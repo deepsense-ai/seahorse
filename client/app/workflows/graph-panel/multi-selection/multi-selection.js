@@ -47,7 +47,7 @@ class MultiSelection {
       };
 
       that._getWorkflowFromInheritedScope = () => {
-        return scope.flowChartBoxCtrl.workflow;
+        return scope.$ctrl.workflow;
       };
 
       that.startPainting = (event) => {
@@ -62,7 +62,7 @@ class MultiSelection {
           return;
         }
 
-        startPoint = internal.MouseEvent.getEventOffsetOfElement(event, element[0]);
+        startPoint = internal.MouseEvent.getEventOffsetOfElement(event, element[0].parentElement);
 
         workflowNodes = workflowNodes || _.map(that._getWorkflowFromInheritedScope().getNodes(),
           node => {
@@ -82,7 +82,6 @@ class MultiSelection {
         };
 
         element.addClass('has-cursor-crosshair');
-
         $selectionElement.css({
           'top': startPoint.y,
           'left': startPoint.x
@@ -158,7 +157,7 @@ class MultiSelection {
       }, true);
 
       that.paint = (event) => {
-        let currentPoint = internal.MouseEvent.getEventOffsetOfElement(event, element[0]);
+        let currentPoint = internal.MouseEvent.getEventOffsetOfElement(event, element[0].parentElement);
         var diff = {
           x: currentPoint.x - startPoint.x,
           y: currentPoint.y - startPoint.y
@@ -276,7 +275,7 @@ class MultiSelection {
         element.on('mousedown', that.clearNodes);
 
         scope.$on('MultiSelection.ADD', (e, nodeIds) => {
-          that.addToSelection(nodeIds);;
+          that.addToSelection(nodeIds);
         });
 
         scope.$on('MultiSelection.CLEAR_ALL', (event) => {
