@@ -13,7 +13,7 @@ Workflow Executor requires:
 
 * Hadoop version: 2.6.0
 
-## Building Workflow Executor from sources
+## Building Workflow Executor from Sources
 
 Steps required to build Workflow Executor:
 
@@ -29,7 +29,7 @@ Assembled jar can be found under path:
 
 ``workflowexecutor/target/scala-2.10/workflowexecutor.jar``
 
-## How to run Workflow Executor
+## How to Run Workflow Executor
 
 Workflow Executor can be submitted to Spark cluster as any other Spark application.
 Example spark-submit commands can be found in following subsections.
@@ -49,7 +49,7 @@ For more detailed information about submitting Spark applications, visit:
         --output-directory test-output \
         --python-executor-path workflowexecutor.jar
 
-#### Spark Standalone cluster
+#### Spark Standalone Cluster
     # Run on a Spark Standalone cluster in client deploy mode
     ./bin/spark-submit \
       --driver-class-path workflowexecutor.jar \
@@ -61,7 +61,7 @@ For more detailed information about submitting Spark applications, visit:
         --output-directory test-output \
         --python-executor-path workflowexecutor.jar
 
-#### YARN cluster
+#### YARN Cluster
     # Run on a YARN cluster
     export HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop   # location of Hadoop cluster configuration directory
     ./bin/spark-submit \
@@ -94,7 +94,7 @@ Detailed information about command line parameters can be obtained by executing 
 
 ``java -classpath workflowexecutor.jar io.deepsense.workflowexecutor.WorkflowExecutorApp --help``
 
-#### Command line parameters details
+#### Command Line Parameters Details
 
 | Argument                                                        | Meaning |
 |:----------------------------------------------------------------|:--------|

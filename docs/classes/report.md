@@ -17,7 +17,7 @@ that include column distributions, missing value counts etc.
 Reports may contain data presentable through a chart,
 in a tabular form or through an interactive front-end presentation.
 
-### Report visualization examples
+### Report Visualization Examples
 
 <img src="report_01.png" alt="Report_01" style="width:45%" onclick="window.open('report_01.png', '_blank');">
 &nbsp; &nbsp; &nbsp; &nbsp;

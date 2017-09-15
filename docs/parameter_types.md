@@ -71,7 +71,7 @@ For `multiple columns` input mode with `append new columns` output mode, a prefi
 columns has to be specified. Every new column will have corresponding input column's name with
 given prefix prepended.
 
-#### Example of use
+#### Example of Use
 
 Operation `Convert Type`
 

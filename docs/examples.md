@@ -11,7 +11,7 @@ description: Seahorse documentation homepage
 * Table of Contents
 {:toc}
 
-## Example 1 - Build a simple regression model
+## Example 1 - Build a Simple Regression Model
 
 The goal of this exercise is to build a model predicting apartments prices
 basing on 3 apartments features:
@@ -34,7 +34,7 @@ Linear Regression model using training set.
 The model will be scored (against validation part of the dataset) and report of
 the scoring will be produced (model performance report).
 
-### Build workflow
+### Build a Workflow
 
 <img class="img-responsive" style="float:right" src="./img/examples_workflow1.png" />
 
@@ -103,7 +103,7 @@ the scoring will be produced (model performance report).
 
 <div style="clear:both" />
 
-### Execute workflow
+### Execute the Workflow
 {:.no_toc}
 
 * Click on the **Evaluate** node.
@@ -114,7 +114,7 @@ the scoring will be produced (model performance report).
   spinning wheel on the right side. Completed operations are marked with green ticks. The workflow
   execution will be finished when the selected Evaluate node's execution is completed.
 
-### View the reports
+### View the Reports
 {:.no_toc}
 
 Click on the report icon under the **Evaluate** node. Report panel with evaluation metrics
@@ -125,7 +125,7 @@ In the next example we will try to improve these metrics.
   ![Evaluate Regression Report](./img/examples_report1.png){: .centered-image .img-responsive}
 </div>
 
-## Example 2 - Build a better model
+## Example 2 - Build a Better Model
 
 The goal of this exercise is to improve our previous models performance.
 In previous example we only used 3 features of the apartments:
@@ -139,7 +139,7 @@ Quick view on the <code>city</code> column values suggests it is a categorical c
 containing only a small, fixed set of different values. We will process this feature before
 executing linear regression algorithm on the data.
 
-### Update workflow
+### Update the Workflow
 
 <img class="img-responsive" style="float:right" src="./img/examples_workflow2.png" />
 
@@ -169,13 +169,13 @@ executing linear regression algorithm on the data.
 
 <div style="clear:both" />
 
-### Execute workflow
+### Execute the Workflow
 {:.no_toc}
 
 * Click on the **Evaluate** node
 * Press **RUN** button from the top menu
 
-### View the reports
+### View the Reports
 {:.no_toc}
 
 Click on the report icon under the **Evaluate** node. As you can see the model performance is much
@@ -186,12 +186,12 @@ better than in the previous example.
 </div>
 
 
-## Example 3 - Analyze data using Notebook
+## Example 3 - Analyze the Data Using a Notebook
 
 The goal of this exercise is to show how to use the [Notebook](operations/notebook.html)
 and interactively analyze data.
 
-### Build workflow
+### Build a Workflow
 
 <img class="img-responsive" style="float:right; padding: 1em;" src="./img/examples_workflow3.png" />
 
@@ -230,7 +230,7 @@ def transform(dataframe):
   * Drag [Notebook](operations/notebook.html) to your canvas
   * Connect operations as presented in the picture
 
-### Execute and edit notebook
+### Execute and Edit the Notebook
 
 * Select the created Notebook node and click **run** button. This will execute the Notebook node and
   all required predecessor nodes.
@@ -316,7 +316,7 @@ sqlContext.sql("SELECT FCE FROM notebook_df").toPandas().sample(5)
 </tr>
 </table>
 
-#### Perform operations on input DataFrame
+#### Perform Operations on the Input DataFrame
 {:.no_toc}
 
 You can access the DataFrame passed to the Notebook node on first input port by calling the
@@ -383,7 +383,7 @@ dataframe().toPandas().sample(5)
 </tr>
 </table>
 
-#### Visualize data using Pandas and Matplotlib
+#### Visualize Data Using Pandas and Matplotlib
 {:.no_toc}
 
 You can use Matplotlib inside notebook cells to generate plots and visualize your data.

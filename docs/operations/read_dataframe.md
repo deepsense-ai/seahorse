@@ -22,7 +22,7 @@ For more detailed information on using Cassandra, visit
 [Cassandra configuration](../workflowexecutor.html#cassandra-configuration) section.
 
 
-## Available file formats
+## Available File Formats
 
 ### `CSV`
 <a target="_blank" href="https://en.wikipedia.org/wiki/Comma-separated_values">Comma-separated values</a>

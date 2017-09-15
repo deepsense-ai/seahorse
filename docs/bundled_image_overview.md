@@ -52,7 +52,7 @@ To stop Seahorse bundled image you need to execute:
 
     vagrant halt
 
-## Making local files available in Seahorse
+## Making Local Files Available in Seahorse
 By default Vagrant mounts host directory where virtual machine was started to `/vagrant` directory on virtual machine.
 If you want to use data sets stored as local files you need to copy them to the directory where you started your virtual machine.
 
@@ -77,8 +77,8 @@ vagrant halt
 vagrant box remove seahorse-vm
 # remove older Vagrantfile
 rm Vagrantfile
-# get newest Vagrantfile (please check Downloads page)
+# get the newest Vagrantfile (please check Downloads page)
 wget http://path.to.the.newest.vagrantfile
-# start newest Seahorse
+# start the newest Seahorse
 vagrant up
 {% endhighlight %}

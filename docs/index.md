@@ -18,14 +18,14 @@ description: Seahorse documentation homepage
 <a target="_blank" href=" {{ site.SEAHORSE_EDITOR_ADDRESS }} ">Seahorse Editor</a>.
 
 
-### Create a new empty workflow
+### Create a New Empty Workflow
 In the the main page of Seahorse you can manage existing workflows and create new. Let's make a new one:
 
 * Click **New workflow**.
 * Name your workflow with `quickstart` so you can distinguish it later on.
 * Press the **create** button.
 
-### Build workflow
+### Build a Workflow
 You've been redirected to workflow editor page where you can interactively compound complex algorithms.
 
 In Seahorse, algorithms are represented as graphs of connected [operations](/operations.html),
@@ -33,7 +33,7 @@ which are consuming and producing [entities](/deeplang_overview.html#entities).
 
 Let's start with a single one.
 
-#### Read some data
+#### Read Data
 
 <img class="img-responsive" style="display: inline-block; float:right; width:35%; height:auto" src="./img/quickstart/warning_read_dataframe.png" />
 
@@ -50,7 +50,7 @@ Execution time statistics are provided in the right panel.
 output by clicking its port icon.
 
 
-#### Query it!
+#### Query It!
 Loaded [transactions.csv file](https://s3.amazonaws.com/workflowexecutor/examples/data/transactions.csv)
 contains apartments prices from 3 cities.
 It has 5 columns and 1000 rows (header row and 999 data rows).

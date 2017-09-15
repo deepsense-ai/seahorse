@@ -47,9 +47,9 @@ Replace `./bin/spark-submit` with a path to the script in Apache Spark's directo
 For more detailed information about submitting Spark applications, visit:
 <a target="_blank" href="https://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/submitting-applications.html">https://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/submitting-applications.html</a>
 
-#### Local (single machine) Spark
+#### Local Spark (single machine)
 {% highlight bash %}
-# Run application locally (on 8 cores)
+# Run Application Locally (on 8 cores)
 ./bin/spark-submit \
   --driver-class-path workflowexecutor.jar \
   --class io.deepsense.workflowexecutor.WorkflowExecutorApp \
@@ -61,9 +61,9 @@ For more detailed information about submitting Spark applications, visit:
     --python-executor-path workflowexecutor.jar
 {% endhighlight %}
 
-#### Spark Standalone cluster
+#### Spark Standalone Cluster
 {% highlight bash %}
-# Run on a Spark Standalone cluster in client deploy mode
+# Run on a Spark Standalone Cluster in Client Deploy Mode
 ./bin/spark-submit \
   --driver-class-path workflowexecutor.jar \
   --class io.deepsense.workflowexecutor.WorkflowExecutorApp \
@@ -75,9 +75,9 @@ For more detailed information about submitting Spark applications, visit:
     --python-executor-path workflowexecutor.jar
 {% endhighlight %}
 
-#### YARN cluster
+#### YARN Cluster
 {% highlight bash %}
-# Run on a YARN cluster
+# Run on a YARN Cluster
 export HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop   # location of Hadoop cluster configuration directory
 ./bin/spark-submit \
   --driver-class-path workflowexecutor.jar \
@@ -126,7 +126,7 @@ For more information on
 <a target="_blank" href="http://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/submitting-applications.html#advanced-dependency-management">Apache Spark documentation</a>.
 
 
-## Cassandra configuration
+## Cassandra Configuration
 
 To allow usage of Cassandra database as data source in I/O operations the following configuration
 parameters need to be defined either in Spark configuration or passed to ``spark-submit``
@@ -147,7 +147,7 @@ Detailed information about command line parameters can be obtained by executing 
 
 ``java -classpath workflowexecutor.jar io.deepsense.workflowexecutor.WorkflowExecutorApp --help``
 
-#### Command line parameters details
+#### Command Line Parameters Details
 
 | Argument                                                        | Meaning |
 |:----------------------------------------------------------------|:--------|
