@@ -31,7 +31,6 @@ import io.deepsense.models.json.workflow.exceptions.WorkflowVersionException
 import io.deepsense.models.workflows._
 import io.deepsense.workflowmanager.WorkflowManagerProvider
 import io.deepsense.workflowmanager.exceptions._
-import io.deepsense.workflowmanager.rest.protocols.ResultsUploadTimeJsonProtocol
 
 /**
  * Exposes Workflow Manager through a REST API.

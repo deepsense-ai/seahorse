@@ -46,8 +46,6 @@ object Library {
   val scalatest = "org.scalatest" %% "scalatest" % Version.scalatest
   val seahorseCommons = seahorse("commons")
   val seahorseDeeplang = seahorse("deeplang")
-  val seahorseESClient = seahorse("entitystorage-client")
-  val seahorseESModel = seahorse("entitystorage-model")
   val seahorseModels = seahorse("models")
   val seahorseGraph = seahorse("graph")
   val seahorseWorkflowJson = seahorse("workflow-json")
@@ -89,26 +87,6 @@ object Dependencies {
     sprayRouting
   ) ++ Seq(akkaTestkit, cassandraUnit, mockitoCore, scalatest, sprayTestkit).map(_ % Test)
 
-  val deploymodelservice = Seq(
-    akkaActor,
-    seahorseDeeplang,
-    sprayCan,
-    sprayJson,
-    sprayRouting
-  ) ++ Seq(scalatest, sprayTestkit).map(_ % s"$Test,it")
-
-  val entitystorage = Seq(
-    akkaActor,
-    cassandraConnector,
-    seahorseDeeplang
-  ) ++ Seq(
-    akkaTestkit,
-    cassandraUnit,
-    mockitoCore,
-    scalatest,
-    seahorseESClient,
-    sprayTestkit).map(_ % s"$Test,it")
-
   val workflowmanager = Seq(
     akkaActor,
     apacheCommons,
@@ -116,7 +94,6 @@ object Dependencies {
     guice,
     guiceMultibindings,
     seahorseDeeplang,
-    seahorseESModel,
     seahorseGraph,
     seahorseReportlib,
     seahorseWorkflowJson,
