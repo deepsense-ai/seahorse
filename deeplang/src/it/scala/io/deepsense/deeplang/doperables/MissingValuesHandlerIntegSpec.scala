@@ -27,9 +27,11 @@ import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.MissingValuesHandler.EmptyColumnsStrategy
+import io.deepsense.deeplang.doperables.MissingValuesHandler.MissingValueIndicatorChoice
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.spark.wrappers.transformers.TransformerSerialization
 import io.deepsense.deeplang.doperations.exceptions.{MultipleTypesReplacementException, ValueConversionException}
+import io.deepsense.deeplang.params.exceptions.EmptyColumnPrefixNameException
 import io.deepsense.deeplang.params.selections.{IndexColumnSelection, IndexRangeColumnSelection, MultipleColumnSelection, TypeColumnSelection}
 
 class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
@@ -48,6 +50,9 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
     ))
 
     val uut = new MissingValuesHandler
+
+    val allColumnsInSchemaSelection = MultipleColumnSelection(
+      Vector(IndexRangeColumnSelection(Some(0), Some(schema.fields.length - 1))))
   }
 
   "MissingValuesHandler" should {
@@ -562,13 +567,10 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
         val strategy = MissingValuesHandler.Strategy.ReplaceWithMode()
 
         strategy.setEmptyColumnStrategy(EmptyColumnsStrategy.RemoveEmptyColumns())
-
         uut
           .setUserDefinedMissingValues(Seq())
-          .setSelectedColumns(MultipleColumnSelection(
-            Vector(IndexRangeColumnSelection(Some(0), Some(schema.fields.length - 1)))))
+          .setSelectedColumns(allColumnsInSchemaSelection)
           .setStrategy(strategy)
-
 
         val df = createDataFrame(
           Seq(
@@ -582,6 +584,19 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
         val expectedDf = createDataFrame(Seq(Row(), Row()), StructType(Seq()))
 
         assertDataFramesEqual(resultDf, expectedDf)
+      }
+    }
+  }
+
+  "should fail param validation" when {
+    "indicator column prefix not set" in {
+      new TestData {
+        uut
+          .setSelectedColumns(allColumnsInSchemaSelection)
+          .setMissingValueIndicator(MissingValueIndicatorChoice.Yes())
+
+        uut.validateParams should contain(EmptyColumnPrefixNameException)
+
       }
     }
   }

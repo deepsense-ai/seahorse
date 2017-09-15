@@ -18,7 +18,7 @@ package io.deepsense.deeplang.params
 
 import spray.json._
 
-import io.deepsense.deeplang.params.validators.ColumnRegexValidator
+import io.deepsense.deeplang.params.validators.ColumnNameValidator
 
 class SingleColumnCreatorParamSpec extends AbstractParamSpec[String, SingleColumnCreatorParam] {
 
@@ -37,7 +37,7 @@ class SingleColumnCreatorParamSpec extends AbstractParamSpec[String, SingleColum
       "validator" -> JsObject(
         "type" -> JsString("regex"),
         "configuration" -> JsObject(
-          "regex" -> JsString(ColumnRegexValidator.regex)
+          "regex" -> JsString(ColumnNameValidator.regex.toString())
         )
       )
     )

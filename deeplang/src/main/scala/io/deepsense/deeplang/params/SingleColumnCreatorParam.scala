@@ -18,7 +18,7 @@ package io.deepsense.deeplang.params
 
 import spray.json.DefaultJsonProtocol.StringJsonFormat
 
-import io.deepsense.deeplang.params.validators.{ColumnRegexValidator, Validator}
+import io.deepsense.deeplang.params.validators.{ColumnNameValidator, Validator}
 
 case class SingleColumnCreatorParam(
     name: String,
@@ -26,7 +26,7 @@ case class SingleColumnCreatorParam(
   extends ParamWithJsFormat[String]
   with HasValidator[String] {
 
-  val validator: Validator[String] = new ColumnRegexValidator()
+  val validator: Validator[String] = ColumnNameValidator
 
   val parameterType = ParameterType.SingleColumnCreator
 
