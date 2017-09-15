@@ -34,51 +34,53 @@ let ParameterFactory = {
   createParametersList(paramValues, paramSchemas) {
     let parametersList = [];
 
-    for (let i = 0; i < paramSchemas.length; ++i) {
-      let paramSchema = paramSchemas[i];
-      let paramName = paramSchema.name;
-      let paramValue = paramValues[paramName];
-      let options = {
-        'name': paramName,
-        'value': paramValue,
-        'schema': paramSchema
-      };
+    if (!_.isNull(paramSchemas)) {
+      for (let i = 0; i < paramSchemas.length; ++i) {
+        let paramSchema = paramSchemas[i];
+        let paramName = paramSchema.name;
+        let paramValue = paramValues[paramName];
+        let options = {
+          'name': paramName,
+          'value': paramValue,
+          'schema': paramSchema
+        };
 
-      switch (paramSchema.type) {
-        case 'choice':
-        case 'multipleChoice':
-          options.possibleChoicesList = {};
-          _.forEach(options.schema.values, (choiceObject) => {
-            let choiceName = choiceObject.name;
-            let choiceParamValues = (options.value || {})[choiceName] || {};
-            let choiceParamSchema = choiceObject.schema;
+        switch (paramSchema.type) {
+          case 'choice':
+          case 'multipleChoice':
+            options.possibleChoicesList = {};
+            _.forEach(options.schema.values, (choiceObject) => {
+              let choiceName = choiceObject.name;
+              let choiceParamValues = (options.value || {})[choiceName] || {};
+              let choiceParamSchema = choiceObject.schema;
 
-            options.possibleChoicesList[choiceName] = ParameterFactory.createParametersList(
-              choiceParamValues,
-              choiceParamSchema
-            );
-          });
+              options.possibleChoicesList[choiceName] = ParameterFactory.createParametersList(
+                choiceParamValues,
+                choiceParamSchema
+              );
+            });
 
-          break;
-        case 'multiplier':
-          options.parametersLists = [];
-          paramValue = paramValue || [];
-          _.forEach(paramValue, (multiplier) => {
-            let nestedParametersList = ParameterFactory.createParametersList(
-              multiplier,
-              options.schema.values
-            );
+            break;
+          case 'multiplier':
+            options.parametersLists = [];
+            paramValue = paramValue || [];
+            _.forEach(paramValue, (multiplier) => {
+              let nestedParametersList = ParameterFactory.createParametersList(
+                multiplier,
+                options.schema.values
+              );
 
-            options.parametersLists.push(nestedParametersList)
-          });
+              options.parametersLists.push(nestedParametersList)
+            });
 
-          break;
-      }
+            break;
+        }
 
-      if (parameterConstructors[paramSchema.type]) {
-        let Constructor = parameterConstructors[paramSchema.type];
-        if (!_.isUndefined(Constructor)) {
-          parametersList.push(new Constructor(options));
+        if (parameterConstructors[paramSchema.type]) {
+          let Constructor = parameterConstructors[paramSchema.type];
+          if (!_.isUndefined(Constructor)) {
+            parametersList.push(new Constructor(options));
+          }
         }
       }
     }
