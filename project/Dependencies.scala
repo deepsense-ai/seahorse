@@ -73,7 +73,7 @@ object Library {
   val metricsScala = "nl.grons" %% "metrics-scala" % Version.metricsScala excludeAkkaActor
   val mockitoCore = "org.mockito" % "mockito-core" % Version.mockito
   val nscalaTime = "com.github.nscala-time" %% "nscala-time" % Version.nsscalaTime
-  val quartz = "org.quartz-scheduler" % "quartz" % "2.2.3"
+  val quartz = "org.quartz-scheduler" % "quartz" % "2.3.0"
   val rabbitmq = "com.thenewmotion.akka" %% "akka-rabbitmq" % "2.2" excludeAkkaActor
   val scalaReflect = "org.scala-lang" % "scala-reflect" % Version.scala
   val scalatest = "org.scalatest" %% "scalatest" % Version.scalatest

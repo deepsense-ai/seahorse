@@ -64,7 +64,7 @@ object Library {
   val nscalaTime = "com.github.nscala-time" %% "nscala-time" % Version.nsscalaTime
   val mockitoCore = "org.mockito" % "mockito-core" % Version.mockito
   val rabbitmq = "com.thenewmotion.akka" %% "akka-rabbitmq" % "2.2" excludeAkkaActor
-  val reflections = "org.reflections" % "reflections" % "0.9.10" excludeGuava
+  val reflections = "org.reflections" % "reflections" % "0.9.11" excludeGuava
   val scalacheck = "org.scalacheck" %% "scalacheck" % Version.scalacheck
   val scalate = "org.scalatra.scalate" %% "scalate-core" % "1.7.1"
   val slf4j = "org.slf4j" % "slf4j-api" % "1.7.12"
