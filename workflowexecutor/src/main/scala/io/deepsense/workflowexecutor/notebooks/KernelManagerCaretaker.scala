@@ -96,7 +96,7 @@ class KernelManagerCaretaker(
   }
 
   private def runKernelManager(kernelManagerPath: String, workingDir: String): Process = {
-    val pyLogger = ProcessLogger(fout = logger.error, ferr = logger.error)
+    val pyLogger = ProcessLogger(fout = logger.info, ferr = logger.error)
 
     val chmod = s"chmod +x $kernelManagerPath"
     logger.info(s"Setting +x for $kernelManagerPath")
