@@ -54,7 +54,7 @@ abstract class Param[T] {
    *                     but we need to receive Any because Params have to use this method
    *                     without knowing T.
    */
-  def toJson(maybeDefault: Option[Any]): JsObject = {
+  final def toJson(maybeDefault: Option[Any]): JsObject = {
     val basicFields = Map(
       "name" -> name.toJson,
       "type" -> parameterType.toString.toJson, // TODO json format for parameterType
