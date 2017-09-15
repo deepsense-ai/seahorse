@@ -5,7 +5,7 @@
 package io.deepsense.deeplang.doperations
 
 import org.apache.spark.sql
-import org.apache.spark.sql.UserDefinedFunction
+import org.apache.spark.sql.{Column, UserDefinedFunction}
 
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
@@ -43,15 +43,12 @@ class ConvertType extends DOperation1To1[DataFrame, DataFrame] {
       val mapper = CategoricalMapper(dataFrame, context.dataFrameBuilder)
       mapper.categorized(notYetCategorical: _*)
     } else {
+      logger.info("Finding converters...")
       val converters = findConverters(dataFrame, columns, targetType)
-      val (columnsOldToNew, columnsNewToOld) = findColumnNameMapping(converters.keys, dataFrame)
-      val convertedDf = executeConverters(dataFrame, converters, columnsOldToNew)
-      val cleanedUpDf = selectConvertedColumns(
-        convertedDf,
-        columnsNewToOld,
-        columnsOldToNew,
-        dataFrame.sparkDataFrame.columns,
-        converters.keys)
+      val columnsOldToNew = findColumnNameMapping(converters.keys, dataFrame)
+      logger.info("Executing converters and selecting converted columns...")
+      val cleanedUpDf = convert(dataFrame, converters, columnsOldToNew)
+      logger.info("Building DF...")
       context.dataFrameBuilder.buildDataFrame(cleanedUpDf)
     }
   }
@@ -83,34 +80,29 @@ class ConvertType extends DOperation1To1[DataFrame, DataFrame] {
   private def findColumnNameMapping(columnsToConvert: Iterable[String], dataFrame: DataFrame) = {
     val pairs = columnsToConvert.map(old => (old, dataFrame.uniqueColumnName(old, "convert_type")))
     val oldToNew = pairs.toMap
-    val newToOld = pairs.map { case (oldName, newName) => (newName, oldName) }.toMap
-    (oldToNew, newToOld)
+    (oldToNew)
   }
 
-  private def executeConverters(
+  private def convert(
       dataFrame: DataFrame,
       converters: Map[String, UserDefinedFunction],
       columnsOldToNew: Map[String, String]) = {
-    converters.foldLeft(dataFrame.sparkDataFrame){ case (df, (columnName, converter)) =>
-      df.withColumn(columnsOldToNew(columnName), converter(dataFrame.sparkDataFrame(columnName)))
+    val convertedColumns: Seq[Column] = converters.toSeq.map {
+      case (columnName: String, converter: UserDefinedFunction) => {
+        val column = converter(dataFrame.sparkDataFrame(columnName))
+        val alias = columnsOldToNew(columnName)
+        column.as(alias)
+      }
     }
-  }
-
-  private def selectConvertedColumns(
-      sparkDataFrame: sql.DataFrame,
-      columnsNewToOld: Map[String, String],
-      columnsOldToNew: Map[String, String],
-      inputColumns: Array[String],
-      changedColumns: Iterable[String]) = {
-    val convertedColumnsNames = inputColumns.toSeq
-      .map { name =>
-      sparkDataFrame(columnsOldToNew.getOrElse(name, name))
-    }
-    val convertedDataFrame = sparkDataFrame.select(convertedColumnsNames: _*)
-    changedColumns.foldLeft(convertedDataFrame){ case (df, columnName) =>
-      val columnAfterRename = columnsOldToNew(columnName)
-      df.withColumnRenamed(columnAfterRename, columnsNewToOld(columnAfterRename))
-    }
+    val dfWithConvertedColumns = dataFrame.sparkDataFrame.select(new Column("*") +: convertedColumns: _*)
+    val correctColumns: Seq[Column] = dataFrame.sparkDataFrame.columns.toSeq.map(name => {
+      if (columnsOldToNew.contains(name)) {
+        new Column(columnsOldToNew(name)).as(name)
+      } else {
+        new Column(name)
+      }
+    })
+    dfWithConvertedColumns.select(correctColumns: _*)
   }
 }
 
