@@ -13,8 +13,8 @@ describe('OperationsAPIClient', () => {
 
   beforeEach(() => {
     module = angular.module('test', []);
-    require('../factory.BaseAPIClient.js').inject(module);
-    require('../factory.OperationsAPIClient.js').inject(module);
+    require('../BaseAPIClient.factory.js').inject(module);
+    require('../OperationsAPIClient.factory.js').inject(module);
 
     angular.mock.module('test');
     inject((_OperationsAPIClient_) => {

@@ -13,8 +13,8 @@ var angular = require('angular');
  */
 var providers = angular.module('ds.providers', []);
 
-require('./factory.BaseAPIClient.js').inject(providers);
-require('./factory.ExperimentAPIClient.js').inject(providers);
-require('./factory.OperationsAPIClient.js').inject(providers);
+require('./BaseAPIClient.factory.js').inject(providers);
+require('./ExperimentAPIClient.factory.js').inject(providers);
+require('./OperationsAPIClient.factory.js').inject(providers);
 
 module.exports = providers;
