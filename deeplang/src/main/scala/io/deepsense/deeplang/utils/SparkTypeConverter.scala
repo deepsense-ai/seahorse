@@ -16,12 +16,11 @@
 
 package io.deepsense.deeplang.utils
 
-import org.apache.spark.mllib.linalg.{Vector, Vectors}
+import org.apache.spark.mllib.linalg.{SparseVector, Vector, Vectors}
 import org.apache.spark.sql.Row
 import org.joda.time.{DateTime, LocalDate}
 
 import io.deepsense.commons.datetime.DateTimeConverter
-import io.deepsense.commons.utils.CollectionExtensions.RichSeq
 import io.deepsense.commons.utils.DoubleUtils
 
 
@@ -30,6 +29,8 @@ import io.deepsense.commons.utils.DoubleUtils
  * Check @{link Row.get()} for possible types of Any returned by Spark
  */
 object SparkTypeConverter {
+
+  val defaultLimitInSeq = 20
 
   def getColumnAsDouble(columnIndex: Int)(row: Row): Double = {
     getOption(columnIndex)(row).map(SparkTypeConverter.sparkAnyToDouble).getOrElse(Double.NaN)
@@ -77,9 +78,11 @@ object SparkTypeConverter {
 
   def sparkAnyToString(value: Any): String = {
     value match {
+      case sparseVector: SparseVector => sparseVectorToString(sparseVector)
       case vector: Vector => sparkAnyToString(vector.toArray)
       case array: Array[_] => sparkAnyToString(array.toSeq)
-      case seq: Seq[_] => seq.map(sparkAnyToString).humanReadable
+      case seq: Seq[_] => seqToString(seq)
+      case (key, tupleValue) => s"(${sparkAnyToString(key)}, ${sparkAnyToString(tupleValue)})"
       case float: java.lang.Float => DoubleUtils.double2String(float.toDouble)
       case double: java.lang.Double => DoubleUtils.double2String(double)
       case decimal: java.math.BigDecimal => decimal.toPlainString
@@ -112,4 +115,25 @@ object SparkTypeConverter {
       0,
       DateTimeConverter.zone).getMillis
   }
+
+  private def seqToString(
+      seq: Seq[_], optionalLimit:
+      Option[Int] = Some(defaultLimitInSeq)): String = {
+    val moreValuesMark = "..."
+    val itemsToString = optionalLimit match {
+      case None => seq
+      case Some(limit) => if (seq.length > limit) seq.take(limit) ++ Seq(moreValuesMark) else seq
+    }
+    itemsToString.map(sparkAnyToString).mkString("[", ", ", "]")
+  }
+
+  private def sparseVectorToString(sparseVector: SparseVector): String = {
+    val size = sparseVector.size
+    val indices = sparseVector.indices.toStream
+    val values = sparseVector.values.toStream
+    val pairs = indices.zip(values)
+
+    s"($size, ${sparkAnyToString(pairs)})"
+  }
+
 }
