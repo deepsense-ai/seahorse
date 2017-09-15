@@ -69,7 +69,7 @@ class ColorPickerController {
   }
 
   open(event) {
-    if (!this.picker) {
+    if (!this.picker && !this.$scope.disabledMode) {
       this.picker = this.$compile(this.template)(this.$scope);
 
       this.$body.append(this.picker);
