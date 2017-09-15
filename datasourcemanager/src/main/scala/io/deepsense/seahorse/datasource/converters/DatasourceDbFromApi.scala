@@ -26,6 +26,7 @@ object DatasourceDbFromApi {
       id = datasourceId,
       ownerId = userId,
       name = dsParams.name,
+      creationDateTime = new java.util.Date(),
       visibility = dsParams.visibility,
       downloadUri = dsParams.downloadUri,
       datasourceType = dsParams.datasourceType,

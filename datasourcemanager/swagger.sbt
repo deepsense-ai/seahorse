@@ -1,6 +1,6 @@
 enablePlugins(ScalatraSwaggerCodegenPlugin)
 
-val swaggerJsonPath = "seahorse-workflow-executor/api/src/main/resources/io/deepsense/datasourcemanager/swagger.json"
+val swaggerJsonPath = "seahorse-workflow-executor/api/src/main/resources/datasourcemanager.swagger.json"
 
 swaggerSpecPath := swaggerJsonPath
 generatedCodePackage := "io.deepsense.seahorse.datasource"

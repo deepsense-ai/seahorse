@@ -24,6 +24,7 @@ object DatasourcesSchema {
     id: UUID,
     ownerId: UUID,
     name: String,
+    creationDateTime: java.util.Date,
     visibility: Visibility,
     downloadUri: Option[String],
     datasourceType: DatasourceType,
@@ -48,11 +49,17 @@ object DatasourcesSchema {
   implicit val visibilityFormat = EnumColumnMapper(Visibility)
   implicit val csvSeparatorType = EnumColumnMapper(CsvSeparatorType)
 
+  implicit val javaUtilDateMapper =
+    MappedColumnType.base[java.util.Date, java.sql.Timestamp] (
+      d => new java.sql.Timestamp(d.getTime),
+      d => new java.util.Date(d.getTime))
+
   final class DatasourceTable(tag: Tag)
       extends Table[DatasourceDB](tag, Some(DatasourceManagerConfig.database.schema), "datasource") {
     def id = column[UUID]("id", O.PrimaryKey)
     def ownerId = column[UUID]("ownerId")
     def name = column[String]("name")
+    def creationDateTime = column[java.util.Date]("creationDateTime")
     def visibility = column[Visibility]("visibility")
     def downloadUri = column[Option[String]]("downloadUri")
     def datasourceType = column[DatasourceType]("datasourceType")
@@ -71,11 +78,11 @@ object DatasourcesSchema {
     def googleSpreadsheetId = column[Option[String]]("googleSpreadsheetId")
     def googleServiceAccountCredentials = column[Option[String]]("googleServiceAccountCredentials")
 
-    def * = (id, ownerId, name, visibility, downloadUri, datasourceType, jdbcUrl, jdbcDriver, jdbcTable,
-        jdbcQuery, externalFileUrl, hdfsPath, libraryPath, fileFormat, fileCsvIncludeHeader,
+    def * = (id, ownerId, name, creationDateTime, visibility, downloadUri, datasourceType, jdbcUrl, jdbcDriver,
+      jdbcTable, jdbcQuery, externalFileUrl, hdfsPath, libraryPath, fileFormat, fileCsvIncludeHeader,
       fileCsvConvert01ToBoolean, fileCsvSeparatorType, fileCsvCustomSeparator,
       googleSpreadsheetId, googleServiceAccountCredentials
-      ) <> (DatasourceDB.tupled, DatasourceDB.unapply _)
+      ) <> (DatasourceDB.tupled, DatasourceDB.unapply)
   }
 
   lazy val datasourcesTable = TableQuery[DatasourceTable]

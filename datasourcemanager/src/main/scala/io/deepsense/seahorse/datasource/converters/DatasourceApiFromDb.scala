@@ -27,6 +27,7 @@ object DatasourceApiFromDb {
       googleSpreadsheetParams <- validateGoogleSpreadsheetParams(datasource)
     } yield Datasource(
       id = datasource.id,
+      creationDateTime = datasource.creationDateTime,
       accessLevel = if (currentUserId == datasource.ownerId) {
         AccessLevel.writeRead
       } else {

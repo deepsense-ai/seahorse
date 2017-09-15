@@ -2,6 +2,7 @@ create table "datasourcemanager"."datasource" (
     "id" UUID NOT NULL PRIMARY KEY,
     "ownerId" UUID NOT NULL,
     "name" VARCHAR NOT NULL,
+    "creationDateTime" TIMESTAMP NOT NULL,
     "visibility" VARCHAR NOT NULL,
     "downloadUri" VARCHAR,
     "datasourceType" VARCHAR NOT NULL,
