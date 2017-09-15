@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-name := "ds-seahorse"
+name := "seahorse"
 
 lazy val commons                = project
 lazy val deeplang               = project dependsOn (
@@ -46,3 +46,6 @@ addCommandAlias("ds-it",
     ";models/it:test " +
     ";reportlib/it:test " +
     ";workflowexecutor/it:test")
+
+addCommandAlias("sPublish", "aetherDeploy")
+addCommandAlias("sPublishLocal", "aetherInstall")
