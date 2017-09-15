@@ -65,13 +65,7 @@ trait UntrainedLinearRegression[TrainedRegressionType <: Scorable, ModelType] {
       modelParameters: LinearRegressionParameters): Report = {
 
     DOperableReporter("Report for " + getClass.getSimpleName)
-      .withParameters(
-        description = "",
-        ("Regularization parameter",
-          ColumnType.numeric, modelParameters.regularizationParameter.toString),
-        ("Iterations number", ColumnType.numeric, modelParameters.numberOfIterations.toString),
-        ("Mini batch fraction", ColumnType.numeric, modelParameters.miniBatchFraction.toString)
-      )
+      .withParameters(modelParameters)
       .report
   }
 }

@@ -20,8 +20,11 @@ import org.apache.spark.mllib.linalg.Vectors
 import org.mockito.Mockito._
 
 import io.deepsense.commons.types.ColumnType
+import io.deepsense.commons.types.ColumnType
+import io.deepsense.commons.types.ColumnType.ColumnType
 import io.deepsense.commons.utils.DoubleUtils
 import io.deepsense.deeplang.UnitSpec
+import io.deepsense.deeplang.doperables.machinelearning.ModelParameters
 
 class DOperableReporterSpec extends UnitSpec {
 
@@ -46,17 +49,16 @@ class DOperableReporterSpec extends UnitSpec {
 
       "parameters are passed" in {
 
-        val parameters = Seq(
-          ("Column 1", ColumnType.string, "Value 1"),
-          ("Column 2", ColumnType.categorical, "Value 2"),
-          ("Column 3", ColumnType.numeric, "3.0")
-        )
+        val parameters = new ModelParameters {
+          override def reportTableRows: Seq[(String, ColumnType, String)] =
+            Seq(
+              ("Column 1", ColumnType.string, "Value 1"),
+              ("Column 2", ColumnType.categorical, "Value 2"),
+              ("Column 3", ColumnType.numeric, "3.0"))
+        }
 
         val report = DOperableReporter(reportName)
-          .withParameters(
-            description,
-            parameters: _*
-          )
+          .withParameters(parameters)
           .report
 
         verifyNotEmptyReportWasGenerated(report)

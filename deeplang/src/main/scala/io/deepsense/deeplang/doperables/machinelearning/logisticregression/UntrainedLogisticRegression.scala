@@ -54,15 +54,7 @@ case class UntrainedLogisticRegression(
 
   override def report(executionContext: ExecutionContext): Report = {
     DOperableReporter("Untrained Logistic Regression")
-      .withParameters(
-        description = "",
-        ("Regularization", ColumnType.numeric,
-          DoubleUtils.double2String(modelParameters.regularization)),
-        ("Iterations number", ColumnType.numeric,
-          DoubleUtils.double2String(modelParameters.iterationsNumber)),
-        ("Tolerance", ColumnType.numeric,
-          DoubleUtils.double2String(modelParameters.tolerance))
-      )
+      .withParameters(modelParameters)
       .report
   }
 

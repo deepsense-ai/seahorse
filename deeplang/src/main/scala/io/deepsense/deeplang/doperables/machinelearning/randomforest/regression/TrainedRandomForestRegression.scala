@@ -51,14 +51,7 @@ case class TrainedRandomForestRegression(
 
   override def report(executionContext: ExecutionContext): Report = {
     DOperableReporter("Trained Random Forest Regression")
-      .withParameters(
-        description = model.toString,
-        ("Num trees", ColumnType.numeric, modelParameters.numTrees.toString),
-        ("Feature subset strategy", ColumnType.string, modelParameters.featureSubsetStrategy),
-        ("Impurity", ColumnType.string, modelParameters.impurity),
-        ("Max depth", ColumnType.numeric, modelParameters.maxDepth.toString),
-        ("Max bins", ColumnType.numeric, modelParameters.maxBins.toString)
-      )
+      .withParameters(modelParameters)
       .withSupervisedScorable(this)
       .report
   }

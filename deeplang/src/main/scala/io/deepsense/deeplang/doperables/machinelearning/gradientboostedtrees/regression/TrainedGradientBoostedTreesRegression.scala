@@ -44,14 +44,7 @@ case class TrainedGradientBoostedTreesRegression(
 
   override def report(executionContext: ExecutionContext): Report = {
     DOperableReporter("Trained Gradient Boosted Trees Regression")
-      .withParameters(
-        description = model.toString,
-        ("Num iterations", ColumnType.numeric, modelParameters.numIterations.toString),
-        ("Loss", ColumnType.string, modelParameters.loss),
-        ("Impurity", ColumnType.string, modelParameters.impurity),
-        ("Max depth", ColumnType.numeric, modelParameters.maxDepth.toString),
-        ("Max bins", ColumnType.numeric, modelParameters.maxBins.toString)
-      )
+      .withParameters(modelParameters)
       .withSupervisedScorable(this)
       .report
   }

@@ -56,15 +56,7 @@ case class TrainedLogisticRegression(
 
   override def report(executionContext: ExecutionContext): Report = {
     DOperableReporter("Trained Logistic Regression")
-      .withParameters(
-        description = "",
-        ("Regularization", ColumnType.numeric,
-          DoubleUtils.double2String(modelParameters.regularization)),
-        ("Iterations number", ColumnType.numeric,
-          DoubleUtils.double2String(modelParameters.iterationsNumber)),
-        ("Tolerance", ColumnType.numeric,
-          DoubleUtils.double2String(modelParameters.tolerance))
-      )
+      .withParameters(modelParameters)
       .withWeights(featureColumns, model.weights.toArray)
       .withIntercept(model.intercept)
       .withSupervisedScorable(this)

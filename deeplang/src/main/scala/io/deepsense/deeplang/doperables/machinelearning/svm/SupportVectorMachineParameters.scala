@@ -16,10 +16,23 @@
 
 package io.deepsense.deeplang.doperables.machinelearning.svm
 
+import io.deepsense.commons.types.ColumnType
+import io.deepsense.commons.types.ColumnType.ColumnType
+import io.deepsense.commons.utils.DoubleUtils
+import io.deepsense.deeplang.doperables.machinelearning.ModelParameters
 import io.deepsense.deeplang.parameters.RegularizationType.RegularizationType
 
 case class SupportVectorMachineParameters(
-  regularization: RegularizationType,
-  numIterations: Int,
-  regParam: Double,
-  miniBatchFraction: Double)
+    regularization: RegularizationType,
+    numIterations: Int,
+    regParam: Double,
+    miniBatchFraction: Double)
+  extends ModelParameters {
+
+  override def reportTableRows: Seq[(String, ColumnType, String)] =
+    Seq(
+      ("Regularization type", ColumnType.string, regularization.toString),
+      ("Regularization parameter", ColumnType.numeric, DoubleUtils.double2String(regParam)),
+      ("Number of iterations", ColumnType.numeric, numIterations.toString),
+      ("Mini batch fraction", ColumnType.numeric, DoubleUtils.double2String(miniBatchFraction)))
+}

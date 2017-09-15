@@ -18,6 +18,7 @@ package io.deepsense.deeplang.doperables.machinelearning.kmeans
 
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.commons.types.ColumnType.ColumnType
+import io.deepsense.deeplang.doperables.machinelearning.ModelParameters
 
 case class KMeansParameters(
     numClusters: Int,
@@ -26,9 +27,10 @@ case class KMeansParameters(
     initializationSteps: Option[Int],
     seed: Int,
     runs: Int,
-    epsilon: Double) {
+    epsilon: Double)
+  extends ModelParameters {
 
-  def reportTableRows: Seq[(String, ColumnType, String)] = {
+  override def reportTableRows: Seq[(String, ColumnType, String)] = {
     val initializationStepsInfo = initializationSteps.map(_.toString).getOrElse("")
     Seq(
       ("Number of clusters", ColumnType.numeric, numClusters.toString),

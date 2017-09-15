@@ -16,5 +16,19 @@
 
 package io.deepsense.deeplang.doperables.machinelearning.randomforest
 
+import io.deepsense.commons.types.ColumnType
+import io.deepsense.commons.types.ColumnType.ColumnType
+import io.deepsense.deeplang.doperables.machinelearning.ModelParameters
+
 case class RandomForestParameters(
-   numTrees: Int, featureSubsetStrategy: String, impurity: String, maxDepth: Int, maxBins: Int)
+    numTrees: Int, featureSubsetStrategy: String, impurity: String, maxDepth: Int, maxBins: Int)
+  extends ModelParameters {
+
+  override def reportTableRows: Seq[(String, ColumnType, String)] =
+    Seq(
+      ("Num trees", ColumnType.numeric, numTrees.toString),
+      ("Feature subset strategy", ColumnType.string, featureSubsetStrategy),
+      ("Impurity", ColumnType.string, impurity),
+      ("Max depth", ColumnType.numeric, maxDepth.toString),
+      ("Max bins", ColumnType.numeric, maxBins.toString))
+}

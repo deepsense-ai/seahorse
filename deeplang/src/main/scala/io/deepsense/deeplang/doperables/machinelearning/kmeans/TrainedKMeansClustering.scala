@@ -45,9 +45,7 @@ case class TrainedKMeansClustering(
 
   override def report(executionContext: ExecutionContext): Report =
     DOperableReporter("Report for Trained k-means Clustering")
-      .withParameters(
-        description = "",
-        modelParameters.reportTableRows: _*)
+      .withParameters(modelParameters)
       .withUnsupervisedScorable(this)
       .withCustomTable(
         name = "Centers of clusters",

@@ -16,5 +16,19 @@
 
 package io.deepsense.deeplang.doperables.machinelearning.gradientboostedtrees
 
+import io.deepsense.commons.types.ColumnType
+import io.deepsense.commons.types.ColumnType.ColumnType
+import io.deepsense.deeplang.doperables.machinelearning.ModelParameters
+
 case class GradientBoostedTreesParameters(
-  numIterations: Int, loss: String, impurity: String, maxDepth: Int, maxBins: Int)
+    numIterations: Int, loss: String, impurity: String, maxDepth: Int, maxBins: Int)
+  extends ModelParameters {
+
+  override def reportTableRows: Seq[(String, ColumnType, String)] =
+    Seq(
+      ("Num iterations", ColumnType.numeric, numIterations.toString),
+      ("Loss", ColumnType.string, loss),
+      ("Impurity", ColumnType.string, impurity),
+      ("Max depth", ColumnType.numeric, maxDepth.toString),
+      ("Max bins", ColumnType.numeric, maxBins.toString))
+}

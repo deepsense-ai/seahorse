@@ -16,5 +16,18 @@
 
 package io.deepsense.deeplang.doperables.machinelearning.logisticregression
 
+import io.deepsense.commons.types.ColumnType
+import io.deepsense.commons.types.ColumnType.ColumnType
+import io.deepsense.commons.utils.DoubleUtils
+import io.deepsense.deeplang.doperables.machinelearning.ModelParameters
+
 case class LogisticRegressionParameters(
     regularization: Double, iterationsNumber: Double, tolerance: Double)
+  extends ModelParameters {
+
+    override def reportTableRows: Seq[(String, ColumnType, String)] =
+      Seq(
+        ("Regularization", ColumnType.numeric, DoubleUtils.double2String(regularization)),
+        ("Iterations number", ColumnType.numeric, DoubleUtils.double2String(iterationsNumber)),
+        ("Tolerance", ColumnType.numeric, DoubleUtils.double2String(tolerance)))
+}

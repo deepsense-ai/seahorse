@@ -79,8 +79,6 @@ case class UntrainedKMeansClustering(modelParameters: KMeansParameters)
 
   override def report(executionContext: ExecutionContext): Report =
     DOperableReporter("Report for Untrained k-means Clustering")
-      .withParameters(
-        description = "",
-        modelParameters.reportTableRows: _*)
+      .withParameters(modelParameters)
       .report
 }

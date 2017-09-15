@@ -22,21 +22,22 @@ import org.apache.spark.mllib.linalg.Vector
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.commons.types.ColumnType.ColumnType
 import io.deepsense.commons.utils.DoubleUtils
+import io.deepsense.deeplang.doperables.machinelearning.ModelParameters
 import io.deepsense.reportlib.model.{ReportContent, Table}
 
 case class DOperableReporter(title: String, tables: List[Table] = List.empty) {
 
-  def withParameters(
-      description: String,
-      parameters: (String, ColumnType, String)*): DOperableReporter = {
+  def withParameters(parameters: ModelParameters): DOperableReporter = {
+
+    val reportTableRows = parameters.reportTableRows
 
     val parametersTable = Table(
       "Parameters",
-      description,
-      Some(parameters.map(_._1).toList),
-      parameters.map(_._2).toList,
+      "",
+      Some(reportTableRows.map(_._1).toList),
+      reportTableRows.map(_._2).toList,
       None,
-      List(parameters.map(_._3).map(Some(_)).toList))
+      List(reportTableRows.map(_._3).map(Some(_)).toList))
 
     DOperableReporter(title, tables :+ parametersTable)
   }

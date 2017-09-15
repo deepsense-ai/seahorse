@@ -16,10 +16,20 @@
 
 package io.deepsense.deeplang.doperables.machinelearning
 
+import io.deepsense.commons.types.ColumnType
+import io.deepsense.commons.types.ColumnType.ColumnType
 import io.deepsense.deeplang.doperations.LinearRegressionParams
 
 case class LinearRegressionParameters(
-  regularizationParameter: Double, numberOfIterations: Double, miniBatchFraction: Double)
+    regularizationParameter: Double, numberOfIterations: Double, miniBatchFraction: Double)
+  extends ModelParameters {
+
+  override def reportTableRows: Seq[(String, ColumnType, String)] =
+    Seq(
+      ("Regularization parameter", ColumnType.numeric, regularizationParameter.toString),
+      ("Iterations number", ColumnType.numeric, numberOfIterations.toString),
+      ("Mini batch fraction", ColumnType.numeric, miniBatchFraction.toString))
+}
 
 object LinearRegressionParameters {
   def apply(operationParams: LinearRegressionParams): LinearRegressionParameters = {

@@ -70,17 +70,7 @@ case class UntrainedSupportVectorMachineClassifier(
 
   override def report(executionContext: ExecutionContext): Report = {
     DOperableReporter("Report for Untrained SVM Classification")
-      .withParameters(
-        description = "",
-        ("Regularization type",
-          ColumnType.string, svmParameters.regularization.toString),
-        ("Regularization parameter",
-          ColumnType.numeric, DoubleUtils.double2String(svmParameters.regParam)),
-        ("Number of iterations",
-          ColumnType.numeric, svmParameters.numIterations.toString),
-        ("Mini batch fraction",
-          ColumnType.numeric, DoubleUtils.double2String(svmParameters.miniBatchFraction))
-      )
+      .withParameters(svmParameters)
       .report
   }
 

@@ -33,13 +33,7 @@ trait TrainedLinearRegression {
     val reportName = "Report for " + getClass.getSimpleName
 
     DOperableReporter(reportName)
-      .withParameters(
-        description = "",
-        ("Regularization parameter",
-          ColumnType.numeric, modelParameters.regularizationParameter.toString),
-        ("Iterations number", ColumnType.numeric, modelParameters.numberOfIterations.toString),
-        ("Mini batch fraction", ColumnType.numeric, modelParameters.miniBatchFraction.toString)
-      )
+      .withParameters(modelParameters)
       .withWeights(featureColumns, model.weights.toArray)
       .withIntercept(model.intercept)
       .withSupervisedScorable(this)
