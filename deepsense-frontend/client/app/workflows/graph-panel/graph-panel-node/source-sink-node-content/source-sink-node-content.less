@@ -9,10 +9,21 @@
   width: 63px;
   height: 58px;
   color: white;
+  overflow: hidden;
 
   display: flex;
   justify-content: center;
   align-items: center;
+
+  .source-sink-node-content {
+    width: inherit;
+  }
+
+  .name-block {
+    padding: 0 5px;
+    width: inherit;
+    .text-elipsis();
+  }
 
   p {
     margin: 0;
