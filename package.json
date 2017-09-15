@@ -12,7 +12,7 @@
   },
   "scripts": {
     "clean": "rimraf dist/*",
-    "dist": "cross-env NODE_ENV=production webpack -p --colors",
+    "dist": "cross-env NODE_ENV=production webpack --colors",
     "lint": "eslint ./client",
     "posttest": "npm run lint",
     "release:major": "npm version major && npm publish && git push --follow-tags",
