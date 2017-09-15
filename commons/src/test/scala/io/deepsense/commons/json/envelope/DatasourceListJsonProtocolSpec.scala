@@ -16,11 +16,11 @@
 
 package io.deepsense.commons.json.envelope
 
+import org.joda.time.DateTime
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
-
-import io.deepsense.api.datasourcemanager.model.{Datasource, DatasourceType, DatasourceParams}
-import io.deepsense.commons.json.DatasourceListJsonProtocol
+import io.deepsense.api.datasourcemanager.model.{AccessLevel, Datasource, DatasourceParams, DatasourceType}
+import io.deepsense.commons.json.datasources.DatasourceListJsonProtocol
 
 class DatasourceListJsonProtocolSpec
   extends WordSpec
@@ -38,13 +38,19 @@ class DatasourceListJsonProtocolSpec
     val params = new DatasourceParams
     params.setDatasourceType(externalFile)
     ds.setParams(params)
+    ds.setCreationDateTime(new DateTime())
+    ds.setAccessLevel(AccessLevel.WRITEREAD)
+    ds.setOwnerId("abcd")
+    ds.setOwnerName("owner_name")
     ds
   }
 
   "DatasourceJsonProtocolSpec" should {
     "serialize and deserialize single datasource" in {
       val datasourcesJson = DatasourceListJsonProtocol.toString(dsList)
-      val datasources = DatasourceListJsonProtocol.fromString(datasourcesJson.toString)
+      val asString = datasourcesJson.toString
+      val datasources = DatasourceListJsonProtocol.fromString(asString)
+      info(s"Datasource: $datasources, json: $asString")
       datasources should contain theSameElementsAs dsList
     }
 
@@ -52,6 +58,5 @@ class DatasourceListJsonProtocolSpec
       val datasourcesJson = DatasourceListJsonProtocol.toString(List.empty[Datasource])
       datasourcesJson shouldBe "[]"
     }
-
   }
 }

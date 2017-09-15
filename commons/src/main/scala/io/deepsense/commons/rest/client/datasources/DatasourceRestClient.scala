@@ -30,14 +30,16 @@ class DatasourceRestClient(
   extends DatasourceClient
   with Logging {
 
-  val apiClient = new ApiClient()
-  apiClient.setAdapterBuilder(
-    apiClient.getAdapterBuilder().baseUrl(datasourceServerAddress.toString))
+  private val client = {
+    val apiClient = new ApiClient()
+    apiClient.setAdapterBuilder(
+      apiClient.getAdapterBuilder.baseUrl(datasourceServerAddress.toString))
+    apiClient.createService(classOf[DefaultApi])
+  }
 
   def getDatasource(uuid: UUID): Option[Datasource] = {
-    val client = apiClient.createService(classOf[DefaultApi])  // TODO can this be extracted?
     val response = client.getDatasource(userId, uuid.toString).execute()
-    if (response.isSuccessful()) {
+    if (response.isSuccessful) {
       Some(response.body)
     } else {
       None
@@ -45,13 +47,17 @@ class DatasourceRestClient(
   }
 
   def addDatasource(userName: String, datasourceParams: DatasourceParams): Unit = {
-    val client = apiClient.createService(classOf[DefaultApi])
     val newUUID = UUID.randomUUID().toString
     val response = client.putDatasource(userId, userName, newUUID, datasourceParams).execute()
-    if (response.isSuccessful()) {
-      logger.info("Added datasource; {}", response.body())
+    logger.info(s"Adding datasource, userId = $userId, userName = $userName," +
+      s"uuid = $newUUID, params = $datasourceParams")
+    if (response.isSuccessful) {
+      logger.info(s"Successfully added datasource; body = ${response.body()}")
     } else {
-      logger.error("There was a problem with adding datasource; {}", response.body())
+      throw new Exception(
+        s"There was a problem with adding datasource," +
+          s"code: ${response.code()}, body: ${response.body()}, error body: ${response.errorBody()}."
+      )
     }
   }
 }
