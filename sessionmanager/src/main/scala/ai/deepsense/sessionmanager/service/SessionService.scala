@@ -41,11 +41,11 @@ import ai.deepsense.sessionmanager.service.sessionspawner.{ExecutorSession, Sess
 
 class SessionService @Inject() (
   @Named("SessionService.Actor") private val serviceActor: ActorRef,
-  @Named("session-service.timeout") private val timeout: Int,
+  @Named("session-service.timeout") private val timeoutMillis: Int,
   @Named("predefined-users.admin.id") private val adminUserId: String
 )(implicit ec: ExecutionContext) extends Logging {
 
-  private implicit val implicitTimeout = Timeout(timeout, TimeUnit.MILLISECONDS)
+  private implicit val implicitTimeout = Timeout(timeoutMillis, TimeUnit.MILLISECONDS)
 
   def getSession(callerId: String, workflowId: Id): FutureOpt[Session] = {
     logger.info(s"Getting session '$workflowId'")

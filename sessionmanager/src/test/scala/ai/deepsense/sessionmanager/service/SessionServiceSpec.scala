@@ -59,7 +59,7 @@ class SessionServiceSpec extends WordSpec with Matchers with MockitoSugar {
   private def test(initialSessions: Seq[CreateRequest])
     (testBody: SessionService => Unit) = {
     val sessionService = new SessionService(
-      generateSessionServiceActor(initialSessions), 60, adminId)
+      generateSessionServiceActor(initialSessions), 1000, adminId)
     testBody(sessionService)
   }
 
