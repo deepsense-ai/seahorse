@@ -128,8 +128,8 @@
         }],
         "metadata": {
           "kernelspec": {
-            "display_name": "pySpark",
-            "name": "pyspark",
+            "display_name": "PySpark",
+            "name": "forwarding_kernel_py",
             "language": "python"
           },
           "language_info": {
