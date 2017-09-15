@@ -16,31 +16,23 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
+import org.apache.spark.ml.feature.{PCA => SparkPCA}
+
 import io.deepsense.deeplang.params.ParamPair
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
-import org.apache.spark.ml.classification.{LogisticRegression => SparkLogisticRegression}
 
-class LogisticRegressionSmokeTest
-  extends AbstractEstimatorModelWrapperSmokeTest[SparkLogisticRegression] {
+class PCASmokeTest
+  extends AbstractEstimatorModelWrapperSmokeTest[SparkPCA] {
 
-  override def className: String = "LogisticRegression"
+  override def className: String = "PCA"
 
-  override val estimatorWrapper = new LogisticRegression()
+  override val estimatorWrapper = new PCA()
 
   import estimatorWrapper._
 
   override val estimatorParams: Seq[ParamPair[_]] = Seq(
-    elasticNetParameter -> 0.8,
-    fitIntercept -> true,
-    maxIterations -> 2.0,
-    regularizationParameter -> 0.1,
-    tolerance -> 0.01,
-    standardization -> true,
-    featuresColumn -> NameSingleColumnSelection("myFeatures"),
-    labelColumn -> NameSingleColumnSelection("myLabel"),
-    probabilityColumn -> "prob",
-    rawPredictionColumn -> "rawPred",
-    predictionColumn -> "pred",
-    threshold -> 0.3
+    inputCol -> NameSingleColumnSelection("myFeatures"),
+    outputCol -> "testOutputCol",
+    k -> 2
   )
 }

@@ -16,26 +16,29 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.models
 
-import org.apache.spark.ml.classification.{LogisticRegression => SparkLogisticRegression, LogisticRegressionModel => SparkLogisticRegressionModel}
+import org.apache.spark.ml
+import org.apache.spark.ml.feature.{PCA => SparkPCA, PCAModel => SparkPCAModel}
 
 import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasThreshold, ProbabilisticClassifierParams}
+import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasOutputCol, HasInputCol}
+import io.deepsense.deeplang.params.validators.RangeValidator
+import io.deepsense.deeplang.params.wrappers.spark.IntParamWrapper
+
 import io.deepsense.deeplang.doperables.{Report, SparkModelWrapper}
 import io.deepsense.deeplang.params.Param
 
-class LogisticRegressionModel
-  extends SparkModelWrapper[
-    SparkLogisticRegressionModel,
-    SparkLogisticRegression]
-  with ProbabilisticClassifierParams
-  with HasThreshold {
+class PCAModel
+  extends SparkModelWrapper[SparkPCAModel, SparkPCA]
+  with HasInputCol
+  with HasOutputCol {
+
+  val k = new IntParamWrapper[ml.param.Params { val k: ml.param.IntParam }](
+    name = "k",
+    description = "Number of principal components",
+    sparkParamGetter = _.k,
+    validator = RangeValidator.positiveIntegers)
 
   override def report(executionContext: ExecutionContext): Report = Report()
 
-  override val params: Array[Param[_]] = declareParams(
-    featuresColumn,
-    probabilityColumn,
-    rawPredictionColumn,
-    predictionColumn,
-    threshold)
+  override val params: Array[Param[_]] = declareParams(k, inputCol, outputCol)
 }
