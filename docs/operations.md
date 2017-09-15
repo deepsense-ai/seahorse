@@ -46,6 +46,7 @@ List of all currently supported operations:
   * Feature Conversion
     * [Assemble Vector](operations/assemble_vector.html)
     * [Binarize](operations/binarize.html)
+    * [Compose Datetime](operations/compose_datetime.html)
     * [Convert Type](operations/convert_type.html)
     * [DCT](operations/dct.html)
     * [Decompose Datetime](operations/decompose_datetime.html)
