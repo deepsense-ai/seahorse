@@ -5,7 +5,6 @@ function WorkflowsApiClientFactory(BaseApiClient, ServerCommunication, config) {
 
   const API_TYPE = 'batch';
   const PATH_WORKFLOWS = '/workflows';
-  const PATH_REPORTS = '/reports';
 
   class WorkflowsApiClient extends BaseApiClient {
 
@@ -20,14 +19,6 @@ function WorkflowsApiClientFactory(BaseApiClient, ServerCommunication, config) {
 
     getWorkflow(workflowId) {
       return this.makeRequest(this.METHOD_GET, `${this.API_URL}${PATH_WORKFLOWS}/${workflowId}`);
-    }
-
-    getLatestReport(workflowId) {
-      return this.makeRequest(this.METHOD_GET, `${this.API_URL}${PATH_WORKFLOWS}/${workflowId}/report`);
-    }
-
-    getReport(reportId) {
-      return this.makeRequest(this.METHOD_GET, `${this.API_URL}${PATH_REPORTS}/${reportId}`);
     }
 
     createWorkflow(params) {
@@ -72,21 +63,10 @@ function WorkflowsApiClientFactory(BaseApiClient, ServerCommunication, config) {
       return `${this.API_URL}${PATH_WORKFLOWS}/${workflowId}/download?format=json`;
     }
 
-    getDownloadReportUrl(reportId) {
-      return `${this.API_URL}${PATH_REPORTS}/${reportId}/download`;
-    }
-
     getUploadWorkflowMethodUrl() {
       return `${this.API_URL}${PATH_WORKFLOWS}/upload`;
     }
 
-    getUploadReportMethodUrl() {
-      return `${this.API_URL}${PATH_WORKFLOWS}/report/upload`;
-    }
-
-    getResultsUploadTime(workflowId) {
-      return this.makeRequest(this.METHOD_GET, `${this.API_URL}${PATH_WORKFLOWS}/${workflowId}/results-upload-time`);
-    }
   }
 
   return new WorkflowsApiClient();
