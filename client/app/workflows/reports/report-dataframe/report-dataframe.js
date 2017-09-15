@@ -11,27 +11,19 @@ function ReportDataframe() {
     controller: function() {
       // TODO Use some enum instead of name here.
       this.tableData = this.data['Data Sample'];
-      this.tableData = this.tableData ? this.tableData : this.data['Column Names and Types']
+      this.tableData = this.tableData ? this.tableData : this.data['Column Names and Types'];
       this.tableSizes = this.data['DataFrame Size'];
-      this.tableColumnsData = {};
-      _.forEach(this.distributionsTypes, function(distType, colName) {
-        let icon = undefined;
-        switch (distType) {
-          case 'discrete':
-            icon = 'fa-pie-chart';
-            break;
-          case 'continuous':
-            icon = 'fa-bar-chart-o';
-            break
-          // TODO Handle 'no_distribution'
-          default:
-            console.log('Unknown distType: ' + distType + ". Falling back to bar chart");
-            icon = 'fa-bar-chart-o';
-        }
-        this.tableColumnsData[colName] = {
-          'icon': icon
+
+      let columnTypeByName = _.object(_.zip(this.tableData.columnNames, this.tableData.columnTypes));
+
+      this.tableColumnsData = _.map(this.tableData.columnNames, (columnName) => {
+        let distributionType = this.distributionsTypes[columnName];
+        return {
+          'columnName': columnName,
+          'type': columnTypeByName[columnName],
+          'distributionType': distributionType
         };
-      }.bind(this));
+      });
     },
     controllerAs: 'reportDataframe',
     bindToController: true

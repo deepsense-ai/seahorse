@@ -34,9 +34,10 @@ function ReportTableBodyController($scope, $rootScope, $element) {
       let highlightedCell = tableEl.querySelector('td.info');
 
       if (highlightedCell) {
+        // TODO There should be no HTML in controller.
         let index = highlightedCell.cellIndex + 1;
         let colName = tableEl.querySelector(`th:nth-child(${ index }) span.col-name`)
-          .innerHTML;
+          .dataset.columnName;
 
         $rootScope.$broadcast(REPORT_EVENTS.SELECT_COLUMN, {
           colName: colName
