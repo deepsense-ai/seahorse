@@ -47,7 +47,6 @@ abstract class WorkflowApi @Inject() (
   with WorkflowJsonProtocol
   with WorkflowWithVariablesJsonProtocol
   with WorkflowWithResultsJsonProtocol
-  with MetadataInferenceResultJsonProtocol
   with DOperationEnvelopesJsonProtocol
   with Cors
   with WorkflowVersionUtil {
