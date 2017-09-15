@@ -48,12 +48,32 @@ class CanvasService {
   }
 
   bindEvents() {
+    //Wheel handling
     this.$slidingWindow.bind('wheel', (e) => {
       let zoomDelta = ZOOM_STEP;
       if (e.originalEvent.deltaY < 0) {
         zoomDelta = -1 * ZOOM_STEP;
       }
       this.centerZoom(zoomDelta);
+    });
+
+    // Drag handling
+    const moveHandler = (event) => {
+      if (event.ctrlKey) {
+        this.moveWindow(event.originalEvent.movementX, event.originalEvent.movementY);
+      } else {
+        this.$slidingWindow.off('mousemove', moveHandler);
+      }
+    };
+
+    this.$slidingWindow.bind('mousedown', () => {
+      if (event.ctrlKey) {
+        this.$slidingWindow.bind('mousemove', moveHandler);
+      }
+    });
+
+    this.$slidingWindow.bind('mouseup', () => {
+      this.$slidingWindow.off('mousemove', moveHandler);
     });
   }
 

@@ -47,6 +47,7 @@ class AdapterService {
   }
 
   bindEvents() {
+    // Edge management
     jsPlumb.bind('connection', (info, originalEvent) => {
       if (!originalEvent) {
         return;
@@ -98,11 +99,11 @@ class AdapterService {
   setWorkflow(workflow) {
     this.workflow = workflow;
     this.edges = workflow.getEdges();
-    this.items = workflow.getNodes();
+    this.nodes = workflow.getNodes();
   }
 
   render() {
-    this.renderPorts(this.items);
+    this.renderPorts(this.nodes);
     this.renderEdges(this.edges);
     jsPlumb.repaintEverything();
   }
