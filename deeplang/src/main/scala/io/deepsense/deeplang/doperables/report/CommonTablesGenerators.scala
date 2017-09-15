@@ -21,6 +21,7 @@ import scala.util.Try
 import org.apache.spark.mllib.linalg.DenseMatrix
 
 import io.deepsense.commons.types.ColumnType
+import io.deepsense.deeplang.doperables.report.ReportUtils.{formatValues, shortenLongTableValues}
 import io.deepsense.deeplang.params.ParamMap
 import io.deepsense.deeplang.params.choice.Choice
 import io.deepsense.deeplang.utils.SparkTypeConverter.sparkAnyToString
@@ -29,20 +30,16 @@ import io.deepsense.reportlib.model._
 object CommonTablesGenerators {
 
   private def paramMapToDescriptionLists(params: ParamMap): List[List[Option[String]]] = {
-    params.toSeq.flatMap(
+    val descriptionList = params.toSeq.flatMap(
       pair => pair.value match {
         case choice: Choice =>
-          Seq(List(Some(pair.param.name), Some(choice.toString), Some(pair.param.description))) ++
+          Seq(List(Some(pair.param.name), Some(choice), Some(pair.param.description))) ++
             paramMapToDescriptionLists(choice.extractParamMap())
-        case array: Array[_] =>
-          Seq(List(
-            Some(pair.param.name),
-            Some(s"[${array.map(_.toString).mkString(", ")}]"),
-            Some(pair.param.description)))
         case value =>
-          Seq(List(Some(pair.param.name), Some(value.toString), Some(pair.param.description)))
+          Seq(List(Some(pair.param.name), Some(value), Some(pair.param.description)))
       }
     ).toList
+    shortenLongTableValues(formatValues(descriptionList))
   }
 
   def params(params: ParamMap): Table = {
@@ -53,7 +50,7 @@ object CommonTablesGenerators {
       columnNames = Some(List("parameter", "value", "description")),
       columnTypes = List(ColumnType.string, ColumnType.string, ColumnType.string),
       rowNames = None,
-      values = ReportUtils.shortenLongTableValues(values))
+      values = shortenLongTableValues(values))
   }
 
   def modelSummary(tableEntries: List[SummaryEntry]): Table = {
@@ -67,7 +64,7 @@ object CommonTablesGenerators {
       columnNames = Some(List("result", "value", "description")),
       columnTypes = List(ColumnType.string, ColumnType.string, ColumnType.string),
       rowNames = None,
-      values = ReportUtils.shortenLongTableValues(values))
+      values = shortenLongTableValues(values))
   }
 
   def decisionTree(
@@ -77,10 +74,10 @@ object CommonTablesGenerators {
     val treesEntries = (trees.indices, weights, trees).zipped.map(
       (index, weight, tree) => {
         List(
-          Some(index.toString),
-          Some(weight.toString),
-          Some(tree.depth.toString),
-          Some(tree.numNodes.toString))
+          Some(index),
+          Some(weight),
+          Some(tree.depth),
+          Some(tree.numNodes))
       }).toList
 
     Table(
@@ -90,12 +87,13 @@ object CommonTablesGenerators {
       columnTypes =
         List(ColumnType.numeric, ColumnType.numeric, ColumnType.numeric, ColumnType.numeric),
       rowNames = None,
-      values = ReportUtils.shortenLongTableValues(treesEntries))
+      values = shortenLongTableValues(formatValues(treesEntries)))
   }
 
   def categoryMaps(maps: Map[Int, Map[Double, Int]]): Table = {
-    val values = maps.toList.map(
-      tuple => List(Some(tuple._1.toString), Some(tuple._2.toString())))
+    val values = maps.toList.map {
+      case (key, value) => List(Some(key), Some(value))
+    }
 
     Table(
       name = "Category Maps",
@@ -105,7 +103,7 @@ object CommonTablesGenerators {
       columnNames = Some(List("index", "map")),
       columnTypes = List(ColumnType.numeric, ColumnType.string),
       rowNames = None,
-      values = ReportUtils.shortenLongTableValues(values))
+      values = shortenLongTableValues(formatValues(values)))
   }
 
   def denseMatrix(
@@ -117,7 +115,7 @@ object CommonTablesGenerators {
       (for (r <- Range(0, numRows)) yield
         (for (c <- Range(0, numCols)) yield {
           val index = if (!matrix.isTransposed) r + numRows * c else c + numCols * r
-          Some(matrix.values(index).toString)
+          Some(matrix.values(index))
         }).toList).toList
 
     Table(
@@ -126,7 +124,7 @@ object CommonTablesGenerators {
       columnNames = Some(List.fill(numCols)("")),
       columnTypes = List.fill(numCols)(ColumnType.numeric),
       rowNames = None,
-      values = ReportUtils.shortenLongTableValues(values))
+      values = shortenLongTableValues(formatValues(values)))
   }
 
   trait SummaryEntry {
