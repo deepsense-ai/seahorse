@@ -5,3 +5,6 @@
 
 - name: Install Py4j
   pip: name=py4j
+
+- name: Install numpy
+  apt: package=python-numpy

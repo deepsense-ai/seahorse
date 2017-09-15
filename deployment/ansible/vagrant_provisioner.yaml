@@ -4,7 +4,7 @@
   gather_facts: false
   tasks:
     - apt: update_cache=yes
-    - include: tasks/install_py4j.yml
+    - include: tasks/install_python_libs.yml
     - include: tasks/install_openjdk.yml
     - shell: usermod -a -G vagrant ubuntu
 
