@@ -13,7 +13,9 @@ function AttributeDatasource(DatasourcesPanelService, datasourcesService, Dataso
     restrict: 'E',
     templateUrl: tpl,
     replace: true,
-    link: function (scope) {
+    link: function(scope) {
+      DatasourcesPanelService.setHandlerOnDatasourceSelect(setDatasource);
+
       if (scope.parameter.value) {
         scope.error = '';
         scope.datasource = datasourcesService.datasources.find(datasource => datasource.id === scope.parameter.value);
@@ -26,18 +28,9 @@ function AttributeDatasource(DatasourcesPanelService, datasourcesService, Dataso
         scope.disabledMode = newValue;
       });
 
-      scope.$watchGroup(
-        [
-          () => datasourcesService.datasources,
-          () => scope.parameter.value
-        ],
-        (newValues) => {
-          scope.datasource = newValues[0].find(
-            (datasource) => datasource.id === scope.parameter.value
-          );
-        },
-        true
-      );
+      scope.$watch(() => datasourcesService.datasources, (changedDatasources) => {
+        scope.datasource = changedDatasources.find(datasource => datasource.id === scope.parameter.value);
+      }, true);
 
       scope.typeIcon = {
         externalFile: 'sa-external-file',
@@ -47,8 +40,7 @@ function AttributeDatasource(DatasourcesPanelService, datasourcesService, Dataso
         googleSpreadsheet: 'sa-google-spreadsheet'
       };
 
-      scope.openDataSourcePanel = function openDataSourcePanel() {
-        DatasourcesPanelService.setHandlerOnDatasourceSelect(setDatasource);
+      scope.openDataSourcePanel = function() {
         if (scope.parameter.schema.type === 'datasourceIdForRead') {
           DatasourcesPanelService.openDatasourcesForReading();
         } else {
@@ -56,7 +48,7 @@ function AttributeDatasource(DatasourcesPanelService, datasourcesService, Dataso
         }
       };
 
-      scope.clearDatasource = function clearDatasource() {
+      scope.clearDatasource = function () {
         scope.datasource = null;
         scope.parameter.value = null;
       };
@@ -77,11 +69,11 @@ function AttributeDatasource(DatasourcesPanelService, datasourcesService, Dataso
         );
       }
 
-      scope.isDataSourceEmpty = function isDataSourceEmpty() {
+      scope.isDataSourceEmpty = function() {
         return _.isEmpty(scope.datasource);
       };
 
-      scope.isOwner = function isOwner() {
+      scope.isOwner = function() {
         return scope.datasource ? datasourcesService.isCurrentUserOwnerOfDatasource(scope.datasource) : false;
       };
 

@@ -147,5 +147,8 @@ angular
       return undefined;
     };
 
+    GraphNode.MOVE = 'GraphNode.MOVE';
+    GraphNode.MOUSEDOWN = 'GraphNode.MOUSEDOWN';
+
     return GraphNode;
   });

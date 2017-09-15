@@ -16,9 +16,5 @@ export const specialOperations = {
     SOURCE: 'f94b04d7-ec34-42f7-8100-93fe235c89f8',
     SINK: 'e652238f-7415-4da6-95c6-ee33808561b2'
   },
-  DATASOURCE: {
-    READ: '1a3b32f0-f56d-4c44-a396-29d2dfd43423',
-    WRITE: 'bf082da2-a0d9-4335-a62f-9804217a1436'
-  },
   UNKNOWN_OPERATION: '08752b37-3f90-4b8d-8555-e911e2de5662'
 };

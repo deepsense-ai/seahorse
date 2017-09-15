@@ -9,7 +9,6 @@ import CanvasComponent from './core-canvas/canvas.component.js';
 import NewNodeComponent from './new-node/new-node.component.js';
 import EditorComponent from './editor.component.js';
 import GraphNodeComponent from './core-canvas/graph-node/graph-node.component.js';
-import StatusIconComponent from './core-canvas/graph-node/status-icon/status-icon.component.js';
 import PortStatusTooltipComponent from './port-status-tooltip/port-status-tooltip.component.js';
 import CreateNodeInvitationComponent from './create-node-invitation/create-node-invitation.component.js';
 import AdapterService from './core-canvas/adapter.service.js';
@@ -28,7 +27,6 @@ const appModule = angular
   .component('coreCanvas', CanvasComponent)
   .component('editor', EditorComponent)
   .component('graphNode', GraphNodeComponent)
-  .component('statusIcon', StatusIconComponent)
   .component('portStatusTooltip', PortStatusTooltipComponent)
   .component('createNodeInvitation', CreateNodeInvitationComponent)
   .name;
