@@ -107,22 +107,30 @@ factory('Workflow', /*@ngInject*/function (GraphNode, Edge) {
 
     that.setStatus = function setStatus(state) {
       if (state && state.status && Object.keys(that.STATUS).indexOf(state.status) > -1) {
-        that.status = that.STATUS[state.status];
+        that.state.status = that.STATUS[state.status];
       }
-    };
-
-    that.getStatus = function getStatus() {
-      return that.status || that.STATUS_DEFAULT;
     };
 
     that.updateState = function updateState(state) {
-      for (let id in state.nodes) {
-        let node = internal.nodes[id];
-        if (node) {
-          node.updateState(state.nodes[id]);
+      if (!state) {
+        that.state = null;
+      } else {
+        for (let id in state.nodes) {
+          let node = internal.nodes[id];
+          if (node) {
+            node.updateState(state.nodes[id]);
+          }
         }
+
+        that.state = {};
+        that.setStatus(state);
+
+        _.assign(that.state, {
+          started: state.started,
+          ended: state.ended,
+          error: state.error
+        });
       }
-      that.setStatus(state);
     };
 
     that.addNode = function addNode(node) {
