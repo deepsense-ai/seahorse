@@ -166,5 +166,10 @@ object CatalogRecorder {
       DOperationCategories.Transformation,
       "Trains Normalizer on a DataFrame"
     )
+
+    catalog.registerDOperation[MissingValuesHandler](
+      DOperationCategories.DataManipulation,
+      "Handles missing values in a DataFrame"
+    )
   }
 }
