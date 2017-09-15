@@ -10,7 +10,8 @@
   "forin": false,
   "globals": {
     "angular": true,
-    "jsPlumb": true
+    "jsPlumb": true,
+    "console": true
   },
   "globalstrict": false,
   "jasmine": true,
@@ -19,10 +20,6 @@
   "noarg": true,
   "nonbsp": true,
   "plusplus": false,
-  "predef": [
-    "angular",
-    "console"
-  ],
   "quotmark": true,
   "smarttabs": true,
   "strict": true,

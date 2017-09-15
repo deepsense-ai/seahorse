@@ -6,7 +6,6 @@
 
 /* @ngInject */
 function ExperimentListController($rootScope, ExperimentAPIClient) {
-
   ExperimentAPIClient.getList().then((data) => {
     this.experiments = data.experiments;
   });

@@ -13,7 +13,8 @@ function BaseAPIClientFactory($http, $q) {
    }
 
    BaseAPIClient.prototype.API_PATH = '/api';
-   BaseAPIClient.prototype.METHOD_GET    = 'GET';
+
+  BaseAPIClient.prototype.METHOD_GET    = 'GET';
    BaseAPIClient.prototype.METHOD_POST   = 'POST';
    BaseAPIClient.prototype.METHOD_PUT    = 'PUT';
    BaseAPIClient.prototype.METHOD_DELETE = 'DELETE';
