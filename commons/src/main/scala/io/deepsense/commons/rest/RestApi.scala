@@ -62,6 +62,7 @@ trait RestApiAbstractAuth
       val code = cause match {
         case Some(_: DeepSenseException)
              | Some(_: DeserializationException)
+             | Some(_: NoSuchElementException)
              | Some(_: ParsingException)
              | Some(_: IllegalArgumentException) => StatusCodes.BadRequest
         case _ => StatusCodes.InternalServerError

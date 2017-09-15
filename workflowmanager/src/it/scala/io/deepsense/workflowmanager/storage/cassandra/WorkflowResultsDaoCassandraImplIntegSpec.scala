@@ -86,8 +86,6 @@ class WorkflowResultsDaoCassandraImplIntegSpec
     val thirdPartyData = ThirdPartyData("{}")
     val executionReport: ExecutionReportWithId = ExecutionReportWithId(
       resultId,
-      DateTimeConverter.now,
-      DateTimeConverter.now,
       Map(Node.Id.randomId -> nodestate.Failed(
         DateTimeConverter.now,
         DateTimeConverter.now,

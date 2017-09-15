@@ -8,31 +8,28 @@ import com.datastax.driver.core.Row
 import spray.json._
 
 import io.deepsense.graph.Node
-import io.deepsense.graph.nodestate.NodeState
-import io.deepsense.models.json.graph.NodeStateJsonProtocol
+import io.deepsense.graph.nodestate.NodeStatus
+import io.deepsense.models.json.graph.NodeStatusJsonProtocol
 import io.deepsense.models.json.workflow.EntitiesMapJsonProtocol
-import io.deepsense.models.workflows.EntitiesMap
-import io.deepsense.workflowmanager.storage.WorkflowStateStorage.NodeStateWithReports
+import io.deepsense.models.workflows.{EntitiesMap, NodeState}
 
 class WorkflowStateRowMapper
   extends EntitiesMapJsonProtocol
-  with NodeStateJsonProtocol {
+  with NodeStatusJsonProtocol {
 
   import WorkflowStateRowMapper._
 
-  def toIdAndNodeStateWithReports(row: Row): (Node.Id, NodeStateWithReports) = {
-    val stateJson = row.getString(Field.State)
+  def toIdAndNodeState(row: Row): (Node.Id, NodeState) = {
+    val statusJson = row.getString(Field.State)
     val reportsJson = Option(row.getString(Field.Reports))
-
     val nodeId = Node.Id(row.getUUID(Field.NodeId))
-    val nodeState = stateJson.parseJson.convertTo[NodeState]
+    val nodeStatus = statusJson.parseJson.convertTo[NodeStatus]
     val reports = reportsJson map { _.parseJson.convertTo[EntitiesMap] }
-
-    (nodeId, NodeStateWithReports(nodeState, reports))
+    (nodeId, NodeState(nodeStatus, reports))
   }
 
-  def nodeStateToCell(nodeState: NodeState): String =
-    nodeState.toJson.compactPrint
+  def nodeStatusToCell(nodeStatus: NodeStatus): String =
+    nodeStatus.toJson.compactPrint
 
   def entitiesMapToCell(entitiesMap: EntitiesMap): String =
     entitiesMap.toJson.compactPrint

@@ -15,7 +15,7 @@ import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.{WorkflowVersionUtil, WorkflowWithSavedResultsJsonProtocol}
 import io.deepsense.models.workflows.{Workflow, WorkflowWithSavedResults}
 import io.deepsense.workflowmanager.rest.CurrentBuild
-import io.deepsense.workflowmanager.storage.{WorkflowWithDates, WorkflowStorage}
+import io.deepsense.workflowmanager.storage.WorkflowWithDates
 
 case class WorkflowRowMapper @Inject() (
     override val graphReader: GraphReader)
@@ -23,9 +23,8 @@ case class WorkflowRowMapper @Inject() (
   with WorkflowVersionUtil
   with Logging {
 
-  def toWorkflow(row: Row): Either[String, Workflow] = {
-    val stringRow = row.getString(WorkflowRowMapper.Workflow)
-    workflowOrString(stringRow)
+  def toWorkflow(row: Row): Workflow = {
+    row.getString(WorkflowRowMapper.Workflow).parseJson.convertTo[Workflow]
   }
 
   def toWorkflowWithSavedResults(row: Row): Option[Either[String, WorkflowWithSavedResults]] = {

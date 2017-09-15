@@ -6,22 +6,18 @@ package io.deepsense.workflowmanager.storage
 
 import scala.concurrent.Future
 
-import org.joda.time.DateTime
-
 import io.deepsense.graph.Node
-import io.deepsense.graph.nodestate.NodeState
-import io.deepsense.models.workflows.{EntitiesMap, Workflow}
+import io.deepsense.models.workflows.{NodeState, Workflow}
 
 
 trait WorkflowStateStorage {
-  import WorkflowStateStorage._
 
   /**
    * Retrieves the state of all nodes in workflow.
    * Note, that this method doesn't know anything about the current structure of the workflow,
    * therefore it might return nodes that are not in the workflow anymore.
    */
-  def get(workflowId: Workflow.Id): Future[Map[Node.Id, NodeStateWithReports]]
+  def get(workflowId: Workflow.Id): Future[Map[Node.Id, NodeState]]
 
   /**
    * For each entry in state, inserts/updates the appropriate row in storage.
@@ -30,11 +26,5 @@ trait WorkflowStateStorage {
    */
   def save(
     workflowId: Workflow.Id,
-    state: Map[Node.Id, NodeStateWithReports]): Future[Unit]
-}
-
-object WorkflowStateStorage {
-  case class NodeStateWithReports(
-    nodeState: NodeState,
-    reports: Option[EntitiesMap])
+    state: Map[Node.Id, NodeState]): Future[Unit]
 }

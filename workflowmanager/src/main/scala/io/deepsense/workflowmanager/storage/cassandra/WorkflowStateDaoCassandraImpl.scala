@@ -16,9 +16,9 @@ import com.google.inject.name.Named
 
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.graph.Node
+import io.deepsense.models.workflows.NodeState
 import io.deepsense.models.workflows.Workflow.Id
 import io.deepsense.workflowmanager.storage.WorkflowStateStorage
-import io.deepsense.workflowmanager.storage.WorkflowStateStorage.NodeStateWithReports
 
 class WorkflowStateDaoCassandraImpl @Inject() (
     @Named("cassandra.workflowmanager.workflowstate.table") table: String,
@@ -30,25 +30,25 @@ class WorkflowStateDaoCassandraImpl @Inject() (
 
   private val queryBuilder = new QueryBuilder(session.getCluster)
 
-  override def get(workflowId: Id): Future[Map[Node.Id, NodeStateWithReports]] = {
+  override def get(workflowId: Id): Future[Map[Node.Id, NodeState]] = {
     val query = queryBuilder
       .select(Field.NodeId, Field.State, Field.Reports)
       .from(table)
       .where(QueryBuilder.eq(Field.WorkflowId, workflowId.value))
 
     Future(session.execute(query))
-      .map(rs => rs.all().toList.map(rowMapper.toIdAndNodeStateWithReports).toMap)
+      .map(rs => rs.all().toList.map(rowMapper.toIdAndNodeState).toMap)
   }
 
   override def save(
       workflowId: Id,
-      state: Map[Node.Id, NodeStateWithReports]): Future[Unit] = {
+      state: Map[Node.Id, NodeState]): Future[Unit] = {
 
-    def query(nodeId: Node.Id, nodeStateWithReports: NodeStateWithReports): Update.Where =
+    def query(nodeId: Node.Id, nodeState: NodeState): Update.Where =
       queryBuilder.update(table).`with`()
-        .and(Field.State, rowMapper.nodeStateToCell(nodeStateWithReports.nodeState))
+        .and(Field.State, rowMapper.nodeStatusToCell(nodeState.nodeStatus))
         .and(Field.UpdateTime, DateTimeConverter.now.getMillis)
-        .andOptionally(Field.Reports, nodeStateWithReports.reports map rowMapper.entitiesMapToCell)
+        .andOptionally(Field.Reports, nodeState.reports map rowMapper.entitiesMapToCell)
         .where(QueryBuilder.eq(Field.WorkflowId, workflowId.value))
         .and(QueryBuilder.eq(Field.NodeId, nodeId.value))
 
@@ -77,5 +77,4 @@ class WorkflowStateDaoCassandraImpl @Inject() (
         case Some(value) => and(key, value)
       }
   }
-
 }

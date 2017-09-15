@@ -17,8 +17,7 @@ import io.deepsense.commons.cassandra.CassandraTestSupport
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.utils.Logging
 import io.deepsense.graph.{Node, nodestate}
-import io.deepsense.models.workflows.{EntitiesMap, Workflow}
-import io.deepsense.workflowmanager.storage.WorkflowStateStorage.NodeStateWithReports
+import io.deepsense.models.workflows.{NodeState, EntitiesMap, Workflow}
 
 class WorkflowStateDaoCassandraImplIntegSpec
   extends StandardSpec
@@ -42,12 +41,12 @@ class WorkflowStateDaoCassandraImplIntegSpec
 
   private def aDate: DateTime = DateTimeConverter.now
 
-  val draftNoReports = (Node.Id.randomId, NodeStateWithReports(nodestate.Draft, None))
+  val draftNoReports = (Node.Id.randomId, NodeState(nodestate.Draft, None))
   val draftWithReports =
-    (Node.Id.randomId, NodeStateWithReports(nodestate.Draft, Some(EntitiesMap())))
-  val completedNoReports = (Node.Id.randomId, NodeStateWithReports(
+    (Node.Id.randomId, NodeState(nodestate.Draft, Some(EntitiesMap())))
+  val completedNoReports = (Node.Id.randomId, NodeState(
       nodestate.Completed(aDate, aDate, Seq()), None))
-  val completedWithReports = (Node.Id.randomId, NodeStateWithReports(
+  val completedWithReports = (Node.Id.randomId, NodeState(
     nodestate.Completed(aDate, aDate, Seq()), Some(EntitiesMap())))
 
   val workflowState1@(workflowId1, state1) = createState(draftNoReports, completedNoReports)
@@ -55,7 +54,7 @@ class WorkflowStateDaoCassandraImplIntegSpec
   val workflowState3@(workflowId3, state3) = createState(completedWithReports, draftWithReports)
 
   private def createState(
-      nodes: (Node.Id, NodeStateWithReports)*): (Workflow.Id, Map[Node.Id, NodeStateWithReports]) =
+      nodes: (Node.Id, NodeState)*): (Workflow.Id, Map[Node.Id, NodeState]) =
     (Workflow.Id.randomId, nodes.toMap)
 
   "WorkflowStateDao" should {
@@ -82,7 +81,7 @@ class WorkflowStateDaoCassandraImplIntegSpec
     "update state" in withStored(workflowState1) {
       val nodeId = draftNoReports._1
       assert(state1.contains(nodeId))
-      val newState = NodeStateWithReports(nodestate.Draft, Some(EntitiesMap()))
+      val newState = NodeState(nodestate.Draft, Some(EntitiesMap()))
 
       whenReady(workflowStateDao.save(workflowId1, Map(nodeId -> newState))) { _ =>
         whenReady(workflowStateDao.get(workflowId1)) { state =>
@@ -98,8 +97,8 @@ class WorkflowStateDaoCassandraImplIntegSpec
       assert(state3.contains(nodeId))
 
       val newNodeState = nodestate.Completed(aDate, aDate, Seq())
-      val stateUpdate = NodeStateWithReports(newNodeState, None)
-      val newState = NodeStateWithReports(newNodeState, draftWithReports._2.reports)
+      val stateUpdate = NodeState(newNodeState, None)
+      val newState = NodeState(newNodeState, draftWithReports._2.reports)
 
       whenReady(workflowStateDao.save(workflowId3, Map(nodeId -> stateUpdate))) { _ =>
         whenReady(workflowStateDao.get(workflowId3)) { state =>
@@ -110,7 +109,7 @@ class WorkflowStateDaoCassandraImplIntegSpec
   }
 
   private def withStored(
-      storedStates: (Workflow.Id, Map[Node.Id, NodeStateWithReports])*)(
+      storedStates: (Workflow.Id, Map[Node.Id, NodeState])*)(
       testCode: => Any): Unit = {
 
     val s = Future.sequence(storedStates.map {

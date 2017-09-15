@@ -18,20 +18,18 @@ import io.deepsense.models.workflows._
 trait WorkflowManager {
 
   /**
-   * Returns a workflow with knowledge with the specified Id. If the workflow is compatible with
-   * the current API version it is returned as an object otherwise as a string.
+   * Returns a workflow with results with the specified Id.
    * @param id An identifier of the workflow.
-   * @return A workflow with knowledge with the specified Id.
+   * @return A workflow with results with the specified Id.
    */
-  def get(id: Id): Future[Option[Either[String, WorkflowWithKnowledge]]]
+  def get(id: Id): Future[Option[WorkflowWithResults]]
 
   /**
-   * Returns a workflow with an empty variables section and specified Id. If the workflow is
-   * compatible with the current API version it is returned as an object otherwise as a string.
+   * Returns a workflow with an empty variables section and specified Id.
    * @param id An identifier of the workflow.
    * @return A workflow with an empty variables section and specified Id.
    */
-  def download(id: Id): Future[Option[Either[String, WorkflowWithVariables]]]
+  def download(id: Id): Future[Option[WorkflowWithVariables]]
 
   /**
    * Updates an workflow.
@@ -39,14 +37,14 @@ trait WorkflowManager {
    * @param workflow An workflow to be updated.
    * @return The updated workflow with knowledge.
    */
-  def update(workflowId: Id, workflow: Workflow): Future[WorkflowWithKnowledge]
+  def update(workflowId: Id, workflow: Workflow): Future[Unit]
 
   /**
    * Creates new workflow.
    * @param workflow New workflow.
-   * @return Enhanced, saved version of the workflow with knowledge (includes identifier etc).
+   * @return created workflow id.
    */
-  def create(workflow: Workflow): Future[WorkflowWithKnowledge]
+  def create(workflow: Workflow): Future[Workflow.Id]
 
   /**
    * Deletes a workflow by Id.

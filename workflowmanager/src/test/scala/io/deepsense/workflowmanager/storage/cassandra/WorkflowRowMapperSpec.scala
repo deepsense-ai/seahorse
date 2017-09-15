@@ -37,24 +37,7 @@ class WorkflowRowMapperSpec
     "return a workflow as an object" when {
       "it is in the API's current version" in withWorkflow(currentVersion) {
         (workflow, _, workflowRow) =>
-          workflowRowMapper().toWorkflow(workflowRow) shouldBe Right(workflow)
-      }
-    }
-    "return a workflow as a String" when {
-      "it is NOT in the API's current version" in withWorkflow(otherVersion) {
-        (_, stringWorkflow, workflowRow) =>
-          workflowRowMapper()
-            .toWorkflow(workflowRow) shouldBe Left(stringWorkflow)
-      }
-      "it's version does not exist" in withStringWorkflow("{ \"foo\" : \"bar\" }") {
-        (stringWorkflow, workflowRow) =>
-          workflowRowMapper()
-            .toWorkflow(workflowRow) shouldBe Left(stringWorkflow)
-      }
-      "it's version is corrupted" in
-        withStringWorkflow("{ \"metadata\" : {\"apiVersion\": \"foobar\"} }") {
-          (stringWorkflow, workflowRow) =>
-            workflowRowMapper().toWorkflow(workflowRow) shouldBe Left(stringWorkflow)
+          workflowRowMapper().toWorkflow(workflowRow) shouldBe workflow
       }
     }
     "throw an exception" when {
@@ -72,32 +55,6 @@ class WorkflowRowMapperSpec
           (workflow, _, workflowRow) =>
             workflowRowMapper()
               .toWorkflowWithSavedResults(workflowRow) shouldBe Some(Right(workflow))
-      }
-    }
-    "return a workflow with results as a String" when {
-      "it is NOT in the API's current version" in
-        withWorkflowWithSavedResults(otherVersion) {
-          (workflow, stringWorkflow, workflowRow) =>
-            workflowRowMapper()
-              .toWorkflowWithSavedResults(workflowRow) shouldBe Some(Left(stringWorkflow))
-      }
-      "it's version does not exist" in
-        withWorkflowWithSavedResultString("{ \"foo\" : \"bar\" }") {
-          (stringWorkflow, workflowRow) =>
-            workflowRowMapper()
-              .toWorkflowWithSavedResults(workflowRow) shouldBe Some(Left(stringWorkflow))
-      }
-      "it's version is corrupted" in
-        withStringWorkflow("{ \"metadata\" : {\"apiVersion\": \"foobar\"} }") {
-          (stringWorkflow, row) =>
-            workflowRowMapper()
-              .toWorkflow(row) shouldBe Left(stringWorkflow)
-        }
-    }
-    "return None" when {
-      "the workflow has null body" in {
-        workflowRowMapper()
-          .toWorkflowWithSavedResults(mock[Row]) shouldBe None
       }
     }
   }
@@ -159,7 +116,7 @@ class WorkflowRowMapperSpec
         ThirdPartyData("{}"),
         ExecutionReportWithId(
           Id.randomId,
-          ExecutionReport(started, ended, Map(), EntitiesMap())))
+          ExecutionReport(Map(), EntitiesMap(), None)))
 
     val stringWorkflow = workflowWithSavedResults.toJson.compactPrint
     val rowWorkflow = mock[Row]

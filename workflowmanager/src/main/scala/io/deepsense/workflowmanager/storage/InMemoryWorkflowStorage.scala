@@ -43,13 +43,13 @@ class InMemoryWorkflowStorage extends WorkflowStorage {
     Future.successful(())
   }
 
-  override def get(id: Workflow.Id): Future[Option[Either[String, Workflow]]] = {
-    Future.successful(workflows.get(id).map(_.workflow).map(Right(_)))
+  override def get(id: Workflow.Id): Future[Option[Workflow]] = {
+    Future.successful(workflows.get(id).map(_.workflow))
   }
 
   override def getAll(): Future[Map[Workflow.Id, WorkflowWithDates]] = {
     Future.successful(workflows.mapValues(e =>
-      WorkflowWithDates(Right(e.workflow), now, now)).toMap)
+      WorkflowWithDates(e.workflow, now, now)).toMap)
   }
 
   override def delete(id: Workflow.Id): Future[Unit] = {

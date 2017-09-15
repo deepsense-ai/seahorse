@@ -81,22 +81,22 @@ class WorkflowDaoCassandraImplIntegSpec
       val modifiedWorkflow2 = workflow2.copy(additionalData = ThirdPartyData("[]"))
       whenReady(workflowsDao.update(workflow2Id, modifiedWorkflow2)) { _ =>
         whenReady(workflowsDao.get(workflow2Id)) { workflow =>
-          workflow.get.right.get shouldBe modifiedWorkflow2
+          workflow.get shouldBe modifiedWorkflow2
         }
       }
     }
 
     "find workflow by id" in withStoredWorkflows(storedWorkflows) {
       whenReady(workflowsDao.get(workflow1Id)) { workflow =>
-        workflow shouldBe Some(Right(workflow1))
+        workflow shouldBe Some(workflow1)
       }
     }
 
     "get all workflows" in withStoredWorkflows(storedWorkflows) {
       whenReady(workflowsDao.getAll()) { workflows =>
         workflows.size shouldBe 2
-        workflows(workflow1Id).workflow shouldBe Right(workflow1)
-        workflows(workflow2Id).workflow shouldBe Right(workflow2)
+        workflows(workflow1Id).workflow shouldBe workflow1
+        workflows(workflow2Id).workflow shouldBe workflow2
       }
     }
 
@@ -186,9 +186,7 @@ class WorkflowDaoCassandraImplIntegSpec
         workflow.additionalData,
         ExecutionReportWithId(
           resultId,
-          DateTimeConverter.now,
-          DateTimeConverter.now,
-          Map[Node.Id, nodestate.NodeState](),
+          Map[Node.Id, nodestate.NodeStatus](),
           EntitiesMap()))
   }
 

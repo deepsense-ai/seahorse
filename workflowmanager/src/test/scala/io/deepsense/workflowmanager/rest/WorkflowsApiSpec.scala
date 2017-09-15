@@ -7,8 +7,6 @@ package io.deepsense.workflowmanager.rest
 import scala.collection.concurrent.TrieMap
 import scala.concurrent._
 
-import com.google.common.base.Charsets
-import org.joda.time
 import org.joda.time.DateTime
 import org.mockito.Matchers._
 import org.mockito.Mockito._
@@ -25,7 +23,7 @@ import io.deepsense.commons.buildinfo.BuildInfo
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
 import io.deepsense.commons.models.Id
-import io.deepsense.commons.{StandardSpec, UnitTestSupport, models}
+import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.deeplang.DOperationCategories
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
@@ -43,7 +41,7 @@ class WorkflowsApiSpec
   with UnitTestSupport
   with ApiSpecSupport
   with WorkflowJsonProtocol
-  with WorkflowWithKnowledgeJsonProtocol
+  with InferredStateJsonProtocol
   with WorkflowWithVariablesJsonProtocol
   with WorkflowWithSavedResultsJsonProtocol {
 
@@ -56,24 +54,24 @@ class WorkflowsApiSpec
   val dOperableCatalog = new DOperableCatalog
   val inferContext: InferContext = InferContext.forTypeInference(dOperableCatalog)
   override val graphReader: GraphReader = new GraphReader(catalog)
-  val workflowAName = "Very nice workflow&*workflow"
-  val (workflowA, knowledgeA) = newWorkflowAndKnowledge()
+
   val workflowAId = Workflow.Id.randomId
-  val nodeAId = Node.Id.randomId
+  val workflowAName = "Very nice workflow&*workflow"
+  val workflowA: Workflow = newWorkflow()
   val workflowAWithResults = newWorkflowWithResults(workflowAId, workflowA)
-  val (workflowB, knowledgeB) = newWorkflowAndKnowledge()
+  val nodeAId = Node.Id.randomId
+
+  val workflowB = newWorkflow()
   val workflowBId = Workflow.Id.randomId
   val nodeBId = Node.Id.randomId
   val workflowBWithSavedResults = WorkflowWithSavedResults(
     ExecutionReportWithId.Id.randomId,
-    newWorkflowWithResults(workflowBId, workflowB)._1)
+    newWorkflowWithResults(workflowBId, workflowB))
 
   val workflowWithoutNotebookId = Workflow.Id.randomId
-  val (workflowWithoutNotebook, _) = newWorkflowAndKnowledge()
+  val workflowWithoutNotebook = newWorkflow()
 
   val noVersionWorkflowId = Workflow.Id.randomId
-  val obsoleteVersionWorkflowId = Workflow.Id.randomId
-  val obsoleteVersionWorkflowWithNotebookId = Workflow.Id.randomId
   val incorrectVersionFormatWorkflowId = Workflow.Id.randomId
   val noVersionWorkflowResultId = Workflow.Id.randomId
   val obsoleteVersionWorkflowResultId = Workflow.Id.randomId
@@ -104,8 +102,9 @@ class WorkflowsApiSpec
   val notebookB = "{ \"notebook B content\": {} }"
   val obsoleteNotebook = "{ \"obsolete notebook content\": {} }"
 
-  def newWorkflowAndKnowledge(apiVersion: String = BuildInfo.version, name: String = workflowAName)
-      : (Workflow, GraphKnowledge) = {
+  def newWorkflow(
+      apiVersion: String = BuildInfo.version,
+      name: String = workflowAName): Workflow = {
     val node1 = Node(Node.Id.randomId, FileToDataFrame())
     val node2 = Node(Node.Id.randomId, FileToDataFrame())
     val graph = DirectedGraph(Set(node1, node2), Set(Edge(node1, 0, node2, 0)))
@@ -116,29 +115,20 @@ class WorkflowsApiSpec
       ),
       "notebooks" -> JsObject()
     ).toString)
-    val knowledge = graph.inferKnowledge(inferContext)
-    val workflow = Workflow(metadata, graph, thirdPartyData)
-    (workflow, knowledge)
+    Workflow(metadata, graph, thirdPartyData)
   }
 
   def newWorkflowWithResults(
       id: Workflow.Id,
-      wf: Workflow): (WorkflowWithResults, GraphKnowledge) = {
+      wf: Workflow): WorkflowWithResults = {
     val executionReport = ExecutionReport(
-      DateTimeConverter.now,
-      DateTimeConverter.now,
-      Map(Node.Id.randomId -> nodestate.Failed(
+      Map(wf.graph.nodes.head.id -> nodestate.Failed(
         DateTimeConverter.now,
         DateTimeConverter.now,
         FailureDescription(DeepSenseFailure.Id.randomId, FailureCode.NodeFailure, "title"))),
       EntitiesMap(),
-      Some(FailureDescription(
-        DeepSenseFailure.Id.randomId, FailureCode.NodeFailure, "title")))
-
-    val knowledge = wf.graph.inferKnowledge(inferContext)
-    val workflow =
-      WorkflowWithResults(id, wf.metadata, wf.graph, wf.additionalData, executionReport)
-    (workflow, knowledge)
+      None)
+    WorkflowWithResults(id, wf.metadata, wf.graph, wf.additionalData, executionReport)
   }
 
   def cyclicWorkflow: Workflow = {
@@ -194,10 +184,15 @@ class WorkflowsApiSpec
           .thenReturn(authorizator)
 
         val workflowStorage = mockStorage()
+        val workflowStatesStorage = mockStatesStorage()
+        when(workflowStatesStorage.get(any()))
+          .thenReturn(Future.successful(Map[Node.Id, NodeState]()))
+        when(workflowStatesStorage.get(workflowAId))
+          .thenReturn(Future.successful(workflowAWithResults.executionReport.states))
         val notebookStorage = mockNotebookStorage()
         new WorkflowManagerImpl(
-          authorizatorProvider, workflowStorage, workflowResultsStorage, notebookStorage,
-          inferContext, futureContext, roleGet, roleUpdate, roleDelete, roleCreate)
+          authorizatorProvider, workflowStorage, workflowResultsStorage, workflowStatesStorage,
+          notebookStorage, inferContext, futureContext, roleGet, roleUpdate, roleDelete, roleCreate)
       }
     })
 
@@ -241,35 +236,22 @@ class WorkflowsApiSpec
         ()
       }
     }
-    "return a workflow" when {
+    "return a workflow with results" when {
       "auth token is correct, user has roles" in {
         Get(s"/$apiPrefix/$workflowAId") ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
 
-          // Checking if WorkflowWithKnowledge response is correct
-          // This should be done better, but JsonReader is not available for WorkflowWithKnowledge
-          val returnedWorkflow = responseAs[Workflow]
+          val returnedWorkflow = responseAs[WorkflowWithResults]
           returnedWorkflow should have(
+            'id(workflowAId),
             'metadata(workflowA.metadata),
             'graph(workflowA.graph),
-            'additionalData(workflowA.additionalData)
+            'thirdPartyData(workflowA.additionalData),
+            'executionReport(workflowAWithResults.executionReport)
           )
-          val thirdPartyData = returnedWorkflow.additionalData.data.parseJson.asJsObject
+          val thirdPartyData = returnedWorkflow.thirdPartyData.data.parseJson.asJsObject
           thirdPartyData.fields.get("notebook") shouldBe None
-
-          val resultJs = response.entity.asString.parseJson.asJsObject
-          resultJs.fields("knowledge") shouldBe knowledgeA.results.toJson
-          resultJs.fields("id") shouldBe workflowAId.toJson
-        }
-        ()
-      }
-    }
-    "return a conflict" when {
-      "incompatible version" in {
-        Get(s"/$apiPrefix/${obsoleteVersionWorkflowId}") ~>
-          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
-          status should be(StatusCodes.Conflict)
         }
         ()
       }
@@ -282,7 +264,7 @@ class WorkflowsApiSpec
         addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
         status should be(StatusCodes.OK)
 
-        responseAs[JsArray].elements.size shouldBe 7
+        responseAs[JsArray].elements.size shouldBe 3
       }
       ()
     }
@@ -455,60 +437,6 @@ class WorkflowsApiSpec
         }
         ()
       }
-      "auth token is correct, user has roles and version is unknown" in {
-        Get(s"/$apiPrefix/$noVersionWorkflowId/download?format=json") ~>
-          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
-          status should be(StatusCodes.OK)
-          header("Content-Disposition") shouldBe Some(
-            `Content-Disposition`(
-              "attachment",
-              Map("filename" -> "workflow.json")))
-
-          responseAs[JsObject] shouldBe noVersionWorkflowJson
-        }
-        ()
-      }
-      "auth token is correct, user has roles and version is in incorrect format" in {
-        Get(s"/$apiPrefix/$incorrectVersionFormatWorkflowId/download?format=json") ~>
-          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
-          status should be(StatusCodes.OK)
-          header("Content-Disposition") shouldBe Some(
-            `Content-Disposition`(
-              "attachment",
-              Map("filename" -> "workflow.json")))
-
-          responseAs[JsObject] shouldBe incorrectVersionFormatWorkflowJson
-        }
-        ()
-      }
-      "auth token is correct, user has roles and version is obsolete" in {
-        Get(s"/$apiPrefix/$obsoleteVersionWorkflowId/download?format=json") ~>
-          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
-          status should be(StatusCodes.OK)
-          header("Content-Disposition") shouldBe Some(
-            `Content-Disposition`(
-              "attachment",
-              Map("filename" -> "workflow.json")))
-
-          responseAs[JsObject] shouldBe obsoleteVersionWorkflowJson
-        }
-        ()
-      }
-      "auth token is correct, user has roles, version is obsolete and notebook is present" in {
-        Get(s"/$apiPrefix/$obsoleteVersionWorkflowWithNotebookId/download?format=json") ~>
-          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
-          status should be(StatusCodes.OK)
-          header("Content-Disposition") shouldBe Some(
-            `Content-Disposition`(
-              "attachment",
-              Map("filename" -> "workflow.json")))
-
-          val expectedJson = jsonWithNotebook(
-            obsoleteVersionWorkflowWithNotebookJson, nodeAId, obsoleteNotebook)
-          responseAs[JsObject] shouldBe expectedJson
-        }
-        ()
-      }
     }
   }
 
@@ -602,39 +530,20 @@ class WorkflowsApiSpec
     }
     "return created" when {
       "inputWorkflow was send" in {
-        val (createdWorkflow, knowledge) = newWorkflowAndKnowledge()
+        val createdWorkflow = newWorkflow()
         Post(s"/$apiPrefix", createdWorkflow) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be (StatusCodes.Created)
 
-          // Checking if WorkflowWithKnowledge response is correct
-          // This should be done better, but JsonReader is not available for WorkflowWithKnowledge
-          val savedWorkflow = responseAs[Workflow]
-          savedWorkflow should have (
-            'metadata (createdWorkflow.metadata),
-            'graph (createdWorkflow.graph),
-            'additionalData (createdWorkflow.additionalData)
-          )
           val resultJs = response.entity.asString.parseJson.asJsObject
-          resultJs.fields("knowledge") shouldBe knowledge.results.toJson
-          resultJs.fields should contain key "id"
+          resultJs.fields should contain key "workflowId"
         }
         ()
       }
     }
     "return BadRequest" when {
-      "inputWorkflow contains cyclic graph" in {
-        Post(s"/$apiPrefix", cyclicWorkflow) ~>
-          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
-          status should be (StatusCodes.BadRequest)
-
-          val failureDescription = responseAs[FailureDescription]
-          failureDescription.code shouldBe FailureCode.IllegalArgumentException
-        }
-        ()
-      }
       "inputWorkflow contains wrong API version" in {
-        val (createdWorkflow, knowledge) = newWorkflowAndKnowledge(apiVersion = "0.0.1")
+        val createdWorkflow = newWorkflow(apiVersion = "0.0.1")
         Post(s"/$apiPrefix", createdWorkflow) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.BadRequest)
@@ -672,8 +581,7 @@ class WorkflowsApiSpec
 
     "return BadRequest" when {
       "execution report contains wrong API version" in {
-        val (createdWorkflow, knowledge) =
-          newWorkflowAndKnowledge(apiVersion = "0.0.1")
+        val createdWorkflow = newWorkflow(apiVersion = "0.0.1")
 
         val multipartData = MultipartFormData(Map(
           "workflowFile" -> BodyPart(HttpEntity(
@@ -694,7 +602,7 @@ class WorkflowsApiSpec
 
     "return created" when {
       "workflow file is sent" in {
-        val (createdWorkflow, knowledge) = newWorkflowAndKnowledge()
+        val createdWorkflow = newWorkflow()
 
         val multipartData = MultipartFormData(Map(
           "workflowFile" -> BodyPart(HttpEntity(
@@ -707,17 +615,8 @@ class WorkflowsApiSpec
             RawHeader("X-Auth-Token", validAuthTokenTenantA)) ~> testRoute ~> check {
           status should be(StatusCodes.Created)
 
-          // Checking if WorkflowWithKnowledge response is correct
-          // This should be done better, but JsonReader is not available for WorkflowWithKnowledge
-          val savedWorkflow = responseAs[Workflow]
-          savedWorkflow should have(
-            'metadata(createdWorkflow.metadata),
-            'graph(createdWorkflow.graph),
-            'additionalData(createdWorkflow.additionalData))
-
           val resultJs = response.entity.asString.parseJson.asJsObject
-          resultJs.fields("knowledge") shouldBe knowledge.results.toJson
-          resultJs.fields should contain key "id"
+          resultJs.fields should contain key "workflowId"
         }
         ()
       }
@@ -725,7 +624,7 @@ class WorkflowsApiSpec
 
     "return created" when {
       "workflow file with execution report is sent" in {
-        val (createdWorkflow, knowledge) = workflowAWithResults
+        val createdWorkflow = workflowAWithResults
 
         val multipartData = MultipartFormData(Map(
           "workflowFile" -> BodyPart(HttpEntity(
@@ -738,15 +637,8 @@ class WorkflowsApiSpec
             RawHeader("X-Auth-Token", validAuthTokenTenantA)) ~> testRoute ~> check {
           status should be (StatusCodes.Created)
 
-          val savedWorkflow = responseAs[Workflow]
-          savedWorkflow should have (
-            'metadata (createdWorkflow.metadata),
-            'graph (createdWorkflow.graph))
-
           val resultJs = response.entity.asString.parseJson.asJsObject
-          // NOTE: workflowWithKnowledge is returned instead of workflowAWithResults
-          resultJs.fields("knowledge") shouldBe knowledge.results.toJson
-          resultJs.fields should contain key "id"
+          resultJs.fields should contain key "workflowId"
         }
         ()
       }
@@ -754,7 +646,7 @@ class WorkflowsApiSpec
 
     "return BadRequest" when {
       "workflow file with invalid execution report is sent" in {
-        val (createdWorkflow, knowledge) = workflowAWithResults
+        val createdWorkflow = workflowAWithResults
 
         val json = workflowWithResultsFormat.write(createdWorkflow).toString().parseJson
         val modifiedJs = JsObject(json.asJsObject.fields.map {
@@ -784,36 +676,6 @@ class WorkflowsApiSpec
         ()
       }
     }
-
-    "return correct encoding" when {
-      "workflow with UTF-8 characters is sent" in {
-
-        // scalastyle:off
-        val workflowName = "zażółć gęślą jaźń"
-        // scalastyle:on
-
-        val (createdWorkflow, knowledge) = newWorkflowAndKnowledge(name = workflowName)
-
-        val multipartData = MultipartFormData(Map(
-          "workflowFile" -> BodyPart(HttpEntity(
-            ContentType(MediaTypes.`application/json`),
-            workflowFormat.write(createdWorkflow).toString.getBytes(Charsets.UTF_8))
-          )))
-
-        Post(s"/$apiPrefix/upload", multipartData) ~>
-          addHeaders(
-            RawHeader("X-Auth-Token", validAuthTokenTenantA)) ~> testRoute ~> check {
-          status should be (StatusCodes.Created)
-
-          val savedWorkflow = responseAs[Workflow]
-          val savedName = savedWorkflow.additionalData.data.parseJson.asJsObject
-            .fields("gui").asJsObject
-            .fields("name").asInstanceOf[JsString].value
-          savedName shouldBe workflowName
-        }
-        ()
-      }
-    }
   }
 
   "POST /workflows/report/upload" should {
@@ -821,8 +683,8 @@ class WorkflowsApiSpec
     "return BadRequest" when {
       "execution report contains wrong API version" in {
         val workflowWithWrongAPIVersion =
-          workflowAWithResults._1.copy(
-            metadata = workflowAWithResults._1.metadata.copy(apiVersion = "0.0.1"))
+          workflowAWithResults.copy(
+            metadata = workflowAWithResults.metadata.copy(apiVersion = "0.0.1"))
 
         val multipartData = MultipartFormData(Map(
           "workflowFile" -> BodyPart(HttpEntity(
@@ -846,7 +708,7 @@ class WorkflowsApiSpec
         val multipartData = MultipartFormData(Map(
           "workflowFile" -> BodyPart(HttpEntity(
             ContentType(MediaTypes.`application/json`),
-            workflowWithResultsFormat.write(workflowAWithResults._1).toString())
+            workflowWithResultsFormat.write(workflowAWithResults).toString())
           )))
 
         Post(s"/$apiPrefix/report/upload", multipartData) ~>
@@ -856,10 +718,10 @@ class WorkflowsApiSpec
 
           val returnedReport = responseAs[WorkflowWithResults]
           returnedReport should have (
-            'metadata (workflowAWithResults._1.metadata),
-            'graph (workflowAWithResults._1.graph),
-            'thirdPartyData (workflowAWithResults._1.thirdPartyData),
-            'executionReport (workflowAWithResults._1.executionReport))
+            'metadata (workflowAWithResults.metadata),
+            'graph (workflowAWithResults.graph),
+            'thirdPartyData (workflowAWithResults.thirdPartyData),
+            'executionReport (workflowAWithResults.executionReport))
         }
         ()
       }
@@ -867,7 +729,7 @@ class WorkflowsApiSpec
   }
 
   s"PUT /workflows/:id" should {
-    val (workflow, knowledge) = newWorkflowAndKnowledge()
+    val workflow = newWorkflow()
     val updatedWorkflow = workflow.copy(
       metadata = workflow.metadata.copy(apiVersion = BuildInfo.version))
     val updatedWorkflowWithNotebook = updatedWorkflow.copy(
@@ -884,18 +746,6 @@ class WorkflowsApiSpec
         Put(s"/$apiPrefix/$workflowAId", updatedWorkflow) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
-
-          // Checking if WorkflowWithKnowledge response is correct
-          // This should be done better, but JsonReader is not available for WorkflowWithKnowledge
-          val savedWorkflow = responseAs[Workflow]
-          savedWorkflow should have(
-            'graph (updatedWorkflow.graph),
-            'metadata (updatedWorkflow.metadata),
-            'additionalData (updatedWorkflow.additionalData)
-          )
-          val resultJs = response.entity.asString.parseJson.asJsObject
-          resultJs.fields("knowledge") shouldBe knowledge.results.toJson
-          resultJs.fields("id") shouldBe workflowAId.toJson
         }
         ()
       }
@@ -903,17 +753,6 @@ class WorkflowsApiSpec
         Put(s"/$apiPrefix/$workflowAId", updatedWorkflowWithNotebook) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
-
-          val savedWorkflow = responseAs[Workflow]
-          savedWorkflow should have(
-            'graph (updatedWorkflowWithNotebook.graph),
-            'metadata (updatedWorkflowWithNotebook.metadata),
-            'additionalData (updatedWorkflowWithNotebook.additionalData)
-          )
-
-          val resultJs = response.entity.asString.parseJson.asJsObject
-          resultJs.fields("knowledge") shouldBe knowledge.results.toJson
-          resultJs.fields("id") shouldBe workflowAId.toJson
         }
         ()
       }
@@ -1070,15 +909,6 @@ class WorkflowsApiSpec
         ()
       }
     }
-    "return a conflict" when {
-      "incompatible version" in {
-        Get(s"/$apiPrefix/${obsoleteVersionWorkflowId}/report") ~>
-          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
-          status should be(StatusCodes.Conflict)
-        }
-        ()
-      }
-    }
   }
 
   "GET /workflows/:workflowid/notebook/:nodeid" should {
@@ -1132,17 +962,16 @@ class WorkflowsApiSpec
     storage
   }
 
+  def mockStatesStorage(): WorkflowStateStorage = {
+    mock[WorkflowStateStorage]
+  }
+
   def mockStorage(): WorkflowStorage = {
-    val storage = new TestWorkflowStorage()
+    val storage = new InMemoryWorkflowStorage()
     storage.create(workflowAId, workflowA)
     storage.create(workflowBId, workflowB)
     storage.create(workflowWithoutNotebookId, workflowWithoutNotebook)
     storage.saveExecutionResults(workflowBWithSavedResults)
-
-    storage.saveString(noVersionWorkflowId, noVersionWorkflow)
-    storage.saveString(obsoleteVersionWorkflowId, obsoleteVersionWorkflow)
-    storage.saveString(obsoleteVersionWorkflowWithNotebookId, obsoleteVersionWorkflowWithNotebook)
-    storage.saveString(incorrectVersionFormatWorkflowId, incorrectVersionFormatWorkflow)
     storage
   }
 
@@ -1150,7 +979,6 @@ class WorkflowsApiSpec
     val storage = new TestNotebookStorage
     storage.save(workflowAId, nodeAId, notebookA)
     storage.save(workflowBId, nodeBId, notebookB)
-    storage.save(obsoleteVersionWorkflowWithNotebookId, nodeAId, obsoleteNotebook)
     storage
   }
 
@@ -1195,48 +1023,6 @@ class WorkflowsApiSpec
 
     def saveString(id: Id, results: String): Unit = {
       stringStorage.put(id, results)
-    }
-  }
-
-  class TestWorkflowStorage extends WorkflowStorage {
-    private val storage = new InMemoryWorkflowStorage()
-    private val stringStorage: TrieMap[models.Id, String] = TrieMap()
-
-    override def get(id: Id): Future[Option[Either[String, Workflow]]] = {
-      storage.get(id).map { _.orElse {
-          stringStorage.get(id).map(Left(_))
-        }
-      }
-    }
-
-    override def getAll(): Future[Map[Workflow.Id, WorkflowWithDates]] = {
-      storage.getAll().map(workflows =>
-        workflows ++ stringStorage.mapValues(
-          s => WorkflowWithDates(Left(s), DateTime.now, DateTime.now)).toMap)
-    }
-
-    override def getLatestExecutionResults(
-        workflowId: Id): Future[Option[Either[String, WorkflowWithSavedResults]]] = {
-      storage.getLatestExecutionResults(workflowId).map { _.orElse {
-          stringStorage.get(workflowId).map(Left(_))
-        }
-      }
-    }
-
-    override def delete(id: Id): Future[Unit] = storage.delete(id)
-
-    override def saveExecutionResults(results: WorkflowWithSavedResults): Future[Unit] =
-      storage.saveExecutionResults(results)
-
-    override def getResultsUploadTime(workflowId: Id): Future[Option[time.DateTime]] =
-      storage.getResultsUploadTime(workflowId)
-
-    override def create(id: Id, workflow: Workflow): Future[Unit] = storage.create(id, workflow)
-
-    override def update(id: Id, workflow: Workflow): Future[Unit] = storage.update(id, workflow)
-
-    def saveString(id: Id, stringWorkflow: String): Future[Unit] = {
-      Future.successful(stringStorage.put(id, stringWorkflow))
     }
   }
 

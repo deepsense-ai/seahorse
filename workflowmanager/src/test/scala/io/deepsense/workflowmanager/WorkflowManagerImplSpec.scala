@@ -12,12 +12,11 @@ import org.mockito.{ArgumentCaptor, Mockito}
 
 import io.deepsense.commons.auth.usercontext.{Role, UserContext}
 import io.deepsense.commons.auth.{AuthorizatorProvider, UserContextAuthorizator}
-import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.graph._
 import io.deepsense.models.workflows._
-import io.deepsense.workflowmanager.storage.{NotebookStorage, WorkflowResultsStorage, WorkflowStorage}
+import io.deepsense.workflowmanager.storage.{NotebookStorage, WorkflowResultsStorage, WorkflowStateStorage, WorkflowStorage}
 
 class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
   val tenantId = "tenantId"
@@ -33,30 +32,28 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
 
   val inferContext: InferContext = mock[InferContext]
   val graph = mock[DirectedGraph]
-  val knowledge = mock[GraphKnowledge]
-  when(graph.inferKnowledge(inferContext)).thenReturn(knowledge)
+  when(graph.nodes).thenReturn(Set[Node]())
   val metadata = mock[WorkflowMetadata]
   val thirdPartyData = mock[ThirdPartyData]
   val storedWorkflow = Workflow(metadata, graph, thirdPartyData)
   val storedWorkflowId = Workflow.Id.randomId
   val storedNodeId = Node.Id.randomId
-  val storedWorkflowWithKnowledge = WorkflowWithKnowledge(
-    storedWorkflowId, metadata, graph, thirdPartyData, knowledge)
+  val storedWorkflowWithResults = WorkflowWithResults(
+    storedWorkflowId,
+    metadata,
+    graph,
+    thirdPartyData,
+    ExecutionReport(Map[io.deepsense.graph.Node.Id, NodeState]()))
   val workflowStorage: WorkflowStorage = mock[WorkflowStorage]
   val workflowResultStorage = mock[WorkflowResultsStorage]
+  val workflowStateStorage = mock[WorkflowStateStorage]
   val notebookStorage = mock[NotebookStorage]
   val workflowWithResults = WorkflowWithResults(
     Workflow.Id.randomId,
     mock[WorkflowMetadata],
     mock[DirectedGraph],
     mock[ThirdPartyData],
-    ExecutionReport(
-      DateTimeConverter.now,
-      DateTimeConverter.now,
-      Map[io.deepsense.graph.Node.Id, io.deepsense.graph.nodestate.NodeState](),
-      EntitiesMap()
-    )
-  )
+    ExecutionReport(Map[io.deepsense.graph.Node.Id, NodeState]()))
   Mockito.when(workflowStorage.saveExecutionResults(any())).thenReturn(Future.successful(()))
   Mockito.when(workflowResultStorage.save(any())).thenReturn(Future.successful(()))
 
@@ -64,6 +61,7 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
     authorizatorProvider,
     workflowStorage,
     workflowResultStorage,
+    workflowStateStorage,
     notebookStorage,
     inferContext,
     userContextFuture,
@@ -87,12 +85,14 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
     }
     "return workflow from the storage" in {
       when(workflowStorage.get(storedWorkflowId))
-        .thenReturn(Future.successful(Some(Right(storedWorkflow))))
+        .thenReturn(Future.successful(Some(storedWorkflow)))
+      when(workflowStateStorage.get(storedWorkflowId))
+        .thenReturn(Future.successful(Map[Node.Id, NodeState]()))
       when(notebookStorage.getAll(storedWorkflowId))
         .thenReturn(Future.successful(Map[Node.Id, String]()))
 
       val eventualWorkflow = workflowManager.get(storedWorkflowId)
-      whenReady(eventualWorkflow) { _.get shouldEqual Right(storedWorkflowWithKnowledge) }
+      whenReady(eventualWorkflow) { _.get shouldEqual storedWorkflowWithResults }
     }
     "delete workflow from the storage" is pending
     "save workflow in storage" is pending

@@ -4,7 +4,7 @@
 
 package io.deepsense.commons.cassandra
 
-import com.datastax.driver.core.Cluster
+import com.datastax.driver.core.{ProtocolVersion, Cluster}
 import com.datastax.driver.core.policies.ConstantReconnectionPolicy
 import org.apache.commons.lang3.StringUtils
 
@@ -25,6 +25,7 @@ class ClusterFactory {
       .withoutMetrics()
       .withCredentials(user, password)
       .withReconnectionPolicy(new ConstantReconnectionPolicy(reconnectDelay))
+      .withProtocolVersion(ProtocolVersion.V3)
       .build()
   }
 }

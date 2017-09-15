@@ -27,7 +27,7 @@ class WorkflowDaoCassandraImpl @Inject() (
 
   private val queryBuilder = new QueryBuilder(session.getCluster)
 
-  override def get(id: Workflow.Id): Future[Option[Either[String, Workflow]]] = {
+  override def get(id: Workflow.Id): Future[Option[Workflow]] = {
     Future(session.execute(getWorkflowQuery(id)))
       .map(rs => Option(rs.one()).map(workflowRowMapper.toWorkflow))
   }

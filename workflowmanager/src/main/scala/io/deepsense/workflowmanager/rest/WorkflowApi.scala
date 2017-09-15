@@ -21,7 +21,7 @@ import spray.util.LoggingContext
 
 import io.deepsense.commons.auth.directives._
 import io.deepsense.commons.auth.usercontext.TokenTranslator
-import io.deepsense.commons.json.envelope.Envelope
+import io.deepsense.commons.json.envelope.{EnvelopeJsonFormat, Envelope}
 import io.deepsense.commons.rest.{RestApiAbstractAuth, RestComponent}
 import io.deepsense.commons.utils.Version
 import io.deepsense.graph.CyclicGraphException
@@ -46,7 +46,6 @@ abstract class WorkflowApi @Inject() (
   extends RestApiAbstractAuth
   with RestComponent
   with WorkflowJsonProtocol
-  with WorkflowWithKnowledgeJsonProtocol
   with WorkflowWithVariablesJsonProtocol
   with WorkflowWithResultsJsonProtocol
   with MetadataInferenceResultJsonProtocol
@@ -89,6 +88,9 @@ abstract class WorkflowApi @Inject() (
   private val versionedWorkflowUnmarashaler: Unmarshaller[Workflow] =
     sprayJsonUnmarshallerConverter[Workflow](versionedWorkflowReader)
 
+  implicit private val envelopeWorkflowIdJsonFormat =
+    new EnvelopeJsonFormat[Workflow.Id]("workflowId")
+
   def route: Route = {
     cors {
       handleRejections(rejectionHandler) {
@@ -102,32 +104,30 @@ abstract class WorkflowApi @Inject() (
             path(JavaUUID) { workflowId =>
               get {
                 withUserContext { userContext =>
-                  workflowManagerProvider.forContext(userContext).get(workflowId)
+                  onSuccess(workflowManagerProvider.forContext(userContext).get(workflowId)) {
+                    workflowWithResults => complete(workflowWithResults)
+                  }
                 }
               } ~
               put {
                 withUserContext { userContext =>
                   implicit val unmarshaller = versionedWorkflowUnmarashaler
                   entity(as[Workflow]) { workflow =>
-                    complete {
+                    onSuccess(
                       workflowManagerProvider
                         .forContext(userContext)
                         .update(workflowId, workflow)
+                    ) { _ =>
+                      complete(StatusCodes.OK)
                     }
                   }
                 }
               } ~
               delete {
                 withUserContext { userContext =>
-                  onComplete(
-                    workflowManagerProvider
-                      .forContext(userContext)
-                      .delete(workflowId)) {
-                    case Success(result) => result match {
-                      case true => complete(StatusCodes.OK)
-                      case false => complete(StatusCodes.NotFound)
-                    }
-                    case Failure(exception) => failWith(exception)
+                  onSuccess(workflowManagerProvider.forContext(userContext).delete(workflowId)) {
+                    case true => complete(StatusCodes.OK)
+                    case false => complete(StatusCodes.NotFound)
                   }
                 }
               }
@@ -135,30 +135,23 @@ abstract class WorkflowApi @Inject() (
             path(JavaUUID / "download") { workflowId =>
               get {
                 withUserContext { userContext =>
-                  onComplete(
-                    workflowManagerProvider
-                      .forContext(userContext)
-                      .download(workflowId)
-                  ) {
-                    case Success(workflowWithVariables) =>
-                      if (workflowWithVariables.isDefined) {
-                        val outputFileName = workflowWithVariables.get match {
-                          case Left(stringWorkflow) => workflowDownloadName
-                          case Right(objectWorkflow) => workflowFileName(objectWorkflow)
-                        }
-                        respondWithMediaType(`application/json`) {
-                          complete(
-                            StatusCodes.OK,
-                            Seq(
-                              `Content-Disposition`(
-                                "attachment",
-                                Map("filename" -> outputFileName))),
-                            workflowWithVariables.get)
-                        }
-                      } else {
-                        complete(StatusCodes.NotFound)
+                  val futureWorkflow =
+                    workflowManagerProvider.forContext(userContext).download(workflowId)
+                  onSuccess(futureWorkflow) { workflowWithVariables =>
+                    if (workflowWithVariables.isDefined) {
+                      val outputFileName = workflowFileName(workflowWithVariables.get)
+                      respondWithMediaType(`application/json`) {
+                        complete(
+                          StatusCodes.OK,
+                          Seq(
+                            `Content-Disposition`(
+                              "attachment",
+                              Map("filename" -> outputFileName))),
+                          workflowWithVariables.get)
                       }
-                    case Failure(exception) => failWith(exception)
+                    } else {
+                      complete(StatusCodes.NotFound)
+                    }
                   }
                 }
               }
@@ -193,31 +186,30 @@ abstract class WorkflowApi @Inject() (
 
                       implicit val unmarshaller = WorkflowUploadUnmarshaller
                       entity(as[Workflow]) { workflow =>
-                        onComplete(
-                          workflowManagerProvider.forContext(userContext).create(workflow)) {
-                          case Failure(exception) => failWith(exception)
-                          case Success(workflowWithKnowledge) =>
-                            if (containsExecutionReport) {
-                              workflowWithResultsEntity.get {
-                                workflowWithResults => {
-                                  onComplete(workflowManagerProvider
-                                    .forContext(userContext)
-                                    .saveWorkflowResults(workflowWithResults)) {
-                                    case Failure(exception) =>
-                                      logger.info("Uploaded workflow contained execution report, " +
-                                        "but execution report upload failed", exception)
-                                      failWith(exception)
-                                    case Success(_) =>
-                                      logger.info("Uploaded workflow contained execution report, " +
-                                        "and execution report upload succeed")
-                                      // Return workflowWithKnowledge instead of wotkflowWithResults
-                                      complete(StatusCodes.Created, workflowWithKnowledge)
-                                  }
+                        val futureWorkflowId =
+                          workflowManagerProvider.forContext(userContext).create(workflow)
+                        onSuccess(futureWorkflowId) { workflowId =>
+                          val envelopedWorkflowId = Envelope(workflowId)
+                          if (containsExecutionReport) {
+                            workflowWithResultsEntity.get {
+                              workflowWithResults => {
+                                onComplete(workflowManagerProvider
+                                  .forContext(userContext)
+                                  .saveWorkflowResults(workflowWithResults)) {
+                                  case Failure(exception) =>
+                                    logger.info("Uploaded workflow contained execution report, " +
+                                      "but execution report upload failed", exception)
+                                    failWith(exception)
+                                  case Success(_) =>
+                                    logger.info("Uploaded workflow contained execution report, " +
+                                      "and execution report upload succeed")
+                                    complete(StatusCodes.Created, envelopedWorkflowId)
                                 }
                               }
-                            } else {
-                              complete(StatusCodes.Created, workflowWithKnowledge)
                             }
+                          } else {
+                            complete(StatusCodes.Created, envelopedWorkflowId)
+                          }
                         }
                       }
                     }
@@ -238,11 +230,10 @@ abstract class WorkflowApi @Inject() (
                 withUserContext { userContext =>
                   implicit val unmarshaller = WorkflowWithResultsUploadUnmarshaller
                   entity(as[WorkflowWithResults]) { workflowWithResults => {
-                      onComplete(workflowManagerProvider
+                      onSuccess(workflowManagerProvider
                         .forContext(userContext)
-                        .saveWorkflowResults(workflowWithResults)) {
-                        case Success(saved) => complete(StatusCodes.Created, saved)
-                        case Failure(exception) => failWith(exception)
+                        .saveWorkflowResults(workflowWithResults)) { saved =>
+                          complete(StatusCodes.Created, saved)
                       }
                     }
                   }
@@ -261,10 +252,9 @@ abstract class WorkflowApi @Inject() (
               post {
                 withUserContext { userContext =>
                   entity(as[String]) { notebook =>
-                    onComplete(workflowManagerProvider.forContext(userContext)
-                      .saveNotebook(workflowId, nodeId, notebook)) {
-                      case Success(_) => complete(StatusCodes.Created)
-                      case Failure(exception) => failWith(exception)
+                    onSuccess(workflowManagerProvider.forContext(userContext)
+                      .saveNotebook(workflowId, nodeId, notebook)) { _ =>
+                      complete(StatusCodes.Created)
                     }
                   }
                 }
@@ -273,9 +263,8 @@ abstract class WorkflowApi @Inject() (
             pathEndOrSingleSlash {
               get {
                 withUserContext { userContext =>
-                  onComplete(workflowManagerProvider.forContext(userContext).list()) {
-                    case Success(workflows) => complete(StatusCodes.OK, workflows)
-                    case Failure(exception) => failWith(exception)
+                  onSuccess(workflowManagerProvider.forContext(userContext).list()) { workflows =>
+                    complete(StatusCodes.OK, workflows)
                   }
                 }
               } ~
@@ -283,11 +272,9 @@ abstract class WorkflowApi @Inject() (
                 withUserContext { userContext =>
                   implicit val format = versionedWorkflowUnmarashaler
                   entity(as[Workflow]) { workflow =>
-                    onComplete(workflowManagerProvider
-                      .forContext(userContext).create(workflow)) {
-                      case Success(workflowWithKnowledge) => complete(
-                        StatusCodes.Created, workflowWithKnowledge)
-                      case Failure(exception) => failWith(exception)
+                    onSuccess(workflowManagerProvider
+                      .forContext(userContext).create(workflow)) { workflowId =>
+                      complete(StatusCodes.Created, Envelope(workflowId))
                     }
                   }
                 }

@@ -17,12 +17,11 @@ import io.deepsense.models.workflows.{Workflow, WorkflowWithSavedResults}
 trait WorkflowStorage {
 
   /**
-   * Returns a workflow with the specified id. If the workflow is compatible with the current
-   * API version it is returned as an object otherwise as a string.
+   * Returns a workflow with the specified id.
    * @param id Id of the workflow.
-   * @return Workflow with the id as an object or String, or None if the workflow does not exist.
+   * @return Workflow with the id as an object, or None if the workflow does not exist.
    */
-  def get(id: Id): Future[Option[Either[String, Workflow]]]
+  def get(id: Id): Future[Option[Workflow]]
 
   /**
    * Creates a workflow.
@@ -77,6 +76,6 @@ trait WorkflowStorage {
 }
 
 case class WorkflowWithDates(
-  workflow: Either[String, Workflow],
+  workflow: Workflow,
   created: DateTime,
   updated: DateTime)
