@@ -36,6 +36,7 @@ function LibraryModalService($uibModal) {
       })
       .catch(() => {
         closeUploadingFilesPopover();
+        hideNewDirectoryInput();
       });
   }
 

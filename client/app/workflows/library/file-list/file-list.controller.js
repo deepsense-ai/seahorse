@@ -3,6 +3,8 @@ require('./file-list.less');
 class FileListController {
   /* @ngInject */
   constructor($scope, LibraryModalService) {
+    this.mode = 'editable';
+
     $scope.$watch(() => LibraryModalService.getNewDirectoryInputVisibility(), (newValue) => {
       this.newDir = newValue;
       this.newDirItem = {
@@ -25,7 +27,9 @@ class FileListController {
   }
 
   $onChanges(params) {
-    this.mode = params.mode || 'editable';
+    if (params.mode && params.mode.currentValue) {
+      this.mode = params.mode.currentValue;
+    }
   }
 
 }
