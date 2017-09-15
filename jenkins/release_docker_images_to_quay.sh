@@ -15,7 +15,11 @@ GIT_BRANCH="master"
 echo "This script assumes it is run from deepsense-backend directory"
 echo "Release SEAHORSE_BUILD_TAG $SEAHORSE_BUILD_TAG"
 
-DOCKER_IMAGES=(`cat deployment/docker-compose/docker-compose.tmpl.yml | grep image: | cut -d":" -f 2 | rev | cut -d"/" -f 1 | rev | tr " " "\n"`)
+TMP_FILE=$(mktemp /tmp/dc-tmp.XXXXXX)
+deployment/docker-compose/docker-compose.py --generate-only --yaml-file $TMP_FILE
+DOCKER_IMAGES=(`cat $TMP_FILE | grep image: | cut -d":" -f 2 | rev | cut -d"/" -f 1 | rev | tr " " "\n"`)
+rm $TMP_FILE
+
 for DOCKER_IMAGE in ${DOCKER_IMAGES[*]}
 do
   echo "************* Releasing docker image for project $DOCKER_IMAGE"
@@ -36,12 +40,11 @@ done
 
 echo "Generating docker compose file with docker images tagged with $SEAHORSE_BUILD_TAG"
 
-DOCKER_COMPOSE_TMPL="deployment/docker-compose/docker-compose.tmpl.yml"
 ARTIFACT_NAME="docker-compose.yml"
 rm -f $ARTIFACT_NAME
 
-export DOCKER_REPOSITORY=$QUAY_REGISTRY
-deployment/docker-compose/prepare_docker-compose $DOCKER_COMPOSE_TMPL $ARTIFACT_NAME $SEAHORSE_BUILD_TAG $SEAHORSE_BUILD_TAG
+deployment/docker-compose/docker-compose.py --generate-only --yaml-file $ARTIFACT_NAME \
+  -f $SEAHORSE_BUILD_TAG -b $SEAHORSE_BUILD_TAG --docker-repo $QUAY_REGISTRY
 
 echo 'Sending & $ARTIFACT_NAME to snapshot artifactory'
 source jenkins/publish_to_artifactory_function.sh

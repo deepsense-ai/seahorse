@@ -21,8 +21,8 @@ MESOS_SPARK_DOCKER_COMPOSE="testing/mesos-spark-cluster/mesos-cluster.dc.yml"
 function cleanup {
     $SPARK_STANDALONE_MANAGEMENT down
     docker-compose -f $MESOS_SPARK_DOCKER_COMPOSE down
-    (cd deployment/docker-compose ; ./docker-compose $FRONTEND_TAG $BACKEND_TAG logs > docker-compose.log)
-    (cd deployment/docker-compose ; ./docker-compose $FRONTEND_TAG $BACKEND_TAG down)
+    deployment/docker-compose/docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG logs > docker-compose.log
+    deployment/docker-compose/docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG down
 }
 trap cleanup EXIT
 
@@ -30,16 +30,16 @@ cleanup # in case something was already running
 
 ## Start Seahorse dockers
 
-(cd deployment/docker-compose ; ./docker-compose $FRONTEND_TAG $BACKEND_TAG pull)
+deployment/docker-compose/docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG pull
 # destroy dockercompose_default, so we can recreate it with proper id
-(cd deployment/docker-compose ; ./docker-compose $FRONTEND_TAG $BACKEND_TAG down)
+deployment/docker-compose/docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG down
 (
  cd e2etestssdk
  sbt clean assembly
  cd ../deployment/docker-compose
  mkdir -p jars
  cp -r ../../e2etestssdk/target/scala-2.11/*.jar jars
- ./docker-compose $FRONTEND_TAG $BACKEND_TAG up -d
+ ./docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG up -d
 )
 
 ## Start Spark Standalone cluster dockers

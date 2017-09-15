@@ -1,3 +1,5 @@
+# Copyright (c) 2016, CodiLime Inc.
+
 import json
 
 from docker_compose_generation.docker_compose_utils import *
@@ -161,7 +163,7 @@ class SessionManager(Service):
             SX_PARAM_WM_ADDRESS=self.deps.WorkflowManager.exposed_address().as_string()) + \
                self.deps.RabbitMQ.credentials().as_env() + \
                self.deps.RabbitMQ.exposed_address().as_env('MQ_HOST', 'MQ_PORT') + \
-               self.deps.WorkflowManager.credentials().as_env('SM_PARAM_WM_AUTH_USER', 'SM_PARAM_WM_AUTH_USER')
+               self.deps.WorkflowManager.credentials().as_env('SX_PARAM_WM_AUTH_USER', 'SX_PARAM_WM_AUTH_PASS')
 
     def port_mapping(self):
         return PortMappings().add(PortMappings.Mapping(9082, 60100))
@@ -194,6 +196,11 @@ class WorkflowManager(Service):
 
     def port_mapping(self):
         return PortMappings().add(PortMappings.Mapping(9080, 60103))
+
+    def volumes(self):
+        return [
+            Directories.expose(Directories.jars, '/resources/jars')
+        ]
 
 
 class Frontend(Service):

@@ -1,22 +1,18 @@
 #!/usr/bin/python
 
+# Copyright (c) 2016, CodiLime Inc.
+
 import argparse
 import subprocess
 import tempfile
+import sys
+import os
 
 from docker_compose_generation.generation import *
-from docker_compose_generation.services import *
+from docker_compose_generation.configurations import *
 
-
-def read_api_version():
-    import os
-    import re
-
-    dir_path = os.path.dirname(os.path.realpath(__file__))
-    version_sbt = os.path.join(dir_path, '..', '..', 'version.sbt')
-    with open(version_sbt) as f:
-        content = f.read()
-        return re.search('version in ThisBuild := "([0-9.]+).*"', content).group(1)
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..', 'utils'))
+from api_version import read_api_version
 
 
 def main():
@@ -26,19 +22,22 @@ def main():
     parser.add_argument('-c', '--configuration', default='linux',
                         help='Configuration to use: linux, mac',
                         action='store')
-    parser.add_argument('-d', '--docker-repo', default='docker-repo.deepsense.codilime.com/deepsense_io',
-                        help='Docker repository to use',
-                        action='store')
     parser.add_argument('-b', '--backend-tag', default='master-latest',
                         help='Git tag of the deepsense-backend repo to use',
                         action='store')
     parser.add_argument('-f', '--frontend-tag', default='master-latest',
                         help='Git tag of the deepsense-frontend repo to use',
                         action='store')
+    parser.add_argument('--subnet', default='10.255.3.1/24',
+                        help='Network address range to use for docker-compose containers',
+                        action='store')
+    parser.add_argument('--docker-repo', default='docker-repo.deepsense.codilime.com/deepsense_io',
+                        help='Docker repository to use',
+                        action='store')
     parser.add_argument('--custom-frontend', default=None,
                         help='Custom frontend address passed to proxy: HOST:PORT',
                         action='store')
-    parser.add_argument('-y', '--yaml-file', default='docker-compose.yml',
+    parser.add_argument('--yaml-file', default='docker-compose.yml',
                         help='The generated file; used only togeter with --generate-only',
                         action='store')
     parser.add_argument('--generate-only',
@@ -61,7 +60,8 @@ def main():
                                  Repositories.backend: args.backend_tag,
                                  Repositories.frontend: args.frontend_tag
                              },
-                             api_version=read_api_version())))
+                             api_version=read_api_version(),
+                             subnet=args.subnet)))
 
     if args.generate_only:
         with open(args.yaml_file, 'w') as f:

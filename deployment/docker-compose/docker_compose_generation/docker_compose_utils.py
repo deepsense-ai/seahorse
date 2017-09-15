@@ -1,3 +1,4 @@
+# Copyright (c) 2016, CodiLime Inc.
 
 class Dependencies(object):
     def __init__(self):

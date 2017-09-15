@@ -1,13 +1,16 @@
+# Copyright (c) 2016, CodiLime Inc.
+
 import yaml
 
 from docker_compose_utils import *
 
 
 class GenerationConfig(object):
-    def __init__(self, docker_repository, tags, api_version):
+    def __init__(self, docker_repository, tags, api_version, subnet):
         self.docker_repository = docker_repository
         self.tags = tags
         self.api_version = api_version
+        self.subnet = subnet
 
     def tag(self, repository):
         return self.tags[repository]
@@ -17,6 +20,21 @@ class VolumesGeneration(object):
     @staticmethod
     def generate(volumes):
         return dict((v, {}) for v in volumes)
+
+
+class NetworksGeneration(object):
+    @staticmethod
+    def generate(generation_config):
+        return {
+            'default': {
+                'ipam': {
+                    'driver': 'default',
+                    'config': [
+                        {'subnet': generation_config.subnet}
+                    ]
+                }
+            }
+        }
 
 
 class ServiceGeneration(object):
@@ -57,7 +75,8 @@ class ConfigurationGeneration(object):
         return {
             'version': '2',
             'services': dict(ServiceGeneration(s).generate(generation_config) for s in self.service_instances),
-            'volumes': VolumesGeneration.generate(self.configuration.volumes)
+            'volumes': VolumesGeneration.generate(self.configuration.volumes),
+            'networks': NetworksGeneration.generate(generation_config)
         }
 
 
