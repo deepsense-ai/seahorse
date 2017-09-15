@@ -96,7 +96,7 @@
           <a ng-class="{'owned-by-current-user': home.isWorkflowOwnedByCurrentUser(workflow)}"
              title={{workflow.ownerName}}
              ng-click="home.goToWorkflowEditor(workflow.id)">
-            <i class="fa fa-user logged-user__icon" ng-if="home.isWorkflowOwnedByCurrentUser(workflow)"></i>
+            <i class="fa fa-user table__logged-user" ng-if="home.isWorkflowOwnedByCurrentUser(workflow)"></i>
             {{workflow.ownerName}}
           </a>
         </td>
