@@ -25,8 +25,8 @@ object DeployOnHdfs {
   val geJarFilename = BuildInfo.name + "-assembly-" + BuildInfo.version + ".jar"
   val geDepsJarFilename = BuildInfo.name + "-assembly-" + BuildInfo.version + "-deps.jar"
 
-  val geJarPath = s"../graphexecutor/target/scala-2.11/$geJarFilename"
-  val geDepsJarPath = s"../graphexecutor/target/scala-2.11/$geDepsJarFilename"
+  val geJarPath = s"../graphexecutor/target/$geJarFilename"
+  val geDepsJarPath = s"../graphexecutor/target/$geDepsJarFilename"
   val log4jXmlPath = s"../graphexecutor/src/main/resources/log4j.xml"
 
   val geConfPath =
