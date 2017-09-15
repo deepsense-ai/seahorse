@@ -32,18 +32,16 @@ abstract class EstimatorAsOperation[E <: Estimator[T] : TypeTag, T <: Transforme
 
   setDefault(estimator.extractParamMap().toSeq: _*)
 
-  override protected def _execute(
-      context: ExecutionContext)(
-      t0: DataFrame): (DataFrame, T) = {
+  override protected def execute(
+      t0: DataFrame)(
+      context: ExecutionContext): (DataFrame, T) = {
     val transformer = estimatorWithParams().fit(context)(())(t0)
     val transformedDataFrame = transformer.transform(context)(())(t0)
     (transformedDataFrame, transformer)
   }
 
-  override protected def _inferKnowledge(
-      context: InferContext)(
-      k0: DKnowledge[DataFrame])
-    : ((DKnowledge[DataFrame], DKnowledge[T]), InferenceWarnings) = {
+  override protected def inferKnowledge(k0: DKnowledge[DataFrame])(context: InferContext)
+      : ((DKnowledge[DataFrame], DKnowledge[T]), InferenceWarnings) = {
 
     val (transformerKnowledge, fitWarnings) = estimatorWithParams().fit.infer(context)(())(k0)
     val (dataFrameKnowledge, transformWarnings) =

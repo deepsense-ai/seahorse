@@ -32,14 +32,11 @@ abstract class EvaluatorAsFactory[T <: Evaluator : TypeTag]
 
   setDefault(evaluator.extractParamMap().toSeq: _*)
 
-  override protected def _execute(context: ExecutionContext)(): T =
+  override protected def execute()(context: ExecutionContext): T =
     updatedEvaluator
 
-  override def inferKnowledge(
-      context: InferContext)(
-      knowledge: Vector[DKnowledge[DOperable]])
-        : (Vector[DKnowledge[DOperable]], InferenceWarnings) = {
-    (Vector(DKnowledge[DOperable](updatedEvaluator)), InferenceWarnings.empty)
+  override def inferKnowledge()(context: InferContext): (DKnowledge[T], InferenceWarnings) = {
+    (DKnowledge[T](updatedEvaluator), InferenceWarnings.empty)
   }
 
   private def updatedEvaluator: T = evaluator.set(extractParamMap())

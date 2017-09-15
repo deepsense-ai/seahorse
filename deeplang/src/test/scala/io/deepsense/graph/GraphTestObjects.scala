@@ -46,34 +46,32 @@ object DOperationTestClasses {
 
     override val description: String = ""
 
-    override val since: Version = Version(0, 0, 0)
-
     val params: Array[io.deepsense.deeplang.params.Param[_]] = Array()
   }
 
   case class DOperationCreateA1() extends DOperation0To1[A1] with DOperationBaseFields {
-    override protected def _execute(context: ExecutionContext)(): A1 = ???
+    override protected def execute()(context: ExecutionContext): A1 = ???
   }
 
   case class DOperationReceiveA1() extends DOperation1To0[A1] with DOperationBaseFields {
-    override protected def _execute(context: ExecutionContext)(t0: A1): Unit = ???
+    override protected def execute(t0: A1)(context: ExecutionContext): Unit = ???
   }
 
   case class DOperationA1ToA() extends DOperation1To1[A1, A] with DOperationBaseFields {
-    override protected def _execute(context: ExecutionContext)(t1: A1): A = ???
+    override protected def execute(t1: A1)(context: ExecutionContext): A = ???
   }
 
   case class DOperationAToA1A2() extends DOperation1To2[A, A1, A2] with DOperationBaseFields {
-    override protected def _execute(context: ExecutionContext)(in: A): (A1, A2) = ???
+    override protected def execute(in: A)(context: ExecutionContext): (A1, A2) = ???
   }
 
   case class DOperationA1A2ToA() extends DOperation2To1[A1, A2, A] with DOperationBaseFields {
-    override protected def _execute(context: ExecutionContext)(t1: A1, t2: A2): A = ???
+    override protected def execute(t1: A1, t2: A2)(context: ExecutionContext): A = ???
   }
 
   case class DOperationAToALogging() extends DOperation1To1[A, A] with DOperationBaseFields {
     logger.trace("Initializing logging to test the serialization")
-    override protected def _execute(context: ExecutionContext)(t0: A): A = ???
+    override protected def execute(t0: A)(context: ExecutionContext): A = ???
 
     def trace(message: String): Unit = logger.trace(message)
   }

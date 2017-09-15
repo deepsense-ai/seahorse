@@ -20,11 +20,12 @@ import scala.reflect.runtime.{universe => ru}
 
 import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
+import io.deepsense.deeplang.documentation.OperationDocumentation
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.{DOperation0To1, ExecutionContext}
 
-case class Source() extends DOperation0To1[DataFrame] {
+case class Source() extends DOperation0To1[DataFrame] with OperationDocumentation {
 
   override val id: Id = Source.id
   override val name: String = "Source"
@@ -34,7 +35,7 @@ case class Source() extends DOperation0To1[DataFrame] {
 
   override val params: Array[Param[_]] = Array()
 
-  override protected def _execute(context: ExecutionContext)(): DataFrame =
+  override protected def execute()(context: ExecutionContext): DataFrame =
     throw new IllegalStateException("should not be executed")
 }
 

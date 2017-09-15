@@ -16,7 +16,9 @@
 
 package io.deepsense.deeplang.documentation
 
-trait SparkOperationDocumentation extends OperationDocumentation {
+import io.deepsense.deeplang.DOperation
+
+trait SparkOperationDocumentation extends OperationDocumentation { self: DOperation =>
   private val sparkVersion = org.apache.spark.SPARK_VERSION
   private val sparkDocsUrl = s"https://spark.apache.org/docs/$sparkVersion/"
   protected[this] val docsGuideLocation: Option[String]

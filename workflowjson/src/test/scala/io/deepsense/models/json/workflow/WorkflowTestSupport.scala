@@ -95,7 +95,7 @@ trait WorkflowTestSupport
     val knowledge = mock[DKnowledge[DOperable]]
     when(knowledge.types).thenReturn(Seq[DOperable](operableMock))
     when(knowledge.filterTypes(any())).thenReturn(knowledge)
-    when(dOperation.inferKnowledge(anyObject())(anyObject())).thenReturn(
+    when(dOperation.inferKnowledgeUntyped(anyObject())(anyObject())).thenReturn(
       (Vector.fill(outArity)(knowledge), InferenceWarnings.empty))
     when(dOperation.sameAs(isA(classOf[DOperation]))).thenReturn(true)
     dOperation

@@ -20,7 +20,6 @@ import java.io.IOException
 import java.util.Properties
 
 import scala.reflect.runtime.{universe => ru}
-
 import org.apache.spark.SparkException
 import org.apache.spark.sql.SaveMode
 
@@ -39,11 +38,13 @@ import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.Params
 import io.deepsense.deeplang.params.choice.ChoiceParam
 import io.deepsense.deeplang._
+import io.deepsense.deeplang.documentation.OperationDocumentation
 import io.deepsense.deeplang.doperations.readwritedataframe.validators.{FilePathHasValidFileScheme, ParquetSupportedOnClusterOnly}
 
 case class WriteDataFrame()
   extends DOperation1To0[DataFrame]
-  with Params {
+  with Params
+  with OperationDocumentation {
 
   override val id: Id = "9e460036-95cc-42c5-ba64-5bc767a40e4e"
   override val name: String = "Write DataFrame"
@@ -61,7 +62,7 @@ case class WriteDataFrame()
   val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(storageType)
   setDefault(storageType, OutputStorageTypeChoice.File())
 
-  override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): Unit = {
+  override protected def execute(dataFrame: DataFrame)(context: ExecutionContext): Unit = {
     import OutputStorageTypeChoice._
     try {
       getStorageType() match {
@@ -75,11 +76,10 @@ case class WriteDataFrame()
     }
   }
 
-  override protected def _inferKnowledge(
-      context: InferContext)(k0: DKnowledge[DataFrame]): (Unit, InferenceWarnings) = {
+  override protected def inferKnowledge(k0: DKnowledge[DataFrame])(context: InferContext): (Unit, InferenceWarnings) = {
     FilePathHasValidFileScheme.validate(this)
     ParquetSupportedOnClusterOnly.validate(this)
-    super._inferKnowledge(context)(k0)
+    super.inferKnowledge(k0)(context)
   }
 
   private def writeToJdbc(

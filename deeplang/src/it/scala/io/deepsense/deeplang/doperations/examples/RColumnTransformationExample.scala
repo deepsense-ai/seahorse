@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.doperations.examples
 
-import io.deepsense.deeplang.doperables.TargetTypeChoices
+import io.deepsense.deeplang.doperables.{RColumnTransformer, TargetTypeChoices}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.SingleColumnChoice
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.NoInPlaceChoice
@@ -31,14 +31,14 @@ class RColumnTransformationExample
   val inputColumnName = "Weight"
   val outputColumnName = "WeightInPounds"
 
+  // This is mocked because R executor is not available in tests.
   class RColumnTransformationMock extends RColumnTransformation {
-    override def execute(context: ExecutionContext)
-                        (arguments: Vector[DOperable]): Vector[DOperable] = {
-      val sdf = arguments.head.asInstanceOf[DataFrame].sparkDataFrame
+    override def execute(arg: DataFrame)(context: ExecutionContext): (DataFrame, RColumnTransformer) = {
+      val sdf = arg.sparkDataFrame
       val resultSparkDataFrame = sdf.select(
         sdf("*"),
         (sdf(inputColumnName) / poundInKg).alias(outputColumnName))
-      Vector(DataFrame.fromSparkDataFrame(resultSparkDataFrame))
+      (DataFrame.fromSparkDataFrame(resultSparkDataFrame), mock[RColumnTransformer])
     }
   }
 

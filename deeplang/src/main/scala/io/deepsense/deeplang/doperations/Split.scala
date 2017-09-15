@@ -19,13 +19,13 @@ package io.deepsense.deeplang.doperations
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
 import scala.reflect.runtime.{universe => ru}
-
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 
 import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DPortPosition._
 import io.deepsense.deeplang._
+import io.deepsense.deeplang.documentation.OperationDocumentation
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.HasSeedParam
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
@@ -36,7 +36,8 @@ import io.deepsense.deeplang.params.validators.RangeValidator
 
 case class Split()
   extends DOperation1To2[DataFrame, DataFrame, DataFrame]
-  with Params {
+  with Params
+  with OperationDocumentation {
 
   override val id: DOperation.Id = "d273c42f-b840-4402-ba6b-18282cc68de3"
   override val name: String = "Split"
@@ -63,8 +64,7 @@ case class Split()
   override def outPortsLayout: Vector[DPortPosition] =
     Vector(DPortPosition.Left, DPortPosition.Right)
 
-  override protected def _execute(context: ExecutionContext)
-                                 (df: DataFrame): (DataFrame, DataFrame) = {
+  override protected def execute(df: DataFrame)(context: ExecutionContext): (DataFrame, DataFrame) = {
     implicit val inputDataFrame = df
     implicit val executionContext = context
 
@@ -132,9 +132,8 @@ case class Split()
     Await.result(results, Duration.Inf)
   }
 
-  override protected def _inferKnowledge(context: InferContext)
-      (knowledge: DKnowledge[DataFrame]):
-      ((DKnowledge[DataFrame], DKnowledge[DataFrame]), InferenceWarnings) = {
+  override protected def inferKnowledge(knowledge: DKnowledge[DataFrame])(context: InferContext)
+      : ((DKnowledge[DataFrame], DKnowledge[DataFrame]), InferenceWarnings) = {
     ((knowledge, knowledge), InferenceWarnings.empty)
   }
 }

@@ -39,7 +39,7 @@ class FitPlusTransformSpec extends UnitSpec {
           op: FitPlusTransform,
           expectedTransformer: Transformer,
           expectedDataFrame: DataFrame): Unit = {
-          val results = op.execute(mock[ExecutionContext])(Vector(mock[DataFrame], estimator))
+          val results = op.executeUntyped(Vector(mock[DataFrame], estimator))(mock[ExecutionContext])
           val outputDataFrame = results(0).asInstanceOf[DataFrame]
           val outputTransformer = results(1).asInstanceOf[Transformer]
 
@@ -65,8 +65,7 @@ class FitPlusTransformSpec extends UnitSpec {
           expectedTransformerKnowledge: DKnowledge[Transformer],
           expectedDataFrameKnowledge: DKnowledge[DataFrame]): Unit = {
           val (Vector(outputDataFrameKnowledge, outputTransformerKnowledge), _) =
-            op.inferKnowledge(mock[InferContext])(
-              Vector(mock[DKnowledge[DataFrame]], DKnowledge(estimator)))
+            op.inferKnowledgeUntyped(Vector(mock[DKnowledge[DataFrame]], DKnowledge(estimator)))(mock[InferContext])
 
           outputDataFrameKnowledge shouldBe expectedDataFrameKnowledge
           outputTransformerKnowledge shouldBe expectedTransformerKnowledge
@@ -84,7 +83,7 @@ class FitPlusTransformSpec extends UnitSpec {
             Vector(mock[DKnowledge[DataFrame]], DKnowledge(estimators))
           val fpt = new FitPlusTransform
           a[TooManyPossibleTypesException] shouldBe thrownBy {
-            fpt.inferKnowledge(mock[InferContext])(inputKnowledge)
+            fpt.inferKnowledgeUntyped(inputKnowledge)(mock[InferContext])
           }
         }
         "Estimator's dynamic parameters are invalid" in {
@@ -94,7 +93,7 @@ class FitPlusTransformSpec extends UnitSpec {
           val fpt = new FitPlusTransform
           fpt.setEstimatorParams(JsObject(estimator.paramA.name -> JsNumber(-2)))
           a[DeepLangMultiException] shouldBe thrownBy {
-            fpt.inferKnowledge(mock[InferContext])(inputKnowledge)
+            fpt.inferKnowledgeUntyped(inputKnowledge)(mock[InferContext])
           }
         }
       }

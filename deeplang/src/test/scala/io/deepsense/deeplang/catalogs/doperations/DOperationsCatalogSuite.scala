@@ -52,17 +52,15 @@ object DOperationCatalogTestResources {
 
   abstract class DOperationMock extends DOperation {
 
-    override val since: Version = Version(0, 0, 0)
+    override def inPortTypes: Vector[TypeTag[_]] = Vector()
 
-    def inPortTypes: Vector[TypeTag[_]] = Vector()
+    override def outPortTypes: Vector[TypeTag[_]] = Vector()
 
-    def outPortTypes: Vector[TypeTag[_]] = Vector()
+    override def inferKnowledgeUntyped(
+        l: Vector[DKnowledge[DOperable]])(
+        context: InferContext): (Vector[DKnowledge[DOperable]], InferenceWarnings) = ???
 
-    def inferKnowledge(
-        context: InferContext)(
-        l: Vector[DKnowledge[DOperable]]): (Vector[DKnowledge[DOperable]], InferenceWarnings) = ???
-
-    def execute(context: ExecutionContext)(l: Vector[DOperable]): Vector[DOperable] = ???
+    override def executeUntyped(l: Vector[DOperable])(context: ExecutionContext): Vector[DOperable] = ???
 
     override val inArity: Int = 2
     override val outArity: Int = 3
@@ -121,13 +119,6 @@ object DOperationCatalogTestResources {
     override val outPortTypes: Vector[TypeTag[_]] = Vector(XTypeTag)
   }
 
-  case class DOperationWithoutParameterlessConstructor(x: Int) extends DOperationMock {
-    override val id = DOperation.Id.randomId
-    override val name = "some name"
-    override val description = "description"
-    override val inArity: Int = 2
-    override val outArity: Int = 3
-  }
 }
 
 object ViewingTestResources extends MockitoSugar {
@@ -140,20 +131,20 @@ object ViewingTestResources extends MockitoSugar {
 
   val catalog = DOperationsCatalog()
 
-  catalog.registerDOperation[DOperationA](categoryA)
-  catalog.registerDOperation[DOperationB](categoryB)
-  catalog.registerDOperation[DOperationC](categoryC)
-  catalog.registerDOperation[DOperationD](categoryD)
+  catalog.registerDOperation(categoryA, () => new DOperationA())
+  catalog.registerDOperation(categoryB, () => new DOperationB())
+  catalog.registerDOperation(categoryC, () => new DOperationC())
+  catalog.registerDOperation(categoryD, () => new DOperationD())
 
   val operationD = catalog.createDOperation(idD)
 
-  val expectedA = DOperationDescriptor(idA, nameA, descriptionA, categoryA, true,
+  val expectedA = DOperationDescriptor(idA, nameA, descriptionA, categoryA, hasDocumentation = false,
     DOperationA().paramsToJson, Nil, Vector.empty, Nil, Vector.empty)
-  val expectedB = DOperationDescriptor(idB, nameB, descriptionB, categoryB, true,
+  val expectedB = DOperationDescriptor(idB, nameB, descriptionB, categoryB, hasDocumentation = false,
     DOperationB().paramsToJson, Nil, Vector.empty, Nil, Vector.empty)
-  val expectedC = DOperationDescriptor(idC, nameC, descriptionC, categoryC, true,
+  val expectedC = DOperationDescriptor(idC, nameC, descriptionC, categoryC, hasDocumentation = false,
     DOperationC().paramsToJson, Nil, Vector.empty, Nil, Vector.empty)
-  val expectedD = DOperationDescriptor(idD, nameD, descriptionD, categoryD, true,
+  val expectedD = DOperationDescriptor(idD, nameD, descriptionD, categoryD, hasDocumentation = false,
     DOperationD().paramsToJson, List(XTypeTag.tpe, YTypeTag.tpe), operationD.inPortsLayout,
     List(XTypeTag.tpe), operationD.outPortsLayout)
 }
@@ -163,7 +154,7 @@ class DOperationsCatalogSuite extends FunSuite with Matchers with MockitoSugar {
   test("It is possible to create instance of registered DOperation") {
     import DOperationCatalogTestResources._
     val catalog = DOperationsCatalog()
-    catalog.registerDOperation[DOperationA](CategoryTree.ML.Regression)
+    catalog.registerDOperation(CategoryTree.ML.Regression, () => new DOperationA())
     val instance = catalog.createDOperation(idA)
     assert(instance == DOperationA())
   }
@@ -175,15 +166,6 @@ class DOperationsCatalogSuite extends FunSuite with Matchers with MockitoSugar {
       catalog.createDOperation(nonExistingOperationId)
     }
     exception.operationId shouldBe nonExistingOperationId
-  }
-
-  test("Registering DOperation without parameterless constructor raises exception") {
-    a [NoParameterlessConstructorInDOperationException] shouldBe thrownBy {
-      import DOperationCatalogTestResources._
-      val catalog = DOperationsCatalog()
-      catalog.registerDOperation[DOperationWithoutParameterlessConstructor](
-        CategoryTree.ML.Regression)
-    }
   }
 
   test("It is possible to view list of registered DOperations descriptors") {

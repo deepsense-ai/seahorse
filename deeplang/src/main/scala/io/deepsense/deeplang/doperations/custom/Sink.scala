@@ -21,11 +21,12 @@ import scala.reflect.runtime.{universe => ru}
 import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang._
+import io.deepsense.deeplang.documentation.OperationDocumentation
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.Param
 
-case class Sink() extends DOperation1To1[DataFrame, DataFrame] {
+case class Sink() extends DOperation1To1[DataFrame, DataFrame] with OperationDocumentation {
 
   override val id: Id = Sink.id
   override val name: String = "Sink"
@@ -35,11 +36,11 @@ case class Sink() extends DOperation1To1[DataFrame, DataFrame] {
 
   override val params: Array[Param[_]] = Array()
 
-  override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): DataFrame =
+  override protected def execute(dataFrame: DataFrame)(context: ExecutionContext): DataFrame =
     dataFrame
 
-  override protected def _inferKnowledge(context: InferContext)(
-    inputKnowledge: DKnowledge[DataFrame]): (DKnowledge[DataFrame], InferenceWarnings) = {
+  override protected def inferKnowledge(
+      inputKnowledge: DKnowledge[DataFrame])(context: InferContext): (DKnowledge[DataFrame], InferenceWarnings) = {
     (inputKnowledge, InferenceWarnings.empty)
   }
 }

@@ -56,7 +56,7 @@ class AbstractInferenceSpec
       with DOperationBaseFields {
     import DOperationA1A2ToFirst._
 
-    override protected def _execute(context: ExecutionContext)(t1: A1, t2: A2): A = ???
+    override protected def execute(t1: A1, t2: A2)(context: ExecutionContext): A = ???
 
     override def validateParams: Vector[DeepLangException] = {
       if (paramsValid) Vector.empty else Vector(parameterInvalidError)
@@ -76,10 +76,10 @@ class AbstractInferenceSpec
       multiException = true
     }
 
-    override protected def _inferKnowledge(
-      context: InferContext)(
-      k0: DKnowledge[A1],
-      k1: DKnowledge[A2]): (DKnowledge[A], InferenceWarnings) = {
+    override protected def inferKnowledge(
+        k0: DKnowledge[A1],
+        k1: DKnowledge[A2])(
+        context: InferContext): (DKnowledge[A], InferenceWarnings) = {
       if (inferenceShouldThrow) {
         if (multiException) {
           throw multiInferenceError

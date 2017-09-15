@@ -29,8 +29,6 @@ class TransformerAsFactorySpec extends UnitSpec {
     override val name: String = ""
     override val id: Id = "6d924962-9456-11e5-8994-feff819cdc9f"
     override val description: String = ""
-
-    override val since: Version = Version(0, 0, 0)
   }
 
   "TransformerAsFactory" should {
@@ -47,7 +45,7 @@ class TransformerAsFactorySpec extends UnitSpec {
     "produce transformer with properly set params" in {
       val op = operation
       op.set(op.transformer.paramA -> 2)
-      val result = op.execute(mock[ExecutionContext])(Vector())
+      val result = op.executeUntyped(Vector())(mock[ExecutionContext])
 
       result should have length 1
       result(0).asInstanceOf[MockTransformer].extractParamMap() shouldBe
@@ -58,7 +56,7 @@ class TransformerAsFactorySpec extends UnitSpec {
       op.set(op.transformer.paramA -> 2)
 
       val (result, warnings) =
-        op.inferKnowledge(mock[InferContext])(Vector(DKnowledge()))
+        op.inferKnowledgeUntyped(Vector(DKnowledge()))(mock[InferContext])
 
       warnings shouldBe InferenceWarnings.empty
 

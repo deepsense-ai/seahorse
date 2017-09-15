@@ -31,7 +31,8 @@ trait SparkOperationsExtractor {
     val operationIds = catalog.operations.keys
     operationIds.map(operationId => catalog.createDOperation(operationId))
       .flatMap(operation =>
-        sparkClassName(operation).map(OperationWithSparkClassName(operation, _))).toSeq
+        sparkClassName(operation)
+          .map(OperationWithSparkClassName(operation.asInstanceOf[DocumentedOperation], _))).toSeq
   }
 
   private def sparkClassName(operation: DOperation): Option[String] = {

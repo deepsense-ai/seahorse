@@ -123,7 +123,7 @@ class InputOutputSpec extends
         InputStorageTypeChoice.File()
           .setSourceFile(path)
           .setFileFormat(fileFormat))
-    readDF.execute(ctx)(Vector.empty[DOperable]).head.asInstanceOf[DataFrame]
+    readDF.executeUntyped(Vector.empty[DOperable])(ctx).head.asInstanceOf[DataFrame]
   }
 
   private def write(path: String, fileFormat: OutputFileFormatChoice)
@@ -134,7 +134,7 @@ class InputOutputSpec extends
           .setOutputFile(path)
           .setFileFormat(fileFormat)
       )
-    write.execute(ctx)(Vector(dataframe))
+    write.executeUntyped(Vector(dataframe))(ctx)
   }
 
 }

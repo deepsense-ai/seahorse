@@ -18,8 +18,10 @@ package io.deepsense.deeplang.doperations
 
 import scala.reflect.runtime.{universe => ru}
 import org.apache.spark.sql.types.StructType
+
 import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
+import io.deepsense.deeplang.documentation.OperationDocumentation
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.SchemaMismatchException
 import io.deepsense.deeplang.inference.InferenceWarnings
@@ -29,7 +31,8 @@ import io.deepsense.deeplang.{DOperation2To1, DataFrame2To1Operation, ExecutionC
 case class Union()
     extends DOperation2To1[DataFrame, DataFrame, DataFrame]
     with DataFrame2To1Operation
-    with Params {
+    with Params
+    with OperationDocumentation {
 
   override val id: Id = "90fed07b-d0a9-49fd-ae23-dd7000a1d8ad"
   override val name: String = "Union"
@@ -40,8 +43,9 @@ case class Union()
 
   val params: Array[io.deepsense.deeplang.params.Param[_]] = Array()
 
-  override protected def _execute(
-      context: ExecutionContext)(first: DataFrame, second: DataFrame): DataFrame = {
+  override protected def execute(
+    first: DataFrame, second: DataFrame)(
+    context: ExecutionContext): DataFrame = {
 
     inferSchema(first.schema.get, second.schema.get)
 

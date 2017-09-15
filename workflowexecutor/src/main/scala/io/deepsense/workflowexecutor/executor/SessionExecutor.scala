@@ -30,15 +30,14 @@ import com.typesafe.config.ConfigFactory
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.SparkSession
 
+import io.deepsense.deeplang.catalogs.CatalogPair
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
-import io.deepsense.deeplang.{CustomCodeExecutionProvider, OperationExecutionDispatcher}
+import io.deepsense.deeplang.{CatalogRecorder, CustomCodeExecutionProvider, OperationExecutionDispatcher}
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.workflows.Workflow
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.Init
-import io.deepsense.workflowexecutor._
 import io.deepsense.workflowexecutor.communication.mq.MQCommunication
 import io.deepsense.workflowexecutor.communication.mq.json.Global.{GlobalMQDeserializer, GlobalMQSerializer}
-import io.deepsense.workflowexecutor.{WorkflowManagerClientActor, _}
 import io.deepsense.workflowexecutor.communication.mq.serialization.json.{ProtocolJsonDeserializer, ProtocolJsonSerializer}
 import io.deepsense.workflowexecutor.customcode.CustomCodeEntryPoint
 import io.deepsense.workflowexecutor.executor.session.LivyKeepAliveActor
@@ -46,6 +45,7 @@ import io.deepsense.workflowexecutor.notebooks.KernelManagerCaretaker
 import io.deepsense.workflowexecutor.pyspark.PythonPathGenerator
 import io.deepsense.workflowexecutor.rabbitmq._
 import io.deepsense.workflowexecutor.session.storage.DataFrameStorageImpl
+import io.deepsense.workflowexecutor.{WorkflowManagerClientActor, _}
 
 /**
  * SessionExecutor waits for user instructions in an infinite loop.
@@ -74,7 +74,9 @@ case class SessionExecutor(
   private val wmWorkflowsPath = config.getString("workflow-manager.workflows.path")
   private val wmReportsPath = config.getString("workflow-manager.reports.path")
 
-  val graphReader = new GraphReader(createDOperationsCatalog())
+  val CatalogPair(dOperableCatalog, dOperationsCatalog) = CatalogRecorder.createCatalogs()
+
+  val graphReader = new GraphReader(dOperationsCatalog)
 
   /**
    * WARNING: Performs an infinite loop.
@@ -83,7 +85,7 @@ case class SessionExecutor(
     logger.info(s"SessionExecutor for '$workflowId' starts...")
     val sparkContext = createSparkContext()
     val sparkSession = createSparkSession(sparkContext)
-    val dOperableCatalog = createDOperableCatalog()
+
     val dataFrameStorage = new DataFrameStorageImpl
 
     val hostAddress: InetAddress = HostAddressResolver.findHostAddress()

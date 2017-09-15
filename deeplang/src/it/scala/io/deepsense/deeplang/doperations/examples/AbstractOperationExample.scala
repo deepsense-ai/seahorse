@@ -41,7 +41,7 @@ abstract class AbstractOperationExample[T <: DOperation]
       Comma(),
       csvNamesIncluded = true,
       csvConvertToBoolean = false
-    ).execute(executionContext)(Vector.empty[DOperable])
+    ).executeUntyped(Vector.empty[DOperable])(executionContext)
       .head
       .asInstanceOf[DataFrame]
   }
@@ -52,7 +52,7 @@ abstract class AbstractOperationExample[T <: DOperation]
     "successfully run execute() and generate example" in {
       val op = dOperation
       val outputDfs = op
-        .execute(executionContext)(inputDataFrames.toVector)
+        .executeUntyped(inputDataFrames.toVector)(executionContext)
         .collect { case df: DataFrame => df }
       val html =
         ExampleHtmlFormatter.exampleHtml(op, inputDataFrames, outputDfs)

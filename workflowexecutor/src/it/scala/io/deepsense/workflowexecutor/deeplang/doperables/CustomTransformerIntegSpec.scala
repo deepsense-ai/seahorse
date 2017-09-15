@@ -22,11 +22,12 @@ import org.scalatest.Matchers
 import spray.json._
 
 import io.deepsense.deeplang._
+import io.deepsense.deeplang.catalogs.CatalogPair
 import io.deepsense.deeplang.doperables.spark.wrappers.transformers.TransformerSerialization
 import io.deepsense.deeplang.doperables.spark.wrappers.transformers.TransformerSerialization._
 import io.deepsense.deeplang.utils.CustomTransformerFactory
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
-import io.deepsense.workflowexecutor.executor.{Executor, InnerWorkflowExecutorImpl}
+import io.deepsense.workflowexecutor.executor.InnerWorkflowExecutorImpl
 
 class CustomTransformerIntegSpec
   extends DeeplangIntegTestSupport
@@ -56,7 +57,8 @@ class CustomTransformerIntegSpec
     "serialize and deserialize" in {
       val jsonFileURI = getClass.getResource("/customtransformer/innerWorkflow.json").toURI
       val innerWorkflowJson = scala.io.Source.fromFile(jsonFileURI).mkString.parseJson.asJsObject
-      val graphReader = new GraphReader(Executor.createDOperationsCatalog())
+      val CatalogPair(_, dOperationsCatalog) = CatalogRecorder.createCatalogs()
+      val graphReader = new GraphReader(dOperationsCatalog)
       val innerWorkflowExecutor = new InnerWorkflowExecutorImpl(graphReader)
       val context = executionContext.copy(innerWorkflowExecutor = innerWorkflowExecutor)
 

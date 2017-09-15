@@ -47,7 +47,7 @@ class UnionIntegSpec extends DeeplangIntegTestSupport {
       val df2 = createDataFrame(rows1_2, schema1)
 
       val merged = Union()
-        .execute(executionContext)(Vector(df1, df2))
+        .executeUntyped(Vector(df1, df2))(executionContext)
         .head.asInstanceOf[DataFrame]
 
       assertDataFramesEqual(
@@ -68,7 +68,7 @@ class UnionIntegSpec extends DeeplangIntegTestSupport {
       val df2 = createDataFrame(rows2_1, schema2)
 
       a [SchemaMismatchException] should be thrownBy {
-        Union().execute(executionContext)(Vector(df1, df2))
+        Union().executeUntyped(Vector(df1, df2))(executionContext)
       }
     }
 
@@ -86,7 +86,7 @@ class UnionIntegSpec extends DeeplangIntegTestSupport {
       val df2 = createDataFrame(rows2_1, schema2)
 
       a [SchemaMismatchException] should be thrownBy {
-        Union().execute(executionContext)(Vector(df1, df2))
+        Union().executeUntyped(Vector(df1, df2))(executionContext)
       }
     }
   }
@@ -98,7 +98,7 @@ class UnionIntegSpec extends DeeplangIntegTestSupport {
         StructField("y", DoubleType)))
       val knowledgeDF1 = DKnowledge(DataFrame.forInference(structType))
       val knowledgeDF2 = DKnowledge(DataFrame.forInference(structType))
-      Union().inferKnowledge(mock[InferContext])(Vector(knowledgeDF1, knowledgeDF2)) shouldBe
+      Union().inferKnowledgeUntyped(Vector(knowledgeDF1, knowledgeDF2))(mock[InferContext]) shouldBe
         (Vector(knowledgeDF1), InferenceWarnings())
     }
     "generate error when schemas don't match" in {
@@ -109,7 +109,7 @@ class UnionIntegSpec extends DeeplangIntegTestSupport {
       val knowledgeDF1 = DKnowledge(DataFrame.forInference(structType1))
       val knowledgeDF2 = DKnowledge(DataFrame.forInference(structType2))
       an [SchemaMismatchException] shouldBe thrownBy(
-        Union().inferKnowledge(mock[InferContext])(Vector(knowledgeDF1, knowledgeDF2)))
+        Union().inferKnowledgeUntyped(Vector(knowledgeDF1, knowledgeDF2))(mock[InferContext]))
     }
   }
 }

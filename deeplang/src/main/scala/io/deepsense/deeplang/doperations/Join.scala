@@ -20,9 +20,11 @@ import scala.reflect.runtime.{universe => ru}
 import org.apache.spark.sql
 import org.apache.spark.sql.Column
 import org.apache.spark.sql.types.StructType
+
 import io.deepsense.commons.types.SparkConversions
 import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
+import io.deepsense.deeplang.documentation.OperationDocumentation
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
 import io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException
 import io.deepsense.deeplang.inference.InferenceWarnings
@@ -32,9 +34,10 @@ import io.deepsense.deeplang.params.selections.{NameColumnSelection, SingleColum
 import io.deepsense.deeplang.{DOperation2To1, DataFrame2To1Operation, ExecutionContext}
 
 case class Join()
-    extends DOperation2To1[DataFrame, DataFrame, DataFrame]
-      with DataFrame2To1Operation
-      with Params {
+  extends DOperation2To1[DataFrame, DataFrame, DataFrame]
+  with DataFrame2To1Operation
+  with Params
+  with OperationDocumentation {
 
   import Join._
 
@@ -78,8 +81,7 @@ case class Join()
 
   val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(joinType, leftPrefix, rightPrefix, joinColumns)
 
-  override protected def _execute(context: ExecutionContext)
-      (ldf: DataFrame, rdf: DataFrame): DataFrame = {
+  override protected def execute(ldf: DataFrame, rdf: DataFrame)(context: ExecutionContext): DataFrame = {
 
     logger.debug("Execution of " + this.getClass.getSimpleName + " starts")
 

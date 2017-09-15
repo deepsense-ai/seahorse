@@ -46,7 +46,7 @@ class EstimatorAsOperationSpec extends UnitSpec with DeeplangTestSupport {
           expectedDataFrame: DataFrame,
           expectedTransformer: Transformer): Unit = {
         val Vector(outputDataFrame: DataFrame, outputTransformer: Transformer) =
-          op.execute(mock[ExecutionContext])(Vector(mock[DataFrame]))
+          op.executeUntyped(Vector(mock[DataFrame]))(mock[ExecutionContext])
         outputDataFrame shouldBe expectedDataFrame
         outputTransformer shouldBe expectedTransformer
       }
@@ -62,8 +62,7 @@ class EstimatorAsOperationSpec extends UnitSpec with DeeplangTestSupport {
           expectedTransformerKnowledge: DKnowledge[Transformer]): Unit = {
 
         val inputDF = DataFrame.forInference(createSchema())
-        val (knowledge, warnings) =
-          op.inferKnowledge(mock[InferContext])(Vector(DKnowledge(inputDF)))
+        val (knowledge, warnings) = op.inferKnowledgeUntyped(Vector(DKnowledge(inputDF)))(mock[InferContext])
         // Warnings should be a sum of transformer inference warnings
         // and estimator inference warnings. Currently, either both of them
         // are empty or the inferences throw exception, so the sum is always 'empty'.
@@ -87,8 +86,6 @@ object EstimatorAsOperationSpec extends UnitSpec {
     override val id: Id = Id.randomId
     override val name: String = "Mock Estimator as an Operation"
     override val description: String = "Description"
-
-    override val since: Version = Version(0, 0, 0)
   }
 }
 

@@ -102,7 +102,7 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
   }
 
   def executeOperation(op: DOperation, dfs: DataFrame*): DataFrame =
-    op.execute(executionContext)(dfs.toVector).head.asInstanceOf[DataFrame]
+    op.executeUntyped(dfs.toVector)(executionContext).head.asInstanceOf[DataFrame]
 
   def createDir(path: String): Unit = {
     new java.io.File(path + "/id").getParentFile.mkdirs()
