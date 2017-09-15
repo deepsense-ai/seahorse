@@ -10,7 +10,6 @@ import scala.concurrent.{ExecutionContext, Future}
 import com.datastax.driver.core.Session
 import com.datastax.driver.core.querybuilder.QueryBuilder._
 import com.datastax.driver.core.querybuilder.Select.Where
-import com.datastax.driver.core.querybuilder.Update.Assignments
 import com.datastax.driver.core.querybuilder.{Delete, QueryBuilder, Select, Update}
 import com.google.inject.Inject
 import com.google.inject.name.Named
@@ -25,7 +24,7 @@ class EntityDaoCassandraImpl @Inject() (
     (implicit ec: ExecutionContext)
   extends EntityDao {
 
-  override def getAll(tenantId: String): Future[List[EntityInfo]] = {
+  override def getAllSaved(tenantId: String): Future[List[EntityInfo]] = {
     Future(session.execute(
       getAllQuery(tenantId, selectedFields = EntityRowMapper.EntityInfoFields))
     ).map(_.all().toList.map(EntityRowMapper.toEntityInfo))
@@ -67,6 +66,7 @@ class EntityDaoCassandraImpl @Inject() (
       .select(selectedFields: _*)
       .from(table)
       .where(QueryBuilder.eq(EntityRowMapper.TenantId, tenantId))
+      .and(QueryBuilder.eq(EntityRowMapper.Saved, true))
   }
 
   private def getQuery(tenantId: String, id: Entity.Id, selectedFields: Seq[String]): Select = {

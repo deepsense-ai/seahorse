@@ -87,7 +87,7 @@ class EntitiesApi @Inject() (
             withUserContext { userContext =>
               complete(
                 authorizatorProvider.forContext(userContext).withRole(roleGet) { userContext =>
-                  entityService.getAll(userContext.tenantId).map {
+                  entityService.getAllSaved(userContext.tenantId).map {
                     entities => Map("entities" -> entities)
                   }
                 }

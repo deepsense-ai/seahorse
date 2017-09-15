@@ -6,17 +6,16 @@ package io.deepsense.entitystorage
 
 import scala.concurrent.duration._
 
-import org.joda.time.DateTime
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{BeforeAndAfter, Matchers}
 
 import io.deepsense.commons.StandardSpec
+import io.deepsense.commons.cassandra.CassandraTestSupport
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.rest.RestServer
-import io.deepsense.commons.cassandra.CassandraTestSupport
 import io.deepsense.entitystorage.factories.EntityTestFactory
 import io.deepsense.entitystorage.storage.EntityDao
-import io.deepsense.models.entities.{EntityInfo, Entity}
+import io.deepsense.models.entities.{Entity, EntityInfo}
 
 class EntityStorageClientIntegSpec
   extends StandardSpec
@@ -39,6 +38,7 @@ class EntityStorageClientIntegSpec
 
   before {
     EntitiesTableCreator.create(cassandraTableName, session)
+    EntitiesTableCreator.createIndex(cassandraTableName, "saved", session)
     clientFactory = EntityStorageClientFactoryImpl()
     client = clientFactory.create("root-actor-system", "127.0.0.1", 2552, "EntitiesApiActor", 10)
   }

@@ -137,7 +137,7 @@ class EntitiesApiSpec
 
   private def createMockEntityService: EntityService = {
     val entityService = mock[EntityService]
-    when(entityService.getAll(anyString())).thenReturn(Future.successful(entities.map(_.info)))
+    when(entityService.getAllSaved(anyString())).thenReturn(Future.successful(entities.map(_.info)))
     when(entityService.deleteEntity(any(), any())).thenReturn(Future.successful(()))
     when(entityService.updateEntity(any(), any(), any())).thenAnswer(
       new Answer[Future[Option[EntityWithReport]]] {

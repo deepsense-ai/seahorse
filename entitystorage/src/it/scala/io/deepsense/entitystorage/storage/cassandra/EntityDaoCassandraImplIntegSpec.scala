@@ -32,6 +32,7 @@ class EntityDaoCassandraImplIntegSpec
 
   before {
     EntitiesTableCreator.create(cassandraTableName, session)
+    EntitiesTableCreator.createIndex(cassandraTableName, "saved", session)
     entityDao = new EntityDaoCassandraImpl(cassandraTableName, session)
   }
 
@@ -45,17 +46,19 @@ class EntityDaoCassandraImplIntegSpec
   val entityInfos = List(
     testEntityInfo(tenantId, 3),
     testEntityInfo(tenantId, 14),
-    testEntityInfo(tenantId + "otherTenant"))
+    testEntityInfo(tenantId + "otherTenant"),
+    testEntityInfo(tenantId, 15).copy(saved = false))
   val entityCreates = List(
     CreateEntityRequest(entityInfos(0), Some(dataObjectReference), dataObjectReport),
     CreateEntityRequest(entityInfos(1), None, dataObjectReport),
-    CreateEntityRequest(entityInfos(2), None, dataObjectReport))
+    CreateEntityRequest(entityInfos(2), None, dataObjectReport),
+    CreateEntityRequest(entityInfos(3), None, dataObjectReport))
 
   val inDb = entityInfos.zip(entityCreates)
 
   "Entities" should {
-    "select all rows from a tenant" in withStoredEntities(inDb) {
-      whenReady(entityDao.getAll(tenantId)) { tenantEntities =>
+    "select all saved rows from a tenant" in withStoredEntities(inDb) {
+      whenReady(entityDao.getAllSaved(tenantId)) { tenantEntities =>
         tenantEntities should contain theSameElementsAs Seq(entityInfos(0), entityInfos(1))
       }
     }

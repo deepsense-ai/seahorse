@@ -16,7 +16,7 @@ trait EntityDao {
 
   def getWithData(tenantId: String, id: Entity.Id): Future[Option[EntityWithData]]
 
-  def getAll(tenantId: String): Future[List[EntityInfo]]
+  def getAllSaved(tenantId: String): Future[List[EntityInfo]]
 
   def create(id: Entity.Id, entity: CreateEntityRequest, created: DateTime): Future[Unit]
 

@@ -48,7 +48,7 @@ class EntityServiceSpec
     when(entityDao.getWithData(entityWithData.info.tenantId, nonExistingEntityId))
       .thenReturn(Future.successful(None))
 
-    when(entityDao.getAll(entityWithReport.info.tenantId))
+    when(entityDao.getAllSaved(entityWithReport.info.tenantId))
       .thenReturn(Future.successful(entities.map(_.info)))
 
     when(entityDao.create(any(), any(), any())).thenReturn(Future.successful(()))
@@ -134,7 +134,7 @@ class EntityServiceSpec
   }
 
   it should "return all entities of tenant from entityDao" in {
-    whenReady(entityService.getAll(entity.info.tenantId)) { retrievedEntities =>
+    whenReady(entityService.getAllSaved(entity.info.tenantId)) { retrievedEntities =>
       retrievedEntities shouldBe entities.map(_.info)
     }
   }

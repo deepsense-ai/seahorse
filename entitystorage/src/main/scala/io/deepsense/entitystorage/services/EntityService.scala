@@ -7,7 +7,6 @@ package io.deepsense.entitystorage.services
 import scala.concurrent.{ExecutionContext, Future}
 
 import com.google.inject.Inject
-import org.joda.time.DateTime
 
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.utils.Logging
@@ -18,11 +17,11 @@ class EntityService @Inject() (entityDao: EntityDao)(implicit ec: ExecutionConte
   extends Logging {
 
   /**
-   * Returns all entities of tenant.
+   * Returns all saved entities of tenant.
    */
-  def getAll(tenantId: String): Future[List[EntityInfo]] = {
-    logger.debug("GetAll for tenantId: {}", tenantId)
-    entityDao.getAll(tenantId)
+  def getAllSaved(tenantId: String): Future[List[EntityInfo]] = {
+    logger.debug("GetAllSaved for tenantId: {}", tenantId)
+    entityDao.getAllSaved(tenantId)
   }
 
   /**
