@@ -8,7 +8,6 @@ package io.deepsense.deeplang
 
 import org.scalatest.FunSuite
 
-/** */
 class DKnowledgeSuite extends FunSuite {
 
   test("DKnowledge[DOperable] with same content are equal") {

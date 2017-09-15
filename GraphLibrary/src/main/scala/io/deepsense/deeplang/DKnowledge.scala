@@ -6,8 +6,6 @@
 
 package io.deepsense.deeplang
 
-/**
-  */
 class DKnowledge[T <: DOperable](val types: Set[T]) {
   def this(args: T*) = this(Set[T](args: _*))
 
