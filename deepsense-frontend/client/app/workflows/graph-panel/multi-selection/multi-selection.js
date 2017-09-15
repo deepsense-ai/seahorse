@@ -36,7 +36,6 @@ class MultiSelection {
         }
       };
       let inSelection = [];
-      let nodeDimensions;
       let workflowNodes;
       let disabled;
 
@@ -66,6 +65,8 @@ class MultiSelection {
             return {
               x: node.x,
               y: node.y,
+              height: $(element[0].querySelector('#node-' + node.id)).outerHeight(true),
+              width: $(element[0].querySelector('#node-' + node.id)).outerWidth(true),
               id: node.id
             };
           }
@@ -74,11 +75,6 @@ class MultiSelection {
         elementDimensions = elementDimensions || {
           width: element[0].clientWidth,
           height: element[0].clientHeight
-        };
-
-        nodeDimensions = nodeDimensions || {
-          width: $(element[0].querySelector('[id^="node-"]')).outerWidth(true),
-          height: $(element[0].querySelector('[id^="node-"]')).outerHeight(true)
         };
 
         element.addClass('has-cursor-crosshair');
@@ -129,8 +125,8 @@ class MultiSelection {
           return that.intersect({
             left: node.x,
             top: node.y,
-            right: node.x + nodeDimensions.width,
-            bottom: node.y + nodeDimensions.height
+            right: node.x + node.width,
+            bottom: node.y + node.height
           }, {
             left: Math.min(startPoint.x, startPoint.x + selectionElementDimensions.width),
             top: Math.min(startPoint.y, startPoint.y + selectionElementDimensions.height),
