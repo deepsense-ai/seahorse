@@ -24,7 +24,7 @@ class CanvasController {
     this.$timeout(() => {
       this.CanvasService.render();
       this.CanvasService.fit();
-    }, 0);
+    });
   }
 
   $onChanges(changes) {
@@ -43,7 +43,7 @@ class CanvasController {
     //this must be done in the next digest cycle because of ng-repeat are not available
     this.$timeout(() => {
       this.CanvasService.render();
-    }, 0);
+    });
   }
 
 }

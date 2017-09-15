@@ -1,5 +1,9 @@
 'use strict';
 
+
+// App
+import { specialOperations } from 'APP/enums/special-operations.js';
+
 const CSS_CLASSES_MAP = {
   'status_completed': {
     status: 'completed',
@@ -24,10 +28,13 @@ const CSS_CLASSES_MAP = {
   'error': {
     status: 'failed',
     icon: 'fa-exclamation'
+  },
+  unknown: {
+    status: 'unknown',
+    icon: 'fa-question'
   }
 };
 
-import {specialOperations} from 'APP/enums/special-operations.js';
 
 class GraphNodeController {
   constructor($rootScope, $scope, $element, WorkflowService, UserService, GraphStyleService) {
@@ -36,6 +43,10 @@ class GraphNodeController {
     _.assign(this, {$rootScope, $scope, $element, WorkflowService, UserService, GraphStyleService});
 
     this.nodeType = this.getNodeType();
+    if (this.nodeType === 'unknown') {
+      this.statusClasses = this.getCssClasses();
+      this.tooltipMessage = this.node.description;
+    }
     this.firstNameLetters = this.node.name.split(' ').map((item) => item[0]).join('');
 
     $scope.$watch(() => this.node.state, (newValue) => {
@@ -45,8 +56,12 @@ class GraphNodeController {
     });
 
     $scope.$watch(() => this.node.knowledgeErrors, (newValue) => {
-      var errors = this.node.getFancyKnowledgeErrors();
-      this.tooltipMessage = errors ? errors : '';
+      if (this.nodeType === 'unknown') {
+        return;
+      }
+
+      const errors = this.node.getFancyKnowledgeErrors();
+      this.tooltipMessage = errors || '';
     });
 
     this.borderCssClass = this.getBorderColor();
@@ -83,6 +98,8 @@ class GraphNodeController {
     } else if (operationId === specialOperations.CUSTOM_TRANSFORMER.SINK ||
       operationId === specialOperations.CUSTOM_TRANSFORMER.SOURCE) {
       return 'source-or-sink';
+    } else if (operationId === specialOperations.UNKNOWN_OPERATION) {
+      return 'unknown';
     } else {
       return 'standard';
     }
@@ -94,6 +111,10 @@ class GraphNodeController {
   }
 
   getCssClasses() {
+    if (this.node.operationId === specialOperations.UNKNOWN_OPERATION) {
+      return CSS_CLASSES_MAP.unknown;
+    }
+
     if (this.node.state.status && this.node.state.status !== 'status_draft') {
       return CSS_CLASSES_MAP[this.node.state.status];
     } else if (this.node.knowledgeErrors.length > 0) {
@@ -105,6 +126,11 @@ class GraphNodeController {
 
   getBorderColor() {
     let typeQualifier;
+
+    if (this.node.operationId === specialOperations.UNKNOWN_OPERATION) {
+      return 'border-unknown';
+    }
+
     if (this.node.input && this.node.input.length === 1) {
       typeQualifier = this.node.input[0].typeQualifier[0];
     } else if (this.node.originalOutput && this.node.originalOutput.length === 1) {

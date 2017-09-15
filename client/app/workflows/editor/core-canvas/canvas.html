@@ -1,23 +1,30 @@
-<div class="canvas sliding-window"
-     tabindex="1"
-     ng-class="{'disabled': !$ctrl.isEditable}">
-  <div class="flowchart-paint-area"
-       multi-selection>
-    <div class="new-node-container"
-         ng-transclude=""></div>
+<div
+  class="canvas sliding-window"
+  tabindex="1"
+  ng-class="{'disabled': !$ctrl.isEditable}"
+>
+  <div
+    class="flowchart-paint-area"
+    multi-selection
+  >
+    <div
+      class="new-node-container"
+      ng-transclude=""
+    ></div>
+
     <graph-node
-      class="graph-node-component"
-      id="node-{{ node.id }}"
-      ng-style="{
-           'left': node.x + 'px',
-           'top': node.y + 'px',
-           'border-color': node.color
-        }"
-      jsplumb-draggable
-      keyboard
       ng-repeat="(nodeId, node) in $ctrl.workflow.getNodes()"
       is-selected="$ctrl.selectedNode.id === nodeId"
-      node="node">
-    </graph-node>
+      id="node-{{ node.id }}"
+      class="graph-node-component"
+      ng-style="{
+        'left': node.x + 'px',
+        'top': node.y + 'px',
+        'border-color': node.color
+      }"
+      jsplumb-draggable
+      keyboard
+      node="node"
+    ></graph-node>
   </div>
 </div>

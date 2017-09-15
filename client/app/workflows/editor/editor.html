@@ -7,12 +7,14 @@
     on-fullscreen="$ctrl.fullScreen($event)"
     on-new-node="$ctrl.newNode($event)"
   ></canvas-toolbar>
+
   <core-canvas
     is-editable="$ctrl.isEditable"
     new-node-data="$ctrl.newNodeData"
     selectedNode="$ctrl.selectedNode"
     workflow="$ctrl.workflow"
-    on-connection-abort="$ctrl.onConnectionAbort(newNodeData)">
+    on-connection-abort="$ctrl.onConnectionAbort(newNodeData)"
+  >
     <new-node
       class="flowchart-box__new-node new-node"
       id="node-new-node"
@@ -28,6 +30,7 @@
       jsplumb-draggable
     ></new-node>
   </core-canvas>
+
   <port-status-tooltip
     ng-if="$ctrl.isTooltipVisible"
     ng-style="{
@@ -35,6 +38,5 @@
       'left': $ctrl.tooltipX + 'px'
     }"
     port-object="$ctrl.portObject"
-  >
-  </port-status-tooltip>
+  ></port-status-tooltip>
 </div>

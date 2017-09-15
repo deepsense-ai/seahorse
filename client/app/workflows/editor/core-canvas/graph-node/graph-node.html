@@ -5,40 +5,48 @@
     $ctrl.nodeType,
     $ctrl.borderCssClass
   ]"
-  ng-switch="$ctrl.getNodeType()">
-
+  ng-switch="$ctrl.getNodeType()"
+>
   <div class="graph-node__content">
-    <div class="custom-name"
-         ng-class="{'centered': !$ctrl.node.uiName}">
+    <div
+      class="custom-name"
+      ng-class="{'centered': !$ctrl.node.uiName}"
+    >
       <div ng-if="$ctrl.nodeType !== 'action'">
         {{ $ctrl.node.name }}
       </div>
-      <div ng-if="$ctrl.nodeType === 'action'"
-           class="action-letter">
+      <div
+        ng-if="$ctrl.nodeType === 'action'"
+        class="action-letter"
+      >
         {{ $ctrl.firstNameLetters }}
       </div>
     </div>
-    <div class="user-name"
-         ng-if="$ctrl.node.uiName">
+    <div
+      class="user-name"
+      ng-if="$ctrl.node.uiName"
+    >
       {{ $ctrl.node.uiName }}
     </div>
   </div>
 
-  <div class="status"
-       ng-class="$ctrl.statusClasses.status"
-       ng-if="$ctrl.isOwner()">
-    <div class="status__icon fa"
-         ng-class="$ctrl.statusClasses.icon"
-         popover-placement="right"
-         popover-trigger="mouseenter"
-         popover-append-to-body="true"
-         uib-popover-html="$ctrl.tooltipMessage">
-    </div>
+  <div
+    class="status"
+    ng-class="$ctrl.statusClasses.status"
+    ng-if="$ctrl.isOwner()"
+  >
+    <div
+      class="status__icon fa"
+      ng-class="$ctrl.statusClasses.icon"
+      popover-placement="right"
+      popover-trigger="mouseenter"
+      popover-append-to-body="true"
+      uib-popover-html="$ctrl.tooltipMessage"
+    ></div>
   </div>
 
   <div ng-if="false">
     possible output ports here
   </div>
-
 
 </div>

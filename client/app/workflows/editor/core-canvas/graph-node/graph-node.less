@@ -29,6 +29,12 @@
     border: 2px solid @seahorse-blue;
   }
 
+  &.border-unknown {
+    border: 2px solid @seahorse-orange;
+    color: @seahorse-orange;
+  }
+
+  &.unknown,
   &.standard {
     width: 200px;
     height: 55px;
@@ -113,6 +119,10 @@
     &.aborted,
     &.failed {
       background-color: @color-error;
+    }
+
+    &.unknown {
+      background-color: @seahorse-orange;
     }
   }
 }

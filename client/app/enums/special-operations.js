@@ -15,5 +15,6 @@ export const specialOperations = {
     NODE: '65240399-2987-41bd-ba7e-2944d60a3404',
     SOURCE: 'f94b04d7-ec34-42f7-8100-93fe235c89f8',
     SINK: 'e652238f-7415-4da6-95c6-ee33808561b2'
-  }
+  },
+  UNKNOWN_OPERATION: '08752b37-3f90-4b8d-8555-e911e2de5662'
 };
