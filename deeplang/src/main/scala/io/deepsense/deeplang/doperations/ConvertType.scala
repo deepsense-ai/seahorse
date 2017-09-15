@@ -25,6 +25,8 @@ class ConvertType extends TransformerAsOperation[TypeConverter] {
 
   override val name: String = "Convert Type"
   override val id: Id = "04084863-fdda-46fd-b1fe-796c6b5a0967"
+  override val description: String =
+    "Converts selected columns of a DataFrame to a different type"
 
   override val tTagTO_1: TypeTag[TypeConverter] = typeTag
 }

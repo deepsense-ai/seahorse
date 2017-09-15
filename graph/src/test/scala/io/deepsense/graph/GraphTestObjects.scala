@@ -42,6 +42,8 @@ object DOperationTestClasses {
 
     override val name: String = ""
 
+    override val description: String = ""
+
     val params = declareParams()
   }
 

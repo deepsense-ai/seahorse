@@ -39,6 +39,7 @@ object DOperationForPortTypes {
     override protected def _execute(context: ExecutionContext)(t0: A1): A2 = ???
     override val id: DOperation.Id = DOperation.Id.randomId
     override val name: String = ""
+    override val description: String = ""
     val params = declareParams()
     override lazy val tTagTI_0: ru.TypeTag[A1] = ru.typeTag[A1]
     override lazy val tTagTO_0: ru.TypeTag[A2] = ru.typeTag[A2]
@@ -62,6 +63,7 @@ class DOperationSuite extends FunSuite with DeeplangTestSupport {
         if ($(param) % 2 == 1) t1 else t2
       }
       override val name: String = "Some name"
+      override val description: String = "Some description"
 
       override lazy val tTagTI_0: ru.TypeTag[A1] = ru.typeTag[A1]
       override lazy val tTagTO_0: ru.TypeTag[A] = ru.typeTag[A]
@@ -103,6 +105,7 @@ class DOperationSuite extends FunSuite with DeeplangTestSupport {
       }
 
       override val name: String = ""
+      override val description: String = ""
 
       val params = declareParams()
 

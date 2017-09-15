@@ -68,6 +68,7 @@ class TransformerAsOperationSpec extends UnitSpec {
     override val tTagTO_1: TypeTag[MockTransformer] = typeTag[MockTransformer]
     override val name: String = ""
     override val id: Id = "6d924962-9456-11e5-8994-feff819cdc9f"
+    override val description: String = ""
   }
 
   "TransformerAsOperation" should {

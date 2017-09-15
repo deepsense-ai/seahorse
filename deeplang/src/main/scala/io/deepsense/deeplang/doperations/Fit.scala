@@ -29,7 +29,12 @@ import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
 import io.deepsense.deeplang.params.DynamicParam
 import io.deepsense.deeplang.{DOperable, DKnowledge, DOperation2To1, ExecutionContext}
 
-case class Fit() extends DOperation2To1[Estimator, DataFrame, Transformer]{
+case class Fit() extends DOperation2To1[Estimator, DataFrame, Transformer] {
+
+  override val name: String = "Fit"
+  override val id: Id = "0c2ff818-977b-11e5-8994-feff819cdc9f"
+  override val description: String =
+    "Fits an Estimator on a DataFrame"
 
   val estimatorParams = new DynamicParam(
     name = "Parameters of input Estimator",
@@ -40,9 +45,6 @@ case class Fit() extends DOperation2To1[Estimator, DataFrame, Transformer]{
   def setEstimatorParams(jsValue: JsValue): this.type = set(estimatorParams -> jsValue)
 
   override val params = declareParams(estimatorParams)
-
-  override val name: String = "Fit"
-  override val id: Id = "0c2ff818-977b-11e5-8994-feff819cdc9f"
 
   override val tTagTI_0: TypeTag[Estimator] = typeTag[Estimator]
   override val tTagTI_1: TypeTag[DataFrame] = typeTag[DataFrame]

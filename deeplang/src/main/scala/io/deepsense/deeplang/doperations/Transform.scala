@@ -32,6 +32,8 @@ case class Transform() extends DOperation2To1[Transformer, DataFrame, DataFrame]
 
   override val name: String = "Transform"
   override val id: Id = "643d8706-24db-4674-b5b4-10b5129251fc"
+  override val description: String =
+    "Transforms a DataFrame using a Transformer"
 
   val transformerParams = new DynamicParam(
     name = "Parameters of input Transformer",

@@ -25,6 +25,8 @@ class ExecuteSqlExpression extends TransformerAsOperation[SqlExpression] {
 
   override val name: String = "Execute SQL Expression"
   override val id: Id = "6cba4400-d966-4a2a-8356-b37f37b4c73f"
+  override val description: String =
+    "Executes an SQL expression on a DataFrame"
 
   override val tTagTO_1: TypeTag[SqlExpression] = typeTag
 }

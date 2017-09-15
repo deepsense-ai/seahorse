@@ -91,5 +91,6 @@ object EstimatorAsFactorySpec {
   class MockEstimatorFactory extends EstimatorAsFactory[MockEstimator] {
     override val id: Id = Id.randomId
     override val name: String = "Mock Estimator factory used for tests purposes"
+    override val description: String = "Description"
   }
 }

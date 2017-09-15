@@ -33,6 +33,7 @@ abstract class DOperation extends Serializable with Logging with Params {
   val outArity: Int
   val id: DOperation.Id
   val name: String
+  val description: String
 
   def inPortTypes: Vector[ru.TypeTag[_]]
 

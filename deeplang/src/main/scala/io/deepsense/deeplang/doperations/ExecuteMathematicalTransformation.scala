@@ -26,6 +26,8 @@ class ExecuteMathematicalTransformation
 
   override val name: String = "Execute Mathematical Transformation"
   override val id: Id = "012876d9-7a72-47f9-98e4-8ed26db14d6d"
+  override val description: String =
+    "Executes a mathematical transformation on a column of a DataFrame"
 
   override val tTagTO_1: TypeTag[MathematicalTransformation] = typeTag
 }
