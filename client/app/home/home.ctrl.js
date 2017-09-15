@@ -1,6 +1,3 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- */
 'use strict';
 
 /* @ngInject */
@@ -25,7 +22,7 @@ function Home($rootScope, $modal, $state, PageService) {
 
     modal.result.
       then((workflowId) => {
-        $state.go('workflows_editor', {
+        $state.go('workflows.editor', {
           id: workflowId
         });
       });

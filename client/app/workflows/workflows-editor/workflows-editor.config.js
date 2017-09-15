@@ -3,8 +3,8 @@
 /* @ngInject */
 function WorkflowsConfig($stateProvider) {
   $stateProvider.
-    state('workflows_editor', {
-      url: '/workflows/:id/editor',
+    state('workflows.editor', {
+      url: '/:id/editor',
       templateUrl: 'app/workflows/workflows-editor/workflows-editor.html',
       controller: 'WorkflowsEditorController as workflow',
       resolve: {
@@ -12,17 +12,21 @@ function WorkflowsConfig($stateProvider) {
                                   WorkflowsApiClient, Operations, OperationsHierarchyService) =>
         {
           let workflowId = $stateParams.id;
+          let deferred = $q.defer();
 
-          return Operations.load().
+          Operations.load().
             then(OperationsHierarchyService.load).
             then(() => WorkflowsApiClient.getWorkflow(workflowId)).
             then((data) => {
               $rootScope.stateData.dataIsLoaded = true;
-              return data;
+              deferred.resolve(data);
             }).
-            catch(() => {
-              $rootScope.stateData.errorMessage = `Could not load the workflow with id ${workflowId}`;
+            catch((error) => {
+              $rootScope.stateData.errorMessage = `Could not load the workflow \n ${error.statusText}`;
+              deferred.reject();
             });
+
+          return deferred.promise;
         }
       }
     });

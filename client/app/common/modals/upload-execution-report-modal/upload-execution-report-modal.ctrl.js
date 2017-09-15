@@ -30,7 +30,9 @@ function UploadWorkflowExecutionReportModalController(config, $state, $modalInst
         then((response) => {
           this.status = STATUS_SUCCESS;
           $modalInstance.close();
-          $state.go('workflows_editor', {'id': response.data.id});
+          $state.go('workflows.editor', {
+            'id': response.data.id
+          });
         }).
         catch((error = {}) => {
           error.data = error.data || 'Server is not responding';

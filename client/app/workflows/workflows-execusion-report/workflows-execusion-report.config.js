@@ -3,8 +3,8 @@
 /* @ngInject */
 function WorkflowsConfig($stateProvider) {
   $stateProvider.
-    state('workflows_latest_report', {
-      url: '/workflows/:id/report',
+    state('workflows.latest_report', {
+      url: '/:id/report',
       templateUrl: 'app/workflows/workflows-execution-report/workflows-execution-report.html',
       controller: 'WorkflowsReportController as workflow',
       resolve: {
@@ -12,17 +12,21 @@ function WorkflowsConfig($stateProvider) {
                                 Operations, OperationsHierarchyService) =>
         {
           let workflowId = $stateParams.id;
+          let deferred = $q.defer();
 
-          return Operations.load().
+          Operations.load().
             then(OperationsHierarchyService.load).
             then(() => WorkflowsApiClient.getLatestReport(workflowId)).
             then((data) => {
               $rootScope.stateData.dataIsLoaded = true;
-              return data;
+              deferred.resolve(data);
             }).
             catch(() => {
               $rootScope.stateData.errorMessage = `Could not load the latest report of the workflow with id ${workflowId}`;
+              deferred.reject();
             });
+
+          return deferred.promise;
         }
       }
     });
