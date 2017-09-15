@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# Wrapper for docker-compose to have same interface on all branches
+
+exec docker-compose "$@"
