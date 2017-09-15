@@ -16,14 +16,23 @@ class PySparkKernel(IPythonKernel):
     def __init__(self, *args, **kwargs):
         super(PySparkKernel, self).__init__(*args, **kwargs)
         self.kernel_id = extract_kernel_id(sys.argv[2])
-        self.workflow_id = get_workflow_id(self.kernel_id)
+
+        (workflow_id, node_id) = get_notebook_id(self.kernel_id)
+        self.workflow_id = workflow_id
+
         (gateway_address, gateway_port) = get_gateway_location(self.workflow_id)
+
         self._insert_gateway_location(gateway_address, gateway_port)
+        self._insert_workflow_id(workflow_id, node_id)
         self._initialize_pyspark()
 
     def _insert_gateway_location(self, gateway_address, gateway_port):
         self.do_execute("gateway_address = \"" + gateway_address + "\"", False)
         self.do_execute("gateway_port = " + str(gateway_port) + "", False)
+
+    def _insert_workflow_id(self, workflow_id, node_id):
+        self.do_execute("workflow_id = \"" + workflow_id + "\"", False)
+        self.do_execute("node_id = \"" + node_id + "\"", False)
 
     def _initialize_pyspark(self):
         self.do_execute(open(os.environ['KERNEL_INIT_FILE']).read(), False)
@@ -34,13 +43,13 @@ def extract_kernel_id(connection_file_name):
     return m.group(1)
 
 
-def get_workflow_id(kernel_id):
+def get_notebook_id(kernel_id):
     notebook_server_location = os.environ['NOTEBOOK_SERVER_ADDRESS'] + ":" + os.environ['NOTEBOOK_SERVER_PORT']
     response = urllib2.urlopen("http://" + notebook_server_location + "/api/sessions").read()
     sessions = json.loads(response)
     for session in sessions:
         if session['kernel']['id'] == kernel_id:
-            return session['notebook']['path']
+            return tuple(session['notebook']['path'].split("/"))
     raise Exception('Workflow matching kernel ID ' + kernel_id + 'was not found.')
 
 

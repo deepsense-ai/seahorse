@@ -3,6 +3,7 @@
 from pyspark import SparkContext
 from pyspark import SparkConf
 from pyspark.sql import SQLContext
+from pyspark.sql import DataFrame
 from py4j.java_gateway import JavaGateway, GatewayClient, java_import
 
 # gateway_address and gateway_port are set in the kernel
@@ -32,3 +33,10 @@ sc = SparkContext(
     jsc=java_spark_context)
 
 sqlContext = SQLContext(sc)
+
+# workflow_id and node_id are set in the kernel
+java_data_frame = gateway.entry_point.getDataFrame(workflow_id, node_id)
+
+dataframe = DataFrame(
+    jdf=java_data_frame,
+    sql_ctx=sqlContext)
