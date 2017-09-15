@@ -126,7 +126,8 @@ class WorkflowsApiSpec
         FailureDescription(DeepSenseFailure.Id.randomId, FailureCode.NodeFailure, "title"))),
       EntitiesMap(),
       None)
-    WorkflowWithResults(id, wf.metadata, wf.graph, wf.additionalData, executionReport)
+    WorkflowWithResults(id, wf.metadata, wf.graph, wf.additionalData,
+      executionReport, WorkflowInfo.forId(id))
   }
 
   def cyclicWorkflow: Workflow = {

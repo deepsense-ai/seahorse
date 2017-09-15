@@ -59,16 +59,19 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
     metadata,
     graph,
     thirdPartyData,
-    ExecutionReport(Map[io.deepsense.graph.Node.Id, NodeState]()))
+    ExecutionReport(Map[io.deepsense.graph.Node.Id, NodeState]()),
+    WorkflowInfo.forId(storedWorkflowId))
   val workflowStorage: WorkflowStorage = mock[WorkflowStorage]
   val workflowStateStorage = mock[WorkflowStateStorage]
   val notebookStorage = mock[NotebookStorage]
+  val workflowId = Workflow.Id.randomId
   val workflowWithResults = WorkflowWithResults(
-    Workflow.Id.randomId,
+    workflowId,
     mock[WorkflowMetadata],
     mock[DeeplangGraph],
     mock[JsObject],
-    ExecutionReport(Map[io.deepsense.graph.Node.Id, NodeState]()))
+    ExecutionReport(Map[io.deepsense.graph.Node.Id, NodeState]()),
+    WorkflowInfo.forId(workflowId))
 
   val storedWorkflowFullInfo = WorkflowFullInfo(
     storedWorkflow, DateTime.now, DateTime.now, ownerId, ownerName)
@@ -109,7 +112,10 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
         .thenReturn(Future.successful(Map[Node.Id, String]()))
 
       val eventualWorkflow = workflowManager.get(storedWorkflowId)
-      whenReady(eventualWorkflow) { _.get shouldEqual storedWorkflowWithResults }
+      whenReady(eventualWorkflow) { w =>
+        val withIgnoredInfo = w.get.copy(workflowInfo = storedWorkflowWithResults.workflowInfo)
+        withIgnoredInfo shouldEqual storedWorkflowWithResults
+      }
     }
     "delete workflow from the storage" is pending
     "save workflow in storage" is pending

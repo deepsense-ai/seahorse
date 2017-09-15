@@ -9,6 +9,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import com.google.inject.Inject
 import com.google.inject.assistedinject.Assisted
 import com.google.inject.name.Named
+import org.joda.time.DateTime
 import spray.json._
 
 import io.deepsense.commons.auth.usercontext.UserContext
@@ -48,7 +49,7 @@ class WorkflowManagerImpl @Inject()(
     authorizator.withRole(roleGet) { userContext =>
       workflowStorage.get(id).flatMap{
         case Some(w) =>
-          val result = withResults(id, w.workflow).map {
+          val result = withResults(id, w).map {
             withResults =>
               checkAPICompatibility(withResults.metadata.apiVersion)
               Some(withResults)
@@ -147,10 +148,6 @@ class WorkflowManagerImpl @Inject()(
     logger.debug("List workflows")
     authorizator.withRole(roleGet) { userContext =>
       workflowStorage.getAll().map { workflows =>
-        def getOptionalString(jsObject: JsObject, field: String) = {
-          jsObject.fields.get(field).map(_.asInstanceOf[JsString].value).getOrElse("")
-        }
-
         val extractedThirdPartyData = workflows.mapValues {
           case WorkflowFullInfo(objectWorkflow, created, updated, ownerId, ownerName) =>
             (objectWorkflow.additionalData, created, updated, ownerId, ownerName)
@@ -158,12 +155,7 @@ class WorkflowManagerImpl @Inject()(
 
         extractedThirdPartyData.map {
           case (workflowId, (thirdPartyData, created, updated, ownerId, ownerName)) =>
-            val gui = thirdPartyData.fields.get("gui").map(_.asJsObject).getOrElse(JsObject())
-            WorkflowInfo(workflowId,
-              getOptionalString(gui, "name"), getOptionalString(gui, "description"),
-              created, updated,
-              ownerId, ownerName
-            )
+            workflowInfo(workflowId, thirdPartyData, created, updated, ownerId, ownerName)
         }.toSeq
       }
     }
@@ -218,9 +210,34 @@ class WorkflowManagerImpl @Inject()(
     }
   }
 
-  private def withResults(id: Workflow.Id, workflow: Workflow): Future[WorkflowWithResults] = {
+  private def workflowInfo(
+      workflowId: Workflow.Id,
+      thirdPartyData: JsObject,
+      created: DateTime,
+      updated: DateTime,
+      ownerId: String,
+      ownerName: String): WorkflowInfo = {
+
+    def getOptionalString(jsObject: JsObject, field: String) = {
+      jsObject.fields.get(field).map(_.asInstanceOf[JsString].value).getOrElse("")
+    }
+
+    val gui = thirdPartyData.fields.get("gui").map(_.asJsObject).getOrElse(JsObject())
+    WorkflowInfo(workflowId,
+      getOptionalString(gui, "name"), getOptionalString(gui, "description"),
+      created, updated, ownerId, ownerName
+    )
+  }
+
+  private def withResults(
+      id: Workflow.Id,
+      workflowFullInfo: WorkflowFullInfo): Future[WorkflowWithResults] = {
+    val workflow = workflowFullInfo.workflow
+    val info = workflowInfo(id, workflow.additionalData,
+      workflowFullInfo.created, workflowFullInfo.updated,
+      workflowFullInfo.ownerId, workflowFullInfo.ownerName)
     getExecutionReport(id, workflow).map(
-      WorkflowWithResults(id, workflow.metadata, workflow.graph, workflow.additionalData, _)
+      WorkflowWithResults(id, workflow.metadata, workflow.graph, workflow.additionalData, _, info)
     )
   }
 
