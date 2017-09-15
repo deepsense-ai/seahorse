@@ -53,10 +53,10 @@ const CONNECTOR_HOVER_STYLE = {
 
 // port basic settings
 const OUTPUT_STYLE = {
-  endpoint: RECTANGLE_ENDPOINT,
+  endpoint: DOT_ENDPOINT,
   isSource: true,
   connector: ['Bezier', {
-    curviness: 50
+    curviness: 75
   }],
   connectorStyle: CONNECTOR_STYLE_DEFAULT,
   connectorHoverStyle: CONNECTOR_HOVER_STYLE,
