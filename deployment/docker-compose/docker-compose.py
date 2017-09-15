@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# PYTHON_ARGCOMPLETE_OK
 
 # Copyright (c) 2016, CodiLime Inc.
 
@@ -64,6 +65,12 @@ def main():
                         action='store_true')
 
     args, extra_args = parser.parse_known_args()
+    try:
+        import argcomplete
+        argcomplete.autocomplete(parser)
+    except ImportError:
+        print("Argcomplete is not installed. <tab> autocompletions are not available")
+        print("Setup instructions at https://argcomplete.readthedocs.io/en/latest/")
 
     configuration = {'linux': LinuxConfiguration, 'mac': MacConfiguration}[args.operating_system]
 

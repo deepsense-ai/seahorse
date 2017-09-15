@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# PYTHON_ARGCOMPLETE_OK
 
 # Copyright (c) 2016, CodiLime Inc.
 
@@ -98,6 +99,12 @@ def main():
                         help='Publish docker images',
                         action='store_true')
 
+    try:
+        import argcomplete
+        argcomplete.autocomplete(parser)
+    except ImportError:
+        print("Argcomplete is not installed. <tab> autocompletions are not available")
+        print("Setup instructions at https://argcomplete.readthedocs.io/en/latest/")
     args, extra_args = parser.parse_known_args()
 
     if args.all:
