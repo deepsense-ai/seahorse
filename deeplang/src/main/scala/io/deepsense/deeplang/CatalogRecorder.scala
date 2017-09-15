@@ -89,6 +89,8 @@ object CatalogRecorder {
     catalog.registerDOperable[MultilayerPerceptronClassifierModel]()
     catalog.registerDOperable[QuantileDiscretizerEstimator]()
     catalog.registerDOperable[QuantileDiscretizerModel]()
+    catalog.registerDOperable[ChiSqSelectorEstimator]()
+    catalog.registerDOperable[ChiSqSelectorModel]()
 
     // wrapped Spark transformers
     catalog.registerDOperable[Binarizer]()
@@ -264,6 +266,9 @@ object CatalogRecorder {
 
     catalog.registerDOperation[CreateKMeans](
       DOperationCategories.ML.Clustering)
+
+    catalog.registerDOperation[ChiSqSelector](
+      DOperationCategories.ML.FeatureSelection)
 
     catalog.registerDOperation[CreateALS](
       DOperationCategories.ML.Recommendation)

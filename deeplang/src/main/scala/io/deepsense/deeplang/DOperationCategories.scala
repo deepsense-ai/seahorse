@@ -67,6 +67,9 @@ object DOperationCategories {
     object Clustering
       extends DOperationCategory("5d6ed17f-7dc5-4b50-954c-8b2bbe6da2fd", "Clustering", ML)
 
+    object FeatureSelection extends DOperationCategory(
+      "e6b28974-d2da-4615-b357-bc6055238cff", "Feature selection", ML)
+
     object DimensionalityReduction
       extends DOperationCategory(
         "a112511e-5433-4ed2-a675-098a14a63c00", "Dimensionality reduction", ML)

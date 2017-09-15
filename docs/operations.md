@@ -76,6 +76,8 @@ List of all currently supported operations:
     * [Random Forest Regression](operations/random_forest_regression.html)
   * Clustering
     * [K-Means](operations/k-means.html)
+  * Feature Selection
+    * [Chi-Squared Selector](operations/chi-squared_selector.html)
   * Dimensionality Reduction
     * [PCA](operations/pca.html)
   * Recommendation

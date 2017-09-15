@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2016, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,16 +24,16 @@ import io.deepsense.deeplang.params.Params
 import io.deepsense.deeplang.params.selections.{SingleColumnSelection, NameSingleColumnSelection}
 import io.deepsense.deeplang.params.wrappers.spark.SingleColumnSelectorParamWrapper
 
-trait HasLabelColumnParam extends Params {
+trait HasFeaturesColumnParam extends Params {
 
-  val labelColumn =
+  val featuresColumn =
     new SingleColumnSelectorParamWrapper[
-        ml.param.Params { val labelCol: ml.param.Param[String] }](
-      name = "label column",
-      description = "The label column for model fitting.",
-      sparkParamGetter = _.labelCol,
+      ml.param.Params { val featuresCol: ml.param.Param[String] }](
+      name = "features column",
+      description = "The features column for model fitting.",
+      sparkParamGetter = _.featuresCol,
       portIndex = 0)
-  setDefault(labelColumn, NameSingleColumnSelection("label"))
+  setDefault(featuresColumn, NameSingleColumnSelection("features"))
 
-  def setLabelColumn(value: SingleColumnSelection): this.type = set(labelColumn, value)
+  def setFeaturesColumn(value: SingleColumnSelection): this.type = set(featuresColumn, value)
 }
