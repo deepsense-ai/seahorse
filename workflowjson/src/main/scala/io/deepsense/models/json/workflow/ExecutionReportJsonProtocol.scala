@@ -16,6 +16,8 @@
 
 package io.deepsense.models.json.workflow
 
+import java.util.NoSuchElementException
+
 import spray.json._
 
 import io.deepsense.commons.exception.FailureDescription
@@ -37,11 +39,21 @@ trait ExecutionReportJsonProtocol
     )
 
     override def read(json: JsValue): ExecutionReport = {
-      val fields = json.asJsObject.fields
-      val resultEntities: EntitiesMap = fields("resultEntities").convertTo[EntitiesMap]
-      val nodes: Map[Node.Id, NodeStatus] = fields("nodes").convertTo[Map[Node.Id, NodeStatus]]
-      val error: Option[FailureDescription] = fields("error").convertTo[Option[FailureDescription]]
+      val fieldGetter = getField(json.asJsObject.fields) _
+      val resultEntities: EntitiesMap = fieldGetter("resultEntities").convertTo[EntitiesMap]
+      val nodes: Map[Node.Id, NodeStatus] = fieldGetter("nodes").convertTo[Map[Node.Id, NodeStatus]]
+      val error: Option[FailureDescription] =
+        fieldGetter("error").convertTo[Option[FailureDescription]]
       ExecutionReport(nodes, resultEntities, error)
+    }
+  }
+
+  private def getField(fields: Map[String, JsValue])(fieldName: String): JsValue = {
+    try {
+      fields(fieldName)
+    } catch {
+      case e: NoSuchElementException =>
+        throw new DeserializationException(s"Could not find field: $fieldName", e)
     }
   }
 }
