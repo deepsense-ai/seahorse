@@ -117,10 +117,16 @@ case class WriteDataFrame()
 
   private def writeUsingProvidedFileScheme(
       fileChoice: File, dataFrame: DataFrame, path: FilePath)
-      (implicit context: ExecutionContext): Unit = path.fileScheme match {
-    case FileScheme.File => DriverFiles.write(dataFrame, path, fileChoice.getFileFormat())
-    case FileScheme.HDFS => ClusterFiles.write(dataFrame, path, fileChoice.getFileFormat())
-    case unsupportedFileScheme => throw NotSupportedScheme(unsupportedFileScheme)
+      (implicit context: ExecutionContext): Unit = {
+    import FileScheme._
+    path.fileScheme match {
+      case Library =>
+        val filePath = FilePathFromLibraryPath(path)
+        writeUsingProvidedFileScheme(fileChoice, dataFrame, filePath)
+      case FileScheme.File => DriverFiles.write(dataFrame, path, fileChoice.getFileFormat())
+      case HDFS => ClusterFiles.write(dataFrame, path, fileChoice.getFileFormat())
+      case HTTP | HTTPS | FTP => throw NotSupportedScheme(path.fileScheme)
+    }
   }
 
   case class NotSupportedScheme(fileScheme: FileScheme)

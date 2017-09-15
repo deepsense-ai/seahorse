@@ -90,6 +90,9 @@ case class ReadDataFrame()
       (path: FilePath, fileFormat: InputFileFormatChoice)
       (implicit context: ExecutionContext): SparkDataFrame =
     path.fileScheme match {
+      case FileScheme.Library =>
+        val filePath = FilePathFromLibraryPath(path)
+        readUsingProvidedFileScheme(filePath, fileFormat)
       case FileScheme.File => DriverFiles.read(path.pathWithoutScheme, fileFormat)
       case FileScheme.HTTP | FileScheme.HTTPS | FileScheme.FTP =>
         val downloadedPath = FileDownloader.downloadFile(path.fullPath)

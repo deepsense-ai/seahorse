@@ -29,6 +29,7 @@ object FileScheme {
   case object FTP extends FileScheme("ftp")
   case object HDFS extends FileScheme("hdfs")
   case object File extends FileScheme("file")
+  case object Library extends FileScheme("library")
 
   val values = Seq(HTTP, HTTPS, FTP, HDFS, File)
 
