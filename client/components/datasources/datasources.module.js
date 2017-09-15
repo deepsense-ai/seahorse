@@ -5,6 +5,7 @@ import angular from 'angular';
 
 // App
 import DatasourcesPanelComponent from './datasources-panel/datasources-panel.component.js';
+import DatasourcesElementComponent from './datasources-element/datasources-element.component.js';
 import DatasourcesListComponent from './datasources-list/datasources-list.component.js';
 import DatasourcesToolbarComponent from './datasources-toolbar/datasources-toolbar.component.js';
 import FileSettingsComponent from './datasources-toolbar/file-settings/file-settings.component.js';
@@ -21,6 +22,7 @@ import LibraryModalController from './datasources-toolbar/modals/library-modal/l
 export const datasourcesModule = angular
   .module('datasources', [])
   .component('datasourcesPanel', DatasourcesPanelComponent)
+  .component('datasourcesElement', DatasourcesElementComponent)
   .component('datasourcesList', DatasourcesListComponent)
   .component('datasourcesToolbar', DatasourcesToolbarComponent)
   .component('fileSettings', FileSettingsComponent)

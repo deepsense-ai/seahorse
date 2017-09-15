@@ -1,0 +1,55 @@
+@import "../../../css/variables";
+
+@icon-size: 30px;
+
+.datasources-element {
+  font-size: 13px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #CCC;
+
+  &__type {
+    width: 36px;
+    font-size: @icon-size;
+    text-align: center;
+    color: @seahorse-blue;
+  }
+
+  &__name {
+    flex: 1;
+    color: @seahorse-blue;
+  }
+
+  &__created {
+    width: 130px;
+  }
+
+  &__owner {
+    width: 120px;
+  }
+
+  &__access {
+    width: 120px;
+  }
+
+  &__icon-wrapper {
+    width: 80px;
+    display: flex;
+    color: @seahorse-blue;
+  }
+
+  &__edit {
+    font-size: @icon-size;
+    margin-left: 15px;
+    width: 30px;
+    text-align: center;
+  }
+
+  &__delete {
+    font-size: @icon-size;
+    margin-right: 15px;
+    width: 30px;
+    text-align: center;
+  }
+}

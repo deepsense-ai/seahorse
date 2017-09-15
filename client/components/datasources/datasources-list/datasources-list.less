@@ -1,3 +1,45 @@
-.datasources-list {
+@import "../../../css/variables";
 
+.datasources-list {
+  min-width: 686px;
+  max-width: 974px;
+  margin: 10px;
+
+  &__header {
+    display: flex;
+    font-size: 18px;
+    font-weight: 600;
+    color: @seahorse-blue;
+    border-bottom: 1px solid #CCC;
+  }
+
+  &__type {
+    width: 36px;
+  }
+
+  &__name {
+    flex: 1;
+  }
+
+  &__created {
+    width: 130px;
+  }
+
+  &__owner {
+    width: 120px;
+  }
+
+  &__access {
+    width: 120px;
+  }
+
+  &__ascending-icon {
+    width: 10px;
+    display: inline-block;
+  }
+
+  &__descending-icon {
+    width: 10px;
+    display: inline-block;
+  }
 }

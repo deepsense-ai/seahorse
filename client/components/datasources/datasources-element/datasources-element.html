@@ -1,0 +1,31 @@
+<div
+  class="datasources-element">
+  <div
+    class="datasources-element__type sa"
+    ng-class="$ctrl.typeIcon[$ctrl.element.params.datasourceType]">
+  </div>
+  <div
+    class="datasources-element__name">
+    {{$ctrl.element.params.name}}
+  </div>
+  <div class="datasources-element__icon-wrapper">
+    <div
+      class="datasources-element__edit sa sa-edit">
+    </div>
+    <div
+      class="datasources-element__delete sa sa-delete">
+    </div>
+  </div>
+  <div
+    class="datasources-element__created">
+    {{$ctrl.element.creationDateTime}}
+  </div>
+  <div
+    class="datasources-element__owner">
+    {{$ctrl.element.ownerId}}
+  </div>
+  <div
+    class="datasources-element__access">
+    {{$ctrl.visibilityLabel[$ctrl.element.params.visibility]}}
+  </div>
+</div>
