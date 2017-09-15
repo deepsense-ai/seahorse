@@ -5,7 +5,7 @@ dependencies:
 - { role: supervisedprogram,
     program: {
       name: 'WorkflowManager',
-      command: '{{install_dir}}/deepsense-workflowmanager/bin/deepsense-workflowmanager -Dconfig.file={{install_dir}}/application.conf -DlogFile=/home/ubuntu/log/deepsense/wm/deepsense-workflowmanager',
+      command: '{{install_dir}}/deepsense-workflowmanager/bin/deepsense-workflowmanager -Dconfig.file={{install_dir}}/application.conf -DlogFile={{install_dir}}/deepsense-workflowmanager',
       directory: "{{install_dir}}",
       autostart: true,
       autorestart: true,

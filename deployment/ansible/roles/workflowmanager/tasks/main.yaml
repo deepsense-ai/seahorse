@@ -11,6 +11,9 @@
 - name: Create config file
   template: src=application.conf.j2 dest="{{install_dir}}/application.conf"
 
+- name: Set directory permissions
+  file: path="{{install_dir}}" state=directory mode=0755 owner=ubuntu
+
 - name: Force supervisor restart
   command: /bin/true
   notify: restart supervisor
