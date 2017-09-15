@@ -6,14 +6,14 @@ package io.deepsense.sessionmanager.mq
 
 import java.util.concurrent.TimeoutException
 
-import scala.concurrent.{ExecutionContext, Future}
-import scala.util.control.NonFatal
-
 import akka.actor.{ActorRef, ActorSystem}
 import com.google.inject.name.Named
 import com.google.inject.{AbstractModule, Provides, Singleton}
 import com.rabbitmq.client.ConnectionFactory
 import com.thenewmotion.akka.rabbitmq.ConnectionActor
+
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.control.NonFatal
 
 import io.deepsense.commons.utils.Logging
 import io.deepsense.sessionmanager.service.executor.SessionExecutorClients
@@ -26,7 +26,7 @@ class MqModule extends AbstractModule with Logging {
 
   @Provides
   @Singleton
-  def communiactionFactory(
+  def communicationFactory(
       actorSystem: ActorSystem,
       @Named("MQConnectionActor") connection: ActorRef): MQCommunicationFactory = {
     MQCommunicationFactory(actorSystem, connection, GlobalMQSerializer, GlobalMQDeserializer)
@@ -70,8 +70,6 @@ class MqModule extends AbstractModule with Logging {
     implicit val ec: ExecutionContext = system.dispatcher
     val subscribed = communicationFactory
       .registerBroadcastSubscriber("seahorse_heartbeats_all", sessionServiceActor)
-
-    import system.dispatcher
 
     val subscribedWithTimeout = Future.firstCompletedOf(List(subscribed, Future {
       Thread.sleep(timeout)

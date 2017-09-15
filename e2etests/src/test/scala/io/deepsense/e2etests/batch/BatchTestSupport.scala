@@ -2,6 +2,13 @@ package io.deepsense.e2etests.batch
 
 import java.io.File
 
+import java.net.URL
+
+import spray.json._
+
+import scala.io.Source
+import scalaz.{Failure, Success}
+
 import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.e2etests.{SeahorseIntegrationTestDSL, TestDatasourcesInserter}
 import io.deepsense.models.json.workflow.WorkflowWithResultsJsonProtocol
@@ -27,22 +34,20 @@ trait BatchTestSupport
       specialFlags: Seq[String],
       workflowPath: File,
       weJarPath: File,
-      extraJarsPath: Seq[File],
+      additionalJars: Seq[URL],
       outputDirectory: File): String = {
-
     val exportsCommandFlat = envSettings.map{
       case(k, v) => s"export $k=$v"
     }.toSeq.mkString(" && ")
 
-    val driverClassPath = (extraJarsPath :+ weJarPath).mkString(":")
-
     val submitCommandFlat = (
       Seq(
         sparkSubmitPath,
-        "--driver-class-path", driverClassPath,
+        "--driver-class-path", weJarPath,
         "--class", "io.deepsense.workflowexecutor.WorkflowExecutorApp",
         "--master", masterString,
-        "--files", workflowPath
+        "--files", workflowPath,
+        "--jars", additionalJars.map(_.toString).mkString("\"", ",", "\"")
       ) ++
         specialFlags ++
         Seq(

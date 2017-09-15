@@ -7,18 +7,15 @@ package io.deepsense.e2etests
 import spray.json._
 
 import io.deepsense.commons.utils.{Logging, Version}
-import io.deepsense.deeplang.CatalogRecorder
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.WorkflowVersionUtil
 import io.deepsense.models.workflows.WorkflowWithVariables
 import io.deepsense.workflowmanager.rest.CurrentBuild
 
-object WorkflowParser extends Logging with WorkflowVersionUtil {
+class WorkflowJsonConverter(override val graphReader: GraphReader)
+    extends Logging
+    with WorkflowVersionUtil {
   override def currentVersion: Version = CurrentBuild.version
-
-  override val graphReader: GraphReader = {
-    new GraphReader(CatalogRecorder.catalogs.dOperationsCatalog)
-  }
 
   def parseWorkflow(raw: String): WorkflowWithVariables = {
     raw.parseJson.convertTo[WorkflowWithVariables](versionedWorkflowWithVariablesReader)

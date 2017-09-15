@@ -4,6 +4,7 @@
 
 package io.deepsense.e2etests
 
+import java.io.File
 import java.net.URL
 import java.util.UUID
 
@@ -12,7 +13,6 @@ import scala.concurrent.{Await, Future}
 import scala.language.postfixOps
 import scalaz.Scalaz._
 import scalaz._
-
 import akka.actor.ActorSystem
 import akka.util.Timeout
 import org.scalactic.source.Position
@@ -41,9 +41,22 @@ trait SeahorseIntegrationTestDSL
     with Logging
     with WorkflowWithVariablesJsonProtocol {
 
-  val CatalogPair(operablesCatalog, operationsCatalog) = CatalogRecorder.catalogs
 
-  override val graphReader = new GraphReader(operationsCatalog)
+
+  protected val dockerComposePath = "../deployment/docker-compose/"
+
+  private val localJarsDir = new File(dockerComposePath, "jars")
+  private val localJarPaths = getJarsFrom(localJarsDir)
+  protected val jarsInDockerPaths = localJarPaths
+    .map(f => new File("/resources/jars", f.getName))
+    .map(_.toURI.toURL)
+
+  private def catalogRecorder: CatalogRecorder =
+    CatalogRecorder.fromJars(localJarPaths.map(_.toURI.toURL))
+  private def catalogs = catalogRecorder.catalogs
+  final def operablesCatalog = catalogs.dOperableCatalog
+  final def operationsCatalog = catalogs.dOperationsCatalog
+  override def graphReader = new GraphReader(operationsCatalog)
 
   import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -204,5 +217,9 @@ trait SeahorseIntegrationTestDSL
 
   protected def insertDatasource(uuid: UUID, datasourceParams: DatasourceParams): Unit = {
     dsclient.insertDatasource(uuid, datasourceParams)
+  }
+
+  private def getJarsFrom(dir: File): Seq[File] = {
+    dir.listFiles.filter(f => f.isFile && f.getName.endsWith(".jar"))
   }
 }

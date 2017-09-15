@@ -7,14 +7,15 @@ import java.io.{File, PrintWriter}
 
 import scala.concurrent.Await
 import scala.sys.process._
-
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpec}
 
 import io.deepsense.e2etests.batch.JsonWorkflowsBatchTest.{ProcExitError, ProcExitSuccessful}
 import io.deepsense.commons.models.ClusterDetails
+import io.deepsense.deeplang.CatalogRecorder
+import io.deepsense.e2etests.{TestClusters, TestWorkflowsIterator}
 import io.deepsense.commons.utils.FileOpts._
 import io.deepsense.commons.utils.OptionOpts._
-import io.deepsense.e2etests.{TestClusters, TestWorkflowsIterator, WorkflowParser}
+import io.deepsense.e2etests.{TestClusters, TestWorkflowsIterator, WorkflowJsonConverter}
 import io.deepsense.models.workflows.WorkflowWithVariables
 
 class JsonWorkflowsBatchTest
@@ -23,13 +24,17 @@ class JsonWorkflowsBatchTest
   with BatchTestSupport
   with BeforeAndAfterAll {
 
+  val resultFilePath = "result.json"
+  val sparkVersion = org.apache.spark.SPARK_VERSION
+  val hadoopVersion = "2.7"
+  override val mesosSparkExecutorConf =
+    s"spark.mesos.executor.home=/spark-$sparkVersion/spark-$sparkVersion-bin-hadoop$hadoopVersion/"
+
   import scala.concurrent.ExecutionContext.Implicits.global
 
   private val testsDir = new File("target", "test-batch")
 
   private val resultsDir = new File(testsDir, "results")
-
-  private val dockerComposePath = "../deployment/docker-compose/"
 
   ensureSeahorseIsRunning()
 
@@ -88,9 +93,6 @@ class JsonWorkflowsBatchTest
     val workflowPath = new File(dockerBaseDir, "test-workflow.json")
     val weJarPath = new File(dockerBaseDir, "we.jar")
 
-    val localJarsDir = new File(dockerComposePath, "jars")
-    val localJarPaths = getJarsFrom(localJarsDir)
-    val jarsInDockerPaths = localJarPaths.map { case f => new File("/resources/jars", f.getName)}
     val outputDirectory = new File(dockerBaseDir, "test-output/")
     val dockerResultFilePath = new File(outputDirectory, "result.json")
     val sparkSubmitPath = "$SPARK_HOME/bin/spark-submit"
@@ -110,14 +112,14 @@ class JsonWorkflowsBatchTest
     )
 
     val submitCommand = prepareSubmitCommand(
-      sparkSubmitPath,
-      envSettings,
-      masterString,
-      specialFlags,
-      workflowPath,
-      weJarPath,
-      jarsInDockerPaths,
-      outputDirectory
+      sparkSubmitPath = sparkSubmitPath,
+      envSettings = envSettings,
+      masterString = masterString,
+      specialFlags = specialFlags,
+      workflowPath = workflowPath,
+      weJarPath = weJarPath,
+      additionalJars = jarsInDockerPaths,
+      outputDirectory = outputDirectory
     )
 
     logger.info(s"Submit command: $submitCommand")
@@ -175,15 +177,12 @@ class JsonWorkflowsBatchTest
   private def saveWorkflowToFile(file: File, workflowWithVariables: WorkflowWithVariables): Unit = {
     file.createPathToFile()
     file.createNewFile()
-    val raw = WorkflowParser.printWorkflow(workflowWithVariables, prettyPrint = true)
+    val raw = new WorkflowJsonConverter(graphReader)
+      .printWorkflow(workflowWithVariables, prettyPrint = true)
     new PrintWriter(file) {
       write(raw)
       close()
     }
-  }
-
-  private def getJarsFrom(dir: File): Seq[File] = {
-    dir.listFiles.filter(f => f.isFile && f.getName.endsWith(".jar"))
   }
 }
 

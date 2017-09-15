@@ -26,12 +26,12 @@ class DeepLangModule extends AbstractModule {
   @Singleton
   @Provides
   def provideDOperationsCatalog(): DOperationsCatalog = {
-    CatalogRecorder.catalogs.dOperationsCatalog
+    CatalogRecorder.resourcesCatalogRecorder.catalogs.dOperationsCatalog
   }
 
   @Singleton
   @Provides
   def provideDOperablesCatalog(): DOperableCatalog = {
-    CatalogRecorder.catalogs.dOperableCatalog
+    CatalogRecorder.resourcesCatalogRecorder.catalogs.dOperableCatalog
   }
 }
