@@ -389,7 +389,8 @@
         },
         "customSeparator": {
           "description": "Defined only if separatorType == custom",
-          "type": "string"
+          "type": "string",
+          "maxLength": 1
         }
       }
     },

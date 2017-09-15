@@ -19,6 +19,7 @@ package io.deepsense.deeplang.doperations
 import java.util.UUID
 
 import scala.reflect.runtime.{universe => ru}
+
 import io.deepsense.api.datasourcemanager.model._
 import io.deepsense.commons.rest.client.datasources.DatasourceClient
 import io.deepsense.commons.utils.Version
@@ -28,7 +29,7 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.WriteDatasource.WriteDatasourceParameters
 import io.deepsense.deeplang.doperations.inout.OutputStorageTypeChoice
 import io.deepsense.deeplang.doperations.readwritedatasource.FromDatasourceConverters
-import io.deepsense.deeplang.exceptions.DeepLangException
+import io.deepsense.deeplang.exceptions.{DeepLangException, DeepLangMultiException}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.datasource.DatasourceIdForWriteParam
 import io.deepsense.deeplang.params.{BooleanParam, Param}
@@ -67,7 +68,13 @@ class WriteDatasource()
   override protected def inferKnowledge
       (k0: DKnowledge[DataFrame])
       (context: InferContext): (Unit, InferenceWarnings) = {
-    createWriteDataFrameFromDatasource(context.datasourceClient).inferKnowledge(k0)(context)
+    val writeDataFrame = createWriteDataFrameFromDatasource(context.datasourceClient)
+
+    val parametersValidationErrors = writeDataFrame.validateParams
+    if (parametersValidationErrors.nonEmpty) {
+      throw new DeepLangMultiException(parametersValidationErrors)
+    }
+    writeDataFrame.inferKnowledge(k0)(context)
   }
 
   private def createWriteDataFrameFromDatasource(datasourceClient: DatasourceClient) = {

@@ -29,10 +29,11 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.ReadDatasource.ReadDataSourceParameters
 import io.deepsense.deeplang.doperations.inout.InputStorageTypeChoice
 import io.deepsense.deeplang.doperations.readwritedatasource.FromDatasourceConverters
-import io.deepsense.deeplang.exceptions.DeepLangException
+import io.deepsense.deeplang.exceptions.{DeepLangException, DeepLangMultiException}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
-import io.deepsense.deeplang.params.Param
+import io.deepsense.deeplang.params.{Param, Params}
 import io.deepsense.deeplang.params.datasource.DatasourceIdForReadParam
+import io.deepsense.deeplang.params.exceptions.ParamValueNotProvidedException
 import io.deepsense.deeplang.{DKnowledge, DOperation0To1, ExecutionContext}
 
 class ReadDatasource()
@@ -63,7 +64,13 @@ class ReadDatasource()
   }
 
   override protected def inferKnowledge()(context: InferContext): (DKnowledge[DataFrame], InferenceWarnings) = {
-    createReadDataFrameFromDataSource(context.datasourceClient).inferKnowledge()(context)
+    val readDataFrame = createReadDataFrameFromDataSource(context.datasourceClient)
+
+    val parametersValidationErrors = readDataFrame.validateParams
+    if (parametersValidationErrors.nonEmpty) {
+      throw new DeepLangMultiException(parametersValidationErrors)
+    }
+    readDataFrame.inferKnowledge()(context)
   }
 
   private def createReadDataFrameFromDataSource(datasourceClient: DatasourceClient) = {

@@ -51,11 +51,7 @@ trait NodeInferenceImpl extends NodeInference {
       try {
         val (outKnowledge, inferWarnings) =
           node.value.inferKnowledgeUntyped(inKnowledge)(context)
-        NodeInferenceResult(
-          outKnowledge,
-          warnings ++ inferWarnings,
-          errors ++ parametersValidationErrors
-        )
+        NodeInferenceResult(outKnowledge, warnings ++ inferWarnings, errors)
       } catch {
         case exception: DeepLangException =>
           defaultInferenceResult(exception.toVector)

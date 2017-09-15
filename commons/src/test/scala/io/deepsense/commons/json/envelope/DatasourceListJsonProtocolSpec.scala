@@ -19,7 +19,9 @@ package io.deepsense.commons.json.envelope
 import org.joda.time.DateTime
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
+
 import io.deepsense.api.datasourcemanager.model.{AccessLevel, Datasource, DatasourceParams, DatasourceType}
+import io.deepsense.commons.datasource.DatasourceTestData
 import io.deepsense.commons.json.datasources.DatasourceListJsonProtocol
 
 class DatasourceListJsonProtocolSpec
@@ -30,20 +32,7 @@ class DatasourceListJsonProtocolSpec
   val uuid = "123e4567-e89b-12d3-a456-426655440000"
   val externalFile = DatasourceType.EXTERNALFILE
 
-  val dsList = List(getTestDatasource)
-
-  def getTestDatasource: Datasource = {
-    val ds = new Datasource
-    ds.setId(uuid)
-    val params = new DatasourceParams
-    params.setDatasourceType(externalFile)
-    ds.setParams(params)
-    ds.setCreationDateTime(new DateTime())
-    ds.setAccessLevel(AccessLevel.WRITEREAD)
-    ds.setOwnerId("abcd")
-    ds.setOwnerName("owner_name")
-    ds
-  }
+  val dsList = List(DatasourceTestData.multicharSeparatorLibraryCsvDatasource)
 
   "DatasourceJsonProtocolSpec" should {
     "serialize and deserialize single datasource" in {

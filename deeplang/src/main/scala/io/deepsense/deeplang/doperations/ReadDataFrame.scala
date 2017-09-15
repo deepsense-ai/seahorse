@@ -56,9 +56,6 @@ case class ReadDataFrame()
   val params: Array[Param[_]] = Array(storageType)
   setDefault(storageType, new InputStorageTypeChoice.File())
 
-  override def getDatasourcesId: Set[UUID] = {
-    Set.empty[UUID]
-  }
   override def execute()(context: ExecutionContext): DataFrame = {
     implicit val ec = context
 
