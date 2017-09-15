@@ -17,7 +17,7 @@ case class StringParameter(value: String) extends Parameter
 
 case class ChoiceParameter(label: String, value: ParametersSchema) extends Parameter
 
-case class MultipleChoiceParameter(values: Set[ChoiceParameter]) extends Parameter
+case class MultipleChoiceParameter(values: Traversable[ChoiceParameter]) extends Parameter
 
 case class MultiplicatorParameter(value: List[ParametersSchema]) extends Parameter
 

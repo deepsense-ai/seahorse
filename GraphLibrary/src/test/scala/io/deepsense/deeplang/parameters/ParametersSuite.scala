@@ -11,6 +11,27 @@ import org.scalatest.{Matchers, FunSuite}
 import io.deepsense.deeplang.parameters.exceptions.TypeConversionException
 
 class ParametersSuite extends FunSuite with Matchers {
+
+  def fillBooleanHolderInSchema(
+      key: String,
+      schema: ParametersSchema,
+      value: BooleanParameter): Unit = {
+    schema(key) match {
+      case booleanHolder: BooleanParameterHolder => booleanHolder.value = Some(value)
+      case _ => throw new IllegalStateException()
+    }
+  }
+
+  def fillNumericHolderInSchema(
+      key: String,
+      schema: ParametersSchema,
+      value: NumericParameter): Unit = {
+    schema(key) match {
+      case numericHolder: NumericParameterHolder => numericHolder.value = Some(value)
+      case _ => throw new IllegalStateException()
+    }
+  }
+
   test("Getting Boolean Parameter") {
     val holder = BooleanParameterHolder("example", true, true)
     holder.value = Some(BooleanParameter(true))
@@ -40,37 +61,39 @@ class ParametersSuite extends FunSuite with Matchers {
     val possibleChoices = Map("onlyChoice" -> choiceSchema)
 
     val choice = ChoiceParameterHolder("description", None, true, possibleChoices)
-    choice.value = Some(ChoiceParameter("onlyChoice", choice.options("onlyChoice")))
-    holderNumeric.value = Some(NumericParameter(3.5))
-    holderBoolean.value = Some(BooleanParameter(true))
+    choice.fill("onlyChoice", schema => {
+      fillNumericHolderInSchema("x", schema, NumericParameter(3.5))
+      fillBooleanHolderInSchema("y", schema, BooleanParameter(true))
+    })
 
     val parametersSchema = ParametersSchema("choice" -> choice)
     parametersSchema.getChoiceParameter("choice").get match {
-      case ChoiceParameter("onlyChoice", schema) =>
-        assert(schema.getNumericParameter("x").get.value == 3.5)
-        assert(schema.getBooleanParameter("y").get.value == true)
-      case _ => throw new IllegalStateException
+      case ChoiceParameter("onlyChoice", chosen) =>
+        assert(chosen.getNumericParameter("x").get.value == 3.5)
+        assert(chosen.getBooleanParameter("y").get.value == true)
     }
   }
 
   test("Getting MultipleChoice Parameters") {
     val holderNumeric = NumericParameterHolder("description1", None, true, RangeValidator(3, 4))
     val holderBoolean = BooleanParameterHolder("description2", None, true)
-    holderNumeric.value = Some(NumericParameter(3.5))
-    holderBoolean.value = Some(BooleanParameter(true))
 
-    val multipleChoiceSchema = ParametersSchema("x" -> holderNumeric, "y" -> holderBoolean)
-    val possibleChoices = Map("onlyChoice" -> multipleChoiceSchema)
+    val choiceSchema = ParametersSchema("x" -> holderNumeric, "y" -> holderBoolean)
+    val possibleChoices = Map("onlyChoice" -> choiceSchema)
 
     val multipleChoice = MultipleChoiceParameterHolder("description", None, true, possibleChoices)
-    val chosenParameters = Set(ChoiceParameter("onlyChoice", multipleChoice.options("onlyChoice")))
-    multipleChoice.value = Some(MultipleChoiceParameter(chosenParameters))
+    multipleChoice.fill(Map("onlyChoice" -> (schema => {
+      fillNumericHolderInSchema("x", schema, NumericParameter(3.5))
+      fillBooleanHolderInSchema("y", schema, BooleanParameter(true))
+    })))
 
     val parametersSchema = ParametersSchema("multipleChoice" -> multipleChoice)
     parametersSchema.getMultipleChoiceParameter("multipleChoice").get match {
       case MultipleChoiceParameter(chosen) =>
-        assert(chosen.size == 1)
-        chosen should contain theSameElementsAs chosenParameters
+        val expected = Traversable(ChoiceParameter("onlyChoice", choiceSchema))
+        assert(chosen == expected)
+        assert(choiceSchema.getNumericParameter("x").get.value == 3.5)
+        assert(choiceSchema.getBooleanParameter("y").get.value == true)
     }
   }
 
@@ -79,21 +102,20 @@ class ParametersSuite extends FunSuite with Matchers {
     val schema = ParametersSchema("x" -> holder)
     val multiplicator = MultiplicatorParameterHolder("description", None, true, schema)
 
-    val holderIn1 = BooleanParameterHolder("example", None, true)
-    val holderIn2 = BooleanParameterHolder("example", None, true)
-    holderIn1.value = Some(BooleanParameter(true))
-    holderIn2.value = Some(BooleanParameter(true))
-    val schemaIn1 = ParametersSchema("x" -> holderIn1)
-    val schemaIn2 = ParametersSchema("x" -> holderIn2)
-    val values = List(schemaIn1, schemaIn2)
-    multiplicator.value = Some(MultiplicatorParameter(values))
+    val booleanParameter1 = BooleanParameter(false)
+    val booleanParameter2 = BooleanParameter(true)
 
-    multiplicator.value.get.value.foreach {
-      case s: ParametersSchema => assert(s.getBooleanParameter("x").get.value == true)
-      case _ => throw new IllegalStateException
+    multiplicator.fill(List(
+      schema => fillBooleanHolderInSchema("x", schema, booleanParameter1),
+      schema => fillBooleanHolderInSchema("x", schema, booleanParameter2)))
+
+    val parametersSchema = ParametersSchema("key" -> multiplicator)
+    parametersSchema.getMultiplicatorParameter("key").get match {
+      case MultiplicatorParameter(schema1 :: schema2 :: Nil) =>
+        assert(schema1.getBooleanParameter("x").get == booleanParameter1)
+        assert(schema2.getBooleanParameter("x").get == booleanParameter2)
     }
   }
-
 
   test("Getting single columns selector parameter") {
     val holder = SingleColumnSelectorParameterHolder("description", true)

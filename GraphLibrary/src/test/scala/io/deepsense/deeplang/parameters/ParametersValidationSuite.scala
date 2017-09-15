@@ -12,6 +12,8 @@ import io.deepsense.deeplang.parameters.exceptions.ValidationException
 import io.deepsense.deeplang.parameters.exceptions._
 
 class ParametersValidationSuite extends FunSuite {
+
+  /** Holder that always throws ValidationException, regardless of held value. */
   case class MockParameterHolder(
       description: String,
       default: Option[Nothing],
@@ -19,6 +21,11 @@ class ParametersValidationSuite extends FunSuite {
     extends ParameterHolder {
     type HeldParameter = Nothing
     val parameterType = null
+
+    def value = null
+
+    def replicate = copy()
+
     override def validate: Unit = {
       throw new ValidationException("Mock exception") {}
     }
@@ -105,17 +112,24 @@ class ParametersValidationSuite extends FunSuite {
       val possibleChoices = Map("onlyChoice" -> choiceSchema)
 
       val choice = ChoiceParameterHolder("choice", None, true, possibleChoices)
-      choice.value = Some(ChoiceParameter("onlyChoice", choice.options("onlyChoice")))
+      choice.fill("onlyChoice", _ => { })
       choice.validate
     }
   }
 
-  test("Choosing nonexistent choice should throw an exception") {
+  test("Choosing nonexistent choice in single choice parameter should throw an exception") {
     intercept[IllegalChoiceException] {
       val possibleChoices = Map.empty[String, ParametersSchema]
       val choice = ChoiceParameterHolder("choice", None, true, possibleChoices)
-      choice.value = Some(ChoiceParameter("nonexistent", ParametersSchema()))
-      choice.validate
+      choice.fill("nonexistent", x => { })
+    }
+  }
+
+  test("Choosing nonexistent choice in multiple choice parameter should throw an exception") {
+    intercept[IllegalChoiceException] {
+      val possibleChoices = Map.empty[String, ParametersSchema]
+      val choice = MultipleChoiceParameterHolder("choice", None, true, possibleChoices)
+      choice.fill(Map("nonexistent" -> (x => { })))
     }
   }
 
@@ -126,8 +140,7 @@ class ParametersValidationSuite extends FunSuite {
       val possibleChoices = Map("onlyChoice" -> choiceSchema)
 
       val multipleChoices = MultipleChoiceParameterHolder("choice", None, true, possibleChoices)
-      val choices = Set(ChoiceParameter("onlyChoice", multipleChoices.options("onlyChoice")))
-      multipleChoices.value = Some(MultipleChoiceParameter(choices))
+      multipleChoices.fill(Map("onlyChoice" -> (x => { })))
       multipleChoices.validate
     }
   }
@@ -138,12 +151,7 @@ class ParametersValidationSuite extends FunSuite {
       val schema = ParametersSchema("x" -> holder)
       val multiplicator = MultiplicatorParameterHolder("description", None, true, schema)
 
-      val holderIn1 = MockParameterHolder("example", None, true)
-      val holderIn2 = MockParameterHolder("example", None, true)
-      val schemaIn1 = ParametersSchema("x" -> holderIn1)
-      val schemaIn2 = ParametersSchema("x" -> holderIn2)
-      multiplicator.value = Some(MultiplicatorParameter(List(schemaIn1, schemaIn2)))
-
+      multiplicator.fill(List(x => { }, x => { }))
       multiplicator.validate
     }
   }

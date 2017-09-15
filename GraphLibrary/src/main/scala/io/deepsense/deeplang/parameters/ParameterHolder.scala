@@ -17,15 +17,20 @@ import io.deepsense.deeplang.parameters.exceptions.ParameterRequiredException
  */
 abstract class ParameterHolder {
   type HeldParameter <: Parameter
-
   val parameterType: ParameterType
   val description: String
   /** Default value of the parameter. Can be None if not provided. */
   val default: Option[HeldParameter]
   /** Flag specifying if parameter is required. */
   val required: Boolean
-  /** Value of the held parameter. Can be injected after creation of the holder. */
-  private[parameters] var value: Option[HeldParameter] = None
+  /** Value of the held parameter. */
+  def value: Option[HeldParameter]
+
+  /**
+   * Returns another holder which has all fields equal to this holder's fields
+   * except for held value.
+   */
+  private[parameters] def replicate: ParameterHolder
 
   def validate: Unit = {
     if (!value.isDefined && required) {

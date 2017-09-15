@@ -23,6 +23,20 @@ class ParametersSchema protected (schemaMap: Map[String, ParameterHolder] = Map.
     }
   }
 
+  /**
+   * Returns parameter holder that is assigned to given label.
+   */
+  def apply(label: String): ParameterHolder = schemaMap(label)
+
+  /**
+   * Creates another schema with the same keys and parameter holders under them.
+   * Values held by holders won't be copied.
+   */
+  private[parameters] def replicate: ParametersSchema = {
+    val replicatedSchemaMap = for ((name, holder) <- schemaMap) yield (name, holder.replicate)
+    new ParametersSchema(replicatedSchemaMap)
+  }
+
   def getBooleanParameter(name: String): Option[BooleanParameter] = get[BooleanParameter](name)
 
   def getStringParameter(name: String): Option[StringParameter] = get[StringParameter](name)
