@@ -16,5 +16,4 @@ sed "s|\${BASE_IMAGE_TAG}|$GIT_SHA|g" Dockerfile.template >> Dockerfile
 ( # build and publish deepsense-mesos-spark
 cd deployment/docker
 ./build-local-docker.sh ../mesos-spark-docker/ deepsense-mesos-spark
-./publish-local-docker.sh deepsense-mesos-spark
 )

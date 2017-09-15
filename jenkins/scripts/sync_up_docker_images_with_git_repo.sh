@@ -27,27 +27,28 @@ export SEAHORSE_BUILD_TAG="${SEAHORSE_BUILD_TAG:-$GIT_SHA}" # SET if SEAHORSE_BU
 
 function pullOrBuild {
   DOCKER_IMAGE=$1
-  BUILD_SCRIPT=$2
 
   set +e
   docker pull docker-repo.deepsense.codilime.com/deepsense_io/$DOCKER_IMAGE:$GIT_SHA
   IMAGE_EXISTS_IF_ZERO=$?
   set -e
   if [ "$IMAGE_EXISTS_IF_ZERO" -gt 0 ]; then
-    $BUILD_SCRIPT
+    ./jenkins/manage-docker.py --build --images $DOCKER_IMAGE
   else
     echo "Docker image $DOCKER_IMAGE:$GIT_SHA already exists"
   fi
+
+  ./jenkins/manage-docker.py --publish --images $DOCKER_IMAGE
 }
 
-pullOrBuild "deepsense-proxy" "./jenkins/proxy-publish.sh"
-pullOrBuild "deepsense-rabbitmq" "./jenkins/rabbitmq-publish.sh"
-pullOrBuild "deepsense-h2" "./jenkins/h2-docker-publish.sh"
-pullOrBuild "deepsense-spark" "./jenkins/publish_spark_docker.sh"
-pullOrBuild "deepsense-mesos-spark" "./jenkins/publish_spark_docker_mesos.sh"
-pullOrBuild "deepsense-sessionmanager" "./jenkins/sessionmanager-docker-publish.sh"
-pullOrBuild "deepsense-workflowmanager" "./jenkins/workflowmanager-publish.sh"
-pullOrBuild "deepsense-datasourcemanager" "./jenkins/datasourcemanager-publish.sh"
-pullOrBuild "deepsense-libraryservice" "./jenkins/libraryservice-publish.sh"
-pullOrBuild "deepsense-notebooks" "./jenkins/notebooks-publish.sh"
-pullOrBuild "deepsense-authorization" "./jenkins/authorization-publish.sh"
+pullOrBuild "deepsense-proxy"
+pullOrBuild "deepsense-rabbitmq"
+pullOrBuild "deepsense-h2"
+pullOrBuild "deepsense-spark"
+pullOrBuild "deepsense-mesos-spark"
+pullOrBuild "deepsense-sessionmanager"
+pullOrBuild "deepsense-workflowmanager"
+pullOrBuild "deepsense-datasourcemanager"
+pullOrBuild "deepsense-libraryservice"
+pullOrBuild "deepsense-notebooks"
+pullOrBuild "deepsense-authorization"
