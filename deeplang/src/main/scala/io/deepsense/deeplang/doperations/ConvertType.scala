@@ -12,7 +12,7 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.dataframe.types.Conversions
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoricalMapper, CategoricalMetadata}
 import io.deepsense.deeplang.parameters.ColumnType.ColumnType
-import io.deepsense.deeplang.parameters.{ChoiceParameter, ColumnSelectorParameter, ColumnType, ParametersSchema}
+import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{DOperation1To1, ExecutionContext}
 
 class ConvertType extends DOperation1To1[DataFrame, DataFrame] {
@@ -117,4 +117,19 @@ class ConvertType extends DOperation1To1[DataFrame, DataFrame] {
 object ConvertType {
   val SelectedColumns = "selectedColumns"
   val TargetType = "targetType"
+
+  def apply(
+      targetType: ColumnType.ColumnType,
+      names: Set[String] = Set.empty,
+      indices: Set[Int] = Set.empty): ConvertType = {
+    val ct = new ConvertType
+    val params = ct.parameters
+    params.getColumnSelectorParameter(SelectedColumns).value =
+      Some(MultipleColumnSelection(Vector(
+        NameColumnSelection(names),
+        IndexColumnSelection(indices))))
+
+    params.getChoiceParameter(TargetType).value = Some(targetType.toString)
+    ct
+  }
 }

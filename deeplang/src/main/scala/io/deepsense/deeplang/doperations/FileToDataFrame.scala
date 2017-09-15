@@ -228,4 +228,25 @@ object FileToDataFrame {
       types.StringType
     }
   }
+
+  def apply(
+      fileType: FileType,
+      columnSeparator: String,
+      namesIncluded: Boolean = false,
+      categoricalNames: Set[String] = Set.empty,
+      categoricalIds: Set[Int] = Set.empty): FileToDataFrame = {
+    val fileToDataFrame = new FileToDataFrame
+    val params = fileToDataFrame.parameters
+    val formatParam = params.getChoiceParameter(formatParameter)
+    formatParam.value = Option(fileType.toString)
+    val formatOptions = formatParam.options(fileType.toString)
+    formatOptions.getStringParameter(separatorParameter).value = Some(columnSeparator)
+    formatOptions.getBooleanParameter(namesIncludedParameter).value = Some(namesIncluded)
+    params.getColumnSelectorParameter(categoricalColumnsParameter)
+      .value = Some(MultipleColumnSelection(Vector(
+        NameColumnSelection(categoricalNames),
+        IndexColumnSelection(categoricalIds)
+    )))
+    fileToDataFrame
+  }
 }

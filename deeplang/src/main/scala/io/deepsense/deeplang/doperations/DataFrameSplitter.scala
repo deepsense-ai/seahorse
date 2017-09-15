@@ -14,17 +14,13 @@ import io.deepsense.deeplang.{DOperation, DOperation1To2, ExecutionContext}
 
 class DataFrameSplitter extends DOperation1To2[DataFrame, DataFrame, DataFrame] {
   override val name: String = "Split DataFrame"
-
   override val id: DOperation.Id = "d273c42f-b840-4402-ba6b-18282cc68de3"
 
-  val splitRatioParam = "split ratio"
-
-  val seedParam = "seed"
-
+  import DataFrameSplitter._
   override protected def _execute(context: ExecutionContext)
                                  (df: DataFrame): (DataFrame, DataFrame) = {
-    val range: Double = parameters.getNumericParameter(splitRatioParam).value.get
-    val seed: Long = parameters.getNumericParameter(seedParam).value.get.toLong
+    val range: Double = parameters.getNumericParameter(SplitRatioParam).value.get
+    val seed: Long = parameters.getNumericParameter(SeedParam).value.get.toLong
     val Array(f1: RDD[Row], f2: RDD[Row]) = split(df, range, seed)
     val schema = df.sparkDataFrame.schema
     val dataFrame1 = context.dataFrameBuilder.buildDataFrame(schema, f1)
@@ -37,13 +33,13 @@ class DataFrameSplitter extends DOperation1To2[DataFrame, DataFrame, DataFrame] 
   }
 
   override val parameters: ParametersSchema = ParametersSchema(
-    splitRatioParam ->
+    SplitRatioParam ->
       NumericParameter("Proportion of splitting",
         default = Some(0.5),
         required = true,
         RangeValidator(0.0, 1.0, true, true)
       ),
-    seedParam ->
+    SeedParam ->
       NumericParameter("Seed value",
         default = Some(1.0),
         required = true,
@@ -51,4 +47,16 @@ class DataFrameSplitter extends DOperation1To2[DataFrame, DataFrame, DataFrame] 
         RangeValidator(Int.MinValue / 2, Int.MaxValue / 2, true, true, Some(1.0))
       )
   )
+}
+
+object DataFrameSplitter {
+  val SplitRatioParam = "split ratio"
+  val SeedParam = "seed"
+
+  def apply(splitRatio: Double, seed: Long): DataFrameSplitter = {
+    val splitter = new DataFrameSplitter
+    splitter.parameters.getNumericParameter(SplitRatioParam).value = Some(splitRatio)
+    splitter.parameters.getNumericParameter(SeedParam).value = Some(seed)
+    splitter
+  }
 }

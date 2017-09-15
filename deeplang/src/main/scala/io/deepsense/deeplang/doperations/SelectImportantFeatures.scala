@@ -12,7 +12,7 @@ import io.deepsense.deeplang.{DOperation1To1, ExecutionContext}
 /**
  * Mock.
  */
-class SelectImportantFeatures extends DOperation1To1[DataFrame, DataFrame] {
+case class SelectImportantFeatures() extends DOperation1To1[DataFrame, DataFrame] {
   override val name: String = "Select important features"
   override val id: Id = "c25e034e-ffac-11e4-a322-1697f925ec7b"
 

@@ -61,4 +61,11 @@ class SaveDataFrame extends DOperation1To0[DataFrame] {
 object SaveDataFrame {
   val nameParam = "name"
   val descriptionParam = "description"
+
+  def apply(name: String, description: String = ""): SaveDataFrame = {
+    val saveDataFrame = new SaveDataFrame
+    saveDataFrame.parameters.getStringParameter(nameParam).value = Some(name)
+    saveDataFrame.parameters.getStringParameter(descriptionParam).value = Some(description)
+    saveDataFrame
+  }
 }

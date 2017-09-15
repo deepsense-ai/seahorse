@@ -10,7 +10,7 @@ import io.deepsense.commons.utils.DoubleUtils
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.{Evaluator, Report}
-import io.deepsense.deeplang.parameters.{NameSingleColumnSelection, ParametersSchema}
+import io.deepsense.deeplang.parameters.NameSingleColumnSelection
 import io.deepsense.reportlib.model.{ReportContent, Table}
 
 case class EvaluateRegression() extends Evaluator {
@@ -54,7 +54,6 @@ case class EvaluateRegression() extends Evaluator {
 }
 
 object EvaluateRegression {
-
   def apply(
       targetColumnName: String,
       predictionColumnName: String): EvaluateClassification = {

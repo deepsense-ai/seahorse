@@ -9,10 +9,10 @@ import org.apache.hadoop.hdfs.protocol.HdfsFileStatus
 import org.apache.hadoop.io.{LongWritable, Text}
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat
 
-import io.deepsense.deeplang.doperables.file.File
-import io.deepsense.deeplang.parameters.{ChoiceParameter, AcceptAllRegexValidator, ParametersSchema, StringParameter}
-import io.deepsense.deeplang.{DOperation, DOperation0To1, ExecutionContext}
 import io.deepsense.commons.datetime.DateTimeConverter
+import io.deepsense.deeplang.doperables.file.File
+import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, ChoiceParameter, ParametersSchema, StringParameter}
+import io.deepsense.deeplang.{DOperation, DOperation0To1, ExecutionContext}
 
 /**
  * Operation which is able to read File from HDFS.
@@ -88,5 +88,22 @@ object ReadFile {
     Map(
       "Size" -> fileStatus.getLen.toString,
       "Modification time" -> modificationStr)
+  }
+
+  /**
+   * Creates ReadFile operation with parameters already set.
+   * @param path A path of a file to read.
+   * @param separator A line separator used in the file.
+   * @return ReadFile operation.
+   */
+  def apply(path: String, separator: String): ReadFile = {
+    val readFile = new ReadFile
+    val params = readFile.parameters
+    params.getStringParameter(pathParam).value = Some(path)
+    val separatorChoice: ChoiceParameter = params.getChoiceParameter(lineSeparatorParam)
+    separatorChoice.value = Some(customLineSeparatorLabel)
+    separatorChoice.options(customLineSeparatorLabel)
+      .getStringParameter(customLineSeparatorParam).value = Some(separator)
+    readFile
   }
 }

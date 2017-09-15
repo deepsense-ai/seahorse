@@ -16,9 +16,7 @@ class GraphWithSplitterIntegSuite extends GraphExecutionIntegSuite {
   loadOp.parameters.getStringParameter(idParam).value =
     Some(SimpleGraphExecutionIntegSuiteEntities.entityUuid)
 
-  val splitOp = new DataFrameSplitter
-  splitOp.parameters.getNumericParameter(splitOp.splitRatioParam).value = Some(0.2)
-  splitOp.parameters.getNumericParameter(splitOp.seedParam).value = Some(1)
+  val splitOp = DataFrameSplitter(0.2, 1)
 
   import io.deepsense.deeplang.doperations.SaveDataFrame._
   val saveOpLeft = new SaveDataFrame

@@ -32,4 +32,10 @@ class MathematicalOperation extends DOperation0To1[Transformation] {
 
 object MathematicalOperation {
   val formulaParam = "formula"
+
+  def apply(formula: String): MathematicalOperation = {
+    val operation = new MathematicalOperation
+    operation.parameters.getStringParameter(formulaParam).value = Some(formula)
+    operation
+  }
 }

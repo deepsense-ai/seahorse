@@ -62,9 +62,9 @@ class DataFrameSplitterIntegSpec
 
   private def operation(range: Double, seed: Double): DataFrameSplitter = {
     val operation = new DataFrameSplitter
-    val valueParam = operation.parameters.getNumericParameter(operation.splitRatioParam)
+    val valueParam = operation.parameters.getNumericParameter(DataFrameSplitter.SplitRatioParam)
     valueParam.value = Some(range)
-    val seedParam = operation.parameters.getNumericParameter(operation.seedParam)
+    val seedParam = operation.parameters.getNumericParameter(DataFrameSplitter.SeedParam)
     seedParam.value = Some(seed)
     operation
   }

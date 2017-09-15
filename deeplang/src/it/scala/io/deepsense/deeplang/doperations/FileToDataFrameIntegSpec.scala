@@ -118,10 +118,7 @@ class FileToDataFrameIntegSpec extends DeeplangIntegTestSupport {
     new File(Some(linesRdd), Some(Map()))
   }
 
-  private def emptyFile: File = linesToFile(Seq.empty)
-
   private def generateName(i: Int) = s"column_$i"
-
 
   val namesFromFile = Seq(
     categoricalDoubleName, "Msg", "Val", categoricalName,

@@ -23,10 +23,30 @@ abstract class GraphExecutionIntegSuite
 
   before {
     copyDataFrameToHdfs()
+    copyFilesToHdfs()
+  }
+
+  after {
+    cleanupHdfs()
   }
 
   experimentName should "run on external YARN cluster" in {
     testOnYarnCluster(experiment)
+  }
+
+  protected def requiredFiles: Map[String, String] = Map()
+
+  protected def cleanupHdfs(): Unit = {
+    requiredFiles.foreach { case (_, to) =>
+      cli.get.delete(to, true)
+    }
+  }
+
+  protected def copyFilesToHdfs(): Unit = {
+    cleanupHdfs()
+    requiredFiles.foreach { case (from, to) =>
+      copyFromLocal(this.getClass.getResource(from).getPath, to)
+    }
   }
 
   protected def testOnYarnCluster(experiment: Experiment): Unit = {
