@@ -57,21 +57,21 @@ wget "${ARTIFACTORY_URL}/${SEAHORSE_DISTRIBUTION_REPOSITORY}/io/deepsense/${SEAH
 aws s3 cp $DOCKER_COMPOSE_YML s3://${RELEASE_PATH}/$DOCKER_COMPOSE_YML --acl public-read
 
 
-VAGRANTFILE="Vagrantfile"
-echo "Generating and sending $VAGRANTFILE to artifactory"
-rm -f $VAGRANTFILE
-SEAHORSE_VM_BOX_FILE="seahorse-vm-${API_VERSION}.box"
-URL="https://s3.amazonaws.com/${RELEASE_PATH}/${SEAHORSE_VM_BOX_FILE}"
-sed -e "s#SEAHORSE_BOX_URL_VARIABLE#${URL}#" -e "s#SEAHORSE_BOX_NAME_VARIABLE#seahorse-vm-${API_VERSION}#" -e "s#SEAHORSE_BOX_HOSTNAME_VARIABLE#seahorse-vm-${API_VERSION//./-}#" deployment/image_publication/Vagrantfile.template > $VAGRANTFILE
-
-source jenkins/publish_to_artifactory_function.sh
-publish_to_artifactory $VAGRANTFILE ${SEAHORSE_DISTRIBUTION_REPOSITORY}/io/deepsense/${SEAHORSE_BUILD_TAG}/vagrant/${VAGRANTFILE}
-
-
-echo "Publish to S3 $VAGRANTFILE"
-aws s3 cp $VAGRANTFILE s3://${RELEASE_PATH}/$VAGRANTFILE --acl public-read
-
-echo "Publish to S3 $SEAHORSE_VM_BOX_FILE"
-rm -f $SEAHORSE_VM_BOX_FILE
-wget "${ARTIFACTORY_URL}/${SEAHORSE_DISTRIBUTION_REPOSITORY}/io/deepsense/${SEAHORSE_BUILD_TAG}/vagrant/$SEAHORSE_VM_BOX_FILE"
-aws s3 cp $SEAHORSE_VM_BOX_FILE s3://${RELEASE_PATH}/$SEAHORSE_VM_BOX_FILE --acl public-read
+#VAGRANTFILE="Vagrantfile"
+#echo "Generating and sending $VAGRANTFILE to artifactory"
+#rm -f $VAGRANTFILE
+#SEAHORSE_VM_BOX_FILE="seahorse-vm-${API_VERSION}.box"
+#URL="https://s3.amazonaws.com/${RELEASE_PATH}/${SEAHORSE_VM_BOX_FILE}"
+#sed -e "s#SEAHORSE_BOX_URL_VARIABLE#${URL}#" -e "s#SEAHORSE_BOX_NAME_VARIABLE#seahorse-vm-${API_VERSION}#" -e "s#SEAHORSE_BOX_HOSTNAME_VARIABLE#seahorse-vm-${API_VERSION//./-}#" deployment/image_publication/Vagrantfile.template > $VAGRANTFILE
+#
+#source jenkins/publish_to_artifactory_function.sh
+#publish_to_artifactory $VAGRANTFILE ${SEAHORSE_DISTRIBUTION_REPOSITORY}/io/deepsense/${SEAHORSE_BUILD_TAG}/vagrant/${VAGRANTFILE}
+#
+#
+#echo "Publish to S3 $VAGRANTFILE"
+#aws s3 cp $VAGRANTFILE s3://${RELEASE_PATH}/$VAGRANTFILE --acl public-read
+#
+#echo "Publish to S3 $SEAHORSE_VM_BOX_FILE"
+#rm -f $SEAHORSE_VM_BOX_FILE
+#wget "${ARTIFACTORY_URL}/${SEAHORSE_DISTRIBUTION_REPOSITORY}/io/deepsense/${SEAHORSE_BUILD_TAG}/vagrant/$SEAHORSE_VM_BOX_FILE"
+#aws s3 cp $SEAHORSE_VM_BOX_FILE s3://${RELEASE_PATH}/$SEAHORSE_VM_BOX_FILE --acl public-read
