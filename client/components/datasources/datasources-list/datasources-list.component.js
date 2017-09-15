@@ -16,7 +16,8 @@ const DatasourcesListComponent = {
     }
 
     sort(type, order) {
-
+      this.filterType = type;
+      this.filterOrder = order;
     }
   }
 };
