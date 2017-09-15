@@ -36,13 +36,14 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
     }
 
     initRootWorkflow(workflowData) {
-      let workflow = this._createWorkflowFromWorkflowData(workflowData);
+      let workflow = this._deserializeWorkflow(workflowData);
 
       let nodes = _.values(workflow.getNodes());
       nodes.filter((n) => n.operationId === CUSTOM_TRANSFORMER_ID)
         .forEach((node) => this.initInnerWorkflow(node));
 
       $rootScope.$watch(() => workflow.serialize(), (newSerializedWorkflow) => {
+        console.log('Saving workflow after change...', newSerializedWorkflow);
         WorkflowsApiClient.updateWorkflow(newSerializedWorkflow);
       }, true);
 
@@ -53,13 +54,13 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
 
     initInnerWorkflow(node) {
       let innerWorkflowData = node.parametersValues[INNER_WORKFLOW_PARAM_NAME];
-      let innerWorkflow = this._createWorkflowFromWorkflowData(innerWorkflowData);
+      let innerWorkflow = this._deserializeInnerWorkflow(innerWorkflowData);
       this._innerWorkflowByNodeId[node.id] = innerWorkflow;
 
       let nestedCustomTransformerNodes = _.filter(_.values(innerWorkflow.getNodes()), (n) => n.operationId === CUSTOM_TRANSFORMER_ID);
       _.forEach(nestedCustomTransformerNodes, (node) => this.initInnerWorkflow(node));
 
-      $rootScope.$watch(() => innerWorkflow.serialize(), (newVal) => {
+      $rootScope.$watch(() => this._serializeInnerWorkflow(innerWorkflow), (newVal) => {
         node.parametersValues = node.parametersValues || {};
         node.parametersValues[INNER_WORKFLOW_PARAM_NAME] = newVal;
       }, true);
@@ -81,7 +82,19 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
       });
     }
 
-    _createWorkflowFromWorkflowData(workflowData) {
+    _serializeInnerWorkflow(workflow) {
+      let workflowData = workflow.serialize();
+      workflowData.publicParams = workflow.publicParams;
+      return workflowData;
+    }
+
+    _deserializeInnerWorkflow(workflowData) {
+      let workflow = this._deserializeWorkflow(workflowData);
+      workflow.publicParams = workflowData.publicParams || [];
+      return workflow;
+    }
+
+    _deserializeWorkflow(workflowData) {
       let operations = Operations.getData();
       let workflow = new Workflow();
       let thirdPartyData = workflowData.thirdPartyData || {};

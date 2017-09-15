@@ -34,6 +34,7 @@ function DefaultInnerWorkflowGenerator(UUIDGenerator) {
             }
           }]
         },
+        publicParams: [],
         'thirdPartyData': {
           'gui': {
             'name': 'Inner workflow of custom transformer',
