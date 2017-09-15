@@ -112,10 +112,7 @@ object DataFrameColumnsGetter {
     multipleColumnSelection: MultipleColumnSelection): Unit = {
 
     val selections = multipleColumnSelection.selections
-    val invalidSelections = selections.filterNot(isSelectionValid(schema, _))
-    if (invalidSelections.nonEmpty) {
-      throw ColumnsDoNotExistException(invalidSelections, schema)
-    }
+    selections.foreach(checkSelectionValidity(schema, _))
   }
 
   def assertColumnNamesValid(schema: StructType, columns: Seq[String]): Unit = {
@@ -125,24 +122,30 @@ object DataFrameColumnsGetter {
 
   /**
    * Checks if given selection is valid with regard to dataframe schema.
-   * Returns false if some specified names or indexes are incorrect.
+   * Throws a ColumnsDoNotExistException if some specified names or indexes are incorrect.
    */
-  private def isSelectionValid(
+  private def checkSelectionValidity(
     schema: StructType,
-    selection: ColumnSelection): Boolean = selection match {
+    selection: ColumnSelection): Unit = {
 
-    case IndexColumnSelection(indexes) =>
-      val length = schema.length
-      val indexesOutOfBounds = indexes.filter(index => index < 0 || index >= length)
-      indexesOutOfBounds.isEmpty
-    case NameColumnSelection(names) =>
-      val allNames = schema.fieldNames.toSet
-      val nonExistingNames = names.filter(!allNames.contains(_))
-      nonExistingNames.isEmpty
-    case TypeColumnSelection(_) => true
-    case IndexRangeColumnSelection(Some(lowerBound), Some(upperBound)) =>
-      schema.length > upperBound && lowerBound >= 0
-    case IndexRangeColumnSelection(None, None) => true
+    val valid = selection match {
+      case IndexColumnSelection(indexes) =>
+        val length = schema.length
+        val indexesOutOfBounds = indexes.filter(index => index < 0 || index >= length)
+        indexesOutOfBounds.isEmpty
+      case NameColumnSelection(names) =>
+        val allNames = schema.fieldNames.toSet
+        val nonExistingNames = names.filter(!allNames.contains(_))
+        nonExistingNames.isEmpty
+      case TypeColumnSelection(_) => true
+      case IndexRangeColumnSelection(Some(lowerBound), Some(upperBound)) =>
+        schema.length > upperBound && lowerBound >= 0
+      case IndexRangeColumnSelection(None, None) => true
+    }
+
+    if (!valid) {
+      throw ColumnsDoNotExistException(selection, schema)
+    }
   }
 
   /**

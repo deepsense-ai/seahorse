@@ -132,7 +132,7 @@ case class MathematicalTransformation() extends Transformer {
       val referredColumnNames = expression.references.map(_.name).toSet
       if(!referredColumnNames.subsetOf(columnNames)) {
         val nonExistingColumns = referredColumnNames -- columnNames
-        throw ColumnsDoNotExistException(namesToSelections(nonExistingColumns), schema)
+        throw ColumnsDoNotExistException(NameColumnSelection(nonExistingColumns), schema)
       }
     } catch {
       case de: DeepLangException =>
@@ -147,9 +147,5 @@ case class MathematicalTransformation() extends Transformer {
     if(schema.map(_.name).contains(alias)) {
       throw ColumnAliasNotUniqueException(alias)
     }
-  }
-
-  private def namesToSelections(columnNames: Traversable[String]): Vector[ColumnSelection] = {
-    columnNames.map((name: String) => new NameColumnSelection(Set(name))).toVector
   }
 }

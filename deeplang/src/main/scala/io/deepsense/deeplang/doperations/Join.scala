@@ -207,10 +207,10 @@ case class Join()
 
     logger.debug("Validate that columns used for joining is not empty")
     if (leftJoinColumnNames.isEmpty) {
-      throw ColumnsDoNotExistException(namesToSelections(leftJoinColumnNames), leftSchema)
+      throw ColumnsDoNotExistException(NameColumnSelection(leftJoinColumnNames.toSet), leftSchema)
     }
     if (rightJoinColumnNames.isEmpty) {
-      throw ColumnsDoNotExistException(namesToSelections(rightJoinColumnNames), rightSchema)
+      throw ColumnsDoNotExistException(NameColumnSelection(rightJoinColumnNames.toSet), rightSchema)
     }
 
     logger.debug("Validate types of columns used to join two DataFrames")
@@ -236,11 +236,6 @@ case class Join()
     }
     joinCondition
   }
-
-  private def namesToSelections(columnNames: Traversable[String]): Vector[ColumnSelection] = {
-    columnNames.map((name: String) => new NameColumnSelection(Set(name))).toVector
-  }
-
 
   @transient
   override lazy val tTagTI_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
