@@ -7,6 +7,7 @@ package io.deepsense.experimentmanager
 import com.google.inject.AbstractModule
 import com.google.inject.binder.LinkedBindingBuilder
 import com.google.inject.multibindings.Multibinder
+import com.google.inject.name.Names.named
 
 import io.deepsense.commons.auth.AuthModule
 import io.deepsense.commons.rest.{RestComponent, VersionApi}
@@ -25,6 +26,8 @@ class ApisModule(withMockedSecurity: Boolean) extends AbstractModule {
   }
 
   override def configure(): Unit = {
+    bind(classOf[String]).annotatedWith(named("componentName")).toInstance("experimentmanager")
+
     install(new AuthModule(withMockedSecurity))
     install(new GraphReaderModule)
     install(new DeepLangModule)

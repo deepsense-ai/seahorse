@@ -6,11 +6,13 @@ package io.deepsense.commons.rest
 
 import buildinfo.BuildInfo
 import com.google.inject.Inject
+import com.google.inject.name.Named
 import spray.routing.Route
 
 import io.deepsense.commons.auth.usercontext.TokenTranslator
 
 class VersionApi @Inject() (
+    @Named("componentName") val componentName: String,
     val tokenTranslator: TokenTranslator)
   extends RestApi with RestComponent {
 
@@ -19,7 +21,9 @@ class VersionApi @Inject() (
       handleExceptions(exceptionHandler) {
         path("version") {
           get {
-            complete(BuildInfo.toString)
+            complete(s"name: $componentName, version: ${BuildInfo.version}, " +
+              s"scalaVersion: ${BuildInfo.scalaVersion}, sbtVersion: ${BuildInfo.sbtVersion}, " +
+              s"gitCommitId: ${BuildInfo.gitCommitId}")
           }
         }
       }

@@ -66,7 +66,9 @@ trait DeployModelService extends HttpService with Logging {
   } ~
   path("version") {
     get {
-      complete(BuildInfo.toString)
+      complete(s"name: deploy-model-service, version: ${BuildInfo.version}, " +
+        s"scalaVersion: ${BuildInfo.scalaVersion}, sbtVersion: ${BuildInfo.sbtVersion}, " +
+        s"gitCommitId: ${BuildInfo.gitCommitId}")
     }
   }
 }

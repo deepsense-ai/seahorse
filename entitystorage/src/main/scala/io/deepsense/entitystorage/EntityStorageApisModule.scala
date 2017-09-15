@@ -7,6 +7,7 @@ package io.deepsense.entitystorage
 import com.google.inject.AbstractModule
 import com.google.inject.binder.LinkedBindingBuilder
 import com.google.inject.multibindings.Multibinder
+import com.google.inject.name.Names.named
 
 import io.deepsense.commons.auth.AuthModule
 import io.deepsense.commons.rest.{RestComponent, VersionApi}
@@ -23,6 +24,8 @@ class ApisModule(withMockedSecurity: Boolean) extends AbstractModule {
   }
 
   override def configure(): Unit = {
+    bind(classOf[String]).annotatedWith(named("componentName")).toInstance("entitystorage")
+
     install(new AuthModule(withMockedSecurity))
     bindApi.to(classOf[EntitiesApi])
     bindApi.to(classOf[VersionApi])
