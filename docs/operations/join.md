@@ -87,7 +87,7 @@ random strings will be appended to them.
 </thead>
 <tbody>
 <tr>
-<td><code id="join-type">join type</code></td>
+<td><code>join type</code></td>
 <td><code><a href="../parameter_types.html#single_choice">Single Choice</a></code></td>
 <td>The type of the join to perform. Possible values are:
    <code>Inner</code>, <code>Outer</code>, <code>Left outer</code>, <code>Right outer</code>.
@@ -95,7 +95,7 @@ random strings will be appended to them.
 </tr>
 
 <tr>
-<td><code id="join-columns">join columns</code></td>
+<td><code>join columns</code></td>
 <td><code><a href="../parameter_types.html#parameters-sequence">Parameters Sequence</a></code></td>
 <td>The sequence of column pairs (<code>left column: <a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code>,
    <code>right column: <a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code>) defining the condition for the JOIN operation.
@@ -105,13 +105,13 @@ random strings will be appended to them.
    <code>WrongColumnTypeException</code> is thrown.</td>
 </tr>
 <tr>
-<td><code id="left-prefix">left prefix</code></td>
+<td><code>left prefix</code></td>
 <td><code><a href="../parameter_types.html#string">String</a></code></td>
 <td>An optional prefix, which can be prepended
    to these columns in the output table, which come from the left input table.</td>
 </tr>
 <tr>
-<td><code id="right-prefix">right prefix</code></td>
+<td><code>right prefix</code></td>
 <td><code><a href="../parameter_types.html#string">String</a></code></td>
 <td>An optional prefix, which can be prepended
    to these columns in the output table, which come from the right input table.</td>

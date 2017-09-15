@@ -74,7 +74,7 @@ using the <a href="transform.html">Transform</a>.</td>
 </thead>
 <tbody>
 <tr>
-<td><code id="projection-columns">projection columns</code></td>
+<td><code>projection columns</code></td>
 <td><code><a href="../parameter_types.html#parameters-sequence">Parameters Sequence</a></code></td>
 <td>The sequence of column projection descriptions
    (<code>original column: <a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code>,

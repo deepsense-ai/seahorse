@@ -115,7 +115,7 @@ The `Read DataFrame` operation does not take any input.
   <tbody>
     <tr>
       <td>
-        <code id="data-storage-type">data storage type</code>
+        <code>data storage type</code>
       </td>
       <td>
         <code><a href="../parameter_types.html#single-choice">Single Choice</a></code>
@@ -126,7 +126,7 @@ The `Read DataFrame` operation does not take any input.
     </tr>
     <tr>
       <td>
-        <code id="source">source</code>
+        <code>source</code>
       </td>
       <td>
         <code><a href="../parameter_types.html#string">String</a></code>
@@ -137,7 +137,7 @@ The `Read DataFrame` operation does not take any input.
     </tr>
     <tr>
       <td>
-        <code id="format">format</code>
+        <code>format</code>
       </td>
       <td>
         <code><a href="../parameter_types.html#single-choice">Single Choice</a></code>
@@ -149,7 +149,7 @@ The `Read DataFrame` operation does not take any input.
     </tr>
     <tr>
       <td>
-        <code id="separator">separator</code>
+        <code>separator</code>
       </td>
       <td>
         <code><a href="../parameter_types.html#single-choice">Single Choice</a></code>
@@ -164,7 +164,7 @@ The `Read DataFrame` operation does not take any input.
 
     <tr>
       <td>
-        <code id="custom-separator">custom separator</code>
+        <code>custom separator</code>
       </td>
       <td>
         <code><a href="../parameter_types.html#string">String</a></code>
@@ -176,7 +176,7 @@ The `Read DataFrame` operation does not take any input.
 
     <tr>
       <td>
-        <code id="names-included">names included</code>
+        <code>names included</code>
       </td>
       <td>
         <code><a href="../parameter_types.html#boolean">Boolean</a></code>
@@ -189,7 +189,7 @@ The `Read DataFrame` operation does not take any input.
 
     <tr>
       <td>
-        <code id="convert-to-boolean">convert to boolean</code>
+        <code>convert to boolean</code>
       </td>
       <td>
         <code><a href="../parameter_types.html#boolean">Boolean</a></code>
@@ -202,7 +202,7 @@ The `Read DataFrame` operation does not take any input.
 
     <tr>
       <td>
-        <code id="url">url</code>
+        <code>url</code>
       </td>
       <td>
         <code><a href="../parameter_types.html#string">String</a></code>
@@ -213,7 +213,7 @@ The `Read DataFrame` operation does not take any input.
     </tr>
     <tr>
       <td>
-        <code id="driver">driver</code>
+        <code>driver</code>
       </td>
       <td>
         <code><a href="../parameter_types.html#string">String</a></code>
@@ -224,7 +224,7 @@ The `Read DataFrame` operation does not take any input.
     </tr>
     <tr>
       <td>
-        <code id="table">table</code>
+        <code>table</code>
       </td>
       <td>
         <code><a href="../parameter_types.html#string">String</a></code>
