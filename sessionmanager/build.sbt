@@ -35,7 +35,7 @@ weJar := {
     )
   } else {
     val shell = Seq("bash", "-c")
-    shell :+ s"cd seahorse-workflow-executor; $assemblyCmd" !
+    shell :+ s"cd seahorse-workflow-executor; $assemblyCmd".!!
   }
 
   jar
@@ -46,7 +46,7 @@ mappings in Universal += weJar.value -> "we.jar"
 val preparePythonDeps = taskKey[File]("Generates we_deps.zip file with python dependencies")
 
 preparePythonDeps := {
-  Seq("sessionmanager/prepare-deps.sh", weSparkVersion) !
+  Seq("sessionmanager/prepare-deps.sh", weSparkVersion).!!
 
   target.value / "we-deps.zip"
 }
@@ -64,7 +64,8 @@ dockerBaseImage := {
       s"${SbtGit.GitKeys.gitCurrentBranch.value}-latest"
     }
   }
-  s"docker-repo.deepsense.codilime.com/deepsense_io/deepsense-mesos-spark:$seahorseBuildTag" // TODO set image with proper spark version
+  // TODO set image with proper spark version
+  s"docker-repo.deepsense.codilime.com/deepsense_io/deepsense-mesos-spark:$seahorseBuildTag"
 }
 
 val tiniVersion = "v0.10.0"
