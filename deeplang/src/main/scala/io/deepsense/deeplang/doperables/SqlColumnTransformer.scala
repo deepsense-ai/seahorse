@@ -50,17 +50,17 @@ case class SqlColumnTransformer() extends MultiColumnTransformer {
       outputColumn: String,
       context: ExecutionContext,
       dataFrame: DataFrame): DataFrame = {
-    val inputColumnAlias = getInputColumnAlias
+    val inputColumnAlias = getInputColumnAlias.replace("`", "``")
     val formula = getFormula
-    val inputColumnName = inputColumn
-    val outputColumnName = outputColumn
+    val inputColumnName = inputColumn.replace("`", "``")
+    val outputColumnName = outputColumn.replace("`", "``")
 
     val dataFrameSchema = dataFrame.sparkDataFrame.schema
     validate(dataFrameSchema)
 
     val (transformedSparkDataFrame, schema) = try {
 
-      val inputColumnNames = dataFrameSchema.map(_.name)
+      val inputColumnNames = dataFrameSchema.map(c => "`" + c.name.replace("`", "``") + "`")
       val outputColumnNames = inputColumnNames :+ s"$formula AS `$outputColumnName`"
 
       val outputDataFrame = dataFrame.sparkDataFrame

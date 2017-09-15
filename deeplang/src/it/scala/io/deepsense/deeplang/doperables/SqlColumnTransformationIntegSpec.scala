@@ -156,6 +156,39 @@ class SqlColumnTransformationIntegSpec extends DeeplangIntegTestSupport {
       schema.fieldNames shouldBe Array(column0, column1, column2, column3needsEscaping)
     }
 
+    // TODO: This is Spark bug. Test will be pending till SPARK-13297 is fixed.
+    "create Transformation that works on DataFrame with backtics in column names" is pending
+
+    // Regression test
+    "create Transformation that works on DataFrame with non-standard column names" in {
+      val column0 = "c 0"
+      val column1 = "c-2"
+      val column2 = "c - 2"
+      def prepareDataFrame(): DataFrame = {
+        val schema: StructType = StructType(List(
+          StructField(column0, StringType),
+          StructField(column1, DoubleType),
+          StructField(column2, DoubleType)))
+        val manualRowsSeq: Seq[Row] = Seq(
+          Row("aaa", 1.0, 0.2),
+          Row("bbb", -1.1, 2.2),
+          Row("ccc", 1.2, null),
+          Row("ddd", -1.3, 4.2),
+          Row("eee", null, null))
+        createDataFrame(manualRowsSeq, schema)
+      }
+      val dataFrame = applyFormulaToDataFrame(
+        "COS(x)",
+        column1,
+        s"$column3needsEscaping",
+        "x",
+        prepareDataFrame())
+      val rows = dataFrame.sparkDataFrame.collect()
+      validateColumn(rows, Seq(0.540, 0.453, 0.362, 0.267, null))
+      val schema = dataFrame.sparkDataFrame.schema
+      schema.fieldNames shouldBe Array(column0, column1, column2, column3needsEscaping)
+    }
+
     "fail when 2 comma-separated formulas are provided" in {
       intercept[SqlColumnExpressionSyntaxException] {
         val dataFrame = applyFormulaToDataFrame(
