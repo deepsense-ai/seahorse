@@ -18,9 +18,9 @@ DataFrame
 
 Create Custom Transformer operation enables the user to create the transformation by defining
 data flow between input and output nodes. For the internal workflow to be valid, the same
-requirements as for regular [workflow](../deeplang.html#workflows) must be met, i.e.:
+requirements as for a regular [workflow](../deeplang_overview.html#workflows) must be met, i.e.:
 
-* it may not contain cycle
+* it may not contain a cycle
 * parameters of all operations must be correct
 * each input port must have exactly one incoming connection
 * classes of entities passed between ports must meet requirements of these ports' type qualifiers

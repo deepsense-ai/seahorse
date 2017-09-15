@@ -83,19 +83,19 @@ The function that will be executed has to:
 <tbody>
 <tr>
   <td><code>code</code></td>
-  <td><code><a href="../parameters.html#code-snippet">Code Snippet</a></code></td>
+  <td><code><a href="../parameter_types.html#code-snippet">Code Snippet</a></code></td>
   <td>The Python code to be executed. It has to contain Python function complying to signature presented in the operation's description.</td>
 </tr>
 
 <tr>
   <td><code>target type</code></td>
-  <td><code><a href="../parameters.html#single_choice">Choice</a></code></td>
+  <td><code><a href="../parameter_types.html#single_choice">Choice</a></code></td>
   <td>Target type of the conversion. Possible values are: <code>[String, Boolean, Timestamp, Double, Float, Long, Integer, Vector]</code>.</td>
 </tr>
 
 <tr>
   <td><code>operate on</code></td>
-  <td><code><a href="../parameters.html#input_output_column_selector">InputOutputColumnSelector</a></code></td>
+  <td><code><a href="../parameter_types.html#input_output_column_selector">InputOutputColumnSelector</a></code></td>
   <td>Input and output columns for the operation.</td>
 </tr>
 </tbody>

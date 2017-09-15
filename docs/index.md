@@ -28,8 +28,8 @@ In the the main page of Seahorse you can manage existing workflows and create ne
 ### Build a Workflow
 You've been redirected to workflow editor page where you can interactively compound complex algorithms.
 
-In Seahorse, algorithms are represented as graphs of connected [operations](/operations.html),
-which are consuming and producing [entities](/deeplang_overview.html#entities).
+In Seahorse, algorithms are represented as graphs of connected [operations](operations.html),
+which are consuming and producing [entities](deeplang_overview.html#entities).
 
 Let's start with a single one.
 
@@ -46,7 +46,7 @@ Let's start with a single one.
 * To make Seahorse fetch data, select dropped **Read DataFrame** and press **Run**.
 Node will change its state to **RUNNING** and after a while to **COMPLETED**.
 Execution time statistics are provided in the right panel.
-* You can view sample data of any completed operation with [DataFrame](/classes/dataframe.html)
+* You can view sample data of any completed operation with [DataFrame](classes/dataframe.html)
 output by clicking its port icon.
 
 

@@ -153,7 +153,7 @@ executing linear regression algorithm on the data.
      * Select <code>city</code> in the **INPUT COLUMN**
      * Select <code>append new column</code> in **OUTPUT** selector
      * Put <code>city_index</code> in the **OUTPUT COLUMN**
-   * Add [One Hot Encoder](operations/one_hot_excoder.html) to the canvas
+   * Add [One Hot Encoder](operations/one_hot_encoder.html) to the canvas
      * This operation will create separate columns for each value from the original column
      * Select <code>one column</code> in **OPERATE ON** selector
      * Select <code>city_index</code> in the **INPUT COLUMN**

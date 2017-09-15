@@ -1,8 +1,8 @@
 ---
 layout: documentation
-displayTitle: SQL Expression
-title: SQL Expression
-description: SQL Expression
+displayTitle: Execute SQL Expression
+title: Execute SQL Expression
+description: Execute SQL Expression
 usesMathJax: true
 includeOperationsMenu: true
 ---
