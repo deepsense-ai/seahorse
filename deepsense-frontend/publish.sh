@@ -14,6 +14,7 @@ function jsonValue() {
   awk -F"[,:}]" '{for(i=1;i<=NF;i++){if($i~/'$KEY'\042/){print $(i+1)}}}' | tr -d '"' | sed -n ${num}p
 }
 
+CUSTOM_TAG="$1"
 BASE_VERSION=`cat package.json | jsonValue version 1 | xargs`
 SNAPSHOT_REPOSITORY="deepsense-frontend-snapshot"
 RELEASE_REPOSITORY="deepsense-frontend-release"
@@ -110,15 +111,19 @@ function publish() {
    "$url"
 }
 
-function publishLatest() {
+function publish_custom() {
   artifactLocalName=$1
-  artifactVersion="frontend-latest"
+  artifactVersion="frontend-$2"
   artifactRemoteName="${artifactVersion}.zip"
 
   publish $artifactLocalName $artifactVersion "${REPOSITORY_URL}/${artifactVersion}/${artifactRemoteName}"
 }
 
-function publishVersion() {
+function publish_latest() {
+  publish_custom $1 latest
+}
+
+function publish_version() {
   artifactLocalName=$1
   artifactVersion=$2
   artifactRemoteName="${artifactVersion}.zip"
@@ -151,8 +156,14 @@ add_build_info_file
 add_version_file
 create_jenkins_env_file
 package
-publishVersion "${FULL_VERSION}.zip" "${FULL_VERSION}"
-publishLatest "${FULL_VERSION}.zip"
+
+if [ "${CUSTOM_TAG}" == "" ] ; then
+  publish_version "${FULL_VERSION}.zip" "${FULL_VERSION}"
+  publish_latest "${FULL_VERSION}.zip"
+else
+  publish_custom "${FULL_VERSION}.zip" "${CUSTOM_TAG}"
+fi
+
 clean
 
 set +e
