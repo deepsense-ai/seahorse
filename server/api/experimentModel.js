@@ -19,7 +19,7 @@ var Experiment = Waterline.Collection.extend({
       type: 'string',
       autoPK: false,
       index: true,
-      requred: true,
+      requred: true
     },
     nodes: {
       type: 'json'

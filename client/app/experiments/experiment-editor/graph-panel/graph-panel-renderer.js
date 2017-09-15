@@ -33,7 +33,8 @@ var outputStyle = {
   connector: ['Bezier'],
   connectorStyle: connectorPaintStyle,
   hoverPaintStyle: endpointHoverStyle,
-  connectorHoverStyle: connectorHoverStyle
+  connectorHoverStyle: connectorHoverStyle,
+  maxConnections: -1
 };
 
 var inputStyle = {
@@ -42,12 +43,12 @@ var inputStyle = {
     fillStyle: '#7AB02C'
   },
   hoverPaintStyle: endpointHoverStyle,
-  maxConnections: -1,
   dropOptions: {
     hoverClass: 'hover',
     activeClass: 'active'
   },
-  isTarget: true
+  isTarget: true,
+  maxConnections: 1
 };
 
 /* @ngInject */
@@ -105,14 +106,16 @@ function DrawingService($rootScope) {
     var outputPrefix = 'output';
     var inputPrefix = 'input';
     for (let id in edges) {
-      var edge = edges[id];
-      var connection = jsPlumb.connect({
-        uuids: [
-          outputPrefix + '-' + edge.startPortId + '-' + edge.startNodeId,
-          inputPrefix + '-' + edge.endPortId + '-' + edge.endNodeId
-        ]
-      });
-      connection.setParameter('edgeId', edge.id);
+      if (edges.hasOwnProperty(id)) {
+        let edge = edges[id];
+        let connection = jsPlumb.connect({
+          uuids: [
+            outputPrefix + '-' + edge.startPortId + '-' + edge.startNodeId,
+            inputPrefix + '-' + edge.endPortId + '-' + edge.endNodeId
+          ]
+        });
+        connection.setParameter('edgeId', edge.id);
+      }
     }
   };
 
