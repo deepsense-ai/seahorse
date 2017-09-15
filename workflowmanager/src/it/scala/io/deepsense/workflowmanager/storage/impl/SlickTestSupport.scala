@@ -21,7 +21,7 @@ trait SlickTestSupport {
 
   val operationDuration = new FiniteDuration(5, SECONDS)
 
-  val db: Database = Database.forConfig("h2")
+  val db: Database = Database.forConfig("db")
 
   val driver: JdbcDriver = H2Driver
 }

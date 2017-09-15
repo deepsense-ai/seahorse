@@ -20,6 +20,8 @@ object WorkflowManagerApp extends App with Logging {
   val insecure: Boolean = args.headOption.map("insecure".equalsIgnoreCase).getOrElse(true)
 
   try {
+    FlywayMigration.run()
+
     val injector = Guice.createInjector(Stage.PRODUCTION, new WorkflowManagerAppModule(insecure))
     CatalogRecorder.registerDOperables(injector.getInstance(classOf[DOperableCatalog]))
     CatalogRecorder.registerDOperations(injector.getInstance(classOf[DOperationsCatalog]))

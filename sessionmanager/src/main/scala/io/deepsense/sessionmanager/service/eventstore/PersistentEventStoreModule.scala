@@ -19,7 +19,7 @@ class PersistentEventStoreModule extends PrivateModule {
       .toInstance(H2Driver)
     bind(classOf[JdbcDriver#API#Database])
       .annotatedWith(Names.named("EventStore"))
-      .toInstance(Database.forConfig("h2"))
+      .toInstance(Database.forConfig("db"))
 
     bind(classOf[EventStore])
       .to(classOf[PersistentEventStore])

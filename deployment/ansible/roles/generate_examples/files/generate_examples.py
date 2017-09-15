@@ -5,7 +5,10 @@ import os
 import uuid
 import time
 
-INSERT_WF_FORMAT = "INSERT INTO workflows (id, created, updated, deleted, workflow) VALUES ('{}', '{}', '{}', False, '{}');"
+INSERT_WF_FORMAT = (
+  "INSERT INTO workflows (id, created, updated, deleted, owner_id, owner_name, workflow) "
+  "VALUES ('{}', '{}', '{}', False, '00000000-0000-0000-0000-000000000000', 'seahorse', '{}');"
+)
 INSERT_NOTEBOOK_FORMAT = "INSERT INTO notebooks (workflow_id, node_id, notebook) VALUES ('{}', '{}', '{}');"
 
 def compact_json(content):

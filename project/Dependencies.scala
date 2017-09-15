@@ -19,6 +19,7 @@ object Version {
   val sprayJson = "1.3.1"
   val seahorse = "1.2.0-BDU-SNAPSHOT"
   val wiremock = "1.57"
+  val flyway = "4.0"
 }
 
 object Library {
@@ -71,20 +72,27 @@ object Library {
   val sprayJson = "io.spray" %% "spray-json" % Version.sprayJson
   val h2 = "com.h2database" % "h2" % Version.h2
   val wiremock = "com.github.tomakehurst" % "wiremock" % Version.wiremock
+  val flyway = "org.flywaydb" % "flyway-core" % Version.flyway
 }
 
 object Dependencies {
 
   import Library._
 
-  val resolvers = Seq(
+  val optionalLocalResolver = sys.props.collectFirst {
+    case ("local.resolver", _) => Resolver.mavenLocal
+  }.toSeq
+
+  val resolvers = optionalLocalResolver ++ Seq(
     "typesafe.com"           at "http://repo.typesafe.com/typesafe/repo/",
     "sonatype.org"           at "https://oss.sonatype.org/content/repositories/releases",
     "spray.io"               at "http://repo.spray.io",
     "seahorse.deepsense.io"  at
       "http://artifactory.deepsense.codilime.com:8081/artifactory/simple/deepsense-seahorse-release",
-    "seahorse.snapshot"  at "http://artifactory.deepsense.codilime.com:8081/artifactory/simple/deepsense-seahorse-snapshot",
-    "The New Motion Public Repo" at "http://nexus.thenewmotion.com/content/groups/public/"
+    "seahorse.snapshot"      at
+      "http://artifactory.deepsense.codilime.com:8081/artifactory/simple/deepsense-seahorse-snapshot",
+    "The New Motion Public Repo" at "http://nexus.thenewmotion.com/content/groups/public/",
+    Classpaths.typesafeReleases
   )
 
   object Spark {
@@ -123,6 +131,7 @@ object Dependencies {
     seahorseReportlib,
     seahorseWorkflowJson,
     slick,
+    flyway,
     sprayCan,
     sprayClient,
     sprayJson,
@@ -134,6 +143,7 @@ object Dependencies {
     h2,
     seahorseMqProtocol,
     slick,
+    flyway,
     sprayCan,
     sprayClient,
     sprayJson,

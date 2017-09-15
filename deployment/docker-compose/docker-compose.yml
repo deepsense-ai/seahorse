@@ -65,6 +65,7 @@ services:
     links:
       - rabbitmq
       - workflowmanager
+      - database
     depends_on:
       - rabbitmq
       - workflowmanager
@@ -91,8 +92,16 @@ services:
     environment:
       - "WM_AUTH_USER=oJkTZ8BV"
       - "WM_AUTH_PASS=8Ep9GqRr"
+    links:
+      - database
   rabbitmq:
     image: quay.io/deepsense_io/deepsense-rabbitmq:seahorse_on_bdu-latest
     environment:
      - "RABBITMQ_USER=yNNp7VJS"
      - "RABBITMQ_PASS=1ElYfGNW"
+  database:
+    image: quay.io/deepsense_io/deepsense-h2:seahorse_on_bdu-latest
+    ports:
+      - "1521:1521"
+    volumes:
+      - ./h2-data:/opt/h2-data:rw
