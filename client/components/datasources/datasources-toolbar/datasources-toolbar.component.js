@@ -20,12 +20,15 @@ const DatasourcesToolbarComponent = {
   },
   templateUrl: DatasourcesToolbarTemplate,
   controller: class DatasourcesToolbarController {
-    constructor(DatasourcesModalsService) {
+    constructor($scope, DatasourcesModalsService, LibraryService) {
       'ngInject';
 
+      this.DatasourcesModalsService = DatasourcesModalsService;
       this.datasourceContext = datasourceContext;
 
-      _.assign(this, {DatasourcesModalsService});
+      $scope.$watch(LibraryService.isUploadingInProgress, (newValue) => {
+        this.uploadingInProgress = newValue;
+      }, true);
     }
 
     openModal(type) {

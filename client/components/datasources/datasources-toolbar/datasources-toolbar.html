@@ -10,6 +10,10 @@
     <span class="btn-modal__title">
       Library
     </span>
+    <span
+      ng-if="$ctrl.uploadingInProgress"
+      class="gradient"
+    ></span>
   </button>
   <button
     ng-click="$ctrl.openModal('jdbc')"
