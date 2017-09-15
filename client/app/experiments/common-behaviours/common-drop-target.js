@@ -9,7 +9,7 @@
 var internal = {};
 
 /* @ngInject */
-function DropTarget($rootScope) {
+function DropTarget() {
   return {
     restrict: 'A',
     link: function (scope, element, attrs) {
@@ -27,7 +27,7 @@ function DropTarget($rootScope) {
         data.dropEvent = event;
         data.classId = event.dataTransfer.getData('classId');
         data.target = element;
-        $rootScope.$emit('FlowChartBox.ELEMENT_DROPPED',data);
+        scope.$emit('FlowChartBox.ELEMENT_DROPPED',data);
       });
     }
   };

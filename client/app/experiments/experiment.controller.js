@@ -6,7 +6,7 @@
 /* @ngInject */
 
 function ExperimentController(
-  $timeout, $stateParams, $rootScope,
+  $timeout, $stateParams, $rootScope, $scope,
   Operations, DrawingService, ExperimentFactory, ExperimentAPIClient
 ) {
   const RUN_STATE_CHECK_INTERVAL = 2000;
@@ -89,8 +89,9 @@ function ExperimentController(
    * Triggers experiment state check.
    */
   that.checkExperimentState = function checkExperimentState() {
+    $timeout.cancel(internal.runStateTimeout);
     if (internal.experiment.isRunning()) {
-      $timeout(that.loadExperiemntState, RUN_STATE_CHECK_INTERVAL);
+      internal.runStateTimeout = $timeout(that.loadExperiemntState, RUN_STATE_CHECK_INTERVAL);
     }
   };
 
@@ -162,39 +163,39 @@ function ExperimentController(
   };
 
 
-  $rootScope.$on(GraphNode.CLICK, (event, data) => {
+  $scope.$on(GraphNode.CLICK, (event, data) => {
     internal.selectedNode = data.selectedNode;
-    $rootScope.$apply();
+    $scope.$digest();
   });
 
-  $rootScope.$on(GraphNode.MOVE, (data) => {
+  $scope.$on(GraphNode.MOVE, (data) => {
     that.saveData();
   });
 
-  $rootScope.$on(Edge.CREATE, (data, args)  => {
+  $scope.$on(Edge.CREATE, (data, args)  => {
     internal.experiment.addEdge(args.edge);
-    $rootScope.$apply();
+    $scope.$digest();
     that.saveData();
   });
 
-  $rootScope.$on(Edge.REMOVE, (data, args)  => {
-    console.log(args.edge);
+  $scope.$on(Edge.REMOVE, (data, args)  => {
     internal.experiment.removeEdge(args.edge);
-    $rootScope.$apply();
+    $scope.$digest();
     that.saveData();
   });
 
-  $rootScope.$on('Keyboard.KEY_PRESSED', (event, data) => {
+  $scope.$on('Keyboard.KEY_PRESSED', (event, data) => {
     if (internal.selectedNode) {
       internal.experiment.removeNode(internal.selectedNode.id);
       DrawingService.removeNode(internal.selectedNode.id);
       internal.selectedNode = null;
       that.onRenderFinish();
-      $rootScope.$apply();
+      $scope.$digest();
+      that.saveData();
     }
   });
 
-  $rootScope.$on('FlowChartBox.ELEMENT_DROPPED', function elementDropped(event, args) {
+  $scope.$on('FlowChartBox.ELEMENT_DROPPED', function elementDropped(event, args) {
     let operation = that.getOperationById(args.classId),
         boxPosition = args.target[0].getBoundingClientRect(),
         positionX = (args.dropEvent.pageX - boxPosition.left - window.scrollX) || 0,
@@ -209,17 +210,16 @@ function ExperimentController(
         });
     internal.experiment.addNode(node);
     DrawingService.repaintEverything();
-    $rootScope.$apply();
+    $scope.$digest();
     that.onRenderFinish();
     that.saveData();
   });
 
+  $scope.$on('FlowChartBox.ELEMENT_DROPPED', ()=> that.log());
+  $scope.$on('Keyboard.KEY_PRESSED', ()=> that.log());
+  $scope.$on('Edge.REMOVE', ()=> that.log());
 
-  $rootScope.$on('FlowChartBox.ELEMENT_DROPPED', ()=> that.log());
-  $rootScope.$on('Keyboard.KEY_PRESSED', ()=> that.log());
-  $rootScope.$on('Edge.REMOVE', ()=> that.log());
-
-  $rootScope.$on('Experiment.RUN', () => {
+  $scope.$on('Experiment.RUN', () => {
    ExperimentAPIClient.runExperiment(internal.experiment.getId()).then((data) => {
       that.handleExperimentStateChange(data);
     }, (error) => {
@@ -227,6 +227,9 @@ function ExperimentController(
     });
   });
 
+  $scope.$on('$destroy', () => {
+    $timeout.cancel(internal.runStateTimeout);
+  });
 
   internal.init();
   return that;

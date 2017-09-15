@@ -176,19 +176,19 @@ function DrawingService($rootScope) {
         },
         edge = internal.experiment.createEdge(data);
       info.connection.setParameter('edgeId', edge.id);
-      $rootScope.$emit(Edge.CREATE, {edge: edge});
+      $rootScope.$broadcast(Edge.CREATE, {edge: edge});
     });
 
     jsPlumb.bind('connectionDetached', (info, originalEvent) => {
       var edge = internal.experiment.getEdgeById(info.connection.getParameter('edgeId'));
       if (info.targetEndpoint.isTarget && info.sourceEndpoint.isSource && originalEvent) {
-        $rootScope.$emit(Edge.REMOVE, {edge: edge});
+        $rootScope.$broadcast(Edge.REMOVE, {edge: edge});
       }
     });
 
     jsPlumb.bind('connectionMoved', function (info) {
       var edge = internal.experiment.getEdgeById(info.connection.getParameter('edgeId'));
-      $rootScope.$emit(Edge.REMOVE, {edge: edge});
+      $rootScope.$broadcast(Edge.REMOVE, {edge: edge});
     });
   };
 
