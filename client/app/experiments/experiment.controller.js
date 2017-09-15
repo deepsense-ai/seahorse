@@ -50,9 +50,6 @@ function ExperimentController($stateParams, $rootScope, Operations, DrawingServi
   $rootScope.$on(UPDATE_CLICKED_NODE, function(event, data) {
     if (!that.showOperationAttributesPanel.value) {
       that.showOperationAttributesPanel.value = true;
-    } else if (selectedNodeId && selectedNodeId === data.selectedNodeId) {
-      // another click at the same graph node closes up the right side panel
-      that.showOperationAttributesPanel.value = false;
     }
     selectedNodeId = data.selectedNodeId;
     $rootScope.$apply();

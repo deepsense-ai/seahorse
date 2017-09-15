@@ -1,0 +1,9 @@
+<div class="flowchart-box">
+  <graph-node
+    on-render-finish
+    jsplumb-draggable
+    node="node"
+    ng-class="{ 'selected-node': experiment.getSelectedNode().id === nodeId && experiment.showOperationAttributesPanel.value }"
+    ng-repeat="(nodeId, node) in experiment.getExperiment().getNodes()">
+  </graph-node>
+</div>

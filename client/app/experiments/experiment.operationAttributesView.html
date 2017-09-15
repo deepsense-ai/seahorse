@@ -6,7 +6,9 @@
   <div class="panel-body">
     <div class="panel panel-default" ng-repeat="(parameterName, parameterData) in node.parameters">
       <div class="panel-heading">{{ parameterName }}</div>
-      <div class="panel-body">{{ parameterData.value }}</div>
+      <div class="panel-body">
+        <input type="text" class="form-control" ng-model="parameterData.value">
+      </div>
     </div>
     <div class="lead" ng-if="!node.parameters">No parameters</div>
   </div>

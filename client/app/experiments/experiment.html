@@ -20,15 +20,8 @@
     </ul>
   </div>
 
-  <div class="flowchart-box">
-    <graph-node
-      on-render-finish
-      jsplumb-draggable
-      node="node"
-      ng-class="{ 'selected-node': experiment.getSelectedNode().id === nodeId && experiment.showOperationAttributesPanel.value }"
-      ng-repeat="(nodeId, node) in experiment.getExperiment().getNodes()">
-    </graph-node>
-  </div>
+  <flow-chart-box></flow-chart-box>
+
   <operation-attributes-view node="experiment.getSelectedNode()"
                              show-operation-attributes-panel="experiment.showOperationAttributesPanel"
   ></operation-attributes-view>

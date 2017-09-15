@@ -16,4 +16,5 @@ require('./directives/draggable.directive.js').inject(experiments);
 require('./directives/onRenderFinish.directive.js').inject(experiments);
 require('./directives/graphNode.directive.js').inject(experiments);
 require('./directives/operationAttributesView.directive.js').inject(experiments);
+require('./directives/flowChartBox.directive.js').inject(experiments);
 module.exports = experiments;
