@@ -12,41 +12,45 @@
         </select>
       </div>
       <div
-        class="col checkbox-wrapper"
+        ng-if="$ctrl.selectedFormat === 'CSV'"
+        class="checkboxes-wrapper"
       >
-        <label
-          class="format-form-label"
-          ng-class="{'active': $ctrl.includesNames}"
-        >
-          <input
-            type="checkbox"
-            ng-model="$ctrl.includesNames"
-          />
-          <span>
-            First row includes column names
-          </span>
-        </label>
-      </div>
-      <div
-        class="col checkbox-wrapper"
-      >
-        <label
-          ng-class="{'active': $ctrl.convert}"
-          class="format-form-label"
-        >
-          <input
-            type="checkbox"
-            ng-model="$ctrl.convert"
-          />
-          <span>
-            Convert 0 and 1 to boolean
-          </span>
-        </label>
+        <div class="col checkbox-wrapper">
+          <label
+            class="format-form-label"
+            ng-class="{'active': $ctrl.includesNames}"
+          >
+            <input
+              type="checkbox"
+              ng-model="$ctrl.includesNames"
+            />
+            <span>
+              First row includes column names
+            </span>
+          </label>
+        </div>
+        <div class="col checkbox-wrapper">
+          <label
+            ng-class="{'active': $ctrl.convert}"
+            class="format-form-label"
+          >
+            <input
+              type="checkbox"
+              ng-model="$ctrl.convert"
+            />
+            <span>
+              Convert 0 and 1 to boolean
+            </span>
+          </label>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="file-settings__row-wrapper">
+  <div
+    ng-if="$ctrl.selectedFormat === 'CSV'"
+    class="file-settings__row-wrapper"
+  >
     <div class="title-row">Separator</div>
     <div class="inputs-row space-between">
       <div class="radio-wrapper">

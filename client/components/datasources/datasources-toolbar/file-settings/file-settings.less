@@ -14,12 +14,27 @@
     .inputs-row {
       display: flex;
       margin: 5px 0;
+      height: 36px;
 
       .col {
         width: 33%;
 
         &:not(:first-child):not(:last-child) {
           margin: 0 10px;
+        }
+      }
+
+      .checkboxes-wrapper {
+        display: flex;
+        flex: 1;
+
+        .col:first-child {
+          margin: 0 10px;
+          width: 55%;
+        }
+
+        .col:last-child {
+          width: 45%;
         }
       }
 

@@ -6,13 +6,13 @@
   <div class="datasources-modal__body">
     <div class="datasources-modal__body-row">
       <label class="title">Source</label>
-      <div class="source-input">
+      <div class="library-source">
         <input
           class="form-control"
           type="text"
           placeholder="library/your-file.csv"
         />
-        <div class="btn browse-btn">
+        <div class="btn library-source__browse-btn">
           <i class="sa sa-library icon"></i>
           <span>Browse</span>
         </div>
@@ -20,7 +20,8 @@
 
     </div>
 
-    <file-settings />
+    <file-settings>
+    </file-settings>
   </div>
 
   <div ng-include="$ctrl.footerTpl"></div>
