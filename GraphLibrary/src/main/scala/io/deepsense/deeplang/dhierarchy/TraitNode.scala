@@ -23,3 +23,7 @@ private[dhierarchy] class TraitNode(protected override val typeInfo: Class[_]) e
 
   override def toString = s"DTrait($fullName)"
 }
+
+private[dhierarchy] object TraitNode {
+  def apply(typeInfo: Class[_]): TraitNode = new TraitNode(typeInfo)
+}

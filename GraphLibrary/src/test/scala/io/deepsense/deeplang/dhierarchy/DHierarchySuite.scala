@@ -12,14 +12,14 @@ import scala.reflect.runtime.{universe => ru}
 import org.scalatest.{FunSuite, Matchers}
 
 import io.deepsense.deeplang.DOperable
-import io.deepsense.deeplang.dhierarchy.exceptions.ParametrizedTypeException
+import io.deepsense.deeplang.dhierarchy.exceptions._
 
 object H {
   trait T1 extends DOperable
   trait T2 extends T1
   trait T3 extends T1
   trait T extends DOperable
-  class A extends T3
+  abstract class A extends T3
   class B extends A with T {
     override def equals(any: Any) = any.isInstanceOf[B]
   }
@@ -30,18 +30,26 @@ object H {
 
 object Parametrized {
   trait T[T] extends DOperable
-  class A[T] extends DOperable
+  abstract class A[T] extends DOperable
   class B extends A[Int]
+}
+
+object Constructors {
+  class NotParameterLess(val i: Int) extends DOperable
+  class AuxiliaryParameterLess(val i: Int) extends DOperable {
+    def this() = this(1)
+  }
+  class WithDefault(val i: Int = 1) extends DOperable
 }
 
 class DHierarchySuite extends FunSuite with Matchers {
 
   def testGettingSubclasses[SomeT : ru.TypeTag](h: DHierarchy, expected: DOperable*): Unit = {
     val result: mutable.Set[DOperable] = h.concreteSubclassesInstances[SomeT]
-    assert(result == expected.toSet)
+    result should contain theSameElementsAs expected
   }
 
-  test("Simple hierarchy") {
+  test("Getting concrete subclasses instances") {
 
     val h = new DHierarchy
     h.registerDOperable[H.B]()
@@ -85,6 +93,7 @@ class DHierarchySuite extends FunSuite with Matchers {
     val (traitsInfo, classesInfo) = h.info
     traitsInfo should contain theSameElementsAs traitsMock
     classesInfo should contain theSameElementsAs classesMock
+
   }
 
   test("Registering class extending parametrized class should produce exception") {
@@ -109,5 +118,27 @@ class DHierarchySuite extends FunSuite with Matchers {
       val p = new DHierarchy
       p.registerDOperable[T[Int]]()
     }
+  }
+
+  test("Registering concrete class with no parameter-less constructor should produce exception") {
+    intercept[NoParameterLessConstructorException] {
+      import Constructors._
+      val h = new DHierarchy
+      h.registerDOperable[NotParameterLess]()
+    }
+  }
+
+  test("Registering class with constructor with default parameters should produce exception") {
+    intercept[NoParameterLessConstructorException] {
+      import Constructors._
+      val h = new DHierarchy
+      h.registerDOperable[WithDefault]()
+    }
+  }
+
+  test("Registering class with auxiliary parameter-less constructor should succeed") {
+    import Constructors._
+    val h = new DHierarchy
+    h.registerDOperable[AuxiliaryParameterLess]()
   }
 }

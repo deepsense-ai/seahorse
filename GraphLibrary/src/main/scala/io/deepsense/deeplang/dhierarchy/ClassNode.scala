@@ -6,6 +6,8 @@
 
 package io.deepsense.deeplang.dhierarchy
 
+import scala.reflect.runtime.{universe => ru}
+
 /**
  * Represents Class in DHierarchy graph.
  */
@@ -17,4 +19,13 @@ private[dhierarchy] class ClassNode(protected override val typeInfo: Class[_]) e
   }
 
   override def toString: String = s"DClass($fullName)"
+}
+
+private[dhierarchy] object ClassNode {
+  def apply(typeInfo: Class[_]): ClassNode = {
+    if (DHierarchy.isAbstract(typeInfo))
+      new ClassNode(typeInfo)
+    else
+      new ConcreteClassNode(typeInfo)
+  }
 }

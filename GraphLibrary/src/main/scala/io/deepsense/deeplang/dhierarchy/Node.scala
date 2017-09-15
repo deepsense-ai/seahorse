@@ -7,8 +7,7 @@
 package io.deepsense.deeplang.dhierarchy
 
 import scala.collection.mutable
-
-import io.deepsense.deeplang.DOperable
+import scala.reflect.runtime.{universe => ru}
 
 /**
  * Node that represents type in DHierarchy graph.
@@ -45,32 +44,20 @@ private[dhierarchy] abstract class Node {
     sets.foldLeft(mutable.Set[T]())((x, y) => x ++ y)
   }
 
-  /** Returns set of all leaf-nodes that are descendants of this. */
-  private[dhierarchy] def leafNodes: mutable.Set[Node] = {
-    if (subclasses.isEmpty && subtraits.isEmpty) { // this is leaf-class
-      mutable.Set(this)
-    } else {
-      val descendants = subclasses.values.map(_.leafNodes) ++ subtraits.values.map(_.leafNodes)
-      sumSets[Node](descendants)
-    }
-  }
-
-  /**
-   * Creates instance of type represented by this.
-   * Invokes first constructor and assumes that it takes no parameters.
-   */
-  private[dhierarchy] def createInstance(): DOperable = {
-    val constructor = typeInfo.getConstructors()(0)
-    constructor.newInstance().asInstanceOf[DOperable]
+  /** Returns set of all concrete nodes that are descendants of this. */
+  private[dhierarchy] def subclassesInstances: mutable.Set[ConcreteClassNode] = {
+    val descendants = subclasses.values.map(_.subclassesInstances) ++
+        subtraits.values.map(_.subclassesInstances)
+    sumSets[ConcreteClassNode](descendants)
   }
 }
 
 private[dhierarchy] object Node {
   def apply(typeInfo: Class[_]): Node = {
     if (typeInfo.isInterface) {
-      new TraitNode(typeInfo)
+      TraitNode(typeInfo)
     } else {
-      new ClassNode(typeInfo)
+      ClassNode(typeInfo)
     }
   }
 }

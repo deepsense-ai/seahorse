@@ -17,20 +17,11 @@ import io.deepsense.deeplang.dhierarchy.exceptions.ParametrizedTypeException
  * Exposes tools for advance reflecting and instances creation.
  */
 class DHierarchy {
-  private val mirror = ru.runtimeMirror(getClass.getClassLoader)
   private val baseType = ru.typeOf[DOperable]
   /** All registered nodes. */
   private val nodes: mutable.Map[String, Node] = mutable.Map()
 
   this.register(baseType)
-
-  private def classToType(c: Class[_]): ru.Type = mirror.classSymbol(c).toType
-
-  private def typeToClass(t: ru.Type): Class[_] = mirror.runtimeClass(t.typeSymbol.asClass)
-
-  private def symbolToType(s: ru.Symbol): ru.Type = s.asClass.toType
-
-  private def isParametrized(t: ru.Type): Boolean = !t.typeSymbol.asClass.typeParams.isEmpty
 
   private def addNode(node: Node): Unit = nodes(node.fullName) = node
 
@@ -44,7 +35,7 @@ class DHierarchy {
       return None
     }
 
-    if (isParametrized(t)) {
+    if (DHierarchy.isParametrized(t)) {
       throw new ParametrizedTypeException(t)
     }
 
@@ -70,11 +61,11 @@ class DHierarchy {
 
   private def register(typeInfo: Class[_]): Option[Node] = {
     if (typeInfo == null) return None
-    register(classToType(typeInfo), typeInfo)
+    register(DHierarchy.classToType(typeInfo), typeInfo)
   }
 
   private def register(t: ru.Type): Option[Node] = {
-    register(t, typeToClass(t))
+    register(t, DHierarchy.typeToClass(t))
   }
 
   /** Returns nodes that correspond given type signature T. */
@@ -90,8 +81,8 @@ class DHierarchy {
 
     var uniqueBaseClasses = Set[ru.Symbol]()
     for (b <- baseClasses) {
-      val t: ru.Type = symbolToType(b)
-      val uniqueTypes = uniqueBaseClasses.map(symbolToType)
+      val t: ru.Type = DHierarchy.symbolToType(b)
+      val uniqueTypes = uniqueBaseClasses.map(DHierarchy.symbolToType)
       if (!uniqueTypes.exists(_ <:< t))
         uniqueBaseClasses += b
     }
@@ -100,17 +91,11 @@ class DHierarchy {
     nodes.filterKeys(baseClassesNames.contains).values
   }
 
-  /** Intersection of collection of sets. */
-  private def intersectSets[T](sets: Traversable[mutable.Set[T]]): mutable.Set[T] = {
-    if (sets.size == 0) mutable.Set[T]()
-    else sets.foldLeft(sets.head)((x, y) => x & y)
-  }
-
-  /** Returns instances of all leaf-classes that fulfil type signature T. */
+  /** Returns instances of all concrete classes that fulfil type signature T. */
   def concreteSubclassesInstances[T: ru.TypeTag]: mutable.Set[DOperable] = {
     val typeNodes = nodesForType[T]
-    val leafNodes = typeNodes.map(_.leafNodes)
-    val intersect = intersectSets[Node](leafNodes)
+    val concreteClassNodes = typeNodes.map(_.subclassesInstances)
+    val intersect = DHierarchy.intersectSets[ConcreteClassNode](concreteClassNodes)
     intersect.map(_.createInstance())
   }
 
@@ -122,5 +107,27 @@ class DHierarchy {
   def info: (Iterable[TypeInfo], Iterable[TypeInfo]) = {
     val (traits, classes) = nodes.values.partition(_.isTrait)
     (traits.map(_.info), classes.map(_.info))
+  }
+}
+
+object DHierarchy {
+  private val mirror = ru.runtimeMirror(getClass.getClassLoader)
+
+  private def classToType(c: Class[_]): ru.Type = mirror.classSymbol(c).toType
+
+  private def typeToClass(t: ru.Type): Class[_] = mirror.runtimeClass(t.typeSymbol.asClass)
+
+  private def symbolToType(s: ru.Symbol): ru.Type = s.asClass.toType
+
+  private def isParametrized(t: ru.Type): Boolean = !t.typeSymbol.asClass.typeParams.isEmpty
+
+  /** Intersection of collection of sets. */
+  private def intersectSets[T](sets: Traversable[mutable.Set[T]]): mutable.Set[T] = {
+    if (sets.size == 0) mutable.Set[T]()
+    else sets.foldLeft(sets.head)((x, y) => x & y)
+  }
+
+  private[dhierarchy] def isAbstract(c: Class[_]): Boolean = {
+    classToType(c).typeSymbol.asClass.isAbstractClass
   }
 }
