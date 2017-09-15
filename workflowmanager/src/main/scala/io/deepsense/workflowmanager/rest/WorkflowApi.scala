@@ -223,7 +223,7 @@ abstract class WorkflowApi @Inject() (
             }
           } ~
           pathPrefix(reportsPathPrefixMatcher) {
-            path(JavaUUID) { reportId =>
+            path(JavaUUID) { workflowId =>
               put {
                 withUserContext { userContext =>
                   entity(as[ExecutionReport]) {
@@ -231,7 +231,7 @@ abstract class WorkflowApi @Inject() (
                       onComplete(
                         workflowManagerProvider
                         .forContext(userContext)
-                        .updateStates(reportId, executioReport)) {
+                        .updateStates(workflowId, executioReport)) {
                         case Failure(exception) =>
                           logger.info("updateStates failed", exception)
                           failWith(exception)

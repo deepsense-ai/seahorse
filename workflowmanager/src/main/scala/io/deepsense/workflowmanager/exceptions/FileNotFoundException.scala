@@ -5,7 +5,7 @@
 package io.deepsense.workflowmanager.exceptions
 
 import io.deepsense.commons.exception.FailureCode
-import io.deepsense.models.entities.Entity
+import io.deepsense.commons.models.Entity
 
 case class FileNotFoundException(entityId: Entity.Id)
   extends WorkflowManagerException(

@@ -43,7 +43,7 @@ class WorkflowsApiSpec
   with WorkflowJsonProtocol
   with InferredStateJsonProtocol
   with WorkflowWithVariablesJsonProtocol
-  with WorkflowWithSavedResultsJsonProtocol {
+  with WorkflowWithResultsJsonProtocol {
 
   val catalog = DOperationsCatalog()
   catalog.registerDOperation[FileToDataFrame](
@@ -599,21 +599,21 @@ class WorkflowsApiSpec
     val executionReport = workflowAWithResults.executionReport
     "return Unauthorized" when {
       "invalid auth token was send (when InvalidTokenException occurs)" in {
-        Put(s"/$reportsPrefix/${ExecutionReportWithId.Id.randomId}", executionReport) ~>
+        Put(s"/$reportsPrefix/${Workflow.Id.randomId}", executionReport) ~>
           addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
         ()
       }
       "the user does not have the requested role (on NoRoleException)" in {
-        Put(s"/$reportsPrefix/${ExecutionReportWithId.Id.randomId}", executionReport) ~>
+        Put(s"/$reportsPrefix/${Workflow.Id.randomId}", executionReport) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
         ()
       }
       "no auth token was send (on MissingHeaderRejection)" in {
-        Put(s"/$reportsPrefix/${ExecutionReportWithId.Id.randomId}", executionReport) ~>
+        Put(s"/$reportsPrefix/${Workflow.Id.randomId}", executionReport) ~>
           testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
