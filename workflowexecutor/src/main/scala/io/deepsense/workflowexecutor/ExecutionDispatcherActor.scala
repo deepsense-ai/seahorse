@@ -25,9 +25,8 @@ import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.ReportLevel._
 import io.deepsense.models.workflows.Workflow
 import io.deepsense.models.workflows.Workflow.Id
-import io.deepsense.workflowexecutor.communication.message.global.Connect
-import io.deepsense.workflowexecutor.executor.{PythonExecutionCaretaker, Executor}
-import io.deepsense.workflowexecutor.rabbitmq.WorkflowConnect
+import io.deepsense.workflowexecutor.communication.message.workflow.Init
+import io.deepsense.workflowexecutor.executor.{Executor, PythonExecutionCaretaker}
 
 class ExecutionDispatcherActor(
     sparkContext: SparkContext,
@@ -47,13 +46,12 @@ class ExecutionDispatcherActor(
   // TODO handle child's exceptions
 
   override def receive: Receive = {
-    case msg @ WorkflowConnect(connect @ Connect(workflowId), publisherPath) =>
-      logger.debug(s"Received $msg")
+    case msg @ InitWorkflow(init @ Init(workflowId), publisherPath) =>
       val existingExecutor: Option[ActorRef] = findExecutor(workflowId)
       val publisher = context.actorSelection(publisherPath)
       val executor: ActorRef = existingExecutor.getOrElse(
         createExecutor(workflowId, publisher, workflowManagerClientActor))
-      executor.forward(connect)
+      executor ! WorkflowExecutorActor.Messages.Init()
   }
 
   private def findExecutor(workflowId: Workflow.Id): Option[ActorRef] = {
@@ -84,6 +82,8 @@ class ExecutionDispatcherActor(
     executor
   }
 }
+
+case class InitWorkflow(init: Init, publisherPath: ActorPath)
 
 trait WorkflowExecutorsFactory {
   def createExecutor(

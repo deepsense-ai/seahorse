@@ -29,15 +29,15 @@ object MQCommunication {
 
     object Publisher {
       val seahorse = prefixedName("seahorse")
-      val kernel = prefixedName("kernel")
+      val notebook = prefixedName("notebook")
       def workflow(id: Workflow.Id): String = prefixedName(id.toString)
       private[this] def prefixedName = name("publisher") _
     }
 
     object Subscriber {
       val seahorse = prefixedName("seahorse")
-      val kernel = prefixedName("kernel")
-      def workflow(id: Workflow.Id): String = prefixedName(id.toString)
+      val notebook = prefixedName("notebook")
+      val workflows: String = prefixedName("workflows")
       private[this] def prefixedName = name("subscriber") _
     }
     private[this] def name(prefix: String)(suffix: String): String = s"${prefix}_$suffix"
@@ -48,7 +48,10 @@ object MQCommunication {
   }
 
   object Topic {
-    val kernel = "kernel"
+    private[this] val workflowPrefix = "workflow"
+    val notebook = "notebook"
     val seahorse = "seahorse"
+    val workflows = s"${workflowPrefix}.*"
+    def workflow(workflowId: Workflow.Id): String = s"${workflowPrefix}.${workflowId.toString}"
   }
 }

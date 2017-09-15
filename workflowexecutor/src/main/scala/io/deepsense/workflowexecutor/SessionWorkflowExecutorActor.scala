@@ -53,6 +53,7 @@ class SessionWorkflowExecutorActor(
 
   override def receive: Receive = {
     case Init() =>
+      logger.debug("SessionWorkflowExecutorActor for: {} received INIT", workflowId.toString)
       workflowManagerClientActor.ask(GetWorkflow(workflowId))(wmTimeout seconds) pipeTo self
       context.become(waitingForWorkflow)
   }

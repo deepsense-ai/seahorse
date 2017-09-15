@@ -38,19 +38,21 @@ case class MQCommunicationFactory(
       topic: String,
       subscriber: ActorRef,
       publisherActorName: String): ActorRef = {
-    createSubscriber(topic, SubscriberActor(subscriber, mqMessageDeserializer))
-    val publisher = createPublisher(topic)
-    system.actorOf(
-      PublisherActor.props(topic, publisher),
-      publisherActorName)
-
+    registerSubscriber(topic, subscriber)
+    createPublisher(topic, publisherActorName)
   }
 
-  private def createSubscriber(topic: String, subscriber: SubscriberActor): Unit = {
+  def registerSubscriber(topic: String, subscriber: ActorRef): Unit = {
+    val subscriberActor = SubscriberActor(subscriber, mqMessageDeserializer)
     val subscriberName = MQCommunication.subscriberName(topic)
     connection ! CreateChannel(
-      ChannelActor.props(setupSubscriber(topic, subscriber)),
+      ChannelActor.props(setupSubscriber(topic, subscriberActor)),
       Some(subscriberName))
+  }
+
+  def createPublisher(topic: String, publisherActorName: String): ActorRef = {
+    val publisher = createMQPublisher(topic)
+    system.actorOf(PublisherActor.props(topic, publisher), publisherActorName)
   }
 
   private def setupSubscriber(
@@ -78,11 +80,11 @@ case class MQCommunicationFactory(
     channel.basicConsume(queue, true, consumer)
   }
 
-  private def createPublisher(topic: String): MQPublisher = {
+  private def createMQPublisher(topic: String): MQPublisher = {
     val publisherName = MQCommunication.publisherName(topic)
     val channelActor: ActorRef =
       connection.createChannel(ChannelActor.props(setupPublisher()), Some(publisherName))
-    MQPublisher(topic, mqMessageSerializer, channelActor)
+    MQPublisher(MQCommunication.Exchange.seahorse, mqMessageSerializer, channelActor)
   }
 
   private def setupPublisher()(channel: Channel, self: ActorRef): Unit =

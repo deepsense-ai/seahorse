@@ -87,23 +87,22 @@ case class SessionExecutor(
     val communicationFactory =
       MQCommunicationFactory(system, connection, messageSerializer, messageDeserializer)
 
-    val seahorseSubscriberActor = system.actorOf(
-      SeahorseTopicSubscriber.props(executionDispatcher, communicationFactory),
-      MQCommunication.Actor.Subscriber.seahorse)
-    communicationFactory.createCommunicationChannel(
-      MQCommunication.Topic.seahorse,
-      seahorseSubscriberActor,
-      MQCommunication.Actor.Publisher.seahorse)
-
-    val kernelSubscriberActor = system.actorOf(
+    val notebookSubscriberActor = system.actorOf(
       NotebookKernelTopicSubscriber.props(
-        MQCommunication.Actor.Publisher.kernel,
+        MQCommunication.Actor.Publisher.notebook,
         pythonExecutionCaretaker.gatewayListeningPort _),
-      MQCommunication.Actor.Subscriber.kernel)
+      MQCommunication.Actor.Subscriber.notebook)
     communicationFactory.createCommunicationChannel(
-      MQCommunication.Topic.kernel,
-      kernelSubscriberActor,
-      MQCommunication.Actor.Publisher.kernel)
+      MQCommunication.Topic.notebook,
+      notebookSubscriberActor,
+      MQCommunication.Actor.Publisher.notebook)
+
+    val workflowsSubscriberActor = system.actorOf(
+      WorkflowTopicSubscriber.props(executionDispatcher, communicationFactory),
+      MQCommunication.Actor.Subscriber.workflows)
+    communicationFactory.registerSubscriber(
+      MQCommunication.Topic.workflows,
+      workflowsSubscriberActor)
 
     system.awaitTermination()
     cleanup(sparkContext, pythonExecutionCaretaker)

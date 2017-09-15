@@ -30,7 +30,7 @@ import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.{InferredStateJsonProtocol, WorkflowWithResultsJsonProtocol, ExecutionReportJsonProtocol}
 import io.deepsense.models.workflows._
 import io.deepsense.reportlib.model.ReportContent
-import io.deepsense.workflowexecutor.communication.message.global.{PythonGatewayAddressJsonProtocol, Address, PythonGatewayAddress}
+import io.deepsense.workflowexecutor.communication.message.notebook.{PythonGatewayAddressJsonProtocol, Address, PythonGatewayAddress}
 import io.deepsense.workflowexecutor.communication.message.workflow.ExecutionStatus
 
 class ProtocolJsonSerializerSpec

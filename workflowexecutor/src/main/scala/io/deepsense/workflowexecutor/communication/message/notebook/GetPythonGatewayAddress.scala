@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.deepsense.workflowexecutor.communication.message.global
+package io.deepsense.workflowexecutor.communication.message.notebook
 
 import spray.json.{DefaultJsonProtocol, RootJsonFormat}
 

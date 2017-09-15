@@ -24,7 +24,7 @@ import io.deepsense.commons.utils.Logging
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.{InferredStateJsonProtocol, ExecutionReportJsonProtocol, WorkflowWithResultsJsonProtocol}
 import io.deepsense.models.workflows.{InferredState, WorkflowWithResults}
-import io.deepsense.workflowexecutor.communication.message.global.{PythonGatewayAddress, PythonGatewayAddressJsonProtocol}
+import io.deepsense.workflowexecutor.communication.message.notebook.{PythonGatewayAddress, PythonGatewayAddressJsonProtocol}
 import io.deepsense.workflowexecutor.communication.message.workflow._
 import io.deepsense.workflowexecutor.communication.mq.serialization.MessageMQSerializer
 

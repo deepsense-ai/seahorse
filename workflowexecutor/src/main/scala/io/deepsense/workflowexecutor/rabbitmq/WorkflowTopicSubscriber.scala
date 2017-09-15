@@ -16,33 +16,58 @@
 
 package io.deepsense.workflowexecutor.rabbitmq
 
-import akka.actor.{Actor, ActorPath, ActorSelection}
+import akka.actor._
 
 import io.deepsense.commons.utils.Logging
 import io.deepsense.models.workflows.Workflow
-import io.deepsense.workflowexecutor.WorkflowExecutorActor
+import io.deepsense.models.workflows.Workflow.Id
+import io.deepsense.workflowexecutor.{InitWorkflow, WorkflowExecutorActor}
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.UpdateStruct
 import io.deepsense.workflowexecutor.communication.message.workflow.{Abort, Init, Launch, UpdateWorkflow}
+import io.deepsense.workflowexecutor.communication.mq.MQCommunication
 
+/**
+  * Handles messages with topic workflow.${id}. All messages directed to workflows.
+  */
 case class WorkflowTopicSubscriber(
-  workflowId: Workflow.Id,
-  executionDispatcherPath: ActorPath) extends Actor with Logging {
+  executionDispatcher: ActorRef,
+  communicationFactory: MQCommunicationFactory) extends Actor with Logging {
+
+  private[this] var publishers: Map[Workflow.Id, ActorRef] = Map()
 
   override def receive: Receive = {
-    case request @ Init(id) =>
+    case init @ Init(workflowId) =>
       logger.debug(s"INIT! '$workflowId'")
-      actorsForWorkflow ! WorkflowExecutorActor.Messages.Init()
-    case Launch(id, nodesToExecute) =>
-      logger.debug(s"LAUNCH! '$id'")
-      actorsForWorkflow ! WorkflowExecutorActor.Messages.Launch(nodesToExecute)
-    case Abort(id) =>
-      logger.debug(s"ABORT! '$id'")
-      actorsForWorkflow ! WorkflowExecutorActor.Messages.Abort()
-    case UpdateWorkflow(workflow) =>
+      val publisherPath: ActorPath = getOrCreatePublisher(workflowId)
+      executionDispatcher ! InitWorkflow(init, publisherPath)
+    case Launch(workflowId, nodesToExecute) =>
+      logger.debug(s"LAUNCH! '$workflowId'")
+      actorsForWorkflow(workflowId) ! WorkflowExecutorActor.Messages.Launch(nodesToExecute)
+    case Abort(workflowId) =>
+      logger.debug(s"ABORT! '$workflowId'")
+      actorsForWorkflow(workflowId) ! WorkflowExecutorActor.Messages.Abort()
+    case UpdateWorkflow(workflowId, workflow) =>
       logger.debug(s"UPDATE STRUCT '$workflowId'")
-      actorsForWorkflow ! UpdateStruct(workflow)
+      actorsForWorkflow(workflowId) ! UpdateStruct(workflow)
   }
 
-  private val actorsForWorkflow: ActorSelection =
-    context.actorSelection(executionDispatcherPath./(workflowId.toString))
+  private def getOrCreatePublisher(workflowId: Id): ActorPath = {
+    if (!publishers.contains(workflowId)) {
+      val publisher: ActorRef = communicationFactory.createPublisher(
+        MQCommunication.Topic.workflow(workflowId),
+        MQCommunication.Actor.Publisher.workflow(workflowId))
+      publishers += (workflowId -> publisher)
+    }
+    publishers(workflowId).path
+  }
+
+  private def actorsForWorkflow(workflowId: Workflow.Id): ActorSelection =
+    context.actorSelection(executionDispatcher.path./(workflowId.toString))
+}
+
+object WorkflowTopicSubscriber {
+
+  def props(executionDispatcher: ActorRef, communicationFactory: MQCommunicationFactory): Props = {
+    Props(WorkflowTopicSubscriber(executionDispatcher, communicationFactory))
+  }
 }

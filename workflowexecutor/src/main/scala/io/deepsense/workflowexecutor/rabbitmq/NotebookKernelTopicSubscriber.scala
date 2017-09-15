@@ -19,7 +19,7 @@ package io.deepsense.workflowexecutor.rabbitmq
 import akka.actor._
 
 import io.deepsense.commons.utils.Logging
-import io.deepsense.workflowexecutor.communication.message.global.{Address, GetPythonGatewayAddress, PythonGatewayAddress}
+import io.deepsense.workflowexecutor.communication.message.notebook.{Address, GetPythonGatewayAddress, PythonGatewayAddress}
 
 case class NotebookKernelTopicSubscriber(
     publisherActorName: String,

@@ -35,6 +35,6 @@ class PublisherActor(topic: String, publisher: MQPublisher) extends Actor with L
 
 object PublisherActor {
   def props(topic: String, publisher: MQPublisher): Props = {
-    PublisherActor.props(topic, publisher)
+    Props(new PublisherActor(topic, publisher))
   }
 }

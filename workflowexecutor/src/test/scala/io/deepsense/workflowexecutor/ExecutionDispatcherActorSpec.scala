@@ -28,10 +28,9 @@ import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.ReportLevel
 import io.deepsense.deeplang.doperables.ReportLevel.ReportLevel
 import io.deepsense.models.workflows.Workflow
-import io.deepsense.workflowexecutor.executor.PythonExecutionCaretaker
 import io.deepsense.models.workflows.Workflow._
-import io.deepsense.workflowexecutor.communication.message.global.Connect
-import io.deepsense.workflowexecutor.rabbitmq.WorkflowConnect
+import io.deepsense.workflowexecutor.communication.message.workflow.Init
+import io.deepsense.workflowexecutor.executor.PythonExecutionCaretaker
 
 
 class ExecutionDispatcherActorSpec
@@ -46,23 +45,23 @@ class ExecutionDispatcherActorSpec
 
   "ExecutionDispatcherActor" should {
     "create WorkflowExecutorActor" when {
-      "received Connect messages for non existing actor" in {
+      "received Init messages for non existing actor" in {
         val (workflowId, testProbe, dispatcher) = fixtureWithNonExistingExecutor
-        val connect: Connect = Connect(workflowId)
-        val msg = WorkflowConnect(connect, testProbe.ref.path)
+        val init: Init = Init(workflowId)
+        val msg = InitWorkflow(init, testProbe.ref.path)
         dispatcher ! msg
         eventually {
-          testProbe.expectMsg(connect)
+          testProbe.expectMsg(WorkflowExecutorActor.Messages.Init())
         }
       }
     }
-    "pass Connect to WorkflowExecutorActor" in {
+    "pass Init to WorkflowExecutorActor" in {
       val (workflowId, testProbe, dispatcher) = fixtureWithExistingExecutor
-      val connect: Connect = Connect(workflowId)
-      val msg = WorkflowConnect(connect, testProbe.ref.path)
+      val init: Init = Init(workflowId)
+      val msg = InitWorkflow(init, testProbe.ref.path)
       dispatcher ! msg
       eventually {
-        testProbe.expectMsg(connect)
+        testProbe.expectMsg(WorkflowExecutorActor.Messages.Init())
       }
     }
   }

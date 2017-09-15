@@ -21,20 +21,17 @@ import java.nio.charset.Charset
 import spray.json._
 
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
-import io.deepsense.models.json.workflow.WorkflowJsonProtocol
-import io.deepsense.models.workflows.Workflow
-import io.deepsense.workflowexecutor.communication.message.global._
+import io.deepsense.workflowexecutor.communication.message.notebook._
 import io.deepsense.workflowexecutor.communication.message.workflow._
 import io.deepsense.workflowexecutor.communication.mq.serialization.MessageMQDeserializer
 
 case class ProtocolJsonDeserializer(graphReader: GraphReader)
   extends MessageMQDeserializer
-  with ConnectJsonProtocol
   with LaunchJsonProtocol
   with AbortJsonProtocol
   with InitJsonProtocol
   with GetPythonGatewayAddressJsonProtocol
-  with WorkflowJsonProtocol {
+  with UpdateWorkflowJsonProtocol {
 
   import JsonSerialization._
 
@@ -50,12 +47,11 @@ case class ProtocolJsonDeserializer(graphReader: GraphReader)
     val body = getField(fields, messageBodyKey)
 
     messageType match {
-      case InMessageType.connect => body.convertTo[Connect]
       case InMessageType.launch => body.convertTo[Launch]
       case InMessageType.abort => body.convertTo[Abort]
       case InMessageType.init => body.convertTo[Init]
       case InMessageType.getPythonGatewayAddress => body.convertTo[GetPythonGatewayAddress]
-      case InMessageType.updateWorkflow => UpdateWorkflow(body.convertTo[Workflow])
+      case InMessageType.updateWorkflow => body.convertTo[UpdateWorkflow]
     }
   }
 

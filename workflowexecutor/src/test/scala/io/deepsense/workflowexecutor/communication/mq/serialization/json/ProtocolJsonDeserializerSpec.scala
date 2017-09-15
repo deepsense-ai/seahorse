@@ -22,10 +22,9 @@ import org.scalatest.mock.MockitoSugar
 import spray.json._
 
 import io.deepsense.commons.StandardSpec
-import io.deepsense.graph.{DeeplangGraph, DirectedGraph}
+import io.deepsense.graph.DeeplangGraph
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.workflows.{ThirdPartyData, Workflow, WorkflowMetadata, WorkflowType}
-import io.deepsense.workflowexecutor.communication.message.global.Connect
 import io.deepsense.workflowexecutor.communication.message.workflow.{Abort, Init, Launch, UpdateWorkflow}
 import io.deepsense.workflowexecutor.executor.Executor
 
@@ -67,20 +66,6 @@ class ProtocolJsonDeserializerSpec
       val readMessage: Any = serializeAndRead(protocolDeserializer, rawMessage)
       readMessage shouldBe Abort(workflowId)
     }
-    "deserialize Connect messages" in {
-      val protocolDeserializer = ProtocolJsonDeserializer(mock[GraphReader])
-      val workflowId = Workflow.Id.randomId
-
-      val rawMessage = JsObject(
-        "messageType" -> JsString("connect"),
-        "messageBody" -> JsObject(
-          "workflowId" -> JsString(workflowId.toString)
-        )
-      )
-
-      val readMessage: Any = serializeAndRead(protocolDeserializer, rawMessage)
-      readMessage shouldBe Connect(workflowId)
-    }
     "deserialize Init messages" in {
       val protocolDeserializer = ProtocolJsonDeserializer(mock[GraphReader])
       val workflowId = Workflow.Id.randomId
@@ -98,24 +83,29 @@ class ProtocolJsonDeserializerSpec
     "deserialize UpdateWorkflow messages" in {
       val graphReader = new GraphReader(Executor.createDOperationsCatalog())
       val protocolDeserializer = ProtocolJsonDeserializer(graphReader)
+      val workflowId = Workflow.Id.randomId
 
       val rawMessage = JsObject(
         "messageType" -> JsString("updateWorkflow"),
         "messageBody" -> JsObject(
-          "metadata" -> JsObject(
-            "type" -> JsString("batch"),
-            "apiVersion" -> JsString("1.0.0")
-          ),
+          "workflowId" -> JsString(workflowId.toString),
           "workflow" -> JsObject(
-            "nodes" -> JsArray(),
-            "connections" -> JsArray()
-          ),
-          "thirdPartyData" -> JsObject()
+            "metadata" -> JsObject(
+              "type" -> JsString("batch"),
+              "apiVersion" -> JsString("1.0.0")
+            ),
+            "workflow" -> JsObject(
+              "nodes" -> JsArray(),
+              "connections" -> JsArray()
+            ),
+            "thirdPartyData" -> JsObject()
+          )
         )
       )
 
       val readMessage: Any = serializeAndRead(protocolDeserializer, rawMessage)
       readMessage shouldBe UpdateWorkflow(
+        workflowId,
         Workflow(WorkflowMetadata(WorkflowType.Batch, "1.0.0"), DeeplangGraph(), ThirdPartyData()))
     }
   }
