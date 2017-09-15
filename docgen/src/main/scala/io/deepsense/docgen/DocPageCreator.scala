@@ -105,12 +105,12 @@ trait DocPageCreator {
       case (t: TransformerAsOperation[_]) =>
         inputOutputTable(Seq(
           ("<code><a href=\"../classes/dataframe.html\">DataFrame</a></code>",
-            "The input DataFrame.")
+            "The input <code>DataFrame</code>.")
         ))
       case (es: EstimatorAsOperation[_]) =>
         inputOutputTable(Seq(
           ("<code><a href=\"../classes/dataframe.html\">DataFrame</a></code>",
-            "The input DataFrame.")
+            "The input <code>DataFrame</code>.")
         ))
       case (e: EstimatorAsFactory[_]) =>
         "This operation does not take any input."

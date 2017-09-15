@@ -24,7 +24,7 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 </tr>
 </thead>
 <tbody>
-    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>The input DataFrame.</td></tr>
+    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>The input <code>DataFrame</code>.</td></tr>
 </tbody>
 </table>
 
