@@ -16,45 +16,178 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.evaluators
 
-import org.apache.spark.ml.evaluation.{BinaryClassificationEvaluator => SparkBinaryClassificationEvaluator}
+import org.apache.spark.mllib.evaluation.{BinaryClassificationMetrics, MulticlassMetrics}
+import org.apache.spark.mllib.linalg.Vector
+import org.apache.spark.sql.Row
 
-import io.deepsense.deeplang.doperables.SparkEvaluatorWrapper
-import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasLabelColumnParam, HasRawPredictionColumnParam}
-import io.deepsense.deeplang.params.Param
-import io.deepsense.deeplang.params.choice.Choice
-import io.deepsense.deeplang.params.wrappers.spark.ChoiceParamWrapper
+import io.deepsense.commons.types.ColumnType
+import io.deepsense.deeplang.doperables.dataframe.{DataFrameColumnsGetter, DataFrame}
+import io.deepsense.deeplang.doperables.spark.wrappers.evaluators.BinaryClassificationEvaluator._
+import io.deepsense.deeplang.doperables.spark.wrappers.params.common.HasLabelColumnParam
+import io.deepsense.deeplang.doperables.{Evaluator, MetricValue}
+import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
+import io.deepsense.deeplang.params.selections.{NameSingleColumnSelection, SingleColumnSelection}
+import io.deepsense.deeplang.params.wrappers.spark.ParamsWithSparkWrappers
+import io.deepsense.deeplang.params.{Params, Param, SingleColumnSelectorParam}
+import io.deepsense.deeplang.{DKnowledge, ExecutionContext}
 
 class BinaryClassificationEvaluator
-  extends SparkEvaluatorWrapper[SparkBinaryClassificationEvaluator]
-  with HasRawPredictionColumnParam
+  extends Evaluator
+  with ParamsWithSparkWrappers
   with HasLabelColumnParam {
 
-  import BinaryClassificationEvaluator._
-
-  val metricName = new ChoiceParamWrapper[SparkBinaryClassificationEvaluator, Metric](
+  val metricName = new ChoiceParam[Metric](
     name = "binary metric",
-    description = "The metric used in evaluation.",
-    sparkParamGetter = _.metricName)
+    description = "The metric used in evaluation.")
   setDefault(metricName, AreaUnderROC())
 
-  override val params: Array[Param[_]] = declareParams(metricName, rawPredictionColumn, labelColumn)
+  override val params: Array[Param[_]] = declareParams(metricName, labelColumn)
 
-  override def getMetricName: String = $(metricName).name
+  def getMetricName: String = $(metricName).name
+  def setMetricName(value: Metric): this.type = set(metricName, value)
+
+  override def _evaluate(context: ExecutionContext, dataFrame: DataFrame): MetricValue = {
+    val labelColumnName = dataFrame.getColumnName($(labelColumn))
+    val metric = $(metricName) match {
+      case rawPredictionChoice: RawPredictionMetric =>
+        evaluateRawPrediction(dataFrame, labelColumnName, rawPredictionChoice)
+      case predChoice: PredictionMetric =>
+        val predictionColumnName = dataFrame.getColumnName(predChoice.getPredictionColumnParam)
+        evaluatePrediction(dataFrame, labelColumnName, predChoice)
+    }
+    MetricValue(getMetricName, metric)
+  }
+
+  private def evaluateRawPrediction(
+      dataFrame: DataFrame,
+      labelColumnName: String,
+      rawChoice: RawPredictionMetric): Double = {
+    val rawPredictionColumnName = dataFrame.getColumnName(rawChoice.getRawPredictionColumnParam)
+    val scoreAndLabels = dataFrame.sparkDataFrame.select(rawPredictionColumnName, labelColumnName)
+      .map { case Row(rawPrediction: Vector, label: Double) =>
+      (rawPrediction(1), label)
+    }
+    val metrics = new BinaryClassificationMetrics(scoreAndLabels)
+    val metric = rawChoice match {
+      case areaUnderROCChoice: AreaUnderROC => metrics.areaUnderROC()
+      case areaUnderPRChoice: AreaUnderPR => metrics.areaUnderPR()
+    }
+    metrics.unpersist()
+    metric
+  }
+
+  private def evaluatePrediction(
+      dataFrame: DataFrame,
+      labelColumnName: String,
+      predChoice: PredictionMetric): Double = {
+    val predictionColumnName = dataFrame.getColumnName(predChoice.getPredictionColumnParam)
+    val predictionAndLabels = dataFrame.sparkDataFrame.select(predictionColumnName, labelColumnName)
+      .map { case Row(prediction: Double, label: Double) =>
+      (prediction, label)
+    }
+    val metrics = new MulticlassMetrics(predictionAndLabels)
+    val metric = predChoice match {
+      case precisionChoice: Precision => metrics.precision(1.0)
+      case recallChoice: Recall => metrics.recall(1.0)
+      case f1Choice: F1Score => metrics.fMeasure(1.0)
+    }
+    metric
+  }
+
+  override def _infer(k: DKnowledge[DataFrame]): MetricValue = {
+    // TODO: When dataset metadata will be implemented in Spark,
+    // check rawPredictionCol vector length = 2.
+    val schema = k.single.schema.map {
+      schema =>
+        val labelColumnName = DataFrameColumnsGetter.getColumnName(schema, $(labelColumn))
+        DataFrame.assertExpectedColumnType(
+          schema.fields.filter(_.name == labelColumnName).head,
+          ColumnType.numeric)
+        val (columnName, columnExpectedType) = $(metricName) match {
+          case rawChoice: RawPredictionMetric =>
+            (DataFrameColumnsGetter.getColumnName(schema, rawChoice.getRawPredictionColumnParam),
+              ColumnType.vector)
+          case predChoice: PredictionMetric =>
+            (DataFrameColumnsGetter.getColumnName(schema, predChoice.getPredictionColumnParam),
+              ColumnType.numeric)
+        }
+        DataFrame.assertExpectedColumnType(
+          schema.fields.filter(_.name == columnName).head,
+          columnExpectedType)
+    }
+
+    MetricValue.forInference(getMetricName)
+  }
+
+  override def isLargerBetter: Boolean = true
 }
 
 object BinaryClassificationEvaluator {
 
-  sealed abstract class Metric(override val name: String) extends Choice {
+  val areaUnderROC = "Area under ROC"
+  val areaUnderPR = "Area under PR"
+  val precision = "Precision"
+  val recall = "Recall"
+  val f1Score = "F1 Score"
 
-    override val params: Array[Param[_]] = declareParams()
+
+  sealed abstract class Metric(override val name: String) extends Choice {
 
     override val choiceOrder: List[Class[_ <: Choice]] = List(
       classOf[AreaUnderROC],
-      classOf[AreaUnderPR]
+      classOf[AreaUnderPR],
+      classOf[Precision],
+      classOf[Recall],
+      classOf[F1Score]
     )
   }
 
-  case class AreaUnderROC() extends Metric("areaUnderROC")
+  trait RawPredictionMetric extends Params {
+    val rawPredictionColumnParam = SingleColumnSelectorParam(
+      name = "raw prediction column",
+      description = "The raw prediction (confidence) column.",
+      portIndex = 0
+    )
+    setDefault(rawPredictionColumnParam, NameSingleColumnSelection("rawPrediction"))
+    def getRawPredictionColumnParam: SingleColumnSelection = $(rawPredictionColumnParam)
+    def setRawPredictionColumnParam(value: SingleColumnSelection): this.type =
+      set(rawPredictionColumnParam, value)
+  }
 
-  case class AreaUnderPR() extends Metric("areaUnderPR")
+  trait PredictionMetric extends Params {
+    val predictionColumnParam = SingleColumnSelectorParam(
+      name = "prediction column",
+      description = "The prediction column created during model scoring.",
+      portIndex = 0
+    )
+    setDefault(predictionColumnParam, NameSingleColumnSelection("prediction"))
+    def getPredictionColumnParam: SingleColumnSelection = $(predictionColumnParam)
+    def setPredictionColumnParam(value: SingleColumnSelection): this.type =
+      set(predictionColumnParam, value)
+  }
+
+  case class AreaUnderROC() extends Metric(areaUnderROC) with RawPredictionMetric {
+    override val name = areaUnderROC
+    override val params = declareParams(rawPredictionColumnParam)
+  }
+
+  case class AreaUnderPR() extends Metric(areaUnderPR) with RawPredictionMetric {
+    override val name = areaUnderPR
+    override val params = declareParams(rawPredictionColumnParam)
+  }
+
+  case class Precision() extends Metric(precision) with PredictionMetric {
+    override val name = precision
+    override val params = declareParams(predictionColumnParam)
+  }
+
+  case class Recall() extends Metric(recall) with PredictionMetric {
+    override val name = recall
+    override val params = declareParams(predictionColumnParam)
+  }
+
+  case class F1Score() extends Metric(f1Score) with PredictionMetric {
+    override val name = f1Score
+    override val params = declareParams(predictionColumnParam)
+  }
 }

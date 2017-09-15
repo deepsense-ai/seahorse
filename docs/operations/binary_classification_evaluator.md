@@ -8,15 +8,6 @@ includeOperationsMenu: true
 ---
 Creates a binary classification evaluator.
 
-This operation is ported from Spark ML.
-
-
-For a comprehensive introduction, see
-<a target="_blank" href="https://spark.apache.org/docs/1.6.0/mllib-evaluation-metrics.html#binary-classification">Spark documentation</a>.
-
-
-For scala docs details, see
-<a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.evaluation.BinaryClassificationEvaluator">org.apache.spark.ml.evaluation.BinaryClassificationEvaluator documentation</a>.
 
 **Since**: Seahorse 1.0.0
 
@@ -57,13 +48,21 @@ This operation does not take any input.
 <tr>
 <td><code>binary metric</code></td>
 <td><code><a href="../parameter_types.html#single-choice">SingleChoice</a></code></td>
-<td>The metric used in evaluation. Possible values: <code>["areaUnderROC", "areaUnderPR"]</code></td>
+<td>The metric used in evaluation. Possible values: <code>["Area under ROC", "Area under PR", "Precision", "Recall", "F1 Score"]</code></td>
 </tr>
 
 <tr>
 <td><code>raw prediction column</code></td>
 <td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
-<td>The raw prediction (confidence) column.</td>
+<td>Valid only if <code>binary metric = Area under ROC</code> or <code>binary metric = Area under PR</code>.
+  The raw prediction (confidence) column.</td>
+</tr>
+
+<tr>
+<td><code>prediction column</code></td>
+<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
+<td>Valid only if <code>binary metric = Precision</code>, <code>binary metric = Recall</code> or <code>binary metric = F1 Score</code>.
+  The prediction column created during model scoring.</td>
 </tr>
 
 <tr>
