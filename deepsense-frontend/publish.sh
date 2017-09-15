@@ -46,6 +46,11 @@ function prepare_environment() {
   npmrc -c codilime || test 1
   npmrc codilime
   npm set registry $NPM_REGISTRY_URL
+
+  #install all components dependencies
+  (cd ../deepsense-components && ./install_all.sh)
+  #build all components
+  (cd ../deepsense-components && ./build_all.sh)
   npm install
 }
 

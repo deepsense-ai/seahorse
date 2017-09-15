@@ -12,9 +12,9 @@
     "angular-xeditable": "0.0.1",
     "animate.css": "^3.2.5",
     "bootstrap": "^3.3.4",
-    "deepsense-loading-spinner": "^1.0.2",
-    "deepsense-node-parameters": "0.0.29",
-    "deepsense-graph-model": "0.0.35",
+    "deepsense-loading-spinner": "file:../deepsense-loading-spinner",
+    "deepsense-node-parameters": "file:../deepsense-node-parameters",
+    "deepsense-graph-model": "file:../deepsense-graph-model",
     "font-awesome": "^4.3.0",
     "jquery": "^2.1.4",
     "lodash": "^3.9.3",
@@ -39,6 +39,7 @@
   },
   "scripts": {
     "prestart": "npm install",
+    "postinstall": "bower install",
     "start": "gulp start"
   }
 }

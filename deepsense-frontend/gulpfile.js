@@ -25,6 +25,7 @@ var templateCache = require('gulp-angular-templatecache');
 var htmlreplace = require('gulp-html-replace');
 var prettify = require('gulp-jsbeautifier');
 var exec = require('child_process').exec;
+var execFile = require('child_process').execFile;
 
 require('jshint-stylish');
 
@@ -258,6 +259,16 @@ gulp.task('build', function (callback) {
     'version', 'replace', 'uncache', callback);
 });
 
+gulp.task('build-all', function (callback) {
+  execFile('../deepsense-components/build_all.sh', {
+    cwd: '../deepsense-components'
+  },function (error, stdout, sterr) {
+    console.log(stdout);
+    console.log("All components build");
+    callback(error);
+  });
+});
+
 gulp.task('watch', function () {
   if (devMode) {
     gulp.watch(client.path + client.html, ['html:index', 'html:partials', browserSync.reload]);
@@ -267,10 +278,12 @@ gulp.task('watch', function () {
       [
         client.path + client.js,
         '|',
-        '!' + __dirname + '/' + config.files.tests.client
-      ],
-      ['jshint', 'browserify', 'copy:scripts', browserSync.reload]
-    );
+        '!' + __dirname + '/' + config.files.tests.client,
+        client.localDependencies
+      ]
+    ).on('change', function () {
+      runSequence('jshint', 'browserify', 'libs:css', 'libs:js', 'copy:scripts', browserSync.reload)
+    });
   }
 });
 

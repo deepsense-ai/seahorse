@@ -6,8 +6,8 @@
   "license": "ISC",
   "dependencies": {
     "angular": "^1.4.1",
-    "deepsense-graph-model": "0.0.3",
-    "deepsense-node-parameters": "0.0.11",
+    "deepsense-graph-model": "file:../deepsense-graph-model",
+    "deepsense-node-parameters": "file:../deepsense-node-parameters",
     "lodash": "^3.9.3"
   },
   "devDependencies": {

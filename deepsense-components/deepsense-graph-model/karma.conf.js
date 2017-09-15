@@ -20,8 +20,8 @@ module.exports = function (config) {
       './node_modules/angular/angular.js',
       './node_modules/angular-mocks/angular-mocks.js',
       './node_modules/lodash/index.js',
-      './node_modules/deepsense-node-parameters/dist/deepsense-node-parameters.js',
-      './node_modules/deepsense-graph-model/dist/deepsense-graph-model.js',
+      '../deepsense-node-parameters/dist/deepsense-node-parameters.js',
+      './src/deepsense-graph-model.module.js',
       './src/**/*.js',
       './test/**/*.spec.js'
     ],

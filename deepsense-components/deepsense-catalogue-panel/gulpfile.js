@@ -4,64 +4,71 @@
  * Created by Oleksandr Tserkovnyi on 08.06.15.
  */
 
+var path = require('path');
 var del = require('del');
 var gulp = require('gulp');
+var uglify = require('gulp-uglify');
 var runSequence = require('run-sequence');
-var plugins = require('gulp-load-plugins')({lazy: false});
+var babel = require("gulp-babel");
+var concat = require('gulp-concat');
+var less = require('gulp-less');
 var templateCache = require('gulp-angular-templatecache');
+var minifyCss = require('gulp-minify-css');
 var connect = require('gulp-connect');
 
 var config = require('./config.json');
 
 gulp.task('clean', function () {
-    return del([config.dist, config.temp], { force: true });
+    return del([config.dist + '*', config.temp + '*'], {force: true});
 });
 
 gulp.task('clean-temp', function () {
-    del([config.temp], {force: true});
+    return del([config.temp], {force: true});
 });
 
 gulp.task('html', function () {
     return gulp.src(config.src + '**/*.html')
         .pipe(templateCache({
-            module: config.names.mainModule
+            module: 'deepsense-catalogue-panel'
         }))
         .pipe(gulp.dest(config.temp))
         .pipe(connect.reload());
 });
 
-gulp.task('js', function () {
+gulp.task('es6', function () {
     return gulp.src(config.src + '**/*.js')
-        .pipe(plugins.babel())
-        .pipe(plugins.concat(config.names.js))
-        .pipe(plugins.ngAnnotate({
-            add: true,
-            // jshint -W106
-            single_quotes: true
-        }))
         .pipe(gulp.dest(config.temp))
         .pipe(connect.reload());
 });
 
 gulp.task('less', function () {
     return gulp.src(config.src + '**/*.less')
-        .pipe(plugins.less())
-        .pipe(plugins.minifyCss())
+        .pipe(less({
+            // paths: Array of paths to be used for @import directives
+            paths: [path.join(__dirname, 'less', 'includes')]
+        }))
+        .pipe(minifyCss())
         .pipe(gulp.dest(config.temp))
         .pipe(connect.reload());
 });
 
-gulp.task('concat:js', function () {
-    return gulp.src(config.temp + '**/*.js')
-        .pipe(plugins.concat(config.names.js))
-        .pipe(plugins.uglify())
+gulp.task('concat', function () {
+    gulp.src(config.temp + '**/*.js')
+        .pipe(concat(config.names.js))
+        .pipe(babel())
+        .pipe(uglify())
         .pipe(gulp.dest(config.dist));
+
+    return gulp.src(config.temp + '**/*.css')
+        .pipe(concat(config.names.css))
+        .pipe(gulp.dest(config.dist))
 });
 
-gulp.task('concat:css', function () {
-    return gulp.src(config.temp + '**/*.css')
-        .pipe(plugins.concat(config.names.css))
-        .pipe(gulp.dest(config.dist));
+gulp.task('connect', function() {
+    connect.server({
+        root: ['./', '../'],
+        livereload: true
+    });
 });
 
 gulp.task('serve', function () {
@@ -70,14 +77,7 @@ gulp.task('serve', function () {
 });
 
 gulp.task('build', function () {
-    return runSequence('clean', ['js', 'less', 'html'], ['concat:js', 'concat:css'], 'clean-temp');
-});
-
-gulp.task('connect', function() {
-    connect.server({
-        root: [__dirname, 'test/'],
-        livereload: true
-    });
+    return runSequence('clean', ['es6', 'less', 'html'], 'concat', 'clean-temp');
 });
 
 gulp.task('start', function () {
