@@ -68,16 +68,6 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
 
   def apiPrefix: String = "v1/experiments"
 
-  // roles mock
-  private val rolesForTenantA = Set(
-      new Role("experiments:get"),
-      new Role("experiments:list"),
-      new Role("experiments:delete"),
-      new Role("experiments:update"),
-      new Role("experiments:create"),
-      new Role("experiments:launch"),
-      new Role("experiments:about"))
-
   protected def testRoute = {
     val tokenTranslator = mock[TokenTranslator]
     when(tokenTranslator.translate(any(classOf[String])))
@@ -88,7 +78,6 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
           || tokenFromRequest == validAuthTokenTenantB ) {
           val uc = mock[UserContext]
           when(uc.tenantId).thenReturn(tokenFromRequest)
-          when(uc.roles).thenReturn(rolesForTenantA)
           Future.successful(uc)
         } else {
           Future.failed(new CannotGetUserException(tokenFromRequest))
@@ -457,7 +446,7 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
 
     override def get(id: Experiment.Id): Future[Option[Experiment]] = {
       userContext.flatMap(uc => {
-        if (uc.tenantId == validAuthTokenTenantB) throw new NoRoleException(uc, "experiments:list")
+        if (uc.tenantId == validAuthTokenTenantB) throw new NoRoleException(uc, "experiments:get")
         if (uc.tenantId == validAuthTokenTenantA) {
           val experiment = storedExperiments.find(_.id == id)
           Future(experiment match {
@@ -474,7 +463,9 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
 
     override def update(experiment: Experiment): Future[Experiment] = {
       userContext.flatMap(uc => {
-        if (uc.tenantId == validAuthTokenTenantB) throw new NoRoleException(uc, "experiments:list")
+        if (uc.tenantId == validAuthTokenTenantB) {
+          throw new NoRoleException(uc, "experiments:update")
+        }
         if (uc.tenantId == validAuthTokenTenantA) {
           val oldExperiment = storedExperiments.find(_.id == experiment.id)
           Future(oldExperiment match {
@@ -496,7 +487,9 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
 
     override def delete(id: Experiment.Id): Future[Boolean] = {
       userContext.flatMap(uc => {
-        if (uc.tenantId == validAuthTokenTenantB) throw new NoRoleException(uc, "experiments:list")
+        if (uc.tenantId == validAuthTokenTenantB) {
+          throw new NoRoleException(uc, "experiments:delete")
+        }
         if (uc.tenantId == validAuthTokenTenantA) {
           val experiment = storedExperiments.find(_.id == id)
           Future(experiment match {
@@ -553,7 +546,9 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
 
     override def create(inputExperiment: InputExperiment): Future[Experiment] = {
       userContext.flatMap(uc => {
-        if (uc.tenantId == validAuthTokenTenantB) throw new NoRoleException(uc, "experiments:list")
+        if (uc.tenantId == validAuthTokenTenantB) {
+          throw new NoRoleException(uc, "experiments:create")
+        }
         if (uc.tenantId == validAuthTokenTenantA) {
           val experiment = Experiment(
             UUID.randomUUID(),
