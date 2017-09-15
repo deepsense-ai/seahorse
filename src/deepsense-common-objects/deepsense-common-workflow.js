@@ -77,12 +77,14 @@ angular.module('deepsense.graph-model').
           let data = nodes[i];
           let id = data.id;
           let operation = operations[data.operation.id];
+          let guiData = thirdPartyData.gui || {};
+          let coordinates = (guiData.nodes || {})[id] || {};
           let node = that.createNode({
               'id': id,
               'operation': operation,
               'parameters': data.parameters,
-              'x': thirdPartyData.gui.nodes[id].coordinates.x,
-              'y': thirdPartyData.gui.nodes[id].coordinates.y
+              'x': coordinates.x || 0,
+              'y': coordinates.y || 0
               //'state': state.nodes[id]
             });
           that.addNode(node);
