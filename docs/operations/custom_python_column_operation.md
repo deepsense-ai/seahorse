@@ -19,9 +19,10 @@ The function that will be executed has to:
 * return transformed value that conforms with selected target type (parameter).
 
 #### Example Python code:
-
-    def transform_value(value, column_name):
-      value
+{% highlight python %}
+def transform_value(value, column_name):
+    return value
+{% endhighlight %}
 
 
 **Since**: Seahorse 1.0.0

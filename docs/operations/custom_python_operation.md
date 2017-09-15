@@ -19,12 +19,12 @@ The function that will be executed has to:
 * return DataFrame.
 
 #### Example Python code:
+{% highlight python %}
+from pyspark.sql.types import Row
 
-    from pyspark.sql.types import Row
-
-    def transform(dataframe):
-      return sqlContext.createDataFrame(dataframe.map(lambda row: Row(row.numbers_column*2)))
-
+def transform(dataframe):
+    return sqlContext.createDataFrame(dataframe.map(lambda row: Row(row.numbers_column*2)))
+{% endhighlight %}
 
 **Since**: Seahorse 1.0.0
 
