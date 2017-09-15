@@ -4,14 +4,16 @@
 
 package io.deepsense.experimentmanager.rest
 
+import io.deepsense.deeplang.doperations.MathematicalOperation
+
 import scala.concurrent._
 
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
-import spray.http.StatusCodes
-import spray.json.JsObject
+import spray.http.{HttpCharsets, HttpCharset, StatusCodes}
+import spray.json._
 import spray.routing.Route
 
 import io.deepsense.commons.auth.exceptions.{NoRoleException, ResourceAccessDeniedException}
@@ -20,13 +22,13 @@ import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.json.envelope.Envelope
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
-import io.deepsense.deeplang.InferContext
+import io.deepsense.deeplang.{ExecutionContext, DOperation0To1, InferContext}
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.experimentmanager.exceptions.ExperimentNotFoundException
 import io.deepsense.experimentmanager.models.{Count, ExperimentsList}
 import io.deepsense.experimentmanager.rest.actions.{AbortAction, LaunchAction}
-import io.deepsense.experimentmanager.rest.json.ExperimentJsonProtocol
+import io.deepsense.experimentmanager.rest.json.{ExperimentJsonProtocol, DataFrameMetadataJsonProtocol}
 import io.deepsense.experimentmanager.{ExperimentManager, ExperimentManagerProvider}
 import io.deepsense.graph.{Graph, Node}
 import io.deepsense.graphjson.GraphJsonProtocol.GraphReader
@@ -73,6 +75,7 @@ class ExperimentsApiSpec
   def validAuthTokenTenantB: String = tenantBId
 
   val experimentAId = Experiment.Id.randomId
+  val experimentAWithNodeId = Experiment.Id.randomId
   val experimentA2Id = Experiment.Id.randomId
   val experimentBId = Experiment.Id.randomId
 
@@ -81,6 +84,16 @@ class ExperimentsApiSpec
     tenantAId,
     "Experiment of Tenant A",
     Graph(),
+    created,
+    updated)
+
+  val nodeUUID = Node.Id.randomId
+
+  protected def experimentOfTenantAWithNode = Experiment(
+    experimentAWithNodeId,
+    tenantAId,
+    "Experiment of Tenant A with node",
+    Graph(Set(Node(nodeUUID, MathematicalOperation("2")))),
     created,
     updated)
 
@@ -467,9 +480,71 @@ class ExperimentsApiSpec
     }
   }
 
+  val metadataParams = Map("nodeId" -> nodeUUID.toString, "portIndex" -> "0")
+  val metadataParamsString = getParamString(metadataParams)
+
+  s"GET /experiments/:id/metadata" should {
+    "return Metadata" when {
+      "auth token is correct, user has roles and the experiment belongs to him" in {
+        Get(s"/$apiPrefix/${experimentOfTenantAWithNode.id}/metadata" + metadataParamsString) ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.OK)
+
+          val expectedJson = JsObject(
+            "metadata" -> JsArray()
+          )
+          response.entity.asString(HttpCharsets.`UTF-8`).parseJson shouldBe expectedJson
+        }
+      }
+    }
+    "return NotFound" when {
+      "the experiment does not exist" in {
+        val nonExistingId = Experiment.Id.randomId
+        Get(s"/$apiPrefix/${nonExistingId}/metadata" + metadataParamsString) ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.NotFound)
+        }
+      }
+      "the user has no right to that experiment" in {
+        Get(s"/$apiPrefix/${experimentOfTenantB.id}/metadata" + metadataParamsString) ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.NotFound)
+        }
+      }
+    }
+    "return Unauthorized" when {
+      "invalid auth token was send (when InvalidTokenException occures)" in {
+        Get(s"/$apiPrefix/${experimentOfTenantA.id}/metadata" + metadataParamsString) ~>
+          addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
+          status should be(StatusCodes.Unauthorized)
+        }
+      }
+      "the user does not have the requested role (on NoRoleExeption)" in {
+        Get(s"/$apiPrefix/${experimentOfTenantA.id}/metadata" + metadataParamsString) ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
+          status should be(StatusCodes.Unauthorized)
+        }
+      }
+      "no auth token was send (on MissingHeaderRejection)" in {
+        Get(s"/$apiPrefix/${experimentOfTenantA.id}/metadata" + metadataParamsString) ~> testRoute ~> check {
+          status should be(StatusCodes.Unauthorized)
+        }
+      }
+    }
+  }
+
+  private def getParamString(keyValue: Map[String, Any]): String = {
+    "?" + (keyValue.toList.foldLeft("")
+      ((str: String, kv: (String, Any)) => str + kv._1 + "=" + kv._2 + "&"))
+      .dropRight(1)
+  }
+
   class MockExperimentManager(userContext: Future[UserContext]) extends ExperimentManager {
 
     var storedExperiments = Seq(
+      experimentOfTenantA, experimentOfTenantAWithNode, experimentOfTenantA2, experimentOfTenantB)
+
+    var storedExperimentsWithoutNodes = Seq(
       experimentOfTenantA, experimentOfTenantA2, experimentOfTenantB)
 
     override def get(id: Id): Future[Option[Experiment]] = {
@@ -594,7 +669,7 @@ class ExperimentsApiSpec
         if (!uc.roles.contains(Role(wantedRole))) {
           throw new NoRoleException(uc, wantedRole)
         } else {
-          val filteredExperiments = storedExperiments.filter(_.tenantId == uc.tenantId)
+          val filteredExperiments = storedExperimentsWithoutNodes.filter(_.tenantId == uc.tenantId)
           Future.successful(
             ExperimentsList(
               Count(filteredExperiments.size, filteredExperiments.size),

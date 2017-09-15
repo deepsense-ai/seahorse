@@ -38,7 +38,8 @@ case class DataFrame private[dataframe] (
 
   def this() = this(null)
 
-  override def metadata = Option(DataFrameMetadata.fromSchema(sparkDataFrame.schema))
+  override def metadata: Option[DataFrameMetadata] =
+    Option(DataFrameMetadata.fromSchema(sparkDataFrame.schema))
 
   override def save(context: ExecutionContext)(path: String): Unit =
     sparkDataFrame.write.parquet(path)

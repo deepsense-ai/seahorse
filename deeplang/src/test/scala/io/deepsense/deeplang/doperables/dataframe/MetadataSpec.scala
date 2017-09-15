@@ -4,12 +4,12 @@
 
 package io.deepsense.deeplang.doperables.dataframe
 
-import org.apache.spark.sql.types._
-
 import io.deepsense.deeplang.UnitSpec
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMapper._
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoriesMapping, MappingMetadataConverter}
 import io.deepsense.deeplang.parameters.ColumnType
+import org.apache.spark.sql.types._
+import spray.json._
 
 class MetadataSpec extends UnitSpec {
 
@@ -55,5 +55,6 @@ class MetadataSpec extends UnitSpec {
     "produce schema" in {
       metadata.toSchema shouldBe schema
     }
+
   }
 }

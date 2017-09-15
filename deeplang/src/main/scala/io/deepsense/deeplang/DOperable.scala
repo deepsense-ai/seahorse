@@ -5,6 +5,9 @@
 package io.deepsense.deeplang
 
 import io.deepsense.deeplang.doperables.Report
+import io.deepsense.deeplang.doperables.dataframe.DataFrameMetadata
+import org.json4s.JsonWriter
+import spray.json._
 
 /**
  * Objects of classes with this trait can be used in two ways.
@@ -46,5 +49,13 @@ trait DOperable {
 }
 
 object DOperable {
-  trait AbstractMetadata
+  trait AbstractMetadata {
+    def accept[T](v: MetadataVisitor[T]): T = v.visit(this)
+  }
+  trait MetadataVisitor[T] {
+    def visit(abstractMetadata: AbstractMetadata): T =
+      throw new RuntimeException(
+        "Type " + abstractMetadata.getClass.getSimpleName + "not supported by MetadataVisitor")
+    def visit(dataFrameMetadata: DataFrameMetadata): T
+  }
 }
