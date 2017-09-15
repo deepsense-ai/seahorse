@@ -23,6 +23,7 @@ function StickOnScroll($window, $document, debounce) {
       var startOn = attributes.stickOn;
       var isAnimated = typeof attributes.stickAnimate === 'string';
       var $clone;
+      var originalWidth = $element.width();
 
       var calculateCorrectTopOffset = function calculateCorrectTopOffset () {
         // store top mistake because of display: flex
@@ -55,8 +56,10 @@ function StickOnScroll($window, $document, debounce) {
           $element.addClass(CSS_CLASS_TO_STICK);
           $element.addClass(CSS_CLASS_TO_STICK_TO_LEFT);
           mirror(true);
+          $element.width($clone.width());
         } else if (viewScroll < elementAbsolutePositionTop) {
           mirror(false);
+          $element.width(originalWidth);
           $element.removeClass(CSS_CLASS_TO_STICK);
           $element.removeClass(CSS_CLASS_TO_STICK_TO_LEFT);
         }

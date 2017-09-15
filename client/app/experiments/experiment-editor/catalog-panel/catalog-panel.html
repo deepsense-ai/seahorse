@@ -1,15 +1,23 @@
 <div class="operations-tree no-selection">
   <script type="text/ng-template" id="catalog-panel">
-    <span class="operations-name" ng-click="category.collapsed = ! category.collapsed">
-      <i class="fa fa-caret-{{ category.collapsed ? 'right' : 'down' }}"></i> {{::category.name}}
+    <span class="operations-category-item" ng-click="category.collapsed = ! category.collapsed">
+      <span class="btn btn-primary btn-xs pull-left">
+        <i class="fa fa-caret-{{ category.collapsed ? 'right' : 'down' }}"></i>
+      </span>
+      <span class="text">{{::category.name}}</span>
     </span>
     <ul ng-hide="category.collapsed">
       <li class="operations-category"
           ng-repeat="category in ::category.catalog"
           ng-include="'catalog-panel'"></li>
-      <li class="operations-items"
-          ng-repeat="item in ::category.items">
-          <operation-item droppable id="{{::item.id}}" icon="{{::category.icon}}" name="{{::item.name}}"/>
+      <li class="operations-item"
+          ng-repeat="item in ::category.items"
+          droppable id="{{::item.id}}"
+        >
+          <operation-item id="{{::item.id}}"
+                          icon="{{::category.icon}}"
+                          name="{{::item.name}}"></operation-item>
+          <span class="fa fa-bars pull-right"></span>
       </li>
     </ul>
   </script>

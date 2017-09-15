@@ -20,7 +20,8 @@ var lab = angular.module('ds.lab', [
   require('./experiments/experiments.module.js').name,
   require('./datasets/datasets.module.js').name,
   require('./common/common.module.js').name,
-  require('./reports/reports.module.js').name
+  require('./reports/reports.module.js').name,
+  require('./errors/errors.module.js').name
 ]);
 
 require('./app.config.js').inject(lab);
