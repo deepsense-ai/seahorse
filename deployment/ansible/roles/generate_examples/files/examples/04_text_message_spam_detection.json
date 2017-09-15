@@ -95,6 +95,28 @@
         "max vocabulary size": 262144.0
       }
     }, {
+      "id": "b250f954-3cc2-8e54-2801-d4c8da8d1c4d",
+      "operation": {
+        "id": "39acf60c-3f57-4346-ada7-6959a76568a5",
+        "name": "Remove Stop Words"
+      },
+      "parameters": {
+        "case sensitive": false,
+        "operate on": {
+          "one column": {
+            "input column": {
+              "type": "column",
+              "value": "text"
+            },
+            "output": {
+              "replace input column": {
+
+              }
+            }
+          }
+        }
+      }
+    }, {
       "id": "a74d1f41-61f5-1ddf-eac5-c6dd218ce8de",
       "operation": {
         "id": "643d8706-24db-4674-b5b4-10b5129251fc",
@@ -207,7 +229,7 @@
       "parameters": {
         "data storage type": {
           "FILE": {
-            "source": "https://s3.amazonaws.com/workflowexecutor/examples/data/SMSSpamCollection",
+            "source": "https://s3.amazonaws.com/workflowexecutor/examples/data/SMSSpamCollection.csv",
             "format": {
               "CSV": {
                 "separator": {
@@ -310,6 +332,15 @@
       }
     }, {
       "from": {
+        "nodeId": "d6d89982-bcf7-e65d-9df2-495cd8fc3876",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "b250f954-3cc2-8e54-2801-d4c8da8d1c4d",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
         "nodeId": "a74d1f41-61f5-1ddf-eac5-c6dd218ce8de",
         "portIndex": 0
       },
@@ -364,6 +395,15 @@
       }
     }, {
       "from": {
+        "nodeId": "b250f954-3cc2-8e54-2801-d4c8da8d1c4d",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "d59b610d-7c5a-255f-2b08-b7b84ce6215f",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
         "nodeId": "702dbca8-1f0c-d30f-d2fc-ca583bdbd1c5",
         "portIndex": 0
       },
@@ -414,15 +454,6 @@
       },
       "to": {
         "nodeId": "5169cfbd-079b-dfc1-ed05-73b4308d8a6b",
-        "portIndex": 0
-      }
-    }, {
-      "from": {
-        "nodeId": "d6d89982-bcf7-e65d-9df2-495cd8fc3876",
-        "portIndex": 0
-      },
-      "to": {
-        "nodeId": "d59b610d-7c5a-255f-2b08-b7b84ce6215f",
         "portIndex": 0
       }
     }, {
@@ -554,6 +585,14 @@
             "y": 5101
           }
         },
+        "b250f954-3cc2-8e54-2801-d4c8da8d1c4d": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 4523,
+            "y": 4573
+          }
+        },
         "759f34de-8bc0-9b0b-c72c-c78f103ddf1d": {
           "uiName": "",
           "color": "#00B1EB",
@@ -606,7 +645,7 @@
   "variables": {
 
   },
-  "id": "c2bfd15e-b7d5-4b8d-876c-449e5248fa0c",
+  "id": "1747cf99-2b06-4ec3-8d20-67249ed1945a",
   "metadata": {
     "type": "batch",
     "apiVersion": "1.0.0"
