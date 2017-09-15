@@ -12,7 +12,7 @@
             "type": "column",
             "value": "rawPrediction"
           },
-          "metric": {
+          "binary metric": {
             "areaUnderPR": {
 
             }
@@ -220,7 +220,7 @@
         "name": "Binary Classification Evaluator"
       },
       "parameters": {
-        "metric": {
+        "binary metric": {
           "areaUnderPR": {
 
           }

@@ -139,7 +139,7 @@
           "cache node ids": false
         },
         "Parameters of input Evaluator": {
-          "metric": {
+          "regression metric": {
             "rmse": {
 
             }
@@ -186,7 +186,7 @@
         "name": "Regression Evaluator"
       },
       "parameters": {
-        "metric": {
+        "regression metric": {
           "rmse": {
 
           }
