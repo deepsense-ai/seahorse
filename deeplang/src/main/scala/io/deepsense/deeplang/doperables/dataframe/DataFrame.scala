@@ -52,7 +52,7 @@ case class DataFrame private[dataframe] (
   def withColumns(context: ExecutionContext, newColumns: Traversable[sql.Column]): DataFrame = {
     val columns: List[sql.Column] = new sql.ColumnName("*") :: newColumns.toList
     val newSparkDataFrame = sparkDataFrame.select(columns: _*)
-    context.dataFrameBuilder.buildDataFrame(newSparkDataFrame)
+    DataFrame.fromSparkDataFrame(newSparkDataFrame)
   }
 
   override def report(executionContext: ExecutionContext): Report = {
@@ -100,11 +100,15 @@ object DataFrame {
   def empty(context: ExecutionContext): DataFrame = {
     val emptyRdd = context.sqlContext.sparkContext.parallelize(Seq[Row]())
     val emptySparkDataFrame = context.sqlContext.createDataFrame(emptyRdd, StructType(Seq.empty))
-    context.dataFrameBuilder.buildDataFrame(emptySparkDataFrame)
+    fromSparkDataFrame(emptySparkDataFrame)
   }
 
   def loadFromFs(context: ExecutionContext)(path: String): DataFrame = {
     val dataFrame = context.sqlContext.read.parquet(path)
-    context.dataFrameBuilder.buildDataFrame(dataFrame)
+    fromSparkDataFrame(dataFrame)
+  }
+
+  def fromSparkDataFrame(sparkDataFrame: sql.DataFrame): DataFrame = {
+    DataFrame(sparkDataFrame, Some(sparkDataFrame.schema))
   }
 }

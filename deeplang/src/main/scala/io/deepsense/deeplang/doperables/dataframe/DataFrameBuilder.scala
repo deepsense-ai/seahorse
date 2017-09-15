@@ -29,11 +29,7 @@ case class DataFrameBuilder(sqlContext: SQLContext) {
 
   def buildDataFrame(schema: StructType, data: RDD[Row]): DataFrame = {
     val dataFrame: sql.DataFrame = sqlContext.createDataFrame(data, schema)
-    buildDataFrame(dataFrame)
-  }
-
-  def buildDataFrame(sparkDataFrame: sql.DataFrame): DataFrame = {
-    DataFrame(sparkDataFrame, Some(sparkDataFrame.schema))
+    DataFrame.fromSparkDataFrame(dataFrame)
   }
 }
 

@@ -73,7 +73,7 @@ case class ConvertType()
     logger.debug("Executing converters and selecting converted columns...")
     val cleanedUpDf = convert(dataFrame, converters, columnsOldToNew)
     logger.debug("Building DataFrame...")
-    context.dataFrameBuilder.buildDataFrame(cleanedUpDf)
+    DataFrame.fromSparkDataFrame(cleanedUpDf)
   }
 
   private def findConverters(

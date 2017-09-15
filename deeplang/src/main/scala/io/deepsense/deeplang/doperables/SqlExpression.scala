@@ -45,8 +45,7 @@ class SqlExpression extends Transformer {
     try {
       logger.debug(s"Table '$dataFrameId' registered. Executing the expression")
       val sqlResult = ctx.sqlContext.sql(getExpression)
-      DataFrameBuilder(ctx.sqlContext)
-        .buildDataFrame(sqlResult)
+      DataFrame.fromSparkDataFrame(sqlResult)
     } finally {
       logger.debug("Unregistering the temporary table" + getDataFrameId)
       ctx.sqlContext.dropTempTable(getDataFrameId)

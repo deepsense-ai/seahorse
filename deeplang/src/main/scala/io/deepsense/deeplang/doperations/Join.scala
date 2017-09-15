@@ -171,7 +171,7 @@ case class Join()
 
     // NOTE: We perform only LEFT OUTER JOIN, thus we do not need to change CategoricalMetadata
     // in resultDataFrame (CategoricalMetadata for left DataFrame, already there is sufficient)
-    val resultDataFrame = context.dataFrameBuilder.buildDataFrame(duplicateColumnsRemoved)
+    val resultDataFrame = DataFrame.fromSparkDataFrame(duplicateColumnsRemoved)
     logger.debug("Execution of " + this.getClass.getSimpleName + " ends")
     resultDataFrame
   }
