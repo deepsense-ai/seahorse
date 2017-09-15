@@ -1,0 +1,27 @@
+Vagrant.configure(2) do |config|
+  config.vm.define "deepsense-vm" do |deepsensevm|
+    deepsensevm.vm.box = "deepsense-vm"
+    deepsensevm.vm.box_url = ""
+    deepsensevm.vm.hostname = "deepsense-vm"
+    deepsensevm.vm.boot_timeout = 600
+    #editor:
+    deepsensevm.vm.network "forwarded_port", guest: 8000, host: 8000, host_ip: "127.0.0.1"
+    #WM:
+    deepsensevm.vm.network "forwarded_port", guest: 9080, host: 9080, host_ip: "127.0.0.1"
+    #Spark Master UI:
+    deepsensevm.vm.network "forwarded_port", guest: 8080, host: 8080, host_ip: "127.0.0.1"
+    #RabbitMQ Web-STOMP:
+    deepsensevm.vm.network "forwarded_port", guest: 15674, host: 15674, host_ip: "127.0.0.1"
+    #RabbitMQ STOMP:
+    deepsensevm.vm.network "forwarded_port", guest: 61613, host: 61613, host_ip: "127.0.0.1"
+    #RabbitMQ Management:
+    deepsensevm.vm.network "forwarded_port", guest: 15672, host: 15672, host_ip: "127.0.0.1"
+    #Notebook server:
+    deepsensevm.vm.network "forwarded_port", guest: 8888, host: 8888, host_ip: "127.0.0.1"
+  end
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = "4096"
+    vb.cpus = 4
+    vb.name = "deepsense-vm"
+  end
+end
