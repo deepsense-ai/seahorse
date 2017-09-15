@@ -195,7 +195,7 @@ class WorkflowsApiSpec
             'additionalData(workflowA.additionalData)
           )
           val resultJs = response.entity.asString.parseJson.asJsObject
-          resultJs.fields("knowledge") shouldBe knowledgeA.toJson.asJsObject.fields("resultsMap")
+          resultJs.fields("knowledge") shouldBe knowledgeA.results.toJson
           resultJs.fields("id") shouldBe workflowAId.toJson
         }
         ()
@@ -321,7 +321,7 @@ class WorkflowsApiSpec
             'additionalData (createdWorkflow.additionalData)
           )
           val resultJs = response.entity.asString.parseJson.asJsObject
-          resultJs.fields("knowledge") shouldBe knowledge.toJson.asJsObject.fields("resultsMap")
+          resultJs.fields("knowledge") shouldBe knowledge.results.toJson
           resultJs.fields should contain key "id"
         }
         ()
@@ -385,7 +385,7 @@ class WorkflowsApiSpec
             'additionalData (createdWorkflow.additionalData))
 
           val resultJs = response.entity.asString.parseJson.asJsObject
-          resultJs.fields("knowledge") shouldBe knowledge.toJson.asJsObject.fields("resultsMap")
+          resultJs.fields("knowledge") shouldBe knowledge.results.toJson
           resultJs.fields should contain key "id"
         }
         ()
@@ -444,7 +444,7 @@ class WorkflowsApiSpec
             'additionalData (updatedWorkflow.additionalData)
           )
           val resultJs = response.entity.asString.parseJson.asJsObject
-          resultJs.fields("knowledge") shouldBe knowledge.toJson.asJsObject.fields("resultsMap")
+          resultJs.fields("knowledge") shouldBe knowledge.results.toJson
           resultJs.fields("id") shouldBe workflowAId.toJson
         }
         ()
