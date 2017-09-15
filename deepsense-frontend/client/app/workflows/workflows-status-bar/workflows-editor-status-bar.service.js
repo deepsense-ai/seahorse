@@ -25,6 +25,11 @@ function WorkflowStatusBarService($rootScope, config, version, WorkflowService, 
       href: config.docsHost + '/docs/' + version.getDocsVersion() + '/index.html',
       target: '_blank'
     },
+    clone: {
+      label: 'Clone',
+      icon: 'fa-clone',
+      callFunction: () => $rootScope.$broadcast('StatusBar.CLONE_WORKFLOW')
+    },
     export: {
       label: 'Export',
       icon: 'fa-angle-double-down',
@@ -72,6 +77,9 @@ function WorkflowStatusBarService($rootScope, config, version, WorkflowService, 
     }
   };
 
+  menuItems.disabledClone= angular.copy(menuItems.clone);
+  menuItems.disabledClone.additionalClass = 'menu-item-disabled';
+
   menuItems.disabledStartExecutor = angular.copy(menuItems.startExecutor);
   menuItems.disabledStartExecutor.additionalClass = 'menu-item-disabled';
 
@@ -85,12 +93,12 @@ function WorkflowStatusBarService($rootScope, config, version, WorkflowService, 
   menuItems.disabledRun.additionalClass = 'menu-item-disabled';
 
   const _menuItemViews = {
-    editorWithExecutor: [menuItems.export, menuItems.stopExecutor, menuItems.clear, menuItems.run, menuItems.documentation],
-    editorWithoutReadyExecutor: [menuItems.export, menuItems.startingExecutor,  menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
-    editorWithoutExecutorForOwner: [menuItems.export, menuItems.startExecutor, menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
-    editorWithoutExecutor: [menuItems.export, menuItems.disabledStartExecutor, menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
-    running: [menuItems.disabledExport, menuItems.disabledClear, menuItems.abort, menuItems.documentation],
-    aborting: [menuItems.disabledExport, menuItems.disabledClear,  menuItems.aborting,  menuItems.documentation],
+    editorWithExecutor: [menuItems.export, menuItems.clone, menuItems.stopExecutor, menuItems.clear, menuItems.run, menuItems.documentation],
+    editorWithoutReadyExecutor: [menuItems.export, menuItems.clone, menuItems.startingExecutor,  menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
+    editorWithoutExecutorForOwner: [menuItems.export, menuItems.clone, menuItems.startExecutor, menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
+    editorWithoutExecutor: [menuItems.export, menuItems.clone, menuItems.disabledStartExecutor, menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
+    running: [menuItems.disabledExport, menuItems.disabledClone, menuItems.disabledClear, menuItems.abort, menuItems.documentation],
+    aborting: [menuItems.disabledExport, menuItems.disabledClone, menuItems.disabledClear,  menuItems.aborting,  menuItems.documentation],
     editInnerWorkflow: [menuItems.documentation, menuItems.closeInnerWorkflow]
   };
 

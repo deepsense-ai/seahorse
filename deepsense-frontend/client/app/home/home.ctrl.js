@@ -2,7 +2,7 @@
 
 /* @ngInject */
 function Home($rootScope, $uibModal, $state, $q, WorkflowService, PageService, ConfirmationModalService, SessionManagerApi,
-              NotificationService, WorkflowsApiClient, config, UserService) {
+              NotificationService, WorkflowCloneService, WorkflowsApiClient, config, UserService) {
   this.init = () => {
     PageService.setTitle('Home');
     $rootScope.stateData.dataIsLoaded = true;
@@ -81,29 +81,7 @@ function Home($rootScope, $uibModal, $state, $q, WorkflowService, PageService, C
   };
 
   this.cloneWorkflow = (workflow) => {
-    const modal = $uibModal.open({
-      animation: true,
-      templateUrl: 'app/common/modals/workflow-clone-modal/workflow-clone-modal.html',
-      controller: 'WorkflowCloneModalCtrl as controller',
-      backdrop: 'static',
-      keyboard: true,
-      resolve: {
-        workflow: () => angular.copy(workflow)
-      }
-    });
-
-    modal.result.then((workflowToClone) => {
-      WorkflowsApiClient.cloneWorkflow(workflowToClone).then(() => {
-        this.downloadWorkflows();
-      }, () => {
-        NotificationService.showWithParams({
-          message: 'There was an error during copying this workflow.',
-          title: 'Workflow copy',
-          settings: {timeOut: 10000},
-          notificationType: 'error'
-        });
-      });
-    });
+    WorkflowCloneService.openModal(this.downloadWorkflows, workflow);
   };
 
   this.deleteWorkflow = function (workflow) {

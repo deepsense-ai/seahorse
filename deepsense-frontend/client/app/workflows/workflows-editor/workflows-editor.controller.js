@@ -3,7 +3,7 @@
 class WorkflowsEditorController {
 
   /* @ngInject */
-  constructor(workflowWithResults, $scope, $state, $q, $rootScope, $log, $timeout, specialOperations,
+  constructor(workflowWithResults, $scope, $state, $q, $rootScope, $log, $timeout, specialOperations, WorkflowCloneService,
               GraphNode, Edge, config, Report, MultiSelectionService, PageService, Operations, GraphPanelRendererService,
               WorkflowService, MouseEvent, ConfirmationModalService, ExportModalService, GraphNodesService, NotificationService,
               ServerCommunication, CopyPasteService, SideBarService, BottomBarService, NodeCopyPasteVisitorService, SessionStatus) {
@@ -11,10 +11,34 @@ class WorkflowsEditorController {
     WorkflowService.initRootWorkflow(workflowWithResults);
 
     _.assign(this, {
-      $scope, $state, $q, $rootScope, $log, $timeout, specialOperations,
-      GraphNode, Edge, config, Report, MultiSelectionService, PageService, Operations, GraphPanelRendererService,
-      WorkflowService, MouseEvent, ConfirmationModalService, ExportModalService, GraphNodesService, NotificationService,
-      ServerCommunication, CopyPasteService, SideBarService, BottomBarService, NodeCopyPasteVisitorService, SessionStatus
+      $scope,
+      $state,
+      $q,
+      $rootScope,
+      $log,
+      $timeout,
+      specialOperations,
+      WorkflowCloneService,
+      GraphNode,
+      Edge,
+      config,
+      Report,
+      MultiSelectionService,
+      PageService,
+      Operations,
+      GraphPanelRendererService,
+      WorkflowService,
+      MouseEvent,
+      ConfirmationModalService,
+      ExportModalService,
+      GraphNodesService,
+      NotificationService,
+      ServerCommunication,
+      CopyPasteService,
+      SideBarService,
+      BottomBarService,
+      NodeCopyPasteVisitorService,
+      SessionStatus
     });
 
     this.BottomBarData = BottomBarService.tabsState;
@@ -136,6 +160,11 @@ class WorkflowsEditorController {
       }
     });
 
+    this.$scope.$on('StatusBar.CLONE_WORKFLOW', () => {
+      const currentWorkflow = this.WorkflowService.getCurrentWorkflow();
+      this.WorkflowCloneService.openModal(this._goToWorkflow.bind(this), currentWorkflow);
+    });
+
     this._reinitEditableModeListeners();
   }
 
@@ -173,8 +202,7 @@ class WorkflowsEditorController {
       this.$scope.$on('StatusBar.CLEAR_CLICK', () => {
         this.ConfirmationModalService.showModal({
           message: 'The operation clears the whole workflow graph and it cannot be undone afterwards.'
-        }).
-        then(() => {
+        }).then(() => {
           this.WorkflowService.clearGraph();
           this.GraphPanelRendererService.rerender(this.getWorkflow(), this.selectedOutputPort);
         });
@@ -185,7 +213,7 @@ class WorkflowsEditorController {
       }),
 
       this.$scope.$on('Keyboard.KEY_PRESSED_DEL', () => {
-        if(!this.isEditable()) {
+        if (!this.isEditable()) {
           console.log('WorkflowsEditorController', 'Cannot remove nodes if not editable');
           return;
         }
@@ -240,6 +268,11 @@ class WorkflowsEditorController {
         this.WorkflowService._workflowsStack.pop();
       })
     ];
+  }
+
+  _goToWorkflow(workflow) {
+    const id = workflow.workflowId;
+    this.$state.go(this.$state.current, {id: id}, {reload: true});
   }
 
   loadParametersForNode() {
@@ -329,6 +362,6 @@ class WorkflowsEditorController {
 
 }
 
-exports.inject = function(module) {
+exports.inject = function (module) {
   module.controller('WorkflowsEditorController', WorkflowsEditorController);
 };
