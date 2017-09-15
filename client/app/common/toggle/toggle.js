@@ -12,7 +12,10 @@ function Toggle() {
       scope.$on(attrs.toggleOn, () => {
         element
           .removeClass(classesOn)
-          .addClass(classesOff);
+          .addClass(classesOff)
+          .one('animationend', function() {
+            $(this).removeClass(classesOn);
+          });
       });
 
       scope.$on(attrs.toggleOff, () => {

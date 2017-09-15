@@ -1,0 +1,42 @@
+.side-bar {
+  width: 25px;
+  background: rgba(0, 0, 0, 0.1);
+  border-top: 1px solid lightgray;
+  overflow: hidden;
+  align-items: center;
+  border-right: solid #c0c0c0 1px;
+}
+
+.side-bar-button {
+  margin-top: -3px;
+  transform: rotate(-90deg);
+  display: flex;
+  cursor: pointer;
+  flex-direction: row-reverse;
+  align-items: center;
+
+  &:hover {
+    .side-bar-span,
+    .side-bar-icon {
+      background: #ACACAC;
+      border-top: 1px solid #ACACAC;
+    }
+  }
+}
+
+.side-bar-active {
+  background: #c0c0c0;
+  border-top: 1px solid #c0c0c0;
+}
+
+.side-bar-span {
+  white-space: nowrap;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-right: 5px;
+}
+
+.side-bar-icon {
+  padding: 8px;
+  flex: 1;
+}

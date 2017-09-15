@@ -13,7 +13,7 @@ class WorkflowsEditorController {
     GraphNode, Edge,
     PageService, Operations, GraphPanelRendererService, WorkflowService, UUIDGenerator, MouseEvent,
     DeepsenseNodeParameters, ConfirmationModalService, ExportModalService,
-    NotificationService, ServerCommunication, CopyPasteService) {
+    NotificationService, ServerCommunication, CopyPasteService, SideBarService) {
     this.ServerCommunication = ServerCommunication;
     this.PageService = PageService;
     this.WorkflowService = WorkflowService;
@@ -41,6 +41,7 @@ class WorkflowsEditorController {
     this.eventListeners = [];
     this.zoomId = 'flowchart-box';
     this.CopyPasteService = CopyPasteService;
+    this.data = SideBarService.data;
     this.multipleCopyParams = {
       type: 'nodes',
       filter: () => MultiSelectionService.getSelectedNodes().length,

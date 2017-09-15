@@ -1,15 +1,16 @@
 <div class="c-workflow-container">
 
+  <side-bar></side-bar>
+
   <operation-catalogue
+    ng-style="{'display' : workflow.data.operationCatalogue ? 'block' : 'none'}"
     catalog-collection="::workflow.catalog"
     custom-scroll-bar
-    class="animated fadeInLeft"
     toggle
     toggle-on="StatusBar.ABORT"
     toggle-off="StatusBar.RUN"
-    toggle-animate-in="fadeOutLeft o-panel--absolute"
-    toggle-animate-out="fadeInLeft"
-  >
+    toggle-animate-in="animated fadeOutLeft o-panel--absolute"
+    toggle-animate-out="animated fadeInLeft">
   </operation-catalogue>
 
   <flow-chart-box
