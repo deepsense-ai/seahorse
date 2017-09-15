@@ -1,0 +1,10 @@
+<div class="table-responsive col-xs-10 table-holder">
+  <table class="table table-bordered table-hover">
+    <tr class="active">
+      <th ng-repeat="columnName in ::data.columnNames">{{ ::columnName }}</th>
+    </tr>
+    <tr ng-repeat="values in ::data.values">
+      <td ng-repeat="value in ::values">{{ ::value }}</td>
+    </tr>
+  </table>
+</div>
