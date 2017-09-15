@@ -28,6 +28,8 @@ import io.deepsense.deeplang.params.exceptions.ParamValueNotProvidedException
 import io.deepsense.deeplang.params.multivalue.MultipleValuesParam
 import io.deepsense.deeplang.params.wrappers.spark._
 
+import scala.reflect.runtime.{ universe => ru }
+
 /**
  * Everything that inherits this trait declares that it contains parameters.
  * Parameters are discovered by reflection.
@@ -168,13 +170,18 @@ trait Params extends Serializable with HasInferenceResult with DefaultJsonProtoc
     params.toArray
   }
 
-  private def getParamsByReflection: Array[Param[_]] = {
-    val methods = this.getClass.getMethods
-    methods.filter { m =>
-      Modifier.isPublic(m.getModifiers) &&
-        classOf[Param[_]].isAssignableFrom(m.getReturnType) &&
-        m.getParameterTypes.isEmpty
-    }.map(m => m.invoke(this).asInstanceOf[Param[_]])
+  private def getParamsByReflection: Iterable[Param[_]] = {
+
+    val thisMirror = ru.runtimeMirror(getClass.getClassLoader).reflect(this)
+
+    thisMirror.symbol.toType.members.filter { m =>
+      m.isMethod &&
+        m.isPublic &&
+        m.asMethod.paramLists.forall(_.isEmpty) &&
+        m.asMethod.returnType <:< ru.typeOf[Param[_]]
+    }.map { m =>
+      thisMirror.reflectMethod(m.asMethod).apply().asInstanceOf[Param[_]]
+    }
   }
 
   private lazy val paramsByName: Map[String, Param[_]] =

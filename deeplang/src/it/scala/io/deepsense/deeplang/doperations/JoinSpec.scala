@@ -311,6 +311,18 @@ class JoinSpec extends DeeplangIntegTestSupport {
       "with null values only in both DataFrames" is pending
       "with empty join column selection" is pending
     }
+    "not report error" when {
+      "column prefixes are empty" in {
+        val join = joinWithMultipleColumnSelection(
+          names = Set(),
+          ids = Set(),
+          leftPrefix = None,
+          rightPrefix = None
+        )
+
+        join.validateParams shouldBe empty
+      }
+    }
     "throw an exception during inference" when {
       "with columns of the same name in both and no join on them" in {
         an[Exception] should be thrownBy {
