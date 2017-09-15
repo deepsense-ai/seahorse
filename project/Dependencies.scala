@@ -29,7 +29,7 @@ object Version {
   val scoverage = "1.0.4"
   val spark = "1.6.0"
   val spray = "1.3.3"
-  val sprayJson = "1.3.1"
+  val sprayJson = "1.3.2"
   val wireMock = "1.57"
 }
 
@@ -68,6 +68,7 @@ object Library {
   val sparkSql = spark("sql")
   val wireMock = "com.github.tomakehurst" % "wiremock" %
     Version.wireMock exclude("com.fasterxml.jackson.core", "jackson-databind")
+  val jsonLenses = "net.virtual-void" %%  "json-lenses" % "0.6.1"
 }
 
 object Dependencies {
@@ -128,7 +129,8 @@ object Dependencies {
     akkaActor,
     scopt,
     sprayClient,
-    rabbitmq
+    rabbitmq,
+    jsonLenses
   ) ++ Seq(sparkCore, sparkSql).map(_ % Provided) ++
   Seq(akkaTestkit, mockitoCore, scalatest, wireMock).map(_ % s"$Test,it")
 }
