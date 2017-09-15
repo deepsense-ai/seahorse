@@ -1,5 +1,7 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
+ *
+ * Owner: Piotr Zarówny
  */
 'use strict';
 
@@ -11,6 +13,7 @@ var angular = require('angular');
 var lab = angular.module('ds.lab', [
   'ui.router',
   'ui.bootstrap',
+  require('./providers/providers.module.js').name,
   require('./home/home.module.js').name,
   require('./account/account.module.js').name,
   require('./experiments/experiments.module.js').name,
