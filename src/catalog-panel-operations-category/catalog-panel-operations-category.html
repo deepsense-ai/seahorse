@@ -1,0 +1,18 @@
+<li class="operations-category">
+    <span class="operations-category-item"
+          ng-click="category.collapsed = ! category.collapsed">
+      <span class="btn btn-primary btn-xs pull-left">
+        <i class="fa fa-caret-{{ category.collapsed ? 'right' : 'down' }}"></i>
+      </span>
+      <span class="text">{{::category.name}}</span>
+    </span>
+  <ul ng-hide="category.collapsed">
+    <operations-category
+        ng-repeat="category in ::category.catalog"></operations-category>
+    <operation-item ng-repeat="item in ::category.items"
+                    id="{{::item.id}}"
+                    icon="{{::category.icon}}"
+                    name="{{::item.name}}"
+                    additional-directives="additionalDirectives"></operation-item>
+  </ul>
+</li>

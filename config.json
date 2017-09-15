@@ -1,0 +1,10 @@
+{
+  "dist": "dist/",
+  "src": "src/",
+  "temp": "tmp/",
+  "test": "test/",
+  "names": {
+    "js": "catalog-panel.js",
+    "css": "catalog-panel.css"
+  }
+}
