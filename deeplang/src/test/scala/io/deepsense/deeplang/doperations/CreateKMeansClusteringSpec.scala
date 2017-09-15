@@ -36,5 +36,11 @@ class CreateKMeansClusteringSpec extends UnitSpec {
       val expectedParameters = KMeansParameters(2, 100, KMeans.RANDOM, None, 123, 1, 1e-4)
       untrainedKMeansClustering.modelParameters shouldBe expectedParameters
     }
+    "serialize its parameters to json" in {
+      val createKMeansClustering =
+        CreateKMeansClustering(2, 100, KMeans.RANDOM, Some(1), 123, 1, 1e-4)
+      createKMeansClustering.parameters.toJson
+      ()
+    }
   }
 }

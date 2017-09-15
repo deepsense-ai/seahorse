@@ -80,6 +80,11 @@ trait KMeansParams {
     default = Some(100.0),
     validator = RangeValidator(begin = 1.0, end = 1000000.0, step = Some(1.0)))
 
+  val initializationStepsParameter = NumericParameter(
+    description = "Number of steps for the k-means|| initialization mode",
+    default = Some(1.0),
+    validator = RangeValidator(begin = 1.0, end = 1000000.0, step = Some(1.0)))
+
   val initializationModeParameter = ChoiceParameter(
     description = "Criterion used for information gain calculation",
     default = Some(initializationModeOptions(0)),
@@ -90,11 +95,6 @@ trait KMeansParams {
       KMeans.RANDOM -> ParametersSchema()
     )
   )
-
-  val initializationStepsParameter = NumericParameter(
-    description = "Number of steps for the k-means|| initialization mode",
-    default = Some(1.0),
-    validator = RangeValidator(begin = 1.0, end = 1000000.0, step = Some(1.0)))
 
   val seedParameter = NumericParameter(
     description = "The random seed for cluster initialization",
