@@ -74,14 +74,21 @@ The `Split` operation does not preserve row order.
 </thead>
 <tbody>
 <tr>
+<td><code>split mode</code></td>
+<td><code><a href="../parameter_types.html#single-choice">Single Choice</a></code></td>
+<td>The split mode. Possible values are:
+  <code>RANDOM</code>, <code>CONDITIONAL</code>.
+</td>
+</tr>
+<tr>
 <td><code>split ratio</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
 <td>Valid only if <code>split mode = RANDOM</code>.
   A number between 0 and 1 describing how much of the input <code>DataFrame</code> will end up in
   the first part of the split. Example: <code>split ratio = 0.3</code> means that the first output
-  <code>DataFrame</code> will contain 30% of the rows of the input <code>DataFrame</code>, and the
-  second output <code>DataFrame</code> will contain 70% of the rows of the input
-  <code>DataFrame</code>.
+  <code>DataFrame</code> will contain about 30% of the rows of the input <code>DataFrame</code>,
+  and the second output <code>DataFrame</code> will contain the rest (about 70%) of the rows
+  of the input <code>DataFrame</code>.
 </td>
 </tr>
 <tr>
