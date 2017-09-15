@@ -9,13 +9,6 @@ import scala.util.{Failure, Success}
 
 import com.google.inject.Inject
 import com.google.inject.name.Named
-import org.apache.commons.lang3.StringUtils
-import spray.http.HttpHeaders.`Content-Disposition`
-import spray.http.{MultipartFormData, StatusCodes}
-import spray.json.{JsonParser, ParserInput}
-import spray.routing.{ExceptionHandler, PathMatchers, Route}
-import spray.util.LoggingContext
-
 import io.deepsense.commons.auth.directives.{AbstractAuthDirectives, AuthDirectives, InsecureAuthDirectives}
 import io.deepsense.commons.auth.usercontext.TokenTranslator
 import io.deepsense.commons.models.Id
@@ -28,6 +21,14 @@ import io.deepsense.workflowmanager.WorkflowManagerProvider
 import io.deepsense.workflowmanager.exceptions.{FileNotFoundException, WorkflowNotFoundException, WorkflowRunningException}
 import io.deepsense.workflowmanager.json.WorkflowWithSavedResultsJsonProtocol
 import io.deepsense.workflowmanager.model.ExecutionReportWithId
+import org.apache.commons.lang3.StringUtils
+import spray.http.HttpHeaders.`Content-Disposition`
+import spray.http.MediaTypes._
+import spray.http.{MultipartFormData, StatusCodes}
+import spray.httpx.unmarshalling.Unmarshaller
+import spray.json.{JsonParser, ParserInput}
+import spray.routing.{ExceptionHandler, PathMatchers, Route}
+import spray.util.LoggingContext
 
 /**
  * Exposes Workflow Manager through a REST API.
@@ -55,6 +56,20 @@ abstract class WorkflowApi @Inject() (
   private val reportsPathPrefixMatcher = PathMatchers.separateOnSlashes(reportsApiPrefix)
 
   private val workflowFileMultipartId = "workflowFile"
+
+  private val WorkflowWithResultsUnmarshaller: Unmarshaller[WorkflowWithResults] =
+    Unmarshaller.delegate[MultipartFormData, WorkflowWithResults](`multipart/form-data`) {
+      case multipartFormData =>
+        workflowWithResultsFormat.read(JsonParser(ParserInput(
+          selectFormPart(multipartFormData, workflowFileMultipartId))))
+    }
+
+  private val WorkflowUnmarshaller: Unmarshaller[Workflow] =
+    Unmarshaller.delegate[MultipartFormData, Workflow](`multipart/form-data`) {
+    case multipartFormData =>
+      workflowFormat.read(JsonParser(ParserInput(
+        selectFormPart(multipartFormData, workflowFileMultipartId))))
+  }
 
   def route: Route = {
     handleRejections(rejectionHandler) {
@@ -121,15 +136,12 @@ abstract class WorkflowApi @Inject() (
             path("upload") {
               post {
                 withUserContext { userContext =>
-                  entity(as[MultipartFormData]) {
-                    def readWorkflow(multipartFormData: MultipartFormData): Workflow =
-                      workflowFormat.read(JsonParser(ParserInput(
-                        selectFormPart(multipartFormData, workflowFileMultipartId))))
-
-                    formData => onComplete(
+                  implicit val unmarshaller = WorkflowUnmarshaller
+                  entity(as[Workflow]) { workflow =>
+                    onComplete(
                       workflowManagerProvider
                         .forContext(userContext)
-                        .create(readWorkflow(formData))) {
+                        .create(workflow)) {
                       case Success(workflowWithKnowledge) => complete(
                         StatusCodes.Created, workflowWithKnowledge)
                       case Failure(exception) => failWith(exception)
@@ -152,14 +164,11 @@ abstract class WorkflowApi @Inject() (
             path("report" / "upload") {
               post {
                 withUserContext { userContext =>
-                  entity(as[MultipartFormData]) {
-                    def readWorkflow(multipartFormData: MultipartFormData): WorkflowWithResults =
-                      workflowWithResultsFormat.read(JsonParser(ParserInput(
-                        selectFormPart(multipartFormData, workflowFileMultipartId))))
-
-                    formData => onComplete(
-                      workflowManagerProvider
-                          .forContext(userContext).saveWorkflowResults(readWorkflow(formData))) {
+                  implicit val unmarshaller = WorkflowWithResultsUnmarshaller
+                  entity(as[WorkflowWithResults]) { workflowWithResults =>
+                    onComplete(workflowManagerProvider
+                      .forContext(userContext)
+                      .saveWorkflowResults(workflowWithResults)) {
                         case Success(saved) => complete(StatusCodes.Created, saved)
                         case Failure(exception) => failWith(exception)
                       }
