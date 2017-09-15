@@ -41,7 +41,7 @@ function DefaultInnerWorkflowGenerator(UUIDGenerator) {
             'nodes': {
               '2603a7b5-aaa9-40ad-9598-23f234ec5c32': {
                 'uiName': '',
-                'color': '#00B1EB',
+                'color': '#2F4050',
                 'coordinates': {
                   'x': 5233,
                   'y': 4951
@@ -49,7 +49,7 @@ function DefaultInnerWorkflowGenerator(UUIDGenerator) {
               },
               'd7798d5e-b1c6-4027-873e-a6d653957418': {
                 'uiName': '',
-                'color': '#00B1EB',
+                'color': '#2F4050',
                 'coordinates': {
                   'x': 5236,
                   'y': 5247

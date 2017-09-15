@@ -1,11 +1,16 @@
 <div id="node-{{ ::node.id }}"
-     class="flowchart-node"
+     ng-class="{
+      'selected-node': isSelected,
+      'flowchart-node': !isSourceOrSink(),
+      'flowchart-source-sink-node': isSourceOrSink()
+     }"
      ng-style="{
        'left': node.x + 'px',
        'top': node.y + 'px',
        'border-color': node.color
      }">
-  <aside class="flowchart-node__icon">
+
+  <aside ng-if="!isSourceOrSink()" class="flowchart-node__icon">
     <i class="fa {{ ::node.icon }}"></i>
   </aside>
   <p class="no-selection name name--custom">

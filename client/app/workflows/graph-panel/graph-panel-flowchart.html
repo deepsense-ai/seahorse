@@ -15,8 +15,8 @@
          droppable-highlight="parent">
       <graph-node jsplumb-draggable
                   keyboard
-                  ng-class="{'selected-node': flowChartBoxCtrl.selectedNode.id === nodeId }"
                   ng-repeat="(nodeId, node) in flowChartBoxCtrl.workflow.getNodes()"
+                  is-selected = "flowChartBoxCtrl.selectedNode.id === nodeId"
                   node="node">
       </graph-node>
     </div>
