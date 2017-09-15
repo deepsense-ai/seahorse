@@ -11,6 +11,8 @@ function Home($rootScope, $modal, $state, PageService, config) {
 
   this.getVersion = () => config.editorVersion;
 
+  this.reportBugEmailAddress = 'contact@deepsense.io';
+
   this.displayCreateWorkflowPopup = function displayCreateWorkflowPopup(event) {
     event.preventDefault();
 
