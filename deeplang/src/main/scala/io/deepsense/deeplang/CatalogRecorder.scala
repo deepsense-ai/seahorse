@@ -133,6 +133,9 @@ object CatalogRecorder {
 
   def registerDOperations(catalog: DOperationsCatalog): Unit = {
 
+    catalog.registerDOperation[UnknownOperation](
+      DOperationCategories.Other, visible = false)
+
     catalog.registerDOperation[PythonNotebook](
       DOperationCategories.IO)
 

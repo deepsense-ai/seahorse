@@ -46,10 +46,11 @@ abstract class DOperationsCatalog {
    * Registers DOperation, which can be later viewed and created.
    * DOperation has to have parameterless constructor.
    * @param category category to which this operation directly belongs
+   * @param visible a flag determining if the operation should be visible in the category tree
    * @tparam T DOperation class to register
    */
   def registerDOperation[T <: DOperation : ru.TypeTag](
-      category: DOperationCategory): Unit
+      category: DOperationCategory, visible: Boolean = true): Unit
 }
 
 object DOperationsCatalog {
@@ -72,7 +73,8 @@ object DOperationsCatalog {
     }
 
     def registerDOperation[T <: DOperation : ru.TypeTag](
-        category: DOperationCategory): Unit = {
+        category: DOperationCategory,
+        visible: Boolean = true): Unit = {
       val operationType = ru.typeOf[T]
       val constructor = constructorForType(operationType)
       val operationInstance = DOperationsCatalog.createDOperation(constructor)
@@ -94,7 +96,9 @@ object DOperationsCatalog {
           s"DOperation $alreadyRegisteredOperationName is already registered with UUID $id!")
       }
       operations += id -> operationDescriptor
-      categoryTree = categoryTree.addOperation(operationDescriptor, category)
+      if(visible) {
+        categoryTree = categoryTree.addOperation(operationDescriptor, category)
+      }
       operationsConstructors(id) = constructor
     }
 

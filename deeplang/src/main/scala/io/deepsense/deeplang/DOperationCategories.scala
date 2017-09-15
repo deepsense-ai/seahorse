@@ -87,4 +87,6 @@ object DOperationCategories {
     object HyperOptimization
       extends DOperationCategory("5a26f196-4805-4d8e-9a8b-b4c5c4538b0b", "Hyper Optimization", ML)
   }
+
+  object Other extends DOperationCategory("57c7a964-0f53-43cb-af6d-b6c0f1f9d9bc", "Other")
 }

@@ -22,10 +22,7 @@ abstract class DirectedGraph[T <: Operation, G <: DirectedGraph[T, G]](
   extends TopologicallySortable[T]
   with Serializable {
 
-  private val nonExistingNodes: Set[Node.Id] = checkEdgesEndsExist(nodes, edges)
-
-  require(nonExistingNodes.isEmpty,
-    s"There are connections that point to non-existent nodes ${nonExistingNodes.mkString(", ")}")
+  val validEdges = filterValidEdges(nodes, edges)
 
   private val idToNode = nodes.map(n => n.id -> n).toMap
   private val _predecessors = preparePredecessors
@@ -85,9 +82,11 @@ abstract class DirectedGraph[T <: Operation, G <: DirectedGraph[T, G]](
 
   def subgraph(nodes: Set[Node[T]], edges: Set[Edge]): G
 
+  def getValidEdges: Set[Edge] = validEdges
+
   private def edgesOf(nodes: Set[Node.Id]): Set[Edge] = nodes.flatMap(edgesTo)
 
-  private def edgesTo(node: Node.Id): Set[Edge] = edges.filter(edge => edge.to.nodeId == node)
+  private def edgesTo(node: Node.Id): Set[Edge] = validEdges.filter(edge => edge.to.nodeId == node)
 
   private def preparePredecessors: Map[Node.Id, IndexedSeq[Option[Endpoint]]] = {
     import scala.collection.mutable
@@ -98,7 +97,7 @@ abstract class DirectedGraph[T <: Operation, G <: DirectedGraph[T, G]](
       mutablePredecessors +=
         node.id -> mutable.IndexedSeq.fill(node.value.inArity)(None)
     })
-    edges.foreach(edge => {
+    validEdges.foreach(edge => {
       mutablePredecessors(edge.to.nodeId)(edge.to.portIndex) = Some(edge.from)
     })
     mutablePredecessors.mapValues(_.toIndexedSeq).toMap
@@ -112,17 +111,21 @@ abstract class DirectedGraph[T <: Operation, G <: DirectedGraph[T, G]](
     nodes.foreach(node => {
       mutableSuccessors += node.id -> Vector.fill(node.value.outArity)(mutable.Set())
     })
-    edges.foreach(edge => {
+    validEdges.foreach(edge => {
       mutableSuccessors(edge.from.nodeId)(edge.from.portIndex) += edge.to
     })
     mutableSuccessors.mapValues(_.map(_.toSet)).toMap
   }
 
-  private def checkEdgesEndsExist(nodes: Set[Node[T]], edges: Set[Edge]): Set[Node.Id] = {
+  private def filterValidEdges(nodes: Set[Node[T]], edges: Set[Edge]): Set[Edge] = {
     val nodesIds = nodes.map(_.id)
-    edges.flatMap { edge => Set(edge.from.nodeId, edge.to.nodeId)}.collect {
-      case id if !nodesIds.contains(id) => id
-    }
+    edges.filter(edge => {
+      val inNodeOpt = nodes.find(n => n.id == edge.from.nodeId)
+      val outNodeOpt = nodes.find(n => n.id == edge.to.nodeId)
+      for (inNode <- inNodeOpt; outNode <- outNodeOpt) yield {
+        edge.from.portIndex < inNode.value.outArity && edge.to.portIndex < outNode.value.inArity
+      }}.getOrElse(false)
+    )
   }
 }
 
