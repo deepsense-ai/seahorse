@@ -53,7 +53,7 @@ class HdfsModalController extends DatasourceModal {
 
   canAddDatasource() {
     const isCsvSeparatorValid = this.isCsvSeparatorValid(this.datasourceParams.hdfsParams);
-    const isSourceValid = this.datasourceParams.hdfsParams.hdfsPath !== '';
+    const isSourceValid = this.datasourceParams.hdfsParams.hdfsPath !== 'hdfs://';
 
     return super.canAddDatasource() &&
       isCsvSeparatorValid &&

@@ -169,16 +169,32 @@
             value="custom"
           />
           <span class="radio-title">
-            <input
-              ng-disabled="$ctrl.disabledMode"
-              ng-change="$ctrl.updateFileSettings()"
-              ng-model="$ctrl.csvFileFormatParams.customSeparator"
-              ng-focus="$ctrl.onCustomSeparatorInputFocus()"
-              maxlength="1"
-              placeholder="custom"
-              id="custom-separator"
-              type="text"
-            />
+            <div class="icon-input">
+              <input
+                ng-disabled="$ctrl.disabledMode"
+                ng-change="$ctrl.updateFileSettings()"
+                ng-model="$ctrl.csvFileFormatParams.customSeparator"
+                ng-focus="$ctrl.onCustomSeparatorInputFocus()"
+                maxlength="1"
+                placeholder="custom"
+                id="custom-separator"
+                type="text"
+              />
+              <div
+                ng-if="!$ctrl.disabledMode && $ctrl.csvFileFormatParams.separatorType === 'custom'"
+                class="icon-input__status"
+              >
+                <div
+                  ng-class="{
+                    'sa-ok status-ok':  $ctrl.csvFileFormatParams.separatorType === 'custom' &&
+                                        $ctrl.fileSettings.csvFileFormatParams.customSeparator,
+                    'sa-cross status-error': $ctrl.csvFileFormatParams.separatorType === 'custom' &&
+                                             !$ctrl.fileSettings.csvFileFormatParams.customSeparator
+                  }"
+                  class="sa icon"
+                ></div>
+              </div>
+            </div>
           </span>
         </label>
       </div>

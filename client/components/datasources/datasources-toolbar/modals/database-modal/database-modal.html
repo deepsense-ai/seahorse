@@ -17,13 +17,27 @@
 
     <div class="datasources-modal__body-row">
       <label class="title">JDBC connection string</label>
-      <input
-        ng-disabled="$ctrl.previewMode"
-        ng-model="$ctrl.datasourceParams.jdbcParams.url"
-        placeholder="Connection string"
-        class="form-control"
-        type="text"
-      />
+      <div class="icon-input">
+        <input
+          ng-disabled="$ctrl.previewMode"
+          ng-model="$ctrl.datasourceParams.jdbcParams.url"
+          placeholder="Connection string"
+          class="form-control"
+          type="text"
+        />
+        <div
+          ng-if="!$ctrl.previewMode"
+          class="icon-input__status"
+        >
+          <div
+            ng-class="{
+              'sa-ok status-ok': $ctrl.datasourceParams.jdbcParams.url,
+              'status-error': !$ctrl.datasourceParams.jdbcParams.url
+            }"
+            class="sa icon"
+          ></div>
+        </div>
+      </div>
     </div>
 
     <div class="datasources-modal__body-row">
