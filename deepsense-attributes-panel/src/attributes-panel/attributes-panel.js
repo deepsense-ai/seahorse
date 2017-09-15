@@ -116,6 +116,7 @@ function OperationAttributes($rootScope, AttributesPanelService, config, version
 
       this.showErrorMessage = function showErrorMessage() {
         $scope.modal = $uibModal.open({
+          size: 'lg',
           scope: $scope,
           template: `
             <button type="button" class="close" aria-label="Close" ng-click="modal.close()">
@@ -129,7 +130,7 @@ function OperationAttributes($rootScope, AttributesPanelService, config, version
             <pre class="o-error-trace">{{::node.state.error.message || 'No message'}}</pre>
             <div ng-if="::node.state.error.details.stacktrace">
               <h2>Stack trace:</h2>
-              <pre class="o-error-trace">{{::node.state.error.details.stacktrace}}</pre>
+              <pre class="o-error-trace o-error-full-trace">{{::node.state.error.details.stacktrace}}</pre>
             </div>
             <button type="button" class="btn btn-default pull-right" ng-click="modal.close()">
               Close
