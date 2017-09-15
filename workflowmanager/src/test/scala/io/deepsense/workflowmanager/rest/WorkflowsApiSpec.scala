@@ -52,7 +52,7 @@ class WorkflowsApiSpec
   import WorkflowsApiSpec.MockOperation
 
   val catalog = DOperationsCatalog()
-  catalog.registerDOperation[MockOperation](DOperationCategories.Transformation)
+  catalog.registerDOperation(DOperationCategories.Transformation, () => new MockOperation())
 
   val dOperableCatalog = new DOperableCatalog
   override val graphReader: GraphReader = new GraphReader(catalog)
