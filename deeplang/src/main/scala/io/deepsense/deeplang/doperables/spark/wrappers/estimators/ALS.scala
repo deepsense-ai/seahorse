@@ -53,7 +53,7 @@ class ALS
     name = "nonnegative",
     description = "Whether to apply nonnegativity constraints.",
     sparkParamGetter = _.nonnegative)
-  setDefault(nonnegative, false)
+  setDefault(nonnegative, true)
 
   val numItemBlocks = new IntParamWrapper[SparkALS](
     name = "num item blocks",
