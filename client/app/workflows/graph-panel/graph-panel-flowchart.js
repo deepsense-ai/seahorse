@@ -60,6 +60,7 @@ function FlowChartBox(GraphPanelRendererService) {
     replace: true,
     scope: {
       'selectedNode': '=',
+      'workflow': '=',
       'nodes': '=',
       'isRunning': '=',
       'zoomId': '@'
@@ -78,7 +79,7 @@ function FlowChartBox(GraphPanelRendererService) {
             GraphPanelRendererBase.RUNNING_RENDER_MODE :
             GraphPanelRendererBase.EDITOR_RENDER_MODE;
           GraphPanelRendererService.setRenderMode(newRenderMode);
-          GraphPanelRendererService.rerender();
+          GraphPanelRendererService.rerender(scope.flowChartBoxCtrl.workflow);
         });
       });
 

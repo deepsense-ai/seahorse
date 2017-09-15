@@ -8,6 +8,7 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
   class WorkflowServiceClass {
 
     constructor() {
+      // TODO Internal state to be removed
       internal.workflow = null;
       this.init();
     }
@@ -28,6 +29,7 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
       workflow.createNodes(workflowData.workflow.nodes, operations, workflowData.thirdPartyData);
       workflow.createEdges(workflowData.workflow.connections);
       workflow.updateEdgesStates(OperationsHierarchyService);
+      // TODO Internal state to be removed
       internal.workflow = workflow;
       return workflow;
     }
@@ -48,6 +50,7 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
       return idx !== -1;
     }
 
+    // TODO Internal state to be removed
     getWorkflow() {
       return internal.workflow;
     }

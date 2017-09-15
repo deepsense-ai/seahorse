@@ -15,7 +15,7 @@ class WorkflowsEditorController extends WorkflowReports {
 
   /* @ngInject */
   constructor(workflowWithResults, config, Report, MultiSelectionService,
-    $scope, $state, $stateParams, $q, $rootScope, $log,
+    $scope, $state, $q, $rootScope, $log,
     GraphNode, Edge,
     PageService, Operations, GraphPanelRendererService, WorkflowService, UUIDGenerator, MouseEvent,
     ConfirmationModalService, ExportModalService, GraphNodesService,
@@ -33,7 +33,6 @@ class WorkflowsEditorController extends WorkflowReports {
     this.$scope = $scope;
     this.$rootScope = $rootScope;
     this.$state = $state;
-    this.$stateParams = $stateParams;
     this.$q = $q;
     this.$log = $log;
     this.NotificationService = NotificationService;
@@ -53,6 +52,7 @@ class WorkflowsEditorController extends WorkflowReports {
     this.data = SideBarService.data;
     this.WorkflowStatusBarService = WorkflowStatusBarService;
     this.GraphNodesService = GraphNodesService;
+    this.workflow = null;
 
     this.nodeCopyPasteVisitor = new NodeCopyPasteVisitor(MultiSelectionService, $q,
       $scope, WorkflowService, this, GraphNodesService);
@@ -65,18 +65,18 @@ class WorkflowsEditorController extends WorkflowReports {
       super.init(data.resultEntities);
       super.initListeners(data.resultEntities);
       this.$scope.$applyAsync(() => {
-        this.GraphPanelRendererService.rerender();
+        this.GraphPanelRendererService.rerender(this.workflow);
       });
     }
   }
 
   init(workflowWithResults) {
     this.PageService.setTitle('Workflow editor');
-    this.WorkflowService.createWorkflow(workflowWithResults, this.Operations.getData());
+    this.workflow = this.WorkflowService.createWorkflow(workflowWithResults, this.Operations.getData());
     this.GraphPanelRendererService.setRenderMode(GraphPanelRendererBase.EDITOR_RENDER_MODE);
     this.GraphPanelRendererService.setZoom(1.0);
     this.CopyPasteService.registerCopyPasteVisitor(this.nodeCopyPasteVisitor);
-    this.WorkflowService.getWorkflow().updateState(workflowWithResults.executionReport);
+    this.workflow.updateState(workflowWithResults.executionReport);
     this.initListeners();
     this.loadReports(workflowWithResults.executionReport);
   }
@@ -88,7 +88,7 @@ class WorkflowsEditorController extends WorkflowReports {
     });
 
     this.$scope.$on('ServerCommunication.MESSAGE.executionStatus', (event, data) => {
-      this.WorkflowService.getWorkflow().updateState(data);
+      this.workflow.updateState(data);
 
       this.loadReports(data);
 
@@ -103,7 +103,7 @@ class WorkflowsEditorController extends WorkflowReports {
         this.updateAndRerenderEdges(data);
       }
       if (data.states) {
-        this.WorkflowService.getWorkflow().updateState(data.states);
+        this.workflow.updateState(data.states);
       }
     });
 
@@ -157,11 +157,11 @@ class WorkflowsEditorController extends WorkflowReports {
       }),
 
       this.$scope.$on(this.Edge.CREATE, (data, args) => {
-        this.WorkflowService.getWorkflow().addEdge(args.edge);
+        this.workflow.addEdge(args.edge);
       }),
 
       this.$scope.$on(this.Edge.REMOVE, (data, args) => {
-        this.WorkflowService.getWorkflow().removeEdge(args.edge);
+        this.workflow.removeEdge(args.edge);
       }),
 
       this.$scope.$on('FlowChartBox.ELEMENT_DROPPED', (event, args) => {
@@ -198,7 +198,7 @@ class WorkflowsEditorController extends WorkflowReports {
         }).
         then(() => {
           this.WorkflowService.clearGraph();
-          this.GraphPanelRendererService.rerender();
+          this.GraphPanelRendererService.rerender(this.workflow);
           this.WorkflowService.saveWorkflow();
         });
       }),
@@ -208,7 +208,7 @@ class WorkflowsEditorController extends WorkflowReports {
       }),
 
       this.$scope.$on('Keyboard.KEY_PRESSED_DEL', () => {
-        this.WorkflowService.getWorkflow().removeNodes(this.MultiSelectionService.getSelectedNodes());
+        this.workflow.removeNodes(this.MultiSelectionService.getSelectedNodes());
         this.GraphPanelRendererService.removeNodes(this.MultiSelectionService.getSelectedNodes());
         this.MultiSelectionService.clearSelection();
         this.unselectNode();
@@ -219,7 +219,7 @@ class WorkflowsEditorController extends WorkflowReports {
       this.$scope.$watchCollection('workflow.getWorkflow().getNodesIds()', (newValue, oldValue) => {
         if (newValue !== oldValue) {
           this.$scope.$applyAsync(() => {
-            this.GraphPanelRendererService.rerender();
+            this.GraphPanelRendererService.rerender(this.workflow);
           });
         }
       }),
@@ -252,7 +252,7 @@ class WorkflowsEditorController extends WorkflowReports {
 
   rerenderEdges() {
     this.WorkflowService.updateEdgesStates();
-    this.GraphPanelRendererService.changeEdgesPaintStyles();
+    this.GraphPanelRendererService.changeEdgesPaintStyles(this.workflow);
   }
 
   updateAndRerenderEdges(data) {
@@ -268,7 +268,7 @@ class WorkflowsEditorController extends WorkflowReports {
   }
 
   getWorkflow() {
-    return this.WorkflowService.getWorkflow();
+    return this.workflow;
   }
 
   getPredefColors() {

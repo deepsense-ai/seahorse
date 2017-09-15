@@ -4,7 +4,7 @@ class GraphNodesService {
 
   /* @ngInject */
   constructor($q, DeepsenseNodeParameters, $rootScope, Operations, WorkflowService, MultiSelectionService,
-              UUIDGenerator) {
+    UUIDGenerator) {
     this.$q = $q;
     this.DeepsenseNodeParameters = DeepsenseNodeParameters;
     this.$rootScope = $rootScope;

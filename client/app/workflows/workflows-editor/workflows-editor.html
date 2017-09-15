@@ -16,6 +16,7 @@
     <flow-chart-box
       ng-class="{'flowchart-box--is-running': workflow.isRunning}"
       nodes="workflow.getWorkflow().getNodes()"
+      workflow="workflow.getWorkflow()"
       selected-node="workflow.getSelectedNode()"
       is-running="workflow.isRunning"
       zoom-id="{{::workflow.zoomId}}"></flow-chart-box>
