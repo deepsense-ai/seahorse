@@ -14,14 +14,13 @@ description: Seahorse Batch Workflow Executor
 
 ## Overview
 
-In addition to the standard way,
-[workflows](workflowfile.html) can be executed on a cluster in a batch mode.
-This feature allows you to deploy workflows as independent
-<a target="_blank" href="http://spark.apache.org">Apache Spark</a> applications.
+Production-ready [workflows](workflowfile.html) can be exported as standalone
+Spark applications and executed on any cluster in a batch mode.
 
 Seahorse Batch Workflow Executor {{ site.WORKFLOW_EXECUTOR_VERSION }} is an Apache Spark
-application that allows you to execute workflows in batch mode.
-This functionality can facilitate integration of Seahorse with other data processing systems.
+application that allows you to execute standalone workflows.
+This functionality can facilitate integration of Seahorse with other data processing systems
+and manage the execution of workflows outside of Seahorse Editor.
 
 <div class="centered-container" markdown="1">
   ![Seahorse Batch Workflow Executor Overview](./img/batch_overview.png){: .centered-image .img-responsive}
@@ -33,14 +32,14 @@ This functionality can facilitate integration of Seahorse with other data proces
 ## Download Seahorse Batch Workflow Executor
 
 Compiled version of Seahorse Batch Workflow Executor is available at
-[downloads page](/downloads.html).
+[Try Seahorse page](/downloads.html).
 
 
 
-## How to run Seahorse Batch Workflow Executor
+## How to Run Seahorse Batch Workflow Executor
 
-Seahorse Batch Workflow Executor can be submitted to Spark cluster as any other Spark application.
-Example spark-submit commands can be found in the following subsections.
+Seahorse Batch Workflow Executor can be submitted to a Spark cluster as any other Spark application.
+Example `spark-submit` commands can be found in the following subsections.
 Replace `./bin/spark-submit` with a path to the script in Apache Spark's directory.
 For more detailed information about submitting Spark applications, visit:
 <a target="_blank" href="https://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/submitting-applications.html">https://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/submitting-applications.html</a>
@@ -88,15 +87,15 @@ export HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop   # location of Hadoop cluster con
     --python-executor-path workflowexecutor.jar
 {% endhighlight %}
 
-Option ``--python-executor-path`` is required (workflowexecutor.jar contains PyExecutor).
-Option ``--files workflow.json`` is necessary to distribute workflow file to Spark cluster.
+Option ``--python-executor-path`` is required (`workflowexecutor.jar` contains the PyExecutor).
+Option ``--files workflow.json`` is necessary to distribute workflow file within the Spark cluster.
 It is necessary to pass the same filename to ``--workflow-filename workflow.json`` option,
 in order to tell Seahorse Batch Workflow Executor under which name it should look for a workflow file.
 
-If spark-assembly-{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}-hadoop2.6.0.jar is already distributed
-on HDFS cluster, it is possible to reduce the time necessary for files propagation on the YARN cluster. Use the spark-submit option
+If `spark-assembly-{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}-hadoop2.6.0.jar` is already distributed
+on HDFS cluster, it is possible to reduce the time necessary for files propagation on the YARN cluster. Use the `spark-submit` option
 ``--conf spark.yarn.jar=hdfs:///path/to/spark-assembly-{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}-hadoop2.6.0.jar``
-with proper HDFS path.
+with a proper HDFS path.
 Spark assembly jar can be found in Spark {{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}
 compiled for Hadoop 2.6.0 package.
 
@@ -108,14 +107,14 @@ To allow usage of SQL databases for
 [Read DataFrame](operations/read_dataframe.html)
 and
 [Write DataFrame](operations/write_dataframe.html),
-a proper JDBC driver has to be accessible during workflow execution.
+a proper JDBC driver has to be accessible during workflow's execution.
 This requirement can be satisfied by:
 
-* adding JDBC jar library to cluster deployment,
+* adding the JDBC jar library to cluster deployment or,
 
-* adding JDBC jar to the driver's classpath during spark-submit command.
+* adding the JDBC jar to the driver's classpath during `spark-submit` command.
 
-To specify JDBC jar during execution, use spark-submit option
+To specify JDBC jar during execution, use `spark-submit`'s option
 ``--driver-class-path``. I.e. ``--driver-class-path "path/to/jdbc-driver1.jar:path/to/jdbc-driver2.jar:workflowexecutor.jar"``.
 For more information, please visit
 <a target="_blank" href="http://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/configuration.html#runtime-environment">Apache Spark documentation</a>.
@@ -132,8 +131,8 @@ Detailed information about command line parameters can be obtained by executing 
 |:----------------------------------------------------------------|:--------|
 | ``-w FILENAME``<BR/>``--workflow-filename FILENAME``            | Workflow filename. If specified, workflow will be read from passed location. The file has to be accessible by the driver. |
 | ``-o DIR``<BR/>``--output-directory DIR``                       | Output directory path. If specified, execution report will be saved to passed location. Directory will be created if it does not exist. |
-| ``-e:NAME=VALUE``<BR/>``--extra-var:NAME=VALUE``                | Extra variable. Sets extra variable to specified value. Can be specified multiple times. |
-| ``-p PATH``<BR/>``--python-executor-path PATH``                 | Path to PyExecutor code (included in workflowexecutor.jar). |
+| ``-e:NAME=VALUE``<BR/>``--extra-var:NAME=VALUE``                | Extra variable. Sets an extra variable to a specified value. Can be specified multiple times. |
+| ``-p PATH``<BR/>``--python-executor-path PATH``                 | Path to PyExecutor code (included in `workflowexecutor.jar`). |
 
 * **NOTE:** Parameter ``-w FILENAME`` (or its long name) needs to be specified.
 * **NOTE:** Both parameters ``-w FILENAME`` and ``-o DIR`` (or their long names) have to be specified.
@@ -155,7 +154,7 @@ redirected to several locations, e.g.:
 
 * HDFS directory
 
-You have to look for detailed information about logging with regard to your cluster configuration,
+For detailed information about logging with regard to your cluster configuration,
 for running Spark on YARN, visit:
 <a target="_blank" href="http://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/running-on-yarn.html#debugging-your-application">http://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/running-on-yarn.html#debugging-your-application</a>,
 for Spark Standalone cluster, visit:
