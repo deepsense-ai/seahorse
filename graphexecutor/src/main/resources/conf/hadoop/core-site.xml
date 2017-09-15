@@ -11,7 +11,7 @@
 <configuration>
   <property>
     <name>fs.default.name</name>
-    <value>hdfs://ds-test-env-master:8020</value>
+    <value>hdfs://ds-dev-env-master:8020</value>
   </property>
   <property>
     <name>hadoop.tmp.dir</name>

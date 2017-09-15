@@ -24,7 +24,7 @@ object Constants {
   val WaitingForNodeExecutionInterval = 1000
 
   /** Delay in ms between Application Master unregistration and RPC server closing. */
-  val UnregisteringAndClosingRpcServerDelay = 3 * 1000
+  val UnregisteringAndClosingRpcServerDelay = 10 * 1000
 
   /**
    * Time interval in ms that will be used as heartbeat interval during communication between
@@ -52,7 +52,7 @@ object Constants {
   /**
    * Hostname of cluster master node
    */
-  val MasterHostname = "ds-test-env-master"
+  val MasterHostname = "ds-dev-env-master"
 
   /**
    * HDFS NameNode port

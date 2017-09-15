@@ -7,7 +7,9 @@ package io.deepsense.graphexecutor
 
 import java.util.UUID
 
-import io.deepsense.deeplang.ExecutionContext
+import scala.collection.mutable
+
+import io.deepsense.deeplang.{DOperable, ExecutionContext}
 import io.deepsense.graph.{Status, Node}
 
 /**
@@ -17,6 +19,7 @@ import io.deepsense.graph.{Status, Node}
  * and finally notifies GraphExecutor of finished execution.
  *
  * NOTE: This class probably will have to be thoroughly modified when first DOperation is prepared.
+ * TODO: Currently it is impossible to debug GE without println
  */
 class GraphNodeExecutor(
     executionContext: ExecutionContext,
@@ -29,13 +32,37 @@ class GraphNodeExecutor(
       graphExecutor.graphGuard.synchronized {
         require(node.isRunning)
       }
-      // TODO: Perform real execution of node
       println("Execution of node: " + node.id + " time: " + System.currentTimeMillis)
-      // node.operation.execute(ec)
-      Thread.sleep(10 * 1000)
+      println("real node execution")
+      // TODO: pass real vector of DOperable's, not "deceptive mock"
+      // (we are assuming that all DOperation's return at most one DOperable)
+      var vector = Vector.empty[DOperable]
+      graphExecutor.graphGuard.synchronized {
+        for (preNodeIds <- graphExecutor.graph.get.predecessors.get(node.id)) {
+          for (preNodeId <- preNodeIds) {
+            println("preNodeId=" + preNodeId.get.nodeId)
+            if (graphExecutor.graph.get.node(preNodeId.get.nodeId).state.results.nonEmpty) {
+              vector = vector ++ graphExecutor.dOperableCache.get(
+                graphExecutor.graph.get.node(preNodeId.get.nodeId).state.results.get(0))
+            }
+          }
+        }
+      }
+      println("node.operation= " + node.operation.name)
+      println("vector#= " + vector.size)
+      val resultVector = node.operation.execute(executionContext)(vector)
+      println("resultVector#= " + resultVector.size)
+
 
       graphExecutor.graphGuard.synchronized {
-        graphExecutor.graph = Some(graphExecutor.graph.get.markAsCompleted(node.id, List[UUID]()))
+        graphExecutor.graph =
+          Some(graphExecutor.graph.get.markAsCompleted(
+            node.id,
+            resultVector.map(dOperable => {
+              val uuid = UUID.randomUUID()
+              graphExecutor.dOperableCache.put(uuid, dOperable)
+              uuid
+            }).toList))
       }
     } catch {
       case e: Exception => {

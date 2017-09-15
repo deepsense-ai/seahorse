@@ -17,3 +17,6 @@ addSbtPlugin("com.cavorite" % "sbt-avro" % "0.3.2")
 
 // Assembly plugin allows creation a fat JAR of project with all of its dependencies.
 addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.12.0")
+
+// Plugin provides build info to use in code
+addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.4.0")

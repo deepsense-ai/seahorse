@@ -59,3 +59,5 @@ def unitFilter(name: String) = name.endsWith("Suite") && !integFilter(name)
 
 // Always perform assembly task before it:test
 test in IntegTest <<= (test in IntegTest) dependsOn assembly
+
+enablePlugins(BuildInfoPlugin)

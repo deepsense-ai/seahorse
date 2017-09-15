@@ -6,8 +6,10 @@
 package io.deepsense.graphexecutor
 
 import java.net.{InetAddress, InetSocketAddress}
-import java.util.List
 import java.util.concurrent.Executors
+import java.util.{List, UUID}
+
+import scala.collection.mutable
 
 import org.apache.avro.ipc.NettyServer
 import org.apache.avro.ipc.specific.SpecificResponder
@@ -17,9 +19,12 @@ import org.apache.hadoop.yarn.client.api.AMRMClient.ContainerRequest
 import org.apache.hadoop.yarn.client.api.async.AMRMClientAsync
 import org.apache.hadoop.yarn.client.api.async.impl.AMRMClientAsyncImpl
 import org.apache.hadoop.yarn.conf.YarnConfiguration
+import org.apache.spark.sql.SQLContext
+import org.apache.spark.{SparkConf, SparkContext}
 
-import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.graph.{Status, Graph, Node}
+import io.deepsense.deeplang.dataframe.DataFrameBuilder
+import io.deepsense.deeplang.{DOperable, ExecutionContext}
+import io.deepsense.graph.{Graph, Status}
 import io.deepsense.graphexecutor.protocol.GraphExecutorAvroRpcProtocol
 import io.deepsense.graphexecutor.util.BinarySemaphore
 
@@ -37,6 +42,8 @@ object GraphExecutor {
  */
 class GraphExecutor extends AMRMClientAsync.CallbackHandler {
   implicit val conf: YarnConfiguration = new YarnConfiguration()
+
+  val dOperableCache = mutable.Map[UUID, DOperable]()
 
   /** graphGuard is used to prevent concurrent graph field modifications/inconsistent reads */
   val graphGuard = new Object()
@@ -85,6 +92,15 @@ class GraphExecutor extends AMRMClientAsync.CallbackHandler {
         graph = Some(Graph(graph.get.nodes.map(_.markQueued), graph.get.edges))
       }
       val executionContext = new ExecutionContext()
+      // Acquire Spark Context
+      val sparkConf = new SparkConf()
+      sparkConf.setAppName("Spark DeepSense Akka PoC")
+      sparkConf.set("spark.executor.memory", "512m")
+      val sparkContext = new SparkContext(sparkConf)
+
+      executionContext.sqlContext = new SQLContext(sparkContext)
+      executionContext.dataFrameBuilder = DataFrameBuilder(executionContext.sqlContext)
+
       // Loop until there are nodes in graph that are ready to or during execution
       while (graphGuard.synchronized {
         graph.get.readyNodes.nonEmpty ||
