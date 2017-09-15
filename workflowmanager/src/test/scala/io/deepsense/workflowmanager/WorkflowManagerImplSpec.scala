@@ -13,7 +13,7 @@ import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatest.concurrent.PatienceConfiguration
 import org.scalatest.time.{Seconds, Span}
-import spray.json.{JsArray, JsObject, JsString}
+import spray.json.{JsArray, JsObject, JsString, JsNull}
 
 import io.deepsense.commons.auth.usercontext.{Role, User, UserContext}
 import io.deepsense.commons.auth.{AuthorizatorProvider, UserContextAuthorizator}
@@ -141,14 +141,14 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
     "download workflow without datasource" in {
       val res = workflowManager.download(storedWorkflowId, exportDatasources = false)
       whenReady(res, timeout = PatienceConfiguration.Timeout(Span(2, Seconds))) { workflow =>
-        workflow.get.thirdPartyData.fields.contains("datasources") shouldBe false
+        workflow.get.thirdPartyData.fields.get("datasources").get shouldBe JsNull
       }
     }
 
     "download workflow with datasource" in {
       val res = workflowManager.download(storedWorkflowId, exportDatasources = true)
       whenReady(res, timeout = PatienceConfiguration.Timeout(Span(2, Seconds))) { workflow =>
-        workflow.get.thirdPartyData.fields.contains("datasources") shouldBe true
+        workflow.get.thirdPartyData.fields.get("datasources").get shouldBe JsArray()
       }
     }
 

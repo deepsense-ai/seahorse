@@ -318,15 +318,11 @@ class WorkflowManagerImpl @Inject()(
       exportDatasources: Boolean = true): Future[Workflow] = {
     for {
       notebookData <- addNotebooksData(id, workflow)
-      datasourceData <- {if (exportDatasources) addDatasourcesData(id, workflow) else Future.successful(JsArray())}
+      datasourceData <- {if (exportDatasources) addDatasourcesData(id, workflow) else Future.successful(JsNull)}
     } yield {
       val additionalDataJson = workflow.additionalData
       val notebookJson = JsObject(additionalDataJson.fields.updated(Fields.Notebooks, notebookData))
-      val datasourceJson = if (exportDatasources) {
-        JsObject(notebookJson.fields.updated(Fields.Datasources, datasourceData))
-      } else {
-        notebookJson
-      }
+      val datasourceJson = JsObject(notebookJson.fields.updated(Fields.Datasources, datasourceData))
       Workflow(workflow.metadata, workflow.graph, datasourceJson)
     }
   }
