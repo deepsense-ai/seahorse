@@ -7,7 +7,7 @@ usesMathJax: true
 includeOperationsMenu: true
 ---
 
-Write DataFrame saves a DataFrame to a specified data storage.
+A `Write DataFrame` operation saves a [DataFrame](../classes/dataframe.html) to a specified data storage.
 
 It supports writing files (CSV, JSON or PARQUET) to the local file system, Amazon S3 and HDFS.
 The output will be a Hadoop-compatible partitioned file.
@@ -27,7 +27,7 @@ If you are using the Bundled Image please read about
 <a target="_blank" href="https://en.wikipedia.org/wiki/Comma-separated_values">Comma-separated values</a>
 
 ### `PARQUET`
-<a target="_blank" href="http://spark.apache.org/docs/latest/sql-programming-guide.html#parquet-files">Parquet Files</a>
+<a target="_blank" href="http://spark.apache.org/docs/1.6.0/sql-programming-guide.html#parquet-files">Parquet Files</a>
 do not allow using characters "` ,;{}()\n\t=`" in column names.
 
 ### `JSON`
@@ -64,14 +64,14 @@ Timestamp columns are converted to string columns
         <a href="../classes/dataframe.html">DataFrame</a>
         </code>
       </td>
-      <td>A DataFrame to save</td>
+      <td>The <code>DataFrame</code> to save.</td>
     </tr>
   </tbody>
 </table>
 
 ## Output
 
-Write DataFrame operation does not produce any output.
+The `Write DataFrame` operation does not produce any output.
 
 ## Parameters
 
@@ -104,7 +104,7 @@ Write DataFrame operation does not produce any output.
         <code><a href="../parameter_types.html#string">String</a></code>
       </td>
       <td>Valid only if <code>data storage type = FILE</code>.
-        A path where the output file will be saved.
+        The path where the output file will be saved.
       </td>
     </tr>
     <tr>
@@ -115,7 +115,7 @@ Write DataFrame operation does not produce any output.
         <code><a href="../parameter_types.html#single-choice">Single Choice</a></code>
       </td>
       <td>Valid only if <code>data storage type = FILE</code>.
-        A format of the output file. Possible values:
+        The format of the output file. Possible values:
         <code>CSV</code>, <code>PARQUET</code>, <code>JSON</code>.
       </td>
 
@@ -128,10 +128,10 @@ Write DataFrame operation does not produce any output.
         <code><a href="../parameter_types.html#single-choice">Single Choice</a></code>
       </td>
       <td>Valid only if <code>format = CSV</code>.
-        Character separating fields in a row. Possible values are:
+        A character separating fields in a row. Possible values are:
         <code>Comma</code>, <code>Semicolon</code>, <code>Colon</code>,
         <code>Space</code>, <code>Tab</code>, <code>Custom</code>.
-        Default value: <code>Comma</code>.
+        The default value: <code>Comma</code>.
       </td>
     </tr>
 
@@ -155,7 +155,7 @@ Write DataFrame operation does not produce any output.
         <code><a href="../parameter_types.html#string">String</a></code>
       </td>
       <td>Valid only if <code>data storage type = JDBC</code>.
-        JDBC connection URL.
+        The JDBC connection URL.
       </td>
     </tr>
     <tr>
@@ -166,7 +166,7 @@ Write DataFrame operation does not produce any output.
         <code><a href="../parameter_types.html#string">String</a></code>
       </td>
       <td>Valid only if <code>data storage type = JDBC</code>.
-        JDBC driver ClassName.
+        The JDBC driver ClassName.
       </td>
     </tr>
     <tr>
@@ -177,7 +177,7 @@ Write DataFrame operation does not produce any output.
         <code><a href="../parameter_types.html#string">String</a></code>
       </td>
       <td>Valid only if <code>data storage type = JDBC</code>.
-        JDBC table's name.
+        The JDBC table's name.
         A table with an appropriate schema will be created; if the table already exists, an exception will be thrown.
       </td>
     </tr>
