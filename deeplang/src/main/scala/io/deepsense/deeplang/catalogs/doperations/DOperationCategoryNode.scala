@@ -16,6 +16,8 @@
 
 package io.deepsense.deeplang.catalogs.doperations
 
+import scala.collection.immutable.ListMap
+
 /**
  * Node in DOperationCategoryTree.
  * Represents certain category, holds its subcategories and assigned operations.
@@ -26,8 +28,8 @@ package io.deepsense.deeplang.catalogs.doperations
  */
 case class DOperationCategoryNode(
     category: Option[DOperationCategory] = None,
-    successors: Map[DOperationCategory, DOperationCategoryNode] = Map.empty,
-    operations: Set[DOperationDescriptor] = Set.empty) {
+    successors: ListMap[DOperationCategory, DOperationCategoryNode] = ListMap.empty,
+    operations: List[DOperationDescriptor] = List.empty) {
 
   /**
    * Adds operation to node under given path of categories.
@@ -39,7 +41,7 @@ case class DOperationCategoryNode(
       operation: DOperationDescriptor,
       path: List[DOperationCategory]): DOperationCategoryNode = {
     path match {
-      case Nil => copy(operations = operations + operation)
+      case Nil => copy(operations = operations :+ operation)
       case category :: tail =>
         val successor = successors.getOrElse(category, DOperationCategoryNode(Some(category)))
         val updatedSuccessor = successor.addOperationAtPath(operation, tail)

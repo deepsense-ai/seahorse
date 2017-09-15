@@ -24,11 +24,25 @@ object DOperationCategories {
 
   object IO extends DOperationCategory("5a39e324-15f4-464c-83a5-2d7fba2858aa", "Input/Output")
 
-  object Transformation
-    extends DOperationCategory("3fcc6ce8-11df-433f-8db3-fa1dcc545ed8", "Transformation")
+  object Action extends DOperationCategory("f0202a40-7fe7-4d11-bfda-b11b2199cc12", "Action")
 
-  object DataManipulation
-    extends DOperationCategory("6c730c11-9708-4a84-9dbd-3845903f32ac", "Data manipulation")
+  object SetOperation
+    extends DOperationCategory("6c730c11-9708-4a84-9dbd-3845903f32ac", "Set operation")
+
+  object Filtering extends DOperationCategory("a6114fc2-3144-4828-b350-4232d0d32f91", "Filtering")
+
+  object Transformation
+    extends DOperationCategory("3fcc6ce8-11df-433f-8db3-fa1dcc545ed8", "Transformation") {
+
+    object FeatureConversion extends DOperationCategory(
+      "6d84c023-a5f9-4713-8707-1db2c94ccd09", "Feature conversion", Transformation)
+
+    object FeatureScaling extends DOperationCategory(
+      "da9ec3ca-d3ba-4fca-ad22-7298b725d747", "Feature scaling", Transformation)
+
+    object TextProcessing extends DOperationCategory(
+      "abfc2e76-e2b7-46ad-8fc2-4f80af421432", "Text processing", Transformation)
+  }
 
   object ML extends DOperationCategory("c730c11-9708-4a84-9dbd-3845903f32ac", "Machine learning") {
 
@@ -41,10 +55,14 @@ object DOperationCategories {
     object Clustering
       extends DOperationCategory("5d6ed17f-7dc5-4b50-954c-8b2bbe6da2fd", "Clustering", ML)
 
+    object DimensionalityReduction
+      extends DOperationCategory(
+        "a112511e-5433-4ed2-a675-098a14a63c00", "Dimensionality reduction", ML)
+
     object Recommendation
       extends DOperationCategory("daf4586c-4107-4aab-bfab-2fe4e1652784", "Recommendation", ML)
 
-    object Evaluation
-      extends DOperationCategory("b5d34823-3f2c-4a9a-9114-3c126ce8dfb6", "Evaluation", ML)
+    object ModelEvaluation
+      extends DOperationCategory("b5d34823-3f2c-4a9a-9114-3c126ce8dfb6", "Model evaluation", ML)
   }
 }

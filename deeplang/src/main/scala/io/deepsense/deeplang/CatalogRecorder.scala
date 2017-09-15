@@ -111,6 +111,36 @@ object CatalogRecorder {
     catalog.registerDOperation[Notebook](
       DOperationCategories.IO)
 
+    catalog.registerDOperation[Fit](
+      DOperationCategories.Action)
+
+    catalog.registerDOperation[Transform](
+      DOperationCategories.Action)
+
+    catalog.registerDOperation[FitPlusTransform](
+      DOperationCategories.Action)
+
+    catalog.registerDOperation[Evaluate](
+      DOperationCategories.Action)
+
+    catalog.registerDOperation[Join](
+      DOperationCategories.SetOperation)
+
+    catalog.registerDOperation[Split](
+      DOperationCategories.SetOperation)
+
+    catalog.registerDOperation[Union](
+      DOperationCategories.SetOperation)
+
+    catalog.registerDOperation[FilterColumns](
+      DOperationCategories.Filtering)
+
+    catalog.registerDOperation[HandleMissingValues](
+      DOperationCategories.Filtering)
+
+    catalog.registerDOperation[CreateCustomTransformer](
+      DOperationCategories.Transformation)
+
     catalog.registerDOperation[CustomPythonOperation](
       DOperationCategories.Transformation)
 
@@ -118,45 +148,79 @@ object CatalogRecorder {
       DOperationCategories.Transformation)
 
     catalog.registerDOperation[ConvertType](
-      DOperationCategories.Transformation)
+      DOperationCategories.Transformation.FeatureConversion)
 
     catalog.registerDOperation[DecomposeDatetime](
-      DOperationCategories.Transformation)
+      DOperationCategories.Transformation.FeatureConversion)
 
     catalog.registerDOperation[ExecuteSqlExpression](
-      DOperationCategories.Transformation)
+      DOperationCategories.Transformation.FeatureConversion)
 
-    catalog.registerDOperation[HandleMissingValues](
-      DOperationCategories.Transformation)
+    // operations generated from Spark transformers
+    catalog.registerDOperation[AssembleVector](
+      DOperationCategories.Transformation.FeatureConversion)
 
-    catalog.registerDOperation[Transform](
-      DOperationCategories.Transformation)
+    catalog.registerDOperation[Binarize](
+      DOperationCategories.Transformation.FeatureConversion)
 
-    catalog.registerDOperation[CreateCustomTransformer](
-      DOperationCategories.Transformation)
+    catalog.registerDOperation[StringIndexer](
+      DOperationCategories.Transformation.FeatureConversion)
 
-    catalog.registerDOperation[FilterColumns](
-      DOperationCategories.DataManipulation)
+    catalog.registerDOperation[DCT](
+      DOperationCategories.Transformation.FeatureConversion)
 
-    catalog.registerDOperation[Fit](
-      DOperationCategories.DataManipulation)
+    catalog.registerDOperation[Normalize](
+      DOperationCategories.Transformation.FeatureConversion)
 
-    catalog.registerDOperation[FitPlusTransform](
-      DOperationCategories.Transformation)
+    catalog.registerDOperation[OneHotEncode](
+      DOperationCategories.Transformation.FeatureConversion)
 
-    catalog.registerDOperation[Join](
-      DOperationCategories.DataManipulation)
+    catalog.registerDOperation[PolynomialExpand](
+      DOperationCategories.Transformation.FeatureConversion)
 
-    catalog.registerDOperation[Split](
-      DOperationCategories.DataManipulation)
+    catalog.registerDOperation[ConvertToNGrams](
+      DOperationCategories.Transformation.TextProcessing)
 
-    catalog.registerDOperation[Union](
-      DOperationCategories.DataManipulation)
+    catalog.registerDOperation[HashingTF](
+      DOperationCategories.Transformation.TextProcessing)
 
-    catalog.registerDOperation[Evaluate](
-      DOperationCategories.ML.Evaluation)
+    catalog.registerDOperation[Tokenize](
+      DOperationCategories.Transformation.TextProcessing)
+
+    catalog.registerDOperation[TokenizeWithRegex](
+      DOperationCategories.Transformation.TextProcessing)
+
+    catalog.registerDOperation[RemoveStopWords](
+      DOperationCategories.Transformation.TextProcessing)
 
     // operations generated from Spark estimators
+    catalog.registerDOperation[VectorIndexer](
+      DOperationCategories.Transformation.FeatureConversion)
+
+    catalog.registerDOperation[StandardScaler](
+      DOperationCategories.Transformation.FeatureScaling)
+
+    catalog.registerDOperation[MinMaxScaler](
+      DOperationCategories.Transformation.FeatureScaling)
+
+    catalog.registerDOperation[IDF](
+      DOperationCategories.Transformation.TextProcessing)
+
+    catalog.registerDOperation[CountVectorizer](
+      DOperationCategories.Transformation.TextProcessing)
+
+    catalog.registerDOperation[Word2Vec](
+      DOperationCategories.Transformation.TextProcessing)
+
+    catalog.registerDOperation[CreateLinearRegression](
+      DOperationCategories.ML.Regression)
+
+    catalog.registerDOperation[CreateIsotonicRegression](
+      DOperationCategories.ML.Regression)
+
+    catalog.registerDOperation[CreateRandomForestRegression](
+      DOperationCategories.ML.Regression)
+
     catalog.registerDOperation[CreateGBTRegressor](
       DOperationCategories.ML.Regression)
 
@@ -166,87 +230,23 @@ object CatalogRecorder {
     catalog.registerDOperation[CreateLogisticRegression](
       DOperationCategories.ML.Classification)
 
-    catalog.registerDOperation[CreateALS](
-      DOperationCategories.ML.Recommendation)
-
     catalog.registerDOperation[CreateKMeans](
       DOperationCategories.ML.Clustering)
 
-    catalog.registerDOperation[CreateIsotonicRegression](
-      DOperationCategories.ML.Regression)
-
-    catalog.registerDOperation[CreateLinearRegression](
-      DOperationCategories.ML.Regression)
-
-    catalog.registerDOperation[CreateRandomForestRegression](
-      DOperationCategories.ML.Regression)
+    catalog.registerDOperation[CreateALS](
+      DOperationCategories.ML.Recommendation)
 
     catalog.registerDOperation[PCA](
-      DOperationCategories.ML)
-
-    catalog.registerDOperation[StandardScaler](
-      DOperationCategories.ML)
-
-    catalog.registerDOperation[MinMaxScaler](
-      DOperationCategories.ML)
-
-    catalog.registerDOperation[VectorIndexer](
-      DOperationCategories.ML)
-
-    catalog.registerDOperation[Word2Vec](
-      DOperationCategories.ML)
-
-    catalog.registerDOperation[CountVectorizer](
-      DOperationCategories.ML)
-
-    catalog.registerDOperation[IDF](
-      DOperationCategories.ML)
-
-    // operations generated from Spark transformers
-    catalog.registerDOperation[Binarize](
-      DOperationCategories.Transformation)
-
-    catalog.registerDOperation[StringIndexer](
-      DOperationCategories.Transformation)
-
-    catalog.registerDOperation[DCT](
-      DOperationCategories.Transformation)
-
-    catalog.registerDOperation[ConvertToNGrams](
-      DOperationCategories.Transformation)
-
-    catalog.registerDOperation[Normalize](
-      DOperationCategories.Transformation)
-
-    catalog.registerDOperation[OneHotEncode](
-      DOperationCategories.Transformation)
-
-    catalog.registerDOperation[PolynomialExpand](
-      DOperationCategories.Transformation)
-
-    catalog.registerDOperation[TokenizeWithRegex](
-      DOperationCategories.Transformation)
-
-    catalog.registerDOperation[RemoveStopWords](
-      DOperationCategories.Transformation)
-
-    catalog.registerDOperation[Tokenize](
-      DOperationCategories.Transformation)
-
-    catalog.registerDOperation[AssembleVector](
-      DOperationCategories.Transformation)
-
-    catalog.registerDOperation[HashingTF](
-      DOperationCategories.Transformation)
+      DOperationCategories.ML.DimensionalityReduction)
 
     // operations generated from Spark evaluators
     catalog.registerDOperation[CreateBinaryClassificationEvaluator](
-      DOperationCategories.ML.Evaluation)
+      DOperationCategories.ML.ModelEvaluation)
 
     catalog.registerDOperation[CreateMulticlassClassificationEvaluator](
-      DOperationCategories.ML.Evaluation)
+      DOperationCategories.ML.ModelEvaluation)
 
     catalog.registerDOperation[CreateRegressionEvaluator](
-      DOperationCategories.ML.Evaluation)
+      DOperationCategories.ML.ModelEvaluation)
   }
 }

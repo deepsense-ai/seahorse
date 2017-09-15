@@ -16,6 +16,8 @@
 
 package io.deepsense.models.json.workflow
 
+import scala.collection.immutable.ListMap
+
 import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{FlatSpec, Matchers}
@@ -38,8 +40,8 @@ class DOperationCategoryNodeJsonProtocolSpec extends FlatSpec with Matchers with
 
     val node = DOperationCategoryNode(
       None,
-      successors = Map(childCategory -> childNode),
-      operations = Set(operationDescriptor))
+      successors = ListMap(childCategory -> childNode),
+      operations = List(operationDescriptor))
 
     val expectedJson = JsObject(
       "catalog" -> JsArray(

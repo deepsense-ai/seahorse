@@ -202,7 +202,7 @@ class DOperationsCatalogSuite extends FunSuite with Matchers with MockitoSugar {
 
     val mlNode = root.successors(ML)
     mlNode.category shouldBe Some(ML)
-    mlNode.operations shouldBe Set(expectedD)
+    mlNode.operations shouldBe List(expectedD)
     mlNode.successors.keys should contain theSameElementsAs Seq(ML.Regression, ML.Classification)
 
     val regressionNode = mlNode.successors(ML.Regression)
