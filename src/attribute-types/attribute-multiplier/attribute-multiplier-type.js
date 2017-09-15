@@ -18,10 +18,9 @@ function AttributeMultiplierType($compile, DeepsenseNodeParameters) {
       internal.renderParametersLists = function renderParametersLists () {
         let template = `
         <div class="ibox multiplier-item"
-          ng-repeat="parametersList in parameter.parametersLists"
-        >
+             ng-repeat="parametersList in parameter.parametersLists">
           <div class="ibox-title">
-            <span class="ibox-title--multiplier">Multiplier #{{ $index + 1 }}</span>
+            <span class="ibox-title--multiplier">Group #{{ $index + 1 }}</span>
             <a class="close-link" aria-label="Close" ng-click="removeItem($index)">
               <i class="fa fa-times"></i>
             </a>
@@ -50,6 +49,10 @@ function AttributeMultiplierType($compile, DeepsenseNodeParameters) {
           }
         }
       });
+
+      if (scope.parameter.parametersLists.length === 0) {
+        scope.addItem();
+      }
     }
   };
 }

@@ -113,6 +113,40 @@ angular.module('test').
           "required": true
         },
         {
+          "name": "sample-multiplier",
+          "type": "multiplier",
+          "description": "This is a multiplier parameter.",
+          "required": true,
+          "values": [
+            {
+              "name": "http-field",
+              "type": "string",
+              "description": "sample1",
+              "default": "http://",
+              "required": true,
+              "validator": {
+                "type": "regex",
+                "configuration": {
+                  "regex": "^http://"
+                }
+              }
+            },
+            {
+              "name": "ftp-field",
+              "type": "string",
+              "description": "sample1",
+              "default": "ftp://",
+              "required": true,
+              "validator": {
+                "type": "regex",
+                "configuration": {
+                  "regex": "^ftp://"
+                }
+              }
+            }
+          ]
+        },
+        {
           "name": "sample_multiple_choice",
           "type": "multipleChoice",
           "description": "sample multiple choice description",
@@ -166,7 +200,7 @@ angular.module('test').
           ]
         },
         {
-          "name": "sample-multiplier",
+          "name": "sample-multiplier-nonempty",
           "type": "multiplier",
           "description": "This is a multiplier parameter.",
           "required": true,
@@ -203,6 +237,15 @@ angular.module('test').
       [
         {
           "name": "sample-selectors",
+          "type": "selector",
+          "description": "sample desc",
+          "port": 1,
+          "default": null,
+          "required": true,
+          "isSingle": false
+        },
+        {
+          "name": "sample-selectors-empty",
           "type": "selector",
           "description": "sample desc",
           "port": 1,
@@ -360,6 +403,8 @@ angular.module('test').
       {
         "connection_string": "jdbc:test/string/field",
         "boolean_attr_test": false,
+        "sample-multiplier": [
+        ],
         "sample_multiple_choice": {
           "choice1-long-text": {
             "name_001": 102
@@ -368,7 +413,7 @@ angular.module('test').
             "name_002": "2-2=0"
           }
         },
-        "sample-multiplier": [
+        "sample-multiplier-nonempty": [
           {
             "http-field": "http://42.pl/",
             "ftp-field": "ftp://42.pl/"
@@ -397,6 +442,7 @@ angular.module('test').
             }
           ]
         },
+        "sample-selectors-empty": null,
         "sample-single-column-selector": {
           "type": "column",
           "value": "kozik"
