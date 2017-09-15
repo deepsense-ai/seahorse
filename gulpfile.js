@@ -75,9 +75,14 @@ gulp.task('browser-sync', function () {
   });
 });
 
-gulp.task('copy-root-scripts', function () {
-  return gulp.src([client.path + client.rootJs])
+gulp.task('config', function () {
+  return gulp.src([client.path + 'config.js'])
     .pipe(gulp.dest(build.path));
+});
+
+gulp.task('copy:scripts', function () {
+  return gulp.src([client.path + client.externalScripts])
+    .pipe(gulp.dest(build.path+'/js/'));
 });
 
 gulp.task('html:index', function () {
@@ -87,7 +92,6 @@ gulp.task('html:index', function () {
 
 gulp.task('html:partials', function () {
   var PARTIALS_MODULE_NAME = 'ds.lab.partials';
-
   return gulp.src([client.path + client.html]).
     pipe(templateCache({
       module: PARTIALS_MODULE_NAME,
@@ -208,7 +212,7 @@ gulp.task('build', function (callback) {
   runSequence(
     'clean',
     [
-      'fonts', 'images', 'html:index', 'html:partials', 'copy:images', 'copy-root-scripts', 'favicon', 'assets', 'less',
+      'fonts', 'images', 'html:index', 'html:partials', 'config', 'copy:images', 'copy:scripts', 'favicon', 'assets', 'less',
       'libs:css', 'libs:js', 'jshint', 'browserify'
     ],
     'version', 'replace', callback);
@@ -223,11 +227,10 @@ gulp.task('start', function (callback) {
     gulp.watch(
       [
         client.path + client.js,
-        client.path + client.rootJs,
         '|',
         '!' + __dirname + '/' + config.files.tests.client
       ],
-      ['jshint', 'browserify', 'copy-root-scripts', browserSync.reload]
+      ['jshint', 'browserify', 'copy:scripts', browserSync.reload]
     );
   }
 });

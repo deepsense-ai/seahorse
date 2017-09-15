@@ -27,7 +27,7 @@
       "path": "./client/",
       "app": "app/app.js",
       "js": "app/**/*.js",
-      "rootJs": "*.js",
+      "externalScripts": "app/app.*.js",
       "less": "css/**/*.less",
       "lessSources": "**/*.less",
       "html": "**/*.html",
