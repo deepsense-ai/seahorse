@@ -4,9 +4,7 @@
 
 package io.deepsense.graphexecutor
 
-import scala.util.Success
-
-import akka.actor.{ActorSystem, Actor, ActorRef, Props}
+import akka.actor.{Actor, ActorRef, Props}
 import akka.testkit.{TestActorRef, TestProbe}
 import org.mockito.Matchers._
 import org.mockito.Mockito
@@ -17,12 +15,12 @@ import org.scalatest.mock.MockitoSugar
 
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
-import io.deepsense.deeplang.{DOperation, DOperable, ExecutionContext}
+import io.deepsense.deeplang.{DOperable, DOperation, ExecutionContext}
 import io.deepsense.graph.{Graph, Node}
 import io.deepsense.graphexecutor.GraphExecutorActor._
 import io.deepsense.models.entities.Entity
-import io.deepsense.models.experiments.Experiment
 import io.deepsense.models.messages._
+import io.deepsense.models.workflows.Workflow
 
 class GraphExecutorActorSpec
   extends StandardSpec
@@ -41,8 +39,8 @@ class GraphExecutorActorSpec
     val graph = mock[Graph]
     when(graph.enqueueNodes) thenReturn graph
 
-    val experiment = Mockito.spy(Experiment(
-      id = Experiment.Id.randomId,
+    val experiment = Mockito.spy(Workflow(
+      id = Workflow.Id.randomId,
       tenantId = "tenant-id-for-gea-test",
       name = "name-of-experiment-for-gea-test",
       graph = graph))
@@ -63,7 +61,7 @@ class GraphExecutorActorSpec
       def createGraphNodeExecutor(
           ec: ExecutionContext,
           node: Node,
-          exp: Experiment,
+          exp: Workflow,
           dOperableCache: Results): Actor = {
         synchronized {
           executionContext.tenantId shouldBe experiment.tenantId
@@ -98,7 +96,7 @@ class GraphExecutorActorSpec
     }
 
     def startCommunication(): Unit = {
-      val experimentId = Experiment.Id.randomId
+      val experimentId = Workflow.Id.randomId
       geaRef ! GraphExecutorActor.Messages.Start(experimentId)
       gec.expectMsg(ExecutorReady(experimentId))
     }
@@ -237,14 +235,14 @@ class GraphExecutorActorSpec
 
         val finishedNode = mockFinishedNode()
 
-        val finishedExperiment = mock[Experiment]
+        val finishedExperiment = mock[Workflow]
 
-        val runningExperiment = mock[Experiment]
+        val runningExperiment = mock[Workflow]
         when(runningExperiment.withNode(any())) thenReturn runningExperiment
         when(runningExperiment.updateState()) thenReturn finishedExperiment
         when(runningExperiment.readyNodes) thenReturn List.empty
         when(runningExperiment.runningNodes) thenReturn Set.empty[Node]
-        when(finishedExperiment.state) thenReturn mock[Experiment.State]
+        when(finishedExperiment.state) thenReturn mock[Workflow.State]
 
         gea.experiment = runningExperiment
 
@@ -259,12 +257,12 @@ class GraphExecutorActorSpec
         startCommunication()
         launchExperiment()
 
-        val runningExperiment = mock[Experiment]
+        val runningExperiment = mock[Workflow]
         gea.experiment = runningExperiment
 
-        val experimentWithUpdatedState = mock[Experiment]
+        val experimentWithUpdatedState = mock[Workflow]
         when(runningExperiment.updateState()).thenReturn(experimentWithUpdatedState)
-        when(experimentWithUpdatedState.state) thenReturn mock[Experiment.State]
+        when(experimentWithUpdatedState.state) thenReturn mock[Workflow.State]
 
         geaRef ! Abort(experiment.id)
 

@@ -14,8 +14,8 @@ import io.deepsense.deeplang.{DOperable, ExecutionContext}
 import io.deepsense.graph.Node
 import io.deepsense.graphexecutor.GraphExecutorActor.Results
 import io.deepsense.models.entities.Entity
-import io.deepsense.models.experiments.Experiment
 import io.deepsense.models.messages._
+import io.deepsense.models.workflows.Workflow
 
 class GraphExecutorActor(
     executionContext: ExecutionContext,
@@ -27,7 +27,7 @@ class GraphExecutorActor(
 
   import io.deepsense.graphexecutor.GraphExecutorActor.Messages._
 
-  var experiment: Experiment = _
+  var experiment: Workflow = _
   var dOperableCache: Results = Map.empty
   var startedNodes: Set[Node.Id] = Set()
 
@@ -41,7 +41,7 @@ class GraphExecutorActor(
     case NodeFinished(node, results) => nodeFinished(node, results)
   }
 
-  def start(eid: Experiment.Id): Unit = {
+  def start(eid: Workflow.Id): Unit = {
     logger.info(">>> {}", Start(eid))
     val selection = context.system.actorSelection(clientActorPath)
     import scala.concurrent.duration._
@@ -51,7 +51,7 @@ class GraphExecutorActor(
     clientActor ! ExecutorReady(eid)
   }
 
-  def launch(e: Experiment): Unit = {
+  def launch(e: Workflow): Unit = {
     logger.info(">>> Launch(experimentId={})", e.id)
     experiment = e.markRunning
     executionContext.tenantId = experiment.tenantId
@@ -90,7 +90,7 @@ class GraphExecutorActor(
     }
   }
 
-  def launchReadyNodes(experiment: Experiment): Unit = {
+  def launchReadyNodes(experiment: Workflow): Unit = {
     logger.info(">>> launchReadyNodes(experimentId={})", experiment.id)
     for {
       node <- experiment.readyNodes
@@ -128,7 +128,7 @@ object GraphExecutorActor {
 
   object Messages {
     sealed trait Message
-    case class Start(experimentId: Experiment.Id) extends Message
+    case class Start(experimentId: Workflow.Id) extends Message
     case class NodeStarted(nodeId: Node.Id) extends Message
     case class NodeFinished(node: Node, results: Results) extends Message
   }
@@ -138,7 +138,7 @@ trait GraphNodeExecutorFactory {
   def createGraphNodeExecutor(
       executionContext: ExecutionContext,
       node: Node,
-      experiment: Experiment,
+      experiment: Workflow,
       dOperableCache: Results): Actor
 }
 
@@ -147,7 +147,7 @@ trait ProductionGraphNodeExecutorFactory extends GraphNodeExecutorFactory {
   override def createGraphNodeExecutor(
       executionContext: ExecutionContext,
       node: Node,
-      experiment: Experiment,
+      experiment: Workflow,
       dOperableCache: Results): Actor =
     new GraphNodeExecutorActor(executionContext, node, experiment, dOperableCache)
 }

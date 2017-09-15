@@ -17,7 +17,7 @@ import org.apache.hadoop.yarn.util.Records
 
 import io.deepsense.commons.config.ConfigurationMerger
 import io.deepsense.graphexecutor.util.Utils
-import io.deepsense.models.experiments.Experiment
+import io.deepsense.models.workflows.Workflow
 
 case object DefaultClusterSpawner extends ClusterSpawner with LazyLogging {
 
@@ -31,7 +31,7 @@ case object DefaultClusterSpawner extends ClusterSpawner with LazyLogging {
    * or even longer delay if cluster is short of resources.
    */
   def spawnOnCluster(
-      experimentId: Experiment.Id,
+      experimentId: Workflow.Id,
       graphExecutionStatusesActorPath: String,
       esFactoryName: String = "default"):
     Try[(YarnClient, ApplicationId)] = {

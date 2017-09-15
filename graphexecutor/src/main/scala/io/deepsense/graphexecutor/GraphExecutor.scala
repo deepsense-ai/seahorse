@@ -33,7 +33,7 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.{CatalogRecorder, DOperable, DSHdfsClient, ExecutionContext}
 import io.deepsense.entitystorage.{EntityStorageClient, EntityStorageClientFactory}
 import io.deepsense.models.entities.Entity
-import io.deepsense.models.experiments.Experiment
+import io.deepsense.models.workflows.{Workflow, Workflow$}
 
 object GraphExecutor extends LazyLogging {
   val sparkEventLogDir = "/tmp/spark-events"
@@ -77,7 +77,7 @@ case class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
   val entityStorageClient = createEntityStorageClient(entityStorageClientFactory, geConfig)
 
   def mainLoop(
-    experimentId: Experiment.Id,
+    experimentId: Workflow.Id,
     experimentStatusesReceiverActorPath: String): Unit = {
     logger.debug("mainLoop({}, {})", experimentId, experimentStatusesReceiverActorPath)
     val resourceManagerClient = new AMRMClientAsyncImpl[ContainerRequest](

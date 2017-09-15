@@ -14,7 +14,7 @@ lazy val entitystorage          = project dependsOn (
   commons,
   commons % "test->test",
   deeplang)
-lazy val experimentmanager      = project dependsOn (
+lazy val workflowmanager      = project dependsOn (
   commons,
   commons % "test->test",
   deeplang,
@@ -58,7 +58,7 @@ addCommandAlias("ds-it",
     ";models/it:test " +
     ";deeplang/it:test " +
     ";entitystorage/it:test " +
-    ";experimentmanager/it:test " +
+    ";workflowmanager/it:test " +
     ";graph/it:test " +
     ";graphexecutor/it:test " +
     ";graphjson/it:test " +

@@ -22,8 +22,8 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatest.time.{Seconds, Span}
 
 import io.deepsense.graphexecutor.clusterspawner.ClusterSpawner
-import io.deepsense.models.experiments.Experiment
 import io.deepsense.models.messages.{Abort, ExecutorReady, Launch, Update}
+import io.deepsense.models.workflows.Workflow
 
 class GraphExecutorClientSpec(actorSystem: ActorSystem)
   extends TestKit(actorSystem)
@@ -36,10 +36,10 @@ class GraphExecutorClientSpec(actorSystem: ActorSystem)
 
   def this() = this(ActorSystem("GraphExecutorClientSpec"))
 
-  val experimentId = Experiment.Id.randomId
-  val mockedExperiment = mock[Experiment]
+  val experimentId = Workflow.Id.randomId
+  val mockedExperiment = mock[Workflow]
   when(mockedExperiment.id).thenReturn(experimentId)
-  when(mockedExperiment.state).thenReturn(Experiment.State.draft)
+  when(mockedExperiment.state).thenReturn(Workflow.State.draft)
 
   "GECA" when {
     "received Launch" should {
@@ -55,7 +55,7 @@ class GraphExecutorClientSpec(actorSystem: ActorSystem)
     "received Abort" should {
       "reply with an aborted experiment" when {
         "GE was requested to spawn but not spawned yet" in {
-          val abortedExperiment = mock[Experiment]
+          val abortedExperiment = mock[Workflow]
           when(mockedExperiment.markAborted).thenReturn(abortedExperiment)
           val watcher = TestProbe()
           val yarnClient = mock[YarnClient]
@@ -70,7 +70,7 @@ class GraphExecutorClientSpec(actorSystem: ActorSystem)
           verifyYarnKilled(watcher, yarnClient, applicationId, gecActor)
         }
         "GE was spawned but is not ready yet" in {
-          val abortedExperiment = mock[Experiment]
+          val abortedExperiment = mock[Workflow]
           when(mockedExperiment.markAborted).thenReturn(abortedExperiment)
           val watcher = TestProbe()
           val yarnClient = mock[YarnClient]
@@ -117,7 +117,7 @@ class GraphExecutorClientSpec(actorSystem: ActorSystem)
     "spawn of GE failed" should {
       "return with a failed experiment" in {
         val gec = createTestGEC(failingSpawner)
-        val failedExperiment = mock[Experiment]
+        val failedExperiment = mock[Workflow]
         val runningExperiments = TestProbe()
         when(mockedExperiment.markFailed(any())).thenReturn(failedExperiment)
         runningExperiments.send(gec, Launch(mockedExperiment))
@@ -161,7 +161,7 @@ class GraphExecutorClientSpec(actorSystem: ActorSystem)
   }
 
   def launchAndWaitForSpawn(
-      experiment: Experiment,
+      experiment: Workflow,
       spawner: ClusterSpawner,
       gecActor: ActorRef,
       runningExperiments: TestProbe): Registration = {
@@ -169,7 +169,7 @@ class GraphExecutorClientSpec(actorSystem: ActorSystem)
     verifySpawnerCalled(spawner, experiment)
   }
 
-  def verifySpawnerCalled(spawner: ClusterSpawner, experiment: Experiment): Unit = {
+  def verifySpawnerCalled(spawner: ClusterSpawner, experiment: Workflow): Unit = {
     eventually {
       verify(spawner, times(1))
         .spawnOnCluster(org.mockito.Matchers.eq(experiment.id), any(), any())
@@ -180,8 +180,8 @@ class GraphExecutorClientSpec(actorSystem: ActorSystem)
     TestKit.shutdownActorSystem(system)
   }
 
-  def mockExperimentWithId(id: Experiment.Id): Experiment = {
-    val experiment = mock[Experiment]
+  def mockExperimentWithId(id: Workflow.Id): Workflow = {
+    val experiment = mock[Workflow]
     when(experiment.id).thenReturn(id)
     experiment
   }

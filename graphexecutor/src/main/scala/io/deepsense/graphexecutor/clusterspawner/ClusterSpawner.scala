@@ -9,11 +9,11 @@ import scala.util.Try
 import org.apache.hadoop.yarn.api.records.ApplicationId
 import org.apache.hadoop.yarn.client.api.YarnClient
 
-import io.deepsense.models.experiments.Experiment
+import io.deepsense.models.workflows.Workflow
 
 trait ClusterSpawner {
   def spawnOnCluster(
-      experimentId: Experiment.Id,
+      experimentId: Workflow.Id,
       graphExecutionStatusesActorPath: String,
       esFactoryName: String = "default"):
     Try[(YarnClient, ApplicationId)]

@@ -17,8 +17,8 @@ import io.deepsense.commons.exception.FailureCode._
 import io.deepsense.commons.exception.{DeepSenseFailure, FailureDescription}
 import io.deepsense.graphexecutor.GraphExecutorClientActor.ExecutorSpawned
 import io.deepsense.graphexecutor.clusterspawner.ClusterSpawner
-import io.deepsense.models.experiments.Experiment
 import io.deepsense.models.messages._
+import io.deepsense.models.workflows.Workflow
 
 
 class GraphExecutorClientActor(
@@ -29,7 +29,7 @@ class GraphExecutorClientActor(
   val remoteAddress = RemoteAddressExtension(context.system).address
   val actorPath = self.path.toStringWithAddress(remoteAddress)
 
-  var requestedExperiment: Experiment = _
+  var requestedExperiment: Workflow = _
   var applicationId: ApplicationId = _
   var yarnClient: YarnClient = _
   var graphExecutor: ActorRef = _
@@ -50,7 +50,7 @@ class GraphExecutorClientActor(
    * Afterwards the actor waits for the spawn request to finish.
    * @param experiment An experiment to be launched.
    */
-  def launch(experiment: Experiment): Unit = {
+  def launch(experiment: Workflow): Unit = {
     runningExperiments = sender()
     logger.info(">>> Launch(id: {} / status: {})", experiment.id, experiment.state.status)
     requestedExperiment = experiment

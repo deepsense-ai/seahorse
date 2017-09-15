@@ -14,8 +14,8 @@ import io.deepsense.deeplang.{DKnowledge, DOperable, ExecutionContext}
 import io.deepsense.graph.{Graph, Node}
 import io.deepsense.graphexecutor.GraphExecutorActor.Messages.{NodeFinished, NodeStarted}
 import io.deepsense.graphexecutor.GraphExecutorActor.Results
-import io.deepsense.models.entities.{DataObjectReference, Entity, CreateEntityRequest}
-import io.deepsense.models.experiments.Experiment
+import io.deepsense.models.entities.{CreateEntityRequest, DataObjectReference, Entity}
+import io.deepsense.models.workflows.Workflow
 
 /**
  * GraphNodeExecutorActor is responsible for execution of single node.
@@ -26,7 +26,7 @@ import io.deepsense.models.experiments.Experiment
 class GraphNodeExecutorActor(
     executionContext: ExecutionContext,
     node: Node,
-    experiment: Experiment,
+    experiment: Workflow,
     dOperableCache: Results)
   extends Actor with LazyLogging with Instrumented {
 

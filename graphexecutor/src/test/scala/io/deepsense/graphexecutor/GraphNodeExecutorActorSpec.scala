@@ -17,7 +17,7 @@ import io.deepsense.graph.{Endpoint, Graph, Node}
 import io.deepsense.graphexecutor.GraphExecutorActor.Messages.{NodeFinished, NodeStarted}
 import io.deepsense.graphexecutor.GraphNodeExecutorActor.Messages.Start
 import io.deepsense.models.entities.Entity
-import io.deepsense.models.experiments.Experiment
+import io.deepsense.models.workflows.Workflow
 
 class GraphNodeExecutorActorSpec
   extends TestKit(ActorSystem("GraphNodeExecutorActorSpec"))
@@ -47,7 +47,7 @@ class GraphNodeExecutorActorSpec
         // FIXME node in DRAFT state must not be Completed -> None.get exception
         val node = Node(Node.Id.randomId, mDOp).markRunning
 
-        val mExperiment = mock[Experiment]
+        val mExperiment = mock[Workflow]
         val mGraph = mock[Graph]
         when(mExperiment.graph).thenReturn(mGraph)
         val predecessors: Map[Node.Id, IndexedSeq[Option[Endpoint]]] = Map(node.id -> Vector())
@@ -76,7 +76,7 @@ class GraphNodeExecutorActorSpec
         // FIXME node in DRAFT state must not be Completed -> None.get exception
         val node = Node(Node.Id.randomId, mDOp).markRunning
 
-        val mExperiment = mock[Experiment]
+        val mExperiment = mock[Workflow]
         val mGraph = mock[Graph]
         when(mExperiment.graph).thenReturn(mGraph)
         val predecessors: Map[Node.Id, IndexedSeq[Option[Endpoint]]] = Map(node.id -> Vector())
@@ -101,7 +101,7 @@ class GraphNodeExecutorActorSpec
         // FIXME node in DRAFT state must not be Completed -> None.get exception
         val node = Node(Node.Id.randomId, mDOp).markRunning
 
-        val mExperiment = mock[Experiment]
+        val mExperiment = mock[Workflow]
         val mGraph = mock[Graph]
         when(mExperiment.graph).thenReturn(mGraph)
         val predecessors: Map[Node.Id, IndexedSeq[Option[Endpoint]]] = Map(node.id -> Vector())

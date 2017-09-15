@@ -132,11 +132,12 @@ object Dependencies {
     sparkCore
   ) ++ Seq(scalatest, mockitoCore, scalacheck).map(_ % Test)
 
-  val experimentmanager = Seq(
+  val workflowmanager = Seq(
     akkaActor,
     apacheCommons,
     guice,
     guiceMultibindings,
+    seahorseESModel,
     seahorseReportlib,
     sprayCan,
     sprayClient,
@@ -156,7 +157,8 @@ object Dependencies {
     hadoopYarnApi,
     hadoopYarnClient,
     hadoopYarnCommon,
-    seahorseESClient
+    seahorseESClient,
+    seahorseESModel
   ) ++ Seq(sparkCore).map(_ % Provided) ++ Seq(akkaTestkit, mockitoCore, scalatest).map(_ % s"$Test,it")
 
   val graphJson = Seq(
