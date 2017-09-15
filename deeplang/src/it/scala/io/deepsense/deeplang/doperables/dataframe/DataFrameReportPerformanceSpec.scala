@@ -16,7 +16,8 @@ import org.scalatest.BeforeAndAfter
 import io.deepsense.commons.utils.{DoubleUtils, Logging}
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperations.DOperationsFactory
-
+@Ignore
+//It's ignored because it doesn't have got assertions, it only prints report generation time.
 class DataFrameReportPerformanceSpec
     extends DeeplangIntegTestSupport
     with BeforeAndAfter
