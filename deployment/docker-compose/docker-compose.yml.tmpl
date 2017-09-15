@@ -1,0 +1,42 @@
+version: '2'
+services:
+  workflowmanager:
+    ports:
+     - "9080:9080"
+    image: docker-registry.intra.codilime.com/tap/deepsense-workflowmanager
+  sessionmanager:
+    ports:
+     - "9082:9082"
+    image: docker-registry.intra.codilime.com/tap/deepsense-sessionmanager
+    environment:
+      - LIVY_BASE_URL=http://livy.seahorse.gotapaas.eu
+      - MQ_HOST=10.10.10.110
+      - MQ_PORT=$GENERATED_MQ_PORT
+      - WM_HOST=10.10.10.110
+      - WM_PORT=$GENERATED_WM_PORT
+      - SESSION_EXECUTOR_PATH=hdfs://nameservice1/tmp/we_notebooks.jar
+      - PYEXECUTOR_DIR=hdfs://nameservice1/tmp
+      - PYEXECUTOR_JAR=we_notebooks2.jar
+      - PYSPARK_DIR=hdfs://nameservice1/tmp
+      - PYSPARK_ZIP=pyspark-1.6.zip
+      - KERNEL_MANAGER_ZIP=hdfs://nameservice1/tmp/notebook_executing_kernel.zip
+  frontend:
+    image: docker-registry.intra.codilime.com/tap/deepsense-frontend
+    environment:
+      - API_HOST=http://localhost
+      - API_PORT=9080
+      - SESSION_API_PORT=9082
+      - MQ_USER=guest
+      - MQ_PASS=guest
+      - SOCKETS_ADDRESS=http://localhost:15674/
+      - NOTEBOOKS_HOST=http://localhost:8890/jupyter
+    ports:
+      - "80:80"
+    depends_on:
+      - rabbitmq
+  rabbitmq:
+    image: docker-registry.intra.codilime.com/tap/deepsense-rabbitmq
+    ports:
+     - "15674:15674"
+     - "15672:15672"
+     - "5672:5672"
