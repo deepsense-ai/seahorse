@@ -42,7 +42,7 @@
       },
       "parameters": {
         "Parameters of input Evaluator": {
-          "metric": {
+          "regression metric": {
             "rmse": {
 
             }
@@ -64,7 +64,7 @@
         "name": "Regression Evaluator"
       },
       "parameters": {
-        "metric": {
+        "regression metric": {
           "rmse": {
 
           }
@@ -387,6 +387,6 @@
   "id": "0fdb79ec-b927-48f4-ba05-fb603c65a7a7",
   "metadata": {
     "type": "batch",
-    "apiVersion": "1.1.0"
+    "apiVersion": "1.2.0"
   }
 }

@@ -43,7 +43,7 @@
                 "names included": true
               }
             },
-            "outputFile": "hdfs://spark-cluster-1/system_tests/joinAndSplit/output1.csv"
+            "output file": "hdfs://spark-cluster-1/system_tests/joinAndSplit/output1.csv"
           }
         }
       }
@@ -105,7 +105,7 @@
                 "names included": true
               }
             },
-            "outputFile": "hdfs://spark-cluster-1/system_tests/joinAndSplit/output2.csv"
+            "output file": "hdfs://spark-cluster-1/system_tests/joinAndSplit/output2.csv"
           }
         }
       }
@@ -231,6 +231,6 @@
   "id": "8079e76e-46ce-4c05-ae04-b430a502b66b",
   "metadata": {
     "type": "batch",
-    "apiVersion": "1.1.0"
+    "apiVersion": "1.2.0"
   }
 }

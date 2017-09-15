@@ -12,8 +12,8 @@
             "type": "column",
             "value": "rawPrediction"
           },
-          "metric": {
-            "areaUnderPR": {
+          "binary metric": {
+            "Area under PR": {
 
             }
           },
@@ -220,8 +220,8 @@
         "name": "Binary Classification Evaluator"
       },
       "parameters": {
-        "metric": {
-          "areaUnderPR": {
+        "binary metric": {
+          "Area under PR": {
 
           }
         },
@@ -411,7 +411,7 @@
   },
   "thirdPartyData": {
     "gui": {
-      "name": "EXAMPLE 4: Text Message Spam Detection",
+      "name": "EXAMPLE 5: Text Message Spam Detection",
       "description": "Reducing the amount of text message spam in cellular networks",
       "predefColors": ["#00B1EB", "#1ab394", "#2f4050", "#f8ac59", "#ed5565", "#DD6D3F"],
       "nodes": {
@@ -580,6 +580,6 @@
   "id": "3b70eb16-7860-428a-a378-b6fafb57e879",
   "metadata": {
     "type": "batch",
-    "apiVersion": "1.1.0"
+    "apiVersion": "1.2.0"
   }
 }

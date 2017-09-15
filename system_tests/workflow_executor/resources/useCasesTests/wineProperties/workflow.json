@@ -139,7 +139,7 @@
           "cache node ids": false
         },
         "Parameters of input Evaluator": {
-          "metric": {
+          "regression metric": {
             "rmse": {
 
             }
@@ -186,7 +186,7 @@
         "name": "Regression Evaluator"
       },
       "parameters": {
-        "metric": {
+        "regression metric": {
           "rmse": {
 
           }
@@ -365,7 +365,7 @@
           }
         }
       },
-      "name": "EXAMPLE 5: Wine Properties",
+      "name": "EXAMPLE 6: Wine Properties",
       "description": "Finding important features of wines that define wine quality as perceived by tasters"
     },
     "notebooks": {
@@ -378,6 +378,6 @@
   "id": "e552d2a1-48d6-4adc-bec6-fec6a0150c82",
   "metadata": {
     "type": "batch",
-    "apiVersion": "1.1.0"
+    "apiVersion": "1.2.0"
   }
 }

@@ -35,48 +35,13 @@
         "fit intercept": true
       }
     }, {
-      "id": "e19cb77e-8a35-1341-31f4-34244d36ff8c",
+      "id": "01cb5592-1e87-498e-e453-c7d8c2d89b3e",
       "operation": {
-        "id": "a88eaf35-9061-4714-b042-ddd2049ce917",
-        "name": "Evaluate"
+        "id": "58368deb-68d0-4657-ae3f-145160cb1e2b",
+        "name": "Write Transformer"
       },
       "parameters": {
-        "Parameters of input Evaluator": {
-          "metric": {
-            "rmse": {
-
-            }
-          },
-          "label column": {
-            "type": "column",
-            "value": "price"
-          },
-          "prediction column": {
-            "type": "column",
-            "value": "prediction"
-          }
-        }
-      }
-    }, {
-      "id": "173c865f-bd36-362b-3c88-4157ee09cfd7",
-      "operation": {
-        "id": "d9c3026c-a3d0-4365-8d1a-464a656b72de",
-        "name": "Regression Evaluator"
-      },
-      "parameters": {
-        "metric": {
-          "rmse": {
-
-          }
-        },
-        "prediction column": {
-          "type": "column",
-          "value": "prediction"
-        },
-        "label column": {
-          "type": "column",
-          "value": "price"
-        }
+        "output path": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/output/examples/model_example_1"
       }
     }, {
       "id": "49f8ce4a-f425-3ea6-927f-bdce0ad10006",
@@ -101,6 +66,50 @@
           },
           "prediction column": "prediction",
           "fit intercept": true
+        }
+      }
+    }, {
+      "id": "173c865f-bd36-362b-3c88-4157ee09cfd7",
+      "operation": {
+        "id": "d9c3026c-a3d0-4365-8d1a-464a656b72de",
+        "name": "Regression Evaluator"
+      },
+      "parameters": {
+        "regression metric": {
+          "rmse": {
+
+          }
+        },
+        "prediction column": {
+          "type": "column",
+          "value": "prediction"
+        },
+        "label column": {
+          "type": "column",
+          "value": "price"
+        }
+      }
+    }, {
+      "id": "e19cb77e-8a35-1341-31f4-34244d36ff8c",
+      "operation": {
+        "id": "a88eaf35-9061-4714-b042-ddd2049ce917",
+        "name": "Evaluate"
+      },
+      "parameters": {
+        "Parameters of input Evaluator": {
+          "regression metric": {
+            "rmse": {
+
+            }
+          },
+          "label column": {
+            "type": "column",
+            "value": "price"
+          },
+          "prediction column": {
+            "type": "column",
+            "value": "prediction"
+          }
         }
       }
     }, {
@@ -174,6 +183,15 @@
       }
     }, {
       "from": {
+        "nodeId": "49f8ce4a-f425-3ea6-927f-bdce0ad10006",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "01cb5592-1e87-498e-e453-c7d8c2d89b3e",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
         "nodeId": "eb4e701a-87e8-f487-2165-3aac47182c74",
         "portIndex": 0
       },
@@ -230,75 +248,83 @@
   },
   "thirdPartyData": {
     "gui": {
+      "name": "EXAMPLE 1: Simple Regression Model",
+      "description": "Simple regression model",
       "predefColors": ["#00B1EB", "#1ab394", "#2f4050", "#f8ac59", "#ed5565", "#DD6D3F"],
       "nodes": {
-        "eb4e701a-87e8-f487-2165-3aac47182c74": {
-          "color": "#00B1EB",
+        "01cb5592-1e87-498e-e453-c7d8c2d89b3e": {
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5539,
-            "x": 5245
+            "x": 5764,
+            "y": 5539
+          }
+        },
+        "eb4e701a-87e8-f487-2165-3aac47182c74": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5245,
+            "y": 5539
           }
         },
         "49f8ce4a-f425-3ea6-927f-bdce0ad10006": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5422,
-            "x": 5499
+            "x": 5499,
+            "y": 5422
           }
         },
         "f2d6f3f8-e75e-6182-b183-331d154cfcb8": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5315,
-            "x": 5498
+            "x": 5498,
+            "y": 5315
           }
         },
         "75e3e35e-86d2-98c9-c175-484e9abd3f1a": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5314,
-            "x": 5241
+            "x": 5241,
+            "y": 5314
           }
         },
         "e19cb77e-8a35-1341-31f4-34244d36ff8c": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5653,
-            "x": 5383
+            "x": 5383,
+            "y": 5653
           }
         },
         "11982311-bc25-ff8b-037c-ad969b69acdf": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5201,
-            "x": 5240
+            "x": 5240,
+            "y": 5201
           }
         },
         "79136692-200b-e2f2-b8cc-6e17cab9cfc7": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5080,
-            "x": 5241
+            "x": 5244,
+            "y": 5073
           }
         },
         "173c865f-bd36-362b-3c88-4157ee09cfd7": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5538,
-            "x": 5508
+            "x": 5508,
+            "y": 5538
           }
         }
-      },
-      "name": "EXAMPLE 1: Simple Regression Model",
-      "description": "Simple regression model"
+      }
     },
     "notebooks": {
 
@@ -307,9 +333,9 @@
   "variables": {
 
   },
-  "id": "8270d774-aa7d-48bc-acf7-60eef9157734",
+  "id": "1471d9ee-a52d-4dc8-ac28-781e7e26021b",
   "metadata": {
     "type": "batch",
-    "apiVersion": "1.1.0"
+    "apiVersion": "1.2.0"
   }
 }

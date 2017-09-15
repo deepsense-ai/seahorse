@@ -9,5 +9,6 @@ angular.module('ds.lab').constant('config', {
   'urlApiVersion': 'v1',
   'resultsRefreshInterval': 10000,
   'socketConnectionHost': 'http://172.28.128.100:8000/',
-  'socketReconnectionInterval': 1000
+  'socketReconnectionInterval': 1000,
+  'debugInfoEnabled': false
 });

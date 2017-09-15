@@ -24,7 +24,7 @@
   tasks:
     - name: Assures docker dir exists
       file: path={{ds_documentation_download_dir}} state=directory
-    - include: tasks/copy_docker_image.yml docker_tar_image={{ds_documentation_docker_image}}-docker.tar docker_dir={{ds_documentation_download_dir}} download_dir="{{ds_documentation_download_dir}}"
+    - include: tasks/copy_docker_image.yml docker_tar_image={{ds_documentation_docker_image}}-docker.tar download_dir="{{ds_documentation_download_dir}}"
 
 - name: Imports documentation docker image
   hosts: frontend
@@ -33,7 +33,7 @@
   vars_files:
     - vars/docker.yml
   tasks:
-    - include: tasks/load_docker_image.yml docker_image={{ds_documentation_docker_image}} docker_dir={{ds_documentation_download_dir}}
+    - include: tasks/load_docker_image.yml docker_image={{ds_documentation_docker_image}}
 
 - name: Runs frontend image
   hosts: frontend

@@ -30,3 +30,7 @@ Example2
 Example3
     Run Workflow Local
     Check Report
+
+Example4
+    Run Workflow Local
+    Check Report

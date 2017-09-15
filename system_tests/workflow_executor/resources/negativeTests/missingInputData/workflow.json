@@ -19,7 +19,7 @@
                 "names included": true
               }
             },
-            "outputFile": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/output/ioTests/readWriteLocalFilesystem/output.csv"
+            "output file": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/output/ioTests/readWriteLocalFilesystem/output.csv"
           }
         }
       }
@@ -46,6 +46,6 @@
   "id": "b194a54e-128e-477e-b6aa-65cc15d3adbc",
   "metadata": {
     "type": "batch",
-    "apiVersion": "1.1.0"
+    "apiVersion": "1.2.0"
   }
 }

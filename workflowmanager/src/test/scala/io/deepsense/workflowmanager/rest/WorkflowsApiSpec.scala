@@ -72,33 +72,25 @@ class WorkflowsApiSpec
   val noVersionWorkflowId = Workflow.Id.randomId
   val incorrectVersionFormatWorkflowId = Workflow.Id.randomId
   val noVersionWorkflowResultId = Workflow.Id.randomId
-  val obsoleteVersionWorkflowResultId = Workflow.Id.randomId
-  val incorrectVersionFormatWorkflowResultId = Workflow.Id.randomId
 
   val noVersionWorkflowJson = JsObject(
     "foo" -> JsString("bar"),
     "thirdPartyData" -> JsObject("notebooks" -> JsObject()))
-  val obsoleteVersionWorkflowJson =
-    JsObject(
-      "metadata" -> JsObject("apiVersion" -> JsString("0.0.0")),
-      "thirdPartyData" -> JsObject("notebooks" -> JsObject()))
-  val obsoleteVersionWorkflowWithNotebookJson = obsoleteVersionWorkflowJson.copy()
-  val incorrectVersionFormatWorkflowJson =
-    JsObject(
-      "metadata" -> JsObject("apiVersion" -> JsString("foobar")),
-      "thirdPartyData" -> JsObject("notebooks" -> JsObject()))
-
   val noVersionWorkflow = noVersionWorkflowJson.prettyPrint
-  val obsoleteVersionWorkflow = obsoleteVersionWorkflowJson.prettyPrint
-  val obsoleteVersionWorkflowWithNotebook = obsoleteVersionWorkflowWithNotebookJson.prettyPrint
-  val incorrectVersionFormatWorkflow = incorrectVersionFormatWorkflowJson.prettyPrint
   val noVersionWorkflowResult = noVersionWorkflow
-  val obsoleteVersionWorkflowResult = obsoleteVersionWorkflow
-  val incorrectVersionFormatWorkflowResult = incorrectVersionFormatWorkflow
+
 
   val notebookA = JsObject("notebook A content" -> JsObject())
   val notebookB = "{ \"notebook B content\": {} }"
   val obsoleteNotebook = "{ \"obsolete notebook content\": {} }"
+
+  val obsoleteVersion = "0.0.0"
+  val obsoleteVersionWorkflowId = Workflow.Id.randomId
+  val obsoleteVersionWorkflow =
+    workflowA.copy(
+      metadata = workflowA.metadata.copy(apiVersion = obsoleteVersion))
+  val obsoleteVersionWorkflowWithResults =
+    newWorkflowWithResults(obsoleteVersionWorkflowId, obsoleteVersionWorkflow)
 
   def newWorkflow(
       apiVersion: String = BuildInfo.version,
@@ -253,6 +245,17 @@ class WorkflowsApiSpec
         ()
       }
     }
+    "return BadRequest" when {
+      "workflow's API version is not compatible with current build" in {
+        Get(s"/$apiPrefix/$obsoleteVersionWorkflowId") ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.BadRequest)
+
+          assertFailureDescriptionHasVersionInfo(responseAs[FailureDescription])
+        }
+        ()
+      }
+    }
   }
 
   "GET /workflows" should {
@@ -261,7 +264,7 @@ class WorkflowsApiSpec
         addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
         status should be(StatusCodes.OK)
 
-        responseAs[JsArray].elements.size shouldBe 3
+        responseAs[JsArray].elements.size shouldBe 4
       }
       ()
     }
@@ -349,7 +352,7 @@ class WorkflowsApiSpec
           header("Content-Disposition") shouldBe Some(
             `Content-Disposition`(
               "attachment",
-              Map("filename" -> "Very nice workflow__workflow.json")))
+              Map("filename" -> "Very_nice_workflow__workflow.json")))
 
           responseAs[WorkflowWithVariables] shouldBe WorkflowWithVariables(
             workflowAId,
@@ -368,7 +371,7 @@ class WorkflowsApiSpec
           header("Content-Disposition") shouldBe Some(
             `Content-Disposition`(
               "attachment",
-              Map("filename" -> "Very nice workflow__workflow.json")))
+              Map("filename" -> "Very_nice_workflow__workflow.json")))
 
           responseAs[WorkflowWithVariables] shouldBe WorkflowWithVariables(
             workflowWithoutNotebookId,
@@ -504,7 +507,7 @@ class WorkflowsApiSpec
 
     "return Created" when {
       "workflow with specified id exists" in {
-        Post(s"/$apiPrefix/${workflowAId}/clone", description) ~>
+        Post(s"/$apiPrefix/$workflowAId/clone", description) ~>
           addHeaders(
             RawHeader("X-Auth-Token", validAuthTokenTenantA)) ~> testRoute ~> check {
           status should be(StatusCodes.Created)
@@ -539,6 +542,17 @@ class WorkflowsApiSpec
           status should be(StatusCodes.OK)
         }
         ()
+      }
+      "return BadRequest" when {
+        "workflow's API version is not compatible with current build" in {
+          Put(s"/$apiPrefix/$workflowAId", obsoleteVersionWorkflowWithResults) ~>
+            addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+            status should be(StatusCodes.BadRequest)
+
+            assertFailureDescriptionHasVersionInfo(responseAs[FailureDescription])
+          }
+          ()
+        }
       }
       "user updates his workflow with notebook" in {
         Put(s"/$apiPrefix/$workflowAId", updatedWorkflowWithResultsWithNotebook) ~>
@@ -684,6 +698,7 @@ class WorkflowsApiSpec
     storage.create(workflowAId, workflowA)
     storage.create(workflowBId, workflowB)
     storage.create(workflowWithoutNotebookId, workflowWithoutNotebook)
+    storage.create(obsoleteVersionWorkflowId, obsoleteVersionWorkflow)
     storage
   }
 

@@ -18,6 +18,7 @@ class CommonSetupsAndTeardowns(object):
     self.suite_path = suite_name + "/"
     BuiltIn().set_suite_variable("${SUITE RESOURCE PATH}", "resources/" + suite_name + "/")
     self.suite_resources_path = "resources/" + suite_name + "/"
+    shutil.rmtree("output/" + self.suite_path, ignore_errors=True)
 
   def standard_suite_setup(self):
     self.set_suite_variables()

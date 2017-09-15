@@ -123,7 +123,7 @@
                 "names included": true
               }
             },
-            "outputFile": "hdfs://spark-cluster-1/system_tests/missingValuesHandler/output.csv"
+            "output file": "hdfs://spark-cluster-1/system_tests/missingValuesHandler/output.csv"
           }
         }
       }
@@ -300,6 +300,6 @@
   "id": "5e8cb065-aec5-4766-9860-939fab34bfde",
   "metadata": {
     "type": "batch",
-    "apiVersion": "1.1.0"
+    "apiVersion": "1.2.0"
   }
 }

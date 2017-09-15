@@ -43,7 +43,7 @@
                 "names included": true
               }
             },
-            "outputFile": "hdfs://spark-cluster-1/system_tests/readWriteHdfs/output.csv"
+            "output file": "hdfs://spark-cluster-1/system_tests/readWriteHdfs/output.csv"
           }
         }
       }
@@ -85,6 +85,6 @@
   "id": "103f6c19-13e8-4c70-9206-e2f07eaef5a6",
   "metadata": {
     "type": "batch",
-    "apiVersion": "1.1.0"
+    "apiVersion": "1.2.0"
   }
 }

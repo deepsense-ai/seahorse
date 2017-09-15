@@ -424,7 +424,7 @@
           }
         }
       },
-      "name": "EXAMPLE 6: Income Prediction",
+      "name": "EXAMPLE 7: Income Prediction",
       "description": "Predicting whether an individual earn more than 50$/yr based on various data"
     },
     "notebooks": {
@@ -437,6 +437,6 @@
   "id": "4a7d31b7-927b-4d99-b268-df3d8d0bf680",
   "metadata": {
     "type": "batch",
-    "apiVersion": "1.1.0"
+    "apiVersion": "1.2.0"
   }
 }

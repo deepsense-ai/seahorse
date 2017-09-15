@@ -32,7 +32,7 @@
 
               }
             },
-            "outputFile": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/output/ioTests/readWriteLocalFilesystemParquetFormat/output.parquet"
+            "output file": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/output/ioTests/readWriteLocalFilesystemParquetFormat/output.parquet"
           }
         }
       }
@@ -74,6 +74,6 @@
   "id": "b194a54e-128e-477e-b6aa-65cc15d3adbc",
   "metadata": {
     "type": "batch",
-    "apiVersion": "1.1.0"
+    "apiVersion": "1.2.0"
   }
 }
