@@ -2,16 +2,19 @@
 
 /* @ngInject */
 class StartingPopoverCtrl {
-  constructor(WorkflowStatusBarService) {
-    this.WorkflowStatusBarService = WorkflowStatusBarService;
+  constructor(config) {
+    this.StartingPopoverKey = config.apiVersion + '-startingPopover';
   }
 
-  isPopoverVisible() {
-    return this.WorkflowStatusBarService.isStartingPopoverVisible();
+  isPopoverClosed() {
+    const startingPopover = JSON.parse(localStorage.getItem(this.StartingPopoverKey));
+    return startingPopover && startingPopover.closed;
   }
 
   closePopover() {
-    this.WorkflowStatusBarService.closeStartingPopover();
+    localStorage.setItem(this.StartingPopoverKey, JSON.stringify({
+      closed: true
+    }));
   }
 
 }

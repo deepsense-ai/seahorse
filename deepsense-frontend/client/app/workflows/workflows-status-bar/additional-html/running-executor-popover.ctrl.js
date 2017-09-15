@@ -2,16 +2,16 @@
 
 /* @ngInject */
 class RunningExecutorPopoverCtrl {
-  constructor(WorkflowStatusBarService) {
-    this.WorkflowStatusBarService = WorkflowStatusBarService;
+  constructor() {
+    this.isRunningExecutorPopoverVisible = true
   }
 
   isPopoverVisible() {
-    return this.WorkflowStatusBarService.isRunningExecutorPopoverVisible();
+    return this.isRunningExecutorPopoverVisible;
   }
 
   closePopover() {
-    this.WorkflowStatusBarService.closeRunningExecutorPopover();
+    this.isRunningExecutorPopoverVisible = false;
   }
 
 }

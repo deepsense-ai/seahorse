@@ -8,12 +8,7 @@ function WorkflowStatusBarService($rootScope, config, version, WorkflowService, 
   service.getMenuItems = getMenuItems;
 
   const isOwner = () => WorkflowService.getCurrentWorkflow().owner.id === UserService.getSeahorseUser().id;
-
-  this.popovers = {
-    startingPopoverVisible: true,
-    runningExecutorPopoverVisible: true
-  };
-
+  
   const menuItems = {
     clear: {
       label: 'Clear',
@@ -157,22 +152,6 @@ function WorkflowStatusBarService($rootScope, config, version, WorkflowService, 
         }
     }
   }
-
-  service.isStartingPopoverVisible = () => {
-    return this.popovers.startingPopoverVisible;
-  };
-
-  service.isRunningExecutorPopoverVisible = () => {
-    return this.popovers.runningExecutorPopoverVisible;
-  };
-
-  service.closeStartingPopover = () => {
-    this.popovers.startingPopoverVisible = false;
-  };
-
-  service.closeRunningExecutorPopover = () => {
-    this.popovers.runningExecutorPopoverVisible = false;
-  };
 
   return service;
 }
