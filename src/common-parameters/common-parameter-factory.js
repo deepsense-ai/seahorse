@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
  *
- * Owner: Grzegorz Swatowski
+ * Created by: Grzegorz Swatowski
  */
 
 'use strict';
@@ -15,6 +15,8 @@ let SingleChoiceParameterConstructor = require('./common-choice-parameter/common
 let MultipleChoiceParameterConstructor = require('./common-choice-parameter/common-multiple-choice-parameter.js');
 let SelectorParameterConstructor = require('./common-selector/common-selector-parameter.js');
 let MultiplierParameterConstructor = require('./common-multiplier-parameter.js');
+let CreatorParameterConstructor = require('./common-creator-parameter.js');
+let PrefixBasedCreatorParameterConstructor = require('./common-prefix-based-creator-parameter.js');
 
 /*
  * (API parameter's type value) => (constructor)
@@ -27,7 +29,9 @@ let parameterConstructors = {
   'choice': SingleChoiceParameterConstructor,
   'multipleChoice': MultipleChoiceParameterConstructor,
   'selector': SelectorParameterConstructor,
-  'multiplier': MultiplierParameterConstructor
+  'multiplier': MultiplierParameterConstructor,
+  'creator': CreatorParameterConstructor,
+  'prefixBasedCreator': PrefixBasedCreatorParameterConstructor
 };
 
 let ParameterFactory = {
