@@ -18,7 +18,7 @@ package io.deepsense.workflowexecutor.partialexecution
 
 import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.commons.models.Entity
-import io.deepsense.deeplang.{DOperation, DOperable}
+import io.deepsense.deeplang.DOperable
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.graph.DeeplangGraph.DeeplangNode
 import io.deepsense.graph.Node.Id
@@ -77,7 +77,7 @@ sealed abstract class Execution(val graph: StatefulGraph, running: Boolean) exte
   }
 
   override def inferKnowledge(context: InferContext): GraphKnowledge = {
-    graph.inferKnowledge(context)
+    graph.inferKnowledge(context, graph.memorizedKnowledge)
   }
 }
 

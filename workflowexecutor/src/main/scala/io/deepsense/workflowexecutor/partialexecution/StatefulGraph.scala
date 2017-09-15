@@ -145,10 +145,12 @@ case class StatefulGraph(
     }
   }
 
-  private def memorizedKnowledge = GraphKnowledge(states.flatMap { case (nodeId, nodeState) =>
-    nodeState.knowledge.map(
-      knowledge => (nodeId, knowledge))
-  })
+  def memorizedKnowledge: GraphKnowledge = {
+    GraphKnowledge(states.flatMap { case (nodeId, nodeState) =>
+      nodeState.knowledge.map(
+        knowledge => (nodeId, knowledge))
+    })
+  }
 
   def updateStates(changedGraph: StatefulGraph): StatefulGraph = {
     val updatedStates = states ++ changedGraph.states

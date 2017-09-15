@@ -125,24 +125,29 @@ abstract class WorkflowExecutorActor(
   }
 
   def updateExecutionState(startingPointExecution: Execution): Unit = {
-    statefulWorkflow.currentExecution match {
+    val inferredState = statefulWorkflow.currentExecution match {
       case idle: IdleExecution =>
         logger.debug(s"End of execution")
         terminationListener.foreach(_ ! getExecutionStatus)
         context.unbecome()
         context.become(ready())
+        Some(statefulWorkflow.inferState())
       case running: RunningExecution =>
         launchReadyNodes()
         context.unbecome()
         context.become(launched())
+        None
       case aborted: AbortedExecution =>
         logger.debug("Becoming aborted! - waiting for running nodes to finish")
         context.unbecome()
         context.become(waitingForFinish())
+        None
     }
     val executionStatus: ExecutionStatus =
       ExecutionStatus(statefulWorkflow.changesExecutionReport(startingPointExecution))
     sendExecutionStatus(executionStatus)
+
+    inferredState.foreach(inferredState => sendInferredState(inferredState))
   }
 
   def sendExecutionStatus(executionStatus: ExecutionStatus): Unit = {

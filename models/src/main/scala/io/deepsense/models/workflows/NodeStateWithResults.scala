@@ -18,6 +18,7 @@ package io.deepsense.models.workflows
 
 import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.commons.models.Entity
+import io.deepsense.deeplang.inference.InferenceWarnings
 import io.deepsense.deeplang.{DKnowledge, DOperable}
 import io.deepsense.graph.NodeInferenceResult
 import io.deepsense.reportlib.model.ReportContent
@@ -43,14 +44,20 @@ case class NodeStateWithResults(
   def isFailed: Boolean = nodeState.isFailed
   def isAborted: Boolean = nodeState.isAborted
   def isDraft: Boolean = nodeState.isDraft
+  def start: NodeStateWithResults = copy(nodeState = nodeState.start)
   def finish(
       entitiesIds: Seq[Entity.Id],
       reports: Map[Entity.Id, ReportContent],
       dOperables: Map[Entity.Id, DOperable]): NodeStateWithResults = {
     val results = EntitiesMap(dOperables, reports)
-    NodeStateWithResults(nodeState.finish(entitiesIds, results), dOperables, knowledge)
+    val dOperablesKnowledge =
+      entitiesIds.flatMap(id => dOperables.get(id))
+        .map(DKnowledge(_))
+        .toVector
+    val newWarnings = knowledge.map(_.warnings).getOrElse(InferenceWarnings.empty)
+    val newKnowledge = Some(NodeInferenceResult(dOperablesKnowledge, newWarnings, Vector()))
+    NodeStateWithResults(nodeState.finish(entitiesIds, results), dOperables, newKnowledge)
   }
-  def start: NodeStateWithResults = copy(nodeState = nodeState.start)
 }
 
 object NodeStateWithResults {
