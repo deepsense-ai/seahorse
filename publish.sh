@@ -123,6 +123,11 @@ function publishVersion() {
   publish $artifactLocalName $artifactVersion $url
 }
 
+function create_jenkins_env_file {
+  echo "FULL_VERSION="$FULL_VERSION > env.properties
+  echo "BRANCH_NAME="`echo $fv | cut -d'.' -f 1,2` >> env.properties
+}
+
 function clean() {
   echo "** Removing zip file **"
   rm ${FULL_VERSION}.zip
@@ -135,7 +140,7 @@ calculate_full_version
 calculate_repository_url
 add_build_info_file
 add_version_file
-echo "FULL_VERSION="$FULL_VERSION > env.properties
+create_jenkins_env_file
 package
 publishVersion "${FULL_VERSION}.zip" "${FULL_VERSION}"
 publishLatest "${FULL_VERSION}.zip"
