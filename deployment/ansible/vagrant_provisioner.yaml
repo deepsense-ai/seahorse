@@ -15,8 +15,10 @@
   vars_files:
     - vars/env.yml
   tasks:
-    - name: Wait 15s for clients to reconnect
-      wait_for: timeout=15
+    - name: Wait for Cassandra
+      wait_for: port=9042 delay=120 timeout=600
+    - name: Wait for clients to reconnect
+      wait_for: timeout=180
 
 - hosts: localhost
   gather_facts: false
