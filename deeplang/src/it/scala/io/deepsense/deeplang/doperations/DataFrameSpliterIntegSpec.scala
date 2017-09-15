@@ -60,7 +60,7 @@ class DataFrameSpliterIntegSpec
 
   private def operation(range: Double, seed: Double): DataFrameSpliter = {
     val operation = new DataFrameSpliter
-    val valueParam = operation.parameters.getNumericParameter(operation.splitRangeParam)
+    val valueParam = operation.parameters.getNumericParameter(operation.splitRatioParam)
     valueParam.value = Some(range)
     val seedParam = operation.parameters.getNumericParameter(operation.seedParam)
     seedParam.value = Some(seed)

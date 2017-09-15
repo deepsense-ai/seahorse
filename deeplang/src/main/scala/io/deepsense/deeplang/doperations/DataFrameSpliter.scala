@@ -17,13 +17,13 @@ class DataFrameSpliter extends DOperation1To2[DataFrame, DataFrame, DataFrame] {
 
   override val id: DOperation.Id = "d273c42f-b840-4402-ba6b-18282cc68de3"
 
-  val splitRangeParam = "split range"
+  val splitRatioParam = "split ratio"
 
   val seedParam = "seed"
 
   override protected def _execute(context: ExecutionContext)
                                  (df: DataFrame): (DataFrame, DataFrame) = {
-    val range: Double = parameters.getNumericParameter(splitRangeParam).value.get
+    val range: Double = parameters.getNumericParameter(splitRatioParam).value.get
     val seed: Long = parameters.getNumericParameter(seedParam).value.get.toLong
     val Array(f1: RDD[Row], f2: RDD[Row]) = split(df, range, seed)
     val schema = df.sparkDataFrame.schema
@@ -37,7 +37,7 @@ class DataFrameSpliter extends DOperation1To2[DataFrame, DataFrame, DataFrame] {
   }
 
   override val parameters: ParametersSchema = ParametersSchema(
-    splitRangeParam ->
+    splitRatioParam ->
       NumericParameter("Proportion of spliting",
         default = Some(0.5),
         required = true,
