@@ -51,6 +51,7 @@ function FlowChartBox($rootScope, GraphPanelRendererService) {
       'selectedNode': '=',
       'nodes': '=',
       'reportMode': '=',
+      'isRunning': '=',
       'zoomId': '@'
     },
     templateUrl: 'app/workflows/graph-panel/graph-panel-flowchart.html',
