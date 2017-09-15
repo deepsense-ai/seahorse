@@ -19,8 +19,9 @@ package io.deepsense.deeplang.doperables
 import scala.reflect.runtime.universe._
 
 import org.apache.spark.ml
+import org.apache.spark.sql.types.StructType
 
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.dataframe.{DataFrameColumnsGetter, DataFrame}
 import io.deepsense.deeplang.params.wrappers.spark.ParamsWithSparkWrappers
 import io.deepsense.deeplang.{DKnowledge, ExecutionContext, TypeUtils}
 
@@ -46,6 +47,7 @@ abstract class SparkEvaluatorWrapper[E <: ml.evaluation.Evaluator]
   }
 
   override def _infer(k: DKnowledge[DataFrame]): MetricValue = {
+    k.single.schema.foreach(sparkParamMap(sparkEvaluator, _))
     MetricValue.forInference(getMetricName)
   }
 
