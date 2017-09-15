@@ -5,9 +5,7 @@
 'use strict';
 
 /* @ngInject */
-function AppConfig($stateProvider, $urlRouterProvider, toastrConfig) {
-  // TODO: enable html5mode
-
+function AppConfig($urlRouterProvider, toastrConfig) {
   angular.extend(toastrConfig, {
     'allowHtml': true,
     'newestOnTop': false,
@@ -24,11 +22,6 @@ function AppConfig($stateProvider, $urlRouterProvider, toastrConfig) {
   });
 
   $urlRouterProvider.otherwise('/');
-
-  $stateProvider.state('lab', {
-    abstract: true,
-    template: '<div ui-view/>'
-  });
 }
 
 exports.function = AppConfig;

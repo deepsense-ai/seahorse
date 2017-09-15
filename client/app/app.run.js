@@ -16,7 +16,7 @@ function AppRun($rootScope, $state, PageService) {
 
   $rootScope.transitToErrorState = (errorMessage) => {
     $rootScope.stateData.errorMessage = errorMessage;
-    $state.go('lab.errorState');
+    $state.go('errorState');
   };
 
   $rootScope.$on('$stateChangeStart', (event, toState) => {
@@ -26,7 +26,7 @@ function AppRun($rootScope, $state, PageService) {
     });
 
     // keep the old value while redirection to the error view
-    if (toState.name !== 'lab.errorState') {
+    if (toState.name !== 'errorState') {
       $rootScope.stateData.errorMessage = undefined;
     }
 
@@ -39,7 +39,7 @@ function AppRun($rootScope, $state, PageService) {
 
   $rootScope.$watch('stateData.errorMessage', (newErrorMessage) => {
     if (newErrorMessage) {
-      $state.go('lab.errorState');
+      $state.go('errorState');
     }
   });
 }

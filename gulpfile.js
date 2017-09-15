@@ -91,6 +91,11 @@ gulp.task('favicon', function () {
     .pipe(gulp.dest(build.path));
 });
 
+gulp.task('assets', function () {
+  return gulp.src([client.path + client.assets])
+    .pipe(gulp.dest(build.path));
+});
+
 gulp.task('images', function () {
   return gulp.src([client.path + client.images])
     .pipe(gulp.dest(build.path + build.images));
@@ -171,7 +176,10 @@ gulp.task('browserify', function () {
 gulp.task('build', function (callback) {
   runSequence(
     'clean',
-    ['fonts', 'images', 'html', 'config', 'favicon', 'less', 'libs:css', 'libs:js', 'jshint', 'browserify'],
+    [
+      'fonts', 'images', 'html', 'config', 'favicon', 'assets', 'less',
+      'libs:css', 'libs:js', 'jshint', 'browserify'
+    ],
     callback
   );
 });

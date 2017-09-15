@@ -6,7 +6,7 @@
 /* @ngInject */
 function ExperimentsConfig($stateProvider) {
   $stateProvider
-    .state('lab.experiments', {
+    .state('experiments', {
       url: '/experiments',
       templateUrl: 'app/experiments/experiment-browser/experiment-browser.html',
       controller: 'ExperimentListController as experimentList',
