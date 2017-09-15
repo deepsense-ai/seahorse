@@ -22,8 +22,6 @@ import com.thenewmotion.akka.rabbitmq.ConnectionActor
 import com.typesafe.config.ConfigFactory
 import org.apache.spark.SparkContext
 
-import io.deepsense.deeplang.doperables.ReportLevel
-import io.deepsense.deeplang.doperables.ReportLevel._
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.workflowexecutor.communication.message.global.Ready
 import io.deepsense.workflowexecutor.communication.mq.MQCommunication
@@ -36,7 +34,6 @@ import io.deepsense.workflowexecutor.{ExecutionDispatcherActor, StatusLoggingAct
  * SessionExecutor waits for user instructions in an infinite loop.
  */
 case class SessionExecutor(
-    reportLevel: ReportLevel,
     messageQueueHost: String,
     pythonExecutorPath: String)
   extends Executor {
@@ -90,7 +87,6 @@ case class SessionExecutor(
       dOperableCatalog,
       dataFrameStorage,
       pythonExecutionCaretaker,
-      ReportLevel.HIGH,
       statusLogger,
       workflowManagerClientActor,
       seahorsePublisher,

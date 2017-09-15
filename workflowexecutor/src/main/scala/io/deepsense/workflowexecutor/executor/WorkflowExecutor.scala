@@ -34,7 +34,6 @@ import io.deepsense.commons.models.{Entity, Id}
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.CustomOperationExecutor.Result
 import io.deepsense.deeplang._
-import io.deepsense.deeplang.doperables.ReportLevel.ReportLevel
 import io.deepsense.models.json.workflow.exceptions._
 import io.deepsense.models.workflows.{ExecutionReport, WorkflowWithResults, WorkflowWithVariables}
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.Launch
@@ -49,7 +48,6 @@ import io.deepsense.workflowexecutor._
  */
 case class WorkflowExecutor(
     workflow: WorkflowWithVariables,
-    reportLevel: ReportLevel,
     pythonExecutorPath: String)
   extends Executor {
 
@@ -68,7 +66,6 @@ case class WorkflowExecutor(
     pythonExecutionCaretaker.start()
 
     val executionContext = createExecutionContext(
-      reportLevel,
       dataFrameStorage,
       pythonExecutionCaretaker,
       sparkContext)
@@ -142,7 +139,7 @@ object WorkflowExecutor extends Logging {
     val workflow = loadWorkflow(params)
 
     val executionReport = workflow.map(w => {
-      executeWorkflow(w, params.reportLevel, params.pyExecutorPath.get).get
+      executeWorkflow(w, params.pyExecutorPath.get).get
     })
     val workflowWithResultsFuture = workflow.flatMap(w =>
       executionReport
@@ -220,13 +217,12 @@ object WorkflowExecutor extends Logging {
 
   private def executeWorkflow(
       workflow: WorkflowWithVariables,
-      reportLevel: ReportLevel,
       pythonExecutorPath: String): Try[ExecutionReport] = {
 
     // Run executor
     logger.info("Executing the workflow.")
     logger.debug("Executing the workflow: " +  workflow)
-    WorkflowExecutor(workflow, reportLevel, pythonExecutorPath).execute()
+    WorkflowExecutor(workflow, pythonExecutorPath).execute()
   }
 
   private def loadWorkflow(params: ExecutionParams): Future[WorkflowWithVariables] = {

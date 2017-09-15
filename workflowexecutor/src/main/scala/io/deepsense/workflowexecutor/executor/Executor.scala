@@ -25,7 +25,6 @@ import io.deepsense.commons.utils.{Logging, Version}
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
-import io.deepsense.deeplang.doperables.ReportLevel._
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.doperations.custom.{Sink, Source}
 import io.deepsense.deeplang.inference.InferContext
@@ -37,7 +36,6 @@ trait Executor extends Logging {
     Version(BuildInfo.apiVersionMajor, BuildInfo.apiVersionMinor, BuildInfo.apiVersionPatch)
 
   def createExecutionContext(
-      reportLevel: ReportLevel,
       dataFrameStorage: DataFrameStorage,
       pythonExecutionCaretaker: PythonExecutionCaretaker,
       sparkContext: SparkContext,
@@ -62,7 +60,6 @@ trait Executor extends Logging {
       sqlContext,
       inferContext,
       FileSystemClientStub(), // temporarily mocked
-      reportLevel,
       tenantId,
       innerWorkflowExecutor,
       dataFrameStorage,

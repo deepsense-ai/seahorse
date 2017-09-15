@@ -25,8 +25,6 @@ import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
-import io.deepsense.deeplang.doperables.ReportLevel
-import io.deepsense.deeplang.doperables.ReportLevel.ReportLevel
 import io.deepsense.models.workflows.Workflow
 import io.deepsense.models.workflows.Workflow._
 import io.deepsense.workflowexecutor.communication.message.workflow.Init
@@ -76,7 +74,6 @@ class ExecutionDispatcherActorSpec
         mock[DOperableCatalog],
         mock[DataFrameStorage],
         mock[PythonExecutionCaretaker],
-        mock[ReportLevel],
         TestProbe().ref,
         TestProbe().ref,
         TestProbe().ref,
@@ -111,8 +108,7 @@ class ExecutionDispatcherActorSpec
         mock[SparkContext],
         mock[DOperableCatalog],
         mock[DataFrameStorage],
-        mock[PythonExecutionCaretaker],
-        mock[ReportLevel]
+        mock[PythonExecutionCaretaker]
       ) with WorkflowExecutorsFactory with WorkflowExecutorFinder {
         override def createExecutor(
             context: ActorContext,
@@ -138,16 +134,14 @@ class ExecutionDispatcherActorSpec
       sparkContext: SparkContext,
       dOperableCatalog: DOperableCatalog,
       dataFrameStorage: DataFrameStorage,
-      pythonExecutionCaretaker: PythonExecutionCaretaker,
-      reportLevel: ReportLevel)
+      pythonExecutionCaretaker: PythonExecutionCaretaker)
     extends ExecutionDispatcherActor(
       sparkContext, dOperableCatalog, dataFrameStorage, pythonExecutionCaretaker,
-      reportLevel, TestProbe().ref, TestProbe().ref, TestProbe().ref, TestProbe().ref, 5) {
+      TestProbe().ref, TestProbe().ref, TestProbe().ref, TestProbe().ref, 5) {
 
     self: WorkflowExecutorsFactory with WorkflowExecutorFinder =>
 
     override def createExecutionContext(
-        reportLevel: ReportLevel.ReportLevel,
         dataFrameStorage: DataFrameStorage,
         pythonExecutionCaretaker: PythonExecutionCaretaker,
         sparkContext: SparkContext,

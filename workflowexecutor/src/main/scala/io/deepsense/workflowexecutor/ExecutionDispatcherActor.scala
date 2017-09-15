@@ -22,7 +22,6 @@ import org.apache.spark.SparkContext
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
-import io.deepsense.deeplang.doperables.ReportLevel._
 import io.deepsense.models.workflows.Workflow
 import io.deepsense.models.workflows.Workflow.Id
 import io.deepsense.workflowexecutor.communication.message.global.Ready
@@ -34,7 +33,6 @@ class ExecutionDispatcherActor(
     dOperableCatalog: DOperableCatalog,
     dataFrameStorage: DataFrameStorage,
     pythonExecutionCaretaker: PythonExecutionCaretaker,
-    reportLevel: ReportLevel,
     statusLogger: ActorRef,
     workflowManagerClientActor: ActorRef,
     seahorseTopicPublisher: ActorRef,
@@ -83,7 +81,6 @@ class ExecutionDispatcherActor(
     val executor = createExecutor(
       context,
       createExecutionContext(
-        reportLevel,
         dataFrameStorage,
         pythonExecutionCaretaker,
         sparkContext,
@@ -150,7 +147,6 @@ object ExecutionDispatcherActor {
       dOperableCatalog: DOperableCatalog,
       dataFrameStorage: DataFrameStorage,
       pythonExecutionCaretaker: PythonExecutionCaretaker,
-      reportLevel: ReportLevel,
       statusLogger: ActorRef,
       workflowManagerClientActor: ActorRef,
       seahorseTopicPublisher: ActorRef,
@@ -161,7 +157,6 @@ object ExecutionDispatcherActor {
       dOperableCatalog,
       dataFrameStorage,
       pythonExecutionCaretaker,
-      reportLevel,
       statusLogger,
       workflowManagerClientActor,
       seahorseTopicPublisher,

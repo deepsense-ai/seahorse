@@ -16,26 +16,13 @@
 
 package io.deepsense.deeplang.doperables
 
-import spray.json._
-
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
-import io.deepsense.reportlib.model.{ReportType, ReportJsonProtocol, ReportContent}
+import io.deepsense.reportlib.model.{ReportContent, ReportType}
 
 case class Report(content: ReportContent = ReportContent("empty report", ReportType.Empty))
   extends DOperable {
 
   def this() = this(ReportContent("empty report", ReportType.Empty))
 
-  import ReportJsonProtocol._
   override def report(executionContext: ExecutionContext): Report = this
-}
-
-/**
-  * Level of details for generated reports
-  */
-// TODO Remove
-@deprecated(message = "To be removed. Not used anymore", since = "2015-12-16")
-object ReportLevel extends Enumeration {
-  type ReportLevel = Value
-  val HIGH, MEDIUM, LOW = Value
 }

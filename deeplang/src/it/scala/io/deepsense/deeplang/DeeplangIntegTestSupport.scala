@@ -31,8 +31,6 @@ import io.deepsense.commons.spark.sql.UserDefinedFunctions
 import io.deepsense.deeplang.CustomOperationExecutor.Result
 import io.deepsense.deeplang.DataFrameStorage.DataFrameName
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
-import io.deepsense.deeplang.doperables.ReportLevel
-import io.deepsense.deeplang.doperables.ReportLevel._
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.deeplang.inference.InferContext
 
@@ -75,7 +73,6 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
       sqlContext,
       inferContext,
       fileSystemClient,
-      ReportLevel.HIGH,
       "testTenantId",
       mock[InnerWorkflowExecutor],
       new MockedDataFrameStorage,
@@ -94,7 +91,6 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
       sqlContext,
       inferContext,
       fileSystemClient,
-      ReportLevel.HIGH,
       "testTenantId",
       mock[InnerWorkflowExecutor],
       new MockedContextualDataFrameStorage,
@@ -177,7 +173,6 @@ private class MockedCommonExecutionContext(
     override val sqlContext: SQLContext,
     override val inferContext: InferContext,
     override val fsClient: FileSystemClient,
-    override val reportLevel: ReportLevel,
     override val tenantId: String,
     override val innerWorkflowExecutor: InnerWorkflowExecutor,
     override val dataFrameStorage: DataFrameStorage,
@@ -187,7 +182,6 @@ private class MockedCommonExecutionContext(
     sqlContext,
     inferContext,
     fsClient,
-    reportLevel,
     tenantId,
     innerWorkflowExecutor,
     dataFrameStorage,
@@ -198,7 +192,6 @@ private class MockedCommonExecutionContext(
       sqlContext,
       inferContext,
       fsClient,
-      reportLevel,
       tenantId,
       innerWorkflowExecutor,
       new MockedContextualDataFrameStorage,
@@ -210,7 +203,6 @@ private class MockedExecutionContext(
     override val sqlContext: SQLContext,
     override val inferContext: InferContext,
     override val fsClient: FileSystemClient,
-    override val reportLevel: ReportLevel,
     override val tenantId: String,
     override val innerWorkflowExecutor: InnerWorkflowExecutor,
     override val dataFrameStorage: ContextualDataFrameStorage,
@@ -220,7 +212,6 @@ private class MockedExecutionContext(
     sqlContext,
     inferContext,
     fsClient,
-    reportLevel,
     tenantId,
     innerWorkflowExecutor,
     dataFrameStorage,

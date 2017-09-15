@@ -23,7 +23,6 @@ import io.deepsense.commons.BuildInfo
 import io.deepsense.commons.utils.{Logging, Version}
 import io.deepsense.deeplang.CatalogRecorder
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
-import io.deepsense.deeplang.doperables.ReportLevel
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow._
 import io.deepsense.workflowexecutor.executor.{SessionExecutor, WorkflowExecutor}
@@ -64,10 +63,6 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
 
     note("")
     note("Miscellaneous:")
-    opt[String]('r', "report-level") valueName "LEVEL" action {
-      (x, c) => c.copy(reportLevel = ReportLevel.withName(x.toUpperCase))
-    } text "level of details for DataFrame report generation; " +
-      "LEVEL is 'high', 'medium', or 'low' (default: 'medium')"
 
     opt[String]('a', "api-address") valueName "ADDRESS" action {
       (x, c) => c.copy(apiAddress = Some(x))
@@ -146,8 +141,7 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
       // Interactive mode (SessionExecutor)
       logger.info("Starting SessionExecutor.")
       logger.debug("Starting SessionExecutor.")
-      SessionExecutor(
-        params.reportLevel, params.messageQueueHost.get, params.pyExecutorPath.get).execute()
+      SessionExecutor(params.messageQueueHost.get, params.pyExecutorPath.get).execute()
     }
   }
 

@@ -16,14 +16,10 @@
 
 package io.deepsense.workflowexecutor
 
-import io.deepsense.deeplang.doperables.ReportLevel
-import io.deepsense.deeplang.doperables.ReportLevel._
-
 case class ExecutionParams(
   workflowFilename: Option[String] = None,
   workflowId: Option[String] = None,
   outputDirectoryPath: Option[String] = None,
-  reportLevel: ReportLevel = ReportLevel.MEDIUM,
   apiAddress: Option[String] = None,
   extraVars: Map[String, String] = Map.empty,
   noninteractiveMode: Boolean = false,

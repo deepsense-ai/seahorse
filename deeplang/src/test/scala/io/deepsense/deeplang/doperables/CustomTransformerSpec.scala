@@ -70,7 +70,6 @@ class CustomTransformerSpec extends UnitSpec {
         mock[SQLContext],
         mock[InferContext],
         mock[FileSystemClient],
-        ReportLevel.HIGH,
         "",
         innerWorkflowExecutor,
         mock[ContextualDataFrameStorage],

@@ -25,7 +25,6 @@ import org.apache.spark.sql.{DataFrame => SparkDataFrame, SQLContext}
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.CustomOperationExecutor.Result
-import io.deepsense.deeplang.doperables.ReportLevel.ReportLevel
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.deeplang.inference.InferContext
 
@@ -34,7 +33,6 @@ case class CommonExecutionContext(
     sqlContext: SQLContext,
     inferContext: InferContext,
     fsClient: FileSystemClient,
-    reportLevel: ReportLevel,
     tenantId: String,
     innerWorkflowExecutor: InnerWorkflowExecutor,
     dataFrameStorage: DataFrameStorage,
@@ -46,7 +44,6 @@ case class CommonExecutionContext(
       sqlContext,
       inferContext,
       fsClient,
-      reportLevel,
       tenantId,
       innerWorkflowExecutor,
       ContextualDataFrameStorage(dataFrameStorage, workflowId, nodeId),
@@ -65,7 +62,6 @@ object CommonExecutionContext {
       context.sqlContext,
       context.inferContext,
       context.fsClient,
-      context.reportLevel,
       context.tenantId,
       context.innerWorkflowExecutor,
       context.dataFrameStorage.dataFrameStorage,
@@ -88,7 +84,6 @@ case class ExecutionContext(
     sqlContext: SQLContext,
     inferContext: InferContext,
     fsClient: FileSystemClient,
-    reportLevel: ReportLevel, // TODO REMOVE
     tenantId: String,
     innerWorkflowExecutor: InnerWorkflowExecutor,
     dataFrameStorage: ContextualDataFrameStorage,
