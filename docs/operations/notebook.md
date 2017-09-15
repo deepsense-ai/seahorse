@@ -6,29 +6,29 @@ description: Notebook
 includeOperationsMenu: true
 ---
 
-Notebook is a special type of operation. It gives user capability to quickly explore data.
-In the notebook user can write code using Spark Python API.
-Blocks of python code can be executed and results are immediately returned to the notebook.
+A `Notebook` is a special type of operation. It gives a user a capability to quickly explore the data.
+In the `Notebook` the user can write the code using Apache Spark Python API.
+Blocks of Python code can be executed and the results are immediately returned to the `Notebook`.
 
-To use the notebook user has to drag and drop the Notebook operation onto the canvas
-and connect a DataFrame to its input port. User can access connected dataframe from within
-the notebook by calling `dataframe()` function.
+To use the `Notebook` the user has to drag and drop the `Notebook` operation onto the canvas
+and connect a [DataFrame](../classes/dataframe.html) to its input port. The user can access the connected `DataFrame` from within
+the `Notebook` by calling the `dataframe()` function.
 
-User can start editing code by clicking `Open notebook` button in the Notebook operation's
+The user can start editing the code by clicking the `Open notebook` button in the `Notebook` operation's
 parameters panel.
 
-Variables and functions available in the notebooks' global scope:
+The variables and functions available in the `Notebooks`' global scope:
 
-* <code>dataframe()</code> - function that returns input DataFrame for this notebook.
-Everytime dataframe changes, `dataframe()` must be reevaluated to reflect updated state.
+* <code>dataframe()</code> - a function that returns the input DataFrame for this `Notebook`.
+Everytime the input `Dataframe` changes, the `dataframe()` returns the updated `DataFrame`.
 
 * <code>sc</code> - Spark Context
 
 * <code>sqlContext</code> - SQL Context
 
-To visualize data user can use <a target="_blank" href="{{ site.PANDAS_LIBRARY_ADDRESS }}">pandas</a> library.
+To visualize the data the user can use <a target="_blank" href="{{ site.PANDAS_LIBRARY_ADDRESS }}">pandas</a> library.
 
-**Remark**: To work with big data, user should sample the DataFrame before using pandas.
+**Remark**: In case of big `DataFrames`, the user should sample the DataFrame before using pandas.
 
 **Since**: Seahorse 1.0.0
 
@@ -95,11 +95,11 @@ df['atemp'].plot()
 <tr>
 <td><code>0</code></td>
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>DataFrame that can be used in Notebook operation.</td>
+<td>The input <code>DataFrame</code> that can be used in the operation.</td>
 </tr>
 </tbody>
 </table>
 
 ## Output
 
-Notebook operation does not produce any output.
+The `Notebook` operation does not produce any output.
