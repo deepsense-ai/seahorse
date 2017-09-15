@@ -8,7 +8,7 @@ includeDeeplangMenu: true
 description: Deepsense documentation homepage
 ---
 
-Entity is an object representation of data used in a workflow.
+An Entity is an object representation of data used in a workflow.
 Each entity has a class.
 Detailed description of entities and classes can be found [here](deeplang_overview.html#entities-and-classes).
 

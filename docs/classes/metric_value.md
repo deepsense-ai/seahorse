@@ -9,5 +9,7 @@ description: Seahorse documentation homepage
 ---
 ## Introduction
 
-MetricValue represents a floating point value calculated from a [DataFrame](dataframe.html).
+A `MetricValue` represents an evaluation of predictions. It is a result of
+applied [Evaluator](../classes/evaluator.html) on a [DataFrame](../classes/dataframe.html)
+by an [Evaluate](../operations/evaluate.html) operation.
 Every metric has a name and value.

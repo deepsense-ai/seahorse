@@ -7,18 +7,17 @@ includeClassesMenu: true
 description: Seahorse documentation homepage
 ---
 
-**DataFrame** is a distributed collection of data organized into named columns
-backed by
-<a target="_blank" href="https://spark.apache.org/docs/latest/sql-programming-guide.html#dataframes">Spark SQL’s DataFrame</a>.
+A `DataFrame` is a distributed collection of data organized into named columns
+backed by <a target="_blank" href="https://spark.apache.org/docs/1.6.0/sql-programming-guide.html#dataframes">Spark SQL’s DataFrame</a>.
 
-Reusing Spark’s DataFrame data structure allows Seahorse to construct DataFrames
- from a wide array of sources, e.g. structured data files, tables in Hive or
+The use of Spark’s `DataFrame` data structure allows Seahorse to construct `DataFrames`
+from a wide array of sources, e.g. structured data files, tables in Hive or
 external databases.
 
-DataFrames are described by schema - a collection of column names and their
+`DataFrames` are described by a schema - a collection of column names and their
  types.
 
-DataFrames support the same data types as Spark SQL DataFrames, including:
+`DataFrames` support the same data types as Spark SQL DataFrames, including:
 
 * double
 * integer

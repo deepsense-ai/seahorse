@@ -7,7 +7,8 @@ includeClassesMenu: true
 description: Seahorse documentation homepage
 ---
 
-Report gathers concise summary of any entity that can be easily presented in a human-friendly manner (notice that the report entity is its own relevant summary). Conciseness of the report allows for presenting it to the user via a browser even for big data Entities.
+A `Report` gathers concise summary of any entity that can be easily presented in a human-friendly manner.
+Conciseness of report allows for presenting it to user via browser even for big data Entities.
 
 A report can contain a set of calculated descriptive statistics
 (e.g. for a [DataFrame](dataframe.html))
