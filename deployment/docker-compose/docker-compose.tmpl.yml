@@ -1,7 +1,7 @@
 version: '2'
 services:
   proxy:
-    image: $DOCKER_REPOSITORY/deepsense-proxy:$FRONTEND_TAG
+    image: $DOCKER_REPOSITORY/deepsense-proxy:$BACKEND_TAG
     restart: always
     network_mode: "host"
     environment: &proxy_environment_value

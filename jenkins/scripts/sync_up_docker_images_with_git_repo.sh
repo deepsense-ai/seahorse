@@ -40,6 +40,7 @@ function pullOrBuild {
   fi
 }
 
+pullOrBuild "deepsense-proxy" "./jenkins/proxy-publish.sh"
 pullOrBuild "deepsense-rabbitmq" "./jenkins/rabbitmq-publish.sh"
 pullOrBuild "deepsense-h2" "./jenkins/h2-docker-publish.sh"
 pullOrBuild "deepsense-spark" "./jenkins/publish_spark_docker.sh"
