@@ -1,0 +1,18 @@
+<div class='end-user-agreement' ng-show="!ctrl.userAcceptedAgreement">
+  <div class="modal" style="display: block;">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1>End-User Licence Agreement</h1>
+        </div>
+        <div class="modal-body">
+          <iframe src="static/CodiLime_EULA.html"></iframe>
+        </div>
+        <div class="modal-footer">
+          <button ng-click="ctrl.acceptAgreement()" type="button" class="btn btn-primary">Accept</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mask"></div>
+</div>

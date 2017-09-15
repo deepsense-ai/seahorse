@@ -160,6 +160,11 @@ gulp.task('fonts', function () {
     .pipe(gulp.dest(build.path + build.fonts));
 });
 
+gulp.task('static', function () {
+  return gulp.src([client.path + client.static])
+    .pipe(gulp.dest(build.path + build.static));
+});
+
 gulp.task('copy:fonts', function () {
   return gulp.src('./node_modules/font-awesome/fonts/**/*.{otf,eot,svg,ttf,woff,woff2}')
     .pipe(gulp.src('./node_modules/ionicons/fonts/**/*.{otf,eot,svg,ttf,woff,woff2}'))
@@ -252,7 +257,7 @@ gulp.task('build', function (callback) {
     'clean', 'copy:fonts',
     [
       'fonts', 'images', 'html:index', 'html:partials', 'config', 'copy:images', 'copy:scripts', 'favicon', 'assets', 'less',
-      'libs:css'
+      'libs:css', 'static'
     ],
     'browserify:external',
     ['libs:js', 'jshint', 'browserify'],

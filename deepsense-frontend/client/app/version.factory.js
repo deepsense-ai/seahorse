@@ -8,6 +8,7 @@ function VersionFactory(config) {
     return "1.1";
     //return config.apiVersion.split('.').slice(0, 2).join('.');
   };
+  service.editorVersion = config.editorVersion;
   return service;
 }
 

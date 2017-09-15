@@ -16,6 +16,7 @@
       "css": "css/",
       "fonts": "fonts/",
       "images": "img/",
+      "static": "static/",
       "bundle": {
         "app": "app.js",
         "js": "libs.js",
@@ -33,6 +34,7 @@
       "lessSources": "**/*.less",
       "html": "**/*.html",
       "fonts": "fonts/*",
+      "static": "static/**/*",
       "images": "img/*",
       "favicon": "favicon.ico",
       "assets": "./**/assets/**/*",
