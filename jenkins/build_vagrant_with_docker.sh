@@ -31,7 +31,7 @@ mv $ARTIFACT_NAME docker-compose.yml
 # Inside Vagrant we need Seahorse to listen on 0.0.0.0,
 # so that Vagrant's port forwarding works. So, let's replace the host which
 # proxy listens on.
-$ROOT_DIR/jenkins/scripts/proxy_on_any_interface.py docker-compose.yml
+"$ROOT_DIR/jenkins/scripts/proxy_on_any_interface.py" docker-compose.yml
 
 docker-compose pull
 
