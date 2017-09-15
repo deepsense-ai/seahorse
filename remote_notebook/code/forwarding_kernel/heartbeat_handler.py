@@ -7,13 +7,14 @@ import pika
 import time
 
 from pika.exceptions import ConnectionClosed
-from utils import debug
+from utils import Logging
 from rabbit_mq_client import RabbitMQClient
 
 
-class HeartbeatHandler(object):
+class HeartbeatHandler(Logging):
 
     def __init__(self, rabbit_mq_address, rabbit_mq_credentials, heartbeat_interval, missed_heartbeat_limit, session_id):
+        super(HeartbeatHandler, self).__init__()
         self._rabbit_mq_address = rabbit_mq_address
         self._rabbit_mq_credentials = rabbit_mq_credentials
         self._heartbeat_interval = heartbeat_interval
@@ -26,21 +27,20 @@ class HeartbeatHandler(object):
         """
         :param on_heartbeat_error: Called when multiple heartbeats are missed.
         """
-        debug("Heartbeat::handle_heartbeat starting thread")
+        self.logger.debug("Starting thread")
         thread = Thread(target=lambda: self._handler_thread(on_heartbeat_error))
         thread.daemon = True
         thread.start()
 
     def _handler_thread(self, on_heartbeat_error):
-        debug("HeartbeatHandler::_handler_thread")
+        self.logger.debug("Starting")
         connection = RabbitMQClient(address=self._rabbit_mq_address,
                                     credentials=self._rabbit_mq_credentials,
                                     exchange=self._exchange_name,
                                     exchange_type='fanout')
 
         def heartbeat_missed():
-            debug("HeartbeatHandler::heartbeat_missed ({}) {}".format(self._session_id,
-                                                                      self._missed_heartbeats))
+            self.logger.debug("({}) {}".format(self._session_id, self._missed_heartbeats))
             self._missed_heartbeats += 1
             limit_exceeded = self._missed_heartbeats >= self._missed_heartbeat_limit
             if limit_exceeded:

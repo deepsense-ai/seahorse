@@ -1,5 +1,7 @@
 // Copyright (c) 2015, CodiLime Inc.
 
+// scalastyle:off
+
 name := "deepsense-backend"
 
 lazy val commons                = project
@@ -20,3 +22,5 @@ addCommandAlias("ds-it",
 
 addCommandAlias("sPublish", "aetherDeploy")
 addCommandAlias("sPublishLocal", "aetherInstall")
+
+// scalastyle:on

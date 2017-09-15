@@ -7,13 +7,14 @@ from threading import Thread
 import pika
 from pika.exceptions import ConnectionClosed
 
-from utils import debug
+from utils import Logging
 
 
-class RabbitMQClient(object):
+class RabbitMQClient(Logging):
     _channel_impl = None
 
     def __init__(self, address, credentials, exchange, exchange_type='topic'):
+        super(RabbitMQClient, self).__init__()
         self._address = address
         self._exchange = exchange
         self._credentials = credentials
@@ -79,8 +80,9 @@ class RabbitMQClient(object):
                 time.sleep(1)
 
 
-class RabbitMQJsonSender(object):
+class RabbitMQJsonSender(Logging):
     def __init__(self, rabbit_mq_client, topic):
+        super(RabbitMQJsonSender, self).__init__()
         self._rabbit_mq_client = rabbit_mq_client
         self._topic = topic
 
@@ -88,26 +90,26 @@ class RabbitMQJsonSender(object):
         try:
             json_message = json.dumps(message)
         except Exception as e:
-            debug('RabbitMQSender::send: JSON serialization failed: {}. Message: {}'.format(e, message))
+            self.logger.debug('JSON serialization failed: {}. Message: {}'.format(e, message))
             return
 
         self._rabbit_mq_client.send(topic=self._topic,
                                     message=json_message)
-        # debug('RabbitMQJsonSender[{}]::send: Sent {}'.format(self._topic, json_message))
 
 
-class RabbitMQJsonReceiver(object):
+class RabbitMQJsonReceiver(Logging):
     def __init__(self, rabbit_mq_client):
+        super(RabbitMQJsonReceiver, self).__init__()
         self._rabbit_mq_client = rabbit_mq_client
 
     def subscribe(self, topic, handler):
         self._rabbit_mq_client.subscribe(topic, self._wrapped_handler(handler))
-        debug('RabbitMQJsonReceiver::subscribe: Subscribed to topic {}'.format(topic))
+        self.logger.debug('Subscribed to topic {}'.format(topic))
 
     @staticmethod
     def _wrapped_handler(actual_handler):
+        # noinspection PyUnusedLocal
         def handle(ch, method, properties, body):
-            # debug('RabbitMQJsonReceiver::handle: topic {}, message {}'.format(method.routing_key, body))
             message = json.loads(body)
             return actual_handler(message)
         return handle

@@ -31,7 +31,8 @@ class SparkLauncherConfig @Inject()(
   @Named("session-executor.parameters.yarn.hadoop-user-name") val hadoopUserName: String,
   @Named("session-executor.parameters.workflow-manager.username") val wmUsername: String,
   @Named("session-executor.parameters.workflow-manager.password") val wmPassword: String,
-  @Named("session-executor.parameters.temp-dir") val tempDir: String
+  @Named("session-executor.parameters.temp-dir") val tempDir: String,
+  @Named("session-executor.parameters.python-binary") val pythonBinary: String
 ) {
 
   def wmAddress: String = if (wmHostAuto) {

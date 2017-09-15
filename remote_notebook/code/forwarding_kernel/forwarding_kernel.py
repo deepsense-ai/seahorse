@@ -18,7 +18,7 @@ from ready_handler import ReadyHandler
 from heartbeat_handler import HeartbeatHandler
 from socket_forwarder import SocketForwarder, ToZmqSocketForwarder
 from notebook_server_client import NotebookServerClient
-from utils import debug
+from utils import setup_logging, Logging
 
 RABBIT_MQ_ADDRESS = None
 RABBIT_MQ_CREDENTIALS = None
@@ -26,7 +26,7 @@ HEARTBEAT_INTERVAL = None
 MISSED_HEARTBEAT_LIMIT = None
 
 
-class ForwardingKernel(IPythonKernel):
+class ForwardingKernel(IPythonKernel, Logging):
     """
     This kernel is what the Notebook Server runs.
 
@@ -49,6 +49,8 @@ class ForwardingKernel(IPythonKernel):
 
     # noinspection PyMissingConstructor
     def __init__(self, parent):
+        Logging.__init__(self)
+
         self.parent = parent
 
         nb_client = NotebookServerClient("localhost", 8888, self._kernel_id)
@@ -143,19 +145,22 @@ class ForwardingKernel(IPythonKernel):
         for forwarder in self._socket_forwarders.itervalues():
             forwarder.start()
 
-        debug('ForwardingKernel::start: Started!')
+        self.logger.debug('Started!')
 
-    @staticmethod
-    def _exit(msg):
-        debug(msg)
+    def _exit(self, msg):
+        self.logger.debug(msg)
         sys.exit(1)
 
     @property
     def _kernel_id(self):
         if not self._kernel_id_impl:
-            m = re.search('kernel-(?P<kernel_id>.*)\.json', self.parent.connection_file)
-            self._kernel_id_impl = m.group('kernel_id')
+            self._kernel_id_impl = self.get_kernel_id(self.parent.connection_file)
         return self._kernel_id_impl
+
+    @staticmethod
+    def get_kernel_id(connection_file):
+        m = re.search('kernel-(?P<kernel_id>.*)\.json', connection_file)
+        return m.group('kernel_id')
 
     @property
     def _signature_key(self):
@@ -177,6 +182,8 @@ class ForwardingKernelApp(IPKernelApp):
         self.init_sockets()
         self.init_heartbeat()
         self.init_signal()
+
+    def initialize_kernel(self):
         self.kernel = ForwardingKernel(parent=self)
 
 
@@ -188,4 +195,10 @@ if __name__ == '__main__':
 
     app = ForwardingKernelApp.instance()
     app.initialize()
+
+    setup_logging(os.path.join(os.getcwd(),
+                               'forwarding_kernel_logs',
+                               'kernel_{}.log'.format(ForwardingKernel.get_kernel_id(app.connection_file))))
+
+    app.initialize_kernel()
     app.start()

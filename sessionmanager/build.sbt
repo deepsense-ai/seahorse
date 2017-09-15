@@ -30,7 +30,8 @@ downloadWeJar := {
       s"io/deepsense/workflowexecutor_${scalaMajorMinor}/${version.value}/" +
       s"workflowexecutor_${scalaMajorMinor}-${version.value}.jar")
   }
-  IO.download(urlLoc, location)
+  val weLoc = sys.props.get("workflowexecutor.jar").map(url(_)).getOrElse(urlLoc)
+  IO.download(weLoc, location)
   location
 }
 

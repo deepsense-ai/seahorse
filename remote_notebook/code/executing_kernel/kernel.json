@@ -2,7 +2,7 @@
   "display_name": "PySpark",
   "language": "python",
   "argv": [
-    "/opt/conda/bin/python",
+    "PYTHON_BINARY",
     "executing_kernel/executing_kernel.py",
     "-f",
     "{connection_file}"

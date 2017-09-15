@@ -40,6 +40,7 @@ class SparkLauncherSessionSpawner @Inject()(
       .setConf("spark.executorEnv.PYTHONPATH", config.weDepsPath)
       .setConf("spark.driver.extraJavaOptions",
         "-XX:MaxPermSize=1024m -XX:PermSize=256m -Dfile.encoding=UTF8")
+      .setConf("spark.yarn.appMasterEnv.PYSPARK_PYTHON", config.pythonBinary)
       .startApplication(listener)
 
     listener.executorStartedFuture
@@ -57,7 +58,8 @@ class SparkLauncherSessionSpawner @Inject()(
     "--wm-username", config.wmUsername,
     "--wm-password", config.wmPassword,
     "--user-id", userId,
-    "--temp-dir", config.tempDir
+    "--temp-dir", config.tempDir,
+    "--python-binary", config.pythonBinary
   )
 
   private class AppHandleListener extends SparkAppHandle.Listener {

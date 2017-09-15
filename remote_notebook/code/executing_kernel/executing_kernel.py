@@ -11,10 +11,17 @@ from traitlets import Type
 
 from rabbit_mq_client import RabbitMQClient, RabbitMQJsonSender, RabbitMQJsonReceiver
 from socket_forwarder import SocketForwarder
-from utils import debug
+from utils import setup_logging, Logging
 
 
-class ExecutingKernel(IPythonKernel):
+def extract_argument(argv, arg_name):
+    return argv[argv.index(arg_name) + 1]
+
+
+kernel_id = extract_argument(sys.argv, '--kernel-id')
+
+
+class ExecutingKernel(IPythonKernel, Logging):
     """
     This is where the actual code execution happens.
 
@@ -37,7 +44,7 @@ class ExecutingKernel(IPythonKernel):
 
     def start(self):
         super(ExecutingKernel, self).start()
-        self._rabbit_listener.subscribe(topic=self.EXECUTION_SUBSCRIPTION_TOPIC.format(kernel_id=self._kernel_id),
+        self._rabbit_listener.subscribe(topic=self.EXECUTION_SUBSCRIPTION_TOPIC.format(kernel_id=kernel_id),
                                         handler=self._handle_execution_message_from_rabbit)
 
         self.session.key = self._signature_key
@@ -53,7 +60,7 @@ class ExecutingKernel(IPythonKernel):
 
         workflow_id, node_id, port_number = self._dataframe_source
 
-        self._execute_code('kernel_id = "{}"'.format(self._kernel_id))
+        self._execute_code('kernel_id = "{}"'.format(kernel_id))
         self._execute_code('workflow_id = "{}"'.format(workflow_id))
         if node_id:
             self._execute_code('node_id = "{}"'.format(node_id))
@@ -85,7 +92,7 @@ class ExecutingKernel(IPythonKernel):
                 self._exit('ExecutingKernel::_handle_execution_message_from_rabbit: Malformed message: {}'
                            .format(message))
 
-            debug('ExecutingKernel::_handle_execution_message_from_rabbit: Sending to {}'.format(message['stream']))
+                self.logger.debug('Sending to {}'.format(message['stream']))
             body = [base64.b64decode(s) for s in message['body']]
             self._socket_forwarders[message['stream']].forward_to_zmq(body)
 
@@ -95,14 +102,9 @@ class ExecutingKernel(IPythonKernel):
         ser = self.session.serialize(msg)
         self._socket_forwarders['shell'].forward_to_zmq(ser)
 
-    @staticmethod
-    def _exit(msg):
-        debug(msg)
+    def _exit(self, msg):
+        self.logger.debug(msg)
         sys.exit(1)
-
-    @staticmethod
-    def _extract_argument(argv, arg_name):
-        return argv[argv.index(arg_name) + 1]
 
     @property
     def _dataframe_source(self):
@@ -112,30 +114,26 @@ class ExecutingKernel(IPythonKernel):
             except ValueError:
                 return None
 
-        workflow_id = self._extract_argument(self.parent.argv, '--workflow-id')
-        node_id = value_or_none(lambda: self._extract_argument(self.parent.argv, '--node-id'))
-        port_number = value_or_none(lambda: int(self._extract_argument(self.parent.argv, '--port-number')))
+        workflow_id = extract_argument(self.parent.argv, '--workflow-id')
+        node_id = value_or_none(lambda: extract_argument(self.parent.argv, '--node-id'))
+        port_number = value_or_none(lambda: int(extract_argument(self.parent.argv, '--port-number')))
 
         return workflow_id, node_id, port_number
 
     @property
-    def _kernel_id(self):
-        return self._extract_argument(self.parent.argv, '--kernel-id')
-
-    @property
     def _signature_key(self):
-        return self._extract_argument(self.parent.argv, '--signature-key')
+        return extract_argument(self.parent.argv, '--signature-key')
 
     @property
     def _gateway_address(self):
-        host = self._extract_argument(self.parent.argv, '--gateway-host')
-        port = self._extract_argument(self.parent.argv, '--gateway-port')
+        host = extract_argument(self.parent.argv, '--gateway-host')
+        port = extract_argument(self.parent.argv, '--gateway-port')
         return host, int(port)
 
     @property
     def _rabbit_mq_address(self):
-        host = self._extract_argument(self.parent.argv, '--mq-host')
-        port = self._extract_argument(self.parent.argv, '--mq-port')
+        host = extract_argument(self.parent.argv, '--mq-host')
+        port = extract_argument(self.parent.argv, '--mq-port')
         return host, int(port)
 
     @property
@@ -149,7 +147,7 @@ class ExecutingKernel(IPythonKernel):
                                        credentials=self._rabbit_mq_credentials,
                                        exchange=self.EXCHANGE)
         sender = RabbitMQJsonSender(rabbit_mq_client=rabbit_client,
-                                    topic=self.EXECUTION_PUBLISHING_TOPIC.format(kernel_id=self._kernel_id))
+                                    topic=self.EXECUTION_PUBLISHING_TOPIC.format(kernel_id=kernel_id))
         listener = RabbitMQJsonReceiver(rabbit_client)
         return sender, listener
 
@@ -177,6 +175,8 @@ class ExecutingKernelApp(IPKernelApp):
 
 
 if __name__ == '__main__':
+    setup_logging(os.path.join(os.getcwd(), 'executing_kernel_logs', kernel_id + '.log'))
+
     app = ExecutingKernelApp.instance(context=zmq.Context.instance())
     app.initialize()
     app.start()
