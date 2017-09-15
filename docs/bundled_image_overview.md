@@ -70,10 +70,12 @@ If something went wrong during Seahorse exploration, please let us know about fa
     vagrant reload
 
 ## Replacing Seahorse Bundled Image With the Latest Version
-If you want to replace your Seahorse with the newest version you need to:
+If you want to replace your Seahorse with the newest version you need to invoke
+the commands below. Please keep in mind that the current version of Seahorse will be
+completely erased, meaning that all workflows stored in Seahorse will be deleted, too.
 {% highlight bash %}
-# stop currently running Seahorse
-vagrant halt
+# stop and delete current Seahorse
+vagrant destroy
 # remove current seahorse box
 vagrant box remove seahorse-vm
 # remove older Vagrantfile
