@@ -2,17 +2,16 @@ package io.deepsense.experimentmanager.rest
 
 import java.net.URI
 
-import scala.util.{Try, Failure, Success}
+import scala.concurrent.ExecutionContext
+import scala.util.{Failure, Success, Try}
 
 import com.google.inject.Inject
 import com.google.inject.name.Named
+import com.typesafe.config.ConfigFactory
 import org.apache.commons.lang3.StringUtils
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.hdfs.DFSClient
-import org.apache.spark.sql.SQLContext
-import org.apache.spark.{SparkConf, SparkContext}
 import spray.routing.PathMatchers
-import scala.concurrent.ExecutionContext
 
 import io.deepsense.commons.auth.AuthorizatorProvider
 import io.deepsense.commons.auth.usercontext.{TokenTranslator, UserContext}
@@ -37,13 +36,21 @@ class ModelsApi @Inject()(
   private val pathPrefixMatcher = PathMatchers.separateOnSlashes(apiPrefix)
 
   val deeplangContext: deeplang.ExecutionContext = {
+    val config = ConfigFactory.load("application.conf")
+    val entityStorageHostname = config.getString("entityStorage.hostname")
+    val entityStoragePort = config.getInt("entityStorage.port")
+    val hdfsHostname = config.getString("hdfs.hostname")
+    val hdfsPort = config.getString("hdfs.port")
     val ctx = new DExecutionContext
     ctx.hdfsClient = new DSHdfsClient(
-      new DFSClient(new URI("hdfs://ds-dev-env-master:8020"), new Configuration()))
+      new DFSClient(new URI(s"hdfs://$hdfsHostname:$hdfsPort"), new Configuration()))
     val esFactory = EntityStorageClientFactoryImpl()
-    ctx.entityStorageClient =
-      Try(esFactory.create("root-actor-system", "172.28.128.1", 2552, "EntitiesApiActor", 10))
-        .getOrElse(null)
+    ctx.entityStorageClient = Try(
+      esFactory.create(
+        "root-actor-system",
+        entityStorageHostname,
+        entityStoragePort,
+        "EntitiesApiActor", 10)).getOrElse(null)
     ctx
   }
 
