@@ -97,18 +97,17 @@ case class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
       .set("spark.ui.enabled", "false")
       .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
       .registerKryoClasses(Array())
-    val sparkContext = new SparkContext(sparkConf)
 
-    executionContext.sparkContext = sparkContext
-    executionContext.sqlContext = new SQLContext(sparkContext)
+    executionContext.hdfsClient = new DSHdfsClient(
+      new DFSClient(new URI(getHdfsAddressFromConfig(geConfig)), new Configuration()))
+    // NOTE: GraphExecutor.sparkEventLogDir have to be created before Spark context
+    createHdfsDir(executionContext.hdfsClient, GraphExecutor.sparkEventLogDir)
+
+    executionContext.sparkContext = new SparkContext(sparkConf)
+    executionContext.sqlContext = new SQLContext(executionContext.sparkContext)
     UserDefinedFunctions.registerFunctions(executionContext.sqlContext.udf)
     executionContext.dataFrameBuilder = DataFrameBuilder(executionContext.sqlContext)
     executionContext.entityStorageClient = entityStorageClient
-    executionContext.hdfsClient = new DSHdfsClient(
-      new DFSClient(new URI(getHdfsAddressFromConfig(geConfig)), new Configuration()))
-
-    import executionContext._
-    createHdfsDir(hdfsClient, GraphExecutor.sparkEventLogDir)
 
     val (actorSystem, remotePort) = startActorSystem()
     registerApplicationMaster(resourceManagerClient, remotePort)
