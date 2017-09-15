@@ -24,7 +24,7 @@ Input
      - Data Type
      - Description
    * - 0
-     - Trainable with Classifier
+     - Classifier with Trainable
      - Model to train
    * - 1
      - DataFrame
@@ -41,7 +41,7 @@ Output
      - Data Type
      - Description
    * - 0
-     - Scorable
+     - Classifier with Scorable
      - Trained model
 
 

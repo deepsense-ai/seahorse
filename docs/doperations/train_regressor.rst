@@ -24,7 +24,7 @@ Input
      - Data Type
      - Description
    * - 0
-     - Trainable with Regressor
+     - Regressor with Trainable
      - Model to train
    * - 1
      - DataFrame
@@ -41,7 +41,7 @@ Output
      - Data Type
      - Description
    * - 0
-     - Scorable
+     - Regressor with Scorable
      - Trained model
 
 

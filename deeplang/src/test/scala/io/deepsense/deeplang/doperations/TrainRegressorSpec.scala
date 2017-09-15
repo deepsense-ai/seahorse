@@ -12,7 +12,7 @@ import org.scalatest.mock.MockitoSugar
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.{Regressor, Scorable, Trainable}
+import io.deepsense.deeplang.doperables.{UntrainedRidgeRegression, Regressor, Scorable, Trainable}
 import io.deepsense.deeplang.parameters.{MultipleColumnSelection, SingleColumnSelection}
 
 class TrainRegressorSpec extends UnitSpec with MockitoSugar {
@@ -32,7 +32,7 @@ class TrainRegressorSpec extends UnitSpec with MockitoSugar {
 
   "TrainRegressor with parameters set" should {
     "train untrained model on dataframe" in {
-      val trainableMock = mock[Trainable with Regressor]
+      val trainableMock = mock[UntrainedRidgeRegression]
       val trainMethodMock = mock[DMethod1To1[Trainable.Parameters, DataFrame, Scorable]]
 
       val executionContextStub = mock[ExecutionContext]
@@ -57,10 +57,10 @@ class TrainRegressorSpec extends UnitSpec with MockitoSugar {
       val scorableKnowledgeStub2 = DKnowledge(Set(scorableStubs(1), scorableStubs(2)))
       val dataframeKnowledgeStub = mock[DKnowledge[DataFrame]]
 
-      val trainableMock1 = mock[Trainable with Regressor]
+      val trainableMock1 = mock[UntrainedRidgeRegression]
       val trainMethodMock1 = mock[DMethod1To1[Trainable.Parameters, DataFrame, Scorable]]
 
-      val trainableMock2 = mock[Trainable with Regressor]
+      val trainableMock2 = mock[UntrainedRidgeRegression]
       val trainMethodMock2 = mock[DMethod1To1[Trainable.Parameters, DataFrame, Scorable]]
 
       when(trainableMock1.train).thenReturn(trainMethodMock1)

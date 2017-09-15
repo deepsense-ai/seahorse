@@ -11,7 +11,7 @@ import org.scalatest.mock.MockitoSugar
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.{Report, Scorable, Trainable}
+import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.parameters.{MultipleColumnSelection, SingleColumnSelection}
 import io.deepsense.reportlib.model.ReportContent
 
@@ -48,11 +48,11 @@ class CrossValidateRegressorSpec extends UnitSpec with MockitoSugar {
 
   "CrossValidateRegressor with parameters set" should {
     "train untrained model on DataFrame" in {
-      val trainableMock = mock[Trainable]
+      val trainableMock = mock[UntrainedRidgeRegression]
       val trainMethodMock = mock[DMethod1To1[Trainable.Parameters, DataFrame, Scorable]]
 
       val executionContextStub = mock[ExecutionContext]
-      val scorableStub = mock[Scorable]
+      val scorableStub = mock[TrainedRidgeRegression]
       val dataframeStub = mock[DataFrame]
       val dataframeSparkStub = mock[sql.DataFrame]
       when(dataframeStub.sparkDataFrame).thenReturn(dataframeSparkStub)
@@ -80,10 +80,10 @@ class CrossValidateRegressorSpec extends UnitSpec with MockitoSugar {
       val scorableKnowledgeStub2 = DKnowledge(Set(scorableStubs(1), scorableStubs(2)))
       val dataframeKnowledgeStub = mock[DKnowledge[DataFrame]]
 
-      val trainableMock1 = mock[Trainable]
+      val trainableMock1 = mock[UntrainedRidgeRegression]
       val trainMethodMock1 = mock[DMethod1To1[Trainable.Parameters, DataFrame, Scorable]]
 
-      val trainableMock2 = mock[Trainable]
+      val trainableMock2 = mock[UntrainedRidgeRegression]
       val trainMethodMock2 = mock[DMethod1To1[Trainable.Parameters, DataFrame, Scorable]]
 
       when(trainableMock1.train).thenReturn(trainMethodMock1)

@@ -7,9 +7,9 @@
 package io.deepsense.deeplang.doperations
 
 import io.deepsense.deeplang._
-import io.deepsense.deeplang.doperables.{Regressor, Trainable}
+import io.deepsense.deeplang.doperables.{Scorable, Regressor, Trainable}
 
-case class TrainRegressor() extends Trainer[Regressor with Trainable] {
+case class TrainRegressor() extends Trainer[Regressor with Trainable, Regressor with Scorable] {
   override val id: DOperation.Id = "c526714c-e7fb-11e4-b02c-1681e6b88ec1"
   override val name = "Train regressor"
 }

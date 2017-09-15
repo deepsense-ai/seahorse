@@ -14,7 +14,7 @@ import io.deepsense.deeplang.parameters._
 import io.deepsense.reportlib.model.{ReportContent, Table}
 
 class CrossValidateRegressor
-  extends DOperation2To2[Trainable, DataFrame, Scorable, Report]
+  extends DOperation2To2[Regressor with Trainable, DataFrame, Regressor with Scorable, Report]
   with WithTrainParameters {
 
   override val parameters = trainParameters ++ ParametersSchema(
@@ -43,8 +43,8 @@ class CrossValidateRegressor
   override val name: String = "CrossValidateRegressor"
 
   override protected def _execute(context: ExecutionContext)
-                                 (trainable: Trainable,
-                                  dataFrame: DataFrame): (Scorable, Report) = {
+                                 (trainable: Regressor with Trainable,
+                                  dataFrame: DataFrame): (Regressor with Scorable, Report) = {
     logger.info("Execution of CrossValidateRegressor starts")
     import CrossValidateRegressor._
     // If number of folds is too big, we use dataFrame size as folds number
@@ -87,7 +87,7 @@ class CrossValidateRegressor
     val scorable = trainable.train(context)(parametersForTrainable)(dataFrame)
 
     logger.info("Execution of CrossValidateRegressor ends")
-    (scorable, report)
+    (scorable.asInstanceOf[Regressor with Scorable], report)
   }
 
   def generateCrossValidationReport(
@@ -182,11 +182,15 @@ class CrossValidateRegressor
   }
 
   override protected def _inferKnowledge(context: InferContext)(
-      trainableKnowledge: DKnowledge[Trainable],
-      dataframeKnowledge: DKnowledge[DataFrame]): (DKnowledge[Scorable], DKnowledge[Report]) = {
+      trainableKnowledge: DKnowledge[Regressor with Trainable],
+      dataframeKnowledge: DKnowledge[DataFrame]
+      ): (DKnowledge[Regressor with Scorable], DKnowledge[Report]) = {
     (DKnowledge(
       for (trainable <- trainableKnowledge.types)
-      yield trainable.train.infer(context)(parametersForTrainable)(dataframeKnowledge)),
+      yield trainable
+        .train
+        .infer(context)(parametersForTrainable)(dataframeKnowledge)
+        .asInstanceOf[DKnowledge[Regressor with Scorable]]),
       DKnowledge(context
         .dOperableCatalog
         .concreteSubclassesInstances[Report]))

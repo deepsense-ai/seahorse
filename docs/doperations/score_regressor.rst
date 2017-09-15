@@ -24,7 +24,7 @@ Input
      - Data Type
      - Description
    * - 0
-     - Scorable with Regressor
+     - Regressor with Scorable
      - Predictive model
    * - 1
      - DataFrame
