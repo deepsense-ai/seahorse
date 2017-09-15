@@ -17,6 +17,7 @@ function AttributeMultipleChoiceType($compile) {
     replace: true,
     link: function (scope, element, attrs) {
       let internal = {};
+      scope.name = scope.parameter.name.replace(/\s+/g, '_');
 
       internal.initChoices = function() {
         if (scope.parameter.isDefault) {
@@ -40,7 +41,7 @@ function AttributeMultipleChoiceType($compile) {
       internal.renderParametersList = function renderParametersList() {
         scope.$applyAsync(() => {
           for (let choiceName in scope.parameter.possibleChoicesList) {
-            let $parametersListsContainer = angular.element(element[0].querySelector('#attr-list-' + scope.parameter.name + '-' + choiceName));
+            let $parametersListsContainer = angular.element(element[0].querySelector('#attr-list-' + scope.name + '-' + choiceName));
             let template = `<attributes-list
               parameters-list="parameter.possibleChoicesList[choiceName]"
               ng-if="parameter.choices[choiceName]"
