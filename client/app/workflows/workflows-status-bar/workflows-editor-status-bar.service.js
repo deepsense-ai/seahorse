@@ -20,11 +20,6 @@ class WorkflowStatusBarService {
         href: this.config.docsHost + '/docs/latest/index.html',
         target: '_blank'
       }, {
-        label: 'Notebook',
-        icon: 'fa-terminal',
-        href: this.config.docsHost + '/notebooks/' + this.$stateParams.id + '.ipynb',
-        target: '_blank'
-      }, {
         label: 'Export',
         icon: 'fa-angle-double-down',
         callFunction: () => this.$rootScope.$broadcast('StatusBar.EXPORT_CLICK')
