@@ -31,7 +31,7 @@ class ModelDeploymentIntegSpec
     "name",
     "desc",
     "dclass",
-    Some(DataObjectReference(testFilePath)),
+    Some(DataObjectReference(testFilePath, "{}")),
     DataObjectReport("some report"),
     saved = true)
 

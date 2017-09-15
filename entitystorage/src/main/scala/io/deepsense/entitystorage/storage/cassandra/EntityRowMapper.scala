@@ -8,6 +8,7 @@ import com.datastax.driver.core.Row
 
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.models.entities._
+import spray.json._
 
 object EntityRowMapper {
 
@@ -19,13 +20,14 @@ object EntityRowMapper {
   val Created = "created"
   val Updated = "updated"
   val Url = "url"
+  val Metadata = "metadata"
   val Saved = "saved"
   val Report = "report"
 
   lazy val EntityInfoFields: Seq[String] = Seq(
     Id, TenantId, Name, Description, DClass, Created, Updated, Saved)
 
-  lazy val EntityWithDataFields: Seq[String] = EntityInfoFields :+ Url
+  lazy val EntityWithDataFields: Seq[String] = EntityInfoFields ++ Seq(Url, Metadata)
 
   lazy val EntityWithReportFields: Seq[String] = EntityInfoFields :+ Report
 
@@ -39,10 +41,14 @@ object EntityRowMapper {
     updated = DateTimeConverter.fromMillis(row.getDate(Updated).getTime),
     saved = row.getBool(Saved))
 
-  def toEntityWithData(row: Row): EntityWithData = EntityWithData(
-    info = toEntityInfo(row),
-    dataReference = DataObjectReference(row.getString(Url))
-  )
+  def toEntityWithData(row: Row): EntityWithData = {
+    val url = row.getString(Url)
+    val metadata = row.getString(Metadata)
+    EntityWithData(
+      info = toEntityInfo(row),
+      dataReference = DataObjectReference(url, metadata)
+    )
+  }
 
   def toEntityWithReport(row: Row): EntityWithReport = EntityWithReport(
     info = toEntityInfo(row),

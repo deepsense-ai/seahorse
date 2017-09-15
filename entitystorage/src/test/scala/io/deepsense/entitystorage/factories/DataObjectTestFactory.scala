@@ -15,5 +15,5 @@ trait DataObjectTestFactory {
   def testDataObjectReport: DataObjectReport =
     DataObjectReport(new String(random.alphanumeric.take(32).toArray))
 
-  def testDataObjectReference: DataObjectReference = DataObjectReference("hdfs://whatever")
+  def testDataObjectReference: DataObjectReference = DataObjectReference("hdfs://whatever", "{}")
 }

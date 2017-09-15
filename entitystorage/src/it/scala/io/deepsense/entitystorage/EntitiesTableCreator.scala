@@ -20,6 +20,7 @@ object EntitiesTableCreator {
       created timestamp,
       updated timestamp,
       url text,
+      metadata text,
       saved boolean,
       report text,
       primary key (tenantid, id)

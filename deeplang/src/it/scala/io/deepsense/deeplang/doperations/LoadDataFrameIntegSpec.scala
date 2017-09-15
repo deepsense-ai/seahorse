@@ -57,7 +57,7 @@ class LoadDataFrameIntegSpec
       "testEntity name",
       "testEntity description",
       "DataFrame",
-      Some(DataObjectReference(testDir)),
+      Some(DataObjectReference(testDir, "{}")),
       DataObjectReport("testEntity Report"),
       saved = true))
     Await.result(future, timeout)

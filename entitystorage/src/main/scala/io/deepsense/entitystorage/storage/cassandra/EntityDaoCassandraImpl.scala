@@ -81,7 +81,8 @@ class EntityDaoCassandraImpl @Inject() (
       created: DateTime): Update.Where = {
     inputQuery(entity)
       .and(set(EntityRowMapper.DClass, entity.dClass))
-      .and(set(EntityRowMapper.Url, entity.dataReference.map(_.url).orNull))
+      .and(set(EntityRowMapper.Url, entity.dataReference.map(_.savedDataPath).orNull))
+      .and(set(EntityRowMapper.Metadata, entity.dataReference.map(_.metadata).orNull))
       .and(set(EntityRowMapper.Created, created.getMillis))
       .and(set(EntityRowMapper.Updated, created.getMillis))
       .and(set(EntityRowMapper.Report, entity.report.jsonReport))

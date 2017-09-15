@@ -6,6 +6,7 @@ package io.deepsense.experimentmanager.rest.json
 
 import io.deepsense.commons.json.envelope.EnvelopeJsonWriter
 import io.deepsense.deeplang.DOperable.AbstractMetadata
+import io.deepsense.experimentmanager.rest.json.AbstractMetadataJsonProtocol
 import spray.httpx.SprayJsonSupport
 import spray.json._
 import AbstractMetadataJsonProtocol._

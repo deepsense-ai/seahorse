@@ -14,7 +14,7 @@ trait DOperableSaver {
       context: ExecutionContext)(
       dOperable: DOperable,
       entity: CreateEntityRequest): Entity.Id = {
-    val uniqueFilename: String = entity.dataReference.get.url
+    val uniqueFilename: String = entity.dataReference.get.savedDataPath
     dOperable.save(context)(uniqueFilename)
     saveEntity(context, uniqueFilename, entity)
   }

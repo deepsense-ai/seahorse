@@ -114,12 +114,18 @@ class GraphNodeExecutorActor(
   private def storeAndRegister(dOperable: DOperable): Entity.Id = {
     logger.debug("storeAndRegister started for {}", nodeDescription)
 
+    val serializedMetadata = dOperable.metadata match {
+      case Some(am) => am.serializeToJson.compactPrint
+      case _ => "No metadata defined for this type"
+    }
+
     val inputEntity = CreateEntityRequest(
       tenantId = experiment.tenantId,
       name = dOperable.getClass.toString,
       description = s"Output from Operation: $nodeDescription",
       dClass = dOperable.getClass.toString,
-      dataReference = dOperable.url.map(DataObjectReference),
+      dataReference = dOperable.url.map(
+        DataObjectReference(_, serializedMetadata)),
       report = dOperable.report.toDataObjectReport,
       saved = false
     )

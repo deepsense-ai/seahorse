@@ -11,6 +11,7 @@ import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMapper
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMapper.CategoricalMappingsMap
 import io.deepsense.deeplang.parameters.ColumnType.ColumnType
+import io.deepsense.models.entities.DataObjectReference
 import spray.json._
 import DataFrameMetadataJsonProtocol._
 
@@ -27,7 +28,7 @@ import DataFrameMetadataJsonProtocol._
  * @param columns It contains information about columns.
  * @param categoricalMappings Map from column name to information about categories in this column.
  *                            If some name is present as key in this map, it means that information
- *                            about categories in column of this name are exact.
+ *                            about categories in column of this name is exact.
  *                            If some column is categorical and it's name is not present in map,
  *                            that means we don't know anything about categories in this column.
  *                            There is no possibility to store partial knowledge
@@ -64,6 +65,10 @@ object DataFrameMetadata {
       }).toMap,
       categoricalMappings = CategoricalMapper.mappingsMapFromSchema(schema)
     )
+  }
+
+  def deserializeFromJson(jsValue: JsValue): DataFrameMetadata = {
+    jsValue.convertTo[DataFrameMetadata]
   }
 }
 

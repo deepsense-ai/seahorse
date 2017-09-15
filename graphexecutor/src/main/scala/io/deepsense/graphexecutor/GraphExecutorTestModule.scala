@@ -87,8 +87,8 @@ object SimpleGraphExecutionIntegSuiteEntities {
       DateTime.now,
       DateTime.now,
       saved = true),
-    Some(DataObjectReference(dataFrameLocation)),
-    DataObjectReport("testEntity Report"))
+      Some(DataObjectReference(dataFrameLocation, "{}")),
+      DataObjectReport("testEntity Report"))
 }
 
 object BikesIntegSuiteEntities {
@@ -109,8 +109,8 @@ object BikesIntegSuiteEntities {
       DateTime.now,
       DateTime.now,
       saved = true),
-    Some(DataObjectReference(demandLocation)),
-    DataObjectReport("demandEntity Report"))
+      Some(DataObjectReference(demandLocation, "{}")),
+      DataObjectReport("demandEntity Report"))
 
   val weatherId: Entity.Id = Entity.Id.fromString("7ff0e089-8059-491c-9a7e-557349633312")
   val weatherLocation = GraphExecutorTest.TestDir + "/" + weatherId
@@ -125,6 +125,6 @@ object BikesIntegSuiteEntities {
       DateTime.now,
       DateTime.now,
       saved = true),
-    Some(DataObjectReference(weatherLocation)),
-    DataObjectReport("weatherEntity Report"))
+      Some(DataObjectReference(weatherLocation, "{}")),
+      DataObjectReport("weatherEntity Report"))
 }

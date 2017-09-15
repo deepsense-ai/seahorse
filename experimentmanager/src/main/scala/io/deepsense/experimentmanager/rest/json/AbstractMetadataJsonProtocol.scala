@@ -9,8 +9,8 @@ import spray.httpx.SprayJsonSupport
 import spray.json._
 
 trait AbstractMetadataJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
-  implicit object CategoriesMappingFormat extends RootJsonFormat[AbstractMetadata] {
-    override def write(cm: AbstractMetadata): JsValue = cm.serializeToJson
+  implicit object AbstractMetadataFormat extends RootJsonFormat[AbstractMetadata] {
+    override def write(am: AbstractMetadata): JsValue = am.serializeToJson
     override def read(value: JsValue): AbstractMetadata = ???
   }
 }

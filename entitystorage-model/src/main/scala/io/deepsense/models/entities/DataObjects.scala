@@ -10,6 +10,10 @@ package io.deepsense.models.entities
 case class DataObjectReport(jsonReport: String)
 
 /**
- * Reference to an actual data e.g. DataFrame, Model, etc
+ * Holds path to saved data and related metadata
+ * @param savedDataPath path to the data
+ * @param metadata metadata serialized as json
  */
-case class DataObjectReference(url: String)
+case class DataObjectReference(
+    savedDataPath: String,
+    metadata: String)
