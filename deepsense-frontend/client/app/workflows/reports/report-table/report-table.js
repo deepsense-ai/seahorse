@@ -55,7 +55,8 @@ function ReportTable() {
           $rootScope.$broadcast(REPORT_EVENTS.SELECT_COLUMN, {
             colName: columnName,
             colType: $scope.getColumnType(columnName),
-            colTypesMap: map
+            colTypesMap: map,
+            distributions: $scope.distributions
           });
         }
       };
