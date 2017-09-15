@@ -16,6 +16,8 @@
 
 package io.deepsense.deeplang.doperables
 
+import org.apache.spark.sql.types.StructType
+
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.params.{CodeSnippetParam, CodeSnippetLanguage, Param}
@@ -50,4 +52,7 @@ class RowsFilterer extends Transformer {
       df.sparkDataFrame.sqlContext.dropTempTable(uniqueDataFrameId)
     }
   }
+
+  override private[deeplang] def _transformSchema(schema: StructType): Option[StructType] =
+    Some(schema)
 }
