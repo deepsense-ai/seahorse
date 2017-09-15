@@ -6,7 +6,7 @@
 
 'use strict';
 
-function ColumnPlot() {
+function PiePlot() {
   return {
     restrict: 'E',
     templateUrl: 'app/reports/charts/plot.html',
@@ -18,7 +18,7 @@ function ColumnPlot() {
       scope.$applyAsync(() => {
         $(element).highcharts({
           chart: {
-            type: 'column'
+            type: 'pie'
           },
           title: {
             text: distObject.name
@@ -26,31 +26,26 @@ function ColumnPlot() {
           subtitle: {
             text: distObject.description
           },
-          xAxis: {
-            categories: distObject.buckets,
-            labels: {
-              rotation: -45,
-              style: {
-                fontSize: '13px',
-                fontFamily: 'Verdana, sans-serif'
+          plotOptions: {
+            pie: {
+              allowPointSelect: true,
+              cursor: 'pointer',
+              dataLabels: {
+                enabled: true,
+                format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                style: {
+                  color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                }
               }
             }
           },
-          yAxis: {
-            min: 0,
-            title: {
-              text: ''
-            }
-          },
-          legend: {
-            enabled: false
-          },
           tooltip: {
-            pointFormat: 'The value: <b>{point.y}</b>'
+            pointFormat: 'The number of the such elements: <b>{point.y}</b>'
           },
           series: [{
             name: 'Population',
-            data: distObject.counts
+            colorByPoint: true,
+            data: _.zip(distObject.buckets, distObject.counts)
           }]
         });
       });
@@ -59,5 +54,5 @@ function ColumnPlot() {
 }
 
 exports.inject = function (module) {
-  module.directive('columnPlot', ColumnPlot);
+  module.directive('piePlot', PiePlot);
 };

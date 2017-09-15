@@ -9,48 +9,48 @@
 function BoxPlot() {
   return {
     restrict: 'E',
-    templateUrl: 'app/reports/charts/box-plot.html',
+    templateUrl: 'app/reports/charts/plot.html',
     replace: true,
     scope: false,
     link: function (scope, element) {
-      let distObject = scope.distObject;
+      let distObject = scope.reportSidePanel.distObject;
 
-      $(element).highcharts({
-        chart: {
-          type: 'boxplot'
-        },
-        title: {
-          text: distObject.name
-        },
-        subtitle: {
-          text: distObject.description
-        },
-        legend: {
-          enabled: false
-        },
-        xAxis: {
-          categories: ['']
-        },
-        yAxis: {
+      scope.$applyAsync(() => {
+        $(element).highcharts({
+          chart: {
+            type: 'boxplot'
+          },
           title: {
-            text: 'Age'
-          }
-        },
-        series: [{
-          name: 'Ages',
-          data: [
-            [
-              distObject.statistics.min,
-              distObject.statistics.firstQuartile,
-              distObject.statistics.median,
-              distObject.statistics.thirdQuartile,
-              distObject.statistics.max
-            ]
-          ],
-          tooltip: {
-            headerFormat: ''
-          }
-        }]
+            text: distObject.name
+          },
+          subtitle: {
+            text: distObject.description
+          },
+          legend: {
+            enabled: false
+          },
+          xAxis: {
+            categories: ['']
+          },
+          yAxis: {
+            title: null
+          },
+          series: [{
+            name: 'Age',
+            data: [
+              [
+                distObject.statistics.min,
+                distObject.statistics.firstQuartile,
+                distObject.statistics.median,
+                distObject.statistics.thirdQuartile,
+                distObject.statistics.max
+              ]
+            ],
+            tooltip: {
+              headerFormat: ''
+            }
+          }]
+        });
       });
     }
   };

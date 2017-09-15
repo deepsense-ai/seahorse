@@ -6,13 +6,13 @@
 
 'use strict';
 
-function TableStatistics() {
+function TableHeader() {
   return {
-    templateUrl: 'app/reports/report-table/table-statistics/table-statistics.html',
+    templateUrl: 'app/reports/report-table/table-header/table-header.html',
     replace: 'true'
   };
 }
 
 exports.inject = function (module) {
-  module.directive('tableStatistics', TableStatistics);
+  module.directive('tableHeader', TableHeader);
 };

@@ -3,22 +3,37 @@
  */
 'use strict';
 
-/* @ngInject */
-function Report($scope, $state, $stateParams, EntitiesAPIClient) {
+var EVENTS = {
+  'EXTEND_SIDE_PANEL': 'extend-side-panel',
+  'SHRINK_SIDE_PANEL': 'shrink-side-panel',
+  'CHOSEN_COLUMN': 'chosen-column',
+  'HIDE_DETAILS': 'hide-details'
+};
 
+/* @ngInject */
+function Report(PageService, $scope, $stateParams, EntitiesAPIClient) {
   let that = this;
   let internal = {};
   let entityId = $stateParams.id;
-
-  internal.closeReport = function closeReport () {
-    history.back();
-  };
 
   that.messageError = '';
 
   EntitiesAPIClient.getReport(entityId).then((data) => {
     internal.tables = data.tables;
     internal.distributions = data.distributions;
+    internal.distributionsNames = _.reduce(
+      internal.distributions,
+      function (acc, distObj, name) {
+        let re = /[a-zA-Z0-9]+/.exec(name);
+        if (re) {
+          acc[re[0]] = distObj.subtype;
+        }
+        return acc;
+      },
+      {}
+    );
+
+    PageService.setTitle(`Report: ${data.name}`);
   }, () => {
     that.messageError = `The report with id equals to ${entityId} does not exist!`;
   });
@@ -33,14 +48,26 @@ function Report($scope, $state, $stateParams, EntitiesAPIClient) {
     }
   };
 
-  that.dismiss = function dismiss () {
-    internal.closeReport();
+  that.getDistributionsTypes = function getDistributionsTypes() {
+    return internal.distributionsNames;
   };
+
+  $scope.$on(EVENTS.CHOSEN_COLUMN, function (event, data) {
+    let distObject = that.getDistributionObject(data.colName);
+    let eventToBroadcast = _.isUndefined(distObject) ? EVENTS.SHRINK_SIDE_PANEL : EVENTS.EXTEND_SIDE_PANEL;
+
+    $scope.$broadcast(eventToBroadcast, data);
+  });
+
+  $scope.$on(EVENTS.HIDE_DETAILS, () => {
+    $scope.$broadcast(EVENTS.SHRINK_SIDE_PANEL);
+  });
 
   return that;
 }
 
 exports.function = Report;
+exports.EVENTS = EVENTS;
 
 exports.inject = function (module) {
   module.controller('Report', Report);

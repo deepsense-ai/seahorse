@@ -5,10 +5,7 @@
 
 'use strict';
 
-let EVENTS = {
-  'EXTEND_PANEL': 'extend-panel',
-  'SHRINK_PANEL': 'shrink-panel'
-};
+let REPORT_EVENTS = require('../reports.controller.js').EVENTS;
 
 function ReportSidePanel() {
   return {
@@ -16,18 +13,25 @@ function ReportSidePanel() {
     replace: 'true',
     scope: true,
     controller: function($scope) {
-      $scope.$on(EVENTS.EXTEND_PANEL, function(event, data) {
-        $scope.distObject = $scope.report.getDistributionObject(data.colName);
-        $scope.$digest();
+      _.assign(this, {
+        extendedSidePanel: false,
+        distObject: null,
+        shrinkPanel: () => {
+          $scope.$emit(REPORT_EVENTS.HIDE_DETAILS);
+        }
       });
 
-      $scope.distObject = null;
+      $scope.$on(REPORT_EVENTS.EXTEND_SIDE_PANEL, (event, data) => {
+        this.extendedSidePanel = true;
+        this.distObject = $scope.report.getDistributionObject(data.colName);
+      });
+      $scope.$on(REPORT_EVENTS.SHRINK_SIDE_PANEL, () => {
+        this.extendedSidePanel = false;
+      });
     },
     controllerAs: 'reportSidePanel'
   };
 }
-
-exports.EVENTS = EVENTS;
 
 exports.inject = function (module) {
   module.directive('reportSidePanel', ReportSidePanel);
