@@ -6,7 +6,7 @@
 # This script expects no external parameters.
 # Version is calculated from current git sha, current time and BASE_VERSION variable
 
-BASE_VERSION="0.2.0"
+BASE_VERSION="0.4.0"
 
 function calculate_full_version() {
   echo "** Calculating version **"
