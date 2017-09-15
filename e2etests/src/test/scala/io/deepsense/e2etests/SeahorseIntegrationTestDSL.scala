@@ -4,6 +4,8 @@
 
 package io.deepsense.e2etests
 
+import java.util.UUID
+
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.Await
@@ -22,6 +24,8 @@ import org.scalatest.time.{Seconds, Span}
 import org.scalatest.{Matchers, Suite}
 import play.api.libs.json.{JsArray, JsObject, JsString, Json}
 import play.api.libs.ws.ning.NingWSClient
+import io.deepsense.sessionmanager.rest._
+import io.deepsense.sessionmanager.rest.requests._
 
 import io.deepsense.commons.utils.Logging
 
@@ -104,8 +108,8 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
 
   def withExecutor[T](workflowId: String)(code: ExecutorContext => T): Unit = {
     logger.info(s"Starting executor for workflow $workflowId")
-    httpClient.url(sessionsUrl)
-      .post(Json.obj("workflowId" -> workflowId))
+
+    httpClient.url(sessionsUrl).post(Json.parse(createSessionBody(workflowId)))
 
     ensureExecutorIsRunning(workflowId)
     logger.info(s"Executor for workflow $workflowId started")
@@ -137,6 +141,24 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
     code(ctx)
 
     Await.result(httpClient.url(s"$sessionsUrl/$workflowId").delete(), 10 seconds)
+  }
+
+  private def createSessionBody(workflowId: String) = {
+    import spray.json._
+    import SessionsJsonProtocol._
+
+    val ignoredInLocal = ""
+    val request = CreateSession(
+      workflowId = workflowId,
+      cluster = ClusterDetails(
+        name = "some-name" + UUID.randomUUID(),
+        id = UUID.randomUUID().toString,
+        clusterType = "local",
+        uri = ignoredInLocal,
+        userIP = ignoredInLocal
+      )
+    )
+    request.toJson.compactPrint
   }
 
   private def ensureConnectedReceived()(implicit ctx: ExecutorContext): Unit = {
@@ -244,4 +266,3 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
   }
 
 }
-

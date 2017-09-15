@@ -6,10 +6,9 @@ package io.deepsense.sessionmanager.rest
 
 import spray.httpx.SprayJsonSupport
 import spray.json._
+
 import io.deepsense.commons.json.IdJsonProtocol
-import io.deepsense.sessionmanager.rest.requests.{ClusterDetails, CreateSession}
-import io.deepsense.sessionmanager.rest.responses.ListSessionsResponse
-import io.deepsense.sessionmanager.service.{Session, Status}
+import io.deepsense.sessionmanager.rest.requests.ClusterDetails
 
 trait ClusterDetailsJsonProtocol
   extends DefaultJsonProtocol
