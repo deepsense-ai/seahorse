@@ -23,6 +23,7 @@ object DatasourcesSchema {
   case class DatasourceDB(
     id: UUID,
     ownerId: UUID,
+    ownerName: String,
     name: String,
     creationDateTime: java.util.Date,
     visibility: Visibility,
@@ -58,6 +59,7 @@ object DatasourcesSchema {
       extends Table[DatasourceDB](tag, Some(DatasourceManagerConfig.database.schema), "datasource") {
     def id = column[UUID]("id", O.PrimaryKey)
     def ownerId = column[UUID]("ownerId")
+    def ownerName = column[String]("ownerName")
     def name = column[String]("name")
     def creationDateTime = column[java.util.Date]("creationDateTime")
     def visibility = column[Visibility]("visibility")
@@ -78,8 +80,8 @@ object DatasourcesSchema {
     def googleSpreadsheetId = column[Option[String]]("googleSpreadsheetId")
     def googleServiceAccountCredentials = column[Option[String]]("googleServiceAccountCredentials")
 
-    def * = (id, ownerId, name, creationDateTime, visibility, downloadUri, datasourceType, jdbcUrl, jdbcDriver,
-      jdbcTable, jdbcQuery, externalFileUrl, hdfsPath, libraryPath, fileFormat, fileCsvIncludeHeader,
+    def * = (id, ownerId, ownerName, name, creationDateTime, visibility, downloadUri, datasourceType, jdbcUrl,
+      jdbcDriver, jdbcTable, jdbcQuery, externalFileUrl, hdfsPath, libraryPath, fileFormat, fileCsvIncludeHeader,
       fileCsvConvert01ToBoolean, fileCsvSeparatorType, fileCsvCustomSeparator,
       googleSpreadsheetId, googleServiceAccountCredentials
       ) <> (DatasourceDB.tupled, DatasourceDB.unapply)

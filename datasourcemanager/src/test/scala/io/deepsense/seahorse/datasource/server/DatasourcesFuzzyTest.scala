@@ -53,7 +53,7 @@ class DatasourcesFuzzyTest extends Properties("DatasourcesApi") {
       Try {
         val userId = UUID.randomUUID()
         val datasourceId = UUID.randomUUID()
-        api.putDatasourceImpl(userId, datasourceId, ds)
+        api.putDatasourceImpl(userId, "SomeUserName", datasourceId, ds)
         val dsWithoutIgnoredFields = api.getDatasourceImpl(userId, datasourceId).params
 
         val result = compareIgnoringExtraOptionalsFromLeftArgument(ds, dsWithoutIgnoredFields)

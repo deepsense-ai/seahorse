@@ -40,6 +40,7 @@ class DatasourcesAccessControlSpec extends FreeSpec with Matchers {
       info("Bob has only READ access to other users datasources")
       datasources.find(_.id == alicesPublicDs).get.accessLevel shouldEqual AccessLevel.read
       api.getDatasourceImpl(bob, alicesPublicDs).accessLevel shouldEqual AccessLevel.read
+      api.getDatasourceImpl(bob, alicesPublicDs).ownerName shouldEqual aliceName
     }
     {
       info("Bob cannot hack Alices datasources")
@@ -53,11 +54,11 @@ class DatasourcesAccessControlSpec extends FreeSpec with Matchers {
       info("Bob cannot edit Alices datasource")
 
       the[ApiException].thrownBy(
-        api.putDatasourceImpl(bob, alicesPublicDs, TestData.someDatasource())
+        api.putDatasourceImpl(bob, bobName, alicesPublicDs, TestData.someDatasource())
       ).errorCode shouldBe forbiddenErrorCode
 
       the[ApiException].thrownBy(
-        api.putDatasourceImpl(bob, alicesPrivateDs, TestData.someDatasource())
+        api.putDatasourceImpl(bob, bobName, alicesPrivateDs, TestData.someDatasource())
       ).errorCode shouldBe forbiddenErrorCode
 
       info("Bob cannot delete Alices datasources")
@@ -74,14 +75,19 @@ class DatasourcesAccessControlSpec extends FreeSpec with Matchers {
 
   private def createTestEnviroment() = new {
     val alice = UUID.randomUUID()
+    val aliceName = "Alice"
+
     val alicesPublicDs = UUID.randomUUID()
     val alicesPrivateDs = UUID.randomUUID()
-    api.putDatasourceImpl(alice, alicesPublicDs, TestData.someDatasource().copy(
+    api.putDatasourceImpl(alice, aliceName, alicesPublicDs, TestData.someDatasource().copy(
       visibility = Visibility.publicVisibility
     ))
-    api.putDatasourceImpl(alice, alicesPrivateDs, TestData.someDatasource().copy(
+
+    api.putDatasourceImpl(alice, aliceName, alicesPrivateDs, TestData.someDatasource().copy(
       visibility = Visibility.privateVisibility
     ))
+
+    val bobName = "Bob"
     val bob = UUID.randomUUID()
   }
 

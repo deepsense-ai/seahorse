@@ -18,16 +18,17 @@ class DatasourcesApiSpec extends FreeSpec with Matchers {
 
   "Api consumer" - {
     val userId = UUID.randomUUID()
+    val userName = "Alice"
     "can manage his datasources" in {
       for (dsParams <- TestData.someDatasources()) {
         val id = UUID.randomUUID()
         info("User can add datasource")
-        api.putDatasourceImpl(userId, id, dsParams)
+        api.putDatasourceImpl(userId, userName, id, dsParams)
         api.getDatasourcesImpl(userId).find(_.id == id).get.params shouldEqual dsParams
         api.getDatasourceImpl(userId, id).params shouldEqual dsParams
 
         info("Add operation is idempotent")
-        api.putDatasourceImpl(userId, id, dsParams)
+        api.putDatasourceImpl(userId, userName, id, dsParams)
         api.getDatasourcesImpl(userId).find(_.id == id).get.params shouldEqual dsParams
         api.getDatasourceImpl(userId, id).params shouldEqual dsParams
 

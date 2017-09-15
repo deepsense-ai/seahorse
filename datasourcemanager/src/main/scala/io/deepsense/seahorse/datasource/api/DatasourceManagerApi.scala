@@ -22,9 +22,10 @@ class DatasourceManagerApi extends DefaultApi {
 
   override def putDatasourceImpl(
       userId: UUID,
+      userName: String,
       datasourceId: UUID,
       datasourceParams: DatasourceParams) =
-    datasource.db.dbio.InsertOrUpdate(userId, datasourceId, datasourceParams).run()
+    datasource.db.dbio.InsertOrUpdate(userId, userName, datasourceId, datasourceParams).run()
 
   override def getDatasourceImpl(userId: UUID, datasourceId: UUID) =
     datasource.db.dbio.Get(userId, datasourceId).run()

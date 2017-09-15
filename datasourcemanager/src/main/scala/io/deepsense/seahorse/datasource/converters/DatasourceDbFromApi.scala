@@ -20,11 +20,13 @@ object DatasourceDbFromApi {
 
   def apply(
       userId: UUID,
+      userName: String,
       datasourceId: UUID,
       dsParams: DatasourceParams): Validation[ApiException, DatasourceDB] = {
     val datasourceDb = DatasourceDB(
       id = datasourceId,
       ownerId = userId,
+      ownerName = userName,
       name = dsParams.name,
       creationDateTime = new java.util.Date(),
       visibility = dsParams.visibility,

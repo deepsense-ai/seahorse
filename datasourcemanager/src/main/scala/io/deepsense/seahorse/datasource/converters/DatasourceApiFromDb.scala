@@ -34,6 +34,7 @@ object DatasourceApiFromDb {
         AccessLevel.read
       },
       ownerId = datasource.ownerId,
+      ownerName = datasource.ownerName,
       params = DatasourceParams(
         name = datasource.name,
         downloadUri = datasource.downloadUri,

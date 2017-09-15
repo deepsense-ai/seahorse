@@ -25,13 +25,14 @@ object InsertOrUpdate {
   val logger = LoggerForCallerClass()
 
   def apply(
-      userId: UUID,
+      ownerId: UUID,
+      ownerName: String,
       datasourceId: UUID,
       datasourceParams: DatasourceParams): DBIO[Datasource] =
     for {
-      datasource <- DatasourceDbFromApi(userId, datasourceId, datasourceParams).asDBIO
+      datasource <- DatasourceDbFromApi(ownerId, ownerName, datasourceId, datasourceParams).asDBIO
       updatedCount <- datasourcesTable.filter(ds =>
-        ds.id === datasourceId && ds.ownerId === userId
+        ds.id === datasourceId && ds.ownerId === ownerId
       ).update(datasource)
       notExistsOrOwnedByOtherUser = updatedCount == 0
       _ <- if (notExistsOrOwnedByOtherUser) {
@@ -47,7 +48,7 @@ object InsertOrUpdate {
         DBIO.successful(())
       }
       justUpserted <- datasourcesTable.filter(_.id === datasourceId).result.head
-      apiDatasource <- DatasourceApiFromDb(userId, justUpserted).asDBIO
+      apiDatasource <- DatasourceApiFromDb(ownerId, justUpserted).asDBIO
     } yield apiDatasource
 
   private val successfullInsertBecauseItDidntExist = DBIO.successful(())
