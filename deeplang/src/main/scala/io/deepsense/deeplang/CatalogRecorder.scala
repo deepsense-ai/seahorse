@@ -54,6 +54,7 @@ object CatalogRecorder {
     catalog.registerDOperable[DiscreteCosineTransformer]()
     catalog.registerDOperable[Normalizer]()
     catalog.registerDOperable[PolynomialExpander]()
+    catalog.registerDOperable[RegexTokenizer]()
     catalog.registerDOperable[StringTokenizer]()
     catalog.registerDOperable[VectorAssembler]()
 
@@ -131,6 +132,9 @@ object CatalogRecorder {
       DOperationCategories.Transformation)
 
     catalog.registerDOperation[PolynomialExpand](
+      DOperationCategories.Transformation)
+
+    catalog.registerDOperation[TokenizeWithRegex](
       DOperationCategories.Transformation)
 
     catalog.registerDOperation[Tokenize](
