@@ -18,6 +18,7 @@ package io.deepsense.workflowexecutor.rabbitmq
 
 import java.util
 
+import scala.concurrent.duration._
 import scala.concurrent.{Future, Promise}
 
 import akka.actor.{ActorRef, ActorSystem, Props}
@@ -40,7 +41,7 @@ case class MQCommunicationFactory(
     val subscriberName = MQCommunication.subscriberName(topic)
     val actorProps: Props =
       NotifyingChannelActor.props(channelConnected, setupSubscriber(topic, subscriber))
-    connection.createChannel(actorProps, Some(subscriberName))
+    connection.createChannel(actorProps, Some(subscriberName))(timeout = 10.seconds)
     channelConnected.future
   }
 
@@ -73,7 +74,7 @@ case class MQCommunicationFactory(
   private def createMQPublisher(topic: String): MQPublisher = {
     val publisherName = MQCommunication.publisherName(topic)
     val channelActor: ActorRef =
-      connection.createChannel(ChannelActor.props(), Some(publisherName))
+      connection.createChannel(ChannelActor.props(), Some(publisherName))(timeout = 10.seconds)
     MQPublisher(MQCommunication.Exchange.seahorse, mqMessageSerializer, channelActor)
   }
 
@@ -84,8 +85,8 @@ case class MQCommunicationFactory(
       channel.exchangeDeclare(exchange, "fanout")
     }
 
-    val channelActor: ActorRef =
-      connection.createChannel(ChannelActor.props(setupChannel), Some(publisherName))
+    val channelActor: ActorRef = connection
+      .createChannel(ChannelActor.props(setupChannel), Some(publisherName))(timeout = 10.seconds)
     MQPublisher(exchange, mqMessageSerializer, channelActor)
   }
 }
