@@ -1,41 +1,733 @@
 {
-  "01ccc706-2912-c87d-5f02-9604a7db2b5f": [{
-    "report": {
-      "tables": {
-        "Data Sample": {
-          "columnNames": ["name", "surname", "marriage_status", "salary"]
-        },
-        "DataFrame Size": {
-          "values": [["4", "10"]]
+  "executionReport": {
+    "nodes": {
+      "c21973ce-4bea-ba68-9d92-d4045d11dda2": {
+        "status": "COMPLETED", 
+        "results": [
+          "5df2f1f1-f26a-46fc-b515-836902637ddd"
+        ], 
+        "error": null
+      }, 
+      "88706332-7105-0970-cd38-80a870a5a84b": {
+        "status": "COMPLETED", 
+        "results": [], 
+        "error": null
+      }, 
+      "e66b493e-ac08-2f96-a5c8-f907189dc5f9": {
+        "status": "COMPLETED", 
+        "results": [], 
+        "error": null
+      }, 
+      "31f196ac-d3a5-3859-c678-27105f7a6d2b": {
+        "status": "COMPLETED", 
+        "results": [
+          "83130b4d-fe37-4285-a9a5-7cabfd8a8bf8"
+        ], 
+        "error": null
+      }, 
+      "94d963d6-92e7-64b9-05e8-15661774d1bb": {
+        "status": "COMPLETED", 
+        "results": [
+          "3036f18a-a7ba-4e06-be48-508e55c0fd07", 
+          "cc821184-ccf2-478f-9bd9-5b84361ec87e"
+        ], 
+        "error": null
+      }, 
+      "01ccc706-2912-c87d-5f02-9604a7db2b5f": {
+        "status": "COMPLETED", 
+        "results": [
+          "cceadee8-40b7-44f1-83eb-3d0bdff3e533"
+        ], 
+        "error": null
+      }
+    }, 
+    "resultEntities": {
+      "cc821184-ccf2-478f-9bd9-5b84361ec87e": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "4", 
+                  "6"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "name", 
+                "surname", 
+                "marriage_status", 
+                "salary"
+              ], 
+              "columnTypes": [
+                "string", 
+                "string", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "Alan", 
+                  "Smith", 
+                  "0", 
+                  "9820"
+                ], 
+                [
+                  "Jennifer", 
+                  "Tyler", 
+                  "2", 
+                  null
+                ], 
+                [
+                  "Charlotte", 
+                  "Falconet", 
+                  "1", 
+                  "6690"
+                ], 
+                [
+                  "Vito", 
+                  "Corleone", 
+                  "1", 
+                  null
+                ], 
+                [
+                  "Rita", 
+                  "Innkeeper", 
+                  "0", 
+                  null
+                ], 
+                [
+                  "Larry", 
+                  "Wall", 
+                  "1", 
+                  "12880"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "salary": {
+              "statistics": {
+                "max": "12880", 
+                "mean": "9796.666667", 
+                "min": "6690"
+              }, 
+              "name": "salary", 
+              "subtype": "continuous", 
+              "counts": [
+                1, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 3
+            }, 
+            "marriage_status": {
+              "statistics": {
+                "max": "2", 
+                "mean": "0.833333", 
+                "min": "0"
+              }, 
+              "name": "marriage_status", 
+              "subtype": "continuous", 
+              "counts": [
+                2, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                3, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }
+          }
         }
-      },
-      "distributions": {
-        "marriage_status": {
-          "missingValues": 0,
-          "subtype": "continuous"
-        },
-        "salary": {
-          "missingValues": 5,
-          "subtype": "continuous"
+      }, 
+      "83130b4d-fe37-4285-a9a5-7cabfd8a8bf8": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "3", 
+                  "5"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "name", 
+                "surname", 
+                "salary"
+              ], 
+              "columnTypes": [
+                "string", 
+                "string", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "Charlotte", 
+                  "Falconet", 
+                  "6690"
+                ], 
+                [
+                  "Bobert", 
+                  "Tard", 
+                  "850"
+                ], 
+                [
+                  "Larry", 
+                  "Wall", 
+                  "12880"
+                ], 
+                [
+                  "Alan", 
+                  "Smith", 
+                  "9820"
+                ], 
+                [
+                  "Bob", 
+                  "Dylan", 
+                  "15410"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "salary": {
+              "statistics": {
+                "max": "15410", 
+                "mean": "9130", 
+                "min": "850"
+              }, 
+              "name": "salary", 
+              "subtype": "continuous", 
+              "counts": [
+                1, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "cceadee8-40b7-44f1-83eb-3d0bdff3e533": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "4", 
+                  "10"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "name", 
+                "surname", 
+                "marriage_status", 
+                "salary"
+              ], 
+              "columnTypes": [
+                "string", 
+                "string", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "Alan", 
+                  "Smith", 
+                  "0", 
+                  "9820"
+                ], 
+                [
+                  "Bob", 
+                  "Dylan", 
+                  "1", 
+                  "15410"
+                ], 
+                [
+                  "Bobert", 
+                  "Tard", 
+                  "0", 
+                  "850"
+                ], 
+                [
+                  "Jennifer", 
+                  "Tyler", 
+                  "2", 
+                  null
+                ], 
+                [
+                  "Charlotte", 
+                  "Falconet", 
+                  "1", 
+                  "6690"
+                ], 
+                [
+                  "Alan", 
+                  "Turing", 
+                  "3", 
+                  null
+                ], 
+                [
+                  "Ralph", 
+                  "Max", 
+                  "0", 
+                  null
+                ], 
+                [
+                  "Vito", 
+                  "Corleone", 
+                  "1", 
+                  null
+                ], 
+                [
+                  "Rita", 
+                  "Innkeeper", 
+                  "0", 
+                  null
+                ], 
+                [
+                  "Larry", 
+                  "Wall", 
+                  "1", 
+                  "12880"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "salary": {
+              "statistics": {
+                "max": "15410", 
+                "mean": "9130", 
+                "min": "850"
+              }, 
+              "name": "salary", 
+              "subtype": "continuous", 
+              "counts": [
+                1, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 5
+            }, 
+            "marriage_status": {
+              "statistics": {
+                "max": "3", 
+                "mean": "0.9", 
+                "min": "0"
+              }, 
+              "name": "marriage_status", 
+              "subtype": "continuous", 
+              "counts": [
+                4, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                4, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "5df2f1f1-f26a-46fc-b515-836902637ddd": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "3", 
+                  "10"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "name", 
+                "surname", 
+                "marriage_status"
+              ], 
+              "columnTypes": [
+                "string", 
+                "string", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "Alan", 
+                  "Smith", 
+                  "0"
+                ], 
+                [
+                  "Bob", 
+                  "Dylan", 
+                  "1"
+                ], 
+                [
+                  "Bobert", 
+                  "Tard", 
+                  "0"
+                ], 
+                [
+                  "Jennifer", 
+                  "Tyler", 
+                  "2"
+                ], 
+                [
+                  "Charlotte", 
+                  "Falconet", 
+                  "1"
+                ], 
+                [
+                  "Alan", 
+                  "Turing", 
+                  "3"
+                ], 
+                [
+                  "Ralph", 
+                  "Max", 
+                  "0"
+                ], 
+                [
+                  "Vito", 
+                  "Corleone", 
+                  "1"
+                ], 
+                [
+                  "Rita", 
+                  "Innkeeper", 
+                  "0"
+                ], 
+                [
+                  "Larry", 
+                  "Wall", 
+                  "1"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "marriage_status": {
+              "statistics": {
+                "max": "3", 
+                "mean": "0.9", 
+                "min": "0"
+              }, 
+              "name": "marriage_status", 
+              "subtype": "continuous", 
+              "counts": [
+                4, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                4, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "3036f18a-a7ba-4e06-be48-508e55c0fd07": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "4", 
+                  "4"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "name", 
+                "surname", 
+                "marriage_status", 
+                "salary"
+              ], 
+              "columnTypes": [
+                "string", 
+                "string", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "Bob", 
+                  "Dylan", 
+                  "1", 
+                  "15410"
+                ], 
+                [
+                  "Bobert", 
+                  "Tard", 
+                  "0", 
+                  "850"
+                ], 
+                [
+                  "Alan", 
+                  "Turing", 
+                  "3", 
+                  null
+                ], 
+                [
+                  "Ralph", 
+                  "Max", 
+                  "0", 
+                  null
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "salary": {
+              "statistics": {
+                "max": "15410", 
+                "mean": "8130", 
+                "min": "850"
+              }, 
+              "name": "salary", 
+              "subtype": "continuous", 
+              "counts": [
+                1, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 2
+            }, 
+            "marriage_status": {
+              "statistics": {
+                "max": "3", 
+                "mean": "1", 
+                "min": "0"
+              }, 
+              "name": "marriage_status", 
+              "subtype": "continuous", 
+              "counts": [
+                2, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }
+          }
         }
       }
-    }
-  }],
-  "94d963d6-92e7-64b9-05e8-15661774d1bb": [{
-    "report": {
-      "tables": {
-        "Data Sample": {
-          "columnNames": ["name", "surname", "marriage_status", "salary"]
-        }
-      }
-    }
-  }, {
-    "report": {
-      "tables": {
-        "Data Sample": {
-          "columnNames": ["name", "surname", "marriage_status", "salary"]
-        }
-      }
-    }
-  }]
+    }, 
+    "error": null
+  }
 }

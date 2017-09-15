@@ -1,21 +1,28 @@
 {
   "executionReport": {
     "nodes": {
-      "c9a629a2-6716-5ae8-9c0c-6e2afcfa2dba": {
-        "status": "COMPLETED", 
-        "results": [], 
-        "error": null
-      }, 
-      "b2367b9d-3c7d-4db8-c5b4-40b99be2d8ea": {
+      "a47fa4cf-9833-8541-31cd-98bfe9c57aab": {
         "status": "COMPLETED", 
         "results": [
-          "1a507610-5504-47dc-b6a8-09b4b412482a"
+          "b1f9f706-b30b-48ab-b59c-9cb100fcfa2a"
         ], 
+        "error": null
+      }, 
+      "b3fb1448-9874-3f6c-f259-89b08c4c3689": {
+        "status": "FAILED", 
+        "results": null, 
+        "error": {
+          "code": "UnexpectedError"
+        }
+      }, 
+      "4c433dfc-9f43-d1d7-2032-bb37847d4f37": {
+        "status": "ABORTED", 
+        "results": null, 
         "error": null
       }
     }, 
     "resultEntities": {
-      "1a507610-5504-47dc-b6a8-09b4b412482a": {
+      "b1f9f706-b30b-48ab-b59c-9cb100fcfa2a": {
         "report": {
           "tables": {
             "DataFrame Size": {
@@ -32,7 +39,7 @@
               "values": [
                 [
                   "4", 
-                  "25"
+                  "20"
                 ]
               ], 
               "blockType": "table"
@@ -40,14 +47,14 @@
             "Data Sample": {
               "name": "Data Sample", 
               "columnNames": [
-                "unnamed_0", 
-                "unnamed_1", 
-                "unnamed_2", 
-                "unnamed_3"
+                "employee_id", 
+                "city", 
+                "salary", 
+                "work_time"
               ], 
               "columnTypes": [
                 "numeric", 
-                "categorical", 
+                "string", 
                 "numeric", 
                 "numeric"
               ], 
@@ -55,174 +62,164 @@
               "values": [
                 [
                   "1", 
-                  "black", 
-                  "4.1", 
-                  "8.1"
+                  "Warszawa", 
+                  "8500", 
+                  "1"
                 ], 
                 [
                   "2", 
-                  "white", 
-                  "8.1", 
-                  "16.1"
+                  "Pozna\u0144", 
+                  "9200", 
+                  "1"
                 ], 
                 [
                   "3", 
-                  "white", 
-                  "12.1", 
-                  "24.1"
+                  "Krak\u00f3w", 
+                  "1500", 
+                  "0.5"
                 ], 
                 [
                   "4", 
-                  "white", 
-                  "16.1", 
-                  "32.1"
+                  "Warszawa", 
+                  "4200", 
+                  "0.75"
                 ], 
                 [
                   "5", 
-                  "white", 
-                  "20.1", 
-                  "40.1"
+                  "Pozna\u0144", 
+                  "5600", 
+                  "1"
                 ], 
                 [
                   "6", 
-                  "white", 
-                  "24.1", 
-                  "48.1"
+                  "Krak\u00f3w", 
+                  "2700", 
+                  "1"
                 ], 
                 [
                   "7", 
-                  "white", 
-                  "28.1", 
-                  "56.1"
+                  "Warszawa", 
+                  "8000", 
+                  "1"
                 ], 
                 [
                   "8", 
-                  "white", 
-                  "32.1", 
-                  "64.1"
+                  "Pozna\u0144", 
+                  "10900", 
+                  "1"
                 ], 
                 [
                   "9", 
-                  "white", 
-                  "36.1", 
-                  "72.1"
+                  "Krak\u00f3w", 
+                  "1000", 
+                  "0.5"
                 ], 
                 [
                   "10", 
-                  "white", 
-                  "40.1", 
-                  "80.1"
+                  "Warszawa", 
+                  "8000", 
+                  "1"
                 ]
               ], 
               "blockType": "table"
             }
           }, 
           "distributions": {
-            "unnamed_0": {
+            "salary": {
               "statistics": {
-                "max": "25", 
-                "mean": "13", 
+                "max": "12000", 
+                "mean": "6170", 
+                "min": "1000"
+              }, 
+              "name": "salary", 
+              "subtype": "continuous", 
+              "counts": [
+                4, 
+                0, 
+                0, 
+                1, 
+                0, 
+                2, 
+                1, 
+                0, 
+                2, 
+                0, 
+                1, 
+                0, 
+                3, 
+                1, 
+                2, 
+                0, 
+                0, 
+                0, 
+                1, 
+                2
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "employee_id": {
+              "statistics": {
+                "max": "20", 
+                "mean": "10.5", 
                 "min": "1"
               }, 
-              "name": "unnamed_0", 
+              "name": "employee_id", 
               "subtype": "continuous", 
               "counts": [
-                2, 
                 1, 
                 1, 
                 1, 
                 1, 
-                2, 
                 1, 
                 1, 
                 1, 
                 1, 
-                2, 
                 1, 
                 1, 
                 1, 
                 1, 
-                2, 
                 1, 
                 1, 
                 1, 
-                2
-              ], 
-              "blockType": "distribution", 
-              "missingValues": 0
-            }, 
-            "unnamed_1": {
-              "subtype": "categorical", 
-              "blockType": "distribution", 
-              "counts": [
-                24, 
+                1, 
+                1, 
+                1, 
+                1, 
                 1
               ], 
-              "name": "unnamed_1", 
-              "missingValues": 0
-            }, 
-            "unnamed_2": {
-              "statistics": {
-                "max": "100.1", 
-                "mean": "52.1", 
-                "min": "4.1"
-              }, 
-              "name": "unnamed_2", 
-              "subtype": "continuous", 
-              "counts": [
-                2, 
-                1, 
-                1, 
-                1, 
-                1, 
-                2, 
-                1, 
-                1, 
-                1, 
-                1, 
-                2, 
-                1, 
-                1, 
-                1, 
-                1, 
-                2, 
-                1, 
-                1, 
-                1, 
-                2
-              ], 
               "blockType": "distribution", 
               "missingValues": 0
             }, 
-            "unnamed_3": {
+            "work_time": {
               "statistics": {
-                "max": "200.1", 
-                "mean": "104.1", 
-                "min": "8.1"
+                "max": "1", 
+                "mean": "0.9125", 
+                "min": "0.5"
               }, 
-              "name": "unnamed_3", 
+              "name": "work_time", 
               "subtype": "continuous", 
               "counts": [
-                2, 
+                3, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
                 1, 
-                1, 
-                1, 
-                1, 
-                2, 
-                1, 
-                1, 
-                1, 
-                1, 
-                2, 
-                1, 
-                1, 
-                1, 
-                1, 
-                2, 
-                1, 
-                1, 
-                1, 
-                2
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                16
               ], 
               "blockType": "distribution", 
               "missingValues": 0

@@ -1,96 +1,66 @@
 # Copyright (c) 2015, CodiLime Inc.
 
+*** Variables ***
+${SUITE} =  negativeTests
+
+*** Keywords ***
+Upload File To HDFS
+    [Arguments]  ${RESOURCE FILE NAME}
+    Upload to Hdfs  ${HDFS PATH}${RESOURCE FILE NAME}    ${TEST RESOURCE PATH}${RESOURCE FILE NAME}
+
 *** Settings ***
+Suite Setup     Standard Suite Setup
+Suite Teardown  Standard Suite Teardown
+
+Test Setup      Standard Test Setup
+Test Teardown   Standard Test Teardown
+
 Library    OperatingSystem
 Library    Collections
-Library    ../lib/HdfsClient.py
 Library    ../lib/WorkflowExecutorClient.py
+Library    ../lib/HdfsClient.py
+Library    ../lib/CommonSetupsAndTeardowns.py
+
 
 *** Test Cases ***
 Missing Input Data
-    ${dir} =    Set Variable    resources/negativeTests/missingInputData/
-    Remove Directory    missingInputDataOutput    recursive=True
-    Create Output Directory    missingInputDataOutput
-    Run Workflow    ${dir}workflow.json
-    Check Execution Status    FAILED
-    Check Error    ${dir}errorPattern.json
-    Clean Output Directory
+    Run Workflow
+    Check Report
 
 Missing Parameter Value
-    ${dir} =    Set Variable    resources/negativeTests/missingParamValue/
-    Remove Directory    missingParamValueOutput    recursive=True
-    Create Output Directory    missingParamValueOutput
-    Run Workflow    ${dir}workflow.json
-    Check Execution Status    FAILED
-    Check Error    ${dir}errorPattern.json
-    Clean Output Directory
+    Run Workflow
+    Check Report
 
 Parameter Out Of Range
-    ${dir} =    Set Variable    resources/negativeTests/paramOutOfRange/
-    Remove Directory    paramOutOfRangeOutput    recursive=True
-    Create Output Directory    paramOutOfRangeOutput
-    Run Workflow    ${dir}workflow.json
-    Check Execution Status    FAILED
-    Check Error    ${dir}errorPattern.json
-    Clean Output Directory
+    Run Workflow
+    Check Report
 
 Type Mismatch
-    ${dir} =    Set Variable    resources/negativeTests/typeMismatch/
-    Remove Directory    typeMismatchOutput    recursive=True
-    Create Output Directory    typeMismatchOutput
-    Run Workflow    ${dir}workflow.json
-    Check Execution Status    FAILED
-    Check Error    ${dir}errorPattern.json
-    Clean Output Directory
+    Run Workflow
+    Check Report
 
 Empty Column Selector
-    ${dir} =    Set Variable    resources/negativeTests/emptyColumnSelector/
-    Remove Directory    emptyColumnSelectorOutput    recursive=True
-    Create Output Directory    emptyColumnSelectorOutput
-    Run Workflow    ${dir}workflow.json
-    Check Execution Status    FAILED
-    Check Error    ${dir}errorPattern.json
-    Clean Output Directory
-
-Column Name Duplication
-    [Timeout]    1m
-    ${dir} =    Set Variable    resources/negativeTests/columnNameDuplication/
-    Remove Hdfs Path    /system_tests/columnNameDuplication
-    Upload to Hdfs    /system_tests/columnNameDuplication/input.csv    ${dir}input.csv
-    Remove Directory    columnNameDuplicationOutput    recursive=True
-    Create Output Directory    columnNameDuplicationOutput
-    Run Workflow    ${dir}workflow.json
-    Check Execution Status    FAILED
-    Check Error    ${dir}errorPattern.json
-    Clean Output Directory
-    Remove Hdfs Path    /system_tests/columnNameDuplication
-
-One Category Feature
-    ${dir} =    Set Variable    resources/negativeTests/oneCategoryFeature/
-    Remove Hdfs Path    /system_tests/oneCategoryFeature
-    Upload to Hdfs    /system_tests/oneCategoryFeature/input.csv    ${dir}input.csv
-    Remove Directory    oneCategoryFeatureOutput    recursive=True
-    Create Output Directory    oneCategoryFeatureOutput
-    Run Workflow    ${dir}workflow.json
-    Check Execution Status    FAILED
-    Check Error    ${dir}errorPattern.json
-    Clean Output Directory
-    Remove Hdfs Path    /system_tests/oneCategoryFeature
+    Run Workflow
+    Check Report
 
 Trivial Cycle
-    ${dir} =    Set Variable    resources/negativeTests/trivialCycle/
-    Remove Directory    trivialCycleOutput    recursive=True
-    Create Output Directory    trivialCycleOutput
-    Run Workflow    ${dir}workflow.json
-    Check Execution Status    FAILED
-    Check Error    ${dir}errorPattern.json
-    Clean Output Directory
+    Run Workflow
+    Check Report
 
 Cycle
-    ${dir} =    Set Variable    resources/negativeTests/cycle/
-    Remove Directory    cycleOutput    recursive=True
-    Create Output Directory    cycleOutput
-    Run Workflow    ${dir}workflow.json
-    Check Execution Status    FAILED
-    Check Error    ${dir}errorPattern.json
-    Clean Output Directory
+    Run Workflow
+    Check Report
+
+Column Name Duplication
+    [Setup]  Standard Hdfs Test Setup
+    Upload File To HDFS    input.csv
+    Run Workflow
+    Check Report
+    [Teardown]  Standard Hdfs Test Teardown
+
+One Category Feature
+    [Setup]  Standard Hdfs Test Setup
+    Upload File To HDFS    input.csv
+    Run Workflow
+    Check Report
+    [Teardown]  Standard Hdfs Test Teardown

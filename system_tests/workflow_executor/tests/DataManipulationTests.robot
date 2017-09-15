@@ -1,94 +1,62 @@
 # Copyright (c) 2015, CodiLime Inc.
 
+*** Variables ***
+${SUITE} =  dataManipulationTests
+
+*** Keywords ***
+
+Upload Resource File To Hdfs
+    [Arguments]  ${RESOURCE FILE NAME}
+    Upload to Hdfs  ${HDFS PATH}${RESOURCE FILE NAME}    ${TEST RESOURCE PATH}${RESOURCE FILE NAME}
+
 *** Settings ***
+Suite Setup     Standard Suite Setup
+Suite Teardown  Standard Suite Teardown
+
+Test Setup      Standard Hdfs Test Setup
+Test Teardown   Standard Hdfs Test Teardown
+
 Library    OperatingSystem
 Library    Collections
 Library    ../lib/HdfsClient.py
 Library    ../lib/WorkflowExecutorClient.py
+Library    ../lib/CommonSetupsAndTeardowns.py
+
 
 *** Test Cases ***
 Decompose Datetime
-    ${dir} =    Set Variable    resources/dataManipulationTests/decomposeDatetime/
-    Remove Hdfs Path    /system_tests/decomposeDatetime
-    Upload to Hdfs    /system_tests/decomposeDatetime/input.csv    ${dir}input.csv
-    Remove Directory    decomposeDatetimeOutput    recursive=yes
-    Create Output Directory    decomposeDatetimeOutput
-    Run Workflow    ${dir}workflow.json
-    Check Execution Status
-    Check Report    ${dir}expectedReportPattern.json
-    Clean Output Directory
-    Remove Hdfs Path    /system_tests/decomposeDatetime
+    Upload Resource File To Hdfs  input.csv
+    Run Workflow
+    Check Report
 
 One Hot Encoder
-    ${dir} =    Set Variable    resources/dataManipulationTests/oneHotEncoder/
-    Remove Hdfs Path    /system_tests/oneHotEncoder
-    Upload to Hdfs    /system_tests/oneHotEncoder/input.csv    ${dir}input.csv
-    Remove Directory    oneHotEncoderOutput    recursive=yes
-    Create Output Directory    oneHotEncoderOutput
-    Run Workflow    ${dir}workflow.json
-    Check Execution Status
-    Check Report    ${dir}expectedReportPattern.json
-    Clean Output Directory
-    Remove Hdfs Path    /system_tests/oneHotEncoder
+    Upload Resource File To Hdfs  input.csv
+    Run Workflow
+    Check Report
 
 SQL Expression
-    ${dir} =    Set Variable    resources/dataManipulationTests/sqlExpression/
-    Remove Hdfs Path    /system_tests/sqlExpression
-    Upload to Hdfs    /system_tests/sqlExpression/input.csv    ${dir}input.csv
-    Remove Directory    sqlExpressionOutput    recursive=yes
-    Create Output Directory    sqlExpressionOutput
-    Run Workflow    ${dir}workflow.json
-    Check Execution Status
-    Check Report    ${dir}expectedReportPattern.json
-    Clean Output Directory
-    Remove Hdfs Path    /system_tests/sqlExpression
+    Upload Resource File To Hdfs  input.csv
+    Run Workflow
+    Check Report
 
 Invalid SQL Expression
-    ${dir} =    Set Variable    resources/dataManipulationTests/invalidSqlExpression/
-    Remove Hdfs Path    /system_tests/invalidSqlExpression
-    Upload to Hdfs    /system_tests/invalidSqlExpression/input.csv    resources/dataManipulationTests/sqlExpression/input.csv
-    Remove Directory    invalidSqlExpressionOutput    recursive=yes
-    Create Output Directory    invalidSqlExpressionOutput
-    Run Workflow    ${dir}workflow.json
-    Check Execution Status    FAILED
-    Check Error    ${dir}errorPattern.json
-    Clean Output Directory
-    Remove Hdfs Path    /system_tests/invalidSqlExpression
+    Upload Resource File To Hdfs  input.csv
+    Run Workflow
+    Check Report
 
 Train Normalizer
-    ${dir} =    Set Variable    resources/dataManipulationTests/trainNormalizer/
-    Remove Hdfs Path    /system_tests/trainNormalizer
-    Upload to Hdfs    /system_tests/trainNormalizer/frame1.csv    ${dir}frame1.csv
-    Upload to Hdfs    /system_tests/trainNormalizer/frame2.csv    ${dir}frame2.csv
-    Remove Directory    trainNormalizerOutput    recursive=yes
-    Create Output Directory    trainNormalizerOutput
-    Run Workflow    ${dir}workflow.json
-    Check Execution Status
-    Check Report    ${dir}expectedReportPattern.json
-    Clean Output Directory
-    Remove Hdfs Path    /system_tests/trainNormalizer
+    Upload Resource File To Hdfs  frame1.csv
+    Upload Resource File To Hdfs  frame2.csv
+    Run Workflow
+    Check Report
 
 Join and Split
-    ${dir} =    Set Variable    resources/dataManipulationTests/joinAndSplit/
-    Remove Hdfs Path    /system_tests/joinAndSplit
-    Upload to Hdfs    /system_tests/joinAndSplit/frame1.csv    ${dir}frame1.csv
-    Upload to Hdfs    /system_tests/joinAndSplit/frame2.csv    ${dir}frame2.csv
-    Remove Directory    joinAndSplitOutput    recursive=yes
-    Create Output Directory    joinAndSplitOutput
-    Run Workflow    ${dir}workflow.json
-    Check Execution Status
-    Check Report    ${dir}expectedReportPattern.json
-    Clean Output Directory
-    Remove Hdfs Path    /system_tests/joinAndSplit
+    Upload Resource File To Hdfs  frame1.csv
+    Upload Resource File To Hdfs  frame2.csv
+    Run Workflow
+    Check Report
 
 Missing Values Handler
-    ${dir} =    Set Variable    resources/dataManipulationTests/handleMissingValues/
-    Remove Hdfs Path    /system_tests/handleMissingValues
-    Upload to Hdfs    /system_tests/handleMissingValues/input.csv    ${dir}input.csv
-    Remove Directory    handleMissingValuesOutput    recursive=yes
-    Create Output Directory    handleMissingValuesOutput
-    Run Workflow    ${dir}workflow.json
-    Check Execution Status
-    Check Report    ${dir}expectedReportPattern.json
-    Clean Output Directory
-    Remove Hdfs Path    /system_tests/handleMissingValues
+    Upload Resource File To Hdfs  input.csv
+    Run Workflow
+    Check Report

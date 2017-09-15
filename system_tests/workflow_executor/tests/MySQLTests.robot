@@ -1,8 +1,11 @@
 # Copyright (c) 2015, CodiLime Inc.
 
+*** Variables ***
+${SUITE} =  mySQLTests
+
 *** Keywords ***
 Connect To Docker Mysql Database
-    Build Docker Image    system_tests/mysql    resources/mySQLTests
+    Build Docker Image    system_tests/mysql    ${SUITE RESOURCE PATH}
     Kill Docker Container    mysql
     Remove Docker Container    mysql
     Run Docker Container    system_tests/mysql    mysql    -e    MYSQL_USER=system_tests    -e    MYSQL_PASS=pass    -p    3306:3306
@@ -13,10 +16,21 @@ Disconnect From Docker Mysql Database
     Disconnect From Database
     Kill Docker Container    mysql
 
+Custom Suite Setup
+    Standard Suite Setup
+    Connect To Docker Mysql Database
+
+Custom Suite Teardown
+    Disconnect From Docker Mysql Database
+    Standard Suite Teardown
+
 
 *** Settings ***
-Suite Setup       Connect To Docker Mysql Database
-Suite Teardown    Disconnect From Docker Mysql Database
+Suite Setup     Custom Suite Setup
+Suite Teardown  Custom Suite Teardown
+
+Test Setup      Standard Test Setup
+Test Teardown   Standard Test Teardown
 
 Library    Collections
 Library    DatabaseLibrary
@@ -25,22 +39,15 @@ Library    ../lib/DockerClient.py
 Library    ../lib/HdfsClient.py
 Library    ../lib/S3Client.py
 Library    ../lib/WorkflowExecutorClient.py
+Library    ../lib/CommonSetupsAndTeardowns.py
 
 
 *** Test Cases ***
 Read Write MySQL
-    ${dir} =    Set Variable    resources/mySQLTests/readWriteMySQL/
-    Execute Sql Script    ${dir}fixture.sql
-
-    Remove Directory    readWriteMySQLOutput    recursive=yes
-    Create Output Directory    readWriteMySQLOutput
-    Run Workflow Local    ${dir}workflow.json    --jars ${dir}../mysql-connector-java-5.1.36.jar
-
-    Check Execution Status
-    Check Report    ${dir}expectedReportPattern.json
+    Execute Sql Script    ${TEST RESOURCE PATH}fixture.sql
+    Run Workflow Local    ${WORKFLOW PATH}   --jars ${SUITE RESOURCE PATH}mysql-connector-java-5.1.36.jar
+    Check Report
     @{queryResultsIn} =    Query   SELECT * FROM read_write_mysql_in ORDER BY string_col;
     @{queryResultsOut} =    Query   SELECT * FROM read_write_mysql_out ORDER BY string_col;
     Should Be Equal As Strings    ${queryResultsIn}    ${queryResultsOut}
-
-    Clean Output Directory
-    Execute Sql Script    ${dir}cleanup.sql
+    Execute Sql Script    ${TEST RESOURCE PATH}cleanup.sql

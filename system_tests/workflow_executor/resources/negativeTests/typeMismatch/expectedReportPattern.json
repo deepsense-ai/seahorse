@@ -1,0 +1,21 @@
+{
+  "executionReport": {
+    "nodes": {
+      "b83ca380-73af-bc2d-4929-d9638eaa04da": {
+        "status": "ABORTED", 
+        "results": null, 
+        "error": null
+      }, 
+      "4f6b7735-cc9f-871d-34c1-961aa9afec7d": {
+        "status": "ABORTED", 
+        "results": null, 
+        "error": null
+      }
+    }, 
+    "resultEntities": {}, 
+    "error": {
+      "code": "IncorrectWorkflow", 
+      "title": "Incorrect workflow"
+    }
+  }
+}

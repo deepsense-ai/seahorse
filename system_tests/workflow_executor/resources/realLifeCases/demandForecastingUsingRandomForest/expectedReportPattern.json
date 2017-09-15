@@ -1,0 +1,4721 @@
+{
+  "executionReport": {
+    "nodes": {
+      "74a68995-fc1d-684f-b14e-a036cbfb73ed": {
+        "status": "COMPLETED", 
+        "results": [
+          "4dbe57fc-1de2-4994-89f6-d9f4f3776949"
+        ], 
+        "error": null
+      }, 
+      "a48e9ea5-762b-b41f-ffd4-16a51f48272b": {
+        "status": "COMPLETED", 
+        "results": [
+          "c8366da9-b14e-4ec3-942e-4e2011d23230", 
+          "a498386e-0841-46f6-921d-0cb0ff8d029c"
+        ], 
+        "error": null
+      }, 
+      "3fb387c9-5fe4-b153-fe0b-5b8223c0f5ad": {
+        "status": "COMPLETED", 
+        "results": [
+          "e0325985-a5f6-4431-998a-725f72802898"
+        ], 
+        "error": null
+      }, 
+      "0a9db8c4-ff23-65de-bf95-2c0c69ddf714": {
+        "status": "COMPLETED", 
+        "results": [
+          "887d167d-1922-4630-b391-4815eb994f28"
+        ], 
+        "error": null
+      }, 
+      "43420655-0907-ccc0-7cfb-8e2ece261f71": {
+        "status": "COMPLETED", 
+        "results": [
+          "377e7a8c-07c5-4a55-a29d-c6c8a2647b51"
+        ], 
+        "error": null
+      }, 
+      "1bea26e0-fbee-5ef5-1095-f82608e327cf": {
+        "status": "COMPLETED", 
+        "results": [
+          "3d603fff-b5c0-4ae9-9d40-b9dbcc9fbaa8"
+        ], 
+        "error": null
+      }, 
+      "b719281d-ded7-067c-98b8-f580bf30149c": {
+        "status": "COMPLETED", 
+        "results": [
+          "d8fb9620-26b5-46b7-a8f4-b495420f9048"
+        ], 
+        "error": null
+      }, 
+      "39c5e288-9654-ce6a-d6e7-ba0b2dd93c6d": {
+        "status": "COMPLETED", 
+        "results": [
+          "9e17eb33-1c5d-413a-be51-3a11cc47c1a1"
+        ], 
+        "error": null
+      }, 
+      "ad38c4c9-b405-ee49-8ae4-478685cacc79": {
+        "status": "COMPLETED", 
+        "results": [
+          "2d753b22-09c4-486f-b24e-b54e35b429eb"
+        ], 
+        "error": null
+      }, 
+      "2f7c7540-ee90-0221-31d0-47f63d68e67c": {
+        "status": "COMPLETED", 
+        "results": [
+          "353dff1e-4819-4d67-9e28-c95c86dd09fc", 
+          "9f516de5-d8e2-4f5b-8f7f-75be5ce5e869"
+        ], 
+        "error": null
+      }, 
+      "5b2f3014-39ae-69fe-0f02-1c056c47f837": {
+        "status": "COMPLETED", 
+        "results": [
+          "6df97134-cb39-447c-bef6-5a07e4b5348a"
+        ], 
+        "error": null
+      }, 
+      "57b7d45c-629b-d8c0-d831-6f0b023f5c44": {
+        "status": "COMPLETED", 
+        "results": [
+          "576e9161-5e0d-4c49-89ee-1ba64cdd5f77"
+        ], 
+        "error": null
+      }, 
+      "020ae2b6-2ec3-a829-847b-bd1d54e81fb7": {
+        "status": "COMPLETED", 
+        "results": [
+          "c1f92b72-5399-46d2-8a2c-d96b70ed101a"
+        ], 
+        "error": null
+      }
+    }, 
+    "resultEntities": {
+      "e0325985-a5f6-4431-998a-725f72802898": {
+        "report": {
+          "tables": {
+            "Evaluate Regression Report": {
+              "name": "Evaluate Regression Report", 
+              "columnNames": [
+                "DataFrame Size", 
+                "Explained Variance", 
+                "Mean Absolute Error", 
+                "Mean Squared Error", 
+                "r2", 
+                "Root Mean Squared Error"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "blockType": "table", 
+              "description": "Evaluate regression metrics"
+            }
+          }, 
+          "distributions": {}
+        }
+      }, 
+      "9f516de5-d8e2-4f5b-8f7f-75be5ce5e869": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "16", 
+                  "5183"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "weather2", 
+                "weather3", 
+                "windspeed", 
+                "hum", 
+                "temp", 
+                "atemp", 
+                "log_count", 
+                "workingday", 
+                "holiday", 
+                "season2"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "0", 
+                  "0", 
+                  "0.2836", 
+                  "0.81", 
+                  "0.36", 
+                  "0.3333", 
+                  "4.025352", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "1", 
+                  "0", 
+                  "0.2985", 
+                  "0.77", 
+                  "0.44", 
+                  "0.4394", 
+                  "4.70048", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "1", 
+                  "0", 
+                  "0.2985", 
+                  "0.82", 
+                  "0.42", 
+                  "0.4242", 
+                  "4.532599", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "1", 
+                  "0", 
+                  "0.194", 
+                  "0.87", 
+                  "0.4", 
+                  "0.4091", 
+                  "3.526361", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "1", 
+                  "0", 
+                  "0.2239", 
+                  "0.94", 
+                  "0.4", 
+                  "0.4091", 
+                  "3.332205", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "1", 
+                  "0", 
+                  "0.2985", 
+                  "0.88", 
+                  "0.46", 
+                  "0.4545", 
+                  "3.663562", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "1", 
+                  "0", 
+                  "0.2985", 
+                  "0.88", 
+                  "0.46", 
+                  "0.4545", 
+                  "2.833213", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "1", 
+                  "0", 
+                  "0.2836", 
+                  "1", 
+                  "0.42", 
+                  "0.4242", 
+                  "2.197225", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "0", 
+                  "1", 
+                  "0.2239", 
+                  "0.71", 
+                  "0.4", 
+                  "0.4091", 
+                  "2.079442", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "1", 
+                  "0", 
+                  "0.2239", 
+                  "0.81", 
+                  "0.36", 
+                  "0.3485", 
+                  "3.970292", 
+                  "0", 
+                  "0", 
+                  "0"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "weather2": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.267992", 
+                "min": "0"
+              }, 
+              "name": "weather2", 
+              "subtype": "continuous", 
+              "counts": [
+                3794, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1389
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "temp": {
+              "statistics": {
+                "max": "0.96", 
+                "mean": "0.498094", 
+                "min": "0.02"
+              }, 
+              "name": "temp", 
+              "subtype": "continuous", 
+              "counts": [
+                15, 
+                18, 
+                140, 
+                140, 
+                290, 
+                447, 
+                354, 
+                309, 
+                471, 
+                251, 
+                326, 
+                453, 
+                447, 
+                420, 
+                499, 
+                267, 
+                135, 
+                135, 
+                38, 
+                28
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "weather3": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.083156", 
+                "min": "0"
+              }, 
+              "name": "weather3", 
+              "subtype": "continuous", 
+              "counts": [
+                4752, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                431
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "hum": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.628727", 
+                "min": "0"
+              }, 
+              "name": "hum", 
+              "subtype": "continuous", 
+              "counts": [
+                6, 
+                0, 
+                1, 
+                12, 
+                50, 
+                118, 
+                189, 
+                281, 
+                372, 
+                393, 
+                419, 
+                428, 
+                425, 
+                444, 
+                448, 
+                379, 
+                416, 
+                458, 
+                263, 
+                81
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "windspeed": {
+              "statistics": {
+                "max": "0.8507", 
+                "mean": "0.19015", 
+                "min": "0"
+              }, 
+              "name": "windspeed", 
+              "subtype": "continuous", 
+              "counts": [
+                635, 
+                0, 
+                928, 
+                1030, 
+                488, 
+                835, 
+                313, 
+                407, 
+                158, 
+                187, 
+                98, 
+                39, 
+                34, 
+                10, 
+                9, 
+                9, 
+                1, 
+                0, 
+                1, 
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "workingday": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.67432", 
+                "min": "0"
+              }, 
+              "name": "workingday", 
+              "subtype": "continuous", 
+              "counts": [
+                1688, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                3495
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "atemp": {
+              "statistics": {
+                "max": "0.9242", 
+                "mean": "0.476746", 
+                "min": "0"
+              }, 
+              "name": "atemp", 
+              "subtype": "continuous", 
+              "counts": [
+                4, 
+                14, 
+                62, 
+                109, 
+                299, 
+                331, 
+                427, 
+                346, 
+                307, 
+                466, 
+                414, 
+                526, 
+                303, 
+                616, 
+                455, 
+                260, 
+                124, 
+                73, 
+                29, 
+                18
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "log_count": {
+              "statistics": {
+                "max": "6.884487", 
+                "mean": "4.555934", 
+                "min": "0"
+              }, 
+              "name": "log_count", 
+              "subtype": "continuous", 
+              "counts": [
+                45, 
+                0, 
+                64, 
+                71, 
+                137, 
+                130, 
+                190, 
+                140, 
+                157, 
+                193, 
+                216, 
+                248, 
+                326, 
+                404, 
+                576, 
+                707, 
+                617, 
+                545, 
+                319, 
+                98
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "season2": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.255451", 
+                "min": "0"
+              }, 
+              "name": "season2", 
+              "subtype": "continuous", 
+              "counts": [
+                3859, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1324
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "holiday": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.029134", 
+                "min": "0"
+              }, 
+              "name": "holiday", 
+              "subtype": "continuous", 
+              "counts": [
+                5032, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                151
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "377e7a8c-07c5-4a55-a29d-c6c8a2647b51": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "17", 
+                  "17379"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "datetime", 
+                "weather2", 
+                "weather3", 
+                "windspeed", 
+                "hum", 
+                "temp", 
+                "atemp", 
+                "log_count", 
+                "workingday", 
+                "holiday"
+              ], 
+              "columnTypes": [
+                "timestamp", 
+                "boolean", 
+                "boolean", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "boolean", 
+                "boolean"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "2011-01-01T00:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.81", 
+                  "0.24", 
+                  "0.2879", 
+                  "2.772589", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T01:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.8", 
+                  "0.22", 
+                  "0.2727", 
+                  "3.688879", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T02:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.8", 
+                  "0.22", 
+                  "0.2727", 
+                  "3.465736", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T03:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.75", 
+                  "0.24", 
+                  "0.2879", 
+                  "2.564949", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T04:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.75", 
+                  "0.24", 
+                  "0.2879", 
+                  "0", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T05:00:00.000Z", 
+                  "true", 
+                  "false", 
+                  "0.0896", 
+                  "0.75", 
+                  "0.24", 
+                  "0.2576", 
+                  "0", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T06:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.8", 
+                  "0.22", 
+                  "0.2727", 
+                  "0.693147", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T07:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.86", 
+                  "0.2", 
+                  "0.2576", 
+                  "1.098612", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T08:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.75", 
+                  "0.24", 
+                  "0.2879", 
+                  "2.079442", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T09:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.76", 
+                  "0.32", 
+                  "0.3485", 
+                  "2.639057", 
+                  "false", 
+                  "false"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "weather2": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                12835, 
+                4544
+              ], 
+              "name": "weather2", 
+              "missingValues": 0
+            }, 
+            "temp": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.496987", 
+                "min": "0.02"
+              }, 
+              "name": "temp", 
+              "subtype": "continuous", 
+              "counts": [
+                49, 
+                68, 
+                444, 
+                509, 
+                1502, 
+                942, 
+                1927, 
+                986, 
+                1614, 
+                819, 
+                1125, 
+                1559, 
+                1418, 
+                1732, 
+                1086, 
+                890, 
+                351, 
+                274, 
+                66, 
+                18
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "weather3": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                15957, 
+                1422
+              ], 
+              "name": "weather3", 
+              "missingValues": 0
+            }, 
+            "hum": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.627229", 
+                "min": "0"
+              }, 
+              "name": "hum", 
+              "subtype": "continuous", 
+              "counts": [
+                22, 
+                1, 
+                5, 
+                50, 
+                172, 
+                411, 
+                625, 
+                969, 
+                1263, 
+                1378, 
+                1394, 
+                1423, 
+                1310, 
+                1467, 
+                1472, 
+                1342, 
+                1435, 
+                1465, 
+                901, 
+                274
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "windspeed": {
+              "statistics": {
+                "max": "0.8507", 
+                "mean": "0.190098", 
+                "min": "0"
+              }, 
+              "name": "windspeed", 
+              "subtype": "continuous", 
+              "counts": [
+                2180, 
+                0, 
+                3042, 
+                3433, 
+                1657, 
+                2808, 
+                1048, 
+                1410, 
+                460, 
+                677, 
+                322, 
+                112, 
+                123, 
+                44, 
+                23, 
+                25, 
+                7, 
+                2, 
+                3, 
+                3
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "datetime": {
+              "statistics": {
+                "max": "2012-12-31T23:00:00.000Z", 
+                "mean": "2012-01-02T15:41:22.858Z", 
+                "min": "2011-01-01T00:00:00.000Z"
+              }, 
+              "name": "datetime", 
+              "subtype": "continuous", 
+              "counts": [
+                819, 
+                850, 
+                869, 
+                877, 
+                877, 
+                877, 
+                862, 
+                876, 
+                877, 
+                873, 
+                873, 
+                873, 
+                875, 
+                878, 
+                877, 
+                877, 
+                877, 
+                877, 
+                840, 
+                875
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "workingday": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                5514, 
+                11865
+              ], 
+              "name": "workingday", 
+              "missingValues": 0
+            }, 
+            "atemp": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.475775", 
+                "min": "0"
+              }, 
+              "name": "atemp", 
+              "subtype": "continuous", 
+              "counts": [
+                23, 
+                55, 
+                211, 
+                575, 
+                1088, 
+                1254, 
+                2000, 
+                631, 
+                1669, 
+                1378, 
+                2264, 
+                952, 
+                2028, 
+                1914, 
+                640, 
+                404, 
+                225, 
+                54, 
+                10, 
+                4
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "log_count": {
+              "statistics": {
+                "max": "6.884487", 
+                "mean": "4.536082", 
+                "min": "0"
+              }, 
+              "name": "log_count", 
+              "subtype": "continuous", 
+              "counts": [
+                158, 
+                0, 
+                208, 
+                224, 
+                491, 
+                434, 
+                612, 
+                421, 
+                600, 
+                681, 
+                748, 
+                850, 
+                1072, 
+                1489, 
+                1911, 
+                2319, 
+                2126, 
+                1654, 
+                1045, 
+                336
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "holiday": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                16879, 
+                500
+              ], 
+              "name": "holiday", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "a498386e-0841-46f6-921d-0cb0ff8d029c": {
+        "report": {
+          "tables": {
+            "Cross-validate Regression Report": {
+              "name": "Cross-validate Regression Report", 
+              "columnNames": [
+                "Fold Number", 
+                "Training Set Size", 
+                "Test Set Size", 
+                "Explained Variance", 
+                "Mean Absolute Error", 
+                "Mean Squared Error", 
+                "r2", 
+                "Root Mean Squared Error"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": [
+                "1", 
+                "2", 
+                "3", 
+                "4", 
+                "5", 
+                "average"
+              ], 
+              "blockType": "table", 
+              "description": "Cross-validate regression metrics"
+            }
+          }, 
+          "distributions": {}
+        }
+      }, 
+      "4dbe57fc-1de2-4994-89f6-d9f4f3776949": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "7", 
+                  "17379"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "datetime", 
+                "log_count", 
+                "workingday", 
+                "holiday", 
+                "season2", 
+                "season3", 
+                "season4"
+              ], 
+              "columnTypes": [
+                "timestamp", 
+                "numeric", 
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "2011-01-01T00:00:00.000Z", 
+                  "2.772589", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T01:00:00.000Z", 
+                  "3.688879", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T02:00:00.000Z", 
+                  "3.465736", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T03:00:00.000Z", 
+                  "2.564949", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T04:00:00.000Z", 
+                  "0", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T05:00:00.000Z", 
+                  "0", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T06:00:00.000Z", 
+                  "0.693147", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T07:00:00.000Z", 
+                  "1.098612", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T08:00:00.000Z", 
+                  "2.079442", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T09:00:00.000Z", 
+                  "2.639057", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "datetime": {
+              "statistics": {
+                "max": "2012-12-31T23:00:00.000Z", 
+                "mean": "2012-01-02T15:41:22.858Z", 
+                "min": "2011-01-01T00:00:00.000Z"
+              }, 
+              "name": "datetime", 
+              "subtype": "continuous", 
+              "counts": [
+                819, 
+                850, 
+                869, 
+                877, 
+                877, 
+                877, 
+                862, 
+                876, 
+                877, 
+                873, 
+                873, 
+                873, 
+                875, 
+                878, 
+                877, 
+                877, 
+                877, 
+                877, 
+                840, 
+                875
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "workingday": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                5514, 
+                11865
+              ], 
+              "name": "workingday", 
+              "missingValues": 0
+            }, 
+            "log_count": {
+              "statistics": {
+                "max": "6.884487", 
+                "mean": "4.536082", 
+                "min": "0"
+              }, 
+              "name": "log_count", 
+              "subtype": "continuous", 
+              "counts": [
+                158, 
+                0, 
+                208, 
+                224, 
+                491, 
+                434, 
+                612, 
+                421, 
+                600, 
+                681, 
+                748, 
+                850, 
+                1072, 
+                1489, 
+                1911, 
+                2319, 
+                2126, 
+                1654, 
+                1045, 
+                336
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "season2": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                12970, 
+                4409
+              ], 
+              "name": "season2", 
+              "missingValues": 0
+            }, 
+            "season3": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                12883, 
+                4496
+              ], 
+              "name": "season3", 
+              "missingValues": 0
+            }, 
+            "holiday": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                16879, 
+                500
+              ], 
+              "name": "holiday", 
+              "missingValues": 0
+            }, 
+            "season4": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                13147, 
+                4232
+              ], 
+              "name": "season4", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "2d753b22-09c4-486f-b24e-b54e35b429eb": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "17", 
+                  "17379"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "datetime", 
+                "weather2", 
+                "weather3", 
+                "windspeed", 
+                "hum", 
+                "temp", 
+                "atemp", 
+                "log_count", 
+                "workingday", 
+                "holiday"
+              ], 
+              "columnTypes": [
+                "timestamp", 
+                "boolean", 
+                "boolean", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "boolean", 
+                "boolean"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "2011-01-01T00:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.81", 
+                  "0.24", 
+                  "0.2879", 
+                  "2.772589", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T01:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.8", 
+                  "0.22", 
+                  "0.2727", 
+                  "3.688879", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T02:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.8", 
+                  "0.22", 
+                  "0.2727", 
+                  "3.465736", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T03:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.75", 
+                  "0.24", 
+                  "0.2879", 
+                  "2.564949", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T04:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.75", 
+                  "0.24", 
+                  "0.2879", 
+                  "0", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T05:00:00.000Z", 
+                  "true", 
+                  "false", 
+                  "0.0896", 
+                  "0.75", 
+                  "0.24", 
+                  "0.2576", 
+                  "0", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T06:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.8", 
+                  "0.22", 
+                  "0.2727", 
+                  "0.693147", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T07:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.86", 
+                  "0.2", 
+                  "0.2576", 
+                  "1.098612", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T08:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.75", 
+                  "0.24", 
+                  "0.2879", 
+                  "2.079442", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T09:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.76", 
+                  "0.32", 
+                  "0.3485", 
+                  "2.639057", 
+                  "false", 
+                  "false"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "weather2": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                12835, 
+                4544
+              ], 
+              "name": "weather2", 
+              "missingValues": 0
+            }, 
+            "temp": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.496987", 
+                "min": "0.02"
+              }, 
+              "name": "temp", 
+              "subtype": "continuous", 
+              "counts": [
+                49, 
+                68, 
+                444, 
+                509, 
+                1502, 
+                942, 
+                1927, 
+                986, 
+                1614, 
+                819, 
+                1125, 
+                1559, 
+                1418, 
+                1732, 
+                1086, 
+                890, 
+                351, 
+                274, 
+                66, 
+                18
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "weather3": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                15957, 
+                1422
+              ], 
+              "name": "weather3", 
+              "missingValues": 0
+            }, 
+            "hum": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.627229", 
+                "min": "0"
+              }, 
+              "name": "hum", 
+              "subtype": "continuous", 
+              "counts": [
+                22, 
+                1, 
+                5, 
+                50, 
+                172, 
+                411, 
+                625, 
+                969, 
+                1263, 
+                1378, 
+                1394, 
+                1423, 
+                1310, 
+                1467, 
+                1472, 
+                1342, 
+                1435, 
+                1465, 
+                901, 
+                274
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "windspeed": {
+              "statistics": {
+                "max": "0.8507", 
+                "mean": "0.190098", 
+                "min": "0"
+              }, 
+              "name": "windspeed", 
+              "subtype": "continuous", 
+              "counts": [
+                2180, 
+                0, 
+                3042, 
+                3433, 
+                1657, 
+                2808, 
+                1048, 
+                1410, 
+                460, 
+                677, 
+                322, 
+                112, 
+                123, 
+                44, 
+                23, 
+                25, 
+                7, 
+                2, 
+                3, 
+                3
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "datetime": {
+              "statistics": {
+                "max": "2012-12-31T23:00:00.000Z", 
+                "mean": "2012-01-02T15:41:22.858Z", 
+                "min": "2011-01-01T00:00:00.000Z"
+              }, 
+              "name": "datetime", 
+              "subtype": "continuous", 
+              "counts": [
+                819, 
+                850, 
+                869, 
+                877, 
+                877, 
+                877, 
+                862, 
+                876, 
+                877, 
+                873, 
+                873, 
+                873, 
+                875, 
+                878, 
+                877, 
+                877, 
+                877, 
+                877, 
+                840, 
+                875
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "workingday": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                5514, 
+                11865
+              ], 
+              "name": "workingday", 
+              "missingValues": 0
+            }, 
+            "atemp": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.475775", 
+                "min": "0"
+              }, 
+              "name": "atemp", 
+              "subtype": "continuous", 
+              "counts": [
+                23, 
+                55, 
+                211, 
+                575, 
+                1088, 
+                1254, 
+                2000, 
+                631, 
+                1669, 
+                1378, 
+                2264, 
+                952, 
+                2028, 
+                1914, 
+                640, 
+                404, 
+                225, 
+                54, 
+                10, 
+                4
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "log_count": {
+              "statistics": {
+                "max": "6.884487", 
+                "mean": "4.536082", 
+                "min": "0"
+              }, 
+              "name": "log_count", 
+              "subtype": "continuous", 
+              "counts": [
+                158, 
+                0, 
+                208, 
+                224, 
+                491, 
+                434, 
+                612, 
+                421, 
+                600, 
+                681, 
+                748, 
+                850, 
+                1072, 
+                1489, 
+                1911, 
+                2319, 
+                2126, 
+                1654, 
+                1045, 
+                336
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "holiday": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                16879, 
+                500
+              ], 
+              "name": "holiday", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "d8fb9620-26b5-46b7-a8f4-b495420f9048": {
+        "report": {
+          "tables": {
+            "Parameters": {
+              "name": "Parameters", 
+              "columnNames": [
+                "Num trees", 
+                "Feature subset strategy", 
+                "Impurity", 
+                "Max depth", 
+                "Max bins"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "string", 
+                "string", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "1", 
+                  "auto", 
+                  "variance", 
+                  "20", 
+                  "100"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {}
+        }
+      }, 
+      "c8366da9-b14e-4ec3-942e-4e2011d23230": {
+        "report": {
+          "tables": {
+            "Feature columns": {
+              "name": "Feature columns", 
+              "columnNames": [
+                "Feature columns"
+              ], 
+              "columnTypes": [
+                "string"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "weather2"
+                ], 
+                [
+                  "weather3"
+                ], 
+                [
+                  "windspeed"
+                ], 
+                [
+                  "hum"
+                ], 
+                [
+                  "temp"
+                ], 
+                [
+                  "atemp"
+                ], 
+                [
+                  "workingday"
+                ], 
+                [
+                  "holiday"
+                ], 
+                [
+                  "season2"
+                ], 
+                [
+                  "season3"
+                ], 
+                [
+                  "season4"
+                ], 
+                [
+                  "datetime_year"
+                ], 
+                [
+                  "datetime_month"
+                ], 
+                [
+                  "datetime_day"
+                ], 
+                [
+                  "datetime_hour"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Parameters": {
+              "name": "Parameters", 
+              "columnNames": [
+                "Num trees", 
+                "Feature subset strategy", 
+                "Impurity", 
+                "Max depth", 
+                "Max bins"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "string", 
+                "string", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "1", 
+                  "auto", 
+                  "variance", 
+                  "20", 
+                  "100"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Target column": {
+              "name": "Target column", 
+              "columnNames": [
+                "Target column"
+              ], 
+              "columnTypes": [
+                "string"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "log_count"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {}
+        }
+      }, 
+      "576e9161-5e0d-4c49-89ee-1ba64cdd5f77": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "2", 
+                  "5183"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "log_count", 
+                "log_count_prediction"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "4.025352", 
+                  "4.51086"
+                ], 
+                [
+                  "4.70048", 
+                  "4.543295"
+                ], 
+                [
+                  "4.532599", 
+                  "4.89784"
+                ], 
+                [
+                  "3.526361", 
+                  "4.663439"
+                ], 
+                [
+                  "3.332205", 
+                  "4.158883"
+                ], 
+                [
+                  "3.663562", 
+                  "3.912023"
+                ], 
+                [
+                  "2.833213", 
+                  "0.693147"
+                ], 
+                [
+                  "2.197225", 
+                  "3.332205"
+                ], 
+                [
+                  "2.079442", 
+                  "5.247024"
+                ], 
+                [
+                  "3.970292", 
+                  "4.532599"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "log_count_prediction": {
+              "statistics": {
+                "max": "6.875232", 
+                "mean": "4.646369", 
+                "min": "0"
+              }, 
+              "name": "log_count_prediction", 
+              "subtype": "continuous", 
+              "counts": [
+                39, 
+                0, 
+                42, 
+                44, 
+                148, 
+                108, 
+                182, 
+                98, 
+                184, 
+                195, 
+                210, 
+                228, 
+                323, 
+                419, 
+                521, 
+                710, 
+                693, 
+                560, 
+                351, 
+                128
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "log_count": {
+              "statistics": {
+                "max": "6.884487", 
+                "mean": "4.555934", 
+                "min": "0"
+              }, 
+              "name": "log_count", 
+              "subtype": "continuous", 
+              "counts": [
+                45, 
+                0, 
+                64, 
+                71, 
+                137, 
+                130, 
+                190, 
+                140, 
+                157, 
+                193, 
+                216, 
+                248, 
+                326, 
+                404, 
+                576, 
+                707, 
+                617, 
+                545, 
+                319, 
+                98
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "887d167d-1922-4630-b391-4815eb994f28": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "16", 
+                  "17379"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "weather2", 
+                "weather3", 
+                "windspeed", 
+                "hum", 
+                "temp", 
+                "atemp", 
+                "log_count", 
+                "workingday", 
+                "holiday", 
+                "season2"
+              ], 
+              "columnTypes": [
+                "boolean", 
+                "boolean", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "boolean", 
+                "boolean", 
+                "boolean"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.81", 
+                  "0.24", 
+                  "0.2879", 
+                  "2.772589", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.8", 
+                  "0.22", 
+                  "0.2727", 
+                  "3.688879", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.8", 
+                  "0.22", 
+                  "0.2727", 
+                  "3.465736", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.75", 
+                  "0.24", 
+                  "0.2879", 
+                  "2.564949", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.75", 
+                  "0.24", 
+                  "0.2879", 
+                  "0", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "true", 
+                  "false", 
+                  "0.0896", 
+                  "0.75", 
+                  "0.24", 
+                  "0.2576", 
+                  "0", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.8", 
+                  "0.22", 
+                  "0.2727", 
+                  "0.693147", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.86", 
+                  "0.2", 
+                  "0.2576", 
+                  "1.098612", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.75", 
+                  "0.24", 
+                  "0.2879", 
+                  "2.079442", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.76", 
+                  "0.32", 
+                  "0.3485", 
+                  "2.639057", 
+                  "false", 
+                  "false", 
+                  "false"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "weather2": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                12835, 
+                4544
+              ], 
+              "name": "weather2", 
+              "missingValues": 0
+            }, 
+            "temp": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.496987", 
+                "min": "0.02"
+              }, 
+              "name": "temp", 
+              "subtype": "continuous", 
+              "counts": [
+                49, 
+                68, 
+                444, 
+                509, 
+                1502, 
+                942, 
+                1927, 
+                986, 
+                1614, 
+                819, 
+                1125, 
+                1559, 
+                1418, 
+                1732, 
+                1086, 
+                890, 
+                351, 
+                274, 
+                66, 
+                18
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "weather3": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                15957, 
+                1422
+              ], 
+              "name": "weather3", 
+              "missingValues": 0
+            }, 
+            "hum": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.627229", 
+                "min": "0"
+              }, 
+              "name": "hum", 
+              "subtype": "continuous", 
+              "counts": [
+                22, 
+                1, 
+                5, 
+                50, 
+                172, 
+                411, 
+                625, 
+                969, 
+                1263, 
+                1378, 
+                1394, 
+                1423, 
+                1310, 
+                1467, 
+                1472, 
+                1342, 
+                1435, 
+                1465, 
+                901, 
+                274
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "windspeed": {
+              "statistics": {
+                "max": "0.8507", 
+                "mean": "0.190098", 
+                "min": "0"
+              }, 
+              "name": "windspeed", 
+              "subtype": "continuous", 
+              "counts": [
+                2180, 
+                0, 
+                3042, 
+                3433, 
+                1657, 
+                2808, 
+                1048, 
+                1410, 
+                460, 
+                677, 
+                322, 
+                112, 
+                123, 
+                44, 
+                23, 
+                25, 
+                7, 
+                2, 
+                3, 
+                3
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "workingday": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                5514, 
+                11865
+              ], 
+              "name": "workingday", 
+              "missingValues": 0
+            }, 
+            "atemp": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.475775", 
+                "min": "0"
+              }, 
+              "name": "atemp", 
+              "subtype": "continuous", 
+              "counts": [
+                23, 
+                55, 
+                211, 
+                575, 
+                1088, 
+                1254, 
+                2000, 
+                631, 
+                1669, 
+                1378, 
+                2264, 
+                952, 
+                2028, 
+                1914, 
+                640, 
+                404, 
+                225, 
+                54, 
+                10, 
+                4
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "log_count": {
+              "statistics": {
+                "max": "6.884487", 
+                "mean": "4.536082", 
+                "min": "0"
+              }, 
+              "name": "log_count", 
+              "subtype": "continuous", 
+              "counts": [
+                158, 
+                0, 
+                208, 
+                224, 
+                491, 
+                434, 
+                612, 
+                421, 
+                600, 
+                681, 
+                748, 
+                850, 
+                1072, 
+                1489, 
+                1911, 
+                2319, 
+                2126, 
+                1654, 
+                1045, 
+                336
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "season2": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                12970, 
+                4409
+              ], 
+              "name": "season2", 
+              "missingValues": 0
+            }, 
+            "holiday": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                16879, 
+                500
+              ], 
+              "name": "holiday", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "3d603fff-b5c0-4ae9-9d40-b9dbcc9fbaa8": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "17", 
+                  "5183"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "weather2", 
+                "weather3", 
+                "windspeed", 
+                "hum", 
+                "temp", 
+                "atemp", 
+                "log_count", 
+                "workingday", 
+                "holiday", 
+                "season2"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "0", 
+                  "0", 
+                  "0.2836", 
+                  "0.81", 
+                  "0.36", 
+                  "0.3333", 
+                  "4.025352", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "1", 
+                  "0", 
+                  "0.2985", 
+                  "0.77", 
+                  "0.44", 
+                  "0.4394", 
+                  "4.70048", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "1", 
+                  "0", 
+                  "0.2985", 
+                  "0.82", 
+                  "0.42", 
+                  "0.4242", 
+                  "4.532599", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "1", 
+                  "0", 
+                  "0.194", 
+                  "0.87", 
+                  "0.4", 
+                  "0.4091", 
+                  "3.526361", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "1", 
+                  "0", 
+                  "0.2239", 
+                  "0.94", 
+                  "0.4", 
+                  "0.4091", 
+                  "3.332205", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "1", 
+                  "0", 
+                  "0.2985", 
+                  "0.88", 
+                  "0.46", 
+                  "0.4545", 
+                  "3.663562", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "1", 
+                  "0", 
+                  "0.2985", 
+                  "0.88", 
+                  "0.46", 
+                  "0.4545", 
+                  "2.833213", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "1", 
+                  "0", 
+                  "0.2836", 
+                  "1", 
+                  "0.42", 
+                  "0.4242", 
+                  "2.197225", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "0", 
+                  "1", 
+                  "0.2239", 
+                  "0.71", 
+                  "0.4", 
+                  "0.4091", 
+                  "2.079442", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "1", 
+                  "0", 
+                  "0.2239", 
+                  "0.81", 
+                  "0.36", 
+                  "0.3485", 
+                  "3.970292", 
+                  "0", 
+                  "0", 
+                  "0"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "weather2": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.267992", 
+                "min": "0"
+              }, 
+              "name": "weather2", 
+              "subtype": "continuous", 
+              "counts": [
+                3794, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1389
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "temp": {
+              "statistics": {
+                "max": "0.96", 
+                "mean": "0.498094", 
+                "min": "0.02"
+              }, 
+              "name": "temp", 
+              "subtype": "continuous", 
+              "counts": [
+                15, 
+                18, 
+                140, 
+                140, 
+                290, 
+                447, 
+                354, 
+                309, 
+                471, 
+                251, 
+                326, 
+                453, 
+                447, 
+                420, 
+                499, 
+                267, 
+                135, 
+                135, 
+                38, 
+                28
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "weather3": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.083156", 
+                "min": "0"
+              }, 
+              "name": "weather3", 
+              "subtype": "continuous", 
+              "counts": [
+                4752, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                431
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "hum": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.628727", 
+                "min": "0"
+              }, 
+              "name": "hum", 
+              "subtype": "continuous", 
+              "counts": [
+                6, 
+                0, 
+                1, 
+                12, 
+                50, 
+                118, 
+                189, 
+                281, 
+                372, 
+                393, 
+                419, 
+                428, 
+                425, 
+                444, 
+                448, 
+                379, 
+                416, 
+                458, 
+                263, 
+                81
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "windspeed": {
+              "statistics": {
+                "max": "0.8507", 
+                "mean": "0.19015", 
+                "min": "0"
+              }, 
+              "name": "windspeed", 
+              "subtype": "continuous", 
+              "counts": [
+                635, 
+                0, 
+                928, 
+                1030, 
+                488, 
+                835, 
+                313, 
+                407, 
+                158, 
+                187, 
+                98, 
+                39, 
+                34, 
+                10, 
+                9, 
+                9, 
+                1, 
+                0, 
+                1, 
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "workingday": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.67432", 
+                "min": "0"
+              }, 
+              "name": "workingday", 
+              "subtype": "continuous", 
+              "counts": [
+                1688, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                3495
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "atemp": {
+              "statistics": {
+                "max": "0.9242", 
+                "mean": "0.476746", 
+                "min": "0"
+              }, 
+              "name": "atemp", 
+              "subtype": "continuous", 
+              "counts": [
+                4, 
+                14, 
+                62, 
+                109, 
+                299, 
+                331, 
+                427, 
+                346, 
+                307, 
+                466, 
+                414, 
+                526, 
+                303, 
+                616, 
+                455, 
+                260, 
+                124, 
+                73, 
+                29, 
+                18
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "log_count": {
+              "statistics": {
+                "max": "6.884487", 
+                "mean": "4.555934", 
+                "min": "0"
+              }, 
+              "name": "log_count", 
+              "subtype": "continuous", 
+              "counts": [
+                45, 
+                0, 
+                64, 
+                71, 
+                137, 
+                130, 
+                190, 
+                140, 
+                157, 
+                193, 
+                216, 
+                248, 
+                326, 
+                404, 
+                576, 
+                707, 
+                617, 
+                545, 
+                319, 
+                98
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "season2": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.255451", 
+                "min": "0"
+              }, 
+              "name": "season2", 
+              "subtype": "continuous", 
+              "counts": [
+                3859, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1324
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "holiday": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.029134", 
+                "min": "0"
+              }, 
+              "name": "holiday", 
+              "subtype": "continuous", 
+              "counts": [
+                5032, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                151
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "9e17eb33-1c5d-413a-be51-3a11cc47c1a1": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "7", 
+                  "17379"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "datetime", 
+                "weather2", 
+                "weather3", 
+                "windspeed", 
+                "hum", 
+                "temp", 
+                "atemp"
+              ], 
+              "columnTypes": [
+                "timestamp", 
+                "boolean", 
+                "boolean", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "2011-01-01T00:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.81", 
+                  "0.24", 
+                  "0.2879"
+                ], 
+                [
+                  "2011-01-01T01:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.8", 
+                  "0.22", 
+                  "0.2727"
+                ], 
+                [
+                  "2011-01-01T02:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.8", 
+                  "0.22", 
+                  "0.2727"
+                ], 
+                [
+                  "2011-01-01T03:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.75", 
+                  "0.24", 
+                  "0.2879"
+                ], 
+                [
+                  "2011-01-01T04:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.75", 
+                  "0.24", 
+                  "0.2879"
+                ], 
+                [
+                  "2011-01-01T05:00:00.000Z", 
+                  "true", 
+                  "false", 
+                  "0.0896", 
+                  "0.75", 
+                  "0.24", 
+                  "0.2576"
+                ], 
+                [
+                  "2011-01-01T06:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.8", 
+                  "0.22", 
+                  "0.2727"
+                ], 
+                [
+                  "2011-01-01T07:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.86", 
+                  "0.2", 
+                  "0.2576"
+                ], 
+                [
+                  "2011-01-01T08:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.75", 
+                  "0.24", 
+                  "0.2879"
+                ], 
+                [
+                  "2011-01-01T09:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.76", 
+                  "0.32", 
+                  "0.3485"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "weather2": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                12835, 
+                4544
+              ], 
+              "name": "weather2", 
+              "missingValues": 0
+            }, 
+            "temp": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.496987", 
+                "min": "0.02"
+              }, 
+              "name": "temp", 
+              "subtype": "continuous", 
+              "counts": [
+                49, 
+                68, 
+                444, 
+                509, 
+                1502, 
+                942, 
+                1927, 
+                986, 
+                1614, 
+                819, 
+                1125, 
+                1559, 
+                1418, 
+                1732, 
+                1086, 
+                890, 
+                351, 
+                274, 
+                66, 
+                18
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "weather3": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                15957, 
+                1422
+              ], 
+              "name": "weather3", 
+              "missingValues": 0
+            }, 
+            "hum": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.627229", 
+                "min": "0"
+              }, 
+              "name": "hum", 
+              "subtype": "continuous", 
+              "counts": [
+                22, 
+                1, 
+                5, 
+                50, 
+                172, 
+                411, 
+                625, 
+                969, 
+                1263, 
+                1378, 
+                1394, 
+                1423, 
+                1310, 
+                1467, 
+                1472, 
+                1342, 
+                1435, 
+                1465, 
+                901, 
+                274
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "windspeed": {
+              "statistics": {
+                "max": "0.8507", 
+                "mean": "0.190098", 
+                "min": "0"
+              }, 
+              "name": "windspeed", 
+              "subtype": "continuous", 
+              "counts": [
+                2180, 
+                0, 
+                3042, 
+                3433, 
+                1657, 
+                2808, 
+                1048, 
+                1410, 
+                460, 
+                677, 
+                322, 
+                112, 
+                123, 
+                44, 
+                23, 
+                25, 
+                7, 
+                2, 
+                3, 
+                3
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "datetime": {
+              "statistics": {
+                "max": "2012-12-31T23:00:00.000Z", 
+                "mean": "2012-01-02T15:41:22.858Z", 
+                "min": "2011-01-01T00:00:00.000Z"
+              }, 
+              "name": "datetime", 
+              "subtype": "continuous", 
+              "counts": [
+                819, 
+                850, 
+                869, 
+                877, 
+                877, 
+                877, 
+                862, 
+                876, 
+                877, 
+                873, 
+                873, 
+                873, 
+                875, 
+                878, 
+                877, 
+                877, 
+                877, 
+                877, 
+                840, 
+                875
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "atemp": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.475775", 
+                "min": "0"
+              }, 
+              "name": "atemp", 
+              "subtype": "continuous", 
+              "counts": [
+                23, 
+                55, 
+                211, 
+                575, 
+                1088, 
+                1254, 
+                2000, 
+                631, 
+                1669, 
+                1378, 
+                2264, 
+                952, 
+                2028, 
+                1914, 
+                640, 
+                404, 
+                225, 
+                54, 
+                10, 
+                4
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "c1f92b72-5399-46d2-8a2c-d96b70ed101a": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "13", 
+                  "17379"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "datetime", 
+                "weather2", 
+                "weather3", 
+                "windspeed", 
+                "hum", 
+                "temp", 
+                "atemp", 
+                "log_count", 
+                "workingday", 
+                "holiday"
+              ], 
+              "columnTypes": [
+                "timestamp", 
+                "boolean", 
+                "boolean", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "boolean", 
+                "boolean"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "2011-01-01T00:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.81", 
+                  "0.24", 
+                  "0.2879", 
+                  "2.772589", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T01:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.8", 
+                  "0.22", 
+                  "0.2727", 
+                  "3.688879", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T02:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.8", 
+                  "0.22", 
+                  "0.2727", 
+                  "3.465736", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T03:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.75", 
+                  "0.24", 
+                  "0.2879", 
+                  "2.564949", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T04:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.75", 
+                  "0.24", 
+                  "0.2879", 
+                  "0", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T05:00:00.000Z", 
+                  "true", 
+                  "false", 
+                  "0.0896", 
+                  "0.75", 
+                  "0.24", 
+                  "0.2576", 
+                  "0", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T06:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.8", 
+                  "0.22", 
+                  "0.2727", 
+                  "0.693147", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T07:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.86", 
+                  "0.2", 
+                  "0.2576", 
+                  "1.098612", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T08:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.75", 
+                  "0.24", 
+                  "0.2879", 
+                  "2.079442", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2011-01-01T09:00:00.000Z", 
+                  "false", 
+                  "false", 
+                  "0", 
+                  "0.76", 
+                  "0.32", 
+                  "0.3485", 
+                  "2.639057", 
+                  "false", 
+                  "false"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "weather2": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                12835, 
+                4544
+              ], 
+              "name": "weather2", 
+              "missingValues": 0
+            }, 
+            "temp": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.496987", 
+                "min": "0.02"
+              }, 
+              "name": "temp", 
+              "subtype": "continuous", 
+              "counts": [
+                49, 
+                68, 
+                444, 
+                509, 
+                1502, 
+                942, 
+                1927, 
+                986, 
+                1614, 
+                819, 
+                1125, 
+                1559, 
+                1418, 
+                1732, 
+                1086, 
+                890, 
+                351, 
+                274, 
+                66, 
+                18
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "weather3": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                15957, 
+                1422
+              ], 
+              "name": "weather3", 
+              "missingValues": 0
+            }, 
+            "hum": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.627229", 
+                "min": "0"
+              }, 
+              "name": "hum", 
+              "subtype": "continuous", 
+              "counts": [
+                22, 
+                1, 
+                5, 
+                50, 
+                172, 
+                411, 
+                625, 
+                969, 
+                1263, 
+                1378, 
+                1394, 
+                1423, 
+                1310, 
+                1467, 
+                1472, 
+                1342, 
+                1435, 
+                1465, 
+                901, 
+                274
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "windspeed": {
+              "statistics": {
+                "max": "0.8507", 
+                "mean": "0.190098", 
+                "min": "0"
+              }, 
+              "name": "windspeed", 
+              "subtype": "continuous", 
+              "counts": [
+                2180, 
+                0, 
+                3042, 
+                3433, 
+                1657, 
+                2808, 
+                1048, 
+                1410, 
+                460, 
+                677, 
+                322, 
+                112, 
+                123, 
+                44, 
+                23, 
+                25, 
+                7, 
+                2, 
+                3, 
+                3
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "datetime": {
+              "statistics": {
+                "max": "2012-12-31T23:00:00.000Z", 
+                "mean": "2012-01-02T15:41:22.858Z", 
+                "min": "2011-01-01T00:00:00.000Z"
+              }, 
+              "name": "datetime", 
+              "subtype": "continuous", 
+              "counts": [
+                819, 
+                850, 
+                869, 
+                877, 
+                877, 
+                877, 
+                862, 
+                876, 
+                877, 
+                873, 
+                873, 
+                873, 
+                875, 
+                878, 
+                877, 
+                877, 
+                877, 
+                877, 
+                840, 
+                875
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "workingday": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                5514, 
+                11865
+              ], 
+              "name": "workingday", 
+              "missingValues": 0
+            }, 
+            "atemp": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.475775", 
+                "min": "0"
+              }, 
+              "name": "atemp", 
+              "subtype": "continuous", 
+              "counts": [
+                23, 
+                55, 
+                211, 
+                575, 
+                1088, 
+                1254, 
+                2000, 
+                631, 
+                1669, 
+                1378, 
+                2264, 
+                952, 
+                2028, 
+                1914, 
+                640, 
+                404, 
+                225, 
+                54, 
+                10, 
+                4
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "log_count": {
+              "statistics": {
+                "max": "6.884487", 
+                "mean": "4.536082", 
+                "min": "0"
+              }, 
+              "name": "log_count", 
+              "subtype": "continuous", 
+              "counts": [
+                158, 
+                0, 
+                208, 
+                224, 
+                491, 
+                434, 
+                612, 
+                421, 
+                600, 
+                681, 
+                748, 
+                850, 
+                1072, 
+                1489, 
+                1911, 
+                2319, 
+                2126, 
+                1654, 
+                1045, 
+                336
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "holiday": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                16879, 
+                500
+              ], 
+              "name": "holiday", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "353dff1e-4819-4d67-9e28-c95c86dd09fc": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "16", 
+                  "12196"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "weather2", 
+                "weather3", 
+                "windspeed", 
+                "hum", 
+                "temp", 
+                "atemp", 
+                "log_count", 
+                "workingday", 
+                "holiday", 
+                "season2"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "0", 
+                  "0", 
+                  "0", 
+                  "0.81", 
+                  "0.24", 
+                  "0.2879", 
+                  "2.772589", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "0", 
+                  "0", 
+                  "0", 
+                  "0.8", 
+                  "0.22", 
+                  "0.2727", 
+                  "3.688879", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "0", 
+                  "0", 
+                  "0", 
+                  "0.8", 
+                  "0.22", 
+                  "0.2727", 
+                  "3.465736", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "0", 
+                  "0", 
+                  "0", 
+                  "0.75", 
+                  "0.24", 
+                  "0.2879", 
+                  "2.564949", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "0", 
+                  "0", 
+                  "0", 
+                  "0.75", 
+                  "0.24", 
+                  "0.2879", 
+                  "0", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "1", 
+                  "0", 
+                  "0.0896", 
+                  "0.75", 
+                  "0.24", 
+                  "0.2576", 
+                  "0", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "0", 
+                  "0", 
+                  "0", 
+                  "0.8", 
+                  "0.22", 
+                  "0.2727", 
+                  "0.693147", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "0", 
+                  "0", 
+                  "0", 
+                  "0.86", 
+                  "0.2", 
+                  "0.2576", 
+                  "1.098612", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "0", 
+                  "0", 
+                  "0", 
+                  "0.75", 
+                  "0.24", 
+                  "0.2879", 
+                  "2.079442", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "0", 
+                  "0", 
+                  "0", 
+                  "0.76", 
+                  "0.32", 
+                  "0.3485", 
+                  "2.639057", 
+                  "0", 
+                  "0", 
+                  "0"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "weather2": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.258691", 
+                "min": "0"
+              }, 
+              "name": "weather2", 
+              "subtype": "continuous", 
+              "counts": [
+                9041, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                3155
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "temp": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.496517", 
+                "min": "0.02"
+              }, 
+              "name": "temp", 
+              "subtype": "continuous", 
+              "counts": [
+                34, 
+                50, 
+                304, 
+                369, 
+                1051, 
+                656, 
+                1372, 
+                702, 
+                1148, 
+                588, 
+                767, 
+                1070, 
+                973, 
+                1191, 
+                791, 
+                622, 
+                256, 
+                196, 
+                46, 
+                10
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "weather3": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.081256", 
+                "min": "0"
+              }, 
+              "name": "weather3", 
+              "subtype": "continuous", 
+              "counts": [
+                11205, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                991
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "hum": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.626592", 
+                "min": "0"
+              }, 
+              "name": "hum", 
+              "subtype": "continuous", 
+              "counts": [
+                16, 
+                1, 
+                4, 
+                38, 
+                122, 
+                293, 
+                436, 
+                688, 
+                891, 
+                985, 
+                975, 
+                995, 
+                885, 
+                1023, 
+                1024, 
+                963, 
+                1019, 
+                1007, 
+                638, 
+                193
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "windspeed": {
+              "statistics": {
+                "max": "0.8507", 
+                "mean": "0.190075", 
+                "min": "0"
+              }, 
+              "name": "windspeed", 
+              "subtype": "continuous", 
+              "counts": [
+                1545, 
+                0, 
+                2114, 
+                2403, 
+                1169, 
+                1973, 
+                735, 
+                1003, 
+                302, 
+                490, 
+                224, 
+                73, 
+                89, 
+                34, 
+                14, 
+                16, 
+                6, 
+                2, 
+                2, 
+                2
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "workingday": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.686291", 
+                "min": "0"
+              }, 
+              "name": "workingday", 
+              "subtype": "continuous", 
+              "counts": [
+                3826, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                8370
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "atemp": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.475363", 
+                "min": "0"
+              }, 
+              "name": "atemp", 
+              "subtype": "continuous", 
+              "counts": [
+                19, 
+                41, 
+                149, 
+                401, 
+                766, 
+                863, 
+                1432, 
+                443, 
+                1198, 
+                976, 
+                1555, 
+                649, 
+                1412, 
+                1337, 
+                447, 
+                300, 
+                166, 
+                32, 
+                6, 
+                4
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "log_count": {
+              "statistics": {
+                "max": "6.883463", 
+                "mean": "4.527645", 
+                "min": "0"
+              }, 
+              "name": "log_count", 
+              "subtype": "continuous", 
+              "counts": [
+                113, 
+                0, 
+                144, 
+                153, 
+                354, 
+                304, 
+                422, 
+                281, 
+                443, 
+                488, 
+                532, 
+                602, 
+                746, 
+                1085, 
+                1335, 
+                1612, 
+                1509, 
+                1109, 
+                721, 
+                243
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "season2": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.252952", 
+                "min": "0"
+              }, 
+              "name": "season2", 
+              "subtype": "continuous", 
+              "counts": [
+                9111, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                3085
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "holiday": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.028616", 
+                "min": "0"
+              }, 
+              "name": "holiday", 
+              "subtype": "continuous", 
+              "counts": [
+                11847, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                349
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "6df97134-cb39-447c-bef6-5a07e4b5348a": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "16", 
+                  "17379"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "weather2", 
+                "weather3", 
+                "windspeed", 
+                "hum", 
+                "temp", 
+                "atemp", 
+                "log_count", 
+                "workingday", 
+                "holiday", 
+                "season2"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "0", 
+                  "0", 
+                  "0", 
+                  "0.81", 
+                  "0.24", 
+                  "0.2879", 
+                  "2.772589", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "0", 
+                  "0", 
+                  "0", 
+                  "0.8", 
+                  "0.22", 
+                  "0.2727", 
+                  "3.688879", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "0", 
+                  "0", 
+                  "0", 
+                  "0.8", 
+                  "0.22", 
+                  "0.2727", 
+                  "3.465736", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "0", 
+                  "0", 
+                  "0", 
+                  "0.75", 
+                  "0.24", 
+                  "0.2879", 
+                  "2.564949", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "0", 
+                  "0", 
+                  "0", 
+                  "0.75", 
+                  "0.24", 
+                  "0.2879", 
+                  "0", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "1", 
+                  "0", 
+                  "0.0896", 
+                  "0.75", 
+                  "0.24", 
+                  "0.2576", 
+                  "0", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "0", 
+                  "0", 
+                  "0", 
+                  "0.8", 
+                  "0.22", 
+                  "0.2727", 
+                  "0.693147", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "0", 
+                  "0", 
+                  "0", 
+                  "0.86", 
+                  "0.2", 
+                  "0.2576", 
+                  "1.098612", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "0", 
+                  "0", 
+                  "0", 
+                  "0.75", 
+                  "0.24", 
+                  "0.2879", 
+                  "2.079442", 
+                  "0", 
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "0", 
+                  "0", 
+                  "0", 
+                  "0.76", 
+                  "0.32", 
+                  "0.3485", 
+                  "2.639057", 
+                  "0", 
+                  "0", 
+                  "0"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "weather2": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.261465", 
+                "min": "0"
+              }, 
+              "name": "weather2", 
+              "subtype": "continuous", 
+              "counts": [
+                12835, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                4544
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "temp": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.496987", 
+                "min": "0.02"
+              }, 
+              "name": "temp", 
+              "subtype": "continuous", 
+              "counts": [
+                49, 
+                68, 
+                444, 
+                509, 
+                1502, 
+                942, 
+                1927, 
+                986, 
+                1614, 
+                819, 
+                1125, 
+                1559, 
+                1418, 
+                1732, 
+                1086, 
+                890, 
+                351, 
+                274, 
+                66, 
+                18
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "weather3": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.081823", 
+                "min": "0"
+              }, 
+              "name": "weather3", 
+              "subtype": "continuous", 
+              "counts": [
+                15957, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1422
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "hum": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.627229", 
+                "min": "0"
+              }, 
+              "name": "hum", 
+              "subtype": "continuous", 
+              "counts": [
+                22, 
+                1, 
+                5, 
+                50, 
+                172, 
+                411, 
+                625, 
+                969, 
+                1263, 
+                1378, 
+                1394, 
+                1423, 
+                1310, 
+                1467, 
+                1472, 
+                1342, 
+                1435, 
+                1465, 
+                901, 
+                274
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "windspeed": {
+              "statistics": {
+                "max": "0.8507", 
+                "mean": "0.190098", 
+                "min": "0"
+              }, 
+              "name": "windspeed", 
+              "subtype": "continuous", 
+              "counts": [
+                2180, 
+                0, 
+                3042, 
+                3433, 
+                1657, 
+                2808, 
+                1048, 
+                1410, 
+                460, 
+                677, 
+                322, 
+                112, 
+                123, 
+                44, 
+                23, 
+                25, 
+                7, 
+                2, 
+                3, 
+                3
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "workingday": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.682721", 
+                "min": "0"
+              }, 
+              "name": "workingday", 
+              "subtype": "continuous", 
+              "counts": [
+                5514, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                11865
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "atemp": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.475775", 
+                "min": "0"
+              }, 
+              "name": "atemp", 
+              "subtype": "continuous", 
+              "counts": [
+                23, 
+                55, 
+                211, 
+                575, 
+                1088, 
+                1254, 
+                2000, 
+                631, 
+                1669, 
+                1378, 
+                2264, 
+                952, 
+                2028, 
+                1914, 
+                640, 
+                404, 
+                225, 
+                54, 
+                10, 
+                4
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "log_count": {
+              "statistics": {
+                "max": "6.884487", 
+                "mean": "4.536082", 
+                "min": "0"
+              }, 
+              "name": "log_count", 
+              "subtype": "continuous", 
+              "counts": [
+                158, 
+                0, 
+                208, 
+                224, 
+                491, 
+                434, 
+                612, 
+                421, 
+                600, 
+                681, 
+                748, 
+                850, 
+                1072, 
+                1489, 
+                1911, 
+                2319, 
+                2126, 
+                1654, 
+                1045, 
+                336
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "season2": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.253697", 
+                "min": "0"
+              }, 
+              "name": "season2", 
+              "subtype": "continuous", 
+              "counts": [
+                12970, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                4409
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "holiday": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.02877", 
+                "min": "0"
+              }, 
+              "name": "holiday", 
+              "subtype": "continuous", 
+              "counts": [
+                16879, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                500
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }
+          }
+        }
+      }
+    }, 
+    "error": null
+  }
+}

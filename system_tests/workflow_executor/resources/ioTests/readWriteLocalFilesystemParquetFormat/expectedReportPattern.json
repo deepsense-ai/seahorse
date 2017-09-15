@@ -1,0 +1,158 @@
+{
+  "executionReport": {
+    "nodes": {
+      "c9a629a2-6716-5ae8-9c0c-6e2afcfa2dba": {
+        "status": "COMPLETED", 
+        "results": [], 
+        "error": null
+      }, 
+      "b2367b9d-3c7d-4db8-c5b4-40b99be2d8ea": {
+        "status": "COMPLETED", 
+        "results": [
+          "2abd45ff-df00-4432-8aaa-7880d3e6590d"
+        ], 
+        "error": null
+      }
+    }, 
+    "resultEntities": {
+      "2abd45ff-df00-4432-8aaa-7880d3e6590d": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "3", 
+                  "50"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "col_a", 
+                "col_b", 
+                "col_c"
+              ], 
+              "columnTypes": [
+                "categorical", 
+                "numeric", 
+                "string"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "red", 
+                  "-2.5", 
+                  "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
+                ], 
+                [
+                  "blue", 
+                  "-2.25", 
+                  "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
+                ], 
+                [
+                  "red", 
+                  "-2", 
+                  "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
+                ], 
+                [
+                  "blue", 
+                  "-1.75", 
+                  "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
+                ], 
+                [
+                  "red", 
+                  "-1.5", 
+                  "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
+                ], 
+                [
+                  "blue", 
+                  "-1.25", 
+                  "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
+                ], 
+                [
+                  "red", 
+                  "-1", 
+                  "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
+                ], 
+                [
+                  "blue", 
+                  "-0.75", 
+                  "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
+                ], 
+                [
+                  "red", 
+                  "-0.5", 
+                  "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
+                ], 
+                [
+                  "blue", 
+                  "-0.25", 
+                  "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "col_b": {
+              "statistics": {
+                "max": "9.75", 
+                "mean": "3.625", 
+                "min": "-2.5"
+              }, 
+              "name": "col_b", 
+              "subtype": "continuous", 
+              "counts": [
+                3, 
+                2, 
+                3, 
+                2, 
+                3, 
+                2, 
+                3, 
+                2, 
+                3, 
+                2, 
+                2, 
+                3, 
+                2, 
+                3, 
+                2, 
+                3, 
+                2, 
+                3, 
+                2, 
+                3
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "col_a": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                25, 
+                25
+              ], 
+              "name": "col_a", 
+              "missingValues": 0
+            }
+          }
+        }
+      }
+    }, 
+    "error": null
+  }
+}

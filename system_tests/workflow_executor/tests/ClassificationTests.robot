@@ -1,30 +1,34 @@
 # Copyright (c) 2015, CodiLime Inc.
 
+*** Variables ***
+${SUITE} =  classificationTests
+
+*** Keywords ***
+Upload Resource File To Hdfs
+    [Arguments]  ${RESOURCE FILE NAME}
+    Upload to Hdfs  ${HDFS PATH}${RESOURCE FILE NAME}    ${TEST RESOURCE PATH}${RESOURCE FILE NAME}
+
 *** Settings ***
+Suite Setup     Standard Suite Setup
+Suite Teardown  Standard Suite Teardown
+
+Test Setup      Standard Hdfs Test Setup
+Test Teardown   Standard Hdfs Test Teardown
+
 Library    OperatingSystem
 Library    Collections
 Library    ../lib/HdfsClient.py
 Library    ../lib/WorkflowExecutorClient.py
+Library    ../lib/CommonSetupsAndTeardowns.py
+
 
 *** Test Cases ***
 Point Cloud
-    ${dir} =    Set Variable    resources/classificationTests/pointCloud/
-    Remove Hdfs Path    /system_tests/pointCloud
-    Upload to Hdfs    /system_tests/pointCloud/input.csv    ${dir}input.csv
-    Remove Directory    pointCloudOutput    recursive=yes
-    Create Output Directory    pointCloudOutput
-    Run Workflow    ${dir}workflow.json
-    Check Execution Status
-    Clean Output Directory
-    Remove Hdfs Path    /system_tests/pointCloud
+    Upload Resource File To Hdfs  input.csv
+    Run Workflow
+    Check Report
 
 Point Cloud Using Random Forest Classification
-    ${dir} =    Set Variable    resources/classificationTests/pointCloud2/
-    Remove Hdfs Path    /system_tests/pointCloud2
-    Upload to Hdfs    /system_tests/pointCloud2/input.csv    ${dir}input.csv
-    Remove Directory    pointCloud2Output    recursive=yes
-    Create Output Directory    pointCloud2Output
-    Run Workflow    ${dir}workflow.json
-    Check Execution Status
-    Clean Output Directory
-    Remove Hdfs Path    /system_tests/pointCloud2
+    Upload Resource File To Hdfs  input.csv
+    Run Workflow
+    Check Report

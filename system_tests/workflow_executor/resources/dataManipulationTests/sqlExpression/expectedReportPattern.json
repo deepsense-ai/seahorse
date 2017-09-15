@@ -1,15 +1,320 @@
 {
-  "b3fb1448-9874-3f6c-f259-89b08c4c3689": [{
-    "report": {
-      "tables": {
-        "Data Sample": {
-          "columnNames": ["city", "avg_salary"],
-          "values": [["Warszawa", "8840"], ["Poznań", "7000"], ["Kraków", "5555"]]
-        },
-        "DataFrame Size": {
-          "values": [["2", "3"]]
+  "executionReport": {
+    "nodes": {
+      "a47fa4cf-9833-8541-31cd-98bfe9c57aab": {
+        "status": "COMPLETED", 
+        "results": [
+          "dde515bf-8ce6-4ac2-ae99-8550cfb91b31"
+        ], 
+        "error": null
+      }, 
+      "b3fb1448-9874-3f6c-f259-89b08c4c3689": {
+        "status": "COMPLETED", 
+        "results": [
+          "5c52f794-f29b-434a-9d69-07ca681b707a"
+        ], 
+        "error": null
+      }, 
+      "4c433dfc-9f43-d1d7-2032-bb37847d4f37": {
+        "status": "COMPLETED", 
+        "results": [], 
+        "error": null
+      }
+    }, 
+    "resultEntities": {
+      "5c52f794-f29b-434a-9d69-07ca681b707a": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "2", 
+                  "3"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "city", 
+                "avg_salary"
+              ], 
+              "columnTypes": [
+                "string", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "Krak\u00f3w", 
+                  "5555"
+                ], 
+                [
+                  "Pozna\u0144", 
+                  "7000"
+                ], 
+                [
+                  "Warszawa", 
+                  "8840"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "avg_salary": {
+              "statistics": {
+                "max": "8840", 
+                "mean": "7131.666667", 
+                "min": "5555"
+              }, 
+              "name": "avg_salary", 
+              "subtype": "continuous", 
+              "counts": [
+                1, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "dde515bf-8ce6-4ac2-ae99-8550cfb91b31": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "4", 
+                  "20"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "employee_id", 
+                "city", 
+                "salary", 
+                "work_time"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "string", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "1", 
+                  "Warszawa", 
+                  "8500", 
+                  "1"
+                ], 
+                [
+                  "2", 
+                  "Pozna\u0144", 
+                  "9200", 
+                  "1"
+                ], 
+                [
+                  "3", 
+                  "Krak\u00f3w", 
+                  "1500", 
+                  "0.5"
+                ], 
+                [
+                  "4", 
+                  "Warszawa", 
+                  "4200", 
+                  "0.75"
+                ], 
+                [
+                  "5", 
+                  "Pozna\u0144", 
+                  "5600", 
+                  "1"
+                ], 
+                [
+                  "6", 
+                  "Krak\u00f3w", 
+                  "2700", 
+                  "1"
+                ], 
+                [
+                  "7", 
+                  "Warszawa", 
+                  "8000", 
+                  "1"
+                ], 
+                [
+                  "8", 
+                  "Pozna\u0144", 
+                  "10900", 
+                  "1"
+                ], 
+                [
+                  "9", 
+                  "Krak\u00f3w", 
+                  "1000", 
+                  "0.5"
+                ], 
+                [
+                  "10", 
+                  "Warszawa", 
+                  "8000", 
+                  "1"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "salary": {
+              "statistics": {
+                "max": "12000", 
+                "mean": "6170", 
+                "min": "1000"
+              }, 
+              "name": "salary", 
+              "subtype": "continuous", 
+              "counts": [
+                4, 
+                0, 
+                0, 
+                1, 
+                0, 
+                2, 
+                1, 
+                0, 
+                2, 
+                0, 
+                1, 
+                0, 
+                3, 
+                1, 
+                2, 
+                0, 
+                0, 
+                0, 
+                1, 
+                2
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "employee_id": {
+              "statistics": {
+                "max": "20", 
+                "mean": "10.5", 
+                "min": "1"
+              }, 
+              "name": "employee_id", 
+              "subtype": "continuous", 
+              "counts": [
+                1, 
+                1, 
+                1, 
+                1, 
+                1, 
+                1, 
+                1, 
+                1, 
+                1, 
+                1, 
+                1, 
+                1, 
+                1, 
+                1, 
+                1, 
+                1, 
+                1, 
+                1, 
+                1, 
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "work_time": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.9125", 
+                "min": "0.5"
+              }, 
+              "name": "work_time", 
+              "subtype": "continuous", 
+              "counts": [
+                3, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                16
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }
+          }
         }
       }
-    }
-  }]
+    }, 
+    "error": null
+  }
 }

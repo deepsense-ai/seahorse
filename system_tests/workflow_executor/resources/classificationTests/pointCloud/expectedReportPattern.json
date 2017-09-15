@@ -1,0 +1,2743 @@
+{
+  "executionReport": {
+    "nodes": {
+      "6bba354f-9f95-5eb0-fb87-180e6f37da40": {
+        "status": "COMPLETED", 
+        "results": [
+          "56f15557-f7d0-40a4-aa99-b6feb5eb73fe"
+        ], 
+        "error": null
+      }, 
+      "f3682bc9-0955-4c92-d54d-ca267b029e79": {
+        "status": "COMPLETED", 
+        "results": [
+          "44fc0d2b-14f9-48e5-b52b-1d7d8b940591"
+        ], 
+        "error": null
+      }, 
+      "249a0340-ef92-dda0-3ca8-3d298e4e8a57": {
+        "status": "COMPLETED", 
+        "results": [
+          "c0e644ac-0145-4a8e-8681-81916d1cc749"
+        ], 
+        "error": null
+      }, 
+      "3c9f9b5d-40a3-82c8-f3b8-2d0a5959c6a2": {
+        "status": "COMPLETED", 
+        "results": [
+          "f91d63c8-7bee-4733-a5c3-4f0639e50c52"
+        ], 
+        "error": null
+      }, 
+      "1f5b7d8c-42c8-847a-5acb-a9ac08e2cbca": {
+        "status": "COMPLETED", 
+        "results": [
+          "26b72874-263d-412c-9b06-5f2771358eb6"
+        ], 
+        "error": null
+      }, 
+      "ec25a8dc-f77f-4106-d8ab-ed5da791e79b": {
+        "status": "COMPLETED", 
+        "results": [
+          "357e8abb-8c34-44dc-881a-c0960b9b1d68"
+        ], 
+        "error": null
+      }, 
+      "d2308790-d9b3-a235-6caa-59acadcdd4c1": {
+        "status": "COMPLETED", 
+        "results": [
+          "2d388969-ea8f-480f-9adc-4ff8ac92b57b"
+        ], 
+        "error": null
+      }, 
+      "90cbe6a2-8d71-ec01-d557-b64f2aa31632": {
+        "status": "COMPLETED", 
+        "results": [
+          "c3418598-c403-4f7c-a85c-184f18e80fd6"
+        ], 
+        "error": null
+      }, 
+      "0d800b47-4639-c598-8aa1-cd8a336fac3e": {
+        "status": "COMPLETED", 
+        "results": [
+          "84101008-9d2b-4bb0-aa57-a092f665a25c"
+        ], 
+        "error": null
+      }, 
+      "88d65c54-c9bd-769c-d688-7f117a53649f": {
+        "status": "COMPLETED", 
+        "results": [
+          "6a3350b3-c74e-4faa-aff1-12580e2ac13a"
+        ], 
+        "error": null
+      }, 
+      "1dbec695-1a34-b0fa-6ea1-bfde43d30b73": {
+        "status": "COMPLETED", 
+        "results": [
+          "530edf37-d389-40e7-a7a8-2cbebdf58d93"
+        ], 
+        "error": null
+      }, 
+      "61c93fc8-32d7-b3ee-7240-c9007d6e3090": {
+        "status": "COMPLETED", 
+        "results": [
+          "d4d771ae-e881-44ba-bce3-abc5bd37c19f"
+        ], 
+        "error": null
+      }, 
+      "6182883b-c62d-9ad0-9be5-c4fdfd9903ef": {
+        "status": "COMPLETED", 
+        "results": [
+          "372f1c56-43de-4044-a355-2a931cd1f831"
+        ], 
+        "error": null
+      }, 
+      "f41f6cb0-16c9-de45-65ea-03b25e864298": {
+        "status": "COMPLETED", 
+        "results": [
+          "f4278d02-7af9-4cc0-ad57-17b0c0866226"
+        ], 
+        "error": null
+      }, 
+      "aab1c135-b1bb-b581-7453-df9909be6128": {
+        "status": "COMPLETED", 
+        "results": [
+          "d4b65d3b-a34a-4195-8e57-cc52d5bba808"
+        ], 
+        "error": null
+      }
+    }, 
+    "resultEntities": {
+      "530edf37-d389-40e7-a7a8-2cbebdf58d93": {
+        "report": {
+          "tables": {
+            "Mathematical Formula": {
+              "name": "Mathematical Formula", 
+              "columnNames": [
+                "Formula", 
+                "Column name"
+              ], 
+              "columnTypes": [
+                "string", 
+                "string"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "y*y", 
+                  "y2"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {}
+        }
+      }, 
+      "f4278d02-7af9-4cc0-ad57-17b0c0866226": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "4", 
+                  "49"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "x", 
+                "y", 
+                "clazz", 
+                "prediction"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "-2.174881", 
+                  "-5.65476", 
+                  "1", 
+                  "0.439301"
+                ], 
+                [
+                  "4.38112", 
+                  "3.534924", 
+                  "1", 
+                  "0.436873"
+                ], 
+                [
+                  "-1.936152", 
+                  "-4.841301", 
+                  "1", 
+                  "0.448861"
+                ], 
+                [
+                  "-2.80166", 
+                  "-4.144048", 
+                  "1", 
+                  "0.487994"
+                ], 
+                [
+                  "-2.534801", 
+                  "-5.651621", 
+                  "1", 
+                  "0.449666"
+                ], 
+                [
+                  "-4.064679", 
+                  "-6.292036", 
+                  "0", 
+                  "0.480771"
+                ], 
+                [
+                  "7.270326", 
+                  "-3.783681", 
+                  "0", 
+                  "0.233949"
+                ], 
+                [
+                  "0.802655", 
+                  "-8.157694", 
+                  "0", 
+                  "0.311429"
+                ], 
+                [
+                  "-3.256317", 
+                  "5.141327", 
+                  "1", 
+                  "0.681913"
+                ], 
+                [
+                  "2.847022", 
+                  "5.265799", 
+                  "1", 
+                  "0.516306"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "y": {
+              "statistics": {
+                "max": "8.087637", 
+                "mean": "-0.277055", 
+                "min": "-8.300452"
+              }, 
+              "name": "y", 
+              "subtype": "continuous", 
+              "counts": [
+                4, 
+                2, 
+                2, 
+                4, 
+                3, 
+                3, 
+                1, 
+                3, 
+                1, 
+                4, 
+                0, 
+                2, 
+                3, 
+                1, 
+                2, 
+                2, 
+                4, 
+                2, 
+                2, 
+                4
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "x": {
+              "statistics": {
+                "max": "8.476962", 
+                "mean": "-0.040569", 
+                "min": "-8.611591"
+              }, 
+              "name": "x", 
+              "subtype": "continuous", 
+              "counts": [
+                2, 
+                1, 
+                1, 
+                5, 
+                2, 
+                1, 
+                4, 
+                5, 
+                3, 
+                2, 
+                1, 
+                4, 
+                2, 
+                2, 
+                0, 
+                4, 
+                5, 
+                1, 
+                2, 
+                2
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "prediction": {
+              "statistics": {
+                "max": "0.717429", 
+                "mean": "0.489795", 
+                "min": "0.2146"
+              }, 
+              "name": "prediction", 
+              "subtype": "continuous", 
+              "counts": [
+                4, 
+                3, 
+                2, 
+                2, 
+                2, 
+                1, 
+                2, 
+                0, 
+                3, 
+                3, 
+                3, 
+                0, 
+                3, 
+                2, 
+                1, 
+                0, 
+                4, 
+                5, 
+                6, 
+                3
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "clazz": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.489796", 
+                "min": "0"
+              }, 
+              "name": "clazz", 
+              "subtype": "continuous", 
+              "counts": [
+                25, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                24
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "c3418598-c403-4f7c-a85c-184f18e80fd6": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "7", 
+                  "49"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "x", 
+                "y", 
+                "clazz", 
+                "x2", 
+                "y2", 
+                "xy", 
+                "prediction"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "-2.174881", 
+                  "-5.65476", 
+                  "1", 
+                  "4.730107", 
+                  "31.976305", 
+                  "12.298429", 
+                  "0.933963"
+                ], 
+                [
+                  "4.38112", 
+                  "3.534924", 
+                  "1", 
+                  "19.194208", 
+                  "12.495688", 
+                  "15.486925", 
+                  "0.991703"
+                ], 
+                [
+                  "-1.936152", 
+                  "-4.841301", 
+                  "1", 
+                  "3.748686", 
+                  "23.438196", 
+                  "9.373497", 
+                  "0.998673"
+                ], 
+                [
+                  "-2.80166", 
+                  "-4.144048", 
+                  "1", 
+                  "7.849299", 
+                  "17.17313", 
+                  "11.610212", 
+                  "0.999377"
+                ], 
+                [
+                  "-2.534801", 
+                  "-5.651621", 
+                  "1", 
+                  "6.425218", 
+                  "31.940824", 
+                  "14.325738", 
+                  "0.866672"
+                ], 
+                [
+                  "-4.064679", 
+                  "-6.292036", 
+                  "0", 
+                  "16.521613", 
+                  "39.589718", 
+                  "25.575105", 
+                  "0.002839"
+                ], 
+                [
+                  "7.270326", 
+                  "-3.783681", 
+                  "0", 
+                  "52.857643", 
+                  "14.31624", 
+                  "-27.508593", 
+                  "0.00056"
+                ], 
+                [
+                  "0.802655", 
+                  "-8.157694", 
+                  "0", 
+                  "0.644255", 
+                  "66.547966", 
+                  "-6.547815", 
+                  "0.000221"
+                ], 
+                [
+                  "-3.256317", 
+                  "5.141327", 
+                  "1", 
+                  "10.603601", 
+                  "26.433245", 
+                  "-16.741791", 
+                  "0.993856"
+                ], 
+                [
+                  "2.847022", 
+                  "5.265799", 
+                  "1", 
+                  "8.105537", 
+                  "27.72864", 
+                  "14.991848", 
+                  "0.969838"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "prediction": {
+              "statistics": {
+                "max": "0.999893", 
+                "mean": "0.493009", 
+                "min": "0"
+              }, 
+              "name": "prediction", 
+              "subtype": "continuous", 
+              "counts": [
+                19, 
+                3, 
+                0, 
+                1, 
+                2, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                1, 
+                3, 
+                19
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "clazz": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.489796", 
+                "min": "0"
+              }, 
+              "name": "clazz", 
+              "subtype": "continuous", 
+              "counts": [
+                25, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                24
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "y": {
+              "statistics": {
+                "max": "8.087637", 
+                "mean": "-0.277055", 
+                "min": "-8.300452"
+              }, 
+              "name": "y", 
+              "subtype": "continuous", 
+              "counts": [
+                4, 
+                2, 
+                2, 
+                4, 
+                3, 
+                3, 
+                1, 
+                3, 
+                1, 
+                4, 
+                0, 
+                2, 
+                3, 
+                1, 
+                2, 
+                2, 
+                4, 
+                2, 
+                2, 
+                4
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "xy": {
+              "statistics": {
+                "max": "32.555275", 
+                "mean": "-0.759956", 
+                "min": "-34.328924"
+              }, 
+              "name": "xy", 
+              "subtype": "continuous", 
+              "counts": [
+                3, 
+                2, 
+                1, 
+                0, 
+                0, 
+                3, 
+                6, 
+                4, 
+                2, 
+                2, 
+                3, 
+                2, 
+                4, 
+                8, 
+                4, 
+                0, 
+                1, 
+                2, 
+                0, 
+                2
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "x2": {
+              "statistics": {
+                "max": "74.159506", 
+                "mean": "21.731655", 
+                "min": "0.007409"
+              }, 
+              "name": "x2", 
+              "subtype": "continuous", 
+              "counts": [
+                11, 
+                6, 
+                6, 
+                0, 
+                1, 
+                5, 
+                1, 
+                2, 
+                5, 
+                3, 
+                1, 
+                0, 
+                1, 
+                2, 
+                1, 
+                0, 
+                1, 
+                1, 
+                0, 
+                2
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "x": {
+              "statistics": {
+                "max": "8.476962", 
+                "mean": "-0.040569", 
+                "min": "-8.611591"
+              }, 
+              "name": "x", 
+              "subtype": "continuous", 
+              "counts": [
+                2, 
+                1, 
+                1, 
+                5, 
+                2, 
+                1, 
+                4, 
+                5, 
+                3, 
+                2, 
+                1, 
+                4, 
+                2, 
+                2, 
+                0, 
+                4, 
+                5, 
+                1, 
+                2, 
+                2
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "y2": {
+              "statistics": {
+                "max": "68.897496", 
+                "mean": "26.31429", 
+                "min": "0.016685"
+              }, 
+              "name": "y2", 
+              "subtype": "continuous", 
+              "counts": [
+                9, 
+                5, 
+                1, 
+                2, 
+                3, 
+                3, 
+                2, 
+                4, 
+                1, 
+                4, 
+                1, 
+                2, 
+                1, 
+                2, 
+                0, 
+                2, 
+                2, 
+                0, 
+                3, 
+                2
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "26b72874-263d-412c-9b06-5f2771358eb6": {
+        "report": {
+          "tables": {
+            "Intercept": {
+              "name": "Intercept", 
+              "columnNames": null, 
+              "columnTypes": [
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "18.19692135795324"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Feature columns": {
+              "name": "Feature columns", 
+              "columnNames": [
+                "Feature columns"
+              ], 
+              "columnTypes": [
+                "string"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "x"
+                ], 
+                [
+                  "y"
+                ], 
+                [
+                  "x2"
+                ], 
+                [
+                  "y2"
+                ], 
+                [
+                  "xy"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Parameters": {
+              "name": "Parameters", 
+              "columnNames": [
+                "Regularization", 
+                "Iterations number", 
+                "Tolerance"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "0", 
+                  "10", 
+                  "0.0001"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Target column": {
+              "name": "Target column", 
+              "columnNames": [
+                "Target column"
+              ], 
+              "columnTypes": [
+                "string"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "clazz"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Model weights": {
+              "name": "Model weights", 
+              "columnNames": [
+                "Column", 
+                "Weight"
+              ], 
+              "columnTypes": [
+                "string", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "x", 
+                  "-0.032205"
+                ], 
+                [
+                  "y", 
+                  "0.076445"
+                ], 
+                [
+                  "x2", 
+                  "-0.401319"
+                ], 
+                [
+                  "y2", 
+                  "-0.392226"
+                ], 
+                [
+                  "xy", 
+                  "-0.060596"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {}
+        }
+      }, 
+      "357e8abb-8c34-44dc-881a-c0960b9b1d68": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "5", 
+                  "49"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "x", 
+                "y", 
+                "clazz", 
+                "x2", 
+                "y2"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "-2.174881", 
+                  "-5.65476", 
+                  "1", 
+                  "4.730107", 
+                  "31.976305"
+                ], 
+                [
+                  "4.38112", 
+                  "3.534924", 
+                  "1", 
+                  "19.194208", 
+                  "12.495688"
+                ], 
+                [
+                  "-1.936152", 
+                  "-4.841301", 
+                  "1", 
+                  "3.748686", 
+                  "23.438196"
+                ], 
+                [
+                  "-2.80166", 
+                  "-4.144048", 
+                  "1", 
+                  "7.849299", 
+                  "17.17313"
+                ], 
+                [
+                  "-2.534801", 
+                  "-5.651621", 
+                  "1", 
+                  "6.425218", 
+                  "31.940824"
+                ], 
+                [
+                  "-4.064679", 
+                  "-6.292036", 
+                  "0", 
+                  "16.521613", 
+                  "39.589718"
+                ], 
+                [
+                  "7.270326", 
+                  "-3.783681", 
+                  "0", 
+                  "52.857643", 
+                  "14.31624"
+                ], 
+                [
+                  "0.802655", 
+                  "-8.157694", 
+                  "0", 
+                  "0.644255", 
+                  "66.547966"
+                ], 
+                [
+                  "-3.256317", 
+                  "5.141327", 
+                  "1", 
+                  "10.603601", 
+                  "26.433245"
+                ], 
+                [
+                  "2.847022", 
+                  "5.265799", 
+                  "1", 
+                  "8.105537", 
+                  "27.72864"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "y": {
+              "statistics": {
+                "max": "8.087637", 
+                "mean": "-0.277055", 
+                "min": "-8.300452"
+              }, 
+              "name": "y", 
+              "subtype": "continuous", 
+              "counts": [
+                4, 
+                2, 
+                2, 
+                4, 
+                3, 
+                3, 
+                1, 
+                3, 
+                1, 
+                4, 
+                0, 
+                2, 
+                3, 
+                1, 
+                2, 
+                2, 
+                4, 
+                2, 
+                2, 
+                4
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "x": {
+              "statistics": {
+                "max": "8.476962", 
+                "mean": "-0.040569", 
+                "min": "-8.611591"
+              }, 
+              "name": "x", 
+              "subtype": "continuous", 
+              "counts": [
+                2, 
+                1, 
+                1, 
+                5, 
+                2, 
+                1, 
+                4, 
+                5, 
+                3, 
+                2, 
+                1, 
+                4, 
+                2, 
+                2, 
+                0, 
+                4, 
+                5, 
+                1, 
+                2, 
+                2
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "x2": {
+              "statistics": {
+                "max": "74.159506", 
+                "mean": "21.731655", 
+                "min": "0.007409"
+              }, 
+              "name": "x2", 
+              "subtype": "continuous", 
+              "counts": [
+                11, 
+                6, 
+                6, 
+                0, 
+                1, 
+                5, 
+                1, 
+                2, 
+                5, 
+                3, 
+                1, 
+                0, 
+                1, 
+                2, 
+                1, 
+                0, 
+                1, 
+                1, 
+                0, 
+                2
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "y2": {
+              "statistics": {
+                "max": "68.897496", 
+                "mean": "26.31429", 
+                "min": "0.016685"
+              }, 
+              "name": "y2", 
+              "subtype": "continuous", 
+              "counts": [
+                9, 
+                5, 
+                1, 
+                2, 
+                3, 
+                3, 
+                2, 
+                4, 
+                1, 
+                4, 
+                1, 
+                2, 
+                1, 
+                2, 
+                0, 
+                2, 
+                2, 
+                0, 
+                3, 
+                2
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "clazz": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.489796", 
+                "min": "0"
+              }, 
+              "name": "clazz", 
+              "subtype": "continuous", 
+              "counts": [
+                25, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                24
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "d4b65d3b-a34a-4195-8e57-cc52d5bba808": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "3", 
+                  "49"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "x", 
+                "y", 
+                "clazz"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "boolean"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "-2.174881", 
+                  "-5.65476", 
+                  "true"
+                ], 
+                [
+                  "4.38112", 
+                  "3.534924", 
+                  "true"
+                ], 
+                [
+                  "-1.936152", 
+                  "-4.841301", 
+                  "true"
+                ], 
+                [
+                  "-2.80166", 
+                  "-4.144048", 
+                  "true"
+                ], 
+                [
+                  "-2.534801", 
+                  "-5.651621", 
+                  "true"
+                ], 
+                [
+                  "-4.064679", 
+                  "-6.292036", 
+                  "false"
+                ], 
+                [
+                  "7.270326", 
+                  "-3.783681", 
+                  "false"
+                ], 
+                [
+                  "0.802655", 
+                  "-8.157694", 
+                  "false"
+                ], 
+                [
+                  "-3.256317", 
+                  "5.141327", 
+                  "true"
+                ], 
+                [
+                  "2.847022", 
+                  "5.265799", 
+                  "true"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "y": {
+              "statistics": {
+                "max": "8.087637", 
+                "mean": "-0.277055", 
+                "min": "-8.300452"
+              }, 
+              "name": "y", 
+              "subtype": "continuous", 
+              "counts": [
+                4, 
+                2, 
+                2, 
+                4, 
+                3, 
+                3, 
+                1, 
+                3, 
+                1, 
+                4, 
+                0, 
+                2, 
+                3, 
+                1, 
+                2, 
+                2, 
+                4, 
+                2, 
+                2, 
+                4
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "x": {
+              "statistics": {
+                "max": "8.476962", 
+                "mean": "-0.040569", 
+                "min": "-8.611591"
+              }, 
+              "name": "x", 
+              "subtype": "continuous", 
+              "counts": [
+                2, 
+                1, 
+                1, 
+                5, 
+                2, 
+                1, 
+                4, 
+                5, 
+                3, 
+                2, 
+                1, 
+                4, 
+                2, 
+                2, 
+                0, 
+                4, 
+                5, 
+                1, 
+                2, 
+                2
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "clazz": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                25, 
+                24
+              ], 
+              "name": "clazz", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "44fc0d2b-14f9-48e5-b52b-1d7d8b940591": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "6", 
+                  "49"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "x", 
+                "y", 
+                "clazz", 
+                "x2", 
+                "y2", 
+                "xy"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "-2.174881", 
+                  "-5.65476", 
+                  "1", 
+                  "4.730107", 
+                  "31.976305", 
+                  "12.298429"
+                ], 
+                [
+                  "4.38112", 
+                  "3.534924", 
+                  "1", 
+                  "19.194208", 
+                  "12.495688", 
+                  "15.486925"
+                ], 
+                [
+                  "-1.936152", 
+                  "-4.841301", 
+                  "1", 
+                  "3.748686", 
+                  "23.438196", 
+                  "9.373497"
+                ], 
+                [
+                  "-2.80166", 
+                  "-4.144048", 
+                  "1", 
+                  "7.849299", 
+                  "17.17313", 
+                  "11.610212"
+                ], 
+                [
+                  "-2.534801", 
+                  "-5.651621", 
+                  "1", 
+                  "6.425218", 
+                  "31.940824", 
+                  "14.325738"
+                ], 
+                [
+                  "-4.064679", 
+                  "-6.292036", 
+                  "0", 
+                  "16.521613", 
+                  "39.589718", 
+                  "25.575105"
+                ], 
+                [
+                  "7.270326", 
+                  "-3.783681", 
+                  "0", 
+                  "52.857643", 
+                  "14.31624", 
+                  "-27.508593"
+                ], 
+                [
+                  "0.802655", 
+                  "-8.157694", 
+                  "0", 
+                  "0.644255", 
+                  "66.547966", 
+                  "-6.547815"
+                ], 
+                [
+                  "-3.256317", 
+                  "5.141327", 
+                  "1", 
+                  "10.603601", 
+                  "26.433245", 
+                  "-16.741791"
+                ], 
+                [
+                  "2.847022", 
+                  "5.265799", 
+                  "1", 
+                  "8.105537", 
+                  "27.72864", 
+                  "14.991848"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "clazz": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.489796", 
+                "min": "0"
+              }, 
+              "name": "clazz", 
+              "subtype": "continuous", 
+              "counts": [
+                25, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                24
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "y": {
+              "statistics": {
+                "max": "8.087637", 
+                "mean": "-0.277055", 
+                "min": "-8.300452"
+              }, 
+              "name": "y", 
+              "subtype": "continuous", 
+              "counts": [
+                4, 
+                2, 
+                2, 
+                4, 
+                3, 
+                3, 
+                1, 
+                3, 
+                1, 
+                4, 
+                0, 
+                2, 
+                3, 
+                1, 
+                2, 
+                2, 
+                4, 
+                2, 
+                2, 
+                4
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "xy": {
+              "statistics": {
+                "max": "32.555275", 
+                "mean": "-0.759956", 
+                "min": "-34.328924"
+              }, 
+              "name": "xy", 
+              "subtype": "continuous", 
+              "counts": [
+                3, 
+                2, 
+                1, 
+                0, 
+                0, 
+                3, 
+                6, 
+                4, 
+                2, 
+                2, 
+                3, 
+                2, 
+                4, 
+                8, 
+                4, 
+                0, 
+                1, 
+                2, 
+                0, 
+                2
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "x2": {
+              "statistics": {
+                "max": "74.159506", 
+                "mean": "21.731655", 
+                "min": "0.007409"
+              }, 
+              "name": "x2", 
+              "subtype": "continuous", 
+              "counts": [
+                11, 
+                6, 
+                6, 
+                0, 
+                1, 
+                5, 
+                1, 
+                2, 
+                5, 
+                3, 
+                1, 
+                0, 
+                1, 
+                2, 
+                1, 
+                0, 
+                1, 
+                1, 
+                0, 
+                2
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "x": {
+              "statistics": {
+                "max": "8.476962", 
+                "mean": "-0.040569", 
+                "min": "-8.611591"
+              }, 
+              "name": "x", 
+              "subtype": "continuous", 
+              "counts": [
+                2, 
+                1, 
+                1, 
+                5, 
+                2, 
+                1, 
+                4, 
+                5, 
+                3, 
+                2, 
+                1, 
+                4, 
+                2, 
+                2, 
+                0, 
+                4, 
+                5, 
+                1, 
+                2, 
+                2
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "y2": {
+              "statistics": {
+                "max": "68.897496", 
+                "mean": "26.31429", 
+                "min": "0.016685"
+              }, 
+              "name": "y2", 
+              "subtype": "continuous", 
+              "counts": [
+                9, 
+                5, 
+                1, 
+                2, 
+                3, 
+                3, 
+                2, 
+                4, 
+                1, 
+                4, 
+                1, 
+                2, 
+                1, 
+                2, 
+                0, 
+                2, 
+                2, 
+                0, 
+                3, 
+                2
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "6a3350b3-c74e-4faa-aff1-12580e2ac13a": {
+        "report": {
+          "tables": {
+            "roc": {
+              "name": "roc", 
+              "columnNames": [
+                "False positive rate", 
+                "True positive rate"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "0.08", 
+                  "0.083333"
+                ], 
+                [
+                  "0.2", 
+                  "0.125"
+                ], 
+                [
+                  "0.24", 
+                  "0.25"
+                ], 
+                [
+                  "0.32", 
+                  "0.333333"
+                ], 
+                [
+                  "0.32", 
+                  "0.5"
+                ], 
+                [
+                  "0.36", 
+                  "0.625"
+                ], 
+                [
+                  "0.44", 
+                  "0.708333"
+                ], 
+                [
+                  "0.44", 
+                  "0.875"
+                ], 
+                [
+                  "0.52", 
+                  "0.958333"
+                ], 
+                [
+                  "0.68", 
+                  "0.958333"
+                ], 
+                [
+                  "0.8", 
+                  "1"
+                ], 
+                [
+                  "0.96", 
+                  "1"
+                ], 
+                [
+                  "1", 
+                  "1"
+                ], 
+                [
+                  "1", 
+                  "1"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "summary": {
+              "name": "summary", 
+              "columnNames": [
+                "DataFrame Size", 
+                "AUC", 
+                "Logarithmic Loss"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "49", 
+                  "0.666667", 
+                  "0.6385"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "fMeasureByThreshold": {
+              "name": "fMeasureByThreshold", 
+              "columnNames": [
+                "Threshold", 
+                "F-Measure"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "0.717429", 
+                  "0.142857"
+                ], 
+                [
+                  "0.680508", 
+                  "0.1875"
+                ], 
+                [
+                  "0.673112", 
+                  "0.333333"
+                ], 
+                [
+                  "0.658703", 
+                  "0.4"
+                ], 
+                [
+                  "0.620283", 
+                  "0.545455"
+                ], 
+                [
+                  "0.550398", 
+                  "0.625"
+                ], 
+                [
+                  "0.489882", 
+                  "0.653846"
+                ], 
+                [
+                  "0.448861", 
+                  "0.75"
+                ], 
+                [
+                  "0.430924", 
+                  "0.766667"
+                ], 
+                [
+                  "0.33755", 
+                  "0.71875"
+                ], 
+                [
+                  "0.285551", 
+                  "0.705882"
+                ], 
+                [
+                  "0.249686", 
+                  "0.666667"
+                ], 
+                [
+                  "0.2146", 
+                  "0.657534"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "accuracy": {
+              "name": "accuracy", 
+              "columnNames": [
+                "Threshold", 
+                "Accuracy"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "0.717429", 
+                  "0.489796"
+                ], 
+                [
+                  "0.680508", 
+                  "0.489796"
+                ], 
+                [
+                  "0.673112", 
+                  "0.489796"
+                ], 
+                [
+                  "0.658703", 
+                  "0.530612"
+                ], 
+                [
+                  "0.620283", 
+                  "0.530612"
+                ], 
+                [
+                  "0.550398", 
+                  "0.612245"
+                ], 
+                [
+                  "0.489882", 
+                  "0.612245"
+                ], 
+                [
+                  "0.448861", 
+                  "0.653061"
+                ], 
+                [
+                  "0.430924", 
+                  "0.693878"
+                ], 
+                [
+                  "0.33755", 
+                  "0.693878"
+                ], 
+                [
+                  "0.285551", 
+                  "0.612245"
+                ], 
+                [
+                  "0.249686", 
+                  "0.571429"
+                ], 
+                [
+                  "0.2146", 
+                  "0.489796"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {}
+        }
+      }, 
+      "d4d771ae-e881-44ba-bce3-abc5bd37c19f": {
+        "report": {
+          "tables": {
+            "roc": {
+              "name": "roc", 
+              "columnNames": [
+                "False positive rate", 
+                "True positive rate"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "0", 
+                  "0"
+                ], 
+                [
+                  "0", 
+                  "0.166667"
+                ], 
+                [
+                  "0", 
+                  "0.333333"
+                ], 
+                [
+                  "0", 
+                  "0.5"
+                ], 
+                [
+                  "0", 
+                  "0.666667"
+                ], 
+                [
+                  "0", 
+                  "0.833333"
+                ], 
+                [
+                  "0", 
+                  "1"
+                ], 
+                [
+                  "0.16", 
+                  "1"
+                ], 
+                [
+                  "0.32", 
+                  "1"
+                ], 
+                [
+                  "0.48", 
+                  "1"
+                ], 
+                [
+                  "0.64", 
+                  "1"
+                ], 
+                [
+                  "0.8", 
+                  "1"
+                ], 
+                [
+                  "0.96", 
+                  "1"
+                ], 
+                [
+                  "1", 
+                  "1"
+                ], 
+                [
+                  "1", 
+                  "1"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "summary": {
+              "name": "summary", 
+              "columnNames": [
+                "DataFrame Size", 
+                "AUC", 
+                "Logarithmic Loss"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "49", 
+                  "1", 
+                  "0.040495"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "fMeasureByThreshold": {
+              "name": "fMeasureByThreshold", 
+              "columnNames": [
+                "Threshold", 
+                "F-Measure"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "0.999893", 
+                  "0.285714"
+                ], 
+                [
+                  "0.999272", 
+                  "0.5"
+                ], 
+                [
+                  "0.997259", 
+                  "0.666667"
+                ], 
+                [
+                  "0.99219", 
+                  "0.8"
+                ], 
+                [
+                  "0.969838", 
+                  "0.909091"
+                ], 
+                [
+                  "0.933963", 
+                  "1"
+                ], 
+                [
+                  "0.226429", 
+                  "0.923077"
+                ], 
+                [
+                  "0.080219", 
+                  "0.857143"
+                ], 
+                [
+                  "0.023966", 
+                  "0.8"
+                ], 
+                [
+                  "0.002839", 
+                  "0.75"
+                ], 
+                [
+                  "0.00056", 
+                  "0.705882"
+                ], 
+                [
+                  "0.000019", 
+                  "0.666667"
+                ], 
+                [
+                  "0", 
+                  "0.657534"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "accuracy": {
+              "name": "accuracy", 
+              "columnNames": [
+                "Threshold", 
+                "Accuracy"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "0.999893", 
+                  "0.530612"
+                ], 
+                [
+                  "0.999272", 
+                  "0.612245"
+                ], 
+                [
+                  "0.997259", 
+                  "0.693878"
+                ], 
+                [
+                  "0.99219", 
+                  "0.77551"
+                ], 
+                [
+                  "0.969838", 
+                  "0.857143"
+                ], 
+                [
+                  "0.933963", 
+                  "0.938776"
+                ], 
+                [
+                  "0.226429", 
+                  "0.979592"
+                ], 
+                [
+                  "0.080219", 
+                  "0.897959"
+                ], 
+                [
+                  "0.023966", 
+                  "0.816327"
+                ], 
+                [
+                  "0.002839", 
+                  "0.734694"
+                ], 
+                [
+                  "0.00056", 
+                  "0.653061"
+                ], 
+                [
+                  "0.000019", 
+                  "0.571429"
+                ], 
+                [
+                  "0", 
+                  "0.489796"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {}
+        }
+      }, 
+      "2d388969-ea8f-480f-9adc-4ff8ac92b57b": {
+        "report": {
+          "tables": {
+            "Parameters": {
+              "name": "Parameters", 
+              "columnNames": [
+                "Regularization", 
+                "Iterations number", 
+                "Tolerance"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "0", 
+                  "10", 
+                  "0.0001"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {}
+        }
+      }, 
+      "372f1c56-43de-4044-a355-2a931cd1f831": {
+        "report": {
+          "tables": {
+            "Intercept": {
+              "name": "Intercept", 
+              "columnNames": null, 
+              "columnTypes": [
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "-0.034544184856721324"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Feature columns": {
+              "name": "Feature columns", 
+              "columnNames": [
+                "Feature columns"
+              ], 
+              "columnTypes": [
+                "string"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "x"
+                ], 
+                [
+                  "y"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Parameters": {
+              "name": "Parameters", 
+              "columnNames": [
+                "Regularization", 
+                "Iterations number", 
+                "Tolerance"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "0", 
+                  "10", 
+                  "0.0001"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Target column": {
+              "name": "Target column", 
+              "columnNames": [
+                "Target column"
+              ], 
+              "columnTypes": [
+                "string"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "clazz"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Model weights": {
+              "name": "Model weights", 
+              "columnNames": [
+                "Column", 
+                "Weight"
+              ], 
+              "columnTypes": [
+                "string", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "x", 
+                  "-0.115918"
+                ], 
+                [
+                  "y", 
+                  "0.081624"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {}
+        }
+      }, 
+      "f91d63c8-7bee-4733-a5c3-4f0639e50c52": {
+        "report": {
+          "tables": {
+            "Mathematical Formula": {
+              "name": "Mathematical Formula", 
+              "columnNames": [
+                "Formula", 
+                "Column name"
+              ], 
+              "columnTypes": [
+                "string", 
+                "string"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "x*y", 
+                  "xy"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {}
+        }
+      }, 
+      "84101008-9d2b-4bb0-aa57-a092f665a25c": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "3", 
+                  "49"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "x", 
+                "y", 
+                "clazz"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "-2.174881", 
+                  "-5.65476", 
+                  "1"
+                ], 
+                [
+                  "4.38112", 
+                  "3.534924", 
+                  "1"
+                ], 
+                [
+                  "-1.936152", 
+                  "-4.841301", 
+                  "1"
+                ], 
+                [
+                  "-2.80166", 
+                  "-4.144048", 
+                  "1"
+                ], 
+                [
+                  "-2.534801", 
+                  "-5.651621", 
+                  "1"
+                ], 
+                [
+                  "-4.064679", 
+                  "-6.292036", 
+                  "0"
+                ], 
+                [
+                  "7.270326", 
+                  "-3.783681", 
+                  "0"
+                ], 
+                [
+                  "0.802655", 
+                  "-8.157694", 
+                  "0"
+                ], 
+                [
+                  "-3.256317", 
+                  "5.141327", 
+                  "1"
+                ], 
+                [
+                  "2.847022", 
+                  "5.265799", 
+                  "1"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "y": {
+              "statistics": {
+                "max": "8.087637", 
+                "mean": "-0.277055", 
+                "min": "-8.300452"
+              }, 
+              "name": "y", 
+              "subtype": "continuous", 
+              "counts": [
+                4, 
+                2, 
+                2, 
+                4, 
+                3, 
+                3, 
+                1, 
+                3, 
+                1, 
+                4, 
+                0, 
+                2, 
+                3, 
+                1, 
+                2, 
+                2, 
+                4, 
+                2, 
+                2, 
+                4
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "x": {
+              "statistics": {
+                "max": "8.476962", 
+                "mean": "-0.040569", 
+                "min": "-8.611591"
+              }, 
+              "name": "x", 
+              "subtype": "continuous", 
+              "counts": [
+                2, 
+                1, 
+                1, 
+                5, 
+                2, 
+                1, 
+                4, 
+                5, 
+                3, 
+                2, 
+                1, 
+                4, 
+                2, 
+                2, 
+                0, 
+                4, 
+                5, 
+                1, 
+                2, 
+                2
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "clazz": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.489796", 
+                "min": "0"
+              }, 
+              "name": "clazz", 
+              "subtype": "continuous", 
+              "counts": [
+                25, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                24
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "56f15557-f7d0-40a4-aa99-b6feb5eb73fe": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "4", 
+                  "49"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "x", 
+                "y", 
+                "clazz", 
+                "x2"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "-2.174881", 
+                  "-5.65476", 
+                  "1", 
+                  "4.730107"
+                ], 
+                [
+                  "4.38112", 
+                  "3.534924", 
+                  "1", 
+                  "19.194208"
+                ], 
+                [
+                  "-1.936152", 
+                  "-4.841301", 
+                  "1", 
+                  "3.748686"
+                ], 
+                [
+                  "-2.80166", 
+                  "-4.144048", 
+                  "1", 
+                  "7.849299"
+                ], 
+                [
+                  "-2.534801", 
+                  "-5.651621", 
+                  "1", 
+                  "6.425218"
+                ], 
+                [
+                  "-4.064679", 
+                  "-6.292036", 
+                  "0", 
+                  "16.521613"
+                ], 
+                [
+                  "7.270326", 
+                  "-3.783681", 
+                  "0", 
+                  "52.857643"
+                ], 
+                [
+                  "0.802655", 
+                  "-8.157694", 
+                  "0", 
+                  "0.644255"
+                ], 
+                [
+                  "-3.256317", 
+                  "5.141327", 
+                  "1", 
+                  "10.603601"
+                ], 
+                [
+                  "2.847022", 
+                  "5.265799", 
+                  "1", 
+                  "8.105537"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "y": {
+              "statistics": {
+                "max": "8.087637", 
+                "mean": "-0.277055", 
+                "min": "-8.300452"
+              }, 
+              "name": "y", 
+              "subtype": "continuous", 
+              "counts": [
+                4, 
+                2, 
+                2, 
+                4, 
+                3, 
+                3, 
+                1, 
+                3, 
+                1, 
+                4, 
+                0, 
+                2, 
+                3, 
+                1, 
+                2, 
+                2, 
+                4, 
+                2, 
+                2, 
+                4
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "x": {
+              "statistics": {
+                "max": "8.476962", 
+                "mean": "-0.040569", 
+                "min": "-8.611591"
+              }, 
+              "name": "x", 
+              "subtype": "continuous", 
+              "counts": [
+                2, 
+                1, 
+                1, 
+                5, 
+                2, 
+                1, 
+                4, 
+                5, 
+                3, 
+                2, 
+                1, 
+                4, 
+                2, 
+                2, 
+                0, 
+                4, 
+                5, 
+                1, 
+                2, 
+                2
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "x2": {
+              "statistics": {
+                "max": "74.159506", 
+                "mean": "21.731655", 
+                "min": "0.007409"
+              }, 
+              "name": "x2", 
+              "subtype": "continuous", 
+              "counts": [
+                11, 
+                6, 
+                6, 
+                0, 
+                1, 
+                5, 
+                1, 
+                2, 
+                5, 
+                3, 
+                1, 
+                0, 
+                1, 
+                2, 
+                1, 
+                0, 
+                1, 
+                1, 
+                0, 
+                2
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "clazz": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.489796", 
+                "min": "0"
+              }, 
+              "name": "clazz", 
+              "subtype": "continuous", 
+              "counts": [
+                25, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                24
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "c0e644ac-0145-4a8e-8681-81916d1cc749": {
+        "report": {
+          "tables": {
+            "Mathematical Formula": {
+              "name": "Mathematical Formula", 
+              "columnNames": [
+                "Formula", 
+                "Column name"
+              ], 
+              "columnTypes": [
+                "string", 
+                "string"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "x*x", 
+                  "x2"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {}
+        }
+      }
+    }, 
+    "error": null
+  }
+}

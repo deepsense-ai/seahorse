@@ -1,17 +1,24 @@
 # Copyright (c) 2015, CodiLime Inc.
 
+*** Variables ***
+${SUITE} =  simpleTests
+
+*** Keywords ***
+
 *** Settings ***
+Suite Setup     Standard Suite Setup
+Suite Teardown  Standard Suite Teardown
+
+Test Setup      Standard Test Setup
+Test Teardown   Standard Test Teardown
+
 Library    OperatingSystem
 Library    Collections
 Library    ../lib/WorkflowExecutorClient.py
+Library    ../lib/CommonSetupsAndTeardowns.py
+
 
 *** Test Cases ***
 Empty Workflow
-    ${dir} =    Set Variable    resources/simpleTests/emptyWorkflow/
-    Remove Directory    emptyWorkflowOutput    recursive=True
-    Create Output Directory    emptyWorkflowOutput
-    Run Workflow Local    ${dir}workflow.json
-    Check Execution Status
-    Check Report    ${dir}expectedReportPattern.json
-    Clean Output Directory
-
+    Run Workflow Local
+    Check Report

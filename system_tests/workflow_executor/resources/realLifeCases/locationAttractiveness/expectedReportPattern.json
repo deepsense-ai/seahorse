@@ -1,508 +1,3573 @@
 {
-  "11da09b9-90f3-45aa-9fe9-ec3f9fa86046": [{
-    "report": {
-      "distributions": {
-        "stars": {
-
-        },
-        "smokingUnknown": {
-
-        },
-        "highest_price": {
-
-        },
-        "check_in": {
-
-        },
-        "review_count": {
-
-        },
-        "lowest_price": {
-
-        },
-        "petsTRUE": {
-
-        },
-        "petsUnknown": {
-
-        },
-        "deposit": {
-
-        },
-        "smokingTRUE": {
-
+  "executionReport": {
+    "nodes": {
+      "baf8662c-c606-4fbe-8ed6-6ae6bc1d4d8c": {
+        "status": "COMPLETED", 
+        "results": [
+          "c54ca620-e70a-4a0c-83a5-d9e91cfe7098"
+        ], 
+        "error": null
+      }, 
+      "15546b98-912b-4380-9ac1-f6d862d8f2c1": {
+        "status": "COMPLETED", 
+        "results": [
+          "5838185a-80c2-44b1-bc9d-45f43a39816e"
+        ], 
+        "error": null
+      }, 
+      "7ad7a106-e253-405e-8d95-7528f4e41f1f": {
+        "status": "COMPLETED", 
+        "results": [
+          "0b9102d8-372c-4e1f-ae52-82f9b1a07691", 
+          "03988230-1b5f-4201-9817-d57aafca578d"
+        ], 
+        "error": null
+      }, 
+      "90f0ad82-b9b4-4f93-a35e-26a4c0bd82d1": {
+        "status": "COMPLETED", 
+        "results": [
+          "00fb6ea6-3eb4-4d89-b9d7-b8bb2103ae4d"
+        ], 
+        "error": null
+      }, 
+      "b761e7e9-61ff-4fca-ab7c-d5c3d49f3dd4": {
+        "status": "COMPLETED", 
+        "results": [
+          "19ab0164-7408-4428-a203-9ee48a5db7b1"
+        ], 
+        "error": null
+      }, 
+      "9fc4cea7-afc5-472e-931e-ab6c1280c6eb": {
+        "status": "COMPLETED", 
+        "results": [
+          "b756845d-d839-40a0-9425-dbfb79c9259f"
+        ], 
+        "error": null
+      }, 
+      "11da09b9-90f3-45aa-9fe9-ec3f9fa86046": {
+        "status": "COMPLETED", 
+        "results": [
+          "59b37c1d-0509-4d81-aa91-cca8d8b51751"
+        ], 
+        "error": null
+      }, 
+      "550366f7-ea8b-498e-a6bf-6985acb4ee84": {
+        "status": "COMPLETED", 
+        "results": [], 
+        "error": null
+      }, 
+      "a7f8fbd0-f4c9-429c-9c3f-f32c06ef4ea0": {
+        "status": "COMPLETED", 
+        "results": [
+          "89f7c548-a93a-4316-9c46-07e1767f0c9d"
+        ], 
+        "error": null
+      }, 
+      "fc391d40-40c5-4097-a20f-822dded3454e": {
+        "status": "COMPLETED", 
+        "results": [
+          "91425cf8-3582-40aa-b894-7134e1bf5ef3"
+        ], 
+        "error": null
+      }, 
+      "3bb69404-2ab0-4424-8e11-d7e385a4cc0c": {
+        "status": "COMPLETED", 
+        "results": [
+          "cc614fec-47fd-4249-8d28-ae80753c6e6e"
+        ], 
+        "error": null
+      }, 
+      "dd91d24f-77f2-4954-b891-ed32e510d3c7": {
+        "status": "COMPLETED", 
+        "results": [
+          "2e9cdd42-c169-4ec9-a1de-4397492d009b"
+        ], 
+        "error": null
+      }, 
+      "b5b0f9b4-eabf-42b9-a6e7-ae072bec1186": {
+        "status": "COMPLETED", 
+        "results": [
+          "4cb604f8-5f2c-49f3-9b97-2cfbcb26316b"
+        ], 
+        "error": null
+      }, 
+      "4ec76fa1-6546-435b-84d1-d04eb647a83e": {
+        "status": "COMPLETED", 
+        "results": [
+          "aabd099f-f78f-44b2-9fa9-cb38de04ea83"
+        ], 
+        "error": null
+      }, 
+      "5d871a5d-0bea-4909-8831-2a4fa4816b09": {
+        "status": "COMPLETED", 
+        "results": [
+          "69c4deed-34fb-427a-b3d3-0f46ac405d47"
+        ], 
+        "error": null
+      }, 
+      "dac882c2-ab95-417a-aca2-5eb4d5c355e5": {
+        "status": "COMPLETED", 
+        "results": [
+          "371a3753-6b29-4813-9454-1f0423924474"
+        ], 
+        "error": null
+      }, 
+      "e073a57c-7aef-4f29-bdd1-40cdcabb2047": {
+        "status": "COMPLETED", 
+        "results": [
+          "0d698e04-c822-4dd6-a5f0-785290be6fd1"
+        ], 
+        "error": null
+      }
+    }, 
+    "resultEntities": {
+      "aabd099f-f78f-44b2-9fa9-cb38de04ea83": {
+        "report": {
+          "tables": {
+            "Mathematical Formula": {
+              "name": "Mathematical Formula", 
+              "columnNames": [
+                "Formula", 
+                "Column name"
+              ], 
+              "columnTypes": [
+                "string", 
+                "string"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "LN(highest_price + 1.0)", 
+                  "log_highest_price1"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {}
         }
-      },
-      "name": "DataFrame Report",
-      "tables": {
-        "DataFrame Size": {
-          "name": "DataFrame Size",
-          "columnNames": ["Number of columns", "Number of rows"],
-          "values": [["28", "9"]]
-        },
-        "Data Sample": {
-          "name": "Data Sample"
+      }, 
+      "4cb604f8-5f2c-49f3-9b97-2cfbcb26316b": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "119", 
+                  "9"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "localityAnaheim", 
+                "localityBakersfield", 
+                "localityBerkeley", 
+                "localityBig Bear Lake", 
+                "localityCalistoga", 
+                "localityCambria", 
+                "localityCarlsbad", 
+                "localityCarmel", 
+                "localityCosta Mesa", 
+                "localityDesert Hot Springs"
+              ], 
+              "columnTypes": [
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "localityBerkeley": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityBerkeley", 
+              "missingValues": 0
+            }, 
+            "localityBakersfield": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityBakersfield", 
+              "missingValues": 0
+            }, 
+            "localityCalistoga": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityCalistoga", 
+              "missingValues": 0
+            }, 
+            "localityDesert Hot Springs": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityDesert Hot Springs", 
+              "missingValues": 0
+            }, 
+            "localityCarmel": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityCarmel", 
+              "missingValues": 0
+            }, 
+            "localityCosta Mesa": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityCosta Mesa", 
+              "missingValues": 0
+            }, 
+            "localityCarlsbad": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityCarlsbad", 
+              "missingValues": 0
+            }, 
+            "localityCambria": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityCambria", 
+              "missingValues": 0
+            }, 
+            "localityAnaheim": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityAnaheim", 
+              "missingValues": 0
+            }, 
+            "localityBig Bear Lake": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityBig Bear Lake", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "2e9cdd42-c169-4ec9-a1de-4397492d009b": {
+        "report": {
+          "tables": {
+            "Evaluate Regression Report": {
+              "name": "Evaluate Regression Report", 
+              "columnNames": [
+                "DataFrame Size", 
+                "Explained Variance", 
+                "Mean Absolute Error", 
+                "Mean Squared Error", 
+                "r2", 
+                "Root Mean Squared Error"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "blockType": "table", 
+              "description": "Evaluate regression metrics"
+            }
+          }, 
+          "distributions": {}
+        }
+      }, 
+      "19ab0164-7408-4428-a203-9ee48a5db7b1": {
+        "report": {
+          "tables": {
+            "Mathematical Formula": {
+              "name": "Mathematical Formula", 
+              "columnNames": [
+                "Formula", 
+                "Column name"
+              ], 
+              "columnTypes": [
+                "string", 
+                "string"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "MINIMUM(SQRT(POW(latitude - 37.774929, 2.0) + POW(longitude - -122.419416, 2.0)), SQRT(POW(latitude - 34.052234, 2.0) + POW(longitude - -118.243685, 2.0)))", 
+                  "dist_SF_LA"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {}
+        }
+      }, 
+      "59b37c1d-0509-4d81-aa91-cca8d8b51751": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "28", 
+                  "9"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "review_count", 
+                "smokingTRUE", 
+                "smokingUnknown", 
+                "stars", 
+                "lowest_price", 
+                "highest_price", 
+                "deposit", 
+                "petsTRUE", 
+                "petsUnknown", 
+                "check_in"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "13491", 
+                  "0", 
+                  "0", 
+                  "4", 
+                  "129", 
+                  "215", 
+                  "0", 
+                  "1", 
+                  "0", 
+                  "15"
+                ], 
+                [
+                  "10880", 
+                  "0", 
+                  "0", 
+                  "3", 
+                  "95", 
+                  "160", 
+                  "200", 
+                  "1", 
+                  "0", 
+                  "15"
+                ], 
+                [
+                  "8193", 
+                  "0", 
+                  "0", 
+                  "4", 
+                  "79", 
+                  "159", 
+                  "0", 
+                  "0", 
+                  "0", 
+                  "15"
+                ], 
+                [
+                  "4777", 
+                  "0", 
+                  "0", 
+                  "4", 
+                  "1775", 
+                  "159.5", 
+                  "0", 
+                  "0", 
+                  "0", 
+                  "15"
+                ], 
+                [
+                  "15261", 
+                  "0", 
+                  "0", 
+                  "3", 
+                  "85", 
+                  "181", 
+                  "0", 
+                  "1", 
+                  "0", 
+                  "15"
+                ], 
+                [
+                  "8825", 
+                  "0", 
+                  "0", 
+                  "3", 
+                  "139", 
+                  "259", 
+                  "0", 
+                  "0", 
+                  "0", 
+                  "15"
+                ], 
+                [
+                  "7852", 
+                  "0", 
+                  "0", 
+                  "4", 
+                  "262", 
+                  "382", 
+                  "150", 
+                  "1", 
+                  "0", 
+                  "15"
+                ], 
+                [
+                  "6851", 
+                  "1", 
+                  "0", 
+                  "3", 
+                  "109", 
+                  "159.5", 
+                  "0", 
+                  "1", 
+                  "0", 
+                  "15"
+                ], 
+                [
+                  "9004", 
+                  "0", 
+                  "0", 
+                  "4", 
+                  "1901", 
+                  "389", 
+                  "0", 
+                  "1", 
+                  "0", 
+                  "15"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "check_in": {
+              "statistics": {
+                "max": "15", 
+                "mean": "15", 
+                "min": "15"
+              }, 
+              "name": "check_in", 
+              "subtype": "continuous", 
+              "counts": [
+                9
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "review_count": {
+              "statistics": {
+                "max": "15261", 
+                "mean": "9459.333333", 
+                "min": "4777"
+              }, 
+              "name": "review_count", 
+              "subtype": "continuous", 
+              "counts": [
+                1, 
+                0, 
+                0, 
+                1, 
+                0, 
+                1, 
+                1, 
+                1, 
+                1, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "smokingUnknown": {
+              "statistics": {
+                "max": "0", 
+                "mean": "0", 
+                "min": "0"
+              }, 
+              "name": "smokingUnknown", 
+              "subtype": "continuous", 
+              "counts": [
+                9
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "petsUnknown": {
+              "statistics": {
+                "max": "0", 
+                "mean": "0", 
+                "min": "0"
+              }, 
+              "name": "petsUnknown", 
+              "subtype": "continuous", 
+              "counts": [
+                9
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "deposit": {
+              "statistics": {
+                "max": "200", 
+                "mean": "38.888889", 
+                "min": "0"
+              }, 
+              "name": "deposit", 
+              "subtype": "continuous", 
+              "counts": [
+                7, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "stars": {
+              "statistics": {
+                "max": "4", 
+                "mean": "3.555556", 
+                "min": "3"
+              }, 
+              "name": "stars", 
+              "subtype": "continuous", 
+              "counts": [
+                4, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                5
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "smokingTRUE": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.111111", 
+                "min": "0"
+              }, 
+              "name": "smokingTRUE", 
+              "subtype": "continuous", 
+              "counts": [
+                8, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "highest_price": {
+              "statistics": {
+                "max": "389", 
+                "mean": "229.333333", 
+                "min": "159"
+              }, 
+              "name": "highest_price", 
+              "subtype": "continuous", 
+              "counts": [
+                4, 
+                1, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                2
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "lowest_price": {
+              "statistics": {
+                "max": "1901", 
+                "mean": "508.222222", 
+                "min": "79"
+              }, 
+              "name": "lowest_price", 
+              "subtype": "continuous", 
+              "counts": [
+                6, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1, 
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "petsTRUE": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.666667", 
+                "min": "0"
+              }, 
+              "name": "petsTRUE", 
+              "subtype": "continuous", 
+              "counts": [
+                3, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                6
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "b756845d-d839-40a0-9425-dbfb79c9259f": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "28", 
+                  "9"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "review_count", 
+                "smokingTRUE", 
+                "smokingUnknown", 
+                "stars", 
+                "lowest_price", 
+                "highest_price", 
+                "deposit", 
+                "petsTRUE", 
+                "petsUnknown", 
+                "check_in"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "boolean", 
+                "boolean", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "boolean", 
+                "boolean", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "13491", 
+                  "false", 
+                  "false", 
+                  "4", 
+                  "129", 
+                  "215", 
+                  "0", 
+                  "true", 
+                  "false", 
+                  "15"
+                ], 
+                [
+                  "10880", 
+                  "false", 
+                  "false", 
+                  "3", 
+                  "95", 
+                  "160", 
+                  "200", 
+                  "true", 
+                  "false", 
+                  "15"
+                ], 
+                [
+                  "8193", 
+                  "false", 
+                  "false", 
+                  "4", 
+                  "79", 
+                  "159", 
+                  "0", 
+                  "false", 
+                  "false", 
+                  "15"
+                ], 
+                [
+                  "4777", 
+                  "false", 
+                  "false", 
+                  "4", 
+                  "1775", 
+                  "159.5", 
+                  "0", 
+                  "false", 
+                  "false", 
+                  "15"
+                ], 
+                [
+                  "15261", 
+                  "false", 
+                  "false", 
+                  "3", 
+                  "85", 
+                  "181", 
+                  "0", 
+                  "true", 
+                  "false", 
+                  "15"
+                ], 
+                [
+                  "8825", 
+                  "false", 
+                  "false", 
+                  "3", 
+                  "139", 
+                  "259", 
+                  "0", 
+                  "false", 
+                  "false", 
+                  "15"
+                ], 
+                [
+                  "7852", 
+                  "false", 
+                  "false", 
+                  "4", 
+                  "262", 
+                  "382", 
+                  "150", 
+                  "true", 
+                  "false", 
+                  "15"
+                ], 
+                [
+                  "6851", 
+                  "true", 
+                  "false", 
+                  "3", 
+                  "109", 
+                  "159.5", 
+                  "0", 
+                  "true", 
+                  "false", 
+                  "15"
+                ], 
+                [
+                  "9004", 
+                  "false", 
+                  "false", 
+                  "4", 
+                  "1901", 
+                  "389", 
+                  "0", 
+                  "true", 
+                  "false", 
+                  "15"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "check_in": {
+              "statistics": {
+                "max": "15", 
+                "mean": "15", 
+                "min": "15"
+              }, 
+              "name": "check_in", 
+              "subtype": "continuous", 
+              "counts": [
+                9
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "review_count": {
+              "statistics": {
+                "max": "15261", 
+                "mean": "9459.333333", 
+                "min": "4777"
+              }, 
+              "name": "review_count", 
+              "subtype": "continuous", 
+              "counts": [
+                1, 
+                0, 
+                0, 
+                1, 
+                0, 
+                1, 
+                1, 
+                1, 
+                1, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "smokingUnknown": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "smokingUnknown", 
+              "missingValues": 0
+            }, 
+            "petsUnknown": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "petsUnknown", 
+              "missingValues": 0
+            }, 
+            "deposit": {
+              "statistics": {
+                "max": "200", 
+                "mean": "38.888889", 
+                "min": "0"
+              }, 
+              "name": "deposit", 
+              "subtype": "continuous", 
+              "counts": [
+                7, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "stars": {
+              "statistics": {
+                "max": "4", 
+                "mean": "3.555556", 
+                "min": "3"
+              }, 
+              "name": "stars", 
+              "subtype": "continuous", 
+              "counts": [
+                4, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                5
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "smokingTRUE": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                8, 
+                1
+              ], 
+              "name": "smokingTRUE", 
+              "missingValues": 0
+            }, 
+            "highest_price": {
+              "statistics": {
+                "max": "389", 
+                "mean": "229.333333", 
+                "min": "159"
+              }, 
+              "name": "highest_price", 
+              "subtype": "continuous", 
+              "counts": [
+                4, 
+                1, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                2
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "lowest_price": {
+              "statistics": {
+                "max": "1901", 
+                "mean": "508.222222", 
+                "min": "79"
+              }, 
+              "name": "lowest_price", 
+              "subtype": "continuous", 
+              "counts": [
+                6, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1, 
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "petsTRUE": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                3, 
+                6
+              ], 
+              "name": "petsTRUE", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "5838185a-80c2-44b1-bc9d-45f43a39816e": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "120", 
+                  "9"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "localityAnaheim", 
+                "localityBakersfield", 
+                "localityBerkeley", 
+                "localityBig Bear Lake", 
+                "localityCalistoga", 
+                "localityCambria", 
+                "localityCarlsbad", 
+                "localityCarmel", 
+                "localityCosta Mesa", 
+                "localityDesert Hot Springs"
+              ], 
+              "columnTypes": [
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "localityBerkeley": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityBerkeley", 
+              "missingValues": 0
+            }, 
+            "localityBakersfield": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityBakersfield", 
+              "missingValues": 0
+            }, 
+            "localityCalistoga": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityCalistoga", 
+              "missingValues": 0
+            }, 
+            "localityDesert Hot Springs": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityDesert Hot Springs", 
+              "missingValues": 0
+            }, 
+            "localityCarmel": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityCarmel", 
+              "missingValues": 0
+            }, 
+            "localityCosta Mesa": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityCosta Mesa", 
+              "missingValues": 0
+            }, 
+            "localityCarlsbad": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityCarlsbad", 
+              "missingValues": 0
+            }, 
+            "localityCambria": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityCambria", 
+              "missingValues": 0
+            }, 
+            "localityAnaheim": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityAnaheim", 
+              "missingValues": 0
+            }, 
+            "localityBig Bear Lake": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityBig Bear Lake", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "69c4deed-34fb-427a-b3d3-0f46ac405d47": {
+        "report": {
+          "tables": {
+            "Mathematical Formula": {
+              "name": "Mathematical Formula", 
+              "columnNames": [
+                "Formula", 
+                "Column name"
+              ], 
+              "columnTypes": [
+                "string", 
+                "string"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "LN(lowest_price + 1.0)", 
+                  "log_lowest_price1"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {}
+        }
+      }, 
+      "00fb6ea6-3eb4-4d89-b9d7-b8bb2103ae4d": {
+        "report": {
+          "tables": {
+            "Mathematical Formula": {
+              "name": "Mathematical Formula", 
+              "columnNames": [
+                "Formula", 
+                "Column name"
+              ], 
+              "columnTypes": [
+                "string", 
+                "string"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "LN(review_count + 1.0)", 
+                  "log_review_count1"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {}
+        }
+      }, 
+      "89f7c548-a93a-4316-9c46-07e1767f0c9d": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "29", 
+                  "1"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "review_count", 
+                "smokingTRUE", 
+                "smokingUnknown", 
+                "stars", 
+                "lowest_price", 
+                "highest_price", 
+                "deposit", 
+                "petsTRUE", 
+                "petsUnknown", 
+                "check_in"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "4777", 
+                  "0", 
+                  "0", 
+                  "4", 
+                  "1775", 
+                  "159.5", 
+                  "0", 
+                  "0", 
+                  "0", 
+                  "15"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "check_in": {
+              "statistics": {
+                "max": "15", 
+                "mean": "15", 
+                "min": "15"
+              }, 
+              "name": "check_in", 
+              "subtype": "continuous", 
+              "counts": [
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "review_count": {
+              "statistics": {
+                "max": "4777", 
+                "mean": "4777", 
+                "min": "4777"
+              }, 
+              "name": "review_count", 
+              "subtype": "continuous", 
+              "counts": [
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "smokingUnknown": {
+              "statistics": {
+                "max": "0", 
+                "mean": "0", 
+                "min": "0"
+              }, 
+              "name": "smokingUnknown", 
+              "subtype": "continuous", 
+              "counts": [
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "petsUnknown": {
+              "statistics": {
+                "max": "0", 
+                "mean": "0", 
+                "min": "0"
+              }, 
+              "name": "petsUnknown", 
+              "subtype": "continuous", 
+              "counts": [
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "deposit": {
+              "statistics": {
+                "max": "0", 
+                "mean": "0", 
+                "min": "0"
+              }, 
+              "name": "deposit", 
+              "subtype": "continuous", 
+              "counts": [
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "stars": {
+              "statistics": {
+                "max": "4", 
+                "mean": "4", 
+                "min": "4"
+              }, 
+              "name": "stars", 
+              "subtype": "continuous", 
+              "counts": [
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "smokingTRUE": {
+              "statistics": {
+                "max": "0", 
+                "mean": "0", 
+                "min": "0"
+              }, 
+              "name": "smokingTRUE", 
+              "subtype": "continuous", 
+              "counts": [
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "highest_price": {
+              "statistics": {
+                "max": "159.5", 
+                "mean": "159.5", 
+                "min": "159.5"
+              }, 
+              "name": "highest_price", 
+              "subtype": "continuous", 
+              "counts": [
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "lowest_price": {
+              "statistics": {
+                "max": "1775", 
+                "mean": "1775", 
+                "min": "1775"
+              }, 
+              "name": "lowest_price", 
+              "subtype": "continuous", 
+              "counts": [
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "petsTRUE": {
+              "statistics": {
+                "max": "0", 
+                "mean": "0", 
+                "min": "0"
+              }, 
+              "name": "petsTRUE", 
+              "subtype": "continuous", 
+              "counts": [
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "03988230-1b5f-4201-9817-d57aafca578d": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "28", 
+                  "1"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "review_count", 
+                "smokingTRUE", 
+                "smokingUnknown", 
+                "stars", 
+                "lowest_price", 
+                "highest_price", 
+                "deposit", 
+                "petsTRUE", 
+                "petsUnknown", 
+                "check_in"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "4777", 
+                  "0", 
+                  "0", 
+                  "4", 
+                  "1775", 
+                  "159.5", 
+                  "0", 
+                  "0", 
+                  "0", 
+                  "15"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "check_in": {
+              "statistics": {
+                "max": "15", 
+                "mean": "15", 
+                "min": "15"
+              }, 
+              "name": "check_in", 
+              "subtype": "continuous", 
+              "counts": [
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "review_count": {
+              "statistics": {
+                "max": "4777", 
+                "mean": "4777", 
+                "min": "4777"
+              }, 
+              "name": "review_count", 
+              "subtype": "continuous", 
+              "counts": [
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "smokingUnknown": {
+              "statistics": {
+                "max": "0", 
+                "mean": "0", 
+                "min": "0"
+              }, 
+              "name": "smokingUnknown", 
+              "subtype": "continuous", 
+              "counts": [
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "petsUnknown": {
+              "statistics": {
+                "max": "0", 
+                "mean": "0", 
+                "min": "0"
+              }, 
+              "name": "petsUnknown", 
+              "subtype": "continuous", 
+              "counts": [
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "deposit": {
+              "statistics": {
+                "max": "0", 
+                "mean": "0", 
+                "min": "0"
+              }, 
+              "name": "deposit", 
+              "subtype": "continuous", 
+              "counts": [
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "stars": {
+              "statistics": {
+                "max": "4", 
+                "mean": "4", 
+                "min": "4"
+              }, 
+              "name": "stars", 
+              "subtype": "continuous", 
+              "counts": [
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "smokingTRUE": {
+              "statistics": {
+                "max": "0", 
+                "mean": "0", 
+                "min": "0"
+              }, 
+              "name": "smokingTRUE", 
+              "subtype": "continuous", 
+              "counts": [
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "highest_price": {
+              "statistics": {
+                "max": "159.5", 
+                "mean": "159.5", 
+                "min": "159.5"
+              }, 
+              "name": "highest_price", 
+              "subtype": "continuous", 
+              "counts": [
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "lowest_price": {
+              "statistics": {
+                "max": "1775", 
+                "mean": "1775", 
+                "min": "1775"
+              }, 
+              "name": "lowest_price", 
+              "subtype": "continuous", 
+              "counts": [
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "petsTRUE": {
+              "statistics": {
+                "max": "0", 
+                "mean": "0", 
+                "min": "0"
+              }, 
+              "name": "petsTRUE", 
+              "subtype": "continuous", 
+              "counts": [
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "0d698e04-c822-4dd6-a5f0-785290be6fd1": {
+        "report": {
+          "tables": {
+            "Intercept": {
+              "name": "Intercept", 
+              "columnNames": null, 
+              "columnTypes": [
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "3.3125"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Feature columns": {
+              "name": "Feature columns", 
+              "columnNames": [
+                "Feature columns"
+              ], 
+              "columnTypes": [
+                "string"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "review_count"
+                ], 
+                [
+                  "smokingTRUE"
+                ], 
+                [
+                  "smokingUnknown"
+                ], 
+                [
+                  "stars"
+                ], 
+                [
+                  "lowest_price"
+                ], 
+                [
+                  "highest_price"
+                ], 
+                [
+                  "deposit"
+                ], 
+                [
+                  "petsTRUE"
+                ], 
+                [
+                  "petsUnknown"
+                ], 
+                [
+                  "check_in"
+                ], 
+                [
+                  "room_count"
+                ], 
+                [
+                  "parking_detailsUnknown"
+                ], 
+                [
+                  "fitness_facilitiesTRUE"
+                ], 
+                [
+                  "fitness_facilitiesUnknown"
+                ], 
+                [
+                  "accessibilityUnknown"
+                ], 
+                [
+                  "cribsUnknown"
+                ], 
+                [
+                  "twentyfour_hour_front_deskUnknown"
+                ], 
+                [
+                  "meeting_roomsUnknown"
+                ], 
+                [
+                  "Bed_and_BreakfastsTRUE"
+                ], 
+                [
+                  "BusinessTRUE"
+                ], 
+                [
+                  "MotelTRUE"
+                ], 
+                [
+                  "FamilyTRUE"
+                ], 
+                [
+                  "B_BTRUE"
+                ], 
+                [
+                  "rating"
+                ], 
+                [
+                  "dist_SF_LA"
+                ], 
+                [
+                  "log_highest_price1"
+                ], 
+                [
+                  "log_lowest_price1"
+                ], 
+                [
+                  "log_review_count1"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Parameters": {
+              "name": "Parameters", 
+              "columnNames": [
+                "Regularization parameter", 
+                "Iterations number", 
+                "Mini batch fraction"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "0.5", 
+                  "1.0", 
+                  "1.0"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Target column": {
+              "name": "Target column", 
+              "columnNames": [
+                "Target column"
+              ], 
+              "columnTypes": [
+                "string"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "rating"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Model weights": {
+              "name": "Model weights", 
+              "columnNames": [
+                "Column", 
+                "Weight"
+              ], 
+              "columnTypes": [
+                "string", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "review_count", 
+                  "-0.043416"
+                ], 
+                [
+                  "smokingTRUE", 
+                  "-0.110485"
+                ], 
+                [
+                  "smokingUnknown", 
+                  "0"
+                ], 
+                [
+                  "stars", 
+                  "0.17539"
+                ], 
+                [
+                  "lowest_price", 
+                  "0.256435"
+                ], 
+                [
+                  "highest_price", 
+                  "0.285059"
+                ], 
+                [
+                  "deposit", 
+                  "-0.052335"
+                ], 
+                [
+                  "petsTRUE", 
+                  "0.033754"
+                ], 
+                [
+                  "petsUnknown", 
+                  "0"
+                ], 
+                [
+                  "check_in", 
+                  "0"
+                ], 
+                [
+                  "room_count", 
+                  "0.021942"
+                ], 
+                [
+                  "parking_detailsUnknown", 
+                  "0"
+                ], 
+                [
+                  "fitness_facilitiesTRUE", 
+                  "0"
+                ], 
+                [
+                  "fitness_facilitiesUnknown", 
+                  "0"
+                ], 
+                [
+                  "accessibilityUnknown", 
+                  "0"
+                ], 
+                [
+                  "cribsUnknown", 
+                  "0.066291"
+                ], 
+                [
+                  "twentyfour_hour_front_deskUnknown", 
+                  "0"
+                ], 
+                [
+                  "meeting_roomsUnknown", 
+                  "0"
+                ], 
+                [
+                  "Bed_and_BreakfastsTRUE", 
+                  "0"
+                ], 
+                [
+                  "BusinessTRUE", 
+                  "0"
+                ], 
+                [
+                  "MotelTRUE", 
+                  "0"
+                ], 
+                [
+                  "FamilyTRUE", 
+                  "0.066291"
+                ], 
+                [
+                  "B_BTRUE", 
+                  "0"
+                ], 
+                [
+                  "rating", 
+                  "0.32551"
+                ], 
+                [
+                  "dist_SF_LA", 
+                  "-0.236008"
+                ], 
+                [
+                  "log_highest_price1", 
+                  "0.291838"
+                ], 
+                [
+                  "log_lowest_price1", 
+                  "0.288615"
+                ], 
+                [
+                  "log_review_count1", 
+                  "-0.028349"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {}
+        }
+      }, 
+      "371a3753-6b29-4813-9454-1f0423924474": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "117", 
+                  "9"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "localityAnaheim", 
+                "localityBakersfield", 
+                "localityBerkeley", 
+                "localityBig Bear Lake", 
+                "localityCalistoga", 
+                "localityCambria", 
+                "localityCarlsbad", 
+                "localityCarmel", 
+                "localityCosta Mesa", 
+                "localityDesert Hot Springs"
+              ], 
+              "columnTypes": [
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "localityBerkeley": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityBerkeley", 
+              "missingValues": 0
+            }, 
+            "localityBakersfield": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityBakersfield", 
+              "missingValues": 0
+            }, 
+            "localityCalistoga": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityCalistoga", 
+              "missingValues": 0
+            }, 
+            "localityDesert Hot Springs": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityDesert Hot Springs", 
+              "missingValues": 0
+            }, 
+            "localityCarmel": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityCarmel", 
+              "missingValues": 0
+            }, 
+            "localityCosta Mesa": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityCosta Mesa", 
+              "missingValues": 0
+            }, 
+            "localityCarlsbad": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityCarlsbad", 
+              "missingValues": 0
+            }, 
+            "localityCambria": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityCambria", 
+              "missingValues": 0
+            }, 
+            "localityAnaheim": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityAnaheim", 
+              "missingValues": 0
+            }, 
+            "localityBig Bear Lake": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityBig Bear Lake", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "c54ca620-e70a-4a0c-83a5-d9e91cfe7098": {
+        "report": {
+          "tables": {
+            "Parameters": {
+              "name": "Parameters", 
+              "columnNames": [
+                "Regularization parameter", 
+                "Iterations number", 
+                "Mini batch fraction"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "0.5", 
+                  "1.0", 
+                  "1.0"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {}
+        }
+      }, 
+      "91425cf8-3582-40aa-b894-7134e1bf5ef3": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "118", 
+                  "9"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "localityAnaheim", 
+                "localityBakersfield", 
+                "localityBerkeley", 
+                "localityBig Bear Lake", 
+                "localityCalistoga", 
+                "localityCambria", 
+                "localityCarlsbad", 
+                "localityCarmel", 
+                "localityCosta Mesa", 
+                "localityDesert Hot Springs"
+              ], 
+              "columnTypes": [
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "localityBerkeley": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityBerkeley", 
+              "missingValues": 0
+            }, 
+            "localityBakersfield": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityBakersfield", 
+              "missingValues": 0
+            }, 
+            "localityCalistoga": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityCalistoga", 
+              "missingValues": 0
+            }, 
+            "localityDesert Hot Springs": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityDesert Hot Springs", 
+              "missingValues": 0
+            }, 
+            "localityCarmel": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityCarmel", 
+              "missingValues": 0
+            }, 
+            "localityCosta Mesa": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityCosta Mesa", 
+              "missingValues": 0
+            }, 
+            "localityCarlsbad": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityCarlsbad", 
+              "missingValues": 0
+            }, 
+            "localityCambria": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityCambria", 
+              "missingValues": 0
+            }, 
+            "localityAnaheim": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityAnaheim", 
+              "missingValues": 0
+            }, 
+            "localityBig Bear Lake": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityBig Bear Lake", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "0b9102d8-372c-4e1f-ae52-82f9b1a07691": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "28", 
+                  "8"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "review_count", 
+                "smokingTRUE", 
+                "smokingUnknown", 
+                "stars", 
+                "lowest_price", 
+                "highest_price", 
+                "deposit", 
+                "petsTRUE", 
+                "petsUnknown", 
+                "check_in"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "13491", 
+                  "0", 
+                  "0", 
+                  "4", 
+                  "129", 
+                  "215", 
+                  "0", 
+                  "1", 
+                  "0", 
+                  "15"
+                ], 
+                [
+                  "10880", 
+                  "0", 
+                  "0", 
+                  "3", 
+                  "95", 
+                  "160", 
+                  "200", 
+                  "1", 
+                  "0", 
+                  "15"
+                ], 
+                [
+                  "8193", 
+                  "0", 
+                  "0", 
+                  "4", 
+                  "79", 
+                  "159", 
+                  "0", 
+                  "0", 
+                  "0", 
+                  "15"
+                ], 
+                [
+                  "15261", 
+                  "0", 
+                  "0", 
+                  "3", 
+                  "85", 
+                  "181", 
+                  "0", 
+                  "1", 
+                  "0", 
+                  "15"
+                ], 
+                [
+                  "8825", 
+                  "0", 
+                  "0", 
+                  "3", 
+                  "139", 
+                  "259", 
+                  "0", 
+                  "0", 
+                  "0", 
+                  "15"
+                ], 
+                [
+                  "7852", 
+                  "0", 
+                  "0", 
+                  "4", 
+                  "262", 
+                  "382", 
+                  "150", 
+                  "1", 
+                  "0", 
+                  "15"
+                ], 
+                [
+                  "6851", 
+                  "1", 
+                  "0", 
+                  "3", 
+                  "109", 
+                  "159.5", 
+                  "0", 
+                  "1", 
+                  "0", 
+                  "15"
+                ], 
+                [
+                  "9004", 
+                  "0", 
+                  "0", 
+                  "4", 
+                  "1901", 
+                  "389", 
+                  "0", 
+                  "1", 
+                  "0", 
+                  "15"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "check_in": {
+              "statistics": {
+                "max": "15", 
+                "mean": "15", 
+                "min": "15"
+              }, 
+              "name": "check_in", 
+              "subtype": "continuous", 
+              "counts": [
+                8
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "review_count": {
+              "statistics": {
+                "max": "15261", 
+                "mean": "10044.625", 
+                "min": "6851"
+              }, 
+              "name": "review_count", 
+              "subtype": "continuous", 
+              "counts": [
+                1, 
+                0, 
+                1, 
+                1, 
+                1, 
+                1, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "smokingUnknown": {
+              "statistics": {
+                "max": "0", 
+                "mean": "0", 
+                "min": "0"
+              }, 
+              "name": "smokingUnknown", 
+              "subtype": "continuous", 
+              "counts": [
+                8
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "petsUnknown": {
+              "statistics": {
+                "max": "0", 
+                "mean": "0", 
+                "min": "0"
+              }, 
+              "name": "petsUnknown", 
+              "subtype": "continuous", 
+              "counts": [
+                8
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "deposit": {
+              "statistics": {
+                "max": "200", 
+                "mean": "43.75", 
+                "min": "0"
+              }, 
+              "name": "deposit", 
+              "subtype": "continuous", 
+              "counts": [
+                6, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "stars": {
+              "statistics": {
+                "max": "4", 
+                "mean": "3.5", 
+                "min": "3"
+              }, 
+              "name": "stars", 
+              "subtype": "continuous", 
+              "counts": [
+                4, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                4
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "smokingTRUE": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.125", 
+                "min": "0"
+              }, 
+              "name": "smokingTRUE", 
+              "subtype": "continuous", 
+              "counts": [
+                7, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "highest_price": {
+              "statistics": {
+                "max": "389", 
+                "mean": "238.0625", 
+                "min": "159"
+              }, 
+              "name": "highest_price", 
+              "subtype": "continuous", 
+              "counts": [
+                3, 
+                1, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                2
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "lowest_price": {
+              "statistics": {
+                "max": "1901", 
+                "mean": "349.875", 
+                "min": "79"
+              }, 
+              "name": "lowest_price", 
+              "subtype": "continuous", 
+              "counts": [
+                6, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }, 
+            "petsTRUE": {
+              "statistics": {
+                "max": "1", 
+                "mean": "0.75", 
+                "min": "0"
+              }, 
+              "name": "petsTRUE", 
+              "subtype": "continuous", 
+              "counts": [
+                2, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                6
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "cc614fec-47fd-4249-8d28-ae80753c6e6e": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "121", 
+                  "9"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "localityAnaheim", 
+                "localityBakersfield", 
+                "localityBerkeley", 
+                "localityBig Bear Lake", 
+                "localityCalistoga", 
+                "localityCambria", 
+                "localityCarlsbad", 
+                "localityCarmel", 
+                "localityCosta Mesa", 
+                "localityDesert Hot Springs"
+              ], 
+              "columnTypes": [
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean", 
+                "boolean"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false", 
+                  "false"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "localityBerkeley": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityBerkeley", 
+              "missingValues": 0
+            }, 
+            "localityBakersfield": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityBakersfield", 
+              "missingValues": 0
+            }, 
+            "localityCalistoga": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityCalistoga", 
+              "missingValues": 0
+            }, 
+            "localityDesert Hot Springs": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityDesert Hot Springs", 
+              "missingValues": 0
+            }, 
+            "localityCarmel": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityCarmel", 
+              "missingValues": 0
+            }, 
+            "localityCosta Mesa": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityCosta Mesa", 
+              "missingValues": 0
+            }, 
+            "localityCarlsbad": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityCarlsbad", 
+              "missingValues": 0
+            }, 
+            "localityCambria": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityCambria", 
+              "missingValues": 0
+            }, 
+            "localityAnaheim": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityAnaheim", 
+              "missingValues": 0
+            }, 
+            "localityBig Bear Lake": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                9, 
+                0
+              ], 
+              "name": "localityBig Bear Lake", 
+              "missingValues": 0
+            }
+          }
         }
       }
-    }
-  }],
-  "9fc4cea7-afc5-472e-931e-ab6c1280c6eb": [{
-    "report": {
-      "distributions": {
-        "stars": {
-
-        },
-        "smokingUnknown": {
-
-        },
-        "highest_price": {
-
-        },
-        "check_in": {
-
-        },
-        "review_count": {
-
-        },
-        "lowest_price": {
-
-        },
-        "petsTRUE": {
-
-        },
-        "petsUnknown": {
-
-        },
-        "deposit": {
-
-        },
-        "smokingTRUE": {
-
-        }
-      },
-      "name": "DataFrame Report",
-      "tables": {
-        "DataFrame Size": {
-          "name": "DataFrame Size",
-          "columnNames": ["Number of columns", "Number of rows"],
-          "values": [["28", "9"]]
-        },
-        "Data Sample": {
-          "name": "Data Sample"
-        }
-      }
-    }
-  }],
-  "550366f7-ea8b-498e-a6bf-6985acb4ee84": [],
-  "90f0ad82-b9b4-4f93-a35e-26a4c0bd82d1": [{
-    "report": {
-      "name": "Report for MathematicalTransformation"
-    }
-  }],
-  "4ec76fa1-6546-435b-84d1-d04eb647a83e": [{
-    "report": {
-      "name": "Report for MathematicalTransformation"
-    }
-  }],
-  "a7f8fbd0-f4c9-429c-9c3f-f32c06ef4ea0": [{
-    "report": {
-      "distributions": {
-        "stars": {
-
-        },
-        "smokingUnknown": {
-
-        },
-        "highest_price": {
-
-        },
-        "check_in": {
-
-        },
-        "review_count": {
-
-        },
-        "lowest_price": {
-
-        },
-        "petsTRUE": {
-
-        },
-        "petsUnknown": {
-
-        },
-        "deposit": {
-
-        },
-        "smokingTRUE": {
-
-        }
-      },
-      "name": "DataFrame Report",
-      "tables": {
-        "DataFrame Size": {
-          "name": "DataFrame Size",
-          "columnNames": ["Number of columns", "Number of rows"],
-          "values": [["29", "1"]]
-        },
-        "Data Sample": {
-          "name": "Data Sample"
-        }
-      }
-    }
-  }],
-  "dac882c2-ab95-417a-aca2-5eb4d5c355e5": [{
-    "report": {
-      "distributions": {
-        "localityDesert Hot Springs": {
-
-        },
-        "localityCalistoga": {
-
-        },
-        "localityCarlsbad": {
-
-        },
-        "localityCarmel": {
-
-        },
-        "localityBerkeley": {
-
-        },
-        "localityCambria": {
-
-        },
-        "localityBakersfield": {
-
-        },
-        "localityBig Bear Lake": {
-
-        },
-        "localityAnaheim": {
-
-        },
-        "localityCosta Mesa": {
-
-        }
-      },
-      "name": "DataFrame Report",
-      "tables": {
-        "DataFrame Size": {
-          "name": "DataFrame Size",
-          "columnNames": ["Number of columns", "Number of rows"],
-          "values": [["117", "9"]]
-        },
-        "Data Sample": {
-          "name": "Data Sample"
-        }
-      }
-    }
-  }],
-  "5d871a5d-0bea-4909-8831-2a4fa4816b09": [{
-    "report": {
-      "name": "Report for MathematicalTransformation"
-    }
-  }],
-  "7ad7a106-e253-405e-8d95-7528f4e41f1f": [{
-    "report": {
-      "distributions": {
-        "stars": {
-
-        },
-        "smokingUnknown": {
-
-        },
-        "highest_price": {
-
-        },
-        "check_in": {
-
-        },
-        "review_count": {
-
-        },
-        "lowest_price": {
-
-        },
-        "petsTRUE": {
-
-        },
-        "petsUnknown": {
-
-        },
-        "deposit": {
-
-        },
-        "smokingTRUE": {
-
-        }
-      },
-      "name": "DataFrame Report",
-      "tables": {
-        "DataFrame Size": {
-          "name": "DataFrame Size",
-          "columnNames": ["Number of columns", "Number of rows"],
-          "values": [["28", "8"]]
-        },
-        "Data Sample": {
-          "name": "Data Sample"
-        }
-      }
-    }
-  }, {
-    "report": {
-      "distributions": {
-        "stars": {
-
-        },
-        "smokingUnknown": {
-
-        },
-        "highest_price": {
-
-        },
-        "check_in": {
-
-        },
-        "review_count": {
-
-        },
-        "lowest_price": {
-
-        },
-        "petsTRUE": {
-
-        },
-        "petsUnknown": {
-
-        },
-        "deposit": {
-
-        },
-        "smokingTRUE": {
-
-        }
-      },
-      "name": "DataFrame Report",
-      "tables": {
-        "DataFrame Size": {
-          "name": "DataFrame Size",
-          "columnNames": ["Number of columns", "Number of rows"],
-          "values": [["28", "1"]]
-        },
-        "Data Sample": {
-          "name": "Data Sample"
-        }
-      }
-    }
-  }],
-  "15546b98-912b-4380-9ac1-f6d862d8f2c1": [{
-    "report": {
-      "distributions": {
-        "localityDesert Hot Springs": {
-
-        },
-        "localityCalistoga": {
-
-        },
-        "localityCarlsbad": {
-
-        },
-        "localityCarmel": {
-
-        },
-        "localityBerkeley": {
-
-        },
-        "localityCambria": {
-
-        },
-        "localityBakersfield": {
-
-        },
-        "localityBig Bear Lake": {
-
-        },
-        "localityAnaheim": {
-
-        },
-        "localityCosta Mesa": {
-
-        }
-      },
-      "name": "DataFrame Report",
-      "tables": {
-        "DataFrame Size": {
-          "name": "DataFrame Size",
-          "columnNames": ["Number of columns", "Number of rows"],
-          "values": [["120", "9"]]
-        },
-        "Data Sample": {
-          "name": "Data Sample"
-        }
-      }
-    }
-  }],
-  "fc391d40-40c5-4097-a20f-822dded3454e": [{
-    "report": {
-      "distributions": {
-        "localityDesert Hot Springs": {
-
-        },
-        "localityCalistoga": {
-
-        },
-        "localityCarlsbad": {
-
-        },
-        "localityCarmel": {
-
-        },
-        "localityBerkeley": {
-
-        },
-        "localityCambria": {
-
-        },
-        "localityBakersfield": {
-
-        },
-        "localityBig Bear Lake": {
-
-        },
-        "localityAnaheim": {
-
-        },
-        "localityCosta Mesa": {
-
-        }
-      },
-      "name": "DataFrame Report",
-      "tables": {
-        "DataFrame Size": {
-          "name": "DataFrame Size",
-          "columnNames": ["Number of columns", "Number of rows"],
-          "values": [["118", "9"]]
-        },
-        "Data Sample": {
-          "name": "Data Sample"
-        }
-      }
-    }
-  }],
-  "dd91d24f-77f2-4954-b891-ed32e510d3c7": [{
-    "report": {
-      "name": "Evaluate Regression Report",
-      "tables": {
-        "Evaluate Regression Report": {
-          "name": "Evaluate Regression Report"
-        }
-      }
-    }
-  }],
-  "e073a57c-7aef-4f29-bdd1-40cdcabb2047": [{
-    "report": {
-      "distributions": {
-
-      }
-    }
-  }],
-  "3bb69404-2ab0-4424-8e11-d7e385a4cc0c": [{
-    "report": {
-      "distributions": {
-        "localityDesert Hot Springs": {
-
-        },
-        "localityCalistoga": {
-
-        },
-        "localityCarlsbad": {
-
-        },
-        "localityCarmel": {
-
-        },
-        "localityBerkeley": {
-
-        },
-        "localityCambria": {
-
-        },
-        "localityBakersfield": {
-
-        },
-        "localityBig Bear Lake": {
-
-        },
-        "localityAnaheim": {
-
-        },
-        "localityCosta Mesa": {
-
-        }
-      },
-      "name": "DataFrame Report",
-      "tables": {
-        "DataFrame Size": {
-          "name": "DataFrame Size",
-          "columnNames": ["Number of columns", "Number of rows"],
-          "values": [["121", "9"]]
-        },
-        "Data Sample": {
-          "name": "Data Sample"
-        }
-      }
-    }
-  }],
-  "b5b0f9b4-eabf-42b9-a6e7-ae072bec1186": [{
-    "report": {
-      "distributions": {
-        "localityDesert Hot Springs": {
-
-        },
-        "localityCalistoga": {
-
-        },
-        "localityCarlsbad": {
-
-        },
-        "localityCarmel": {
-
-        },
-        "localityBerkeley": {
-
-        },
-        "localityCambria": {
-
-        },
-        "localityBakersfield": {
-
-        },
-        "localityBig Bear Lake": {
-
-        },
-        "localityAnaheim": {
-
-        },
-        "localityCosta Mesa": {
-
-        }
-      },
-      "tables": {
-        "DataFrame Size": {
-          "name": "DataFrame Size",
-          "columnNames": ["Number of columns", "Number of rows"],
-          "values": [["119", "9"]]
-        },
-        "Data Sample": {
-          "name": "Data Sample"
-        }
-      }
-    }
-  }],
-  "b761e7e9-61ff-4fca-ab7c-d5c3d49f3dd4": [{
-    "report": {
-      "name": "Report for MathematicalTransformation"
-    }
-  }]
+    }, 
+    "error": null
+  }
 }

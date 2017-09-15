@@ -9,17 +9,10 @@
       "parameters": {
         "data storage type": {
           "FILE": {
-            "source": "s3n://AKIAIRRLCDDWK5JBPVLQ:GOK9kdzDLPA+t8vpcBiCVbUmDB6pUrCdmsUNVg1u@seahorse-dev/system_tests/readWriteS3/input.csv",
+            "source": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/resources/ioTests/readWriteLocalFilesystemParquetFormat/input.parquet",
             "format": {
-              "CSV": {
-                "separator": {
-                  "Comma": {
+              "PARQUET": {
 
-                  }
-                },
-                "names included": true,
-                "categorical columns": null,
-                "convert to boolean": true
               }
             }
           }
@@ -35,16 +28,11 @@
         "data storage type": {
           "FILE": {
             "format": {
-              "CSV": {
-                "column separator": {
-                  "Comma": {
+              "PARQUET": {
 
-                  }
-                },
-                "write header": true
               }
             },
-            "output file": "s3n://AKIAIRRLCDDWK5JBPVLQ:GOK9kdzDLPA+t8vpcBiCVbUmDB6pUrCdmsUNVg1u@seahorse-dev/system_tests/readWriteS3/output.csv"
+            "output file": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/output/ioTests/readWriteLocalFilesystemParquetFormat/output.parquet"
           }
         }
       }
@@ -62,19 +50,19 @@
   },
   "thirdPartyData": {
     "gui": {
-      "name": "IO Workflow",
+      "name": "IO Test 2",
       "description": "",
       "nodes": {
         "b2367b9d-3c7d-4db8-c5b4-40b99be2d8ea": {
           "coordinates": {
-            "x": 260,
-            "y": 107
+            "x": 100,
+            "y": 45
           }
         },
         "c9a629a2-6716-5ae8-9c0c-6e2afcfa2dba": {
           "coordinates": {
-            "x": 169,
-            "y": 309
+            "x": 326,
+            "y": 390
           }
         }
       }
@@ -83,7 +71,7 @@
   "variables": {
 
   },
-  "id": "103f6c19-13e8-4c70-9206-e2f07eaef5a6",
+  "id": "b194a54e-128e-477e-b6aa-65cc15d3adbc",
   "metadata": {
     "type": "batch",
     "apiVersion": "1.0.0"

@@ -1,0 +1,1034 @@
+{
+  "executionReport": {
+    "nodes": {
+      "ee2deaf3-a7f0-09c3-b1fe-f1d3cba1c7b5": {
+        "status": "COMPLETED", 
+        "results": [
+          "067353db-4ffc-466e-9c28-792a22c5e9a0"
+        ], 
+        "error": null
+      }, 
+      "2a726929-714b-4d28-365b-5254670ca5ce": {
+        "status": "COMPLETED", 
+        "results": [
+          "0f8c5ce0-ad93-489f-93e8-0b77c9625d41"
+        ], 
+        "error": null
+      }, 
+      "a31ce0cd-d2f5-e11e-28ed-a1c56be8fa31": {
+        "status": "COMPLETED", 
+        "results": [
+          "ff809c8a-c4dc-4ae5-969c-912294e1cdc5"
+        ], 
+        "error": null
+      }, 
+      "089ad81b-3ff7-4196-440d-dda153e62dcd": {
+        "status": "COMPLETED", 
+        "results": [], 
+        "error": null
+      }, 
+      "7afb7a78-9165-3917-f9e2-3ad06a1f2380": {
+        "status": "COMPLETED", 
+        "results": [
+          "a9da3948-0183-4f52-aab5-cd1fba080181"
+        ], 
+        "error": null
+      }, 
+      "76ca6d08-2a1e-6ae3-0b20-a528ea3f0e81": {
+        "status": "COMPLETED", 
+        "results": [
+          "c425b8e0-1e57-40bb-b2f3-fe7a85318c41"
+        ], 
+        "error": null
+      }, 
+      "446a6ad3-ab7c-b4ab-92a7-df76710c18a2": {
+        "status": "COMPLETED", 
+        "results": [
+          "ce92e0f3-5f3e-483f-b67e-c4a45805cd92"
+        ], 
+        "error": null
+      }
+    }, 
+    "resultEntities": {
+      "0f8c5ce0-ad93-489f-93e8-0b77c9625d41": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "5", 
+                  "5"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "col1", 
+                "col2", 
+                "col3", 
+                "col4", 
+                "col5"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "boolean", 
+                "boolean", 
+                "categorical"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "1", 
+                  "1", 
+                  null, 
+                  null, 
+                  "blue"
+                ], 
+                [
+                  "2", 
+                  "2", 
+                  "false", 
+                  null, 
+                  "blue"
+                ], 
+                [
+                  "4", 
+                  null, 
+                  null, 
+                  null, 
+                  null
+                ], 
+                [
+                  "5", 
+                  "5", 
+                  "true", 
+                  null, 
+                  "green"
+                ], 
+                [
+                  "6", 
+                  "6", 
+                  null, 
+                  null, 
+                  "red"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "col4": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                0, 
+                0
+              ], 
+              "name": "col4", 
+              "missingValues": 5
+            }, 
+            "col5": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                1, 
+                2, 
+                1
+              ], 
+              "name": "col5", 
+              "missingValues": 1
+            }, 
+            "col2": {
+              "statistics": {
+                "max": "6", 
+                "mean": "3.5", 
+                "min": "1"
+              }, 
+              "name": "col2", 
+              "subtype": "continuous", 
+              "counts": [
+                1, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 1
+            }, 
+            "col3": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                1, 
+                1
+              ], 
+              "name": "col3", 
+              "missingValues": 3
+            }, 
+            "col1": {
+              "statistics": {
+                "max": "6", 
+                "mean": "3.6", 
+                "min": "1"
+              }, 
+              "name": "col1", 
+              "subtype": "continuous", 
+              "counts": [
+                1, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "c425b8e0-1e57-40bb-b2f3-fe7a85318c41": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "4", 
+                  "5"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "col1", 
+                "col3", 
+                "col5", 
+                "indicator_col2"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "boolean", 
+                "categorical", 
+                "boolean"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "1", 
+                  "false", 
+                  "blue", 
+                  "false"
+                ], 
+                [
+                  "2", 
+                  "false", 
+                  "blue", 
+                  "false"
+                ], 
+                [
+                  "4", 
+                  "false", 
+                  null, 
+                  "true"
+                ], 
+                [
+                  "5", 
+                  "true", 
+                  "green", 
+                  "false"
+                ], 
+                [
+                  "6", 
+                  "false", 
+                  "red", 
+                  "false"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "col5": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                1, 
+                2, 
+                1
+              ], 
+              "name": "col5", 
+              "missingValues": 1
+            }, 
+            "indicator_col2": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                4, 
+                1
+              ], 
+              "name": "indicator_col2", 
+              "missingValues": 0
+            }, 
+            "col3": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                4, 
+                1
+              ], 
+              "name": "col3", 
+              "missingValues": 0
+            }, 
+            "col1": {
+              "statistics": {
+                "max": "6", 
+                "mean": "3.6", 
+                "min": "1"
+              }, 
+              "name": "col1", 
+              "subtype": "continuous", 
+              "counts": [
+                1, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "ce92e0f3-5f3e-483f-b67e-c4a45805cd92": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "5", 
+                  "6"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "col1", 
+                "col2", 
+                "col3", 
+                "col4", 
+                "col5"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "boolean", 
+                "boolean", 
+                "categorical"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "1", 
+                  "1", 
+                  null, 
+                  null, 
+                  "blue"
+                ], 
+                [
+                  "2", 
+                  "2", 
+                  "false", 
+                  null, 
+                  "blue"
+                ], 
+                [
+                  null, 
+                  "3", 
+                  "true", 
+                  null, 
+                  "blue"
+                ], 
+                [
+                  "4", 
+                  null, 
+                  null, 
+                  null, 
+                  null
+                ], 
+                [
+                  "5", 
+                  "5", 
+                  "true", 
+                  null, 
+                  "green"
+                ], 
+                [
+                  "6", 
+                  "6", 
+                  null, 
+                  null, 
+                  "red"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "col4": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                0, 
+                0
+              ], 
+              "name": "col4", 
+              "missingValues": 6
+            }, 
+            "col5": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                1, 
+                3, 
+                1
+              ], 
+              "name": "col5", 
+              "missingValues": 1
+            }, 
+            "col2": {
+              "statistics": {
+                "max": "6", 
+                "mean": "3.4", 
+                "min": "1"
+              }, 
+              "name": "col2", 
+              "subtype": "continuous", 
+              "counts": [
+                1, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 1
+            }, 
+            "col3": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                1, 
+                2
+              ], 
+              "name": "col3", 
+              "missingValues": 3
+            }, 
+            "col1": {
+              "statistics": {
+                "max": "6", 
+                "mean": "3.6", 
+                "min": "1"
+              }, 
+              "name": "col1", 
+              "subtype": "continuous", 
+              "counts": [
+                1, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 1
+            }
+          }
+        }
+      }, 
+      "a9da3948-0183-4f52-aab5-cd1fba080181": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "5", 
+                  "5"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "col1", 
+                "col3", 
+                "col5", 
+                "indicator_col2", 
+                "indicator_col5"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "boolean", 
+                "categorical", 
+                "boolean", 
+                "boolean"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "1", 
+                  "false", 
+                  "blue", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "2", 
+                  "false", 
+                  "blue", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "4", 
+                  "false", 
+                  "blue", 
+                  "true", 
+                  "true"
+                ], 
+                [
+                  "5", 
+                  "true", 
+                  "green", 
+                  "false", 
+                  "false"
+                ], 
+                [
+                  "6", 
+                  "false", 
+                  "red", 
+                  "false", 
+                  "false"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "indicator_col5": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                4, 
+                1
+              ], 
+              "name": "indicator_col5", 
+              "missingValues": 0
+            }, 
+            "col5": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                1, 
+                3, 
+                1
+              ], 
+              "name": "col5", 
+              "missingValues": 0
+            }, 
+            "indicator_col2": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                4, 
+                1
+              ], 
+              "name": "indicator_col2", 
+              "missingValues": 0
+            }, 
+            "col3": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                4, 
+                1
+              ], 
+              "name": "col3", 
+              "missingValues": 0
+            }, 
+            "col1": {
+              "statistics": {
+                "max": "6", 
+                "mean": "3.6", 
+                "min": "1"
+              }, 
+              "name": "col1", 
+              "subtype": "continuous", 
+              "counts": [
+                1, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "067353db-4ffc-466e-9c28-792a22c5e9a0": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "5", 
+                  "5"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "col1", 
+                "col3", 
+                "col4", 
+                "col5", 
+                "indicator_col2"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "boolean", 
+                "boolean", 
+                "categorical", 
+                "boolean"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "1", 
+                  "false", 
+                  null, 
+                  "blue", 
+                  "false"
+                ], 
+                [
+                  "2", 
+                  "false", 
+                  null, 
+                  "blue", 
+                  "false"
+                ], 
+                [
+                  "4", 
+                  "false", 
+                  null, 
+                  null, 
+                  "true"
+                ], 
+                [
+                  "5", 
+                  "true", 
+                  null, 
+                  "green", 
+                  "false"
+                ], 
+                [
+                  "6", 
+                  "false", 
+                  null, 
+                  "red", 
+                  "false"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "col4": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                0, 
+                0
+              ], 
+              "name": "col4", 
+              "missingValues": 5
+            }, 
+            "col5": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                1, 
+                2, 
+                1
+              ], 
+              "name": "col5", 
+              "missingValues": 1
+            }, 
+            "indicator_col2": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                4, 
+                1
+              ], 
+              "name": "indicator_col2", 
+              "missingValues": 0
+            }, 
+            "col3": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                4, 
+                1
+              ], 
+              "name": "col3", 
+              "missingValues": 0
+            }, 
+            "col1": {
+              "statistics": {
+                "max": "6", 
+                "mean": "3.6", 
+                "min": "1"
+              }, 
+              "name": "col1", 
+              "subtype": "continuous", 
+              "counts": [
+                1, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }
+          }
+        }
+      }, 
+      "ff809c8a-c4dc-4ae5-969c-912294e1cdc5": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "5", 
+                  "5"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "col1", 
+                "col3", 
+                "col4", 
+                "col5", 
+                "indicator_col2"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "boolean", 
+                "boolean", 
+                "categorical", 
+                "boolean"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "1", 
+                  null, 
+                  null, 
+                  "blue", 
+                  "false"
+                ], 
+                [
+                  "2", 
+                  "false", 
+                  null, 
+                  "blue", 
+                  "false"
+                ], 
+                [
+                  "4", 
+                  null, 
+                  null, 
+                  null, 
+                  "true"
+                ], 
+                [
+                  "5", 
+                  "true", 
+                  null, 
+                  "green", 
+                  "false"
+                ], 
+                [
+                  "6", 
+                  null, 
+                  null, 
+                  "red", 
+                  "false"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "col4": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                0, 
+                0
+              ], 
+              "name": "col4", 
+              "missingValues": 5
+            }, 
+            "col5": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                1, 
+                2, 
+                1
+              ], 
+              "name": "col5", 
+              "missingValues": 1
+            }, 
+            "indicator_col2": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                4, 
+                1
+              ], 
+              "name": "indicator_col2", 
+              "missingValues": 0
+            }, 
+            "col3": {
+              "subtype": "categorical", 
+              "blockType": "distribution", 
+              "counts": [
+                1, 
+                1
+              ], 
+              "name": "col3", 
+              "missingValues": 3
+            }, 
+            "col1": {
+              "statistics": {
+                "max": "6", 
+                "mean": "3.6", 
+                "min": "1"
+              }, 
+              "name": "col1", 
+              "subtype": "continuous", 
+              "counts": [
+                1, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                0, 
+                1, 
+                0, 
+                0, 
+                1
+              ], 
+              "blockType": "distribution", 
+              "missingValues": 0
+            }
+          }
+        }
+      }
+    }, 
+    "error": null
+  }
+}

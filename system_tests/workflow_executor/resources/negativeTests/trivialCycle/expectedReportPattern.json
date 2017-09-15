@@ -1,0 +1,16 @@
+{
+  "executionReport": {
+    "nodes": {
+      "1b48956f-9733-1306-fa2d-d2916521b41c": {
+        "status": "ABORTED", 
+        "results": null, 
+        "error": null
+      }
+    }, 
+    "resultEntities": {}, 
+    "error": {
+      "code": "IncorrectWorkflow", 
+      "title": "Cyclic workflow"
+    }
+  }
+}

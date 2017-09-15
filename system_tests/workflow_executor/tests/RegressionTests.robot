@@ -1,59 +1,49 @@
 # Copyright (c) 2015, CodiLime Inc.
 
+*** Variables ***
+${SUITE} =  regressionTests
+
+*** Keywords ***
+Upload Suite Resources To Hdfs
+    Upload To Hdfs    ${HDFS PATH}training.csv    ${SUITE RESOURCE PATH}training.csv
+    Upload To Hdfs    ${HDFS PATH}test.csv    ${SUITE RESOURCE PATH}test.csv
+
+Upload File To HDFS
+    [Arguments]  ${RESOURCE FILE NAME}
+    Upload to Hdfs  ${HDFS PATH}${RESOURCE FILE NAME}    ${TEST RESOURCE PATH}${RESOURCE FILE NAME}
+
+
 *** Settings ***
+Suite Setup     Standard Suite Setup
+Suite Teardown  Standard Suite Teardown
+
+Test Setup      Standard Hdfs Test Setup
+Test Teardown   Standard Hdfs Test Teardown
+
 Library    OperatingSystem
 Library    Collections
 Library    ../lib/HdfsClient.py
 Library    ../lib/WorkflowExecutorClient.py
+Library    ../lib/CommonSetupsAndTeardowns.py
+
 
 *** Test Cases ***
 Ridge Regression
-    ${dir} =    Set Variable    resources/regressionTests/ridgeRegression/
-    Remove Hdfs Path    /system_tests/ridgeRegression
-    Upload To Hdfs    /system_tests/ridgeRegression/training.csv    resources/regressionTests/training.csv
-    Upload To Hdfs    /system_tests/ridgeRegression/test.csv    resources/regressionTests/test.csv
-    Remove Directory    ridgeRegressionOutput    recursive=yes
-    Create Output Directory    ridgeRegressionOutput
-    Run Workflow    ${dir}workflow.json
-    Check Execution Status
-    Check Report    resources/regressionTests/expectedReportPattern.json
-    Clean Output Directory
-    Remove Hdfs Path    /system_tests/ridgeRegression
+    Upload Suite Resources To Hdfs
+    Run Workflow
+    Check Report
 
 Lasso Regression
-    ${dir} =    Set Variable    resources/regressionTests/lassoRegression/
-    Remove Hdfs Path    /system_tests/lassoRegression
-    Upload To Hdfs    /system_tests/lassoRegression/training.csv    resources/regressionTests/training.csv
-    Upload To Hdfs    /system_tests/lassoRegression/test.csv    resources/regressionTests/test.csv
-    Remove Directory    lassoRegressionOutput    recursive=yes
-    Create Output Directory    lassoRegressionOutput
-    Run Workflow    ${dir}workflow.json
-    Check Execution Status
-    Check Report    resources/regressionTests/expectedReportPattern.json
-    Clean Output Directory
-    Remove Hdfs Path    /system_tests/lassoRegression
+    Upload Suite Resources To Hdfs
+    Run Workflow
+    Check Report
 
 Random Forest
-    ${dir} =    Set Variable    resources/regressionTests/randomForest/
-    Remove Hdfs Path    /system_tests/randomForest
-    Upload To Hdfs    /system_tests/randomForest/training.csv    resources/regressionTests/training.csv
-    Upload To Hdfs    /system_tests/randomForest/test.csv    resources/regressionTests/test.csv
-    Remove Directory    randomForestOutput    recursive=yes
-    Create Output Directory    randomForestOutput
-    Run Workflow    ${dir}workflow.json
-    Check Execution Status
-    Check Report    resources/regressionTests/expectedReportPattern.json
-    Clean Output Directory
-    Remove Hdfs Path    /system_tests/randomForest
+    Upload Suite Resources To Hdfs
+    Run Workflow
+    Check Report
 
 Gradient Boosted Trees
-    ${dir} =    Set Variable    resources/regressionTests/gradientBoostedTrees/
-    Remove Hdfs Path    /system_tests/gradientBoostedTrees
-    Upload To Hdfs    /system_tests/gradientBoostedTrees/training.csv    resources/regressionTests/training.csv
-    Upload To Hdfs    /system_tests/gradientBoostedTrees/test.csv    resources/regressionTests/test.csv
-    Remove Directory    gradientBoostedTreesOutput    recursive=yes
-    Create Output Directory    gradientBoostedTreesOutput
-    Run Workflow    ${dir}workflow.json
-    Check Execution Status
-    Check Report    resources/regressionTests/expectedReportPattern.json
-    Remove Hdfs Path    /system_tests/gradientBoostedTrees
+    Upload Suite Resources To Hdfs
+    Run Workflow
+    Check Report

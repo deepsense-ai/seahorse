@@ -9,16 +9,22 @@
       "parameters": {
         "data storage type": {
           "FILE": {
-            "source": "s3n://AKIAIRRLCDDWK5JBPVLQ:GOK9kdzDLPA+t8vpcBiCVbUmDB6pUrCdmsUNVg1u@seahorse-dev/system_tests/readWriteS3/input.csv",
+            "source": "hdfs://spark-cluster-1/system_tests/readWriteHdfs/input.csv",
             "format": {
               "CSV": {
                 "separator": {
-                  "Comma": {
+                  "Semicolon": {
 
                   }
                 },
-                "names included": true,
-                "categorical columns": null,
+                "names included": false,
+                "categorical columns": {
+                  "selections": [{
+                    "type": "indexRange",
+                    "values": [1, 1]
+                  }],
+                  "excluding": false
+                },
                 "convert to boolean": true
               }
             }
@@ -37,14 +43,14 @@
             "format": {
               "CSV": {
                 "column separator": {
-                  "Comma": {
+                  "Semicolon": {
 
                   }
                 },
                 "write header": true
               }
             },
-            "output file": "s3n://AKIAIRRLCDDWK5JBPVLQ:GOK9kdzDLPA+t8vpcBiCVbUmDB6pUrCdmsUNVg1u@seahorse-dev/system_tests/readWriteS3/output.csv"
+            "output file": "hdfs://spark-cluster-1/system_tests/readWriteHdfs/output.csv"
           }
         }
       }

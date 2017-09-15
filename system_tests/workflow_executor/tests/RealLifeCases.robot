@@ -1,44 +1,43 @@
 # Copyright (c) 2015, CodiLime Inc.
 
+*** Variables ***
+${SUITE} =  realLifeCases
+
+*** Keywords ***
+
+Upload Resource File To Hdfs
+    [Arguments]  ${RESOURCE FILE NAME}
+    Upload to Hdfs  ${HDFS PATH}${RESOURCE FILE NAME}    ${TEST RESOURCE PATH}${RESOURCE FILE NAME}
+
+
 *** Settings ***
+Suite Setup     Standard Suite Setup
+Suite Teardown  Standard Suite Teardown
+
+Test Setup      Standard Hdfs Test Setup
+Test Teardown   Standard Hdfs Test Teardown
+
 Library    OperatingSystem
 Library    Collections
 Library    ../lib/HdfsClient.py
 Library    ../lib/WorkflowExecutorClient.py
+Library    ../lib/CommonSetupsAndTeardowns.py
+
 
 *** Test Cases ***
 Location Attractiveness
-    ${dir} =    Set Variable    resources/realLifeCases/locationAttractiveness/
-    Remove Hdfs Path    /system_tests/locationAttractiveness
-    Upload To Hdfs    /system_tests/locationAttractiveness/LocationAttractiveness.csv    ${dir}LocationAttractiveness.csv
-    Remove Directory    locationAttractivenessOutput    recursive=yes
-    Create Output Directory    locationAttractivenessOutput
-    Run Workflow    ${dir}workflow.json
-    Check Execution Status
-    Check Report    ${dir}expectedReportPattern.json
-    Clean Output Directory
-    Remove Hdfs Path    /system_tests/locationAttractiveness
+    Upload Resource File To Hdfs  LocationAttractiveness.csv
+    Run Workflow
+    Check Report
 
 Demand Forecasting
-    Remove Hdfs Path    /system_tests/demandForecasting/
-    ${dir} =    Set Variable    resources/demandForecasting/
-    Upload To Hdfs    /system_tests/demandForecasting/demand.csv    ${dir}demand.csv
-    Upload To Hdfs    /system_tests/demandForecasting/weather.csv    ${dir}weather.csv
-    Remove Directory    demandForecastingOutput    recursive=yes
-    Create Output Directory    demandForecastingOutput
-    Run Workflow    ${dir}workflow_hdfs.json
-    Check Execution Status
-    Clean Output Directory
-    Remove Hdfs Path    /system_tests/demandForecasting/
+    Upload Resource File To Hdfs  demand.csv
+    Upload Resource File To Hdfs  weather.csv
+    Run Workflow
+    Check Report
 
 Demand Forecasting Using Random Forest
-    Remove Hdfs Path    /system_tests/demandForecastingRF/
-    ${dir} =    Set Variable    resources/demandForecastingRF/
-    Upload To Hdfs    /system_tests/demandForecastingRF/demand.csv    ${dir}demand.csv
-    Upload To Hdfs    /system_tests/demandForecastingRF/weather.csv    ${dir}weather.csv
-    Remove Directory    demandForecastingRFOutput    recursive=yes
-    Create Output Directory    demandForecastingRFOutput
-    Run Workflow    ${dir}workflow_hdfs.json
-    Check Execution Status
-    Clean Output Directory
-    Remove Hdfs Path    /system_tests/demandForecastingRF/
+    Upload Resource File To Hdfs  demand.csv
+    Upload Resource File To Hdfs  weather.csv
+    Run Workflow
+    Check Report

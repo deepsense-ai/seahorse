@@ -4,7 +4,7 @@
       "02f14ccc-c877-c242-bb82-534d0cac90d3": {
         "status": "COMPLETED", 
         "results": [
-          "7a93bcfa-ef46-4b2a-be89-ae4247e58a98"
+          "1fd4ae5c-ac64-4359-96a8-c52d1a566d22"
         ], 
         "error": null
       }, 
@@ -15,7 +15,7 @@
       }
     }, 
     "resultEntities": {
-      "7a93bcfa-ef46-4b2a-be89-ae4247e58a98": {
+      "1fd4ae5c-ac64-4359-96a8-c52d1a566d22": {
         "report": {
           "tables": {
             "DataFrame Size": {
@@ -42,39 +42,39 @@
               "columnNames": [
                 "string_col", 
                 "numeric_col", 
-                "boolean_col", 
                 "categorical_col", 
-                "timestamp_col"
+                "timestamp_col", 
+                "boolean_col"
               ], 
               "columnTypes": [
                 "string", 
                 "numeric", 
-                "boolean", 
                 "categorical", 
-                "timestamp"
+                "timestamp", 
+                "boolean"
               ], 
               "rowNames": null, 
               "values": [
                 [
                   "str_one", 
                   "2.3461", 
-                  "true", 
                   "A", 
-                  "2013-08-05T18:19:01.000Z"
-                ], 
-                [
-                  "str_three", 
-                  "7.41", 
-                  "true", 
-                  "B", 
-                  "2013-08-05T18:19:03.000Z"
+                  "2013-08-05T18:19:01.000Z", 
+                  "true"
                 ], 
                 [
                   "str_two", 
                   "4.1334", 
-                  "false", 
                   "A", 
-                  "2013-08-05T18:19:02.000Z"
+                  "2013-08-05T18:19:02.000Z", 
+                  "false"
+                ], 
+                [
+                  "str_three", 
+                  "7.41", 
+                  "B", 
+                  "2013-08-05T18:19:03.000Z", 
+                  "true"
                 ]
               ], 
               "blockType": "table"
