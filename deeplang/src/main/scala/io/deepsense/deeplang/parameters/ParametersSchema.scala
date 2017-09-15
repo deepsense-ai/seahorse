@@ -53,6 +53,12 @@ class ParametersSchema protected (private val schemaMap: ListMap[String, Paramet
     new ParametersSchema(replicatedSchemaMap)
   }
 
+  /**
+   * Substitutes placeholders with concrete variable values.
+   */
+  def substitutePlaceholders(variables: Map[String, String]): Unit =
+    schemaMap.foreach { case (name, holder) => holder.substitutePlaceholders(variables) }
+
   override def equals(other: Any): Boolean = other match {
     case that: ParametersSchema => schemaMap == that.schemaMap
     case _ => false

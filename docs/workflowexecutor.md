@@ -117,6 +117,7 @@ Detailed information about command line parameters can be obtained by executing 
 | ``-u``<BR/>``--upload-report``                                  | Upload execution report. If specified, POST request with execution report will be sent after completing workflow execution. |
 | ``-r LEVEL``<BR/>``--report-level LEVEL``                       | Level of details for DataFrame report generation; LEVEL is 'high', 'medium', or 'low' (default: 'medium'). |
 | ``-a ADDRESS``<BR/>``--api-address ADDRESS``                    | Address of Seahorse Editor API. If not specified, the default of ``https://editor.seahorse.deepsense.io`` will be used.  |
+| ``-e NAME=VALUE``<BR/>``--extra-var NAME=VALUE``                | Extra variable. Sets extra variable to specified value. Can be specified multiple times. |
 
 
 * **NOTE:** At least one of ``-w FILE`` or ``-d ID`` (or their long names) needs to be
@@ -125,6 +126,9 @@ Seahorse Editor.
 
 * **NOTE:** At least one of ``-o DIR`` or ``-u`` (or their long names) needs to be
 specified.
+
+* **NOTE:** When using ``--extra-var`` option variable name or value can be surrounded by quotation
+marks if it contains special characters (e.g. space).
 
 
 ## Workflow Executor Logs

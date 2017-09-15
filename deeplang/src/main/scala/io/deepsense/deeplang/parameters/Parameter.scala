@@ -56,6 +56,11 @@ abstract class Parameter extends Serializable {
   private[parameters] def replicate: Parameter
 
   /**
+   * Substitutes placeholders with concrete variable values.
+   */
+  private[parameters] def substitutePlaceholders(variables: Map[String, String]): Unit = ()
+
+  /**
    * Validates held value.
    * If value is set to None exception is thrown.
    */

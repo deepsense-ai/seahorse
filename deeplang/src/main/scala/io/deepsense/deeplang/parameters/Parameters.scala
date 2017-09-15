@@ -17,11 +17,13 @@
 package io.deepsense.deeplang.parameters
 
 import scala.collection.immutable.ListMap
+import scala.util.matching.Regex
 
 import spray.json.DefaultJsonProtocol._
 import spray.json._
 
 import io.deepsense.deeplang.exceptions.DeepLangException
+import io.deepsense.deeplang.parameters.exceptions.VariableNotDefinedException
 
 case class BooleanParameter(
     description: String,
@@ -83,6 +85,21 @@ case class StringParameter(
   val parameterType = ParameterType.String
 
   private[parameters] def replicate: Parameter = copy()
+
+  /**
+   * Substitutes placeholders with concrete variable values.
+   *
+   * E.g. "${username}" will be replaced with value of variable named "username".
+   *
+   * @param variables mapping from variable names to values
+   */
+  override private[parameters] def substitutePlaceholders(variables: Map[String, String]): Unit = {
+    val placeholderRegex = new Regex("\\$\\{(.*?)\\}", "name")
+    value = placeholderRegex.replaceAllIn(value, m => Regex.quoteReplacement {
+      val variableName = m.group("name")
+      variables.getOrElse(variableName, throw VariableNotDefinedException(variableName))
+    })
+  }
 
   override protected def defaultValueToJson(defaultValue: String): JsValue = defaultValue.toJson
 
@@ -248,6 +265,9 @@ case class ParametersSequence(
   }
 
   private[parameters] def replicate: Parameter = copy()
+
+  override private[parameters] def substitutePlaceholders(variables: Map[String, String]): Unit =
+    _value.foreach(_.foreach(_.substitutePlaceholders(variables)))
 
   override def jsDescription: Map[String, JsValue] =
     super.jsDescription + ("values" -> predefinedSchema.toJson)

@@ -102,6 +102,12 @@ object WorkflowExecutorApp
       (x, c) => c.copy(apiAddress = Some(x))
     } text "address of Seahorse Editor API. e.g. https://editor.seahorse.deepsense.io"
 
+    opt[(String, String)]('e', "extra-var") optional() unbounded() valueName "NAME=VALUE" action {
+      (x, c) => c.copy(extraVars = c.extraVars.updated(x._1, x._2))
+    } text "extra variable; can be specified multiple times; " +
+      "name or value can be surrounded by quotation marks " +
+      "if it contains special characters (e.g. space)"
+
     help("help") text "print this help message and exit"
     version("version") text "print product version and exit"
     note("")
@@ -131,7 +137,11 @@ object WorkflowExecutorApp
     val params = cmdParams.get
 
     val workflow = loadWorkflow(params)
-    val executionReport = workflow.map(w => executeWorkflow(w, params.reportLevel).get)
+
+    val executionReport = workflow.map(w => {
+      val workflowWithExtraVars = substituteExtraVars(w, params.extraVars)
+      executeWorkflow(workflowWithExtraVars, params.reportLevel).get
+    })
     val workflowWithResultsFuture = workflow.flatMap(w =>
       executionReport.map(r => WorkflowWithResults(w.id, w.metadata, w.graph, w.thirdPartyData, r))
     )
@@ -203,6 +213,7 @@ object WorkflowExecutorApp
       .getOrElse(System.setProperty("logFile", "workflowexecutor"))
     DOMConfigurator.configure(getClass.getResource("/log4j.xml"))
   }
+
   private def reportUrl(reportId: String): String =
     s"${reportPreviewConfig.defaultAddress}/${reportPreviewConfig.path}/$reportId"
 
@@ -224,9 +235,22 @@ object WorkflowExecutorApp
     logger.error(s"WorkflowExecutor is unable to parse the input file: ${exception.getMessage}")
   }
 
+  private def substituteExtraVars(
+      workflow: WorkflowWithVariables,
+      extraVars: Map[String, String]): WorkflowWithVariables = {
+
+    val workflowCopy = workflow.toJson
+      .convertTo[WorkflowWithVariables](versionedWorkflowWithVariablesReader)
+    workflowCopy.graph.nodes.foreach(node =>
+      node.operation.parameters.substitutePlaceholders(extraVars)
+    )
+    workflowCopy
+  }
+
   private def executeWorkflow(
       workflow: WorkflowWithVariables,
       reportLevel: ReportLevel): Try[ExecutionReport] = {
+
     // Run executor
     logger.info("Executing the workflow.")
     logger.debug("Executing the workflow: " +  workflow)
@@ -310,7 +334,8 @@ object WorkflowExecutorApp
     outputDirectoryPath: Option[String] = None,
     uploadReport: Boolean = false,
     reportLevel: ReportLevel = ReportLevel.MEDIUM,
-    apiAddress: Option[String] = None)
+    apiAddress: Option[String] = None,
+    extraVars: Map[String, String] = Map.empty)
 
   private case class WorkflowManagerConfig(
       defaultAddress: String,

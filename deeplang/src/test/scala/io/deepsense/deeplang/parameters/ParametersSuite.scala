@@ -21,7 +21,7 @@ import scala.collection.immutable.ListMap
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{FunSuite, Matchers}
 
-import io.deepsense.deeplang.parameters.exceptions.TypeConversionException
+import io.deepsense.deeplang.parameters.exceptions.{VariableNotDefinedException, TypeConversionException}
 
 class ParametersSuite extends FunSuite with Matchers with MockitoSugar {
 
@@ -225,5 +225,132 @@ class ParametersSuite extends FunSuite with Matchers with MockitoSugar {
     assert(param1 == param2)
     param2.value = Some(false)
     assert(param1 != param2)
+  }
+
+  test("Substituting placeholders") {
+    val schema = Placeholders.createTestSchema
+
+    Placeholders.setParameterValues(schema,
+      "test ${string}",
+      "${element1} element",
+      "${element2} element",
+      "${element1} and ${element2} ${string}s in single parameter",
+      "${casesensitive}",
+      "${CaseSensitive}",
+      "${dot.separated.path}",
+      "${dash-separated}",
+      "'${outer ${inner}}' will be the same as '${outer ${inner}' with another '}'",
+      "${wrap with special}",
+      "${regex named group test}"
+    )
+
+    schema.substitutePlaceholders(Map(
+      "default" -> "some value",
+      "string" -> "value",
+      "element1" -> "first",
+      "element2" -> "second",
+      "columnselector" -> "changed",
+      "casesensitive" -> "lowercase",
+      "CaseSensitive" -> "CamelCase",
+      "dot.separated.path" -> "with dots",
+      "dash-separated" -> "with dashes",
+      "outer ${inner" -> "nested",
+      "inner" -> "not matched",
+      "outer ${inner}' with another '" -> "not matched",
+      "inner}' with another '" -> "not matched",
+      "wrap with special" -> "${wrapped}",
+      "wrapped" -> "not matched",
+      "regex named group test" -> "${name}"
+    ))
+
+    Placeholders.checkParameterValues(schema,
+      "test value",
+      "some value",
+      "first element",
+      "second element",
+      "first and second values in single parameter",
+      "lowercase",
+      "CamelCase",
+      "with dots",
+      "with dashes",
+      "'nested}' will be the same as 'nested' with another '}'",
+      "${wrapped}",
+      "${name}"
+    )
+  }
+
+  test("Substituting placeholders throws when variable was not defined") {
+    val schema = Placeholders.createTestSchema
+
+    Placeholders.setParameterValues(schema,
+      "${unset} value"
+    )
+
+    a[VariableNotDefinedException] should be thrownBy {
+      schema.substitutePlaceholders(Map(
+        "default" -> "some value"
+      ))
+    }
+  }
+
+  private object Placeholders {
+
+    def createTestSchema: ParametersSchema = {
+      val stringParam = StringParameter("", None, new AcceptAllRegexValidator)
+      val defaultStringParam = StringParameter("", Some("${default}"), new AcceptAllRegexValidator)
+      val numericParam = NumericParameter("", None, RangeValidator(0.0, 1.0))
+
+      val sequenceParam = ParametersSequence("", ParametersSchema(
+        "string" -> StringParameter("", None, new AcceptAllRegexValidator),
+        "numeric" -> NumericParameter("", None, RangeValidator(0.0, 1.0)),
+        "column" -> SingleColumnSelectorParameter("", 0)
+      ))
+
+      ParametersSchema(
+        "string" -> stringParam,
+        "default" -> defaultStringParam,
+        "numeric" -> numericParam,
+        "sequence" -> sequenceParam
+      )
+    }
+
+    def setParameterValues(
+        schema: ParametersSchema,
+        stringParamValue: String,
+        sequenceParamsValues: String*): Unit = {
+
+      schema.getStringParameter("string").value = stringParamValue
+      schema.getNumericParameter("numeric").value = 0.5
+
+      val sequenceParamValue = sequenceParamsValues.map(value => {
+        val element = schema.getParametersSequence("sequence").replicateSchema
+        element.getStringParameter("string").value = value
+        element.getSingleColumnSelectorParameter("column").value =
+          NameSingleColumnSelection("${columnselector}")
+        element
+      }).toVector
+
+      schema.getParametersSequence("sequence").value = sequenceParamValue
+    }
+
+    def checkParameterValues(
+        schema: ParametersSchema,
+        stringParamValue: String,
+        defaultParamValue: String,
+        sequenceParamsValues: String*): Unit = {
+
+      schema.getStringParameter("string").value shouldBe stringParamValue
+      schema.getStringParameter("default").value shouldBe defaultParamValue
+      schema.getNumericParameter("numeric").value shouldBe 0.5
+
+      val elements = schema.getParametersSequence("sequence").value
+
+      elements.zipAll(sequenceParamsValues, ParametersSchema(), "").foreach {
+        case (element, value) =>
+          element.getStringParameter("string").value shouldBe value
+          element.getSingleColumnSelectorParameter("column").value shouldBe
+            NameSingleColumnSelection("${columnselector}")
+      }
+    }
   }
 }
