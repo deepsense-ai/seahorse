@@ -16,8 +16,8 @@ Stop Docker With Cassandra Database
 Suite Setup       Start Docker With Cassandra Database
 Suite Teardown    Stop Docker With Cassandra Database
 
-Library    OperatingSystem
 Library    Collections
+Library    OperatingSystem
 Library    ../lib/CassandraClient.py
 Library    ../lib/DockerClient.py
 Library    ../lib/WorkflowExecutorClient.py

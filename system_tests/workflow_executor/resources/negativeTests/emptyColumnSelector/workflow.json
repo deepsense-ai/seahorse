@@ -101,6 +101,6 @@
   "id": "59a348ce-ccf8-4192-ad63-7116a180aeb5",
   "metadata": {
     "type": "batch",
-    "apiVersion": "0.6.0"
+    "apiVersion": "1.0.0"
   }
 }
