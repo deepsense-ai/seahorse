@@ -1,7 +1,19 @@
 <div class="report">
   <div ng-if="!report.messageError">
-    <report-table data="report.getTables()" distributions-types="report.getDistributionsTypes()"></report-table>
-    <report-side-panel></report-side-panel>
+    <div ng-if="::report.getTables()" ng-switch="::report.getReportType()">
+      <div ng-switch-when="Data Sample">
+        <report-dataframe
+          data="::report.getTables()"
+          distributions-types="::report.getDistributionsTypes()">
+        </report-dataframe>
+        <report-side-panel></report-side-panel>
+      </div>
+      <report-cross-validate-regressor
+        ng-switch-when="CrossValidateRegressor"
+        data="::report.getTables()">
+      </report-cross-validate-regressor>
+    </div>
+    <loading-spinner ng-if="!report.getTables()"></loading-spinner>
   </div>
   <div ng-if="report.messageError" class="lead">
     {{ ::report.messageError }}

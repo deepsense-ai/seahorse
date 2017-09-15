@@ -36,6 +36,7 @@ function BoxPlot() {
             title: null
           },
           series: [{
+            name: data.name,
             data: [
               [
                 parseFloat(data.statistics.min),

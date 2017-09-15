@@ -10,7 +10,6 @@ function ExperimentListController(PageService, ExperimentAPIClient) {
     this.experiments = data.experiments;
   });
 
-  this.experiments = {};
   PageService.setTitle('My experiments');
 }
 

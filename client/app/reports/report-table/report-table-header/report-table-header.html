@@ -1,0 +1,22 @@
+<div class="report-table-header clearfix">
+  <div class="report-info">
+    <h2>{{ ::reportTableHeader.tableData.name }}</h2>
+    <p>{{ ::reportTableHeader.tableData.description }}</p>
+  </div>
+  <div class="report-stats">
+    <div class="col-xs-6">
+      <small>Columns</small>
+      <h4>
+        {{ ::reportTableHeader.tableData.columnNames.length }}
+        <span ng-if="::reportTableHeader.tableSizes">/ {{ ::reportTableHeader.tableSizes.values[0][0] }}</span>
+      </h4>
+    </div>
+    <div class="col-xs-6">
+      <small>Rows</small>
+      <h4>
+        {{ ::reportTableHeader.tableData.values.length }}
+        <span ng-if="::reportTableHeader.tableSizes">/ {{ ::reportTableHeader.tableSizes.values[0][1] }}</span>
+      </h4>
+    </div>
+  </div>
+</div>

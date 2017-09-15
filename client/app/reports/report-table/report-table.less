@@ -4,31 +4,5 @@
  * Created by: Grzegorz Swatowski
  */
 
-.report-table {
-  padding-left: 0;
-  padding-right: 5px;
-
-  & > div.panel { padding: 20px; }
-
-  table, .lead { margin-bottom: 0; }
-
-  table {
-    th {
-      font-size: 1.2em;
-    }
-  }
-
-  .table-header {
-    .report-info {
-      float: left;
-      margin-bottom: 20px;
-    }
-
-    .report-stats {
-      float: right;
-      width: 200px;
-      margin-top: 20px;
-      text-align: center;
-    }
-  }
-}
+@import "./report-table-header/report-table-header.less";
+@import "./report-table-body/report-table-body.less";

@@ -8,39 +8,52 @@
 
 let REPORT_EVENTS = require('../../reports.controller.js').EVENTS;
 
-function TableData() {
+function ReportTableBody() {
   return {
-    templateUrl: 'app/reports/report-table/table-data/table-data.html',
-    controller: TableController,
+    templateUrl: 'app/reports/report-table/report-table-body/report-table-body.html',
+    controller: ReportTableBodyeController,
+    bindToController: true,
+    controllerAs: 'reportTableBody',
     replace: 'true',
+    scope: {
+      'tableData': '=',
+      'tableColumnsData': '=',
+      'selectionColumnEnabled': '='
+    },
     link: function (scope, element, args, controller) {
-      element.on('click', function(event) {
-        scope.$apply(() => {
-          controller.selectColumn(event);
-          controller.extendSidePanel();
+      if (scope.reportTableBody.selectionColumnEnabled) {
+        element.on('click', function (event) {
+          scope.$apply(() => {
+            controller.selectColumn(event);
+            controller.extendSidePanel();
+          });
         });
-      });
+      }
     }
   };
 }
 
-function TableController($scope, $element, TopWalkerService) {
+function ReportTableBodyeController($scope, $element, TopWalkerService) {
   let that = this;
   let internals = {};
 
   internals.CELL_HIGHLIGHT_CLASS = 'info';
 
   _.assign(that, {
-    extendSidePanel: function showDetails() {
+    extendSidePanel: function extendSidePanel () {
       let tableEl = $element[0];
-      let index = tableEl.querySelector('td.info').cellIndex + 1;
-      let colName = tableEl.querySelector(`th:nth-child(${ index }) span.col-name`).innerHTML;
+      let highlightedCell = tableEl.querySelector('td.info');
 
-      $scope.$emit(REPORT_EVENTS.CHOSEN_COLUMN, {
-        colName: colName
-      });
+      if (highlightedCell) {
+        let index = highlightedCell.cellIndex + 1;
+        let colName = tableEl.querySelector(`th:nth-child(${ index }) span.col-name`).innerHTML;
+
+        $scope.$emit(REPORT_EVENTS.CHOSEN_COLUMN, {
+          colName: colName
+        });
+      }
     },
-    selectColumn: function selectColumn(event) {
+    selectColumn: function selectColumn (event) {
       let cell;
       let cellsIndexToSelect;
       let allCellsToSelect;
@@ -79,5 +92,5 @@ function TableController($scope, $element, TopWalkerService) {
 }
 
 exports.inject = function (module) {
-  module.directive('tableData', TableData);
+  module.directive('reportTableBody', ReportTableBody);
 };

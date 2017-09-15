@@ -1,0 +1,6 @@
+<div class="report-dataframe" ng-class="{ 'col-xs-10': reportDataframe.extendedMainPanel, 'col-xs-8': !reportDataframe.extendedMainPanel }">
+  <div class="panel panel-default">
+    <report-table-header table-data="::reportDataframe.tableData" table-sizes="::reportDataframe.tableSizes"></report-table-header>
+    <report-table-body table-data="::reportDataframe.tableData" table-columns-data="::reportDataframe.tableColumnsData" selection-column-enabled="::true"></report-table-body>
+  </div>
+</div>

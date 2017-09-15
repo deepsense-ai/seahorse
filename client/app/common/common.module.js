@@ -10,6 +10,8 @@ var common = angular.module('ds.common', []);
 
 require('./navigation-bar/navigation-bar.js').inject(common);
 require('./navigation-bar/navigation-bar.controller.js').inject(common);
+require('./loading-spinner/loading-spinner.js').inject(common);
+require('./loading-spinner/loading-spinner-sm.js').inject(common);
 require('./page.service.js').inject(common);
 require('./common.top-walker.service.js').inject(common);
 

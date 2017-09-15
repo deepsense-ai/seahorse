@@ -25,12 +25,14 @@ module.exports = function(req, res, next) {
   });
 
   readStream.on('end', function () {
-    res.writeHead(200, {
-      'Content-Type': 'application/json; charset=UTF-8',
-      'Content-Length': data.length
-    });
-    res.write(data);
-    res.end();
+    setTimeout(() => {
+      res.writeHead(200, {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Content-Length': data.length
+      });
+      res.write(data);
+      res.end();
+    }, 1000);
   });
 
   readStream.on('error', function(error) {

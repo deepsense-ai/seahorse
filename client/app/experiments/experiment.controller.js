@@ -15,7 +15,6 @@ function ExperimentController($http, $modal, $timeout, $stateParams, $scope, Pag
   var Edge = require('./common-objects/common-edge.js');
 
   internal.operations = null;
-  internal.experiment = null;
   internal.selectedNode = null;
   internal.isDataLoaded = false;
 
@@ -133,14 +132,15 @@ function ExperimentController($http, $modal, $timeout, $stateParams, $scope, Pag
 
   $scope.$on(GraphNode.CLICK, (event, data) => {
     let node = data.selectedNode;
+
+    internal.selectedNode = node;
+
     if (node.hasParameters()) {
-      internal.selectedNode = node;
       $scope.$digest();
     } else {
       Operations.getWithParams(node.operationId).then((operationData) => {
         $scope.$applyAsync(() => {
           node.setParameters(operationData.parameters);
-          internal.selectedNode = node;
         });
       }, (error) => {
         console.error('operation fetch error', error);

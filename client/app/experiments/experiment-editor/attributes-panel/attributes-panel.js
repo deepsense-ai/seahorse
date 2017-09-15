@@ -18,10 +18,10 @@ function OperationAttributesView() {
       };
 
       scope.$watch('experiment.getSelectedNode()', function() {
-        let container = element[0],
-            header = container.querySelector('.panel-heading'),
-            body = container.querySelector('.panel-body'),
-            footer = container.querySelector('.panel-footer');
+        let container = element[0];
+        let header = container.querySelector('.panel-heading');
+        let body = container.querySelector('.panel-body');
+        let footer = container.querySelector('.panel-footer');
 
         scope.$applyAsync(() => {
           angular.element(body).css('height', (container.offsetHeight - header.offsetHeight - footer.offsetHeight - 2) + 'px');

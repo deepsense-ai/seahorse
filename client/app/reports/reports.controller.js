@@ -20,8 +20,8 @@ function Report(PageService, $scope, $stateParams, EntitiesAPIClient) {
 
   EntitiesAPIClient.getReport(entityId).then((data) => {
     internal.tables = data.tables;
-    internal.distributions = data.distributions;
-    internal.distributionsNames = _.reduce(
+    internal.distributions = data.distributions || {};
+    internal.distributionsTypes = _.reduce(
       internal.distributions,
       function (acc, distObj, name) {
         let re = /[a-zA-Z0-9]+/.exec(name);
@@ -49,7 +49,18 @@ function Report(PageService, $scope, $stateParams, EntitiesAPIClient) {
   };
 
   that.getDistributionsTypes = function getDistributionsTypes() {
-    return internal.distributionsNames;
+    return internal.distributionsTypes;
+  };
+
+  that.getReportType = function getReportType() {
+    let tables = that.getTables();
+    if (_.has(tables, 'Data Sample')) {
+      return 'Data Sample';
+    } else if (_.has(tables, 'CrossValidateRegressor')) {
+      return 'CrossValidateRegressor';
+    } else if (_.has(tables, 'EvaluateRegression')) {
+      return 'EvaluateRegression';
+    }
   };
 
   $scope.$on(EVENTS.CHOSEN_COLUMN, function (event, data) {

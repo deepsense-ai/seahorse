@@ -1,0 +1,19 @@
+<div class="report-table-body table-responsive">
+  <table class="table table-striped table-hover">
+    <thead>
+      <tr>
+        <th ng-repeat="columnName in ::reportTableBody.tableData.columnNames">
+          <span class="col-name">{{ ::columnName }}</span>
+          <span ng-if="::reportTableBody.tableColumnsData[columnName]" class="col-icon">
+            <i class="fa" ng-class="::reportTableBody.tableColumnsData[columnName].icon"></i>
+          </span>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="row in ::reportTableBody.tableData.values">
+        <td ng-repeat="value in ::row track by $index">{{ value }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -14,7 +14,7 @@ function AttributesList() {
     scope: {
       'parametersList': '='
     },
-    link: function (scope, element, attrs) {
+    link: function (scope, element) {
       scope.noParamValues = () => (Object.keys(scope.parametersList.parameters).length === 0);
 
       scope.$watch('parametersList.parameters', () => {
