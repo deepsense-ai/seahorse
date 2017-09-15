@@ -1,7 +1,5 @@
 'use strict';
 
-const EXCHANGE_PATH = '/exchange/some_exchange_name/*.from_editor';
-
 class ServerCommunication {
   /* @ngInject */
   constructor($log, $q, $timeout, $rootScope, config, WorkflowService) {
@@ -27,7 +25,13 @@ class ServerCommunication {
 
   messageHandler(message) {
     this.status = 'active';
-    this.$rootScope.$broadcast('ServerCommunication.MESSAGE', message.body);
+
+    let parsedBody = JSON.parse(message.body);
+
+    this.$rootScope.$broadcast(
+      `ServerCommunication.MESSAGE.${parsedBody.messageType}`,
+      parsedBody.messageBody
+    );
   }
 
   onWebSocketConnect() {
@@ -56,30 +60,66 @@ class ServerCommunication {
     }, this.config.socketReconnectionInterval, false);
   }
 
-  subscribeToRabbit(
-    path = EXCHANGE_PATH,
-    messageHandler = this.messageHandler.bind(this)
-  ) {
+  subscribeToRabbit(workflowId) {
     this.status = 'rb_connected';
-    this.subscription = this.client.subscribe(path, messageHandler);
+    this.subscription = this.client.subscribe(
+      _.template(this.config.queueRoutes.executionStatus)({
+        workflowId
+      }),
+      this.messageHandler.bind(this)
+    );
   }
 
-  send(exchangePath = EXCHANGE_PATH, headers = {}, message = {}) {
+  unSubscribeRabbit(workflowId) {
+    this.subscription();
+    this.status = 'rb_connected';
+    this.abort(workflowId);
+  }
+
+  send(exchangePath = this.config.queueRoutes.connect, headers = {}, message = {}) {
     return this.client && this.client.send.apply(this.client, arguments);
   }
 
   connectToRabbit() {
+    let workflowId = this.WorkflowService.getWorkflow().id;
+
     this.status = 'rb_pending';
-    // fake: /exchange/named/<user_id>
-    // true: /exchange/some_exchange_name/*.from_editor
-    this.send(EXCHANGE_PATH, {}, JSON.stringify({
+    this.send(this.config.queueRoutes.connect, {}, JSON.stringify({
       messageType: 'connect',
       messageBody: {
-        workflowId: this.WorkflowService.getWorkflow().id
+        workflowId
       }
     }));
 
-    this.subscribeToRabbit();
+    this.subscribeToRabbit(workflowId);
+  }
+
+  launch(workflowId, workflow) {
+    this.send(
+      _.template(this.config.queueRoutes['launch/abort'])({
+        workflowId
+      }), {},
+      JSON.stringify({
+        messageType: 'launch',
+        messageBody: {
+          workflowId, workflow
+        }
+      })
+    );
+  }
+
+  abort(workflowId) {
+    this.send(
+      _.template(this.config.queueRoutes['launch/abort'])({
+        workflowId
+      }), {},
+      JSON.stringify({
+        messageType: 'abort',
+        messageBody: {
+          workflowId
+        }
+      })
+    );
   }
 
   connectToWebSocket(user = 'noUser', pass = '123q') {

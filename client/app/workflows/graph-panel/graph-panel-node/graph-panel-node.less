@@ -43,10 +43,30 @@
 .flowchart-node .fa {
   font-size: 125%;
 
-  &.error-icon {
+  &.status-icon {
     position: absolute;
     right: 5px;
     top: 15px;
+
+    &--completed {
+      color: @color-action;
+    }
+
+    &--running {
+      color: @color-active;
+    }
+
+    &--queued {
+      color: @color-warn;
+    }
+
+    &--aborted,
+    &--failed {
+      color: @color-error;
+    }
+  }
+
+  &.error-icon {
     color: darkorange;
   }
 }

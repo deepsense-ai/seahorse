@@ -1,5 +1,5 @@
 <div id="node-{{ ::node.id }}"
-     class="flowchart-node {{ node.state.status }}"
+     class="flowchart-node"
      ng-style="{
        'left': node.x + 'px',
        'top': node.y + 'px',
@@ -15,8 +15,16 @@
   <p class="name" ng-class="{'name--no-custom': !node.uiName}">
     {{ node.name }}
   </p>
-  <i class="fa fa-exclamation-circle error-icon"
-     ng-if="node.knowledgeErrors.length > 0"
+
+  <i class="fa status-icon"
+     ng-class="{
+      'status-icon--completed fa-check': node.state.status === 'status_completed',
+      'status-icon--running fa-cogs': node.state.status === 'status_running',
+      'status-icon--queued fa-clock-o': node.state.status === 'status_queued',
+      'status-icon--aborted fa-exclamation': node.state.status === 'status_aborted',
+      'status-icon--failed fa-ban': node.state.status === 'status_failed',
+      'fa-exclamation-circle error-icon': node.knowledgeErrors.length > 0
+     }"
      tooltip-placement="right"
      tooltip-append-to-body="true"
      uib-tooltip-html="tooltipMessage"></i>

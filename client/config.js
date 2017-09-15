@@ -7,5 +7,10 @@ angular.module('ds.lab').constant('config', {
   'urlApiVersion': 'v1',
   'resultsRefreshInterval': 10000,
   'socketConnectionHost': 'http://127.0.0.1:15674/',
-  'socketReconnectionInterval': 1000
+  'socketReconnectionInterval': 1000,
+  'queueRoutes': {
+    'connect': '/exchange/seahorse/to_executor',
+    'executionStatus': '/exchange/<%= workflowId %>/to_editor',
+    'launch/abort': '/exchange/<%= workflowId %>/to_executor'
+  }
 });

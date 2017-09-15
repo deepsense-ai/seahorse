@@ -8,18 +8,18 @@ import internal from './workflows-editor.internal.js';
 class WorkflowsEditorController {
 
   /* @ngInject */
-  constructor(workflow, MultiSelectionService,
+  constructor(workflow, config, MultiSelectionService,
     $scope, $state, $stateParams, $q, $rootScope,
     GraphNode, Edge,
     PageService, Operations, GraphPanelRendererService, WorkflowService, UUIDGenerator, MouseEvent,
     DeepsenseNodeParameters, ConfirmationModalService, ExportModalService,
-    LastExecutionReportService, NotificationService, ServerCommunication,
-    CopyPasteService) {
+    NotificationService, ServerCommunication, CopyPasteService) {
     this.ServerCommunication = ServerCommunication;
     this.PageService = PageService;
     this.WorkflowService = WorkflowService;
     this.DeepsenseNodeParameters = DeepsenseNodeParameters;
     this.Edge = Edge;
+    this.config = config;
     this.workflow = workflow;
     this.MultiSelectionService = MultiSelectionService;
     this.$scope = $scope;
@@ -30,7 +30,6 @@ class WorkflowsEditorController {
     this.NotificationService = NotificationService;
     this.GraphPanelRendererService = GraphPanelRendererService;
     this.ConfirmationModalService = ConfirmationModalService;
-    this.LastExecutionReportService = LastExecutionReportService;
     this.ExportModalService = ExportModalService;
     this.MouseEvent = MouseEvent;
     this.UUIDGenerator = UUIDGenerator;
@@ -70,7 +69,6 @@ class WorkflowsEditorController {
     this.WorkflowService.createWorkflow(this.workflow, this.Operations.getData());
     this.GraphPanelRendererService.setRenderMode(GraphPanelRendererBase.EDITOR_RENDER_MODE);
     this.GraphPanelRendererService.setZoom(1.0);
-    this.LastExecutionReportService.setTimeout();
     this.CopyPasteService.add(this.multipleCopyParams);
     this.updateAndRerenderEdges(this.workflow);
     this.initListeners();
@@ -78,6 +76,10 @@ class WorkflowsEditorController {
   }
 
   initListeners() {
+    this.$scope.$on('ServerCommunication.MESSAGE.executionStatus', (event, data) => {
+      this.WorkflowService.getWorkflow().updateState(data);
+    });
+
     this.$scope.$on('StatusBar.RUN', () => {
       this.GraphPanelRendererService.setRenderMode(GraphPanelRendererBase.REPORT_RENDER_MODE);
       this.GraphPanelRendererService.rerender();
@@ -184,12 +186,13 @@ class WorkflowsEditorController {
         this.ExportModalService.showModal();
       }),
 
-      this.$scope.$on('StatusBar.LAST_EXECUTION_REPORT', () => {
-        let url = this.$state.href('workflows.latest_report', {
-          'id': this.$stateParams.id
-        });
-        window.open(url, '_blank');
+      this.$scope.$on('StatusBar.RUN', () => {
+        let serialized = this.WorkflowService.getWorkflow().serialize();
+        this.ServerCommunication.launch(this.workflow.id, serialized);
       }),
+
+      this.$scope.$on('StatusBar.ABORT', () =>
+        this.ServerCommunication.unSubscribeRabbit(this.workflow.id)),
 
       this.$scope.$on('Keyboard.KEY_PRESSED_DEL', () => {
         this.WorkflowService.getWorkflow().removeNodes(this.MultiSelectionService.getSelectedNodes());
