@@ -2,8 +2,17 @@
 
 class GraphNodesService {
   /* @ngInject */
-  constructor($q, $rootScope, $timeout, DeepsenseNodeParameters, Operations, UUIDGenerator, nodeTypes) {
-    _.assign(this, {$q, $rootScope, $timeout, DeepsenseNodeParameters, Operations, UUIDGenerator, nodeTypes});
+  constructor($q, $rootScope, $timeout, DeepsenseNodeParameters, Operations, UUIDGenerator, nodeTypes, WorkflowsApiClient) {
+    _.assign(this, {
+      $q,
+      $rootScope,
+      $timeout,
+      DeepsenseNodeParameters,
+      Operations,
+      UUIDGenerator,
+      nodeTypes,
+      WorkflowsApiClient
+    });
   }
 
   getNodeParameters(node) {
@@ -58,9 +67,10 @@ class GraphNodesService {
       y: 0
     };
     let nodeClone = _.cloneDeep(node);
+    let newNodeId = this.UUIDGenerator.generateUUID();
     let nodeParams = angular.merge(
       nodeClone, {
-        'id': this.UUIDGenerator.generateUUID(),
+        'id': newNodeId,
         'operation': operation,
         'x': node.x - offset.x >= 0 ? node.x - offset.x : node.x,
         'y': node.y - offset.y >= 0 ? node.y - offset.y : node.y,
@@ -70,12 +80,25 @@ class GraphNodesService {
 
     const createdNode = workflow.createNode(nodeParams);
     createdNode.parametersValues = angular.copy(node.parameters.serialize());
+
+    if (node.operationId === this.nodeTypes.NOTEBOOK) {
+      this.WorkflowsApiClient.cloneNotebookNode(workflow.id, node.id, newNodeId).then(() => {
+        return workflow.addNode(createdNode);
+      }, () => {
+        this.NotificationService.showError({
+          title: 'Error',
+          message: 'There was an error during copying content of the notebook! Content of the notebook is empty.'
+        });
+      });
+    }
+
     if (node.hasInnerWorkflow()) {
       let innerWorkflow = createdNode.getInnerWorkflow();
       const map = this._mapOldIdsWithNewOnes(innerWorkflow);
       innerWorkflow = this._assignNewIds(map, innerWorkflow);
       createdNode.setInnerWorkflow(innerWorkflow);
     }
+
     return workflow.addNode(createdNode);
   }
 
@@ -98,7 +121,7 @@ class GraphNodesService {
       connection.to.nodeId = map[connection.to.nodeId];
     });
     newInnerWorkflow.nodes.forEach((node) => {
-      if(_.has(node.parameters, 'inner workflow')) {
+      if (_.has(node.parameters, 'inner workflow')) {
         node.parameters['inner workflow'].workflow = this._assignNewIds(map, node.parameters['inner workflow'].workflow);
       }
       node.id = map[node.id];
@@ -119,6 +142,6 @@ class GraphNodesService {
 
 }
 
-exports.inject = function(module) {
+exports.inject = function (module) {
   module.service('GraphNodesService', GraphNodesService);
 };
