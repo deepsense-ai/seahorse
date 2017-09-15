@@ -72,6 +72,7 @@ object Library {
   val sparkCore = spark("core")
   val sparkMLLib = spark("mllib")
   val sparkSql = spark("sql")
+  val scalaz = "org.scalaz" %% "scalaz-core" % "7.2.0"
 }
 
 object Dependencies {
@@ -110,7 +111,8 @@ object Dependencies {
     hadoopClient,
     hadoopCommon,
     cassandraConnector,
-    sparkCSV
+    sparkCSV,
+    scalaz
   ) ++ Seq(scalatest, mockitoCore, scalacheck, scoverage, cassandra, cassandraUnit).map(_ % Test)
 
   val entitystorageClient = Seq(
