@@ -25,6 +25,8 @@ import io.deepsense.deeplang.TypeUtils
  */
 private[doperable] class ClassNode(protected override val javaType: Class[_]) extends TypeNode {
 
+  def javaTypeName: String = javaType.getCanonicalName
+
   private[doperable] override def getParentJavaType(upperBoundType: ru.Type): Option[Class[_]] = {
     val parentJavaType = javaType.getSuperclass
     val parentType = TypeUtils.classToType(parentJavaType)
