@@ -47,7 +47,6 @@ class TrainedRidgeRegressionSpec extends ScorableSpec[TrainedRidgeRegression]{
           "Model weights" -> Table(
             "Model weights", "", Some(List("Column", "Weight")), None,
             values = List(
-              List(Some(""), Some(intercept.toString)),
               List(Some(featureColumns(0)), Some(weights(0).toString)),
               List(Some(featureColumns(1)), Some(weights(1).toString)),
               List(Some(featureColumns(2)), Some(weights(2).toString))
@@ -56,6 +55,9 @@ class TrainedRidgeRegressionSpec extends ScorableSpec[TrainedRidgeRegression]{
           ),
           "Target column" -> Table(
             "Target column", "", None, None, List(List(Some(targetColumn)))
+          ),
+          "intercept" -> Table(
+            "intercept", "", None, None, List(List(Some(intercept.toString)))
           )
         )
       ))
