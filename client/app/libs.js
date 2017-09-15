@@ -15,6 +15,7 @@ require('jquery');
 require('lodash');
 require('malihu-custom-scrollbar-plugin');
 require('ng-file-upload');
+require('imports?this=>window!script!../../node_modules/ng-switchery/dist/ng-switchery.js');
 require('sockjs-client');
 require('stompjs');
 require('d3');

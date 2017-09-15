@@ -52,6 +52,7 @@
     "moment": "~2.11.2",
     "mousetrap": "^1.6.0",
     "ng-file-upload": "~7.0.17",
+    "ng-switchery": "^1.0.1",
     "nvd3": "~1.8.2",
     "sockjs-client": "~1.0.3",
     "stompjs": "^2.3.3"
