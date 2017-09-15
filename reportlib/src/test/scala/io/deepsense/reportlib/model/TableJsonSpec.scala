@@ -17,15 +17,15 @@ class TableJsonSpec extends WordSpec with Matchers with TableTestFactory with Re
       val columnNames: List[String] = List("A", "B")
       val values: List[List[String]] = List(List("11", "12"), List("23", "34"))
       "columnsNames specified" in {
-        val json = testTableWithLables(Some(columnNames), None, values).toJson
+        val json = testTableWithLabels(Some(columnNames), None, values).toJson
         json shouldBe jsonTable(Some(columnNames), None, values)
       }
       "rowsNames specified" in {
-        val json = testTableWithLables(None, Some(rowNames), values).toJson
+        val json = testTableWithLabels(None, Some(rowNames), values).toJson
         json shouldBe jsonTable(None, Some(rowNames), values)
       }
       "rowsNames and columnNames specified" in {
-        val json = testTableWithLables(Some(columnNames), Some(rowNames), values).toJson
+        val json = testTableWithLabels(Some(columnNames), Some(rowNames), values).toJson
         json shouldBe jsonTable(Some(columnNames), Some(rowNames), values)
       }
       "is empty" in {
@@ -39,11 +39,11 @@ class TableJsonSpec extends WordSpec with Matchers with TableTestFactory with Re
         val rowNames: Some[List[String]] = Some(List("1", "2"))
         val values: List[List[String]] = List(List("a", "b"), List("c", "d"))
         val json = jsonTable(columnNames, rowNames, values)
-        json.convertTo[Table] shouldBe testTableWithLables(columnNames, rowNames, values)
+        json.convertTo[Table] shouldBe testTableWithLabels(columnNames, rowNames, values)
       }
       "empty table" in {
         val json = jsonTable(None, None, List())
-        json.convertTo[Table] shouldBe testTableWithLables(None, None, List())
+        json.convertTo[Table] shouldBe testTableWithLabels(None, None, List())
       }
     }
   }

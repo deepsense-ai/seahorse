@@ -14,6 +14,7 @@ import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.{DMethod1To1, ExecutionContext}
+import io.deepsense.reportlib.model.ReportContent
 
 case class TrainedRidgeRegression(
     model: Option[LinearRegressionModel],
@@ -42,10 +43,10 @@ case class TrainedRidgeRegression(
     }
   }
 
-  override def report: Report = Report(message = s"Report for TrainedRidgeRegression.\n" +
+  override def report: Report = Report(ReportContent("Report for TrainedRidgeRegression.\n" +
     s"Feature columns: ${featureColumns.get.mkString(", ")}\n" +
     s"Target column: ${targetColumn.get}\n" +
-    s"Model: ${model}")
+    s"Model: $model"))
 }
 
 object TrainedRidgeRegression {

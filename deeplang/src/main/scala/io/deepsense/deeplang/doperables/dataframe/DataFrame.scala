@@ -16,6 +16,7 @@ import org.apache.spark.sql
 import io.deepsense.deeplang.doperables.Report
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
+import io.deepsense.reportlib.model.ReportContent
 
 /*
 * @param optionalSparkDataFrame spark representation of data.
@@ -125,7 +126,8 @@ case class DataFrame(optionalSparkDataFrame: Option[sql.DataFrame]) extends DOpe
     DataFrame.createColumnName(originalColumnName, columnNameSuffix, level)
   }
 
-  override def report: Report = Report(s"This a report of DataFrame: $optionalSparkDataFrame")
+  override def report: Report =
+    Report(ReportContent(s"This a report of DataFrame: $optionalSparkDataFrame"))
 }
 
 object DataFrame {

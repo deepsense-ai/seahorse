@@ -8,10 +8,11 @@ import io.deepsense.reportlib.model.Table
 
 trait TableTestFactory {
 
-  def testTableWithLables(
-    columnNames: Option[List[String]],
-    rowNames: Option[List[String]],
-    values: List[List[String]]): Table = Table(
+  def testTableWithLabels(
+      columnNames: Option[List[String]],
+      rowNames: Option[List[String]],
+      values: List[List[String]]): Table =
+    Table(
       TableTestFactory.tableName,
       TableTestFactory.tableDescription,
       columnNames,

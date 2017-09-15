@@ -8,6 +8,7 @@ package io.deepsense.deeplang.doperables
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.{DKnowledge, DMethod1To1, ExecutionContext, InferContext}
+import io.deepsense.reportlib.model.ReportContent
 
 class UntrainedRidgeRegression extends RidgeRegression with Trainable {
 
@@ -29,5 +30,5 @@ class UntrainedRidgeRegression extends RidgeRegression with Trainable {
     }
   }
 
-  override def report: Report = Report("Report for UntrainedRidgeRegression")
+  override def report: Report = Report(ReportContent("Report for UntrainedRidgeRegression"))
 }
