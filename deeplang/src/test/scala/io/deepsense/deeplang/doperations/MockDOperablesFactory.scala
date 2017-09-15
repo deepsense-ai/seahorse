@@ -94,9 +94,11 @@ object MockDOperablesFactory extends UnitSpec {
       }
     }
 
+    override private[deeplang] def _fit_infer(schema: Option[StructType]): Transformer =
+      transformer1
+
     // Not used in tests.
     override private[deeplang] def _fit(ctx: ExecutionContext, df: DataFrame): Transformer = ???
-    override private[deeplang] def _fit_infer(schema: Option[StructType]): Transformer = ???
   }
 
   class MockEvaluator extends Evaluator {
@@ -124,10 +126,11 @@ object MockDOperablesFactory extends UnitSpec {
       }
     }
 
+    override private[deeplang] def _infer(k: DKnowledge[DataFrame]): MetricValue =
+      MetricValue.forInference("name1")
+
     // Not used in tests.
     private[deeplang] def _evaluate(context: ExecutionContext, dataFrame: DataFrame): MetricValue =
-      ???
-    private[deeplang] def _infer(k: DKnowledge[DataFrame]): MetricValue =
       ???
 
     override def isLargerBetter: Boolean = ???

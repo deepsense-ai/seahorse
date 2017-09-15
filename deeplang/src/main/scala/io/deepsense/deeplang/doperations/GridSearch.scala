@@ -121,6 +121,14 @@ case class GridSearch() extends DOperation3To1[DataFrame, Estimator, Evaluator, 
     val evaluatorWithParams = createEvaluatorWithParams(evaluator)
 
     validateDynamicParams(estimatorWithParams, evaluatorWithParams)
+
+    dataFrameKnowledge.single.schema.foreach {
+      case schema =>
+        val transformer = estimatorWithParams._fit_infer(Some(schema))
+        val transformedSchema = transformer._transformSchema(schema, context)
+        evaluatorWithParams._infer(DKnowledge(DataFrame.forInference(transformedSchema)))
+    }
+
     (DKnowledge(Report()), InferenceWarnings.empty)
   }
 

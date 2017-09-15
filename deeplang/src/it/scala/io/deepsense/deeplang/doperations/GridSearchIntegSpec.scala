@@ -23,11 +23,12 @@ import org.apache.spark.mllib.linalg
 import org.apache.spark.mllib.linalg.Vectors
 import spray.json._
 
-import io.deepsense.deeplang.DeeplangIntegTestSupport
+import io.deepsense.deeplang.{DKnowledge, DeeplangIntegTestSupport}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.report.Report
 import io.deepsense.deeplang.doperables.spark.wrappers.estimators.LinearRegression
 import io.deepsense.deeplang.doperables.spark.wrappers.evaluators.RegressionEvaluator
+import io.deepsense.deeplang.doperations.exceptions.ColumnDoesNotExistException
 
 class GridSearchIntegSpec extends DeeplangIntegTestSupport with DefaultJsonProtocol {
 
@@ -58,6 +59,45 @@ class GridSearchIntegSpec extends DeeplangIntegTestSupport with DefaultJsonProto
       val metricsTable = tables(1)
       metricsTable.values.size shouldBe 3
       metricsTable.values shouldBe expectedMetrics
+    }
+
+    "throw an exception in inference" when {
+      "estimator params are invalid" in {
+        val gridSearch = new GridSearch()
+        val estimator = new LinearRegression()
+        val dataFrame = buildDataFrame()
+        val evaluator = new RegressionEvaluator()
+        val params = JsObject(estimatorParams.fields.updated(
+          "features column", JsObject(
+            "type" -> JsString("column"),
+            "value" -> JsString("invalid")
+          )))
+        gridSearch.setEstimatorParams(params)
+        gridSearch.setNumberOfFolds(2)
+
+        a[ColumnDoesNotExistException] should be thrownBy {
+          gridSearch.inferKnowledge(executionContext.inferContext)(
+            Vector(DKnowledge(dataFrame), DKnowledge(estimator), DKnowledge(evaluator)))
+        }
+      }
+      "evaluator params are invalid" in {
+        val gridSearch = new GridSearch()
+        val estimator = new LinearRegression()
+        val dataFrame = buildDataFrame()
+        val evaluator = new RegressionEvaluator()
+        val params = JsObject(evaluator.paramValuesToJson.asJsObject.fields.updated(
+          "label column", JsObject(
+            "type" -> JsString("column"),
+            "value" -> JsString("invalid")
+          )))
+        gridSearch.setEvaluatorParams(params)
+        gridSearch.setNumberOfFolds(2)
+
+        a[ColumnDoesNotExistException] should be thrownBy {
+          gridSearch.inferKnowledge(executionContext.inferContext)(
+            Vector(DKnowledge(dataFrame), DKnowledge(estimator), DKnowledge(evaluator)))
+        }
+      }
     }
   }
 
