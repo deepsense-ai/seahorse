@@ -27,7 +27,10 @@ function OperationAttributes($rootScope, AttributesPanelService, config) {
     link: (scope, element) => {
       scope.selected = 'parameters';
       scope.$watch('node', function () {
-        scope.hasCodeEdit = scope.node.operationId === 'e76ca616-0322-47a5-b390-70c9668265dd';
+        let notebookOpId = 'e76ca616-0322-47a5-b390-70c9668265dd';
+        scope.hasCodeEdit = scope.node.operationId === notebookOpId;
+        let createCustomTransformerOpId = '65240399-2987-41bd-ba7e-2944d60a3404';
+        scope.hasInnerWorkflow = scope.node.operationId === createCustomTransformerOpId;
         scope.$applyAsync(setCorrectHeight.bind(null, element[0]));
       });
 
@@ -45,14 +48,24 @@ function OperationAttributes($rootScope, AttributesPanelService, config) {
 
     controller: function ($scope, $sce, $element, $timeout, $uibModal) {
       this.getNotebookUrl = () => $sce.trustAsResourceUrl(config.notebookHost + '/notebooks/' + $scope.workflow + "/" + $scope.node.id);
-      this.hasCodeEdit = () => $scope.hasCodeEdit;
       this.getDocsHost = () => config.docsHost;
+
+      this.hasCodeEdit = () => $scope.hasCodeEdit;
+      this.hasInnerWorkflow = () => $scope.hasInnerWorkflow;
+
       this.showNotebook = () => {
         $scope.modal = $uibModal.open({
           scope: $scope,
           template: `<iframe style="height: calc(100% - 60px); width:100%" frameborder="0" ng-src="{{::controller.getNotebookUrl()}}"></iframe>
                      <button type="button" class="btn btn-default pull-right" ng-click="modal.close()">Close</button>`,
           windowClass: 'o-modal--notebook'
+        });
+      };
+
+      this.showInnerWorkflow = () => {
+        $rootScope.$broadcast('AttributesPanel.OPEN_INNER_WORKFLOW', {
+          'workflowId': $scope.workflow,
+          'nodeId': $scope.node.id
         });
       };
 

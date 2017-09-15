@@ -21,11 +21,18 @@
         <i class="fa fa-book"></i>
         <span>Documentation</span>
       </a>
-      <button class="operation-attributes-panel__notebook-button"
+      <button class="operation-attributes-panel__open-button"
               ng-if="controller.hasCodeEdit()" ng-click="controller.showNotebook()">
         <i class="fa fa-file-text-o"></i>
         <span>
           Open notebook
+        </span>
+      </button>
+      <button class="operation-attributes-panel__open-button"
+              ng-if="controller.hasInnerWorkflow()" ng-click="controller.showInnerWorkflow()">
+        <i class="fa fa-cog"></i>
+        <span>
+          Open inner workflow
         </span>
       </button>
     </section>
