@@ -337,3 +337,38 @@ p.footer-text span {
   float: left;
   margin: 20px;
 }
+
+.contact-block {
+  padding: 40px 30px;
+  margin: 40px 0;
+  display: flex;
+  flex-direction: row;
+  justify-content:
+  space-around;
+  border-width: 2px;
+  border-style: solid;
+  border-color: #418ecc;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.contact-block-button {
+  background-color: #418ecc;
+  color: white;
+  border: 2px solid #418ecc;
+  height: 60px;
+}
+
+.contact-block-info {
+  margin-top: 10px;
+  height: 10px;
+}
+
+.contact-block-button > a {
+  padding: 15px 25px;
+  color: inherit;
+  text-transform: uppercase;
+  font-family: museo-sans, sans-serif;
+  font-weight: normal;
+  font-size: 16px;
+  letter-spacing: 0.1px;
+}
