@@ -14,12 +14,12 @@ description: Seahorse documentation homepage
 
 ## Setup
 
-Follow the instructions in [Seahorse Bundled Image](bundled_image_overview.html) to download and run Seahorse Bundled Image.
+Follow the instructions in [Seahorse Desktop](bundled_image_overview.html) to download and run Seahorse Desktop.
 
 ## Test It
 Go to <a href="http://172.28.128.100:8000/">http://172.28.128.100:8000/</a>.
-If Seahorse Bundled Image was set up correctly, you will see the main page of Seahorse web-based 
-user interface: 
+If Seahorse Desktop was set up correctly, you will see the main page of Seahorse web-based
+user interface:
 
 <p style="text-align:center;">
     <img class="centered-image img-responsive spacer" src="./img/seahorse_main.png">
@@ -27,7 +27,7 @@ user interface:
 </p>
 On the main page of Seahorse you can see a list of all available projects which we call `workflows`.
 Initially, the list contains a set of examples included in order to give you a sense of what is possible in Seahorse.
-You can examine the examples to learn how to solve common data-related problems. 
+You can examine the examples to learn how to solve common data-related problems.
 From the main page you can also create a new empty workflow or upload the previously exported workflow.
 
 ### Create a New Workflow

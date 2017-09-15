@@ -42,7 +42,7 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
     // Hidden option: Running modes:
     opt[Unit]("interactive-mode") hidden() action {
       (_, c) => c.copy(interactiveMode = true)
-    } text "use interactive mode (used only in Seahorse Bundled Image)"
+    } text "use interactive mode (used only in Seahorse Desktop)"
 
     note("Workflow input:")
     opt[String]('w', "workflow-filename") valueName "FILENAME" action {

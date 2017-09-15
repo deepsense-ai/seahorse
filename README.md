@@ -98,7 +98,6 @@ Detailed information about command line parameters can be obtained by executing 
 
 | Argument                                                        | Meaning |
 |:----------------------------------------------------------------|:--------|
-| ``--interactive-mode``                                          | Run in interactive mode (used only in Seahorse Bundled Image) |
 | ``-w FILE``<BR/>``--workflow-filename FILE``                    | Workflow filename. If specified, workflow will be read from passed location. The file has to be accessible by the driver. |
 | ``-o DIR``<BR/>``--output-directory DIR``                       | Output directory path. If specified, execution report will be saved to passed location. Directory will be created if it does not exist. |
 | ``-e NAME=VALUE``<BR/>``--extra-var NAME=VALUE``                | Extra variable. Sets extra variable to specified value. Can be specified multiple times. |

@@ -18,8 +18,8 @@ in downloading the example file from HTTP server.
 It also supports reading data from JDBC compatible databases.
 For more detailed information on using JDBC drivers in the Batch Workflow Executor, visit
 [Custom JDBC drivers](../batch_workflow_executor_overview.html#custom-jdbc-drivers) section.
-If you are using the Bundled Image please read about
-[JDBC drivers included in the Bundled Image](../bundled_image_overview.html#bundled-jdbc-drivers).
+If you are using Seahorse Desktop please read about
+[JDBC drivers included in the bundled image](../bundled_image_overview.html#bundled-jdbc-drivers).
 
 ## Available File Formats
 
