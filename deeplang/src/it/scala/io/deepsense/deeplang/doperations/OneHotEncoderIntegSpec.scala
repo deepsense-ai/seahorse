@@ -41,7 +41,8 @@ class OneHotEncoderIntegSpec extends DeeplangIntegTestSupport {
         val resultDataFrame = executeOneHotEncoder(
           Set(columns(2)), withRedundancy = false, categorizedDataFrame)
         val expectedDataFrame = enrichedDataFrame(
-          Seq(columns(2) + "_ABC"), Seq(Seq(0), Seq(0), Seq(0), Seq(1), Seq(1), Seq(null))
+          Seq(columns(2) + "_ABC"),
+          Seq(Seq(0), Seq(0), Seq(0), Seq(1), Seq(1), Seq(null.asInstanceOf[Double]))
         )
         assertDataFramesEqual(resultDataFrame, expectedDataFrame)
       }
@@ -56,7 +57,7 @@ class OneHotEncoderIntegSpec extends DeeplangIntegTestSupport {
             Seq(0, 0, 0),
             Seq(1, 0, 1),
             Seq(0, 1, 1),
-            Seq(0, 0, null)
+            Seq(0, 0, null.asInstanceOf[Double])
           )
         )
         assertDataFramesEqual(resultDataFrame, expectedDataFrame)
@@ -74,7 +75,7 @@ class OneHotEncoderIntegSpec extends DeeplangIntegTestSupport {
             Seq(0, 1),
             Seq(1, 0),
             Seq(1, 0),
-            Seq(null, null)
+            Seq(null.asInstanceOf[Double], null.asInstanceOf[Double])
           )
         )
         assertDataFramesEqual(resultDataFrame, expectedDataFrame)
@@ -87,7 +88,8 @@ class OneHotEncoderIntegSpec extends DeeplangIntegTestSupport {
         val resultDataFrame = executeOneHotEncoder(
           Set(columns(2)), withRedundancy = false, dataFrameWithSpecialName)
         val expectedDataFrame = enrichedDataFrame(
-          Seq(columns(2) + "_ABC_1"), Seq(Seq(0), Seq(0), Seq(0), Seq(1), Seq(1), Seq(null)))
+          Seq(columns(2) + "_ABC_1"),
+          Seq(Seq(0), Seq(0), Seq(0), Seq(1), Seq(1), Seq(null.asInstanceOf[Double])))
         assertDataFramesEqual(resultDataFrame, expectedDataFrame)
       }
     }
