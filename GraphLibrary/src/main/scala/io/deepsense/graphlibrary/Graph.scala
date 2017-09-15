@@ -7,8 +7,9 @@
 package io.deepsense.graphlibrary
 
 import scala.collection.mutable.{Set, Map}
+import scala.reflect.runtime.{universe => ru}
 
-import io.deepsense.deeplang.DOperation
+import io.deepsense.deeplang.{InferContext, DOperable, DKnowledge, DOperation}
 import io.deepsense.graphlibrary.Node.State
 import io.deepsense.graphlibrary.Node.State.{Progress, Status}
 
@@ -44,11 +45,44 @@ class Graph {
 
     def addSuccessor(index: Int, node: GraphNode): Unit = successors(index) += node
 
+    /** Returns port index which contains the given successor. */
+    def getSuccessorPort(node: GraphNode): Option[Int] = {
+      val successorIndex = successors.indexWhere(_.contains(node))
+      if (successorIndex != -1) Some(successorIndex) else None
+    }
+
+    /** Returns graph knowledge with knowledge inferred for the given node. */
+    def inferKnowledge(context: InferContext, graphKnowledge: GraphKnowledge): GraphKnowledge = {
+      val knowledge = for (portIndex <- 0 until predecessors.size)
+        yield inputKnowledgeForInputPort(context, graphKnowledge, portIndex)
+      val inferredKnowledge = operation.inferKnowledge(context)(knowledge.toVector)
+      graphKnowledge.addKnowledge(this.id, inferredKnowledge)
+    }
+
+    /** Returns suitable input knowledge for the given input port index. */
+    private def inputKnowledgeForInputPort(
+        context: InferContext,
+        graphKnowledge: GraphKnowledge,
+        portIndex: Int): DKnowledge[DOperable] = {
+      // TODO: find a way to delete this cast
+      val inPortType = operation.inPortTypes(portIndex).asInstanceOf[ru.TypeTag[DOperable]]
+      predecessors(portIndex) match {
+        case None => DKnowledge(context.dHierarchy.concreteSubclassesInstances(inPortType))
+        case Some(predecessor) =>
+          val outPortIndex = predecessor.getSuccessorPort(this).get
+          val predecessorKnowledge = graphKnowledge.getKnowledge(predecessor.id)(outPortIndex)
+          predecessorKnowledge.filterTypes(inPortType.tpe)
+          // here it is possible to decide what color graph edge should have
+      }
+    }
+
     def markWhite(): Unit = color = Color.WHITE
 
     def markGrey(): Unit = color = Color.GREY
 
     def markBlack(): Unit = color = Color.BLACK
+
+    def resetState(): Unit = markWhite()
 
     override def toString(): String = id.toString
   }
@@ -118,13 +152,11 @@ class Graph {
   private[graphlibrary] def topologicallySorted: Option[List[GraphNode]] = {
     var sorted: Option[List[GraphNode]] = Some(List.empty)
     nodes.values.foreach(n => sorted = topologicalSort(n, sorted))
-    restoreColors()
+    resetState()
     sorted
   }
 
-  /**
-   * Sorts nodes topologically.
-   */
+  /** Sorts nodes topologically. */
   private def topologicalSort(
       node: GraphNode,
       sortedSoFar: Option[List[GraphNode]]): Option[List[GraphNode]] = {
@@ -141,7 +173,13 @@ class Graph {
     }
   }
 
-  private def restoreColors(): Unit = nodes.values.foreach(_.markWhite())
+  private def resetState(): Unit = nodes.values.foreach(_.resetState())
+
+  /** Returns a graph knowledge with inferred knowledge for every node. */
+  def inferKnowledge(context: InferContext): GraphKnowledge = {
+    val sorted = topologicallySorted.get
+    sorted.foldLeft(GraphKnowledge())((knowledge, node) => node.inferKnowledge(context, knowledge))
+  }
 
   def size: Int = nodes.size
 

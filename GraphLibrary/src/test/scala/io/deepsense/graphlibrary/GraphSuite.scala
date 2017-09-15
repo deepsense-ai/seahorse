@@ -8,8 +8,9 @@ package io.deepsense.graphlibrary
 
 import java.util.UUID
 
-import org.scalatest.FunSuite
+import org.scalatest.{Matchers, FunSuite}
 
+import io.deepsense.deeplang.dhierarchy.DHierarchy
 import io.deepsense.deeplang._
 import io.deepsense.graphlibrary.Node.State.Status
 
@@ -43,7 +44,7 @@ object DOperationTestClasses {
   }
 }
 
-class GraphSuite extends FunSuite {
+class GraphSuite extends FunSuite with Matchers {
 
   test("An empty Graph should have size 0") {
     assert((new Graph).size == 0)
@@ -177,5 +178,39 @@ class GraphSuite extends FunSuite {
     assert(sortedOption.isDefined)
     val sorted = sortedOption.get
     edges.foreach(n => checkIfInOrder(n._1, n._2, sorted))
+  }
+
+  test("Graph can infer knowledge") {
+    import DClassesForDOperations._
+    import DOperationTestClasses._
+
+    val graph = new Graph
+    val node1 = graph.addNode(UUID.randomUUID(), new DOperation0To1Test)
+    val node2 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    val node3 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    val node4 = graph.addNode(UUID.randomUUID(), new DOperation2To1Test)
+    val edges = List(
+      (node1, node2, 0, 0),
+      (node1, node3, 0, 0),
+      (node2, node4, 0, 0),
+      (node3, node4, 0, 1))
+    edges.foreach(n => graph.addEdge(n._1.id, n._2.id, n._3, n._4))
+
+    val hierarchy = new DHierarchy
+    hierarchy.registerDOperable[A1]()
+    hierarchy.registerDOperable[A2]()
+    val ctx = new InferContext(hierarchy)
+    val graphKnowledge = graph.inferKnowledge(ctx)
+
+    val knowledgeA1: Vector[DKnowledge[DOperable]] = Vector(new DKnowledge(new A1))
+    val knowledgeA12: Vector[DKnowledge[DOperable]] = Vector(new DKnowledge(new A1, new A2))
+
+    val graphKnowledgeExpected = Map(
+      node1.id -> knowledgeA1,
+      node2.id -> knowledgeA12,
+      node3.id -> knowledgeA12,
+      node4.id -> knowledgeA12)
+
+    graphKnowledge.knowledgeMap should contain theSameElementsAs graphKnowledgeExpected
   }
 }
