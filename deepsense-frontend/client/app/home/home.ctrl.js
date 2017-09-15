@@ -43,6 +43,7 @@ function Home($rootScope, $uibModal, $state, WorkflowService, PageService, Confi
   this.search = (workflow) => {
     return !this.filterString ||
       (workflow.name.toLowerCase().includes(this.filterString.toLowerCase())) ||
+      (workflow.description.toLowerCase().includes(this.filterString.toLowerCase())) ||
       (workflow.ownerName.toLowerCase().includes(this.filterString.toLowerCase()));
   };
 
