@@ -8,7 +8,7 @@ ds_documentation_download_dir: "{{docker_dir}}/{{ds_documentation_docker_image}}
 
 ds_frontend_docker_image: "ds_frontend"
 ds_frontend_download_dir: "{{docker_dir}}/{{ds_frontend_docker_image}}"
-ds_frontend_artifact_url: "http://10.10.1.77:8081/artifactory/deepsense-frontend-snapshot/io/deepsense/deepsense-frontend/{{ds_frontend_package_name}}/{{ds_frontend_package_name}}.zip"
+ds_frontend_artifact_url: "http://artifactory.deepsense.codilime.com:8081/artifactory/deepsense-frontend-snapshot/io/deepsense/deepsense-frontend/{{ds_frontend_package_name}}/{{ds_frontend_package_name}}.zip"
 
 ds_haproxy_docker_image: "ds_haproxy"
 ds_haproxy_download_dir: "{{docker_dir}}/{{ds_haproxy_docker_image}}"
