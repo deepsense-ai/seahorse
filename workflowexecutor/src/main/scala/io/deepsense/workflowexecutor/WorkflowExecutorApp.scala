@@ -213,6 +213,7 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
       WorkflowExecutor.runInNoninteractiveMode(
         params.copy(tempPath = Some(tempPath)), pythonPathGenerator)
     }
+    System.exit(0)
   }
 
   def configureLogging(): Unit = {
