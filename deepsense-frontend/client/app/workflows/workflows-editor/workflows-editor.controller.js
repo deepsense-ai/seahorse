@@ -326,10 +326,20 @@ class WorkflowsEditorController {
     }
   }
 
+  isRunningOrAborting() {
+    const workflowStatus = this.WorkflowService.getCurrentWorkflow().workflowStatus;
+    return workflowStatus === 'running' || workflowStatus === 'aborting';
+  }
+
   isEditable() {
     const workflow = this.WorkflowService.getCurrentWorkflow();
     let isOwner = workflow.owner.id === this.UserService.getSeahorseUser().id;
-    return workflow.workflowStatus === 'editor' && workflow.sessionStatus === this.SessionStatus.RUNNING && isOwner;
+    return workflow.workflowStatus === 'editor' && workflow.sessionStatus === this.SessionStatus.RUNNING && this._isOwner();
+  }
+
+  _isOwner(){
+    const workflow = this.WorkflowService.getCurrentWorkflow();
+    return workflow.owner.id === this.UserService.getSeahorseUser().id;
   }
 
 }

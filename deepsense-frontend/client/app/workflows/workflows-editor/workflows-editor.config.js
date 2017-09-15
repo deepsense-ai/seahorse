@@ -9,12 +9,16 @@ function WorkflowsConfig($stateProvider) {
     controller: 'WorkflowsEditorController as workflow',
     resolve: {
       workflowWithResults: /* @ngInject */ ($q, $rootScope, $stateParams, $state, NotificationService,
-        WorkflowService, Operations, OperationsHierarchyService, ServerCommunication) => {
-        ServerCommunication.init($stateParams.id);
+        WorkflowService, Operations, OperationsHierarchyService, ServerCommunication, UserService) => {
         return $q.all([
           WorkflowService.downloadWorkflow($stateParams.id),
           Operations.load().then(OperationsHierarchyService.load)
         ]).then(([workflow, ..._]) => {
+          const workflowOwnedByCurrentUser = UserService.getSeahorseUser().id === workflow.workflowInfo.ownerId;
+          if(workflowOwnedByCurrentUser) {
+            console.log("Current user is workflows owner. Registering to topics...")
+            ServerCommunication.init(workflow.id);
+          }
           $rootScope.stateData.dataIsLoaded = true;
           return workflow;
         }).catch((error) => {

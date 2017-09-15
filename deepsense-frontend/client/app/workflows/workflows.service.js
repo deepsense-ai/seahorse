@@ -17,9 +17,11 @@ function WorkflowService($rootScope, Workflow, OperationsHierarchyService, Workf
       // Inner workflow has nodes and publicParam list. Public params point at specific nodes.
       // Let's say we are removing node with public params. This change gets propagated to publicParam list next
       // digest cycle. For one digest cycle state is invalid - public params list points non-existing node.
-      this._saveWorkflow = debounce((serializedWorkflow) => {
-        console.log('Saving workflow after change...', serializedWorkflow);
-        WorkflowsApiClient.updateWorkflow(serializedWorkflow);
+      this._saveWorkflow = debounce((newSerializedWorkflow, oldSerializedWorkflow) => {
+        if(newSerializedWorkflow !== oldSerializedWorkflow) {
+          console.log('Saving workflow after change...', newSerializedWorkflow);
+          WorkflowsApiClient.updateWorkflow(newSerializedWorkflow);
+        }
       }, 200);
 
       $rootScope.$on('AttributesPanel.OPEN_INNER_WORKFLOW', (event, data) => {
