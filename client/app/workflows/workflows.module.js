@@ -40,7 +40,7 @@ require('./cluster-settings-modals/preset-modal/preset-modal.controller.js').inj
 require('./cluster-settings-modals/preset-modal/preset-modal-labels.js').inject(workflows);
 require('./library/library-modal.controller.js').inject(workflows);
 require('./library/library-modal.service.js').inject(workflows);
-require('./library/file-upload-change.drv.js').inject(workflows);
-require('./library/dropzone-file-upload.drv.js').inject(workflows);
+require('./library/file-upload-section/file-upload-change.directive.js').inject(workflows);
+require('./library/file-upload-section/dropzone-file-upload.directive.js').inject(workflows);
 
 module.exports = workflows;

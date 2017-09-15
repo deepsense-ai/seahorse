@@ -6,16 +6,29 @@
   height: 36px;
   align-items: center;
   border-bottom: 1px solid #C6C6C6;
+  position: relative;
 
   &.last-elem {
     border: 0;
+  }
+
+  &.upload-error {
+    background-color: #e5dbdb;
+
+    .name, .directory {
+      color: black;
+    }
+
+    .actions {
+      display: none;
+    }
   }
 
   &.directory {
     background-color: #f2f2f2;
   }
 
-  &-icon {
+  .icon {
     width: 36px;
 
     div {
@@ -26,17 +39,24 @@
     }
   }
 
-  &-name {
-    font-weight: 700;
+  .name {
+    font-weight: 600;
     color: @seahorse-light-blue;
     flex: 1;
 
     &:hover {
       cursor: pointer;
     }
+
+    .upload-info {
+      font-style: italic;
+      color: grey;
+      font-weight: 500;
+      padding-left: 10px;
+    }
   }
 
-  &-actions {
+  .actions {
     display: flex;
     align-items: center;
     padding-right: 10px;
@@ -52,6 +72,16 @@
         cursor: pointer;
       }
     }
+  }
+
+  &-progress-upload {
+    background: linear-gradient(to right, rgba(179,220,237,1) 0%,rgba(41,184,229,1) 100%,rgba(188,224,238,1) 100%);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    opacity: 0.3;
+    height: 100%;
   }
 }
 

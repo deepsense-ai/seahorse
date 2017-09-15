@@ -33,11 +33,6 @@ function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, canChooseDa
     LibraryService.searchFilesInDirectory(vm.filterString);
   });
 
-  $scope.$watch(LibraryService.getUploadingFiles, (newValue) => {
-    vm.uploadingFiles = newValue.filter((value) => value.status === 'uploading');
-    vm.uploadedFiles = newValue.filter((value) => value.status === 'complete');
-  }, true);
-
   LibraryService.fetchAll()
     .then(() => {
       vm.loading = false;

@@ -25,6 +25,7 @@ function LibraryService($q, $log, LibraryDataConverterService, LibraryApiService
   service.getSearchResults = getSearchResults;
   service.getUploadingFiles = getUploadingFiles;
   service.removeFile = removeFile;
+  service.removeDirectory = removeDirectory;
   service.removeUploadingFile = removeUploadingFile;
   service.searchFilesInDirectory = searchFilesInDirectory;
   service.uploadFile = uploadFile;
@@ -125,7 +126,7 @@ function LibraryService($q, $log, LibraryDataConverterService, LibraryApiService
 
 
   /**
-   * @param {String} fileUrl
+   * @param {Object} file
    * @returns {Promise} Promise with parsed data from API
    */
   function removeFile(file) {
@@ -137,6 +138,18 @@ function LibraryService($q, $log, LibraryDataConverterService, LibraryApiService
       });
   }
 
+  /**
+   * @param {Object} directory
+   * @returns {Promise} Promise with parsed data from API
+   */
+  function removeDirectory(directory) {
+    return LibraryApiService
+      .removeDirectory(directory.path)
+      .then((result) => {
+        service.fetchAll();
+        return result;
+      });
+  }
 
   /**
    * Uploads the file to the server and tracks the upload progress. Handles server errors.

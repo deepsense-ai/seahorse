@@ -1,13 +1,12 @@
 'use strict';
 
 /* ngInject */
-function FileUploadChange() {
+function FileUploadChange(LibraryService) {
   return {
     restrict: 'A',
-    link: function (scope, element, attrs) {
-      const fileUploadHandler = scope.$eval(attrs.fileUploadChange);
+    link: function (scope, element) {
       element.bind('change', (event) => {
-        fileUploadHandler(event.target.files);
+        LibraryService.uploadFiles([...event.target.files]);
         element.val(null);
       });
     }

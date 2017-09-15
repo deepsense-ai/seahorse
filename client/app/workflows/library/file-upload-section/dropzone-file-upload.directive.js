@@ -1,10 +1,10 @@
 'use strict';
 
 /* ngInject */
-function DropzoneFileUpload() {
+function DropzoneFileUpload(LibraryService) {
   return {
     restrict: 'A',
-    link: function (scope, element, attrs) {
+    link: function (scope, element) {
 
       element.on('dragover', stopEvents);
 
@@ -18,8 +18,7 @@ function DropzoneFileUpload() {
         stopEvents(e);
         element.removeClass('drag-over');
         element.text('Drag new files here');
-        const onChangeHandler = scope.$eval(attrs.dropzoneFileUpload);
-        onChangeHandler(e.dataTransfer.files);
+        LibraryService.uploadFiles([...e.dataTransfer.files]);
       });
 
       element.on('dragleave', function (e) {

@@ -14,17 +14,36 @@ const COOKIE_NAME = 'DELETE_DATAFRAME_COOKIE';
 
 class FileElementController {
   /* @ngInject */
-  constructor(DeleteModalService, LibraryService) {
+  constructor(DeleteModalService, LibraryModalService, LibraryService) {
     this.DeleteModalService = DeleteModalService;
+    this.LibraryModalService = LibraryModalService;
     this.LibraryService = LibraryService;
   }
 
   $onChanges(changes) {
     this.templateUrl = templateMap[this.item.kind];
+
+    if (this.item.parents) {
+      this.formatParents(this.item.parents);
+    }
   }
 
-  goToUri(item) {
-    this.LibraryService.getDirectoryContent(item.uri);
+  formatParents(parents) {
+    const lastTwoParents = parents.slice(Math.max(parents.length - 2, 1));
+    if (parents.length > 2) {
+      this.parents = [
+        {
+          name: '...',
+          uri: parents[parents.length - 3].uri
+        },
+        ...lastTwoParents
+      ];
+    }
+  }
+
+  goToUri(uri) {
+    this.LibraryModalService.closeUploadingFilesPopover();
+    this.LibraryService.getDirectoryContent(uri);
   }
 
   deleteFile(file) {
@@ -33,6 +52,12 @@ class FileElementController {
         .then(() => {
           this.LibraryService.removeUploadingFile(file);
         });
+    }, COOKIE_NAME);
+  }
+
+  deleteDirectory(directory) {
+    this.DeleteModalService.handleDelete(() => {
+      this.LibraryService.removeDirectory(directory);
     }, COOKIE_NAME);
   }
 

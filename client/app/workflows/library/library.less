@@ -37,6 +37,11 @@
 
     .files-list {
       flex: 1;
+
+      .file-list-wrapper {
+        margin: 0 10px;
+        height: 45vh;
+      }
     }
 
     .btn-grey {
@@ -44,48 +49,10 @@
       background-color: @light-grey;
     }
 
-    .drop-area {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: @light-grey;
-      color: @dragzone-border;
-      font-size: 16px;
-      height: 35px;
-      border: 1px dashed @dragzone-border;
-      letter-spacing: 0.3px;
-
-      &:hover {
-        border: 2px dashed @light-grey;
-        cursor: pointer;
-      }
-
-      &.drag-over {
-        background-color: @color-white;
-        color: @dragzone-border;
-      }
-    }
-
     .dataframe-form {
       padding: 15px;
       display: flex;
       align-items: center;
-
-      .current-directory {
-        margin-right: 20px;
-        max-width: 200px;
-        font-size: 14px;
-        font-weight: bold;
-        .text-elipsis();
-      }
-
-      .add-file {
-        width: 100px;
-      }
-
-      .drop-area {
-        flex: 1;
-      }
     }
 
     .dataframe-info {
@@ -93,30 +60,6 @@
       font-size: 15px;
       text-align: center;
       margin: 20px;
-    }
-
-    .dataframe-upload-progress {
-      padding: 15px;
-
-      .title {
-        font-size: 16px;
-      }
-
-      .uploading-section {
-        display: flex;
-        align-items: center;
-        height: 35px;
-
-        .information {
-          width: 100px;
-          color: @dark-grey;
-        }
-
-        .progress {
-          margin-bottom: 0;
-          flex: 1;
-        }
-      }
     }
 
     .dataframe-list {

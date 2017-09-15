@@ -3,10 +3,15 @@
 import tpl from './library-modal.html';
 
 /* @ngInject */
-function LibraryModalService($uibModal, LibraryService) {
+function LibraryModalService($uibModal) {
   const service = this;
 
+  let isUploadingFilesPopoverOpen = false;
+
   service.openLibraryModal = openLibraryModal;
+  service.openUploadingFilesPopover = openUploadingFilesPopover;
+  service.closeUploadingFilesPopover = closeUploadingFilesPopover;
+  service.getUploadingFilesPopoverStatus = getUploadingFilesPopoverStatus;
 
   function openLibraryModal(canChooseDataframe) {
     return $uibModal.open({
@@ -23,14 +28,21 @@ function LibraryModalService($uibModal, LibraryService) {
         }
       }
     }).result.then((result) => {
-      LibraryService.cleanUploadingFiles();
       return result;
-    }).catch(() => {
-      LibraryService.cleanUploadingFiles();
     });
-
   }
 
+  function openUploadingFilesPopover() {
+    isUploadingFilesPopoverOpen = true;
+  }
+
+  function closeUploadingFilesPopover() {
+    isUploadingFilesPopoverOpen = false;
+  }
+
+  function getUploadingFilesPopoverStatus() {
+    return isUploadingFilesPopoverOpen;
+  }
 }
 
 exports.inject = function (module) {

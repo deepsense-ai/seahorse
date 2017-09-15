@@ -6,6 +6,7 @@ function LibraryApi($http, config) {
   const service = this;
 
   service.addDirectory = addDirectory;
+  service.removeDirectory = removeDirectory;
   service.getAll = getAll;
   service.getResourceUrl = getResourceUrl;
   service.removeFile = removeFile;
@@ -23,6 +24,11 @@ function LibraryApi($http, config) {
       directoryName;
 
     return $http.post(getResourceUrl(directoryPath));
+  }
+
+
+  function removeDirectory(directoryPath) {
+    return $http.delete(getResourceUrl(directoryPath));
   }
 
 
@@ -112,6 +118,6 @@ function LibraryApi($http, config) {
   }
 }
 
-exports.inject = function(module) {
+exports.inject = function (module) {
   module.service('LibraryApiService', LibraryApi);
 };

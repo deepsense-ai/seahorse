@@ -5,7 +5,6 @@ import FileListController from './file-list.controller.js';
 const FileListComponent = {
   controller: FileListController,
   bindings: {
-    loading: '<',
     items: '<',
     parents: '<'
   },

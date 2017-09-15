@@ -2,7 +2,7 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
 <svg>
 <metadata>
-Created by FontForge 20090914 at Thu Oct 20 13:33:45 2016
+Created by FontForge 20090914 at Mon Oct 24 11:28:44 2016
  By www-data
 Copyright (c) 2016, Przemysaw Bagin'ski / deepsense
 </metadata>
@@ -84,6 +84,8 @@ d="M33 0v666h265v-666h-265zM66 33h199v600h-199v-600z" />
 d="M276 18l-226 256l96 86l124 -140l284 366l102 -78z" />
     <glyph glyph-name="W" unicode="W" 
  />
+    <glyph glyph-name="X" unicode="X" horiz-adv-x="678" 
+d="M632 558l-258 -258l258 -260l-40 -40l-258 258l-260 -258l-40 40l260 260l-260 258l40 40l260 -258l258 258z" />
     <glyph glyph-name="d" unicode="d" horiz-adv-x="776" 
 d="M626 142h76v-140h-630v140h76v-66h478v66zM590 316l-204 -206l-204 204l54 54l112 -112v338h76v-336l112 112z" />
     <glyph glyph-name="l" unicode="l" horiz-adv-x="848" 

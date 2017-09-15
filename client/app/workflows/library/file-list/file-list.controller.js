@@ -5,7 +5,7 @@ class FileListController {
   constructor($scope) {
 
     $scope.$watch(() => this.parents, (parents) => {
-      if (parents.length > 0) {
+      if (parents && parents.length > 0) {
         const lastParent = parents[parents.length - 1];
         this.parent = {
           name: '..',

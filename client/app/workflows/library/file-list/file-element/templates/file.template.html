@@ -1,21 +1,46 @@
 <div class="file-element"
-     ng-class="{'last-elem': $ctrl.isLast}">
+     ng-class="{
+       'last-elem': $ctrl.isLast,
+       'upload-error': $ctrl.item.status === 'error'
+     }">
 
-  <div class="file-element-icon">
+  <div class="icon">
     <div>w</div>
   </div>
 
-  <div class="file-element-name"
+  <div class="name"
        ng-class="{'selectable': $ctrl.canChooseDataframe}"
        ng-click="$ctrl.selectDataFrame($ctrl.item)"
   >
-    {{$ctrl.item.name}}
+    <span>
+      {{$ctrl.item.name}}
+    </span>
+    <span class="upload-info" ng-if="$ctrl.item.status !== 'error'">
+      <span ng-repeat="parent in $ctrl.parents">
+        <span ng-click="$ctrl.goToUri(parent.uri)">{{parent.name}}</span>
+        <span ng-if="!$last">/</span>
+      </span>
+    </span>
+    <span class="upload-info" ng-if="$ctrl.item.status === 'error'">
+      (upload failed)
+    </span>
   </div>
 
-  <div class="file-element-actions">
+  <div class="actions">
+    <span class="sa" title="Open directory"
+          ng-if="$ctrl.item.progress" ng-click="$ctrl.goToUri($ctrl.item.parent.uri)">
+      w
+    </span>
     <a ng-href={{$ctrl.item.downloadUrl}} download>
       <span class="sa sa-download"></span>
     </a>
     <span class="sa sa-delete" ng-click="$ctrl.deleteFile($ctrl.item)"></span>
+  </div>
+
+  <div
+    class="file-element-progress-upload"
+    ng-if="$ctrl.item.progress > 0 && $ctrl.item.progress < 100"
+    ng-style="{'width': $ctrl.item.progress + '%'}"
+  >
   </div>
 </div>

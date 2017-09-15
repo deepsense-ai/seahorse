@@ -15,75 +15,26 @@
   ></breadcrumbs>
 
   <div class="dataframe-library-modal__body">
-    <input
-      multiple
-      type="file"
-      id="uploader-input"
-      style="display: none;"
-      file-upload-change="controller.onFileSelectedHandler"
-    >
-
     <div class="content-wrapper">
       <div class="files-list">
         <div class="dataframe-form">
-          <div class="current-directory">
-            {{controller.currentDir}}
-          </div>
-          <div class="add-file">
-            <button class="btn btn-grey" ng-click="controller.openFileBrowser()">
-              <i class="fa fa-plus"></i>
-              <span>Add file</span>
-            </button>
-          </div>
-          <div class="drop-area"
-               ng-click="controller.openFileBrowser()"
-               dropzone-file-upload="controller.onFileSelectedHandler">
-            Drag new files here
-          </div>
-        </div>
-
-        <div class="dataframe-upload-progress" ng-if="controller.uploadingFiles.length > 0">
-          <div ng-repeat="uploadingFile in controller.uploadingFiles track by uploadingFile.path">
-            <div class="title"><b>{{uploadingFile.path}}</b></div>
-            <div class="uploading-section">
-              <div class="information">uploading...</div>
-              <div class="progress">
-                <uib-progressbar
-                  class="progress-striped active"
-                  animate="true"
-                  value="uploadingFile.progress"
-                  type="info">
-                </uib-progressbar>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="list-wrapper uploaded-list-wrapper" ng-if="controller.uploadedFiles">
-          <div class="dataframe" ng-repeat="dataframe in controller.uploadedFiles track by dataframe.path">
-            <div class="dataframe-name"
-                 ng-click="controller.selectDataframe(dataframe)"
-                 ng-class="{'selectable-dataframe': controller.canChooseDataframe}">
-              <span>{{dataframe.path}}</span>
-              <span class="dataframe-uploaded">uploaded</span>
-            </div>
-            <div class="actions">
-              <a ng-href={{dataframe.downloadUrl}} download><span class="sa sa-download"></span></a>
-              <span class="sa sa-delete" ng-click="controller.deleteUploadedFile(dataframe)"></span>
-            </div>
-          </div>
+          <file-upload-section style="flex: 1;"></file-upload-section>
+          <recent-files-indicator></recent-files-indicator>
         </div>
 
         <div ng-if="!controller.filterString">
+          <deepsense-loading-spinner-sm ng-if="controller.loading"></deepsense-loading-spinner-sm>
+
+          <div class="file-list-wrapper" custom-scroll-bar>
             <file-list
-              loading="controller.loading"
               items="controller.items"
               parents="controller.parents"
             ></file-list>
+          </div>
 
-            <div ng-if="controller.message" class="dataframe-info">
-              {{controller.message}}
-            </div>
+          <div ng-if="controller.message" class="dataframe-info">
+            {{controller.message}}
+          </div>
         </div>
 
         <div class="dataframe-list" ng-if="controller.filterString">
@@ -92,9 +43,7 @@
 
             <div ng-repeat="folder in controller.searchResults" class="folder">
               {{folder.name}}
-              <div class="dataframe"
-                   ng-repeat="dataframe in folder.items ">
-
+              <div class="dataframe" ng-repeat="dataframe in folder.items ">
                 <div class="dataframe-name"
                      ng-click="controller.selectDataframe(dataframe)"
                      ng-class="{'selectable-dataframe': controller.canChooseDataframe}">
@@ -106,7 +55,8 @@
                 </div>
               </div>
 
-              <div ng-if="controller.searchResults.length <= 1 && controller.searchResults[0].items.length < 1" class="dataframe-info">
+              <div ng-if="controller.searchResults.length <= 1 && controller.searchResults[0].items.length < 1"
+                   class="dataframe-info">
                 There is no search results in this folder.
               </div>
             </div>
