@@ -16,6 +16,8 @@
 
 package io.deepsense.graph
 
+import scala.reflect.runtime.{universe => ru}
+
 import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
@@ -28,7 +30,6 @@ import io.deepsense.deeplang.inference.{InferContext, InferenceWarning, Inferenc
 import io.deepsense.deeplang.parameters.ParametersSchema
 import io.deepsense.deeplang.parameters.exceptions.ValidationException
 import io.deepsense.deeplang.{DKnowledge, DOperable, DOperation2To1, ExecutionContext}
-import scala.reflect.runtime.{universe => ru}
 
 class KnowledgeInferenceSpec
   extends WordSpec
@@ -46,14 +47,15 @@ class KnowledgeInferenceSpec
   val knowledgeA2: DKnowledge[DOperable] = DKnowledge(A2())
   val knowledgeA12: DKnowledge[DOperable] = DKnowledge(A1(), A2())
 
-  val ctx: InferContext = new InferContext(hierarchy, fullInference = false)
+  val typeInferenceCtx: InferContext = new InferContext(hierarchy, fullInference = false)
+  val fullInferenceCtx: InferContext = new InferContext(hierarchy, fullInference = true)
 
   "Graph" should {
     "infer type knowledge" when {
       "graph is valid" in {
         val graph = validGraph
         setParamsValid(graph)
-        val graphKnowledge = graph.inferKnowledge(ctx)
+        val graphKnowledge = graph.inferKnowledge(typeInferenceCtx)
 
         val graphKnowledgeExpected = Map(
           idCreateA1 -> NodeInferenceResult(Vector(knowledgeA1)),
@@ -67,7 +69,7 @@ class KnowledgeInferenceSpec
       "not all input knowledge accord to input type qualifiers" in {
         val graph = graphWithNotAccordingTypes
         setParamsValid(graph)
-        val graphKnowledge = graph.inferKnowledge(ctx)
+        val graphKnowledge = graph.inferKnowledge(typeInferenceCtx)
 
         val graphKnowledgeExpected = Map(
           idCreateA1 -> NodeInferenceResult(Vector(knowledgeA1)),
@@ -86,7 +88,7 @@ class KnowledgeInferenceSpec
       "knowledge was not provided for some inputs" in {
         val graph = graphWithNotProvidedInputs
         setParamsValid(graph)
-        val graphKnowledge = graph.inferKnowledge(ctx)
+        val graphKnowledge = graph.inferKnowledge(typeInferenceCtx)
 
         val graphKnowledgeExpected = Map(
           idCreateA1 -> NodeInferenceResult(Vector(knowledgeA1)),
@@ -101,13 +103,14 @@ class KnowledgeInferenceSpec
       "graph is valid but params are invalid" in {
         val graph = validGraph
         setParamsInvalid(graph)
-        val graphKnowledge = graph.inferKnowledge(ctx)
+        val graphKnowledge = graph.inferKnowledge(typeInferenceCtx)
 
         val graphKnowledgeExpected = Map(
           idCreateA1 -> NodeInferenceResult(Vector(knowledgeA1)),
           idAToA1A2 -> NodeInferenceResult(Vector(knowledgeA1, knowledgeA2)),
           idA1A2ToFirst -> NodeInferenceResult(
-            Vector(knowledgeA12),
+            Vector(knowledgeA1),
+            warnings = InferenceWarnings(DOperationA1A2ToFirst.warning),
             errors = Vector(DOperationA1A2ToFirst.parameterInvalidError))
         )
         graphKnowledge.resultsMap should contain theSameElementsAs graphKnowledgeExpected
@@ -115,15 +118,17 @@ class KnowledgeInferenceSpec
       "not all input knowledge accords to input type qualifiers and params are invalid" in {
         val graph = graphWithNotAccordingTypes
         setParamsInvalid(graph)
-        val graphKnowledge = graph.inferKnowledge(ctx)
+        val graphKnowledge = graph.inferKnowledge(typeInferenceCtx)
 
         val graphKnowledgeExpected = Map(
           idCreateA1 -> NodeInferenceResult(Vector(knowledgeA1)),
           idA1ToA -> NodeInferenceResult(Vector(knowledgeA12)),
           idAToA1A2 -> NodeInferenceResult(Vector(knowledgeA1, knowledgeA2)),
           idA1A2ToFirst -> NodeInferenceResult(
-            Vector(knowledgeA12),
-            warnings = InferenceWarnings(SomeTypesNotCompilableWarning(portIndex = 1)),
+            Vector(knowledgeA1),
+            warnings = InferenceWarnings(
+              SomeTypesNotCompilableWarning(portIndex = 1),
+              DOperationA1A2ToFirst.warning),
             errors = Vector(
               AllTypesNotCompilableException(portIndex = 0),
               DOperationA1A2ToFirst.parameterInvalidError
@@ -135,12 +140,13 @@ class KnowledgeInferenceSpec
       "knowledge was not provided for some inputs and params are invalid" in {
         val graph = graphWithNotProvidedInputs
         setParamsInvalid(graph)
-        val graphKnowledge = graph.inferKnowledge(ctx)
+        val graphKnowledge = graph.inferKnowledge(typeInferenceCtx)
 
         val graphKnowledgeExpected = Map(
           idCreateA1 -> NodeInferenceResult(Vector(knowledgeA1)),
           idA1A2ToFirst -> NodeInferenceResult(
-            Vector(knowledgeA12),
+            Vector(knowledgeA1),
+            warnings = InferenceWarnings(DOperationA1A2ToFirst.warning),
             errors = Vector(
               NoInputEdgesException(portIndex = 1),
               DOperationA1A2ToFirst.parameterInvalidError
@@ -152,7 +158,7 @@ class KnowledgeInferenceSpec
       "graph is valid and inference throws an error" in {
         val graph = validGraph
         setThrowingError(graph)
-        val graphKnowledge = graph.inferKnowledge(ctx)
+        val graphKnowledge = graph.inferKnowledge(typeInferenceCtx)
 
         val graphKnowledgeExpected = Map(
           idCreateA1 -> NodeInferenceResult(Vector(knowledgeA1)),
@@ -166,7 +172,7 @@ class KnowledgeInferenceSpec
       "not all input knowledge accords to input type qualifiers and inference throws an error" in {
         val graph = graphWithNotAccordingTypes
         setThrowingError(graph)
-        val graphKnowledge = graph.inferKnowledge(ctx)
+        val graphKnowledge = graph.inferKnowledge(typeInferenceCtx)
 
         val graphKnowledgeExpected = Map(
           idCreateA1 -> NodeInferenceResult(Vector(knowledgeA1)),
@@ -185,7 +191,7 @@ class KnowledgeInferenceSpec
       "knowledge was not provided for some inputs and inference throws an error" in {
         val graph = graphWithNotProvidedInputs
         setThrowingError(graph)
-        val graphKnowledge = graph.inferKnowledge(ctx)
+        val graphKnowledge = graph.inferKnowledge(typeInferenceCtx)
 
         val graphKnowledgeExpected = Map(
           idCreateA1 -> NodeInferenceResult(Vector(knowledgeA1)),
@@ -199,11 +205,26 @@ class KnowledgeInferenceSpec
         graphKnowledge.resultsMap should contain theSameElementsAs graphKnowledgeExpected
       }
     }
+    "not inference types (only infer default knowledge) when parameters are not valid " +
+      "for fullInference = true" in {
+        val graph = validGraph
+        setParamsInvalid(graph)
+        val graphKnowledge = graph.inferKnowledge(fullInferenceCtx)
+
+        val graphKnowledgeExpected = Map(
+          idCreateA1 -> NodeInferenceResult(Vector(knowledgeA1)),
+          idAToA1A2 -> NodeInferenceResult(Vector(knowledgeA1, knowledgeA2)),
+          idA1A2ToFirst -> NodeInferenceResult(
+            Vector(knowledgeA12),
+            errors = Vector(DOperationA1A2ToFirst.parameterInvalidError))
+        )
+        graphKnowledge.resultsMap should contain theSameElementsAs graphKnowledgeExpected
+    }
 
     "throw an exception" when {
       "graph contains cycle" in {
         intercept[CyclicGraphException] {
-          graphWithCycle.inferKnowledge(ctx)
+          graphWithCycle.inferKnowledge(typeInferenceCtx)
         }
         ()
       }
@@ -215,10 +236,10 @@ class KnowledgeInferenceSpec
       val graph = validGraph
       setParamsValid(graph)
 
-      val node1Result = graph.inferKnowledge(idCreateA1, 0, ctx)
-      val node2Port0Result = graph.inferKnowledge(idAToA1A2, 0, ctx)
-      val node2Port1Result = graph.inferKnowledge(idAToA1A2, 1, ctx)
-      val node3Result = graph.inferKnowledge(idA1A2ToFirst, 0, ctx)
+      val node1Result = graph.inferKnowledge(idCreateA1, 0, typeInferenceCtx)
+      val node2Port0Result = graph.inferKnowledge(idAToA1A2, 0, typeInferenceCtx)
+      val node2Port1Result = graph.inferKnowledge(idAToA1A2, 1, typeInferenceCtx)
+      val node3Result = graph.inferKnowledge(idA1A2ToFirst, 0, typeInferenceCtx)
 
       node1Result.knowledge shouldBe knowledgeA1
       node2Port0Result.knowledge shouldBe knowledgeA1
@@ -240,9 +261,9 @@ class KnowledgeInferenceSpec
 
     override protected def _execute(context: ExecutionContext)(t1: A1, t2: A2): A = ???
 
-    def setParamsValid(): Unit = doNothing.when(parameters).validate
+    def setParamsValid(): Unit = doReturn(Vector.empty).when(parameters).validate
 
-    def setParamsInvalid(): Unit = doThrow(parameterInvalidError).when(parameters).validate
+    def setParamsInvalid(): Unit = doReturn(Vector(parameterInvalidError)).when(parameters).validate
 
     private var inferenceShouldThrow = false
 

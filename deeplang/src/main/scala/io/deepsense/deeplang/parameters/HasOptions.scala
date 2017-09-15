@@ -21,6 +21,8 @@ import scala.collection.immutable.ListMap
 import spray.json.DefaultJsonProtocol._
 import spray.json._
 
+import io.deepsense.deeplang.exceptions.DeepLangException
+
 /**
  * Represents Parameter with possible choices.
  */
@@ -30,7 +32,7 @@ trait HasOptions extends Parameter {
   /**
    * Validates schema assigned to chosen option.
    */
-  protected def validateChoice(chosenLabel: String): Unit = {
+  protected def validateChoice(chosenLabel: String): Vector[DeepLangException] = {
     options(chosenLabel).validate
   }
 

@@ -34,78 +34,82 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
     param2.value = "abc"
 
     val parametersSchema = ParametersSchema("x" -> param1, "y" -> param2)
-    parametersSchema.validate
+    assert(parametersSchema.validate.isEmpty)
   }
 
-  test("Validation of invalid parameter using range validator should throw an exception") {
-    val exception = intercept[OutOfRangeException] {
-      val param = NumericParameter("description", None, RangeValidator(3, 4))
-      param.value = 4.1
-
-      val parametersSchema = ParametersSchema("x" -> param)
-      parametersSchema.validate
-    }
-    assert(exception == OutOfRangeException(4.1, 3, 4))
+  test("Validation of invalid parameter using range validator should return an exception") {
+    val param = NumericParameter("description", None, RangeValidator(3, 4))
+    param.value = 4.1
+    val parametersSchema = ParametersSchema("x" -> param)
+    assertValidationReturnedException(parametersSchema, OutOfRangeException(4.1, 3, 4))
   }
 
-  test("Validation of invalid parameter using range with step should throw an exception") {
-    val exception = intercept[OutOfRangeWithStepException] {
-      val validator = RangeValidator(3, 5.4, step = Some(1.2))
-      val param = NumericParameter("description", None, validator)
-      param.value = 4.1
+  test("Validation of invalid parameters should return exception for each of them") {
+    val paramOne = mock[Parameter]
+    val paramOneValidationOneException = OutOfRangeException(4.1, 3, 4)
+    when(paramOne.validate("paramOne")).thenReturn(Vector(paramOneValidationOneException))
 
-      val parametersSchema = ParametersSchema("x" -> param)
-      parametersSchema.validate
-    }
-    assert(exception == OutOfRangeWithStepException(4.1, 3, 5.4, 1.2))
+    val paramTwo = mock[Parameter]
+    val paramTwoValidationOneException = MatchException("abc", "a".r)
+    when(paramTwo.validate("paramTwo")).thenReturn(Vector(paramTwoValidationOneException))
+
+    val parametersSchema = ParametersSchema("paramOne" -> paramOne, "paramTwo" -> paramTwo)
+    assertValidationReturnedException(
+      parametersSchema,
+      paramOneValidationOneException, paramTwoValidationOneException)
   }
 
-  test("Creating invalid range validator should throw an exception") {
+  test("Validation of invalid parameter using range with step should return an exception") {
+    val validator = RangeValidator(3, 5.4, step = Some(1.2))
+    val param = NumericParameter("description", None, validator)
+    param.value = Some(4.1)
+
+    val parametersSchema = ParametersSchema("x" -> param)
+    assertValidationReturnedException(parametersSchema,
+      OutOfRangeWithStepException(4.1, 3, 5.4, 1.2))
+  }
+
+  test("Creating invalid range validator should return an exception") {
     intercept[IllegalArgumentException] {
       RangeValidator(3, 2)
     }
   }
 
-  test("Creating invalid range with step validator should throw an exception") {
+  test("Creating invalid range with step validator should return an exception") {
     intercept[IllegalArgumentException] {
       RangeValidator(3, 5.5, step = Some(1.2))
     }
   }
 
-  test("Creating invalid range with step less than zero should throw an exception") {
+  test("Creating invalid range with step less than zero return throw an exception") {
     intercept[IllegalArgumentException] {
       RangeValidator(3, 5.4, step = Some(-1.2))
     }
   }
 
-  test("Validating empty parameter without default value should throw an exception") {
-    val exception = intercept[ParameterRequiredException] {
-      val param = StringParameter("description", None, RegexValidator("a".r))
-      val parametersSchema = ParametersSchema("x" -> param)
-      parametersSchema.validate
-    }
-    assert(exception == ParameterRequiredException("x"))
+  test("Validating empty parameter without default value should return an exception") {
+    val param = StringParameter("description", None, RegexValidator("a".r))
+    val parametersSchema = ParametersSchema("x" -> param)
+    parametersSchema.validate
+    assertValidationReturnedException(parametersSchema, ParameterRequiredException("x"))
   }
 
   test("Validation empty parameter with default value should not throw an exception") {
     val default = "someDefault"
     val param = StringParameter("description", Some(default), new AcceptAllRegexValidator)
     val parametersSchema = ParametersSchema("x" -> param)
-    parametersSchema.validate
+    assert(parametersSchema.validate.isEmpty)
     assert(param.value == default)
   }
 
-  test("Validation of invalid parameter using regex validator should throw an exception") {
+  test("Validation of invalid parameter using regex validator should return an exception") {
     val regex = "a".r
-    val exception = intercept[MatchException] {
-      val validator = RegexValidator(regex)
-      val param = StringParameter("description", None, validator)
-      param.value = "abc"
+    val validator = RegexValidator(regex)
+    val param = StringParameter("description", None, validator)
+    param.value = "abc"
 
-      val parametersSchema = ParametersSchema("x" -> param)
-      parametersSchema.validate
-    }
-    assert(exception == MatchException("abc", regex))
+    val parametersSchema = ParametersSchema("x" -> param)
+    assertValidationReturnedException(parametersSchema, MatchException("abc", regex))
   }
 
   test("Validation of choice parameter should validate chosen schema") {
@@ -119,7 +123,9 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
 
   test("Validation of multipleChoice parameter should validate chosen schemas") {
     val mockSchema1 = mock[ParametersSchema]
+    when(mockSchema1.validate).thenReturn(Vector())
     val mockSchema2 = mock[ParametersSchema]
+    when(mockSchema2.validate).thenReturn(Vector())
     val possibleChoices = ListMap("firstChoice" -> mockSchema1, "secondChoice" -> mockSchema2)
     val multipleChoices = MultipleChoiceParameter("choice", None, possibleChoices)
     multipleChoices.value = Some(Traversable("firstChoice", "secondChoice"))
@@ -130,6 +136,7 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
 
   test("Validation of parameters sequence should validate inner schemas") {
     val mockSchema = mock[ParametersSchema]
+    when(mockSchema.validate).thenReturn(Vector())
     val multiplicator = ParametersSequence("description", mockSchema)
     multiplicator.value = Vector(mockSchema, mockSchema)
     multiplicator.validate("someParamName")
@@ -138,6 +145,7 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
 
   test("Validation of MultipleColumnSelection should validate inner selectors") {
     val selections = Vector.fill(3)({mock[ColumnSelection]})
+    selections.foreach(selection => when(selection.validate).thenReturn(Vector()))
     val selectorParameter = ColumnSelectorParameter("description", 0)
     val multipleColumnSelection = MultipleColumnSelection(selections, false)
     selectorParameter.value = multipleColumnSelection
@@ -147,21 +155,40 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
     }
   }
 
-  test("Validation of IndexRangeColumnSelector should be valid only if lower <= upper bound") {
-    IndexRangeColumnSelection(Some(5), Some(5)).validate
-    IndexRangeColumnSelection(Some(5), Some(6)).validate
 
-    intercept[IllegalIndexRangeColumnSelectionException]{
-      IndexRangeColumnSelection(None, Some(5)).validate
+  test("Validation of IndexRangeColumnSelector should be valid only if lower <= upper bound") {
+    assert(IndexRangeColumnSelection(Some(5), Some(5)).validate.isEmpty)
+    assert(IndexRangeColumnSelection(Some(5), Some(6)).validate.isEmpty)
+
+    def assertColumnSelectionReturnsException(
+        lowerBound: Option[Int], upperBound: Option[Int]): Unit = {
+      val selection = IndexRangeColumnSelection(None, Some(5))
+      assertValidationReturnedException(
+        selection, IllegalIndexRangeColumnSelectionException(selection))
     }
-    intercept[IllegalIndexRangeColumnSelectionException]{
-      IndexRangeColumnSelection(Some(4), None).validate
-    }
-    intercept[IllegalIndexRangeColumnSelectionException]{
-      IndexRangeColumnSelection(None, None).validate
-    }
-    intercept[IllegalIndexRangeColumnSelectionException]{
-      IndexRangeColumnSelection(Some(5), Some(4)).validate
-    }
+
+    assertColumnSelectionReturnsException(None, Some(5))
+    assertColumnSelectionReturnsException(Some(4), None)
+    assertColumnSelectionReturnsException(None, None)
+    assertColumnSelectionReturnsException(Some(5), Some(4))
   }
+
+  def assertValidationReturnedException(
+      validable: ParametersSchema,
+      exceptions: ValidationException*): Unit = {
+    val validationExceptions = validable.validate
+    assert(validationExceptions.size == exceptions.size)
+    exceptions.foreach(
+      e => assert( validationExceptions.contains(e))
+    )
+  }
+
+  def assertValidationReturnedException(
+      validable: IndexRangeColumnSelection,
+      exception: ValidationException): Unit = {
+    val validationExceptions = validable.validate
+    assert(validationExceptions.size == 1)
+    assert(validationExceptions.head == exception)
+  }
+
 }

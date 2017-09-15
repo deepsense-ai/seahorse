@@ -72,15 +72,20 @@ trait KnowledgeInference {
     val NodeInferenceResult(inKnowledge, warnings, errors) =
       inputInferenceForNode(node, context, graphKnowledge)
 
-    val inferenceResult = try {
-      node.operation.parameters.validate
-      val (outKnowledge, inferWarnings) =
-        node.operation.inferKnowledge(context)(inKnowledge.toVector)
-      NodeInferenceResult(outKnowledge, warnings ++ inferWarnings, errors)
-    } catch {
-      case exception: DeepLangException =>
-        val outKnowledge = defaultOutputKnowledge(context, node.operation)
-        NodeInferenceResult(outKnowledge, warnings, errors :+ exception)
+    val parametersValidationErrors = node.operation.parameters.validate
+    val inferenceResult = if (context.fullInference && !parametersValidationErrors.isEmpty) {
+      createDefaultKnowledge(
+        context, node.operation, warnings, errors ++ parametersValidationErrors)
+    } else {
+      try {
+        val (outKnowledge, inferWarnings) =
+          node.operation.inferKnowledge(context)(inKnowledge.toVector)
+        NodeInferenceResult(
+          outKnowledge, warnings ++ inferWarnings, errors ++ parametersValidationErrors)
+      } catch {
+        case exception: DeepLangException =>
+          createDefaultKnowledge(context, node.operation, warnings, errors :+ exception)
+      }
     }
     graphKnowledge.addInference(node.id, inferenceResult)
   }
@@ -97,6 +102,15 @@ trait KnowledgeInference {
         NodeInferenceResult(
           knowledge :+ portKnowledge, warnings ++ accordance.warnings, errors ++ accordance.errors)
     }
+  }
+
+  private def createDefaultKnowledge(
+      context: InferContext,
+      operation: DOperation,
+      warnings: InferenceWarnings,
+      errors: Vector[DeepLangException]): NodeInferenceResult = {
+    val outKnowledge = defaultOutputKnowledge(context, operation)
+    NodeInferenceResult(outKnowledge, warnings, errors)
   }
 
   /**

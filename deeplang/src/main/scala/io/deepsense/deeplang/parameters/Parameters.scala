@@ -21,6 +21,8 @@ import scala.collection.immutable.ListMap
 import spray.json.DefaultJsonProtocol._
 import spray.json._
 
+import io.deepsense.deeplang.exceptions.DeepLangException
+
 case class BooleanParameter(
     description: String,
     default: Option[Boolean],
@@ -110,7 +112,7 @@ case class ChoiceParameter(
 
   val parameterType = ParameterType.Choice
 
-  override protected def validateDefined(definedValue: String): Unit = {
+  override protected def validateDefined(definedValue: String): Vector[DeepLangException] = {
     validateChoice(definedValue)
   }
 
@@ -184,10 +186,9 @@ case class MultipleChoiceParameter(
 
   val parameterType = ParameterType.MultipleChoice
 
-  override protected def validateDefined(definedValue: Traversable[String]): Unit = {
-    for (choice <- definedValue) {
-      validateChoice(choice)
-    }
+  override protected def validateDefined(
+      definedValue: Traversable[String]): Vector[DeepLangException] = {
+    definedValue.flatMap(choice => validateChoice(choice)).toVector
   }
 
   private[parameters] def replicate: Parameter = copy()
@@ -240,8 +241,10 @@ case class ParametersSequence(
    * Validates each filled schema.
    * Does not check if all filled schemas conform to predefined schema.
    */
-  override protected def validateDefined(definedValue: Vector[ParametersSchema]): Unit = {
-    definedValue.foreach(_.validate)
+  override protected def validateDefined(
+      definedValue: Vector[ParametersSchema]): Vector[DeepLangException] = {
+    definedValue.foldLeft(Vector.empty[DeepLangException])(
+      (allErrors, currentErrors ) => allErrors ++ currentErrors.validate)
   }
 
   private[parameters] def replicate: Parameter = copy()
@@ -338,7 +341,7 @@ case class ColumnSelectorParameter(
     MultipleColumnSelection.fromJson(jsValue)
   }
 
-  override protected def validateDefined(definedValue: HeldValue): Unit = {
+  override protected def validateDefined(definedValue: HeldValue): Vector[DeepLangException] = {
     definedValue.validate
   }
 

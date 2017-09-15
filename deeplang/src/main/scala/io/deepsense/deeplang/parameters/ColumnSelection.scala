@@ -21,6 +21,7 @@ import spray.json._
 
 import io.deepsense.commons.types.ColumnType
 import ColumnType._
+import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.parameters.exceptions.IllegalIndexRangeColumnSelectionException
 
 /**
@@ -37,7 +38,9 @@ sealed abstract class ColumnSelection(
 
   protected def valuesToJson: JsValue
 
-  def validate: Unit = {}
+  def validate: Vector[DeepLangException] = {
+    Vector.empty[DeepLangException]
+  }
 }
 
 object ColumnSelection {
@@ -105,14 +108,16 @@ case class IndexRangeColumnSelection(lowerBound: Option[Int], upperBound: Option
   override protected def valuesToJson: JsValue =
     List(lowerBound, upperBound).flatten.toJson
 
-  override def validate: Unit = {
+  override def validate: Vector[DeepLangException] = {
     val lowerLessThanUpper = for {
       lower <- lowerBound
       upper <- upperBound
     } yield lower <= upper
     val valid = lowerLessThanUpper.getOrElse(false)
-    if (!valid) {
-      throw new IllegalIndexRangeColumnSelectionException(this)
+    if (valid) {
+      Vector.empty[DeepLangException]
+    } else {
+      Vector(IllegalIndexRangeColumnSelectionException(this))
     }
   }
 }

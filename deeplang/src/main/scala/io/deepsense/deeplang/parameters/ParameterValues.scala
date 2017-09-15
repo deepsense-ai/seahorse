@@ -19,6 +19,8 @@ package io.deepsense.deeplang.parameters
 import spray.json.DefaultJsonProtocol._
 import spray.json._
 
+import io.deepsense.deeplang.exceptions.DeepLangException
+
 /**
  * Represents selecting one of variety of options.
  * @param label name denoting selected option
@@ -116,7 +118,7 @@ object NameSingleColumnSelection {
  */
 case class MultipleColumnSelection(selections: Vector[ColumnSelection],
     excluding: Boolean = false) {
-  def validate: Unit = selections.foreach(_.validate)
+  def validate: Vector[DeepLangException] = selections.flatMap(selection => selection.validate)
 }
 
 object MultipleColumnSelection {

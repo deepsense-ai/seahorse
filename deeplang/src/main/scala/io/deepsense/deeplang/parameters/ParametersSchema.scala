@@ -17,12 +17,12 @@
 package io.deepsense.deeplang.parameters
 
 import scala.collection.immutable.ListMap
-import scala.util.Try
 
 import spray.json._
 
+import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.parameters.ParameterConversions._
-import io.deepsense.deeplang.parameters.exceptions.{ValidationException, NoSuchParameterException}
+import io.deepsense.deeplang.parameters.exceptions.NoSuchParameterException
 
 /**
  * Schema for a given set of DOperation parameters
@@ -33,10 +33,9 @@ class ParametersSchema protected (private val schemaMap: ListMap[String, Paramet
 
   // TODO: Parameter name should be taken from parameter, not from schema.
   // TODO: When it's there, this method should be simplified to schema.values.foreach(_.validate)
-  @throws[ValidationException]
-  def validate: Unit = schemaMap.foreach {
-    case (name, parameter) => parameter.validate(name)
-  }
+  def validate: Vector[DeepLangException] = schemaMap.flatMap {
+    case (name: String, parameter: Parameter) => parameter.validate(name)
+  }.toVector
 
   private def get[T <: Parameter](name: String)(implicit converter: ParameterConverter[T]): T = {
     schemaMap.get(name) match {

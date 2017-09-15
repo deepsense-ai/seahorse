@@ -18,6 +18,7 @@ package io.deepsense.deeplang.parameters
 
 import spray.json._
 
+import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.parameters.ValidatorType.ValidatorType
 
 /** Represents anything that validates parameter. */
@@ -25,7 +26,7 @@ import io.deepsense.deeplang.parameters.ValidatorType.ValidatorType
 trait Validator[ParameterType] extends Serializable {
   val validatorType: ValidatorType
 
-  def validate(parameter: ParameterType): Unit
+  def validate(parameter: ParameterType): Vector[DeepLangException]
 
   final def toJson: JsObject = {
     import DefaultJsonProtocol._

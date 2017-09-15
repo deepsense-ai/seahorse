@@ -16,6 +16,7 @@
 
 package io.deepsense.deeplang.parameters
 
+import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.parameters.exceptions.ParameterRequiredException
 
 import spray.json.DefaultJsonProtocol._
@@ -58,9 +59,9 @@ abstract class Parameter extends Serializable {
    * Validates held value.
    * If value is set to None exception is thrown.
    */
-  def validate(parameterName: String): Unit = maybeValue match {
+  def validate(parameterName: String): Vector[DeepLangException] = maybeValue match {
     case Some(definedValue) => validateDefined(definedValue)
-    case None => throw ParameterRequiredException(parameterName)
+    case None => Vector(ParameterRequiredException(parameterName))
   }
 
   /**
@@ -68,7 +69,9 @@ abstract class Parameter extends Serializable {
    * This validation is not performed if value is set to None.
    * This function does nothing by default.
    */
-  protected def validateDefined(definedValue: HeldValue): Unit = { }
+  protected def validateDefined(definedValue: HeldValue): Vector[DeepLangException] = {
+    Vector.empty
+  }
 
   /**
    * Map of fields that should be used in each parameter's Json representation.

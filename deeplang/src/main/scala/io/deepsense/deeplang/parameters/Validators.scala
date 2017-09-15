@@ -20,6 +20,7 @@ import scala.util.matching.Regex
 
 import spray.json.JsObject
 
+import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.parameters.exceptions.{MatchException, OutOfRangeException, OutOfRangeWithStepException}
 
 /**
@@ -41,23 +42,24 @@ case class RangeValidator(
 
   val validatorType = ValidatorType.Range
 
-  override def validate(parameter: Double): Unit = {
+  override def validate(parameter: Double): Vector[DeepLangException] = {
     val beginComparison: (Double, Double) => Boolean = if (beginIncluded) (_ >= _) else (_ > _)
     val endComparison: (Double, Double) => Boolean = if (endIncluded) (_ <= _) else (_ < _)
     if (!(beginComparison(parameter, begin) && endComparison(parameter, end))) {
-      throw new OutOfRangeException(parameter, begin, end)
+      Vector(new OutOfRangeException(parameter, begin, end))
     } else {
       validateStep(parameter)
     }
   }
 
   /** Validates if parameter value can be reached using given step */
-  private def validateStep(value: Double): Unit = {
+  private def validateStep(value: Double): Vector[DeepLangException] = {
     step.foreach {
       s => if (takeSteps(countStepsTo(value, s), s) != value) {
-        throw OutOfRangeWithStepException(value, begin, end, s)
+        return Vector(OutOfRangeWithStepException(value, begin, end, s))
       }
     }
+    Vector.empty
   }
 
   /**
@@ -84,11 +86,14 @@ case class RegexValidator(
 
   val validatorType = ValidatorType.Regex
 
-  override def validate(parameter: String): Unit = {
-    if (!(parameter matches regex.toString)) {
-      throw MatchException(parameter, regex)
+  override def validate(parameter: String): Vector[DeepLangException] = {
+    if (parameter matches regex.toString) {
+      Vector.empty
+    } else {
+      Vector(MatchException(parameter, regex))
     }
   }
+
 
   override def configurationToJson: JsObject = {
     import ValidatorsJsonProtocol.regexValidatorFormat
