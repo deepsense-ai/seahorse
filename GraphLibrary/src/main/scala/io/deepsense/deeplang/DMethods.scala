@@ -6,22 +6,179 @@
 
 package io.deepsense.deeplang
 
-abstract class DMethod0To1[P, TO0 <: DOperable] extends DMethod {
-  def apply(parameters: P): TO0
+abstract class DMethod0To1[
+    P,
+    TO_0 <: DOperable] extends DMethod {
+  def apply(parameters: P)(): TO_0
 
-  def infer(parameters: P): DKnowledge[TO0]
+  def infer(parameters: P)(): DKnowledge[TO_0]
 }
 
-abstract class DMethod1To0[P, TI0 <: DOperable] extends DMethod {
-  def apply(parameters: P)(t1: TI0): Unit
+abstract class DMethod0To2[
+    P,
+    TO_0 <: DOperable,
+    TO_1 <: DOperable] extends DMethod {
+  def apply(parameters: P)(): (TO_0, TO_1)
 
-  def infer(parameters: P)(k: DKnowledge[TI0]): Unit
+  def infer(parameters: P)(): (DKnowledge[TO_0], DKnowledge[TO_1])
 }
 
-abstract class DMethod1To1[P, TI0 <: DOperable, TO0 <: DOperable] extends DMethod {
-  def apply(parameters: P)(t0: TI0): TO0
+abstract class DMethod0To3[
+    P,
+    TO_0 <: DOperable,
+    TO_1 <: DOperable,
+    TO_2 <: DOperable] extends DMethod {
+  def apply(parameters: P)(): (TO_0, TO_1, TO_2)
 
-  def infer(parameters: P)(k0: DKnowledge[TI0]): DKnowledge[TO0]
+  def infer(parameters: P)(): (DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2])
 }
 
-// TODO create more DMethods
+abstract class DMethod1To0[
+    P,
+    TI_0 <: DOperable] extends DMethod {
+  def apply(parameters: P)(t0: TI_0): Unit
+
+  def infer(parameters: P)(
+      k0: DKnowledge[TI_0]): Unit
+}
+
+abstract class DMethod1To1[
+    P,
+    TI_0 <: DOperable,
+    TO_0 <: DOperable] extends DMethod {
+  def apply(parameters: P)(t0: TI_0): TO_0
+
+  def infer(parameters: P)(
+      k0: DKnowledge[TI_0]): DKnowledge[TO_0]
+}
+
+abstract class DMethod1To2[
+    P,
+    TI_0 <: DOperable,
+    TO_0 <: DOperable,
+    TO_1 <: DOperable] extends DMethod {
+  def apply(parameters: P)(t0: TI_0): (TO_0, TO_1)
+
+  def infer(parameters: P)(
+      k0: DKnowledge[TI_0]): (DKnowledge[TO_0], DKnowledge[TO_1])
+}
+
+abstract class DMethod1To3[
+    P,
+    TI_0 <: DOperable,
+    TO_0 <: DOperable,
+    TO_1 <: DOperable,
+    TO_2 <: DOperable] extends DMethod {
+  def apply(parameters: P)(t0: TI_0): (TO_0, TO_1, TO_2)
+
+  def infer(parameters: P)(
+      k0: DKnowledge[TI_0]): (DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2])
+}
+
+abstract class DMethod2To0[
+    P,
+    TI_0 <: DOperable,
+    TI_1 <: DOperable] extends DMethod {
+  def apply(parameters: P)(t0: TI_0, t1: TI_1): Unit
+
+  def infer(parameters: P)(
+      k0: DKnowledge[TI_0],
+      k1: DKnowledge[TI_1]): Unit
+}
+
+abstract class DMethod2To1[
+    P,
+    TI_0 <: DOperable,
+    TI_1 <: DOperable,
+    TO_0 <: DOperable] extends DMethod {
+  def apply(parameters: P)(t0: TI_0, t1: TI_1): TO_0
+
+  def infer(parameters: P)(
+      k0: DKnowledge[TI_0],
+      k1: DKnowledge[TI_1]): DKnowledge[TO_0]
+}
+
+abstract class DMethod2To2[
+    P,
+    TI_0 <: DOperable,
+    TI_1 <: DOperable,
+    TO_0 <: DOperable,
+    TO_1 <: DOperable] extends DMethod {
+  def apply(parameters: P)(t0: TI_0, t1: TI_1): (TO_0, TO_1)
+
+  def infer(parameters: P)(
+      k0: DKnowledge[TI_0],
+      k1: DKnowledge[TI_1]): (DKnowledge[TO_0], DKnowledge[TO_1])
+}
+
+abstract class DMethod2To3[
+    P,
+    TI_0 <: DOperable,
+    TI_1 <: DOperable,
+    TO_0 <: DOperable,
+    TO_1 <: DOperable,
+    TO_2 <: DOperable] extends DMethod {
+  def apply(parameters: P)(t0: TI_0, t1: TI_1): (TO_0, TO_1, TO_2)
+
+  def infer(parameters: P)(
+      k0: DKnowledge[TI_0],
+      k1: DKnowledge[TI_1]): (DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2])
+}
+
+abstract class DMethod3To0[
+    P,
+    TI_0 <: DOperable,
+    TI_1 <: DOperable,
+    TI_2 <: DOperable] extends DMethod {
+  def apply(parameters: P)(t0: TI_0, t1: TI_1, t2: TI_2): Unit
+
+  def infer(parameters: P)(
+      k0: DKnowledge[TI_0],
+      k1: DKnowledge[TI_1],
+      k2: DKnowledge[TI_2]): Unit
+}
+
+abstract class DMethod3To1[
+    P,
+    TI_0 <: DOperable,
+    TI_1 <: DOperable,
+    TI_2 <: DOperable,
+    TO_0 <: DOperable] extends DMethod {
+  def apply(parameters: P)(t0: TI_0, t1: TI_1, t2: TI_2): TO_0
+
+  def infer(parameters: P)(
+      k0: DKnowledge[TI_0],
+      k1: DKnowledge[TI_1],
+      k2: DKnowledge[TI_2]): DKnowledge[TO_0]
+}
+
+abstract class DMethod3To2[
+    P,
+    TI_0 <: DOperable,
+    TI_1 <: DOperable,
+    TI_2 <: DOperable,
+    TO_0 <: DOperable,
+    TO_1 <: DOperable] extends DMethod {
+  def apply(parameters: P)(t0: TI_0, t1: TI_1, t2: TI_2): (TO_0, TO_1)
+
+  def infer(parameters: P)(
+      k0: DKnowledge[TI_0],
+      k1: DKnowledge[TI_1],
+      k2: DKnowledge[TI_2]): (DKnowledge[TO_0], DKnowledge[TO_1])
+}
+
+abstract class DMethod3To3[
+    P,
+    TI_0 <: DOperable,
+    TI_1 <: DOperable,
+    TI_2 <: DOperable,
+    TO_0 <: DOperable,
+    TO_1 <: DOperable,
+    TO_2 <: DOperable] extends DMethod {
+  def apply(parameters: P)(t0: TI_0, t1: TI_1, t2: TI_2): (TO_0, TO_1, TO_2)
+
+  def infer(parameters: P)(
+      k0: DKnowledge[TI_0],
+      k1: DKnowledge[TI_1],
+      k2: DKnowledge[TI_2]): (DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2])
+}
