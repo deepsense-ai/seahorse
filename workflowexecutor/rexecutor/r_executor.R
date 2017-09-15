@@ -13,7 +13,8 @@ print(code)
 
 rm(args)
 
-.libPaths(c(file.path("/opt/spark-2.0.0/R/lib/"), .libPaths()))
+# R will install packages to first lib path in here. We will mount it as docker volume to persist packages.
+.libPaths(c(file.path("/opt/R_Libs"), c(file.path("/opt/spark-2.0.0/R/lib/"), .libPaths()))
 library(SparkR)
 
 SparkR:::connectBackend("localhost", backendPort)
