@@ -136,6 +136,8 @@ class GraphExecutorClientActor(
   def requestSpawn(): Unit = {
     val me = self
     import scala.concurrent.ExecutionContext.Implicits.global
+    logger.debug("requestSpawn for " +
+      s"${requestedExperiment.id} / actorPath=$actorPath / entityStorageLabel=$entityStorageLabel")
     val spawnRequest =
       Future(spawner.spawnOnCluster(requestedExperiment.id, actorPath, entityStorageLabel))
 
@@ -151,7 +153,7 @@ class GraphExecutorClientActor(
           LaunchingFailure,
           error)
         runningExperiments ! Update(requestedExperiment.markFailed(experimentFailureDetails))
-        self ! PoisonPill
+        me ! PoisonPill
     }
   }
 

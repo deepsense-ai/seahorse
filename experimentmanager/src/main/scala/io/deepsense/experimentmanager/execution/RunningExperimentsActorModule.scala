@@ -27,7 +27,8 @@ class RunningExperimentsActorModule extends AbstractModule {
     system.actorOf(
       Props(new RunningExperimentsActor(entityStorageLabel, timeoutMillis, spawner)
         with ProductionGraphExecutorClientFactory
-      )
+      ),
+      "RunningExperimentsActor"
     )
   }
 }
