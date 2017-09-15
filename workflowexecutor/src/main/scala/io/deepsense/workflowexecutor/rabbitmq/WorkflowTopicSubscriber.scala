@@ -54,8 +54,8 @@ case class WorkflowTopicSubscriber(
       logger.debug(s"Got Synchronize() request for workflow '$workflowId'")
       executorActor ! WorkflowExecutorActor.Messages.Synchronize()
     case global.PoisonPill() =>
-      logger.info("Got PoisonPill! Shutting down Actor System!")
-      context.system.shutdown()
+      logger.info("Got PoisonPill! Terminating Actor System!")
+      context.system.terminate()
     case x =>
       logger.error(s"Unexpected '$x' from '${sender()}'!")
   }

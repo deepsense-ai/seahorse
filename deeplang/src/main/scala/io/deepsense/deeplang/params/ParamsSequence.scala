@@ -39,7 +39,7 @@ case class ParamsSequence[T <: Params](
   }
 
   private val constructor: Constructor[_] = TypeUtils.constructorForType(tag.tpe).getOrElse {
-    throw NoArgumentConstructorRequiredException(tag.tpe.typeSymbol.asClass.name.decoded)
+    throw NoArgumentConstructorRequiredException(tag.tpe.typeSymbol.asClass.name.decodedName.toString)
   }
 
   private def innerParamsInstance: T = constructor.newInstance().asInstanceOf[T]

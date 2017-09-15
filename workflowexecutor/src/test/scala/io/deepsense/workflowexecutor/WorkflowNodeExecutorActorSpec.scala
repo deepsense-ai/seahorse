@@ -41,7 +41,7 @@ class WorkflowNodeExecutorActorSpec
   with BeforeAndAfterAll
   with Eventually {
 
-  override protected def afterAll(): Unit = system.shutdown()
+  override protected def afterAll(): Unit = system.terminate()
 
   "WorkflowNodeExecutorActor" when {
     "receives start" should {

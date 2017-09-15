@@ -37,7 +37,7 @@ object TypeUtils {
 
   def isParametrized(t: ru.Type): Boolean = t.typeSymbol.asClass.typeParams.nonEmpty
 
-  def isAbstract(c: Class[_]): Boolean = classToType(c).typeSymbol.asClass.isAbstractClass
+  def isAbstract(c: Class[_]): Boolean = classToType(c).typeSymbol.asClass.isAbstract
 
   def constructorForClass(c: Class[_]): Option[Constructor[_]] = {
     val constructors = c.getConstructors
@@ -56,7 +56,7 @@ object TypeUtils {
 
   def instanceOfType[T](typeTag: ru.TypeTag[T]): T = {
     val constructorT = constructorForType(typeTag.tpe).getOrElse {
-      throw NoArgumentConstructorRequiredException(typeTag.tpe.typeSymbol.asClass.name.decoded)
+      throw NoArgumentConstructorRequiredException(typeTag.tpe.typeSymbol.asClass.name.decodedName.toString)
     }
     createInstance(constructorT).asInstanceOf[T]
   }

@@ -1,4 +1,3 @@
-import sbt.IvyConsole.Dependencies
 import sbt.Tests.{SubProcess, Group}
 import CommonSettingsPlugin._
 

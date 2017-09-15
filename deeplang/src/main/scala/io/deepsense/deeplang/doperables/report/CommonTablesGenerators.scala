@@ -39,8 +39,8 @@ object CommonTablesGenerators {
           Seq(
             List(Some(namePrefix + pair.param.name), Some(choice), Some(pair.param.description))) ++
             paramMapToDescriptionLists(choice.extractParamMap(), namePrefix)
-        case seq: Seq[Params] =>
-          seq.zipWithIndex.flatMap { case (p, i) =>
+        case seq: Seq[_] =>
+          seq.zipWithIndex.flatMap { case (p: Params, i) =>
             paramMapToDescriptionLists(p.extractParamMap(), s"${pair.param.name} #${i + 1} ")
           }.toList
         case value =>

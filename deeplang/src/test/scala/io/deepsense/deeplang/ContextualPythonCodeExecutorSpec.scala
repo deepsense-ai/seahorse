@@ -54,7 +54,7 @@ class ContextualPythonCodeExecutorSpec extends UnitSpec with BeforeAndAfter {
 
     "execute code" in {
       when(operationExecutionDispatcher.executionStarted(workflowId, nodeId))
-        .thenReturn(Future.successful(Right()))
+        .thenReturn(Future.successful(Right(())))
       doNothing().when(pythonCodeExecutor).run(workflowId.toString, nodeId.toString, code)
 
       executor.runPython(code)

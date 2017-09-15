@@ -180,7 +180,7 @@ case class SessionExecutor(
     logger.info(s"Sending Init() to WorkflowsSubscriberActor")
     workflowsSubscriberActor ! Init()
 
-    system.awaitTermination()
+    Await.result(system.whenTerminated, Duration.Inf)
     cleanup(system, sparkContext, pythonExecutionCaretaker, kernelManagerCaretaker)
     logger.debug("SessionExecutor ends")
     System.exit(0)
@@ -308,7 +308,7 @@ case class SessionExecutor(
     kernelManagerCaretaker.stop()
     sparkContext.stop()
     logger.debug("Spark terminated!")
-    system.shutdown()
+    system.terminate()
     logger.debug("Akka terminated!")
   }
 }

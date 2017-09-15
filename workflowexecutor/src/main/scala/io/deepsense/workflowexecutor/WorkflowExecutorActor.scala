@@ -140,6 +140,8 @@ abstract class WorkflowExecutorActor(
         context.unbecome()
         context.become(waitingForFinish())
         None
+      case _: StartedExecution =>
+        throw new NotImplementedError("Case for StartedExecution not implemented in WorkflowExecutorActor")
     }
     val executionReport: ExecutionReport =
       statefulWorkflow.changesExecutionReport(startingPointExecution)

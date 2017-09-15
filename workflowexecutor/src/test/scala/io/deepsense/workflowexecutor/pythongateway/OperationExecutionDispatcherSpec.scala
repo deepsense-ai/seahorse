@@ -44,7 +44,7 @@ class OperationExecutionDispatcherSpec
         val future = dispatcher.executionStarted(workflowId, nodeId)
         future.isCompleted shouldBe false
 
-        dispatcher.executionEnded(workflowId, nodeId, Right())
+        dispatcher.executionEnded(workflowId, nodeId, Right(()))
         future.isCompleted shouldBe true
       }
 
@@ -73,7 +73,7 @@ class OperationExecutionDispatcherSpec
         future.isCompleted shouldBe false
 
         an[IllegalArgumentException] shouldBe thrownBy {
-          dispatcher.executionEnded(Id.randomId, nodeId, Right())
+          dispatcher.executionEnded(Id.randomId, nodeId, Right(()))
         }
       }
 
@@ -82,7 +82,7 @@ class OperationExecutionDispatcherSpec
         future.isCompleted shouldBe false
 
         an[IllegalArgumentException] shouldBe thrownBy {
-          dispatcher.executionEnded(workflowId, Id.randomId, Right())
+          dispatcher.executionEnded(workflowId, Id.randomId, Right(()))
         }
       }
     }

@@ -225,6 +225,8 @@ object ParametersHtmlFormatter {
         obj.fields(nameFieldName).asInstanceOf[JsString].value ->
           obj.fields(typeFieldName).asInstanceOf[JsString].value
       }
+      case x => throw new IllegalArgumentException(
+        s"Expected array of jsObjects. Encountered ${x.prettyPrint} as array element.")
     }
   }
 

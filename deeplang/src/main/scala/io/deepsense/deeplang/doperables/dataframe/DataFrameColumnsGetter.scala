@@ -155,6 +155,7 @@ object DataFrameColumnsGetter {
       case IndexRangeColumnSelection(Some(lowerBound), Some(upperBound)) =>
         schema.length > upperBound && lowerBound >= 0
       case IndexRangeColumnSelection(None, None) => true
+      case IndexRangeColumnSelection(_, _) => throw new IllegalArgumentException("Malformed IndexRangeColumnSelection")
     }
 
     if (!valid) {
@@ -172,15 +173,16 @@ object DataFrameColumnsGetter {
    * @return True iff column meets selection's criteria.
    */
   private[DataFrameColumnsGetter] def isFieldSelected(
-    columnName: String,
-    columnIndex: Int,
-    columnType: ColumnType,
-    selection: ColumnSelection): Boolean = selection match {
+      columnName: String,
+      columnIndex: Int,
+      columnType: ColumnType,
+      selection: ColumnSelection): Boolean = selection match {
     case IndexColumnSelection(indexes) => indexes.contains(columnIndex)
     case NameColumnSelection(names) => names.contains(columnName)
     case TypeColumnSelection(types) => types.contains(columnType)
     case IndexRangeColumnSelection(Some(lowerBound), Some(upperBound)) =>
       columnIndex >= lowerBound && columnIndex <= upperBound
     case IndexRangeColumnSelection(None, None) => false
+    case IndexRangeColumnSelection(_, _) => throw new IllegalArgumentException("Malformed IndexRangeColumnSelection")
   }
 }

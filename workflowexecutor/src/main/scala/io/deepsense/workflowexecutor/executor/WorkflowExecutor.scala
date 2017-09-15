@@ -129,7 +129,7 @@ case class WorkflowExecutor(
     workflowExecutorActor ! Launch(workflow.graph.nodes.map(_.id))
 
     logger.debug("Awaiting execution end...")
-    actorSystem.awaitTermination()
+    Await.result(actorSystem.whenTerminated, Duration.Inf)
 
     val report: ExecutionReport = finishedExecutionStatus.future.value.get match {
       case Failure(exception) => // WEA failed with an exception
@@ -151,7 +151,7 @@ case class WorkflowExecutor(
     logger.debug("Cleaning up...")
     pythonExecutionCaretaker.stop()
     logger.debug("PythonExecutionCaretaker terminated!")
-    actorSystem.shutdown()
+    actorSystem.terminate()
     logger.debug("Akka terminated!")
     executionContext.sparkContext.stop()
     logger.debug("Spark terminated!")

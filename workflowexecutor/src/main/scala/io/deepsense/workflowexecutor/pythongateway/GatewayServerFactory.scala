@@ -35,7 +35,7 @@ object GatewayServerFactory {
       readTimeout: Int,
       cbClient: CallbackClient,
       hostAddress: InetAddress): GatewayServer = {
-    val gatewayServer = new GatewayServer()
+    val gatewayServer = new GatewayServer(())
     val clazz = gatewayServer.getClass
 
     def setFieldValue(fieldName: String, value: Any): Unit = {

@@ -71,14 +71,13 @@ abstract class DOperation0To1[
   val outArity = 1
 
 
-  @transient
-  val tTagTO_0: ru.TypeTag[TO_0]
+  def tTagTO_0: ru.TypeTag[TO_0]
 
   @transient
-  override val inPortTypes: Vector[ru.TypeTag[_]] = Vector()
+  override lazy val inPortTypes: Vector[ru.TypeTag[_]] = Vector()
 
   @transient
-  override val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
+  override lazy val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
     ru.typeTag[TO_0](tTagTO_0))
 
   override def execute(context: ExecutionContext)(
@@ -118,17 +117,15 @@ abstract class DOperation0To2[
   val outArity = 2
 
 
-  @transient
-  val tTagTO_0: ru.TypeTag[TO_0]
+  def tTagTO_0: ru.TypeTag[TO_0]
+
+  def tTagTO_1: ru.TypeTag[TO_1]
 
   @transient
-  val tTagTO_1: ru.TypeTag[TO_1]
+  override lazy val inPortTypes: Vector[ru.TypeTag[_]] = Vector()
 
   @transient
-  override val inPortTypes: Vector[ru.TypeTag[_]] = Vector()
-
-  @transient
-  override val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
+  override lazy val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
     ru.typeTag[TO_0](tTagTO_0),
     ru.typeTag[TO_1](tTagTO_1))
 
@@ -171,20 +168,17 @@ abstract class DOperation0To3[
   val outArity = 3
 
 
-  @transient
-  val tTagTO_0: ru.TypeTag[TO_0]
+  def tTagTO_0: ru.TypeTag[TO_0]
+
+  def tTagTO_1: ru.TypeTag[TO_1]
+
+  def tTagTO_2: ru.TypeTag[TO_2]
 
   @transient
-  val tTagTO_1: ru.TypeTag[TO_1]
+  override lazy val inPortTypes: Vector[ru.TypeTag[_]] = Vector()
 
   @transient
-  val tTagTO_2: ru.TypeTag[TO_2]
-
-  @transient
-  override val inPortTypes: Vector[ru.TypeTag[_]] = Vector()
-
-  @transient
-  override val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
+  override lazy val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
     ru.typeTag[TO_0](tTagTO_0),
     ru.typeTag[TO_1](tTagTO_1),
     ru.typeTag[TO_2](tTagTO_2))
@@ -227,15 +221,14 @@ abstract class DOperation1To0[
   val outArity = 0
 
 
-  @transient
-  val tTagTI_0: ru.TypeTag[TI_0]
+  def tTagTI_0: ru.TypeTag[TI_0]
 
   @transient
-  override val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
+  override lazy val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
     ru.typeTag[TI_0](tTagTI_0))
 
   @transient
-  override val outPortTypes: Vector[ru.TypeTag[_]] = Vector()
+  override lazy val outPortTypes: Vector[ru.TypeTag[_]] = Vector()
 
   override def execute(context: ExecutionContext)(
       arguments: Vector[DOperable]): Vector[DOperable] = {
@@ -281,18 +274,16 @@ abstract class DOperation1To1[
   val outArity = 1
 
 
-  @transient
-  val tTagTI_0: ru.TypeTag[TI_0]
+  def tTagTI_0: ru.TypeTag[TI_0]
+
+  def tTagTO_0: ru.TypeTag[TO_0]
 
   @transient
-  val tTagTO_0: ru.TypeTag[TO_0]
-
-  @transient
-  override val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
+  override lazy val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
     ru.typeTag[TI_0](tTagTI_0))
 
   @transient
-  override val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
+  override lazy val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
     ru.typeTag[TO_0](tTagTO_0))
 
   override def execute(context: ExecutionContext)(
@@ -339,21 +330,18 @@ abstract class DOperation1To2[
   val outArity = 2
 
 
-  @transient
-  val tTagTI_0: ru.TypeTag[TI_0]
+  def tTagTI_0: ru.TypeTag[TI_0]
+
+  def tTagTO_0: ru.TypeTag[TO_0]
+
+  def tTagTO_1: ru.TypeTag[TO_1]
 
   @transient
-  val tTagTO_0: ru.TypeTag[TO_0]
-
-  @transient
-  val tTagTO_1: ru.TypeTag[TO_1]
-
-  @transient
-  override val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
+  override lazy val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
     ru.typeTag[TI_0](tTagTI_0))
 
   @transient
-  override val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
+  override lazy val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
     ru.typeTag[TO_0](tTagTO_0),
     ru.typeTag[TO_1](tTagTO_1))
 
@@ -403,24 +391,20 @@ abstract class DOperation1To3[
   val outArity = 3
 
 
-  @transient
-  val tTagTI_0: ru.TypeTag[TI_0]
+  def tTagTI_0: ru.TypeTag[TI_0]
+
+  def tTagTO_0: ru.TypeTag[TO_0]
+
+  def tTagTO_1: ru.TypeTag[TO_1]
+
+  def tTagTO_2: ru.TypeTag[TO_2]
 
   @transient
-  val tTagTO_0: ru.TypeTag[TO_0]
-
-  @transient
-  val tTagTO_1: ru.TypeTag[TO_1]
-
-  @transient
-  val tTagTO_2: ru.TypeTag[TO_2]
-
-  @transient
-  override val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
+  override lazy val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
     ru.typeTag[TI_0](tTagTI_0))
 
   @transient
-  override val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
+  override lazy val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
     ru.typeTag[TO_0](tTagTO_0),
     ru.typeTag[TO_1](tTagTO_1),
     ru.typeTag[TO_2](tTagTO_2))
@@ -470,19 +454,17 @@ abstract class DOperation2To0[
   val outArity = 0
 
 
-  @transient
-  val tTagTI_0: ru.TypeTag[TI_0]
+  def tTagTI_0: ru.TypeTag[TI_0]
+
+  def tTagTI_1: ru.TypeTag[TI_1]
 
   @transient
-  val tTagTI_1: ru.TypeTag[TI_1]
-
-  @transient
-  override val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
+  override lazy val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
     ru.typeTag[TI_0](tTagTI_0),
     ru.typeTag[TI_1](tTagTI_1))
 
   @transient
-  override val outPortTypes: Vector[ru.TypeTag[_]] = Vector()
+  override lazy val outPortTypes: Vector[ru.TypeTag[_]] = Vector()
 
   override def execute(context: ExecutionContext)(
       arguments: Vector[DOperable]): Vector[DOperable] = {
@@ -535,22 +517,19 @@ abstract class DOperation2To1[
   val outArity = 1
 
 
-  @transient
-  val tTagTI_0: ru.TypeTag[TI_0]
+  def tTagTI_0: ru.TypeTag[TI_0]
+
+  def tTagTI_1: ru.TypeTag[TI_1]
+
+  def tTagTO_0: ru.TypeTag[TO_0]
 
   @transient
-  val tTagTI_1: ru.TypeTag[TI_1]
-
-  @transient
-  val tTagTO_0: ru.TypeTag[TO_0]
-
-  @transient
-  override val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
+  override lazy val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
     ru.typeTag[TI_0](tTagTI_0),
     ru.typeTag[TI_1](tTagTI_1))
 
   @transient
-  override val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
+  override lazy val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
     ru.typeTag[TO_0](tTagTO_0))
 
   override def execute(context: ExecutionContext)(
@@ -604,25 +583,21 @@ abstract class DOperation2To2[
   val outArity = 2
 
 
-  @transient
-  val tTagTI_0: ru.TypeTag[TI_0]
+  def tTagTI_0: ru.TypeTag[TI_0]
+
+  def tTagTI_1: ru.TypeTag[TI_1]
+
+  def tTagTO_0: ru.TypeTag[TO_0]
+
+  def tTagTO_1: ru.TypeTag[TO_1]
 
   @transient
-  val tTagTI_1: ru.TypeTag[TI_1]
-
-  @transient
-  val tTagTO_0: ru.TypeTag[TO_0]
-
-  @transient
-  val tTagTO_1: ru.TypeTag[TO_1]
-
-  @transient
-  override val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
+  override lazy val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
     ru.typeTag[TI_0](tTagTI_0),
     ru.typeTag[TI_1](tTagTI_1))
 
   @transient
-  override val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
+  override lazy val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
     ru.typeTag[TO_0](tTagTO_0),
     ru.typeTag[TO_1](tTagTO_1))
 
@@ -679,28 +654,23 @@ abstract class DOperation2To3[
   val outArity = 3
 
 
-  @transient
-  val tTagTI_0: ru.TypeTag[TI_0]
+  def tTagTI_0: ru.TypeTag[TI_0]
+
+  def tTagTI_1: ru.TypeTag[TI_1]
+
+  def tTagTO_0: ru.TypeTag[TO_0]
+
+  def tTagTO_1: ru.TypeTag[TO_1]
+
+  def tTagTO_2: ru.TypeTag[TO_2]
 
   @transient
-  val tTagTI_1: ru.TypeTag[TI_1]
-
-  @transient
-  val tTagTO_0: ru.TypeTag[TO_0]
-
-  @transient
-  val tTagTO_1: ru.TypeTag[TO_1]
-
-  @transient
-  val tTagTO_2: ru.TypeTag[TO_2]
-
-  @transient
-  override val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
+  override lazy val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
     ru.typeTag[TI_0](tTagTI_0),
     ru.typeTag[TI_1](tTagTI_1))
 
   @transient
-  override val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
+  override lazy val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
     ru.typeTag[TO_0](tTagTO_0),
     ru.typeTag[TO_1](tTagTO_1),
     ru.typeTag[TO_2](tTagTO_2))
@@ -757,23 +727,20 @@ abstract class DOperation3To0[
   val outArity = 0
 
 
-  @transient
-  val tTagTI_0: ru.TypeTag[TI_0]
+  def tTagTI_0: ru.TypeTag[TI_0]
+
+  def tTagTI_1: ru.TypeTag[TI_1]
+
+  def tTagTI_2: ru.TypeTag[TI_2]
 
   @transient
-  val tTagTI_1: ru.TypeTag[TI_1]
-
-  @transient
-  val tTagTI_2: ru.TypeTag[TI_2]
-
-  @transient
-  override val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
+  override lazy val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
     ru.typeTag[TI_0](tTagTI_0),
     ru.typeTag[TI_1](tTagTI_1),
     ru.typeTag[TI_2](tTagTI_2))
 
   @transient
-  override val outPortTypes: Vector[ru.TypeTag[_]] = Vector()
+  override lazy val outPortTypes: Vector[ru.TypeTag[_]] = Vector()
 
   override def execute(context: ExecutionContext)(
       arguments: Vector[DOperable]): Vector[DOperable] = {
@@ -833,26 +800,22 @@ abstract class DOperation3To1[
   val outArity = 1
 
 
-  @transient
-  val tTagTI_0: ru.TypeTag[TI_0]
+  def tTagTI_0: ru.TypeTag[TI_0]
+
+  def tTagTI_1: ru.TypeTag[TI_1]
+
+  def tTagTI_2: ru.TypeTag[TI_2]
+
+  def tTagTO_0: ru.TypeTag[TO_0]
 
   @transient
-  val tTagTI_1: ru.TypeTag[TI_1]
-
-  @transient
-  val tTagTI_2: ru.TypeTag[TI_2]
-
-  @transient
-  val tTagTO_0: ru.TypeTag[TO_0]
-
-  @transient
-  override val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
+  override lazy val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
     ru.typeTag[TI_0](tTagTI_0),
     ru.typeTag[TI_1](tTagTI_1),
     ru.typeTag[TI_2](tTagTI_2))
 
   @transient
-  override val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
+  override lazy val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
     ru.typeTag[TO_0](tTagTO_0))
 
   override def execute(context: ExecutionContext)(
@@ -913,29 +876,24 @@ abstract class DOperation3To2[
   val outArity = 2
 
 
-  @transient
-  val tTagTI_0: ru.TypeTag[TI_0]
+  def tTagTI_0: ru.TypeTag[TI_0]
+
+  def tTagTI_1: ru.TypeTag[TI_1]
+
+  def tTagTI_2: ru.TypeTag[TI_2]
+
+  def tTagTO_0: ru.TypeTag[TO_0]
+
+  def tTagTO_1: ru.TypeTag[TO_1]
 
   @transient
-  val tTagTI_1: ru.TypeTag[TI_1]
-
-  @transient
-  val tTagTI_2: ru.TypeTag[TI_2]
-
-  @transient
-  val tTagTO_0: ru.TypeTag[TO_0]
-
-  @transient
-  val tTagTO_1: ru.TypeTag[TO_1]
-
-  @transient
-  override val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
+  override lazy val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
     ru.typeTag[TI_0](tTagTI_0),
     ru.typeTag[TI_1](tTagTI_1),
     ru.typeTag[TI_2](tTagTI_2))
 
   @transient
-  override val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
+  override lazy val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
     ru.typeTag[TO_0](tTagTO_0),
     ru.typeTag[TO_1](tTagTO_1))
 
@@ -999,32 +957,26 @@ abstract class DOperation3To3[
   val outArity = 3
 
 
-  @transient
-  val tTagTI_0: ru.TypeTag[TI_0]
+  def tTagTI_0: ru.TypeTag[TI_0]
+
+  def tTagTI_1: ru.TypeTag[TI_1]
+
+  def tTagTI_2: ru.TypeTag[TI_2]
+
+  def tTagTO_0: ru.TypeTag[TO_0]
+
+  def tTagTO_1: ru.TypeTag[TO_1]
+
+  def tTagTO_2: ru.TypeTag[TO_2]
 
   @transient
-  val tTagTI_1: ru.TypeTag[TI_1]
-
-  @transient
-  val tTagTI_2: ru.TypeTag[TI_2]
-
-  @transient
-  val tTagTO_0: ru.TypeTag[TO_0]
-
-  @transient
-  val tTagTO_1: ru.TypeTag[TO_1]
-
-  @transient
-  val tTagTO_2: ru.TypeTag[TO_2]
-
-  @transient
-  override val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
+  override lazy val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
     ru.typeTag[TI_0](tTagTI_0),
     ru.typeTag[TI_1](tTagTI_1),
     ru.typeTag[TI_2](tTagTI_2))
 
   @transient
-  override val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
+  override lazy val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
     ru.typeTag[TO_0](tTagTO_0),
     ru.typeTag[TO_1](tTagTO_1),
     ru.typeTag[TO_2](tTagTO_2))

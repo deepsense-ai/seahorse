@@ -53,7 +53,7 @@ class WorkflowDownloadClient(
 
     futureResponse.onComplete { _ =>
       Try(IO(Http).ask(Http.CloseAll)(1.second).await)
-      system.shutdown()
+      system.terminate()
     }
     futureResponse.map(handleResponse)
   }
