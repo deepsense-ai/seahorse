@@ -3,9 +3,10 @@
 const ZOOM_STEP = 0.1;
 
 class CanvasToolbarController {
-  constructor(CanvasService) {
+  constructor(CanvasService, NewNodeService) {
     'ngInject';
     this.CanvasService = CanvasService;
+    this.NewNodeService = NewNodeService;
   }
 
   zoomIn() {
@@ -25,7 +26,7 @@ class CanvasToolbarController {
   }
 
   newNode() {
-    //TODO
+    this.NewNodeService.startWizard(100, 100);
   }
 }
 

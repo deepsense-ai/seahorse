@@ -17,8 +17,9 @@ const ZOOM_STEP = 0.1;
 
 class CanvasService {
   /*@ngInject*/
-  constructor(AdapterService, $rootScope, MouseEvent) {
+  constructor(AdapterService, NewNodeService, $rootScope, MouseEvent) {
     this.AdapterService = AdapterService;
+    this.NewNodeService = NewNodeService;
     this.MouseEvent = MouseEvent;
     this.$rootScope = $rootScope;
 
@@ -74,7 +75,7 @@ class CanvasService {
       this.centerZoom(zoomDelta);
     });
 
-    // Drag handling
+    // Drag handling in JSPlumb
     const moveHandler = (event) => {
       if (this.MouseEvent.isModKeyDown(event)) {
         this.moveWindow(event.originalEvent.movementX, event.originalEvent.movementY);
@@ -91,6 +92,14 @@ class CanvasService {
 
     this.$slidingWindow.bind('mouseup', () => {
       this.$slidingWindow.off('mousemove', moveHandler);
+    });
+
+    // Drag and Drop from toolbar handling
+    this.$slidingWindow.bind('drop', (event) => {
+      const originalEvent = event.originalEvent;
+      if (originalEvent.dataTransfer.getData('draggableExactType') === 'graphNode') {
+        this.NewNodeService.startWizard(originalEvent.layerX, originalEvent.layerY);
+      }
     });
   }
 

@@ -2,11 +2,7 @@
   <canvas-toolbar></canvas-toolbar>
   <div class="flowchart-mask sliding-window" tabindex="1" ng-class="{'disabled': !$ctrl.isEditable}">
     <div class="flowchart-paint-area"
-         multi-selection
-         droppable
-         droppable-type="exact"
-         droppable-exact-type="graphNode"
-         droppable-highlight="parent">
+         multi-selection>
       <graph-node jsplumb-draggable
                   keyboard
                   ng-repeat="(nodeId, node) in $ctrl.workflow.getNodes()"

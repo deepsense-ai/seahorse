@@ -33,7 +33,9 @@ if (browserValidator.isBrowserSupported()) {
   require('./UserService.js').inject(lab);
   require('./app.run.js').inject(lab);
 } else {
-  document.body.innerHTML = browserValidator.getErrorMessageHTML();
+  document.addEventListener("DOMContentLoaded", function() {
+    document.body.innerHTML = browserValidator.getErrorMessageHTML();
+  });
   angular.module('ds.lab', []); //so config is not throwing exceptions that ds.lab is not available
 }
 

@@ -1,5 +1,10 @@
 <div class="canvas-toolbar">
-  <div ng-click="$ctrl.newNode()" class="canvas-toolbar__item">NEW NODE</div>
+  <div ng-click="$ctrl.newNode()"
+       class="canvas-toolbar__item"
+       draggable-type="exact"
+       draggable-exact-type="graphNode"
+       draggable="true"
+  >NEW NODE</div>
   <div ng-click="$ctrl.zoomIn()" class="canvas-toolbar__item">+</div>
   <div ng-click="$ctrl.zoomOut()" class="canvas-toolbar__item">-</div>
   <div ng-click="$ctrl.fit()" class="canvas-toolbar__item">FIT</div>
