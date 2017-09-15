@@ -9,7 +9,7 @@
       "parameters": {
         "data storage type": {
           "FILE": {
-            "source": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/resources/customPythonOperationTests/executionError/input.csv",
+            "source": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/resources/pythonTransformationTests/syntaxError/input.csv",
             "format": {
               "CSV": {
                 "separator": {
@@ -31,7 +31,7 @@
         "name": "Python Transformation"
       },
       "parameters": {
-        "code": "from pyspark.sql.types import Row\ndef transform(dataframe):\n    return sqlContext.createDataFrame(dataframe.map(lambda row: Row(row.numbers, 1.0/row.numbers)))"
+        "code": "from pyspark.sql.types import Row\nde_SYNTAX_ERROR_f transform(dataframe):\n    return sqlContext.createDataFrame(dataframe.map(lambda row: Row(row.numbers, row.numbers*2)))"
       }
     }],
     "connections": [{
@@ -47,7 +47,7 @@
   },
   "thirdPartyData": {
     "gui": {
-      "name": "CustomPythonOperationExecutionError",
+      "name": "CustomPythonOperationSyntaxError",
       "description": "",
       "predefColors": ["#00B1EB", "#1ab394", "#2f4050", "#f8ac59", "#ed5565", "#DD6D3F"],
       "nodes": {
@@ -56,7 +56,7 @@
           "color": "#00B1EB",
           "coordinates": {
             "x": 5349,
-            "y": 5152
+            "y": 5151
           }
         },
         "a80b6bed-5c11-52ff-7ce6-a5a986fa88ff": {
@@ -76,7 +76,7 @@
   "variables": {
 
   },
-  "id": "3c60481d-0a81-4c63-8709-ab7d6215c304",
+  "id": "83b21b6c-4d63-4029-809e-0e34dd71ff46",
   "metadata": {
     "type": "batch",
     "apiVersion": "1.2.0"
