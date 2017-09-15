@@ -51,6 +51,9 @@ End-to-end integration tests:
 ```console
 ./build/e2e_tests.sh -a
 ```
+## Mac OS
+
+In order for Seahorse work correctly, you need to increase memory for Docker engine to at least 6GB.
 
 ### Bash competition for Python scripts
 
