@@ -4,8 +4,6 @@
 
 package io.deepsense.seahorse.datasource.server
 
-import java.time.temporal.TemporalUnit
-
 import org.eclipse.jetty.server.handler.gzip.GzipHandler
 import org.eclipse.jetty.server.{HttpConfiguration, HttpConnectionFactory, NetworkTrafficServerConnector, Server}
 import org.eclipse.jetty.webapp.WebAppContext
@@ -48,7 +46,7 @@ object JettyMain {
       classOf[ScalatraBootstrap].getCanonicalName
     )
 
-    webApp setContextPath "/"
+    webApp setContextPath "/datasourcemanager/v1/" // So swagger-ui with swagger.json is also versioned
     webApp setResourceBase getClass.getClassLoader.getResource("webapp").toExternalForm
     webApp setEventListeners Array(new ScalatraListener)
     webApp setMaxFormContentSize Configs.Jetty.maxFormContentSize

@@ -4,8 +4,9 @@
 
 package io.deepsense.seahorse.datasource.server
 
-import org.scalatest.{Matchers, WordSpec}
 import scalaj.http._
+
+import org.scalatest.{Matchers, WordSpec}
 
 import io.deepsense.commons.utils.LoggerForCallerClass
 
@@ -14,11 +15,17 @@ class ServerSmokeTest extends WordSpec with Matchers {
   val logger = LoggerForCallerClass()
 
   "Jetty server" should {
+    JettyMain.start(Array.empty)
+
     "serve datasources" in {
-      JettyMain.start(Array.empty)
-      val response = Http("http://localhost:8080/datasources").asString
-      logger.info(s"Response: ${response.body}")
-      response.code shouldEqual 200
+      val response = Http("http://localhost:8080/datasourcemanager/v1/datasources").asString
+      logger.info(s"Datasources response: ${response.body}")
+      response.isNotError shouldBe true
+    }
+    "serve swagger-ui" in {
+      val response = Http("http://localhost:8080/datasourcemanager/v1/swagger-ui").asString
+      logger.info(s"Swagger ui response: ${response.body}")
+      response.isNotError shouldBe true
     }
   }
 

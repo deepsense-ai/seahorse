@@ -1,4 +1,4 @@
-name := "deepsense-seahorse-datasourcemanager"
+name := "deepsense-datasourcemanager"
 
 libraryDependencies ++= Dependencies.datasourcemanager
 

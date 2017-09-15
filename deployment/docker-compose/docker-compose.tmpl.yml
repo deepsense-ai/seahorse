@@ -1,11 +1,12 @@
 version: '2'
 services:
   proxy:
-    image: $DOCKER_REPOSITORY/deepsense-proxy:$DOCKER_TAG
+  # TODO change to $DOCKER_TAG after merging changes in frontend
+    image: $DOCKER_REPOSITORY/deepsense-proxy:dev_datasources
     restart: always
     network_mode: "host"
     environment:
-      VCAP_SERVICES: "{\"user-provided\":[{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_WM_PORT\"},\"name\":\"workflow-manager\"},{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_LIBRARY_PORT\"},\"name\":\"library\"},{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_SM_PORT\"},\"name\":\"session-manager\"},{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_NOTEBOOK_PORT\"},\"name\":\"jupyter\"},{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_MQ_WEBSOCKET_PORT\"},\"name\":\"rabbitmq\"},{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_FRONTEND_PORT\"},\"name\":\"frontend\"}]}"
+      VCAP_SERVICES: "{\"user-provided\":[{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_WM_PORT\"},\"name\":\"workflow-manager\"},{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_LIBRARY_PORT\"},\"name\":\"library\"},{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_SM_PORT\"},\"name\":\"session-manager\"},{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_DATASOURCES_MANAGER_PORT\"},\"name\":\"datasource-manager\"},{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_NOTEBOOK_PORT\"},\"name\":\"jupyter\"},{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_MQ_WEBSOCKET_PORT\"},\"name\":\"rabbitmq\"},{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_FRONTEND_PORT\"},\"name\":\"frontend\"}]}"
       HOST: "127.0.0.1"
       PORT: "33321"
       DISABLE_OAUTH: "true"
@@ -104,6 +105,16 @@ services:
     environment:
       - "WM_AUTH_USER=oJkTZ8BV"
       - "WM_AUTH_PASS=8Ep9GqRr"
+    links:
+      - database
+  datasourcemanager:
+  # TODO change to $DOCKER_TAG
+    image: $DOCKER_REPOSITORY/deepsense-datasourcemanager:dev_datasources
+    restart: always
+    ports:
+     - "127.0.0.1:$EXPOSED_DATASOURCES_MANAGER_PORT:8080"
+    environment:
+      - "JDBC_URL=jdbc:h2:tcp://database:1521/datasourcemanager;DATABASE_TO_UPPER=false;DB_CLOSE_DELAY=-1"
     links:
       - database
   rabbitmq:

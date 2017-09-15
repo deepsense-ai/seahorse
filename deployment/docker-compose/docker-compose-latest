@@ -12,5 +12,5 @@ fi
 
 DOCKER_TAG="master-latest"
 
-echo "Starting docker-compose script with DOCKER_TAG=$DOCKER_TAG"
+echo "Running docker-compose script with DOCKER_TAG=$DOCKER_TAG"
 ./docker-compose $DOCKER_TAG "$@"
