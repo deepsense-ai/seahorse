@@ -28,12 +28,10 @@ class SparkLauncherSessionSpawner @Inject()(
 
     val listener = new AppHandleListener()
 
-    val master = if (clusterDetails.clusterType == "yarn") "yarn" else clusterDetails.uri
-
-    val launcher = new SparkLauncher(env(clusterDetails.clusterType, clusterDetails.uri))
+    new SparkLauncher()
       .setVerbose(true)
       .setMainClass(config.className)
-      .setMaster(master)
+      .setMaster("spark://sessionmanager:7077")
       .setDeployMode("cluster")
       .setAppResource(config.weJarPath)
       .setAppName("SessionExecutor")
@@ -45,37 +43,11 @@ class SparkLauncherSessionSpawner @Inject()(
       .setConf("spark.driver.extraJavaOptions",
         "-XX:MaxPermSize=1024m -XX:PermSize=256m -Dfile.encoding=UTF8")
       .setConf("spark.yarn.appMasterEnv.PYSPARK_PYTHON", config.pythonBinary)
+      .startApplication(listener)
 
-    clusterDetails.executorMemory.foreach { executorMemory =>
-      launcher.addAppArgs("--executor-memory", executorMemory.toString)
-    }
-    clusterDetails.numExecutors.foreach { numExecutors =>
-      launcher.addAppArgs("--num-executors", numExecutors.toString)
-    }
-    clusterDetails.executorCores.foreach { executorCores =>
-      launcher.addAppArgs("--executor-cores", executorCores.toString)
-    }
-    clusterDetails.totalExecutorCores.foreach { totalExecutorCores =>
-      launcher.addAppArgs("--total-executor-cores", totalExecutorCores.toString)
-    }
-
-    launcher.startApplication(listener)
-
+    logger.info(s"Waiting for proper status ${workflowId}")
     listener.executorStartedFuture
   }
-
-  private def env(clusterType: String, uri: String): Map[String, String] = {
-    if (clusterType == "yarn") {
-      Map(
-      "HADOOP_CONF_DIR" -> uri,
-      "SPARK_YARN_MODE" -> "true",
-      "HADOOP_USER_NAME" -> "hdfs"
-      )
-    } else {
-      Map()
-    }
-  }
-
 
   private def args(workflowId: Id, userId: String) = Seq(
     "--interactive-mode",
@@ -113,7 +85,7 @@ class SparkLauncherSessionSpawner @Inject()(
             val exception = new SessionSpawnerException(msg)
             promise.failure(exception)
           }
-          case other =>
+          case other => logger.info(s"No default action for ${handle}")
         }
       }
     }

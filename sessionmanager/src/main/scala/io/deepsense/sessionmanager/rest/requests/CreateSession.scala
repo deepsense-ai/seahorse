@@ -9,10 +9,16 @@ import io.deepsense.commons.models.Id
 case class CreateSession(workflowId: Id, cluster: ClusterDetails)
 
 case class ClusterDetails(
+    name: String,
+    id: String,
     clusterType: String,
     uri: String,
-    executorMemory: Option[Double],
-    totalExecutorCores: Option[Int],
-    executorCores: Option[Int],
-    numExecutors: Option[Int],
-    params: Option[String])
+    userIP: Option[String] = None,
+    hadoopUser: Option[String] = None,
+    isEditable: Boolean = true,
+    isDefault: Boolean = false,
+    executorMemory: Option[Double] = None,
+    totalExecutorCores: Option[Int] = None,
+    executorCores: Option[Int] = None,
+    numExecutors: Option[Int] = None,
+    params: Option[String] = None)
