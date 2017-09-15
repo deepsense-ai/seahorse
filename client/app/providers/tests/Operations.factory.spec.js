@@ -10,11 +10,11 @@ describe('Operations', () => {
   var module,
       Operations;
 
-
-  var mockOperations = {
+  var category1 = 'c1',
+      mockOperations = {
         'id-01': {
           'id': 'id-01',
-          'category': 'c1',
+          'category': category1,
           'value': 101
         },
         'id-02': {
@@ -26,17 +26,28 @@ describe('Operations', () => {
       mockCatalog = {
         'catalog': [
           {
-            'id': 'c1',
+            'id': category1,
             'name': 'Category1',
             'items': [
               {
                 'id': 'id-01',
               }
+            ],
+            'catalog': [
+              {
+                'id': 'c1-1',
+                'name': 'SubCategory1-1',
+                'items': [
+                  {
+                    'id': 'id-01-01'
+                  }
+                ]
+              }
             ]
           },
           {
-            'id': 'c1',
-            'name': 'Category1',
+            'id': 'c2',
+            'name': 'Category2',
             'items': [
               {
                 'id': 'id-02',
@@ -91,6 +102,7 @@ describe('Operations', () => {
     expect(Operations.getAll).toEqual(jasmine.any(Function));
     expect(Operations.get).toEqual(jasmine.any(Function));
     expect(Operations.getCatalog).toEqual(jasmine.any(Function));
+    expect(Operations.getCategory).toEqual(jasmine.any(Function));
   });
 
 
@@ -223,5 +235,40 @@ describe('Operations', () => {
   testMethod('getAll', 'getAll', mockOperations);
   testMethod('get', 'getAll', mockOperations['id-02'], 'id-02');
   testMethod('getCatalog', 'getCatalog', mockCatalog.catalog);
+
+
+  describe('getCategory method should', () => {
+    it('return promise', () => {
+      let promise = Operations.getCategory(category1);
+      expect(promise).toEqual(jasmine.any(Object));
+      expect(promise.then).toEqual(jasmine.any(Function));
+      expect(promise.catch).toEqual(jasmine.any(Function));
+    });
+
+    it(
+      'return category data for known id',
+      angular.mock.inject(($rootScope, OperationsAPIClient) =>
+    {
+      let success = false,
+          error   = false,
+          responseData;
+
+      OperationsAPIClient.changeRequestState(true);
+
+      Operations.getCategory(category1).then((data) => {
+        success = true;
+        responseData = data;
+      }, () => {
+        error = true;
+      });
+      $rootScope.$apply();
+
+      expect(success).toBe(true);
+      expect(error).toBe(false);
+      expect(responseData.id).toBe(category1);
+      expect(responseData.icon).toBeDefined();
+      expect(responseData.icon).toEqual(jasmine.any(String));
+    }));
+  });
 
 });

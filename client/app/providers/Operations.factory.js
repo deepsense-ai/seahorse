@@ -8,10 +8,20 @@
 
 /* @ngInject */
 function OperationsFactory(OperationsAPIClient, $q) {
+  const CATEGORY_ICONS = {
+    '11111-5555-9999': 'fa-cube',
+    '23123-12312-43242': 'fa-download',
+    '91111-111111-11111': 'fa-filter',
+    '234234-756756-34234': 'fa-gear'
+  };
+  const DEFAULT_ICON = 'fa-square';
+
+
   var service = {};
 
   var operationsData = null,
-      catalogData = null;
+      catalogData = null,
+      categoryMap = null;
 
 
   /**
@@ -21,8 +31,63 @@ function OperationsFactory(OperationsAPIClient, $q) {
    *
    * @return {Object}
    */
-  var getOperation = function getOperation(id) {
+  var getOperationData = function getOperationData(id) {
     return operationsData[id] || null;
+  };
+
+  /**
+   * Gets operation category data.
+   *
+   * @param {string} id
+   *
+   * @return {Object}
+   */
+  var getCategoryData = function getCategoryData(id) {
+    return categoryMap[id] || null;
+  };
+
+
+  /**
+   * Creates category map.
+   *
+   * @param {object} catalog
+   * @param {string} parentId
+   */
+  var createCategoryMap = function createCategoryMap(catalog, parentId) {
+    for (let i = catalog.length - 1; i >= 0; i--) {
+      let category = catalog[i];
+      categoryMap[category.id] = category;
+      if (parentId) {
+        category.parentId = parentId;
+      }
+      if (category.catalog) {
+        createCategoryMap(category.catalog, category.id);
+      }
+    }
+  };
+
+  /**
+   * Updates each category with its own icon or inherited from parent category.
+   */
+  var updateCategoryIcons = function updateCategoryIcons() {
+    for (let id in categoryMap) {
+      let category = categoryMap[id];
+      if (CATEGORY_ICONS[id]) {
+        category.icon = CATEGORY_ICONS[id];
+      } else {
+        let parentId = category.parentId;
+        while (parentId && categoryMap[parentId]) {
+          if (CATEGORY_ICONS[parentId]) {
+            category.icon = CATEGORY_ICONS[parentId];
+            break;
+          }
+          parentId = categoryMap[parentId].parentId;
+        }
+        if (!category.icon) {
+          category.icon = DEFAULT_ICON;
+        }
+      }
+    }
   };
 
 
@@ -33,8 +98,25 @@ function OperationsFactory(OperationsAPIClient, $q) {
    */
   var loadData = function loadData() {
     return OperationsAPIClient.getAll().then((data) => {
-      operationsData = data.operations;
+      operationsData = Object.freeze(data.operations);
       return operationsData;
+    });
+  };
+
+  /**
+   * Loads catalog & category data.
+   *
+   * @return {Promise}
+   */
+  var loadCatalog = function loadCatalog() {
+    return OperationsAPIClient.getCatalog().then((data) => {
+      catalogData = data.catalog;
+      categoryMap = {};
+      createCategoryMap(catalogData);
+      updateCategoryIcons();
+      Object.freeze(catalogData);
+      Object.freeze(categoryMap);
+      return catalogData;
     });
   };
 
@@ -49,12 +131,12 @@ function OperationsFactory(OperationsAPIClient, $q) {
   service.get = function get(id) {
     if (operationsData) {
       let deferred = $q.defer();
-      deferred.resolve(getOperation(id));
+      deferred.resolve(getOperationData(id));
       return deferred.promise;
     }
 
     return loadData().then(() => {
-      return getOperation(id);
+      return getOperationData(id);
     });
   };
 
@@ -85,9 +167,25 @@ function OperationsFactory(OperationsAPIClient, $q) {
       return deferred.promise;
     }
 
-    return OperationsAPIClient.getCatalog().then((data) => {
-      catalogData = data.catalog;
-      return catalogData;
+    return loadCatalog();
+  };
+
+  /**
+   * Returns category data.
+   *
+   * @param {string} id
+   *
+   * @return {Promise}
+   */
+  service.getCategory = function getCategory(id) {
+    if (catalogData) {
+      let deferred = $q.defer();
+      deferred.resolve(getCategoryData(id));
+      return deferred.promise;
+    }
+
+    return loadCatalog().then(() => {
+      return getCategoryData(id);
     });
   };
 
