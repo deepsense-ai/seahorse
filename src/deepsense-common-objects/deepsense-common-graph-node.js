@@ -104,8 +104,8 @@ angular.module('deepsense.graph-model').
 
     GraphNode.prototype.getFancyKnowledgeErrors = function getFancyKnowledgeErrors() {
       return this.knowledgeErrors.
-        map((error, ix) => `${ix + 1}: ${error}`).
-        join('\n');
+        map((error, ix) => `<strong>#${ix + 1}</strong>: ${error}`).
+        join('<br/>');
     };
 
     GraphNode.CLICK = 'GraphNode.CLICK';
