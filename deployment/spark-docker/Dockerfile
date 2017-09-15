@@ -4,7 +4,7 @@ FROM ubuntu:16.04
 # Install packages
 # libcurl4-openssl-dev and libssl-dev are needed for IRkernel dependencies
 RUN apt-get update && \
-    apt-get install -y openjdk-8-jre wget curl bzip2 openssh-server openssh-client libsm6 \
+    apt-get install -y build-essential openjdk-8-jre wget curl bzip2 openssh-server openssh-client libsm6 \
     r-base libcurl4-openssl-dev  libssl-dev && \
     apt-get clean && \
     apt-get autoremove && \

@@ -9,7 +9,6 @@ ENV MESOS_ARTIFACT_FILENAME mesos-${MESOS_VERSION}.tar.gz
 # Compile and install Mesos (compilation phase uses 6 threads for speed up this process)
 # Uninstall Mesos build dependencies
 RUN apt-get update && apt-get install -y \
-    build-essential \
     openjdk-8-jdk \
     python-dev \
     libcurl4-nss-dev \
@@ -30,7 +29,6 @@ RUN apt-get update && apt-get install -y \
   && cd ../.. \
   && rm -rf mesos-${MESOS_VERSION} ${MESOS_ARTIFACT_FILENAME} \
   && apt-get purge -y \
-    build-essential \
     openjdk-8-jdk \
     python-dev \
     libsasl2-dev \
