@@ -25,7 +25,7 @@
           <div
             ng-class="{
               'sa-ok status-ok': $ctrl.isUrlValid && (datasourceForm.url.$dirty || $ctrl.originalDatasource),
-              'sa-cross status-error': !$ctrl.isUrlValid && (datasourceForm.url.$dirty || $ctrl.originalDatasource)
+              'status-error': !$ctrl.isUrlValid && (datasourceForm.url.$dirty || $ctrl.originalDatasource)
             }"
             class="sa icon"
           ></div>

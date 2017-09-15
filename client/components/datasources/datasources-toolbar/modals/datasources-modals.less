@@ -1,5 +1,7 @@
 @import "../../../../css/variables";
 
+@exclamation-mark: "\0021";
+
 .datasources-modal {
   &__header {
     padding: 20px;
@@ -56,6 +58,10 @@
 
           .status-error {
             color: @seahorse-error-red;
+
+            &:before {
+              content: @exclamation-mark;
+            }
           }
         }
       }

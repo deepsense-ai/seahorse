@@ -24,7 +24,7 @@
           <div
             ng-class="{
               'sa-ok status-ok': $ctrl.isHdfsPathValid && (datasourceForm.hdfsUrl.$dirty || $ctrl.originalDatasource),
-              'sa-cross status-error': !$ctrl.isHdfsPathValid && (datasourceForm.hdfsUrl.$dirty || $ctrl.originalDatasource)
+              'status-error': !$ctrl.isHdfsPathValid && (datasourceForm.hdfsUrl.$dirty || $ctrl.originalDatasource)
             }"
             class="sa icon"
           ></div>

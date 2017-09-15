@@ -22,7 +22,7 @@
           <div
             ng-class="{
               'sa-ok status-ok': $ctrl.isGoogleSpreadsheetIdValid() && (datasourceForm.googleSpreadsheetId.$dirty || $ctrl.originalDatasource),
-              'sa-cross status-error': !$ctrl.isGoogleSpreadsheetIdValid() && (datasourceForm.googleSpreadsheetId.$dirty || $ctrl.originalDatasource)
+              'status-error': !$ctrl.isGoogleSpreadsheetIdValid() && (datasourceForm.googleSpreadsheetId.$dirty || $ctrl.originalDatasource)
             }"
             class="sa icon"
           ></div>
@@ -50,7 +50,7 @@
           <div
             ng-class="{
               'sa-ok status-ok': $ctrl.areCredentialsValid && (datasourceForm.googleServiceAccountCredentials.$dirty || $ctrl.originalDatasource),
-              'sa-cross status-error': !$ctrl.areCredentialsValid && (datasourceForm.googleServiceAccountCredentials.$dirty || $ctrl.originalDatasource)
+              'status-error': !$ctrl.areCredentialsValid && (datasourceForm.googleServiceAccountCredentials.$dirty || $ctrl.originalDatasource)
             }"
             class="sa icon"
           ></div>
