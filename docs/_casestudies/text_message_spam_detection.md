@@ -26,13 +26,13 @@ Computer Science.
 
 The data is provided in a form of 2-column, tab-separated CSV file. For convenience, at the top of
 the file we add a row with names of the columns: **class** and **text** separated with a Tab. Using
-the [Read Data Frame](../operations/read_dataframe.html) operation with `CSV` format and
+the [Read Data Frame](../operations/read_dataframe.html) operation  and Data Source with `CSV` format and
 `Tab` selected as a `column separator`, we are able to pull the data into Seahorse. Let’s take a
 look at the sample by clicking the report icon that appeared after running this single-node workflow.
 
 <img class="centered-image img-responsive spacer" src="../img/usecases/text_message_spam_detection/image_0.png" >
 
-We can see the distribution of the class column by clicking on it’s header. This tells us that there
+We can see the distribution of the class column by clicking on a graph icon in its header. This tells us that there
 are more “good” messages than spam, which in turn leads to the conclusion that the trivial
 classifier that always returns “not spam” can serve as our baseline to which we can later compare
 our model.
