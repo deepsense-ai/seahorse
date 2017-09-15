@@ -6,6 +6,8 @@
 
 package io.deepsense.deeplang
 
+import scala.reflect.runtime.{universe => ru}
+
 import org.scalatest.FunSuite
 
 import io.deepsense.deeplang.dhierarchy.DHierarchy
@@ -19,6 +21,14 @@ object DClassesForDOperations {
     override def equals(any: Any) = any.isInstanceOf[A2]
   }
 }
+
+object DOperationForPortTypes {
+  import DClassesForDOperations._
+  class SimpleOperation extends DOperation1To1[A1, A2](null) {
+    override protected def _execute(t0: A1): A2 = ???
+  }
+}
+
 class DOperationSuite extends FunSuite {
 
   test("It is possible to implement simple operations") {
@@ -67,5 +77,33 @@ class DOperationSuite extends FunSuite {
     val context = new InferContext(h)
 
     assert(generator.inferKnowledge(context)(Vector()) == Vector(DKnowledge(new A1, new A2)))
+  }
+
+  test("Getting type required in input port") {
+    import DOperationForPortTypes._
+    val op = new SimpleOperation
+    assert(op.inPortType(0) == ru.typeOf[DClassesForDOperations.A1])
+  }
+
+  test("Getting type required in output port") {
+    import DOperationForPortTypes._
+    val op = new SimpleOperation
+    assert(op.outPortType(0) == ru.typeOf[DClassesForDOperations.A2])
+  }
+
+  test("Requesting type of non-existing input port throws") {
+    intercept[IllegalArgumentException] {
+      import DOperationForPortTypes._
+      val op = new SimpleOperation
+      op.inPortType(-1)
+    }
+  }
+
+  test("Requesting type of non-existing output port throws") {
+    intercept[IllegalArgumentException] {
+      import DOperationForPortTypes._
+      val op = new SimpleOperation
+      op.outPortType(2)
+    }
   }
 }

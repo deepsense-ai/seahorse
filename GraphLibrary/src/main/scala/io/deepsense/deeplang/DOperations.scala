@@ -54,6 +54,19 @@ abstract class DOperation0To1[
   val inArity = 0
   val outArity = 1
 
+  override def inPortType(index: Int): ru.Type = {
+    index match {
+      case _ => throw new IllegalArgumentException("Wrong input port index")
+    }
+  }
+
+  override def outPortType(index: Int): ru.Type = {
+    index match {
+      case 0 => ru.typeOf[TO_0]
+      case _ => throw new IllegalArgumentException("Wrong output port index")
+    }
+  }
+
   override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
     _execute()
   }
@@ -77,6 +90,20 @@ abstract class DOperation0To2[
   extends DOperation(parameters) {
   val inArity = 0
   val outArity = 2
+
+  override def inPortType(index: Int): ru.Type = {
+    index match {
+      case _ => throw new IllegalArgumentException("Wrong input port index")
+    }
+  }
+
+  override def outPortType(index: Int): ru.Type = {
+    index match {
+      case 0 => ru.typeOf[TO_0]
+      case 1 => ru.typeOf[TO_1]
+      case _ => throw new IllegalArgumentException("Wrong output port index")
+    }
+  }
 
   override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
     _execute()
@@ -104,6 +131,21 @@ abstract class DOperation0To3[
   val inArity = 0
   val outArity = 3
 
+  override def inPortType(index: Int): ru.Type = {
+    index match {
+      case _ => throw new IllegalArgumentException("Wrong input port index")
+    }
+  }
+
+  override def outPortType(index: Int): ru.Type = {
+    index match {
+      case 0 => ru.typeOf[TO_0]
+      case 1 => ru.typeOf[TO_1]
+      case 2 => ru.typeOf[TO_2]
+      case _ => throw new IllegalArgumentException("Wrong output port index")
+    }
+  }
+
   override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
     _execute()
   }
@@ -128,6 +170,19 @@ abstract class DOperation1To0[
   extends DOperation(parameters) {
   val inArity = 1
   val outArity = 0
+
+  override def inPortType(index: Int): ru.Type = {
+    index match {
+      case 0 => ru.typeOf[TI_0]
+      case _ => throw new IllegalArgumentException("Wrong input port index")
+    }
+  }
+
+  override def outPortType(index: Int): ru.Type = {
+    index match {
+      case _ => throw new IllegalArgumentException("Wrong output port index")
+    }
+  }
 
   override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
     _execute(
@@ -158,6 +213,20 @@ abstract class DOperation1To1[
   val inArity = 1
   val outArity = 1
 
+  override def inPortType(index: Int): ru.Type = {
+    index match {
+      case 0 => ru.typeOf[TI_0]
+      case _ => throw new IllegalArgumentException("Wrong input port index")
+    }
+  }
+
+  override def outPortType(index: Int): ru.Type = {
+    index match {
+      case 0 => ru.typeOf[TO_0]
+      case _ => throw new IllegalArgumentException("Wrong output port index")
+    }
+  }
+
   override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
     _execute(
       arguments(0).asInstanceOf[TI_0])
@@ -186,6 +255,21 @@ abstract class DOperation1To2[
   extends DOperation(parameters) {
   val inArity = 1
   val outArity = 2
+
+  override def inPortType(index: Int): ru.Type = {
+    index match {
+      case 0 => ru.typeOf[TI_0]
+      case _ => throw new IllegalArgumentException("Wrong input port index")
+    }
+  }
+
+  override def outPortType(index: Int): ru.Type = {
+    index match {
+      case 0 => ru.typeOf[TO_0]
+      case 1 => ru.typeOf[TO_1]
+      case _ => throw new IllegalArgumentException("Wrong output port index")
+    }
+  }
 
   override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
     _execute(
@@ -218,6 +302,22 @@ abstract class DOperation1To3[
   val inArity = 1
   val outArity = 3
 
+  override def inPortType(index: Int): ru.Type = {
+    index match {
+      case 0 => ru.typeOf[TI_0]
+      case _ => throw new IllegalArgumentException("Wrong input port index")
+    }
+  }
+
+  override def outPortType(index: Int): ru.Type = {
+    index match {
+      case 0 => ru.typeOf[TO_0]
+      case 1 => ru.typeOf[TO_1]
+      case 2 => ru.typeOf[TO_2]
+      case _ => throw new IllegalArgumentException("Wrong output port index")
+    }
+  }
+
   override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
     _execute(
       arguments(0).asInstanceOf[TI_0])
@@ -247,6 +347,20 @@ abstract class DOperation2To0[
   extends DOperation(parameters) {
   val inArity = 2
   val outArity = 0
+
+  override def inPortType(index: Int): ru.Type = {
+    index match {
+      case 0 => ru.typeOf[TI_0]
+      case 1 => ru.typeOf[TI_1]
+      case _ => throw new IllegalArgumentException("Wrong input port index")
+    }
+  }
+
+  override def outPortType(index: Int): ru.Type = {
+    index match {
+      case _ => throw new IllegalArgumentException("Wrong output port index")
+    }
+  }
 
   override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
     _execute(
@@ -282,6 +396,21 @@ abstract class DOperation2To1[
   val inArity = 2
   val outArity = 1
 
+  override def inPortType(index: Int): ru.Type = {
+    index match {
+      case 0 => ru.typeOf[TI_0]
+      case 1 => ru.typeOf[TI_1]
+      case _ => throw new IllegalArgumentException("Wrong input port index")
+    }
+  }
+
+  override def outPortType(index: Int): ru.Type = {
+    index match {
+      case 0 => ru.typeOf[TO_0]
+      case _ => throw new IllegalArgumentException("Wrong output port index")
+    }
+  }
+
   override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
     _execute(
       arguments(0).asInstanceOf[TI_0],
@@ -315,6 +444,22 @@ abstract class DOperation2To2[
   extends DOperation(parameters) {
   val inArity = 2
   val outArity = 2
+
+  override def inPortType(index: Int): ru.Type = {
+    index match {
+      case 0 => ru.typeOf[TI_0]
+      case 1 => ru.typeOf[TI_1]
+      case _ => throw new IllegalArgumentException("Wrong input port index")
+    }
+  }
+
+  override def outPortType(index: Int): ru.Type = {
+    index match {
+      case 0 => ru.typeOf[TO_0]
+      case 1 => ru.typeOf[TO_1]
+      case _ => throw new IllegalArgumentException("Wrong output port index")
+    }
+  }
 
   override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
     _execute(
@@ -352,6 +497,23 @@ abstract class DOperation2To3[
   val inArity = 2
   val outArity = 3
 
+  override def inPortType(index: Int): ru.Type = {
+    index match {
+      case 0 => ru.typeOf[TI_0]
+      case 1 => ru.typeOf[TI_1]
+      case _ => throw new IllegalArgumentException("Wrong input port index")
+    }
+  }
+
+  override def outPortType(index: Int): ru.Type = {
+    index match {
+      case 0 => ru.typeOf[TO_0]
+      case 1 => ru.typeOf[TO_1]
+      case 2 => ru.typeOf[TO_2]
+      case _ => throw new IllegalArgumentException("Wrong output port index")
+    }
+  }
+
   override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
     _execute(
       arguments(0).asInstanceOf[TI_0],
@@ -386,6 +548,21 @@ abstract class DOperation3To0[
   extends DOperation(parameters) {
   val inArity = 3
   val outArity = 0
+
+  override def inPortType(index: Int): ru.Type = {
+    index match {
+      case 0 => ru.typeOf[TI_0]
+      case 1 => ru.typeOf[TI_1]
+      case 2 => ru.typeOf[TI_2]
+      case _ => throw new IllegalArgumentException("Wrong input port index")
+    }
+  }
+
+  override def outPortType(index: Int): ru.Type = {
+    index match {
+      case _ => throw new IllegalArgumentException("Wrong output port index")
+    }
+  }
 
   override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
     _execute(
@@ -426,6 +603,22 @@ abstract class DOperation3To1[
   val inArity = 3
   val outArity = 1
 
+  override def inPortType(index: Int): ru.Type = {
+    index match {
+      case 0 => ru.typeOf[TI_0]
+      case 1 => ru.typeOf[TI_1]
+      case 2 => ru.typeOf[TI_2]
+      case _ => throw new IllegalArgumentException("Wrong input port index")
+    }
+  }
+
+  override def outPortType(index: Int): ru.Type = {
+    index match {
+      case 0 => ru.typeOf[TO_0]
+      case _ => throw new IllegalArgumentException("Wrong output port index")
+    }
+  }
+
   override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
     _execute(
       arguments(0).asInstanceOf[TI_0],
@@ -464,6 +657,23 @@ abstract class DOperation3To2[
   extends DOperation(parameters) {
   val inArity = 3
   val outArity = 2
+
+  override def inPortType(index: Int): ru.Type = {
+    index match {
+      case 0 => ru.typeOf[TI_0]
+      case 1 => ru.typeOf[TI_1]
+      case 2 => ru.typeOf[TI_2]
+      case _ => throw new IllegalArgumentException("Wrong input port index")
+    }
+  }
+
+  override def outPortType(index: Int): ru.Type = {
+    index match {
+      case 0 => ru.typeOf[TO_0]
+      case 1 => ru.typeOf[TO_1]
+      case _ => throw new IllegalArgumentException("Wrong output port index")
+    }
+  }
 
   override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
     _execute(
@@ -505,6 +715,24 @@ abstract class DOperation3To3[
   extends DOperation(parameters) {
   val inArity = 3
   val outArity = 3
+
+  override def inPortType(index: Int): ru.Type = {
+    index match {
+      case 0 => ru.typeOf[TI_0]
+      case 1 => ru.typeOf[TI_1]
+      case 2 => ru.typeOf[TI_2]
+      case _ => throw new IllegalArgumentException("Wrong input port index")
+    }
+  }
+
+  override def outPortType(index: Int): ru.Type = {
+    index match {
+      case 0 => ru.typeOf[TO_0]
+      case 1 => ru.typeOf[TO_1]
+      case 2 => ru.typeOf[TO_2]
+      case _ => throw new IllegalArgumentException("Wrong output port index")
+    }
+  }
 
   override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
     _execute(

@@ -6,6 +6,8 @@
 
 package io.deepsense.deeplang
 
+import scala.reflect.runtime.{universe => ru}
+
 /**
  * DOperation that receives and returns instances of DOperable.
  * Can infer its output type basing on type knowledge.
@@ -13,6 +15,10 @@ package io.deepsense.deeplang
 abstract class DOperation(val parameters: DParameters) {
   val inArity: Int
   val outArity: Int
+
+  def inPortType(index: Int): ru.Type
+
+  def outPortType(index: Int): ru.Type
 
   def execute(l: Vector[DOperable]): Vector[DOperable]
 
