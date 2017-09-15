@@ -16,7 +16,10 @@
       <div
         ng-if="!$ctrl.error.presetId.required"
         class="schedule-attribute__value"
-      >{{$ctrl.model.executionInfo.presetName}}</div>
+        title="{{$ctrl.model.executionInfo.presetName}}"
+      >
+        {{$ctrl.model.executionInfo.presetName}}
+      </div>
       <div
         ng-if="$ctrl.error.presetId.required"
         class="schedule-attribute__value schedule-attribute__value--invalid schedule-attribute__value--clickable"
@@ -31,7 +34,12 @@
 
     <div class="schedule-attribute schedule-email">
       <div class="schedule-attribute__label">Reports send to:</div>
-      <div class="schedule-attribute__value">{{$ctrl.model.executionInfo.emailForReports}}</div>
+      <div
+        class="schedule-attribute__value"
+        title="{{$ctrl.model.executionInfo.emailForReports}}"
+      >
+        {{$ctrl.model.executionInfo.emailForReports}}
+      </div>
       <div class="schedule-attribute__errors">
         <p
           ng-if="$ctrl.error.emailForReports.required || $ctrl.error.emailForReports.email"
