@@ -9,7 +9,7 @@ angular.module('test').
         name: 'Sql Reader',
         uiName: 'Sql Reader',
         color: '#00B1EB',
-        operationId: '342342-123123-434234-234234',
+        operationId: 'e76ca616-0322-47a5-b390-70c9668265dd',
         parameters: null,
         state: {
           "status": "status_completed",

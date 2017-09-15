@@ -13,17 +13,20 @@
     </section>
     <section class="operation-attributes-panel__details" ng-class="{'u-top-border': disabledMode && !node.uiName}">
       <p class="operation-attributes-panel__title m-b-xs" ng-class="{'m-t-n-xs': !disabledMode}">{{ node.name }}</p>
+
       <p class="operation-attributes-panel__description"
          title="{{ node.description }}">{{ node.description }}</p>
       <a ng-href="{{controller.getDocsHost()}}/docs/latest/uuid/{{node.operationId}}.html" target="_blank"
          class="o-read-more block m-t-xs">
         Read more
       </a>
-      <a ng-if="controller.hasCodeEdit()" ng-click="controller.showNotebook()" target="_blank" class="block m-t-xs">
-        <p class="o-state__status label">
-          Edit code
-        </p>
-      </a>
+      <button class="operation-attributes-panel__notebook-button"
+              ng-if="controller.hasCodeEdit()" ng-click="controller.showNotebook()">
+        <i class="fa fa-file-text-o"></i>
+        <span>
+          Open notebook
+        </span>
+      </button>
     </section>
     <section class="operation-attributes-panel__details o-state" ng-if="node.state">
       <header>
@@ -127,7 +130,8 @@
         <div ng-repeat="output in node.output" class="ibox-content c-ports-info__content">
           <strong>{{$index}}:</strong>
           <span class="c-ports-info__item" ng-repeat="typeQualifier in output.typeQualifier">
-            <a target="_blank" ng-href="{{controller.getDocsHost()}}/docs/latest/uuid/{{typeQualifier}}.html">{{typeQualifier.substr(typeQualifier.lastIndexOf('.')+1,typeQualifier.length)}}{{{true: '', false: ', '}[$last]}}</a>
+            <a target="_blank" ng-href="{{controller.getDocsHost()}}/docs/latest/uuid/{{typeQualifier}}.html">{{typeQualifier.substr(typeQualifier.lastIndexOf('.')+1,typeQualifier.length)}}{{{true:
+              '', false: ', '}[$last]}}</a>
           </span>
         </div>
       </section>
