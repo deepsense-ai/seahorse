@@ -20,6 +20,11 @@ fi
 
 GIT_SHA=`git rev-parse HEAD`
 
+# Without it SM dockers SbtGit.GitKeys.gitCurrentBranch will resolve to git hash instead of branch
+# and fail with $GIT_SHA-latest doesnt exists.
+# TODO Fix SM docker building process and get rid of SEAHORSE_BUILD_TAG here
+export SEAHORSE_BUILD_TAG="${SEAHORSE_BUILD_TAG:-$GIT_SHA}" # SET if SEAHORSE_BUILD_TAG not set
+
 function pullOrBuild {
   DOCKER_IMAGE=$1
   BUILD_SCRIPT=$2

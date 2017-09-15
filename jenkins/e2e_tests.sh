@@ -11,11 +11,6 @@ BACKEND_TAG=`git rev-parse HEAD`
 FRONTEND_TAG="${FRONTEND_TAG:-$SEAHORSE_BUILD_TAG}" # If FRONTEND_TAG not defined try to use SEAHORSE_BUILD_TAG
 FRONTEND_TAG="${FRONTEND_TAG:-master-latest}" # If it's still undefined fallback to master-latest
 
-# Without it SM dockers SbtGit.GitKeys.gitCurrentBranch will resolve to git hash instead of branch
-# and fail with $GIT_SHA-latest doesnt exists.
-# TODO Fix SM docker building process and get rid of SEAHORSE_BUILD_TAG here
-export SEAHORSE_BUILD_TAG="${SEAHORSE_BUILD_TAG:-$BACKEND_TAG}"
-
 ./jenkins/scripts/sync_up_docker_images_with_git_repo.sh
 
 SPARK_STANDALONE_MANAGEMENT="./seahorse-workflow-executor/docker/spark-standalone-cluster-manage.sh"
