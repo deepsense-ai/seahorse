@@ -96,7 +96,7 @@ case class MissingValuesHandler()
   def setMissingValueIndicator(value: MissingValueIndicatorChoice): this.type =
     set(missingValueIndicator, value)
 
-  override val params = declareParams(
+  override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(
     selectedColumns,
     strategy,
     missingValueIndicator,
@@ -315,12 +315,12 @@ object MissingValuesHandler {
   object Strategy {
     case class RemoveRow() extends Strategy {
       override val name: String = "remove row"
-      override val params: Array[Param[_]] = declareParams()
+      override val params: Array[Param[_]] = Array()
     }
 
     case class RemoveColumn() extends Strategy {
       override val name: String = "remove column"
-      override val params: Array[Param[_]] = declareParams()
+      override val params: Array[Param[_]] = Array()
     }
 
     case class ReplaceWithCustomValue() extends Strategy {
@@ -333,7 +333,7 @@ object MissingValuesHandler {
       def getCustomValue: String = $(customValue)
       def setCustomValue(value: String): this.type = set(customValue, value)
 
-      override val params: Array[Param[_]] = declareParams(customValue)
+      override val params: Array[Param[_]] = Array(customValue)
     }
 
     case class ReplaceWithMode() extends Strategy {
@@ -349,7 +349,7 @@ object MissingValuesHandler {
       def setEmptyColumnStrategy(value: EmptyColumnsStrategy): this.type =
         set(emptyColumnStrategy, value)
 
-      override val params: Array[Param[_]] = declareParams(emptyColumnStrategy)
+      override val params: Array[Param[_]] = Array(emptyColumnStrategy)
     }
   }
 
@@ -364,11 +364,11 @@ object MissingValuesHandler {
   object EmptyColumnsStrategy {
     case class RemoveEmptyColumns() extends EmptyColumnsStrategy {
       override val name: String = "remove"
-      override val params: Array[Param[_]] = declareParams()
+      override val params: Array[Param[_]] = Array()
     }
     case class RetainEmptyColumns() extends EmptyColumnsStrategy {
       override val name: String = "retain"
-      override val params: Array[Param[_]] = declareParams()
+      override val params: Array[Param[_]] = Array()
     }
   }
 
@@ -396,14 +396,14 @@ object MissingValuesHandler {
       override def getIndicatorPrefix: Option[String] = Some($(indicatorPrefix))
       def setIndicatorPrefix(value: String): this.type = set(indicatorPrefix, value)
 
-      override val params: Array[Param[_]] = declareParams(indicatorPrefix)
+      override val params: Array[Param[_]] = Array(indicatorPrefix)
     }
     case class No() extends MissingValueIndicatorChoice {
       override val name: String = "No"
 
       override def getIndicatorPrefix: Option[String] = None
 
-      override val params: Array[Param[_]] = declareParams()
+      override val params: Array[Param[_]] = Array()
     }
   }
 }
@@ -423,7 +423,7 @@ case class UserDefinedMissingValue() extends Params {
   def setMissingValue(value: String): this.type = set(missingValue, value)
   setDefault(missingValue, "")
 
-  val params = declareParams(missingValue)
+  val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(missingValue)
 }
 
 private object MissingValuesHandlerUtils {

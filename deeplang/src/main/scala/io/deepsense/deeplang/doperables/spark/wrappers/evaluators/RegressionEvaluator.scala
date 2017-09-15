@@ -37,7 +37,7 @@ class RegressionEvaluator
     sparkParamGetter = _.metricName)
   setDefault(metricName, Rmse())
 
-  override val params: Array[Param[_]] = declareParams(metricName, predictionColumn, labelColumn)
+  override val params: Array[Param[_]] = Array(metricName, predictionColumn, labelColumn)
 
   override def getMetricName: String = $(metricName).name
 }
@@ -46,7 +46,7 @@ object RegressionEvaluator {
 
   sealed abstract class Metric(override val name: String) extends Choice {
 
-    override val params: Array[Param[_]] = declareParams()
+    override val params: Array[Param[_]] = Array()
 
     override val choiceOrder: List[Class[_ <: Choice]] = List(
       classOf[Mse],

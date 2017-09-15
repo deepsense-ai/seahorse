@@ -54,7 +54,7 @@ class VanillaRandomForestClassificationModel
     )))
   }
 
-  override val params: Array[Param[_]] = declareParams(
+  override val params: Array[Param[_]] = Array(
     featuresColumn,
     predictionColumn,
     probabilityColumn,

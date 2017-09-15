@@ -32,18 +32,18 @@ object InputFileFormatChoice {
 
     override val name: String = FileFormat.CSV.toString
     override val params: Array[Param[_]] =
-      declareParams(
+      Array(
         csvColumnSeparator,
         csvNamesIncluded,
         shouldConvertToBoolean)
   }
   case class Parquet() extends InputFileFormatChoice {
     override val name: String = FileFormat.PARQUET.toString
-    override val params = declareParams()
+    override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array()
   }
   case class Json() extends InputFileFormatChoice {
     override val name: String = FileFormat.JSON.toString
-    override val params = declareParams()
+    override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array()
   }
 
   val choiceOrder: List[Class[_ <: InputFileFormatChoice]] = List(

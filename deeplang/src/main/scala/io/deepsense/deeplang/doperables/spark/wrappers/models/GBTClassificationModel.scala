@@ -46,7 +46,7 @@ class VanillaGBTClassificationModel()
   }
 
   override val params: Array[Param[_]] =
-    declareParams(featuresColumn, predictionColumn)
+    Array(featuresColumn, predictionColumn)
 
   override def report: Report = {
     val summary =

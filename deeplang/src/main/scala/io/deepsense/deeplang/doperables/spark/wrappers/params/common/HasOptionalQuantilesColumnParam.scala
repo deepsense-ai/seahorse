@@ -55,11 +55,11 @@ object OptionalQuantilesColumnChoice {
     setDefault(quantilesColumn, "quantiles")
 
     override val name = "yes"
-    override val params = declareParams(quantilesColumn)
+    override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(quantilesColumn)
   }
 
   case class QuantilesColumnNoOption() extends QuantilesColumnOption {
     override val name = "no"
-    override val params = declareParams()
+    override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array()
   }
 }

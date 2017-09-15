@@ -43,7 +43,7 @@ class SqlTransformer extends Transformer {
   def getExpression: String = $(expression)
   def setExpression(value: String): this.type = set(expression, value)
 
-  override val params: Array[Param[_]] = declareParams(dataFrameId, expression)
+  override val params: Array[Param[_]] = Array(dataFrameId, expression)
 
   override private[deeplang] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
     logger.debug(s"SqlExpression(expression = '$getExpression'," +

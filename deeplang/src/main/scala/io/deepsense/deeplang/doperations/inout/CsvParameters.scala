@@ -76,23 +76,23 @@ object CsvParameters {
 
     case class Comma() extends ColumnSeparatorChoice {
       override val name = ","
-      override val params = declareParams()
+      override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array()
     }
     case class Semicolon() extends ColumnSeparatorChoice {
       override val name = ";"
-      override val params = declareParams()
+      override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array()
     }
     case class Colon() extends ColumnSeparatorChoice {
       override val name = ":"
-      override val params = declareParams()
+      override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array()
     }
     case class Space() extends ColumnSeparatorChoice {
       override val name = "Space"
-      override val params = declareParams()
+      override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array()
     }
     case class Tab() extends ColumnSeparatorChoice {
       override val name = "Tab"
-      override val params = declareParams()
+      override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array()
     }
     case class Custom() extends ColumnSeparatorChoice {
       override val name = "Custom"
@@ -106,7 +106,7 @@ object CsvParameters {
       def getCustomColumnSeparator: String = $(customColumnSeparator)
       def setCustomColumnSeparator(value: String): this.type = set(customColumnSeparator, value)
 
-      override val params = declareParams(customColumnSeparator)
+      override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(customColumnSeparator)
     }
   }
 }

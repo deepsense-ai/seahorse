@@ -46,7 +46,7 @@ class SortTransformer extends Transformer {
         SortColumnParam.columnParamToColumnExpression(_, df)): _*))
   }
 
-  override def params: Array[Param[_]] = declareParams(columns)
+  override def params: Array[Param[_]] = Array(columns)
 
   override private[deeplang] def _transformSchema(schema: StructType): Option[StructType] = {
     Some(schema)
@@ -76,7 +76,7 @@ class SortColumnParam extends Params {
   def getColumn: SingleColumnSelection = $(column)
   def setColumn(col: SingleColumnSelection): this.type = set(column, col)
 
-  override def params: Array[Param[_]] = declareParams(column, descending)
+  override def params: Array[Param[_]] = Array(column, descending)
 
 }
 

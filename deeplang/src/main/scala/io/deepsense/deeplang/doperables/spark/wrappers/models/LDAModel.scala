@@ -29,7 +29,7 @@ class LDAModel extends SparkModelWrapper[SparkLDAModel, SparkLDA]
   with HasFeaturesColumnParam
   with HasSeedParam {
 
-  val params = declareParams(
+  val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(
     featuresColumn,
     seed)
 

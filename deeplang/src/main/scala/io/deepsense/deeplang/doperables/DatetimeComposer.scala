@@ -52,7 +52,7 @@ case class DatetimeComposer() extends Transformer {
   def setOutputColumn(outputColumn: String): this.type =
     set(outputColumnParam, outputColumn)
 
-  override val params = declareParams(timestampColumnsParam, outputColumnParam)
+  override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(timestampColumnsParam, outputColumnParam)
 
 
   override def _transform(context: ExecutionContext, dataFrame: DataFrame): DataFrame = {
@@ -130,7 +130,7 @@ object DatetimeComposer {
     def setTimestampColumn(timestampColumn: SingleColumnSelection): this.type =
       set(timestampColumnSelectorParam, timestampColumn)
 
-    override val params = declareParams(timestampColumnSelectorParam)
+    override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(timestampColumnSelectorParam)
 
     override val choiceOrder: List[Class[_ <: Choice]] = orderedTimestampParts.map(p => p.getClass)
   }

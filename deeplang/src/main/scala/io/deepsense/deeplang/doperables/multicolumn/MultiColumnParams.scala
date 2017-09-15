@@ -34,7 +34,7 @@ object MultiColumnParams {
 
     case class MultiColumnYesInPlace() extends MultiColumnInPlaceChoice {
       override val name: String = "replace input columns"
-      override val params: Array[Param[_]] = declareParams()
+      override val params: Array[Param[_]] = Array()
     }
     case class MultiColumnNoInPlace() extends MultiColumnInPlaceChoice {
       override val name: String = "append new columns"
@@ -44,7 +44,7 @@ object MultiColumnParams {
         description = "Prefix for output columns."
       )
 
-      override val params: Array[Param[_]] = declareParams(outputColumnsPrefixParam)
+      override val params: Array[Param[_]] = Array(outputColumnsPrefixParam)
 
       def getColumnsPrefix: String = $(outputColumnsPrefixParam)
       def setColumnsPrefix(prefix: String): this.type = set(outputColumnsPrefixParam, prefix)
@@ -69,7 +69,7 @@ object MultiColumnParams {
       )
 
       override val params: Array[Param[_]] =
-        declareParams(inputColumn, singleInPlaceChoice)
+        Array(inputColumn, singleInPlaceChoice)
 
       def setInputColumn(value: SingleColumnSelection): this.type = set(inputColumn, value)
       def setInPlace(value: SingleColumnInPlaceChoice): this.type =
@@ -93,7 +93,7 @@ object MultiColumnParams {
       )
       setDefault(multiInPlaceChoiceParam, MultiColumnYesInPlace())
 
-      override val params: Array[Param[_]] = declareParams(
+      override val params: Array[Param[_]] = Array(
         inputColumnsParam,
         multiInPlaceChoiceParam
       )

@@ -84,7 +84,7 @@ object EvaluatorAsFactorySpec {
   class MockEvaluator extends Evaluator {
     val param = NumericParam("b", "desc")
     setDefault(param -> 5)
-    override val params: Array[Param[_]] = declareParams(param)
+    override val params: Array[Param[_]] = Array(param)
 
     override private[deeplang] def _evaluate(ctx: ExecutionContext, df: DataFrame): MetricValue =
       ???

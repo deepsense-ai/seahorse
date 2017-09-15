@@ -53,7 +53,7 @@ class NaiveBayes
   setDefault(modelType, Multinomial())
 
 
-  override val params: Array[Param[_]] = declareParams(
+  override val params: Array[Param[_]] = Array(
     smoothing,
     modelType,
     labelColumn,
@@ -67,7 +67,7 @@ object NaiveBayes {
 
   sealed abstract class ModelType(override val name: String) extends Choice {
 
-    override val params: Array[Param[_]] = declareParams()
+    override val params: Array[Param[_]] = Array()
 
     override val choiceOrder: List[Class[_ <: Choice]] = List(
       classOf[Multinomial],

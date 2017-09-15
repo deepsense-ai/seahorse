@@ -41,7 +41,7 @@ class ColumnsFilterer extends Transformer {
         Vector(NameColumnSelection(retainedColumns.toSet)),
         excluding = false))
 
-  override val params: Array[Param[_]] = declareParams(selectedColumns)
+  override val params: Array[Param[_]] = Array(selectedColumns)
 
   override def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
     val columns = df.getColumnNames(getSelectedColumns)
