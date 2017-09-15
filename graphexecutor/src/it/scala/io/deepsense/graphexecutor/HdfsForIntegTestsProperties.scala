@@ -4,15 +4,15 @@
 
 package io.deepsense.graphexecutor
 
+import com.typesafe.config.ConfigFactory
+
 object HdfsForIntegTestsProperties {
 
-  /**
-   * Hostname of cluster master node
-   */
-  val MasterHostname = "ds-dev-env-master"
+  private lazy val config = ConfigFactory.load("testEnvironment.conf")
 
-  /**
-   * HDFS NameNode port
-   */
-  val HdfsNameNodePort = 8020
+  lazy val MasterHostname = config.getString("master.hostname")
+
+  lazy val MasterIp = config.getString("master.ip")
+
+  lazy val HdfsNameNodePort = config.getString("hdfs.name.node.port")
 }
