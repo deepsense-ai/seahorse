@@ -86,6 +86,7 @@ class CanvasService {
   }
 
   render() {
+    this.AdapterService.setZoom(this.scale);
     this.AdapterService.render();
   }
 
