@@ -5,7 +5,7 @@ require('./attributes-panel.service.js');
 import tpl from './attributes-panel.html';
 
 /* @ngInject */
-function OperationAttributes($rootScope, AttributesPanelService, config, version, nodeTypes) {
+function OperationAttributes($rootScope, AttributesPanelService, config, version, nodeTypes, Operations) {
   function setCorrectHeight(container) {
     let heightOfOthers = _.reduce(jQuery(
       '> .ibox-title--main, > .c-attributes-tabs',
@@ -38,6 +38,7 @@ function OperationAttributes($rootScope, AttributesPanelService, config, version
         let notebookOpIds = [nodeTypes.PYTHON_NOTEBOOK, nodeTypes.R_NOTEBOOK];
 
         scope.hasCodeEdit = _.includes(notebookOpIds, scope.node.operationId);
+        scope.hasDocumentation = Operations.get(scope.node.operationId).hasDocumentation;
         scope.$applyAsync(setCorrectHeight.bind(null, element[0]));
       });
 

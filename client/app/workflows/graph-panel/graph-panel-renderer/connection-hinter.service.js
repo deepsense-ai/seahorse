@@ -39,10 +39,11 @@ class ConnectionHinterService extends GraphPanelRendererBase {
         typeQualifier => this.OperationsHierarchyService.IsDescendantOf(typeQualifier, port.typeQualifier)
       ));
 
-      if (typesMatch && // types match
+      if (
+        typesMatch && // types match
         endpoint.connections.length === 0 && // there cannot be any edge attached
-        port.nodeId !== sourceNodeId) // attaching an edge to the same node is forbidden
-      {
+        port.nodeId !== sourceNodeId // attaching an edge to the same node is forbidden
+      ) {
         this.GraphPanelStyler.styleInputEndpointTypeMatch(endpoint);
       } else {
         this.GraphPanelStyler.styleInputEndpointTypeDismatch(endpoint);

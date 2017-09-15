@@ -1,6 +1,6 @@
 'use strict';
 
-import src from 'url-loader?mimetype=text/html!_static/CodiLime_EULA';
+import src from 'url-loader?mimetype=text/html!STATIC/CodiLime_EULA';
 
 /* @ngInject */
 function AgreementModalCtrl($cookies, version) {

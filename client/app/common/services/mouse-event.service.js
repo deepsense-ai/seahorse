@@ -2,6 +2,9 @@
 
 /* @ngInject */
 function MouseEvent() {
+  // Should we test other Apple OS'es? /Mac|iPod|iPhone|iPad/
+  const modKey = /Mac/.test(navigator.platform) ? 'metaKey' : 'ctrlKey';
+
   var that = this;
   var internal = {};
 
@@ -37,6 +40,10 @@ function MouseEvent() {
         .offset()
         .top) / scale)
     };
+  };
+
+  that.isModKeyDown = function isModKeyDown(event) {
+    return event[modKey];
   };
 
   return that;

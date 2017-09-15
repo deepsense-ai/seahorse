@@ -1,8 +1,8 @@
 'use strict';
 
-require('_nodeModules/ace-webapp/src-min-noconflict/mode-sql.js');
-require('_nodeModules/ace-webapp/src-min-noconflict/mode-python.js');
-require('_nodeModules/ace-webapp/src-min-noconflict/mode-r.js');
+require('NODE_MODULES/ace-webapp/src-min-noconflict/mode-sql.js');
+require('NODE_MODULES/ace-webapp/src-min-noconflict/mode-python.js');
+require('NODE_MODULES/ace-webapp/src-min-noconflict/mode-r.js');
 
 require('./attribute-code-snippet-type.ctrl.js');
 import tpl from './attribute-code-snippet-type.html';

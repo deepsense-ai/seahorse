@@ -140,10 +140,12 @@ class WorkflowsEditorController {
     });
 
     this.$scope.$on('GraphNode.CLICK', (event, data) => {
-      if (!data.originalEvent.ctrlKey) {
+      const isModKeyDown = this.MouseEvent.isModKeyDown(data.originalEvent);
+
+      if (!isModKeyDown) {
         this.selectedNode = data.selectedNode;
         this.loadParametersForNode();
-      } else if (data.originalEvent.ctrlKey && this.selectedNode && this.selectedNode.id === data.selectedNode.id) {
+      } else if (isModKeyDown && this.selectedNode && this.selectedNode.id === data.selectedNode.id) {
         this.unselectNode();
       }
     });
