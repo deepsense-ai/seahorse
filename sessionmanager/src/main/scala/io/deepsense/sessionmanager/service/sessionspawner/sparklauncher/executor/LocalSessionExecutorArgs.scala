@@ -10,8 +10,6 @@ import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.SparkLau
 
 object LocalSessionExecutorArgs {
 
-  // TODO Have args parser/formatter in we.jar and use it here to have type-safety
-
   def apply(
       sessionConfig: SessionConfig,
       config: SparkLauncherConfig,
