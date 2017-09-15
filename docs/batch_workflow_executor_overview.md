@@ -41,41 +41,47 @@ For more detailed information about submitting Spark applications, visit:
 <a target="_blank" href="https://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/submitting-applications.html">https://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/submitting-applications.html</a>
 
 #### Local (single machine) Spark
-    # Run application locally (on 8 cores)
-    ./bin/spark-submit \
-      --driver-class-path workflowexecutor.jar \
-      --class io.deepsense.workflowexecutor.WorkflowExecutorApp \
-      --master local[8] \
-      --files workflow.json \
-      workflowexecutor.jar \
-        --workflow-filename workflow.json \
-        --output-directory test-output \
-        --python-executor-path workflowexecutor.jar
+{% highlight bash %}
+# Run application locally (on 8 cores)
+./bin/spark-submit \
+  --driver-class-path workflowexecutor.jar \
+  --class io.deepsense.workflowexecutor.WorkflowExecutorApp \
+  --master local[8] \
+  --files workflow.json \
+  workflowexecutor.jar \
+    --workflow-filename workflow.json \
+    --output-directory test-output \
+    --python-executor-path workflowexecutor.jar
+{% endhighlight %}
 
 #### Spark Standalone cluster
-    # Run on a Spark Standalone cluster in client deploy mode
-    ./bin/spark-submit \
-      --driver-class-path workflowexecutor.jar \
-      --class io.deepsense.workflowexecutor.WorkflowExecutorApp \
-      --master spark://207.184.161.138:7077 \
-      --files workflow.json \
-      workflowexecutor.jar \
-        --workflow-filename workflow.json \
-        --output-directory test-output \
-        --python-executor-path workflowexecutor.jar
+{% highlight bash %}
+# Run on a Spark Standalone cluster in client deploy mode
+./bin/spark-submit \
+  --driver-class-path workflowexecutor.jar \
+  --class io.deepsense.workflowexecutor.WorkflowExecutorApp \
+  --master spark://207.184.161.138:7077 \
+  --files workflow.json \
+  workflowexecutor.jar \
+    --workflow-filename workflow.json \
+    --output-directory test-output \
+    --python-executor-path workflowexecutor.jar
+{% endhighlight %}
 
 #### YARN cluster
-    # Run on a YARN cluster
-    export HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop   # location of Hadoop cluster configuration directory
-    ./bin/spark-submit \
-      --driver-class-path workflowexecutor.jar \
-      --class io.deepsense.workflowexecutor.WorkflowExecutorApp \
-      --master yarn-cluster \  # can also be `yarn-client` for client mode
-      --files workflow.json \
-      workflowexecutor.jar \
-        --workflow-filename workflow.json \
-        --output-directory test-output \
-        --python-executor-path workflowexecutor.jar
+{% highlight bash %}
+# Run on a YARN cluster
+export HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop   # location of Hadoop cluster configuration directory
+./bin/spark-submit \
+  --driver-class-path workflowexecutor.jar \
+  --class io.deepsense.workflowexecutor.WorkflowExecutorApp \
+  --master yarn-cluster \  # can also be `yarn-client` for client mode
+  --files workflow.json \
+  workflowexecutor.jar \
+    --workflow-filename workflow.json \
+    --output-directory test-output \
+    --python-executor-path workflowexecutor.jar
+{% endhighlight %}
 
 Option ``--python-executor-path`` is required (workflowexecutor.jar contains PyExecutor).
 Option ``--files workflow.json`` is necessary to distribute workflow file to Spark cluster.

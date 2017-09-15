@@ -70,14 +70,15 @@ If something went wrong during Seahorse exploration, please let us know about fa
 
 ## Replacing Seahorse Bundled Image With the Latest Version
 If you want to replace your Seahorse with the newest version you need to:
-
-    # stop currently running Seahorse
-    vagrant halt
-    # remove current seahorse box
-    vagrant box remove seahorse-vm
-    # remove older Vagrantfile
-    rm Vagrantfile
-    #get newest Vagrantfile (please check Downloads page)
-    wget http://path.to.the.newest.vagrantfile
-    #start newest Seahorse
-    vagrant up
+{% highlight bash %}
+# stop currently running Seahorse
+vagrant halt
+# remove current seahorse box
+vagrant box remove seahorse-vm
+# remove older Vagrantfile
+rm Vagrantfile
+# get newest Vagrantfile (please check Downloads page)
+wget http://path.to.the.newest.vagrantfile
+# start newest Seahorse
+vagrant up
+{% endhighlight %}
