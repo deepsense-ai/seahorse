@@ -29,7 +29,7 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException
 import io.deepsense.deeplang.parameters._
 
-class FilterColumnsIntegSpec
+class ColumnsFiltererIntegSpec
   extends DeeplangIntegTestSupport
   with GeneratorDrivenPropertyChecks
   with Matchers {
@@ -49,7 +49,7 @@ class FilterColumnsIntegSpec
   val row3 = Seq(3, "str3", 30.0, new Timestamp(DateTime.now.getMillis), false)
   val data = Seq(row1, row2, row3)
 
-  "FilterColumns" should {
+  "ColumnsFilterer" should {
     val names: Set[String] = Set("z", "b")
     val indices: Set[Int] = Set(1, 2)
     val selectedIndices = Set(1, 2, 4) // c b a z
@@ -128,7 +128,7 @@ class FilterColumnsIntegSpec
     filterColumnTransformer(names, ids)._transformSchema(schema)
 
   private def filterColumnTransformer(names: Set[String], ids: Set[Int]): Transformer =
-    new FilterColumns().setSelectedColumns(
+    new ColumnsFilterer().setSelectedColumns(
       MultipleColumnSelection(Vector(
         NameColumnSelection(names),
         IndexColumnSelection(ids),

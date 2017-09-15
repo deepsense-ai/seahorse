@@ -18,38 +18,34 @@ package io.deepsense.deeplang.doperables
 
 import java.sql.Timestamp
 
-import scala.reflect.runtime.{universe => ru}
-
 import org.apache.spark.sql.types._
 
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
-import io.deepsense.deeplang.doperables.dataframe.{DataFrameColumnsGetter, DataFrame}
-import io.deepsense.deeplang.doperations.exceptions.{WrongReplacementValueException, MultipleTypesReplacementException}
+import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
+import io.deepsense.deeplang.doperations.exceptions.{MultipleTypesReplacementException, WrongReplacementValueException}
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.params._
 import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
 
-case class MissingValuesHandler()
-  extends Transformer
-  with Params {
+case class MissingValuesHandler() extends Transformer {
 
   import io.deepsense.deeplang.doperables.MissingValuesHandler._
 
   override def _transformSchema(schema: StructType): Option[StructType] = {
     getStrategy match {
       case Strategy.RemoveColumn() => None
-      case _ => {
+      case _ =>
         val indicator = getMissingValueIndicator.getIndicatorPrefix
         indicator match {
           case Some(prefix) =>
             val columnNames = DataFrameColumnsGetter.getColumnNames(schema, getSelectedColumns)
-            val newColumns = columnNames.map(s => StructField(prefix + s, BooleanType, false))
+            val newColumns = columnNames.map(s =>
+              StructField(prefix + s, BooleanType, nullable = false))
             val inferredSchema = StructType(schema.fields ++ newColumns)
             Some(inferredSchema)
           case None => Some(schema)
         }
-      }
     }
   }
 
@@ -119,13 +115,11 @@ case class MissingValuesHandler()
       indicator: Option[String]) = {
 
     indicator match {
-      case Some(prefix) => {
+      case Some(prefix) =>
         val attachedColumns = columns.map(missingValueIndicatorColumn(dataFrame, _, prefix))
         dataFrame.withColumns(context, attachedColumns)
-      }
-      case None => {
+      case None =>
         dataFrame
-      }
     }
   }
 

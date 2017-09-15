@@ -20,14 +20,14 @@ import org.apache.spark.sql.types.{DataType, DoubleType, StringType, StructType}
 import org.apache.spark.sql.{Column, UserDefinedFunction}
 
 import io.deepsense.deeplang._
-import io.deepsense.deeplang.doperables.ConvertType.TargetTypeChoice
+import io.deepsense.deeplang.doperables.TypeConverter.TargetTypeChoice
 import io.deepsense.deeplang.doperables.dataframe._
 import io.deepsense.deeplang.doperables.dataframe.types.Conversions
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.params.ColumnSelectorParam
 import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
 
-case class ConvertType() extends Transformer {
+case class TypeConverter() extends Transformer {
 
   val selectedColumns = ColumnSelectorParam(
     name = "selected columns",
@@ -117,7 +117,7 @@ case class ConvertType() extends Transformer {
   override def report(executionContext: ExecutionContext): Report = Report()
 }
 
-object ConvertType {
+object TypeConverter {
 
   sealed trait TargetTypeChoice extends Choice {
     import TargetTypeChoice._

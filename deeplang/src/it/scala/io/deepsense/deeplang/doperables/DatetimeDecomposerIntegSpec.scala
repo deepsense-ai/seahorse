@@ -29,12 +29,12 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.{ColumnDoesNotExistException, WrongColumnTypeException}
 import io.deepsense.deeplang.parameters.{IndexSingleColumnSelection, NameSingleColumnSelection}
 
-class DecomposeDatetimeIntegSpec extends DeeplangIntegTestSupport {
+class DatetimeDecomposerIntegSpec extends DeeplangIntegTestSupport {
 
   private[this] val timestampColumnName = "timestampColumn"
   private[this] val t1 = new DateTime(2015, 3, 30, 15, 25)
 
-  "DecomposeDatetime" should {
+  "DatetimeDecomposer" should {
     "decompose timestamp column without prefix" in {
       val schema = createSchema
       val t2 = t1.plusDays(1)
@@ -88,7 +88,7 @@ class DecomposeDatetimeIntegSpec extends DeeplangIntegTestSupport {
     "throw an exception" when {
       "column selected by name does not exist" in {
         intercept[ColumnDoesNotExistException] {
-          val operation = new DecomposeDatetime()
+          val operation = new DatetimeDecomposer()
             .setTimestampColumn(NameSingleColumnSelection("nonExistsingColumnName"))
             .setTimestampParts(partsFromStrings("year"))
             .setTimestampPrefix("")
@@ -100,7 +100,7 @@ class DecomposeDatetimeIntegSpec extends DeeplangIntegTestSupport {
       }
       "column selected by index does not exist" in {
         intercept[ColumnDoesNotExistException] {
-          val operation = new DecomposeDatetime()
+          val operation = new DatetimeDecomposer()
             .setTimestampColumn(IndexSingleColumnSelection(1))
             .setTimestampParts(partsFromStrings("year"))
             .setTimestampPrefix("")
@@ -112,7 +112,7 @@ class DecomposeDatetimeIntegSpec extends DeeplangIntegTestSupport {
       }
       "selected column is not timestamp" in {
         intercept[WrongColumnTypeException] {
-          val operation = new DecomposeDatetime()
+          val operation = new DatetimeDecomposer()
             .setTimestampColumn(IndexSingleColumnSelection(0))
             .setTimestampParts(partsFromStrings("year"))
             .setTimestampPrefix("")
@@ -129,7 +129,7 @@ class DecomposeDatetimeIntegSpec extends DeeplangIntegTestSupport {
     "throw an exception in transform schema" when {
       "column selected by name does not exist" in {
         intercept[ColumnDoesNotExistException] {
-          val operation = new DecomposeDatetime()
+          val operation = new DatetimeDecomposer()
             .setTimestampColumn(NameSingleColumnSelection("nonExistsingColumnName"))
             .setTimestampParts(partsFromStrings("year"))
             .setTimestampPrefix("")
@@ -140,7 +140,7 @@ class DecomposeDatetimeIntegSpec extends DeeplangIntegTestSupport {
       }
       "column selected by index does not exist" in {
         intercept[ColumnDoesNotExistException] {
-          val operation = new DecomposeDatetime()
+          val operation = new DatetimeDecomposer()
             .setTimestampColumn(IndexSingleColumnSelection(1))
             .setTimestampParts(partsFromStrings("year"))
             .setTimestampPrefix("")
@@ -151,7 +151,7 @@ class DecomposeDatetimeIntegSpec extends DeeplangIntegTestSupport {
       }
       "selected column is not timestamp" in {
         intercept[WrongColumnTypeException] {
-          val operation = new DecomposeDatetime()
+          val operation = new DatetimeDecomposer()
             .setTimestampColumn(IndexSingleColumnSelection(0))
             .setTimestampParts(partsFromStrings("year"))
             .setTimestampPrefix("")
@@ -167,7 +167,7 @@ class DecomposeDatetimeIntegSpec extends DeeplangIntegTestSupport {
       schema: StructType, data: RDD[Row],
       expectedData: Seq[Row],
       prefix: String): Unit = {
-    val operation: DecomposeDatetime = operationWithParamsSet(prefix)
+    val operation: DatetimeDecomposer = operationWithParamsSet(prefix)
     val dataFrame = executionContext.dataFrameBuilder.buildDataFrame(schema, data)
 
     val resultDataFrame: DataFrame = decomposeDatetime(operation, dataFrame)
@@ -182,7 +182,7 @@ class DecomposeDatetimeIntegSpec extends DeeplangIntegTestSupport {
   private def shouldTransformSchema(
       schema: StructType,
       prefix: String): Unit = {
-    val operation: DecomposeDatetime = operationWithParamsSet(prefix)
+    val operation: DatetimeDecomposer = operationWithParamsSet(prefix)
     val transformedSchema = operation._transformSchema(schema)
 
     val expectedSchema: StructType = resultSchema(schema, prefix)
@@ -216,20 +216,20 @@ class DecomposeDatetimeIntegSpec extends DeeplangIntegTestSupport {
   }
 
   private def decomposeDatetime(
-      decomposeDatetime: DecomposeDatetime,
+      decomposeDatetime: DatetimeDecomposer,
       dataFrame: DataFrame): DataFrame = {
     decomposeDatetime.transform.apply(executionContext)(())(dataFrame)
   }
 
-  private def operationWithParamsSet(prefixParam: String): DecomposeDatetime = {
-    new DecomposeDatetime()
+  private def operationWithParamsSet(prefixParam: String): DatetimeDecomposer = {
+    new DatetimeDecomposer()
       .setTimestampColumn(NameSingleColumnSelection(timestampColumnName))
       .setTimestampParts(partsFromStrings("year", "month", "day", "hour", "minutes", "seconds"))
       .setTimestampPrefix(prefixParam)
   }
 
-  private def partsFromStrings(names: String*): Set[DecomposeDatetime.TimestampPart] = {
-    import DecomposeDatetime.TimestampPart._
+  private def partsFromStrings(names: String*): Set[DatetimeDecomposer.TimestampPart] = {
+    import DatetimeDecomposer.TimestampPart._
     val allParts = Set(Year(), Month(), Day(), Hour(), Minutes(), Seconds())
     names.map(name => allParts.filter(_.name == name).head).toSet
   }

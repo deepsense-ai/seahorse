@@ -22,7 +22,7 @@ import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
 
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables.DecomposeDatetime.TimestampPart
+import io.deepsense.deeplang.doperables.DatetimeDecomposer.TimestampPart
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.params.choice.{Choice, MultipleChoiceParam}
@@ -37,7 +37,7 @@ import io.deepsense.deeplang.params.{Param, PrefixBasedColumnCreatorParam, Singl
  * If a column with that name already exists {original_timestamp_column_name}_$part_N will be used,
  * where N is first not used Int value starting from 1.
  */
-case class DecomposeDatetime() extends Transformer {
+case class DatetimeDecomposer() extends Transformer {
 
   val timestampColumnParam = SingleColumnSelectorParam(
     name = "timestamp column",
@@ -79,7 +79,7 @@ case class DecomposeDatetime() extends Transformer {
       ColumnType.timestamp)
 
     val newColumns = for {
-      range <- DecomposeDatetime.timestampPartRanges
+      range <- DatetimeDecomposer.timestampPartRanges
       if getTimestampParts.contains(range.part)
     } yield timestampUnitColumn(dataFrame.sparkDataFrame, decomposedColumnName, range)
 
@@ -89,7 +89,7 @@ case class DecomposeDatetime() extends Transformer {
   private[this] def timestampUnitColumn(
       sparkDataFrame: sql.DataFrame,
       columnName: String,
-      timestampPart: DecomposeDatetime.TimestampPartRange): Column = {
+      timestampPart: DatetimeDecomposer.TimestampPartRange): Column = {
 
     val newColumnName = getTimestampPrefix + timestampPart.part.name
 
@@ -106,7 +106,7 @@ case class DecomposeDatetime() extends Transformer {
       ColumnType.timestamp)
 
     val newColumns = for {
-      range <- DecomposeDatetime.timestampPartRanges
+      range <- DatetimeDecomposer.timestampPartRanges
       if getTimestampParts.contains(range.part)
     } yield StructField(getTimestampPrefix + range.part.name, DoubleType)
 
@@ -117,7 +117,7 @@ case class DecomposeDatetime() extends Transformer {
   override def report(executionContext: ExecutionContext): Report = Report()
 }
 
-object DecomposeDatetime {
+object DatetimeDecomposer {
 
   import TimestampPart._
 

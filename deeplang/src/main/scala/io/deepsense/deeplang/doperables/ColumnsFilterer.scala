@@ -23,7 +23,7 @@ import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGe
 import io.deepsense.deeplang.parameters.{MultipleColumnSelection, NameColumnSelection}
 import io.deepsense.deeplang.params.{ColumnSelectorParam, Param}
 
-class FilterColumns extends Transformer {
+class ColumnsFilterer extends Transformer {
 
   val selectedColumns = ColumnSelectorParam(
     name = "selected columns",

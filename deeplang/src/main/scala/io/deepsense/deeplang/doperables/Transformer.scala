@@ -20,8 +20,8 @@ import org.apache.spark.sql.types.StructType
 
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
-import io.deepsense.deeplang.params.{ParamMap, Params}
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
+import io.deepsense.deeplang.params.Params
 import io.deepsense.deeplang.{DKnowledge, DMethod1To1, DOperable, ExecutionContext}
 
 /**

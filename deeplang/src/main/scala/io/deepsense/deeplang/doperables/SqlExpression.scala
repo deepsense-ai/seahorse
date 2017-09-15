@@ -17,7 +17,7 @@
 package io.deepsense.deeplang.doperables
 
 import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.params.{Param, StringParam}
 
 class SqlExpression extends Transformer {

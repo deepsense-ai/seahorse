@@ -26,83 +26,83 @@ import org.joda.time.{DateTime, DateTimeZone}
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.commons.types.ColumnType._
 import io.deepsense.deeplang.DeeplangIntegTestSupport
-import io.deepsense.deeplang.doperables.ConvertType.TargetTypeChoice
+import io.deepsense.deeplang.doperables.TypeConverter.TargetTypeChoice
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException
 import io.deepsense.deeplang.parameters._
 
-class ConvertTypeIntegSpec extends DeeplangIntegTestSupport {
+class TypeConverterIntegSpec extends DeeplangIntegTestSupport {
 
   var inputDataFrame: DataFrame = _
 
-  "Convert Type" when {
+  "TypeConverter" when {
     "converting columns to String" which {
       val targetType = StringType
       "are Doubles" should {
         "cast them to String" in {
-          val converted = useConvertType(Set(doubleId), Set.empty, Set.empty, targetType)
+          val converted = useTypeConverter(Set(doubleId), Set.empty, Set.empty, targetType)
           val expected = toString(Set(doubleId))
           assertDataFramesEqual(converted, expected)
         }
       }
       "are Strings" should {
         "return the same values" in {
-          val converted = useConvertType(Set.empty, Set.empty, Set(ColumnType.string), targetType)
+          val converted = useTypeConverter(Set.empty, Set.empty, Set(ColumnType.string), targetType)
           assertDataFramesEqual(converted, inputDataFrame)
         }
       }
       "are Booleans" should {
         "return 'true', 'false' strings" in {
-          val converted = useConvertType(Set(booleanId), Set.empty, Set.empty, targetType)
+          val converted = useTypeConverter(Set(booleanId), Set.empty, Set.empty, targetType)
           val expected = toString(Set(booleanId))
           assertDataFramesEqual(converted, expected)
         }
       }
       "are Timestamps" should {
         "use ISO 8601 format" in {
-          val converted = useConvertType(Set(timestampId), Set.empty, Set.empty, targetType)
+          val converted = useTypeConverter(Set(timestampId), Set.empty, Set.empty, targetType)
           val expected = toString(Set(timestampId))
           assertDataFramesEqual(converted, expected)
         }
       }
       "are Longs" should {
         "cast them to String" in {
-          val converted = useConvertType(Set(longId), Set.empty, Set.empty, targetType)
+          val converted = useTypeConverter(Set(longId), Set.empty, Set.empty, targetType)
           val expected = toString(Set(longId))
           assertDataFramesEqual(converted, expected)
         }
       }
       "are Integers" should {
         "cast them to String" in {
-          val converted = useConvertType(Set(integerId), Set.empty, Set.empty, targetType)
+          val converted = useTypeConverter(Set(integerId), Set.empty, Set.empty, targetType)
           val expected = toString(Set(integerId))
           assertDataFramesEqual(converted, expected)
         }
       }
       "are Floats" should {
         "cast them to String" in {
-          val converted = useConvertType(Set(floatId), Set.empty, Set.empty, targetType)
+          val converted = useTypeConverter(Set(floatId), Set.empty, Set.empty, targetType)
           val expected = toString(Set(floatId))
           assertDataFramesEqual(converted, expected)
         }
       }
       "are Bytes" should {
         "cast them to String" in {
-          val converted = useConvertType(Set(byteId), Set.empty, Set.empty, targetType)
+          val converted = useTypeConverter(Set(byteId), Set.empty, Set.empty, targetType)
           val expected = toString(Set(byteId))
           assertDataFramesEqual(converted, expected)
         }
       }
       "are Shorts" should {
         "cast them to String" in {
-          val converted = useConvertType(Set(shortId), Set.empty, Set.empty, targetType)
+          val converted = useTypeConverter(Set(shortId), Set.empty, Set.empty, targetType)
           val expected = toString(Set(shortId))
           assertDataFramesEqual(converted, expected)
         }
       }
       "are Decimals" should {
         "cast them to String" in {
-          val converted = useConvertType(Set(decimalId), Set.empty, Set.empty, targetType)
+          val converted = useTypeConverter(Set(decimalId), Set.empty, Set.empty, targetType)
           val expected = toString(Set(decimalId))
           assertDataFramesEqual(converted, expected)
         }
@@ -113,7 +113,7 @@ class ConvertTypeIntegSpec extends DeeplangIntegTestSupport {
       "are strings" should {
         "return values as Double" when {
           "strings represent numbers" in {
-            val converted = useConvertType(Set(numStrId), Set.empty, Set.empty, targetType)
+            val converted = useTypeConverter(Set(numStrId), Set.empty, Set.empty, targetType)
             val expected = toDouble(Set(numStrId))
             assertDataFramesEqual(converted, expected)
           }
@@ -121,7 +121,7 @@ class ConvertTypeIntegSpec extends DeeplangIntegTestSupport {
         "fail" when {
           "strings DO NOT represent numbers" in {
             a[SparkException] should be thrownBy {
-              useConvertType(Set(nonNumStrId), Set.empty, Set.empty, targetType)
+              useTypeConverter(Set(nonNumStrId), Set.empty, Set.empty, targetType)
                 .sparkDataFrame.collect()
             }
           }
@@ -129,56 +129,56 @@ class ConvertTypeIntegSpec extends DeeplangIntegTestSupport {
       }
       "are Boolean" should {
         "return 1.0s and 0.0s" in {
-          val converted = useConvertType(Set(booleanId), Set.empty, Set.empty, targetType)
+          val converted = useTypeConverter(Set(booleanId), Set.empty, Set.empty, targetType)
           val expected = toDouble(Set(booleanId))
           assertDataFramesEqual(converted, expected)
         }
       }
       "are Timestamp" should {
         "convert the value to millis and then to double" in {
-          val converted = useConvertType(Set(timestampId), Set.empty, Set.empty, targetType)
+          val converted = useTypeConverter(Set(timestampId), Set.empty, Set.empty, targetType)
           val expected = toDouble(Set(timestampId))
           assertDataFramesEqual(converted, expected)
         }
       }
       "are Longs" should {
         "cast them to Double" in {
-          val converted = useConvertType(Set(longId), Set.empty, Set.empty, targetType)
+          val converted = useTypeConverter(Set(longId), Set.empty, Set.empty, targetType)
           val expected = toDouble(Set(longId))
           assertDataFramesEqual(converted, expected)
         }
       }
       "are Integers" should {
         "cast them to Double" in {
-          val converted = useConvertType(Set(integerId), Set.empty, Set.empty, targetType)
+          val converted = useTypeConverter(Set(integerId), Set.empty, Set.empty, targetType)
           val expected = toDouble(Set(integerId))
           assertDataFramesEqual(converted, expected)
         }
       }
       "are Floats" should {
         "cast them to Double" in {
-          val converted = useConvertType(Set(floatId), Set.empty, Set.empty, targetType)
+          val converted = useTypeConverter(Set(floatId), Set.empty, Set.empty, targetType)
           val expected = toDouble(Set(floatId))
           assertDataFramesEqual(converted, expected)
         }
       }
       "are Bytes" should {
         "cast them to Double" in {
-          val converted = useConvertType(Set(byteId), Set.empty, Set.empty, targetType)
+          val converted = useTypeConverter(Set(byteId), Set.empty, Set.empty, targetType)
           val expected = toDouble(Set(byteId))
           assertDataFramesEqual(converted, expected)
         }
       }
       "are Shorts" should {
         "cast them to Double" in {
-          val converted = useConvertType(Set(shortId), Set.empty, Set.empty, targetType)
+          val converted = useTypeConverter(Set(shortId), Set.empty, Set.empty, targetType)
           val expected = toDouble(Set(shortId))
           assertDataFramesEqual(converted, expected)
         }
       }
       "are Decimals" should {
         "cast them to Double" in {
-          val converted = useConvertType(Set(decimalId), Set.empty, Set.empty, targetType)
+          val converted = useTypeConverter(Set(decimalId), Set.empty, Set.empty, targetType)
           val expected = toDouble(Set(decimalId))
           assertDataFramesEqual(converted, expected)
         }
@@ -196,7 +196,7 @@ class ConvertTypeIntegSpec extends DeeplangIntegTestSupport {
         StructField("col5", TimestampType)
       ))
 
-      val transformedSchema = new ConvertType()
+      val transformedSchema = new TypeConverter()
         .setSelectedColumns(
           MultipleColumnSelection(Vector(
             TypeColumnSelection(Set(ColumnType.numeric)),
@@ -220,7 +220,7 @@ class ConvertTypeIntegSpec extends DeeplangIntegTestSupport {
           StructField("col", DoubleType)
         ))
 
-        val operation = new ConvertType()
+        val operation = new TypeConverter()
           .setSelectedColumns(
             MultipleColumnSelection(Vector(
               NameColumnSelection(Set("non-existent"))
@@ -394,13 +394,13 @@ class ConvertTypeIntegSpec extends DeeplangIntegTestSupport {
 
   def toString(ids: Set[Int]): DataFrame = to(StringType, ids, None){ _.asString }
 
-  private def useConvertType(
+  private def useTypeConverter(
       ids: Set[Int] = Set(),
       names: Set[String] = Set(),
       types: Set[ColumnType] = Set(),
       targetType: DataType,
       dataFrame: DataFrame = inputDataFrame): DataFrame = {
-    val operation = new ConvertType()
+    val operation = new TypeConverter()
       .setSelectedColumns(
         MultipleColumnSelection(
           Vector(
