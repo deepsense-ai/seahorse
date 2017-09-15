@@ -10,14 +10,15 @@ import scala.util.{Failure, Success}
 import com.google.inject.Inject
 import com.google.inject.name.Named
 import org.apache.commons.lang3.StringUtils
-import spray.http.StatusCodes
+import spray.http.{MultipartFormData, StatusCodes}
+import spray.json.{JsonParser, ParserInput}
 import spray.routing.{ExceptionHandler, PathMatchers, Route}
 import spray.util.LoggingContext
 
-import io.deepsense.commons.auth.directives.{InsecureAuthDirectives, AuthDirectives, AbstractAuthDirectives}
+import io.deepsense.commons.auth.directives.{AbstractAuthDirectives, AuthDirectives, InsecureAuthDirectives}
 import io.deepsense.commons.auth.usercontext.TokenTranslator
 import io.deepsense.commons.models.Id
-import io.deepsense.commons.rest.{RestApiAbstractAuth, RestApi, RestComponent}
+import io.deepsense.commons.rest.{RestApiAbstractAuth, RestComponent}
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.graph.CyclicGraphException
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
@@ -102,6 +103,31 @@ abstract class WorkflowApi @Inject() (
                   workflowManagerProvider
                     .forContext(userContext)
                     .download(workflowId)
+                }
+              }
+            }
+          } ~
+          path("upload") {
+            post {
+              withUserContext { userContext =>
+                entity(as[MultipartFormData]) {
+                  def workflowFileContent(formData: MultipartFormData): String =
+                    formData.fields
+                      .filter(_.name.get == "workflowFile")
+                      .map(_.entity.asString)
+                      .foldLeft("")(_ + _)
+
+                  def readWorkflow(s: String): Workflow =
+                    workflowFormat.read(JsonParser(ParserInput(s)))
+
+                  formData => onComplete(
+                    workflowManagerProvider
+                      .forContext(userContext)
+                      .create(readWorkflow(workflowFileContent(formData)))) {
+                    case Success(workflowWithKnowledge) => complete(
+                      StatusCodes.Created, workflowWithKnowledge)
+                    case Failure(exception) => failWith(exception)
+                  }
                 }
               }
             }

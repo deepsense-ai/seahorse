@@ -10,7 +10,8 @@ import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
-import spray.http.StatusCodes
+import spray.http.HttpHeaders.RawHeader
+import spray.http._
 import spray.json._
 import spray.routing.Route
 
@@ -326,6 +327,43 @@ class WorkflowsApiSpec
       "no auth token was send (on MissingHeaderRejection)" in {
         Post(s"/$apiPrefix", workflowA) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
+        }
+        ()
+      }
+    }
+  }
+
+  "POST /workflows/upload" should {
+    "return created" when {
+      "workflow file is sent" in {
+        val (createdWorkflow, knowledge) = newWorkflowAndKnowledge
+
+        val workflowJsonString =
+          jsonFormat(Workflow.apply, "metadata", "workflow", "thirdPartyData")
+            .write(createdWorkflow).toString()
+
+        val multipartData = MultipartFormData(Map(
+          "workflowFile" -> BodyPart(HttpEntity(
+            ContentType(MediaTypes.`application/json`),
+            workflowJsonString)
+          )))
+
+        Post(s"/$apiPrefix/upload", multipartData) ~>
+          addHeaders(
+            RawHeader("X-Auth-Token", validAuthTokenTenantA)) ~> testRoute ~> check {
+          status should be (StatusCodes.Created)
+
+          // Checking if WorkflowWithKnowledge response is correct
+          // This should be done better, but JsonReader is not available for WorkflowWithKnowledge
+          val savedWorkflow = responseAs[Workflow]
+          savedWorkflow should have (
+            'metadata (createdWorkflow.metadata),
+            'graph (createdWorkflow.graph),
+            'additionalData (createdWorkflow.additionalData))
+
+          val resultJs = response.entity.asString.parseJson.asJsObject
+          resultJs.fields("knowledge") shouldBe knowledge.toJson.asJsObject.fields("resultsMap")
+          resultJs.fields should contain key "id"
         }
         ()
       }
