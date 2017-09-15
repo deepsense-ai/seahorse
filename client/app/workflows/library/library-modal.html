@@ -31,7 +31,9 @@
             <span class="add-folder__label">New</span>
           </button>
           <file-upload-section style="flex: 1;"></file-upload-section>
-          <recent-files-indicator></recent-files-indicator>
+          <recent-files-indicator
+            on-select="controller.onSelect"
+          ></recent-files-indicator>
         </div>
 
         <deepsense-loading-spinner-sm ng-if="controller.loading"></deepsense-loading-spinner-sm>

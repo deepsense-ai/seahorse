@@ -4,7 +4,9 @@ import RecentFilesController from './recent-files-indicator.controller.js';
 
 const RecentFilesIndicatorComponent = {
   controller: RecentFilesController,
-  bindings: {},
+  bindings: {
+    onSelect: '<'
+  },
   templateUrl: tpl
 };
 

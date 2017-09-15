@@ -36,6 +36,7 @@ function LibraryModalService($uibModal) {
         }
       }
     }).result.then((result) => {
+        closeUploadingFilesPopover();
         return result;
       })
       .catch(() => {
