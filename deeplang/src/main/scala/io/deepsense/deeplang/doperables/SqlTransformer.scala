@@ -16,14 +16,17 @@
 
 package io.deepsense.deeplang.doperables
 
-import org.apache.spark.sql
-import org.apache.spark.sql.SQLContext
+import org.apache.spark.ml.feature.{SQLTransformer => SparkSqlTransformer}
+import org.apache.spark.sql.types.StructType
+import org.apache.spark.sql.AnalysisException
 
+import io.deepsense.deeplang.doperations.exceptions.SqlExpressionException
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.params.{CodeSnippetLanguage, CodeSnippetParam, Param, StringParam}
 
 class SqlTransformer extends Transformer {
+
   val dataFrameId = StringParam(
     name = "dataframe id",
     description = "An identifier that can be used in " +
@@ -43,23 +46,23 @@ class SqlTransformer extends Transformer {
   override val params: Array[Param[_]] = declareParams(dataFrameId, expression)
 
   override private[deeplang] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
-    logger.debug(s"SqlExpression(expression = '$getExpression'," +
-      s" dataFrameId = '$getDataFrameId')")
+    DataFrame.fromSparkDataFrame(sparkSqlT.transform(df.sparkDataFrame))
+  }
 
-    val localSqlContext = ctx.sqlContext.newSession()
-    val localDataFrame = moveToSqlContext(df.sparkDataFrame, localSqlContext)
-
-    localDataFrame.registerTempTable(getDataFrameId)
+  override private[deeplang] def _transformSchema(schema: StructType): Option[StructType] = {
     try {
-      logger.debug(s"Table '$dataFrameId' registered. Executing the expression")
-      val sqlResult = moveToSqlContext(localSqlContext.sql(getExpression), ctx.sqlContext)
-      DataFrame.fromSparkDataFrame(sqlResult)
-    } finally {
-      logger.debug("Unregistering the temporary table" + getDataFrameId)
-      localSqlContext.dropTempTable(getDataFrameId)
+      Some(sparkSqlT.transformSchema(schema))
+    } catch {
+        case e: RuntimeException =>
+          throw SqlExpressionException(getExpression, e.getMessage);
+        case e: IllegalArgumentException =>
+          throw SqlExpressionException(getExpression, e.getMessage);
+        case e: AnalysisException =>
+          throw SqlExpressionException(getExpression, e.getMessage);
     }
   }
 
-  private def moveToSqlContext(df: sql.DataFrame, destinationCtx: SQLContext): sql.DataFrame =
-    destinationCtx.createDataFrame(df.rdd, df.schema)
+  private val sparkSqlTableName = "__THIS__"
+  private def sparkSqlT: SparkSqlTransformer = new SparkSqlTransformer()
+    .setStatement(getExpression.replace(getDataFrameId, sparkSqlTableName))
 }

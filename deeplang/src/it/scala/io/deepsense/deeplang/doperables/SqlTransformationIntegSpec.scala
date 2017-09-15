@@ -19,10 +19,10 @@ package io.deepsense.deeplang.doperables
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.analysis.NoSuchTableException
 import org.apache.spark.sql.types._
-
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.spark.wrappers.transformers.TransformerSerialization
+import io.deepsense.deeplang.doperations.exceptions.SqlExpressionException
 
 class SqlTransformationIntegSpec extends DeeplangIntegTestSupport with TransformerSerialization {
 
@@ -31,7 +31,7 @@ class SqlTransformationIntegSpec extends DeeplangIntegTestSupport with Transform
 
   val dataFrameId = "ThisIsAnId"
   val validExpression = s"select * from $dataFrameId"
-  val invalidExpresion = "foobar"
+  val invalidExpression = "foobar"
 
   val firstColumn = "firstColumn"
   val secondColumn = "secondColumn"
@@ -59,6 +59,32 @@ class SqlTransformationIntegSpec extends DeeplangIntegTestSupport with Transform
       assertDataFramesEqual(result, expectedDataFrame)
       assertTableUnregistered()
     }
+    "correctly infer output DataFrame schema" in {
+      val expression = s"select $firstColumn, $thirdColumn from $dataFrameId"
+      val result = executeSqlSchemaTransformation(expression, dataFrameId, schema)
+      val selectedColumnsIndices = Seq(0, 2)
+      val expectedSchema = StructType(selectedColumnsIndices.map(schema))
+      assertSchemaEqual(result, expectedSchema)
+      assertTableUnregistered()
+    }
+    "throw the appropriate exception when the table does not exist" in {
+      val expression = s"SELECT * FROM notexistanttable"
+      a [SqlExpressionException] should be thrownBy {
+        executeSqlSchemaTransformation(expression, dataFrameId, schema)
+      }
+    }
+    "throw the appropriate exception when trying to infer schema with invalid statement" in {
+      val expression = s"SELEC * FRMO $dataFrameId"
+      a [SqlExpressionException] should be thrownBy {
+        executeSqlSchemaTransformation(expression, dataFrameId, schema)
+      }
+    }
+    "throw the appropriate exception when no tables are used" in {
+      val expression = s"SELECT *"
+      a [SqlExpressionException] should be thrownBy {
+        executeSqlSchemaTransformation(expression, dataFrameId, schema)
+      }
+    }
     "unregister the input DataFrame after execution" in {
       val dataFrame = sampleDataFrame
       executeSqlTransformation(validExpression, dataFrameId, dataFrame)
@@ -67,7 +93,7 @@ class SqlTransformationIntegSpec extends DeeplangIntegTestSupport with Transform
     "unregister the input DataFrame if execution failed" in {
       val dataFrame = sampleDataFrame
       a [RuntimeException] should be thrownBy {
-        executeSqlTransformation(invalidExpresion, dataFrameId, dataFrame)
+        executeSqlTransformation(invalidExpression, dataFrameId, dataFrame)
       }
       assertTableUnregistered()
     }
@@ -88,6 +114,17 @@ class SqlTransformationIntegSpec extends DeeplangIntegTestSupport with Transform
       .setExpression(expression)
       .setDataFrameId(dataFrameId)
     transformer.applyTransformationAndSerialization(tempDir, input)
+  }
+
+  def executeSqlSchemaTransformation(
+    expression: String,
+    dataFrameId: String,
+    input: StructType): StructType = {
+
+    val transformer = new SqlTransformer()
+      .setExpression(expression)
+      .setDataFrameId(dataFrameId)
+    transformer._transformSchema(input).getOrElse(new StructType())
   }
 
   def sampleDataFrame: DataFrame = createDataFrame(data, schema)
