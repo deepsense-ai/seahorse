@@ -11,19 +11,22 @@ import scala.util.{Failure, Success}
 
 import com.google.inject.Inject
 import com.google.inject.name.Named
+import org.apache.commons.lang3.StringUtils
 import spray.http.StatusCodes
 import spray.routing.{Directives, ExceptionHandler, MissingHeaderRejection, PathMatchers, RejectionHandler, ValidationRejection}
 import spray.util.LoggingContext
 
+import io.deepsense.deeplang.InferContext
 import io.deepsense.experimentmanager.app.ExperimentManagerProvider
 import io.deepsense.experimentmanager.app.exceptions.ExperimentNotFoundException
 import io.deepsense.experimentmanager.app.models.{Experiment, Id, InputExperiment}
 import io.deepsense.experimentmanager.app.rest.actions.Action
-import io.deepsense.experimentmanager.app.rest.json.RestJsonProtocol._
+import io.deepsense.experimentmanager.app.rest.json.RestJsonProtocol
 import io.deepsense.experimentmanager.auth.directives.AuthDirectives
 import io.deepsense.experimentmanager.auth.exceptions.{NoRoleException, ResourceAccessDeniedException}
 import io.deepsense.experimentmanager.auth.usercontext.{InvalidTokenException, TokenTranslator}
 import io.deepsense.experimentmanager.rest.RestComponent
+import io.deepsense.graphjson.GraphJsonProtocol.GraphReader
 
 /**
  * Exposes Experiment Manager through a REST API.
@@ -31,11 +34,16 @@ import io.deepsense.experimentmanager.rest.RestComponent
 class RestApi @Inject() (
     val tokenTranslator: TokenTranslator,
     experimentManagerProvider: ExperimentManagerProvider,
-    @Named("experiments.api.prefix") apiPrefix: String)
+    @Named("experiments.api.prefix") apiPrefix: String,
+    override val graphReader: GraphReader,
+    override val inferContext: InferContext)
     (implicit ec: ExecutionContext)
-  extends Directives with RestComponent with AuthDirectives {
+  extends Directives
+  with RestComponent
+  with AuthDirectives
+  with RestJsonProtocol {
 
-  assert(apiPrefix != null)
+  assert(StringUtils.isNoneBlank(apiPrefix))
   private val pathPrefixMatcher = PathMatchers.separateOnSlashes(apiPrefix)
 
   def route = {

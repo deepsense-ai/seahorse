@@ -8,8 +8,8 @@ package io.deepsense.experimentmanager.app
 
 import scala.concurrent.Future
 
-import io.deepsense.experimentmanager.app.models.Graph.Node
 import io.deepsense.experimentmanager.app.models.{Experiment, InputExperiment}
+import io.deepsense.graph.Node
 
 /**
  * Experiment Manager's API

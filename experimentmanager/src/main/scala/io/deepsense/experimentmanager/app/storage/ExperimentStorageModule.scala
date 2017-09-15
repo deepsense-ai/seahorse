@@ -10,6 +10,6 @@ import com.google.inject.AbstractModule
 
 class ExperimentStorageModule extends AbstractModule {
   override def configure(): Unit = {
-    bind(classOf[ExperimentStorage]).to(classOf[MockedExperimentStorage]).asEagerSingleton()
+    bind(classOf[ExperimentStorage]).to(classOf[InMemoryExperimentStorage]).asEagerSingleton()
   }
 }

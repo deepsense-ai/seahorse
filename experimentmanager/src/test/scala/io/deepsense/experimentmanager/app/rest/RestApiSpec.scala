@@ -16,19 +16,28 @@ import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 import spray.http.StatusCodes
 
+import io.deepsense.deeplang.InferContext
+import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
+import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.experimentmanager.app.exceptions.ExperimentNotFoundException
 import io.deepsense.experimentmanager.app.models.Experiment.Status
-import io.deepsense.experimentmanager.app.models.Graph.Node
-import io.deepsense.experimentmanager.app.models.{Experiment, Graph, Id, InputExperiment}
+import io.deepsense.experimentmanager.app.models.{Experiment, Id, InputExperiment}
 import io.deepsense.experimentmanager.app.rest.actions.{AbortAction, LaunchAction}
-import io.deepsense.experimentmanager.app.rest.json.RestJsonProtocol._
+import io.deepsense.experimentmanager.app.rest.json.RestJsonProtocol
 import io.deepsense.experimentmanager.app.{ExperimentManager, ExperimentManagerProvider}
 import io.deepsense.experimentmanager.auth.exceptions.{NoRoleException, ResourceAccessDeniedException}
 import io.deepsense.experimentmanager.auth.usercontext.{CannotGetUserException, TokenTranslator, UserContext}
 import io.deepsense.experimentmanager.{StandardSpec, UnitTestSupport}
+import io.deepsense.graph.{Graph, Node}
+import io.deepsense.graphjson.GraphJsonProtocol.GraphReader
 
-class RestApiSpec extends StandardSpec with UnitTestSupport {
+class RestApiSpec extends StandardSpec with UnitTestSupport with RestJsonProtocol {
 
+  val catalog = mock[DOperationsCatalog]
+  val dOperableCatalog = mock[DOperableCatalog]
+  override val inferContext: InferContext = mock[InferContext]
+  when(inferContext.dOperableCatalog).thenReturn(dOperableCatalog)
+  override val graphReader: GraphReader = new GraphReader(catalog)
   case class LaunchActionWrapper(launch: LaunchAction)
   case class AbortActionWrapper(abort: AbortAction)
   implicit val launchWrapperFormat = jsonFormat1(LaunchActionWrapper.apply)
@@ -59,12 +68,14 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
   def experimentOfTenantA = Experiment(
     experimentAId,
     tenantAId,
-    "Experiment of Tenant A")
+    "Experiment of Tenant A",
+    Graph())
 
   def experimentOfTenantB = Experiment(
     experimentBId,
     tenantBId,
-    "Experiment of Tenant B")
+    "Experiment of Tenant B",
+    Graph())
 
   def apiPrefix: String = "v1/experiments"
 
@@ -94,7 +105,7 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
       }
     })
 
-    new RestApi(tokenTranslator, experimentManagerProvider, apiPrefix).route
+    new RestApi(tokenTranslator, experimentManagerProvider, apiPrefix, graphReader, inferContext).route
   }
 
   // TODO Test errors in Json
@@ -258,7 +269,11 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
 
   s"POST /experiments/:id/action (with LaunchAction)" should {
     "return Unauthorized" when {
-      def launchAction = LaunchActionWrapper(LaunchAction(Some(List(experimentOfTenantA.id))))
+      def launchAction = LaunchActionWrapper(
+        LaunchAction(
+          Some(
+            List(
+              Node.Id(experimentOfTenantA.id.value)))))
       "invalid auth token was send (when InvalidTokenException occures)" in {
         Post(s"/$apiPrefix/${experimentOfTenantA.id}/action", launchAction) ~>
           addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
@@ -364,8 +379,8 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
           experimentOfTenantA.id,
           tenantAId,
           "New Name",
-          "New Desc",
-          Graph())
+          Graph(),
+          "New Desc")
 
         Put(s"/$apiPrefix/${experimentOfTenantA.id}", newExperiment) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
@@ -386,8 +401,8 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
           UUID.randomUUID(),
           tenantAId,
           "New Name",
-          "New Desc",
-          Graph())
+          Graph(),
+          "New Desc")
 
         Put(s"/$apiPrefix/${newExperiment.id}", newExperiment) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
@@ -400,8 +415,8 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
           experimentOfTenantB.id,
           tenantBId,
           "New Name",
-          "New Desc",
-          Graph())
+          Graph(),
+          "New Desc")
 
         Put(s"/$apiPrefix/${experimentOfTenantB.id}", newExperiment) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
@@ -410,7 +425,7 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
       }
     }
     "return Unauthorized" when {
-      val newExperiment = Experiment(UUID.randomUUID(), "asd", "New Name", "New Desc", Graph())
+      val newExperiment = Experiment(UUID.randomUUID(), "asd", "New Name", Graph(), "New Desc")
       "invalid auth token was send (when InvalidTokenException occures)" in {
         Put(s"/$apiPrefix/" + newExperiment.id, newExperiment) ~>
           addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
@@ -430,7 +445,7 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
       }
     }
     "return BadRequest" when {
-      val newExperiment = Experiment(UUID.randomUUID(), "asd", "New Name", "New Desc", Graph())
+      val newExperiment = Experiment(UUID.randomUUID(), "asd", "New Name", Graph(), "New Desc")
       "Experiment's Id from Json does not match Id from request's URL" in {
         Put(s"/$apiPrefix/" + newExperiment.id, newExperiment) ~>
           addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
@@ -473,8 +488,8 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
               oe.id,
               oe.tenantId,
               experiment.name,
-              experiment. description,
-              experiment.graph)
+              experiment.graph,
+              experiment.description)
             case Some(oe) if oe.tenantId != uc.tenantId =>
               throw new ResourceAccessDeniedException(uc, oe)
             case None => throw new ExperimentNotFoundException(experiment.id)
@@ -501,7 +516,7 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
             case None => false
           })
         } else {
-          Future.failed(new IllegalStateException("This should never happen in this mock"))
+          throw new IllegalStateException("This should never happen in this mock")
         }
       })
     }
@@ -554,8 +569,8 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
             UUID.randomUUID(),
             uc.tenantId,
             inputExperiment.name,
-            inputExperiment.description,
-            inputExperiment.graph)
+            inputExperiment.graph,
+            inputExperiment.description)
           Future.successful(experiment)
         } else {
           Future.failed(new IllegalStateException("This should never happen in this mock"))

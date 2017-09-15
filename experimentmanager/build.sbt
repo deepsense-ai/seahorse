@@ -15,7 +15,7 @@ scalacOptions := Seq(
 
 Revolver.settings
 
-inConfig(Test) { 
+inConfig(Test) {
   Seq(
     testOptions := Seq(
       Tests.Filter(unitFilter),
@@ -53,6 +53,7 @@ libraryDependencies ++= {
     "io.spray"                     %% "spray-routing"       % sprayV,
     "io.spray"                     %% "spray-json"          % "1.3.1",
     "com.typesafe.akka"            %% "akka-actor"          % akkaV,
+    "org.apache.commons"           %  "commons-lang3"       % "3.3.+",
     "io.spray"                     %% "spray-testkit"       % sprayV     % "test",
     "com.typesafe.akka"            %% "akka-testkit"        % akkaV      % "test",
     "org.mockito"                  %  "mockito-core"        % "1.10.19"  % "test",
