@@ -19,7 +19,8 @@ The Python function that will be executed must:
 
 * take exactly one argument of type `DataFrame`,
 
-* return a `DataFrame`.
+* return a `DataFrame` (or data which can be automatically converted to Spark `DataFrame`:
+pandas.DataFrame, single value, tuple/list of single values, tuple/list of tuples/lists of single values).
 
 #### Example Python code:
 {% highlight python %}
