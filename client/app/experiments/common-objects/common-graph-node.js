@@ -58,5 +58,6 @@ GraphNode.prototype.serialize = function serialize() {
 };
 
 GraphNode.CLICK = 'GraphNode.CLICK';
+GraphNode.MOVE = 'GraphNode.MOVE';
 
 module.exports = GraphNode;

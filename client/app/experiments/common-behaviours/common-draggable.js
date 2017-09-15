@@ -6,13 +6,20 @@
 
 'use strict';
 
+var GraphNode = require('../common-objects/common-graph-node.js');
+
 /* @ngInject */
 function DraggableDirective() {
   return {
     restrict: 'A',
     link: function (scope, element, attrs) {
       jsPlumb.draggable(element, {
-        containment: 'parent'
+        containment: 'parent',
+        stop: () => {
+          scope.node.x = parseInt(element.css('left'), 10);
+          scope.node.y = parseInt(element.css('top'), 10);
+          scope.$emit(GraphNode.MOVE, {});
+        }
       });
     }
   };
