@@ -24,10 +24,11 @@ import org.apache.spark.sql.types.StructType
 
 import io.deepsense.commons.types.SparkConversions
 import io.deepsense.deeplang.DOperation.Id
-import io.deepsense.deeplang.doperables.dataframe.{DataFrameColumnsGetter, DataFrame}
+import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
 import io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException
-import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params._
+import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
 import io.deepsense.deeplang.params.selections.{ColumnSelection, NameColumnSelection, SingleColumnSelection}
 import io.deepsense.deeplang.{DKnowledge, DOperation2To1, ExecutionContext}
 
@@ -41,6 +42,14 @@ case class Join()
   override val name = "Join"
   override val description: String =
     "Joins two DataFrames to a DataFrame"
+
+  val joinType = ChoiceParam[JoinTypeChoice.Option](
+    name = "join type",
+    description = "Type of join operation.")
+  setDefault(joinType, JoinTypeChoice.Inner())
+
+  def getJoinType: JoinTypeChoice.Option = $(joinType)
+  def setJoinType(value: JoinTypeChoice.Option): this.type = set(joinType, value)
 
   val leftPrefix = PrefixBasedColumnCreatorParam(
     name = "left prefix",
@@ -65,7 +74,7 @@ case class Join()
   def getJoinColumns: Seq[ColumnPair] = $(joinColumns)
   def setJoinColumns(value: Seq[ColumnPair]): this.type = set(joinColumns, value)
 
-  val params = declareParams(leftPrefix, rightPrefix, joinColumns)
+  val params = declareParams(joinType, leftPrefix, rightPrefix, joinColumns)
 
   override protected def _execute(context: ExecutionContext)
       (ldf: DataFrame, rdf: DataFrame): DataFrame = {
@@ -73,7 +82,7 @@ case class Join()
     logger.debug("Execution of " + this.getClass.getSimpleName + " starts")
 
     validateSchemas(ldf.sparkDataFrame.schema, rdf.sparkDataFrame.schema)
-
+    val joinType = getJoinType
     val columnNames = RenamedColumnNames(ldf.sparkDataFrame.columns, rdf.sparkDataFrame.columns)
     val leftColumnNames = getSelectedJoinColumsNames(
         ldf.sparkDataFrame.schema, _.getLeftColumn)
@@ -102,8 +111,8 @@ case class Join()
     logger.debug("Prepare joining condition")
     val joinCondition = prepareJoiningCondition(renamedJoinColumnsPairs, lsdf, rsdf)
 
-    logger.debug("Joining two DataFrames")
-    val joinedDataFrame = lsdf.join(rsdf, joinCondition, Type.leftOuter)
+    logger.debug(s"$joinType Join of two DataFrames")
+    val joinedDataFrame = lsdf.join(rsdf, joinCondition, joinType.toSpark)
 
     logger.debug("Removing additional columns in right DataFrame")
     val noDuplicatesSparkDF = sparkDFWithRemovedDuplicatedColumns(
@@ -186,6 +195,7 @@ case class Join()
     getJoinColumns.map(columnPair =>
       DataFrameColumnsGetter.getColumnName(schema, selector(columnPair)))
   }
+
   private def validateSchemas(
       leftSchema: StructType,
       rightSchema: StructType): Unit = {
@@ -281,6 +291,7 @@ case class Join()
 }
 
 object Join {
+
   object Type {
     val (inner, outer, leftOuter, rightOuter, leftSemi) =
       ("inner", "outer", "left_outer", "right_outer", "leftsemi")
@@ -306,4 +317,28 @@ object Join {
 
     val params = declareParams(leftColumn, rightColumn)
   }
+
+}
+
+
+object JoinTypeChoice {
+
+  sealed abstract class Option(override val name: String) extends Choice {
+
+    val toSpark: String
+    override val params: Array[Param[_]] = declareParams()
+
+    override val choiceOrder: List[Class[_ <: Choice]] = List(
+      classOf[Inner],
+      classOf[Outer],
+      classOf[LeftOuter],
+      classOf[RightOuter]
+    )
+
+  }
+
+  case class Inner() extends Option("Inner") { override val toSpark = "inner"}
+  case class Outer() extends Option("Outer") { override val toSpark = "outer"}
+  case class LeftOuter() extends Option("left outer") { override val toSpark = "left_outer"}
+  case class RightOuter() extends Option("right outer") { override val toSpark = "right_outer"}
 }

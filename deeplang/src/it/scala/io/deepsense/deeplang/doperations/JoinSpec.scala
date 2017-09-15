@@ -27,10 +27,24 @@ import io.deepsense.deeplang.params.selections.{IndexSingleColumnSelection, Name
 
 class JoinSpec extends DeeplangIntegTestSupport {
 
+  val defaultJoinType = JoinTypeChoice.LeftOuter()
   val leftTablePrefix = Some("leftTable_")
   val rightTablePrefix = Some("rightTable_")
 
   "Join operation" should {
+    // Smoke test. Each row from both tables is matched so the output is the same for all types.
+    "execute for all types" in {
+        val (ldf, rdf, expected, joinColumns) = oneColumnFixture()
+        val joinTypes =
+          joinWithMultipleColumnSelection(joinColumns, Set.empty, joinType = defaultJoinType)
+            .joinType.choiceInstances
+
+        for (joinType <- joinTypes){
+          val join = joinWithMultipleColumnSelection(joinColumns, Set.empty, joinType = joinType)
+          val joinDF = executeOperation(join, ldf, rdf)
+          assertDataFramesEqual(joinDF, expected, checkRowOrder = false)
+        }
+      }
     "LEFT JOIN two DataFrames" when {
       "based upon a single column selection by name" in {
         val (ldf, rdf, expected, joinColumns) = oneColumnFixture()
@@ -76,7 +90,8 @@ class JoinSpec extends DeeplangIntegTestSupport {
           rightJoinColumns,
           Vector.empty,
           leftPrefix = None,
-          rightPrefix = None)
+          rightPrefix = None,
+          joinType = defaultJoinType)
 
         val joinDF = executeOperation(join, ldf, rdf)
 
@@ -92,7 +107,8 @@ class JoinSpec extends DeeplangIntegTestSupport {
           Vector.empty,
           rightJoinIndices,
           leftPrefix = None,
-          rightPrefix = None)
+          rightPrefix = None,
+          joinType = defaultJoinType)
 
         val joinDF = executeOperation(join, ldf, rdf)
 
@@ -235,7 +251,8 @@ class JoinSpec extends DeeplangIntegTestSupport {
           rightJoinColumns,
           Vector.empty,
           leftPrefix = None,
-          rightPrefix = None)
+          rightPrefix = None,
+          joinType = defaultJoinType)
 
         val joinDF = inferSchema(join, ldf, rdf)
 
@@ -251,7 +268,8 @@ class JoinSpec extends DeeplangIntegTestSupport {
           Vector.empty,
           rightJoinIndices,
           leftPrefix = None,
-          rightPrefix = None)
+          rightPrefix = None,
+          joinType = defaultJoinType)
 
         val joinDF = inferSchema(join, ldf, rdf)
 
@@ -909,7 +927,8 @@ class JoinSpec extends DeeplangIntegTestSupport {
       namesRight: Vector[String],
       idsRight: Vector[Int],
       leftPrefix: Option[String],
-      rightPrefix: Option[String]): Join = {
+      rightPrefix: Option[String],
+      joinType: JoinTypeChoice.Option): Join = {
     val operation = new Join
 
     val paramsByName: Seq[Join.ColumnPair] =
@@ -925,6 +944,7 @@ class JoinSpec extends DeeplangIntegTestSupport {
         .setRightColumn(IndexSingleColumnSelection(rightColId))
     })
 
+    operation.setJoinType(joinType)
     operation.setJoinColumns(paramsByName ++ paramsById)
     leftPrefix.foreach(p => operation.setLeftPrefix(p))
     rightPrefix.foreach(p => operation.setRightPrefix(p))
@@ -933,12 +953,15 @@ class JoinSpec extends DeeplangIntegTestSupport {
   }
 
   private def joinWithMultipleColumnSelection(
-      names: Set[String], ids: Set[Int], leftPrefix: Option[String] = leftTablePrefix,
-      rightPrefix: Option[String] = rightTablePrefix): Join = {
+      names: Set[String], ids: Set[Int],
+      leftPrefix: Option[String] = leftTablePrefix,
+      rightPrefix: Option[String] = rightTablePrefix,
+      joinType: JoinTypeChoice.Option = defaultJoinType): Join = {
     val namesVector = names.toVector
     val idsVector = ids.toVector
     joinWithMultipleColumnSelection(
-      namesVector, idsVector, namesVector, idsVector, leftPrefix, rightPrefix)
+      namesVector, idsVector, namesVector, idsVector,
+      leftPrefix, rightPrefix, joinType)
   }
 
   private def appendPrefix(schema: Seq[StructField], prefix: Option[String]) = {
