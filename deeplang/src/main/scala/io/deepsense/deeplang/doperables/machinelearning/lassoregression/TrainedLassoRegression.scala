@@ -14,33 +14,32 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperables.machinelearning.ridgeregression
+package io.deepsense.deeplang.doperables.machinelearning.lassoregression
 
 import org.apache.spark.mllib.feature.StandardScalerModel
 import org.apache.spark.mllib.linalg.Vector
-import org.apache.spark.mllib.regression.{GeneralizedLinearModel, RidgeRegressionModel}
+import org.apache.spark.mllib.regression.{GeneralizedLinearModel, LassoModel}
 import org.apache.spark.rdd.RDD
 
-import io.deepsense.deeplang.doperables.ColumnTypesPredicates.Predicate
+import io.deepsense.deeplang.doperables.ColumnTypesPredicates._
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.machinelearning.{TrainedLinearRegression, LinearRegressionParameters}
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
 
-case class TrainedRidgeRegression(
+case class TrainedLassoRegression(
     modelParameters: LinearRegressionParameters,
-    model: RidgeRegressionModel,
+    model: LassoModel,
     featureColumns: Seq[String],
     targetColumn: String,
     scaler: StandardScalerModel)
-  extends RidgeRegression
+  extends LassoRegression
   with TrainedLinearRegression
   with Scorable
-  with VectorScoring
-  with DOperableSaver {
+  with VectorScoring {
 
   def this() = this(null, null, null, null, null)
 
-  def toInferrable: DOperable = new TrainedRidgeRegression()
+  def toInferrable: DOperable = new TrainedLassoRegression()
 
   private var physicalPath: Option[String] = None
 
@@ -55,8 +54,7 @@ case class TrainedRidgeRegression(
   override def predict(features: RDD[Vector]): RDD[Double] = preparedModel.predict(features)
 
   override def report(executionContext: ExecutionContext): Report = {
-    generateTrainedRegressionReport(
-      modelParameters, model, featureColumns, targetColumn)
+    generateTrainedRegressionReport(modelParameters, model, featureColumns, targetColumn)
   }
 
   override def save(executionContext: ExecutionContext)(path: String): Unit = ???

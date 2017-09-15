@@ -17,15 +17,15 @@
 package io.deepsense.deeplang.doperables
 
 import org.apache.spark.mllib.linalg.{Vector => LinAlgVector}
-import org.apache.spark.mllib.regression.RidgeRegressionModel
+import org.apache.spark.mllib.regression.LassoModel
 
 import io.deepsense.deeplang.DOperable
 import io.deepsense.deeplang.doperables.machinelearning.LinearRegressionParameters
-import io.deepsense.deeplang.doperables.machinelearning.ridgeregression.TrainedRidgeRegression
+import io.deepsense.deeplang.doperables.machinelearning.lassoregression.TrainedLassoRegression
 
-class TrainedRidgeRegressionSpec extends BaseTrainedLinearRegressionSpec {
+class TrainedLassoRegressionSpec extends BaseTrainedLinearRegressionSpec {
 
-  override def scorableName: String = "TrainedRidgeRegression"
+  override def scorableName: String = "TrainedLassoRegression"
 
   override def createRegression(
       params: LinearRegressionParameters,
@@ -34,9 +34,10 @@ class TrainedRidgeRegressionSpec extends BaseTrainedLinearRegressionSpec {
       weights: LinAlgVector,
       intercept: Double): DOperable = {
 
-    val model = new RidgeRegressionModel(weights, intercept)
-    TrainedRidgeRegression(params, model, featureColumns, targetColumn, null)
+    val model = new LassoModel(weights, intercept)
+    TrainedLassoRegression(params, model, featureColumns, targetColumn, null)
   }
 
-  override def scorable: Scorable = new TrainedRidgeRegression()
+  override def scorable: Scorable = new TrainedLassoRegression()
+
 }

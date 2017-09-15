@@ -21,14 +21,15 @@ import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.file.File
-import io.deepsense.deeplang.doperables.machinelearning.gradientboostedtrees.regression.{UntrainedGradientBoostedTreesRegression, TrainedGradientBoostedTreesRegression}
-import io.deepsense.deeplang.doperables.machinelearning.logisticregression.{UntrainedLogisticRegression, TrainedLogisticRegression}
-import io.deepsense.deeplang.doperables.machinelearning.randomforest.classification.{UntrainedRandomForestClassification, TrainedRandomForestClassification}
-import io.deepsense.deeplang.doperables.machinelearning.randomforest.regression.{UntrainedRandomForestRegression, TrainedRandomForestRegression}
-import io.deepsense.deeplang.doperables.machinelearning.ridgeregression.{UntrainedRidgeRegression, TrainedRidgeRegression}
-import io.deepsense.deeplang.doperables.machinelearning.svm.classification.{UntrainedSupportVectorMachineClassifier, TrainedSupportVectorMachineClassifier}
-import io.deepsense.deeplang.doperations._
+import io.deepsense.deeplang.doperables.machinelearning.gradientboostedtrees.regression.{TrainedGradientBoostedTreesRegression, UntrainedGradientBoostedTreesRegression}
+import io.deepsense.deeplang.doperables.machinelearning.lassoregression.{TrainedLassoRegression, UntrainedLassoRegression}
+import io.deepsense.deeplang.doperables.machinelearning.logisticregression.{TrainedLogisticRegression, UntrainedLogisticRegression}
+import io.deepsense.deeplang.doperables.machinelearning.randomforest.classification.{TrainedRandomForestClassification, UntrainedRandomForestClassification}
+import io.deepsense.deeplang.doperables.machinelearning.randomforest.regression.{TrainedRandomForestRegression, UntrainedRandomForestRegression}
+import io.deepsense.deeplang.doperables.machinelearning.ridgeregression.{TrainedRidgeRegression, UntrainedRidgeRegression}
+import io.deepsense.deeplang.doperables.machinelearning.svm.classification.{TrainedSupportVectorMachineClassifier, UntrainedSupportVectorMachineClassifier}
 import io.deepsense.deeplang.doperables.transformations.MathematicalTransformation
+import io.deepsense.deeplang.doperations._
 
 /**
  * Object used to register all desired DOperables and DOperations.
@@ -45,6 +46,9 @@ object CatalogRecorder {
 
     catalog.registerDOperable[UntrainedRidgeRegression]()
     catalog.registerDOperable[TrainedRidgeRegression]()
+
+    catalog.registerDOperable[UntrainedLassoRegression]()
+    catalog.registerDOperable[TrainedLassoRegression]()
 
     catalog.registerDOperable[TrainedGradientBoostedTreesRegression]()
     catalog.registerDOperable[UntrainedGradientBoostedTreesRegression]()
@@ -118,6 +122,11 @@ object CatalogRecorder {
     catalog.registerDOperation[CreateRidgeRegression](
       DOperationCategories.ML.Regression,
       "Creates an untrained ridge regression model"
+    )
+
+    catalog.registerDOperation[CreateLassoRegression](
+      DOperationCategories.ML.Regression,
+      "Creates an untrained lasso regression model"
     )
 
     catalog.registerDOperation[TrainRegressor](

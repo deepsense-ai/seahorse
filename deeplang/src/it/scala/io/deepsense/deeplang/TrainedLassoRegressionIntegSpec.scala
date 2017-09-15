@@ -14,24 +14,25 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperables
+package io.deepsense.deeplang
 
-import org.apache.spark.mllib.regression.{GeneralizedLinearModel, RidgeRegressionModel}
+import org.apache.spark.mllib.regression.{GeneralizedLinearModel, LassoModel}
 
 import io.deepsense.deeplang.doperables.machinelearning.LinearRegressionParameters
-import io.deepsense.deeplang.doperables.machinelearning.ridgeregression.TrainedRidgeRegression
+import io.deepsense.deeplang.doperables.machinelearning.lassoregression.TrainedLassoRegression
+import io.deepsense.deeplang.doperables.{BaseTrainedLinearRegressionIntegSpec, Scorable}
 
-class TrainedRidgeRegressionIntegSpec
-  extends BaseTrainedLinearRegressionIntegSpec[RidgeRegressionModel] {
+class TrainedLassoRegressionIntegSpec
+  extends BaseTrainedLinearRegressionIntegSpec[LassoModel] {
 
-  override def regressionName: String = "TrainedRidgeRegression"
+  override def regressionName: String = "TrainedLassoRegression"
 
-  override val modelType: Class[RidgeRegressionModel] = classOf[RidgeRegressionModel]
+  override val modelType: Class[LassoModel] = classOf[LassoModel]
 
   override val regressionConstructor: (GeneralizedLinearModel, Seq[String], String) => Scorable =
-    (model, featureColumns, targetColumn) => TrainedRidgeRegression(
+    (model, featureColumns, targetColumn) => TrainedLassoRegression(
       mock[LinearRegressionParameters],
-      model.asInstanceOf[RidgeRegressionModel],
+      model.asInstanceOf[LassoModel],
       featureColumns,
       targetColumn,
       createScalerMock())

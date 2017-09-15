@@ -16,28 +16,28 @@
 
 package io.deepsense.deeplang.doperables
 
-import org.apache.spark.mllib.regression.{GeneralizedLinearAlgorithm, RidgeRegressionModel, RidgeRegressionWithSGD}
+import org.apache.spark.mllib.regression.{GeneralizedLinearAlgorithm, LassoModel, LassoWithSGD}
 import org.scalactic.EqualityPolicy.Spread
 
 import io.deepsense.deeplang.doperables.machinelearning.LinearRegressionParameters
-import io.deepsense.deeplang.doperables.machinelearning.ridgeregression.{TrainedRidgeRegression, UntrainedRidgeRegression}
+import io.deepsense.deeplang.doperables.machinelearning.lassoregression.{TrainedLassoRegression, UntrainedLassoRegression}
 
-class UntrainedRidgeRegressionIntegSpec extends UntrainedRegressionIntegSpec[RidgeRegressionModel] {
+class UntrainedLassoRegressionIntegSpec extends UntrainedRegressionIntegSpec[LassoModel] {
 
-  val testDataDir: String = testsDir + "/UntrainedRidgeRegressionIntegSpec"
+  val testDataDir: String = testsDir + "/UntrainedLassoRegressionIntegSpec"
 
-  override def regressionName: String = "UntrainedRidgeRegression"
+  override def regressionName: String = "UntrainedLassoRegression"
 
-  override def modelType: Class[RidgeRegressionModel] = classOf[RidgeRegressionModel]
+  override def modelType: Class[LassoModel] = classOf[LassoModel]
 
   override def constructUntrainedModel(
-      untrainedModelMock: GeneralizedLinearAlgorithm[RidgeRegressionModel]): Trainable =
-    UntrainedRidgeRegression(
-      () => untrainedModelMock.asInstanceOf[RidgeRegressionWithSGD],
+      untrainedModelMock: GeneralizedLinearAlgorithm[LassoModel]): Trainable =
+    UntrainedLassoRegression(
+      () => untrainedModelMock.asInstanceOf[LassoWithSGD],
       mock[LinearRegressionParameters])
 
-  override def mockUntrainedModel(): GeneralizedLinearAlgorithm[RidgeRegressionModel] =
-    mock[RidgeRegressionWithSGD]
+  override def mockUntrainedModel(): GeneralizedLinearAlgorithm[LassoModel] =
+    mock[LassoWithSGD]
 
   override val featuresValues: Seq[Spread[Double]] = Seq(
     Spread(0.0, 0.0),
@@ -49,11 +49,11 @@ class UntrainedRidgeRegressionIntegSpec extends UntrainedRegressionIntegSpec[Rid
   )
 
   override def validateResult(
-      mockTrainedModel: RidgeRegressionModel,
+      mockTrainedModel: LassoModel,
       result: Scorable,
       targetColumnName: String): Registration = {
 
-    val castedResult = result.asInstanceOf[TrainedRidgeRegression]
+    val castedResult = result.asInstanceOf[TrainedLassoRegression]
     castedResult.model shouldBe mockTrainedModel
     castedResult.featureColumns shouldBe Seq("column1", "column0")
     castedResult.targetColumn shouldBe targetColumnName

@@ -19,19 +19,25 @@ package io.deepsense.deeplang.doperables
 import org.scalatest.BeforeAndAfter
 
 import io.deepsense.commons.utils.Logging
-import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.file.File
-import io.deepsense.deeplang.doperables.machinelearning.ridgeregression.{UntrainedRidgeRegression, TrainedRidgeRegression}
 import io.deepsense.deeplang.doperations.FileToDataFrame.CSV
 import io.deepsense.deeplang.doperations._
+import io.deepsense.deeplang.{DOperable, DOperation, DeeplangIntegTestSupport}
 
-class TrainedRidgeRegressionTrainScoreIntegTest
+abstract class BaseTrainedLinearRegressionTrainScoreIntegSpec
+  [CreateRegressionType <: DOperation,
+    UntrainedRegressionType <: DOperable,
+    TrainedRegressionType <: DOperable with Scorable]
   extends DeeplangIntegTestSupport
   with Logging
   with BeforeAndAfter {
 
   val fileName = testsDir + "/almost_linear_function.csv"
+
+  def regressionName: String
+
+  def createRegressionOperation: CreateRegressionType
 
   private def deleteDataFile(): Unit =
     executionContext.fsClient.delete(fileName)
@@ -54,14 +60,14 @@ class TrainedRidgeRegressionTrainScoreIntegTest
     deleteDataFile()
   }
 
-  "TrainedRidgeRegression" should {
+  regressionName should {
     "give satisfactory results" in {
       logger.debug("Loading file...")
       val file = loadFile()
       logger.debug("Converting to DataFrame and splitting...")
       val (trainingData, scoreData) = split(fileToDataFrame(file))
       logger.debug("Training regression...")
-      val trained = trainRidgeRegression(trainingData)
+      val trained = trainRegression(trainingData)
       logger.debug("Scoring...")
       val scoredDataFrame = scoreDataFrame(trained, scoreData)
       logger.debug("After score:")
@@ -93,19 +99,19 @@ class TrainedRidgeRegressionTrainScoreIntegTest
       .asInstanceOf[DataFrame]
   }
 
-  def trainRidgeRegression(dataFrame: DataFrame): TrainedRidgeRegression = {
+  def trainRegression(dataFrame: DataFrame): Scorable = {
     val untrained =
-      CreateRidgeRegression(0.0, 2)
+      createRegressionOperation
         .execute(executionContext)(Vector.empty)
         .head
-        .asInstanceOf[UntrainedRidgeRegression]
+        .asInstanceOf[UntrainedRegressionType]
     TrainRegressor(Set("x"), "f_x")
       .execute(executionContext)(Vector(untrained, dataFrame))
       .head
-      .asInstanceOf[TrainedRidgeRegression]
+      .asInstanceOf[TrainedRegressionType]
   }
 
-  def scoreDataFrame(trained: TrainedRidgeRegression, dataFrame: DataFrame): DataFrame = {
+  def scoreDataFrame(trained: Scorable, dataFrame: DataFrame): DataFrame = {
     ScoreRegressor("prediction").execute(executionContext)(Vector(trained, dataFrame))
       .head
       .asInstanceOf[DataFrame]

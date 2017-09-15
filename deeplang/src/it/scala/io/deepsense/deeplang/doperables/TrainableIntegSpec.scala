@@ -27,6 +27,7 @@ import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType._
 import io.deepsense.deeplang.PrebuiltTypedColumns._
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.ColumnTypesPredicates._
+import io.deepsense.deeplang.doperables.Trainable.TrainingParameters
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.parameters.{MultipleColumnSelection, NameColumnSelection, NameSingleColumnSelection}

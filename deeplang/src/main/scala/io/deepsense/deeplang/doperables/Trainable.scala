@@ -19,8 +19,9 @@ package io.deepsense.deeplang.doperables
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.rdd.RDD
 
+import io.deepsense.deeplang.doperables.Trainable.TrainingParameters
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.{DKnowledge, DMethod1To1, DOperable, ExecutionContext}
 import io.deepsense.entitystorage.UniqueFilenameUtil
 
@@ -126,11 +127,12 @@ trait Trainable extends DOperable {
     val uniquePath = context.uniqueFsFileName(UniqueFilenameUtil.ModelEntityCategory)
     scorable.save(context)(uniquePath)
   }
+}
 
-  protected case class TrainingParameters(
+object Trainable {
+  case class TrainingParameters(
     dataFrame: DataFrame,
     labeledPoints: RDD[LabeledPoint],
     features: Seq[String],
     target: String)
 }
-

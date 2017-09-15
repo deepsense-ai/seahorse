@@ -78,22 +78,6 @@ abstract class TrainedRegressionIntegSpec[T <: GeneralizedLinearModel]
         }
       }
     }
-
-    val path = "blah"
-    "return url" when {
-      "save was executed" in {
-        val regression = createMockTrainedRegression(Seq(), "whatever", Seq())
-        regression.save(mockExecutionContext)(path)
-        regression.url shouldBe Some(path)
-      }
-    }
-
-    "not return url" when {
-      "save was not executed" in {
-        val regression = createMockTrainedRegression(Seq(), "whatever", Seq())
-        regression.url shouldBe None
-      }
-    }
   }
 
   private def createScoredAndExpectedDataFrames(

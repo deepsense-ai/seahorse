@@ -14,42 +14,40 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperables.machinelearning.ridgeregression
+package io.deepsense.deeplang.doperables.machinelearning.lassoregression
 
-import org.apache.spark.mllib.regression.{RidgeRegressionModel, RidgeRegressionWithSGD}
+import org.apache.spark.mllib.feature.StandardScalerModel
+import org.apache.spark.mllib.regression.{LassoModel, LassoWithSGD}
 
-import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.ColumnTypesPredicates.Predicate
+import io.deepsense.deeplang.doperables.Trainable.TrainingParameters
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.machinelearning.{LinearRegressionParameters, UntrainedLinearRegression}
-import io.deepsense.deeplang.doperables.{ColumnTypesPredicates, Report, Scorable, Trainable}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
+import io.deepsense.deeplang.{DKnowledge, DOperable, ExecutionContext}
 
-case class UntrainedRidgeRegression(
-    createModel: () => RidgeRegressionWithSGD, modelParameters: LinearRegressionParameters)
-  extends RidgeRegression
-  with Trainable
-  with UntrainedLinearRegression[TrainedRidgeRegression, RidgeRegressionModel] {
+case class UntrainedLassoRegression(
+    createModel: () => LassoWithSGD, modelParameters: LinearRegressionParameters)
+  extends LassoRegression
+  with UntrainedLinearRegression[TrainedLassoRegression, LassoModel]
+  with Trainable {
 
   def this() = this(() => null, null)
 
-  override def toInferrable: DOperable = new UntrainedRidgeRegression()
+  override def toInferrable: DOperable = new UntrainedLassoRegression()
 
   override protected def runTraining: RunTraining = runTrainingWithUncachedLabeledPoints
 
-  override protected def actualTraining: TrainScorable =
-    (trainParameters: Trainable.TrainingParameters) =>
-      trainLinearRegression(
-        modelParameters,
-        trainParameters,
-        createModel)
+  override protected def actualTraining: TrainScorable = (trainParameters: TrainingParameters) => {
+    trainLinearRegression(modelParameters, trainParameters, createModel)
+  }
 
   override protected def actualInference(
       context: InferContext)(
       parameters: TrainableParameters)(
       dataFrame: DKnowledge[DataFrame]): (DKnowledge[Scorable], InferenceWarnings) =
-    (DKnowledge(new TrainedRidgeRegression), InferenceWarnings.empty)
+    (DKnowledge(new TrainedLassoRegression), InferenceWarnings.empty)
 
   override def report(executionContext: ExecutionContext): Report =
     generateUntrainedRegressionReport(modelParameters)
@@ -60,5 +58,7 @@ case class UntrainedRidgeRegression(
   override protected def featurePredicate: Predicate = ColumnTypesPredicates.isNumeric
   override protected def labelPredicate: Predicate = ColumnTypesPredicates.isNumeric
 
-  override protected def trainedRegressionCreator = TrainedRidgeRegression.apply
+  override protected def trainedRegressionCreator:
+    (LinearRegressionParameters, LassoModel, Seq[String], String, StandardScalerModel)
+      => TrainedLassoRegression = TrainedLassoRegression.apply
 }
