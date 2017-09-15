@@ -31,7 +31,7 @@ SingleColumnSelectorItem.prototype.serialize = function serialize() {
 
 SingleColumnSelectorItem.getType = () => { return {
   'id': 'column',
-  'verbose': 'Single name'
+  'verbose': 'Select by name'
 };};
 
 module.exports = SingleColumnSelectorItem;

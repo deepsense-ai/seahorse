@@ -25,7 +25,7 @@ SingleIndexSelectorItem.prototype.serialize = function serialize() {
 
 SingleIndexSelectorItem.getType = () => { return {
   'id': 'index',
-  'verbose': 'Single index'
+  'verbose': 'Select by index'
 };};
 
 module.exports = SingleIndexSelectorItem;
