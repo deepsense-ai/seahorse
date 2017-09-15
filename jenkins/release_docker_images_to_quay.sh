@@ -3,7 +3,7 @@
 #
 # Tags latest dockers with TAG and releases docker-compose.yml
 #
-# Usage: `jenkins/release_docker_images.sh TAG` from deepsense-backend catalog
+# Usage: `jenkins/release_docker_images_to_quay.sh TAG` from deepsense-backend catalog
 
 set -e
 
@@ -42,16 +42,13 @@ done
 
 echo "Generating docker compose file with docker images tagged with $TAG"
 
-ARTIFACT_NAME_INTERNAL="docker-compose-internal.yml"
 ARTIFACT_NAME="docker-compose.yml"
 
 DOCKER_COMPOSE_TMPL="deployment/docker-compose/docker-compose.tmpl.yml"
-rm -f $ARTIFACT_NAME_INTERNAL
 rm -f $ARTIFACT_NAME
-sed 's|\$DOCKER_REPOSITORY|'"$DEEPSENSE_REGISTRY"'|g ; s|\$DOCKER_TAG|'"$TAG"'|g' $DOCKER_COMPOSE_TMPL >> $ARTIFACT_NAME_INTERNAL
 sed 's|\$DOCKER_REPOSITORY|'"$QUAY_REGISTRY"'|g ; s|\$DOCKER_TAG|'"$TAG"'|g' $DOCKER_COMPOSE_TMPL >> $ARTIFACT_NAME
 
-echo 'Sending $ARTIFACT_NAME_INTERNAL & $ARTIFACT_NAME to snapshot artifactory'
+echo 'Sending & $ARTIFACT_NAME to snapshot artifactory'
 
 ARTIFACTORY_CREDENTIALS=$HOME/.artifactory_credentials
 
@@ -62,22 +59,6 @@ ARTIFACTORY_URL=`grep "host=" $ARTIFACTORY_CREDENTIALS | cut -d '=' -f 2`
 SNAPSHOT_REPOSITORY="seahorse-distribution"
 
 REPOSITORY_URL="$ARTIFACTORY_URL/$SNAPSHOT_REPOSITORY/io/deepsense"
-
-echo "Sending $ARTIFACT_NAME_INTERNAL"
-
-md5Value="`md5sum "${ARTIFACT_NAME_INTERNAL}"`"
-md5Value="${md5Value:0:32}"
-sha1Value="`sha1sum "${ARTIFACT_NAME_INTERNAL}"`"
-sha1Value="${sha1Value:0:40}"
-
-URL_WITH_TAG="${REPOSITORY_URL}/${TAG}/dockercompose/${ARTIFACT_NAME_INTERNAL}"
-
-echo "** INFO: Uploading $ARTIFACT_NAME_INTERNAL to ${URL_WITH_TAG} **"
-curl -i -X PUT -u $ARTIFACTORY_USER:$ARTIFACTORY_PASSWORD \
- -H "X-Checksum-Md5: $md5Value" \
- -H "X-Checksum-Sha1: $sha1Value" \
- -T "${ARTIFACT_NAME_INTERNAL}" \
- "${URL_WITH_TAG}"
 
 echo "Sending $ARTIFACT_NAME"
 
