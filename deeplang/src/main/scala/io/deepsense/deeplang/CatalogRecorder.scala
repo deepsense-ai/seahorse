@@ -122,9 +122,6 @@ object CatalogRecorder {
     catalog.registerDOperation[ExecuteSqlExpression](
       DOperationCategories.Transformation)
 
-    catalog.registerDOperation[FilterColumns](
-      DOperationCategories.Transformation)
-
     catalog.registerDOperation[HandleMissingValues](
       DOperationCategories.Transformation)
 
@@ -133,6 +130,9 @@ object CatalogRecorder {
 
     catalog.registerDOperation[CreateCustomTransformer](
       DOperationCategories.Transformation)
+
+    catalog.registerDOperation[FilterColumns](
+      DOperationCategories.DataManipulation)
 
     catalog.registerDOperation[Fit](
       DOperationCategories.DataManipulation)

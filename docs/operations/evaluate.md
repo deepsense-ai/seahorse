@@ -1,14 +1,14 @@
 ---
 layout: documentation
-displayTitle: Transform
-title: Transform
-description: Transform
+displayTitle: Evaluate
+title: Evaluate
+description: Evaluate
 usesMathJax: true
 includeOperationsMenu: true
 ---
 
-Transform is an operation used to transform a [DataFrame](../classes/dataframe.html)
-using a [Transformer](../classes/transformer.html).
+Evaluate is an operation used to calculate a metric value from given
+[DataFrame](../classes/dataframe.html).
 
 **Since**: Seahorse 1.0.0
 
@@ -25,13 +25,8 @@ using a [Transformer](../classes/transformer.html).
 <tbody>
 <tr>
 <td><code>0</code></td>
-<td><code><a href="../classes/transformer.html">Transformer</a></code></td>
-<td>A Transformer to apply.</td>
-</tr>
-<tr>
-<td><code>1</code></td>
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>A DataFrame to transform.</td>
+<td>Input DataFrame.</td>
 </tr>
 </tbody>
 </table>
@@ -49,8 +44,8 @@ using a [Transformer](../classes/transformer.html).
 <tbody>
 <tr>
 <td><code>0</code></td>
-<td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>A DataFrame which is a result of the Transformer executed on the input DataFrame.</td>
+<td><code><a href="../classes/metric_value.html">MetricValue</a></code></td>
+<td>Metric value calculated for input DataFrame.</td>
 </tr>
 </tbody>
 </table>

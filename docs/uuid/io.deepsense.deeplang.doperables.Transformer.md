@@ -1,4 +1,4 @@
 ---
 layout: redirect
-redirect: ../traits/transformer.html
+redirect: ../classes/transformer.html
 ---

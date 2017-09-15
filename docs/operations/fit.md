@@ -1,14 +1,14 @@
 ---
 layout: documentation
-displayTitle: Transform
-title: Transform
-description: Transform
+displayTitle: Fit
+title: Fit
+description: Fit
 usesMathJax: true
 includeOperationsMenu: true
 ---
 
-Transform is an operation used to transform a [DataFrame](../classes/dataframe.html)
-using a [Transformer](../classes/transformer.html).
+Fit is an operation used to fit an [Estimator](../classes/estimator.html) on a
+[DataFrame](../classes/dataframe.html). It produces a [Transformer](../classes/transformer.html).
 
 **Since**: Seahorse 1.0.0
 
@@ -25,13 +25,13 @@ using a [Transformer](../classes/transformer.html).
 <tbody>
 <tr>
 <td><code>0</code></td>
-<td><code><a href="../classes/transformer.html">Transformer</a></code></td>
-<td>A Transformer to apply.</td>
+<td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
+<td>A DataFrame to fit the Estimator on.</td>
 </tr>
 <tr>
 <td><code>1</code></td>
-<td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>A DataFrame to transform.</td>
+<td><code><a href="../classes/estimator.html">Estimator</a></code></td>
+<td>An Estimator to fit.</td>
 </tr>
 </tbody>
 </table>
@@ -49,8 +49,8 @@ using a [Transformer](../classes/transformer.html).
 <tbody>
 <tr>
 <td><code>0</code></td>
-<td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>A DataFrame which is a result of the Transformer executed on the input DataFrame.</td>
+<td><code><a href="../classes/transformer.html">Transformer</a></code></td>
+<td>Result of fitting the Estimator on input DataFrame.</td>
 </tr>
 </tbody>
 </table>

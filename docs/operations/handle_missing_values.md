@@ -1,13 +1,13 @@
 ---
 layout: documentation
-displayTitle: Missing Values Handler
-title: Missing Values Handler
-description: Missing Values Handler
+displayTitle: Handle Missing Values
+title: Handle Missing Values
+description: Handle Missing Values
 usesMathJax: true
 includeOperationsMenu: true
 ---
 
-Missing Values Handler finds rows containing empty values and handles them according to the
+Handle Missing Values finds rows containing empty values and handles them according to the
 chosen strategy.
 
 **Since**: Seahorse 0.4.0

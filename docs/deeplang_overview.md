@@ -56,12 +56,10 @@ List of currently supported types of parameters can be found [here](parameters.h
 Each port of an operation has associated type qualifier. A type qualifier of an input port informs what type of entity can be placed in this port. A type qualifier of an output port informs what is a guaranteed type of entity that will be produced in this port.
 
 #### Example 1
-The `Filter Columns` operation accepts only  DataFrames in its input port. Therefore, the type qualifier of its single input port is `DataFrame`. `Filter Columns` also produces DataFrames in its output port. Therefore, the type qualifier of its output port is `DataFrame`.
-
-Type qualifier can be either a concrete class, or a set of traits. In the second case, entity must have all traits specified in the type qualifier to meet its requirements.
+The `Filter Columns` operation accepts only  DataFrames in its input port. Therefore, the type qualifier of its single input port is `DataFrame`. `Filter Columns` also produces DataFrames in its first output port. Therefore, the type qualifier of its first output port is `DataFrame`.
 
 #### Example 2
-The `Fit` operation serves to create machine learning model based on a training `DataFrame`. It has two input ports and one output port. The type qualifier of the input port with number 0 is: `Estimator`. This means that only entities extending `Estimator` class can be placed in this port. The type qualifier of the output port is `Transformer`. This means that each entity produced by this operation will extend `Transformer` class.
+The `Fit` operation serves to create machine learning model based on a training `DataFrame`. It has two input ports and one output port. The type qualifier of the first input port is: `Estimator`. This means that only entities extending `Estimator` class can be placed in this port. The type qualifier of the output port is `Transformer`. This means that each entity produced by this operation will extend `Transformer` class.
 
 $$Fit: (Estimator, DataFrame) \rightarrow Transformer$$
 

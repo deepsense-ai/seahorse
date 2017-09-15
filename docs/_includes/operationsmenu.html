@@ -17,9 +17,13 @@
     </li>
     <li class="menu-group"><a href="#"><strong>Transformations</strong></a>
       <ul class="lvl-2">
+        <li><a href="{{base}}/operations/transform.html">Transform</a></li>
+        <li><a href="{{base}}/operations/convert_type.html">Convert Type</a></li>
+        <li><a href="{{base}}/operations/create_custom_transformer.html">Create Custom Transformer</a></li>
         <li><a href="{{base}}/operations/custom_python_operation.html">Custom Python Operation</a></li>
-        <li><a href="{{base}}/operations/create_mathematical_transformation.html">Create Mathematical Transformation</a></li>
-        <li><a href="{{base}}/operations/apply_transformation.html">Apply Transformation</a></li>
+        <li><a href="{{base}}/operations/decompose_datetime.html">Decompose Datetime</a></li>
+        <li><a href="{{base}}/operations/execute_mathematical_transformation.html">Execute Mathematical Transformation</a></li>
+        <li><a href="{{base}}/operations/execute_sql_expression.html">Execute SQL Expression</a></li>
         <!-- Spark ported transformations -->
         <li><a href="http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.feature.VectorAssembler">Assemble Vector</a></li>
         <li><a href="http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.feature.Binarizer">Binarize</a></li>
@@ -36,14 +40,12 @@
     </li>
     <li class="menu-group"><a href="#"><strong>Data Manipulation</strong></a>
       <ul class="lvl-2">
-        <li><a href="{{base}}/operations/join.html">Join</a></li>
-        <li><a href="{{base}}/operations/decompose_datetime.html">Decompose Datetime</a></li>
-        <li><a href="{{base}}/operations/convert_type.html">Convert Type</a></li>
+        <li><a href="{{base}}/operations/fit.html">Fit</a></li>
         <li><a href="{{base}}/operations/filter_columns.html">Filter Columns</a></li>
+        <li><a href="{{base}}/operations/handle_missing_values.html">Handle Missing Values</a></li>
+        <li><a href="{{base}}/operations/join.html">Join</a></li>
         <li><a href="{{base}}/operations/split.html">Split</a></li>
         <li><a href="{{base}}/operations/union.html">Union</a></li>
-        <li><a href="{{base}}/operations/sql_expression.html">SQL Expression</a></li>
-        <li><a href="{{base}}/operations/missing_values_handler.html">Missing Values Handler</a></li>
       </ul>
     </li>
     <li class="menu-group"><a href="#"><strong>Machine Learning</strong></a>
@@ -58,11 +60,11 @@
         </li>
         <li class="menu-group"><a href="#">Regression</a>
           <ul class="lvl-3">
-            <li><a href="http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.classification.LogisticRegression">Logistic Regression</a></li>
           </ul>
         </li>
         <li class="menu-group"><a href="#">Classification</a>
           <ul class="lvl-3">
+            <li><a href="http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.classification.LogisticRegression">Logistic Regression</a></li>
           </ul>
         </li>
         <li class="menu-group"><a href="#">Clustering</a>
@@ -71,6 +73,7 @@
         </li>
         <li class="menu-group"><a href="#">Evaluation</a>
           <ul class="lvl-3">
+            <li><a href="{{base}}/operations/evaluate.html">Evaluate</a></li>
             <li><a href="http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.evaluation.BinaryClassificationEvaluator">Binary Classification Evaluator</a></li>
             <li><a href="http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator">Multiclass Classification Evaluator</a></li>
             <li><a href="http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.evaluation.RegressionEvaluator">Regression Evaluator</a></li>

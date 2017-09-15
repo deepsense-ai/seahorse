@@ -1,8 +1,8 @@
 ---
 layout: documentation
-displayTitle: Create Mathematical Transformation
-title: Create Mathematical Transformation
-description: Create Mathematical Transformation
+displayTitle: Execute Mathematical Transformation
+title: Execute Mathematical Transformation
+description: Execute Mathematical Transformation
 usesMathJax: true
 includeOperationsMenu: true
 ---
@@ -10,7 +10,7 @@ includeOperationsMenu: true
 Produces a [Mathematical Transformation](../classes/mathematical_transformation.html).
 The Transformation creates a new column basing on a mathematical formula.
 The Transformation can be applied to a [DataFrame](../classes/dataframe.html)
-with [Apply Transformation](apply_transformation.html)
+with [Transform](transform.html)
 operation.
 
 
@@ -18,7 +18,7 @@ operation.
 
 ## Input
 
-Create Mathematical Transformation does not take any input.
+Execute Mathematical Transformation does not take any input.
 
 ## Output
 
@@ -53,7 +53,7 @@ Create Mathematical Transformation does not take any input.
 <tr>
 <td><code>formula</code></td>
 <td><code><a href="../parameters.html#string">String</a></code></td>
-<td>A mathematicla formula. The formula grammar is based on SQL expressions (see below).</td>
+<td>A mathematical formula. The formula grammar is based on SQL expressions (see below).</td>
 </tr>
 <tr>
 <td><code>column name</code></td>
