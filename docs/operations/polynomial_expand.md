@@ -8,7 +8,7 @@ includeOperationsMenu: true
 ---
 Applies polynomial expansion to vector columns.
 
-This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.feature.PolynomialExpansion">org.apache.spark.ml.feature.PolynomialExpansion documentation</a>.
+This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.feature.PolynomialExpansion">org.apache.spark.ml.feature.PolynomialExpansion documentation</a>.
 
 **Since**: Seahorse 1.0.0
 

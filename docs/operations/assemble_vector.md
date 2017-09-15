@@ -8,7 +8,7 @@ includeOperationsMenu: true
 ---
 Merges multiple columns into a single vector column.
 
-This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.feature.VectorAssembler">org.apache.spark.ml.feature.VectorAssembler documentation</a>.
+This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.feature.VectorAssembler">org.apache.spark.ml.feature.VectorAssembler documentation</a>.
 
 **Since**: Seahorse 1.0.0
 

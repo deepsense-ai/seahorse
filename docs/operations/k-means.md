@@ -8,7 +8,7 @@ includeOperationsMenu: true
 ---
 Creates a k-means model.
 
-This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.clustering.KMeans">org.apache.spark.ml.clustering.KMeans documentation</a>.
+This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.clustering.KMeans">org.apache.spark.ml.clustering.KMeans documentation</a>.
 
 **Since**: Seahorse 1.0.0
 

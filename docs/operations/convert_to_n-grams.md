@@ -8,7 +8,7 @@ includeOperationsMenu: true
 ---
 Converts arrays of strings to arrays of n-grams. Null values in the input arrays are ignored. Each n-gram is represented by a space-separated string of words.
 
-This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.feature.NGram">org.apache.spark.ml.feature.NGram documentation</a>.
+This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.feature.NGram">org.apache.spark.ml.feature.NGram documentation</a>.
 
 **Since**: Seahorse 1.0.0
 

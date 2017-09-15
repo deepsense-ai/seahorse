@@ -8,7 +8,7 @@ includeOperationsMenu: true
 ---
 Transforms a word into a code for further natural language processing or machine learning process.
 
-This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.feature.Word2Vec">org.apache.spark.ml.feature.Word2Vec documentation</a>.
+This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.feature.Word2Vec">org.apache.spark.ml.feature.Word2Vec documentation</a>.
 
 **Since**: Seahorse 1.0.0
 

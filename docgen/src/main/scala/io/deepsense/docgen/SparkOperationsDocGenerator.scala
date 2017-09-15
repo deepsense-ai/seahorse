@@ -41,7 +41,7 @@ object SparkOperationsDocGenerator
   with RedirectCreator
   with LinkPrinter {
 
-  val sparkVersion = "1.5.2"
+  val sparkVersion = "1.6.0"
   val sparkDocPrefix = s"http://spark.apache.org/docs/$sparkVersion/api/scala/index.html#"
 
   // scalastyle:off println
@@ -51,8 +51,8 @@ object SparkOperationsDocGenerator
 
     println("==========================")
     println("= Seahorse doc generator =")
-    println("==========================\n")
-
+    println("==========================")
+    println
     println("What do you want to do?")
     println("[P]rint links to new Spark operations")
     println("[C]reate documentation pages and redirects for Spark operations")

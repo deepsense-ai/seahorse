@@ -8,7 +8,7 @@ includeOperationsMenu: true
 ---
 Gradient-Boosted Trees (GBTs) learning algorithm for classification. It supports binary labels, as well as both continuous and categorical features. Note: Multiclass labels are not currently supported.
 
-This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.classification.GBTClassifier">org.apache.spark.ml.classification.GBTClassifier documentation</a>.
+This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.classification.GBTClassifier">org.apache.spark.ml.classification.GBTClassifier documentation</a>.
 
 **Since**: Seahorse 1.0.0
 

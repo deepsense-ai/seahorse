@@ -8,7 +8,7 @@ includeOperationsMenu: true
 ---
 Extracts a vocabulary from document collections and generates a CountVectorizerModel.
 
-This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.5.2/api/scala/index.html#org.apache.spark.ml.feature.CountVectorizer">org.apache.spark.ml.feature.CountVectorizer documentation</a>.
+This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.feature.CountVectorizer">org.apache.spark.ml.feature.CountVectorizer documentation</a>.
 
 **Since**: Seahorse 1.0.0
 

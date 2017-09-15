@@ -30,7 +30,7 @@ object Version {
   val scalacheck = "1.12.2"
   val scalatest = "3.0.0-SNAP4"
   val scoverage = "1.0.4"
-  val spark = "1.5.2"
+  val spark = "1.6.0"
   val spray = "1.3.3"
   val sprayJson = "1.3.1"
   val wireMock = "1.57"

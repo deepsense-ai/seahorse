@@ -17,6 +17,7 @@
 package io.deepsense.deeplang.doperables
 
 import org.apache.spark.sql.Row
+import org.apache.spark.sql.catalyst.analysis.NoSuchTableException
 import org.apache.spark.sql.types._
 
 import io.deepsense.deeplang.DeeplangIntegTestSupport
@@ -69,10 +70,9 @@ class SqlExpressionIntegSpec extends DeeplangIntegTestSupport {
   }
 
   def assertTableUnregistered(): Unit = {
-    val exception = intercept[RuntimeException] {
+    val exception = intercept[NoSuchTableException] {
       executionContext.sqlContext.table(dataFrameId)
     }
-    exception.getMessage shouldBe s"Table Not Found: $dataFrameId"
   }
 
   def executeSqlExpression(expression: String, dataFrameId: String, input: DataFrame): DataFrame =
