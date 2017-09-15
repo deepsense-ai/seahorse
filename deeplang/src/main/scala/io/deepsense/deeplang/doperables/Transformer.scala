@@ -16,6 +16,7 @@
 
 package io.deepsense.deeplang.doperables
 
+import org.apache.spark.SparkException
 import org.apache.spark.sql.types.StructType
 
 import io.deepsense.commons.utils.Logging
@@ -23,6 +24,7 @@ import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
 import io.deepsense.deeplang.doperables.serialization.{Loadable, ParamsSerialization, PathsUtils}
+import io.deepsense.deeplang.doperations.exceptions.WriteFileException
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.Params
 import io.deepsense.reportlib.model.ReportType
@@ -84,8 +86,14 @@ abstract class Transformer
   protected def transformerName: String = this.getClass.getSimpleName
 
   def save(ctx: ExecutionContext, path: String): Unit = {
-    saveObjectWithParams(ctx, path)
-    saveTransformer(ctx, path)
+    try {
+      saveObjectWithParams(ctx, path)
+      saveTransformer(ctx, path)
+    } catch {
+      case e: SparkException =>
+        logger.error(s"Saving Transformer error: Spark problem. Unable to write file to $path", e)
+        throw WriteFileException(path, e)
+    }
   }
 
   override def load(ctx: ExecutionContext, path: String): this.type = {
