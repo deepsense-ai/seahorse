@@ -47,7 +47,7 @@ trait Executor extends Logging {
     val tenantId = ""
 
     val innerWorkflowExecutor = new InnerWorkflowExecutorImpl(
-      new GraphReader(createDOperationsCatalog()))
+      new GraphReader(createDOperationsCatalogForCustom()))
 
     val inferContext = InferContext(
       DataFrameBuilder(sqlContext),
@@ -99,6 +99,16 @@ trait Executor extends Logging {
     catalog
   }
 
+  def createDOperationsCatalogForCustom(): DOperationsCatalog = {
+    val catalog = DOperationsCatalog()
+    CatalogRecorder.registerDOperations(catalog)
+
+    // register additional operations for custom transformers and estimators
+    catalog.registerDOperation[Source](DOperationCategories.IO)
+    catalog.registerDOperation[Sink](DOperationCategories.IO)
+
+    catalog
+  }
 }
 
 object Executor extends Executor
