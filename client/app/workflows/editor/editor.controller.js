@@ -159,11 +159,14 @@ class EditorController {
   }
 
   onDisplayRectChange(rect) {
+    let delta;
     const {left, right, bottom} = this.containment[0].getBoundingClientRect();
-    const rightDelta = Math.min(right - rect.right, 0);
-    const leftDelta = Math.max(left - rect.left, rightDelta);
+    delta = Math.min(right - rect.right, 0);
+    if (delta === 0) {
+      delta = Math.max(left - rect.left, 0);
+    }
     this.CanvasService.moveWindow(
-      leftDelta,
+      delta,
       Math.min(bottom - rect.bottom, 0),
       TRANSITION_TIME);
   }
