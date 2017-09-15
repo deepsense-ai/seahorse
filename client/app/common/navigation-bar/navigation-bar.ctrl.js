@@ -10,7 +10,7 @@ function NavigationController($rootScope, config, PageService) {
         $rootScope.$broadcast('StatusBar.HOME_CLICK');
       },
       getAPIVersion() {
-        return config.apiVersion;
+        return config.editorVersion;
       }
   });
 }

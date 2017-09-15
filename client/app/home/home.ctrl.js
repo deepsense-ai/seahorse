@@ -10,7 +10,7 @@ function Home($rootScope, $uibModal, $state, WorkflowService, PageService, Confi
   };
 
   this.getVersion = () => {
-    return config.apiVersion;
+    return config.editorVersion;
   };
 
   this.getAllWorkflows = () => {
