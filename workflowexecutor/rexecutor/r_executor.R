@@ -17,7 +17,7 @@ rm(args)
 .libPaths(c(file.path("/opt/R_Libs"), file.path(Sys.getenv('SPARK_HOME'), 'R', 'lib'), .libPaths()))
 library(SparkR)
 
-SparkR:::connectBackend("localhost", backendPort)
+SparkR:::connectBackend("localhost", backendPort, timeout=600)
 
 assign(".scStartTime", as.integer(Sys.time()), envir = SparkR:::.sparkREnv)
 
