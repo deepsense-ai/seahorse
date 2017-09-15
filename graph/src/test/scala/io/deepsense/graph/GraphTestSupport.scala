@@ -113,7 +113,7 @@ trait GraphTestSupport {
     nodestate.Completed(date, date.plusMinutes(1), Seq())
   }
 
-  protected def nodeCompletedId(nodeId: Node.Id): nodestate.Completed = {
+  protected def nodeCompletedId(nodeId: Entity.Id): nodestate.Completed = {
     val date = DateTimeConverter.now
     nodestate.Completed(date, date.plusMinutes(1), results(nodeId))
   }

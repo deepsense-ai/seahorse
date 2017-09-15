@@ -45,6 +45,7 @@ import io.deepsense.workflowexecutor.communication.message.workflow.ExecutionSta
 import io.deepsense.workflowexecutor.exception.{UnexpectedHttpResponseException, WorkflowExecutionException}
 import io.deepsense.workflowexecutor.session.storage.DataFrameStorageImpl
 import io.deepsense.workflowexecutor.{ExecutionParams, WorkflowDownloadClient, WorkflowExecutorActor}
+import io.deepsense.workflowexecutor._
 
 /**
  * WorkflowExecutor creates an execution context and then executes a workflow on Spark.
@@ -79,12 +80,19 @@ case class WorkflowExecutor(
     val finishedExecutionStatus: Promise[ExecutionStatus] = Promise()
     val statusReceiverActor =
       actorSystem.actorOf(TerminationListenerActor.props(finishedExecutionStatus))
+
+    val workflowWithResults = WorkflowWithResults(
+      workflow.id,
+      workflow.metadata,
+      workflow.graph,
+      workflow.thirdPartyData,
+      ExecutionReport(Map(), None))
     val workflowExecutorActor = actorSystem.actorOf(
-      WorkflowExecutorActor.props(executionContext, None, Some(statusReceiverActor)),
+      BatchWorkflowExecutorActor.props(executionContext, statusReceiverActor, workflowWithResults),
       workflow.id.toString)
 
     workflowExecutorActor ! Connect(workflow.id)
-    workflowExecutorActor ! Launch(workflow.graph)
+    workflowExecutorActor ! Launch(workflow.graph.nodes.map(_.id))
 
     logger.debug("Awaiting execution end...")
     actorSystem.awaitTermination()
@@ -117,7 +125,7 @@ object WorkflowExecutor extends Logging {
 
   private val workflowManagerConfig = WorkflowManagerConfig(
     defaultAddress = config.getString("workflow-manager.address"),
-    path = config.getString("workflow-manager.path"),
+    path = config.getString("workflow-manager.workflows.path"),
     timeout = config.getInt("workflow-manager.timeout")
   )
 

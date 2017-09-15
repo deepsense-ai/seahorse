@@ -80,16 +80,17 @@ class WorkflowNodeExecutorActor(
   }
 
   def nodeExecutionResultsFrom(operationResults: Vector[DOperable]): NodeExecutionResults = {
-    val registeredResults: Map[Entity.Id, DOperable] = registerResults(operationResults)
-    val reports: Map[Entity.Id, ReportContent] = collectReports(registeredResults)
-    NodeExecutionResults(reports, registeredResults)
+    val registeredResults: Seq[(Entity.Id, DOperable)] = registerResults(operationResults)
+    val registeredResultsMap: Map[Entity.Id, DOperable] = registeredResults.toMap
+    val reports: Map[Entity.Id, ReportContent] = collectReports(registeredResultsMap)
+    NodeExecutionResults(registeredResults.map(_._1), reports, registeredResultsMap)
   }
 
-  def registerResults(operables: Seq[DOperable]): Map[Entity.Id, DOperable] = {
+  private def registerResults(operables: Seq[DOperable]): Seq[(Entity.Id, DOperable)] = {
     logger.debug(s"Registering data from operation output ports in node ${node.id}")
-    val results: Map[Entity.Id, DOperable] = operables.map { dOperable =>
-      Entity.Id.randomId -> dOperable
-    }.toMap
+    val results: Seq[(Entity.Id, DOperable)] = operables.map { dOperable =>
+      (Entity.Id.randomId, dOperable)
+    }
     logger.debug(s"Data registered for $nodeDescription: results=$results")
     results
   }

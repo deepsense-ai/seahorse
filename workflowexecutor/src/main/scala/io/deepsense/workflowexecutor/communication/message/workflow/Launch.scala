@@ -26,7 +26,7 @@ import io.deepsense.models.workflows.Workflow
 case class Launch(
     workflowId: Workflow.Id,
     workflow: DirectedGraph,
-    nodesToExecute: Seq[Node.Id])
+    nodesToExecute: Set[Node.Id])
 
 trait LaunchJsonProtocol
     extends DefaultJsonProtocol

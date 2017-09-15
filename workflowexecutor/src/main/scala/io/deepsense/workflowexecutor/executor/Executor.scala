@@ -96,3 +96,5 @@ trait Executor extends Logging {
     catalog
   }
 }
+
+object Executor extends Executor

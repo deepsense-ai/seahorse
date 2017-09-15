@@ -18,12 +18,13 @@ package io.deepsense.workflowexecutor
 
 import scala.concurrent.Future
 
-import akka.actor.Actor
+import akka.actor.{Props, Actor}
 import akka.pattern.pipe
 import spray.client.pipelining._
 import spray.http.{HttpRequest, HttpResponse, StatusCodes}
 import spray.json._
 
+import io.deepsense.commons.utils.Logging
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.WorkflowWithResultsJsonProtocol
 import io.deepsense.models.workflows.{ExecutionReport, Workflow, WorkflowWithResults}
@@ -36,7 +37,8 @@ class WorkflowManagerClientActor(
     val reportsApiPrefix: String,
     override val graphReader: GraphReader)
   extends Actor
-  with WorkflowWithResultsJsonProtocol {
+  with WorkflowWithResultsJsonProtocol
+  with Logging {
 
   import context.dispatcher
 
@@ -59,8 +61,9 @@ class WorkflowManagerClientActor(
     s"$workflowApiAddress/$reportsApiPrefix/$workflowId"
 
   private def getWorkflow(workflowId: Workflow.Id): Future[Option[WorkflowWithResults]] = {
-    pipeline(Get(downloadWorkflowUrl(workflowId)))
-      .map(handleGetResponse)
+    val url: String = downloadWorkflowUrl(workflowId)
+    logger.debug("GET workflow URL: {}", url)
+    pipeline(Get(url)).map(handleGetResponse)
   }
 
   private def saveWorkflowWithState(workflow: WorkflowWithResults): Future[Unit] = {
@@ -90,6 +93,21 @@ class WorkflowManagerClientActor(
       case _ => throw UnexpectedHttpResponseException(
         "Upload failed", response.status, response.entity.data.asString)
     }
+  }
+}
+
+object WorkflowManagerClientActor {
+  def props(
+      workflowApiAddress: String,
+      workflowApiPrefix: String,
+      reportsApiPrefix: String,
+      graphReader: GraphReader): Props = {
+    Props(
+      new WorkflowManagerClientActor(
+        workflowApiAddress,
+        workflowApiPrefix,
+        reportsApiPrefix,
+        graphReader))
   }
 }
 

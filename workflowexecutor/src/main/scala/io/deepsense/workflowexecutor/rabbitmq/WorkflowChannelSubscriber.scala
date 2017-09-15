@@ -29,10 +29,10 @@ case class WorkflowChannelSubscriber(
   override def receive: Receive = {
     case request @ Init(workflowId) =>
       logger.debug(s"INIT! '$workflowId'")
-      actorsForWorkflow(workflowId) ! request
+      actorsForWorkflow(workflowId) ! WorkflowExecutorActor.Messages.Init()
     case Launch(id, directedGraph, nodesToExecute) =>
       logger.debug(s"LAUNCH! '$id' -> $directedGraph")
-      actorsForWorkflow(id) ! WorkflowExecutorActor.Messages.Launch(directedGraph, nodesToExecute)
+      actorsForWorkflow(id) ! WorkflowExecutorActor.Messages.Launch(nodesToExecute)
     case Abort(id) =>
       logger.debug(s"ABORT! '$id'")
       actorsForWorkflow(id) ! WorkflowExecutorActor.Messages.Abort()

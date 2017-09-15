@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-package io.deepsense.models.workflows
+package io.deepsense.workflowexecutor.communication.message.workflowmanager
 
-import spray.json._
+import io.deepsense.models.workflows.Workflow
 
-case class ThirdPartyData(data: String = "{}") {
+object WorkflowManagerClientProtocol {
 
-  override def equals(o: Any): Boolean = o match {
-    case that: ThirdPartyData => this.data.parseJson == that.data.parseJson
-    case _ => false
-  }
-
-  override def hashCode: Int = data.parseJson.compactPrint.hashCode
+  case class GetWorkflow(workflowId: Workflow.Id)
 }

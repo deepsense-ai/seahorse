@@ -21,6 +21,7 @@ import spray.json._
 
 import io.deepsense.models.metadata.MetadataInferenceResult
 
+@Deprecated
 trait MetadataInferenceResultJsonProtocol
     extends DefaultJsonProtocol
     with AbstractMetadataJsonProtocol
@@ -31,4 +32,5 @@ trait MetadataInferenceResultJsonProtocol
   implicit val metadataInferenceFormat = jsonFormat3(MetadataInferenceResult.apply)
 }
 
+@Deprecated
 object MetadataInferenceResultJsonProtocol extends MetadataInferenceResultJsonProtocol

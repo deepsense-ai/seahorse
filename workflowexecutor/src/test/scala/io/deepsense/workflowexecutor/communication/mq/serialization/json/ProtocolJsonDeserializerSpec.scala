@@ -62,7 +62,7 @@ class ProtocolJsonDeserializerSpec
       readMessage shouldBe Launch(
         workflowId,
         graph,
-        nodesToExecute)
+        nodesToExecute.toSet)
     }
     "deserialize Abort messages" in {
       val protocolDeserializer = ProtocolJsonDeserializer(mock[GraphReader])

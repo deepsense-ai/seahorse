@@ -35,7 +35,9 @@ class ExecutionDispatcherActor(
     dataFrameStorage: DataFrameStorage,
     pythonExecutionCaretaker: PythonExecutionCaretaker,
     reportLevel: ReportLevel,
-    statusLogger: ActorRef)
+    statusLogger: ActorRef,
+    workflowManagerClientActor: ActorRef,
+    wmTimeout: Int)
   extends Actor
   with Logging
   with Executor {
@@ -49,7 +51,8 @@ class ExecutionDispatcherActor(
       logger.debug(s"Received $msg")
       val existingExecutor: Option[ActorRef] = findExecutor(workflowId)
       val publisher = context.actorSelection(publisherPath)
-      val executor: ActorRef = existingExecutor.getOrElse(createExecutor(workflowId, publisher))
+      val executor: ActorRef = existingExecutor.getOrElse(
+        createExecutor(workflowId, publisher, workflowManagerClientActor))
       executor.forward(connect)
   }
 
@@ -60,7 +63,10 @@ class ExecutionDispatcherActor(
     executor
   }
 
-  def createExecutor(workflowId: Workflow.Id, publisher: ActorSelection): ActorRef = {
+  def createExecutor(
+    workflowId: Workflow.Id,
+    publisher: ActorSelection,
+    workflowManagerClientActor: ActorRef): ActorRef = {
     val executor = createExecutor(
       context,
       createExecutionContext(
@@ -70,8 +76,10 @@ class ExecutionDispatcherActor(
         sparkContext,
         dOperableCatalog = Some(dOperableCatalog)),
       workflowId,
+      workflowManagerClientActor,
       statusLogger,
-      publisher)
+      publisher,
+      wmTimeout)
     logger.debug(s"Created an executor: '${executor.path}'")
     executor
   }
@@ -82,8 +90,10 @@ trait WorkflowExecutorsFactory {
     context: ActorContext,
     executionContext: CommonExecutionContext,
     workflowId: Id,
+    workflowManagerClientActor: ActorRef,
     statusLogger: ActorRef,
-    publisher: ActorSelection): ActorRef
+    publisher: ActorSelection,
+    wmTimeout: Int): ActorRef
 }
 
 trait WorkflowExecutorsFactoryImpl extends WorkflowExecutorsFactory {
@@ -91,10 +101,17 @@ trait WorkflowExecutorsFactoryImpl extends WorkflowExecutorsFactory {
       context: ActorContext,
       executionContext: CommonExecutionContext,
       workflowId: Id,
+      workflowManagerClientActor: ActorRef,
       statusLogger: ActorRef,
-      publisher: ActorSelection): ActorRef = {
+      publisher: ActorSelection,
+      wmTimeout: Int): ActorRef = {
     context.actorOf(
-      WorkflowExecutorActor.props(executionContext, Some(publisher), Some(statusLogger)),
+      SessionWorkflowExecutorActor.props(
+        executionContext,
+        workflowManagerClientActor,
+        publisher,
+        wmTimeout,
+        Some(statusLogger)),
       workflowId.toString)
   }
 }
@@ -115,14 +132,18 @@ object ExecutionDispatcherActor {
       dataFrameStorage: DataFrameStorage,
       pythonExecutionCaretaker: PythonExecutionCaretaker,
       reportLevel: ReportLevel,
-      statusLogger: ActorRef): Props =
+      statusLogger: ActorRef,
+      workflowManagerClientActor: ActorRef,
+      wmTimeout: Int): Props =
     Props(new ExecutionDispatcherActor(
       sparkContext,
       dOperableCatalog,
       dataFrameStorage,
       pythonExecutionCaretaker,
       reportLevel,
-      statusLogger
+      statusLogger,
+      workflowManagerClientActor,
+      wmTimeout
     ) with WorkflowExecutorsFactoryImpl
       with ExecutorFinderImpl)
 }

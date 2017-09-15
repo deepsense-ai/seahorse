@@ -29,6 +29,7 @@ import io.deepsense.deeplang.doperables.ReportLevel
 import io.deepsense.deeplang.doperables.ReportLevel.ReportLevel
 import io.deepsense.models.workflows.Workflow
 import io.deepsense.workflowexecutor.executor.PythonExecutionCaretaker
+import io.deepsense.models.workflows.Workflow._
 import io.deepsense.workflowexecutor.communication.message.global.Connect
 import io.deepsense.workflowexecutor.rabbitmq.WorkflowConnect
 
@@ -77,14 +78,18 @@ class ExecutionDispatcherActorSpec
         mock[DataFrameStorage],
         mock[PythonExecutionCaretaker],
         mock[ReportLevel],
-        TestProbe().ref
+        TestProbe().ref,
+        TestProbe().ref,
+        5
       ) with WorkflowExecutorsFactory with WorkflowExecutorFinder {
         override def createExecutor(
-          context: ActorContext,
-          executionContext: CommonExecutionContext,
-          workflowId: Workflow.Id,
-          statusLogger: ActorRef,
-          publisher: ActorSelection): ActorRef = {
+            context: ActorContext,
+            executionContext: CommonExecutionContext,
+            workflowId: Id,
+            workflowManagerClientActor: ActorRef,
+            statusLogger: ActorRef,
+            publisher: ActorSelection,
+            wmTimeout: Int): ActorRef = {
           fail("Tried to create an executor but it exists!")
         }
 
@@ -108,11 +113,13 @@ class ExecutionDispatcherActorSpec
         mock[ReportLevel]
       ) with WorkflowExecutorsFactory with WorkflowExecutorFinder {
         override def createExecutor(
-          context: ActorContext,
-          executionContext: CommonExecutionContext,
-          workflowId: Workflow.Id,
-          statusLogger: ActorRef,
-          publisher: ActorSelection): ActorRef = {
+            context: ActorContext,
+            executionContext: CommonExecutionContext,
+            workflowId: Id,
+            workflowManagerClientActor: ActorRef,
+            statusLogger: ActorRef,
+            publisher: ActorSelection,
+            wmTimeout: Int): ActorRef = {
           workflowId shouldBe expectedWorkflowId
           testProbe.ref
         }
@@ -132,7 +139,7 @@ class ExecutionDispatcherActorSpec
       reportLevel: ReportLevel)
     extends ExecutionDispatcherActor(
       sparkContext, dOperableCatalog, dataFrameStorage, pythonExecutionCaretaker,
-      reportLevel, TestProbe().ref) {
+      reportLevel, TestProbe().ref, TestProbe().ref, 5) {
 
     self: WorkflowExecutorsFactory with WorkflowExecutorFinder =>
 

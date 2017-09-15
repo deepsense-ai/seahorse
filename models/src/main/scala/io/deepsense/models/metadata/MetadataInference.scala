@@ -20,22 +20,26 @@ import io.deepsense.deeplang.DOperable
 import io.deepsense.deeplang.DOperable.AbstractMetadata
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.graph.GraphKnowledge.InferenceErrors
-import io.deepsense.graph.{Node, StatefulGraph}
+import io.deepsense.graph.{KnowledgeInference, DirectedGraph, Node}
 
+// rafal: I think this classes are not being used anymore. Marking as deprecated for now.
+
+@Deprecated
 case class MetadataInferenceResult(
   metadata: Seq[Option[AbstractMetadata]],
   warnings: InferenceWarnings,
   errors: InferenceErrors)
 
+@Deprecated
 object MetadataInference {
   def run(
-      graph: StatefulGraph,
+      inferrable: KnowledgeInference,
       nodeId: Node.Id,
       portIndex: Int,
       baseContext: InferContext): MetadataInferenceResult = {
 
     val inferContext = baseContext.copy(fullInference = true)
-    val singlePortInferenceResult = graph.inferKnowledge(nodeId, portIndex, inferContext)
+    val singlePortInferenceResult = inferrable.inferKnowledge(nodeId, portIndex, inferContext)
 
     MetadataInferenceResult(
       singlePortInferenceResult.knowledge.types.toList.map(
