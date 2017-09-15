@@ -16,6 +16,11 @@ export default class ApiBaseClass {
   }
 
 
+  getData(result) {
+    return result.data;
+  }
+
+
   makeEndpointUrl(endpointPath = '') {
     return `${this.serviceUrl}${endpointPath}`;
   }

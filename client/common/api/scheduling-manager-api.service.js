@@ -19,7 +19,7 @@ export default class SchedulingManagerApiService extends ApiBaseClass {
 
     return this.$http
       .get(endpointUrl)
-      .then((result) => result.data);
+      .then(this.getData);
   }
 
 
@@ -28,7 +28,7 @@ export default class SchedulingManagerApiService extends ApiBaseClass {
 
     return this.$http
       .get(endpointUrl)
-      .then((result) => result.data);
+      .then(this.getData);
   }
 
 
@@ -37,7 +37,7 @@ export default class SchedulingManagerApiService extends ApiBaseClass {
 
     return this.$http
       .get(endpointUrl)
-      .then((result) => result.data);
+      .then(this.getData);
   }
 
 
@@ -46,7 +46,7 @@ export default class SchedulingManagerApiService extends ApiBaseClass {
 
     return this.$http
       .put(endpointUrl, workflowSchedule)
-      .then((result) => result.data);
+      .then(this.getData);
   }
 
 
