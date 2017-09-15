@@ -30,6 +30,16 @@ class WorkflowStatusBarService {
   }
 
   executionRun() {
+    this.createAbortButton();
+    this.$rootScope.$broadcast('StatusBar.RUN');
+  }
+
+  executionAbort() {
+    this.createRunButton();
+    this.$rootScope.$broadcast('StatusBar.ABORT');
+  }
+
+  createAbortButton() {
     let abortButton = {
       label: 'Abort',
       icon: 'fa-ban',
@@ -37,10 +47,9 @@ class WorkflowStatusBarService {
     };
     this.data.menuItems.pop();
     this.data.menuItems.push(abortButton);
-    this.$rootScope.$broadcast('StatusBar.RUN');
   }
 
-  executionAbort() {
+  createRunButton() {
     let runButton = {
       label: 'Run',
       icon: 'fa-play',
@@ -48,7 +57,6 @@ class WorkflowStatusBarService {
     };
     this.data.menuItems.pop();
     this.data.menuItems.push(runButton);
-    this.$rootScope.$broadcast('StatusBar.ABORT');
   }
 
 }

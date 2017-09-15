@@ -10,11 +10,11 @@ class WorkflowsEditorController extends WorkflowReports {
 
   /* @ngInject */
   constructor(workflowWithResults, config, Report, MultiSelectionService,
-              $scope, $state, $stateParams, $q, $rootScope,
-              GraphNode, Edge, $timeout,
-              PageService, Operations, GraphPanelRendererService, WorkflowService, UUIDGenerator, MouseEvent,
-              DeepsenseNodeParameters, ConfirmationModalService, ExportModalService,
-              NotificationService, ServerCommunication, CopyPasteService, SideBarService) {
+    $scope, $state, $stateParams, $q, $rootScope,
+    GraphNode, Edge,
+    PageService, Operations, GraphPanelRendererService, WorkflowService, UUIDGenerator, MouseEvent,
+    DeepsenseNodeParameters, ConfirmationModalService, ExportModalService,
+    NotificationService, ServerCommunication, CopyPasteService, SideBarService, WorkflowStatusBarService) {
 
     super($scope, $rootScope, Report, PageService, Operations, GraphPanelRendererService,
       WorkflowService);
@@ -30,7 +30,6 @@ class WorkflowsEditorController extends WorkflowReports {
     this.$rootScope = $rootScope;
     this.$state = $state;
     this.$stateParams = $stateParams;
-    this.$timeout = $timeout;
     this.$q = $q;
     this.NotificationService = NotificationService;
     this.GraphPanelRendererService = GraphPanelRendererService;
@@ -47,6 +46,7 @@ class WorkflowsEditorController extends WorkflowReports {
     this.zoomId = 'flowchart-box';
     this.CopyPasteService = CopyPasteService;
     this.data = SideBarService.data;
+    this.WorkflowStatusBarService = WorkflowStatusBarService;
     this.multipleCopyParams = {
       type: 'nodes',
       filter: () => MultiSelectionService.getSelectedNodes().length,
@@ -99,7 +99,12 @@ class WorkflowsEditorController extends WorkflowReports {
 
     this.$scope.$on('ServerCommunication.MESSAGE.executionStatus', (event, data) => {
       this.WorkflowService.getWorkflow().updateState(data);
+
       this.loadReports(data);
+
+      if (!this.WorkflowService.isWorkflowRunning()) {
+        this.$rootScope.$broadcast('ServerCommunication.EXECUTION_FINISHED');
+      }
     });
 
     this.$scope.$on('ServerCommunication.MESSAGE.inferredState', (event, data) => {
@@ -125,11 +130,13 @@ class WorkflowsEditorController extends WorkflowReports {
       this.$scope.$digest();
     });
 
+    this.$scope.$on('ServerCommunication.EXECUTION_FINISHED', () => {
+      this.restoreEditableMode();
+    });
+
     this.$scope.$on('StatusBar.ABORT', () => {
-      this.initUnbindableListeners();
-      this.isReportMode = false;
-      this.isRunning = false;
       this.ServerCommunication.sendAbortToWorkflowExchange();
+      this.restoreEditableMode();
     });
 
     this.$scope.$on('GraphNode.CLICK', (event, data) => {
@@ -238,6 +245,12 @@ class WorkflowsEditorController extends WorkflowReports {
     ];
   }
 
+  restoreEditableMode() {
+    this.initUnbindableListeners();
+    this.isReportMode = false;
+    this.WorkflowStatusBarService.createRunButton();
+  }
+
   unbindListeners() {
     this.eventListeners.forEach(func => func());
   }
@@ -269,6 +282,6 @@ class WorkflowsEditorController extends WorkflowReports {
   }
 }
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.controller('WorkflowsEditorController', WorkflowsEditorController);
 };

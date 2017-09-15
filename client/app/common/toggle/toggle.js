@@ -9,13 +9,15 @@ function Toggle() {
       let classesOn = `${attrs.toggleAnimateIn}`;
       let classesOff = `${attrs.toggleAnimateOut}`;
 
-      scope.$on(attrs.toggleOn, () => {
-        element
-          .removeClass(classesOn)
-          .addClass(classesOff)
-          .one('animationend', function() {
-            $(this).removeClass(classesOn);
-          });
+      attrs.toggleOn.split(' ').forEach((eventName) => {
+        scope.$on(eventName, () => {
+          element
+            .removeClass(classesOn)
+            .addClass(classesOff)
+            .one('animationend', function() {
+              $(this).removeClass(classesOn);
+            });
+        });
       });
 
       scope.$on(attrs.toggleOff, () => {

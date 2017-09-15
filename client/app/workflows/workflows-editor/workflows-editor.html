@@ -7,7 +7,7 @@
       catalog-collection="::workflow.catalog"
       custom-scroll-bar
       toggle
-      toggle-on="StatusBar.ABORT"
+      toggle-on="StatusBar.ABORT ServerCommunication.EXECUTION_FINISHED"
       toggle-off="StatusBar.RUN"
       toggle-animate-in="animated fadeOutLeft o-panel--absolute"
       toggle-animate-out="animated fadeInLeft">
@@ -38,7 +38,7 @@
       description="workflow.getWorkflow().description"
       ng-if="!workflow.getSelectedNode()"
       toggle
-      toggle-on="StatusBar.ABORT"
+      toggle-on="StatusBar.ABORT ServerCommunication.EXECUTION_FINISHED"
       toggle-off="StatusBar.RUN"
       toggle-animate-in="fadeOutRight o-panel--absolute"
       toggle-animate-out="fadeInRight o-general-panel"

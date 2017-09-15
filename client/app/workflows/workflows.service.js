@@ -32,6 +32,22 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
       return workflow;
     }
 
+    isWorkflowRunning() {
+      let statuses = _.chain(internal.workflow.getNodes())
+        .map((node) => {
+          return node.state;
+        })
+        .map((state) => {
+          return state.status;
+        })
+        .value();
+      let idx = _.findIndex(statuses, (status) => {
+        return status === 'status_queued' || status === 'status_running';
+      });
+
+      return idx !== -1;
+    }
+
     getWorkflow() {
       return internal.workflow;
     }
