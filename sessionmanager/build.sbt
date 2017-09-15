@@ -17,8 +17,8 @@ enablePlugins(JavaAppPackaging, GitVersioning, DeepsenseUniversalSettingsPlugin)
 // If there are many `App` objects in project, docker image will crash with cryptic message
 mainClass in Compile := Some("io.deepsense.sessionmanager.SessionManagerApp")
 
-val weJar = taskKey[File]("Workflow executor runnable jar")
-val weSparkVersion = DeepsenseUniversalSettingsPlugin.weSparkVersion
+lazy val weJar = taskKey[File]("Workflow executor runnable jar")
+lazy val weSparkVersion = DeepsenseUniversalSettingsPlugin.weSparkVersion
 
 weJar := {
   val jar =
@@ -26,7 +26,7 @@ weJar := {
 
   val assemblyCmd = s"sbt -DsparkVersion=$weSparkVersion workflowexecutor/assembly"
 
-  if(jar.exists()) {
+  if (jar.exists()) {
     println(
       s"""
          |Workflow executor jar in nested repo already exist. Assuming it's up to date.
@@ -35,7 +35,7 @@ weJar := {
     )
   } else {
     val shell = Seq("bash", "-c")
-    shell :+ s"cd seahorse-workflow-executor; $assemblyCmd".!!
+    shell :+ s"cd seahorse-workflow-executor; $assemblyCmd" !!
   }
 
   jar
@@ -43,7 +43,7 @@ weJar := {
 
 mappings in Universal += weJar.value -> "we.jar"
 
-val preparePythonDeps = taskKey[File]("Generates we_deps.zip file with python dependencies")
+lazy val preparePythonDeps = taskKey[File]("Generates we_deps.zip file with python dependencies")
 
 preparePythonDeps := {
   Seq("sessionmanager/prepare-deps.sh", weSparkVersion).!!
@@ -68,7 +68,7 @@ dockerBaseImage := {
   s"docker-repo.deepsense.codilime.com/deepsense_io/deepsense-mesos-spark:$seahorseBuildTag"
 }
 
-val tiniVersion = "v0.10.0"
+lazy val tiniVersion = "v0.10.0"
 
 dockerCommands ++= Seq(
 // Add Tini - so the python zombies can be collected
