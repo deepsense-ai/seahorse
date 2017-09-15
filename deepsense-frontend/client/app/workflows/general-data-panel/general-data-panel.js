@@ -12,7 +12,6 @@ function GeneralDataPanel() {
       'description': '=',
       'publicParams': '=',
       'state': '=',
-      'isReportMode': '='
     },
     controller: () => {},
     controllerAs: 'controller',

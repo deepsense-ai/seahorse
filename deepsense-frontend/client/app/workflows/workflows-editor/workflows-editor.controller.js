@@ -28,7 +28,7 @@ class WorkflowsEditorController {
     this.selectedNode = null;
     this.catalog = Operations.getCatalog();
     this.isReportMode = false;
-    this.eventListeners = [];
+    this._editableModeEventListeners = [];
     this.zoomId = 'flowchart-box';
     this.nodeCopyPasteVisitor = new NodeCopyPasteVisitor(MultiSelectionService, $q,
       $scope, WorkflowService, this, GraphNodesService);
@@ -78,7 +78,7 @@ class WorkflowsEditorController {
     this.WorkflowService.getCurrentWorkflow().updateState(workflowWithResults.executionReport);
     this.initListeners();
     if (this.WorkflowService.isWorkflowRunning()) {
-      this.changeToRunningMode();
+      this._setRunningMode();
     }
     this._loadReports(workflowWithResults.executionReport);
   }
@@ -137,7 +137,7 @@ class WorkflowsEditorController {
     });
 
     this.$scope.$on('StatusBar.RUN', () => {
-      this.changeToRunningMode();
+      this._setRunningMode();
       let nodesToExecute = this.MultiSelectionService.getSelectedNodeIds();
       this.ServerCommunication.sendLaunchToWorkflowExchange(nodesToExecute);
     });
@@ -148,12 +148,12 @@ class WorkflowsEditorController {
     });
 
     this.$scope.$on('ServerCommunication.EXECUTION_FINISHED', () => {
-      this.restoreEditableMode();
+      this._setEditableMode();
     });
 
     this.$scope.$on('StatusBar.ABORT', () => {
       this.ServerCommunication.sendAbortToWorkflowExchange();
-      this.restoreEditableMode();
+      this._setEditableMode();
     });
 
     this.$scope.$on('GraphNode.CLICK', (event, data) => {
@@ -165,11 +165,12 @@ class WorkflowsEditorController {
       }
     });
 
-    this.initUnbindableListeners();
+    this._reinitEditableModeListeners();
   }
 
-  initUnbindableListeners() {
-    this.eventListeners = [
+  _reinitEditableModeListeners() {
+    this._unbindEditorListeners();
+    this._editableModeEventListeners = [
       this.$scope.$on(this.Edge.CREATE, (data, args) => {
         this.getWorkflow().addEdge(args.edge);
       }),
@@ -179,11 +180,6 @@ class WorkflowsEditorController {
       }),
 
       this.$scope.$on('FlowChartBox.ELEMENT_DROPPED', (event, args) => {
-        // BUG DS-2605 - Remove after resolving
-        console.log('FlowchartBox - element dropped: event', event);
-        console.log('FlowchartBox - element dropped: args', args);
-        console.log('FlowchartBox - element dropped: this', this);
-
         let dropElementOffset = this.MouseEvent.getEventOffsetOfElement(args.dropEvent, args.target);
         let operation = this.Operations.get(args.elementId);
         let offsetX = dropElementOffset.x;
@@ -275,24 +271,25 @@ class WorkflowsEditorController {
     });
   }
 
-  changeToRunningMode() {
-    this.unbindListeners();
+  _setRunningMode() {
+    this._unbindEditorListeners();
     this.isReportMode = true;
     this.WorkflowService.getCurrentWorkflow().isRunning = true;
     this.CopyPasteService.setEnabled(false);
     this.isRunning = true;
   }
 
-  restoreEditableMode() {
-    this.initUnbindableListeners();
+  _setEditableMode() {
+    this._reinitEditableModeListeners();
     this.isReportMode = false;
     this.WorkflowService.getCurrentWorkflow().isRunning = false;
     this.CopyPasteService.setEnabled(true);
     this.isRunning = false;
   }
 
-  unbindListeners() {
-    this.eventListeners.forEach(func => func());
+  _unbindEditorListeners() {
+    this._editableModeEventListeners.forEach(func => func());
+    this._editableModeEventListeners = [];
   }
 
   rerenderEdges() {
