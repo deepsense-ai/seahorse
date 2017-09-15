@@ -89,4 +89,14 @@ object Constants {
    */
   val EntityStorageConfigLocation =
     DeepSenseIoDeploymentDirectory + "/etc/" + EntityStorageConfName
+
+  /**
+   *  Configuration file's name on cluster HDFS
+   */
+  val Log4jPropertiesName = "log4j.properties"
+
+  /**
+   * Location of configuration file on cluster HDFS
+   */
+  val Log4jPropertiesLocation = DeepSenseIoDeploymentDirectory + "/etc/" + Log4jPropertiesName
 }

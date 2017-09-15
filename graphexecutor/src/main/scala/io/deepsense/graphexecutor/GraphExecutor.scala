@@ -25,6 +25,7 @@ import org.apache.hadoop.yarn.client.api.AMRMClient.ContainerRequest
 import org.apache.hadoop.yarn.client.api.async.AMRMClientAsync
 import org.apache.hadoop.yarn.client.api.async.impl.AMRMClientAsyncImpl
 import org.apache.hadoop.yarn.conf.YarnConfiguration
+import org.apache.log4j.PropertyConfigurator
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.{SparkConf, SparkContext}
 
@@ -44,6 +45,7 @@ object GraphExecutor extends LazyLogging {
   val sparkEventLogDir = "/tmp/spark-events"
 
   def main(args: Array[String]): Unit = {
+    PropertyConfigurator.configure("./" + Constants.Log4jPropertiesName)
     // All INFOs are printed out to stderr on Hadoop YARN (dev env)
     // Go to /opt/hadoop/logs/userlogs/application_*/container_*/stderr to see progress
     logger.debug("Starting with args: {}", args.mkString("[", ", ", "]"))

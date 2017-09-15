@@ -27,6 +27,7 @@ object DeployOnHdfs {
 
   val geJarPath = s"../graphexecutor/target/scala-2.11/$geJarFilename"
   val geDepsJarPath = s"../graphexecutor/target/scala-2.11/$geDepsJarFilename"
+  val log4jPropertiesPath = s"../graphexecutor/src/main/resources/log4j.properties"
 
   val geConfPath = getClass().getResource("/graphexecutor.conf").getPath
   val esConfPath = "../deeplang/target/scala-2.11/classes/entitystorage-communication.conf"
@@ -60,6 +61,7 @@ object DeployOnHdfs {
     }
     dsHdfsClient.hdfsClient.delete(Constants.GraphExecutorConfigLocation, true)
     dsHdfsClient.hdfsClient.delete(Constants.EntityStorageConfigLocation, true)
+    dsHdfsClient.hdfsClient.delete(Constants.Log4jPropertiesLocation, true)
 
     // Create DeepSense.io directories on HDFS
     dsHdfsClient.hdfsClient.mkdirs(
@@ -88,6 +90,7 @@ object DeployOnHdfs {
       true)
 
     // NOTE: We assume here that uber-jar has been assembled immediately before this task
+    dsHdfsClient.copyLocalFile(log4jPropertiesPath, Constants.Log4jPropertiesLocation)
     dsHdfsClient.copyLocalFile(geJarPath, Constants.GraphExecutorJarLocation)
     if (deployGeWithDeps) {
       dsHdfsClient.copyLocalFile(geDepsJarPath, Constants.GraphExecutorDepsJarLocation)

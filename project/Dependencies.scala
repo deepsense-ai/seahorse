@@ -18,7 +18,7 @@ object Version {
   val scala         = "2.11.6"
   val scalacheck    = "1.12.2"
   val scalatest     = "3.0.0-SNAP4"
-  val spark         = "1.3.0"
+  val spark         = "1.4.0"
   val spray         = "1.3.3"
   val sprayJson     = "1.3.1"
 }

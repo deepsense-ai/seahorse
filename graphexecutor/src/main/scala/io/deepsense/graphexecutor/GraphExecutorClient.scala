@@ -196,11 +196,14 @@ class GraphExecutorClient extends Closeable with LazyLogging {
     val geJar = Utils.getConfiguredLocalResource(new Path(Constants.GraphExecutorJarLocation))
     val geDepsJar =
       Utils.getConfiguredLocalResource(new Path(Constants.GraphExecutorDepsJarLocation))
+    val geLog4jProperties =
+      Utils.getConfiguredLocalResource(new Path(Constants.Log4jPropertiesLocation))
     amContainer.setLocalResources(Map(
       Constants.GraphExecutorConfName -> geConf,
       Constants.EntityStorageConfName -> esConf,
       "graphexecutor.jar" -> geJar,
-      "graphexecutor-deps.jar" -> geDepsJar
+      "graphexecutor-deps.jar" -> geDepsJar,
+      Constants.Log4jPropertiesName -> geLog4jProperties
     ).asJava)
 
     // Setup env to get all yarn and hadoop classes in classpath
