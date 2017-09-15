@@ -1,18 +1,16 @@
 'use strict';
 
-import footerTpl from '../modal-footer/modal-footer.html';
+import BaseDatasourceModalController from '../base-datasource-modal-controller.js';
 
-class HdfsModalController {
-  constructor($scope, $log, $uibModalInstance, datasourcesService, datasource) {
+class HdfsModalController extends BaseDatasourceModalController {
+  constructor($scope, $log, $uibModalInstance, datasourcesService, editedDatasource) {
     'ngInject';
 
-    _.assign(this, {$log, $uibModalInstance, datasourcesService});
+    super($log, $uibModalInstance, datasourcesService, editedDatasource);
 
-    this.footerTpl = footerTpl;
-
-    if (datasource) {
-      this.originalDatasource = datasource;
-      this.datasourceParams = datasource.params;
+    if (editedDatasource) {
+      this.originalDatasource = editedDatasource;
+      this.datasourceParams = editedDatasource.params;
     } else {
       this.datasourceParams = {
         name: '',
@@ -33,63 +31,21 @@ class HdfsModalController {
 
     $scope.$watch(() => this.datasourceParams, (newSettings) => {
       this.datasourceParams = newSettings;
-      this.canAddNewDatasource = this.checkCanAddNewDatasource();
+      this.canAddNewDatasource = this.canAddDatasource();
     }, true);
   }
 
-  checkCanAddNewDatasource() {
-    const isSeparatorValid = this.checkIsSeparatorValid();
-    const isSourceValid = this.datasourceParams.hdfsParams.hdfsPath !== '';
-    const isNameValid = this.datasourceParams.name !== '';
-
-    return isSeparatorValid && isSourceValid && isNameValid;
-  }
-
-  checkIsSeparatorValid() {
+  canAddDatasource() {
     const {separatorType, customSeparator} = this.datasourceParams.hdfsParams.csvFileFormatParams;
+    const isSeparatorValid = this.isSeparatorValid(separatorType, customSeparator);
+    const isSourceValid = this.datasourceParams.hdfsParams.hdfsPath !== '';
+    const isNameEmpty = this.datasourceParams.name === '';
 
-    if (separatorType) {
-      if (separatorType === 'custom') {
-        return customSeparator !== '';
-      } else {
-        return true;
-      }
-    } else {
-      return false;
-    }
+    return !super.doesNameExists() && isSeparatorValid && isSourceValid && !isNameEmpty;
   }
 
   onFileSettingsChange(data) {
     this.datasourceParams.hdfsParams = Object.assign({}, this.datasourceParams.hdfsParams, data);
-  }
-
-  cancel() {
-    this.$uibModalInstance.dismiss();
-  }
-
-  ok() {
-    if (this.originalDatasource) {
-      const params = this.datasourceParams;
-      const updatedDatasource = Object.assign({}, this.originalDatasource, params);
-
-      this.datasourcesService.updateDatasource(updatedDatasource)
-        .then((result) => {
-          this.$log.info('result ', result);
-          this.$uibModalInstance.close();
-        })
-        .catch((error) => {
-          this.$log.info('error ', error);
-        });
-    } else {
-      this.datasourcesService.addDatasource(this.datasourceParams)
-        .then((result) => {
-          this.$log.info('result ', result);
-          this.$uibModalInstance.close();
-        })
-        .catch((error) => {
-          this.$log.info('error ', error);
-        });
-    }
   }
 }
 

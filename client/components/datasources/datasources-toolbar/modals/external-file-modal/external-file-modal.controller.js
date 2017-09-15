@@ -1,19 +1,17 @@
 'use strict';
 
-import footerTpl from '../modal-footer/modal-footer.html';
+import BaseDatasourceModalController from '../base-datasource-modal-controller.js';
 
-class ExternalFileModalController {
-  constructor($scope, $log, $uibModalInstance, datasourcesService, datasource) {
+class ExternalFileModalController extends BaseDatasourceModalController {
+  constructor($scope, $log, $uibModalInstance, datasourcesService, editedDatasource) {
     'ngInject';
 
-    _.assign(this, {$log, $uibModalInstance, datasourcesService});
-
-    this.footerTpl = footerTpl;
+    super($log, $uibModalInstance, datasourcesService, editedDatasource);
     this.extension = 'csv';
 
-    if (datasource) {
-      this.originalDatasource = datasource;
-      this.datasourceParams = datasource.params;
+    if (editedDatasource) {
+      this.originalDatasource = editedDatasource;
+      this.datasourceParams = editedDatasource.params;
     } else {
       this.datasourceParams = {
         name: '',
@@ -34,63 +32,21 @@ class ExternalFileModalController {
 
     $scope.$watch(() => this.datasourceParams, (newSettings) => {
       this.datasourceParams = newSettings;
-      this.canAddNewDatasource = this.checkCanAddNewDatasource();
+      this.canAddNewDatasource = this.canAddDatasource();
     }, true);
   }
 
-  checkCanAddNewDatasource() {
-    const isSeparatorValid = this.checkIsSeparatorValid();
+  canAddDatasource() {
+    const {separatorType, customSeparator} = this.datasourceParams.externalFileParams.csvFileFormatParams;
+    const isSeparatorValid = this.isSeparatorValid(separatorType, customSeparator);
     const isSourceValid = this.datasourceParams.externalFileParams.url !== '';
     const isNameValid = this.datasourceParams.name !== '';
 
-    return isSeparatorValid && isSourceValid && isNameValid;
-  }
-
-  checkIsSeparatorValid() {
-    const {separatorType, customSeparator} = this.datasourceParams.externalFileParams.csvFileFormatParams;
-
-    if (separatorType) {
-      if (separatorType === 'custom') {
-        return customSeparator !== '';
-      } else {
-        return true;
-      }
-    } else {
-      return false;
-    }
+    return isSeparatorValid && isSourceValid && isNameValid && !super.doesNameExists();
   }
 
   onFileSettingsChange(data) {
     this.datasourceParams.externalFileParams = Object.assign({}, this.datasourceParams.externalFileParams, data);
-  }
-
-  cancel() {
-    this.$uibModalInstance.dismiss();
-  }
-
-  ok() {
-    if (this.originalDatasource) {
-      const params = this.datasourceParams;
-      const updatedDatasource = Object.assign({}, this.originalDatasource, params);
-
-      this.datasourcesService.updateDatasource(updatedDatasource)
-        .then((result) => {
-          this.$log.info('result ', result);
-          this.$uibModalInstance.close();
-        })
-        .catch((error) => {
-          this.$log.info('error ', error);
-        });
-    } else {
-      this.datasourcesService.addDatasource(this.datasourceParams)
-        .then((result) => {
-          this.$log.info('result ', result);
-          this.$uibModalInstance.close();
-        })
-        .catch((error) => {
-          this.$log.info('error ', error);
-        });
-    }
   }
 }
 

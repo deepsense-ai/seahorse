@@ -8,6 +8,12 @@
       class="form-control"
       type="text"
     />
+    <label
+      ng-if="$ctrl.doesNameExists()"
+      class="name-exists"
+    >
+      Datasource with this name already exists. Choose another name.
+    </label>
   </div>
   <button
     ng-disabled="!$ctrl.canAddNewDatasource"

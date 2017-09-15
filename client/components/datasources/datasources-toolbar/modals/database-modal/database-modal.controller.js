@@ -1,29 +1,28 @@
 'use strict';
 
-import footerTpl from '../modal-footer/modal-footer.html';
+import BaseDatasourceModalController from '../base-datasource-modal-controller.js';
 
-class DatabaseModalController {
-  constructor($scope, $log, $uibModalInstance, datasourcesService, datasource) {
+class DatabaseModalController extends BaseDatasourceModalController {
+  constructor($scope, $log, $uibModalInstance, datasourcesService, editedDatasource) {
     'ngInject';
 
-    _.assign(this, {$log, $uibModalInstance, datasourcesService});
+    super($log, $uibModalInstance, datasourcesService, editedDatasource);
 
-    this.footerTpl = footerTpl;
     this.drivers = ['com.mysql.jdbc.driver', 'com.postgresql.jdbc.driver', 'com.oracle.jdbc.driver'];
     this.copyFromQueryInput = true;
     this.sqlInstruction = '';
 
-    if (datasource) {
-      this.originalDatasource = datasource;
-      this.datasourceParams = datasource.params;
+    if (editedDatasource) {
+      this.originalDatasource = editedDatasource;
+      this.datasourceParams = editedDatasource.params;
       this.copyFromQueryInput = false;
 
-      if (datasource.params.jdbcParams.query) {
+      if (editedDatasource.params.jdbcParams.query) {
         this.type = 'query';
-        this.sqlInstruction = datasource.params.jdbcParams.query;
-      } else if (datasource.params.jdbcParams.table) {
+        this.sqlInstruction = editedDatasource.params.jdbcParams.query;
+      } else if (editedDatasource.params.jdbcParams.table) {
         this.type = 'table';
-        this.sqlInstruction = datasource.params.jdbcParams.table;
+        this.sqlInstruction = editedDatasource.params.jdbcParams.table;
       }
     } else {
       this.type = 'table';
@@ -40,62 +39,36 @@ class DatabaseModalController {
       };
     }
 
-    $scope.$watch(() => this.datasourceParams, (newDatasourceParams) => {
-      this.datasourceParams = newDatasourceParams;
-      this.canAddNewDatasource = this.checkCanAddNewDatasource();
-    }, true);
-
     $scope.$watch(() => this.sqlInstruction, (sqlInstruction) => {
       if (this.copyFromQueryInput) {
         this.datasourceParams.name = sqlInstruction;
       }
     });
+
+    $scope.$watch(() => this.datasourceParams, (newSettings) => {
+      this.datasourceParams = newSettings;
+      this.canAddNewDatasource = this.canAddDatasource();
+    }, true);
   }
 
-  checkCanAddNewDatasource() {
+  canAddDatasource() {
     return this.datasourceParams.name !== '' &&
       this.datasourceParams.jdbcParams.driver !== '' &&
-      this.datasourceParams.jdbcParams.url !== '';
+      this.datasourceParams.jdbcParams.url !== '' &&
+      !super.doesNameExists();
   }
 
   stopCopyingFromUserField() {
     this.copyFromQueryInput = false;
   }
 
-  cancel() {
-    this.$uibModalInstance.dismiss();
-  }
-
-  ok() {
+  onQueryTypeChange() {
     if (this.type === 'table') {
       this.datasourceParams.jdbcParams.query = '';
       this.datasourceParams.jdbcParams.table = this.sqlInstruction;
     } else {
       this.datasourceParams.jdbcParams.query = this.sqlInstruction;
       this.datasourceParams.jdbcParams.table = '';
-    }
-
-    if (this.originalDatasource) {
-      const params = this.datasourceParams;
-      const updatedDatasource = Object.assign({}, this.originalDatasource, params);
-
-      this.datasourcesService.updateDatasource(updatedDatasource)
-        .then((result) => {
-          this.$log.info('result ', result);
-          this.$uibModalInstance.close();
-        })
-        .catch((error) => {
-          this.$log.info('error ', error);
-        });
-    } else {
-      this.datasourcesService.addDatasource(this.datasourceParams)
-        .then((result) => {
-          this.$log.info('result ', result);
-          this.$uibModalInstance.close();
-        })
-        .catch((error) => {
-          this.$log.info('error ', error);
-        });
     }
   }
 }

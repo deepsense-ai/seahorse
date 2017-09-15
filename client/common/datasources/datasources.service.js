@@ -59,7 +59,16 @@ export default class DatasourcesService {
       });
   }
 
+
   isCurrentUserOwnerOfDatasource(datasource) {
     return this.UserService.getSeahorseUser().id === datasource.ownerId;
   }
+
+
+  isNameUsed(datasourceName) {
+    return !!this.datasources.find((datasource) => {
+      return datasource.params.name === datasourceName;
+    });
+  }
+
 }

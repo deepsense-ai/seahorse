@@ -51,7 +51,7 @@ class DatasourcesModalsService {
       backdrop: 'static',
       keyboard: true,
       resolve: {
-        datasource: () => angular.copy(datasource)
+        editedDatasource: () => angular.copy(datasource)
       }
     });
   }

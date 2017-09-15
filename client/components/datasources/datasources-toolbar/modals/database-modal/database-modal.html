@@ -32,9 +32,10 @@
             class="format-form-label"
           >
             <input
+              ng-model="$ctrl.type"
+              ng-change="$ctrl.onQueryTypeChange()"
               type="radio"
               value="table"
-              ng-model="$ctrl.type"
             />
             <span class="radio-title">Table name</span>
           </label>
@@ -46,8 +47,9 @@
           >
             <input
               ng-model="$ctrl.type"
-              value="query"
+              ng-change="$ctrl.onQueryTypeChange()"
               type="radio"
+              value="query"
             />
             <span class="radio-title">Custom SQL query</span>
           </label>
@@ -56,6 +58,7 @@
       <div class="query-row">
         <input
           ng-model="$ctrl.sqlInstruction"
+          ng-change="$ctrl.onQueryTypeChange()"
           placeholder="Custom query"
           class="form-control"
           type="text"

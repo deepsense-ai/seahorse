@@ -1,17 +1,16 @@
 'use strict';
 
-import footerTpl from '../modal-footer/modal-footer.html';
+import BaseDatasourceModalController from '../base-datasource-modal-controller.js';
 
-class GoogleSpreadsheetModalController {
-  constructor($scope, $log, $uibModalInstance, datasourcesService, datasource) {
+class GoogleSpreadsheetModalController extends BaseDatasourceModalController {
+  constructor($scope, $log, $uibModalInstance, datasourcesService, editedDatasource) {
     'ngInject';
 
-    _.assign(this, {$log, $uibModalInstance, datasourcesService});
-    this.footerTpl = footerTpl;
+    super($log, $uibModalInstance, datasourcesService, editedDatasource);
 
-    if (datasource) {
-      this.originalDatasource = datasource;
-      this.datasourceParams = datasource.params;
+    if (editedDatasource) {
+      this.originalDatasource = editedDatasource;
+      this.datasourceParams = editedDatasource.params;
     } else {
       this.datasourceParams = {
         name: '',
@@ -28,43 +27,15 @@ class GoogleSpreadsheetModalController {
 
     $scope.$watch(() => this.datasourceParams, (newSettings) => {
       this.datasourceParams = newSettings;
-      this.canAddNewDatasource = this.checkCanAddNewDatasource();
+      this.canAddNewDatasource = this.canAddDatasource();
     }, true);
   }
 
-  checkCanAddNewDatasource() {
+  canAddDatasource() {
     return this.datasourceParams.googleSpreadsheetParams.googleSpreadsheetId !== '' &&
       this.datasourceParams.googleSpreadsheetParams.googleServiceAccountCredentials !== '' &&
-      this.datasourceParams.name !== '';
-  }
-
-  cancel() {
-    this.$uibModalInstance.dismiss();
-  }
-
-  ok() {
-    if (this.originalDatasource) {
-      const params = this.datasourceParams;
-      const updatedDatasource = Object.assign({}, this.originalDatasource, params);
-
-      this.datasourcesService.updateDatasource(updatedDatasource)
-        .then((result) => {
-          this.$log.info('result ', result);
-          this.$uibModalInstance.close();
-        })
-        .catch((error) => {
-          this.$log.info('error ', error);
-        });
-    } else {
-      this.datasourcesService.addDatasource(this.datasourceParams)
-        .then((result) => {
-          this.$log.info('result ', result);
-          this.$uibModalInstance.close();
-        })
-        .catch((error) => {
-          this.$log.info('error ', error);
-        });
-    }
+      this.datasourceParams.name !== '' &&
+      !super.doesNameExists();
   }
 }
 
