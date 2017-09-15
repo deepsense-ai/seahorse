@@ -69,7 +69,7 @@ The [Filter Rows](../operations/filter_rows.html) operation is parameterized by 
 
 **CONDITION**: `Gender = 'F'`
 
-![image alt text](img/usecases/us_baby_names/image_5.png)
+![image alt text](../img/usecases/us_baby_names/image_5.png)
 
 ### Finding the Most Popular Names
 

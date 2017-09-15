@@ -1,9 +1,8 @@
 ---
 layout: global
 displayTitle: Seahorse on Data Scientist Workbench
-docTab: dswb_overview
+menuTab: deployment
 title: Seahorse on Data Scientist Workbench
-includeTechnicalOverviewMenu: true
 description: Seahorse on Data Scientist Workbench
 ---
 
@@ -22,7 +21,7 @@ The purpose of Seahorse on Data Scientist Workbench is to present important feat
 production use, this is why it is limited to a single-node Spark cluster.
 
 <div class="centered-container" markdown="1">
-  ![Seahorse on Data Scientist Workbench Overview](./img/dswb_overview.png){: .centered-image .img-responsive}
+  ![Seahorse on Data Scientist Workbench Overview](../img/dswb_overview.png){: .centered-image .img-responsive}
   *Seahorse on Data Scientist Workbench Overview*
 </div>
 
@@ -40,7 +39,7 @@ Once you have opened the workflow (either by creating a new one or by cloning on
 press the **START EDITING** button to start editing the workflow. This will start the Seahorse Spark
 application responsible for executing your workflow.
 
-To find out more on what is possible in Seahorse, see the [Quick Start guide](index.html).
+To find out more on what is possible in Seahorse, see the [Getting Started guide](../getting_started.html#use-seahorse).
 
 ## Platform Information
 
@@ -59,7 +58,7 @@ To find out more on what is possible in Seahorse, see the [Quick Start guide](in
 
 Above limitations refer only to Seahorse on Data Scientist Workbench.
 To learn more about scaling up and using Seahorse in production,
-see the <a href="https://seahorse.deepsense.io/enterprise.html">Enterprise</a> page.
+see the [Enterprise](enterprise.html) page.
 
 
 <div class="contact-block">

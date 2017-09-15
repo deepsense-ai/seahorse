@@ -27,7 +27,7 @@ By default, Seahorse supports JDBC drivers:
 - PostgreSQL, version 9.4.1207
 
 For detailed information on using custom JDBC drivers in the Batch Workflow Executor, visit
-[Custom JDBC drivers](../internal/batch_workflow_executor_overview.html#custom-jdbc-drivers) section.
+[Custom JDBC drivers](../productionizing.html#custom-jdbc-drivers) section.
 
 
 ## Available File Formats

@@ -133,9 +133,9 @@ compiled for Hadoop {{ site.WORKFLOW_EXECUTOR_HADOOP_VERSION }} package.
 ## Custom JDBC Drivers
 
 To allow usage of SQL databases for
-[Read DataFrame](../operations/read_dataframe.html)
+[Read DataFrame](operations/read_dataframe.html)
 and
-[Write DataFrame](../operations/write_dataframe.html),
+[Write DataFrame](operations/write_dataframe.html),
 a proper JDBC driver has to be accessible during workflow's execution.
 This requirement can be satisfied by:
 

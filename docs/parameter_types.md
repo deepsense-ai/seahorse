@@ -1,10 +1,9 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Parameter Types
-docTab: parameter_types
+menuTab: reference
 title: Parameter Types
-includeDeeplangMenu: true
-description: Parameters documentation
+description: Parameters Reference
 ---
 
 Each parameter has a name, description and a type. A type of a parameter defines what kind of value it receives (along with some validation logic).

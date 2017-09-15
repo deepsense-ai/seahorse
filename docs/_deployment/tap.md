@@ -1,12 +1,10 @@
 ---
 layout: global
 displayTitle: Seahorse on Trusted Analytics Platform
-docTab: tap_overview
+menuTab: deployment
 title: Seahorse on Trusted Analytics Platform
-includeTechnicalOverviewMenu: true
 description: Seahorse on Trusted Analytics Platform
 ---
-
 
 **Table of Contents**
 
@@ -31,7 +29,7 @@ The Seahorse instances are bound to organization.
 Only users from given organization can access them.
 
 <div class="centered-container" markdown="1">
-  ![Seahorse on Trusted Analytics Platform Overview](./img/tap_creating_instance.png){: .centered-image .img-responsive}
+  ![Seahorse on Trusted Analytics Platform Overview](../img/tap_creating_instance.png){: .centered-image .img-responsive}
   *Managing Seahorse instances*
 </div>
 
@@ -47,7 +45,7 @@ Opening Seahorse for the first time may also show a screen,
 where you will have to grant permissions for Seahorse.
 
 <div class="centered-container" markdown="1">
-  ![TAP login page](./img/tap_login_screen.png){: .centered-image .img-responsive}
+  ![TAP login page](../img/tap_login_screen.png){: .centered-image .img-responsive}
   *TAP login page*
 </div>
 
@@ -59,13 +57,13 @@ but you can only edit and run the workflows that you own.
 
 If you found an interesting workflow, but you are not the owner,
 you can clone it by clicking the
-![clone button](img/clone_button.png) button.
+![clone button](../img/clone_button.png) button.
 Once the workflow is cloned you can edit and run it.
 You can also create new workflows from scratch by pressing the
 **NEW WORKFLOW** button.
 
 <div class="centered-container" markdown="1">
-  ![List of workflows](./img/tap_list_of_workflows.png){: .centered-image .img-responsive}
+  ![List of workflows](../img/tap_list_of_workflows.png){: .centered-image .img-responsive}
   *List of workflows*
 </div>
 
@@ -78,12 +76,12 @@ This will start the Seahorse Spark application responsible for executing
 your workflow.
 
 <div class="centered-container" markdown="1">
-  ![List of workflows](./img/tap_seahorse_editor.png){: .centered-image .img-responsive}
-  *List of workflows*
+  ![List of workflows](../img/tap_seahorse_editor.png){: .centered-image .img-responsive}
+  *Seahorse editor*
 </div>
 
 To find out more on what is possible in Seahorse,
-see the [Quick Start guide](internal/main.html).
+see the [Getting Started guide](../getting_started.html#use-seahorse).
 
 ## Limitations
 
@@ -94,7 +92,7 @@ your workflow will stop working.
 
 Above limitations refer only to Seahorse on Trusted Analytics Platform.
 To learn more about scaling up and using Seahorse in production,
-see the <a href="https://seahorse.deepsense.io/enterprise.html">Enterprise</a> page.
+see the [Enterprise](enterprise.html) page.
 
 
 <div class="contact-block">

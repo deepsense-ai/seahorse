@@ -1,9 +1,8 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Spark SQL User Defined Functions
-docTab: Spark SQL User Defined Functions
+menuTab: reference
 title: Spark SQL User Defined Functions
-includeDeeplangMenu: true
 description: Spark SQL User Defined Functions
 usesMathJax: true
 ---
