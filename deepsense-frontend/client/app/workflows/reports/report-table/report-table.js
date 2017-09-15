@@ -26,9 +26,7 @@ function ReportTable() {
         return $scope.distributions && $scope.distributions[columnName];
       };
 
-      $scope.getTriggerEventBasedOnDescriptionLength = (value) => {
-        return value.length > $scope.maxLength ? 'mouseenter' : 'none';
-      };
+      $scope.isLongEnoughToBeCutOff = (value) => value.length > $scope.maxLength;
 
       this.showDistribution = (columnName) => {
         if ($scope.getDistributionType(columnName)) {
