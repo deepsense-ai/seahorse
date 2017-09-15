@@ -145,7 +145,7 @@ class EditorController {
         newNodeData.portIndex = endpoint.getParameter('portIndex');
         newNodeData.typeQualifier = this.workflow.getNodeById(newNodeData.nodeId).output[newNodeData.portIndex].typeQualifier;
         const catalog = this.Operations.getCatalog();
-        const filterForCatalog = this.Operations.getFilterForTypeQualifier(newNodeData.typeQualifier);
+        const filterForCatalog = this.Operations.getFilterForTypeQualifier(newNodeData.typeQualifier[0]);
         this.categories = this.Operations.filterCatalog(catalog, filterForCatalog);
       } else {
         this.categories = this.Operations.getCatalog();
