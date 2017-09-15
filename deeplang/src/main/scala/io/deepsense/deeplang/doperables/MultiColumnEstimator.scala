@@ -20,6 +20,7 @@ import scala.language.reflectiveCalls
 
 import org.apache.spark.sql.types.StructType
 
+import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.multicolumn.HasSpecificParams
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.MultiColumnInPlaceChoices.MultiColumnNoInPlace
@@ -64,22 +65,24 @@ abstract class MultiColumnEstimator extends Estimator with HasSpecificParams {
   }
 
   def handleSingleColumnChoice(
+    ctx: ExecutionContext,
     df: DataFrame,
     single: SingleColumnChoice): Transformer with HasInputColumn
 
   def handleMultiColumnChoice(
+    ctx: ExecutionContext,
     df: DataFrame,
     multi: MultiColumnChoice): Transformer
 
   /**
    * Creates a Transformer based on a DataFrame.
    */
-  override private[deeplang] def _fit(df: DataFrame): Transformer = {
+  override private[deeplang] def _fit(ctx: ExecutionContext, df: DataFrame): Transformer = {
     $(singleOrMultiChoiceParam) match {
       case single: SingleColumnChoice =>
-        handleSingleColumnChoice(df, single)
+        handleSingleColumnChoice(ctx, df, single)
       case multi: MultiColumnChoice =>
-        handleMultiColumnChoice(df, multi)
+        handleMultiColumnChoice(ctx, df, multi)
     }
   }
 

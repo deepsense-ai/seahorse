@@ -47,6 +47,7 @@ abstract class SparkMultiColumnEstimatorWrapper[
   val sparkEstimatorWrapper: EW = createEstimatorWrapperInstance()
 
   override def handleSingleColumnChoice(
+      ctx: ExecutionContext,
       df: DataFrame,
       single: SingleColumnChoice): MW = {
 
@@ -56,12 +57,13 @@ abstract class SparkMultiColumnEstimatorWrapper[
       .set(inputColumn -> single.getInputColumn)
       .setSingleInPlaceParam(single.getInPlace)
 
-    estimator._fit(df).asInstanceOf[MW]
+    estimator._fit(ctx, df).asInstanceOf[MW]
       .setSingleInPlaceParam(single.getInPlace)
   }
 
 
   override def handleMultiColumnChoice(
+      ctx: ExecutionContext,
       df: DataFrame,
       multi: MultiColumnChoice): MMW = {
     val inputColumns = df.getColumnNames(multi.getMultiInputColumnSelection)
@@ -74,7 +76,7 @@ abstract class SparkMultiColumnEstimatorWrapper[
           .set(inputColumn -> NameSingleColumnSelection(inputColumnName))
           .setSingleInPlaceParam(multiToSingleDecoder(inputColumnName))
         estimator.
-          _fit(df)
+          _fit(ctx, df)
           .asInstanceOf[MW]
           .setSingleInPlaceParam(multiToSingleDecoder(inputColumnName))
     }

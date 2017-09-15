@@ -31,7 +31,7 @@ abstract class Estimator extends DOperable with Params {
   /**
    * Creates a Transformer based on a DataFrame.
    */
-  private[deeplang] def _fit(df: DataFrame): Transformer
+  private[deeplang] def _fit(ctx: ExecutionContext, df: DataFrame): Transformer
 
   /**
    * Creates an instance of Transformer for inference.
@@ -42,7 +42,7 @@ abstract class Estimator extends DOperable with Params {
   def fit: DMethod1To1[Unit, DataFrame, Transformer] = {
     new DMethod1To1[Unit, DataFrame, Transformer] {
       override def apply(ctx: ExecutionContext)(p: Unit)(df: DataFrame): Transformer = {
-        _fit(df)
+        _fit(ctx, df)
       }
 
       override def infer(ctx: InferContext)(p: Unit)(k: DKnowledge[DataFrame])

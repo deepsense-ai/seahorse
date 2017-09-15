@@ -98,7 +98,8 @@ class EstimatorModelWrapperIntegSpec extends DeeplangIntegTestSupport {
     val estimatorWrapper = new SimpleSparkEstimatorWrapper()
       .setPredictionColumn(estimatorPredictionParamValue)
 
-    val transformer = estimatorWrapper._fit(inputDF).asInstanceOf[SimpleSparkModelWrapper]
+    val transformer =
+      estimatorWrapper._fit(executionContext, inputDF).asInstanceOf[SimpleSparkModelWrapper]
     transformer.getPredictionColumn() shouldBe estimatorPredictionParamValue
 
     transformer

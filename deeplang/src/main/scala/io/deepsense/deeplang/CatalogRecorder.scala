@@ -76,6 +76,8 @@ object CatalogRecorder {
     catalog.registerDOperable[CountVectorizerModel]()
     catalog.registerDOperable[IDF]()
     catalog.registerDOperable[IDFModel]()
+    catalog.registerDOperable[GBTClassifier]()
+    catalog.registerDOperable[GBTClassificationModel]()
 
     // wrapped Spark transformers
     catalog.registerDOperable[Binarizer]()
@@ -188,6 +190,9 @@ object CatalogRecorder {
 
     catalog.registerDOperation[CreateIDF](
       DOperationCategories.ML)
+
+    catalog.registerDOperation[CreateGBTClassifier](
+      DOperationCategories.ML.Classification)
 
     // operations generated from Spark transformers
     catalog.registerDOperation[Binarize](

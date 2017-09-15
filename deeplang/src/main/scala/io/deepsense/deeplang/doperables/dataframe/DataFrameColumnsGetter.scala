@@ -18,8 +18,6 @@ package io.deepsense.deeplang.doperables.dataframe
 
 import java.util.UUID
 
-import scala.annotation.tailrec
-
 import org.apache.spark.sql.types.StructType
 
 import io.deepsense.commons.types.ColumnType.ColumnType

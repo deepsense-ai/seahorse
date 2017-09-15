@@ -37,8 +37,9 @@ class EstimatorIntegSpec extends UnitSpec {
     "fit to a DataFrame producing a Transfomer" in {
       val dataFrame: DataFrame = mock[DataFrame]
       val e = estimator
-      when(e._fit(dataFrame)).thenReturn(transformer)
-      val outputTransfomer = e.fit(mock[ExecutionContext])(())(dataFrame)
+      val context: ExecutionContext = mock[ExecutionContext]
+      when(e._fit(context, dataFrame)).thenReturn(transformer)
+      val outputTransfomer = e.fit(context)(())(dataFrame)
       outputTransfomer shouldBe transformer
     }
     "infer" when {

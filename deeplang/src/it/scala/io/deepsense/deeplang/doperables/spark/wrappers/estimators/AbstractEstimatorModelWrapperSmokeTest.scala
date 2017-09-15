@@ -16,13 +16,15 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
+import org.apache.spark.mllib.linalg.Vectors
+import org.apache.spark.sql.types.StructType
+import org.apache.spark.{ml, mllib}
+
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.SparkEstimatorWrapper
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.spark.wrappers.estimators.AbstractEstimatorModelWrapperSmokeTest.TestDataFrameRow
 import io.deepsense.deeplang.params.ParamPair
-import org.apache.spark.mllib.linalg.Vectors
-import org.apache.spark.{ml, mllib}
 
 abstract class AbstractEstimatorModelWrapperSmokeTest[E <: ml.Estimator[_]]
   extends DeeplangIntegTestSupport {
@@ -44,12 +46,17 @@ abstract class AbstractEstimatorModelWrapperSmokeTest[E <: ml.Estimator[_]]
     DataFrame.fromSparkDataFrame(sparkDF)
   }
 
+  def assertTransformedDF(dataFrame: DataFrame): Unit = {}
+  def assertTransformedSchema(schema: StructType): Unit = {}
+
   className should {
     "successfully run _fit(), _transform() and _transformSchema()" in {
       val estimatorWithParams = estimatorWrapper.set(estimatorParams: _*)
-      val transformer = estimatorWithParams._fit(dataFrame)
-      transformer._transform(executionContext, dataFrame)
-      transformer._transformSchema(dataFrame.sparkDataFrame.schema)
+      val transformer = estimatorWithParams._fit(executionContext, dataFrame)
+      val transformed = transformer._transform(executionContext, dataFrame)
+       assertTransformedDF(transformed)
+      val transformedSchema = transformer._transformSchema(dataFrame.sparkDataFrame.schema)
+      assertTransformedSchema(transformedSchema.get)
     }
     "successfully run _fit_infer() and _transformSchema() with schema" in {
       val estimatorWithParams = estimatorWrapper.set(estimatorParams: _*)

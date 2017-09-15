@@ -19,7 +19,7 @@ package io.deepsense.deeplang.doperables
 import org.apache.spark.sql.types.StructType
 import org.apache.spark.sql.{DataFrame => SparkDataFrame}
 
-import io.deepsense.deeplang.UnitSpec
+import io.deepsense.deeplang.{ExecutionContext, UnitSpec}
 
 class SparkEstimatorWrapperSpec extends UnitSpec {
 
@@ -30,7 +30,8 @@ class SparkEstimatorWrapperSpec extends UnitSpec {
       val wrapper = new ExampleSparkEstimatorWrapper().setNumericParamWrapper(paramValueToSet)
       val inputDataFrame = mockInputDataFrame()
 
-      val modelWrapper = wrapper._fit(inputDataFrame).asInstanceOf[ExampleSparkModelWrapper]
+      val modelWrapper =
+        wrapper._fit(mock[ExecutionContext], inputDataFrame).asInstanceOf[ExampleSparkModelWrapper]
       modelWrapper.model shouldBe fitModel
     }
     "infer knowledge when schema is provided" in {

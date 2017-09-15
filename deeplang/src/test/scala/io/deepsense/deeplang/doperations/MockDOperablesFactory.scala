@@ -93,7 +93,7 @@ object MockDOperablesFactory extends UnitSpec {
     }
 
     // Not used in tests.
-    override private[deeplang] def _fit(df: DataFrame): Transformer = ???
+    override private[deeplang] def _fit(ctx: ExecutionContext, df: DataFrame): Transformer = ???
     override private[deeplang] def _fit_infer(schema: Option[StructType]): Transformer = ???
   }
 

@@ -21,7 +21,7 @@ import scala.reflect.runtime.universe._
 import org.apache.spark.ml
 import org.apache.spark.sql.types.StructType
 
-import io.deepsense.deeplang.TypeUtils
+import io.deepsense.deeplang.{ExecutionContext, TypeUtils}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.params.wrappers.spark.ParamsWithSparkWrappers
 
@@ -43,7 +43,7 @@ abstract class SparkEstimatorWrapper
 
   val sparkEstimator: E = createEstimatorInstance()
 
-  override private[deeplang] def _fit(dataFrame: DataFrame): Transformer = {
+  override private[deeplang] def _fit(ctx: ExecutionContext, dataFrame: DataFrame): Transformer = {
     val sparkParams = sparkParamMap(sparkEstimator, dataFrame.sparkDataFrame.schema)
     val sparkModel = sparkEstimator.fit(
       dataFrame.sparkDataFrame,
