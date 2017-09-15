@@ -70,7 +70,7 @@ it will be included only once. When a column selected by name
 or by index does not exist the operation will fail at runtime with <code>ColumnsDoNotExistException</code>.</td>
 </tr>
 <tr>
-<td><code id="seed">strategy</code></td>
+<td><code id="strategy">strategy</code></td>
 <td><code><a href="../parameters.html#single_choice">Choice</a></code></td>
 <td>
   Strategy of handling missing values in data.<br />
@@ -78,23 +78,44 @@ or by index does not exist the operation will fail at runtime with <code>Columns
 </td>
 </tr>
 <tr>
-<td><code id="seed">value</code></td>
+<td><code id="missing-value-indicator">missing value indicator</code></td>
+<td><code><a href="../parameters.html#single_choice">Choice</a></code></td>
+<td>
+  When set to <code>"Yes"</code>, a missing value indicator is added for each column in the
+  selected column range. Newly generated columns contain <code>true</code> if the value was
+  missing and <code>false</code> otherwise. The names of generated columns are constructed by
+  prepending the given <code><a href="#indicator-column-prefix">indicator column prefix</a></code>
+  to original column name.<br />
+  Possible values: <code>["Yes", "No"]</code>
+</td>
+</tr>
+<tr>
+<td><code id="value">value</code></td>
 <td><code><a href="../parameters.html#string">String</a></code></td>
 <td>
-  Available only if <code>strategy</code> is set to <code>"replace with custom value"</code>.
-  It contains a replacement for missing values. The replacement value should match selected columns'
-  type. Boolean values are represented as <code>true</code> or <code>false</code>.
-  Timestamps are represented in <code>yyyy-[m]m-[d]d hh:mm:ss[.f...]</code> format.
+  Available only if <code><a href="#strategy">strategy</a></code> is set to
+  <code>"replace with custom value"</code>. It contains a replacement for missing values.
+  The replacement value should match selected columns' type. Boolean values are represented
+  as <code>true</code> or <code>false</code>. Timestamps are represented in
+  <code>yyyy-[m]m-[d]d hh:mm:ss[.f...]</code> format.
   Example timestamp: <code>2015-03-30 15:25:00.0</code>.
 </td>
 </tr>
 <tr>
-<td><code id="seed">empty column strategy</code></td>
+<td><code id="empty-column-strategy">empty column strategy</code></td>
 <td><code><a href="../parameters.html#single_choice">Choice</a></code></td>
 <td>
-  Available only if <code>strategy</code> is set to <code>"replace with mode"</code>.
+  Available only if <code><a href="#strategy">strategy</a></code> is set to <code>"replace with mode"</code>.
   It defines whether to remove or retain columns, which contain only empty values.
   Possible values: <code>["remove", "retain"]</code>
+</td>
+</tr>
+<tr>
+<td><code id="indicator-column-prefix">indicator column prefix</code></td>
+<td><code><a href="../parameters.html#string">String</a></code></td>
+<td>
+  Available only if <code><a href="#missing-value-indicator">missing value indicator</a></code>
+  is set to <code>"Yes"</code>. It defines the prefix for generated missing value indicator columns.
 </td>
 </tr>
 </tbody>
