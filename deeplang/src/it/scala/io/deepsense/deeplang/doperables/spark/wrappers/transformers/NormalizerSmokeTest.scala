@@ -23,11 +23,11 @@ import io.deepsense.deeplang.doperables.multicolumn.MultiColumnTransformerParams
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnTransformerParams.SingleTransformInPlaceChoices.NoInPlaceChoice
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
-class NormalizerTransformerSmokeTest
-  extends AbstractTransformerWrapperSmokeTest[NormalizerTransformer]
+class NormalizerSmokeTest
+  extends AbstractTransformerWrapperSmokeTest[Normalizer]
   with MultiColumnTransformerWrapperTestSupport {
 
-  override def transformerWithParams: NormalizerTransformer = {
+  override def transformerWithParams: Normalizer = {
     val inPlace = NoInPlaceChoice()
       .setColumnName("normalize")
 
@@ -35,7 +35,7 @@ class NormalizerTransformerSmokeTest
       .setInputColumn(NameSingleColumnSelection("v"))
       .setInPlace(inPlace)
 
-    val transformer = new NormalizerTransformer()
+    val transformer = new Normalizer()
     transformer.set(Seq(
       transformer.singleOrMultiChoiceParam -> single,
       transformer.p -> 1.0

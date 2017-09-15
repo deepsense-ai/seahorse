@@ -19,14 +19,14 @@ package io.deepsense.deeplang.doperations.spark.wrappers.transformers
 import scala.reflect.runtime.universe.TypeTag
 
 import io.deepsense.deeplang.DOperation.Id
-import io.deepsense.deeplang.doperables.spark.wrappers.transformers.NormalizerTransformer
+import io.deepsense.deeplang.doperables.spark.wrappers.transformers.Normalizer
 import io.deepsense.deeplang.doperations.TransformerAsOperation
 
-class Normalize extends TransformerAsOperation[NormalizerTransformer] {
+class Normalize extends TransformerAsOperation[Normalizer] {
 
   override val id: Id = "20f3d9ef-9b04-49c6-8acd-7ddafdedcb39"
   override val name: String = "Normalizer"
   override val description: String = "Normalize vector columns using given p-norm"
 
-  override lazy val tTagTO_1: TypeTag[NormalizerTransformer] = typeTag
+  override lazy val tTagTO_1: TypeTag[Normalizer] = typeTag
 }

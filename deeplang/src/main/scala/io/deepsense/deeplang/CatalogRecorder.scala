@@ -23,7 +23,7 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.spark.wrappers.estimators.LogisticRegression
 import io.deepsense.deeplang.doperables.spark.wrappers.evaluators._
 import io.deepsense.deeplang.doperables.spark.wrappers.models.LogisticRegressionModel
-import io.deepsense.deeplang.doperables.spark.wrappers.transformers.{Binarizer, NormalizerTransformer, DiscreteCosineTransformer, StringTokenizer, VectorAssembler}
+import io.deepsense.deeplang.doperables.spark.wrappers.transformers.{Binarizer, Normalizer, DiscreteCosineTransformer, StringTokenizer, VectorAssembler}
 import io.deepsense.deeplang.doperations._
 import io.deepsense.deeplang.doperations.spark.wrappers.estimators.CreateLogisticRegression
 import io.deepsense.deeplang.doperations.spark.wrappers.evaluators._
@@ -52,7 +52,7 @@ object CatalogRecorder {
     // wrapped Spark transformers
     catalog.registerDOperable[Binarizer]()
     catalog.registerDOperable[DiscreteCosineTransformer]()
-    catalog.registerDOperable[NormalizerTransformer]()
+    catalog.registerDOperable[Normalizer]()
     catalog.registerDOperable[StringTokenizer]()
     catalog.registerDOperable[VectorAssembler]()
 

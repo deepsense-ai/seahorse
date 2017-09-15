@@ -16,16 +16,16 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.transformers
 
-import org.apache.spark.ml.feature.Normalizer
+import org.apache.spark.ml.feature.{Normalizer => SparkNormalizer}
 
 import io.deepsense.deeplang.doperables.SparkTransformerAsMultiColumnTransformer
 import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.validators.RangeValidator
 import io.deepsense.deeplang.params.wrappers.spark.DoubleParamWrapper
 
-class NormalizerTransformer extends SparkTransformerAsMultiColumnTransformer[Normalizer] {
+class Normalizer extends SparkTransformerAsMultiColumnTransformer[SparkNormalizer] {
 
-  val p = new DoubleParamWrapper[Normalizer](
+  val p = new DoubleParamWrapper[SparkNormalizer](
     name = "p",
     description = "Normalization in L^p space. Must be >= 1",
     sparkParamGetter = _.p,
