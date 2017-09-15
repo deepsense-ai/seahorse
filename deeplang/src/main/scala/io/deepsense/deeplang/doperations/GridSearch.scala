@@ -103,15 +103,28 @@ case class GridSearch() extends DOperation3To1[DataFrame, Estimator, Evaluator, 
       metrics: Array[Double],
       isLargerMetricBetter: Boolean): Report = {
     val paramsWithOrder: Seq[Param[_]] = gridSearchParams.head.toSeq.map(_.param).sortBy(_.name)
-    val bestMetric: Metric = findBestMetric(metrics, isLargerMetricBetter)
+    val sortedMetrics: Seq[Metric] =
+      sortParamsByMetricValue(gridSearchParams, metrics, isLargerMetricBetter)
     Report(ReportContent("Grid Search", ReportType.GridSearch, tables = Seq(
-      bestParamsMetricsTable(gridSearchParams, paramsWithOrder, bestMetric),
-      cvParamsMetricsTable(gridSearchParams, paramsWithOrder, metrics)
+      bestParamsMetricsTable(paramsWithOrder, sortedMetrics.head),
+      cvParamsMetricsTable(paramsWithOrder, sortedMetrics)
     )))
   }
 
-  private def bestParamsMetricsTable(
+  private def sortParamsByMetricValue(
       gridSearchParams: Array[ParamMap],
+      metricValues: Array[Double],
+      isLargerMetricBetter: Boolean): Seq[Metric] = {
+    val metrics: Seq[Metric] = gridSearchParams.zip(metricValues).map(new Metric(_))
+    val sorted = metrics.sortBy(_.metricValue)
+    if (isLargerMetricBetter) {
+      sorted.reverse
+    } else {
+      sorted
+    }
+  }
+
+  private def bestParamsMetricsTable(
       paramsWithOrder: Seq[Param[_]],
       bestMetric: Metric): Table = {
     Table(
@@ -120,27 +133,21 @@ case class GridSearch() extends DOperation3To1[DataFrame, Estimator, Evaluator, 
       columnNames = metricsTableColumnNames(paramsWithOrder),
       columnTypes = metricsTableColumnTypes(paramsWithOrder),
       rowNames = None,
-      values = List(
-        metricsTableRow(
-          gridSearchParams(bestMetric.metricIndex),
-          paramsWithOrder,
-          bestMetric.metricValue)
-      )
+      values = List(metricsTableRow(bestMetric.params, paramsWithOrder, bestMetric.metricValue))
     )
   }
 
   private def cvParamsMetricsTable(
-      gridSearchParams: Array[ParamMap],
       paramsWithOrder: Seq[Param[_]],
-      metrics: Array[Double]): Table = {
+      params: Seq[Metric]): Table = {
     Table(
       name = "Params",
       description = "Parameters Values",
       columnNames = metricsTableColumnNames(paramsWithOrder),
       columnTypes = metricsTableColumnTypes(paramsWithOrder),
       rowNames = None,
-      values = gridSearchParams.zipWithIndex.map { case (cvParamMap, index) =>
-        metricsTableRow(cvParamMap, paramsWithOrder, metrics(index))
+      values = params.map { case metric =>
+        metricsTableRow(metric.params, paramsWithOrder, metric.metricValue)
       }.toList
     )
   }
@@ -158,15 +165,6 @@ case class GridSearch() extends DOperation3To1[DataFrame, Estimator, Evaluator, 
 
   private def metricsTableColumnNames(paramsWithOrder: Seq[Param[_]]): Some[List[String]] = {
     Some((paramsWithOrder.map(_.name) :+ "Metric").toList)
-  }
-
-  private def findBestMetric(metrics: Array[Double], isLargerMetricBetter: Boolean): Metric = {
-    val (bestMetric, bestIndex) = if (isLargerMetricBetter) {
-      metrics.zipWithIndex.maxBy(_._1)
-    } else {
-      metrics.zipWithIndex.minBy(_._1)
-    }
-    Metric(bestMetric, bestIndex)
   }
 
   private def paramMapToTableRow(
@@ -196,5 +194,7 @@ case class GridSearch() extends DOperation3To1[DataFrame, Estimator, Evaluator, 
     }.build()
   }
 
-  private case class Metric(metricValue: Double, metricIndex: Int)
+  private case class Metric(params: ParamMap, metricValue: Double) {
+    def this(pair: (ParamMap, Double)) = this(pair._1, pair._2)
+  }
 }
