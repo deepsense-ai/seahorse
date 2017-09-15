@@ -36,6 +36,7 @@ assemblyMergeStrategy in assembly := {
 // Skip test while assembling uber-jar
 test in assembly := {}
 
+// Include PyExecutor code in assembled uber-jar (under path inside jar: /pyexecutor)
 unmanagedResourceDirectories in Compile += { baseDirectory.value / "../python" }
 
 enablePlugins(BuildInfoPlugin)

@@ -16,11 +16,14 @@
 
 package io.deepsense.workflowexecutor.executor
 
+import java.io._
 import java.util.concurrent.atomic.AtomicReference
+import java.util.zip.ZipInputStream
 
 import scala.annotation.tailrec
 import scala.sys.process._
 
+import com.google.common.io.Files
 import org.apache.spark.SparkContext
 
 import io.deepsense.commons.utils.Logging
@@ -74,9 +77,59 @@ class PythonExecutionCaretaker(
 
   private def runPyExecutor(gatewayPort: Int): Process = {
     val pyLogger = ProcessLogger(fout = logger.debug, ferr = logger.error)
-    val command = s"$PythonExecutable $pythonExecutorPath --gateway-address localhost:$gatewayPort"
+    logger.info(s"Initializing PyExecutor from: $pythonExecutorPath")
+    val pyExecutorFilesPath = if (pythonExecutorPath.endsWith(".jar")) {
+      val zis: ZipInputStream = new ZipInputStream(new FileInputStream(pythonExecutorPath))
+
+      val tempDir = Files.createTempDir()
+      logger.info("Created temporary directory for PyExecutor: " + tempDir.getAbsolutePath)
+      var entry = zis.getNextEntry
+      while (entry != null) {
+        if (entry.getName.startsWith("pyexecutor/")) {
+          val entryFilename = entry.getName.substring(entry.getName.lastIndexOf('/') + 1)
+          val entryDirName = entry.getName.substring(0, entry.getName.lastIndexOf('/'))
+
+          logger.debug(s"Entry found in jar file: " +
+            s"directory: $entryDirName filename: $entryFilename isDirectory: " + entry.isDirectory)
+
+          new File(tempDir + "/" + entryDirName).mkdirs()
+          if (!entry.isDirectory) {
+            val target = new File(tempDir + "/" + entryDirName, entryFilename)
+            val fos = new BufferedOutputStream(new FileOutputStream(target, true))
+            transferImpl(zis, fos, close = false)
+          }
+        }
+        entry = zis.getNextEntry
+      }
+      zis.close()
+      tempDir + "/pyexecutor/pyexecutor.py"
+    } else {
+      pythonExecutorPath
+    }
+    logger.info(s"PyExecutor code is located at: $pyExecutorFilesPath")
+    val command = s"$PythonExecutable $pyExecutorFilesPath --gateway-address localhost:$gatewayPort"
     logger.info(s"Starting a new PyExecutor process: $command")
     command run pyLogger
+  }
+
+  private def transferImpl(in: InputStream, out: OutputStream, close: Boolean): Unit = {
+    try {
+      val buffer = new Array[Byte](4096)
+      def read(): Unit = {
+        val byteCount = in.read(buffer)
+        if (byteCount >= 0) {
+          out.write(buffer, 0, byteCount)
+          read()
+        }
+      }
+      read()
+      out.close()
+    }
+    finally {
+      if (close) {
+        in.close()
+      }
+    }
   }
 
   /**

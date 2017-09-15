@@ -80,7 +80,7 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
 
     opt[String]('p', "python-executor-path") valueName "PATH" action {
       (x, c) => c.copy(pyExecutorPath = Some(x))
-    } text "python executor path"
+    } text "PyExecutor code (included in workflowexecutor.jar) path"
 
     help("help") text "print this help message and exit"
     version("version") text "print product version and exit"
