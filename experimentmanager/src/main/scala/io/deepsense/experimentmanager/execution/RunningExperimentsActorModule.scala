@@ -14,7 +14,8 @@ import io.deepsense.commons.akka.GuiceAkkaExtension
 
 class RunningExperimentsActorModule extends AbstractModule {
   override def configure(): Unit = {
-    bind(classOf[DefaultGraphExecutorClientFactory])
+    bind(classOf[GraphExecutorClientFactory])
+      .to(classOf[DefaultGraphExecutorClientFactory]).asEagerSingleton()
   }
 
   @Provides
