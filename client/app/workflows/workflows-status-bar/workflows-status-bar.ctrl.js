@@ -2,7 +2,7 @@
 
 /* @ngInject */
 function WorkflowStatusBarController($rootScope, $stateParams, WorkflowService,
-                                     additionalControls, WorkflowsApiClient, TimeService) {
+                                     additionalControls, WorkflowsApiClient, TimeService, config) {
   _.assign(this, {
     exportWorkflow () {
       $rootScope.$broadcast('StatusBar.EXPORT_CLICK');
@@ -22,6 +22,11 @@ function WorkflowStatusBarController($rootScope, $stateParams, WorkflowService,
       let name = WorkflowService.getWorkflow().name;
       return name.toLowerCase().split(' ').join('-');
     },
+
+    getDocsHost () {
+      return config.docsHost;
+    },
+
     exportReportLink: WorkflowsApiClient.getDownloadReportUrl($stateParams.reportId),
     reportHasBeenUploaded: () => !_.isNull(WorkflowService.getWorkflow().lastExecutionReportTime),
     getLastExecutionTooltipMessage() {
