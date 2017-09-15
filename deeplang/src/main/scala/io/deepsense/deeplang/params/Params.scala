@@ -21,6 +21,7 @@ import java.lang.reflect.Modifier
 import spray.json._
 
 import io.deepsense.deeplang.exceptions.DeepLangException
+import io.deepsense.deeplang.params.exceptions.ParamValueNotProvidedException
 
 /**
  * Everything that inherits this trait declares that it contains parameters.
@@ -164,7 +165,9 @@ trait Params extends Serializable {
 
   final def getOrDefaultOption[T](param: Param[T]): Option[T] = get(param).orElse(getDefault(param))
 
-  final def getOrDefault[T](param: Param[T]): T = getOrDefaultOption(param).get
+  final def getOrDefault[T](param: Param[T]): T = getOrDefaultOption(param).getOrElse {
+    throw ParamValueNotProvidedException(param.name)
+  }
 
   protected final def $[T](param: Param[T]): T = getOrDefault(param)
 

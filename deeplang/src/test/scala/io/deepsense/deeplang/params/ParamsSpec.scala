@@ -22,6 +22,7 @@ import spray.json.DefaultJsonProtocol._
 import io.deepsense.deeplang.UnitSpec
 import io.deepsense.deeplang.exceptions.DeepLangException
 import ParameterType._
+import io.deepsense.deeplang.params.exceptions.ParamValueNotProvidedException
 
 class ParamsSpec extends UnitSpec {
   import ParamsSpec._
@@ -133,20 +134,6 @@ class ParamsSpec extends UnitSpec {
       p.is1Set shouldBe false
     }
   }
-  "Params.get" should {
-    "return Some param value" when {
-      "it is defined" in {
-        val p = WithParams()
-        p.set1(3)
-        p.get1 shouldBe 3
-      }
-    }
-    "return None" when {
-      "param value is not defined" in {
-
-      }
-    }
-  }
   "Params.$" should {
     "return param value" when {
       "it is defined" in {
@@ -163,10 +150,11 @@ class ParamsSpec extends UnitSpec {
     }
     "throw exception" when {
       "neither param value nor default is defined" in {
-        an [Exception] shouldBe thrownBy {
-          val p = WithParams()
+        val p = WithParams()
+        val exception = intercept [ParamValueNotProvidedException] {
           p.get2
         }
+        exception.name shouldBe p.param2.name
       }
     }
   }
