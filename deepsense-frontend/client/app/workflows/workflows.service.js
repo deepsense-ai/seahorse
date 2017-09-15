@@ -134,10 +134,7 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
     isWorkflowRunning() {
       let statuses = _.chain(this.getCurrentWorkflow().getNodes())
         .map((node) => {
-          return node.state;
-        })
-        .map((state) => {
-          return state.status;
+          return node.state && node.state.status;
         })
         .value();
       let idx = _.findIndex(statuses, (status) => {
