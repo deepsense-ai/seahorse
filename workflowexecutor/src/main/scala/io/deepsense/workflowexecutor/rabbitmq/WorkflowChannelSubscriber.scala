@@ -27,8 +27,8 @@ case class WorkflowChannelSubscriber(
   executionDispatcher: ActorRef) extends Actor with Logging {
 
   override def receive: Receive = {
-    case request @ StatusRequestMQ(workflowId) =>
-      logger.debug(s"STATUS REQUEST! '$workflowId'")
+    case request @ InitMQ(workflowId) =>
+      logger.debug(s"INIT! '$workflowId'")
       actorsForWorkflow(workflowId) ! request
     case LaunchMQ(id, directedGraph, nodesToExecute) =>
       logger.debug(s"LAUNCH! '$id' -> $directedGraph")

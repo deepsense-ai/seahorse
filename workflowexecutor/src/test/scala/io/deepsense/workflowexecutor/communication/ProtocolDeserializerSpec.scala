@@ -90,19 +90,19 @@ class ProtocolDeserializerSpec
       val readMessage: ReadMessageMQ = serializeAndRead(protocolDeserializer, rawMessage)
       readMessage shouldBe ConnectMQ(workflowId)
     }
-    "deserialize StatusRequest messages" in {
+    "deserialize Init messages" in {
       val protocolDeserializer = ProtocolDeserializer(mock[GraphReader])
       val workflowId = Workflow.Id.randomId
 
       val rawMessage = JsObject(
-        "messageType" -> JsString("statusRequest"),
+        "messageType" -> JsString("init"),
         "messageBody" -> JsObject(
           "workflowId" -> JsString(workflowId.toString)
         )
       )
 
       val readMessage: ReadMessageMQ = serializeAndRead(protocolDeserializer, rawMessage)
-      readMessage shouldBe StatusRequestMQ(workflowId)
+      readMessage shouldBe InitMQ(workflowId)
     }
   }
 

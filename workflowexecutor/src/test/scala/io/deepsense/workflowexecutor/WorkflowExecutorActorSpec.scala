@@ -40,7 +40,7 @@ import io.deepsense.models.workflows.{EntitiesMap, Workflow}
 import io.deepsense.reportlib.model.ReportContent
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages._
 import io.deepsense.workflowexecutor.WorkflowNodeExecutorActor.Messages.Start
-import io.deepsense.workflowexecutor.communication.{ExecutionStatusMQ, StatusRequestMQ}
+import io.deepsense.workflowexecutor.communication.{ExecutionStatusMQ, InitMQ}
 import io.deepsense.workflowexecutor.partialexecution.{AbortedExecution, Execution, IdleExecution, RunningExecution}
 
 class WorkflowExecutorActorSpec
@@ -54,7 +54,7 @@ class WorkflowExecutorActorSpec
   with ScaledTimeSpans {
 
   "WorkflowExecutorActor" when {
-    "received StatusRequest" when {
+    "received Init" when {
       "no graph was sent" should {
         "send empty status" in {
           val probe = TestProbe()
@@ -67,7 +67,7 @@ class WorkflowExecutorActorSpec
             Some(statusListener.ref),
             Some(system.actorSelection(publisher.ref.path))),
             Id.randomId.toString)
-          probe.send(wea, StatusRequestMQ(Workflow.Id.randomId))
+          probe.send(wea, InitMQ(Workflow.Id.randomId))
           verifyStatusSent(Seq(publisher))
         }
       }
@@ -76,7 +76,7 @@ class WorkflowExecutorActorSpec
           val ids: IndexedSeq[Id] = IndexedSeq(Node.Id.randomId, Node.Id.randomId, Node.Id.randomId)
           val (_, execution) = simpleRunningExecution(ids, Some(ids.head))
           val (probe, wea, _, _, statusListeners, _) = launchedStateFixture(execution)
-          probe.send(wea, StatusRequestMQ(Workflow.Id.randomId))
+          probe.send(wea, InitMQ(Workflow.Id.randomId))
           eventually {
             statusListeners.foreach { receiver =>
               val status = receiver.expectMsgClass(classOf[ExecutionStatusMQ])
@@ -426,7 +426,7 @@ class WorkflowExecutorActorSpec
         verifyStatus(statusListeners){ _.executionReport.error.isDefined shouldBe true }
         verifyStatus(Seq(endStateSubscriber)){ _.executionReport.error.isDefined shouldBe true }
 
-        probe.send(wea, StatusRequestMQ(Workflow.Id.randomId)) // Id doesn't matter
+        probe.send(wea, InitMQ(Workflow.Id.randomId)) // Id doesn't matter
         eventually {
           verifyStatus(statusListeners){ _.executionReport.error.isDefined shouldBe true }
         }

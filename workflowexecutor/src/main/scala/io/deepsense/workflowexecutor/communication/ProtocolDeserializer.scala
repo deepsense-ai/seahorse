@@ -28,7 +28,7 @@ case class ProtocolDeserializer(
   with ConnectMQJsonProtocol
   with LaunchMQJsonProtocol
   with AbortMQJsonProtocol
-  with StatusRequestMQJsonProtocol
+  with InitMQJsonProtocol
   with GetPythonGatewayAddressMQJsonProtocol {
 
   override protected def deserializeJson(jsObject: JsObject): ReadMessageMQ = {
@@ -40,7 +40,7 @@ case class ProtocolDeserializer(
       case ConnectMQ.messageType => body.convertTo[ConnectMQ]
       case LaunchMQ.messageType => body.convertTo[LaunchMQ]
       case AbortMQ.messageType => body.convertTo[AbortMQ]
-      case StatusRequestMQ.messageType => body.convertTo[StatusRequestMQ]
+      case InitMQ.messageType => body.convertTo[InitMQ]
       case GetPythonGatewayAddressMQ.messageType => body.convertTo[GetPythonGatewayAddressMQ]
     }
   }
