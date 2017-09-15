@@ -110,6 +110,13 @@ class WorkflowManagerImpl @Inject()(
     }
   }
 
+  override def getLatestExecutionReport(
+      workflowId: Workflow.Id): Future[Option[WorkflowWithSavedResults]] = {
+    authorizator.withRole(roleGet) { userContext =>
+      workflowStorage.getLatestExecutionResults(workflowId)
+    }
+  }
+
   override def getExecutionReport(
       id: ExecutionReportWithId.Id): Future[Option[WorkflowWithSavedResults]] = {
     authorizator.withRole(roleGet) { userContext =>

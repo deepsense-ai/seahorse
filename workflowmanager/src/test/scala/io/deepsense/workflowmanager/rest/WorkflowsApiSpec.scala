@@ -143,7 +143,6 @@ class WorkflowsApiSpec
     new SecureWorkflowApi(
       tokenTranslator,
       workflowManagerProvider,
-      workflowResultsStorage,
       apiPrefix,
       reportsPrefix,
       graphReader).route
@@ -519,6 +518,59 @@ class WorkflowsApiSpec
     "return a result" when {
       "auth token is correct, user has roles" in {
         Get(s"/$reportsPrefix/${workflowBWithSavedResults.executionReport.id}") ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.OK)
+
+          val returnedWorkflow = responseAs[WorkflowWithSavedResults]
+          returnedWorkflow.executionReport.id shouldBe workflowBWithSavedResults.executionReport.id
+        }
+        ()
+      }
+    }
+  }
+
+  s"GET :id/report" should {
+    "return Unauthorized" when {
+      "invalid auth token was send (when InvalidTokenException occurs)" in {
+        Get(s"/$apiPrefix/${Workflow.Id.randomId}/report") ~>
+          addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
+          status should be(StatusCodes.Unauthorized)
+        }
+        ()
+      }
+      "the user does not have the requested role (on NoRoleException)" in {
+        Get(s"/$apiPrefix/${Workflow.Id.randomId}/report") ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
+          status should be(StatusCodes.Unauthorized)
+        }
+        ()
+      }
+      "no auth token was send (on MissingHeaderRejection)" in {
+        Get(s"/$apiPrefix/${Workflow.Id.randomId}/report") ~> testRoute ~> check {
+          status should be(StatusCodes.Unauthorized)
+        }
+        ()
+      }
+    }
+    "return Not found" when {
+      "asked for non existing Workflow" in {
+        Get(s"/$apiPrefix/${Workflow.Id.randomId}/report") ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.NotFound)
+        }
+        ()
+      }
+      "workflow never executed" in {
+        Get(s"/$apiPrefix/$workflowAId/report") ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.NotFound)
+        }
+        ()
+      }
+    }
+    "return a result" when {
+      "auth token is correct, user has roles" in {
+        Get(s"/$apiPrefix/$workflowBId/report") ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
 

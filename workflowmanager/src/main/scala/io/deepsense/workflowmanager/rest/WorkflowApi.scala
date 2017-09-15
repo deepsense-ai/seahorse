@@ -28,7 +28,6 @@ import io.deepsense.workflowmanager.WorkflowManagerProvider
 import io.deepsense.workflowmanager.exceptions.{FileNotFoundException, WorkflowNotFoundException, WorkflowRunningException}
 import io.deepsense.workflowmanager.json.WorkflowWithSavedResultsJsonProtocol
 import io.deepsense.workflowmanager.model.ExecutionReportWithId
-import io.deepsense.workflowmanager.storage.WorkflowResultsStorage
 
 /**
  * Exposes Workflow Manager through a REST API.
@@ -139,6 +138,17 @@ abstract class WorkflowApi @Inject() (
                 }
               }
             } ~
+            path(JavaUUID / "report") { idParameter =>
+              val workflowId = Id(idParameter)
+              get {
+                withUserContext { userContext =>
+                  complete {
+                    workflowManagerProvider.forContext(userContext)
+                      .getLatestExecutionReport(workflowId)
+                  }
+                }
+              }
+            } ~
             path("report" / "upload") {
               post {
                 withUserContext { userContext =>
@@ -212,7 +222,6 @@ abstract class WorkflowApi @Inject() (
 class SecureWorkflowApi @Inject() (
   tokenTranslator: TokenTranslator,
   workflowManagerProvider: WorkflowManagerProvider,
-  workflowResultsStorage: WorkflowResultsStorage,
   @Named("workflows.api.prefix") workflowsApiPrefix: String,
   @Named("reports.api.prefix") reportsApiPrefix: String,
   override val graphReader: GraphReader)
@@ -228,7 +237,6 @@ class SecureWorkflowApi @Inject() (
 class InsecureWorkflowApi @Inject() (
   tokenTranslator: TokenTranslator,
   workflowManagerProvider: WorkflowManagerProvider,
-  workflowResultsStorage: WorkflowResultsStorage,
   @Named("workflows.api.prefix") workflowsApiPrefix: String,
   @Named("reports.api.prefix") reportsApiPrefix: String,
   override val graphReader: GraphReader)
