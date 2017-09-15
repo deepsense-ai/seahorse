@@ -4,27 +4,14 @@
 
 import sbtassembly.PathList
 
-name         := "deepsense-graphexecutor"
+name := "deepsense-graphexecutor"
 
-val hadoopV = "2.6.0"
-val avroV = "1.7.7"
-libraryDependencies ++= Seq(
-  "org.apache.hadoop" %  "hadoop-common"      % hadoopV,
-  "org.apache.hadoop" %  "hadoop-yarn-client" % hadoopV,
-  "org.apache.hadoop" %  "hadoop-yarn-api"    % hadoopV,
-  "org.apache.hadoop" %  "hadoop-yarn-common" % hadoopV,
-  "org.apache.hadoop" %  "hadoop-hdfs"        % hadoopV,
-  "org.apache.hadoop" %  "hadoop-client"      % hadoopV,
-  "org.apache.spark"  %% "spark-core"         % "1.3.0"  % "provided",
-  // Avro is used to provide RPC communication with Graph Executor
-  "org.apache.avro"   %  "avro"               % avroV,
-  "org.apache.avro"   %  "avro-ipc"           % avroV
-)
+libraryDependencies ++= Dependencies.graphexecutor
 
-// Import the sbt-avro plugin settings to activate sbt-avro plugin
+// Activate sbt-avro plugin
 sbtavro.SbtAvro.avroSettings
 // Set Avro version for Avro compiler
-version in avroConfig := avroV
+version in avroConfig := Version.avro
 
 // Necessary while assembling uber-jar (omitting MANIFEST.MF file from constituent jar files)
 assemblyMergeStrategy in assembly := {

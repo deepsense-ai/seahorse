@@ -149,19 +149,19 @@ class DOperationsCatalogSuite extends FunSuite with Matchers {
     import ViewingTestResources._
 
     val root: DOperationCategoryNode = catalog.categoryTree
-    root.operations should contain theSameElementsAs Seq.empty
+    root.operations shouldBe empty
     root.successors.keys should contain theSameElementsAs Seq(ML)
 
     val mlNode = root.successors(ML)
-    mlNode.operations should contain theSameElementsAs Seq(expectedD)
+    mlNode.operations shouldBe Set(expectedD)
     mlNode.successors.keys should contain theSameElementsAs Seq(ML.Regression, ML.Classification)
 
     val regressionNode = mlNode.successors(ML.Regression)
     regressionNode.operations should contain theSameElementsAs Seq(expectedA, expectedB)
-    regressionNode.successors.keys should contain theSameElementsAs Seq()
+    regressionNode.successors.keys shouldBe empty
 
     val classificationNode = mlNode.successors(ML.Classification)
     classificationNode.operations should contain theSameElementsAs Seq(expectedC)
-    classificationNode.successors.keys should contain theSameElementsAs Seq()
+    classificationNode.successors.keys shouldBe empty
   }
 }

@@ -2,7 +2,7 @@
 //
 // Owner: Jacek Laskowski
 
-name         := "deepsense-backend"
+name := "deepsense-backend"
 
 lazy val deeplang          = project
 lazy val experimentmanager = project
