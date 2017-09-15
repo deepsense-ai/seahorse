@@ -74,8 +74,12 @@ class RunningExperimentsActor @Inject() (
     s ! Launched(resultExp)
     Future {
       gec.spawnOnCluster(entitystorageLabel)
-      gec.waitForSpawn(Constants.WaitForGraphExecutorClientInitDelay)
-      gec.sendExperiment(resultExp)
+      val spawned = gec.waitForSpawn(Constants.WaitForGraphExecutorClientInitDelay)
+      if (spawned) {
+        gec.sendExperiment(resultExp)
+      } else {
+        throw new IllegalStateException("Spawning Failed for experiment: " + experiment)
+      }
     }.onComplete {
       case Failure(ex) =>
         log.error(ex, s"Launching experiment failed $experiment")
