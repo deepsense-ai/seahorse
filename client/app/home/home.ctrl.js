@@ -1,7 +1,7 @@
 'use strict';
 
 /* @ngInject */
-function Home($rootScope, $uibModal, $state, WorkflowService, PageService, config) {
+function Home($rootScope, $uibModal, $state, WorkflowService, PageService, ConfirmationModalService, config) {
 
   this.init = () => {
     PageService.setTitle('Home');
@@ -19,6 +19,15 @@ function Home($rootScope, $uibModal, $state, WorkflowService, PageService, confi
 
   this.getWorkflowUrl = (workflowId) => {
     return '/#/workflows/' + workflowId + '/editor';
+  };
+
+  this.deleteWorkflow = function(workflow) {
+    ConfirmationModalService.showModal({
+      message: 'The operation will delete workflow "' + workflow.name + '". Deletion cannot be undone afterwards.'
+    }).
+    then(() => {
+      WorkflowService.deleteWorkflow(workflow.id);
+    });
   };
 
   this.displayCreateWorkflowPopup = (event) => {

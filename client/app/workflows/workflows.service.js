@@ -84,6 +84,23 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
       return WorkflowsApiClient.updateWorkflow(internal.workflow.serialize());
     }
 
+    removeWorkflowFromList(workflowId) {
+      let foundWorkflow = internal.workflows.find((workflow) => workflow.id === workflowId);
+      let workflowIndex = internal.workflows.indexOf(foundWorkflow);
+      if (workflowIndex >= 0) {
+        internal.workflows.splice(workflowIndex, 1);
+      }
+    }
+
+    deleteWorkflow(workflowId) {
+      WorkflowsApiClient.deleteWorkflow(workflowId).then(() => {
+        if (internal.workflow && internal.workflow.id === workflowId) {
+          internal.workflow = null;
+        }
+        this.removeWorkflowFromList(workflowId);
+      });
+    }
+
     cloneParamsFromNodeToNode(nodeSrc, nodeDist) {
       nodeDist.parametersValues = nodeSrc.parameters.serialize();
     }

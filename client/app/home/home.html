@@ -20,6 +20,7 @@
       <td class="col-md-3">Description</td>
       <td class="col-md-3">Updated</td>
       <td class="col-md-3">Created</td>
+      <td class="col-md-3">Actions</td>
     </tr>
     <tr ng-repeat="workflow in home.getAllWorkflows() | filter:home.filterString track by workflow.id">
       <td>{{$index+1}}</td>
@@ -35,6 +36,11 @@
       </td>
       <td>
         <a ng-href="{{home.getWorkflowUrl(workflow.id)}}">{{workflow.created | date:"hh:mm:ss - dd/MM/yyyy"}}</a>
+      </td>
+      <td>
+        <a title="Delete" ng-click="home.deleteWorkflow(workflow)">
+          <span class="glyphicon glyphicon-remove"></span>
+        </a>
       </td>
     </tr>
   </table>

@@ -50,6 +50,10 @@ function WorkflowsApiClientFactory(BaseApiClient, ServerCommunication, config) {
       return this.makeRequest(this.METHOD_POST, this.API_URL + PATH_WORKFLOWS, data);
     }
 
+    deleteWorkflow(workflowId) {
+      return this.makeRequest(this.METHOD_DELETE, `${this.API_URL}${PATH_WORKFLOWS}/${workflowId}`);
+    }
+
     updateWorkflow(serializedWorkflow) {
       let data = {
         workflowId: serializedWorkflow.id,
