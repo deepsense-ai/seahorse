@@ -21,6 +21,7 @@ List of all currently supported operations:
 * Action
   * [Fit](operations/fit.html)
   * [Transform](operations/transform.html)
+  * [Fit + Transform](operations/fit_plus_transform.html)
   * [Evaluate](operations/evaluate.html)
 * Set Operation
   * [Join](operations/join.html)
