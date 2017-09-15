@@ -1,5 +1,5 @@
 @import "../../../css/variables";
-
+@import "../../../app/mixins";
 @icon-size: 30px;
 
 .datasources-element {
@@ -9,16 +9,39 @@
   align-items: center;
   border-bottom: 1px solid #CCC;
 
+  &__name-wrapper {
+    min-width: 36px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    color: @seahorse-blue;
+    font-weight: 600;
+    transition: background-color .2s ease-in;
+
+    &:hover {
+      cursor: pointer;
+      background-color: #D7FBFF;
+    }
+
+    &--disabled {
+      color: #333;
+
+      &:hover {
+        cursor: default;
+        background-color: inherit;
+      }
+    }
+  }
+
   &__type {
     width: 36px;
     font-size: @icon-size;
     text-align: center;
-    color: @seahorse-blue;
   }
 
   &__name {
     flex: 1;
-    color: @seahorse-blue;
+    .text-elipsis();
   }
 
   &__created {
@@ -27,6 +50,14 @@
 
   &__owner {
     width: 120px;
+
+    &--current {
+      font-weight: 600;
+    }
+  }
+
+  &__owner-icon {
+    font-size: 18px;
   }
 
   &__access {
@@ -37,9 +68,15 @@
     width: 80px;
     display: flex;
     color: @seahorse-blue;
+
+    &--disabled {
+      pointer-events: none;
+      color: @color-grey;
+    }
   }
 
   &__edit {
+    cursor: pointer;
     font-size: @icon-size;
     margin-left: 15px;
     width: 30px;
@@ -47,6 +84,7 @@
   }
 
   &__delete {
+    cursor: pointer;
     font-size: @icon-size;
     margin-right: 15px;
     width: 30px;

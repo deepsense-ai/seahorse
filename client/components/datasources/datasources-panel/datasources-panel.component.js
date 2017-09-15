@@ -7,10 +7,17 @@ const DatasourcesPanelComponent = {
   bindings: {},
   templateUrl,
   controller: class DatasourcesPanelController {
-    constructor() {
+    constructor(datasourcesService, $scope) {
       'ngInject';
 
+      this.datasourcesService = datasourcesService;
+      this.datasourcesService.fetchDatasources();
+
+      $scope.$watch(() => datasourcesService.datasources, () => {
+        this.datasources = datasourcesService.datasources;
+      });
     }
+
   }
 };
 

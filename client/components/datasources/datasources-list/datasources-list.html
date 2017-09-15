@@ -28,5 +28,7 @@
   <datasources-element
     ng-repeat="datasource in $ctrl.datasources"
     element="datasource"
+    context="$ctrl.context"
+    on-select="$ctrl.onSelect({datasource: datasource})"
   />
 </div>

@@ -6,11 +6,15 @@ import './datasources-element.less';
 const DatasourcesElementComponent = {
   templateUrl,
   bindings: {
-    element: '<'
+    element: '<',
+    context: '<',
+    onSelect: '&'
   },
   controller: class DatasourcesElementController {
-    constructor() {
+    constructor(UserService) {
       'ngInject';
+
+      this.UserService = UserService;
 
       this.visibilityLabel = {
         publicVisibility: 'Public',
@@ -24,6 +28,24 @@ const DatasourcesElementComponent = {
         jdbc: 'sa-database',
         googleSpreadsheet: 'sa-google-spreadsheet'
       };
+
+      this.context = this.context || 'read-only';
+    }
+
+    edit(datasource) {
+      console.warn(datasource); //eslint-disable-line
+    }
+
+    delete(datasource) {
+      console.warn(datasource); //eslint-disable-line
+    }
+
+    isSelectable() {
+      return this.context !== 'read-only';
+    }
+
+    isOwner() {
+      return this.UserService.getSeahorseUser().id === this.element.ownerId;
     }
   }
 };
