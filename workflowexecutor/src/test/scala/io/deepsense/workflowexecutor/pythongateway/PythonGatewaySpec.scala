@@ -26,6 +26,7 @@ import scala.io.BufferedSource
 import scala.util.{Success, Try}
 
 import org.apache.spark.SparkContext
+import org.apache.spark.sql.SQLContext
 import org.scalatest.concurrent.Timeouts
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.time.SpanSugar._
@@ -53,6 +54,7 @@ class PythonGatewaySpec extends WordSpec with MockitoSugar with Matchers with Ti
       val gateway = PythonGateway(
         gatewayConfig,
         mock[SparkContext],
+        mock[SQLContext],
         mock[ReadOnlyDataFrameStorage],
         mock[CustomOperationDataFrameStorage])
       gateway.start()
@@ -67,6 +69,7 @@ class PythonGatewaySpec extends WordSpec with MockitoSugar with Matchers with Ti
       val gateway = PythonGateway(
         gatewayConfig,
         mock[SparkContext],
+        mock[SQLContext],
         mock[ReadOnlyDataFrameStorage],
         mock[CustomOperationDataFrameStorage])
       gateway.start()
@@ -79,6 +82,7 @@ class PythonGatewaySpec extends WordSpec with MockitoSugar with Matchers with Ti
       val gateway = PythonGateway(
         gatewayConfig,
         mock[SparkContext],
+        mock[SQLContext],
         mock[ReadOnlyDataFrameStorage],
         mock[CustomOperationDataFrameStorage])
 
@@ -89,6 +93,7 @@ class PythonGatewaySpec extends WordSpec with MockitoSugar with Matchers with Ti
       val gateway = PythonGateway(
         gatewayConfig,
         mock[SparkContext],
+        mock[SQLContext],
         mock[ReadOnlyDataFrameStorage],
         mock[CustomOperationDataFrameStorage])
       gateway.start()
@@ -104,6 +109,7 @@ class PythonGatewaySpec extends WordSpec with MockitoSugar with Matchers with Ti
       val gateway = PythonGateway(
         gatewayConfig,
         mock[SparkContext],
+        mock[SQLContext],
         mock[ReadOnlyDataFrameStorage],
         mock[CustomOperationDataFrameStorage])
       gateway.start()

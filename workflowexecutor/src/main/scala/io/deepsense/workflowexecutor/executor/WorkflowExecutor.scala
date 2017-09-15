@@ -66,16 +66,18 @@ case class WorkflowExecutor(
     val dataFrameStorage = new DataFrameStorageImpl
 
     val sparkContext = createSparkContext()
+    val sqlContext = createSqlContext(sparkContext)
 
     val pythonExecutionCaretaker =
-      new PythonExecutionCaretaker(pythonExecutorPath, sparkContext, dataFrameStorage)
+      new PythonExecutionCaretaker(pythonExecutorPath, sparkContext, sqlContext, dataFrameStorage)
 
     pythonExecutionCaretaker.start()
 
     val executionContext = createExecutionContext(
       dataFrameStorage,
       pythonExecutionCaretaker,
-      sparkContext)
+      sparkContext,
+      sqlContext)
 
     val actorSystem = ActorSystem(actorSystemName)
     val finishedExecutionStatus: Promise[ExecutionStatus] = Promise()

@@ -24,7 +24,7 @@ import scala.concurrent.duration._
 import scala.concurrent.{Await, Promise}
 
 import org.apache.spark.api.java.JavaSparkContext
-import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.{SQLContext, DataFrame}
 import org.apache.spark.{SparkConf, SparkContext}
 
 import io.deepsense.commons.utils.Logging
@@ -37,6 +37,7 @@ import io.deepsense.workflowexecutor.pythongateway.PythonEntryPoint.PythonEntryP
 class PythonEntryPoint(
     val pythonEntryPointConfig: PythonEntryPointConfig,
     val sparkContext: SparkContext,
+    val sqlContext: SQLContext,
     val dataFrameStorage: ReadOnlyDataFrameStorage,
     val customOperationDataFrameStorage: CustomOperationDataFrameStorage,
     val operationExecutionDispatcher: OperationExecutionDispatcher)
@@ -45,6 +46,8 @@ class PythonEntryPoint(
   import io.deepsense.workflowexecutor.pythongateway.PythonEntryPoint._
 
   def getSparkContext: JavaSparkContext = sparkContext
+
+  def getSqlContext: SQLContext = sqlContext
 
   def getSparkConf: SparkConf = sparkContext.getConf
 

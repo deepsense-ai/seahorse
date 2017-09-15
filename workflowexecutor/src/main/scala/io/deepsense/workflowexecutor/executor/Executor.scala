@@ -38,9 +38,9 @@ trait Executor extends Logging {
       dataFrameStorage: DataFrameStorage,
       pythonExecutionCaretaker: PythonExecutionCaretaker,
       sparkContext: SparkContext,
+      sqlContext: SQLContext,
       dOperableCatalog: Option[DOperableCatalog] = None): CommonExecutionContext = {
 
-    val sqlContext = createSqlContext(sparkContext)
     val catalog = dOperableCatalog.getOrElse(createDOperableCatalog())
 
     val tenantId = ""

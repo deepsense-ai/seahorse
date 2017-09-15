@@ -51,7 +51,7 @@ class PyExecutor(object):
             gateway=gateway,
             jsc=java_spark_context)
 
-        sql_context = SQLContext(spark_context)
+        sql_context = SQLContext(spark_context, gateway.entry_point.getSqlContext())
 
         return spark_context, sql_context
 

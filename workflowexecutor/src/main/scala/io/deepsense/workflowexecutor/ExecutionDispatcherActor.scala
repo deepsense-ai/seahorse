@@ -18,6 +18,7 @@ package io.deepsense.workflowexecutor
 
 import akka.actor._
 import org.apache.spark.SparkContext
+import org.apache.spark.sql.SQLContext
 
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang._
@@ -30,6 +31,7 @@ import io.deepsense.workflowexecutor.executor.{Executor, PythonExecutionCaretake
 
 class ExecutionDispatcherActor(
     sparkContext: SparkContext,
+    sqlContext: SQLContext,
     dOperableCatalog: DOperableCatalog,
     dataFrameStorage: DataFrameStorage,
     pythonExecutionCaretaker: PythonExecutionCaretaker,
@@ -85,6 +87,7 @@ class ExecutionDispatcherActor(
         dataFrameStorage,
         pythonExecutionCaretaker,
         sparkContext,
+        sqlContext,
         dOperableCatalog = Some(dOperableCatalog)),
       workflowId,
       workflowManagerClientActor,
@@ -145,6 +148,7 @@ trait ExecutorFinderImpl extends WorkflowExecutorFinder {
 object ExecutionDispatcherActor {
   def props(
       sparkContext: SparkContext,
+      sqlContext: SQLContext,
       dOperableCatalog: DOperableCatalog,
       dataFrameStorage: DataFrameStorage,
       pythonExecutionCaretaker: PythonExecutionCaretaker,
@@ -155,6 +159,7 @@ object ExecutionDispatcherActor {
       wmTimeout: Int): Props =
     Props(new ExecutionDispatcherActor(
       sparkContext,
+      sqlContext,
       dOperableCatalog,
       dataFrameStorage,
       pythonExecutionCaretaker,

@@ -25,6 +25,7 @@ import scala.sys.process._
 
 import com.google.common.io.Files
 import org.apache.spark.SparkContext
+import org.apache.spark.sql.SQLContext
 
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.{CustomOperationExecutor, DataFrameStorage, PythonCodeExecutor}
@@ -44,6 +45,7 @@ import io.deepsense.workflowexecutor.pythongateway.PythonGateway.GatewayConfig
 class PythonExecutionCaretaker(
   pythonExecutorPath: String,
   val sparkContext: SparkContext,
+  val sqlContext: SQLContext,
   val dataFrameStorage: DataFrameStorage) extends Logging {
 
   import PythonExecutionCaretaker._
@@ -84,7 +86,7 @@ class PythonExecutionCaretaker(
   def gatewayListeningPort: Option[Int] = pythonGateway.listeningPort
 
   private val pythonGateway =
-    PythonGateway(GatewayConfig(), sparkContext, dataFrameStorage, dataFrameStorage)
+    PythonGateway(GatewayConfig(), sparkContext, sqlContext, dataFrameStorage, dataFrameStorage)
 
   private val pyExecutorProcess = new AtomicReference[Option[Process]](None)
 

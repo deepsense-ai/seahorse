@@ -22,6 +22,7 @@ import scala.annotation.tailrec
 import scala.concurrent.duration._
 
 import org.apache.spark.SparkContext
+import org.apache.spark.sql.SQLContext
 import py4j.{DefaultGatewayServerListener, CallbackClient, GatewayServer}
 
 import io.deepsense.commons.utils.Logging
@@ -32,6 +33,7 @@ import io.deepsense.workflowexecutor.pythongateway.PythonGateway.GatewayConfig
 case class PythonGateway(
     gatewayConfig: GatewayConfig,
     sparkContext: SparkContext,
+    sqlContext: SQLContext,
     dataFrameStorage: ReadOnlyDataFrameStorage,
     customOperationDataFrameStorage: CustomOperationDataFrameStorage) extends Logging {
   import PythonGateway._
@@ -41,6 +43,7 @@ case class PythonGateway(
   private[pythongateway] val entryPoint = new PythonEntryPoint(
     PythonEntryPointConfig(gatewayConfig.pyExecutorSetupTimeout),
     sparkContext,
+    sqlContext,
     dataFrameStorage,
     customOperationDataFrameStorage,
     operationExecutionDispatcher)

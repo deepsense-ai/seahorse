@@ -21,6 +21,7 @@ import java.util.concurrent.TimeoutException
 import scala.concurrent.duration._
 
 import org.apache.spark.SparkContext
+import org.apache.spark.sql.SQLContext
 import org.scalatest.{Matchers, WordSpec}
 import org.scalatest.mock.MockitoSugar
 
@@ -76,6 +77,7 @@ class PythonEntryPointTest extends WordSpec with MockitoSugar with Matchers {
     new PythonEntryPoint(
       PythonEntryPointConfig(timeout),
       mock[SparkContext],
+      mock[SQLContext],
       mock[ReadOnlyDataFrameStorage],
       mock[CustomOperationDataFrameStorage],
       mock[OperationExecutionDispatcher])

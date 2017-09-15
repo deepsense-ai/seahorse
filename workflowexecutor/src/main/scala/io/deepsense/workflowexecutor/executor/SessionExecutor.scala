@@ -47,11 +47,12 @@ case class SessionExecutor(
   def execute(): Unit = {
     logger.debug("SessionExecutor starts")
     val sparkContext = createSparkContext()
+    val sqlContext = createSqlContext(sparkContext)
     val dOperableCatalog = createDOperableCatalog()
     val dataFrameStorage = new DataFrameStorageImpl
 
     val pythonExecutionCaretaker =
-      new PythonExecutionCaretaker(pythonExecutorPath, sparkContext, dataFrameStorage)
+      new PythonExecutionCaretaker(pythonExecutorPath, sparkContext, sqlContext, dataFrameStorage)
     pythonExecutionCaretaker.start()
 
     implicit val system = ActorSystem()
@@ -84,6 +85,7 @@ case class SessionExecutor(
 
     val executionDispatcher = system.actorOf(ExecutionDispatcherActor.props(
       sparkContext,
+      sqlContext,
       dOperableCatalog,
       dataFrameStorage,
       pythonExecutionCaretaker,

@@ -19,6 +19,7 @@ package io.deepsense.workflowexecutor
 import akka.actor.{ActorContext, ActorRef, ActorSelection, ActorSystem}
 import akka.testkit.{TestActorRef, TestKit, TestProbe}
 import org.apache.spark.SparkContext
+import org.apache.spark.sql.SQLContext
 import org.scalatest.concurrent.{Eventually, ScalaFutures, ScaledTimeSpans}
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
@@ -71,6 +72,7 @@ class ExecutionDispatcherActorSpec
     val dispatcher: TestActorRef[ExecutionDispatcherActor] =
       TestActorRef(new ExecutionDispatcherActor(
         mock[SparkContext],
+        mock[SQLContext],
         mock[DOperableCatalog],
         mock[DataFrameStorage],
         mock[PythonExecutionCaretaker],
@@ -106,6 +108,7 @@ class ExecutionDispatcherActorSpec
     val dispatcher: TestActorRef[ExecutionDispatcherActor] =
       TestActorRef(new ExecutionDispatcherActorTest(
         mock[SparkContext],
+        mock[SQLContext],
         mock[DOperableCatalog],
         mock[DataFrameStorage],
         mock[PythonExecutionCaretaker]
@@ -132,11 +135,12 @@ class ExecutionDispatcherActorSpec
 
   class ExecutionDispatcherActorTest(
       sparkContext: SparkContext,
+      sqlContext: SQLContext,
       dOperableCatalog: DOperableCatalog,
       dataFrameStorage: DataFrameStorage,
       pythonExecutionCaretaker: PythonExecutionCaretaker)
     extends ExecutionDispatcherActor(
-      sparkContext, dOperableCatalog, dataFrameStorage, pythonExecutionCaretaker,
+      sparkContext, sqlContext, dOperableCatalog, dataFrameStorage, pythonExecutionCaretaker,
       TestProbe().ref, TestProbe().ref, TestProbe().ref, TestProbe().ref, 5) {
 
     self: WorkflowExecutorsFactory with WorkflowExecutorFinder =>
@@ -145,6 +149,7 @@ class ExecutionDispatcherActorSpec
         dataFrameStorage: DataFrameStorage,
         pythonExecutionCaretaker: PythonExecutionCaretaker,
         sparkContext: SparkContext,
+        sqlContext: SQLContext,
         dOperableCatalog: Option[DOperableCatalog]): CommonExecutionContext = {
       mock[CommonExecutionContext]
     }
