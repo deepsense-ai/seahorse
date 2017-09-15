@@ -72,14 +72,18 @@
 
   .datasources-component-wrapper {
     position: absolute;
-    left: -1000px;
+    left: -1010px;
     top: 0;
-    background-color: white;
+    background-color: @color-white;
     height: ~"calc(100vh - 25px)";
-    width: 50vw;
+    min-width: 706px;
+    max-width: 1004px;
     z-index: 1000;
     transition: all 1s ease;
-    min-width: 860px;
+
+    &.active {
+      left: 0;
+    }
 
     .cross {
       position: absolute;
@@ -88,10 +92,6 @@
       cursor: pointer;
       font-size: 36px;
       font-family: "Seahorse Symbol";
-    }
-
-    &.active {
-      left: 0;
     }
   }
 }
