@@ -27,7 +27,9 @@ app.use(timeoutHandler);
 app.use(compression());
 app.disable('x-powered-by');
 
-app.use(httpsRedirectHandler);
+if (config.get('FORCE_HTTPS') === "true") {
+  app.use(httpsRedirectHandler);
+}
 
 auth.init(app);
 
