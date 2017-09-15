@@ -9,25 +9,25 @@ import scala.concurrent.Await
 import akka.actor.{Actor, PoisonPill}
 import com.typesafe.scalalogging.LazyLogging
 
-import io.deepsense.commons.exception.FailureCode.{NodeFailure, UnexpectedError}
-import io.deepsense.commons.exception.{DeepSenseFailure, FailureDescription}
 import io.deepsense.commons.metrics.Instrumented
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
 import io.deepsense.graph.{Graph, Node}
-import io.deepsense.graphexecutor.GraphExecutorActor.Messages.{Completed, Failed, NodeRunning}
+import io.deepsense.graphexecutor.GraphExecutorActor.Messages.{NodeFinished, NodeStarted}
+import io.deepsense.graphexecutor.GraphExecutorActor.Results
 import io.deepsense.models.entities.{DataObjectReference, Entity, InputEntity}
 import io.deepsense.models.experiments.Experiment
 
 /**
- * GraphNodeExecutor is responsible for execution of single node.
- * It requires that this node has state of RUNNING and performs its execution,
- * changes to state COMPLETED (on success) or FAILED (on fail)
- * and finally notifies GraphExecutor of finished execution.
+ * GraphNodeExecutorActor is responsible for execution of single node.
+ * It requires that this node has state of RUNNING.
+ * Actor performs its execution, changes to state COMPLETED (on success)
+ * or FAILED (on fail) and finally notifies GraphExecutor of finished execution.
  */
-class GraphNodeExecutor(
+class GraphNodeExecutorActor(
     executionContext: ExecutionContext,
     node: Node,
-    experiment: Experiment)
+    experiment: Experiment,
+    dOperableCache: Results)
   extends Actor with LazyLogging with Instrumented {
 
   import scala.concurrent.duration._
@@ -35,22 +35,22 @@ class GraphNodeExecutor(
   implicit val entityStorageResponseDelay = 5.seconds
 
   import scala.concurrent.ExecutionContext.Implicits.global
+  import io.deepsense.graphexecutor.GraphNodeExecutorActor.Messages._
 
-  import GraphNodeExecutor.Messages._
 
-  val nodeDescription = s"'${node.operation.name}-${node.id}'"
+  lazy val nodeDescription = s"'${node.operation.name}-${node.id}'"
   var executionStart: Long = _
 
   override def receive: Receive = {
-    case Start(graph, dOperableCache) =>
+    case Start() =>
       executionStart = System.currentTimeMillis()
       logger.info(">>> Start(node={})", node.id)
-      val msg = NodeRunning(node.id)
-      sender ! NodeRunning(node.id)
+      val msg = NodeStarted(node.id)
+      sender ! NodeStarted(node.id)
       logger.info("<<< {}", msg)
 
       logger.debug("Collecting data for operation input ports for {}", nodeDescription)
-      val collectedOutput = collectOutputs(graph, dOperableCache)
+      val collectedOutput = collectOutputs(experiment.graph, dOperableCache)
       logger.debug("Executing operation {}", nodeDescription)
 
       try {
@@ -63,14 +63,13 @@ class GraphNodeExecutor(
           uuid -> dOperable
         }.toMap
         logger.debug("Data registered for {}", nodeDescription)
-        val completed = Completed(node.id, results)
-        sender ! completed
-        logger.info("<<< {}", completed)
-        self ! PoisonPill
+        val finished = NodeFinished(node.markCompleted(results.keys.toSeq), results) // TODO
+        sender ! finished
+        logger.info("<<< {}", finished)
       } catch {
         case e: Throwable =>
           logger.error(s"[nodeId: ${node.id}] Graph execution failed", e)
-          val failed = Failed(node.id, e)
+          val failed = NodeFinished(node.markFailed(e), results = Map.empty)
           sender ! failed
           logger.info("<<< {}", failed)
       } finally {
@@ -78,6 +77,7 @@ class GraphNodeExecutor(
         val duration = (System.currentTimeMillis() - executionStart) / 1000.0
         logger.info("{} Execution of node ends (duration: {} seconds)",
           nodeDescription, duration.toString)
+        self ! PoisonPill
       }
   }
 
@@ -85,25 +85,23 @@ class GraphNodeExecutor(
    * Returns Vector of DOperable's to pass to current node as DOperation arguments.
    * NOTE: Currently we do not support optional input ports.
    * @param graph graph of operations to execute (contains current node)
-   * @param dOperableCache mutable map UUID -> DOperable
+   * @param dOperableCache map UUID -> DOperable
    * @return Vector of DOperable's to pass to current node
    */
   def collectOutputs(
     graph: Graph,
-    dOperableCache: Map[Entity.Id, DOperable]): Vector[DOperable] = {
-    var collectedOutputs = Vector.empty[DOperable]
+    dOperableCache: Results): Vector[DOperable] = {
     // Iterate through predecessors, constructing Vector of DOperable's
     // (predecessors are ordered by current node input port number connected with them)
-    for (predecessorEndpoint <- graph.predecessors.get(node.id).get) {
+    val result = for {predecessorEndpoint <- graph.predecessors.get(node.id).get} yield {
       // NOTE: Currently we do not support optional input ports
       // (require assures that all ports are obligatory)
       require(predecessorEndpoint.nonEmpty)
       val nodeId = predecessorEndpoint.get.nodeId
       val portIndex = predecessorEndpoint.get.portIndex
-      collectedOutputs = collectedOutputs ++ dOperableCache.get(
-        graph.node(nodeId).state.results.get(portIndex))
+      dOperableCache(graph.node(nodeId).state.results.get(portIndex))
     }
-    collectedOutputs
+    result.toVector
   }
 
   private def executeOperation(inputVector: Vector[DOperable]): Vector[DOperable] = {
@@ -136,14 +134,11 @@ class GraphNodeExecutor(
   }
 }
 
-object GraphNodeExecutor {
+object GraphNodeExecutorActor {
 
   object Messages {
-
     sealed trait Message
-
-    case class Start(graph: Graph, dOperableCache: Map[Entity.Id, DOperable]) extends Message
-
+    case class Start() extends Message
   }
 
 }

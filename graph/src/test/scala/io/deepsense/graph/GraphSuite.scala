@@ -84,7 +84,8 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
   test("Programmer can get/edit state of an execution graph nodes") {
     import DOperationTestClasses._
     val node = Node(Node.Id.randomId, new DOperation1To1Test)
-    var graph = Graph(Set(node))
+    val otherNode = Node(Node.Id.randomId, new DOperation0To1Test)
+    var graph = Graph(Set(node, otherNode))
 
     // node should be in draft
     assert(node.isDraft)
@@ -105,6 +106,12 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
     // completed
     graph = graph.markAsCompleted(node.id, List())
     assert(graph.node(node.id).isCompleted)
+
+    val changedNode = node.markAborted
+    graph = graph.withChangedNode(changedNode)
+    assert(graph.node(node.id) == changedNode)
+
+    assert(graph.node(otherNode.id) == otherNode)
   }
 
   test("Programmer can list all nodes in graph") {

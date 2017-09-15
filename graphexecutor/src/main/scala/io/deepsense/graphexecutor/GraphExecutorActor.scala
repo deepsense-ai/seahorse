@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2015, CodiLime, Inc.
  */
+
 package io.deepsense.graphexecutor
 
 import scala.concurrent.Await
@@ -10,150 +11,139 @@ import akka.actor._
 import akka.util.Timeout
 import com.typesafe.scalalogging.LazyLogging
 
-import io.deepsense.commons.exception.FailureCode._
-import io.deepsense.commons.exception.{FailureDescription, DeepSenseFailure}
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
-import io.deepsense.graph.Node.Id
-import io.deepsense.graph.{Graph, Node}
-import io.deepsense.graphexecutor.GraphNodeExecutor.Messages.Start
+import io.deepsense.graph.Node
+import io.deepsense.graphexecutor.GraphExecutorActor.Results
 import io.deepsense.models.entities.Entity
 import io.deepsense.models.experiments.Experiment
 import io.deepsense.models.messages._
 
-/**
- * Executes graph
- */
-class GraphExecutorActor(ec: ExecutionContext, gecActorPath: String)
-    extends Actor with LazyLogging {
+class GraphExecutorActor(
+    executionContext: ExecutionContext, clientActorPath: String)
+  extends Actor with LazyLogging {
 
-  import GraphExecutorActor.Messages._
+  this: GraphNodeExecutorFactory =>
+
+  import io.deepsense.graphexecutor.GraphExecutorActor.Messages._
 
   var experiment: Experiment = _
-  var dOperableCache: Map[Entity.Id, DOperable] = Map.empty
+  var dOperableCache: Results = Map.empty
+  var startedNodes: Set[Node.Id] = Set()
 
-  var gec: ActorRef = _
+  var clientActor: ActorRef = _
 
   override def receive: Receive = {
-    case ReadyToExecute(eid) => readyToExecute(eid)
+    case Start(eid) => start(eid)
     case Launch(e) => launch(e)
-    case NodeRunning(id) => nodeRunning(id)
-    case Completed(nodeId, results) => completed(nodeId, results)
-    case Failed(nodeId, reason) => failed(nodeId, reason)
-    case Abort(eid) => abort(eid)
+    case Abort(eid) => endExecution()
+    case NodeStarted(id) => nodeStarted(id)
+    case NodeFinished(node, results) => nodeFinished(node, results)
   }
 
-  def readyToExecute(eid: Experiment.Id): Unit = {
-    logger.info(">>> {}", ReadyToExecute(eid))
-    val selection = context.system.actorSelection(gecActorPath)
+  def start(eid: Experiment.Id): Unit = {
+    logger.info(">>> {}", Start(eid))
+    val selection = context.system.actorSelection(clientActorPath)
     import scala.concurrent.duration._
-    implicit val timeout: Timeout = 60.second
-    gec = Await.result(selection.resolveOne(), timeout.duration)
-    logger.info("GEC actor resolved: {}", gecActorPath)
-    gec ! ExecutorReady(eid)
+    implicit val timeout: Timeout = 60.second // TODO move to configuration
+    clientActor = Await.result(selection.resolveOne(), timeout.duration)
+    logger.info("GEC actor resolved: {}", clientActorPath)
+    clientActor ! ExecutorReady(eid)
   }
 
   def launch(e: Experiment): Unit = {
     logger.info(">>> Launch(experimentId={})", e.id)
     experiment = e.markRunning
-    gec ! Success(experiment)
+    clientActor ! Success(experiment)
     logger.info("<<< Success(experimentId={})", e.id)
-    ec.tenantId = experiment.tenantId
+    executionContext.tenantId = experiment.tenantId
     launchReadyNodes(experiment)
   }
 
-  def nodeRunning(id: Id): Unit = {
-    logger.info(">>> {}", NodeRunning(id))
-    experiment = experiment.copy(graph = experiment.graph.markAsRunning(id))
-    gec ! Update(experiment)
+  def nodeStarted(id: Node.Id): Unit = {
+    logger.info(">>> {}", NodeStarted(id))
+    experiment = experiment.markNodeRunning(id)
+    clientActor ! Update(experiment)
     logger.info("<<< Update(experimentId={}) / status={}", experiment.id, experiment.state.status)
   }
 
-  def completed(nodeId: Id, results: Map[Entity.Id, DOperable]): Unit = {
-    logger.debug(s">>> Completed(nodeId=$nodeId, results=$results)")
-    experiment = experiment.copy(
-      graph = experiment.graph.markAsCompleted(nodeId, results.keys.toList))
+  def nodeFinished(node: Node, results: Results): Unit = {
+    assert(node.isFailed || node.isCompleted)
+    logger.info(s">>> nodeFinished(node=$node)")
+    experiment = experiment.withNode(node)
+
     dOperableCache = dOperableCache ++ results
-    gec ! Update(experiment)
-    logger.debug(s"<<< NodeCompleted(experimentId=${experiment.id}, nodeId=$nodeId)")
-    if (experiment.graph.readyNodes.nonEmpty) {
-      logger.debug("Launching READY nodes")
+    logger.debug(s"<<< NodeCompleted(experimentId=${experiment.id}, nodeId=${node.id})")
+    if (experiment.readyNodes.nonEmpty) {
       launchReadyNodes(experiment)
+      clientActor ! Update(experiment)
     } else {
-      val nodesRunningCount = experiment.graph.nodes.count(_.isRunning)
+      val nodesRunningCount = experiment.runningNodes.size
       if (nodesRunningCount > 0) {
         logger.debug(s"No nodes to run, but there are still $nodesRunningCount running")
         logger.debug(s"Awaiting $nodesRunningCount RUNNINGs reporting Completed")
+        clientActor ! Update(experiment)
       } else {
-        // FIXME Use become to mark the state of experiment and never change
-        experiment = if (experiment.isFailed) experiment else experiment.markCompleted
-        gec ! Update(experiment)
-        logger.debug("<<< Update(experimentId={}) / status={}", experiment.id, experiment.state.status)
-        logger.debug("Shutting down the actor system")
-        context.system.shutdown()
+        endExecution()
       }
     }
-  }
-
-  def failed(nodeId: Node.Id, reason: Throwable): Unit = {
-
-    logger.debug(">>> {}", Failed(nodeId, reason))
-
-    experiment = experiment.markNodeFailed(nodeId, reason)
-    gec ! Update(experiment)
-    logger.debug("<<< Update(experimentId={}) for nodeId={}", experiment.id, nodeId)
-    if (experiment.graph.readyNodes.nonEmpty) {
-      logger.debug("Launching READY nodes")
-      launchReadyNodes(experiment)
-    } else {
-      val nodesRunningCount = experiment.graph.nodes.count(_.isRunning)
-      if (nodesRunningCount > 0) {
-        logger.info(s"No nodes to run, but there are still $nodesRunningCount running")
-        logger.info(s"Awaiting $nodesRunningCount RUNNINGs reporting Completed")
-      } else {
-        gec ! Update(experiment)
-        logger.debug("<<< Update(experimentId={}) / status={}", experiment.id, experiment.state.status)
-        logger.debug("Shutting down the actor system")
-        context.system.shutdown()
-      }
-    }
-  }
-
-  def abort(eid: Experiment.Id): Unit = {
-    logger.debug(">>> {}", Abort(eid))
-    experiment = experiment.markAborted
-    context.children.foreach(_ ! PoisonPill)
-    gec ! Update(experiment)
-    logger.debug("<<< {}", Abort(eid))
   }
 
   def launchReadyNodes(experiment: Experiment): Unit = {
     logger.info(">>> launchReadyNodes(experimentId={})", experiment.id)
-    for (node <- experiment.graph.readyNodes) {
-      logger.info("Creating actor for: {}", node)
-      val nodeRef = context.actorOf(
-        Props(classOf[GraphNodeExecutor], ec, node, experiment), s"node-executor-${node.id.value.toString}")
-      nodeRef ! Start(experiment.graph, dOperableCache)
+    for {
+      node <- experiment.readyNodes
+      if !startedNodes.contains(node.id)
+    } {
+      val props = Props(createGraphNodeExecutor(executionContext, node, experiment, dOperableCache))
+      val nodeRef = context.actorOf(props, s"node-executor-${node.id.value.toString}")
+      nodeRef ! GraphNodeExecutorActor.Messages.Start()
     }
+    startedNodes = startedNodes ++ experiment.readyNodes.map(_.id)
     logger.info("<<< launchReadyNodes(experimentId={})", experiment.id)
+  }
+
+  def endExecution(): Unit = {
+    experiment = experiment.updateState()
+    clientActor ! Update(experiment)
+    logger.debug("<<< Update(experimentId={}) / status={}", experiment.id, experiment.state.status)
+    logger.debug("Shutting down the actor system")
+    context.become(ignoreAllMessages)
+    self ! PoisonPill
+  }
+
+  def ignoreAllMessages: Receive = {
+    case x => logger.info(s"Received message $x after being aborted - ignoring")
   }
 }
 
 object GraphExecutorActor {
-
   def props(ec: ExecutionContext, statusReceiverActorPath: String) =
     Props(classOf[GraphExecutorActor], ec, statusReceiverActorPath)
 
+  type Results = Map[Entity.Id, DOperable]
+
   object Messages {
-
     sealed trait Message
-
-    case class ReadyToExecute(experimentId: Experiment.Id) extends Message
-
-    case class NodeRunning(nodeId: Node.Id) extends Message
-
-    // FIXME Why would GEA return a map not result of the computation itself?
-    case class Completed(nodeId: Node.Id, results: Map[Entity.Id, DOperable]) extends Message
-    case class Failed(nodeId: Node.Id, reason: Throwable) extends Message
-
+    case class Start(experimentId: Experiment.Id) extends Message
+    case class NodeStarted(nodeId: Node.Id) extends Message
+    case class NodeFinished(node: Node, results: Results) extends Message
   }
+}
+
+trait GraphNodeExecutorFactory {
+  def createGraphNodeExecutor(
+      executionContext: ExecutionContext,
+      node: Node,
+      experiment: Experiment,
+      dOperableCache: Results): Actor
+}
+
+trait ProductionGraphNodeExecutorFactory extends GraphNodeExecutorFactory {
+
+  override def createGraphNodeExecutor(
+      executionContext: ExecutionContext,
+      node: Node,
+      experiment: Experiment,
+      dOperableCache: Results): Actor =
+    new GraphNodeExecutorActor(executionContext, node, experiment, dOperableCache)
 }

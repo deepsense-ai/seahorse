@@ -9,7 +9,7 @@ import scala.collection.immutable.ListMap
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{FunSuite, Matchers}
 
-import io.deepsense.deeplang.parameters.exceptions.{NoSuchParameterException, TypeConversionException}
+import io.deepsense.deeplang.parameters.exceptions.TypeConversionException
 
 class ParametersSuite extends FunSuite with Matchers with MockitoSugar {
 

@@ -30,7 +30,7 @@ import io.deepsense.commons.spark.sql.UserDefinedFunctions
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.{DOperable, DSHdfsClient, ExecutionContext}
 import io.deepsense.entitystorage.{EntityStorageClient, EntityStorageClientFactory}
-import io.deepsense.graphexecutor.GraphExecutorActor.Messages.ReadyToExecute
+import io.deepsense.graphexecutor.GraphExecutorActor.Messages.Start
 import io.deepsense.models.entities.Entity
 import io.deepsense.models.experiments.Experiment
 
@@ -53,7 +53,7 @@ object GraphExecutor extends LazyLogging {
       Key.get(classOf[EntityStorageClientFactory], Names.named(args(2)))
     )
     logger.debug("entityStorageClientFactory ready: {}", entityStorageClientFactory)
-    val graphExecutor = new GraphExecutor(entityStorageClientFactory)
+    val graphExecutor = GraphExecutor(entityStorageClientFactory)
     logger.debug("graphExecutor ready: {}", graphExecutor)
     val experimentId = args(0)
     val statusActorPath = args(1)
@@ -63,10 +63,9 @@ object GraphExecutor extends LazyLogging {
 
 /**
  * GraphExecutor (it is YARN asynchronous Application Master).
- * Starts Avro RPC server, waits for graph and performs its execution.
  * Only one graph execution per GraphExecutor can be performed.
  */
-class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
+case class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
   extends AMRMClientAsync.CallbackHandler
   with LazyLogging {
 
@@ -74,8 +73,6 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
   val geConfig: Config = ConfigFactory.load(Constants.GraphExecutorConfName)
 
   val dOperableCache = mutable.Map[Entity.Id, DOperable]()
-
-  val nodeTiming = mutable.ListMap[String, Double]()
 
   val entityStorageClient = createEntityStorageClient(entityStorageClientFactory, geConfig)
 
@@ -125,7 +122,7 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
 
     val geRef = actorSystem.actorOf(
       GraphExecutorActor.props(executionContext, experimentStatusesReceiverActorPath))
-    geRef ! ReadyToExecute(experimentId)
+    geRef ! GraphExecutorActor.Messages.Start(experimentId)
 
     logger.debug("awaitTermination BEFORE")
     actorSystem.awaitTermination()
@@ -155,7 +152,7 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
 
   /**
    * Performs orderly closing of Graph Executor components:
-   * Application Master unregisteration, RPC server closing and executor thread pool shutdown.
+   * Application Master, entityStorageClientFactory and actorSystem.
    */
   private def cleanup(
     rmClient: AMRMClientAsyncImpl[ContainerRequest],
@@ -164,9 +161,9 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
     logger.debug("cleanup started")
     rmClient.unregisterApplicationMaster(FinalApplicationStatus.SUCCEEDED, "", "")
     entityStorageClientFactory.close()
-    println(s"[GraphExecutor] Shutting down actorSystem: $actorSystem")
+    logger.debug(s"[GraphExecutor] Shutting down actorSystem: $actorSystem")
     actorSystem.shutdown()
-    println("[GraphExecutor] ==>...DONE")
+    logger.debug("[GraphExecutor] ==>...DONE")
     logger.debug("cleanup end")
   }
 
@@ -178,7 +175,7 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
 
   override def onError(throwable: Throwable): Unit = {}
 
-  override def getProgress: Float = 0f // FIXME
+  override def getProgress: Float = 0f // TODO do we need it?
 
   override def onShutdownRequest(): Unit = {}
 
@@ -187,11 +184,6 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
   override def onContainersCompleted(list: JList[ContainerStatus]): Unit = {}
 
   override def onContainersAllocated(list: JList[Container]): Unit = {}
-
-  private def logNodeTimings(): Unit = {
-    logger.info("Nodes timings: ")
-    nodeTiming.foreach { case (node, time) => logger.info(s"$node: ${time}s") }
-  }
 
   private def createEntityStorageClient(
       entityStorageClientFactory: EntityStorageClientFactory,
