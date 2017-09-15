@@ -52,7 +52,6 @@ function OperationsCategory(RecursionHelper) {
     controller: function() {
       var ocCtrl = this;
 
-      ocCtrl.content = {};
       ocCtrl.templateUrl = 'catalogue-panel-operations-category/popoverTemplate.html';
 
       ocCtrl.selectContentForPopover = function(operation) {

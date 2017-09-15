@@ -14,7 +14,6 @@
     >
     </operations-category>
 
-
     <operation-item ng-repeat="item in category.items | filter:search"
                     ng-mouseover="ocCtrl.selectContentForPopover(item)"
                     id="{{item.id}}"
@@ -26,7 +25,6 @@
                     uib-popover-template="ocCtrl.templateUrl"
     >
     </operation-item>
-
 
   </ul>
 </li>

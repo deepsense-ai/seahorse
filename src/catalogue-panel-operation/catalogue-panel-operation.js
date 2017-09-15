@@ -8,7 +8,7 @@ function OperationItemView() {
       'name': '@',
       'icon': '@'
     },
-    link: (scope) => {
+    link: (scope, elem) => {
       scope.highlight = false;
       scope.$on('ConnectionHinter.HIGHLIGHT_OPERATIONS', (_, data) => {
         scope.highlight = data[scope.id];
@@ -17,6 +17,19 @@ function OperationItemView() {
       scope.$on('ConnectionHinter.DISABLE_HIGHLIGHTINGS', () => {
         scope.highlight = false;
         scope.$digest();
+      });
+
+      elem.on('mousedown', () => {
+        $('.popover').hide();
+      });
+      elem.on('dragstart', () => {
+        $('.popover').hide();
+      });
+      elem.on('mouseover', () => {
+        $('.popover').show();
+      });
+      elem.on('mouseup', () => {
+        $('.popover').show();
       });
     }
   };
