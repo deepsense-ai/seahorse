@@ -1,0 +1,20 @@
+Seahorse Spark docker image
+===========================
+
+The image contains Hadoop, Spark, python libraries and Session Executor - all requirements for
+running SX inside a docker container.
+
+1. Dependencies
+
+   1.1 Session Executor jar (we.jar)
+       NOTE: Python path in application.conf needs to be set to /opt/conda/bin/python
+   1.2 Session Executor dependencies zip (we-deps.zip)
+       NOTE: Python paths in start.sh, kernel.json etc need to be set to /opt/conda
+
+2. Building the image
+
+   $ docker build -t deepsense-spark .
+
+3. Running the image
+
+   $ docker run -d deepsense-spark
