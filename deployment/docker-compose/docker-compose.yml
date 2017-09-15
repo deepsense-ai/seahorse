@@ -11,6 +11,8 @@ services:
     ports:
       - "9082:9082"
     image: docker-repo.deepsense.codilime.com/tap/deepsense-sessionmanager:seahorse_on_tap-latest
+    volumes:
+      - ./yarn-remote-client:/yarn-remote-client:ro
     environment:
       - MQ_HOST=rabbitmq
       - MQ_PORT=5672
@@ -20,7 +22,7 @@ services:
       - WM_AUTH_PASS=Some_Password
       - SESSION_EXECUTOR_PATH=/opt/docker/we.jar
       - SESSION_EXECUTOR_DEPS_PATH=/opt/docker/we-deps.zip
-      - HADOOP_CONF_DIR=/opt/docker/yarn-remote-client
+      - HADOOP_CONF_DIR=/yarn-remote-client
       - SM_MQ_HOST=rabbitmq
       - SM_MQ_PORT=5672
     links:
