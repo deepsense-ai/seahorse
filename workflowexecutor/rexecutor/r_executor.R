@@ -22,8 +22,10 @@ assign(".scStartTime", as.integer(Sys.time()), envir = SparkR:::.sparkREnv)
 
 entryPoint <- SparkR:::getJobj(entryPointId)
 
-assign("sc", SparkR:::callJMethod(entryPoint, "getSparkContext"), envir = .GlobalEnv)
-assign("spark", SparkR:::callJMethod(entryPoint, "getSparkSession"), envir = .GlobalEnv)
+assign(".sparkRjsc", SparkR:::callJMethod(entryPoint, "getSparkSession"), envir = SparkR:::.sparkREnv)
+assign("sc", get(".sparkRjsc", envir = SparkR:::.sparkREnv), envir = .GlobalEnv)
+assign(".sparkRsession", SparkR:::callJMethod(entryPoint, "getSparkSession"), envir = SparkR:::.sparkREnv)
+assign("spark", get(".sparkRsession", envir = SparkR:::.sparkREnv), envir = .GlobalEnv)
 
 sdf <- SparkR:::callJMethod(entryPoint, "retrieveInputDataFrame", workflowId, nodeId, as.integer(0))
 df <- SparkR:::dataFrame(sdf, isCached = FALSE)
@@ -32,7 +34,7 @@ tryCatch({
   eval(parse(text = code))
   transformedDF <- transform(df)
   if (class(transformedDF) != "SparkDataFrame") {
-    transformedDF <- createDataFrame(spark, data.frame(transformedDF))
+    transformedDF <- createDataFrame(data.frame(transformedDF))
   }
 
   SparkR:::callJMethod(entryPoint, "registerOutputDataFrame", workflowId, nodeId, as.integer(0), transformedDF@sdf)
