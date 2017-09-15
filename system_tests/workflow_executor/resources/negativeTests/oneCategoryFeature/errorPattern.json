@@ -1,0 +1,15 @@
+{
+  "error": {
+    "code": "NodeFailure",
+    "title": "One or more nodes failed"
+  },
+  "nodes": {
+    "75746858-0620-7e75-55f5-10105e8645ff": {
+      "status": "FAILED",
+      "error": {
+        "message": "Column 'cat' is 'categorical' with less than 2 levels.",
+        "title": "DeepLang Exception"
+      }
+    }
+  }
+}

@@ -65,6 +65,18 @@ Column Name Duplication
     Clean Output Directory
     Remove Hdfs Path    /system_tests/columnNameDuplication
 
+One Category Feature
+    ${dir} =    Set Variable    resources/negativeTests/oneCategoryFeature/
+    Remove Hdfs Path    /system_tests/oneCategoryFeature
+    Upload to Hdfs    /system_tests/oneCategoryFeature/input.csv    ${dir}input.csv
+    Remove Directory    oneCategoryFeatureOutput    recursive=True
+    Create Output Directory    oneCategoryFeatureOutput
+    Run Workflow    ${dir}workflow.json
+    Check Execution Status    FAILED
+    Check Error    ${dir}errorPattern.json
+    Clean Output Directory
+    Remove Hdfs Path    /system_tests/oneCategoryFeature
+
 Trivial Cycle
     [Timeout]    20s
     ${dir} =    Set Variable    resources/negativeTests/trivialCycle/
