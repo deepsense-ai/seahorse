@@ -176,7 +176,8 @@ object DataFrame {
     addedPart: String,
     level: Int): String = {
     val levelSuffix = if (level > 0) "_" + level else ""
-    baseColumnName + "_" + addedPart + levelSuffix
+    (baseColumnName + "_" + addedPart + levelSuffix).replace(".", "_")
+    // TODO: 'replace' should be removed after spark upgrade to version containing bugfix. DS-635
   }
 
   /**

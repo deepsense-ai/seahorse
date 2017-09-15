@@ -51,7 +51,7 @@ class OneHotEncoderIntegSpec extends DeeplangIntegTestSupport {
           Set(columns(1), columns(2)), withRedundancy = false, categorizedDataFrame)
         val expectedDataFrame = enrichedDataFrame(
           categorizedDataFrame,
-          Seq(columns(1) + "_x,x", columns(1) + "_y.y", columns(2) + "_ABC"),
+          Seq(columns(1) + "_x,x", columns(1) + "_y_y", columns(2) + "_ABC"),
           Seq(
             Seq(1.0, 0.0, 0.0),
             Seq(0.0, 1.0, 0.0),
