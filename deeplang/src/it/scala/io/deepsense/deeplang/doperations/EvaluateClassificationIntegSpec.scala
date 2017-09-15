@@ -148,12 +148,7 @@ class EvaluateClassificationIntegSpec extends DeeplangIntegTestSupport {
 
     Report(ReportContent(
       "Evaluate Classification Report",
-      Map(
-        summaryTable.name -> summaryTable,
-        accuracyTable.name -> accuracyTable,
-        fMeasureByThresholdTable.name -> fMeasureByThresholdTable,
-        rocTable.name -> rocTable)
-    ))
+      List(summaryTable, accuracyTable, fMeasureByThresholdTable, rocTable)))
   }
 
   private def assertEvaluateClassificationReport(

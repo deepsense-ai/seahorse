@@ -81,7 +81,7 @@ trait ReportJsonProtocol extends DefaultJsonProtocol with ProductFormatsInstance
     }
   }
   implicit val tableFormat = jsonFormat6(Table.apply)
-  implicit val reportFormat = jsonFormat3(ReportContent)
+  implicit val reportFormat = jsonFormat3(ReportContent.apply)
 }
 
 object ReportJsonProtocol extends ReportJsonProtocol

@@ -35,7 +35,7 @@ object RegressionReporter extends Reporter with Logging {
       )
 
     val table = Table(ReportName, ReportDescription, Some(ReportColumnNames), None, rows)
-    Report(ReportContent(ReportName, Map(table.name -> table)))
+    Report(ReportContent(ReportName, List(table)))
   }
 
   override protected def createPartialReport(
@@ -82,7 +82,7 @@ object RegressionReporter extends Reporter with Logging {
       Some(rowNames),
       rowsWithAverage)
 
-    Report(ReportContent(CvReportName, Map(table.name -> table)))
+    Report(ReportContent(CvReportName, List(table)))
   }
 
   def getMetrics(predictionsAndLabels: RDD[(Double, Double)]): List[Double] = {

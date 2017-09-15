@@ -20,3 +20,12 @@ case class ReportContent(
     name: String,
     tables: Map[String, Table] = Map(),
     distributions: Map[String, Distribution] = Map())
+
+object ReportContent {
+
+  def apply(name: String, tables: List[Table]): ReportContent =
+    ReportContent(
+      name,
+      tables.map(t => t.name -> t).toMap,
+      Map())
+}

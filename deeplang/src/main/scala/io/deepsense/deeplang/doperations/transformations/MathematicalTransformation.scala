@@ -21,7 +21,7 @@ import io.deepsense.deeplang.doperables.{Report, Transformation}
 import io.deepsense.deeplang.doperations.exceptions.MathematicalOperationExecutionException
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.{DKnowledge, DMethod1To1, DOperable, ExecutionContext}
-import io.deepsense.reportlib.model.ReportContent
+import io.deepsense.reportlib.model.{ReportContent, Table}
 
 case class MathematicalTransformation(formula: Option[String]) extends Transformation {
 
@@ -55,8 +55,11 @@ case class MathematicalTransformation(formula: Option[String]) extends Transform
     }
   }
 
-  override def report: Report = Report(ReportContent("Report for MathematicalTransformation.\n" +
-    s"Formula: $formula"))
+  override def report: Report = {
+    val table = Table("Mathematical Formula", "", Some(List("Formula")), None, List(List(formula)))
+    Report(ReportContent(
+      "Report for MathematicalTransformation", List(table)))
+  }
 
   override def save(executionContext: ExecutionContext)(path: String): Unit = ???
 }

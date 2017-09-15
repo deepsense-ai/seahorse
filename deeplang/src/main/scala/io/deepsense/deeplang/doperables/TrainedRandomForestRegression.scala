@@ -21,7 +21,7 @@ import org.apache.spark.mllib.tree.model.RandomForestModel
 import org.apache.spark.rdd.RDD
 
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
-import io.deepsense.reportlib.model.ReportContent
+import io.deepsense.reportlib.model.{ReportContent, Table}
 
 case class TrainedRandomForestRegression(
     model: RandomForestModel,
@@ -42,10 +42,21 @@ case class TrainedRandomForestRegression(
 
   override def predict(vectors: RDD[Vector]): RDD[Double] = model.predict(vectors)
 
-  override def report: Report = Report(ReportContent("Report for TrainedRandomForestRegression.\n" +
-    s"Feature columns: ${featureColumns.mkString(", ")}\n" +
-    s"Target column: ${targetColumn}\n" +
-    s"Model: $model"))
+  override def report: Report = {
+    val featureColumnsColumn = featureColumns.get.toList.map(Some.apply)
+    val targetColumnColumn = List(targetColumn)
+    val rows = featureColumnsColumn.zipAll(targetColumnColumn, Some(""), Some(""))
+      .map{ case (a, b) => List(a, b) }
+
+    val table = Table(
+      "Trained Random Forest Regression",
+      "",
+      Some(List("Feature columns", "Target column")),
+      None,
+      rows)
+
+    Report(ReportContent("Report for TrainedRandomForestRegression", List(table)))
+  }
 
   override def save(context: ExecutionContext)(path: String): Unit = ???
 }

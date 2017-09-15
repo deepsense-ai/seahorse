@@ -85,12 +85,7 @@ object ClassificationReporter extends Reporter with Logging {
     logger.debug("Assembling evaluation report")
     val report = Report(ReportContent(
       ReportName,
-      Map(
-        summaryTable.name -> summaryTable,
-        accuracyTable.name -> accuracyTable,
-        fMeasureByThresholdTable.name -> fMeasureByThresholdTable,
-        rocTable.name -> rocTable)
-    ))
+      List(summaryTable, accuracyTable, fMeasureByThresholdTable, rocTable)))
 
     import spray.json._
 

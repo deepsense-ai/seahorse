@@ -24,7 +24,7 @@ import org.apache.spark.mllib.regression.{GeneralizedLinearModel, RidgeRegressio
 import org.apache.spark.rdd.RDD
 
 import io.deepsense.deeplang.{DOperable, ExecutionContext, Model}
-import io.deepsense.reportlib.model.ReportContent
+import io.deepsense.reportlib.model.{ReportContent, Table}
 
 case class TrainedRidgeRegression(
     model: Option[RidgeRegressionModel],
@@ -50,10 +50,17 @@ case class TrainedRidgeRegression(
 
   override def predict(vectors: RDD[Vector]): RDD[Double] = preparedModel.predict(vectors)
 
-  override def report: Report = Report(ReportContent("Report for TrainedRidgeRegression.\n" +
-    s"Feature columns: ${featureColumns.get.mkString(", ")}\n" +
-    s"Target column: ${targetColumn.get}\n" +
-    s"Model: $model"))
+  override def report: Report = {
+    val featureColumnsColumn = featureColumns.get.toList.map(Some.apply)
+    val targetColumnColumn = List(targetColumn)
+    val rows = featureColumnsColumn.zipAll(targetColumnColumn, Some(""), Some(""))
+      .map{ case (a, b) => List(a, b) }
+
+    val table = Table(
+      "Trained Ridge Regression", "", Some(List("Feature columns", "Target column")), None, rows)
+
+    Report(ReportContent("Report for TrainedRidgeRegression", List(table)))
+  }
 
   override def save(context: ExecutionContext)(path: String): Unit = {
     val params = TrainedRidgeRegressionDescriptor(

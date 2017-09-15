@@ -24,7 +24,7 @@ import org.apache.spark.mllib.regression.GeneralizedLinearModel
 import org.apache.spark.rdd.RDD
 
 import io.deepsense.deeplang.{DOperable, ExecutionContext, Model}
-import io.deepsense.reportlib.model.ReportContent
+import io.deepsense.reportlib.model.{ReportContent, Table}
 
 case class TrainedLogisticRegression(
     model: Option[LogisticRegressionModel],
@@ -48,10 +48,17 @@ case class TrainedLogisticRegression(
 
   override def url: Option[String] = physicalPath
 
-  override def report: Report = Report(ReportContent("Report for TrainedLogisticRegression.\n" +
-    s"Feature columns: ${featureColumns.get.mkString(", ")}\n" +
-    s"Target column: ${targetColumn.get}\n" +
-    s"Model: $model"))
+  override def report: Report = {
+    val featureColumnsColumn = featureColumns.get.toList.map(Some.apply)
+    val targetColumnColumn = List(targetColumn)
+    val rows = featureColumnsColumn.zipAll(targetColumnColumn, Some(""), Some(""))
+      .map{ case (a, b) => List(a, b) }
+
+    val table = Table(
+      "Trained Logistic Regression", "", Some(List("Feature columns", "Target column")), None, rows)
+
+    Report(ReportContent("Report for TrainedLogisticRegression", List(table)))
+  }
 
   override def save(context: ExecutionContext)(path: String): Unit = {
     val params = TrainedLogisticRegressionDescriptor(
