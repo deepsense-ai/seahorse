@@ -74,10 +74,14 @@ let ParameterFactory = {
             break;
 
           case 'selector':
-            if (paramValue.hasOwnProperty('excluding')) {
+            if (paramValue && paramValue.hasOwnProperty('excluding')) {
               options.excluding = paramValue.excluding;
             }
-            options.value = paramValue.selections ? paramValue.selections : options.value;
+            if (paramValue) {
+              options.value = paramSchema.isSingle === false ?
+                paramValue.selections :
+                options.value;
+            }
             break;
         }
 

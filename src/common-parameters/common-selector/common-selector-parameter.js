@@ -15,8 +15,10 @@ function SelectorParameter(options) {
   this.items = this.initItems(options.value, options.schema);
   this.schema = options.schema;
 
-  if (options.hasOwnProperty('excluding')) {
-    this.excluding = options.excluding;
+  if (!this.schema.isSingle) {
+    this.excluding = options.hasOwnProperty('excluding') ?
+      options.excluding :
+      false;
   }
 }
 
