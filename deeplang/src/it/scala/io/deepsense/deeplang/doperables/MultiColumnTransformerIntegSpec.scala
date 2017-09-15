@@ -42,7 +42,7 @@ class MultiColumnTransformerIntegSpec extends DeeplangIntegTestSupport {
   "MultiColumnTransformer" when {
     "working with multiple columns" when {
       val t = transformerWithMagicConstant
-      t.setMultipleColumns(columns = Seq("x", "y"), inPlace = Some("magic"))
+      t.setMultipleColumns(columns = Seq("x", "y"), inPlace = Some("magic_"))
       "in-place mode was not selected" should {
         "create columns with unique name (with prefix)" in {
           val transformedInPlace = t.transform(executionContext)(())(inputData)

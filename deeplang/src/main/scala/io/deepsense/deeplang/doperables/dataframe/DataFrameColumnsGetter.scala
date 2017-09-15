@@ -52,7 +52,7 @@ object DataFrameColumnsGetter {
 
   def uniqueSuffixedColumnName(column: String): String = column + "_" + UUID.randomUUID().toString
 
-  def prefixedColumnName(column: String, prefix: String): String = prefix + "_" + column
+  def prefixedColumnName(column: String, prefix: String): String = prefix + column
 
   /**
    * Returns name of column based on selection.

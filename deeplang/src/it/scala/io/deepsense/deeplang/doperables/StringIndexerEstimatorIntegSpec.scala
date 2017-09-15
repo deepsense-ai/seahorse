@@ -63,7 +63,7 @@ class StringIndexerEstimatorIntegSpec extends DeeplangIntegTestSupport {
     }
     "convert multiple columns" in {
       val si = new StringIndexerEstimator()
-      val outputPrefix = "idx"
+      val outputPrefix = "idx_"
       si.setMultipleColumn(Set("a", "b"), outputPrefix)
 
       val t = si.fit(executionContext)(())(inputDataFrame)
@@ -110,7 +110,7 @@ class StringIndexerEstimatorIntegSpec extends DeeplangIntegTestSupport {
     }
     "infer knowledge in multi-column mode" in {
       val si = new StringIndexerEstimator()
-      val outputPrefix = "idx"
+      val outputPrefix = "idx_"
       si.setMultipleColumn(Set("a", "b"), outputPrefix)
 
       val inputKnowledge: DKnowledge[DataFrame] = DKnowledge(Set(inputDataFrame))
