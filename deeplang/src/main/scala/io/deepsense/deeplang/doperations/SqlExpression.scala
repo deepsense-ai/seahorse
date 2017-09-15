@@ -24,8 +24,10 @@ import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, ParametersSche
 import io.deepsense.deeplang.{DOperation1To1, ExecutionContext}
 
 case class SqlExpression() extends DOperation1To1[DataFrame, DataFrame] {
-  override val tTagTO_0 = ru.typeTag[DataFrame]
-  override val tTagTI_0 = ru.typeTag[DataFrame]
+  @transient
+  override lazy val tTagTO_0 = ru.typeTag[DataFrame]
+  @transient
+  override lazy val tTagTI_0 = ru.typeTag[DataFrame]
 
   val dataFrameIdParameter = StringParameter(
     "An identifier that can be used in the SQL expression to refer to the input " +
