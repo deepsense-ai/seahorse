@@ -32,7 +32,8 @@ class MultipleColumnCreatorParamSpec
     val expectedJson = JsObject(
       "type" -> JsString("multipleCreator"),
       "name" -> JsString(param.name),
-      "description" -> JsString(param.description)
+      "description" -> JsString(param.description),
+      "default" -> JsNull
     )
     (param, expectedJson)
   }

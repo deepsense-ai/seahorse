@@ -32,12 +32,18 @@ abstract class Param[T] {
 
   def validate(value: T): Vector[DeepLangException] = Vector.empty
 
-  def toJson: JsObject = {
+  /**
+   * Describes json representation of this parameter.
+   * @param default Optional default value of parameter. Should be of type Option[T], but we need
+   *                to receive Any because Params have to use this method without knowing T.
+   */
+  private[params] def toJson(default: Option[Any]): JsObject = {
     val basicFields = Map(
-      "name" -> name,
-      "type" -> parameterType.toString, // TODO json format for parameterType
-      "description" -> description
-    ).toJson.asJsObject.fields
+      "name" -> name.toJson,
+      "type" -> parameterType.toString.toJson, // TODO json format for parameterType
+      "description" -> description.toJson,
+      "default" -> default.map(_.asInstanceOf[T]).map(valueToJson).getOrElse(JsNull)
+    )
     JsObject(basicFields ++ extraJsFields)
   }
 
@@ -53,7 +59,10 @@ abstract class Param[T] {
 
   def valueToJson(value: T): JsValue
 
-  def anyValueToJson(value: Any): JsValue = valueToJson(value.asInstanceOf[T])
+  /**
+   * Helper method for Params, which don't know T.
+   */
+  private[params] def anyValueToJson(value: Any): JsValue = valueToJson(value.asInstanceOf[T])
 
   def valueFromJson(jsValue: JsValue): T
 }

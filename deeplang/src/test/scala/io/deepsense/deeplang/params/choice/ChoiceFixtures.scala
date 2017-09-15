@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.params.choice
 
-import spray.json.{JsArray, JsObject, JsString}
+import spray.json.{JsNull, JsArray, JsObject, JsString}
 
 import io.deepsense.deeplang.params.{Param, BooleanParam}
 
@@ -76,7 +76,8 @@ object ChoiceFixtures {
         JsObject(
           "type" -> JsString("boolean"),
           "name" -> JsString("bool"),
-          "description" -> JsString("description")
+          "description" -> JsString("description"),
+          "default" -> JsNull
         )
       )
     )

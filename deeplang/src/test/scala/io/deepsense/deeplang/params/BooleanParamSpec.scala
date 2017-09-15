@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.params
 
-import spray.json.{JsString, JsObject, JsBoolean, JsValue}
+import spray.json._
 
 class BooleanParamSpec extends AbstractParamSpec[Boolean, BooleanParam] {
 
@@ -29,7 +29,8 @@ class BooleanParamSpec extends AbstractParamSpec[Boolean, BooleanParam] {
     val json = JsObject(
       "type" -> JsString("boolean"),
       "name" -> JsString(param.name),
-      "description" -> JsString(param.description)
+      "description" -> JsString(param.description),
+      "default" -> JsNull
     )
     (param, json)
   }

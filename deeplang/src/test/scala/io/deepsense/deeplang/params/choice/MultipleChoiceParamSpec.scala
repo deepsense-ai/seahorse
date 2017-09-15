@@ -18,7 +18,7 @@ package io.deepsense.deeplang.params.choice
 
 import scala.reflect.runtime.universe._
 
-import spray.json.{JsString, JsObject, JsTrue, JsValue}
+import spray.json._
 
 class MultipleChoiceParamSpec
   extends AbstractChoiceParamSpec[Set[ChoiceABC], MultipleChoiceParam[ChoiceABC]] {
@@ -31,6 +31,7 @@ class MultipleChoiceParamSpec
       "type" -> JsString("multipleChoice"),
       "name" -> JsString(multipleChoiceParam.name),
       "description" -> JsString(multipleChoiceParam.description),
+      "default" -> JsNull,
       ChoiceFixtures.values)
     (multipleChoiceParam, multipleChoiceExpectedJson)
   }

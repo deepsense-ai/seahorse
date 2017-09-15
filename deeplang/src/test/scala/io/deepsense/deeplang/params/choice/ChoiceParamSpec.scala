@@ -41,6 +41,7 @@ class ChoiceParamSpec extends AbstractChoiceParamSpec[ChoiceABC, ChoiceParam[Cho
       "type" -> JsString("choice"),
       "name" -> JsString(singleChoiceParam.name),
       "description" -> JsString(singleChoiceParam.description),
+      "default" -> JsNull,
       ChoiceFixtures.values)
     (singleChoiceParam, singleChoiceExpectedJson)
   }

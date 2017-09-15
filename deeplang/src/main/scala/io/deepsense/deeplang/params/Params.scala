@@ -29,10 +29,11 @@ import io.deepsense.deeplang.exceptions.DeepLangException
  */
 trait Params extends Serializable with ParameterJsonContainer {
 
-  /**
-   * Json describing parameters schema in this class.
-   */
-  def paramsToJson: JsValue = JsArray(params.map(_.toJson): _*)
+  def paramsToJson: JsValue = JsArray(params.map {
+    case param =>
+      val default = getDefault(param)
+      param.toJson(default)
+  }: _*)
 
   /**
    * Json describing values associated to parameters.

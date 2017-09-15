@@ -35,7 +35,8 @@ class SingleColumnSelectorParamSpec
       "name" -> JsString(param.name),
       "description" -> JsString(param.description),
       "portIndex" -> JsNumber(param.portIndex),
-      "isSingle" -> JsTrue
+      "isSingle" -> JsTrue,
+      "default" -> JsNull
     )
     (param, expectedJson)
   }

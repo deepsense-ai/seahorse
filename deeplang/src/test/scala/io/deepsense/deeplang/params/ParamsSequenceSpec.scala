@@ -56,11 +56,13 @@ class ParamsSequenceSpec
       "type" -> JsString("multiplier"),
       "name" -> JsString(paramsSequence.name),
       "description" -> JsString(paramsSequence.description),
+      "default" -> JsNull,
       "values" -> JsArray(
         JsObject(
           "type" -> JsString("string"),
           "name" -> JsString("string"),
           "description" -> JsString(""),
+          "default" -> JsNull,
           "validator" -> JsObject(
             "type" -> JsString("regex"),
             "configuration" -> JsObject(
@@ -71,7 +73,8 @@ class ParamsSequenceSpec
         JsObject(
           "type" -> JsString("boolean"),
           "name" -> JsString("bool"),
-          "description" -> JsString("")
+          "description" -> JsString(""),
+          "default" -> JsNull
         )
       )
     )

@@ -31,7 +31,10 @@ class ParamsSpec extends UnitSpec {
     override val description: String = "description"
     override val parameterType: ParameterType = mock[ParameterType]
 
-    override def toJson: JsObject = JsObject("name" -> name.toJson)
+    override def toJson(default: Option[Any]): JsObject = JsObject(
+      "name" -> name.toJson,
+      "default" -> default.map(_.asInstanceOf[Int]).map(JsNumber(_)).getOrElse(JsNull)
+    )
 
     override def valueToJson(value: Int): JsValue = value.toJson
     override def valueFromJson(jsValue: JsValue): Int = jsValue.convertTo[Int]
@@ -75,9 +78,12 @@ class ParamsSpec extends UnitSpec {
       p.set1(4)
       p.validateParams should contain theSameElementsAs Seq(p.param1.validate(4)).flatten
     }
-    "describe its params as json ordered asc by index" in {
+    "describe its params as json ordered as in declareParams()" in {
       val p = WithParams()
-      p.paramsToJson shouldBe JsArray(p.param2.toJson, p.param1.toJson)
+      p.paramsToJson shouldBe JsArray(
+        p.param2.toJson(default = None),
+        p.param1.toJson(default = Some(defaultForParam1))
+      )
     }
     "describe values of its params as json" in {
       val p = WithParams()

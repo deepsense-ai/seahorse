@@ -18,7 +18,7 @@ package io.deepsense.deeplang.params
 
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
-import spray.json.JsValue
+import spray.json.{JsObject, JsValue}
 
 abstract class AbstractParamSpec[T, U <: Param[T]]
   extends WordSpec
@@ -27,14 +27,25 @@ abstract class AbstractParamSpec[T, U <: Param[T]]
 
   def className: String
 
-  def paramFixture: (U, JsValue)
+  def paramFixture: (U, JsValue)  // param + its json description
 
-  def valueFixture: (T, JsValue)
+  def valueFixture: (T, JsValue)  // value + its json description
+
+  val defaultValue: T = valueFixture._1
 
   className should {
-    "serialize itself to JSON" in {
-      val (param, expectedJson) = paramFixture
-      param.toJson shouldBe expectedJson
+    "serialize itself to JSON" when {
+      "default value is not provided" in {
+        val (param, expectedJson) = paramFixture
+        param.toJson(default = None) shouldBe expectedJson
+      }
+      "default value is provided" in {
+        val (param, expectedJson) = paramFixture
+        val expectedJsonWithDefault = JsObject(
+          expectedJson.asJsObject.fields + ("default" -> param.valueToJson(defaultValue))
+        )
+        param.toJson(default = Some(defaultValue)) shouldBe expectedJsonWithDefault
+      }
     }
   }
 

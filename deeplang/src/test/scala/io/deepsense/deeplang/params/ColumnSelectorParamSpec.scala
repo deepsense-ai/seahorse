@@ -37,7 +37,8 @@ class ColumnSelectorParamSpec
       "name" -> JsString(param.name),
       "description" -> JsString(param.description),
       "portIndex" -> JsNumber(param.portIndex),
-      "isSingle" -> JsFalse
+      "isSingle" -> JsFalse,
+      "default" -> JsNull
     )
     (param, expectedJson)
   }

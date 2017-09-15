@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.params
 
-import spray.json.{JsString, JsObject, JsValue}
+import spray.json.{JsNull, JsString, JsObject, JsValue}
 
 class PrefixBasedColumnCreatorParamSpec
   extends AbstractParamSpec[String, PrefixBasedColumnCreatorParam] {
@@ -31,7 +31,8 @@ class PrefixBasedColumnCreatorParamSpec
     val expectedJson = JsObject(
       "type" -> JsString("prefixBasedCreator"),
       "name" -> JsString(param.name),
-      "description" -> JsString(param.description)
+      "description" -> JsString(param.description),
+      "default" -> JsNull
     )
     (param, expectedJson)
   }

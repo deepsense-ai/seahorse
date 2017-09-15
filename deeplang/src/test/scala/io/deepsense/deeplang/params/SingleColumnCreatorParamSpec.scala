@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.params
 
-import spray.json.{JsObject, JsString, JsValue}
+import spray.json.{JsNull, JsObject, JsString, JsValue}
 
 class SingleColumnCreatorParamSpec extends AbstractParamSpec[String, SingleColumnCreatorParam] {
 
@@ -29,7 +29,8 @@ class SingleColumnCreatorParamSpec extends AbstractParamSpec[String, SingleColum
     val expectedJson = JsObject(
       "type" -> JsString("creator"),
       "name" -> JsString(param.name),
-      "description" -> JsString(param.description)
+      "description" -> JsString(param.description),
+      "default" -> JsNull
     )
     (param, expectedJson)
   }
