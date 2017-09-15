@@ -5,7 +5,7 @@
 set -e
 
 # Settings
-COMPOSE_FILE="http://artifactory.deepsense.codilime.com:8081/artifactory/deepsense-seahorse-docker-compose-snapshot/io/deepsense/docker-compose/latest/docker-compose.yml"
+COMPOSE_FILE="http://artifactory.deepsense.codilime.com:8081/artifactory/simple/deepsense-seahorse-docker-compose-snapshot/io/deepsense/docker-compose/latest/docker-compose.yml"
 VAGRANT_BOX_NAME="seahorse-vm"
 PUBLISH_DIR="../image_publication"
 
