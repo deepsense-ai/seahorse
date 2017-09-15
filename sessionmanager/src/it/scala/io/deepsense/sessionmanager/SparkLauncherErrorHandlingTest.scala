@@ -30,7 +30,7 @@ class SparkLauncherErrorHandlingTest extends StandardSpec with Futures with Insi
     val clusterDetails = someClusterDetails.copy (
       params = Some("--non-existing-parameter some-value")
     )
-    val creating = SeahorseSparkLauncher(someSessionConfig(), sparkLauncherConfig, clusterDetails)
+    val creating = SeahorseSparkLauncher(Nil, sparkLauncherConfig, clusterDetails)
     inside(creating) { case Failure(error) =>
       error shouldBe an [UnknownOption]
     }
@@ -40,7 +40,7 @@ class SparkLauncherErrorHandlingTest extends StandardSpec with Futures with Insi
     val clusterDetails = someClusterDetails.copy (
       params = Some("--conf not-spark.executor.extraJavaOptions=-XX:+PrintGCDetails")
     )
-    val creating = SeahorseSparkLauncher(someSessionConfig(), sparkLauncherConfig, clusterDetails)
+    val creating = SeahorseSparkLauncher(Nil, sparkLauncherConfig, clusterDetails)
     inside(creating) { case Failure(error) =>
       error shouldBe an [SparkLauncherError]
       error.getMessage should include ("'key' must start with 'spark.'")

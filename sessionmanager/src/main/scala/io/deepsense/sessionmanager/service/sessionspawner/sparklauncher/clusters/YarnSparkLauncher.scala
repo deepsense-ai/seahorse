@@ -19,7 +19,7 @@ import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.spark.Sp
 private [clusters] object YarnSparkLauncher {
   import scala.collection.JavaConversions._
 
-  def apply(sessionConfig: SessionConfig,
+  def apply(applicationArgs: Seq[String],
             config: SparkLauncherConfig,
             clusterConfig: ClusterDetails,
             args: SparkOptionsMultiMap): SparkLauncher = {
@@ -33,8 +33,8 @@ private [clusters] object YarnSparkLauncher {
       .setDeployMode("client")
       .setAppResource(config.weJarPath)
       .setSparkHome(config.sparkHome)
-      .setAppName("SessionExecutor")
-      .addAppArgs(SessionExecutorArgs(sessionConfig, config, clusterConfig): _*)
+      .setAppName("Seahorse Workflow Executor")
+      .addAppArgs(applicationArgs: _*)
       .addFile(config.weDepsPath)
       .setConf("spark.driver.host", clusterConfig.userIP)
       .setConf("spark.executorEnv.PYTHONPATH", config.weDepsFileName)

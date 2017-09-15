@@ -7,17 +7,16 @@ package io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.cluster
 import org.apache.spark.launcher.SparkLauncher
 
 import io.deepsense.commons.models.ClusterDetails
-import io.deepsense.sessionmanager.service.sessionspawner.SessionConfig
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.SparkLauncherConfig
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.clusters.SeahorseSparkLauncher.RichSparkLauncher
-import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.executor.{CommonEnv, LocalSessionExecutorArgs}
+import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.executor.CommonEnv
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.spark.SparkArgumentParser._
 
 private [clusters] object LocalSparkLauncher {
 
   import scala.collection.JavaConversions._
 
-  def apply(sessionConfig: SessionConfig,
+  def apply(applicationArgs: Seq[String],
             config: SparkLauncherConfig,
             clusterConfig: ClusterDetails,
             args: SparkOptionsMultiMap): SparkLauncher = {
@@ -28,8 +27,8 @@ private [clusters] object LocalSparkLauncher {
       .setMaster("local[*]")
       .setDeployMode("client")
       .setAppResource(config.weJarPath)
-      .setAppName("SessionExecutor")
-      .addAppArgs(LocalSessionExecutorArgs(sessionConfig, config, clusterConfig): _*)
+      .setAppName("Seahorse Workflow Executor")
+      .addAppArgs(applicationArgs: _*)
       .addFile(config.weDepsPath)
       .setConf("spark.executorEnv.PYTHONPATH", config.weDepsPath)
       .setConf("spark.default.parallelism", parallelism.toString)

@@ -20,7 +20,7 @@ private [clusters] object StandaloneSparkLauncher {
 
   import scala.collection.JavaConversions._
 
-  def apply(sessionConfig: SessionConfig,
+  def apply(applicationArgs: Seq[String],
             config: SparkLauncherConfig,
             clusterConfig: ClusterDetails,
             args: SparkOptionsMultiMap): SparkLauncher = {
@@ -31,8 +31,8 @@ private [clusters] object StandaloneSparkLauncher {
       .setMaster(clusterConfig.uri)
       .setDeployMode("client")
       .setAppResource(config.weJarPath)
-      .setAppName("SessionExecutor")
-      .addAppArgs(SessionExecutorArgs(sessionConfig, config, clusterConfig): _*)
+      .setAppName("Seahorse Workflow Executor")
+      .addAppArgs(applicationArgs: _*)
       .addFile(config.weDepsPath)
       .setConf("spark.driver.host", clusterConfig.userIP)
       .setConf("spark.executorEnv.PYTHONPATH", config.weDepsPath)

@@ -15,6 +15,7 @@ import com.google.inject.Inject
 import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.commons.utils.Logging
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.clusters.SeahorseSparkLauncher
+import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.executor.SessionExecutorArgs
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.outputintercepting.OutputInterceptorFactory
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.spark.LoggingSparkAppListener
 import io.deepsense.sessionmanager.service.sessionspawner.{ExecutorSession, SessionConfig, SessionSpawner, StateInferencerFactory}
@@ -34,8 +35,9 @@ class SparkLauncherSessionSpawner @Inject()(
       clusterDetails
     )
 
+    val applicationArgs = SessionExecutorArgs(sessionConfig, sparkLauncherConfig)
     val startedSession = for {
-      launcher <- SeahorseSparkLauncher(sessionConfig, sparkLauncherConfig, clusterDetails)
+      launcher <- SeahorseSparkLauncher(applicationArgs, sparkLauncherConfig, clusterDetails)
       listener = new LoggingSparkAppListener()
       handle <- handleUnexpectedExceptions {
         interceptorHandle.attachTo(launcher)

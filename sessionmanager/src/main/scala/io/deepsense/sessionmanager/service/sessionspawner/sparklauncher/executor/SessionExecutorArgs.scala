@@ -4,7 +4,6 @@
 
 package io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.executor
 
-import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.sessionmanager.service.sessionspawner.SessionConfig
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.SparkLauncherConfig
 
@@ -14,8 +13,7 @@ object SessionExecutorArgs {
 
   def apply(
       sessionConfig: SessionConfig,
-      config: SparkLauncherConfig,
-      clusterConfig: ClusterDetails): Seq[String] = Seq(
+      config: SparkLauncherConfig): Seq[String] = Seq(
     "--interactive-mode",
     "--message-queue-host", config.queueHost,
     "--message-queue-port", config.queuePort.toString,

@@ -18,7 +18,7 @@ import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.spark.Sp
 private [clusters] object MesosSparkLauncher {
   import scala.collection.JavaConversions._
 
-  def apply(sessionConfig: SessionConfig,
+  def apply(applicationArgs: Seq[String],
             config: SparkLauncherConfig,
             clusterConfig: ClusterDetails,
             args: SparkOptionsMultiMap): SparkLauncher = {
@@ -30,8 +30,8 @@ private [clusters] object MesosSparkLauncher {
       .setDeployMode("client")
       .setAppResource(config.weJarPath)
       .setSparkHome(config.sparkHome)
-      .setAppName("SessionExecutor")
-      .addAppArgs(SessionExecutorArgs(sessionConfig, config, clusterConfig): _*)
+      .setAppName("Seahorse Workflow Executor")
+      .addAppArgs(applicationArgs: _*)
       .addFile(config.weDepsPath)
       .setConf("spark.executor.uri",
         "http://d3kbcqa49mib13.cloudfront.net/spark-2.0.0-bin-hadoop2.7.tgz")

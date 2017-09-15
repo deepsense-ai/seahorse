@@ -12,16 +12,17 @@ import org.apache.spark.launcher.SparkLauncher
 
 import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.sessionmanager.service.sessionspawner._
+import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.executor.SessionExecutorArgs
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.spark.SparkArgumentParser
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.spark.SparkArgumentParser._
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.{SparkLauncherConfig, SparkLauncherError, UnexpectedException}
 
 object SeahorseSparkLauncher {
 
-  def apply(sessionConfig: SessionConfig,
-            sparkLauncherConfig: SparkLauncherConfig,
-            clusterConfig: ClusterDetails) = handleUnexpectedExceptions {
-
+  def apply(
+      applicationArgs: Seq[String],
+      sparkLauncherConfig: SparkLauncherConfig,
+      clusterConfig: ClusterDetails): Validation[SparkLauncherError, SparkLauncher] = handleUnexpectedExceptions {
     for {
       basicArgs <- SparkArgumentParser.parse(clusterConfig.params)
     } yield {
@@ -29,13 +30,13 @@ object SeahorseSparkLauncher {
         "spark.driver.extraJavaOptions", "-Dfile.encoding=UTF8 -XX:+UseG1GC", delimiter = " ")
       val sparkLauncher = clusterConfig.clusterType match {
         case ClusterType.local =>
-          LocalSparkLauncher(sessionConfig, sparkLauncherConfig, clusterConfig, args)
+          LocalSparkLauncher(applicationArgs, sparkLauncherConfig, clusterConfig, args)
         case ClusterType.standalone =>
-          StandaloneSparkLauncher(sessionConfig, sparkLauncherConfig, clusterConfig, args)
+          StandaloneSparkLauncher(applicationArgs, sparkLauncherConfig, clusterConfig, args)
         case ClusterType.yarn =>
-          YarnSparkLauncher(sessionConfig, sparkLauncherConfig, clusterConfig, args)
+          YarnSparkLauncher(applicationArgs, sparkLauncherConfig, clusterConfig, args)
         case ClusterType.mesos =>
-          MesosSparkLauncher(sessionConfig, sparkLauncherConfig, clusterConfig, args)
+          MesosSparkLauncher(applicationArgs, sparkLauncherConfig, clusterConfig, args)
       }
 
       val jars = new java.io.File(sparkLauncherConfig.sparkResourcesJarsDir)
@@ -77,8 +78,8 @@ object SeahorseSparkLauncher {
         if (isNoValueArgument) {
           sparkLauncher.addSparkArg(key)
         } else {
-          value.foldLeft(sparkLauncher) { case (sparkLauncher, v) =>
-            sparkLauncher.addSparkArg(key, v)
+          value.foldLeft(sparkLauncher) { case (currentSparkLauncher, v) =>
+            currentSparkLauncher.addSparkArg(key, v)
           }
         }
       }
