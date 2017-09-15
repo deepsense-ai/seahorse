@@ -16,7 +16,7 @@ def build_simple_docker(docker_file_path, project_name):
 
 
 def build_sbt_docker(project_name):
-    return "sbt clean {}/docker:publishLocal".format(project_name)
+    return "sbt clean && sbt {}/docker:publishLocal".format(project_name)
 
 
 image_confs = [
