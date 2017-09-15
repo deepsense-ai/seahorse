@@ -16,7 +16,7 @@
 
 package io.deepsense.commons
 
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 
 /**
  * Extends StandardSpec with features to aid unit testing including:

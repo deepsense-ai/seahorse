@@ -16,7 +16,7 @@
 
 package io.deepsense.models.workflows
 
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
 
 import io.deepsense.commons.models.Entity

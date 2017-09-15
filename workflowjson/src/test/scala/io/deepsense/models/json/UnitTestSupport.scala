@@ -16,7 +16,7 @@
 
 package io.deepsense.models.json
 
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 
 trait UnitTestSupport extends MockitoSugar {
   suite: StandardSpec =>

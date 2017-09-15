@@ -16,7 +16,7 @@
 
 package io.deepsense.reportlib.model
 
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
 import spray.json._
 

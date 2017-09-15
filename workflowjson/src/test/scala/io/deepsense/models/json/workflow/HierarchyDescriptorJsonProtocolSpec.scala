@@ -17,7 +17,7 @@
 package io.deepsense.models.json.workflow
 
 import org.scalatest._
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import spray.json._
 
 import io.deepsense.deeplang.catalogs.doperable.{ClassDescriptor, HierarchyDescriptor, TraitDescriptor}
