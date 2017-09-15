@@ -21,7 +21,7 @@ import spray.util.LoggingContext
 
 import io.deepsense.commons.auth.directives._
 import io.deepsense.commons.auth.usercontext.TokenTranslator
-import io.deepsense.commons.json.envelope.{EnvelopeJsonFormat, Envelope}
+import io.deepsense.commons.json.envelope.{Envelope, EnvelopeJsonFormat}
 import io.deepsense.commons.rest.{RestApiAbstractAuth, RestComponent}
 import io.deepsense.commons.utils.Version
 import io.deepsense.graph.CyclicGraphException
@@ -31,7 +31,7 @@ import io.deepsense.models.json.workflow.exceptions.WorkflowVersionException
 import io.deepsense.models.workflows._
 import io.deepsense.workflowmanager.WorkflowManagerProvider
 import io.deepsense.workflowmanager.exceptions._
-import io.deepsense.workflowmanager.model.{WorkflowDescriptionJsonProtocol, WorkflowDescription}
+import io.deepsense.workflowmanager.model.{WorkflowDescription, WorkflowDescriptionJsonProtocol}
 
 /**
  * Exposes Workflow Manager through a REST API.
@@ -109,8 +109,13 @@ abstract class WorkflowApi @Inject() (
             path(JavaUUID) { workflowId =>
               get {
                 withUserContext { userContext =>
-                  onSuccess(workflowManagerProvider.forContext(userContext).get(workflowId)) {
-                    workflowWithResults => complete(workflowWithResults)
+                  onComplete(workflowManagerProvider.forContext(userContext).get(workflowId)) {
+                    case Failure(exception) =>
+                      logger.info("Get Workflow & results failed", exception)
+                      failWith(exception)
+                    case Success(workflowWithResults) =>
+                      logger.info("Get Workflow & results")
+                      complete(workflowWithResults)
                   }
                 }
               } ~

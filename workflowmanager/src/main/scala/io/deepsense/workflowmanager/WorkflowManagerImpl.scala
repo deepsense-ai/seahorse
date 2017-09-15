@@ -14,11 +14,13 @@ import spray.json._
 import io.deepsense.commons.auth.usercontext.UserContext
 import io.deepsense.commons.auth.{Authorizator, AuthorizatorProvider}
 import io.deepsense.commons.models.Id
-import io.deepsense.commons.utils.Logging
+import io.deepsense.commons.utils.{Logging, Version}
 import io.deepsense.graph.Node
+import io.deepsense.models.json.workflow.exceptions.WorkflowVersionNotSupportedException
 import io.deepsense.models.workflows._
 import io.deepsense.workflowmanager.exceptions.WorkflowNotFoundException
 import io.deepsense.workflowmanager.model.WorkflowDescription
+import io.deepsense.workflowmanager.rest.CurrentBuild
 import io.deepsense.workflowmanager.storage._
 
 /**
@@ -44,7 +46,11 @@ class WorkflowManagerImpl @Inject()(
     authorizator.withRole(roleGet) { userContext =>
       workflowStorage.get(id).flatMap{
         case Some(workflow) =>
-          val result = withResults(id, workflow).map(Some(_))
+          val result = withResults(id, workflow).map {
+            withResults =>
+              checkAPICompatibility(withResults.metadata.apiVersion)
+              Some(withResults)
+          }
           logger.info(s"Workflow with id: $id, $result")
           result
         case None =>
@@ -65,7 +71,10 @@ class WorkflowManagerImpl @Inject()(
     logger.debug(s"Update workflow id: $workflowId, workflow: $workflow")
     authorizator.withRole(roleUpdate) { userContext =>
       workflowStorage.get(workflowId).flatMap {
-        case Some(_) => workflowStorage.update(workflowId, workflow).map(_ => ())
+        case Some(_) =>
+          Future.successful(checkAPICompatibility(workflow.metadata.apiVersion)).flatMap {
+            _ => workflowStorage.update(workflowId, workflow).map(_ => ())
+          }
         case None => throw new WorkflowNotFoundException(workflowId)
       }
     }
@@ -78,11 +87,13 @@ class WorkflowManagerImpl @Inject()(
         val workflowId = Workflow.Id.randomId
         val notebooks = extractNotebooks(workflow)
         val workflowWithoutNotebook = workflowWithRemovedNotebooks(workflow)
-        workflowStorage.create(workflowId, workflowWithoutNotebook).flatMap(_ =>
-          Future.sequence(notebooks.map {
-            case (nodeId, notebookJson) =>
-              notebookStorage.save(workflowId, nodeId, notebookJson.toString)
-          }).map(_ => workflowId)
+        Future.successful(checkAPICompatibility(workflow.metadata.apiVersion)).flatMap(_ =>
+          workflowStorage.create(workflowId, workflowWithoutNotebook).flatMap(_ =>
+            Future.sequence(notebooks.map {
+              case (nodeId, notebookJson) =>
+                notebookStorage.save(workflowId, nodeId, notebookJson.toString)
+            }).map(_ => workflowId)
+          )
         )
       }
     }
@@ -239,5 +250,12 @@ class WorkflowManagerImpl @Inject()(
     val thirdPartyDataJson = workflow.additionalData
     val prunedThirdPartyData = JsObject(thirdPartyDataJson.fields - "notebooks")
     Workflow(workflow.metadata, workflow.graph, prunedThirdPartyData)
+  }
+
+  private def checkAPICompatibility(workflowAPIVersion: String): Unit = {
+    val parsedWorkflowAPIVersion = Version(workflowAPIVersion)
+    if (!CurrentBuild.version.compatibleWith(parsedWorkflowAPIVersion)) {
+      throw new WorkflowVersionNotSupportedException(parsedWorkflowAPIVersion, CurrentBuild.version)
+    }
   }
 }

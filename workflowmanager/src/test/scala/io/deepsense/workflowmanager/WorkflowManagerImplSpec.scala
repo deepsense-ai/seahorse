@@ -8,7 +8,7 @@ import scala.concurrent.Future
 
 import org.mockito.Matchers._
 import org.mockito.Mockito._
-import spray.json.{JsString, JsObject}
+import spray.json.{JsObject, JsString}
 
 import io.deepsense.commons.auth.usercontext.{Role, UserContext}
 import io.deepsense.commons.auth.{AuthorizatorProvider, UserContextAuthorizator}
@@ -17,6 +17,7 @@ import io.deepsense.graph.DeeplangGraph.DeeplangNode
 import io.deepsense.graph._
 import io.deepsense.models.workflows._
 import io.deepsense.workflowmanager.model.WorkflowDescription
+import io.deepsense.workflowmanager.rest.CurrentBuild
 import io.deepsense.workflowmanager.storage.{NotebookStorage, WorkflowStateStorage, WorkflowStorage}
 
 class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
@@ -33,7 +34,9 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
 
   val graph = mock[DeeplangGraph]
   when(graph.nodes).thenReturn(Set[DeeplangNode]())
-  val metadata = mock[WorkflowMetadata]
+  val metadata = WorkflowMetadata(
+    workflowType = WorkflowType.Batch,
+    apiVersion = CurrentBuild.version.humanReadable)
   val name = "test name"
   val thirdPartyData = JsObject(
     "gui" -> JsObject("name" -> JsString(name)),
