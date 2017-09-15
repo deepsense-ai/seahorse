@@ -162,7 +162,7 @@ class DefaultLivySpec
       "file" -> JsString(c.file),
       "className" -> JsString(c.className),
       "args" -> JsArray(c.args.map(JsString(_)): _*),
-      "jars" -> JsArray(c.jars.map(JsString(_)): _*),
+      "files" -> JsArray(c.files.map(JsString(_)): _*),
       "conf" -> JsObject(c.conf.mapValues(JsString(_)))
     )
 

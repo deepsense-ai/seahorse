@@ -20,7 +20,12 @@ import io.deepsense.sessionmanager.service.livy.requests.Create
 class SessionExecutorRequestBodyBuilder @Inject() (
   @Named("session-executor.parameters.class-name") private val className: String,
   @Named("session-executor.parameters.application-jar-path") private val applicationJarPath: String,
-  @Named("session-executor.parameters.queue-host") private val queueHost: String
+  @Named("session-executor.parameters.queue-host") private val queueHost: String,
+  @Named("session-executor.parameters.queue-port") private val queuePort: Int,
+  @Named("session-executor.parameters.pyexecutor.dir") private val pyExecutorDir: String,
+  @Named("session-executor.parameters.pyexecutor.jar") private val pyExecutorJar: String,
+  @Named("session-executor.parameters.pyspark.dir") private val pySparkDir: String,
+  @Named("session-executor.parameters.pyspark.zip") private val pySparkZip: String
 ) extends RequestBodyBuilder {
 
   /**
@@ -30,17 +35,22 @@ class SessionExecutorRequestBodyBuilder @Inject() (
     * @param workflowId An identifier of a workflow that SE will operate on.
     */
   def createSession(workflowId: Id): Create = {
+    val pyExecutorFile = s"$pyExecutorDir/$pyExecutorJar"
+    val pySparkFile = s"$pySparkDir/$pySparkZip"
+
     Create(
       applicationJarPath,
       className,
       args = Seq(
         "--interactive-mode",
         "-m", queueHost,
-        "-p", applicationJarPath,
+        "--message-queue-port", queuePort.toString,
+        "-p", pyExecutorJar,
+        "-z", pySparkZip,
         "-j", workflowId.toString()
       ),
-      jars = Seq(applicationJarPath),
-      conf = Map("spark.driver.extraClassPath" -> applicationJarPath)
+      files = Seq(pyExecutorFile, pySparkFile),
+      conf = Map("spark.driver.extraClassPath" -> pyExecutorJar)
     )
   }
 }

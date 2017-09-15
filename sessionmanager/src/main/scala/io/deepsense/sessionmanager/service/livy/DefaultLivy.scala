@@ -30,6 +30,8 @@ class DefaultLivy @Inject() (
   private implicit val implicitTimeout = Timeout(timeout, TimeUnit.MILLISECONDS)
   private implicit val executionContext = system.dispatcher
 
+  private val credentials = BasicHttpCredentials("codilime", "Seahorse123")
+
   override def createSession(workflowId: Id): Future[Batch] = {
     createSessionPipeline(Post(
       batchesUrl,
@@ -49,17 +51,17 @@ class DefaultLivy @Inject() (
   }
 
   private def createSessionPipeline: (HttpRequest) => Future[Batch] =
-    sendReceive ~> unmarshal[Batch]
+    basePipeline ~> unmarshal[Batch]
 
   private def killSessionPipeline: (HttpRequest) => Future[Boolean] = {
-    sendReceive ~> convertToBoolean
+    basePipeline ~> convertToBoolean
   }
 
   private def listSessionsPipeline: (HttpRequest) => Future[BatchList] =
-    sendReceive ~> unmarshal[BatchList]
+    basePipeline ~> unmarshal[BatchList]
 
   private def getSessionPipeline: (HttpRequest) => Future[Option[Batch]] = {
-    sendReceive ~> convertOption[Batch]
+    basePipeline ~> convertOption[Batch]
   }
 
   private def convertToBoolean: Future[HttpResponse] => Future[Boolean] = {
@@ -68,6 +70,9 @@ class DefaultLivy @Inject() (
     }
   }
 
+  private def basePipeline = {
+    addCredentials(credentials) ~> sendReceive
+  }
   private type ConvertOptionFunction[T] = Future[HttpResponse] => Future[Option[T]]
 
   private def convertOption[T](

@@ -8,6 +8,6 @@ case class Create(
   file: String,
   className: String,
   args: Seq[String],
-  jars: Seq[String],
+  files: Seq[String],
   conf: Map[String, String]
 )
