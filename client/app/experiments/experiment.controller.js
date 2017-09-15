@@ -162,7 +162,7 @@ function ExperimentController(
   });
 
   $scope.$on(GraphNode.MOVE, (data) => {
-    internal.saveExperiment();
+    //internal.saveExperiment();
   });
 
   $scope.$on(Edge.CREATE, (data, args)  => {
