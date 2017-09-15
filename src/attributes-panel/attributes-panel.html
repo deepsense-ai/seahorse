@@ -7,7 +7,7 @@
           tooltip="{{!disabledMode && node.uiName ? 'Click to change name' : ''}}"
           tooltip-trigger="mouseenter"
           tooltip-append-to-body="true">
-        <span editable-text="node.uiName" onaftersave="panel.customNameSaved()" ng-if="!disabledMode">{{node.uiName || 'Create custom name'}}</span>
+        <span editable-text="node.uiName" onaftersave="controller.customNameSaved()" ng-if="!disabledMode">{{node.uiName || 'Create custom name'}}</span>
         <span ng-if="disabledMode && node.uiName">{{::node.uiName}}</span>
       </h4>
     </section>
@@ -15,7 +15,7 @@
       <p class="operation-attributes-panel__title m-b-xs" ng-class="{'m-t-n-xs': !disabledMode}">{{ node.name }}</p>
       <p class="operation-attributes-panel__description"
          title="{{ node.description }}">{{ node.description }}</p>
-      <a ng-href="http://seahorse.deepsense.io/docs/latest/uuid/{{node.operationId}}.html" target="_blank"
+      <a ng-href={{controller.getDocsHost()}}/docs/latest/uuid/{{node.operationId}}.html" target="_blank"
          class="o-read-more block m-t-xs">
         Read more
       </a>
@@ -32,7 +32,7 @@
           {{node.state.status.replace('status_', '')}}
         </p>
         <button ng-show="node.state.status === 'status_failed'"
-                ng-click="panel.showErrorMessage()"
+                ng-click="controller.showErrorMessage()"
                 class="btn btn-xs btn-info o-action-text fa fa-exclamation-triangle o-error-btn">
           <span class="o-action-text__text-element">Click here to show errors</span>
         </button>
@@ -90,7 +90,7 @@
         <div ng-repeat="input in node.input" class="ibox-content c-ports-info__content">
           <strong>{{$index}}:</strong>
           <span class="c-ports-info__item" ng-repeat="typeQualifier in input.typeQualifier">
-            <a target="_blank" ng-href="http://seahorse.deepsense.io/docs/latest/uuid/{{typeQualifier}}.html">
+            <a target="_blank" ng-href="{{controller.getDocsHost()}}/docs/latest/uuid/{{typeQualifier}}.html">
               {{{true: '', false: ' +&nbsp;'}[$first]}}{{typeQualifier.substr(typeQualifier.lastIndexOf('.')+1,typeQualifier.length)}}
             </a>
           </span>
@@ -106,7 +106,7 @@
         <div ng-repeat="output in node.originalOutput" class="ibox-content c-ports-info__content">
           <strong>{{$index}}:</strong>
           <span class="c-ports-info__item" ng-repeat="typeQualifier in output.typeQualifier">
-            <a target="_blank" ng-href="http://seahorse.deepsense.io/docs/latest/uuid/{{typeQualifier}}.html">
+            <a target="_blank" ng-href="{{controller.getDocsHost()}}/docs/latest/uuid/{{typeQualifier}}.html">
               {{{true: '', false: ' +&nbsp;'}[$first]}}{{typeQualifier.substr(typeQualifier.lastIndexOf('.')+1,typeQualifier.length)}}
             </a>
           </span>
@@ -122,7 +122,7 @@
         <div ng-repeat="output in node.output" class="ibox-content c-ports-info__content">
           <strong>{{$index}}:</strong>
           <span class="c-ports-info__item" ng-repeat="typeQualifier in output.typeQualifier">
-            <a target="_blank" ng-href="http://seahorse.deepsense.io/docs/latest/uuid/{{typeQualifier}}.html">{{typeQualifier.substr(typeQualifier.lastIndexOf('.')+1,typeQualifier.length)}}{{{true: '', false: ', '}[$last]}}</a>
+            <a target="_blank" ng-href="{{controller.getDocsHost()}}/docs/latest/uuid/{{typeQualifier}}.html">{{typeQualifier.substr(typeQualifier.lastIndexOf('.')+1,typeQualifier.length)}}{{{true: '', false: ', '}[$last]}}</a>
           </span>
         </div>
       </section>

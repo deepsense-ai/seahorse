@@ -1,13 +1,6 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- *
- * Created by Oleksandr Tserkovnyi on 08.06.15.
- */
-
 'use strict';
-
 var module = angular.module('test', ['deepsense.attributes-panel']);
-
+module.config = {};
 module.controller('TestCtrl', ['$scope', '$element', 'Model', function ($scope, $element, Model) {
   var nodes = Model.getNodes();
 

@@ -1,7 +1,7 @@
 'use strict';
 
 /*@ngInject*/
-function OperationAttributes($rootScope, AttributesPanelService) {
+function OperationAttributes($rootScope,AttributesPanelService,config) {
   return {
     restrict: 'E',
     scope: {
@@ -36,6 +36,7 @@ function OperationAttributes($rootScope, AttributesPanelService) {
       });
     },
     controller: function ($scope, $element, $timeout, $modal) {
+      this.getDocsHost = () => config.docsHost;
       this.showErrorMessage = function showErrorMessage () {
         $modal.open({
           scope: $scope,
@@ -58,7 +59,7 @@ function OperationAttributes($rootScope, AttributesPanelService) {
         });
       };
     },
-    controllerAs: 'panel'
+    controllerAs: 'controller'
   };
 }
 
