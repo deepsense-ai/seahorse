@@ -6,6 +6,9 @@ package io.deepsense.deeplang.doperations
 import scala.collection.mutable
 
 import org.apache.spark.mllib.evaluation.RegressionMetrics
+import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.Row
+import org.apache.spark.sql.catalyst.expressions.GenericRow
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables._
@@ -47,10 +50,11 @@ class CrossValidateRegressor
                                   dataFrame: DataFrame): (Regressor with Scorable, Report) = {
     logger.info("Execution of CrossValidateRegressor starts")
     import CrossValidateRegressor._
+    val dataFrameSize = dataFrame.sparkDataFrame.count()
     // If number of folds is too big, we use dataFrame size as folds number
     val effectiveNumberOfFolds = math.min(
       // If dataFrame is of size 1, no folds can be performed
-      if (dataFrame.sparkDataFrame.count() == 1) 0 else dataFrame.sparkDataFrame.count(),
+      if (dataFrameSize == 1) 0 else dataFrameSize,
       math.round(parameters.getDouble(numOfFoldsParamKey).get).toInt).toInt
     val performShuffle = parameters.getChoice(shuffleParamKey).get.label == shuffleYes
     val seed =
@@ -61,8 +65,8 @@ class CrossValidateRegressor
         0
       }
 
-    logger.debug("Effective effectiveNumberOfFolds=" + effectiveNumberOfFolds +
-      ", DataFrame size=" + dataFrame.sparkDataFrame.count())
+    logger.debug(
+      s"Effective effectiveNumberOfFolds=$effectiveNumberOfFolds, DataFrame size=$dataFrameSize")
 
     // Perform shuffling if necessary
     // TODO: (DS-546) Do not use sample method, perform shuffling "in flight"
@@ -97,8 +101,9 @@ class CrossValidateRegressor
       effectiveNumberOfFolds: Int): Report = {
     logger.info("Generating cross-validation report")
     val schema = dataFrame.sparkDataFrame.schema
+    val rddWithIndex: RDD[(Row, Long)] = dataFrame.sparkDataFrame.rdd.map(
+      r => new GenericRow(r.toSeq.toArray).asInstanceOf[Row]).zipWithIndex().cache()
 
-    val rddWithIndex = dataFrame.sparkDataFrame.rdd.zipWithIndex().cache()
     val foldMetrics = new mutable.MutableList[RegressionMetricsRow]
     (0 to effectiveNumberOfFolds - 1).foreach {
       case splitIndex =>
@@ -111,31 +116,25 @@ class CrossValidateRegressor
           rddWithIndex.filter { case (r, index) => index % k == splitIndex }
             .map { case (r, index) => r }
 
-        val trainingSparkDataFrame = context.sqlContext.createDataFrame(training, schema).cache()
+        val trainingSparkDataFrame = context.sqlContext.createDataFrame(training, schema)
         val trainingDataFrame = context.dataFrameBuilder.buildDataFrame(trainingSparkDataFrame)
-        val testSparkDataFrame = context.sqlContext.createDataFrame(test, schema).cache()
+        val testSparkDataFrame = context.sqlContext.createDataFrame(test, schema)
         val testDataFrame = context.dataFrameBuilder.buildDataFrame(testSparkDataFrame)
 
         // Train model on trainingDataFrame
-        val trained = trainable.train(context)(parametersForTrainable)(trainingDataFrame)
-
-        // NOTE: trainingSparkDataFrame/trainingDataFrame will not be used further
-        trainingSparkDataFrame.unpersist()
+        val trained: Scorable = trainable.train(context)(parametersForTrainable)(trainingDataFrame)
 
         // Score model on trainingDataFrame
         val scored = trained.score(context)(None)(testDataFrame)
 
         // Prepare prediction and observations RDDs to facilitate computation of metrics
-        val predictions =
-          scored.sparkDataFrame.rdd.map(r => { r.get(r.size - 1).asInstanceOf[Double] })
+        val predictions = scored.sparkDataFrame.rdd.map(r => r.getDouble(r.size - 1))
         val observations =
           testDataFrame
             .sparkDataFrame
             .select(testDataFrame.getColumnName(parametersForTrainable.targetColumn.get))
             .rdd
-            .map(r => r.get(0).asInstanceOf[Double])
-        // NOTE: testSparkDataFrame/testDataFrame will not be used further
-        testSparkDataFrame.unpersist()
+            .map(r => r.getDouble(0))
 
         // Compute metrics for current fold
         val metrics = new RegressionMetrics(predictions zip observations)

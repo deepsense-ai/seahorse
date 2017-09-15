@@ -58,7 +58,8 @@
           "version": "0.1.0"
         },
         "parameters": {
-          "regularization": 1.0E-7
+          "regularization": 1.0E-7,
+          "iterationsNumber": 1
         }
       }, {
         "id": "08485e14-014e-42d6-acfc-34c99f34195f",

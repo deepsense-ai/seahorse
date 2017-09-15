@@ -66,7 +66,7 @@ class GraphNodeExecutor(
       }
     } catch {
       case e: Exception => {
-        logger.error(s"${node.id} Graph execution failed $e")
+        logger.error(s"${node.id} Graph execution failed $e", e)
         // Exception thrown here, during handling exception could result in application deadlock
         // (node stays in status RUNNING forever, Graph Executor waiting for this status change)
         graphExecutor.graphGuard.synchronized {
