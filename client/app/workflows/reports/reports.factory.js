@@ -4,7 +4,7 @@
 function ReportsFactory($q, $rootScope) {
   let reportsStorage = new Map();
 
-  let createReportEntities = (reportId, resultEntities, workflow) => {
+  let createReportEntities = (reportId, resultEntities) => {
     for (let reportEntityId in resultEntities) {
       let resultEntity = resultEntities[reportEntityId];
       if (resultEntity.report) {

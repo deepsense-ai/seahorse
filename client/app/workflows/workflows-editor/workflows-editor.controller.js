@@ -74,7 +74,7 @@ class WorkflowsEditorController extends WorkflowReports {
     if (!_.isEmpty(data.resultEntities)) {
       super.init(data.resultEntities);
       super.initListeners(data.resultEntities);
-      this.$scope.$evalAsync(() => {
+      this.$scope.$applyAsync(() => {
         this.GraphPanelRendererService.rerender();
       });
     }

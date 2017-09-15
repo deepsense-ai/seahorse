@@ -1,6 +1,6 @@
 <div class="c-report"
      ng-style="{'height': report.autoHeight ? 'auto' : ''}">
-  <div ng-switch="report.getReportName()">
+  <div ng-switch="report.reportName">
     <report-dataframe
       ng-switch-when="DataFrame Report"
       data="report.getTables()"
