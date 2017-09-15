@@ -1,1 +1,10 @@
-<div class="canvas__new-element">{{$ctrl.data}}</div>
+<input
+  class="new-node__input"
+  ng-model="$ctrl.operationSearchQuery"
+/>
+<operation-catalogue
+  class="new-node__catalogue"
+  query="$ctrl.operationSearchQuery"
+  select-operation="$ctrl.onSelect({operationId: operationId})"
+>
+</operation-catalogue>

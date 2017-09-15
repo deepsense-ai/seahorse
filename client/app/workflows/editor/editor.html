@@ -1,22 +1,25 @@
 <div class="flowchart-box">
-  <new-node class="flowchar-box__new-node"
-            data="$ctrl.newNodeData.param"
-            ng-if="$ctrl.newNodeData"
-            ng-style="{
-              left: $ctrl.newNodeData.x + 'px',
-              top: $ctrl.newNodeData.y + 'px'
-            }"
-  ></new-node>
   <canvas-toolbar
-    on-zoom-in="$ctrl.zoomIn()"
-    on-zoom-out="$ctrl.zoomOut()"
-    on-fit="$ctrl.fit()"
-    on-fullscreen="$ctrl.fullScreen()"
-    on-new-node="$ctrl.newNode()"
+    on-zoom-in="$ctrl.zoomIn($event)"
+    on-zoom-out="$ctrl.zoomOut($event)"
+    on-fit="$ctrl.fit($event)"
+    on-fullscreen="$ctrl.fullScreen($event)"
+    on-new-node="$ctrl.newNode($event)"
   ></canvas-toolbar>
   <core-canvas
     is-editable="$ctrl.isEditable"
+    new-node-data="$ctrl.newNodeData"
+    selectedNode="$ctrl.selectedNode"
     workflow="$ctrl.workflow"
-    selectedNode="$ctrl.selectedNode">
+    on-connection-abort="$ctrl.onConnectionAbort(newNodeData)">
+    <new-node class="flowchart-box__new-node"
+      id="node-new-node"
+      ng-style="{
+        left: $ctrl.newNodeData.x + 'px',
+        top: $ctrl.newNodeData.y + 'px'
+      }"
+      on-select="$ctrl.onSelect(operationId)"
+      jsplumb-draggable
+    ></new-node>
   </core-canvas>
 </div>

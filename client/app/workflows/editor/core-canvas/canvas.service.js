@@ -92,7 +92,6 @@ class CanvasService {
 
   render() {
     this.AdapterService.render();
-    this.fit();
   }
 
   moveWindow(x = 0, y = 0) {
@@ -137,6 +136,13 @@ class CanvasService {
       x: this.slidingWindowSize.width/2 -(this.slidingWindowSize.width/2 - this.slidingWindowPosition.x) * ratio,
       y: this.slidingWindowSize.height/2- (this.slidingWindowSize.height/2 - this.slidingWindowPosition.y) * ratio
     })
+  }
+
+  translatePosition(x, y) {
+    return [
+      -1 * this.slidingWindowPosition.x / this.scale + x,
+      -1 * this.slidingWindowPosition.y / this.scale + y
+    ];
   }
 }
 

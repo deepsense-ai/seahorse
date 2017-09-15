@@ -7,7 +7,7 @@ import OperationsCatalogueService from './operations-catalogue.service.js';
 
 const Operations = angular
   .module('operations-catalogue', [])
-  .component('newOperationCatalogue', OperationCatalogue)
+  .component('operationCatalogue', OperationCatalogue)
   .component('categoriesList', CategoriesList)
   .component('categoryOperationsList', CategoryOperationsList)
   .component('searchOperation', SearchOperation)

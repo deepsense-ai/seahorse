@@ -13,6 +13,23 @@ const POSITION_MAP = {
   }
 };
 
+const NEW_NODE_NODE = {
+  id: 'new-node',
+  input: [{
+    id: 'input-0-new-node',
+    portPosition: 'center',
+    index: 0
+  }],
+  output: []
+};
+
+const NEW_NODE_EDGE = {
+  id: 'new-node-edge',
+  startPortId: 0,
+  endNodeId: NEW_NODE_NODE.id,
+  endPortId: 0
+};
+
 class AdapterService {
   /*@ngInject*/
   constructor(WorkflowService, $rootScope, DeepsenseCycleAnalyser, GraphStyleService) {
@@ -73,7 +90,16 @@ class AdapterService {
     jsPlumb.bind('connectionDrag', (connection) => {
       //TODO Add highlight
     });
+
+    jsPlumb.bind('connectionAborted', (information, originalEvent) => {
+      this.onConnectionAbort({newNodeData: {
+        x: (originalEvent.layerX - originalEvent.x) * -1,
+        y: (originalEvent.layerY - originalEvent.y + 60) * -1,
+        source: information.sourceId.replace('node-', '')
+      }});
+    });
   }
+
 
   setZoom(zoom) {
     jsPlumb.setZoom(zoom);
@@ -85,6 +111,14 @@ class AdapterService {
     this.nodes = workflow.getNodes();
   }
 
+  setNewNodeData(newNodeData) {
+    this.newNodeData = newNodeData;
+  }
+
+  handleConnectionAbort(fn) {
+    this.onConnectionAbort = fn;
+  }
+
   reset() {
     jsPlumb.setContainer(this.container);
     jsPlumb.deleteEveryEndpoint();
@@ -92,14 +126,33 @@ class AdapterService {
     jsPlumb.unbind('connectionDetached');
     jsPlumb.unbind('connectionMoved');
     jsPlumb.unbind('connectionDrag');
+    jsPlumb.unbind('connectionAborted');
     this.bindEvents();
   }
 
   render() {
     this.reset();
-    this.renderPorts(this.nodes);
-    this.renderEdges(this.edges);
+    this.renderPorts(this.getNodesToRender(this.nodes));
+    this.renderEdges(this.getEdgesToRender(this.edges));
     jsPlumb.repaintEverything();
+  }
+
+  getNodesToRender(inputNodes) {
+    const nodes = JSON.parse(JSON.stringify(inputNodes));
+    if (this.newNodeData && this.newNodeData.source) {
+      nodes[NEW_NODE_NODE.id] = Object.assign({}, NEW_NODE_NODE);
+    }
+    return nodes;
+  }
+
+  getEdgesToRender(inputEdges) {
+    const edges = JSON.parse(JSON.stringify(inputEdges));
+    if (this.newNodeData && this.newNodeData.source) {
+      const edge = Object.assign({}, NEW_NODE_EDGE);
+      edge.startNodeId = this.newNodeData.source;
+      edges[edge.id] = edge;
+    }
+    return edges;
   }
 
   renderPorts(nodes) {
@@ -145,12 +198,13 @@ class AdapterService {
 
     for (const id of Object.keys(edges)) {
       const edge = edges[id];
+      const detachable = (edge.id === NEW_NODE_EDGE.id) ? false: this.isEditable;
       const connection = jsPlumb.connect({
         uuids: [
           `${outputPrefix}-${edge.startPortId}-${edge.startNodeId}`,
           `${inputPrefix}-${edge.endPortId}-${edge.endNodeId}`
         ],
-        detachable: this.isEditable
+        detachable: detachable
       });
       connection.setParameter('edgeId', edge.id);
     }

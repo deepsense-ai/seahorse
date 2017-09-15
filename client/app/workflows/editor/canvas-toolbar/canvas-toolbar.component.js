@@ -1,7 +1,6 @@
 'use strict';
 
 import CanvasToolbarTemplate from './canvas-toolbar.html';
-import CanvasToolbarController from './canvas-toolbar.controller.js';
 import './canvas-toolbar.less';
 
 const CanvasToolbarComponent = {
@@ -12,7 +11,6 @@ const CanvasToolbarComponent = {
     'onFullScreen': '&',
     'onFit': '&'
   },
-  controller: CanvasToolbarController,
   templateUrl: CanvasToolbarTemplate
 };
 

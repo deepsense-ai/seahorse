@@ -7,10 +7,13 @@ import './canvas.less';
 const CanvasComponent = {
   bindings: {
     'isEditable' : '<',
-    'workflow': '<'
+    'newNodeData': '<',
+    'workflow': '<',
+    'onConnectionAbort': '&'
   },
   controller: CanvasController,
-  templateUrl: CanvasTemplate
+  templateUrl: CanvasTemplate,
+  transclude: true
 };
 
 export default CanvasComponent;

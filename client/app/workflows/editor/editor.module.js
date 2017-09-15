@@ -1,6 +1,9 @@
 'use strict';
 
 import angular from 'angular';
+
+import OperationsCatalogueModule from '../operations-catalogue/operations-catalogue.module.js';
+
 import CanvasToolbarComponent from './canvas-toolbar/canvas-toolbar.component.js';
 import CanvasComponent from './core-canvas/canvas.component.js';
 import NewNodeComponent from './new-node/new-node.component.js';
@@ -11,7 +14,9 @@ import CanvasService from './core-canvas/canvas.service.js';
 import GraphStyleService from './core-canvas/graph-node/graph-style.service.js';
 
 const appModule = angular
-  .module('editor', [])
+  .module('editor', [
+    OperationsCatalogueModule
+  ])
   .service('CanvasService', CanvasService)
   .service('AdapterService', AdapterService)
   .service('GraphStyleService', GraphStyleService)
