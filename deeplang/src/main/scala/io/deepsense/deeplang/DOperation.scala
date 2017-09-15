@@ -32,7 +32,7 @@ import io.deepsense.graph.{GraphKnowledge, Operation}
  */
 @SerialVersionUID(1L)
 abstract class DOperation extends Operation
-    with Serializable with Logging with Params with OperationDocumentation {
+    with Serializable with Logging with Params {
   import CollectionExtensions._
 
   val inArity: Int
@@ -40,8 +40,7 @@ abstract class DOperation extends Operation
   val id: DOperation.Id
   val name: String
   val description: String
-  // TODO This will change when user operations will be added.
-  val hasDocumentation: Boolean = true
+  def hasDocumentation: Boolean = false
 
   def inPortTypes: Vector[ru.TypeTag[_]]
 
@@ -71,7 +70,7 @@ abstract class DOperation extends Operation
     require(outPortsLayout.isSorted, "Output ports must be laid out from left to right")
   }
 
-  def execute(context: ExecutionContext)(l: Vector[DOperable]): Vector[DOperable]
+  def executeUntyped(l: Vector[DOperable])(context: ExecutionContext): Vector[DOperable]
 
   /**
    * Infers knowledge for this operation.
@@ -83,9 +82,9 @@ abstract class DOperation extends Operation
    *          - vector of knowledge object for each of operation's output port
    *          - inference warnings for this operation
    */
-  def inferKnowledge(
-      context: InferContext)(
-      inputKnowledge: Vector[DKnowledge[DOperable]])
+  def inferKnowledgeUntyped(
+      inputKnowledge: Vector[DKnowledge[DOperable]])(
+      context: InferContext)
       : (Vector[DKnowledge[DOperable]], InferenceWarnings)
 
   def inferGraphKnowledgeForInnerWorkflow(context: InferContext): GraphKnowledge = GraphKnowledge()

@@ -22,6 +22,7 @@ import scala.reflect.runtime.{universe => ru}
 
 import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
+import io.deepsense.deeplang.documentation.OperationDocumentation
 import io.deepsense.deeplang.doperables.Transformer
 import io.deepsense.deeplang.doperations.ReadTransformer.ReadTransformerParameters
 import io.deepsense.deeplang.doperations.exceptions.DeepSenseIOException
@@ -31,7 +32,8 @@ import io.deepsense.deeplang.{DOperation0To1, ExecutionContext}
 case class ReadTransformer()
   extends DOperation0To1[Transformer]
   with Params
-  with ReadTransformerParameters {
+  with ReadTransformerParameters
+  with OperationDocumentation {
 
   override val id: Id = "424dc996-a471-482d-b08c-bc12849f0b68"
   override val name: String = "Read Transformer"
@@ -41,7 +43,7 @@ case class ReadTransformer()
 
   val params = declareParams(sourcePath)
 
-  override protected def _execute(context: ExecutionContext)(): Transformer = {
+  override protected def execute()(context: ExecutionContext): Transformer = {
     val path = getSourcePath
     try {
       Transformer.load(context, path)

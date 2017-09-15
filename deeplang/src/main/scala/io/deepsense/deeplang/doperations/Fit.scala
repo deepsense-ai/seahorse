@@ -17,11 +17,11 @@
 package io.deepsense.deeplang.doperations
 
 import scala.reflect.runtime.universe.TypeTag
-
 import spray.json.{JsNull, JsValue}
 
 import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
+import io.deepsense.deeplang.documentation.OperationDocumentation
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.{Estimator, Transformer}
 import io.deepsense.deeplang.doperations.exceptions.TooManyPossibleTypesException
@@ -29,7 +29,7 @@ import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.DynamicParam
 import io.deepsense.deeplang.{DKnowledge, DOperation2To1, ExecutionContext}
 
-case class Fit() extends DOperation2To1[DataFrame, Estimator[Transformer], Transformer] {
+case class Fit() extends DOperation2To1[DataFrame, Estimator[Transformer], Transformer] with OperationDocumentation {
 
   override val id: Id = "0c2ff818-977b-11e5-8994-feff819cdc9f"
   override val name: String = "Fit"
@@ -48,17 +48,17 @@ case class Fit() extends DOperation2To1[DataFrame, Estimator[Transformer], Trans
 
   override val params = declareParams(estimatorParams)
 
-  override protected def _execute(
-      ctx: ExecutionContext)(
+  override protected def execute(
       dataFrame: DataFrame,
-      estimator: Estimator[Transformer]): Transformer = {
+      estimator: Estimator[Transformer])(
+      ctx: ExecutionContext): Transformer = {
     estimatorWithParams(estimator).fit(ctx)(())(dataFrame)
   }
 
-  override protected def _inferKnowledge(
-      ctx: InferContext)(
+  override protected def inferKnowledge(
       dataFrameKnowledge: DKnowledge[DataFrame],
-      estimatorKnowledge: DKnowledge[Estimator[Transformer]])
+      estimatorKnowledge: DKnowledge[Estimator[Transformer]])(
+      ctx: InferContext)
     : (DKnowledge[Transformer], InferenceWarnings) = {
 
     if (estimatorKnowledge.size > 1) {

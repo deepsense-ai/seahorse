@@ -43,7 +43,7 @@ class GridSearchIntegSpec extends DeeplangIntegTestSupport with DefaultJsonProto
       gridSearch.setEstimatorParams(estimatorParams)
       gridSearch.setNumberOfFolds(2)
 
-      val results = gridSearch.execute(executionContext)(Vector(dataFrame, estimator, evaluator))
+      val results = gridSearch.executeUntyped(Vector(dataFrame, estimator, evaluator))(executionContext)
       val report = results.head.asInstanceOf[Report]
 
       val tables = report.content.tables
@@ -77,8 +77,9 @@ class GridSearchIntegSpec extends DeeplangIntegTestSupport with DefaultJsonProto
         gridSearch.setNumberOfFolds(2)
 
         a[ColumnDoesNotExistException] should be thrownBy {
-          gridSearch.inferKnowledge(executionContext.inferContext)(
-            Vector(DKnowledge(dataFrame), DKnowledge(estimator), DKnowledge(evaluator)))
+          gridSearch.inferKnowledgeUntyped(
+            Vector(DKnowledge(dataFrame), DKnowledge(estimator), DKnowledge(evaluator)))(
+            executionContext.inferContext)
         }
       }
       "evaluator params are invalid" in {
@@ -95,8 +96,9 @@ class GridSearchIntegSpec extends DeeplangIntegTestSupport with DefaultJsonProto
         gridSearch.setNumberOfFolds(2)
 
         a[ColumnDoesNotExistException] should be thrownBy {
-          gridSearch.inferKnowledge(executionContext.inferContext)(
-            Vector(DKnowledge(dataFrame), DKnowledge(estimator), DKnowledge(evaluator)))
+          gridSearch.inferKnowledgeUntyped(
+            Vector(DKnowledge(dataFrame), DKnowledge(estimator), DKnowledge(evaluator)))(
+            executionContext.inferContext)
         }
       }
     }

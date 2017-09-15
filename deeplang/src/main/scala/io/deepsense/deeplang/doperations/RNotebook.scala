@@ -20,11 +20,12 @@ import scala.reflect.runtime.{universe => ru}
 
 import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
+import io.deepsense.deeplang.documentation.OperationDocumentation
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.{DOperation1To0, ExecutionContext}
 
 case class RNotebook()
-  extends DOperation1To0[DataFrame] {
+  extends DOperation1To0[DataFrame] with OperationDocumentation {
 
   override val id: Id = "89198bfd-6c86-40de-8238-68f7e0a0b50e"
   override val name: String = "R Notebook"
@@ -34,5 +35,5 @@ case class RNotebook()
 
   override val params = declareParams()
 
-  override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): Unit = ()
+  override protected def execute(dataFrame: DataFrame)(context: ExecutionContext): Unit = ()
 }

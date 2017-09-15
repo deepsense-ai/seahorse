@@ -117,8 +117,8 @@ class WorkflowNodeExecutorActor(
     logger.debug(s"$nodeDescription inputVector.size = ${input.size}")
     val inputKnowledge = input.map { dOperable => DKnowledge(dOperable) }
     // if inference throws, we do not perform execution
-    node.value.inferKnowledge(executionContext.inferContext)(inputKnowledge)
-    val resultVector = node.value.execute(executionContext)(input)
+    node.value.inferKnowledgeUntyped(inputKnowledge)(executionContext.inferContext)
+    val resultVector = node.value.executeUntyped(input)(executionContext)
 
     resultVector.zipWithIndex.foreach {
       case (dataFrame: DataFrame, portNumber: Int) =>

@@ -17,16 +17,18 @@
 package io.deepsense.deeplang.doperations.examples
 
 
-import io.deepsense.deeplang.doperations.{RTransformation}
+import io.deepsense.deeplang.doperables.RTransformer
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperations.RTransformation
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
 
 class RTransformationExample
   extends AbstractOperationExample[RTransformation] {
 
+  // This is mocked because R executor is not available in tests.
   class RTransformationMock extends RTransformation {
-    override def execute(context: ExecutionContext)
-                        (arguments: Vector[DOperable]): Vector[DOperable] = {
-      PythonTransformationExample.execute(context)(arguments)
+    override def execute(arg: DataFrame)(context: ExecutionContext): (DataFrame, RTransformer) = {
+      (PythonTransformationExample.execute(arg)(context), mock[RTransformer])
     }
   }
 

@@ -974,10 +974,10 @@ class JoinSpec extends DeeplangIntegTestSupport {
       leftDataFrame: DataFrame,
       rightDataFrame: DataFrame): StructType = {
 
-    val (knowledge, _) = operation.inferKnowledge(mock[InferContext])(Vector(
+    val (knowledge, _) = operation.inferKnowledgeUntyped(Vector(
       DKnowledge(DataFrame.forInference(leftDataFrame.sparkDataFrame.schema)),
       DKnowledge(DataFrame.forInference(rightDataFrame.sparkDataFrame.schema))
-    ))
+    ))(mock[InferContext])
 
     val dataFrameKnowledge = knowledge.head.single.asInstanceOf[DataFrame]
     dataFrameKnowledge.schema.get

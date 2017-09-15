@@ -22,7 +22,6 @@ import java.nio.file.{Files, Paths}
 import java.util.UUID
 
 import scala.reflect.runtime.{universe => ru}
-
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
@@ -30,6 +29,7 @@ import org.apache.spark.sql.{Row, DataFrame => SparkDataFrame}
 
 import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
+import io.deepsense.deeplang.documentation.OperationDocumentation
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.ReadDataFrame.ReadDataFrameParameters
 import io.deepsense.deeplang.doperations.exceptions.{DeepSenseIOException, DeepSenseUnknownHostException}
@@ -46,7 +46,8 @@ import io.deepsense.deeplang.{DKnowledge, DOperation0To1, ExecutionContext}
 case class ReadDataFrame()
     extends DOperation0To1[DataFrame]
     with ReadDataFrameParameters
-    with Params {
+    with Params
+    with OperationDocumentation {
 
   override val id: Id = "c48dd54c-6aef-42df-ad7a-42fc59a09f0e"
   override val name: String = "Read DataFrame"
@@ -58,7 +59,7 @@ case class ReadDataFrame()
   val params = declareParams(storageType)
   setDefault(storageType, InputStorageTypeChoice.File())
 
-  override protected def _execute(context: ExecutionContext)(): DataFrame = {
+  override protected def execute()(context: ExecutionContext): DataFrame = {
     implicit val ec = context
 
     try {
@@ -73,11 +74,11 @@ case class ReadDataFrame()
     }
   }
 
-  override protected def _inferKnowledge(context: InferContext)():
+  override protected def inferKnowledge()(context: InferContext):
       (DKnowledge[DataFrame], InferenceWarnings) = {
     FilePathHasValidFileScheme.validate(this)
     ParquetSupportedOnClusterOnly.validate(this)
-    super._inferKnowledge(context)()
+    super.inferKnowledge()(context)
   }
 
   private def readFromFile(fileChoice: InputStorageTypeChoice.File)

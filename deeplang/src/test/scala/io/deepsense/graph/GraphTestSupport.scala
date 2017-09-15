@@ -31,8 +31,6 @@ trait GraphTestSupport {
 
   val op0To1 = {
     val m = mock[DOperation0To1[DOperable]]
-    when(m.inArity).thenReturn(0)
-    when(m.outArity).thenReturn(1)
     when(m.sameAs(any())).thenReturn(true)
     m
   }
@@ -41,16 +39,12 @@ trait GraphTestSupport {
 
   def createOp1To1: DOperation1To1[DOperable, DOperable] = {
     val m = mock[DOperation1To1[DOperable, DOperable]]
-    when(m.inArity).thenReturn(1)
-    when(m.outArity).thenReturn(1)
     when(m.sameAs(any())).thenReturn(true)
     m
   }
 
   val op2To2 = {
     val m = mock[DOperation2To2[DOperable, DOperable, DOperable, DOperable]]
-    when(m.inArity).thenReturn(2)
-    when(m.outArity).thenReturn(2)
     when(m.sameAs(any())).thenReturn(true)
     m
   }

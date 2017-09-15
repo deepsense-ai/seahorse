@@ -20,9 +20,10 @@ import scala.reflect.runtime.universe.TypeTag
 
 import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
+import io.deepsense.deeplang.documentation.OperationDocumentation
 import io.deepsense.deeplang.doperables.MissingValuesHandler
 
-class HandleMissingValues extends TransformerAsOperation[MissingValuesHandler] {
+class HandleMissingValues extends TransformerAsOperation[MissingValuesHandler] with OperationDocumentation {
 
   override val id: Id = "d5f4e717-429f-4a28-a0d3-eebba036363a"
   override val name: String = "Handle Missing Values"

@@ -52,17 +52,15 @@ object DOperationCatalogTestResources {
 
   abstract class DOperationMock extends DOperation {
 
-    override val since: Version = Version(0, 0, 0)
+    override def inPortTypes: Vector[TypeTag[_]] = Vector()
 
-    def inPortTypes: Vector[TypeTag[_]] = Vector()
+    override def outPortTypes: Vector[TypeTag[_]] = Vector()
 
-    def outPortTypes: Vector[TypeTag[_]] = Vector()
+    override def inferKnowledgeUntyped(
+        l: Vector[DKnowledge[DOperable]])(
+        context: InferContext): (Vector[DKnowledge[DOperable]], InferenceWarnings) = ???
 
-    def inferKnowledge(
-        context: InferContext)(
-        l: Vector[DKnowledge[DOperable]]): (Vector[DKnowledge[DOperable]], InferenceWarnings) = ???
-
-    def execute(context: ExecutionContext)(l: Vector[DOperable]): Vector[DOperable] = ???
+    override def executeUntyped(l: Vector[DOperable])(context: ExecutionContext): Vector[DOperable] = ???
 
     override val inArity: Int = 2
     override val outArity: Int = 3
@@ -140,13 +138,13 @@ object ViewingTestResources extends MockitoSugar {
 
   val operationD = catalog.createDOperation(idD)
 
-  val expectedA = DOperationDescriptor(idA, nameA, descriptionA, categoryA, true,
+  val expectedA = DOperationDescriptor(idA, nameA, descriptionA, categoryA, hasDocumentation = false,
     DOperationA().paramsToJson, Nil, Vector.empty, Nil, Vector.empty)
-  val expectedB = DOperationDescriptor(idB, nameB, descriptionB, categoryB, true,
+  val expectedB = DOperationDescriptor(idB, nameB, descriptionB, categoryB, hasDocumentation = false,
     DOperationB().paramsToJson, Nil, Vector.empty, Nil, Vector.empty)
-  val expectedC = DOperationDescriptor(idC, nameC, descriptionC, categoryC, true,
+  val expectedC = DOperationDescriptor(idC, nameC, descriptionC, categoryC, hasDocumentation = false,
     DOperationC().paramsToJson, Nil, Vector.empty, Nil, Vector.empty)
-  val expectedD = DOperationDescriptor(idD, nameD, descriptionD, categoryD, true,
+  val expectedD = DOperationDescriptor(idD, nameD, descriptionD, categoryD, hasDocumentation = false,
     DOperationD().paramsToJson, List(XTypeTag.tpe, YTypeTag.tpe), operationD.inPortsLayout,
     List(XTypeTag.tpe), operationD.outPortsLayout)
 }

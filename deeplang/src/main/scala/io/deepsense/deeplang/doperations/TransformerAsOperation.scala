@@ -33,14 +33,12 @@ abstract class TransformerAsOperation[T <: Transformer : TypeTag]
 
   setDefault(transformer.extractParamMap().toSeq: _*)
 
-  override protected def _execute(context: ExecutionContext)(t0: DataFrame): (DataFrame, T) = {
+  override protected def execute(t0: DataFrame)(context: ExecutionContext): (DataFrame, T) = {
     transformer.set(extractParamMap())
     (transformer.transform(context)(())(t0), transformer)
   }
 
-  override protected def _inferKnowledge(
-      ctx: InferContext)(
-      dfKnowledge: DKnowledge[DataFrame])
+  override protected def inferKnowledge(dfKnowledge: DKnowledge[DataFrame])(ctx: InferContext)
     : ((DKnowledge[DataFrame], DKnowledge[T]), InferenceWarnings) = {
 
     transformer.set(extractParamMap())

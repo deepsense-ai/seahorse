@@ -33,8 +33,8 @@ class GridSearchSpec extends UnitSpec with DeeplangTestSupport {
       val evaluator = new MockEvaluator
 
       val gridSearch = GridSearch()
-      gridSearch.inferKnowledge(mock[InferContext])(
-          Vector(DKnowledge(inputDF), DKnowledge(estimator), DKnowledge(evaluator))) shouldBe
+      gridSearch.inferKnowledgeUntyped(
+          Vector(DKnowledge(inputDF), DKnowledge(estimator), DKnowledge(evaluator)))(mock[InferContext]) shouldBe
         (Vector(DKnowledge(Report())), InferenceWarnings.empty)
     }
     "throw Exception" when {
@@ -63,11 +63,11 @@ class GridSearchSpec extends UnitSpec with DeeplangTestSupport {
       .setEvaluatorParams(prepareParamDictionary(evaluator.paramA.name, evaluatorParamValue))
 
     val multiException = the [DeepLangMultiException] thrownBy {
-      gridSearch.inferKnowledge(mock[InferContext])(
+      gridSearch.inferKnowledgeUntyped(
         Vector(
           DKnowledge(inputDF),
           DKnowledge(estimator),
-          DKnowledge(evaluator)))
+          DKnowledge(evaluator)))(mock[InferContext])
     }
 
     val invalidParamCount =

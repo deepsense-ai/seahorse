@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2016, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,20 +14,11 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.refl;
+package io.deepsense
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import io.deepsense.deeplang.DOperation
+import io.deepsense.deeplang.documentation.OperationDocumentation
 
-/**
- * Marks the class to be registered in {@link io.deepsense.deeplang.DOperation DOperation} catalog.
- *
- * @see io.deepsense.deeplang.DOperation DOperation
- */
-@Retention(RetentionPolicy.CLASS)
-@Target({ ElementType.TYPE })
-public @interface Register {
-
+package object docgen {
+  type DocumentedOperation = DOperation with OperationDocumentation
 }

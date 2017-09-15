@@ -43,7 +43,7 @@ class CreateCustomTransformerSpec extends UnitSpec {
         PublicParam(node2Id, "target type", "public param 2")
       ))
 
-      val results = operation.execute(executionContext)(Vector.empty)
+      val results = operation.executeUntyped(Vector.empty)(executionContext)
       results.length shouldBe 1
       results(0) shouldBe a[CustomTransformer]
       val result = results(0).asInstanceOf[CustomTransformer]
@@ -61,7 +61,7 @@ class CreateCustomTransformerSpec extends UnitSpec {
       val operation = CreateCustomTransformer()
       val executionContext = createExecutionContext(createInnerWorkflow())
 
-      val results = operation.execute(executionContext)(Vector.empty)
+      val results = operation.executeUntyped(Vector.empty)(executionContext)
       results.size shouldBe 1
       results(0) shouldBe a[CustomTransformer]
       val result = results(0).asInstanceOf[CustomTransformer]
@@ -76,7 +76,7 @@ class CreateCustomTransformerSpec extends UnitSpec {
         PublicParam(node2Id, "target type", "public param 2")
       ))
 
-      val results = operation.inferKnowledge(inferContext)(Vector.empty)._1.map(_.single)
+      val results = operation.inferKnowledgeUntyped(Vector.empty)(inferContext)._1.map(_.single)
       results.length shouldBe 1
       results(0) shouldBe a[CustomTransformer]
       val result = results(0).asInstanceOf[CustomTransformer]

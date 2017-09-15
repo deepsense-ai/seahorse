@@ -21,11 +21,10 @@ import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import org.apache.spark.sql.types.StructType
 
 trait DataFrame2To1Operation { self: DOperation2To1[DataFrame, DataFrame, DataFrame] =>
-  override protected final def _inferKnowledge(
-      context: InferContext)(
+  override protected final def inferKnowledge(
       leftDataFrameKnowledge: DKnowledge[DataFrame],
-      rightDataFrameKnowledge: DKnowledge[DataFrame])
-    : (DKnowledge[DataFrame], InferenceWarnings) = {
+      rightDataFrameKnowledge: DKnowledge[DataFrame])(
+      context: InferContext): (DKnowledge[DataFrame], InferenceWarnings) = {
 
     val leftSchema = leftDataFrameKnowledge.single.schema
     val rightSchema = rightDataFrameKnowledge.single.schema

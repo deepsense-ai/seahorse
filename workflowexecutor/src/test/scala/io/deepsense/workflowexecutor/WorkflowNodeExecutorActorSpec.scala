@@ -51,8 +51,8 @@ class WorkflowNodeExecutorActorSpec
         probe.expectMsg(NodeStarted(node.id))
 
         eventually {
-          verify(operation).inferKnowledge(any())(any())
-          verify(operation).execute(any())(same(input))
+          verify(operation).inferKnowledgeUntyped(any())(any())
+          verify(operation).executeUntyped(same(input))(any())
         }
       }
     }
@@ -142,7 +142,7 @@ class WorkflowNodeExecutorActorSpec
       : (TestProbe, ActorRef, DeeplangNode, NullPointerException) = {
     val operation = mockOperation
     val cause = new NullPointerException("test exception")
-    when(operation.inferKnowledge(any())(any()))
+    when(operation.inferKnowledgeUntyped(any())(any()))
       .thenThrow(cause)
     val (probe, testedActor, node, _, _) = fixtureWithOperation(operation)
     (probe, testedActor, node, cause)
@@ -152,7 +152,7 @@ class WorkflowNodeExecutorActorSpec
       : (TestProbe, ActorRef, DeeplangNode, NullPointerException) = {
     val operation = mockOperation
     val cause = new NullPointerException("test exception")
-    when(operation.execute(any[ExecutionContext]())(any[Vector[DOperable]]()))
+    when(operation.executeUntyped(any[Vector[DOperable]]())(any[ExecutionContext]()))
       .thenThrow(cause)
     val (probe, testedActor, node, _, _) = fixtureWithOperation(operation)
     (probe, testedActor, node, cause)
@@ -162,7 +162,7 @@ class WorkflowNodeExecutorActorSpec
   : (TestProbe, ActorRef, DeeplangNode, Throwable) = {
     val operation = mockOperation
     val cause = new AssertionError("test exception")
-    when(operation.execute(any[ExecutionContext]())(any[Vector[DOperable]]()))
+    when(operation.executeUntyped(any[Vector[DOperable]]())(any[ExecutionContext]()))
       .thenThrow(cause)
     val (probe, testedActor, node, _, _) = fixtureWithOperation(operation)
     (probe, testedActor, node, cause)
@@ -172,7 +172,7 @@ class WorkflowNodeExecutorActorSpec
       : (TestProbe, ActorRef, DeeplangNode, Vector[DOperable]) = {
     val operation = mockOperation
     val output = Vector(operableWithReports, operableWithReports)
-    when(operation.execute(any())(any()))
+    when(operation.executeUntyped(any())(any()))
       .thenReturn(output)
     val (probe, testedActor, node, _, _) = fixtureWithOperation(operation)
     (probe, testedActor, node, output)
@@ -191,9 +191,9 @@ class WorkflowNodeExecutorActorSpec
 
   private def fixutre(): (TestProbe, ActorRef, DeeplangNode, DOperation, Vector[DOperable]) = {
     val dOperation = mockOperation
-    when(dOperation.inferKnowledge(any())(any()))
+    when(dOperation.inferKnowledgeUntyped(any())(any()))
       .thenReturn((Vector[DKnowledge[DOperable]](), mock[InferenceWarnings]))
-    when(dOperation.execute(any())(any()))
+    when(dOperation.executeUntyped(any())(any()))
       .thenReturn(Vector())
     fixtureWithOperation(dOperation)
   }

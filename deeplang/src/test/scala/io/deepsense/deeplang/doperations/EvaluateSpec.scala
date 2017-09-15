@@ -35,8 +35,7 @@ class EvaluateSpec extends UnitSpec with DeeplangTestSupport {
       val evaluator = new MockEvaluator
 
       def testEvaluate(op: Evaluate, expected: MetricValue): Unit = {
-        val Vector(outputDataFrame) = op.execute(mock[ExecutionContext])(
-          Vector(mock[DataFrame], evaluator))
+        val Vector(outputDataFrame) = op.executeUntyped(Vector(mock[DataFrame], evaluator))(mock[ExecutionContext])
         outputDataFrame shouldBe expected
       }
 
@@ -54,7 +53,7 @@ class EvaluateSpec extends UnitSpec with DeeplangTestSupport {
 
       val paramsForEvaluator = JsObject(evaluator.paramA.name -> JsNumber(2))
       val op = Evaluate().setEvaluatorParams(paramsForEvaluator)
-      op.execute(mock[ExecutionContext])(Vector(mock[DataFrame], evaluator))
+      op.executeUntyped(Vector(mock[DataFrame], evaluator))(mock[ExecutionContext])
 
       evaluator should have (theSameParamsAs (originalEvaluator))
     }
@@ -64,8 +63,8 @@ class EvaluateSpec extends UnitSpec with DeeplangTestSupport {
 
       def testInference(op: Evaluate, expectedKnowledge: DKnowledge[MetricValue]): Unit = {
         val inputDF = DataFrame.forInference(createSchema())
-        val (knowledge, warnings) = op.inferKnowledge(mock[InferContext])(
-          Vector(DKnowledge(inputDF), DKnowledge(evaluator)))
+        val (knowledge, warnings) = op.inferKnowledgeUntyped(
+          Vector(DKnowledge(inputDF), DKnowledge(evaluator)))(mock[InferContext])
         // Currently, InferenceWarnings are always empty.
         warnings shouldBe InferenceWarnings.empty
         val Vector(dataFrameKnowledge) = knowledge
@@ -87,7 +86,7 @@ class EvaluateSpec extends UnitSpec with DeeplangTestSupport {
       val paramsForEvaluator = JsObject(evaluator.paramA.name -> JsNumber(2))
       val op = Evaluate().setEvaluatorParams(paramsForEvaluator)
       val inputDF = DataFrame.forInference(createSchema())
-      op.inferKnowledge(mock[InferContext])(Vector(DKnowledge(inputDF), DKnowledge(evaluator)))
+      op.inferKnowledgeUntyped(Vector(DKnowledge(inputDF), DKnowledge(evaluator)))(mock[InferContext])
 
       evaluator should have (theSameParamsAs (originalEvaluator))
     }
@@ -99,8 +98,7 @@ class EvaluateSpec extends UnitSpec with DeeplangTestSupport {
 
         val op = Evaluate()
         a [TooManyPossibleTypesException] shouldBe thrownBy {
-          op.inferKnowledge(mock[InferContext])(
-            Vector(DKnowledge(inputDF), DKnowledge(evaluators)))
+          op.inferKnowledgeUntyped(Vector(DKnowledge(inputDF), DKnowledge(evaluators)))(mock[InferContext])
         }
       }
       "values of dynamic parameters are invalid" in {
@@ -112,8 +110,8 @@ class EvaluateSpec extends UnitSpec with DeeplangTestSupport {
         val evaluatorWithParams = Evaluate().setEvaluatorParams(paramsForEvaluator)
 
         a [DeepLangMultiException] shouldBe thrownBy {
-          evaluatorWithParams.inferKnowledge(mock[InferContext])(
-            Vector(DKnowledge(inputDF), DKnowledge(evaluator)))
+          evaluatorWithParams.inferKnowledgeUntyped(
+            Vector(DKnowledge(inputDF), DKnowledge(evaluator)))(mock[InferContext])
         }
       }
     }

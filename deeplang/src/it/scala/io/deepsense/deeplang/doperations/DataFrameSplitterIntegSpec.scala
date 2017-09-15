@@ -94,7 +94,7 @@ class DataFrameSplitterIntegSpec
 
   private def executeOperation(context: ExecutionContext, operation: DOperation)
                               (dataFrame: DataFrame): (DataFrame, DataFrame) = {
-    val operationResult = operation.execute(context)(Vector[DOperable](dataFrame))
+    val operationResult = operation.executeUntyped(Vector[DOperable](dataFrame))(context)
     val df1 = operationResult.head.asInstanceOf[DataFrame]
     val df2 = operationResult.last.asInstanceOf[DataFrame]
     (df1, df2)

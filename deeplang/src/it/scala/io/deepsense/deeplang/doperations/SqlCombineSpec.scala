@@ -138,10 +138,10 @@ class SqlCombineSpec extends DeeplangIntegTestSupport {
       .setLeftTableName(leftName)
       .setRightTableName(rightName)
       .setSqlCombineExpression(expression)
-    val (knowledge, warnings) = combine.inferKnowledge(mock[InferContext])(Vector(
+    val (knowledge, warnings) = combine.inferKnowledgeUntyped(Vector(
       DKnowledge(DataFrame.forInference(leftSchema)),
       DKnowledge(DataFrame.forInference(rightSchema))
-    ))
+    ))(mock[InferContext])
 
     val dataFrameKnowledge = knowledge.head.single.asInstanceOf[DataFrame]
     (dataFrameKnowledge.schema.get, warnings)

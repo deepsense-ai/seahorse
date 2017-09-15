@@ -20,7 +20,6 @@ import java.io.File
 import java.net.{URL, URLClassLoader}
 
 import scala.collection.JavaConversions._
-import scala.reflect.runtime.{universe => ru}
 
 import org.reflections.Reflections
 import org.reflections.util.{ClasspathHelper, ConfigurationBuilder}
@@ -48,8 +47,7 @@ object CatalogScanner extends Logging {
   /**
     * Scans jars on classpath for classes annotated with [[io.deepsense.deeplang.refl.Register Register]]
     * annotation and at the same time implementing [[io.deepsense.deeplang.DOperation DOperation]]
-    * or [[io.deepsense.deeplang.DOperable DOperable]] interfaces. Found classes are then registered
-    * in appropriate catalogs.
+    * interface. Found classes are then registered in appropriate catalogs.
     *
     * @see [[io.deepsense.deeplang.refl.Register Register]]
     */
@@ -60,9 +58,8 @@ object CatalogScanner extends Logging {
     for (registrable <- scanForRegistrables()) {
       logger.debug(s"Trying to register class $registrable")
       registrable match {
-        case DOperableMatcher(doperable) => registerDOperable(dOperableCatalog, doperable)
         case DOperationMatcher(doperation) => registerDOperation(dOperationsCatalog, doperation)
-        case other => logger.warn(s"Only DOperable and DOperation can be `@Register`ed")
+        case other => logger.warn(s"Only DOperation can be `@Register`ed")
       }
     }
   }
@@ -92,11 +89,6 @@ object CatalogScanner extends Logging {
     )
   }
 
-  private def registerDOperable(
-    catalog: DOperableCatalog,
-    operable: Class[DOperable]
-  ): Unit = catalog.register(TypeUtils.classToType(operable))
-
   class AssignableFromExtractor[T](targetClass: Class[T]) {
     def unapply(clazz: Class[_]): Option[Class[T]] = {
       if (targetClass.isAssignableFrom(clazz)) {
@@ -107,7 +99,6 @@ object CatalogScanner extends Logging {
     }
   }
 
-  object DOperableMatcher extends AssignableFromExtractor(classOf[DOperable])
   object DOperationMatcher extends AssignableFromExtractor(classOf[DOperation])
 
 }

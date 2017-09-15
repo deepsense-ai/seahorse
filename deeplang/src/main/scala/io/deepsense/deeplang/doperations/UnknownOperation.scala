@@ -26,8 +26,8 @@ import scala.reflect.runtime.{universe => ru}
 
 class UnknownOperation extends DOperation {
 
-  val inArity = 0
-  val outArity = 0
+  override val inArity = 0
+  override val outArity = 0
 
   @transient
   override lazy val inPortTypes: Vector[ru.TypeTag[_]] = Vector()
@@ -40,17 +40,14 @@ class UnknownOperation extends DOperation {
   override val name: String = "Unknown Operation"
   override val description: String = "Operation that could not be recognized by Seahorse"
 
-  override val since: Version = Version(1, 4, 0)
-
   override val params = declareParams()
 
-  override def execute(context: ExecutionContext)(
-    arguments: Vector[DOperable]): Vector[DOperable] = {
+  override def executeUntyped(arguments: Vector[DOperable])(context: ExecutionContext): Vector[DOperable] = {
     Vector()
   }
 
-  override def inferKnowledge(context: InferContext)(
-    knowledge: Vector[DKnowledge[DOperable]]): (Vector[DKnowledge[DOperable]], InferenceWarnings) = {
+  override def inferKnowledgeUntyped(knowledge: Vector[DKnowledge[DOperable]])(
+      context: InferContext): (Vector[DKnowledge[DOperable]], InferenceWarnings) = {
     (Vector(), InferenceWarnings.empty)
   }
 }

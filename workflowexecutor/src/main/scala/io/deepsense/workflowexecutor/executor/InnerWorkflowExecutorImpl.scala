@@ -105,8 +105,8 @@ class InnerWorkflowExecutorImpl(override val graphReader: GraphReader)
       input: Vector[DOperable],
       executionContext: ExecutionContext): Vector[DOperable] = {
     val inputKnowledge = input.map { dOperable => DKnowledge(dOperable) }
-    node.value.inferKnowledge(executionContext.inferContext)(inputKnowledge)
-    node.value.execute(executionContext)(input)
+    node.value.inferKnowledgeUntyped(inputKnowledge)(executionContext.inferContext)
+    node.value.executeUntyped(input)(executionContext)
   }
 
   private def nodeExecutionResultsFrom(

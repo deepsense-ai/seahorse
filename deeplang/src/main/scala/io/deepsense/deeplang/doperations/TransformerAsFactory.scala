@@ -31,14 +31,11 @@ abstract class TransformerAsFactory[T <: Transformer : TypeTag]
 
   setDefault(transformer.extractParamMap().toSeq: _*)
 
-  override protected def _execute(context: ExecutionContext)(): T =
+  override protected def execute()(context: ExecutionContext): T =
     updatedTransformer
 
-  override def inferKnowledge(
-      context: InferContext)(
-      knowledge: Vector[DKnowledge[DOperable]])
-        : (Vector[DKnowledge[DOperable]], InferenceWarnings) = {
-    (Vector(DKnowledge[DOperable](updatedTransformer)), InferenceWarnings.empty)
+  override def inferKnowledge()(context: InferContext): (DKnowledge[T], InferenceWarnings) = {
+    (DKnowledge[T](updatedTransformer), InferenceWarnings.empty)
   }
 
   private def updatedTransformer: T = transformer.set(extractParamMap())

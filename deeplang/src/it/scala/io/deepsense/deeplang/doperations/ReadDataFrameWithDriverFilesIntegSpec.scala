@@ -191,9 +191,7 @@ class ReadDataFrameWithDriverFilesIntegSpec
             .setFileFormat(InputFileFormatChoice.Parquet()))
 
       an [ParquetNotSupported.type] shouldBe thrownBy {
-        rdf.inferKnowledge(
-          executionContext.inferContext
-        )(Vector())
+        rdf.inferKnowledgeUntyped(Vector())(executionContext.inferContext)
       }
     }
 
@@ -205,9 +203,7 @@ class ReadDataFrameWithDriverFilesIntegSpec
             .setFileFormat(InputFileFormatChoice.Json()))
 
       an [UnknownFileSchemaForPath] shouldBe thrownBy {
-        rdf.inferKnowledge(
-          executionContext.inferContext
-        )(Vector())
+        rdf.inferKnowledgeUntyped(Vector())(executionContext.inferContext)
       }
     }
 
@@ -223,7 +219,7 @@ class ReadDataFrameWithDriverFilesIntegSpec
       csvColumnSeparator,
       csvNamesIncluded,
       csvConvertToBoolean
-    ).execute(executionContext)(Vector.empty[DOperable])
+    ).executeUntyped(Vector.empty[DOperable])(executionContext)
       .head
       .asInstanceOf[DataFrame]
   }

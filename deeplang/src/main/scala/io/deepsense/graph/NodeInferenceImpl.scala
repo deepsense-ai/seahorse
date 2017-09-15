@@ -48,7 +48,7 @@ trait NodeInferenceImpl extends NodeInference {
     } else {
       try {
         val (outKnowledge, inferWarnings) =
-          node.value.inferKnowledge(context)(inKnowledge)
+          node.value.inferKnowledgeUntyped(inKnowledge)(context)
         NodeInferenceResult(
           outKnowledge,
           warnings ++ inferWarnings,
