@@ -22,13 +22,13 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.scalatest.BeforeAndAfter
 
-import io.deepsense.deeplang.DeeplangIntegTestSupport
+import io.deepsense.deeplang.{TestFiles, DeeplangIntegTestSupport}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.inout._
 
 class WriteReadDataFrameIntegSpec
   extends DeeplangIntegTestSupport
-  with BeforeAndAfter {
+  with BeforeAndAfter with TestFiles {
 
   import DeeplangIntegTestSupport._
   val absoluteWriteReadDataFrameTestPath = absoluteTestsDirPath + "/WriteReadDataFrameTest"
@@ -52,17 +52,13 @@ class WriteReadDataFrameIntegSpec
 
   val dataFrame = createDataFrame(rows, schema)
 
-  before {
-    fileSystemClient.delete(testsDir)
-  }
-
   "WriteDataFrame and ReadDataFrame" should {
     "write and read CSV file" in {
       val wdf =
         new WriteDataFrame()
           .setStorageType(
             OutputStorageTypeChoice.File()
-              .setOutputFile(absoluteWriteReadDataFrameTestPath + "/csv")
+              .setOutputFile(absoluteWriteReadDataFrameTestPath + "/test_files")
               .setFileFormat(
                 OutputFileFormatChoice.Csv()
                   .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Tab())
@@ -73,7 +69,7 @@ class WriteReadDataFrameIntegSpec
         new ReadDataFrame()
           .setStorageType(
             InputStorageTypeChoice.File()
-              .setSourceFile(absoluteWriteReadDataFrameTestPath + "/csv")
+              .setSourceFile(absoluteWriteReadDataFrameTestPath + "/test_files")
               .setFileFormat(InputFileFormatChoice.Csv()
                 .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Tab())
                 .setCsvNamesIncluded(true)

@@ -40,15 +40,12 @@ import io.deepsense.deeplang.inference.InferContext
  */
 trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
 
-  val testsDir = "target/tests"
-  val absoluteTestsDirPath = new java.io.File(testsDir).getAbsoluteFile.toString
   var commonExecutionContext: CommonExecutionContext = _
   implicit var executionContext: ExecutionContext = _
 
   val sparkConf: SparkConf = DeeplangIntegTestSupport.sparkConf
   val sparkContext: SparkContext = DeeplangIntegTestSupport.sparkContext
   val sqlContext: SQLContext = DeeplangIntegTestSupport.sqlContext
-  var fileSystemClient: FileSystemClient = _
 
   val dOperableCatalog = {
     val catalog = new DOperableCatalog
@@ -57,7 +54,6 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
   }
 
   override def beforeAll(): Unit = {
-    fileSystemClient = LocalFileSystemClient()
     commonExecutionContext = prepareCommonExecutionContext()
     executionContext = prepareExecutionContext()
   }
@@ -73,7 +69,7 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
       sparkContext,
       sqlContext,
       inferContext,
-      fileSystemClient,
+      LocalFileSystemClient(),
       "testTenantId",
       mock[InnerWorkflowExecutor],
       mock[DataFrameStorage],
@@ -91,7 +87,7 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
       sparkContext,
       sqlContext,
       inferContext,
-      fileSystemClient,
+      LocalFileSystemClient(),
       "testTenantId",
       mock[InnerWorkflowExecutor],
       mock[ContextualDataFrameStorage],

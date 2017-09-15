@@ -24,16 +24,12 @@ import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.report.Report
 import io.deepsense.deeplang.doperations.inout.CsvParameters
-import io.deepsense.deeplang.{DOperable, DeeplangIntegTestSupport}
+import io.deepsense.deeplang.{TestFiles, DOperable, DeeplangIntegTestSupport}
 
-class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfter {
+class ReadDataFrameIntegSpec
+  extends DeeplangIntegTestSupport with BeforeAndAfter with TestFiles {
 
   import DeeplangIntegTestSupport._
-  before {
-    fileSystemClient.delete(testsDir)
-    new java.io.File(testsDir + "/id").getParentFile.mkdirs()
-    fileSystemClient.copyLocalFile(getClass.getResource("/csv/").getPath, testsDir)
-  }
 
   val csvContent = Seq(
     Row("a1", "b1", "c1"),

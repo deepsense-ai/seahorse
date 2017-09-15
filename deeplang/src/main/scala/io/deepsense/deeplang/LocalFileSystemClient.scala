@@ -28,7 +28,6 @@ case class LocalFileSystemClient() extends FileSystemClient with Serialization {
 
   override def fileExists(path: String): Boolean = Files.exists(Paths.get(path))
 
-
   override def copyLocalFile[T <: Serializable](
     localFilePath: String,
     remoteFilePath: String): Unit = {

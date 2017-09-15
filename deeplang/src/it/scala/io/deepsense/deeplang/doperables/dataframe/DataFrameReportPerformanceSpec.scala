@@ -26,26 +26,16 @@ import org.apache.spark.sql.types.{DoubleType, StructField, StructType, Timestam
 import org.scalatest.{BeforeAndAfter, Ignore}
 
 import io.deepsense.commons.utils.{DoubleUtils, Logging}
-import io.deepsense.deeplang.DeeplangIntegTestSupport
+import io.deepsense.deeplang.{TestFiles, DeeplangIntegTestSupport}
 
 // It's ignored because it does not have got assertions, it only prints report generation time.
 @Ignore
 class DataFrameReportPerformanceSpec
     extends DeeplangIntegTestSupport
     with BeforeAndAfter
+    with TestFiles
     with Logging {
-  val testFile = "/tests/demand.csv"
-
-  before {
-    fileSystemClient.delete(testFile)
-    fileSystemClient.copyLocalFile(
-      this.getClass.getResource("/csv/demand_without_header.csv").getPath,
-      testFile)
-  }
-
-  after {
-    fileSystemClient.delete(testFile)
-  }
+  val testFile = absoluteTestsDirPath + "/demand_without_header.csv"
 
   "DataFrame" should {
     "generate report" when {

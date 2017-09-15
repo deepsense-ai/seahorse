@@ -26,13 +26,14 @@ import org.apache.spark.sql.types._
 import org.scalatest.BeforeAndAfter
 
 import io.deepsense.commons.datetime.DateTimeConverter
-import io.deepsense.deeplang.DeeplangIntegTestSupport
+import io.deepsense.deeplang.{TestFiles, DeeplangIntegTestSupport}
 import io.deepsense.deeplang.doperations.exceptions.UnsupportedColumnTypeException
 import io.deepsense.deeplang.doperations.inout.{CsvParameters, OutputFileFormatChoice, OutputStorageTypeChoice}
 
 class WriteDataFrameIntegSpec
   extends DeeplangIntegTestSupport
-  with BeforeAndAfter {
+  with BeforeAndAfter
+  with TestFiles {
 
   val absoluteWriteDataFrameTestPath = absoluteTestsDirPath + "/WriteDataFrameTest"
 
@@ -99,12 +100,6 @@ class WriteDataFrameIntegSpec
     StructField("v", ArrayType(DoubleType, false), false)))
 
   val arrayDataFrame = createDataFrame(arrayDataFrameRows, arrayDataFrameSchema)
-
-  before {
-    fileSystemClient.delete(testsDir)
-    new java.io.File(testsDir + "/id").getParentFile.mkdirs()
-    fileSystemClient.copyLocalFile(getClass.getResource("/csv/").getPath, testsDir)
-  }
 
   "WriteDataFrame" should {
     "write CSV file without header" in {

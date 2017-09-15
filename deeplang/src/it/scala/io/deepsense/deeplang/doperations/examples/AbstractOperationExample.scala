@@ -36,7 +36,7 @@ abstract class AbstractOperationExample[T <: DOperation]
 
   def loadCsv(fileName: String): DataFrame = {
     ReadDataFrame(
-      this.getClass.getResource(s"/csv/$fileName.csv").getPath,
+      this.getClass.getResource(s"/test_files/$fileName.csv").getPath,
       Comma(),
       csvNamesIncluded = true,
       csvConvertToBoolean = false
