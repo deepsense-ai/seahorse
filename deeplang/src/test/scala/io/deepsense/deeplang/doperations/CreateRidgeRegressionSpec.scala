@@ -10,9 +10,7 @@ import io.deepsense.deeplang.{ExecutionContext, UnitSpec}
 class CreateRidgeRegressionSpec extends UnitSpec {
   "CreateRidgeRegression DOperation" should {
     "create RidgeRegressionModel" in {
-      val createRidgeRegression = CreateRidgeRegression()
-      createRidgeRegression.parameters.getNumericParameter(
-        CreateRidgeRegression.RegularizationKey).value = Some(16.5)
+      val createRidgeRegression = CreateRidgeRegression(16.5, 1)
       val context = mock[ExecutionContext]
       val resultVector = createRidgeRegression.execute(context)(Vector.empty)
       val result = resultVector.head.asInstanceOf[UntrainedRidgeRegression]

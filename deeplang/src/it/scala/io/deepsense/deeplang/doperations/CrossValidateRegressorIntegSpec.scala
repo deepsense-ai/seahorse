@@ -107,9 +107,7 @@ class CrossValidateRegressorIntegSpec
         regressor.parameters.getDouble(CrossValidateRegressor.numOfFoldsParamKey).get).toInt)
 
     // Training untrained RidgeReggressor
-    val createRidgeRegression = new CreateRidgeRegression()
-    import io.deepsense.deeplang.doperations.CreateRidgeRegression._
-    createRidgeRegression.parameters.getNumericParameter(RegularizationKey).value = Some(0.0)
+    val createRidgeRegression = CreateRidgeRegression(0.0, 10)
     val ridgeRegression = createRidgeRegression.execute(executionContext)(Vector()).head
     val result = regressor.execute(executionContext)(Vector(ridgeRegression, dataFrame))
 

@@ -23,20 +23,35 @@ case class CreateRidgeRegression() extends DOperation0To1[UntrainedRidgeRegressi
       description = "Regularization parameter",
       default = Some(0.0),
       required = true,
-      validator = RangeValidator(begin = 0.0, end = Double.PositiveInfinity)))
+      validator = RangeValidator(begin = 0.0, end = Double.PositiveInfinity)),
+    IterationsNumberKey -> NumericParameter(
+      description = "Number of iterations to perform",
+      default = Some(1.0),
+      required = true,
+      validator = RangeValidator(begin = 1.0, end = 1000000, step = Some(1.0))))
 
   override protected def _execute(context: ExecutionContext)(): UntrainedRidgeRegression = {
     val regParam = parameters.getDouble(RegularizationKey).get
+    val numberOfIterations = parameters.getDouble(IterationsNumberKey).get
     val model = new RidgeRegressionWithSGD()
     model.setIntercept(true)
     model.optimizer
       .setRegParam(regParam)
-      .setNumIterations(IterationsNumber)
+      .setNumIterations(numberOfIterations.toInt)
     UntrainedRidgeRegression(Some(model))
   }
 }
 
 object CreateRidgeRegression {
   val RegularizationKey = "regularization"
-  val IterationsNumber = 1000
+  val IterationsNumberKey = "iterationsNumber"
+
+  def apply(regularization: Double, iterationsNumber: Int): CreateRidgeRegression = {
+    val createRidgeRegression = CreateRidgeRegression()
+    createRidgeRegression.parameters.getNumericParameter(
+      CreateRidgeRegression.RegularizationKey).value = Some(regularization)
+    createRidgeRegression.parameters.getNumericParameter(
+      CreateRidgeRegression.IterationsNumberKey).value = Some(iterationsNumber.toDouble)
+    createRidgeRegression
+  }
 }
