@@ -4,13 +4,12 @@
 'use strict';
 
 var angular = require('angular');
-require('angular-ui-bootstrap');
 
 /**
  * DesspSense.io LAB main module.
  */
 var lab = angular.module('ds.lab', [
-  require('angular-ui-router'),
+  'ui.router',
   'ui.bootstrap',
   require('./home/home.module.js').name,
   require('./account/account.module.js').name,
