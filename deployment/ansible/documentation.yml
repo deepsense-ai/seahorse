@@ -56,4 +56,4 @@
       when: docker_containers.stdout.find('{{ds_documentation_docker_image}}') != -1
 
     - name: Run documentation container
-      shell: docker run --restart=always -d -p {{ds_documentation_ip}}:{{ds_documentation_port}}:80 {{ds_documentation_docker_image}}
+      shell: docker run --restart=always -d -p {{ds_documentation_ip}}:{{ds_documentation_port}}:80 --name={{ds_documentation_docker_image}} {{ds_documentation_docker_image}}
