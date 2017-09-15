@@ -5,62 +5,48 @@ menuTab: caseStudy
 description: Income Prediction
 ---
 
-<div style="display: table; margin-top: 50px; margin-bottom: 50px">
-	<div style="display: table-cell; vertical-align: top; width: 65%; padding-right: 20px">
-	<h2 style="margin-top: 0; padding-top: 0">Basic Information</h2>
-        <p>
-            <b>Dataset</b>: <a target="_blank" href="http://archive.ics.uci.edu/ml/datasets/Adult">Adult Data Set</a>
-        </p>
-        <p>
-            <b>Dataset size</b>: 32,561 rows; 15 columns (6 numerical columns, 9 string columns).
-        </p>
-        <p>
-            <b>Dataset description</b>:
-            Dataset contains various information on US citizens such as: age, workclass, education, marital status, sex, capital gain,
-            capital loss, hours per week, native country.
-        </p>
-        <p>
-            <b>Business purpose</b>:
-            Predict whether a person's income exceeds $50K/yr based on census data.
-        </p>
-        <p>
-            <b>Data set credits</b>:
-            Lichman, M. (2013). UCI Machine Learning Repository
-            <a target="_blank" href="http://archive.ics.uci.edu/ml">http://archive.ics.uci.edu/ml</a>.
-            Irvine, CA: University of California, School of Information and Computer Science.
-        </p>
+## Basic Information
 
-        <h2 style="margin-top: 0; padding-top: 0">Workflow Overview</h2>
-        <p>
-            Many businesses would like to personalize their offer based on customer’s income.
-            High-income customers could be, for instance, exposed to premium products.
-            As a customer’s income is not always explicitly known, predictive model could estimate
-            income of a person based on other information.
-        </p>
-        <p>
-           Our goal is to create a predictive model that will be able to output a single decision - i.e. whether
-           the income of given person exceeds 50k per year - based on other information about the individual.
-        </p>
-        <p>
-            As our predictive method we will use logistic regression, which is a binary classification algorithm.
-            First, we will split our dataset into two parts - training set and validation set.
-            Then, we will train a logistic regression model on samples from the training set
-            and finally evaluate its accuracy based on validation dataset.
-        </p>
-	</div>
-	<div style="display: table-cell; vertical-align: top; width: 35%">
-	  <img class="centered-image img-responsive spacer" src="../img/usecases/income_predicting/workflow.png" width="100%" />
-	</div>
-</div>
+**Dataset**: <a target="_blank" href="http://archive.ics.uci.edu/ml/datasets/Adult">Adult Data Set</a>
+
+**Dataset size**: 32,561 rows; 15 columns (6 numerical columns, 9 string columns).
+
+**Dataset description**: Dataset contains various information on US citizens such as:
+age, workclass, education, marital status, sex, capital gain,
+capital loss, hours per week, native country.
+
+**Business purpose**: Predict whether a person's income exceeds $50K/yr based on census data.
+
+**Data set credits**: Lichman, M. (2013). UCI Machine Learning Repository
+<a target="_blank" href="http://archive.ics.uci.edu/ml">http://archive.ics.uci.edu/ml</a>.
+Irvine, CA: University of California, School of Information and Computer Science.
+
+## Workflow Overview
+
+<img class="centered-image img-responsive spacer" src="../img/usecases/income_predicting/workflow.png" />
+
+Many businesses would like to personalize their offer based on customer’s income.
+High-income customers could be, for instance, exposed to premium products.
+As a customer’s income is not always explicitly known, predictive model could estimate
+income of a person based on other information.
+
+Our goal is to create a predictive model that will be able to output a single decision - i.e. whether
+the income of given person exceeds 50k per year - based on other information about the individual.
+
+As our predictive method we will use logistic regression, which is a binary classification algorithm.
+First, we will split our dataset into two parts - training set and validation set.
+Then, we will train a logistic regression model on samples from the training set
+and finally evaluate its accuracy based on validation dataset.
 
 ## Step-by-step Workflow Creation
 
 ### Reading Data
 
 The data is provided in form of CSV file, with the names of columns described in the first row.
-In order to pull the data we will use [Read Data Frame](../operations/read_dataframe.html) operation.
+In order to pull the data we will use [Read Data Frame](../operations/read_dataframe.html) operation
+with the following Data Source attached.
 
-<img class="bordered-image centered-image img-responsive spacer" src="../img/usecases/income_predicting/parameters_image_0.png">
+<img class="bordered-image centered-image img-responsive spacer" src="../img/usecases/income_predicting/data_source.png">
 
 ### Extracting Features and Transforming Data
 
@@ -141,7 +127,7 @@ operation to check for each prediction whether it is correct, and whether it is 
 Let’s see the metrics for our model with the default transform parameters.
 To do this, we need to open the report created for the resulting DataFrame.
 We'll click on the distribution icon for the **correctness** column.
-As we see on the distribution chart, the predictions of our model are correct for 85% of observations.
+As we see on the distribution chart, the predictions of our model are correct for 86% of observations.
 
 <img class="centered-image img-responsive spacer" src="../img/usecases/income_predicting/image_4.png">
 
@@ -175,8 +161,8 @@ Let’s take a look at the effectiveness of our model with the modified threshol
 <img class="centered-image img-responsive spacer" src="../img/usecases/income_predicting/image_5.png">
 
 As we can see, our high-earner identification accuracy is much better now.
-We got 19% *true* and 5% *false* predictions for high-income customers as opposed to previous 14,5% *true* and 9,4% *false*.
-Although overall accuracy went down from 85% to 83%, our high-income client predictions accuracy went up considerably.
+We got 19% *true* and 5% *false* predictions for high-income customers as opposed to previous 15% *true* and 9% *false*.
+Although overall accuracy went down from 86% to 83%, our high-income client predictions accuracy went up considerably.
 
 ## Conclusion
 
