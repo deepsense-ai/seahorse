@@ -31,8 +31,6 @@ trait WorkflowWithKnowledgeJsonProtocol extends WorkflowJsonProtocol
 
   implicit val nodeInferenceResultFormat = jsonFormat3(NodeInferenceResult.apply)
 
-  implicit val graphKnowledgeFormat = jsonFormat1(GraphKnowledge.apply)
-
   implicit val workflowWithKnowledgeFormat: RootJsonFormat[WorkflowWithKnowledge] =
     new RootJsonFormat[WorkflowWithKnowledge] {
       override def read(json: JsValue): WorkflowWithKnowledge = ???
@@ -43,7 +41,7 @@ trait WorkflowWithKnowledgeJsonProtocol extends WorkflowJsonProtocol
           "metadata" -> workflow.metadata.toJson,
           "workflow" -> workflow.graph.toJson(GraphWriter),
           "thirdPartyData" -> workflow.thirdPartyData.toJson,
-          "knowledge" -> workflow.knowledge.toJson.asJsObject.fields("resultsMap"))
+          "knowledge" -> workflow.knowledge.results.toJson)
       }
     }
 }

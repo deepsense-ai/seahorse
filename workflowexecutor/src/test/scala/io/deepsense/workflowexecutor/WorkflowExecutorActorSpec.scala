@@ -27,10 +27,12 @@ import org.scalatest._
 import org.scalatest.concurrent.{Eventually, ScaledTimeSpans}
 import org.scalatest.mock.MockitoSugar
 
+import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
+import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.{DOperable, DOperation, ExecutionContext}
-import io.deepsense.graph.{GraphState, Graph, Node}
+import io.deepsense.graph.{GraphKnowledge, GraphState, Graph, Node}
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.{Launch, GraphFinished}
 import io.deepsense.workflowexecutor.WorkflowExecutorActor._
 import io.deepsense.models.entities.Entity
@@ -53,6 +55,11 @@ class WorkflowExecutorActorSpec
       val g = mock[Graph]
       when(g.enqueueNodes) thenReturn g
       when(g.markRunning) thenReturn g
+
+      val knowledgeWithoutErrors = mock[GraphKnowledge]
+      when(knowledgeWithoutErrors.errors)
+        .thenReturn(Map.empty[Node.Id, GraphKnowledge.InferenceErrors])
+      when(g.inferKnowledge(any())) thenReturn knowledgeWithoutErrors
       g
     }
 
@@ -109,7 +116,7 @@ class WorkflowExecutorActorSpec
       shutdownerProbe.expectMsgType[String] shouldBe shutdownMessage
     }
 
-    def launchGraph(): Future[GraphFinished] = {
+    def launchGraph(shouldStartExecutors: Boolean = true): Future[GraphFinished] = {
       val nodes = List(mockNode(), mockNode())
       val nodeExecutors = Seq(TestProbe(), TestProbe())
       val running = graph.markRunning
@@ -121,22 +128,13 @@ class WorkflowExecutorActorSpec
 
       val resultPromise: Promise[GraphFinished] = Promise()
       weaRef ! Launch(graph, false, resultPromise)
-      wea.nodeExecutors(0).expectMsg(WorkflowNodeExecutorActor.Messages.Start())
-      wea.nodeExecutors(1).expectMsg(WorkflowNodeExecutorActor.Messages.Start())
-      wea.nodesToVisit shouldBe empty
+
+      if (shouldStartExecutors) {
+        wea.nodeExecutors(0).expectMsg(WorkflowNodeExecutorActor.Messages.Start())
+        wea.nodeExecutors(1).expectMsg(WorkflowNodeExecutorActor.Messages.Start())
+        wea.nodesToVisit shouldBe empty
+      }
       resultPromise.future
-    }
-
-    def launchEmptyWorkflow(): Unit = {
-      val nodes = List()
-      val nodeExecutors = Seq()
-      when(graph.readyNodes).thenReturn(nodes)
-      when(graph.nodes).thenReturn(Set.empty[Node])
-      wea.expectedNodes = nodes
-      wea.nodeExecutors = nodeExecutors
-      wea.expectedDOperableCache = Map.empty
-
-      weaRef ! graph
     }
 
     def mockOperation(): DOperation = {
@@ -173,7 +171,7 @@ class WorkflowExecutorActorSpec
       }
     }
     "close actor system and returns a result" when {
-      "it receives NodeFinished and there are no nodes left for execution" in new TestCase {
+      "it receives NodeFinished and there are no nodes left for execution" in { new TestCase {
         val result = launchGraph()
         val finishedNode = mockFinishedNode()
         val finishedGraph = mock[Graph]
@@ -188,7 +186,22 @@ class WorkflowExecutorActorSpec
         weaRef ! WorkflowExecutorActor.Messages.NodeFinished(finishedNode, Map.empty)
         verifySystemShutDown()
         result shouldBe 'completed
-      }
+      };()}
+      "graph knowledge contains errors" in { new TestCase {
+        val finishedGraph = mock[Graph]
+        val knowledgeWithErrors = mock[GraphKnowledge]
+        when(knowledgeWithErrors.errors)
+          .thenReturn(Map(Node.Id.randomId ->  Vector(mock[DeepLangException])))
+        when(graph.inferKnowledge(any())) thenReturn knowledgeWithErrors
+        when(graph.markFailed(any())) thenReturn finishedGraph
+        when(finishedGraph.updateState()) thenReturn finishedGraph
+        when(finishedGraph.state) thenReturn GraphState.failed(mock[FailureDescription])
+
+        val result = launchGraph(shouldStartExecutors = false)
+
+        verifySystemShutDown()
+        result shouldBe 'completed
+      };()}
     }
   }
 }

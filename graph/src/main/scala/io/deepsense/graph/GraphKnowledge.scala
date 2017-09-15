@@ -40,6 +40,20 @@ case class GraphKnowledge(
   def getResult(id: Node.Id): NodeInferenceResult = resultsMap(id)
 
   def getKnowledge(id: Node.Id): Vector[DKnowledge[DOperable]] = getResult(id).ports
+
+  def results: Map[Node.Id, NodeInferenceResult] = resultsMap
+
+  /**
+   * Map from node ids to their errors. Contains only nodes that have errors.
+   */
+  lazy val errors: Map[Node.Id, InferenceErrors] = {
+    val pairs = for {
+      (nodeId, result) <- resultsMap
+      errors = result.errors
+      if errors.nonEmpty
+    } yield (nodeId, errors)
+    pairs.toMap
+  }
 }
 
 object GraphKnowledge {

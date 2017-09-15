@@ -20,9 +20,10 @@ import scala.concurrent.Promise
 
 import akka.actor._
 
+import io.deepsense.commons.exception.{FailureCode, DeepSenseFailure, FailureDescription}
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
-import io.deepsense.graph.{Graph, Node}
+import io.deepsense.graph.{GraphKnowledge, Graph, Node}
 import io.deepsense.models.entities.Entity
 import io.deepsense.models.workflows.EntitiesMap
 import io.deepsense.reportlib.model.ReportContent
@@ -56,11 +57,20 @@ class WorkflowExecutorActor(executionContext: ExecutionContext)
   def launch(g: Graph, generateReports: Boolean, result: Promise[GraphFinished]): Unit = {
     this.generateReports = generateReports
     this.result = result
-    graph = g.markRunning
-    logger.debug("launch(graph={})", graph)
-    launchReadyNodes(graph)
-    if (graph.readyNodes.isEmpty) {
+    graph = g
+    val knowledge = graph.inferKnowledge(executionContext)
+    if (knowledge.errors.nonEmpty) {
+      val failureDescription = WorkflowExecutorActor.inferenceErrorsFailureDescription(knowledge)
+      logger.error("Workflow is incorrect - cannot launch. Errors: {}", failureDescription)
+      graph = graph.markFailed(failureDescription)
       endExecution()
+    } else {
+      graph = graph.markRunning
+      logger.debug("launch(graph={})", graph)
+      launchReadyNodes(graph)
+      if (graph.readyNodes.isEmpty) {
+        endExecution()
+      }
     }
   }
 
@@ -110,7 +120,7 @@ class WorkflowExecutorActor(executionContext: ExecutionContext)
 
   def endExecution(): Unit = {
     graph = graph.updateState()
-    logger.debug("End execution, status={}", graph.state.status)
+    logger.debug(s"End execution, status=${graph.state.status}")
     result.success(GraphFinished(graph, entitiesMap(dOperableCache, reports)))
     logger.debug("Shutting down the actor system")
     context.become(ignoreAllMessages)
@@ -156,6 +166,18 @@ object WorkflowExecutorActor {
     case class NodeStarted(nodeId: Node.Id) extends Message
     case class NodeFinished(node: Node, results: Results) extends Message
     case class GraphFinished(graph: Graph, entitiesMap: EntitiesMap) extends Message
+  }
+
+  def inferenceErrorsFailureDescription(graphKnowledge: GraphKnowledge): FailureDescription = {
+    FailureDescription(
+      DeepSenseFailure.Id.randomId,
+      FailureCode.IncorrectWorkflow,
+      "Incorrect workflow",
+      Some("Provided workflow cannot be launched, because it contains errors"),
+      details = graphKnowledge.errors.map {
+        case (id, errors) => (id.toString, errors.map(_.toString).mkString("\n"))
+      }
+    )
   }
 }
 
