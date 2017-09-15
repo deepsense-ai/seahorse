@@ -4,15 +4,15 @@
       "a47fa4cf-9833-8541-31cd-98bfe9c57aab": {
         "status": "COMPLETED", 
         "results": [
-          "448a899e-22d4-4ffd-81b0-8684ee09c223"
+          "f9f195e5-5542-4261-b810-6d0feaaf78ff"
         ], 
         "error": null
       }, 
       "b3fb1448-9874-3f6c-f259-89b08c4c3689": {
         "status": "COMPLETED", 
         "results": [
-          "28c4006e-84c6-49f0-a278-71b0dc527474", 
-          "67889736-5a6b-4873-b2d1-d906d538be88"
+          "99e78feb-6484-4ca3-90ad-93fecc8549e2", 
+          "e7202b89-fbff-4870-9343-4833260baa6a"
         ], 
         "error": null
       }, 
@@ -23,7 +23,7 @@
       }
     }, 
     "resultEntities": {
-      "448a899e-22d4-4ffd-81b0-8684ee09c223": {
+      "f9f195e5-5542-4261-b810-6d0feaaf78ff": {
         "report": {
           "tables": [
             {
@@ -100,6 +100,66 @@
                   "Warszawa", 
                   "8000", 
                   "1"
+                ], 
+                [
+                  "11", 
+                  "Pozna\u0144", 
+                  "1000", 
+                  "1"
+                ], 
+                [
+                  "12", 
+                  "Krak\u00f3w", 
+                  "4200", 
+                  "1"
+                ], 
+                [
+                  "13", 
+                  "Warszawa", 
+                  "12000", 
+                  "1"
+                ], 
+                [
+                  "14", 
+                  "Pozna\u0144", 
+                  "4700", 
+                  "1"
+                ], 
+                [
+                  "15", 
+                  "Krak\u00f3w", 
+                  "6600", 
+                  "1"
+                ], 
+                [
+                  "16", 
+                  "Warszawa", 
+                  "7700", 
+                  "1"
+                ], 
+                [
+                  "17", 
+                  "Pozna\u0144", 
+                  "12000", 
+                  "1"
+                ], 
+                [
+                  "18", 
+                  "Krak\u00f3w", 
+                  "8720", 
+                  "1"
+                ], 
+                [
+                  "19", 
+                  "Warszawa", 
+                  "1280", 
+                  "0.5"
+                ], 
+                [
+                  "20", 
+                  "Pozna\u0144", 
+                  "5600", 
+                  "1"
                 ]
               ], 
               "name": "Data Sample"
@@ -163,14 +223,7 @@
           "reportType": "DataFrameFull"
         }
       }, 
-      "67889736-5a6b-4873-b2d1-d906d538be88": {
-        "report": {
-          "tables": [], 
-          "distributions": {}, 
-          "reportType": "Empty"
-        }
-      }, 
-      "28c4006e-84c6-49f0-a278-71b0dc527474": {
+      "99e78feb-6484-4ca3-90ad-93fecc8549e2": {
         "report": {
           "tables": [
             {
@@ -236,6 +289,13 @@
             }
           }, 
           "reportType": "DataFrameFull"
+        }
+      }, 
+      "e7202b89-fbff-4870-9343-4833260baa6a": {
+        "report": {
+          "tables": [], 
+          "distributions": {}, 
+          "reportType": "Empty"
         }
       }
     }, 
