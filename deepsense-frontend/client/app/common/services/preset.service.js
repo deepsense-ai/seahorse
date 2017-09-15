@@ -5,15 +5,16 @@ const SCHEMA = require('./preset.schema.json');
 const jsonSchema = require('jsen');
 const validate = jsonSchema(SCHEMA);
 const DEFAULT_PRESET = {
-  'id': '1_Local',
+  'id': '1_local',
   'name': 'default',
-  'clusterType': 'standalone',
-  'uri': 'spark://something',
-  'executorMemory': 7,
-  'executorCores': 5,
-  'totalExecutorCores': 5,
+  'clusterType': 'local',
+  'uri': '',
+  'userIP': '',
+  'executorMemory': '2',
+  'totalExecutorCores': 2,
+  'executorCores': 2,
   'numExecutors': 2,
-  'params': '--this that',
+  'params': '--num-executors 2 --verbose',
   'isEditable': false,
   'isDefault': true
 };
@@ -178,7 +179,7 @@ function PresetService($log, StorageService) {
     Object.keys(allPresets).forEach((key) => {
       if (!validate(allPresets[key])) {
         $log.warn('invalid preset detected', allPresets[key], validate.errors);
-        deletePreset(allPresets[key]);
+        deletePreset(allPresets[key].id);
       }
     });
   }

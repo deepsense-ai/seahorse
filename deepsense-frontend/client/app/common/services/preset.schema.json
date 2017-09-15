@@ -15,16 +15,19 @@
     },
     "clusterType": {
       "type": "string",
-      "enum": ["mesos", "standalone", "yarn"],
-      "invalidMessage": "clusterType is not set to any of yarn|standalone|mesos",
+      "enum": ["mesos", "standalone", "yarn", "local"],
+      "invalidMessage": "clusterType is not set to any of yarn|standalone|mesos|local",
       "requiredMessage": "clusterType is required"
     },
     "uri": {
       "type": "string",
-      "minLength": 1,
-      "format": "uri",
       "invalidMessage": "Uri is not a valid uri",
       "requiredMessage": "Uri is required"
+    },
+    "userIP": {
+      "type": "string",
+      "invalidMessage": "User IP is not a valid IP",
+      "requiredMessage": "User IP is required"
     },
     "isEditable": {
       "type": "boolean",
@@ -37,14 +40,13 @@
       "invalidMessage": "isDefault is not a boolean"
     },
     "executorMemory": {
-      "type": "number",
-      "minimum": 0,
-      "invalidMessage": "executorMemory is not a valid number > 0"
+      "type": "string",
+      "invalidMessage": "executorMemory is not a valid string"
     },
     "executorCores": {
       "type": "integer",
       "minimum": 0,
-      "invalidMessage": "executorCores is not a valid integer > 0"
+      "invalidMessage": "executorCores is not a valid integer"
     },
     "totalExecutorCores": {
       "type": "integer",
@@ -59,6 +61,7 @@
   "required": [
     "name",
     "clusterType",
-    "uri"
+    "uri",
+    "userIP"
   ]
 }

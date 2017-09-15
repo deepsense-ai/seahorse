@@ -5,24 +5,26 @@ describe('PresetService', () => {
   let StorageMock;
 
   const DEFAULT_PRESET = {
-    'id': '1_Local',
+    'id': '1_local',
     'name': 'default',
-    'clusterType': 'standalone',
-    'uri': 'spark://something',
-    'executorMemory': 7,
-    'executorCores': 5,
-    'totalExecutorCores': 5,
+    'clusterType': 'local',
+    'uri': '',
+    'userIP': '',
+    'executorMemory': '2',
+    'totalExecutorCores': 2,
+    'executorCores': 2,
     'numExecutors': 2,
-    'params': '--this that',
+    'params': '--num-executors 2 --verbose',
     'isEditable': false,
     'isDefault': true
   };
   const MOCK_PRESET = {
-    'id': '2_Local',
+    'id': '2_local',
     'name': 'Default',
     'clusterType': 'mesos',
     'uri': 'http://www.path/to/standalone',
-    'executorMemory': 7,
+    'userIP': '',
+    'executorMemory': '2',
     'executorCores': 5,
     'totalExecutorCores': 5,
     'numExecutors': 2,
@@ -31,11 +33,12 @@ describe('PresetService', () => {
     'isDefault': false
   };
   const MOCK_PRESET_EDITABLE = {
-    'id': '2_Local',
+    'id': '2_local',
     'name': 'Default',
     'clusterType': 'mesos',
     'uri': 'http://www.path/to/standalone',
-    'executorMemory': 7,
+    'userIP': '',
+    'executorMemory': '2',
     'executorCores': 5,
     'totalExecutorCores': 5,
     'numExecutors': 2,
@@ -44,11 +47,12 @@ describe('PresetService', () => {
     'isDefault': false
   };
   const MOCK_PRESET_EDITABLE_CHANGED = {
-    'id': '2_Local',
+    'id': '2_local',
     'name': 'Default',
     'clusterType': 'mesos',
     'uri': 'http://www.path/to/standalone',
-    'executorMemory': 8,
+    'userIP': '',
+    'executorMemory': '3',
     'executorCores': 5,
     'totalExecutorCores': 5,
     'numExecutors': 2,
@@ -57,11 +61,12 @@ describe('PresetService', () => {
     'isDefault': false
   };
   const INVALID_MOCK_PRESET = {
-    'id': '2_Local',
+    'id': '2_local',
     'name': 'Default',
     'clusterType': 'invalid-type',
     'uri': 'http://www.path/to/standalone',
-    'executorMemory': 7,
+    'userIP': '',
+    'executorMemory': '2',
     'executorCores': 5,
     'totalExecutorCores': 5,
     'numExecutors': 2,
@@ -70,18 +75,18 @@ describe('PresetService', () => {
     'isDefault': false
   };
   const DEFAULT_STORE = {
-    '1_Local' : DEFAULT_PRESET
+    '1_local' : DEFAULT_PRESET
   };
   const MOCK_STORE = {
-    '1_Local' : DEFAULT_PRESET,
-    '2_Local' : MOCK_PRESET
+    '1_local' : DEFAULT_PRESET,
+    '2_local' : MOCK_PRESET
   };
   const MOCK_LOCALSTORAGE = {
     'presets': MOCK_STORE
   };
   const MOCK_STORE_EDITABLE = {
-    '1_Local' : DEFAULT_PRESET,
-    '2_Local' : MOCK_PRESET_EDITABLE
+    '1_local' : DEFAULT_PRESET,
+    '2_local' : MOCK_PRESET_EDITABLE
   };
   const MOCK_LOCALSTORAGE_EDITABLE = {
     'presets': MOCK_STORE_EDITABLE
@@ -143,11 +148,11 @@ describe('PresetService', () => {
 
   describe ('getPresetById()', () => {
     it('should return preset if already in the store', () => {
-      expect(PresetService.getPresetById('1_Local')).toEqual(DEFAULT_PRESET);
+      expect(PresetService.getPresetById('1_local')).toEqual(DEFAULT_PRESET);
     });
 
     it('should return undefined if not in the store', () => {
-      expect(PresetService.getPresetById('2_Local')).toBeUndefined();
+      expect(PresetService.getPresetById('2_local')).toBeUndefined();
     });
   });
 

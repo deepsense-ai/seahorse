@@ -76,17 +76,41 @@
       </div>
     </div>
 
+    <div class="row main-form-row" ng-if="controller.labels.userIP">
+      <div class="col-md-4">
+        <div class="label-main">{{controller.labels.userIP}}</div>
+      </div>
+      <div class="col-md-5">
+        <input class="form-control cluster-input"
+               placeholder="e.g. localhost"
+               ng-model="controller.preset.userIP"
+               ng-disabled="!controller.isEditingEnabled()"
+        />
+      </div>
+    </div>
+
+    <div class="row main-form-row" ng-if="controller.labels.hadoopUser">
+      <div class="col-md-4">
+        <div class="label-main">{{controller.labels.hadoopUser}}</div>
+      </div>
+      <div class="col-md-5">
+        <input class="form-control cluster-input"
+               placeholder="e.g. Hadoop User"
+               ng-model="controller.preset.hadoopUser"
+               ng-disabled="!controller.isEditingEnabled()"
+        />
+      </div>
+    </div>
+
     <div class="row form-row" ng-if="controller.labels.executorMemory">
       <div class="col-md-4">
         <div class="label-main">{{controller.labels.executorMemory}}</div>
-        <div class="label-additional">(GB)</div>
       </div>
       <div class="col-md-5">
         <input class="form-control cluster-input"
                placeholder="e.g. 3"
                ng-model="controller.preset.executorMemory"
                ng-disabled="!controller.isEditingEnabled()"
-               type="number" min="0"
         />
       </div>
     </div>
@@ -97,7 +121,7 @@
       </div>
       <div class="col-md-5">
         <input class="form-control cluster-input"
-               placeholder="e.g 2"
+               placeholder="e.g. 2"
                ng-model="controller.preset.totalExecutorCores"
                ng-disabled="!controller.isEditingEnabled()"
                type="number" min="0"
@@ -111,7 +135,7 @@
       </div>
       <div class="col-md-5">
         <input class="form-control cluster-input"
-               placeholder="e.g 2"
+               placeholder="e.g. 2"
                ng-model="controller.preset.executorCores"
                ng-disabled="!controller.isEditingEnabled()"
                type="number" min="0"

@@ -5,6 +5,8 @@ exports.inject = function (module) {
     yarn: {
       main: 'YARN',
       uri: 'Hadoop Configuration Directory',
+      userIP: 'User IP',
+      hadoopUser: 'Hadoop User',
       instruction: '<div><b>In order to run Spark on Yarn</b> you need to provide a directory configuration for your ' +
       'YARN cluster - Hadoop Configuration Directory. This directory should contain several' +
       'xml files (for example: hdfs-site.xml).</div>' +
@@ -20,12 +22,22 @@ exports.inject = function (module) {
     mesos: {
       main: 'Mesos',
       uri: 'Spark Master Uri',
+      userIP: 'User IP',
+      hadoopUser: 'Hadoop User',
       executorMemory: 'Executor memory',
       totalExecutorCores: 'Total executor cores'
     },
     standalone: {
       main: 'Stand-alone',
       uri: 'Spark Master Uri',
+      userIP: 'User IP',
+      hadoopUser: 'Hadoop User',
+      executorMemory: 'Executor memory',
+      totalExecutorCores: 'Total executor cores',
+      executorCores: 'Executor cores'
+    },
+    local: {
+      main: 'Default - local',
       executorMemory: 'Executor memory',
       totalExecutorCores: 'Total executor cores',
       executorCores: 'Executor cores'

@@ -9,8 +9,8 @@
       <div class="cluster-settings">
         <div ng-click="controller.openCurrentPresetModal(controller.currentPreset)" class="current-cluster">
           <div ng-switch on="controller.currentPreset.clusterType" class="current-cluster__icon">
-            <img ng-switch-when="standalone" ng-if="controller.currentPreset.isDefault" src="/img/cluster-local.png"/>
-            <img ng-switch-when="standalone" ng-if="!controller.currentPreset.isDefault" src="/img/cluster-spark-sm.png"/>
+            <img ng-switch-when="local" src="/img/cluster-local.png"/>
+            <img ng-switch-when="standalone" src="/img/cluster-spark-sm.png"/>
             <img ng-switch-when="mesos" src="/img/cluster-mesos-sm.png"/>
             <img ng-switch-when="yarn" src="/img/cluster-yarn-sm.png"/>
           </div>

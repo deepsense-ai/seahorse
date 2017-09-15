@@ -3,7 +3,8 @@
 const presetTypesMap = {
   standalone: 'Stand-alone',
   yarn: 'YARN',
-  mesos: 'Mesos'
+  mesos: 'Mesos',
+  local: 'Local'
 };
 
 /* @ngInject */
