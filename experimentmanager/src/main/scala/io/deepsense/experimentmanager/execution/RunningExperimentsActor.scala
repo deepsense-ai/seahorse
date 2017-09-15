@@ -3,14 +3,16 @@
  */
 package io.deepsense.experimentmanager.execution
 
+import java.util.concurrent.TimeoutException
 import javax.inject.{Inject, Named}
 
 import scala.collection.mutable
 import scala.concurrent.Future
+import scala.concurrent.duration._
 import scala.util.{Failure, Success}
 
 import akka.actor.{Actor, ActorLogging}
-import akka.pattern.pipe
+import akka.pattern.{after, pipe}
 import akka.util.Timeout
 
 import io.deepsense.experimentmanager.execution.RunningExperimentsActor._
@@ -21,19 +23,21 @@ import io.deepsense.models.experiments.Experiment.Id
 class RunningExperimentsActor @Inject() (
     @Named("entitystorage.label") entitystorageLabel: String,
     @Named("runningexperiments.timeout") timeoutMillis: Long,
-    @Named("runningexperiments.refresh.duration") statusRefreshMillis: Long,
+    @Named("runningexperiments.refresh.interval") refreshIntervalMillis: Long,
+    @Named("runningexperiments.refresh.timeout") refreshTimeoutMillis: Long,
     graphExecutorFactory: GraphExecutorClientFactory)
   extends Actor with ActorLogging {
 
-  import scala.concurrent.duration._
-  val refreshDelay = statusRefreshMillis.milliseconds
+  val refreshInterval = refreshIntervalMillis.milliseconds
+  val refreshTimeout = refreshTimeoutMillis.milliseconds
   val experiments = mutable.Map[Experiment.Id, (Experiment, GraphExecutorClient)]()
+  val updateTasks = mutable.Map[Experiment.Id, Future[Any]]()
 
   implicit val timeout: Timeout = timeoutMillis.milliseconds
   import InternalMessages._
   import context.dispatcher
 
-  context.system.scheduler.schedule(refreshDelay, refreshDelay, self, Tick)
+  context.system.scheduler.schedule(refreshInterval, refreshInterval, self, Tick)
 
   override def receive: Receive = {
     case internal: InternalMessage => processInternal(internal)
@@ -84,7 +88,10 @@ class RunningExperimentsActor @Inject() (
     for {
       (exp, _) <- experiments.get(experimentId)
       if exp.state.status != Experiment.Status.Running
-    } experiments.remove(exp.id)
+    } {
+      experiments.remove(exp.id)
+      updateTasks.remove(exp.id)
+    }
 
   private def abort(id: Id): Unit = {
     log.info(s"RunningExperimentsActor starts aborting experiment: $id")
@@ -129,9 +136,16 @@ class RunningExperimentsActor @Inject() (
 
   private def refreshStatuses(): Unit = {
     experiments.values.foreach { case (experiment, client) =>
-      Future(getExecutionState(experiment, client))
-        .map(experiment => ExperimentStatusUpdated(experiment))
-        .pipeTo(self)
+      val shouldUpdate = updateTasks.get(experiment.id).map(_.isCompleted).getOrElse(true)
+      if (shouldUpdate) {
+        val state = Future { getExecutionState(experiment, client) }
+        val stateWithTimeout = Future firstCompletedOf Seq(state,
+          after(refreshTimeout, context.system.scheduler)(Future.failed {
+            new TimeoutException(s"getExecutionState of ${experiment.id} has timed out!")
+          }))
+        updateTasks.put(experiment.id, stateWithTimeout)
+        stateWithTimeout.map(experiment => ExperimentStatusUpdated(experiment)).pipeTo(self)
+      }
     }
   }
 

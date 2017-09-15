@@ -174,6 +174,7 @@ class RunningExperimentsActorSpec
       SimpleGraphExecutionIntegSuiteEntities.Name,
       5000L,
       3L,
+      15000L,
       mockClientFactory)))
   }
 }

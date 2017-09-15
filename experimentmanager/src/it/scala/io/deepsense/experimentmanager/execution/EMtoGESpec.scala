@@ -91,6 +91,7 @@ class EMtoGESpec
         SimpleGraphExecutionIntegSuiteEntities.Name,
         3000,
         1000,
+        15000,
         DefaultGraphExecutorClientFactory()))
     testProbe = TestProbe()
   }
