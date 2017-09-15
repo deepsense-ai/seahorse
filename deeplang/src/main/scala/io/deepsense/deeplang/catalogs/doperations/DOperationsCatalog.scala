@@ -44,45 +44,21 @@ abstract class DOperationsCatalog {
 
   /**
    * Registers DOperation, which can be later viewed and created.
-   * DOperation has to have parameterless constructor.
    * @param category category to which this operation directly belongs
-   * @tparam T DOperation class to register
    */
-  def registerDOperation[T <: DOperation : ru.TypeTag](
-      category: DOperationCategory): Unit
-
-  /**
-    * Registers DOperation, which can be later viewed and created.
-    * DOperation has to have parameterless constructor.
-    *
-    * @param t runtime type of the operation
-    * @param category category to which this operation directly belongs
-    */
-  def registerDOperation(t: ru.Type, category: DOperationCategory): Unit
+  def registerDOperation(category: DOperationCategory, factory: () => DOperation): Unit
 }
 
 object DOperationsCatalog {
   def apply(): DOperationsCatalog = new DOperationsCatalogImpl
 
-  private[DOperationsCatalog] def createDOperation(constructor: Constructor[_]) = {
-    TypeUtils.createInstance[DOperation](constructor)
-  }
-
   private class DOperationsCatalogImpl() extends DOperationsCatalog {
     var categoryTree = DOperationCategoryNode()
     var operations = Map.empty[DOperation.Id, DOperationDescriptor]
-    private val operationsConstructors = mutable.Map.empty[DOperation.Id, Constructor[_]]
+    private val operationFactoryByOperationId = mutable.Map.empty[DOperation.Id, () => DOperation]
 
-    private def constructorForType(operationType: ru.Type) = {
-      TypeUtils.constructorForType(operationType) match {
-        case Some(x) => x
-        case None => throw NoParameterlessConstructorInDOperationException(operationType)
-      }
-    }
-
-    def registerDOperation(operationType: ru.Type, category: DOperationCategory): Unit = {
-      val constructor = constructorForType(operationType)
-      val operationInstance = DOperationsCatalog.createDOperation(constructor)
+    def registerDOperation(category: DOperationCategory, factory: () => DOperation): Unit = {
+      val operationInstance = factory()
       operationInstance.validate()
       val id = operationInstance.id
       val name = operationInstance.name
@@ -102,17 +78,11 @@ object DOperationsCatalog {
       }
       operations += id -> operationDescriptor
       categoryTree = categoryTree.addOperation(operationDescriptor, category)
-      operationsConstructors(id) = constructor
+      operationFactoryByOperationId(id) = factory
     }
 
-    def registerDOperation[T <: DOperation : ru.TypeTag](
-        category: DOperationCategory): Unit = {
-      val operationType = ru.typeOf[T]
-      registerDOperation(operationType, category)
-    }
-
-    def createDOperation(id: DOperation.Id): DOperation = operationsConstructors.get(id) match {
-      case Some(constructor) => DOperationsCatalog.createDOperation(constructor)
+    def createDOperation(id: DOperation.Id): DOperation = operationFactoryByOperationId.get(id) match {
+      case Some(factory) => factory()
       case None => throw DOperationNotFoundException(id)
     }
   }

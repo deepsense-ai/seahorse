@@ -121,13 +121,6 @@ object DOperationCatalogTestResources {
     override val outPortTypes: Vector[TypeTag[_]] = Vector(XTypeTag)
   }
 
-  case class DOperationWithoutParameterlessConstructor(x: Int) extends DOperationMock {
-    override val id = DOperation.Id.randomId
-    override val name = "some name"
-    override val description = "description"
-    override val inArity: Int = 2
-    override val outArity: Int = 3
-  }
 }
 
 object ViewingTestResources extends MockitoSugar {
@@ -140,10 +133,10 @@ object ViewingTestResources extends MockitoSugar {
 
   val catalog = DOperationsCatalog()
 
-  catalog.registerDOperation[DOperationA](categoryA)
-  catalog.registerDOperation[DOperationB](categoryB)
-  catalog.registerDOperation[DOperationC](categoryC)
-  catalog.registerDOperation[DOperationD](categoryD)
+  catalog.registerDOperation(categoryA, () => new DOperationA())
+  catalog.registerDOperation(categoryB, () => new DOperationB())
+  catalog.registerDOperation(categoryC, () => new DOperationC())
+  catalog.registerDOperation(categoryD, () => new DOperationD())
 
   val operationD = catalog.createDOperation(idD)
 
@@ -163,7 +156,7 @@ class DOperationsCatalogSuite extends FunSuite with Matchers with MockitoSugar {
   test("It is possible to create instance of registered DOperation") {
     import DOperationCatalogTestResources._
     val catalog = DOperationsCatalog()
-    catalog.registerDOperation[DOperationA](CategoryTree.ML.Regression)
+    catalog.registerDOperation(CategoryTree.ML.Regression, () => new DOperationA())
     val instance = catalog.createDOperation(idA)
     assert(instance == DOperationA())
   }
@@ -175,15 +168,6 @@ class DOperationsCatalogSuite extends FunSuite with Matchers with MockitoSugar {
       catalog.createDOperation(nonExistingOperationId)
     }
     exception.operationId shouldBe nonExistingOperationId
-  }
-
-  test("Registering DOperation without parameterless constructor raises exception") {
-    a [NoParameterlessConstructorInDOperationException] shouldBe thrownBy {
-      import DOperationCatalogTestResources._
-      val catalog = DOperationsCatalog()
-      catalog.registerDOperation[DOperationWithoutParameterlessConstructor](
-        CategoryTree.ML.Regression)
-    }
   }
 
   test("It is possible to view list of registered DOperations descriptors") {
