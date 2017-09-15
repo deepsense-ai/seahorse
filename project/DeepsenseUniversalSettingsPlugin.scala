@@ -2,6 +2,8 @@
  * Copyright (c) 2015, CodiLime Inc.
  */
 
+import java.util.Date
+
 import aether.AetherPlugin
 import aether.AetherKeys._
 import com.typesafe.sbt.GitPlugin
@@ -25,12 +27,14 @@ object DeepsenseUniversalSettingsPlugin extends AutoPlugin {
       git.gitHeadCommit.value.getOrElse((version in Universal).value)
     },
     gitVersionFile := {
-      val location = target.value / gitVersion.value
+      val location = target.value / "build-info.txt"
       location.getParentFile.mkdirs()
-      IO.write(location, "")
+      IO.write(location, "BUILD DATE: " + new Date().toString + "\n")
+      IO.write(location, "GIT SHA: " + gitVersion.value + "\n", append = true)
+      IO.write(location, "API VERSION: " + version.value + "\n", append = true)
       location
     },
-    mappings in Universal += gitVersionFile.value -> gitVersion.value,
+    mappings in Universal += gitVersionFile.value -> "build-info.txt",
     aetherPackageMain <<= packageBin in Universal
   ) ++ SettingsHelper.makeDeploymentSettings(Universal, packageBin in Universal, "zip")
 }
