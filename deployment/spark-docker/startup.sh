@@ -1,14 +1,19 @@
 #!/bin/bash
 
-# Copyright (c) 2016, CodiLime Inc.
+echo 'export PATH="/opt/conda/bin:$PATH"' >> $SPARK_HOME/conf/spark-env.sh
+echo 'export PYSPARK_PYTHON="/opt/conda/bin/python"' >> $SPARK_HOME/conf/spark-env.sh
+echo 'export PYSPARK_DRIVER_PYTHON="/opt/conda/bin/python"' >> $SPARK_HOME/conf/spark-env.sh
+echo 'export SPARK_WORKER_INSTANCES="4"' >> $SPARK_HOME/conf/spark-env.sh
+echo 'export SPARK_MASTER_OPTS="-Dspark.deploy.defaultCores=1"' >> $SPARK_HOME/conf/spark-env.sh
 
-echo 'export PATH="/opt/conda/bin:$PATH"' >> /usr/local/hadoop/etc/hadoop/hadoop-env.sh
+service ssh restart
 
-/etc/bootstrap.sh
+$SPARK_HOME/sbin/start-all.sh
 
-echo "spark.yarn.appMasterEnv.PYSPARK_PYTHON /opt/conda/bin/python" >> /usr/local/spark/conf/spark-defaults.conf
-echo "spark.master yarn-cluster" >> /usr/local/spark/conf/spark-defaults.conf
-
-# Do not stop the container when script exits - run sshd instead
-service sshd stop
-/usr/sbin/sshd -D -d
+if [ "$1" == "-d" ] ; then
+  while [ 1 == 1 ] ; do
+    sleep 1
+  done
+else
+  exec "$@"
+fi

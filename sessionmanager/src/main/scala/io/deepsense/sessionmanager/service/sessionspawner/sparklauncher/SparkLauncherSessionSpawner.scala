@@ -26,28 +26,23 @@ class SparkLauncherSessionSpawner @Inject()(
 
     val listener = new AppHandleListener()
 
-    new SparkLauncher(env)
+    new SparkLauncher()
       .setVerbose(true)
       .setMainClass(config.className)
-      .setMaster("yarn-cluster")
+      .setMaster("spark://sessionmanager:7077")
+      .setDeployMode("cluster")
       .setAppResource(config.weJarPath)
       .setAppName("SessionExecutor")
       .setSparkHome(config.sparkHome)
       .addFile(config.weDepsPath)
       .addAppArgs(args(workflowId, userId): _*)
-      .setConf("spark.driver.extraClassPath", "__app__.jar")
-      .setConf("spark.executorEnv.PYTHONPATH", config.weDepsFileName)
+      .setConf("spark.driver.extraClassPath", config.weJarPath)
+      .setConf("spark.executorEnv.PYTHONPATH", config.weDepsPath)
       .setConf("spark.driver.extraJavaOptions", "-XX:MaxPermSize=1024m -XX:PermSize=256m")
       .startApplication(listener)
 
     listener.executorStartedFuture
   }
-
-  private def env = Map(
-    "HADOOP_CONF_DIR" -> config.hadoopConfDir,
-    "SPARK_YARN_MODE" -> "true",
-    "HADOOP_USER_NAME" -> config.hadoopUserName
-  )
 
   private def args(workflowId: Id, userId: String) = Seq(
     "--interactive-mode",
@@ -55,7 +50,7 @@ class SparkLauncherSessionSpawner @Inject()(
     "--message-queue-port", config.queuePort.toString,
     "--wm-address", config.wmAddress,
     "--workflow-id", workflowId.toString(),
-    "-d", config.weDepsFileName,
+    "-d", config.weDepsPath,
     "--wm-username", config.wmUsername,
     "--wm-password", config.wmPassword,
     "--user-id", userId

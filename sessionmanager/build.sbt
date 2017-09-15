@@ -1,5 +1,7 @@
 // Copyright (c) 2016, CodiLime Inc.
 
+import com.typesafe.sbt.packager.docker._
+
 name := "deepsense-sessionmanager"
 
 libraryDependencies ++= Dependencies.sessionmanager
@@ -14,6 +16,11 @@ enablePlugins(JavaAppPackaging, GitVersioning, DeepsenseUniversalSettingsPlugin)
 //   It might require manual change prop pythoncaretaker.python-binary in application.conf in JAR.
 // TODO Introduce new sbt task to generate we-deps.zip
 
-dockerBaseImage := "sequenceiq/spark:1.6.0"
+dockerBaseImage := "quay.io/deepsense_io/deepsense-spark:1.6.1"
 dockerExposedPorts := Seq(9082)
+dockerCommands ++= Seq(
+  Cmd("USER", "root"),
+  ExecCmd("ENTRYPOINT", "/opt/startup.sh"),
+  ExecCmd("CMD", "bin/deepsense-sessionmanager")
+)
 dockerUpdateLatest := true

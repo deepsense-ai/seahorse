@@ -80,7 +80,7 @@ export PYTHONPATH="$LOCAL_PATH/opt/conda/lib/python2.7/site-packages/:$ADDITIONA
 echo "PYTHONPATH=$PYTHONPATH"
 
 echo "start executing_kernel_manager"
-python executing_kernel/executing_kernel_manager.py \
+exec python executing_kernel/executing_kernel_manager.py \
   --gateway-host "$GATEWAY_HOST" \
   --gateway-port "$GATEWAY_PORT" \
   --mq-host "$MQ_HOST" \

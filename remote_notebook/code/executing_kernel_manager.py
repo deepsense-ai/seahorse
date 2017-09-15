@@ -9,6 +9,7 @@ from jupyter_client.kernelspec import KernelSpecManager
 from rabbit_mq_client import RabbitMQClient, RabbitMQJsonReceiver, RabbitMQJsonSender
 from utils import debug
 import argparse
+import signal
 
 
 class ExecutingKernelManager(object):
@@ -29,6 +30,10 @@ class ExecutingKernelManager(object):
 
     def __init__(self, gateway_address, rabbit_mq_address, session_id, workflow_id, executing_kernel_source_dir):
         super(ExecutingKernelManager, self).__init__()
+
+        signal.signal(signal.SIGINT, self.exit_gracefully)
+        signal.signal(signal.SIGTERM, self.exit_gracefully)
+
         self._executing_kernel_source_dir = executing_kernel_source_dir
         self._gateway_address = gateway_address
         self._rabbit_mq_address = rabbit_mq_address
@@ -65,6 +70,9 @@ class ExecutingKernelManager(object):
 
     def stop(self):
         self._shutdown_event.set()
+
+    def exit_gracefully(self, signum, frame):
+        self.stop()
 
     def _handle_management_message(self, message):
         known_message_types = ['start_kernel', 'shutdown_kernel']

@@ -1,8 +1,7 @@
 Seahorse Spark docker image
 ===========================
 
-The image contains Hadoop, Spark, python libraries and Session Executor - all requirements for
-running SX inside a docker container.
+The image contains Spark and python libraries required for running SX inside a docker container.
 
 1. Building the image
 

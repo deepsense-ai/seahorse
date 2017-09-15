@@ -212,7 +212,9 @@ class SessionServiceActorSpec(_system: ActorSystem)
   private def fixture[T](eventStore: EventStore)(test: (TestParams) => T): T =
     fixture(eventStore, mock[StatusInferencer], mock[SessionSpawner])(test)
 
-  private def fixture[T](eventStore: EventStore, sessionSpawner: SessionSpawner)(test: (TestParams) => T): T =
+  private def fixture[T](
+      eventStore: EventStore,
+      sessionSpawner: SessionSpawner)(test: (TestParams) => T): T =
     fixture(eventStore, mock[StatusInferencer], sessionSpawner)(test)
 
   private def fixture[T](
