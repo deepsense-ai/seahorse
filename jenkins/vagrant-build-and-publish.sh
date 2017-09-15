@@ -5,12 +5,12 @@
 # $SEAHORSE_BUILD_TAG required for deployment
 # $API_VERSION requred for deployment
 
-SEAHORSE_BUILD_TAG="${SEAHORSE_BUILD_TAG?Need to set SEAHORSE_BUILD_TAG. For example export SEAHORSE_BUILD_TAG=SEAHORSE_BUILD_TAG=\`date +%Y%m%d_%H%M%S\`-\$GIT_TAG}"
-API_VERSION="${API_VERSION?Need to set SEAHORSE_BUILD_TAG. For example export API_VERSION="1.3.0"}"
-
 # Set working directory to project root file
 # `dirname $0` gives folder containing script
 cd `dirname $0`"/../"
+
+SEAHORSE_BUILD_TAG="${SEAHORSE_BUILD_TAG?Need to set SEAHORSE_BUILD_TAG. For example export SEAHORSE_BUILD_TAG=SEAHORSE_BUILD_TAG=\`date +%Y%m%d_%H%M%S\`-\$GIT_TAG}"
+API_VERSION=`jenkins/scripts/print_api_version.sh`
 
 echo "Building Vagrant image"
 # run from ./jenkins

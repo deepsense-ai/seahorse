@@ -16,8 +16,6 @@ SEAHORSE_BUILD_TAG=$1
 FRONTEND_TAG=${SEAHORSE_BUILD_TAG}
 BACKEND_TAG=`git rev-parse HEAD`
 
-echo "This script assumes it is run from deepsense-backend directory"
-
 echo "Generating docker compose file with docker images tagged with $SEAHORSE_BUILD_TAG"
 
 DOCKER_COMPOSE_TMPL="deployment/docker-compose/docker-compose.tmpl.yml"
