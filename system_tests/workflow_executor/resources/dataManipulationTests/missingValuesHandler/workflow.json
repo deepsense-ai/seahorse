@@ -123,7 +123,7 @@
                 "names included": true
               }
             },
-            "outputFile": "hdfs://spark-cluster-1/system_tests/missingValuesHandler/output.csv"
+            "output file": "hdfs://spark-cluster-1/system_tests/missingValuesHandler/output.csv"
           }
         }
       }

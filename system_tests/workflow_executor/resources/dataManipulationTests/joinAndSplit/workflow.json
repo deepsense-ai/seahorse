@@ -43,7 +43,7 @@
                 "names included": true
               }
             },
-            "outputFile": "hdfs://spark-cluster-1/system_tests/joinAndSplit/output1.csv"
+            "output file": "hdfs://spark-cluster-1/system_tests/joinAndSplit/output1.csv"
           }
         }
       }
@@ -105,7 +105,7 @@
                 "names included": true
               }
             },
-            "outputFile": "hdfs://spark-cluster-1/system_tests/joinAndSplit/output2.csv"
+            "output file": "hdfs://spark-cluster-1/system_tests/joinAndSplit/output2.csv"
           }
         }
       }

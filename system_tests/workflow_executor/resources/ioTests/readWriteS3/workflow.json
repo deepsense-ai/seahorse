@@ -43,7 +43,7 @@
                 "names included": true
               }
             },
-            "outputFile": "s3n://AKIAIRRLCDDWK5JBPVLQ:GOK9kdzDLPA+t8vpcBiCVbUmDB6pUrCdmsUNVg1u@seahorse-dev/system_tests/readWriteS3/output.csv"
+            "output file": "s3n://AKIAIRRLCDDWK5JBPVLQ:GOK9kdzDLPA+t8vpcBiCVbUmDB6pUrCdmsUNVg1u@seahorse-dev/system_tests/readWriteS3/output.csv"
           }
         }
       }
