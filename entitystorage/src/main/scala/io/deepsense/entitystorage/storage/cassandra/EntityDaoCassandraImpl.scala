@@ -16,6 +16,7 @@ import com.datastax.driver.core.querybuilder.Update.Assignments
 import com.datastax.driver.core.querybuilder.{QueryBuilder, Select, Update}
 import com.google.inject.Inject
 import com.google.inject.name.Named
+
 import io.deepsense.entitystorage.storage.EntityDao
 import io.deepsense.models.entities.Entity
 
@@ -73,7 +74,7 @@ class EntityDaoCassandraImpl @Inject() (
     // TODO Reimplement when Report gets implemented
     entity.report match {
       case Some(report) =>
-        update.and(set(EntityRowMapper.Report, report.report.message))
+        update.and(set(EntityRowMapper.Report, report.message))
       case None =>
         update
     }

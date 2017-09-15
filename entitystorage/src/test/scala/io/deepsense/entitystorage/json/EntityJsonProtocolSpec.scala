@@ -11,7 +11,6 @@ import spray.json._
 
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.entitystorage.factories.EntityTestFactory
-import io.deepsense.entitystorage.models._
 import io.deepsense.models.entities._
 
 class EntityJsonProtocolSpec
@@ -108,7 +107,7 @@ class EntityJsonProtocolSpec
     "description" -> JsString(entity.description),
     "saved" -> JsBoolean(entity.saved))
 
-  private def jsonReport(report: DataObjectReport) = JsString(report.report.message)
+  private def jsonReport(report: DataObjectReport) = JsString(report.message)
 
   private def jsonReference(reference: DataObjectReference) =
     JsObject(Map("url" -> JsString(reference.url)))

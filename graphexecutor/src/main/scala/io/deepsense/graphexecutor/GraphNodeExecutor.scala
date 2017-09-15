@@ -7,15 +7,15 @@ package io.deepsense.graphexecutor
 
 import java.util.UUID
 
-import scala.concurrent.{Await, duration}
 import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.{Await, duration}
 
 import com.typesafe.scalalogging.LazyLogging
 
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
 import io.deepsense.entitystorage.EntityStorageClient
 import io.deepsense.graph.Node
-import io.deepsense.models.entities.{DataObjectReport, InputEntity}
+import io.deepsense.models.entities.InputEntity
 
 /**
  * GraphNodeExecutor is responsible for execution of single node.
@@ -110,7 +110,7 @@ class GraphNodeExecutor(
       "temporary Entity",
       "?",
       None,
-      Some(DataObjectReport(dOperable.report)),
+      Some(dOperable.report.toDataObjectReport),
       saved = false
     )
 

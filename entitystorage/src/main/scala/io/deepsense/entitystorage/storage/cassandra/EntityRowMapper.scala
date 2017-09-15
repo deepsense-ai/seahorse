@@ -9,7 +9,6 @@ package io.deepsense.entitystorage.storage.cassandra
 import com.datastax.driver.core.Row
 
 import io.deepsense.commons.datetime.DateTimeConverter
-import io.deepsense.deeplang.doperables
 import io.deepsense.models.entities.{DataObjectReference, DataObjectReport, Entity}
 
 object EntityRowMapper {
@@ -44,6 +43,5 @@ object EntityRowMapper {
     Option(row.getString(Url)).map(DataObjectReference)
 
   def readReport(row: Row): Option[DataObjectReport] =
-    Option(row.getString(Report)).map(doperables.Report).map(DataObjectReport)
+    Option(row.getString(Report)).map(DataObjectReport)
 }
-

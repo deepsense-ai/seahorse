@@ -6,9 +6,17 @@ name := "deepsense-backend"
 
 lazy val commons                = project
 lazy val models                 = project dependsOn graph
-lazy val deeplang               = project dependsOn commons
-lazy val entitystorage          = project dependsOn (commons, commons % "test->test", deeplang, models)
-lazy val `entitystorage-client` = project dependsOn models
+lazy val deeplang               = project dependsOn (
+  commons,
+  `entitystorage-model`,
+  `entitystorage-client`)
+lazy val `entitystorage-model`  = project dependsOn commons
+lazy val entitystorage          = project dependsOn (
+  commons,
+  commons % "test->test",
+  deeplang,
+  `entitystorage-model`)
+lazy val `entitystorage-client` = project dependsOn `entitystorage-model`
 lazy val experimentmanager      = project dependsOn (
   commons,
   commons % "test->test",
@@ -17,5 +25,10 @@ lazy val experimentmanager      = project dependsOn (
   graphjson,
   models)
 lazy val graph         = project dependsOn (commons, deeplang)
-lazy val graphexecutor = project dependsOn (commons, deeplang, `entitystorage-client`, graph, models)
+lazy val graphexecutor = project dependsOn (
+  commons,
+  deeplang,
+  `entitystorage-client`,
+  graph,
+  models)
 lazy val graphjson     = project dependsOn (commons, deeplang, graph)

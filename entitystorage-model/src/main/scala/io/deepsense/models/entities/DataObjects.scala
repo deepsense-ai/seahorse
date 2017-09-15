@@ -6,12 +6,10 @@
 
 package io.deepsense.models.entities
 
-import io.deepsense.deeplang.doperables.Report
-
 /**
  * Report representation with all its content.
  */
-case class DataObjectReport(report: Report)
+case class DataObjectReport(message: String)
 
 /**
  * Reference to an actual data e.g. DataFrame, Model, etc
