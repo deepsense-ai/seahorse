@@ -30,8 +30,9 @@ class Service(object):
 
     enable_authorization = 'false'
 
-    def __init__(self, services):
+    def __init__(self, services, generation_config):
         self.services = services
+        self.generation_config = generation_config
 
     def exposed_address(self, name=None):
         return Address('127.0.0.1', self.port_mapping().get(name).exposed)
@@ -75,8 +76,6 @@ class Mail(Service):
 
 class Proxy(Service):
 
-    network_mode = 'host'
-
     def depends_on(self):
         return [
             WorkflowManager,
@@ -93,7 +92,7 @@ class Proxy(Service):
     def environment(self):
         return Env(
             VCAP_SERVICES=json.dumps(self.vcap_services()),
-            HOST='127.0.0.1',
+            HOST='0.0.0.0',
             ENABLE_AUTHORIZATION=self.services.Authorization.enable_authorization(),
             FORCE_HTTPS='false',
             PORT=33321) + \
@@ -103,7 +102,7 @@ class Proxy(Service):
         return PortMappings().add(PortMappings.Mapping(33321, 33321))
 
     def service_address(self, service, name=None):
-        return getattr(self.services, service.name()).exposed_address(name).as_string()
+        return getattr(self.services, service.name()).internal_address(name).as_string()
 
     def vcap_services(self):
         def service_desc(service_name, service):
@@ -147,8 +146,6 @@ class Proxy(Service):
 
 class SchedulingManager(Service):
 
-    network_mode = 'host'
-
     def depends_on(self):
         return [
             Database,
@@ -162,10 +159,10 @@ class SchedulingManager(Service):
                Env(
                    PORT=self.port_mapping().get().internal,
                    SEAHORSE_EXTERNAL_URL="http://localhost:33321/",
-                   JDBC_URL=self.services.Database.exposed_jdbc_url(db='schedulingmanager'),
-                   SM_URL='http://{}'.format(self.services.SessionManager.exposed_address()),
-                   WM_URL='http://{}'.format(self.services.WorkflowManager.exposed_address())) + \
-               self.services.Mail.exposed_address().as_env('MAIL_SERVER_HOST', 'MAIL_SERVER_PORT') + \
+                   JDBC_URL=self.services.Database.internal_jdbc_url(db='schedulingmanager'),
+                   SM_URL='http://{}'.format(self.services.SessionManager.internal_address()),
+                   WM_URL='http://{}'.format(self.services.WorkflowManager.internal_address())) + \
+               self.services.Mail.internal_address().as_env('MAIL_SERVER_HOST', 'MAIL_SERVER_PORT') + \
                self.services.WorkflowManager.credentials().as_env()
 
     def port_mapping(self):
@@ -173,7 +170,6 @@ class SchedulingManager(Service):
 
 
 class SchedulingManagerBridgeNetwork(SchedulingManager):
-    network_mode = None
 
     @classmethod
     def name(cls):
@@ -207,8 +203,8 @@ class SessionManager(Service):
 
     def environment(self):
         return Env(
-            SM_HOST='127.0.0.1',
-            SM_PORT=self.port_mapping().get().exposed,
+            SM_HOST=self.generation_config.gateway,
+            SM_PORT=self.port_mapping().get().internal,
             JDBC_URL=self.services.Database.exposed_jdbc_url(db='sessionmanager'),
             NOTEBOOK_SERVER_ADDRESS='http://{}'.format(self.services.Notebooks.exposed_address().as_string()),
             DATASOURCE_SERVER_ADDRESS=self.services.DatasourceManager.exposed_datasource_url(),
@@ -236,6 +232,9 @@ class SessionManager(Service):
             Directories.expose(Directories.spark_application_logs, '/spark_applications_logs', 'rw'),
             Directories.expose(Directories.library, '/library')
         ]
+
+    def internal_address(self, name=None):
+        return Address(self.generation_config.gateway, self.port_mapping().get(name).internal)
 
 
 class SessionManagerBridgeNetwork(SessionManager):
@@ -265,8 +264,6 @@ class SessionManagerBridgeNetwork(SessionManager):
 
 class WorkflowManager(Service):
 
-    network_mode = 'host'
-
     def depends_on(self):
         return [
             Database,
@@ -275,10 +272,10 @@ class WorkflowManager(Service):
 
     def environment(self):
         return Env(
-            WM_HOST='127.0.0.1',
+            WM_HOST='0.0.0.0',
             WM_PORT=self.port_mapping().get().exposed,
-            JDBC_URL=self.services.Database.exposed_jdbc_url(db='workflowmanager'),
-            DATASOURCE_SERVER_ADDRESS=self.services.DatasourceManager.exposed_datasource_url()) + \
+            JDBC_URL=self.services.Database.internal_jdbc_url(db='workflowmanager'),
+            DATASOURCE_SERVER_ADDRESS=self.services.DatasourceManager.internal_datasource_url()) + \
                self.credentials().as_env()
 
     @staticmethod
@@ -385,7 +382,7 @@ class Notebooks(Service):
     def environment(self):
         return Env(
             MISSED_HEARTBEAT_LIMIT=30,
-            WM_URL='http://{}'.format(self.services.WorkflowManager.exposed_address().as_string()),
+            WM_URL='http://{}'.format(self.services.WorkflowManager.internal_address().as_string()),
             JUPYTER_LISTENING_IP='0.0.0.0',
             JUPYTER_LISTENING_PORT=self.port_mapping().get().internal,
             HEARTBEAT_INTERVAL=2.0) \
