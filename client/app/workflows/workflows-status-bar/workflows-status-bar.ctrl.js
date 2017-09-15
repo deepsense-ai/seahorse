@@ -1,8 +1,8 @@
 'use strict';
 
 /* @ngInject */
-function WorkflowStatusBarController($rootScope, $stateParams, WorkflowService,
-  WorkflowsApiClient, WorkflowStatusBarService, TimeService, config) {
+function WorkflowStatusBarController($stateParams, WorkflowService,
+  WorkflowsApiClient, WorkflowStatusBarService, config) {
 
   this.data = WorkflowStatusBarService.data;
 
