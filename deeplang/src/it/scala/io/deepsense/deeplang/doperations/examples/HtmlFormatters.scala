@@ -22,6 +22,7 @@ import org.apache.spark.sql.Row
 import spray.json._
 
 import io.deepsense.deeplang.DOperation
+import io.deepsense.deeplang.doperables.Projector
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 
 object ExampleHtmlFormatter {
@@ -194,6 +195,8 @@ object ParametersHtmlFormatter {
     jsObject.fields.toSeq.flatMap {
       case (name, value: JsArray) if isColumnPairs(value) =>
         Seq(handleColumnPairs(name, value))
+      case (name, value: JsArray) if isColumnProjection(value) =>
+        Seq(handleColumnProjection(name, value))
       case (name, value: JsObject) if value.fields.size == 1 =>
         val (fieldName, innerFieldObject) = value.fields.head
         (name, fieldName) +: extractParamValues(innerFieldObject.asJsObject)
@@ -214,13 +217,14 @@ object ParametersHtmlFormatter {
         |  </tr>""".stripMargin
   }
 
+  private def isColumn(jsObject: JsObject): Boolean = {
+    jsObject.fields.contains(typeFieldName) &&
+      jsObject.fields(typeFieldName).isInstanceOf[JsString]
+    jsObject.fields(typeFieldName).asInstanceOf[JsString].value == "column" &&
+      jsObject.fields.contains(valueFieldName)
+  }
+
   private def isColumnPairs(value: JsArray): Boolean = {
-    def isColumn(jsObject: JsObject): Boolean = {
-      jsObject.fields.contains(typeFieldName) &&
-        jsObject.fields(typeFieldName).isInstanceOf[JsString]
-      jsObject.fields(typeFieldName).asInstanceOf[JsString].value == "column" &&
-        jsObject.fields.contains(valueFieldName)
-    }
     value.elements.forall { v =>
       v.isInstanceOf[JsObject] &&
         v.asJsObject.fields.contains(leftColumnFieldName) &&
@@ -232,13 +236,23 @@ object ParametersHtmlFormatter {
     }
   }
 
-  private def handleColumnPairs(name: String, value: JsArray): (String, String) = {
-    def extractColumnName(v: JsValue, key: String): String = {
-      v.asJsObject
-        .fields(key)
-        .asInstanceOf[JsObject]
-        .fields(valueFieldName).asInstanceOf[JsString].value
+  private def isColumnProjection(value: JsArray): Boolean = {
+    value.elements.forall { v =>
+      v.isInstanceOf[JsObject] &&
+        v.asJsObject.fields.contains(Projector.OriginalColumnParameterName) &&
+        v.asJsObject.fields(Projector.OriginalColumnParameterName).isInstanceOf[JsObject] &&
+        isColumn(v.asJsObject.fields(Projector.OriginalColumnParameterName).asJsObject)
     }
+  }
+
+  private def extractColumnName(v: JsValue, key: String): String = {
+    v.asJsObject
+      .fields(key)
+      .asInstanceOf[JsObject]
+      .fields(valueFieldName).asInstanceOf[JsString].value
+  }
+
+  private def handleColumnPairs(name: String, value: JsArray): (String, String) = {
     val pairs = value.elements.map { v =>
       val leftColumn = extractColumnName(v, leftColumnFieldName)
       val rightColumn = extractColumnName(v, rightColumnFieldName)
@@ -247,6 +261,28 @@ object ParametersHtmlFormatter {
 
     (name, s"Join on $pairs")
   }
+
+  private def handleColumnProjection(name: String, value: JsArray): (String, String) = {
+    val pairs = value.elements.map { v =>
+      val originalColumn = extractColumnName(v, Projector.OriginalColumnParameterName)
+      val renameDesc =
+        if (v.asJsObject.fields.contains(Projector.RenameColumnParameterName) &&
+            v.asJsObject.fields(Projector.RenameColumnParameterName)
+              .asJsObject.fields.contains("Yes")) {
+          " (renamed to <code>" +
+            v.asJsObject.fields(Projector.RenameColumnParameterName).asJsObject
+              .fields.get("Yes").get.asJsObject.fields(Projector.ColumnNameParameterName)
+              .asInstanceOf[JsString].value +
+            "</code>)"
+        } else {
+          ""
+        }
+      s"<code>$originalColumn</code>$renameDesc"
+    }.mkString(", ")
+
+    (name, s"Select columns: $pairs")
+  }
+
 
   private def isMultipleColumnSelection(name: String, value: JsObject): Boolean = {
     value.fields.size == 2 &&

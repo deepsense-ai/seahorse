@@ -40,7 +40,7 @@ class ColumnsFiltererIntegSpec
   import TransformerSerialization._
 
   val columns = Seq(
-    StructField("c", DoubleType),
+    StructField("c", IntegerType),
     StructField("b", StringType),
     StructField("a", DoubleType),
     StructField("x", TimestampType),

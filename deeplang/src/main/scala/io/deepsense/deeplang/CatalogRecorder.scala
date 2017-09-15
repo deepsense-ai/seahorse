@@ -43,6 +43,7 @@ object CatalogRecorder {
     catalog.registerDOperable[ColumnsFilterer]()
     catalog.registerDOperable[RowsFilterer]()
     catalog.registerDOperable[MissingValuesHandler]()
+    catalog.registerDOperable[Projector]()
     catalog.registerDOperable[DatetimeDecomposer]()
     catalog.registerDOperable[SqlTransformer]()
     catalog.registerDOperable[SqlColumnTransformer]()
@@ -177,6 +178,9 @@ object CatalogRecorder {
       DOperationCategories.Filtering)
 
     catalog.registerDOperation[HandleMissingValues](
+      DOperationCategories.Filtering)
+
+    catalog.registerDOperation[Projection](
       DOperationCategories.Filtering)
 
     catalog.registerDOperation[CreateCustomTransformer](

@@ -33,6 +33,7 @@ List of all currently supported operations:
   * [Filter Columns](operations/filter_columns.html)
   * [Filter Rows](operations/filter_rows.html)
   * [Handle Missing Values](operations/handle_missing_values.html)
+  * [Projection](operations/projection.html)
 * Transformation
   * Custom
     * [Create Custom Transformer](operations/create_custom_transformer.html)
