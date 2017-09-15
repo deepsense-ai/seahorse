@@ -50,7 +50,7 @@ production use, this is why it consists of the simplest system setup which does 
 * Python, version 2.7.6
 * NumPy, version 1.8.2
 * JDBC drivers:
-    
+
     -   MySQL, version 5.1.38
     -   PostgreSQL, version 9.4.1207
 
@@ -104,7 +104,9 @@ Example:
 
 ### Note for Windows users
 
-By default, Vagrant keeps boxes and configuration in `%HOMEPATH%/.vagrant.d`, but can't access it when a `%HOMEPATH%` includes non-ASCII characters. It's a well known <a target="_blank" href="https://github.com/mitchellh/vagrant/issues/4966">Vagrant bug</a> and results in:
+By default, Vagrant keeps boxes and configuration in `%HOMEPATH%/.vagrant.d`,
+but cannot access it when a `%HOMEPATH%` includes non-ASCII characters.
+It's a well known <a target="_blank" href="https://github.com/mitchellh/vagrant/issues/4966">Vagrant bug</a> and results in:
 
     > vagrant up
     ...
