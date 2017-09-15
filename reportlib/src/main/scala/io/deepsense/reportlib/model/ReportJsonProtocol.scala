@@ -16,8 +16,9 @@
 
 package io.deepsense.reportlib.model
 
-import io.deepsense.commons.types.ColumnType
 import spray.json._
+
+import io.deepsense.commons.types.ColumnType
 
 trait ReportJsonProtocol
   extends DefaultJsonProtocol
@@ -29,36 +30,33 @@ trait ReportJsonProtocol
   val statisticsConstructor: ((maybeStats, maybeStats, maybeStats) => Statistics) = Statistics.apply
   implicit val statisticsFormat = jsonFormat3(statisticsConstructor)
 
-  implicit val categoricalDistributionFormat = jsonFormat(
-    DiscreteDistribution.apply,
-    DistributionJsonProtocol.nameKey,
-    DistributionJsonProtocol.descriptionKey,
-    DistributionJsonProtocol.missingValuesKey,
-    DistributionJsonProtocol.bucketsKey,
-    DistributionJsonProtocol.countsKey,
-    DistributionJsonProtocol.subtypeKey,
-    DistributionJsonProtocol.typeKey)
+  implicit object DistributionJsonFormat extends JsonFormat[Distribution] {
 
-  implicit val continuousDistributionFormat = jsonFormat(
-    ContinuousDistribution.apply,
-    DistributionJsonProtocol.nameKey,
-    DistributionJsonProtocol.descriptionKey,
-    DistributionJsonProtocol.missingValuesKey,
-    DistributionJsonProtocol.bucketsKey,
-    DistributionJsonProtocol.countsKey,
-    DistributionJsonProtocol.statisticsKey,
-    DistributionJsonProtocol.subtypeKey,
-    DistributionJsonProtocol.typeKey)
+    val categoricalDistributionFormat = jsonFormat(
+      DiscreteDistribution.apply,
+      DistributionJsonProtocol.nameKey,
+      DistributionJsonProtocol.descriptionKey,
+      DistributionJsonProtocol.missingValuesKey,
+      DistributionJsonProtocol.bucketsKey,
+      DistributionJsonProtocol.countsKey)
 
-  implicit object DistributionJsonReader extends JsonFormat[Distribution] {
+    val continuousDistributionFormat = jsonFormat(
+      ContinuousDistribution.apply,
+      DistributionJsonProtocol.nameKey,
+      DistributionJsonProtocol.descriptionKey,
+      DistributionJsonProtocol.missingValuesKey,
+      DistributionJsonProtocol.bucketsKey,
+      DistributionJsonProtocol.countsKey,
+      DistributionJsonProtocol.statisticsKey)
+
     override def read(json: JsValue): Distribution = {
       val fields: Map[String, JsValue] = json.asJsObject.fields
       require(fields.get(DistributionJsonProtocol.typeKey) ==
       Some(JsString(DistributionJsonProtocol.typeName)))
       val subtype: String = fields.get(DistributionJsonProtocol.subtypeKey).get.convertTo[String]
       subtype match {
-        case DiscreteDistribution.subtype => json.convertTo[DiscreteDistribution]
-        case ContinuousDistribution.subtype => json.convertTo[ContinuousDistribution]
+        case DiscreteDistribution.subtype => json.convertTo(categoricalDistributionFormat)
+        case ContinuousDistribution.subtype => json.convertTo(continuousDistributionFormat)
       }
     }
     override def write(distribution: Distribution): JsValue = {

@@ -36,9 +36,7 @@ case class DiscreteDistribution(
     override val description: String,
     override  val missingValues: Long,
     buckets: Seq[String],
-    counts: Seq[Long],
-    override val subtype: String = DiscreteDistribution.subtype,
-    blockType: String = DistributionJsonProtocol.typeName)
+    counts: Seq[Long])
   extends UnivariateDistribution(
     name,
     DiscreteDistribution.subtype,
@@ -46,8 +44,6 @@ case class DiscreteDistribution(
     missingValues,
     buckets,
     counts) {
-  require(subtype == DiscreteDistribution.subtype)
-  require(blockType == DistributionJsonProtocol.typeName)
   require(buckets.size == counts.size, "buckets size does not match count size. " +
     s"Buckets size is: ${buckets.size}, counts size is: ${counts.size}")
 }
@@ -62,9 +58,7 @@ case class ContinuousDistribution(
     override val missingValues: Long,
     buckets: Seq[String],
     counts: Seq[Long],
-    statistics: Statistics,
-    override val subtype: String = ContinuousDistribution.subtype,
-    blockType: String = DistributionJsonProtocol.typeName)
+    statistics: Statistics)
   extends UnivariateDistribution(
     name,
     ContinuousDistribution.subtype,
@@ -72,8 +66,6 @@ case class ContinuousDistribution(
     missingValues,
     buckets.map(_.toString),
     counts) with ReportJsonProtocol {
-  require(subtype == ContinuousDistribution.subtype)
-  require(blockType == DistributionJsonProtocol.typeName)
   require(buckets.size != 1, "Buckets size cannot be 1")
   require((buckets.isEmpty && counts.isEmpty)
     || (!buckets.isEmpty && (buckets.size == counts.size + 1)),

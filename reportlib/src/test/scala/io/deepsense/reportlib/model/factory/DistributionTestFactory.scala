@@ -16,14 +16,14 @@
 
 package io.deepsense.reportlib.model.factory
 
-import io.deepsense.reportlib.model.{DiscreteDistribution, ContinuousDistribution, Statistics}
+import io.deepsense.reportlib.model.{Distribution, DiscreteDistribution, ContinuousDistribution, Statistics}
 
 trait DistributionTestFactory {
 
-  def testCategoricalDistribution: DiscreteDistribution =
+  def testCategoricalDistribution: Distribution =
     testCategoricalDistribution(DistributionTestFactory.distributionName)
 
-  def testCategoricalDistribution(name: String): DiscreteDistribution =
+  def testCategoricalDistribution(name: String): Distribution =
     DiscreteDistribution(
       name,
       DistributionTestFactory.distributionDescription,
@@ -31,10 +31,10 @@ trait DistributionTestFactory {
       DistributionTestFactory.categoricalDistributionBuckets,
       DistributionTestFactory.distributionCounts)
 
-  def testContinuousDistribution: ContinuousDistribution =
+  def testContinuousDistribution: Distribution =
     testContinuousDistribution(DistributionTestFactory.distributionName)
 
-  def testContinuousDistribution(name: String): ContinuousDistribution =
+  def testContinuousDistribution(name: String): Distribution =
     ContinuousDistribution(
       name,
       DistributionTestFactory.distributionDescription,
