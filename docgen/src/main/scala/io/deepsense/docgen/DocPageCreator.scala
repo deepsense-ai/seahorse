@@ -20,7 +20,7 @@ import java.io.{File, PrintWriter}
 
 import io.deepsense.commons.BuildInfo
 import io.deepsense.deeplang.DOperation
-import io.deepsense.deeplang.doperations.{EstimatorAsFactory, EvaluatorAsFactory, TransformerAsOperation}
+import io.deepsense.deeplang.doperations.{EstimatorAsFactory, EstimatorAsOperation, EvaluatorAsFactory, TransformerAsOperation}
 import io.deepsense.deeplang.params._
 import io.deepsense.deeplang.params.choice.{AbstractChoiceParam, Choice, ChoiceParam, MultipleChoiceParam}
 
@@ -99,6 +99,10 @@ trait DocPageCreator {
         inputOutputTable(Seq(
           ("<code><a href=\"../classes/dataframe.html\">DataFrame</a></code>", "Input DataFrame")
         ))
+      case (es: EstimatorAsOperation[_]) =>
+        inputOutputTable(Seq(
+          ("<code><a href=\"../classes/dataframe.html\">DataFrame</a></code>", "Input DataFrame")
+        ))
       case (e: EstimatorAsFactory[_]) =>
         "This operation does not take any input."
       case (ev: EvaluatorAsFactory[_]) =>
@@ -116,6 +120,14 @@ trait DocPageCreator {
           ("<code><a href=\"../classes/transformer.html\">Transformer</a></code>",
             "Transformer that allows to apply the operation on other DataFrames using " +
             "<a href=\"transform.html\">Transform</a>")
+        ))
+      case (eso: EstimatorAsOperation[_]) =>
+        inputOutputTable(Seq(
+          ("<code><a href=\"../classes/dataframe.html\">DataFrame</a></code>",
+            "Output DataFrame"),
+          ("<code><a href=\"../classes/transformer.html\">Transformer</a></code>",
+            "Transformer that allows to apply the operation on other DataFrames using " +
+              "<a href=\"transform.html\">Transform</a>")
         ))
       case (e: EstimatorAsFactory[_]) =>
         inputOutputTable(Seq(
@@ -149,7 +161,7 @@ trait DocPageCreator {
     """
       |</tbody>
       |</table>
-    """.stripMargin
+      |""".stripMargin
   }
 
   private def tableRows(data: Seq[(String, String)]): String = {
@@ -174,11 +186,11 @@ trait DocPageCreator {
       |</tr>
       |</thead>
       |<tbody>
-    """.stripMargin + extractParameters(operation) +
+      |""".stripMargin + extractParameters(operation) +
     """
       |</tbody>
       |</table>
-    """.stripMargin
+      |""".stripMargin
   }
 
   private def extractParameters(operation: DOperation): String = {
@@ -215,7 +227,7 @@ trait DocPageCreator {
       |<td><code><a href="../parameters.html#$anchor">${paramDescription.paramType}</a></code></td>
       |<td>${paramDescription.description}</td>
       |</tr>
-    """.stripMargin
+      |""".stripMargin
   }
 
   private def paramTypeAnchor(paramType: String) = {

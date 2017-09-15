@@ -14,7 +14,20 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 
 ## Input
 
-This operation does not take any input.
+
+<table>
+<thead>
+<tr>
+<th style="width:15%">Port</th>
+<th style="width:15%">Type Qualifier</th>
+<th style="width:70%">Description</th>
+</tr>
+</thead>
+<tbody>
+    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>Input DataFrame</td></tr>
+</tbody>
+</table>
+
 
 ## Output
 
@@ -28,10 +41,10 @@ This operation does not take any input.
 </tr>
 </thead>
 <tbody>
-    <tr><td><code>0</code></td><td><code><a href="../classes/estimator.html">Estimator</a></code></td><td>Estimator that can be used in <a href="fit.html">Fit</a> operation</td></tr>
+    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>Output DataFrame</td></tr><tr><td><code>1</code></td><td><code><a href="../classes/transformer.html">Transformer</a></code></td><td>Transformer that allows to apply the operation on other DataFrames using <a href="transform.html">Transform</a></td></tr>
 </tbody>
 </table>
-    
+
 
 ## Parameters
 
@@ -45,25 +58,25 @@ This operation does not take any input.
 </tr>
 </thead>
 <tbody>
-    
+
 <tr>
 <td><code>k</code></td>
 <td><code><a href="../parameters.html#numeric">Numeric</a></code></td>
 <td>Number of principal components.</td>
 </tr>
-    
+
 <tr>
 <td><code>input column</code></td>
 <td><code><a href="../parameters.html#single_column_selector">SingleColumnSelector</a></code></td>
 <td>Input column name.</td>
 </tr>
-    
+
 <tr>
 <td><code>output column</code></td>
 <td><code><a href="../parameters.html#string">String</a></code></td>
 <td>Output column name.</td>
 </tr>
-    
+
 </tbody>
 </table>
-    
+

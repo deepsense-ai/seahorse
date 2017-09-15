@@ -31,7 +31,7 @@ This operation does not take any input.
     <tr><td><code>0</code></td><td><code><a href="../classes/evaluator.html">Evaluator</a></code></td><td>Evaluator that can be used in <a href="evaluate.html">Evaluate</a> operation</td></tr>
 </tbody>
 </table>
-    
+
 
 ## Parameters
 
@@ -45,25 +45,25 @@ This operation does not take any input.
 </tr>
 </thead>
 <tbody>
-    
+
 <tr>
 <td><code>metric</code></td>
 <td><code><a href="../parameters.html#single_choice">SingleChoice</a></code></td>
 <td>Metric used in evaluation. Possible values: <code>["mse", "rmse", "r2", "mae"]</code></td>
 </tr>
-    
+
 <tr>
 <td><code>prediction column</code></td>
 <td><code><a href="../parameters.html#single_column_selector">SingleColumnSelector</a></code></td>
 <td>Prediction column.</td>
 </tr>
-    
+
 <tr>
 <td><code>label column</code></td>
 <td><code><a href="../parameters.html#single_column_selector">SingleColumnSelector</a></code></td>
 <td>Label column for model fitting.</td>
 </tr>
-    
+
 </tbody>
 </table>
-    
+

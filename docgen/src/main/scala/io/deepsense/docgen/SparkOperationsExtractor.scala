@@ -18,7 +18,7 @@ package io.deepsense.docgen
 
 import io.deepsense.deeplang.catalogs.doperations.{DOperationCategory, DOperationsCatalog}
 import io.deepsense.deeplang.doperables._
-import io.deepsense.deeplang.doperations.{EstimatorAsFactory, EvaluatorAsFactory, TransformerAsOperation}
+import io.deepsense.deeplang.doperations.{EstimatorAsFactory, EstimatorAsOperation, EvaluatorAsFactory, TransformerAsOperation}
 import io.deepsense.deeplang.{CatalogRecorder, DOperation}
 
 trait SparkOperationsExtractor {
@@ -55,6 +55,14 @@ trait SparkOperationsExtractor {
         ev.evaluator match {
           case (sev: SparkEvaluatorWrapper[_]) =>
             Some(sev.sparkEvaluator.getClass.getCanonicalName)
+          case _ => None
+        }
+      case es: (EstimatorAsOperation[_]) =>
+        es.estimator match {
+          case (ses: SparkMultiColumnEstimatorWrapper[_, _, _, _, _]) =>
+            Some(ses.sparkEstimatorWrapper.getClass.getCanonicalName)
+          case (ses: SparkEstimatorWrapper[_, _, _]) =>
+            Some(ses.sparkEstimator.getClass.getCanonicalName)
           case _ => None
         }
       case _ => None

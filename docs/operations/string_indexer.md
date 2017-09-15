@@ -1,14 +1,14 @@
 ---
 layout: documentation
-displayTitle: Assemble Vector
-title: Assemble Vector
-description: Assemble Vector
+displayTitle: String Indexer
+title: String Indexer
+description: String Indexer
 usesMathJax: true
 includeOperationsMenu: true
 ---
-Merges multiple columns into a single vector column.
+Maps a string column of labels to a column of label indices.
 
-This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.feature.VectorAssembler">org.apache.spark.ml.feature.VectorAssembler documentation</a>.
+This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#io.deepsense.deeplang.doperables.SingleStringIndexer">io.deepsense.deeplang.doperables.SingleStringIndexer documentation</a>.
 
 **Since**: Seahorse 1.0.0
 
@@ -60,15 +60,9 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 <tbody>
 
 <tr>
-<td><code>input columns</code></td>
-<td><code><a href="../parameters.html#multiple_column_selector">MultipleColumnSelector</a></code></td>
-<td>Input columns.</td>
-</tr>
-
-<tr>
-<td><code>output column</code></td>
-<td><code><a href="../parameters.html#string">String</a></code></td>
-<td>Name of created output column.</td>
+<td><code>one or many</code></td>
+<td><code><a href="../parameters.html#single_choice">SingleChoice</a></code></td>
+<td>Transform one or many columns. Possible values: <code>["Transform one column", "Transform multiple columns"]</code></td>
 </tr>
 
 </tbody>

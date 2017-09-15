@@ -32,6 +32,7 @@ List of all currently supported operations:
   * [Convert to n-grams](operations/convert_to_n-grams.html)
   * [DCT](operations/dct.html)
   * [HashingTF](operations/hashingtf.html)
+  * [String Indexer](operations/string_indexer.html)
   * [Normalize](operations/normalize.html)
   * [One Hot Encode](operations/one_hot_encode.html)
   * [Polynomial Expand](operations/polynomial_expand.html)

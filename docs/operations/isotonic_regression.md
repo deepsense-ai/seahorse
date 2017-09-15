@@ -31,7 +31,7 @@ This operation does not take any input.
     <tr><td><code>0</code></td><td><code><a href="../classes/estimator.html">Estimator</a></code></td><td>Estimator that can be used in <a href="fit.html">Fit</a> operation</td></tr>
 </tbody>
 </table>
-    
+
 
 ## Parameters
 
@@ -45,43 +45,43 @@ This operation does not take any input.
 </tr>
 </thead>
 <tbody>
-    
+
 <tr>
 <td><code>feature index</code></td>
 <td><code><a href="../parameters.html#numeric">Numeric</a></code></td>
 <td>Index of the feature if features column is a vector column, no effect otherwise.</td>
 </tr>
-    
+
 <tr>
 <td><code>features column</code></td>
 <td><code><a href="../parameters.html#single_column_selector">SingleColumnSelector</a></code></td>
 <td>Features column for model fitting.</td>
 </tr>
-    
+
 <tr>
 <td><code>isotonic</code></td>
 <td><code><a href="../parameters.html#boolean">Boolean</a></code></td>
 <td>Whether the output sequence should be isotonic/increasing (true) or antitonic/decreasing (false).</td>
 </tr>
-    
+
 <tr>
 <td><code>label column</code></td>
 <td><code><a href="../parameters.html#single_column_selector">SingleColumnSelector</a></code></td>
 <td>Label column for model fitting.</td>
 </tr>
-    
+
 <tr>
 <td><code>prediction column</code></td>
 <td><code><a href="../parameters.html#string">String</a></code></td>
 <td>Prediction column created during model scoring.</td>
 </tr>
-    
+
 <tr>
 <td><code>weight column</code></td>
 <td><code><a href="../parameters.html#single_column_selector">SingleColumnSelector</a></code></td>
 <td>Weight column - if this is not set, we treat all instance weights as 1.0.</td>
 </tr>
-    
+
 </tbody>
 </table>
-    
+
