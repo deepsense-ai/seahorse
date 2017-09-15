@@ -5,6 +5,7 @@ require('./attribute-creator-type/attribute-creator-type.js');
 require('./attribute-dynamic-param/attribute-dynamic-param-type.js');
 require('./attribute-gridsearch-param/attribute-gridsearch-param-type.js');
 require('./attribute-load-from-library/attribute-load-from-library-type.js');
+require('./attribute-load-from-library/library-connector/library-connector.js');
 require('./attribute-multiple-choice/attribute-multiple-choice-type.js');
 require('./attribute-multiple-numeric/attribute-multiple-numeric-type.js');
 require('./attribute-multiplier/attribute-multiplier-type.js');
@@ -13,5 +14,4 @@ require('./attribute-prefix-based-creator-type/attribute-prefix-based-creator-ty
 require('./attribute-save-to-library/attribute-save-to-library-type.js');
 require('./attribute-single-choice/attribute-single-choice-type.js');
 require('./attribute-string/attribute-string-type.js');
-require('./attribute-load-from-library/library-connector/library-connector.js');
 require('./attribute-workflow/attribute-workflow-type.js');

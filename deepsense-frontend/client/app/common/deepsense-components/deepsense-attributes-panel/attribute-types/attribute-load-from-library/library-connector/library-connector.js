@@ -23,11 +23,12 @@ function LibraryConnector() {
       });
 
       function openLibrary() {
-        DataframeLibraryModalService.openLibraryModal(CAN_SELECT_DATAFRAME).then((result) => {
-          if (result) {
-            vm.fileUri = result.uri;
-          }
-        });
+        DataframeLibraryModalService.openLibraryModal(CAN_SELECT_DATAFRAME)
+          .then((result) => {
+            if (result) {
+              vm.fileUri = result.uri;
+            }
+          });
       }
     }
   };

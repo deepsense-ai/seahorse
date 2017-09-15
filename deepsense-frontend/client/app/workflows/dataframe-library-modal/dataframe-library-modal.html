@@ -8,7 +8,7 @@
       type="file"
       id="uploader-input"
       style="display: none;"
-      file-upload-change="controller.fileUploaded"
+      file-upload-change="controller.onFileSelectedHandler"
     >
 
     <div class="dataframe-form">
@@ -30,7 +30,7 @@
         <div class="col-md-12">
           <div class="drop-area"
                ng-click="controller.openFileBrowser()"
-               dropzone-file-upload="controller.fileUploaded">
+               dropzone-file-upload="controller.onFileSelectedHandler">
             Drag new files here
           </div>
         </div>

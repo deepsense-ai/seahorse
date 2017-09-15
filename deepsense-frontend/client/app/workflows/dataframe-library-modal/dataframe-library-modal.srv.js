@@ -19,10 +19,10 @@ function DataframeLibraryModalService($uibModal, LibraryService) {
           return canChooseDataframe;
         }
       }
-    }).result.then(function (result) {
+    }).result.then((result) => {
       LibraryService.cleanUploadingFiles();
       return result;
-    }, function () {
+    }).catch(() => {
       LibraryService.cleanUploadingFiles();
     });
 

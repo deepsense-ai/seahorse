@@ -54,10 +54,10 @@ function LibraryService($q, $log, LibraryApiService) {
    * @returns {Promise}
    */
   function uploadFiles(files) {
-    const promisesArray = [];
+    let promisesArray = [];
     if (angular.isArray(files)) {
-      files.forEach((file) => {
-        promisesArray.push(uploadFile(file));
+      promisesArray = files.map((file) => {
+        return uploadFile(file);
       });
     } else {
       $log.error('FilesList is not an array');
@@ -70,7 +70,7 @@ function LibraryService($q, $log, LibraryApiService) {
    * @param {File} file from HTML5 FileAPI
    * @returns {Promise}
    */
-  function uploadFile(file){
+  function uploadFile(file) {
     const uploadingFile = {
       name: file.name,
       progress: 0,
@@ -88,14 +88,15 @@ function LibraryService($q, $log, LibraryApiService) {
 
     uploading.push(uploadingFile);
 
-    return LibraryApiService.upload(file, progressHandler).then((result) => {
-      service.fetchAll();
-      return result;
-    }, (error) => {
-      uploadingFile.status = STATUS_ERROR;
-      $log.error('Uplading failed for file ', file, error);
-      throw error;
-    });
+    return LibraryApiService.upload(file, progressHandler)
+      .then((result) => {
+        service.fetchAll();
+        return result;
+      }, (error) => {
+        uploadingFile.status = STATUS_ERROR;
+        $log.error('Uplading failed for file ', file, error);
+        throw error;
+      });
   }
 
   /**

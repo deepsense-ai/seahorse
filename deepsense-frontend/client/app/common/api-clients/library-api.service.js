@@ -15,14 +15,11 @@ function LibraryApi($http, config) {
    */
   function getAll() {
     return $http.get(URL).then(function processResult(result) {
-      const arr = [];
-      result.data.forEach((file) => {
-        const parsedFile = Object.assign(file, {
+      return result.data.map((file) => {
+        return Object.assign(file, {
           downloadUrl: getDownloadUrlForFile(file.name)
         });
-        arr.push(parsedFile);
       });
-      return arr;
     });
   }
 
@@ -43,8 +40,6 @@ function LibraryApi($http, config) {
           progressHandler(uploadProgress);
         }
       }
-    }).then(function processResult(result) {
-      return result;
     });
   }
 
@@ -53,9 +48,7 @@ function LibraryApi($http, config) {
    * @returns {Promise}
    */
   function remove(fileName) {
-    return $http.delete(`${URL}/${fileName}`).then(function processResult(result) {
-      return result;
-    });
+    return $http.delete(`${URL}/${fileName}`);
   }
 
   /**
@@ -63,7 +56,7 @@ function LibraryApi($http, config) {
    * @returns {string} Url
    */
   function getDownloadUrlForFile(fileName) {
-    return URL + '/' + encodeURIComponent(fileName);
+    return `${URL}/${encodeURIComponent(fileName)}`;
   }
 }
 
