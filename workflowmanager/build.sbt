@@ -12,6 +12,6 @@ enablePlugins(JavaAppPackaging, GitVersioning, DeepsenseUniversalSettingsPlugin)
 
 // Docker related configuration
 
-dockerBaseImage := "anapsix/alpine-java:jre8"
+dockerBaseImage := "docker-repo.deepsense.codilime.com/intel/tap-base-java:java8-jessie"
 dockerExposedPorts := Seq(9080)
 dockerUpdateLatest := true
