@@ -1,0 +1,7 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+- name: Install python-pip
+  apt: package=python-pip
+
+- name: Install Py4j
+  pip: name=py4j

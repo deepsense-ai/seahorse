@@ -3,7 +3,8 @@
 - hosts: seahorse-vm
   gather_facts: false
   tasks:
-    - include: tasks/install_docker.yml
+    - apt: update_cache=yes
+    - include: tasks/install_py4j.yml
     - include: tasks/install_openjdk.yml
     - shell: usermod -a -G vagrant ubuntu
 
@@ -14,8 +15,6 @@
   vars_files:
     - vars/env.yml
   tasks:
-    - name: Wait for Cassandra to come up
-      wait_for: host={{cassandra_server_ip}} port={{cassandra_server_port}}
     - name: Wait 15s for clients to reconnect
       wait_for: timeout=15
 

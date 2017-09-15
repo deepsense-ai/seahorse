@@ -1,6 +1,6 @@
 - set_fact: ds_frontend_artifact_url="{{artifactory_base_url}}/deepsense-frontend-release/io/deepsense/deepsense-frontend/{{ds_frontend_package_name}}/{{ds_frontend_package_name}}.zip"
 
-- set_fact: ds_frontend_artifact_url="{{artifactory_base_url}}/deepsense-frontend-release/io/deepsense/deepsense-frontend/{{ds_frontend_package_name}}/{{ds_frontend_package_name}}.zip"
+- set_fact: ds_frontend_artifact_url="{{artifactory_base_url}}/deepsense-frontend-snapshot/io/deepsense/deepsense-frontend/{{ds_frontend_package_name}}/{{ds_frontend_package_name}}.zip"
   when: ds_frontend_package_name | search('.*latest')
 
 - set_fact: ds_frontend_artifact_url="{{artifactory_base_url}}/deepsense-frontend-snapshot/io/deepsense/deepsense-frontend/{{ds_frontend_package_name|regex_replace('^(.+)-SNAPSHOT-.*$','\\1-SNAPSHOT')}}/{{ds_frontend_package_name}}/{{ds_frontend_package_name}}.zip"

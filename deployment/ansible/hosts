@@ -32,3 +32,6 @@ ds-frontend
 
 [cassandra]
 ds-system-test-env-master
+
+[rabbitmq]
+ds-frontend

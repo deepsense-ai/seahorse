@@ -1,20 +1,24 @@
 # Copyright (c) 2015, CodiLime Inc.
 
 ---
-- name: Assures docker dir exists
-  file: path={{docker_dir}}/frontend state=directory
 
-- name: Create frontend dockerfile
-  template: src=Dockerfile.j2 dest="{{docker_dir}}/frontend/Dockerfile"
+- name: Install nginx
+  apt: package=nginx state=present
 
-- name: Create run.sh file
-  template: src="run.sh" dest="{{docker_dir}}/frontend/run.sh"
+- name: Assure directory exists
+  file: path="{{frontend_dir}}" state=directory
 
-- name: Copy config files
-  copy: src="{{item}}" dest="{{docker_dir}}/frontend/{{item}}"
-  with_items:
-    - config.js
-    - default.conf
+- name: Copy frontend config file
+  copy: src="config.js" dest="{{frontend_dir}}/config.js"
 
-- name: Build frontend docker image
-  command: docker build -t {{ds_frontend_docker_image}} {{docker_dir}}/frontend/
+- name: Copy installation script
+  template: src="install.sh.j2" dest="{{frontend_dir}}/install.sh" mode=0755
+
+- name: Install frontend
+  shell: "{{frontend_dir}}/install.sh"
+
+- name: Copy nginx config file
+  copy: src="default.conf" dest="/etc/nginx/conf.d/default.conf"
+
+- name: Restart nginx
+  service: name=nginx state=restarted

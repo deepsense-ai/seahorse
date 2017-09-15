@@ -2,14 +2,17 @@
 
 ---
 
-- name: Assures docker dir exists
-  file: path={{docker_dir}}/rabbitmq state=directory
+- name: Add RabbitMQ APT repository key
+  apt_key: url=https://www.rabbitmq.com/rabbitmq-signing-key-public.asc
+
+- name: Add RabbitMQ APT repository
+  apt_repository: repo='deb http://www.rabbitmq.com/debian/ testing main'
+
+- name: Install RabbitMQ
+  apt: package=rabbitmq-server
 
 - name: Copy config files
-  copy: src="{{item}}" dest="{{docker_dir}}/rabbitmq/{{item}}"
+  copy: src="{{item}}" dest="/etc/rabbitmq/{{item}}"
   with_items:
-    - Dockerfile
     - rabbitmq.config
-
-- name: Build frontend docker image
-  command: docker build -t rabbitmq {{docker_dir}}/rabbitmq/
+    - enabled_plugins

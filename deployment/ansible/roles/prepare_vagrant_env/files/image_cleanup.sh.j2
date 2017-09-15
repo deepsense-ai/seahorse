@@ -3,8 +3,13 @@
 rm -fR /tmp/docker-ansible /tmp/supervisor* /tmp/elementtree* /tmp/meld3* /tmp/setuptools* /tmp/kernels {{wm_install_dir}}/deepsense-workflowmanager.zip
 {{conda_dir}}/bin/conda clean --yes --tarballs
 {{conda_dir}}/bin/conda clean --index-cache
-apt-get -y remove juju-core puppet-common chef-zero
+
+apt-get -y purge juju-core puppet-common chef-zero
+apt-get -y purge x11-common
+apt-get -y purge linux-headers-3.13.0-54 linux-headers-3.13.0-54-generic linux-image-3.13.0-54 linux-image-3.13.0-54-generic
+
 apt-get -y autoremove
 apt-get -y clean
 rm -fR /var/lib/apt/lists/*
 
+cat /dev/zero > zero.fill ; sync ; sleep 1 ; sync ; rm -f zero.fill

@@ -10,7 +10,7 @@
  ],
  "env": {
   "SPARK_HOME": "/opt/spark",
-  "PYTHONPATH": "/opt/spark/python/:/opt/spark/python/lib/py4j-0.8.2.1-src.zip:/usr/local/share/jupyter/kernels/pyspark/",
+  "PYTHONPATH": "/opt/spark/python/:/opt/spark/python/lib/py4j-0.9-src.zip:/usr/local/share/jupyter/kernels/pyspark/",
   "KERNEL_INIT_FILE": "/usr/local/share/jupyter/kernels/pyspark/kernel_init.py",
   "PYSPARK_SUBMIT_ARGS": "--master local[*] pyspark-shell",
   "NOTEBOOK_SERVER_ADDRESS": "localhost",

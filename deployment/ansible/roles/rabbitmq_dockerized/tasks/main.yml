@@ -1,0 +1,15 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+---
+
+- name: Assures docker dir exists
+  file: path={{docker_dir}}/rabbitmq state=directory
+
+- name: Copy config files
+  copy: src="{{item}}" dest="{{docker_dir}}/rabbitmq/{{item}}"
+  with_items:
+    - Dockerfile
+    - rabbitmq.config
+
+- name: Build frontend docker image
+  command: docker build -t rabbitmq {{docker_dir}}/rabbitmq/

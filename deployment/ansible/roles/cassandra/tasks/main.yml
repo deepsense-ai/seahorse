@@ -1,14 +1,18 @@
 # Copyright (c) 2015, CodiLime Inc.
 
-- name: Run Cassandra container
-  docker:
-    name: cassandra
-    image: cassandra:{{cassandra_image_version}}
-    state: started
-    restart_policy: always
-    volumes:
-      - "{{data_dir}}:/var/lib/cassandra/data"
-    expose:
-      - 9042
-    ports:
-      - "{{cassandra_server_ip}}:{{cassandra_server_port}}:9042"
+---
+
+- name: Add Cassandra APT repository key
+  apt_key: keyserver=pgp.mit.edu id=F758CE318D77295D
+
+- name: Add Cassandra APT repository key
+  apt_key: keyserver=pgp.mit.edu id=2B5C1B00
+
+- name: Add Cassandra APT repository key
+  apt_key: keyserver=pgp.mit.edu id=0353B12C
+
+- name: Add Cassandra APT repository
+  apt_repository: repo='deb http://www.apache.org/dist/cassandra/debian 22x main'
+
+- name: Install Cassandra
+  apt: package=cassandra
