@@ -1,0 +1,14 @@
+{
+  "display_name": "PySpark",
+  "language": "python",
+  "argv": [
+    "/usr/bin/python",
+    "-m",
+    "forwarding_kernel",
+    "-f",
+    "{connection_file}"
+  ],
+  "env": {
+    "PYTHONPATH": "/usr/local/share/jupyter/kernels/pyspark"
+  }
+}

@@ -1,0 +1,171 @@
+# Copyright (c) 2016, CodiLime Inc.
+
+import base64
+import sys
+import os
+
+import zmq
+from ipykernel.ipkernel import IPythonKernel
+from ipykernel.kernelapp import IPKernelApp
+from traitlets import Type
+
+from rabbit_mq_client import RabbitMQClient, RabbitMQJsonSender, RabbitMQJsonReceiver
+from socket_forwarder import SocketForwarder
+from gateway_resolver import GatewayResolver
+from notebook_server_client import NotebookServerClient
+from utils import debug
+
+
+class ExecutingKernel(IPythonKernel):
+    """
+    This is where the actual code execution happens.
+
+    This kernel listens on messages sent via RabbitMQ and forwards them
+    to appropriate ZMQ sockets of the actual IPython kernel. Similarly,
+    all traffic sent via ZMQ sockets ends up in RabbitMQ.
+    """
+
+    EXCHANGE = 'remote_notebook_kernel'
+    EXECUTION_PUBLISHING_TOPIC = 'execution.{kernel_id}.from_external'
+    EXECUTION_SUBSCRIPTION_TOPIC = 'execution.{kernel_id}.to_external'
+
+    ZMQ_IDENTITY = 'ExecutingKernel'
+
+    def __init__(self, **kwargs):
+        super(ExecutingKernel, self).__init__(**kwargs)
+
+        self._rabbit_sender_client, self._rabbit_listener = self._init_rabbit_clients()
+        self._socket_forwarders = self._init_socket_forwarders()
+
+    def start(self):
+        super(ExecutingKernel, self).start()
+        self._rabbit_listener.subscribe(topic=self.EXECUTION_SUBSCRIPTION_TOPIC.format(kernel_id=self._kernel_id),
+                                        handler=self._handle_execution_message_from_rabbit)
+
+        self.session.key = self._signature_key
+
+        for forwarder in self._socket_forwarders.itervalues():
+            forwarder.start()
+
+        self._init_kernel()
+
+    def _init_kernel(self):
+        mq_host, mq_port = self._rabbit_mq_address
+        nb_host, nb_port = self._notebook_server_address
+        gateway_resolver = GatewayResolver([mq_host, mq_port])
+        gateway_host, gateway_port = gateway_resolver.get_gateway_address()
+        kernel_init_file = os.path.join(os.getcwd(), "kernel_init.py")
+
+        nb_client = NotebookServerClient(nb_host, nb_port, self._kernel_id)
+        workflow_id, node_id, port_number = nb_client.extract_dataframe_source()
+
+        self._execute_code('kernel_id = "{}"'.format(self._kernel_id))
+        self._execute_code('workflow_id = "{}"'.format(workflow_id))
+        if node_id:
+            self._execute_code('node_id = "{}"'.format(node_id))
+        else:
+            self._execute_code('node_id = None')
+        self._execute_code('port_number = {}'.format(port_number))
+
+        self._execute_code('gateway_address = "{}"'.format(gateway_host))
+        self._execute_code('gateway_port = {}'.format(gateway_port))
+        self._execute_code('mq_address = "{}"'.format(mq_host))
+        self._execute_code('mq_port = {}'.format(mq_port))
+        self._execute_code('notebook_server_address = "{}"'.format(nb_host))
+        self._execute_code('notebook_server_port = {}'.format(nb_port))
+        self._execute_code(open(kernel_init_file, "r").read())
+
+    def _send_zmq_forward_to_rabbit(self, stream_name, message):
+        if not isinstance(message, list):
+            self._exit('ExecutingKernel::_send_zmq_forward_to_rabbit: Malformed message')
+
+        self._rabbit_sender_client.send({
+            'type': 'zmq_socket_forward',
+            'stream': stream_name,
+            'body': [base64.b64encode(s) for s in message]
+        })
+
+    def _handle_execution_message_from_rabbit(self, message):
+        known_message_types = ['zmq_socket_forward']
+        if not isinstance(message, dict) or 'type' not in message or message['type'] not in known_message_types:
+            self._exit('ExecutingKernel::_handle_execution_message_from_rabbit: Unknown message: {}'.format(message))
+
+        if message['type'] == 'zmq_socket_forward':
+            if 'stream' not in message or 'body' not in message:
+                self._exit('ExecutingKernel::_handle_execution_message_from_rabbit: Malformed message: {}'
+                           .format(message))
+
+            debug('ExecutingKernel::_handle_execution_message_from_rabbit: Sending to {}'.format(message['stream']))
+            body = [base64.b64decode(s) for s in message['body']]
+            self._socket_forwarders[message['stream']].forward_to_zmq(body)
+
+    def _execute_code(self, code):
+        content = dict(code=code, silent=True, user_variables=[], user_expressions={}, allow_stdin=False)
+        msg = self.session.msg('execute_request', content)
+        ser = self.session.serialize(msg)
+        self._socket_forwarders['shell'].forward_to_zmq(ser)
+
+    @staticmethod
+    def _exit(msg):
+        debug(msg)
+        sys.exit(1)
+
+    @staticmethod
+    def _extract_argument(argv, arg_name):
+        return argv[argv.index(arg_name) + 1]
+
+    @property
+    def _kernel_id(self):
+        return self._extract_argument(self.parent.argv, '--kernel-id')
+
+    @property
+    def _signature_key(self):
+        return self._extract_argument(self.parent.argv, '--signature-key')
+
+    @property
+    def _rabbit_mq_address(self):
+        host = self._extract_argument(self.parent.argv, '--mq-host')
+        port = self._extract_argument(self.parent.argv, '--mq-port')
+        return host, int(port)
+
+    @property
+    def _notebook_server_address(self):
+        host = self._extract_argument(self.parent.argv, '--nb-host')
+        port = self._extract_argument(self.parent.argv, '--nb-port')
+        return host, int(port)
+
+    def _init_rabbit_clients(self):
+        rabbit_client = RabbitMQClient(address=self._rabbit_mq_address,
+                                       exchange=self.EXCHANGE)
+        sender = RabbitMQJsonSender(rabbit_mq_client=rabbit_client,
+                                    topic=self.EXECUTION_PUBLISHING_TOPIC.format(kernel_id=self._kernel_id))
+        listener = RabbitMQJsonReceiver(rabbit_client)
+        return sender, listener
+
+    def _init_socket_forwarders(self):
+        forwarders = {}
+
+        def make_sender(stream_name):
+            def sender(message):
+                self._send_zmq_forward_to_rabbit(stream_name, message)
+            return sender
+
+        for socket in ['shell', 'control', 'stdin', 'iopub']:
+            get_connected_socket = getattr(self.parent, 'connect_{}'.format(socket))
+            forwarders[socket] = SocketForwarder(
+                stream_name=socket,
+                zmq_socket=get_connected_socket(identity=self.ZMQ_IDENTITY),
+                to_rabbit_sender=make_sender(socket))
+
+        return forwarders
+
+
+class ExecutingKernelApp(IPKernelApp):
+    kernel_class = Type(ExecutingKernel, config=True)
+    log_level = 'DEBUG'
+
+
+if __name__ == '__main__':
+    app = ExecutingKernelApp.instance(context=zmq.Context.instance())
+    app.initialize()
+    app.start()
