@@ -7,7 +7,7 @@
         "name": "R Transformation"
       },
       "parameters": {
-        "code": "use.library <- function(package) {\n    if(!require(package, character.only=TRUE)) {\n        install.packages(package, repos='http://cran.us.r-project.org')\n    }\n    library(package, character.only=TRUE)\n}\n\nmyfun <- function(olddf) {\n    use.library(\"e1071\")\n    cbind(olddf, sigmoid((olddf$price - 400000) / 1000000))\n}\n\nschema <- structType(structField(\"city\", \"string\"), structField(\"price\", \"double\"), structField(\"newcol\", \"double\")) \n\ntransform <- function(dataframe) {\n    newDF <- select(dataframe, dataframe$city, dataframe$price)\n    newerDF <- dapply(newDF, myfun, schema)\n    return(newerDF)\n}\n    "
+        "code": "use.library <- function(package) {\n    if(!require(package, character.only=TRUE)) {\n        install.packages(package, repos='http://cran.us.r-project.org')\n    }\n    library(package, character.only=TRUE)\n}\n\nmyfun <- function(olddf) {\n    cbind(olddf, (olddf$price - 400000) / 1000000)\n}\n\nschema <- structType(structField(\"city\", \"string\"), structField(\"price\", \"double\"), structField(\"newcol\", \"double\")) \n\ntransform <- function(dataframe) {\n    use.library('rpart')\n    newDF <- select(dataframe, dataframe$city, dataframe$price)\n    newerDF <- dapply(newDF, myfun, schema)\n    return(newerDF)\n}"
       }
     }, {
       "id": "5b0fc7c9-7ae5-a4e4-63bc-0018a11995d8",
@@ -118,32 +118,32 @@
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 4979,
-            "y": 5056
+            "x": 4973,
+            "y": 5044
           }
         },
         "5b0fc7c9-7ae5-a4e4-63bc-0018a11995d8": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 5264,
-            "y": 5055
+            "x": 5236,
+            "y": 5043
           }
         },
         "79136692-200b-e2f2-b8cc-6e17cab9cfc7": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 5121,
-            "y": 4949
+            "x": 5095,
+            "y": 4929
           }
         },
         "384cbd6c-8f68-22b8-cda4-cc37cce4342a": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 5115,
-            "y": 5161
+            "x": 5098,
+            "y": 5150
           }
         }
       }
@@ -155,7 +155,7 @@
   "variables": {
 
   },
-  "id": "5811807b-c1f8-406f-a2e1-f253b79eda2d",
+  "id": "c4070170-c226-4903-81f0-3dba5c67f46e",
   "metadata": {
     "type": "batch",
     "apiVersion": "1.3.0"
