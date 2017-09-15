@@ -19,6 +19,8 @@ package io.deepsense.workflowexecutor
 import java.io._
 import java.util.zip.ZipInputStream
 
+import scala.reflect.io.Path
+
 import com.google.common.io.Files
 
 import io.deepsense.commons.utils.Logging
@@ -40,15 +42,17 @@ object Unzip extends Logging {
     var entry = zis.getNextEntry
     while (entry != null) {
       if (filter(entry.getName)) {
-        val entryFilename = entry.getName.substring(entry.getName.lastIndexOf('/') + 1)
-        val entryDirName = entry.getName.substring(0, entry.getName.lastIndexOf('/'))
+        val path = Path(entry.getName)
+        val entryFilename = path.name
+        val entryDirName = path.parent
 
         logger.debug("Entry found in jar file: " +
           s"directory: $entryDirName filename: $entryFilename isDirectory: ${entry.isDirectory}")
 
-        new File(tempDir + "/" + entryDirName).mkdirs()
+        val destinationPath = Path(tempDir) / entryDirName
+        new File(destinationPath.toURI).mkdirs()
         if (!entry.isDirectory) {
-          val target = new File(tempDir + "/" + entryDirName, entryFilename)
+          val target = new File((destinationPath/entryFilename).toURI)
           val fos = new BufferedOutputStream(new FileOutputStream(target, true))
           transferImpl(zis, fos, close = false)
         }

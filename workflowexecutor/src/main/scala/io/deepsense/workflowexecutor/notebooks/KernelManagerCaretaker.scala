@@ -19,7 +19,7 @@ package io.deepsense.workflowexecutor.notebooks
 import java.util.concurrent.atomic.AtomicReference
 
 import scala.concurrent.duration._
-import scala.concurrent.{Await, Future, Promise}
+import scala.concurrent.{Await, Future, Promise, TimeoutException}
 import scala.sys.process._
 
 import akka.actor.{Actor, ActorSystem, Props}
@@ -42,7 +42,6 @@ class KernelManagerCaretaker(
 ) extends Logging {
 
   private val config = ConfigFactory.load.getConfig("kernelmanagercaretaker")
-  private val pythonExecutable = config.getString("python-binary")
   private val archive: String = config.getString("archive")
   private val startupScript = config.getString("startup-script")
   private val startupTimeout: Duration = config.getInt("timeout").seconds
@@ -54,8 +53,9 @@ class KernelManagerCaretaker(
       destroyPythonProcess()
     }
 
-    val extractedKernelManagerPath = extractKernelManager()
-    val process = runKernelManager(extractedKernelManagerPath)
+    val tempPath = extractKernelManager()
+    val extractedKernelManagerPath = s"$tempPath/$startupScript"
+    val process = runKernelManager(extractedKernelManagerPath, tempPath)
     val exited = Future(process.exitValue()).map { code =>
       startPromise.failure(
         new RuntimeException(s"Kernel Manager finished prematurely (with exit code $code)!"))
@@ -77,27 +77,35 @@ class KernelManagerCaretaker(
   }
 
   private def waitForKernelManager(exited: Future[Unit]): Unit = {
-    val startup = subscribe().flatMap { _ =>
-      Future.firstCompletedOf(Seq(exited, startPromise.future))
-    }
+    val startup = subscribe().flatMap { _ => startPromise.future }
     logger.debug("startup initiated")
-    Await.result(startup, startupTimeout)
-    logger.debug("startup done")
+    try {
+      Await.result(startup, startupTimeout)
+      logger.debug("startup done")
+    } catch {
+      case t: TimeoutException =>
+        throw new RuntimeException(s"Kernel Manager did not start after $startupTimeout")
+    }
   }
 
   private def extractKernelManager(): String = {
     logger.info("Extracting Kernel Manager...")
-    val tempPath = Unzip.unzipAll(archive)
-    s"$tempPath/$startupScript"
+    Unzip.unzipAll(archive)
   }
 
-  private def runKernelManager(kernelManagerPath: String): Process = {
-    val command = s"$pythonExecutable $kernelManagerPath" +
+  private def runKernelManager(kernelManagerPath: String, workingDir: String): Process = {
+    val pyLogger = ProcessLogger(fout = logger.error, ferr = logger.error)
+
+    val chmod = s"chmod +x $kernelManagerPath"
+    logger.info(s"Setting +x for $kernelManagerPath")
+    chmod.run(pyLogger).exitValue()
+
+    val command = s"$kernelManagerPath" +
+      s" --working-dir $workingDir" +
       s" --mq-host $mqHost" +
       s" --mq-port $mqPort" +
       s" --workflow-id $workflowId" +
       s" --session-id $sessionId"
-    val pyLogger = ProcessLogger(fout = logger.error, ferr = logger.error)
     logger.info(s"Starting a new Kernel Manager process: $command")
     command.run(pyLogger)
   }
