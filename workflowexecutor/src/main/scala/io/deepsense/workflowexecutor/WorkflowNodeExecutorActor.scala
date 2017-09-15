@@ -22,7 +22,6 @@ import io.deepsense.commons.models.Entity
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang._
 import io.deepsense.graph.DeeplangGraph.DeeplangNode
-import io.deepsense.graph.Node
 import io.deepsense.reportlib.model.ReportContent
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.{NodeCompleted, NodeFailed, NodeStarted}
 
@@ -100,7 +99,7 @@ class WorkflowNodeExecutorActor(
     logger.debug(s"Collecting reports for ${node.id}")
     results.map {
       case (id, dOperable) =>
-        (id, dOperable.report(executionContext).content)
+        (id, dOperable.report.content)
     }
   }
 

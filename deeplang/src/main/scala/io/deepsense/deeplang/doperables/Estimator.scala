@@ -22,6 +22,7 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.Params
 import io.deepsense.deeplang.{DKnowledge, DMethod1To1, DOperable, ExecutionContext}
+import io.deepsense.reportlib.model.ReportType
 
 /**
  * Can create a Transformer based on a DataFrame.
@@ -35,7 +36,8 @@ abstract class Estimator extends DOperable with Params {
 
   /**
    * Creates an instance of Transformer for inference.
-   * @param schema the schema for inference, or None if it's unknown.
+    *
+    * @param schema the schema for inference, or None if it's unknown.
    */
   private[deeplang] def _fit_infer(schema: Option[StructType]): Transformer
 
@@ -52,4 +54,10 @@ abstract class Estimator extends DOperable with Params {
       }
     }
   }
+
+  override def report: Report =
+    super.report
+      .withReportName(s"${this.getClass.getSimpleName} Report")
+      .withReportType(ReportType.Estimator)
+      .withAdditionalTable(CommonTablesGenerators.params(extractParamMap()))
 }

@@ -20,6 +20,7 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.Params
 import io.deepsense.deeplang.{DKnowledge, DMethod1To1, DOperable, ExecutionContext}
+import io.deepsense.reportlib.model.ReportType
 
 /**
  * Evaluates a DataFrame.
@@ -45,6 +46,12 @@ abstract class Evaluator extends DOperable with Params {
       }
     }
   }
+
+  override def report: Report =
+    super.report
+      .withReportName(s"${this.getClass.getSimpleName} Report")
+      .withReportType(ReportType.Evaluator)
+      .withAdditionalTable(CommonTablesGenerators.params(extractParamMap()))
 
   def isLargerBetter: Boolean
 }

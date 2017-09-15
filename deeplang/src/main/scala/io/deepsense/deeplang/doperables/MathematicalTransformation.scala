@@ -16,15 +16,16 @@
 
 package io.deepsense.deeplang.doperables
 
+import org.apache.spark.sql.catalyst.SqlParser
+import org.apache.spark.sql.types.StructType
+import org.apache.spark.sql.{DataFrame => SparkDataFrame}
+
 import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables.dataframe.{DataFrameColumnsGetter, DataFrame}
+import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
 import io.deepsense.deeplang.doperations.exceptions._
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.params.selections.{ColumnSelection, NameColumnSelection, SingleColumnSelection}
 import io.deepsense.deeplang.params.{Param, SingleColumnSelectorParam, StringParam}
-import org.apache.spark.sql.catalyst.SqlParser
-import org.apache.spark.sql.types.StructType
-import org.apache.spark.sql.{DataFrame => SparkDataFrame}
 
 case class MathematicalTransformation() extends Transformer {
 
@@ -151,6 +152,4 @@ case class MathematicalTransformation() extends Transformer {
   private def namesToSelections(columnNames: Traversable[String]): Vector[ColumnSelection] = {
     columnNames.map((name: String) => new NameColumnSelection(Set(name))).toVector
   }
-
-  override def report(executionContext: ExecutionContext): Report = Report()
 }

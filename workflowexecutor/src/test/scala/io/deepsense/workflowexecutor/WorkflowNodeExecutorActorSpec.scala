@@ -97,7 +97,7 @@ class WorkflowNodeExecutorActorSpec
     val operable = mock[DOperable]
     val report = mock[Report]
     when(report.content).thenReturn(mock[ReportContent])
-    when(operable.report(any())).thenReturn(report)
+    when(operable.report).thenReturn(report)
     operable
   }
 

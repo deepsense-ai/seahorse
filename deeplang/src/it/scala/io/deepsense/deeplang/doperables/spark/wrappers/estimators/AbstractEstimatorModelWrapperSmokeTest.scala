@@ -67,6 +67,10 @@ abstract class AbstractEstimatorModelWrapperSmokeTest[E <: ml.Estimator[_]]
       val estimatorWithParams = estimatorWrapper.set(estimatorParams: _*)
       estimatorWithParams._fit_infer(None)
     }
+    "succesfully run report" in {
+      val estimatorWithParams = estimatorWrapper.set(estimatorParams: _*)
+      estimatorWithParams.report
+    }
   }
 }
 

@@ -18,10 +18,9 @@ package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
 import org.apache.spark.ml.feature.{MinMaxScaler => SparkMinMaxScaler, MinMaxScalerModel => SparkMinMaxScalerModel}
 
-import io.deepsense.deeplang.ExecutionContext
+import io.deepsense.deeplang.doperables.SparkEstimatorWrapper
 import io.deepsense.deeplang.doperables.spark.wrappers.models.MinMaxScalerModel
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasInputColumn, HasOutputColumn, MinMaxParams}
-import io.deepsense.deeplang.doperables.{Report, SparkEstimatorWrapper}
 import io.deepsense.deeplang.params.Param
 
 class MinMaxScalerEstimator
@@ -29,8 +28,6 @@ class MinMaxScalerEstimator
   with MinMaxParams
   with HasInputColumn
   with HasOutputColumn {
-
-  override def report(executionContext: ExecutionContext): Report = Report()
 
   override val params: Array[Param[_]] = declareParams(min, max, inputColumn, outputColumn)
 }

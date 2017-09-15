@@ -129,8 +129,6 @@ abstract class SparkMultiColumnEstimatorWrapper[
       .setModels(Seq.empty))
   }
 
-  override def report(executionContext: ExecutionContext): Report = Report()
-
   def createEstimatorWrapperInstance(): EW = TypeUtils.instanceOfType(estimatorWrapperTag)
 
   def createMultiColumnModel(): MMW = TypeUtils.instanceOfType(multiColumnModelTag)

@@ -50,11 +50,14 @@ abstract class AbstractEvaluatorWrapperSmokeTest extends DeeplangIntegTestSuppor
   }
 
   className should {
-    "successfully run _transform()" in {
+    "successfully run _evaluate()" in {
       evaluator.set(evaluatorParams: _*)._evaluate(executionContext, inputDataFrame)
     }
-    "successfully run _transformSchema()" in {
+    "successfully run _infer()" in {
       evaluator.set(evaluatorParams: _*)._infer(DKnowledge(inputDataFrame))
+    }
+    "succesfully run report" in {
+      evaluator.set(evaluatorParams: _*).report
     }
   }
 }

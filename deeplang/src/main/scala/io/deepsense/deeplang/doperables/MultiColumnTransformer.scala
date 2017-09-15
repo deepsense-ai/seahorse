@@ -26,8 +26,7 @@ import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTra
 import io.deepsense.deeplang.doperables.multicolumn.{HasSpecificParams, MultiColumnParams, SingleColumnTransformerUtils}
 import io.deepsense.deeplang.inference.exceptions.TransformSchemaException
 import io.deepsense.deeplang.params.IOColumnsParam
-import io.deepsense.deeplang.params.choice.ChoiceParam
-import io.deepsense.deeplang.params.selections.{NameSingleColumnSelection, MultipleColumnSelection}
+import io.deepsense.deeplang.params.selections.{MultipleColumnSelection, NameSingleColumnSelection}
 
 /**
  * MultiColumnTransformer is a [[io.deepsense.deeplang.doperables.Transformer]]
@@ -90,8 +89,6 @@ abstract class MultiColumnTransformer
       .setMultiInPlaceChoice(MultiColumnYesInPlace())
     setSingleOrMultiChoice(multiChoice)
   }
-
-  override def report(executionContext: ExecutionContext): Report = Report()
 
   override private[deeplang] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
     $(singleOrMultiChoiceParam) match {

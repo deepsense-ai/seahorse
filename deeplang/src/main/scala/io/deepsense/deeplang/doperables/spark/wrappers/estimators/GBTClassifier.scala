@@ -65,8 +65,6 @@ class GBTClassifier()
     sparkParamGetter = _.lossType)
   setDefault(lossType, Logistic())
 
-  override def report(executionContext: ExecutionContext): Report = Report()
-
   override val params: Array[Param[_]] = declareParams(
     featuresColumn,
     impurity,

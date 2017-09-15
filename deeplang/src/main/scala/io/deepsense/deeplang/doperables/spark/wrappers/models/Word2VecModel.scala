@@ -18,16 +18,13 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.feature.{Word2Vec => SparkWord2Vec, Word2VecModel => SparkWord2VecModel}
 
-import io.deepsense.deeplang.ExecutionContext
+import io.deepsense.deeplang.doperables.SparkModelWrapper
 import io.deepsense.deeplang.doperables.spark.wrappers.params.Word2VecParams
-import io.deepsense.deeplang.doperables.{Report, SparkModelWrapper}
 import io.deepsense.deeplang.params.Param
 
 class Word2VecModel
   extends SparkModelWrapper[SparkWord2VecModel, SparkWord2Vec]
   with Word2VecParams {
-
-  override def report(executionContext: ExecutionContext): Report = Report()
 
   override val params: Array[Param[_]] = declareParams(
     inputColumn,

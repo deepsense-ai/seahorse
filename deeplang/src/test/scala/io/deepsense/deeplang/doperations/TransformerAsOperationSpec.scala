@@ -42,7 +42,7 @@ object MockTransformers extends UnitSpec {
 
     override val params: Array[Param[_]] = declareParams(paramA)
 
-    override def report(executionContext: ExecutionContext): Report = ???
+    override def report: Report = ???
 
     private[deeplang] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
       $(paramA) match {

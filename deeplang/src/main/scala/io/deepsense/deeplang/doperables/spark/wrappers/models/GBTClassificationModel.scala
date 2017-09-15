@@ -19,9 +19,9 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 import org.apache.spark.ml.classification.{GBTClassificationModel => SparkGBTClassificationModel, GBTClassifier => SparkGBTClassifier}
 
 import io.deepsense.commons.utils.Logging
-import io.deepsense.deeplang.ExecutionContext
+import io.deepsense.deeplang.doperables.CommonTablesGenerators.SummaryEntry
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.PredictorParams
-import io.deepsense.deeplang.doperables.{Report, SparkModelWrapper}
+import io.deepsense.deeplang.doperables.{CommonTablesGenerators, Report, SparkModelWrapper}
 import io.deepsense.deeplang.params.Param
 
 class GBTClassificationModel(private val labels: Array[String])
@@ -30,8 +30,20 @@ class GBTClassificationModel(private val labels: Array[String])
 
   def this() = this(null)
 
-  override def report(executionContext: ExecutionContext): Report = Report()
-
   override val params: Array[Param[_]] =
     declareParams(featuresColumn, predictionColumn)
+
+  override def report: Report = {
+    val summary =
+      List(
+        SummaryEntry(
+          name = "number of features",
+          value = model.numFeatures.toString,
+          description = "Number of features."))
+
+    super.report
+      .withReportName(s"${this.getClass.getSimpleName} with ${model.numTrees} trees")
+      .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))
+      .withAdditionalTable(CommonTablesGenerators.decisionTree(model.treeWeights, model.trees), 2)
+  }
 }

@@ -18,10 +18,9 @@ package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
 import org.apache.spark.ml.recommendation.{ALS => SparkALS, ALSModel => SparkALSModel}
 
-import io.deepsense.deeplang.ExecutionContext
+import io.deepsense.deeplang.doperables.SparkEstimatorWrapper
 import io.deepsense.deeplang.doperables.spark.wrappers.models.ALSModel
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common._
-import io.deepsense.deeplang.doperables.{Report, SparkEstimatorWrapper}
 import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 import io.deepsense.deeplang.params.validators.RangeValidator
@@ -89,8 +88,6 @@ class ALS
     sparkParamGetter = _.ratingCol,
     portIndex = 0)
   setDefault(ratingColumn, NameSingleColumnSelection("rating"))
-
-  override def report(executionContext: ExecutionContext): Report = Report()
 
   override val params: Array[Param[_]] = declareParams(
     alpha,

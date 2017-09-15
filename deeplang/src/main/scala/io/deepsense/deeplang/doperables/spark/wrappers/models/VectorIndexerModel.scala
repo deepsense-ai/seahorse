@@ -18,9 +18,8 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.feature.{VectorIndexer => SparkVectorIndexer, VectorIndexerModel => SparkVectorIndexerModel}
 
-import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasInputColumn, HasOutputColumn}
-import io.deepsense.deeplang.doperables.{Report, SparkModelWrapper}
+import io.deepsense.deeplang.doperables.{CommonTablesGenerators, Report, SparkModelWrapper}
 import io.deepsense.deeplang.params.Param
 
 class VectorIndexerModel
@@ -28,7 +27,10 @@ class VectorIndexerModel
   with HasInputColumn
   with HasOutputColumn {
 
-  override def report(executionContext: ExecutionContext): Report = Report()
-
   override val params: Array[Param[_]] = declareParams(inputColumn, outputColumn)
+
+  override def report: Report = {
+    super.report
+      .withAdditionalTable(CommonTablesGenerators.categoryMaps(model.categoryMaps))
+  }
 }

@@ -24,14 +24,9 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 
 import io.deepsense.commons.datetime.DateTimeConverter
-import io.deepsense.commons.utils.DoubleUtils
 import io.deepsense.deeplang.DeeplangIntegTestSupport
-import io.deepsense.deeplang.doperables.Report
-import io.deepsense.deeplang.doperables.dataframe.report.distribution.continuous.ContinuousDistributionBuilderFactory
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameTestFactory}
-import io.deepsense.deeplang.doperables.dataframe.report.DataFrameReportGenerator
 import io.deepsense.reportlib.model._
-import io.deepsense.reportlib.model.Distribution
 
 class StatisticsForContinuousIntegSpec extends DeeplangIntegTestSupport with DataFrameTestFactory {
 
@@ -88,7 +83,7 @@ class StatisticsForContinuousIntegSpec extends DeeplangIntegTestSupport with Dat
     val sparkDataFrame: sql.DataFrame = sqlContext.createDataFrame(rdd, schema)
     val dataFrame = DataFrame.fromSparkDataFrame(sparkDataFrame)
 
-    val report = dataFrame.report(executionContext)
+    val report = dataFrame.report
     report.content.distributions(columnName).asInstanceOf[ContinuousDistribution]
   }
 

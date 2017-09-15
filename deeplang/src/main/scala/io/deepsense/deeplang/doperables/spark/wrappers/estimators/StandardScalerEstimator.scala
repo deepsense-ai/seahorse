@@ -18,10 +18,9 @@ package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
 import org.apache.spark.ml.feature.{StandardScaler => SparkStandardScaler, StandardScalerModel => SparkStandardScalerModel}
 
-import io.deepsense.deeplang.ExecutionContext
+import io.deepsense.deeplang.doperables.SparkEstimatorWrapper
 import io.deepsense.deeplang.doperables.spark.wrappers.models.StandardScalerModel
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common._
-import io.deepsense.deeplang.doperables.{Report, SparkEstimatorWrapper}
 import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.wrappers.spark.BooleanParamWrapper
 
@@ -41,8 +40,6 @@ class StandardScalerEstimator
     description = "Scales the data to unit standard deviation.",
     sparkParamGetter = _.withStd)
   setDefault(withStd, true)
-
-  override def report(executionContext: ExecutionContext): Report = Report()
 
   override val params: Array[Param[_]] = declareParams(withMean, withStd, inputColumn, outputColumn)
 }

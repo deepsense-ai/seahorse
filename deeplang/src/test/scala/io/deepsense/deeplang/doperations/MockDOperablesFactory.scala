@@ -20,8 +20,8 @@ import org.apache.spark.sql.types.StructType
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables._
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.{NumericParam, Param}
 import io.deepsense.deeplang.{DKnowledge, DMethod1To1, ExecutionContext, UnitSpec}
@@ -67,7 +67,7 @@ object MockDOperablesFactory extends UnitSpec {
     val paramA = NumericParam("b", "desc")
     setDefault(paramA -> DefaultForA)
     override val params: Array[Param[_]] = declareParams(paramA)
-    override def report(executionContext: ExecutionContext): Report = ???
+    override def report: Report = ???
 
     override def fit: DMethod1To1[Unit, DataFrame, Transformer] = {
       new DMethod1To1[Unit, DataFrame, Transformer] {
@@ -101,7 +101,7 @@ object MockDOperablesFactory extends UnitSpec {
     val paramA = NumericParam("b", "desc")
     setDefault(paramA -> DefaultForA)
     override val params: Array[Param[_]] = declareParams(paramA)
-    override def report(executionContext: ExecutionContext): Report = ???
+    override def report: Report = ???
 
     override def evaluate: DMethod1To1[Unit, DataFrame, MetricValue] = {
       new DMethod1To1[Unit, DataFrame, MetricValue] {

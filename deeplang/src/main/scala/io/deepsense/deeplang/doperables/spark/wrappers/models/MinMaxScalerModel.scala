@@ -18,9 +18,9 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.feature.{MinMaxScaler => SparkMinMaxScaler, MinMaxScalerModel => SparkMinMaxScalerModel}
 
-import io.deepsense.deeplang.ExecutionContext
+import io.deepsense.deeplang.doperables.CommonTablesGenerators.SummaryEntry
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasInputColumn, HasOutputColumn, MinMaxParams}
-import io.deepsense.deeplang.doperables.{Report, SparkModelWrapper}
+import io.deepsense.deeplang.doperables.{CommonTablesGenerators, Report, SparkModelWrapper}
 import io.deepsense.deeplang.params.Param
 
 class MinMaxScalerModel
@@ -29,7 +29,21 @@ class MinMaxScalerModel
   with HasInputColumn
   with HasOutputColumn {
 
-  override def report(executionContext: ExecutionContext): Report = Report()
-
   override val params: Array[Param[_]] = declareParams(min, max, inputColumn, outputColumn)
+
+  override def report: Report = {
+    val summary =
+      List(
+        SummaryEntry(
+          name = "original min",
+          value = model.originalMin.toString,
+          description = "Minimal value for each original column during fitting."),
+        SummaryEntry(
+          name = "original max",
+          value = model.originalMax.toString,
+          description = "Maximum value for each original column during fitting"))
+
+    super.report
+      .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))
+  }
 }

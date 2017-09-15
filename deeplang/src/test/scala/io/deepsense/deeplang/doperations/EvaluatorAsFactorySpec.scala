@@ -88,7 +88,7 @@ object EvaluatorAsFactorySpec {
       ???
     override private[deeplang] def _infer(k: DKnowledge[DataFrame]): MetricValue =
       ???
-    override def report(executionContext: ExecutionContext): Report =
+    override def report: Report =
       ???
 
     override def isLargerBetter: Boolean = ???

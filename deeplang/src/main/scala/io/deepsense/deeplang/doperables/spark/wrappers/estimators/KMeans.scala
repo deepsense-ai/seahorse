@@ -18,11 +18,10 @@ package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
 import org.apache.spark.ml.clustering.{KMeans => SparkKMeans, KMeansModel => SparkKMeansModel}
 
-import io.deepsense.deeplang.ExecutionContext
+import io.deepsense.deeplang.doperables.SparkEstimatorWrapper
 import io.deepsense.deeplang.doperables.spark.wrappers.estimators.KMeans.{KMeansInitMode, ParallelInitMode}
 import io.deepsense.deeplang.doperables.spark.wrappers.models.KMeansModel
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common._
-import io.deepsense.deeplang.doperables.{Report, SparkEstimatorWrapper}
 import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.choice.Choice
 import io.deepsense.deeplang.params.validators.RangeValidator
@@ -60,8 +59,6 @@ class KMeans
     _.initSteps,
     validator = RangeValidator(begin = 1.0, end = Int.MaxValue, step = Some(1.0)))
   setDefault(initSteps, 5.0)
-
-  override def report(executionContext: ExecutionContext): Report = Report()
 
   override val params: Array[Param[_]] = declareParams(
     featuresColumn,

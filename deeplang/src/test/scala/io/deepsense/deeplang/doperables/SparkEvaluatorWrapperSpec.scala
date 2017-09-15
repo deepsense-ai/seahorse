@@ -77,7 +77,7 @@ object SparkEvaluatorWrapperSpec {
 
     override def getMetricName: String = metricName
 
-    override def report(executionContext: ExecutionContext): Report = ???
+    override def report: Report = ???
   }
 
   class ExampleSparkEvaluator extends ml.evaluation.Evaluator {

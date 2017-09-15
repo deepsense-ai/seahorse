@@ -56,5 +56,8 @@ abstract class AbstractTransformerWrapperSmokeTest[+T <: Transformer]
     "successfully run _transformSchema()" in {
       transformerWithParams._transformSchema(inputDataFrame.sparkDataFrame.schema)
     }
+    "succesfully run report" in {
+      transformerWithParams.report
+    }
   }
 }

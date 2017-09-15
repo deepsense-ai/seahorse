@@ -51,6 +51,4 @@ class SqlExpression extends Transformer {
       ctx.sqlContext.dropTempTable(getDataFrameId)
     }
   }
-
-  override def report(executionContext: ExecutionContext): Report = Report()
 }

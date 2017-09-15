@@ -63,6 +63,4 @@ class ColumnsFilterer extends Transformer {
     }
     Some(inferredSchema)
   }
-
-  override def report(executionContext: ExecutionContext): Report = Report()
 }

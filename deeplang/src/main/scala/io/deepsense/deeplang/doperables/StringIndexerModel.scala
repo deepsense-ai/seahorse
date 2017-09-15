@@ -18,7 +18,6 @@ package io.deepsense.deeplang.doperables
 
 import org.apache.spark.ml.feature.{StringIndexer => SparkStringIndexer, StringIndexerModel => SparkStringIndexerModel}
 
-import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.params.Param
 
 case class StringIndexerModel()
@@ -29,5 +28,12 @@ case class StringIndexerModel()
 
   override def getSpecificParams: Array[Param[_]] = Array()
 
-  override def report(executionContext: ExecutionContext): Report = Report()
+  override def report: Report = {
+    val tables = models.map(model => model.report.content.tables)
+    val name = s"${this.getClass.getSimpleName} with ${models.length} columns"
+    tables
+      .foldRight (super.report.withReportName(name))(
+        (seqTables, accReport) =>
+          seqTables.foldRight(accReport)((t, r) => r.withAdditionalTable(t)))
+  }
 }

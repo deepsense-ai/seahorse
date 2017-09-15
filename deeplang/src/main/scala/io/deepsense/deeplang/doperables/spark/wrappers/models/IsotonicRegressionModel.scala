@@ -18,19 +18,33 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.regression.{IsotonicRegression => SparkIsotonicRegression, IsotonicRegressionModel => SparkIsotonicRegressionModel}
 
-import io.deepsense.deeplang.ExecutionContext
+import io.deepsense.deeplang.doperables.CommonTablesGenerators.SummaryEntry
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasFeatureIndexParam, PredictorParams}
-import io.deepsense.deeplang.doperables.{Report, SparkModelWrapper}
+import io.deepsense.deeplang.doperables.{CommonTablesGenerators, Report, SparkModelWrapper}
 
 class IsotonicRegressionModel
   extends SparkModelWrapper[SparkIsotonicRegressionModel, SparkIsotonicRegression]
   with PredictorParams
   with HasFeatureIndexParam {
 
-  override def report(executionContext: ExecutionContext): Report = Report()
-
   override val params = declareParams(
     featureIndex,
     featuresColumn,
     predictionColumn)
+
+  override def report: Report = {
+    val summary =
+      List(
+        SummaryEntry(
+          name = "boundaries",
+          value = model.boundaries.toString,
+          description = "Boundaries in increasing order for which predictions are known."),
+        SummaryEntry(
+          name = "predictions",
+          value = model.predictions.toString,
+          description = "Predictions associated with the boundaries at the same index, " +
+            "monotone because of isotonic regression."))
+    super.report
+      .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))
+  }
 }

@@ -52,7 +52,7 @@ case class DataFrame private[dataframe] (
     DataFrame.fromSparkDataFrame(newSparkDataFrame)
   }
 
-  override def report(executionContext: ExecutionContext): Report = {
+  override def report: Report = {
     DataFrameReportGenerator.report(sparkDataFrame)
   }
 

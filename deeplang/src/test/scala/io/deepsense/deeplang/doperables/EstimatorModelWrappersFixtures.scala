@@ -25,7 +25,6 @@ import org.apache.spark.sql.{DataFrame => SparkDataFrame}
 import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 
-import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.params.wrappers.spark.DoubleParamWrapper
 import io.deepsense.deeplang.params.{Param, Params}
@@ -59,7 +58,7 @@ object EstimatorModelWrappersFixtures extends MockitoSugar {
 
     def setNumericParamWrapper(value: Double): this.type = set(numericParamWrapper, value)
 
-    override def report(executionContext: ExecutionContext): Report = ???
+    override def report: Report = ???
     override val params: Array[Param[_]] = declareParams(numericParamWrapper)
   }
 
@@ -122,7 +121,7 @@ object EstimatorModelWrappersFixtures extends MockitoSugar {
 
     def setNumericParamWrapper(value: Double): this.type = set(numericParamWrapper, value)
 
-    override def report(executionContext: ExecutionContext): Report = ???
+    override def report: Report = ???
     override val params: Array[Param[_]] = declareParams(numericParamWrapper)
   }
 

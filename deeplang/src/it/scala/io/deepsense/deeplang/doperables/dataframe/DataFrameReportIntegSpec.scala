@@ -18,8 +18,6 @@ package io.deepsense.deeplang.doperables.dataframe
 
 import java.sql.Timestamp
 
-import scala.collection.immutable
-
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
@@ -64,7 +62,7 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
         val dataFrame =
           executionContext.dataFrameBuilder.buildDataFrame(schema, rdd)
 
-        val report = dataFrame.report(executionContext)
+        val report = dataFrame.report
 
         val dataSampleTable = report.content.tableByName(
           DataFrameReportGenerator.DataSampleTableName).get
@@ -80,7 +78,7 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
           StructType(List(StructField(timestampColumnName, TimestampType))),
           sparkContext.parallelize(List(Row(new Timestamp(now.getMillis)))))
 
-        val report = dataFrame.report(executionContext)
+        val report = dataFrame.report
 
         val dataSampleTable = report.content.tableByName(
           DataFrameReportGenerator.DataSampleTableName).get
@@ -92,7 +90,7 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
     "generate report with correct column types" in {
       val dataFrame = testDataFrame(executionContext.dataFrameBuilder, sparkContext)
 
-      val report = dataFrame.report(executionContext)
+      val report = dataFrame.report
       val dataSampleTable = report.content.tableByName(
         DataFrameReportGenerator.DataSampleTableName).get
 
@@ -107,7 +105,7 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
       "number of column in schema exceeds threshold" in {
         val dataFrame = dataWithColumnsCountOverThreshold()
 
-        val report = dataFrame.report(executionContext)
+        val report = dataFrame.report
 
         val expectedValues = dataFrame.schema.get.fields.zipWithIndex.map {
           case (field, index) =>
@@ -136,7 +134,7 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
           schema,
           sparkContext.parallelize(Seq.empty[Row]))
 
-        val report = emptyDataFrame.report(executionContext)
+        val report = emptyDataFrame.report
 
         val dataSampleTable = report.content.tableByName(
           DataFrameReportGenerator.DataSampleTableName).get
@@ -160,7 +158,7 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
             Row(null, null, null, null, null),
             Row(null, null, null, null, null))))
 
-        val report = emptyDataFrame.report(executionContext)
+        val report = emptyDataFrame.report
 
         val dataSampleTable = report.content.tableByName(
           DataFrameReportGenerator.DataSampleTableName).get
@@ -194,7 +192,7 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
         sparkContext.parallelize(data)
       )
 
-      val report = dataFrame.report(executionContext)
+      val report = dataFrame.report
 
       val shortened = longValuePrefix + "..."
 
@@ -237,7 +235,7 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
       buildSchema(dataFrameColumnsNumber, columnNameBase),
       buildRDDWithStringValues(dataFrameColumnsNumber, dataFrameRowsNumber, cellValue))
 
-    val report = dataFrame.report(executionContext)
+    val report = dataFrame.report
 
     testDataSampleTable(
       cellValue,

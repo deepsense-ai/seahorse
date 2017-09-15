@@ -125,8 +125,6 @@ private class SparkTransformerWrapper(
     Some(transformer.transformSchema(schema))
   }
 
-  override def report(executionContext: ExecutionContext): Report = Report()
-
   override val params: Array[Param[_]] = transformerParams
 }
 

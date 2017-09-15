@@ -49,8 +49,6 @@ case class MissingValuesHandler() extends Transformer {
     }
   }
 
-  override def report(executionContext: ExecutionContext): Report = Report()
-
   val selectedColumns = ColumnSelectorParam(
     name = "columns",
     description = "Columns containing missing values to handle.",

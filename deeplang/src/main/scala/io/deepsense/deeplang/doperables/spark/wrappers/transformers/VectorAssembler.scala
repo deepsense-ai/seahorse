@@ -16,13 +16,12 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.transformers
 
-import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables.{Report, SparkTransformerWrapper}
-import io.deepsense.deeplang.params.Param
-import io.deepsense.deeplang.params.selections.{NameColumnSelection, MultipleColumnSelection}
-import io.deepsense.deeplang.params.wrappers.spark.{SingleColumnCreatorParamWrapper, ColumnSelectorParamWrapper}
-
 import org.apache.spark.ml.feature.{VectorAssembler => SparkVectorAssembler}
+
+import io.deepsense.deeplang.doperables.SparkTransformerWrapper
+import io.deepsense.deeplang.params.Param
+import io.deepsense.deeplang.params.selections.{MultipleColumnSelection, NameColumnSelection}
+import io.deepsense.deeplang.params.wrappers.spark.{ColumnSelectorParamWrapper, SingleColumnCreatorParamWrapper}
 
 class VectorAssembler extends SparkTransformerWrapper[SparkVectorAssembler] {
 
@@ -37,7 +36,6 @@ class VectorAssembler extends SparkTransformerWrapper[SparkVectorAssembler] {
     description = "Name of created output column.",
     sparkParamGetter = _.outputCol)
 
-  override def report(executionContext: ExecutionContext): Report = Report()
   override val params: Array[Param[_]] = declareParams(inputColumns, outputColumn)
 
   def setInputColumns(selection: Set[String]): this.type = {

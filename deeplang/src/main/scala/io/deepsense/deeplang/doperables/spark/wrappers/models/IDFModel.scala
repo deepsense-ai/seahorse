@@ -18,9 +18,9 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.feature.{IDF => SparkIDF, IDFModel => SparkIDFModel}
 
-import io.deepsense.deeplang.ExecutionContext
+import io.deepsense.deeplang.doperables.CommonTablesGenerators.SummaryEntry
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common._
-import io.deepsense.deeplang.doperables.{Report, SparkModelWrapper}
+import io.deepsense.deeplang.doperables.{CommonTablesGenerators, Report, SparkModelWrapper}
 import io.deepsense.deeplang.params.Param
 
 class IDFModel
@@ -28,7 +28,17 @@ class IDFModel
   with HasInputColumn
   with HasOutputColumn {
 
-  override def report(executionContext: ExecutionContext): Report = Report()
-
   override val params: Array[Param[_]] = declareParams(inputColumn, outputColumn)
+
+  override def report: Report = {
+    val summary =
+      List(
+        SummaryEntry(
+          name = "IDF vector",
+          value = model.idf.toString,
+          description = "The IDF vector."))
+
+    super.report
+      .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))
+  }
 }

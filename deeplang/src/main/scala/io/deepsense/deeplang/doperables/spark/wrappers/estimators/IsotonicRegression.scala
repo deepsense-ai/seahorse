@@ -18,10 +18,9 @@ package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
 import org.apache.spark.ml.regression.{IsotonicRegression => SparkIsotonicRegression, IsotonicRegressionModel => SparkIsotonicRegressionModel}
 
-import io.deepsense.deeplang.ExecutionContext
+import io.deepsense.deeplang.doperables.SparkEstimatorWrapper
 import io.deepsense.deeplang.doperables.spark.wrappers.models.IsotonicRegressionModel
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasFeatureIndexParam, HasLabelColumnParam, PredictorParams}
-import io.deepsense.deeplang.doperables.{Report, SparkEstimatorWrapper}
 import io.deepsense.deeplang.params.wrappers.spark.{BooleanParamWrapper, SingleColumnSelectorParamWrapper}
 
 class IsotonicRegression
@@ -43,8 +42,6 @@ class IsotonicRegression
     description = "Weight column - if this is not set, we treat all instance weights as 1.0.",
     sparkParamGetter = _.weightCol,
     portIndex = 0)
-
-  override def report(executionContext: ExecutionContext): Report = Report()
 
   override val params = declareParams(
     featureIndex,

@@ -18,9 +18,9 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.classification.{LogisticRegression => SparkLogisticRegression, LogisticRegressionModel => SparkLogisticRegressionModel}
 
-import io.deepsense.deeplang.ExecutionContext
+import io.deepsense.deeplang.doperables.CommonTablesGenerators.SummaryEntry
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasThreshold, ProbabilisticClassifierParams}
-import io.deepsense.deeplang.doperables.{Report, SparkModelWrapper}
+import io.deepsense.deeplang.doperables.{CommonTablesGenerators, Report, SparkModelWrapper}
 import io.deepsense.deeplang.params.Param
 
 class LogisticRegressionModel
@@ -30,12 +30,35 @@ class LogisticRegressionModel
   with ProbabilisticClassifierParams
   with HasThreshold {
 
-  override def report(executionContext: ExecutionContext): Report = Report()
-
   override val params: Array[Param[_]] = declareParams(
     featuresColumn,
     probabilityColumn,
     rawPredictionColumn,
     predictionColumn,
     threshold)
+
+  override def report: Report = {
+    val coefficients =
+      SummaryEntry(
+        name = "coefficients",
+        value = model.coefficients.toString,
+        description = "Model coefficients.")
+
+    val summary = if (model.hasSummary) {
+      List(
+        SummaryEntry(
+          name = "objective history",
+          value = model.summary.objectiveHistory.mkString("[", ", ", "]"),
+          description = "objective function (scaled loss + regularization) at each iteration."),
+        SummaryEntry(
+          name = "total iterations",
+          value = model.summary.totalIterations.toString,
+          description = "Number of training iterations until termination."))
+    } else {
+      Nil
+    }
+
+    super.report
+      .withAdditionalTable(CommonTablesGenerators.modelSummary(List(coefficients) ++ summary))
+  }
 }

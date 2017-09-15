@@ -113,8 +113,6 @@ case class DatetimeDecomposer() extends Transformer {
     val inferredSchema = StructType(schema.fields ++ newColumns)
     Some(inferredSchema)
   }
-
-  override def report(executionContext: ExecutionContext): Report = Report()
 }
 
 object DatetimeDecomposer {

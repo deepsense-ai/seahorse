@@ -19,13 +19,12 @@ package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 import org.apache.spark.ml
 import org.apache.spark.ml.feature.{CountVectorizer => SparkCountVectorizer, CountVectorizerModel => SparkCountVectorizerModel}
 
-import io.deepsense.deeplang.ExecutionContext
+import io.deepsense.deeplang.doperables.SparkEstimatorWrapper
 import io.deepsense.deeplang.doperables.spark.wrappers.models.CountVectorizerModel
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common._
-import io.deepsense.deeplang.doperables.{Report, SparkEstimatorWrapper}
 import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.validators.RangeValidator
-import io.deepsense.deeplang.params.wrappers.spark.{IntParamWrapper, DoubleParamWrapper}
+import io.deepsense.deeplang.params.wrappers.spark.{DoubleParamWrapper, IntParamWrapper}
 
 class CountVectorizerEstimator
   extends SparkEstimatorWrapper[
@@ -48,8 +47,6 @@ class CountVectorizerEstimator
     sparkParamGetter = _.vocabSize,
     RangeValidator(0.0, Double.MaxValue, beginIncluded = false))
   setDefault(vocabSize, (1 << 18).toDouble)
-
-  override def report(executionContext: ExecutionContext): Report = Report()
 
   override val params: Array[Param[_]] =
     declareParams(inputColumn, outputColumn, minDF, minTF, vocabSize)

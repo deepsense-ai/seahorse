@@ -18,16 +18,13 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.feature.{CountVectorizer => SparkCountVectorizer, CountVectorizerModel => SparkCountVectorizerModel}
 
-import io.deepsense.deeplang.ExecutionContext
+import io.deepsense.deeplang.doperables.SparkModelWrapper
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.HasMinTermsFrequencyParam
-import io.deepsense.deeplang.doperables.{Report, SparkModelWrapper}
 import io.deepsense.deeplang.params.Param
 
 class CountVectorizerModel
   extends SparkModelWrapper[SparkCountVectorizerModel, SparkCountVectorizer]
   with HasMinTermsFrequencyParam {
-
-  override def report(executionContext: ExecutionContext): Report = Report()
 
   override val params: Array[Param[_]] =
     declareParams(inputColumn, minTF, outputColumn)

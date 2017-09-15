@@ -20,21 +20,16 @@ import scala.reflect.runtime.{universe => ru}
 
 import org.scalatest.{FunSuite, Matchers}
 
-import io.deepsense.deeplang.{ExecutionContext, DOperable}
+import io.deepsense.deeplang.DOperable
 import io.deepsense.deeplang.catalogs.doperable.exceptions._
-import io.deepsense.deeplang.doperables.Report
-
-
-import io.deepsense.deeplang.doperables.DOperableMock
+import io.deepsense.deeplang.doperables.{DOperableMock, Report}
 
 object SampleInheritance {
   trait T1 extends DOperable
   trait T2 extends T1
   trait T3 extends T1
   trait T extends DOperable
-  abstract class A extends T3 {
-    override def report(executionContext: ExecutionContext): Report = ???
-  }
+  abstract class A extends T3
   case class B() extends A with T
   case class C() extends A with T2
 }

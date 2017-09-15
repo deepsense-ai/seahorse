@@ -19,10 +19,9 @@ package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 import org.apache.spark.ml
 import org.apache.spark.ml.regression.{GBTRegressionModel => SparkGBTRegressionModel, GBTRegressor => SparkGBTRegressor}
 
-import io.deepsense.deeplang.ExecutionContext
+import io.deepsense.deeplang.doperables.SparkEstimatorWrapper
 import io.deepsense.deeplang.doperables.spark.wrappers.models.GBTRegressionModel
 import io.deepsense.deeplang.doperables.spark.wrappers.params.GBTParams
-import io.deepsense.deeplang.doperables.{Report, SparkEstimatorWrapper}
 import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.choice.Choice
 import io.deepsense.deeplang.params.wrappers.spark.ChoiceParamWrapper
@@ -51,8 +50,6 @@ class GBTRegressor
     description = "Loss function which GBT tries to minimize.",
     sparkParamGetter = _.lossType)
   setDefault(lossType, Squared())
-
-  override def report(executionContext: ExecutionContext): Report = Report()
 
   override val params: Array[Param[_]] = declareParams(
     featuresColumn,

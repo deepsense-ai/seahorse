@@ -16,13 +16,12 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
-import org.apache.spark.ml.regression.{RandomForestRegressor => SparkRFR, RandomForestRegressionModel => SparkRFRModel}
+import org.apache.spark.ml.regression.{RandomForestRegressionModel => SparkRFRModel, RandomForestRegressor => SparkRFR}
 
 import io.deepsense.commons.utils.Logging
-import io.deepsense.deeplang.ExecutionContext
+import io.deepsense.deeplang.doperables.SparkEstimatorWrapper
 import io.deepsense.deeplang.doperables.spark.wrappers.models.RandomForestRegressionModel
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common._
-import io.deepsense.deeplang.doperables.{Report, SparkEstimatorWrapper}
 import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.choice.Choice
 import io.deepsense.deeplang.params.validators.RangeValidator
@@ -109,8 +108,6 @@ class RandomForestRegression
     description = "The number of features to consider for splits at each tree node.",
     sparkParamGetter = _.featureSubsetStrategy)
   setDefault(featureSubsetStrategy, FeatureSubsetStrategy.Auto())
-
-  override def report(executionContext: ExecutionContext): Report = Report()
 
   override val params: Array[Param[_]] = declareParams(
     maxDepth,

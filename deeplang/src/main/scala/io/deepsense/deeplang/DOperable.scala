@@ -27,5 +27,5 @@ import io.deepsense.deeplang.doperables.descriptions.HasInferenceResult
  * DOperable that can be used for execution can ALWAYS be used for inference, but not vice-versa.
  */
 trait DOperable extends HasInferenceResult {
-  def report(executionContext: ExecutionContext): Report
+  def report: Report = Report()
 }

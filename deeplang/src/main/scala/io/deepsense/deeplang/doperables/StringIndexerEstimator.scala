@@ -20,7 +20,7 @@ import scala.language.reflectiveCalls
 
 import org.apache.spark.ml.feature.{StringIndexer => SparkStringIndexer, StringIndexerModel => SparkStringIndexerModel}
 
-import io.deepsense.deeplang.ExecutionContext
+import io.deepsense.deeplang.doperables.CommonTablesGenerators.SummaryEntry
 import io.deepsense.deeplang.params.Param
 
 class StringIndexerEstimator
@@ -39,12 +39,23 @@ class SingleStringIndexer
     SparkStringIndexer,
     SingleStringIndexerModel] {
 
-  override def report(executionContext: ExecutionContext): Report = Report()
   override def getSpecificParams: Array[Param[_]] = Array()
 }
 
 class SingleStringIndexerModel
   extends SparkSingleColumnModelWrapper[SparkStringIndexerModel, SparkStringIndexer] {
-  override def report(executionContext: ExecutionContext): Report = Report()
+
   override def getSpecificParams: Array[Param[_]] = Array()
+
+  override def report: Report = {
+    val summary =
+      List(
+        SummaryEntry(
+          name = "labels",
+          value = model.labels.mkString("[", ", ", "]"),
+          description = "Ordered list of labels, corresponding to indices to be assigned."))
+
+    super.report
+      .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))
+  }
 }

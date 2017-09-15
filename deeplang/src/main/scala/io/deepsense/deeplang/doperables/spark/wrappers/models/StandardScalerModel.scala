@@ -18,9 +18,9 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.feature.{StandardScaler => SparkStandardScaler, StandardScalerModel => SparkStandardScalerModel}
 
-import io.deepsense.deeplang.ExecutionContext
+import io.deepsense.deeplang.doperables.CommonTablesGenerators.SummaryEntry
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasInputColumn, HasOutputColumn}
-import io.deepsense.deeplang.doperables.{Report, SparkModelWrapper}
+import io.deepsense.deeplang.doperables.{CommonTablesGenerators, Report, SparkModelWrapper}
 import io.deepsense.deeplang.params.Param
 
 class StandardScalerModel
@@ -28,7 +28,22 @@ class StandardScalerModel
   with HasInputColumn
   with HasOutputColumn {
 
-  override def report(executionContext: ExecutionContext): Report = Report()
-
   override val params: Array[Param[_]] = declareParams(inputColumn, outputColumn)
+
+  override def report: Report = {
+    val summary =
+      List(
+        SummaryEntry(
+          name = "std",
+          value = model.std.toString,
+          description = "Standard deviation of the StandardScalerModel"),
+        SummaryEntry(
+          name = "mean",
+          value = model.mean.toString,
+          description = "Mean of the StandardScalerModel"))
+
+
+    super.report
+      .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))
+  }
 }

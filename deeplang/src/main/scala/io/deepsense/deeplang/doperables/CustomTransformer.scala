@@ -23,7 +23,7 @@ import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.custom.{Sink, Source}
 import io.deepsense.deeplang.inference.InferContext
-import io.deepsense.deeplang.params.{WorkflowParam, Param}
+import io.deepsense.deeplang.params.{Param, WorkflowParam}
 import io.deepsense.graph.{GraphKnowledge, Node, NodeInferenceResult}
 
 case class CustomTransformer() extends Transformer with DefaultCustomTransformerWorkflow {
@@ -53,8 +53,6 @@ case class CustomTransformer() extends Transformer with DefaultCustomTransformer
     workflow.graph.inferKnowledge(inferCtx, initialKnowledge)
       .getKnowledge(workflow.sink.id)(0).asInstanceOf[DKnowledge[DataFrame]].single.schema
   }
-
-  override def report(executionContext: ExecutionContext): Report = Report()
 }
 
 trait DefaultCustomTransformerWorkflow {

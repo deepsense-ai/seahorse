@@ -23,6 +23,7 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.Params
 import io.deepsense.deeplang.{DKnowledge, DMethod1To1, DOperable, ExecutionContext}
+import io.deepsense.reportlib.model.ReportType
 
 /**
  * Able to transform a DataFrame into another DataFrame.
@@ -66,4 +67,10 @@ abstract class Transformer extends DOperable with Params with Logging {
       }
     }
   }
+
+  override def report: Report =
+    super.report
+      .withReportName(s"${this.getClass.getSimpleName} Report")
+      .withReportType(ReportType.Model)
+      .withAdditionalTable(CommonTablesGenerators.params(extractParamMap()))
 }
