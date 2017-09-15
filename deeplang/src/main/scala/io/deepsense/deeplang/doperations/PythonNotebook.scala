@@ -16,16 +16,13 @@
 
 package io.deepsense.deeplang.doperations
 
-import scala.reflect.runtime.{universe => ru}
-
 import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
-import io.deepsense.deeplang.documentation.OperationDocumentation
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.{DOperation1To0, ExecutionContext}
+import io.deepsense.deeplang.ExecutionContext
 
 case class PythonNotebook()
-  extends DOperation1To0[DataFrame] with OperationDocumentation {
+  extends Notebook {
 
   override val id: Id = "e76ca616-0322-47a5-b390-70c9668265dd"
   override val name: String = "Python Notebook"
@@ -33,10 +30,5 @@ case class PythonNotebook()
 
   override val since: Version = Version(1, 0, 0)
 
-  override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array()
-
   override protected def execute(dataFrame: DataFrame)(context: ExecutionContext): Unit = ()
-
-  @transient
-  override lazy val tTagTI_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }
