@@ -56,6 +56,7 @@ object Library {
   val amazonS3 = "com.amazonaws" % "aws-java-sdk-s3" % Version.amazonS3 excludeJackson
   val apacheCommonsLang3 = "org.apache.commons" % "commons-lang3" % Version.apacheCommons
   val apacheCommonsCsv = "org.apache.commons" % "commons-csv" % "1.1" // Also used by spark-csv
+  val config = "com.typesafe" % "config" % "1.3.1"
   val hadoopAWS = hadoop("aws")
   val hadoopClient = hadoop("client")
   val hadoopCommon = hadoop("common")
@@ -65,6 +66,7 @@ object Library {
   val rabbitmq = "com.thenewmotion.akka" %% "akka-rabbitmq" % "2.2" excludeAkkaActor
   val reflections = "org.reflections" % "reflections" % "0.9.10" excludeGuava
   val scalacheck = "org.scalacheck" %% "scalacheck" % Version.scalacheck
+  val scalate = "org.scalatra.scalate" %% "scalate-core" % "1.7.1"
   val slf4j = "org.slf4j" % "slf4j-api" % "1.7.12"
   val slf4jLog4j = "org.slf4j" % "slf4j-log4j12" % "1.7.12"
   val sprayCan = spray("can")
@@ -82,6 +84,7 @@ object Library {
   val wireMock = "com.github.tomakehurst" % "wiremock" % Version.wireMock exclude (
     "com.google.guava", "guava") excludeJackson
   val jsonLenses = "net.virtual-void" %%  "json-lenses" % "0.6.1"
+  val javaMail = "javax.mail" % "mail" % "1.4.7"
 }
 
 object Dependencies {
@@ -141,8 +144,11 @@ object Dependencies {
 
   val commons = usedSpark.onlyInTests ++ Seq(
     apacheCommonsLang3,
+    config,
+    javaMail,
     log4JExtras,
     nscalaTime,
+    scalate,
     slf4j,
     slf4jLog4j,
     sprayCan,
