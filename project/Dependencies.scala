@@ -57,6 +57,7 @@ object Library {
   val scalatraTest = "org.scalatra" %% "scalatra-scalatest" % Version.scalatra % "test"
   val scalaz = "org.scalaz" %% "scalaz-core" % "7.2.5"
   val scoverage = "org.scoverage" %% "scalac-scoverage-runtime" % Version.scoverage
+  val stampy = "asia.stampy" % "stampy-core" % "1.0-RELEASE"
   val slick = "com.typesafe.slick" %% "slick" % Version.slick
   val sparkCore = spark("core")
   val sparkMLLib = spark("mllib")
@@ -151,6 +152,7 @@ object Dependencies {
   val integrationtests = Seq(
     "com.typesafe.play" %% "play-ws" % "2.4.3",
     "org.jfarcand" % "wcs" % "1.5",
-    scalaz
+    scalaz,
+    stampy
   ) ++ Seq(scalatest).map(_ % s"$Test,it")
 }

@@ -12,6 +12,7 @@ lazy val seahorseDeeplang = ProjectRef(file("./seahorse-workflow-executor"), "de
 lazy val seahorseGraph = ProjectRef(file("./seahorse-workflow-executor"), "graph")
 lazy val seahorseReportlib = ProjectRef(file("./seahorse-workflow-executor"), "reportlib")
 lazy val seahorseWorkflowJson = ProjectRef(file("./seahorse-workflow-executor"), "workflowjson")
+lazy val seahorseWorkflowExecutor = ProjectRef(file("./seahorse-workflow-executor"), "workflowexecutor")
 
 lazy val backendcommons         = project dependsOn seahorseCommons
 lazy val workflowmanager        = project dependsOn (seahorseDeeplang, seahorseGraph, seahorseReportlib,
@@ -25,7 +26,8 @@ lazy val seahorseWorkflowExecutorProjects = Seq(
     seahorseDeeplang,
     seahorseGraph,
     seahorseReportlib,
-    seahorseWorkflowJson
+    seahorseWorkflowJson,
+    seahorseWorkflowExecutor
 )
 
 lazy val seahorseBackendProjects = Seq(
@@ -41,7 +43,9 @@ lazy val root = (project in file(".")).aggregate(rootProjects:_*)
 
 
 // e2e tests are not aggregated in root, so they are not run after calling sbt tasks from root project
-lazy val e2etests = project dependsOn (backendcommons, backendcommons % "test->test", sessionmanager, workflowmanager)
+lazy val e2etests = project dependsOn (backendcommons, backendcommons % "test->test",
+  sessionmanager, workflowmanager, seahorseWorkflowExecutor, seahorseMqProtocol, seahorseWorkflowJson
+)
 
 
 // Sequentially perform integration tests after assembling and deploying GE with dependencies jar.

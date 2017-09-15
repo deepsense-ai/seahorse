@@ -30,7 +30,7 @@ class AllInputWorkflowsCorrectTest extends WordSpec {
 object WorkflowParser extends Logging with WorkflowVersionUtil {
   override def currentVersion: Version = CurrentBuild.version
 
-  override protected val graphReader: GraphReader = {
+  override val graphReader: GraphReader = {
     val dOperationsCatalog = DOperationsCatalog()
     CatalogRecorder.registerDOperations(dOperationsCatalog)
     new GraphReader(dOperationsCatalog)
