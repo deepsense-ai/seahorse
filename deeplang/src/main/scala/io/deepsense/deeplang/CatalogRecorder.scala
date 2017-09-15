@@ -148,5 +148,10 @@ object CatalogRecorder {
       DOperationCategories.DataManipulation,
       "Converts selected columns of a DataFrame to a different type"
     )
+
+    catalog.registerDOperation[SqlExpression](
+      DOperationCategories.Transformation,
+      "Executes an SQL expression on a DataFrame"
+    )
   }
 }
