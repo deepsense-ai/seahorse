@@ -7,18 +7,17 @@ usesMathJax: true
 includeOperationsMenu: true
 ---
 
-Combines input [DataFrames](../classes/dataframe.html) $$ A $$ and $$ B $$
-into a DataFrame $$ D $$ such that
-$$ \forall_{x \in A \cup B} \; x \in D $$ and $$ |D| = |A| + |B| $$.
+Sums two input [DataFrames](../classes/dataframe.html) together into one `DataFrame`.
+This means that each row from each of the input `DataFrames` will end up in the resulting `DataFrame`.
 
-This means that each row from each of the input DataFrames will end up in the resulting DataFrame
-with no deduplication effort.
+There will be no deduplication effort, meaning that if there are two identical rows in the input
+`DataFrames`, both of them will be added to the output `DataFrame`.
 
-The schemas of $$ A $$ and $$ B $$ have to be the same.
+The schemas of both input `DataFrames` have to be the same.
 
-The order of rows in $$ A $$ and $$ B $$ is not guaranteed to be preserved in the $$ D $$.
+The order of rows from input `DataFrames` is not guaranteed to be preserved in the output `DataFrame`.
 
-If schemas of the input DataFrames do not match a ``SchemaMismatchException`` will be thrown.
+If schemas of the input `DataFrames` do not match, a ``SchemaMismatchException`` will be thrown.
 
 **Since**: Seahorse 0.4.0
 
@@ -37,13 +36,13 @@ If schemas of the input DataFrames do not match a ``SchemaMismatchException`` wi
 <tr>
 <td><code>0</code></td>
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>Frist DataFrame</td>
+<td>The first <code>DataFrame</code>.</td>
 </tr>
 
 <tr>
 <td><code>1</code></td>
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>Second DataFrame</td>
+<td>The second <code>DataFrame</code>.</td>
 </tr>
 
 </tbody>
@@ -63,7 +62,7 @@ If schemas of the input DataFrames do not match a ``SchemaMismatchException`` wi
 <tr>
 <td><code>0</code></td>
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>Union of the input DataFrames</td>
+<td>Union of the input <code>DataFrames</code>.</td>
 </tr>
 </tbody>
 </table>
