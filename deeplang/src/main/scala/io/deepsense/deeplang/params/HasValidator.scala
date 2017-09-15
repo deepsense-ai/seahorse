@@ -27,6 +27,13 @@ trait HasValidator[T] extends Param[T] {
 
   override def validate(value: T): Vector[DeepLangException] = validator.validate(name, value)
 
+  override def constraints: String =
+    if (validator.toHumanReadable(name).isEmpty) {
+      ""
+    } else {
+      " " + validator.toHumanReadable(name)
+    }
+
   override protected def extraJsFields: Map[String, JsValue] =
     super.extraJsFields ++ Map("validator" -> validator.toJson)
 }

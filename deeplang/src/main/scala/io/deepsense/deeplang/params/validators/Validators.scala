@@ -21,8 +21,7 @@ import scala.util.matching.Regex
 import spray.json.JsObject
 
 import io.deepsense.deeplang.exceptions.DeepLangException
-import io.deepsense.deeplang.params.exceptions.{EmptyColumnNameException,
-OutOfRangeWithStepException, OutOfRangeException, MatchException}
+import io.deepsense.deeplang.params.exceptions._
 
 /**
  * Validates if NumericParameter value is within range bounds.
@@ -116,7 +115,7 @@ case class RangeValidator(
         case (_, None) => s"`$paramName` is a floating point number."
       }
     }
-    " Range constraints: " + rangeDescription + stepDescription
+    "Range constraints: " + rangeDescription + stepDescription
   }
 
   abstract class Constraint(limit: Double) {
@@ -183,6 +182,86 @@ object RangeValidator {
       endIncluded = true,
       step = Some(1.0))
 }
+
+
+case class ArrayLengthValidator(min: Int = 1, max: Int = Int.MaxValue)
+  extends Validator[Array[Double]] {
+
+  require(min >= 0)
+  require(max >= min)
+
+  override val validatorType = ValidatorType.ArrayLength
+
+  override def validate(name: String, parameter: Array[Double]): Vector[DeepLangException] = {
+    val length = parameter.length
+    if (length < min) {
+      Vector(new ArrayTooShort(name, length, min))
+    } else if (length > max) {
+      Vector(new ArrayTooLong(name, length, max))
+    } else {
+      Vector.empty
+    }
+  }
+
+  override def toHumanReadable(paramName: String): String = {
+    if (min > 0 && max == Int.MaxValue) {
+      s"Minimum length of `$paramName` is $min."
+    } else if (min == 0 && max < Int.MaxValue) {
+      s"Maximum length of `$paramName` is $max."
+    } else if (min > 0 && max < Int.MaxValue) {
+      s"Length of `$paramName` must be in range [$min, $max]."
+    } else {
+      s"Array `$paramName` can be of any length."
+    }
+  }
+
+  override def configurationToJson: JsObject = {
+    import ValidatorsJsonProtocol.arrayLengthValidator
+    arrayLengthValidator.write(this).asJsObject
+  }
+}
+
+object ArrayLengthValidator {
+  def all: ArrayLengthValidator = ArrayLengthValidator(min = 0)
+  def withAtLeast(n: Int): ArrayLengthValidator = ArrayLengthValidator(min = n)
+}
+
+
+case class ComplexArrayValidator(
+    rangeValidator: RangeValidator = RangeValidator.all,
+    lengthValidator: ArrayLengthValidator = ArrayLengthValidator.withAtLeast(1))
+  extends Validator[Array[Double]] {
+
+  override val validatorType = ValidatorType.ArrayComplex
+
+  override def validate(name: String, parameter: Array[Double]): Vector[DeepLangException] = {
+    val arrayExceptions = lengthValidator.validate(name, parameter)
+    val elementsRangesExceptions = parameter.zipWithIndex.flatMap {
+      case (value, idx) => rangeValidator.validate(s"$name[$idx]", value)
+    }.toVector
+    arrayExceptions ++ elementsRangesExceptions
+  }
+
+  override def toHumanReadable(paramName: String): String = {
+    lengthValidator.toHumanReadable(paramName) ++
+      " " ++
+      rangeValidator.toHumanReadable(s"$paramName[i]")
+  }
+
+  override def configurationToJson: JsObject = {
+    import ValidatorsJsonProtocol._
+    complexArrayValidator.write(this).asJsObject
+  }
+}
+
+object ComplexArrayValidator {
+  def all: ComplexArrayValidator =
+    ComplexArrayValidator(
+      rangeValidator = RangeValidator.all,
+      lengthValidator = ArrayLengthValidator.all
+    )
+}
+
 
 /**
  * Validates if StringParameter value matches the given regex.

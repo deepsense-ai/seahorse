@@ -16,7 +16,5 @@
 
 package io.deepsense.deeplang.params.exceptions
 
-import scala.util.matching.Regex
-
 case class EmptyColumnNameException()
   extends ValidationException("Column name cannot be empty.")

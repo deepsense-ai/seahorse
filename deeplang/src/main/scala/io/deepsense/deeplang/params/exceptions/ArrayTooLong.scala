@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2016, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,8 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.params
+package io.deepsense.deeplang.params.exceptions
 
-import spray.json.DefaultJsonProtocol.DoubleJsonFormat
-
-import io.deepsense.deeplang.params.validators.{RangeValidator, Validator}
-
-case class NumericParam(
-    name: String,
-    description: String,
-    validator: Validator[Double] = RangeValidator.all)
-  extends ParamWithJsFormat[Double]
-  with HasValidator[Double] {
-
-  override val parameterType = ParameterType.Numeric
-
-  override val isGriddable: Boolean = true
-
-  override def replicate(name: String): NumericParam = copy(name = name)
-}
+case class ArrayTooLong(name: String, arrayLength: Int, maxLength: Int)
+  extends ValidationException(s"Array '$name' is too long. " +
+    s"Length of `$name` is `$arrayLength` but needs to be at most `$maxLength`.")
