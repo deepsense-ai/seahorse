@@ -20,9 +20,6 @@ factory('Workflow', /*@ngInject*/function (GraphNode, Edge) {
     that.id = null;
     that.name = 'empty';
     that.description = 'empty';
-    that.predefColors = [
-      '#00B1EB', '#1ab394', '#2f4050', '#f8ac59', '#ed5565', '#DD6D3F'
-    ];
     that.STATUS_DEFAULT = that.STATUS.DRAFT;
     that.lastExecutionReportTime = null;
 
@@ -287,7 +284,6 @@ factory('Workflow', /*@ngInject*/function (GraphNode, Edge) {
           'gui': {
             'name': that.name,
             'description': that.description,
-            'predefColors': that.predefColors,
             'nodes': {}
           }
         },

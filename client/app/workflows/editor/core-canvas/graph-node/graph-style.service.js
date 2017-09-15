@@ -53,8 +53,7 @@ const OUTPUT_STYLE = {
   connectorStyle: CONNECTOR_STYLE_DEFAULT,
   connectorHoverStyle: CONNECTOR_HOVER_STYLE,
   maxConnections: -1,
-  paintStyle: DEFAULT_PAINT_STYLE,
-  cssClass: 'cursor-pointer'
+  paintStyle: DEFAULT_PAINT_STYLE
 };
 
 const INPUT_STYLE = {
@@ -65,8 +64,7 @@ const INPUT_STYLE = {
   },
   isTarget: true,
   maxConnections: 1,
-  paintStyle: DEFAULT_PAINT_STYLE,
-  cssClass: 'cursor-pointer'
+  paintStyle: DEFAULT_PAINT_STYLE
 };
 
 class GraphStyleService {

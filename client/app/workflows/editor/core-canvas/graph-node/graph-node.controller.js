@@ -27,13 +27,12 @@ const CSS_CLASSES_MAP = {
   }
 };
 
+import {specialOperations} from '_appRoot/enums/special-operations.js';
+
 class GraphNodeController {
-  constructor($rootScope, $scope, $element, WorkflowService, UserService, nodeTypes, specialOperations, GraphStyleService) {
+  constructor($rootScope, $scope, $element, WorkflowService, UserService, GraphStyleService) {
     'ngInject';
-    _.assign(this, {
-      $rootScope, $scope, $element, WorkflowService, UserService, nodeTypes, specialOperations,
-      GraphStyleService
-    });
+    _.assign(this, {$rootScope, $scope, $element, WorkflowService, UserService, GraphStyleService});
 
     this.nodeType = this.getNodeType();
     this.firstNameLetters = this.node.name.split(' ').map((item) => item[0]).join('');
@@ -78,9 +77,10 @@ class GraphNodeController {
 
   getNodeType() {
     const operationId = this.node.operationId;
-    if (operationId in this.specialOperations) {
+    if (operationId in Object.values(specialOperations.ACTIONS)) {
       return 'action';
-    } else if (operationId === this.nodeTypes.CUSTOM_TRANSFORMER_SOURCE || operationId === this.nodeTypes.CUSTOM_TRANSFORMER_SINK) {
+    } else if (operationId === specialOperations.CUSTOM_TRANSFORMER.SINK
+      || operationId === specialOperations.CUSTOM_TRANSFORMER.SOURCE) {
       return 'source-or-sink';
     } else {
       return 'standard';

@@ -5,105 +5,96 @@
 @seahorse-shining-evaluator: #57aaae;
 @seahorse-shining-estimator: #28e8ef;
 
-.disabled {
-  filter: grayscale(100%);
-}
+.canvas {
+  path {
+    cursor: default;
+  }
 
-.sliding-window {
-  height: 100%;
-  transform-origin: left top 0;
-}
+  &.disabled {
+    filter: grayscale(100%);
+  }
 
-.new-node-container {
-  width: inherit;
-  height: inherit;
-}
+  &.sliding-window {
+    height: 100%;
+    transform-origin: left top 0;
+  }
 
-.graph-node-component {
-  position: absolute;
-  z-index: 100;
-}
+  .new-node-container {
+    width: inherit;
+    height: inherit;
+  }
 
-.cursor-pointer{
-  cursor: pointer;
-}
+  .flowchart-paint-area {
+    position: absolute;
+    width: 10000px;
+    height: 10000px;
+    z-index: 1;
+  }
 
-.position-endpoint-icon {
-  &:before {
-    top: 12px;
-    left: 8px;
+  .graph-node-component {
+    position: absolute;
+    z-index: 100;
+  }
+
+  .jtk-endpoint {
+    cursor: pointer;
+    z-index: 2;
+  }
+
+  .dataframe-output-port {
+    z-index: 100;
+  }
+
+  .matching-port-default svg circle {
+    animation: svg-fill-animation-default 1s linear infinite;
+  }
+
+  .matching-port-transformer svg rect {
+    animation: svg-fill-animation-transformer 1s linear infinite;
+  }
+
+  .matching-port-evaluator svg rect {
+    animation: svg-fill-animation-evaluator 1s linear infinite;
+  }
+
+  .matching-port-estimator svg rect {
+    animation: svg-fill-animation-estimator 1s linear infinite;
+  }
+
+  .has-report {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+
+    &:before {
+      font-size: 14px;
+      position: relative;
+      color: white;
+      z-index: 1;
+    }
+  }
+
+  @keyframes svg-fill-animation-default {
+    50% {
+      fill: @seahorse-shining-data
+    }
+  }
+
+  @keyframes svg-fill-animation-transformer {
+    50% {
+      fill: @seahorse-shining-transformer
+    }
+  }
+
+  @keyframes svg-fill-animation-evaluator {
+    50% {
+      fill: @seahorse-shining-evaluator
+    }
+  }
+
+  @keyframes svg-fill-animation-estimator {
+    50% {
+      fill: @seahorse-shining-estimator
+    }
   }
 }
-
-.jsplumb-endpoint {
-  z-index: 2;
-}
-
-.dataframe-output-port {
-  z-index: 100;
-}
-
-.matching-port-default svg circle {
-  animation: svg-fill-animation-default 1s linear infinite;
-}
-
-.matching-port-transformer svg rect {
-  animation: svg-fill-animation-transformer 1s linear infinite;
-}
-
-.matching-port-evaluator svg rect {
-  animation: svg-fill-animation-evaluator 1s linear infinite;
-}
-
-.matching-port-estimator svg rect {
-  animation: svg-fill-animation-estimator 1s linear infinite;
-}
-
-@keyframes svg-fill-animation-default {
-  0% {
-    fill: @seahorse-blue
-  }
-  50% {
-    fill: @seahorse-shining-data
-  }
-  100% {
-    fill: @seahorse-blue
-  }
-}
-
-@keyframes svg-fill-animation-transformer {
-  0% {
-    fill: @seahorse-madison
-  }
-  50% {
-    fill: @seahorse-shining-transformer
-  }
-  100% {
-    fill: @seahorse-madison
-  }
-}
-
-@keyframes svg-fill-animation-evaluator {
-  0% {
-    fill: @seahorse-allports
-  }
-  50% {
-    fill: @seahorse-shining-evaluator
-  }
-  100% {
-    fill: @seahorse-allports
-  }
-}
-
-@keyframes svg-fill-animation-estimator {
-  0% {
-    fill: @seahorse-light-sea-green
-  }
-  50% {
-    fill: @seahorse-shining-estimator
-  }
-  100% {
-    fill: @seahorse-light-sea-green
-  }
-}
-

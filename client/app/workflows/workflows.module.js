@@ -27,9 +27,6 @@ require('./workflows-status-bar/menu-item/menu-item.controller.js').inject(workf
 require('./workflows-status-bar/additional-html/running-executor-popover.ctrl.js').inject(workflows);
 require('./workflows-status-bar/additional-html/starting-popover.ctrl.js').inject(workflows);
 require('./workflows-status-bar/additional-html/executor-error.ctrl.js').inject(workflows);
-require('./workflows-editor/side-bar/side-bar.directive.js').inject(workflows);
-require('./workflows-editor/side-bar/side-bar.controller.js').inject(workflows);
-require('./workflows-editor/side-bar/side-bar.service.js').inject(workflows);
 require('./workflows-editor/bottom-bar/bottom-bar.directive.js').inject(workflows);
 require('./workflows-editor/bottom-bar/bottom-bar.controller.js').inject(workflows);
 require('./workflows-editor/bottom-bar/bottom-bar.service.js').inject(workflows);
@@ -43,10 +40,5 @@ require('./dataframe-library-modal/dataframe-library-modal.ctrl.js').inject(work
 require('./dataframe-library-modal/dataframe-library-modal.srv.js').inject(workflows);
 require('./dataframe-library-modal/file-upload-change.drv.js').inject(workflows);
 require('./dataframe-library-modal/dropzone-file-upload.drv.js').inject(workflows);
-
-// TODO these two files contain constants used throughout the whole app
-// TODO move them to upper directory and create one file instead of two
-require('./editor/core-canvas/graph-node/special-operations.js').inject(workflows);
-require('./editor/core-canvas/graph-node/node-types.js').inject(workflows);
 
 module.exports = workflows;

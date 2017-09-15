@@ -1,9 +1,12 @@
 'use strict';
 
+import {specialOperations} from '_appRoot/enums/special-operations.js';
+import {sessionStatus} from '_appRoot/enums/session-status.js';
+
 /* @ngInject */
 function WorkflowService($rootScope, $log, Workflow, OperationsHierarchyService, WorkflowsApiClient, Operations,
-                         ConfirmationModalService, DefaultInnerWorkflowGenerator, debounce, nodeTypes, SessionManagerApi,
-                         SessionStatus, SessionManager, ServerCommunication, UserService, DeepsenseCycleAnalyser) {
+                         ConfirmationModalService, DefaultInnerWorkflowGenerator, debounce, SessionManagerApi,
+                         SessionManager, ServerCommunication, UserService, DeepsenseCycleAnalyser) {
 
   const INNER_WORKFLOW_PARAM_NAME = 'inner workflow';
 
@@ -34,7 +37,7 @@ function WorkflowService($rootScope, $log, Workflow, OperationsHierarchyService,
       let workflow = this._deserializeWorkflow(workflowData);
       workflow.workflowType = 'root';
       workflow.workflowStatus = 'editor';
-      workflow.sessionStatus = SessionStatus.NOT_RUNNING;
+      workflow.sessionStatus = sessionStatus.NOT_RUNNING;
 
       workflow.owner = {
         id: workflowData.workflowInfo.ownerId,
@@ -42,7 +45,7 @@ function WorkflowService($rootScope, $log, Workflow, OperationsHierarchyService,
       };
 
       let nodes = _.values(workflow.getNodes());
-      nodes.filter((n) => n.operationId === nodeTypes.CUSTOM_TRANSFORMER)
+      nodes.filter((n) => n.operationId === specialOperations.CUSTOM_TRANSFORMER.NODE)
         .forEach((node) => this.initInnerWorkflow(node, workflow));
 
       $rootScope.$watch(() => workflow.serialize(), this._saveWorkflow, true);
@@ -96,14 +99,11 @@ function WorkflowService($rootScope, $log, Workflow, OperationsHierarchyService,
       let innerWorkflow = this._deserializeInnerWorkflow(innerWorkflowData);
       innerWorkflow.workflowType = 'inner';
       innerWorkflow.workflowStatus = 'editor';
-      innerWorkflow.sessionStatus = SessionStatus.NOT_RUNNING;
+      innerWorkflow.sessionStatus = sessionStatus.NOT_RUNNING;
       innerWorkflow.owner = rootWorkflow.owner;
 
       innerWorkflow.publicParams = innerWorkflow.publicParams || [];
       this._innerWorkflowByNodeId[node.id] = innerWorkflow;
-
-      let nestedCustomTransformerNodes = _.filter(_.values(innerWorkflow.getNodes()), (n) => n.operationId === nodeTypes.CUSTOM_TRANSFORMER);
-      _.forEach(nestedCustomTransformerNodes, (node) => this.initInnerWorkflow(node, rootWorkflow));
 
       $rootScope.$watch(() => SessionManager.statusForWorkflowId(rootWorkflow.id), (newStatus) => {
         innerWorkflow.sessionStatus = newStatus;
@@ -121,7 +121,9 @@ function WorkflowService($rootScope, $log, Workflow, OperationsHierarchyService,
       $rootScope.$watchCollection(() => workflow.getNodes(), (newNodes, oldNodes) => {
         let addedNodeIds = _.difference(_.keys(newNodes), _.keys(oldNodes));
         let addedNodes = _.map(addedNodeIds, nodeId => newNodes[nodeId]);
-        let addedCustomWorkflowNodes = _.filter(addedNodes, (n) => n.operationId === nodeTypes.CUSTOM_TRANSFORMER);
+        let addedCustomWorkflowNodes = _.filter(addedNodes,
+          (n) => n.operationId === specialOperations.CUSTOM_TRANSFORMER.NODE
+        );
         _.forEach(addedCustomWorkflowNodes, (addedNode) => {
           if (_.isUndefined(addedNode.parametersValues[INNER_WORKFLOW_PARAM_NAME])) {
             addedNode.parametersValues[INNER_WORKFLOW_PARAM_NAME] = DefaultInnerWorkflowGenerator.create();
@@ -155,7 +157,6 @@ function WorkflowService($rootScope, $log, Workflow, OperationsHierarchyService,
       workflow.id = workflowData.id;
       workflow.name = (thirdPartyData.gui || {}).name;
       workflow.description = (thirdPartyData.gui || {}).description;
-      workflow.predefColors = (thirdPartyData.gui || {}).predefColors || workflow.predefColors;
       workflow.createNodes(workflowData.workflow.nodes, operations, workflowData.thirdPartyData);
       workflow.createEdges(workflowData.workflow.connections);
       workflow.updateEdgesStates(OperationsHierarchyService);
@@ -165,7 +166,7 @@ function WorkflowService($rootScope, $log, Workflow, OperationsHierarchyService,
     isWorkflowEditable() {
       const workflow = this.getCurrentWorkflow();
       return workflow.workflowStatus === 'editor' &&
-        workflow.sessionStatus === SessionStatus.RUNNING &&
+        workflow.sessionStatus === sessionStatus.RUNNING &&
         workflow.owner.id === UserService.getSeahorseUser().id;
     }
 
@@ -184,7 +185,7 @@ function WorkflowService($rootScope, $log, Workflow, OperationsHierarchyService,
 
     isExecutorForCurrentWorkflowRunning() {
       const status = this.getCurrentWorkflow().sessionStatus;
-      return status === SessionStatus.RUNNING || status === SessionStatus.CREATING;
+      return status === sessionStatus.RUNNING || status === sessionStatus.CREATING;
     }
 
     getCurrentWorkflow() {

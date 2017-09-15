@@ -1,16 +1,16 @@
 'use strict';
 
+import {specialOperations} from '_appRoot/enums/special-operations.js';
+
 class GraphNodesService {
   /* @ngInject */
-  constructor($q, $rootScope, $timeout, DeepsenseNodeParameters, Operations, UUIDGenerator, nodeTypes, WorkflowsApiClient) {
+  constructor($q, $rootScope, DeepsenseNodeParameters, Operations, UUIDGenerator, WorkflowsApiClient) {
     _.assign(this, {
       $q,
       $rootScope,
-      $timeout,
       DeepsenseNodeParameters,
       Operations,
       UUIDGenerator,
-      nodeTypes,
       WorkflowsApiClient
     });
   }
@@ -20,10 +20,6 @@ class GraphNodesService {
 
     if (node.hasParameters()) {
       node.refreshParameters(this.DeepsenseNodeParameters);
-      this.$timeout(() => {
-        // Sometimes when we click on a port to show report, '$digest cycle in progress' is shown. This fixes it.
-        this.$rootScope.$apply();
-      }, 0);
       deferred.resolve(node, 'sync');
     } else {
       this.Operations.getWithParams(node.operationId)
@@ -81,8 +77,7 @@ class GraphNodesService {
     const createdNode = workflow.createNode(nodeParams);
     createdNode.parametersValues = angular.copy(node.parameters.serialize());
 
-    if (node.operationId === this.nodeTypes.PYTHON_NOTEBOOK ||
-        node.operationId === this.nodeTypes.R_NOTEBOOK) {
+    if (Object.values(this.specialOperations.NOTEBOOKS).includes(node.operationId)) {
       this.WorkflowsApiClient.cloneNotebookNode(workflow.id, node.id, newNodeId).then(() => {
         return workflow.addNode(createdNode);
       }, () => {
@@ -106,7 +101,7 @@ class GraphNodesService {
   _mapOldIdsWithNewOnes(innerWorkflow) {
     let map = {};
     innerWorkflow.nodes.forEach((node) => {
-      if (node.operation.id === this.nodeTypes.CUSTOM_TRANSFORMER) {
+      if (node.operation.id === this.specialOperations.CUSTOM_TRANSFORMER.NODE) {
         let mapFromNestedNode = this._mapOldIdsWithNewOnes(node.parameters['inner workflow'].workflow);
         map = angular.extend(map, mapFromNestedNode);
       }
@@ -142,8 +137,8 @@ class GraphNodesService {
   }
 
   isSinkOrSource(node) {
-    return node.operationId === this.nodeTypes.CUSTOM_TRANSFORMER_SINK ||
-      node.operationId === this.nodeTypes.CUSTOM_TRANSFORMER_SOURCE;
+    return node.operationId === this.specialOperations.CUSTOM_TRANSFORMER.SINK ||
+      node.operationId === this.specialOperations.CUSTOM_TRANSFORMER.SOURCE;
   }
 
 }

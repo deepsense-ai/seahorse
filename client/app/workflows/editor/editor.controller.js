@@ -24,10 +24,10 @@ class EditorController {
 
   $postLink() {
     this.bindEvents();
-    this.containment = $(this.$element[0].querySelector('.flowchart-box'));
+    this.containment = $(this.$element[0].querySelector('.editor'));
 
-    this.AdapterService.handleShowTooltip(this.showTooltip.bind(this));
-    this.AdapterService.handleHideTooltip(this.hideTooltip.bind(this));
+    this.AdapterService.setMouseOverOnPortFunction(this.showTooltip.bind(this));
+    this.AdapterService.setMouseOutOnPortFunction(this.hideTooltip.bind(this));
   }
 
   $onDestroy() {

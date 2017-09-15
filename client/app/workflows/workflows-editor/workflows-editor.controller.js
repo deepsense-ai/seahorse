@@ -3,33 +3,34 @@
 class WorkflowsEditorController {
 
   /* @ngInject */
-  constructor(workflowWithResults, $scope, $state, $q, $rootScope, $log, $timeout, specialOperations, WorkflowCloneService,
-              GraphNode, Edge, config, Report, MultiSelectionService, Operations, GraphPanelRendererService,
-              WorkflowService, MouseEvent, ConfirmationModalService, ExportModalService, GraphNodesService, NotificationService,
-              ServerCommunication, CopyPasteService, SideBarService, BottomBarService, NodeCopyPasteVisitorService,
-              EventsService, WorkflowsEditorService) {
-
-
-    WorkflowService.initRootWorkflow(workflowWithResults);
+  constructor(workflowWithResults, $scope, $state, $rootScope, WorkflowCloneService,
+              config, Report, MultiSelectionService, Operations, GraphPanelRendererService, WorkflowService,
+              MouseEvent, ConfirmationModalService, ExportModalService, GraphNodesService, NotificationService,
+              ServerCommunication, CopyPasteService, BottomBarService, NodeCopyPasteVisitorService,
+              EventsService, WorkflowsEditorService, AdapterService) {
 
     _.assign(this, {
-      $scope, $state, $q, $rootScope, $log, $timeout, specialOperations,
-      WorkflowCloneService, GraphNode, Edge, config, Report, MultiSelectionService, Operations, GraphPanelRendererService,
-      WorkflowService, MouseEvent, ConfirmationModalService, ExportModalService,
-      GraphNodesService, NotificationService, ServerCommunication, CopyPasteService, SideBarService, BottomBarService,
-      NodeCopyPasteVisitorService, EventsService, WorkflowsEditorService
+      workflowWithResults, $scope, $state, $rootScope, WorkflowCloneService,
+      config, Report, MultiSelectionService, Operations, GraphPanelRendererService, WorkflowService,
+      MouseEvent, ConfirmationModalService, ExportModalService, GraphNodesService, NotificationService,
+      ServerCommunication, CopyPasteService, BottomBarService, NodeCopyPasteVisitorService,
+      EventsService, WorkflowsEditorService, AdapterService
     });
+
+    WorkflowService.initRootWorkflow(workflowWithResults);
 
     $rootScope.$watch(() => this.WorkflowService.getCurrentWorkflow().name, (newValue) => {
       $rootScope.pageTitle = newValue;
     });
 
+    this.AdapterService.setMouseClickOnPortFunction((data) => {
+      this.openReport(data);
+    });
+
     this.BottomBarData = BottomBarService.tabsState;
-    this.SideBarData = SideBarService.data;
     this.selectedNode = null;
     this.catalog = Operations.getCatalog();
     this._editableModeEventListeners = [];
-    this.zoomId = 'flowchart-box';
     this.init(workflowWithResults);
   }
 
@@ -39,10 +40,21 @@ class WorkflowsEditorController {
       this.WorkflowService.getCurrentWorkflow().setPortTypesFromReport(report);
       this.Report.createReportEntities(report.id, report);
       this._initReportListeners();
-      this.$scope.$applyAsync(() => {
-        // this.GraphPanelRendererService.rerender(this.getWorkflow(), this.selectedOutputPort);
-      });
     }
+  }
+
+  openReport(data) {
+    const workflow = this.WorkflowService.getCurrentWorkflow();
+    const node = workflow.getNodeById(data.port.nodeId);
+    this.selectedPortObject = {
+      portIdx: data.port.index,
+      node: node
+    };
+
+    const reportEntityId = node.getResult(data.reference.getParameter('portIndex'));
+
+    this.loadReportById(reportEntityId);
+    this.Report.openReport();
   }
 
   _initReportListeners() {
@@ -50,26 +62,10 @@ class WorkflowsEditorController {
       return false;
     }
 
-    this.$scope.$on('OutputPort.LEFT_CLICK', (event, data) => {
-      let workflow = this.WorkflowService.getCurrentWorkflow();
-      let node = workflow.getNodeById(data.portObject.nodeId);
-      this.selectedPortObject = {
-        portIdx: data.portObject.index,
-        node: node
-      };
-      this.selectedOutputPort = data.portObject.id;
-
-      let reportEntityId = node.getResult(data.reference.getParameter('portIndex'));
-      this.loadReportById(reportEntityId);
-      this.Report.openReport();
-      // this.GraphPanelRendererService.rerender(this.getWorkflow(), this.selectedOutputPort);
-    });
-
     this.inited = true;
   }
 
   init(workflowWithResults) {
-    this.GraphPanelRendererService.setZoom(1.0);
     this.WorkflowService.getCurrentWorkflow().updateState(workflowWithResults.executionReport);
     this.initListeners();
     if (this.WorkflowService.isWorkflowRunning()) {
@@ -82,14 +78,6 @@ class WorkflowsEditorController {
     this.$scope.$watch(() => this.getWorkflow(), () => {
       // So attributes panel does not show attributes from previous workflow node.
       this.unselectNode();
-
-      // HACK. Further down in digest cycle there are changes in stuff that navigation service relies on (probably node-related)
-      // Timeout allows us to broadcast fit event after other components.
-      this.$timeout(() => {
-        this.$rootScope.$broadcast('INTERACTION-PANEL.FIT', {
-          zoomId: this.zoomId
-        });
-      }, 10);
     });
 
     this.$scope.$on('ServerCommunication.MESSAGE.executionStatus', (event, data) => {
@@ -163,35 +151,14 @@ class WorkflowsEditorController {
   _reinitEditableModeListeners() {
     this._unbindEditorListeners();
     this._editableModeEventListeners = [
-      this.$scope.$on(this.Edge.CREATE, (data, args) => {
+      this.$scope.$on('Edge.CREATE', (data, args) => {
         const workflow = this.getWorkflow();
         workflow.addEdge(args.edge);
         this.WorkflowService.updateEdgesStates();
-        // this.GraphPanelRendererService.changeEdgesPaintStyles(workflow);
       }),
 
-      this.$scope.$on(this.Edge.REMOVE, (data, args) => {
+      this.$scope.$on('Edge.REMOVE', (data, args) => {
         this.getWorkflow().removeEdge(args.edge);
-      }),
-
-      this.$scope.$on('FlowChartBox.ELEMENT_DROPPED', (event, args) => {
-        let dropElementOffset = this.MouseEvent.getEventOffsetOfElement(args.dropEvent, args.target);
-        let operation = this.Operations.get(args.elementId);
-        let offsetX = dropElementOffset.x;
-        let offsetY = dropElementOffset.y;
-        let positionX = offsetX || 0;
-        let positionY = offsetY || 0;
-        let elementOffsetX = _.has(this.specialOperations, args.elementId) ? 40 : 100;
-        let elementOffsetY = 30;
-        this.GraphNodesService.createNodeAndAdd(this.getWorkflow(), {
-          operation: operation,
-          // TODO check if we reached right and bottom end of flowchart box,
-          x: positionX > elementOffsetX ? positionX - elementOffsetX : 0,
-          y: positionY > elementOffsetY ? positionY - elementOffsetY : 0
-        });
-        // Call of $apply assures that a DOM element for the node is added before method exit.
-        // It prevents exceptions in browser's console.
-        this.$rootScope.$apply();
       }),
 
       this.$scope.$on('Keyboard.KEY_PRESSED_DEL', () => {
@@ -201,28 +168,11 @@ class WorkflowsEditorController {
       }),
       this.EventsService.on(this.EventsService.EVENTS.WORKFLOW_DELETE_SELECTED_ELEMENT, this._handleDelete.bind(this)),
 
-      this.$scope.$watchCollection('workflow.getWorkflow().getNodesIds()', (newValue, oldValue) => {
-        if (newValue !== oldValue) {
-          this.$scope.$applyAsync(() => {
-            // this.GraphPanelRendererService.rerender(this.getWorkflow(), this.selectedOutputPort);
-          });
-        }
-      }),
-
-      this.$scope.$watchCollection('workflow.getWorkflow().getEdgesIds()', (newValue, oldValue) => {
-        if (newValue !== oldValue) {
-          this.$scope.$applyAsync(() => {
-            this.rerenderEdges();
-          });
-        }
-      }),
-
       this.$scope.$on('$destroy', () => {
-        this.GraphPanelRendererService.clearWorkflow();
+        // this.GraphPanelRendererService.clearWorkflow();
         this.NotificationService.clearToasts();
         this._unbindEditorListeners();
       })
-
     ];
   }
 
@@ -262,11 +212,6 @@ class WorkflowsEditorController {
     this._editableModeEventListeners = [];
   }
 
-  rerenderEdges() {
-    this.WorkflowService.updateEdgesStates();
-    // this.GraphPanelRendererService.changeEdgesPaintStyles(this.getWorkflow());
-  }
-
   updateAndRerenderEdges(data) {
     this.WorkflowService.updateTypeKnowledge(data.knowledge);
     if (this.selectedNode) {
@@ -276,7 +221,6 @@ class WorkflowsEditorController {
         }
       });
     }
-    this.rerenderEdges();
   }
 
   loadReportById(reportEntityId) {
@@ -291,10 +235,6 @@ class WorkflowsEditorController {
     return this.WorkflowService.getCurrentWorkflow();
   }
 
-  getPredefColors() {
-    return this.WorkflowService.getCurrentWorkflow().predefColors;
-  }
-
   getSelectedNode() {
     return this.selectedNode;
   }
@@ -304,11 +244,6 @@ class WorkflowsEditorController {
       this.MultiSelectionService.removeNodeIdsFromSelection([this.selectedNode.id]);
       this.selectedNode = null;
     }
-  }
-
-  isRunningOrAborting() {
-    const workflowStatus = this.WorkflowService.getCurrentWorkflow().workflowStatus;
-    return workflowStatus === 'running' || workflowStatus === 'aborting';
   }
 
   isEditable() {

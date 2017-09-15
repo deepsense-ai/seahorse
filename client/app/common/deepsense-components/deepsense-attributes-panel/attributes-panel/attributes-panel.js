@@ -3,9 +3,10 @@
 require('./attributes-panel.service.js');
 
 import tpl from './attributes-panel.html';
+import {specialOperations} from '_appRoot/enums/special-operations.js';
 
 /*@ngInject*/
-function OperationAttributes($rootScope, AttributesPanelService, config, version, nodeTypes) {
+function OperationAttributes($rootScope, AttributesPanelService, config, version) {
   function setCorrectHeight(container) {
     let heightOfOthers = _.reduce(jQuery(
       '> .ibox-title--main, > .c-attributes-tabs',
@@ -25,8 +26,7 @@ function OperationAttributes($rootScope, AttributesPanelService, config, version
       isInnerWorkflow: '=',
       publicParams: '=',
       workflow: '=', // It's actually workflowId. TODO Rename it to workflowId
-      disabledMode: '=',
-      predefColors: '='
+      disabledMode: '='
     },
     templateUrl: tpl,
     replace: false,
@@ -35,9 +35,7 @@ function OperationAttributes($rootScope, AttributesPanelService, config, version
       scope.publicParams = scope.publicParams || [];
 
       scope.$watch('node', function () {
-        let notebookOpIds = [nodeTypes.PYTHON_NOTEBOOK, nodeTypes.R_NOTEBOOK];
-
-        scope.hasCodeEdit = _.includes(notebookOpIds, scope.node.operationId);
+        scope.hasCodeEdit = Object.values(specialOperations.NOTEBOOKS).includes(scope.node.operationId);
         scope.$applyAsync(setCorrectHeight.bind(null, element[0]));
       });
 
@@ -64,9 +62,10 @@ function OperationAttributes($rootScope, AttributesPanelService, config, version
       };
 
       this.getNotebookUrl = () => {
-        const languageMap = {};
-        languageMap[nodeTypes.PYTHON_NOTEBOOK] = 'python';
-        languageMap[nodeTypes.R_NOTEBOOK] = 'r';
+        const languageMap = {
+          [specialOperations.NOTEBOOKS.PYTHON]: 'python',
+          [specialOperations.NOTEBOOKS.R]: 'r'
+        };
 
         const notebookParams = {
           dataframeSource: getDataFrameSource(),

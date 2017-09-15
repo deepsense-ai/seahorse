@@ -13,7 +13,6 @@ const attributesPanel = angular.module('deepsense.attributes-panel', [
 require('./attribute-types/attribute-types.js');
 require('./attributes-list/attributes-list.js');
 require('./attributes-panel/attributes-panel.js');
-require('./color-picker/color-picker.js');
 require('./common/common.js');
 
 module.exports = attributesPanel;

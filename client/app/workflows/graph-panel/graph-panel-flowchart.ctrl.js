@@ -30,7 +30,7 @@ function FlowChartBoxController($scope, $element, $timeout, GraphPanelRendererSe
           .find('.flowchart-paint-area')[0]
       };
 
-      $scope.$emit('FlowChartBox.ELEMENT_DROPPED', data);
+      // $scope.$emit('FlowChartBox.ELEMENT_DROPPED', data);
     }
   });
 

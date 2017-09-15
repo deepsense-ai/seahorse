@@ -32,11 +32,11 @@ const NEW_NODE_EDGE = {
 
 
 class AdapterService {
-  constructor(WorkflowService, GraphStyleService) {
+  constructor(WorkflowService, GraphStyleService, Report) {
     'ngInject';
-
     this.WorkflowService = WorkflowService;
     this.GraphStyleService = GraphStyleService;
+    this.Report = Report;
   }
 
   initialize(container) {
@@ -123,16 +123,20 @@ class AdapterService {
     this.newNodeData = newNodeData;
   }
 
-  handleConnectionAbort(fn) {
+  setOnConnectionAbortFunction(fn) {
     this.onConnectionAbort = fn;
   }
 
-  handleShowTooltip(fn) {
+  setMouseOverOnPortFunction(fn) {
     this.onMouseOver = fn;
   }
 
-  handleHideTooltip(fn) {
+  setMouseOutOnPortFunction(fn) {
     this.onMouseOut = fn;
+  }
+
+  setMouseClickOnPortFunction(fn) {
+    this.onMouseClick = fn;
   }
 
   reset() {
@@ -154,7 +158,7 @@ class AdapterService {
   }
 
   getNodesToRender(inputNodes) {
-    const nodes = JSON.parse(JSON.stringify(inputNodes));
+    const nodes = Object.assign({}, inputNodes);
     if (this.newNodeData && this.newNodeData.nodeId) {
       const node = Object.assign({}, NEW_NODE_NODE);
       node.input[0].typeQualifier = [...this.newNodeData.typeQualifier];
@@ -164,7 +168,7 @@ class AdapterService {
   }
 
   getEdgesToRender(inputEdges) {
-    const edges = JSON.parse(JSON.stringify(inputEdges));
+    const edges = Object.assign({}, inputEdges);
     if (this.newNodeData && this.newNodeData.nodeId) {
       const edge = Object.assign({}, NEW_NODE_EDGE);
       edge.startNodeId = this.newNodeData.nodeId;
@@ -185,6 +189,9 @@ class AdapterService {
 
   renderOutputPorts(element, ports, node) {
     ports.forEach((port) => {
+      const reportEntityId = node.getResult(port.index);
+      const hasReport = this.Report.hasReportEntity(reportEntityId);
+
       const style = this.GraphStyleService.getStyleForPort(port);
 
       const jsPlumbPort = jsPlumb.addEndpoint(element, style, {
@@ -200,11 +207,21 @@ class AdapterService {
         this.onMouseOut();
       });
 
+      jsPlumbPort.bind('click', (reference) => {
+        if (hasReport) {
+          this.onMouseClick({reference, port});
+        }
+      });
+
       const portType = this.GraphStyleService.getOutputTypeFromQualifier(port.typeQualifier[0]);
       const isDataOutput = portType === 'default';
 
       if (isDataOutput) {
         jsPlumbPort.addClass('dataframe-output-port');
+      }
+
+      if (hasReport) {
+        jsPlumbPort.addClass('has-report sa sa-chart');
       }
 
       jsPlumbPort.setParameter('portIndex', port.index);

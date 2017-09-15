@@ -18,7 +18,7 @@ class CanvasController {
     const slidingWindow = this.$element[0].querySelector('.sliding-window');
 
     this.CanvasService.initialize(jsPlumbContainer, slidingWindow);
-    this.AdapterService.handleConnectionAbort(this.onConnectionAbort);
+    this.AdapterService.setOnConnectionAbortFunction(this.onConnectionAbort);
 
     this.$timeout(() => {
       this.CanvasService.render();

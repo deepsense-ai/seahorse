@@ -1,6 +1,7 @@
 <div class="c-workflow-container">
   <section class="c-workflow-container__content" resizable-listener="height">
     <editor
+      class="c-workflow-container__editor"
       is-editable="workflow.isEditable()"
       workflow="workflow.getWorkflow()"
       selectedNode="workflow.getSelectedNode()"
@@ -13,7 +14,6 @@
       node="workflow.getSelectedNode()"
       ng-if="workflow.getSelectedNode()"
       disabled-mode="!workflow.isEditable()"
-      predef-colors="workflow.getPredefColors()"
       class="o-panel o-panel--scroll-right animated fadeInRight right-panel-resizable"
       custom-scroll-bar
       resizable
