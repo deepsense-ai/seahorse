@@ -31,12 +31,12 @@ class GlobalMQDeserializerSpec
 
   "GlobalMQDeserializer" should {
     "deserialize Heartbeat messages" in {
-      val sessionId = "foo-session"
+      val workflowId = "foo-workflow"
       val rawMessage = JsObject(
         "messageType" -> JsString("heartbeat"),
         "messageBody" -> JsObject(
-          "sessionId" -> JsString(sessionId)))
-      serializeAndRead(rawMessage) shouldBe Heartbeat(sessionId)
+          "workflowId" -> JsString(workflowId)))
+      serializeAndRead(rawMessage) shouldBe Heartbeat(workflowId)
     }
     "deserialize PoisonPill messages" in {
       val rawMessage = JsObject(

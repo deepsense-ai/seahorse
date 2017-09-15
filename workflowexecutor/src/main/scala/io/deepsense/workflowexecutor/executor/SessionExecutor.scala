@@ -50,7 +50,7 @@ import io.deepsense.workflowexecutor.session.storage.DataFrameStorageImpl
 case class SessionExecutor(
     messageQueueHost: String,
     messageQueuePort: Int,
-    sessionId: String,
+    workflowId: String,
     wmAddress: String,
     wmUsername: String,
     wmPassword: String,
@@ -58,7 +58,7 @@ case class SessionExecutor(
     workflowOwnerId: String)
   extends Executor {
 
-  private val workflowId = Workflow.Id.fromString(sessionId)
+  private val workflowIdObject = Workflow.Id.fromString(workflowId)
   private val config = ConfigFactory.load
   private val subscriptionTimeout = config.getInt("subscription-timeout").seconds
   private val keepAliveInterval = config.getInt("keep-alive.interval").seconds
@@ -122,7 +122,7 @@ case class SessionExecutor(
       communicationFactory)
 
     val workflowsSubscriberReady = communicationFactory.registerSubscriber(
-      MQCommunication.Topic.allWorkflowsSubscriptionTopic(sessionId),
+      MQCommunication.Topic.allWorkflowsSubscriptionTopic(workflowId),
       workflowsSubscriberActor)
 
     waitUntilSubscribersAreReady(Seq(workflowsSubscriberReady))
@@ -136,8 +136,9 @@ case class SessionExecutor(
       pythonExecutionCaretaker.gatewayListeningPort.get,
       messageQueueHost,
       messageQueuePort,
-      sessionId,
-      workflowId
+      // TODO: Currently sessionId == workflowId
+      workflowId,
+      workflowIdObject
     )
 
     kernelManagerCaretaker.start()
@@ -162,12 +163,13 @@ case class SessionExecutor(
 
     def createHeartbeatPublisher: ActorRef = {
       val seahorsePublisher = communicationFactory.createPublisher(
-        MQCommunication.Topic.seahorsePublicationTopic(sessionId),
+        // TODO: Currently sessionId == workflowId
+        MQCommunication.Topic.seahorsePublicationTopic(workflowId),
         MQCommunication.Actor.Publisher.seahorse)
 
       val heartbeatWorkflowBroadcaster = communicationFactory.createBroadcaster(
-        MQCommunication.Exchange.heartbeats(workflowId),
-        MQCommunication.Actor.Publisher.heartbeat(workflowId)
+        MQCommunication.Exchange.heartbeats(workflowIdObject),
+        MQCommunication.Actor.Publisher.heartbeat(workflowIdObject)
       )
 
       val heartbeatAllBroadcaster = communicationFactory.createBroadcaster(
@@ -199,12 +201,13 @@ case class SessionExecutor(
       dOperableCatalog = Some(dOperableCatalog))
 
     val readyBroadcaster = communicationFactory.createBroadcaster(
-      MQCommunication.Exchange.ready(workflowId),
-      MQCommunication.Actor.Publisher.ready(workflowId))
+      MQCommunication.Exchange.ready(workflowIdObject),
+      MQCommunication.Actor.Publisher.ready(workflowIdObject))
 
     val publisher: ActorRef = communicationFactory.createPublisher(
-      MQCommunication.Topic.workflowPublicationTopic(workflowId, sessionId),
-      MQCommunication.Actor.Publisher.workflow(workflowId))
+      // TODO: Currently sessionId == workflowId
+      MQCommunication.Topic.workflowPublicationTopic(workflowIdObject, workflowId),
+      MQCommunication.Actor.Publisher.workflow(workflowIdObject))
 
     val actorProvider = new SessionWorkflowExecutorActorProvider(
       executionContext,
@@ -213,14 +216,16 @@ case class SessionExecutor(
       readyBroadcaster,
       workflowManagerTimeout,
       publisher,
-      sessionId,
+      // TODO: Currently sessionId == workflowId
+      workflowId,
       heartbeatInterval)
 
     val workflowsSubscriberActor = system.actorOf(
       WorkflowTopicSubscriber.props(
         actorProvider,
-        sessionId,
-        workflowId),
+        // TODO: Currently sessionId == workflowId
+        workflowId,
+        workflowIdObject),
       MQCommunication.Actor.Subscriber.workflows)
 
     workflowsSubscriberActor

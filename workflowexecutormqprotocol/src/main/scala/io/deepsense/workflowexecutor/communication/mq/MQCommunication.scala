@@ -30,7 +30,7 @@ object MQCommunication {
     object Publisher {
       val seahorse = prefixedName("seahorse")
       def notebook(id: Workflow.Id): String = prefixedName(s"notebook_$id")
-      def heartbeat(id: Workflow.Id): String = prefixedName(s"heartbeat_$id")
+      def heartbeat(workflowId: Workflow.Id): String = prefixedName(s"heartbeat_$workflowId")
       def heartbeatAll: String = prefixedName(s"heartbeat_all")
       def ready(id: Workflow.Id): String = prefixedName(s"ready_$id")
       def workflow(id: Workflow.Id): String = prefixedName(id.toString)
@@ -58,16 +58,16 @@ object MQCommunication {
     private val workflowPrefix = "workflow"
     private val notebook = "notebook"
     private val kernelManager = "kernelmanager"
-    def allWorkflowsSubscriptionTopic(sessionId: String): String =
-      subscriptionTopic(s"$workflowPrefix.$sessionId.*")
+    def allWorkflowsSubscriptionTopic(workflowId: String): String =
+      subscriptionTopic(s"$workflowPrefix.$workflowId.*")
     def seahorsePublicationTopic(sessionId: String): String =
       publicationTopic(s"seahorse.$sessionId")
     val notebookSubscriptionTopic = subscriptionTopic(notebook)
     val notebookPublicationTopic = publicationTopic(notebook)
-    def kernelManagerSubscriptionTopic(id: Workflow.Id, sessionId: String): String =
-      subscriptionTopic(kernelManagerTopic(id, sessionId))
-    def workflowPublicationTopic(id: Workflow.Id, sessionId: String): String =
-      publicationTopic(workflowTopic(id, sessionId))
+    def kernelManagerSubscriptionTopic(workflowId: Workflow.Id, sessionId: String): String =
+      subscriptionTopic(kernelManagerTopic(workflowId, sessionId))
+    def workflowPublicationTopic(workflowId: Workflow.Id, sessionId: String): String =
+      publicationTopic(workflowTopic(workflowId, sessionId))
     private def kernelManagerTopic(workflowId: Workflow.Id, sessionId: String): String =
       s"$kernelManager.$sessionId.${workflowId.toString}"
     private def workflowTopic(workflowId: Workflow.Id, sessionId: String): String =

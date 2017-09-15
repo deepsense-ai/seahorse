@@ -31,12 +31,12 @@ class GlobalMQSerializerSpec
 
     "GlobalMQSerializer" should {
       "serialize Heartbeat messages" in {
-        val sessionId = "foo-session"
+        val workflowId = "foo-workflow"
         val outMessage = JsObject(
           "messageType" -> JsString("heartbeat"),
           "messageBody" -> JsObject(
-            "sessionId" -> JsString(sessionId)))
-        serialize(Heartbeat(sessionId)) shouldBe asBytes(outMessage)
+            "workflowId" -> JsString(workflowId)))
+        serialize(Heartbeat(workflowId)) shouldBe asBytes(outMessage)
       }
       "serialize PoisonPill messages" in {
         val outMessage = JsObject(
