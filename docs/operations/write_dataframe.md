@@ -24,6 +24,9 @@ do not allow using characters "` ,;{}()\n\t=`" in column names.
 <a target="_blank" href="https://en.wikipedia.org/wiki/JSON">JSON</a>
 file format does not preserve column order.
 
+`Null` values in JSON are omitted. This might result in schema mismatch if all values in particular
+column are `null` (that column will be omitted in output JSON file).
+
 Timestamp columns are converted to string columns
 (values of that columns are converted to its string representations by Apache Spark).
 
