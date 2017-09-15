@@ -23,7 +23,8 @@ angular.module('deepsense.graph-model').
         this.parameters = options.parameters;
       }
 
-      this.state = null;
+      this.state = null; // report state
+      this.knowledgeErrors = []; // inference errors
     }
 
     GraphNode.prototype.STATUS = {
@@ -99,6 +100,12 @@ angular.module('deepsense.graph-model').
 
     GraphNode.prototype.hasParameters = function hasParameters() {
       return !this.parametersValues && this.parameters;
+    };
+
+    GraphNode.prototype.getFancyKnowledgeErrors = function getFancyKnowledgeErrors() {
+      return this.knowledgeErrors.
+        map((error, ix) => `${ix + 1}: ${error}`).
+        join('\n');
     };
 
     GraphNode.CLICK = 'GraphNode.CLICK';
