@@ -107,6 +107,7 @@ class WorkflowsEditorController {
       } else {
         this._setEditableMode();
       }
+      this.AdapterService.render();
     });
 
     this.$scope.$on('ServerCommunication.MESSAGE.inferredState', (event, data) => {
