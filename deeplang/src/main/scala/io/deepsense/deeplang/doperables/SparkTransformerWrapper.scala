@@ -16,8 +16,6 @@
 
 package io.deepsense.deeplang.doperables
 
-import java.lang.reflect.Constructor
-
 import scala.reflect.runtime.universe._
 
 import org.apache.spark.ml
@@ -25,7 +23,6 @@ import org.apache.spark.sql.types.StructType
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.inference.exceptions.SparkTransformSchemaException
-import io.deepsense.deeplang.params.exceptions.NoArgumentConstructorRequiredException
 import io.deepsense.deeplang.params.wrappers.spark.ParamsWithSparkWrappers
 import io.deepsense.deeplang.{ExecutionContext, TypeUtils}
 
@@ -39,11 +36,7 @@ abstract class SparkTransformerWrapper[T <: ml.Transformer](implicit tag: TypeTa
   extends Transformer
   with ParamsWithSparkWrappers {
 
-  lazy val sparkTransformer: T = constructor.newInstance().asInstanceOf[T]
-
-  private val constructor: Constructor[_] = TypeUtils.constructorForType(tag.tpe).getOrElse {
-    throw NoArgumentConstructorRequiredException(tag.tpe.typeSymbol.asClass.name.decoded)
-  }
+  lazy val sparkTransformer: T = TypeUtils.instanceOfType(tag)
 
   override private[deeplang] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
     val paramMap = sparkParamMap(sparkTransformer, df.sparkDataFrame.schema)

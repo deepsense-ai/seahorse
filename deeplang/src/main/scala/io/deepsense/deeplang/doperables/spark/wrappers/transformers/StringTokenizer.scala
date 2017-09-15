@@ -19,23 +19,9 @@ package io.deepsense.deeplang.doperables.spark.wrappers.transformers
 import org.apache.spark.ml.feature.Tokenizer
 
 import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables.{Report, SparkTransformerWrapper}
-import io.deepsense.deeplang.params.Param
+import io.deepsense.deeplang.doperables.{SparkUnaryTransformerAsMultiColumnTransformer, Report, SparkTransformerWrapper}
+import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
+import io.deepsense.deeplang.params.{Params, SingleColumnSelectorParam, Param}
 import io.deepsense.deeplang.params.wrappers.spark.{SingleColumnCreatorParamWrapper, SingleColumnSelectorParamWrapper}
 
-class StringTokenizer extends SparkTransformerWrapper[Tokenizer] {
-
-  val inputColumn = new SingleColumnSelectorParamWrapper[Tokenizer](
-    name = "input column",
-    description = "Column that contains input strings",
-    _.inputCol,
-    portIndex = 0)
-
-  val outputColumn = new SingleColumnCreatorParamWrapper[Tokenizer](
-    name = "output column",
-    description = "Output column for tokenized words",
-    _.outputCol)
-
-  override def report(executionContext: ExecutionContext): Report = Report()
-  override val params: Array[Param[_]] = declareParams(inputColumn, outputColumn)
-}
+class StringTokenizer extends SparkUnaryTransformerAsMultiColumnTransformer[Tokenizer]

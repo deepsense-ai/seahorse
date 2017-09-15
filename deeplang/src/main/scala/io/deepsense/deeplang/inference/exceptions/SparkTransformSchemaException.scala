@@ -16,7 +16,5 @@
 
 package io.deepsense.deeplang.inference.exceptions
 
-import io.deepsense.deeplang.exceptions.DeepLangException
-
 case class SparkTransformSchemaException(exception: Exception)
-  extends DeepLangException(exception.getMessage, cause = exception)
+  extends TransformSchemaException(exception.getMessage, cause = Some(exception))

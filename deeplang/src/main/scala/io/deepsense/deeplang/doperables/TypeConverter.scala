@@ -19,21 +19,16 @@ package io.deepsense.deeplang.doperables
 import org.apache.spark.sql.types._
 
 import io.deepsense.deeplang._
+import io.deepsense.deeplang.doperables.multicolumn.MultiColumnTransformerParams
+import MultiColumnTransformerParams.MultiColumnInPlaceChoices.MultiColumnYesInPlace
+import MultiColumnTransformerParams.SingleOrMultiColumnChoices.MultiColumnChoice
 import io.deepsense.deeplang.doperables.TypeConverter.TargetTypeChoice
 import io.deepsense.deeplang.doperables.dataframe._
-import io.deepsense.deeplang.params.ColumnSelectorParam
+import io.deepsense.deeplang.params.{Param, ColumnSelectorParam}
 import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
 import io.deepsense.deeplang.params.selections.MultipleColumnSelection
 
-case class TypeConverter() extends Transformer {
-
-  val selectedColumns = ColumnSelectorParam(
-    name = "selected columns",
-    description = "Columns to be converted",
-    portIndex = 0)
-
-  def getSelectedColumns: MultipleColumnSelection = $(selectedColumns)
-  def setSelectedColumns(value: MultipleColumnSelection): this.type = set(selectedColumns, value)
+case class TypeConverter() extends MultiColumnTransformer {
 
   val targetType = ChoiceParam[TargetTypeChoice](
     name = "target type",
@@ -42,49 +37,27 @@ case class TypeConverter() extends Transformer {
   def getTargetType: TargetTypeChoice = $(targetType)
   def setTargetType(value: TargetTypeChoice): this.type = set(targetType, value)
 
-  val params = declareParams(selectedColumns, targetType)
+  override def getSpecificParams: Array[Param[_]] = Array(targetType)
 
-  override def _transform(context: ExecutionContext, dataFrame: DataFrame): DataFrame = {
-    val targetType = getTargetType.columnType
-    val columnsToConvert = dataFrame.getColumnNames(getSelectedColumns)
-    val allColumns = dataFrame.sparkDataFrame.schema.map(_.name)
-
-    val transformingExpression =
-      buildTransformingExpression(allColumns, columnsToConvert.toSet, targetType)
-
-    val sparkDataFrame = dataFrame.sparkDataFrame.selectExpr(transformingExpression: _*)
-
+  override def transformSingleColumn(
+      inputColumn: String,
+      outputColumn: String,
+      context: ExecutionContext,
+      dataFrame: DataFrame): DataFrame = {
+    val targetTypeName = getTargetType.columnType.typeName
+    val expr = s"cast(`$inputColumn` as $targetTypeName) as `$outputColumn`"
+    val sparkDataFrame = dataFrame.sparkDataFrame.selectExpr("*", expr)
     DataFrame.fromSparkDataFrame(sparkDataFrame)
   }
 
-  override def _transformSchema(schema: StructType): Option[StructType] = {
-    val convertedColumns = DataFrameColumnsGetter.getColumnNames(schema, getSelectedColumns)
-    val convertedFields = schema.map { field =>
-      if (convertedColumns.contains(field.name)) {
-        field.copy(dataType = getTargetType.columnType)
-      } else {
-        field
-      }
-    }
-    Some(StructType(convertedFields))
+  override def transformSingleColumnSchema(
+      inputColumn: String,
+      outputColumn: String,
+      schema: StructType): Option[StructType] = {
+    MultiColumnTransformer.assertColumnExist(inputColumn, schema)
+    MultiColumnTransformer.assertColumnDoesNotExist(outputColumn, schema)
+    Some(schema.add(StructField(outputColumn, getTargetType.columnType, nullable = true)))
   }
-
-  private def buildTransformingExpression(
-    allColumns: Seq[String],
-    columnsToConvert: Set[String],
-    targetType: DataType): Seq[String] = {
-    val typeName = targetType.typeName
-
-    allColumns.map { column =>
-      if (columnsToConvert.contains(column)) {
-        s"cast(`$column` as $typeName) as `$column`"
-      } else {
-        s"`$column`"
-      }
-    }
-  }
-
-  override def report(executionContext: ExecutionContext): Report = Report()
 }
 
 object TypeConverter {

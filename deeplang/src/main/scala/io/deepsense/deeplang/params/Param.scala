@@ -37,7 +37,7 @@ abstract class Param[T] {
    * @param default Optional default value of parameter. Should be of type Option[T], but we need
    *                to receive Any because Params have to use this method without knowing T.
    */
-  private[params] def toJson(default: Option[Any]): JsObject = {
+  def toJson(default: Option[Any]): JsObject = {
     val basicFields = Map(
       "name" -> name.toJson,
       "type" -> parameterType.toString.toJson, // TODO json format for parameterType

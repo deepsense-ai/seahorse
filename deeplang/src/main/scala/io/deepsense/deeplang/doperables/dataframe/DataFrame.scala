@@ -16,14 +16,10 @@
 
 package io.deepsense.deeplang.doperables.dataframe
 
-import org.apache.spark.mllib.linalg.{Vector => SparkVector, Vectors}
-import org.apache.spark.mllib.regression.LabeledPoint
-import org.apache.spark.rdd.RDD
 import org.apache.spark.sql
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.{StructField, StructType}
 
-import io.deepsense.commons.types.ColumnType
 import io.deepsense.commons.types.ColumnType.ColumnType
 import io.deepsense.deeplang.doperables.Report
 import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions

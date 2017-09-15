@@ -33,7 +33,9 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException
 import io.deepsense.deeplang.params.selections.{IndexColumnSelection, MultipleColumnSelection, NameColumnSelection, TypeColumnSelection}
 
-class TypeConverterIntegSpec extends DeeplangIntegTestSupport {
+class TypeConverterIntegSpec
+  extends DeeplangIntegTestSupport
+  with MultiColumnTransformerTestSupport {
 
   var inputDataFrame: DataFrame = _
 
@@ -213,25 +215,6 @@ class TypeConverterIntegSpec extends DeeplangIntegTestSupport {
         StructField("col4", StringType),
         StructField("col5", StringType)
       )))
-    }
-
-    "throw an exception" when {
-      "selected columns do not exist" in {
-        val originalSchema = StructType(Seq(
-          StructField("col", DoubleType)
-        ))
-
-        val operation = new TypeConverter()
-          .setSelectedColumns(
-            MultipleColumnSelection(Vector(
-              NameColumnSelection(Set("non-existent"))
-            )))
-          .setTargetType(StringTargetTypeChoice())
-
-        a[ColumnsDoNotExistException] should be thrownBy {
-          operation._transformSchema(originalSchema)
-        }
-      }
     }
   }
 
@@ -419,5 +402,19 @@ class TypeConverterIntegSpec extends DeeplangIntegTestSupport {
       .setTargetType(targetTypeChoice)
 
     operation.transform.apply(executionContext)(())(dataFrame)
+  }
+
+  override def transformerName: String = "TypeConverter"
+  override def inputType: DataType = DoubleType
+  override def outputType: DataType = StringType
+
+  override def transformer: MultiColumnTransformer = {
+    new TypeConverter().setTargetType(StringTargetTypeChoice())
+  }
+
+  override val testValues: Seq[(Double, String)] = {
+    val doubles = Seq.fill(5)(Math.random())
+    val strings = doubles.map(_.toString)
+    doubles.zip(strings)
   }
 }

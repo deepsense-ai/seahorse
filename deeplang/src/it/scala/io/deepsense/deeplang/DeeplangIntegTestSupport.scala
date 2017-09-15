@@ -16,9 +16,9 @@
 
 package io.deepsense.deeplang
 
-import java.util.UUID
-
 import scala.concurrent.Future
+import scala.reflect.ClassTag
+import scala.reflect.runtime.universe.TypeTag
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.types._
@@ -26,7 +26,7 @@ import org.apache.spark.sql.{Row, SQLContext}
 import org.apache.spark.{SparkConf, SparkContext, sql}
 import org.scalatest.BeforeAndAfterAll
 
-import io.deepsense.commons.models.{Entity, Id}
+import io.deepsense.commons.models.Id
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
 import io.deepsense.deeplang.CustomOperationExecutor.Result
 import io.deepsense.deeplang.DataFrameStorage.DataFrameName
@@ -95,9 +95,11 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
   protected def assertDataFramesEqual(
       actualDf: DataFrame,
       expectedDf: DataFrame,
-      checkRowOrder: Boolean = true): Unit = {
+      checkRowOrder: Boolean = true,
+      checkNullability: Boolean = true): Unit = {
     // Checks only semantic identity, not objects location in memory
-    actualDf.sparkDataFrame.schema.treeString shouldBe expectedDf.sparkDataFrame.schema.treeString
+    assertSchemaEqual(
+      actualDf.sparkDataFrame.schema, expectedDf.sparkDataFrame.schema, checkNullability)
     val collectedRows1: Array[Row] = actualDf.sparkDataFrame.collect()
     val collectedRows2: Array[Row] = expectedDf.sparkDataFrame.collect()
     if (checkRowOrder) {
@@ -105,6 +107,24 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
     } else {
       collectedRows1 should contain theSameElementsAs collectedRows2
     }
+  }
+
+  def assertSchemaEqual(
+      actualSchema: StructType,
+      expectedSchema: StructType,
+      checkNullability: Boolean): Unit = {
+    val (actual, expected) = if (checkNullability) {
+      (actualSchema, expectedSchema)
+    } else {
+      val actualNonNull = StructType(actualSchema.map(_.copy(nullable = false)))
+      val expectedNonNull = StructType(expectedSchema.map(_.copy(nullable = false)))
+      (actualNonNull, expectedNonNull)
+    }
+    assertSchemaEqual(actual, expected)
+  }
+
+  def assertSchemaEqual(actualSchema: StructType, expectedSchema: StructType): Unit = {
+    actualSchema.treeString shouldBe expectedSchema.treeString
   }
 
   protected def createDataFrame(rows: Seq[Row], schema: StructType): DataFrame = {
@@ -119,6 +139,12 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
   def createDir(path: String): Unit = {
     new java.io.File(path + "/id").getParentFile.mkdirs()
   }
+
+  def createDataFrame[T <: Product : TypeTag : ClassTag](seq: Seq[T]): DataFrame = {
+    DataFrame.fromSparkDataFrame(
+      sqlContext.createDataFrame(sparkContext.parallelize(seq)))
+  }
+
 }
 
 object DeeplangIntegTestSupport {
