@@ -15,19 +15,23 @@
   tasks:
     - include: tasks/get_frontend_artifact_path.yml
     - include: tasks/get_wm_artifact_path.yml
+    - include: tasks/get_sm_artifact_path.yml
     - include: tasks/get_workflowexecutor_artifact_path.yml
+
 
 - include: generate_examples.yml
 - include: h2_migration.yml
 - include: remove_examples.yml
+
 
 - include: workflowmanager.yaml
 - include: frontend.yml
 - include: rabbitmq.yml
 - include: install_spark.yml
 - include: workflowexecutor.yaml
-- include: notebook.yml
 - include: livy.yml
+- include: sessionmanager.yaml
+- include: notebook.yml
 
 - hosts: seahorse-vm
   gather_facts: false

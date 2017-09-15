@@ -4,6 +4,9 @@ wm_artifact_id: deepsense-workflowmanager
 wm_version: 0.2.0-SNAPSHOT
 wm_build_version: latest
 
+sm_artifact_id: deepsense-sessionmanager
+sm_build_version: latest
+
 frontend_artifact_id: deepsense-frontend
 frontend_version: latest
 

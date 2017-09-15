@@ -1,0 +1,15 @@
+# Copyright (c) 2016, CodiLime Inc.
+
+---
+sessionmanager_ip: "0.0.0.0"
+sessionmanager_port: 9082
+
+sessionmanager_api_prefix: "v1/sessions"
+sessionmanager_service_timeout: 5000
+sessionmanager_class_name: "io.deepsense.workflowexecutor.WorkflowExecutorApp"
+sessionmanager_executor_mq_host: "localhost"
+
+sessionmanager_livy_timeout: 5000
+sessionmanager_livy_base_url: "http://localhost:8998"
+
+sessionmanager_executor_mq_host: "localhost"
