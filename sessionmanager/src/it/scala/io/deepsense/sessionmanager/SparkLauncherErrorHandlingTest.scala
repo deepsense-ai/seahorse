@@ -4,15 +4,18 @@
 
 package io.deepsense.sessionmanager
 
+import scalaz.Failure
+
 import com.google.inject.Guice
+import org.scalatest.Inside
 import org.scalatest.concurrent.Futures
 import org.scalatest.time.{Second, Seconds, Span}
 
 import io.deepsense.commons.StandardSpec
-import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.{SparkLauncherError, SparkLauncherSessionSpawner}
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.spark.SparkAgumentParser.UnknownOption
+import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.{SparkLauncherError, SparkLauncherSessionSpawner}
 
-class SparkLauncherErrorHandlingTest extends StandardSpec with Futures {
+class SparkLauncherErrorHandlingTest extends StandardSpec with Futures with Inside {
 
   import io.deepsense.sessionmanager.service.TestData._
 
@@ -27,7 +30,9 @@ class SparkLauncherErrorHandlingTest extends StandardSpec with Futures {
       params = Some("--non-existing-parameter some-value")
     )
     val creating = sessionSpawner.createSession(someSessionConfig(), clusterDetails)
-    creating.failed.futureValue shouldBe an [UnknownOption]
+    inside(creating) { case Failure(error) =>
+      error shouldBe an [UnknownOption]
+    }
   }
 
   "Unknown illegal conf key in params" in {
@@ -35,8 +40,11 @@ class SparkLauncherErrorHandlingTest extends StandardSpec with Futures {
       params = Some("--conf not-spark.executor.extraJavaOptions=-XX:+PrintGCDetails")
     )
     val creating = sessionSpawner.createSession(someSessionConfig(), clusterDetails)
-    creating.failed.futureValue shouldBe an [SparkLauncherError]
-    creating.failed.futureValue.getMessage should include ("'key' must start with 'spark.'")
+    inside(creating) { case Failure(error) =>
+      error shouldBe an [SparkLauncherError]
+      error.getMessage should include ("'key' must start with 'spark.'")
+    }
+
   }
 
 }

@@ -7,8 +7,10 @@ package io.deepsense.sessionmanager.service.actors
 import scala.concurrent.Future
 
 import akka.actor.Actor
+import akka.agent.Agent
 import akka.pattern.pipe
 import com.google.inject.Inject
+import org.apache.spark.launcher.SparkAppHandle
 import org.joda.time.DateTime
 
 import io.deepsense.commons.models.Id
@@ -29,6 +31,8 @@ class SessionServiceActor @Inject()(
 ) extends Actor with Logging {
 
   import scala.concurrent.ExecutionContext.Implicits.global
+
+  private val sparkHandleBySessionId = Agent(Map.empty[Id, SparkAppHandle])
 
   override def receive: Receive = {
     case r: Request => handleRequest(r)
@@ -88,15 +92,26 @@ class SessionServiceActor @Inject()(
         Future.successful(sessionConfig.workflowId)
       case Right(_) =>
         logger.info(s"Session '${sessionConfig.workflowId}' does not exist. Creating!")
-        sessionSpawner.createSession(sessionConfig, clusterConfig).map(_ =>
-          sessionConfig.workflowId
-        )
+        val handleValidation = sessionSpawner.createSession(sessionConfig, clusterConfig)
+        // TODO We already know that there was an error with launching App. We ignore it for now
+        handleValidation.foreach(handle => {
+          sparkHandleBySessionId.send(_.updated(sessionConfig.workflowId, handle))
+        })
+        Future.successful(sessionConfig.workflowId)
     }
   }
 
   private def handleKill(workflowId: Id): Future[Unit] = {
+    tryToKillInstantlyIfHandleAvailable(workflowId)
     sessionExecutorClients.sendPoisonPill(workflowId)
     eventStore.killed(workflowId)
+  }
+
+  private def tryToKillInstantlyIfHandleAvailable(workflowId: Id): Unit = {
+    sparkHandleBySessionId.send { handleBySessionId =>
+      handleBySessionId.get(workflowId).foreach(_.kill())
+      handleBySessionId - workflowId
+    }
   }
 }
 

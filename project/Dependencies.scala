@@ -42,6 +42,7 @@ object Library {
 
 
   val akkaActor = akka("actor")
+  val akkaAgent = akka("agent")
   val akkaTestkit = akka("testkit")
   val apacheCommons = "org.apache.commons" % "commons-lang3" % Version.apacheCommons
   val apacheCommonsExec = "org.apache.commons" % "commons-exec" % "1.3"
@@ -143,6 +144,7 @@ object Dependencies {
 
   val sessionmanager = Seq(
     akkaActor,
+    akkaAgent,
     apacheCommonsExec,
     h2,
     seahorseMqProtocol,

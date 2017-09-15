@@ -6,11 +6,13 @@ package io.deepsense.sessionmanager.service.actors
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
+import scalaz.Success
 
 import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.pattern.ask
 import akka.testkit.{ImplicitSender, TestKit}
 import akka.util.Timeout
+import org.apache.spark.launcher.SparkAppHandle
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.mockito.{Matchers => matchers}
@@ -19,7 +21,6 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
 import io.deepsense.commons.models.Id
-import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.sessionmanager.service.EventStore.{Event, InvalidWorkflowId, SessionExists}
 import io.deepsense.sessionmanager.service._
 import io.deepsense.sessionmanager.service.actors.SessionServiceActor.{CreateRequest, GetRequest, KillRequest, ListRequest}
@@ -137,8 +138,11 @@ class SessionServiceActorSpec(_system: ActorSystem)
 
         def sessionSpawner: SessionSpawner = {
           val m = mock[SessionSpawner]
+          val handle = mock[SparkAppHandle]
+          val success = Success(handle)
+
           when(m.createSession(matchers.eq(notExistingWorkflowSessionConfig), any()))
-            .thenReturn(Future.successful(()))
+            .thenReturn(success)
           m
         }
 
