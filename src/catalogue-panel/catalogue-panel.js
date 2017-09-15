@@ -1,8 +1,7 @@
 function OperationCatalogue () {
   return {
     scope: {
-      catalogCollection: '=',
-      additionalDirectives: '='
+      catalogCollection: '='
     },
     templateUrl: "catalogue-panel/catalogue-panel.html",
     replace: "true"

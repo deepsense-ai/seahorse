@@ -6,8 +6,7 @@ function OperationItemView() {
     scope: {
       id:'@',
       name:'@',
-      icon:'@',
-      additionalDirectives: '='
+      icon:'@'
     }
   };
 }
