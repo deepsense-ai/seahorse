@@ -27,10 +27,10 @@ class WriteReadDatasourceIntegSpec
 
   for (ds <- someDatasourcesForWriting) {
     s"`${ds.getParams.getName}` datasource should be readable and writeable" in {
-      val wds = new WriteDatasource().setDatasourceId(ds.getId)
+      val wds = WriteDatasource().setDatasourceId(ds.getId)
       wds.execute(inMemoryDataFrame)(context)
 
-      val rds = new ReadDatasource().setDatasourceId(ds.getId)
+      val rds = ReadDatasource().setDatasourceId(ds.getId)
       val dataframe = rds.execute()(context)
 
       DataFrameMatchers.assertDataFramesEqual(dataframe, inMemoryDataFrame)

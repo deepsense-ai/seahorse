@@ -19,10 +19,11 @@ package io.deepsense.deeplang.doperations
 import java.util.UUID
 
 import scala.reflect.runtime.{universe => ru}
-
 import io.deepsense.api.datasourcemanager.model._
 import io.deepsense.commons.rest.client.datasources.DatasourceClient
+import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
+import io.deepsense.deeplang.documentation.OperationDocumentation
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.ReadDatasource.ReadDataSourceParameters
 import io.deepsense.deeplang.doperations.inout.InputStorageTypeChoice
@@ -33,7 +34,13 @@ import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.datasource.DatasourceIdForReadParam
 import io.deepsense.deeplang.{DKnowledge, DOperation0To1, ExecutionContext}
 
-class ReadDatasource() extends DOperation0To1[DataFrame] with ReadDataSourceParameters {
+class ReadDatasource()
+  extends DOperation0To1[DataFrame]
+  with ReadDataSourceParameters
+  with OperationDocumentation {
+
+  override def since: Version = Version(1, 4, 0)
+
   @transient
   override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 
@@ -43,11 +50,11 @@ class ReadDatasource() extends DOperation0To1[DataFrame] with ReadDataSourcePara
 
   override def params: Array[Param[_]] = Array(datasourceId)
 
-  override def getDatasourcesId: Set[UUID] = Set(
-    UUID.fromString(getDatasourceId())
-  )
+  override def getDatasourcesId: Set[UUID] = get(datasourceId).toSet
 
-  def setDatasourceId(value: String) = set(datasourceId, value)
+  def setDatasourceId(value: UUID): this.type = set(datasourceId, value)
+  def setDatasourceId(value: String): this.type = setDatasourceId(UUID.fromString(value))
+
   private def getDatasourceId() = $(datasourceId)
 
   override def execute()(context: ExecutionContext): DataFrame = {
@@ -59,7 +66,7 @@ class ReadDatasource() extends DOperation0To1[DataFrame] with ReadDataSourcePara
   }
 
   private def createReadDataFrameFromDataSource(datasourceClient: DatasourceClient) = {
-    val datasourceOpt = datasourceClient.getDatasource(UUID.fromString(getDatasourceId()))
+    val datasourceOpt = datasourceClient.getDatasource(getDatasourceId())
     val datasource = checkDataSourceExists(datasourceOpt)
 
     // TODO Reduce similar code with WriteDatasource
@@ -105,6 +112,8 @@ class ReadDatasource() extends DOperation0To1[DataFrame] with ReadDataSourcePara
 }
 
 object ReadDatasource {
+  def apply(): ReadDatasource = new ReadDatasource
+
   trait ReadDataSourceParameters {
     val datasourceId = DatasourceIdForReadParam(
       name = "datasourceId",

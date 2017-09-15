@@ -16,15 +16,16 @@
 
 package io.deepsense.deeplang.params.datasource
 
-import spray.json.DefaultJsonProtocol.StringJsonFormat
+import java.util.UUID
 
+import io.deepsense.commons.json.UUIDJsonProtocol._
 import io.deepsense.deeplang.params.ParameterType.ParameterType
 import io.deepsense.deeplang.params.{ParamWithJsFormat, ParameterType}
 
 case class DatasourceIdForReadParam(
     name: String,
     description: String)
-  extends ParamWithJsFormat[String] {
+  extends ParamWithJsFormat[UUID] {
 
   override def replicate(name: String): DatasourceIdForReadParam = copy(name = name)
 

@@ -20,13 +20,17 @@ import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll, FreeSpec}
 
 import io.deepsense.deeplang.{LocalExecutionContext, TestDataSources, TestFiles}
 
-class ReadDataSourceIntegSpec
-  extends FreeSpec with BeforeAndAfter with BeforeAndAfterAll with LocalExecutionContext
-    with TestDataSources with TestFiles {
+class ReadDatasourceIntegSpec
+  extends FreeSpec
+  with BeforeAndAfter
+  with BeforeAndAfterAll
+  with LocalExecutionContext
+  with TestDataSources
+  with TestFiles {
 
   for (ds <- someDatasourcesForReading) {
-    s"ReadDataSource should work with datasource ${ds.getParams.getName}" in {
-      val rds = new ReadDatasource().setDatasourceId(ds.getId)
+    s"ReadDatasource should work with datasource ${ds.getParams.getName}" in {
+      val rds = ReadDatasource().setDatasourceId(ds.getId)
       rds.execute()(LocalExecutionContext.createExecutionContext(datasourceClient))
     }
   }

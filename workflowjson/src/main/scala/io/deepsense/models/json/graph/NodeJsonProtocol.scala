@@ -16,12 +16,9 @@
 
 package io.deepsense.models.json.graph
 
-import spray.json._
-
 import io.deepsense.commons.json.IdJsonProtocol
-import io.deepsense.deeplang.DOperation
 import io.deepsense.graph.DeeplangGraph.DeeplangNode
-import io.deepsense.graph.Node
+import spray.json._
 
 trait NodeJsonProtocol extends DefaultJsonProtocol with IdJsonProtocol {
 

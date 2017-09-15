@@ -19,10 +19,11 @@ package io.deepsense.deeplang.doperations
 import java.util.UUID
 
 import scala.reflect.runtime.{universe => ru}
-
 import io.deepsense.api.datasourcemanager.model._
 import io.deepsense.commons.rest.client.datasources.DatasourceClient
+import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
+import io.deepsense.deeplang.documentation.OperationDocumentation
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.WriteDatasource.WriteDatasourceParameters
 import io.deepsense.deeplang.doperations.inout.OutputStorageTypeChoice
@@ -33,7 +34,13 @@ import io.deepsense.deeplang.params.datasource.DatasourceIdForWriteParam
 import io.deepsense.deeplang.params.{BooleanParam, Param}
 import io.deepsense.deeplang.{DKnowledge, DOperation1To0, ExecutionContext}
 
-class WriteDatasource() extends DOperation1To0[DataFrame] with WriteDatasourceParameters {
+class WriteDatasource()
+  extends DOperation1To0[DataFrame]
+  with WriteDatasourceParameters
+  with OperationDocumentation {
+
+  override def since: Version = Version(1, 4, 0)
+
   @transient
   override lazy val tTagTI_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 
@@ -45,11 +52,11 @@ class WriteDatasource() extends DOperation1To0[DataFrame] with WriteDatasourcePa
 
   setDefault(shouldOverwrite, true)
 
-  override def getDatasourcesId: Set[UUID] = Set(
-    UUID.fromString(getDatasourceId())
-  )
+  override def getDatasourcesId: Set[UUID] = get(datasourceId).toSet
 
-  def setDatasourceId(value: String) = set(datasourceId, value)
+  def setDatasourceId(value: UUID): this.type = set(datasourceId, value)
+  def setDatasourceId(value: String): this.type = setDatasourceId(UUID.fromString(value))
+
   private def getDatasourceId() = $(datasourceId)
   private def getShouldOverwrite() = $(shouldOverwrite)
 
@@ -64,7 +71,7 @@ class WriteDatasource() extends DOperation1To0[DataFrame] with WriteDatasourcePa
   }
 
   private def createWriteDataFrameFromDatasource(datasourceClient: DatasourceClient) = {
-    val datasourceOpt = datasourceClient.getDatasource(UUID.fromString(getDatasourceId()))
+    val datasourceOpt = datasourceClient.getDatasource(getDatasourceId())
     val datasource = checkDatasourceExists(datasourceOpt)
 
     val storageType: OutputStorageTypeChoice = datasource.getParams.getDatasourceType match {
@@ -102,6 +109,8 @@ class WriteDatasource() extends DOperation1To0[DataFrame] with WriteDatasourcePa
 }
 
 object WriteDatasource {
+  def apply(): WriteDatasource = new WriteDatasource
+
   trait WriteDatasourceParameters {
     val datasourceId = DatasourceIdForWriteParam(
       name = "datasourceId",

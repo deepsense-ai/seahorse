@@ -14,20 +14,27 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.params.datasource
+package io.deepsense.deeplang.doperations
 
 import java.util.UUID
 
-import io.deepsense.commons.json.UUIDJsonProtocol._
-import io.deepsense.deeplang.params.ParameterType.ParameterType
-import io.deepsense.deeplang.params.{ParamWithJsFormat, ParameterType}
+import io.deepsense.deeplang.UnitSpec
 
-case class DatasourceIdForWriteParam(
-    name: String,
-    description: String)
-  extends ParamWithJsFormat[UUID] {
+class ReadDatasourceSpec extends UnitSpec {
 
-  override def replicate(name: String): DatasourceIdForWriteParam = copy(name = name)
-
-  override val parameterType: ParameterType = ParameterType.DatasourceIdForWrite
+  "ReadDatasource.getDatasourcesId" should {
+    "return declared datasources" when {
+      "datasource param is defined" in {
+        val someDatasourceId = UUID.randomUUID()
+        val rds = ReadDatasource().setDatasourceId(someDatasourceId)
+        rds.getDatasourcesId shouldBe Set(someDatasourceId)
+      }
+    }
+    "return empty set" when {
+      "datasource param is not defined" in {
+        val rds = ReadDatasource()
+        rds.getDatasourcesId shouldBe empty
+      }
+    }
+  }
 }
