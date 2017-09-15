@@ -26,11 +26,11 @@ trait ParamsWithSparkWrappers[P <: ml.param.Params] extends Params {
     case wrapper: SparkParamWrapper[_, _, _] => wrapper +: wrapper.nestedWrappers
   }.flatten
 
-  def sparkParamPairs(sparkEntity: P, schema: StructType): Array[ml.param.ParamPair[Any]] =
-    sparkParamWrappers.map(wrapper => {
+  def sparkParamMap(sparkEntity: P, schema: StructType): ml.param.ParamMap =
+    ml.param.ParamMap(sparkParamWrappers.map(wrapper => {
       val value = $(wrapper)
       val convertedValue = wrapper.convertAny(value)(schema)
       ml.param.ParamPair(
         wrapper.sparkParam(sparkEntity).asInstanceOf[ml.param.Param[Any]], convertedValue)
-    })
+    }): _*)
 }

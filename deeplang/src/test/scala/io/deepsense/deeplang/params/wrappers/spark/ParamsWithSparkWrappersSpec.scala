@@ -17,7 +17,7 @@
 package io.deepsense.deeplang.params.wrappers.spark
 
 import org.apache.spark.ml
-import org.apache.spark.ml.param.{IntParam, Param, ParamPair}
+import org.apache.spark.ml.param.{ParamMap, IntParam, Param, ParamPair}
 import org.apache.spark.sql.types.StructType
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
@@ -57,11 +57,11 @@ class ParamsWithSparkWrappersSpec extends WordSpec
     }
     "return parameter values" in {
       val paramsWithSparkWrappers = ParamsWithSparkWrappersClass().setParamA("a").setParamB(0.0)
-      paramsWithSparkWrappers.sparkParamPairs(
-        paramsWithSparkWrappers.exampleSparkParams, mock[StructType]) shouldBe
-        Array(
-          ParamPair(paramsWithSparkWrappers.exampleSparkParams.sparkParamA, "a"),
-          ParamPair(paramsWithSparkWrappers.exampleSparkParams.sparkParamB, 0))
+      paramsWithSparkWrappers.sparkParamMap(
+        paramsWithSparkWrappers.exampleSparkParams, StructType(Seq())).toSeq.toSet shouldBe
+        Set(
+          paramsWithSparkWrappers.exampleSparkParams.sparkParamA -> "a",
+          paramsWithSparkWrappers.exampleSparkParams.sparkParamB -> 0)
     }
   }
 }
