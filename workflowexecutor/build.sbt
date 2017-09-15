@@ -23,7 +23,12 @@ libraryDependencies ++= Dependencies.workflowexecutor
 // Necessary while assembling uber-jar (omitting MANIFEST.MF file from constituent jar files)
 assemblyMergeStrategy in assembly := {
   case PathList("META-INF", "MANIFEST.MF")               => MergeStrategy.discard
+  case PathList("META-INF", "INDEX.LIST")                => MergeStrategy.discard
+  case PathList("META-INF", "ECLIPSEF.SF")               => MergeStrategy.discard
+  case PathList("META-INF", "ECLIPSEF.RSA")              => MergeStrategy.discard
   case _ => MergeStrategy.first
 }
+
+enablePlugins(BuildInfoPlugin)
 
 assemblyJarName in assembly := "workflowexecutor.jar"

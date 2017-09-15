@@ -48,6 +48,7 @@ object Library {
   val scalaLogging       = "com.typesafe.scala-logging"       %% "scala-logging"        % "3.1.0"
   val scalaReflect       = "org.scala-lang"                    % "scala-reflect"        % Version.scala
   val scalatest          = "org.scalatest"                    %% "scalatest"            % Version.scalatest
+  val scopt              = "com.github.scopt"                 %% "scopt"                % "3.3.0"
   val sparkCore          = spark("core")
   val sparkMLLib         = spark("mllib")
   val sparkSql           = spark("sql")
@@ -102,5 +103,6 @@ object Dependencies {
   ) ++ Seq(scalatest, mockitoCore).map(_ % Test)
 
   val workflowexecutor = Seq(
-  ) ++ Seq(sparkCore).map(_ % Provided)
+    scopt
+  ) ++ Seq(sparkCore, sparkSql).map(_ % Provided)
 }
