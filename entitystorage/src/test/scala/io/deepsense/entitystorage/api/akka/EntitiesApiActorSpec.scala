@@ -20,10 +20,10 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
 
 import io.deepsense.commons.models.Id
-import io.deepsense.entitystorage.api.akka.EntitiesApiActor.{Create, Get}
 import io.deepsense.entitystorage.factories.EntityTestFactory
 import io.deepsense.entitystorage.services.EntityService
 import io.deepsense.models.entities.Entity
+import io.deepsense.models.protocols.EntitiesApiActorProtocol.{Create, Get}
 
 class EntitiesApiActorSpec
   extends FlatSpec

@@ -5,7 +5,7 @@
  */
 package io.deepsense.entitystorage
 
-import akka.actor.{ActorRef, ActorSystem}
+import akka.actor.ActorRef
 
 trait EntityStorageClientFactory {
   def create(actorRef: ActorRef): EntityStorageClient

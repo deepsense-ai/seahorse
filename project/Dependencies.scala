@@ -81,6 +81,10 @@ object Dependencies {
     akkaActor
   ) ++ Seq(scalatest, mockitoCore, sprayTestkit, cassandraUnit, akkaTestkit).map(_ % s"$Test,it")
 
+  val entitystorageClient = Seq(
+    akkaActor
+  ) ++ Seq(scalatest, mockitoCore, akkaTestkit).map(_ % Test)
+
   val commons = Seq(
     akkaActor,
     apacheCommons,

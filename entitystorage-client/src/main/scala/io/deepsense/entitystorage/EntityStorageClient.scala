@@ -13,27 +13,26 @@ import akka.pattern.ask
 import akka.util.Timeout
 import com.typesafe.config.ConfigFactory
 
-import io.deepsense.entitystorage.api.akka.EntitiesApiActor.{Create, Get, Request}
 import io.deepsense.models.entities.{Entity, InputEntity}
+import io.deepsense.models.protocols.EntitiesApiActorProtocol.{Create, Get, Request}
 
 trait EntityStorageClient {
   def getEntityData(tenantId: String, id: Entity.Id)
-    (implicit duration: FiniteDuration): Future[Option[Entity]]
+                   (implicit duration: FiniteDuration): Future[Option[Entity]]
+
   def createEntity(inputEntity: InputEntity)
-    (implicit duration: FiniteDuration): Future[Entity]
+                  (implicit duration: FiniteDuration): Future[Entity]
 }
 
 class ActorBasedEntityStorageClient(entitiesApiActor: ActorRef) extends EntityStorageClient {
 
   def getEntityData(tenantId: String, id: Entity.Id)
-    (implicit duration: FiniteDuration): Future[Option[Entity]] = {
-    import akka.util.Timeout._
-    send(Get(tenantId, id))(durationToTimeout(duration)).mapTo[Option[Entity]]
+                   (implicit duration: FiniteDuration): Future[Option[Entity]] = {
+    send(Get(tenantId, id))(duration).mapTo[Option[Entity]]
   }
 
   def createEntity(inputEntity: InputEntity)
-    (implicit duration: FiniteDuration): Future[Entity] = {
-    import akka.util.Timeout.durationToTimeout
+                  (implicit duration: FiniteDuration): Future[Entity] = {
     send(Create(inputEntity))(duration).mapTo[Entity]
   }
 
@@ -42,7 +41,7 @@ class ActorBasedEntityStorageClient(entitiesApiActor: ActorRef) extends EntitySt
 
 object EntityStorageClient {
   def apply(actorSystemName: String, hostname: String, port: Int, actorName: String,
-    timeoutSeconds: Int): EntityStorageClient = {
+            timeoutSeconds: Int): EntityStorageClient = {
     val actorSystem = ActorSystem(s"$actorSystemName-client",
       ConfigFactory.load("entitystorage-communication.conf"))
     val path = s"akka.tcp://$actorSystemName@$hostname:$port/user/$actorName"

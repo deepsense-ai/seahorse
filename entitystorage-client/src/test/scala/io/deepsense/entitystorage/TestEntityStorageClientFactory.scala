@@ -8,7 +8,6 @@ package io.deepsense.entitystorage
 import akka.actor.ActorRef
 
 object TestEntityStorageClientFactory extends EntityStorageClientFactory {
-  override def create(actorRef: ActorRef): EntityStorageClient = {
+  override def create(actorRef: ActorRef): EntityStorageClient =
     new ActorBasedEntityStorageClient(actorRef)
-  }
 }
