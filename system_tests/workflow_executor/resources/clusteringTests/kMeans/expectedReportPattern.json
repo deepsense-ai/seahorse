@@ -1,0 +1,79 @@
+{
+  "7c8a56b0-81e3-f963-5e45-a442ba4bbb6a": [{
+    "report": {
+      "name": "Report for Untrained k-means Clustering",
+      "tables": {
+        "Parameters": {
+          "columnNames": ["Number of clusters", "Max iterations", "Initialization mode", "Initialization steps", "Seed", "Runs", "Epsilon"],
+          "values": [["2", "100", "random", "", "600", "1", "1.0E-5"]]
+        }
+      }
+    }
+  }],
+  "954eac78-14a3-9f7d-bb63-c26ab919943a": [{
+    "report": {
+      "name": "Report for Trained k-means Clustering",
+      "tables": {
+        "Parameters": {
+          "columnNames": ["Number of clusters", "Max iterations", "Initialization mode", "Initialization steps", "Seed", "Runs", "Epsilon"],
+          "columnTypes": ["numeric", "numeric", "string", "numeric", "numeric", "numeric", "numeric"],
+          "values": [["2", "100", "random", "", "600", "1", "1.0E-5"]]
+        },
+        "Feature columns": {
+          "name": "Feature columns",
+          "values": [["x"], ["y"]]
+        },
+        "Centers of clusters": {
+          "name": "Centers of clusters",
+          "columnNames": ["x", "y"],
+          "columnTypes": ["numeric", "numeric"]
+        }
+      }
+    }
+  }, {
+    "report": {
+      "tables": {
+        "Data Sample": {
+          "columnNames": ["x", "y", "prediction"],
+          "columnTypes": ["numeric", "numeric", "numeric"]
+        },
+        "DataFrame Size": {
+          "values": [["3", "8"]]
+        }
+      },
+      "distributions": {
+        "prediction": {
+          "missingValues": 0,
+          "statistics": {
+            "mean": "0.5",
+            "min": "0",
+            "max": "1"
+          }
+        }
+      }
+    }
+  }],
+  "2578fa83-8098-163b-d2bb-b4774f1b9140": [{
+    "report": {
+      "tables": {
+        "Data Sample": {
+          "columnNames": ["x", "y", "prediction"],
+          "columnTypes": ["numeric", "numeric", "numeric"]
+        },
+        "DataFrame Size": {
+          "values": [["3", "8"]]
+        }
+      },
+      "distributions": {
+        "prediction": {
+          "missingValues": 0,
+          "statistics": {
+            "mean": "0.5",
+            "min": "0",
+            "max": "1"
+          }
+        }
+      }
+    }
+  }]
+}

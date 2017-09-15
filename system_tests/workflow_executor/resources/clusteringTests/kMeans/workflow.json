@@ -1,0 +1,184 @@
+{
+  "workflow": {
+    "nodes": [{
+      "id": "2578fa83-8098-163b-d2bb-b4774f1b9140",
+      "operation": {
+        "id": "bce36c12-df3b-44d0-9a67-8ae213cc9d10",
+        "name": "Assign to Clusters"
+      },
+      "parameters": {
+        "prediction column": "prediction"
+      }
+    }, {
+      "id": "87a2c267-d792-c237-b8f0-4c8eebe50f75",
+      "operation": {
+        "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
+        "name": "Read DataFrame"
+      },
+      "parameters": {
+        "source": "hdfs://spark-cluster-1/system_tests/kMeans/input.csv",
+        "format": {
+          "CSV": {
+            "separator": {
+              "Comma": {}
+            },
+            "names included": true,
+            "convert to boolean": false,
+            "categorical columns": null
+          }
+        },
+        "line separator": {
+          "Unix line separator": {
+
+          }
+        }
+      }
+    }, {
+      "id": "954eac78-14a3-9f7d-bb63-c26ab919943a",
+      "operation": {
+        "id": "754944c9-4c6b-4c70-8a93-ef0baa940c01",
+        "name": "Train Clustering"
+      },
+      "parameters": {
+        "feature columns": {
+          "selections": [{
+            "type": "columnList",
+            "values": ["x", "y"]
+          }],
+          "excluding": false
+        },
+        "prediction column": "prediction"
+      }
+    }, {
+      "id": "7c8a56b0-81e3-f963-5e45-a442ba4bbb6a",
+      "operation": {
+        "id": "1550a57b-86d5-4f49-96eb-329a5bdbaaa7",
+        "name": "Create k-means Clustering"
+      },
+      "parameters": {
+        "number of clusters": 2,
+        "max iterations": 100,
+        "initialization mode": {
+          "random": {}
+        },
+        "seed": 600,
+        "number of runs": 1,
+        "epsilon": 1e-5
+      }
+    }, {
+      "id": "c11ca6af-ae52-8117-f1d7-d7e5a4ee2da9",
+      "operation": {
+        "id": "9e460036-95cc-42c5-ba64-5bc767a40e4e",
+        "name": "Write DataFrame"
+      },
+      "parameters": {
+        "format": {
+          "CSV": {
+            "column separator": {
+              "Comma": {}
+            },
+            "write header": true
+          }
+        },
+        "output file": "hdfs://spark-cluster-1/system_tests/kMeans/output.csv"
+      }
+    }],
+    "connections": [{
+      "from": {
+        "nodeId": "87a2c267-d792-c237-b8f0-4c8eebe50f75",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "954eac78-14a3-9f7d-bb63-c26ab919943a",
+        "portIndex": 1
+      }
+    }, {
+      "from": {
+        "nodeId": "7c8a56b0-81e3-f963-5e45-a442ba4bbb6a",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "954eac78-14a3-9f7d-bb63-c26ab919943a",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "954eac78-14a3-9f7d-bb63-c26ab919943a",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "2578fa83-8098-163b-d2bb-b4774f1b9140",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "87a2c267-d792-c237-b8f0-4c8eebe50f75",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "2578fa83-8098-163b-d2bb-b4774f1b9140",
+        "portIndex": 1
+      }
+    }, {
+      "from": {
+        "nodeId": "2578fa83-8098-163b-d2bb-b4774f1b9140",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "c11ca6af-ae52-8117-f1d7-d7e5a4ee2da9",
+        "portIndex": 0
+      }
+    }]
+  },
+  "thirdPartyData": {
+    "gui": {
+      "name": "Draft workflow",
+      "description": "",
+      "nodes": {
+        "954eac78-14a3-9f7d-bb63-c26ab919943a": {
+          "uiName": "",
+          "coordinates": {
+            "x": 151,
+            "y": 252
+          }
+        },
+        "c11ca6af-ae52-8117-f1d7-d7e5a4ee2da9": {
+          "uiName": "",
+          "coordinates": {
+            "x": 251,
+            "y": 560
+          }
+        },
+        "87a2c267-d792-c237-b8f0-4c8eebe50f75": {
+          "uiName": "",
+          "coordinates": {
+            "x": 270,
+            "y": 80
+          }
+        },
+        "2578fa83-8098-163b-d2bb-b4774f1b9140": {
+          "uiName": "",
+          "coordinates": {
+            "x": 331,
+            "y": 389
+          }
+        },
+        "7c8a56b0-81e3-f963-5e45-a442ba4bbb6a": {
+          "uiName": "",
+          "coordinates": {
+            "x": 9,
+            "y": 104
+          }
+        }
+      }
+    }
+  },
+  "variables": {
+
+  },
+  "id": "7c57f096-6439-4301-a35c-a5faaae5d1eb",
+  "metadata": {
+    "type": "batch",
+    "apiVersion": "0.5.0"
+  }
+}
