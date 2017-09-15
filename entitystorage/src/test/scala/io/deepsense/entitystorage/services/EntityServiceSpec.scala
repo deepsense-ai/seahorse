@@ -42,6 +42,7 @@ class EntityServiceSpec
     when(entityDao.get(entity.tenantId, nonExistingEntityId)).thenReturn(Future.successful(None))
     when(entityDao.getAll(entity.tenantId)).thenReturn(Future.successful(entities))
     when(entityDao.upsert(any())).thenReturn(Future.successful(()))
+    when(entityDao.delete(any(), any())).thenReturn(Future.successful(()))
   }
 
   "EntityService" should "set id, update time and create time when create entity" in {
@@ -113,6 +114,7 @@ class EntityServiceSpec
 
     val updatedEntity = UserEntityDescriptor(entity).copy(
       name = "new name", description = "new description", saved = false)
+
     whenReady(entityService.updateEntity(entity.tenantId, updatedEntity)) { retrievedEntityOption =>
       val retrievedEntity = retrievedEntityOption.get
       retrievedEntity.updated should be > entity.updated
@@ -138,6 +140,12 @@ class EntityServiceSpec
   it should "return all entities of tenant from entityDao" in {
     whenReady(entityService.getAll(entity.tenantId)) { retrievedEntities =>
       retrievedEntities shouldBe entities
+    }
+  }
+
+  it should "delete entity" in {
+    whenReady(entityService.deleteEntity(entity.tenantId, entity.id)) { _ =>
+      verify(entityDao).delete(entity.tenantId, entity.id)
     }
   }
 }

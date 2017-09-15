@@ -94,6 +94,16 @@ class EntitiesApiSpec
     }
   }
 
+  "DELETE /entities/:id" should {
+    "return Status OK and delete entity" in {
+      Delete(s"/$apiPrefix/${addedEntityDescriptor.id}") ~>
+        addHeader("X-Auth-Token", correctTenantA) ~> testRoute ~> check {
+        status should be(StatusCodes.OK)
+        verify(entityService).deleteEntity(correctTenantA, addedEntityDescriptor.id)
+      }
+    }
+  }
+
   protected def testRoute = {
     val tokenTranslator = mock[TokenTranslator]
     when(tokenTranslator.translate(any(classOf[String])))
@@ -114,7 +124,7 @@ class EntitiesApiSpec
   private def createMockEntityService: EntityService = {
     val entityService = mock[EntityService]
     when(entityService.getAll(anyString())).thenReturn(Future.successful(entities))
-
+    when(entityService.deleteEntity(any(), any())).thenReturn(Future.successful(()))
     when(entityService.updateEntity(anyString(), any())).thenAnswer(
       new Answer[Future[Option[Entity]]] {
         override def answer(invocationOnMock: InvocationOnMock): Future[Option[Entity]] = {
@@ -130,7 +140,7 @@ class EntitiesApiSpec
     tokenTranslator,
     entityService,
     new AllAllowedAuthorizationProvider(),
-    apiPrefix, "role1", "role2").route
+    apiPrefix, "role1", "role2", "role3").route
 
   private class AllAllowedAuthorizationProvider extends AuthorizatorProvider {
     override def forContext(userContext: Future[UserContext]): Authorizator = {

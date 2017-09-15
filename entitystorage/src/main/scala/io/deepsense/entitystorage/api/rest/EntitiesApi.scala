@@ -31,7 +31,8 @@ class EntitiesApi @Inject() (
     authorizatorProvider: AuthorizatorProvider,
     @Named("entities.api.prefix") apiPrefix: String,
     @Named("roles.entities.get") roleGet: String,
-    @Named("roles.entities.update") roleUpdate: String)
+    @Named("roles.entities.update") roleUpdate: String,
+    @Named("roles.entities.delete") roleDelete: String)
     (implicit ec: ExecutionContext)
   extends RestApi with RestComponent with EntityJsonProtocol with ExceptionsJsonProtocol {
 
@@ -61,6 +62,15 @@ class EntitiesApi @Inject() (
                   )
                 }
               }
+            }
+          } ~
+          delete {
+            withUserContext { userContext =>
+              complete(
+                authorizatorProvider.forContext(userContext).withRole(roleDelete) { userContext =>
+                  entityService.deleteEntity(userContext.tenantId, entityId).map( _ => "")
+                }
+              )
             }
           }
         } ~

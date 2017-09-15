@@ -21,14 +21,12 @@ class EntityService(entityDao: EntityDao)(implicit ec: ExecutionContext) {
 
   /**
    * Returns reference to a physical storage where data associated with the entity are stored.
-   * This operation is not blocking.
    */
   def getEntityData(tenantId: String, entityId: Entity.Id): Future[Option[Entity]] =
     entityDao.get(tenantId, entityId).map(_.map(_.dataOnly))
 
   /**
    * Returns report associated with the entity.
-   * This operation is not blocking.
    */
   def getEntityReport(tenantId: String, entityId: Entity.Id): Future[Option[Entity]] =
     entityDao.get(tenantId, entityId).map(_.map(_.reportOnly))
@@ -64,5 +62,12 @@ class EntityService(entityDao: EntityDao)(implicit ec: ExecutionContext) {
         entityDao.upsert(newEntity).map(_ => Some(newEntity.reportOnly))
       case None => Future.successful(None)
     }
+  }
+
+  /**
+   * Removes entity pointed by id or does nothing if it does not exist.
+   */
+  def deleteEntity(tenantId: String, entityId: Entity.Id): Future[Unit] = {
+    entityDao.delete(tenantId, entityId)
   }
 }
