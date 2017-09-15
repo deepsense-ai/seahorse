@@ -12,7 +12,5 @@ object HdfsForIntegTestsProperties {
 
   lazy val MasterHostname = config.getString("master.hostname")
 
-  lazy val MasterIp = config.getString("master.ip")
-
   lazy val HdfsNameNodePort = config.getString("hdfs.name.node.port")
 }

@@ -62,7 +62,7 @@ trait HdfsIntegTestSupport
   override def afterAll(): Unit = {
     info("If some tests failed, please:")
     info("1) Make sure that You have Development Environment running on Your machine")
-    info(s"2) Make sure that You have entry ${HdfsForIntegTestsProperties.MasterIp} " +
+    info(s"2) Make sure that You have entry ip.of.a.master.node " +
       HdfsForIntegTestsProperties.MasterHostname + "' in /etc/hosts")
     info("3) Make sure that You can establish connection with " +
       HdfsForIntegTestsProperties.MasterHostname)
