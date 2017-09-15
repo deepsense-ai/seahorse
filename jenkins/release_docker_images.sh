@@ -43,7 +43,7 @@ done
 
 echo "Generating docker compose file with docker images tagged with $TAG"
 
-ARTIFACT_NAME="docker-compose.yml"
+ARTIFACT_NAME="docker-compose-internal.yml"
 
 DOCKER_COMPOSE_TMPL="deployment/docker-compose/docker-compose.tmpl.yml"
 rm -f $ARTIFACT_NAME
@@ -57,7 +57,7 @@ ARTIFACTORY_USER=`grep "user=" $ARTIFACTORY_CREDENTIALS | cut -d '=' -f 2`
 ARTIFACTORY_PASSWORD=`grep "password=" $ARTIFACTORY_CREDENTIALS | cut -d '=' -f 2`
 ARTIFACTORY_URL=`grep "host=" $ARTIFACTORY_CREDENTIALS | cut -d '=' -f 2`
 
-SNAPSHOT_REPOSITORY="deepsense-seahorse-docker-compose-snapshot"
+SNAPSHOT_REPOSITORY="seahorse-distribution"
 
 REPOSITORY_URL="$ARTIFACTORY_URL/$SNAPSHOT_REPOSITORY/io/deepsense"
 
@@ -66,7 +66,7 @@ md5Value="${md5Value:0:32}"
 sha1Value="`sha1sum "${ARTIFACT_NAME}"`"
 sha1Value="${sha1Value:0:40}"
 
-URL_WITH_TAG="${REPOSITORY_URL}/docker-compose/${TAG}/${ARTIFACT_NAME}"
+URL_WITH_TAG="${REPOSITORY_URL}/${TAG}/dockercompose/${ARTIFACT_NAME}"
 
 echo "** INFO: Uploading $ARTIFACT_NAME to ${URL_WITH_TAG} **"
 curl -i -X PUT -u $ARTIFACTORY_USER:$ARTIFACTORY_PASSWORD \

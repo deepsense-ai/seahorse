@@ -3,18 +3,20 @@
 #
 # Publishes docker image from given project path and name.
 #
-# Example usage: ./publish-local-docker.sh ../../remote_notebook/ deepsense-notebooks
+# Example usage: ./publish-local-docker.sh ../../remote_notebook/ deepsense-notebooks SEAHORSE_BUILD_TAG
+# Note: SEAHORSE_BUILD_TAG can be generated using: SEAHORSE_BUILD_TAG=`date +%Y%m%d_%H%M%S`
 
 set -e
 
 # Check if number of parameters is correct
-if [ $# != 2 ]; then
-  echo ">>> Exactly two parameters must be provided."
+if [ $# != 3 ]; then
+  echo ">>> Exactly three parameters must be provided."
   exit 1
 fi
 
 PROJECT_PATH=$1;
 PROJECT_NAME=$2
+SEAHORSE_BUILD_TAG=$3
 DOCKER_IMAGE=`docker images | grep $PROJECT_NAME | grep "latest" | head -1 | awk '{ print $3 }'`
 GIT_BRANCH=`git branch | grep '*' | awk '{ print $2 }'`
 if [ ! -z $BRANCH ]; then
@@ -46,7 +48,7 @@ TIMESTAMP=`date +"%d%m%Y-%H%M%S"`
 COMMIT_HASH=`git rev-parse HEAD`
 DEEPSENSE_REGISTRY="docker-repo.deepsense.codilime.com"
 NAMESPACE="deepsense_io"
-TAG_VERSION="$PROJECT_NAME:$GIT_BRANCH-$TIMESTAMP-$COMMIT_HASH"
+TAG_VERSION="$PROJECT_NAME:$SEAHORSE_BUILD_TAG"
 TAG_LATEST="$PROJECT_NAME:$GIT_BRANCH-latest"
 
 # Tag docker image
