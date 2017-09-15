@@ -33,11 +33,11 @@ trait Evaluator extends DOperation1To1[DataFrame, Report] {
   )
 
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): Report = {
-    logger.info("Execution of " + this.getClass.getSimpleName + " starts")
+    logger.debug("Execution of " + this.getClass.getSimpleName + " starts")
     val predictionsAndLabels = getPredictionsAndLabels(dataFrame)
-    logger.info("Preparing evaluation report")
+    logger.debug("Preparing evaluation report")
     val evaluationReport = report(dataFrame, predictionsAndLabels)
-    logger.info("Execution of " + this.getClass.getSimpleName + " ends")
+    logger.debug("Execution of " + this.getClass.getSimpleName + " ends")
     evaluationReport
   }
 

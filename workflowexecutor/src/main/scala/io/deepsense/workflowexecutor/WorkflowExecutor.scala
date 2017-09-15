@@ -28,9 +28,9 @@ import org.apache.spark.{SparkConf, SparkContext}
 
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
 import io.deepsense.commons.utils.Logging
+import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
-import io.deepsense.deeplang._
 import io.deepsense.models.entities.Entity
 import io.deepsense.models.workflows.{ExecutionReport, WorkflowWithVariables}
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.{GraphFinished, Launch}
@@ -55,15 +55,15 @@ case class WorkflowExecutor(
     val resultPromise: Promise[GraphFinished] = Promise()
     workflowExecutorActor ! Launch(workflow.graph, generateReports, resultPromise)
 
-    logger.info("Awaiting execution end...")
+    logger.debug("Awaiting execution end...")
     actorSystem.awaitTermination()
 
     val report = resultPromise.future.value.get match {
       case Failure(exception) => // WEA failed with an exception
-        logger.error("WEA failed: ", exception)
+        logger.error("WorkflowExecutorActor failed: ", exception)
         throw exception
       case Success(GraphFinished(graph, entitiesMap)) =>
-        logger.info(s"WEA finished successfully: ${workflow.graph}")
+        logger.debug(s"WorkflowExecutorActor finished successfully: ${workflow.graph}")
         Try(ExecutionReport(
           graph.state.status,
           graph.state.error,

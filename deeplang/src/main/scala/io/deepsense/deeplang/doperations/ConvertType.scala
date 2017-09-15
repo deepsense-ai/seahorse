@@ -71,12 +71,12 @@ case class ConvertType() extends DOperation1To1[DataFrame, DataFrame] {
       val mapper = CategoricalMapper(dataFrame, context.dataFrameBuilder)
       mapper.categorized(notYetCategorical: _*)
     } else {
-      logger.info("Finding converters...")
+      logger.debug("Finding converters...")
       val converters = findConverters(dataFrame, columns, targetType)
       val columnsOldToNew = findColumnNameMapping(converters.keys, dataFrame)
-      logger.info("Executing converters and selecting converted columns...")
+      logger.debug("Executing converters and selecting converted columns...")
       val cleanedUpDf = convert(dataFrame, converters, columnsOldToNew)
-      logger.info("Building DF...")
+      logger.debug("Building DataFrame...")
       context.dataFrameBuilder.buildDataFrame(cleanedUpDf)
     }
   }

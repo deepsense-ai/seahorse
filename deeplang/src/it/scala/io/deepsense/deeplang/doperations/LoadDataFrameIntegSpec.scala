@@ -50,9 +50,9 @@ class LoadDataFrameIntegSpec
       dataFrame.sparkDataFrame.write.parquet(testsDir)
       val entityId = registerDataFrame(context)
 
-      val operation = LoadDataFrame(entityId.toString)
+      val operation = LoadDataFrame(entityId.toString())
 
-      logger.info("Loading dataframe from entity id: {}", entityId)
+      logger.debug("Loading dataframe from entity id: {}", entityId)
       val operationResult = operation.execute(context)(Vector.empty[DOperable])
       val operationDataFrame = operationResult.head.asInstanceOf[DataFrame]
       // We cannot guarantee order of rows in loaded DataFrame

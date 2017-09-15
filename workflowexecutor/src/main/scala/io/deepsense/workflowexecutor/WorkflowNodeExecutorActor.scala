@@ -47,11 +47,11 @@ class WorkflowNodeExecutorActor(
   override def receive: Receive = {
     case Start() =>
       executionStart = System.currentTimeMillis()
-      logger.info(s">>> Start(node=${node.id})")
-      val msg = NodeStarted(node.id)
+      logger.info(s"Starting execution of node $nodeDescription")
       val runningNode = node.markRunning
-      sender ! msg
-      logger.info(s"<<< $msg")
+      val nodeStarted = NodeStarted(node.id)
+      sender ! nodeStarted
+      logger.debug(s"Sending $nodeStarted.")
 
       logger.debug(s"Collecting data for operation input ports for $nodeDescription")
       val collectedOutput = collectOutputs(graph, dOperableCache)
@@ -61,24 +61,26 @@ class WorkflowNodeExecutorActor(
         val resultVector = executeOperation(collectedOutput)
         logger.debug(s"Operation executed (without reports): $resultVector")
 
-        logger.info(s"${runningNode.id} Registering data from operation output ports")
+        logger.debug(s"Registering data from operation output ports in node ${runningNode.id}")
         val results: Map[Entity.Id, DOperable] = resultVector.map { dOperable =>
           Entity.Id.randomId -> dOperable
         }.toMap
         logger.debug(s"Data registered for $nodeDescription: results=$results")
-        val finished = NodeFinished(runningNode.markCompleted(results.keys.toSeq), results)
-        sender ! finished
-        logger.info(s"<<< $finished")
+        val nodeCompleted = NodeFinished(runningNode.markCompleted(results.keys.toSeq), results)
+        sender ! nodeCompleted
+        logger.debug(s"Sending $nodeCompleted")
       } catch {
         case e: Throwable =>
-          logger.error(s"[nodeId: ${runningNode.id}] Graph execution failed", e)
-          val failed = NodeFinished(runningNode.markFailed(e), results = Map.empty)
-          sender ! failed
-          logger.info(s"<<< $failed")
+          logger.error(
+            s"Workflow execution failed in node with id=${runningNode.id}. Exception {}", e)
+          val nodeFailed = NodeFinished(runningNode.markFailed(e), results = Map.empty)
+          sender ! nodeFailed
+          logger.debug(s"Sending $nodeFailed")
       } finally {
         // Exception thrown here could result in slightly delayed graph execution
         val duration = (System.currentTimeMillis() - executionStart) / 1000.0
-        logger.info(s"$nodeDescription Execution of node ends (duration: $duration seconds)")
+        logger.info(s"Ending execution of node $nodeDescription (duration: $duration seconds)")
+
         self ! PoisonPill
       }
   }

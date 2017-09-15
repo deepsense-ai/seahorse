@@ -59,9 +59,9 @@ class DataFrameReportPerformanceSpec
           val end = System.nanoTime()
           val time1: Double = (end - start).toDouble / 1000000000.0
           results = results :+ time1
-          logger.info("Report generation time: {}", DoubleUtils.double2String(time1))
+          logger.debug("Report generation time: {}", DoubleUtils.double2String(time1))
         }
-        logger.info(
+        logger.debug(
           "Mean report generation time: {}",
           DoubleUtils.double2String(results.fold(0D)(_ + _) / numberOfTries.toDouble))
       }

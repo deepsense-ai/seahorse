@@ -88,7 +88,7 @@ case class CrossValidateRegressor()
   override protected def _execute(context: ExecutionContext)
                                  (trainable: Regressor with Trainable,
                                   dataFrame: DataFrame): (Regressor with Scorable, Report) = {
-    logger.info("Execution of CrossValidateRegressor starts")
+    logger.debug("Execution of CrossValidateRegressor starts")
 
     val dataFrameSize = dataFrame.sparkDataFrame.count()
     // If number of folds is too big, we use dataFrame size as folds number
@@ -128,10 +128,10 @@ case class CrossValidateRegressor()
         Report(ReportContent(reportName))
       }
 
-    logger.info("Train regressor on all data available")
+    logger.debug("Train regressor on all data available")
     val scorable = trainable.train(context)(parametersForTrainable)(dataFrame)
 
-    logger.info("Execution of CrossValidateRegressor ends")
+    logger.debug("Execution of CrossValidateRegressor ends")
     (scorable.asInstanceOf[Regressor with Scorable], report)
   }
 
@@ -140,7 +140,7 @@ case class CrossValidateRegressor()
       trainable: Trainable,
       dataFrame: DataFrame,
       effectiveNumberOfFolds: Int): Report = {
-    logger.info("Generating cross-validation report")
+    logger.debug("Generating cross-validation report")
     val schema = dataFrame.sparkDataFrame.schema
     val rddWithIndex: RDD[(Row, Long)] = dataFrame.sparkDataFrame.rdd.map(
       r => new GenericRow(r.toSeq.toArray).asInstanceOf[Row]).zipWithIndex().cache()
@@ -149,7 +149,7 @@ case class CrossValidateRegressor()
     (0 to effectiveNumberOfFolds - 1).foreach {
       case splitIndex =>
         val k = effectiveNumberOfFolds
-        logger.info("Preparing cross-validation report: split index [0..N-1]=" + splitIndex)
+        logger.debug("Preparing cross-validation report: split index [0..N-1]=" + splitIndex)
         val training =
           rddWithIndex.filter { case (r, index) => index % k != splitIndex }
             .map { case (r, index) => r }

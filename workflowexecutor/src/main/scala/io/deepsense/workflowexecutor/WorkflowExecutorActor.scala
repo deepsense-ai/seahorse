@@ -45,6 +45,7 @@ class WorkflowExecutorActor(executionContext: ExecutionContext)
   var dOperableCache: Results = Map.empty
   var reports: Map[Entity.Id, ReportContent] = Map.empty
   var startedNodes: Set[Node.Id] = Set()
+  val progressReporter = WorkflowProgress()
 
   override def receive: Receive = {
     case Launch(g, withReports, resultPromise) => launch(g, withReports, resultPromise)
@@ -56,7 +57,7 @@ class WorkflowExecutorActor(executionContext: ExecutionContext)
     this.generateReports = generateReports
     this.result = result
     graph = g.markRunning
-    logger.info(">>> Launch(graph={})", graph)
+    logger.debug("launch(graph={})", graph)
     launchReadyNodes(graph)
     if (graph.readyNodes.isEmpty) {
       endExecution()
@@ -64,13 +65,13 @@ class WorkflowExecutorActor(executionContext: ExecutionContext)
   }
 
   def nodeStarted(id: Node.Id): Unit = {
-    logger.info(">>> {}", NodeStarted(id))
+    logger.debug("{}", NodeStarted(id))
     graph = graph.markAsRunning(id)
   }
 
   def nodeFinished(node: Node, results: Results): Unit = {
     assert(node.isFailed || node.isCompleted)
-    logger.info(s">>> nodeFinished(node=$node)")
+    logger.debug(s"Node finished: $node")
     graph = graph.withChangedNode(node)
 
     if (generateReports) {
@@ -78,22 +79,23 @@ class WorkflowExecutorActor(executionContext: ExecutionContext)
     }
 
     dOperableCache = dOperableCache ++ results
-    logger.debug(s"<<< NodeCompleted(nodeId=${node.id})")
+
     if (graph.readyNodes.nonEmpty) {
       launchReadyNodes(graph)
     } else {
       val nodesRunningCount = graph.runningNodes.size
       if (nodesRunningCount > 0) {
         logger.debug(s"No nodes to run, but there are still $nodesRunningCount running")
-        logger.debug(s"Awaiting $nodesRunningCount RUNNINGs reporting Completed")
       } else {
         endExecution()
       }
     }
+
+    progressReporter.logProgress(graph)
   }
 
   def launchReadyNodes(graph: Graph): Unit = {
-    logger.info(">>> launchReadyNodes(graph={})", graph)
+    logger.debug("launchReadyNodes(graph={})", graph)
     for {
       node <- graph.readyNodes
       if !startedNodes.contains(node.id)
@@ -101,7 +103,7 @@ class WorkflowExecutorActor(executionContext: ExecutionContext)
       val props = Props(createGraphNodeExecutor(executionContext, node, graph, dOperableCache))
       val nodeRef = context.actorOf(props, s"node-executor-${node.id.value.toString}")
       nodeRef ! WorkflowNodeExecutorActor.Messages.Start()
-      logger.info(s"Starting node $node")
+      logger.debug(s"Starting node $node")
     }
     startedNodes = startedNodes ++ graph.readyNodes.map(_.id)
   }
@@ -116,7 +118,7 @@ class WorkflowExecutorActor(executionContext: ExecutionContext)
   }
 
   def ignoreAllMessages: Receive = {
-    case x => logger.info(s"Received message $x after being aborted - ignoring")
+    case x => logger.debug(s"Received message $x after being aborted - ignoring")
   }
 
   def collectReports(results: Results): Unit = {
@@ -182,4 +184,17 @@ trait SystemShutdowner {
 trait ProductionSystemShutdowner extends SystemShutdowner {
   val context: ActorContext
   def shutdownSystem: Unit = context.system.shutdown()
+}
+
+// This is a separate class in order to make logs look better.
+case class WorkflowProgress() extends Logging {
+  def logProgress(graph: Graph): Unit = {
+    val completed = graph.nodes.count(_.isCompleted)
+    logger.info(
+      s"$completed ${if (completed == 1) "node" else "nodes"} successfully completed, " +
+      s"${graph.nodes.count(_.isFailed)} failed, " +
+      s"${graph.nodes.count(_.isAborted)} aborted, " +
+      s"${graph.nodes.count(_.isRunning)} running, " +
+      s"${graph.nodes.count(_.isQueued)} queued.")
+  }
 }

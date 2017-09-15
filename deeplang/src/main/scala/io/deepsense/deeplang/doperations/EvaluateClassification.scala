@@ -39,20 +39,20 @@ case class EvaluateClassification() extends Evaluator {
   override protected def report(
       dataFrame: DataFrame,
       predictionsAndLabels: RDD[(Double, Double)]): Report = {
-    logger.info("Computing DataFrame size")
+    logger.debug("Computing DataFrame size")
     val dataFrameSize = dataFrame.sparkDataFrame.count()
-    logger.info("Preparing BinaryClassificationMetrics object")
+    logger.debug("Preparing BinaryClassificationMetrics object")
     val metrics =
       new BinaryClassificationMetrics(predictionsAndLabels, EvaluateClassification.MetricsNumBins)
 
-    logger.info("Computing LogarithmicLoss metric")
+    logger.debug("Computing LogarithmicLoss metric")
     val logLossSum = predictionsAndLabels.map {
       case (prediction, label) =>
         label * math.log(prediction) + (1.0 - label) * math.log(1.0 - prediction)
     }.sum()
     val logLoss = logLossSum * -1.0 / dataFrameSize
 
-    logger.info("Computing accuracyByThreshold metric")
+    logger.debug("Computing accuracyByThreshold metric")
     // TODO: This implementation of accuracy computing is inefficient
     val predictionsAndBooleanLabels =
       predictionsAndLabels.map { case (prediction, label) => (prediction, label < 0.5) }
@@ -73,7 +73,7 @@ case class EvaluateClassification() extends Evaluator {
       reportTableValues(accuracyByThreshold)
     )
 
-    logger.info("Computing fMeasureByThreshold metric")
+    logger.debug("Computing fMeasureByThreshold metric")
     val fMeasureByThresholdTable = Table(
       "fMeasureByThreshold",
       "F-Measure (F1 score) by threshold",
@@ -85,7 +85,7 @@ case class EvaluateClassification() extends Evaluator {
       reportTableValues(metrics.fMeasureByThreshold().collect())
     )
 
-    logger.info("Computing ROC curve")
+    logger.debug("Computing Receiver Operating Characteristic curve")
     val rocTable = Table(
       "roc",
       "Receiver Operating Characteristic curve",
@@ -97,7 +97,7 @@ case class EvaluateClassification() extends Evaluator {
       reportTableValues(metrics.roc().collect())
     )
 
-    logger.info("Preparing summary table")
+    logger.debug("Preparing summary table")
     val summaryTable = Table(
       "summary",
       "Evaluate classification summary",
@@ -115,7 +115,7 @@ case class EvaluateClassification() extends Evaluator {
         ))
     )
 
-    logger.info("Assembling evaluation report")
+    logger.debug("Assembling evaluation report")
     val report = Report(ReportContent(
       EvaluateClassification.ReportName,
       Map(

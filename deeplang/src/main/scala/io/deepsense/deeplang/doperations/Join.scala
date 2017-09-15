@@ -52,7 +52,7 @@ case class Join() extends DOperation2To1[DataFrame, DataFrame, DataFrame] {
 
   override protected def _execute(context: ExecutionContext)
                                  (ldf: DataFrame, rdf: DataFrame): DataFrame = {
-    logger.info("Execution of " + this.getClass.getSimpleName + " starts")
+    logger.debug("Execution of " + this.getClass.getSimpleName + " starts")
 
     val leftJoinColumnNames = joinColumnsSequence.value.get.map(
       schema => ldf.getColumnName(schema.getSingleColumnSelection(leftColumnParamKey).get))
@@ -156,7 +156,7 @@ case class Join() extends DOperation2To1[DataFrame, DataFrame, DataFrame] {
     // NOTE: We perform only LEFT OUTER JOIN, thus we do not need to change CategoricalMetadata
     // in resultDataFrame (CategoricalMetadata for left DataFrame, already there is sufficient)
     val resultDataFrame = context.dataFrameBuilder.buildDataFrame(duplicateColumnsRemoved)
-    logger.info("Execution of " + this.getClass.getSimpleName + " ends")
+    logger.debug("Execution of " + this.getClass.getSimpleName + " ends")
     resultDataFrame
   }
 

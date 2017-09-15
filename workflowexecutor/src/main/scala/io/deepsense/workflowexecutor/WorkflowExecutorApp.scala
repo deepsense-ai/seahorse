@@ -65,7 +65,7 @@ object WorkflowExecutorApp
   }
 
   def main(args: Array[String]): Unit = {
-    logger.info("Starting WorkflowExecutor...")
+    logger.info("Starting WorkflowExecutor.")
     val cmdParams = parser.parse(args, ExecutionParams())
 
     cmdParams match {
@@ -81,8 +81,8 @@ object WorkflowExecutorApp
       workflow: WorkflowWithVariables,
       generateReport: Boolean): Try[ExecutionReport] = {
     // Run executor
-    logger.info("Executing graph!")
-    logger.debug("Workflow", workflow)
+    logger.info("Executing the workflow.")
+    logger.debug("Executing the workflow: " +  workflow)
     WorkflowExecutor(workflow, generateReport).execute()
   }
 
