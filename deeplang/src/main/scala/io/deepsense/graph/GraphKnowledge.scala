@@ -37,6 +37,15 @@ case class GraphKnowledge(
     GraphKnowledge(resultsMap + (id -> inferenceResult))
   }
 
+  def addInference(other: GraphKnowledge): GraphKnowledge = {
+    require(
+      (this.resultsMap.keySet intersect other.resultsMap.keySet).isEmpty,
+      "Each summed graph knowledge object must describe " +
+        "different set of nodes so there is no ambiguity")
+
+    GraphKnowledge(this.resultsMap ++ other.resultsMap)
+  }
+
   def containsNodeKnowledge(id: Node.Id): Boolean = resultsMap.contains(id)
 
   def getResult(id: Node.Id): NodeInferenceResult = resultsMap(id)

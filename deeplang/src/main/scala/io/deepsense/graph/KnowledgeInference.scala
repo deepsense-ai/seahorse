@@ -40,7 +40,7 @@ trait KnowledgeInference {
       .filterNot(node => initialKnowledge.containsNodeKnowledge(node.id))
       .foldLeft(initialKnowledge)(
         (knowledge, node) => {
-          val inferenceResult = inferKnowledge(
+          val nodeInferenceResult = inferKnowledge(
             node,
             context,
             inputInferenceForNode(
@@ -48,7 +48,10 @@ trait KnowledgeInference {
               context,
               knowledge,
               predecessors(node.id)))
-          knowledge.addInference(node.id, inferenceResult)
+          val innerWorkflowGraphKnowledge = node.value.inferGraphKnowledgeForInnerWorkflow(context)
+          knowledge
+            .addInference(node.id, nodeInferenceResult)
+            .addInference(innerWorkflowGraphKnowledge)
         }
       )
   }

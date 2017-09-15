@@ -29,7 +29,7 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
  */
 case class InferContext(
     dataFrameBuilder: DataFrameBuilder,
-    tenantId: String,
+    tenantId: String, // TODO REMOVE
     dOperableCatalog: DOperableCatalog,
     innerWorkflowParser: InnerWorkflowParser,
     fullInference: Boolean = false)

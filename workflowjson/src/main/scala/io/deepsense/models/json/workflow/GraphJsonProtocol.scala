@@ -23,7 +23,7 @@ import io.deepsense.models.json.graph.GraphJsonProtocol.{GraphReader, GraphWrite
 
 trait GraphJsonProtocol {
 
-  val graphReader: GraphReader
+  protected val graphReader: GraphReader
 
   implicit val graphFormat: JsonFormat[DeeplangGraph] = new JsonFormat[DeeplangGraph] {
     override def read(json: JsValue): DeeplangGraph = json.convertTo[DeeplangGraph](graphReader)

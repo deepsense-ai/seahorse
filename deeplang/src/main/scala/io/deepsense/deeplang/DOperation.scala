@@ -24,7 +24,7 @@ import io.deepsense.deeplang.DPortPosition.DPortPosition
 import io.deepsense.deeplang.documentation.OperationDocumentation
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.Params
-import io.deepsense.graph.Operation
+import io.deepsense.graph.{GraphKnowledge, Operation}
 
 /**
  * DOperation that receives and returns instances of DOperable.
@@ -85,6 +85,8 @@ abstract class DOperation extends Operation
       context: InferContext)(
       inputKnowledge: Vector[DKnowledge[DOperable]])
       : (Vector[DKnowledge[DOperable]], InferenceWarnings)
+
+  def inferGraphKnowledgeForInnerWorkflow(context: InferContext): GraphKnowledge = GraphKnowledge()
 
   def typeTag[T : ru.TypeTag]: ru.TypeTag[T] = ru.typeTag[T]
 }

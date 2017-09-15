@@ -28,13 +28,13 @@ import io.deepsense.deeplang.doperations.custom.{Sink, Source}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.custom.PublicParam
 import io.deepsense.deeplang.params.{Param, WorkflowParam}
-import io.deepsense.graph.Node
+import io.deepsense.graph.{GraphKnowledge, Node}
 
 case class CreateCustomTransformer() extends DOperation0To1[CustomTransformer] {
 
   import DefaultCustomTransformerWorkflow._
 
-  override val id: Id = "65240399-2987-41bd-ba7e-2944d60a3404"
+  override val id: Id = CreateCustomTransformer.id
   override val name: String = "Create Custom Transformer"
   override val description: String = "Creates custom transformer"
 
@@ -44,6 +44,14 @@ case class CreateCustomTransformer() extends DOperation0To1[CustomTransformer] {
     name = "inner workflow",
     description = "Inner workflow of the Transformer.")
   setDefault(innerWorkflow, defaultWorkflow)
+
+  // Inner workflow should be of type InnerWorkflow instead of raw json.
+  // Unfortunetely it's currently impossible because of project dependency graph.
+  // We have executor -> json -> deeplang.
+  // Unfortunetely json parsing for parameters is in deeplang. And InnerWorkflow is parameter.
+  // Current workaround is to pass innerWorkflowParser through context.
+  // TODO If we stick to custom transformer in current form merge those two project
+  // and use InnerWorkflow type here instead of raw json.
 
   def getInnerWorkflow: JsObject = $(innerWorkflow)
   def setInnerWorkflow(workflow: JsObject): this.type = set(innerWorkflow, workflow)
@@ -64,6 +72,11 @@ case class CreateCustomTransformer() extends DOperation0To1[CustomTransformer] {
     (Vector(DKnowledge[DOperable](transformer)), InferenceWarnings.empty)
   }
 
+  override def inferGraphKnowledgeForInnerWorkflow(context: InferContext): GraphKnowledge = {
+    val innerWorkflowValue = context.innerWorkflowParser.parse($(innerWorkflow))
+    innerWorkflowValue.graph.inferKnowledge(context, GraphKnowledge())
+  }
+
   private def customTransformer(innerWorkflowParser: InnerWorkflowParser): CustomTransformer = {
     val workflow = innerWorkflowParser.parse($(innerWorkflow))
     val selectedParams = workflow.publicParams.flatMap {
@@ -75,6 +88,10 @@ case class CreateCustomTransformer() extends DOperation0To1[CustomTransformer] {
 
     CustomTransformer(workflow, selectedParams)
   }
+}
+
+object CreateCustomTransformer {
+  val id: Id = "65240399-2987-41bd-ba7e-2944d60a3404"
 }
 
 object DefaultCustomTransformerWorkflow {
