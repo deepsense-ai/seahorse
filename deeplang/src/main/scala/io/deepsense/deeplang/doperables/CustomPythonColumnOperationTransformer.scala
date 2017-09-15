@@ -16,6 +16,8 @@
 
 package io.deepsense.deeplang.doperables
 
+import java.util.UUID
+
 import org.apache.spark.sql.types._
 
 import io.deepsense.deeplang._
@@ -28,12 +30,12 @@ case class CustomPythonColumnOperationTransformer() extends MultiColumnTransform
 
   import CustomPythonColumnOperationTransformer._
 
-  val targetType = ChoiceParam[TargetPythonTypeChoice](
+  val targetType = ChoiceParam[TargetTypeChoice](
     name = "target type",
     description = "Target type of the columns.")
 
-  def getTargetType: TargetPythonTypeChoice = $(targetType)
-  def setTargetType(value: TargetPythonTypeChoice): this.type = set(targetType, value)
+  def getTargetType: TargetTypeChoice = $(targetType)
+  def setTargetType(value: TargetTypeChoice): this.type = set(targetType, value)
 
   val codeParameter = CodeSnippetParam(
     name = "code",
@@ -49,12 +51,24 @@ case class CustomPythonColumnOperationTransformer() extends MultiColumnTransform
       userCode: String,
       inputColumn: String,
       outputColumn: String,
-      targetTypeName: String): String = {
-    userCode + s"\n" +
-      s"from pyspark.sql.types import Row\n" +
-      s"def transform(dataframe):\n" +
-      s"    return sqlContext.createDataFrame(dataframe.map(lambda row: " +
-      s"row + (transform_value(row['$inputColumn'], '$inputColumn'),)))"
+      targetType: DataType): String = {
+    val newFieldName = UUID.randomUUID().toString.replace("-", "")
+    val newFieldJson =
+      s"""{"name": "$newFieldName", "type":${targetType.json}, "nullable":true, "metadata":null}"""
+
+    s"""
+      |$userCode
+      |
+      |from pyspark.sql.types import *
+      |import json
+      |
+      |def transform(dataframe):
+      |    new_field = StructField.fromJson(json.loads(\"\"\"$newFieldJson\"\"\"))
+      |    schema = StructType(dataframe.schema.fields + [new_field])
+      |    def _transform_row(row):
+      |        return row + (transform_value(row['$inputColumn'], '$inputColumn'),)
+      |    return sqlContext.createDataFrame(dataframe.map(_transform_row), schema)
+    """.stripMargin
   }
 
   private def executePythonCode(
@@ -86,9 +100,8 @@ case class CustomPythonColumnOperationTransformer() extends MultiColumnTransform
       outputColumn: String,
       context: ExecutionContext,
       dataFrame: DataFrame): DataFrame = {
-    val targetTypeName = getTargetType.columnType.typeName
-
-    val code = getComposedCode($(codeParameter), inputColumn, outputColumn, targetTypeName)
+    val code = getComposedCode(
+      $(codeParameter), inputColumn, outputColumn, getTargetType.columnType)
     logger.debug(s"Python code to be validated and executed:\n$code")
 
     if (!context.pythonCodeExecutor.isValid(code)) {
