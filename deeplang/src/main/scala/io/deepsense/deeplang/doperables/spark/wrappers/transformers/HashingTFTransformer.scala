@@ -26,7 +26,7 @@ import io.deepsense.deeplang.params.wrappers.spark.IntParamWrapper
 class HashingTFTransformer extends SparkTransformerAsMultiColumnTransformer[HashingTF] {
 
   val numFeatures = new IntParamWrapper[HashingTF](
-    name = "numFeatures",
+    name = "num features",
     description = "The number of features.",
     sparkParamGetter = _.numFeatures,
     validator = RangeValidator(1.0, Int.MaxValue, step = Some(1.0)))
