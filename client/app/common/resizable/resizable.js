@@ -18,17 +18,6 @@ class Resizable {
     let resizeElement;
     let startPoint = {};
     let minAndStart = Number(attrs.resizableMinStart);
-    let renderDimensions = () => {
-      if (!width) {
-        width = jQuery(element[0]).outerWidth(true);
-      }
-
-      if (!height) {
-        height = minAndStart || jQuery(element[0]).outerHeight(true);
-      }
-    };
-
-    loadDimensions();
 
     function move(e) {
       let diff = {
@@ -98,43 +87,59 @@ class Resizable {
       }
     }
 
-    renderDimensions();
+    function rest() {
+      element.append(template({
+        position: attrs.resizablePosition || 'left',
+        invisible: attrs.resizableInvisible === 'true'
+      }));
 
-    element.append(template({
-      position: attrs.resizablePosition || 'left',
-      invisible: attrs.resizableInvisible === 'true'
-    }));
+      resizeElement = $(element).find('.o-resizable');
 
-    deps.$compile(element.contents())(scope);
+      resizeElement.on('mousedown', (e) => {
+        startPoint.x = e.clientX;
+        startPoint.y = e.clientY;
+        deps.$document.on('mousemove', move);
+        body.addClass('no-selection');
+      });
 
-    resizeElement = $(element).find('.o-resizable');
-
-    resizeElement.on('mousedown', (e) => {
-      startPoint.x = e.clientX;
-      startPoint.y = e.clientY;
-      deps.$document.on('mousemove', move);
-      body.addClass('no-selection');
-    });
-
-    deps.$document.on('mouseup', (e) => {
-      startPoint.x = e.clientX;
-      startPoint.y = e.clientY;
-      width = parseInt(element[0].style.width);
-      height = parseInt(element[0].style.height);
-      renderDimensions();
-      deps.$document.off('mousemove', move);
-      body.removeClass('no-selection');
-      saveDimensions();
-    });
-
-    scope.$on('Resizable.FIT', (e, data) => {
-      if (data.name === 'height') {
-        element[0].style[data.name] = data.amount;
+      deps.$document.on('mouseup', (e) => {
+        startPoint.x = e.clientX;
+        startPoint.y = e.clientY;
+        width = parseInt(element[0].style.width);
         height = parseInt(element[0].style.height);
-      }
-    });
+        renderDimensions();
+        deps.$document.off('mousemove', move);
+        body.removeClass('no-selection');
+        saveDimensions();
+      });
 
-    resizeElement.css(attrs.resizablePosition, '+=' + attrs.resizableAddShift);
+      scope.$on('Resizable.FIT', (e, data) => {
+        if (data.name === 'height') {
+          element[0].style[data.name] = data.amount;
+          height = parseInt(element[0].style.height);
+        }
+      });
+
+      resizeElement.css(attrs.resizablePosition, '+=' + attrs.resizableAddShift);
+    }
+
+    function renderDimensions() {
+      if (!width) {
+        width = jQuery(element[0]).outerWidth(true);
+      }
+
+      if (!height) {
+        height = minAndStart || jQuery(element[0]).outerHeight(true);
+      }
+    }
+
+    function init() {
+      loadDimensions();
+      renderDimensions();
+      rest();
+    }
+
+    init();
   }
 
   static directiveFactory($rootScope, $document, $compile) {
