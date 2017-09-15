@@ -55,6 +55,8 @@ object CatalogRecorder {
     catalog.registerDOperable[PCAModel]()
     catalog.registerDOperable[StandardScaler]()
     catalog.registerDOperable[StandardScalerModel]()
+    catalog.registerDOperable[VectorIndexer]()
+    catalog.registerDOperable[VectorIndexerModel]()
 
     // wrapped Spark transformers
     catalog.registerDOperable[Binarizer]()
@@ -142,6 +144,9 @@ object CatalogRecorder {
       DOperationCategories.ML)
 
     catalog.registerDOperation[CreateStandardScaler](
+      DOperationCategories.ML)
+
+    catalog.registerDOperation[CreateVectorIndexer](
       DOperationCategories.ML)
 
     // operations generated from Spark transformers
