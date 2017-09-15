@@ -77,7 +77,11 @@ object Dependencies {
 
   import Library._
 
-  val resolvers = Seq(
+  val optionalLocalResolver = sys.props.collectFirst {
+    case ("local.resolver", _) => Resolver.mavenLocal
+  }.toSeq
+
+  val resolvers = optionalLocalResolver ++ Seq(
     "typesafe.com"           at "http://repo.typesafe.com/typesafe/repo/",
     "sonatype.org"           at "https://oss.sonatype.org/content/repositories/releases",
     "spray.io"               at "http://repo.spray.io",
