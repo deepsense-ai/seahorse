@@ -2,10 +2,10 @@
 
 *** Keywords ***
 Connect To Docker Oracle Database
-    Pull Docker Image    sath89/oracle-xe-11g
+    Pull Docker Image    wnameless/oracle-xe-11g
     Kill Docker Container    oracle
     Remove Docker Container    oracle
-    Run Docker Container    sath89/oracle-xe-11g    oracle    -p    8080:8080    -p    1521:1521
+    Run Docker Container    wnameless/oracle-xe-11g    oracle    -p    49160:22    -p    1521:1521
     Delay    100.0
     Connect To Database Using Custom Params    cx_Oracle    user='system',password='oracle',dsn='localhost'
 
@@ -26,9 +26,9 @@ Library    ../lib/HdfsClient.py
 Library    ../lib/S3Client.py
 Library    ../lib/WorkflowExecutorClient.py
 
+
 *** Test Cases ***
 Read Write Oracle
-    [Tags]    InvalidTest
     ${dir} =    Set Variable    resources/oracleTests/readWriteOracle/
     Run Keyword And Ignore Error    Execute Sql String    DROP TABLE read_write_in
     Run Keyword And Ignore Error    Execute Sql String    DROP TABLE read_write_out
