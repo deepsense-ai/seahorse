@@ -18,14 +18,21 @@ package io.deepsense.deeplang.params
 
 import spray.json.{JsValue, JsObject}
 
-case class JsonParam(
+import io.deepsense.deeplang.exceptions.DeepLangException
+
+case class WorkflowParam(
     name: String,
     description: String)
   extends Param[JsObject] {
 
-  override val parameterType = ParameterType.Json
+  override val parameterType = ParameterType.Workflow
 
   override def valueToJson(value: JsObject): JsValue = value
 
   override def valueFromJson(jsValue: JsValue): JsObject = jsValue.asJsObject
+
+  override def validate(value: JsObject): Vector[DeepLangException] = {
+    super.validate(value)
+    // TODO: validate if json is a valid workflow representation.
+  }
 }

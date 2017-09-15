@@ -23,12 +23,12 @@ import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.custom.{Sink, Source}
 import io.deepsense.deeplang.inference.InferContext
-import io.deepsense.deeplang.params.{JsonParam, Param}
+import io.deepsense.deeplang.params.{WorkflowParam, Param}
 import io.deepsense.graph.{GraphKnowledge, Node, NodeInferenceResult}
 
 case class CustomTransformer() extends Transformer with DefaultCustomTransformerWorkflow {
 
-  val innerWorkflow = JsonParam(
+  val innerWorkflow = WorkflowParam(
     name = "inner workflow",
     description = "Inner workflow of the Transformer.")
   setDefault(innerWorkflow, defaultWorkflow)

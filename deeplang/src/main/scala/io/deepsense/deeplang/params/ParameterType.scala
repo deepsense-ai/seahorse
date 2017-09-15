@@ -30,5 +30,5 @@ object ParameterType extends Enumeration {
   val PrefixBasedColumnCreator = Value("prefixBasedCreator")
   val CodeSnippet = Value("codeSnippet")
   val Dynamic = Value("dynamic")
-  val Json = Value("json")
+  val Workflow = Value("workflow")
 }

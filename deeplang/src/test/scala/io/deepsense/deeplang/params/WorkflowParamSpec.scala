@@ -18,16 +18,16 @@ package io.deepsense.deeplang.params
 
 import spray.json._
 
-class JsonParamSpec extends AbstractParamSpec[JsObject, JsonParam] {
+class WorkflowParamSpec extends AbstractParamSpec[JsObject, WorkflowParam] {
 
-  override def className: String = "JsonParam"
+  override def className: String = "WorkflowParam"
 
-  override def paramFixture: (JsonParam, JsValue) = {
-    val param = JsonParam(
-      name = "Json parameter name",
-      description = "Json parameter description")
+  override def paramFixture: (WorkflowParam, JsValue) = {
+    val param = WorkflowParam(
+      name = "Workflow parameter name",
+      description = "Workflow parameter description")
     val expectedJson = JsObject(
-      "type" -> JsString("json"),
+      "type" -> JsString("workflow"),
       "name" -> JsString(param.name),
       "description" -> JsString(param.description),
       "default" -> JsNull
