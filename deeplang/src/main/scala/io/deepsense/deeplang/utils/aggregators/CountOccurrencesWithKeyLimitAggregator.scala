@@ -21,6 +21,10 @@ import scala.collection.mutable
 case class CountOccurrencesWithKeyLimitAggregator[T](limit: Long)
   extends Aggregator[Option[mutable.Map[T, Long]], T] {
 
+  // This might be problematic performance-wise when elements T are HUGE
+  // (for example huge texts). Some kind of document-field detection might be needed
+  // to avoid calling this on such datasets.
+
   // Accumulate allows seq and comb function to mutate first argument and return it.
   // This approach saves memory allocations while aggregating data.
 
