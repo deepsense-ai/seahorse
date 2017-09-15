@@ -10,6 +10,6 @@ describe('Home page', function() {
         browser.get('/#/');
 
         expect(browser.getTitle()).toEqual('DeepSense.io LAB');
-        expect($('.container-fluid p').getText()).toEqual('Hello!');
+        expect($('#page-wrapper .wrapper-content p').getText()).toEqual('Hello! DeepSense.io engine at Your service!');
     });
 });
