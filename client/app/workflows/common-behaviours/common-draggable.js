@@ -56,6 +56,10 @@ function Draggable($rootScope, $log, DragAndDrop) {
           event.dataTransfer.setData('draggableType', attrs.draggableType);
 
           $rootScope.$broadcast('Drag.END', event, element);
+
+          event.preventDefault();
+
+          return false;
         }
       }
 

@@ -25,8 +25,16 @@ function Droppable($log, DragAndDrop) {
       }
 
       element.on('drop', drop);
-      element.on('dragover', dragPreventDefault);
-      element.on('dragenter', dragPreventDefault);
+      element.on('dragover', (event) => {
+        event.dataTransfer.effectAllowed = 'copy';
+        event.preventDefault();
+        return false;
+      });
+      element.on('dragenter', event => {
+        event.dataTransfer.dropEffect = 'copy';
+        event.preventDefault();
+        return false;
+      });
 
       function drop(event) {
         if (
@@ -39,14 +47,11 @@ function Droppable($log, DragAndDrop) {
           event.stopImmediatePropagation();
 
           DragAndDrop.drop(event, element);
-        }
-      }
 
-      function dragPreventDefault(event) {
-        /* prevent default behaviour */
-        event.preventDefault();
-        /* allow drop */
-        return true;
+          event.preventDefault();
+
+          return false;
+        }
       }
     }
   };
