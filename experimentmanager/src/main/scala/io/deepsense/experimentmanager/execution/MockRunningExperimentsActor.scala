@@ -43,14 +43,14 @@ class MockRunningExperimentsActor @Inject()(
   }
 
   private def launch(experiment: Experiment): Unit = {
-    val enqueuedExperiment = enqueueNodes(experiment)
-    experiments += experiment.id -> enqueuedExperiment
-    sender() ! Status(Some(enqueuedExperiment))
+    val runningExperiment = experiment.markRunning
+    experiments += experiment.id -> runningExperiment
+    sender() ! Status(Some(runningExperiment))
   }
 
   private def abort(id: Experiment.Id): Unit = {
     val experiment = experiments.get(id)
-      .map(abortNodes).map(experiment => {
+      .map(_.markAborted).map(experiment => {
       experiments += experiment.id -> experiment
       experiment
     })
@@ -109,12 +109,6 @@ class MockRunningExperimentsActor @Inject()(
       node
     }
   }
-
-  private def enqueueNodes(experiment: Experiment): Experiment =
-    experiment.copy(graph = experiment.graph.enqueueNodes)
-
-  private def abortNodes(experiment: Experiment): Experiment =
-    experiment.copy(graph = experiment.graph.abortNodes)
 }
 
 object MockRunningExperimentsActor {
