@@ -16,11 +16,9 @@
 
 package io.deepsense.commons.utils
 
-import com.typesafe.scalalogging.Logger
-import org.slf4j.LoggerFactory
+import org.slf4j.{Logger, LoggerFactory}
 
 trait Logging {
   @transient
-  protected lazy val logger: Logger =
-    Logger(LoggerFactory.getLogger(getClass.getName))
+  protected lazy val logger: Logger = LoggerFactory.getLogger(getClass.getName)
 }

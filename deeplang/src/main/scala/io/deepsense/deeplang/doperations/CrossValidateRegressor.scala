@@ -61,7 +61,8 @@ case class CrossValidateRegressor()
                 "Seed value",
                 default = Some(0.0),
                 required = true,
-                RangeValidator(Int.MinValue / 2, Int.MaxValue / 2, true, true, Some(1.0))
+                RangeValidator(Int.MinValue / 2, Int.MaxValue / 2, true, true, Some(1.0)),
+                value = None
               )
           )
         )

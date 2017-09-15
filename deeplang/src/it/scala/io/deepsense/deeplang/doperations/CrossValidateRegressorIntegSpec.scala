@@ -16,12 +16,12 @@
 
 package io.deepsense.deeplang.doperations
 
-import com.typesafe.scalalogging.LazyLogging
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import org.scalatest.{BeforeAndAfter, Matchers}
 
+import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
@@ -32,7 +32,7 @@ class CrossValidateRegressorIntegSpec
   extends DeeplangIntegTestSupport
   with GeneratorDrivenPropertyChecks
   with Matchers
-  with LazyLogging
+  with Logging
   with BeforeAndAfter {
 
   before {

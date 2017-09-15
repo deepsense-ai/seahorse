@@ -31,14 +31,16 @@ case class Split() extends DOperation1To2[DataFrame, DataFrame, DataFrame] {
   val splitRatioParam = NumericParameter("Proportion of splitting",
     default = Some(0.5),
     required = true,
-    RangeValidator(0.0, 1.0, true, true)
+    RangeValidator(0.0, 1.0, true, true),
+    value = None
   )
 
   val seedParam = NumericParameter("Seed value",
     default = Some(1.0),
     required = true,
     // TODO Fix RangeValidator, because now it can't handle Int.MinValue and Int.MaxValue
-    RangeValidator(Int.MinValue / 2, Int.MaxValue / 2, true, true, Some(1.0))
+    RangeValidator(Int.MinValue / 2, Int.MaxValue / 2, true, true, Some(1.0)),
+    value = None
   )
 
   override protected def _execute(context: ExecutionContext)

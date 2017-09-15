@@ -44,14 +44,16 @@ case class FileToDataFrame() extends DOperation1To1[File, DataFrame] {
           "Column separator",
           Some(","),
           required = true,
-          new AcceptAllRegexValidator
+          new AcceptAllRegexValidator,
+          value = None
         ),
         namesIncludedParameter -> BooleanParameter(
           "Does the first row include column names?",
           Some(true),
           required = true
         )
-      ))),
+      )),
+      value = None),
     categoricalColumnsParameter -> ColumnSelectorParameter(
       "Categorical columns in the input File",
       required = false,
@@ -80,16 +82,17 @@ case class FileToDataFrame() extends DOperation1To1[File, DataFrame] {
     val firstLine = lines.first()
     val columnsNo = firstLine.length
     val (columnNames, dataLines) = if (namesIncluded) {
-      val processedFirstLine = firstLine.map(removeQuotes).map(safeColumnName)
+      val processedFirstLine =
+        firstLine.map(FileToDataFrameSparkHelper.removeQuotes).map(safeColumnName)
       (processedFirstLine, removeFirstLine(lines).cache())
     } else {
       (generateColumnNames(columnsNo), lines)
     }
 
-    val linesInferences = dataLines.map(_.map(cellTypeInference))
+    val linesInferences = dataLines.map(_.map(FileToDataFrameSparkHelper.cellTypeInference))
 
     val inferredTypes = linesInferences.reduce{(lInf1, lInf2) =>
-      lInf1.zip(lInf2).map(reduceTypeInferences)
+      lInf1.zip(lInf2).map(FileToDataFrameSparkHelper.reduceTypeInferences)
     }.map(_.toType)
 
     val schema = StructType(columnNames.zip(inferredTypes).map { case (columnName, inferredType) =>
@@ -102,7 +105,7 @@ case class FileToDataFrame() extends DOperation1To1[File, DataFrame] {
     val convertedData = dataLines.map(splitLine => Row.fromSeq(
       splitLine.zipWithIndex.zip(inferredTypes).map {
         case ((cell, index), inferredType) =>
-          convertCell(
+          FileToDataFrameSparkHelper.convertCell(
             cell,
             inferredType,
             willBeCategorical = categoricalColumnIndices.contains(index))
@@ -158,8 +161,17 @@ case class FileToDataFrame() extends DOperation1To1[File, DataFrame] {
   private def generateColumnNames(columnsNo: Int): Seq[String] = {
     (0 until columnsNo).map(i => s"column_$i")
   }
+}
 
-  private def cellTypeInference(cell: String): TypeInference = {
+/**
+ * Helper groups functions that needs to be passed as Spark's Task.
+ * Placing those funtions to FileToDataFrame results in Serialization errors while using scala 2.10
+ * Using scala 2.11 fixes that issue.
+ */
+object FileToDataFrameSparkHelper {
+  import io.deepsense.deeplang.doperations.FileToDataFrame._
+
+  def cellTypeInference(cell: String): TypeInference = {
     val trimmedCell = cell.trim
     if (trimmedCell == "") {
       return TypeInference(canBeBoolean = true, canBeNumeric = true, canBeTimestamp = true)
@@ -181,17 +193,16 @@ case class FileToDataFrame() extends DOperation1To1[File, DataFrame] {
     }
   }
 
-  private def reduceTypeInferences(inferences: (TypeInference, TypeInference)): TypeInference =
+  def reduceTypeInferences(inferences: (TypeInference, TypeInference)): TypeInference =
     TypeInference(
       canBeBoolean = inferences._1.canBeBoolean && inferences._2.canBeBoolean,
       canBeNumeric = inferences._1.canBeNumeric && inferences._2.canBeNumeric,
       canBeTimestamp = inferences._1.canBeTimestamp && inferences._2.canBeTimestamp)
 
-  private def convertCell(
+  def convertCell(
       cell: String,
       targetType: types.DataType,
       willBeCategorical: Boolean): Any = {
-
     val trimmedCell = cell.trim
     if (targetType == types.StringType || willBeCategorical) {
       removeQuotes(trimmedCell)
@@ -209,7 +220,7 @@ case class FileToDataFrame() extends DOperation1To1[File, DataFrame] {
   /**
    * Removes double quotes from front and end (if any).
    */
-  private def removeQuotes(s: String): String = s.replaceAll("^\"|\"$", "")
+  def removeQuotes(s: String): String = s.replaceAll("^\"|\"$", "")
 }
 
 object FileToDataFrame {

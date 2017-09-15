@@ -180,7 +180,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
 
   test("Numeric parameter can provide json representation of it's value") {
     val mockValidator = mock[Validator[Double]]
-    val numericParameter = NumericParameter("", None, required = false, mockValidator)
+    val numericParameter = NumericParameter("", None, required = false, mockValidator, value = None)
     val value = 3.14
     numericParameter.value = Some(value)
     assert(numericParameter.valueToJson == JsNumber(value))
@@ -188,7 +188,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
 
   test("Numeric parameter can be filled with json") {
     val mockValidator = mock[Validator[Double]]
-    val numericParameter = NumericParameter("", None, required = false, mockValidator)
+    val numericParameter = NumericParameter("", None, required = false, mockValidator, value = None)
     val value = 3.15
     numericParameter.fillValueWithJson(JsNumber(value))
     assert(numericParameter.value == Some(value))
@@ -196,7 +196,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
 
   test("Numeric parameter can be filled with JsNull") {
     val mockValidator = mock[Validator[Double]]
-    val numericParameter = NumericParameter("", None, required = false, mockValidator)
+    val numericParameter = NumericParameter("", None, required = false, mockValidator, value = None)
     numericParameter.fillValueWithJson(JsNull)
     assert(numericParameter.value == None)
   }
@@ -225,7 +225,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
 
   test("String parameter can provide json representation of it's value") {
     val mockValidator = mock[Validator[String]]
-    val stringParameter = StringParameter("", None, required = false, mockValidator)
+    val stringParameter = StringParameter("", None, required = false, mockValidator, value = None)
     val value = "abc"
     stringParameter.value = Some(value)
     assert(stringParameter.valueToJson == JsString(value))
@@ -233,7 +233,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
 
   test("String parameter can be filled with json") {
     val mockValidator = mock[Validator[String]]
-    val stringParameter = StringParameter("", None, required = false, mockValidator)
+    val stringParameter = StringParameter("", None, required = false, mockValidator, value = None)
     val value = "abcd"
     stringParameter.fillValueWithJson(JsString(value))
     assert(stringParameter.value == Some(value))
@@ -241,7 +241,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
 
   test("String parameter can be filled with JsNull") {
     val mockValidator = mock[Validator[String]]
-    val stringParameter = StringParameter("", None, required = false, mockValidator)
+    val stringParameter = StringParameter("", None, required = false, mockValidator, value = None)
     stringParameter.fillValueWithJson(JsNull)
     assert(stringParameter.value == None)
   }
@@ -305,7 +305,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
       "filledChoice" -> filledSchema,
       "emptyChoice" -> ParametersSchema()
     )
-    val choiceParameter = ChoiceParameter("", None, required = false, possibleChoices)
+    val choiceParameter = ChoiceParameter("", None, required = false, possibleChoices, value = None)
     choiceParameter.value = Some("filledChoice")
 
     val expectedJson = JsObject("filledChoice" -> filledSchema.valueToJson)
@@ -318,7 +318,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
       "filledChoice" -> filledSchema,
       "emptyChoice" -> ParametersSchema()
     )
-    val choiceParameter = ChoiceParameter("", None, required = false, possibleChoices)
+    val choiceParameter = ChoiceParameter("", None, required = false, possibleChoices, value = None)
     val innerJsValue = JsString("mock inner value")
     choiceParameter.fillValueWithJson(JsObject("filledChoice" -> innerJsValue))
     verify(filledSchema).fillValuesWithJson(innerJsValue)
@@ -329,7 +329,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
     val possibleChoices = ListMap(
       "filledChoice" -> filledSchema, "emptyChoice" -> ParametersSchema()
     )
-    val choiceParameter = ChoiceParameter("", None, required = false, possibleChoices)
+    val choiceParameter = ChoiceParameter("", None, required = false, possibleChoices, value = None)
     a [DeserializationException] should be thrownBy {
       choiceParameter.fillValueWithJson(JsObject(
         "filledChoice" -> JsString("mock1"),
@@ -339,14 +339,14 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
 
   test("Choice parameter throws when non-existing option is chosen in json") {
     val possibleChoices = ListMap("onlyChoice" -> ParametersSchema())
-    val choiceParameter = ChoiceParameter("", None, required = false, possibleChoices)
+    val choiceParameter = ChoiceParameter("", None, required = false, possibleChoices, value = None)
     a [DeserializationException] should be thrownBy {
       choiceParameter.fillValueWithJson(JsObject("nonExistingChoice" -> JsString("mock1")))
     }
   }
 
   test("Choice parameter can be filled with JsNull") {
-    val choiceParameter = ChoiceParameter("", None, required = false, ListMap.empty)
+    val choiceParameter = ChoiceParameter("", None, required = false, ListMap.empty, value = None)
     choiceParameter.fillValueWithJson(JsNull)
     assert(choiceParameter.value == None)
   }
@@ -412,7 +412,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
       "emptyChoice" -> ParametersSchema()
     )
     val multipleChoiceParameter = MultipleChoiceParameter(
-      "", None, required = false, possibleChoices)
+      "", None, required = false, possibleChoices, value = None)
     multipleChoiceParameter.value = Some(Traversable("filledChoice", "emptyChoice"))
 
     val expectedJson = JsObject(
@@ -427,7 +427,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
     val schema2 = mock[ParametersSchema]
     val possibleChoices = ListMap("choice1" -> schema1, "choice2" -> schema2)
     val multipleChoiceParameter = MultipleChoiceParameter(
-      "", None, required = false, possibleChoices)
+      "", None, required = false, possibleChoices, value = None)
     val innerJsValue1 = JsString("mock inner value 1")
     val innerJsValue2 = JsString("mock inner value 2")
     multipleChoiceParameter.fillValueWithJson(JsObject(
@@ -439,14 +439,15 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
   test("Multiple choice parameter throws when non-existing option is chosen in json") {
     val possibleChoices = ListMap("onlyChoice" -> ParametersSchema())
     val multipleChoiceParameter = MultipleChoiceParameter(
-      "", None, required = false, possibleChoices)
+      "", None, required = false, possibleChoices, value = None)
     a [DeserializationException] should be thrownBy {
       multipleChoiceParameter.fillValueWithJson(JsObject("nonExistingChoice" -> JsString("mock1")))
     }
   }
 
   test("Multiple Choice parameter can be filled with JsNull") {
-    val multipleChoiceParameter = MultipleChoiceParameter("", None, required = false, ListMap.empty)
+    val multipleChoiceParameter = MultipleChoiceParameter(
+      "", None, required = false, ListMap.empty, value = None)
     multipleChoiceParameter.fillValueWithJson(JsNull)
     assert(multipleChoiceParameter.value == None)
   }
@@ -471,7 +472,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
   test("Parameters sequence can provide json representation of it's value") {
     val innerSchema = mock[ParametersSchema]
     when(innerSchema.valueToJson) thenReturn JsObject("x" -> JsString("y"))
-    val parametersSequence = ParametersSequence("", required = false, innerSchema)
+    val parametersSequence = ParametersSequence("", required = false, innerSchema, value = None)
     parametersSequence.value = Some(Vector(innerSchema))
     val expectedJson = JsArray(innerSchema.valueToJson)
     assert(parametersSequence.valueToJson == expectedJson)
@@ -480,7 +481,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
   test("Parameters sequence can be filled with json") {
     val innerSchema = mock[ParametersSchema]
     when(innerSchema.replicate) thenReturn innerSchema
-    val parametersSequence = ParametersSequence("", required = false, innerSchema)
+    val parametersSequence = ParametersSequence("", required = false, innerSchema, value = None)
     val innerJsValue1 = JsString("mock inner value 1")
     val innerJsValue2 = JsString("mock inner value 2")
     parametersSequence.fillValueWithJson(JsArray(innerJsValue1, innerJsValue2))
@@ -489,7 +490,8 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
   }
 
   test("Parameters sequence can be filled with JsNull") {
-    val parametersSequence = ParametersSequence("", required = false, ParametersSchema())
+    val parametersSequence = ParametersSequence(
+      "", required = false, ParametersSchema(), value = None)
     parametersSequence.fillValueWithJson(JsNull)
     assert(parametersSequence.value == None)
   }
