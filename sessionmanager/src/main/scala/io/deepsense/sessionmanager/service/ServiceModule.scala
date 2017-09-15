@@ -12,6 +12,7 @@ import io.deepsense.commons.akka.GuiceAkkaExtension
 import io.deepsense.sessionmanager.service.actors.SessionServiceActor
 import io.deepsense.sessionmanager.service.sessionspawner.SessionSpawner
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.SparkLauncherSessionSpawner
+import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.auth._
 import io.deepsense.sessionmanager.service.statusinferencer.DefaultStatusInferencer
 
 class ServiceModule extends AbstractModule {
@@ -25,5 +26,15 @@ class ServiceModule extends AbstractModule {
   @Named("SessionService.Actor")
   def sessionServiceActor(system: ActorSystem): ActorRef = {
     system.actorOf(GuiceAkkaExtension(system).props[SessionServiceActor], "SessionService.Actor")
+  }
+
+  @Provides
+  @Singleton
+  def authContextInitiator(
+      @Named("launcher.auth") launcherAuth: String): AuthContextInitiator = {
+    launcherAuth match {
+      case "kerberos" => new KerberosInitiator
+      case _ => new DummyAuthContextInitiator
+    }
   }
 }

@@ -43,6 +43,7 @@ class SessionsApiSpec
   implicit val envelopedSessionIdFormat = new EnvelopeJsonFormat[Id]("sessionId")
 
   val userId: String = Id.randomId.toString
+  val token: String = "token"
 
   "GET /sessions" should {
     "list all sessions" in {
@@ -135,10 +136,10 @@ class SessionsApiSpec
       val workflowId: Id = Id.randomId
       val s = workflowId
       val service = mock[SessionService]
-      when(service.createSession(workflowId, userId)).thenReturn(Future.successful(s))
+      when(service.createSession(workflowId, userId, token)).thenReturn(Future.successful(s))
 
       Post(s"/$apiPrefix", CreateSession(workflowId))
-        .withUserId(userId) ~> testRoute(service) ~> check {
+        .withUserId(userId).withToken(token) ~> testRoute(service) ~> check {
 
         status shouldBe StatusCodes.OK
         val returnedSessionId = responseAs[Envelope[Id]].content
@@ -148,7 +149,7 @@ class SessionsApiSpec
     "return ServiceUnavailable" when {
       "not yet subscribed to Heartbeats" in {
         Post(s"/$apiPrefix", CreateSession(Id.randomId))
-          .withUserId(userId) ~>
+          .withUserId(userId).withToken(token) ~>
           testRoute(mock[SessionService], notReadyFuture) ~> check {
           status shouldBe StatusCodes.ServiceUnavailable
         }
@@ -156,7 +157,15 @@ class SessionsApiSpec
     }
     "return 400 Bad Request" when {
       "X-Seahorse-UserId is not present" in {
-        Post(s"/$apiPrefix", CreateSession(Id.randomId)) ~>
+        Post(s"/$apiPrefix", CreateSession(Id.randomId))
+          .withToken(token) ~>
+          testRoute(mock[SessionService]) ~> check {
+          status shouldBe StatusCodes.BadRequest
+        }
+      }
+      "Authorization is not present" in {
+        Post(s"/$apiPrefix", CreateSession(Id.randomId))
+          .withUserId(userId) ~>
           testRoute(mock[SessionService]) ~> check {
           status shouldBe StatusCodes.BadRequest
         }
@@ -188,5 +197,8 @@ class SessionsApiSpec
   private implicit class RichHttpRequest(httpRequest: HttpRequest) {
     def withUserId(userId: String): HttpRequest =
       addHeader("X-Seahorse-UserId", userId)(httpRequest)
+
+    def withToken(token: String): HttpRequest =
+      addHeader("Authorization", s"bearer $token")(httpRequest)
   }
 }

@@ -1,0 +1,14 @@
+Seahorse base Spark docker image with Kerberos
+==============================================
+
+The image contains Spark libraries required for running inside a docker container.
+Can be used as a base image for applications requiring spark libraries.
+Contains preinstalled Kerberos libs and programs, including ktinit.
+
+1. Building the image
+
+   $ docker build -t deepsense-spark-krb .
+
+2. Running the image
+
+   $ docker run -h sandbox -d deepsense-spark-krb

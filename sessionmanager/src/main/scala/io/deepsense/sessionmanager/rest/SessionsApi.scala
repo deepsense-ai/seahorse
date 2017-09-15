@@ -34,6 +34,8 @@ class SessionsApi @Inject()(
 
   private val sessionsPathPrefixMatcher = PathMatchers.separateOnSlashes(sessionsApiPrefix)
   private val SeahorseUserIdHeaderName = "X-Seahorse-UserId".toLowerCase
+  private val AuthorizationHeaderName = "Authorization".toLowerCase
+  private val tokenPattern = "[Bb]earer (.*)".r
 
   implicit val envelopedSessionFormat = new EnvelopeJsonFormat[Session]("session")
   implicit val envelopedSessionIdFormat = new EnvelopeJsonFormat[Id]("sessionId")
@@ -64,10 +66,12 @@ class SessionsApi @Inject()(
               } ~
               pathEndOrSingleSlash {
                 post {
-                  entity(as[CreateSession]) { request =>
-                    val session = sessionService.createSession(request.workflowId, userId)
-                    val enveloped = session.map(Envelope(_))
-                    complete(enveloped)
+                  withToken { token =>
+                    entity(as[CreateSession]) { request =>
+                      val session = sessionService.createSession(request.workflowId, userId, token)
+                      val enveloped = session.map(Envelope(_))
+                      complete(enveloped)
+                    }
                   }
                 } ~
                 get {
@@ -84,6 +88,17 @@ class SessionsApi @Inject()(
   private def withUserId: Directive1[String] = {
     optionalHeaderValueByName(SeahorseUserIdHeaderName).flatMap {
       case Some(value) => provide(value)
+      case None => complete(StatusCodes.BadRequest)
+    }
+  }
+
+  private def withToken: Directive1[String] = {
+    optionalHeaderValueByName(AuthorizationHeaderName).flatMap {
+      case Some(value) =>
+        value match {
+          case tokenPattern(token) => provide(token)
+          case _ => complete(StatusCodes.BadRequest)
+        }
       case None => complete(StatusCodes.BadRequest)
     }
   }

@@ -4,6 +4,7 @@
 
 package io.deepsense.sessionmanager.service.sessionspawner.sparklauncher
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
 
 import akka.actor.ActorSystem
@@ -12,41 +13,47 @@ import org.apache.spark.launcher.{SparkAppHandle, SparkLauncher}
 
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.utils.Logging
+import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.auth.AuthContextInitiator
 import io.deepsense.sessionmanager.service.sessionspawner.{SessionSpawner, SessionSpawnerException}
 
 class SparkLauncherSessionSpawner @Inject()(
   private val system: ActorSystem,
-  private val config: SparkLauncherConfig
+  private val config: SparkLauncherConfig,
+  private val authContextInitiator: AuthContextInitiator
 ) extends SessionSpawner with Logging {
 
   import scala.collection.JavaConversions._
 
-  override def createSession(workflowId: Id, userId: String): Future[Unit] = {
+  override def createSession(workflowId: Id, userId: String, token: String): Future[Unit] = {
     logger.info(s"Creating session for workflow $workflowId")
 
-    val listener = new AppHandleListener()
+    authContextInitiator.init(userId, token).flatMap { ccache =>
 
-    new SparkLauncher(env)
-      .setVerbose(true)
-      .setMainClass(config.className)
-      .setMaster("yarn-cluster")
-      .setAppResource(config.weJarPath)
-      .setAppName("SessionExecutor")
-      .setSparkHome(config.sparkHome)
-      .addFile(config.weDepsPath)
-      .addAppArgs(args(workflowId, userId): _*)
-      .setConf("spark.driver.extraClassPath", "__app__.jar")
-      .setConf("spark.executorEnv.PYTHONPATH", config.weDepsFileName)
-      .setConf("spark.driver.extraJavaOptions", "-XX:MaxPermSize=1024m -XX:PermSize=256m")
-      .startApplication(listener)
+      val listener = new AppHandleListener()
 
-    listener.executorStartedFuture
+      new SparkLauncher(env(ccache))
+        .setVerbose(true)
+        .setMainClass(config.className)
+        .setMaster("yarn-cluster")
+        .setAppResource(config.weJarPath)
+        .setAppName("SessionExecutor")
+        .setSparkHome(config.sparkHome)
+        .addFile(config.weDepsPath)
+        .addAppArgs(args(workflowId, userId): _*)
+        .setConf("spark.driver.extraClassPath", "__app__.jar")
+        .setConf("spark.executorEnv.PYTHONPATH", config.weDepsFileName)
+        .setConf("spark.driver.extraJavaOptions", "-XX:MaxPermSize=1024m -XX:PermSize=256m")
+        .startApplication(listener)
+
+      listener.executorStartedFuture
+    }
   }
 
-  private def env = Map(
+  private def env(ccache: String) = Map(
     "HADOOP_CONF_DIR" -> config.hadoopConfDir,
     "SPARK_YARN_MODE" -> "true",
-    "HADOOP_USER_NAME" -> config.hadoopUserName
+    "HADOOP_USER_NAME" -> config.hadoopUserName,
+    "KRB5CCNAME" -> s"FILE:$ccache"
   )
 
   private def args(workflowId: Id, userId: String) = Seq(

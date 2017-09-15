@@ -23,5 +23,8 @@ RUN wget -q -O - \
   && mv /tmp/$SPARK_PACKAGE $SPARK_HOME \
   && rm -rf $SPARK_HOME/examples $SPARK_HOME/ec2
 
+COPY startup.sh /opt/
+RUN chown root.root /opt/startup.sh && chmod 700 /opt/startup.sh
+
 ENTRYPOINT [ "/opt/startup.sh" ]
 CMD [ "-d" ]

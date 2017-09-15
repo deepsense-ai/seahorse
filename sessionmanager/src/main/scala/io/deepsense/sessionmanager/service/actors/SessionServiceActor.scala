@@ -43,8 +43,8 @@ class SessionServiceActor @Inject()(
         handleKill(id) pipeTo sender()
       case ListRequest() =>
         handleList() pipeTo sender()
-      case CreateRequest(id, userId) =>
-        handleCreate(id, userId) pipeTo sender()
+      case CreateRequest(id, userId, token) =>
+        handleCreate(id, userId, token) pipeTo sender()
     }
   }
 
@@ -78,14 +78,14 @@ class SessionServiceActor @Inject()(
     }.toSeq)
   }
 
-  private def handleCreate(id: Id, userId: String): Future[Id] = {
+  private def handleCreate(id: Id, userId: String, token: String): Future[Id] = {
     eventStore.started(id).flatMap {
       case Left(_) =>
         logger.info(s"Session '$id' already exists!")
         Future.successful(id)
       case Right(_) =>
         logger.info(s"Session '$id' does not exist. Creating!")
-        sessionSpawner.createSession(id, userId).map(_ => id)
+        sessionSpawner.createSession(id, userId, token).map(_ => id)
     }
   }
 
@@ -100,5 +100,5 @@ object SessionServiceActor {
   case class GetRequest(id: Id) extends Request
   case class KillRequest(id: Id) extends Request
   case class ListRequest() extends Request
-  case class CreateRequest(workflowId: Id, userId: String) extends Request
+  case class CreateRequest(workflowId: Id, userId: String, token: String) extends Request
 }

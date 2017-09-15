@@ -25,6 +25,7 @@ services:
       - HADOOP_CONF_DIR=/yarn-remote-client
       - SM_MQ_HOST=rabbitmq
       - SM_MQ_PORT=5672
+      - LAUNCHER_AUTH=none
     links:
       - rabbitmq
       - workflowmanager

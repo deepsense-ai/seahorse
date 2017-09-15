@@ -9,7 +9,7 @@ import scala.concurrent.Future
 import io.deepsense.commons.models.Id
 
 trait SessionSpawner {
-  def createSession(workflowId: Id, userId: String): Future[Unit]
+  def createSession(workflowId: Id, userId: String, token: String): Future[Unit]
 }
 
 final class SessionSpawnerException(msg: String) extends Exception(msg)

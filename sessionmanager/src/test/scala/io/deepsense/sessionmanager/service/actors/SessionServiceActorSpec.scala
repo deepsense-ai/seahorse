@@ -46,6 +46,8 @@ class SessionServiceActorSpec(_system: ActorSystem)
 
   implicit val timeout: Timeout = 5.seconds
 
+  val token = "token"
+
   // TODO: Currently sessionId == workflowId
   val existingSessionId, existingWorkflowId = Id.randomId
   // TODO: Currently sessionId == workflowId
@@ -116,7 +118,7 @@ class SessionServiceActorSpec(_system: ActorSystem)
           .thenReturn(Future.successful(Left(SessionExists())))
         "return it's Id" in
           fixture(eventStore) { p =>
-            whenReady(sendCreateRequest(p, existingSessionId, Id.randomId.toString)) {
+            whenReady(sendCreateRequest(p, existingSessionId, Id.randomId.toString, token)) {
               _ shouldBe existingSessionId
             }
           }
@@ -130,21 +132,21 @@ class SessionServiceActorSpec(_system: ActorSystem)
 
         def sessionSpawner: SessionSpawner = {
           val m = mock[SessionSpawner]
-          when(m.createSession(matchers.eq(notExistingSessionId), any()))
+          when(m.createSession(matchers.eq(notExistingSessionId), any(), any()))
             .thenReturn(Future.successful(()))
           m
         }
 
         "use session spawner to create a session" in fixture(eventStore, sessionSpawner) { p =>
           val userId = Id.randomId.toString
-          sendCreateRequest(p, notExistingSessionId, userId)
+          sendCreateRequest(p, notExistingSessionId, userId, token)
           eventually {
-            verify(p.sessionSpawner, times(1)).createSession(notExistingSessionId, userId)
+            verify(p.sessionSpawner, times(1)).createSession(notExistingSessionId, userId, token)
           }
         }
 
         "put 'Created' event to EventStore" in fixture(eventStore, sessionSpawner) { p =>
-          sendCreateRequest(p, notExistingSessionId, Id.randomId.toString)
+          sendCreateRequest(p, notExistingSessionId, Id.randomId.toString, token)
           eventually {
             verify(p.eventStore, times(1)).started(notExistingSessionId)
           }
@@ -206,8 +208,9 @@ class SessionServiceActorSpec(_system: ActorSystem)
       .mapTo[Option[Session]]
   }
 
-  private def sendCreateRequest(p: TestParams, workflowId: Id, userId: String): Future[Id] =
-    (p.sessionServiceActor ? CreateRequest(workflowId, userId)).mapTo[Id]
+  private def sendCreateRequest(
+      p: TestParams, workflowId: Id, userId: String, token: String): Future[Id] =
+    (p.sessionServiceActor ? CreateRequest(workflowId, userId, token)).mapTo[Id]
 
   private def fixture[T](eventStore: EventStore)(test: (TestParams) => T): T =
     fixture(eventStore, mock[StatusInferencer], mock[SessionSpawner])(test)
