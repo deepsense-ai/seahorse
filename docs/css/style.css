@@ -162,6 +162,11 @@ pre {
 .dropdown-menu>li>a {
   padding: 10px 20px;
 }
+.dropdown-menu>li.header {
+  padding: 10px 10px;
+  font-size: smaller;
+  color: #7f7f7f;
+}
 .dropdown-menu .divider {
   margin: 0;
 }
