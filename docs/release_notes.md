@@ -49,13 +49,13 @@ see the <a href="./deployment/enterprise.html">Enterprise</a> page.
 #### What is New
 
 * Seahorse has been upgraded to Spark 2.0.0
-* Seahorse can connect to external clusters (YARN, Mesos, Standalone) along a local one.
+* Seahorse can connect to external clusters (YARN, Mesos, Standalone)
 * R support
 * Added library
   * Upload and download datasets between local machine and Seahorse Library
   * Read and write data between Seahorse Library and Spark Cluster
 * Added operations:
-  * [R notebooks](/1.3/operations/r_notebook.html)
+  * [R Notebook](/1.3/operations/r_notebook.html)
   * [R Column Transformation](/1.3/operations/r_column_transformation.html)
   * [R Transformation](/1.3/operations/r_transformation.html)
   * [R Evaluator](/1.3/operations/r_evaluator.html)

@@ -52,7 +52,7 @@
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <li class="{% if page.menuTab == 'overview' %}active{% endif %}"><a href="{{base}}">Overview</a></li>
-            <li class="{% if page.menuTab == 'getting_started' %}active{% else %}editor-link{% endif %}"><a href="{{base}}/getting_started.html">Get Started</a></li>
+            <li class="{% if page.menuTab == 'getting_started' %}active{% else %}editor-link{% endif %}"><a href="{{base}}/getting_started.html">Getting Started</a></li>
             <li class="{% if page.menuTab == 'deployment' %}active{% endif %} dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Deployment Modes<span class="caret"></span></a>
               <ul class="dropdown-menu">
@@ -74,7 +74,7 @@
               </ul>
             </li>
             <li class="{% if page.menuTab == 'reference' %}active{% endif %} dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Reference<span class="caret"></span></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Reference Guide<span class="caret"></span></a>
               <ul class="dropdown-menu">
                 <li class="{% if page.title == 'Server Mode' %}active{% endif %}"><a href="{{base}}/server_mode.html">Server Mode</a></li>
                 <li class="{% if page.title == 'External Cluster' %}active{% endif %}"><a href="{{base}}/external_cluster.html">Using External Cluster</a></li>
@@ -83,6 +83,7 @@
                 <li class="{% if page.title == 'Release Notes' %}active{% endif %}"><a href="{{base}}/release_notes.html">Release Notes</a></li>
               </ul>
             </li>
+            <li><a href="http://deepsense.io/about-us/contact/#contact-form-anchor">Contact Us</a></li>
           </ul>
         </div>
       </div>
