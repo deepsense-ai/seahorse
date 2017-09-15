@@ -188,6 +188,12 @@ factory('Workflow', /*@ngInject*/function (GraphNode, Edge) {
       delete internal.nodes[edge.endNodeId].edges[edge.id];
     };
 
+    that.removeNodes = (nodes) => {
+      _.each(nodes, (nodeId) => {
+          that.removeNode(nodeId);
+      });
+    };
+
     that.removeNode = function removeNode(nodeId) {
       try {
         that.removeEdges(nodeId);
