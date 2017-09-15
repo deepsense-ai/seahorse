@@ -35,8 +35,11 @@ Missing Parameter Value
     [Teardown]  Standard Hdfs Test Teardown
 
 Parameter Out Of Range
+    [Setup]  Standard Hdfs Test Setup
+    Upload File To HDFS    input.csv
     Run Workflow
     Check Report
+    [Teardown]  Standard Hdfs Test Teardown
 
 Type Mismatch
     Run Workflow
