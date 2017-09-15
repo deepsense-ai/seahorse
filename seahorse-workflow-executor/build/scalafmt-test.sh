@@ -13,5 +13,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-cd `dirname $0`"/../jenkins"
+cd `dirname $0`"/../build"
 ./scalafmt.sh --test
