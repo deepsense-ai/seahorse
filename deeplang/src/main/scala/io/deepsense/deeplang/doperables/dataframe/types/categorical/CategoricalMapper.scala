@@ -23,10 +23,10 @@ import org.apache.spark.sql.types.{IntegerType, StringType, StructType}
 import org.joda.time.DateTime
 
 import io.deepsense.commons.types.ColumnType
-import io.deepsense.deeplang.doperables.dataframe.types.{SparkConversions, Conversions}
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMapper.CategoricalMappingsMap
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.MappingMetadataConverter._
-import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder, DataFrameColumnsGetter}
+import io.deepsense.deeplang.doperables.dataframe.types.{Conversions, SparkConversions}
+import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 
 case class CategoricalMapper(dataFrame: DataFrame, dataFrameBuilder: DataFrameBuilder) {
   private val sparkDataFrame = dataFrame.sparkDataFrame
@@ -78,7 +78,7 @@ case class CategoricalMapper(dataFrame: DataFrame, dataFrameBuilder: DataFrameBu
       .select(convertedColumn)
       .collect()
       .map(_.getString(0))
-      .filter(value => (value == null || !value.isEmpty))
+      .filter(value => value == null || !value.isEmpty)
   }
 
   private def findMappingFunction(column: String) = {
@@ -145,9 +145,7 @@ object CategoricalMapper {
   }
 
   /**
-   * Permorms conversion of categorical columns to string columns in Spark DataFrame schema.
-   * @param schema
-   * @param categoricalMetadata
+   * Performs conversion of categorical columns to string columns in Spark DataFrame schema.
    * @return Spark DataFrame schema with categorical columns converted to string columns
    */
   def uncategorizedSchema(

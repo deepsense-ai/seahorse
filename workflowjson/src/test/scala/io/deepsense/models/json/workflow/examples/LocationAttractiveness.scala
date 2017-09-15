@@ -18,9 +18,9 @@ package io.deepsense.models.json.workflow.examples
 
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.DOperation
-import io.deepsense.deeplang.doperations.CsvParameters.ColumnSeparator
 import io.deepsense.deeplang.doperations._
-import io.deepsense.deeplang.parameters._
+import io.deepsense.deeplang.doperations.inout.CsvParameters
+import io.deepsense.deeplang.doperations.inout.CsvParameters.ColumnSeparator
 import io.deepsense.graph.{Edge, Node}
 
 object LocationAttractiveness extends WorkflowCreator {
@@ -30,7 +30,6 @@ object LocationAttractiveness extends WorkflowCreator {
 
   val readDataFrame: ReadDataFrame = ReadDataFrame(
     testFilePath,
-    (ReadDataFrame.LineSeparator.UNIX, None),
     (ColumnSeparator.COMMA, None),
     csvNamesIncluded = true,
     csvShouldConvertToBoolean = true,

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperations
+package io.deepsense.deeplang.doperations.inout
 
 import java.sql.Timestamp
 
@@ -25,7 +25,7 @@ import org.joda.time.DateTime
 import org.scalatest.BeforeAndAfter
 
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
-import io.deepsense.deeplang.{DeeplangIntegTestSupport, DOperable}
+import io.deepsense.deeplang.{DOperable, DeeplangIntegTestSupport}
 import io.deepsense.entitystorage.EntityStorageClientInMemoryImpl
 
 class SaveDataFrameIntegSpec

@@ -60,6 +60,7 @@ object Library {
   val scopt              = "com.github.scopt"                 %% "scopt"                     % "3.3.0"
   val scoverage          = "org.scoverage"                    %% "scalac-scoverage-runtime"  % "1.0.4"
   val sparkCore          = spark("core")
+  val sparkCSV           = "com.databricks"                   %% "spark-csv"                 % "1.2.0"
   val sparkMLLib         = spark("mllib")
   val sparkSql           = spark("sql")
   val hadoopAWS          = hadoop("aws")
@@ -103,7 +104,8 @@ object Dependencies {
     hadoopAWS,
     hadoopClient,
     hadoopCommon,
-    cassandraConnector
+    cassandraConnector,
+    sparkCSV
   ) ++ Seq(scalatest, mockitoCore, scalacheck, scoverage, cassandra, cassandraUnit).map(_ % Test)
 
   val entitystorageClient = Seq(

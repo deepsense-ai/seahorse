@@ -17,8 +17,9 @@
 package io.deepsense.deeplang.doperables.dataframe.types
 
 import org.apache.spark.sql
+
 import io.deepsense.commons.types.ColumnType
-import ColumnType._
+import io.deepsense.commons.types.ColumnType._
 
 object SparkConversions {
 
@@ -31,7 +32,7 @@ object SparkConversions {
   )
 
   private val columnTypeToSparkColumnTypeMap: Map[sql.types.DataType, ColumnType] =
-    sparkColumnTypeToColumnTypeMap.map(_.swap).toMap
+    sparkColumnTypeToColumnTypeMap.map(_.swap)
 
   def columnTypeToSparkColumnType(columnType: ColumnType): sql.types.DataType =
     sparkColumnTypeToColumnTypeMap(columnType)

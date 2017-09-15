@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperations
+package io.deepsense.deeplang.doperations.inout
 
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._

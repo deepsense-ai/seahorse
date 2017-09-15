@@ -26,16 +26,16 @@ case class CategoricalMetadata(sparkDataFrame: org.apache.spark.sql.DataFrame) {
       mapping <- mappingFromMetadata(field.metadata)
     } yield (field.name, index, mapping)
 
-  val mappingById =
+  val mappingByIndex =
     mappingTriplets.map { case (_, index, mapping) => index -> mapping }.toMap
   val mappingByName =
     mappingTriplets.map { case (name, _, mapping) => name -> mapping }.toMap
 
-  def mapping(id: Int): CategoriesMapping = mappingById(id)
+  def mapping(index: Int): CategoriesMapping = mappingByIndex(index)
   def mapping(name: String): CategoriesMapping = mappingByName(name)
-  def mappingOptional(id: Int): Option[CategoriesMapping] = mappingById.get(id)
+  def mappingOptional(index: Int): Option[CategoriesMapping] = mappingByIndex.get(index)
   def mappingOptional(name: String): Option[CategoriesMapping] = mappingByName.get(name)
-  def isCategorical(id: Int): Boolean = mappingById.contains(id)
+  def isCategorical(index: Int): Boolean = mappingByIndex.contains(index)
   def isCategorical(name: String): Boolean = mappingByName.contains(name)
 }
 

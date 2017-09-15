@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperations
+package io.deepsense.deeplang.doperations.inout
 
 import scala.concurrent.Await
 import scala.concurrent.duration._

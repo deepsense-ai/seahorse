@@ -16,11 +16,12 @@
 
 package io.deepsense.deeplang.doperations
 
+import org.apache.spark.sql.Row
+import org.apache.spark.sql.types._
+
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMetadata
-import org.apache.spark.sql.Row
-import org.apache.spark.sql.types._
 
 class SqlExpressionSpec extends DeeplangIntegTestSupport {
 
@@ -67,7 +68,7 @@ class SqlExpressionSpec extends DeeplangIntegTestSupport {
 
       outputMetadata.isCategorical(0) shouldBe false
       outputMetadata.isCategorical(1) shouldBe true
-      outputMetadata.mappingById(1) shouldBe inputMetadata.mappingById(columns(1))
+      outputMetadata.mappingByIndex(1) shouldBe inputMetadata.mappingByIndex(columns(1))
     }
     "unregister the input DataFrame after execution" in {
       val dataFrame = sampleDataFrame
@@ -89,7 +90,7 @@ class SqlExpressionSpec extends DeeplangIntegTestSupport {
 
       val inputMetadata = CategoricalMetadata(dataFrame)
       val outputMetadata = CategoricalMetadata(result)
-      outputMetadata.mappingById shouldBe inputMetadata.mappingById
+      outputMetadata.mappingByIndex shouldBe inputMetadata.mappingByIndex
       outputMetadata.mappingByName shouldBe inputMetadata.mappingByName
     }
   }

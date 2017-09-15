@@ -24,6 +24,7 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.file.File
 import io.deepsense.deeplang.doperations.FileToDataFrame.CSV
 import io.deepsense.deeplang.doperations._
+import io.deepsense.deeplang.doperations.inout.ReadFile
 import io.deepsense.deeplang.{DOperable, DOperation, DeeplangIntegTestSupport}
 
 abstract class BaseTrainedLinearRegressionTrainScoreIntegSpec

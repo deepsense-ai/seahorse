@@ -19,30 +19,30 @@ package io.deepsense.deeplang.doperations
 import java.sql.Timestamp
 
 import org.apache.spark.sql.Row
-import org.apache.spark.sql.types.{StructField, StructType}
+import org.apache.spark.sql.types._
 import org.scalatest.BeforeAndAfter
+
 import io.deepsense.commons.types.ColumnType
-import io.deepsense.deeplang.{CassandraTestSupport, DeeplangIntegTestSupport}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoriesMapping, MappingMetadataConverter}
-import io.deepsense.deeplang.doperations.CsvParameters.ColumnSeparator
+import io.deepsense.deeplang.doperations.inout.CsvParameters.ColumnSeparator
 import io.deepsense.deeplang.parameters._
+import io.deepsense.deeplang.{CassandraTestSupport, DeeplangIntegTestSupport}
 
 class WriteReadDataFrameIntegSpec
   extends DeeplangIntegTestSupport
   with BeforeAndAfter
   with CassandraTestSupport {
 
-  val absoluteWriteReadDataFrameTestPath =  absoluteTestsDirPath + "/WriteReadDataFrameTest"
+  val absoluteWriteReadDataFrameTestPath = absoluteTestsDirPath + "/WriteReadDataFrameTest"
 
   override def cassandraKeySpaceName: String = "dataframes"
   override def cassandraTableName: String = "dataframe"
 
-  val time = System.currentTimeMillis()
-  val timestamp = new Timestamp(time)
+  val timestamp = new Timestamp(System.currentTimeMillis())
 
-  def createSchema: StructType = {
+  val schema: StructType =
     StructType(Seq(
       StructField("boolean", SparkConversions.columnTypeToSparkColumnType(ColumnType.boolean)),
       StructField(
@@ -54,22 +54,43 @@ class WriteReadDataFrameIntegSpec
       StructField("string", SparkConversions.columnTypeToSparkColumnType(ColumnType.string)),
       StructField("timestamp", SparkConversions.columnTypeToSparkColumnType(ColumnType.timestamp))
     ))
-  }
 
   val rows = Seq(
     Row(true, 0, 0.45, "3.14", timestamp),
     Row(false, 1, null, "\"testing...\"", null),
     Row(false, 2, 3.14159, "Hello, world!", timestamp),
-    Row(null, null, null, null, null)
+    Row(null, null, null, "", null) // in case of CSV, an empty string is the same as null -
+                                    // no way around it
   )
 
-  val dataFrame = createDataFrame(rows, createSchema)
+  val dataFrame = createDataFrame(rows, schema)
 
   before {
     fileSystemClient.delete(testsDir)
   }
 
   "WriteDataFrame and ReadDataFrame" should {
+    "write and read CSV file" in {
+      val wdf = WriteDataFrame(
+        (ColumnSeparator.TAB, None),
+        writeHeader = true,
+        absoluteWriteReadDataFrameTestPath + "/csv")
+      wdf.execute(executionContext)(Vector(dataFrame))
+
+      val rdf = ReadDataFrame(
+        absoluteWriteReadDataFrameTestPath + "/csv",
+        (ColumnSeparator.TAB, None),
+        csvNamesIncluded = true,
+        csvShouldConvertToBoolean = true,
+        categoricalColumns = Some(MultipleColumnSelection(
+          Vector(NameColumnSelection(Set("categorical")))
+        ))
+      )
+      val loadedDataFrame = rdf.execute(executionContext)(Vector()).head.asInstanceOf[DataFrame]
+
+      assertDataFramesEqual(loadedDataFrame, dataFrame, checkRowOrder = false)
+    }
+
     "write and read PARQUET file" in {
       val wdf = WriteDataFrame(
         StorageType.FILE,
@@ -86,26 +107,24 @@ class WriteReadDataFrameIntegSpec
     }
 
     "write and read JSON file" in {
-      val convertedSchema = createSchema
-      val timestampFieldIndex = convertedSchema.fieldIndex("timestamp")
+      val convertedSchema = StructType(schema.map {
+        case field@StructField("timestamp", _, _, _) =>
+          field.copy(dataType = SparkConversions.columnTypeToSparkColumnType(ColumnType.string))
+        case field => field
+      })
 
-      convertedSchema.fields.update(
-        timestampFieldIndex,
-        StructField(
-          "timestamp",
-          SparkConversions.columnTypeToSparkColumnType(ColumnType.string)))
+      val timestampFieldIndex = convertedSchema.fieldIndex("timestamp")
 
       // JSON format does not completely preserve schema.
       // Timestamp columns are converted to string columns by WriteDataFrame operation.
       val convertedRows = rows.map {
-        r => {
-          if (r.get(timestampFieldIndex) != null) {
-            val seq = r.toSeq
-            Row.fromSeq(seq.updated(timestampFieldIndex, r.get(timestampFieldIndex).toString))
+        row =>
+          val timestampValue = row.get(timestampFieldIndex)
+          if (timestampValue != null) {
+            Row.fromSeq(row.toSeq.updated(timestampFieldIndex, timestampValue.toString))
           } else {
-            r
+            row
           }
-        }
       }
       val convertedDataFrame = createDataFrame(convertedRows, convertedSchema)
 
@@ -128,13 +147,11 @@ class WriteReadDataFrameIntegSpec
     }
 
     "write and read from cassandra" in {
-
       // Cassandra requires non-null primary key column
-      val schema = createSchema
-      val convertedSchema = schema.copy(fields =
-        StructField("id", SparkConversions.columnTypeToSparkColumnType(ColumnType.string)) +:
-        schema.fields)
-      val convertedRows = rows.zipWithIndex.map { case (r, i) => Row((i.toString +: r.toSeq): _*) }
+      val idField =
+        StructField("id", SparkConversions.columnTypeToSparkColumnType(ColumnType.string))
+      val convertedSchema = schema.copy(fields = idField +: schema.fields)
+      val convertedRows = rows.zipWithIndex.map { case (r, i) => Row(i.toString +: r.toSeq: _*) }
       val dataFrame = createDataFrame(convertedRows, convertedSchema)
 
       createTable()

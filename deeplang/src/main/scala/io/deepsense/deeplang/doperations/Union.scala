@@ -21,12 +21,11 @@ import scala.reflect.runtime.{universe => ru}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.{Metadata, StructField, StructType}
 
-import io.deepsense.commons.types.ColumnType
+import io.deepsense.commons.types.ColumnType.ColumnType
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoricalMetadata, MappingMetadataConverter}
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameMetadata}
 import io.deepsense.deeplang.doperations.exceptions.SchemaMismatchException
-import ColumnType.ColumnType
 import io.deepsense.deeplang.parameters.ParametersSchema
 import io.deepsense.deeplang.{DOperation2To1, ExecutionContext}
 
@@ -107,7 +106,7 @@ case class Union() extends DOperation2To1[DataFrame, DataFrame, DataFrame] {
 
     val metadata = CategoricalMetadata(dataFrame)
 
-    val mergedMappingsByColumnIdx = externalMetadata.mappingById.map {
+    val mergedMappingsByColumnIdx = externalMetadata.mappingByIndex.map {
       case (i: Int, extMapping) =>
         i -> extMapping.mergeWith(metadata.mapping(i))
     }
