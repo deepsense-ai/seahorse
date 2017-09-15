@@ -29,7 +29,7 @@ function UploadWorkflowModalController($uibModalInstance, Upload, WorkflowsApiCl
         })
         .then((response) => {
           this.status = STATUS_SUCCESS;
-          $uibModalInstance.close(response.data.id);
+          $uibModalInstance.close(response.data.workflowId);
         })
         .catch(({
           data

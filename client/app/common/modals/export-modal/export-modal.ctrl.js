@@ -5,7 +5,7 @@ function ExportModalController(config, $uibModalInstance, $stateParams, Workflow
   _.assign(this, {
     errorMessage: '',
     warningMessage: '',
-    loading: true,
+    loading: false,
     close: () => {
       $uibModalInstance.dismiss();
     },
@@ -17,22 +17,6 @@ function ExportModalController(config, $uibModalInstance, $stateParams, Workflow
         `));
     }
   });
-
-  WorkflowService.saveWorkflow()
-    .catch(() => {
-      this.errorMessage = 'Could not save the workflow';
-    })
-    .then(() => {
-      this.loading = false;
-      let workflow = WorkflowService.getWorkflow();
-      let nodes = workflow.getNodes();
-      let errorsExist = _.any(_.map(nodes, node => node.knowledgeErrors && node.knowledgeErrors.length > 0));
-
-      if (errorsExist) {
-        this.warningMessage = `You are trying to export a workflow which still contains at least one flawed node.
-          Check if there is any node with the exclamation mark icon on it in order to see all errors related to the node.`;
-      }
-    });
 }
 
 exports.inject = function(module) {
