@@ -25,7 +25,7 @@ import io.deepsense.commons.StandardSpec
 import io.deepsense.graph.DeeplangGraph
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.workflows.{Workflow, WorkflowMetadata, WorkflowType}
-import io.deepsense.workflowexecutor.communication.message.workflow.{Abort, Launch, UpdateWorkflow}
+import io.deepsense.workflowexecutor.communication.message.workflow.{Abort, Launch, Synchronize, UpdateWorkflow}
 import io.deepsense.workflowexecutor.executor.Executor
 
 class ProtocolJsonDeserializerSpec
@@ -34,8 +34,6 @@ class ProtocolJsonDeserializerSpec
 
   "ProtocolJsonDeserializer" should {
     "deserialize Launch messages" in {
-      val protocolDeserializer = ProtocolJsonDeserializer(mock[GraphReader])
-
       val workflowId = Workflow.Id.randomId
       val nodesToExecute = Vector(Workflow.Id.randomId, Workflow.Id.randomId, Workflow.Id.randomId)
       val jsNodesToExecute = JsArray(nodesToExecute.map(id => JsString(id.toString)))
@@ -48,12 +46,10 @@ class ProtocolJsonDeserializerSpec
         )
       )
 
-      val readMessage: Any = serializeAndRead(protocolDeserializer, rawMessage)
-
+      val readMessage: Any = serializeAndRead(rawMessage)
       readMessage shouldBe Launch(workflowId, nodesToExecute.toSet)
     }
     "deserialize Abort messages" in {
-      val protocolDeserializer = ProtocolJsonDeserializer(mock[GraphReader])
       val workflowId = Workflow.Id.randomId
 
       val rawMessage = JsObject(
@@ -63,7 +59,7 @@ class ProtocolJsonDeserializerSpec
         )
       )
 
-      val readMessage: Any = serializeAndRead(protocolDeserializer, rawMessage)
+      val readMessage: Any = serializeAndRead(rawMessage)
       readMessage shouldBe Abort(workflowId)
     }
     "deserialize UpdateWorkflow messages" in {
@@ -89,16 +85,24 @@ class ProtocolJsonDeserializerSpec
         )
       )
 
-      val readMessage: Any = serializeAndRead(protocolDeserializer, rawMessage)
+      val readMessage: Any = serializeAndRead(rawMessage, protocolDeserializer)
       readMessage shouldBe UpdateWorkflow(
         workflowId,
         Workflow(WorkflowMetadata(WorkflowType.Batch, "1.0.0"), DeeplangGraph(), JsObject()))
     }
+
+    "deserialize Synchronize messages" in {
+      val rawMessage = JsObject(
+        "messageType" -> JsString("synchronize"),
+        "messageBody" -> JsObject())
+      serializeAndRead(rawMessage) shouldBe Synchronize()
+    }
   }
 
-  def serializeAndRead(
-      protocolDeserializer: ProtocolJsonDeserializer,
-      rawMessage: JsObject): Any = {
+  private def serializeAndRead(
+      rawMessage: JsObject,
+      protocolDeserializer: ProtocolJsonDeserializer =
+        ProtocolJsonDeserializer(mock[GraphReader])): Any = {
     val bytes = rawMessage.compactPrint.getBytes(StandardCharsets.UTF_8)
     protocolDeserializer.deserializeMessage(bytes)
   }

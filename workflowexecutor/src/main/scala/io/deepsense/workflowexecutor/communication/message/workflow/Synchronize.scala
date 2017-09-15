@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2016, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package io.deepsense.workflowexecutor.communication.mq.serialization.json
+package io.deepsense.workflowexecutor.communication.message.workflow
 
-import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
-import io.deepsense.workflowexecutor.communication.mq.json.JsonMQSerializer
+import spray.httpx.SprayJsonSupport
+import spray.json.DefaultJsonProtocol
 
-case class ProtocolJsonSerializer(graphReader: GraphReader)
-  extends JsonMQSerializer(
-    Seq(
-      WorkflowProtocol.ExecutionStatusSerializer,
-      WorkflowProtocol.InferredStateSerializer(graphReader),
-      WorkflowProtocol.SynchronizeSerializer))
+case class Synchronize()
+
+trait SynchronizeJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
+  implicit val synchronizeFormat = jsonFormat0(Synchronize)
+}
+
+object SynchronizeJsonProtocol extends SynchronizeJsonProtocol

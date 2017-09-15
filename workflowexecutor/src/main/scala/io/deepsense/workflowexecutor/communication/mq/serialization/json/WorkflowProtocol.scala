@@ -24,7 +24,9 @@ import io.deepsense.models.json.workflow.ExecutionReportJsonProtocol._
 import io.deepsense.models.json.workflow.{InferredStateJsonProtocol, WorkflowJsonProtocol, WorkflowWithResultsJsonProtocol}
 import io.deepsense.workflowexecutor.communication.message.workflow.AbortJsonProtocol._
 import io.deepsense.workflowexecutor.communication.message.workflow.LaunchJsonProtocol._
-import io.deepsense.workflowexecutor.communication.message.workflow.{Abort, Launch, UpdateWorkflow, UpdateWorkflowJsonProtocol}
+import io.deepsense.workflowexecutor.communication.message.workflow.SynchronizeJsonProtocol._
+import io.deepsense.workflowexecutor.communication.message.workflow._
+import io.deepsense.workflowexecutor.communication.mq.json.Constants.MessagesTypes._
 import io.deepsense.workflowexecutor.communication.mq.json.{DefaultJsonMessageDeserializer, DefaultJsonMessageSerializer, JsonMessageDeserializer, JsonMessageSerializer}
 
 object WorkflowProtocol {
@@ -33,12 +35,16 @@ object WorkflowProtocol {
   val launch = "launch"
   val updateWorkflow = "updateWorkflow"
   val inferredState = "inferredState"
-  val workflowWithResults = "workflowWithResults"
+  val synchronize = "synchronize"
 
 
   object AbortDeserializer extends DefaultJsonMessageDeserializer[Abort](abort)
 
   object LaunchDeserializer extends DefaultJsonMessageDeserializer[Launch](launch)
+
+  object SynchronizeDeserializer extends DefaultJsonMessageDeserializer[Synchronize](synchronize)
+  object SynchronizeSerializer extends DefaultJsonMessageSerializer[Synchronize](synchronize)
+
 
   object ExecutionStatusSerializer
     extends DefaultJsonMessageSerializer[ExecutionReport](executionReport)
@@ -60,16 +66,6 @@ object WorkflowProtocol {
 
     private val defaultSerializer =
       new DefaultJsonMessageSerializer[InferredState](inferredState)
-
-    override def serialize: PartialFunction[Any, JsObject] = defaultSerializer.serialize
-  }
-
-  case class WorkflowWithResultsSerializer(graphReader: GraphReader)
-    extends JsonMessageSerializer
-      with WorkflowWithResultsJsonProtocol {
-
-    private val defaultSerializer =
-      new DefaultJsonMessageSerializer[WorkflowWithResults](workflowWithResults)
 
     override def serialize: PartialFunction[Any, JsObject] = defaultSerializer.serialize
   }

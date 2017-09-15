@@ -34,16 +34,15 @@ import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.workflows.Workflow
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.Init
+import io.deepsense.workflowexecutor._
 import io.deepsense.workflowexecutor.communication.mq.MQCommunication
+import io.deepsense.workflowexecutor.communication.mq.json.Global.{GlobalMQDeserializer, GlobalMQSerializer}
 import io.deepsense.workflowexecutor.communication.mq.serialization.json.{ProtocolJsonDeserializer, ProtocolJsonSerializer}
 import io.deepsense.workflowexecutor.executor.session.LivyKeepAliveActor
 import io.deepsense.workflowexecutor.notebooks.KernelManagerCaretaker
 import io.deepsense.workflowexecutor.pyspark.PythonPathGenerator
 import io.deepsense.workflowexecutor.rabbitmq._
 import io.deepsense.workflowexecutor.session.storage.DataFrameStorageImpl
-import io.deepsense.workflowexecutor._
-import io.deepsense.workflowexecutor.rabbitmq.MQCommunicationFactory
-import io.deepsense.workflowexecutor.communication.mq.json.Global.{GlobalMQDeserializer, GlobalMQSerializer}
 
 /**
  * SessionExecutor waits for user instructions in an infinite loop.

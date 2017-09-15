@@ -20,9 +20,7 @@ import akka.actor._
 
 import io.deepsense.commons.utils.Logging
 import io.deepsense.models.workflows.Workflow
-import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.{Init, UpdateStruct}
-import io.deepsense.workflowexecutor.communication.message.global.PoisonPill
-import io.deepsense.workflowexecutor.communication.message.workflow.{Abort, Launch, UpdateWorkflow}
+import io.deepsense.workflowexecutor.communication.message.{global, workflow}
 import io.deepsense.workflowexecutor.executor.Executor
 import io.deepsense.workflowexecutor.{SessionWorkflowExecutorActorProvider, WorkflowExecutorActor}
 
@@ -40,19 +38,22 @@ case class WorkflowTopicSubscriber(
   private val executorActor: ActorRef = actorProvider.provide(context, workflowId)
 
   override def receive: Receive = {
-    case Init() =>
+    case WorkflowExecutorActor.Messages.Init() =>
       logger.debug(s"Initializing SessionWorkflowExecutorActor for workflow '$workflowId'")
-      executorActor ! Init()
-    case Launch(id, nodesToExecute) if id == workflowId =>
+      executorActor ! WorkflowExecutorActor.Messages.Init()
+    case workflow.Launch(id, nodesToExecute) if id == workflowId =>
       logger.debug(s"LAUNCH! '$workflowId'")
       executorActor ! WorkflowExecutorActor.Messages.Launch(nodesToExecute)
-    case Abort(id) if id == workflowId =>
+    case workflow.Abort(id) if id == workflowId =>
       logger.debug(s"ABORT! '$workflowId'")
       executorActor ! WorkflowExecutorActor.Messages.Abort()
-    case UpdateWorkflow(id, workflow) if id == workflowId =>
+    case workflow.UpdateWorkflow(id, workflow) if id == workflowId =>
       logger.debug(s"UPDATE STRUCT '$workflowId'")
-      executorActor ! UpdateStruct(workflow)
-    case PoisonPill() =>
+      executorActor ! WorkflowExecutorActor.Messages.UpdateStruct(workflow)
+    case workflow.Synchronize() =>
+      logger.debug(s"Got Synchronize() request for workflow '$workflowId'")
+      executorActor ! WorkflowExecutorActor.Messages.Synchronize()
+    case global.PoisonPill() =>
       logger.info("Got PoisonPill! Shutting down Actor System!")
       context.system.shutdown()
     case x =>

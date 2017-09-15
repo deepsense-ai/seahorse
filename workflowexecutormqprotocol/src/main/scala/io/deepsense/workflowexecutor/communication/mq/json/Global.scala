@@ -18,7 +18,7 @@ package io.deepsense.workflowexecutor.communication.mq.json
 
 import java.nio.charset.Charset
 
-import io.deepsense.workflowexecutor.communication.message.global.{Heartbeat, PoisonPill, Ready}
+import io.deepsense.workflowexecutor.communication.message.global._
 import io.deepsense.workflowexecutor.communication.message.global.HeartbeatJsonProtocol._
 import io.deepsense.workflowexecutor.communication.message.global.PoisonPillJsonProtocol._
 import io.deepsense.workflowexecutor.communication.message.global.ReadyJsonProtocol._

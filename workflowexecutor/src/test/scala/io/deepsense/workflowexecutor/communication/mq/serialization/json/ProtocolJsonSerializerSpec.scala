@@ -31,6 +31,7 @@ import io.deepsense.models.json.workflow.{ExecutionReportJsonProtocol, InferredS
 import io.deepsense.models.workflows._
 import io.deepsense.reportlib.model.factory.ReportContentTestFactory
 import io.deepsense.workflowexecutor.communication.message.global._
+import io.deepsense.workflowexecutor.communication.message.workflow.Synchronize
 
 class ProtocolJsonSerializerSpec
   extends StandardSpec
@@ -58,16 +59,9 @@ class ProtocolJsonSerializerSpec
         expectedSerializationResult("executionStatus", executionReport.toJson)
     }
 
-    "serialize WorkflowWithResults" in {
-      val workflowWithResults = WorkflowWithResults(
-        Workflow.Id.randomId,
-        WorkflowMetadata(WorkflowType.Streaming, "1.0.0"),
-        DeeplangGraph(),
-        JsObject(),
-        ExecutionReport(Map()))
-
-      protocolJsonSerializer.serializeMessage(workflowWithResults) shouldBe
-      expectedSerializationResult("workflowWithResults", workflowWithResults.toJson)
+    "serialize Synchronize messages" in {
+      protocolJsonSerializer.serializeMessage(Synchronize()) shouldBe
+        expectedSerializationResult("synchronize", JsObject())
     }
   }
 

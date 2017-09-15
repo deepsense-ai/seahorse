@@ -55,10 +55,8 @@ abstract class WorkflowExecutorActor(
   def ready(): Receive = {
     case Launch(nodes) => launch(nodes)
     case UpdateStruct(workflow) => updateStruct(workflow)
-    case Init() => unhandledInit()
+    case Synchronize() => synchronize()
   }
-
-  private def unhandledInit(): Unit = logger.warn("Already initiated but received Init - ignoring!")
 
   def launched(): Receive = {
     waitingForFinish().orElse {
@@ -70,7 +68,7 @@ abstract class WorkflowExecutorActor(
   def waitingForFinish(): PartialFunction[Any, Unit] = {
     case NodeCompleted(id, nodeExecutionResult) => nodeCompleted(id, nodeExecutionResult)
     case NodeFailed(id, failureDescription) => nodeFailed(id, failureDescription)
-    case Init() => unhandledInit()
+    case Synchronize() => synchronize()
     case UpdateStruct(workflow) => updateStruct(workflow)
     case l: Launch =>
       logger.info("It is illegal to Launch a graph when the execution is in progress.")
@@ -79,18 +77,13 @@ abstract class WorkflowExecutorActor(
   def initWithWorkflow(workflowWithResults: WorkflowWithResults): Unit = {
     statefulWorkflow = StatefulWorkflow(executionContext, workflowWithResults, executionFactory)
     context.become(ready())
-    initWhenStateIsAvailable()
+    sendInferredState(statefulWorkflow.inferState)
     onInitiated()
   }
 
-  def initWhenStateIsAvailable(): Unit = {
-    val results: WorkflowWithResults = statefulWorkflow.workflowWithResults
-    sendWorkflowWithResults(results)
+  def synchronize(): Unit = {
+    sendExecutionReport(statefulWorkflow.executionReport)
     sendInferredState(statefulWorkflow.inferState)
-  }
-
-  def sendWorkflowWithResults(workflowWithResults: WorkflowWithResults): Unit = {
-    publisher.foreach(_ ! workflowWithResults)
   }
 
   private def updateStruct(workflow: Workflow): Unit = {
@@ -229,6 +222,7 @@ object WorkflowExecutorActor {
     case class Abort() extends Message
     case class Init() extends Message
     case class UpdateStruct(workflow: Workflow) extends Message
+    case class Synchronize() extends Message
   }
 
   def inferenceErrorsDebugDescription(graphKnowledge: GraphKnowledge): FailureDescription = {

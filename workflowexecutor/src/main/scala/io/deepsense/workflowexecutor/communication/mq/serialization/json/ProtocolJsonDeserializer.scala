@@ -25,4 +25,5 @@ case class ProtocolJsonDeserializer(graphReader: GraphReader)
       WorkflowProtocol.AbortDeserializer,
       WorkflowProtocol.LaunchDeserializer,
       WorkflowProtocol.UpdateWorkflowDeserializer(graphReader),
+      WorkflowProtocol.SynchronizeDeserializer,
       NotebookProtocol.KernelManagerReadyDeserializer))

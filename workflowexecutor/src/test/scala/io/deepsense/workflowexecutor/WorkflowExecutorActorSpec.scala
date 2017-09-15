@@ -70,13 +70,6 @@ class WorkflowExecutorActorSpec
 
           eventually {
             statusListeners.foreach { receiver =>
-              val results = receiver.expectMsgClass(classOf[WorkflowWithResults])
-              results.executionReport shouldBe workflow.executionReport
-              results.graph shouldBe workflow.graph
-              results.id shouldBe workflow.id
-              results.metadata shouldBe workflow.metadata
-              results.thirdPartyData shouldBe workflow.thirdPartyData
-
               val inferredState = receiver.expectMsgClass(classOf[InferredState])
               inferredState.id shouldBe workflow.id
               inferredState.states shouldBe workflow.executionReport.statesOnly

@@ -22,8 +22,8 @@ import org.scalatest.mock.MockitoSugar
 import spray.json.{JsObject, JsString}
 
 import io.deepsense.commons.StandardSpec
-import io.deepsense.workflowexecutor.communication.message.global.{Heartbeat, PoisonPill, Ready}
-import io.deepsense.workflowexecutor.communication.mq.json.Global.{GlobalMQDeserializer, GlobalMQSerializer}
+import io.deepsense.workflowexecutor.communication.message.global._
+import io.deepsense.workflowexecutor.communication.mq.json.Global.GlobalMQDeserializer
 
 class GlobalMQDeserializerSpec
   extends StandardSpec
