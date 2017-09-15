@@ -84,18 +84,37 @@ factory('Workflow', /*@ngInject*/function (GraphNode, Edge) {
     };
 
     that.createNodes = function createNodes(nodes, operations, thirdPartyData) {
-      let getCoordinate = (id, cord) => {
+      let getCoordinate = (id, axis) => {
         try {
-          return thirdPartyData.gui.nodes[id].coordinates[cord] || 0;
+          return thirdPartyData.gui.nodes[id].coordinates[axis] || 0;
         } catch (e) {
-          return 0;
+          return getAverageCoordinates(thirdPartyData.gui.nodes, axis);
         }
       };
-      let getUiName = (id) => {
-        return thirdPartyData.gui.nodes[id].uiName;
+
+      let getAverageCoordinates = (nodes, axis) => {
+        if (Object.keys(nodes).length > 0) {
+          let coordinate = 0;
+          for (let key in nodes) {
+            coordinate += nodes[key].coordinates[axis];
+          }
+          return Math.floor(coordinate/Object.keys(nodes).length);
+        }
+        return 0;
       };
+
+      let getUiName = (id) => {
+        if (thirdPartyData.gui.nodes[id]) {
+          return thirdPartyData.gui.nodes[id].uiName;
+        }
+        return '';
+      };
+
       let getColor = (id) => {
-        return thirdPartyData.gui.nodes[id].color;
+        if (thirdPartyData.gui.nodes[id]) {
+          return thirdPartyData.gui.nodes[id].color;
+        }
+        return '#00B1EB';
       };
 
       for (let i = 0; i < nodes.length; i++) {
