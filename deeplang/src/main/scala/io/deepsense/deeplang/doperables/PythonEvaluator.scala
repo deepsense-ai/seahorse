@@ -16,26 +16,13 @@
 
 package io.deepsense.deeplang.doperables
 
+import io.deepsense.deeplang.OperationExecutionDispatcher.Result
 import io.deepsense.deeplang._
-import io.deepsense.deeplang.doperables.dataframe._
-import io.deepsense.deeplang.doperables.spark.wrappers.params.common.HasIsLargerBetterParam
-import io.deepsense.deeplang.doperations.exceptions.CustomOperationExecutionException
-import io.deepsense.deeplang.params.{CodeSnippetLanguage, CodeSnippetParam, Param, StringParam}
+import io.deepsense.deeplang.params.{CodeSnippetLanguage, CodeSnippetParam}
 
-case class PythonEvaluator()
-    extends Evaluator
-    with HasIsLargerBetterParam {
+case class PythonEvaluator() extends CustomCodeEvaluator {
 
-  val InputPortNumber: Int = 0
-  val OutputPortNumber: Int = 0
-
-  val metricName = StringParam(
-    name = "metric name",
-    description = "Name of the metric.")
-  setDefault(metricName -> "custom metric")
-  def getMetricName: String = $(metricName)
-
-  val codeParameter = CodeSnippetParam(
+  override val codeParameter = CodeSnippetParam(
     name = "python evaluator code",
     description = "Python evaluator source code.",
     language = CodeSnippetLanguage(CodeSnippetLanguage.python))
@@ -49,64 +36,35 @@ case class PythonEvaluator()
       |    row_to_sq_error = lambda row: (row['label'] - row['prediction'])**2
       |    sum_sq_error = dataframe.map(row_to_sq_error).reduce(add)
       |    rmse = sqrt(sum_sq_error / n)
-      |    return rmse""".stripMargin)
+      |    return rmse""".stripMargin
+  )
 
-  override def params: Array[Param[_]] =
-    declareParams(metricName, codeParameter, isLargerBetterParam)
+  override def runCode(context: ExecutionContext, code: String): Result =
+    context.customCodeExecutor.runPython(code)
 
-  override def isLargerBetter: Boolean = $(isLargerBetterParam)
-
-  override def _evaluate(ctx: ExecutionContext, df: DataFrame): MetricValue = {
-    val userCode = $(codeParameter)
-
-    val composedCode = getComposedCode(userCode)
-
-    if (!ctx.customCodeExecutor.isPythonValid(composedCode)) {
-      throw CustomOperationExecutionException("Code validation failed")
-    }
-
-    ctx.dataFrameStorage.withInputDataFrame(InputPortNumber, df.sparkDataFrame) {
-      ctx.customCodeExecutor.runPython(composedCode) match {
-        case Left(error) =>
-          throw CustomOperationExecutionException(s"Execution exception:\n\n$error")
-
-        case Right(_) =>
-          val sparkDataFrame =
-            ctx.dataFrameStorage.getOutputDataFrame(OutputPortNumber).getOrElse {
-              throw CustomOperationExecutionException(
-                "Function `evaluate` finished successfully, but did not produce a metric.")
-            }
-
-          val metricValue = sparkDataFrame.collect.head.getAs[Double](0)
-          MetricValue(getMetricName, metricValue)
-      }
-    }
-  }
+  override def isValid(context: ExecutionContext, code: String): Boolean =
+    context.customCodeExecutor.isPythonValid(code)
 
   // Creating a dataframe is a workaround. Currently we can pass to jvm DataFrames only.
   // TODO DS-3695 Fix a metric value - dataframe workaround.
-  private def getComposedCode(userCode: String): String = {
-      s"""
-      |
-      |$userCode
-      |
-      |def transform(dataframe):
-      |    result = evaluate(dataframe)
-      |    try:
-      |        float_result = float(result)
-      |    except ValueError:
-      |        raise Exception("Invalid result of `evaluate` function. " +
-      |                        "Value " + str(result) + " of type " +
-      |                        str(type(result)) + " cannot be converted to float.")
-      |    except TypeError:
-      |        raise Exception("Invalid result type of `evaluate` function. " +
-      |                        "Type " + str(type(result)) +
-      |                        " cannot be cast to float.")
-      |    result_df = sqlContext.createDataFrame([[float_result]])
-      |    return result_df
+  override def getComposedCode(userCode: String): String = {
+    s"""
+       |$userCode
+       |
+       |def transform(dataframe):
+       |    result = evaluate(dataframe)
+       |    try:
+       |        float_result = float(result)
+       |    except ValueError:
+       |        raise Exception("Invalid result of `evaluate` function. " +
+       |                        "Value " + str(result) + " of type " +
+       |                        str(type(result)) + " cannot be converted to float.")
+       |    except TypeError:
+       |        raise Exception("Invalid result type of `evaluate` function. " +
+       |                        "Type " + str(type(result)) +
+       |                        " cannot be cast to float.")
+       |    result_df = sqlContext.createDataFrame([[float_result]])
+       |    return result_df
       """.stripMargin
-      }
-
-  override def _infer(k: DKnowledge[DataFrame]): MetricValue =
-    MetricValue.forInference(getMetricName)
+  }
 }

@@ -99,6 +99,7 @@ List of all currently supported operations:
     * [PCA](operations/pca.html)
   * Model Evaluation
     * [Python Evaluator](operations/python_evaluator.html)
+    * [R Evaluator](operations/r_evaluator.html)
     * [Binary Classification Evaluator](operations/binary_classification_evaluator.html)
     * [Multiclass Classification Evaluator](operations/multiclass_classification_evaluator.html)
     * [Regression Evaluator](operations/regression_evaluator.html)
