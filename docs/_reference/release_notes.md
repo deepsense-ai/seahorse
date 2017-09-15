@@ -18,14 +18,10 @@ description: Seahorse Release Notes
 * Apache Spark, version {{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}
 * Python, version 2.7.6
 * NumPy, version 1.8.2
-* JDBC drivers:
-
-    -   MySQL, version 5.1.38
-    -   PostgreSQL, version 9.4.1207
 
 ### Minimum Hardware Requirements
 * 6 GB of a free disk space
-* 6 GB of RAM
+* 4 GB of RAM
 * Virtualbox must be supported
 
 ### Local Cluster Limitations
@@ -48,6 +44,20 @@ To learn more about scaling up and using Seahorse in production,
 please <a target="_blank" href="http://deepsense.io/about-us/contact/#contact-form">contact us for details</a>.
 
 ## Changelog
+
+### Seahorse 1.4
+
+#### What is New
+
+* Support for defining reusable [data sources and sinks](/reference/datasources.html)
+* Support for reading and writing from/to Google Spreadsheets
+* Support for user-defined operations via [Software Developement Kit](/reference/sdk_user_guide.html)
+* Scheduled workflow execution with customizable Notebook-based email notifications
+* Completely redesigned UI for building workflows
+* Spark 2.0.2 support
+* Added operations:
+  * [Sort](/1.4/operations/sort.html)
+  * [SQL Combine](/1.4/operations/sql_combine.html)
 
 ### Seahorse 1.3
 
