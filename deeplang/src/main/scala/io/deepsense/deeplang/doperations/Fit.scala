@@ -28,7 +28,7 @@ import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.DynamicParam
 import io.deepsense.deeplang.{DKnowledge, DOperation2To1, ExecutionContext}
 
-case class Fit() extends DOperation2To1[Estimator, DataFrame, Transformer] {
+case class Fit() extends DOperation2To1[DataFrame, Estimator, Transformer] {
 
   override val name: String = "Fit"
   override val id: Id = "0c2ff818-977b-11e5-8994-feff819cdc9f"
@@ -45,20 +45,21 @@ case class Fit() extends DOperation2To1[Estimator, DataFrame, Transformer] {
 
   override val params = declareParams(estimatorParams)
 
-  override lazy val tTagTI_0: TypeTag[Estimator] = typeTag
-  override lazy val tTagTI_1: TypeTag[DataFrame] = typeTag
+  override lazy val tTagTI_0: TypeTag[DataFrame] = typeTag
+  override lazy val tTagTI_1: TypeTag[Estimator] = typeTag
   override lazy val tTagTO_0: TypeTag[Transformer] = typeTag
 
   override protected def _execute(
       ctx: ExecutionContext)(
-      estimator: Estimator, dataFrame: DataFrame): Transformer = {
+      dataFrame: DataFrame,
+      estimator: Estimator): Transformer = {
     estimatorWithParams(estimator).fit(ctx)(())(dataFrame)
   }
 
   override protected def _inferKnowledge(
       ctx: InferContext)(
-      estimatorKnowledge: DKnowledge[Estimator],
-      dataFrameKnowledge: DKnowledge[DataFrame]): (DKnowledge[Transformer], InferenceWarnings) = {
+      dataFrameKnowledge: DKnowledge[DataFrame],
+      estimatorKnowledge: DKnowledge[Estimator]): (DKnowledge[Transformer], InferenceWarnings) = {
 
     if (estimatorKnowledge.size > 1) {
       throw TooManyPossibleTypesException()

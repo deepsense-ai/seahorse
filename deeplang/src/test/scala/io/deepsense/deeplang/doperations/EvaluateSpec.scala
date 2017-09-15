@@ -36,7 +36,7 @@ class EvaluateSpec extends UnitSpec {
 
       def testEvaluate(op: Evaluate, expected: MetricValue): Unit = {
         val Vector(outputDataFrame) = op.execute(mock[ExecutionContext])(
-          Vector(evaluator, mock[DataFrame]))
+          Vector(mock[DataFrame], evaluator))
         outputDataFrame shouldBe expected
       }
 
@@ -54,7 +54,7 @@ class EvaluateSpec extends UnitSpec {
 
       val paramsForEvaluator = JsObject(evaluator.paramA.name -> JsNumber(2))
       val op = Evaluate().setEvaluatorParams(paramsForEvaluator)
-      op.execute(mock[ExecutionContext])(Vector(evaluator, mock[DataFrame]))
+      op.execute(mock[ExecutionContext])(Vector(mock[DataFrame], evaluator))
 
       evaluator should have (theSameParamsAs (originalEvaluator))
     }
@@ -65,7 +65,7 @@ class EvaluateSpec extends UnitSpec {
       def testInference(op: Evaluate, expectedKnowledge: DKnowledge[MetricValue]): Unit = {
         val inputDF = DataFrame.forInference(mock[StructType])
         val (knowledge, warnings) = op.inferKnowledge(mock[InferContext])(
-          Vector(DKnowledge(evaluator), DKnowledge(inputDF)))
+          Vector(DKnowledge(inputDF), DKnowledge(evaluator)))
         // Currently, InferenceWarnings are always empty.
         warnings shouldBe InferenceWarnings.empty
         val Vector(dataFrameKnowledge) = knowledge
@@ -87,7 +87,7 @@ class EvaluateSpec extends UnitSpec {
       val paramsForEvaluator = JsObject(evaluator.paramA.name -> JsNumber(2))
       val op = Evaluate().setEvaluatorParams(paramsForEvaluator)
       val inputDF = DataFrame.forInference(mock[StructType])
-      op.inferKnowledge(mock[InferContext])(Vector(DKnowledge(evaluator), DKnowledge(inputDF)))
+      op.inferKnowledge(mock[InferContext])(Vector(DKnowledge(inputDF), DKnowledge(evaluator)))
 
       evaluator should have (theSameParamsAs (originalEvaluator))
     }
@@ -100,7 +100,7 @@ class EvaluateSpec extends UnitSpec {
         val op = Evaluate()
         a [TooManyPossibleTypesException] shouldBe thrownBy {
           op.inferKnowledge(mock[InferContext])(
-            Vector(DKnowledge(evaluators), DKnowledge(inputDF)))
+            Vector(DKnowledge(inputDF), DKnowledge(evaluators)))
         }
       }
     }

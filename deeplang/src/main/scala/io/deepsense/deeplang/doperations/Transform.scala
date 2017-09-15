@@ -28,7 +28,7 @@ import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.DynamicParam
 import io.deepsense.deeplang.{DKnowledge, DOperation2To1, ExecutionContext}
 
-case class Transform() extends DOperation2To1[Transformer, DataFrame, DataFrame] {
+case class Transform() extends DOperation2To1[DataFrame, Transformer, DataFrame] {
 
   override val name: String = "Transform"
   override val id: Id = "643d8706-24db-4674-b5b4-10b5129251fc"
@@ -46,21 +46,21 @@ case class Transform() extends DOperation2To1[Transformer, DataFrame, DataFrame]
 
   override val params = declareParams(transformerParams)
 
-  override lazy val tTagTI_0: TypeTag[Transformer] = typeTag
-  override lazy val tTagTI_1: TypeTag[DataFrame] = typeTag
+  override lazy val tTagTI_0: TypeTag[DataFrame] = typeTag
+  override lazy val tTagTI_1: TypeTag[Transformer] = typeTag
   override lazy val tTagTO_0: TypeTag[DataFrame] = typeTag
 
   override protected def _execute(
       context: ExecutionContext)(
-      transformer: Transformer,
-      dataFrame: DataFrame): DataFrame = {
+      dataFrame: DataFrame,
+      transformer: Transformer): DataFrame = {
     transformerWithParams(transformer).transform(context)(())(dataFrame)
   }
 
   override protected def _inferKnowledge(
       context: InferContext)(
-      transformerKnowledge: DKnowledge[Transformer],
-      dataFrameKnowledge: DKnowledge[DataFrame]): (DKnowledge[DataFrame], InferenceWarnings) = {
+      dataFrameKnowledge: DKnowledge[DataFrame],
+      transformerKnowledge: DKnowledge[Transformer]): (DKnowledge[DataFrame], InferenceWarnings) = {
 
     if (transformerKnowledge.size > 1) {
       throw TooManyPossibleTypesException()

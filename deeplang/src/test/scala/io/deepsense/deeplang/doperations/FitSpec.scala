@@ -35,7 +35,7 @@ class FitSpec extends UnitSpec {
 
       def testFit(op: Fit, expectedTransformer: Transformer): Unit = {
         val Vector(outputTransformer: Transformer) =
-          op.execute(mock[ExecutionContext])(Vector(estimator, mock[DataFrame]))
+          op.execute(mock[ExecutionContext])(Vector(mock[DataFrame], estimator))
         outputTransformer shouldBe expectedTransformer
       }
       val op1 = Fit()
@@ -51,7 +51,7 @@ class FitSpec extends UnitSpec {
 
       val paramsForEstimator = JsObject(estimator.paramA.name -> JsNumber(2))
       val op = Fit().setEstimatorParams(paramsForEstimator)
-      op.execute(mock[ExecutionContext])(Vector(estimator, mock[DataFrame]))
+      op.execute(mock[ExecutionContext])(Vector(mock[DataFrame], estimator))
 
       estimator should have (theSameParamsAs (originalEstimator))
     }
@@ -61,7 +61,7 @@ class FitSpec extends UnitSpec {
       def testInference(op: Fit, expectedTransformerKnowledge: DKnowledge[Transformer]): Unit = {
         val inputDF = DataFrame.forInference(mock[StructType])
         val (knowledge, warnings) =
-          op.inferKnowledge(mock[InferContext])(Vector(DKnowledge(estimator), DKnowledge(inputDF)))
+          op.inferKnowledge(mock[InferContext])(Vector(DKnowledge(inputDF), DKnowledge(estimator)))
         // Currently, InferenceWarnings are always empty.
         warnings shouldBe InferenceWarnings.empty
         val Vector(transformerKnowledge) = knowledge
@@ -81,7 +81,7 @@ class FitSpec extends UnitSpec {
       val paramsForEstimator = JsObject(estimator.paramA.name -> JsNumber(2))
       val op = Fit().setEstimatorParams(paramsForEstimator)
       val inputDF = DataFrame.forInference(mock[StructType])
-      op.inferKnowledge(mock[InferContext])(Vector(DKnowledge(estimator), DKnowledge(inputDF)))
+      op.inferKnowledge(mock[InferContext])(Vector(DKnowledge(inputDF), DKnowledge(estimator)))
 
       estimator should have (theSameParamsAs (originalEstimator))
     }
@@ -92,7 +92,7 @@ class FitSpec extends UnitSpec {
 
         val op = Fit()
         a[TooManyPossibleTypesException] shouldBe thrownBy {
-          op.inferKnowledge(mock[InferContext])(Vector(DKnowledge(estimators), DKnowledge(inputDF)))
+          op.inferKnowledge(mock[InferContext])(Vector(DKnowledge(inputDF), DKnowledge(estimators)))
         }
       }
     }

@@ -38,7 +38,7 @@ class FitPlusTransformSpec extends UnitSpec {
           op: FitPlusTransform,
           expectedTransformer: Transformer,
           expectedDataFrame: DataFrame): Unit = {
-          val results = op.execute(mock[ExecutionContext])(Vector(estimator, mock[DataFrame]))
+          val results = op.execute(mock[ExecutionContext])(Vector(mock[DataFrame], estimator))
           val outputDataFrame = results(0).asInstanceOf[DataFrame]
           val outputTransformer = results(1).asInstanceOf[Transformer]
 
@@ -65,7 +65,7 @@ class FitPlusTransformSpec extends UnitSpec {
           expectedDataFrameKnowledge: DKnowledge[DataFrame]): Unit = {
           val (Vector(outputDataFrameKnowledge, outputTransformerKnowledge), _) =
             op.inferKnowledge(mock[InferContext])(
-              Vector(DKnowledge(estimator), mock[DKnowledge[DataFrame]]))
+              Vector(mock[DKnowledge[DataFrame]], DKnowledge(estimator)))
 
           outputDataFrameKnowledge shouldBe expectedDataFrameKnowledge
           outputTransformerKnowledge shouldBe expectedTransformerKnowledge
@@ -80,7 +80,7 @@ class FitPlusTransformSpec extends UnitSpec {
         "input Estimator Knowledge consist more than one type" in {
           val estimators = Set[DOperable](new MockEstimator, new MockEstimator)
           val inputKnowledge: Vector[DKnowledge[DOperable]] =
-            Vector(DKnowledge(estimators), mock[DKnowledge[DataFrame]])
+            Vector(mock[DKnowledge[DataFrame]], DKnowledge(estimators))
           val fpt = new FitPlusTransform
           a[TooManyPossibleTypesException] shouldBe thrownBy {
             fpt.inferKnowledge(mock[InferContext])(inputKnowledge)

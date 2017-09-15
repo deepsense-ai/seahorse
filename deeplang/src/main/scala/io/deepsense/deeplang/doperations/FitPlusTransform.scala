@@ -28,15 +28,15 @@ import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.{DynamicParam, Param}
 import io.deepsense.deeplang.{DKnowledge, DOperation2To2, ExecutionContext}
 
-class FitPlusTransform extends DOperation2To2[Estimator, DataFrame, DataFrame, Transformer] {
+class FitPlusTransform extends DOperation2To2[DataFrame, Estimator, DataFrame, Transformer] {
 
   override val id: Id = "1cb153f1-3731-4046-a29b-5ad64fde093f"
   override val name: String = "Fit + Transform"
   override val description: String = "Fits an Estimator on a DataFrame and transform it"
   override val tTagTO_0: TypeTag[DataFrame] = typeTag[DataFrame]
   override val tTagTO_1: TypeTag[Transformer] = typeTag[Transformer]
-  override val tTagTI_0: TypeTag[Estimator] = typeTag[Estimator]
-  override val tTagTI_1: TypeTag[DataFrame] = typeTag[DataFrame]
+  override val tTagTI_0: TypeTag[DataFrame] = typeTag[DataFrame]
+  override val tTagTI_1: TypeTag[Estimator] = typeTag[Estimator]
 
   val estimatorParams = new DynamicParam(
     name = "Parameters of input Estimator",
@@ -49,8 +49,8 @@ class FitPlusTransform extends DOperation2To2[Estimator, DataFrame, DataFrame, T
 
   override protected def _execute(
       context: ExecutionContext)(
-      estimator: Estimator,
-      dataFrame: DataFrame): (DataFrame, Transformer) = {
+      dataFrame: DataFrame,
+      estimator: Estimator): (DataFrame, Transformer) = {
     val estimatorToRun = estimatorWithParams(estimator)
     val transformer: Transformer = estimatorToRun.fit(context)(())(dataFrame)
     val transformed: DataFrame = transformer.transform(context)(())(dataFrame)
@@ -59,8 +59,8 @@ class FitPlusTransform extends DOperation2To2[Estimator, DataFrame, DataFrame, T
 
   override protected def _inferKnowledge(
       context: InferContext)(
-      estimatorKnowledge: DKnowledge[Estimator],
-      inputDataFrameKnowledge: DKnowledge[DataFrame])
+      inputDataFrameKnowledge: DKnowledge[DataFrame],
+      estimatorKnowledge: DKnowledge[Estimator])
       : ((DKnowledge[DataFrame], DKnowledge[Transformer]), InferenceWarnings) = {
 
     val (transformerKnowledge, transformerWarnings) =

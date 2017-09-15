@@ -36,7 +36,7 @@ class TransformSpec extends UnitSpec {
 
       def testTransform(op: Transform, expectedDataFrame: DataFrame): Unit = {
         val Vector(outputDataFrame) = op.execute(mock[ExecutionContext])(
-          Vector(transformer, mock[DataFrame]))
+          Vector(mock[DataFrame], transformer))
         outputDataFrame shouldBe expectedDataFrame
       }
 
@@ -54,7 +54,7 @@ class TransformSpec extends UnitSpec {
 
       val paramsForTransformer = JsObject(transformer.paramA.name -> JsNumber(2))
       val op = Transform().setTransformerParams(paramsForTransformer)
-      op.execute(mock[ExecutionContext])(Vector(transformer, mock[DataFrame]))
+      op.execute(mock[ExecutionContext])(Vector(mock[DataFrame], transformer))
 
       transformer should have (theSameParamsAs (originalTransformer))
     }
@@ -65,7 +65,7 @@ class TransformSpec extends UnitSpec {
       def testInference(op: Transform, expecteDataFrameKnowledge: DKnowledge[DataFrame]): Unit = {
         val inputDF = DataFrame.forInference(mock[StructType])
         val (knowledge, warnings) = op.inferKnowledge(mock[InferContext])(
-          Vector(DKnowledge(transformer), DKnowledge(inputDF)))
+          Vector(DKnowledge(inputDF), DKnowledge(transformer)))
         // Currently, InferenceWarnings are always empty.
         warnings shouldBe InferenceWarnings.empty
         val Vector(dataFrameKnowledge) = knowledge
@@ -87,7 +87,7 @@ class TransformSpec extends UnitSpec {
       val paramsForTransformer = JsObject(transformer.paramA.name -> JsNumber(2))
       val op = Transform().setTransformerParams(paramsForTransformer)
       val inputDF = DataFrame.forInference(mock[StructType])
-      op.inferKnowledge(mock[InferContext])(Vector(DKnowledge(transformer), DKnowledge(inputDF)))
+      op.inferKnowledge(mock[InferContext])(Vector(DKnowledge(inputDF), DKnowledge(transformer)))
 
       transformer should have (theSameParamsAs (originalTransformer))
     }
@@ -100,7 +100,7 @@ class TransformSpec extends UnitSpec {
         val op = Transform()
         a [TooManyPossibleTypesException] shouldBe thrownBy {
           op.inferKnowledge(mock[InferContext])(
-            Vector(DKnowledge(transformers), DKnowledge(inputDF)))
+            Vector(DKnowledge(inputDF), DKnowledge(transformers)))
         }
       }
     }

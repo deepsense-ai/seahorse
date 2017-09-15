@@ -28,7 +28,7 @@ import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.DynamicParam
 import io.deepsense.deeplang.{DKnowledge, DOperation2To1, ExecutionContext}
 
-case class Evaluate() extends DOperation2To1[Evaluator, DataFrame, MetricValue] {
+case class Evaluate() extends DOperation2To1[DataFrame, Evaluator, MetricValue] {
 
   override val name: String = "Evaluate"
   override val id: Id = "a88eaf35-9061-4714-b042-ddd2049ce917"
@@ -46,21 +46,21 @@ case class Evaluate() extends DOperation2To1[Evaluator, DataFrame, MetricValue] 
 
   override val params = declareParams(evaluatorParams)
 
-  override lazy val tTagTI_0: TypeTag[Evaluator] = typeTag
-  override lazy val tTagTI_1: TypeTag[DataFrame] = typeTag
+  override lazy val tTagTI_0: TypeTag[DataFrame] = typeTag
+  override lazy val tTagTI_1: TypeTag[Evaluator] = typeTag
   override lazy val tTagTO_0: TypeTag[MetricValue] = typeTag
 
   override protected def _execute(
       context: ExecutionContext)(
-      evaluator: Evaluator,
-      dataFrame: DataFrame): MetricValue = {
+      dataFrame: DataFrame,
+      evaluator: Evaluator): MetricValue = {
     evaluatorWithParams(evaluator).evaluate(context)(())(dataFrame)
   }
 
   override protected def _inferKnowledge(
       context: InferContext)(
-      evaluatorKnowledge: DKnowledge[Evaluator],
-      dataFrameKnowledge: DKnowledge[DataFrame]): (DKnowledge[MetricValue], InferenceWarnings) = {
+      dataFrameKnowledge: DKnowledge[DataFrame],
+      evaluatorKnowledge: DKnowledge[Evaluator]): (DKnowledge[MetricValue], InferenceWarnings) = {
 
     if (evaluatorKnowledge.size > 1) {
       throw TooManyPossibleTypesException()
