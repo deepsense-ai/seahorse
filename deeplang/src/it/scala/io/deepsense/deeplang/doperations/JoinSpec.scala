@@ -264,7 +264,7 @@ class JoinSpec extends DeeplangIntegTestSupport {
     ))
     val rdf = createDataFrame(rowsR, schemaR)
 
-    val ignored = DataFrame(None)
+    val ignored = mock[DataFrame]
 
     (ldf, rdf, ignored, joinColumns)
   }
@@ -300,7 +300,7 @@ class JoinSpec extends DeeplangIntegTestSupport {
     ))
     val rdf = createDataFrame(rowsR, schemaR)
 
-    val ignored = DataFrame(None)
+    val ignored = mock[DataFrame]
 
     (ldf, rdf, ignored, joinColumns)
   }

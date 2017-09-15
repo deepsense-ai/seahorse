@@ -61,7 +61,7 @@ class SaveDataFrameIntegSpec
         .filter(p => p.description == dataFrameDescription)
     filteredEntities.length shouldBe 1
 
-    val loadedSparkDataFrame = sqlContext.parquetFile(filteredEntities.head.data.get.url)
+    val loadedSparkDataFrame = sqlContext.read.parquet(filteredEntities.head.data.get.url)
     val loadedDataFrame = context.dataFrameBuilder.buildDataFrame(loadedSparkDataFrame)
     // We cannot guarantee order of rows in loaded DataFrame
     assertDataFramesEqual(dataFrameToSave, loadedDataFrame, checkRowOrder = false)

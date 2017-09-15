@@ -10,7 +10,7 @@ import org.apache.spark.sql
 import org.apache.spark.sql.Column
 import org.apache.spark.sql.types.DoubleType
 
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
 import io.deepsense.deeplang.doperations.DecomposeDatetime.{timeUnits, timestampColumnParamKey, timestampParts, timestampPartsParamKey}
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{DOperation, DOperation1To1, ExecutionContext}
@@ -68,7 +68,8 @@ case class DecomposeDatetime() extends DOperation1To1[DataFrame, DataFrame] {
       timestampPart: DecomposeDatetime.TimestampPart,
       level: Int): Column = {
 
-    val newColumnName = DataFrame.createColumnName(columnName, timestampPart.name, level)
+    val newColumnName = DataFrameColumnsGetter.createColumnName(
+      columnName, timestampPart.name, level)
     (sparkDataFrame(columnName).substr(timestampPart.start, timestampPart.length)
       as newColumnName cast DoubleType)
   }

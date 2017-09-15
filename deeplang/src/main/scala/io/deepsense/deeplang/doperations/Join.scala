@@ -6,13 +6,12 @@ package io.deepsense.deeplang.doperations
 
 import scala.collection.mutable
 
-import com.typesafe.scalalogging.LazyLogging
 import org.apache.spark.sql
-import org.apache.spark.sql.{Row, Column}
+import org.apache.spark.sql.{Column, Row}
 
 import io.deepsense.deeplang.DOperation.Id
-import io.deepsense.deeplang.doperables.dataframe.{DataFrameBuilder, DataFrame}
-import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoricalMetadata, CategoricalMapper}
+import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMetadata
+import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
 import io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{DOperation2To1, ExecutionContext}
@@ -58,7 +57,7 @@ case class Join() extends DOperation2To1[DataFrame, DataFrame, DataFrame] {
     leftJoinColumnNames.foreach { col =>
       DataFrame.assertExpectedColumnType(
         lsdf.schema.apply(col),
-        DataFrame.sparkColumnTypeToColumnType(rsdf.schema.apply(col).dataType))
+        DataFrameColumnsGetter.sparkColumnTypeToColumnType(rsdf.schema.apply(col).dataType))
     }
 
     logger.debug("Prepare rename columns map")

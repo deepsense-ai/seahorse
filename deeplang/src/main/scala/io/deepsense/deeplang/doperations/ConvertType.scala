@@ -6,12 +6,13 @@ package io.deepsense.deeplang.doperations
 
 import scala.collection.immutable.ListMap
 
+import org.apache.spark.sql.types.DataType
 import org.apache.spark.sql.{Column, UserDefinedFunction}
 
 import io.deepsense.deeplang.DOperation.Id
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.dataframe.types.Conversions
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoricalMapper, CategoricalMetadata}
+import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
 import io.deepsense.deeplang.parameters.ColumnType.ColumnType
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{DOperation1To1, ExecutionContext}
@@ -66,16 +67,25 @@ case class ConvertType() extends DOperation1To1[DataFrame, DataFrame] {
 
     columnDataTypes.collect {
       case (columnName, sourceDataType)
-        if DataFrame.sparkColumnTypeToColumnType(sourceDataType) != targetType =>
-        val sourceColumnType = DataFrame.sparkColumnTypeToColumnType(sourceDataType)
-        val converter = if (sourceColumnType == ColumnType.categorical) {
-          val mapping = CategoricalMetadata(dataFrame)
-          Conversions.generateCategoricalConversion(mapping.mapping(columnName), targetType)
-        } else {
-          Conversions.UdfConverters(
-            (DataFrame.sparkColumnTypeToColumnType(sourceDataType), targetType))
-        }
+        if DataFrameColumnsGetter.sparkColumnTypeToColumnType(sourceDataType) != targetType =>
+        val converter: UserDefinedFunction = findConverter(
+          dataFrame, columnName, targetType, sourceDataType)
         columnName -> converter
+    }
+  }
+
+  private def findConverter(
+      dataFrame: DataFrame,
+      columnName: String,
+      targetType: ColumnType,
+      sourceDataType: DataType): UserDefinedFunction = {
+    val sourceColumnType = DataFrameColumnsGetter.sparkColumnTypeToColumnType(sourceDataType)
+    if (sourceColumnType == ColumnType.categorical) {
+      val mapping = CategoricalMetadata(dataFrame)
+      Conversions.generateCategoricalConversion(mapping.mapping(columnName), targetType)
+    } else {
+      Conversions.UdfConverters(
+        (DataFrameColumnsGetter.sparkColumnTypeToColumnType(sourceDataType), targetType))
     }
   }
 

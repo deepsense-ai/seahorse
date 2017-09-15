@@ -18,7 +18,6 @@ object EntityRowMapper {
   val DClass = "dclass"
   val Created = "created"
   val Updated = "updated"
-  val Data = "data"
   val Url = "url"
   val Saved = "saved"
   val Report = "report"

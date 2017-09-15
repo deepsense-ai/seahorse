@@ -11,7 +11,7 @@ import org.apache.spark.sql.types.{IntegerType, StringType, StructType}
 import org.joda.time.DateTime
 
 import io.deepsense.deeplang.doperables.dataframe.types.Conversions
-import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
+import io.deepsense.deeplang.doperables.dataframe.{DataFrameColumnsGetter, DataFrame, DataFrameBuilder}
 import io.deepsense.deeplang.parameters.ColumnType
 
 case class CategoricalMapper(dataFrame: DataFrame, dataFrameBuilder: DataFrameBuilder) {
@@ -46,7 +46,7 @@ case class CategoricalMapper(dataFrame: DataFrame, dataFrameBuilder: DataFrameBu
       udf[String, String](identity[String])
     } else {
       Conversions.UdfConverters(
-        DataFrame.sparkColumnTypeToColumnType(convertFrom.dataType),
+        DataFrameColumnsGetter.sparkColumnTypeToColumnType(convertFrom.dataType),
         ColumnType.string
       )
     }

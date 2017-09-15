@@ -5,9 +5,9 @@
 package io.deepsense.deeplang.doperations.transformations
 
 import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables.{Report, Transformation}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperations.exceptions.{MathematicalOperationExecutionException, DOperationExecutionException}
+import io.deepsense.deeplang.doperables.{Report, Transformation}
+import io.deepsense.deeplang.doperations.exceptions.MathematicalOperationExecutionException
 import io.deepsense.reportlib.model.ReportContent
 
 class MathematicalTransformation(formula: Option[String]) extends Transformation {
@@ -16,7 +16,7 @@ class MathematicalTransformation(formula: Option[String]) extends Transformation
 
   override def transform(dataFrame: DataFrame): DataFrame = {
     try {
-      DataFrame(Some(dataFrame.sparkDataFrame.selectExpr("*", formula.get)))
+      DataFrame(dataFrame.sparkDataFrame.selectExpr("*", formula.get))
     } catch {
       case e: Exception => throw new MathematicalOperationExecutionException(formula.get, Some(e))
     }

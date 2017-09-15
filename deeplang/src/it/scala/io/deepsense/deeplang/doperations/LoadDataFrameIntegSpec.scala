@@ -36,7 +36,7 @@ class LoadDataFrameIntegSpec
     "load saved DataFrame" in {
       val context = executionContext
       val dataFrame: DataFrame = testDataFrame(context.dataFrameBuilder)
-      dataFrame.sparkDataFrame.saveAsParquetFile(testDir)
+      dataFrame.sparkDataFrame.write.parquet(testDir)
       val entity = registerDataFrame(context)
 
       val operation = createLoadDataFrameOperation(entity.id.toString)

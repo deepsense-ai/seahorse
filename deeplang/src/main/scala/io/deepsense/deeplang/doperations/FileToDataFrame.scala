@@ -13,7 +13,7 @@ import org.apache.spark.sql.{Row, types}
 
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.DOperation._
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
 import io.deepsense.deeplang.doperables.file.File
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{DOperation1To1, ExecutionContext}
@@ -116,7 +116,7 @@ case class FileToDataFrame() extends DOperation1To1[File, DataFrame] {
       categoricalColumnsSelection: Option[MultipleColumnSelection]): (Set[Int], Seq[String]) = {
     categoricalColumnsSelection match {
       case Some(selection) =>
-        val categoricalColumnNames = DataFrame.getColumnNames(schema, selection)
+        val categoricalColumnNames = DataFrameColumnsGetter.getColumnNames(schema, selection)
         val categoricalColumnNamesSet = categoricalColumnNames.toSet
         val categoricalColumnIndices = (for {
           (columnName, index) <- columnNames.zipWithIndex
