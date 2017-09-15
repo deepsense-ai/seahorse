@@ -11,7 +11,16 @@ import org.apache.spark._
 
 /** Computes an approximation to pi */
 object WorkflowExecutor {
+
+  val ExperimentJsonFilename = "experiment.json"
+
   def main(args: Array[String]) {
+    import sys.process._
+    "ls -al" !
+
+    val lines = scala.io.Source.fromFile(ExperimentJsonFilename).mkString
+    println("FILE " + ExperimentJsonFilename + " CONTENT: " + lines)
+
     val conf = new SparkConf().setAppName("Spark Pi")
     val spark = new SparkContext(conf)
     val slices = if (args.length > 0) args(0).toInt else 2
