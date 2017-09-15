@@ -8,9 +8,11 @@ import org.joda.time.DateTime
 
 import io.deepsense.commons.auth.Ownable
 import io.deepsense.commons.datetime.DateTimeConverter
+import io.deepsense.commons.exception.FailureCode._
 import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
 import io.deepsense.commons.models
-import io.deepsense.graph.Graph
+import io.deepsense.commons.utils.Logging
+import io.deepsense.graph.{Graph, Node}
 import io.deepsense.models.experiments.Experiment.State
 import io.deepsense.models.experiments.Experiment.Status.Status
 
@@ -23,13 +25,14 @@ case class Experiment(
     tenantId: String,
     name: String,
     graph: Graph,
-    created: DateTime,
-    updated: DateTime,
+    created: DateTime = DateTimeConverter.now,
+    updated: DateTime = DateTimeConverter.now,
     description: String = "",
     state: State = State.draft)
   extends BaseExperiment(name, description, graph)
   with Ownable
-  with Serializable {
+  with Serializable
+  with Logging {
 
   /**
    * Creates a copy of the experiment with name, graph, updated, and
@@ -47,16 +50,8 @@ case class Experiment(
       description = inputExperiment.description)
   }
 
-  /**
-   * Creates a copy of the experiment with a given graph
-   * and updates status of the experiment based upon the status of
-   * the nodes in the graph
-   *
-   * @param graph graph of the experiment
-   * @return a copy of the current experiment with the graph inside
-   */
-  def withGraph(graph: Graph): Experiment =
-    copy(graph = graph, state = Experiment.computeExperimentState(graph))
+  def withNode(node: Node): Experiment =
+    copy(graph = graph.withChangedNode(node))
 
   def markAborted: Experiment = {
     val abortedNodes = graph.nodes.map(n => if (n.isFailed || n.isCompleted) n else n.markAborted)
@@ -71,6 +66,53 @@ case class Experiment(
   def isFailed: Boolean = state.status == Experiment.Status.Failed
   def isAborted: Boolean = state.status == Experiment.Status.Aborted
   def isDraft: Boolean = state.status == Experiment.Status.Draft
+  def isCompleted: Boolean = state.status == Experiment.Status.Completed
+
+  def markNodeFailed(nodeId: Node.Id, reason: Throwable): Experiment = {
+    val errorId = DeepSenseFailure.Id.randomId
+    val failureTitle = s"Node: $nodeId failed. Error Id: $errorId"
+    logger.error(failureTitle, reason)
+    // TODO: To decision: exception in single node should result in abortion of:
+    // (current) only descendant nodes of failed node? / only queued nodes? / all other nodes?
+    val nodeFailureDetails = FailureDescription(
+      errorId,
+      UnexpectedError,
+      failureTitle,
+      Some(reason.toString),
+      FailureDescription.stacktraceDetails(reason.getStackTrace))
+    val experimentFailureDetails = FailureDescription(
+      errorId,
+      NodeFailure,
+      Experiment.nodeFailureMessage)
+    copy(graph = this.graph.markAsFailed(nodeId, nodeFailureDetails))
+      .markFailed(experimentFailureDetails)
+  }
+
+  def readyNodes: List[Node] = graph.readyNodes
+  def runningNodes: Set[Node] = graph.nodes.filter(_.isRunning)
+  def markNodeRunning(id: Node.Id): Experiment =
+    copy(graph = graph.markAsRunning(id))
+
+  def updateState(): Experiment = {
+    // TODO precise semantics of this method
+    // TODO rewrite this method to be more effective (single counting)
+    import io.deepsense.models.experiments.Experiment.State._
+    val nodes = graph.nodes
+    copy(state = if (nodes.isEmpty) {
+      completed
+    } else if (nodes.forall(_.isDraft)) {
+      draft
+    } else if (nodes.forall(n => n.isDraft || n.isCompleted)) {
+      completed
+    } else if (nodes.forall(n => n.isDraft || n.isCompleted || n.isQueued || n.isRunning)) {
+      running
+    } else if (nodes.exists(_.isFailed)) {
+      val failureId = DeepSenseFailure.Id.randomId
+      failed(FailureDescription(failureId, FailureCode.NodeFailure, Experiment.nodeFailureMessage))
+    } else {
+      aborted
+    })
+  }
 }
 
 object Experiment {
@@ -87,24 +129,7 @@ object Experiment {
   type Id = models.Id
   val Id = models.Id
 
-  def computeExperimentState(graph: Graph): Experiment.State = {
-    import Experiment.State._
-    val nodes = graph.nodes
-    if (nodes.isEmpty) {
-      completed
-    } else if (nodes.forall(_.isDraft)) {
-      draft
-    } else if (nodes.forall(n => n.isDraft || n.isCompleted)) {
-      completed
-    } else if (nodes.forall(n => n.isDraft || n.isCompleted || n.isQueued || n.isRunning)) {
-      running
-    } else if (nodes.exists(_.isFailed)) {
-      val failureId = DeepSenseFailure.Id.randomId
-      failed(FailureDescription(failureId, FailureCode.NodeFailure, "Node Failure"))
-    } else {
-      aborted
-    }
-  }
+  def nodeFailureMessage = "One or more nodes failed in the experiment"
 
   object Status extends Enumeration {
     type Status = Value

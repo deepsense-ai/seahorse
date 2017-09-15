@@ -4,24 +4,30 @@
 
 package io.deepsense.experimentmanager.execution
 
-import akka.actor.{ActorRef, ActorSystem}
+import akka.actor.{ActorRef, ActorSystem, Props}
 import com.google.inject.name.Named
 import com.google.inject.{AbstractModule, Provides, Singleton}
 
-import io.deepsense.commons.akka.GuiceAkkaExtension
+import io.deepsense.graphexecutor.clusterspawner.{ClusterSpawner, ClusterSpawnerModule}
 
 class RunningExperimentsActorModule extends AbstractModule {
   override def configure(): Unit = {
-    bind(classOf[GraphExecutorClientFactory])
-      .to(classOf[DefaultGraphExecutorClientFactory]).asEagerSingleton()
+    install(new ClusterSpawnerModule())
   }
 
   @Provides
   @Singleton
   @Named("RunningExperimentsActor")
-  def provideRunningExperimentsActorRef(system: ActorSystem): ActorRef = {
+  def provideRunningExperimentsActorRef(
+      @Named("entitystorage.label") entityStorageLabel: String,
+      @Named("runningexperiments.timeout") timeoutMillis: Long,
+      spawner: ClusterSpawner,
+      system: ActorSystem): ActorRef = {
+
     system.actorOf(
-      GuiceAkkaExtension(system).props[RunningExperimentsActor],
-      "RunningExperimentsActor")
+      Props(new RunningExperimentsActor(entityStorageLabel, timeoutMillis, spawner)
+        with ProductionGraphExecutorClientFactory
+      )
+    )
   }
 }

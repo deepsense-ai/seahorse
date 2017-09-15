@@ -2,15 +2,18 @@
  * Copyright (c) 2015, CodiLime Inc.
  */
 
-package io.deepsense.graphexecutor
+package io.deepsense.experimentmanager.execution
 
 import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.doperations.FileToDataFrame.CSV
 import io.deepsense.deeplang.doperations._
 import io.deepsense.deeplang.parameters.ColumnType
 import io.deepsense.graph._
+import io.deepsense.graphexecutor.SimpleGraphExecutionIntegSuiteEntities
 
-class LocationAttractivnessIntegSuite extends GraphExecutionIntegSuite {
+class LocationAttractivnessIntegSuite extends ExperimentExecutionSpec {
+
+  override def executionTimeLimitSeconds = 240L
 
   override def experimentName = "MVP Case 2: Location Attractiveness Scoring"
 

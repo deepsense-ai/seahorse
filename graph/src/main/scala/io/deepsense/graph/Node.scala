@@ -4,21 +4,42 @@
 
 package io.deepsense.graph
 
-import io.deepsense.commons.exception.FailureDescription
+import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription, DeepSenseException}
 import io.deepsense.commons.models
+import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.DOperation
 import io.deepsense.models.entities.Entity
 
 case class Node(
     id: Node.Id,
     operation: DOperation,
-    state: State = State.draft) {
+    state: State = State.draft)
+  extends Logging {
 
   def markDraft: Node = copy(state = State.draft)
 
   def markQueued: Node = copy(state = State.queued)
 
-  def markFailed(error: FailureDescription): Node = copy(state = state.failed(error))
+  def markFailed(failureDescription: FailureDescription): Node =
+    copy(state = state.failed(failureDescription))
+
+  def markFailed(reason: Throwable): Node = {
+    val errorId = DeepSenseFailure.Id.randomId
+    val failureTitle = s"Node: $id failed. Error Id: $errorId"
+    logger.error(failureTitle, reason)
+    // TODO: To decision: exception in single node should result in abortion of:
+    // (current) only descendant nodes of failed node? / only queued nodes? / all other nodes?
+    val failureDescription = reason match {
+      case e: DeepSenseException => e.failureDescription
+      case e => FailureDescription(
+        errorId,
+        FailureCode.UnexpectedError,
+        failureTitle,
+        Some(reason.toString),
+        FailureDescription.stacktraceDetails(reason.getStackTrace))
+    }
+    markFailed(failureDescription)
+  }
 
   def markAborted: Node = copy(state = state.aborted)
 

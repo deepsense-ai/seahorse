@@ -339,7 +339,7 @@ class ExperimentsApiSpec
       }
     }
     "return Accepted" when {
-      "experiments belongs to the user" in {
+      "experiments belongs to the user" ignore {
         val launchAction = LaunchActionWrapper(LaunchAction(Some(List(Node.Id.randomId))))
         Post(s"/$apiPrefix/${experimentOfTenantA.id}/action", launchAction) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {

@@ -65,11 +65,14 @@ object CommonSettingsPlugin extends AutoPlugin {
     if (System.getProperty("env") != null) System.getProperty("env") else "local"
   lazy val entityStorageIp =
     if (System.getProperty("es") != null) System.getProperty("es") else "172.28.128.1"
+  lazy val runningExperimentsIp =
+    if (System.getProperty("re") != null) System.getProperty("re") else "172.28.128.1"
   import FilterKeys._
   lazy val setUpFiltersPlugin = Seq(
     filterDirectoryName := s"filters/$filtersDirectory",
     includeFilter in (Compile, filters) ~= { f => f || ("*.props" | "*.conf") },
     includeFilter in (Compile, filterResources) ~= { f => f || ("*.props" | "*.conf") },
-    extraProps += "entityStorage.hostname" -> entityStorageIp
+    extraProps += "entityStorage.hostname" -> entityStorageIp,
+    extraProps += "runningExperiments.hostname" -> runningExperimentsIp
   )
 }

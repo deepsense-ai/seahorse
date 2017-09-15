@@ -35,6 +35,7 @@ lazy val experimentmanager      = project dependsOn (
 lazy val graph         = project dependsOn (commons, deeplang)
 lazy val graphexecutor = project dependsOn (
   commons,
+  commons % "test->test",
   deeplang,
   deeplang % "test->test",
   `entitystorage-client`,

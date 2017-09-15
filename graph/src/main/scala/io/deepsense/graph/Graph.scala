@@ -147,7 +147,14 @@ case class Graph(nodes: Set[Node] = Set(), edges: Set[Edge] = Set()) {
   }
 
   private def withChangedNode(id: Node.Id, f: Node => Node): Graph = {
+    // TODO make it more efficient (change nodes to map)
     val changedNodes = nodes.map(node => if (node.id == id) f(node) else node)
+    copy(nodes = changedNodes)
+  }
+
+  def withChangedNode(node: Node): Graph = {
+    // TODO make it more efficient (change nodes to map)
+    val changedNodes = nodes.map(n => if (n.id == node.id) node else n)
     copy(nodes = changedNodes)
   }
 
