@@ -21,13 +21,13 @@
 - include: h2_migration.yml
 - include: remove_examples.yml
 
-- include: proxy.yml
 - include: workflowmanager.yaml
 - include: frontend.yml
 - include: rabbitmq.yml
 - include: install_spark.yml
 - include: workflowexecutor.yaml
 - include: notebook.yml
+- include: proxy.yml
 
 - hosts: seahorse-vm
   gather_facts: false

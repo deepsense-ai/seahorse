@@ -18,7 +18,5 @@
     - vars/env.yml
     - vars/deployment.yml
     - vars/frontend.yml
-  vars:
-    - frontend_dir: /tmp/frontend
   roles:
     - frontend

@@ -11,11 +11,29 @@
 - name: Copy frontend config file
   copy: src="config.js" dest="{{frontend_dir}}/config.js"
 
-- name: Copy installation script
-  template: src="install.sh.j2" dest="{{frontend_dir}}/install.sh" mode=0755
+- name: Unpack frontend package
+  unarchive: src="{{frontend_dir}}/{{frontend_artifact_id}}.zip" dest="{{frontend_dir}}" copy=no
 
-- name: Install frontend
-  shell: "{{frontend_dir}}/install.sh"
+- name: Copy frontend files
+  shell: cp -r {{frontend_dir}}/build/* /usr/share/nginx/html
+
+- name: Register build version
+  command: cat {{frontend_dir}}/build/FULL_VERSION
+  register: frontend_build_version
+
+- name: Prepare frontend config
+  shell: envsubst < {{frontend_dir}}/config.js > /usr/share/nginx/html/config.js
+  environment:
+    EDITOR_VERSION: "{{frontend_build_version.stdout}}"
+    DOCS_ADDRESS: "{{ds_frontend_docs_address}}"
+    API_VERSION: "{{api_version}}"
+
+- name: Remove temporary files
+  file: path="{{frontend_dir}}/{{item}}" state=absent
+  with_items:
+    - build
+    - config.js
+    - "{{frontend_artifact_id}}.zip"
 
 - name: Restart nginx
   service: name=nginx state=restarted
