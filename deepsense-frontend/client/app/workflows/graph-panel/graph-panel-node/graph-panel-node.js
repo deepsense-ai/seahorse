@@ -41,13 +41,6 @@ function GraphNodeView($rootScope, GraphNode) {
     replace: true,
     templateUrl: 'app/workflows/graph-panel/graph-panel-node/graph-panel-node.html',
     controller: function($scope) {
-      $scope.$watch('node.knowledgeErrors', () => {
-        $scope.getTooltipMessage = function() {
-          var errors = $scope.node.getFancyKnowledgeErrors();
-          return errors ? errors : '';
-        };
-      });
-
       $scope.getNodeType = () => {
         let opId = $scope.node.operationId;
         if (opId in specialNodes) {

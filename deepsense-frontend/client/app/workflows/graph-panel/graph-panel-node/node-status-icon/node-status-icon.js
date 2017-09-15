@@ -10,6 +10,11 @@ function NodeStatusIcon() {
     templateUrl: 'app/workflows/graph-panel/graph-panel-node/node-status-icon/node-status-icon.html',
     controller: function($scope) {
 
+      $scope.$watch('node.knowledgeErrors', () => {
+        var errors = $scope.node.getFancyKnowledgeErrors();
+        $scope.tooltipMessage = errors ? errors : '';
+      });
+
       $scope.isNonEmpty = function() {
         return $scope.calculateClass() !== '';
       };
