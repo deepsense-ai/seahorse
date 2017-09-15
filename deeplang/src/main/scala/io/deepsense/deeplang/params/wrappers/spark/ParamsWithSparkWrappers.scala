@@ -26,12 +26,30 @@ trait ParamsWithSparkWrappers extends Params {
     case wrapper: SparkParamWrapper[_, _, _] => wrapper +: wrapper.nestedWrappers
   }.flatten
 
-  def sparkParamMap(sparkEntity: ml.param.Params, schema: StructType): ml.param.ParamMap =
-    ml.param.ParamMap(sparkParamWrappers.flatMap(wrapper => {
-      getOrDefaultOption(wrapper).map(value => {
-        val convertedValue = wrapper.convertAny(value)(schema)
-        ml.param.ParamPair(
-          wrapper.sparkParam(sparkEntity).asInstanceOf[ml.param.Param[Any]], convertedValue)
-      })
-    }): _*)
+  /**
+    * This method extracts Spark parameters from SparkParamWrappers that are:
+    * - declared directly in class which mixes this trait in
+    * - declared in values of parameters (i.e. ChoiceParam, MultipleChoiceParam)
+    */
+  def sparkParamMap(sparkEntity: ml.param.Params, schema: StructType): ml.param.ParamMap = {
+
+    val directParamMap = ml.param.ParamMap(
+      sparkParamWrappers.flatMap(wrapper =>
+        getOrDefaultOption(wrapper).map(value => {
+          val convertedValue = wrapper.convertAny(value)(schema)
+          ml.param.ParamPair(
+            wrapper.sparkParam(sparkEntity).asInstanceOf[ml.param.Param[Any]], convertedValue)
+        })
+      ): _*)
+
+    val paramsNestedInParamValues = params.flatMap(param => {
+      get(param) match {
+        case Some(nestedParams: ParamsWithSparkWrappers) =>
+          Some(nestedParams.sparkParamMap(sparkEntity, schema))
+        case _ => None
+      }
+    }).foldLeft(ml.param.ParamMap())((map1, map2) => map1 ++ map2)
+
+    directParamMap ++ paramsNestedInParamValues
+  }
 }

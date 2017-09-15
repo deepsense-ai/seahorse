@@ -18,10 +18,11 @@ package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
 import org.apache.spark.ml.regression.{IsotonicRegression => SparkIsotonicRegression}
 
+import io.deepsense.deeplang.doperables.spark.wrappers.estimators.IsotonicRegression.WeightColumnYesOption
 import io.deepsense.deeplang.params.ParamPair
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
-class IsotonicRegressionSmokeTest
+class IsotonicRegressionWithWeightsSmokeTest
   extends AbstractEstimatorModelWrapperSmokeTest[SparkIsotonicRegression] {
 
   override def className: String = "IsotonicRegression"
@@ -30,11 +31,27 @@ class IsotonicRegressionSmokeTest
 
   import estimatorWrapper._
 
-  // weightColumn isn't set for purpose
+  val weightColumnName = "myLabel"
+
+  val weightColumnChoice = WeightColumnYesOption()
+    .setWeightColumn(NameSingleColumnSelection(weightColumnName))
+
   override val estimatorParams: Seq[ParamPair[_]] = Seq(
     featureIndex -> 1,
     featuresColumn -> NameSingleColumnSelection("myFeatures"),
     isotonic -> true,
     labelColumn -> NameSingleColumnSelection("myLabel"),
-    predictionColumn -> "isotonicPrediction")
+    predictionColumn -> "isotonicPrediction",
+    useCustomWeights -> weightColumnChoice)
+
+  className should {
+    "pass weight column value to wrapped model" in {
+      val estimatorWithParams = estimatorWrapper.set(estimatorParams: _*)
+      val sparkEstimator = estimatorWithParams.sparkEstimator
+      val sparkParamMap = estimatorWithParams.sparkParamMap(
+        sparkEstimator,
+        dataFrame.sparkDataFrame.schema)
+      sparkParamMap.get(estimatorWrapper.sparkEstimator.weightCol) shouldBe Some(weightColumnName)
+    }
+  }
 }

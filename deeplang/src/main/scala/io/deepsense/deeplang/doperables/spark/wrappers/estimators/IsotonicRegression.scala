@@ -19,9 +19,12 @@ package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 import org.apache.spark.ml.regression.{IsotonicRegression => SparkIsotonicRegression, IsotonicRegressionModel => SparkIsotonicRegressionModel}
 
 import io.deepsense.deeplang.doperables.SparkEstimatorWrapper
+import io.deepsense.deeplang.doperables.spark.wrappers.estimators.IsotonicRegression.{WeightColumnNoOption, WeightColumnOption}
 import io.deepsense.deeplang.doperables.spark.wrappers.models.IsotonicRegressionModel
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasFeatureIndexParam, HasLabelColumnParam, PredictorParams}
-import io.deepsense.deeplang.params.wrappers.spark.{BooleanParamWrapper, SingleColumnSelectorParamWrapper}
+import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
+import io.deepsense.deeplang.params.selections.SingleColumnSelection
+import io.deepsense.deeplang.params.wrappers.spark.{ParamsWithSparkWrappers, BooleanParamWrapper, SingleColumnSelectorParamWrapper}
 
 class IsotonicRegression
   extends SparkEstimatorWrapper[
@@ -37,11 +40,11 @@ class IsotonicRegression
     sparkParamGetter = _.isotonic)
   setDefault(isotonic, true)
 
-  val weightColumn = new SingleColumnSelectorParamWrapper[SparkIsotonicRegression](
-    name = "weight column",
-    description = "Weight column - if this is not set, we treat all instance weights as 1.0.",
-    sparkParamGetter = _.weightCol,
-    portIndex = 0)
+  val useCustomWeights = new ChoiceParam[WeightColumnOption](
+    name = "use custom weights",
+    description =
+      "Whether to use custom weights. By default, all instance weights are equal to 1.0.")
+  setDefault(useCustomWeights, WeightColumnNoOption())
 
   override val params = declareParams(
     featureIndex,
@@ -49,5 +52,34 @@ class IsotonicRegression
     isotonic,
     labelColumn,
     predictionColumn,
-    weightColumn)
+    useCustomWeights)
+}
+
+object IsotonicRegression {
+
+  sealed trait WeightColumnOption extends Choice with ParamsWithSparkWrappers {
+    override val choiceOrder: List[Class[_ <: WeightColumnOption]] = List(
+      classOf[WeightColumnYesOption],
+      classOf[WeightColumnNoOption])
+  }
+
+  case class WeightColumnYesOption() extends WeightColumnOption {
+    val weightColumn = new SingleColumnSelectorParamWrapper[SparkIsotonicRegression](
+      name = "weight column",
+      description = "Weight column for isotonic regression.",
+      sparkParamGetter = _.weightCol,
+      portIndex = 0)
+
+    def getWeightColumn: SingleColumnSelection = $(weightColumn)
+    def setWeightColumn(value: SingleColumnSelection): this.type = set(weightColumn -> value)
+
+    override val name = "yes"
+    override val params = declareParams(weightColumn)
+  }
+
+  case class WeightColumnNoOption() extends WeightColumnOption {
+    override val name = "no"
+    override val params = declareParams()
+  }
+
 }
