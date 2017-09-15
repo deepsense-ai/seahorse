@@ -118,7 +118,7 @@ Read DataFrame does not take any input.
         <code id="data-storage-type">data storage type</code>
       </td>
       <td>
-        <code><a href="../parameter_types.html#single_choice">Choice</a></code>
+        <code><a href="../parameter_types.html#single_choice">Single Choice</a></code>
       </td>
       <td>The input data storage type. Possible values are:
         <code>FILE</code>, <code>JDBC</code>, <code>CASSANDRA</code>.
@@ -140,7 +140,7 @@ Read DataFrame does not take any input.
         <code id="format">format</code>
       </td>
       <td>
-        <code><a href="../parameter_types.html#single_choice">Choice</a></code>
+        <code><a href="../parameter_types.html#single_choice">Single Choice</a></code>
       </td>
       <td>Valid only if <code>data storage type = FILE</code>.
         The input file format. Possible values are:
@@ -152,7 +152,7 @@ Read DataFrame does not take any input.
         <code id="separator">separator</code>
       </td>
       <td>
-        <code><a href="../parameter_types.html#single_choice">Choice</a></code>
+        <code><a href="../parameter_types.html#single_choice">Single Choice</a></code>
       </td>
       <td>Valid only if <code>format = CSV</code>.
         Character separating fields in a row. Possible values are:

@@ -87,7 +87,7 @@ to another [DataFrame](../classes/dataframe.html) with [Transform](transform.htm
 <tbody>
 <tr>
 <td><code>target type</code></td>
-<td><code><a href="../parameter_types.html#single_choice">Choice</a></code></td>
+<td><code><a href="../parameter_types.html#single_choice">Single Choice</a></code></td>
 <td>Target type of the conversion. Possible values are: <code>[String, Boolean, Timestamp, Double, Float, Long,
 Integer]</code>.</td>
 </tr>

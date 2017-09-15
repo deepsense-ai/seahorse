@@ -89,7 +89,7 @@ Write DataFrame operation does not produce any output.
         <code id="data-storage-type">data storage type</code>
       </td>
       <td>
-        <code><a href="../parameter_types.html#single_choice">Choice</a></code>
+        <code><a href="../parameter_types.html#single_choice">Single Choice</a></code>
       </td>
       <td>The input data storage type. Possible values are:
         <code>FILE</code>, <code>JDBC</code>, <code>CASSANDRA</code>.
@@ -112,7 +112,7 @@ Write DataFrame operation does not produce any output.
         <code id="format">format</code>
       </td>
       <td>
-        <code><a href="../parameter_types.html#single_choice">Choice</a></code>
+        <code><a href="../parameter_types.html#single_choice">Single Choice</a></code>
       </td>
       <td>Valid only if <code>data storage type = FILE</code>.
         A format of the output file. Possible values:
@@ -125,7 +125,7 @@ Write DataFrame operation does not produce any output.
         <code id="column-separator">column separator</code>
       </td>
       <td>
-        <code><a href="../parameter_types.html#single_choice">Choice</a></code>
+        <code><a href="../parameter_types.html#single_choice">Single Choice</a></code>
       </td>
       <td>Valid only if <code>format = CSV</code>.
         Character separating fields in a row. Possible values are:
