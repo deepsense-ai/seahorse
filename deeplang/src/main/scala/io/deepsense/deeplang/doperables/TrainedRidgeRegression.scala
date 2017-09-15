@@ -51,15 +51,28 @@ case class TrainedRidgeRegression(
   override def predict(vectors: RDD[Vector]): RDD[Double] = preparedModel.predict(vectors)
 
   override def report: Report = {
-    val featureColumnsColumn = featureColumns.get.toList.map(Some.apply)
-    val targetColumnColumn = List(targetColumn)
-    val rows = featureColumnsColumn.zipAll(targetColumnColumn, Some(""), Some(""))
-      .map{ case (a, b) => List(a, b) }
+    val featureColumnsColumn = "" +: featureColumns.get.toList
+    val weights: Array[Double] = model.get.intercept +: model.get.weights.toArray
+    val rows = featureColumnsColumn.zip(weights).map {
+      case (name, weight) => List(Some(name), Some(weight.toString))
+    }
+    val weightsTable = Table(
+      name = "Model weights",
+      description = "",
+      columnNames = Some(List("Column", "Weight")),
+      rowNames = None,
+      values = rows)
 
-    val table = Table(
-      "Trained Ridge Regression", "", Some(List("Feature columns", "Target column")), None, rows)
+    val targetTable = Table(
+      name = "Target column",
+      description = "",
+      columnNames = None,
+      rowNames = None,
+      values = List(List(targetColumn)))
 
-    Report(ReportContent("Report for TrainedRidgeRegression", List(table)))
+    Report(ReportContent(
+      "Report for TrainedRidgeRegression",
+      tables = List(weightsTable, targetTable)))
   }
 
   override def save(context: ExecutionContext)(path: String): Unit = {

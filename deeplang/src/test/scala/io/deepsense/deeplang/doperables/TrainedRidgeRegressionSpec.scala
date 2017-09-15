@@ -16,8 +16,45 @@
 
 package io.deepsense.deeplang.doperables
 
+import org.apache.spark.mllib.regression.RidgeRegressionModel
+import org.apache.spark.mllib.linalg
+
+import io.deepsense.reportlib.model.{Table, ReportContent}
+
 class TrainedRidgeRegressionSpec extends ScorableSpec[TrainedRidgeRegression]{
   def scorableName: String = "TrainedRidgeRegression"
 
   def scorable: Scorable = new TrainedRidgeRegression()
+
+  "TrainedRidgeRegression" should {
+    "generate report" in {
+      val weights = linalg.Vectors.dense(0.4, 10.3, -2.7)
+      val intercept = -3.14
+      val model = new RidgeRegressionModel(weights, intercept)
+      val featureColumns = Seq("abc", "def", "ghi")
+      val targetColumn = "xyz"
+
+      val regression = TrainedRidgeRegression(
+        Some(model), Some(featureColumns), Some(targetColumn), None)
+
+      regression.report shouldBe Report(ReportContent(
+        "Report for TrainedRidgeRegression",
+        tables = Map(
+          "Model weights" -> Table(
+            "Model weights", "", Some(List("Column", "Weight")), None,
+            values = List(
+              List(Some(""), Some(intercept.toString)),
+              List(Some(featureColumns(0)), Some(weights(0).toString)),
+              List(Some(featureColumns(1)), Some(weights(1).toString)),
+              List(Some(featureColumns(2)), Some(weights(2).toString))
+
+            )
+          ),
+          "Target column" -> Table(
+            "Target column", "", None, None, List(List(Some(targetColumn)))
+          )
+        )
+      ))
+    }
+  }
 }
