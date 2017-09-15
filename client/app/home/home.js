@@ -4,8 +4,11 @@
 'use strict';
 
 /* @ngInject */
-function Home($rootScope, $scope, PageService) {
+function Home($rootScope, $scope, $state, PageService) {
   PageService.setTitle('Home');
+
+  // Index page should change itself
+  $scope.$state = $state;
 
   $rootScope.stateData.dataIsLoaded = true;
 

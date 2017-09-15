@@ -13,15 +13,17 @@
           ng-hide="navigationController.getTitle() === 'Home'"
           ng-controller="NavigationController as navigationController">
     <navigation-bar title="navigationController.getTitle()"></navigation-bar>
+    <experiment-editor-status-bar status="experiment.getExperiment().getStatus()"
+      ng-show="stateData.dataIsLoaded">
+    </experiment-editor-status-bar>
   </header>
   <deepsense-loading-spinner-lg ng-cloak ng-if="!stateData.dataIsLoaded"></deepsense-loading-spinner-lg>
   <ui-view id="wrapper"
            class="animated fadeIn"
+           ng-class="{'c-home': $state.includes('home')}"
            ng-show="stateData.showView"
            droppable
-           droppable-type="frame">
-
-  </ui-view>
+           droppable-type="frame"></ui-view>
 
   <script type="text/javascript" src="js/libs.js"></script>
   <script type="text/javascript" src="js/app.js"></script>

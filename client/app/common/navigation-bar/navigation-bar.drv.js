@@ -10,7 +10,7 @@ function NavigationBar() {
     scope: {
       title: '='
     },
-    templateUrl: 'app/common/navigation-bar/navigation-bar.tmpl.html'
+    templateUrl: 'app/common/navigation-bar/navigation-bar.html'
   };
 }
 exports.function = NavigationBar;

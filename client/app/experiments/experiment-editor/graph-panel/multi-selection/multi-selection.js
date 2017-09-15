@@ -206,6 +206,7 @@ function MultiSelection(GraphNode, MouseEvent, ExperimentService,
       var init = function init () {
         // put selection element
         selectionElement.className = CLASS_NAME;
+        selectionElement.style.display = 'none';
         element.append(selectionElement);
       };
 

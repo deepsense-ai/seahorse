@@ -7,7 +7,6 @@
 'use strict';
 
 exports.inject = function (module) {
-  require('./status-bar/status-bar.js').inject(module);
   require('./graph-panel/graph-panel.module.js').inject(module);
   require('./freeze/freeze.js').inject(module);
 };

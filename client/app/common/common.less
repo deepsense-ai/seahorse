@@ -8,9 +8,14 @@
 @import "./services/notification.service.less";
 @import "./navigation-bar/navigation-bar.less";
 
-.ds-action-btn {
+.o-action-btn {
   min-width: 60px;
   text-transform: uppercase;
-  font-size: 10px;
   transition: all .5s;
+  border-radius: 0;
+  height: 100%;
+
+  &:hover {
+    box-shadow: 0 0 5px gray inset;
+  }
 }

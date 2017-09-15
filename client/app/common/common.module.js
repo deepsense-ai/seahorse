@@ -16,4 +16,6 @@ require('./services/services.module.js').inject(common);
 
 require('./sticky-window/sticky-window.js').inject(common);
 
+require('./status-bar/status-bar.js').inject(common);
+
 module.exports = common;

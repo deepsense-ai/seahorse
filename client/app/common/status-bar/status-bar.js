@@ -6,11 +6,9 @@
 function ExperimentEditorStatusBar() {
   return {
     restrict: 'E',
-    templateUrl: 'app/experiments/experiment-editor/status-bar/status-bar.html',
+    templateUrl: 'app/common/status-bar/status-bar.html',
     replace: true,
-    scope: {
-      'status': '='
-    },
+    scope: {},
     link: function (scope) {
       scope.runExperiment = function runExperiment () {
         scope.$emit('Experiment.RUN');
