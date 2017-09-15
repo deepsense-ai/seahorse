@@ -1,7 +1,7 @@
 /**
   * Copyright (c) 2016, CodiLime Inc.
   */
-package io.deepsense.batche2etests
+package io.deepsense.e2etests.batch
 
 import java.io.{File, PrintWriter}
 
@@ -10,7 +10,7 @@ import scala.sys.process._
 
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpec}
 
-import io.deepsense.batche2etests.JsonWorkflowsBatchTest.{ProcExitError, ProcExitSuccessful}
+import io.deepsense.e2etests.batch.JsonWorkflowsBatchTest.{ProcExitError, ProcExitSuccessful}
 import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.commons.utils.FileOpts._
 import io.deepsense.commons.utils.OptionOpts._

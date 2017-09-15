@@ -1,4 +1,4 @@
-package io.deepsense.batche2etests
+package io.deepsense.e2etests.batch
 
 import java.io.File
 

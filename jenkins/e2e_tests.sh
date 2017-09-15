@@ -106,10 +106,10 @@ export MESOS_MASTER_IP=10.254.0.2
 
 ## Run sbt tests
 if $RUN_SESSIONMANAGER_TESTS ; then
-  sbt e2etests/clean "e2etests/testOnly io.deepsense.e2etests.*"
+  sbt e2etests/clean "e2etests/testOnly io.deepsense.e2etests.session.*"
 fi
 if $RUN_BATCH_TESTS ; then
-  sbt e2etests/clean "e2etests/testOnly io.deepsense.batche2etests.*"
+  sbt e2etests/clean "e2etests/testOnly io.deepsense.e2etests.batch.*"
 fi
 
 SBT_EXIT_CODE=$?

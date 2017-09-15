@@ -1,12 +1,14 @@
 /**
   * Copyright (c) 2016, CodiLime Inc.
   */
-package io.deepsense.e2etests
+package io.deepsense.e2etests.session
 
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 
 import org.scalatest.{Matchers, WordSpec}
+
+import io.deepsense.e2etests.{SeahorseIntegrationTestDSL, TestClusters, TestDatasourcesInserter, TestWorkflowsIterator}
 
 class JsonWorkflowsSessionTest
   extends WordSpec

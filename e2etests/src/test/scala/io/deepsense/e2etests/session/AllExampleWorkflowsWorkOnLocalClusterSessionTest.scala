@@ -2,7 +2,7 @@
   * Copyright (c) 2016, CodiLime Inc.
   */
 
-package io.deepsense.e2etests
+package io.deepsense.e2etests.session
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Await, Future}
@@ -11,11 +11,12 @@ import scala.language.postfixOps
 import org.scalatest._
 
 import io.deepsense.commons.utils.OptionOpts._
+import io.deepsense.e2etests.{SeahorseIntegrationTestDSL, TestClusters}
 import io.deepsense.models.workflows.WorkflowInfo
 import io.deepsense.workflowmanager.model.WorkflowDescription
 
 
-class AllExampleWorkflowsWorkOnLocalClusterTest extends FreeSpec with Matchers with SeahorseIntegrationTestDSL {
+class AllExampleWorkflowsWorkOnLocalClusterSessionTest extends FreeSpec with Matchers with SeahorseIntegrationTestDSL {
 
   info("Assuming application will be accessible under localhost:33321")
 
