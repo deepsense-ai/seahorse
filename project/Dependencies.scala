@@ -24,12 +24,12 @@ object Version {
 
 object Library {
 
-  val akka    = (name: String) => "org.spark-project.akka"      %% s"akka-$name"       % Version.akka
+  val akka    = (name: String) => "org.spark-project.akka"  %% s"akka-$name"      % Version.akka
   val avro    = (name: String) => "org.apache.avro"         % s"avro$name"        % Version.avro
-  val hadoop  = (name: String) => "org.apache.hadoop"       % s"hadoop-$name"     % Version.hadoop
+  val hadoop  = (name: String) => "org.apache.hadoop"       % s"hadoop-$name"     % Version.hadoop exclude("org.slf4j", "slf4j-log4j12")
   val jclouds = (name: String) => "org.apache.jclouds.api"  % s"openstack-$name"  % Version.jclouds
   val logback = (name: String) => "ch.qos.logback"          % s"logback-$name"    % Version.logback
-  val spark   = (name: String) => "org.apache.spark"       %% s"spark-$name"      % Version.spark
+  val spark   = (name: String) => "org.apache.spark"       %% s"spark-$name"      % Version.spark exclude("org.slf4j", "slf4j-log4j12")
   val spray   = (name: String) => "io.spray"               %% s"spray-$name"      % Version.spray
 
   val akkaActor          = akka("actor")

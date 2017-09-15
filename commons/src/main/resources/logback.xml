@@ -4,6 +4,7 @@
               value="%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n" />
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <target>System.out</target>
         <encoder>
             <pattern>${defaultPattern}</pattern>
         </encoder>
