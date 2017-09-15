@@ -16,6 +16,7 @@
 
 package io.deepsense.workflowexecutor.partialexecution
 
+import scala.collection.immutable.Iterable
 import scala.util.{Failure, Success, Try}
 
 import io.deepsense.commons.exception.{DeepSenseException, DeepSenseFailure, FailureCode, FailureDescription}
@@ -88,6 +89,11 @@ case class StatefulGraph(
     val inputs = queuedIds.collect { case id if predecessorsReady(id) => (id, inputFor(id).get) }
     inputs.map { case (id, input) => ReadyNode(directedGraph.node(id), input) }.toSeq
   }
+
+  def runningNodes: Seq[DeeplangNode] = {
+    val queuedIds = states.collect { case (id, nodeState) if nodeState.isRunning => id }
+    queuedIds.map(id => node(id))
+  }.toSeq
 
   /**
    * Tells the graph that it was enqueued for execution.

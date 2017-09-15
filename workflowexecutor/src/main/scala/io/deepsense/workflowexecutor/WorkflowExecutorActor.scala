@@ -108,6 +108,9 @@ abstract class WorkflowExecutorActor(
     val startingPointExecution = statefulWorkflow.currentExecution
     statefulWorkflow.abort()
     updateExecutionState(startingPointExecution)
+    statefulWorkflow.currentExecution.graph.runningNodes.foreach(node =>
+      executionContext.sparkContext.cancelJobGroup(JobGroupIdForNode(node))
+    )
   }
 
   def launch(nodes: Set[Node.Id]): Unit = {
@@ -122,7 +125,7 @@ abstract class WorkflowExecutorActor(
     updateExecutionState(startingPointExecution)
   }
 
-  def updateExecutionState(startingPointExecution: Execution): Unit = {
+  private def updateExecutionState(startingPointExecution: Execution): Unit = {
     val inferredState = statefulWorkflow.currentExecution match {
       case idle: IdleExecution =>
         logger.debug(s"End of execution")
@@ -163,11 +166,11 @@ abstract class WorkflowExecutorActor(
   def launchReadyNodes(): Unit = {
     logger.debug("launchReadyNodes")
     val readyNodes: Seq[ReadyNode] = statefulWorkflow.startReadyNodes()
-    readyNodes.foreach {case readyNode =>
-        val input = readyNode.input.toVector
-        val nodeRef = getGraphNodeExecutor(readyNode.node, input)
-        nodeRef ! WorkflowNodeExecutorActor.Messages.Start()
-        logger.debug(s"Starting node $readyNode")
+    readyNodes.foreach { readyNode =>
+      val input = readyNode.input.toVector
+      val nodeRef = getGraphNodeExecutor(readyNode.node, input)
+      nodeRef ! WorkflowNodeExecutorActor.Messages.Start()
+      logger.debug(s"Starting node $readyNode")
     }
   }
 

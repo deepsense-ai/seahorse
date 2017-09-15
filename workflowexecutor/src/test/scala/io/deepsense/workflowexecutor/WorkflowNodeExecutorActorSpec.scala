@@ -201,5 +201,6 @@ class WorkflowNodeExecutorActorSpec
     fixtureWithOperation(dOperation)
   }
 
-  val executionContext = mock[ExecutionContext]
+  val executionContext = LocalExecutionContext.createExecutionContext()
+
 }

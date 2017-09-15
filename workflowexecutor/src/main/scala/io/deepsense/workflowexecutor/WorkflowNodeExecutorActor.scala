@@ -51,9 +51,11 @@ class WorkflowNodeExecutorActor(
       logger.info(s"Starting execution of node $nodeDescription")
       sendStarted()
       try {
-        val resultVector = executeOperation()
-        val nodeExecutionResults = nodeExecutionResultsFrom(resultVector)
-        sendCompleted(nodeExecutionResults)
+        asSparkJobGroup {
+          val resultVector = executeOperation()
+          val nodeExecutionResults = nodeExecutionResultsFrom(resultVector)
+          sendCompleted(nodeExecutionResults)
+        }
       } catch {
         case SparkExceptionAsDeeplangException(deeplangEx) => sendFailed(deeplangEx)
         case e: Exception => sendFailed(e)
@@ -120,6 +122,7 @@ class WorkflowNodeExecutorActor(
     val inputKnowledge = input.map { dOperable => DKnowledge(dOperable) }
     // if inference throws, we do not perform execution
     node.value.inferKnowledgeUntyped(inputKnowledge)(executionContext.inferContext)
+
     val resultVector = node.value.executeUntyped(input)(executionContext)
 
     resultVector.zipWithIndex.foreach {
@@ -131,6 +134,20 @@ class WorkflowNodeExecutorActor(
     logger.debug(s"$nodeDescription executed (without reports): $resultVector")
     resultVector
   }
+
+  private def asSparkJobGroup[T](sparkCode: => T): T = try {
+    // interrupt on cancel = false because of HDFS-1208
+    executionContext.sparkContext.setJobGroup(
+      JobGroupIdForNode(node),
+      s"Execution of node id=${node.id.toString}",
+      interruptOnCancel = false
+    )
+    sparkCode
+  } finally {
+    // clear job group, because this thread will be used by other actors
+    executionContext.sparkContext.clearJobGroup()
+  }
+
 }
 
 object WorkflowNodeExecutorActor {
