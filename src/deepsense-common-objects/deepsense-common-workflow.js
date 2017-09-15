@@ -84,14 +84,6 @@ factory('Workflow', /*@ngInject*/function (GraphNode, Edge) {
     };
 
     that.createNodes = function createNodes(nodes, operations, thirdPartyData) {
-      let getCoordinate = (id, axis) => {
-        try {
-          return thirdPartyData.gui.nodes[id].coordinates[axis] || 0;
-        } catch (e) {
-          return getAverageCoordinates(thirdPartyData.gui.nodes, axis);
-        }
-      };
-
       let getAverageCoordinates = (nodes, axis) => {
         if (Object.keys(nodes).length > 0) {
           let coordinate = 0;
@@ -101,6 +93,14 @@ factory('Workflow', /*@ngInject*/function (GraphNode, Edge) {
           return Math.floor(coordinate/Object.keys(nodes).length);
         }
         return 0;
+      };
+
+      let getCoordinate = (id, axis) => {
+        try {
+          return thirdPartyData.gui.nodes[id].coordinates[axis] || 0;
+        } catch (e) {
+          return getAverageCoordinates(thirdPartyData.gui.nodes, axis);
+        }
       };
 
       let getUiName = (id) => {
