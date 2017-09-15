@@ -42,8 +42,10 @@ function OperationAttributes($timeout, AttributesPanelService) {
         $modal.open({
           scope: $scope,
           template: `
+            <h2>Error title:</h2>
+            <pre class="o-error-trace">{{node.state.error.title || 'No title'}}</pre>
             <h2>Error message:</h2>
-            <pre class="o-error-trace">{{node.state.error.message}}</pre>`,
+            <pre class="o-error-trace">{{node.state.error.message || 'No message'}}</pre>`,
           windowClass: 'o-modal--error'
         });
       };
