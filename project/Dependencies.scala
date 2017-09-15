@@ -26,12 +26,13 @@ object Library {
 
   implicit class RichModuleID(m: ModuleID) {
     def excludeAkkaActor: ModuleID = m excludeAll ExclusionRule("com.typesafe.akka")
+    def excludeScalatest: ModuleID = m excludeAll ExclusionRule("org.scalatest")
   }
 
   val akka = (name: String) => "com.typesafe.akka" %% s"akka-$name" % Version.akka
   val jclouds = (name: String) => "org.apache.jclouds.api" % s"openstack-$name" % Version.jclouds
 
-  val spark = (name: String) => "org.apache.spark" %% s"spark-$name" % Version.spark
+  val spark = (name: String) => "org.apache.spark" %% s"spark-$name" % Version.spark excludeScalatest
 
   val spray = (name: String) => "io.spray" %% s"spray-$name" % Version.spray excludeAkkaActor
 
@@ -73,9 +74,6 @@ object Library {
 object Dependencies {
 
   import Library._
-
-  // file:// won't work with relative path
-  val projectAbsPath = Path.absolute(new File(".")).getAbsolutePath
 
   val resolvers = Seq(
     "typesafe.com"           at "http://repo.typesafe.com/typesafe/repo/",
