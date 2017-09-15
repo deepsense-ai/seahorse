@@ -84,16 +84,20 @@ class ServerCommunication {
     return this.client && this.client.send.apply(this.client, arguments);
   }
 
-  connectToRabbit() {
-    let workflowId = this.WorkflowService.getWorkflow().id;
-
-    this.subscribeToRabbit(workflowId);
+  connect(workflowId) {
     this.send(this.config.queueRoutes.connect, {}, JSON.stringify({
       messageType: 'connect',
       messageBody: {
         workflowId
       }
     }));
+  }
+
+  connectToRabbit() {
+    let workflowId = this.WorkflowService.getWorkflow().id;
+    this.connect(workflowId);
+    this.subscribeToRabbit(workflowId);
+    this.connect(workflowId);
   }
 
   launch(workflowId, workflow, nodesToExecute) {
