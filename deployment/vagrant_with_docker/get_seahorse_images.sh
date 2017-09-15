@@ -16,4 +16,8 @@ cp docker-compose.yml /resources
 cd /resources
 
 # Pull Seahorse docker-images
-docker-compose pull
+DOCKER_IMAGES=("deepsense-sessionmanager" "deepsense-workflowmanager" "deepsense-notebooks" "deepsense-rabbitmq" "deepsense-h2" "deepsense-frontend" "deepsense-proxy")
+for DOCKER_IMAGE in "${DOCKER_IMAGES[@]}"
+do
+  docker load --input $DOCKER_IMAGE.tar
+done
