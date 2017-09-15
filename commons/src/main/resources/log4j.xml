@@ -84,6 +84,14 @@
     <level value="WARN"/>
   </logger>
 
+  <logger name="DataNucleus">
+    <level value="WARN" />
+  </logger>
+
+  <logger name="com.jolbox">
+    <level value="WARN" />
+  </logger>
+
   <root>
     <priority value ="debug" />
     <appender-ref ref="console" />

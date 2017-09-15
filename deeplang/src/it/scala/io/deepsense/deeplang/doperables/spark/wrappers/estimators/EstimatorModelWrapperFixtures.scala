@@ -20,9 +20,8 @@ import scala.language.reflectiveCalls
 
 import org.apache.spark.annotation.DeveloperApi
 import org.apache.spark.ml
-import org.apache.spark.ml.Estimator
 import org.apache.spark.ml.param.{ParamMap, Param => SparkParam}
-import org.apache.spark.sql.{DataFrame, Dataset}
+import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types.{IntegerType, StructField, StructType}
 
 import io.deepsense.deeplang.ExecutionContext
@@ -31,11 +30,12 @@ import io.deepsense.deeplang.doperables.serialization.SerializableSparkModel
 import io.deepsense.deeplang.doperables.{SparkEstimatorWrapper, SparkModelWrapper}
 import io.deepsense.deeplang.params.wrappers.spark.SingleColumnCreatorParamWrapper
 import io.deepsense.deeplang.params.{Param, Params}
+import io.deepsense.sparkutils.ML
 
 object EstimatorModelWrapperFixtures {
 
   class SimpleSparkModel private[EstimatorModelWrapperFixtures]()
-    extends ml.Model[SimpleSparkModel] {
+    extends ML.Model[SimpleSparkModel] {
 
     def this(x: String) = this()
 
@@ -47,7 +47,7 @@ object EstimatorModelWrapperFixtures {
 
     override def copy(extra: ParamMap): this.type = defaultCopy(extra)
 
-    override def transform(dataset: Dataset[_]): DataFrame = {
+    override def transformDF(dataset: DataFrame): DataFrame = {
       dataset.selectExpr("*", "1 as " + $(predictionCol))
     }
 
@@ -55,7 +55,7 @@ object EstimatorModelWrapperFixtures {
     override def transformSchema(schema: StructType): StructType = ???
   }
 
-  class SimpleSparkEstimator extends ml.Estimator[SimpleSparkModel] {
+  class SimpleSparkEstimator extends ML.Estimator[SimpleSparkModel] {
 
     def this(x: String) = this()
 
@@ -63,10 +63,10 @@ object EstimatorModelWrapperFixtures {
 
     val predictionCol = new SparkParam[String](uid, "name", "description")
 
-    override def fit(dataset: Dataset[_]): SimpleSparkModel =
+    override def fitDF(dataset: DataFrame): SimpleSparkModel =
       new SimpleSparkModel().setPredictionCol($(predictionCol))
 
-    override def copy(extra: ParamMap): Estimator[SimpleSparkModel] = defaultCopy(extra)
+    override def copy(extra: ParamMap): ML.Estimator[SimpleSparkModel] = defaultCopy(extra)
 
     @DeveloperApi
     override def transformSchema(schema: StructType): StructType = {

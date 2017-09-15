@@ -49,6 +49,10 @@ case class Evaluate() extends DOperation2To1[DataFrame, Evaluator, MetricValue] 
 
   override val params = declareParams(evaluatorParams)
 
+  override lazy val tTagTI_0: TypeTag[DataFrame] = typeTag
+  override lazy val tTagTI_1: TypeTag[Evaluator] = typeTag
+  override lazy val tTagTO_0: TypeTag[MetricValue] = typeTag
+
   override protected def _execute(
       context: ExecutionContext)(
       dataFrame: DataFrame,

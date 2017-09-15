@@ -17,11 +17,12 @@
 package io.deepsense.deeplang
 
 import org.apache.spark.sql.{DataFrame => SparkDataFrame}
-import org.mockito.Mockito._
 import org.mockito.Matchers._
+import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfter
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
+
 import io.deepsense.commons.models.Id
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.CustomOperationExecutionException
 
 

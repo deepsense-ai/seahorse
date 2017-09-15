@@ -25,13 +25,14 @@ import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.{Transformer, Estimator}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.params.wrappers.deeplang.ParamWrapper
+import io.deepsense.sparkutils.ML
 
 class EstimatorWrapper(
     executionContext: ExecutionContext,
     estimator: Estimator[Transformer])
-  extends ml.Estimator[TransformerWrapper] {
+  extends ML.Estimator[TransformerWrapper] {
 
-  override def fit(dataset: sql.Dataset[_]): TransformerWrapper = {
+  override def fitDF(dataset: sql.DataFrame): TransformerWrapper = {
     new TransformerWrapper(
       executionContext,
       estimator._fit(executionContext, DataFrame.fromSparkDataFrame(dataset.toDF())))

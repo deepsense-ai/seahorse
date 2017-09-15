@@ -18,7 +18,10 @@
 
 name := "seahorse"
 
-lazy val commons                = project settings LicenceReportSettings.settings
+lazy val sparkVersion = CommonSettingsPlugin.Versions.spark
+lazy val sparkUtils = project in file (s"sparkutils$sparkVersion")
+
+lazy val commons                = project dependsOn sparkUtils settings LicenceReportSettings.settings
 lazy val deeplang               = project dependsOn (
   commons,
   commons % "test->test",

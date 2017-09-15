@@ -18,15 +18,16 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.regression.{GBTRegressionModel => SparkGBTRegressionModel, GBTRegressor => SparkGBTRegressor}
 
-import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables.SparkModelWrapper
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
-import io.deepsense.deeplang.doperables.serialization.SerializableSparkModel
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.PredictorParams
+import io.deepsense.deeplang.doperables.{LoadableWithFallback, SparkModelWrapper}
 import io.deepsense.deeplang.params.Param
+import io.deepsense.sparkutils.ML
 
-class GBTRegressionModel extends SparkModelWrapper[SparkGBTRegressionModel, SparkGBTRegressor]
+class GBTRegressionModel
+  extends SparkModelWrapper[SparkGBTRegressionModel, SparkGBTRegressor]
+  with LoadableWithFallback[SparkGBTRegressionModel, SparkGBTRegressor]
   with PredictorParams {
 
   override val params: Array[Param[_]] = declareParams(featuresColumn, predictionColumn)
@@ -50,9 +51,5 @@ class GBTRegressionModel extends SparkModelWrapper[SparkGBTRegressionModel, Spar
         2)
   }
 
-  override protected def loadModel(
-      ctx: ExecutionContext,
-      path: String): SerializableSparkModel[SparkGBTRegressionModel] = {
-    new SerializableSparkModel(SparkGBTRegressionModel.load(path))
-  }
+  override def tryToLoadModel(path: String): Option[SparkGBTRegressionModel] = ML.ModelLoading.GBTRegression(path)
 }

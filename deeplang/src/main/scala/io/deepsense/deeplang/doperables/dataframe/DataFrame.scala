@@ -112,13 +112,13 @@ object DataFrame {
    * Generates a DataFrame with no columns.
    */
   def empty(context: ExecutionContext): DataFrame = {
-    val emptyRdd = context.sparkSession.sparkContext.parallelize(Seq[Row]())
-    val emptySparkDataFrame = context.sparkSession.createDataFrame(emptyRdd, StructType(Seq.empty))
+    val emptyRdd = context.sparkContext.parallelize(Seq[Row]())
+    val emptySparkDataFrame = context.sparkSQLSession.createDataFrame(emptyRdd, StructType(Seq.empty))
     fromSparkDataFrame(emptySparkDataFrame)
   }
 
   def loadFromFs(context: ExecutionContext)(path: String): DataFrame = {
-    val dataFrame = context.sparkSession.read.parquet(path)
+    val dataFrame = context.sparkSQLSession.read.parquet(path)
     fromSparkDataFrame(dataFrame)
   }
 

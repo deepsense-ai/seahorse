@@ -40,6 +40,6 @@ class CountVectorizerExample extends AbstractOperationExample[CountVectorizer]{
       Row("e e e e e".split(" ").toSeq))
     val rdd = sparkContext.parallelize(rows)
     val schema = StructType(Seq(StructField("lines", ArrayType(StringType, containsNull = true))))
-    Seq(DataFrameBuilder(sparkSession).buildDataFrame(schema, rdd))
+    Seq(DataFrameBuilder(sparkSQLSession).buildDataFrame(schema, rdd))
   }
 }

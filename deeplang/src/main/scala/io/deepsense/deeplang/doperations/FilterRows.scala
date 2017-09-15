@@ -29,5 +29,7 @@ class FilterRows extends TransformerAsOperation[RowsFilterer] {
   override val description: String =
     "Creates a DataFrame containing only rows satisfying given condition"
 
+  override lazy val tTagTO_1: TypeTag[RowsFilterer] = typeTag
+
   override val since: Version = Version(1, 0, 0)
 }

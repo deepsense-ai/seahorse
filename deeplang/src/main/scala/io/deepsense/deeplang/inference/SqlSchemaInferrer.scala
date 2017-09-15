@@ -18,7 +18,9 @@ package io.deepsense.deeplang.inference
 
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
 import org.apache.spark.sql.types.StructType
-import org.apache.spark.sql.{AnalysisException, Row, SparkSession}
+import org.apache.spark.sql.{AnalysisException, Row}
+
+import io.deepsense.sparkutils.SQL
 
 case class SqlInferenceWarning(sqlExpression: String, warningText: String) extends
   InferenceWarning(s"Schema for SQL formula '$sqlExpression' cannot be inferred ($warningText).")
@@ -27,12 +29,12 @@ class SqlSchemaInferrer {
   def inferSchema(sqlExpression: String, inputSchemas: (String, StructType)*)
   : (StructType, InferenceWarnings) = {
     try {
-      val localSpark = SparkSession.builder().getOrCreate().newSession()
-      UserDefinedFunctions.registerFunctions(localSpark.udf)
+    val localSpark = SQL.createEmptySparkSQLSession()
+      UserDefinedFunctions.registerFunctions(localSpark.udfRegistration)
       inputSchemas.foreach { case (dataFrameId, schema) =>
         val emptyData = localSpark.sparkContext.parallelize(Seq(Row.empty))
         val emptyDf = localSpark.createDataFrame(emptyData, schema)
-        emptyDf.createOrReplaceTempView(dataFrameId)
+        SQL.registerTempTable(emptyDf, dataFrameId)
       }
       val resultSchema = localSpark.sql(sqlExpression).schema
       val warnings = if (!namesUnique(inputSchemas)) {
@@ -43,9 +45,10 @@ class SqlSchemaInferrer {
         InferenceWarnings.empty
       }
       (resultSchema, warnings)
-    } catch { case e : AnalysisException =>
-      (StructType(Seq.empty),
-        InferenceWarnings(SqlInferenceWarning(sqlExpression, "Invalid Spark SQL expression.")))
+    } catch {
+      case e @ (_: AnalysisException | _: IllegalArgumentException) =>
+        (StructType(Seq.empty),
+          InferenceWarnings(SqlInferenceWarning(sqlExpression, s"Invalid Spark SQL expression: ${e.getMessage}")))
     }
   }
 

@@ -17,7 +17,6 @@
 package io.deepsense.deeplang.doperables
 
 import org.apache.spark.SparkContext
-import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.types._
 import org.mockito.Matchers._
 import org.mockito.Mockito.when
@@ -33,6 +32,7 @@ import io.deepsense.deeplang.doperations.ConvertType
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.custom.{InnerWorkflow, PublicParam}
+import io.deepsense.sparkutils.SparkSQLSession
 
 class CustomTransformerSpec extends UnitSpec {
 
@@ -182,7 +182,7 @@ class CustomTransformerSpec extends UnitSpec {
       innerWorkflowExecutor: InnerWorkflowExecutor): ExecutionContext =
     ExecutionContext(
       mock[SparkContext],
-      mock[SparkSession],
+      mock[SparkSQLSession],
       mock[InferContext],
       mock[FileSystemClient],
       "/tmp",

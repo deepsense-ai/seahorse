@@ -18,16 +18,16 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.regression.{RandomForestRegressionModel => SparkRFRModel, RandomForestRegressor => SparkRFR}
 
-import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables.SparkModelWrapper
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
-import io.deepsense.deeplang.doperables.serialization.SerializableSparkModel
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.PredictorParams
+import io.deepsense.deeplang.doperables.{LoadableWithFallback, SparkModelWrapper}
 import io.deepsense.deeplang.params.Param
+import io.deepsense.sparkutils.ML
 
 class RandomForestRegressionModel
   extends SparkModelWrapper[SparkRFRModel, SparkRFR]
+  with LoadableWithFallback[SparkRFRModel, SparkRFR]
   with PredictorParams {
 
   override val params: Array[Param[_]] = declareParams(
@@ -47,9 +47,10 @@ class RandomForestRegressionModel
           description = "Estimate of the importance of each feature."
         ))
 
+    val numTrees = ML.ModelParams.numTreesFromRandomForestRegressionModel(sparkModel)
     super.report
       .withReportName(
-        s"${this.getClass.getSimpleName} with ${sparkModel.getNumTrees} trees")
+        s"${this.getClass.getSimpleName} with $numTrees trees")
       .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))
       .withAdditionalTable(
         CommonTablesGenerators.decisionTree(
@@ -58,9 +59,5 @@ class RandomForestRegressionModel
         2)
   }
 
-  override protected def loadModel(
-      ctx: ExecutionContext,
-      path: String): SerializableSparkModel[SparkRFRModel] = {
-    new SerializableSparkModel(SparkRFRModel.load(path))
-  }
+  override def tryToLoadModel(path: String): Option[SparkRFRModel] = ML.ModelLoading.randomForestRegression(path)
 }

@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.doperations.examples
 
-import org.apache.spark.ml.linalg.Vectors
+import io.deepsense.sparkutils.Linalg.Vectors
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.spark.wrappers.estimators.PCA
@@ -37,6 +37,6 @@ class PCAExample extends AbstractOperationExample[PCA] {
       Vectors.dense(2.0, 0.0, 3.0, 4.0, 5.0),
       Vectors.dense(4.0, 0.0, 0.0, 6.0, 7.0)
     ).map(Tuple1(_))
-    Seq(DataFrame.fromSparkDataFrame(sparkSession.createDataFrame(data).toDF("features")))
+    Seq(DataFrame.fromSparkDataFrame(sparkSQLSession.createDataFrame(data).toDF("features")))
   }
 }

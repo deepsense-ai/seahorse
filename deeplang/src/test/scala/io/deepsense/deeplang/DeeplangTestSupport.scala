@@ -44,6 +44,7 @@ trait DeeplangTestSupport extends MockitoSugar {
   protected def createSparkDataFrame(schema: StructType = createSchema()) = {
     val sparkDataFrameMock = mock[sql.DataFrame]
     when(sparkDataFrameMock.schema).thenReturn(schema)
+    when(sparkDataFrameMock.toDF).thenReturn(sparkDataFrameMock)
     sparkDataFrameMock
   }
 

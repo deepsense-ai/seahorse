@@ -1,12 +1,10 @@
 # Copyright (c) 2015, CodiLime Inc.
 
 import ast
-
-from threading import Thread
 import traceback
-
-from pyspark.sql.dataframe import DataFrame
 from pyspark import SQLContext
+from pyspark.sql.dataframe import DataFrame
+from threading import Thread
 
 class CodeExecutor(object):
     """
@@ -19,10 +17,10 @@ class CodeExecutor(object):
     INPUT_PORT_NUMBER = 0
     OUTPUT_PORT_NUMBER = 0
 
-    def __init__(self, spark_context, spark_session, entry_point):
+    def __init__(self, spark_context, spark_sql_session, entry_point):
         self.entry_point = entry_point
         self.spark_context = spark_context
-        self.spark_session = spark_session
+        self.spark_sql_session = spark_sql_session
 
         self.threads = []
 
@@ -46,7 +44,7 @@ class CodeExecutor(object):
             self.entry_point.executionFailed(workflow_id, node_id, stacktrace)
 
     def _convert_data_to_data_frame(self, data):
-        sparkSession = self.spark_session
+        sparkSQLSession = self.spark_sql_session
         sc = self.spark_context
         try:
             import pandas
@@ -56,13 +54,13 @@ class CodeExecutor(object):
         if isinstance(data, DataFrame):
             return data
         elif self.is_pandas_available and isinstance(data, pandas.DataFrame):
-            return sparkSession.createDataFrame(data)
+            return sparkSQLSession.createDataFrame(data)
         elif isinstance(data, (list, tuple)) and all(isinstance(el, (list, tuple)) for el in data):
-            return sparkSession.createDataFrame(sc.parallelize(data))
+            return sparkSQLSession.createDataFrame(sc.parallelize(data))
         elif isinstance(data, (list, tuple)):
-            return sparkSession.createDataFrame(sc.parallelize(map(lambda x: (x,), data)))
+            return sparkSQLSession.createDataFrame(sc.parallelize(map(lambda x: (x,), data)))
         else:
-            return sparkSession.createDataFrame(sc.parallelize([(data,)]))
+            return sparkSQLSession.createDataFrame(sc.parallelize([(data,)]))
 
     def _run_custom_code(self, workflow_id, node_id, custom_operation_code):
         """
@@ -76,8 +74,8 @@ class CodeExecutor(object):
         # This should've been checked before running
         assert self.isValid(custom_operation_code)
 
-        new_spark_session = self.spark_session.newSession()
-        new_sql_context = SQLContext(self.spark_context, new_spark_session)
+        new_spark_session = self.spark_sql_session.newSession()
+        new_sql_context = SQLContext(self.spark_context, new_spark_session)  # TODO HiveContext
 
         raw_input_data_frame = DataFrame(
             jdf=self.entry_point.retrieveInputDataFrame(workflow_id,

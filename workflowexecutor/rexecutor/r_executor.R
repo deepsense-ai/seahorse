@@ -1,10 +1,12 @@
 args <- commandArgs(trailingOnly = TRUE)
-backendPort <- as.integer(args[1])
-workflowId <- args[2]
-nodeId <- args[3]
-entryPointId <- args[4]
-code <- URLdecode(args[5])
+sparkVersion <- args[1]
+backendPort <- as.integer(args[2])
+workflowId <- args[3]
+nodeId <- args[4]
+entryPointId <- args[5]
+code <- URLdecode(args[6])
 
+print(sparkVersion)
 print(backendPort)
 print(workflowId)
 print(nodeId)
@@ -13,8 +15,11 @@ print(code)
 
 rm(args)
 
+sparkDFName <- ifelse(sparkVersion == "2.0.0", "SparkDataFrame", "DataFrame")
+
+sparkLibDir <- paste("/opt/spark-", sparkVersion, "/R/lib/", sep="")
 # R will install packages to first lib path in here. We will mount it as docker volume to persist packages.
-.libPaths(c(file.path("/opt/R_Libs"), file.path("/opt/spark-2.0.0/R/lib/"), .libPaths()))
+.libPaths(c(file.path("/opt/R_Libs"), file.path(sparkLibDir), .libPaths()))
 library(SparkR)
 
 SparkR:::connectBackend("localhost", backendPort)
@@ -37,8 +42,11 @@ df <- SparkR:::dataFrame(SparkR:::callJMethod(spark,
 tryCatch({
   eval(parse(text = code))
   transformedDF <- transform(df)
-  if (class(transformedDF) != "SparkDataFrame") {
-    transformedDF <- createDataFrame(data.frame(transformedDF))
+  if (class(transformedDF) != sparkDFName) {
+    transformedDF <- ifelse(
+      sparkVersion == "2.0.0",
+      createDataFrame(data.frame(transformedDF)),
+      createDataFrame(data.frame(spark, transformedDF)))
   }
 
   SparkR:::callJMethod(entryPoint, "registerOutputDataFrame", workflowId, nodeId, as.integer(0), transformedDF@sdf)

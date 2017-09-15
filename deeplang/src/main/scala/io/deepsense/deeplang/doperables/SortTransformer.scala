@@ -41,9 +41,13 @@ class SortTransformer extends Transformer {
     set(columns, sortColumnParams)
 
   override private[deeplang] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
-    DataFrame.fromSparkDataFrame(
-      df.sparkDataFrame.sort($(columns).map(
-        SortColumnParam.columnParamToColumnExpression(_, df)): _*))
+    getColumns match {
+      case Nil => df  // Sort in Spark 2.0 is no-op for empty columns, but in 1.6 it throws. Here we always do no-op.
+      case selectedColumns =>
+        DataFrame.fromSparkDataFrame(
+          df.sparkDataFrame.sort($(columns).map(
+            SortColumnParam.columnParamToColumnExpression(_, df)): _*))
+    }
   }
 
   override def params: Array[Param[_]] = declareParams(columns)

@@ -28,6 +28,7 @@ import org.apache.spark.{ml, sql}
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.serialization.{DefaultMLReader, DefaultMLWriter}
+import io.deepsense.sparkutils.ML
 
 /**
   * In order to add string-indexing behaviour to estimators we need to put it into Sparks Pipeline
@@ -36,7 +37,7 @@ private [stringindexingwrapper] object StringIndexingPipeline {
 
   def apply[M, T](
       dataFrame: DataFrame,
-      sparkEstimator: SparkEstimator[_],
+      sparkEstimator: ML.Estimator[_],
       labelColumnName: String,
       predictionColumnName: String): Pipeline = {
 
@@ -79,9 +80,9 @@ private [stringindexingwrapper] object StringIndexingPipeline {
   */
 class RenameColumnTransformer(
   private val originalColumnName: String,
-  private val newColumnName: String) extends ml.Transformer with MLWritable with Params {
+  private val newColumnName: String) extends ML.Transformer with MLWritable with Params {
 
-  override def transform(dataset: sql.Dataset[_]): sql.DataFrame = {
+  override def transformDF(dataset: sql.DataFrame): sql.DataFrame = {
     // WARN: cannot use dataset.withColumnRenamed - it does not preserve metadata.
     val fieldsNames = dataset.schema.fieldNames
     val columns = fieldsNames.map { case name =>
@@ -125,9 +126,9 @@ object RenameColumnTransformer extends MLReadable[RenameColumnTransformer] {
   * @param columnsToOmit columns to filter out.
   */
 class FilterNotTransformer(
-  private val columnsToOmit: Set[String]) extends ml.Transformer with MLWritable {
+  private val columnsToOmit: Set[String]) extends ML.Transformer with MLWritable {
 
-  override def transform(dataset: sql.Dataset[_]): sql.DataFrame = {
+  override def transformDF(dataset: sql.DataFrame): sql.DataFrame = {
     val fieldsNames = dataset.schema.fieldNames.filterNot(columnsToOmit.contains)
     val columns = fieldsNames.map(dataset(_))
     val transformed = dataset.select(columns: _*)
@@ -159,14 +160,14 @@ class SetUpPredictionColumnTransformer(
   predictionColumnName: String,
   predictionColumnType: DataType,
   predictedLabelsColumnName: String)
-  extends ml.Transformer with MLWritable {
+  extends ML.Transformer with MLWritable {
 
   import org.apache.spark.sql.functions._
 
   private val outSet =
     Set(predictedLabelsColumnName, predictionColumnName)
 
-  override def transform(dataset: sql.Dataset[_]): sql.DataFrame = {
+  override def transformDF(dataset: sql.DataFrame): sql.DataFrame = {
     val columnsNames = dataset.schema.fieldNames.filterNot(outSet.contains)
     val predictionColumnType = dataset.schema(predictionColumnName).dataType
     val cols = columnsNames.map(col) :+

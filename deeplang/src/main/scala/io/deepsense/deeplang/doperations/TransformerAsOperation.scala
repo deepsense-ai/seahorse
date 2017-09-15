@@ -24,10 +24,11 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.{DKnowledge, DOperation1To2, ExecutionContext, TypeUtils}
 
-abstract class TransformerAsOperation[T <: Transformer : TypeTag]
+abstract class TransformerAsOperation[T <: Transformer]
+    ()(implicit tag: TypeTag[T])
   extends DOperation1To2[DataFrame, DataFrame, T] {
 
-  val transformer: T = TypeUtils.instanceOfType(typeTag[T])
+  val transformer: T = TypeUtils.instanceOfType(tag)
 
   val params = transformer.params
 
@@ -47,4 +48,7 @@ abstract class TransformerAsOperation[T <: Transformer : TypeTag]
     val (outputDfKnowledge, warnings) = transformer.transform.infer(ctx)(())(dfKnowledge)
     ((outputDfKnowledge, DKnowledge(transformer)), warnings)
   }
+
+  override lazy val tTagTI_0: TypeTag[DataFrame] = typeTag
+  override lazy val tTagTO_0: TypeTag[DataFrame] = typeTag
 }

@@ -17,11 +17,13 @@
 package io.deepsense.workflowexecutor
 
 import scala.concurrent.Future
+
 import akka.actor.{Actor, Props}
 import akka.pattern.pipe
 import spray.client.pipelining._
 import spray.http.{BasicHttpCredentials, HttpRequest, HttpResponse, StatusCodes}
 import spray.json._
+
 import io.deepsense.commons.utils.Logging
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.WorkflowWithResultsJsonProtocol

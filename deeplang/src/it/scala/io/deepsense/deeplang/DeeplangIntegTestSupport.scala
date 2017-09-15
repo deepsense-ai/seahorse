@@ -21,10 +21,10 @@ import scala.reflect.ClassTag
 import scala.reflect.runtime.universe.TypeTag
 
 import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
-import org.apache.spark.sql.{Row, SparkSession}
 import org.apache.spark.{SparkConf, SparkContext}
-import org.scalatest.{Matchers, BeforeAndAfterAll}
+import org.scalatest.BeforeAndAfterAll
 import org.scalatest.mockito.MockitoSugar._
 
 import io.deepsense.commons.models.Id
@@ -34,6 +34,7 @@ import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.deeplang.utils.DataFrameMatchers
+import io.deepsense.sparkutils.SparkSQLSession
 
 
 /**
@@ -46,7 +47,7 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
 
   val sparkConf: SparkConf = DeeplangIntegTestSupport.sparkConf
   val sparkContext: SparkContext = DeeplangIntegTestSupport.sparkContext
-  val sparkSession: SparkSession = DeeplangIntegTestSupport.sparkSession
+  val sparkSQLSession: SparkSQLSession = DeeplangIntegTestSupport.sparkSQLSession
 
   val dOperableCatalog = {
     val catalog = new DOperableCatalog
@@ -61,14 +62,14 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
 
   protected def prepareCommonExecutionContext(): CommonExecutionContext = {
     val inferContext = InferContext(
-      DataFrameBuilder(sparkSession),
+      DataFrameBuilder(sparkSQLSession),
       "testTenantId",
       dOperableCatalog,
       mock[InnerWorkflowParser])
 
     new MockedCommonExecutionContext(
       sparkContext,
-      sparkSession,
+      sparkSQLSession,
       inferContext,
       LocalFileSystemClient(),
       "testTenantId",
@@ -79,14 +80,14 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
 
   protected def prepareExecutionContext(): ExecutionContext = {
     val inferContext = InferContext(
-      DataFrameBuilder(sparkSession),
+      DataFrameBuilder(sparkSQLSession),
       "testTenantId",
       dOperableCatalog,
       mock[InnerWorkflowParser])
 
     new MockedExecutionContext(
       sparkContext,
-      sparkSession,
+      sparkSQLSession,
       inferContext,
       LocalFileSystemClient(),
       "testTenantId",
@@ -97,7 +98,7 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
 
   protected def createDataFrame(rows: Seq[Row], schema: StructType): DataFrame = {
     val rdd: RDD[Row] = sparkContext.parallelize(rows)
-    val sparkDataFrame = sparkSession.createDataFrame(rdd, schema)
+    val sparkDataFrame = sparkSQLSession.createDataFrame(rdd, schema)
     DataFrame.fromSparkDataFrame(sparkDataFrame)
   }
 
@@ -110,7 +111,7 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
 
   def createDataFrame[T <: Product : TypeTag : ClassTag](seq: Seq[T]): DataFrame = {
     DataFrame.fromSparkDataFrame(
-      sparkSession.createDataFrame(sparkContext.parallelize(seq)))
+      sparkSQLSession.createDataFrame(sparkContext.parallelize(seq)))
   }
 
 }
@@ -122,14 +123,14 @@ object DeeplangIntegTestSupport extends UnitSpec with DataFrameMatchers {
     .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
     .registerKryoClasses(Array())
   val sparkContext: SparkContext = new SparkContext(sparkConf)
-  val sparkSession: SparkSession = SparkSession.builder().config(sparkConf).getOrCreate()
+  val sparkSQLSession: SparkSQLSession = new SparkSQLSession(sparkContext)
 
-  UserDefinedFunctions.registerFunctions(sparkSession.udf)
+  UserDefinedFunctions.registerFunctions(sparkSQLSession.udfRegistration)
 }
 
 private class MockedCommonExecutionContext(
     override val sparkContext: SparkContext,
-    override val sparkSession: SparkSession,
+    override val sparkSQLSession: SparkSQLSession,
     override val inferContext: InferContext,
     override val fsClient: FileSystemClient,
     override val tenantId: String,
@@ -138,7 +139,7 @@ private class MockedCommonExecutionContext(
     override val customCodeExecutionProvider: CustomCodeExecutionProvider)
   extends CommonExecutionContext(
     sparkContext,
-    sparkSession,
+    sparkSQLSession,
     inferContext,
     fsClient,
     "/tmp",
@@ -149,7 +150,7 @@ private class MockedCommonExecutionContext(
 
   override def createExecutionContext(workflowId: Id, nodeId: Id): ExecutionContext =
     new MockedExecutionContext(sparkContext,
-      sparkSession,
+      sparkSQLSession,
       inferContext,
       fsClient,
       tenantId,
@@ -161,7 +162,7 @@ private class MockedCommonExecutionContext(
 // TODO Unnecessary intermediate object. Remove.
 private class MockedExecutionContext(
     override val sparkContext: SparkContext,
-    override val sparkSession: SparkSession,
+    override val sparkSQLSession: SparkSQLSession,
     override val inferContext: InferContext,
     override val fsClient: FileSystemClient,
     override val tenantId: String,
@@ -170,7 +171,7 @@ private class MockedExecutionContext(
     override val customCodeExecutor: ContextualCustomCodeExecutor)
   extends ExecutionContext(
     sparkContext,
-    sparkSession,
+    sparkSQLSession,
     inferContext,
     fsClient,
     "/tmp",

@@ -26,7 +26,7 @@ class TerminationListenerActor(finishedExecutionStatus: Promise[ExecutionReport]
   override def receive: Receive = {
     case status: ExecutionReport =>
       finishedExecutionStatus.success(status)
-      context.system.terminate()
+      context.system.shutdown()
   }
 }
 

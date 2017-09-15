@@ -26,13 +26,14 @@ import org.json4s._
 import org.json4s.jackson.JsonMethods._
 
 import io.deepsense.deeplang.doperables.Transformer
+import io.deepsense.sparkutils.ML.MLWriterWithSparkContext
 
-class DefaultMLWriter[T <: Params](instance: T) extends MLWriter {
+class DefaultMLWriter[T <: Params](instance: T) extends MLWriter with MLWriterWithSparkContext {
 
   def saveImpl(path: String): Unit = {
     val modelPath = Transformer.modelFilePath(path)
     saveMetadata(instance, path, sc)
-    CustomPersistence.save(sparkSession.sparkContext, instance, modelPath)
+    CustomPersistence.save(sparkContext, instance, modelPath)
   }
 
   /**

@@ -21,7 +21,7 @@ import scala.language.reflectiveCalls
 import org.apache.spark.ml
 import org.apache.spark.ml.param.{DoubleParam, ParamMap}
 import org.apache.spark.sql.types.{StringType, StructField, StructType}
-import org.apache.spark.sql.Dataset
+import org.apache.spark.sql
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.report.Report
@@ -30,6 +30,7 @@ import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.selections.{NameSingleColumnSelection, SingleColumnSelection}
 import io.deepsense.deeplang.params.wrappers.spark.{DoubleParamWrapper, SingleColumnSelectorParamWrapper}
 import io.deepsense.deeplang.{DKnowledge, DeeplangTestSupport, ExecutionContext, UnitSpec}
+import io.deepsense.sparkutils.ML
 
 class SparkEvaluatorWrapperSpec extends UnitSpec with DeeplangTestSupport {
 
@@ -106,7 +107,7 @@ object SparkEvaluatorWrapperSpec {
     override def report: Report = ???
   }
 
-  class ExampleSparkEvaluator extends ml.evaluation.Evaluator {
+  class ExampleSparkEvaluator extends ML.Evaluator {
 
     def this(id: String) = this()
 
@@ -118,7 +119,7 @@ object SparkEvaluatorWrapperSpec {
     def setNumericParam(value: Double): this.type = set(numericParam, value)
     def setColumnParam(value: String): this.type = set(columnParam, value)
 
-    override def evaluate(dataset: Dataset[_]): Double = {
+    override def evaluateDF(dataset: sql.DataFrame): Double = {
       $(numericParam)
     }
 

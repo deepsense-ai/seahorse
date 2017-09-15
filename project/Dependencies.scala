@@ -17,18 +17,21 @@
 import sbt._
 
 object Version {
-  val akka = "2.4.9"
+
+  import CommonSettingsPlugin.Versions
+  val akka = Versions.akka
+  val scala = Versions.scala
+  val hadoop = Versions.hadoop
+  val spark = Versions.spark
+
   val amazonS3 = "1.10.16"
   val apacheCommons = "3.3.+"
   val guava = "16.0"
-  val hadoop = "2.7.0"
   val mockito = "1.10.19"
   val nsscalaTime = "1.8.0"
-  val scala = "2.11.8"
   val scalacheck = "1.12.2"
   val scalatest = "3.0.0"
   val scoverage = "1.0.4"
-  val spark = "2.0.0"
   val spray = "1.3.3"
   val sprayJson = "1.3.2"
   val wireMock = "1.57"
@@ -43,7 +46,7 @@ object Library {
 
   val akka = (name: String) => "com.typesafe.akka" %% s"akka-$name" % Version.akka
   val hadoop = (name: String) => "org.apache.hadoop" % s"hadoop-$name" % Version.hadoop
-  val spark = (name: String) => "org.apache.spark" %% s"spark-$name" % Version.spark excludeScalatest
+  val spark = (name: String) => (version: String) => "org.apache.spark" %% s"spark-$name" % version excludeScalatest
   val spray = (name: String) => "io.spray" %% s"spray-$name" % Version.spray excludeAkkaActor
 
   val akkaActor = akka("actor")
@@ -63,6 +66,7 @@ object Library {
   val scalacheck = "org.scalacheck" %% "scalacheck" % Version.scalacheck
   val slf4j = "org.slf4j" % "slf4j-api" % "1.7.12"
   val slf4jLog4j = "org.slf4j" % "slf4j-log4j12" % "1.7.12"
+  val sparkCSV = "com.databricks" %% "spark-csv" % "1.4.0"
   val sprayCan = spray("can")
   val sprayClient = spray("client")
   val sprayHttpx = spray("httpx")
@@ -74,6 +78,7 @@ object Library {
   val sparkCore = spark("core")
   val sparkMLLib = spark("mllib")
   val sparkSql = spark("sql")
+  val sparkHive = spark("hive")
   val wireMock = "com.github.tomakehurst" % "wiremock" % Version.wireMock exclude(
     "com.fasterxml.jackson.core", "jackson-databind") exclude (
     "com.google.guava", "guava")
@@ -92,12 +97,14 @@ object Dependencies {
     "central.maven.org" at "http://central.maven.org/maven2/"
   )
 
-  object Spark {
-    val components = Seq(
+  class Spark(version: String) {
+    private val unversionedComponents = Seq(
       sparkMLLib,
       sparkSql,
-      sparkCore
+      sparkCore,
+      sparkHive
     )
+    val components = unversionedComponents.map(_(version)) :+ sparkCSV
     val provided = components.map(_ % Provided)
     val test = components.map(_ % s"$Test,it")
     val onlyInTests = provided ++ test
@@ -114,7 +121,13 @@ object Dependencies {
     val onlyInTests = provided ++ test
   }
 
-  val commons = Spark.onlyInTests ++ Seq(
+  val sparkutils_1_6_1 = new Spark("1.6.1").onlyInTests
+
+  val sparkutils_2_0_0 = new Spark("2.0.0").onlyInTests
+
+   val usedSpark = new Spark(Version.spark)
+
+  val commons = usedSpark.onlyInTests ++ Seq(
     apacheCommonsLang3,
     log4JExtras,
     nscalaTime,
@@ -125,30 +138,31 @@ object Dependencies {
     sprayJson
   ) ++ Seq(mockitoCore, scalatest, scoverage).map(_ % Test)
 
-  val deeplang = Spark.onlyInTests ++ Hadoop.onlyInTests ++ Seq(
+  val deeplang = usedSpark.onlyInTests ++ Hadoop.onlyInTests ++ Seq(
     apacheCommonsLang3,
     amazonS3,
     nscalaTime,
     scalaReflect,
-    apacheCommonsCsv
+    apacheCommonsCsv,
+    sparkCSV
   ) ++ Seq(mockitoCore, scalacheck, scalatest, scoverage).map(_ % Test)
 
-  val docgen = Spark.components
+  val docgen = usedSpark.components
 
   val graph = Seq(nscalaTime) ++ Seq(scalatest, mockitoCore).map(_ % Test)
 
-  val workflowJson = Spark.onlyInTests ++ Seq(
+  val workflowJson = usedSpark.onlyInTests ++ Seq(
     nscalaTime,
     sprayJson
   ) ++ Seq(mockitoCore, scalatest).map(_ % Test)
 
-  val models = Spark.onlyInTests ++ Seq(scalatest, mockitoCore).map(_ % Test)
+  val models = usedSpark.onlyInTests ++ Seq(scalatest, mockitoCore).map(_ % Test)
 
-  val reportlib = Spark.onlyInTests ++ Seq(
+  val reportlib = usedSpark.onlyInTests ++ Seq(
     sprayJson
   ) ++ Seq(mockitoCore, scalatest).map(_ % Test)
 
-  val workflowexecutor = Spark.onlyInTests ++ Seq(
+  val workflowexecutor = usedSpark.onlyInTests ++ Seq(
     akkaActor,
     guava,
     jsonLenses,

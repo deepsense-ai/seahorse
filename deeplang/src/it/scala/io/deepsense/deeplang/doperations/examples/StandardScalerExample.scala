@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.doperations.examples
 
-import org.apache.spark.ml.linalg.Vectors
+import io.deepsense.sparkutils.Linalg.Vectors
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.spark.wrappers.estimators.StandardScaler
@@ -36,6 +36,6 @@ class StandardScalerExample extends AbstractOperationExample[StandardScaler] {
       Vectors.dense(0.0, -5.1, 1.0),
       Vectors.dense(1.7, -0.6, 3.3)
     ).map(Tuple1(_))
-    Seq(DataFrame.fromSparkDataFrame(sparkSession.createDataFrame(data).toDF("features")))
+    Seq(DataFrame.fromSparkDataFrame(sparkSQLSession.createDataFrame(data).toDF("features")))
   }
 }

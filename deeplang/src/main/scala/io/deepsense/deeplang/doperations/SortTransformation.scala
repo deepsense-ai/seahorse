@@ -23,6 +23,7 @@ import scala.reflect.runtime.universe.TypeTag
 
 
 class SortTransformation extends TransformerAsOperation[SortTransformer] {
+  override lazy val tTagTO_1: TypeTag[SortTransformer] = typeTag
   override val id: Id = "1fa337cc-26f5-4cff-bd91-517777924d66"
   override val name: String = "Sort"
   override val description: String = "Sorts DataFrame by selected columns"

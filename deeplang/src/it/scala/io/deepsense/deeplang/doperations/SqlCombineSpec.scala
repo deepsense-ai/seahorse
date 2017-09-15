@@ -16,12 +16,13 @@
 
 package io.deepsense.deeplang.doperations
 
-import io.deepsense.deeplang.{DKnowledge, DeeplangIntegTestSupport}
+import org.apache.spark.sql.Row
+import org.apache.spark.sql.types._
+
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings, SqlInferenceWarning}
 import io.deepsense.deeplang.params.exceptions.ParamsEqualException
-import org.apache.spark.sql.Row
-import org.apache.spark.sql.types._
+import io.deepsense.deeplang.{DKnowledge, DeeplangIntegTestSupport}
 
 class SqlCombineSpec extends DeeplangIntegTestSupport {
 
@@ -114,8 +115,9 @@ class SqlCombineSpec extends DeeplangIntegTestSupport {
       val (_, warnings) = inferSqlCombineSchema(expression, leftName, leftSchema,
         rightName, rightSchema)
 
-      warnings.warnings should
-        contain (SqlInferenceWarning(expression, "Invalid Spark SQL expression."))
+      warnings.warnings.length shouldBe 1
+      val warning = warnings.warnings(0)
+      warning shouldBe a [SqlInferenceWarning]
     }
     "not throw exception during inference when its parameters are not set" in {
       val expression = s"""SELECT * from $leftName"""
@@ -124,13 +126,13 @@ class SqlCombineSpec extends DeeplangIntegTestSupport {
     }
   }
 
-  private def executeSqlCombine(expresssion: String,
+  private def executeSqlCombine(expression: String,
                                 leftName: String, leftData: DataFrame,
                                 rightName: String, rightData: DataFrame): DataFrame = {
     val combine = new SqlCombine()
       .setLeftTableName(leftName)
       .setRightTableName(rightName)
-      .setSqlCombineExpression(expresssion)
+      .setSqlCombineExpression(expression)
 
     executeOperation(combine, leftData, rightData)
   }

@@ -19,10 +19,12 @@ package io.deepsense.deeplang.doperables
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.analysis.NoSuchTableException
 import org.apache.spark.sql.types._
+
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.spark.wrappers.transformers.TransformerSerialization
 import io.deepsense.deeplang.doperations.exceptions.SqlExpressionException
+import io.deepsense.sparkutils.SQL
 
 class SqlTransformationIntegSpec extends DeeplangIntegTestSupport with TransformerSerialization {
 
@@ -59,7 +61,6 @@ class SqlTransformationIntegSpec extends DeeplangIntegTestSupport with Transform
       assertDataFramesEqual(result, expectedDataFrame)
       assertTableUnregistered()
     }
-
     "correctly infer output DataFrame schema" in {
       val expression = s"select $firstColumn, $thirdColumn from $dataFrameId"
       val result = executeSqlSchemaTransformation(expression, dataFrameId, schema)
@@ -99,7 +100,7 @@ class SqlTransformationIntegSpec extends DeeplangIntegTestSupport with Transform
     }
     "unregister the input DataFrame if execution failed" in {
       val dataFrame = sampleDataFrame
-      a [org.apache.spark.sql.catalyst.parser.ParseException] should be thrownBy {
+      a [SQL.ExceptionThrownByInvalidExpression] should be thrownBy {
         executeSqlTransformation(invalidExpression, dataFrameId, dataFrame)
       }
       assertTableUnregistered()
@@ -107,8 +108,8 @@ class SqlTransformationIntegSpec extends DeeplangIntegTestSupport with Transform
   }
 
   def assertTableUnregistered(): Unit = {
-    val exception = intercept[NoSuchTableException] {
-      executionContext.sparkSession.table(dataFrameId)
+    intercept[NoSuchTableException] {
+      executionContext.sparkSQLSession.table(dataFrameId)
     }
   }
 

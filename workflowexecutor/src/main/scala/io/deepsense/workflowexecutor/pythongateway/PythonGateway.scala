@@ -23,18 +23,18 @@ import scala.annotation.tailrec
 import scala.concurrent.duration._
 
 import org.apache.spark.SparkContext
-import org.apache.spark.sql.SparkSession
 import py4j._
 
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang._
+import io.deepsense.sparkutils.SparkSQLSession
 import io.deepsense.workflowexecutor.customcode.CustomCodeEntryPoint
 import io.deepsense.workflowexecutor.pythongateway.PythonGateway.GatewayConfig
 
 case class PythonGateway(
                           gatewayConfig: GatewayConfig,
                           sparkContext: SparkContext,
-                          sparkSession: SparkSession,
+                          sparkSQLSession: SparkSQLSession,
                           dataFrameStorage: DataFrameStorage,
                           pythonEntryPoint: CustomCodeEntryPoint,
                           hostAddress: InetAddress) extends Logging {

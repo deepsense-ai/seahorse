@@ -19,7 +19,6 @@ package io.deepsense.deeplang.doperables
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.{DataType, StructField, StructType}
 
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.{DeeplangIntegTestSupport, ExecutionContext}
 
@@ -126,12 +125,12 @@ trait MultiColumnTransformerTestSupport {
     val outputColumn = outputValues
     val anotherColumn = inputValues
 
-    val inputData = sparkContext.parallelize(inputColumn.zipWithIndex.map { case (v, idx) =>
+    val inputData = inputColumn.zipWithIndex.map { case (v, idx) =>
       Row(v, anotherColumn(idx))
-    })
-    val outputData = sparkContext.parallelize(inputColumn.zipWithIndex.map { case (v, idx) =>
+    }
+    val outputData = inputColumn.zipWithIndex.map { case (v, idx) =>
       Row(v, anotherColumn(idx), outputColumn(idx))
-    })
+    }
     val duplicatedColumnData = inputData
 
     val inputSchema = StructType(Seq(
@@ -147,13 +146,10 @@ trait MultiColumnTransformerTestSupport {
       StructField("thirdColumn", inputType)
     ))
 
-    val inputDataFrame = sparkSession.createDataFrame(inputData, inputSchema)
-    val outputDataFrame = sparkSession.createDataFrame(outputData, outputSchema)
-    val duplicatedColumnDataFrame =
-      sparkSession.createDataFrame(duplicatedColumnData, duplicatedColumnSchema)
+    val inputDataFrame = createDataFrame(inputData, inputSchema)
+    val outputDataFrame = createDataFrame(outputData, outputSchema)
+    val duplicatedColumnDataFrame = createDataFrame(duplicatedColumnData, duplicatedColumnSchema)
 
-    (DataFrame.fromSparkDataFrame(inputDataFrame),
-      DataFrame.fromSparkDataFrame(outputDataFrame),
-      DataFrame.fromSparkDataFrame(duplicatedColumnDataFrame))
+    (inputDataFrame, outputDataFrame, duplicatedColumnDataFrame)
   }
 }

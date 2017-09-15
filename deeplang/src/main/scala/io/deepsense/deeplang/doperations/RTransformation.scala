@@ -27,6 +27,8 @@ class RTransformation extends TransformerAsOperation[RTransformer] {
   override val name: String = "R Transformation"
   override val description: String = "Creates a custom R transformation"
 
+  override lazy val tTagTO_1: TypeTag[RTransformer] = typeTag
+
   override val since: Version = Version(1, 3, 0)
 }
 

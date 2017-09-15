@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.transformers
 
-import org.apache.spark.ml.linalg.Vectors
+import io.deepsense.sparkutils.Linalg.Vectors
 import org.apache.spark.sql.types.{DataType, DoubleType}
 
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.SingleColumnChoice
@@ -48,5 +48,5 @@ class OneHotEncoderSmokeTest
 
   override def inputType: DataType = DoubleType
 
-  override def outputType: DataType = new org.apache.spark.hacks.SparkVectors.VectorUDT
+  override def outputType: DataType = new io.deepsense.sparkutils.Linalg.VectorUDT
 }

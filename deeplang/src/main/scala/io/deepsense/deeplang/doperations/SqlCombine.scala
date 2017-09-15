@@ -17,17 +17,19 @@
 package io.deepsense.deeplang.doperations
 
 import scala.reflect.runtime.{universe => ru}
+
+import org.apache.spark.sql
+import org.apache.spark.sql.types.StructType
+
 import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
-import io.deepsense.deeplang.{DOperation2To1, DataFrame2To1Operation, ExecutionContext}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.inference.{InferenceWarnings, SqlSchemaInferrer}
 import io.deepsense.deeplang.params.exceptions.ParamsEqualException
 import io.deepsense.deeplang.params.{CodeSnippetLanguage, CodeSnippetParam, Param, StringParam}
-import org.apache.spark.sql
-import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.types.StructType
+import io.deepsense.deeplang.{DOperation2To1, DataFrame2To1Operation, ExecutionContext}
+import io.deepsense.sparkutils.{SQL, SparkSQLSession}
 
 
 final class SqlCombine
@@ -70,16 +72,16 @@ final class SqlCombine
     logger.debug(s"SqlCombine(expression = '$getSqlCombineExpression', " +
       s"leftTableName = '$getLeftTableName', " +
       s"rightTableName = '$getRightTableName')")
-    val localSparkSession = ctx.sparkSession.newSession()
-    val leftDf = moveToSparkSession(left.sparkDataFrame, localSparkSession)
-    val rightDf = moveToSparkSession(right.sparkDataFrame, localSparkSession)
+    val localSparkSQLSession = ctx.sparkSQLSession.newSession()
+    val leftDf = moveToSparkSQLSession(left.sparkDataFrame, localSparkSQLSession)
+    val rightDf = moveToSparkSQLSession(right.sparkDataFrame, localSparkSQLSession)
 
-    leftDf.createOrReplaceTempView(getLeftTableName)
-    rightDf.createOrReplaceTempView(getRightTableName)
+    SQL.registerTempTable(leftDf, getLeftTableName)
+    SQL.registerTempTable(rightDf, getRightTableName)
     logger.debug(s"Tables '$getLeftTableName', '$getRightTableName' registered. " +
       s"Executing the expression")
-    val sqlResult = moveToSparkSession(localSparkSession.sql(getSqlCombineExpression),
-      ctx.sparkSession)
+    val localSqlResult = localSparkSQLSession.sql(getSqlCombineExpression)
+    val sqlResult = moveToSparkSQLSession(localSqlResult, ctx.sparkSQLSession)
     DataFrame.fromSparkDataFrame(sqlResult)
   }
 
@@ -101,11 +103,18 @@ final class SqlCombine
     }
   }
 
-  private def moveToSparkSession(df: sql.DataFrame, destinationCtx: SparkSession): sql.DataFrame =
+  private def moveToSparkSQLSession(df: sql.DataFrame, destinationCtx: SparkSQLSession): sql.DataFrame =
     destinationCtx.createDataFrame(df.rdd, df.schema)
 
   override def params: Array[Param[_]] =
     declareParams(leftTableName, rightTableName, sqlCombineExpression)
 
   override def since: Version = Version(1, 4, 0)
+
+  @transient
+  override lazy val tTagTI_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
+  @transient
+  override lazy val tTagTI_1: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
+  @transient
+  override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }

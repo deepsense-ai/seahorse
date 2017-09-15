@@ -2,7 +2,7 @@
 # Copyright (c) 2016, CodiLime Inc.
 
 # This is a helper for managing the dockerized standalone spark cluster.
-# It accepts a single string parameter: up|down
+# Its first parameter is up/down. In case of down, second parameter should be spark version.
 # It's useful, because the docker-compose it manages requires an external network to exist.
 # This script handles the lifecycle of said network.
 # If there is a need to run multiple instances of the cluster,
@@ -18,8 +18,17 @@ fi
 
 NETWORK_NAME="sbt-test-$CLUSTER_ID"
 
+
+
 case $1 in
   up)
+    SPARK_VERSION=$2
+    export SPARK_VERSION=${SPARK_VERSION}
+    if [ "$SPARK_VERSION" == "2.0.0" ]; then
+      export HADOOP_VERSION="2.7.1"
+    else
+      export HADOOP_VERSION="2.6.0"
+    fi
     docker network create --subnet=10.255.2.1/24 $NETWORK_NAME
     docker-compose -f spark-standalone-cluster.dc.yml up -d
     ;;

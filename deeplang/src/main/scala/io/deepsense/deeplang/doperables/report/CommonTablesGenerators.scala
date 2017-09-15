@@ -19,14 +19,13 @@ package io.deepsense.deeplang.doperables.report
 import scala.language.reflectiveCalls
 import scala.util.Try
 
-import org.apache.spark.ml.linalg.DenseMatrix
-
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.doperables.report.ReportUtils.{formatValues, shortenLongTableValues}
-import io.deepsense.deeplang.params.{ParamMap, Params}
 import io.deepsense.deeplang.params.choice.Choice
+import io.deepsense.deeplang.params.{ParamMap, Params}
 import io.deepsense.deeplang.utils.SparkTypeConverter.sparkAnyToString
 import io.deepsense.reportlib.model._
+import io.deepsense.sparkutils.Linalg.DenseMatrix
 
 object CommonTablesGenerators {
 

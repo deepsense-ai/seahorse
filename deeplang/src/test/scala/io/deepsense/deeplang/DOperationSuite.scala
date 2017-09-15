@@ -42,6 +42,8 @@ object DOperationForPortTypes {
     override val description: String = ""
     override val since: Version = Version(0, 0, 0)
     val params = declareParams()
+    override lazy val tTagTI_0: ru.TypeTag[A1] = ru.typeTag[A1]
+    override lazy val tTagTO_0: ru.TypeTag[A2] = ru.typeTag[A2]
   }
 }
 
@@ -65,6 +67,10 @@ class DOperationSuite extends FunSuite with DeeplangTestSupport {
       override val description: String = "Some description"
 
       override val since: Version = Version(0, 0, 0)
+
+      override lazy val tTagTI_0: ru.TypeTag[A1] = ru.typeTag[A1]
+      override lazy val tTagTO_0: ru.TypeTag[A] = ru.typeTag[A]
+      override lazy val tTagTI_1: ru.TypeTag[A2] = ru.typeTag[A2]
     }
 
     val firstPicker = new PickOne
@@ -107,6 +113,8 @@ class DOperationSuite extends FunSuite with DeeplangTestSupport {
       override val since: Version = Version(0, 0, 0)
 
       val params = declareParams()
+
+      override lazy val tTagTO_0: ru.TypeTag[A] = ru.typeTag[A]
     }
 
     val generator: DOperation = new GeneratorOfA

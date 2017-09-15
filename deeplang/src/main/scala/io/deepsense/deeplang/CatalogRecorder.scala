@@ -157,7 +157,7 @@ object CatalogRecorder {
 
     // Operations API uses catalog to fetch data even for operation/{id} calls.
     // To make Source and Sink accessible with this call they are added here.
-    // As a workaround frontend filter outs those from operations pallete.
+    // As a workaround frontend filters out those from operations pallete.
     // FIXME Make operation/{id} calls not rely on catalog and introduce some kind of
     // additional 'all operations' map to be used in operation/{id} calls.
     catalog.registerDOperation[Source](DOperationCategories.IO)

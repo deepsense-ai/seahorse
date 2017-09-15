@@ -23,15 +23,15 @@ import scala.annotation.tailrec
 import scala.sys.process._
 
 import org.apache.spark.SparkContext
-import org.apache.spark.sql.SparkSession
 
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.{CustomCodeExecutor, DataFrameStorage}
+import io.deepsense.sparkutils.SparkSQLSession
 import io.deepsense.workflowexecutor.Unzip
 import io.deepsense.workflowexecutor.customcode.CustomCodeEntryPoint
 import io.deepsense.workflowexecutor.pyspark.PythonPathGenerator
-import io.deepsense.workflowexecutor.pythongateway.PythonGateway.GatewayConfig
 import io.deepsense.workflowexecutor.pythongateway.PythonGateway
+import io.deepsense.workflowexecutor.pythongateway.PythonGateway.GatewayConfig
 
 
 /**
@@ -48,7 +48,7 @@ class PythonExecutionCaretaker(
                                 pythonPathGenerator: PythonPathGenerator,
                                 pythonBinary: String,
                                 val sparkContext: SparkContext,
-                                val sparkSession: SparkSession,
+                                val sparkSQLSession: SparkSQLSession,
                                 val dataFrameStorage: DataFrameStorage,
                                 val customCodeEntryPoint: CustomCodeEntryPoint,
                                 val hostAddress: InetAddress) extends Logging {
@@ -88,7 +88,7 @@ class PythonExecutionCaretaker(
   private val pythonGateway = PythonGateway(
     GatewayConfig(),
     sparkContext,
-    sparkSession,
+    sparkSQLSession,
     dataFrameStorage,
     customCodeEntryPoint,
     hostAddress)

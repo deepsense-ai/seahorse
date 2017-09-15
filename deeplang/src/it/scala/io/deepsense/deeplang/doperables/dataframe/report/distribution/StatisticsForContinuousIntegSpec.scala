@@ -78,17 +78,14 @@ class StatisticsForContinuousIntegSpec extends DeeplangIntegTestSupport with Dat
     ))
 
     val rows = data.map(v => Row(v))
-    val rdd = sparkContext.parallelize(rows)
-
-    val sparkDataFrame: sql.DataFrame = sparkSession.createDataFrame(rdd, schema)
-    val dataFrame = DataFrame.fromSparkDataFrame(sparkDataFrame)
+    val dataFrame = createDataFrame(rows, schema)
 
     val report = dataFrame.report
     report.content.distributions(columnName).asInstanceOf[ContinuousDistribution]
   }
 
   def buildDataFrame(schema: StructType, data: RDD[Row]): DataFrame = {
-    val dataFrame: sql.DataFrame = sparkSession.createDataFrame(data, schema)
+    val dataFrame: sql.DataFrame = sparkSQLSession.createDataFrame(data, schema)
     DataFrame.fromSparkDataFrame(dataFrame)
   }
 

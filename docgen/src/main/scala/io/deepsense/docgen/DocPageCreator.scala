@@ -20,7 +20,6 @@ import java.io.{File, PrintWriter}
 
 import scala.reflect.runtime.universe.typeTag
 
-import io.deepsense.commons.BuildInfo
 import io.deepsense.deeplang.doperables.Transformer
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.{EstimatorAsFactory, EstimatorAsOperation, EvaluatorAsFactory, TransformerAsOperation}
@@ -278,9 +277,9 @@ trait DocPageCreator {
     val createExamplesSection: Boolean = operation match {
       // It is impossible to match DOperation1To2[DataFrame, DataFrame, Transformer] in match-case
       case op: DOperation1To2[_, _, _] =>
-        (op.inPortTypes(0).tpe <:< typeTag[DataFrame].tpe) &&
-          (op.outPortTypes(0).tpe <:< typeTag[DataFrame].tpe) &&
-          (op.outPortTypes(1).tpe <:< typeTag[Transformer].tpe)
+        (op.tTagTI_0.tpe <:< typeTag[DataFrame].tpe) &&
+          (op.tTagTO_0.tpe <:< typeTag[DataFrame].tpe) &&
+          (op.tTagTO_1.tpe <:< typeTag[Transformer].tpe)
       case op =>
         false
     }

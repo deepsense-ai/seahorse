@@ -17,7 +17,7 @@
 package io.deepsense.workflowexecutor
 
 import io.deepsense.deeplang.{DOperation, DeeplangIntegTestSupport, DeeplangTestSupport}
-import io.deepsense.graph.{Node, NodeInferenceImpl, NodeInferenceResult, DefaultKnowledgeService}
+import io.deepsense.graph.{DefaultKnowledgeService, Node, NodeInferenceImpl, NodeInferenceResult}
 import io.deepsense.workflowexecutor.executor.Executor
 
 class InferKnowledgeIntegTest extends DeeplangIntegTestSupport with DeeplangTestSupport{

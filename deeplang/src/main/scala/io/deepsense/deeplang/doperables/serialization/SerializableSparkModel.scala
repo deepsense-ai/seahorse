@@ -19,11 +19,13 @@ package io.deepsense.deeplang.doperables.serialization
 import org.apache.spark.ml.Model
 import org.apache.spark.ml.param.ParamMap
 import org.apache.spark.ml.util.{MLReadable, MLReader, MLWritable, MLWriter}
-import org.apache.spark.sql.{DataFrame, Dataset}
+import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types.StructType
 
+import io.deepsense.sparkutils.ML
+
 class SerializableSparkModel[M <: Model[M]](val sparkModel: M)
-  extends Model[SerializableSparkModel[M]]
+  extends ML.Model[SerializableSparkModel[M]]
   with MLWritable {
 
   override def copy(extra: ParamMap): SerializableSparkModel[M] =
@@ -36,15 +38,16 @@ class SerializableSparkModel[M <: Model[M]](val sparkModel: M)
     }
   }
 
-  override def transform(dataset: Dataset[_]): DataFrame = sparkModel.transform(dataset)
+  override def transformDF(dataset: DataFrame): DataFrame = sparkModel.transform(dataset)
 
   override def transformSchema(schema: StructType): StructType = sparkModel.transformSchema(schema)
 
   override val uid: String = "dc7178fe-b209-44f5-8a74-d3c4dafa0fae"
 }
 
+// This class may seem unused, but it is used reflectively by spark deserialization mechanism
 object SerializableSparkModel extends MLReadable[SerializableSparkModel[_]] {
-
-  override def read: MLReader[SerializableSparkModel[_]] =
+  override def read: MLReader[SerializableSparkModel[_]] = {
     new DefaultMLReader[SerializableSparkModel[_]]()
+  }
 }

@@ -24,27 +24,28 @@ import scala.concurrent.duration._
 import scala.concurrent.{Await, Promise}
 
 import org.apache.spark.api.java.JavaSparkContext
-import org.apache.spark.sql.{DataFrame, SparkSession}
+import org.apache.spark.sql.DataFrame
 import org.apache.spark.{SparkConf, SparkContext}
 
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang._
+import io.deepsense.sparkutils.SparkSQLSession
 
 /**
   * An entry point to our application designed to be accessible by custom code processes.
   */
 class CustomCodeEntryPoint(
     val sparkContext: SparkContext,
-    val sparkSession: SparkSession,
+    val sparkSQLSession: SparkSQLSession,
     val dataFrameStorage: DataFrameStorage,
     val operationExecutionDispatcher: OperationExecutionDispatcher)
   extends Logging {
   import io.deepsense.workflowexecutor.customcode.CustomCodeEntryPoint._
   def getSparkContext: JavaSparkContext = sparkContext
 
-  def getSparkSession: SparkSession = sparkSession
+  def getSparkSQLSession: SparkSQLSession = sparkSQLSession
 
-  def getNewSparkSession: SparkSession = sparkSession.newSession()
+  def getNewSparkSQLSession: SparkSQLSession = sparkSQLSession.newSession()
 
   def getSparkConf: SparkConf = sparkContext.getConf
 

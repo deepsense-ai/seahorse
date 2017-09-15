@@ -16,12 +16,12 @@
 
 package io.deepsense.deeplang.doperables
 
-import org.apache.spark.ml.linalg.Vectors
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.sparkutils.Linalg.Vectors
 
 /**
  * Provides helper methods for automatic conversion of double columns to vector columns.
@@ -55,7 +55,7 @@ object NumericToVectorUtils {
    * Converts schema by changing `inputColumn` type to vector
    */
   def convertSchema(schema: StructType, inputColumn: String): StructType = {
-    updateSchema(schema, inputColumn, new org.apache.spark.hacks.SparkVectors.VectorUDT())
+    updateSchema(schema, inputColumn, new io.deepsense.sparkutils.Linalg.VectorUDT())
   }
 
   /**
@@ -94,7 +94,7 @@ object NumericToVectorUtils {
       }
     }
     val convertedSchema = NumericToVectorUtils.convertSchema(dataFrame.schema.get, inputColumn)
-    val convertedDf = context.sparkSession.createDataFrame(convertedRdd, convertedSchema)
+    val convertedDf = context.sparkSQLSession.createDataFrame(convertedRdd, convertedSchema)
     convertedDf
   }
 
@@ -116,7 +116,7 @@ object NumericToVectorUtils {
       if (vector != null) {
         Row.fromSeq(r.toSeq.updated(
           columnIdx,
-          vector.asInstanceOf[org.apache.spark.ml.linalg.Vector].apply(0)))
+          vector.asInstanceOf[io.deepsense.sparkutils.Linalg.Vector].apply(0)))
       } else {
         Row.fromSeq(r.toSeq.updated(columnIdx, null))
       }
@@ -128,6 +128,6 @@ object NumericToVectorUtils {
       } else {
         transformedInputColumnRdd
       }
-    context.sparkSession.createDataFrame(transformedRdd, expectedSchema)
+    context.sparkSQLSession.createDataFrame(transformedRdd, expectedSchema)
   }
 }

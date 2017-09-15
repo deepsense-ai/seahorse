@@ -20,8 +20,7 @@ import org.scalatest.FunSuite
 
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.DOperableMock
-
-import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 
 object DClassesForDMethods {
   class S extends DOperableMock

@@ -22,6 +22,8 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 import py4j.{CallbackClient, Gateway, GatewayServer, GatewayServerListener}
 
+import io.deepsense.sparkutils
+
 object GatewayServerFactory {
 
   /**
@@ -57,6 +59,11 @@ object GatewayServerFactory {
 
     // gatewayServer.readTimeout = readTimeout
     setFieldValue("readTimeout", readTimeout)
+
+    if (sparkutils.PythonGateway.gatewayServerHasCallBackClient) {
+      // gatewayServer.cbClient = cbClient
+      setFieldValue("cbClient", cbClient)
+    }
 
     // gatewayServer.gateway = new Gateway(entryPoint, cbClient)
     setFieldValue("gateway", new Gateway(entryPoint, cbClient))

@@ -26,6 +26,6 @@ private[distribution] object DistributionType extends Enumeration {
     case TimestampType | DateType | _: NumericType => Continuous
     case StringType | BooleanType => Discrete
     case BinaryType | _: ArrayType | _: MapType |
-         _: StructType | _: org.apache.spark.hacks.SparkVectors.VectorUDT => NotApplicable
+         _: StructType | _: io.deepsense.sparkutils.Linalg.VectorUDT => NotApplicable
   }
 }

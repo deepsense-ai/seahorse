@@ -23,9 +23,10 @@ import org.mockito.Mockito._
 import org.scalatest.concurrent.Eventually
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll, Matchers, WordSpecLike}
+
+import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.report.Report
 import io.deepsense.deeplang.inference.InferenceWarnings
-import io.deepsense.deeplang._
 import io.deepsense.graph.DeeplangGraph.DeeplangNode
 import io.deepsense.graph.Node
 import io.deepsense.reportlib.model.ReportContent
@@ -41,7 +42,7 @@ class WorkflowNodeExecutorActorSpec
   with BeforeAndAfterAll
   with Eventually {
 
-  override protected def afterAll(): Unit = system.terminate()
+  override protected def afterAll(): Unit = system.shutdown()
 
   "WorkflowNodeExecutorActor" when {
     "receives start" should {

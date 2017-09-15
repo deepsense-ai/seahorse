@@ -16,14 +16,16 @@
 
 package io.deepsense.deeplang.doperables
 
+import org.apache.spark.sql
+import org.apache.spark.sql.types.StructType
+
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.SqlExpressionException
 import io.deepsense.deeplang.inference.{SqlInferenceWarning, SqlSchemaInferrer}
 import io.deepsense.deeplang.params.{CodeSnippetLanguage, CodeSnippetParam, Param, StringParam}
-import org.apache.spark.sql
-import org.apache.spark.sql.types.StructType
-import org.apache.spark.sql.SparkSession
+import io.deepsense.sparkutils.SparkSQLSession
+import io.deepsense.sparkutils.SQL
 
 class SqlTransformer extends Transformer {
 
@@ -49,17 +51,17 @@ class SqlTransformer extends Transformer {
     logger.debug(s"SqlExpression(expression = '$getExpression'," +
       s" dataFrameId = '$getDataFrameId')")
 
-    val localSparkSession = ctx.sparkSession.newSession()
-    val localDataFrame = moveToSparkSession(df.sparkDataFrame, localSparkSession)
+    val localSparkSQLSession = ctx.sparkSQLSession.newSession()
+    val localDataFrame = moveToSparkSQLSession(df.sparkDataFrame, localSparkSQLSession)
 
-    localDataFrame.createOrReplaceTempView(getDataFrameId)
+    SQL.registerTempTable(localDataFrame, getDataFrameId)
     try {
       logger.debug(s"Table '$dataFrameId' registered. Executing the expression")
-      val sqlResult = moveToSparkSession(localSparkSession.sql(getExpression), ctx.sparkSession)
+      val sqlResult = moveToSparkSQLSession(localSparkSQLSession.sql(getExpression), ctx.sparkSQLSession)
       DataFrame.fromSparkDataFrame(sqlResult)
     } finally {
-      logger.debug("Unregistering the temporary table" + getDataFrameId)
-      localSparkSession.catalog.dropTempView(getDataFrameId)
+      logger.debug("Unregistering the temporary table " + getDataFrameId)
+      localSparkSQLSession.dropTempTable(getDataFrameId)
     }
   }
 
@@ -75,6 +77,6 @@ class SqlTransformer extends Transformer {
     Some(resultSchema)
   }
 
-  private def moveToSparkSession(df: sql.DataFrame, destinationCtx: SparkSession): sql.DataFrame =
-    destinationCtx.createDataFrame(df.rdd, df.schema)
+  private def moveToSparkSQLSession(df: sql.DataFrame, destinationSession: SparkSQLSession): sql.DataFrame =
+    destinationSession.createDataFrame(df.rdd, df.schema)
 }

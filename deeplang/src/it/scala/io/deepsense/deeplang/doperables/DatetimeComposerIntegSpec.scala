@@ -34,10 +34,10 @@ class DatetimeComposerIntegSpec extends DeeplangIntegTestSupport with Transforme
 
   private val t1 = new DateTime(2015, 3, 30, 15, 25, 40)
 
-  import TransformerSerialization._
-  import DeeplangIntegTestSupport._
   import DatetimeComposer.TimestampPartColumnChoice._
   import DatetimeComposer.orderedTimestampParts
+  import DeeplangIntegTestSupport._
+  import TransformerSerialization._
 
   "DatetimeComposer" should {
     "compose timestamp from timestamp part columns" in {

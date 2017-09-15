@@ -29,5 +29,7 @@ class SqlTransformation extends TransformerAsOperation[SqlTransformer] {
   override val description: String =
     "Executes an SQL transformation on a DataFrame"
 
+  override lazy val tTagTO_1: TypeTag[SqlTransformer] = typeTag
+
   override val since: Version = Version(0, 4, 0)
 }

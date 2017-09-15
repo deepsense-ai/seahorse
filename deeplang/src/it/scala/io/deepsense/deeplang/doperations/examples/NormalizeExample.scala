@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.doperations.examples
 
-import org.apache.spark.ml.linalg.Vectors
+import io.deepsense.sparkutils.Linalg.Vectors
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.spark.wrappers.transformers.Normalize
@@ -37,6 +37,6 @@ class NormalizeExample extends AbstractOperationExample[Normalize] {
       Vectors.sparse(3, Seq((1, 0.91), (2, 3.2))).toDense,
       Vectors.sparse(3, Seq((0, 5.7), (1, 0.72), (2, 2.7))).toDense,
       Vectors.sparse(3, Seq()).toDense).map(Tuple1(_))
-    Seq(DataFrame.fromSparkDataFrame(sparkSession.createDataFrame(data).toDF("features")))
+    Seq(DataFrame.fromSparkDataFrame(sparkSQLSession.createDataFrame(data).toDF("features")))
   }
 }

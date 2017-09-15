@@ -18,7 +18,7 @@ package io.deepsense.deeplang
 
 import java.io._
 
-import org.apache.hadoop.hdfs.{DFSInputStream, DFSClient}
+import org.apache.hadoop.hdfs.{DFSClient, DFSInputStream}
 
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.serialization.Serialization

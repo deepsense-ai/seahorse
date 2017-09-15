@@ -81,6 +81,11 @@ case class GridSearch()
 
   override val params = declareParams(estimatorParams, evaluatorParams, numberOfFolds)
 
+  override lazy val tTagTI_0: TypeTag[DataFrame] = typeTag
+  override lazy val tTagTI_1: TypeTag[Estimator[Transformer]] = typeTag
+  override lazy val tTagTI_2: TypeTag[Evaluator] = typeTag
+  override lazy val tTagTO_0: TypeTag[Report] = typeTag
+
   override protected def _execute(
       context: ExecutionContext)(
       dataFrame: DataFrame,

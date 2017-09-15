@@ -46,9 +46,9 @@ case class CreateCustomTransformer() extends TransformerAsFactory[CustomTransfor
   setDefault(innerWorkflow, defaultWorkflow)
 
   // Inner workflow should be of type InnerWorkflow instead of raw json.
-  // Unfortunetely it's currently impossible because of project dependency graph.
+  // Unfortunately it's currently impossible because of project dependency graph.
   // We have executor -> json -> deeplang.
-  // Unfortunetely json parsing for parameters is in deeplang. And InnerWorkflow is parameter.
+  // Unfortunately json parsing for parameters is in deeplang. And InnerWorkflow is parameter.
   // Current workaround is to pass innerWorkflowParser through context.
   // TODO If we stick to custom transformer in current form merge those two project
   // and use InnerWorkflow type here instead of raw json.
@@ -57,6 +57,8 @@ case class CreateCustomTransformer() extends TransformerAsFactory[CustomTransfor
   def setInnerWorkflow(workflow: JsObject): this.type = set(innerWorkflow, workflow)
 
   override val params: Array[Param[_]] = declareParams(innerWorkflow)
+
+  override lazy val tTagTO_0: TypeTag[CustomTransformer] = typeTag
 
   override protected def _execute(context: ExecutionContext)(): CustomTransformer =
     customTransformer(context.innerWorkflowExecutor)

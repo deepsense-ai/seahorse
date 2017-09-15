@@ -19,14 +19,15 @@ package io.deepsense.deeplang.doperables
 import java.sql.Date
 import java.text.SimpleDateFormat
 
+import org.apache.spark.sql.Row
+import org.apache.spark.sql.types._
+import org.scalatest.enablers.Sortable
+
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.spark.wrappers.transformers.TransformerSerialization
 import io.deepsense.deeplang.doperables.spark.wrappers.transformers.TransformerSerialization.TransformerSerializationOps
 import io.deepsense.deeplang.doperations.exceptions.ColumnDoesNotExistException
-import org.apache.spark.sql.Row
-import org.apache.spark.sql.types._
-import org.scalatest.enablers.Sortable
 
 class SortTransformationIntegSpec extends DeeplangIntegTestSupport with TransformerSerialization {
 

@@ -29,6 +29,7 @@ import io.deepsense.deeplang.inference.exceptions.SparkTransformSchemaException
 import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.wrappers.spark.DoubleParamWrapper
 import io.deepsense.deeplang.{DeeplangTestSupport, ExecutionContext, UnitSpec}
+import io.deepsense.sparkutils.ML
 
 class SparkTransformerWrapperSpec extends UnitSpec with DeeplangTestSupport {
 
@@ -81,13 +82,13 @@ object SparkTransformerWrapperSpec extends MockitoSugar {
     override def report: Report = ???
   }
 
-  class ParamValueCheckingTransformer extends ml.Transformer {
+  class ParamValueCheckingTransformer extends ML.Transformer {
 
     def this(id: String) = this()
 
     val param = new DoubleParam("id", "name", "description")
 
-    override def transform(dataset: Dataset[_]): SparkDataFrame = {
+    override def transformDF(dataset: SparkDataFrame): SparkDataFrame = {
       require($(param) == paramValueToSet)
       outputDataFrame
     }
