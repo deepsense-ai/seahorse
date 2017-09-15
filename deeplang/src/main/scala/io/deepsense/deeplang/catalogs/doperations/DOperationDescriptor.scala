@@ -35,7 +35,7 @@ object DOperationDescriptor {
   val typeSeparator = " with "
 
   def describeType(t: Type): Seq[String] = {
-    t.toString.split(typeSeparator).map(TypeUtils.shortNameOfType)
+    t.toString.split(typeSeparator)
   }
 
   /** Helper method that converts scala types to readable strings. */

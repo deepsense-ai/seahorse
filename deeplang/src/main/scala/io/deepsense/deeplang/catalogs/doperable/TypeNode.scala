@@ -36,9 +36,6 @@ private[doperable] abstract class TypeNode {
   /** Name that unambiguously defines underlying type. */
   private[doperable] val fullName: String = javaType.getName.replaceAllLiterally("$", ".")
 
-  /** Display, short name of type. */
-  private[doperable] val displayName: String = TypeUtils.shortNameOfType(fullName)
-
   private[doperable] def setParent(node: TypeNode): Unit = parent = Some(node)
 
   private[doperable] def addSupertrait(node: TypeNode): Unit = supertraits(node.fullName) = node

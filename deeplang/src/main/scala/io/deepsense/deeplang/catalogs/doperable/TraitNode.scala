@@ -28,7 +28,7 @@ private[doperable] class TraitNode(protected override val javaType: Class[_]) ex
   }
 
   private[doperable] override def descriptor: TypeDescriptor = {
-    TraitDescriptor(displayName, supertraits.values.map(_.displayName).toList)
+    TraitDescriptor(fullName, supertraits.values.map(_.fullName).toList)
   }
 }
 

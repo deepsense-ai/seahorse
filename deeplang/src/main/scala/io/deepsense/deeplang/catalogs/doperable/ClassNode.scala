@@ -22,8 +22,8 @@ private[doperable] class ClassNode(protected override val javaType: Class[_]) ex
   }
 
   private[doperable] override def descriptor: TypeDescriptor = {
-    val parentName = if (parent.isDefined) Some(parent.get.displayName) else None
-    ClassDescriptor(displayName, parentName, supertraits.values.map(_.displayName).toList)
+    val parentName = if (parent.isDefined) Some(parent.get.fullName) else None
+    ClassDescriptor(fullName, parentName, supertraits.values.map(_.fullName).toList)
   }
 }
 

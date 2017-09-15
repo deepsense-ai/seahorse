@@ -8,7 +8,7 @@ package io.deepsense.experimentmanager.rest.json
 
 import java.util.UUID
 
-import scala.reflect.runtime.universe.typeOf
+import scala.reflect.runtime.universe.{typeOf, TypeTag}
 
 import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
@@ -18,18 +18,18 @@ import spray.json._
 import io.deepsense.deeplang.catalogs.doperations.{DOperationCategory, DOperationDescriptor}
 import io.deepsense.deeplang.parameters.ParametersSchema
 
+object HelperTypes {
+  class A
+  class B
+  trait T1
+  trait T2
+}
+
 class DOperationDescriptorJsonProtocolSpec
   extends FlatSpec
   with MockitoSugar
   with Matchers
   with DOperationDescriptorJsonProtocol {
-
-  object HelperTypes {
-    class A
-    class B
-    trait T1
-    trait T2
-  }
 
   "DOperationDescriptor" should "be correctly serialized to json" in {
     val (operationDescriptor, expectedJson) = operationDescriptorWithExpectedJsRepresentation
@@ -58,6 +58,8 @@ class DOperationDescriptorJsonProtocolSpec
       UUID.randomUUID, "operation name", "operation description", category, parameters,
       Seq(typeOf[A], typeOf[A with T1]), Seq(typeOf[B], typeOf[B with T2]))
 
+    def name[T: TypeTag]: String = typeOf[T].typeSymbol.fullName
+
     val expectedJson = JsObject(
       "id" -> JsString(operationDescriptor.id.toString),
       "name" -> JsString(operationDescriptor.name),
@@ -70,19 +72,19 @@ class DOperationDescriptorJsonProtocolSpec
           JsObject(
             "portIndex" -> JsNumber(0),
             "required" -> JsBoolean(true),
-            "typeQualifier" -> JsArray(JsString("A"))),
+            "typeQualifier" -> JsArray(JsString(name[A]))),
           JsObject(
             "portIndex" -> JsNumber(1),
             "required" -> JsBoolean(true),
-            "typeQualifier" -> JsArray(JsString("A"), JsString("T1")))
+            "typeQualifier" -> JsArray(JsString(name[A]), JsString(name[T1])))
         ),
         "output" -> JsArray(
           JsObject(
             "portIndex" -> JsNumber(0),
-            "typeQualifier" -> JsArray(JsString("B"))),
+            "typeQualifier" -> JsArray(JsString(name[B]))),
           JsObject(
             "portIndex" -> JsNumber(1),
-            "typeQualifier" -> JsArray(JsString("B"), JsString("T2")))
+            "typeQualifier" -> JsArray(JsString(name[B]), JsString(name[T2])))
         )
       )
     )

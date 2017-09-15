@@ -13,7 +13,7 @@ import org.scalatest.{FunSuite, Matchers}
 import io.deepsense.deeplang.DOperable
 import io.deepsense.deeplang.catalogs.doperable.exceptions._
 
-object H {
+object SampleInheritance {
   trait T1 extends DOperable
   trait T2 extends T1
   trait T3 extends T1
@@ -61,51 +61,56 @@ class DOperableCatalogSuite extends FunSuite with Matchers {
   }
 
   test("Getting concrete subclasses instances") {
+    import SampleInheritance._
 
     val h = new DOperableCatalog
-    h.registerDOperable[H.B]()
-    h.registerDOperable[H.C]()
+    h.registerDOperable[B]()
+    h.registerDOperable[C]()
 
-    val b = new H.B
-    val c = new H.C
+    val b = new B
+    val c = new C
 
     def check[T <: DOperable : ru.TypeTag](expected: DOperable*) = {
       testGettingSubclasses[T](h, expected:_*)
     }
 
-    check[H.T with H.T1](b)
-    check[H.T2 with H.T3](c)
-    check[H.B](b)
-    check[H.C](c)
-    check[H.A with H.T2](c)
-    check[H.A with H.T1](b, c)
-    check[H.A](b, c)
-    check[H.T3](b, c)
-    check[H.T with H.T2]()
+    check[T with T1](b)
+    check[T2 with T3](c)
+    check[B](b)
+    check[C](c)
+    check[A with T2](c)
+    check[A with T1](b, c)
+    check[A](b, c)
+    check[T3](b, c)
+    check[T with T2]()
   }
 
   test("Getting concrete subclasses instances using ru.TypeTag") {
+    import SampleInheritance._
     val h = new DOperableCatalog
-    h.registerDOperable[H.B]()
-    val t = ru.typeTag[H.T]
-    h.concreteSubclassesInstances(t) should contain theSameElementsAs List(new H.B)
+    h.registerDOperable[B]()
+    val t = ru.typeTag[T]
+    h.concreteSubclassesInstances(t) should contain theSameElementsAs List(new B)
   }
 
   test("Listing DTraits and DClasses") {
+    import SampleInheritance._
     val h = new DOperableCatalog
-    h.registerDOperable[H.B]()
-    h.registerDOperable[H.C]()
+    h.registerDOperable[B]()
+    h.registerDOperable[C]()
 
-    val traits = (TraitDescriptor("DOperable", Nil)::
-      TraitDescriptor("T2", List("T1"))::
-      TraitDescriptor("T", List("DOperable"))::
-      TraitDescriptor("T1", List("DOperable"))::
-      TraitDescriptor("T3", List("T1"))::
+    def name[T: ru.TypeTag]: String = ru.typeOf[T].typeSymbol.fullName
+
+    val traits = (TraitDescriptor(name[DOperable], Nil)::
+      TraitDescriptor(name[T2], List(name[T1]))::
+      TraitDescriptor(name[T], List(name[DOperable]))::
+      TraitDescriptor(name[T1], List(name[DOperable]))::
+      TraitDescriptor(name[T3], List(name[T1]))::
       Nil).map(t => t.name -> t).toMap
 
-    val classes = (ClassDescriptor("A", None, List("T3"))::
-      ClassDescriptor("B", Some("A"), List("T"))::
-      ClassDescriptor("C", Some("A"), List("T2"))::
+    val classes = (ClassDescriptor(name[A], None, List(name[T3]))::
+      ClassDescriptor(name[B], Some(name[A]), List(name[T]))::
+      ClassDescriptor(name[C], Some(name[A]), List(name[T2]))::
       Nil).map(c => c.name -> c).toMap
 
     val descriptor = h.descriptor
