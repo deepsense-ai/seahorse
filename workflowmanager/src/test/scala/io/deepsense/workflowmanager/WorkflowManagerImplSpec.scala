@@ -6,15 +6,16 @@ package io.deepsense.workflowmanager
 
 import scala.concurrent.Future
 
-import org.mockito.{Mockito, ArgumentCaptor}
 import org.mockito.Matchers._
 import org.mockito.Mockito._
+import org.mockito.{ArgumentCaptor, Mockito}
 
 import io.deepsense.commons.auth.usercontext.{Role, UserContext}
 import io.deepsense.commons.auth.{AuthorizatorProvider, UserContextAuthorizator}
+import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.deeplang.inference.InferContext
-import io.deepsense.graph.{Status, Graph, GraphKnowledge}
+import io.deepsense.graph.{Graph, GraphKnowledge, Status}
 import io.deepsense.models.workflows._
 import io.deepsense.workflowmanager.storage.{WorkflowResultsStorage, WorkflowStorage}
 
@@ -49,6 +50,8 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
     mock[ThirdPartyData],
     ExecutionReport(
       Status.Aborted,
+      DateTimeConverter.now,
+      DateTimeConverter.now,
       None,
       Map[io.deepsense.graph.Node.Id, io.deepsense.graph.State](),
       EntitiesMap()

@@ -11,6 +11,7 @@ import org.scalatest.{BeforeAndAfter, Matchers}
 
 import io.deepsense.commons.StandardSpec
 import io.deepsense.commons.cassandra.CassandraTestSupport
+import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
 import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
@@ -83,6 +84,8 @@ class WorkflowResultsDaoCassandraImplIntegSpec
     val executionReport: ExecutionReportWithId = ExecutionReportWithId(
       resultId,
       Status.Failed,
+      DateTimeConverter.now,
+      DateTimeConverter.now,
       Some(FailureDescription(DeepSenseFailure.Id.randomId, FailureCode.NodeFailure, "title")),
       Map(Node.Id.randomId -> State(Status.Failed)),
       EntitiesMap())

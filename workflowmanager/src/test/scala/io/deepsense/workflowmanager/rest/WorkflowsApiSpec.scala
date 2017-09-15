@@ -17,6 +17,7 @@ import spray.routing.Route
 
 import io.deepsense.commons.auth.usercontext.{TokenTranslator, UserContext}
 import io.deepsense.commons.auth.{AuthorizatorProvider, UserContextAuthorizator}
+import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.deeplang.DOperationCategories
@@ -78,6 +79,8 @@ class WorkflowsApiSpec
   def newWorkflowWithResults(id: Workflow.Id, wf: Workflow): WorkflowWithResults = {
     val executionReport = ExecutionReport(
       Status.Failed,
+      DateTimeConverter.now,
+      DateTimeConverter.now,
       Some(FailureDescription(
         DeepSenseFailure.Id.randomId, FailureCode.NodeFailure, "title")),
       Map(Node.Id.randomId -> State(Status.Failed)),

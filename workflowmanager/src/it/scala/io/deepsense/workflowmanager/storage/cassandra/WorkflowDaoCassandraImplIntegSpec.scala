@@ -14,6 +14,7 @@ import org.scalatest.{BeforeAndAfter, Matchers}
 
 import io.deepsense.commons.StandardSpec
 import io.deepsense.commons.cassandra.CassandraTestSupport
+import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.deeplang.inference.InferContext
@@ -139,6 +140,8 @@ class WorkflowDaoCassandraImplIntegSpec
         ExecutionReportWithId(
           resultId,
           io.deepsense.graph.Status.Completed,
+          DateTimeConverter.now,
+          DateTimeConverter.now,
           None,
           Map[Node.Id, State](),
           EntitiesMap()))
