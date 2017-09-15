@@ -9,3 +9,4 @@ cassandra-driver==2.5.1
 cx_Oracle==5.2
 py4j==0.8.2.1
 pika==0.10.0
+pandas==0.18.1
