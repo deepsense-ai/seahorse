@@ -124,7 +124,7 @@ case class ReadDataFrame() extends DOperation0To1[DataFrame] with ReadDataFrameP
     val lines = splitLinesIntoColumns(rdd, csvColumnSeparatorParameter.value.get).cache()
 
     val (columnNames, dataLines) = if (namesIncluded) {
-      val processedFirstLine = lines.first().map(removeQuotes).map(sanitizeColumnName)
+      val processedFirstLine = lines.first().map(_.trim).map(removeQuotes).map(sanitizeColumnName)
       (processedFirstLine, skipFirstLine(lines).cache())
     } else {
       (generateColumnNames(columnsNo = lines.first().length), lines)

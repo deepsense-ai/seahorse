@@ -129,6 +129,26 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
         ))
     }
 
+    "trim white spaces for not quoted column names and values in CSV" in {
+      val dataFrame = readDataFrame(
+        fileName = "with_white_spaces.csv",
+        lineSeparator = lineSep(ReadDataFrame.LineSeparator.UNIX),
+        csvColumnSeparator = ",",
+        csvNamesIncluded = true,
+        csvConvertToBoolean = true)
+
+      assertDataFramesEqual(
+        dataFrame,
+        expectedDataFrame(
+          Seq(
+            Row(" a2", "b2", "c2"),
+            Row(" a3", "b3", "c3")
+          ),
+          schemaOf(Seq(" a1", "b1", "c1"),
+            Seq(StringType, StringType, StringType)))
+      )
+    }
+
     "throw on empty csv file" in {
       an[InvalidFileException] should be thrownBy readDataFrame(
         fileName = "empty.csv",
