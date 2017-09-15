@@ -30,7 +30,8 @@
       "lessSources": "**/*.less",
       "html": "**/*.html",
       "fonts": "fonts/*",
-      "images": "img/*"
+      "images": "img/*",
+      "favicon": "favicon.ico"
     },
     "server": {
       "path": "./server/",

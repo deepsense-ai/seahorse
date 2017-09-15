@@ -24,7 +24,9 @@ function GraphNodeView() {
       });
 
       element.on('mousedown', function () {
-        scope.$emit(GraphNode.MOUSEDOWN);
+        scope.$emit(GraphNode.MOUSEDOWN, {
+          selectedNode: scope.node
+        });
       });
     }
   };

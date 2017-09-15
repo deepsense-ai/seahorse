@@ -13,14 +13,20 @@ function DraggableDirective() {
   return {
     restrict: 'A',
     link: function (scope, element, attrs) {
+      var reInitThisNodePosition = function reInitThisNodePosition () {
+        scope.node.x = parseInt(element.css('left'), 10);
+        scope.node.y = parseInt(element.css('top'), 10);
+      };
+
       jsPlumb.draggable(element, {
         containment: 'parent',
         stop: () => {
-          scope.node.x = parseInt(element.css('left'), 10);
-          scope.node.y = parseInt(element.css('top'), 10);
+          reInitThisNodePosition();
           scope.$emit(GraphNode.MOVE, {});
         }
       });
+
+      scope.$on('MultipleSelection.STOP_DRAG', reInitThisNodePosition);
     }
   };
 }

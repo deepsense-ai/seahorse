@@ -18,7 +18,7 @@ function FlowChartBox() {
     templateUrl: 'app/experiments/experiment-editor/graph-panel/graph-panel-flowchart.html',
     link: (scope, element) => {
       element.on('click', function (event) {
-        if (event.target.classList.contains('flowchart-box')) {
+        if (event.target.classList.contains('flowchart-paint-area')) {
           scope.experiment.unselectNode();
           scope.$apply();
         }
