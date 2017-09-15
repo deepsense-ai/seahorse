@@ -6,6 +6,7 @@ var lab = angular.module('ds.lab', [
   'ui.router',
   'ui.bootstrap',
   'debounce',
+  'ds.lab.partials',
   'deepsense.spinner',
   'deepsense-context-menu',
   'deepsense-catalogue-panel',
@@ -18,9 +19,10 @@ var lab = angular.module('ds.lab', [
   require('./home/home.module.js').name,
   require('./workflows/workflows.module.js').name,
   require('./common/common.module.js').name,
-  require('./reports/reports.module.js').name,
   require('./errors/errors.module.js').name
 ]);
+
+lab.constant('additionalControls', true);
 
 require('./app.config.js').inject(lab);
 require('./app.run.js').inject(lab);

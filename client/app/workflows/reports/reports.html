@@ -1,0 +1,25 @@
+<div class="report">
+  <div ng-if="::report.getTables()" ng-switch="::report.getReportName()">
+    <report-dataframe
+      ng-switch-when="DataFrame Report"
+      data="::report.getTables()"
+      distributions-types="::report.getDistributionsTypes()">
+    </report-dataframe>
+    <report-cross-validate-regressor
+      ng-switch-when="Cross-validate Regression Report"
+      data="::report.getTables()">
+    </report-cross-validate-regressor>
+    <report-evaluate-scoring
+      ng-switch-when="Evaluate Regression Report"
+      data="::report.getTables()">
+    </report-evaluate-scoring>
+    <report-evaluate-classification
+      ng-switch-when="Evaluate Classification Report"
+      data="::report.getTables()">
+    </report-evaluate-classification>
+    <div ng-switch-default class="alert alert-danger text-center lead animated fadeIn">
+      <i class="fa fa-exclamation-triangle fa-4x"></i>
+      <div>The report is not supported</div>
+    </div>
+  </div>
+</div>

@@ -1,6 +1,3 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- */
 'use strict';
 
 /* @ngInject */
@@ -9,7 +6,7 @@ function ErrorsConfig($stateProvider) {
     state('errorState', {
       url: '/error',
       views: {
-        'errorView@': {
+        '@': {
           templateUrl: 'app/errors/error.html',
           /* @ngInject */
           controller: ($stateParams, $rootScope) => {

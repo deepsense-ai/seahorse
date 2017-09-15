@@ -1,0 +1,11 @@
+<div id="node-{{ ::node.id }}"
+     class="flowchart-node {{ node.state.status }}"
+     ng-style="{'left': node.x + 'px', 'top': node.y + 'px'}"
+     title="{{ ::node.description }}">
+  <span class="name" title="{{ ::node.name }}">
+    <i class="fa {{ ::node.icon }}"></i> {{ ::node.name }}
+  </span>
+  <i class="fa fa-exclamation-circle error-icon"
+     ng-if="node.knowledgeErrors.length > 0"
+     title="{{ node.getFancyKnowledgeErrors() }}"></i>
+</div>

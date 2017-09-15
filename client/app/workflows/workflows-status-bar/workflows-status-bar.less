@@ -1,0 +1,55 @@
+.c-workflows-status-bar {
+  margin: 0;
+  text-align: center;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+
+  &__item {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row-reverse;
+    padding: 0;
+    position: relative;
+
+    &:before {
+      transition: all 0.15s ease-in-out;
+      content: "";
+      display: block;
+      position: absolute;
+      right: 0;
+      top: 0;
+      height: 100%;
+      width: 0;
+      background: rgba(255,255,255,0.35);
+    }
+
+    &:hover:before {
+      width: 100%;
+    }
+  }
+
+  &__text {
+    flex: 0.85;
+    font-size: 14px;
+  }
+
+  &__icon {
+    background-color: rgba(0,0,0,0.15);
+    padding: 4px 0;
+    flex: 0.15;
+
+    @media (max-width: 850px) {
+      display: none;
+    }
+  }
+
+  &--6-items &__icon {
+    @media (max-width: 1210px) {
+      display: none;
+    }
+  }
+}
