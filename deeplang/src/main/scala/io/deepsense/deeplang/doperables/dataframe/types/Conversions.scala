@@ -21,10 +21,10 @@ import java.sql.Timestamp
 
 import org.apache.spark.sql.UserDefinedFunction
 import org.apache.spark.sql.functions._
+import org.apache.spark.sql.types._
 
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.types.ColumnType
-import io.deepsense.commons.types.ColumnType._
 import io.deepsense.commons.utils.DoubleUtils
 import io.deepsense.deeplang.doperations.exceptions.TypeConversionException
 
@@ -34,23 +34,53 @@ object Conversions {
     if (value == null) null.asInstanceOf[B] else f(value)
 
   // (from, to) -> UDF
-  val UdfConverters: Map[(ColumnType, ColumnType), UserDefinedFunction] = Map(
-    (ColumnType.boolean, ColumnType.string) ->
-      udf[String, java.lang.Boolean](booleanToString),
-    (ColumnType.numeric, ColumnType.string) ->
+  val UdfConverters: Map[(DataType, DataType), UserDefinedFunction] = Map(
+    (BooleanType, StringType) ->
+      udf[String, java.lang.Boolean](defaultToString),
+    (ByteType, StringType) ->
+      udf[String, java.lang.Byte](defaultToString),
+    (DecimalType(), StringType) ->
+      udf[String, java.math.BigDecimal](defaultToString),
+    (DoubleType, StringType) ->
       udf[String, java.lang.Double](doubleToString),
-    (ColumnType.timestamp, ColumnType.string) ->
+    (FloatType, StringType) ->
+      udf[String, java.lang.Float](floatToString),
+    (IntegerType, StringType) ->
+      udf[String, java.lang.Integer](defaultToString),
+    (LongType, StringType) ->
+      udf[String, java.lang.Long](defaultToString),
+    (ShortType, StringType) ->
+      udf[String, java.lang.Short](defaultToString),
+    (TimestampType, StringType) ->
       udf[String, Timestamp](nullOr(timestampToString)),
 
-    (ColumnType.boolean, ColumnType.numeric) ->
+    (BooleanType, DoubleType) ->
       udf[java.lang.Double, java.lang.Boolean](booleanToDouble),
-    (ColumnType.string, ColumnType.numeric) ->
+    (ByteType, DoubleType) ->
+      udf[java.lang.Double, java.lang.Byte](defaultToDouble),
+    (DecimalType(), DoubleType) ->
+      udf[java.lang.Double, java.math.BigDecimal](defaultToDouble),
+    (FloatType, DoubleType) ->
+      udf[java.lang.Double, java.lang.Float](defaultToDouble),
+    (IntegerType, DoubleType) ->
+      udf[java.lang.Double, java.lang.Integer](defaultToDouble),
+    (LongType, DoubleType) ->
+      udf[java.lang.Double, java.lang.Long](defaultToDouble),
+    (ShortType, DoubleType) ->
+      udf[java.lang.Double, java.lang.Short](defaultToDouble),
+    (StringType, DoubleType) ->
       udf[java.lang.Double, String](stringToDouble),
-    (ColumnType.timestamp, ColumnType.numeric) ->
+    (TimestampType, DoubleType) ->
       udf[java.lang.Double, Timestamp](timestampToDouble)
   )
 
-  def booleanToString(b: JavaBoolean): String = nullOr[JavaBoolean, String](_.toString)(b)
+  def defaultToString[T <: AnyRef](value: T): String = nullOr[T, String](_.toString)(value)
+
+  def defaultToDouble[T <: java.lang.Number](value: T): JavaDouble =
+    nullOr[T, JavaDouble](_.doubleValue())(value)
+
+  def floatToString(f: java.lang.Float): String =
+    nullOr[java.lang.Float, String](v => DoubleUtils.double2String(v.toDouble))(f)
 
   def doubleToString(d: JavaDouble): String =
     nullOr[JavaDouble, String](DoubleUtils.double2String(_))(d)
@@ -79,6 +109,6 @@ object Conversions {
     case d: JavaDouble => doubleToString(d)
     case t: Timestamp => timestampToString(t)
     case s: String => s
-    case b: JavaBoolean => booleanToString(b)
+    case b: JavaBoolean => defaultToString(b)
   }
 }

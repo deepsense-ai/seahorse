@@ -14,36 +14,20 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperations
+package io.deepsense.deeplang.doperables
 
-import scala.reflect.runtime.{universe => ru}
-
-import org.apache.spark.sql.types.DataType
+import org.apache.spark.sql.types.{DataType, DoubleType, StringType, StructType}
 import org.apache.spark.sql.{Column, UserDefinedFunction}
 
-import io.deepsense.commons.types.ColumnType
-import io.deepsense.commons.types.ColumnType.ColumnType
-import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang._
+import io.deepsense.deeplang.doperables.ConvertType.TargetTypeChoice
 import io.deepsense.deeplang.doperables.dataframe._
-import io.deepsense.deeplang.doperables.dataframe.types.{Conversions, SparkConversions}
-import io.deepsense.deeplang.doperations.ConvertType.TargetTypeChoice
-import io.deepsense.deeplang.doperations.ConvertType.TargetTypeChoice.{NumericTargetTypeChoice, StringTargetTypeChoice}
+import io.deepsense.deeplang.doperables.dataframe.types.Conversions
 import io.deepsense.deeplang.parameters._
+import io.deepsense.deeplang.params.ColumnSelectorParam
 import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
-import io.deepsense.deeplang.params.{ColumnSelectorParam, Params}
 
-case class ConvertType()
-    extends DOperation1To1[DataFrame, DataFrame]
-    with Params {
-
-  override val name: String = "Convert Type"
-  override val id: Id = "f8b3c5d0-febe-11e4-b939-0800200c9a66"
-
-  @transient
-  override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
-  @transient
-  override lazy val tTagTI_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
+case class ConvertType() extends Transformer {
 
   val selectedColumns = ColumnSelectorParam(
     name = "selected columns",
@@ -62,10 +46,9 @@ case class ConvertType()
 
   val params = declareParams(selectedColumns, targetType)
 
-  override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): DataFrame = {
+  override def _transform(context: ExecutionContext, dataFrame: DataFrame): DataFrame = {
     val targetType = getTargetType.columnType
-    val columns = dataFrame
-      .getColumnNames(getSelectedColumns)
+    val columns = dataFrame.getColumnNames(getSelectedColumns)
 
     logger.debug("Finding converters...")
     val converters = findConverters(dataFrame, columns, targetType)
@@ -76,30 +59,31 @@ case class ConvertType()
     DataFrame.fromSparkDataFrame(cleanedUpDf)
   }
 
+  override def _transformSchema(schema: StructType): Option[StructType] = {
+    val convertedColumns = DataFrameColumnsGetter.getColumnNames(schema, getSelectedColumns)
+    val convertedFields = schema.map { field =>
+      if (convertedColumns.contains(field.name)) {
+        field.copy(dataType = getTargetType.columnType)
+      } else {
+        field
+      }
+    }
+    Some(StructType(convertedFields))
+  }
+
   private def findConverters(
       dataFrame: DataFrame,
       columns: Seq[String],
-      targetType: ColumnType): Map[String, UserDefinedFunction] = {
+      targetDataType: DataType): Map[String, UserDefinedFunction] = {
     val columnDataTypes = columns
       .map(n => n -> dataFrame.sparkDataFrame.schema.apply(n).dataType)
       .toMap
 
     columnDataTypes.collect {
       case (columnName, sourceDataType)
-        if SparkConversions.sparkColumnTypeToColumnType(sourceDataType) != targetType =>
-          val converter = findConverter(dataFrame, columnName, targetType, sourceDataType)
-          columnName -> converter
+        if sourceDataType != targetDataType =>
+          columnName -> Conversions.UdfConverters((sourceDataType, targetDataType))
     }
-  }
-
-  private def findConverter(
-      dataFrame: DataFrame,
-      columnName: String,
-      targetType: ColumnType,
-      sourceDataType: DataType): UserDefinedFunction = {
-    val sourceColumnType = SparkConversions.sparkColumnTypeToColumnType(sourceDataType)
-      Conversions.UdfConverters(
-        (SparkConversions.sparkColumnTypeToColumnType(sourceDataType), targetType))
   }
 
   private def findColumnNameMapping(columnsToConvert: Iterable[String], dataFrame: DataFrame) = {
@@ -107,13 +91,6 @@ case class ConvertType()
     val oldToNew = pairs.toMap
     oldToNew
   }
-
-  val safeConvertsTo = Seq(ColumnType.string)
-  val safeConvertsMap = Map(
-    ColumnType.numeric -> (safeConvertsTo),
-    ColumnType.boolean -> (safeConvertsTo ++ Seq(ColumnType.numeric)),
-    ColumnType.timestamp -> (safeConvertsTo ++ Seq(ColumnType.numeric))
-  )
 
   private def convert(
       dataFrame: DataFrame,
@@ -136,34 +113,38 @@ case class ConvertType()
     })
     dfWithConvertedColumns.select(correctColumns: _*)
   }
+
+  override def report(executionContext: ExecutionContext): Report = Report()
 }
 
 object ConvertType {
 
   sealed trait TargetTypeChoice extends Choice {
-    val columnType: ColumnType.Value
+    import TargetTypeChoice._
+
+    val columnType: DataType
     override val choiceOrder: List[Class[_ <: Choice]] = List(
       classOf[StringTargetTypeChoice],
       classOf[NumericTargetTypeChoice])
   }
 
   object TargetTypeChoice {
-    def fromColumnType(targetType: ColumnType): TargetTypeChoice = {
+    def fromColumnType(targetType: DataType): TargetTypeChoice = {
       targetType match {
-        case ColumnType.string => StringTargetTypeChoice()
-        case ColumnType.numeric => NumericTargetTypeChoice()
+        case StringType => StringTargetTypeChoice()
+        case DoubleType => NumericTargetTypeChoice()
       }
     }
 
     case class StringTargetTypeChoice() extends TargetTypeChoice {
       override val name = "string"
-      override val columnType = ColumnType.string
+      override val columnType = StringType
       override val params = declareParams()
     }
 
     case class NumericTargetTypeChoice() extends TargetTypeChoice {
       override val name = "numeric"
-      override val columnType = ColumnType.numeric
+      override val columnType = DoubleType
       override val params = declareParams()
     }
   }
