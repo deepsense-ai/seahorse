@@ -2,7 +2,7 @@
 
 /* @ngInject */
 function Home($rootScope, $uibModal, $state, $q, WorkflowService, PageService, ConfirmationModalService, SessionManagerApi,
-              NotificationService, WorkflowsApiClient, config) {
+              NotificationService, WorkflowsApiClient, SessionManager, config) {
   this.init = () => {
     PageService.setTitle('Home');
     $rootScope.stateData.dataIsLoaded = true;
@@ -17,6 +17,14 @@ function Home($rootScope, $uibModal, $state, $q, WorkflowService, PageService, C
     };
 
     this.downloadWorkflows();
+
+    $rootScope.$watch(() => {
+      return { sessions: SessionManager.sessions, workflows: this.workflows }
+    }, () => {
+      _.forEach(this.workflows, (w) => {
+        w.sessionStatus = SessionManager.statusForWorkflowId(w.id);
+      });
+    }, true); // deep: true
   };
 
   this.downloadWorkflows = () => {

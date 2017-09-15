@@ -2,7 +2,7 @@
 
 /* @ngInject */
 function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiClient, Operations, $rootScope,
-  DefaultInnerWorkflowGenerator, debounce, nodeTypes, SessionManagerApi, SessionStatus, ServerCommunication) {
+  DefaultInnerWorkflowGenerator, debounce, nodeTypes, SessionManagerApi, SessionStatus, SessionManager) {
 
   const INNER_WORKFLOW_PARAM_NAME = 'inner workflow';
 
@@ -28,39 +28,29 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
       let workflow = this._deserializeWorkflow(workflowData);
       workflow.workflowType = 'root';
       workflow.workflowStatus = 'editor';
-      workflow.sessionStatus = workflowData.sessionStatus;
+      workflow.sessionStatus = SessionStatus.NOT_RUNNING;
 
       let nodes = _.values(workflow.getNodes());
       nodes.filter((n) => n.operationId === nodeTypes.CUSTOM_TRANSFORMER)
         .forEach((node) => this.initInnerWorkflow(node));
 
       $rootScope.$watch(() => workflow.serialize(), this._saveWorkflow, true);
-      this._watchForNewCustomTransformers(workflow);
-      this._workflowsStack.push(workflow);
+      $rootScope.$watch(() => SessionManager.statusForWorkflowId(workflow.id), (newStatus) => {
+        workflow.sessionStatus = newStatus;
+      });
 
       $rootScope.$on('StatusBar.START_EXECUTOR', () => {
         const workflow = this.getRootWorkflow();
-        workflow.sessionStatus = SessionStatus.STARTING;
-        SessionManagerApi.startSession(workflow.id).then(() => {
-          workflow.sessionStatus = SessionStatus.RUNNING;
-        });
+        SessionManagerApi.startSession(workflow.id);
       });
 
       $rootScope.$on('StatusBar.STOP_EXECUTOR', () => {
         const workflow = this.getRootWorkflow();
-        SessionManagerApi.deleteSessionById(workflow.id).then(() => {
-          workflow.sessionStatus = SessionStatus.NOT_RUNNING;
-        });
+        SessionManagerApi.deleteSessionById(workflow.id);
       });
 
-      $rootScope.$on('ServerCommunication.MESSAGE.heartbeat', (event, data) => {
-        const workflow = this.getRootWorkflow();
-        if(data.sessionId === workflow.id && workflow.sessionStatus !== 'running_and_ready') {
-          console.log('WorkflowService', 'Received first heartbeat. Executor is running and ready');
-          workflow.sessionStatus = SessionStatus.RUNNING_AND_READY;
-          ServerCommunication.sendSynchronize();
-        }
-      });
+      this._watchForNewCustomTransformers(workflow);
+      this._workflowsStack.push(workflow);]
     }
 
     // TODO Add enums for workflowType, workflowStatus
@@ -186,44 +176,17 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
     }
 
     downloadWorkflow(workflowId) {
-      return $q.all([
-        WorkflowsApiClient.getWorkflow(workflowId),
-        SessionManagerApi.downloadSessions()
-      ]).then(([workflow, sessions]) => {
-        this._assignStatusToWorkflow(workflow, sessions);
-        return workflow;
-      });
+      return WorkflowsApiClient.getWorkflow(workflowId);
     }
 
     downloadWorkflows() {
-      return $q.all([
-        WorkflowsApiClient.getAllWorkflows(),
-        SessionManagerApi.downloadSessions()
-      ]).then(([workflows, sessions]) => {
-        this._assignStatusesToWorkflows(workflows, sessions);
+      return WorkflowsApiClient.getAllWorkflows().then((workflows) => {
         this._workflowsData = workflows; // TODO There should be no state here. Get rid of it
         return workflows;
       });
     }
 
-    _assignStatusesToWorkflows(workflows, sessions) {
-      _.forEach(workflows, (workflow) => {
-        this._assignStatusToWorkflow(workflow, sessions);
-      });
-    }
-
-    _assignStatusToWorkflow(workflow, sessions) {
-      const sessionByWorkflowId = _.object(_.map(sessions, s => [s.workflowId, s]));
-      const session = sessionByWorkflowId[workflow.id];
-      if(session && session.status === 'error') {
-        // TODO Design and implement proper error handling.
-        console.warn('Session status is `error` for ', session);
-      }
-      workflow.sessionStatus = _.isUndefined(session) ? SessionStatus.NOT_RUNNING : SessionStatus.RUNNING;
-    }
   }
-
-
 
   return new WorkflowServiceClass();
 }

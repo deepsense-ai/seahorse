@@ -27,5 +27,6 @@ require('./workflows-editor/side-bar/side-bar.service.js').inject(workflows);
 require('./workflows-editor/bottom-bar/bottom-bar.directive.js').inject(workflows);
 require('./workflows-editor/bottom-bar/bottom-bar.controller.js').inject(workflows);
 require('./workflows-editor/bottom-bar/bottom-bar.service.js').inject(workflows);
+require('./session-manager.service.js').inject(workflows);
 
 module.exports = workflows;

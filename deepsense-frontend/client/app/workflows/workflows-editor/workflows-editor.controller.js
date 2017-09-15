@@ -318,7 +318,7 @@ class WorkflowsEditorController {
 
   isEditable() {
     const workflow = this.WorkflowService.getCurrentWorkflow();
-    return workflow.workflowStatus === 'editor' && workflow.sessionStatus === this.SessionStatus.RUNNING_AND_READY;
+    return workflow.workflowStatus === 'editor' && workflow.sessionStatus === this.SessionStatus.RUNNING;
   }
 
   _isSinkOrSource(node) {

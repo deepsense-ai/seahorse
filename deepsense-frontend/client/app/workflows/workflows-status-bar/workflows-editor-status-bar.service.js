@@ -40,6 +40,12 @@ function WorkflowStatusBarService($rootScope, config, version, SessionStatus) {
       additionalClass: 'disabled',
       additionalIconClass: 'fa-spin'
     },
+    executorError: {
+      label: 'Executor error',
+      icon: 'fa-ban',
+      color: '#BF2828',
+      additionalClass: 'disabled'
+    },
     stopExecutor: {
       label: 'Stop executor',
       icon: 'fa-ban',
@@ -74,9 +80,10 @@ function WorkflowStatusBarService($rootScope, config, version, SessionStatus) {
   menuItems.disabledRun.additionalClass = 'disabled';
 
   const _menuItemViews = {
-    editorWithExecutor: [menuItems.clear, menuItems.export, menuItems.documentation, menuItems.stopExecutor, menuItems.run],
-    editorWithoutReadyExecutor: [menuItems.disabledClear, menuItems.export, menuItems.documentation, menuItems.startingExecutor, menuItems.disabledRun],
-    editorWithoutExecutor: [menuItems.disabledClear, menuItems.export, menuItems.documentation, menuItems.startExecutor, menuItems.disabledRun],
+    editorExecutorRunning: [menuItems.clear, menuItems.export, menuItems.documentation, menuItems.stopExecutor, menuItems.run],
+    editorExecutorCreating: [menuItems.disabledClear, menuItems.export, menuItems.documentation, menuItems.startingExecutor, menuItems.disabledRun],
+    editorExecutorNotRunning: [menuItems.disabledClear, menuItems.export, menuItems.documentation, menuItems.startExecutor, menuItems.disabledRun],
+    editorExecutorError: [menuItems.disabledClear, menuItems.export, menuItems.documentation, menuItems.executorError, menuItems.disabledRun],
     running: [menuItems.disabledClear, menuItems.disabledExport, menuItems.documentation, menuItems.abort],
     aborting: [menuItems.disabledClear, menuItems.disabledExport, menuItems.documentation, menuItems.aborting],
     editInnerWorkflow: [menuItems.documentation, menuItems.closeInnerWorkflow]
@@ -95,12 +102,13 @@ function WorkflowStatusBarService($rootScope, config, version, SessionStatus) {
           case 'editor':
             switch (workflow.sessionStatus) {
               case SessionStatus.NOT_RUNNING:
-                return 'editorWithoutExecutor';
-              case SessionStatus.STARTING:
+                return 'editorExecutorNotRunning';
+              case SessionStatus.CREATING:
+                return 'editorExecutorCreating';
               case SessionStatus.RUNNING:
-                return 'editorWithoutReadyExecutor';
-              case SessionStatus.RUNNING_AND_READY:
-                return 'editorWithExecutor';
+                return 'editorExecutorRunning';
+              case SessionStatus.ERROR:
+                return 'editorExecutorError';
               default:
                 throw `Unsupported session status: ${workflow.sessionStatus}`;
             }

@@ -93,7 +93,7 @@
           </a>
         </td>
         <td class="vertical-align action-icons">
-          <a ng-if="workflow.sessionStatus === 'running' || workflow.sessionStatus === 'error'">
+          <a ng-if="workflow.sessionStatus !== 'not_running'">
             <i ng-click="home.deleteSession(workflow.id)"
                uib-popover="Stop session"
                popover-trigger="mouseenter"
