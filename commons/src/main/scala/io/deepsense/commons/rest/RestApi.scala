@@ -40,6 +40,9 @@ trait RestApiAbstractAuth extends Directives with Logging {
 
   val rejectionHandler: RejectionHandler = {
     RejectionHandler {
+      case rejection @ (MalformedRequestContentRejection(message, cause) :: _) =>
+        logger.info(message, cause.orNull)
+        RejectionHandler.Default(rejection)
       case MissingHeaderRejection(param) :: _ if param == TokenHeader =>
         logger.info(s"A request was rejected because did not contain '$TokenHeader' header")
         complete(StatusCodes.Unauthorized, s"Request is missing required header '$param'")

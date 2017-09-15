@@ -26,7 +26,7 @@ trait Cors {
         val allowedMethods: List[HttpMethod] =
           x.collect { case rejection: MethodRejection => rejection.supported }
         ctx.complete(HttpResponse().withHeaders(
-          `Access-Control-Allow-Methods`(OPTIONS, allowedMethods :_*) :: allowOriginHeader ::
+          `Access-Control-Allow-Methods`(OPTIONS, allowedMethods : _*) :: allowOriginHeader ::
             optionsCorsHeaders
         ))
     }).withHttpResponseHeadersMapped { headers => allowOriginHeader :: headers }
