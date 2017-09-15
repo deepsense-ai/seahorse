@@ -41,6 +41,9 @@ function PiePlot($filter) {
 
         chart.tooltip.hideDelay(0);
 
+        //We don't want any formatting to the numbers in tooltip
+        chart.tooltip.valueFormatter(n => n);
+
         d3.select(element[0].querySelector('.svg-plot'))
             .datum(chartValues)
             .call(chart);
