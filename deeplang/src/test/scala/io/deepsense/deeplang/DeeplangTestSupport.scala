@@ -19,7 +19,7 @@ package io.deepsense.deeplang
 import org.apache.spark.sql
 import org.apache.spark.sql.types.StructType
 import org.mockito.Mockito._
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}

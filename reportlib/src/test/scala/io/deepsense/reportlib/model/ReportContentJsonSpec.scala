@@ -59,7 +59,7 @@ class ReportContentJsonSpec
         emptyReportJson.convertTo[ReportContent] shouldBe ReportContent(
           reportName, reportType)
       }
-      "full report" when {
+      "full report" in {
         reportJson.convertTo[ReportContent] shouldBe report
       }
     }

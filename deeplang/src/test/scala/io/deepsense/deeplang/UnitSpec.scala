@@ -17,7 +17,7 @@
 package io.deepsense.deeplang
 
 import org.scalatest._
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 
 /**
  * Base class for unit tests as advised: http://www.scalatest.org/user_guide/defining_base_classes

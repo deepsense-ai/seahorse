@@ -21,7 +21,7 @@ import org.apache.spark.ml.param.{BooleanParam, DoubleParam, ParamMap}
 import org.apache.spark.sql.types.StructType
 import org.apache.spark.sql.{DataFrame => SparkDataFrame, Dataset}
 import org.mockito.Mockito._
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.report.Report

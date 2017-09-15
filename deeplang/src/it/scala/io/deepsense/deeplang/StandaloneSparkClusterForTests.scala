@@ -29,7 +29,7 @@ import io.deepsense.deeplang.inference.InferContext
 object StandaloneSparkClusterForTests {
 
   lazy val executionContext: ExecutionContext = {
-    import org.scalatest.mock.MockitoSugar._
+    import org.scalatest.mockito.MockitoSugar._
 
     System.setProperty("HADOOP_USER_NAME", "hdfs")
 

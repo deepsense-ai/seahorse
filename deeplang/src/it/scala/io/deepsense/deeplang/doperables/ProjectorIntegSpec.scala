@@ -132,7 +132,7 @@ class ProjectorIntegSpec
         val emptyDataFrame = emptyProjector._transform(executionContext, dataFrame)
         emptyDataFrame.sparkDataFrame.collectAsList() shouldBe empty
       }
-      "produce an empty schema" when {
+      "produce an empty schema" in {
         val Some(inferredSchema) = emptyProjector._transformSchema(schema)
         inferredSchema.fields shouldBe empty
       }

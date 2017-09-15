@@ -26,7 +26,7 @@ object Version {
   val nsscalaTime = "1.8.0"
   val scala = "2.11.8"
   val scalacheck = "1.12.2"
-  val scalatest = "3.0.0-SNAP4"
+  val scalatest = "3.0.0"
   val scoverage = "1.0.4"
   val spark = "2.0.0"
   val spray = "1.3.3"
@@ -38,11 +38,12 @@ object Library {
 
   implicit class RichModuleID(m: ModuleID) {
     def excludeAkkaActor: ModuleID = m excludeAll ExclusionRule("com.typesafe.akka")
+    def excludeScalatest: ModuleID = m excludeAll ExclusionRule("org.scalatest")
   }
 
   val akka = (name: String) => "com.typesafe.akka" %% s"akka-$name" % Version.akka
   val hadoop = (name: String) => "org.apache.hadoop" % s"hadoop-$name" % Version.hadoop
-  val spark = (name: String) => "org.apache.spark" %% s"spark-$name" % Version.spark
+  val spark = (name: String) => "org.apache.spark" %% s"spark-$name" % Version.spark excludeScalatest
   val spray = (name: String) => "io.spray" %% s"spray-$name" % Version.spray excludeAkkaActor
 
   val akkaActor = akka("actor")

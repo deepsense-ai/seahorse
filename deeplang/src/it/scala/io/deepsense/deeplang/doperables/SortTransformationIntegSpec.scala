@@ -26,7 +26,7 @@ import io.deepsense.deeplang.doperables.spark.wrappers.transformers.TransformerS
 import io.deepsense.deeplang.doperations.exceptions.ColumnDoesNotExistException
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
-import org.scalactic.enablers.Sortable
+import org.scalatest.enablers.Sortable
 
 class SortTransformationIntegSpec extends DeeplangIntegTestSupport with TransformerSerialization {
 

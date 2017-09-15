@@ -25,7 +25,7 @@ import org.apache.spark.sql.types._
 import org.apache.spark.sql.{Row, SparkSession}
 import org.apache.spark.{SparkConf, SparkContext}
 import org.scalatest.{Matchers, BeforeAndAfterAll}
-import org.scalatest.mock.MockitoSugar._
+import org.scalatest.mockito.MockitoSugar._
 
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.spark.sql.UserDefinedFunctions

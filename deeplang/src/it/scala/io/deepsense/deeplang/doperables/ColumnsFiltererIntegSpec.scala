@@ -120,7 +120,7 @@ class ColumnsFiltererIntegSpec
         val emptyDataFrame = filterColumns(Set.empty, Set.empty)
         emptyDataFrame.sparkDataFrame.collectAsList() shouldBe empty
       }
-      "produce an empty schema" when {
+      "produce an empty schema" in {
         val Some(inferredSchema) = filterColumnsSchema(Set.empty, Set.empty)
         inferredSchema.fields shouldBe empty
       }

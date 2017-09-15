@@ -19,7 +19,7 @@ package io.deepsense.deeplang.catalogs.doperations
 
 import scala.reflect.runtime.universe.{TypeTag, typeTag}
 
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{FunSuite, Matchers}
 
 import io.deepsense.commons.utils.Version

@@ -29,7 +29,7 @@ class EntitiesMapSpec
   with MockitoSugar {
 
   "EntitiesMap" should {
-    "be correctly created from results and reports" when {
+    "be correctly created from results and reports" in {
 
       val entity1Id = Entity.Id.randomId
       val doperable1 = new DataFrame()
