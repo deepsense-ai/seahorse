@@ -66,3 +66,16 @@ Note, that bash 4.2 is required.
 
 After the bash upgrade, you may have to rename `.bash_profile` to `.bashrc`. And maybe add `/usr/local/bin` to $PATH.
 Also, check if you're actually running the new bash with `echo $BASH_VERSION` - your terminal might still be using the old one.
+
+### Developing SDK operations on local repository
+To compile and test SDK operations on local repository, you can use `seahorse-sdk-example` submodule
+```console
+git submodule init
+git submodule update
+./build/prepare-sdk-dependencies.sh
+```
+Now it will compile and test against the local Seahorse repository:
+```console
+cd seahorse-sdk-example
+sbt test
+```
