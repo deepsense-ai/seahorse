@@ -4,9 +4,9 @@
 
 package io.deepsense.sessionmanager.service.livy.responses
 
-import io.deepsense.sessionmanager.service.livy.responses.BatchStatus.BatchStatus
+import io.deepsense.sessionmanager.service.livy.responses.BatchState.BatchState
 
 case class Batch(
   id: Int,
-  status: BatchStatus
+  state: BatchState
 )

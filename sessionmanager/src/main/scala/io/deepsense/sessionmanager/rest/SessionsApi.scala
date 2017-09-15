@@ -4,15 +4,18 @@
 
 package io.deepsense.sessionmanager.rest
 
+import javax.inject.Named
+
 import scala.concurrent.ExecutionContext
 
+import com.google.inject.Inject
 import spray.routing.{Directives, PathMatchers, Route}
 
 import io.deepsense.commons.rest.RestComponent
 import io.deepsense.sessionmanager.service.SessionService
 
-class SessionsApi(
-  private val sessionsApiPrefix: String,
+class SessionsApi @Inject() (
+  @Named("session-api.prefix") private val sessionsApiPrefix: String,
   private val sessionService: SessionService
 )(implicit ec: ExecutionContext) extends RestComponent
   with Directives

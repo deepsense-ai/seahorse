@@ -4,8 +4,6 @@
 
 package io.deepsense.sessionmanager.service.livy
 
-import scala.concurrent.duration._
-
 import akka.actor.ActorSystem
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
@@ -14,21 +12,23 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
 import org.mockito.Mockito
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
+import org.scalatest.time.{Milliseconds, Span}
 import spray.http.StatusCodes
 import spray.json._
 
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.sessionmanager.service.livy.requests.Create
-import io.deepsense.sessionmanager.service.livy.responses.{BatchStatus, Batch}
+import io.deepsense.sessionmanager.service.livy.responses.BatchState.BatchState
+import io.deepsense.sessionmanager.service.livy.responses.{Batch, BatchState}
 
 class DefaultLivySpec
   extends StandardSpec
     with UnitTestSupport
     with BeforeAndAfterEach {
 
-  val defaultTimeout = 5.seconds
-  implicit val patience = PatienceConfig(timeout = defaultTimeout)
+  val defaultTimeout = 5000 // 5 sec
+  implicit val patience = PatienceConfig(timeout = Span(defaultTimeout, Milliseconds))
 
   val httpHost = "localhost"
   var httpPort: Int = _
@@ -68,13 +68,13 @@ class DefaultLivySpec
     }
     "getting an existing session" should {
       "return the requested session" in {
-        val status = BatchStatus.Running
+        val status = BatchState.Running
         val id: Int = 123
         stubFor(get(urlEqualTo(s"/batches/$id"))
           .willReturn(aResponse()
             .withStatus(StatusCodes.OK.intValue)
             .withHeader("Content-Type", "application/json; charset=UTF-8")
-            .withBody(sessionJson(id, status.toString).compactPrint)))
+            .withBody(sessionJson(id, status).compactPrint)))
 
         whenReady(createTestLivy.getSession(id)) {
           _ shouldBe Some(Batch(id, status))
@@ -133,7 +133,7 @@ class DefaultLivySpec
           .willReturn(aResponse()
             .withStatus(StatusCodes.Created.intValue)
             .withHeader("Content-Type", "application/json; charset=UTF-8")
-            .withBody(sessionJson(returnedId, BatchStatus.Running.toString).compactPrint)))
+            .withBody(sessionJson(returnedId, BatchState.Running).compactPrint)))
 
         whenReady(createTestLivy.createSession(workflowId))(_.id shouldBe returnedId)
       }
@@ -177,19 +177,19 @@ class DefaultLivySpec
 
   private val (sessionsJson, sessionsObjects) = {
     val batches = Seq(
-      Batch(3, BatchStatus.Ok),
-      Batch(1, BatchStatus.Error),
-      Batch(4, BatchStatus.Idle))
+      Batch(3, BatchState.Ok),
+      Batch(1, BatchState.Error),
+      Batch(4, BatchState.Idle))
 
     val json = JsObject(
-      "sessions" -> JsArray(batches.map(b => sessionJson(b.id, b.status.toString)): _*)
+      "sessions" -> JsArray(batches.map(b => sessionJson(b.id, b.state)): _*)
     )
 
     (json, batches)
   }
 
-  private def sessionJson(id: Int, status: String): JsObject = JsObject(
+  private def sessionJson(id: Int, state: BatchState): JsObject = JsObject(
     "id" -> JsNumber(id),
-    "status" -> JsString(status)
+    "state" -> JsString(state.toString)
   )
 }

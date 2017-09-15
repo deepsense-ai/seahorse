@@ -4,8 +4,8 @@
 
 package io.deepsense.sessionmanager.service.livy.responses
 
-object BatchStatus extends Enumeration {
-  type BatchStatus = Value
+object BatchState extends Enumeration {
+  type BatchState = Value
   val Ok = Value("ok")
   val NotStarted = Value("not_started")
   val Starting = Value("starting")

@@ -9,6 +9,7 @@ lazy val sessionmanager         = project dependsOn (commons, commons % "test->t
 // Sequentially perform integration tests after assembling and deploying GE with dependencies jar
 addCommandAlias("ds-it",
     ";commons/it:test " +
+    ";sessionmanager/it:test " +
     ";workflowmanager/it:test ")
 
 addCommandAlias("sPublish", "aetherDeploy")

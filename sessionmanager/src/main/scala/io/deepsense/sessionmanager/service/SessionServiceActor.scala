@@ -9,6 +9,7 @@ import scala.concurrent.Future
 
 import akka.actor.Actor
 import akka.pattern.pipe
+import com.google.inject.Inject
 
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.utils.Logging
@@ -21,6 +22,11 @@ class SessionServiceActor private[service](
   private val initialHandles: Seq[LivySessionHandle] = Seq.empty,
   private val initialFutureSessions: Map[Id, Future[Session]] = Map.empty
 ) extends Actor with Logging {
+
+  @Inject()
+  def this(livyClient: Livy) = {
+    this(livyClient, Seq.empty, Map.empty)
+  }
 
   private val sessions =
     mutable.Map[Id, LivySessionHandle](initialHandles.map(h => (h.workflowId, h)): _*)
@@ -102,7 +108,7 @@ class SessionServiceActor private[service](
   }
 
   private def createSession(handle: LivySessionHandle, batch: Batch): Session = {
-    Session(handle, Status.fromBatchStatus(batch.status))
+    Session(handle, Status.fromBatchStatus(batch.state))
   }
 
   private def handleCreate(workflowId: Id): Unit = {

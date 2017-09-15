@@ -4,19 +4,25 @@
 
 package io.deepsense.sessionmanager.service
 
+import java.util.concurrent.TimeUnit
+
 import scala.concurrent.Future
 
 import akka.actor.ActorRef
 import akka.pattern.ask
 import akka.util.Timeout
+import com.google.inject.Inject
+import com.google.inject.name.Named
 
 import io.deepsense.commons.models.Id
 import io.deepsense.sessionmanager.service.SessionServiceActor.KillResponse
 
-class SessionService(
-  private val serviceActor: ActorRef,
-  private implicit val timeout: Timeout
+class SessionService @Inject() (
+  @Named("SessionService.Actor") private val serviceActor: ActorRef,
+  @Named("session-service.timeout") private val timeout: Int
 ) {
+
+  private implicit val implicitTimeout = Timeout(timeout, TimeUnit.MILLISECONDS)
 
   def getSession(workflowId: Id): Future[Option[Session]] = {
     (serviceActor ? SessionServiceActor.GetRequest(workflowId)).mapTo[Option[Session]]

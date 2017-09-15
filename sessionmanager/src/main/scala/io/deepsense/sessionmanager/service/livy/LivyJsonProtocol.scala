@@ -10,17 +10,17 @@ import spray.httpx.SprayJsonSupport
 import spray.json._
 
 import io.deepsense.sessionmanager.service.livy.requests.Create
-import io.deepsense.sessionmanager.service.livy.responses.{Batch, BatchList, BatchStatus}
+import io.deepsense.sessionmanager.service.livy.responses.{Batch, BatchList, BatchState}
 
 trait LivyJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
 
-  implicit val statusFormat = new RootJsonFormat[BatchStatus.Value]{
-    override def write(obj: BatchStatus.Value): JsValue = JsString(obj.toString)
+  implicit val statusFormat = new RootJsonFormat[BatchState.Value]{
+    override def write(obj: BatchState.Value): JsValue = JsString(obj.toString)
 
-    override def read(json: JsValue): BatchStatus.Value = {
+    override def read(json: JsValue): BatchState.Value = {
       json match {
         case JsString(value) => try {
-          BatchStatus.withName(value)
+          BatchState.withName(value)
         } catch {
           case e: NoSuchElementException =>
             deserializationError(s"Unknown Batch status value '$value'", e)

@@ -4,10 +4,14 @@
 
 package io.deepsense.sessionmanager.service.livy
 
+import java.util.concurrent.TimeUnit
+
 import scala.concurrent.Future
 
 import akka.actor.ActorSystem
 import akka.util.Timeout
+import com.google.inject.Inject
+import com.google.inject.name.Named
 import spray.client.pipelining._
 import spray.http.{HttpRequest, _}
 import spray.httpx.unmarshalling.FromResponseUnmarshaller
@@ -15,17 +19,16 @@ import spray.httpx.unmarshalling.FromResponseUnmarshaller
 import io.deepsense.commons.models.Id
 import io.deepsense.sessionmanager.service.livy.responses.{Batch, BatchList}
 
-class DefaultLivy(
+class DefaultLivy @Inject() (
   private val system: ActorSystem,
-  private val timeout: Timeout,
-  private val baseUrl: String,
+  @Named("livy-client.timeout") private val timeout: Int,
+  @Named("livy-client.base-url") private val baseUrl: String,
   private val requestBuilder: RequestBodyBuilder
 ) extends LivyJsonProtocol with Livy {
 
   private implicit val implicitSystem = system
-  private implicit val implicitTimeout = timeout
+  private implicit val implicitTimeout = Timeout(timeout, TimeUnit.MILLISECONDS)
   private implicit val executionContext = system.dispatcher
-  private val awaitDuration = timeout.duration
 
   override def createSession(workflowId: Id): Future[Batch] = {
     createSessionPipeline(Post(

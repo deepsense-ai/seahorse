@@ -21,7 +21,7 @@ import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 import io.deepsense.commons.models.Id
 import io.deepsense.sessionmanager.service.SessionServiceActor.KillResponse
 import io.deepsense.sessionmanager.service.livy.Livy
-import io.deepsense.sessionmanager.service.livy.responses.{BatchStatus, Batch, BatchList}
+import io.deepsense.sessionmanager.service.livy.responses.{BatchState, Batch, BatchList}
 
 class SessionServiceActorSpec(_system: ActorSystem) extends TestKit(_system) with ImplicitSender
   with WordSpecLike with ScalaFutures with Matchers with MockitoSugar with BeforeAndAfterAll {
@@ -42,7 +42,7 @@ class SessionServiceActorSpec(_system: ActorSystem) extends TestKit(_system) wit
         val livy = mock[Livy]
         val workflowId = Id.randomId
         val batchId = 5
-        val batchStatus = BatchStatus.Running
+        val batchStatus = BatchState.Running
         val expectedStatus = Status.fromBatchStatus(batchStatus)
         when(livy.createSession(workflowId))
           .thenReturn(Future.successful(Batch(batchId, batchStatus)))
@@ -62,7 +62,7 @@ class SessionServiceActorSpec(_system: ActorSystem) extends TestKit(_system) wit
         val workflowId: Id = handle.workflowId
         val livy = mock[Livy]
         when(livy.getSession(handle.batchId))
-          .thenReturn(Future.successful(Some(Batch(handle.batchId, BatchStatus.Running))))
+          .thenReturn(Future.successful(Some(Batch(handle.batchId, BatchState.Running))))
         "not create new session" in withActor(livy, Seq(handle)) { actor =>
           whenReady(askCreate(actor, workflowId)) {
             session =>
@@ -81,7 +81,7 @@ class SessionServiceActorSpec(_system: ActorSystem) extends TestKit(_system) wit
           val batchId = 5
           val existingSessionHandle = LivySessionHandle(workflowId, batchId)
           when(livy.getSession(batchId))
-            .thenReturn(Future.successful(Some(Batch(batchId, BatchStatus.Running))))
+            .thenReturn(Future.successful(Some(Batch(batchId, BatchState.Running))))
           withActor(livy, handles = Seq(existingSessionHandle)) { actor =>
             whenReady(askGet(actor, workflowId)) { session =>
               session.get.status shouldBe Status.Running
@@ -169,7 +169,7 @@ class SessionServiceActorSpec(_system: ActorSystem) extends TestKit(_system) wit
       val remoteSessions = Seq(remoteAndLocalSession, randomHandle)
       val batches = remoteSessions.zipWithIndex.map {
         case (handle, idx) =>
-          Batch(handle.batchId, if (idx % 2 == 0) BatchStatus.Running else BatchStatus.Error)
+          Batch(handle.batchId, if (idx % 2 == 0) BatchState.Running else BatchState.Error)
       }
 
       val client = mock[Livy]
