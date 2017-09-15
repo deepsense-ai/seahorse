@@ -16,33 +16,29 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
-import org.apache.spark.ml.recommendation.{ALS => SparkALS}
+import org.apache.spark.ml.regression.{LinearRegression => SparkLinearRegression}
 
 import io.deepsense.deeplang.params.ParamPair
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
-class ALSSmokeTest extends AbstractEstimatorModelWrapperSmokeTest[SparkALS] {
+class LinearRegressionSmokeTest
+  extends AbstractEstimatorModelWrapperSmokeTest[SparkLinearRegression] {
 
-  override def className: String = "ALS"
+  override def className: String = "LinearRegression"
 
-  override val estimatorWrapper = new ALS()
+  override val estimatorWrapper = new LinearRegression()
 
   import estimatorWrapper._
 
   override val estimatorParams: Seq[ParamPair[_]] = Seq(
-    alpha -> 1.0,
-    checkpointInterval -> 15.0,
-    implicitPrefs -> false,
-    itemColumn -> NameSingleColumnSelection("myItemId"),
-    maxIterations -> 5.0,
-    nonnegative -> false,
-    numItemBlocks -> 10.0,
-    numUserBlocks -> 10.0,
-    predictionColumn -> "prediction",
-    rank -> 8.0,
-    ratingColumn -> NameSingleColumnSelection("myRating"),
-    regularizationParam -> 0.2,
-    seed -> 100.0,
-    userColumn -> NameSingleColumnSelection("myUserId")
+    elasticNetParam -> 0.8,
+    fitIntercept -> true,
+    maxIterations -> 2.0,
+    regularizationParam -> 0.1,
+    tolerance -> 0.01,
+    standardization -> true,
+    featuresColumn -> NameSingleColumnSelection("myFeatures"),
+    labelColumn -> NameSingleColumnSelection("myLabel"),
+    predictionColumn -> "pred"
   )
 }

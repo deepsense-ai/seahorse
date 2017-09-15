@@ -30,10 +30,10 @@ class LogisticRegressionSmokeTest
   import estimatorWrapper._
 
   override val estimatorParams: Seq[ParamPair[_]] = Seq(
-    elasticNetParameter -> 0.8,
+    elasticNetParam -> 0.8,
     fitIntercept -> true,
     maxIterations -> 2.0,
-    regularizationParameter -> 0.1,
+    regularizationParam -> 0.1,
     tolerance -> 0.01,
     standardization -> true,
     featuresColumn -> NameSingleColumnSelection("myFeatures"),

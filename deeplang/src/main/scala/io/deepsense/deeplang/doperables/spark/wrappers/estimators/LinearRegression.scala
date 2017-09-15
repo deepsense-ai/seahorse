@@ -16,30 +16,20 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
-import org.apache.spark.ml.classification.{LogisticRegression => SparkLogisticRegression, LogisticRegressionModel => SparkLogisticRegressionModel}
+import org.apache.spark.ml.regression.{LinearRegression => SparkLinearRegression, LinearRegressionModel => SparkLinearRegressionModel}
 
 import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables.spark.wrappers.models.LogisticRegressionModel
-import io.deepsense.deeplang.doperables.spark.wrappers.params.common._
+import io.deepsense.deeplang.doperables.spark.wrappers.models.LinearRegressionModel
+import io.deepsense.deeplang.doperables.spark.wrappers.params.LinearRegressionParams
 import io.deepsense.deeplang.doperables.{Report, SparkEstimatorWrapper}
 import io.deepsense.deeplang.params.Param
 
-class LogisticRegression
+class LinearRegression
   extends SparkEstimatorWrapper[
-    SparkLogisticRegressionModel,
-    SparkLogisticRegression,
-    LogisticRegressionModel]
-  with ProbabilisticClassifierParams
-  with HasLabelColumnParam
-  with HasThreshold
-  with HasRegularizationParam
-  with HasElasticNetParam
-  with HasMaxIterationsParam
-  with HasTolerance
-  with HasFitIntercept
-  with HasStandardization {
-
-  override val maxIterationsDefault = 100.0
+    SparkLinearRegressionModel,
+    SparkLinearRegression,
+    LinearRegressionModel]
+  with LinearRegressionParams {
 
   override def report(executionContext: ExecutionContext): Report = Report()
 
@@ -52,8 +42,5 @@ class LogisticRegression
     standardization,
     featuresColumn,
     labelColumn,
-    probabilityColumn,
-    rawPredictionColumn,
-    predictionColumn,
-    threshold)
+    predictionColumn)
 }

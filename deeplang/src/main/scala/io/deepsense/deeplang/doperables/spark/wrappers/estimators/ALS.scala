@@ -33,7 +33,8 @@ class ALS
   with HasPredictionColumnCreatorParam
   with HasUserColumnParam
   with HasMaxIterationsParam
-  with HasSeedParam {
+  with HasSeedParam
+  with HasRegularizationParam {
 
   val alpha = new DoubleParamWrapper[SparkALS](
     name = "alpha",
@@ -89,13 +90,6 @@ class ALS
     portIndex = 0)
   setDefault(ratingColumn, NameSingleColumnSelection("rating"))
 
-  val regularization = new DoubleParamWrapper[SparkALS](
-    name = "regularization",
-    description = "Regularization parameter (>= 0)",
-    sparkParamGetter = _.regParam,
-    validator = RangeValidator(begin = 0.0, end = Double.PositiveInfinity))
-  setDefault(regularization, 0.1)
-
   override def report(executionContext: ExecutionContext): Report = Report()
 
   override val params: Array[Param[_]] = declareParams(
@@ -110,7 +104,7 @@ class ALS
     predictionColumn,
     rank,
     ratingColumn,
-    regularization,
+    regularizationParam,
     seed,
     userColumn
   )
