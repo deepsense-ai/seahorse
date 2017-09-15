@@ -71,7 +71,9 @@ class LibraryModalController extends DatasourceModal {
   }
 
   setDatasourceParams(fullFilePath) {
-    this.extension = fullFilePath.substr(fullFilePath.lastIndexOf('.') + 1);
+    this.extension = fullFilePath
+      .substr(fullFilePath.lastIndexOf('.') + 1)
+      .toLowerCase();
     this.datasourceParams.libraryFileParams.libraryPath = fullFilePath;
     this.datasourceParams.libraryFileParams.fileFormat = this.extension;
     this.datasourceParams.name = fullFilePath
