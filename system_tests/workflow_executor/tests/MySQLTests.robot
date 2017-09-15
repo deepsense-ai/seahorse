@@ -13,18 +13,18 @@ Library    ../lib/S3Client.py
 Library    ../lib/WorkflowExecutorClient.py
 
 *** Test Cases ***
-Read Write using JDBC
-    ${dir} =    Set Variable    resources/jdbcTests/readWriteJdbc/
+Read Write MySQL
+    ${dir} =    Set Variable    resources/mySQLTests/readWriteMySQL/
     Execute Sql Script    ${dir}fixture.sql
 
-    Remove Directory    readWriteJdbcOutput    recursive=yes
-    Create Output Directory    readWriteJdbcOutput
+    Remove Directory    readWriteMySQLOutput    recursive=yes
+    Create Output Directory    readWriteMySQLOutput
     Run Workflow Local    ${dir}workflow.json    --jars ${dir}../mysql-connector-java-5.1.36.jar
 
     Check Execution Status
     Check Report    ${dir}expectedReportPattern.json
-    @{queryResultsIn} =    Query   SELECT * FROM read_write_jdbc_in ORDER BY string_col;
-    @{queryResultsOut} =    Query   SELECT * FROM read_write_jdbc_out ORDER BY string_col;
+    @{queryResultsIn} =    Query   SELECT * FROM read_write_mysql_in ORDER BY string_col;
+    @{queryResultsOut} =    Query   SELECT * FROM read_write_mysql_out ORDER BY string_col;
     Should Be Equal As Strings    ${queryResultsIn}    ${queryResultsOut}
 
     Clean Output Directory

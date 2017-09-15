@@ -11,7 +11,7 @@
           "JDBC": {
             "url": "jdbc:mysql://spark-cluster-1:3306?user=system_tests&password=pass",
             "driver": "com.mysql.jdbc.Driver",
-            "table": "mysql.read_write_jdbc_in",
+            "table": "mysql.read_write_mysql_in",
             "categorical columns": {
               "selections": [{
                 "type": "columnList",
@@ -33,7 +33,7 @@
           "JDBC": {
             "url": "jdbc:mysql://spark-cluster-1:3306?user=system_tests&password=pass",
             "driver": "com.mysql.jdbc.Driver",
-            "table": "mysql.read_write_jdbc_out"
+            "table": "mysql.read_write_mysql_out"
           }
         }
       }
