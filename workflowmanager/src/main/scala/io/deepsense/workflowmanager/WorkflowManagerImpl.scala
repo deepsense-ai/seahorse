@@ -136,12 +136,25 @@ class WorkflowManagerImpl @Inject()(
     }
   }
 
+  override def updateStates(
+      workflowId: Workflow.Id,
+      executionReport: ExecutionReport): Future[Unit] = {
+    authorizator.withRole(roleUpdate) { _ =>
+      workflowStateStorage.save(workflowId, executionReport.states)
+    }
+  }
+
   override def updateStructAndStates(
-      wfId: Workflow.Id,
-      wfWithResults: WorkflowWithResults): Future[Unit] = {
-    val wf = Workflow(wfWithResults.metadata, wfWithResults.graph, wfWithResults.thirdPartyData)
-    update(wfId, wf).flatMap( _ =>
-      workflowStateStorage.save(wfWithResults.id, wfWithResults.executionReport.states))
+      workflowId: Workflow.Id,
+      workflowWithResults: WorkflowWithResults): Future[Unit] = {
+    authorizator.withRole(roleUpdate) { _ =>
+      val workflow = Workflow(
+        workflowWithResults.metadata,
+        workflowWithResults.graph,
+        workflowWithResults.thirdPartyData)
+      update(workflowId, workflow).flatMap( _ =>
+        workflowStateStorage.save(workflowId, workflowWithResults.executionReport.states))
+    }
   }
 
   private def withResults(id: Workflow.Id, workflow: Workflow): Future[WorkflowWithResults] = {

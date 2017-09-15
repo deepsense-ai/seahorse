@@ -196,6 +196,7 @@ class WorkflowsApiSpec
       tokenTranslator,
       workflowManagerProvider,
       apiPrefix,
+      reportsPrefix,
       graphReader).route
   }
 
@@ -591,6 +592,42 @@ class WorkflowsApiSpec
         status should be(StatusCodes.Created)
       }
       ()
+    }
+  }
+
+  s"PUT /reports/:id" should {
+    val executionReport = workflowAWithResults.executionReport
+    "return Unauthorized" when {
+      "invalid auth token was send (when InvalidTokenException occurs)" in {
+        Put(s"/$reportsPrefix/${ExecutionReportWithId.Id.randomId}", executionReport) ~>
+          addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
+          status should be(StatusCodes.Unauthorized)
+        }
+        ()
+      }
+      "the user does not have the requested role (on NoRoleException)" in {
+        Put(s"/$reportsPrefix/${ExecutionReportWithId.Id.randomId}", executionReport) ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
+          status should be(StatusCodes.Unauthorized)
+        }
+        ()
+      }
+      "no auth token was send (on MissingHeaderRejection)" in {
+        Put(s"/$reportsPrefix/${ExecutionReportWithId.Id.randomId}", executionReport) ~>
+          testRoute ~> check {
+          status should be(StatusCodes.Unauthorized)
+        }
+        ()
+      }
+    }
+    "save execution report" when {
+      "auth token is correct, user has roles" in {
+        Put(s"/$reportsPrefix/${workflowAWithResults.id}", executionReport) ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.OK)
+        }
+        ()
+      }
     }
   }
 

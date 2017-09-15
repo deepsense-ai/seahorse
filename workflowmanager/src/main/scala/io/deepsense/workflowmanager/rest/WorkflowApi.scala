@@ -40,6 +40,7 @@ abstract class WorkflowApi @Inject() (
     val tokenTranslator: TokenTranslator,
     workflowManagerProvider: WorkflowManagerProvider,
     @Named("workflows.api.prefix") workflowsApiPrefix: String,
+    @Named("reports.api.prefix") reportsApiPrefix: String,
     override val graphReader: GraphReader)
     (implicit ec: ExecutionContext)
   extends RestApiAbstractAuth
@@ -58,6 +59,7 @@ abstract class WorkflowApi @Inject() (
 
   assert(StringUtils.isNoneBlank(workflowsApiPrefix))
   private val workflowsPathPrefixMatcher = PathMatchers.separateOnSlashes(workflowsApiPrefix)
+  private val reportsPathPrefixMatcher = PathMatchers.separateOnSlashes(reportsApiPrefix)
   private val workflowFileMultipartId = "workflowFile"
   private val workflowDownloadName = "workflow.json"
 
@@ -220,6 +222,28 @@ abstract class WorkflowApi @Inject() (
                 }
               }
             }
+          } ~
+          pathPrefix(reportsPathPrefixMatcher) {
+            path(JavaUUID) { reportId =>
+              put {
+                withUserContext { userContext =>
+                  entity(as[ExecutionReport]) {
+                    executioReport =>
+                      onComplete(
+                        workflowManagerProvider
+                        .forContext(userContext)
+                        .updateStates(reportId, executioReport)) {
+                        case Failure(exception) =>
+                          logger.info("updateStates failed", exception)
+                          failWith(exception)
+                        case Success(_) =>
+                          logger.info("updateStates succeeded")
+                          complete(StatusCodes.OK)
+                      }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -271,12 +295,14 @@ class SecureWorkflowApi @Inject() (
   tokenTranslator: TokenTranslator,
   workflowManagerProvider: WorkflowManagerProvider,
   @Named("workflows.api.prefix") workflowsApiPrefix: String,
+  @Named("reports.api.prefix") reportsApiPrefix: String,
   override val graphReader: GraphReader)
   (implicit ec: ExecutionContext)
   extends WorkflowApi(
     tokenTranslator,
     workflowManagerProvider,
     workflowsApiPrefix,
+    reportsApiPrefix,
     graphReader)
   with AuthDirectives
 
@@ -284,11 +310,13 @@ class InsecureWorkflowApi @Inject() (
   tokenTranslator: TokenTranslator,
   workflowManagerProvider: WorkflowManagerProvider,
   @Named("workflows.api.prefix") workflowsApiPrefix: String,
+  @Named("reports.api.prefix") reportsApiPrefix: String,
   override val graphReader: GraphReader)
   (implicit ec: ExecutionContext)
   extends WorkflowApi(
     tokenTranslator,
     workflowManagerProvider,
     workflowsApiPrefix,
+    reportsApiPrefix,
     graphReader)
   with InsecureAuthDirectives

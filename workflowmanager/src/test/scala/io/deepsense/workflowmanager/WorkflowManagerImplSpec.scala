@@ -82,6 +82,7 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
     }
     "return workflow from the storage" in {
       reset(workflowStorage)
+      reset(workflowStateStorage)
       when(workflowStorage.get(storedWorkflowId))
         .thenReturn(Future.successful(Some(storedWorkflow)))
       when(workflowStateStorage.get(storedWorkflowId))
@@ -99,7 +100,7 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
       when(workflowStorage.get(storedWorkflowId))
         .thenReturn(Future.successful(Some(storedWorkflow)))
       when(workflowStorage.update(storedWorkflowId, storedWorkflow))
-        .thenReturn(Future.successful[Unit](Unit))
+        .thenReturn(Future.successful(()))
 
       val res = workflowManager.update(storedWorkflowId, storedWorkflow)
       whenReady(res) { _ => () }
@@ -108,18 +109,33 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
     }
     "update StructAndStates in storages" in {
       reset(workflowStorage)
+      reset(workflowStateStorage)
       when(workflowStorage.get(storedWorkflowId))
         .thenReturn(Future.successful(Some(storedWorkflow)))
       when(workflowStorage.update(storedWorkflowId, storedWorkflow))
-        .thenReturn(Future.successful[Unit](Unit))
+        .thenReturn(Future.successful(()))
       when(
         workflowStateStorage
           .save(storedWorkflowId, storedWorkflowWithResults.executionReport.states))
-        .thenReturn(Future.successful[Unit](Unit))
+        .thenReturn(Future.successful(()))
 
       val res = workflowManager.updateStructAndStates(storedWorkflowId, storedWorkflowWithResults)
       whenReady(res) { _ => () }
       verify(workflowStorage).update(storedWorkflowId, storedWorkflow)
+      verify(workflowStateStorage)
+        .save(storedWorkflowId, storedWorkflowWithResults.executionReport.states)
+      ()
+    }
+    "update States in storage" in {
+      reset(workflowStateStorage)
+      when(
+        workflowStateStorage
+          .save(storedWorkflowId, storedWorkflowWithResults.executionReport.states))
+        .thenReturn(Future.successful(()))
+
+      val res = workflowManager
+        .updateStates(storedWorkflowId, storedWorkflowWithResults.executionReport)
+      whenReady(res) { _ => () }
       verify(workflowStateStorage)
         .save(storedWorkflowId, storedWorkflowWithResults.executionReport.states)
       ()

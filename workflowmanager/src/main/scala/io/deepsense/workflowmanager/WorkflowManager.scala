@@ -79,10 +79,20 @@ trait WorkflowManager {
   def saveNotebook(workflowId: Workflow.Id, nodeId: Node.Id, notebook: String): Future[Unit]
 
   /**
-   * Updates an workflow, and then updates its nodes states in WorkflowStateStorage.
+   * Updates nodes states.
    *
-   * @param wfId Id of the workflow.
-   * @param wfWithResults Updated workflow and its updated results to save.
+   * @param workflowId Id of the workflow.
+   * @param executionReport Execution report with updated nodes to save.
    */
-  def updateStructAndStates(wfId: Workflow.Id, wfWithResults: WorkflowWithResults): Future[Unit]
+  def updateStates(workflowId: Workflow.Id, executionReport: ExecutionReport): Future[Unit]
+
+  /**
+   * Updates an workflow, and then updates its nodes states.
+   *
+   * @param workflowId Id of the workflow.
+   * @param workflowWithResults Updated workflow and its updated results to save.
+   */
+  def updateStructAndStates(
+      workflowId: Workflow.Id,
+      workflowWithResults: WorkflowWithResults): Future[Unit]
 }
