@@ -37,7 +37,8 @@
       <p class="operation-attributes-panel__description"
          title="{{ node.description }}">{{ node.description }}</p>
       <div class="operation-attributes-panel__documentation">
-        <a ng-href="{{controller.getDocsHost()}}/docs/{{controller.getDocsVersion()}}/uuid/{{node.operationId}}.html" target="_blank"
+        <a ng-href="{{controller.getDocsHost()}}/docs/{{controller.getDocsVersion()}}/uuid/{{node.operationId}}.html"
+           target="_blank"
            class="o-read-more block"
            ng-if="hasDocumentation"
         >
@@ -61,10 +62,11 @@
         <p
           class="o-state__status label"
           ng-class="{
-            'label-success': node.state.status === 'status_completed',
-            'label-danger': node.state.status === 'status_failed',
-            'label-warning': node.state.status === 'status_aborted',
-            'label-draft': node.state.status === 'status_draft'
+            'label-completed': node.state.status === 'status_completed',
+            'label-failed': node.state.status === 'status_failed' || node.state.status === 'status_aborted',
+            'label-draft': node.state.status === 'status_draft',
+            'label-queued': node.state.status === 'status_queued',
+            'label-running': node.state.status === 'status_running'
           }"
           title="Status"
         >
@@ -73,8 +75,9 @@
         <button
           ng-show="node.state.status === 'status_failed'"
           ng-click="controller.showErrorMessage()"
-          class="btn btn-xs btn-info o-action-text fa fa-exclamation-triangle o-error-btn"
+          class="btn btn-xs btn-info o-action-text o-error-btn"
         >
+          <span class="fa fa-exclamation-triangle"></span>
           <span class="o-action-text__text-element">Click here to show errors</span>
         </button>
       </header>

@@ -49,9 +49,29 @@
   &__details {
     padding: 0 @main-space / 2;
 
+    .label-completed {
+      background-color: @color-action;
+      color: @color-white;
+    }
+
+    .label-failed {
+      background-color: @color-error;
+      color: @color-white;
+    }
+
     .label-draft {
-      background-color: #d1dade;
+      background-color: @color-draft;
       color: #5e5e5e;
+    }
+
+    .label-queued {
+      background-color: @color-warn;
+      color: @color-white;
+    }
+
+    .label-running {
+      background-color: @color-active;
+      color: @color-white;
     }
   }
 
