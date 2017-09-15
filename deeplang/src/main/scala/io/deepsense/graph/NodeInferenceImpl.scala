@@ -35,17 +35,20 @@ trait NodeInferenceImpl extends NodeInference {
 
     val NodeInferenceResult(inKnowledge, warnings, errors) = inputInferenceForNode
     val parametersValidationErrors = node.value.validateParams
-    if (context.fullInference && parametersValidationErrors.nonEmpty) {
+
+    def defaultInferenceResult(additionalErrors: Vector[DeepLangException] = Vector.empty) =
       createDefaultKnowledge(
         context,
         node.value,
         warnings,
-        errors ++ parametersValidationErrors
-      )
+        (errors ++ parametersValidationErrors ++ additionalErrors).distinct)
+
+    if (context.fullInference && parametersValidationErrors.nonEmpty) {
+      defaultInferenceResult()
     } else {
       try {
         val (outKnowledge, inferWarnings) =
-          node.value.inferKnowledge(context)(inKnowledge.toVector)
+          node.value.inferKnowledge(context)(inKnowledge)
         NodeInferenceResult(
           outKnowledge,
           warnings ++ inferWarnings,
@@ -53,12 +56,9 @@ trait NodeInferenceImpl extends NodeInference {
         )
       } catch {
         case exception: DeepLangException =>
-          createDefaultKnowledge(
-            context,
-            node.value,
-            warnings,
-            (errors ++ parametersValidationErrors ++ exception.toVector).distinct
-          )
+          defaultInferenceResult(exception.toVector)
+        case exception: Exception =>
+          defaultInferenceResult()
       }
     }
   }

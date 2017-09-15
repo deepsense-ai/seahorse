@@ -32,4 +32,4 @@ case class InferContext(
     tenantId: String, // TODO REMOVE
     dOperableCatalog: DOperableCatalog,
     innerWorkflowParser: InnerWorkflowParser,
-    fullInference: Boolean = false)
+    fullInference: Boolean = true)

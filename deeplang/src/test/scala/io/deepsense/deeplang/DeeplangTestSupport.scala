@@ -29,7 +29,7 @@ trait DeeplangTestSupport extends MockitoSugar {
 
   protected def createInferContext(
       dOperableCatalog: DOperableCatalog,
-      fullInference: Boolean = false): InferContext =
+      fullInference: Boolean = true): InferContext =
     InferContext(
       mock[DataFrameBuilder],
       "testTenantId",
