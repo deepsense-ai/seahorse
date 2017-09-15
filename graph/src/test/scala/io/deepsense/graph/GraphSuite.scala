@@ -32,7 +32,7 @@ class GraphSuite extends FunSuite with Matchers with Serialization with Logging 
   }
 
   test("Adding edge to an empty Graph should produce NoSuchElementException") {
-    a [NoSuchElementException] shouldBe thrownBy {
+    an [IllegalArgumentException] shouldBe thrownBy {
       val edge = Edge(Endpoint(Node.Id.randomId, 0), Endpoint(Node.Id.randomId, 0))
       Graph(Set(), Set(edge))
     }

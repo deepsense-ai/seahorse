@@ -29,6 +29,11 @@ case class Graph(
   extends KnowledgeInference
   with Logging {
 
+  private val nonExistingNodes: Set[Node.Id] = checkEdgesEndsExist(nodes, edges)
+
+  require(nonExistingNodes.isEmpty,
+    s"There are connections that point to non-existent nodes ${nonExistingNodes.mkString(", ")}")
+
   /** Maps ids of nodes to nodes. */
   val nodeById: Map[Id, Node] = nodes.map(node => node.id -> node).toMap
 
@@ -213,6 +218,13 @@ case class Graph(
       } else {
         aborted
       })
+    }
+  }
+
+  private def checkEdgesEndsExist(nodes: Set[Node], edges: Set[Edge]): Set[Node.Id] = {
+    val nodesIds = nodes.map(_.id)
+    edges.flatMap { edge => Set(edge.from.nodeId, edge.to.nodeId)}.collect {
+      case id if !nodesIds.contains(id) => id
     }
   }
 }
