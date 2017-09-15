@@ -5,10 +5,7 @@
 
 /* @ngInject */
 
-function ExperimentController(
-  $timeout, $stateParams, $rootScope, $scope,
-  Operations, DrawingService, ExperimentFactory, ExperimentAPIClient
-) {
+function ExperimentController($timeout, $stateParams, $scope, PageService, Operations, DrawingService, ExperimentFactory, ExperimentAPIClient) {
   const RUN_STATE_CHECK_INTERVAL = 2000;
 
   var that = this;
@@ -17,9 +14,23 @@ function ExperimentController(
   var GraphNode = require('./common-objects/common-graph-node.js');
   var Edge = require('./common-objects/common-edge.js');
 
+  internal.operations = null;
   internal.experiment = null;
   internal.selectedNode = null;
   internal.isDataLoaded = false;
+
+  internal.init = function init() {
+    internal.initializeOperations().then(internal.loadExperiment);
+  };
+
+  internal.loadCatalog = () => {
+    return Operations
+      .getCatalog()
+      .then((operationCatalog) => {
+        console.log('Catalog downloaded successfully');
+        that.operationsCatalog = operationCatalog;
+      });
+  };
 
   internal.initializeOperations = () => {
     return Operations.load().then(() => {
@@ -32,7 +43,7 @@ function ExperimentController(
       .getData($stateParams.id)
       .then((data) => {
         console.log('Experiment downloaded successfully');
-        $rootScope.headerTitle = 'Experiment: ' + data.experiment.name;
+        PageService.setTitle('Experiment: ' + data.experiment.name);
         internal.experiment = ExperimentFactory.createExperiment(data, Operations.getData());
         DrawingService.renderExperiment(internal.experiment);
         internal.isDataLoaded = true;
@@ -65,7 +76,7 @@ function ExperimentController(
   /**
    * Loads experiment state data.
    */
-  that.loadExperiemntState = function loadExperiemntState() {
+  that.loadExperimentState = function loadExperimentState() {
     ExperimentAPIClient.getData(internal.experiment.getId()).then(that.handleExperimentStateChange,
       (error) => {
         console.error('experiment fetch state error', error);
@@ -79,7 +90,7 @@ function ExperimentController(
   that.checkExperimentState = function checkExperimentState() {
     $timeout.cancel(internal.runStateTimeout);
     if (internal.experiment.isRunning()) {
-      internal.runStateTimeout = $timeout(that.loadExperiemntState, RUN_STATE_CHECK_INTERVAL, false);
+      internal.runStateTimeout = $timeout(that.loadExperimentState, RUN_STATE_CHECK_INTERVAL, false);
     }
   };
 
@@ -100,11 +111,11 @@ function ExperimentController(
    */
   that.generateUUID = function generateGUID() {
     return (
-      generateUUIDPart() + generateUUIDPart() + '-' +
-      generateUUIDPart() + '-' +
-      generateUUIDPart() + '-' +
-      generateUUIDPart() + '-' +
-      generateUUIDPart() + generateUUIDPart() + generateUUIDPart()
+    generateUUIDPart() + generateUUIDPart() + '-' +
+    generateUUIDPart() + '-' +
+    generateUUIDPart() + '-' +
+    generateUUIDPart() + '-' +
+    generateUUIDPart() + generateUUIDPart() + generateUUIDPart()
     );
   };
 
@@ -112,8 +123,20 @@ function ExperimentController(
     return internal.isDataLoaded ? Operations.getCatalog() : undefined;
   };
 
+  that.getOperations = function getOperations() {
+    return internal.operations;
+  };
+
+  that.getOperationById = function getOperationById(id) {
+    return internal.operations[id];
+  };
+
   that.getExperiment = function getExperiment() {
     return internal.experiment;
+  };
+
+  that.getParametersSchemaById = function getParametersSchemaById(id) {
+    return internal.experiment.getParametersSchema()[id];
   };
 
   that.getSelectedNode = function getSelectedNode() {
@@ -132,12 +155,6 @@ function ExperimentController(
       // TODO: compare sent data with response / update experiment if needed
     });
   };
-
-  that.log = function log() {
-    console.log(internal.experiment.getNodes());
-    console.log(internal.experiment.getEdges());
-  };
-
 
   $scope.$on(GraphNode.CLICK, (event, data) => {
     internal.selectedNode = data.selectedNode;
@@ -172,28 +189,24 @@ function ExperimentController(
   });
 
   $scope.$on('FlowChartBox.ELEMENT_DROPPED', function elementDropped(event, args) {
-    let operation = Operations.get(args.classId),
-        boxPosition = args.target[0].getBoundingClientRect(),
-        positionX = (args.dropEvent.pageX - boxPosition.left - window.scrollX) || 0,
-        positionY = (args.dropEvent.pageY - boxPosition.top - window.scrollY) || 0,
-        offsetX = 100,
-        offsetY = 30,
-        node = internal.experiment.createNode({
-          'id': that.generateUUID(),
-          'operation': operation,
-          'x': positionX > offsetX ? positionX - offsetX : 0,
-          'y': positionY > offsetY ? positionY - offsetY : 0
-        });
+    let operation = that.getOperationById(args.classId),
+      boxPosition = args.target[0].getBoundingClientRect(),
+      positionX = (args.dropEvent.pageX - boxPosition.left - window.scrollX) || 0,
+      positionY = (args.dropEvent.pageY - boxPosition.top - window.scrollY) || 0,
+      offsetX = 100,
+      offsetY = 30,
+      node = internal.experiment.createNode({
+        'id': that.generateUUID(),
+        'operation': operation,
+        'x': positionX > offsetX ? positionX - offsetX : 0,
+        'y': positionY > offsetY ? positionY - offsetY : 0
+      });
     internal.experiment.addNode(node);
     DrawingService.repaintEverything();
     $scope.$digest();
     that.onRenderFinish();
     that.saveData();
   });
-
-  $scope.$on('FlowChartBox.ELEMENT_DROPPED', ()=> that.log());
-  $scope.$on('Keyboard.KEY_PRESSED', ()=> that.log());
-  $scope.$on('Edge.REMOVE', ()=> that.log());
 
   $scope.$on('Experiment.RUN', () => {
     ExperimentAPIClient.runExperiment(internal.experiment.getId()).then((data) => {

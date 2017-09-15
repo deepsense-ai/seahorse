@@ -4,10 +4,9 @@
 'use strict';
 
 /* @ngInject */
-function Home($rootScope) {
-  let message = 'Hello! DeepSense.io engine at Your service!';
-  this.welcomeMessage = message;
-  $rootScope.headerTitle = 'Home';
+function Home(PageService) {
+  PageService.setTitle('Home');
+  this.welcomeMessage = 'Hello! DeepSense.io engine at Your service!';
 }
 exports.function = Home;
 

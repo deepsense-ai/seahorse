@@ -5,13 +5,13 @@
 
 
 /* @ngInject */
-function ExperimentListController($rootScope, ExperimentAPIClient) {
+function ExperimentListController(PageService, ExperimentAPIClient) {
   ExperimentAPIClient.getList().then((data) => {
     this.experiments = data.experiments;
   });
 
   this.experiments = {};
-  $rootScope.headerTitle = 'My experiments';
+  PageService.setTitle('My experiments');
 }
 
 exports.inject = function (module) {

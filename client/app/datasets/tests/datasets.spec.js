@@ -4,25 +4,32 @@
 'use strict';
 
 describe('Datasets test', function() {
-  var mod;
-
-  mod = require('../datasets.module.js');
-
   beforeEach(function() {
+    let testModule = angular.module('test', []);
+
+    angular.mock.module('test');
     angular.mock.module('ui.router');
     angular.mock.module('ds.datasets');
+
+    require('../datasets.module.js');
+    require('../../common/page.service.js').inject(testModule);
   });
 
-  describe('dataset list', function() {
-    var ctrl;
-    beforeEach(function() {
-      angular.mock.inject(function($controller, $rootScope) {
-        ctrl = $controller('DatasetList');
-      });
+  describe('dataset controller', function() {
+    let PageService;
+    let ctrl;
+
+    beforeEach(angular.mock.inject(($injector, $controller) => {
+      ctrl = $controller('DatasetList');
+      PageService = $injector.get('PageService');
+    }));
+
+    it('should say you do not have any datasets', function () {
+      expect(ctrl.setsLabel).toBe('You do not have any datasets!');
     });
 
-    it('should say you do not have any datasets', function() {
-      expect(ctrl.setsLabel).toBe('You do not have any datasets!');
+    it('should set nav title', function () {
+      expect(PageService.getTitle()).toBe('Datasets');
     });
   });
 });
