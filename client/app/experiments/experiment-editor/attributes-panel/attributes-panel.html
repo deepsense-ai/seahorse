@@ -8,7 +8,7 @@
       ng-if="experiment.getSelectedNode().parameters"
       parameters-list="experiment.getSelectedNode().parameters">
     </attributes-list>
-    <loading-spinner-sm ng-if="!experiment.getSelectedNode().parameters"></loading-spinner-sm>
+    <deepsense-loading-spinner-sm ng-if="!experiment.getSelectedNode().parameters"></deepsense-loading-spinner-sm>
   </div>
   <div class="panel-footer">
     {{ experiment.getSelectedNode().description }}

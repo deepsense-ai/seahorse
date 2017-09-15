@@ -40,7 +40,7 @@
       <div class="wrapper wrapper-content" ng-cloak>
         <div ui-view="errorView"></div>
 
-        <loading-spinner ng-if="!stateData.dataIsLoaded"></loading-spinner>
+        <deepsense-loading-spinner-lg ng-if="!stateData.dataIsLoaded"></deepsense-loading-spinner-lg>
 
         <div ng-show="stateData.showView" class="animated fadeInRight" ui-view></div>
       </div>

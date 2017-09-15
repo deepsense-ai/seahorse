@@ -42,6 +42,7 @@
     "browserify": "^8.1.1",
     "browserify-ngannotate": "^0.7.1",
     "browserify-shim": "^3.8.2",
+    "deepsense-loading-spinner": "0.0.2",
     "gulp": "^3.8.10",
     "gulp-clean": "^0.3.1",
     "gulp-concat": "^2.5.1",
@@ -122,11 +123,13 @@
           "./bower_components/jquery/dist/jquery.min.js",
           "./bower_components/highcharts-release/highcharts.js",
           "./bower_components/highcharts-release/highcharts-more.js",
-          "./bower_components/ng-debounce/angular-debounce.js"
+          "./bower_components/ng-debounce/angular-debounce.js",
+          "./node_modules/deepsense-loading-spinner/dist/deepsense-loading-spinner.js"
         ],
         "css": [
           "./node_modules/bootstrap/dist/css/bootstrap.css",
-          "./client/css/*.css"
+          "./client/css/*.css",
+          "./node_modules/deepsense-loading-spinner/dist/deepsense-loading-spinner.css"
         ]
       },
       "prod": {
@@ -141,11 +144,13 @@
           "./bower_components/jquery/dist/jquery.min.js",
           "./bower_components/highcharts-release/highcharts.js",
           "./bower_components/highcharts-release/highcharts-more.js",
-          "./bower_components/ng-debounce/angular-debounce.js"
+          "./bower_components/ng-debounce/angular-debounce.js",
+          "./node_modules/deepsense-loading-spinner/dist/deepsense-loading-spinner.js"
         ],
         "css": [
           "./node_modules/bootstrap/dist/css/bootstrap.min.css",
-          "./client/css/*.css"
+          "./client/css/*.css",
+          "./node_modules/deepsense-loading-spinner/dist/deepsense-loading-spinner.css"
         ]
       }
     },
