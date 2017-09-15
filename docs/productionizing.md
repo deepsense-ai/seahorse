@@ -1,10 +1,9 @@
 ---
-layout: documentation
-displayTitle: Seahorse Batch Workflow Executor
-docTab: batch_workflow_executor_overview
-title: Seahorse Batch Workflow Executor
-includeTechnicalOverviewMenu: true
-description: Seahorse Batch Workflow Executor
+layout: global
+displayTitle: Productionizing Workflows
+menuTab: reference
+title: Productionizing
+description: Productionizing Workflows with Seahorse Batch Workflow Executor
 ---
 
 **Table of Contents**
@@ -27,14 +26,31 @@ and manage the execution of workflows outside of Seahorse Editor.
   *Seahorse Batch Workflow Executor Overview*
 </div>
 
+## Get Seahorse Batch Workflow Executor
+
+Seahorse Batch Workflow Executor is available in a form of both precompiled binaries and source code.
+
+#### Use Precompiled Binaries
+
+| **Seahorse Batch Workflow Executor Version** | **Apache Spark Version** | **Scala Version** | **Link** |
+| 1.3.0 | 1.6 | 2.10 | <a target="_blank" href="https://s3.amazonaws.com/workflowexecutor/releases/1.3.0/workflowexecutor_2.10-1.3.0.jar">download</a> |
+| 1.3.0 | 1.6 | 2.11 | <a target="_blank" href="https://s3.amazonaws.com/workflowexecutor/releases/1.3.0/workflowexecutor_2.11-1.3.0.jar">download</a> |
+| 1.2.0 | 1.6 | 2.10 | <a target="_blank" href="https://s3.amazonaws.com/workflowexecutor/releases/1.2.0/workflowexecutor_2.10-1.2.0.jar">download</a> |
+| 1.2.0 | 1.6 | 2.11 | <a target="_blank" href="https://s3.amazonaws.com/workflowexecutor/releases/1.2.0/workflowexecutor_2.11-1.2.0.jar">download</a> |
+| 1.1.0 | 1.6 | 2.10 | <a target="_blank" href="https://s3.amazonaws.com/workflowexecutor/releases/1.1.0/workflowexecutor_2.10-1.1.0.jar">download</a> |
+| 1.1.0 | 1.6 | 2.11 | <a target="_blank" href="https://s3.amazonaws.com/workflowexecutor/releases/1.1.0/workflowexecutor_2.11-1.1.0.jar">download</a> |
+
+#### Build from Source
+
+If you are interested in compiling Seahorse Batch Workflow Executor from source
+you can check out our Git repository:
+
+```
+git clone {{ site.WORKFLOW_EXECUTOR_GITHUB_URL }}
+```
 
 
-## Download Seahorse Batch Workflow Executor
-
-Compiled version of Seahorse Batch Workflow Executor is available at
-[Try Seahorse page](../downloads.html).
-
-### Configure Environment Variables
+## Configure Environment Variables
 
 It is necessary to set the `SPARK_HOME` and `PYTHONPATH` environment variables to allow
 Seahorse Batch Workflow Executor's Python module to use Apache Spark specific libraries.
@@ -54,9 +70,7 @@ export PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.9-src.zip:$PY
 ## How to Run Seahorse Batch Workflow Executor
 
 Seahorse Batch Workflow Executor can be submitted to an Apache Spark cluster as any other Apache Spark application.
-Example `spark-submit` commands can be found in the following subsections.
-Replace `./bin/spark-submit` with a path to the script in Apache Spark's directory.
-For more detailed information about submitting Apache Spark applications, visit:
+For more detailed information about submitting Apache Spark applications visit
 <a target="_blank" href="{{ site.SPARK_DOCS }}/submitting-applications.html">{{ site.SPARK_DOCS }}/submitting-applications.html</a>
 
 #### Local Apache Spark (single machine)
