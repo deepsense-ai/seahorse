@@ -220,10 +220,18 @@ function ExperimentController(
   $scope.$on('Edge.REMOVE', ()=> that.log());
 
   $scope.$on('Experiment.RUN', () => {
-   ExperimentAPIClient.runExperiment(internal.experiment.getId()).then((data) => {
+    ExperimentAPIClient.runExperiment(internal.experiment.getId()).then((data) => {
       that.handleExperimentStateChange(data);
     }, (error) => {
       console.log('experiment launch error', error);
+    });
+  });
+
+  $scope.$on('Experiment.ABORT', () => {
+    ExperimentAPIClient.abortExperiment(internal.experiment.getId()).then((data) => {
+      that.handleExperimentStateChange(data);
+    }, (error) => {
+      console.log('experiment abort error', error);
     });
   });
 

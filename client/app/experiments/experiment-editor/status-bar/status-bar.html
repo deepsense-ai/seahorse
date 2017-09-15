@@ -1,8 +1,15 @@
 <div class="status-bar">
   <a
-    class="btn btn-sm btn-w-m btn-success run-experiment-button"
+    class="btn btn-w-m btn-success btn-sm run-experiment-button"
+    ng-hide="status === undefined"
     ng-disabled="status === 'status_running'"
   >
     <span class="fa fa-caret-square-o-right"></span> run experiment
+  </a>
+  <a
+    class="btn btn-outline btn-warning btn-sm abort-experiment-button"
+    ng-hide="status !== 'status_running'"
+  >
+    <span class="fa fa-times-circle-o"></span> abort
   </a>
   </div>

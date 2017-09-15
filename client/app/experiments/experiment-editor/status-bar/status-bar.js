@@ -15,6 +15,9 @@ function StatusBar() {
       element[0].querySelector('.run-experiment-button').addEventListener('click', () => {
         scope.$emit('Experiment.RUN', {});
       });
+      element[0].querySelector('.abort-experiment-button').addEventListener('click', () => {
+        scope.$emit('Experiment.ABORT', {});
+      });
     }
   };
 }

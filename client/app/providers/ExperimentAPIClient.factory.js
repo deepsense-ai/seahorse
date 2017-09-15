@@ -75,6 +75,29 @@ function ExperimentAPIClientFactory(BaseAPIClient) {
     );
   };
 
+  /**
+   * Aborts experiment run.
+   *
+   * @param {string} id
+   * @param {object} params
+   *
+   * @return {Promise}
+   */
+  ExperimentAPIClient.prototype.abortExperiment = function(id, params) {
+    let data = {
+      'abort': {}
+    };
+    if (params && params.nodes) {
+      data.abort.nodes = params.nodes;
+    }
+
+    return this.makeRequest(
+      this.METHOD_POST,
+      this.API_PATH + PATH_EXPERIMENTS + '/' + id + PATH_ACTION,
+      data
+    );
+  };
+
   return new ExperimentAPIClient();
 }
 

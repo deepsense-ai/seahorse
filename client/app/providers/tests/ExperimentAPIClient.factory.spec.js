@@ -377,4 +377,101 @@ describe('ExperimentAPIClient', () => {
 
   });
 
+  describe('should have abortExperiment method', () => {
+    var $httpBackend,
+        mockRequest;
+
+    var id = 'experiemnt-id',
+        url = '/api/experiments/' + id  + '/action',
+        nodes = ['node-1', 'node-3'],
+        data = {
+          'id': id,
+          'data': {
+            'test': true
+          }
+        };
+
+    beforeEach(() => {
+      angular.mock.inject(($injector) => {
+        $httpBackend = $injector.get('$httpBackend');
+        mockRequest = $httpBackend
+          .when('POST', url)
+          .respond(data);
+        });
+    });
+
+    afterEach(function() {
+      $httpBackend.verifyNoOutstandingExpectation();
+      $httpBackend.verifyNoOutstandingRequest();
+    });
+
+
+    it('which is valid function', () => {
+      expect(ExperimentAPIClient.abortExperiment).toEqual(jasmine.any(Function));
+    });
+
+    it('which return promise', () => {
+      $httpBackend.expectPOST(url, {'abort': {}});
+
+      let promise = ExperimentAPIClient.abortExperiment(id);
+      expect(promise).toEqual(jasmine.any(Object));
+      expect(promise.then).toEqual(jasmine.any(Function));
+      expect(promise.catch).toEqual(jasmine.any(Function));
+
+      $httpBackend.flush();
+    });
+
+    it('which return promise & resolve it on request success', () => {
+      let success = false,
+          error   = false,
+          responseData;
+
+      $httpBackend.expectPOST(url, {'abort': {}});
+
+      let promise = ExperimentAPIClient.abortExperiment(id);
+      promise.then((data) => {
+        success = true;
+        responseData = data;
+      }).catch(() => {
+        error = true;
+      });
+
+      $httpBackend.flush();
+
+      expect(success).toBe(true);
+      expect(error).toBe(false);
+      expect(responseData).toEqual(data);
+    });
+
+    it('which return promise & rejects it on request error', () => {
+      let success = false,
+          error   = false;
+
+      $httpBackend.expectPOST(url, {'abort': {}});
+
+      let promise = ExperimentAPIClient.abortExperiment(id);
+      promise.then(() => {
+        success = true;
+      }).catch(() => {
+        error = true;
+      });
+
+      mockRequest.respond(409, 'Conflict');
+      $httpBackend.flush();
+
+      expect(success).toBe(false);
+      expect(error).toBe(true);
+    });
+
+    it('which handles nodes params', () => {
+      $httpBackend.expectPOST(url, {'abort': {'nodes': nodes}});
+
+      let promise = ExperimentAPIClient.abortExperiment(id, {'nodes': nodes});
+      expect(promise).toEqual(jasmine.any(Object));
+
+      $httpBackend.flush();
+    });
+
+  });
+
 });
