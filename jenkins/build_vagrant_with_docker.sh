@@ -1,14 +1,11 @@
-#!/bin/bash
-
+#!/bin/bash -ex
 # Copyright (c) 2016, CodiLime Inc.
 #
 # Usage ./build_vagrant_with_docker.sh SEAHORSE_BUILD_TAG
 
-set -e
-
 # Check if number of parameters is correct
 if [ $# != 1 ]; then
-  echo ">>> Exactly one parameters must be provided."
+  echo ">>> Exactly one parameter must be provided."
   exit 1
 fi
 
