@@ -49,7 +49,10 @@ class EditorController {
     this.$canvas.bind('wheel', ($event) => {
       const cursorX = $event.originalEvent.clientX - this.$element[0].getBoundingClientRect().left;
       const cursorY = $event.originalEvent.clientY - this.$element[0].getBoundingClientRect().top;
-      const zoomDelta = $event.originalEvent.deltaY / 1000;
+      // Normalize zoom delta, so FF scrolling seems similar in speed compared to Chrome
+      const FF_ZOOM_RATIO = 17;
+      const normalizedZoom = (!$event.originalEvent.wheelDelta) ? $event.originalEvent.deltaY * FF_ZOOM_RATIO : $event.originalEvent.deltaY;
+      const zoomDelta = normalizedZoom / 1000;
       this.CanvasService.zoomToPosition(zoomDelta, cursorX, cursorY);
     });
 
