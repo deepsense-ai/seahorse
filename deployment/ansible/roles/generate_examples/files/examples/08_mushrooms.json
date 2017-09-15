@@ -284,7 +284,7 @@
   "thirdPartyData": {
     "gui": {
       "name": "EXAMPLE 8: Mushrooms",
-      "description": "Distinguishing poisonous and edible mushrooms.",
+      "description": "Distinguishing poisonous and edible mushrooms",
       "predefColors": ["#00B1EB", "#1ab394", "#2f4050", "#f8ac59", "#ed5565", "#DD6D3F"],
       "nodes": {
         "5f03c46b-c21d-8c7f-4df9-bda5b059506a": {
