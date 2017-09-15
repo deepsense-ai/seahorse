@@ -1,6 +1,11 @@
 'use strict';
 var module = angular.module('test', ['deepsense.attributes-panel']);
 module.constant('config', {});
+module.factory('version', function() {
+  return {
+    getDocsVersion: () => '1.0'
+  };
+});
 module.controller('TestCtrl', ['$scope', '$element', 'Model', function ($scope, $element, Model) {
   let nodes = Model.getNodes();
   let workflowId = Model.getWorkflowId();

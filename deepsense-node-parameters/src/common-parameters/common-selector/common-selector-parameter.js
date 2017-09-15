@@ -59,9 +59,11 @@ SelectorParameter.prototype.serialize = function () {
       result.selections.push(this.items[i].serialize());
     }
 
-    return result.selections.length === 0 ?
-      null :
-      result;
+    if (!this.excluding && this.items.length === 0) {
+      return null;
+    } else {
+      return result;
+    }
   }
 };
 

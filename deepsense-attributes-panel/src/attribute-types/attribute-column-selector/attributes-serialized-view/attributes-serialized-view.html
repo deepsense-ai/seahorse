@@ -1,4 +1,4 @@
-<ul class="list-unstyled" ng-show="parameter.items.length">
+<ul class="list-unstyled" ng-if="parameter.excluding || parameter.items.length">
   <li class="text-warning" ng-if="!selectorIsSingle()">
     <span class="font-bold">Mode:</span>
     <span class="badge badge-sm badge-info"
@@ -17,6 +17,9 @@
            tooltip-append-to-body="true">
       Excluding
     </span>
+  </li>
+  <li ng-if="parameter.excluding && parameter.items.length === 0">
+    <span>All columns are selected.</span>
   </li>
   <li ng-if="getNamesList()">
     <p class="m-b-none">Names list:</p>
