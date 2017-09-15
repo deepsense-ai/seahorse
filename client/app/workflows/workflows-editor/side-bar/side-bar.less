@@ -4,7 +4,7 @@
   border-top: 1px solid lightgray;
   overflow: hidden;
   align-items: center;
-  border-right: solid #c0c0c0 1px;
+  border-right: 1px solid rgba(128, 128, 128, 0.7);
 }
 
 .side-bar-button {
@@ -14,19 +14,20 @@
   cursor: pointer;
   flex-direction: row-reverse;
   align-items: center;
+  font-size: 14px;
 
   &:hover {
     .side-bar-span,
     .side-bar-icon {
-      background: #ACACAC;
-      border-top: 1px solid #ACACAC;
+      background: rgba(128, 128, 128, 0.7);
     }
   }
 }
 
 .side-bar-active {
-  background: #c0c0c0;
-  border-top: 1px solid #c0c0c0;
+  background: rgba(128, 128, 128, 0.7);
+  color: white;
+  font-weight: bold;
 }
 
 .side-bar-span {

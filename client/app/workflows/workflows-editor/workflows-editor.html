@@ -60,7 +60,10 @@
   >
     <tabify-tab label="Report">
       <p class="o-tabify-tab__label"
-         ng-class="{'o-tabify-tab__label--active': workflow.report}">Report</p>
+         ng-class="{'o-tabify-tab__label--active': workflow.report}">
+        <i class="fa fa-file-text"></i>
+        Report
+      </p>
       <report
         report="workflow.report"
         ng-if="workflow.report"
