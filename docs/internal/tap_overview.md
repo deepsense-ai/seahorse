@@ -44,7 +44,7 @@ Once you have created a workflow it will show up on the main Seahorse page with 
 *OWNER* column. You can only edit workflows which were created by you, all the others are
 read-only -- you can always clone any workflow and start working on it.
 
-To find out more on what is possible in Seahorse, see the [Quick Start guide](index.html).
+To find out more on what is possible in Seahorse, see the [Quick Start guide](main.html).
 
 ## Platform Information
 

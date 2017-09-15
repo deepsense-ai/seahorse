@@ -4,7 +4,6 @@
   Git-sha: {{ site.data['hash']}}
 -->
 {% include base.html %}
-{{page.url}}
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,7 +30,7 @@
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container head-of-page">
         <div class="navbar-header">
-          <a class="navbar-brand" href="/index.html"><img src="{{base}}/internal/img/seahorse_logo.png" alt="deepsense.io Seahorse"></a>
+          <a class="navbar-brand" href="{{base}}"><img src="{{base}}/internal/img/seahorse_logo.png" alt="deepsense.io Seahorse"></a>
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
             <span class="sr-only">Toggle navigation</span>
             <span class="icon-bar"></span>
@@ -91,15 +90,17 @@
       {% else %}
       <h1 class="title">{{ page.title }}</h1>
       {% endif %}
+      BASE {{base}}
+      PAGE URL {{page.url}}
       {{ content }}
     </section>
   </div>
 
   <footer class="col-sm-12">
     <p class="text-center footer-text">Seahorse by <a href="http://deepsense.io/" target="_blank"><span>deep</span>sense<span>.io</span></a> | 2016 |
-          <a target="_blank" href="https://twitter.com/deepsense_io/"><img src="/img/twitter.png" height="35px"></a>
-          <a target="_blank" href="https://github.com/deepsense-io/seahorse-workflow-executor"><img src="/img/octocat.png" height="25px"></a>
-          <a target="_blank" href="http://feedback.seahorse.deepsense.io/"><img src="/img/userecho.png" height="25px"></a>
+          <a target="_blank" href="https://twitter.com/deepsense_io/"><img src="{{base}}/img/twitter.png" height="35px"></a>
+          <a target="_blank" href="https://github.com/deepsense-io/seahorse-workflow-executor"><img src="{{base}}/img/octocat.png" height="25px"></a>
+          <a target="_blank" href="http://feedback.seahorse.deepsense.io/"><img src="{{base}}/img/userecho.png" height="25px"></a>
     </p>
   </footer>
 </body>

@@ -17,7 +17,7 @@ Depending on your preferences or rules in your organization, you may choose:
           <li class="header">
             <div class="wrapper">
               <div>
-                <img src="/img/logo.png" height="25px" alt="" />
+                <img src="img/logo.png" height="25px" alt="" />
               </div>
               <div style="height:2em">
                 <big>Seahorse Desktop</big>
@@ -38,7 +38,7 @@ Depending on your preferences or rules in your organization, you may choose:
           <li class="header">
             <div class="wrapper">
               <div>
-                <img src="../img/tap.png" alt="TAP" height="25px" />
+                <img src="img/tap.png" alt="TAP" height="25px" />
               </div>
               <div>
                 <big>Seahorse on Trusted Analytics Platform</big>
@@ -59,7 +59,7 @@ Depending on your preferences or rules in your organization, you may choose:
           <li class="header">
             <div class="wrapper">
               <div>
-                <img src="/img/ibm_workbench.png" height="25px" alt="" />
+                <img src="img/ibm_workbench.png" height="25px" alt="" />
               </div>
               <div>
                 <big>Seahorse on IBM Data Scientist Workbench</big>
@@ -80,7 +80,7 @@ Depending on your preferences or rules in your organization, you may choose:
 </section>
 
 Scaling up your Seahorse deployment in a production setting is covered in the
-[Enterprise](../enterprise.html) section.
+[Enterprise](enterprise.html) section.
 
 Regardless of which Seahorse deployment version you choose for building a Spark application,
 after it's completed, it can be [deployed on a production cluster](#spark-application-deployment).
@@ -90,7 +90,7 @@ after it's completed, it can be [deployed on a production cluster](#spark-applic
 Seahorse makes it possible to build Spark applications interactively,
 working directly with data in a running session. Your final workflow can be then exported
 as a standalone Spark application that you can submit to any Spark cluster using
-[Seahorse Batch Workflow Executor](/internal/batch_workflow_executor_overview.html).
+[Seahorse Batch Workflow Executor](internal/batch_workflow_executor_overview.html).
 A list of precompiled binaries is available below.
 
 <p style="text-align: center; font-style: italic">Version Matrix for Seahorse Batch Workflow Executor</p>

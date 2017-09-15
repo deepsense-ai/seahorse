@@ -83,7 +83,7 @@ your workflow.
 </div>
 
 To find out more on what is possible in Seahorse,
-see the [Quick Start guide](/internal/main.html).
+see the [Quick Start guide](internal/main.html).
 
 ## Limitations
 

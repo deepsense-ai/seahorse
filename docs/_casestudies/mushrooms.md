@@ -39,7 +39,7 @@ description: Mushrooms
 <div style="display: table-cell; margin-top: 50px; margin-bottom: 50px">
   <h2 style="margin-top: 0; padding-top: 0">Workflow Overview</h2>
   <div style="display: table-cell; vertical-align: top; width: 100%">
-    <img class="centered-image img-responsive spacer" src="/img/usecases/mushrooms/workflow_overview.png" width="100%" />
+    <img class="centered-image img-responsive spacer" src="../img/usecases/mushrooms/workflow_overview.png" width="100%" />
   </div>
   <p>
     This is a complete experiment that generates a mushroom classification model.
@@ -55,7 +55,7 @@ description: Mushrooms
 
 The data is provided in a form of a 23-column, comma-separated CSV-like file with column names in the first line.
 To work with the dataset, it has to be loaded into Seahorse. This can be done by a
-[Read DataFrame](/internal/operations/read_dataframe.html) operation.
+[Read DataFrame](../internal/operations/read_dataframe.html) operation.
 Let’s place it on the canvas using drag-and-drop from the operations palette.
 To load the data, we need to provide the correct path to the file.
 
@@ -64,35 +64,35 @@ The Read DataFrame needs to have its parameters modified:
 
 **SOURCE**: <a target="_blank" href="https://s3.amazonaws.com/workflowexecutor/examples/data/mushrooms.csv">https://s3.amazonaws.com/workflowexecutor/examples/data/mushrooms.csv</a>
 
-<img class="bordered-image centered-image img-responsive spacer" src="/img/usecases/mushrooms/read_dataframe_parameters.png">
+<img class="bordered-image centered-image img-responsive spacer" src="../img/usecases/mushrooms/read_dataframe_parameters.png">
 
 After setting the Read DataFrame’s parameters to the correct values, the operation is ready to be executed
  – just simply click the RUN button in the top Seahorse toolbar.
 If you have much more operations on the canvas and you are interested in the results of only one operation,
 you can use partial execution of the workflow. Simply select that operation before clicking RUN.
 
-<img class="bordered-image centered-image img-responsive spacer" src="/img/usecases/mushrooms/run_button.png">
+<img class="bordered-image centered-image img-responsive spacer" src="../img/usecases/mushrooms/run_button.png">
 
 When the execution ends, a report of the operation will be available.
 Let’s click on the operation output port to see its result.
 
-<img class="bordered-image centered-image img-responsive spacer" src="/img/usecases/mushrooms/output_port.png">
+<img class="bordered-image centered-image img-responsive spacer" src="../img/usecases/mushrooms/output_port.png">
 
 At the bottom of the screen you will see a simple DataFrame report.
 It contains information about data loaded by the Read DataFrame operation.
 
-<img class="bordered-image centered-image img-responsive spacer" src="/img/usecases/mushrooms/read_dataframe_report.png">
+<img class="bordered-image centered-image img-responsive spacer" src="../img/usecases/mushrooms/read_dataframe_report.png">
 
 The DataFrame is too wide (more than 20 columns) to allow viewing the data sample in the report,
 so we are able to explore here only the column types and names.
 If you want to explore the data a bit more, you can use
-a [Notebook](/internal/operations/notebook.html) operation
+a [Notebook](../internal/operations/notebook.html) operation
 (it allows interactive data exploration). Just place it on the canvas (use drag-and-drop technique)
 and connect its input port with the Read DataFrame output port
 (click on the output port and drag it to an input port of the other operation).
 Now, you can open the Notebook by selecting it on the canvas and clicking at the “Open notebook” button on the right panel.
 
-<img class="bordered-image centered-image img-responsive spacer" src="/img/usecases/mushrooms/open_notebook_button.png">
+<img class="bordered-image centered-image img-responsive spacer" src="../img/usecases/mushrooms/open_notebook_button.png">
 
 In the newly opened window, enter: `dataframe().take(10)` and click on the “run cell” button
 (you can use a shortcut for it: Ctrl+Enter).
@@ -107,9 +107,9 @@ We have discovered that all columns have string values.
 To perform classification, Seahorse needs a numeric label column and a vector of numerics as features column.
 We need to map string values to numbers and assembly features into a single vector column.
 This can be done by combining multiple operations
- – [String Indexer](/internal/operations/string_indexer.html)
-with [One Hot Encoder](/internal/operations/one_hot_encoder.html)
-and [Assemble Vector](/internal/operations/assemble_vector.html)
+ – [String Indexer](../internal/operations/string_indexer.html)
+with [One Hot Encoder](../internal/operations/one_hot_encoder.html)
+and [Assemble Vector](../internal/operations/assemble_vector.html)
  – as shown in the workflow overview image.
 
 The String Indexer operation translates string values to numeric ordinal values.
@@ -123,7 +123,7 @@ It needs to have its parameters modified, as follows:
 
 **COLUMN NAME PREFIX**: indexed_
 
-<img class="bordered-image centered-image img-responsive spacer" src="/img/usecases/mushrooms/string_indexer_parameters.png">
+<img class="bordered-image centered-image img-responsive spacer" src="../img/usecases/mushrooms/string_indexer_parameters.png">
 
 The One Hot Encoder operation translates ordinal values to vector having “1” only at position given by input numeric value.
 It needs to have its parameters modified, as follows:
@@ -137,7 +137,7 @@ It needs to have its parameters modified, as follows:
 One Hot Encoder does not allow operating on columns with only one value
 (unless user wants to drop the last category using DROP LAST parameter).*
 
-<img class="bordered-image centered-image img-responsive spacer" src="/img/usecases/mushrooms/one_hot_encoder_parameters.png">
+<img class="bordered-image centered-image img-responsive spacer" src="../img/usecases/mushrooms/one_hot_encoder_parameters.png">
 
 Assemble Vector merges columns with numerics and vectors of numerics into a single vector of numerics. It needs to have its parameters modified, as follows:
 
@@ -145,13 +145,13 @@ Assemble Vector merges columns with numerics and vectors of numerics into a sing
 
 **OUTPUT COLUMN**: features
 
-<img class="bordered-image centered-image img-responsive spacer" src="/img/usecases/mushrooms/assemble_vector_parameters.png">
+<img class="bordered-image centered-image img-responsive spacer" src="../img/usecases/mushrooms/assemble_vector_parameters.png">
 
 
 ### Remove Unnecessary Columns
 
 We will use the
-[SQL Transformation](/internal/operations/sql_transformation.html)
+[SQL Transformation](../internal/operations/sql_transformation.html)
 operation to remove unnecessary columns from the dataset and give more meaningful names to columns
 that are essential for our experiment.
 It will make the dataset reports smaller and facilitate exploring data.
@@ -173,23 +173,23 @@ FROM df
 
 To perform a fair evaluation of our model, we need to split our data into two parts:
 a testing dataset and a training dataset. That task could be accomplished by using
-a [Split](/internal/operations/split.html) operation.
+a [Split](../internal/operations/split.html) operation.
 To divide the dataset in ratio 1 to 3, we do need to modify its default parameters:
 
 **SPLIT RATIO**: 0.25
 *(percentage of rows that should end up in the first output DataFrame – the test set)*
 
-<img class="bordered-image centered-image img-responsive spacer" src="/img/usecases/mushrooms/split_parameters.png">
+<img class="bordered-image centered-image img-responsive spacer" src="../img/usecases/mushrooms/split_parameters.png">
 
 
 ### Model Training
 
 To train a model, we need to use
-the [Fit](/internal/operations/fit.html) operation,
+the [Fit](../internal/operations/fit.html) operation,
 which can be used to fit
-an [Estimator](/internal/classes/estimator.html).
+an [Estimator](../internal/classes/estimator.html).
 We want to use logistic regression classification, so we will put
-the [Logistic Regression](/internal/operations/logistic_regression.html)
+the [Logistic Regression](../internal/operations/logistic_regression.html)
 operation on the canvas and connect it to the Fit operation.
 
 We will leave almost all default values of Logistic Regression parameters unchanged,
@@ -197,7 +197,7 @@ we need only to change the label column to edibility_label.
 
 **LABEL COLUMN**: edibility_label
 
-<img class="bordered-image centered-image img-responsive spacer" src="/img/usecases/mushrooms/logistic_regression_parameters.png">
+<img class="bordered-image centered-image img-responsive spacer" src="../img/usecases/mushrooms/logistic_regression_parameters.png">
 
 
 ### Verifying Model Effectiveness On Test Data
@@ -206,14 +206,14 @@ By using Split operation, we had generated a training dataset and a test dataset
 We have trained our model on the training dataset.
 Now it is time to use the test dataset to verify the effectiveness of our classification model.
 To generate predictions using the trained model, we need to use
-a [Transform](/internal/operations/transform.html) operation.
+a [Transform](../internal/operations/transform.html) operation.
 To assess effectiveness of our model we will count “Falsely Poisonous” (waste of edible mushrooms)
 and “Falsely Edible“ (very dangerous!) entries in the test dataset. To perform the calculations,
 we will use the SQL Transformation operation.
 
 After executing the Transform operation, we can investigate the resulting report:
 
-<img class="bordered-image centered-image img-responsive spacer" src="/img/usecases/mushrooms/transform_report.png">
+<img class="bordered-image centered-image img-responsive spacer" src="../img/usecases/mushrooms/transform_report.png">
 
 Thanks to projecting only the necessary columns, the resulting dataset fits in the column number limit
 and we are able to view the data sample. We can notice that the test dataset has 2043 entries.

@@ -13,12 +13,12 @@ description: Seahorse documentation homepage
 
 ## Setup
 
-Follow the instructions at the [Try Seahorse](/downloads.html) page to start your Seahorse instance.
+Follow the instructions at the [Try Seahorse](../downloads.html) page to start your Seahorse instance.
 
 ## Test It
-Depending on the deployment mode you are using (they are all listed [here](/downloads.html))
+Depending on the deployment mode you are using (they are all listed [here](../downloads.html))
 Seahorse might be available at different addresses. In Seahorse Desktop it's usually
-<a target="_blank" href="{{ site.SEAHORSE_EDITOR_ADDRESS }}">{{ site.SEAHORSE_EDITOR_ADDRESS }}</a> (visit [Seahorse Desktop Overview](/desktop_overview.html) for details).
+<a target="_blank" href="{{ site.SEAHORSE_EDITOR_ADDRESS }}">{{ site.SEAHORSE_EDITOR_ADDRESS }}</a> (visit [Seahorse Desktop Overview](../desktop_overview.html) for details).
 Open it in your browser and you will see the web-based user interface:
 
 <p style="text-align:center;">

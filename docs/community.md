@@ -9,14 +9,14 @@ description: Deepsense documentation homepage
     Follow us on
     <a target="_blank" href="https://twitter.com/deepsense_io/">
       Twitter
-      <img src="/img/twitter.png" height="40px" />
+      <img src="{{base}}/img/twitter.png" height="40px" />
     </a>
   </div>
   <div class="centered-content">
     Check out
     <a target="_blank" href="https://github.com/deepsense-io/seahorse-workflow-executor">
       Seahorse GitHub repository
-      <img src="/img/octocat.png" height="40px" />
+      <img src="{{base}}/img/octocat.png" height="40px" />
     </a>
   </div>
 </div>

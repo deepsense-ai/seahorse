@@ -32,7 +32,7 @@ of the execution. This establishes an interactive process during which the user 
 what happens at each step.
 
 <div class="centered-container" markdown="1">
-  ![Seahorse Overview](/img/seahorse_overview.png){: .centered-image .img-responsive}
+  ![Seahorse Overview](img/seahorse_overview.png){: .centered-image .img-responsive}
 </div>
 
 Finally, after the workflow has been constructed, it can be exported and deployed as a typical Spark
@@ -45,7 +45,7 @@ builds an application by dragging operations onto the canvas and defining connec
 Each operation is configurable via its parameters.
 
 <div class="centered-container spacer" markdown="1">
-  <img src="/img/seahorse_editor.png"
+  <img src="img/seahorse_editor.png"
     class="centered-image img-responsive spacer" style="width:90%"/>
   *Seahorse's interface*
 </div>

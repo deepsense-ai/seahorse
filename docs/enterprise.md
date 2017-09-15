@@ -9,7 +9,7 @@ title: Seahorse Enterprise
 
 <div style="overflow: auto">
     <p style="float:right; margin-left:25px; width:55%; text-align:center;">
-      <img class="centered-image img-responsive" src="/img/enterprise_architecture.png" />
+      <img class="centered-image img-responsive" src="img/enterprise_architecture.png" />
         <em>Seahorse in a Production Environment</em>
     </p>
 
