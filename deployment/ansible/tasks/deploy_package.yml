@@ -1,5 +1,8 @@
 # Copyright (c) 2015, CodiLime Inc.
 
+- name: "Install unzip"
+  apt: package=unzip state=latest
+
 - name: "Remove directory"
   command: "/bin/rm -rf {{install_dir}}/*"
 
