@@ -5,13 +5,11 @@ var passport = require('passport');
 var OAUTH2Strategy = require('passport-cloudfoundry').Strategy;
 var config = require('../config/config');
 
-var sso = config.getSso();
-
 var strategy = new OAUTH2Strategy({
-  authorizationURL: sso.authorizationUri,
-  tokenURL: sso.tokenUri,
-  clientID: sso.clientId,
-  clientSecret: sso.clientSecret,
+  authorizationURL: config.oauth.authorizationUri,
+  tokenURL: config.oauth.tokenUri,
+  clientID: config.oauth.clientId,
+  clientSecret: config.oauth.clientSecret,
   callbackURL: '/oauth/callback',
   passReqToCallback: false
 }, function (accessToken, refreshToken, profile, done) {
@@ -19,7 +17,7 @@ var strategy = new OAUTH2Strategy({
   done(null, profile);
 });
 
-strategy.setUserProfileURI(sso.userInfoUri);
+strategy.setUserProfileURI(config.oauth.userInfoUri);
 passport.use(strategy);
 
 passport.serializeUser(function (user, done) {

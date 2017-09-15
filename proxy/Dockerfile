@@ -13,17 +13,18 @@ RUN npm install
 
 COPY . .
 
-RUN node_modules/.bin/obfuscator --root app/server/ \
-       --entry app/server/server.js \
-       $(find app/ -name "*.js") \
-       $(find app/ -name "*.json") \
-       --out app/server/server.js.obfuscated
+RUN npm install && \
+    npm run build && \
+    node_modules/.bin/obfuscator --root lib/server/ \
+       --entry lib/server/server.js \
+       $(find lib/ -name "*.js") \
+       $(find lib/ -name "*.json") \
+       --out server.js.obfuscated && \
+    # TODO Obfuscation should occur before ever adding js files as docker layer (or we should squash some layers)
+    # Someone might just remove those two layers and build his own proxy docker image with source code.
+    rm -rf app lib
 
-RUN chmod +x app/server/server.js.obfuscated
-# TODO Obfuscation should occur before ever adding js files as docker layer (or we should squash some layers)
-# Someone might just remove those two layers and build his own proxy docker image with source code.
-RUN find app -name "*.js" | xargs rm
-RUN find app -name "*.json" | xargs rm
+RUN chmod +x server.js.obfuscated
 
 CMD [ "npm", "start"]
 

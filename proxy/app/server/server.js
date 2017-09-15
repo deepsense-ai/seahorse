@@ -9,7 +9,7 @@
 var app = require('./app');
 var debug = require('debug')('console:server');
 var http = require('http');
-var reverseProxy = require('./reverse-proxy')
+var reverseProxy = require('./reverse-proxy');
 
 /**
  * Get port from environment and store in Express.

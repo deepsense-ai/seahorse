@@ -92,57 +92,29 @@ class Proxy(Service):
 
     def environment(self):
         return Env(
-            VCAP_SERVICES=json.dumps(self.vcap_services()),
             HOST='127.0.0.1',
             ENABLE_AUTHORIZATION=self.services.Authorization.enable_authorization(),
             FORCE_HTTPS='false',
+            WORKFLOW_MANAGER_HOST=self._service_address(WorkflowManager),
+            SCHEDULING_MANAGER_HOST=self._service_address(SchedulingManager),
+            DATASOURCE_MANAGER_HOST=self._service_address(DataSourceManager),
+            SESSION_MANAGER_HOST=self._service_address(SessionManager),
+            LIBRARY_HOST=self._service_address(Library),
+            JUPYTER_HOST=self._service_address(Notebooks),
+            FRONTEND_HOST=self._service_address(Frontend),
+            AUTHORIZATION_HOST=self._service_address(Authorization),
+            RABBITMQ_HOST=self._service_address(RabbitMQ, 'websocket'),
             PORT=33321) + \
                self.services.WorkflowManager.credentials().as_env()
+
 
     def port_mapping(self):
         return PortMappings().add(PortMappings.Mapping(33321, 33321))
 
-    def service_address(self, service, name=None):
-        return getattr(self.services, service.name()).exposed_address(name).as_string()
 
-    def vcap_services(self):
-        def service_desc(service_name, service):
-            return {
-                "credentials": {
-                    "host": "http://{}".format(self.service_address(service))
-                },
-                "name": service_name
-            }
-
-        return {
-            "user-provided": [
-                service_desc('workflow-manager', WorkflowManager),
-                service_desc('scheduling-manager', SchedulingManager),
-                service_desc('datasource-manager', DataSourceManager),
-                service_desc('library', Library),
-                service_desc('session-manager', SessionManager),
-                service_desc('jupyter', Notebooks),
-                service_desc('frontend', Frontend),
-                {
-                    "credentials": {
-                        "host": "http://{}".format(self.service_address(Authorization)),
-                        "authorizationUri": "/authorization/oauth/authorize",
-                        "logoutUri": "/authorization/logout.do",
-                        "tokenUri": "http://{}/authorization/oauth/token".format(self.service_address(Authorization)),
-                        "clientId": "Seahorse",
-                        "clientSecret": "seahorse01",
-                        "userInfoUri": "http://{}/authorization/userinfo".format(self.service_address(Authorization))
-                    },
-                    "name": "sso"
-                },
-                {
-                    "credentials": {
-                        "host": "http://{}".format(self.service_address(RabbitMQ, 'websocket'))
-                    },
-                    "name": "rabbitmq"
-                }
-            ]
-        }
+    def _service_address(self, service, name=None):
+        address_no_protocol = getattr(self.services, service.name()).exposed_address(name).as_string()
+        return "http://{}".format(address_no_protocol)
 
 
 class SchedulingManager(Service):
@@ -493,7 +465,7 @@ class ProxyBridgeNetwork(Proxy):
         return super(ProxyBridgeNetwork, self).environment() + \
                Env(HOST='0.0.0.0')
 
-    def service_address(self, service, name=None):
+    def _service_address(self, service, name=None):
         return getattr(self.services, service.name()).internal_address(name).as_string()
 
 

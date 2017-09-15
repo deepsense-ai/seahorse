@@ -1,19 +1,18 @@
 /**
  * Copyright (c) 2016, CodiLime Inc.
  */
-var _ = require('underscore');
-var defaults = require('./default-config.json');
+const _ = require('underscore');
+const defaults = require('./default-config.json');
+const serviceMapping = require('./service-mapping');
 
-var thr = require('throw');
-
-var vcapServices = JSON.parse(process.env.VCAP_SERVICES || thr('VCAP_SERVICES env is required'));
-
-var userProvided = vcapServices['user-provided'] || [];
-
-function getUserProvidedSerice(name) {
-  var service = _.findWhere(userProvided, { name: name });
-  return service && service.credentials;
-}
+const oauth = {
+  "clientSecret": "seahorse01",
+  "tokenUri": `${serviceMapping.authorization.host}/authorization/oauth/token`,
+  "clientId": "Seahorse",
+  "logoutUri": "/authorization/logout.do",
+  "authorizationUri": "/authorization/oauth/authorize",
+  "userInfoUri": `${serviceMapping.authorization.host}/authorization/userinfo`
+};
 
 function getVariable(name) {
   if(!name || !_.isString(name)) {
@@ -27,7 +26,6 @@ function getVariable(name) {
 }
 
 module.exports = {
-  getUserProvidedSerice: getUserProvidedSerice,
-  getSso: _.partial(getUserProvidedSerice, 'sso'),
+  oauth,
   get: getVariable
 };

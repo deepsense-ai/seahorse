@@ -5,8 +5,6 @@ var session = require('express-session');
 var config = require('../config/config');
 var request = require('request');
 
-var sso = config.getSso();
-
 /*
  * When user quota is changed also change numbers in Seahorse documentation
  * We need one account for admin, so user_quota = number_of_user + 1 (for admin)
@@ -16,8 +14,6 @@ var user_quota = 2
 module.exports = {
     forward: checkUserQuota,
 };
-
-
 
 function getToken(success, failure, tokenUri, client_id, client_secret) {
 
@@ -57,7 +53,7 @@ function checkUserQuota(req, res, next) {
     }
 
     var callUsersUri = function(key) {
-        var usersUri = sso.tokenUri + "/../../Users"
+        var usersUri = config.oauth.tokenUri + "/../../Users"
         request.get(usersUri, handleScimUserResponse).auth(null, null, true, key);
     }
 
@@ -66,5 +62,5 @@ function checkUserQuota(req, res, next) {
         res.redirect('/quota.html?limit_code=401');
     }
 
-    getToken(callUsersUri, failure, sso.tokenUri, "admin", "adminsecret");
+    getToken(callUsersUri, failure, config.oauth.tokenUri, "admin", "adminsecret");
 }

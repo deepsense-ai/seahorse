@@ -12,21 +12,27 @@
     "debug": "2.2.0",
     "express": "4.13.4",
     "express-session": "1.13.0",
-    "lodash": "4.13.1",
     "http-proxy": "1.13.2",
     "http-proxy-agent": "1.0.0",
     "https-proxy-agent": "1.0.0",
+    "lodash": "4.13.1",
     "morgan": "1.7.0",
     "obfuscator": "0.5.4",
     "passport": "0.3.2",
     "passport-cloudfoundry": "rajaraodv/passport-cloudfoundry",
     "request": "2.69.0",
     "require-dir": "0.3.0",
-    "throw": "1.1.0",
     "serve-favicon": "2.3.0",
+    "throw": "1.1.0",
     "underscore": "1.8.3"
   },
   "scripts": {
-    "start": "node app/server/server.js.obfuscated"
+    "build": "babel app -d lib --copy-files --presets env",
+    "start": "node server.js.obfuscated",
+    "startDev": "node app/server/server.js"
+  },
+  "devDependencies": {
+    "babel-cli": "6.18.0",
+    "babel-preset-env": "1.1.8"
   }
 }

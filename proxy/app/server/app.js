@@ -8,7 +8,7 @@ var express = require('express'),
     compression = require('compression'),
     timeout = require('connect-timeout'),
     reverseProxy = require('./reverse-proxy'),
-    authorizationQuota = require('./authorization-quota/authorization-quota');
+    authorizationQuota = require('./authorization-quota/authorization-quota'),
     config = require('./config/config');
 
 var app = express();

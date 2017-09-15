@@ -9,8 +9,6 @@ var config = require('../config/config');
 var passport = oauth2.passport;
 var strategy = oauth2.strategy;
 
-var sso = config.getSso();
-
 module.exports = {
   init: init,
   login: login,
@@ -42,7 +40,7 @@ function init(app) {
     req.logout();
     strategy.reset();
     var oauthPage = url.format({protocol: req.protocol, host: req.get("host"), pathname: "oauth"})
-    res.redirect(sso.logoutUri+"?redirect=" + oauthPage);
+    res.redirect(config.oauth.logoutUri+"?redirect=" + oauthPage);
   });
 }
 
