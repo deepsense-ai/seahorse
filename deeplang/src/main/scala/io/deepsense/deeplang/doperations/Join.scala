@@ -23,13 +23,14 @@ import org.apache.spark.sql.Column
 import org.apache.spark.sql.types.StructType
 
 import io.deepsense.commons.types.SparkConversions
+import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
 import io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params._
 import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
-import io.deepsense.deeplang.params.selections.{ColumnSelection, NameColumnSelection, SingleColumnSelection}
+import io.deepsense.deeplang.params.selections.{NameColumnSelection, SingleColumnSelection}
 import io.deepsense.deeplang.{DKnowledge, DOperation2To1, ExecutionContext}
 
 case class Join()
@@ -42,6 +43,8 @@ case class Join()
   override val name = "Join"
   override val description: String =
     "Joins two DataFrames to a DataFrame"
+
+  override val since: Version = Version(0, 4, 0)
 
   val joinType = ChoiceParam[JoinTypeChoice.Option](
     name = "join type",

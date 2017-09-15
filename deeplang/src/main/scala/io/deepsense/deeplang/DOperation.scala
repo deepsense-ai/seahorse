@@ -20,6 +20,7 @@ import scala.reflect.runtime.{universe => ru}
 
 import io.deepsense.commons.models
 import io.deepsense.commons.utils.Logging
+import io.deepsense.deeplang.documentation.OperationDocumentation
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.Params
 import io.deepsense.graph.Operation
@@ -29,7 +30,8 @@ import io.deepsense.graph.Operation
  * Can infer its output type based on type knowledge.
  */
 @SerialVersionUID(1L)
-abstract class DOperation extends Operation with Serializable with Logging with Params {
+abstract class DOperation extends Operation
+    with Serializable with Logging with Params with OperationDocumentation {
   val inArity: Int
   val outArity: Int
   val id: DOperation.Id

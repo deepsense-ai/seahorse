@@ -21,6 +21,7 @@ import scala.reflect.runtime.{universe => ru}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 
+import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.HasSeedParam
@@ -37,6 +38,8 @@ case class Split()
   override val name: String = "Split"
   override val description: String =
     "Splits a DataFrame into two DataFrames"
+
+  override val since: Version = Version(0, 4, 0)
 
   val splitRatio = NumericParam(
     name = "split ratio",

@@ -20,6 +20,7 @@ import scala.reflect.runtime.universe.TypeTag
 
 import spray.json.{JsNull, JsValue}
 
+import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.Transformer
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
@@ -34,6 +35,8 @@ case class Transform() extends DOperation2To1[DataFrame, Transformer, DataFrame]
   override val name: String = "Transform"
   override val description: String =
     "Transforms a DataFrame using a Transformer"
+
+  override val since: Version = Version(1, 0, 0)
 
   val transformerParams = new DynamicParam(
     name = "Parameters of input Transformer",

@@ -16,6 +16,7 @@
 
 package io.deepsense.deeplang.doperations
 
+import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.report.Report
@@ -99,5 +100,6 @@ object EvaluatorAsFactorySpec {
     override val id: Id = Id.randomId
     override val name: String = "Mock Evaluator factory used for tests purposes"
     override val description: String = "Description"
+    override val since: Version = Version(0, 0, 0)
   }
 }

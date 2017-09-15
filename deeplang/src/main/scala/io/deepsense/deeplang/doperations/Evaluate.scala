@@ -20,6 +20,7 @@ import scala.reflect.runtime.universe.TypeTag
 
 import spray.json.{JsNull, JsValue}
 
+import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.{Evaluator, MetricValue}
@@ -34,6 +35,8 @@ case class Evaluate() extends DOperation2To1[DataFrame, Evaluator, MetricValue] 
   override val name: String = "Evaluate"
   override val description: String =
     "Evaluates a DataFrame using an Evaluator"
+
+  override val since: Version = Version(1, 0, 0)
 
   val evaluatorParams = new DynamicParam(
     name = "Parameters of input Evaluator",

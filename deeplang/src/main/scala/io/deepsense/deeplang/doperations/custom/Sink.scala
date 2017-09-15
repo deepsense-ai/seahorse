@@ -18,10 +18,11 @@ package io.deepsense.deeplang.doperations.custom
 
 import scala.reflect.runtime.{universe => ru}
 
+import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.Param
 
 case class Sink() extends DOperation1To1[DataFrame, DataFrame] {
@@ -29,6 +30,9 @@ case class Sink() extends DOperation1To1[DataFrame, DataFrame] {
   override val id: Id = Sink.id
   override val name: String = "Sink"
   override val description: String = "Custom transformer sink"
+
+  override val since: Version = Version(1, 0, 0)
+
   override val params: Array[Param[_]] = declareParams()
 
   @transient

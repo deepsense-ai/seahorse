@@ -18,6 +18,7 @@ package io.deepsense.deeplang.doperations.custom
 
 import scala.reflect.runtime.{universe => ru}
 
+import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.params.Param
@@ -28,6 +29,9 @@ case class Source() extends DOperation0To1[DataFrame] {
   override val id: Id = Source.id
   override val name: String = "Source"
   override val description: String = "Custom transformer source"
+
+  override val since: Version = Version(1, 0, 0)
+
   override val params: Array[Param[_]] = declareParams()
 
   @transient

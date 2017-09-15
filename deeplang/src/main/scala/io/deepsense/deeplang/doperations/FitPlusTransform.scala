@@ -20,6 +20,7 @@ import scala.reflect.runtime.universe._
 
 import spray.json.{JsNull, JsValue}
 
+import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.{Estimator, Transformer}
@@ -33,6 +34,9 @@ class FitPlusTransform extends DOperation2To2[DataFrame, Estimator, DataFrame, T
   override val id: Id = "1cb153f1-3731-4046-a29b-5ad64fde093f"
   override val name: String = "Fit + Transform"
   override val description: String = "Fits an Estimator on a DataFrame and transforms it"
+
+  override val since: Version = Version(1, 0, 0)
+
   override lazy val tTagTO_0: TypeTag[DataFrame] = typeTag[DataFrame]
   override lazy val tTagTO_1: TypeTag[Transformer] = typeTag[Transformer]
   override lazy val tTagTI_0: TypeTag[DataFrame] = typeTag[DataFrame]

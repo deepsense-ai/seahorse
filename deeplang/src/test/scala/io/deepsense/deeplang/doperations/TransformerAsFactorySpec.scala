@@ -16,6 +16,7 @@
 
 package io.deepsense.deeplang.doperations
 
+import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.ParamMap
@@ -28,6 +29,8 @@ class TransformerAsFactorySpec extends UnitSpec {
     override val name: String = ""
     override val id: Id = "6d924962-9456-11e5-8994-feff819cdc9f"
     override val description: String = ""
+
+    override val since: Version = Version(0, 0, 0)
   }
 
   "TransformerAsFactory" should {

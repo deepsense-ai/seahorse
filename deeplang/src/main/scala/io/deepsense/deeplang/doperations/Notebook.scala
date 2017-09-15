@@ -18,6 +18,7 @@ package io.deepsense.deeplang.doperations
 
 import scala.reflect.runtime.{universe => ru}
 
+import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.{DOperation1To0, ExecutionContext}
@@ -28,6 +29,8 @@ case class Notebook()
   override val id: Id = "e76ca616-0322-47a5-b390-70c9668265dd"
   override val name: String = "Notebook"
   override val description: String = "Creates a notebook with access to the DataFrame"
+
+  override val since: Version = Version(1, 0, 0)
 
   override val params = declareParams()
 

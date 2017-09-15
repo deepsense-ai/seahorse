@@ -18,6 +18,7 @@ package io.deepsense.deeplang.doperations
 
 import scala.reflect.runtime.{universe => ru}
 
+import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.CustomOperationExecutionException
@@ -32,6 +33,8 @@ case class CustomPythonOperation()
   override val id: Id = "a721fe2a-5d7f-44b3-a1e7-aade16252ead"
   override val name: String = "Custom Python Operation"
   override val description: String = "Creates a custom Python operation"
+
+  override val since: Version = Version(1, 0, 0)
 
   val codeParameter = CodeSnippetParam(
     name = "code",

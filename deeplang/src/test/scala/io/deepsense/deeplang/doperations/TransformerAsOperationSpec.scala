@@ -20,6 +20,7 @@ import scala.reflect.runtime.universe.TypeTag
 
 import org.apache.spark.sql.types.StructType
 
+import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.Transformer
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
@@ -71,6 +72,7 @@ class TransformerAsOperationSpec extends UnitSpec {
     override val name: String = ""
     override val id: Id = "6d924962-9456-11e5-8994-feff819cdc9f"
     override val description: String = ""
+    override val since: Version = Version(0, 0, 0)
   }
 
   "TransformerAsOperation" should {

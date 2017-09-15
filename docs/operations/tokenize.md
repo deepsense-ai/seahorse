@@ -8,7 +8,15 @@ includeOperationsMenu: true
 ---
 Converts text to lowercase and splits it by spaces.
 
-This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.feature.Tokenizer">org.apache.spark.ml.feature.Tokenizer documentation</a>.
+This operation is ported from Spark ML.
+
+
+For a comprehensive introduction, see
+<a target="_blank" href="https://spark.apache.org/docs/1.6.0/ml-features.html#tokenizer">Spark documentation</a>.
+
+
+For scala docs details, see
+<a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.feature.Tokenizer">org.apache.spark.ml.feature.Tokenizer documentation</a>.
 
 **Since**: Seahorse 1.0.0
 

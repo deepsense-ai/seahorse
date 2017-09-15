@@ -27,6 +27,7 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 
 import io.deepsense.commons.datetime.DateTimeConverter
+import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.{DeepSenseIOException, UnsupportedColumnTypeException, WriteFileException}
@@ -42,6 +43,8 @@ case class WriteDataFrame()
   override val id: Id = "9e460036-95cc-42c5-ba64-5bc767a40e4e"
   override val name: String = "Write DataFrame"
   override val description: String = "Writes a DataFrame to a file or database"
+
+  override val since: Version = Version(0, 4, 0)
 
   val storageType = ChoiceParam[OutputStorageTypeChoice](
     name = "data storage type",

@@ -8,7 +8,15 @@ includeOperationsMenu: true
 ---
 Creates a multiclass classification evaluator.
 
-This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator">org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator documentation</a>.
+This operation is ported from Spark ML.
+
+
+For a comprehensive introduction, see
+<a target="_blank" href="https://spark.apache.org/docs/1.6.0/mllib-evaluation-metrics.html#multiclass-classification">Spark documentation</a>.
+
+
+For scala docs details, see
+<a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator">org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator documentation</a>.
 
 **Since**: Seahorse 1.0.0
 

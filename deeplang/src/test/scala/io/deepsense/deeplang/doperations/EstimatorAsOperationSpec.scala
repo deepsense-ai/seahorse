@@ -18,6 +18,7 @@ package io.deepsense.deeplang.doperations
 
 import org.apache.spark.sql.types.StructType
 
+import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables._
@@ -86,6 +87,8 @@ object EstimatorAsOperationSpec extends UnitSpec {
     override val id: Id = Id.randomId
     override val name: String = "Mock Estimator as an Operation"
     override val description: String = "Description"
+
+    override val since: Version = Version(0, 0, 0)
   }
 }
 
