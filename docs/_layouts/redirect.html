@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+  <meta charset="utf-8">
+  {% if page.redirect %}
+  <meta http-equiv="refresh" content="0; url={{page.redirect}}">
+  <link rel="canonical" href="{{page.redirect}}" />
+  {% endif %}
+</head>
+
+<body>
+  You will be automatically redirected to <a href="{{page.redirect}}">{{page.redirect}}</a>
+</body>
+</html>
