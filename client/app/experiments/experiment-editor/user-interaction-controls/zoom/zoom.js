@@ -38,8 +38,6 @@ function ZoomController($document, $scope, GraphPanelRendererService, $rootScope
   internal.elementParentStaticWidth = internal.elementToZoomParent.clientWidth;
   internal.min    = internal.elementParentStaticWidth / internal.elementStaticWidth;
 
-  console.log(internal.min, internal.value);
-
   internal.getMinElementZoom = function getMinElementZoom () {
     return internal.elementStaticWidth * internal.min;
   };
@@ -80,11 +78,11 @@ function ZoomController($document, $scope, GraphPanelRendererService, $rootScope
   };
 
   internal.wheelListener = function wheelListener (event) {
-    var userWheelData = event.wheelDelta;
+    var userWheelData = event.deltaY;
     var zoom;
 
     // zoom out wheel is rolling down
-    if (userWheelData < 0) {
+    if (userWheelData > 0) {
       zoom = internal.zoomOut();
     // zoom in wheel is rolling up
     } else {

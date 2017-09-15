@@ -27,6 +27,7 @@ function FitController($document, $scope, $timeout, $rootScope, GraphPanelRender
   var that = this;
   var internal = {};
 
+  internal.started = false;
   internal.padding = ($scope.padding / 1000) || 0;
 
   internal.getZoomRatioToFit = function getZoomRatioToFit (params) {
@@ -124,6 +125,13 @@ function FitController($document, $scope, $timeout, $rootScope, GraphPanelRender
     internal.setFit(visibleDimensions, GraphPanelRendererService.getAllInternalElementsPosition());
   };
 
+  internal.start = function start () {
+    if (internal.started === false) {
+      internal.run();
+      internal.started = true;
+    }
+  };
+
   internal.getCurrentElementDimensions = function getCurrentElementDimensions () {
     return internal.element.getBoundingClientRect();
   };
@@ -144,7 +152,7 @@ function FitController($document, $scope, $timeout, $rootScope, GraphPanelRender
     internal.elementStaticHeight  = internal.element.clientHeight;
 
     if ($scope.run) {
-      $scope.$on('Experiment.RENDER_FINISHED', internal.run);
+      $scope.$on('Experiment.RENDER_FINISHED', internal.start);
     }
   };
 

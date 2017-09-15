@@ -187,16 +187,23 @@ function ExperimentController(
 
   $scope.$on('FlowChartBox.ELEMENT_DROPPED', function elementDropped(event, args) {
     let operation = Operations.get(args.classId);
-    let boxPosition = args.target[0].getBoundingClientRect();
-    let positionX = (args.dropEvent.pageX - boxPosition.left - window.scrollX) || 0;
-    let positionY = (args.dropEvent.pageY - boxPosition.top - window.scrollY) || 0;
-    let offsetX = 100;
-    let offsetY = 30;
+    let offsetX = args.dropEvent.offsetX;
+    let offsetY = args.dropEvent.offsetY;
+
+    if (!offsetX && !offsetY) {
+      offsetX = args.dropEvent.layerX - args.dropEvent.currentTarget.offsetLeft;
+      offsetY = args.dropEvent.layerY - args.dropEvent.currentTarget.offsetTop;
+    }
+
+    let positionX = offsetX || 0;
+    let positionY = offsetY || 0;
+    let elementOffsetX = 100;
+    let elementOffsetY = 30;
     let node = ExperimentService.getExperiment().createNode({
         'id': UUIDGenerator.generateUUID(),
         'operation': operation,
-        'x': positionX > offsetX ? positionX - offsetX : 0,
-        'y': positionY > offsetY ? positionY - offsetY : 0
+        'x': positionX > elementOffsetX ? positionX - elementOffsetX : 0,
+        'y': positionY > elementOffsetY ? positionY - elementOffsetY : 0
       });
 
     ExperimentService.getExperiment().addNode(node);
