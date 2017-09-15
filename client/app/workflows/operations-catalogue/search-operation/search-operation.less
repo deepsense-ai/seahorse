@@ -43,7 +43,15 @@
       font-weight: bold;
       display: flex;
       justify-content: flex-start;
-      color: @subcategory-color;
+      color: @main-category-color;
+    }
+
+    &__inner-subcategory {
+      padding-left: 5px;
+
+      .subcategory__name {
+        color: @subcategory-color;
+      }
     }
   }
 
@@ -57,8 +65,6 @@
       font-size: 14px;
       font-weight: 600;
       width: 200px;
-      display: flex;
-      justify-content: flex-start;
       padding-left: 10px;
       .text-elipsis();
 

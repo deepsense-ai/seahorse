@@ -16,20 +16,33 @@
          ng-repeat="operation in category.items"
          ng-click="$ctrl.selectOperation({operationId: operation.id})"
     >
-      <div class="operations__name">
+      <div class="operations__name" title={{operation.name}}>
         {{operation.name}}
       </div>
     </div>
-    <div class="subcategory" ng-repeat="category in category.catalog">
+    <div class="subcategory" ng-repeat="subcategory in category.catalog">
       <div class="subcategory__name">
-        {{category.name}}
+        {{subcategory.name}}
       </div>
       <div class="operations"
-           ng-repeat="operation in category.items"
+           ng-repeat="operation in subcategory.items"
            ng-click="$ctrl.selectOperation({operationId: operation.id})"
       >
         <div class="operations__name">
           {{operation.name}}
+        </div>
+      </div>
+      <div class="subcategory__inner-subcategory" ng-repeat="subcategory in subcategory.catalog">
+        <div class="subcategory__name">
+          {{subcategory.name}}
+        </div>
+        <div class="operations"
+             ng-repeat="operation in subcategory.items"
+             ng-click="$ctrl.selectOperation({operationId: operation.id})"
+        >
+          <div class="operations__name" title={{operation.name}}>
+            {{operation.name}}
+          </div>
         </div>
       </div>
     </div>
