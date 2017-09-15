@@ -26,7 +26,7 @@ lazy val root = (project in file(".")).
     ),
     javaOptions in Test := Seq("-Denv=test"),
     fork in Test := true,
-    javaOptions in IntegTest := Seq("-Denv=test"),
+    javaOptions in IntegTest := Seq("-Denv=integtest"),
     fork in IntegTest := true,
     unmanagedClasspath in Test += baseDirectory.value / "conf",
     unmanagedClasspath in Runtime += baseDirectory.value / "conf",
