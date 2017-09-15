@@ -334,8 +334,8 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
         _.isArray(connection.endpoints)
       ) {
         let port = connection.endpoints[0];
-        ConnectionHinterService.showHints(port, internal.renderMode);
-        ConnectionHinterService.highlightOperations(port);
+        ConnectionHinterService.showHints(workflow, port, internal.renderMode);
+        ConnectionHinterService.highlightOperations(workflow, port);
       }
     });
   };

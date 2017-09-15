@@ -24,8 +24,7 @@ class ConnectionHinterService extends GraphPanelRendererBase {
    * Highlights such ports that match to the given port
    * and colours ports that don't match.
    */
-  showHints(sourceEndpoint, renderMode, hasReport) {
-    const workflow = this.WorkflowService.getWorkflow();
+  showHints(workflow, sourceEndpoint, renderMode, hasReport) {
     const nodes = workflow.getNodes();
 
     const sourceNodeId = sourceEndpoint.getParameter('nodeId');
@@ -99,8 +98,7 @@ class ConnectionHinterService extends GraphPanelRendererBase {
   /*
    * Highlight the operation on the left side panel.
    */
-  highlightOperations(sourceEndpoint, hasReport) {
-    const workflow = this.WorkflowService.getWorkflow();
+  highlightOperations(workflow, sourceEndpoint) {
     const sourceNodeId = sourceEndpoint.getParameter('nodeId');
     const sourceNode = workflow.getNodeById(sourceNodeId);
     const sourcePortIndex = sourceEndpoint.getParameter('portIndex');
