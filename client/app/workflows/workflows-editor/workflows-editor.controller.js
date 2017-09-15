@@ -91,6 +91,11 @@ class WorkflowsEditorController {
       this.ServerCommunication.launch(this.workflow.id, serialized, nodesToExecute);
     });
 
+    this.$scope.$on('AttributePanel.UNSELECT_NODE', () => {
+      this.unselectNode();
+      this.$scope.$digest();
+    });
+
     this.$scope.$on('StatusBar.ABORT', () => {
       this.GraphPanelRendererService.setRenderMode(GraphPanelRendererBase.EDITOR_RENDER_MODE);
       this.GraphPanelRendererService.rerender();
@@ -147,11 +152,6 @@ class WorkflowsEditorController {
         });
 
         internal.getNodeParameters.call(this, node);
-      }),
-
-      this.$scope.$on('AttributePanel.UNSELECT_NODE', () => {
-        this.unselectNode();
-        this.$scope.$digest();
       }),
 
       this.$scope.$on('AttributesPanel.UPDATED', () => {
