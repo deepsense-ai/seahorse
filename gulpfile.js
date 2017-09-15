@@ -30,7 +30,7 @@ var config = require('./package.json'),
 
 
 gulp.task('clean', function () {
-  del([build.path]);
+  return del(['./build/','./build/*']);
 });
 
 gulp.task('browser-sync', function () {
@@ -47,6 +47,11 @@ gulp.task('browser-sync', function () {
 gulp.task('html', function () {
   return gulp.src([client.path + client.html])
     .pipe(gulp.dest(build.path));
+});
+
+gulp.task('fonts', function () {
+  return gulp.src([client.path + client.fonts])
+    .pipe(gulp.dest(build.path + build.fonts));
 });
 
 gulp.task('less', function () {
@@ -116,7 +121,7 @@ gulp.task('browserify', function () {
 
 
 gulp.task('build', function (callback) {
-  runSequence('clean', ['html', 'less', 'libs:css', 'libs:js', 'jshint', 'browserify'], callback);
+  runSequence('clean', ['fonts', 'html', 'less', 'libs:css', 'libs:js', 'jshint', 'browserify'], callback);
 });
 
 gulp.task('start', function (callback) {

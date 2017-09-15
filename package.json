@@ -71,6 +71,7 @@
       "path": "./build/",
       "js": "js/",
       "css": "css/",
+      "fonts": "fonts/",
       "bundle": {
         "app": "app.js",
         "js": "libs.js",
@@ -82,7 +83,8 @@
       "app": "app/app.js",
       "js": "app/**/*.js",
       "less": "css/**/*.less",
-      "html": "**/*.html"
+      "html": "**/*.html",
+      "fonts": "fonts/*"
     },
     "libs": {
       "js": [
@@ -92,7 +94,8 @@
         "./bower_components/jsPlumb/dist/js/dom.jsPlumb-1.7.2-min.js"
       ],
       "css": [
-        "./node_modules/bootstrap/dist/css/bootstrap.min.css"
+        "./node_modules/bootstrap/dist/css/bootstrap.min.css",
+        "./client/css/*.css"
       ]
     },
     "tests": {
