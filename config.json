@@ -37,6 +37,13 @@
       "assets": "./**/assets/**/*",
       "icheckImages": "css/*.png"
     },
+    "external": {
+      "sockjs": {
+        "input": "./node_modules/sockjs-client/lib/entry.js",
+        "output": "./node_modules/sockjs-client/lib/",
+        "outputName": "bundle.js"
+      }
+    },
     "server": {
       "path": "./server/",
       "app": "app.js",
@@ -73,7 +80,9 @@
           "./node_modules/ng-file-upload/dist/ng-file-upload-shim.js",
           "./node_modules/icheck/icheck.min.js",
           "./node_modules/angular-xeditable/xeditable.min.js",
-          "./node_modules/moment/moment.js"
+          "./node_modules/moment/moment.js",
+          "./node_modules/stompjs/lib/stomp.min.js",
+          "./node_modules/sockjs-client/lib/bundle.js"
         ],
         "css": [
           "./node_modules/bootstrap/dist/css/bootstrap.css",
@@ -121,7 +130,9 @@
           "./node_modules/ng-file-upload/dist/ng-file-upload-shim.min.js",
           "./node_modules/icheck/icheck.min.js",
           "./node_modules/angular-xeditable/xeditable.min.js",
-          "./node_modules/moment/min/moment.min.js"
+          "./node_modules/moment/min/moment.min.js",
+          "./node_modules/stompjs/lib/stomp.min.js",
+          "./node_modules/sockjs-client/lib/bundle.js"
         ],
         "css": [
           "./node_modules/bootstrap/dist/css/bootstrap.min.css",

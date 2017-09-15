@@ -28,6 +28,7 @@ require('jshint-stylish');
 
 var config = require('./config.json');
 var client = config.files.client;
+var external = config.files.external;
 var server = config.files.server;
 var build = config.files.build;
 var libs = config.files.libs;
@@ -216,13 +217,27 @@ gulp.task('browserify', function () {
     .pipe(gulp.dest(build.path));
 });
 
+gulp.task('browserify:external', function () {
+  return browserify({
+    entries: [external.sockjs.input],
+    standalone: 'SockJS'
+  })
+    .bundle()
+    .pipe(source(external.sockjs.outputName))
+    .pipe(buffer())
+    .pipe(!devMode ? uglify() : gutil.noop())
+    .pipe(gulp.dest(external.sockjs.output));
+});
+
 gulp.task('build', function (callback) {
   runSequence(
     'clean', 'style',
     [
       'fonts', 'images', 'html:index', 'html:partials', 'config', 'copy:images', 'copy:scripts', 'favicon', 'assets', 'less',
-      'libs:css', 'libs:js', 'jshint', 'browserify'
+      'libs:css'
     ],
+    'browserify:external',
+    ['libs:js', 'jshint', 'browserify'],
     'version', 'replace', callback);
 });
 

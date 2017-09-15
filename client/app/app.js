@@ -24,7 +24,8 @@ if (browser.name === 'chrome' && version >= 40) {
     require('./home/home.module.js').name,
     require('./workflows/workflows.module.js').name,
     require('./common/common.module.js').name,
-    require('./errors/errors.module.js').name
+    require('./errors/errors.module.js').name,
+    require('./server-communication/server-communication.module.js').name
   ]);
   lab.constant('additionalControls', false);
   require('./app.config.js').inject(lab);

@@ -21,8 +21,6 @@ function AppConfig($urlRouterProvider, toastrConfig) {
   $urlRouterProvider.otherwise('/');
 }
 
-exports.function = AppConfig;
-
 exports.inject = function(module) {
   module.config(AppConfig);
 };

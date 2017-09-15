@@ -46,7 +46,9 @@
     "moment": "^2.10.6",
     "ng-debounce": "^1.0.1",
     "ng-file-upload": "7.0.13",
-    "ng-switchery": "^1.0.1"
+    "ng-switchery": "^1.0.1",
+    "sockjs-client": "^1.0.3",
+    "stompjs": "^2.3.3"
   },
   "devDependencies": {
     "angular-ui-bootstrap": "^0.13.4",

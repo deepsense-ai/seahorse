@@ -24,7 +24,9 @@
     "Highcharts": true,
     "moment": true,
     "ga": true,
-    "UE": true
+    "UE": true,
+    "Stomp": true,
+    "SockJS": true
   },
   "globalstrict": false,
   "jasmine": true,
