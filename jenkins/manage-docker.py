@@ -112,8 +112,9 @@ def main():
         check_if_git_repo_is_clean()
         for conf in selected_confs:
             print 'Publishing {} image'.format(conf.docker_image_name)
-            script = './jenkins/scripts/publish-local-docker.sh {}'.format(conf.docker_image_name)
-            subprocess.call(script, shell=True, cwd=cwd)
+            push_docker_with_base_sha_tag(conf)
+            push_docker_with_seahorse_build_tag_if_defined(conf)
+            push_docker_with_branch_latest_tag_if_on_branch(conf)
 
 def build_dockers(docker_configurations):
     simple_command_confs = [conf for conf in docker_configurations if conf.type == simple_command_type]
@@ -131,6 +132,31 @@ def build_dockers(docker_configurations):
         subprocess.call(final_sbt_command, shell=True, cwd=cwd)
         for conf in sbt_confs:
             assign_base_sha_tag_to_locally_built_image(conf)
+
+def push_docker_with_base_sha_tag(docker_configuration):
+    docker.push(base_sha_tag(docker_configuration))
+
+
+def push_docker_with_seahorse_build_tag_if_defined(docker_configuration):
+    seahorse_build_tag = os.environ.get('SEAHORSE_BUILD_TAG')
+    if seahorse_build_tag is not None:
+        print("Seahorse build tag: " + seahorse_build_tag)
+        docker_tag = tag_with_custom_label(docker_configuration, seahorse_build_tag)
+        docker.tag(base_sha_tag(docker_configuration), docker_tag)
+        docker.push(docker_tag)
+
+
+def push_docker_with_branch_latest_tag_if_on_branch(docker_configuration):
+    # Fetch changes from origin to make sure we have current origin/master
+    subprocess.call("git fetch origin", shell=True, cwd=cwd)
+    # TODO Automatically derive branches. Make it work with any dev_* branches
+    for branch in ['master', 'seahorse_on_desktop', 'seahorse_on_tap', 'seahorse_on_bdu']:
+        sha_for_tip_of_remote_branch_cmd = "git rev-parse origin/{}".format(branch)
+        sha_for_tip_of_remote_branch = subprocess.check_output(sha_for_tip_of_remote_branch_cmd, shell=True, cwd=cwd).strip()
+        is_this_tip_of_remote_branch = sha_for_tip_of_remote_branch == git_sha()
+        if is_this_tip_of_remote_branch:
+            tag = tag_with_custom_label(docker_configuration, branch + "-latest")
+            docker.push(tag)
 
 
 def assign_base_sha_tag_to_locally_built_image(docker_configuration):
@@ -161,9 +187,11 @@ def check_if_git_repo_is_clean():
         print "####################################"
         raise Exception("Cannot sync with unstaged files")
 
+
 def git_sha():
     sha_output_with_endline = subprocess.check_output("git rev-parse HEAD", shell=True, cwd=cwd)
     return sha_output_with_endline.strip()
+
 
 def check_images_provided_by_user(user_provided_images):
     for image in user_provided_images:
