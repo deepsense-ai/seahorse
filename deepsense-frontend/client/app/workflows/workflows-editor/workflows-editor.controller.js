@@ -217,6 +217,7 @@ class WorkflowsEditorController {
       this.$scope.$on('$destroy', () => {
         this.GraphPanelRendererService.clearWorkflow();
         this.NotificationService.clearToasts();
+        this._unbindEditorListeners();
       })
 
     ];

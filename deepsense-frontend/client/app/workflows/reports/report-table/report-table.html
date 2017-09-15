@@ -2,12 +2,12 @@
   <table class="table table-striped table-hover report-table">
     <thead>
     <tr>
-      <th ng-repeat="columnName in table.columnNames">
+      <th ng-repeat="columnName in controller.table.columnNames">
         <div>
           <p class="break-mid-words">
-            <span class="has-distribution" ng-switch="getDistributionType(columnName).subtype"
+            <span class="has-distribution" ng-switch="controller.getDistributionType(columnName).subtype"
                   ng-click="controller.showDistribution(columnName)"
-                  uib-popover="Open {{getDistributionType(columnName).subtype}} distibution"
+                  uib-popover="Open {{controller.getDistributionType(columnName).subtype}} distibution"
                   popover-trigger="mouseenter"
                   popover-placement="{{($first) ? 'top-left' : 'top'}}"
                   popover-popup-delay="50" >
@@ -22,20 +22,20 @@
           </p>
         </div>
         <div>
-          <span ng-if="datatypesVisible" class="col-type">({{getColumnType(columnName)}})</span>
+          <span ng-if="datatypesVisible" class="col-type">({{controller.getColumnType(columnName)}})</span>
         </div>
       </th>
     </tr>
     </thead>
     <tbody class="table-container">
-    <tr ng-repeat="row in table.values">
+    <tr ng-repeat="row in controller.table.values">
       <td ng-repeat="value in row track by $index"
           uib-popover="{{value}}"
-          popover-trigger="{{{true: 'outsideClick', false: 'none'}[isLongEnoughToBeCutOff(value)]}}"
+          popover-trigger="{{{true: 'outsideClick', false: 'none'}[controller.isLongEnoughToBeCutOff(value)]}}"
           popover-append-to-body="true">
         <span ng-switch="value === null">
           <i ng-switch-when="true" class="null-value">(null)</i>
-          <span ng-switch-default class="whitespaces-preserved break-mid-words">{{shortenValues(value, $index)}}</span>
+          <span ng-switch-default class="whitespaces-preserved break-mid-words">{{controller.shortenValues(value, $index)}}</span>
         </span>
       </td>
     </tr>
