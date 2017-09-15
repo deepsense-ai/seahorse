@@ -86,6 +86,7 @@ function OperationsFactory(OperationsApiClient, $q) {
   var loadCatalog = function loadCatalog() {
     return OperationsApiClient.getCatalog()
       .then((data) => {
+        filterOutCatalog(data);
         catalogData = data.catalog;
         categoryMap = {};
         createCategoryMap(catalogData);
@@ -96,6 +97,23 @@ function OperationsFactory(OperationsApiClient, $q) {
         return catalogData;
       });
   };
+
+  // FIXME Backend reuses catalog do look-up in operation/{id} methods.
+  // Source and Sink operations should be accessible through id, but should
+  // not be part of catalog. As a workaround it's getting filtered out here.
+  var filterOutCatalog = function(catalog) {
+    // Catalog have tree structure, where every node have array of catalogs (named 'catalog') and items.
+    _.forEach(catalog.catalog, (catalog) => filterOutCatalog(catalog));
+
+    let filteredItems = _.filter(catalog.items, (item) => HIDDEN_OPERATION_IDS_ARRAY.indexOf(item.id) === -1);
+    catalog.items = filteredItems;
+  };
+
+  const HIDDEN_OPERATIONS = {
+    source: 'f94b04d7-ec34-42f7-8100-93fe235c89f8',
+    sink: 'e652238f-7415-4da6-95c6-ee33808561b2'
+  };
+  const HIDDEN_OPERATION_IDS_ARRAY = _.values(HIDDEN_OPERATIONS);
 
   service.load = function load() {
     if (isLoaded) {
