@@ -1,7 +1,10 @@
 'use strict';
 
+const COOKIE_NAME = 'SEAHORSE_DELETE_PRESET_CONFIRMATION';
+
 /* @ngInject */
-function ChooseClusterModalCtrl($scope, $uibModalInstance, ClusterService, ClusterModalService, PresetService, WorkflowService, ConfirmationModalService) {
+function ChooseClusterModalCtrl($scope, $uibModalInstance, DeleteModalService, ClusterService, ClusterModalService,
+                                PresetService, WorkflowService) {
   const vm = this;
 
   vm.presets = getPresetList();
@@ -20,11 +23,7 @@ function ChooseClusterModalCtrl($scope, $uibModalInstance, ClusterService, Clust
   }
 
   function deletePresetById(preset) {
-    ConfirmationModalService.showModal({
-      message: `The operation will delete preset ${preset.name}. Deletion cannot be undone afterwards.`
-    }).then(() => {
-      PresetService.deletePreset(preset.id);
-    });
+    DeleteModalService.handleDelete(() => PresetService.deletePreset(preset.id), COOKIE_NAME);
   }
 
   function isPresetAssignedToWorkflow(presetId) {

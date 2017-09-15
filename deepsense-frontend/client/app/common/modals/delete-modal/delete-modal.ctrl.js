@@ -3,11 +3,11 @@
 /* @ngInject */
 function DeleteConfirmationModalController($uibModalInstance) {
   const vm = this;
-  vm.ok = ok;
-  vm.close = close;
+
   vm.doNotShowAgain = false;
 
-  return vm;
+  vm.ok = ok;
+  vm.close = close;
 
   function close() {
     $uibModalInstance.dismiss();

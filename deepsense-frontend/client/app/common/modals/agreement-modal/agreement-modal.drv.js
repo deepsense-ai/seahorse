@@ -4,7 +4,7 @@
 function AgreementModal() {
   return {
     restrict: 'E',
-    templateUrl: 'app/common/agreement/agreement-modal.html',
+    templateUrl: 'app/common/modals/agreement-modal/agreement-modal.html',
     replace: true,
     controller: 'AgreementModalCtrl',
     controllerAs: 'ctrl',

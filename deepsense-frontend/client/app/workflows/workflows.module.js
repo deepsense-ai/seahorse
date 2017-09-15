@@ -17,7 +17,6 @@ require('./workflows-status-bar/workflows-status-bar.drv.js').inject(workflows);
 require('./workflows-status-bar/workflows-status-bar.ctrl.js').inject(workflows);
 require('./workflows-status-bar/workflows-editor-status-bar.service.js').inject(workflows);
 require('./workflows-status-bar/documentation-link/documentation-link.directive.js').inject(workflows);
-require('./workflows-status-bar/selection-items/delete.modal.controller.js').inject(workflows);
 require('./workflows-status-bar/selection-items/selection-items.controller.js').inject(workflows);
 require('./workflows-status-bar/selection-items/selection-items.directive.js').inject(workflows);
 require('./general-data-panel/general-data-panel.module.js').inject(workflows);
