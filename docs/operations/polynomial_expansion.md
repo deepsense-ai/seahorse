@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Polynomial Expansion
 title: Polynomial Expansion
 description: Polynomial Expansion

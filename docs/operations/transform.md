@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Transform
 title: Transform
 description: Transform

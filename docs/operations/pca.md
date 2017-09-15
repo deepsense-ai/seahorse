@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: PCA
 title: PCA
 description: PCA

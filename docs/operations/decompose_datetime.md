@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Decompose Datetime
 title: Decompose Datetime
 description: Decompose Datetime

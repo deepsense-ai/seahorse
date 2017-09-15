@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: GBT Classifier
 title: GBT Classifier
 description: GBT Classifier

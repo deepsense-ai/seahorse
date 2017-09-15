@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: HashingTF
 title: HashingTF
 description: HashingTF

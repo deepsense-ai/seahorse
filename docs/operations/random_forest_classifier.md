@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Random Forest Classifier
 title: Random Forest Classifier
 description: Random Forest Classifier

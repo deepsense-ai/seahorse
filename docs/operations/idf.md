@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: IDF
 title: IDF
 description: IDF

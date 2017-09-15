@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Read Transformer
 title: Read Transformer
 description: Read Transformer
@@ -8,7 +8,10 @@ includeOperationsMenu: true
 
 Reads a [Transformer](../classes/transformer.html) from a directory at the specified location.
 
-It supports reading `Transformers` from the local file system and HDFS.
+It supports reading `Transformers` that were written using the [Write Transformer](write_transformer.html) operation.
+
+A `Transformer` can be read from HDFS.
+Additionally, in local cluster mode a `Transformer` can be read from local filesystem.
 
 **Since**: Seahorse 1.1.0
 

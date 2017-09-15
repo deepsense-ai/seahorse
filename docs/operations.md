@@ -1,18 +1,16 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Operations
-docTab: operations
-title: Operations
-includeDeeplangMenu: true
+menuTab: reference
 includeOperationsMenu: true
-description: Deepsense documentation homepage
+title: Operations
+description: Seahorse Operations Reference
 ---
 
-Operations are base building blocks for Deeplang workflow.
-Detailed description of operations can be found [here](deeplang_overview.html#operations).
+The main feature of Seahorse is that it lets you to create data processing and machine learning workflows.
+Seahorse workflow is a graph of connected operations, which are consuming and producing entities.
 
-### Operations Catalog
-List of all currently supported operations:
+Below you can find the complete list of operations available in Seahorse:
 
 * Input/Output
   * [Python Notebook](operations/python_notebook.html)

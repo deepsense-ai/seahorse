@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Multiclass Classification Evaluator
 title: Multiclass Classification Evaluator
 description: Multiclass Classification Evaluator

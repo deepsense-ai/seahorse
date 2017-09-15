@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: DataFrame
 title: DataFrame
 includeClassesMenu: true

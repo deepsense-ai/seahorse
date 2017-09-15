@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Python Notebook
 title: Python Notebook
 description: Python Notebook

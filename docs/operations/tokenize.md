@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Tokenize
 title: Tokenize
 description: Tokenize

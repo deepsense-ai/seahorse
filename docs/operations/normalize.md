@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Normalize
 title: Normalize
 description: Normalize

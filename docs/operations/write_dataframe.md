@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Write DataFrame
 title: Write DataFrame
 description: Write DataFrame
@@ -14,7 +14,7 @@ It supports writing files (in CSV, JSON or PARQUET formats) to HDFS.
 The output is a Hadoop-compatible partitioned file.
 Path to the file needs to be prefixed with ``hdfs://``.
 
-CSV and JSON files can be also saved to [Files Library](../seahorse_editor_overview.html#files-library) using widget in the ``output file`` parameter.
+CSV and JSON files can be also saved to **Files Library** using widget in the ``output file`` parameter.
 Files in the library can be downloaded to local computer.
 
 It is possible to customize the file format (e.g. the values separator in CSV format)
@@ -27,7 +27,7 @@ By default, Seahorse supports JDBC drivers:
 - PostgreSQL, version 9.4.1207
 
 For detailed information on using custom JDBC drivers in the Batch Workflow Executor, visit
-[Custom JDBC drivers](../batch_workflow_executor_overview.html#custom-jdbc-drivers) section.
+[Custom JDBC drivers](../productionizing.html#custom-jdbc-drivers) section.
 
 
 ## Available File Formats

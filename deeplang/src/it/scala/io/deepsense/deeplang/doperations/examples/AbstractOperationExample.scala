@@ -61,7 +61,7 @@ abstract class AbstractOperationExample[T <: DOperation]
       // fail, because ../ points out of project directory.
       // TODO Make it not rely on relative path it's run from
       val examplePageFile = new File(
-        "../docs/operations/examples/" + className + ".md")
+        "../docs/internal/operations/examples/" + className + ".md")
 
       examplePageFile.getParentFile.mkdirs()
       examplePageFile.createNewFile()

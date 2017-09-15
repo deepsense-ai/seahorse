@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Remove Stop Words
 title: Remove Stop Words
 description: Remove Stop Words

@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: K-Means
 title: K-Means
 description: K-Means

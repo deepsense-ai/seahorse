@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Filter Rows
 title: Filter Rows
 description: Filter Rows

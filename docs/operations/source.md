@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Source
 title: Source
 description: Source

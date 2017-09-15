@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Regression Evaluator
 title: Regression Evaluator
 description: Regression Evaluator

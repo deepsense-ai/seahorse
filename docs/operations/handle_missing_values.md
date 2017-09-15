@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Handle Missing Values
 title: Handle Missing Values
 description: Handle Missing Values

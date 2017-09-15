@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: String Indexer
 title: String Indexer
 description: String Indexer

@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Python Column Transformation
 title: Python Column Transformation
 description: Python Column Transformation

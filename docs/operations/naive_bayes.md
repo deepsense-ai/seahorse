@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Naive Bayes
 title: Naive Bayes
 description: Naive Bayes

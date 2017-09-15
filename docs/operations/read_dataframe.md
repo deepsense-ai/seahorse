@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Read DataFrame
 title: Read DataFrame
 description: Read DataFrame
@@ -11,7 +11,7 @@ Reads a `DataFrame` from a specified data storage.
 It supports reading files (in CSV, JSON or PARQUET formats) from HDFS (it supports reading Hadoop-compatible partitioned files).
 Path to the file needs to be prefixed with ``hdfs://``.
 
-CSV and JSON files can be also loaded from local computer using [Files Library](../seahorse_editor_overview.html#files-library).
+CSV and JSON files can be also loaded from local computer using **Files Library**.
 File uploaded to the library can be selected with the widget in the ``source`` parameter.
 
 In addition, HTTP/HTTPS and FTP URLs are supported. E.g. specifying
@@ -25,7 +25,7 @@ By default, Seahorse supports JDBC drivers:
 - PostgreSQL, version 9.4.1207
 
 For detailed information on using custom JDBC drivers in the Batch Workflow Executor, visit
-[Custom JDBC drivers](../batch_workflow_executor_overview.html#custom-jdbc-drivers) section.
+[Custom JDBC drivers](../productionizing.html#custom-jdbc-drivers) section.
 
 
 ## Available File Formats

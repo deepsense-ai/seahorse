@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: R Notebook
 title: R Notebook
 description: R Notebook

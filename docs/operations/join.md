@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Join
 title: Join
 description: Join

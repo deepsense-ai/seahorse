@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Filter Columns
 title: Filter Columns
 description: Filter Columns

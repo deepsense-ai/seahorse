@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Assemble Vector
 title: Assemble Vector
 description: Assemble Vector

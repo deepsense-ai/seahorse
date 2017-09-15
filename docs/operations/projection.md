@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Projection
 title: Projection
 description: Projection

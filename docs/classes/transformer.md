@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Transformer
 title: Transformer
 usesMathJax: true

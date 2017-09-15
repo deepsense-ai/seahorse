@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Tokenize With Regex
 title: Tokenize With Regex
 description: Tokenize With Regex

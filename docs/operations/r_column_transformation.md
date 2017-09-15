@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: R Column Transformation
 title: R Column Transformation
 description: R Column Transformation

@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Word2Vec
 title: Word2Vec
 description: Word2Vec

@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Fit
 title: Fit
 description: Fit

@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Isotonic Regression
 title: Isotonic Regression
 description: Isotonic Regression

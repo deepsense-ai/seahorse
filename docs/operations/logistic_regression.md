@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Logistic Regression
 title: Logistic Regression
 description: Logistic Regression

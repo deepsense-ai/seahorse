@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Evaluate
 title: Evaluate
 description: Evaluate

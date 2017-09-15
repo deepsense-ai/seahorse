@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: LDA
 title: LDA
 description: LDA

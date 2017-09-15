@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Report
 title: Report
 includeClassesMenu: true

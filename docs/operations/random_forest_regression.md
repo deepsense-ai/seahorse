@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Random Forest Regression
 title: Random Forest Regression
 description: Random Forest Regression

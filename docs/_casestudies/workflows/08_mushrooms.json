@@ -1,0 +1,440 @@
+{
+  "workflow": {
+    "nodes": [{
+      "id": "da0eb95b-c317-50e0-35ec-c9a8a5057da0",
+      "operation": {
+        "id": "0c2ff818-977b-11e5-8994-feff819cdc9f",
+        "name": "Fit"
+      },
+      "parameters": {
+        "Parameters of input Estimator": {
+          "features column": null,
+          "use custom weights": null,
+          "tolerance": null,
+          "elastic net param": null,
+          "max iterations": null,
+          "regularization param": null,
+          "standardization": null,
+          "threshold": null,
+          "label column": null,
+          "prediction column": null,
+          "probability column": null,
+          "fit intercept": null,
+          "raw prediction column": null
+        }
+      }
+    }, {
+      "id": "b74b79cf-235f-4e55-f041-177ab485f59b",
+      "operation": {
+        "id": "6cba4400-d966-4a2a-8356-b37f37b4c73f",
+        "name": "SQL Transformation"
+      },
+      "parameters": {
+        "expression": "SELECT * FROM df WHERE prediction=0 AND edibility_label=1"
+      }
+    }, {
+      "id": "e82ba399-619d-0c78-466b-8768b20fc1b2",
+      "operation": {
+        "id": "7f9e459e-3e11-4c5f-9137-94447d53ff60",
+        "name": "Logistic Regression"
+      },
+      "parameters": {
+        "label column": {
+          "type": "column",
+          "value": "edibility_label"
+        }
+      }
+    }, {
+      "id": "0a76eaa4-ad58-cc5d-6da6-b98d66c0d98c",
+      "operation": {
+        "id": "643d8706-24db-4674-b5b4-10b5129251fc",
+        "name": "Transform"
+      },
+      "parameters": {
+        "Parameters of input Transformer": {
+          "features column": null,
+          "threshold": null,
+          "prediction column": null,
+          "probability column": null,
+          "raw prediction column": null
+        }
+      }
+    }, {
+      "id": "5f03c46b-c21d-8c7f-4df9-bda5b059506a",
+      "operation": {
+        "id": "e76ca616-0322-47a5-b390-70c9668265dd",
+        "name": "Python Notebook"
+      },
+      "parameters": {
+
+      }
+    }, {
+      "id": "876fd087-a944-8c96-9b05-20d3f7502d67",
+      "operation": {
+        "id": "c57a5b99-9184-4095-9037-9359f905628d",
+        "name": "Assemble Vector"
+      },
+      "parameters": {
+        "input columns": {
+          "selections": [{
+            "type": "indexRange",
+            "values": [24, 45]
+          }],
+          "excluding": false
+        },
+        "output column": "features"
+      }
+    }, {
+      "id": "87d5da6a-faea-08a2-46a4-34d8d83f339b",
+      "operation": {
+        "id": "33af92e5-57f2-4586-b176-961eb72ce5b0",
+        "name": "One Hot Encoder"
+      },
+      "parameters": {
+        "operate on": {
+          "multiple columns": {
+            "input columns": {
+              "selections": [{
+                "type": "indexRange",
+                "values": [24, 38]
+              }, {
+                "type": "indexRange",
+                "values": [40, 45]
+              }],
+              "excluding": false
+            }
+          }
+        }
+      }
+    }, {
+      "id": "eb61b61e-b5a5-5d00-27f9-5c944a97705a",
+      "operation": {
+        "id": "c9df7000-9ea0-41c0-b66c-3062fd57851b",
+        "name": "String Indexer"
+      },
+      "parameters": {
+        "operate on": {
+          "multiple columns": {
+            "input columns": {
+              "selections": [{
+                "type": "indexRange",
+                "values": [0, 22]
+              }],
+              "excluding": false
+            },
+            "output": {
+              "append new columns": {
+                "column name prefix": "indexed_"
+              }
+            }
+          }
+        }
+      }
+    }, {
+      "id": "98218ebd-2d10-e425-324b-5cfe76fa9501",
+      "operation": {
+        "id": "d273c42f-b840-4402-ba6b-18282cc68de3",
+        "name": "Split"
+      },
+      "parameters": {
+        "split ratio": 0.25
+      }
+    }, {
+      "id": "97d58273-a92f-b015-9591-1abfe1381d6b",
+      "operation": {
+        "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
+        "name": "Read DataFrame"
+      },
+      "parameters": {
+        "data storage type": {
+          "FILE": {
+            "source": "https://s3.amazonaws.com/workflowexecutor/examples/data/mushrooms.csv"
+          }
+        }
+      }
+    }, {
+      "id": "88f79b63-fc38-dacf-e455-96b851e1de25",
+      "operation": {
+        "id": "6cba4400-d966-4a2a-8356-b37f37b4c73f",
+        "name": "SQL Transformation"
+      },
+      "parameters": {
+        "expression": "SELECT\n    edible AS edibility_string,\n    indexed_edible AS edibility_label,\n    features\nFROM df"
+      }
+    }, {
+      "id": "3d046428-09f9-7a8c-f2e6-648a321f1efb",
+      "operation": {
+        "id": "6cba4400-d966-4a2a-8356-b37f37b4c73f",
+        "name": "SQL Transformation"
+      },
+      "parameters": {
+        "expression": "SELECT * FROM df WHERE prediction=1 AND edibility_label=0"
+      }
+    }],
+    "connections": [{
+      "from": {
+        "nodeId": "97d58273-a92f-b015-9591-1abfe1381d6b",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "5f03c46b-c21d-8c7f-4df9-bda5b059506a",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "0a76eaa4-ad58-cc5d-6da6-b98d66c0d98c",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "3d046428-09f9-7a8c-f2e6-648a321f1efb",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "97d58273-a92f-b015-9591-1abfe1381d6b",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "eb61b61e-b5a5-5d00-27f9-5c944a97705a",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "98218ebd-2d10-e425-324b-5cfe76fa9501",
+        "portIndex": 1
+      },
+      "to": {
+        "nodeId": "da0eb95b-c317-50e0-35ec-c9a8a5057da0",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "98218ebd-2d10-e425-324b-5cfe76fa9501",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "0a76eaa4-ad58-cc5d-6da6-b98d66c0d98c",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "876fd087-a944-8c96-9b05-20d3f7502d67",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "88f79b63-fc38-dacf-e455-96b851e1de25",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "eb61b61e-b5a5-5d00-27f9-5c944a97705a",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "87d5da6a-faea-08a2-46a4-34d8d83f339b",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "e82ba399-619d-0c78-466b-8768b20fc1b2",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "da0eb95b-c317-50e0-35ec-c9a8a5057da0",
+        "portIndex": 1
+      }
+    }, {
+      "from": {
+        "nodeId": "87d5da6a-faea-08a2-46a4-34d8d83f339b",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "876fd087-a944-8c96-9b05-20d3f7502d67",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "0a76eaa4-ad58-cc5d-6da6-b98d66c0d98c",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "b74b79cf-235f-4e55-f041-177ab485f59b",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "da0eb95b-c317-50e0-35ec-c9a8a5057da0",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "0a76eaa4-ad58-cc5d-6da6-b98d66c0d98c",
+        "portIndex": 1
+      }
+    }, {
+      "from": {
+        "nodeId": "88f79b63-fc38-dacf-e455-96b851e1de25",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "98218ebd-2d10-e425-324b-5cfe76fa9501",
+        "portIndex": 0
+      }
+    }]
+  },
+  "thirdPartyData": {
+    "gui": {
+      "name": "EXAMPLE 8: Mushrooms",
+      "description": "Distinguishing poisonous and edible mushrooms.",
+      "predefColors": ["#00B1EB", "#1ab394", "#2f4050", "#f8ac59", "#ed5565", "#DD6D3F"],
+      "nodes": {
+        "5f03c46b-c21d-8c7f-4df9-bda5b059506a": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5579,
+            "y": 5175
+          }
+        },
+        "eb61b61e-b5a5-5d00-27f9-5c944a97705a": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5206,
+            "y": 5110
+          }
+        },
+        "e82ba399-619d-0c78-466b-8768b20fc1b2": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5542,
+            "y": 5310
+          }
+        },
+        "da0eb95b-c317-50e0-35ec-c9a8a5057da0": {
+          "uiName": "Fit On Training Data",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5631,
+            "y": 5444
+          }
+        },
+        "876fd087-a944-8c96-9b05-20d3f7502d67": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5142,
+            "y": 5270
+          }
+        },
+        "98218ebd-2d10-e425-324b-5cfe76fa9501": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5392,
+            "y": 5388
+          }
+        },
+        "97d58273-a92f-b015-9591-1abfe1381d6b": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5385,
+            "y": 5046
+          }
+        },
+        "b74b79cf-235f-4e55-f041-177ab485f59b": {
+          "uiName": "Falsely Edible",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5045,
+            "y": 5540
+          }
+        },
+        "0a76eaa4-ad58-cc5d-6da6-b98d66c0d98c": {
+          "uiName": "Transform On Test Data",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5294,
+            "y": 5502
+          }
+        },
+        "87d5da6a-faea-08a2-46a4-34d8d83f339b": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5167,
+            "y": 5190
+          }
+        },
+        "3d046428-09f9-7a8c-f2e6-648a321f1efb": {
+          "uiName": "Falsely Poisonous",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5415,
+            "y": 5540
+          }
+        },
+        "88f79b63-fc38-dacf-e455-96b851e1de25": {
+          "uiName": "Remove Unnecessary Columns",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5110,
+            "y": 5349
+          }
+        }
+      }
+    },
+    "notebooks": {
+      "5f03c46b-c21d-8c7f-4df9-bda5b059506a": {
+        "cells": [{
+          "source": ["dataframe().take(10)"],
+          "execution_count": 17,
+          "outputs": [{
+            "data": {
+              "text/plain": ["[Row(edible=u'p', cap-shape=u'x', cap-surface=u's', cap-color=u'n', bruises=u't', odor=u'p', gill-attachment=u'f', gill-spacing=u'c', gill-size=u'n', gill-color=u'k', stalk-shape=u'e', stalk-root=u'e', stalk-surface-above-ring=u's', stalk-surface-below-ring=u's', stalk-color-above-ring=u'w', stalk-color-below-ring=u'w', veil-type=u'p', veil-color=u'w', ring-number=u'o', ring-type=u'p', spore-print-color=u'k', population=u's', habitat=u'u'),\n", " Row(edible=u'e', cap-shape=u'x', cap-surface=u's', cap-color=u'y', bruises=u't', odor=u'a', gill-attachment=u'f', gill-spacing=u'c', gill-size=u'b', gill-color=u'k', stalk-shape=u'e', stalk-root=u'c', stalk-surface-above-ring=u's', stalk-surface-below-ring=u's', stalk-color-above-ring=u'w', stalk-color-below-ring=u'w', veil-type=u'p', veil-color=u'w', ring-number=u'o', ring-type=u'p', spore-print-color=u'n', population=u'n', habitat=u'g'),\n", " Row(edible=u'e', cap-shape=u'b', cap-surface=u's', cap-color=u'w', bruises=u't', odor=u'l', gill-attachment=u'f', gill-spacing=u'c', gill-size=u'b', gill-color=u'n', stalk-shape=u'e', stalk-root=u'c', stalk-surface-above-ring=u's', stalk-surface-below-ring=u's', stalk-color-above-ring=u'w', stalk-color-below-ring=u'w', veil-type=u'p', veil-color=u'w', ring-number=u'o', ring-type=u'p', spore-print-color=u'n', population=u'n', habitat=u'm'),\n", " Row(edible=u'p', cap-shape=u'x', cap-surface=u'y', cap-color=u'w', bruises=u't', odor=u'p', gill-attachment=u'f', gill-spacing=u'c', gill-size=u'n', gill-color=u'n', stalk-shape=u'e', stalk-root=u'e', stalk-surface-above-ring=u's', stalk-surface-below-ring=u's', stalk-color-above-ring=u'w', stalk-color-below-ring=u'w', veil-type=u'p', veil-color=u'w', ring-number=u'o', ring-type=u'p', spore-print-color=u'k', population=u's', habitat=u'u'),\n", " Row(edible=u'e', cap-shape=u'x', cap-surface=u's', cap-color=u'g', bruises=u'f', odor=u'n', gill-attachment=u'f', gill-spacing=u'w', gill-size=u'b', gill-color=u'k', stalk-shape=u't', stalk-root=u'e', stalk-surface-above-ring=u's', stalk-surface-below-ring=u's', stalk-color-above-ring=u'w', stalk-color-below-ring=u'w', veil-type=u'p', veil-color=u'w', ring-number=u'o', ring-type=u'e', spore-print-color=u'n', population=u'a', habitat=u'g'),\n", " Row(edible=u'e', cap-shape=u'x', cap-surface=u'y', cap-color=u'y', bruises=u't', odor=u'a', gill-attachment=u'f', gill-spacing=u'c', gill-size=u'b', gill-color=u'n', stalk-shape=u'e', stalk-root=u'c', stalk-surface-above-ring=u's', stalk-surface-below-ring=u's', stalk-color-above-ring=u'w', stalk-color-below-ring=u'w', veil-type=u'p', veil-color=u'w', ring-number=u'o', ring-type=u'p', spore-print-color=u'k', population=u'n', habitat=u'g'),\n", " Row(edible=u'e', cap-shape=u'b', cap-surface=u's', cap-color=u'w', bruises=u't', odor=u'a', gill-attachment=u'f', gill-spacing=u'c', gill-size=u'b', gill-color=u'g', stalk-shape=u'e', stalk-root=u'c', stalk-surface-above-ring=u's', stalk-surface-below-ring=u's', stalk-color-above-ring=u'w', stalk-color-below-ring=u'w', veil-type=u'p', veil-color=u'w', ring-number=u'o', ring-type=u'p', spore-print-color=u'k', population=u'n', habitat=u'm'),\n", " Row(edible=u'e', cap-shape=u'b', cap-surface=u'y', cap-color=u'w', bruises=u't', odor=u'l', gill-attachment=u'f', gill-spacing=u'c', gill-size=u'b', gill-color=u'n', stalk-shape=u'e', stalk-root=u'c', stalk-surface-above-ring=u's', stalk-surface-below-ring=u's', stalk-color-above-ring=u'w', stalk-color-below-ring=u'w', veil-type=u'p', veil-color=u'w', ring-number=u'o', ring-type=u'p', spore-print-color=u'n', population=u's', habitat=u'm'),\n", " Row(edible=u'p', cap-shape=u'x', cap-surface=u'y', cap-color=u'w', bruises=u't', odor=u'p', gill-attachment=u'f', gill-spacing=u'c', gill-size=u'n', gill-color=u'p', stalk-shape=u'e', stalk-root=u'e', stalk-surface-above-ring=u's', stalk-surface-below-ring=u's', stalk-color-above-ring=u'w', stalk-color-below-ring=u'w', veil-type=u'p', veil-color=u'w', ring-number=u'o', ring-type=u'p', spore-print-color=u'k', population=u'v', habitat=u'g'),\n", " Row(edible=u'e', cap-shape=u'b', cap-surface=u's', cap-color=u'y', bruises=u't', odor=u'a', gill-attachment=u'f', gill-spacing=u'c', gill-size=u'b', gill-color=u'g', stalk-shape=u'e', stalk-root=u'c', stalk-surface-above-ring=u's', stalk-surface-below-ring=u's', stalk-color-above-ring=u'w', stalk-color-below-ring=u'w', veil-type=u'p', veil-color=u'w', ring-number=u'o', ring-type=u'p', spore-print-color=u'k', population=u's', habitat=u'm')]"]
+            },
+            "execution_count": 17,
+            "metadata": {
+
+            },
+            "output_type": "execute_result"
+          }],
+          "cell_type": "code",
+          "metadata": {
+            "collapsed": false
+          }
+        }],
+        "metadata": {
+          "kernelspec": {
+            "display_name": "pySpark",
+            "language": "python",
+            "name": "pyspark"
+          },
+          "language_info": {
+            "mimetype": "text/x-python",
+            "name": "python",
+            "pygments_lexer": "ipython2",
+            "codemirror_mode": {
+              "name": "ipython",
+              "version": 2
+            },
+            "version": "2.7.11",
+            "nbconvert_exporter": "python",
+            "file_extension": ".py"
+          }
+        },
+        "nbformat": 4,
+        "nbformat_minor": 0
+      }
+    }
+  },
+  "variables": {
+
+  },
+  "id": "9134ba3f-51e0-4f36-a6c7-d942e052ea98",
+  "metadata": {
+    "type": "batch",
+    "apiVersion": "1.1.0"
+  }
+}

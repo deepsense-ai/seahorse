@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: R Transformation
 title: R Transformation
 description: R Transformation

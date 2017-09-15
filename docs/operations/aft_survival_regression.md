@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: AFT Survival Regression
 title: AFT Survival Regression
 description: AFT Survival Regression

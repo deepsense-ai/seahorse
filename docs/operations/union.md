@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Union
 title: Union
 description: Union

@@ -1,16 +1,15 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Parameter Types
-docTab: parameter_types
+menuTab: reference
 title: Parameter Types
-includeDeeplangMenu: true
-description: Parameters documentation
+description: Parameters Reference
 ---
 
 Each parameter has a name, description and a type. A type of a parameter defines what kind of value it receives (along with some validation logic).
 
-Each [operation](deeplang_overview.html#operations) defines its parameters. In order for an `operation` to be executed, all its parameters have to be filled with valid values.
-There are several predefined types of parameters in [Deeplang](deeplang_overview.html):
+Each [operation](operations.html) defines its parameters. In order for an `operation` to be executed, all its parameters have to be filled with valid values.
+There are several predefined types of parameters in Seahorse:
 
 ### Numeric
 Holds a single numeric value. It can specify validation rules such as a range of accepted values etc.
@@ -114,7 +113,7 @@ Like in a `single choice selector`, each option can have internal parameters tha
 ### Code Snippet
 Holds code snippet string value. Different languages (language is chosen by operation creator) can be used for syntax validation and syntax highlighting.
 
-**Example of use:** code snippet parameter for Python language in [Custom Python Operation](operations/custom_python_operation.html).
+**Example of use:** code snippet parameter for Python language in [Python Transformation](operations/python_transformation.html).
 
 **Example value:**
 

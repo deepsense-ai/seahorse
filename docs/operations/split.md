@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Split
 title: Split
 description: Split

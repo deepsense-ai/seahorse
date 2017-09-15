@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Convert To n-grams
 title: Convert To n-grams
 description: Convert To n-grams

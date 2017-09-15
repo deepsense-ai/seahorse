@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Decision Tree Regression
 title: Decision Tree Regression
 description: Decision Tree Regression

@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Chi-Squared Selector
 title: Chi-Squared Selector
 description: Chi-Squared Selector

@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: GBT Regression
 title: GBT Regression
 description: GBT Regression

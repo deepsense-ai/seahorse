@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Create Custom Transformer
 title: Create Custom Transformer
 description: Create Custom Transformer
@@ -21,7 +21,7 @@ A Custom transformer can be created by building an internal workflow from
 
 The `Create Custom Transformer` operation enables the user to create a transformation by defining
 a data flow between the input and output nodes. For the internal workflow to be valid, the same
-requirements as for a regular [workflow](../deeplang_overview.html#workflows) must be met, i.e.:
+requirements as for a regular workflow must be met, i.e.:
 
 * it must not contain a cycle,
 * the parameters of all operations must be correct,

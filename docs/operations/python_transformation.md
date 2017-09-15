@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Python Transformation
 title: Python Transformation
 description: Python Transformation

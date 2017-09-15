@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: DCT
 title: DCT
 description: DCT

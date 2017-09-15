@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Binary Classification Evaluator
 title: Binary Classification Evaluator
 description: Binary Classification Evaluator

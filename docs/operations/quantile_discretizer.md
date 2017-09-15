@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Quantile Discretizer
 title: Quantile Discretizer
 description: Quantile Discretizer

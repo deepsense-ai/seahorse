@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: SQL Column Transformation
 title: SQL Column Transformation
 description: SQL Column Transformation

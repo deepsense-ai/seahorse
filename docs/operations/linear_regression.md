@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Linear Regression
 title: Linear Regression
 description: Linear Regression

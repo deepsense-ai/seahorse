@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: ALS
 title: ALS
 description: ALS

@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Convert Type
 title: Convert Type
 description: Convert Type

@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Python Evaluator
 title: Python Evaluator
 description: Python Evaluator

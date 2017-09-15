@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: SQL Transformation
 title: SQL Transformation
 description: SQL Transformation

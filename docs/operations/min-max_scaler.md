@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Min-Max Scaler
 title: Min-Max Scaler
 description: Min-Max Scaler

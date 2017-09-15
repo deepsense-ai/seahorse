@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Vector Indexer
 title: Vector Indexer
 description: Vector Indexer

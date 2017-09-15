@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: R Evaluator
 title: R Evaluator
 description: R Evaluator

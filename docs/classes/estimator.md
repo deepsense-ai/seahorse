@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Estimator
 title: Estimator
 usesMathJax: true

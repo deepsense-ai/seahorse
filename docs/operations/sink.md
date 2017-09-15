@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Sink
 title: Sink
 description: Sink

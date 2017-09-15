@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: One Hot Encoder
 title: One Hot Encoder
 description: One Hot Encoder

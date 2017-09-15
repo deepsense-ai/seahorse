@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Standard Scaler
 title: Standard Scaler
 description: Standard Scaler

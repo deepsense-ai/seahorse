@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Count Vectorizer
 title: Count Vectorizer
 description: Count Vectorizer

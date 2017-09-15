@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Decision Tree Classifier
 title: Decision Tree Classifier
 description: Decision Tree Classifier

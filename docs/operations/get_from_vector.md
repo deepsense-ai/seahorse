@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Get From Vector
 title: Get From Vector
 description: Get From Vector

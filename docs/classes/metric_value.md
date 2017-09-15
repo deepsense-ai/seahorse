@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: MetricValue
 title: MetricValue
 usesMathJax: true

@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Multilayer Perceptron Classifier
 title: Multilayer Perceptron Classifier
 description: Multilayer Perceptron Classifier

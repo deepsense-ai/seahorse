@@ -1,5 +1,5 @@
 ---
-layout: documentation
+layout: global
 displayTitle: Grid Search
 title: Grid Search
 description: Grid Search
