@@ -45,7 +45,9 @@ object DatasourceDbFromApi {
       fileCsvSeparatorType = toBeOptionallyFilledLater,
       fileCsvCustomSeparator = toBeOptionallyFilledLater,
       googleSpreadsheetId = toBeOptionallyFilledLater,
-      googleServiceAccountCredentials = toBeOptionallyFilledLater
+      googleServiceAccountCredentials = toBeOptionallyFilledLater,
+      googleSpreadsheetIncludeHeader = toBeOptionallyFilledLater,
+      googleSpreadsheetConvert01ToBoolean = toBeOptionallyFilledLater
     )
     withForDatasourceTypeSpecificParams(datasourceDb, dsParams)
   }
@@ -69,7 +71,9 @@ object DatasourceDbFromApi {
         googleSpreadsheetParams <- validateDefined("googleSpreadsheetParams", ds.googleSpreadsheetParams)
       } yield datasourceDb.copy(
         googleSpreadsheetId = Some(googleSpreadsheetParams.googleSpreadsheetId),
-        googleServiceAccountCredentials = Some(googleSpreadsheetParams.googleServiceAccountCredentials)
+        googleServiceAccountCredentials = Some(googleSpreadsheetParams.googleServiceAccountCredentials),
+        googleSpreadsheetIncludeHeader = Some(googleSpreadsheetParams.includeHeader),
+        googleSpreadsheetConvert01ToBoolean = Some(googleSpreadsheetParams.convert01ToBoolean)
       )
     case DatasourceType.hdfs => for {
       hdfsParams <- validateDefined("hdfsParams", ds.hdfsParams)

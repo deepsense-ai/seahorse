@@ -114,8 +114,16 @@ object DatasourceApiFromDb {
     if (datasource.datasourceType == DatasourceType.googleSpreadsheet) {
       for {
         googleSpreadsheetId <- validateDefined("googleSpreadsheetId", datasource.googleSpreadsheetId)
-        googleServiceAccountCredentials <- validateDefined("fileFormat", datasource.googleServiceAccountCredentials)
-      } yield Some(GoogleSpreadsheetParams(googleSpreadsheetId, googleServiceAccountCredentials))
+        googleServiceAccountCredentials <- validateDefined("googleServiceAccountCredentials",
+          datasource.googleServiceAccountCredentials
+        )
+        includeHeader <- validateDefined("includeHeader", datasource.googleSpreadsheetIncludeHeader)
+        convert01ToBoolean <- validateDefined("convert01ToBoolean",
+          datasource.googleSpreadsheetConvert01ToBoolean
+        )
+      } yield Some(GoogleSpreadsheetParams(googleSpreadsheetId, googleServiceAccountCredentials,
+        includeHeader, convert01ToBoolean
+      ))
     } else {
       None.success
     }

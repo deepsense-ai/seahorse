@@ -63,6 +63,7 @@ object Library {
   val scoverage = "org.scoverage" %% "scalac-scoverage-runtime" % Version.scoverage
   val stampy = "asia.stampy" % "stampy-core" % "1.0-RELEASE"
   val slick = "com.typesafe.slick" %% "slick" % Version.slick
+  val slickless = "io.underscore" %% "slickless" % "0.3.0"
   val sparkCore = spark("core")
   val sparkMLLib = spark("mllib")
   val sparkLauncher = spark("launcher")
@@ -187,7 +188,8 @@ object Dependencies {
     scalaz,
     shapeless,
     scalacheckShapeless,
-    scalacheck
+    scalacheck,
+    slickless
   )
 
   val schedulingmanager = scalatraAndJetty ++ json4s ++ Seq(

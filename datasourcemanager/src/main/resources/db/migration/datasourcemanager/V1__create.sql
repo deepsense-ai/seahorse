@@ -20,5 +20,7 @@ create table "datasourcemanager"."datasource" (
     "fileCsvSeparatorType" VARCHAR,
     "fileCsvSeparator" VARCHAR,
     "googleSpreadsheetId" VARCHAR,
-    "googleServiceAccountCredentials" VARCHAR
+    "googleServiceAccountCredentials" VARCHAR,
+    "googleSpreadsheetIncludeHeader" BOOLEAN,
+    "googleSpreadsheetConvert01ToBoolean" BOOLEAN
 )

@@ -19,6 +19,8 @@ object DatasourcesSchema {
 
   import Database.api._
   import CommonSlickFormats._
+  import shapeless.{ HList, ::, HNil, Generic }
+  import slickless._
 
   case class DatasourceDB(
     id: UUID,
@@ -42,7 +44,9 @@ object DatasourcesSchema {
     fileCsvSeparatorType: Option[CsvSeparatorType],
     fileCsvCustomSeparator: Option[String],
     googleSpreadsheetId: Option[String],
-    googleServiceAccountCredentials: Option[String]
+    googleServiceAccountCredentials: Option[String],
+    googleSpreadsheetIncludeHeader: Option[Boolean],
+    googleSpreadsheetConvert01ToBoolean: Option[Boolean]
   )
 
   implicit val datasourceTypeFormat = EnumColumnMapper(DatasourceType)
@@ -79,12 +83,16 @@ object DatasourcesSchema {
     def fileCsvCustomSeparator = column[Option[String]]("fileCsvSeparator")
     def googleSpreadsheetId = column[Option[String]]("googleSpreadsheetId")
     def googleServiceAccountCredentials = column[Option[String]]("googleServiceAccountCredentials")
+    def googleSpreadsheetIncludeHeader = column[Option[Boolean]]("googleSpreadsheetIncludeHeader")
+    def googleSpreadsheetConvert01ToBoolean = column[Option[Boolean]]("googleSpreadsheetConvert01ToBoolean")
 
-    def * = (id, ownerId, ownerName, name, creationDateTime, visibility, downloadUri, datasourceType, jdbcUrl,
-      jdbcDriver, jdbcTable, jdbcQuery, externalFileUrl, hdfsPath, libraryPath, fileFormat, fileCsvIncludeHeader,
-      fileCsvConvert01ToBoolean, fileCsvSeparatorType, fileCsvCustomSeparator,
-      googleSpreadsheetId, googleServiceAccountCredentials
-      ) <> (DatasourceDB.tupled, DatasourceDB.unapply)
+    def * = (id :: ownerId :: ownerName :: name :: creationDateTime :: visibility :: downloadUri ::
+      datasourceType :: jdbcUrl :: jdbcDriver :: jdbcTable :: jdbcQuery :: externalFileUrl ::
+      hdfsPath :: libraryPath :: fileFormat :: fileCsvIncludeHeader :: fileCsvConvert01ToBoolean ::
+      fileCsvSeparatorType :: fileCsvCustomSeparator :: googleSpreadsheetId :: googleServiceAccountCredentials ::
+      googleSpreadsheetIncludeHeader :: googleSpreadsheetConvert01ToBoolean :: HNil
+    ).mappedWith(Generic[DatasourceDB])
+
   }
 
   lazy val datasourcesTable = TableQuery[DatasourceTable]
@@ -95,7 +103,7 @@ object DatasourcesSchema {
 // TODO use sbt-docker with sbt-assembly and define mainClass in assembly as
 // it's solved in Neptune
 
-/*
+
 object PrintDDL extends App {
   import Database.api._
   import DatasourcesSchema._
@@ -103,4 +111,4 @@ object PrintDDL extends App {
   println(datasourcesTable.schema.createStatements.mkString("\n"))
   // scalastyle:on println
 }
-*/
+
