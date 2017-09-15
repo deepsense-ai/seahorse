@@ -17,7 +17,8 @@ import io.deepsense.deeplang.parameters.exceptions.ParameterRequiredException
  * Parameters are used to fill parameter
  * schemas with their values and validate them.
  */
-abstract class Parameter extends DefaultJsonProtocol {
+@SerialVersionUID(1)
+abstract class Parameter extends Serializable with DefaultJsonProtocol {
   type HeldValue <: Any
 
   val parameterType: ParameterType

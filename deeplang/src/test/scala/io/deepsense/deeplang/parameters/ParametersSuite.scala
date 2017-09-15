@@ -63,7 +63,6 @@ class ParametersSuite extends FunSuite with Matchers with MockitoSugar {
   }
 
   test("Getting wrong type of parameter should throw an exception") {
-    val parameter = Some("abc")
     val expectedTargetTypeName = "io.deepsense.deeplang.parameters.NumericParameter"
     val param = mock[StringParameter]
     val exception = intercept[TypeConversionException] {

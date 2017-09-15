@@ -11,7 +11,8 @@ import spray.json._
 import io.deepsense.deeplang.parameters.ValidatorType.ValidatorType
 
 /** Represents anything that validates parameter. */
-trait Validator[ParameterType] {
+@SerialVersionUID(1)
+trait Validator[ParameterType] extends Serializable {
   val validatorType: ValidatorType
 
   def validate(parameter: ParameterType)

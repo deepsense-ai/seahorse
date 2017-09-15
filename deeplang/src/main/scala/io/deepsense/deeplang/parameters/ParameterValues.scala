@@ -25,7 +25,12 @@ case class MultipleSelection(choices: Traversable[Selection])
 /**
  * Represents selecting single column of dataframe.
  */
-sealed abstract class SingleColumnSelection(typeName: String) extends DefaultJsonProtocol {
+@SerialVersionUID(1)
+sealed abstract class SingleColumnSelection(
+    typeName: String)
+  extends Serializable
+  with DefaultJsonProtocol {
+
   final def toJson: JsValue = {
     JsObject(
       SingleColumnSelection.typeField -> JsString(typeName),

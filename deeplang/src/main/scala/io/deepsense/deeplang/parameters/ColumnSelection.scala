@@ -14,7 +14,12 @@ import io.deepsense.deeplang.parameters.ColumnType._
 /**
  * Represents selecting subset of columns of dataframe.
  */
-sealed abstract class ColumnSelection(typeName: String) extends DefaultJsonProtocol {
+@SerialVersionUID(1)
+sealed abstract class ColumnSelection(
+    typeName: String)
+  extends Serializable
+  with DefaultJsonProtocol {
+
   final def toJson: JsValue = JsObject(
     ColumnSelection.typeField -> typeName.toJson,
     ColumnSelection.valuesField -> valuesToJson)
@@ -22,7 +27,7 @@ sealed abstract class ColumnSelection(typeName: String) extends DefaultJsonProto
   protected def valuesToJson: JsValue
 }
 
-object ColumnSelection {
+object ColumnSelection extends Serializable {
   val typeField = "type"
 
   val valuesField = "values"
