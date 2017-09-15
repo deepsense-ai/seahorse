@@ -30,13 +30,70 @@ object CatalogRecorder {
   def registerDOperables(catalog: DOperableCatalog): Unit = {
     catalog.registerDOperable[DataFrame]()
     catalog.registerDOperable[Report]()
+
+    catalog.registerDOperable[ColumnsFilterer]()
+    catalog.registerDOperable[DatetimeDecomposer]()
+    catalog.registerDOperable[MathematicalTransformation]()
+    catalog.registerDOperable[MissingValuesHandler]()
+    catalog.registerDOperable[SqlExpression]()
+    catalog.registerDOperable[TypeConverter]()
   }
 
   def registerDOperations(catalog: DOperationsCatalog): Unit = {
 
+    catalog.registerDOperation[ReadDataFrame](
+      DOperationCategories.IO,
+      "Reads a DataFrame from a file or database"
+    )
+
+    catalog.registerDOperation[WriteDataFrame](
+      DOperationCategories.IO,
+      "Writes a DataFrame to a file or database"
+    )
+
+    catalog.registerDOperation[ConvertType](
+      DOperationCategories.Transformation,
+      "Converts selected columns of a DataFrame to a different type"
+    )
+
+    catalog.registerDOperation[DecomposeDatetime](
+      DOperationCategories.Transformation,
+      "Extracts Numeric fields (year, month, etc.) from a Timestamp column"
+    )
+
+    catalog.registerDOperation[ExecuteMathematicalTransformation](
+      DOperationCategories.Transformation,
+      "Executes a mathematical transformation on a column of a DataFrame"
+    )
+
+    catalog.registerDOperation[ExecuteSqlExpression](
+      DOperationCategories.Transformation,
+      "Executes an SQL expression on a DataFrame"
+    )
+
+    catalog.registerDOperation[FilterColumns](
+      DOperationCategories.Transformation,
+      "Creates a DataFrame containing only selected columns"
+    )
+
+    catalog.registerDOperation[HandleMissingValues](
+      DOperationCategories.Transformation,
+      "Handles missing values in a DataFrame"
+    )
+
+    catalog.registerDOperation[Join](
+      DOperationCategories.DataManipulation,
+      "Joins two DataFrames to a DataFrame"
+    )
+
     catalog.registerDOperation[Split](
       DOperationCategories.DataManipulation,
       "Splits a DataFrame into two DataFrames"
+    )
+
+    catalog.registerDOperation[Union](
+      DOperationCategories.DataManipulation,
+      "Creates a DataFrame containing all rows from both input DataFrames"
     )
   }
 }
