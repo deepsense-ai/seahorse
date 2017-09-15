@@ -1,13 +1,13 @@
 # Loading spinner
 
-DeepSense.io loading spinner component
+deepsense.ai loading spinner component
 
 ### Dependencies
 
  * angular
  * bootstrap
  * font-awesome
- 
+
 ### API
 
 COMPONENT MODULE `deepsense.spinner`

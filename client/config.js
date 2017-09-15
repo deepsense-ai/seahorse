@@ -3,7 +3,7 @@
 const config = {
   // localhost - from docker compose
   'apiHost': window.location.protocol + '//' + window.location.hostname,
-  'docsHost': 'https://seahorse.deepsense.io',
+  'docsHost': 'https://seahorse.deepsense.ai',
   'notebookHost': window.location.protocol + '//' + window.location.host + '/jupyter',
   'sessionApiPort': window.location.port,
   'sessionPollingInterval': 1000,
