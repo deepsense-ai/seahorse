@@ -17,6 +17,7 @@
 package io.deepsense.reportlib.model.factory
 
 import io.deepsense.reportlib.model.ReportContent
+import org.apache.spark.sql.types.{DoubleType, IntegerType, StructField, StructType}
 
 trait ReportContentTestFactory {
 
@@ -29,7 +30,11 @@ trait ReportContentTestFactory {
       ReportContentTestFactory.continuousDistName ->
       DistributionTestFactory.testContinuousDistribution(
         ReportContentTestFactory.continuousDistName)
-    )
+    ),
+    Some(StructType(Seq(
+      StructField("x", IntegerType, nullable = true),
+      StructField("y", DoubleType, nullable = false)
+    )))
   )
 }
 

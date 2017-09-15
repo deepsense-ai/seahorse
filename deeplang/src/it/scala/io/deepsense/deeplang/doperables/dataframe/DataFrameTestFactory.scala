@@ -16,55 +16,125 @@
 
 package io.deepsense.deeplang.doperables.dataframe
 
-/** TODO rewrite
+import java.sql.Timestamp
+
+import io.deepsense.commons.datetime.DateTimeConverter
+import org.apache.spark.SparkContext
+import org.apache.spark.mllib.linalg.{Vectors, VectorUDT}
+import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.Row
+import org.apache.spark.sql.types._
+import org.joda.time.DateTime
+
 trait DataFrameTestFactory {
+
+  import DataFrameTestFactory._
 
   def testDataFrame(dataFrameBuilder: DataFrameBuilder, sparkContext: SparkContext): DataFrame =
     dataFrameBuilder.buildDataFrame(
       testSchema,
-      testRDD(sparkContext),
-      Seq(DataFrameTestFactory.categoricalColumnName))
+      testRDD(sparkContext))
 
   def oneValueDataFrame(
       dataFrameBuilder: DataFrameBuilder,
       sparkContext: SparkContext): DataFrame =
     dataFrameBuilder.buildDataFrame(
       testSchema,
-      sameValueRDD(sparkContext),
-      Seq(DataFrameTestFactory.categoricalColumnName))
+      sameValueRDD(sparkContext))
+
+  def allTypesDataFrame(dataFrameBuilder: DataFrameBuilder, sparkContext: SparkContext): DataFrame =
+    dataFrameBuilder.buildDataFrame(
+      allTypesSchema,
+      allTypesRDD(sparkContext))
 
   val testSchema: StructType = StructType(Array(
-    StructField(DataFrameTestFactory.stringColumnName, StringType),
-    StructField(DataFrameTestFactory.booleanColumnName, BooleanType),
-    StructField(DataFrameTestFactory.doubleColumnName, DoubleType),
-    StructField(DataFrameTestFactory.timestampColumnName, TimestampType),
-    StructField(DataFrameTestFactory.categoricalColumnName, StringType)
+    StructField(stringColumnName, StringType),
+    StructField(booleanColumnName, BooleanType),
+    StructField(doubleColumnName, DoubleType),
+    StructField(timestampColumnName, TimestampType),
+    StructField(integerColumnName, IntegerType)
+  ))
+
+  val allTypesSchema: StructType = StructType(Seq(
+    StructField(byteColumnName, ByteType),
+    StructField(shortColumnName, ShortType),
+    StructField(integerColumnName, IntegerType),
+    StructField(longColumnName, LongType),
+    StructField(floatColumnName, FloatType),
+    StructField(doubleColumnName, DoubleType),
+    StructField(decimalColumnName, DecimalType(10, 2)),
+    StructField(stringColumnName, StringType),
+    StructField(binaryColumnName, BinaryType),
+    StructField(booleanColumnName, BooleanType),
+    StructField(timestampColumnName, TimestampType),
+    StructField(dateColumnName, DateType),
+    StructField(arrayColumnName, ArrayType(IntegerType)),
+    StructField(mapColumnName, DataTypes.createMapType(StringType, IntegerType)),
+    StructField(structColumnName, StructType(Seq(StructField("x", IntegerType)))),
+    StructField(vectorColumnName, new VectorUDT)
   ))
 
   def testRDD(sparkContext: SparkContext): RDD[Row] = sparkContext.parallelize(Seq(
-    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), "summer"),
-    Row("Name2", false, 1.95, timestamp(1990, 2, 11, 0, 43), "summer"),
-    Row("Name3", false, 1.87, timestamp(1999, 7, 2, 0, 43), "winter"),
-    Row("Name4", false, 1.7, timestamp(1954, 12, 18, 0, 43), "spring"),
+    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), 0),
+    Row("Name2", false, 1.95, timestamp(1990, 2, 11, 0, 43), 1),
+    Row("Name3", false, 1.87, timestamp(1999, 7, 2, 0, 43), 3),
+    Row("Name4", false, 1.7, timestamp(1954, 12, 18, 0, 43), 0),
     Row("Name5", false, 2.07, timestamp(1987, 4, 27, 0, 43), null),
-    Row(null, true, 1.307, timestamp(2010, 1, 7, 0, 0), "autumn"),
-    Row("Name7", null, 2.132, timestamp(2000, 4, 27, 0, 43), "summer"),
-    Row("Name8", true, 1.777, timestamp(1996, 10, 24, 0, 43), "summer"),
-    Row("Name9", true, null, timestamp(1999, 1, 6, 0, 0), "spring"),
-    Row("Name10", true, 1.99, null, "summer")
+    Row(null, true, 1.307, timestamp(2010, 1, 7, 0, 0), 2),
+    Row("Name7", null, 2.132, timestamp(2000, 4, 27, 0, 43), 1),
+    Row("Name8", true, 1.777, timestamp(1996, 10, 24, 0, 43), 1),
+    Row("Name9", true, null, timestamp(1999, 1, 6, 0, 0), 0),
+    Row("Name10", true, 1.99, null, 1)
   ))
 
   def sameValueRDD(sparkContext: SparkContext): RDD[Row] = sparkContext.parallelize(Seq(
-    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), "summer"),
-    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), "summer"),
-    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), "summer"),
-    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), "summer"),
-    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), "summer"),
-    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), "summer"),
-    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), "summer"),
-    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), "summer"),
-    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), "summer"),
-    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), "summer")
+    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), 1),
+    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), 1),
+    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), 1),
+    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), 1),
+    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), 1),
+    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), 1),
+    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), 1),
+    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), 1),
+    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), 1),
+    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), 1)
+  ))
+
+  def allTypesRDD(sparkContext: SparkContext): RDD[Row] = sparkContext.parallelize(Seq(
+    Row(
+      Byte.box(0),
+      Short.box(0),
+      0,
+      0L,
+      0.0f,
+      0.0,
+      BigDecimal(0),
+      "x",
+      Array[Byte](),
+      false,
+      timestamp(1970, 1, 20, 0, 0),
+      java.sql.Date.valueOf("1970-01-20"),
+      Array(1, 2, 3),
+      Map("x" -> 0),
+      Row(0),
+      Vectors.dense(1, 2, 3)),
+    Row(
+      Byte.box(1),
+      Short.box(1),
+      1,
+      1L,
+      1.0f,
+      1.0,
+      BigDecimal(1),
+      "y",
+      Array[Byte](),
+      true,
+      timestamp(1970, 1, 22, 0, 0),
+      java.sql.Date.valueOf("1970-01-22"),
+      Array(4, 5, 6),
+      Map("y" -> 1),
+      Row(1),
+      Vectors.dense(4, 5, 6))
   ))
 
   private def timestamp(
@@ -77,10 +147,21 @@ trait DataFrameTestFactory {
 }
 
 object DataFrameTestFactory extends DataFrameTestFactory {
-  val stringColumnName = "Name"
-  val booleanColumnName = "BusinessAccount"
-  val doubleColumnName = "Whatever"
-  val timestampColumnName = "AccountCreationDate"
-  val categoricalColumnName = "Season"
+  val stringColumnName = "stringColumn"
+  val booleanColumnName = "booleanColumn"
+  val doubleColumnName = "doubleColumn"
+  val timestampColumnName = "timestampColumn"
+  val integerColumnName = "integerColumn"
+
+  val byteColumnName = "byteColumn"
+  val shortColumnName = "shortColumn"
+  val longColumnName = "longColumn"
+  val floatColumnName = "floatColumn"
+  val decimalColumnName = "decimalColumn"
+  val binaryColumnName = "binaryColumn"
+  val dateColumnName = "dateColumn"
+  val arrayColumnName = "arrayColumn"
+  val mapColumnName = "mapColumn"
+  val structColumnName = "structColumn"
+  val vectorColumnName = "vectorColumn"
 }
-*/

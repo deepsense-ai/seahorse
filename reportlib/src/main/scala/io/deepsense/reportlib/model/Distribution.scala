@@ -87,35 +87,14 @@ object ContinuousDistribution {
 }
 
 case class Statistics(
-  median: Option[String],
   max: Option[String],
   min: Option[String],
-  mean: Option[String],
-  firstQuartile: Option[String],
-  thirdQuartile: Option[String],
-  outliers: Seq[String])
+  mean: Option[String])
 
 
 object Statistics {
-  def apply(): Statistics = new Statistics(None, None, None, None, None, None, Seq())
+  def apply(): Statistics = new Statistics(None, None, None)
 
-  def apply(median: String, max: String, min: String, mean: String): Statistics =
-    Statistics(Option(median), Option(max), Option(min), Option(mean), None, None, Seq())
-
-  def apply(
-      median: String,
-      max: String,
-      min: String,
-      mean: String,
-      firstQuartile: String,
-      thirdQuartile: String,
-      outliers: Seq[String] = Seq()): Statistics =
-    Statistics(
-      median = Option(median),
-      max = Option(max),
-      min = Option(min),
-      mean = Option(mean),
-      firstQuartile = Option(firstQuartile),
-      thirdQuartile = Option(thirdQuartile),
-      outliers = outliers)
+  def apply(max: String, min: String, mean: String): Statistics =
+    Statistics(Option(max), Option(min), Option(mean))
 }

@@ -105,13 +105,9 @@ class DistributionJsonSpec
 
   private def expectedStatisticsJson(statistics: Statistics): JsObject =
     JsObject(
-      "median" -> jsStringOrNull(statistics.median),
       "max" -> jsStringOrNull(statistics.max),
       "min" -> jsStringOrNull(statistics.min),
-      "mean" -> jsStringOrNull(statistics.mean),
-      "firstQuartile" -> jsStringOrNull(statistics.firstQuartile),
-      "thirdQuartile" -> jsStringOrNull(statistics.thirdQuartile),
-      "outliers" -> JsArray(statistics.outliers.map(JsString(_)).toVector)
+      "mean" -> jsStringOrNull(statistics.mean)
     )
 
   private def jsStringOrNull(s: Option[String]): JsValue = s.map(JsString(_)).getOrElse(JsNull)

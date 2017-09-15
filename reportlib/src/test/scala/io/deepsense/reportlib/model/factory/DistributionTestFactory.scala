@@ -43,11 +43,9 @@ trait DistributionTestFactory {
       DistributionTestFactory.distributionCounts,
       testStatistics)
 
-  val testStatistics: Statistics =
-    Statistics("5.4", "43", "1.5", "12.1", "1", "1.23", List("0.1", "0.2", "23.3", "23.5", "27.1"))
+  val testStatistics: Statistics = Statistics("43", "1.5", "12.1")
 
-  val testStatisticsWithEmptyValues: Statistics =
-    Statistics(Some("5.4"), Some("43"), Some("1.5"), Some("12.1"), None, None, List())
+  val testStatisticsWithEmptyValues: Statistics = Statistics(None, Some("1.5"), None)
 }
 
 object DistributionTestFactory extends DistributionTestFactory {

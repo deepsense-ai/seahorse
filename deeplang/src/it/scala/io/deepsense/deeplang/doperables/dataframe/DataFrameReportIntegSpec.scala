@@ -16,10 +16,22 @@
 
 package io.deepsense.deeplang.doperables.dataframe
 
-import org.apache.spark.sql.types.{Metadata => SparkMetadata}
+import java.sql.Timestamp
 
-/** TODO rewrite
+import io.deepsense.commons.datetime.DateTimeConverter
+import io.deepsense.commons.types.ColumnType
+import io.deepsense.commons.utils.DoubleUtils
+import io.deepsense.deeplang.DeeplangIntegTestSupport
+import io.deepsense.deeplang.doperables.Report
+import io.deepsense.reportlib.model.{ContinuousDistribution, DiscreteDistribution, Statistics, Table}
+import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.Row
+import org.apache.spark.sql.types._
+import org.joda.time.DateTime
+
 class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTestFactory {
+
+  import DataFrameTestFactory._
 
   override def beforeAll(): Unit = {
     super.beforeAll()
@@ -29,11 +41,6 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
     "generate report with data sample table" when {
       val exampleString = "DeepSense.io"
       val columnNameBase = "stringColumn"
-      "number of columns and rows exceeds max" in {
-        val columnsNumber = DataFrameReportGenerator.maxColumnsNumberInReport + 10
-        val rowsNumber = DataFrameReportGenerator.maxColumnsNumberInReport + 10
-        testReportTables(Some(exampleString), columnNameBase, columnsNumber, rowsNumber)
-      }
       "number of columns and rows is minimal" in {
          val columnsNumber = 1
          val rowsNumber = 1
@@ -54,7 +61,7 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
           StructField(nameColumnName, StringType),
           StructField(birthDateColumnName, TimestampType)))
         val dataFrame =
-          executionContext.dataFrameBuilder.buildDataFrame(schema, rdd, Seq(nameColumnName))
+          executionContext.dataFrameBuilder.buildDataFrame(schema, rdd)
 
         val report = dataFrame.report(executionContext)
 
@@ -93,47 +100,49 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
         ColumnType.boolean,
         ColumnType.numeric,
         ColumnType.timestamp,
-        ColumnType.categorical)
+        ColumnType.numeric)
     }
     "generate report with correct column Distribution" in {
       val dataFrame = testDataFrame(executionContext.dataFrameBuilder, sparkContext)
 
       val report = dataFrame.report(executionContext)
 
-      testEmptyDistribution(report, DataFrameTestFactory.stringColumnName)
-      testCategoricalDistribution(
+      testDiscreteDistribution(
         report,
-        DataFrameTestFactory.booleanColumnName,
+        stringColumnName,
+        1L,
+        Seq("Name1", "Name10", "Name2", "Name3", "Name4", "Name5", "Name7", "Name8", "Name9"),
+        Seq.fill(9)(1))
+      testDiscreteDistribution(
+        report,
+        booleanColumnName,
         1L,
         Seq("false", "true"),
         Seq(5, 4))
-      testCategoricalDistribution(
-        report,
-        DataFrameTestFactory.categoricalColumnName,
-        1L,
-        Seq("autumn", "spring", "summer", "winter"),
-        Seq(1, 2, 5, 1))
       testContinuousDistribution(
         report,
-        DataFrameTestFactory.doubleColumnName,
+        integerColumnName,
+        1L,
+        integerTypeBuckets,
+        Seq(3, 4, 1, 1),
+        Statistics("3", "0", "1"))
+      testContinuousDistribution(
+        report,
+        doubleColumnName,
         1L,
         doubleTypeBuckets,
         Seq(1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0 , 1, 1),
-        Statistics("1.87", "2.132", "1.307", "1.829556", "1.685", "2.03", Seq()))
+        Statistics("2.132", "1.307", "1.829556"))
       testContinuousDistribution(
         report,
-        DataFrameTestFactory.timestampColumnName,
+        timestampColumnName,
         1L,
         timestampTypeBuckets,
         Seq(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 3, 0, 0, 1),
         Statistics(
-          "1996-10-24T00:43:00.000Z",
           "2010-01-07T00:00:00.000Z",
           "1954-12-18T00:43:00.000Z",
-          "1989-10-15T21:53:26.666Z",
-          "1978-09-08T00:43:00.000Z",
-          "1999-11-29T00:43:00.000Z",
-          Seq())
+          "1989-10-15T21:53:26.666Z")
       )
     }
     "generate column Distribution for one value DataFrame" in {
@@ -141,51 +150,110 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
 
       val report = dataFrame.report(executionContext)
 
-      testEmptyDistribution(report, DataFrameTestFactory.stringColumnName)
-      testCategoricalDistribution(
+      testDiscreteDistribution(
         report,
-        DataFrameTestFactory.booleanColumnName,
+        stringColumnName,
+        0L,
+        Seq("Name1"),
+        Seq(10))
+      testDiscreteDistribution(
+        report,
+        booleanColumnName,
         0L,
         Seq("false", "true"),
         Seq(10, 0))
-      testCategoricalDistribution(
-        report,
-        DataFrameTestFactory.categoricalColumnName,
-        0L,
-        Seq("summer"),
-        Seq(10))
       testContinuousDistribution(
         report,
-        DataFrameTestFactory.doubleColumnName,
+        integerColumnName,
+        0L,
+        Seq("1", "1"),
+        Seq(10),
+        Statistics("1", "1", "1"))
+      testContinuousDistribution(
+        report,
+        doubleColumnName,
         0L,
         Seq("1.67", "1.67"),
         Seq(10),
-        Statistics("1.67", "1.67", "1.67", "1.67", "1.67", "1.67", Seq()))
+        Statistics("1.67", "1.67", "1.67"))
       testContinuousDistribution(
         report,
-        DataFrameTestFactory.timestampColumnName,
+        timestampColumnName,
         0L,
         Seq("1970-01-20T00:43:00.000Z", "1970-01-20T00:43:00.000Z"),
         Seq(10),
         Statistics(
           "1970-01-20T00:43:00.000Z",
           "1970-01-20T00:43:00.000Z",
-          "1970-01-20T00:43:00.000Z",
-          "1970-01-20T00:43:00.000Z",
-          "1970-01-20T00:43:00.000Z",
-          "1970-01-20T00:43:00.000Z",
-          Seq())
+          "1970-01-20T00:43:00.000Z")
       )
+    }
+    "generate report for all column types" in {
+      val dataFrame = allTypesDataFrame(executionContext.dataFrameBuilder, sparkContext)
+      val report = dataFrame.report(executionContext)
+
+      Seq(byteColumnName, shortColumnName, integerColumnName, longColumnName).foreach(colName => {
+        testContinuousDistribution(
+          report,
+          colName,
+          0L,
+          Seq("0", "0", "1"),
+          Seq(1, 1),
+          Statistics("1", "0", "0.5"))
+      })
+
+      Seq(floatColumnName, doubleColumnName, decimalColumnName).foreach(colName => {
+        testContinuousDistribution(
+          report,
+          colName,
+          0L,
+          (0 to 20).map(x => x * 0.05).toSeq.map(DoubleUtils.double2String(_)),
+          Seq(1L) ++ Seq.fill(18)(0L) ++ Seq(1L),
+          Statistics("1", "0", "0.5"))
+      })
+
+      testDiscreteDistribution(
+        report,
+        stringColumnName,
+        0L,
+        Seq("x", "y"),
+        Seq(1, 1))
+
+      testDiscreteDistribution(report, booleanColumnName, 0L, Seq("false", "true"), Seq(1, 1))
+
+      testContinuousDistribution(
+        report,
+        timestampColumnName,
+        0L,
+        timestampBucketsForSparkTypesTest,
+        Seq(1L) ++ Seq.fill(18)(0L) ++ Seq(1L),
+        Statistics(
+          "1970-01-22T00:00:00.000Z",
+          "1970-01-20T00:00:00.000Z",
+          "1970-01-21T00:00:00.000Z"))
+
+      testContinuousDistribution(
+        report,
+        dateColumnName,
+        0L,
+        timestampBucketsForSparkTypesTest,
+        Seq(1L) ++ Seq.fill(18)(0L) ++ Seq(1L),
+        Statistics(
+          "1970-01-22T00:00:00.000Z",
+          "1970-01-20T00:00:00.000Z",
+          "1970-01-21T00:00:00.000Z"))
+
+      Seq(binaryColumnName, arrayColumnName, mapColumnName, structColumnName, vectorColumnName)
+        .foreach(
+          colName => testEmptyDistribution(report, colName))
     }
     "generate correct report" when {
       "DataFrame is empty" in {
         val categories = Seq("red", "blue", "green")
-        val mapping = CategoriesMapping(categories)
-        val metadata = MappingMetadataConverter.mappingToMetadata(mapping, SparkMetadata.empty)
         val schema = StructType(Seq(
           StructField("string", StringType),
           StructField("numeric", DoubleType),
-          StructField("categorical", IntegerType, metadata = metadata),
+          StructField("categorical", IntegerType),
           StructField("timestamp", TimestampType),
           StructField("boolean", BooleanType)))
         val emptyDataFrame = executionContext.dataFrameBuilder.buildDataFrame(
@@ -201,20 +269,18 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
         dataSampleTable.rowNames shouldBe None
         dataSampleTable.values shouldBe List.empty
         testDataFrameSizeTable(tables, 5, 0)
-        testEmptyDistribution(report, "string")
+        testDiscreteDistribution(report, "string", 0L, Seq.empty, Seq.empty)
         testContinuousDistribution(report, "numeric", 0L, Seq.empty, Seq.empty, Statistics())
-        testCategoricalDistribution(report, "categorical", 0L, categories, Seq(0, 0, 0))
+        testContinuousDistribution(report, "numeric", 0L, Seq.empty, Seq.empty, Statistics())
         testContinuousDistribution(report, "timestamp", 0L, Seq.empty, Seq.empty, Statistics())
-        testCategoricalDistribution(report, "boolean", 0L, Seq("false", "true"), Seq(0, 0))
+        testDiscreteDistribution(report, "boolean", 0L, Seq("false", "true"), Seq(0, 0))
       }
       "DataFrame consists of null values only" in {
         val categories = Seq("red", "blue", "green")
-        val mapping = CategoriesMapping(categories)
-        val metadata = MappingMetadataConverter.mappingToMetadata(mapping, SparkMetadata.empty)
         val schema = StructType(Seq(
           StructField("string", StringType),
           StructField("numeric", DoubleType),
-          StructField("categorical", IntegerType, metadata = metadata),
+          StructField("categorical", IntegerType),
           StructField("timestamp", TimestampType),
           StructField("boolean", BooleanType)))
         val emptyDataFrame = executionContext.dataFrameBuilder.buildDataFrame(
@@ -236,23 +302,34 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
           List(None, None, None, None, None),
           List(None, None, None, None, None))
         testDataFrameSizeTable(tables, 5, 3)
-        testEmptyDistribution(report, "string")
+        testDiscreteDistribution(report, "string", 3L, Seq.empty, Seq.empty)
         testContinuousDistribution(report, "numeric", 3L, Seq.empty, Seq.empty, Statistics())
-        testCategoricalDistribution(report, "categorical", 3L, categories, Seq(0, 0, 0))
+        testContinuousDistribution(report, "numeric", 3L, Seq.empty, Seq.empty, Statistics())
         testContinuousDistribution(report, "timestamp", 3L, Seq.empty, Seq.empty, Statistics())
-        testCategoricalDistribution(report, "boolean", 3L, Seq("false", "true"), Seq(0, 0))
+        testDiscreteDistribution(report, "boolean", 3L, Seq("false", "true"), Seq(0, 0))
+      }
+    }
+    "not generate string column distribution" when {
+      "there are too many distinct values in the DataFrame" in {
+        val schema = StructType(Seq(StructField("string", StringType)))
+        val rowCount = DataFrameReportGenerator.maxDistinctValuesToCalculateDistribution + 1
+        val dataFrame = executionContext.dataFrameBuilder.buildDataFrame(
+          schema,
+          sparkContext.parallelize(
+            (1 to rowCount).toSeq.map(x => Row(x.toString))
+          )
+        )
+        val report = dataFrame.report(executionContext)
+        testDiscreteDistribution(report, "string", 0L, Seq.empty, Seq.empty)
       }
     }
   }
 
-  val longTypeBuckets: Array[String] = Array("1", "4939940.8", "9879880.6", "14819820.4",
-    "19759760.2", "24699700", "29639639.8", "34579579.6", "39519519.4", "44459459.2", "49399399",
-    "54339338.8", "59279278.6", "64219218.4", "69159158.2", "74099098", "79039037.8", "83978977.6",
-    "88918917.4", "93858857.2")
-
   val doubleTypeBuckets: Array[String] = Array("1.307", "1.34825", "1.3895", "1.43075", "1.472",
     "1.51325", "1.5545", "1.59575", "1.637", "1.67825", "1.7195", "1.76075", "1.802", "1.84325",
     "1.8845", "1.92575", "1.967", "2.00825", "2.0495", "2.09075", "2.132")
+
+  val integerTypeBuckets: Array[String] = Array("0", "0", "1", "2", "3")
 
   val timestampTypeBuckets: Array[String] = Array("1954-12-18T00:43:00.000Z",
     "1957-09-18T11:28:51.000Z", "1960-06-19T22:14:42.000Z", "1963-03-22T09:00:33.000Z",
@@ -263,24 +340,33 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
     "1999-01-03T04:56:36.000Z", "2001-10-04T15:42:27.000Z", "2004-07-06T02:28:18.000Z",
     "2007-04-07T13:14:09.000Z", "2010-01-07T00:00:00.000Z")
 
+  val timestampBucketsForSparkTypesTest: Array[String] = Array("1970-01-20T00:00:00.000Z",
+    "1970-01-20T02:24:00.000Z", "1970-01-20T04:48:00.000Z", "1970-01-20T07:12:00.000Z",
+    "1970-01-20T09:36:00.000Z", "1970-01-20T12:00:00.000Z", "1970-01-20T14:24:00.000Z",
+    "1970-01-20T16:48:00.000Z", "1970-01-20T19:12:00.000Z", "1970-01-20T21:36:00.000Z",
+    "1970-01-21T00:00:00.000Z", "1970-01-21T02:24:00.000Z", "1970-01-21T04:48:00.000Z",
+    "1970-01-21T07:12:00.000Z", "1970-01-21T09:36:00.000Z", "1970-01-21T12:00:00.000Z",
+    "1970-01-21T14:24:00.000Z", "1970-01-21T16:48:00.000Z", "1970-01-21T19:12:00.000Z",
+    "1970-01-21T21:36:00.000Z", "1970-01-22T00:00:00.000Z")
+
   private def testEmptyDistribution(
       report: Report,
       columnName: String): Unit = {
     report.content.distributions.contains(columnName) shouldBe false
   }
 
-  private def testCategoricalDistribution(
+  private def testDiscreteDistribution(
       report: Report,
       columnName: String,
       missingValues: Long,
       buckets: Seq[String],
       counts: Seq[Long]): Unit = {
-    val categoricalColumnDistribution: CategoricalDistribution =
-      report.content.distributions(columnName).asInstanceOf[CategoricalDistribution]
-    categoricalColumnDistribution.missingValues shouldBe missingValues
-    categoricalColumnDistribution.name shouldBe columnName
-    categoricalColumnDistribution.buckets shouldBe buckets
-    categoricalColumnDistribution.counts shouldBe counts
+    val discreteColumnDistribution: DiscreteDistribution =
+      report.content.distributions(columnName).asInstanceOf[DiscreteDistribution]
+    discreteColumnDistribution.missingValues shouldBe missingValues
+    discreteColumnDistribution.name shouldBe columnName
+    discreteColumnDistribution.buckets shouldBe buckets
+    discreteColumnDistribution.counts shouldBe counts
   }
 
   private def testContinuousDistribution(
@@ -327,15 +413,13 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
       dataFrameRowsNumber: Int,
       tables: Map[String, Table]): Registration = {
     val dataSampleTable = tables.get(DataFrameReportGenerator.dataSampleTableName).get
-    val expectedColumnsNumber: Int =
-      Math.min(DataFrameReportGenerator.maxColumnsNumberInReport, dataFrameColumnsNumber)
     val expectedRowsNumber: Int =
       Math.min(DataFrameReportGenerator.maxRowsNumberInReport, dataFrameRowsNumber)
     dataSampleTable.columnNames shouldBe
-      Some((0 until expectedColumnsNumber).map(columnNameBase + _))
+      Some((0 until dataFrameColumnsNumber).map(columnNameBase + _))
     dataSampleTable.rowNames shouldBe None
     dataSampleTable.values shouldBe
-      List.fill(expectedRowsNumber)(List.fill(expectedColumnsNumber)(cellValue))
+      List.fill(expectedRowsNumber)(List.fill(dataFrameColumnsNumber)(cellValue))
   }
 
   private def testDataFrameSizeTable(
@@ -360,4 +444,3 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
     sparkContext.parallelize(
       List.fill(numberOfRows)(Row(List.fill(numberOfColumns)(value.orNull): _*)))
 }
-*/

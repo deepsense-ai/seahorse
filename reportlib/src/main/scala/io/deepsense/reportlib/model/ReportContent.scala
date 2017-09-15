@@ -16,10 +16,13 @@
 
 package io.deepsense.reportlib.model
 
+import org.apache.spark.sql.types.StructType
+
 case class ReportContent(
     name: String,
     tables: Map[String, Table] = Map(),
-    distributions: Map[String, Distribution] = Map())
+    distributions: Map[String, Distribution] = Map(),
+    schema: Option[StructType] = None)
 
 object ReportContent {
 

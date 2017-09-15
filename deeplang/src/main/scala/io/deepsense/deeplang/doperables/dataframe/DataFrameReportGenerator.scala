@@ -18,13 +18,6 @@ package io.deepsense.deeplang.doperables.dataframe
 
 import java.sql.Timestamp
 
-import org.apache.spark.mllib.linalg.{Vector, Vectors}
-import org.apache.spark.mllib.stat.{MultivariateStatisticalSummary, Statistics}
-import org.apache.spark.rdd.RDD
-import org.apache.spark.sql
-import org.apache.spark.sql.types._
-import org.apache.spark.sql.{ColumnName, Row}
-
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.commons.utils.DoubleUtils
@@ -32,8 +25,16 @@ import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.ReportLevel.ReportLevel
 import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
 import io.deepsense.deeplang.doperables.{Report, ReportLevel}
+import io.deepsense.deeplang.utils.SparkUtils
 import io.deepsense.reportlib.model
 import io.deepsense.reportlib.model._
+import org.apache.spark.mllib.linalg._
+import org.apache.spark.mllib.stat.{MultivariateStatisticalSummary, Statistics}
+import org.apache.spark.rdd.RDD
+import org.apache.spark.sql
+import org.apache.spark.sql.types._
+import org.apache.spark.sql.{ColumnName, Row}
+import org.joda.time.{LocalDate, DateTime}
 
 private object StatType extends Enumeration {
   type StatType = Value
@@ -44,22 +45,21 @@ import io.deepsense.deeplang.doperables.dataframe.StatType._
 trait DataFrameReportGenerator {
 
   def report(
-    executionContext: ExecutionContext,
-    sparkDataFrame: org.apache.spark.sql.DataFrame): Report = {
+      executionContext: ExecutionContext,
+      sparkDataFrame: org.apache.spark.sql.DataFrame): Report = {
+
     val dataFrameEmpty: Boolean = sparkDataFrame.rdd.isEmpty()
     safeDataFrameCache(sparkDataFrame)
-    val columnsSubset: List[String] =
-      sparkDataFrame.columns.toList.take(DataFrameReportGenerator.maxColumnsNumberInReport)
-    val limitedDataFrame = sparkDataFrame.select(columnsSubset.map(new ColumnName(_)): _*)
 
     val (distributions, dataFrameSize) =
-      columnsDistributions(executionContext, limitedDataFrame, dataFrameEmpty)
-    val sampleTable = dataSampleTable(limitedDataFrame)
+      columnsDistributions(executionContext, sparkDataFrame, dataFrameEmpty)
+    val sampleTable = dataSampleTable(sparkDataFrame)
     val sizeTable = dataFrameSizeTable(sparkDataFrame.schema, dataFrameSize)
     Report(ReportContent(
       "DataFrame Report",
       Map(sampleTable.name -> sampleTable, sizeTable.name -> sizeTable),
-      distributions))
+      distributions,
+      Some(sparkDataFrame.schema)))
   }
 
   private def dataSampleTable(
@@ -75,7 +75,7 @@ trait DataFrameReportGenerator {
     Table(
       DataFrameReportGenerator.dataSampleTableName,
       s"${DataFrameReportGenerator.dataSampleTableName}. " +
-        s"First $columnsNumber columns and ${rows.length} randomly chosen rows",
+        s"First ${rows.length} randomly chosen rows",
       Some(columnsNames),
       columnTypes,
       None,
@@ -92,14 +92,11 @@ trait DataFrameReportGenerator {
       None,
       List(List(Some(schema.fieldNames.length.toString), Some(dataFrameSize.toString))))
 
-  /**
-   * Assumption that DataFrame is already filtered to the interesting subset of columns
-   * (up to 100 columns).
-   */
   private def columnsDistributions(
       executionContext: ExecutionContext,
       sparkDataFrame: org.apache.spark.sql.DataFrame,
       dataFrameEmpty: Boolean): (Map[String, Distribution], Long) = {
+
     safeDataFrameCache(sparkDataFrame)
     val basicStats: Option[MultivariateStatisticalSummary] =
       if (dataFrameEmpty) {
@@ -109,33 +106,29 @@ trait DataFrameReportGenerator {
       }
     val dataFrameSize: Long = basicStats.map(_.count).getOrElse(0L)
 
-    if (executionContext.reportLevel == ReportLevel.LOW) {
-      // Turn off generating any distributions when reportLevel == LOW
-      (Map(), dataFrameSize)
-    } else {
-      val distributions = sparkDataFrame.schema.zipWithIndex.flatMap {
-        case (structField, index) => {
-          val rdd: RDD[Double] =
-            columnAsDoubleRDDWithoutMissingValues(sparkDataFrame, index)
-          rdd.cache()
-          distributionType(structField) match {
-            case Continuous =>
-              val basicStatsForColumnOption = if (rdd.isEmpty()) { None } else { basicStats }
-              Some(continuousDistribution(
-                structField,
-                rdd,
-                basicStatsForColumnOption.map(_.min(index)),
-                basicStatsForColumnOption.map(_.max(index)),
-                dataFrameSize,
-                executionContext.reportLevel))
-            case Discrete =>
-              Some(discreteDistribution(dataFrameSize, structField, rdd))
-            case Empty => None
-          }
+    val distributions = sparkDataFrame.schema.zipWithIndex.flatMap {
+      case (structField, index) => {
+        distributionType(structField) match {
+          case Continuous =>
+            val rdd: RDD[Double] =
+              columnAsDoubleRDDWithoutMissingValues(sparkDataFrame, index)
+            rdd.cache()
+            val basicStatsForColumnOption = if (rdd.isEmpty()) { None } else { basicStats }
+            Some(continuousDistribution(
+              structField,
+              rdd,
+              basicStatsForColumnOption.map(_.min(index)),
+              basicStatsForColumnOption.map(_.max(index)),
+              dataFrameSize,
+              executionContext.reportLevel))
+          case Discrete =>
+            val rdd = columnAsStringRDDWithoutMissingValues(sparkDataFrame, index)
+            Some(discreteDistribution(dataFrameSize, structField, rdd))
+          case Empty => None
         }
       }
-      (distributions.map(d => d.name -> d).toMap, dataFrameSize)
     }
+    (distributions.map(d => d.name -> d).toMap, dataFrameSize)
   }
 
   private def columnAsDoubleRDDWithoutMissingValues(
@@ -143,12 +136,16 @@ trait DataFrameReportGenerator {
       columnIndex: Int): RDD[Double] =
     sparkDataFrame.rdd.map(cell2Double(_, columnIndex)).filter(!_.isNaN)
 
+  def columnAsStringRDDWithoutMissingValues(
+      sparkDataFrame: org.apache.spark.sql.DataFrame,
+      columnIndex: Int): RDD[String] =
+    sparkDataFrame.rdd.flatMap(cell2String(_, columnIndex))
+
   private def discreteDistribution(
       dataFrameSize: Long,
       structField: StructField,
-      rdd: RDD[Double]): DiscreteDistribution = {
-    val (labels, buckets) = bucketsForDiscreteColumn(structField)
-    val counts: Array[Long] = if (buckets.size > 1) rdd.histogram(buckets.toArray) else Array()
+      rdd: RDD[String]): DiscreteDistribution = {
+    val (labels, counts) = getLabelsAndCounts(structField, rdd)
     val rddSize: Long = if (counts.nonEmpty) counts.fold(0L)(_ + _) else rdd.count()
     DiscreteDistribution(
       structField.name,
@@ -158,14 +155,20 @@ trait DataFrameReportGenerator {
       counts)
   }
 
-  private def bucketsForDiscreteColumn(
-      structField: StructField): (IndexedSeq[String], IndexedSeq[Double]) =
-
-    structField.dataType match {
-      case BooleanType =>
-        (IndexedSeq(false.toString, true.toString), IndexedSeq(0.0, 1.0, 1.1))
-      case StringType => (IndexedSeq(), IndexedSeq())
-    }
+  private def getLabelsAndCounts(
+      structField: StructField,
+      rdd: RDD[String]): (Seq[String], Seq[Long]) = {
+    val maybeOccurencesMap = SparkUtils.countOccurrencesWithKeyLimit(
+      rdd, DataFrameReportGenerator.maxDistinctValuesToCalculateDistribution)
+    maybeOccurencesMap.map(occurencesMap => {
+      val labels = structField.dataType match {
+        case StringType => occurencesMap.keys.toSeq.sorted
+        case BooleanType => Seq("false", "true")
+      }
+      val counts = labels.map(occurencesMap.getOrElse(_, 0L))
+      (labels, counts)
+    }).getOrElse((Seq.empty, Seq.empty))
+  }
 
   private def continuousDistribution(
       structField: StructField,
@@ -181,17 +184,13 @@ trait DataFrameReportGenerator {
         histogram(rdd, min.get, max.get, structField)
       }
     val rddSize: Long = counts.fold(0L)(_ + _)
-    val quartiles = calculateQuartiles(rddSize, rdd, structField, reportLevel)
     val d2L = double2Label(structField)_
+    val mean2L = mean2Label(structField)_
     val mean = if (min.isEmpty || max.isEmpty) None else Some(rdd.mean())
     val stats = model.Statistics(
-      quartiles.median,
       max.map(d2L),
       min.map(d2L),
-      mean.map(d2L),
-      quartiles.first,
-      quartiles.third,
-      quartiles.outliers)
+      mean.map(mean2L))
     ContinuousDistribution(
       structField.name,
       s"Continuous distribution for ${structField.name} column",
@@ -212,63 +211,20 @@ trait DataFrameReportGenerator {
       rdd.histogram(buckets))
   }
 
+  def isIntegerLike(dataType: DataType): Boolean =
+    dataType match {
+      case ByteType | ShortType | IntegerType | LongType | TimestampType | DateType => true
+      case _ => false
+    }
+
   private def numberOfSteps(min: Double, max: Double, dataType: DataType): Int =
     if (max - min < DataFrameReportGenerator.doubleTolerance) {
       1
-    } else if (dataType == LongType || dataType == TimestampType) {
+    } else if (isIntegerLike(dataType)) {
       Math.min(max.toLong - min.toLong + 1, DataFrameReportGenerator.defaultBucketsNumber).toInt
     } else {
       DataFrameReportGenerator.defaultBucketsNumber
     }
-
-  private def calculateQuartiles(
-      rddSize: Long,
-      rdd: RDD[Double],
-      structField: StructField,
-      reportLevel: ReportLevel): Quartiles =
-    if (rddSize > 0 && reportLevel == ReportLevel.HIGH) {
-      val sortedRdd = rdd.sortBy(identity).zipWithIndex().map {
-        case (v, idx) => (idx, v)
-      }
-      sortedRdd.cache()
-      val d2L = double2Label(structField) _
-      val secondQuartile: Option[String] = Some(d2L(median(sortedRdd, 0, rddSize)))
-      if (rddSize >= 3) {
-        val firstQuartile: Double = median(sortedRdd, 0, rddSize / 2)
-        val thirdQuartile: Double = median(sortedRdd, rddSize / 2 + rddSize % 2, rddSize)
-        val outliers: Array[Double] = findOutliers(rdd, firstQuartile, thirdQuartile)
-        Quartiles(
-          Some(d2L(firstQuartile)),
-          secondQuartile,
-          Some(d2L(thirdQuartile)),
-          outliers.map(d2L))
-      } else {
-        Quartiles(None, secondQuartile, None, Seq())
-      }
-    } else {
-      Quartiles(None, None, None, Seq())
-    }
-
-  private def findOutliers(
-      rdd: RDD[Double],
-      firstQuartile: Double,
-      thirdQuartile: Double): Array[Double] = {
-    val k = (thirdQuartile - firstQuartile) * DataFrameReportGenerator.outlierConstant
-    val lowerBound = firstQuartile - k
-    val upperBound = thirdQuartile + k
-    rdd.filter(d => d < lowerBound || d > upperBound).collect()
-  }
-
-  private def median(sortedRdd: RDD[(Long, Double)], start: Long, end: Long): Double = {
-    val s = start + end
-    if (s % 2 == 0) {
-      val r = s / 2
-      val l = r - 1
-      (sortedRdd.lookup(l).head + sortedRdd.lookup(r).head) / 2
-    } else {
-      sortedRdd.lookup(s / 2).head
-    }
-  }
 
   private def customRange(min: Double, max: Double, steps: Int): Array[Double] = {
     val span = max - min
@@ -283,16 +239,33 @@ trait DataFrameReportGenerator {
       Double.NaN
     } else {
       row.schema(index).dataType match {
+        case ByteType => row.getByte(index).toDouble
+        case ShortType => row.getShort(index).toDouble
+        case IntegerType => row.getInt(index).toDouble
         case LongType => row.getLong(index).toDouble
-        case TimestampType => row.getAs[Timestamp](index).getTime.toDouble
-        case StringType => 0L
+        case FloatType => row.getFloat(index).toDouble
+        case DoubleType => row.getDouble(index)
+        case _: DecimalType => row.getDecimal(index).doubleValue()
         case BooleanType => discrete2Double(
           row.getBoolean(index).toString,
           List(false.toString, true.toString))
-        case DoubleType => row.getDouble(index)
-        case IntegerType => row.getInt(index).toDouble
+        case TimestampType => row.getAs[Timestamp](index).getTime.toDouble
+        case DateType => dateToDouble(row.getDate(index))
+        // We return 0 to call Statistics.colStats on the whole DataFrame
+        case _ => 0L
       }
     }
+
+  private def dateToDouble(date: java.sql.Date): Double = {
+    val localDate = new LocalDate(date)
+    new DateTime(
+      localDate.getYear,
+      localDate.getMonthOfYear,
+      localDate.getDayOfMonth,
+      0,
+      0,
+      DateTimeConverter.zone).getMillis
+  }
 
   private def buckets2Labels(
       buckets: Seq[Double],
@@ -302,22 +275,43 @@ trait DataFrameReportGenerator {
   private def double2Label(
       structField: StructField)(
       d: Double): String = structField.dataType match {
-    case BooleanType => if (d == 0D) false.toString else true.toString
-    case LongType => DoubleUtils.double2String(d)
-    case DoubleType => DoubleUtils.double2String(d)
-    case TimestampType =>
-      DateTimeConverter.toString(DateTimeConverter.fromMillis(d.toLong))
+    case ByteType => d.toByte.toString
+    case ShortType => d.toShort.toString
     case IntegerType => d.toInt.toString
+    case LongType => d.toLong.toString
+    case FloatType | DoubleType | _: DecimalType => DoubleUtils.double2String(d)
+    case BooleanType => if (d == 0D) false.toString else true.toString
+    case TimestampType | DateType =>
+      DateTimeConverter.toString(DateTimeConverter.fromMillis(d.toLong))
+  }
+
+  /**
+    * We want to present mean of integer-like values as a floating point number, however
+    * dates, timestamps and booleans should be converted to their original type.
+    */
+  private def mean2Label(structField: StructField)(d: Double): String = structField.dataType match {
+    case ByteType | ShortType | IntegerType | LongType => DoubleUtils.double2String(d)
+    case _ => double2Label(structField)(d)
   }
 
   private def distributionType(
       structField: StructField): StatType = structField.dataType match {
-    case LongType => Continuous
-    case TimestampType => Continuous
-    case DoubleType => Continuous
-    case StringType => Empty
-    case BooleanType => Discrete
+    case ByteType => Continuous
+    case ShortType => Continuous
     case IntegerType => Continuous
+    case LongType => Continuous
+    case FloatType => Continuous
+    case DoubleType => Continuous
+    case _: DecimalType => Continuous
+    case StringType => Discrete
+    case BinaryType => Empty
+    case BooleanType => Discrete
+    case TimestampType => Continuous
+    case DateType => Continuous
+    case _: ArrayType => Empty
+    case _: MapType => Empty
+    case _: StructType => Empty
+    case _: VectorUDT => Empty
   }
 
   private def discrete2Double(value: String, possibleValues: List[String]): Double =
@@ -331,16 +325,20 @@ trait DataFrameReportGenerator {
       None
     } else {
       structField.dataType match {
+        case FloatType => Some(DoubleUtils.double2String(row.getFloat(index)))
+        case DoubleType => Some(DoubleUtils.double2String(row.getDouble(index)))
+        case _: DecimalType => Some(row.getDecimal(index).toPlainString)
         case TimestampType => Some(DateTimeConverter.toString(
           DateTimeConverter.fromMillis(row.get(index).asInstanceOf[Timestamp].getTime)))
-        case DoubleType => Some(DoubleUtils.double2String(row.getDouble(index)))
+        case DateType => Some(DateTimeConverter.toString(
+          DateTimeConverter.fromMillis(row.getDate(index).getTime)))
         case _ => Some(row(index).toString)
       }
     }
   }
 
   private def safeDataFrameCache(sparkDataFrame: sql.DataFrame): Unit = {
-    if (!sparkDataFrame.schema.isEmpty) {
+    if (sparkDataFrame.schema.nonEmpty) {
       sparkDataFrame.cache()
     }
   }
@@ -351,13 +349,6 @@ object DataFrameReportGenerator extends DataFrameReportGenerator {
   val dataSampleTableName = "Data Sample"
   val dataFrameSizeTableName = "DataFrame Size"
   val maxRowsNumberInReport = 10
-  val maxColumnsNumberInReport = 10
-  val outlierConstant = 1.5
   val doubleTolerance = 0.000001
+  val maxDistinctValuesToCalculateDistribution = 10
 }
-
-private case class Quartiles(
-  first: Option[String],
-  median: Option[String],
-  third: Option[String],
-  outliers: Seq[String])

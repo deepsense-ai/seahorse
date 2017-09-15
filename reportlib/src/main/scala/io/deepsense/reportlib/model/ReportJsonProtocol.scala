@@ -16,20 +16,19 @@
 
 package io.deepsense.reportlib.model
 
+import io.deepsense.commons.types.ColumnType
 import spray.json._
 
-import io.deepsense.commons.types.ColumnType
+trait ReportJsonProtocol
+  extends DefaultJsonProtocol
+  with StructTypeJsonProtocol
+  with ProductFormatsInstances
+  with NullOptions {
 
-trait ReportJsonProtocol extends DefaultJsonProtocol with ProductFormatsInstances with NullOptions {
-  implicit val statisticsFormat = jsonFormat7(
-    Statistics.apply(
-      _: Option[String],
-      _: Option[String],
-      _: Option[String],
-      _: Option[String],
-      _: Option[String],
-      _: Option[String],
-      _: Seq[String]))
+  type maybeStats = Option[String]
+  val statisticsConstructor: ((maybeStats, maybeStats, maybeStats) => Statistics) = Statistics.apply
+  implicit val statisticsFormat = jsonFormat3(statisticsConstructor)
+
   implicit val categoricalDistributionFormat = jsonFormat(
     DiscreteDistribution.apply,
     DistributionJsonProtocol.nameKey,
@@ -39,6 +38,7 @@ trait ReportJsonProtocol extends DefaultJsonProtocol with ProductFormatsInstance
     DistributionJsonProtocol.countsKey,
     DistributionJsonProtocol.subtypeKey,
     DistributionJsonProtocol.typeKey)
+
   implicit val continuousDistributionFormat = jsonFormat(
     ContinuousDistribution.apply,
     DistributionJsonProtocol.nameKey,
@@ -82,7 +82,8 @@ trait ReportJsonProtocol extends DefaultJsonProtocol with ProductFormatsInstance
       }
     }
   }
-  implicit val columntTypeFormat = new RootJsonFormat[ColumnType.ColumnType] {
+
+  implicit val columnTypeFormat = new RootJsonFormat[ColumnType.ColumnType] {
     override def write(obj: ColumnType.ColumnType): JsValue = {
       JsString(obj.toString)
     }
@@ -92,8 +93,9 @@ trait ReportJsonProtocol extends DefaultJsonProtocol with ProductFormatsInstance
       case _ => throw new DeserializationException("Enum string expected")
     }
   }
+
   implicit val tableFormat = jsonFormat7(Table.apply)
-  implicit val reportFormat = jsonFormat3(ReportContent.apply)
+  implicit val reportFormat = jsonFormat4(ReportContent.apply)
 }
 
 object ReportJsonProtocol extends ReportJsonProtocol
