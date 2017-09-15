@@ -1,0 +1,24 @@
+- name: Enable UDP module in rsyslog
+  lineinfile:
+    dest=/etc/rsyslog.conf
+    regexp="#?\$ModLoad imudp"
+    line="$ModLoad imudp"
+  notify: restart rsyslog
+
+- name: Enable listening on UDP/514 in rsyslog
+  lineinfile:
+    dest=/etc/rsyslog.conf
+    regexp="#?\$UDPServerRun 514"
+    line="$UDPServerRun 514"
+  notify: restart rsyslog
+
+- name: Store HAproxy logs in a separate file
+  copy: src=10-haproxy.conf dest=/etc/rsyslog.d/10-haproxy.conf
+  notify: restart rsyslog
+
+- name: Create HAproxy logfile
+  file: path=/var/log/haproxy.log state=touch owner=syslog group=adm mode=0640
+  notify: restart rsyslog
+
+- name: Configure HAproxy logs rotation
+  copy: src=haproxy dest=/etc/logrotate.d/haproxy

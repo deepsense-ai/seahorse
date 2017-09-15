@@ -1,5 +1,5 @@
 global
-  log /dev/log local0
+  log {{syslog_server_ip}} local0
   chroot /usr/local/etc/haproxy
   maxconn 4000
   user nobody

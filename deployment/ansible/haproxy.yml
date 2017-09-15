@@ -17,6 +17,13 @@
   tasks:
     - include: tasks/save_docker_image.yml docker_image={{ds_haproxy_docker_image}} download_dir="{{ds_haproxy_download_dir}}"
 
+- name: Configure HAproxy logs receiving
+  hosts: frontend
+  user: ubuntu
+  sudo: yes
+  roles:
+    - haproxy_logs_receiver
+
 - name: Copies haproxy docker image
   hosts: frontend
   user: ubuntu
@@ -61,8 +68,6 @@
         image: "{{ds_haproxy_docker_image}}"
         state: started
         restart_policy: always
-        volumes:
-          - "/dev/log:/dev/log:rw"
         ports:
           - "{{haproxy_listen_ip}}:80:80"
           - "{{haproxy_listen_ip}}:443:443"
