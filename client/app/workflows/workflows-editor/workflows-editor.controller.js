@@ -14,8 +14,8 @@ class WorkflowsEditorController {
 
     _.assign(this, {
       $scope, $state, $q, $rootScope, $log, $timeout, specialOperations,
-      WorkflowCloneService, GraphNode, Edge, config, Report, MultiSelectionService, Operations,
-      GraphPanelRendererService, WorkflowService, MouseEvent, ConfirmationModalService, ExportModalService,
+      WorkflowCloneService, GraphNode, Edge, config, Report, MultiSelectionService, Operations, GraphPanelRendererService,
+      WorkflowService, MouseEvent, ConfirmationModalService, ExportModalService,
       GraphNodesService, NotificationService, ServerCommunication, CopyPasteService, SideBarService, BottomBarService,
       NodeCopyPasteVisitorService, EventsService, WorkflowsEditorService
     });
@@ -40,7 +40,7 @@ class WorkflowsEditorController {
       this.Report.createReportEntities(report.id, report);
       this._initReportListeners();
       this.$scope.$applyAsync(() => {
-        this.GraphPanelRendererService.rerender(this.getWorkflow(), this.selectedOutputPort);
+        // this.GraphPanelRendererService.rerender(this.getWorkflow(), this.selectedOutputPort);
       });
     }
   }
@@ -62,7 +62,7 @@ class WorkflowsEditorController {
       let reportEntityId = node.getResult(data.reference.getParameter('portIndex'));
       this.loadReportById(reportEntityId);
       this.Report.openReport();
-      this.GraphPanelRendererService.rerender(this.getWorkflow(), this.selectedOutputPort);
+      // this.GraphPanelRendererService.rerender(this.getWorkflow(), this.selectedOutputPort);
     });
 
     this.inited = true;
@@ -167,7 +167,7 @@ class WorkflowsEditorController {
         const workflow = this.getWorkflow();
         workflow.addEdge(args.edge);
         this.WorkflowService.updateEdgesStates();
-        this.GraphPanelRendererService.changeEdgesPaintStyles(workflow);
+        // this.GraphPanelRendererService.changeEdgesPaintStyles(workflow);
       }),
 
       this.$scope.$on(this.Edge.REMOVE, (data, args) => {
@@ -204,7 +204,7 @@ class WorkflowsEditorController {
       this.$scope.$watchCollection('workflow.getWorkflow().getNodesIds()', (newValue, oldValue) => {
         if (newValue !== oldValue) {
           this.$scope.$applyAsync(() => {
-            this.GraphPanelRendererService.rerender(this.getWorkflow(), this.selectedOutputPort);
+            // this.GraphPanelRendererService.rerender(this.getWorkflow(), this.selectedOutputPort);
           });
         }
       }),
@@ -264,7 +264,7 @@ class WorkflowsEditorController {
 
   rerenderEdges() {
     this.WorkflowService.updateEdgesStates();
-    this.GraphPanelRendererService.changeEdgesPaintStyles(this.getWorkflow());
+    // this.GraphPanelRendererService.changeEdgesPaintStyles(this.getWorkflow());
   }
 
   updateAndRerenderEdges(data) {

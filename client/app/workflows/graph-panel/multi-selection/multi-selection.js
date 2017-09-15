@@ -187,7 +187,7 @@ class MultiSelection {
       that.addToSelection = (nodeIDs) => {
         let DOMNodes = _.map(nodeIDs, (nodeId) => {
           let DOMNode = that.findDOMNodeById(nodeId);
-          DOMNode.classList.add('flowchart-node--active');
+          DOMNode.classList.add('graph-node--active');
           jsPlumb.addToDragSelection(DOMNode);
           return DOMNode;
         });
@@ -198,7 +198,7 @@ class MultiSelection {
       that.removeFromSelection = (nodeIDs) => {
         let DOMNodes = _.map(nodeIDs, (nodeId) => {
           let DOMNode = that.findDOMNodeById(nodeId);
-          DOMNode.classList.remove('flowchart-node--active');
+          DOMNode.classList.remove('graph-node--active');
           jsPlumb.removeFromDragSelection(DOMNode);
           return DOMNode;
         });
@@ -208,7 +208,7 @@ class MultiSelection {
 
       that.clearAllFromSelection = () => {
         _.each(inSelection, (DOMNode) => {
-          DOMNode.classList.remove('flowchart-node--active');
+          DOMNode.classList.remove('graph-node--active');
         });
         internal.MultiSelectionService.clearSelection();
         jsPlumb.clearDragSelection();

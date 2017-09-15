@@ -48,10 +48,6 @@ Graph.prototype.build = function(data) {
 };
 
 Graph.prototype.IsDescendantOf = function(node, ancestors) {
-  return this.areDescendantsOf([node], ancestors);
-};
-
-Graph.prototype.IsDescendantOf = function(node, ancestors) {
   let thatGraph = this;
   let visitedNodes = {};
   let queue = [node];

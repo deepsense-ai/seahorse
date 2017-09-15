@@ -37,7 +37,7 @@ function FlowChartBoxController($scope, $element, $timeout, GraphPanelRendererSe
   $scope.$watch(() => this.disabledMode, function(newValue) {
     $timeout(() => {
       GraphPanelRendererService.setDisabledMode(newValue);
-      GraphPanelRendererService.rerender($scope.flowChartBoxCtrl.workflow);
+      // GraphPanelRendererService.rerender($scope.flowChartBoxCtrl.workflow);
     }, 0);
   });
 

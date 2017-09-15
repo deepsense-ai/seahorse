@@ -146,7 +146,6 @@ angular.module('deepsense.graph-model').
       return undefined;
     };
 
-    GraphNode.CLICK = 'GraphNode.CLICK';
     GraphNode.MOVE = 'GraphNode.MOVE';
     GraphNode.MOUSEDOWN = 'GraphNode.MOUSEDOWN';
 

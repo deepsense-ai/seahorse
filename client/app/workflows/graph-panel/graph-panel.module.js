@@ -1,7 +1,6 @@
 'use strict';
 
 exports.inject = function(module) {
-  require('./graph-panel-node/graph-panel-node.module.js').inject(module);
   require('./port-statuses-tooltip/port-statuses-tooltip.controller.js').inject(module);
   require('./graph-panel-flowchart.js').inject(module);
   require('./graph-panel-flowchart.ctrl.js').inject(module);

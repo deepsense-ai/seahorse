@@ -1,6 +1,6 @@
 'use strict';
 
-let specialOperations = {
+export const specialOperations = {
   // Evaluate
   'a88eaf35-9061-4714-b042-ddd2049ce917': {
     icons: ['fa fa-tachometer']
