@@ -18,5 +18,6 @@ angular.module('ds.lab').constant('config', {
   'socketConnectionHost': window.location.protocol + '//' + window.location.host + '/',
   'socketReconnectionInterval': 1000,
   'mqUser': 'yNNp7VJS',
-  'mqPass': '1ElYfGNW'
+  'mqPass': '1ElYfGNW',
+  'libraryPrefix': 'library://'
 });

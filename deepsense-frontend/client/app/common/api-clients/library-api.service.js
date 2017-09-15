@@ -17,7 +17,8 @@ function LibraryApi($http, config) {
     return $http.get(URL).then(function processResult(result) {
       return result.data.map((file) => {
         return Object.assign(file, {
-          downloadUrl: getDownloadUrlForFile(file.name)
+          downloadUrl: getDownloadUrlForFile(file.name),
+          uri: config.libraryPrefix + file.name
         });
       });
     });

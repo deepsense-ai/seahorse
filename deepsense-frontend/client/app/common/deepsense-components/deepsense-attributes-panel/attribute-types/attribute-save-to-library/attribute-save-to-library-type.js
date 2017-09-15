@@ -1,15 +1,14 @@
 'use strict';
 
-const PREFIX_URI = 'file:///library/';
 
 /*@ngInject*/
-function AttributeSaveToLibrary() {
+function AttributeSaveToLibrary(config) {
   return {
     restrict: 'E',
     templateUrl: 'app/common/deepsense-components/deepsense-attributes-panel/attribute-types/attribute-save-to-library/attribute-save-to-library-type.html',
     replace: true,
     link: function (scope) {
-      scope.placeInLibrary = scope.parameter.value && scope.parameter.value.indexOf(PREFIX_URI) === 0;
+      scope.placeInLibrary = scope.parameter.value && scope.parameter.value.indexOf(config.libraryPrefix) === 0;
       scope.file = {
         name: getNameFromURI(scope.parameter.value),
         uri: scope.parameter.value
@@ -25,11 +24,11 @@ function AttributeSaveToLibrary() {
       });
 
       function getNameFromURI(uri) {
-        return uri ? uri.replace(PREFIX_URI, '') : '';
+        return uri ? uri.replace(config.libraryPrefix, '') : '';
       }
 
       function addURIToName(name) {
-        return PREFIX_URI + name;
+        return config.libraryPrefix + name;
       }
     }
   };
