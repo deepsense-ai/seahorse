@@ -3,12 +3,14 @@
 function ReportDefault() {
   return {
     scope: {
-      'data': '='
+      'report': '='
     },
     templateUrl: 'app/workflows/reports/report-default/report-default.html',
     replace: 'true',
-    controller: () => {},
-    controllerAs: 'reportDefault',
+    controller: function() {
+      this.getTables = () => _.values(this.report.tables);
+    },
+    controllerAs: 'controller',
     bindToController: true
   };
 }

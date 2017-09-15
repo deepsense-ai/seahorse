@@ -1,0 +1,30 @@
+<div class="report-dataframe">
+  <div class="panel panel-default">
+
+    <div class="report-table-header clearfix">
+      <div class="col-md-4 col-xs-6">
+        <h2> Data sample </h2>
+      </div>
+      <div class="report-stats col-md-offset-4">
+        <div class="col-xs-6">
+
+          <small>Columns</small>
+          <h4>
+            <span> {{ controller.dataframeHeaderData.columnCount }} </span>
+          </h4>
+        </div>
+        <div class="col-xs-6">
+          <small>Rows</small>
+          <h4>
+            {{ controller.dataframeHeaderData.previewRowCount }} <span>/ {{ controller.dataframeHeaderData.rowCount }} </span>
+          </h4>
+        </div>
+      </div>
+    </div>
+
+    <report-table table="controller.dataSample"
+                  distributions="controller.report.distributions"
+                  datatypes-visible="true"></report-table>
+
+  </div>
+</div>

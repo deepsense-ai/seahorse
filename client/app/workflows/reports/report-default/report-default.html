@@ -1,5 +1,5 @@
 <div class="report-default">
-  <div class="panel panel-default" ng-repeat="table in reportDefault.data">
-    <report-table table-data="table" selection-column-enabled="::false"></report-table>
+  <div class="panel panel-default" ng-repeat="table in controller.getTables()">
+    <report-table table="table" datatypesVisible="false"></report-table>
   </div>
 </div>

@@ -1,29 +1,41 @@
 'use strict';
 
+let REPORT_EVENTS = require('../reports.controller.js').EVENTS;
+
 function ReportTable() {
   return {
     templateUrl: 'app/workflows/reports/report-table/report-table.html',
-    controller: 'ReportTableController',
-    bindToController: true,
-    controllerAs: 'reportTable',
-    replace: 'true',
     scope: {
-      'tableData': '=',
-      'tableColumnsData': '=',
-      // TODO What is it for? Can we remove it?
-      'selectionColumnEnabled': '=',
-      'tableSizes': '='
+      'table': '=',
+      // Even though distributions are strictly connected to tables at the moment, we have them
+      // at root level next to tables for now.
+      'distributions': '=',
+      'datatypesVisible': '=?'
     },
-    link: function(scope, element, args, controller) {
-      if (scope.reportTable.selectionColumnEnabled) {
-        element.on('click', function(event) {
-          scope.$apply(() => {
-            controller.selectColumn(event);
-            controller.extendSidePanel();
+    controller: function($rootScope) {
+      let columnTypeByName = _.object(_.zip(this.table.columnNames, this.table.columnTypes));
+      this.tableColumnsData = _.map(this.table.columnNames, (columnName) => {
+        let distributionType = this.distributions && this.distributions[columnName];
+        return {
+          'columnName': columnName,
+          'type': columnTypeByName[columnName],
+          'distributionType': distributionType
+        };
+      });
+
+      this.showDistribution = function(columnData) {
+        if (columnData.distributionType) {
+          $rootScope.$broadcast(REPORT_EVENTS.SELECT_COLUMN, {
+            colName: columnData.columnName
           });
-        });
-      }
-    }
+        }
+
+      };
+
+    },
+    controllerAs: 'controller',
+    bindToController: true,
+    replace: 'true'
   };
 }
 
