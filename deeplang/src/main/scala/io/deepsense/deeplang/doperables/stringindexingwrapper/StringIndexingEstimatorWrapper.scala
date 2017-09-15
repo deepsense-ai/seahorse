@@ -55,6 +55,9 @@ abstract class StringIndexingEstimatorWrapper
   final override def params: Array[Param[_]] = wrappedEstimator.params
   final override def report: Report = wrappedEstimator.report
 
+  final def sparkClassCanonicalName: String =
+    wrappedEstimator.sparkEstimator.getClass.getCanonicalName
+
   private def setWrappedEstimator(
     wrappedEstimator: SparkEstimatorWrapper[MD, E, MW]
       with HasLabelColumnParam with HasPredictionColumnCreatorParam): this.type = {

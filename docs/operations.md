@@ -67,6 +67,7 @@ List of all currently supported operations:
 * Machine Learning
   * Classification
     * [GBT Classifier](operations/gbt_classifier.html)
+    * [Random Forest Classifier](operations/random_forest_classifier.html)
     * [Logistic Regression](operations/logistic_regression.html)
     * [Multilayer Perceptron Classifier](operations/multilayer_perceptron_classifier.html)
     * [Naive Bayes](operations/naive_bayes.html)
