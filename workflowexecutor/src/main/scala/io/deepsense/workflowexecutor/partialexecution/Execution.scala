@@ -63,7 +63,6 @@ sealed abstract class Execution {
     dOperables: Map[Entity.Id, DOperable]): Execution
   def enqueue: Execution
   def inferAndApplyKnowledge(inferContext: InferContext): Execution
-  def updateStructure(directedGraph: DeeplangGraph, nodes: Set[Node.Id] = Set.empty): Execution
   def abort: Execution
 
 }
@@ -92,7 +91,7 @@ case class IdleExecution(
     throw new IllegalStateException("A node cannot start in IdleExecution")
   }
 
-  override def updateStructure(
+  def updateStructure(
       newStructure: DeeplangGraph,
       nodes: Set[Id] = Set.empty): IdleExecution = {
     val selected = Execution.selectedNodes(newStructure, nodes.toSeq)
@@ -223,9 +222,6 @@ abstract class StartedExecution(
   override def inferAndApplyKnowledge(inferContext: InferContext): RunningExecution = {
     throw new IllegalStateException("An Execution that is not idle cannot infer knowledge!")
   }
-
-  override def updateStructure(directedGraph: DeeplangGraph, nodes: Set[Id]): Execution =
-    throw new IllegalStateException("Structure of an Execution that is not idle cannot be altered!")
 
   final def withRunningPartUpdated(
     update: (StatefulGraph) => StatefulGraph): Execution = {

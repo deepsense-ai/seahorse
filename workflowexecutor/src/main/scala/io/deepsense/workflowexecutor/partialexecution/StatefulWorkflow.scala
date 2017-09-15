@@ -39,10 +39,16 @@ class StatefulWorkflow(
   private var additionalData = thirdPartyData
 
   def launch(nodes: Set[Node.Id]): Unit = {
-    val newExecution = execution.updateStructure(execution.graph.directedGraph, nodes)
-    val inferred = newExecution.inferAndApplyKnowledge(executionContext.inferContext)
-    val map: Option[Execution] = inferred.graph.executionFailure.map(_ => inferred)
-    execution = map.getOrElse(inferred.enqueue)
+    execution match {
+      case idleExecution: IdleExecution => {
+        val newExecution = idleExecution.updateStructure(execution.graph.directedGraph, nodes)
+        val inferred = newExecution.inferAndApplyKnowledge(executionContext.inferContext)
+        val map: Option[Execution] = inferred.graph.executionFailure.map(_ => inferred)
+        execution = map.getOrElse(inferred.enqueue)
+      }
+      case notIdle => throw new IllegalStateException(
+        s"Only IdleExecution can be launched. Execution: $notIdle")
+    }
   }
 
   def startReadyNodes(): Seq[ReadyNode] = {
@@ -97,7 +103,7 @@ class StatefulWorkflow(
     */
   def updateStructure(workflow: Workflow): Unit = {
     execution = execution match {
-      case IdleExecution(_, _) => execution.updateStructure(workflow.graph)
+      case idleExecution: IdleExecution => idleExecution.updateStructure(workflow.graph)
       case _ =>
         logger.warn("Update of the graph during execution is impossible. " +
           "Only `thirdPartyData` updated.")
