@@ -39,11 +39,6 @@
             "source": "hdfs://spark-cluster-1/system_tests/pointCloud2/input.csv",
             "format": {
               "CSV": {
-                "line separator": {
-                  "Unix line separator": {
-
-                  }
-                },
                 "separator": {
                   "Semicolon": {
 

@@ -12,11 +12,6 @@
             "source": "s3n://AKIAIRRLCDDWK5JBPVLQ:GOK9kdzDLPA+t8vpcBiCVbUmDB6pUrCdmsUNVg1u@seahorse-dev/system_tests/ioTests/input.csv",
             "format": {
               "CSV": {
-                "line separator": {
-                  "Custom line separator": {
-                    "Custom line separator": ";"
-                  }
-                },
                 "separator": {
                   "Comma": {
 

@@ -31,11 +31,6 @@
             "source": "hdfs://spark-cluster-1/system_tests/demandForecastingRF/weather.csv",
             "format": {
               "CSV": {
-                "line separator": {
-                  "Unix line separator": {
-
-                  }
-                },
                 "separator": {
                   "Comma": {
 
@@ -117,11 +112,6 @@
             "source": "hdfs://spark-cluster-1/system_tests/demandForecastingRF/demand.csv",
             "format": {
               "CSV": {
-                "line separator": {
-                  "Unix line separator": {
-
-                  }
-                },
                 "separator": {
                   "Comma": {
 

@@ -12,10 +12,7 @@
             "version": "0.1.0"
           },
           "parameters": {
-            "path": "/system_tests/file.csv",
-            "line separator": {
-              "Unix line separator": {}
-            }
+            "path": "/system_tests/file.csv"
           }
         },
         {

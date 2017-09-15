@@ -22,11 +22,6 @@
             "source": "file:///tmp/file.csv",
             "format": {
               "CSV": {
-                "line separator": {
-                  "Unix line separator": {
-
-                  }
-                },
                 "separator": {
                   "Comma": {
 

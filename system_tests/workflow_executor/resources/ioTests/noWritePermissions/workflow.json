@@ -12,11 +12,6 @@
             "source": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/resources/ioTests/readWriteLocal/input.csv",
             "format": {
               "CSV": {
-                "line separator": {
-                  "Unix line separator": {
-
-                  }
-                },
                 "separator": {
                   "Comma": {
 

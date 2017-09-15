@@ -65,11 +65,6 @@
             "source": "hdfs://spark-cluster-1/system_tests/gradientBoostedTrees/training.csv",
             "format": {
               "CSV": {
-                "line separator": {
-                  "Unix line separator": {
-
-                  }
-                },
                 "separator": {
                   "Comma": {
 
@@ -135,11 +130,6 @@
             "source": "hdfs://spark-cluster-1/system_tests/gradientBoostedTrees/test.csv",
             "format": {
               "CSV": {
-                "line separator": {
-                  "Unix line separator": {
-
-                  }
-                },
                 "separator": {
                   "Comma": {
 

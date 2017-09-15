@@ -21,11 +21,6 @@
             "source": "hdfs://spark-cluster-1/system_tests/trainNormalizer/frame1.csv",
             "format": {
               "CSV": {
-                "line separator": {
-                  "Unix line separator": {
-
-                  }
-                },
                 "separator": {
                   "Comma": {
 
@@ -112,11 +107,6 @@
             "source": "hdfs://spark-cluster-1/system_tests/trainNormalizer/frame2.csv",
             "format": {
               "CSV": {
-                "line separator": {
-                  "Unix line separator": {
-
-                  }
-                },
                 "separator": {
                   "Comma": {
 

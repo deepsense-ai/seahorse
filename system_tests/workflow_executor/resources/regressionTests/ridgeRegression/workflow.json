@@ -76,11 +76,6 @@
             "source": "hdfs://spark-cluster-1/system_tests/ridgeRegression/training.csv",
             "format": {
               "CSV": {
-                "line separator": {
-                  "Unix line separator": {
-
-                  }
-                },
                 "separator": {
                   "Comma": {
 
@@ -125,11 +120,6 @@
             "source": "hdfs://spark-cluster-1/system_tests/ridgeRegression/test.csv",
             "format": {
               "CSV": {
-                "line separator": {
-                  "Unix line separator": {
-
-                  }
-                },
                 "separator": {
                   "Comma": {
 

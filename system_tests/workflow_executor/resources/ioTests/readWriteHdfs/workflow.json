@@ -12,11 +12,6 @@
             "source": "hdfs://spark-cluster-1/system_tests/readWriteHdfs/input.csv",
             "format": {
               "CSV": {
-                "line separator": {
-                  "Windows line separator": {
-
-                  }
-                },
                 "separator": {
                   "Semicolon": {
 

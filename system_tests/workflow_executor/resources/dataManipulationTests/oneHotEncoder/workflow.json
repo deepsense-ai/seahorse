@@ -29,11 +29,6 @@
             "source": "hdfs://spark-cluster-1/system_tests/oneHotEncoder/input.csv",
             "format": {
               "CSV": {
-                "line separator": {
-                  "Unix line separator": {
-
-                  }
-                },
                 "separator": {
                   "Comma": {
 
