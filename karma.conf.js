@@ -4,42 +4,57 @@
 
 'use strict';
 
-module.exports = function(config) {
-  var settings = require('./config.json');
-  var params = {
-      basePath: './',
+module.exports = function (config) {
+    var settings = require('./config.json');
+    var istanbul = require('browserify-istanbul');
+    var params = {
+        basePath: './',
 
-      files: [
-        './node_modules/angular/angular.js',
-        './node_modules/lodash/index.js',
-        './src/**/*.spec.js'
-      ],
+        plugins: [
+            'karma-chrome-launcher',
+            'karma-jasmine',
+            'karma-coverage',
+            'karma-browserify',
+            'browserify-istanbul',
+            'karma-phantomjs-launcher'
+        ],
 
-      autoWatch: true,
+        files: [
+            './node_modules/angular/angular.js',
+            './node_modules/lodash/index.js',
+            './src/**/*.js'
+        ],
 
-      frameworks: ['browserify', 'jasmine'],
+        autoWatch: true,
 
-      browsers: ['PhantomJS'],
+        frameworks: ['browserify', 'jasmine'],
 
-      plugins: [
-        'karma-chrome-launcher',
-        'karma-jasmine',
-        'karma-browserify',
-        'karma-phantomjs-launcher'
-      ],
+        browsers: ['PhantomJS'],
 
-     preprocessors: {},
+        reporters: ['progress','coverage'],
 
-      browserify: {
-        transform: ['browserify-shim', 'babelify']
-      },
+        preprocessors: {
+            'src/**/*.js': ['browserify','coverage']
+        },
 
-      junitReporter : {
-        outputFile: 'test_out/unit.xml',
-        suite: 'unit'
-      }
+        browserify: {
+            debug: true,
+            transform: ['browserify-shim', 'babelify','browserify-istanbul']
+        },
+
+        junitReporter: {
+            outputFile: 'test_out/unit.xml',
+            suite: 'unit'
+        },
+
+        coverageReporter: {
+            reporters : [
+                {"type": "text"},
+                {"type": "html", dir: 'coverages'}
+            ]
+        }
     };
 
-  params.preprocessors['**/*.spec.js'] = ['browserify'];
-  config.set(params);
+    params.preprocessors['**/*.spec.js'] = ['browserify'];
+    config.set(params);
 };
