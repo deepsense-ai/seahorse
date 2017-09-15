@@ -31,7 +31,7 @@ class SaveLoadDataFrameIntegSpec
       val dataFrameId = saveDataFrame(context, dataFrame, "test name", "test description")
 
       val retrievedDataFrame = loadDataFrame(context, dataFrameId)
-      assertDataFramesEqual(dataFrame, retrievedDataFrame)
+      assertDataFramesEqual(dataFrame, retrievedDataFrame, checkRowOrder = false)
     }
   }
 

@@ -17,9 +17,10 @@ assemblyMergeStrategy in assembly := {
   case PathList("META-INF", "INDEX.LIST")                => MergeStrategy.discard
   case PathList("META-INF", "ECLIPSEF.SF")               => MergeStrategy.discard
   case PathList("META-INF", "ECLIPSEF.RSA")              => MergeStrategy.discard
-  case PathList("entitystorage-communication.conf")      => MergeStrategy.discard
-  case PathList("graphexecutor.conf")                    => MergeStrategy.discard
-  case PathList("testEnvironment.conf")                  => MergeStrategy.discard
+  // TODO: Remove configuration files from jar (there is some problem with classpath on YARN&SPARK)
+  // case PathList("entitystorage-communication.conf")      => MergeStrategy.discard
+  // case PathList("graphexecutor.conf")                    => MergeStrategy.discard
+  // case PathList("testEnvironment.conf")                  => MergeStrategy.discard
   case PathList("conf", "hadoop", "core-site.xml")       => MergeStrategy.discard
   case PathList("conf", "hadoop", "hdfs-site.xml")       => MergeStrategy.discard
   case PathList("conf", "hadoop", "yarn-site.xml")       => MergeStrategy.discard

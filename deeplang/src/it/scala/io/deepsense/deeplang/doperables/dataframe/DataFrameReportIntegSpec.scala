@@ -92,8 +92,8 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
         report,
         DataFrameTestFactory.categoricalColumnName,
         1L,
-        Seq("summer", "winter", "autumn", "spring"),
-        Seq(5, 1, 1, 2))
+        Seq("autumn", "spring", "summer", "winter"),
+        Seq(1, 2, 5, 1))
       testContinuousDistribution(
         report,
         DataFrameTestFactory.longColumnName,
