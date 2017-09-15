@@ -24,10 +24,7 @@ class SimpleGraphExecutionIntegSuite
   with BeforeAndAfter {
 
   before {
-    cli.get.delete(SimpleGraphExecutionIntegSuiteEntities.dataFrameLocation, true)
-    copyFromLocal(
-      "../graphexecutor/src/test/resources/SimpleDataFrame",
-      SimpleGraphExecutionIntegSuiteEntities.dataFrameLocation)
+    copyDataFrameToHdfs()
   }
 
   "GraphExecutor" should

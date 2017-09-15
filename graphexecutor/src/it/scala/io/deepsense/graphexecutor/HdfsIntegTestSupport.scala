@@ -88,4 +88,14 @@ trait HdfsIntegTestSupport
       }
     }
   }
+
+  /**
+   * Copies example DataFrame to hdfs
+   */
+  def copyDataFrameToHdfs(): Unit = {
+    cli.get.delete(SimpleGraphExecutionIntegSuiteEntities.dataFrameLocation, true)
+    copyFromLocal(
+      "../graphexecutor/src/test/resources/SimpleDataFrame",
+      SimpleGraphExecutionIntegSuiteEntities.dataFrameLocation)
+  }
 }

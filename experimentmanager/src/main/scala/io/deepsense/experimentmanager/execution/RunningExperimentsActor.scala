@@ -21,6 +21,7 @@ import io.deepsense.models.experiments.Experiment
 import io.deepsense.models.experiments.Experiment.Id
 
 class RunningExperimentsActor @Inject() (
+    @Named("entitystorage.label") entitystorageLabel: String,
     @Named("runningexperiments.timeout") timeoutMillis: Long,
     @Named("runningexperiments.refresh.duration") statusRefreshMillis: Long,
     graphExecutorFactory: GraphExecutorClientFactory)
@@ -73,7 +74,7 @@ class RunningExperimentsActor @Inject() (
     experiments.put(resultExp.id, (resultExp, gec))
     sender() ! Status(Some(resultExp))
     Future({
-      gec.spawnOnCluster()
+      gec.spawnOnCluster(entitystorageLabel)
       gec.waitForSpawn(Constants.WaitForGraphExecutorClientInitDelay)
       gec.sendExperiment(resultExp)
     })

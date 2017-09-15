@@ -37,6 +37,7 @@ object Node {
   case class Id(value: UUID)
 
   object Id {
+    def randomId = Id(UUID.randomUUID())
     implicit def fromUuid(uuid: UUID): Id = Id(uuid)
   }
 }

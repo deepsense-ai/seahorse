@@ -32,7 +32,8 @@ class GraphExecutorTestModule extends AbstractModule {
     /**
      * Closes EntityStorageClientFactory. After close, create cannot be executed.
      */
-    override def close(): Unit = ???
+    override def close(): Unit = {
+    }
   }
 
   @Provides

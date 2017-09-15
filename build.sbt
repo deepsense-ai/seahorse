@@ -22,6 +22,7 @@ lazy val experimentmanager      = project dependsOn (
   commons % "test->test",
   deeplang,
   graphexecutor,
+  graphexecutor % "it->it",
   graphjson,
   models)
 lazy val graph         = project dependsOn (commons, deeplang)

@@ -20,7 +20,7 @@ import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.deeplang.DOperation
 import io.deepsense.experimentmanager.execution.RunningExperimentsActor._
 import io.deepsense.graph.{Graph, Node}
-import io.deepsense.graphexecutor.GraphExecutorClient
+import io.deepsense.graphexecutor.{SimpleGraphExecutionIntegSuiteEntities, GraphExecutorClient}
 import io.deepsense.models.experiments.Experiment
 
 class RunningExperimentsActorSpec
@@ -173,6 +173,10 @@ class RunningExperimentsActorSpec
   }
 
   private def createTestedActor: TestActorRef[RunningExperimentsActor] = {
-    TestActorRef(Props(new RunningExperimentsActor(5000L, 3L, mockClientFactory)))
+    TestActorRef(Props(new RunningExperimentsActor(
+      SimpleGraphExecutionIntegSuiteEntities.Name,
+      5000L,
+      3L,
+      mockClientFactory)))
   }
 }
