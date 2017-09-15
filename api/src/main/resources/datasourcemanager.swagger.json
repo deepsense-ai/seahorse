@@ -327,7 +327,9 @@
       "type": "object",
       "required": [
         "googleSpreadsheetId",
-        "googleServiceAccountCredentials"
+        "googleServiceAccountCredentials",
+        "includeHeader",
+        "convert01ToBoolean"
       ],
       "properties": {
         "googleSpreadsheetId": {
@@ -336,6 +338,12 @@
         "googleServiceAccountCredentials": {
           "type": "string",
           "format": "json"
+        },
+        "includeHeader": {
+          "type": "boolean"
+        },
+        "convert01ToBoolean": {
+          "type": "boolean"
         }
       }
     },
