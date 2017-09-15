@@ -14,7 +14,6 @@ import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalM
 import io.deepsense.deeplang.doperations.exceptions.{ColumnsDoNotExistException, WrongColumnTypeException}
 import io.deepsense.deeplang.parameters.{NameColumnSelection, MultipleColumnSelection}
 
-@Ignore
 class OneHotEncoderIntegSpec extends DeeplangIntegTestSupport {
 
   val rows: Seq[Row] = Seq(
@@ -41,8 +40,9 @@ class OneHotEncoderIntegSpec extends DeeplangIntegTestSupport {
         val resultDataFrame = executeOneHotEncoder(
           Set(columns(2)), withRedundancy = false, categorizedDataFrame)
         val expectedDataFrame = enrichedDataFrame(
+          categorizedDataFrame,
           Seq(columns(2) + "_ABC"),
-          Seq(Seq(0), Seq(0), Seq(0), Seq(1), Seq(1), Seq(null.asInstanceOf[Double]))
+          Seq(Seq(0.0), Seq(0.0), Seq(0.0), Seq(1.0), Seq(1.0), Seq(null))
         )
         assertDataFramesEqual(resultDataFrame, expectedDataFrame)
       }
@@ -50,14 +50,15 @@ class OneHotEncoderIntegSpec extends DeeplangIntegTestSupport {
         val resultDataFrame = executeOneHotEncoder(
           Set(columns(1), columns(2)), withRedundancy = false, categorizedDataFrame)
         val expectedDataFrame = enrichedDataFrame(
+          categorizedDataFrame,
           Seq(columns(1) + "_x", columns(1) + "_y", columns(2) + "_ABC"),
           Seq(
-            Seq(1, 0, 0),
-            Seq(0, 1, 0),
-            Seq(0, 0, 0),
-            Seq(1, 0, 1),
-            Seq(0, 1, 1),
-            Seq(0, 0, null.asInstanceOf[Double])
+            Seq(1.0, 0.0, 0.0),
+            Seq(0.0, 1.0, 0.0),
+            Seq(0.0, 0.0, 0.0),
+            Seq(1.0, 0.0, 1.0),
+            Seq(0.0, 1.0, 1.0),
+            Seq(0.0, 0.0, null)
           )
         )
         assertDataFramesEqual(resultDataFrame, expectedDataFrame)
@@ -68,14 +69,15 @@ class OneHotEncoderIntegSpec extends DeeplangIntegTestSupport {
         val resultDataFrame = executeOneHotEncoder(
           Set(columns(2)), withRedundancy = true, categorizedDataFrame)
         val expectedDataFrame = enrichedDataFrame(
+          categorizedDataFrame,
           Seq(columns(2) + "_ABC", columns(2) + "_abc"),
           Seq(
-            Seq(0, 1),
-            Seq(0, 1),
-            Seq(0, 1),
-            Seq(1, 0),
-            Seq(1, 0),
-            Seq(null.asInstanceOf[Double], null.asInstanceOf[Double])
+            Seq(0.0, 1.0),
+            Seq(0.0, 1.0),
+            Seq(0.0, 1.0),
+            Seq(1.0, 0.0),
+            Seq(1.0, 0.0),
+            Seq(null, null)
           )
         )
         assertDataFramesEqual(resultDataFrame, expectedDataFrame)
@@ -84,12 +86,13 @@ class OneHotEncoderIntegSpec extends DeeplangIntegTestSupport {
     "name output columns properly" when {
       "default extensions are occupied" in {
         val dataFrameWithSpecialName = enrichedDataFrame(
-          Seq(columns(2) + "_ABC"), Seq.fill(6)(Seq(1)))
+          categorizedDataFrame, Seq(columns(2) + "_ABC"), Seq.fill(6)(Seq(1)))
         val resultDataFrame = executeOneHotEncoder(
           Set(columns(2)), withRedundancy = false, dataFrameWithSpecialName)
         val expectedDataFrame = enrichedDataFrame(
+          dataFrameWithSpecialName,
           Seq(columns(2) + "_ABC_1"),
-          Seq(Seq(0), Seq(0), Seq(0), Seq(1), Seq(1), Seq(null.asInstanceOf[Double])))
+          Seq(Seq(0.0), Seq(0.0), Seq(0.0), Seq(1.0), Seq(1.0), Seq(null)))
         assertDataFramesEqual(resultDataFrame, expectedDataFrame)
       }
     }
@@ -117,15 +120,18 @@ class OneHotEncoderIntegSpec extends DeeplangIntegTestSupport {
     operation.execute(executionContext)(Vector(dataFrame)).head.asInstanceOf[DataFrame]
   }
 
-  private def enrichedDataFrame(columnNames: Seq[String], columns: Seq[Seq[Double]]) = {
-    createDataFrame(enrichedRows(columns), enrichedSchema(columnNames))
-  }
+  private def enrichedDataFrame(
+      dataFrame: DataFrame,
+      additionalColumnNames: Seq[String],
+      additionalColumns: Seq[Seq[Any]]) = {
 
-  private def enrichedSchema(additionalColumnNames: Seq[String]): StructType = {
-    StructType(schema.fields ++ additionalColumnNames.map(StructField(_, DoubleType)))
-  }
-
-  private def enrichedRows(additionalColumns: Seq[Seq[Double]]): Seq[Row] = {
-    rows.zip(additionalColumns).map{ case (row, addition) => Row.fromSeq(row.toSeq ++ addition) }
+    val sparkDataFrame = dataFrame.sparkDataFrame
+    val enrichedRows = sparkDataFrame.collect().zip(additionalColumns).map{
+      case (row, addition) => Row.fromSeq(row.toSeq ++ addition)
+    }
+    val enrichedSchema = StructType(sparkDataFrame.schema.fields ++
+      additionalColumnNames.map(StructField(_, DoubleType))
+    )
+    createDataFrame(enrichedRows, enrichedSchema)
   }
 }

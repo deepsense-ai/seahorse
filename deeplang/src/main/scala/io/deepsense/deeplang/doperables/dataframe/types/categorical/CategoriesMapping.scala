@@ -9,7 +9,7 @@ package io.deepsense.deeplang.doperables.dataframe.types.categorical
  * by its id and the id of a value.
  */
 case class CategoriesMapping(valueToId: Map[String, Int], idToValue: Map[Int, String]) {
-  private val valueIdPairs = valueToId.toList.sortBy { case (value, _) => value }
+  val valueIdPairs = valueToId.toList.sortBy { case (value, _) => value }
   val values = valueIdPairs.map(_._1)
   val ids = valueIdPairs.map(_._2)
   val isEmpty: Boolean = valueToId.isEmpty

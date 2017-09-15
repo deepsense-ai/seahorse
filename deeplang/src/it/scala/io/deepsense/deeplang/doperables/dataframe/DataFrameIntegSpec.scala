@@ -19,7 +19,9 @@ class DataFrameIntegSpec extends DeeplangIntegTestSupport {
       StructField("a", DoubleType),
       StructField("y", LongType),
       StructField("x", TimestampType),
-      StructField("z", BooleanType)))
+      StructField("z", BooleanType),
+      StructField("m", IntegerType)
+    ))
 
     def dataFrame = createDataFrame(Seq.empty, schema)
 
@@ -66,7 +68,9 @@ class DataFrameIntegSpec extends DeeplangIntegTestSupport {
         selectSingleType(ColumnType.timestamp) shouldBe Seq("x")
       }
 
-      "categorical type is selected" is pending  // TODO fill
+      "categorical type is selected" in {
+        selectSingleType(ColumnType.categorical) shouldBe Seq("m")
+      }
     }
 
     "throw an exception" when {

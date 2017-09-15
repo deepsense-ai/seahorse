@@ -56,5 +56,9 @@ object CatalogRecorder {
     catalog.registerDOperation[CrossValidateRegressor](
       DOperationCategories.ML.Regression,
       "Cross-validates regression model")
+
+    catalog.registerDOperation[OneHotEncoder](
+      DOperationCategories.Utils,
+      "One-hot encodes categorical columns")
   }
 }

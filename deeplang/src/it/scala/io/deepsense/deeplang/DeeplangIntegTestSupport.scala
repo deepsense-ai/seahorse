@@ -53,10 +53,10 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
     sparkContext.stop()
   }
 
-  protected def assertDataFramesEqual(dt1: DataFrame, dt2: DataFrame): Unit = {
-    assert(dt1.sparkDataFrame.schema == dt2.sparkDataFrame.schema)
-    val collectedRows1: Array[Row] = dt1.sparkDataFrame.collect()
-    val collectedRows2: Array[Row] = dt2.sparkDataFrame.collect()
+  protected def assertDataFramesEqual(actualDf: DataFrame, expectedDf: DataFrame): Unit = {
+    assert(actualDf.sparkDataFrame.schema == expectedDf.sparkDataFrame.schema)
+    val collectedRows1: Array[Row] = actualDf.sparkDataFrame.collect()
+    val collectedRows2: Array[Row] = expectedDf.sparkDataFrame.collect()
     collectedRows1 should be (collectedRows2)
   }
 

@@ -111,6 +111,12 @@ case class DataFrame(optionalSparkDataFrame: Option[sql.DataFrame])
   }
 
   /**
+   * Column type by column name.
+   */
+  def columnType(columnName: String): ColumnType =
+    DataFrame.sparkColumnTypeToColumnType(sparkDataFrame.schema(columnName).dataType)
+
+  /**
    * Creates new DataFrame with new columns added.
    */
   def withColumns(context: ExecutionContext, newColumns: Traversable[sql.Column]): DataFrame = {
@@ -246,6 +252,7 @@ object DataFrame {
       case sql.types.BooleanType => ColumnType.boolean
       case sql.types.TimestampType => ColumnType.timestamp
       case sql.types.LongType => ColumnType.ordinal
+      case sql.types.IntegerType => ColumnType.categorical
     }
 
   /**

@@ -5,9 +5,11 @@
 package io.deepsense.deeplang.doperations
 
 import io.deepsense.deeplang.DOperation._
+import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoriesMapping, CategoricalMetadata}
+import io.deepsense.deeplang.doperations.exceptions.WrongColumnTypeException
 import io.deepsense.deeplang.{ExecutionContext, DOperation1To1}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.parameters.{BooleanParameter, ColumnSelectorParameter, ParametersSchema}
+import io.deepsense.deeplang.parameters.{ColumnType, BooleanParameter, ColumnSelectorParameter, ParametersSchema}
 
 case class OneHotEncoder() extends DOperation1To1[DataFrame, DataFrame] {
   override val name: String = "One Hot Encoder"
@@ -22,5 +24,34 @@ case class OneHotEncoder() extends DOperation1To1[DataFrame, DataFrame] {
     )
   )
 
-  override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): DataFrame = ???
+  override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): DataFrame = {
+    val categoricalMetadata = CategoricalMetadata(dataFrame)
+    val selectedColumnNames = dataFrame.getColumnNames(
+      parameters.getColumnSelection(selectedColumnsKey).get)
+    val withRedundant = parameters.getBoolean(withRedundantKey).get
+
+    def sqlOneHotEncodingExpression(
+        columnName: String,
+        mapping: CategoriesMapping): List[String] = {
+
+      val valueIdPairs = mapping.valueIdPairs.dropRight(if (withRedundant) 0 else 1)
+      val uniqueLevel = dataFrame.getFirstFreeNamesLevel(columnName, mapping.values.toSet)
+      for ((value, id) <- valueIdPairs) yield {
+        val newColumnName = DataFrame.createColumnName(columnName, value, uniqueLevel)
+
+        s"IF(`$columnName` IS NULL, CAST(NULL as Double), IF(`$columnName`=$id, 1.0, 0.0))" +
+          s"as $newColumnName"
+      }
+    }
+
+    val expressions = for (columnName <- selectedColumnNames) yield {
+      categoricalMetadata.mappingOptional(columnName) match {
+        case Some(mapping) => sqlOneHotEncodingExpression(columnName, mapping)
+        case None => throw WrongColumnTypeException(
+          columnName, dataFrame.columnType(columnName), ColumnType.categorical)
+      }
+    }
+    val resultSparkDataFrame = dataFrame.sparkDataFrame.selectExpr("*" +: expressions.flatten:_*)
+    context.dataFrameBuilder.buildDataFrame(resultSparkDataFrame)
+  }
 }
