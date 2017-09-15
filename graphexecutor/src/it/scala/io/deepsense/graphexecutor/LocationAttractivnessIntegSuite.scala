@@ -12,7 +12,11 @@ import io.deepsense.graph._
 
 class LocationAttractivnessIntegSuite extends GraphExecutionIntegSuite {
 
-  override def experimentName = "Case 2: Location Attractiveness Scoring"
+  override def experimentName = "MVP Case 2: Location Attractiveness Scoring"
+
+  override def esFactoryName = SimpleGraphExecutionIntegSuiteEntities.Name
+
+  override def tenantId = SimpleGraphExecutionIntegSuiteEntities.entityTenantId
 
   val testFile = "/tests/hotels_model_matrix_head_10.csv"
 

@@ -10,7 +10,14 @@ import io.deepsense.graph._
 
 class GraphWithTimestampDecomposeIntegSuite extends GraphExecutionIntegSuite {
 
-  def experimentName = "(LoadDF, DecomposeTimestamp, SaveDF)"
+  override def experimentName = "(LoadDF, DecomposeTimestamp, SaveDF)"
+
+  override def esFactoryName = SimpleGraphExecutionIntegSuiteEntities.Name
+
+  override def tenantId = SimpleGraphExecutionIntegSuiteEntities.entityTenantId
+
+  override def requiredFiles: Map[String, String] =
+    Map("/SimpleDataFrame" -> SimpleGraphExecutionIntegSuiteEntities.dataFrameLocation)
 
   import io.deepsense.deeplang.doperations.LoadDataFrame._
   val loadOp = new LoadDataFrame

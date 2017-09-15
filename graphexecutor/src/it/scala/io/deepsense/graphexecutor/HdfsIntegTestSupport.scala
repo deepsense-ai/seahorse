@@ -32,6 +32,21 @@ trait HdfsIntegTestSupport
   var cli: Option[DFSClient] = None
   var dsHdfsClient: Option[DSHdfsClient] = None
 
+  protected def requiredFiles: Map[String, String]
+
+  protected def cleanupHdfs(): Unit = {
+    requiredFiles.foreach { case (_, to) =>
+      cli.get.delete(to, true)
+    }
+  }
+
+  protected def copyFilesToHdfs(): Unit = {
+    cleanupHdfs()
+    requiredFiles.foreach { case (from, to) =>
+      copyFromLocal(this.getClass.getResource(from).getPath, to)
+    }
+  }
+
   override def beforeAll(): Unit = {
     // TODO: Configuration resource access should follow proper configuration access convention
     config.addResource(getClass().getResource("/conf/hadoop/core-site.xml"))
@@ -44,6 +59,9 @@ trait HdfsIntegTestSupport
     cli.get
       .mkdirs(Constants.TestDir, new FsPermission(FsAction.ALL, FsAction.ALL, FsAction.ALL), true)
     DeployOnHdfs.deployOnHdfs(dsHdfsClient.get)
+
+    // Deploy test-specific files
+    copyFilesToHdfs()
   }
 
   override def afterAll(): Unit = {
@@ -64,15 +82,5 @@ trait HdfsIntegTestSupport
    */
   def copyFromLocal(localFrom: String, remoteTo: String): Unit = {
     dsHdfsClient.get.copyLocalFile(localFrom, remoteTo)
-  }
-
-  /**
-   * Copies example DataFrame to HDFS
-   */
-  def copyDataFrameToHdfs(): Unit = {
-    cli.get.delete(SimpleGraphExecutionIntegSuiteEntities.dataFrameLocation, true)
-    copyFromLocal(
-      "../graphexecutor/src/test/resources/SimpleDataFrame",
-      SimpleGraphExecutionIntegSuiteEntities.dataFrameLocation)
   }
 }

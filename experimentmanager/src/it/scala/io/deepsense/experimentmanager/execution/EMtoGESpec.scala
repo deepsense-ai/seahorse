@@ -20,10 +20,11 @@ import io.deepsense.graph.{Graph, Node}
 import io.deepsense.graphexecutor.{HdfsIntegTestSupport, SimpleGraphExecutionIntegSuiteEntities}
 import io.deepsense.models.experiments.Experiment
 
-class EMtoGESpec extends HdfsIntegTestSupport
-    with MockitoSugar
-    with ScalaFutures
-    with LazyLogging {
+class EMtoGESpec
+  extends HdfsIntegTestSupport
+  with MockitoSugar
+  with ScalaFutures
+  with LazyLogging {
 
   implicit var system: ActorSystem = _
   var actorRef: TestActorRef[RunningExperimentsActor] = _
@@ -90,8 +91,10 @@ class EMtoGESpec extends HdfsIntegTestSupport
         1000,
         DefaultGraphExecutorClientFactory()))
     testProbe = TestProbe()
-    copyDataFrameToHdfs()
   }
 
   override def afterAll(): Unit = system.shutdown()
+
+  override def requiredFiles: Map[String, String] =
+    Map("/SimpleDataFrame" -> SimpleGraphExecutionIntegSuiteEntities.dataFrameLocation)
 }

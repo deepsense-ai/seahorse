@@ -9,7 +9,14 @@ import io.deepsense.graph.Edge
 
 class GraphWithSplitterIntegSuite extends GraphExecutionIntegSuite {
 
-  def experimentName = "(LoadDF, Split, 2xSaveDF)"
+  override def experimentName = "(LoadDF, Split, 2xSaveDF)"
+
+  override def esFactoryName = SimpleGraphExecutionIntegSuiteEntities.Name
+
+  override def tenantId = SimpleGraphExecutionIntegSuiteEntities.entityTenantId
+
+  override def requiredFiles: Map[String, String] =
+    Map("/SimpleDataFrame" -> SimpleGraphExecutionIntegSuiteEntities.dataFrameLocation)
 
   import io.deepsense.deeplang.doperations.LoadDataFrame._
   val loadOp = new LoadDataFrame

@@ -16,7 +16,7 @@ class GraphExecutorTestModule extends AbstractModule {
   override def configure(): Unit = {
   }
 
-  private class EntityStorageClientFactoryMock(
+  class EntityStorageClientFactoryMock(
       initialState: Map[(String, Entity.Id), Entity] = Map())
     extends EntityStorageClientFactory {
 
@@ -45,6 +45,18 @@ class GraphExecutorTestModule extends AbstractModule {
         SimpleGraphExecutionIntegSuiteEntities.entity.id)
         -> SimpleGraphExecutionIntegSuiteEntities.entity))
   }
+
+  @Provides
+  @Singleton
+  @Named("BikesIntegSuiteEntities")
+  def provideForBikesIntegSuiteEntities: EntityStorageClientFactory = {
+    new EntityStorageClientFactoryMock(Map(
+      (BikesIntegSuiteEntities.bikesTenantId, BikesIntegSuiteEntities.demand.id)
+        -> BikesIntegSuiteEntities.demand,
+      (BikesIntegSuiteEntities.bikesTenantId, BikesIntegSuiteEntities.weather.id)
+        -> BikesIntegSuiteEntities.weather
+    ))
+  }
 }
 
 object SimpleGraphExecutionIntegSuiteEntities {
@@ -62,6 +74,42 @@ object SimpleGraphExecutionIntegSuiteEntities {
     "DataFrame",
     Some(DataObjectReference(dataFrameLocation)),
     Some(DataObjectReport("testEntity Report")),
+    DateTime.now,
+    DateTime.now,
+    saved = true)
+}
+
+object BikesIntegSuiteEntities {
+  val Name = "BikesIntegSuiteEntities"
+
+  val bikesTenantId = Constants.TestTenantId
+
+  val demandUuid = "52df8588-b192-4446-a418-2c95f8a94d85"
+  val demandLocation = Constants.TestDir + "/" + demandUuid
+
+  val demand = Entity(
+    bikesTenantId,
+    demandUuid,
+    "demandEntity name",
+    "demandEntity description",
+    "DataFrame",
+    Some(DataObjectReference(demandLocation)),
+    Some(DataObjectReport("demandEntity Report")),
+    DateTime.now,
+    DateTime.now,
+    saved = true)
+
+  val weatherUuid = "7ff0e089-8059-491c-9a7e-557349633312"
+  val weatherLocation = Constants.TestDir + "/" + weatherUuid
+
+  val weather = Entity(
+    bikesTenantId,
+    weatherUuid,
+    "weatherEntity name",
+    "weatherEntity description",
+    "DataFrame",
+    Some(DataObjectReference(weatherLocation)),
+    Some(DataObjectReport("weatherEntity Report")),
     DateTime.now,
     DateTime.now,
     saved = true)

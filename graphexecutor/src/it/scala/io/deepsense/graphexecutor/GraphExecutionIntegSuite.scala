@@ -1,7 +1,6 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
  */
-
 package io.deepsense.graphexecutor
 
 import java.util.UUID
@@ -21,38 +20,14 @@ abstract class GraphExecutionIntegSuite
   with Matchers
   with BeforeAndAfter {
 
-  before {
-    copyDataFrameToHdfs()
-    copyFilesToHdfs()
-  }
-
-  after {
-    cleanupHdfs()
-  }
-
   experimentName should "run on external YARN cluster" in {
     testOnYarnCluster(experiment)
-  }
-
-  protected def requiredFiles: Map[String, String] = Map()
-
-  protected def cleanupHdfs(): Unit = {
-    requiredFiles.foreach { case (_, to) =>
-      cli.get.delete(to, true)
-    }
-  }
-
-  protected def copyFilesToHdfs(): Unit = {
-    cleanupHdfs()
-    requiredFiles.foreach { case (from, to) =>
-      copyFromLocal(this.getClass.getResource(from).getPath, to)
-    }
   }
 
   protected def testOnYarnCluster(experiment: Experiment): Unit = {
     val graphExecutorClient = GraphExecutorClient()
     try {
-      graphExecutorClient.spawnOnCluster(SimpleGraphExecutionIntegSuiteEntities.Name)
+      graphExecutorClient.spawnOnCluster(esFactoryName)
       val spawned = graphExecutorClient.waitForSpawn(Constants.WaitForGraphExecutorClientInitDelay)
       spawned shouldBe true
       val graphSent = graphExecutorClient.sendExperiment(experiment)
@@ -81,7 +56,7 @@ abstract class GraphExecutionIntegSuite
 
   protected def experiment = Experiment(
     Experiment.Id.randomId,
-    SimpleGraphExecutionIntegSuiteEntities.entityTenantId,
+    tenantId,
     experimentName,
     Graph(nodes.toSet, edges.toSet))
 
@@ -92,4 +67,8 @@ abstract class GraphExecutionIntegSuite
   protected def edges: Seq[Edge]
 
   protected def experimentName: String
+
+  protected def esFactoryName: String
+
+  protected def tenantId: String
 }
