@@ -22,12 +22,12 @@
     "tests:e2e": "protractor"
   },
   "dependencies": {
-    "angular": "^1.4.0",
+    "angular": "^1.4.2",
     "angular-bootstrap": "^0.12.0",
     "angular-mocks": "^1.4.0",
     "angular-ui-router": "^0.2.15",
     "bootstrap": "^3.3.4",
-    "deepsense-attributes-panel": "0.0.7",
+    "deepsense-attributes-panel": "0.0.8",
     "deepsense-catalogue-panel": "0.0.4",
     "deepsense-context-menu": "0.0.1",
     "deepsense-loading-spinner": "^1.0.2",

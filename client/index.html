@@ -32,9 +32,8 @@
     </nav>
 
     <div id="page-wrapper" class="gray-bg">
-      <div class="row border-bottom">
-        <navigation-bar ng-controller="NavigationController as navigationController"
-                        title="navigationController.getTitle()"></navigation-bar>
+      <div class="row border-bottom" ng-controller="NavigationController as navigationController">
+        <navigation-bar title="navigationController.getTitle()"></navigation-bar>
       </div>
 
       <div class="wrapper wrapper-content" ng-cloak>

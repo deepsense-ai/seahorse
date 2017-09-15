@@ -8,6 +8,7 @@
 var GraphNode = require('../../common-objects/common-graph-node.js');
 var Edge = require('../../common-objects/common-edge.js');
 
+/* @ngInject */
 function FlowChartBox() {
   return {
     restrict: 'E',
@@ -26,7 +27,9 @@ function FlowChartBox() {
   };
 }
 
-function FlowChartBoxController($scope, $element, $window) {
+/* @ngInject */
+function FlowChartBoxController($scope, $element, $window,
+                                ExperimentService, ReportOptionsService) {
   var that = this;
   var internal = {};
 
@@ -60,6 +63,19 @@ function FlowChartBoxController($scope, $element, $window) {
     }
   };
 
+  internal.handlePortRightClick = function handlePortRightClick (event, data) {
+    let port = data.reference;
+    let nodeId = port.getParameter('nodeId');
+    let currentNode = ExperimentService.getExperiment().getNodes()[nodeId];
+
+    ReportOptionsService.setCurrentPort(port);
+    ReportOptionsService.setCurrentNode(currentNode);
+    ReportOptionsService.clearReportOptions();
+    ReportOptionsService.updateReportOptions();
+
+    internal.contextMenuOpener.apply(internal, arguments);
+  };
+
   that.getContextMenuState = function getContextMenuState () {
     return internal.contextMenuState;
   };
@@ -80,11 +96,15 @@ function FlowChartBoxController($scope, $element, $window) {
     return $element[0].getBoundingClientRect().left;
   };
 
+  that.getReportOptions = function getReportOptions() {
+    return ReportOptionsService.getReportOptions();
+  };
+
   $scope.$on(GraphNode.MOUSEDOWN, internal.closeContextMenu);
   $scope.$on(Edge.DRAG, internal.closeContextMenu);
   $scope.$on('InputPoint.CLICK', internal.closeContextMenu);
   $scope.$on('OutputPort.LEFT_CLICK', internal.closeContextMenu);
-  $scope.$on('ReportOptions.UPDATED', internal.contextMenuOpener);
+  $scope.$on('OutputPort.RIGHT_CLICK', internal.handlePortRightClick);
   $scope.$on('Keyboard.KEY_PRESSED_ESC', internal.closeContextMenu);
 
   $window.addEventListener('mousedown', internal.checkClickAndClose);
