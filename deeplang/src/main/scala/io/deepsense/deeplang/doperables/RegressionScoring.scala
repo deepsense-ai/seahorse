@@ -17,15 +17,14 @@
 package io.deepsense.deeplang.doperables
 
 import org.apache.spark.mllib.linalg.Vector
-import org.apache.spark.mllib.regression.GeneralizedLinearModel
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
 
-import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
+import io.deepsense.deeplang.doperables.dataframe.{CommonColumnMetadata, DataFrame, DataFrameBuilder}
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.parameters.ColumnType
 import io.deepsense.deeplang.{DKnowledge, DMethod1To1, ExecutionContext}
-import io.deepsense.deeplang.doperables.dataframe.{CommonColumnMetadata, DataFrameBuilder, DataFrame}
 
 trait RegressionScoring {
 
@@ -37,7 +36,7 @@ trait RegressionScoring {
 
   val targetColumn: Option[String]
 
-  def preparedModel: GeneralizedLinearModel
+  def predict(vectors: RDD[Vector]): RDD[Double]
 
   override val score = new DMethod1To1[String, DataFrame, DataFrame] {
 
@@ -48,7 +47,7 @@ trait RegressionScoring {
       val vectors: RDD[Vector] = dataFrame.toSparkVectorRDD(featureColumns.get)
       val transformedVectors = transformFeatures(vectors)
       transformedVectors.cache()
-      val predictionsRDD: RDD[Double] = preparedModel.predict(transformedVectors)
+      val predictionsRDD: RDD[Double] = predict(transformedVectors)
 
       val outputSchema = StructType(dataFrame.sparkDataFrame.schema.fields :+
         StructField(predictionColumnName, DoubleType))

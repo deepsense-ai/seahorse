@@ -23,8 +23,7 @@ import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.mllib.regression.{GeneralizedLinearModel, RidgeRegressionModel}
 import org.apache.spark.rdd.RDD
 
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.{DOperable, DMethod1To1, ExecutionContext, Model}
+import io.deepsense.deeplang.{DOperable, ExecutionContext, Model}
 import io.deepsense.reportlib.model.ReportContent
 
 case class TrainedRidgeRegression(
@@ -47,7 +46,9 @@ case class TrainedRidgeRegression(
 
   def preparedModel: GeneralizedLinearModel = model.get
 
-  def transformFeatures(v: RDD[Vector]): RDD[Vector] = scaler.get.transform(v)
+  override def transformFeatures(v: RDD[Vector]): RDD[Vector] = scaler.get.transform(v)
+
+  override def predict(vectors: RDD[Vector]): RDD[Double] = preparedModel.predict(vectors)
 
   override def report: Report = Report(ReportContent("Report for TrainedRidgeRegression.\n" +
     s"Feature columns: ${featureColumns.get.mkString(", ")}\n" +

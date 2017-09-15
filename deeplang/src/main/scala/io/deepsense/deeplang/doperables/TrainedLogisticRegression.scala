@@ -42,7 +42,9 @@ case class TrainedLogisticRegression(
 
   def preparedModel: GeneralizedLinearModel = model.get.clearThreshold()
 
-  def transformFeatures(v: RDD[Vector]): RDD[Vector] = v
+  override def transformFeatures(v: RDD[Vector]): RDD[Vector] = v
+
+  override def predict(vectors: RDD[Vector]): RDD[Double] = preparedModel.predict(vectors)
 
   override def url: Option[String] = physicalPath
 
