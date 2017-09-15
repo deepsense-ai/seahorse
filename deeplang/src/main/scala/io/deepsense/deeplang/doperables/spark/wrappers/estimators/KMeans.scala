@@ -35,9 +35,9 @@ class KMeans
   with HasSeedParam
   with HasTolerance {
 
-  override val maxIterationsDefault = 20.0
+  setDefault(maxIterations, 20.0)
 
-  override val toleranceDefault = 1E-4
+  setDefault(tolerance, 1E-4)
 
   val k = new IntParamWrapper[SparkKMeans](
     "k",

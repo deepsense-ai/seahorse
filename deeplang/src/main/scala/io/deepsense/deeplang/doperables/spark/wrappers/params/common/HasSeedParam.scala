@@ -29,5 +29,5 @@ trait HasSeedParam extends Params {
     name = "seed",
     description = "Random seed",
     sparkParamGetter = _.seed)
-  setDefault(seed, 1.0)
+  setDefault(seed, 0.0)
 }

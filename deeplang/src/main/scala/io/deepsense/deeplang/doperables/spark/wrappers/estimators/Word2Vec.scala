@@ -28,6 +28,10 @@ class Word2Vec
   extends SparkEstimatorWrapper[SparkWord2VecModel, SparkWord2Vec, Word2VecModel]
   with Word2VecParams {
 
+  setDefault(stepSize, 0.025)
+
+  setDefault(maxIterations, 1.0)
+
   override def report(executionContext: ExecutionContext): Report = Report()
 
   override val params: Array[Param[_]] = declareParams(

@@ -17,10 +17,10 @@
 package io.deepsense.deeplang.doperations.spark.wrappers.estimators
 
 import io.deepsense.deeplang.DOperation.Id
-import io.deepsense.deeplang.doperables.spark.wrappers.estimators.VectorIndexer
+import io.deepsense.deeplang.doperables.spark.wrappers.estimators.CountVectorizer
 import io.deepsense.deeplang.doperations.EstimatorAsFactory
 
-class CreateCountVectorizer extends EstimatorAsFactory[VectorIndexer] {
+class CreateCountVectorizer extends EstimatorAsFactory[CountVectorizer] {
 
   override val id: Id = "e640d7df-d464-4ac0-99c4-235c29a0aa31"
   override val name: String = "Count Vectorizer"

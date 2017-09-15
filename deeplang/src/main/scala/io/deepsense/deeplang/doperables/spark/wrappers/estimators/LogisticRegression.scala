@@ -39,7 +39,7 @@ class LogisticRegression
   with HasFitIntercept
   with HasStandardization {
 
-  override val maxIterationsDefault = 100.0
+  setDefault(maxIterations, 100.0)
 
   override def report(executionContext: ExecutionContext): Report = Report()
 

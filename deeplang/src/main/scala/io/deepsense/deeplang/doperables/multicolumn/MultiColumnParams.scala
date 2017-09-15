@@ -17,6 +17,7 @@
 package io.deepsense.deeplang.doperables.multicolumn
 
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleColumnInPlaceChoice
+import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.YesInPlaceChoice
 import io.deepsense.deeplang.params._
 import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
 import io.deepsense.deeplang.params.selections.{MultipleColumnSelection, SingleColumnSelection}
@@ -71,6 +72,7 @@ object MultiColumnParams {
         name = "transform in place",
         description = "Should the transformation be done in place?"
       )
+      setDefault(singleInPlaceChoice, YesInPlaceChoice())
 
       override val params: Array[Param[_]] =
         declareParams(inputColumn, singleInPlaceChoice)

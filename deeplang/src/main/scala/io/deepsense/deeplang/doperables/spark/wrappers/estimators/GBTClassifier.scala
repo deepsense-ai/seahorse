@@ -43,8 +43,9 @@ class GBTClassifier()
 
   import GBTClassifier._
 
-  override val maxIterationsDefault: Double = 20.0
-  override val stepSizeDefault: Double = 0.1
+  setDefault(maxIterations, 20.0)
+
+  setDefault(stepSize, 0.1)
 
   override private[deeplang] def _fit(ctx: ExecutionContext, dataFrame: DataFrame): Transformer = {
     val labelColumnName = dataFrame.getColumnName($(labelColumn))

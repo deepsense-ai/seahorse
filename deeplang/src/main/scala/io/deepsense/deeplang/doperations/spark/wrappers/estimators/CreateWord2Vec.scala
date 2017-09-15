@@ -17,10 +17,10 @@
 package io.deepsense.deeplang.doperations.spark.wrappers.estimators
 
 import io.deepsense.deeplang.DOperation.Id
-import io.deepsense.deeplang.doperables.spark.wrappers.estimators.LogisticRegression
+import io.deepsense.deeplang.doperables.spark.wrappers.estimators.Word2Vec
 import io.deepsense.deeplang.doperations.EstimatorAsFactory
 
-class CreateWord2Vec extends EstimatorAsFactory[LogisticRegression] {
+class CreateWord2Vec extends EstimatorAsFactory[Word2Vec] {
 
   override val id: Id = "131c6765-6b60-44c7-9a09-0f79fbb4ad2f"
   override val name: String = "Word2Vec"

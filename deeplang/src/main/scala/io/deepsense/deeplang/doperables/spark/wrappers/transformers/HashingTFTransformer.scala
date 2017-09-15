@@ -30,7 +30,7 @@ class HashingTFTransformer extends SparkTransformerAsMultiColumnTransformer[Hash
     description = "Number of features. Should be > 0.",
     sparkParamGetter = _.numFeatures,
     validator = RangeValidator(1.0, Int.MaxValue, step = Some(1.0)))
-  setDefault(numFeatures, (1 << 18).toDouble)
+  setDefault(numFeatures, (1 << 20).toDouble)
 
   override protected def getSpecificParams: Array[Param[_]] = Array(numFeatures)
 }

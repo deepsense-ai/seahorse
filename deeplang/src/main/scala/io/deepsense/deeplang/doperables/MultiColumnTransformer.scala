@@ -48,6 +48,7 @@ abstract class MultiColumnTransformer
     name = "one or many",
     description = "Transform one or many columns"
   )
+  setDefault(singleOrMultiChoiceParam, SingleColumnChoice())
 
   override lazy val params = declareParams(getSpecificParams :+ singleOrMultiChoiceParam: _*)
 
