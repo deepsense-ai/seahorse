@@ -949,7 +949,6 @@ button.dim:active:before {
 .label {
   background-color: #d1dade;
   color: #5e5e5e;
-  font-family: 'Open Sans';
   font-size: 10px;
   font-weight: 600;
   padding: 3px 8px;
@@ -958,7 +957,6 @@ button.dim:active:before {
 .badge {
   background-color: #d1dade;
   color: #5e5e5e;
-  font-family: 'Open Sans';
   font-size: 11px;
   font-weight: 600;
   padding-bottom: 4px;
