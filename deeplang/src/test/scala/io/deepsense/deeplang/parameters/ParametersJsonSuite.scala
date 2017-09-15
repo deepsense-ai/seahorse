@@ -575,22 +575,26 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
       TypeColumnSelection(Set(ColumnType.categorical))
     ), false))
 
-    val expectedJson = JsArray(
-      JsObject(
-        "type" -> JsString("columnList"),
-        "values" -> JsArray(JsString("abc"), JsString("def"))),
-      JsObject(
-        "type" -> JsString("indexList"),
-        "values" -> JsArray(JsNumber(1), JsNumber(4), JsNumber(7))
+    val expectedJson = JsObject(
+      "selections" -> JsArray(
+        JsObject(
+          "type" -> JsString("columnList"),
+          "values" -> JsArray(JsString("abc"), JsString("def"))),
+        JsObject(
+          "type" -> JsString("indexList"),
+          "values" -> JsArray(JsNumber(1), JsNumber(4), JsNumber(7))
+        ),
+        JsObject(
+          "type" -> JsString("indexRange"),
+          "values" -> JsArray(JsNumber(5), JsNumber(6))
+        ),
+        JsObject(
+          "type" -> JsString("typeList"),
+          "values" -> JsArray(JsString("categorical"))
+        )
       ),
-      JsObject(
-        "type" -> JsString("indexRange"),
-        "values" -> JsArray(JsNumber(5), JsNumber(6))
-      ),
-      JsObject(
-        "type" -> JsString("typeList"),
-        "values" -> JsArray(JsString("categorical"))
-      ))
+      "excluding" -> JsBoolean(false)
+    )
 
     assert(columnSelectorParameter.valueToJson == expectedJson)
   }

@@ -311,7 +311,10 @@ case class ColumnSelectorParameter(
 
   override protected def definedValueToJson(definedValue: MultipleColumnSelection): JsValue = {
     val fields = definedValue.selections.map(_.toJson)
-    JsArray(fields: _*)
+    JsObject(
+      MultipleColumnSelection.selectionsField -> JsArray(fields: _*),
+      MultipleColumnSelection.excludingField -> JsBoolean(definedValue.excluding)
+    )
   }
 
   override protected def valueFromDefinedJson(jsValue: JsValue): MultipleColumnSelection = {
