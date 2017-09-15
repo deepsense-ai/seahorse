@@ -6,6 +6,9 @@
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 start=`date +%s`
+NPM_REGISTRY_URL="https://registry.npmjs.org"
+
+npm set registry $NPM_REGISTRY_URL
 
 find . -maxdepth 1 -type d \( ! -name . \) -exec bash -c \
     "cd '{}' \
