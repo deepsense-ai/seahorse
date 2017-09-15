@@ -59,7 +59,7 @@ class WorkflowExecutorClient(object):
 def spark_submit_command(**kwargs):
   return """spark-submit --class {we_class} --master {spark_master} --files {workflow_filename}\\
     --driver-class-path {jar} {spark_submit_options} {jar}\\
-    --noninteractive-mode --python-executor-path ./python/pyexecutor/pyexecutor.py\\
+    --python-executor-path ./python/pyexecutor/pyexecutor.py\\
     --workflow-filename {workflow_filename} --output-directory {output_dir}\\
     """.format(
     we_class=kwargs['we_class'],
