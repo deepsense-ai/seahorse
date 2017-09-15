@@ -16,6 +16,8 @@
 
 package io.deepsense.deeplang.doperables
 
+import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.SingleColumnChoice
+import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.NoInPlaceChoice
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
@@ -94,28 +96,36 @@ class MathematicalTransformationIntegSpec extends DeeplangIntegTestSupport {
 
   it should {
     "detect missing inputColumn during inference" in {
-      a[ColumnDoesNotExistException] shouldBe thrownBy(
+      a[ColumnDoesNotExistException] shouldBe thrownBy {
+        val inPlace = NoInPlaceChoice()
+          .setOutputColumn(column3)
+        val single = SingleColumnChoice()
+          .setInputColumn(NameSingleColumnSelection("nonExistingCol"))
+          .setInPlace(inPlace)
         MathematicalTransformation()
           .setFormula("x * 2")
-          .setInputColumn(NameSingleColumnSelection("nonExistingCol"))
-          .setOutputColumnName(column3)
-          ._transformSchema(schema))
+          .setSingleOrMultiChoice(single)
+          ._transformSchema(schema)
+      }
     }
+    val inPlace = NoInPlaceChoice()
+      .setOutputColumn(column3)
+    val single = SingleColumnChoice()
+      .setInputColumn(NameSingleColumnSelection(column1))
+      .setInPlace(inPlace)
     "detect SQL syntax error during inference" in {
       a[MathematicalExpressionSyntaxException] shouldBe thrownBy(
         MathematicalTransformation()
           .setFormula("+++---")
-          .setInputColumn(NameSingleColumnSelection(column1))
-          .setOutputColumnName(column3)
-      ._transformSchema(schema))
+          .setSingleOrMultiChoice(single)
+          ._transformSchema(schema))
     }
     "detect non-existent column during inference" in {
       a[ColumnsDoNotExistException] shouldBe thrownBy(
         MathematicalTransformation()
           .setFormula("nonExistingCol")
-          .setInputColumn(NameSingleColumnSelection(column1))
-          .setOutputColumnName(column3)
-        ._transformSchema(schema)
+          .setSingleOrMultiChoice(single)
+          ._transformSchema(schema)
       )
     }
     "detect that alias conflicts with a column name form input DF" in {
@@ -123,8 +133,7 @@ class MathematicalTransformationIntegSpec extends DeeplangIntegTestSupport {
         MathematicalTransformation()
           .setFormula("c0")
           .setInputColumnAlias("c0")
-          .setInputColumn(NameSingleColumnSelection(column1))
-          .setOutputColumnName(column3)
+          .setSingleOrMultiChoice(single)
           ._transformSchema(schema))
     }
   }
@@ -218,10 +227,14 @@ class MathematicalTransformationIntegSpec extends DeeplangIntegTestSupport {
       inputColumnName: String,
       outputColumnName: String,
       columnAlias: String): MathematicalTransformation = {
+    val inPlace = NoInPlaceChoice()
+      .setOutputColumn(outputColumnName)
+    val single = SingleColumnChoice()
+      .setInputColumn(NameSingleColumnSelection(inputColumnName))
+      .setInPlace(inPlace)
     MathematicalTransformation()
       .setFormula(formula)
-      .setInputColumn(NameSingleColumnSelection(inputColumnName))
-      .setOutputColumnName(outputColumnName)
+      .setSingleOrMultiChoice(single)
       .setInputColumnAlias(columnAlias)
   }
 

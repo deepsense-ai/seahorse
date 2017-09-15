@@ -16,6 +16,8 @@
 
 package io.deepsense.deeplang.doperations.examples
 
+import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.SingleColumnChoice
+import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.NoInPlaceChoice
 import io.deepsense.deeplang.doperations.ExecuteMathematicalTransformation
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
@@ -25,10 +27,15 @@ class ExecuteMathematicalTransformationExample
   override def dOperation: ExecuteMathematicalTransformation = {
     val o = new ExecuteMathematicalTransformation()
     val myalias: String = "myAlias"
-    o.transformer.setFormula("MINIMUM(" + myalias + ", 2.0)")
+
+    val inPlace = NoInPlaceChoice()
+      .setOutputColumn("WeightCutoff")
+    val single = SingleColumnChoice()
       .setInputColumn(NameSingleColumnSelection("Weight"))
+      .setInPlace(inPlace)
+    o.transformer.setFormula("MINIMUM(" + myalias + ", 2.0)")
       .setInputColumnAlias(myalias)
-      .setOutputColumnName("WeightCutoff")
+      .setSingleOrMultiChoice(single)
     o.set(o.transformer.extractParamMap())
   }
 

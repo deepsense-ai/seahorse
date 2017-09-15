@@ -22,6 +22,8 @@ import spray.json._
 
 import io.deepsense.commons.exception.DeepSenseException
 import io.deepsense.deeplang.doperables.MathematicalTransformation
+import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.SingleColumnChoice
+import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.NoInPlaceChoice
 import io.deepsense.deeplang.doperations._
 import io.deepsense.deeplang.doperations.custom.{Sink, Source}
 import io.deepsense.deeplang.doperations.spark.wrappers.evaluators.CreateRegressionEvaluator
@@ -45,19 +47,27 @@ class InnerWorkflowExecutorSpec
   val sinkNode = Node(sinkNodeId, Sink())
 
   val innerNodeOperation = {
+    val inPlace = NoInPlaceChoice()
+      .setOutputColumn("output")
+    val single = SingleColumnChoice()
+      .setInputColumn(NameSingleColumnSelection("column1"))
+      .setInPlace(inPlace)
     val params = MathematicalTransformation()
       .setFormula("2*x")
-      .setInputColumn(NameSingleColumnSelection("column1"))
-      .setOutputColumnName("output")
+      .setSingleOrMultiChoice(single)
       .paramValuesToJson
     new ExecuteMathematicalTransformation().setParamsFromJson(params)
   }
 
   val failingOperation = {
+    val inPlace = NoInPlaceChoice()
+      .setOutputColumn("output")
+    val single = SingleColumnChoice()
+      .setInputColumn(NameSingleColumnSelection("does not exist"))
+      .setInPlace(inPlace)
     val params = MathematicalTransformation()
       .setFormula("2*x")
-      .setInputColumn(NameSingleColumnSelection("does not exist"))
-      .setOutputColumnName("output")
+      .setSingleOrMultiChoice(single)
       .paramValuesToJson
     ExecuteMathematicalTransformation().setParamsFromJson(params)
   }

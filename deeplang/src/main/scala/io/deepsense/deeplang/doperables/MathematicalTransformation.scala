@@ -18,16 +18,15 @@ package io.deepsense.deeplang.doperables
 
 import org.apache.spark.sql.catalyst.SqlParser
 import org.apache.spark.sql.types.StructType
-import org.apache.spark.sql.{DataFrame => SparkDataFrame}
 
 import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions._
 import io.deepsense.deeplang.exceptions.DeepLangException
-import io.deepsense.deeplang.params.selections.{ColumnSelection, NameColumnSelection, SingleColumnSelection}
-import io.deepsense.deeplang.params.{Param, SingleColumnSelectorParam, StringParam}
+import io.deepsense.deeplang.params.selections.NameColumnSelection
+import io.deepsense.deeplang.params.{Param, StringParam}
 
-case class MathematicalTransformation() extends Transformer {
+case class MathematicalTransformation() extends MultiColumnTransformer {
 
   val inputColumnAlias = StringParam(
     name = "input column alias",
@@ -44,33 +43,17 @@ case class MathematicalTransformation() extends Transformer {
   def getFormula: String = $(formula)
   def setFormula(value: String): this.type = set(formula, value)
 
-  val inputColumn = SingleColumnSelectorParam(
-    name = "input column",
-    description = "Input column.",
-    portIndex = 0)
+  override def getSpecificParams: Array[Param[_]] = Array(inputColumnAlias, formula)
 
-  def getInputColumn: SingleColumnSelection = $(inputColumn)
-  def setInputColumn(value: SingleColumnSelection): this.type = set(inputColumn, value)
-
-  val outputColumnName = StringParam(
-    name = "output column name",
-    description = "Name of column holding the result.")
-
-  def getOutputColumnName: String = $(outputColumnName)
-  def setOutputColumnName(value: String): this.type = set(outputColumnName, value)
-
-  override val params: Array[Param[_]] = declareParams(
-    inputColumnAlias,
-    formula,
-    inputColumn,
-    outputColumnName)
-
-  override def _transform(context: ExecutionContext, dataFrame: DataFrame): DataFrame = {
-
+  override def transformSingleColumn(
+      inputColumn: String,
+      outputColumn: String,
+      context: ExecutionContext,
+      dataFrame: DataFrame): DataFrame = {
     val inputColumnAlias = getInputColumnAlias
     val formula = getFormula
-    val inputColumnName = dataFrame.getColumnName(getInputColumn)
-    val outputColumnName = getOutputColumnName
+    val inputColumnName = inputColumn
+    val outputColumnName = outputColumn
 
     val dataFrameSchema = dataFrame.sparkDataFrame.schema
     validate(dataFrameSchema)
@@ -106,22 +89,21 @@ case class MathematicalTransformation() extends Transformer {
     }
 
     context.dataFrameBuilder.buildDataFrame(schema, transformedSparkDataFrame.rdd)
+
   }
 
-  override private[deeplang] def _transformSchema(schema: StructType): Option[StructType] = {
+  override def transformSingleColumnSchema(
+      inputColumn: String,
+      outputColumn: String,
+      schema: StructType): Option[StructType] = {
     validate(schema)
     // Output column type cannot be determined easily without SQL expression evaluation on DF
     None
   }
 
   private def validate(schema: StructType) = {
-    validateInputColumn(schema)
     validateFormula(schema)
     validateUniqueAlias(schema)
-  }
-
-  private def validateInputColumn(schema: StructType) = {
-    DataFrameColumnsGetter.getColumnName(schema, getInputColumn)
   }
 
   private def validateFormula(schema: StructType) = {
