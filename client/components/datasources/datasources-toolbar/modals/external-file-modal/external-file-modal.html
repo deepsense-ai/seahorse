@@ -4,21 +4,37 @@
   </div>
 
   <div class="datasources-modal__body">
-    <div class="datasource-name-form__input">
-      <label class="title">Source (http, https, ftp, sftp, ...)</label>
-      <input type="text" class="form-control" placeholder="my-file">
+    <div class="datasources-modal__body-row">
+      <label class="title">
+        Source (http, https, ftp, sftp ...)
+      </label>
+      <input
+        ng-model="$ctrl.datasourceParams.externalFileParams.url"
+        placeholder="Connection string"
+        class="form-control"
+        type="text"
+      />
     </div>
 
-    <file-settings>
+    <file-settings
+      extension="$ctrl.extension"
+      on-change="$ctrl.onFileSettingsChange(fileSettings)"
+    >
     </file-settings>
 
     <div class="datasources-modal__body-row">
       <div class="public-param-row">
         <div class="checkbox-wrapper">
-          <label class="format-form-label"
-                 ng-class="{'active': $ctrl.public}">
-            <input type="checkbox"
-                   ng-model="$ctrl.public"/>
+          <label
+            ng-class="{'active': $ctrl.datasourceParams.visibility === 'publicVisibility'}"
+            class="format-form-label"
+          >
+            <input
+              ng-model="$ctrl.datasourceParams.visibility"
+              ng-true-value="'publicVisibility'"
+              ng-false-value="'privateVisibility'"
+              type="checkbox"
+            />
             <span>Public</span>
           </label>
         </div>
