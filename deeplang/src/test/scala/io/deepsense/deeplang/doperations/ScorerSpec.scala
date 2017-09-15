@@ -38,7 +38,7 @@ abstract class ScorerSpec[T <: Scorable : Manifest] extends UnitSpec {
   }
 
   it should {
-    "infer type of DataFrame correctly" in {
+    "infer result DataFrame correctly" in {
       val dataFrameKnowledgeStub = mock[DKnowledge[DataFrame]]
       val inferContextStub = mock[InferContext]
       when(inferContextStub.fullInference).thenReturn(true)
@@ -65,6 +65,5 @@ abstract class ScorerSpec[T <: Scorable : Manifest] extends UnitSpec {
       warnings shouldBe (warning1 ++ warning2)
     }
   }
-
 
 }

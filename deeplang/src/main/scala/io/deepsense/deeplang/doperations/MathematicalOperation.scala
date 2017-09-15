@@ -21,21 +21,21 @@ case class MathematicalOperation() extends DOperation0To1[Transformation] {
   // TODO: DS-635 This operation will fail if user provide column name with '.'
 
   override protected def _execute(context: ExecutionContext)(): Transformation = {
-    val formula = parameters.getString(MathematicalOperation.formulaParam).get
-    new MathematicalTransformation(Some(formula))
+    val formula = formulaParam.value.get
+    MathematicalTransformation(Some(formula))
   }
 
-  override val parameters = ParametersSchema(
-    MathematicalOperation.formulaParam -> StringParameter(
-      "formula", None, required = true, validator = new AcceptAllRegexValidator))
+  val formulaParam = StringParameter(
+    "formula", None, required = true, validator = new AcceptAllRegexValidator)
+
+  override val parameters = ParametersSchema("formula" -> formulaParam)
 }
 
 object MathematicalOperation {
-  val formulaParam = "formula"
-
   def apply(formula: String): MathematicalOperation = {
+
     val operation = new MathematicalOperation
-    operation.parameters.getStringParameter(formulaParam).value = Some(formula)
+    operation.formulaParam.value = Some(formula)
     operation
   }
 }

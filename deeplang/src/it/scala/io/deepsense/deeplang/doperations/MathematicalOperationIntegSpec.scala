@@ -131,11 +131,7 @@ class MathematicalOperationIntegSpec extends DeeplangIntegTestSupport {
 
   def prepareTransformation(formula: String): Transformation = {
     val operation = new MathematicalOperation()
-    operation
-      .parameters
-      .getStringParameter(MathematicalOperation.formulaParam)
-      .value =
-      Some(formula)
+    operation.formulaParam.value = Some(formula)
     operation.execute(executionContext)(Vector.empty[DOperable]).head.asInstanceOf[Transformation]
   }
 

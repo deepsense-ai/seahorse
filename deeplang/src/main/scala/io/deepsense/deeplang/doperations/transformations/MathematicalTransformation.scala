@@ -4,13 +4,14 @@
 
 package io.deepsense.deeplang.doperations.transformations
 
-import io.deepsense.deeplang.{DOperable, DMethod1To1, ExecutionContext}
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
+import io.deepsense.deeplang.{DKnowledge, DOperable, DMethod1To1, ExecutionContext}
+import io.deepsense.deeplang.doperables.dataframe.{DataFrameBuilder, DataFrame}
 import io.deepsense.deeplang.doperables.{Report, Transformation}
 import io.deepsense.deeplang.doperations.exceptions.MathematicalOperationExecutionException
 import io.deepsense.reportlib.model.ReportContent
 
-class MathematicalTransformation(formula: Option[String]) extends Transformation {
+case class MathematicalTransformation(formula: Option[String]) extends Transformation {
 
   def this() = this(None)
 
@@ -24,6 +25,21 @@ class MathematicalTransformation(formula: Option[String]) extends Transformation
         case e: Exception => throw new MathematicalOperationExecutionException(formula.get, Some(e))
       }
       context.dataFrameBuilder.buildDataFrame(transformedSparkDataFrame)
+    }
+
+    override def inferFull(
+        context: InferContext)(
+        p: Unit)(
+        dataFrameKnowledge: DKnowledge[DataFrame])
+        : (DKnowledge[DataFrame], InferenceWarnings) = {
+      val dataFrame = dataFrameKnowledge.types.head
+
+      // For now, we only say that a column is appended.
+      val outputMetadata = dataFrame.inferredMetadata.get.copy(
+        isExact = false, isColumnCountExact = false)
+
+      val outputDataFrame = DataFrameBuilder.buildDataFrameForInference(outputMetadata)
+      (DKnowledge(outputDataFrame), InferenceWarnings.empty)
     }
   }
 

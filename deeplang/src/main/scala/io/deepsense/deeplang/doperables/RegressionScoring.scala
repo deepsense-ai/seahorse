@@ -56,7 +56,6 @@ trait RegressionScoring {
       // TODO when model metadata is introduced:
       // add support for checking if dataframe has correct columns
 
-      require(dataFrameKnowledge.size == 1, "We do not support DataFrame subclasses")
       val dataFrame = dataFrameKnowledge.types.head
       val newColumn = CommonColumnMetadata(
         predictionColumnName, index = None, columnType = Some(ColumnType.numeric))

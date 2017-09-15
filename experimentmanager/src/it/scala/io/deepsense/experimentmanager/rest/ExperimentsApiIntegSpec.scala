@@ -150,7 +150,7 @@ class ExperimentsApiIntegSpec
 
   private def prepareMathematicalOperation(): DOperation = {
     val operation = MathematicalOperation()
-    operation.parameters.getStringParameter(MathematicalOperation.formulaParam).value = Some("2")
+    operation.formulaParam.value = Some("2")
     operation
   }
 }
