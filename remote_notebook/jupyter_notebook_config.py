@@ -39,7 +39,7 @@ c.NotebookApp.server_extensions = [
   'headless_notebook_handler.headless_notebook_handler'
 ]
 
-
+c.Exporter.preprocessors = ['execute_saver.ExecuteSaver']
 c.ClearOutputPreprocessor.enabled = True
 c.ExecutePreprocessor.enabled = True
 c.ExecutePreprocessor.timeout = -1

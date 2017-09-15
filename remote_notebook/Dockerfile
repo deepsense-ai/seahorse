@@ -20,6 +20,7 @@ COPY seahorse_notebook_path /usr/local/lib/python2.7/site-packages
 COPY jupyter_notebook_config.py /home/jovyan/.jupyter
 COPY wmcontents /opt/conda/lib/python3.5/site-packages/wmcontents
 COPY seahorse_notebook_path /opt/conda/lib/python3.5/site-packages/
+COPY execute_saver /opt/conda/lib/python3.5/site-packages/execute_saver
 COPY headless_notebook_handler.py /opt/conda/lib/python3.5/site-packages/headless_notebook_handler/
 
 EXPOSE 8888

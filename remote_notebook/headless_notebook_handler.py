@@ -2,8 +2,8 @@
 
 
 import os
-
 from nbconvert.exporters.export import exporter_map
+from nbconvert.writers.files import FilesWriter
 from notebook.base.handlers import IPythonHandler
 from notebook.utils import url_path_join
 from tornado import web, escape
@@ -28,8 +28,14 @@ class HeadlessNotebookHandler(IPythonHandler):
         model = self.contents_manager.get(path=serialized_path)
         try:
             output, resources = exporter.from_notebook_node(model['content'])
-            with open("/home/jovyan/work/" + path.workflow_id + "_" + path.node_id + ".pdf", "wb") as output_file:
-                output_file.write(output)
+            resources['output_extension'] = ''
+            writer = FilesWriter(config=self.config, log=self.log)
+            model['content'] = resources["seahorse_notebook_content"]
+            self.contents_manager.save(model, path=serialized_path)
+
+            write_results = writer.write(
+                output, resources, notebook_name="/home/jovyan/work/" + path.workflow_id + "_" + path.node_id + '.pdf')
+            self.log.error(write_results)
         except Exception as e:
             raise web.HTTPError(500, "nbconvert failed: %s" % e)
 
