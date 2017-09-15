@@ -25,7 +25,8 @@ class SessionExecutorRequestBodyBuilder @Inject() (
   @Named("session-executor.parameters.pyexecutor.dir") private val pyExecutorDir: String,
   @Named("session-executor.parameters.pyexecutor.jar") private val pyExecutorJar: String,
   @Named("session-executor.parameters.pyspark.dir") private val pySparkDir: String,
-  @Named("session-executor.parameters.pyspark.zip") private val pySparkZip: String
+  @Named("session-executor.parameters.pyspark.zip") private val pySparkZip: String,
+  @Named("session-executor.parameters.workflow-manager.address") private val wmAddress: String
 ) extends RequestBodyBuilder {
 
   /**
@@ -45,6 +46,7 @@ class SessionExecutorRequestBodyBuilder @Inject() (
         "--interactive-mode",
         "-m", queueHost,
         "--message-queue-port", queuePort.toString,
+        "--wm-address", wmAddress,
         "-p", pyExecutorJar,
         "-z", pySparkZip,
         "-j", workflowId.toString()
