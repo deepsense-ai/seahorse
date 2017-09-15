@@ -1,21 +1,55 @@
 {
-  "bd38bef6-85c2-b9e5-a332-fea055a530f3": [
+  "446a6ad3-ab7c-b4ab-92a7-df76710c18a2": [
     {
       "report": {
         "tables": {
+          "Data Sample": {
+            "columnNames": ["col1", "col2", "col3", "col4", "col5"],
+            "columnTypes": ["numeric", "numeric", "boolean", "numeric", "numeric"]
+          },
           "DataFrame Size": {
-            "values": [["2", "13"]]
+            "values": [["5", "6"]]
           }
         }
       }
     }
   ],
-  "7cc30ecb-ff8d-60a7-7810-11772c2a7ada": [
+  "7afb7a78-9165-3917-f9e2-3ad06a1f2380": [
     {
       "report": {
         "tables": {
+          "Data Sample": {
+            "columnNames": ["col1", "col3", "col5", "indicator_col2", "indicator_col5"],
+            "columnTypes": ["numeric", "boolean", "numeric", "boolean", "boolean"]
+          },
           "DataFrame Size": {
-            "values": [["2", "10"]]
+            "values": [["5", "5"]]
+          }
+        },
+        "distributions": {
+          "col1": {
+            "missingValues": 0
+          },
+          "col3": {
+            "missingValues": 0,
+            "buckets": ["false", "true"],
+            "counts": [4, 1]
+          },
+          "col5": {
+            "missingValues": 0,
+            "statistics": {
+              "median": "5"
+            }
+          },
+          "indicator_col2": {
+            "missingValues": 0,
+            "buckets": ["false", "true"],
+            "counts": [4, 1]
+          },
+          "indicator_col5": {
+            "missingValues": 0,
+            "buckets": ["false", "true"],
+            "counts": [4, 1]
           }
         }
       }

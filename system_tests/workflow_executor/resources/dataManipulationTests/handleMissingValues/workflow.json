@@ -1,40 +1,45 @@
 {
   "workflow": {
     "nodes": [{
-      "id": "bd38bef6-85c2-b9e5-a332-fea055a530f3",
-      "operation": {
-        "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
-        "name": "Read DataFrame"
-      },
-      "parameters": {
-        "source": "hdfs://spark-cluster-1/system_tests/handleMissingValues/input.csv",
-        "format": {
-          "CSV": {
-            "separator": {
-              "Comma": {}
-            },
-            "names included": true,
-            "convert to boolean": false,
-            "categorical columns": null
-          }
-        },
-        "line separator": {
-          "Unix line separator": {
-
-          }
-        }
-      }
-    }, {
-      "id": "7cc30ecb-ff8d-60a7-7810-11772c2a7ada",
+      "id": "7afb7a78-9165-3917-f9e2-3ad06a1f2380",
       "operation": {
         "id": "e1120fbc-375b-4967-9c23-357ab768272f",
-        "name": "Handle Missing Values"
+        "name": "Missing Values Handler"
       },
       "parameters": {
         "columns": {
           "selections": [{
-            "type": "indexRange",
-            "values": [0, 0]
+            "type": "columnList",
+            "values": ["col5"]
+          }],
+          "excluding": false
+        },
+        "strategy": {
+          "replace with mode": {
+            "empty column strategy": {
+              "retain": {
+
+              }
+            }
+          }
+        },
+        "missing value indicator": {
+          "Yes": {
+            "indicator column prefix": "indicator_"
+          }
+        }
+      }
+    }, {
+      "id": "2a726929-714b-4d28-365b-5254670ca5ce",
+      "operation": {
+        "id": "e1120fbc-375b-4967-9c23-357ab768272f",
+        "name": "Missing Values Handler"
+      },
+      "parameters": {
+        "columns": {
+          "selections": [{
+            "type": "columnList",
+            "values": ["col1"]
           }],
           "excluding": false
         },
@@ -42,10 +47,65 @@
           "remove row": {
 
           }
+        },
+        "missing value indicator": {
+          "No": {
+
+          }
         }
       }
     }, {
-      "id": "0059c035-14de-e045-4163-683d8a337097",
+      "id": "a31ce0cd-d2f5-e11e-28ed-a1c56be8fa31",
+      "operation": {
+        "id": "e1120fbc-375b-4967-9c23-357ab768272f",
+        "name": "Missing Values Handler"
+      },
+      "parameters": {
+        "columns": {
+          "selections": [{
+            "type": "columnList",
+            "values": ["col2"]
+          }],
+          "excluding": false
+        },
+        "strategy": {
+          "remove column": {
+
+          }
+        },
+        "missing value indicator": {
+          "Yes": {
+            "indicator column prefix": "indicator_"
+          }
+        }
+      }
+    }, {
+      "id": "ee2deaf3-a7f0-09c3-b1fe-f1d3cba1c7b5",
+      "operation": {
+        "id": "e1120fbc-375b-4967-9c23-357ab768272f",
+        "name": "Missing Values Handler"
+      },
+      "parameters": {
+        "columns": {
+          "selections": [{
+            "type": "columnList",
+            "values": ["col3"]
+          }],
+          "excluding": false
+        },
+        "strategy": {
+          "replace with custom value": {
+            "value": "false"
+          }
+        },
+        "missing value indicator": {
+          "No": {
+
+          }
+        }
+      }
+    }, {
+      "id": "089ad81b-3ff7-4196-440d-dda153e62dcd",
       "operation": {
         "id": "9e460036-95cc-42c5-ba64-5bc767a40e4e",
         "name": "Write DataFrame"
@@ -61,48 +121,171 @@
         },
         "output file": "hdfs://spark-cluster-1/system_tests/handleMissingValues/output.csv"
       }
+    }, {
+      "id": "446a6ad3-ab7c-b4ab-92a7-df76710c18a2",
+      "operation": {
+        "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
+        "name": "Read DataFrame"
+      },
+      "parameters": {
+        "source": "hdfs://spark-cluster-1/system_tests/handleMissingValues/input.csv",
+        "format": {
+          "CSV": {
+            "separator": {
+              "Comma": {}
+            },
+            "names included": true,
+            "convert to boolean": true,
+            "categorical columns": {
+              "selections": [],
+              "excluding": false
+            }
+          }
+        },
+        "line separator": {
+          "Unix line separator": {
+
+          }
+        }
+      }
+    }, {
+      "id": "76ca6d08-2a1e-6ae3-0b20-a528ea3f0e81",
+      "operation": {
+        "id": "e1120fbc-375b-4967-9c23-357ab768272f",
+        "name": "Missing Values Handler"
+      },
+      "parameters": {
+        "columns": {
+          "selections": [{
+            "type": "columnList",
+            "values": ["col4"]
+          }],
+          "excluding": false
+        },
+        "strategy": {
+          "replace with mode": {
+            "empty column strategy": {
+              "remove": {
+
+              }
+            }
+          }
+        },
+        "missing value indicator": {
+          "No": {
+
+          }
+        }
+      }
     }],
     "connections": [{
       "from": {
-        "nodeId": "bd38bef6-85c2-b9e5-a332-fea055a530f3",
+        "nodeId": "2a726929-714b-4d28-365b-5254670ca5ce",
         "portIndex": 0
       },
       "to": {
-        "nodeId": "7cc30ecb-ff8d-60a7-7810-11772c2a7ada",
+        "nodeId": "a31ce0cd-d2f5-e11e-28ed-a1c56be8fa31",
         "portIndex": 0
       }
     }, {
       "from": {
-        "nodeId": "7cc30ecb-ff8d-60a7-7810-11772c2a7ada",
+        "nodeId": "ee2deaf3-a7f0-09c3-b1fe-f1d3cba1c7b5",
         "portIndex": 0
       },
       "to": {
-        "nodeId": "0059c035-14de-e045-4163-683d8a337097",
+        "nodeId": "76ca6d08-2a1e-6ae3-0b20-a528ea3f0e81",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "76ca6d08-2a1e-6ae3-0b20-a528ea3f0e81",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "7afb7a78-9165-3917-f9e2-3ad06a1f2380",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "7afb7a78-9165-3917-f9e2-3ad06a1f2380",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "089ad81b-3ff7-4196-440d-dda153e62dcd",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "446a6ad3-ab7c-b4ab-92a7-df76710c18a2",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "2a726929-714b-4d28-365b-5254670ca5ce",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "a31ce0cd-d2f5-e11e-28ed-a1c56be8fa31",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "ee2deaf3-a7f0-09c3-b1fe-f1d3cba1c7b5",
         "portIndex": 0
       }
     }]
   },
   "thirdPartyData": {
     "gui": {
-      "name": "Draft workflow",
+      "name": "Missing values handler system test",
       "description": "",
       "nodes": {
-        "bd38bef6-85c2-b9e5-a332-fea055a530f3": {
+        "ee2deaf3-a7f0-09c3-b1fe-f1d3cba1c7b5": {
+          "uiName": "",
           "coordinates": {
-            "x": 192,
-            "y": 33
+            "x": 224,
+            "y": 331
           }
         },
-        "7cc30ecb-ff8d-60a7-7810-11772c2a7ada": {
+        "7afb7a78-9165-3917-f9e2-3ad06a1f2380": {
+          "uiName": "",
           "coordinates": {
-            "x": 209,
-            "y": 180
+            "x": 245,
+            "y": 592
           }
         },
-        "0059c035-14de-e045-4163-683d8a337097": {
+        "2a726929-714b-4d28-365b-5254670ca5ce": {
+          "uiName": "",
           "coordinates": {
-            "x": 220,
-            "y": 320
+            "x": 205,
+            "y": 129
+          }
+        },
+        "76ca6d08-2a1e-6ae3-0b20-a528ea3f0e81": {
+          "uiName": "",
+          "coordinates": {
+            "x": 235,
+            "y": 452
+          }
+        },
+        "089ad81b-3ff7-4196-440d-dda153e62dcd": {
+          "uiName": "",
+          "coordinates": {
+            "x": 254,
+            "y": 702
+          }
+        },
+        "446a6ad3-ab7c-b4ab-92a7-df76710c18a2": {
+          "uiName": "",
+          "coordinates": {
+            "x": 201,
+            "y": 10
+          }
+        },
+        "a31ce0cd-d2f5-e11e-28ed-a1c56be8fa31": {
+          "uiName": "",
+          "coordinates": {
+            "x": 211,
+            "y": 226
           }
         }
       }
@@ -111,7 +294,7 @@
   "variables": {
 
   },
-  "id": "2d7541f2-6f37-438d-880d-299ea99a2895",
+  "id": "5e8cb065-aec5-4766-9860-939fab34bfde",
   "metadata": {
     "type": "batch",
     "apiVersion": "0.5.0"
