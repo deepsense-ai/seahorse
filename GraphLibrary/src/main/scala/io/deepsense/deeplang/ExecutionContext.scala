@@ -6,4 +6,5 @@
 
 package io.deepsense.deeplang
 
+/** Holds information needed by DOperations and DMethods during execution. */
 class ExecutionContext

@@ -12,4 +12,4 @@ case class TraitInheritingFromClassException(
     traitNode: TraitNode,
     classNode: TypeNode)
   extends DOperableCatalogException(
-    s"DTrait cannot inherit from DClass in DHierarchy, ($traitNode inherits from $classNode)")
+    s"Trait cannot inherit from class in hierarchy, ($traitNode inherits from $classNode)")

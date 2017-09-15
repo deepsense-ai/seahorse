@@ -10,6 +10,9 @@ import java.lang.reflect.Constructor
 
 import scala.reflect.runtime.{universe => ru}
 
+/**
+ * Holds methods used for manipulating objects representing types.
+ */
 private[deeplang] object TypeUtils {
   private val mirror = ru.runtimeMirror(getClass.getClassLoader)
 
