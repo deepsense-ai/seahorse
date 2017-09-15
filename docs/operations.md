@@ -16,6 +16,7 @@ List of all currently supported operations:
 
 * Input/Output
   * [Python Notebook](operations/python_notebook.html)
+  * [R Notebook](operations/r_notebook.html)
   * [Read DataFrame](operations/read_dataframe.html)
   * [Read Transformer](operations/read_transformer.html)
   * [Write DataFrame](operations/write_dataframe.html)
