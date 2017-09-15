@@ -61,6 +61,7 @@ factory('Workflow', /*@ngInject*/function (GraphNode, Edge) {
       return new GraphNode({
         'id': options.id,
         'name': operation.name,
+        'uiName': options.uiName,
         'operationId': operation.id,
         'version': operation.version,
         'icon': operation.icon,
@@ -81,6 +82,9 @@ factory('Workflow', /*@ngInject*/function (GraphNode, Edge) {
           return 0;
         }
       };
+      let getNodeUiName = (id) => {
+        return thirdPartyData.gui.nodes[id].uiName;
+      };
 
       for (let i = 0; i < nodes.length; i++) {
         let data = nodes[i];
@@ -88,6 +92,7 @@ factory('Workflow', /*@ngInject*/function (GraphNode, Edge) {
         let operation = operations[data.operation.id];
         let node = that.createNode({
           'id': id,
+          'uiName': getNodeUiName(id),
           'operation': operation,
           'parameters': data.parameters,
           'x': getCoordinate(id, 'x'),
@@ -219,17 +224,22 @@ factory('Workflow', /*@ngInject*/function (GraphNode, Edge) {
       };
 
       for (let id in internal.nodes) {
-        data.workflow.nodes.push(internal.nodes[id].serialize());
-        data.thirdPartyData.gui.nodes[id] = {
-          coordinates: {
-            x: internal.nodes[id].x,
-            y: internal.nodes[id].y
-          }
-        };
+        if (internal.nodes.hasOwnProperty(id)) {
+          data.workflow.nodes.push(internal.nodes[id].serialize());
+          data.thirdPartyData.gui.nodes[id] = {
+            uiName: internal.nodes[id].uiName,
+            coordinates: {
+              x: internal.nodes[id].x,
+              y: internal.nodes[id].y
+            }
+          };
+        }
       }
 
       for (let id in internal.edges) {
-        data.workflow.connections.push(internal.edges[id].serialize());
+        if (internal.edges.hasOwnProperty(id)) {
+          data.workflow.connections.push(internal.edges[id].serialize());
+        }
       }
 
       return data;
