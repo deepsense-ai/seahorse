@@ -5,25 +5,35 @@
 #
 # Example usage: ./publish-local-docker.sh ../../remote_notebook/ deepsense-notebooks
 
+set -e
+
 # Check if number of parameters is correct
 if [ $# != 2 ]; then
   echo ">>> Exactly two parameters must be provided."
-  exit 1;
+  exit 1
 fi
 
 PROJECT_PATH=$1;
 PROJECT_NAME=$2
 DOCKER_IMAGE=`docker images | grep $PROJECT_NAME | grep "latest" | head -1 | awk '{ print $3 }'`
+GIT_BRANCH=`git branch | grep '*' | awk '{ print $2 }'`
 
-# Validate input parameters
+echo $DOCKER_IMAGE
+
+# Validation
 if [ ! -d $PROJECT_PATH ]; then
   echo ">>> $PROJECT_PATH does not exist or is not a directory."
-  exit 2;
+  exit 2
 fi
 
 if [ -z $DOCKER_IMAGE ]; then
   echo ">>> No local images for project $PROJECT_NAME."
-  exit 3;
+  exit 3
+fi
+
+if [ -z $GIT_BRANCH ]; then
+  echo ">>> Cannot get Git branch."
+  exit 4
 fi
 
 cd $PROJECT_PATH
@@ -35,8 +45,8 @@ DOCKER_REGISTRY="docker-registry.intra.codilime.com"
 QUAY_REGISTRY="quay.io"
 CL_NAMESPACE="tap"
 QUAY_NAMESPACE="intelseahorse"
-TAG_VERSION="$PROJECT_NAME:tap-$TIMESTAMP-$COMMIT_HASH"
-TAG_LATEST="$PROJECT_NAME:latest"
+TAG_VERSION="$PROJECT_NAME:$GIT_BRANCH-$TIMESTAMP-$COMMIT_HASH"
+TAG_LATEST="$PROJECT_NAME:$GIT_BRANCH-latest"
 
 # Tag docker image
 echo ">>> Tagging docker image"
