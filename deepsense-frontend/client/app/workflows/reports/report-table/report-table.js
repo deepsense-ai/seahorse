@@ -13,6 +13,9 @@ function ReportTable() {
       'datatypesVisible': '=?'
     },
     controller: function($scope, $rootScope) {
+      $scope.reportWidth = window.innerWidth / 2;
+      $scope.maxLength = $scope.reportWidth / $scope.table.columnNames.length;
+
       $scope.getColumnType = (columnName) => {
         // Not using zip to avoid object allocation every digest cycle.
         let indexOfColumn = $scope.table.columnNames.indexOf(columnName);
@@ -21,6 +24,10 @@ function ReportTable() {
 
       $scope.getDistributionType = (columnName) => {
         return $scope.distributions && $scope.distributions[columnName];
+      };
+
+      $scope.getTriggerEventBasedOnDescriptionLength = (value) => {
+        return value.length > $scope.maxLength ? 'mouseenter' : 'none';
       };
 
       this.showDistribution = (columnName) => {

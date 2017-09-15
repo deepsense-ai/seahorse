@@ -59,8 +59,9 @@
       </td>
       <td>
         <a ng-if="workflow.description"
-           popover-trigger="mouseenter"
            uib-popover="{{workflow.description}}"
+           popover-trigger="{{ home.getTriggerEventBasedOnDescriptionLength(workflow.description) }}"
+           popover-append-to-body="true"
            ng-href="{{home.getWorkflowUrl(workflow.id)}}">
           {{workflow.description | cut : true : 50 : ' ...' }}
         </a>

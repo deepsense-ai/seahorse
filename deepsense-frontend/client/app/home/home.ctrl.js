@@ -13,8 +13,8 @@ function Home($rootScope, $uibModal, $state, WorkflowService, PageService, Confi
     };
   };
 
-  this.canShowPopover = (description) => {
-    return description.length > 100;
+  this.getTriggerEventBasedOnDescriptionLength = (description) => {
+    return description.length > 50 ? 'mouseenter' : 'none';
   };
 
   this.sortBy = (columnName) => {
