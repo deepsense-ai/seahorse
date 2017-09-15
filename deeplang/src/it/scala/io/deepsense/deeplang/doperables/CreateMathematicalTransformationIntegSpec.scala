@@ -38,49 +38,49 @@ class CreateMathematicalTransformationIntegSpec extends DeeplangIntegTestSupport
   "CreateMathematicalTransformation" should {
 
     "create Transformation that counts ABS properly" in {
-      runTest(s"ABS($column1) as $column3", Seq(1.0, 1.1, 1.2, 1.3, null))
+      runTest(s"ABS($column1)", s"$column3", Seq(1.0, 1.1, 1.2, 1.3, null))
     }
 
     "create Transformation that counts POW properly" in {
-      runTest(s"POW($column1, 2.0) as $column3", Seq(1.0, 1.21, 1.44, 1.69, null))
+      runTest(s"POW($column1, 2.0)", s"$column3", Seq(1.0, 1.21, 1.44, 1.69, null))
     }
 
     "create Transformation that counts SQRT properly" in {
-      runTest(s"SQRT($column2) as $column3", Seq(0.447, 1.483, null, 2.04, null))
+      runTest(s"SQRT($column2)", s"$column3", Seq(0.447, 1.483, null, 2.04, null))
     }
 
     "create Transformation that counts SIN properly" in {
-      runTest(s"SIN($column1) as $column3", Seq(0.841, -0.891, 0.932, -0.96, null))
+      runTest(s"SIN($column1)", s"$column3", Seq(0.841, -0.891, 0.932, -0.96, null))
     }
 
     "create Transformation that counts COS properly" in {
-      runTest(s"COS($column1) as $column3", Seq(0.540, 0.453, 0.362, 0.267, null))
+      runTest(s"COS($column1)", s"$column3", Seq(0.540, 0.453, 0.362, 0.267, null))
     }
 
     "create Transformation that counts TAN properly" in {
-      runTest(s"TAN($column1) as $column3", Seq(1.557, -1.964, 2.572, -3.602, null))
+      runTest(s"TAN($column1)", s"$column3", Seq(1.557, -1.964, 2.572, -3.602, null))
     }
 
     "create Transformation that counts LN properly" in {
-      runTest(s"LN($column2) as $column3", Seq(-1.609, 0.788, null, 1.435, null))
+      runTest(s"LN($column2)", s"$column3", Seq(-1.609, 0.788, null, 1.435, null))
     }
 
     "create Transformation that counts MINIMUM properly" in {
-      runTest(s"MINIMUM($column1, $column2) as $column3", Seq(0.2, -1.1, null, -1.3, null))
+      runTest(s"MINIMUM($column1, $column2)", s"$column3", Seq(0.2, -1.1, null, -1.3, null))
     }
 
     "create Transformation that counts MAXIMUM properly" in {
-      runTest(s"MAXIMUM($column1, $column2) as $column3", Seq(1.0, 2.2, null, 4.2, null))
+      runTest(s"MAXIMUM($column1, $column2)", s"$column3", Seq(1.0, 2.2, null, 4.2, null))
     }
 
     "create Transformation that counts complex formulas properly" in {
-      runTest(s"MAXIMUM(SIN($column2) + 1.0, ABS($column1 - 2.0)) as $column3",
+      runTest(s"MAXIMUM(SIN($column2) + 1.0, ABS($column1 - 2.0))", s"$column3",
         Seq(1.19, 3.1, null, 3.3, null))
     }
 
     "create Transformation that produces properly escaped column name" in {
       val dataFrame = applyFormulaToDataFrame(
-        s"COS($column1) as `$column3needsEscaping`",
+        s"COS($column1)", s"$column3needsEscaping",
         prepareDataFrame())
       val rows = dataFrame.sparkDataFrame.collect()
       validateColumn(rows, Seq(0.540, 0.453, 0.362, 0.267, null))
@@ -91,29 +91,29 @@ class CreateMathematicalTransformationIntegSpec extends DeeplangIntegTestSupport
     "fail when 2 comma-separated formulas are provided" in {
       intercept[DOperationExecutionException] {
         val dataFrame = applyFormulaToDataFrame(
-          s"MAXIMUM($column1), SIN($column1)",
+          s"MAXIMUM($column1), SIN($column1)", "name",
           prepareDataFrame())
         dataFrame.sparkDataFrame.collect()
-      }
+      };()
     }
 
     "fail when formula is not correct" in {
       intercept[DOperationExecutionException] {
-        val dataFrame = applyFormulaToDataFrame("MAXIMUM(", prepareDataFrame())
+        val dataFrame = applyFormulaToDataFrame("MAXIMUM(", "name", prepareDataFrame())
         dataFrame.sparkDataFrame.collect()
-      }
+      };()
     }
 
     "produce NaN if the argument given to the function is not correct" in {
       // counting LN from negative number
-      val dataFrame = applyFormulaToDataFrame(s"LN($column1) as $column3", prepareDataFrame())
+      val dataFrame = applyFormulaToDataFrame(s"LN($column1)", s"$column3", prepareDataFrame())
       val rowWithNegativeValue = 1
       val rowWithNaN = dataFrame.sparkDataFrame.collect()(rowWithNegativeValue)
       rowWithNaN.getDouble(resultColumn).isNaN shouldBe true
     }
 
     "retain the categorical column type" in {
-      val dataFrame = applyFormulaToDataFrame(s"SIN($column1) as $column3",
+      val dataFrame = applyFormulaToDataFrame(s"SIN($column1)", s"$column3",
         prepareDataFrameWithCategorical())
       CategoricalMetadata(dataFrame).isCategorical(column0) shouldBe true
       CategoricalMetadata(dataFrame).isCategorical(column1) shouldBe false
@@ -122,15 +122,15 @@ class CreateMathematicalTransformationIntegSpec extends DeeplangIntegTestSupport
     }
   }
 
-  def runTest(formula: String, expectedValues: Seq[Any]) : Unit = {
-    val dataFrame = applyFormulaToDataFrame(formula, prepareDataFrame())
+  def runTest(formula: String, columnName: String, expectedValues: Seq[Any]) : Unit = {
+    val dataFrame = applyFormulaToDataFrame(formula, columnName, prepareDataFrame())
     val rows = dataFrame.sparkDataFrame.collect()
     validateSchema(dataFrame.sparkDataFrame.schema)
     validateColumn(rows, expectedValues)
   }
 
-  def applyFormulaToDataFrame(formula: String, df: DataFrame): DataFrame = {
-    val transformation = prepareTransformation(formula)
+  def applyFormulaToDataFrame(formula: String, columnName: String, df: DataFrame): DataFrame = {
+    val transformation = prepareTransformation(formula, columnName)
     applyTransformation(transformation, df)
   }
 
@@ -140,9 +140,10 @@ class CreateMathematicalTransformationIntegSpec extends DeeplangIntegTestSupport
       .head.asInstanceOf[DataFrame]
   }
 
-  def prepareTransformation(formula: String): Transformation = {
+  def prepareTransformation(formula: String, columnName: String): Transformation = {
     val createMathematicalTransformation = new CreateMathematicalTransformation()
     createMathematicalTransformation.formulaParam.value = Some(formula)
+    createMathematicalTransformation.columnNameParam.value = Some(columnName)
     createMathematicalTransformation.execute(executionContext)(
       Vector.empty[DOperable]
     ).head.asInstanceOf[Transformation]

@@ -40,16 +40,16 @@ object LocationAttractiveness extends WorkflowCreator {
     def distTo(p: Seq[Double]): String =
       s"SQRT(POW(latitude - ${p(0)}, 2.0) + POW(longitude - ${p(1)}, 2.0))"
 
-    CreateMathematicalTransformation(s"MINIMUM(${distTo(sf)}, ${distTo(la)}) as dist_SF_LA")
+    CreateMathematicalTransformation(s"MINIMUM(${distTo(sf)}, ${distTo(la)})", "dist_SF_LA")
   }
   val applyDistanceOperation = ApplyTransformation()
 
   val logHighestPrice1: DOperation =
-    CreateMathematicalTransformation("LN(highest_price + 1.0) as log_highest_price1")
+    CreateMathematicalTransformation("LN(highest_price + 1.0)", "log_highest_price1")
   val logLowestPrice1: DOperation =
-    CreateMathematicalTransformation("LN(lowest_price + 1.0) as log_lowest_price1")
+    CreateMathematicalTransformation("LN(lowest_price + 1.0)", "log_lowest_price1")
   val logReviewCount1: DOperation =
-    CreateMathematicalTransformation("LN(review_count + 1.0) as log_review_count1")
+    CreateMathematicalTransformation("LN(review_count + 1.0)", "log_review_count1")
 
   val applyLogHighestPrice1 = ApplyTransformation()
   val applyLogLowestPrice1 = ApplyTransformation()

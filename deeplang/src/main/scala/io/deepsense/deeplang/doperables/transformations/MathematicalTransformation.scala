@@ -23,25 +23,27 @@ import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.{DKnowledge, DMethod1To1, DOperable, ExecutionContext}
 import io.deepsense.reportlib.model.{ReportContent, Table}
 
-case class MathematicalTransformation(formula: Option[String]) extends Transformation {
+case class MathematicalTransformation(
+    formula: String, columnName: String) extends Transformation {
 
-  def this() = this(None)
+  def this() = this(null, null)
 
   override def toInferrable: DOperable = new MathematicalTransformation()
 
   override val transform = new DMethod1To1[Unit, DataFrame, DataFrame] {
     override def apply(context: ExecutionContext)(p: Unit)(dataFrame: DataFrame): DataFrame = {
       val transformedSparkDataFrame = try {
-        dataFrame.sparkDataFrame.selectExpr("*", formula.get)
+        dataFrame.sparkDataFrame.selectExpr("*", s"${formula} AS `${columnName}`")
       } catch {
         case e: Exception =>
-          throw new MathematicalTransformationExecutionException(formula.get, Some(e))
+          throw new MathematicalTransformationExecutionException(
+            formula, columnName, Some(e))
       }
 
       val columns = transformedSparkDataFrame.columns
       if (columns.distinct.size != columns.size) {
-        throw new MathematicalTransformationExecutionException(formula.get,
-          Some(DuplicatedColumnsException()))
+        throw new MathematicalTransformationExecutionException(
+          formula, columnName, Some(DuplicatedColumnsException(List(columnName))))
       }
 
       context.dataFrameBuilder.buildDataFrame(transformedSparkDataFrame)
@@ -64,7 +66,8 @@ case class MathematicalTransformation(formula: Option[String]) extends Transform
   }
 
   override def report(executionContext: ExecutionContext): Report = {
-    val table = Table("Mathematical Formula", "", Some(List("Formula")), None, List(List(formula)))
+    val table = Table("Mathematical Formula", "",
+      Some(List("Formula", "Column name")), None, List(List(Some(formula)), List(Some(columnName))))
     Report(ReportContent(
       "Report for MathematicalTransformation", List(table)))
   }

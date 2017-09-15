@@ -33,25 +33,38 @@ case class CreateMathematicalTransformation() extends DOperation0To1[Mathematica
 
   override protected def _execute(context: ExecutionContext)(): MathematicalTransformation = {
     val formula = formulaParam.value.get
-    MathematicalTransformation(Some(formula))
+    val columnName = columnNameParam.value.get
+    MathematicalTransformation(formula, columnName)
   }
 
   val formulaParam = StringParameter(
-    "Mathematical formula to be placed in a column named with AS directive. " +
-    "For example, \"(myColumn * myColumn)\" AS myColumnSquared",
-    None, required = true, validator = new AcceptAllRegexValidator)
+    description = "Mathematical formula. For example, \"(myColumn * myColumn)\"",
+    default = None,
+    required = true,
+    validator = new AcceptAllRegexValidator)
 
-  override val parameters = ParametersSchema("formula" -> formulaParam)
+  val columnNameParam = StringParameter(
+    description = "Name of the newly created column holding the result.",
+    default = None,
+    required = true,
+    validator = new AcceptAllRegexValidator)
+
+  override val parameters = ParametersSchema(
+    "formula" -> formulaParam,
+    "column name" -> columnNameParam
+  )
+
   @transient
   override lazy val tTagTO_0: ru.TypeTag[MathematicalTransformation] =
     ru.typeTag[MathematicalTransformation]
 }
 
 object CreateMathematicalTransformation {
-  def apply(formula: String): CreateMathematicalTransformation = {
+  def apply(formula: String, columnName: String): CreateMathematicalTransformation = {
 
     val operation = new CreateMathematicalTransformation
     operation.formulaParam.value = Some(formula)
+    operation.columnNameParam.value = Some(columnName)
     operation
   }
 }

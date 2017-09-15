@@ -16,5 +16,5 @@
 
 package io.deepsense.deeplang.doperations.exceptions
 
-case class DuplicatedColumnsException() extends DOperationExecutionException(
-  s"Dataframe contains duplicated columns", None)
+case class DuplicatedColumnsException(columns: List[String])
+  extends DOperationExecutionException(s"Dataframe contains duplicated columns: $columns", None)
