@@ -8,6 +8,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 import com.google.inject.Inject
 import com.google.inject.name.Named
+import shapeless.HNil
 import spray.http.StatusCodes
 import spray.routing._
 
@@ -43,31 +44,33 @@ class SessionsApi @Inject()(
           complete("Session Manager")
         }
       } ~
-      waitForHeartbeat {
-        pathPrefix(sessionsPathPrefixMatcher) {
-          path(JavaUUID) { sessionId =>
-            get {
-              complete {
-                val session = sessionService.getSession(sessionId)
-                session.map(_.map(Envelope(_)))
+      handleRejections(rejectionHandler) {
+        waitForHeartbeat {
+          pathPrefix(sessionsPathPrefixMatcher) {
+            path(JavaUUID) { sessionId =>
+              get {
+                complete {
+                  val session = sessionService.getSession(sessionId)
+                  session.map(_.map(Envelope(_)))
+                }
+              } ~
+              delete {
+                onSuccess(sessionService.killSession(sessionId)) { _ =>
+                  complete(StatusCodes.OK)
+                }
               }
             } ~
-            delete {
-              onSuccess(sessionService.killSession(sessionId)) { _ =>
-                complete(StatusCodes.OK)
+            pathEndOrSingleSlash {
+              post {
+                entity(as[CreateSession]) { request =>
+                  val session = sessionService.createSession(request.workflowId)
+                  val enveloped = session.map(Envelope(_))
+                  complete(enveloped)
+                }
+              } ~
+              get {
+                complete(sessionService.listSessions())
               }
-            }
-          } ~
-          pathEndOrSingleSlash {
-            post {
-              entity(as[CreateSession]) { request =>
-                val session = sessionService.createSession(request.workflowId)
-                val enveloped = session.map(Envelope(_))
-                complete(enveloped)
-              }
-            } ~
-            get {
-              complete(sessionService.listSessions())
             }
           }
         }
@@ -75,15 +78,19 @@ class SessionsApi @Inject()(
     }
   }
 
+  val rejectionHandler: RejectionHandler = RejectionHandler {
+    case NotSubscribedToHeartbeatsRejection :: _ =>
+      complete {
+        logger.warn("Rejected a request because not yet subscribed to Heartbeats!")
+        (StatusCodes.ServiceUnavailable, "Session Manager is starting!")
+      }
+  }.orElse(RejectionHandler.Default)
+
   private def waitForHeartbeat: Directive0 = {
-    heartbeatSubscribed.value match {
-      case Some(x) =>
-        pass
-      case None =>
-        complete {
-          logger.warn("Received a request but still not subscribed to Heartbeats!")
-          (StatusCodes.ServiceUnavailable, "Session Manager is starting!")
-        }
-    }
+    extract(_ => heartbeatSubscribed.isCompleted)
+      .flatMap[HNil](if (_) pass else reject(NotSubscribedToHeartbeatsRejection)) &
+      cancelRejection(NotSubscribedToHeartbeatsRejection)
   }
+
+  case object NotSubscribedToHeartbeatsRejection extends Rejection
 }
