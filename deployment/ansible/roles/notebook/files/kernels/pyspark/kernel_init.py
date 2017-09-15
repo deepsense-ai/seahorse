@@ -49,5 +49,9 @@ def dataframe():
     if node_id is None or port_number is None:
         raise Exception("No edge is connected to this Notebook")
 
-    java_data_frame = gateway.entry_point.retrieveOutputDataFrame(workflow_id, node_id, port_number)
+    try:
+        java_data_frame = gateway.entry_point.retrieveOutputDataFrame(workflow_id, node_id, port_number)
+    except Py4JJavaError:
+        raise Exception("Input operation is not yet executed")
+
     return DataFrame(jdf=java_data_frame, sql_ctx=sqlContext)
