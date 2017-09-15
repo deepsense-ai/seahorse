@@ -10,5 +10,6 @@ description: SDK User Guide
 Scala SDK gives you a possibility to define your own operation in Scala and use it in your Seahorse instance.
 
 ## Examples with explanation
-You can find runnable examples together with explanation on [GitHub](TODO - link do repozytorium z przykładem).
+You can find runnable examples together with explanation on
+[GitHub](https://github.com/deepsense-io/seahorse-sdk-example).
 
