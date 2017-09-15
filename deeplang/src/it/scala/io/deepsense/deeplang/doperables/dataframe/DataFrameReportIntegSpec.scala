@@ -51,7 +51,7 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport {
         dataSampleTable.columnNames shouldBe Some(List(nameColumnName, birthDateColumnName))
         dataSampleTable.rowNames shouldBe None
         dataSampleTable.values shouldBe
-          List(List(null, DateTimeConverter.convertToString(now)), List(exampleString, null))
+          List(List(null, DateTimeConverter.toString(now)), List(exampleString, null))
        }
       "there is timestamp column" in {
         val now: DateTime = DateTimeConverter.now
@@ -66,7 +66,7 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport {
         val dataSampleTable = tables.get(DataFrame.dataSampleTableName).get
         dataSampleTable.columnNames shouldBe Some(List(timestampColumnName))
         dataSampleTable.rowNames shouldBe None
-        dataSampleTable.values shouldBe List(List(DateTimeConverter.convertToString(now)))
+        dataSampleTable.values shouldBe List(List(DateTimeConverter.toString(now)))
       }
     }
   }

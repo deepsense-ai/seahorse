@@ -98,8 +98,8 @@ class EntityJsonProtocolSpec
     userEntityDescriptionMap(entity) ++ Map(
       "tenantId" -> JsString(entity.tenantId),
       "dClass" -> JsString(entity.dClass),
-      "created" -> JsString(DateTimeConverter.convertToString(entity.created)),
-      "updated" -> JsString(DateTimeConverter.convertToString(entity.updated)))
+      "created" -> JsString(DateTimeConverter.toString(entity.created)),
+      "updated" -> JsString(DateTimeConverter.toString(entity.updated)))
 
   private def userEntityDescriptionMap(entity: Entity): Map[String, JsValue] = Map(
     "id" -> JsString(entity.id.value.toString),

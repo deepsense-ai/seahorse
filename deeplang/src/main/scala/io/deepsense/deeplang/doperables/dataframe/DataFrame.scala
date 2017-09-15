@@ -217,18 +217,16 @@ case class DataFrame(optionalSparkDataFrame: Option[sql.DataFrame]) extends DOpe
     )
   }
 
-  private def cellToString(row: Row, index: Int): String = {
-    val structField: StructField = row.schema.apply(index)
-    if (row(index) != null) {
-      structField.dataType match {
-        case TimestampType => DateTimeConverter.convertToString(
-          DateTimeConverter.fromMillis(row.get(index).asInstanceOf[Timestamp].getTime))
-        case _ => row(index).toString
+  private def cellToString(row: Row, index: Int): String =
+    Option(row(index)).map { cell =>
+      row.schema.apply(index).dataType match {
+        case TimestampType =>
+          DateTimeConverter.toString(
+            DateTimeConverter.fromMillis(cell.asInstanceOf[Timestamp].getTime)
+          )
+        case _ => cell.toString
       }
-    } else {
-      null
-    }
-  }
+    }.orNull
 }
 
 object DataFrame {
