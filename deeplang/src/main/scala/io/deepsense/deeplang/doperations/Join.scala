@@ -20,38 +20,60 @@ import scala.collection.mutable
 import scala.reflect.runtime.{universe => ru}
 
 import org.apache.spark.sql
-import org.apache.spark.sql.{Column, Row}
+import org.apache.spark.sql.Column
 
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
-import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMetadata
 import io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException
-import io.deepsense.deeplang.parameters._
+import io.deepsense.deeplang.params._
+import io.deepsense.deeplang.params.selections.{ColumnSelection, NameColumnSelection, SingleColumnSelection}
 import io.deepsense.deeplang.{DOperation2To1, ExecutionContext}
 
-case class Join() extends DOperation2To1[DataFrame, DataFrame, DataFrame] with JoinParams {
+case class Join()
+    extends DOperation2To1[DataFrame, DataFrame, DataFrame]
+    with Params {
+
+  import Join._
 
   override val name = "Join"
-
   override val id: Id = "06374446-3138-4cf7-9682-f884990f3a60"
+  override val description: String =
+    "Joins two DataFrames to a DataFrame"
 
-  override val parameters: ParametersSchema = ParametersSchema(
-    "join columns" -> joinColumnsParam,
-    "left prefix" -> leftTablePrefixParam,
-    "right prefix" -> rightTablePrefixParam
-  )
+  val leftPrefix = PrefixBasedColumnCreatorParam(
+    name = "left prefix",
+    description = "Prefix for columns of left DataFrame")
+  setDefault(leftPrefix, "")
 
-  import io.deepsense.deeplang.doperations.Join._
+  def getLeftPrefix: String = $(leftPrefix)
+  def setLeftPrefix(value: String): this.type = set(leftPrefix, value)
+
+  val rightPrefix = PrefixBasedColumnCreatorParam(
+    name = "right prefix",
+    description = "Prefix for columns of right DataFrame")
+  setDefault(rightPrefix, "")
+
+  def getRightPrefix: String = $(rightPrefix)
+  def setRightPrefix(value: String): this.type = set(rightPrefix, value)
+
+  val joinColumns = ParamsSequence[ColumnPair](
+    name = "join columns",
+    description = "Pairs of columns to join upon")
+
+  def getJoinColumns: Seq[ColumnPair] = $(joinColumns)
+  def setJoinColumns(value: Seq[ColumnPair]): this.type = set(joinColumns, value)
+
+  val params = declareParams(leftPrefix, rightPrefix, joinColumns)
 
   override protected def _execute(context: ExecutionContext)
                                  (ldf: DataFrame, rdf: DataFrame): DataFrame = {
     logger.debug("Execution of " + this.getClass.getSimpleName + " starts")
 
-    val leftJoinColumnNames = joinColumnsParam.value.map(
-      schema => ldf.getColumnName(schema.getSingleColumnSelection(leftColumnParamKey)))
-    val rightJoinColumnNames = joinColumnsParam.value.map(
-      schema => rdf.getColumnName(schema.getSingleColumnSelection(rightColumnParamKey)))
+    val leftJoinColumnNames = getJoinColumns.map(columnPair =>
+      ldf.getColumnName(columnPair.getLeftColumn))
+    val rightJoinColumnNames = getJoinColumns.map(columnPair =>
+      rdf.getColumnName(columnPair.getRightColumn))
 
     var lsdf = ldf.sparkDataFrame
     var rsdf = rdf.sparkDataFrame
@@ -65,18 +87,18 @@ case class Join() extends DOperation2To1[DataFrame, DataFrame, DataFrame] with J
     }
 
     logger.debug("Validate types of columns used to join two DataFrames")
-    leftJoinColumnNames.zip(rightJoinColumnNames).foreach { case (leftCol, rightCol) => {
+    leftJoinColumnNames.zip(rightJoinColumnNames).foreach { case (leftCol, rightCol) =>
       DataFrame.assertExpectedColumnType(
         lsdf.schema.apply(leftCol),
         SparkConversions.sparkColumnTypeToColumnType(rsdf.schema.apply(rightCol).dataType))
-    }}
+    }
 
     logger.debug("Append prefixes to columns from left table")
-    val (newLsdf, renamedLeftColumns) = appendPrefixes(lsdf, leftTablePrefixParam.value)
+    val (newLsdf, renamedLeftColumns) = appendPrefixes(lsdf, getLeftPrefix)
     lsdf = newLsdf
 
     logger.debug("Append prefixes to columns from right table")
-    val (newRsdf, renamedRightColumns) = appendPrefixes(rsdf, rightTablePrefixParam.value)
+    val (newRsdf, renamedRightColumns) = appendPrefixes(rsdf, getRightPrefix)
     rsdf = newRsdf
 
     logger.debug("Rename join columns in right DataFrame if they are present in left DataFrame")
@@ -91,29 +113,9 @@ case class Join() extends DOperation2To1[DataFrame, DataFrame, DataFrame] with J
     val prefixedLeftJoinColumnNames = leftJoinColumnNames.map(renamedLeftColumns(_))
     val prefixedRightJoinColumnNames = rightJoinColumnNames.map(renamedRightColumns(_))
 
-    logger.debug("Change CategoricalMapping in right DataFrame to allow join with left DataFrame")
-    val lcm = CategoricalMetadata(lsdf)
-    val rcm = CategoricalMetadata(rsdf)
-    prefixedLeftJoinColumnNames.zipWithIndex.foreach { case (col, index) =>
-      if (lcm.isCategorical(col)) {
-        val rightJoinColumnName = prefixedRightJoinColumnNames(index)
-        val lMapping = lcm.mapping(col)
-        val rMapping = rcm.mapping(rightJoinColumnName)
-        val merged = lMapping.mergeWith(rMapping)
-        val otherToFinal = merged.otherToFinal
-        val columnIndex = rsdf.columns.indexOf(rightJoinColumnName)
-        val rddWithFinalMapping = rsdf.map { r =>
-          val id = r.getInt(columnIndex)
-          val mappedId = otherToFinal.mapId(id)
-          Row.fromSeq(r.toSeq.updated(columnIndex, mappedId))
-        }
-        rsdf = context.sqlContext.createDataFrame(rddWithFinalMapping, rsdf.schema)
-      }
-    }
-
     logger.debug("Prepare joining condition")
 
-    val zippedJoinColumns = (leftJoinColumnNames.zip(rightJoinColumnNames).toList: @unchecked)
+    val zippedJoinColumns = leftJoinColumnNames.zip(rightJoinColumnNames).toList
 
     def prepareCondition(leftColumn: String, rightColumn: String): Column = {
       columnEqualityCondition(
@@ -144,9 +146,7 @@ case class Join() extends DOperation2To1[DataFrame, DataFrame, DataFrame] with J
     assert(columns.nonEmpty)
     val duplicateColumnsRemoved = joinedDataFrame.select(columns.head, columns.tail: _*)
 
-    // NOTE: We perform only LEFT OUTER JOIN, thus we do not need to change CategoricalMetadata
-    // in resultDataFrame (CategoricalMetadata for left DataFrame, already there is sufficient)
-    val resultDataFrame = context.dataFrameBuilder.buildDataFrame(duplicateColumnsRemoved)
+    val resultDataFrame = DataFrame.fromSparkDataFrame(duplicateColumnsRemoved)
     logger.debug("Execution of " + this.getClass.getSimpleName + " ends")
     resultDataFrame
   }
@@ -185,41 +185,26 @@ case class Join() extends DOperation2To1[DataFrame, DataFrame, DataFrame] with J
   override lazy val tTagTI_1: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }
 
-trait JoinParams {
-
-  import io.deepsense.deeplang.doperations.Join._
-
-  val joinColumnsParam = ParametersSequence(
-    "Pairs of columns to join upon",
-    predefinedSchema = ParametersSchema(
-      leftColumnParamKey -> SingleColumnSelectorParameter(
-        "Column from the left DataFrame", portIndex = 0),
-      rightColumnParamKey -> SingleColumnSelectorParameter(
-        "Column from the right DataFrame", portIndex = 1)
-    )
-  )
-
-  val leftTablePrefixParam = PrefixBasedColumnCreatorParameter(
-    "Prefix for columns of left DataFrame",
-    default = Some(""))
-
-  val rightTablePrefixParam = PrefixBasedColumnCreatorParameter(
-    "Prefix for columns of right DataFrame",
-    default = Some(""))
-}
-
 object Join {
 
-  def apply(joinColumns: Vector[ParametersSchema],
-            prefixLeft: Option[String],
-            prefixRight: Option[String]): Join = {
-    val join = new Join
-    join.joinColumnsParam.value = joinColumns
-    join.leftTablePrefixParam.value = prefixLeft
-    join.rightTablePrefixParam.value = prefixRight
-    join
-  }
+  case class ColumnPair() extends Params {
 
-  val leftColumnParamKey = "left column"
-  val rightColumnParamKey = "right column"
+    val leftColumn = SingleColumnSelectorParam(
+      name = "left column",
+      description = "Column from the left DataFrame",
+      portIndex = 0)
+
+    def getLeftColumn: SingleColumnSelection = $(leftColumn)
+    def setLeftColumn(value: SingleColumnSelection): this.type = set(leftColumn, value)
+
+    val rightColumn = SingleColumnSelectorParam(
+      name = "right column",
+      description = "Column from the left DataFrame",
+      portIndex = 1)
+
+    def getRightColumn: SingleColumnSelection = $(rightColumn)
+    def setRightColumn(value: SingleColumnSelection): this.type = set(rightColumn, value)
+
+    val params = declareParams(leftColumn, rightColumn)
+  }
 }

@@ -28,7 +28,8 @@ import io.deepsense.models.workflows.InferredState
 trait InferredStateJsonProtocol
   extends WorkflowJsonProtocol
   with GraphKnowledgeJsonProtocol
-  with ExecutionReportJsonProtocol {
+  with ExecutionReportJsonProtocol
+  with InferenceWarningsJsonProtocol {
 
   implicit val nodeInferenceResultFormat = jsonFormat3(NodeInferenceResult.apply)
 

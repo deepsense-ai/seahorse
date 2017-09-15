@@ -27,10 +27,10 @@ case class Notebook()
   extends DOperation1To0[DataFrame] {
 
   override val id: Id = "e76ca616-0322-47a5-b390-70c9668265dd"
-
   override val name: String = "Notebook"
+  override val description: String = "Creates a notebook with access to the DataFrame"
 
-  override val parameters = ParametersSchema()
+  override val params = declareParams()
 
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): Unit = {
     context.dataFrameStorage.store(dataFrame)

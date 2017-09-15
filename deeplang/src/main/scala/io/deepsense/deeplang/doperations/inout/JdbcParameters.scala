@@ -16,20 +16,32 @@
 
 package io.deepsense.deeplang.doperations.inout
 
-import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, StringParameter}
+import io.deepsense.deeplang.params.{Params, StringParam}
 
 trait JdbcParameters {
-  val jdbcUrlParameter = StringParameter(
-    "JDBC URL",
-    default = Some(
-      "jdbc:mysql://HOST:PORT/DATABASE?user=${DB_USER}&password=${DB_PASSWORD}"),
-    validator = new AcceptAllRegexValidator())
-  val jdbcDriverClassNameParameter = StringParameter(
-    "JDBC driver ClassName",
-    default = Some("com.mysql.jdbc.Driver"),
-    validator = new AcceptAllRegexValidator())
-  val jdbcTableNameParameter = StringParameter(
-    "Table name",
-    default = None,
-    validator = new AcceptAllRegexValidator())
+  this: Params =>
+
+  val jdbcUrl = StringParam(
+    name = "url",
+    description = "JDBC URL")
+  setDefault(jdbcUrl,
+    "jdbc:mysql://HOST:PORT/DATABASE?user=${DB_USER}&password=${DB_PASSWORD}")
+
+  def getJdbcUrl: String = $(jdbcUrl)
+  def setJdbcUrl(value: String): this.type = set(jdbcUrl, value)
+
+  val jdbcDriverClassName = StringParam(
+    name = "driver",
+    description = "JDBC driver ClassName")
+  setDefault(jdbcDriverClassName, "com.mysql.jdbc.Driver")
+
+  def getJdbcDriverClassName: String = $(jdbcDriverClassName)
+  def setJdbcDriverClassName(value: String): this.type = set(jdbcDriverClassName, value)
+
+  val jdbcTableName = StringParam(
+    name = "table",
+    description = "Table name")
+
+  def getJdbcTableName: String = $(jdbcTableName)
+  def setJdbcTableName(value: String): this.type = set(jdbcTableName, value)
 }

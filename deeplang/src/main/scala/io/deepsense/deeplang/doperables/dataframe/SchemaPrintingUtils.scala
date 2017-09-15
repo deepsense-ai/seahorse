@@ -24,15 +24,8 @@ object SchemaPrintingUtils {
     case (field, index) => structFieldToString(field, index)
   }.mkString("[", ",", "]")
 
-  def columnsMetadataToSchemaString(columns: Seq[ColumnMetadata]): String =
-    columns.map(_.prettyPrint).mkString("[", ",", "]")
-
   def structFieldToString(structField: StructField, index: Int): String =
     structFieldToString(structField, index.toString)
-
-  def columnMetadataToString(columnMetadata: ColumnMetadata): String = structFieldToString(
-    columnMetadata.toStructField,
-    columnMetadata.index.map(_.toString).getOrElse("_"))
 
   private def structFieldToString(structField: StructField, index: String): String =
     s"($index -> ${structField.name}: ${structField.dataType})"

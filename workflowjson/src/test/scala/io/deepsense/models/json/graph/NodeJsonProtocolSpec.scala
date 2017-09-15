@@ -21,7 +21,6 @@ import spray.json._
 
 import io.deepsense.commons.json.IdJsonProtocol
 import io.deepsense.deeplang.DOperation
-import io.deepsense.deeplang.parameters.ParametersSchema
 import io.deepsense.graph.Node
 
 class NodeJsonProtocolSpec extends GraphJsonTestSupport with IdJsonProtocol {
@@ -32,11 +31,9 @@ class NodeJsonProtocolSpec extends GraphJsonTestSupport with IdJsonProtocol {
     val expectedOperationId = DOperation.Id.randomId
     val expectedOperationName = "expectedName"
     val dOperation = mock[DOperation]
-    val parametersSchema = mock[ParametersSchema]
 
     when(dOperation.id).thenReturn(expectedOperationId)
     when(dOperation.name).thenReturn(expectedOperationName)
-    when(dOperation.parameters).thenReturn(parametersSchema)
 
     val node = mock[Node]
     val expectedNodeId = Node.Id.randomId
@@ -52,10 +49,6 @@ class NodeJsonProtocolSpec extends GraphJsonTestSupport with IdJsonProtocol {
       val operationField = nodeJson.fields("operation").asJsObject
       operationField.fields("id").convertTo[DOperation.Id] shouldBe expectedOperationId
       operationField.fields("name").convertTo[String] shouldBe expectedOperationName
-    }
-
-    "have 'parameters' field created by internal .toJson method" in {
-      verify(parametersSchema).valueToJson
     }
   }
 }

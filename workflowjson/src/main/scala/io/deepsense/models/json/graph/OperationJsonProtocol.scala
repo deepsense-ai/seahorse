@@ -39,7 +39,7 @@ object OperationJsonProtocol extends IdJsonProtocol {
         Operation -> JsObject(
           Id -> operation.id.toJson,
           Name -> operation.name.toJson),
-        Parameters -> operation.parameters.valueToJson)
+        Parameters -> operation.paramValuesToJson)
     }
   }
 
@@ -65,7 +65,7 @@ object OperationJsonProtocol extends IdJsonProtocol {
         val parameters = fields.getOrElse(Parameters,
           deserializationError(s"Operation parameters field '$Parameters' is missing"))
 
-        operation.parameters.fillValuesWithJson(parameters)
+        operation.setParamsFromJson(parameters)
         operation
       case x =>
         throw new DeserializationException(s"Expected JsObject with a node but got $x")

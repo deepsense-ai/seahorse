@@ -25,7 +25,7 @@ import spray.json._
 
 import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.catalogs.doperations.{DOperationCategory, DOperationDescriptor}
-import io.deepsense.deeplang.parameters.ParametersSchema
+import io.deepsense.deeplang.params.Params
 
 object HelperTypes {
   class A
@@ -59,16 +59,16 @@ class DOperationDescriptorJsonProtocolSpec
     val category = mock[DOperationCategory]
     when(category.id) thenReturn DOperationCategory.Id.randomId
 
-    val parameters = mock[ParametersSchema]
+    val parameters = mock[Params]
     val parametersJsRepresentation = JsString("Mock parameters representation")
-    when(parameters.toJson) thenReturn parametersJsRepresentation
+    when(parameters.paramsToJson) thenReturn parametersJsRepresentation
 
     val operationDescriptor = DOperationDescriptor(
       DOperation.Id.randomId,
       "operation name",
       "operation description",
       category,
-      parameters,
+      parameters.paramsToJson,
       Seq(typeOf[A], typeOf[A with T1]),
       Seq(typeOf[B], typeOf[B with T2]))
 

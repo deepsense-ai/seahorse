@@ -20,11 +20,10 @@ import scala.annotation.tailrec
 
 import org.apache.spark.sql.types.StructType
 
-import io.deepsense.commons.types.ColumnType
+import io.deepsense.commons.types.ColumnType.ColumnType
 import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
 import io.deepsense.deeplang.doperations.exceptions.{ColumnDoesNotExistException, ColumnsDoNotExistException}
-import ColumnType.ColumnType
-import io.deepsense.deeplang.parameters._
+import io.deepsense.deeplang.params.selections._
 
 trait DataFrameColumnsGetter {
 
@@ -36,21 +35,7 @@ trait DataFrameColumnsGetter {
    * or non-existing column name is selected.
    */
   def getColumnName(singleColumnSelection: SingleColumnSelection): String =
-    tryGetColumnName(singleColumnSelection).getOrElse {
-      throw ColumnDoesNotExistException(singleColumnSelection, this.metadata.get)
-    }
-
-  private def tryGetColumnName(singleColumnSelection: SingleColumnSelection): Option[String] =
-    singleColumnSelection match {
-      case NameSingleColumnSelection(name) =>
-        if (sparkDataFrame.schema.fieldNames.contains(name)) Some(name) else None
-      case IndexSingleColumnSelection(index) =>
-        if (index >= 0 && index < sparkDataFrame.schema.length) {
-          Some(sparkDataFrame.schema.fieldNames(index))
-        } else {
-          None
-        }
-    }
+    DataFrameColumnsGetter.getColumnName(sparkDataFrame.schema, singleColumnSelection)
 
   /**
    * Names of columns selected by provided selections.
@@ -59,9 +44,8 @@ trait DataFrameColumnsGetter {
    * Throws [[ColumnsDoNotExistException]] if out-of-range indexes
    * or non-existing column names are selected.
    */
-  def getColumnNames(multipleColumnSelection: MultipleColumnSelection): Seq[String] = {
+  def getColumnNames(multipleColumnSelection: MultipleColumnSelection): Seq[String] =
     DataFrameColumnsGetter.getColumnNames(sparkDataFrame.schema, multipleColumnSelection)
-  }
 
   /**
    * Column type by column name.
@@ -132,6 +116,32 @@ object DataFrameColumnsGetter {
   }
 
   /**
+   * Returns name of column based on selection.
+   * Throws [[ColumnDoesNotExistException]] if out-of-range index
+   * or non-existing column name is selected.
+   */
+  def getColumnName(
+      schema: StructType,
+      singleColumnSelection: SingleColumnSelection): String =
+    tryGetColumnName(schema, singleColumnSelection).getOrElse {
+      throw ColumnDoesNotExistException(singleColumnSelection, schema)
+    }
+
+  private def tryGetColumnName(
+      schema: StructType,
+      singleColumnSelection: SingleColumnSelection): Option[String] =
+    singleColumnSelection match {
+      case NameSingleColumnSelection(name) =>
+        if (schema.fieldNames.contains(name)) Some(name) else None
+      case IndexSingleColumnSelection(index) =>
+        if (index >= 0 && index < schema.length) {
+          Some(schema.fieldNames(index))
+        } else {
+          None
+        }
+    }
+
+  /**
    * Names of columns selected by provided selections.
    * Order of returned columns is the same as in schema.
    * If a column will occur in many selections, it won't be duplicated in result.
@@ -170,8 +180,8 @@ object DataFrameColumnsGetter {
   }
 
   def assertColumnNamesValid(schema: StructType, columns: Seq[String]): Unit = {
-    assertColumnSelectionsValid(
-      schema, MultipleColumnSelection(Vector(NameColumnSelection(columns.toSet)), false))
+    assertColumnSelectionsValid(schema,
+      MultipleColumnSelection(Vector(NameColumnSelection(columns.toSet)), excluding = false))
   }
 
   /**

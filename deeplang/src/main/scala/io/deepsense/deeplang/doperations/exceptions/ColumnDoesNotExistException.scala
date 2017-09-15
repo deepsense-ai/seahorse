@@ -16,12 +16,14 @@
 
 package io.deepsense.deeplang.doperations.exceptions
 
-import io.deepsense.deeplang.doperables.dataframe.{SchemaPrintingUtils, DataFrameMetadata}
-import io.deepsense.deeplang.parameters.SingleColumnSelection
+import org.apache.spark.sql.types.StructType
+
+import io.deepsense.deeplang.doperables.dataframe.SchemaPrintingUtils
+import io.deepsense.deeplang.params.selections.SingleColumnSelection
 
 case class ColumnDoesNotExistException(
     selection: SingleColumnSelection,
-    dataFrameMetadata: DataFrameMetadata) extends DOperationExecutionException(
+    schema: StructType) extends DOperationExecutionException(
   s"Column from specified selection: $selection does not exist in " +
-    s"${SchemaPrintingUtils.columnsMetadataToSchemaString(dataFrameMetadata.orderedColumns)}",
+    s"${SchemaPrintingUtils.structTypeToString(schema)}",
   None)

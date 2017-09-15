@@ -21,18 +21,28 @@ import org.apache.spark.sql.types._
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException
-import io.deepsense.deeplang.parameters._
+import io.deepsense.deeplang.params.selections.{IndexColumnSelection, MultipleColumnSelection, NameColumnSelection, TypeColumnSelection}
 
 class DataFrameIntegSpec extends DeeplangIntegTestSupport {
 
   "DataFrame" should {
     def schema: StructType = StructType(List(
-      StructField("c", DoubleType),
-      StructField("b", StringType),
-      StructField("a", DoubleType),
-      StructField("x", TimestampType),
-      StructField("z", BooleanType),
-      StructField("m", IntegerType)
+      StructField("a", ArrayType(BooleanType)),
+      StructField("b", BinaryType),
+      StructField("c", BooleanType),
+      StructField("d", ByteType),
+      StructField("e", DateType),
+      StructField("f", DecimalType(5, 5)),
+      StructField("g", DoubleType),
+      StructField("h", FloatType),
+      StructField("i", IntegerType),
+      StructField("j", LongType),
+      StructField("k", MapType(StringType, StringType)),
+      StructField("l", NullType),
+      StructField("m", ShortType),
+      StructField("n", StringType),
+      StructField("o", StructType(Seq(StructField("n", StringType)))),
+      StructField("p", TimestampType)
     ))
 
     def dataFrame: DataFrame = createDataFrame(Seq.empty, schema)
@@ -45,14 +55,16 @@ class DataFrameIntegSpec extends DeeplangIntegTestSupport {
           IndexColumnSelection(Set(1, 3)),
           TypeColumnSelection(Set(ColumnType.string, ColumnType.timestamp))
         ), false)
-        dataFrame.getColumnNames(selection) shouldBe Seq("b", "a", "x")
+        dataFrame.getColumnNames(selection) shouldBe Seq("a", "b", "d", "n", "p")
       }
 
       "columns are selected in different order" in {
         val selection = MultipleColumnSelection(Vector(
-          NameColumnSelection(Set("a", "b", "c"))
+          NameColumnSelection(Set("c")),
+          NameColumnSelection(Set("a")),
+          NameColumnSelection(Set("b"))
         ), false)
-        dataFrame.getColumnNames(selection) shouldBe Seq("c", "b", "a")
+        dataFrame.getColumnNames(selection) shouldBe Seq("a", "b", "c")
       }
 
       def selectSingleType(columnType: ColumnType.ColumnType): Seq[String] = {
@@ -61,32 +73,26 @@ class DataFrameIntegSpec extends DeeplangIntegTestSupport {
       }
 
       "boolean type is selected" in {
-        selectSingleType(ColumnType.boolean) shouldBe Seq("z")
+        selectSingleType(ColumnType.boolean) shouldBe Seq("c")
       }
 
       "string type is selected" in {
-        selectSingleType(ColumnType.string) shouldBe Seq("b")
+        selectSingleType(ColumnType.string) shouldBe Seq("n")
       }
 
       "numeric type is selected" in {
-        selectSingleType(ColumnType.numeric) shouldBe Seq("c", "a")
+        selectSingleType(ColumnType.numeric) shouldBe Seq("d", "f", "g", "h", "i", "j", "m")
       }
 
       "timestamp type is selected" in {
-        selectSingleType(ColumnType.timestamp) shouldBe Seq("x")
-      }
-
-      "categorical type is selected" in {
-        selectSingleType(ColumnType.categorical) shouldBe Seq("m")
+        selectSingleType(ColumnType.timestamp) shouldBe Seq("p")
       }
 
       "excluding selector is used" in {
         val selection = MultipleColumnSelection(Vector(
-          NameColumnSelection(Set("a")),
-          IndexColumnSelection(Set(1, 3)),
-          TypeColumnSelection(Set(ColumnType.string, ColumnType.timestamp))
+          NameColumnSelection(Set("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m"))
         ), true)
-        dataFrame.getColumnNames(selection) shouldBe Seq("c", "z", "m")
+        dataFrame.getColumnNames(selection) shouldBe Seq("n", "o", "p")
       }
     }
 
@@ -102,7 +108,7 @@ class DataFrameIntegSpec extends DeeplangIntegTestSupport {
       "index out of bounds was selected" in {
         intercept[ColumnsDoNotExistException] {
           val selection = MultipleColumnSelection(Vector(
-            IndexColumnSelection(Set(10))), false)
+            IndexColumnSelection(Set(20))), false)
           dataFrame.getColumnNames(selection)
         }
         ()

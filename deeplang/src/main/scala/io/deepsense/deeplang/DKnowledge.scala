@@ -39,7 +39,16 @@ class DKnowledge[T <: DOperable](val types: Set[T]) {
     }
   }
 
-  lazy val size = types.size
+  /**
+   * Returns first type from DKnowledge.
+   * Throws exception when there are None.
+   */
+  def single: T = {
+    require(types.nonEmpty, "Expected at least one inferred type, but got 0")
+    types.head
+  }
+
+  def size: Int = types.size
 
   override def hashCode(): Int = types.hashCode()
 

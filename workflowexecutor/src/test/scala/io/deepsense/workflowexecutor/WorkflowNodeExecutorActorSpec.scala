@@ -89,7 +89,6 @@ class WorkflowNodeExecutorActorSpec
 
   private def inferableOperable: DOperable = {
     val operable = mock[DOperable]
-    when(operable.toInferrable).thenReturn(operable)
     operable
   }
 

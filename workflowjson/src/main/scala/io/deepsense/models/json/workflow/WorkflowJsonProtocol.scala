@@ -36,8 +36,6 @@ trait WorkflowJsonProtocol
   with IdJsonProtocol
   with FailureDescriptionJsonProtocol
   with DateTimeJsonProtocol
-  with AbstractMetadataJsonProtocol
-  with MetadataInferenceResultJsonProtocol
   with InferenceErrorJsonProtocol
   with InferenceWarningJsonProtocol
   with WorkflowInfoJsonProtocol {

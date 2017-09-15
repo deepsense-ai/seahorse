@@ -50,8 +50,7 @@ abstract class DOperationsCatalog {
    * @tparam T DOperation class to register
    */
   def registerDOperation[T <: DOperation : ru.TypeTag](
-      category: DOperationCategory,
-      description: String): Unit
+      category: DOperationCategory): Unit
 }
 
 object DOperationsCatalog {
@@ -74,18 +73,18 @@ object DOperationsCatalog {
     }
 
     def registerDOperation[T <: DOperation : ru.TypeTag](
-        category: DOperationCategory,
-        description: String): Unit = {
+        category: DOperationCategory): Unit = {
       val operationType = ru.typeOf[T]
       val constructor = constructorForType(operationType)
       val operationInstance = DOperationsCatalog.createDOperation(constructor)
       val id = operationInstance.id
       val name = operationInstance.name
-      val parameters = operationInstance.parameters
+      val description = operationInstance.description
       val inPortTypes = operationInstance.inPortTypes.map(_.tpe)
       val outPortTypes = operationInstance.outPortTypes.map(_.tpe)
+      val parameterDescription = operationInstance.paramsToJson
       val operationDescriptor = DOperationDescriptor(
-          id, name, description, category, parameters, inPortTypes, outPortTypes)
+          id, name, description, category, parameterDescription, inPortTypes, outPortTypes)
 
       operations += id -> operationDescriptor
       categoryTree = categoryTree.addOperation(operationDescriptor, category)

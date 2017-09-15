@@ -25,8 +25,7 @@ import org.scalatest.{FunSuite, Matchers}
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperations.exceptions._
 import io.deepsense.deeplang.doperables.DOperableMock
-import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
-import io.deepsense.deeplang.parameters.ParametersSchema
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 
 object DOperationCatalogTestResources {
   object CategoryTree {
@@ -50,8 +49,6 @@ object DOperationCatalogTestResources {
     object Utils extends DOperationCategory(DOperationCategory.Id.randomId, "Utilities", None)
   }
 
-  val parametersSchema = ParametersSchema()
-
   abstract class DOperationMock extends DOperation {
     def inPortTypes: Vector[TypeTag[_]] = Vector()
 
@@ -65,7 +62,7 @@ object DOperationCatalogTestResources {
 
     override val inArity: Int = 2
     override val outArity: Int = 3
-    override val parameters = parametersSchema
+    val params = declareParams()
   }
 
   case class X() extends DOperableMock
@@ -84,6 +81,11 @@ object DOperationCatalogTestResources {
   val nameC = "nameC"
   val nameD = "nameD"
 
+  val descriptionA = "descriptionA"
+  val descriptionB = "descriptionB"
+  val descriptionC = "descriptionC"
+  val descriptionD = "descriptionD"
+
   val versionA = "versionA"
   val versionB = "versionB"
   val versionC = "versionC"
@@ -92,21 +94,25 @@ object DOperationCatalogTestResources {
   case class DOperationA() extends DOperationMock {
     override val id = idA
     override val name = nameA
+    override val description = descriptionA
   }
 
   case class DOperationB() extends DOperationMock {
     override val id = idB
     override val name = nameB
+    override val description = descriptionB
   }
 
   case class DOperationC() extends DOperationMock {
     override val id = idC
     override val name = nameC
+    override val description = descriptionC
   }
 
   case class DOperationD() extends DOperationMock {
     override val id = idD
     override val name = nameD
+    override val description = descriptionD
     override val inPortTypes: Vector[TypeTag[_]] = Vector(XTypeTag, YTypeTag)
     override val outPortTypes: Vector[TypeTag[_]] = Vector(XTypeTag)
   }
@@ -114,6 +120,7 @@ object DOperationCatalogTestResources {
   case class DOperationWithoutParameterlessConstructor(x: Int) extends DOperationMock {
     override val id = DOperation.Id.randomId
     override val name = "some name"
+    override val description = "description"
     override val inArity: Int = 2
     override val outArity: Int = 3
   }
@@ -122,11 +129,6 @@ object DOperationCatalogTestResources {
 object ViewingTestResources extends MockitoSugar {
   import DOperationCatalogTestResources._
 
-  val descriptionA = "descriptionA"
-  val descriptionB = "descriptionB"
-  val descriptionC = "descriptionC"
-  val descriptionD = "descriptionD"
-
   val categoryA = CategoryTree.ML.Regression
   val categoryB = CategoryTree.ML.Regression
   val categoryC = CategoryTree.ML.Classification
@@ -134,19 +136,19 @@ object ViewingTestResources extends MockitoSugar {
 
   val catalog = DOperationsCatalog()
 
-  catalog.registerDOperation[DOperationA](categoryA, descriptionA)
-  catalog.registerDOperation[DOperationB](categoryB, descriptionB)
-  catalog.registerDOperation[DOperationC](categoryC, descriptionC)
-  catalog.registerDOperation[DOperationD](categoryD, descriptionD)
+  catalog.registerDOperation[DOperationA](categoryA)
+  catalog.registerDOperation[DOperationB](categoryB)
+  catalog.registerDOperation[DOperationC](categoryC)
+  catalog.registerDOperation[DOperationD](categoryD)
 
   val expectedA = DOperationDescriptor(
-    idA, nameA, descriptionA, categoryA, parametersSchema, Nil, Nil)
+    idA, nameA, descriptionA, categoryA, DOperationA().paramsToJson, Nil, Nil)
   val expectedB = DOperationDescriptor(
-    idB, nameB, descriptionB, categoryB, parametersSchema, Nil, Nil)
+    idB, nameB, descriptionB, categoryB, DOperationB().paramsToJson, Nil, Nil)
   val expectedC = DOperationDescriptor(
-    idC, nameC, descriptionC, categoryC, parametersSchema, Nil, Nil)
+    idC, nameC, descriptionC, categoryC, DOperationC().paramsToJson, Nil, Nil)
   val expectedD = DOperationDescriptor(
-    idD, nameD, descriptionD, categoryD, parametersSchema,
+    idD, nameD, descriptionD, categoryD, DOperationD().paramsToJson,
     List(XTypeTag.tpe, YTypeTag.tpe), List(XTypeTag.tpe))
 }
 
@@ -155,7 +157,7 @@ class DOperationsCatalogSuite extends FunSuite with Matchers with MockitoSugar {
   test("It is possible to create instance of registered DOperation") {
     import DOperationCatalogTestResources._
     val catalog = DOperationsCatalog()
-    catalog.registerDOperation[DOperationA](CategoryTree.ML.Regression, "")
+    catalog.registerDOperation[DOperationA](CategoryTree.ML.Regression)
     val instance = catalog.createDOperation(idA)
     assert(instance == DOperationA())
   }
@@ -174,7 +176,7 @@ class DOperationsCatalogSuite extends FunSuite with Matchers with MockitoSugar {
       import DOperationCatalogTestResources._
       val catalog = DOperationsCatalog()
       catalog.registerDOperation[DOperationWithoutParameterlessConstructor](
-        CategoryTree.ML.Regression, "description")
+        CategoryTree.ML.Regression)
     }
   }
 

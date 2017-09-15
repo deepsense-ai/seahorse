@@ -29,11 +29,11 @@ class DistributionJsonSpec
   with Matchers
   with ReportJsonProtocol {
 
-  "CategoricalDistribution" should {
+  "DiscreteDistribution" should {
     val jsonCategoricalDistribution: JsObject = JsObject(
       "name" -> JsString(DistributionTestFactory.distributionName),
       "blockType" -> JsString("distribution"),
-      "subtype" -> JsString("categorical"),
+      "subtype" -> JsString("discrete"),
       "description" -> JsString(DistributionTestFactory.distributionDescription),
       "missingValues" -> JsNumber(0),
       "buckets" ->

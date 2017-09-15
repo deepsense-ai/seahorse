@@ -31,29 +31,29 @@ sealed abstract class UnivariateDistribution(
     counts: Seq[Long])
   extends Distribution(name, subtype, description, missingValues)
 
-case class CategoricalDistribution(
+case class DiscreteDistribution(
     override val name: String,
     override val description: String,
     override  val missingValues: Long,
     buckets: Seq[String],
     counts: Seq[Long],
-    override val subtype: String = CategoricalDistribution.subtype,
+    override val subtype: String = DiscreteDistribution.subtype,
     blockType: String = DistributionJsonProtocol.typeName)
   extends UnivariateDistribution(
     name,
-    CategoricalDistribution.subtype,
+    DiscreteDistribution.subtype,
     description,
     missingValues,
     buckets,
     counts) {
-  require(subtype == CategoricalDistribution.subtype)
+  require(subtype == DiscreteDistribution.subtype)
   require(blockType == DistributionJsonProtocol.typeName)
   require(buckets.size == counts.size, "buckets size does not match count size. " +
     s"Buckets size is: ${buckets.size}, counts size is: ${counts.size}")
 }
 
-object CategoricalDistribution {
-  val subtype = "categorical"
+object DiscreteDistribution {
+  val subtype = "discrete"
 }
 
 case class ContinuousDistribution(

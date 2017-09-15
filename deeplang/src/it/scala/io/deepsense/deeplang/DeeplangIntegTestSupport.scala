@@ -116,15 +116,7 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
   protected def createDataFrame(rows: Seq[Row], schema: StructType): DataFrame = {
     val rdd: RDD[Row] = sparkContext.parallelize(rows)
     val sparkDataFrame = sqlContext.createDataFrame(rdd, schema)
-    DataFrameBuilder(sqlContext).buildDataFrame(sparkDataFrame)
-  }
-
-  protected def createDataFrame(
-      rows: Seq[Row],
-      schema: StructType,
-      categoricalColumns: Seq[String]): DataFrame = {
-    val rdd: RDD[Row] = sparkContext.parallelize(rows)
-    DataFrameBuilder(sqlContext).buildDataFrame(schema, rdd, categoricalColumns)
+    DataFrame.fromSparkDataFrame(sparkDataFrame)
   }
 
   def executeOperation(op: DOperation, dfs: DataFrame*): DataFrame =

@@ -101,7 +101,7 @@ class WorkflowNodeExecutorActor(
 
   def executeOperation(): Vector[DOperable] = {
     logger.debug(s"$nodeDescription inputVector.size = ${input.size}")
-    val inputKnowledge = input.map { dOperable => DKnowledge(dOperable.toInferrable) }
+    val inputKnowledge = input.map { dOperable => DKnowledge(dOperable) }
     // if inference throws, we do not perform execution
     node.operation.inferKnowledge(executionContext.inferContext)(inputKnowledge)
     val resultVector = node.operation.execute(executionContext)(input)

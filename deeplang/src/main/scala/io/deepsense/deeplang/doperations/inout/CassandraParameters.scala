@@ -16,15 +16,22 @@
 
 package io.deepsense.deeplang.doperations.inout
 
-import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, StringParameter}
+import io.deepsense.deeplang.params.{Params, StringParam}
 
 trait CassandraParameters {
-  val cassandraKeyspaceParameter = StringParameter(
-    "Keyspace",
-    default = Some("${cassandra.keyspace}"),
-    validator = new AcceptAllRegexValidator())
-  val cassandraTableParameter = StringParameter(
-    "Table",
-    default = Some("${cassandra.table}"),
-    validator = new AcceptAllRegexValidator())
+  this: Params =>
+
+  val cassandraKeyspace = StringParam(
+    name = "keyspace",
+    description = "Keyspace")
+
+  def getCassandraKeyspace: String = $(cassandraKeyspace)
+  def setCassandraKeyspace(value: String): this.type = set(cassandraKeyspace, value)
+
+  val cassandraTable = StringParam(
+    name = "table",
+    description = "Table")
+
+  def getCassandraTable: String = $(cassandraTable)
+  def setCassandraTable(value: String): this.type = set(cassandraTable, value)
 }

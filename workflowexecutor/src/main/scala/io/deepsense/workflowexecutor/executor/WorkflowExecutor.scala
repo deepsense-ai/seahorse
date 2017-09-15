@@ -124,8 +124,7 @@ object WorkflowExecutor extends Logging {
     val workflow = loadWorkflow(params)
 
     val executionReport = workflow.map(w => {
-      val workflowWithExtraVars = substituteExtraVars(w, params.extraVars)
-      executeWorkflow(workflowWithExtraVars, params.reportLevel).get
+      executeWorkflow(w, params.reportLevel).get
     })
     val workflowWithResultsFuture = workflow.flatMap(w =>
       executionReport
@@ -214,18 +213,6 @@ object WorkflowExecutor extends Logging {
 
   private def handleDeserializationException(exception: DeserializationException): Unit = {
     logger.error(s"WorkflowExecutor is unable to parse the input file: ${exception.getMessage}")
-  }
-
-  private def substituteExtraVars(
-      workflow: WorkflowWithVariables,
-      extraVars: Map[String, String]): WorkflowWithVariables = {
-
-    val workflowCopy = workflow.toJson
-      .convertTo[WorkflowWithVariables](versionedWorkflowWithVariablesReader)
-    workflowCopy.graph.nodes.foreach(node =>
-      node.operation.parameters.substitutePlaceholders(extraVars)
-    )
-    workflowCopy
   }
 
   private def executeWorkflow(

@@ -20,20 +20,20 @@ import scala.reflect.runtime.{universe => ru}
 
 import io.deepsense.commons.models
 import io.deepsense.commons.utils.Logging
-import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
-import io.deepsense.deeplang.parameters.ParametersSchema
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
+import io.deepsense.deeplang.params.Params
 
 /**
  * DOperation that receives and returns instances of DOperable.
  * Can infer its output type based on type knowledge.
  */
 @SerialVersionUID(1L)
-abstract class DOperation extends Serializable with Logging {
+abstract class DOperation extends Serializable with Logging with Params {
   val inArity: Int
   val outArity: Int
   val id: DOperation.Id
   val name: String
-  val parameters: ParametersSchema
+  val description: String
 
   def inPortTypes: Vector[ru.TypeTag[_]]
 

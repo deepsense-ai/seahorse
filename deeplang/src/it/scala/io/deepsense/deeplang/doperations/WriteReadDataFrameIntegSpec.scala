@@ -22,12 +22,9 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.scalatest.BeforeAndAfter
 
-import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
-import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoriesMapping, MappingMetadataConverter}
-import io.deepsense.deeplang.doperations.inout.CsvParameters.ColumnSeparator
-import io.deepsense.deeplang.parameters._
+import io.deepsense.deeplang.doperations.inout._
+import io.deepsense.deeplang.params.selections.{MultipleColumnSelection, NameColumnSelection}
 import io.deepsense.deeplang.{CassandraTestSupport, DeeplangIntegTestSupport}
 
 class WriteReadDataFrameIntegSpec
@@ -44,24 +41,18 @@ class WriteReadDataFrameIntegSpec
 
   val schema: StructType =
     StructType(Seq(
-      StructField("boolean", SparkConversions.columnTypeToSparkColumnType(ColumnType.boolean)),
-      StructField(
-        "categorical",
-        SparkConversions.columnTypeToSparkColumnType(ColumnType.categorical),
-        metadata =
-          MappingMetadataConverter.mappingToMetadata(CategoriesMapping(Seq("A", "B", "C")))),
-      StructField("numeric", SparkConversions.columnTypeToSparkColumnType(ColumnType.numeric)),
-      StructField("string", SparkConversions.columnTypeToSparkColumnType(ColumnType.string)),
-      StructField("timestamp", SparkConversions.columnTypeToSparkColumnType(ColumnType.timestamp))
+      StructField("boolean", BooleanType),
+      StructField("double", DoubleType),
+      StructField("string", StringType),
+      StructField("timestamp", TimestampType)
     ))
 
   val rows = Seq(
-    Row(true, 0, 0.45, "3.14", timestamp),
-    Row(false, 1, null, "\"testing...\"", null),
-    Row(false, 2, 3.14159, "Hello, world!", timestamp),
-    Row(null, null, null, "", null) // in case of CSV, an empty string is the same as null -
-                                    // no way around it
-  )
+    Row(true, 0.45, "3.14", timestamp),
+    Row(false, null, "\"testing...\"", null),
+    Row(false, 3.14159, "Hello, world!", timestamp),
+    // in case of CSV, an empty string is the same as null - no way around it
+    Row(null, null, "", null))
 
   val dataFrame = createDataFrame(rows, schema)
 
@@ -71,36 +62,50 @@ class WriteReadDataFrameIntegSpec
 
   "WriteDataFrame and ReadDataFrame" should {
     "write and read CSV file" in {
-      val wdf = WriteDataFrame(
-        (ColumnSeparator.TAB, None),
-        writeHeader = true,
-        absoluteWriteReadDataFrameTestPath + "/csv")
+      val wdf =
+        new WriteDataFrame()
+          .setStorageType(
+            OutputStorageTypeChoice.File()
+              .setOutputFile(absoluteWriteReadDataFrameTestPath + "/csv")
+              .setFileFormat(
+                OutputFileFormatChoice.Csv()
+                  .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Tab())
+                  .setCsvNamesIncluded(true)))
       wdf.execute(executionContext)(Vector(dataFrame))
 
-      val rdf = ReadDataFrame(
-        absoluteWriteReadDataFrameTestPath + "/csv",
-        (ColumnSeparator.TAB, None),
-        csvNamesIncluded = true,
-        csvShouldConvertToBoolean = true,
-        categoricalColumns = Some(MultipleColumnSelection(
-          Vector(NameColumnSelection(Set("categorical")))
-        ))
+      val categoricalColumns = MultipleColumnSelection(
+        Vector(NameColumnSelection(Set("categorical")))
       )
+
+      val rdf =
+        new ReadDataFrame()
+          .setStorageType(
+            InputStorageTypeChoice.File()
+              .setSourceFile(absoluteWriteReadDataFrameTestPath + "/csv")
+              .setFileFormat(InputFileFormatChoice.Csv()
+                .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Tab())
+                .setCsvNamesIncluded(true)
+                .setShouldConvertToBoolean(true)))
       val loadedDataFrame = rdf.execute(executionContext)(Vector()).head.asInstanceOf[DataFrame]
 
       assertDataFramesEqual(loadedDataFrame, dataFrame, checkRowOrder = false)
     }
 
     "write and read PARQUET file" in {
-      val wdf = WriteDataFrame(
-        StorageType.FILE,
-        FileFormat.PARQUET,
-        absoluteWriteReadDataFrameTestPath + "/parquet")
+      val wdf =
+        new WriteDataFrame()
+          .setStorageType(
+            OutputStorageTypeChoice.File()
+              .setOutputFile(absoluteWriteReadDataFrameTestPath + "/parquet")
+              .setFileFormat(OutputFileFormatChoice.Parquet()))
       wdf.execute(executionContext)(Vector(dataFrame))
 
-      val rdf = ReadDataFrame(
-        FileFormat.PARQUET,
-        absoluteWriteReadDataFrameTestPath + "/parquet")
+      val rdf =
+        new ReadDataFrame()
+          .setStorageType(
+            InputStorageTypeChoice.File()
+              .setSourceFile(absoluteWriteReadDataFrameTestPath + "/parquet")
+              .setFileFormat(InputFileFormatChoice.Parquet()))
       val loadedDataFrame = rdf.execute(executionContext)(Vector()).head.asInstanceOf[DataFrame]
 
       assertDataFramesEqual(loadedDataFrame, dataFrame, checkRowOrder = false)
@@ -109,7 +114,7 @@ class WriteReadDataFrameIntegSpec
     "write and read JSON file" in {
       val convertedSchema = StructType(schema.map {
         case field@StructField("timestamp", _, _, _) =>
-          field.copy(dataType = SparkConversions.columnTypeToSparkColumnType(ColumnType.string))
+          field.copy(dataType = StringType)
         case field => field
       })
 
@@ -128,19 +133,23 @@ class WriteReadDataFrameIntegSpec
       }
       val convertedDataFrame = createDataFrame(convertedRows, convertedSchema)
 
-      val wdf = WriteDataFrame(
-        StorageType.FILE,
-        FileFormat.JSON,
-        absoluteWriteReadDataFrameTestPath + "/json")
+      val wdf =
+        new WriteDataFrame()
+          .setStorageType(OutputStorageTypeChoice.File()
+            .setOutputFile(absoluteWriteReadDataFrameTestPath + "/json")
+            .setFileFormat(OutputFileFormatChoice.Json()))
+
       wdf.execute(executionContext)(Vector(dataFrame))
 
-      val rdf = ReadDataFrame(
-        FileFormat.JSON,
-        absoluteWriteReadDataFrameTestPath + "/json",
-        categoricalColumns = Some(MultipleColumnSelection(
-          Vector(NameColumnSelection(Set("categorical")))
-        ))
+      val categoricals = MultipleColumnSelection(
+        Vector(NameColumnSelection(Set("categorical")))
       )
+
+      val rdf =
+        new ReadDataFrame()
+          .setStorageType(InputStorageTypeChoice.File()
+            .setSourceFile(absoluteWriteReadDataFrameTestPath + "/json")
+            .setFileFormat(InputFileFormatChoice.Json()))
       val loadedDataFrame = rdf.execute(executionContext)(Vector()).head.asInstanceOf[DataFrame]
 
       assertDataFramesEqual(loadedDataFrame, convertedDataFrame, checkRowOrder = false)
@@ -149,25 +158,27 @@ class WriteReadDataFrameIntegSpec
     "write and read from cassandra" in {
       // Cassandra requires non-null primary key column
       val idField =
-        StructField("id", SparkConversions.columnTypeToSparkColumnType(ColumnType.string))
+        StructField("id", StringType)
       val convertedSchema = schema.copy(fields = idField +: schema.fields)
       val convertedRows = rows.zipWithIndex.map { case (r, i) => Row(i.toString +: r.toSeq: _*) }
       val dataFrame = createDataFrame(convertedRows, convertedSchema)
 
       createTable()
 
-      val wdf = WriteDataFrame()
-      wdf.storageTypeParameter.value = StorageType.CASSANDRA.toString
-      wdf.cassandraTableParameter.value = cassandraTableName
-      wdf.cassandraKeyspaceParameter.value = cassandraKeySpaceName
+      val wdf =
+        new WriteDataFrame()
+          .setStorageType(
+            OutputStorageTypeChoice.Cassandra()
+              .setCassandraTable(cassandraTableName)
+              .setCassandraKeyspace(cassandraKeySpaceName))
       wdf.execute(executionContext)(Vector(dataFrame))
 
-      val rdf = ReadDataFrame()
-      rdf.storageTypeParameter.value = StorageType.CASSANDRA.toString
-      rdf.cassandraTableParameter.value = cassandraTableName
-      rdf.cassandraKeyspaceParameter.value = cassandraKeySpaceName
-      rdf.categoricalColumnsParameter.value =
-        MultipleColumnSelection(Vector(NameColumnSelection(Set("categorical"))))
+      val rdf =
+        new ReadDataFrame()
+          .setStorageType(
+            InputStorageTypeChoice.Cassandra()
+              .setCassandraTable(cassandraTableName)
+              .setCassandraKeyspace(cassandraKeySpaceName))
       val loadedDataFrame = rdf.execute(executionContext)(Vector()).head.asInstanceOf[DataFrame]
 
       assertDataFramesEqual(loadedDataFrame, dataFrame, checkRowOrder = false)
@@ -178,8 +189,7 @@ class WriteReadDataFrameIntegSpec
     session.execute(s"""
       |CREATE TABLE IF NOT EXISTS $cassandraTableName (
       |  boolean BOOLEAN,
-      |  categorical TEXT,
-      |  numeric DOUBLE,
+      |  double DOUBLE,
       |  string TEXT,
       |  timestamp TIMESTAMP,
       |  id TEXT,

@@ -22,24 +22,27 @@ import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.CustomOperationExecutionException
 import io.deepsense.deeplang.parameters._
+import io.deepsense.deeplang.params.StringParam
 import io.deepsense.deeplang.{DOperation1To1, ExecutionContext}
 
 case class CustomPythonOperation()
   extends DOperation1To1[DataFrame, DataFrame] {
 
   override val id: Id = "a721fe2a-5d7f-44b3-a1e7-aade16252ead"
-
   override val name: String = "Custom Python operation"
+  override val description: String = "Creates a custom Python operation"
 
-  val codeParameter = CodeSnippetParameter(
-    description = "Operation source code",
-    default = Some("def transform(dataframe):\n  return dataframe"),
-    language = CodeSnippetLanguage(CodeSnippetLanguage.Python)
+  val codeParameter = StringParam(
+    name = "code",
+    description = "Operation source code"
   )
-  override val parameters = ParametersSchema("code" -> codeParameter)
+
+  setDefault(codeParameter -> "def transform(dataframe):\n  return dataframe")
+
+  override val params = declareParams(codeParameter)
 
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): DataFrame = {
-    val code = codeParameter.value
+    val code = $(codeParameter)
 
     if (!context.pythonCodeExecutor.validate(code)) {
       throw CustomOperationExecutionException("Code validation failed")
@@ -56,7 +59,7 @@ case class CustomPythonOperation()
             "Operation finished successfully, but did not produce a DataFrame.")
         }
 
-        context.dataFrameBuilder.buildDataFrame(sparkDataFrame)
+        DataFrame.fromSparkDataFrame(sparkDataFrame)
     }
   }
 
