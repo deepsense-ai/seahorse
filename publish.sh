@@ -91,6 +91,7 @@ function publish_component() {
 calculate_is_snapshot_version
 calculate_repository_url
 calculate_full_version
+echo $FULL_VERSION > env.properties
 for component in entitystorage workflowmanager deploy-model-service
 do
   publish_component ${component}
