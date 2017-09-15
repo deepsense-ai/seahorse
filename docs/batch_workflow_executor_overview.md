@@ -27,10 +27,10 @@ application that allows user to execute [workflows](workflowfile.html) created b
 
 ## Download Seahorse Batch Workflow Executor
 
-Compiled version of Seahorse Batch Workflow Executor is available at:
-[Downloads page](/downloads.html)
+Compiled version of Seahorse Batch Workflow Executor is available at
+[downloads page](/downloads.html).
 
-You need to download Python Executor too (also available at: [Downloads page](/downloads.html)).
+You need to download Python Executor too (also available at [downloads page](/downloads.html)).
 
 
 
@@ -38,7 +38,7 @@ You need to download Python Executor too (also available at: [Downloads page](/d
 
 Seahorse Batch Workflow Executor can be submitted to Spark cluster as any other Spark application.
 Example spark-submit commands can be found in following subsections.
-Replace `./bin/spark-submit` with path to script in Apache Spark's directory.
+Replace `./bin/spark-submit` with a path to the script in Apache Spark's directory.
 For more detailed information about submitting Spark applications, visit:
 <a target="_blank" href="https://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/submitting-applications.html">https://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/submitting-applications.html</a>
 
