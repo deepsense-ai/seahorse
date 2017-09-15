@@ -91,7 +91,7 @@ class AdapterService {
     });
 
     jsPlumb.bind('connectionDrag', (connection) => {
-      //TODO Add highlight 
+      //TODO Add highlight
     });
   }
 
@@ -123,13 +123,11 @@ class AdapterService {
   }
 
   renderPorts(nodes) {
-    for (const nodeId in nodes) {
-      if (nodes.hasOwnProperty(nodeId)) {
-        const nodeElement = this.container.querySelector(`#node-${nodeId}`);
-        const nodeObject = nodes[nodeId];
-        this.renderOutputPorts(nodeElement, nodeObject.output, nodes[nodeId]);
-        this.renderInputPorts(nodeElement, nodeObject.input);
-      }
+    for (const nodeId of Object.keys(nodes)) {
+      const nodeElement = this.container.querySelector(`#node-${nodeId}`);
+      const nodeObject = nodes[nodeId];
+      this.renderOutputPorts(nodeElement, nodeObject.output, nodes[nodeId]);
+      this.renderInputPorts(nodeElement, nodeObject.input);
     }
   }
 
