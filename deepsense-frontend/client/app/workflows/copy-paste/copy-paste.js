@@ -4,8 +4,8 @@ const OBJECT_TYPE = 'application/seahorseObjects/';
 
 class CopyPasteService {
   /* @njInject */
-  constructor($document, $rootScope, NodeCopyPasteVisitorService) {
-    _.assign(this, {$document, $rootScope, NodeCopyPasteVisitorService});
+  constructor($document, $rootScope, NodeCopyPasteVisitorService, WorkflowService, UserService) {
+    _.assign(this, {$document, $rootScope, NodeCopyPasteVisitorService, WorkflowService, UserService});
 
     this.enabled = true;
     this.init();
@@ -38,7 +38,8 @@ class CopyPasteService {
   }
 
   _paste(event) {
-    if (this.enabled) {
+    const isOwner = this.WorkflowService.getCurrentWorkflow().owner.id === this.UserService.getSeahorseUser().id
+    if (this.enabled && isOwner) {
       const isPasteTargetFocused = this.NodeCopyPasteVisitorService.isFocused();
       const dataType = `${OBJECT_TYPE}${this.NodeCopyPasteVisitorService.getType()}`;
       const serializedData = event.clipboardData.getData(dataType);
@@ -51,6 +52,6 @@ class CopyPasteService {
   }
 }
 
-exports.inject = function(module) {
+exports.inject = function (module) {
   module.service('CopyPasteService', CopyPasteService);
 };

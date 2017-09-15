@@ -17,7 +17,11 @@ function NodeStatusIcon() {
       'node': '='
     },
     templateUrl: 'app/workflows/graph-panel/graph-panel-node/node-status-icon/node-status-icon.html',
-    controller: function($scope) {
+    controller: function($scope, WorkflowService, UserService) {
+
+      $scope.isOwner = function() {
+        return WorkflowService.getCurrentWorkflow().owner.id === UserService.getSeahorseUser().id
+      };
 
       $scope.$watch('node.knowledgeErrors', () => {
         var errors = $scope.node.getFancyKnowledgeErrors();

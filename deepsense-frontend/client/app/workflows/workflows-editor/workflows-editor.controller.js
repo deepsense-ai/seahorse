@@ -6,39 +6,16 @@ class WorkflowsEditorController {
   constructor(workflowWithResults, $scope, $state, $q, $rootScope, $log, $timeout, specialOperations, WorkflowCloneService,
               GraphNode, Edge, config, Report, MultiSelectionService, PageService, Operations, GraphPanelRendererService,
               WorkflowService, MouseEvent, ConfirmationModalService, ExportModalService, GraphNodesService, NotificationService,
-              ServerCommunication, CopyPasteService, SideBarService, BottomBarService, NodeCopyPasteVisitorService, SessionStatus) {
+              ServerCommunication, CopyPasteService, SideBarService, BottomBarService, NodeCopyPasteVisitorService, SessionStatus, UserService) {
 
     WorkflowService.initRootWorkflow(workflowWithResults);
 
     _.assign(this, {
-      $scope,
-      $state,
-      $q,
-      $rootScope,
-      $log,
-      $timeout,
-      specialOperations,
-      WorkflowCloneService,
-      GraphNode,
-      Edge,
-      config,
-      Report,
-      MultiSelectionService,
-      PageService,
-      Operations,
-      GraphPanelRendererService,
-      WorkflowService,
-      MouseEvent,
-      ConfirmationModalService,
-      ExportModalService,
-      GraphNodesService,
-      NotificationService,
-      ServerCommunication,
-      CopyPasteService,
-      SideBarService,
-      BottomBarService,
-      NodeCopyPasteVisitorService,
-      SessionStatus
+      $scope, $state, $q, $rootScope, $log, $timeout, specialOperations,
+      WorkflowCloneService, GraphNode, Edge, config, Report, MultiSelectionService, PageService, Operations,
+      GraphPanelRendererService, WorkflowService, MouseEvent, ConfirmationModalService, ExportModalService,
+      GraphNodesService, NotificationService, ServerCommunication, CopyPasteService, SideBarService, BottomBarService,
+      NodeCopyPasteVisitorService, SessionStatus, UserService
     });
 
     this.BottomBarData = BottomBarService.tabsState;
@@ -351,7 +328,8 @@ class WorkflowsEditorController {
 
   isEditable() {
     const workflow = this.WorkflowService.getCurrentWorkflow();
-    return workflow.workflowStatus === 'editor' && workflow.sessionStatus === this.SessionStatus.RUNNING;
+    let isOwner = workflow.owner.id === this.UserService.getSeahorseUser().id;
+    return workflow.workflowStatus === 'editor' && workflow.sessionStatus === this.SessionStatus.RUNNING && isOwner;
   }
 
   _isSinkOrSource(node) {

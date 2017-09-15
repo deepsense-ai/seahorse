@@ -31,7 +31,7 @@
         <span>Documentation</span>
       </a>
       <button class="operation-attributes-panel__open-button"
-              ng-if="controller.hasCodeEdit()" ng-click="controller.showNotebook()">
+              ng-if="controller.hasCodeEdit() && !disabledMode" ng-click="controller.showNotebook()">
         <i class="fa fa-file-text-o"></i>
         <span>
           Open notebook
