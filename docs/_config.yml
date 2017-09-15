@@ -14,7 +14,7 @@ include:
 # These allow the documentation to be updated with newer releases
 WORKFLOW_EXECUTOR_SCALA_VERSION: 2.10.5
 WORKFLOW_EXECUTOR_HADOOP_VERSION: 2.6.0
-WORKFLOW_EXECUTOR_SPARK_VERSION: 1.5.0
+WORKFLOW_EXECUTOR_SPARK_VERSION: 1.5.2
 
 WORKFLOW_EXECUTOR_GITHUB_URL: https://github.com/deepsense-io/seahorse-workflow-executor
 WORKFLOW_EXECUTOR_GITHUB_REPO_NAME: seahorse-workflow-executor

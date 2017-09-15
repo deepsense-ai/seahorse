@@ -15,7 +15,7 @@ description: Deepsense documentation homepage
 ## Overview
 
 The main purpose of the workflow file is to store information about
-[workflow](deeplang.html#workflows) design and results
+[workflow](deeplang_overview.html#workflows) design and results
 of its execution. Workflow file uses JSON format.
 
 ## Workflow File Format
@@ -37,12 +37,12 @@ Workflow file contains up to 5 sections: [metadata](#metadata), [workflow](#work
 
 ### Metadata
 
-Metadata contains information about [workflow](deeplang.html#workflows)
+Metadata contains information about [workflow](deeplang_overview.html#workflows)
 type and Seahorse API version.
 
 | Property | Description |
 | --- | --- |
-| `type` | Execution mode for the workflow: "batch" or "streaming". Currently only batch workflows are supported. |
+| `type` | Execution mode for the workflow: "batch". |
 | `apiVersion` |  Seahorse API version. |
 
 ##### Example
@@ -51,7 +51,7 @@ type and Seahorse API version.
 {% highlight json %}
 "metadata": {
   "type": "batch",
-  "apiVersion": "{{ site.WORKFLOW_EXECUTOR_VERSION }}"
+  "apiVersion": "1.0.0"
 }
 {% endhighlight %}
 
@@ -92,31 +92,33 @@ Connections represent flow of data. Data from one operation output port can be c
     {
       "id": "742743c3-a0b1-41dc-82b1-172d68e1e814",
       "operation": {
-	"id": "83bad450-f87c-11e4-b939-0800200c9a66",
-	"name": "File To DataFrame",
-	"version": "0.1.0"
+        "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
+        "name": "Read DataFrame"
       },
       "parameters": {
-	"format": {
-	  "CSV": {
-	    "separator": ",",
-	    "names included": true
-	  }
-	},
-	"categorical columns": [
-	  {
-	    "type": "columnList",
-	    "values": []
-	  }
-	]
+        "data storage type": {
+          "FILE": {
+            "source": "file:///var/input.csv",
+            "format": {
+              "CSV": {
+                "separator": {
+                  ",": {
+
+                  }
+                },
+                "names included": true,
+                "convert to boolean": false
+              }
+            }
+          }
+        }
       }
     },
     {
       "id": "c20f5b58-4193-11e5-a151-feff819cdc9f",
       "operation": {
 	"id": "d273c42f-b840-4402-ba6b-18282cc68de3",
-	"name": "Split DataFrame",
-	"version": "0.1.0"
+	"name": "Split DataFrame"
       },
       "parameters": {
 	"split ratio": 0.7,
@@ -141,16 +143,13 @@ Connections represent flow of data. Data from one operation output port can be c
 
 ### Execution Report
 
-Execution report contains information about [workflow](deeplang.html#workflows)
+Execution report contains information about [workflow](deeplang_overview.html#workflows)
 execution on the cluster: status information, errors, entity reports.
 This section is optional.
 
 | Property | Description |
 | --- | --- |
-| ``status`` | Overall execution status - ``COMPLETED``, ``FAILED`` |
 | ``error`` | Error message - present only if the workflow execution failed. |
-| ``started`` | Timestamp of workflow execution start. It contains date, time and timezone according to ISO 8601 standard.<br>Example: ``2015-05-12T21:11:09Z`` |
-| ``ended`` | Timestamp of workflow execution finish. Format is the same as in ``started``. |
 | ``nodes`` | Described in following [Nodes](#nodes-1) subsection. |
 | ``resultEntities`` | Described in following [Result entities](#result-entities) subsection. |
 
@@ -160,16 +159,16 @@ Subsection *nodes* contains information about [operation](operations.html) execu
 
 | Property | Description |
 | --- | --- |
-| ``status`` | Operation execution status - ``COMPLETED`` or ``FAILED``. |
+| ``status`` | Operation execution status - ``COMPLETED``, ``FAILED`` or ``ABORTED``. |
 | ``error`` | Error message - present only if operation execution failed. |
-| ``started`` | Timestamp of operation execution start. Format is the same as in [execution report](#execution-report). |
-| ``ended`` | Timestamp of operation execution finish. Format is the same as in [execution report](#execution-report). |
+| ``started`` | Timestamp of operation execution start. It contains date, time and timezone according to ISO 8601 standard.<br>Example: ``2015-05-12T21:11:09Z`` |
+| ``ended`` | Timestamp of operation execution finish. Format is the same as in ``started``. |
 | ``results`` | UUID identifiers of output entities produced by the operation. |
 
 #### Result Entities
 
 Subsection *resultEntities* contains information about entities created as a result of
-[workflow](deeplang.html#workflows) execution, such as data frames and models.
+[workflow](deeplang_overview.html#workflows) execution, such as data frames and models.
 
 | Property | Description |
 | --- | --- |
@@ -181,10 +180,7 @@ Subsection *resultEntities* contains information about entities created as a res
 
 {% highlight json %}
 "executionReport": {
-  "status": "COMPLETED",
   "error": null,
-  "started": "2015-05-12T21:11:09Z",
-  "ended": "2015-05-14T12:03:55Z",
   "nodes": {
     "742743c3-a0b1-41dc-82b1-172d68e1e814": {
       "status": "COMPLETED",
@@ -226,7 +222,7 @@ Subsection *resultEntities* contains information about entities created as a res
 ### Third Party Data
 
 Third party data can contain any valid JSON. It is neither read nor interpreted
-by the [Workflow Executor](workflowexecutor.html).
+by the [Seahorse Batch Workflow Executor](batch_workflow_executor_overview.html).
 
 ##### Example
 {:.no_toc}
@@ -245,339 +241,311 @@ by the [Workflow Executor](workflowexecutor.html).
 <div class="collapsable-content">
 {% highlight json %}
 {
-  "id": "bbf34cbb-9ee6-442f-80a8-22886b860933",
+  "id": "3b7b6aee-0fe4-4136-8de3-d06a68fbc059",
   "metadata": {
     "type": "batch",
-    "apiVersion": "0.9.0"
+    "apiVersion": "1.0.0"
   },
   "workflow": {
-    "nodes": [
-      {
-        "id": "742743c3-a0b1-41dc-82b1-172d68e1e814",
-        "operation": {
-          "id": "71a45d0f-949e-439f-bfae-2e905e160a4c",
-          "name": "Read DataFrame"
-        },
-        "parameters": {
-          "path": "hdfs://resources/dataframe1",
-          "data source": "json"
-        }
+    "nodes": [{
+      "id": "051259cb-189f-2706-6f5a-7f684d52c849",
+      "operation": {
+        "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
+        "name": "Read DataFrame"
       },
-      {
-        "id": "6a27687a-dd30-4245-86bc-7cf4db670eab",
-        "operation": {
-          "id": "d273c42f-b840-4402-ba6b-18282cc68de3",
-          "name": "Split DataFrame",
-          "version": "0.1.0"
-        },
-        "parameters": {
-          "split ratio": 0.7,
-          "seed": 1.0
-        }
-      },
-      {
-        "id": "ad3c82f3-3afa-4fd6-b1ee-075180914592",
-          "operation": {
-            "id": "0643f308-f2fa-11e4-b9b2-1697f925ec7b",
-            "name": "Create Ridge Regression",
-            "version": "0.1.0"
-          },
-          "parameters": {
-            "regularization": 0.5,
-            "iterations number": 1.0
-          }
-      },
-      {
-        "id": "3d55ea34-1897-4128-8025-90c73ed69a4d",
-        "operation": {
-          "id": "c526714c-e7fb-11e4-b02c-1681e6b88ec1",
-          "name": "Train regressor",
-          "version": "0.1.0"
-        },
-        "parameters": {
-          "feature columns": [
-            {
-              "type": "typeList",
-              "values": ["numeric"]
-            },
-            {
-              "type": "nameList",
-              "value": ["rating"],
-              "exclude": true
+      "parameters": {
+        "data storage type": {
+          "FILE": {
+            "source": "~/transactions.csv",
+            "format": {
+              "CSV": {
+                "separator": {
+                  ",": {
+
+                  }
+                },
+                "names included": true,
+                "convert to boolean": false
+              }
             }
-          ],
-          "target column": {
-            "type": "name",
-            "value": "rating"
           }
         }
+      }
+    }, {
+      "id": "bf6900e4-eea1-8f6c-6a0e-8d79fd2bb165",
+      "operation": {
+        "id": "9e460036-95cc-42c5-ba64-5bc767a40e4e",
+        "name": "Write DataFrame"
       },
-      {
-        "id": "d2dd9574-1a76-4c87-ae4e-aba0b959a0cc",
-        "operation": {
-          "id": "6cf6867c-e7fd-11e4-b02c-1681e6b88ec1",
-          "name": "Score regressor"
-        },
-        "parameters": {
-          "prediction column": "rating_prediction"
-        }
-      },
-      {
-        "id": "c3cf202c-9035-4e11-851c-7c4869be0ed3",
-        "operation": {
-          "id": "f2a43e21-331e-42d3-8c02-7db1da20bc00",
-          "name": "Evaluate Regression"
-        },
-        "parameters": {
-          "target column": {
-            "type": "column",
-            "value": "rating"
-          },
-          "prediction column": {
-            "type": "column",
-            "value": "rating_prediction"
+      "parameters": {
+        "data storage type": {
+          "FILE": {
+            "outputFile": "file:///root/filtered_transactions.csv",
+            "format": {
+              "CSV": {
+                "separator": {
+                  ",": {
+
+                  }
+                },
+                "names included": true
+              }
+            }
           }
         }
+      }
+    }, {
+      "id": "67610468-7121-a364-ac17-68d578dec03b",
+      "operation": {
+        "id": "6534f3f4-fa3a-49d9-b911-c213d3da8b5d",
+        "name": "Filter Columns"
       },
-      {
-        "id": "2407ebc5-916d-4e4f-b1ff-4061ebb753b4",
-        "operation": {
-          "id": "ee585aba-1067-4262-ae44-881ef67e8486",
-          "name": "Write DataFrame"
-        },
-        "parameters": {
-          "path": "hdfs://resources/dataframe2",
-          "data source": "json"
+      "parameters": {
+        "selected columns": {
+          "selections": [{
+            "type": "columnList",
+            "values": ["sq_ft", "price"]
+          }],
+          "excluding": false
         }
       }
-    ],
-    "connections": [
-      {
-        "from": {
-          "nodeId": "742743c3-a0b1-41dc-82b1-172d68e1e814",
-          "portIndex": 0
-        },
-        "to": {
-          "nodeId": "6a27687a-dd30-4245-86bc-7cf4db670eab",
-          "portIndex": 0
-        }
+    }],
+    "connections": [{
+      "from": {
+        "nodeId": "051259cb-189f-2706-6f5a-7f684d52c849",
+        "portIndex": 0
       },
-      {
-        "from": {
-          "nodeId": "6a27687a-dd30-4245-86bc-7cf4db670eab",
-          "portIndex": 0
-        },
-        "to": {
-          "nodeId": "3d55ea34-1897-4128-8025-90c73ed69a4d",
-          "portIndex": 1
-        }
-      },
-      {
-        "from": {
-          "nodeId": "6a27687a-dd30-4245-86bc-7cf4db670eab",
-          "portIndex": 1
-        },
-        "to": {
-          "nodeId": "d2dd9574-1a76-4c87-ae4e-aba0b959a0cc",
-          "portIndex": 1
-        }
-      },
-      {
-        "from": {
-          "nodeId": "ad3c82f3-3afa-4fd6-b1ee-075180914592",
-          "portIndex": 0
-        },
-        "to": {
-          "nodeId": "3d55ea34-1897-4128-8025-90c73ed69a4d",
-          "portIndex": 0
-        }
-      },
-      {
-        "from": {
-          "nodeId": "3d55ea34-1897-4128-8025-90c73ed69a4d",
-          "portIndex": 0
-        },
-        "to": {
-          "nodeId": "d2dd9574-1a76-4c87-ae4e-aba0b959a0cc",
-          "portIndex": 0
-        }
-      },
-      {
-        "from": {
-          "nodeId": "d2dd9574-1a76-4c87-ae4e-aba0b959a0cc",
-          "portIndex": 0
-        },
-        "to": {
-          "nodeId": "c3cf202c-9035-4e11-851c-7c4869be0ed3",
-          "portIndex": 0
-        }
-      },
-      {
-        "from": {
-          "nodeId": "d2dd9574-1a76-4c87-ae4e-aba0b959a0cc",
-          "portIndex": 0
-        },
-        "to": {
-          "nodeId": "2407ebc5-916d-4e4f-b1ff-4061ebb753b4",
-          "portIndex": 0
-        }
+      "to": {
+        "nodeId": "67610468-7121-a364-ac17-68d578dec03b",
+        "portIndex": 0
       }
-    ]
+    }, {
+      "from": {
+        "nodeId": "67610468-7121-a364-ac17-68d578dec03b",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "bf6900e4-eea1-8f6c-6a0e-8d79fd2bb165",
+        "portIndex": 0
+      }
+    }]
   },
   "thirdPartyData": {
-    "seahorseEditor": {
-    "name": "My first workflow",
-    "description": "An example of a workflow.",
+    "gui": {
+      "name": "My first workflow",
+      "description": "Simple example of workflow",
+      "predefColors": ["#00B1EB", "#1ab394", "#2f4050", "#f8ac59", "#ed5565", "#DD6D3F"],
       "nodes": {
-        "742743c3-a0b1-41dc-82b1-172d68e1e814": {
+        "051259cb-189f-2706-6f5a-7f684d52c849": {
+          "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "x": 123,
-            "y": 419
+            "x": 5354,
+            "y": 5102
           }
         },
-        "6a27687a-dd30-4245-86bc-7cf4db670eab": {
+        "bf6900e4-eea1-8f6c-6a0e-8d79fd2bb165": {
+          "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "x": 500,
-            "y": 329
+            "x": 5358,
+            "y": 5430
           }
         },
-        "ad3c82f3-3afa-4fd6-b1ee-075180914592": {
+        "67610468-7121-a364-ac17-68d578dec03b": {
+          "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "x": 245,
-            "y": 345
-          }
-        },
-        "3d55ea34-1897-4128-8025-90c73ed69a4d": {
-          "coordinates": {
-            "x": 122,
-            "y": 879
-          }
-        },
-        "d2dd9574-1a76-4c87-ae4e-aba0b959a0cc": {
-          "coordinates": {
-            "x": 123,
-            "y": 876
-          }
-        },
-        "c3cf202c-9035-4e11-851c-7c4869be0ed3": {
-          "coordinates": {
-            "x": 424,
-            "y": 767
-          }
-        },
-        "2407ebc5-916d-4e4f-b1ff-4061ebb753b4": {
-          "coordinates": {
-            "x": 873,
-            "y": 334
+            "x": 5364,
+            "y": 5234
           }
         }
       }
+    },
+    "notebooks": {
+
     }
   },
   "executionReport": {
-    "status": "FAILED",
-    "error": "One of nodes failed",
-    "started": "2015-06-12T21:11:09Z",
-    "ended": "2015-06-12T21:15:55Z",
-    "nodes": {
-      "742743c3-a0b1-41dc-82b1-172d68e1e814": {
-	"status": "COMPLETED",
-	"started": "2015-06-12T21:11:09Z",
-	"ended": "2015-05-14T12:03:55Z",
-	"results": [
-	  "2518d941-43cb-4288-b959-bc4441b86083"
-	],
-	"error": null
+    "resultEntities": {
+      "04c20743-a380-42f3-bfa9-7ef648414fb6": {
+        "className": "io.deepsense.deeplang.doperables.dataframe.DataFrame",
+        "report": {
+          "name": "DataFrame Report",
+          "reportType": "DataFrameFull",
+          "tables": [{
+            "name": "Data Sample",
+            "description": "Data Sample. Randomly selected 10 rows",
+            "columnNames": ["city", "beds", "baths", "sq_ft", "price"],
+            "columnTypes": ["string", "numeric", "numeric", "numeric", "numeric"],
+            "rowNames": null,
+            "values": [["CityA", "2", "1", "820", "449178"], ["CityC", "2", "1", "656", "267975"], ["CityA", "2", "1", "636", "348946"], ["CityA", "2", "1", "736", "356438"], ["CityC", "3", "2", "1139", "473705"], ["CityC", "2", "2", "1074", "458227"], ["CityC", "2", "1", "652", "236328"], ["CityC", "2", "2", "908", "367640"], ["CityC", "3", "1", "1065", "425669"], ["CityA", "4", "1", "1110", "587941"]]
+          }, {
+            "name": "DataFrame Size",
+            "description": "DataFrame Size. Number of columns and number of rows in the DataFrame.",
+            "columnNames": ["Number of columns", "Number of rows"],
+            "columnTypes": ["numeric", "numeric"],
+            "rowNames": null,
+            "values": [["5", "999"]]
+          }],
+          "distributions": {
+            "city": {
+              "name": "city",
+              "missingValues": 0,
+              "subtype": "discrete",
+              "description": "Discrete distribution for city column",
+              "buckets": ["CityA", "CityB", "CityC"],
+              "counts": [327, 329, 343]
+            },
+            "price": {
+              "name": "price",
+              "missingValues": 0,
+              "subtype": "continuous",
+              "statistics": {
+                "max": "816408",
+                "min": "221661",
+                "mean": "471568.263263"
+              },
+              "description": "Continuous distribution for price column",
+              "buckets": ["221661", "251398.35", "281135.7", "310873.05", "340610.4", "370347.75", "400085.1", "429822.45", "459559.8", "489297.15", "519034.5", "548771.85", "578509.2", "608246.55", "637983.9", "667721.25", "697458.6", "727195.95", "756933.3", "786670.65", "816408"],
+              "counts": [10, 31, 23, 53, 82, 79, 102, 110, 99, 81, 91, 69, 46, 36, 34, 22, 12, 6, 9, 4]
+            },
+            "sq_ft": {
+              "name": "sq_ft",
+              "missingValues": 0,
+              "subtype": "continuous",
+              "statistics": {
+                "max": "1498",
+                "min": "600",
+                "mean": "1043.002002"
+              },
+              "description": "Continuous distribution for sq_ft column",
+              "buckets": ["600", "644.9", "689.8", "734.7", "779.6", "824.5", "869.4", "914.3", "959.2", "1004.1", "1049", "1093.9", "1138.8", "1183.7", "1228.6", "1273.5", "1318.4", "1363.3", "1408.2", "1453.1", "1498"],
+              "counts": [31, 25, 15, 26, 59, 78, 64, 64, 59, 97, 90, 58, 45, 72, 64, 59, 27, 25, 19, 22]
+            },
+            "baths": {
+              "name": "baths",
+              "missingValues": 0,
+              "subtype": "continuous",
+              "statistics": {
+                "max": "2",
+                "min": "1",
+                "mean": "1.478478"
+              },
+              "description": "Continuous distribution for baths column",
+              "buckets": ["1", "1.05", "1.1", "1.15", "1.2", "1.25", "1.3", "1.35", "1.4", "1.45", "1.5", "1.55", "1.6", "1.65", "1.7", "1.75", "1.8", "1.85", "1.9", "1.95", "2"],
+              "counts": [521, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 478]
+            },
+            "beds": {
+              "name": "beds",
+              "missingValues": 0,
+              "subtype": "continuous",
+              "statistics": {
+                "max": "4",
+                "min": "2",
+                "mean": "2.984985"
+              },
+              "description": "Continuous distribution for beds column",
+              "buckets": ["2", "2.1", "2.2", "2.3", "2.4", "2.5", "2.6", "2.7", "2.8", "2.9", "3", "3.1", "3.2", "3.3", "3.4", "3.5", "3.6", "3.7", "3.8", "3.9", "4"],
+              "counts": [336, 0, 0, 0, 0, 0, 0, 0, 0, 0, 342, 0, 0, 0, 0, 0, 0, 0, 0, 321]
+            }
+          }
+        }
       },
-      "6a27687a-dd30-4245-86bc-7cf4db670eab": {
-	"status": "COMPLETED",
-	"started": "2015-05-12T21:11:09Z",
-	"ended": "2015-05-14T12:03:55Z",
-	"results": [
-	  "c376d234-b64f-4cec-8c47-6a3e54adf181",
-	  "a63ea659-2f15-47dc-b133-b2a442fd9fce"
-	],
-	"error": null
+      "270b15f0-c208-41b9-9031-6f75187c3eb8": {
+        "className": "io.deepsense.deeplang.doperables.dataframe.DataFrame",
+        "report": {
+          "name": "DataFrame Report",
+          "reportType": "DataFrameFull",
+          "tables": [{
+            "name": "Data Sample",
+            "description": "Data Sample. Randomly selected 10 rows",
+            "columnNames": ["sq_ft", "price"],
+            "columnTypes": ["numeric", "numeric"],
+            "rowNames": null,
+            "values": [["820", "449178"], ["656", "267975"], ["636", "348946"], ["736", "356438"], ["1139", "473705"], ["1074", "458227"], ["652", "236328"], ["908", "367640"], ["1065", "425669"], ["1110", "587941"]]
+          }, {
+            "name": "DataFrame Size",
+            "description": "DataFrame Size. Number of columns and number of rows in the DataFrame.",
+            "columnNames": ["Number of columns", "Number of rows"],
+            "columnTypes": ["numeric", "numeric"],
+            "rowNames": null,
+            "values": [["2", "999"]]
+          }],
+          "distributions": {
+            "sq_ft": {
+              "name": "sq_ft",
+              "missingValues": 0,
+              "subtype": "continuous",
+              "statistics": {
+                "max": "1498",
+                "min": "600",
+                "mean": "1043.002002"
+              },
+              "description": "Continuous distribution for sq_ft column",
+              "buckets": ["600", "644.9", "689.8", "734.7", "779.6", "824.5", "869.4", "914.3", "959.2", "1004.1", "1049", "1093.9", "1138.8", "1183.7", "1228.6", "1273.5", "1318.4", "1363.3", "1408.2", "1453.1", "1498"],
+              "counts": [31, 25, 15, 26, 59, 78, 64, 64, 59, 97, 90, 58, 45, 72, 64, 59, 27, 25, 19, 22]
+            },
+            "price": {
+              "name": "price",
+              "missingValues": 0,
+              "subtype": "continuous",
+              "statistics": {
+                "max": "816408",
+                "min": "221661",
+                "mean": "471568.263263"
+              },
+              "description": "Continuous distribution for price column",
+              "buckets": ["221661", "251398.35", "281135.7", "310873.05", "340610.4", "370347.75", "400085.1", "429822.45", "459559.8", "489297.15", "519034.5", "548771.85", "578509.2", "608246.55", "637983.9", "667721.25", "697458.6", "727195.95", "756933.3", "786670.65", "816408"],
+              "counts": [10, 31, 23, 53, 82, 79, 102, 110, 99, 81, 91, 69, 46, 36, 34, 22, 12, 6, 9, 4]
+            }
+          }
+        }
       },
-      "ad3c82f3-3afa-4fd6-b1ee-075180914592": {
-	"status": "COMPLETED",
-	"started": "2015-05-12T21:11:09Z",
-	"ended": "2015-05-14T12:03:55Z",
-	"results": [
-	  "e36697f3-cd7b-41cc-bdf7-fefebd24ba5d"
-	],
-	"error": null
-      },
-      "3d55ea34-1897-4128-8025-90c73ed69a4d": {
-	"status": "COMPLETED",
-	"started": "2015-05-12T21:11:09Z",
-	"ended": "2015-05-14T12:03:55Z",
-	"results": [
-	  "03b99144-3f50-452b-b4f9-67e5338383a7"
-	],
-	"error": null
-      },
-      "d2dd9574-1a76-4c87-ae4e-aba0b959a0cc": {
-	"status": "COMPLETED",
-	"started": "2015-05-12T21:11:09Z",
-	"ended": "2015-05-14T12:03:55Z",
-	"results": [
-	  "da322b24-73b1-40c9-9ca9-84e847087a1f"
-	],
-	"error": null
-      },
-      "c3cf202c-9035-4e11-851c-7c4869be0ed3": {
-	"status": "COMPLETED",
-	"started": "2015-05-12T21:11:09Z",
-	"ended": "2015-05-14T12:03:55Z",
-	"results": [
-	  "3b4151e4-2bfd-4aa5-a726-6cb5faf6caf2"
-	],
-	"error": null
-      },
-      "2407ebc5-916d-4e4f-b1ff-4061ebb753b4": {
-	"status": "FAILED",
-	"started": "2015-05-12T21:11:09Z",
-	"ended": "2015-06-12T21:15:55Z",
-	"results": [],
-	"error": {
-	  "message": "Could not write to specified path.",
-	  "details": {
-	    "stacktrace": "..."
-	  }
-	}
+      "74ed4653-b396-4e58-af32-92aeb29a7b19": {
+        "className": "io.deepsense.deeplang.doperables.ColumnsFilterer",
+        "report": {
+          "name": "empty report",
+          "reportType": "Empty",
+          "tables": [],
+          "distributions": {
+
+          }
+        }
       }
     },
-    "resultEntities": {
-      "2518d941-43cb-4288-b959-bc4441b86083": {
-        "className": "DataFrame",
-        "report": null
+    "nodes": {
+      "051259cb-189f-2706-6f5a-7f684d52c849": {
+        "ended": "2016-01-04T11:58:56.404Z",
+        "results": ["04c20743-a380-42f3-bfa9-7ef648414fb6"],
+        "error": null,
+        "status": "COMPLETED",
+        "started": "2016-01-04T11:58:50.508Z"
       },
-      "c376d234-b64f-4cec-8c47-6a3e54adf181": {
-        "className": "DataFrame",
-        "report": null
+      "bf6900e4-eea1-8f6c-6a0e-8d79fd2bb165": {
+        "ended": "2016-01-04T11:58:57.191Z",
+        "results": null,
+        "error": {
+          "code": "NodeFailure",
+          "id": "ea50c0c5-f877-4cc1-b071-0cc4398d17f3",
+          "details": {
+            "stacktrace": "Job aborted due to stage failure: Task 1 in stage 8.0 failed 1 times, most recent failure: Lost task 1.0 in stage 8.0 (TID 14, localhost): java.io.IOException: Mkdirs failed to create file:/root/filtered_transactions.csv/_temporary/0/_temporary/attempt_201601041258_0008_m_000001_14 (exists=false, cwd=file:/home/gzes/newWorkflow)\n\tat org.apache.hadoop.fs.ChecksumFileSystem.create(ChecksumFileSystem.java:442)\n\tat org.apache.hadoop.fs.ChecksumFileSystem.create(ChecksumFileSystem.java:428)\n\tat org.apache.hadoop.fs.FileSystem.create(FileSystem.java:908)\n\tat org.apache.hadoop.fs.FileSystem.create(FileSystem.java:801)\n\tat org.apache.hadoop.mapred.TextOutputFormat.getRecordWriter(TextOutputFormat.java:123)\n\tat org.apache.spark.SparkHadoopWriter.open(SparkHadoopWriter.scala:91)\n\tat org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsHadoopDataset$1$$anonfun$13.apply(PairRDDFunctions.scala:1104)\n\tat org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsHadoopDataset$1$$anonfun$13.apply(PairRDDFunctions.scala:1095)\n\tat org.apache.spark.scheduler.ResultTask.runTask(ResultTask.scala:66)\n\tat org.apache.spark.scheduler.Task.run(Task.scala:88)\n\tat org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:214)\n\tat java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)\n\tat java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)\n\tat java.lang.Thread.run(Thread.java:745)\n\nDriver stacktrace:\n\norg.apache.spark.scheduler.DAGScheduler.org$apache$spark$scheduler$DAGScheduler$$failJobAndIndependentStages(DAGScheduler.scala:1283)\norg.apache.spark.scheduler.DAGScheduler$$anonfun$abortStage$1.apply(DAGScheduler.scala:1271)\norg.apache.spark.scheduler.DAGScheduler$$anonfun$abortStage$1.apply(DAGScheduler.scala:1270)\nscala.collection.mutable.ResizableArray$class.foreach(ResizableArray.scala:59)\nscala.collection.mutable.ArrayBuffer.foreach(ArrayBuffer.scala:47)\norg.apache.spark.scheduler.DAGScheduler.abortStage(DAGScheduler.scala:1270)\norg.apache.spark.scheduler.DAGScheduler$$anonfun$handleTaskSetFailed$1.apply(DAGScheduler.scala:697)\norg.apache.spark.scheduler.DAGScheduler$$anonfun$handleTaskSetFailed$1.apply(DAGScheduler.scala:697)\nscala.Option.foreach(Option.scala:236)\norg.apache.spark.scheduler.DAGScheduler.handleTaskSetFailed(DAGScheduler.scala:697)\norg.apache.spark.scheduler.DAGSchedulerEventProcessLoop.doOnReceive(DAGScheduler.scala:1496)\norg.apache.spark.scheduler.DAGSchedulerEventProcessLoop.onReceive(DAGScheduler.scala:1458)\norg.apache.spark.scheduler.DAGSchedulerEventProcessLoop.onReceive(DAGScheduler.scala:1447)\norg.apache.spark.util.EventLoop$$anon$1.run(EventLoop.scala:48)\norg.apache.spark.scheduler.DAGScheduler.runJob(DAGScheduler.scala:567)\norg.apache.spark.SparkContext.runJob(SparkContext.scala:1824)\norg.apache.spark.SparkContext.runJob(SparkContext.scala:1837)\norg.apache.spark.SparkContext.runJob(SparkContext.scala:1914)\norg.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsHadoopDataset$1.apply$mcV$sp(PairRDDFunctions.scala:1124)\norg.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsHadoopDataset$1.apply(PairRDDFunctions.scala:1065)\norg.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsHadoopDataset$1.apply(PairRDDFunctions.scala:1065)\norg.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:147)\norg.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:108)\norg.apache.spark.rdd.RDD.withScope(RDD.scala:310)\norg.apache.spark.rdd.PairRDDFunctions.saveAsHadoopDataset(PairRDDFunctions.scala:1065)\norg.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsHadoopFile$4.apply$mcV$sp(PairRDDFunctions.scala:989)\norg.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsHadoopFile$4.apply(PairRDDFunctions.scala:965)\norg.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsHadoopFile$4.apply(PairRDDFunctions.scala:965)\norg.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:147)\norg.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:108)\norg.apache.spark.rdd.RDD.withScope(RDD.scala:310)\norg.apache.spark.rdd.PairRDDFunctions.saveAsHadoopFile(PairRDDFunctions.scala:965)\norg.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsHadoopFile$1.apply$mcV$sp(PairRDDFunctions.scala:897)\norg.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsHadoopFile$1.apply(PairRDDFunctions.scala:897)\norg.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsHadoopFile$1.apply(PairRDDFunctions.scala:897)\norg.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:147)\norg.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:108)\norg.apache.spark.rdd.RDD.withScope(RDD.scala:310)\norg.apache.spark.rdd.PairRDDFunctions.saveAsHadoopFile(PairRDDFunctions.scala:896)\norg.apache.spark.rdd.RDD$$anonfun$saveAsTextFile$1.apply$mcV$sp(RDD.scala:1430)\norg.apache.spark.rdd.RDD$$anonfun$saveAsTextFile$1.apply(RDD.scala:1409)\norg.apache.spark.rdd.RDD$$anonfun$saveAsTextFile$1.apply(RDD.scala:1409)\norg.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:147)\norg.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:108)\norg.apache.spark.rdd.RDD.withScope(RDD.scala:310)\norg.apache.spark.rdd.RDD.saveAsTextFile(RDD.scala:1409)\ncom.databricks.spark.csv.package$CsvSchemaRDD.saveAsCsvFile(package.scala:169)\ncom.databricks.spark.csv.DefaultSource.createRelation(DefaultSource.scala:165)\norg.apache.spark.sql.execution.datasources.ResolvedDataSource$.apply(ResolvedDataSource.scala:170)\norg.apache.spark.sql.DataFrameWriter.save(DataFrameWriter.scala:146)\norg.apache.spark.sql.DataFrameWriter.save(DataFrameWriter.scala:137)\nio.deepsense.deeplang.doperations.WriteDataFrame.writeToFile(WriteDataFrame.scala:122)\nio.deepsense.deeplang.doperations.WriteDataFrame._execute(WriteDataFrame.scala:64)\nio.deepsense.deeplang.doperations.WriteDataFrame._execute(WriteDataFrame.scala:38)\nio.deepsense.deeplang.DOperation1To0.execute(DOperations.scala:242)\nio.deepsense.workflowexecutor.WorkflowNodeExecutorActor.executeOperation(WorkflowNodeExecutorActor.scala:112)\nio.deepsense.workflowexecutor.WorkflowNodeExecutorActor$$anonfun$receive$1.applyOrElse(WorkflowNodeExecutorActor.scala:52)\nakka.actor.Actor$class.aroundReceive(Actor.scala:467)\nio.deepsense.workflowexecutor.WorkflowNodeExecutorActor.aroundReceive(WorkflowNodeExecutorActor.scala:34)\nakka.actor.ActorCell.receiveMessage(ActorCell.scala:516)\nakka.actor.ActorCell.invoke(ActorCell.scala:487)\nakka.dispatch.Mailbox.processMailbox(Mailbox.scala:238)\nakka.dispatch.Mailbox.run(Mailbox.scala:220)\nakka.dispatch.ForkJoinExecutorConfigurator$AkkaForkJoinTask.exec(AbstractDispatcher.scala:397)\nscala.concurrent.forkjoin.ForkJoinTask.doExec(ForkJoinTask.java:260)\nscala.concurrent.forkjoin.ForkJoinPool$WorkQueue.runTask(ForkJoinPool.java:1339)\nscala.concurrent.forkjoin.ForkJoinPool.runWorker(ForkJoinPool.java:1979)\nscala.concurrent.forkjoin.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:107)\n"
+          },
+          "message": "Unable to write file: file:///root/filtered_transactions.csv",
+          "title": "WriteFileException"
+        },
+        "status": "FAILED",
+        "started": "2016-01-04T11:58:56.860Z"
       },
-      "a63ea659-2f15-47dc-b133-b2a442fd9fce": {
-        "className": "DataFrame",
-        "report": null
-      },
-      "e36697f3-cd7b-41cc-bdf7-fefebd24ba5d": {
-        "className": "UntrainedRidgeRegression",
-        "report": null
-      },
-      "03b99144-3f50-452b-b4f9-67e5338383a7": {
-        "className": "TrainedRidgeRegression",
-        "report": null
-      },
-      "da322b24-73b1-40c9-9ca9-84e847087a1f": {
-        "className": "DataFrame",
-        "report": null
-      },
-      "3b4151e4-2bfd-4aa5-a726-6cb5faf6caf2": {
-        "className": "Report",
-        "report": null
+      "67610468-7121-a364-ac17-68d578dec03b": {
+        "ended": "2016-01-04T11:58:56.860Z",
+        "results": ["270b15f0-c208-41b9-9031-6f75187c3eb8", "74ed4653-b396-4e58-af32-92aeb29a7b19"],
+        "error": null,
+        "status": "COMPLETED",
+        "started": "2016-01-04T11:58:56.406Z"
       }
-    }
+    },
+    "error": null
   }
 }
 {% endhighlight %}

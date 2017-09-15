@@ -36,6 +36,8 @@ assemblyMergeStrategy in assembly := {
 // Skip test while assembling uber-jar
 test in assembly := {}
 
+unmanagedResourceDirectories in Compile += { baseDirectory.value / "../python" }
+
 enablePlugins(BuildInfoPlugin)
 
 buildInfoPackage := "io.deepsense.workflowexecutor.buildinfo"

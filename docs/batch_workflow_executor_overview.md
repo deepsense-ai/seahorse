@@ -14,41 +14,29 @@ description: Seahorse Batch Workflow Executor
 
 ## Overview
 
-Workflow Executor {{ site.WORKFLOW_EXECUTOR_VERSION }}
+Seahorse Batch Workflow Executor {{ site.WORKFLOW_EXECUTOR_VERSION }}
 is an <a target="_blank" href="http://spark.apache.org">Apache Spark</a>
 application that allows user to execute [workflows](workflowfile.html) created by Seahorse Editor.
 
-## Download Workflow Executor
+<div class="centered-container" markdown="1">
+  ![Seahorse Batch Workflow Executor Overview](./img/batch_overview.png){: .centered-image .img-responsive}
+  *Seahorse Batch Workflow Executor Overview*
+</div>
 
-Compiled version of Workflow Executor is available at:
+
+
+## Download Seahorse Batch Workflow Executor
+
+Compiled version of Seahorse Batch Workflow Executor is available at:
 [Downloads page](/downloads.html)
 
-### Building Workflow Executor from sources
-
-Workflow Executor sources can be found at:
-<a target="_blank" href="{{ site.WORKFLOW_EXECUTOR_GITHUB_URL }}">{{ site.WORKFLOW_EXECUTOR_GITHUB_URL }}</a>
-
-Steps required to build Workflow Executor:
-
-* <a target="_blank" href="http://www.scala-lang.org/download/install.html">Install Scala</a>
-
-* <a target="_blank" href="http://www.scala-sbt.org/release/tutorial/Installing-sbt-on-Linux.html">Install sbt</a>
-
-Execute the following commands:
-
-    git clone {{ site.WORKFLOW_EXECUTOR_GITHUB_URL }}
-    cd {{ site.WORKFLOW_EXECUTOR_GITHUB_REPO_NAME }}
-    sbt workflowexecutor/assembly
-
-Assembled jar can be found under path:
-
-``workflowexecutor/target/scala-2.10/workflowexecutor.jar``
+You need to download Python Executor too (also available at: [Downloads page](/downloads.html)).
 
 
 
-## How to run Workflow Executor in noninteractive mode
+## How to run Seahorse Batch Workflow Executor
 
-Workflow Executor can be submitted to Spark cluster as any other Spark application.
+Seahorse Batch Workflow Executor can be submitted to Spark cluster as any other Spark application.
 Example spark-submit commands can be found in following subsections.
 Replace `./bin/spark-submit` with path to script in Apache Spark's directory.
 For more detailed information about submitting Spark applications, visit:
@@ -57,6 +45,7 @@ For more detailed information about submitting Spark applications, visit:
 #### Local (single machine) Spark
     # Run application locally (on 8 cores)
     ./bin/spark-submit \
+      --driver-class-path workflowexecutor.jar \
       --class io.deepsense.workflowexecutor.WorkflowExecutorApp \
       --master local[8] \
       --files workflow.json \
@@ -64,11 +53,12 @@ For more detailed information about submitting Spark applications, visit:
         --noninteractive-mode
         --workflow-filename workflow.json \
         --output-directory test-output \
-        --report-level medium
+        --python-executor-path /path/to/pyexecutor.zip
 
 #### Spark Standalone cluster
     # Run on a Spark Standalone cluster in client deploy mode
     ./bin/spark-submit \
+      --driver-class-path workflowexecutor.jar \
       --class io.deepsense.workflowexecutor.WorkflowExecutorApp \
       --master spark://207.184.161.138:7077 \
       --files workflow.json \
@@ -76,12 +66,13 @@ For more detailed information about submitting Spark applications, visit:
         --noninteractive-mode
         --workflow-filename workflow.json \
         --output-directory test-output \
-        --report-level medium
+        --python-executor-path /path/to/pyexecutor.zip
 
 #### YARN cluster
     # Run on a YARN cluster
     export HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop   # location of Hadoop cluster configuration directory
     ./bin/spark-submit \
+      --driver-class-path workflowexecutor.jar \
       --class io.deepsense.workflowexecutor.WorkflowExecutorApp \
       --master yarn-cluster \  # can also be `yarn-client` for client mode
       --files workflow.json \
@@ -89,19 +80,22 @@ For more detailed information about submitting Spark applications, visit:
         --noninteractive-mode
         --workflow-filename workflow.json \
         --output-directory test-output \
-        --report-level medium
+        --python-executor-path /path/to/pyexecutor.zip
 
+Option ``--python-executor-path`` is required, You have to download <code>pyexecutor.zip</code> from
+[Downloads page](/downloads.html).
+Option ``--noninteractive-mode`` is necessary to start Workflow Executor in batch mode.
 Option ``--files workflow.json`` is necessary to distribute workflow file to Spark cluster.
 It is necessary to pass the same filename to ``--workflow-filename workflow.json`` option,
-in order to tell Workflow Executor under which name it should look for workflow file.
+in order to tell Seahorse Batch Workflow Executor under which name it should look for workflow file.
 
 If spark-assembly-{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}-hadoop2.6.0.jar is already distributed
 on HDFS cluster, it is possible to reduce time necessary for files propagation on YARN cluster.
 Use spark-submit option
 ``--conf spark.yarn.jar=hdfs:///path/to/spark-assembly-{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}-hadoop2.6.0.jar``
 with proper HDFS path.
-Spark assembly jar can be found in Spark {{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }} compiled for
-Hadoop 2.6.0 package (Seahorse uses Scala 2.10, Spark has to be built with Scala 2.10 support).
+Spark assembly jar can be found in Spark {{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}
+compiled for Hadoop 2.6.0 package.
 
 
 
@@ -137,10 +131,11 @@ using ``--conf`` option:
 * ``spark.cassandra.auth.username``
 * ``spark.cassandra.auth.password``
 
-For more information, please visit <a target="_blank" href="http://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/submitting-applications.html#launching-applications-with-spark-submit">Apache Spark documentation</a>.
+For more information, please visit
+<a target="_blank" href="http://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/submitting-applications.html#launching-applications-with-spark-submit">Apache Spark documentation</a>.
 
 
-## Workflow Executor Command Line Parameters
+## Seahorse Batch Workflow Executor Command Line Parameters
 
 Detailed information about command line parameters can be obtained by executing command:
 
@@ -150,27 +145,25 @@ Detailed information about command line parameters can be obtained by executing 
 
 | Argument                                                        | Meaning |
 |:----------------------------------------------------------------|:--------|
-| ``--noninteractive-mode``                                       | Run in noninteractive mode (single workflow execution) |
+| ``--noninteractive-mode``                                       | Run in noninteractive mode (batch mode, single workflow execution) |
 | ``-w FILE``<BR/>``--workflow-filename FILE``                    | Workflow filename. If specified, workflow will be read from passed location. The file has to be accessible by the driver. |
 | ``-d ID``<BR/>``--download-workflow ID``                        | Download workflow. If specified, workflow with passed ID will be downloaded from Seahorse Editor. |
 | ``-o DIR``<BR/>``--output-directory DIR``                       | Output directory path. If specified, execution report will be saved to passed location. Directory will be created if it does not exist. |
-| ``-r LEVEL``<BR/>``--report-level LEVEL``                       | Level of details for DataFrame report generation; LEVEL is 'high', 'medium', or 'low' (default: 'medium'). |
 | ``-a ADDRESS``<BR/>``--api-address ADDRESS``                    | Address of Seahorse Editor API. If not specified, the default of ``https://editor.seahorse.deepsense.io`` will be used.  |
 | ``-e NAME=VALUE``<BR/>``--extra-var NAME=VALUE``                | Extra variable. Sets extra variable to specified value. Can be specified multiple times. |
-
+| ``-m HOST``<BR/>``--message-queue-host HOST``                   | Address of message queue host. |
+| ``-p PATH``<BR/>``--python-executor-path PATH``                 | Path to Python Executor (pyexecutor.zip). |
 
 * **NOTE:** At least one of ``-w FILE`` or ``-d ID`` (or their long names) needs to be
 specified. If both parameters are present, workflow will be downloaded from
 Seahorse Editor.
 
-* **NOTE:** At least one of ``-o DIR`` or ``-u`` (or their long names) needs to be
-specified.
-
-* **NOTE:** When using ``--extra-var`` option variable name or value can be surrounded by quotation
-marks if it contains special characters (e.g. space).
+* **NOTE:** When using ``--extra-var`` option,
+if variable name or value contains special characters (e.g. space),
+it have to be surrounded by quotation marks.
 
 
-## Workflow Executor Logs
+## Seahorse Batch Workflow Executor Logs
 
 Depending on Spark application deployment mode and cluster configuration, execution logs can be
 redirected to several locations, e.g.:
