@@ -17,7 +17,7 @@ class EditorController {
 
     this.categories = Operations.getCatalog();
 
-    $rootScope.$on('Keyboard.KEY_PRESSED_DEL', () => {
+    this.removeListener = $rootScope.$on('Keyboard.KEY_PRESSED_DEL', () => {
       this.hideTooltip();
     });
   }
@@ -32,6 +32,7 @@ class EditorController {
 
   $onDestroy() {
     this.$canvas.off();
+    this.removeListener();
   }
 
   bindEvents() {
