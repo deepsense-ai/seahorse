@@ -9,7 +9,7 @@ import org.apache.spark.launcher.SparkLauncher
 import io.deepsense.sessionmanager.rest.requests.ClusterDetails
 import io.deepsense.sessionmanager.service.sessionspawner.SessionConfig
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.SparkLauncherConfig
-import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.executor.SessionExecutorArgs
+import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.executor.{CommonEnv, SessionExecutorArgs}
 
 private [clusters] object MesosSparkLauncher {
   import scala.collection.JavaConversions._
@@ -18,7 +18,7 @@ private [clusters] object MesosSparkLauncher {
       sessionConfig: SessionConfig,
       config: SparkLauncherConfig,
       clusterConfig: ClusterDetails): SparkLauncher = {
-    new SparkLauncher(env(clusterConfig))
+    new SparkLauncher(env(config, clusterConfig))
       .setVerbose(true)
       .setMainClass(config.className)
       .setMaster(clusterConfig.uri)
@@ -33,7 +33,9 @@ private [clusters] object MesosSparkLauncher {
       .setConf("spark.driver.extraClassPath", config.weJarPath)
   }
 
-  private def env(clusterConfig: ClusterDetails) = Map(
+  private def env(
+      config: SparkLauncherConfig,
+      clusterConfig: ClusterDetails) = CommonEnv(config, clusterConfig) ++ Map(
     "MESOS_NATIVE_JAVA_LIBRARY" -> "/usr/lib/libmesos.so",
     "LIBPROCESS_IP" -> clusterConfig.userIP,
     "LIBPROCESS_ADVERTISE_IP" -> clusterConfig.userIP

@@ -28,7 +28,7 @@ object SessionExecutorArgs {
     "--wm-password", config.wmPassword,
     "--user-id", sessionConfig.userId,
     "--temp-dir", config.tempDir,
-    "--python-binary", config.pythonBinary
+    "--python-binary", config.pythonDriverBinary
   )
 
   private def wmAddress(

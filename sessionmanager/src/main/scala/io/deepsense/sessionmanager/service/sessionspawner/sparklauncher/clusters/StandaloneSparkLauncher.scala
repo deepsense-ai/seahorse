@@ -9,15 +9,16 @@ import org.apache.spark.launcher.SparkLauncher
 import io.deepsense.sessionmanager.rest.requests.ClusterDetails
 import io.deepsense.sessionmanager.service.sessionspawner.SessionConfig
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.SparkLauncherConfig
-import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.executor.SessionExecutorArgs
+import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.executor.{CommonEnv, SessionExecutorArgs}
 
 private [clusters] object StandaloneSparkLauncher {
+  import scala.collection.JavaConversions._
 
   def apply(
       sessionConfig: SessionConfig,
       config: SparkLauncherConfig,
       clusterConfig: ClusterDetails): SparkLauncher = {
-    new SparkLauncher()
+    new SparkLauncher(CommonEnv(config, clusterConfig))
       .setVerbose(true)
       .setMainClass(config.className)
       .setMaster(clusterConfig.uri)

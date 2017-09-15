@@ -9,15 +9,16 @@ import org.apache.spark.launcher.SparkLauncher
 import io.deepsense.sessionmanager.rest.requests.ClusterDetails
 import io.deepsense.sessionmanager.service.sessionspawner.SessionConfig
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.SparkLauncherConfig
-import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.executor.LocalSessionExecutorArgs
+import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.executor.{CommonEnv, LocalSessionExecutorArgs}
 
 private [clusters] object LocalSparkLauncher {
+  import scala.collection.JavaConversions._
 
   def apply(
       sessionConfig: SessionConfig,
       config: SparkLauncherConfig,
       clusterConfig: ClusterDetails): SparkLauncher = {
-    new SparkLauncher()
+    new SparkLauncher(env(config, clusterConfig))
       .setVerbose(true)
       .setMainClass(config.className)
       .setMaster("local[*]")
@@ -31,5 +32,11 @@ private [clusters] object LocalSparkLauncher {
       .setConf("spark.driver.extraJavaOptions",
         "-XX:MaxPermSize=1024m -XX:PermSize=256m -Dfile.encoding=UTF8")
   }
+
+  private def env(config: SparkLauncherConfig,
+                  clusterConfig: ClusterDetails) = CommonEnv(config, clusterConfig) ++ Map(
+    // For local cluster driver python binary IS executors python binary
+    "PYSPARK_PYTHON" -> config.pythonDriverBinary
+  )
 
 }

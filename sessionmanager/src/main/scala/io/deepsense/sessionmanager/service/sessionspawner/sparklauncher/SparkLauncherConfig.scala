@@ -25,7 +25,8 @@ class SparkLauncherConfig @Inject()(
   @Named("session-executor.parameters.workflow-manager.username") val wmUsername: String,
   @Named("session-executor.parameters.workflow-manager.password") val wmPassword: String,
   @Named("session-executor.parameters.temp-dir") val tempDir: String,
-  @Named("session-executor.parameters.python-binary") val pythonBinary: String
+  @Named("session-executor.parameters.python-driver-binary") val pythonDriverBinary: String,
+  @Named("session-executor.parameters.python-executor-binary") val pythonExecutorBinary: String
 ) {
 
   def weDepsFileName: String = {

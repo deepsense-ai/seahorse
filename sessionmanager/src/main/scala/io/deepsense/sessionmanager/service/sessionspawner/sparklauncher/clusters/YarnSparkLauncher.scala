@@ -9,7 +9,7 @@ import org.apache.spark.launcher.SparkLauncher
 import io.deepsense.sessionmanager.rest.requests.ClusterDetails
 import io.deepsense.sessionmanager.service.sessionspawner.SessionConfig
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.SparkLauncherConfig
-import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.executor.SessionExecutorArgs
+import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.executor.{CommonEnv, SessionExecutorArgs}
 
 private [clusters] object YarnSparkLauncher {
   import scala.collection.JavaConversions._
@@ -18,7 +18,7 @@ private [clusters] object YarnSparkLauncher {
       sessionConfig: SessionConfig,
       config: SparkLauncherConfig,
       clusterConfig: ClusterDetails): SparkLauncher = {
-    new SparkLauncher(env(clusterConfig))
+    new SparkLauncher(env(config, clusterConfig))
       .setVerbose(true)
       .setMainClass(config.className)
       .setMaster("yarn")
@@ -31,13 +31,14 @@ private [clusters] object YarnSparkLauncher {
       .setConf("spark.driver.host", clusterConfig.userIP)
       .setConf("spark.driver.extraClassPath", config.weJarPath)
       .setConf("spark.executorEnv.PYTHONPATH", config.weDepsFileName)
-      .setConf("spark.yarn.appMasterEnv.PYSPARK_PYTHON", config.pythonBinary)
+      .setConf("spark.yarn.appMasterEnv.PYSPARK_PYTHON", config.pythonDriverBinary)
   }
 
-  private def env(clusterConfig: ClusterDetails): Map[String, String] = Map(
+  private def env(
+      config: SparkLauncherConfig,
+      clusterConfig: ClusterDetails) = CommonEnv(config, clusterConfig) ++ Map(
     "HADOOP_CONF_DIR" -> clusterConfig.uri,
     "SPARK_YARN_MODE" -> "true",
-    "HADOOP_USER_NAME" -> clusterConfig.hadoopUser.getOrElse("root"),
     "SPARK_LOCAL_IP" -> clusterConfig.userIP
   )
 

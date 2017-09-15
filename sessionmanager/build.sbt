@@ -55,7 +55,6 @@ mappings in Universal += preparePythonDeps.value -> "we-deps.zip"
 dockerBaseImage := "docker-repo.deepsense.codilime.com/deepsense_io/deepsense-mesos-spark"
 dockerCommands ++= Seq(
   Cmd("USER", "root"),
-  ExecCmd("ENTRYPOINT", "/opt/startup.sh"),
-  ExecCmd("CMD", "bin/deepsense-sessionmanager")
+  ExecCmd("ENTRYPOINT", "bin/deepsense-sessionmanager")
 )
 dockerUpdateLatest := true
