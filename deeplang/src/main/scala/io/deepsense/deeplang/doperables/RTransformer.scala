@@ -23,7 +23,7 @@ import io.deepsense.deeplang.params.{CodeSnippetLanguage, CodeSnippetParam}
 class RTransformer extends CustomCodeTransformer {
 
   override lazy val codeParameter = CodeSnippetParam(
-    name = "transformer code",
+    name = "code",
     description = None,
     language = CodeSnippetLanguage(CodeSnippetLanguage.r)
   )

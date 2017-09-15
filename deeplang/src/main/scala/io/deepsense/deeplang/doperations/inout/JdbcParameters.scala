@@ -22,7 +22,7 @@ trait JdbcParameters {
   this: Params =>
 
   val jdbcUrl = StringParam(
-    name = "jdbc connection url",
+    name = "url",
     description = None)
   setDefault(jdbcUrl,
     "jdbc:mysql://HOST:PORT/DATABASE?user=DB_USER&password=DB_PASSWORD")
@@ -31,7 +31,7 @@ trait JdbcParameters {
   def setJdbcUrl(value: String): this.type = set(jdbcUrl, value)
 
   val jdbcDriverClassName = StringParam(
-    name = "jdbc driver classname",
+    name = "driver",
     description = None)
   setDefault(jdbcDriverClassName, "com.mysql.jdbc.Driver")
 
@@ -39,7 +39,7 @@ trait JdbcParameters {
   def setJdbcDriverClassName(value: String): this.type = set(jdbcDriverClassName, value)
 
   val jdbcTableName = StringParam(
-    name = "table name",
+    name = "table",
     description = None)
 
   def getJdbcTableName: String = $(jdbcTableName)
