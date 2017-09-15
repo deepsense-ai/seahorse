@@ -20,4 +20,4 @@ import io.deepsense.deeplang.exceptions.DeepLangException
 
 case class AllTypesNotCompilableException(
     portIndex: Int)
-  extends DeepLangException(s"None of provided types can be put in port $portIndex")
+  extends DeepLangException(s"None of inferred types can be placed in the port $portIndex")

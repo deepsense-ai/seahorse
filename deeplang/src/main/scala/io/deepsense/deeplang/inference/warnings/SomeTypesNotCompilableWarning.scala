@@ -20,4 +20,4 @@ import io.deepsense.deeplang.inference.InferenceWarning
 
 case class SomeTypesNotCompilableWarning(
     portIndex: Int)
-  extends InferenceWarning(s"Some types can be put in port $portIndex")
+  extends InferenceWarning(s"Not all of inferred types can be placed in the port $portIndex")
