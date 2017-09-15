@@ -3,12 +3,12 @@
  *
  */
 
-package io.deepsense.modeldeploying
+package io.deepsense.deploymodelservice
 
 import spray.httpx.SprayJsonSupport
 import spray.json.DefaultJsonProtocol
 
-object ModelDeploingJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
+object DeployModelJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
   implicit val modelFormat = jsonFormat5(Model)
   implicit val createResultFormat = jsonFormat1(CreateResult)
   implicit val getScoringRequestFormat = jsonFormat1(GetScoringRequest)

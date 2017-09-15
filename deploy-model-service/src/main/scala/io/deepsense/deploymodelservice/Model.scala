@@ -1,9 +1,8 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
- *
  */
 
-package io.deepsense.modeldeploying
+package io.deepsense.deploymodelservice
 
 case class Model(
     isLogistic: Boolean,

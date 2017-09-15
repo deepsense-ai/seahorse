@@ -78,6 +78,13 @@ object Dependencies {
     "spray.io"     at "http://repo.spray.io"
   )
 
+  val deploymodelservice = Seq(
+    akkaActor,
+    sprayCan,
+    sprayJson,
+    sprayRouting
+  ) ++ Seq(scalatest, sprayTestkit).map(_ % s"$Test,it")
+
   val entitystorage = Seq(
     akkaActor
   ) ++ Seq(scalatest, mockitoCore, sprayTestkit, cassandraUnit, akkaTestkit).map(_ % s"$Test,it")
