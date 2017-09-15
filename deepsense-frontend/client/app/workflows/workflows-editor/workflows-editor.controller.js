@@ -64,6 +64,7 @@ class WorkflowsEditorController {
       let reportEntityId = node.getResult(data.reference.getParameter('portIndex'));
       this.loadReportById(reportEntityId);
       this.Report.openReport();
+      this.GraphPanelRendererService.rerender(this.getWorkflow(), this.selectedOutputPort);
     });
 
     this.inited = true;

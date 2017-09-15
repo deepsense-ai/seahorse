@@ -25,12 +25,11 @@ const inputStyle = {
 
 /* beautify preserve:start */
 import { GraphPanelRendererBase } from './graph-panel-renderer-base.js';
-import { GraphPanelStyler} from './graph-panel-styler.js';
 /* beautify preserve:end */
 
 /* @ngInject */
 function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report,
-  DeepsenseCycleAnalyser, NotificationService, ConnectionHinterService) {
+  DeepsenseCycleAnalyser, NotificationService, ConnectionHinterService, GraphPanelStyler) {
 
   const connectorPaintStyles = {
     [Edge.STATE_TYPE.ALWAYS]: _.defaults({}, connectorPaintStyleDefault, {
@@ -57,6 +56,8 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
 
   const nodeIdPrefix = 'node-';
   const nodeIdPrefixLength = nodeIdPrefix.length;
+
+  jsPlumb.registerEndpointTypes(GraphPanelStyler.getTypes());
 
   let that = this;
   let internal = {
@@ -89,17 +90,6 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
   };
 
   that.init = function init(workflow) {
-    jsPlumb.registerEndpointTypes({
-      'selected': {
-        endpointStyle: {
-          fillStyle: "#2f4050",
-          radius: 15,
-          lineWidth: 2
-        },
-        cssClass: 'output-endpoint-selected-style-report-mode'
-      }
-    });
-
     internal.reset();
     jsPlumb.setContainer($document[0].querySelector('.flowchart-paint-area'));
     jsPlumb.importDefaults({
@@ -140,27 +130,28 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
     });
   };
 
-  that.rerender = function rerender(workflow, selectedPortId) {
+  that.rerender = function rerender(workflow, selectedPort) {
     that.init(workflow);
-    that.renderPorts(workflow);
+    that.renderPorts(workflow, selectedPort);
     that.renderEdges(workflow);
     that.repaintEverything();
-    if (selectedPortId) {
-      let previouslySelected = jsPlumb.getEndpoint(selectedPortId);
+
+    if (selectedPort) {
+      let previouslySelected = jsPlumb.getEndpoint(selectedPort);
       // This might be null after opening inner workflow.
       if (previouslySelected) {
-        previouslySelected.toggleType('selected');
+        previouslySelected.addType('selected');
       }
     }
   };
 
-  that.renderPorts = function renderPorts(workflow) {
+  that.renderPorts = function renderPorts(workflow, selectedPort) {
     let nodes = workflow.getNodes();
     for (let nodeId in nodes) {
       if (nodes.hasOwnProperty(nodeId)) {
         let node = internal.getNodeById(nodeId);
-        that._addOutputPoint(workflow, node, nodes[nodeId].output, nodes[nodeId]);
-        that._addInputPoint(node, nodes[nodeId].input);
+        that._addOutputPoints(workflow, node, nodes[nodeId].output, nodes[nodeId], selectedPort);
+        that._addInputPoints(node, nodes[nodeId].input);
       }
     }
   };
@@ -201,7 +192,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
     }
   };
 
-  that._addOutputPoint = function _addOutputPoint(workflow, nodeElement, ports, nodeObj) {
+  that._addOutputPoints = function _addOutputPoints(workflow, nodeElement, ports, nodeObj, selectedPort) {
     let anchors = (ports.length === 1) ? ['BottomCenter'] : ['BottomLeft', 'BottomCenter', 'BottomRight'];
 
     for (let i = 0; i < ports.length; i++) {
@@ -211,9 +202,10 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
       let outputStyle = angular.copy(OUTPUT_STYLE);
 
       if (hasReport) {
+        // HACK We would like to use jsPlumb types for all styling. Unfortunately it seems like jsPlumb
+        // ignores CSS classes from type in endpoints when dragging connection. Explicit cssClass works though.
         outputStyle = _.assign(outputStyle, {
-          cssClass: GraphPanelStyler.getOutputEndpointCssClassForReport(),
-          hoverClass: GraphPanelStyler.getOutputEndpointHoverClassForReport()
+          cssClass: GraphPanelStyler.getTypes().outputWithReport.cssClass
         });
       }
 
@@ -221,47 +213,45 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
         outputStyle.isSource = false;
       }
 
-      let port = jsPlumb.addEndpoint(nodeElement, outputStyle, {
+      let jsPlumbPort = jsPlumb.addEndpoint(nodeElement, outputStyle, {
         anchor: anchors[i],
         uuid: ports[i].id
       });
 
-      port.setParameter('portIndex', i);
-      port.setParameter('nodeId', nodeObj.id);
+      jsPlumbPort.setParameter('portIndex', i);
+      jsPlumbPort.setParameter('nodeId', nodeObj.id);
 
-      GraphPanelStyler.styleOutputEndpointDefault(port, hasReport);
+      GraphPanelStyler.styleOutputEndpointDefault(jsPlumbPort, hasReport);
+
+      if(ports[i] === selectedPort) {
+        GraphPanelStyler.styleSelectedOutputEndpoint(jsPlumbPort);
+      }
 
       // FIXME Quickfix to make reports browseable in read-only mode.
       // There is a conflict between multiselection and output port click when isSource = false.
       let eventForLeftClick = internal.renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE ? 'click' : 'mousedown';
-      port.bind(eventForLeftClick, (port, event) => {
+      jsPlumbPort.bind(eventForLeftClick, (port, event) => {
         if (hasReport) {
+          let thisPortObject = ports[i];
           $rootScope.$broadcast('OutputPort.LEFT_CLICK', {
             reference: port,
-            portObject: ports[i],
+            portObject: thisPortObject,
             event: event
           });
-          that.rerender(workflow, ports[i].id);
         }
       });
 
-      port.canvas.addEventListener('mousedown', (event) => {
-        if (internal.renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE) {
-          ConnectionHinterService.highlightOperations(workflow, port);
-        }
-      });
-
-      port.bind('mouseover', (endpoint) => {
+      jsPlumbPort.bind('mouseover', (endpoint) => {
         internal.broadcastHoverEvent('OutputPoint.MOUSEOVER', endpoint.canvas, ports[i]);
       });
 
-      port.bind('mouseout', (endpoint) => {
+      jsPlumbPort.bind('mouseout', (endpoint) => {
         internal.broadcastHoverEvent('OutputPoint.MOUSEOUT', endpoint.canvas, ports[i]);
       });
     }
   };
 
-  that._addInputPoint = function _addInputPoint(node, ports) {
+  that._addInputPoints = function _addInputPoints(node, ports) {
     let anchors = (ports.length === 1) ? ['TopCenter'] : ['TopLeft', 'TopCenter', 'TopRight'];
 
     for (let i = 0; i < ports.length; i++) {
@@ -272,7 +262,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
 
       port.setParameter('portIndex', i);
 
-      GraphPanelStyler.styleInputEndpointDefault(port, internal.renderMode);
+      GraphPanelStyler.styleInputEndpointDefault(port);
 
       port.bind('click', () => {
         $rootScope.$broadcast('InputPoint.CLICK');
@@ -356,10 +346,11 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
         _.isArray(connection.endpoints)
       ) {
         let port = connection.endpoints[0];
-        ConnectionHinterService.showHints(workflow, port, internal.renderMode);
+        ConnectionHinterService.highlightMatchedAndDismatchedPorts(workflow, port);
         ConnectionHinterService.highlightOperations(workflow, port);
       }
     });
+
   };
 
   that.setRenderMode = function setRenderMode(renderMode) {
@@ -372,10 +363,8 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
   };
 
   that.disablePortHighlightings = function disablePortHighlightings(workflow) {
-    if (internal.renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE) {
-      ConnectionHinterService.setDefaultPortColors(workflow, internal.renderMode);
-      ConnectionHinterService.broadcastDisableHighlightings();
-    }
+    ConnectionHinterService.disablePortHighlighting(workflow);
+    ConnectionHinterService.disableOperationsHighlighting();
   };
 
   return that;

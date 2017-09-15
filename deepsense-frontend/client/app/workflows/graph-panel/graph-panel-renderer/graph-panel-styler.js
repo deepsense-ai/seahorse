@@ -1,100 +1,95 @@
 'use strict';
 
-/* beautify preserve:start */
-import { GraphPanelRendererBase } from './graph-panel-renderer-base.js';
-/* beautify preserve:end */
+const DEFAULT_COLOR = '#00b1eb';
+const HOVER_COLOR = '#028DBB';
+const SELECTED_COLOR = '#2f4050';
 
-const ENDPOINT_DEFAULT_BACKGROUND_COLOR = '#00b1eb';
+const MATCHED_GREEN = '#26F323';
+const DISMATCHED_RED = '#ed5565';
 
-export class GraphPanelStyler {
-
-  static styleInputEndpointDefault(endpoint, renderMode) {
-    endpoint.setPaintStyle(GraphPanelStyler._getInputEndpointDefaultPaintStyle());
-    endpoint.setHoverPaintStyle(GraphPanelStyler.getInputEndpointDefaultHoverPaintStyle(renderMode));
-  }
-
-  static styleOutputEndpointDefault(endpoint, hasReport) {
-    endpoint.setPaintStyle(GraphPanelStyler._getOutputEndpointDefaultPaintStyle(hasReport));
-    endpoint.setHoverPaintStyle(GraphPanelStyler._getOutputEndpointDefaultHoverPaintStyle(hasReport));
-  }
-
-  static styleSelectedOutputEndpoint(endpoint) {
-    let paintStyles = endpoint.getPaintStyle();
-
-    endpoint.setPaintStyle(_.assign(paintStyles, {
-      fillStyle: '#216477'
-    }));
-  }
-
-  static styleInputEndpointTypeMatch(endpoint) {
-    let paintStyles = endpoint.getPaintStyle();
-
-    endpoint.setPaintStyle(_.assign(paintStyles, {
-      fillStyle: '#1ab394'
-    }));
-  }
-
-  static styleInputEndpointTypeDismatch(endpoint) {
-    let paintStyles = endpoint.getPaintStyle();
-
-    endpoint.setPaintStyle(_.assign(paintStyles, {
-      fillStyle: '#ed5565'
-    }));
-  }
-
-  static _getInputEndpointDefaultPaintStyle() {
-    return {
-      fillStyle: ENDPOINT_DEFAULT_BACKGROUND_COLOR,
-      width: 20,
-      height: 20
-    };
-  }
-
-  static getInputEndpointDefaultHoverPaintStyle(renderMode) {
-    return renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE ? {
-      fillStyle: '#216477',
-      width: 20,
-      height: 20
-    } : {
-      fillStyle: ENDPOINT_DEFAULT_BACKGROUND_COLOR,
-      width: 20,
-      height: 20
-    };
-  }
-
-  static _getOutputEndpointDefaultPaintStyle(hasReport) {
-    if (!hasReport) {
+/* @ngInject */
+function GraphPanelStyler() {
+  return {
+    getTypes: () => {
       return {
-        fillStyle: ENDPOINT_DEFAULT_BACKGROUND_COLOR,
-        radius: 10,
-        lineWidth: 2
+        'selected': {
+          paintStyle: {
+            fillStyle: SELECTED_COLOR
+          },
+          hoverPaintStyle: {
+            fillStyle: SELECTED_COLOR
+          },
+          endpointStyle: { // Those are needed for dragging to work
+            fillStyle: SELECTED_COLOR,
+            radius: 15,
+            lineWidth: 2
+          }
+        },
+        'matched': {
+          paintStyle: {
+            fillStyle: MATCHED_GREEN
+          }
+        },
+        'dismatched': {
+          paintStyle: {
+            fillStyle: DISMATCHED_RED
+          }
+        },
+        'input': {
+          paintStyle: {
+            fillStyle: DEFAULT_COLOR,
+            width: 20,
+            height: 20
+          },
+          hoverPaintStyle: {
+            fillStyle: HOVER_COLOR
+          }
+        },
+        'outputWithReport': {
+          paintStyle: {
+            fillStyle: DEFAULT_COLOR,
+            radius: 15,
+            lineWidth: 2
+          },
+          hoverPaintStyle: {
+            fillStyle: HOVER_COLOR
+          },
+          cssClass: 'position-endpoint-icon fa fa-bar-chart',
+        },
+        'outputNoReport': {
+          paintStyle: {
+            fillStyle: DEFAULT_COLOR,
+            radius: 10,
+            lineWidth: 2
+          },
+          hoverPaintStyle: {
+            fillStyle: HOVER_COLOR
+          }
+        }
       };
-    } else {
-      return {
-        fillStyle: ENDPOINT_DEFAULT_BACKGROUND_COLOR,
-        radius: 15,
-        lineWidth: 2
-      };
+    },
+    styleInputEndpointDefault: (endpoint) => {
+      endpoint.addType('input');
+    },
+    styleOutputEndpointDefault: (endpoint, hasReport) => {
+      if(hasReport) {
+        endpoint.addType('outputWithReport');
+      } else {
+        endpoint.addType('outputNoReport');
+      }
+    },
+    styleSelectedOutputEndpoint: (endpoint) => {
+      endpoint.addType('selected');
+    },
+    styleInputEndpointTypeMatch: (endpoint) => {
+      endpoint.addType('matched');
+    },
+    styleInputEndpointTypeDismatch: (endpoint) => {
+      endpoint.addType('dismatched');
     }
-  }
-
-  static getOutputEndpointCssClassForReport() {
-    return 'output-endpoint-default-style-report-mode fa fa-bar-chart';
-  }
-
-  static _getOutputEndpointDefaultHoverPaintStyle(hasReport) {
-    return !hasReport ? {
-      fillStyle: '#216477',
-      radius: 10,
-      lineWidth: 2
-    } : {
-      fillStyle: '#216477',
-      radius: 15,
-      lineWidth: 2
-    };
-  }
-
-  static getOutputEndpointHoverClassForReport() {
-    return 'output-endpoint-default-hover-style-report-mode';
-  }
+  };
 }
+
+exports.inject = function (module) {
+  module.service('GraphPanelStyler', GraphPanelStyler);
+};

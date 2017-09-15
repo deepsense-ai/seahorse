@@ -4,28 +4,25 @@ import {
   GraphPanelRendererBase
 }
 from './graph-panel-renderer-base.js';
-import {
-  GraphPanelStyler
-}
-from './graph-panel-styler.js';
 
 class ConnectionHinterService extends GraphPanelRendererBase {
 
   /* @ngInject */
-  constructor($rootScope, WorkflowService, OperationsHierarchyService, Operations, Report) {
+  constructor($rootScope, WorkflowService, OperationsHierarchyService, Operations, Report, GraphPanelStyler) {
     super();
     this.$rootScope = $rootScope;
     this.WorkflowService = WorkflowService;
     this.Report = Report;
     this.OperationsHierarchyService = OperationsHierarchyService;
     this.Operations = Operations;
+    this.GraphPanelStyler = GraphPanelStyler;
   }
 
   /*
    * Highlights such ports that match to the given port
    * and colours ports that don't match.
    */
-  showHints(workflow, sourceEndpoint, renderMode, hasReport) {
+  highlightMatchedAndDismatchedPorts(workflow, sourceEndpoint) {
     const nodes = workflow.getNodes();
 
     const sourceNodeId = sourceEndpoint.getParameter('nodeId');
@@ -46,9 +43,9 @@ class ConnectionHinterService extends GraphPanelRendererBase {
         endpoint.connections.length === 0 && // there cannot be any edge attached
         port.nodeId !== sourceNodeId) // attaching an edge to the same node is forbidden
       {
-        GraphPanelStyler.styleInputEndpointTypeMatch(endpoint);
+        this.GraphPanelStyler.styleInputEndpointTypeMatch(endpoint);
       } else {
-        GraphPanelStyler.styleInputEndpointTypeDismatch(endpoint);
+        this.GraphPanelStyler.styleInputEndpointTypeDismatch(endpoint);
       }
     };
 
@@ -57,40 +54,20 @@ class ConnectionHinterService extends GraphPanelRendererBase {
       const endpoints = jsPlumb.getEndpoints(nodeEl);
 
       _.forEach(endpoints, (endpoint, i) => {
-        let reportEntityId = node.getResult(i);
-        let hasReport = this.Report.hasReportEntity(reportEntityId);
-
         if (endpoint.isTarget) { // is an input port
           highlightInputPort(endpoint, node);
         }
-        if (endpoint.isSource) { // is an output port
-          GraphPanelStyler.styleOutputEndpointDefault(endpoint, hasReport);
-        }
       });
     });
-
-    GraphPanelStyler.styleSelectedOutputEndpoint(sourceEndpoint);
   }
 
-  /*
-   * Remove any port highlighting.
-   */
-  setDefaultPortColors(workflow, renderMode) {
-    const nodes = workflow.getNodes();
-
-    _.forEach(nodes, (node) => {
-      const nodeEl = this.getNodeById(node.id);
-      const endpoints = jsPlumb.getEndpoints(nodeEl);
-      _.forEach(endpoints, (endpoint, i) => {
-        let reportEntityId = node.getResult(i);
-        let hasReport = this.Report.hasReportEntity(reportEntityId);
-
-        if (endpoint.isSource && !hasReport) {
-          GraphPanelStyler.styleInputEndpointDefault(endpoint, renderMode);
-        }
-        if (endpoint.isTarget) {
-          GraphPanelStyler.styleOutputEndpointDefault(endpoint);
-        }
+  disablePortHighlighting(workflow) {
+    _.forEach(workflow.getNodes(), (node) => {
+      let nodeEl = this.getNodeById(node.id);
+      let endpoints = jsPlumb.getEndpoints(nodeEl);
+      _.forEach(endpoints, (endpoint) => {
+        endpoint.removeType('matched');
+        endpoint.removeType('dismatched');
       });
     });
   }
@@ -124,7 +101,7 @@ class ConnectionHinterService extends GraphPanelRendererBase {
     this.$rootScope.$broadcast('ConnectionHinter.HIGHLIGHT_OPERATIONS', operationsMatch);
   }
 
-  broadcastDisableHighlightings() {
+  disableOperationsHighlighting() {
     this.$rootScope.$broadcast('ConnectionHinter.DISABLE_HIGHLIGHTINGS');
   }
 }

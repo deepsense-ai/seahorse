@@ -5,8 +5,7 @@ import { GraphPanelRendererBase } from './../graph-panel/graph-panel-renderer/gr
 /* beautify preserve:end */
 
 /* @ngInject */
-function FlowChartBoxController($rootScope, $scope, $element, $document, GraphPanelRendererService, Edge, GraphNode,
-  WorkflowService) {
+function FlowChartBoxController($scope, $element, GraphPanelRendererService) {
   let nodeDimensions = {};
 
   this.getNodeDimensions = function getNodeDimensions() {
@@ -39,13 +38,6 @@ function FlowChartBoxController($rootScope, $scope, $element, $document, GraphPa
     }
   });
 
-  // Those are global. It is assumed that there is only one flowchart in application.
-  $document.on('mousedown', () => GraphPanelRendererService.disablePortHighlightings(this.workflow));
-  $rootScope.$on('FlowChartBox.ELEMENT_DROPPED', () => GraphPanelRendererService.disablePortHighlightings(this.workflow));
-  $rootScope.$on('Keyboard.KEY_PRESSED_DEL', () => GraphPanelRendererService.disablePortHighlightings(this.workflow));
-  $rootScope.$on(Edge.CREATE, () => GraphPanelRendererService.disablePortHighlightings(this.workflow));
-  $rootScope.$on(Edge.REMOVE, () => GraphPanelRendererService.disablePortHighlightings(this.workflow));
-  $rootScope.$on(GraphNode.MOUSEDOWN, () => GraphPanelRendererService.disablePortHighlightings(this.workflow));
   jsPlumb.bind('connectionDragStop', () => GraphPanelRendererService.disablePortHighlightings(this.workflow));
 
 }
