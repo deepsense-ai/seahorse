@@ -112,7 +112,7 @@ abstract class WorkflowApi @Inject() (
             pathPrefix(workflowsPathPrefixMatcher) {
               path(JavaUUID) { workflowId =>
                 get {
-                  withUserContext { userContext =>
+                  withUserId { userContext =>
                     onComplete(workflowManagerProvider.forContext(userContext).get(workflowId)) {
                       case Failure(exception) =>
                         logger.info("Get Workflow & results failed", exception)
@@ -124,7 +124,7 @@ abstract class WorkflowApi @Inject() (
                   }
                 } ~
                 put {
-                  withUserContext { userContext =>
+                  withUserId { userContext =>
                     implicit val unmarshaller = versionedWorkflowWithResultsUnmarashaler
                     entity(as[WorkflowWithResults]) {
                       workflowWithResults =>
@@ -142,7 +142,7 @@ abstract class WorkflowApi @Inject() (
                   }
                 } ~
                 delete {
-                  withUserContext { userContext =>
+                  withUserId { userContext =>
                     onSuccess(workflowManagerProvider.forContext(userContext).delete(workflowId)) {
                       case true => complete(StatusCodes.OK)
                       case false => complete(StatusCodes.NotFound)
@@ -152,7 +152,7 @@ abstract class WorkflowApi @Inject() (
               } ~
               path(JavaUUID / "download") { workflowId =>
                 get {
-                  withUserContext { userContext =>
+                  withUserId { userContext =>
                     val futureWorkflow =
                       workflowManagerProvider.forContext(userContext).download(workflowId)
                     onSuccess(futureWorkflow) { workflowWithVariables =>
@@ -213,7 +213,7 @@ abstract class WorkflowApi @Inject() (
               } ~
               path(JavaUUID / "notebook" / JavaUUID) { (workflowId, nodeId) =>
                 get {
-                  withUserContext { userContext =>
+                  withUserId { userContext =>
                     complete {
                       workflowManagerProvider.forContext(userContext)
                         .getNotebook(workflowId, nodeId)
@@ -244,7 +244,7 @@ abstract class WorkflowApi @Inject() (
               } ~
               pathEndOrSingleSlash {
                 get {
-                  withUserContext { userContext =>
+                  withUserId { userContext =>
                     onSuccess(workflowManagerProvider.forContext(userContext).list()) { workflows =>
                       complete(StatusCodes.OK, workflows)
                     }
@@ -266,7 +266,7 @@ abstract class WorkflowApi @Inject() (
             pathPrefix(reportsPathPrefixMatcher) {
               path(JavaUUID) { workflowId =>
                 put {
-                  withUserContext { userContext =>
+                  withUserId { userContext =>
                     entity(as[ExecutionReport]) {
                       executioReport =>
                         onComplete(

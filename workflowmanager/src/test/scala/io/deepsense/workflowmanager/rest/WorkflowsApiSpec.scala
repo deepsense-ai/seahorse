@@ -216,7 +216,7 @@ class WorkflowsApiSpec
       "asked for non existing Workflow" in {
         Get(s"/$apiPrefix/${Workflow.Id.randomId}") ~>
           addCredentials(credentials) ~>
-          addHeaders(validHeaders()) ~> testRoute ~> check {
+          addHeaders(validHeadersIdOnly()) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
       }
@@ -225,7 +225,7 @@ class WorkflowsApiSpec
       "auth token is correct, user has roles" in {
         Get(s"/$apiPrefix/$workflowAId") ~>
           addCredentials(credentials) ~>
-          addHeaders(validHeaders()) ~> testRoute ~> check {
+          addHeaders(validHeadersIdOnly()) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
 
           val returnedWorkflow = responseAs[WorkflowWithResults]
@@ -245,7 +245,7 @@ class WorkflowsApiSpec
       "workflow's API version is not compatible with current build" in {
         Get(s"/$apiPrefix/$obsoleteVersionWorkflowId") ~>
           addCredentials(credentials) ~>
-          addHeaders(validHeaders()) ~> testRoute ~> check {
+          addHeaders(validHeadersIdOnly()) ~> testRoute ~> check {
           status should be(StatusCodes.BadRequest)
 
           assertFailureDescriptionHasVersionInfo(responseAs[FailureDescription])
@@ -258,7 +258,7 @@ class WorkflowsApiSpec
     "list all stored workflows" in {
       Get(s"/$apiPrefix") ~>
         addCredentials(credentials) ~>
-        addHeaders(validHeaders()) ~> testRoute ~> check {
+        addHeaders(validHeadersIdOnly()) ~> testRoute ~> check {
         status should be(StatusCodes.OK)
 
         responseAs[JsArray].elements.size shouldBe 4
@@ -268,7 +268,7 @@ class WorkflowsApiSpec
     "return Unauthorized" when {
       "no credentials were sent" in {
         Get(s"/$apiPrefix") ~>
-          addHeaders(validHeaders()) ~> sealRoute(testRoute) ~> check {
+          addHeaders(validHeadersIdOnly()) ~> sealRoute(testRoute) ~> check {
           status should be(StatusCodes.Unauthorized)
           header[HttpHeaders.`WWW-Authenticate`].get.challenges.head shouldBe a[HttpChallenge]
         }
@@ -276,7 +276,7 @@ class WorkflowsApiSpec
       "invalid credentials were sent" in {
         Get(s"/$apiPrefix") ~>
           addCredentials(invalidCredentials) ~>
-          addHeaders(validHeaders()) ~> sealRoute(testRoute) ~> check {
+          addHeaders(validHeadersIdOnly()) ~> sealRoute(testRoute) ~> check {
           status should be(StatusCodes.Unauthorized)
           header[HttpHeaders.`WWW-Authenticate`].get.challenges.head shouldBe a[HttpChallenge]
         }
@@ -289,7 +289,7 @@ class WorkflowsApiSpec
       "workflow does not exists" in {
         Delete(s"/$apiPrefix/${Workflow.Id.randomId}") ~>
           addCredentials(credentials) ~>
-          addHeaders(validHeaders()) ~> testRoute ~> check {
+          addHeaders(validHeadersIdOnly()) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
       }
@@ -298,7 +298,7 @@ class WorkflowsApiSpec
       "workflow existed and is deleted now" in {
         Delete(s"/$apiPrefix/$workflowAId") ~>
           addCredentials(credentials) ~>
-          addHeaders(validHeaders()) ~> testRoute ~> check {
+          addHeaders(validHeadersIdOnly()) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
         }
       }
@@ -335,7 +335,7 @@ class WorkflowsApiSpec
       "asked for non existing Workflow" in {
         Get(s"/$apiPrefix/${Workflow.Id.randomId}/download?format=json") ~>
           addCredentials(credentials) ~>
-          addHeaders(validHeaders()) ~> testRoute ~> check {
+          addHeaders(validHeadersIdOnly()) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
       }
@@ -344,7 +344,7 @@ class WorkflowsApiSpec
       "auth token is correct, user has roles and version is current (with notebook)" in {
         Get(s"/$apiPrefix/$workflowAId/download?format=json") ~>
           addCredentials(credentials) ~>
-          addHeaders(validHeaders()) ~> testRoute ~> check {
+          addHeaders(validHeadersIdOnly()) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
           header("Content-Disposition") shouldBe Some(
             `Content-Disposition`(
@@ -363,7 +363,7 @@ class WorkflowsApiSpec
       "auth token is correct, user has roles and version is current (without notebook)" in {
         Get(s"/$apiPrefix/$workflowWithoutNotebookId/download?format=json") ~>
           addCredentials(credentials) ~>
-          addHeaders(validHeaders()) ~> testRoute ~> check {
+          addHeaders(validHeadersIdOnly()) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
           header("Content-Disposition") shouldBe Some(
             `Content-Disposition`(
@@ -417,6 +417,13 @@ class WorkflowsApiSpec
       "no auth headers were sent (on MissingHeaderRejection)" in {
         Post(s"/$apiPrefix", workflowA) ~>
           addCredentials(credentials) ~> testRoute ~> check {
+          status should be(StatusCodes.BadRequest)
+        }
+      }
+      "only id auth header was sent (on MissingHeaderRejection)" in {
+        Post(s"/$apiPrefix", workflowA) ~>
+          addCredentials(credentials) ~>
+          addHeaders(validHeadersIdOnly()) ~> testRoute ~> check {
           status should be(StatusCodes.BadRequest)
         }
       }
@@ -517,7 +524,7 @@ class WorkflowsApiSpec
       "user updates his workflow without notebook" in {
         Put(s"/$apiPrefix/$workflowAId", updatedWorkflowWithResults) ~>
           addCredentials(credentials) ~>
-          addHeaders(validHeaders()) ~> testRoute ~> check {
+          addHeaders(validHeadersIdOnly()) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
         }
       }
@@ -525,7 +532,7 @@ class WorkflowsApiSpec
         "workflow's API version is not compatible with current build" in {
           Put(s"/$apiPrefix/$workflowAId", obsoleteVersionWorkflowWithResults) ~>
             addCredentials(credentials) ~>
-            addHeaders(validHeaders()) ~> testRoute ~> check {
+            addHeaders(validHeadersIdOnly()) ~> testRoute ~> check {
             status should be(StatusCodes.BadRequest)
 
             assertFailureDescriptionHasVersionInfo(responseAs[FailureDescription])
@@ -535,7 +542,7 @@ class WorkflowsApiSpec
       "user updates his workflow with notebook" in {
         Put(s"/$apiPrefix/$workflowAId", updatedWorkflowWithResultsWithNotebook) ~>
           addCredentials(credentials) ~>
-          addHeaders(validHeaders()) ~> testRoute ~> check {
+          addHeaders(validHeadersIdOnly()) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
         }
       }
@@ -545,7 +552,7 @@ class WorkflowsApiSpec
         val nonExistingId = Workflow.Id.randomId
         Put(s"/$apiPrefix/$nonExistingId", updatedWorkflowWithResults) ~>
           addCredentials(credentials) ~>
-          addHeaders(validHeaders()) ~> testRoute ~> check {
+          addHeaders(validHeadersIdOnly()) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
       }
@@ -556,7 +563,7 @@ class WorkflowsApiSpec
           .copy(metadata = workflowWithResults.metadata.copy(apiVersion = "0.0.1"))
         Put(s"/$apiPrefix/$workflowAId", wrongUpdatedWorkflow) ~>
           addCredentials(credentials) ~>
-          addHeaders(validHeaders()) ~> testRoute ~> check {
+          addHeaders(validHeadersIdOnly()) ~> testRoute ~> check {
           status should be(StatusCodes.BadRequest)
 
           assertFailureDescriptionHasVersionInfo(responseAs[FailureDescription])
@@ -585,7 +592,7 @@ class WorkflowsApiSpec
       "notebook exists" in {
         Get(s"/$apiPrefix/$workflowAId/notebook/$nodeAId") ~>
           addCredentials(credentials) ~>
-          addHeaders(validHeaders()) ~> testRoute ~> check {
+          addHeaders(validHeadersIdOnly()) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
 
           val returnedNotebook = responseAs[String]
@@ -598,7 +605,7 @@ class WorkflowsApiSpec
       "notebook does not exists" in {
         Get(s"/$apiPrefix/${Workflow.Id.randomId}/notebook/${Node.Id.randomId}") ~>
           addCredentials(credentials) ~>
-          addHeaders(validHeaders()) ~> testRoute ~> check {
+          addHeaders(validHeadersIdOnly()) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
       }
@@ -643,7 +650,7 @@ class WorkflowsApiSpec
       "auth token is correct, user has roles" in {
         Put(s"/$reportsPrefix/${workflowAWithResults.id}", executionReport) ~>
           addCredentials(credentials) ~>
-          addHeaders(validHeaders()) ~> testRoute ~> check {
+          addHeaders(validHeadersIdOnly()) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
         }
       }
@@ -656,6 +663,9 @@ class WorkflowsApiSpec
       RawHeader("X-Seahorse-UserName", ownerName)
     )
   }
+
+  def validHeadersIdOnly(): List[RawHeader] =
+    List(RawHeader("X-Seahorse-UserId", ownerId))
 
   def differentOwnerHeaders(): List[RawHeader] = {
     List(

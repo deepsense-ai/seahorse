@@ -144,6 +144,9 @@ case class TestEntity(x: String) {
 trait MockAuthDirectives extends AbstractAuthDirectives {
   def withUserContext: Directive1[Future[UserContext]] =
     BasicDirectives.provide[Future[UserContext]](???)
+
+  def withUserId: Directive1[Future[UserContext]] =
+    BasicDirectives.provide[Future[UserContext]](???)
 }
 
 
