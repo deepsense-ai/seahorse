@@ -16,7 +16,10 @@ class ExecutorErrorCtrl {
 
   runExecutorAgain() {
     this.visible = false;
-    this.SessionManagerApi.deleteSessionById(this.workflow.id);
+    this.SessionManagerApi.deleteSessionById(this.workflow.id)
+      .then(() => {
+        return this.SessionManagerApi.startSession(this.workflow.id);
+      });
   }
 
 }

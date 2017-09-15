@@ -34,7 +34,7 @@ if (browser.chrome && version >= 40) {
   require('./app.run.js').inject(lab);
 } else {
   document.body.innerHTML =
-    '<div class="alert alert-danger" role="alert" style="font-size: 18px;">' +
+    '<div class="alert alert-danger no-support-message" role="alert">' +
     'We\'re sorry, Seahorse doesn\'t support your browser yet.<br/>' +
     'We\'re working on it, please use Google Chrome 40.0+ in the meantime.</div>';
 }
