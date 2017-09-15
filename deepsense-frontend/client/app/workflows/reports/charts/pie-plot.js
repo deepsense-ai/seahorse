@@ -2,6 +2,8 @@
 
 /* @ngInject */
 function PiePlot($filter) {
+  const chart = nv.models.pieChart();
+
   const directive = {
     restrict: 'E',
     templateUrl: 'app/workflows/reports/charts/plot.html',
@@ -13,33 +15,38 @@ function PiePlot($filter) {
       scope.$watch('data', function(data) {
         displayChart(data, element);
       });
+
+      scope.$on('$destroy', function() {
+        chart.tooltip.hidden(true);
+      });
+
+      function displayChart(data, element) {
+        const chartValues = _.map(data.counts, function (val, idx) {
+          val = $filter('precision')(val);
+          return {
+            x: data.buckets[idx],
+            y: val
+          };
+        });
+
+        chart
+            .duration(500)
+            .noData('There is no Data to display')
+            .labelThreshold(0)
+            .labelType('percent');
+
+        chart.tooltip.hideDelay(0);
+
+        d3.select(element[0].querySelector('.svg-plot'))
+            .datum(chartValues)
+            .call(chart);
+
+        nv.utils.windowResize(chart.update);
+      }
+
     }
   };
   return directive;
-
-  function displayChart(data, element) {
-    const chart = nv.models.pieChart();
-
-    const chartValues = _.map(data.counts, function (val, idx) {
-      val = $filter('precision')(val);
-      return {
-        x: data.buckets[idx],
-        y: val
-      };
-    });
-
-    chart
-        .duration(500)
-        .noData('There is no Data to display')
-        .labelThreshold(0)
-        .labelType('percent');
-
-    d3.select(element[0].querySelector('.svg-plot'))
-        .datum(chartValues)
-        .call(chart);
-
-    nv.utils.windowResize(chart.update);
-  }
 }
 
 exports.inject = function(module) {

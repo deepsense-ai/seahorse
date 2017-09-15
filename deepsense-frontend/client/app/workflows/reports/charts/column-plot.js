@@ -6,6 +6,7 @@ function ColumnPlot($filter) {
   const maxChartHeight = 400;
   const labelLengthThreshold = 20;
   const maxLabelChars = 40;
+  const chart = nv.models.multiBarChart();
 
   const directive = {
     restrict: 'E',
@@ -20,9 +21,12 @@ function ColumnPlot($filter) {
         displayChart(data, element);
       });
 
+      scope.$on('$destroy', function() {
+        chart.tooltip.hidden(true);
+      });
+
       function displayChart(data, element) {
         const labels = getLabels(data.buckets);
-        const chart = nv.models.multiBarChart();
 
         const chartValues = _.map(data.counts, function (val, idx) {
           return {
@@ -47,6 +51,8 @@ function ColumnPlot($filter) {
           .showControls(false)
           .color(['#ff7f0e'])
           .rotateLabels(labels.angle);
+
+        chart.tooltip.hideDelay(0);
 
         d3.select(element[0].querySelector('.svg-plot'))
           .datum(chartData)
