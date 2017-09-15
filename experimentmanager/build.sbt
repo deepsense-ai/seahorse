@@ -3,11 +3,15 @@
  *
  * Owner: Wojciech Jurczyk
  */
-name := "Experiment Manager"
-version := "0.1.0"
-scalaVersion := "2.10.5"
+organization := "io.deepsense"
+name         := "deepsense-experimentmanager"
+version      := "0.1.0"
+scalaVersion := "2.11.6"
 
-scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8")
+scalacOptions := Seq(
+  "-unchecked", "-deprecation", "-encoding", "utf8",
+  "-feature", "-language:implicitConversions"
+)
 
 Revolver.settings
 
@@ -20,7 +24,11 @@ inConfig(Test) {
     ),
     fork := true,
     javaOptions := Seq("-Denv=test"),
-    unmanagedClasspath += baseDirectory.value / "conf"
+    unmanagedClasspath += baseDirectory.value / "conf",
+    scalacOptions := Seq(
+      "-unchecked", "-deprecation", "-encoding", "utf8",
+      "-feature", "-language:existentials"
+    )
   )
 }
 
@@ -34,20 +42,21 @@ resolvers ++= Seq(
 
 libraryDependencies ++= {
   val akkaV      = "2.3.9"
-  val sprayV     = "1.3.2"
+  val sprayV     = "1.3.3"
   val scalaTestV = "3.0.0-SNAP4"
   val jsr305V    = "3.0.0"
   Seq(
-    "org.apache.jclouds" %  "jclouds-all"   % "1.8.1",
-    "net.codingwell"     %% "scala-guice"   % "3.0.2",
-    "io.spray"           %% "spray-can"     % sprayV,
-    "io.spray"           %% "spray-routing" % sprayV,
-    "io.spray"           %% "spray-json"    % "1.3.1",
-    "com.typesafe.akka"  %% "akka-actor"    % akkaV,
-    "io.spray"           %% "spray-testkit" % sprayV     % "test",
-    "com.typesafe.akka"  %% "akka-testkit"  % akkaV      % "test",
-    "org.mockito"        %  "mockito-core"  % "1.10.19"  % "test",
-    "org.scalatest"      %% "scalatest"     % scalaTestV % "test"
+    "org.apache.jclouds"           %  "jclouds-all"         % "1.8.1",
+    "com.google.inject"            %  "guice"               % "3.0",
+    "com.google.inject.extensions" %  "guice-multibindings" % "3.0",
+    "io.spray"                     %% "spray-can"           % sprayV,
+    "io.spray"                     %% "spray-routing"       % sprayV,
+    "io.spray"                     %% "spray-json"          % "1.3.1",
+    "com.typesafe.akka"            %% "akka-actor"          % akkaV,
+    "io.spray"                     %% "spray-testkit"       % sprayV     % "test",
+    "com.typesafe.akka"            %% "akka-testkit"        % akkaV      % "test",
+    "org.mockito"                  %  "mockito-core"        % "1.10.19"  % "test",
+    "org.scalatest"                %% "scalatest"           % scalaTestV % "test"
   )
 }
 

@@ -6,15 +6,15 @@
 
 package io.deepsense.experimentmanager.app
 
+import com.google.inject.AbstractModule
 import com.google.inject.assistedinject.FactoryModuleBuilder
-import net.codingwell.scalaguice.ScalaModule
 
 import io.deepsense.experimentmanager.app.storage.ExperimentStorageModule
 
 /**
  * Configures services.
  */
-class ServicesModule extends ScalaModule {
+class ServicesModule extends AbstractModule {
   override def configure(): Unit = {
     install(new ExperimentStorageModule)
     install(new FactoryModuleBuilder()

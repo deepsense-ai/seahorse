@@ -9,9 +9,9 @@ package io.deepsense.experimentmanager.config
 import scala.collection.JavaConversions._
 
 import com.google.inject.name.Names
+import com.google.inject.{AbstractModule, TypeLiteral}
 import com.typesafe.config.ConfigValueType._
 import com.typesafe.config.{Config, ConfigFactory, ConfigValue}
-import net.codingwell.scalaguice.ScalaModule
 
 /**
  * This module binds each property defined in the active typesafe config to
@@ -46,10 +46,10 @@ import net.codingwell.scalaguice.ScalaModule
  * Taken from: https://github.com/ehalpern/sandbox (MIT licence)
  * @author Eric Halpern (eric.halpern@gmail.com)
  */
-class ConfigModule extends ScalaModule {
+class ConfigModule extends AbstractModule {
   def configure(): Unit = {
     val config = loadConfig()
-    bind[Config].toInstance(config)
+    bind(classOf[Config]).toInstance(config)
     bindConfig(config)
   }
 
@@ -101,22 +101,22 @@ class ConfigModule extends ScalaModule {
     val list = value.unwrapped.asInstanceOf[java.util.List[Any]]
     if (list.size == 0) {
       // Seq[Int|Double|Boolean] type params will only match a value bound as Seq[Any]
-      bind[Seq[Any]].annotatedWith(Names.named(key)).toInstance(Seq())
-      bind[Seq[String]].annotatedWith(Names.named(key)).toInstance(Seq())
+      bind(new TypeLiteral[Seq[Any]](){}).annotatedWith(Names.named(key)).toInstance(Seq())
+      bind(new TypeLiteral[Seq[String]](){}).annotatedWith(Names.named(key)).toInstance(Seq())
     } else {
       val seq = list.get(0) match {
         case x: Integer =>
           val v = list.collect({case x: java.lang.Integer => x.intValue}).toSeq
-          bind[Seq[Any]].annotatedWith(Names.named(key)).toInstance(v)
+          bind(new TypeLiteral[Seq[Any]](){}).annotatedWith(Names.named(key)).toInstance(v)
         case x: Double =>
           val v = list.collect({case x: java.lang.Double => x.doubleValue}).toSeq
-          bind[Seq[Any]].annotatedWith(Names.named(key)).toInstance(v)
+          bind(new TypeLiteral[Seq[Any]](){}).annotatedWith(Names.named(key)).toInstance(v)
         case x: Boolean =>
           val v = list.collect({case x: java.lang.Boolean => x.booleanValue}).toSeq
-          bind[Seq[Any]].annotatedWith(Names.named(key)).toInstance(v)
+          bind(new TypeLiteral[Seq[Any]](){}).annotatedWith(Names.named(key)).toInstance(v)
         case x: String =>
           val v = list.collect({case x: String => x}).toSeq
-          bind[Seq[String]].annotatedWith(Names.named(key)).toInstance(v)
+          bind(new TypeLiteral[Seq[String]](){}).annotatedWith(Names.named(key)).toInstance(v)
         case x =>
           throw new AssertionError("Unsupported list type " + x.getClass)
       }

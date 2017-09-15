@@ -1,8 +1,6 @@
 // Copyright (c) 2015, CodiLime, Inc.
 //
 // Owner: Robert Pohnke
-//
-// SBT plugin declarations
 
 resolvers += Classpaths.sbtPluginReleases
 

@@ -8,17 +8,16 @@ package io.deepsense.experimentmanager.rest
 
 import akka.actor.{ActorRef, ActorSystem}
 import com.google.inject.name.Named
-import com.google.inject.{Provides, Singleton}
-import net.codingwell.scalaguice.ScalaModule
+import com.google.inject.{AbstractModule, Provides, Singleton}
 
 import io.deepsense.experimentmanager.akka.GuiceAkkaExtension
 
 /**
  * Configures RestServer internals.
  */
-class RestModule extends ScalaModule {
+class RestModule extends AbstractModule {
   override def configure(): Unit = {
-    bind[RestServer]
+    bind(classOf[RestServer])
   }
 
   @Provides

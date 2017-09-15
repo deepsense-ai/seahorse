@@ -6,10 +6,10 @@
 
 package io.deepsense.experimentmanager.app.storage
 
-import net.codingwell.scalaguice.ScalaModule
+import com.google.inject.AbstractModule
 
-class ExperimentStorageModule extends ScalaModule {
+class ExperimentStorageModule extends AbstractModule {
   override def configure(): Unit = {
-    bind[ExperimentStorage].to[MockedExperimentStorage].asEagerSingleton()
+    bind(classOf[ExperimentStorage]).to(classOf[MockedExperimentStorage]).asEagerSingleton()
   }
 }

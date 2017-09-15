@@ -12,19 +12,17 @@ import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.{Await, duration}
 
 import com.google.common.base.Function
-import net.codingwell.scalaguice.KeyExtensions._
-import net.codingwell.scalaguice._
+import com.google.inject.{Key, TypeLiteral}
 import org.jclouds.ContextBuilder
 import org.jclouds.compute.ComputeServiceContext
 import org.jclouds.domain.Credentials
 import org.jclouds.openstack.keystone.v2_0.domain.Access
-import org.scalatest.{BeforeAndAfterAll, BeforeAndAfter}
+import org.scalatest.BeforeAndAfter
 import spray.routing.Route
 
 import io.deepsense.experimentmanager.IntegTestSupport
 import io.deepsense.experimentmanager.app.models.Experiment
 import io.deepsense.experimentmanager.app.storage.ExperimentStorage
-import io.deepsense.experimentmanager.auth.HasTenantId
 
 class RestApiIntegSpec extends RestApiSpec with IntegTestSupport with BeforeAndAfter {
 
@@ -96,7 +94,7 @@ class RestApiIntegSpec extends RestApiSpec with IntegTestSupport with BeforeAndA
     val auth = context
       .utils()
       .injector()
-      .getInstance(typeLiteral[Function[Credentials, Access]].toKey)
+      .getInstance(Key.get(new TypeLiteral[Function[Credentials, Access]](){}))
 
     auth(
       new Credentials.Builder[Credentials]()

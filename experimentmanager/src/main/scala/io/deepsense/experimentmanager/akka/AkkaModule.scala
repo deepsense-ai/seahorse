@@ -10,8 +10,7 @@ import scala.concurrent.ExecutionContext
 
 import akka.actor.{ActorRefFactory, ActorSystem}
 import com.google.inject
-import com.google.inject.{Injector, Provider, Provides}
-import net.codingwell.scalaguice.ScalaModule
+import com.google.inject.{AbstractModule, Injector, Provider, Provides}
 
 /**
  * This module defines the bindings required to support Guice injectable Akka actors.
@@ -30,9 +29,9 @@ import net.codingwell.scalaguice.ScalaModule
  * Taken from: https://github.com/ehalpern/sandbox (MIT licence)
  * @author Eric Halpern (eric.halpern@gmail.com)
  */
-class AkkaModule extends ScalaModule {
+class AkkaModule extends AbstractModule {
 
-  def configure {
+  def configure(): Unit = {
     // All of the bindings for this module are defined using the
     // [[https://github.com/google/guice/wiki/ProvidesMethods provider methods]]
     // below.

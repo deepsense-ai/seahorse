@@ -24,7 +24,7 @@ import io.deepsense.experimentmanager.app.rest.actions.{AbortAction, LaunchActio
 import io.deepsense.experimentmanager.app.rest.json.RestJsonProtocol._
 import io.deepsense.experimentmanager.app.{ExperimentManager, ExperimentManagerProvider}
 import io.deepsense.experimentmanager.auth.exceptions.{NoRoleException, ResourceAccessDeniedException}
-import io.deepsense.experimentmanager.auth.usercontext.{CannotGetUserException, Role, TokenTranslator, UserContext}
+import io.deepsense.experimentmanager.auth.usercontext.{CannotGetUserException, TokenTranslator, UserContext}
 import io.deepsense.experimentmanager.{StandardSpec, UnitTestSupport}
 
 class RestApiSpec extends StandardSpec with UnitTestSupport {

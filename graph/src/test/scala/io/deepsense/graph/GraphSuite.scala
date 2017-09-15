@@ -1,0 +1,265 @@
+/**
+ * Copyright (c) 2015, CodiLime Inc.
+ *
+ * Owner: Radoslaw Kotowski
+ */
+
+package io.deepsense.graph
+
+import java.io.{ByteArrayInputStream, ByteArrayOutputStream, ObjectInputStream, ObjectOutputStream}
+import java.util.UUID
+
+import org.scalatest.{FunSuite, Matchers}
+
+import io.deepsense.deeplang._
+import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
+import io.deepsense.graph.Node.State.Status
+
+object DClassesForDOperations {
+  trait A extends DOperable
+  class A1 extends A {
+    override def equals(any: Any) = any.isInstanceOf[A1]
+  }
+  class A2 extends A {
+    override def equals(any: Any) = any.isInstanceOf[A2]
+  }
+}
+
+object DOperationTestClasses {
+  import DClassesForDOperations._
+
+  class DOperation0To1Test extends DOperation0To1[A1] {
+    override protected def _execute(context: ExecutionContext)(): A1 = ???
+  }
+
+  class DOperation1To0Test extends DOperation1To0[A1] {
+    override protected def _execute(context: ExecutionContext)(t0: A1): Unit = ???
+  }
+
+  class DOperation1To1Test extends DOperation1To1[A1, A] {
+    override protected def _execute(context: ExecutionContext)(t1: A1): A = ???
+  }
+
+  class DOperation2To1Test extends DOperation2To1[A1, A2, A] {
+    override protected def _execute(context: ExecutionContext)(t1: A1, t2: A2): A = ???
+  }
+}
+
+class GraphSuite extends FunSuite with Matchers {
+
+  test("An empty Graph should have size 0") {
+    assert((new Graph).size == 0)
+  }
+
+  test("Adding edge to an empty Graph should produce NoSuchElementException") {
+    intercept[NoSuchElementException] {
+      val graph = new Graph
+      graph.addEdge(UUID.randomUUID(), UUID.randomUUID(), 0, 0)
+    }
+  }
+
+  test("Graph with two nodes should have size 2") {
+    import DOperationTestClasses._
+
+    val graph = new Graph
+    val node1 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    val node2 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    graph.addEdge(node1.id, node2.id, 0, 0)
+
+    assert(graph.size == 2)
+  }
+
+  test("Programmer can get/edit state of an execution graph nodes") {
+    import DOperationTestClasses._
+
+    val graph = new Graph
+    val node = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+
+    // node should be in draft
+    assert(node.state.status == Status.INDRAFT)
+
+    // queued
+    graph.markAsQueued(node.id)
+    assert(node.state.status == Status.QUEUED)
+
+    // running
+    graph.markAsRunning(node.id)
+    assert(node.state.status == Status.RUNNING)
+
+    // report some progress
+    graph.reportProgress(node.id, 5)
+    assert(node.state.status == Status.RUNNING)
+    assert(node.state.progress.get.current == 5)
+
+    // completed
+    graph.markAsCompleted(node.id, List())
+    assert(node.state.status == Status.COMPLETED)
+  }
+
+  test("Programmer can list all nodes in graph") {
+    import DOperationTestClasses._
+
+    // Create a Graph instance and list of its nodes.
+    val graph = new Graph
+    val nodes = List(
+      graph.addNode(UUID.randomUUID(), new DOperation0To1Test),
+      graph.addNode(UUID.randomUUID(), new DOperation1To1Test))
+
+    assert(graph.nodesList.size == graph.size)
+    // Check equality of lists elements sets.
+    assert(graph.nodesList.toSet == nodes.toSet)
+
+    graph.addNode(UUID.randomUUID(), new DOperation1To0Test)
+    assert(graph.nodesList.size == graph.size)
+    // Check lack of equality of lists elements sets after new node is added to graph.
+    assert(graph.nodesList.toSet != nodes.toSet)
+  }
+
+  test("Programmer can list operations ready for execution") {
+    import DOperationTestClasses._
+
+    // create a Graph Instance
+    val graph = new Graph
+    val nodeReady = graph.addNode(UUID.randomUUID(), new DOperation0To1Test)
+    val nodeNotReady = graph.addNode(UUID.randomUUID(), new DOperation1To0Test)
+    graph.addEdge(nodeReady.id, nodeNotReady.id, 0, 0)
+
+    // queue all Nodes for execution
+    graph.markAsQueued(nodeReady.id)
+    graph.markAsQueued(nodeNotReady.id)
+
+    // get list of operations ready for execution
+    val readyList = graph.readyNodes
+
+    assert(readyList.length == 1)
+    assert(readyList.head == nodeReady)
+  }
+
+  test("Programmer can validate if graph doesn't contain a cycle") {
+    import DOperationTestClasses._
+
+    val graph = new Graph
+    val node1 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    val node2 = graph.addNode(UUID.randomUUID(), new DOperation2To1Test)
+    val node3 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    val node4 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    graph.addEdge(node1.id, node2.id, 0, 0)
+    graph.addEdge(node2.id, node3.id, 0, 0)
+    graph.addEdge(node3.id, node4.id, 0, 0)
+    assert(graph.containsCycle == false)
+
+    graph.addEdge(node4.id, node2.id, 0, 1)
+    assert(graph.containsCycle == true)
+  }
+
+  test("Simple Graph can be sorted topologically") {
+    import DOperationTestClasses._
+
+    val graph = new Graph
+    val node1 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    val node2 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    val node3 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    val node4 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    graph.addEdge(node1.id, node2.id, 0, 0)
+    graph.addEdge(node2.id, node3.id, 0, 0)
+    graph.addEdge(node3.id, node4.id, 0, 0)
+
+    val sorted = graph.topologicallySorted
+    assert(sorted == Some(List(node1, node2, node3, node4)))
+  }
+
+  test("Complicated Graph can be sorted topologically") {
+    import DOperationTestClasses._
+
+    def checkIfInOrder(node1: Node, node2: Node, order: List[Node]): Unit = {
+      assert(order.indexOf(node1) < order.indexOf(node2))
+    }
+
+    val graph = new Graph
+    val node1 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    val node2 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    val node3 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    val node4 = graph.addNode(UUID.randomUUID(), new DOperation2To1Test)
+    val node5 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    val node6 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    val node7 = graph.addNode(UUID.randomUUID(), new DOperation2To1Test)
+    val edges = List(
+      (node1, node2, 0, 0),
+      (node1, node3, 0, 0),
+      (node2, node4, 0, 0),
+      (node3, node4, 0, 1),
+      (node4, node5, 0, 0),
+      (node4, node6, 0, 0),
+      (node5, node7, 0, 0),
+      (node6, node7, 0, 1))
+    edges.foreach(n => graph.addEdge(n._1.id, n._2.id, n._3, n._4))
+
+    val sortedOption = graph.topologicallySorted
+    assert(sortedOption.isDefined)
+    val sorted = sortedOption.get
+    edges.foreach(n => checkIfInOrder(n._1, n._2, sorted))
+  }
+
+  test("Graph can infer knowledge") {
+    import DClassesForDOperations._
+    import DOperationTestClasses._
+
+    val graph = new Graph
+    val node1 = graph.addNode(UUID.randomUUID(), new DOperation0To1Test)
+    val node2 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    val node3 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    val node4 = graph.addNode(UUID.randomUUID(), new DOperation2To1Test)
+    val edges = List(
+      (node1, node2, 0, 0),
+      (node1, node3, 0, 0),
+      (node2, node4, 0, 0),
+      (node3, node4, 0, 1))
+    edges.foreach(n => graph.addEdge(n._1.id, n._2.id, n._3, n._4))
+
+    val hierarchy = new DOperableCatalog
+    hierarchy.registerDOperable[A1]()
+    hierarchy.registerDOperable[A2]()
+    val ctx = new InferContext(hierarchy)
+    val graphKnowledge = graph.inferKnowledge(ctx)
+
+    val knowledgeA1: Vector[DKnowledge[DOperable]] = Vector(new DKnowledge(new A1))
+    val knowledgeA12: Vector[DKnowledge[DOperable]] = Vector(new DKnowledge(new A1, new A2))
+
+    val graphKnowledgeExpected = Map(
+      node1.id -> knowledgeA1,
+      node2.id -> knowledgeA12,
+      node3.id -> knowledgeA12,
+      node4.id -> knowledgeA12)
+
+    graphKnowledge.knowledgeMap should contain theSameElementsAs graphKnowledgeExpected
+  }
+
+  test("Non-empty Graph should be serializable") {
+    import DOperationTestClasses._
+    val graph = new Graph
+    val node1 = graph.addNode(UUID.randomUUID(), new DOperation0To1Test)
+    val node2 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    val node3 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    val node4 = graph.addNode(UUID.randomUUID(), new DOperation2To1Test)
+    val edges = List(
+      (node1, node2, 0, 0),
+      (node1, node3, 0, 0),
+      (node2, node4, 0, 0),
+      (node3, node4, 0, 1))
+    edges.foreach(n => graph.addEdge(n._1.id, n._2.id, n._3, n._4))
+
+    val bytesOut = new ByteArrayOutputStream()
+    val oos = new ObjectOutputStream(bytesOut)
+    oos.writeObject(graph)
+    oos.flush()
+    oos.close()
+
+    val bufferIn = new ByteArrayInputStream(bytesOut.toByteArray)
+    val streamIn = new ObjectInputStream(bufferIn)
+    val graphIn = streamIn.readObject().asInstanceOf[Graph]
+
+    assert(graphIn.size == graph.size)
+    // Verify that both graphs have the same nodes ids set
+    assert(graphIn.nodesList.map(n => n.id).toSet == graph.nodesList.map(n => n.id).toSet)
+  }
+}

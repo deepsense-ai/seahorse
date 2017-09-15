@@ -6,7 +6,7 @@
 
 package io.deepsense.experimentmanager
 
-import net.codingwell.scalaguice.ScalaModule
+import com.google.inject.AbstractModule
 
 import io.deepsense.experimentmanager.akka.AkkaModule
 import io.deepsense.experimentmanager.app.{ApisModule, ServicesModule}
@@ -18,7 +18,7 @@ import io.deepsense.experimentmanager.rest.RestModule
  * The main module for Experiment Manager. Installs all needed modules to run
  * the application.
  */
-class ExperimentManagerAppModule extends ScalaModule {
+class ExperimentManagerAppModule extends AbstractModule {
   override def configure(): Unit = {
     installCore()
     installServices()

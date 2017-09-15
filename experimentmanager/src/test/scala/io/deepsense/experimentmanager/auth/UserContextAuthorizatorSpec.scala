@@ -7,14 +7,14 @@
 package io.deepsense.experimentmanager.auth
 
 import scala.concurrent.duration.FiniteDuration
-import scala.concurrent.{duration, Await, Future}
+import scala.concurrent.{Await, Future, duration}
 import scala.util.Failure
 
 import org.mockito.Mockito._
 
 import io.deepsense.experimentmanager.auth.exceptions.NoRoleException
 import io.deepsense.experimentmanager.auth.usercontext.{Role, UserContext}
-import io.deepsense.experimentmanager.{UnitTestSupport, StandardSpec}
+import io.deepsense.experimentmanager.{StandardSpec, UnitTestSupport}
 
 class UserContextAuthorizatorSpec extends StandardSpec with UnitTestSupport {
 

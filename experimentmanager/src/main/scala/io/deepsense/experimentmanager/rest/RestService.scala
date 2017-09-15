@@ -6,17 +6,18 @@
 
 package io.deepsense.experimentmanager.rest
 
+import scala.collection.JavaConversions.asScalaSet
+
 import akka.actor.{Actor, ActorContext}
 import com.google.inject.Inject
 import spray.http.StatusCodes
 import spray.routing._
 import spray.util.LoggingContext
 
-
 /**
  * Akka actor responsible for handling REST API requests.
  */
-class RestServiceActor @Inject()(apiSet: Set[RestComponent])
+class RestServiceActor @Inject()(apiSet: java.util.Set[RestComponent])
   extends Actor
   with RestService {
   def actorRefFactory: ActorContext = {
@@ -27,7 +28,7 @@ class RestServiceActor @Inject()(apiSet: Set[RestComponent])
     runRoute(standardRoute)
   }
 
-  protected[this] def apis = apiSet.toSeq
+  protected[this] def apis = asScalaSet(apiSet).toSeq
 }
 
 trait RestService extends HttpService {

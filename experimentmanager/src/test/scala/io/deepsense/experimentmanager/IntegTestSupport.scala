@@ -6,12 +6,12 @@
 
 package io.deepsense.experimentmanager
 
+import scala.collection.JavaConversions.asScalaSet
 import scala.concurrent.duration._
 
 import _root_.akka.actor.ActorRefFactory
-import com.google.inject.{Guice, Provides}
+import com.google.inject.{AbstractModule, Guice, Provides}
 import com.typesafe.config.Config
-import net.codingwell.scalaguice.ScalaModule
 import org.scalatest.concurrent.IntegrationPatience
 
 import io.deepsense.experimentmanager.rest.{RestComponent, RestService}
@@ -20,14 +20,14 @@ import scala.reflect._
 /**
  * Extends StandardSpec with features to aid integration testing including:
  *
- *   - [[getRestServiceInstance]] method to obtain a fully wired application route
- *     for integrated API testing
+ * - [[getRestServiceInstance]] method to obtain a fully wired application route
+ * for integrated API testing
  *
- *   - [[getInstance]] method to obtain a fully wired class/trait instance for
- *     integrated service testing
+ * - [[getInstance]] method to obtain a fully wired class/trait instance for
+ * integrated service testing
  *
- *   - longer default future and spray timeouts to accommodate the longer wait
- *     times associated with using real remote services
+ * - longer default future and spray timeouts to accommodate the longer wait
+ * times associated with using real remote services
  *
  */
 trait IntegTestSupport extends IntegrationPatience {
@@ -36,25 +36,25 @@ trait IntegTestSupport extends IntegrationPatience {
   /**
    * An injector that creates the entire integrated object graph
    */
-  private val injector = Guice.createInjector(new ScalaModule {
-      override def configure(): Unit = {
-        install(new ExperimentManagerAppModule)
-      }
+  private val injector = Guice.createInjector(new AbstractModule {
+    override def configure(): Unit = {
+      install(new ExperimentManagerAppModule)
+    }
 
-      /**
-       * Provides the test entry point for the application router.
-       * The actual application creates the router using the actor
-       * [[io.deepsense.experimentmanager.rest.RestServiceActor]]
-       */
-      @Provides
-      def provideApiRouter(apiSet: Set[RestComponent], arf: ActorRefFactory): RestService = {
-        new RestService {
-          implicit def actorRefFactory: ActorRefFactory = arf
+    /**
+     * Provides the test entry point for the application router.
+     * The actual application creates the router using the actor
+     * [[io.deepsense.experimentmanager.rest.RestServiceActor]]
+     */
+    @Provides
+    def provideApiRouter(apiSet: java.util.Set[RestComponent], arf: ActorRefFactory): RestService = {
+      new RestService {
+        implicit def actorRefFactory: ActorRefFactory = arf
 
-          protected[this] def apis = apiSet.toSeq
-        }
+        protected[this] def apis = asScalaSet(apiSet).toSeq
       }
-    })
+    }
+  })
 
   /**
    * Increases the default timeout for routing tests

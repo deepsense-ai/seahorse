@@ -6,12 +6,11 @@
 
 package io.deepsense.experimentmanager.jclouds
 
-import com.google.inject.{Injector, Provides}
-import net.codingwell.scalaguice.ScalaModule
+import com.google.inject.{AbstractModule, Injector, Provides}
 import org.jclouds.openstack.keystone.v2_0.KeystoneApi
 import org.jclouds.openstack.keystone.v2_0.features.TokenApi
 
-class TokenApiModule extends ScalaModule {
+class TokenApiModule extends AbstractModule {
   override def configure(): Unit = {
     // All done by defining ProvidesMethods
   }
