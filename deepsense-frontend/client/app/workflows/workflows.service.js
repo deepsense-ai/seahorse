@@ -73,7 +73,9 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
         let addedNodes = _.map(addedNodeIds, nodeId => newNodes[nodeId]);
         let addedCustomWorkflowNodes = _.filter(addedNodes, (n) => n.operationId === CUSTOM_TRANSFORMER_ID);
         _.forEach(addedCustomWorkflowNodes, (addedNode) => {
-          addedNode.parametersValues[INNER_WORKFLOW_PARAM_NAME] = DefaultInnerWorkflowGenerator.create();
+          if (_.isUndefined(addedNode.parametersValues[INNER_WORKFLOW_PARAM_NAME])) {
+            addedNode.parametersValues[INNER_WORKFLOW_PARAM_NAME] = DefaultInnerWorkflowGenerator.create();
+          }
           this.initInnerWorkflow(addedNode);
         });
       });
