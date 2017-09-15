@@ -16,11 +16,12 @@
 
 package io.deepsense.deeplang.doperations
 
-import java.io.IOException
+import java.io.{File, IOException}
 
 import scala.reflect.runtime.{universe => ru}
 
 import io.deepsense.commons.utils.Version
+import io.deepsense.commons.utils.FileOperations.deleteRecursivelyIfExists
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.Transformer
 import io.deepsense.deeplang.doperations.exceptions.DeepSenseIOException
@@ -49,6 +50,7 @@ case class WriteTransformer()
   override protected def _execute(context: ExecutionContext)(transformer: Transformer): Unit = {
     val outputDictPath = getOutputPath
     try {
+      deleteRecursivelyIfExists(new File(outputDictPath))
       transformer.save(context, outputDictPath)
     } catch {
       case e: IOException =>
