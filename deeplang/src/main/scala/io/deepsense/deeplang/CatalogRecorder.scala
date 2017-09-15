@@ -58,6 +58,7 @@ object CatalogRecorder {
     catalog.registerDOperable[OneHotEncoder]()
     catalog.registerDOperable[PolynomialExpander]()
     catalog.registerDOperable[RegexTokenizer]()
+    catalog.registerDOperable[StopWordsRemover]()
     catalog.registerDOperable[StringTokenizer]()
     catalog.registerDOperable[VectorAssembler]()
     catalog.registerDOperable[HashingTFTransformer]()
@@ -148,6 +149,9 @@ object CatalogRecorder {
       DOperationCategories.Transformation)
 
     catalog.registerDOperation[TokenizeWithRegex](
+      DOperationCategories.Transformation)
+
+    catalog.registerDOperation[RemoveStopWords](
       DOperationCategories.Transformation)
 
     catalog.registerDOperation[Tokenize](
