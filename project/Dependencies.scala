@@ -78,6 +78,9 @@ object Library {
     "com.fasterxml.jackson.core", "jackson-databind") exclude (
     "com.google.guava", "guava")
   val jsonLenses = "net.virtual-void" %%  "json-lenses" % "0.6.1"
+  // JDBC drivers
+  val mysql = "mysql" % "mysql-connector-java" % "5.1.28"
+  val postgresql = "org.postgresql" % "postgresql" % "9.4.1207"
 }
 
 object Dependencies {
@@ -155,7 +158,10 @@ object Dependencies {
     jsonLenses,
     scopt,
     sprayClient,
-    rabbitmq
+    rabbitmq,
+    // JDBC drivers
+    mysql,
+    postgresql
   ) ++ Seq(akkaTestkit, mockitoCore, scalatest, wireMock).map(_ % s"$Test,it")
 
   val workflowexecutorMqProtocol = Seq(
