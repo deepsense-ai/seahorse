@@ -31,15 +31,15 @@ class SqlTransformer extends Transformer {
 
   val dataFrameId = StringParam(
     name = "dataframe id",
-    description = "An identifier that can be used in " +
-      "the SQL expression to refer to the input DataFrame.")
+    description = Some("An identifier that can be used in " +
+      "the SQL expression to refer to the input DataFrame."))
   setDefault(dataFrameId -> "df")
   def getDataFrameId: String = $(dataFrameId)
   def setDataFrameId(value: String): this.type = set(dataFrameId, value)
 
   val expression = CodeSnippetParam(
     name = "expression",
-    description = "SQL Expression to be executed on the DataFrame.",
+    description = Some("SQL Expression to be executed on the DataFrame."),
     language = CodeSnippetLanguage(CodeSnippetLanguage.sql))
   setDefault(expression -> "SELECT * FROM df")
   def getExpression: String = $(expression)

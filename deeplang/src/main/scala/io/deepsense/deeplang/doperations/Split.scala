@@ -50,11 +50,11 @@ case class Split()
   val splitMode = ChoiceParam[SplitModeChoice](
     name = "split mode",
     description =
-      """There are two split modes:
+      Some("""There are two split modes:
         |`RANDOM` where rows are split randomly with specified `ratio` and `seed`;
         |`CONDITIONAL` where rows are split into two `DataFrames` -
         |satisfying an SQL `condition` and not satisfying it.
-        |""".stripMargin)
+        |""".stripMargin))
   setDefault(splitMode, SplitModeChoice.Random())
 
   def getSplitMode: SplitModeChoice = $(splitMode)
@@ -164,7 +164,7 @@ object SplitModeChoice {
 
     val splitRatio = NumericParam(
       name = "split ratio",
-      description = "Percentage of rows that should end up in the first output DataFrame.",
+      description = Some("Percentage of rows that should end up in the first output DataFrame."),
       validator = RangeValidator(0.0, 1.0, beginIncluded = true, endIncluded = true))
     setDefault(splitRatio, 0.5)
 
@@ -185,10 +185,10 @@ object SplitModeChoice {
     val condition = CodeSnippetParam(
       name = "condition",
       description =
-        """Condition used to split rows.
+        Some("""Condition used to split rows.
           |Rows that satisfy condition will be placed in the first DataFrame
           |and rows that do not satisfy it - in the second.
-          |Use SQL syntax.""".stripMargin,
+          |Use SQL syntax.""".stripMargin),
       language = CodeSnippetLanguage(CodeSnippetLanguage.sql)
     )
 

@@ -35,8 +35,8 @@ class QuantileDiscretizerEstimator
 
   val numBuckets = new IntParamWrapper[ml.param.Params { val numBuckets: ml.param.IntParam }](
     name = "num buckets",
-    description = "Maximum number of buckets (quantiles or categories) " +
-      "into which the data points are grouped. Must be >= 2.",
+    description = Some("Maximum number of buckets (quantiles or categories) " +
+      "into which the data points are grouped. Must be >= 2."),
     sparkParamGetter = _.numBuckets,
     RangeValidator(2.0, Int.MaxValue, step = Some(1.0)))
   setDefault(numBuckets, 2.0)

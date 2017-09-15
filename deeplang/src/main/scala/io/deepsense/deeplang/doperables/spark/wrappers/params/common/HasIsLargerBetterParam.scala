@@ -25,7 +25,7 @@ trait HasIsLargerBetterParam extends Params {
   val isLargerBetterParam = BooleanParam(
     name = "is larger better",
     description =
-      """Indicates whether the returned metric
-        |is better to be maximized or minimized.""".stripMargin)
+      Some("""Indicates whether the returned metric
+        |is better to be maximized or minimized.""".stripMargin))
   setDefault(isLargerBetterParam -> false)
 }

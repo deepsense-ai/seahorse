@@ -26,14 +26,15 @@ class ColumnSelectorParamSpec
   override def className: String = "MultipleColumnCreatorParam"
 
   override def paramFixture: (ColumnSelectorParam, JsValue) = {
+    val description = "Column selector description"
     val param = ColumnSelectorParam(
       name = "Column selector name",
-      description = "Column selector description",
+      description = Some(description),
       portIndex = 0)
     val expectedJson = JsObject(
       "type" -> JsString("selector"),
       "name" -> JsString(param.name),
-      "description" -> JsString(param.description),
+      "description" -> JsString(description),
       "portIndex" -> JsNumber(param.portIndex),
       "isSingle" -> JsFalse,
       "isGriddable" -> JsFalse,

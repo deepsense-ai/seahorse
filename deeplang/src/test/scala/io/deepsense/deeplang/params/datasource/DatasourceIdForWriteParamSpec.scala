@@ -28,11 +28,11 @@ class DatasourceIdForWriteParamSpec extends AbstractParamSpec[UUID, DatasourceId
   override def paramFixture: (DatasourceIdForWriteParam, JsValue) = {
     val param = DatasourceIdForWriteParam(
       name = "Ds for write parameter name",
-      description = "Ds for write parameter description")
+      description = None)
     val expectedJson = JsObject(
       "type" -> JsString("datasourceIdForWrite"),
       "name" -> JsString(param.name),
-      "description" -> JsString(param.description),
+      "description" -> JsString(""),
       "default" -> JsNull,
       "isGriddable" -> JsFalse
     )

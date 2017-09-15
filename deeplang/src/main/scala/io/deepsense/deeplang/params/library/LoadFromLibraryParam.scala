@@ -23,7 +23,7 @@ import io.deepsense.deeplang.params.ParameterType.ParameterType
 
 case class LoadFromLibraryParam(
     name: String,
-    description: String)
+    override val description: Option[String])
   extends ParamWithJsFormat[String] {
 
   override def replicate(name: String): LoadFromLibraryParam = copy(name = name)

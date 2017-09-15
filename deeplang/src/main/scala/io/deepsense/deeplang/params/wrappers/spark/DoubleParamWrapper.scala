@@ -23,7 +23,7 @@ import io.deepsense.deeplang.params.validators.{RangeValidator, Validator}
 
 class DoubleParamWrapper[P <: ml.param.Params](
     override val name: String,
-    override val description: String,
+    override val description: Option[String],
     val sparkParamGetter: P => ml.param.DoubleParam,
     override val validator: Validator[Double] = RangeValidator(Double.MinValue, Double.MaxValue))
   extends NumericParam(name, description, validator)

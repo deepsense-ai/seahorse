@@ -71,10 +71,10 @@ object ParamsWithSparkWrappersSpec {
 
     val exampleSparkParams = new ExampleSparkParams
 
-    val paramA = new StringParamWrapper[ExampleSparkParams]("paramA", "descA", _.sparkParamA)
-    val paramB = new IntParamWrapper[ExampleSparkParams]("paramB", "descB", _.sparkParamB)
-    val choiceWithParamsInValues = new ChoiceParam[ChoiceWithWrappers]("choice", "descChoice")
-    val notWrappedParam = BooleanParam("booleanParamName", "booleanParamDescription")
+    val paramA = new StringParamWrapper[ExampleSparkParams]("paramA", Some("descA"), _.sparkParamA)
+    val paramB = new IntParamWrapper[ExampleSparkParams]("paramB", Some("descB"), _.sparkParamB)
+    val choiceWithParamsInValues = new ChoiceParam[ChoiceWithWrappers]("choice", Some("descChoice"))
+    val notWrappedParam = BooleanParam("booleanParamName", Some("booleanParamDescription"))
 
     val params: Array[io.deepsense.deeplang.params.Param[_]] =
       Array(paramA, paramB, choiceWithParamsInValues, notWrappedParam)
@@ -91,7 +91,7 @@ object ParamsWithSparkWrappersSpec {
   }
 
   case class OneParamChoiceWithWrappers() extends ChoiceWithWrappers {
-    val paramC = new StringParamWrapper[ExampleSparkParams]("paramC", "descC", _.sparkParamC)
+    val paramC = new StringParamWrapper[ExampleSparkParams]("paramC", Some("descC"), _.sparkParamC)
     def setParamC(v: String): this.type = set(paramC, v)
 
     override val name = "one param"

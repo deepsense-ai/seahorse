@@ -21,8 +21,8 @@ import spray.json.DefaultJsonProtocol.DoubleJsonFormat
 import io.deepsense.deeplang.params.validators.{RangeValidator, Validator}
 
 case class NumericParam(
-    name: String,
-    description: String,
+    override val name: String,
+    override val description: Option[String],
     validator: Validator[Double] = RangeValidator.all)
   extends ParamWithJsFormat[Double]
   with HasValidator[Double] {

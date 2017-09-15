@@ -26,7 +26,7 @@ class ParamWrapper[T](
   extends ml.param.Param[T](
     parentId,
     param.name,
-    param.description,
+    param.description.getOrElse(""),
     (_: T) => true)
 
 object ParamWrapper {

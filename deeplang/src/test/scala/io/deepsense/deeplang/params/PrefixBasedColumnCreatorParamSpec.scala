@@ -24,14 +24,15 @@ class PrefixBasedColumnCreatorParamSpec
   override def className: String = "PrefixBasedColumnCreatorParam"
 
   override def paramFixture: (PrefixBasedColumnCreatorParam, JsValue) = {
+    val description = "Prefix based column creator description"
     val param = PrefixBasedColumnCreatorParam(
       name = "Prefix based column creator name",
-      description = "Prefix based column creator description"
+      description = Some(description)
     )
     val expectedJson = JsObject(
       "type" -> JsString("prefixBasedCreator"),
       "name" -> JsString(param.name),
-      "description" -> JsString(param.description),
+      "description" -> JsString(description),
       "isGriddable" -> JsFalse,
       "default" -> JsNull
     )

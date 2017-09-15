@@ -30,7 +30,7 @@ trait HasTolerance extends Params {
 
   val tolerance = new DoubleParamWrapper[ml.param.Params { val tol: ml.param.DoubleParam }](
     name = "tolerance",
-    description = "The convergence tolerance for iterative algorithms.",
+    description = Some("The convergence tolerance for iterative algorithms."),
     sparkParamGetter = _.tol,
     validator = RangeValidator(0.0, 1.0))
   setDefault(tolerance, toleranceDefault)

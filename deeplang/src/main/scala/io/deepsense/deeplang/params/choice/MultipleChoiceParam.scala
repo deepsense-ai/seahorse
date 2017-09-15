@@ -24,8 +24,8 @@ import spray.json._
 import scala.reflect.runtime.universe._
 
 case class MultipleChoiceParam[T <: Choice](
-    name: String,
-    description: String)
+    override val name: String,
+    override val description: Option[String])
   (implicit tag: TypeTag[T])
   extends AbstractChoiceParam[T, Set[T]] {
 

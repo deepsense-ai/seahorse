@@ -51,7 +51,7 @@ class WriteDataFrame()
 
   val storageType = ChoiceParam[OutputStorageTypeChoice](
     name = "data storage type",
-    description = "Storage type.")
+    description = Some("Storage type."))
 
   def getStorageType(): OutputStorageTypeChoice = $(storageType)
   def setStorageType(value: OutputStorageTypeChoice): this.type = set(storageType, value)

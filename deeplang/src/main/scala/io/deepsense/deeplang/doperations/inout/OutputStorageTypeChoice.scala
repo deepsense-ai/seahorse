@@ -39,14 +39,14 @@ object OutputStorageTypeChoice {
 
     val outputFile = SaveToLibraryParam(
       name = "output file",
-      description = "Output file path.")
+      description = Some("Output file path."))
 
     def getOutputFile(): String = $(outputFile)
     def setOutputFile(value: String): this.type = set(outputFile, value)
 
     val shouldOverwrite = BooleanParam(
       name = "overwrite",
-      description = "Should saving a file overwrite an existing file with the same name?"
+      description = Some("Should saving a file overwrite an existing file with the same name?")
     )
     setDefault(shouldOverwrite, true)
 
@@ -55,7 +55,7 @@ object OutputStorageTypeChoice {
 
     val fileFormat = ChoiceParam[OutputFileFormatChoice](
       name = "format",
-      description = "Format of the output file.")
+      description = Some("Format of the output file."))
     setDefault(fileFormat, new OutputFileFormatChoice.Csv())
 
     def getFileFormat(): OutputFileFormatChoice = $(fileFormat)
@@ -70,7 +70,7 @@ object OutputStorageTypeChoice {
 
     val shouldOverwrite = BooleanParam(
       name = "overwrite",
-      description = "Should saving a table overwrite an existing table with the same name?"
+      description = Some("Should saving a table overwrite an existing table with the same name?")
     )
     setDefault(shouldOverwrite, true)
 

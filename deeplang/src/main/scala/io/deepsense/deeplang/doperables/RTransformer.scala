@@ -24,7 +24,7 @@ class RTransformer extends CustomCodeTransformer {
 
   override lazy val codeParameter = CodeSnippetParam(
     name = "code",
-    description = "Operation source code.",
+    description = Some("Operation source code."),
     language = CodeSnippetLanguage(CodeSnippetLanguage.r)
   )
   setDefault(codeParameter ->

@@ -45,7 +45,7 @@ case class Evaluate()
 
   val evaluatorParams = new DynamicParam(
     name = "Parameters of input Evaluator",
-    description = "These parameters are rendered dynamically, depending on type of Evaluator.",
+    description = Some("These parameters are rendered dynamically, depending on type of Evaluator."),
     inputPort = 0)
   setDefault(evaluatorParams, JsNull)
 

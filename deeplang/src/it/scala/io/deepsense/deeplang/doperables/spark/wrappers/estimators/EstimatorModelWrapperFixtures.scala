@@ -78,7 +78,7 @@ object EstimatorModelWrapperFixtures {
     val predictionColumn = new SingleColumnCreatorParamWrapper[
         ml.param.Params { val predictionCol: SparkParam[String] }](
       "prediction column",
-      "description",
+      None,
       _.predictionCol)
     setDefault(predictionColumn, "abcdefg")
 

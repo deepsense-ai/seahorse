@@ -24,7 +24,7 @@ import io.deepsense.deeplang.params.validators.{RangeValidator, Validator}
 
 class FloatParamWrapper[P <: ml.param.Params](
     override val name: String,
-    override val description: String,
+    override val description: Option[String],
     val sparkParamGetter: P => ml.param.FloatParam,
     override val validator: Validator[Double] = RangeValidator(Float.MinValue, Float.MaxValue))
   extends NumericParam(name, description, validator)

@@ -23,14 +23,15 @@ class DynamicParamSpec extends AbstractParamSpec[JsValue, DynamicParam] {
   override def className: String = "DynamicParam"
 
   override def paramFixture: (DynamicParam, JsValue) = {
+    val description = "Dynamic param description"
     val param = new DynamicParam(
       "Dynamic param name",
-      "Dynamic param description",
+      Some(description),
       inputPort = 4)
     val json = JsObject(
       "type" -> JsString("dynamic"),
       "name" -> JsString(param.name),
-      "description" -> JsString(param.description),
+      "description" -> JsString(description),
       "inputPort" -> JsNumber(param.inputPort),
       "isGriddable" -> JsFalse,
       "default" -> JsNull)

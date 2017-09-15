@@ -24,7 +24,7 @@ import io.deepsense.deeplang.params.validators.{RangeValidator, Validator}
 
 class LongParamWrapper[P <: ml.param.Params](
     override val name: String,
-    override val description: String,
+    override val description: Option[String],
     val sparkParamGetter: P => ml.param.LongParam,
     // TODO change to full Long range when RangeValidator will be rewritten
     override val validator: Validator[Double] =

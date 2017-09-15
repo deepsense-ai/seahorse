@@ -23,8 +23,8 @@ import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.params.validators.{ComplexArrayValidator, Validator}
 
 case class MultipleNumericParam(
-    name: String,
-    description: String,
+    override val name: String,
+    override val description: Option[String],
     validator: Validator[Array[Double]] = ComplexArrayValidator.all)
   extends Param[Array[Double]] {
 

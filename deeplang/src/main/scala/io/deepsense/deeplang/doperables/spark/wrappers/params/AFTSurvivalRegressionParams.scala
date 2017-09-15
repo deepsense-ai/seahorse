@@ -33,9 +33,9 @@ trait AFTSurvivalRegressionParams extends Params
     new DoubleArrayParamWrapper[
         ml.param.Params { val quantileProbabilities: ml.param.DoubleArrayParam }](
       name = "quantile probabilities",
-      description = """Param for quantile probabilities array.
+      description = Some("""Param for quantile probabilities array.
                       |Values of the quantile probabilities array should be in the range (0, 1)
-                      |and the array should be non-empty.""".stripMargin,
+                      |and the array should be non-empty.""".stripMargin),
       sparkParamGetter = _.quantileProbabilities,
       validator = ComplexArrayValidator(
         rangeValidator = RangeValidator(0, 1, beginIncluded = false, endIncluded = false),

@@ -21,8 +21,8 @@ import spray.json.DefaultJsonProtocol.StringJsonFormat
 import io.deepsense.deeplang.params.validators.{ColumnNameValidator, Validator}
 
 case class SingleColumnCreatorParam(
-    name: String,
-    description: String)
+    override val name: String,
+    override val description: Option[String])
   extends ParamWithJsFormat[String]
   with HasValidator[String] {
 

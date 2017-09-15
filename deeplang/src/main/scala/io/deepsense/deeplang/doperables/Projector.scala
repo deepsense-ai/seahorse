@@ -30,7 +30,7 @@ class Projector extends Transformer {
 
   val projectionColumns = ParamsSequence[ColumnProjection](
     name = "projection columns",
-    description = "Column to project in the output DataFrame.")
+    description = Some("Column to project in the output DataFrame."))
 
   def getProjectionColumns: Seq[ColumnProjection] = $(projectionColumns)
   def setProjectionColumns(value: Seq[ColumnProjection]): this.type = set(projectionColumns, value)
@@ -79,7 +79,7 @@ object Projector {
 
     val originalColumn = SingleColumnSelectorParam(
       name = OriginalColumnParameterName,
-      description = "Column from the input DataFrame.",
+      description = Some("Column from the input DataFrame."),
       portIndex = 0)
 
     def getOriginalColumn: SingleColumnSelection = $(originalColumn)
@@ -87,7 +87,7 @@ object Projector {
 
     val renameColumn = ChoiceParam[RenameColumnChoice](
       name = RenameColumnParameterName,
-      description = "Determine if the column should be renamed.")
+      description = Some("Determine if the column should be renamed."))
     setDefault(renameColumn, RenameColumnChoice.No())
 
     def getRenameColumn: RenameColumnChoice = $(renameColumn)
@@ -114,7 +114,7 @@ object Projector {
 
       val columnName = SingleColumnCreatorParam(
         name = ColumnNameParameterName,
-        description = "New name for a column in the output DataFrame."
+        description = Some("New name for a column in the output DataFrame.")
       )
       setDefault(columnName, "")
 

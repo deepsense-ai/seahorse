@@ -32,22 +32,22 @@ trait Word2VecParams extends Params
 
   val vectorSize = new IntParamWrapper[ml.param.Params { val vectorSize: ml.param.IntParam }](
     name = "vector size",
-    description = "The dimension of codes after transforming from words.",
+    description = Some("The dimension of codes after transforming from words."),
     sparkParamGetter = _.vectorSize,
     validator = RangeValidator.positiveIntegers)
   setDefault(vectorSize -> 100)
 
   val numPartitions = new IntParamWrapper[ml.param.Params { val numPartitions: ml.param.IntParam }](
     name = "num partitions",
-    description = "The number of partitions for sentences of words.",
+    description = Some("The number of partitions for sentences of words."),
     sparkParamGetter = _.numPartitions,
     validator = RangeValidator.positiveIntegers)
   setDefault(numPartitions -> 1)
 
   val minCount = new IntParamWrapper[ml.param.Params { val minCount: ml.param.IntParam }](
     name = "min count",
-    description = "The minimum number of occurences of a token to " +
-      "be included in the model's vocabulary.",
+    description = Some("The minimum number of occurences of a token to " +
+      "be included in the model's vocabulary."),
     sparkParamGetter = _.minCount,
     validator = RangeValidator.positiveIntegers)
   setDefault(minCount -> 5)

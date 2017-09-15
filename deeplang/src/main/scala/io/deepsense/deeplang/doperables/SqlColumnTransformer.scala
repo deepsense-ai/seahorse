@@ -31,14 +31,14 @@ case class SqlColumnTransformer() extends MultiColumnTransformer {
 
   val inputColumnAlias = StringParam(
     name = "input column alias",
-    description = "An identifier that can be used in SQL formula to refer the input column.")
+    description = Some("An identifier that can be used in SQL formula to refer the input column."))
   setDefault(inputColumnAlias -> "x")
   def getInputColumnAlias: String = $(inputColumnAlias)
   def setInputColumnAlias(value: String): this.type = set(inputColumnAlias, value)
 
   val formula = StringParam(
     name = "formula",
-    description = "SQL formula involving input column as \"x\".")
+    description = Some("SQL formula involving input column as \"x\"."))
   setDefault(formula -> "x")
   def getFormula: String = $(formula)
   def setFormula(value: String): this.type = set(formula, value)

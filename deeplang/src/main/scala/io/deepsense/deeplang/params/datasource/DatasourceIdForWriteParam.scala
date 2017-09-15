@@ -23,8 +23,8 @@ import io.deepsense.deeplang.params.ParameterType.ParameterType
 import io.deepsense.deeplang.params.{ParamWithJsFormat, ParameterType}
 
 case class DatasourceIdForWriteParam(
-    name: String,
-    description: String)
+    override val name: String,
+    override val description: Option[String])
   extends ParamWithJsFormat[UUID] {
 
   override def replicate(name: String): DatasourceIdForWriteParam = copy(name = name)

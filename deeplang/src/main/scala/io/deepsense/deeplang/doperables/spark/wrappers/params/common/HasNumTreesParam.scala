@@ -29,7 +29,7 @@ trait HasNumTreesParam extends Params {
 
   val numTrees = new IntParamWrapper[ml.param.Params { val numTrees: ml.param.IntParam }](
     name = "num trees",
-    description = "The number of trees to train.",
+    description = Some("The number of trees to train."),
     sparkParamGetter = _.numTrees,
     validator = RangeValidator(begin = 1.0, end = Int.MaxValue, step = Some(1.0)))
   setDefault(numTrees, 20.0)

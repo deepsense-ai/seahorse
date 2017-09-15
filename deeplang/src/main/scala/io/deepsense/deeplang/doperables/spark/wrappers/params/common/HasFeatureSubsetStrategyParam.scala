@@ -30,7 +30,7 @@ trait HasFeatureSubsetStrategyParam extends Params {
     new ChoiceParamWrapper[ml.param.Params {val featureSubsetStrategy: ml.param.Param[String]},
       FeatureSubsetStrategy.Option](
       name = "feature subset strategy",
-      description = "The number of features to consider for splits at each tree node.",
+      description = Some("The number of features to consider for splits at each tree node."),
       sparkParamGetter = _.featureSubsetStrategy)
 
   setDefault(featureSubsetStrategy, FeatureSubsetStrategy.Auto())

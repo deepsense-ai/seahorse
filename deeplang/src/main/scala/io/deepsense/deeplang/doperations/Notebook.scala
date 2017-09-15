@@ -37,7 +37,7 @@ abstract class Notebook()
   // TODO: invent a better implementation of nested parameters
   val shouldExecuteParam = MultipleChoiceParam[SendEmailChoice](
     name = "execute notebook",
-    description = "Should the Notebook cells be run when this operation is executed?"
+    description = Some("Should the Notebook cells be run when this operation is executed?")
   )
   setDefault(shouldExecuteParam, Set.empty: Set[SendEmailChoice])
 
@@ -117,7 +117,7 @@ object Notebook {
 
     val sendEmailParam = MultipleChoiceParam[EmailAddressChoice](
       name = "send e-mail report",
-      description = "Should the e-mail report be sent after Notebook execution?"
+      description = Some("Should the e-mail report be sent after Notebook execution?")
     )
     setDefault(sendEmailParam, Set.empty: Set[EmailAddressChoice])
 
@@ -140,7 +140,7 @@ object Notebook {
 
     val emailAddressParam = StringParam(
       name = "email address",
-      description = "The address to which the report will be sent."
+      description = Some("The address to which the report will be sent.")
     )
 
     def getEmailAddress: String = $(emailAddressParam)

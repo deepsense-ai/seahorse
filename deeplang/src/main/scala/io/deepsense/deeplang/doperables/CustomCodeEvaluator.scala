@@ -32,7 +32,7 @@ abstract class CustomCodeEvaluator()
 
   val metricName = StringParam(
     name = "metric name",
-    description = "Name of the metric.")
+    description = Some("Name of the metric."))
   setDefault(metricName -> "custom metric")
 
   def getMetricName: String = $(metricName)

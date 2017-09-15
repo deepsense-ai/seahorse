@@ -37,7 +37,7 @@ object EstimatorModelWrappersFixtures extends MockitoSugar with DeeplangTestSupp
     val numericParamWrapper = new DoubleParamWrapper[
         ml.param.Params { val numericParam: ml.param.DoubleParam }](
       "name",
-      "description",
+      Some("description"),
       _.numericParam)
     setDefault(numericParamWrapper, 1.0)
   }

@@ -47,8 +47,8 @@ final class SqlCombine
 
   val leftTableName = StringParam(
     name = "Left dataframe id",
-    description = "The identifier that can be used in the Spark SQL expression to refer the " +
-      "left-hand side DataFrame.")
+    description = Some("The identifier that can be used in the Spark SQL expression to refer the " +
+      "left-hand side DataFrame."))
   setDefault(leftTableName, "")
 
   def getLeftTableName: String = $(leftTableName)
@@ -56,8 +56,8 @@ final class SqlCombine
 
   val rightTableName = StringParam(
     name = "Right dataframe id",
-    description = "The identifier that can be used in the Spark SQL expression to refer the " +
-      "right-hand side DataFrame.")
+    description = Some("The identifier that can be used in the Spark SQL expression to refer the " +
+      "right-hand side DataFrame."))
   setDefault(rightTableName, "")
 
   def getRightTableName: String = $(rightTableName)
@@ -65,7 +65,7 @@ final class SqlCombine
 
   val sqlCombineExpression = CodeSnippetParam(
     name = "expression",
-    description = "SQL expression to be executed on two DataFrames, yielding a DataFrame.",
+    description = Some("SQL expression to be executed on two DataFrames, yielding a DataFrame."),
     language = CodeSnippetLanguage(CodeSnippetLanguage.sql))
   setDefault(sqlCombineExpression, "")
 

@@ -34,13 +34,13 @@ class StandardScalerEstimator
 
   val withMean = new BooleanParamWrapper[SparkStandardScaler](
     name = "with mean",
-    description = "Centers the data with mean before scaling.",
+    description = Some("Whether to center data with mean."),
     sparkParamGetter = _.withMean)
   setDefault(withMean, false)
 
   val withStd = new BooleanParamWrapper[SparkStandardScaler](
     name = "with std",
-    description = "Scales the data to unit standard deviation.",
+    description = Some("Whether to scale the data to unit standard deviation."),
     sparkParamGetter = _.withStd)
   setDefault(withStd, true)
 

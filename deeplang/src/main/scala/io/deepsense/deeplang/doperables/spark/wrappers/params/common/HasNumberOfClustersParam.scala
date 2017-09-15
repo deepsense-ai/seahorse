@@ -27,9 +27,9 @@ import io.deepsense.deeplang.params.wrappers.spark.IntParamWrapper
 trait HasNumberOfClustersParam extends Params {
 
   val k = new IntParamWrapper[ml.param.Params { val k: ml.param.IntParam }](
-    "k",
-    "The number of clusters to create.",
-    _.k,
+    name = "k",
+    description = Some("The number of clusters to create."),
+    sparkParamGetter = _.k,
     validator = RangeValidator(begin = 2.0, end = Int.MaxValue, step = Some(1.0)))
   setDefault(k, 2.0)
 }

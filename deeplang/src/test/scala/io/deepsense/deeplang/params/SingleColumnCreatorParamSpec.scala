@@ -25,13 +25,14 @@ class SingleColumnCreatorParamSpec extends AbstractParamSpec[String, SingleColum
   override def className: String = "SingleColumnCreatorParam"
 
   override def paramFixture: (SingleColumnCreatorParam, JsValue) = {
+    val description = "Single column creator description"
     val param = SingleColumnCreatorParam(
       name = "Single column creator name",
-      description = "Single column creator description")
+      description = Some(description))
     val expectedJson = JsObject(
       "type" -> JsString("creator"),
       "name" -> JsString(param.name),
-      "description" -> JsString(param.description),
+      "description" -> JsString(description),
       "isGriddable" -> JsFalse,
       "default" -> JsNull,
       "validator" -> JsObject(

@@ -49,7 +49,7 @@ class FitPlusTransform
 
   val estimatorParams = new DynamicParam(
     name = "Parameters of input Estimator",
-    description = "These parameters are rendered dynamically, depending on type of Estimator.",
+    description = Some("These parameters are rendered dynamically, depending on type of Estimator."),
     inputPort = 0)
   setDefault(estimatorParams -> JsNull)
 

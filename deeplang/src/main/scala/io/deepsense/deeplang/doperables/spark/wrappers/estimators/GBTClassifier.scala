@@ -58,7 +58,7 @@ class VanillaGBTClassifier()
 
   val lossType = new ChoiceParamWrapper[SparkGBTClassifier, LossType](
     name = "loss function",
-    description = "The loss function which GBT tries to minimize.",
+    description = Some("The loss function which GBT tries to minimize."),
     sparkParamGetter = _.lossType)
   setDefault(lossType, Logistic())
 

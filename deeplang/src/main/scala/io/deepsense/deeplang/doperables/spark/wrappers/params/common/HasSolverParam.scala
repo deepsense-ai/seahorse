@@ -32,13 +32,13 @@ trait HasSolverParam extends Params {
       name = "solver",
       sparkParamGetter = _.solver,
       description =
-        """Sets the solver algorithm used for optimization.
+        Some("""Sets the solver algorithm used for optimization.
           |Can be set to "l-bfgs", "normal" or "auto".
           |"l-bfgs" denotes Limited-memory BFGS which is a limited-memory quasi-Newton
           |optimization method. "normal" denotes Normal Equation. It is an analytical
           |solution to the linear regression problem.
           |The default value is "auto" which means that the solver algorithm is
-          |selected automatically.""".stripMargin)
+          |selected automatically.""".stripMargin))
 
   setDefault(solver, SolverChoice.Auto())
 }

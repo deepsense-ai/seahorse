@@ -29,8 +29,8 @@ import io.deepsense.deeplang.params.ParameterType.ParameterType
  * @param inputPort number of port on which the DOperable is received
  */
 class DynamicParam(
-    val name: String,
-    val description: String,
+    override val name: String,
+    override val description: Option[String],
     val inputPort: Int)
   extends Param[JsValue] {
 

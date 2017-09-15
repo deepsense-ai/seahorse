@@ -26,7 +26,7 @@ import io.deepsense.deeplang.params.selections.MultipleColumnSelection
 
 class ColumnSelectorParamWrapper[P <: ml.param.Params](
     override val name: String,
-    override val description: String,
+    override val description: Option[String],
     val sparkParamGetter: P => ml.param.StringArrayParam,
     override val portIndex: Int = 0)
   extends ColumnSelectorParam(name, description, portIndex)

@@ -21,8 +21,8 @@ import io.deepsense.deeplang.params.exceptions.NoArgumentConstructorRequiredExce
 import io.deepsense.deeplang.params.validators.AcceptAllRegexValidator
 
 case class ClassWithParams() extends Params {
-  val string = StringParam("string", "")
-  val bool = BooleanParam("bool", "")
+  val string = StringParam("string", None)
+  val bool = BooleanParam("bool", None)
 
   val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(string, bool)
 
@@ -42,19 +42,20 @@ class ParamsSequenceSpec
   className should {
     "throw an exception when params don't have no-arg constructor" in {
       an [NoArgumentConstructorRequiredException] should be thrownBy
-        ParamsSequence[ParamsWithoutNoArgConstructor](name = "paramsSequence", description = "")
+        ParamsSequence[ParamsWithoutNoArgConstructor](name = "paramsSequence", description = Some(""))
     }
   }
 
   override def paramFixture: (ParamsSequence[ClassWithParams], JsValue) = {
+    val description = "Params sequence description"
     val paramsSequence = ParamsSequence[ClassWithParams](
       name = "Params sequence name",
-      description = "Params sequence description"
+      description = Some(description)
     )
     val expectedJson = JsObject(
       "type" -> JsString("multiplier"),
       "name" -> JsString(paramsSequence.name),
-      "description" -> JsString(paramsSequence.description),
+      "description" -> JsString(description),
       "default" -> JsNull,
       "isGriddable" -> JsFalse,
       "values" -> JsArray(

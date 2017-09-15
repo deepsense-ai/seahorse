@@ -23,7 +23,7 @@ trait HasShouldConvertToBooleanParam {
 
   val shouldConvertToBoolean = BooleanParam(
     name = "convert to boolean",
-    description = "Should columns containing only 0 and 1 be converted to Boolean?")
+    description = Some("Should columns containing only 0 and 1 be converted to Boolean?"))
   setDefault(shouldConvertToBoolean, false)
 
   def getShouldConvertToBoolean: Boolean = $(shouldConvertToBoolean)

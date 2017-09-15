@@ -40,15 +40,15 @@ class KMeans
 
   val initMode = new ChoiceParamWrapper[SparkKMeans, KMeansInitMode](
     "init mode",
-    "The initialization algorithm mode. This can be either \"random\" to choose random " +
-      "points as initial cluster centers, or \"k-means||\" to use a parallel variant of k-means++.",
+    Some("The initialization algorithm mode. This can be either \"random\" to choose random " +
+      "points as initial cluster centers, or \"k-means||\" to use a parallel variant of k-means++."),
     _.initMode)
   setDefault(initMode, ParallelInitMode())
 
   val initSteps = new IntParamWrapper[SparkKMeans](
     "init steps",
-    "The number of steps for the k-means|| initialization mode. It will be ignored when other " +
-      "initialization modes are chosen.",
+    Some("The number of steps for the k-means|| initialization mode. It will be ignored when other " +
+      "initialization modes are chosen."),
     _.initSteps,
     validator = RangeValidator(begin = 1.0, end = Int.MaxValue, step = Some(1.0)))
   setDefault(initSteps, 5.0)

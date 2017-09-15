@@ -21,7 +21,7 @@ import io.deepsense.deeplang.params.ParameterType._
 
 class GridSearchParam(
     override val name: String,
-    override val description: String,
+    override val description: Option[String],
     override val inputPort: Int)
   extends DynamicParam(name, description, inputPort) {
 

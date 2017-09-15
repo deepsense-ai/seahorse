@@ -84,7 +84,7 @@ object SparkEvaluatorWrapperSpec {
 
     val paramWrapper = new DoubleParamWrapper[ExampleSparkEvaluator](
       "name",
-      "description",
+      Some("description"),
       _.numericParam)
     setDefault(paramWrapper, 0.0)
 
@@ -93,7 +93,7 @@ object SparkEvaluatorWrapperSpec {
     val columnWrapper = new SingleColumnSelectorParamWrapper[
         ml.param.Params { val columnParam: ml.param.Param[String] }](
         name = "column",
-        description = "Selected column.",
+        description = Some("Selected column."),
         sparkParamGetter = _.columnParam,
         portIndex = 0)
     setDefault(columnWrapper, NameSingleColumnSelection("column"))

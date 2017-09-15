@@ -57,7 +57,7 @@ case class MissingValuesHandler()
 
   val selectedColumns = ColumnSelectorParam(
     name = "columns",
-    description = "Columns containing missing values to handle.",
+    description = Some("Columns containing missing values to handle."),
     portIndex = 0)
 
   def getSelectedColumns: MultipleColumnSelection = $(selectedColumns)
@@ -65,7 +65,7 @@ case class MissingValuesHandler()
 
   val strategy = ChoiceParam[Strategy](
     name = "strategy",
-    description = "Strategy of handling missing values.")
+    description = Some("Strategy of handling missing values."))
   setDefault(strategy, Strategy.RemoveRow())
 
   def getStrategy: Strategy = $(strategy)
@@ -73,7 +73,7 @@ case class MissingValuesHandler()
 
   val userDefinedMissingValues = ParamsSequence[UserDefinedMissingValue](
     name = "user-defined missing values",
-    description = "Sequence of values to be considered as missing.")
+    description = Some("Sequence of values to be considered as missing."))
 
   def getUserDefinedMissingValues: Seq[String] = $(userDefinedMissingValues).map(_.getMissingValue)
   def setUserDefinedMissingValues(value: Seq[String]): this.type =
@@ -89,7 +89,7 @@ case class MissingValuesHandler()
 
   val missingValueIndicator = ChoiceParam[MissingValueIndicatorChoice](
     name = "missing value indicator",
-    description = "Generate missing value indicator column.")
+    description = Some("Generate missing value indicator column."))
   setDefault(missingValueIndicator, MissingValueIndicatorChoice.No())
 
   def getMissingValueIndicator: MissingValueIndicatorChoice = $(missingValueIndicator)
@@ -328,7 +328,7 @@ object MissingValuesHandler {
       override val name: String = "replace with custom value"
       val customValue = StringParam(
         name = "value",
-        description = "Replacement for missing values.")
+        description = Some("Replacement for missing values."))
 
       def getCustomValue: String = $(customValue)
       def setCustomValue(value: String): this.type = set(customValue, value)
@@ -342,7 +342,7 @@ object MissingValuesHandler {
 
       val emptyColumnStrategy = ChoiceParam[EmptyColumnsStrategy](
         name = "empty column strategy",
-        description = "Strategy of handling columns with missing all values.")
+        description = Some("Strategy of handling columns with missing all values."))
       setDefault(emptyColumnStrategy, EmptyColumnsStrategy.RemoveEmptyColumns())
 
       def getEmptyColumnStrategy: EmptyColumnsStrategy = $(emptyColumnStrategy)
@@ -389,7 +389,7 @@ object MissingValuesHandler {
 
       val indicatorPrefix = new PrefixBasedColumnCreatorParam(
         name = "indicator column prefix",
-        description = "Prefix for columns indicating presence of missing values."
+        description = Some("Prefix for columns indicating presence of missing values.")
       )
       setDefault(indicatorPrefix, "")
 
@@ -413,10 +413,10 @@ case class UserDefinedMissingValue() extends Params {
   val missingValue = StringParam(
     name = "missing value",
     description =
-      """Value to be considered as a missing one.
+      Some("""Value to be considered as a missing one.
         |Provided value will be cast to all chosen column types if possible,
         |so for example a value "-1" might be applied to all numeric and string columns."""
-        .stripMargin,
+        .stripMargin),
     validator = new AcceptAllRegexValidator())
 
   def getMissingValue: String = $(missingValue)

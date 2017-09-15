@@ -33,7 +33,7 @@ class SortTransformer extends Transformer {
 
   val columns = ParamsSequence[SortColumnParam](
     name = "sort columns",
-    description = "Columns to sort by"
+    description = Some("Columns to sort by")
   )
 
   def getColumns: Seq[SortColumnParam] = $(columns)
@@ -71,13 +71,13 @@ class SortColumnParam extends Params {
 
   val column = SingleColumnSelectorParam(
     name = columnNameParamName,
-    description = "Column name",
+    description = Some("Column name"),
     portIndex = 0
   )
 
   val descending = BooleanParam(
     name = descendingFlagParamName,
-    description = "Sort in descending order when true"
+    description = Some("Sort in descending order when true")
   )
 
   setDefault(descending, false)

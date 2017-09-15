@@ -32,9 +32,9 @@ trait HasOptionalWeightColumnParam extends Params {
     new ChoiceParam[OptionalWeightColumnChoice.WeightColumnOption](
       name = "use custom weights",
       description =
-        """Whether to over-/under-sample training instances according to the given weights in
+        Some("""Whether to over-/under-sample training instances according to the given weights in
           |the `weight column`. If the `weight column` is not specified,
-          |all instances are treated equally with a weight 1.0.""".stripMargin)
+          |all instances are treated equally with a weight 1.0.""".stripMargin))
 
   setDefault(optionalWeightColumn, OptionalWeightColumnChoice.WeightColumnNoOption())
 }
@@ -52,7 +52,7 @@ object OptionalWeightColumnChoice {
     val weightColumn = new SingleColumnSelectorParamWrapper[
       ml.param.Params { val weightCol: SparkParam[String]}](
       name = "weight column",
-      description = "The weight column for a model.",
+      description = Some("The weight column for a model."),
       sparkParamGetter = _.weightCol,
       portIndex = 0)
     setDefault(weightColumn, NameSingleColumnSelection("weight"))

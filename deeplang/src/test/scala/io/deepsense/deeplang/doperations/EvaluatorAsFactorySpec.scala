@@ -81,7 +81,7 @@ class EvaluatorAsFactorySpec extends UnitSpec {
 object EvaluatorAsFactorySpec {
 
   class MockEvaluator extends Evaluator {
-    val param = NumericParam("b", "desc")
+    val param = NumericParam("b", Some("desc"))
     setDefault(param -> 5)
     override val params: Array[Param[_]] = Array(param)
 

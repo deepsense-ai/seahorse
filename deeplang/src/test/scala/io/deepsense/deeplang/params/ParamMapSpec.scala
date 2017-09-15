@@ -26,7 +26,7 @@ class ParamMapSpec extends UnitSpec {
   class MockParam[T] extends Param[T] {
     // cannot use mockito, because asInstanceOf[Any] won't work
     override val name: String = "name"
-    override val description: String = "description"
+    override val description: Option[String] = Some("description")
     override val parameterType: ParameterType = mock[ParameterType]
 
     override def valueToJson(value: T): JsValue = ???

@@ -29,8 +29,8 @@ trait HasFeatureIndexParam extends Params {
 
   val featureIndex = new IntParamWrapper[ml.param.Params { val featureIndex: IntParam }](
     name = "feature index",
-    description = "The index of the feature if features column is a vector column, " +
-      "no effect otherwise.",
+    description = Some("The index of the feature if features column is a vector column, " +
+      "no effect otherwise."),
     sparkParamGetter = _.featureIndex,
     validator = RangeValidator.positiveIntegers)
   setDefault(featureIndex, 0.0)

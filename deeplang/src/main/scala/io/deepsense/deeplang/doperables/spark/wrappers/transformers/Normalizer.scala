@@ -30,7 +30,7 @@ class Normalizer extends SparkTransformerAsMultiColumnTransformer[SparkNormalize
 
   val p = new DoubleParamWrapper[SparkNormalizer](
     name = "p",
-    description = "Normalization in L^p space.",
+    description = Some("Normalization in L^p space."),
     sparkParamGetter = _.p,
     validator = RangeValidator(1.0, Double.PositiveInfinity))
   setDefault(p, 2.0)

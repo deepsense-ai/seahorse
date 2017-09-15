@@ -54,7 +54,7 @@ class DOperationSuite extends FunSuite with DeeplangTestSupport {
     class PickOne extends DOperation2To1[A1, A2, A] {
       override val id: DOperation.Id = DOperation.Id.randomId
 
-      val param = NumericParam("param", "description", RangeValidator.all)
+      val param = NumericParam("param", None, RangeValidator.all)
       def setParam(int: Int): this.type = set(param -> int)
 
       val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(param)

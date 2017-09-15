@@ -30,7 +30,7 @@ trait HasSubsamplingRateParam extends Params {
     new DoubleParamWrapper[ml.param.Params { val subsamplingRate: ml.param.DoubleParam }](
       name = "subsampling rate",
       description =
-        "The fraction of the training data used for learning each decision tree.",
+        Some("The fraction of the training data used for learning each decision tree."),
       sparkParamGetter = _.subsamplingRate,
       RangeValidator(0.0, 1.0, beginIncluded = false))
   setDefault(subsamplingRate, 1.0)

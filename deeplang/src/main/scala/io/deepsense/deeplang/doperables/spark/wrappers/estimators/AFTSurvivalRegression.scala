@@ -44,10 +44,10 @@ class AFTSurvivalRegression
     new SingleColumnSelectorParamWrapper[
       ml.param.Params { val censorCol: ml.param.Param[String] }](
       name = "censor column",
-      description = """Param for censor column name.
+      description = Some("""Param for censor column name.
                       |The value of this column could be 0 or 1.
                       |If the value is 1, it means the event has occurred i.e. uncensored;
-                      |otherwise censored.""".stripMargin,
+                      |otherwise censored.""".stripMargin),
       sparkParamGetter = _.censorCol,
       portIndex = 0)
   setDefault(censorColumn, NameSingleColumnSelection("censor"))

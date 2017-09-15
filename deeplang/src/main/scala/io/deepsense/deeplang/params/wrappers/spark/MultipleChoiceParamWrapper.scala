@@ -25,7 +25,7 @@ import io.deepsense.deeplang.params.choice.{Choice, MultipleChoiceParam}
 
 class MultipleChoiceParamWrapper[P <: ml.param.Params, T <: Choice : TypeTag](
     override val name: String,
-    override val description: String,
+    override val description: Option[String],
     val sparkParamGetter: P => ml.param.StringArrayParam)
   extends MultipleChoiceParam[T](name, description)
   with SparkParamWrapper[P, Array[String], Set[T]] {

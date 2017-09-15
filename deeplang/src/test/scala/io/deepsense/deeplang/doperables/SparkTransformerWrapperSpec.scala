@@ -72,7 +72,7 @@ object SparkTransformerWrapperSpec extends MockitoSugar {
 
     val paramWrapper = new DoubleParamWrapper[ParamValueCheckingTransformer](
       "name",
-      "description",
+      Some("description"),
       _.param)
     setDefault(paramWrapper, 0.0)
 

@@ -34,8 +34,8 @@ class IsotonicRegression
   val isotonic = new BooleanParamWrapper[SparkIsotonicRegression](
     name = "isotonic",
     description =
-      """Whether the output sequence should be isotonic/increasing (true)
-        |or antitonic/decreasing (false).""".stripMargin,
+      Some("""Whether the output sequence should be isotonic/increasing (true)
+        |or antitonic/decreasing (false).""".stripMargin),
     sparkParamGetter = _.isotonic)
   setDefault(isotonic, true)
 

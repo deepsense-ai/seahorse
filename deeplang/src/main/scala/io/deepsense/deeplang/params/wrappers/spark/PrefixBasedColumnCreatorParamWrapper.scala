@@ -22,7 +22,7 @@ import io.deepsense.deeplang.params.PrefixBasedColumnCreatorParam
 
 class PrefixBasedColumnCreatorParamWrapper[P <: ml.param.Params](
     override val name: String,
-    override val description: String,
+    override val description: Option[String],
     val sparkParamGetter: P => ml.param.Param[String])
   extends PrefixBasedColumnCreatorParam(name, description)
   with ForwardSparkParamWrapper[P, String] {

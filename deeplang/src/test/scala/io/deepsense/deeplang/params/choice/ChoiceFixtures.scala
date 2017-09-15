@@ -32,7 +32,7 @@ case class OptionA() extends ChoiceABC {
 
   val bool = BooleanParam(
     name = "bool",
-    description = "description")
+    description = Some("description"))
 
   override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(bool)
 

@@ -30,7 +30,7 @@ trait HasFeaturesColumnParam extends Params {
     new SingleColumnSelectorParamWrapper[
       ml.param.Params { val featuresCol: ml.param.Param[String] }](
       name = "features column",
-      description = "The features column for model fitting.",
+      description = Some("The features column for model fitting."),
       sparkParamGetter = _.featuresCol,
       portIndex = 0)
   setDefault(featuresColumn, NameSingleColumnSelection("features"))

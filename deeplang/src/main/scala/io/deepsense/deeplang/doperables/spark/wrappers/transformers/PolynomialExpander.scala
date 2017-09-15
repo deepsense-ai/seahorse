@@ -30,7 +30,7 @@ class PolynomialExpander extends SparkTransformerAsMultiColumnTransformer[Polyno
 
   val degree = new IntParamWrapper[PolynomialExpansion](
     name = "degree",
-    description = "The polynomial degree to expand.",
+    description = Some("The polynomial degree to expand."),
     sparkParamGetter = _.degree,
     validator = RangeValidator(2.0, Int.MaxValue, step = Some(1.0)))
   setDefault(degree, 2.0)

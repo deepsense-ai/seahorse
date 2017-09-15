@@ -25,7 +25,7 @@ trait NamesIncludedParam {
 
   val namesIncluded = BooleanParam(
     name = "names included",
-    description = "Does the first row include column names?")
+    description = Some("Does the first row include column names?"))
   setDefault(namesIncluded, true)
 
   def getNamesIncluded: Boolean = $(namesIncluded)
@@ -39,7 +39,7 @@ trait CsvParameters extends NamesIncludedParam {
 
   val csvColumnSeparator = ChoiceParam[ColumnSeparatorChoice](
     name = "separator",
-    description = "Column separator.")
+    description = Some("Column separator."))
   setDefault(csvColumnSeparator, ColumnSeparatorChoice.Comma())
 
   def getCsvColumnSeparator(): ColumnSeparatorChoice = $(csvColumnSeparator)
@@ -103,7 +103,7 @@ object CsvParameters {
 
       val customColumnSeparator = StringParam(
         name = "custom separator",
-        description = "Custom column separator.",
+        description = Some("Custom column separator."),
         validator = new SingleCharRegexValidator)
       setDefault(customColumnSeparator, ",")
 

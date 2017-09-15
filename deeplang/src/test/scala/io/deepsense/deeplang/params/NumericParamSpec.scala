@@ -25,15 +25,16 @@ class NumericParamSpec extends AbstractParamSpec[Double, NumericParam] {
   override def className: String = "NumericParam"
 
   override def paramFixture: (NumericParam, JsValue) = {
+    val description = "Numeric parameter description"
     val param = NumericParam(
       name = "Numeric parameter",
-      description = "Numeric parameter description",
+      description = Some(description),
       validator = RangeValidator(1.0, 3.0, true, false))
     val json = JsObject(
       "type" -> JsString("numeric"),
       "name" -> JsString(param.name),
       "description" -> JsString(
-        param.description + param.constraints),
+        description + param.constraints),
       "default" -> JsNull,
       "isGriddable" -> JsTrue,
       "validator" -> JsObject(

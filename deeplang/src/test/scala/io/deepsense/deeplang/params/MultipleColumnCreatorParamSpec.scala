@@ -27,12 +27,12 @@ class MultipleColumnCreatorParamSpec
   override def paramFixture: (MultipleColumnCreatorParam, JsValue) = {
     val param = MultipleColumnCreatorParam(
       name = "Multiple column creator name",
-      description = "Multiple column creator description"
+      description = Some("Multiple column creator description")
     )
     val expectedJson = JsObject(
       "type" -> JsString("multipleCreator"),
       "name" -> JsString(param.name),
-      "description" -> JsString(param.description),
+      "description" -> JsString(param.description.getOrElse("")),
       "isGriddable" -> JsFalse,
       "default" -> JsNull
     )

@@ -216,7 +216,8 @@ trait DocPageCreator {
       ParameterDescription(
         param.name,
         sparkParamType(param),
-        DocUtils.forceDotAtEnd(param.description) + extraDescription(param)))
+        param.description.map(desc => DocUtils.forceDotAtEnd(desc)).getOrElse("")
+          + extraDescription(param)))
       .map(paramDescription => parameterTableEntry(paramDescription))
       .reduce((s1, s2) => s1 + s2)
   }

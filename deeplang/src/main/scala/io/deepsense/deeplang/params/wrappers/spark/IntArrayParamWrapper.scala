@@ -24,7 +24,7 @@ import io.deepsense.deeplang.params.validators.{ComplexArrayValidator, RangeVali
 
 class IntArrayParamWrapper[P <: ml.param.Params](
     override val name: String,
-    override val description: String,
+    override val description: Option[String],
     val sparkParamGetter: P => ml.param.IntArrayParam,
     override val validator: Validator[Array[Double]] =
       ComplexArrayValidator(

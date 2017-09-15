@@ -22,8 +22,8 @@ import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.params.validators.ColumnPrefixNameValidator
 
 case class PrefixBasedColumnCreatorParam(
-    name: String,
-    description: String)
+    override val name: String,
+    override val description: Option[String])
   extends ParamWithJsFormat[String] {
 
   override def validate(value: String): Vector[DeepLangException] = {

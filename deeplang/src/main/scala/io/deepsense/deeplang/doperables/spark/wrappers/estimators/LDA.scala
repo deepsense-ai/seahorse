@@ -39,19 +39,19 @@ class LDA extends SparkEstimatorWrapper[SparkLDAModel, SparkLDA, LDAModel]
   val optimizer = new ChoiceParamWrapper[SparkLDA, LDAOptimizer](
     name = "optimizer",
     description =
-      """Optimizer or inference algorithm used to estimate the LDA model. Currently supported:
-        |Online Variational Bayes, Expectation-Maximization""".stripMargin,
+      Some("""Optimizer or inference algorithm used to estimate the LDA model. Currently supported:
+        |Online Variational Bayes, Expectation-Maximization""".stripMargin),
     sparkParamGetter = _.optimizer)
   setDefault(optimizer, OnlineLDAOptimizer())
 
   val subsamplingRate = new DoubleParamWrapper[SparkLDA](
     name = "subsampling rate",
     description =
-      """Fraction of the corpus to be sampled and used in each iteration of mini-batch gradient
+      Some("""Fraction of the corpus to be sampled and used in each iteration of mini-batch gradient
         |descent. Note that this should be adjusted in synchronization with `max iterations` so the
         |entire corpus is used. Specifically, set both so that `max iterations` * `subsampling rate`
         |>= 1.
-        |""".stripMargin,
+        |""".stripMargin),
     sparkParamGetter = _.subsamplingRate,
     validator = RangeValidator(0.0, 1.0, beginIncluded = false))
   setDefault(subsamplingRate, 0.05)
@@ -59,9 +59,9 @@ class LDA extends SparkEstimatorWrapper[SparkLDAModel, SparkLDA, LDAModel]
   val topicDistributionColumn = new SingleColumnCreatorParamWrapper[SparkLDA](
     name = "topic distribution column",
     description =
-      """Output column with estimates of the topic mixture distribution for each document
+      Some("""Output column with estimates of the topic mixture distribution for each document
         |(often called \"theta\" in the literature). Returns a vector of zeros for
-        |an empty document.""".stripMargin,
+        |an empty document.""".stripMargin),
     sparkParamGetter = _.topicDistributionCol)
   setDefault(topicDistributionColumn, "topicDistribution")
 
@@ -84,12 +84,12 @@ object LDA {
     extends DoubleArrayParamWrapper[SparkLDA](
       name = name,
       description =
-        """Concentration parameter (commonly named "alpha") for the prior placed on documents'
+        Some("""Concentration parameter (commonly named "alpha") for the prior placed on documents'
           |distributions over topics ("theta"). This is the parameter to a Dirichlet distribution,
           |where larger values mean more smoothing (more regularization). If not set by the user,
           |then docConcentration is set automatically. If set to singleton vector [alpha], then
           |alpha is replicated to a vector of length k in fitting. Otherwise, the docConcentration
-          |vector must be length k.""".stripMargin,
+          |vector must be length k.""".stripMargin),
       sparkParamGetter = _.docConcentration,
       validator = validator)
 
@@ -97,9 +97,9 @@ object LDA {
     extends DoubleParamWrapper[SparkLDA](
       name = name,
       description =
-        """Concentration parameter (commonly named "beta" or "eta") for the prior placed on topics'
+        Some("""Concentration parameter (commonly named "beta" or "eta") for the prior placed on topics'
           |distributions over terms. This is the parameter to a symmetric Dirichlet distribution.
-          |""".stripMargin,
+          |""".stripMargin),
       sparkParamGetter = _.topicConcentration,
       validator = validator)
 

@@ -29,7 +29,7 @@ trait HasMaxMemoryInMBParam extends Params {
 
   val maxMemoryInMB = new IntParamWrapper[ml.param.Params { val maxMemoryInMB: ml.param.IntParam }](
     name = "max memory",
-    description = "Maximum memory in MB allocated to histogram aggregation.",
+    description = Some("Maximum memory in MB allocated to histogram aggregation."),
     sparkParamGetter = _.maxMemoryInMB,
     validator = RangeValidator.positiveIntegers)
   setDefault(maxMemoryInMB, 256.0)

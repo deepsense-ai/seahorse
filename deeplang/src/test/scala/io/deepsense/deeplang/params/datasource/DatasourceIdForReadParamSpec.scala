@@ -28,11 +28,11 @@ class DatasourceIdForReadParamSpec extends AbstractParamSpec[UUID, DatasourceIdF
   override def paramFixture: (DatasourceIdForReadParam, JsValue) = {
     val param = DatasourceIdForReadParam(
       name = "Ds for read parameter name",
-      description = "Ds for read parameter description")
+      description = None)
     val expectedJson = JsObject(
       "type" -> JsString("datasourceIdForRead"),
       "name" -> JsString(param.name),
-      "description" -> JsString(param.description),
+      "description" -> JsString(""),
       "default" -> JsNull,
       "isGriddable" -> JsFalse
     )

@@ -62,7 +62,7 @@ object ReadTransformer {
 
     val sourcePath = StringParam(
       name = "source",
-      description = "A path to the Transformer directory.")
+      description = Some("A path to the Transformer directory."))
 
     def getSourcePath: String = $(sourcePath)
     def setSourcePath(value: String): this.type = set(sourcePath, value)

@@ -29,7 +29,7 @@ trait HasOutputColumn extends Params {
   val outputColumn = new SingleColumnCreatorParamWrapper[
       ml.param.Params { val outputCol: ml.param.Param[String] }](
     name = "output column",
-    description = "The output column name.",
+    description = Some("The output column name."),
     sparkParamGetter = _.outputCol)
 
   def setOutputColumn(value: String): this.type = {

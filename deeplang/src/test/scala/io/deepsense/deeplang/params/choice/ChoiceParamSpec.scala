@@ -47,11 +47,11 @@ class ChoiceParamSpec extends AbstractChoiceParamSpec[ChoiceABC, ChoiceParam[Cho
   }
 
   override def paramFixture: (ChoiceParam[ChoiceABC], JsValue) = {
-    val singleChoiceParam = ChoiceParam[ChoiceABC]("name", "description")
+    val singleChoiceParam = ChoiceParam[ChoiceABC]("name", Some("description"))
     val singleChoiceExpectedJson = JsObject(
       "type" -> JsString("choice"),
       "name" -> JsString(singleChoiceParam.name),
-      "description" -> JsString(singleChoiceParam.description),
+      "description" -> JsString("description"),
       "isGriddable" -> JsFalse,
       "default" -> JsNull,
       ChoiceFixtures.values)
@@ -73,5 +73,5 @@ class ChoiceParamSpec extends AbstractChoiceParamSpec[ChoiceABC, ChoiceParam[Cho
   override protected def createChoiceParam[V <: Choice : TypeTag](
       name: String,
       description: String): ChoiceParam[V] =
-    ChoiceParam[V](name, description)
+    ChoiceParam[V](name, Some(description))
 }

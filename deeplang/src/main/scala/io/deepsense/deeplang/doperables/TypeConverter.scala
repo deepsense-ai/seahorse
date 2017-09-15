@@ -27,7 +27,7 @@ case class TypeConverter() extends MultiColumnTransformer {
 
   val targetType = ChoiceParam[TargetTypeChoice](
     name = "target type",
-    description = "Target type of the columns.")
+    description = Some("Target type of the columns."))
 
   def getTargetType: TargetTypeChoice = $(targetType)
   def setTargetType(value: TargetTypeChoice): this.type = set(targetType, value)

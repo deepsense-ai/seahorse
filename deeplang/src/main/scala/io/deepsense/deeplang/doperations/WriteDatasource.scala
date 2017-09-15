@@ -114,11 +114,11 @@ object WriteDatasource {
   trait WriteDatasourceParameters {
     val datasourceId = DatasourceIdForWriteParam(
       name = "datasourceId",
-      description = "Id of the datasource")
+      description = Some("Id of the datasource"))
 
     val shouldOverwrite = BooleanParam(
       name = "overwrite",
-      description = "Should data be overwritten?"
+      description = Some("Should data be overwritten?")
     )
   }
 }

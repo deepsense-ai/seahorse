@@ -106,7 +106,7 @@ object ReadDataFrame {
 
     val storageType = ChoiceParam[InputStorageTypeChoice](
       name = "data storage type",
-      description = "Storage type.")
+      description = Some("Storage type."))
 
     def getStorageType(): InputStorageTypeChoice = $(storageType)
     def setStorageType(value: InputStorageTypeChoice): this.type = set(storageType, value)

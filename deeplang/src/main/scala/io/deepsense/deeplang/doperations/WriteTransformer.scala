@@ -44,7 +44,7 @@ case class WriteTransformer()
 
   val shouldOverwrite = BooleanParam(
     name = "overwrite",
-    description = "Should an existing transformer with the same name be overwritten?"
+    description = Some("Should an existing transformer with the same name be overwritten?")
   )
   setDefault(shouldOverwrite, true)
 
@@ -53,7 +53,7 @@ case class WriteTransformer()
 
   val outputPath = StringParam(
     name = "output path",
-    description = "The output path for writing the Transformer.")
+    description = Some("The output path for writing the Transformer."))
 
   def getOutputPath: String = $(outputPath)
   def setOutputPath(value: String): this.type = set(outputPath, value)

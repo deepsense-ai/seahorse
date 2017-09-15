@@ -25,14 +25,15 @@ class StringParamSpec extends AbstractParamSpec[String, StringParam] {
   override def className: String = "StringParam"
 
   override def paramFixture: (StringParam, JsValue) = {
+    val description = "String parameter description"
     val param = StringParam(
       name = "String parameter name",
-      description = "String parameter description",
+      description = Some(description),
       validator = new AcceptAllRegexValidator)
     val expectedJson = JsObject(
       "type" -> JsString("string"),
       "name" -> JsString(param.name),
-      "description" -> JsString(param.description),
+      "description" -> JsString(description),
       "default" -> JsNull,
       "isGriddable" -> JsFalse,
       "validator" -> JsObject(

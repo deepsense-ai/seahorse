@@ -30,7 +30,7 @@ trait HasMinInfoGainParam extends Params {
   val minInfoGain =
     new DoubleParamWrapper[ml.param.Params { val minInfoGain: ml.param.DoubleParam }](
       name = "min information gain",
-      description = "The minimum information gain for a split to be considered at a tree node.",
+      description = Some("The minimum information gain for a split to be considered at a tree node."),
       sparkParamGetter = _.minInfoGain,
       RangeValidator(0.0, Double.MaxValue))
   setDefault(minInfoGain, 0.0)

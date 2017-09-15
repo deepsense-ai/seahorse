@@ -51,19 +51,19 @@ case class GridSearch()
 
   val estimatorParams = new GridSearchParam(
     name = "Parameters of input Estimator",
-    description = "These parameters are rendered dynamically, depending on type of Estimator.",
+    description = Some("These parameters are rendered dynamically, depending on type of Estimator."),
     inputPort = 0)
   setDefault(estimatorParams, JsNull)
 
   val evaluatorParams = new DynamicParam(
     name = "Parameters of input Evaluator",
-    description = "These parameters are rendered dynamically, depending on type of Evaluator.",
+    description = Some("These parameters are rendered dynamically, depending on type of Evaluator."),
     inputPort = 2)
   setDefault(evaluatorParams, JsNull)
 
   val numberOfFolds = new NumericParam(
     name = "number of folds",
-    description = "Number of folds.",
+    description = Some("Number of folds."),
     validator = RangeValidator(
       begin = 2.0,
       end = Int.MaxValue,

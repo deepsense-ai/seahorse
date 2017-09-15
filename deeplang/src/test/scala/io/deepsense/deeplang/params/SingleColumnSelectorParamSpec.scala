@@ -26,14 +26,15 @@ class SingleColumnSelectorParamSpec
   override def className: String = "SingleColumnSelectorParam"
 
   override def paramFixture: (SingleColumnSelectorParam, JsValue) = {
+    val description = "Single column selector description"
     val param = SingleColumnSelectorParam(
       name = "Single column selector name",
-      description = "Single column selector description",
+      description = Some(description),
       portIndex = 0)
     val expectedJson = JsObject(
       "type" -> JsString("selector"),
       "name" -> JsString(param.name),
-      "description" -> JsString(param.description),
+      "description" -> JsString(description),
       "portIndex" -> JsNumber(param.portIndex),
       "isSingle" -> JsTrue,
       "isGriddable" -> JsFalse,

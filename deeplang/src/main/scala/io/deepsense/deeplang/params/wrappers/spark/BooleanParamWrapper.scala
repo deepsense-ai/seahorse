@@ -22,7 +22,7 @@ import io.deepsense.deeplang.params.BooleanParam
 
 class BooleanParamWrapper[P <: ml.param.Params](
     override val name: String,
-    override val description: String,
+    override val description: Option[String],
     val sparkParamGetter: P => ml.param.Param[Boolean])
   extends BooleanParam(name, description)
   with ForwardSparkParamWrapper[P, Boolean] {

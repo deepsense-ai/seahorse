@@ -30,7 +30,7 @@ trait HasStepSizeParam extends Params {
 
   val stepSize = new DoubleParamWrapper[ml.param.Params { val stepSize: ml.param.DoubleParam }](
     name = "step size",
-    description = "The step size to be used for each iteration of optimization.",
+    description = Some("The step size to be used for each iteration of optimization."),
     sparkParamGetter = _.stepSize,
     validator = RangeValidator(begin = 0.0, end = Double.MaxValue))
   setDefault(stepSize, stepSizeDefault)

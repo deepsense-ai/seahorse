@@ -30,7 +30,7 @@ trait HasUserColumnParam extends Params {
     new SingleColumnSelectorParamWrapper[
       ml.param.Params { val userCol: ml.param.Param[String] }](
       name = "user column",
-      description = "The column for user ids.",
+      description = Some("The column for user ids."),
       sparkParamGetter = _.userCol,
       portIndex = 0)
   setDefault(userColumn, NameSingleColumnSelection("user"))

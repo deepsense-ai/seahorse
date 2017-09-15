@@ -29,7 +29,7 @@ class DiscreteCosineTransformer extends SparkTransformerAsMultiColumnTransformer
 
   val inverse = new BooleanParamWrapper[DCT](
     name = "inverse",
-    description = "Indicates whether to perform the inverse DCT (true) or forward DCT (false).",
+    description = Some("Indicates whether to perform the inverse DCT (true) or forward DCT (false)."),
     sparkParamGetter = _.inverse)
   setDefault(inverse, false)
 

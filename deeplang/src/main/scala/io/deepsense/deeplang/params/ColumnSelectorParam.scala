@@ -21,7 +21,7 @@ import io.deepsense.deeplang.params.selections.MultipleColumnSelectionProtocol._
 
 case class ColumnSelectorParam(
     name: String,
-    description: String,
+    override val description: Option[String],
     portIndex: Int)
   extends AbstractColumnSelectorParam[MultipleColumnSelection] {
 

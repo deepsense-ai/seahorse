@@ -46,9 +46,10 @@ class MultipleNumericParamSpec extends AbstractParamSpec[Array[Double], Multiple
   }
 
   override def paramFixture: (MultipleNumericParam, JsValue) = {
+    val description = "Multiple numeric parameter description"
     val param = MultipleNumericParam(
       name = "Multiple numeric parameter",
-      description = "Multiple numeric parameter description",
+      description = Some(description),
       validator = ComplexArrayValidator(
         rangeValidator = RangeValidator(1.0, 3.0, beginIncluded = true, endIncluded = false),
         lengthValidator = ArrayLengthValidator(min = 2, max = 4)))
@@ -56,7 +57,7 @@ class MultipleNumericParamSpec extends AbstractParamSpec[Array[Double], Multiple
       "type" -> JsString("multipleNumeric"),
       "name" -> JsString(param.name),
       "description" -> JsString(
-        param.description + param.constraints),
+        description + param.constraints),
       "default" -> JsNull,
       "isGriddable" -> JsFalse,
       "validator" -> JsObject(

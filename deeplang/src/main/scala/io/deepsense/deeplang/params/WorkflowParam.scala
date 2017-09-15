@@ -21,8 +21,8 @@ import spray.json.{JsValue, JsObject}
 import io.deepsense.deeplang.exceptions.DeepLangException
 
 case class WorkflowParam(
-    name: String,
-    description: String)
+    override val name: String,
+    override val description: Option[String])
   extends Param[JsObject] {
 
   override val parameterType = ParameterType.Workflow

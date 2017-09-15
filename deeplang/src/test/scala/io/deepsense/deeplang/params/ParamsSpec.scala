@@ -242,7 +242,7 @@ object ParamsSpec extends UnitSpec {
   case class MockException(override val message: String) extends DeepLangException(message)
 
   case class MockParam(name: String) extends Param[Int] {
-    override val description: String = "description"
+    override val description: Option[String] = Some("description")
     override val parameterType: ParameterType = mock[ParameterType]
 
     override def valueToJson(value: Int): JsValue = value.toJson
@@ -285,7 +285,7 @@ object ParamsSpec extends UnitSpec {
   case class ParamsWithChoice() extends Params {
     val choiceParam = ChoiceParam[ChoiceWithRepeatedParameter](
       name = "choice",
-      description = "choice")
+      description = Some("choice"))
 
     def setChoice(v: ChoiceWithRepeatedParameter): this.type = set(choiceParam, v)
 
@@ -303,7 +303,7 @@ object ParamsSpec extends UnitSpec {
 
     val numericParam = NumericParam(
       name = "x",
-      description = "numericParam")
+      description = Some("numericParam"))
 
     override val params: Array[Param[_]] = Array(numericParam)
   }
@@ -313,7 +313,7 @@ object ParamsSpec extends UnitSpec {
 
     val numericParam = NumericParam(
       name = "x",
-      description = "numericParam")
+      description = Some("numericParam"))
 
     override val params: Array[Param[_]] = Array(numericParam)
   }

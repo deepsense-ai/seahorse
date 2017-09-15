@@ -38,7 +38,7 @@ class BinaryClassificationEvaluator
 
   val metricName = new ChoiceParam[Metric](
     name = "binary metric",
-    description = "The metric used in evaluation.")
+    description = Some("The metric used in evaluation."))
   setDefault(metricName, AreaUnderROC())
 
   override val params: Array[Param[_]] = Array(metricName, labelColumn)
@@ -142,7 +142,7 @@ object BinaryClassificationEvaluator {
   trait RawPredictionMetric extends Params {
     val rawPredictionColumnParam = SingleColumnSelectorParam(
       name = "raw prediction column",
-      description = "The raw prediction (confidence) column.",
+      description = Some("The raw prediction (confidence) column."),
       portIndex = 0
     )
     setDefault(rawPredictionColumnParam, NameSingleColumnSelection("rawPrediction"))
@@ -154,7 +154,7 @@ object BinaryClassificationEvaluator {
   trait PredictionMetric extends Params {
     val predictionColumnParam = SingleColumnSelectorParam(
       name = "prediction column",
-      description = "The prediction column created during model scoring.",
+      description = Some("The prediction column created during model scoring."),
       portIndex = 0
     )
     setDefault(predictionColumnParam, NameSingleColumnSelection("prediction"))

@@ -29,7 +29,7 @@ case class GetFromVectorTransformer() extends MultiColumnTransformer {
 
   val index = NumericParam(
     name = "index",
-    description = "Index of value to extract (starting from 0).",
+    description = Some("Index of value to extract (starting from 0)."),
     validator = RangeValidator.positiveIntegers)
   setDefault(index, 0.0)
 

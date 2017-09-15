@@ -37,15 +37,15 @@ class CountVectorizerEstimator
 
   val minDF = new DoubleParamWrapper[ml.param.Params { val minDF: ml.param.DoubleParam }](
     name = "min different documents",
-    description = "Specifies the minimum number of different documents " +
-      "a term must appear in to be included in the vocabulary.",
+    description = Some("Specifies the minimum number of different documents " +
+      "a term must appear in to be included in the vocabulary."),
     sparkParamGetter = _.minDF,
     RangeValidator(0.0, Double.MaxValue))
   setDefault(minDF, 1.0)
 
   val vocabSize = new IntParamWrapper[ml.param.Params { val vocabSize: ml.param.IntParam }](
     name = "max vocabulary size",
-    description = "The maximum size of the vocabulary.",
+    description = Some("The maximum size of the vocabulary."),
     sparkParamGetter = _.vocabSize,
     RangeValidator(0.0, Int.MaxValue, beginIncluded = false, step = Some(1.0)))
   setDefault(vocabSize, (1 << 18).toDouble)

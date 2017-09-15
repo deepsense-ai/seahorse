@@ -28,7 +28,7 @@ case class PythonColumnTransformer() extends CustomCodeColumnTransformer {
 
   override val codeParameter = CodeSnippetParam(
     name = "column operation code",
-    description = "Column operation source code",
+    description = Some("Column operation source code"),
     language = CodeSnippetLanguage(CodeSnippetLanguage.python)
   )
   setDefault(codeParameter -> "def transform_value(value, column_name):\n    return value")

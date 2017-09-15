@@ -22,7 +22,7 @@ import io.deepsense.deeplang.params.MultipleColumnCreatorParam
 
 class MultipleColumnCreatorParamWrapper[P <: ml.param.Params](
     override val name: String,
-    override val description: String,
+    override val description: Option[String],
     val sparkParamGetter: P => ml.param.StringArrayParam)
   extends MultipleColumnCreatorParam(name, description)
   with ForwardSparkParamWrapper[P, Array[String]] {

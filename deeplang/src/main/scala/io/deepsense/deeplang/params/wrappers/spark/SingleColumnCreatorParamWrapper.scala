@@ -22,7 +22,7 @@ import io.deepsense.deeplang.params.SingleColumnCreatorParam
 
 class SingleColumnCreatorParamWrapper[P <: ml.param.Params](
     override val name: String,
-    override val description: String,
+    override val description: Option[String],
     val sparkParamGetter: P => ml.param.Param[String])
   extends SingleColumnCreatorParam(name, description)
   with ForwardSparkParamWrapper[P, String] {

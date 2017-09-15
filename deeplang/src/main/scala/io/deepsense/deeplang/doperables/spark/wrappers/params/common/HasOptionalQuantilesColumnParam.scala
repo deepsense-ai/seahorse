@@ -31,9 +31,9 @@ trait HasOptionalQuantilesColumnParam extends Params {
     new ChoiceParam[OptionalQuantilesColumnChoice.QuantilesColumnOption](
       name = "use custom quantiles",
       description =
-        """Param for quantiles column name.
+        Some("""Param for quantiles column name.
           |This column will output quantiles of corresponding
-          |quantileProbabilities if it is set.""".stripMargin)
+          |quantileProbabilities if it is set.""".stripMargin))
 
   setDefault(optionalQuantilesColumn, OptionalQuantilesColumnChoice.QuantilesColumnNoOption())
 }
@@ -50,7 +50,7 @@ object OptionalQuantilesColumnChoice {
     val quantilesColumn = new SingleColumnCreatorParamWrapper[
         ml.param.Params { val quantilesCol: SparkParam[String]}](
       name = "quantiles column",
-      description = "The quantiles column for a model.",
+      description = Some("The quantiles column for a model."),
       sparkParamGetter = _.quantilesCol)
     setDefault(quantilesColumn, "quantiles")
 

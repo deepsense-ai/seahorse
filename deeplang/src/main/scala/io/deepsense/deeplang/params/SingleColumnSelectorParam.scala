@@ -20,8 +20,8 @@ import io.deepsense.deeplang.params.selections.{SingleColumnSelection, SingleCol
 import io.deepsense.deeplang.params.selections.SingleColumnSelectionProtocol._
 
 case class SingleColumnSelectorParam(
-    name: String,
-    description: String,
+    override val name: String,
+    override val description: Option[String],
     portIndex: Int)
   extends AbstractColumnSelectorParam[SingleColumnSelection]
   with SingleColumnSelectionProtocol {

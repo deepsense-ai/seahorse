@@ -41,7 +41,7 @@ object MultiColumnParams {
 
       val outputColumnsPrefixParam = PrefixBasedColumnCreatorParam(
         name = "column name prefix",
-        description = "Prefix for output columns."
+        description = Some("Prefix for output columns.")
       )
 
       override val params: Array[Param[_]] = Array(outputColumnsPrefixParam)
@@ -64,7 +64,7 @@ object MultiColumnParams {
 
       val inputColumn = SingleColumnSelectorParam(
         name = "input column",
-        description = "Column to transform.",
+        description = Some("Column to transform."),
         portIndex = 0
       )
 
@@ -83,13 +83,13 @@ object MultiColumnParams {
 
       val inputColumnsParam = ColumnSelectorParam(
         name = "input columns",
-        description = "Columns to transform.",
+        description = Some("Columns to transform."),
         portIndex = 0
       )
 
       val multiInPlaceChoiceParam = ChoiceParam[MultiColumnInPlaceChoice](
         name = "output",
-        description = "Output generation mode."
+        description = Some("Output generation mode.")
       )
       setDefault(multiInPlaceChoiceParam, MultiColumnYesInPlace())
 

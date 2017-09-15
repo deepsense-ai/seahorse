@@ -28,7 +28,7 @@ trait ProbabilisticClassifierParams extends ClassifierParams {
     new SingleColumnCreatorParamWrapper[
         ml.param.Params { val probabilityCol: ml.param.Param[String] }](
       name = "probability column",
-      description = "The column for predicted class conditional probabilities.",
+      description = Some("The column for predicted class conditional probabilities."),
       sparkParamGetter = _.probabilityCol)
   setDefault(probabilityColumn, "probability")
 }

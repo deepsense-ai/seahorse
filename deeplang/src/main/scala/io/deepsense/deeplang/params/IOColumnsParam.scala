@@ -22,4 +22,4 @@ import io.deepsense.deeplang.params.choice.ChoiceParam
 case class IOColumnsParam()
   extends ChoiceParam[SingleOrMultiColumnChoice](
     name = "operate on",
-    description = "The input and output columns for the operation.")
+    description = Some("The input and output columns for the operation."))

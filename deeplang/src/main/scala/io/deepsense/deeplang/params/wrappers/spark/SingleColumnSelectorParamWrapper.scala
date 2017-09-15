@@ -25,7 +25,7 @@ import io.deepsense.deeplang.params.selections.SingleColumnSelection
 
 class SingleColumnSelectorParamWrapper[P <: ml.param.Params](
     override val name: String,
-    override val description: String,
+    override val description: Option[String],
     val sparkParamGetter: P => ml.param.Param[String],
     override val portIndex: Int)
   extends SingleColumnSelectorParam(name, description, portIndex)

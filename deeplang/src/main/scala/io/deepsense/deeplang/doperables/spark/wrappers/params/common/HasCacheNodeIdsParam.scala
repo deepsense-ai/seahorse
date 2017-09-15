@@ -30,7 +30,7 @@ trait HasCacheNodeIdsParam extends Params {
   val cacheNodeIds =
     new BooleanParamWrapper[ml.param.Params {val cacheNodeIds: ml.param.BooleanParam}](
       name = "cache node ids",
-      description = "The caching nodes IDs. Can speed up training of deeper trees.",
+      description = Some("The caching nodes IDs. Can speed up training of deeper trees."),
       sparkParamGetter = _.cacheNodeIds)
   setDefault(cacheNodeIds, false)
 

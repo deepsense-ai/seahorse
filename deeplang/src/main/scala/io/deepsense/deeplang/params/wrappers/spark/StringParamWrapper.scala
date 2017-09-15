@@ -23,7 +23,7 @@ import io.deepsense.deeplang.params.validators.{AcceptAllRegexValidator, Validat
 
 class StringParamWrapper[P <: ml.param.Params](
     override val name: String,
-    override val description: String,
+    override val description: Option[String],
     val sparkParamGetter: P => ml.param.Param[String],
     override val validator: Validator[String] = new AcceptAllRegexValidator)
   extends StringParam(name, description, validator)

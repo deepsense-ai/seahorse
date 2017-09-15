@@ -23,7 +23,7 @@ import io.deepsense.deeplang.params.validators.{ArrayLengthValidator, ComplexArr
 
 class DoubleArrayParamWrapper[P <: ml.param.Params](
     override val name: String,
-    override val description: String,
+    override val description: Option[String],
     val sparkParamGetter: P => ml.param.DoubleArrayParam,
     override val validator: Validator[Array[Double]] =
       ComplexArrayValidator(

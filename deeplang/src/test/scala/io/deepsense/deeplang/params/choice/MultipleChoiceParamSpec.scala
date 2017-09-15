@@ -35,11 +35,11 @@ class MultipleChoiceParamSpec
   }
 
   override def paramFixture: (MultipleChoiceParam[ChoiceABC], JsValue) = {
-    val multipleChoiceParam = MultipleChoiceParam[ChoiceABC]("name", "description")
+    val multipleChoiceParam = MultipleChoiceParam[ChoiceABC]("name", Some("description"))
     val multipleChoiceExpectedJson = JsObject(
       "type" -> JsString("multipleChoice"),
       "name" -> JsString(multipleChoiceParam.name),
-      "description" -> JsString(multipleChoiceParam.description),
+      "description" -> JsString(multipleChoiceParam.description.getOrElse("")),
       "isGriddable" -> JsFalse,
       "default" -> JsNull,
       ChoiceFixtures.values)
@@ -66,5 +66,5 @@ class MultipleChoiceParamSpec
   override protected def createChoiceParam[V <: Choice : TypeTag](
       name: String,
       description: String): ChoiceParam[V] =
-    ChoiceParam[V](name, description)
+    ChoiceParam[V](name, Some(description))
 }

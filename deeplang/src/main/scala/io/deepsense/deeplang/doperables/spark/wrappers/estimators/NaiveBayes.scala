@@ -40,7 +40,7 @@ class NaiveBayes
 
   val smoothing = new DoubleParamWrapper[ml.param.Params { val smoothing: ml.param.DoubleParam }](
     name = "smoothing",
-    description = "The smoothing parameter.",
+    description = Some("The smoothing parameter."),
     sparkParamGetter = _.smoothing,
     validator = RangeValidator(begin = 0.0, end = Double.MaxValue))
   setDefault(smoothing, 1.0)
@@ -48,7 +48,7 @@ class NaiveBayes
   val modelType =
     new ChoiceParamWrapper[ml.param.Params { val modelType: ml.param.Param[String] }, ModelType](
       name = "modelType",
-      description = "The model type.",
+      description = Some("The model type."),
       sparkParamGetter = _.modelType)
   setDefault(modelType, Multinomial())
 

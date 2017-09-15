@@ -30,7 +30,7 @@ trait HasItemColumnParam extends Params {
     new SingleColumnSelectorParamWrapper[
       ml.param.Params { val itemCol: ml.param.Param[String] }](
       name = "item column",
-      description = "The column for item ids.",
+      description = Some("The column for item ids."),
       sparkParamGetter = _.itemCol,
       portIndex = 0)
   setDefault(itemColumn, NameSingleColumnSelection("item"))

@@ -80,7 +80,7 @@ class EstimatorAsFactorySpec extends UnitSpec {
 object EstimatorAsFactorySpec {
 
   class MockEstimator extends Estimator[Transformer] {
-    val param = NumericParam("b", "desc")
+    val param = NumericParam("b", Some("desc"))
     setDefault(param -> 5)
     override val params: Array[Param[_]] = Array(param)
 

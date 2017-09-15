@@ -25,8 +25,8 @@ import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.params.exceptions.NoArgumentConstructorRequiredException
 
 case class ParamsSequence[T <: Params](
-    name: String,
-    description: String)
+    override val name: String,
+    override val description: Option[String])
     (implicit tag: TypeTag[T])
   extends Param[Seq[T]] {
 

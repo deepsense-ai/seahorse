@@ -30,7 +30,7 @@ trait HasMaxIterationsParam extends Params {
 
   val maxIterations = new IntParamWrapper[ml.param.Params { val maxIter: ml.param.IntParam }](
     name = "max iterations",
-    description = "The maximum number of iterations.",
+    description = Some("The maximum number of iterations."),
     sparkParamGetter = _.maxIter,
     validator = RangeValidator.positiveIntegers)
   setDefault(maxIterations, maxIterationsDefault)

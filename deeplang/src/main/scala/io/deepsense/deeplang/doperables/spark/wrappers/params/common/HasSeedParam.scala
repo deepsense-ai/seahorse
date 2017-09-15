@@ -27,7 +27,7 @@ trait HasSeedParam extends Params {
 
   val seed = new LongParamWrapper[ml.param.Params { val seed: ml.param.LongParam }](
     name = "seed",
-    description = "The random seed.",
+    description = Some("The random seed."),
     sparkParamGetter = _.seed)
   setDefault(seed, 0.0)
 }

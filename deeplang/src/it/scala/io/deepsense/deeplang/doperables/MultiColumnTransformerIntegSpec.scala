@@ -145,7 +145,7 @@ object MultiColumnTransformerIntegSpec {
 
     val magicConstant = NumericParam(
       name = "aconstant",
-      description = "Constant that will be added to columns"
+      description = Some("Constant that will be added to columns")
     )
 
     def setMagicConstant(value: Double): this.type = set(magicConstant, value)

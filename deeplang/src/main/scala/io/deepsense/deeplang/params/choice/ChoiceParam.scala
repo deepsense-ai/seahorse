@@ -25,7 +25,7 @@ import io.deepsense.deeplang.params.ParameterType
 
 class ChoiceParam[T <: Choice](
     val name: String,
-    val description: String)
+    override val description: Option[String])
     (implicit tag: TypeTag[T])
   extends AbstractChoiceParam[T, T] {
 
@@ -55,6 +55,6 @@ class ChoiceParam[T <: Choice](
 object ChoiceParam {
   def apply[T <: Choice : TypeTag](
       name: String,
-      description: String): ChoiceParam[T] =
+      description: Option[String]): ChoiceParam[T] =
     new ChoiceParam[T](name, description)
 }

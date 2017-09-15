@@ -21,9 +21,9 @@ import spray.json.DefaultJsonProtocol.StringJsonFormat
 import io.deepsense.deeplang.params.validators.{AcceptAllRegexValidator, Validator}
 
 case class StringParam(
-    val name: String,
-    val description: String,
-    val validator: Validator[String] = new AcceptAllRegexValidator)
+    override val name: String,
+    override val description: Option[String],
+    override val validator: Validator[String] = new AcceptAllRegexValidator)
   extends ParamWithJsFormat[String]
   with HasValidator[String] {
 

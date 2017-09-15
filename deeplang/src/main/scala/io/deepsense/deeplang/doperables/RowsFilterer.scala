@@ -27,8 +27,8 @@ class RowsFilterer extends Transformer {
 
   val condition = CodeSnippetParam(
     name = "condition",
-    description = "Condition used to filter rows. " +
-      "Only rows that satisfy condition will remain in DataFrame. Use SQL syntax.",
+    description = Some("Condition used to filter rows. " +
+      "Only rows that satisfy condition will remain in DataFrame. Use SQL syntax."),
     language = CodeSnippetLanguage(CodeSnippetLanguage.sql)
   )
 

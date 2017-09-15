@@ -23,7 +23,7 @@ import io.deepsense.deeplang.params.ParameterType.ParameterType
 
 case class CodeSnippetParam(
     name: String,
-    description: String,
+    override val description: Option[String],
     language: CodeSnippetLanguage)
   extends ParamWithJsFormat[String] {
 

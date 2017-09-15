@@ -27,7 +27,7 @@ class HashingTFTransformer extends SparkTransformerAsMultiColumnTransformer[Hash
 
   val numFeatures = new IntParamWrapper[HashingTF](
     name = "num features",
-    description = "The number of features.",
+    description = Some("The number of features."),
     sparkParamGetter = _.numFeatures,
     validator = RangeValidator(1.0, Int.MaxValue, step = Some(1.0)))
   // With default setting in Bundled Image (1 << 20) makes jvm run out of memory even for few rows.

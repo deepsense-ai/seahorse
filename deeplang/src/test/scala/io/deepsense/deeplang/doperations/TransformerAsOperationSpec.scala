@@ -42,7 +42,7 @@ object MockTransformers extends UnitSpec with DeeplangTestSupport {
   val outputSchema2 = outputDataFrame2.schema.get
 
   class MockTransformer extends Transformer {
-    val paramA = NumericParam("a", "desc", RangeValidator(0.0, Double.MaxValue))
+    val paramA = NumericParam("a", Some("desc"), RangeValidator(0.0, Double.MaxValue))
     setDefault(paramA -> DefaultForA)
 
     override val params: Array[Param[_]] = Array(paramA)

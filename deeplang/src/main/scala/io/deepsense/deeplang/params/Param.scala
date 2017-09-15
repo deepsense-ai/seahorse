@@ -28,7 +28,7 @@ abstract class Param[T] {
 
   val name: String
 
-  val description: String
+  val description: Option[String]
 
   def constraints: String = ""
 
@@ -56,7 +56,7 @@ abstract class Param[T] {
     val basicFields = Map(
       "name" -> name.toJson,
       "type" -> parameterType.toString.toJson, // TODO json format for parameterType
-      "description" -> (description + constraints).toJson,
+      "description" -> (description.getOrElse("") + constraints).toJson,
       "isGriddable" -> isGriddable.toJson,
       "default" -> maybeDefault.map(default =>
         serializeDefault(default.asInstanceOf[T])).getOrElse(JsNull)

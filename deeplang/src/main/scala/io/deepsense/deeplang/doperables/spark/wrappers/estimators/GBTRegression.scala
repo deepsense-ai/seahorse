@@ -44,7 +44,7 @@ class GBTRegression
   val lossType = new ChoiceParamWrapper[
     ml.param.Params { val lossType: ml.param.Param[String] }, LossType](
     name = "loss function",
-    description = "The loss function which GBT tries to minimize.",
+    description = Some("The loss function which GBT tries to minimize."),
     sparkParamGetter = _.lossType)
   setDefault(lossType, Squared())
 

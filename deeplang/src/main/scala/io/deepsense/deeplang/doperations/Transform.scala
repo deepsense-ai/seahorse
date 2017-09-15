@@ -44,7 +44,7 @@ case class Transform()
 
   val transformerParams = new DynamicParam(
     name = "Parameters of input Transformer",
-    description = "These parameters are rendered dynamically, depending on type of Transformer.",
+    description = Some("These parameters are rendered dynamically, depending on type of Transformer."),
     inputPort = 0)
   setDefault(transformerParams, JsNull)
 

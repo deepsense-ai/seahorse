@@ -42,11 +42,11 @@ class MultilayerPerceptronClassifier
   val layersParam = new IntArrayParamWrapper[SparkMultilayerPerceptronClassifier](
     name = "layers",
     description =
-      """The list of layer sizes that includes the input layer size as the first number and the
+      Some("""The list of layer sizes that includes the input layer size as the first number and the
         |output layer size as the last number. The input layer and hidden layers have sigmoid
         |activation functions, while the output layer has a softmax. The input layer size has to be
         |equal to the length of the feature vector. The output layer size has to be equal to the
-        |total number of labels.""".stripMargin,
+        |total number of labels.""".stripMargin),
     sparkParamGetter = _.layers,
     validator = ComplexArrayValidator(
       RangeValidator.positiveIntegers,

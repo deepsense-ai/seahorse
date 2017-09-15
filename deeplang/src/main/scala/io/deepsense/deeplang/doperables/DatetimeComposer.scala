@@ -32,7 +32,7 @@ case class DatetimeComposer() extends Transformer {
 
   val timestampColumnsParam = MultipleChoiceParam[TimestampPartColumnChoice](
     name = "parts",
-    description = "Columns containing timestamp parts."
+    description = Some("Columns containing timestamp parts.")
   )
   setDefault(timestampColumnsParam, Set.empty: Set[TimestampPartColumnChoice])
 
@@ -43,7 +43,7 @@ case class DatetimeComposer() extends Transformer {
 
   val outputColumnParam = SingleColumnCreatorParam(
     name = "output column",
-    description = "Column to save results."
+    description = Some("Column to save results.")
   )
   setDefault(outputColumnParam, "Timestamp")
 
@@ -121,7 +121,7 @@ object DatetimeComposer {
 
     val timestampColumnSelectorParam = SingleColumnSelectorParam(
       name = name + " column",
-      description = "Column containing " + name,
+      description = Some("Column containing " + name),
       portIndex = 0
     )
 

@@ -39,7 +39,7 @@ class WrappersDefaultValidationSpec
 
     val intParamWrapper = new IntParamWrapper[ExampleSparkParams](
       "name",
-      "description",
+      Some("description"),
       _.intSparkParam)
 
     "validate whole Int range" in {
@@ -56,7 +56,7 @@ class WrappersDefaultValidationSpec
 
     val floatParamWrapper = new FloatParamWrapper[ExampleSparkParams](
       "name",
-      "description",
+      Some("description"),
       _.floatSparkParam)
 
     "validate whole Float range" in {
@@ -73,7 +73,7 @@ class WrappersDefaultValidationSpec
     "validate whole Double range" in {
       val doubleParamWrapper = new DoubleParamWrapper[ExampleSparkParams](
         "name",
-        "description",
+        Some("description"),
         _.doubleSparkParam)
       doubleParamWrapper.validate(Double.MinValue + 1) shouldBe empty
       doubleParamWrapper.validate(Double.MinValue - 1) shouldBe empty
