@@ -68,17 +68,27 @@ function forwardRequest(req, res) {
     req.headers['X-Seahorse-UserId'] = req.user.user_id;
     req.headers['X-Seahorse-UserName'] = req.user.user_name;
   } else {
-    req.removeHeader('X-Seahorse-UserId');
-    req.removeHeader('X-Seahorse-UserName');
+    delete req.headers['X-Seahorse-UserId'];
+    delete req.headers['X-Seahorse-UserName'];
   }
 
   req.headers['x-forwarded-host'] = req.headers['host'];
   req.clearTimeout();
 
-  proxy.web(req, res, {
+  var options = {
     target: getTargetHost(req, res),
-    timeout: config.get('timeout')
-  });
+    timeout: config.get('timeout'),
+  }
+  if (typeof service.proxyTimeout !== 'undefined') {
+      options.proxyTimeout = service.proxyTimeout;
+  }
+
+  proxy.web(req, res, options, function (e) {
+             console.error(e);
+             var waitPage = url.format({protocol: req.protocol, host: req.get("host"), pathname: "wait.html"})
+             res.writeHead(302, {'Location': waitPage});
+             res.end();
+   });
 }
 
 function forwardWebSocket(req, socket, head) {

@@ -3,6 +3,7 @@
  */
 var session = require('express-session');
 var crypto = require('crypto');
+var url = require('url');
 var oauth2 = require('./oauth2');
 var config = require('../config/config');
 var passport = oauth2.passport;
@@ -40,7 +41,8 @@ function init(app) {
     req.session.destroy();
     req.logout();
     strategy.reset();
-    res.redirect(sso.logoutUri);
+    var oauthPage = url.format({protocol: req.protocol, host: req.get("host"), pathname: "oauth"})
+    res.redirect(sso.logoutUri+"?redirect=" + oauthPage);
   });
 }
 
