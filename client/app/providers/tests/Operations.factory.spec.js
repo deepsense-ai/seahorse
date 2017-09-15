@@ -10,10 +10,11 @@ describe('Operations', () => {
   var module,
       Operations;
 
-  var category1 = 'c1',
+  var id = 'id-01',
+      category1 = 'c1',
       mockOperations = {
         'id-01': {
-          'id': 'id-01',
+          'id': id,
           'category': category1,
           'value': 101
         },
@@ -23,6 +24,18 @@ describe('Operations', () => {
           'value': 102
         },
       },
+      mockOperationsFull = {
+        'id-01': {
+          'id': id,
+          'category': category1,
+          'value': 101,
+          'parameters': {
+            'parameter': {
+              'type': 'some'
+            }
+          }
+        }
+      },
       mockCatalog = {
         'catalog': [
           {
@@ -30,7 +43,7 @@ describe('Operations', () => {
             'name': 'Category1',
             'items': [
               {
-                'id': 'id-01',
+                'id': id,
               }
             ],
             'catalog': [
@@ -57,6 +70,7 @@ describe('Operations', () => {
         ]
       };
 
+
   beforeEach(() => {
     module = angular.module('test', []);
     require('../Operations.factory.js').inject(module);
@@ -77,6 +91,9 @@ describe('Operations', () => {
         };
 
         return {
+          get: (id) => requestAPI({
+            'operation': mockOperationsFull[id]
+          }),
           getAll: () => requestAPI({
             'operations': mockOperations
           }),
@@ -102,6 +119,7 @@ describe('Operations', () => {
     expect(Operations.load).toEqual(jasmine.any(Function));
     expect(Operations.getData).toEqual(jasmine.any(Function));
     expect(Operations.get).toEqual(jasmine.any(Function));
+    expect(Operations.getWithParams).toEqual(jasmine.any(Function));
     expect(Operations.getCatalog).toEqual(jasmine.any(Function));
     expect(Operations.getCategory).toEqual(jasmine.any(Function));
   });
@@ -136,7 +154,7 @@ describe('Operations', () => {
     }));
 
     it(
-      'request api only once / use cache for next calls',
+      'request api only once / use cache for next initialization',
       angular.mock.inject(($rootScope, OperationsAPIClient) =>
     {
       let success = false,
@@ -225,12 +243,79 @@ describe('Operations', () => {
     }));
 
     it('known operation', angular.mock.inject(($rootScope, OperationsAPIClient) => {
-      expect(Operations.get('id-01')).toEqual(mockOperations['id-01']);
+      expect(Operations.get(id)).toEqual(mockOperations[id]);
     }));
 
     it('unknown operation', angular.mock.inject(($rootScope, OperationsAPIClient) => {
       expect(Operations.get('id-X')).toBeNull();
     }));
+  });
+
+
+  describe('should have getWithParams method', () => {
+    beforeEach(angular.mock.inject(($rootScope, OperationsAPIClient) => {
+      OperationsAPIClient.changeRequestState(true);
+      Operations.load();
+      $rootScope.$apply();
+    }));
+
+    it('which return promise',
+      angular.mock.inject(($rootScope, OperationsAPIClient) =>
+    {
+      let promise = Operations.getWithParams(id);
+      expect(promise).toEqual(jasmine.any(Object));
+      expect(promise.then).toEqual(jasmine.any(Function));
+      expect(promise.catch).toEqual(jasmine.any(Function));
+    }));
+
+    it(
+      'resolve promise on requests success',
+      angular.mock.inject(($rootScope, OperationsAPIClient) =>
+    {
+      let success = false,
+          error   = false,
+          responseData;
+
+      expect(Operations.get(id).parameters).not.toBeDefined();
+
+      OperationsAPIClient.changeRequestState(true);
+
+      spyOn(OperationsAPIClient, 'get').and.callThrough();
+
+      Operations.getWithParams(id).then((data) => {
+        success = true;
+        responseData = data;
+      }, () => {
+        error = true;
+      });
+      $rootScope.$apply();
+
+      expect(OperationsAPIClient.get).toHaveBeenCalled();
+      expect(OperationsAPIClient.get.calls.count()).toBe(1);
+      expect(success).toBe(true);
+      expect(error).toBe(false);
+      expect(responseData.parameters).toBeDefined();
+      expect(responseData.parameters).toEqual(jasmine.any(Object));
+
+      success = false;
+      error = false;
+      responseData = null;
+
+      Operations.getWithParams(id).then((data) => {
+        success = true;
+        responseData = data;
+      }, () => {
+        error = true;
+      });
+      $rootScope.$apply();
+
+      expect(OperationsAPIClient.get.calls.count()).toBe(1);
+      expect(success).toBe(true);
+      expect(error).toBe(false);
+      expect(responseData.parameters).toBeDefined();
+      expect(responseData.parameters).toEqual(jasmine.any(Object));
+    }));
+
   });
 
 });

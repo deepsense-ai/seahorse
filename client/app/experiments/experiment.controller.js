@@ -157,8 +157,20 @@ function ExperimentController($timeout, $stateParams, $scope, PageService, Opera
   };
 
   $scope.$on(GraphNode.CLICK, (event, data) => {
-    internal.selectedNode = data.selectedNode;
-    $scope.$digest();
+    let node = data.selectedNode;
+    if (node.hasParameters()) {
+      internal.selectedNode = node;
+      $scope.$digest();
+    } else {
+      Operations.getWithParams(node.operationId).then((operationData) => {
+        $scope.$applyAsync(() => {
+          node.setParameters(operationData.parameters);
+          internal.selectedNode = node;
+        });
+      }, (error) => {
+        console.error('operation fetch error', error);
+      });
+    }
   });
 
   $scope.$on(GraphNode.MOVE, (data) => {
@@ -181,7 +193,7 @@ function ExperimentController($timeout, $stateParams, $scope, PageService, Opera
     if (internal.selectedNode) {
       internal.experiment.removeNode(internal.selectedNode.id);
       DrawingService.removeNode(internal.selectedNode.id);
-      internal.selectedNode = null;
+      that.unselectNode();
       that.onRenderFinish();
       $scope.$digest();
       that.saveData();

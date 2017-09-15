@@ -1,0 +1,68 @@
+{
+  "operation": {
+    "id": "342342-123123-434234-12334",
+    "name": "Row Filter",
+    "version": "1.0.3",
+    "category": "91111-111111-11111",
+    "description": "Simple filters takes dataset based on...",
+    "deterministic": true,
+    "ports": {
+      "input": [
+        {
+          "portIndex": 0,
+          "required": true,
+          "typeQualifier": ["SomeDOperation"]
+        }
+      ],
+      "output": [
+        {
+          "portIndex": 0,
+          "required": true,
+          "typeQualifier": ["OtherDOperation"]
+        }
+      ]
+    },
+    "parameters": {
+      "sample-selectors": {
+        "type": "selector",
+        "description": "sample desc",
+        "port": 1,
+        "default": null,
+        "required": true,
+        "isSingle": false
+      },
+      "sample-single-index-selector": {
+        "type": "selector",
+        "description": "sample desc",
+        "port": 1,
+        "default": null,
+        "required": true,
+        "isSingle": true
+      },
+      "sample-single-column-selector": {
+        "type": "selector",
+        "description": "sample desc",
+        "port": 1,
+        "default": null,
+        "required": true,
+        "isSingle": true
+      },
+      "condition_threshold": {
+        "type": "numeric",
+        "description": "condition threshold",
+        "default": 6,
+        "required": true,
+        "validator": {
+          "type": "range",
+          "configuration": {
+            "begin": 10.1,
+            "end": 12.3,
+            "beginIncluded": true,
+            "endIncluded": true,
+            "step": 1.1
+          }
+        }
+      }
+    }
+  }
+}

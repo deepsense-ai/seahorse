@@ -1,0 +1,13 @@
+{
+  "operation": {
+    "id": "43241264-6318434-f34d234",
+    "name": "ScientificDatasetA",
+    "category": "982345-23943-85923",
+    "description": "Dataframe description and other stuff",
+    "ports": {
+      "input": [],
+      "output": []
+    },
+    "parameters": {}
+  }
+}

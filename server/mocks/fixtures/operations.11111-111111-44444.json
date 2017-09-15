@@ -1,0 +1,97 @@
+{
+  "operation": {
+    "id": "11111-111111-44444",
+    "name": "Neural Network",
+    "version": "1.2.3",
+    "category": "234234-756756-34234",
+    "description": "Neural networks inspired by biological...",
+    "deterministic": true,
+    "ports": {
+      "input": [
+        {
+          "portIndex": 0,
+          "required": true,
+          "typeQualifier": ["SomeDOperation"]
+        }
+      ],
+      "output": [
+        {
+          "portIndex": 0,
+          "required": true,
+          "typeQualifier": ["OtherDOperation"]
+        }
+      ]
+    },
+    "parameters": {
+      "sample_snippet": {
+        "type": "snippet",
+        "description": "This is a snippet parameter.",
+        "language": "R",
+        "default": "m <- 1000",
+        "required": true
+      },
+      "sample_choice": {
+        "type": "choice",
+        "description": "sample choice description",
+        "default": "choice1",
+        "required": true,
+        "values": {
+          "choice1": {
+            "name11": {
+              "type": "numeric",
+              "description": "11 desc",
+              "default": 42,
+              "required": true,
+              "validator": {
+                "type": "range",
+                "configuration": {
+                  "begin": 40,
+                  "end": 50,
+                  "beginIncluded": true,
+                  "endIncluded": false,
+                  "step": 2
+                }
+              }
+            },
+            "name21": {
+              "type": "string",
+              "description": "21 desc",
+              "default": "word123",
+              "required": true,
+              "validator": {
+                "type": "regex",
+                "configuration": {
+                  "regex": "^word[\\d]+$"
+                }
+              }
+            }
+          },
+          "choice2": {
+            "name12": {
+              "type": "boolean",
+              "description": "12 desc",
+              "default": true,
+              "required": false
+            },
+            "name22": {
+              "type": "snippet",
+              "description": "22 desc",
+              "language": "R",
+              "default": "exit 42;",
+              "required": true
+            }
+          },
+          "choice3": {
+            "name31": {
+              "type": "snippet",
+              "description": "31 desc",
+              "language": "R",
+              "default": "let codilime <- 42;",
+              "required": true
+            }
+          }
+        }
+      }
+    }
+  }
+}

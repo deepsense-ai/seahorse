@@ -5,7 +5,6 @@
 
 var Edge = require('./common-edge.js');
 var GraphNode = require('./common-graph-node.js');
-var ParameterFactory = require('./common-parameter-factory.js');
 
 function Experiment() {
 
@@ -57,9 +56,7 @@ function Experiment() {
    * @return {GraphNode}
    */
   that.createNode = function createNode(options) {
-    let operation = options.operation,
-        paramSchemas = operation.parameters || {},
-        paramValues = options.parameters || {};
+    let operation = options.operation;
 
     return new GraphNode({
       'id': options.id,
@@ -67,7 +64,7 @@ function Experiment() {
       'operationId': operation.id,
       'version': operation.version,
       'icon': operation.icon,
-      'parameters': ParameterFactory.createParametersList(paramValues, paramSchemas),
+      'parametersValues': options.parameters || {},
       'description': operation.description,
       'input': operation.ports.input,
       'output': operation.ports.output,

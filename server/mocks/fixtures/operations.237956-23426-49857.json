@@ -1,0 +1,27 @@
+{
+  "operation": {
+    "id": "237956-23426-49857",
+    "name": "Linear Regresion",
+    "version": "1.1.2",
+    "category": "987435-12343-56401",
+    "description": "Regresion linear model",
+    "deterministic": true,
+    "ports": {
+      "input": [
+        {
+          "portIndex": 0,
+          "required": true,
+          "typeQualifier": ["SomeDOperation"]
+        }
+      ],
+      "output": [
+        {
+          "portIndex": 0,
+          "required": true,
+          "typeQualifier": ["OtherDOperation"]
+        }
+      ]
+    },
+    "parameters": {}
+  }
+}

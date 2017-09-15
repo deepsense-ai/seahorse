@@ -95,6 +95,23 @@ function OperationsFactory(OperationsAPIClient, $q) {
   };
 
   /**
+   * Loads full operation data from API.
+   *
+   * @param {string} id
+   *
+   * @return {Promise}
+   */
+  var loadOperationData = function loadOperationData(id) {
+    return OperationsAPIClient.get(id).then((data) => {
+      operationsData[id].parameters = Object.freeze(data.operation.parameters || {});
+      Object.freeze(operationsData[id]);
+      return operationsData[id];
+    }, (error) => {
+      console.error('error', error);
+    });
+  };
+
+  /**
    * Loads catalog & category data from API.
    *
    * @return {Promise}
@@ -157,6 +174,26 @@ function OperationsFactory(OperationsAPIClient, $q) {
       return null;
     }
     return operationsData[id] || null;
+  };
+
+  /**
+   * Returns operation data with params schema.
+   *
+   * @param {string} id
+   *
+   * @return {Promise}
+   */
+  service.getWithParams = function getWithParams(id) {
+    if (!isLoaded) {
+      console.error('Operations not loaded!');
+    }
+    let operation = operationsData[id] || null;
+    if (!isLoaded || (operation && operation.parameters)) {
+      let deferred = $q.defer();
+      deferred.resolve(operation);
+      return deferred.promise;
+    }
+    return loadOperationData(id);
   };
 
   /**

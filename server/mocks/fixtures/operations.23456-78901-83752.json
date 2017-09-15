@@ -1,0 +1,32 @@
+{
+  "operation": {
+    "id": "23456-78901-83752",
+    "name": "Webservice Reader",
+    "version": "2.0.3",
+    "category": "23123-12312-43242",
+    "description": "Remote webservice reader",
+    "deterministic": true,
+    "ports": {
+      "input": [
+        {
+          "portIndex": 0,
+          "required": true,
+          "typeQualifier": ["SomeDOperation"]
+        }
+      ],
+      "output": [
+        {
+          "portIndex": 0,
+          "required": true,
+          "typeQualifier": ["OtherDOperation"]
+        },
+        {
+          "portIndex": 1,
+          "required": true,
+          "typeQualifier": ["OtherDOperation"]
+        }
+      ]
+    },
+    "parameters": {}
+  }
+}

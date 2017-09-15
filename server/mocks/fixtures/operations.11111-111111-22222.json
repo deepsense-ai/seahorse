@@ -1,0 +1,27 @@
+{
+  "operation": {
+    "id": "11111-111111-22222",
+    "name": "Basic filter",
+    "version": "1.0.1",
+    "category": "81111-111111-11111",
+    "description": "Basic fiter description",
+    "deterministic": true,
+    "ports": {
+      "input": [
+        {
+          "portIndex": 0,
+          "required": true,
+          "typeQualifier": ["SomeDOperation"]
+        }
+      ],
+      "output": [
+        {
+          "portIndex": 0,
+          "required": true,
+          "typeQualifier": ["OtherDOperation"]
+        }
+      ]
+    },
+    "parameters": {}
+  }
+}

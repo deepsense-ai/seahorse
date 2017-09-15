@@ -4,6 +4,7 @@
 'use strict';
 
 var Port = require('./common-port.js');
+var ParameterFactory = require('./common-parameter-factory.js');
 
 function GraphNode(options) {
   this.name = options.name;
@@ -18,7 +19,11 @@ function GraphNode(options) {
   this.edges = {};
   this.x = options.x;
   this.y = options.y;
-  this.parameters = options.parameters;
+  if (options.parametersValues) {
+    this.parametersValues = options.parametersValues;
+  } else {
+    this.parameters = options.parameters;
+  }
   this.setStatus(options.state);
 }
 
@@ -60,7 +65,7 @@ GraphNode.prototype.serialize = function serialize() {
       'name': this.name,
       'version': this.version
     },
-    'parameters': this.parameters.serialize(),
+    'parameters': this.parametersValues ? this.parametersValues : this.parameters.serialize(),
     'ui': {
       'x': this.x,
       'y': this.y
@@ -81,6 +86,27 @@ GraphNode.prototype.setStatus = function setStatus(state) {
   } else if (!this.status) {
     this.status = this.STATUS_DEFAULT;
   }
+};
+
+/**
+ * Sets parameters object using internal parameters values and provided schema.
+ *
+ * @param {object} parametersSchema
+ */
+GraphNode.prototype.setParameters = function setParameters(parametersSchema) {
+  if (this.parametersValues) {
+    this.parameters = ParameterFactory.createParametersList(this.parametersValues, parametersSchema);
+    this.parametersValues = null;
+  }
+};
+
+/**
+ * Checks if node has full parameters object.
+ *
+ * @return {boolean}
+ */
+GraphNode.prototype.hasParameters = function hasParameters() {
+  return !this.parametersValues && this.parameters;
 };
 
 GraphNode.CLICK = 'GraphNode.CLICK';

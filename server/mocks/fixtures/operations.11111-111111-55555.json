@@ -1,0 +1,27 @@
+{
+  "operation": {
+    "id": "11111-111111-55555",
+    "name": "Decision Forest",
+    "version": "1.2.3",
+    "category": "234234-756756-34234",
+    "description": "Classification model",
+    "deterministic": true,
+    "ports": {
+      "input": [
+        {
+          "portIndex": 0,
+          "required": true,
+          "typeQualifier": ["SomeDOperation"]
+        }
+      ],
+      "output": [
+        {
+          "portIndex": 0,
+          "required": true,
+          "typeQualifier": ["OtherDOperation"]
+        }
+      ]
+    },
+    "parameters": {}
+  }
+}

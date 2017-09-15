@@ -22,16 +22,25 @@ function OperationsAPIClientFactory(BaseAPIClient) {
    *
    * @return {Promise}
    */
-  OperationsAPIClient.prototype.getAll = function() {
+  OperationsAPIClient.prototype.getAll = function getAll() {
     return this.makeRequest(this.METHOD_GET, this.API_PATH + PATH_OPERATIONS);
   };
 
   /**
-   * Returns list of all operations.
+   * Returns operation data.
    *
    * @return {Promise}
    */
-  OperationsAPIClient.prototype.getCatalog = function() {
+  OperationsAPIClient.prototype.get = function get(id) {
+    return this.makeRequest(this.METHOD_GET, this.API_PATH + PATH_OPERATIONS + '/' + id);
+  };
+
+  /**
+   * Returns operations catalog data.
+   *
+   * @return {Promise}
+   */
+  OperationsAPIClient.prototype.getCatalog = function getCatalog() {
     return this.makeRequest(this.METHOD_GET, this.API_PATH + PATH_CATALOG);
   };
 
