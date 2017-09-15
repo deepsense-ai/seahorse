@@ -30,7 +30,8 @@ case class ProtocolJsonDeserializer(graphReader: GraphReader)
   with LaunchJsonProtocol
   with AbortJsonProtocol
   with InitJsonProtocol
-  with UpdateWorkflowJsonProtocol {
+  with UpdateWorkflowJsonProtocol
+  with KernelManagerReadyJsonProtocol {
 
   import JsonSerialization._
 
@@ -51,6 +52,7 @@ case class ProtocolJsonDeserializer(graphReader: GraphReader)
       case InMessageType.init => body.convertTo[Init]
       case InMessageType.getPythonGatewayAddress => GetPythonGatewayAddress()
       case InMessageType.updateWorkflow => body.convertTo[UpdateWorkflow]
+      case InMessageType.kernelManagerReady => body.convertTo[KernelManagerReady]
     }
   }
 

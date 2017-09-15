@@ -51,18 +51,22 @@ object MQCommunication {
     private val workflowPrefix = "workflow"
     private val notebook = "notebook"
     private val seahorse = "seahorse"
+    private val kernelManager = "kernelmanager"
     def allWorkflowsSubscriptionTopic(sessionId: String): String =
       subscriptionTopic(s"$workflowPrefix.$sessionId.*")
     def seahorsePublicationTopic(sessionId: String): String =
       publicationTopic(s"seahorse.$sessionId")
     val notebookSubscriptionTopic = subscriptionTopic(notebook)
     val notebookPublicationTopic = publicationTopic(notebook)
+    def kernelManagerSubscriptionTopic(id: Workflow.Id, sessionId: String): String =
+      subscriptionTopic(kernelManagerTopic(id, sessionId))
     def workflowPublicationTopic(id: Workflow.Id, sessionId: String): String =
       publicationTopic(workflowTopic(id, sessionId))
+    private def kernelManagerTopic(workflowId: Workflow.Id, sessionId: String): String =
+      s"$kernelManager.$sessionId.${workflowId.toString}"
     private def workflowTopic(workflowId: Workflow.Id, sessionId: String): String =
       s"$workflowPrefix.$sessionId.${workflowId.toString}"
     private def subscriptionTopic(topic: String): String = s"$topic.from"
-    private def publicationTopic(topic: String): String =
-      s"$topic.to"
+    private def publicationTopic(topic: String): String = s"$topic.to"
   }
 }

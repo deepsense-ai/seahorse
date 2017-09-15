@@ -20,6 +20,7 @@ object Version {
   val akka = "2.3.11"
   val amazonS3 = "1.10.16"
   val apacheCommons = "3.3.+"
+  val guava = "19.0"
   val hadoop = "2.6.0"
   val mockito = "1.10.19"
   val nsscalaTime = "1.8.0"
@@ -44,6 +45,7 @@ object Library {
   val amazonS3 = "com.amazonaws" % "aws-java-sdk-s3" %
     Version.amazonS3 exclude("com.fasterxml.jackson.core", "jackson-databind")
   val apacheCommons = "org.apache.commons" % "commons-lang3" % Version.apacheCommons
+  val guava = "com.google.guava" % "guava" % Version.guava
   val hadoopAWS = hadoop("aws")
   val hadoopClient = hadoop("client")
   val hadoopCommon = hadoop("common")
@@ -140,6 +142,7 @@ object Dependencies {
 
   val workflowexecutor = Spark.onlyInTests ++ Seq(
     akkaActor,
+    guava,
     scopt,
     sprayClient,
     rabbitmq

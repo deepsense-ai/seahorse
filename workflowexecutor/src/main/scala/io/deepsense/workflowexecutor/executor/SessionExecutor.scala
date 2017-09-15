@@ -36,6 +36,7 @@ import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.Init
 import io.deepsense.workflowexecutor.communication.mq.MQCommunication
 import io.deepsense.workflowexecutor.communication.mq.serialization.json.{ProtocolJsonDeserializer, ProtocolJsonSerializer}
 import io.deepsense.workflowexecutor.executor.session.LivyKeepAliveActor
+import io.deepsense.workflowexecutor.notebooks.KernelManagerCaretaker
 import io.deepsense.workflowexecutor.rabbitmq._
 import io.deepsense.workflowexecutor.session.storage.DataFrameStorageImpl
 import io.deepsense.workflowexecutor.{SessionWorkflowExecutorActorProvider, WorkflowManagerClientActor}
@@ -95,7 +96,6 @@ case class SessionExecutor(
         graphReader))
 
     val communicationFactory: MQCommunicationFactory = createCommunicationFactory(system)
-
     val seahorsePublisher = communicationFactory.createPublisher(
       MQCommunication.Topic.seahorsePublicationTopic(sessionId),
       MQCommunication.Actor.Publisher.seahorse)
@@ -115,24 +115,48 @@ case class SessionExecutor(
       MQCommunication.Topic.allWorkflowsSubscriptionTopic(sessionId),
       workflowsSubscriberActor)
 
+    val notebookSubscriberReady: Future[Unit] =
+      createNotebookSubscriber(
+        hostAddress,
+        pythonExecutionCaretaker,
+        system,
+        communicationFactory)
+
+    waitUntilSubscribersAreReady(Seq(notebookSubscriberReady, workflowsSubscriberReady))
+
+    val kernelManagerCaretaker = new KernelManagerCaretaker(
+      system,
+      communicationFactory,
+      messageQueueHost,
+      messageQueuePort,
+      sessionId,
+      workflowId
+    )
+
+    kernelManagerCaretaker.start()
+
+    logger.info(s"Sending Init() to WorkflowsSubscriberActor")
+    workflowsSubscriberActor ! Init()
+
+    system.awaitTermination()
+    cleanup(system, sparkContext, pythonExecutionCaretaker, kernelManagerCaretaker)
+    logger.debug("SessionExecutor ends")
+  }
+
+  def createNotebookSubscriber(
+      hostAddress: InetAddress,
+      pythonExecutionCaretaker: PythonExecutionCaretaker,
+      system: ActorSystem,
+      communicationFactory: MQCommunicationFactory): Future[Unit] = {
     val notebookSubscriberActor = system.actorOf(
       NotebookKernelTopicSubscriber.props(
         "user/" + MQCommunication.Actor.Publisher.notebook,
         pythonExecutionCaretaker.gatewayListeningPort _,
         hostAddress.getHostAddress),
       MQCommunication.Actor.Subscriber.notebook)
-    val notebookSubscriberReady = communicationFactory.registerSubscriber(
+    communicationFactory.registerSubscriber(
       MQCommunication.Topic.notebookSubscriptionTopic,
       notebookSubscriberActor)
-
-    waitUntilSubscribersAreReady(Seq(notebookSubscriberReady, workflowsSubscriberReady))
-
-    logger.info(s"Sending Init() to WorkflowsSubscriberActor")
-    workflowsSubscriberActor ! Init()
-
-    system.awaitTermination()
-    cleanup(sparkContext, pythonExecutionCaretaker)
-    logger.debug("SessionExecutor ends")
   }
 
   private def createWorkflowsSubscriberActor(
@@ -183,23 +207,18 @@ case class SessionExecutor(
 
   private def createCommunicationFactory(system: ActorSystem): MQCommunicationFactory = {
     val connection: ActorRef = createConnection(system)
-
     val messageDeserializer = ProtocolJsonDeserializer(graphReader)
     val messageSerializer = ProtocolJsonSerializer(graphReader)
-    val communicationFactory =
-      MQCommunicationFactory(system, connection, messageSerializer, messageDeserializer)
-    communicationFactory
+    MQCommunicationFactory(system, connection, messageSerializer, messageDeserializer)
   }
 
   private def createConnection(system: ActorSystem): ActorRef = {
     val factory = new ConnectionFactory()
     factory.setHost(messageQueueHost)
     factory.setPort(messageQueuePort)
-
-    val connection = system.actorOf(
+    system.actorOf(
       ConnectionActor.props(factory),
       MQCommunication.mqActorSystemName)
-    connection
   }
 
   // Clients after receiving ready or heartbeat will assume
@@ -216,11 +235,16 @@ case class SessionExecutor(
     system.actorOf(LivyKeepAliveActor.props(interval), "KeepAliveActor")
 
   private def cleanup(
+      system: ActorSystem,
       sparkContext: SparkContext,
-      pythonExecutionCaretaker: PythonExecutionCaretaker): Unit = {
+      pythonExecutionCaretaker: PythonExecutionCaretaker,
+      kernelManagerCaretaker: KernelManagerCaretaker): Unit = {
     logger.debug("Cleaning up...")
     pythonExecutionCaretaker.stop()
+    kernelManagerCaretaker.stop()
     sparkContext.stop()
     logger.debug("Spark terminated!")
+    system.shutdown()
+    logger.debug("Akka terminated!")
   }
 }

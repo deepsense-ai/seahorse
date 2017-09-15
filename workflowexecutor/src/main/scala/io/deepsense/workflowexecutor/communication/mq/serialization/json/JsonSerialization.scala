@@ -28,6 +28,7 @@ object JsonSerialization {
     val init = "init"
     val launch = "launch"
     val updateWorkflow = "updateWorkflow"
+    val kernelManagerReady = "kernelManagerReady"
   }
 
   object OutMessages {
