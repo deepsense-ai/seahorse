@@ -1,17 +1,9 @@
 'use strict';
 
 class GraphNodesService {
-
   /* @ngInject */
-  constructor($q, $rootScope, $timeout, DeepsenseNodeParameters, Operations, MultiSelectionService,
-    UUIDGenerator) {
-    this.$q = $q;
-    this.DeepsenseNodeParameters = DeepsenseNodeParameters;
-    this.$rootScope = $rootScope;
-    this.$timeout = $timeout;
-    this.Operations = Operations;
-    this.MultiSelectionService = MultiSelectionService;
-    this.UUIDGenerator = UUIDGenerator;
+  constructor($q, $rootScope, $timeout, DeepsenseNodeParameters, Operations, UUIDGenerator) {
+    _.assign(this, {$q, $rootScope, $timeout, DeepsenseNodeParameters, Operations, UUIDGenerator});
   }
 
   getNodeParameters(node) {
@@ -48,7 +40,6 @@ class GraphNodesService {
 
   cloneNodes(workflow, nodes) {
     let cloningNodeIds = nodes.map(node => node.id);
-
     let clones = _.map(nodes, node => this._cloneNode(workflow, node));
 
     // clone connections with saving hierarchy

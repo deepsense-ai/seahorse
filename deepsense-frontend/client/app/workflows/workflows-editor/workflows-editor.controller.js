@@ -4,15 +4,13 @@
 import { GraphPanelRendererBase } from './../graph-panel/graph-panel-renderer/graph-panel-renderer-base.js';
 /* beautify preserve:end */
 
-import NodeCopyPasteVisitor from './node-copy-paste-visitor.js';
-
 class WorkflowsEditorController {
 
   /* @ngInject */
   constructor(workflowWithResults, $scope, $state, $q, $rootScope, $log, $timeout,
     GraphNode, Edge, config, Report, MultiSelectionService, PageService, Operations, GraphPanelRendererService,
     WorkflowService, MouseEvent, ConfirmationModalService, ExportModalService, GraphNodesService, NotificationService,
-    ServerCommunication, CopyPasteService, SideBarService, BottomBarService) {
+    ServerCommunication, CopyPasteService, SideBarService, BottomBarService, NodeCopyPasteVisitorService) {
 
     WorkflowService.initRootWorkflow(workflowWithResults);
 
@@ -20,7 +18,7 @@ class WorkflowsEditorController {
       $scope, $state, $q, $rootScope, $log, $timeout,
       GraphNode, Edge, config, Report, MultiSelectionService, PageService, Operations, GraphPanelRendererService,
       WorkflowService, MouseEvent, ConfirmationModalService, ExportModalService, GraphNodesService, NotificationService,
-      ServerCommunication, CopyPasteService, SideBarService, BottomBarService
+      ServerCommunication, CopyPasteService, SideBarService, BottomBarService, NodeCopyPasteVisitorService
     });
 
     this.BottomBarData = BottomBarService.tabsState;
@@ -29,9 +27,6 @@ class WorkflowsEditorController {
     this.catalog = Operations.getCatalog();
     this._editableModeEventListeners = [];
     this.zoomId = 'flowchart-box';
-    this.nodeCopyPasteVisitor = new NodeCopyPasteVisitor(MultiSelectionService, $q,
-      $scope, WorkflowService, this, GraphNodesService);
-
     this.init(workflowWithResults);
   }
 
@@ -74,7 +69,6 @@ class WorkflowsEditorController {
     this.PageService.setTitle('Workflow editor');
     this.GraphPanelRendererService.setRenderMode(GraphPanelRendererBase.EDITOR_RENDER_MODE);
     this.GraphPanelRendererService.setZoom(1.0);
-    this.CopyPasteService.registerCopyPasteVisitor(this.nodeCopyPasteVisitor);
     this.WorkflowService.getCurrentWorkflow().updateState(workflowWithResults.executionReport);
     this.initListeners();
     if (this.WorkflowService.isWorkflowRunning()) {

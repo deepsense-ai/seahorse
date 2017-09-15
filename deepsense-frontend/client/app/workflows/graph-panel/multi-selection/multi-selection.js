@@ -270,12 +270,11 @@ class MultiSelection {
         element.append(selectionElement);
         element.on('mousedown', that.startPainting);
         element.on('mousedown', that.clearNodes);
+
         scope.$on('MultiSelection.ADD', (e, nodeIds) => {
-          that.clearAllFromSelection();
-          nodeIds.forEach(id => that.addToSelection({
-            id
-          }));
+          that.addToSelection(nodeIds);;
         });
+
         scope.$on('MultiSelection.CLEAR_ALL', (event) => {
           that.clearAllFromSelection();
         });
