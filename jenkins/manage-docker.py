@@ -7,39 +7,57 @@ import collections
 import os
 import subprocess
 
+import docker
+
 cwd = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..')
-DockerImageConfig = collections.namedtuple('DockerImageConfig', 'docker_image_name build_script')
 
+SimpleCommandConfig = collections.namedtuple('SimpleCommandConfig', 'docker_image_name type command')
+SbtDockerConfig = collections.namedtuple('SbtDockerConfig', 'docker_image_name type sbt_task')
 
-def build_simple_docker(docker_file_path, project_name):
-    return "./jenkins/scripts/build-local-docker.sh {} {}".format(docker_file_path, project_name)
+simple_command_type = 'simple_command'
+sbt_type = 'sbt'
 
-
-def build_sbt_docker(project_name):
-    return "sbt clean && sbt {}/docker:publishLocal".format(project_name)
-
+# This is added here since sbt clean doesn't clean everything; in particular, it doesn't clean
+# project/target, so we delete all "target". For discussion, see
+# http://stackoverflow.com/questions/4483230/an-easy-way-to-get-rid-of-everything-generated-by-sbt
+# and
+# https://github.com/sbt/sbt/issues/896
+sbt_clean_more_cmd = "(find . -name target -type d -exec rm -rf {} \; || true) && sbt clean &&"
 
 # This is a workaround for sessionmanager sbt building workflowexecutor using subprocess
 # It should be solved by sessionmanager sbt task calling sbt task from workflowexecutor subproject
-def build_sessionmanager():
-    return "sbt clean && cd seahorse-workflow-executor/ && sbt -DsparkVersion=2.0.0 workflowexecutor/assembly && cd .. && sbt sessionmanager/docker:publishLocal"
+def sessionmanager():
+    command = sbt_clean_more_cmd + "cd seahorse-workflow-executor/ && sbt -DsparkVersion=2.0.0 workflowexecutor/assembly && cd .. && sbt sessionmanager/docker:publishLocal"
+    return simple_command_docker("deepsense-sessionmanager", command)
+
+
+def simple_docker(docker_image_name, docker_file_path, project_name):
+    command = "./jenkins/scripts/build-local-docker.sh {} {}".format(docker_file_path, project_name)
+    return simple_command_docker(docker_image_name, command)
+
+
+def simple_command_docker(docker_image_name, command):
+    return SimpleCommandConfig(docker_image_name, simple_command_type, command)
+
+
+def sbt_docker(docker_image_name, project_name):
+    return SbtDockerConfig(docker_image_name, sbt_type, "{}/docker:publishLocal".format(project_name))
+
 
 image_confs = [
-    DockerImageConfig("deepsense-proxy", build_simple_docker("proxy", "deepsense-proxy")),
-    DockerImageConfig("deepsense-rabbitmq", build_simple_docker("deployment/rabbitmq", "deepsense-rabbitmq")),
-    DockerImageConfig("deepsense-h2", build_simple_docker("deployment/h2-docker", "deepsense-h2")),
-    DockerImageConfig("deepsense-spark", build_simple_docker("deployment/spark-docker", "deepsense-spark")),
-    DockerImageConfig("deepsense-mesos-spark", "./jenkins/build_spark_docker_mesos.sh"),
-    DockerImageConfig("deepsense-schedulingmanager", build_sbt_docker("schedulingmanager")),
-    DockerImageConfig("deepsense-sessionmanager", build_sessionmanager()),
-    DockerImageConfig("deepsense-workflowmanager", build_sbt_docker("workflowmanager")),
-    DockerImageConfig("deepsense-datasourcemanager", build_sbt_docker("datasourcemanager")),
-    DockerImageConfig("deepsense-libraryservice", build_sbt_docker("libraryservice")),
-    DockerImageConfig("deepsense-notebooks", build_simple_docker("remote_notebook", "deepsense-notebooks")),
-    DockerImageConfig("deepsense-authorization",
-                      build_simple_docker("deployment/authorization-docker", "deepsense-authorization")),
-    DockerImageConfig("deepsense-mail",
-                      build_simple_docker("deployment/exim", "deepsense-mail"))
+    simple_docker("deepsense-proxy", "proxy", "deepsense-proxy"),
+    simple_docker("deepsense-rabbitmq", "deployment/rabbitmq", "deepsense-rabbitmq"),
+    simple_docker("deepsense-h2", "deployment/h2-docker", "deepsense-h2"),
+    simple_docker("deepsense-spark", "deployment/spark-docker", "deepsense-spark"),
+    simple_command_docker("deepsense-mesos-spark", "./jenkins/build_spark_docker_mesos.sh"),
+    sbt_docker("deepsense-schedulingmanager", "schedulingmanager"),
+    sessionmanager(),
+    sbt_docker("deepsense-workflowmanager", "workflowmanager"),
+    sbt_docker("deepsense-datasourcemanager", "datasourcemanager"),
+    sbt_docker("deepsense-libraryservice", "libraryservice"),
+    simple_docker("deepsense-notebooks", "remote_notebook", "deepsense-notebooks"),
+    simple_docker("deepsense-authorization", "deployment/authorization-docker", "deepsense-authorization"),
+    simple_docker("deepsense-mail", "deployment/exim", "deepsense-mail")
 ]
 
 image_conf_by_name = {conf.docker_image_name: conf for conf in image_confs}
@@ -75,22 +93,59 @@ def main():
         check_images_provided_by_user(user_provided_images)
         selected_confs = [image_conf_by_name.get(image) for image in args.images]
 
-    for conf in selected_confs:
-        if args.sync:
-            print "Syncing {} image".format(conf.docker_image_name)
-            check_if_git_repo_is_clean()
-            pull_cmd = "docker pull {}/{}:{}".format(docker_repo, conf.docker_image_name, git_sha())
+    if args.build:
+        build_dockers(selected_confs)
+
+    if args.sync:
+        check_if_git_repo_is_clean()
+
+        images_missing_in_registry_confs = []
+        for conf in selected_confs:
+            pull_cmd = 'docker pull {}/{}:{}'.format(docker_repo, conf.docker_image_name, git_sha())
             pull_code = subprocess.call(pull_cmd, shell=True, cwd=cwd)
             if pull_code > 0:
-                print "Docker image miss in registry. Building local docker from scratch..."
-                subprocess.call(conf.build_script, shell=True, cwd=cwd)
-        if args.build:
-            print "Building {} image".format(conf.docker_image_name)
-            subprocess.call(conf.build_script, shell=True, cwd=cwd)
-        if args.publish:
-            print "Publishing {} image".format(conf.docker_image_name)
-            script = "./jenkins/scripts/publish-local-docker.sh {}".format(conf.docker_image_name)
+                print 'Docker image missing in registry. Will build local docker from scratch...'
+                images_missing_in_registry_confs.append(conf)
+        build_dockers(images_missing_in_registry_confs)
+
+    if args.publish:
+        check_if_git_repo_is_clean()
+        for conf in selected_confs:
+            print 'Publishing {} image'.format(conf.docker_image_name)
+            script = './jenkins/scripts/publish-local-docker.sh {}'.format(conf.docker_image_name)
             subprocess.call(script, shell=True, cwd=cwd)
+
+def build_dockers(docker_configurations):
+    simple_command_confs = [conf for conf in docker_configurations if conf.type == simple_command_type]
+    for conf in simple_command_confs:
+        print(conf.command)
+        subprocess.call(conf.command, shell=True, cwd=cwd)
+        assign_base_sha_tag_to_locally_built_image(conf)
+
+    sbt_confs = [conf for conf in docker_configurations if conf.type == sbt_type]
+    if sbt_confs:
+        sbt_commands = [conf.sbt_task for conf in sbt_confs]
+        batched_sbt_tasks = ' '.join(sbt_commands)
+        final_sbt_command = sbt_clean_more_cmd + "sbt {}".format(batched_sbt_tasks)
+        print(final_sbt_command)
+        subprocess.call(final_sbt_command, shell=True, cwd=cwd)
+        for conf in sbt_confs:
+            assign_base_sha_tag_to_locally_built_image(conf)
+
+
+def assign_base_sha_tag_to_locally_built_image(docker_configuration):
+    locally_built_docker_image = docker.find_image(docker_configuration.docker_image_name + ":" + git_sha())
+    target_tag = base_sha_tag(docker_configuration)
+    docker.tag(locally_built_docker_image, target_tag)
+
+
+def base_sha_tag(docker_configuration):
+    return tag_with_custom_label(docker_configuration, git_sha())
+
+
+def tag_with_custom_label(docker_configuration, label):
+    return "docker-repo.deepsense.codilime.com/deepsense_io/{}:{}".format(docker_configuration.docker_image_name, label)
+
 
 def check_if_git_repo_is_clean():
     unstaged_files = subprocess.check_output("git status --porcelain", shell=True, cwd=cwd)
@@ -107,7 +162,8 @@ def check_if_git_repo_is_clean():
         raise Exception("Cannot sync with unstaged files")
 
 def git_sha():
-    return subprocess.check_output("git rev-parse HEAD", shell=True, cwd=cwd)
+    sha_output_with_endline = subprocess.check_output("git rev-parse HEAD", shell=True, cwd=cwd)
+    return sha_output_with_endline.strip()
 
 def check_images_provided_by_user(user_provided_images):
     for image in user_provided_images:
