@@ -26,4 +26,5 @@ case class ExecutionParams(
   pyExecutorPath: Option[String] = None,
   jobId: Option[String] = None,
   pySparkPath: Option[String] = None,
-  wmAddress: Option[String] = None)
+  wmAddress: Option[String] = None,
+  kmArchive: Option[String] = None)

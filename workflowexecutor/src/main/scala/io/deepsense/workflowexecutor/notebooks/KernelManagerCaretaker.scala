@@ -37,6 +37,7 @@ class KernelManagerCaretaker(
   private val actorSystem: ActorSystem,
   private val pythonPathGenerator: PythonPathGenerator,
   private val communicationFactory: MQCommunicationFactory,
+  private val archive: String,
   private val mqHost: String,
   private val mqPort: Int,
   private val sessionId: String,
@@ -44,7 +45,6 @@ class KernelManagerCaretaker(
 ) extends Logging {
 
   private val config = ConfigFactory.load.getConfig("kernelmanagercaretaker")
-  private val archive: String = config.getString("archive")
   private val startupScript = config.getString("startup-script")
   private val startupTimeout: Duration = config.getInt("timeout").seconds
   private val startPromise: Promise[Unit] = Promise()

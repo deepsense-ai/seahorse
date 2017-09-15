@@ -51,7 +51,8 @@ case class SessionExecutor(
     pythonExecutorPath: String,
     sessionId: String,
     pythonPathGenerator: PythonPathGenerator,
-    wmAddress: String)
+    wmAddress: String,
+    kernelManagerArchive: String)
   extends Executor {
 
   private val workflowId = Workflow.Id.fromString(sessionId)
@@ -129,6 +130,7 @@ case class SessionExecutor(
       system,
       pythonPathGenerator,
       communicationFactory,
+      kernelManagerArchive,
       messageQueueHost,
       messageQueuePort,
       sessionId,

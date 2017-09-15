@@ -89,6 +89,10 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
       (x, c) => c.copy(pyExecutorPath = Some(x))
     } text "PyExecutor code (included in workflowexecutor.jar) path"
 
+    opt[String]("kernel-manager-archive") required() valueName "ZIP ARCHIVE" action {
+      (x, c) => c.copy(kmArchive = Some(x))
+    } text "ZIP with KernelManager"
+
     opt[String]('z', "pyspark-zip-path") valueName "PYSPARKPATH" action {
       (x, c) => c.copy(pySparkPath = Some(x))
     } text "Path to zip archive with pyspark"
@@ -108,7 +112,8 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
         (config.messageQueueHost.isEmpty, "--message-queue-host is required in interactive mode"),
         (config.messageQueuePort.isEmpty, "--message-queue-port is required in interactive mode"),
         (config.jobId.isEmpty, "--job-id is required in interactive mode"),
-        (config.wmAddress.isEmpty, "--wm-address is required in interactive mode")
+        (config.wmAddress.isEmpty, "--wm-address is required in interactive mode"),
+        (config.kmArchive.isEmpty, "--kernel-manager-archive is required in interactive mode")
       )
 
       val nonInteractiveRequirements: Requirements = Seq(
@@ -157,7 +162,8 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
             params.pyExecutorPath.get,
             params.jobId.get,
             pythonPathGenerator,
-            params.wmAddress.get
+            params.wmAddress.get,
+            params.kmArchive.get
           ).execute()
         } else {
           // Running in non-interactive mode
