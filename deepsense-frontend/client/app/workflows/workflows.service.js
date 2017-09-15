@@ -1,7 +1,7 @@
 'use strict';
 
 /* @ngInject */
-function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClient, Operations, $rootScope,
+function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiClient, Operations, $rootScope,
   DefaultInnerWorkflowGenerator, debounce) {
 
   // TODO Disable clean/export/run in inner workflows
@@ -16,7 +16,6 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
       this._isLoading = true;
       this._workflowsStack = [];
       this._innerWorkflowByNodeId = {};
-      this.init();
       // We want to save workflow after all intermediate changes are resolved. Intermediate state might be invalid.
       // Debounce takes care of that and additionally reduces unnecessary client-server communication.
       // Example:
@@ -34,12 +33,16 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
     }
 
     downloadWorkflows() {
-      return WorkflowsApiClient.getAllWorkflows().then((data) => {
+      var deferred = $q.defer();
+      WorkflowsApiClient.getAllWorkflows().then((data) => {
         this._workflowsData = data;
         this._isLoading = false;
+        return deferred.resolve(data);
       }, (failure) => {
         this._isLoading = false;
+        return deferred.reject(failure);
       });
+      return deferred.promise;
     }
 
     initRootWorkflow(workflowData) {

@@ -4,8 +4,10 @@
 function Home($rootScope, $uibModal, $state, WorkflowService, PageService, ConfirmationModalService, config) {
   this.init = () => {
     PageService.setTitle('Home');
-    this.$state = $state;
     $rootScope.stateData.dataIsLoaded = true;
+    this.canShowWorkflows = false;
+    this.icon = '';
+    this.info = '';
     this.sort = {
       column: 'updated',
       descending: true
@@ -13,7 +15,20 @@ function Home($rootScope, $uibModal, $state, WorkflowService, PageService, Confi
 
     WorkflowService.downloadWorkflows().then(() => {
       this.workflows = WorkflowService.getAllWorkflows();
+      if (this.workflows && this.workflows.length === 0) {
+        this.setWarning('fa-ban', 'No workflows found!');
+      } else {
+        this.canShowWorkflows = true;
+      }
+    }, () => {
+      this.setWarning('fa-exclamation-circle', 'Could not connect to database. Try realoading.');
     });
+  };
+
+  this.setWarning = (icon, information) => {
+    this.canShowWorkflows = false;
+    this.icon = icon;
+    this.info = information;
   };
 
   this.getTriggerEventBasedOnDescriptionLength = (description) => {
