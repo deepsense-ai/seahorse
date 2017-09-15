@@ -27,22 +27,23 @@ import org.mockito.Mockito._
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.deeplang.{DeeplangIntegTestSupport, ExecutionContext}
 
-trait PredictorModelBaseIntegSpec extends DeeplangIntegTestSupport {
+trait PredictorModelBaseIntegSpec[PredictionType] extends DeeplangIntegTestSupport {
 
   self: ScorableBaseIntegSpec =>
 
   trait PredictorSparkModel {
-    def predict(features: RDD[SparkVector]): RDD[Double]
+    def predict(features: RDD[SparkVector]): RDD[PredictionType]
   }
 
   def mockTrainedModel(): PredictorSparkModel
 
   def createScorableInstanceWithModel(trainedModelMock: PredictorSparkModel): Scorable
 
+  val featuresValues: Seq[Seq[Double]]
+  val predictionValues: Seq[Any]
+
   scorableName should {
     "construct prediction using provided features" in {
-      val featuresValues = Seq(10.0, 11.1, 12.2, 13.3).map(Seq(_))
-      val predictionValues = Seq(0.0, 1.1, 2.2, 3.3)
 
       val dataFrame = mock[DataFrame]
       val features = mock[RDD[SparkVector]]
@@ -68,7 +69,7 @@ trait PredictorModelBaseIntegSpec extends DeeplangIntegTestSupport {
 
       // the tested call happens here
       val scorable = createScorableInstanceWithModel(trainedModelMock)
-      scorable.score(context)(targetColumnName)(dataFrame)
+      scorable.score(context)(predictionColumnName)(dataFrame)
 
       // now, we check what was called with what arguments
 
@@ -92,7 +93,7 @@ trait PredictorModelBaseIntegSpec extends DeeplangIntegTestSupport {
       outputData shouldBe expectedOutputData
 
       val expectedSchema = StructType(
-        Seq(StructField("feature", DoubleType), StructField(targetColumnName, DoubleType)))
+        Seq(StructField("feature", DoubleType), StructField(predictionColumnName, DoubleType)))
       buildInvocationSchema.getValue shouldBe expectedSchema
     }
   }

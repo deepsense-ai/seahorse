@@ -23,7 +23,7 @@ import org.scalatest.mock.MockitoSugar
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.machinelearning.ridgeregression.UntrainedRidgeRegression
-import io.deepsense.deeplang.doperables.{TrainableParameters, TrainableParameters$, Scorable, Trainable}
+import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
 import io.deepsense.deeplang.parameters.{MultipleColumnSelection, SingleColumnSelection}
 
@@ -56,7 +56,7 @@ class TrainRegressorSpec extends UnitSpec with MockitoSugar {
   it should {
     "infer results of its types" in {
       val inferContextStub = mock[InferContext]
-      val scorableStubs = Vector(mock[Scorable], mock[Scorable], mock[Scorable])
+      val scorableStubs = Vector.fill(3)(mock[Scorable])
       val scorableKnowledgeStub1 = DKnowledge(Set(scorableStubs(0), scorableStubs(1)))
       val scorableKnowledgeStub2 = DKnowledge(Set(scorableStubs(1), scorableStubs(2)))
       val dataframeKnowledgeStub = mock[DKnowledge[DataFrame]]

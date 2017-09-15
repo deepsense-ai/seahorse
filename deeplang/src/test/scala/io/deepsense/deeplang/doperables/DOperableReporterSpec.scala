@@ -25,6 +25,8 @@ import io.deepsense.deeplang.UnitSpec
 
 class DOperableReporterSpec extends UnitSpec {
 
+  private trait ScorableWithTargetColumn extends Scorable with HasTargetColumn
+
   val reportName = "Test Report Name"
   val description = "Test Description"
 
@@ -68,12 +70,12 @@ class DOperableReporterSpec extends UnitSpec {
 
       "feature and target columns are passed" in {
 
-        val operable = mock[VectorScoring]
+        val operable = mock[ScorableWithTargetColumn]
         when(operable.featureColumns).thenReturn(Seq("column1", "column2"))
         when(operable.targetColumn).thenReturn("target")
 
         val report = DOperableReporter(reportName)
-          .withVectorScoring(operable)
+          .withSupervisedScorable(operable)
           .report
 
         verifyNotEmptyReportWasGenerated(report)

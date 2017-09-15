@@ -30,7 +30,7 @@ import io.deepsense.deeplang.doperables.machinelearning.randomforest.classificat
 
 class TrainedRandomForestClassificationIntegSpec
   extends ScorableBaseIntegSpec("TrainedRandomForestClassification")
-  with PredictorModelBaseIntegSpec {
+  with SupervisedPredictorModelBaseIntegSpec {
 
   override def acceptedFeatureTypes: Seq[ExtendedColumnType] = Seq(
     ExtendedColumnType.binaryValuedNumeric,
@@ -66,7 +66,7 @@ class TrainedRandomForestClassificationIntegSpec
       RandomForestParameters(1, "auto", "gini", 1, 1),
       model,
       features,
-      targetColumnName)
+      predictionColumnName)
   }
 
   override def createScorableInstanceWithModel(trainedModelMock: PredictorSparkModel): Scorable =
@@ -74,5 +74,5 @@ class TrainedRandomForestClassificationIntegSpec
       RandomForestParameters(1, "auto", "gini", 1, 1),
       trainedModelMock.asInstanceOf[RandomForestModel],
       mock[Seq[String]],
-      targetColumnName)
+      predictionColumnName)
 }

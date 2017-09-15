@@ -20,10 +20,12 @@ import scala.reflect.runtime.{universe => ru}
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.{Regressor, Scorable, Trainable}
+import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.parameters.{ColumnSelectorParameter, MultipleColumnSelection, NameColumnSelection, NameSingleColumnSelection}
 
-case class TrainRegressor() extends Trainer[Regressor with Trainable, Regressor with Scorable] {
+case class TrainRegressor()
+    extends SupervisedTrainer[Regressor with Trainable, Regressor with Scorable] {
+
   override val id: DOperation.Id = "c526714c-e7fb-11e4-b02c-1681e6b88ec1"
   override val name = "Train Regressor"
   @transient

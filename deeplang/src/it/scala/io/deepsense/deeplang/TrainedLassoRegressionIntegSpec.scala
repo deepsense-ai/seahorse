@@ -24,15 +24,15 @@ import org.mockito.AdditionalAnswers._
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 
-import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType
+import io.deepsense.deeplang.PrebuiltTypedColumns.{TypedColumn, ExtendedColumnType}
 import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType.ExtendedColumnType
 import io.deepsense.deeplang.doperables.machinelearning.LinearRegressionParameters
 import io.deepsense.deeplang.doperables.machinelearning.lassoregression.TrainedLassoRegression
-import io.deepsense.deeplang.doperables.{PredictorModelBaseIntegSpec, Scorable, ScorableBaseIntegSpec}
+import io.deepsense.deeplang.doperables._
 
 class TrainedLassoRegressionIntegSpec
   extends ScorableBaseIntegSpec("TrainedLassoRegression")
-  with PredictorModelBaseIntegSpec {
+  with SupervisedPredictorModelBaseIntegSpec {
 
   override def acceptedFeatureTypes: Seq[ExtendedColumnType] = Seq(
     ExtendedColumnType.binaryValuedNumeric,
@@ -51,7 +51,8 @@ class TrainedLassoRegressionIntegSpec
     mock[LassoPredictor]
   }
 
-  override def createScorableInstanceWithModel(trainedModelMock: PredictorSparkModel): Scorable =
+  override def createScorableInstanceWithModel(
+      trainedModelMock: PredictorSparkModel): Scorable =
     createScorableInstanceImpl(trainedModelMock.asInstanceOf[LassoModel], mock[Seq[String]])
 
   override def createScorableInstance(features: String*): Scorable =
@@ -71,7 +72,7 @@ class TrainedLassoRegressionIntegSpec
       LinearRegressionParameters(1, 1, 1),
       trainedModelMock,
       features,
-      targetColumnName,
+      predictionColumnName,
       scalerMock)
   }
 }

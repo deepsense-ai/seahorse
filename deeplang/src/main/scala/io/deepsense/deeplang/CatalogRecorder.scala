@@ -22,6 +22,7 @@ import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.file.File
 import io.deepsense.deeplang.doperables.machinelearning.gradientboostedtrees.regression.{TrainedGradientBoostedTreesRegression, UntrainedGradientBoostedTreesRegression}
+import io.deepsense.deeplang.doperables.machinelearning.kmeans.{TrainedKMeansClustering, UntrainedKMeansClustering}
 import io.deepsense.deeplang.doperables.machinelearning.lassoregression.{TrainedLassoRegression, UntrainedLassoRegression}
 import io.deepsense.deeplang.doperables.machinelearning.logisticregression.{TrainedLogisticRegression, UntrainedLogisticRegression}
 import io.deepsense.deeplang.doperables.machinelearning.randomforest.classification.{TrainedRandomForestClassification, UntrainedRandomForestClassification}
@@ -66,6 +67,11 @@ object CatalogRecorder {
 
     catalog.registerDOperable[UntrainedLogisticRegression]()
     catalog.registerDOperable[TrainedLogisticRegression]()
+
+    // Clustering
+
+    catalog.registerDOperable[UntrainedKMeansClustering]
+    catalog.registerDOperable[TrainedKMeansClustering]
 
     // Other
 
@@ -192,6 +198,21 @@ object CatalogRecorder {
     catalog.registerDOperation[CreateSupportVectorMachineClassification](
       DOperationCategories.ML.Classification,
       "Creates an untrained SVM classification model"
+    )
+
+    catalog.registerDOperation[TrainClustering](
+      DOperationCategories.ML.Clustering,
+      "Trains a clustering model and assigns data to clusters"
+    )
+
+    catalog.registerDOperation[CreateKMeansClustering](
+      DOperationCategories.ML.Clustering,
+      "Creates an untrained k-means clustering model"
+    )
+
+    catalog.registerDOperation[AssignToClusters](
+      DOperationCategories.ML.Clustering,
+      "Assigns data to clusters using trained clustering model"
     )
 
     catalog.registerDOperation[ApplyTransformation](

@@ -35,7 +35,7 @@ case class TrainedRidgeRegression(
   extends RidgeRegression
   with TrainedLinearRegression
   with Scorable
-  with VectorScoring
+  with HasTargetColumn
   with DOperableSaver {
 
   def this() = this(null, null, null, null, null)

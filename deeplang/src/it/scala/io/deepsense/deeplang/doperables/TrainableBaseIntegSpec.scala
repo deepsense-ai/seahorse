@@ -34,7 +34,7 @@ abstract class TrainableBaseIntegSpec(val trainableName: String)
   def unacceptableTargetTypes: Seq[ExtendedColumnType]
   def unacceptableFeatureTypes: Seq[ExtendedColumnType]
 
-  override protected val targetColumns = buildColumns(targetName)
+  override protected val targetColumns = Some(buildColumns(targetName))
   override protected val featureColumns = buildColumns(featureName)
 
   trainableName should {
@@ -111,7 +111,7 @@ abstract class TrainableBaseIntegSpec(val trainableName: String)
           val scorable = createTrainableInstance.train(
             mock[ExecutionContext])(trainableParameters)(dataFrame)
 
-          verifyScorable(scorable,
+          verifySupervisedScorable(scorable,
             targetName(binaryValuedNumeric), Seq(featureName(columnType)))
         }
       }
@@ -126,7 +126,7 @@ abstract class TrainableBaseIntegSpec(val trainableName: String)
           val scorable = createTrainableInstance.train(
             mock[ExecutionContext])(trainableParameters)(dataFrame)
 
-          verifyScorable(scorable,
+          verifySupervisedScorable(scorable,
             targetName(columnType), Seq(featureName(nonBinaryValuedNumeric)))
         }
       }
@@ -142,13 +142,12 @@ abstract class TrainableBaseIntegSpec(val trainableName: String)
     )
   }
 
-  // Theoretically, not every Scorable has VectorScoring trait, but for now, that's the case.
-  // If it changes, this might need little work.
-  def verifyScorable(scorable: Scorable, target: String, features: Seq[String]): Unit = {
-    scorable.isInstanceOf[VectorScoring] shouldBe true
+  def verifySupervisedScorable(
+      scorable: Scorable,
+      target: String,
+      features: Seq[String]): Unit = {
 
-    val trained = scorable.asInstanceOf[VectorScoring]
-    trained.featureColumns shouldBe features
-    trained.targetColumn shouldBe target
+    scorable.featureColumns shouldBe features
+    scorable.asInstanceOf[HasTargetColumn].targetColumn shouldBe target
   }
 }

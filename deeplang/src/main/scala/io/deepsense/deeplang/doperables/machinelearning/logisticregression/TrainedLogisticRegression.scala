@@ -35,7 +35,7 @@ case class TrainedLogisticRegression(
     targetColumn: String)
   extends LogisticRegression
   with Scorable
-  with VectorScoring {
+  with HasTargetColumn {
 
   def this() = this(null, null, null, null)
 
@@ -67,7 +67,7 @@ case class TrainedLogisticRegression(
       )
       .withWeights(featureColumns, model.weights.toArray)
       .withIntercept(model.intercept)
-      .withVectorScoring(this)
+      .withSupervisedScorable(this)
       .report
   }
 

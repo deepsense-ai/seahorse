@@ -33,7 +33,7 @@ case class TrainedRandomForestClassification(
     targetColumn: String)
   extends RandomForestClassifier
   with Scorable
-  with VectorScoring
+  with HasTargetColumn
   with DOperableSaver {
 
   def this() = this(null, null, null, null)
@@ -58,7 +58,7 @@ case class TrainedRandomForestClassification(
         ("Max depth", ColumnType.numeric, modelParameters.maxDepth.toString),
         ("Max bins", ColumnType.numeric, modelParameters.maxBins.toString)
       )
-      .withVectorScoring(this)
+      .withSupervisedScorable(this)
       .report
   }
 

@@ -20,13 +20,13 @@ import org.apache.spark.mllib.classification.LogisticRegressionModel
 import org.apache.spark.mllib.linalg.Vectors
 import org.mockito.Mockito._
 
-import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType
+import io.deepsense.deeplang.PrebuiltTypedColumns.{TypedColumn, ExtendedColumnType}
 import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType.ExtendedColumnType
 import io.deepsense.deeplang.doperables.machinelearning.logisticregression.{LogisticRegressionParameters, TrainedLogisticRegression}
 
 class TrainedLogisticRegressionIntegSpec
   extends ScorableBaseIntegSpec("TrainedLogisticRegression")
-  with PredictorModelBaseIntegSpec {
+  with SupervisedPredictorModelBaseIntegSpec {
 
   override def acceptedFeatureTypes: Seq[ExtendedColumnType] = Seq(
     ExtendedColumnType.binaryValuedNumeric,
@@ -56,7 +56,7 @@ class TrainedLogisticRegressionIntegSpec
       LogisticRegressionParameters(1, 1, 1),
       model,
       mock[Seq[String]],
-      targetColumnName)
+      predictionColumnName)
   }
 
   override def createScorableInstance(features: String*): Scorable = {
@@ -64,6 +64,6 @@ class TrainedLogisticRegressionIntegSpec
       LogisticRegressionParameters(1, 1, 1),
       new LogisticRegressionModel(Vectors.dense(1), 1),
       features,
-      targetColumnName)
+      predictionColumnName)
   }
 }

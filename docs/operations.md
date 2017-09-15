@@ -49,3 +49,7 @@ List of all currently supported operations:
     * [Score Classifier](operations/score_classifier.html)
     * [Cross-validate Classifier](operations/cross_validate_classifier.html)
     * [Evaluate Classification](operations/evaluate_classification.html)
+  * Clustering
+    * [Create k-means Clustering](operations/create_k_means_clustering.html)
+    * [Train Clustering](operations/train_clustering.html)
+    * [Assign to Clusters](operations/assign_to_clusters.html)

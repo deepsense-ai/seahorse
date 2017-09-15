@@ -22,8 +22,10 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.{ColumnsDoNotExistException, WrongColumnTypeException}
 import io.deepsense.deeplang.{DeeplangIntegTestSupport, ExecutionContext, PrebuiltTypedColumns}
 
-abstract class ScorableBaseIntegSpec(val scorableName: String)
-  extends DeeplangIntegTestSupport with PrebuiltTypedColumns {
+abstract class ScorableBaseIntegSpec(
+    val scorableName: String)
+  extends DeeplangIntegTestSupport
+  with PrebuiltTypedColumns {
 
   import PrebuiltTypedColumns.ExtendedColumnType._
   import PrebuiltTypedColumns._
@@ -33,10 +35,9 @@ abstract class ScorableBaseIntegSpec(val scorableName: String)
 
   def unacceptableFeatureTypes: Seq[ExtendedColumnType]
 
-  override protected val targetColumns = null
   override protected val featureColumns = buildColumns(featureName)
 
-  val targetColumnName: String = "target column"
+  val predictionColumnName: String = "prediction column"
 
   scorableName should {
     "throw" when {
@@ -70,7 +71,7 @@ abstract class ScorableBaseIntegSpec(val scorableName: String)
 
           val dataFrameWithPredictions =
             createScorableInstance(featureName(columnType)).score(
-              executionContext)(targetColumnName)(dataFrame)
+              executionContext)(predictionColumnName)(dataFrame)
 
           validatePredictions(columnType, dataFrameWithPredictions)
         }
@@ -82,7 +83,7 @@ abstract class ScorableBaseIntegSpec(val scorableName: String)
       columnType: ExtendedColumnType, dataFrameWithPredictions: DataFrame): Unit = {
 
     dataFrameWithPredictions
-      .selectDoubleRDD(targetColumnName, f => Success())
+      .selectDoubleRDD(predictionColumnName, f => Success())
       .collect()
       .toSeq
   }
