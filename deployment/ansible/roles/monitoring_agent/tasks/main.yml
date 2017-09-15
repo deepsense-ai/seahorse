@@ -1,9 +1,0 @@
-- name: Install xinetd
-  apt: package=xinetd state=latest
-
-- name: Copy Check MK agent
-  copy: src=check_mk_agent dest=/usr/bin/check_mk_agent mode=755
-
-- name: Copy xinetd config file for check_mk_agent
-  copy: src=check_mk.xinetd dest=/etc/xinetd.d/check_mk
-  notify: restart xinetd

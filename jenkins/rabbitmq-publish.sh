@@ -14,5 +14,5 @@ SEAHORSE_BUILD_TAG="${SEAHORSE_BUILD_TAG?Need to set SEAHORSE_BUILD_TAG. For exa
 cd `dirname $0`"/../"
 
 cd deployment/docker
-./build-local-docker.sh ../ansible/roles/rabbitmq_dockerized/files/ deepsense-rabbitmq
+./build-local-docker.sh ../rabbitmq/ deepsense-rabbitmq
 ./publish-local-docker.sh deepsense-rabbitmq $SEAHORSE_BUILD_TAG

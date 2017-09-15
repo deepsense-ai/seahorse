@@ -1,5 +1,0 @@
-# Copyright (c) 2016, CodiLime Inc.
-
----
-dependencies:
-- role: nginx

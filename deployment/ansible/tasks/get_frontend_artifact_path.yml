@@ -1,7 +1,0 @@
-- set_fact: frontend_artifact_path="deepsense-frontend-snapshot/io/deepsense/deepsense-frontend/{{ds_frontend_package_name}}/{{ds_frontend_package_name}}.zip"
-
-- set_fact: frontend_artifact_path="deepsense-frontend-snapshot/io/deepsense/deepsense-frontend/{{ds_frontend_package_name|regex_replace('^(.+)-SNAPSHOT-.*$','\\1-SNAPSHOT')}}/{{ds_frontend_package_name}}/{{ds_frontend_package_name}}.zip"
-  when: ds_frontend_package_name | search("SNAPSHOT")
-
-- set_fact: frontend_artifact_path="deepsense-frontend-release/io/deepsense/deepsense-frontend/{{ds_frontend_package_name}}/{{ds_frontend_package_name}}.zip"
-  when: ds_frontend_package_name | match('[0-9]+\.[0-9]+\.[0-9]+')

@@ -1,9 +1,0 @@
-# Copyright (c) 2016, CodiLime Inc.
-
-livy_groupid: "livy-server"
-livy_artifactid: "livy-server"
-livy_version: "0.2.0-SNAPSHOT"
-livy_filename: "{{livy_artifactid}}-{{livy_version}}.zip"
-livy_directory_name: "{{livy_artifactid}}-{{livy_version}}"
-
-livy_install_dir: /opt

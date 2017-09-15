@@ -1,7 +1,0 @@
-- set_fact: workflowexecutor_artifact_path="seahorse-workflowexecutor-snapshot/io/deepsense/workflowexecutor_2.10/{{workflowexecutor_build_version}}/workflowexecutor_2.10-{{workflowexecutor_build_version}}.jar"
-
-- set_fact: workflowexecutor_artifact_path="seahorse-workflowexecutor-snapshot/io/deepsense/workflowexecutor_2.10/{{workflowexecutor_build_version|regex_replace('^(.+)-SNAPSHOT-.*$','\\1-SNAPSHOT')}}/{{workflowexecutor_build_version}}/workflowexecutor_2.10-{{workflowexecutor_build_version}}.jar"
-  when: workflowexecutor_build_version | search("SNAPSHOT")
-
-- set_fact: workflowexecutor_artifact_path="seahorse-workflowexecutor-release/io/deepsense/workflowexecutor_2.10/{{workflowexecutor_build_version}}/workflowexecutor_2.10-{{workflowexecutor_build_version}}.jar"
-  when: workflowexecutor_build_version | match('[0-9]+\.[0-9]+\.[0-9]+')
