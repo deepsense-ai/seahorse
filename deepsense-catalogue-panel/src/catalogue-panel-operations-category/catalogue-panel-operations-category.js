@@ -46,7 +46,8 @@ function OperationsCategory(RecursionHelper) {
     replace: "true",
     scope: {
       search: '=',
-      category: '='
+      category: '=',
+      isRunning: '='
     },
     controllerAs: 'ocCtrl',
     controller: ['$scope', function($scope) {

@@ -5,13 +5,9 @@
     <operation-catalogue
       ng-style="{'display' : workflow.SideBarData.operationCatalogue ? 'block' : 'none'}"
       catalog-collection="::workflow.catalog"
+      is-running="workflow.WorkflowService.getCurrentWorkflow().workflowStatus !== 'editor'"
       custom-scroll-bar
-      toggle
-      toggle-init="workflow.WorkflowService.getCurrentWorkflow().workflowStatus === 'editor'"
-      toggle-on="WorkflowEditor.EDITOR_MODE_SET"
-      toggle-off="WorkflowEditor.RUNNING_MODE_SET"
-      toggle-animate-in="animated fadeOutLeft o-panel--absolute"
-      toggle-animate-out="animated fadeInLeft">
+      >
     </operation-catalogue>
 
     <flow-chart-box

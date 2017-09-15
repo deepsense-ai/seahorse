@@ -1,7 +1,8 @@
 function OperationCatalogue () {
   return {
     scope: {
-      catalogCollection: '='
+      catalogCollection: '=',
+      isRunning: '='
     },
     templateUrl: 'catalogue-panel/catalogue-panel.html',
     replace: 'true',

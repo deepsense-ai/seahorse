@@ -6,7 +6,8 @@ function OperationItemView() {
     scope: {
       'id': '@',
       'name': '@',
-      'icon': '@'
+      'icon': '@',
+      'isRunning': '='
     },
     link: (scope, elem) => {
       scope.highlight = false;

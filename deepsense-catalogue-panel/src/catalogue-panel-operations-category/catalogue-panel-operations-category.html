@@ -16,6 +16,7 @@
     </operations-category>
     <operation-item ng-repeat="item in category.items"
                     ng-mouseover="ocCtrl.selectContentForPopover(item)"
+                    is-running="isRunning"
                     id="{{item.id}}"
                     icon="{{item.icon}}"
                     name="{{item.name}}"

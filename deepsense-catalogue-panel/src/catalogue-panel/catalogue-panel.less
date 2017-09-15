@@ -1,9 +1,11 @@
 .catalog-wrapper {
+  position: relative;
   width: 250px;
+  margin-right: 5px;
 }
 
 .operations-tree {
-  padding: 50px 10px 0 0 !important;
+  padding-top: 50px !important;
   width: 260px;
   box-sizing: border-box;
 
@@ -13,6 +15,7 @@
     padding-left: 15px;
 
     &.root {
+      margin-right: 5px;
       padding-left: 0;
     }
 
@@ -81,16 +84,6 @@
           background: #fff;
         }
 
-        &__icon-panel {
-          display: flex;
-          align-items: center;
-          width: 20px;
-        }
-
-        &__icon {
-          margin: auto;
-        }
-
         &__name {
           flex: 1;
           margin: 0 10px;
@@ -127,12 +120,13 @@
 }
 
 .search-div-wrapper {
+  padding-right: 10px;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
   height: 50px;
-  width: 240px;
+  width: 250px;
   position: fixed;
   background: white;
 }
