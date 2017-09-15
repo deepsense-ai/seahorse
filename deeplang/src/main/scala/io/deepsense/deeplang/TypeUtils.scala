@@ -18,6 +18,7 @@ package io.deepsense.deeplang
 
 import java.lang.reflect.Constructor
 
+import scala.reflect.runtime.universe.Type
 import scala.reflect.runtime.{universe => ru}
 
 import io.deepsense.deeplang.params.exceptions.NoArgumentConstructorRequiredException
@@ -25,7 +26,7 @@ import io.deepsense.deeplang.params.exceptions.NoArgumentConstructorRequiredExce
 /**
  * Holds methods used for manipulating objects representing types.
  */
-private[deeplang] object TypeUtils {
+object TypeUtils {
   private val mirror = ru.runtimeMirror(getClass.getClassLoader)
 
   def classToType(c: Class[_]): ru.Type = mirror.classSymbol(c).toType
@@ -58,5 +59,21 @@ private[deeplang] object TypeUtils {
       throw NoArgumentConstructorRequiredException(typeTag.tpe.typeSymbol.asClass.name.decoded)
     }
     createInstance(constructorT).asInstanceOf[T]
+  }
+
+  private val TypeSeparator = " with "
+
+  private def cutAfter(ch: Char)(s: String): String = {
+    val found = s.lastIndexOf(ch)
+    if (found == -1) s else s.substring(0, found)
+  }
+
+  def describeType(t: Type): Seq[String] = {
+    t.toString.split(TypeSeparator).map(cutAfter('['))
+  }
+
+  /** Helper method that converts scala types to readable strings. */
+  def typeToString(t: Type): String = {
+    describeType(t).map(_.split("\\.").toList.last).mkString(TypeSeparator)
   }
 }

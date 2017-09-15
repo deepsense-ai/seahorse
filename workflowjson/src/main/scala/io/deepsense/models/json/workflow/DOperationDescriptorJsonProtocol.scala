@@ -22,7 +22,7 @@ import spray.httpx.SprayJsonSupport
 import spray.json._
 
 import io.deepsense.commons.json.{EnumerationSerializer, IdJsonProtocol}
-import io.deepsense.deeplang.DPortPosition
+import io.deepsense.deeplang.{DPortPosition, TypeUtils}
 import io.deepsense.deeplang.DPortPosition._
 import io.deepsense.deeplang.catalogs.doperations.DOperationDescriptor
 
@@ -89,7 +89,7 @@ trait DOperationDescriptorJsonProtocol
       position: DPortPosition): JsValue = {
       val fields = Map(
         "portIndex" -> index.toJson,
-        "typeQualifier" -> DOperationDescriptor.describeType(portType).toJson,
+        "typeQualifier" -> TypeUtils.describeType(portType).toJson,
         "portPosition" -> position.toJson
       )
       JsObject(required match {

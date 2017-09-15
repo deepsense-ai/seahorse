@@ -20,7 +20,7 @@ import scala.reflect.runtime.universe.Type
 
 import spray.json.JsValue
 
-import io.deepsense.deeplang.DOperation
+import io.deepsense.deeplang.{TypeUtils, DOperation}
 import io.deepsense.deeplang.DPortPosition.DPortPosition
 
 /**
@@ -39,21 +39,8 @@ case class DOperationDescriptor(
 
   override def toString: String = {
     def portsToString(ports: Seq[Type]): String = {
-      ports.map(DOperationDescriptor.typeToString).mkString(", ")
+      ports.map(TypeUtils.typeToString).mkString(", ")
     }
     s"$name(${portsToString(inPorts)} => ${portsToString(outPorts)})"
-  }
-}
-
-object DOperationDescriptor {
-  val typeSeparator = " with "
-
-  def describeType(t: Type): Seq[String] = {
-    t.toString.split(typeSeparator)
-  }
-
-  /** Helper method that converts scala types to readable strings. */
-  private def typeToString(t: Type): String = {
-    describeType(t).map(_.split("\\.").toList.last).mkString(typeSeparator)
   }
 }
