@@ -16,12 +16,14 @@
     <new-node class="flowchart-box__new-node"
       id="node-new-node"
       categories="$ctrl.categories"
+      containment="$ctrl.containment"
       ng-style="{
         left: $ctrl.newNodeData.x + 'px',
         top: $ctrl.newNodeData.y + 'px'
       }"
       ng-if="$ctrl.newNodeData"
       on-select="$ctrl.onSelect(operationId)"
+      on-display-rect-change="$ctrl.onDisplayRectChange(rect)"
       jsplumb-draggable
     ></new-node>
   </core-canvas>
@@ -30,8 +32,7 @@
     ng-if="$ctrl.isTooltipVisible"
     ng-style="{
       'top': $ctrl.tooltipY + 'px',
-      'left': $ctrl.tooltipX + 'px',
-      'position': 'absolute'
+      'left': $ctrl.tooltipX + 'px'
     }"
     port-object="$ctrl.portObject"
   >

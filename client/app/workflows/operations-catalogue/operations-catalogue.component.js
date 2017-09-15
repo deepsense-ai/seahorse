@@ -7,6 +7,7 @@ const OperationsCatalogueComponent = {
   controller: OperationsCatalogueController,
   bindings: {
     categories: '<',
+    containment: '<',
     onUpdate: '&',
     query: '<',
     selectOperation: '&'

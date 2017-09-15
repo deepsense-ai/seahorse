@@ -35,7 +35,8 @@ import {GraphTypesStyle} from './graph-node/graph-types-styles.const.js';
 class AdapterService {
   /*@ngInject*/
   constructor(WorkflowService, GraphStyleService) {
-    _.assign(this, {WorkflowService, GraphStyleService});
+    this.WorkflowService = WorkflowService;
+    this.GraphStyleService = GraphStyleService;
 
     jsPlumb.registerEndpointTypes(GraphTypesStyle);
   }
@@ -71,6 +72,7 @@ class AdapterService {
         this.workflow.removeEdge(edge);
         jsPlumb.detach(jsPlumbEvent.connection);
       }
+      this.GraphStyleService.disablePortHighlighting(this.nodes);
     });
 
     jsPlumb.bind('connectionDetached', (jsPlumbEvent, originalEvent) => {
@@ -90,8 +92,7 @@ class AdapterService {
     });
 
     jsPlumb.bind('connectionDrag', (connection) => {
-      const originPort = connection.endpoints[0];
-      this.GraphStyleService.enablePortHighlighting(this.nodes, originPort);
+      this.GraphStyleService.enablePortHighlighting(this.nodes, connection.endpoints[0]);
     });
 
     jsPlumb.bind('connectionDragStop', () => {
@@ -99,13 +100,14 @@ class AdapterService {
     });
 
     jsPlumb.bind('connectionAborted', (connection, originalEvent) => {
-      this.onConnectionAbort({
-        newNodeData: {
-          x: (originalEvent.layerX - originalEvent.x) * -1,
-          y: (originalEvent.layerY - originalEvent.y + 60) * -1,
-          endpoint: connection.endpoints[0]
-        }
-      });
+      if ($(originalEvent.target).closest('core-canvas').length === 0) {
+        return;
+      }
+      this.onConnectionAbort({newNodeData: {
+        x: (originalEvent.layerX - originalEvent.x) * -1,
+        y: (originalEvent.layerY - originalEvent.y + 60) * -1,
+        endpoint: connection.endpoints[0]
+      }});
     });
   }
 

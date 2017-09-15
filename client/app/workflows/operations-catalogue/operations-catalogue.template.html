@@ -6,6 +6,7 @@
 >
   <categories-list
     ng-if="!$ctrl.isSearchMode"
+    containment="$ctrl.containment"
     categories="$ctrl.categories"
     select-operation="$ctrl.selectOperation({operationId: operationId})"
   >

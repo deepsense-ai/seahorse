@@ -25,6 +25,7 @@ class EditorController {
 
   $postLink() {
     this.bindEvents();
+    this.containment = $(this.$element[0].querySelector('.flowchart-box'));
 
     this.AdapterService.handleShowTooltip(this.showTooltip.bind(this));
     this.AdapterService.handleHideTooltip(this.hideTooltip.bind(this));
@@ -141,6 +142,11 @@ class EditorController {
     }
   }
 
+  onDisplayRectChange(rect) {
+    const {right, bottom} = this.containment[0].getBoundingClientRect();
+    this.CanvasService.moveWindow(Math.min(right - rect.right, 0) * this.CanvasService.scale, Math.min(bottom - rect.bottom, 0) * this.CanvasService.scale, 0.5);
+  }
+
   onSelect(operationId) {
     const newNodeElement = this.$element[0].querySelector('new-node');
     //TODO move it out of here to some service when they're refactored
@@ -255,6 +261,65 @@ class EditorController {
         .top - MAIN_HEADER_HEIGHT
       + adjustment
     );
+  }
+
+  //TODO move it to service which is aware of endpoints and nodes
+  getTypeQualifierForEndpoint(endpoint) {
+    const node = this.workflow.getNodeById(endpoint.getParameter('nodeId'));
+    const port = node.originalOutput[endpoint.getParameter('portIndex')];
+
+    return [...port.typeQualifier];
+  }
+
+  //TODO move it to service which is aware of endpoints and their params
+  getAvailableOperations(workflow, sourceEndpoint) {
+    const sourceNodeId = sourceEndpoint.getParameter('nodeId');
+    const sourceNode = workflow.getNodeById(sourceNodeId);
+    const sourcePortIndex = sourceEndpoint.getParameter('portIndex');
+    const sourcePort = sourceNode.output[sourcePortIndex];
+
+
+    const operations = this.Operations.getData();
+    const operationsMatch = [];
+    _.forEach(operations, (operation) => {
+      const inputMatches = _.reduce(operation.ports.input, (acc, input) => {
+        const typesMatch = _.every(_.map(
+          sourcePort.typeQualifier,
+          typeQualifier => this.OperationsHierarchyService.IsDescendantOf(typeQualifier, input.typeQualifier)
+        ));
+
+        acc.push(typesMatch);
+
+        return acc;
+      }, []);
+      operationsMatch[operation.id] = _.some(inputMatches);
+    });
+
+    return operationsMatch;
+  }
+
+  showTooltip(portEl, portObject) {
+    this.portElement = portEl;
+    this.portObject = portObject;
+    this.isTooltipVisible = true;
+
+    [this.tooltipX, this.tooltipY] = this.getPosition();
+  }
+
+  hideTooltip() {
+    this.portElement = null;
+    this.portObject = null;
+    this.isTooltipVisible = false;
+  }
+
+  getPosition() {
+    // To show tooltip in the same position for both inputs and outputs
+    const adjustment = (this.portObject.type === 'input') ? -5 : 5;
+
+    return [
+      Math.round(this.portElement.getBoundingClientRect().right),
+      Math.round(this.portElement.getBoundingClientRect().top - this.$canvas[0].getBoundingClientRect().top + adjustment)
+    ];
   }
 }
 

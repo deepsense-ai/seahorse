@@ -61,8 +61,9 @@ class CanvasService {
     }
   }
 
-  applyToWindow() {
+  applyToWindow(animateTime = 0) {
     this.$slidingWindow.css({
+      'transition': `transform ${animateTime}s`,
       'transform': `translate(${this.slidingWindowPosition.x}px, ${this.slidingWindowPosition.y}px) scale(${this.scale})`
     });
   }
@@ -72,13 +73,13 @@ class CanvasService {
     this.AdapterService.setZoom(this.scale);
   }
 
-  setPosition(position) {
+  setPosition(position, animateTime) {
     const newPosition = {
       x: _.clamp(position.x, POSITION_BOUNDS.X[0] * this.scale + this.slidingWindowSize.width, POSITION_BOUNDS.X[1]),
       y: _.clamp(position.y, POSITION_BOUNDS.Y[0] * this.scale + this.slidingWindowSize.height, POSITION_BOUNDS.Y[1]),
     };
     this.slidingWindowPosition = newPosition;
-    this.applyToWindow();
+    this.applyToWindow(animateTime);
   }
 
   setWorkflow(workflow) {
@@ -94,11 +95,11 @@ class CanvasService {
     this.AdapterService.render();
   }
 
-  moveWindow(x = 0, y = 0) {
+  moveWindow(x = 0, y = 0, animateTime) {
     this.setPosition({
       x: this.slidingWindowPosition.x + x,
       y: this.slidingWindowPosition.y + y
-    });
+    }, animateTime);
   }
 
   fit() {

@@ -6,7 +6,8 @@ import CategoriesListController from './categories-list.controller.js';
 const CategoriesListComponent = {
   controller: CategoriesListController,
   bindings: {
-    categories : '<',
+    categories: '<',
+    containment: '<',
     selectOperation: '&'
   },
   templateUrl: tpl

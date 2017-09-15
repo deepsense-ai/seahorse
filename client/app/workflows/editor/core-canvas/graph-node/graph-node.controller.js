@@ -106,8 +106,8 @@ class GraphNodeController {
     let typeQualifier;
     if (this.node.input && this.node.input.length === 1) {
       typeQualifier = this.node.input[0].typeQualifier[0];
-    } else if (this.node.output && this.node.output.length === 1) {
-      typeQualifier = this.node.output[0].typeQualifier[0];
+    } else if (this.node.originalOutput && this.node.originalOutput.length === 1) {
+      typeQualifier = this.node.originalOutput[0].typeQualifier[0];
     }
     const type = this.GraphStyleService.getOutputTypeFromQualifier(typeQualifier);
 

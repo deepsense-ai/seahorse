@@ -1,9 +1,15 @@
-.port-status-tooltip {
+@shadow-color: #181c17;
+@border-color: #E0E0E0;
+
+port-status-tooltip {
   position: absolute;
+}
+
+.port-status-tooltip {
   z-index: 100;
   background: #fff;
-  border: 1px solid #E0E0E0;
-  box-shadow: 2px 2px 5px 0 rgba(102, 102, 102, 1);
+  border: 1px solid @border-color;
+  box-shadow: 2px 2px 5px 0 @shadow-color;
   border-radius: 4px;
 
   &__body {

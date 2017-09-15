@@ -280,7 +280,7 @@ function WorkflowService($rootScope, $log, Workflow, OperationsHierarchyService,
       const workflow = this.getCurrentWorkflow();
 
       const startNode = workflow.getNodeById(connection.startNodeId);
-      const startNodeTypeQualifier = startNode.output[connection.startPortId].typeQualifier[0];
+      const startNodeTypeQualifier = startNode.originalOutput[connection.startPortId].typeQualifier[0];
 
       const endNode = workflow.getNodeById(connection.endNodeId);
       const endNodeTypeQualifier = endNode.input[connection.endPortId].typeQualifier[0];
