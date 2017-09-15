@@ -55,7 +55,37 @@ object LocationAttractiveness extends WorkflowCreator {
   val applyLogLowestPrice1 = ApplyTransformation()
   val applyLogReviewCount1 = ApplyTransformation()
 
-  val selectImportantFeatures = SelectImportantFeatures()
+  val importantColumns = Seq(
+    "rating",
+    "review_count",
+    "stars",
+    "highest_price",
+    "lowest_price",
+    "deposit",
+    "petsTRUE",
+    "petsUnknown",
+    "smokingTRUE",
+    "smokingUnknown",
+    "check_in",
+    "room_count",
+    "meeting_roomsUnknown",
+    "parking_detailsUnknown",
+    "fitness_facilitiesTRUE",
+    "fitness_facilitiesUnknown",
+    "accessibilityUnknown",
+    "cribsUnknown",
+    "twentyfour_hour_front_deskUnknown",
+    "Bed_and_BreakfastsTRUE",
+    "BusinessTRUE",
+    "MotelTRUE",
+    "FamilyTRUE",
+    "B_BTRUE",
+    "log_highest_price1",
+    "log_lowest_price1",
+    "log_review_count1",
+    "dist_SF_LA")
+
+  val selectImportantFeatures = ProjectColumns(importantColumns)
   val writeDataFrame: WriteDataFrame = WriteDataFrame(
     WriteDataFrame.CSV,
     ",",
@@ -89,7 +119,7 @@ object LocationAttractiveness extends WorkflowCreator {
 
   val targetColumnName = "rating"
   val predictionColumnName = "rating_prediction"
-  val trainRegressor = TrainRegressor(SelectImportantFeatures.ColumnsNames.toSet, targetColumnName)
+  val trainRegressor = TrainRegressor(importantColumns.toSet, targetColumnName)
   val scoreRegressor = ScoreRegressor("rating_prediction")
   val evaluateRegressor = EvaluateRegression(
     targetColumnName = targetColumnName,

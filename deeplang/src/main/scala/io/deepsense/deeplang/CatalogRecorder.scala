@@ -140,11 +140,6 @@ object CatalogRecorder {
       "Applies a Transformation to a DataFrame"
     )
 
-    catalog.registerDOperation[SelectImportantFeatures](
-      DOperationCategories.ML.FeatureSelection,
-      "Selects most important features of a DataFrame"
-    )
-
     catalog.registerDOperation[ConvertType](
       DOperationCategories.DataManipulation,
       "Converts selected columns of a DataFrame to a different type"

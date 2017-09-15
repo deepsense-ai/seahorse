@@ -43,8 +43,5 @@ object DOperationCategories {
 
     object Evaluation
       extends DOperationCategory("b5d34823-3f2c-4a9a-9114-3c126ce8dfb6", "Evaluation", ML)
-
-    object FeatureSelection
-      extends DOperationCategory("dd29042a-a32c-4948-974f-073c41230da0", "Feature selection", ML)
   }
 }

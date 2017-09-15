@@ -52,3 +52,16 @@ case class ProjectColumns() extends DOperation1To1[DataFrame, DataFrame] {
   @transient
   override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }
+
+object ProjectColumns extends ProjectColumns {
+
+  def apply(retainedColumns: Seq[String]): ProjectColumns = {
+    val projectColumnsOp = ProjectColumns()
+    projectColumnsOp.parameters.getColumnSelectorParameter(selectedColumns).value =
+      Some(MultipleColumnSelection(
+        Vector(NameColumnSelection(retainedColumns.toSet)),
+        excluding = false
+      ))
+    projectColumnsOp
+  }
+}
