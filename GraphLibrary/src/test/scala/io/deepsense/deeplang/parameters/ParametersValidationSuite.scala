@@ -57,6 +57,12 @@ class ParametersValidationSuite extends FunSuite {
     }
   }
 
+  test("Creating invalid range with step less than zero should throw an exception") {
+    intercept[IllegalArgumentException] {
+      RangeValidator(3, 5.4, step = Some(-1.2))
+    }
+  }
+
   test("Missing required parameter should throw an exception") {
     val exception = intercept[ParameterRequiredException] {
       val holder = StringParameterHolder("description", None, true, RegexValidator("a".r))

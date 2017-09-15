@@ -21,7 +21,8 @@ case class RangeValidator(
     endIncluded: Boolean = true,
     step: Option[Double] = None) extends Validator[NumericParameter] {
   require(begin <= end)
-  step.foreach(s => require(makeSteps(countStepsTo(end, s), s) == end,
+  step.foreach(s => require(s > 0))
+  step.foreach(s => require(takeSteps(countStepsTo(end, s), s) == end,
     "Length of range should be divisible by step."))
 
   val validatorType = ValidatorType.Range
@@ -39,7 +40,7 @@ case class RangeValidator(
   /** Validates if parameter value can be reached using given step */
   private def validateStep(value: Double): Unit = {
     step.foreach {
-      s => if (s <= 0 || makeSteps(countStepsTo(value, s), s) != value) {
+      s => if (takeSteps(countStepsTo(value, s), s) != value) {
         throw OutOfRangeWithStepException(value, begin, end, s)
       }
     }
@@ -52,7 +53,7 @@ case class RangeValidator(
   private def countStepsTo(value: Double, step: Double): Int = ((value - begin)/step).floor.toInt
 
   /** Computes the value after given number of steps starting at `begin` of range. */
-  private def makeSteps(count: Int, step: Double): Double = begin + step * count
+  private def takeSteps(count: Int, step: Double): Double = begin + step * count
 }
 
 /**
