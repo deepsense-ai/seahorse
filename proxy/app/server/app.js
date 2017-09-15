@@ -30,39 +30,30 @@ app.all("/wait.html");
 app.all("/quota.html");
 app.all("/trial-expired.html");
 
-let auth = undefined;
+app.all("/authorization/create_account*",
+  authorizationQuota.forward,
+  reverseProxy.forward
+);
+app.all("/authorization/**",
+  reverseProxy.forward
+);
+
+let auth;
 if (config.get('ENABLE_AUTHORIZATION') === "true") {
   auth = require('./auth/auth');
 } else {
   auth = require('./auth/stub');
 }
 auth.init(app);
-
+app.use(auth.login);
 app.use(userCookieMiddleware);
-
-app.all("/authorization/create_account*",
-  authorizationQuota.forward,
-  reverseProxy.forward
-);
-
-app.all("/authorization/**",
-  reverseProxy.forward
-);
-
-app.get('/',
-  auth.login,
-  reverseProxy.forward
-);
-
-app.all('/**',
-  auth.login,
-  reverseProxy.forward
-);
-
 if (config.get('ENABLE_AUTHORIZATION') === "true") { // Depends on userCookieMiddleware
   const trialTimeLimitMiddleware = require('./trial/time-limit').middleware;
   app.use(trialTimeLimitMiddleware)
 }
+
+app.get('/', reverseProxy.forward);
+app.all('/**', reverseProxy.forward);
 
 function httpsRedirectHandler(req, res, next) {
   if (req.headers['x-forwarded-proto'] !== 'https' && !req.headers.host.startsWith("localhost:")) {
