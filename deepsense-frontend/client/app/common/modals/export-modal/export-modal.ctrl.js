@@ -10,6 +10,7 @@ function ExportModalController(config, version, $uibModalInstance, $stateParams,
       $uibModalInstance.dismiss();
     },
     getExecutorLink: () => 'https://s3.amazonaws.com/workflowexecutor/releases/' + config.apiVersion + '/workflowexecutor_2.10-' + config.apiVersion + '.jar',
+    getDocsHost: () => config.docsHost,
     getDocsVersion: () => version.getDocsVersion(),
     download: () => {
       $('body')
