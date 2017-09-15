@@ -20,12 +20,13 @@ import java.io._
 
 import org.apache.hadoop.hdfs.{DFSInputStream, DFSClient}
 
+import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.serialization.Serialization
 
 /**
  * Wrapper class for DFSClient. Introduces higher level operations on hdfs.
  */
-case class DSHdfsClient(hdfsClient: DFSClient) extends Serialization {
+case class DSHdfsClient(hdfsClient: DFSClient) extends Serialization with FileSystemClient {
 
   /**
    * Checks if file located by the given path exists
@@ -84,4 +85,15 @@ case class DSHdfsClient(hdfsClient: DFSClient) extends Serialization {
     val inputStream: DFSInputStream = hdfsClient.open(path)
     deserialize(org.apache.commons.io.IOUtils.toByteArray(inputStream))
   }
+
+  /**
+   * Returns basic info about a file.
+   */
+  def getFileInfo(path: String): Option[FileInfo] = Option(hdfsClient.getFileInfo(path))
+      .map(s => FileInfo(s.getLen, DateTimeConverter.fromMillis(s.getModificationTime)))
+
+  /**
+   * Deletes file or dir under given path
+   */
+  def delete(path: String): Unit = hdfsClient.delete(path, true)
 }

@@ -16,6 +16,8 @@
 
 package io.deepsense.deeplang.doperables
 
+import java.io.File
+
 import scala.concurrent.Future
 import scala.util.Success
 
@@ -31,10 +33,11 @@ class ModelDeploymentIntegSpec
   with BeforeAndAfter
   with TrainedRidgeRegressionTestFactory {
 
-  private val testFilePath: String = "/tests/modelDeploymentTest"
+  private val testFilePath: String = "target/tests/modelDeploymentTest"
 
   before {
-    rawHdfsClient.delete(testFilePath, true)
+    fileSystemClient.delete(testFilePath)
+    new File(testFilePath).getParentFile.mkdirs()
   }
 
   private def inputEntity = CreateEntityRequest(
@@ -55,7 +58,7 @@ class ModelDeploymentIntegSpec
 
       val retrieved: Deployable = DOperableLoader.load(
         executionContext.entityStorageClient)(
-        DeployableLoader.loadFromHdfs(executionContext.hdfsClient))(
+        DeployableLoader.loadFromFs(executionContext.fsClient))(
         executionContext.tenantId, id)
       val response = "testId"
       val toService = (model: Model) => {

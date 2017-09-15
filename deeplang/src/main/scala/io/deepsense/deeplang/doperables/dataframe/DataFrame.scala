@@ -132,7 +132,7 @@ object DataFrame {
     context.dataFrameBuilder.buildDataFrame(emptySparkDataFrame)
   }
 
-  def loadFromHdfs(context: ExecutionContext)(path: String): DataFrame = {
+  def loadFromFs(context: ExecutionContext)(path: String): DataFrame = {
     val dataFrame = context.sqlContext.read.parquet(path)
     context.dataFrameBuilder.buildDataFrame(dataFrame)
   }

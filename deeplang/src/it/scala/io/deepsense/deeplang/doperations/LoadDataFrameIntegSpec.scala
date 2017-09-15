@@ -37,10 +37,10 @@ class LoadDataFrameIntegSpec
 
   val timestamp: Timestamp = new Timestamp(new DateTime(2007, 12, 2, 3, 10, 11).getMillis)
 
-  val testDir = "/tests/LoadDataFrameTest"
+  val testDir = "target/tests/LoadDataFrameTest"
 
   before {
-    rawHdfsClient.delete(testDir, true)
+    fileSystemClient.delete(testDir)
   }
 
   "LoadDataFrame" should {

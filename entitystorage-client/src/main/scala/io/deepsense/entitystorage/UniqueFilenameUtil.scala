@@ -20,7 +20,7 @@ import java.util.UUID
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
- * Utility for creating unique filenames on HDFS.
+ * Utility for creating unique filenames on FS.
  */
 object UniqueFilenameUtil {
   val DataFrameEntityCategory = "dataframe"
@@ -38,10 +38,10 @@ object UniqueFilenameUtil {
    * cli.get.mkdirs(directoryName, new FsPermission(FsAction.ALL, FsAction.ALL, FsAction.ALL), true)
    * @param tenantId tenant id
    * @param entityCategory category of entity (file/dataframe/etc..)
-   * @param deploymentDirName optional: HDFS location of deepsense application
+   * @param deploymentDirName optional: FS location of deepsense application
    * @return directory name for storing files of given properties
    */
-  def getHdfsDirectoryName(
+  def getFsDirectoryName(
       tenantId: String,
       entityCategory: String,
       deploymentDirName: String = "deepsense",
@@ -51,19 +51,19 @@ object UniqueFilenameUtil {
   }
 
   /**
-   * Returns unique HDFS filename for file of given properties.
+   * Returns unique FS filename for file of given properties.
    * @param tenantId tenant id
    * @param entityCategory category of entity (file/dataframe/etc..)
-   * @param deploymentDirName optional: HDFS location of deepsense application
-   * @return unique HDFS filename for file of given properties
+   * @param deploymentDirName optional: FS location of deepsense application
+   * @return unique FS filename for file of given properties
    */
-  def getUniqueHdfsFilename(
+  def getUniqueFsFilename(
       tenantId: String,
       entityCategory: String,
       deploymentDirName: String = "deepsense",
       isTemporary: Boolean = false): String = {
     val directoryName =
-      getHdfsDirectoryName(tenantId, entityCategory, deploymentDirName, isTemporary)
+      getFsDirectoryName(tenantId, entityCategory, deploymentDirName, isTemporary)
     val uniqueNumberStr = "%06d".format(numberGenerator.incrementAndGet())
     s"$directoryName/${uniqueString}_file$uniqueNumberStr"
   }

@@ -37,14 +37,14 @@ class DataFrameReportPerformanceSpec
   val testFile = "/tests/demand.csv"
 
   before {
-    rawHdfsClient.delete(testFile, true)
-    executionContext.hdfsClient.copyLocalFile(
+    fileSystemClient.delete(testFile)
+    executionContext.fsClient.copyLocalFile(
       this.getClass.getResource("/csv/demand_without_header.csv").getPath,
       testFile)
   }
 
   after {
-    rawHdfsClient.delete(testFile, true)
+    fileSystemClient.delete(testFile)
   }
 
   "DataFrame" should {

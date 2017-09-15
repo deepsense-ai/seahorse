@@ -29,3 +29,16 @@ lazy val graphjson              = project dependsOn (commons, deeplang, graph, m
 lazy val models                 = project dependsOn (commons, graph)
 lazy val reportlib              = project
 lazy val workflowexecutor       = project
+
+
+// Sequentially perform integration tests
+addCommandAlias("ds-it",
+    ";commons/it:test " +
+    ";deeplang/it:test " +
+    ";entitystorage-client/it:test " +
+    ";entitystorage-model/it:test " +
+    ";graph/it:test " +
+    ";graphjson/it:test " +
+    ";models/it:test " +
+    ";reportlib/it:test " +
+    ";workflowexecutor/it:test")

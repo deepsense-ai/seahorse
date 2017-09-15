@@ -23,21 +23,21 @@ import org.scalatest.{FunSuite, Matchers}
 class UniqueFilenameUtilSuite extends FunSuite with Matchers {
 
   test("UniqueFilenameUtil should generate directory name in proper format") {
-    val hdfsDirectoryName =
-      UniqueFilenameUtil.getHdfsDirectoryName("userA", "file", deploymentDirName = "deepsenseB")
-    hdfsDirectoryName shouldBe "/deepsenseB/data/userA/file"
+    val fsDirectoryName =
+      UniqueFilenameUtil.getFsDirectoryName("userA", "file", deploymentDirName = "deepsenseB")
+    fsDirectoryName shouldBe "/deepsenseB/data/userA/file"
   }
 
   test("UniqueFilenameUtil should generate filename in proper format") {
-    val uniqueHdfsFilename =
-      UniqueFilenameUtil.getUniqueHdfsFilename("userA", "file")
-    uniqueHdfsFilename.matches(s"/deepsense/data/userA/file/[^_]+_file\\d{6}") shouldBe true
+    val uniqueFsFilename =
+      UniqueFilenameUtil.getUniqueFsFilename("userA", "file")
+    uniqueFsFilename.matches(s"/deepsense/data/userA/file/[^_]+_file\\d{6}") shouldBe true
   }
 
   test("UniqueFilenameUtil should generate filename in temporary directory") {
-    val uniqueHdfsFilename =
-      UniqueFilenameUtil.getUniqueHdfsFilename("userTmp", "file", isTemporary = true)
-    uniqueHdfsFilename.matches(s"/deepsense/tmp/userTmp/file/[^_]+_file\\d{6}") shouldBe true
+    val uniqueFsFilename =
+      UniqueFilenameUtil.getUniqueFsFilename("userTmp", "file", isTemporary = true)
+    uniqueFsFilename.matches(s"/deepsense/tmp/userTmp/file/[^_]+_file\\d{6}") shouldBe true
   }
 
   test("UniqueFilenameUtil should generate unique filenames") {
@@ -45,7 +45,7 @@ class UniqueFilenameUtilSuite extends FunSuite with Matchers {
     val uniqueFilenames = mutable.Set[String]()
     for (x <- Range(0, uniqueFilenamesCount)) {
       uniqueFilenames.add(
-        UniqueFilenameUtil.getUniqueHdfsFilename("userA", "file"))
+        UniqueFilenameUtil.getUniqueFsFilename("userA", "file"))
     }
     // NOTE: if some filenames were not unique, set size will be smaller than  uniqueFilenamesCount
     uniqueFilenames.size shouldBe uniqueFilenamesCount

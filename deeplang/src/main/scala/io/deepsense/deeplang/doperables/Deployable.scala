@@ -16,18 +16,18 @@
 
 package io.deepsense.deeplang.doperables
 
-import io.deepsense.commons.utils.Logging
-import io.deepsense.deeplang.{DSHdfsClient, Model}
-
 import scala.concurrent.Future
+
+import io.deepsense.commons.utils.Logging
+import io.deepsense.deeplang.{FileSystemClient, Model}
 
 trait Deployable extends Serializable {
   def deploy(f: (Model) => Future[String]): Future[String]
 }
 
 object DeployableLoader extends Logging {
-  def loadFromHdfs(hdfsClient: DSHdfsClient)(path: String): Deployable = {
+  def loadFromFs(fsClient: FileSystemClient)(path: String): Deployable = {
     logger.debug("Trying to read path: {}", path)
-    hdfsClient.readFileAsObject[Deployable](path)
+    fsClient.readFileAsObject[Deployable](path)
   }
 }

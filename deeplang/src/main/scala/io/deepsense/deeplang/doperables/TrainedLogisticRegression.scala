@@ -23,8 +23,7 @@ import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.mllib.regression.GeneralizedLinearModel
 import org.apache.spark.rdd.RDD
 
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.{DOperable, DMethod1To1, ExecutionContext, Model}
+import io.deepsense.deeplang.{DOperable, ExecutionContext, Model}
 import io.deepsense.reportlib.model.ReportContent
 
 case class TrainedLogisticRegression(
@@ -58,15 +57,15 @@ case class TrainedLogisticRegression(
       model.get.intercept,
       featureColumns.get,
       targetColumn.get)
-    context.hdfsClient.saveObjectToFile(path, params)
+    context.fsClient.saveObjectToFile(path, params)
     this.physicalPath = Some(path)
   }
 }
 
 object TrainedLogisticRegression {
-  def loadFromHdfs(context: ExecutionContext)(path: String): TrainedLogisticRegression = {
+  def loadFromFs(context: ExecutionContext)(path: String): TrainedLogisticRegression = {
     val params: TrainedLogisticRegressionDescriptor =
-      context.hdfsClient.readFileAsObject[TrainedLogisticRegressionDescriptor](path)
+      context.fsClient.readFileAsObject[TrainedLogisticRegressionDescriptor](path)
     TrainedLogisticRegression(
       Some(new LogisticRegressionModel(params.modelWeights, params.modelIntercept)),
       Some(params.featureColumns),

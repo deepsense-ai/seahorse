@@ -49,7 +49,7 @@ trait DOperable {
   def report: Report
 
   /**
-   * Saves DOperable on HDFS under specified path.
+   * Saves DOperable on FS under specified path.
    * Sets url so that it informs where it has been saved.
    */
   def save(executionContext: ExecutionContext)(path: String): Unit

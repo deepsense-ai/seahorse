@@ -25,7 +25,7 @@ trait Trainable extends DOperable {
   val train: DMethod1To1[Trainable.Parameters, DataFrame, Scorable]
 
   protected def saveScorable(context: ExecutionContext, scorable: Scorable): Unit = {
-    val uniquePath = context.uniqueHdfsFileName(UniqueFilenameUtil.ModelEntityCategory)
+    val uniquePath = context.uniqueFsFileName(UniqueFilenameUtil.ModelEntityCategory)
     scorable.save(context)(uniquePath)
   }
 }

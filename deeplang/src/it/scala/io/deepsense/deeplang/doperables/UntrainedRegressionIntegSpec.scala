@@ -61,10 +61,10 @@ abstract class UntrainedRegressionIntegSpec[T <: GeneralizedLinearModel]
     lazy val inputDataFrame = createDataFrame(inputRows, inputSchema)
 
     "create model trained on given dataframe" in {
-      val hdfsClient = executionContext.hdfsClient
+      val fsClient = executionContext.fsClient
       val mockContext: ExecutionContext = mock[ExecutionContext]
-      when(mockContext.hdfsClient).thenReturn(hdfsClient)
-      when(mockContext.uniqueHdfsFileName(isA(classOf[String]))).thenReturn(testDir)
+      when(mockContext.fsClient).thenReturn(fsClient)
+      when(mockContext.uniqueFsFileName(isA(classOf[String]))).thenReturn(testDir)
 
       val mockTrainedModel = Mockito.mock(modelType)
 
@@ -96,7 +96,7 @@ abstract class UntrainedRegressionIntegSpec[T <: GeneralizedLinearModel]
       val result = regression.train(mockContext)(parameters)(inputDataFrame)
       validateResult(mockTrainedModel, result)
 
-      hdfsClient.fileExists(testDir) shouldBe true
+      fsClient.fileExists(testDir) shouldBe true
     }
 
     "throw an exception" when {
@@ -144,10 +144,11 @@ abstract class UntrainedRegressionIntegSpec[T <: GeneralizedLinearModel]
   }
 
   after {
-    rawHdfsClient.delete(testDir, true)
+    fileSystemClient.delete(testDir)
   }
 
   before {
-    rawHdfsClient.delete(testDir, true)
+    fileSystemClient.delete(testDir)
+    new java.io.File(testDir).getParentFile.mkdirs()
   }
 }

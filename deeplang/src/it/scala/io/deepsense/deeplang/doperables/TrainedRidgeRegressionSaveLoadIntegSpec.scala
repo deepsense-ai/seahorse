@@ -26,10 +26,10 @@ class TrainedRidgeRegressionSaveLoadIntegSpec
   with BeforeAndAfter
   with TrainedRidgeRegressionTestFactory {
 
-  private val testFilePath: String = "/tests/trainedRidgeRegressionSerializationTest"
+  private val testFilePath: String = "target/tests/trainedRidgeRegressionSerializationTest"
 
   before {
-    rawHdfsClient.delete(testFilePath, true)
+    fileSystemClient.delete(testFilePath)
   }
 
   "TrainedRidgeRegression" should {

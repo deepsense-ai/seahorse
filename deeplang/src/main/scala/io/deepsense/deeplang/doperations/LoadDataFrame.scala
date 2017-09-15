@@ -43,7 +43,7 @@ case class LoadDataFrame() extends DOperation0To1[DataFrame] {
   override protected def _execute(context: ExecutionContext)(): DataFrame = {
     DOperableLoader.load(
       context.entityStorageClient)(
-        DataFrame.loadFromHdfs(context))(
+        DataFrame.loadFromFs(context))(
         context.tenantId,
         idParameter.value.get)
   }

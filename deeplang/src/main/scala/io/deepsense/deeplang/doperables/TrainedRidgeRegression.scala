@@ -62,7 +62,7 @@ case class TrainedRidgeRegression(
       targetColumn.get,
       scaler.get.std,
       scaler.get.mean)
-    context.hdfsClient.saveObjectToFile(path, params)
+    context.fsClient.saveObjectToFile(path, params)
     this.physicalPath = Some(path)
   }
 }
@@ -70,7 +70,7 @@ case class TrainedRidgeRegression(
 object TrainedRidgeRegression {
   def loadFromHdfs(context: ExecutionContext)(path: String): TrainedRidgeRegression = {
     val params: TrainedRidgeRegressionDescriptor =
-      context.hdfsClient.readFileAsObject[TrainedRidgeRegressionDescriptor](path)
+      context.fsClient.readFileAsObject[TrainedRidgeRegressionDescriptor](path)
     TrainedRidgeRegression(
       Some(new RidgeRegressionModel(params.modelWeights, params.modelIntercept)),
       Some(params.featureColumns),

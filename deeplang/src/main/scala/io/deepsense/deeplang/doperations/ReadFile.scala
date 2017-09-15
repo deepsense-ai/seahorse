@@ -21,14 +21,13 @@ import java.io.FileNotFoundException
 import scala.collection.immutable.ListMap
 
 import org.apache.hadoop.conf.Configuration
-import org.apache.hadoop.hdfs.protocol.HdfsFileStatus
 import org.apache.hadoop.io.{LongWritable, Text}
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat
 
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.doperables.file.File
 import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, ChoiceParameter, ParametersSchema, StringParameter}
-import io.deepsense.deeplang.{DOperation, DOperation0To1, ExecutionContext}
+import io.deepsense.deeplang.{DOperation, DOperation0To1, ExecutionContext, FileInfo}
 
 /**
  * Operation which is able to read File from HDFS.
@@ -63,7 +62,7 @@ case class ReadFile() extends DOperation0To1[File] {
     val lines = context.sqlContext.sparkContext.newAPIHadoopFile(
       path, classOf[TextInputFormat], classOf[LongWritable], classOf[Text], conf)
       .map { case (_, text) => text.toString }
-    val fileInfo = Option(context.hdfsClient.hdfsClient.getFileInfo(path)) match {
+    val fileInfo = context.fsClient.getFileInfo(path) match {
       case Some(hdfsFileInfo) => hdfsFileInfo
       case None => throw new FileNotFoundException(path)
     }
@@ -101,11 +100,11 @@ object ReadFile {
   val unixSeparatorValue = "\n"
   val defaultSeparatorValue = unixSeparatorLabel
 
-  def buildReportMap(fileStatus : HdfsFileStatus) : Map[String, String] = {
-    val modificationDateTime = DateTimeConverter.fromMillis(fileStatus.getModificationTime)
+  def buildReportMap(fileInfo : FileInfo) : Map[String, String] = {
+    val modificationDateTime = fileInfo.modificationTime
     val modificationStr = DateTimeConverter.toString(modificationDateTime)
     Map(
-      "Size" -> fileStatus.getLen.toString,
+      "Size" -> fileInfo.size.toString,
       "Modification time" -> modificationStr)
   }
 

@@ -17,28 +17,34 @@
 package io.deepsense.deeplang.doperables
 
 import com.typesafe.scalalogging.LazyLogging
+import org.scalatest.BeforeAndAfter
 
 import io.deepsense.deeplang.DeeplangIntegTestSupport
-import io.deepsense.deeplang.doperables.dataframe.{DataFrameBuilder, DataFrame}
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.file.File
 import io.deepsense.deeplang.doperations.FileToDataFrame.CSV
 import io.deepsense.deeplang.doperations._
 
 class TrainedRidgeRegressionTrainScoreIntegTest
   extends DeeplangIntegTestSupport
-  with LazyLogging {
+  with LazyLogging
+  with BeforeAndAfter {
 
-  val fileName = "/tests/almost_linear_function.csv"
+  val fileName = "target/tests/almost_linear_function.csv"
 
   private def deleteDataFile(): Unit =
-    executionContext.hdfsClient.hdfsClient.delete(fileName, false)
+    executionContext.fsClient.delete(fileName)
 
   override def beforeAll(): Unit = {
     super.beforeAll()
     deleteDataFile()
-    executionContext.hdfsClient.copyLocalFile(
+    executionContext.fsClient.copyLocalFile(
       this.getClass.getResource("/csv/almost_linear_function.csv").getPath,
       fileName)
+  }
+
+  before {
+    createDir("target/tests/model")
   }
 
   override def afterAll(): Unit = {

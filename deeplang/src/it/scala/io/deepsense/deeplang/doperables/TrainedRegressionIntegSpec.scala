@@ -170,7 +170,7 @@ abstract class TrainedRegressionIntegSpec[T <: GeneralizedLinearModel]
   private def mockExecutionContext: ExecutionContext = {
     val executionContext = mock[ExecutionContext]
     val hdfsClient = mock[DSHdfsClient]
-    when(executionContext.hdfsClient).thenReturn(hdfsClient)
+    when(executionContext.fsClient).thenReturn(hdfsClient)
     executionContext
   }
 }

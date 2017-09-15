@@ -68,7 +68,7 @@ case class SaveDataFrame() extends DOperation1To0[DataFrame] {
   }
 
   private def getUniqueFileName(context: ExecutionContext): String =
-    context.uniqueHdfsFileName(UniqueFilenameUtil.DataFrameEntityCategory)
+    context.uniqueFsFileName(UniqueFilenameUtil.DataFrameEntityCategory)
 }
 
 object SaveDataFrame {

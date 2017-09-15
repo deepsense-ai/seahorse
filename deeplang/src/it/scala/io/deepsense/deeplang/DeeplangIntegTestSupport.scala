@@ -16,10 +16,9 @@
 
 package io.deepsense.deeplang
 
-import java.net.URI
+import java.util.UUID
 
 import org.apache.hadoop.conf.Configuration
-import org.apache.hadoop.hdfs.DFSClient
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.types._
 import org.apache.spark.sql.{Row, SQLContext}
@@ -27,24 +26,21 @@ import org.apache.spark.{SparkConf, SparkContext}
 import org.scalatest.BeforeAndAfterAll
 
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
-import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.entitystorage.EntityStorageClientTestInMemoryImpl
-import io.deepsense.models.entities.{CreateEntityRequest, Entity}
+import io.deepsense.models.entities.Entity
 
 /**
  * Adds features to facilitate integration testing using Spark and entitystorage
  */
 trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
 
-  val hdfsPath = "hdfs://ds-dev-env-master:8020"
-
   var executionContext: ExecutionContext = _
 
   var sparkConf: SparkConf = _
   var sparkContext: SparkContext = _
   var sqlContext: SQLContext = _
-  var rawHdfsClient: DFSClient = _
+  var fileSystemClient: FileSystemClient = _
 
   override def beforeAll(): Unit = {
     sparkConf =
@@ -60,18 +56,18 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
     // TODO: Proper configuration files usage
     config.addResource("core-site.xml")
     config.addResource("hdfs-site.xml")
-    // TODO: Configuration string instead of hardcoded hdfsPath
-    rawHdfsClient = new DFSClient(new URI(hdfsPath), config)
+    // TODO: Configuration string instead of hardcoded fsPath
+    fileSystemClient = LocalFileSystemClient()
     prepareExecutionContext
   }
 
   protected def prepareExecutionContext(): Unit = {
-    executionContext = new ExecutionContext(mock[DOperableCatalog])
+    executionContext = new MockedExecutionContext
     executionContext.sparkContext = sparkContext
     executionContext.sqlContext = sqlContext
     executionContext.dataFrameBuilder = DataFrameBuilder(sqlContext)
     executionContext.tenantId = "testTenantId"
-    executionContext.hdfsClient = new DSHdfsClient(rawHdfsClient)
+    executionContext.fsClient = fileSystemClient
     prepareEntityStorageClient
   }
 
@@ -116,4 +112,13 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
 
   def executeOperation(op: DOperation, dfs: DataFrame*): DataFrame =
     op.execute(executionContext)(dfs.toVector).head.asInstanceOf[DataFrame]
+
+  def createDir(path: String): Unit = {
+    new java.io.File(path + "/id").getParentFile.mkdirs()
+  }
+}
+
+private class MockedExecutionContext extends ExecutionContext(null) {
+  override def uniqueFsFileName(entityCategory: String): String =
+    s"target/tests/$entityCategory/" + UUID.randomUUID().toString
 }

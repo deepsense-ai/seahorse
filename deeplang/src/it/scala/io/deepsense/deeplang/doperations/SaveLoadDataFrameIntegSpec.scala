@@ -50,7 +50,7 @@ class SaveLoadDataFrameIntegSpec
   }
 
   "Save and Load DataFrame operations" should {
-    "correctly save and load dataFrame from HDFS" in {
+    "correctly save and load dataFrame from FS" in {
       val context = executionContext
       val dataFrame: DataFrame = createDataFrame
       val dataFrameId = saveDataFrame(context, dataFrame, "test name", "test description")

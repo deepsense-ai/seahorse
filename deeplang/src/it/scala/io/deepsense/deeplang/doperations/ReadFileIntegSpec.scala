@@ -24,11 +24,12 @@ import io.deepsense.deeplang.{DOperable, DeeplangIntegTestSupport}
 class ReadFileIntegSpec
   extends DeeplangIntegTestSupport
   with BeforeAndAfter {
-  val testDir = "/tests/ReadFileTest"
+  val testDir = "target/tests/ReadFileTest"
 
   before {
-    rawHdfsClient.delete(testDir, true)
-    executionContext.hdfsClient.copyLocalFile("../deeplang/src/it/resources/csv/", testDir)
+    fileSystemClient.delete(testDir)
+    new java.io.File(testDir + "/id").getParentFile.mkdirs()
+    executionContext.fsClient.copyLocalFile(getClass.getResource("/csv/").getPath, testDir)
   }
 
   "ReadFile" should {

@@ -20,9 +20,8 @@ import org.apache.spark.SparkContext
 import org.apache.spark.sql.SQLContext
 
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
-import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.inference.InferContext
-import io.deepsense.entitystorage.{EntityStorageClient, UniqueFilenameUtil}
+import io.deepsense.entitystorage.UniqueFilenameUtil
 
 /** Holds information needed by DOperations and DMethods during execution. */
 class ExecutionContext(
@@ -31,8 +30,8 @@ class ExecutionContext(
 
   var sparkContext: SparkContext = _
   var sqlContext: SQLContext = _
-  var hdfsClient: DSHdfsClient = _
+  var fsClient: FileSystemClient = _
 
-  def uniqueHdfsFileName(entityCategory: String): String =
-    UniqueFilenameUtil.getUniqueHdfsFilename(tenantId, entityCategory)
+  def uniqueFsFileName(entityCategory: String): String =
+    UniqueFilenameUtil.getUniqueFsFilename(tenantId, entityCategory)
 }
