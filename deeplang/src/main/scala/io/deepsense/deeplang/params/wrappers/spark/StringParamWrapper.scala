@@ -18,8 +18,8 @@ package io.deepsense.deeplang.params.wrappers.spark
 
 import org.apache.spark.ml
 
-import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, Validator}
 import io.deepsense.deeplang.params.StringParam
+import io.deepsense.deeplang.params.validators.{AcceptAllRegexValidator, Validator}
 
 class StringParamWrapper[P <: ml.param.Params](
     override val name: String,

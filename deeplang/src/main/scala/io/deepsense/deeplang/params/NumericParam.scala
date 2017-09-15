@@ -18,7 +18,7 @@ package io.deepsense.deeplang.params
 
 import spray.json.DefaultJsonProtocol.DoubleJsonFormat
 
-import io.deepsense.deeplang.parameters.{RangeValidator, ParameterType, Validator}
+import io.deepsense.deeplang.params.validators.{RangeValidator, Validator}
 
 case class NumericParam(
     val name: String,

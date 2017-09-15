@@ -25,7 +25,7 @@ import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarning, InferenceWarnings}
-import io.deepsense.deeplang.parameters.exceptions.ValidationException
+import io.deepsense.deeplang.params.exceptions.ValidationException
 
 
 class AbstractInferenceSpec

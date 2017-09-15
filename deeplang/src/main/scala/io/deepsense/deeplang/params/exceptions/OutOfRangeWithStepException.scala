@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.parameters.exceptions
+package io.deepsense.deeplang.params.exceptions
 
-case class TypeConversionException(source: Any, targetTypeName: String)
-  extends ValidationException(s"Cannot convert ${source.getClass} to $targetTypeName.")
+case class OutOfRangeWithStepException(
+    value: Double,
+    lowerBound: Double,
+    upperBound: Double,
+    step: Double)
+  extends ValidationException(s"Parameter value is out of range. " +
+    s"Value $value is not in [$lowerBound; $upperBound] with step $step")

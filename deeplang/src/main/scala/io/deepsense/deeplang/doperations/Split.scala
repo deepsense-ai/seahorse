@@ -24,9 +24,8 @@ import org.apache.spark.sql.Row
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
-import io.deepsense.deeplang.parameters.{NumericParameter, ParametersSchema, RangeValidator}
-
-import io.deepsense.deeplang.params.{Param, NumericParam, Params}
+import io.deepsense.deeplang.params.validators.RangeValidator
+import io.deepsense.deeplang.params.{NumericParam, Params}
 
 case class Split()
   extends DOperation1To2[DataFrame, DataFrame, DataFrame]
@@ -38,7 +37,7 @@ case class Split()
   val splitRatio = NumericParam(
     name = "split ratio",
     description = "Percentage of rows that should end up in the first output DataFrame",
-    validator = RangeValidator(0.0, 1.0, true, true))
+    validator = RangeValidator(0.0, 1.0, beginIncluded = true, endIncluded = true))
 
   def getSplitRatio: Double = $(splitRatio)
   def setSplitRatio(value: Double): this.type = set(splitRatio, value)
@@ -46,8 +45,8 @@ case class Split()
   val seed = NumericParam(
     name = "seed",
     description = "Seed for random generator used during splitting",
-    validator = RangeValidator(Int.MinValue, Int.MaxValue, true, true, Some(1.0))
-  )
+    validator = RangeValidator(Int.MinValue, Int.MaxValue,
+      beginIncluded = true, endIncluded = true, Some(1.0)))
 
   def getSeed: Int = $(seed).toInt
   def setSeed(value: Int): this.type = set(seed, value.toDouble)

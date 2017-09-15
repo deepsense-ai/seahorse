@@ -14,19 +14,8 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.parameters
+package io.deepsense.deeplang.params.exceptions
 
-object ParameterType extends Enumeration {
-  type ParameterType = Value
-  val Boolean = Value("boolean")
-  val Numeric = Value("numeric")
-  val String = Value("string")
-  val Choice = Value("choice")
-  val MultipleChoice = Value("multipleChoice")
-  val Multiplier = Value("multiplier")
-  val ColumnSelector = Value("selector")
-  val SingleColumnCreator = Value("creator")
-  val MultipleColumnCreator = Value("multipleCreator")
-  val PrefixBasedColumnCreator = Value("prefixBasedCreator")
-  val Dynamic = Value("dynamic")
-}
+case class OutOfRangeException(value: Double, lowerBound: Double, upperBound: Double)
+  extends ValidationException(s"Parameter value is out of range. " +
+    s"Value $value is not in [$lowerBound; $upperBound]")

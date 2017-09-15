@@ -16,11 +16,8 @@
 
 package io.deepsense.deeplang.params
 
-import spray.httpx.SprayJsonSupport
-import spray.json._
-
-import io.deepsense.deeplang.parameters.{MultipleColumnSelectionProtocol, ParameterType, MultipleColumnSelection}
-import MultipleColumnSelectionProtocol._
+import io.deepsense.deeplang.params.selections.MultipleColumnSelection
+import io.deepsense.deeplang.params.selections.MultipleColumnSelectionProtocol._
 
 case class ColumnSelectorParam(
     name: String,

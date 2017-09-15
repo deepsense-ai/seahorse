@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.parameters
+package io.deepsense.deeplang.params.selections
 
 import spray.httpx.SprayJsonSupport
 import spray.json.DefaultJsonProtocol._
 import spray.json._
 
 import io.deepsense.commons.types.ColumnType
-import ColumnType._
+import io.deepsense.commons.types.ColumnType._
 import io.deepsense.deeplang.exceptions.DeepLangException
-import io.deepsense.deeplang.parameters.exceptions.IllegalIndexRangeColumnSelectionException
+import io.deepsense.deeplang.params.exceptions.IllegalIndexRangeColumnSelectionException
 
 /**
  * Represents selecting subset of columns of dataframe.

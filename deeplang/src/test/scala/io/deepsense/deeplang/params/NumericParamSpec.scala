@@ -18,7 +18,7 @@ package io.deepsense.deeplang.params
 
 import spray.json._
 
-import io.deepsense.deeplang.parameters.RangeValidator
+import io.deepsense.deeplang.params.validators.RangeValidator
 
 class NumericParamSpec extends AbstractParamSpec[Double, NumericParam] {
 

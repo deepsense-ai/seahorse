@@ -14,27 +14,14 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.parameters
+package io.deepsense.deeplang.params.selections
 
 import spray.httpx.SprayJsonSupport
 import spray.json.DefaultJsonProtocol.{IntJsonFormat, StringJsonFormat}
 import spray.json._
 
 import io.deepsense.deeplang.exceptions.DeepLangException
-
-import ColumnSelectionJsonProtocol._
-
-/**
- * Represents selecting one of variety of options.
- * @param label name denoting selected option
- * @param selectedSchema parameters schema bound to selected option
- */
-case class Selection(label: String, selectedSchema: ParametersSchema)
-
-/**
- * Represents selecting subset of variety of options.
- */
-case class MultipleSelection(choices: Traversable[Selection])
+import io.deepsense.deeplang.params.selections.ColumnSelectionJsonProtocol._
 
 /**
  * Represents selecting single column of dataframe.

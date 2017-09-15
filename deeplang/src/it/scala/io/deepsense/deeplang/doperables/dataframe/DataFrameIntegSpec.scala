@@ -21,7 +21,7 @@ import org.apache.spark.sql.types._
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException
-import io.deepsense.deeplang.parameters._
+import io.deepsense.deeplang.params.selections.{IndexColumnSelection, MultipleColumnSelection, NameColumnSelection, TypeColumnSelection}
 
 class DataFrameIntegSpec extends DeeplangIntegTestSupport {
 

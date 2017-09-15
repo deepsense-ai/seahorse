@@ -20,8 +20,8 @@ import org.apache.spark.ml
 import org.apache.spark.sql.types.StructType
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrameColumnsGetter
-import io.deepsense.deeplang.parameters.SingleColumnSelection
 import io.deepsense.deeplang.params.SingleColumnSelectorParam
+import io.deepsense.deeplang.params.selections.SingleColumnSelection
 
 class SingleColumnSelectorParamWrapper[P <: ml.param.Params](
     override val name: String,

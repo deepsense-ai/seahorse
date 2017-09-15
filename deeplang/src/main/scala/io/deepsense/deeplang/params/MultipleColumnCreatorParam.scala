@@ -16,8 +16,6 @@
 
 package io.deepsense.deeplang.params
 
-import io.deepsense.deeplang.parameters.ParameterType
-
 import spray.json.DefaultJsonProtocol._
 
 case class MultipleColumnCreatorParam(

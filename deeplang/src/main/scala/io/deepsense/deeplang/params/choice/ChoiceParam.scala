@@ -20,7 +20,7 @@ import scala.reflect.runtime.universe._
 
 import spray.json._
 
-import io.deepsense.deeplang.parameters.ParameterType
+import io.deepsense.deeplang.params.ParameterType
 
 class ChoiceParam[T <: Choice](
     val name: String,

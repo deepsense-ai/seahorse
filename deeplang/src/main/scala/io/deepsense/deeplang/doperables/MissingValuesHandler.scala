@@ -24,9 +24,9 @@ import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
 import io.deepsense.deeplang.doperations.exceptions.{MultipleTypesReplacementException, WrongReplacementValueException}
-import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.params._
 import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
+import io.deepsense.deeplang.params.selections.MultipleColumnSelection
 
 case class MissingValuesHandler() extends Transformer {
 

@@ -21,16 +21,14 @@ import scala.reflect.runtime.{universe => ru}
 
 import org.apache.spark.sql
 import org.apache.spark.sql.Column
-import org.apache.spark.sql.types.StructType
 
 import io.deepsense.deeplang.DOperation.Id
-import io.deepsense.deeplang.doperables.dataframe.{DataFrameColumnsGetter, DataFrame}
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
 import io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException
-import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
-import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.params._
-import io.deepsense.deeplang.{DKnowledge, DOperation2To1, ExecutionContext}
+import io.deepsense.deeplang.params.selections.{ColumnSelection, NameColumnSelection, SingleColumnSelection}
+import io.deepsense.deeplang.{DOperation2To1, ExecutionContext}
 
 case class Join()
     extends DOperation2To1[DataFrame, DataFrame, DataFrame]

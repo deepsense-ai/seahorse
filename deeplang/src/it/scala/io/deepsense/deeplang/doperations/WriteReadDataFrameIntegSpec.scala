@@ -22,11 +22,9 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.scalatest.BeforeAndAfter
 
-import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
 import io.deepsense.deeplang.doperations.inout._
-import io.deepsense.deeplang.parameters._
+import io.deepsense.deeplang.params.selections.{MultipleColumnSelection, NameColumnSelection}
 import io.deepsense.deeplang.{CassandraTestSupport, DeeplangIntegTestSupport}
 
 class WriteReadDataFrameIntegSpec

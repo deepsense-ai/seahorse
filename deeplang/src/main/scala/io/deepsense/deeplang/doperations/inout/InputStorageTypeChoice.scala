@@ -16,9 +16,8 @@
 
 package io.deepsense.deeplang.doperations.inout
 
-import io.deepsense.deeplang.parameters.StorageType
-import io.deepsense.deeplang.params.{Param, StringParam}
-import io.deepsense.deeplang.params.choice.{ChoiceParam, Choice}
+import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
+import io.deepsense.deeplang.params.{StorageType, Param, StringParam}
 
 sealed trait InputStorageTypeChoice extends Choice {
   import InputStorageTypeChoice._

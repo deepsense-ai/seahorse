@@ -16,9 +16,8 @@
 
 package io.deepsense.deeplang.params
 
-import io.deepsense.deeplang.parameters.{SingleColumnSelectionProtocol, ParameterType, SingleColumnSelection}
-
-import SingleColumnSelectionProtocol._
+import io.deepsense.deeplang.params.selections.{SingleColumnSelection, SingleColumnSelectionProtocol}
+import io.deepsense.deeplang.params.selections.SingleColumnSelectionProtocol._
 
 case class SingleColumnSelectorParam(
     name: String,

@@ -19,7 +19,7 @@ package io.deepsense.deeplang.doperations.exceptions
 import org.apache.spark.sql.types.StructType
 
 import io.deepsense.deeplang.doperables.dataframe.{SchemaPrintingUtils, DataFrame}
-import io.deepsense.deeplang.parameters.ColumnSelection
+import io.deepsense.deeplang.params.selections.ColumnSelection
 
 case class ColumnsDoNotExistException(
     invalidSelections: Vector[ColumnSelection],

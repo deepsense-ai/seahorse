@@ -14,15 +14,9 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.parameters
+package io.deepsense.deeplang.params.exceptions
 
-/**
- * Supported storage types for reading/writing DataFrames.
- */
-object StorageType extends Enumeration {
+import scala.util.matching.Regex
 
-  type StorageType = Value
-  val FILE = Value("FILE")
-  val JDBC = Value("JDBC")
-  val CASSANDRA = Value("CASSANDRA")
-}
+case class MatchException(value: String, regex: Regex)
+  extends ValidationException(s"Parameter value `$value` does not match regex `$regex`.")

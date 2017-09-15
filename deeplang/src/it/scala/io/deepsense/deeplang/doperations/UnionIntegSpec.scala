@@ -19,10 +19,10 @@ package io.deepsense.deeplang.doperations
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.{DoubleType, StringType, StructField, StructType}
 
-import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
-import io.deepsense.deeplang.{DKnowledge, DeeplangIntegTestSupport}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.SchemaMismatchException
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
+import io.deepsense.deeplang.{DKnowledge, DeeplangIntegTestSupport}
 
 class UnionIntegSpec extends DeeplangIntegTestSupport {
 

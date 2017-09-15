@@ -16,8 +16,7 @@
 
 package io.deepsense.deeplang.doperations.inout
 
-import io.deepsense.deeplang.parameters.FileFormat
-import io.deepsense.deeplang.params.Param
+import io.deepsense.deeplang.params.{FileFormat, Param}
 import io.deepsense.deeplang.params.choice.Choice
 
 sealed trait InputFileFormatChoice extends Choice {

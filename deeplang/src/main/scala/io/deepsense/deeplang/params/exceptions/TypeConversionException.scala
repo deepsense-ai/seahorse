@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.parameters
+package io.deepsense.deeplang.params.exceptions
 
-object ValidatorType extends Enumeration {
-  type ValidatorType = Value
-  val Range = Value("range")
-  val Regex = Value("regex")
-}
+case class TypeConversionException(source: Any, targetTypeName: String)
+  extends ValidationException(s"Cannot convert ${source.getClass} to $targetTypeName.")

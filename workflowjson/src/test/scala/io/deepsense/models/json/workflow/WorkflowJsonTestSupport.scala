@@ -24,12 +24,10 @@ import org.mockito.Mockito._
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.deeplang.inference.InferenceWarnings
-import io.deepsense.deeplang.parameters.ParametersSchema
 import io.deepsense.deeplang.{DKnowledge, DOperable, DOperation}
 import io.deepsense.graph.{Edge, Endpoint, Node, StatefulGraph}
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.{StandardSpec, UnitTestSupport}
-
 
 trait WorkflowJsonTestSupport
   extends StandardSpec

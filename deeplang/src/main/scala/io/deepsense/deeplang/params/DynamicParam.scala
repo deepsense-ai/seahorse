@@ -19,8 +19,7 @@ package io.deepsense.deeplang.params
 import spray.json.DefaultJsonProtocol._
 import spray.json._
 
-import io.deepsense.deeplang.parameters.ParameterType
-import io.deepsense.deeplang.parameters.ParameterType.ParameterType
+import io.deepsense.deeplang.params.ParameterType.ParameterType
 
 /**
  * This parameter type is used to forward parameters from the DOperation to its input DOperables.

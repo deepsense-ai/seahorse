@@ -16,7 +16,6 @@
 
 package io.deepsense.deeplang.doperations.inout
 
-import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, StringParameter}
 import io.deepsense.deeplang.params.{Params, StringParam}
 
 trait CassandraParameters {

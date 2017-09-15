@@ -29,7 +29,7 @@ import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.TypeConverter.TargetTypeChoice
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException
-import io.deepsense.deeplang.parameters._
+import io.deepsense.deeplang.params.selections.{IndexColumnSelection, MultipleColumnSelection, NameColumnSelection, TypeColumnSelection}
 
 class TypeConverterIntegSpec extends DeeplangIntegTestSupport {
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.parameters
+package io.deepsense.deeplang.params.validators
 
 import scala.util.matching.Regex
 

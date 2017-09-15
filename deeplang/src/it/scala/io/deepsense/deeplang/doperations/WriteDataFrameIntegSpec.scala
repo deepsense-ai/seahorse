@@ -26,9 +26,7 @@ import org.apache.spark.sql.types._
 import org.scalatest.BeforeAndAfter
 
 import io.deepsense.commons.datetime.DateTimeConverter
-import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.DeeplangIntegTestSupport
-import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
 import io.deepsense.deeplang.doperations.exceptions.UnsupportedColumnTypeException
 import io.deepsense.deeplang.doperations.inout.{CsvParameters, OutputFileFormatChoice, OutputStorageTypeChoice}
 

@@ -22,16 +22,14 @@ import java.util.UUID
 import scala.reflect.runtime.{universe => ru}
 
 import org.apache.spark.SparkContext
-import org.apache.spark.sql.types.{StringType, StructType}
 import org.apache.spark.sql.{DataFrame => SparkDataFrame}
 
 import io.deepsense.deeplang.DOperation.Id
-import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.ReadDataFrame._
 import io.deepsense.deeplang.doperations.exceptions.DeepSenseIOException
 import io.deepsense.deeplang.doperations.inout._
-import io.deepsense.deeplang.parameters._
-import io.deepsense.deeplang.params.{Param, Params}
+import io.deepsense.deeplang.params.Params
 import io.deepsense.deeplang.params.choice.ChoiceParam
 import io.deepsense.deeplang.{DOperation0To1, ExecutionContext, FileSystemClient}
 

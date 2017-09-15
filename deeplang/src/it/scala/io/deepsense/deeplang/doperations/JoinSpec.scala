@@ -22,7 +22,7 @@ import org.apache.spark.sql.types._
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.{ColumnDoesNotExistException, ColumnsDoNotExistException, WrongColumnTypeException}
-import io.deepsense.deeplang.parameters._
+import io.deepsense.deeplang.params.selections.{IndexSingleColumnSelection, NameSingleColumnSelection}
 
 class JoinSpec extends DeeplangIntegTestSupport {
 

@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.doperations.inout
 
-import io.deepsense.deeplang.params.{Params, BooleanParam}
+import io.deepsense.deeplang.params.{BooleanParam, Params}
 
 trait HasShouldConvertToBooleanParam {
   this: Params =>

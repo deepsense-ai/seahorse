@@ -27,7 +27,7 @@ import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException
-import io.deepsense.deeplang.parameters._
+import io.deepsense.deeplang.params.selections.{IndexColumnSelection, MultipleColumnSelection, NameColumnSelection, TypeColumnSelection}
 
 class ColumnsFiltererIntegSpec
   extends DeeplangIntegTestSupport

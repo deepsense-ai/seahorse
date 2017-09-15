@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.parameters
+package io.deepsense.deeplang.params.validators
 
 import scala.util.matching.Regex
 
 import spray.json.JsObject
 
 import io.deepsense.deeplang.exceptions.DeepLangException
-import io.deepsense.deeplang.parameters.ValidatorType.ValidatorType
-import io.deepsense.deeplang.parameters.exceptions.{MatchException, OutOfRangeException, OutOfRangeWithStepException}
+import io.deepsense.deeplang.params.exceptions.{OutOfRangeWithStepException, OutOfRangeException, MatchException}
 
 /**
  * Validates if NumericParameter value is within range bounds.

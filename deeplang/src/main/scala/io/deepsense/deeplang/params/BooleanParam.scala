@@ -18,8 +18,6 @@ package io.deepsense.deeplang.params
 
 import spray.json.DefaultJsonProtocol.BooleanJsonFormat
 
-import io.deepsense.deeplang.parameters.ParameterType
-
 case class BooleanParam(
     val name: String,
     val description: String)

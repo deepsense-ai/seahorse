@@ -21,7 +21,7 @@ import spray.json.DefaultJsonProtocol._
 
 import io.deepsense.deeplang.UnitSpec
 import io.deepsense.deeplang.exceptions.DeepLangException
-import io.deepsense.deeplang.parameters.ParameterType._
+import ParameterType._
 
 class ParamsSpec extends UnitSpec {
   import ParamsSpec._

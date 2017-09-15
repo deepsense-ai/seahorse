@@ -24,8 +24,8 @@ import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.DatetimeDecomposer.TimestampPart
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
-import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.params.choice.{Choice, MultipleChoiceParam}
+import io.deepsense.deeplang.params.selections.SingleColumnSelection
 import io.deepsense.deeplang.params.{Param, PrefixBasedColumnCreatorParam, SingleColumnSelectorParam}
 
 /**

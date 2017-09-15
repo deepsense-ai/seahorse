@@ -20,7 +20,7 @@ import org.apache.spark.sql.types.StructType
 
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
-import io.deepsense.deeplang.parameters.{MultipleColumnSelection, NameColumnSelection}
+import io.deepsense.deeplang.params.selections.{MultipleColumnSelection, NameColumnSelection}
 import io.deepsense.deeplang.params.{ColumnSelectorParam, Param}
 
 class ColumnsFilterer extends Transformer {

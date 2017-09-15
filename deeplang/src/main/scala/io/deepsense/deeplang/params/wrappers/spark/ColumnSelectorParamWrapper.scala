@@ -20,8 +20,8 @@ import org.apache.spark.ml
 import org.apache.spark.sql.types.StructType
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrameColumnsGetter
-import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.params.ColumnSelectorParam
+import io.deepsense.deeplang.params.selections.MultipleColumnSelection
 
 
 class ColumnSelectorParamWrapper[P <: ml.param.Params](

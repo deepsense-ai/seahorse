@@ -18,7 +18,7 @@ package io.deepsense.deeplang.params
 
 import spray.json._
 
-import io.deepsense.deeplang.parameters.{IndexSingleColumnSelection, NameSingleColumnSelection, SingleColumnSelection}
+import io.deepsense.deeplang.params.selections.{IndexSingleColumnSelection, SingleColumnSelection}
 
 class SingleColumnSelectorParamSpec
   extends AbstractParamSpec[SingleColumnSelection, SingleColumnSelectorParam] {

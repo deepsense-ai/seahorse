@@ -16,8 +16,8 @@
 
 package io.deepsense.deeplang.params
 
-import spray.json._
 import spray.json.DefaultJsonProtocol._
+import spray.json._
 
 abstract class AbstractColumnSelectorParam[T: JsonFormat] extends ParamWithJsFormat[T] {
 

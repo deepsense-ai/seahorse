@@ -14,21 +14,11 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.parameters
+package io.deepsense.deeplang.params.exceptions
 
-import spray.json.JsValue
+import io.deepsense.deeplang.exceptions.DeepLangException
 
 /**
- * Represents ParameterHolder with validator.
+ * Base class for all Parameters Validation exceptions.
  */
-trait HasValidator extends Parameter {
-  val validator: Validator[HeldValue]
-
-  override protected def validateDefined(definedValue: HeldValue) = {
-    validator.validate(definedValue)
-  }
-
-  override def jsDescription: Map[String, JsValue] = {
-    super.jsDescription + ("validator" -> validator.toJson)
-  }
-}
+abstract class ValidationException(message: String) extends DeepLangException(message)

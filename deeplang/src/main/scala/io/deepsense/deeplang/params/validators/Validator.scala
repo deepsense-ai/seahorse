@@ -14,11 +14,26 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.parameters.exceptions
+package io.deepsense.deeplang.params.validators
+
+import spray.json._
 
 import io.deepsense.deeplang.exceptions.DeepLangException
+import io.deepsense.deeplang.params.validators.ValidatorType.ValidatorType
 
-/**
- * Base class for all Parameters Validation exceptions.
- */
-abstract class ValidationException(message: String) extends DeepLangException(message)
+/** Represents anything that validates parameter. */
+@SerialVersionUID(1)
+trait Validator[ParameterType] extends Serializable {
+  val validatorType: ValidatorType
+
+  def validate(parameter: ParameterType): Vector[DeepLangException]
+
+  final def toJson: JsObject = {
+    import DefaultJsonProtocol._
+    JsObject(
+      "type" -> validatorType.toString.toJson,
+      "configuration" -> configurationToJson)
+  }
+
+  protected def configurationToJson: JsObject
+}

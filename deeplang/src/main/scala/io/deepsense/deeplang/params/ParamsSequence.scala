@@ -23,7 +23,6 @@ import scala.reflect.runtime.universe._
 import spray.json._
 
 import io.deepsense.deeplang.TypeUtils
-import io.deepsense.deeplang.parameters.ParameterType
 import io.deepsense.deeplang.params.exceptions.NoArgumentConstructorRequiredException
 
 case class ParamsSequence[T <: Params](

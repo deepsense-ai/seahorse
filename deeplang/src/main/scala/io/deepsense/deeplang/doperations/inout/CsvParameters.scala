@@ -16,9 +16,9 @@
 
 package io.deepsense.deeplang.doperations.inout
 
-import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
-import io.deepsense.deeplang.params.{Param, BooleanParam, Params, StringParam}
+import io.deepsense.deeplang.params.validators.SingleCharRegexValidator
+import io.deepsense.deeplang.params.{BooleanParam, Params, StringParam}
 
 trait CsvParameters {
   this: Params =>

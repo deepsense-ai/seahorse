@@ -14,15 +14,10 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.parameters
+package io.deepsense.deeplang.params.validators
 
-/**
- * Supported file formats for reading/writing DataFrames.
- */
-object FileFormat extends Enumeration {
-
-  type FileFormat = Value
-  val CSV = Value("CSV")
-  val PARQUET = Value("PARQUET")
-  val JSON = Value("JSON")
+object ValidatorType extends Enumeration {
+  type ValidatorType = Value
+  val Range = Value("range")
+  val Regex = Value("regex")
 }

@@ -14,10 +14,19 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.parameters.exceptions
+package io.deepsense.deeplang.params
 
-import io.deepsense.deeplang.parameters.IndexRangeColumnSelection
-
-case class IllegalIndexRangeColumnSelectionException(selection: IndexRangeColumnSelection)
-  extends ValidationException(s"The column selection $selection is invalid. " +
-    "All bounds should be set and lower bound should be less or equal upper bound.")
+object ParameterType extends Enumeration {
+  type ParameterType = Value
+  val Boolean = Value("boolean")
+  val Numeric = Value("numeric")
+  val String = Value("string")
+  val Choice = Value("choice")
+  val MultipleChoice = Value("multipleChoice")
+  val Multiplier = Value("multiplier")
+  val ColumnSelector = Value("selector")
+  val SingleColumnCreator = Value("creator")
+  val MultipleColumnCreator = Value("multipleCreator")
+  val PrefixBasedColumnCreator = Value("prefixBasedCreator")
+  val Dynamic = Value("dynamic")
+}

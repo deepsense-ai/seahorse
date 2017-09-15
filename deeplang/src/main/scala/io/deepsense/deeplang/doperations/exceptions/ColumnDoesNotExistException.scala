@@ -19,7 +19,7 @@ package io.deepsense.deeplang.doperations.exceptions
 import org.apache.spark.sql.types.StructType
 
 import io.deepsense.deeplang.doperables.dataframe.SchemaPrintingUtils
-import io.deepsense.deeplang.parameters.SingleColumnSelection
+import io.deepsense.deeplang.params.selections.SingleColumnSelection
 
 case class ColumnDoesNotExistException(
     selection: SingleColumnSelection,

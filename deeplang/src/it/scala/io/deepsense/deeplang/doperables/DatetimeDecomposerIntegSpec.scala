@@ -27,7 +27,7 @@ import org.joda.time.DateTime
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.{ColumnDoesNotExistException, WrongColumnTypeException}
-import io.deepsense.deeplang.parameters.{IndexSingleColumnSelection, NameSingleColumnSelection}
+import io.deepsense.deeplang.params.selections.{IndexSingleColumnSelection, NameSingleColumnSelection}
 
 class DatetimeDecomposerIntegSpec extends DeeplangIntegTestSupport {
 

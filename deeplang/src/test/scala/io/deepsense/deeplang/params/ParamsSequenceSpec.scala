@@ -17,9 +17,8 @@
 package io.deepsense.deeplang.params
 
 import spray.json._
-
-import io.deepsense.deeplang.parameters.AcceptAllRegexValidator
 import io.deepsense.deeplang.params.exceptions.NoArgumentConstructorRequiredException
+import io.deepsense.deeplang.params.validators.AcceptAllRegexValidator
 
 case class ClassWithParams() extends Params {
   val string = StringParam("string", "")

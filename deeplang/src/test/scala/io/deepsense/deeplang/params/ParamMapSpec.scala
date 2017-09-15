@@ -19,7 +19,7 @@ package io.deepsense.deeplang.params
 import spray.json.JsValue
 
 import io.deepsense.deeplang.UnitSpec
-import io.deepsense.deeplang.parameters.ParameterType.ParameterType
+import ParameterType.ParameterType
 
 class ParamMapSpec extends UnitSpec {
 

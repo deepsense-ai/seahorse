@@ -20,11 +20,10 @@ import scala.annotation.tailrec
 
 import org.apache.spark.sql.types.StructType
 
-import io.deepsense.commons.types.ColumnType
+import io.deepsense.commons.types.ColumnType.ColumnType
 import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
 import io.deepsense.deeplang.doperations.exceptions.{ColumnDoesNotExistException, ColumnsDoNotExistException}
-import ColumnType.ColumnType
-import io.deepsense.deeplang.parameters._
+import io.deepsense.deeplang.params.selections._
 
 trait DataFrameColumnsGetter {
 
@@ -181,8 +180,8 @@ object DataFrameColumnsGetter {
   }
 
   def assertColumnNamesValid(schema: StructType, columns: Seq[String]): Unit = {
-    assertColumnSelectionsValid(
-      schema, MultipleColumnSelection(Vector(NameColumnSelection(columns.toSet)), false))
+    assertColumnSelectionsValid(schema,
+      MultipleColumnSelection(Vector(NameColumnSelection(columns.toSet)), excluding = false))
   }
 
   /**

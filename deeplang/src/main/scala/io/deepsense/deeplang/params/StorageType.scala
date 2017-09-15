@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.parameters
+package io.deepsense.deeplang.params
 
-object RegularizationType extends Enumeration {
-  type RegularizationType = Value
-  val NONE = Value("None")
-  val L1 = Value("L1")
-  val L2 = Value("L2")
+/**
+ * Supported storage types for reading/writing DataFrames.
+ */
+object StorageType extends Enumeration {
+
+  type StorageType = Value
+  val FILE = Value("FILE")
+  val JDBC = Value("JDBC")
+  val CASSANDRA = Value("CASSANDRA")
 }

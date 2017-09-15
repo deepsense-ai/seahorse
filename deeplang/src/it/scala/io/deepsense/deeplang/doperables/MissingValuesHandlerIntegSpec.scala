@@ -28,7 +28,7 @@ import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.{MultipleTypesReplacementException, WrongReplacementValueException}
-import io.deepsense.deeplang.parameters.{IndexRangeColumnSelection, MultipleColumnSelection, TypeColumnSelection}
+import io.deepsense.deeplang.params.selections.{IndexRangeColumnSelection, MultipleColumnSelection, TypeColumnSelection}
 
 class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
   with GeneratorDrivenPropertyChecks

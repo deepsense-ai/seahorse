@@ -19,7 +19,7 @@ package io.deepsense.deeplang.params
 import spray.json.JsValue
 
 import io.deepsense.deeplang.exceptions.DeepLangException
-import io.deepsense.deeplang.parameters.Validator
+import io.deepsense.deeplang.params.validators.Validator
 
 trait HasValidator[T] extends Param[T] {
 

@@ -20,7 +20,7 @@ import scala.reflect.runtime.universe._
 
 import spray.json.{JsObject, JsValue}
 
-import io.deepsense.deeplang.parameters.ParameterType
+import io.deepsense.deeplang.params.ParameterType
 
 case class MultipleChoiceParam[T <: Choice](
     name: String,

@@ -23,10 +23,10 @@ import scala.reflect.runtime.universe._
 import org.apache.spark.ml
 import org.apache.spark.sql.types.StructType
 
-import io.deepsense.deeplang.params.exceptions.NoArgumentConstructorRequiredException
-import io.deepsense.deeplang.{TypeUtils, ExecutionContext}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.params.exceptions.NoArgumentConstructorRequiredException
 import io.deepsense.deeplang.params.wrappers.spark.ParamsWithSparkWrappers
+import io.deepsense.deeplang.{ExecutionContext, TypeUtils}
 
 /**
  * This class creates a Deeplang Transformer from a Spark ML Transformer.

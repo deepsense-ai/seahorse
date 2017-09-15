@@ -18,9 +18,9 @@ package io.deepsense.deeplang.doperables
 
 import spray.json._
 
-import io.deepsense.deeplang.{ExecutionContext, DOperable}
+import io.deepsense.deeplang.{DOperable, ExecutionContext}
 import io.deepsense.models.entities.DataObjectReport
-import io.deepsense.reportlib.model.{ReportContent, ReportJsonProtocol}
+import io.deepsense.reportlib.model.{ReportJsonProtocol, ReportContent}
 
 case class Report(content: ReportContent = ReportContent("empty report"))
   extends DOperable {

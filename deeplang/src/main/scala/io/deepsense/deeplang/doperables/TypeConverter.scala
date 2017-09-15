@@ -23,9 +23,9 @@ import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.TypeConverter.TargetTypeChoice
 import io.deepsense.deeplang.doperables.dataframe._
 import io.deepsense.deeplang.doperables.dataframe.types.Conversions
-import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.params.ColumnSelectorParam
 import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
+import io.deepsense.deeplang.params.selections.MultipleColumnSelection
 
 case class TypeConverter() extends Transformer {
 

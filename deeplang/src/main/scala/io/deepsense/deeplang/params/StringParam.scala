@@ -16,9 +16,9 @@
 
 package io.deepsense.deeplang.params
 
-import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, ParameterType, Validator}
-
 import spray.json.DefaultJsonProtocol.StringJsonFormat
+
+import io.deepsense.deeplang.params.validators.{AcceptAllRegexValidator, Validator}
 
 case class StringParam(
     val name: String,

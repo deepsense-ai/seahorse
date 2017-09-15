@@ -23,8 +23,8 @@ import org.scalatest.FunSuite
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.DOperableMock
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
-import io.deepsense.deeplang.parameters.RangeValidator
 import io.deepsense.deeplang.params.NumericParam
+import io.deepsense.deeplang.params.validators.RangeValidator
 
 
 object DClassesForDOperations {

@@ -20,7 +20,7 @@ import spray.json.DefaultJsonProtocol._
 import spray.json._
 
 import io.deepsense.deeplang.exceptions.DeepLangException
-import io.deepsense.deeplang.parameters.ParameterType._
+import io.deepsense.deeplang.params.ParameterType._
 
 abstract class Param[T] {
 

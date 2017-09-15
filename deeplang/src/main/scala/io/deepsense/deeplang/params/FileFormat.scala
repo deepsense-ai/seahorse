@@ -14,8 +14,15 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.parameters.exceptions
+package io.deepsense.deeplang.params
 
-case class OutOfRangeException(value: Double, lowerBound: Double, upperBound: Double)
-  extends ValidationException(s"Parameter value is out of range. " +
-    s"Value $value is not in [$lowerBound; $upperBound]")
+/**
+ * Supported file formats for reading/writing DataFrames.
+ */
+object FileFormat extends Enumeration {
+
+  type FileFormat = Value
+  val CSV = Value("CSV")
+  val PARQUET = Value("PARQUET")
+  val JSON = Value("JSON")
+}
