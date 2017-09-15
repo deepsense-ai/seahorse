@@ -1,6 +1,15 @@
 #!/bin/bash
 # Copyright (c) 2016, CodiLime Inc.
 
-./prepare_docker-compose docker-compose.tmpl.yml docker-compose.yml
+if [ "$#" -lt "2" ]; then
+    echo "Usage: ./docker-compose DOCKER_TAG COMMAND [COMMAND_OPTIONS*]"
+    exit 1
+fi
+
+DOCKER_TAG=$1
+# Remove first parameter (DOCKER_TAG) from "$@"
+shift
+
+./prepare_docker-compose docker-compose.tmpl.yml docker-compose.yml $DOCKER_TAG
 
 exec docker-compose "$@"

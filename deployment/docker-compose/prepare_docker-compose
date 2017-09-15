@@ -1,11 +1,16 @@
 #!/bin/bash
 # Copyright (c) 2016, CodiLime Inc.
 
+if [ "$#" != "3" ]; then
+    echo "Usage: ./prepare_docker-compose TEMPLATE TARGET DOCKER_TAG"
+    exit 1
+fi
+
 TEMPLATE=$1
 TARGET=$2
+DOCKER_TAG=$3
 
 DOCKER_REPOSITORY="docker-repo.deepsense.codilime.com/deepsense_io"
-DOCKER_TAG="master-latest"
 
 EXPOSED_SM_PORT=60100
 EXPOSED_MQ_PORT=60101
