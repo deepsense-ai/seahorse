@@ -91,7 +91,7 @@ services:
   workflowmanager:
     image: $DOCKER_REPOSITORY/deepsense-workflowmanager:$DOCKER_TAG
     ports:
-     - "0.0.0.0:$EXPOSED_WM_PORT:9080"
+     - "127.0.0.1:$EXPOSED_WM_PORT:9080"
     environment:
       - "WM_AUTH_USER=oJkTZ8BV"
       - "WM_AUTH_PASS=8Ep9GqRr"
@@ -100,7 +100,7 @@ services:
   rabbitmq:
     image: $DOCKER_REPOSITORY/deepsense-rabbitmq:$DOCKER_TAG
     ports:
-     - "0.0.0.0:$EXPOSED_MQ_PORT:5672"
+     - "127.0.0.1:$EXPOSED_MQ_PORT:5672"
      - "127.0.0.1:$EXPOSED_MQ_WEBSOCKET_PORT:15674"
     environment:
      - "RABBITMQ_USER=yNNp7VJS"

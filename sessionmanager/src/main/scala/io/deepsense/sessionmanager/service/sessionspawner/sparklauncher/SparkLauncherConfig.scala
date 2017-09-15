@@ -10,8 +10,6 @@ import java.net.URI
 import com.google.inject.Inject
 import com.google.inject.name.Named
 
-import io.deepsense.sessionmanager.service.HostAddressResolver
-
 class SparkLauncherConfig @Inject()(
   @Named("session-executor.parameters.class-name") val className: String,
   @Named("session-executor.parameters.application-jar-path") val weJarPath: String,
