@@ -152,6 +152,7 @@ gulp.task('fonts', function () {
 
 gulp.task('copy:fonts', function () {
   return gulp.src('./node_modules/font-awesome/fonts/**/*.{otf,eot,svg,ttf,woff,woff2}')
+    .pipe(gulp.src('./node_modules/ionicons/fonts/**/*.{otf,eot,svg,ttf,woff,woff2}'))
     .pipe(gulp.dest('./fonts'));
 });
 
