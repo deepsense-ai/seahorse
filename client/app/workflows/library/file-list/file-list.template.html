@@ -8,6 +8,8 @@
   <file-element
     ng-repeat="item in $ctrl.items"
     item="item"
-    is-last="$last">
+    is-last="$last"
+    on-select="$ctrl.onSelect"
+  >
   </file-element>
 </div>

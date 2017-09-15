@@ -13,7 +13,7 @@ function LibraryModalService($uibModal) {
   service.closeUploadingFilesPopover = closeUploadingFilesPopover;
   service.getUploadingFilesPopoverStatus = getUploadingFilesPopoverStatus;
 
-  function openLibraryModal(canChooseDataframe) {
+  function openLibraryModal(mode) {
     return $uibModal.open({
       animation: false,
       templateUrl: tpl,
@@ -23,8 +23,8 @@ function LibraryModalService($uibModal) {
       backdrop: 'static',
       keyboard: true,
       resolve: {
-        canChooseDataframe: () => {
-          return canChooseDataframe;
+        mode: () => {
+          return mode;
         }
       }
     }).result.then((result) => {

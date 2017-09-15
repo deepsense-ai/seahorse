@@ -1,4 +1,6 @@
-<div class="dataframe-library-modal">
+<div class="dataframe-library-modal"
+     ng-class="{'select-mode' : controller.mode === 'read-file'}"
+>
   <div class="modal-header dataframe-library-modal__header">
     <div class="title">Select Data Frame</div>
     <div class="input">
@@ -29,6 +31,7 @@
             <file-list
               items="controller.items"
               parents="controller.parents"
+              on-select="controller.onSelect"
             ></file-list>
           </div>
 

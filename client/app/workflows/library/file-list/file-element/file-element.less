@@ -26,6 +26,14 @@
 
   &.directory {
     background-color: #f2f2f2;
+
+    .name {
+      color: @seahorse-light-blue;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
   }
 
   .icon {
@@ -41,12 +49,7 @@
 
   .name {
     font-weight: 600;
-    color: @seahorse-light-blue;
     flex: 1;
-
-    &:hover {
-      cursor: pointer;
-    }
 
     .upload-info {
       font-style: italic;
@@ -82,6 +85,16 @@
     left: 0;
     opacity: 0.3;
     height: 100%;
+  }
+}
+
+.select-mode {
+  .name {
+    color: @seahorse-light-blue;
+
+    &:hover {
+      cursor: pointer;
+    }
   }
 }
 

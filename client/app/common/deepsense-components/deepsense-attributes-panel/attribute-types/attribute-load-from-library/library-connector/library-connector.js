@@ -2,7 +2,7 @@
 
 import tpl from './library-connector.html';
 
-const CAN_SELECT_DATAFRAME = true;
+const LIBRARY_MODE = 'read-file';
 
 /* @ngInject */
 function LibraryConnector() {
@@ -25,7 +25,7 @@ function LibraryConnector() {
       });
 
       function openLibrary() {
-        LibraryModalService.openLibraryModal(CAN_SELECT_DATAFRAME)
+        LibraryModalService.openLibraryModal(LIBRARY_MODE)
           .then((result) => {
             if (result) {
               vm.fileUri = result.uri;

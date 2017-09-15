@@ -6,7 +6,8 @@ const FileListComponent = {
   controller: FileListController,
   bindings: {
     items: '<',
-    parents: '<'
+    parents: '<',
+    onSelect: '<'
   },
   templateUrl: tpl
 };

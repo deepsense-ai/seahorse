@@ -9,8 +9,7 @@
   </div>
 
   <div class="name"
-       ng-class="{'selectable': $ctrl.canChooseDataframe}"
-       ng-click="$ctrl.selectDataFrame($ctrl.item)"
+       ng-click="$ctrl.onSelect($ctrl.item)"
   >
     <span>
       {{$ctrl.item.name}}

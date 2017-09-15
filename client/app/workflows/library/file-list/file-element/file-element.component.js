@@ -4,7 +4,8 @@ const FileElementComponent = {
   controller: FileElementController,
   bindings: {
     item: '<',
-    isLast: '<'
+    isLast: '<',
+    onSelect: '<'
   },
   template: `
     <div ng-include="$ctrl.templateUrl"></div>

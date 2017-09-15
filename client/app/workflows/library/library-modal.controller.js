@@ -3,22 +3,22 @@
 const COOKIE_NAME = 'DELETE_DATAFRAME_COOKIE';
 
 /* @ngInject */
-function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, canChooseDataframe, DeleteModalService) {
+function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, mode, DeleteModalService) {
   const vm = this;
 
   vm.loading = true;
   vm.filterString = '';
   vm.uploadingFiles = [];
   vm.uploadedFiles = [];
-  vm.canChooseDataframe = canChooseDataframe;
+  vm.mode = mode;
 
   vm.openFileBrowser = openFileBrowser;
   vm.onFileSelectedHandler = onFileSelectedHandler;
-  vm.selectDataframe = selectDataframe;
   vm.getFilesForUri = getFilesForUri;
   vm.goToParentDirectory = goToParentDirectory;
   vm.deleteFile = deleteFile;
   vm.deleteUploadedFile = deleteUploadedFile;
+  vm.onSelect = onSelect;
   vm.close = close;
 
   $scope.$watch(() => LibraryService.getDirectoryContent(), (newValue) => {
@@ -48,12 +48,6 @@ function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, canChooseDa
 
   function onFileSelectedHandler(files) {
     LibraryService.uploadFiles([...files]);
-  }
-
-  function selectDataframe(file) {
-    if (vm.canChooseDataframe) {
-      $uibModalInstance.close(file);
-    }
   }
 
   function getFilesForUri(uri) {
@@ -93,6 +87,12 @@ function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, canChooseDa
     vm.items = result.items;
     vm.parents = result.parents;
     vm.currentDirName = result.name;
+  }
+
+  function onSelect(item) {
+    if (vm.mode === 'read-file') {
+      $uibModalInstance.close(item);
+    }
   }
 }
 
