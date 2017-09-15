@@ -22,3 +22,5 @@ project/plugins/project/
 # Idea specific
 .idea/
 .idea_modules/
+*.iml
+

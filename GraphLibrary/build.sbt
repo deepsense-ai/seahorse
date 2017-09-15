@@ -14,5 +14,6 @@ ideaExcludeFolders += ".idea_modules"
 
 libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "2.2.4" % "test",
-  "com.github.nscala-time" %% "nscala-time" % "1.8.0"
+  "com.github.nscala-time" %% "nscala-time" % "1.8.0",
+  "org.scala-lang" % "scala-reflect" % "2.10.4"
 )
