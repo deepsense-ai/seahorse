@@ -16,6 +16,8 @@
 
 package io.deepsense.deeplang.doperables.report
 
+import scala.util.Try
+
 import org.apache.spark.mllib.linalg.DenseMatrix
 
 import io.deepsense.commons.types.ColumnType
@@ -129,8 +131,9 @@ object CommonTablesGenerators {
     extends SummaryEntry
 
   object SparkSummaryEntry {
-    def apply(name: String, value: Any, description: String = ""): SummaryEntry = {
-      SparkSummaryEntry(name, sparkAnyToString(value), description)
+    def apply(name: String, value: => Any, description: String = ""): SummaryEntry = {
+      val safeValue = Try(value).getOrElse("N/A")
+      SparkSummaryEntry(name, sparkAnyToString(safeValue), description)
     }
   }
 }
