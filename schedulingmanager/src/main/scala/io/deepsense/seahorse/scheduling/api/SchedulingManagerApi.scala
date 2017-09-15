@@ -21,13 +21,13 @@ import io.deepsense.seahorse.scheduling.db.dbio.WorkflowSchedulesDBIOs
 import io.deepsense.seahorse.scheduling.db.schema.WorkflowScheduleSchema
 import io.deepsense.seahorse.scheduling.db.schema.WorkflowScheduleSchema.WorkflowScheduleDB
 import io.deepsense.seahorse.scheduling.model.{JsonBodyForError, WorkflowSchedule}
-import io.deepsense.seahorse.scheduling.schedule.{RunWorkflow, WorkflowScheduler}
+import io.deepsense.seahorse.scheduling.schedule.{RunWorkflowJob, WorkflowScheduler}
 
 class SchedulingManagerApi extends DefaultApi {
   import scala.concurrent.ExecutionContext.Implicits.global
 
   private val scheduler = {
-    val s = new WorkflowScheduler[RunWorkflow](ConfigToPropsLossy(SchedulingManagerConfig.config))
+    val s = new WorkflowScheduler[RunWorkflowJob](ConfigToPropsLossy(SchedulingManagerConfig.config))
     s.start()
     s
   }

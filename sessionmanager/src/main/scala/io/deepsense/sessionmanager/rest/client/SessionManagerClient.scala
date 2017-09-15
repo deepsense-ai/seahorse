@@ -5,9 +5,9 @@
 package io.deepsense.sessionmanager.rest.client
 
 import java.net.URL
+import java.util.UUID
 
 import scala.concurrent.{ExecutionContext, Future}
-
 import akka.actor.ActorSystem
 import akka.util.Timeout
 import spray.client.pipelining._
@@ -22,15 +22,16 @@ import io.deepsense.sessionmanager.rest.requests.CreateSession
 import io.deepsense.sessionmanager.rest.responses.{ListSessionsResponse, NodeStatusesResponse}
 import io.deepsense.sessionmanager.service.Session
 
-class SessionManagerClient(val sessionManagerUrl: URL,
-    override val userId: Option[String],
-    override val userName: Option[String],
+class SessionManagerClient(
+    override val apiUrl: URL,
+    mandatoryUserId: UUID,
+    mandatoryUserName: String,
     override val credentials: Option[HttpCredentials]) (
-    implicit override val ctx: ExecutionContext,
-    override val as: ActorSystem,
+    implicit override val as: ActorSystem,
     override val timeout: Timeout) extends RestClient with SessionsJsonProtocol {
 
-  override val apiUrl: URL = sessionManagerUrl
+  override def userId: Option[UUID] = Some(mandatoryUserId)
+  override def userName: Option[String] = Some(mandatoryUserName)
 
   implicit val envelopeFormat = new EnvelopeJsonFormat[Session]("session")
 

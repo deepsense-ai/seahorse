@@ -14,6 +14,7 @@ object FlywayMigration {
   def run(): Unit = {
     val flyway = new Flyway
     flyway.setBaselineOnMigrate(true)
+    flyway.setLocations("db.migration.workflowmanager")
     flyway.setDataSource(config.getString("db.url"), "", "")
     flyway.migrate()
   }

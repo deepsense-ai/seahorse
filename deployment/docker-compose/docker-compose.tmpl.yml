@@ -116,15 +116,21 @@ services:
     links:
       - database
   schedulingmanager:
-    # TODO Change TO BACKEND_TAG after merging with master
-    image: $DOCKER_REPOSITORY/deepsense-schedulingmanager:dev_scheduling-latest
+    image: $DOCKER_REPOSITORY/deepsense-schedulingmanager:$BACKEND_TAG
+    network_mode: "host"
     restart: always
-    ports:
-     - "127.0.0.1:$EXPOSED_SCHEDULING_MANAGER_PORT:8080"
     environment:
-      - "JDBC_URL=jdbc:h2:tcp://database:1521/schedulingmanager;DATABASE_TO_UPPER=false;DB_CLOSE_DELAY=-1"
-    links:
+      - "PORT=$EXPOSED_SCHEDULING_MANAGER_PORT"
+      - "JDBC_URL=jdbc:h2:tcp://127.0.0.1:$EXPOSED_DB_PORT/sessionmanager;DATABASE_TO_UPPER=false;DB_CLOSE_DELAY=-1"
+      - "SM_URL=http://127.0.0.1:$EXPOSED_SM_PORT"
+      - "WM_URL=http://127.0.0.1:$EXPOSED_WM_PORT"
+      - "WM_AUTH_USER=oJkTZ8BV"
+      - "WM_AUTH_PASS=8Ep9GqRr"
+      - "SEAHORSE_EXTERNAL_URL=http://localhost:33321/"
+    depends_on:
       - database
+      - sessionmanager
+      - workflowmanager
   rabbitmq:
     image: $DOCKER_REPOSITORY/deepsense-rabbitmq:$BACKEND_TAG
     restart: always

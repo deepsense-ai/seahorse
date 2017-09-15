@@ -5,9 +5,7 @@
 package io.deepsense.workflowmanager.client
 
 import java.net.URL
-
-import scala.concurrent.{ExecutionContext, Future}
-import scala.language.postfixOps
+import java.util.UUID
 
 import akka.actor.ActorSystem
 import akka.util.Timeout
@@ -15,27 +13,29 @@ import spray.client.pipelining._
 import spray.http._
 import spray.json.RootJsonFormat
 
+import scala.concurrent.{ExecutionContext, Future}
+import scala.language.postfixOps
+
 import io.deepsense.commons.json.envelope.{Envelope, EnvelopeJsonFormat}
 import io.deepsense.commons.rest.client.RestClient
 import io.deepsense.commons.utils.Logging
-import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
-import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
-import io.deepsense.models.json.workflow.{WorkflowInfoJsonProtocol, WorkflowJsonProtocol}
+import io.deepsense.models.json.workflow.WorkflowInfoJsonProtocol
 import io.deepsense.models.workflows.{Workflow, WorkflowInfo}
 import io.deepsense.workflowmanager.model.{WorkflowDescription, WorkflowDescriptionJsonProtocol}
 
-class WorkflowManagerClient(val workflowsUrl: URL,
-    override val userId: Option[String],
-    override val userName: Option[String],
+class WorkflowManagerClient(
+    override val apiUrl: URL,
+    mandatoryUserId: UUID,
+    mandatoryUserName: String,
     override val credentials: Option[HttpCredentials])(
-    implicit override val ctx: ExecutionContext,
-    override val as: ActorSystem,
+    implicit override val as: ActorSystem,
     override val timeout: Timeout)
   extends RestClient with WorkflowInfoJsonProtocol
     with WorkflowDescriptionJsonProtocol
     with Logging {
 
-  override val apiUrl: URL = workflowsUrl
+  override def userId: Option[UUID] = Some(mandatoryUserId)
+  override def userName: Option[String] = Some(mandatoryUserName)
 
   implicit private val envelopeWorkflowIdJsonFormat =
     new EnvelopeJsonFormat[Workflow.Id]("workflowId")
@@ -47,6 +47,10 @@ class WorkflowManagerClient(val workflowsUrl: URL,
 
   def fetchWorkflow(id: Workflow.Id)(implicit workflowJsonFormat: RootJsonFormat[Workflow]): Future[Workflow] = {
     fetchResponse[Workflow](Get(endpointPath(s"$id")))
+  }
+
+  def fetchWorkflowInfo(id: Workflow.Id): Future[WorkflowInfo] = {
+    fetchResponse[WorkflowInfo](Get(endpointPath(s"$id/info")))
   }
 
   def cloneWorkflow(workflowId: Workflow.Id,

@@ -5,9 +5,9 @@
 package io.deepsense.commons.rest.client
 
 import java.net.URL
+import java.util.UUID
 
-import scala.concurrent.Future
-
+import scala.concurrent.{ExecutionContext, Future}
 import akka.io.IO
 import akka.pattern.ask
 import spray.client.pipelining._
@@ -17,12 +17,14 @@ import spray.http.{HttpCredentials, HttpRequest, HttpResponse}
 import spray.httpx.unmarshalling.FromResponseUnmarshaller
 
 import io.deepsense.commons.auth.directives.AuthDirectives._
+import io.deepsense.commons.utils.LoggerForCallerClass
 
 trait RestClient extends RestClientImplicits {
   def apiUrl: URL
-  def userId: Option[String]
+  def userId: Option[UUID]
   def userName: Option[String]
   def credentials: Option[HttpCredentials]
+  implicit override val ctx: ExecutionContext = as.dispatcher
 
   private def hostConnectorFut(): Future[HostConnectorInfo] = {
     (IO(Http) ? Http.HostConnectorSetup(apiUrl.getHost, port = apiUrl.getPort)).mapTo[HostConnectorInfo]
@@ -33,7 +35,7 @@ trait RestClient extends RestClientImplicits {
       HostConnectorInfo(hostConnector, _) <- hostConnectorFut()
     } yield {
       credentials.map(addCredentials).getOrElse[RequestTransformer](identity) ~>
-      userId.map(addHeader(UserIdHeader, _)).getOrElse[RequestTransformer](identity) ~>
+      userId.map(id => addHeader(UserIdHeader, id.toString)).getOrElse[RequestTransformer](identity) ~>
       userName.map(addHeader(UserNameHeader, _)).getOrElse[RequestTransformer](identity) ~>
         sendReceive(hostConnector)
     }

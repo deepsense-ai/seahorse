@@ -5,13 +5,13 @@
 package io.deepsense.e2etests
 
 import java.net.URL
+import java.util.UUID
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.language.postfixOps
 import scalaz.Scalaz._
 import scalaz._
-
 import akka.actor.ActorSystem
 import akka.util.Timeout
 import org.scalactic.source.Position
@@ -51,6 +51,9 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging w
   protected val workflowsUrl = new URL(baseUrl, "/v1/workflows/")
   protected val sessionsUrl = new URL(baseUrl, "/v1/sessions/")
 
+  private val userId = UUID.fromString("dd63e120-548f-4ac9-8fd5-092bad7616ab")
+  private val userName = "Seahorse test"
+
   implicit val as: ActorSystem = ActorSystem()
   implicit val timeout: Timeout = httpTimeout
 
@@ -61,15 +64,15 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging w
 
   val wmclient = new WorkflowManagerClient(
     workflowsUrl,
-    None,
-    None,
+    userId,
+    userName,
     None
   )
 
   val smclient = new SessionManagerClient(
     sessionsUrl,
-    None,
-    None,
+    userId,
+    userName,
     None
   )
 
@@ -101,8 +104,8 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging w
       Await.result(
         for {
           nsr <- nodesStatuses
-          errorNodeStatuses = nsr.nodeStatuses.getOrElse(NodeStatusName.Failed, 0)
-          completedNodes = nsr.nodeStatuses.getOrElse(NodeStatusName.Completed, 0)
+          errorNodeStatuses = nsr.nodeStatuses.getOrElse(Map.empty).getOrElse(NodeStatusName.Failed, 0)
+          completedNodes = nsr.nodeStatuses.getOrElse(Map.empty).getOrElse(NodeStatusName.Completed, 0)
           numberOfNodes <- numberOfNodesFut
         } yield {
           if (errorNodeStatuses > 0) {
