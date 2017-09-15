@@ -19,8 +19,7 @@ package io.deepsense.workflowexecutor.rabbitmq
 import java.util
 
 import akka.actor.{ActorRef, ActorSystem}
-import com.rabbitmq.client.AMQP.BasicProperties
-import com.rabbitmq.client.{Channel, DefaultConsumer, Envelope}
+import com.rabbitmq.client.Channel
 import com.thenewmotion.akka.rabbitmq.{ChannelActor, CreateChannel, RichConnectionActor}
 
 import io.deepsense.workflowexecutor.communication.mq.MQCommunication
@@ -57,7 +56,6 @@ case class MQCommunicationFactory(
       false,
       true,
       new util.HashMap[String, AnyRef]()).getQueue
-    declareExchange(channel)
     channel.queueBind(queue, MQCommunication.Exchange.seahorse, topic)
     val consumer = MQSubscriber(subscriber, mqMessageDeserializer, channel)
     channel.basicConsume(queue, true, consumer)
@@ -66,14 +64,7 @@ case class MQCommunicationFactory(
   private def createMQPublisher(topic: String): MQPublisher = {
     val publisherName = MQCommunication.publisherName(topic)
     val channelActor: ActorRef =
-      connection.createChannel(ChannelActor.props(setupPublisher()), Some(publisherName))
+      connection.createChannel(ChannelActor.props(), Some(publisherName))
     MQPublisher(MQCommunication.Exchange.seahorse, mqMessageSerializer, channelActor)
-  }
-
-  private def setupPublisher()(channel: Channel, self: ActorRef): Unit =
-    declareExchange(channel)
-
-  private def declareExchange(channel: Channel) = {
-    channel.exchangeDeclare(MQCommunication.Exchange.seahorse, exchangeType)
   }
 }

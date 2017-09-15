@@ -37,7 +37,8 @@ import io.deepsense.workflowexecutor.{ExecutionDispatcherActor, StatusLoggingAct
  */
 case class SessionExecutor(
     messageQueueHost: String,
-    pythonExecutorPath: String)
+    pythonExecutorPath: String,
+    jobId: String)
   extends Executor {
 
   private val config = ConfigFactory.load
@@ -86,7 +87,7 @@ case class SessionExecutor(
       MQCommunicationFactory(system, connection, messageSerializer, messageDeserializer)
 
     val seahorsePublisher = communicationFactory.createPublisher(
-      MQCommunication.Topic.seahorsePublicationTopic,
+      MQCommunication.Topic.seahorsePublicationTopic(jobId),
       MQCommunication.Actor.Publisher.seahorse)
     val notebookPublisher = communicationFactory.createPublisher(
       MQCommunication.Topic.notebookPublicationTopic,
@@ -115,10 +116,10 @@ case class SessionExecutor(
       notebookSubscriberActor)
 
     val workflowsSubscriberActor = system.actorOf(
-      WorkflowTopicSubscriber.props(executionDispatcher, communicationFactory),
+      WorkflowTopicSubscriber.props(executionDispatcher, communicationFactory, jobId),
       MQCommunication.Actor.Subscriber.workflows)
     communicationFactory.registerSubscriber(
-      MQCommunication.Topic.allWorkflowsSubscriptionTopic,
+      MQCommunication.Topic.allWorkflowsSubscriptionTopic(jobId),
       workflowsSubscriberActor)
 
     val ready: Ready = Ready(None, ReadyContent(ReadyMessageType.Info, "Seahorse is ready"))

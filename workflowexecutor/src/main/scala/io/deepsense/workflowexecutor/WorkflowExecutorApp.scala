@@ -70,6 +70,11 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
       (x, c) => c.copy(messageQueueHost = Some(x))
     } text "message queue host"
 
+    // Hidden option:
+    opt[String]('j', "job-id") hidden() valueName "JOB" action {
+      (x, c) => c.copy(jobId = Some(x))
+    } text "job id"
+
     opt[String]('p', "python-executor-path") required() valueName "PATH" action {
       (x, c) => c.copy(pyExecutorPath = Some(x))
     } text "PyExecutor code (included in workflowexecutor.jar) path"
@@ -86,7 +91,9 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
       type Requirements = Seq[(FailureCondition, ErrorMsg)]
 
       val interactiveRequirements: Requirements = Seq(
-        (config.messageQueueHost.isEmpty, "--message-queue-host is required in interactive mode"))
+        (config.messageQueueHost.isEmpty, "--message-queue-host is required in interactive mode"),
+        (config.jobId.isEmpty, "--job-id is required in interactive mode")
+      )
 
       val nonInteractiveRequirements: Requirements = Seq(
         (config.workflowFilename.isEmpty,
@@ -126,7 +133,11 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
       // Interactive mode (SessionExecutor)
       logger.info("Starting SessionExecutor.")
       logger.debug("Starting SessionExecutor.")
-      SessionExecutor(params.messageQueueHost.get, params.pyExecutorPath.get).execute()
+      SessionExecutor(
+        params.messageQueueHost.get,
+        params.pyExecutorPath.get,
+        params.jobId.get
+      ).execute()
     } else {
       // Running in non-interactive mode
       WorkflowExecutor.runInNoninteractiveMode(params)

@@ -51,15 +51,19 @@ object MQCommunication {
     private val workflowPrefix = "workflow"
     private val notebook = "notebook"
     private val seahorse = "seahorse"
-    val allWorkflowsSubscriptionTopic = subscriptionTopic(s"$workflowPrefix.*")
-    val seahorsePublicationTopic = publicationTopic(seahorse)
+    def allWorkflowsSubscriptionTopic(jobId: String): String =
+      subscriptionTopic(s"$workflowPrefix.$jobId.*")
+    def seahorsePublicationTopic(jobId: String): String = publicationTopic(s"seahorse.$jobId")
     val notebookSubscriptionTopic = subscriptionTopic(notebook)
     val notebookPublicationTopic = publicationTopic(notebook)
-    def workflowSubscriptionTopic(id: Workflow.Id): String = subscriptionTopic(workflowTopic(id))
-    def workflowPublicationTopic(id: Workflow.Id): String = publicationTopic(workflowTopic(id))
-    private def workflowTopic(workflowId: Workflow.Id): String =
-      s"$workflowPrefix.${workflowId.toString}"
+    def workflowSubscriptionTopic(id: Workflow.Id, jobId: String): String =
+      subscriptionTopic(workflowTopic(id, jobId))
+    def workflowPublicationTopic(id: Workflow.Id, jobId: String): String =
+      publicationTopic(workflowTopic(id, jobId))
+    private def workflowTopic(workflowId: Workflow.Id, jobId: String): String =
+      s"$workflowPrefix.$jobId.${workflowId.toString}"
     private def subscriptionTopic(topic: String): String = s"$topic.from"
-    private def publicationTopic(topic: String): String = s"$topic.to"
+    private def publicationTopic(topic: String): String =
+      s"$topic.to"
   }
 }

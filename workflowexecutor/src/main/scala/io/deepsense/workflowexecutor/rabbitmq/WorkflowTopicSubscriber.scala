@@ -31,7 +31,8 @@ import io.deepsense.workflowexecutor.communication.mq.MQCommunication
   */
 case class WorkflowTopicSubscriber(
   executionDispatcher: ActorRef,
-  communicationFactory: MQCommunicationFactory) extends Actor with Logging {
+  communicationFactory: MQCommunicationFactory,
+  jobId: String) extends Actor with Logging {
 
   private[this] var publishers: Map[Workflow.Id, ActorRef] = Map()
 
@@ -54,7 +55,7 @@ case class WorkflowTopicSubscriber(
   private def getOrCreatePublisher(workflowId: Id): ActorPath = {
     if (!publishers.contains(workflowId)) {
       val publisher: ActorRef = communicationFactory.createPublisher(
-        MQCommunication.Topic.workflowPublicationTopic(workflowId),
+        MQCommunication.Topic.workflowPublicationTopic(workflowId, jobId),
         MQCommunication.Actor.Publisher.workflow(workflowId))
       publishers += (workflowId -> publisher)
     }
@@ -67,7 +68,10 @@ case class WorkflowTopicSubscriber(
 
 object WorkflowTopicSubscriber {
 
-  def props(executionDispatcher: ActorRef, communicationFactory: MQCommunicationFactory): Props = {
-    Props(WorkflowTopicSubscriber(executionDispatcher, communicationFactory))
+  def props(
+      executionDispatcher: ActorRef,
+      communicationFactory: MQCommunicationFactory,
+      jobId: String): Props = {
+    Props(WorkflowTopicSubscriber(executionDispatcher, communicationFactory, jobId))
   }
 }
