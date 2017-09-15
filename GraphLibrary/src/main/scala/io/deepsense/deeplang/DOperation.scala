@@ -12,9 +12,10 @@ import scala.reflect.runtime.{universe => ru}
  * DOperation that receives and returns instances of DOperable.
  * Can infer its output type basing on type knowledge.
  */
-abstract class DOperation(val parameters: DParameters) {
+abstract class DOperation {
   val inArity: Int
   val outArity: Int
+  var parameters: DParameters = _
 
   def inPortType(index: Int): ru.TypeTag[_]
 

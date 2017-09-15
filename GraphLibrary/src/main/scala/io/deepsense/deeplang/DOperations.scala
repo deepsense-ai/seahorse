@@ -48,9 +48,8 @@ private object ToVectorConversions {
 /** Following classes are generated automatically. */
 
 abstract class DOperation0To1[
-    TO_0 <: DOperable : ru.TypeTag] (
-    parameters: DParameters)
-  extends DOperation(parameters) {
+    TO_0 <: DOperable : ru.TypeTag]
+  extends DOperation {
   val inArity = 0
   val outArity = 1
 
@@ -85,9 +84,8 @@ abstract class DOperation0To1[
 
 abstract class DOperation0To2[
     TO_0 <: DOperable : ru.TypeTag,
-    TO_1 <: DOperable : ru.TypeTag] (
-    parameters: DParameters)
-  extends DOperation(parameters) {
+    TO_1 <: DOperable : ru.TypeTag]
+  extends DOperation {
   val inArity = 0
   val outArity = 2
 
@@ -125,9 +123,8 @@ abstract class DOperation0To2[
 abstract class DOperation0To3[
     TO_0 <: DOperable : ru.TypeTag,
     TO_1 <: DOperable : ru.TypeTag,
-    TO_2 <: DOperable : ru.TypeTag] (
-    parameters: DParameters)
-  extends DOperation(parameters) {
+    TO_2 <: DOperable : ru.TypeTag]
+  extends DOperation {
   val inArity = 0
   val outArity = 3
 
@@ -165,9 +162,8 @@ abstract class DOperation0To3[
 }
 
 abstract class DOperation1To0[
-    TI_0 <: DOperable : ru.TypeTag] (
-    parameters: DParameters)
-  extends DOperation(parameters) {
+    TI_0 <: DOperable : ru.TypeTag]
+  extends DOperation {
   val inArity = 1
   val outArity = 0
 
@@ -207,9 +203,8 @@ abstract class DOperation1To0[
 
 abstract class DOperation1To1[
     TI_0 <: DOperable : ru.TypeTag,
-    TO_0 <: DOperable : ru.TypeTag] (
-    parameters: DParameters)
-  extends DOperation(parameters) {
+    TO_0 <: DOperable : ru.TypeTag]
+  extends DOperation {
   val inArity = 1
   val outArity = 1
 
@@ -250,9 +245,8 @@ abstract class DOperation1To1[
 abstract class DOperation1To2[
     TI_0 <: DOperable : ru.TypeTag,
     TO_0 <: DOperable : ru.TypeTag,
-    TO_1 <: DOperable : ru.TypeTag] (
-    parameters: DParameters)
-  extends DOperation(parameters) {
+    TO_1 <: DOperable : ru.TypeTag]
+  extends DOperation {
   val inArity = 1
   val outArity = 2
 
@@ -296,9 +290,8 @@ abstract class DOperation1To3[
     TI_0 <: DOperable : ru.TypeTag,
     TO_0 <: DOperable : ru.TypeTag,
     TO_1 <: DOperable : ru.TypeTag,
-    TO_2 <: DOperable : ru.TypeTag] (
-    parameters: DParameters)
-  extends DOperation(parameters) {
+    TO_2 <: DOperable : ru.TypeTag]
+  extends DOperation {
   val inArity = 1
   val outArity = 3
 
@@ -342,9 +335,8 @@ abstract class DOperation1To3[
 
 abstract class DOperation2To0[
     TI_0 <: DOperable : ru.TypeTag,
-    TI_1 <: DOperable : ru.TypeTag] (
-    parameters: DParameters)
-  extends DOperation(parameters) {
+    TI_1 <: DOperable : ru.TypeTag]
+  extends DOperation {
   val inArity = 2
   val outArity = 0
 
@@ -390,9 +382,8 @@ abstract class DOperation2To0[
 abstract class DOperation2To1[
     TI_0 <: DOperable : ru.TypeTag,
     TI_1 <: DOperable : ru.TypeTag,
-    TO_0 <: DOperable : ru.TypeTag] (
-    parameters: DParameters)
-  extends DOperation(parameters) {
+    TO_0 <: DOperable : ru.TypeTag]
+  extends DOperation {
   val inArity = 2
   val outArity = 1
 
@@ -439,9 +430,8 @@ abstract class DOperation2To2[
     TI_0 <: DOperable : ru.TypeTag,
     TI_1 <: DOperable : ru.TypeTag,
     TO_0 <: DOperable : ru.TypeTag,
-    TO_1 <: DOperable : ru.TypeTag] (
-    parameters: DParameters)
-  extends DOperation(parameters) {
+    TO_1 <: DOperable : ru.TypeTag]
+  extends DOperation {
   val inArity = 2
   val outArity = 2
 
@@ -491,9 +481,8 @@ abstract class DOperation2To3[
     TI_1 <: DOperable : ru.TypeTag,
     TO_0 <: DOperable : ru.TypeTag,
     TO_1 <: DOperable : ru.TypeTag,
-    TO_2 <: DOperable : ru.TypeTag] (
-    parameters: DParameters)
-  extends DOperation(parameters) {
+    TO_2 <: DOperable : ru.TypeTag]
+  extends DOperation {
   val inArity = 2
   val outArity = 3
 
@@ -543,9 +532,8 @@ abstract class DOperation2To3[
 abstract class DOperation3To0[
     TI_0 <: DOperable : ru.TypeTag,
     TI_1 <: DOperable : ru.TypeTag,
-    TI_2 <: DOperable : ru.TypeTag] (
-    parameters: DParameters)
-  extends DOperation(parameters) {
+    TI_2 <: DOperable : ru.TypeTag]
+  extends DOperation {
   val inArity = 3
   val outArity = 0
 
@@ -597,9 +585,8 @@ abstract class DOperation3To1[
     TI_0 <: DOperable : ru.TypeTag,
     TI_1 <: DOperable : ru.TypeTag,
     TI_2 <: DOperable : ru.TypeTag,
-    TO_0 <: DOperable : ru.TypeTag] (
-    parameters: DParameters)
-  extends DOperation(parameters) {
+    TO_0 <: DOperable : ru.TypeTag]
+  extends DOperation {
   val inArity = 3
   val outArity = 1
 
@@ -652,9 +639,8 @@ abstract class DOperation3To2[
     TI_1 <: DOperable : ru.TypeTag,
     TI_2 <: DOperable : ru.TypeTag,
     TO_0 <: DOperable : ru.TypeTag,
-    TO_1 <: DOperable : ru.TypeTag] (
-    parameters: DParameters)
-  extends DOperation(parameters) {
+    TO_1 <: DOperable : ru.TypeTag]
+  extends DOperation {
   val inArity = 3
   val outArity = 2
 
@@ -710,9 +696,8 @@ abstract class DOperation3To3[
     TI_2 <: DOperable : ru.TypeTag,
     TO_0 <: DOperable : ru.TypeTag,
     TO_1 <: DOperable : ru.TypeTag,
-    TO_2 <: DOperable : ru.TypeTag] (
-    parameters: DParameters)
-  extends DOperation(parameters) {
+    TO_2 <: DOperable : ru.TypeTag]
+  extends DOperation {
   val inArity = 3
   val outArity = 3
 
