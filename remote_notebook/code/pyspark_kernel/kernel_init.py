@@ -33,15 +33,15 @@ sc = SparkContext(
     gateway=gateway,
     jsc=java_spark_context)
 
-sqlContext = SQLContext(sc)
 
 try:
   from pyspark.sql import SparkSession
   java_spark_sql_session = gateway.entry_point.getNewSparkSQLSession()
   java_spark_session = java_spark_sql_session.getSparkSession()
   spark = SparkSession(sc, java_spark_session)
+  sqlContext = SQLContext(sc, spark)
 except ImportError:
-  pass
+  sqlContext = SQLContext(sc)
 
 def dataframe():
     # workflow_id, node_id and port_number are set in the kernel
