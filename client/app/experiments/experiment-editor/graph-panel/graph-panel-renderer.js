@@ -90,15 +90,15 @@ function DrawingService() {
     var outputPrefix = 'output';
     var inputPrefix = 'input';
 
-    for (var i = 0; i < edges.length; i++) {
-      var edge = edges[i],
+    for (let id in edges) {
+      var edge = edges[id],
           connection = jsPlumb.connect({
             uuids: [
               outputPrefix + '-' + edge.startPortId + '-' + edge.startNodeId,
               inputPrefix + '-' + edge.endPortId + '-' + edge.endNodeId
             ]
           });
-      edge.setId(connection.id);
+      connection.setParameter('edgeId', edge.id);
     }
     that.bindConnectionEvents();
   };
@@ -163,17 +163,17 @@ function DrawingService() {
           }
         },
         edge = internal.experiment.createConnection(data);
-      edge.setId(info.connection.id);
+      info.connection.setParameter('edgeId', edge.id);
     });
 
     jsPlumb.bind('connectionDetached', (info) => {
       if (info.targetEndpoint.isTarget && info.sourceEndpoint.isSource) {
-        internal.experiment.removeEdge(info.connection.id);
+        internal.experiment.removeEdge(info.connection.getParameter('edgeId'));
       }
     });
 
     jsPlumb.bind('connectionMoved', function(info) {
-       internal.experiment.removeEdge(info.connection.id);
+       internal.experiment.removeEdge(info.connection.getParameter('edgeId'));
     });
   };
 

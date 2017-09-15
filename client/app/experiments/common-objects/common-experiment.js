@@ -11,7 +11,7 @@ function Experiment() {
   var that = this;
   var internal = {};
   internal.nodes = {};
-  internal.edges = [];
+  internal.edges = {};
   internal.parameters = {};
 
   that.getNodes = function getNodes() {
@@ -47,12 +47,9 @@ function Experiment() {
    * @return {boolean}
    */
   that.removeEdge = function removeEdge(edgeId) {
-    for (let i = internal.edges.length - 1; i >= 0; i--) {
-      let edge = internal.edges[i];
-      if (edge.getId() === edgeId) {
-        internal.edges.splice(i, 1);
-        return true;
-      }
+    if (edgeId in internal.edges) {
+      delete internal.edges[edgeId];
+      return true;
     }
     return false;
   };
@@ -131,7 +128,7 @@ function Experiment() {
       endNodeId: data.to.node,
       endPortId: data.to.portIndex
     });
-    internal.edges.push(edge);
+    internal.edges[edge.id] = edge;
 
     return edge;
   };
@@ -167,8 +164,8 @@ function Experiment() {
       data.graph.nodes.push(internal.nodes[id].serialize());
     }
 
-    for (let i = 0, k = internal.edges.length; i < k; i++) {
-      data.graph.edges.push(internal.edges[i].serialize());
+    for (let id in internal.edges) {
+      data.graph.edges.push(internal.edges[id].serialize());
     }
 
     return data;

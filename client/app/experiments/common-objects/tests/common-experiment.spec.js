@@ -5,7 +5,8 @@
 
 
 describe('experiment', () => {
-  var Experiment = require('../common-experiment.js');
+  var Experiment = require('../common-experiment.js'),
+      Edge = require('../common-edge.js');
 
   var initId = '111-111-111',
       initName = 'Sample name',
@@ -104,6 +105,33 @@ describe('experiment', () => {
    expect(Experiment).toEqual(jasmine.any(Function));
   });
 
+  it('can create connections', () => {
+    let experiment = new Experiment();
+    expect(Object.keys(experiment.getEdges()).length).toBe(0);
+
+    experiment.createConnections(initConnections);
+    expect(Object.keys(experiment.getEdges()).length).toBe(1);
+  });
+
+  it('can create connection', () => {
+    let experiment = new Experiment();
+    expect(Object.keys(experiment.getEdges()).length).toBe(0);
+
+    let edge = experiment.createConnection(initConnections[0]);
+    expect(Object.keys(experiment.getEdges()).length).toBe(1);
+    expect(edge instanceof Edge).toBe(true);
+  });
+
+  it('can remove connection', () => {
+    let experiment = new Experiment();
+    expect(Object.keys(experiment.getEdges()).length).toBe(0);
+
+    let edge = experiment.createConnection(initConnections[0]);
+    expect(Object.keys(experiment.getEdges()).length).toBe(1);
+
+    experiment.removeEdge(edge.id);
+    expect(Object.keys(experiment.getEdges()).length).toBe(0);
+  });
 
   it('should have serialize method', () => {
    let experiment = new Experiment();

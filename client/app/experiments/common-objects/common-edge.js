@@ -8,26 +8,16 @@ function Edge(options) {
   this.endNodeId = options.endNodeId;
   this.startPortId = options.startPortId;
   this.endPortId = options.endPortId;
+
+  this.generateId();
 }
 
 /**
- * Sets edge id.
- *
- * @param id {string}
+ * Generates node id.
  */
-Edge.prototype.setId = function setId(id) {
-  this.id = id;
+Edge.prototype.generateId = function generateId() {
+  this.id = this.startNodeId + '#' + this.startPortId + '_' + this.endNodeId + '#' + this.endPortId;
 };
-
-/**
- * Returns edge id.
- *
- * @return {string}
- */
-Edge.prototype.getId = function getId() {
-  return this.id;
-};
-
 
 /**
  * Serializes edge data to transfer format.

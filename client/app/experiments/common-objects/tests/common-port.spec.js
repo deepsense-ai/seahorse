@@ -24,12 +24,9 @@ describe('port', () => {
     expect(Port).toEqual(jasmine.any(Function));
   });
 
-  it('should generate method', () => {
-    let port = new Port(initData);
-    expect(port.generateId).toEqual(jasmine.any(Function));
-
-    let id = initType + '-' + initPortIndex + '-' + initNodeId;
+  it('should have generated id', () => {
+    let port = new Port(initData),
+        id = initType + '-' + initPortIndex + '-' + initNodeId;
     expect(port.id).toEqual(id);
-    expect(port.generateId(initData)).toEqual(id);
   });
 });
