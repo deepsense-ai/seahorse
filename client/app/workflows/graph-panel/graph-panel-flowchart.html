@@ -27,21 +27,17 @@
                   node="node">
       </graph-node>
     </div>
-
     <context-menu-wrapper></context-menu-wrapper>
   </div>
-
   <div ng-controller="PortStatusesTooltipController as portStatusesTooltipCtrl">
     <sticky-window
       ng-if="portStatusesTooltipCtrl.tooltipIsVisible"
       x="::portStatusesTooltipCtrl.getPositionX()"
-      y="::portStatusesTooltipCtrl.getPositionY()"
-    >
+      y="::portStatusesTooltipCtrl.getPositionY()">
       <span ng-repeat="type in ::portStatusesTooltipCtrl.getTypes()">
         <span>{{ ::type }}</span><span ng-if="::!$last">,</span>
       </span>
     </sticky-window>
   </div>
-
   <deepsense-interaction-toolbar zoom-id="flowchart-box"></deepsense-interaction-toolbar>
 </div>
