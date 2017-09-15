@@ -38,8 +38,7 @@ class TrainedRidgeRegressionSpec extends ScorableSpec[TrainedRidgeRegression]{
       val featureColumns = Seq("abc", "def", "ghi")
       val targetColumn = "xyz"
 
-      val regression = TrainedRidgeRegression(
-        Some(model), Some(featureColumns), Some(targetColumn), None)
+      val regression = TrainedRidgeRegression(model, featureColumns, targetColumn, null)
 
       regression.report(executionContext) shouldBe Report(ReportContent(
         "Report for TrainedRidgeRegression",

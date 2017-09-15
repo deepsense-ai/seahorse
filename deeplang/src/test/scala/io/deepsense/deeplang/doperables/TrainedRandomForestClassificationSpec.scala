@@ -14,15 +14,10 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperations.exceptions
+package io.deepsense.deeplang.doperables
 
-import io.deepsense.deeplang.parameters.ColumnType.ColumnType
+class TrainedRandomForestClassificationSpec extends ScorableSpec[TrainedRandomForestClassification]{
+  def scorableName: String = "TrainedRandomForestClassification"
 
-
-case class WrongColumnTypeException(
-    columnName: String,
-    actualType: ColumnType,
-    expectedTypes: ColumnType*)
-  extends DOperationExecutionException(
-    s"Column '$columnName' has type $actualType instead of expected ${expectedTypes.mkString}",
-    None)
+  def scorable: Scorable = new TrainedRandomForestClassification()
+}

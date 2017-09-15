@@ -23,20 +23,21 @@ import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.mllib.regression.{GeneralizedLinearModel, RidgeRegressionModel}
 import org.apache.spark.rdd.RDD
 
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.{DOperable, ExecutionContext, Model}
 import io.deepsense.reportlib.model.{ReportContent, Table}
 
 case class TrainedRidgeRegression(
-    model: Option[RidgeRegressionModel],
-    featureColumns: Option[Seq[String]],
-    targetColumn: Option[String],
-    scaler: Option[StandardScalerModel])
+    model: RidgeRegressionModel,
+    featureColumns: Seq[String],
+    targetColumn: String,
+    scaler: StandardScalerModel)
   extends RidgeRegression
   with Scorable
-  with RegressionScoring
+  with VectorScoring
   with DOperableSaver {
 
-  def this() = this(None, None, None, None)
+  def this() = this(null, null, null, null)
 
   def toInferrable: DOperable = new TrainedRidgeRegression()
 
@@ -44,15 +45,18 @@ case class TrainedRidgeRegression(
 
   override def url: Option[String] = physicalPath
 
-  def preparedModel: GeneralizedLinearModel = model.get
+  def preparedModel: GeneralizedLinearModel = model
 
-  override def transformFeatures(v: RDD[Vector]): RDD[Vector] = scaler.get.transform(v)
+  override def transformFeatures(v: RDD[Vector]): RDD[Vector] = scaler.transform(v)
+
+  override def vectors(dataFrame: DataFrame): RDD[Vector] =
+    dataFrame.toSparkVectorRDD(featureColumns)
 
   override def predict(vectors: RDD[Vector]): RDD[Double] = preparedModel.predict(vectors)
 
   override def report(executionContext: ExecutionContext): Report = {
-    val featureColumnsColumn = "" +: featureColumns.get.toList
-    val weights: Array[Double] = model.get.intercept +: model.get.weights.toArray
+    val featureColumnsColumn = "" +: featureColumns.toList
+    val weights: Array[Double] = model.intercept +: model.weights.toArray
     val rows = featureColumnsColumn.zip(weights).map {
       case (name, weight) => List(Some(name), Some(weight.toString))
     }
@@ -68,7 +72,7 @@ case class TrainedRidgeRegression(
       description = "",
       columnNames = None,
       rowNames = None,
-      values = List(List(targetColumn)))
+      values = List(List(Some(targetColumn))))
 
     Report(ReportContent(
       "Report for TrainedRidgeRegression",
@@ -77,12 +81,12 @@ case class TrainedRidgeRegression(
 
   override def save(context: ExecutionContext)(path: String): Unit = {
     val params = TrainedRidgeRegressionDescriptor(
-      model.get.weights,
-      model.get.intercept,
-      featureColumns.get,
-      targetColumn.get,
-      scaler.get.std,
-      scaler.get.mean)
+      model.weights,
+      model.intercept,
+      featureColumns,
+      targetColumn,
+      scaler.std,
+      scaler.mean)
     context.fsClient.saveObjectToFile(path, params)
     this.physicalPath = Some(path)
   }
@@ -93,10 +97,10 @@ object TrainedRidgeRegression {
     val params: TrainedRidgeRegressionDescriptor =
       context.fsClient.readFileAsObject[TrainedRidgeRegressionDescriptor](path)
     TrainedRidgeRegression(
-      Some(new RidgeRegressionModel(params.modelWeights, params.modelIntercept)),
-      Some(params.featureColumns),
-      Some(params.targetColumn),
-      Some(new StandardScalerModel(params.scaleStd, params.scalerMean, true, true))
+      new RidgeRegressionModel(params.modelWeights, params.modelIntercept),
+      params.featureColumns,
+      params.targetColumn,
+      new StandardScalerModel(params.scaleStd, params.scalerMean, true, true)
     )
   }
 }

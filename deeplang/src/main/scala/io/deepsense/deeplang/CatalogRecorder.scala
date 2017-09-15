@@ -39,6 +39,8 @@ object CatalogRecorder {
     catalog.registerDOperable[TrainedLogisticRegression]()
     catalog.registerDOperable[UntrainedRandomForestRegression]()
     catalog.registerDOperable[TrainedRandomForestRegression]()
+    catalog.registerDOperable[UntrainedRandomForestClassification]()
+    catalog.registerDOperable[TrainedRandomForestClassification]()
     catalog.registerDOperable[Report]()
     catalog.registerDOperable[Normalizer]()
   }
@@ -122,6 +124,11 @@ object CatalogRecorder {
 
     catalog.registerDOperation[CreateRandomForestRegression](
       DOperationCategories.ML.Regression,
+      "Creates an untrained random forest regression model"
+    )
+
+    catalog.registerDOperation[CreateRandomForestClassification](
+      DOperationCategories.ML.Classification,
       "Creates an untrained random forest regression model"
     )
 

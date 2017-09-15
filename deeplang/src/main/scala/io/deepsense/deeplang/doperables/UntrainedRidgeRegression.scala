@@ -53,7 +53,7 @@ case class UntrainedRidgeRegression(
 
       val trainedModel = createModel().run(scaledLabeledPoints)
       val result = TrainedRidgeRegression(
-        Some(trainedModel), Some(featureColumns), Some(targetColumn), Some(scaler))
+        trainedModel, featureColumns, targetColumn, scaler)
       scaledLabeledPoints.unpersist()
       saveScorable(context, result)
       result

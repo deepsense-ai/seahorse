@@ -34,10 +34,7 @@ class TrainedLogisticRegressionIntegSpec
     (model, features, target) => {
       val castedModel = model.asInstanceOf[LogisticRegressionModel]
       when(castedModel.clearThreshold()).thenReturn(castedModel)
-      TrainedLogisticRegression(
-        Some(castedModel),
-        Some(features),
-        Some(target))
+      TrainedLogisticRegression(castedModel, features, target)
     }
 
   override val modelType: Class[LogisticRegressionModel] = classOf[LogisticRegressionModel]
@@ -48,7 +45,7 @@ class TrainedLogisticRegressionIntegSpec
       when(model.clearThreshold()).thenReturn(model)
 
       val logisticRegression =
-        TrainedLogisticRegression(Some(model), Some(Seq("f1", "f2")), Some("t"))
+        TrainedLogisticRegression(model, Seq("f1", "f2"), "t")
       val df = createDataFrame(
         Seq(Row(1.0, 2.0, 3.0)),
         StructType(Seq(

@@ -68,7 +68,7 @@ case class DecomposeDatetime() extends DOperation1To1[DataFrame, DataFrame] {
 
     DataFrame.assertExpectedColumnType(
       dataFrame.sparkDataFrame.schema.fields.filter(_.name == decomposedColumnName).head,
-      expectedType = ColumnType.timestamp)
+      ColumnType.timestamp)
 
     val selectedParts = timestampPartsParam.selections.get.map(_.label).toSet
 

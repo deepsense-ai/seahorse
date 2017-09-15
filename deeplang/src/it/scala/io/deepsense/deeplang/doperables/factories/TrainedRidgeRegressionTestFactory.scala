@@ -25,10 +25,10 @@ import io.deepsense.deeplang.doperables.TrainedRidgeRegression
 trait TrainedRidgeRegressionTestFactory {
 
   val testTrainedRidgeRegression = TrainedRidgeRegression(
-    Some(new RidgeRegressionModel(Vectors.dense(1.0, 2.3, 3.5, 99.8), 101.4)),
-    Some(Seq("column1", "column2", "column3")),
-    Some("result"),
-    Some(new StandardScalerModel(Vectors.dense(1.2, 3.4), Vectors.dense(4.5, 6.7), true, true)))
+    new RidgeRegressionModel(Vectors.dense(1.0, 2.3, 3.5, 99.8), 101.4),
+    Seq("column1", "column2", "column3"),
+    "result",
+    new StandardScalerModel(Vectors.dense(1.2, 3.4), Vectors.dense(4.5, 6.7), true, true))
 }
 
 object TrainedRidgeRegressionTestFactory extends TrainedRidgeRegressionTestFactory

@@ -26,15 +26,17 @@ import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.parameters.ColumnType
 import io.deepsense.deeplang.{DKnowledge, DMethod1To1, ExecutionContext}
 
-trait RegressionScoring {
+trait VectorScoring {
 
   this: Scorable =>
 
+  val featureColumns: Seq[String]
+
+  val targetColumn: String
+
+  def vectors(dataFrame: DataFrame): RDD[Vector]
+
   def transformFeatures(v: RDD[Vector]): RDD[Vector]
-
-  val featureColumns: Option[Seq[String]]
-
-  val targetColumn: Option[String]
 
   def predict(vectors: RDD[Vector]): RDD[Double]
 
@@ -44,8 +46,7 @@ trait RegressionScoring {
         context: ExecutionContext)(
         predictionColumnName: String)(
         dataFrame: DataFrame): DataFrame = {
-      val vectors: RDD[Vector] = dataFrame.toSparkVectorRDD(featureColumns.get)
-      val transformedVectors = transformFeatures(vectors)
+      val transformedVectors = transformFeatures(vectors(dataFrame))
       transformedVectors.cache()
       val predictionsRDD: RDD[Double] = predict(transformedVectors)
 

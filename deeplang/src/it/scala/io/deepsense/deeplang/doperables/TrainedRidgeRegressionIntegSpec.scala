@@ -38,10 +38,10 @@ class TrainedRidgeRegressionIntegSpec extends TrainedRegressionIntegSpec[RidgeRe
   override val inputVectorsTransformer: (Seq[SparkVector]) => Seq[SparkVector] = a => scaledVectors
   override val regressionConstructor: (GeneralizedLinearModel, Seq[String], String) => Scorable =
     (model, featureColumns, targetColumn) => TrainedRidgeRegression(
-      Some(model.asInstanceOf[RidgeRegressionModel]),
-      Some(featureColumns),
-      Some(targetColumn),
-      Some(createScalerMock()))
+      model.asInstanceOf[RidgeRegressionModel],
+      featureColumns,
+      targetColumn,
+      createScalerMock())
 
   private def createScalerMock(): StandardScalerModel = {
     val mockScaler = mock[StandardScalerModel]

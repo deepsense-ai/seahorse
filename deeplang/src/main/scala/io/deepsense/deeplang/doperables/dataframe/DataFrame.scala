@@ -74,9 +74,24 @@ case class DataFrame private[dataframe] (
   def toSparkVectorRDD(columns: Seq[String]): RDD[SparkVector] = {
     DataFrameColumnsGetter.assertColumnNamesValid(sparkDataFrame.schema, columns)
     val sparkDataFrameWithSelectedColumns = sparkDataFrame.select(columns.head, columns.tail: _*)
-    DataFrame.assertExpectedColumnType(sparkDataFrameWithSelectedColumns.schema, ColumnType.numeric)
+    DataFrame.assertExpectedColumnType(
+      sparkDataFrameWithSelectedColumns.schema, ColumnType.numeric)
     sparkDataFrameWithSelectedColumns.map(row =>
       Vectors.dense(row.toSeq.asInstanceOf[Seq[Double]].toArray))
+  }
+
+  /**
+   * Converts DataFrame to RDD of spark's vectors using selected columns.
+   * Throws [[ColumnsDoNotExistException]] if non-existing column names are selected.
+   * Throws [[WrongColumnTypeException]] if not numeric or categorical columns names are selected.
+   * @param columns List of columns' names to use as vector fields.
+   */
+  def toSparkVectorRDDWithCategoricals(columns: Seq[String]): RDD[SparkVector] = {
+    DataFrameColumnsGetter.assertColumnNamesValid(sparkDataFrame.schema, columns)
+    val sparkDataFrameWithSelectedColumns = sparkDataFrame.select(columns.head, columns.tail: _*)
+    DataFrame.assertExpectedColumnType(
+      sparkDataFrameWithSelectedColumns.schema, ColumnType.numeric, ColumnType.categorical)
+    sparkDataFrameWithSelectedColumns.map(row => Vectors.dense(rowToDoubles(row).toArray))
   }
 
   /**
@@ -89,9 +104,28 @@ case class DataFrame private[dataframe] (
       columns: Seq[String], labelColumn: String): RDD[LabeledPoint] = {
     DataFrameColumnsGetter.assertColumnNamesValid(sparkDataFrame.schema, columns)
     val sparkDataFrameWithSelectedColumns = sparkDataFrame.select(labelColumn, columns: _*)
-    DataFrame.assertExpectedColumnType(sparkDataFrameWithSelectedColumns.schema, ColumnType.numeric)
+    DataFrame.assertExpectedColumnType(
+      sparkDataFrameWithSelectedColumns.schema, ColumnType.numeric)
     sparkDataFrameWithSelectedColumns.map(row => {
       val doubles = row.toSeq.asInstanceOf[Seq[Double]]
+      LabeledPoint(doubles.head, Vectors.dense(doubles.tail.toArray))
+    })
+  }
+
+  /**
+   * Converts DataFrame to RDD of spark's LabeledPoints using selected columns.
+   * Throws [[WrongColumnTypeException]] if not numeric or categorical columns names are selected.
+   * @param columns List of columns' names to use as features.
+   * @param labelColumn Column name to use as label.
+   */
+  def toSparkLabeledPointRDDWithCategoricals(
+      columns: Seq[String], labelColumn: String): RDD[LabeledPoint] = {
+    DataFrameColumnsGetter.assertColumnNamesValid(sparkDataFrame.schema, columns)
+    val sparkDataFrameWithSelectedColumns = sparkDataFrame.select(labelColumn, columns: _*)
+    DataFrame.assertExpectedColumnType(
+      sparkDataFrameWithSelectedColumns.schema, ColumnType.numeric, ColumnType.categorical)
+    sparkDataFrameWithSelectedColumns.map(row => {
+      val doubles = rowToDoubles(row)
       LabeledPoint(doubles.head, Vectors.dense(doubles.tail.toArray))
     })
   }
@@ -99,27 +133,35 @@ case class DataFrame private[dataframe] (
   override def report(executionContext: ExecutionContext): Report = {
     report(executionContext, sparkDataFrame)
   }
+
+  private def rowToDoubles(row: Row): Seq[Double] = {
+    row.toSeq.map {
+      case d: Double => d
+      case i: Int => i.toDouble
+      case _ => ???
+    }
+  }
 }
 
 object DataFrame {
 
   /**
    * Throws [[WrongColumnTypeException]]
-   * if some columns of schema have different type than expected.
+   * if some columns of schema have type different than one of expected.
    */
-  def assertExpectedColumnType(schema: StructType, expectedType: ColumnType): Unit = {
+  def assertExpectedColumnType(schema: StructType, expectedTypes: ColumnType*): Unit = {
     for (field <- schema.fields) {
-      assertExpectedColumnType(field, expectedType)
+      assertExpectedColumnType(field, expectedTypes: _*)
     }
   }
 
   /**
-   * Throws [[WrongColumnTypeException]] if column has different type than expected.
+   * Throws [[WrongColumnTypeException]] if column has type different than one of expected.
    */
-  def assertExpectedColumnType(column: StructField, expectedType: ColumnType): Unit = {
+  def assertExpectedColumnType(column: StructField, expectedTypes: ColumnType*): Unit = {
     val actualType = SparkConversions.sparkColumnTypeToColumnType(column.dataType)
-    if (actualType != expectedType) {
-      throw WrongColumnTypeException(column.name, actualType, expectedType)
+    if (!expectedTypes.contains(actualType)) {
+      throw WrongColumnTypeException(column.name, actualType, expectedTypes: _*)
     }
   }
 

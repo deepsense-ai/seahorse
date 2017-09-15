@@ -44,9 +44,9 @@ case class UntrainedLogisticRegression(
       labeledPoints.cache()
       val trainedModel: LogisticRegressionModel = createModel().run(labeledPoints)
       val result = TrainedLogisticRegression(
-        Some(trainedModel),
-        Some(featureColumns),
-        Some(labelColumn))
+        trainedModel,
+        featureColumns,
+        labelColumn)
       saveScorable(context, result)
       result
     }

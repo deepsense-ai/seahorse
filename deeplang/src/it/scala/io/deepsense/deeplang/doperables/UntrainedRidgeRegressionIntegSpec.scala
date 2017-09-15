@@ -44,8 +44,8 @@ class UntrainedRidgeRegressionIntegSpec
     mockTrainedModel: RidgeRegressionModel,
     result: Scorable): Registration = {
     val castedResult = result.asInstanceOf[TrainedRidgeRegression]
-    castedResult.model shouldBe Some(mockTrainedModel)
-    castedResult.featureColumns shouldBe Some(Seq("column1", "column0"))
-    castedResult.targetColumn shouldBe Some("column3")
+    castedResult.model shouldBe mockTrainedModel
+    castedResult.featureColumns shouldBe Seq("column1", "column0")
+    castedResult.targetColumn shouldBe "column3"
   }
 }

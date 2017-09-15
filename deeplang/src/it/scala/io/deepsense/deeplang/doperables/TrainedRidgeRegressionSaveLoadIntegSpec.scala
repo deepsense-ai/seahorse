@@ -39,14 +39,14 @@ class TrainedRidgeRegressionSaveLoadIntegSpec
 
       val retrieved = TrainedRidgeRegression.loadFromHdfs(executionContext)(testFilePath)
 
-      retrieved.model.get.intercept shouldBe testTrainedRidgeRegression.model.get.intercept
-      retrieved.model.get.weights shouldBe testTrainedRidgeRegression.model.get.weights
+      retrieved.model.intercept shouldBe testTrainedRidgeRegression.model.intercept
+      retrieved.model.weights shouldBe testTrainedRidgeRegression.model.weights
       retrieved.featureColumns shouldBe testTrainedRidgeRegression.featureColumns
       retrieved.targetColumn  shouldBe testTrainedRidgeRegression.targetColumn
-      retrieved.scaler.get.std shouldBe testTrainedRidgeRegression.scaler.get.std
-      retrieved.scaler.get.mean shouldBe testTrainedRidgeRegression.scaler.get.mean
-      retrieved.scaler.get.withStd shouldBe true
-      retrieved.scaler.get.withMean shouldBe true
+      retrieved.scaler.std shouldBe testTrainedRidgeRegression.scaler.std
+      retrieved.scaler.mean shouldBe testTrainedRidgeRegression.scaler.mean
+      retrieved.scaler.withStd shouldBe true
+      retrieved.scaler.withMean shouldBe true
     }
   }
 }

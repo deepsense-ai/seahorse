@@ -20,36 +20,36 @@ import scala.reflect.runtime.{universe => ru}
 
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang._
-import io.deepsense.deeplang.doperables.UntrainedRandomForestRegression
+import io.deepsense.deeplang.doperables.UntrainedRandomForestClassification
 
-case class CreateRandomForestRegression()
-    extends { override val impurityOptions = Seq("variance") }
-    with DOperation0To1[UntrainedRandomForestRegression]
+case class CreateRandomForestClassification()
+    extends { override val impurityOptions = Seq("gini", "entropy") }
+    with DOperation0To1[UntrainedRandomForestClassification]
     with RandomForestParams {
 
-  override val name = "Create Random Forest Regression"
+  override val name = "Create Random Forest Classification"
 
-  override val id: Id = "0496cdad-32b4-4231-aec4-4e7e312c9e4e"
+  override val id: Id = "9498dfdc-368f-469b-b7de-c83933251ab3"
 
   override protected def _execute(
-      context: ExecutionContext)(): UntrainedRandomForestRegression = {
-    UntrainedRandomForestRegression(modelParameters)
+      context: ExecutionContext)(): UntrainedRandomForestClassification = {
+    UntrainedRandomForestClassification(modelParameters)
   }
 
   @transient
-  override lazy val tTagTO_0: ru.TypeTag[UntrainedRandomForestRegression] =
-    ru.typeTag[UntrainedRandomForestRegression]
+  override lazy val tTagTO_0: ru.TypeTag[UntrainedRandomForestClassification] =
+    ru.typeTag[UntrainedRandomForestClassification]
 }
 
-object CreateRandomForestRegression {
+object CreateRandomForestClassification {
 
   def apply(
       numTrees: Int,
       featureSubsetStrategy: String,
       impurity: String,
       maxDepth: Int,
-      maxBins: Int): CreateRandomForestRegression = {
-    val createRandomForest = CreateRandomForestRegression()
+      maxBins: Int): CreateRandomForestClassification = {
+    val createRandomForest = CreateRandomForestClassification()
     createRandomForest.setParameters(numTrees, featureSubsetStrategy, impurity, maxDepth, maxBins)
     createRandomForest
   }

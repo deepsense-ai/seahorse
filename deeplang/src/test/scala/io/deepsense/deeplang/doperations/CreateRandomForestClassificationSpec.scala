@@ -16,21 +16,22 @@
 
 package io.deepsense.deeplang.doperations
 
-import io.deepsense.deeplang.doperables.{RandomForestParameters, UntrainedRandomForestRegression}
+import io.deepsense.deeplang.doperables.{RandomForestParameters, UntrainedRandomForestClassification}
 import io.deepsense.deeplang.{ExecutionContext, UnitSpec}
 
-class CreateRandomForestRegressionSpec extends UnitSpec {
-  "CreateRandomForestRegression DOperation" should {
+class CreateRandomForestClassificationSpec extends UnitSpec {
+  "CreateRandomForestClassification DOperation" should {
     "create UntrainedRandomForestModel" in {
-      val createRandomForestRegression = CreateRandomForestRegression(1, "auto", "variance", 4, 100)
+      val createRandomForestClassification = CreateRandomForestClassification(
+        1, "auto", "gini", 4, 100)
       val context = mock[ExecutionContext]
-      val resultVector = createRandomForestRegression.execute(context)(Vector.empty)
-      val result = resultVector.head.asInstanceOf[UntrainedRandomForestRegression]
+      val resultVector = createRandomForestClassification.execute(context)(Vector.empty)
+      val result = resultVector.head.asInstanceOf[UntrainedRandomForestClassification]
       result.modelParameters shouldBe a [RandomForestParameters]
 
       result.modelParameters.numTrees shouldBe 1
       result.modelParameters.featureSubsetStrategy shouldBe "auto"
-      result.modelParameters.impurity shouldBe "variance"
+      result.modelParameters.impurity shouldBe "gini"
       result.modelParameters.maxDepth shouldBe 4
       result.modelParameters.maxBins shouldBe 100
     }

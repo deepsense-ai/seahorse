@@ -23,34 +23,38 @@ import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.mllib.regression.GeneralizedLinearModel
 import org.apache.spark.rdd.RDD
 
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.{DOperable, ExecutionContext, Model}
 import io.deepsense.reportlib.model.{ReportContent, Table}
 
 case class TrainedLogisticRegression(
-    model: Option[LogisticRegressionModel],
-    featureColumns: Option[Seq[String]],
-    targetColumn: Option[String])
+    model: LogisticRegressionModel,
+    featureColumns: Seq[String],
+    targetColumn: String)
   extends LogisticRegression
   with Scorable
-  with RegressionScoring {
+  with VectorScoring {
 
-  def this() = this(None, None, None)
+  def this() = this(null, null, null)
 
   override def toInferrable: DOperable = new TrainedLogisticRegression()
 
   private var physicalPath: Option[String] = None
 
-  def preparedModel: GeneralizedLinearModel = model.get.clearThreshold()
+  def preparedModel: GeneralizedLinearModel = model.clearThreshold()
 
   override def transformFeatures(v: RDD[Vector]): RDD[Vector] = v
+
+  override def vectors(dataFrame: DataFrame): RDD[Vector] =
+    dataFrame.toSparkVectorRDD(featureColumns)
 
   override def predict(vectors: RDD[Vector]): RDD[Double] = preparedModel.predict(vectors)
 
   override def url: Option[String] = physicalPath
 
   override def report(executionContext: ExecutionContext): Report = {
-    val featureColumnsColumn = featureColumns.get.toList.map(Some.apply)
-    val targetColumnColumn = List(targetColumn)
+    val featureColumnsColumn = featureColumns.toList.map(Some.apply)
+    val targetColumnColumn = List(Some(targetColumn))
     val rows = featureColumnsColumn.zipAll(targetColumnColumn, Some(""), Some(""))
       .map{ case (a, b) => List(a, b) }
 
@@ -62,10 +66,10 @@ case class TrainedLogisticRegression(
 
   override def save(context: ExecutionContext)(path: String): Unit = {
     val params = TrainedLogisticRegressionDescriptor(
-      model.get.weights,
-      model.get.intercept,
-      featureColumns.get,
-      targetColumn.get)
+      model.weights,
+      model.intercept,
+      featureColumns,
+      targetColumn)
     context.fsClient.saveObjectToFile(path, params)
     this.physicalPath = Some(path)
   }
@@ -76,9 +80,9 @@ object TrainedLogisticRegression {
     val params: TrainedLogisticRegressionDescriptor =
       context.fsClient.readFileAsObject[TrainedLogisticRegressionDescriptor](path)
     TrainedLogisticRegression(
-      Some(new LogisticRegressionModel(params.modelWeights, params.modelIntercept)),
-      Some(params.featureColumns),
-      Some(params.targetColumn))
+      new LogisticRegressionModel(params.modelWeights, params.modelIntercept),
+      params.featureColumns,
+      params.targetColumn)
   }
 }
 
