@@ -68,7 +68,7 @@ class EMtoGESpec
       failureDescription.code shouldBe NodeFailure
       failureDescription.title shouldBe "Node Failure"
       failureDescription.message shouldBe None
-      failureDescription.details shouldBe None
+      failureDescription.details shouldBe Map()
     }
   }
 

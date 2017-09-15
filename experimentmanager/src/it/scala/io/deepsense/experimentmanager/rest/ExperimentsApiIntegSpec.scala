@@ -81,8 +81,8 @@ class ExperimentsApiIntegSpec
   }
 
   after {
-    experimentStorage.delete(experimentA.id)
-    experimentStorage.delete(experimentB.id)
+    experimentStorage.delete(tenantAId, experimentA.id)
+    experimentStorage.delete(tenantBId, experimentB.id)
   }
 
   private def tenantId(user: String): String = accessForUser(user).getToken.getTenant.get.getId

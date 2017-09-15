@@ -53,7 +53,7 @@ class ExperimentManagerImpl @Inject()(
   def get(id: Id): Future[Option[Experiment]] = {
     logger.debug("Get experiment id: {}", id)
     authorizator.withRole(roleGet) { userContext =>
-      val experiment = storage.get(id).flatMap {
+      val experiment = storage.get(userContext.tenantId, id).flatMap {
         case Some(storedExperiment) =>
           val ownedExperiment = storedExperiment.assureOwnedBy(userContext)
           runningExperiment(id).map {
@@ -70,7 +70,7 @@ class ExperimentManagerImpl @Inject()(
     logger.debug("Update experiment id: {}, experiment: {}", experimentId, experiment)
     val now = DateTimeConverter.now
     authorizator.withRole(roleUpdate) { userContext =>
-      val oldExperimentOption = storage.get(experimentId)
+      val oldExperimentOption = storage.get(userContext.tenantId, experimentId)
       oldExperimentOption.flatMap {
         case Some(oldExperiment) =>
           runningExperiment(experimentId).flatMap {
@@ -82,7 +82,7 @@ class ExperimentManagerImpl @Inject()(
               val updatedExperiment = oldExperiment
                 .assureOwnedBy(userContext)
                 .updatedWith(experiment, now)
-              storage.save(updatedExperiment)
+              storage.save(updatedExperiment).map(_ => updatedExperiment)
           }
         case None => throw new ExperimentNotFoundException(experimentId)
       }
@@ -92,8 +92,11 @@ class ExperimentManagerImpl @Inject()(
   def create(inputExperiment: InputExperiment): Future[Experiment] = {
     logger.debug("Create experiment inputExperiment: {}", inputExperiment)
     val now = DateTimeConverter.now
-    authorizator.withRole(roleCreate) { userContext =>
-      storage.save(inputExperiment.toExperimentOf(userContext, now))
+    authorizator.withRole(roleCreate) {
+      userContext => {
+        val experiment = inputExperiment.toExperimentOf(userContext, now)
+        storage.save(experiment).map(_ => experiment)
+      }
     }
   }
 
@@ -104,7 +107,7 @@ class ExperimentManagerImpl @Inject()(
     logger.debug("List experiments limit: {}, page: {}, status: {}", limit, page, status)
     authorizator.withRole(roleList) { userContext =>
       val tenantExperimentsFuture: Future[Seq[Experiment]] =
-        storage.list(userContext, limit, page, status)
+        storage.list(userContext.tenantId, limit, page, status)
       val runningExperimentsFuture: Future[Map[Id, Experiment]] = runningExperimentsActor
         .ask(ExperimentsByTenant(Some(userContext.tenantId)))
         .mapTo[ExperimentsMap]
@@ -126,10 +129,10 @@ class ExperimentManagerImpl @Inject()(
   def delete(id: Id): Future[Boolean] = {
     logger.debug("Delete experiment id: {}", id)
     authorizator.withRole(roleDelete) { userContext =>
-      storage.get(id).flatMap {
+      storage.get(userContext.tenantId, id).flatMap {
         case Some(experiment) =>
           experiment.assureOwnedBy(userContext)
-          storage.delete(id).map(_ => true)
+          storage.delete(userContext.tenantId, id).map(_ => true)
         case None => Future.successful(false)
       }
     }
@@ -140,7 +143,7 @@ class ExperimentManagerImpl @Inject()(
       targetNodes: Seq[Node.Id]): Future[Experiment] = {
     logger.debug("Launch experiment id: {}, targetNodes: {}", id, targetNodes)
     authorizator.withRole(roleLaunch) { userContext =>
-      storage.get(id).flatMap {
+      storage.get(userContext.tenantId, id).flatMap {
         case Some(experiment) =>
           val ownedExperiment = experiment.assureOwnedBy(userContext)
           val launched = runningExperimentsActor.ask(Launch(ownedExperiment))
@@ -156,7 +159,7 @@ class ExperimentManagerImpl @Inject()(
   def abort(id: Id, nodes: Seq[Node.Id]): Future[Experiment] = {
     logger.debug("Abort experiment id: {}, targetNodes: {}", id, nodes)
     authorizator.withRole(roleAbort) { userContext =>
-      val experimentFuture = storage.get(id)
+      val experimentFuture = storage.get(userContext.tenantId, id)
       experimentFuture.flatMap {
         case Some(experiment) =>
           val ownedExperiment = experiment.assureOwnedBy(userContext)

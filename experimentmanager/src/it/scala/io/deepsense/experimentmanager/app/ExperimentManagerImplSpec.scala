@@ -65,7 +65,7 @@ class ExperimentManagerImplSpec extends StandardSpec with UnitTestSupport {
   "ExperimentManager.get(...)" should {
     "return None" when {
       "the requested experiment does not exist" in {
-        when(storage.get(any()))
+        when(storage.get(any(), any()))
           .thenReturn(Future.successful(None))
 
         val eventualExperiment = experimentManager.get(Experiment.Id.randomId)
@@ -73,7 +73,7 @@ class ExperimentManagerImplSpec extends StandardSpec with UnitTestSupport {
       }
     }
     "return experiment from the storage when the experiment is not running" in {
-      when(storage.get(any()))
+      when(storage.get(any(), any()))
         .thenReturn(Future.successful(Some(storedExperiment)))
       val id = Experiment.Id.randomId
 
@@ -84,7 +84,7 @@ class ExperimentManagerImplSpec extends StandardSpec with UnitTestSupport {
     }
     "return running experiment" in {
       val runningExperiment = mock[Experiment]
-      when(storage.get(any()))
+      when(storage.get(any(), any()))
         .thenReturn(Future.successful(Some(storedExperiment)))
 
       val eventualExperiment = experimentManager.get(storedExperiment.id)
@@ -98,7 +98,7 @@ class ExperimentManagerImplSpec extends StandardSpec with UnitTestSupport {
     "launch experiment and return it" when {
       "the experiment exists" in {
         val launchedExperiment = mock[Experiment]
-        when(storage.get(any())).thenReturn(Future.successful(Some(storedExperiment)))
+        when(storage.get(any(), any())).thenReturn(Future.successful(Some(storedExperiment)))
 
         val eventualExperiment = experimentManager.launch(storedExperiment.id, Seq.empty)
         probe.expectMsg(Launch(storedExperiment))
@@ -108,7 +108,7 @@ class ExperimentManagerImplSpec extends StandardSpec with UnitTestSupport {
     }
     "return fail" when {
       "the experiment does not exists" in {
-        when(storage.get(any()))
+        when(storage.get(any(), any()))
           .thenReturn(Future.successful(None))
 
         val eventualExperiment = experimentManager.launch(storedExperiment.id, Seq.empty)
@@ -137,7 +137,7 @@ class ExperimentManagerImplSpec extends StandardSpec with UnitTestSupport {
     }
     "return fail" when {
       "the experiment does not exists" in {
-        when(storage.get(any())).thenReturn(Future.successful(None))
+        when(storage.get(any(), any())).thenReturn(Future.successful(None))
         val eventualExperiment = experimentManager.abort(storedExperiment.id, Seq.empty)
         whenReady(eventualExperiment.failed) {
           _ shouldBe new ExperimentNotFoundException(storedExperiment.id)

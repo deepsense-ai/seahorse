@@ -11,6 +11,7 @@ import org.scalatest.{BeforeAndAfter, Matchers}
 
 import io.deepsense.commons.StandardSpec
 import io.deepsense.commons.rest.RestServer
+import io.deepsense.commons.cassandra.CassandraTestSupport
 import io.deepsense.entitystorage.factories.EntityTestFactory
 import io.deepsense.entitystorage.storage.EntityDao
 import io.deepsense.models.entities.Entity
@@ -24,6 +25,9 @@ class EntityStorageClientIntegSpec
   with EntityTestFactory
   with EntityStorageIntegTestSupport {
 
+  def cassandraTableName : String = "entities"
+  def cassandraKeySpaceName : String = "entitystorage"
+
   var clientFactory: EntityStorageClientFactory = _
   var client: EntityStorageClient = _
   val entityDao = getInstance[EntityDao]
@@ -32,7 +36,7 @@ class EntityStorageClientIntegSpec
   implicit val callDuration = 5.seconds
 
   before {
-    EntitiesTableCreator.create(table, session)
+    EntitiesTableCreator.create(cassandraTableName, session)
     clientFactory = EntityStorageClientFactoryImpl()
     client = clientFactory.create("root-actor-system", "127.0.0.1", 2552, "EntitiesApiActor", 10)
   }
