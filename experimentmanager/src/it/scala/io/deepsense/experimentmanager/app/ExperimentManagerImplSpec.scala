@@ -6,6 +6,7 @@ package io.deepsense.experimentmanager.app
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
+import scala.util.Success
 
 import akka.actor.ActorRef
 import akka.testkit.TestProbe
@@ -21,6 +22,7 @@ import io.deepsense.experimentmanager.exceptions.ExperimentNotFoundException
 import io.deepsense.experimentmanager.execution.RunningExperimentsActor._
 import io.deepsense.experimentmanager.storage.ExperimentStorage
 import io.deepsense.models.experiments.Experiment
+import io.deepsense.models.messages._
 
 class ExperimentManagerImplSpec extends StandardSpec with UnitTestSupport {
   val tenantId = "tenantId"
@@ -78,7 +80,7 @@ class ExperimentManagerImplSpec extends StandardSpec with UnitTestSupport {
       val id = Experiment.Id.randomId
 
       val eventualExperiment = experimentManager.get(id)
-      probe.expectMsg(GetStatus(id))
+      probe.expectMsg(io.deepsense.models.messages.Get(id))
       probe.reply(Status(None))
       whenReady(eventualExperiment) { _.get shouldEqual storedExperiment }
     }
@@ -88,7 +90,7 @@ class ExperimentManagerImplSpec extends StandardSpec with UnitTestSupport {
         .thenReturn(Future.successful(Some(storedExperiment)))
 
       val eventualExperiment = experimentManager.get(storedExperiment.id)
-      probe.expectMsg(GetStatus(storedExperiment.id))
+      probe.expectMsg(io.deepsense.models.messages.Get(storedExperiment.id))
       probe.reply(Status(Some(runningExperiment)))
       whenReady(eventualExperiment) { _.get shouldEqual runningExperiment }
     }
@@ -102,20 +104,22 @@ class ExperimentManagerImplSpec extends StandardSpec with UnitTestSupport {
 
         val eventualExperiment = experimentManager.launch(storedExperiment.id, Seq.empty)
         probe.expectMsg(Launch(storedExperiment))
-        probe.reply(Launched(launchedExperiment))
+        probe.reply(Success(launchedExperiment))
         whenReady(eventualExperiment) { _ shouldEqual launchedExperiment }
       }
     }
-    "return fail" when {
+    "fail" when {
       "the experiment does not exists" in {
-        when(storage.get(any()))
-          .thenReturn(Future.successful(None))
+        when(storage.get(any())).thenReturn(Future.successful(None))
 
         val eventualExperiment = experimentManager.launch(storedExperiment.id, Seq.empty)
         whenReady(eventualExperiment.failed) {
           _ shouldBe new ExperimentNotFoundException(storedExperiment.id)
         }
       }
+    }
+    "fail" when {
+      "the experiment is already running" in pending
     }
   }
 
@@ -166,7 +170,7 @@ class ExperimentManagerImplSpec extends StandardSpec with UnitTestSupport {
         .thenReturn(Future.successful(storedExperiments))
 
       val mergedExperiments = experimentManager.experiments(None, None, None)
-      probe.expectMsg(ExperimentsByTenant(Some(tenantId)))
+      probe.expectMsg(GetAllByTenantId(Some(tenantId)))
       probe.reply(ExperimentsMap(Map(tenantId -> Set(runningExperiment))))
       whenReady(mergedExperiments) { experimentsLists =>
         val experiments = experimentsLists.experiments

@@ -19,6 +19,7 @@ import io.deepsense.experimentmanager.execution.RunningExperimentsActor._
 import io.deepsense.graph.Node
 import io.deepsense.models.entities.Entity
 import io.deepsense.models.experiments.Experiment
+import io.deepsense.models.messages._
 
 class MockRunningExperimentsActor @Inject()(
     @Named("runningexperiments.mock.failureprobability") failureProbability: Double,
@@ -40,8 +41,8 @@ class MockRunningExperimentsActor @Inject()(
   override def receive: Receive = {
     case Launch(experiment) => launch(experiment)
     case Abort(id) => abort(id)
-    case GetStatus(id) => getStatus(id)
-    case ExperimentsByTenant(tenantId) => listExperiments(tenantId)
+    case Get(id) => getStatus(id)
+    case GetAllByTenantId(tenantId) => listExperiments(tenantId)
     case Tick() => updateProgress()
     case x => unhandled(x)
   }

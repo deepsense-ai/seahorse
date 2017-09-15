@@ -25,9 +25,6 @@
     <logger name="io.netty" >
         <level value ="WARN"/>
     </logger>
-    <logger name="org.apache.avro" >
-        <level value ="WARN"/>
-    </logger>
 
     <logger name="org.apache.cassandra" >
         <level value ="WARN"/>

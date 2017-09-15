@@ -14,7 +14,7 @@ trait ActorBasedEntityStorageClientFactory {
   def create(actorRef: ActorRef): EntityStorageClient
 }
 
-trait EntityStorageClientFactory {
+trait EntityStorageClientFactory extends AutoCloseable {
 
   def create(
     actorSystemName: String,
@@ -22,11 +22,6 @@ trait EntityStorageClientFactory {
     port: Int,
     actorName: String,
     timeoutSeconds: Int): EntityStorageClient
-
-  /**
-   * Closes EntityStorageClientFactory. After close, create cannot be executed.
-   */
-  def close(): Unit
 }
 
 case class EntityStorageClientFactoryImpl(
@@ -34,16 +29,15 @@ case class EntityStorageClientFactoryImpl(
     port: Int = 0)
   extends EntityStorageClientFactory {
 
-  import scala.collection.JavaConversions._
-
+  import scala.collection.JavaConverters._
   val actorSystem = ActorSystem(
     "EntityStorageClient",
     ConfigFactory.parseMap(
       Map(
         "akka.actor.provider" -> "akka.remote.RemoteActorRefProvider",
-        "akka.remote.netty.tcp.port" -> port,
+        "akka.remote.netty.tcp.port" -> port.toString,
         "akka.remote.hostname" -> host
-      )
+      ).asJava
     )
   )
 
@@ -59,8 +53,5 @@ case class EntityStorageClientFactoryImpl(
     new ActorBasedEntityStorageClient(actorRef)
   }
 
-  /**
-   * Closes EntityStorageClientFactory. After close, create cannot be executed.
-   */
   override def close(): Unit = actorSystem.shutdown()
 }

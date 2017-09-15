@@ -8,9 +8,11 @@ import org.joda.time.DateTime
 
 import io.deepsense.commons.auth.Ownable
 import io.deepsense.commons.datetime.DateTimeConverter
+import io.deepsense.commons.exception.FailureCode._
 import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
 import io.deepsense.commons.models
-import io.deepsense.graph.Graph
+import io.deepsense.commons.utils.Logging
+import io.deepsense.graph.{Node, Graph}
 import io.deepsense.models.experiments.Experiment.State
 import io.deepsense.models.experiments.Experiment.Status.Status
 
@@ -23,13 +25,14 @@ case class Experiment(
     tenantId: String,
     name: String,
     graph: Graph,
-    created: DateTime,
-    updated: DateTime,
+    created: DateTime = DateTimeConverter.now,
+    updated: DateTime = DateTimeConverter.now,
     description: String = "",
     state: State = State.draft)
   extends BaseExperiment(name, description, graph)
   with Ownable
-  with Serializable {
+  with Serializable
+  with Logging {
 
   /**
    * Creates a copy of the experiment with name, graph, updated, and
@@ -71,6 +74,27 @@ case class Experiment(
   def isFailed: Boolean = state.status == Experiment.Status.Failed
   def isAborted: Boolean = state.status == Experiment.Status.Aborted
   def isDraft: Boolean = state.status == Experiment.Status.Draft
+  def isCompleted: Boolean = state.status == Experiment.Status.Completed
+
+  def markNodeFailed(nodeId: Node.Id, reason: Throwable): Experiment = {
+    val errorId = DeepSenseFailure.Id.randomId
+    val failureTitle = s"Node: $nodeId failed. Error Id: $errorId"
+    logger.error(failureTitle, reason)
+    // TODO: To decision: exception in single node should result in abortion of:
+    // (current) only descendant nodes of failed node? / only queued nodes? / all other nodes?
+    val nodeFailureDetails = FailureDescription(
+      errorId,
+      UnexpectedError,
+      failureTitle,
+      Some(reason.toString),
+      FailureDescription.stacktraceDetails(reason.getStackTrace))
+    val experimentFailureDetails = FailureDescription(
+      errorId,
+      NodeFailure,
+      s"One or more nodes failed in experiment: $id")
+    copy(graph = this.graph.markAsFailed(nodeId, nodeFailureDetails))
+      .markFailed(experimentFailureDetails)
+  }
 }
 
 object Experiment {

@@ -3,6 +3,10 @@
  */
 package io.deepsense.graphexecutor
 
+import scala.concurrent.Future
+
+import akka.actor.Actor
+import com.typesafe.scalalogging.LazyLogging
 import org.scalatest.{BeforeAndAfter, Matchers}
 
 import io.deepsense.commons.datetime.DateTimeConverter
@@ -24,37 +28,6 @@ abstract class GraphExecutionIntegSuite
 
   experimentName should {
     "run on external YARN cluster" in {
-      testOnYarnCluster(experiment)
-    }
-  }
-
-  protected def testOnYarnCluster(experiment: Experiment): Unit = {
-    val graphExecutorClient = GraphExecutorClient()
-    try {
-      graphExecutorClient.spawnOnCluster(esFactoryName)
-      val spawned = graphExecutorClient.waitForSpawn(Constants.WaitForGraphExecutorClientInitDelay)
-      spawned shouldBe true
-      val graphSent = graphExecutorClient.sendExperiment(experiment)
-      graphSent shouldBe true
-
-      while (!graphExecutorClient.hasGraphExecutorEndedRunning()) {
-        val graph = graphExecutorClient.getExecutionState()
-        import io.deepsense.graph.Status._
-        forAll(graph.get.nodes) {
-          _.state.status should not(be(Aborted) or be(Failed))
-        }
-        // Sleeping to postpone next control loop iteration, delay arbitrarily chosen
-        Thread.sleep(Constants.EMControlInterval)
-      }
-      // NOTE: Executed graph is not saved anywhere except GE. GE have to wait appropriate
-      // time before closing RPC server, in order to allow to get executed graph state.
-      graphExecutorClient shouldBe 'graphExecutorFinished
-      val graph = graphExecutorClient.getExecutionState()
-      forAll(graph.get.nodes) {
-        _.state.status shouldBe Status.Completed
-      }
-    } finally {
-      graphExecutorClient.close()
     }
   }
 

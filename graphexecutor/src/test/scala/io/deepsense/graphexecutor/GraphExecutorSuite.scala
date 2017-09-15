@@ -23,12 +23,6 @@ class GraphExecutorSuite
     }
   }
 
-  "GraphExecutorClient" should {
-    "return no graph when asking for executionStatus before spawn" in {
-      GraphExecutorClient().getExecutionState() shouldBe None
-    }
-  }
-
   /**
    * Creates complex mocked graph
    * @return Mocked graph

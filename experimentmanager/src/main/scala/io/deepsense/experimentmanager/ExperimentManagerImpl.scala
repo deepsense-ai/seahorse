@@ -7,6 +7,7 @@ package io.deepsense.experimentmanager
 import java.util.concurrent.TimeUnit
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Success, Try, Failure}
 
 import akka.actor.ActorRef
 import akka.pattern.ask
@@ -21,11 +22,11 @@ import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.utils.Logging
 import io.deepsense.experimentmanager.exceptions.{ExperimentNotFoundException, ExperimentRunningException}
-import io.deepsense.experimentmanager.execution.RunningExperimentsActor._
 import io.deepsense.experimentmanager.models.{Count, ExperimentsList}
 import io.deepsense.experimentmanager.storage.ExperimentStorage
 import io.deepsense.graph.Node
 import io.deepsense.models.experiments.{Experiment, InputExperiment}
+import io.deepsense.models.messages._
 
 /**
  * Implementation of Experiment Manager
@@ -106,7 +107,7 @@ class ExperimentManagerImpl @Inject()(
       val tenantExperimentsFuture: Future[Seq[Experiment]] =
         storage.list(userContext, limit, page, status)
       val runningExperimentsFuture: Future[Map[Id, Experiment]] = runningExperimentsActor
-        .ask(ExperimentsByTenant(Some(userContext.tenantId)))
+        .ask(GetAllByTenantId(Some(userContext.tenantId)))
         .mapTo[ExperimentsMap]
         .map(_.experimentsByTenantId.getOrElse(userContext.tenantId, Set())
           .map(experiment => experiment.id -> experiment).toMap)
@@ -143,10 +144,10 @@ class ExperimentManagerImpl @Inject()(
       storage.get(id).flatMap {
         case Some(experiment) =>
           val ownedExperiment = experiment.assureOwnedBy(userContext)
-          val launched = runningExperimentsActor.ask(Launch(ownedExperiment))
-          launched.map {
-            case l: Launched => l.experiment
-            case r: Rejected => throw new ExperimentRunningException(experiment.id)
+          val launchedExp = runningExperimentsActor.ask(Launch(ownedExperiment)).mapTo[Try[Experiment]]
+          launchedExp.map {
+            case Success(e) => e
+            case Failure(e) => throw new ExperimentRunningException(experiment.id)
           }
         case None => throw new ExperimentNotFoundException(id)
       }
@@ -162,7 +163,7 @@ class ExperimentManagerImpl @Inject()(
           val ownedExperiment = experiment.assureOwnedBy(userContext)
           runningExperimentsActor
             .ask(Abort(ownedExperiment.id))
-            .mapTo[Status]
+            .mapTo[Update]
             .map(_ => ownedExperiment)
         case None => throw new ExperimentNotFoundException(id)
       }
@@ -171,8 +172,8 @@ class ExperimentManagerImpl @Inject()(
 
   private def runningExperiment(id: Id): Future[Option[Experiment]] = {
     runningExperimentsActor
-      .ask(GetStatus(id))
-      .mapTo[Status]
+      .ask(Get(id))
+      .mapTo[Update]
       .map(_.experiment)
   }
 }

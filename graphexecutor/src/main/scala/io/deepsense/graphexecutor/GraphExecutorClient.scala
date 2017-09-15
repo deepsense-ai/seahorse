@@ -4,159 +4,125 @@
 
 package io.deepsense.graphexecutor
 
-import java.io._
-import java.nio.ByteBuffer
-
 import scala.collection.JavaConverters._
-import scala.util.Try
+import scala.concurrent.Future
+import scala.util.{Success, Try}
 
+import akka.actor._
+import akka.util.Timeout
 import com.typesafe.config.ConfigFactory
-import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
-import org.apache.avro.AvroRuntimeException
-import org.apache.avro.ipc.NettyTransceiver
-import org.apache.avro.ipc.specific.SpecificRequestor
 import org.apache.hadoop.fs.Path
-import org.apache.hadoop.net.NetUtils
 import org.apache.hadoop.yarn.api.records._
 import org.apache.hadoop.yarn.client.api.YarnClient
 import org.apache.hadoop.yarn.conf.YarnConfiguration
 import org.apache.hadoop.yarn.util.Records
 
-import io.deepsense.graph.Graph
-import io.deepsense.graphexecutor.protocol.GraphExecutorAvroRpcProtocol
+import io.deepsense.commons.exception.FailureCode._
+import io.deepsense.commons.exception.{DeepSenseFailure, FailureDescription}
 import io.deepsense.graphexecutor.util.Utils
 import io.deepsense.models.experiments.Experiment
-import io.deepsense.graphexecutor.GraphExecutorClient.ExecutorMemoryProperty
-import io.deepsense.graphexecutor.GraphExecutorClient.HdfsHostnameProperty
-import io.deepsense.graphexecutor.GraphExecutorClient.DriverMemoryProperty
+import io.deepsense.models.messages._
 
-/**
- * Starts Graph Executor on remote YARN cluster,
- * allows to send an Experiment for execution to Graph Executor.
- * NOTE: Only one graph launch per object is allowed.
- */
-class GraphExecutorClient extends Closeable with LazyLogging {
-  var yarnClient: Option[YarnClient] = None
+class GraphExecutorClientActor(
+    entitystorageLabel: String,
+    parentRemoteActorPath: String)
+  extends Actor with LazyLogging {
 
-  var applicationId: Option[ApplicationId] = None
+  var experiment: Experiment = _
+  var applicationId: ApplicationId = _
+  var yarnClient: YarnClient = _
+  var ge: ActorRef = _
 
-  var rpcClient: Option[NettyTransceiver] = None
+  import GraphExecutorClient._
 
-  var rpcProxy: Option[GraphExecutorAvroRpcProtocol] = None
+  override def receive: Receive = handleLaunchRequests orElse handleUnknownRequests
 
-  val geConfig: Config = ConfigFactory.load(Constants.GraphExecutorConfName)
+  def handleLaunchRequests: Receive = {
+    case Launch(e) =>
+      logger.info(">>> Launch(id: {} / status: {})", e.id, e.state.status)
+      logger.info("entitystorageLabel={}", entitystorageLabel)
+      experiment = e
 
-  /**
-   * Sends and experiment designated to immediate execution by Graph Executor.
-   * NOTE: Call method {@link #init(timeout:Int)} before using RPC
-   * @param experiment Experiment to send
-   * @return true on success, false if graph has been received by Graph Executor earlier
-   *         (return of false means that this is probably second method call)
-   * @throws AvroRuntimeException on any critical problem (i.e. graph deserialization fail)
-   */
-  def sendExperiment(experiment: Experiment): Boolean = {
-    val bytesOut = new ByteArrayOutputStream()
-    val oos = new ObjectOutputStream(bytesOut)
-    oos.writeObject(experiment)
-    oos.flush()
-    oos.close()
-    val graphByteBuffer = ByteBuffer.wrap(bytesOut.toByteArray)
-    rpcProxy.get.sendGraph(graphByteBuffer)
-  }
+      import scala.concurrent.duration._
 
-  /**
-   * Returns current state of experiment execution.
-   * @return Graph with current state of execution
-   * @throws AvroRuntimeException on any critical problem (i.e. graph not sent yet)
-   */
-  def getExecutionState(): Option[Graph] = rpcProxy.map { proxy =>
-    val executionStateByteBuffer = proxy.getExecutionState
-    val bufferIn = new ByteArrayInputStream(executionStateByteBuffer.array())
-    val streamIn = new ObjectInputStream(bufferIn)
-    val executionState = streamIn.readObject().asInstanceOf[Graph]
-    executionState
-  }
+      import context.dispatcher
 
-  /**
-   * Aborts execution of graph.
-   * Dequeues queued nodes, tries to stop currently processing threads.
-   * @return true on success, false if graph has not been sent yet
-   * @throws AvroRuntimeException on any critical problem (i.e. node executors pool shutdown fail)
-   */
-  def terminateExecution(): Boolean = rpcProxy.get.terminateExecution()
+      implicit val timeout: Timeout = 60.seconds
 
-  /**
-   * Checks if Graph Executor is in running state.
-   * @return true if Graph Executor is in running state and false otherwise
-   */
-  def isGraphExecutorRunning(): Boolean = {
-    // TODO: Application report cache could save some time and cluster resources
-    val applicationReport = yarnClient.get.getApplicationReport(applicationId.get)
-    applicationReport.getYarnApplicationState == YarnApplicationState.RUNNING
-  }
+      val actorPath = parentRemoteActorPath + "/" + self.path.name
+      logger.debug("Using actorPath={}", actorPath)
 
-  /**
-   * Checks if Graph Executor is in finished state.
-   * @return true if Graph Executor is in finished state and false otherwise
-   */
-  def isGraphExecutorFinished(): Boolean = {
-    // TODO: Application report cache could save some time and cluster resources
-    val applicationReport = yarnClient.get.getApplicationReport(applicationId.get)
-    applicationReport.getYarnApplicationState == YarnApplicationState.FINISHED
-  }
-
-  /**
-   * Checks if Graph Executor has finished its running.
-   * @return true if Graph Executor is in end state and false otherwise
-   */
-  def hasGraphExecutorEndedRunning(): Boolean = {
-    // TODO: Application report cache could save some time and cluster resources
-    val applicationReport = yarnClient.get.getApplicationReport(applicationId.get)
-    val endYarnAppStates = List(
-      YarnApplicationState.FINISHED,
-      YarnApplicationState.FAILED,
-      YarnApplicationState.KILLED)
-    endYarnAppStates.contains(applicationReport.getYarnApplicationState)
-  }
-
-  /**
-   * Waits for Graph Executor start of running, then prepares RPC client for future use.
-   * If Graph Executor has not ended running, this method can be called several times,
-   * until it returns true.
-   * @param timeout timeout in milliseconds
-   * @return true on success and false on fail (possibly timeout exceed)
-   * @throws Exception if RPC client has been successfully prepared before
-   */
-  def waitForSpawn(timeout: Int): Boolean = {
-    val startOfWaitingForGraphExecutor = System.currentTimeMillis
-    while (!isGraphExecutorRunning() && !hasGraphExecutorEndedRunning()
-      && System.currentTimeMillis - startOfWaitingForGraphExecutor < timeout) {
-      val remainingTimeout = timeout - (System.currentTimeMillis - startOfWaitingForGraphExecutor)
-      try {
-        Thread.sleep(math.min(Constants.EMGraphExecutorClientInitInterval, remainingTimeout))
-      } catch {
-        case e: InterruptedException => {
-          // Silently proceed to next loop iteration
-        }
+      val me = self
+      val rea = sender()
+      Future(spawnOnCluster(e.id, actorPath, entitystorageLabel)).onComplete {
+        case Success(Success((yc, appId))) =>
+          logger.info("Application spawned: {}", appId)
+          me ! ExecutorSpawned(appId, yc)
+        case r =>
+          val error = s"Spawning experiment on cluster failed: $r"
+          logger.error(error)
+          val experimentFailureDetails = FailureDescription(
+            DeepSenseFailure.Id.randomId,
+            LaunchingFailure,
+            error)
+          val msg = Update(Some(experiment.markFailed(experimentFailureDetails)))
+          rea ! msg
+          logger.debug("<<< {}", msg)
+          self ! PoisonPill
       }
-    }
-    if (isGraphExecutorRunning() && !hasGraphExecutorEndedRunning()) {
-      // Require will throw exception if
-      require(rpcClient.isEmpty && rpcProxy.isEmpty)
-      val applicationReport = yarnClient.get.getApplicationReport(applicationId.get)
-      val graphExecutorRpcHost = applicationReport.getHost
-      val graphExecutorRpcPort = applicationReport.getRpcPort
+      logger.info(s"Awaiting YARN up (via ExecutorSpawned request)")
+      context.become(handleExecutorSpawnedRequests orElse handleUnknownRequests)
+  }
 
-      val rpcSocket = NetUtils.createSocketAddr(graphExecutorRpcHost, graphExecutorRpcPort)
-      rpcClient = Some(new NettyTransceiver(rpcSocket))
-      rpcProxy = Some(SpecificRequestor.getClient(
-        classOf[GraphExecutorAvroRpcProtocol],
-        rpcClient.get))
-      true
-    } else {
-      false
-    }
+  def handleExecutorSpawnedRequests: Receive = {
+    case msg @ ExecutorSpawned(appId, yc) =>
+      logger.info(">>> {}", msg)
+      this.applicationId = appId
+      this.yarnClient = yc
+      context.become(handleExecutorReadyRequests orElse handleUnknownRequests)
+      logger.info("<<< {}", msg)
+  }
+
+  def handleExecutorReadyRequests: Receive = {
+    case msg @ ExecutorReady(eid) =>
+      logger.info(">>> {}", msg)
+      ge = sender()
+      logger.debug("Sending Launch({}) to {}", experiment.id, ge)
+      ge ! Launch(experiment)
+      context.become(handleSuccessRequest orElse handleUnknownRequests)
+  }
+
+  def handleSuccessRequest: Receive = {
+    case msg @ Success(exp) =>
+      logger.debug(">>> {}", msg)
+      // FIXME The type in Success is Any and hence the need to have custom message type
+      experiment = msg.get.asInstanceOf[Experiment]
+      context.parent.forward(msg)
+      context.become(handleStatusRequests orElse handleAbortRequests orElse handleUnknownRequests)
+  }
+
+  def handleStatusRequests: Receive = {
+    case msg @ Update(Some(exp)) =>
+      logger.info(">>> Update({}) / status: {}", exp.id, exp.state.status)
+      experiment = exp
+      context.parent.forward(msg)
+      if (exp.isCompleted || exp.isFailed) {
+        logger.info("Experiment [{}] / status: {} - cleaning up", exp.id, exp.state.status)
+        yarnClient.stop()
+        self ! PoisonPill
+      }
+  }
+
+  def handleAbortRequests: Receive = {
+    case msg @ Abort(eid) =>
+      logger.info(">>> $msg / status: {}", experiment.state.status)
+      ge.forward(msg)
+      logger.info("<<< {}", msg)
+  }
+
+  def handleUnknownRequests: Receive = {
+    case m => logger.info(s"UNHANDLED: $m from ${sender()}")
   }
 
   /**
@@ -165,37 +131,38 @@ class GraphExecutorClient extends Closeable with LazyLogging {
    * or even longer delay if cluster is short of resources.
    */
   def spawnOnCluster(
-      esFactoryName: String = "default",
-      applicationConfLocation: String = Constants.GraphExecutorConfigLocation): Unit = {
+    experimentId: Experiment.Id,
+    graphExecutionStatusesActorPath: String,
+    esFactoryName: String = "default",
+    applicationConfLocation: String = Constants.GraphExecutorConfigLocation): Try[(YarnClient, ApplicationId)] = {
+
+    logger.debug(">>> spawnOnCluster")
+
     implicit val conf = new YarnConfiguration()
-    // TODO: Configuration resource access should follow proper configuration access convention
-    // or should be changed to simple configuration string access following proper convention
-    conf.addResource(getClass().getResource("/conf/hadoop/core-site.xml"))
-    // TODO: Configuration resource access should follow proper configuration access convention
-    // or should be changed to simple configuration string access following proper convention
-    conf.addResource(getClass().getResource("/conf/hadoop/yarn-site.xml"))
+    conf.addResource(getClass.getResource("/conf/hadoop/core-site.xml"))
+    conf.addResource(getClass.getResource("/conf/hadoop/yarn-site.xml"))
 
-    yarnClient = Some(YarnClient.createYarnClient())
-    yarnClient.get.init(conf)
-    yarnClient.get.start()
+    val yarnClient = YarnClient.createYarnClient()
+    yarnClient.init(conf)
+    yarnClient.start()
 
-    val app = yarnClient.get.createApplication()
+    val app = yarnClient.createApplication()
     val amContainer = Records.newRecord(classOf[ContainerLaunchContext])
 
-    val command = "/opt/spark/bin/spark-submit --class io.deepsense.graphexecutor.GraphExecutor " +
-        " --master spark://" + geConfig.getString(HdfsHostnameProperty) + ":7077" +
-        " --executor-memory " + geConfig.getString(ExecutorMemoryProperty) +
-        " --driver-memory " + geConfig.getString(DriverMemoryProperty) +
-        " --jars ./graphexecutor-deps.jar " +
-        s" ./graphexecutor.jar $esFactoryName " + Utils.logRedirection
+    val geCfg = ConfigFactory.load(Constants.GraphExecutorConfName)
+    val command = "/opt/spark/bin/spark-submit --class io.deepsense.graphexecutor.GraphExecutor" +
+      " --master spark://" + geCfg.getString(HdfsHostnameProperty) + ":7077" +
+      " --executor-memory " + geCfg.getString(ExecutorMemoryProperty) +
+      " --driver-memory " + geCfg.getString(DriverMemoryProperty) +
+      " --jars ./graphexecutor-deps.jar" +
+      s" ./graphexecutor.jar $experimentId $graphExecutionStatusesActorPath $esFactoryName" + Utils.logRedirection
     logger.debug("Prepared {}", command)
     amContainer.setCommands(List(command).asJava)
 
     val geConf = Utils.getConfiguredLocalResource(new Path(Constants.GraphExecutorConfigLocation))
     val esConf = Utils.getConfiguredLocalResource(new Path(Constants.EntityStorageConfigLocation))
     val geJar = Utils.getConfiguredLocalResource(new Path(Constants.GraphExecutorJarLocation))
-    val geDepsJar =
-      Utils.getConfiguredLocalResource(new Path(Constants.GraphExecutorDepsJarLocation))
+    val geDepsJar = Utils.getConfiguredLocalResource(new Path(Constants.GraphExecutorDepsJarLocation))
     amContainer.setLocalResources(Map(
       Constants.GraphExecutorConfName -> geConf,
       Constants.EntityStorageConfName -> esConf,
@@ -211,49 +178,31 @@ class GraphExecutorClient extends Closeable with LazyLogging {
     resource.setMemory(1024)
     resource.setVirtualCores(1)
     val appContext = app.getApplicationSubmissionContext
-    // TODO: Configuration string access should follow proper configuration access convention
-    appContext.setApplicationName("Deepsense GraphExecutor")
+    appContext.setApplicationName(s"DeepSense.io GraphExecutor [experiment: $experimentId]")
     appContext.setAMContainerSpec(amContainer)
     appContext.setResource(resource)
-    // TODO: move queue string to config file
     appContext.setQueue("default")
-    // TODO: Configuration value access should follow proper configuration access convention
-    // This value probably should equal to 1
     appContext.setMaxAppAttempts(1)
-    // Submit the application
     Try {
-      logger.info("Submitting application")
-      yarnClient.get.submitApplication(appContext)
+      logger.debug("Submitting application to YARN cluster: {}", appContext)
+      yarnClient.submitApplication(appContext)
     }.map { aid =>
       logger.info("Application submitted - ID: {}", aid)
-      applicationId = Some(aid)
+      (yarnClient, aid)
     }.recover {
       case e: Exception =>
         logger.error("Exception thrown at submitting application", e)
         throw e
     }
   }
-
-  /**
-   * Releases all resources associated with this object.
-   */
-  override def close(): Unit = {
-    rpcClient.foreach(_.close())
-    rpcClient = None
-
-    rpcProxy = None
-
-    yarnClient.foreach(_.stop())
-    yarnClient = None
-
-    applicationId = None
-  }
 }
 
-object GraphExecutorClient {
+object GraphExecutorClient extends LazyLogging {
   val HdfsHostnameProperty = "hdfs.hostname"
   val ExecutorMemoryProperty = "spark.executor.memory"
   val DriverMemoryProperty = "spark.driver.memory"
 
-  def apply(): GraphExecutorClient = new GraphExecutorClient()
+  sealed trait Message
+
+  case class ExecutorSpawned(aid: ApplicationId, yarnClient: YarnClient) extends Message
 }
