@@ -33,6 +33,13 @@ function init(app) {
       console.info('Authenticated, redirecting');
       res.redirect('/');
     });
+
+  app.get('/logout', function (req, res) {
+    req.session.destroy();
+    req.logout();
+    strategy.reset();
+    res.redirect(sso.logoutUri);
+  });
 }
 
 function login(req, res, next) {

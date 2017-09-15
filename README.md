@@ -7,7 +7,7 @@ Running the proxy app (dev mode)
 
 2. Set VCAP_SERVICES env variable (see below)
 
-2. Run the application
+3. Run the application
 
     $ npm start
 
@@ -38,6 +38,7 @@ $ export VCAP_SERVICES='{
     {
       "credentials": {
         "authorizationUri": "http://login.seahorse.gotapaas.eu/oauth/authorize",
+        "logoutUri": "http://login.seahorse.gotapaas.eu/logout.do",
         "tokenUri": "http://uaa.seahorse.gotapaas.eu/oauth/token",
         "clientId": "<CLIENT-ID>",
         "clientSecret": "<CLIENT-SECRET>",
@@ -53,7 +54,7 @@ $ export VCAP_SERVICES='{
     },
     {
       "credentials": {
-        "host": "http://172.28.128.100:9081"
+        "host": "http://172.28.128.100:9082"
       },
       "name": "session-manager"
     },
