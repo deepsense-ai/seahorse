@@ -5,7 +5,7 @@ function PresetModalCtrl($uibModalInstance, PresetService, PresetModalLabels, pr
   const vm = this;
 
   vm.labels = getLabelsForType(type);
-  vm.preset = angular.copy(preset) || {isEditable: true};
+  vm.preset = angular.copy(preset) || {isEditable: true, isDefault: false};
   vm.isSnapshot = isSnapshot;
   vm.focused = undefined;
 
