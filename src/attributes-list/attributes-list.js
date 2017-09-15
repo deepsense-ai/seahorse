@@ -7,7 +7,7 @@
 'use strict';
 
 /*@ngInject*/
-function AttributesList() {
+function AttributesList(AttributesPanelService) {
   return {
     restrict: 'E',
     templateUrl: 'attributes-list/attributes-list.html',
@@ -34,6 +34,9 @@ function AttributesList() {
               }
             });
           }
+
+          // get rendered content
+          AttributesPanelService.disableElements(element);
         });
       });
     }

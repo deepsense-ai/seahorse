@@ -81,7 +81,9 @@ angular.module('test').
             "code": 42,
             "title": "Question unknown",
             "message": "Something that describes the problem more precisely",
-            "details": null
+            "details": {
+              "stacktrace": "exception404\nexception502"
+            }
           }
         },
         stateDetails: null
@@ -101,7 +103,9 @@ angular.module('test').
             "code": 42,
             "title": "Question unknown",
             "message": "Something that describes the problem more precisely",
-            "details": null
+            "details": {
+              "stacktrace": "exception1\nexception2"
+            }
           }
         },
         stateDetails: null
@@ -113,7 +117,7 @@ angular.module('test').
         {
           "name": "connection_string",
           "type": "string",
-          "description": "jdbc address",
+          "description": "jdbc address mmmmmmmm mmmmmmmm mmmmmmmm mmmmmmmm mmmmmmmm mmmmmmmm mmmmmmmm mmmmmmmmmmmmm mmmmmmmmmmm mmmmmmmm",
           "default": "jdbc:",
           "required": true,
           "validator": {
@@ -133,7 +137,8 @@ angular.module('test').
         {
           "name": "sample-multiplier",
           "type": "multiplier",
-          "description": "This is a multiplier parameter.",
+          "description": "This is a multiplier parameter test teats as ttatasast" +
+            "asast tasat sat at .",
           "required": true,
           "values": [
             {

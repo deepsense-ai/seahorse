@@ -9,5 +9,6 @@
 angular.module('deepsense.attributes-panel', [
   'deepsense.spinner',
   'deepsense.node-parameters',
-  'NgSwitchery'
+  'NgSwitchery',
+  'ui.bootstrap'
 ]);

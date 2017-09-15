@@ -7,11 +7,12 @@
 'use strict';
 
 /*@ngInject*/
-function OperationAttributes($timeout) {
+function OperationAttributes($timeout, AttributesPanelService) {
   return {
     restrict: 'E',
     scope: {
-      node: '='
+      node: '=',
+      disabledMode: '='
     },
     templateUrl: 'attributes-panel/attributes-panel.html',
     replace: true,
@@ -25,14 +26,19 @@ function OperationAttributes($timeout) {
 
       scope.$watch('node', function() {
         scope.$applyAsync(() => {
+          let container = element[0];
           let heightOfOthers = jQuery(
             '> .ibox-title--main',
-            '.operation-attributes-panel'
+            container
           ).outerHeight(true);
-          let container = element[0];
           let body = container.querySelector('.ibox-content');
 
           angular.element(body).css('height', 'calc(100% - ' + heightOfOthers + 'px)');
+
+          if (scope.disabledMode) {
+            AttributesPanelService.setDisabledMode();
+            AttributesPanelService.disableElements(container);
+          }
         });
       });
     }

@@ -31,6 +31,15 @@
           {{node.state.ended | date:'medium'}}
         </time>
       </p>
+      <section class="operation-attributes-panel__error o-error text-danger"
+               ng-if="node.state.error">
+        <header>
+          <p class="o-error__message">{{node.state.error.message}}</p>
+        </header>
+        <article>
+          <pre ng-if="node.state.error.details">{{node.state.error.details.stacktrace}}</pre>
+        </article>
+      </section>
     </section>
   </header>
   <section class="ibox-content" custom-scroll-bar>
