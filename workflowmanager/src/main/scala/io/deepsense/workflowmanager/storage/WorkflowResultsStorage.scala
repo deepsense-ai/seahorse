@@ -6,7 +6,7 @@ package io.deepsense.workflowmanager.storage
 
 import scala.concurrent.Future
 
-import io.deepsense.workflowmanager.model.{WorkflowWithSavedResults, ExecutionReportWithId}
+import io.deepsense.models.workflows._
 
 trait WorkflowResultsStorage {
 

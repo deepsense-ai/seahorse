@@ -16,7 +16,6 @@ import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.graph.{Status, Graph, GraphKnowledge}
 import io.deepsense.models.workflows._
-import io.deepsense.workflowmanager.model.WorkflowWithSavedResults
 import io.deepsense.workflowmanager.storage.{WorkflowResultsStorage, WorkflowStorage}
 
 class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {

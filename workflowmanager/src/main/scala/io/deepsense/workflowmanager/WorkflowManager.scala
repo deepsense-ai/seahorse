@@ -7,8 +7,7 @@ package io.deepsense.workflowmanager
 import scala.concurrent.Future
 
 import io.deepsense.commons.models.Id
-import io.deepsense.models.workflows.{Workflow, WorkflowWithKnowledge, WorkflowWithResults, WorkflowWithVariables}
-import io.deepsense.workflowmanager.model.{ExecutionReportWithId, WorkflowWithSavedResults}
+import io.deepsense.models.workflows._
 
 /**
  * Workflow Manager's API

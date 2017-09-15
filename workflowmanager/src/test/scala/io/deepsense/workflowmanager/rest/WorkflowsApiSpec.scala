@@ -28,8 +28,6 @@ import io.deepsense.graph._
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow._
 import io.deepsense.models.workflows._
-import io.deepsense.workflowmanager.json.WorkflowWithSavedResultsJsonProtocol
-import io.deepsense.workflowmanager.model.{WorkflowWithSavedResults, ExecutionReportWithId}
 import io.deepsense.workflowmanager.storage.{InMemoryWorkflowResultsStorage, InMemoryWorkflowStorage, WorkflowStorage}
 import io.deepsense.workflowmanager.{WorkflowManager, WorkflowManagerImpl, WorkflowManagerProvider}
 

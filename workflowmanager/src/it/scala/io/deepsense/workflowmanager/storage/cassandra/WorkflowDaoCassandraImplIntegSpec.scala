@@ -21,7 +21,6 @@ import io.deepsense.deeplang.parameters.{BooleanParameter, ParametersSchema}
 import io.deepsense.graph.{Edge, Endpoint, Graph, Node, State}
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.workflows._
-import io.deepsense.workflowmanager.model.{ExecutionReportWithId, WorkflowWithSavedResults}
 
 
 class WorkflowDaoCassandraImplIntegSpec

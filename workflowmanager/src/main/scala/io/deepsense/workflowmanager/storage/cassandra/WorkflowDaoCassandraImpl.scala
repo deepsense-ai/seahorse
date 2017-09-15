@@ -13,8 +13,7 @@ import com.google.inject.Inject
 import com.google.inject.name.Named
 
 import io.deepsense.commons.models.Id
-import io.deepsense.models.workflows.Workflow
-import io.deepsense.workflowmanager.model.WorkflowWithSavedResults
+import io.deepsense.models.workflows.{Workflow, WorkflowWithSavedResults}
 import io.deepsense.workflowmanager.storage.WorkflowStorage
 
 class WorkflowDaoCassandraImpl @Inject() (

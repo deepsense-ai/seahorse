@@ -9,9 +9,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 import io.deepsense.commons.models
-import io.deepsense.models.workflows.Workflow
+import io.deepsense.models.workflows.{Workflow, WorkflowWithSavedResults}
 import io.deepsense.models.workflows.Workflow._
-import io.deepsense.workflowmanager.model.WorkflowWithSavedResults
 
 /**
  * Thread-safe, in-memory WorkflowStorage.

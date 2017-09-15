@@ -12,7 +12,7 @@ import com.datastax.driver.core.querybuilder.{QueryBuilder, Select, Update}
 import com.google.inject.Inject
 import com.google.inject.name.Named
 
-import io.deepsense.workflowmanager.model.{WorkflowWithSavedResults, ExecutionReportWithId}
+import io.deepsense.models.workflows.{WorkflowWithSavedResults, ExecutionReportWithId}
 import io.deepsense.workflowmanager.storage.WorkflowResultsStorage
 
 class WorkflowResultsDaoCassandraImpl @Inject() (

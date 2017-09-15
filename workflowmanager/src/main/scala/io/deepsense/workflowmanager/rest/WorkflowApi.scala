@@ -9,18 +9,16 @@ import scala.util.{Failure, Success}
 
 import com.google.inject.Inject
 import com.google.inject.name.Named
-import io.deepsense.commons.auth.directives.{AbstractAuthDirectives, AuthDirectives, InsecureAuthDirectives}
+import io.deepsense.commons.auth.directives._
 import io.deepsense.commons.auth.usercontext.TokenTranslator
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.rest.{RestApiAbstractAuth, RestComponent}
 import io.deepsense.graph.CyclicGraphException
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow._
-import io.deepsense.models.workflows.{Workflow, WorkflowWithResults}
+import io.deepsense.models.workflows._
 import io.deepsense.workflowmanager.WorkflowManagerProvider
-import io.deepsense.workflowmanager.exceptions.{FileNotFoundException, WorkflowNotFoundException, WorkflowRunningException}
-import io.deepsense.workflowmanager.json.WorkflowWithSavedResultsJsonProtocol
-import io.deepsense.workflowmanager.model.ExecutionReportWithId
+import io.deepsense.workflowmanager.exceptions._
 import org.apache.commons.lang3.StringUtils
 import spray.http.HttpHeaders.`Content-Disposition`
 import spray.http.MediaTypes._

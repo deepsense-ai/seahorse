@@ -18,7 +18,6 @@ import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.graph.CyclicGraphException
 import io.deepsense.models.workflows._
 import io.deepsense.workflowmanager.exceptions.WorkflowNotFoundException
-import io.deepsense.workflowmanager.model.{ExecutionReportWithId, WorkflowWithSavedResults}
 import io.deepsense.workflowmanager.storage.{WorkflowResultsStorage, WorkflowStorage}
 
 /**

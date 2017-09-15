@@ -19,7 +19,6 @@ import io.deepsense.deeplang.parameters.{BooleanParameter, ParametersSchema}
 import io.deepsense.graph._
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.workflows._
-import io.deepsense.workflowmanager.model.{ExecutionReportWithId, WorkflowWithSavedResults}
 
 class WorkflowResultsDaoCassandraImplIntegSpec
   extends StandardSpec

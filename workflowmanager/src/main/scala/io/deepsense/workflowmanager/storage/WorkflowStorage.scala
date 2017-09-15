@@ -7,8 +7,7 @@ package io.deepsense.workflowmanager.storage
 import scala.concurrent.Future
 
 import io.deepsense.commons.models.Id
-import io.deepsense.models.workflows.Workflow
-import io.deepsense.workflowmanager.model.WorkflowWithSavedResults
+import io.deepsense.models.workflows.{Workflow, WorkflowWithSavedResults}
 
 /**
  * Abstraction layer to make implementation of Workflow Manager easier.

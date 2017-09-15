@@ -7,8 +7,7 @@ package io.deepsense.workflowmanager.storage
 import scala.collection.concurrent.TrieMap
 import scala.concurrent.Future
 
-import io.deepsense.workflowmanager.model.ExecutionReportWithId.Id
-import io.deepsense.workflowmanager.model.{ExecutionReportWithId, WorkflowWithSavedResults}
+import io.deepsense.models.workflows._
 
 class InMemoryWorkflowResultsStorage(
     initState: Map[ExecutionReportWithId.Id, WorkflowWithSavedResults] = Map()
@@ -17,7 +16,7 @@ class InMemoryWorkflowResultsStorage(
   val storage: TrieMap[ExecutionReportWithId.Id, WorkflowWithSavedResults] =
     TrieMap(initState.toSeq: _*)
 
-  override def get(id: Id): Future[Option[WorkflowWithSavedResults]] =
+  override def get(id: ExecutionReportWithId.Id): Future[Option[WorkflowWithSavedResults]] =
     Future.successful(storage.get(id))
 
 
