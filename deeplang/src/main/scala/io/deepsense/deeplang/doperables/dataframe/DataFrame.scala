@@ -136,6 +136,7 @@ case class DataFrame private[dataframe] (
 
   private def rowToDoubles(row: Row): Seq[Double] = {
     row.toSeq.map {
+      case null => 0.0
       case d: Double => d
       case i: Int => i.toDouble
       case _ => ???

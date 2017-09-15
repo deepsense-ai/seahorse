@@ -36,7 +36,8 @@ class TrainedRandomForestRegressionIntegSpec extends DeeplangIntegTestSupport {
   private val inputVectors = Seq(
     Vectors.dense(1.5, 3.5, 0.0),
     Vectors.dense(1.6, 3.6, 1.0),
-    Vectors.dense(1.7, 3.7, 2.0))
+    Vectors.dense(1.7, 3.7, 2.0),
+    Vectors.dense(0.0, 0.0, 0.0))
 
   private val targetColumnName = "some_target"
 
@@ -81,7 +82,8 @@ class TrainedRandomForestRegressionIntegSpec extends DeeplangIntegTestSupport {
     val inputRowsSeq: Seq[Row] = Seq(
       Row(1.5, 2.5, "a", 3.5, 0),
       Row(1.6, 2.6, "b", 3.6, 1),
-      Row(1.7, 2.7, "c", 3.7, 2))
+      Row(1.7, 2.7, "c", 3.7, 2),
+      Row(null, null, null, null, null))
     val inputSchema: StructType = StructType(List(
       StructField(inputColumnNames(0), DoubleType),
       StructField(inputColumnNames(1), DoubleType),
@@ -92,7 +94,7 @@ class TrainedRandomForestRegressionIntegSpec extends DeeplangIntegTestSupport {
       )
     ))
     val inputDataframe = createDataFrame(inputRowsSeq, inputSchema)
-    val resultDoubles = Seq(4.5, 4.6, 4.7)
+    val resultDoubles = Seq(4.5, 4.6, 4.7, 4.8)
 
     val expectedOutputDataFrame = createExpectedOutputDataFrame(
       inputSchema, inputRowsSeq, resultDoubles, targetColumnName)
