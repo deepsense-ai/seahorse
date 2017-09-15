@@ -127,8 +127,8 @@ trait DocPageCreator {
           ("<code><a href=\"../classes/dataframe.html\">DataFrame</a></code>",
             "The output <code>DataFrame</code>."),
           ("<code><a href=\"../classes/transformer.html\">Transformer</a></code>",
-            "A <code>Transformer</code> that allows to apply the operation on other " +
-              "<code>DataFrames</code> using a <a href=\"transform.html\">Transform</a>.")
+            "A <code>Transformer</code> that allows to apply the operation on other" +
+              " <code>DataFrames</code> using a <a href=\"transform.html\">Transform</a>.")
         ))
       case (eso: EstimatorAsOperation[_]) =>
         inputOutputTable(Seq(
@@ -136,7 +136,7 @@ trait DocPageCreator {
             "The output <code>DataFrame</code>."),
           ("<code><a href=\"../classes/transformer.html\">Transformer</a></code>",
             "A <code>Transformer</code> that allows to apply the operation on other" +
-              "<code>DataFrames</code> using a <a href=\"transform.html\">Transform</a>.")
+              " <code>DataFrames</code> using a <a href=\"transform.html\">Transform</a>.")
         ))
       case (e: EstimatorAsFactory[_]) =>
         inputOutputTable(Seq(

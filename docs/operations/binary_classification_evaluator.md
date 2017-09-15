@@ -28,7 +28,7 @@ This operation does not take any input.
 </tr>
 </thead>
 <tbody>
-    <tr><td><code>0</code></td><td><code><a href="../classes/evaluator.html">Evaluator</a></code></td><td>An Evaluator that can be used in <a href="evaluate.html">Evaluate</a> operation.</td></tr>
+    <tr><td><code>0</code></td><td><code><a href="../classes/evaluator.html">Evaluator</a></code></td><td>An <code>Evaluator</code> that can be used in an <a href="evaluate.html">Evaluate</a> operation.</td></tr>
 </tbody>
 </table>
 

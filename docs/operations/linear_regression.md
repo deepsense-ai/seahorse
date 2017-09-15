@@ -28,7 +28,7 @@ This operation does not take any input.
 </tr>
 </thead>
 <tbody>
-    <tr><td><code>0</code></td><td><code><a href="../classes/estimator.html">Estimator</a></code></td><td>An Estimator that can be used in <a href="fit.html">Fit</a> operation.</td></tr>
+    <tr><td><code>0</code></td><td><code><a href="../classes/estimator.html">Estimator</a></code></td><td>An <code>Estimator</code> that can be used in a <a href="fit.html">Fit</a> operation.</td></tr>
 </tbody>
 </table>
 
