@@ -22,6 +22,8 @@ object CatalogRecorder {
     catalog.registerDOperable[DataFrame]()
     catalog.registerDOperable[UntrainedRidgeRegression]()
     catalog.registerDOperable[TrainedRidgeRegression]()
+    catalog.registerDOperable[UntrainedLogisticRegression]()
+    catalog.registerDOperable[TrainedLogisticRegression]()
     catalog.registerDOperable[Report]()
   }
 
