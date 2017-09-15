@@ -24,20 +24,19 @@ import scala.concurrent.duration._
 import scala.io.Source
 import scala.util.{Failure, Success, Try}
 
-import akka.actor.ActorSystem
-import buildinfo.BuildInfo
 import com.typesafe.config.ConfigFactory
 import scopt.OptionParser
 import spray.json._
 
-import io.deepsense.commons.utils.Logging
+import io.deepsense.commons.BuildInfo
+import io.deepsense.commons.utils.{Logging, Version}
 import io.deepsense.deeplang.CatalogRecorder
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
-import io.deepsense.deeplang.doperables.ReportLevel
 import io.deepsense.deeplang.doperables.ReportLevel
 import io.deepsense.deeplang.doperables.ReportLevel.ReportLevel
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow._
+import io.deepsense.models.json.workflow.exceptions.{WorkflowVersionException, WorkflowVersionFormatException, WorkflowVersionNotFoundException, WorkflowVersionNotSupportedException}
 import io.deepsense.models.workflows._
 
 
@@ -49,7 +48,8 @@ object WorkflowExecutorApp
   extends Logging
   with WorkflowWithVariablesJsonProtocol
   with WorkflowWithResultsJsonProtocol
-  with WorkflowWithSavedResultsJsonProtocol {
+  with WorkflowWithSavedResultsJsonProtocol
+  with WorkflowVersionUtil {
 
   private val config = ConfigFactory.load
 
@@ -83,6 +83,9 @@ object WorkflowExecutorApp
     note("See http://deepsense.io for more details")
   }
 
+  override def currentVersion: Version =
+    Version(BuildInfo.apiVersionMajor, BuildInfo.apiVersionMinor, BuildInfo.apiVersionPatch)
+
   def main(args: Array[String]): Unit = {
     val cmdParams = parser.parse(args, ExecutionParams())
 
@@ -91,11 +94,44 @@ object WorkflowExecutorApp
     cmdParams match {
       case None => System.exit(-1)
       case Some(params) =>
-        val workflowWithVariables = loadWorkflow(params.workflowFilename)
-        val executionReport = executeWorkflow(workflowWithVariables, params.reportLevel)
-        handleExecutionReport(params.outputDirectoryPath, executionReport, workflowWithVariables,
-          params.reportUploadHost)
+        loadWorkflow(params.workflowFilename) match {
+          case Failure(exception) => exception match {
+            case e: WorkflowVersionException => handleVersionException(e)
+            case e: DeserializationException => handleDeserializationException(e)
+            case e: Throwable => handleLoadingErrors(e)
+          }
+          case Success(workflowWithVariables) =>
+            val executionReport = executeWorkflow(workflowWithVariables, params.reportLevel)
+            handleExecutionReport(
+              params.outputDirectoryPath,
+              executionReport,
+              workflowWithVariables,
+              params.reportUploadHost)
+        }
     }
+  }
+
+  private def handleVersionException(versionException: WorkflowVersionException): Unit = {
+    versionException match {
+      case e @ WorkflowVersionFormatException(stringVersion) =>
+        logger.error(e.getMessage)
+      case WorkflowVersionNotFoundException(supportedApiVersion) =>
+        logger.error("The input workflow does not contain version identifier. Unable to proceed...")
+      case WorkflowVersionNotSupportedException(workflowApiVersion, supportedApiVersion) =>
+        logger.error(
+          "The input workflow is incompatible with this WorkflowExecutor. " +
+            s"Workflow's version is '${workflowApiVersion.humanReadable}' but " +
+            s"WorkflowExecutor's version is '${supportedApiVersion.humanReadable}'.")
+    }
+    System.exit(-1)
+  }
+
+  private def handleDeserializationException(exception: DeserializationException): Unit = {
+    logger.error(s"WorkflowExecutor is unable to parse the input file: ${exception.getMessage}")
+  }
+
+  private def handleLoadingErrors(exception: Throwable): Unit = {
+    logger.error(s"Unexpected error occurred during access to the input file!", exception)
   }
 
   private def executeWorkflow(
@@ -107,11 +143,13 @@ object WorkflowExecutorApp
     WorkflowExecutor(workflow, reportLevel).execute()
   }
 
-  private def loadWorkflow(filename: String): WorkflowWithVariables =
+  private def loadWorkflow(filename: String): Try[WorkflowWithVariables] = Try {
+    val reader = new VersionedJsonReader[WorkflowWithVariables]
     Source.fromFile(filename)
       .mkString
       .parseJson
-      .convertTo[WorkflowWithVariables]
+      .convertTo[WorkflowWithVariables](reader)
+  }
 
   private def handleExecutionReport(
       outputDirectoryPath: String,

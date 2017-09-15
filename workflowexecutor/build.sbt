@@ -37,4 +37,6 @@ test in assembly := {}
 
 enablePlugins(BuildInfoPlugin)
 
+buildInfoPackage := "io.deepsense.workflowexecutor.buildinfo"
+
 assemblyJarName in assembly := "workflowexecutor.jar"
