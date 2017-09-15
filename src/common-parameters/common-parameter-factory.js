@@ -32,10 +32,11 @@ let parameterConstructors = {
 
 let ParameterFactory = {
   createParametersList(paramValues, paramSchemas) {
-    let parametersList = {};
+    let parametersList = [];
 
-    for (let paramName in paramSchemas) {
-      let paramSchema = paramSchemas[paramName];
+    for (let i = 0; i < paramSchemas.length; ++i) {
+      let paramSchema = paramSchemas[i];
+      let paramName = paramSchema.name;
       let paramValue = paramValues[paramName];
       let options = {
         'name': paramName,
@@ -47,9 +48,11 @@ let ParameterFactory = {
         case 'choice':
         case 'multipleChoice':
           options.possibleChoicesList = {};
-          for (let choiceName in options.schema.values) {
+          for (let j = 0; j < options.schema.values.length; ++j) {
+            let choiceObject = options.schema.values[j];
+            let choiceName = choiceObject.name;
             let choiceParamValues = (options.value || {})[choiceName] || {};
-            let choiceParamSchema = options.schema.values[choiceName];
+            let choiceParamSchema = choiceObject.schema;
 
             options.possibleChoicesList[choiceName] = ParameterFactory.createParametersList(
               choiceParamValues,
@@ -61,9 +64,9 @@ let ParameterFactory = {
         case 'multiplier':
           options.parametersLists = [];
           paramValue = paramValue || [];
-          for (let i = 0; i < paramValue.length; ++i) {
+          for (let j = 0; i < paramValue.length; ++j) {
             let nestedParametersList = ParameterFactory.createParametersList(
-              paramValue[i],
+              paramValue[j],
               options.schema.values
             );
 
@@ -76,7 +79,7 @@ let ParameterFactory = {
       if (parameterConstructors[paramSchema.type]) {
         let Constructor = parameterConstructors[paramSchema.type];
         if (!_.isUndefined(Constructor)) {
-          parametersList[paramName] = new Constructor(options);
+          parametersList.push(new Constructor(options));
         }
       }
     }

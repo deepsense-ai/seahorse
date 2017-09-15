@@ -11,24 +11,13 @@ function ParametersList(options) {
 }
 
 ParametersList.prototype.serialize = function () {
-  let serializedObject = {};
-
-  for (let paramName in this.parameters) {
-    let parameter = this.parameters[paramName];
-    serializedObject[parameter.name] = parameter.serialize();
-  }
-
-  return serializedObject;
+  return _.map(this.parameters, (parameter) => {
+    return parameter.serialize();
+  });
 };
 
 ParametersList.prototype.validate = function() {
-  for (let parameter in this.parameters) {
-    if (!parameter.validate()) {
-      return false;
-    }
-  }
-
-  return true;
+  return _.every(_.map(this.parameters, (parameter) => parameter.validate()));
 };
 
 module.exports = ParametersList;
