@@ -63,6 +63,7 @@ object Library {
   val scalaLogging       = "com.typesafe.scala-logging"  %% "scala-logging"       % "3.1.0"
   val scalaReflect       = "org.scala-lang"               % "scala-reflect"       % Version.scala
   val scalatest          = "org.scalatest"               %% "scalatest"           % Version.scalatest
+  val seahorseCommons    = seahorse("commons")
   val seahorseReportlib  = seahorse("reportlib")
   val seahorseESClient   = seahorse("entitystorage-client")
   val seahorseESModel    = seahorse("entitystorage-model")
@@ -108,6 +109,7 @@ object Dependencies {
     logbackClassic,
     logbackCore,
     scalaLogging,
+    seahorseCommons,
     sparkSql,
     sprayCan,
     sprayJson,
