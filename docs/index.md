@@ -17,7 +17,7 @@ description: Seahorse documentation homepage
 Follow the instructions in [Seahorse Desktop](bundled_image_overview.html) to download and run Seahorse Desktop.
 
 ## Test It
-Go to <a href="http://172.28.128.100:8000/">http://172.28.128.100:8000/</a>.
+Go to <a target="_blank" href="http://172.28.128.100:8000/">http://172.28.128.100:8000/</a>.
 If Seahorse Desktop was set up correctly, you will see the main page of Seahorse web-based
 user interface:
 
@@ -69,7 +69,7 @@ For the `Read DataFrame` the report contains a data sample of the read [DataFram
 
 
 #### Query It!
-Loaded [transactions.csv](https://s3.amazonaws.com/workflowexecutor/examples/data/transactions.csv)
+Loaded <a target="_blank" href="https://s3.amazonaws.com/workflowexecutor/examples/data/transactions.csv">transactions.csv</a>
 file contains apartment prices from 3 cities.
 It has 5 columns and 1000 rows (header row and 999 data rows).
 Each row provides information about the apartment:
@@ -102,7 +102,7 @@ Congratulations! You have successfully created your first Seahorse application.
 The goal of this exercise is to build a model predicting apartment prices based on 3 features:
 <code>beds</code>, <code>baths</code> and <code>sq_ft</code>.
 
-The dataset [transactions.csv](https://s3.amazonaws.com/workflowexecutor/examples/data/transactions.csv) has 5 columns and 1,000 rows
+The dataset <a target="_blank" href="https://s3.amazonaws.com/workflowexecutor/examples/data/transactions.csv">transactions.csv</a> has 5 columns and 1,000 rows
 (header row and 999 data rows).
 Each row provides information about the apartment:
 city, number of bedrooms, number of bathrooms, size of the apartment (in square feet) and its price.

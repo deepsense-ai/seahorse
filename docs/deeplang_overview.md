@@ -110,7 +110,8 @@ Special-purpose entities include `Transformers`, `Estimators` and `Evaluators`.
 One can think about `Transformers`, `Estimators` and `Evaluators` as encapsulated operations that
 can be input to higher-order operations.
 
-These categories are analogous to classes in [Spark ML API](http://spark.apache.org/docs/latest/ml-guide.html#main-concepts).
+These categories are analogous to classes in
+<a target="_blank" href="http://spark.apache.org/docs/latest/ml-guide.html#main-concepts">Spark ML API</a>.
 Similarity of Deeplang and Spark class hierarchies gives multiple benefits:
 
 * Deeplang concepts are very easy to learn for users already familiar with Spark ML.
