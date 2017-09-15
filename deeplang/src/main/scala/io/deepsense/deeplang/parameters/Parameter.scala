@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
  *
- * Owner: Radoslaw Kotowski
+ * Owner: Witold Jedrzejewski
  */
 
 package io.deepsense.deeplang.parameters
@@ -28,7 +28,7 @@ abstract class Parameter extends DefaultJsonProtocol {
   val required: Boolean
 
   /** Value of parameter. */
-  def value: Option[HeldValue]
+  var value: Option[HeldValue] = None
 
   /**
    * Returns another parameter which has all fields equal to this parameter's fields
@@ -79,14 +79,23 @@ abstract class Parameter extends DefaultJsonProtocol {
   }
 
   /**
-   * Json representation of value held by parameter if it is provided.
+   * Json representation of value held by parameter if this value is provided.
    */
   protected def definedValueToJson(definedValue: HeldValue): JsValue
 
+  /**
+   * Fills parameter with value basing on json representation of this value.
+   */
   def fillValueWithJson(jsValue: JsValue): Unit = {
-    valueFromJsonPF.applyOrElse(jsValue, (_: Any) =>
-      throw new DeserializationException(s"Cannot fill parameter using $jsValue."))
+    value = jsValue match {
+      case JsNull => None
+      case _ => Some(valueFromDefinedJson(jsValue))
+    }
   }
 
-  protected def valueFromJsonPF: PartialFunction[JsValue, Unit]
+  /**
+   * Returns value of parameter basing on json representation of this value.
+   * Assumes that `jsValue` is not JsNull. Performs all required side effects of setting value.
+   */
+  protected def valueFromDefinedJson(jsValue: JsValue): HeldValue
 }

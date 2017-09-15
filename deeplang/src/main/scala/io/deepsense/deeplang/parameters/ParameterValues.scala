@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
  *
- * Owner: Radoslaw Kotowski
+ * Owner: Witold Jedrzejewski
  *
  * This is a place for all types of values that can be put in Parameters.
  */
@@ -21,12 +21,6 @@ case class Selection(label: String, selectedSchema: ParametersSchema)
  * Represents selecting subset of variety of options.
  */
 case class MultipleSelection(choices: Traversable[Selection])
-
-/**
- * Represents list of schemas that all conform to some predefined schema,
- * but each one can be filled with different value.
- */
-case class Multiplied(schemas: Vector[ParametersSchema])
 
 /**
  * Represents selecting single column of dataframe.

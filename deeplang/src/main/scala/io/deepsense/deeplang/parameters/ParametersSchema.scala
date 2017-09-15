@@ -6,7 +6,7 @@
 
 package io.deepsense.deeplang.parameters
 
-import spray.json.{DeserializationException, JsObject, JsValue}
+import spray.json.{DeserializationException, JsNull, JsObject, JsValue}
 
 import io.deepsense.deeplang.parameters.ParameterConversions._
 import io.deepsense.deeplang.parameters.exceptions.NoSuchParameterException
@@ -59,6 +59,7 @@ class ParametersSchema protected (schemaMap: Map[String, Parameter] = Map.empty)
             s"$jsValue: unknown parameter label $label.")
         }
       }
+    case JsNull => // JsNull is treated as empty object
     case _ => throw new DeserializationException(s"Cannot fill parameters schema with $jsValue:" +
       s"object expected.")
   }
@@ -75,8 +76,8 @@ class ParametersSchema protected (schemaMap: Map[String, Parameter] = Map.empty)
     get[MultipleChoiceParameter](name)
   }
 
-  def getMultiplicatedParameter(name: String): MultiplierParameter = {
-    get[MultiplierParameter](name)
+  def getParametersSequence(name: String): ParametersSequence = {
+    get[ParametersSequence](name)
   }
 
   def getSingleColumnSelectorParameter(name: String): SingleColumnSelectorParameter = {
@@ -93,14 +94,14 @@ class ParametersSchema protected (schemaMap: Map[String, Parameter] = Map.empty)
 
   def getDouble(name: String): Option[Double] = getNumericParameter(name).value
 
-  def getChoice(name: String): Option[Selection] = getChoiceParameter(name).value
+  def getChoice(name: String): Option[Selection] = getChoiceParameter(name).selection
 
-  def getMultipleChoice(name: String): Option[MultipleSelection] = {
-    getMultipleChoiceParameter(name).value
+  def getMultipleChoice(name: String): Option[Traversable[Selection]] = {
+    getMultipleChoiceParameter(name).selections
   }
 
-  def getMultiplicated(name: String): Option[Multiplied] = {
-    getMultiplicatedParameter(name).value
+  def getMultiplicatedSchema(name: String): Option[Vector[ParametersSchema]] = {
+    getParametersSequence(name).value
   }
 
   def getSingleColumnSelection(name: String): Option[SingleColumnSelection] = {

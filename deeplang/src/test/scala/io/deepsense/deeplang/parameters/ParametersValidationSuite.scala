@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
  *
- * Owner: Radoslaw Kotowski
+ * Owner: Witold Jedrzejewski
  */
 
 package io.deepsense.deeplang.parameters
@@ -88,27 +88,11 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
     assert(exception == MatchException("abc", regex))
   }
 
-  test("Choosing nonexistent choice in single choice parameter should throw an exception") {
-    intercept[IllegalChoiceException] {
-      val possibleChoices = Map.empty[String, ParametersSchema]
-      val choice = ChoiceParameter("choice", None, true, possibleChoices)
-      choice.fill("nonexistent", x => { })
-    }
-  }
-
-  test("Choosing nonexistent choice in multiple choice parameter should throw an exception") {
-    intercept[IllegalChoiceException] {
-      val possibleChoices = Map.empty[String, ParametersSchema]
-      val choice = MultipleChoiceParameter("choice", None, true, possibleChoices)
-      choice.fill(Map("nonexistent" -> (x => { })))
-    }
-  }
-
   test("Validation of choice parameter should validate chosen schema") {
     val mockSchema = mock[ParametersSchema]
     val possibleChoices = Map("onlyChoice" -> mockSchema)
     val choice = ChoiceParameter("choice", None, true, possibleChoices)
-    choice.fill("onlyChoice", _ => { })
+    choice.value = Some("onlyChoice")
     choice.validate
     verify(mockSchema).validate
   }
@@ -118,17 +102,16 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
     val mockSchema2 = mock[ParametersSchema]
     val possibleChoices = Map("firstChoice" -> mockSchema1, "secondChoice" -> mockSchema2)
     val multipleChoices = MultipleChoiceParameter("choice", None, true, possibleChoices)
-    multipleChoices.fill(Map("firstChoice" -> (x => { }), "secondChoice" -> (x => { })))
+    multipleChoices.value = Some(Traversable("firstChoice", "secondChoice"))
     multipleChoices.validate
     verify(mockSchema1).validate
     verify(mockSchema2).validate
   }
 
-  test("Validation of multiplier parameter should validate inner schemas") {
+  test("Validation of parameters sequence should validate inner schemas") {
     val mockSchema = mock[ParametersSchema]
-    when(mockSchema.replicate) thenReturn mockSchema
-    val multiplicator = MultiplierParameter("description", true, mockSchema)
-    multiplicator.fill(Vector(x => { }, x => { }))
+    val multiplicator = ParametersSequence("description", true, mockSchema)
+    multiplicator.value = Some(Vector(mockSchema, mockSchema))
     multiplicator.validate
     verify(mockSchema, times(2)).validate
   }

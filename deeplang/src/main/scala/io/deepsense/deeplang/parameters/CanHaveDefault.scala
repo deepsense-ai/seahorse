@@ -5,18 +5,19 @@ import spray.json._
 /**
  * Represents parameter that can provide default value.
  */
-trait CanHaveDefault[T] extends Parameter {
+trait CanHaveDefault extends Parameter {
 
   /** Default value of the parameter. Can be None if not provided. */
-  val default: Option[T]
+  val default: Option[HeldValue]
 
   override def toJson: JsObject = {
-    val fields = default match {
-      case Some(value) => Map("default" -> defaultValueToJson(value))
-      case None => Nil
+    val result = super.toJson
+    default match {
+      case Some(defaultValue) => JsObject(
+        result.fields.updated("default", defaultValueToJson(defaultValue)))
+      case None => result
     }
-    JsObject(super.toJson.fields ++ fields)
   }
 
-  protected def defaultValueToJson(defaultValue: T): JsValue
+  protected def defaultValueToJson(defaultValue: HeldValue): JsValue
 }
