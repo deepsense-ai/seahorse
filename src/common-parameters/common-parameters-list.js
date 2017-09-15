@@ -15,4 +15,10 @@ ParametersList.prototype.validate = function() {
   return _.every(_.map(this.parameters, (parameter) => parameter.validate()));
 };
 
+ParametersList.prototype.refresh = function(node) {
+  _.forEach(this.parameters, param => {
+    param.refresh(node);
+  });
+};
+
 module.exports = ParametersList;

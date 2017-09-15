@@ -22,4 +22,6 @@ GenericParameter.prototype.serialize = () => {
 
 GenericParameter.prototype.validate = () => true;
 
+GenericParameter.prototype.refresh = (node) => { return undefined; };
+
 module.exports = GenericParameter;

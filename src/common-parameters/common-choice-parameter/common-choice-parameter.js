@@ -50,4 +50,8 @@ ChoiceParameter.prototype.validate = function () {
   return true;
 };
 
+ChoiceParameter.prototype.refresh = function(node) {
+  _.forOwn(this.possibleChoicesList, (params, _) => params.refresh(node));
+};
+
 module.exports = ChoiceParameter;

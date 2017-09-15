@@ -1,31 +1,29 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Grzegorz Swatowski
- */
-
 'use strict';
 
 let GenericParameter = require('./../common-generic-parameter.js');
 let SelectorItemFactory = require('./common-selector-items/common-selector-item-factory.js');
 
-function SelectorParameter(options) {
+function SelectorParameter(options, node) {
   this.factoryItem = SelectorItemFactory;
   this.name = options.name;
   this.items = this.initItems(options.value, options.schema);
   this.schema = options.schema;
+  this.dataFrameSchema = options.dataFrameSchema;
 
   if (!this.schema.isSingle) {
     this.excluding = options.hasOwnProperty('excluding') ?
       options.excluding :
       false;
   }
+
+  this.setDataFrameSchema(node);
 }
 
 SelectorParameter.prototype = new GenericParameter();
 SelectorParameter.prototype.constructor = GenericParameter;
 
 SelectorParameter.prototype.initItems = function(value, schema) {
+  // TODO if we have dataFrameSchema, we should convert values to single ColumnSelection.
   let isSingle = schema.isSingle;
   let result = [];
 
@@ -80,6 +78,23 @@ SelectorParameter.prototype.validate = function() {
 
     return true;
   }
+};
+
+SelectorParameter.prototype.setDataFrameSchema = function(node) {
+  this.dataFrameSchema = undefined;
+  let dataFrameInputPort = this.schema.portIndex;
+  let inputKnowledge = node.getIncomingKnowledge(dataFrameInputPort);
+  if (inputKnowledge) {
+    let inferredResultDetails = inputKnowledge.result;
+    if (inferredResultDetails) {
+      // We assume that if selector is declared, inferred result details have 'schema' field.
+      this.dataFrameSchema = inferredResultDetails.schema;
+    }
+  }
+};
+
+SelectorParameter.prototype.refresh = function(node) {
+  this.setDataFrameSchema(node);
 };
 
 module.exports = SelectorParameter;
