@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.doperables
 
-import io.deepsense.deeplang.doperables.StringIndexerEstimatorIntegSpec.{IndexedR, MultiIndexedR, R}
+import io.deepsense.deeplang.doperables.StringIndexerEstimatorIntegSpec.{MultiIndexedInPlaceR, IndexedR, MultiIndexedR, R}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.NoInPlaceChoice
 import io.deepsense.deeplang.inference.InferContext
@@ -53,6 +53,22 @@ class StringIndexerEstimatorIntegSpec extends DeeplangIntegTestSupport {
       assertDataFramesEqual(
         transformed,
         multiOutputDataFrame,
+        checkRowOrder = true,
+        checkNullability = false)
+    }
+    "convert multiple columns in-place" in {
+      val si = new StringIndexerEstimator()
+      si.setMultipleColumnInPlace(Set("a", "b"))
+
+      val t = si.fit(executionContext)(())(inputDataFrame)
+        .asInstanceOf[StringIndexerModel]
+
+      t.validateParams shouldBe empty
+
+      val transformed = t.transform(executionContext)(())(inputDataFrame)
+      assertDataFramesEqual(
+        transformed,
+        multiOutputDataFrameInPlace,
         checkRowOrder = true,
         checkNullability = false)
     }
@@ -126,10 +142,26 @@ class StringIndexerEstimatorIntegSpec extends DeeplangIntegTestSupport {
 
     createDataFrame(indexedRs)
   }
+
+  val multiOutputDataFrameInPlace = {
+    val indexesB: Map[String, Double] = Map(
+      ("b", 0),
+      ("bb", 1),
+      ("bbb", 2)
+    )
+
+    val indexedRs = rs.map {
+      case R(a, b, c) =>
+        MultiIndexedInPlaceR(indexesA(a), indexesB(b), c)
+    }
+
+    createDataFrame(indexedRs)
+  }
 }
 
 object StringIndexerEstimatorIntegSpec {
   case class R(a: String, b: String, c: String)
   case class IndexedR(a: String, b: String, c: String, out: Double)
   case class MultiIndexedR(a: String, b: String, c: String, idx_a: Double, idx_b: Double)
+  case class MultiIndexedInPlaceR(a: Double, b: Double, c: String)
 }

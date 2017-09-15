@@ -22,12 +22,13 @@ import org.apache.spark.sql.types.StructType
 
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.multicolumn.HasSpecificParams
-import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.MultiColumnInPlaceChoices.MultiColumnNoInPlace
+import io.deepsense.deeplang.doperables.multicolumn.{MultiColumnParams, HasSpecificParams}
+import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.MultiColumnInPlaceChoices.{MultiColumnYesInPlace, MultiColumnNoInPlace}
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoice
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.{MultiColumnChoice, SingleColumnChoice}
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.NoInPlaceChoice
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.HasInputColumn
+import io.deepsense.deeplang.inference.InferenceWarnings
 import io.deepsense.deeplang.params.IOColumnsParam
 import io.deepsense.deeplang.params.choice.ChoiceParam
 import io.deepsense.deeplang.params.selections.{MultipleColumnSelection, NameColumnSelection, NameSingleColumnSelection}
@@ -57,9 +58,14 @@ abstract class MultiColumnEstimator extends Estimator with HasSpecificParams {
   }
 
   def setMultipleColumn(inputColumnNames: Set[String], outputColumnPrefix: String): this.type = {
-    val choice = MultiColumnChoice()
+    val choice = MultiColumnChoice(inputColumnNames)
       .setMultiInPlaceChoice(MultiColumnNoInPlace().setColumnsPrefix(outputColumnPrefix))
-      .setInputColumnsParam(MultipleColumnSelection(Vector(NameColumnSelection(inputColumnNames))))
+    set(singleOrMultiChoiceParam, choice)
+  }
+
+  def setMultipleColumnInPlace(inputColumnNames: Set[String]): this.type = {
+    val choice = MultiColumnChoice(inputColumnNames)
+      .setMultiInPlaceChoice(MultiColumnYesInPlace())
     set(singleOrMultiChoiceParam, choice)
   }
 
@@ -97,7 +103,8 @@ abstract class MultiColumnEstimator extends Estimator with HasSpecificParams {
    * Creates an instance of Transformer for inference.
    * @param schema the schema for inference, or None if it's unknown.
    */
-  override private[deeplang] def _fit_infer(schema: Option[StructType]): Transformer = {
+  override private[deeplang] def _fit_infer(
+      schema: Option[StructType]): Transformer = {
     $(singleOrMultiChoiceParam) match {
       case single: SingleColumnChoice =>
         handleSingleColumnChoiceInfer(schema, single)

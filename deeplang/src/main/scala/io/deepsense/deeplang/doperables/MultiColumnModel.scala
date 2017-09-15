@@ -50,10 +50,9 @@ abstract class MultiColumnModel[
   private val multiColumnChoice = MultiColumnChoice()
 
   override lazy val params: Array[Param[_]] =
-    declareParams(
-      getSpecificParams :+
-        multiColumnChoice.inputColumnsParam :+
-        multiColumnChoice.multiInPlaceChoiceParam: _*)
+    getSpecificParams :+
+      multiColumnChoice.inputColumnsParam :+
+      multiColumnChoice.multiInPlaceChoiceParam
 
   override private[deeplang] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
     val inputColumnNames = df.getColumnNames($(multiColumnChoice.inputColumnsParam))
