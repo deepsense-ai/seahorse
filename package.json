@@ -1,6 +1,6 @@
 {
   "name": "deepsense-catalogue-panel",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "main": "catalogue-panel.js",
   "description": "Catalogue panel",
   "license": "ISC",
@@ -9,6 +9,7 @@
     "bootstrap": "^3.3.4",
     "font-awesome": "^4.3.0",
     "jquery": "^2.1.4",
+    "lodash": "3.7.0",
     "malihu-custom-scrollbar-plugin": "^3.0.9"
   },
   "devDependencies": {

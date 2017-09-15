@@ -49,15 +49,31 @@ function OperationsCategory(RecursionHelper) {
       category: '='
     },
     controllerAs: 'ocCtrl',
-    controller: function() {
+    controller: ['$scope', function($scope) {
       var ocCtrl = this;
 
       ocCtrl.templateUrl = 'catalogue-panel-operations-category/popoverTemplate.html';
 
       ocCtrl.selectContentForPopover = function(operation) {
         ocCtrl.content = operation;
-      }
-    },
+      };
+
+      ocCtrl.showCategory = function (category) {
+        console.log('showCategory ', category);
+        var canShow = false;
+        category.items.forEach(function (item) {
+          if (item.name.toLowerCase().indexOf($scope.search) > -1) {
+            canShow = true;
+          }
+        });
+        if (category.catalog.length) {
+          canShow = true;
+        }
+
+        return canShow;
+      };
+
+    }],
     compile: function(element, scope) {
       // Use the compile function from the RecursionHelper,
       // And return the linking function(s) which it returns

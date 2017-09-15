@@ -22,6 +22,9 @@ function OperationItemView() {
       elem.on('mousedown', () => {
         $('.popover').hide();
       });
+      elem.on('wheel', () => {
+        $('.popover').hide();
+      });
       elem.on('dragstart', () => {
         $('.popover').hide();
       });
