@@ -60,7 +60,6 @@
 
   &__value {
     font-weight: bold;
-    .text-elipsis();
 
     &--invalid {
       color: @seahorse-error-red;
@@ -81,7 +80,13 @@
 }
 
 
-.schedule-cluster-preset {}
+.schedule-cluster-preset {
+  .schedule__preview & {
+    .schedule-attribute__value {
+      .text-elipsis();
+    }
+  }
+}
 
 
 .schedule-cron {
@@ -111,4 +116,10 @@
 }
 
 
-.schedule-email {}
+.schedule-email {
+  .schedule__preview & {
+    .schedule-attribute__value {
+      .text-elipsis();
+    }
+  }
+}
