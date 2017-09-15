@@ -32,7 +32,7 @@
   shell: "{{conda_dir}}/bin/python {{conda_dir}}/bin/ipython kernelspec install-self"
 
 - name: Install py4j
-  shell: "{{conda_dir}}/bin/pip install py4j"
+  shell: "{{conda_dir}}/bin/pip install py4j==0.9"
 
 - name: Copy pyspark kernel files
   copy: src=kernels dest=/tmp/

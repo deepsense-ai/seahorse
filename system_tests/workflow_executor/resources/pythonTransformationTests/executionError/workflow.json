@@ -9,7 +9,7 @@
       "parameters": {
         "data storage type": {
           "FILE": {
-            "source": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/resources/customPythonOperationTests/badTransformFunctionSignatureError/input.csv",
+            "source": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/resources/pythonTransformationTests/executionError/input.csv",
             "format": {
               "CSV": {
                 "separator": {
@@ -31,7 +31,7 @@
         "name": "Python Transformation"
       },
       "parameters": {
-        "code": "from pyspark.sql.types import Row\ndef transform(dataframe, UNEXPECTED_PARAMETER):\n    return sqlContext.createDataFrame(dataframe.map(lambda row: Row(row.numbers, row.numbers*2)))"
+        "code": "from pyspark.sql.types import Row\ndef transform(dataframe):\n    return sqlContext.createDataFrame(dataframe.map(lambda row: Row(row.numbers, 1.0/row.numbers)))"
       }
     }],
     "connections": [{
@@ -47,7 +47,7 @@
   },
   "thirdPartyData": {
     "gui": {
-      "name": "CustomPythonOperationBadTransformFunctionSignatureError",
+      "name": "CustomPythonOperationExecutionError",
       "description": "",
       "predefColors": ["#00B1EB", "#1ab394", "#2f4050", "#f8ac59", "#ed5565", "#DD6D3F"],
       "nodes": {
@@ -76,7 +76,7 @@
   "variables": {
 
   },
-  "id": "62f354c8-cb00-4e28-9a61-b7decebb3531",
+  "id": "3c60481d-0a81-4c63-8709-ab7d6215c304",
   "metadata": {
     "type": "batch",
     "apiVersion": "1.2.0"

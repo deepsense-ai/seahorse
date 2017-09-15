@@ -1,0 +1,115 @@
+{
+  "workflow": {
+    "nodes": [{
+      "id": "806d1a75-7f9b-3de1-3fc9-6f644684835d",
+      "operation": {
+        "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
+        "name": "Read DataFrame"
+      },
+      "parameters": {
+        "data storage type": {
+          "FILE": {
+            "source": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/resources/pythonEvaluatorTests/evaluatorError/input.csv",
+            "format": {
+              "CSV": {
+                "separator": {
+                  ",": {
+
+                  }
+                },
+                "names included": true,
+                "convert to boolean": false
+              }
+            }
+          }
+        }
+      }
+    }, {
+      "id": "67b26f6c-84ef-9759-82d0-3f03094777d8",
+      "operation": {
+        "id": "582748ff-b1e4-4821-94da-d6c411e76e7e",
+        "name": "Python Evaluator"
+      },
+      "parameters": {
+        "metric name": "test metric",
+        "python evaluator code": "from math import sqrt\nfrom operator import add\n\ndef evaluate(dataframe):\n    # Example Root-Mean-Square Error implementation\n    n = dataframe.count()\n    row_to_sq_error = lambda row: (row['price'] - row['predicted_price'])**2\n    sum_sq_error = dataframe.map(row_to_sq_error).reduce(add)\n    rmse = sqrt(sum_sq_error / n)\n    return 'wrong_value'",
+        "is larger better": true
+      }
+    }, {
+      "id": "054bf1d1-0f42-dce3-ffbc-878ccc83d794",
+      "operation": {
+        "id": "a88eaf35-9061-4714-b042-ddd2049ce917",
+        "name": "Evaluate"
+      },
+      "parameters": {
+        "Parameters of input Evaluator": {
+          "python evaluator code": "from math import sqrt\nfrom operator import add\n\ndef evaluate(dataframe):\n    # Example Root-Mean-Square Error implementation\n    n = dataframe.count()\n    row_to_sq_error = lambda row: (row['price'] - row['predicted_price'])**2\n    sum_sq_error = dataframe.map(row_to_sq_error).reduce(add)\n    rmse = sqrt(sum_sq_error / n)\n    return 'wrong_value'",
+          "is larger better": true
+        }
+      }
+    }],
+    "connections": [{
+      "from": {
+        "nodeId": "806d1a75-7f9b-3de1-3fc9-6f644684835d",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "054bf1d1-0f42-dce3-ffbc-878ccc83d794",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "67b26f6c-84ef-9759-82d0-3f03094777d8",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "054bf1d1-0f42-dce3-ffbc-878ccc83d794",
+        "portIndex": 1
+      }
+    }]
+  },
+  "thirdPartyData": {
+    "gui": {
+      "name": "PythonEvaluatorError",
+      "description": "",
+      "predefColors": ["#00B1EB", "#1ab394", "#2f4050", "#f8ac59", "#ed5565", "#DD6D3F"],
+      "nodes": {
+        "806d1a75-7f9b-3de1-3fc9-6f644684835d": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5244,
+            "y": 5214
+          }
+        },
+        "67b26f6c-84ef-9759-82d0-3f03094777d8": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5490,
+            "y": 5218
+          }
+        },
+        "054bf1d1-0f42-dce3-ffbc-878ccc83d794": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5419,
+            "y": 5377
+          }
+        }
+      }
+    },
+    "notebooks": {
+
+    }
+  },
+  "variables": {
+
+  },
+  "id": "bbf6557b-153f-4da0-b332-1e0e1c81eddf",
+  "metadata": {
+    "type": "batch",
+    "apiVersion": "1.2.0"
+  }
+}

@@ -1,7 +1,7 @@
 # Copyright (c) 2015, CodiLime Inc.
 
 *** Variables ***
-${SUITE} =    customPythonOperationTests
+${SUITE} =    pythonTransformationTests
 
 
 *** Settings ***
@@ -36,5 +36,9 @@ Execution Error
     Check Report
 
 Success
+    Run Workflow Local
+    Check Report
+
+Success Automatic Conversion To DataFrame
     Run Workflow Local
     Check Report

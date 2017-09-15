@@ -49,3 +49,13 @@ Missing Values Handler
     Upload Resource File To Hdfs  input.csv
     Run Workflow
     Check Report
+
+Get From Vector
+    Upload Resource File To Hdfs  input.csv
+    Run Workflow
+    Check Report
+
+Automatic Conversion To Vector
+    Upload Resource File To Hdfs  input.csv
+    Run Workflow
+    Check Report

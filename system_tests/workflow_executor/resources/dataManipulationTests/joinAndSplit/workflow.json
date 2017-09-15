@@ -25,7 +25,20 @@
         }
       }
     }, {
-      "id": "88706332-7105-0970-cd38-80a870a5a84b",
+      "id": "297374ae-c22b-5093-0695-a831acdde33b",
+      "operation": {
+        "id": "d273c42f-b840-4402-ba6b-18282cc68de3",
+        "name": "Split"
+      },
+      "parameters": {
+        "split mode": {
+          "CONDITIONAL": {
+            "condition": "salary > 10000"
+          }
+        }
+      }
+    }, {
+      "id": "e66b493e-ac08-2f96-a5c8-f907189dc5f9",
       "operation": {
         "id": "9e460036-95cc-42c5-ba64-5bc767a40e4e",
         "name": "Write DataFrame"
@@ -33,6 +46,7 @@
       "parameters": {
         "data storage type": {
           "FILE": {
+            "output file": "hdfs://spark-cluster-1/system_tests/joinAndSplit/output3.csv",
             "format": {
               "CSV": {
                 "separator": {
@@ -42,8 +56,7 @@
                 },
                 "names included": true
               }
-            },
-            "output file": "hdfs://spark-cluster-1/system_tests/joinAndSplit/output1.csv"
+            }
           }
         }
       }
@@ -54,8 +67,35 @@
         "name": "Split"
       },
       "parameters": {
-        "split ratio": 0.5,
-        "seed": 800.0
+        "split mode": {
+          "RANDOM": {
+            "split ratio": 0.5,
+            "seed": 20.0
+          }
+        }
+      }
+    }, {
+      "id": "88706332-7105-0970-cd38-80a870a5a84b",
+      "operation": {
+        "id": "9e460036-95cc-42c5-ba64-5bc767a40e4e",
+        "name": "Write DataFrame"
+      },
+      "parameters": {
+        "data storage type": {
+          "FILE": {
+            "output file": "hdfs://spark-cluster-1/system_tests/joinAndSplit/output1.csv",
+            "format": {
+              "CSV": {
+                "separator": {
+                  ",": {
+
+                  }
+                },
+                "names included": true
+              }
+            }
+          }
+        }
       }
     }, {
       "id": "01ccc706-2912-c87d-5f02-9604a7db2b5f",
@@ -82,12 +122,10 @@
             "type": "column",
             "value": "surname"
           }
-        }],
-        "left prefix": null,
-        "right prefix": null
+        }]
       }
     }, {
-      "id": "e66b493e-ac08-2f96-a5c8-f907189dc5f9",
+      "id": "01168407-a54e-7fd6-9f6e-b86fc58ee9c1",
       "operation": {
         "id": "9e460036-95cc-42c5-ba64-5bc767a40e4e",
         "name": "Write DataFrame"
@@ -95,6 +133,7 @@
       "parameters": {
         "data storage type": {
           "FILE": {
+            "output file": "hdfs://spark-cluster-1/system_tests/joinAndSplit/output2.csv",
             "format": {
               "CSV": {
                 "separator": {
@@ -104,8 +143,7 @@
                 },
                 "names included": true
               }
-            },
-            "output file": "hdfs://spark-cluster-1/system_tests/joinAndSplit/output2.csv"
+            }
           }
         }
       }
@@ -136,6 +174,15 @@
     }],
     "connections": [{
       "from": {
+        "nodeId": "297374ae-c22b-5093-0695-a831acdde33b",
+        "portIndex": 1
+      },
+      "to": {
+        "nodeId": "01168407-a54e-7fd6-9f6e-b86fc58ee9c1",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
         "nodeId": "01ccc706-2912-c87d-5f02-9604a7db2b5f",
         "portIndex": 0
       },
@@ -158,7 +205,7 @@
         "portIndex": 0
       },
       "to": {
-        "nodeId": "88706332-7105-0970-cd38-80a870a5a84b",
+        "nodeId": "297374ae-c22b-5093-0695-a831acdde33b",
         "portIndex": 0
       }
     }, {
@@ -169,6 +216,15 @@
       "to": {
         "nodeId": "01ccc706-2912-c87d-5f02-9604a7db2b5f",
         "portIndex": 1
+      }
+    }, {
+      "from": {
+        "nodeId": "297374ae-c22b-5093-0695-a831acdde33b",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "88706332-7105-0970-cd38-80a870a5a84b",
+        "portIndex": 0
       }
     }, {
       "from": {
@@ -185,50 +241,82 @@
     "gui": {
       "name": "Join And Split",
       "description": "",
+      "predefColors": ["#00B1EB", "#1ab394", "#2f4050", "#f8ac59", "#ed5565", "#DD6D3F"],
       "nodes": {
+        "01168407-a54e-7fd6-9f6e-b86fc58ee9c1": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 568,
+            "y": 634
+          }
+        },
         "31f196ac-d3a5-3859-c678-27105f7a6d2b": {
+          "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
             "x": 677,
             "y": 104
           }
         },
         "01ccc706-2912-c87d-5f02-9604a7db2b5f": {
+          "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
             "x": 534,
             "y": 234
           }
         },
-        "e66b493e-ac08-2f96-a5c8-f907189dc5f9": {
+        "297374ae-c22b-5093-0695-a831acdde33b": {
+          "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "x": 711,
-            "y": 551
+            "x": 367,
+            "y": 520
+          }
+        },
+        "e66b493e-ac08-2f96-a5c8-f907189dc5f9": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 866,
+            "y": 633
           }
         },
         "c21973ce-4bea-ba68-9d92-d4045d11dda2": {
+          "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
             "x": 401,
             "y": 103
           }
         },
         "88706332-7105-0970-cd38-80a870a5a84b": {
+          "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "x": 300,
-            "y": 544
+            "x": 161,
+            "y": 628
           }
         },
         "94d963d6-92e7-64b9-05e8-15661774d1bb": {
+          "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
             "x": 539,
             "y": 386
           }
         }
       }
+    },
+    "notebooks": {
+
     }
   },
   "variables": {
 
   },
-  "id": "8079e76e-46ce-4c05-ae04-b430a502b66b",
+  "id": "1fda4d9d-8148-45aa-bc5d-8f21f63c61d5",
   "metadata": {
     "type": "batch",
     "apiVersion": "1.2.0"
