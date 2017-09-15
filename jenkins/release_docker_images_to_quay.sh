@@ -3,30 +3,37 @@
 #
 # Tags latest dockers with SEAHORSE_BUILD_TAG and releases docker-compose.yml
 #
-# Usage: `jenkins/release_docker_images_to_quay.sh SEAHORSE_BUILD_TAG` from deepsense-backend catalog
+# Usage: `jenkins/release_docker_images_to_quay.sh ARTIFACTORY_URL SEAHORSE_DISTRIBUTION_REPOSITORY SEAHORSE_BUILD_TAG`
+#  from deepsense-backend catalog
 
 set -e
 
 DEEPSENSE_REGISTRY="docker-repo.deepsense.codilime.com/deepsense_io"
 QUAY_REGISTRY="quay.io/deepsense_io"
-SEAHORSE_BUILD_TAG=$1
-GIT_BRANCH="master"
+
+ARTIFACTORY_URL=$1
+SEAHORSE_DISTRIBUTION_REPOSITORY=$2
+SEAHORSE_BUILD_TAG=$3
 
 echo "This script assumes it is run from deepsense-backend directory"
 echo "Release SEAHORSE_BUILD_TAG $SEAHORSE_BUILD_TAG"
 
+LINK_TO_DOCKER_COMPOSE_FILE=
 TMP_FILE=$(mktemp /tmp/dc-tmp.XXXXXX)
-deployment/docker-compose/docker-compose.py --generate-only --yaml-file $TMP_FILE
-DOCKER_IMAGES=(`cat $TMP_FILE | grep image: | cut -d":" -f 2 | rev | cut -d"/" -f 1 | rev | tr " " "\n"`)
+wget \
+  --output-document=$TMP_FILE \
+  "${ARTIFACTORY_URL}/${SEAHORSE_DISTRIBUTION_REPOSITORY}/io/deepsense/${SEAHORSE_BUILD_TAG}/dockercompose/docker-compose-internal.yml"
+
+DOCKER_IMAGES=(`cat $TMP_FILE | grep image: | cut -d":" -f 2,3 | rev | cut -d"/" -f 1 | rev | tr " " "\n"`)
 rm $TMP_FILE
 
 for DOCKER_IMAGE in ${DOCKER_IMAGES[*]}
 do
   echo "************* Releasing docker image for project $DOCKER_IMAGE"
 
-  LATEST_IMAGE_DEEPSENSE=$DEEPSENSE_REGISTRY/$DOCKER_IMAGE:$SEAHORSE_BUILD_TAG
-
-  QUAY_IMAGE=$QUAY_REGISTRY/$DOCKER_IMAGE:$SEAHORSE_BUILD_TAG
+  LATEST_IMAGE_DEEPSENSE=$DEEPSENSE_REGISTRY/$DOCKER_IMAGE
+  DOCKER_IMAGE_NAME=`cut -d":" -f1 <<<$DOCKER_IMAGE`
+  QUAY_IMAGE=$QUAY_REGISTRY/$DOCKER_IMAGE_NAME:$SEAHORSE_BUILD_TAG
 
   echo ">>> pulling docker image $LATEST_IMAGE_DEEPSENSE"
   docker pull $LATEST_IMAGE_DEEPSENSE

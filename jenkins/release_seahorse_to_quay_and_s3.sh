@@ -26,10 +26,14 @@ if [ $AWS_FILES_COUNT -ne 0 ]; then
   exit -1
 fi
 
+ARTIFACTORY_CREDENTIALS=$HOME/.artifactory_credentials
+ARTIFACTORY_URL=`grep "host=" $ARTIFACTORY_CREDENTIALS | cut -d '=' -f 2`
+
+SEAHORSE_WORKFLOWEXECUTOR_REPOSITORY="seahorse-workflowexecutor"
+SEAHORSE_DISTRIBUTION_REPOSITORY="seahorse-distribu tion"
 
 echo "Publish docker images to quay.io and generate docker-compose.yml"
-./jenkins/release_docker_images_to_quay.sh ${SEAHORSE_BUILD_TAG}
-
+./jenkins/release_docker_images_to_quay.sh ${ARTIFACTORY_URL} ${SEAHORSE_DISTRIBUTION_REPOSITORY} ${SEAHORSE_BUILD_TAG}
 
 if [ $RELEASE_TO_S3 = "false" ]
 then
@@ -37,13 +41,6 @@ then
   exit 0
 fi
 echo "RELEASE_TO_S3 equals to $RELEASE_TO_S3, continue job and Release artifacts to S3"
-
-
-ARTIFACTORY_CREDENTIALS=$HOME/.artifactory_credentials
-ARTIFACTORY_URL=`grep "host=" $ARTIFACTORY_CREDENTIALS | cut -d '=' -f 2`
-
-SEAHORSE_WORKFLOWEXECUTOR_REPOSITORY="seahorse-workflowexecutor"
-SEAHORSE_DISTRIBUTION_REPOSITORY="seahorse-distribution"
 
 
 echo "Publish to S3 workflowexecutor uber-jars"
