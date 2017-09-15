@@ -4,17 +4,21 @@
 
 package io.deepsense.workflowmanager.storage
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 import org.joda.time.DateTime
+import spray.json._
 
 import io.deepsense.commons.models.Id
+import io.deepsense.commons.utils.{Logging, Version}
+import io.deepsense.models.json.workflow.WorkflowVersionUtil
 import io.deepsense.models.workflows.Workflow
+import io.deepsense.workflowmanager.rest.CurrentBuild
 
 /**
  * Abstraction layer to make implementation of Workflow Manager easier.
  */
-trait WorkflowStorage {
+trait WorkflowStorage extends WorkflowVersionUtil with Logging {
 
   /**
    * Returns a workflow with the specified id.
@@ -30,21 +34,47 @@ trait WorkflowStorage {
    * @param ownerId Id of the owner.
    * @param ownerName Name of the owner.
    */
-  def create(id: Id, workflow: Workflow, ownerId: String, ownerName: String): Future[Unit]
+  def create(id: Id, workflow: Workflow, ownerId: String, ownerName: String): Future[Unit] = {
+    createRaw(id, workflow.toJson, ownerId, ownerName)
+  }
+
+  def createRaw(id: Id, workflow: JsValue, ownerId: String, ownerName: String): Future[Unit]
 
   /**
    * Updates a workflow.
    * @param id Id of the workflow.
    * @param workflow Workflow to be updated.
    */
-  def update(id: Id, workflow: Workflow): Future[Unit]
+  def update(id: Id, workflow: Workflow): Future[Unit] = {
+    updateRaw(id, workflow.toJson)
+  }
+
+  protected def rawWorkflowToFullWorkflow(raw: WorkflowRaw): WorkflowFullInfo = {
+    WorkflowFullInfo(
+      workflow = raw.workflow.convertTo[Workflow],
+      created = raw.created,
+      updated = raw.updated,
+      ownerId = raw.ownerId,
+      ownerName = raw.ownerName
+    )
+  }
 
   /**
    * Returns all stored workflows. If the workflow is compatible with the current
    * API version it is returned as an object otherwise as a string.
    * @return Stored workflows as objects or Strings.
    */
-  def getAll(): Future[Map[Workflow.Id, WorkflowFullInfo]]
+  def getAll(implicit ec: ExecutionContext): Future[Map[Id, WorkflowFullInfo]] = {
+    for {
+      rawWorkflows <- getAllRaw
+    } yield {
+      rawWorkflows.mapValues(rawWorkflowToFullWorkflow)
+    }
+  }
+
+  def updateRaw(id: Id, workflow: JsValue): Future[Unit]
+
+  def getAllRaw: Future[Map[Workflow.Id, WorkflowRaw]]
 
   /**
    * Removes an workflow with the specified id.
@@ -54,6 +84,8 @@ trait WorkflowStorage {
    *         future will fail.
    */
   def delete(id: Id): Future[Unit]
+
+  override def currentVersion: Version = CurrentBuild.version
 }
 
 case class WorkflowFullInfo(
@@ -62,3 +94,11 @@ case class WorkflowFullInfo(
     updated: DateTime,
     ownerId: String,
     ownerName: String)
+
+case class WorkflowRaw(
+    workflow: JsValue,
+    created: DateTime,
+    updated: DateTime,
+    ownerId: String,
+    ownerName: String
+)

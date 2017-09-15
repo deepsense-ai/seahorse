@@ -170,7 +170,7 @@ class WorkflowManagerImpl @Inject()(
   def list(): Future[Seq[WorkflowInfo]] = {
     logger.debug("List workflows")
     authorizator.withRole(roleGet) { userContext =>
-      workflowStorage.getAll().map { workflows =>
+      workflowStorage.getAll.map { workflows =>
         workflows.map {
           case (workflowId, fullInfo) =>
             workflowInfo(workflowId, fullInfo)

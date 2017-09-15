@@ -6,8 +6,11 @@ package io.deepsense.workflowmanager.rest
 
 import scala.collection.concurrent.TrieMap
 import scala.concurrent._
+import scala.concurrent.duration._
+import scala.language.postfixOps
 import scala.reflect.runtime.universe.TypeTag
 
+import akka.testkit._
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.mockito.invocation.InvocationOnMock
@@ -22,7 +25,6 @@ import io.deepsense.commons.auth.{AuthorizatorProvider, UserContextAuthorizator}
 import io.deepsense.commons.buildinfo.BuildInfo
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
-import io.deepsense.commons.utils.Version
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.deeplang
 import io.deepsense.deeplang.DOperation.Id
@@ -47,9 +49,11 @@ class WorkflowsApiSpec
   with WorkflowJsonProtocol
   with InferredStateJsonProtocol
   with WorkflowWithVariablesJsonProtocol
-  with WorkflowWithResultsJsonProtocol {
+  with WorkflowWithResultsJsonProtocol { self =>
 
   import WorkflowsApiSpec.MockOperation
+
+  override implicit val routeTestTimeout: RouteTestTimeout = RouteTestTimeout((5 seconds) dilated)
 
   val catalog = DOperationsCatalog()
   catalog.registerDOperation(DOperationCategories.Transformation, () => new MockOperation())
@@ -694,7 +698,9 @@ class WorkflowsApiSpec
   }
 
   def mockStorage(): WorkflowStorage = {
-    val storage = new InMemoryWorkflowStorage()
+    val storage = new InMemoryWorkflowStorage() {
+      override val graphReader: GraphReader = self.graphReader
+    }
     storage.create(workflowAId, workflowA, ownerId, ownerName)
     storage.create(workflowBId, workflowB, ownerId, ownerName)
     storage.create(workflowWithoutNotebookId, workflowWithoutNotebook, ownerId, ownerName)

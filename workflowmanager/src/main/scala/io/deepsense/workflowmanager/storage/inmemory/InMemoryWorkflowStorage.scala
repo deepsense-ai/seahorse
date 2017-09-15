@@ -9,30 +9,34 @@ import scala.concurrent.Future
 import scala.language.postfixOps
 
 import org.joda.time.DateTime
+import spray.json._
 
+import io.deepsense.deeplang.CatalogRecorder
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.workflows.Workflow
-import io.deepsense.workflowmanager.storage.{WorkflowFullInfo, WorkflowStorage}
+import io.deepsense.workflowmanager.storage.{WorkflowFullInfo, WorkflowRaw, WorkflowStorage}
 
 /**
  * Thread-safe, in-memory WorkflowStorage.
  */
 class InMemoryWorkflowStorage extends WorkflowStorage {
-  private val workflows: TrieMap[Workflow.Id, WorkflowFullInfo] = TrieMap()
+  override val graphReader = new GraphReader(CatalogRecorder.resourcesCatalogRecorder.catalogs.dOperationsCatalog)
+
+  private val workflows: TrieMap[Workflow.Id, WorkflowRaw] = TrieMap()
   private val now = DateTime.now()
 
-  override def create(
-      id: Workflow.Id, workflow: Workflow, ownerId: String, ownerName: String): Future[Unit] = {
+  def createRaw(id: Workflow.Id, workflow: JsValue, ownerId: String, ownerName: String): Future[Unit] = {
     save(id, workflow, Some(ownerId), Some(ownerName))
   }
 
-  override def update(id: Workflow.Id, workflow: Workflow): Future[Unit] = {
+  override def updateRaw(id: Workflow.Id, workflow: JsValue): Future[Unit] = {
     save(id, workflow, None, None)
   }
 
-  private def save(id: Workflow.Id, workflow: Workflow,
+  private def save(id: Workflow.Id, workflow: JsValue,
       ownerId: Option[String], ownerName: Option[String]): Future[Unit] = {
-    def withNewWorkflow(old: Option[WorkflowFullInfo]): WorkflowFullInfo =
-      WorkflowFullInfo(workflow,
+    def withNewWorkflow(old: Option[WorkflowRaw]): WorkflowRaw =
+      WorkflowRaw(workflow,
         old.map(_.created).getOrElse(DateTime.now),
         old.map(_.updated).getOrElse(DateTime.now),
         ownerId orElse old.map(_.ownerId) get,
@@ -49,10 +53,10 @@ class InMemoryWorkflowStorage extends WorkflowStorage {
   }
 
   override def get(id: Workflow.Id): Future[Option[WorkflowFullInfo]] = {
-    Future.successful(workflows.get(id))
+    Future.successful(workflows.get(id).map(rawWorkflowToFullWorkflow))
   }
 
-  override def getAll(): Future[Map[Workflow.Id, WorkflowFullInfo]] = {
+  override def getAllRaw: Future[Map[Workflow.Id, WorkflowRaw]] = {
     Future.successful(workflows.toMap)
   }
 

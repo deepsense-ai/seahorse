@@ -1,11 +1,13 @@
 /**
- * Copyright (c) 2016, CodiLime Inc.
+ * Copyright (c) 2017, CodiLime Inc.
  */
 
-package io.deepsense.e2etests
+package io.deepsense.workflowmanager.versionconverter
 
 import java.net.URL
 import java.util.UUID
+
+import scala.util.{Try, Success, Failure}
 
 import io.deepsense.api.datasourcemanager.ApiClient
 import io.deepsense.api.datasourcemanager.client.DefaultApi
@@ -21,17 +23,17 @@ class DatasourcesClient(datasourceServerAddress: URL, userId: UUID, userName: St
     apiClient.createService(classOf[DefaultApi])
   }
 
-  def insertDatasource(uuid: UUID, datasourceParams: DatasourceParams): Unit = {
+  def insertDatasource(uuid: UUID, datasourceParams: DatasourceParams): Try[Unit] = {
     val response = client.putDatasource(userId.toString, userName, uuid.toString, datasourceParams).execute()
     logger.info(s"Adding datasource, userId = $userId, userName = $userName," +
       s"uuid = $uuid, params = $datasourceParams")
-    if (response.isSuccessful) {
+    if (response.isSuccessful) { Success {
       logger.info(s"Successfully added datasource; body = ${response.body()}")
-    } else {
-      throw new Exception(
+    }} else {
+      Failure(new RuntimeException(
         s"There was a problem with adding datasource," +
           s"code: ${response.code()}, error body: ${response.errorBody().string()}."
-      )
+      ))
     }
   }
 }

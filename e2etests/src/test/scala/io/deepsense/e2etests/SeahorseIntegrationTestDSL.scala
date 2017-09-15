@@ -34,6 +34,7 @@ import io.deepsense.models.workflows.{Workflow, WorkflowInfo}
 import io.deepsense.sessionmanager.rest.client.SessionManagerClient
 import io.deepsense.sessionmanager.service.Status
 import io.deepsense.workflowmanager.client.WorkflowManagerClient
+import io.deepsense.workflowmanager.versionconverter.DatasourcesClient
 
 trait SeahorseIntegrationTestDSL
     extends Matchers

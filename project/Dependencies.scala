@@ -156,7 +156,8 @@ object Dependencies {
     sprayCan,
     sprayClient,
     sprayJson,
-    sprayRouting
+    sprayRouting,
+    scalaz
   ) ++ Seq(akkaTestkit, mockitoCore, scalatest, scoverage, sprayTestkit).map(_ % s"$Test,it")
 
   val sessionmanager = Spark.components ++ Seq(

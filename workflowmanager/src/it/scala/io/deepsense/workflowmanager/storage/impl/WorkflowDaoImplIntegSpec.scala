@@ -85,7 +85,7 @@ class WorkflowDaoImplIntegSpec
 
       "workflow belongs to scheduler user" in {
         withStoredWorkflows(storedWorkflows) {
-          whenReady(workflowsDao.getAll()) { workflows =>
+          whenReady(workflowsDao.getAll) { workflows =>
             workflows.keySet should not contain schedulerWorkflowId
           }
         }
@@ -108,7 +108,7 @@ class WorkflowDaoImplIntegSpec
     }
 
     "get all workflows" in withStoredWorkflows(storedWorkflows) {
-      whenReady(workflowsDao.getAll()) { workflows =>
+      whenReady(workflowsDao.getAll) { workflows =>
         workflows.size shouldBe 2
         workflows(workflow1Id).workflow shouldBe workflow1
         workflows(workflow2Id).workflow shouldBe workflow2

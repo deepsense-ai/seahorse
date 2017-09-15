@@ -1,0 +1,569 @@
+{
+  "workflow": {
+    "nodes": [{
+      "id": "0cca3c16-1eb2-f69f-f2b3-dfbcb2240445",
+      "operation": {
+        "id": "643d8706-24db-4674-b5b4-10b5129251fc",
+        "name": "Transform"
+      },
+      "parameters": {
+        "Parameters of input Transformer": {
+
+        }
+      }
+    }, {
+      "id": "8112eef9-e473-3dcb-84e5-970091d191d1",
+      "operation": {
+        "id": "643d8706-24db-4674-b5b4-10b5129251fc",
+        "name": "Transform"
+      },
+      "parameters": {
+        "Parameters of input Transformer": {
+
+        }
+      }
+    }, {
+      "id": "dfe6fb3c-513a-8b7e-bf1b-f202d4313c77",
+      "operation": {
+        "id": "d273c42f-b840-4402-ba6b-18282cc68de3",
+        "name": "Split"
+      },
+      "parameters": {
+        "split mode": {
+          "RANDOM": {
+            "split ratio": 0.3
+          }
+        }
+      }
+    }, {
+      "id": "047288e5-f529-53d4-5d89-1c9bfe1e220b",
+      "operation": {
+        "id": "c57a5b99-9184-4095-9037-9359f905628d",
+        "name": "Assemble Vector"
+      },
+      "parameters": {
+        "input columns": {
+          "selections": [{
+            "type": "columnList",
+            "values": ["city", "price"]
+          }],
+          "excluding": true
+        },
+        "output column": "features"
+      }
+    }, {
+      "id": "9fbbf8fe-0567-92c0-421c-bd28149cf7b4",
+      "operation": {
+        "id": "461a7b68-5fc8-4cd7-a912-0e0cc70eb3aa",
+        "name": "Linear Regression"
+      },
+      "parameters": {
+        "label column": {
+          "type": "column",
+          "value": "price"
+        }
+      }
+    }, {
+      "id": "47d6d30e-3f52-9553-3cfd-51cc0bef4835",
+      "operation": {
+        "id": "d9c3026c-a3d0-4365-8d1a-464a656b72de",
+        "name": "Regression Evaluator"
+      },
+      "parameters": {
+        "label column": {
+          "type": "column",
+          "value": "price"
+        }
+      }
+    }, {
+      "id": "a89afc6d-ceaa-c4cf-ffd1-b9250b9e0543",
+      "operation": {
+        "id": "e76ca616-0322-47a5-b390-70c9668265dd",
+        "name": "Python Notebook"
+      },
+      "parameters": {
+
+      }
+    }, {
+      "id": "554da8b8-764d-130a-46eb-f8014bdf8312",
+      "operation": {
+        "id": "65240399-2987-41bd-ba7e-2944d60a3404",
+        "name": "Create Custom Transformer"
+      },
+      "parameters": {
+        "inner workflow": {
+          "workflow": {
+            "nodes": [{
+              "id": "5a54dc52-dc2d-07dd-9cfe-ce05208db721",
+              "operation": {
+                "id": "f94b04d7-ec34-42f7-8100-93fe235c89f8",
+                "name": "Source"
+              },
+              "parameters": {
+
+              }
+            }, {
+              "id": "de3e089c-b655-ca71-c330-0cb3d1a27e7c",
+              "operation": {
+                "id": "e652238f-7415-4da6-95c6-ee33808561b2",
+                "name": "Sink"
+              },
+              "parameters": {
+
+              }
+            }, {
+              "id": "80d31c5c-00a3-d22e-f9a1-dcfbcff9d954",
+              "operation": {
+                "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
+                "name": "Read DataFrame"
+              },
+              "parameters": {
+                "data storage type": {
+                  "FILE": {
+                    "source": "http://s3.amazonaws.com/workflowexecutor/examples/data/adult.data",
+                    "format": null
+                  }
+                }
+              }
+            }, {
+              "id": "271ce334-291f-5f09-b334-d4b0abd84c9b",
+              "operation": {
+                "id": "06374446-3138-4cf7-9682-f884990f3a60",
+                "name": "Join"
+              },
+              "parameters": {
+                "join type": {
+                  "Outer": {
+
+                  }
+                },
+                "left prefix": null,
+                "right prefix": null,
+                "join columns": [{
+                  "left column": {
+                    "type": "index",
+                    "value": 1
+                  },
+                  "right column": {
+                    "type": "index",
+                    "value": 0
+                  }
+                }]
+              }
+            }],
+            "connections": [{
+              "from": {
+                "nodeId": "80d31c5c-00a3-d22e-f9a1-dcfbcff9d954",
+                "portIndex": 0
+              },
+              "to": {
+                "nodeId": "271ce334-291f-5f09-b334-d4b0abd84c9b",
+                "portIndex": 0
+              }
+            }, {
+              "from": {
+                "nodeId": "5a54dc52-dc2d-07dd-9cfe-ce05208db721",
+                "portIndex": 0
+              },
+              "to": {
+                "nodeId": "271ce334-291f-5f09-b334-d4b0abd84c9b",
+                "portIndex": 1
+              }
+            }, {
+              "from": {
+                "nodeId": "271ce334-291f-5f09-b334-d4b0abd84c9b",
+                "portIndex": 0
+              },
+              "to": {
+                "nodeId": "de3e089c-b655-ca71-c330-0cb3d1a27e7c",
+                "portIndex": 0
+              }
+            }]
+          },
+          "thirdPartyData": {
+            "gui": {
+              "name": "Inner workflow of custom transformer",
+              "predefColors": ["#00B1EB", "#1ab394", "#2f4050", "#f8ac59", "#ed5565", "#DD6D3F"],
+              "nodes": {
+                "5a54dc52-dc2d-07dd-9cfe-ce05208db721": {
+                  "uiName": "",
+                  "color": "#2F4050",
+                  "coordinates": {
+                    "x": 5233,
+                    "y": 4951
+                  }
+                },
+                "de3e089c-b655-ca71-c330-0cb3d1a27e7c": {
+                  "uiName": "",
+                  "color": "#2F4050",
+                  "coordinates": {
+                    "x": 5236,
+                    "y": 5247
+                  }
+                },
+                "80d31c5c-00a3-d22e-f9a1-dcfbcff9d954": {
+                  "uiName": "",
+                  "color": "#00B1EB",
+                  "coordinates": {
+                    "x": 4897,
+                    "y": 4977
+                  }
+                },
+                "271ce334-291f-5f09-b334-d4b0abd84c9b": {
+                  "uiName": "",
+                  "color": "#00B1EB",
+                  "coordinates": {
+                    "x": 5140,
+                    "y": 5098
+                  }
+                }
+              }
+            }
+          },
+          "variables": {
+
+          },
+          "publicParams": [],
+          "id": "54dbd50a-96a0-8d35-c4f9-056d402ad7de"
+        }
+      }
+    }, {
+      "id": "cb8e6d30-6a59-eb89-43d5-e34c7cdcd64a",
+      "operation": {
+        "id": "a88eaf35-9061-4714-b042-ddd2049ce917",
+        "name": "Evaluate"
+      },
+      "parameters": {
+        "Parameters of input Evaluator": {
+
+        }
+      }
+    }, {
+      "id": "dbee59b3-e5b0-6f31-0c6f-f3173dcdf191",
+      "operation": {
+        "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
+        "name": "Read DataFrame"
+      },
+      "parameters": {
+        "data storage type": {
+          "FILE": {
+            "source": "http://s3.amazonaws.com/workflowexecutor/examples/data/transactions.csv"
+          }
+        }
+      }
+    }, {
+      "id": "e95674c4-391c-a77d-92ff-0c9ef9032564",
+      "operation": {
+        "id": "9e460036-95cc-42c5-ba64-5bc767a40e4e",
+        "name": "Write DataFrame"
+      },
+      "parameters": {
+        "data storage type": {
+          "FILE": {
+            "output file": "library://evaluate.csv"
+          }
+        }
+      }
+    }, {
+      "id": "3dcf4d4a-ce52-456c-c6a6-8d0870d7f737",
+      "operation": {
+        "id": "0c2ff818-977b-11e5-8994-feff819cdc9f",
+        "name": "Fit"
+      },
+      "parameters": {
+        "Parameters of input Estimator": {
+
+        }
+      }
+    }],
+    "connections": [{
+      "from": {
+        "nodeId": "9fbbf8fe-0567-92c0-421c-bd28149cf7b4",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "3dcf4d4a-ce52-456c-c6a6-8d0870d7f737",
+        "portIndex": 1
+      }
+    }, {
+      "from": {
+        "nodeId": "dbee59b3-e5b0-6f31-0c6f-f3173dcdf191",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "047288e5-f529-53d4-5d89-1c9bfe1e220b",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "dfe6fb3c-513a-8b7e-bf1b-f202d4313c77",
+        "portIndex": 1
+      },
+      "to": {
+        "nodeId": "8112eef9-e473-3dcb-84e5-970091d191d1",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "dfe6fb3c-513a-8b7e-bf1b-f202d4313c77",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "3dcf4d4a-ce52-456c-c6a6-8d0870d7f737",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "8112eef9-e473-3dcb-84e5-970091d191d1",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "e95674c4-391c-a77d-92ff-0c9ef9032564",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "8112eef9-e473-3dcb-84e5-970091d191d1",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "a89afc6d-ceaa-c4cf-ffd1-b9250b9e0543",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "047288e5-f529-53d4-5d89-1c9bfe1e220b",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "dfe6fb3c-513a-8b7e-bf1b-f202d4313c77",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "554da8b8-764d-130a-46eb-f8014bdf8312",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "0cca3c16-1eb2-f69f-f2b3-dfbcb2240445",
+        "portIndex": 1
+      }
+    }, {
+      "from": {
+        "nodeId": "47d6d30e-3f52-9553-3cfd-51cc0bef4835",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "cb8e6d30-6a59-eb89-43d5-e34c7cdcd64a",
+        "portIndex": 1
+      }
+    }, {
+      "from": {
+        "nodeId": "dbee59b3-e5b0-6f31-0c6f-f3173dcdf191",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "0cca3c16-1eb2-f69f-f2b3-dfbcb2240445",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "3dcf4d4a-ce52-456c-c6a6-8d0870d7f737",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "8112eef9-e473-3dcb-84e5-970091d191d1",
+        "portIndex": 1
+      }
+    }, {
+      "from": {
+        "nodeId": "8112eef9-e473-3dcb-84e5-970091d191d1",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "cb8e6d30-6a59-eb89-43d5-e34c7cdcd64a",
+        "portIndex": 0
+      }
+    }]
+  },
+  "thirdPartyData": {
+    "gui": {
+      "name": "my workflow 1.3.2",
+      "description": "",
+      "predefColors": ["#00B1EB", "#1ab394", "#2f4050", "#f8ac59", "#ed5565", "#DD6D3F"],
+      "nodes": {
+        "9fbbf8fe-0567-92c0-421c-bd28149cf7b4": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5364,
+            "y": 5302
+          }
+        },
+        "dfe6fb3c-513a-8b7e-bf1b-f202d4313c77": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5056,
+            "y": 5360
+          }
+        },
+        "dbee59b3-e5b0-6f31-0c6f-f3173dcdf191": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5155,
+            "y": 5015
+          }
+        },
+        "e95674c4-391c-a77d-92ff-0c9ef9032564": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5027,
+            "y": 5774
+          }
+        },
+        "3dcf4d4a-ce52-456c-c6a6-8d0870d7f737": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5208,
+            "y": 5537
+          }
+        },
+        "047288e5-f529-53d4-5d89-1c9bfe1e220b": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5160,
+            "y": 5170
+          }
+        },
+        "0cca3c16-1eb2-f69f-f2b3-dfbcb2240445": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5566,
+            "y": 5171
+          }
+        },
+        "47d6d30e-3f52-9553-3cfd-51cc0bef4835": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5699,
+            "y": 5337
+          }
+        },
+        "8112eef9-e473-3dcb-84e5-970091d191d1": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5421,
+            "y": 5629
+          }
+        },
+        "a89afc6d-ceaa-c4cf-ffd1-b9250b9e0543": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5384,
+            "y": 5851
+          }
+        },
+        "554da8b8-764d-130a-46eb-f8014bdf8312": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5715,
+            "y": 5111
+          }
+        },
+        "cb8e6d30-6a59-eb89-43d5-e34c7cdcd64a": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5642,
+            "y": 5677
+          }
+        }
+      }
+    },
+    "notebooks": {
+      "a89afc6d-ceaa-c4cf-ffd1-b9250b9e0543": {
+        "cells": [{
+          "source": ["import pyspark\n", "from pyspark.sql.functions import *"],
+          "execution_count": 1,
+          "outputs": [],
+          "cell_type": "code",
+          "metadata": {
+            "collapsed": true
+          }
+        }, {
+          "source": ["df = dataframe()"],
+          "execution_count": 2,
+          "outputs": [],
+          "cell_type": "code",
+          "metadata": {
+            "collapsed": true
+          }
+        }, {
+          "source": ["df.select(pow(sum(pow(df.price - df.prediction, 2)) / df.count(), .5)).collect()"],
+          "execution_count": 3,
+          "outputs": [{
+            "data": {
+              "text/plain": ["[Row(POWER((sum(POWER((price - prediction), 2.0)) / 671), 0.5)=60947.70803121219)]"]
+            },
+            "execution_count": 3,
+            "metadata": {
+
+            },
+            "output_type": "execute_result"
+          }],
+          "cell_type": "code",
+          "metadata": {
+            "collapsed": false
+          }
+        }, {
+          "source": [],
+          "execution_count": null,
+          "outputs": [],
+          "cell_type": "code",
+          "metadata": {
+            "collapsed": true
+          }
+        }],
+        "metadata": {
+          "kernelspec": {
+            "display_name": "PySpark",
+            "language": "python",
+            "name": "forwarding_kernel_py"
+          },
+          "language_info": {
+            "mimetype": "text/x-python",
+            "name": "python",
+            "pygments_lexer": "ipython2",
+            "codemirror_mode": {
+              "name": "ipython",
+              "version": 2
+            },
+            "version": "2.7.12",
+            "nbconvert_exporter": "python",
+            "file_extension": ".py"
+          }
+        },
+        "nbformat": 4,
+        "nbformat_minor": 0
+      }
+    }
+  },
+  "variables": {
+
+  },
+  "id": "b7b2ea67-1e56-45dc-982d-475b8e7c4813",
+  "metadata": {
+    "type": "batch",
+    "apiVersion": "1.3.2"
+  }
+}

@@ -21,7 +21,7 @@ import io.deepsense.models.json.workflow.WorkflowVersionUtil
 import io.deepsense.models.workflows.Workflow
 import io.deepsense.models.workflows.Workflow.Id
 import io.deepsense.workflowmanager.rest.CurrentBuild
-import io.deepsense.workflowmanager.storage.{WorkflowStorage, WorkflowFullInfo}
+import io.deepsense.workflowmanager.storage.{WorkflowFullInfo, WorkflowStorage, WorkflowRaw}
 
 case class WorkflowDaoImpl @Inject()(
     @Named("workflowmanager") db: JdbcDriver#API#Database,
@@ -47,9 +47,9 @@ case class WorkflowDaoImpl @Inject()(
     }
   }
 
-  override def update(id: Id, workflow: Workflow): Future[Unit] = {
+  override def updateRaw(id: Id, workflow: JsValue): Future[Unit] = {
     val query = for { w <- workflows if w.id === id.value } yield (w.workflow, w.updated)
-    db.run(query.update((workflow.toJson.compactPrint, DateTimeConverter.now.getMillis)))
+    db.run(query.update((workflow.compactPrint, DateTimeConverter.now.getMillis)))
       .map(_ => ())
   }
 
@@ -58,28 +58,28 @@ case class WorkflowDaoImpl @Inject()(
     db.run(query.update(true)).map(_ => ())
   }
 
-  override def create(
+  override def createRaw(
       id: Id,
-      workflow: Workflow,
+      workflow: JsValue,
       ownerId: String,
       ownerName: String): Future[Unit] = {
-    db.run(workflows += ((id.value, workflow.toJson.compactPrint, false,
+    db.run(workflows += ((id.value, workflow.compactPrint, false,
       DateTimeConverter.now.getMillis, DateTimeConverter.now.getMillis,
       ownerId, ownerName))).map(_ => ())
   }
 
-  override def getAll(): Future[Map[Id, WorkflowFullInfo]] = {
+
+  override def getAllRaw: Future[Map[Id, WorkflowRaw]] = {
     db.run(workflows.filterNot(w => w.deleted || w.ownerId === schedulerUserId).result).map(_.map {
       case (id, workflow, _, created, updated, ownerId, ownerName) =>
-        Id.fromUuid(id) -> WorkflowFullInfo(
-          workflow.parseJson.convertTo[Workflow],
-          DateTimeConverter.fromMillis(created), DateTimeConverter.fromMillis(updated),
+        Id.fromUuid(id) -> WorkflowRaw(
+          workflow.parseJson,
+          DateTimeConverter.fromMillis(created),
+          DateTimeConverter.fromMillis(updated),
           ownerId, ownerName
         )
     }.toMap)
   }
-
-  override def currentVersion: Version = CurrentBuild.version
 
   val WorkflowId = "id"
   val Workflow = "workflow"
