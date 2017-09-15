@@ -10,9 +10,9 @@ export class GraphPanelStyler {
     endpoint.setHoverPaintStyle(GraphPanelStyler.getInputEndpointDefaultHoverPaintStyle(renderMode));
   }
 
-  static styleOutputEndpointDefault(endpoint, renderMode) {
-    endpoint.setPaintStyle(GraphPanelStyler.getOutputEndpointDefaultPaintStyle(renderMode));
-    endpoint.setHoverPaintStyle(GraphPanelStyler.getOutputEndpointDefaultHoverPaintStyle(renderMode));
+  static styleOutputEndpointDefault(endpoint, renderMode, hasReport) {
+    endpoint.setPaintStyle(GraphPanelStyler.getOutputEndpointDefaultPaintStyle(renderMode, hasReport));
+    endpoint.setHoverPaintStyle(GraphPanelStyler.getOutputEndpointDefaultHoverPaintStyle(renderMode, hasReport));
   }
 
   static styleSelectedOutputEndpoint(endpoint) {
@@ -69,39 +69,47 @@ export class GraphPanelStyler {
       'input-endpoint-default-hover-style-report-mode';
   }
 
-  static getOutputEndpointDefaultPaintStyle(renderMode) {
-    return renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE ? {
-      fillStyle: ENDPOINT_DEFAULT_BACKGROUND_COLOR,
-      radius: 10,
-      lineWidth: 2
-    } : {
-      fillStyle: ENDPOINT_DEFAULT_BACKGROUND_COLOR,
-      radius: 15,
-      lineWidth: 2
-    };
+  static getOutputEndpointDefaultPaintStyle(renderMode, hasReport) {
+    if (renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE) {
+      return {
+        fillStyle: ENDPOINT_DEFAULT_BACKGROUND_COLOR,
+        radius: 10,
+        lineWidth: 2
+      };
+    } else {
+      return {
+        fillStyle: ENDPOINT_DEFAULT_BACKGROUND_COLOR,
+        radius: hasReport ? 15 : 10,
+        lineWidth: 2
+      };
+    }
   }
 
-  static getOutputEndpointDefaultCssClass(renderMode) {
-    return renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE ?
-      'output-endpoint-default-style-editor-mode' :
-      'output-endpoint-default-style-report-mode fa fa-bar-chart';
+  static getOutputEndpointDefaultCssClass(renderMode, hasReport) {
+    if (renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE) {
+      return 'output-endpoint-default-style-editor-mode';
+    } else {
+      return 'output-endpoint-default-style-report-mode' + (hasReport ? ' fa fa-bar-chart' : '');
+    }
   }
 
-  static getOutputEndpointDefaultHoverPaintStyle(renderMode) {
+  static getOutputEndpointDefaultHoverPaintStyle(renderMode, hasReport) {
     return renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE ? {
       fillStyle: '#216477',
       radius: 10,
       lineWidth: 2
     } : {
       fillStyle: ENDPOINT_DEFAULT_BACKGROUND_COLOR,
-      radius: 20,
+      radius: hasReport ? 20 : 10,
       lineWidth: 2
     };
   }
 
-  static getOutputEndpointDefaultHoverCssClass(renderMode) {
-    return renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE ?
-      'output-endpoint-default-hover-style-editor-mode' :
-      'output-endpoint-default-hover-style-report-mode';
+  static getOutputEndpointDefaultHoverCssClass(renderMode, hasReport) {
+    if (renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE) {
+      return 'output-endpoint-default-hover-style-editor-mode';
+    } else {
+      return hasReport ? 'output-endpoint-default-hover-style-report-mode' : '';
+    }
   }
 }

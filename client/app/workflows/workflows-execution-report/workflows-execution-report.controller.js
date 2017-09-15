@@ -77,9 +77,12 @@ function WorkflowsReportController(
   $scope.$on('OutputPort.LEFT_CLICK', (event, data) => {
     let node = WorkflowService.getWorkflow().getNodeById(data.portObject.nodeId);
     $scope.$applyAsync(() => {
-      $state.go('workflows.reportEntity', {
-        reportEntityId: node.getResult(data.reference.getParameter('portIndex'))
-      });
+      let reportEntityId = node.getResult(data.reference.getParameter('portIndex'));
+      if (Report.hasReportEntity(reportEntityId)) {
+        $state.go('workflows.reportEntity', {
+          reportEntityId: reportEntityId
+        });
+      }
     });
   });
 

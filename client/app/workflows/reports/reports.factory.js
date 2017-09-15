@@ -11,8 +11,10 @@ function ReportsFactory() {
   let createReportEntities = (reportId, resultEntities) => {
     for (let reportEntityId in resultEntities) {
       let resultEntity = resultEntities[reportEntityId];
-      resultEntity.report.reportId = reportId;
-      reportsStorage.set(reportEntityId, resultEntity);
+      if (resultEntity.report) {
+        resultEntity.report.reportId = reportId;
+        reportsStorage.set(reportEntityId, resultEntity);
+      }
     }
   };
 
@@ -20,9 +22,14 @@ function ReportsFactory() {
     return reportsStorage.get(reportEntityId);
   };
 
+  let hasReportEntity = (reportEntityId) => {
+    return !!getReportEntity(reportEntityId);
+  };
+
   return {
     createReportEntities: createReportEntities,
-    getReportEntity: getReportEntity
+    getReportEntity: getReportEntity,
+    hasReportEntity: hasReportEntity
   };
 }
 

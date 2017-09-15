@@ -24,7 +24,7 @@ import { GraphPanelRendererBase } from './graph-panel-renderer-base.js';
 import { GraphPanelStyler } from './graph-panel-styler.js';
 
 /* @ngInject */
-function GraphPanelRendererService($rootScope, $document, Edge, $timeout,
+function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report,
                                    DeepsenseCycleAnalyser, NotificationService, ConnectionHinterService, WorkflowService, GraphNode)
 {
   const connectorPaintStyles = {
@@ -163,12 +163,15 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout,
       ['BottomCenter'] :
       ['BottomLeft', 'BottomCenter', 'BottomRight'];
 
-    let outputStyle = _.assign({}, OUTPUT_STYLE, {
-      cssClass: GraphPanelStyler.getOutputEndpointDefaultCssClass(internal.renderMode),
-      hoverClass: GraphPanelStyler.getOutputEndpointDefaultHoverCssClass(internal.renderMode)
-    });
-
     for (let i = 0; i < ports.length; i++) {
+      let reportEntityId = nodeObj.getResult(i);
+      let hasReport = Report.hasReportEntity(reportEntityId);
+
+      let outputStyle = _.assign({}, OUTPUT_STYLE, {
+        cssClass: GraphPanelStyler.getOutputEndpointDefaultCssClass(internal.renderMode, hasReport),
+        hoverClass: GraphPanelStyler.getOutputEndpointDefaultHoverCssClass(internal.renderMode, hasReport)
+      });
+
       let port = jsPlumb.addEndpoint(nodeElement, outputStyle, {
         anchor: anchors[i],
         uuid: ports[i].id
@@ -177,7 +180,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout,
       port.setParameter('portIndex', i);
       port.setParameter('nodeId', nodeObj.id);
 
-      GraphPanelStyler.styleOutputEndpointDefault(port, internal.renderMode);
+      GraphPanelStyler.styleOutputEndpointDefault(port, internal.renderMode, hasReport);
 
       port.bind('click', (port, event) => {
         $rootScope.$broadcast('OutputPort.LEFT_CLICK', {
