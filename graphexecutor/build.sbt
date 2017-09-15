@@ -31,6 +31,12 @@ mainClass in Compile := Some("io.deepsense.graphexecutor.GraphExecutor")
 
 enablePlugins(BuildInfoPlugin, JavaAppPackaging, GitVersioning, UniversalDeployPlugin)
 
+// Disable tgz as set by UniversalDeployPlugin
+packagedArtifacts in Universal := {
+  (packagedArtifacts in Universal).value.filterNot { case (artifact, _) =>
+    artifact.extension == "tgz" }
+}
+
 mappings in Universal := {
   val universalMappings = (mappings in Universal).value
   val assemblyJar = (assembly in Compile).value

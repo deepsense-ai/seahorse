@@ -14,6 +14,14 @@ object CommonSettingsPlugin extends AutoPlugin {
 
   lazy val OurIT = config("it") extend Test
 
+  lazy val artifactoryUrl = settingKey[String]("Artifactory URL to deploy packages to")
+
+  override def globalSettings = Seq(
+    // Set custom URL using -Dartifactory.url
+    // sbt -Dartifactory.url=http://192.168.59.104/artifactory/
+    artifactoryUrl := sys.props.getOrElse("artifactory.url", "http://10.10.1.77:8081/artifactory/")
+  )
+
   override def projectSettings = Seq(
     organization := "io.deepsense",
     scalaVersion := "2.11.6",
@@ -30,11 +38,11 @@ object CommonSettingsPlugin extends AutoPlugin {
     test <<= test in Test
   ) ++ Seq(
     publishTo := {
-      val artifactoryUrl = sys.props.getOrElse("artifactory.url", "http://10.10.1.77:8081/artifactory/")
+      val url = artifactoryUrl.value
       if (isSnapshot.value)
-        Some("snapshots" at artifactoryUrl + "deepsense-backend-snapshot")
+        Some("snapshots" at url + "deepsense-backend-snapshot")
       else
-        Some("releases" at artifactoryUrl + "deepsense-backend-release")
+        Some("releases" at url + "deepsense-backend-release")
     },
     releaseProcess := Seq[ReleaseStep](
       checkSnapshotDependencies,
