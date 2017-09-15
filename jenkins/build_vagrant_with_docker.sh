@@ -32,11 +32,11 @@ DEEPSENSE_REGISTRY="docker-repo.deepsense.codilime.com/deepsense_io"
 docker-compose pull
 
 echo "Save docker images to files"
-DOCKER_IMAGES=("deepsense-sessionmanager" "deepsense-workflowmanager" "deepsense-notebooks" "deepsense-rabbitmq" "deepsense-h2" "deepsense-frontend" "deepsense-proxy")
-for DOCKER_IMAGE in "${DOCKER_IMAGES[@]}"
+DOCKER_IMAGES=(`cat docker-compose.yml | grep image: | cut -d":" -f 2 | cut -d"/" -f 3 | tr " " "\n"`)
+for DOCKER_IMAGE in ${DOCKER_IMAGES[*]}
 do
-  DOCKER_IMAGE_FULL=$DEEPSENSE_REGISTRY/$DOCKER_IMAGE:$SEAHORSE_BUILD_TAG
   echo "Save docker image to $DOCKER_IMAGE.tar"
+  DOCKER_IMAGE_FULL=$DEEPSENSE_REGISTRY/$DOCKER_IMAGE:$SEAHORSE_BUILD_TAG
   rm -f $DOCKER_IMAGE.tar
   docker save --output $DOCKER_IMAGE.tar $DOCKER_IMAGE_FULL
 done

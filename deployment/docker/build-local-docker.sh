@@ -16,8 +16,8 @@ fi
 PROJECT_PATH=$1
 PROJECT_NAME=$2
 GIT_BRANCH=`git branch | grep '*' | awk '{ print $2 }'`
-if [ ! -z $BRANCH ]; then
-  GIT_BRANCH="$BRANCH"
+if [ ! -z $GIT_TAG ]; then
+  GIT_BRANCH="$GIT_TAG"
 fi
 
 TAG_LATEST="$PROJECT_NAME:$GIT_BRANCH-latest"

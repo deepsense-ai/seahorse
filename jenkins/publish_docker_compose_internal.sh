@@ -3,23 +3,22 @@
 #
 # Releases docker-compose-internal.yml
 #
-# Usage: `jenkins/publish_docker_compose_internal.sh TAG` from deepsense-backend catalog
+# Usage: `jenkins/publish_docker_compose_internal.sh SEAHORSE_BUILD_TAG` from deepsense-backend catalog
 
 set -e
 
 DEEPSENSE_REGISTRY="docker-repo.deepsense.codilime.com/deepsense_io"
-TAG=$1
-GIT_BRANCH="master"
+SEAHORSE_BUILD_TAG=$1
 
 echo "This script assumes it is run from deepsense-backend directory"
 
-echo "Generating docker compose file with docker images tagged with $TAG"
+echo "Generating docker compose file with docker images tagged with $SEAHORSE_BUILD_TAG"
 
 ARTIFACT_NAME="docker-compose-internal.yml"
 
 DOCKER_COMPOSE_TMPL="deployment/docker-compose/docker-compose.tmpl.yml"
 rm -f $ARTIFACT_NAME
-sed 's|\$DOCKER_REPOSITORY|'"$DEEPSENSE_REGISTRY"'|g ; s|\$DOCKER_TAG|'"$TAG"'|g' $DOCKER_COMPOSE_TMPL >> $ARTIFACT_NAME
+sed 's|\$DOCKER_REPOSITORY|'"$DEEPSENSE_REGISTRY"'|g ; s|\$DOCKER_TAG|'"$SEAHORSE_BUILD_TAG"'|g' $DOCKER_COMPOSE_TMPL >> $ARTIFACT_NAME
 
 echo 'Sending $ARTIFACT_NAME to snapshot artifactory'
 
@@ -29,9 +28,7 @@ ARTIFACTORY_USER=`grep "user=" $ARTIFACTORY_CREDENTIALS | cut -d '=' -f 2`
 ARTIFACTORY_PASSWORD=`grep "password=" $ARTIFACTORY_CREDENTIALS | cut -d '=' -f 2`
 ARTIFACTORY_URL=`grep "host=" $ARTIFACTORY_CREDENTIALS | cut -d '=' -f 2`
 
-SNAPSHOT_REPOSITORY="seahorse-distribution"
-
-REPOSITORY_URL="$ARTIFACTORY_URL/$SNAPSHOT_REPOSITORY/io/deepsense"
+REPOSITORY_URL="$ARTIFACTORY_URL/seahorse-distribution/io/deepsense"
 
 echo "Sending $ARTIFACT_NAME"
 
@@ -40,7 +37,7 @@ md5Value="${md5Value:0:32}"
 sha1Value="`sha1sum "${ARTIFACT_NAME}"`"
 sha1Value="${sha1Value:0:40}"
 
-URL_WITH_TAG="${REPOSITORY_URL}/${TAG}/dockercompose/${ARTIFACT_NAME}"
+URL_WITH_TAG="${REPOSITORY_URL}/${SEAHORSE_BUILD_TAG}/dockercompose/${ARTIFACT_NAME}"
 
 echo "** INFO: Uploading $ARTIFACT_NAME to ${URL_WITH_TAG} **"
 curl -i -X PUT -u $ARTIFACTORY_USER:$ARTIFACTORY_PASSWORD \

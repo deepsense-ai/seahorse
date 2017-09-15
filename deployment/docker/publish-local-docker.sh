@@ -4,7 +4,7 @@
 # Publishes docker image from given project path and name.
 #
 # Example usage: ./publish-local-docker.sh ../../remote_notebook/ deepsense-notebooks SEAHORSE_BUILD_TAG
-# Note: SEAHORSE_BUILD_TAG can be generated using: SEAHORSE_BUILD_TAG=`date +%Y%m%d_%H%M%S`
+# Note: SEAHORSE_BUILD_TAG can be generated using: SEAHORSE_BUILD_TAG=`date +%Y%m%d_%H%M%S`-$GIT_TAG
 
 set -e
 
@@ -19,8 +19,8 @@ PROJECT_NAME=$2
 SEAHORSE_BUILD_TAG=$3
 DOCKER_IMAGE=`docker images | grep $PROJECT_NAME | grep "latest" | head -1 | awk '{ print $3 }'`
 GIT_BRANCH=`git branch | grep '*' | awk '{ print $2 }'`
-if [ ! -z $BRANCH ]; then
-  GIT_BRANCH="$BRANCH"
+if [ ! -z $GIT_TAG ]; then
+  GIT_BRANCH="$GIT_TAG"
 fi
 
 echo $DOCKER_IMAGE
