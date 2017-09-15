@@ -23,7 +23,7 @@ import io.deepsense.deeplang.{DOperation, DOperation0To1, ExecutionContext}
  * Current version only supports CSV
  */
 
-class ReadFile extends DOperation0To1[File] {
+case class ReadFile() extends DOperation0To1[File] {
 
   override val id: DOperation.Id = "748975b2-38f0-40b4-8550-3faf4840b7c5"
 

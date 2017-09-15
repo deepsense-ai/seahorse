@@ -18,7 +18,7 @@ import io.deepsense.deeplang.doperables.file.File
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{DOperation1To1, ExecutionContext}
 
-class FileToDataFrame extends DOperation1To1[File, DataFrame] {
+case class FileToDataFrame() extends DOperation1To1[File, DataFrame] {
   import io.deepsense.deeplang.doperations.FileToDataFrame._
   override val name: String = "File To DataFrame"
   override val id: Id = "83bad450-f87c-11e4-b939-0800200c9a66"

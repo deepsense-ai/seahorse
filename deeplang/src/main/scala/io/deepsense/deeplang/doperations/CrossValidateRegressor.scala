@@ -17,7 +17,7 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.parameters._
 import io.deepsense.reportlib.model.{ReportContent, Table}
 
-class CrossValidateRegressor
+case class CrossValidateRegressor()
   extends DOperation2To2[Regressor with Trainable, DataFrame, Regressor with Scorable, Report]
   with WithTrainParameters {
 

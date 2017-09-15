@@ -28,7 +28,7 @@ abstract class Parameter extends Serializable {
   val required: Boolean
 
   /** Value of parameter. */
-  var value: Option[HeldValue] = None
+  var value: Option[HeldValue]
 
   /**
    * Returns another parameter which has all fields equal to this parameter's fields

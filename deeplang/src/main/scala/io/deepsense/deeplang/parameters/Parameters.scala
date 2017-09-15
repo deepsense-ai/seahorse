@@ -12,7 +12,8 @@ import spray.json._
 case class BooleanParameter(
     description: String,
     default: Option[Boolean],
-    required: Boolean)
+    required: Boolean,
+    var value: Option[Boolean] = None)
   extends Parameter
   with CanHaveDefault {
 
@@ -35,7 +36,8 @@ case class NumericParameter(
     description: String,
     default: Option[Double],
     required: Boolean,
-    validator: Validator[Double])
+    validator: Validator[Double],
+    var value: Option[Double] = None)
   extends Parameter
   with HasValidator
   with CanHaveDefault {
@@ -59,7 +61,8 @@ case class StringParameter(
     description: String,
     default: Option[String],
     required: Boolean,
-    validator: Validator[String])
+    validator: Validator[String],
+    var value: Option[String] = None)
   extends Parameter
   with HasValidator
   with CanHaveDefault {
@@ -89,7 +92,8 @@ case class ChoiceParameter(
     description: String,
     default: Option[String],
     required: Boolean,
-    options: ListMap[String, ParametersSchema])
+    options: ListMap[String, ParametersSchema],
+    var value: Option[String] = None)
   extends Parameter
   with HasOptions
   with CanHaveDefault {
@@ -139,7 +143,8 @@ case class MultipleChoiceParameter(
     description: String,
     default: Option[Traversable[String]],
     required: Boolean,
-    options: ListMap[String, ParametersSchema])
+    options: ListMap[String, ParametersSchema],
+    var value: Option[Traversable[String]] = None)
   extends Parameter
   with HasOptions
   with CanHaveDefault {
@@ -192,7 +197,8 @@ case class MultipleChoiceParameter(
 case class ParametersSequence(
     description: String,
     required: Boolean,
-    predefinedSchema: ParametersSchema)
+    predefinedSchema: ParametersSchema,
+    var value: Option[Vector[ParametersSchema]] = None)
   extends Parameter {
   type HeldValue = Vector[ParametersSchema]
 
@@ -252,7 +258,8 @@ abstract sealed class AbstractColumnSelectorParameter extends Parameter {
  */
 case class SingleColumnSelectorParameter(
     description: String,
-    required: Boolean)
+    required: Boolean,
+    var value: Option[SingleColumnSelection] = None)
   extends AbstractColumnSelectorParameter {
   type HeldValue = SingleColumnSelection
 
@@ -274,7 +281,8 @@ case class SingleColumnSelectorParameter(
  */
 case class ColumnSelectorParameter(
     description: String,
-    required: Boolean)
+    required: Boolean,
+    var value: Option[MultipleColumnSelection] = None)
   extends AbstractColumnSelectorParameter {
   type HeldValue = MultipleColumnSelection
 

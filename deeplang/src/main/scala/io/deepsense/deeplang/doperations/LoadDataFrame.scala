@@ -13,7 +13,7 @@ import io.deepsense.models.entities.Entity
 /**
  * Operation which is able to load DataFrame and deserialize it.
  */
-class LoadDataFrame extends DOperation0To1[DataFrame] {
+case class LoadDataFrame() extends DOperation0To1[DataFrame] {
   override val id: DOperation.Id = "2aa22df2-e28b-11e4-8a00-1681e6b88ec1"
 
   override val parameters = ParametersSchema(LoadDataFrame.idParam -> StringParameter(

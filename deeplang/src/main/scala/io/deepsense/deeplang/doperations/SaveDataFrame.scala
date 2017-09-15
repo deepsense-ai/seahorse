@@ -16,7 +16,7 @@ import io.deepsense.models.entities.{DataObjectReference, DataObjectReport, Inpu
 /**
  * Operation which is able to serialize DataFrame and save it.
  */
-class SaveDataFrame extends DOperation1To0[DataFrame] {
+case class SaveDataFrame() extends DOperation1To0[DataFrame] {
 
   override val parameters = ParametersSchema(
     SaveDataFrame.nameParam -> StringParameter(

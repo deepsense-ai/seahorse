@@ -17,7 +17,7 @@ import io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{DOperation2To1, ExecutionContext}
 
-class Join extends DOperation2To1[DataFrame, DataFrame, DataFrame] {
+case class Join() extends DOperation2To1[DataFrame, DataFrame, DataFrame] {
 
   override val name = "Join"
 
