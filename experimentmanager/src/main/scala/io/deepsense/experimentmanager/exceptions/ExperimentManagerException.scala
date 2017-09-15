@@ -4,15 +4,13 @@
 
 package io.deepsense.experimentmanager.exceptions
 
-import java.util.UUID
-
 import io.deepsense.commons.exception.{DeepSenseException, ExceptionDetails}
 
 /**
  * Base exception for all exceptions Experiment Manager
  */
 abstract class ExperimentManagerException(
-    id: UUID,
+    id: DeepSenseException.Id,
     code: Int,
     title: String,
     message: String,

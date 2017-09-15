@@ -69,7 +69,6 @@ class EntityDaoCassandraImpl @Inject() (
   }
 
   private def upsertReport(update: Update.Assignments, entity: Entity): Assignments = {
-    // TODO Reimplement when Report gets implemented
     entity.report match {
       case Some(report) =>
         update.and(set(EntityRowMapper.Report, report.jsonReport))

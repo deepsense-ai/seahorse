@@ -4,12 +4,11 @@
 
 package io.deepsense.graph
 
-import java.util.UUID
-
 import scala.reflect.runtime.{universe => ru}
 
 import io.deepsense.deeplang.{DKnowledge, DOperable, InferContext}
 import io.deepsense.graph.Node.Id
+import io.deepsense.models.entities.Entity
 
 case class Graph(nodes: Set[Node] = Set(), edges: Set[Edge] = Set()) {
   /** Maps ids of nodes to nodes. */
@@ -50,7 +49,7 @@ case class Graph(nodes: Set[Node] = Set(), edges: Set[Edge] = Set()) {
 
   def markAsRunning(id: Node.Id): Graph = withChangedNode(id, _.markRunning)
 
-  def markAsCompleted(id: Node.Id, results: List[UUID]): Graph = {
+  def markAsCompleted(id: Node.Id, results: List[Entity.Id]): Graph = {
     withChangedNode(id, _.markCompleted(results))
   }
 

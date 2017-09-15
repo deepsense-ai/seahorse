@@ -4,11 +4,10 @@
 
 package io.deepsense.graph
 
-import java.util.UUID
-
 import org.joda.time.DateTime
 
 import io.deepsense.commons.datetime.DateTimeConverter
+import io.deepsense.models.entities.Entity
 
 /**
  * Represents the state of execution node.
@@ -23,9 +22,9 @@ case class State private[graph](
     ended: Option[DateTime] = None,
     progress: Option[Progress] = None,
     // TODO: results should be changed to list of datasets UUIDs
-    results: Option[Seq[UUID]] = None) {
+    results: Option[Seq[Entity.Id]] = None) {
 
-  private[graph] def completed(results: Seq[UUID]): State = {
+  private[graph] def completed(results: Seq[Entity.Id]): State = {
     copy(status = Status.Completed,
       ended = Some(DateTimeConverter.now),
       progress = Some(Progress(progress.get.total, progress.get.total)),

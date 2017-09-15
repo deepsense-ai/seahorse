@@ -4,8 +4,6 @@
 
 package io.deepsense.graphjson
 
-import java.util.UUID
-
 import org.joda.time.DateTime
 import org.mockito.Mockito._
 import spray.json._
@@ -13,6 +11,7 @@ import spray.json._
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.json.DateTimeJsonProtocol
 import io.deepsense.graph.{Progress => GraphProgress, State}
+import io.deepsense.models.entities.Entity
 
 class NodeJsonStateProtocolSpec extends GraphJsonTestSupport {
 
@@ -27,7 +26,7 @@ class NodeJsonStateProtocolSpec extends GraphJsonTestSupport {
       val ended = DateTimeConverter.now
       val progress = GraphProgress(3, 14)
       val state = mock[State]
-      val results = List(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID())
+      val results = List(Entity.Id.randomId, Entity.Id.randomId, Entity.Id.randomId)
       when(state.status).thenReturn(status)
       when(state.started).thenReturn(Some(started))
       when(state.ended).thenReturn(Some(ended))

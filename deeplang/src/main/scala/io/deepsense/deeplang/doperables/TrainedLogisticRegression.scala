@@ -11,7 +11,7 @@ import org.apache.spark.mllib.linalg.Vector
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.{DMethod1To1, ExecutionContext}
-import io.deepsense.deploymodelservice.{CreateResult, Model}
+import io.deepsense.deploymodelservice.{CreateModelResponse, Model}
 import io.deepsense.reportlib.model.ReportContent
 
 case class TrainedLogisticRegression(
@@ -77,6 +77,6 @@ case class TrainedLogisticRegressionDescriptor(
   featureColumns: Seq[String],
   targetColumn: String) extends Deployable {
 
-  override def deploy(f: Model => Future[CreateResult]): Future[CreateResult] =
+  override def deploy(f: Model => Future[CreateModelResponse]): Future[CreateModelResponse] =
     throw new UnsupportedOperationException()
 }

@@ -4,7 +4,6 @@
 
 package io.deepsense.deeplang.catalogs.doperations
 
-import java.util.UUID
 
 import scala.reflect.runtime.universe.{TypeTag, typeTag}
 
@@ -18,23 +17,24 @@ import io.deepsense.deeplang.parameters.ParametersSchema
 
 object DOperationCatalogTestResources {
   object CategoryTree {
-    object IO extends DOperationCategory(UUID.randomUUID(), "Input/Output")
+    object IO extends DOperationCategory(DOperationCategory.Id.randomId, "Input/Output")
 
     object DataManipulation
-      extends DOperationCategory(UUID.randomUUID(), "Data manipulation")
+      extends DOperationCategory(DOperationCategory.Id.randomId, "Data manipulation")
 
-    object ML extends DOperationCategory(UUID.randomUUID(), "Machine learning") {
+    object ML extends DOperationCategory(DOperationCategory.Id.randomId, "Machine learning") {
 
-      object Regression extends DOperationCategory(UUID.randomUUID(), "Regression", ML)
+      object Regression extends DOperationCategory(DOperationCategory.Id.randomId, "Regression", ML)
 
-      object Classification extends DOperationCategory(UUID.randomUUID(), "Classification", ML)
+      object Classification
+        extends DOperationCategory(DOperationCategory.Id.randomId, "Classification", ML)
 
-      object Clustering extends DOperationCategory(UUID.randomUUID(), "Clustering", ML)
+      object Clustering extends DOperationCategory(DOperationCategory.Id.randomId, "Clustering", ML)
 
-      object Evaluation extends DOperationCategory(UUID.randomUUID(), "Evaluation", ML)
+      object Evaluation extends DOperationCategory(DOperationCategory.Id.randomId, "Evaluation", ML)
     }
 
-    object Utils extends DOperationCategory(UUID.randomUUID(), "Utilities", None)
+    object Utils extends DOperationCategory(DOperationCategory.Id.randomId, "Utilities", None)
   }
 
   val parametersSchema = ParametersSchema()

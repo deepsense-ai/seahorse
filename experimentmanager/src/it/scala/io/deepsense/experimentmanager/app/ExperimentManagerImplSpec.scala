@@ -4,8 +4,6 @@
 
 package io.deepsense.experimentmanager.app
 
-import java.util.UUID
-
 import scala.concurrent.Future
 import scala.concurrent.duration._
 
@@ -17,7 +15,6 @@ import org.scalactic.Equality
 
 import io.deepsense.commons.auth.usercontext.{Role, UserContext}
 import io.deepsense.commons.auth.{AuthorizatorProvider, UserContextAuthorizator}
-import io.deepsense.commons.models.Id
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.experimentmanager.ExperimentManagerImpl
 import io.deepsense.experimentmanager.exceptions.ExperimentNotFoundException
@@ -71,14 +68,14 @@ class ExperimentManagerImplSpec extends StandardSpec with UnitTestSupport {
         when(storage.get(any()))
           .thenReturn(Future.successful(None))
 
-        val eventualExperiment = experimentManager.get(Id(UUID.randomUUID()))
+        val eventualExperiment = experimentManager.get(Experiment.Id.randomId)
         whenReady(eventualExperiment) { _ shouldBe None }
       }
     }
     "return experiment from the storage when the experiment is not running" in {
       when(storage.get(any()))
         .thenReturn(Future.successful(Some(storedExperiment)))
-      val id = UUID.randomUUID()
+      val id = Experiment.Id.randomId
 
       val eventualExperiment = experimentManager.get(id)
       probe.expectMsg(GetStatus(id))
@@ -152,15 +149,15 @@ class ExperimentManagerImplSpec extends StandardSpec with UnitTestSupport {
 
   "ExperimentManager.list(...)" should {
     "contain running experiments" in {
-      val runningExperimentId = Id(UUID.randomUUID())
+      val runningExperimentId = Experiment.Id.randomId
       val e1 = mock[Experiment]
       val e2 = mock[Experiment]
       val e3 = mock[Experiment]
       val e4 = mock[Experiment]
-      when(e1.id).thenReturn(UUID.randomUUID())
+      when(e1.id).thenReturn(Experiment.Id.randomId)
       when(e2.id).thenReturn(runningExperimentId)
-      when(e3.id).thenReturn(UUID.randomUUID())
-      when(e4.id).thenReturn(UUID.randomUUID())
+      when(e3.id).thenReturn(Experiment.Id.randomId)
+      when(e4.id).thenReturn(Experiment.Id.randomId)
 
       val runningExperiment = mock[Experiment]
       when(runningExperiment.id).thenReturn(runningExperimentId)

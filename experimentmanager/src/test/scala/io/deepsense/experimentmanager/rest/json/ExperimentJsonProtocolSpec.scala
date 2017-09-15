@@ -4,8 +4,6 @@
 
 package io.deepsense.experimentmanager.rest.json
 
-import java.util.UUID
-
 import scala.reflect.runtime.{universe => ru}
 
 import org.joda.time.DateTime
@@ -45,10 +43,10 @@ class ExperimentJsonProtocolSpec
   val operation3 = mockOperation(1, 1, DOperation.Id.randomId, "name3", "version3")
   val operation4 = mockOperation(2, 1, DOperation.Id.randomId, "name4", "version4")
 
-  val node1 = Node(UUID.randomUUID(), operation1)
-  val node2 = Node(UUID.randomUUID(), operation2)
-  val node3 = Node(UUID.randomUUID(), operation3)
-  val node4 = Node(UUID.randomUUID(), operation4)
+  val node1 = Node(Node.Id.randomId, operation1)
+  val node2 = Node(Node.Id.randomId, operation2)
+  val node3 = Node(Node.Id.randomId, operation3)
+  val node4 = Node(Node.Id.randomId, operation4)
   val nodes = Set(node1, node2, node3, node4)
   val preEdges = Set(
     (node1, node2, 0, 0),
@@ -58,14 +56,14 @@ class ExperimentJsonProtocolSpec
   val edges = preEdges.map(n => Edge(Endpoint(n._1.id, n._3), Endpoint(n._2.id, n._4)))
   val graph = Graph(nodes, edges)
 
-  val id = UUID.randomUUID()
+  val experimentId = Experiment.Id.randomId
   val tenantId = "tenantId"
   val name = "testName"
   val description = "testDescription"
   val created = new DateTime(2015, 6, 5, 11, 25, DateTimeConverter.zone)
   val updated = new DateTime(2015, 6, 5, 12, 54, DateTimeConverter.zone)
   val experiment = Experiment(
-    id,
+    experimentId,
     tenantId,
     name,
     graph,
@@ -100,7 +98,7 @@ class ExperimentJsonProtocolSpec
       val graphKnowledge = graph.inferKnowledge(null) // Null is OK because of mocked Operations.
       typeKnowledge.fields.foreach(keyValue => {
         val (nodeId, knowledgeJson) = keyValue
-        knowledgeJson shouldBe graphKnowledge.getKnowledge(UUID.fromString(nodeId)).toJson
+        knowledgeJson shouldBe graphKnowledge.getKnowledge(Node.Id.fromString(nodeId)).toJson
       })
     }
   }

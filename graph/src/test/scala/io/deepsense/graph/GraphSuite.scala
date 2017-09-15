@@ -4,8 +4,6 @@
 
 package io.deepsense.graph
 
-import java.util.UUID
-
 import org.scalatest.{FunSuite, Matchers}
 
 import io.deepsense.commons.serialization.Serialization
@@ -72,7 +70,7 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
 
   test("Adding edge to an empty Graph should produce NoSuchElementException") {
     intercept[NoSuchElementException] {
-      val edge = Edge(Endpoint(UUID.randomUUID(), 0), Endpoint(UUID.randomUUID(), 0))
+      val edge = Edge(Endpoint(Node.Id.randomId, 0), Endpoint(Node.Id.randomId, 0))
       Graph(Set(), Set(edge))
     }
   }
@@ -80,8 +78,8 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
   test("Graph with two nodes should have size 2") {
     import DOperationTestClasses._
 
-    val node1 = Node(UUID.randomUUID(), new DOperation1To1Test)
-    val node2 = Node(UUID.randomUUID(), new DOperation1To1Test)
+    val node1 = Node(Node.Id.randomId, new DOperation1To1Test)
+    val node2 = Node(Node.Id.randomId, new DOperation1To1Test)
     val nodes = Set(node1, node2)
     val edges = Set(Edge(Endpoint(node1.id, 0), Endpoint(node2.id, 0)))
     val graph = Graph(nodes, edges)
@@ -90,7 +88,7 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
 
   test("Programmer can get/edit state of an execution graph nodes") {
     import DOperationTestClasses._
-    val node = Node(UUID.randomUUID(), new DOperation1To1Test)
+    val node = Node(Node.Id.randomId, new DOperation1To1Test)
     var graph = Graph(Set(node))
 
     // node should be in draft
@@ -117,8 +115,8 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
   test("Programmer can list all nodes in graph") {
     import DOperationTestClasses._
 
-    val node1 = Node(UUID.randomUUID(), new DOperation0To1Test)
-    val node2 = Node(UUID.randomUUID(), new DOperation1To1Test)
+    val node1 = Node(Node.Id.randomId, new DOperation0To1Test)
+    val node2 = Node(Node.Id.randomId, new DOperation1To1Test)
 
     // Create a Graph instance and list of its nodes.
     val nodes = Set(node1, node2)
@@ -128,7 +126,7 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
     // Check equality of lists elements sets.
     assert(graph.nodes == nodes)
 
-    val newNode = Node(UUID.randomUUID(), new DOperation1To0Test)
+    val newNode = Node(Node.Id.randomId, new DOperation1To0Test)
     graph = graph.copy(nodes = graph.nodes + newNode)
     assert(graph.nodes.size == graph.size)
     // Check lack of equality of lists elements sets after new node is added to graph.
@@ -139,8 +137,8 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
     import DOperationTestClasses._
 
     // create a Graph Instance
-    val nodeReady = Node(UUID.randomUUID(), new DOperation0To1Test)
-    val nodeNotReady = Node(UUID.randomUUID(), new DOperation1To0Test)
+    val nodeReady = Node(Node.Id.randomId, new DOperation0To1Test)
+    val nodeNotReady = Node(Node.Id.randomId, new DOperation1To0Test)
     val nodes = Set(nodeReady, nodeNotReady)
     val edges = Set(Edge(Endpoint(nodeReady.id, 0), Endpoint(nodeNotReady.id, 0)))
     var graph = Graph(nodes, edges)
@@ -158,10 +156,10 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
   test("Programmer can validate if graph doesn't contain a cycle") {
     import DOperationTestClasses._
 
-    val node1 = Node(UUID.randomUUID(), new DOperation1To1Test)
-    val node2 = Node(UUID.randomUUID(), new DOperation2To1Test)
-    val node3 = Node(UUID.randomUUID(), new DOperation1To1Test)
-    val node4 = Node(UUID.randomUUID(), new DOperation1To1Test)
+    val node1 = Node(Node.Id.randomId, new DOperation1To1Test)
+    val node2 = Node(Node.Id.randomId, new DOperation2To1Test)
+    val node3 = Node(Node.Id.randomId, new DOperation1To1Test)
+    val node4 = Node(Node.Id.randomId, new DOperation1To1Test)
     val nodes = Set(node1, node2, node3, node4)
     val nonCyclicEdges = Set(
       Edge(Endpoint(node1.id, 0), Endpoint(node2.id, 0)),
@@ -178,10 +176,10 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
   test("Simple Graph can be sorted topologically") {
     import DOperationTestClasses._
 
-    val node1 = Node(UUID.randomUUID(), new DOperation1To1Test)
-    val node2 = Node(UUID.randomUUID(), new DOperation1To1Test)
-    val node3 = Node(UUID.randomUUID(), new DOperation1To1Test)
-    val node4 = Node(UUID.randomUUID(), new DOperation1To1Test)
+    val node1 = Node(Node.Id.randomId, new DOperation1To1Test)
+    val node2 = Node(Node.Id.randomId, new DOperation1To1Test)
+    val node3 = Node(Node.Id.randomId, new DOperation1To1Test)
+    val node4 = Node(Node.Id.randomId, new DOperation1To1Test)
     val edges = Set(
       Edge(Endpoint(node1.id, 0), Endpoint(node2.id, 0)),
       Edge(Endpoint(node2.id, 0), Endpoint(node3.id, 0)),
@@ -199,13 +197,13 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
       assert(order.indexOf(node1) < order.indexOf(node2))
     }
 
-    val node1 = Node(UUID.randomUUID(), new DOperation1To1Test)
-    val node2 = Node(UUID.randomUUID(), new DOperation1To1Test)
-    val node3 = Node(UUID.randomUUID(), new DOperation1To1Test)
-    val node4 = Node(UUID.randomUUID(), new DOperation2To1Test)
-    val node5 = Node(UUID.randomUUID(), new DOperation1To1Test)
-    val node6 = Node(UUID.randomUUID(), new DOperation1To1Test)
-    val node7 = Node(UUID.randomUUID(), new DOperation2To1Test)
+    val node1 = Node(Node.Id.randomId, new DOperation1To1Test)
+    val node2 = Node(Node.Id.randomId, new DOperation1To1Test)
+    val node3 = Node(Node.Id.randomId, new DOperation1To1Test)
+    val node4 = Node(Node.Id.randomId, new DOperation2To1Test)
+    val node5 = Node(Node.Id.randomId, new DOperation1To1Test)
+    val node6 = Node(Node.Id.randomId, new DOperation1To1Test)
+    val node7 = Node(Node.Id.randomId, new DOperation2To1Test)
     val nodes = Set(node1, node2, node3, node4, node5, node6, node7)
     val edges = List(
       (node1, node2, 0, 0),
@@ -228,10 +226,10 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
   test("Graph's nodes have correct predecessors and successors") {
     import DOperationTestClasses._
 
-    val node1 = Node(UUID.randomUUID(), new DOperation0To1Test)
-    val node2 = Node(UUID.randomUUID(), new DOperation1To1Test)
-    val node3 = Node(UUID.randomUUID(), new DOperation1To1Test)
-    val node4 = Node(UUID.randomUUID(), new DOperation2To1Test)
+    val node1 = Node(Node.Id.randomId, new DOperation0To1Test)
+    val node2 = Node(Node.Id.randomId, new DOperation1To1Test)
+    val node3 = Node(Node.Id.randomId, new DOperation1To1Test)
+    val node4 = Node(Node.Id.randomId, new DOperation2To1Test)
     val nodes = Set(node1, node2, node3, node4)
     val edges = List(
       (node1, node2, 0, 0),
@@ -260,10 +258,10 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
     import DClassesForDOperations._
     import DOperationTestClasses._
 
-    val node1 = Node(UUID.randomUUID(), new DOperation0To1Test)
-    val node2 = Node(UUID.randomUUID(), new DOperation1To1Test)
-    val node3 = Node(UUID.randomUUID(), new DOperation1To1Test)
-    val node4 = Node(UUID.randomUUID(), new DOperation2To1Test)
+    val node1 = Node(Node.Id.randomId, new DOperation0To1Test)
+    val node2 = Node(Node.Id.randomId, new DOperation1To1Test)
+    val node3 = Node(Node.Id.randomId, new DOperation1To1Test)
+    val node4 = Node(Node.Id.randomId, new DOperation2To1Test)
     val nodes = Set(node1, node2, node3, node4)
     val edges = List(
       (node1, node2, 0, 0),
@@ -294,11 +292,11 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
   test("Non-empty Graph should be serializable") {
     import DOperationTestClasses._
     val operationWithInitedLogger = new DOperation1To1Logging
-    val id = UUID.randomUUID()
-    val node1 = Node(UUID.randomUUID(), new DOperation0To1Test)
-    val node2 = Node(UUID.randomUUID(), new DOperation1To1Test)
+    val id = Node.Id.randomId
+    val node1 = Node(Node.Id.randomId, new DOperation0To1Test)
+    val node2 = Node(Node.Id.randomId, new DOperation1To1Test)
     val node3 = Node(id, operationWithInitedLogger)
-    val node4 = Node(UUID.randomUUID(), new DOperation2To1Test)
+    val node4 = Node(Node.Id.randomId, new DOperation2To1Test)
     val edges = List(
       (node1, node2, 0, 0),
       (node1, node3, 0, 0),

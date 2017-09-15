@@ -37,8 +37,5 @@ abstract class DOperation extends Serializable with Logging {
 
 object DOperation {
   type Id = models.Id
-
-  object Id {
-    def randomId: Id = models.Id.randomId
-  }
+  val Id = models.Id
 }

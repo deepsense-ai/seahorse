@@ -5,6 +5,7 @@ name := "deepsense-backend"
 lazy val commons                = project
 lazy val reportlib              = project
 lazy val `deploy-model-service` = project dependsOn (
+  commons,
   commons % "test->test")
 lazy val models                 = project dependsOn graph
 lazy val deeplang               = project dependsOn (

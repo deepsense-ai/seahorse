@@ -88,7 +88,9 @@ class EMtoGESpec
 
   def createExperiment() = {
     val graph = Graph(
-      Set(Node(Node.Id.randomId, LoadDataFrame(SimpleGraphExecutionIntegSuiteEntities.entityUuid))))
+      Set(Node(
+        Node.Id.randomId,
+        LoadDataFrame(SimpleGraphExecutionIntegSuiteEntities.entityId.toString))))
     Experiment(
       Experiment.Id.randomId,
       SimpleGraphExecutionIntegSuiteEntities.entityTenantId,

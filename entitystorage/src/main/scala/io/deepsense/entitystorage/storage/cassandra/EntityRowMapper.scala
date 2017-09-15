@@ -26,7 +26,7 @@ object EntityRowMapper {
   def fromRow(row: Row): Entity =
     Entity(
       row.getString(TenantId),
-      row.getUUID(Id),
+      Entity.Id(row.getUUID(Id)),
       row.getString(Name),
       row.getString(Description),
       row.getString(DClass),

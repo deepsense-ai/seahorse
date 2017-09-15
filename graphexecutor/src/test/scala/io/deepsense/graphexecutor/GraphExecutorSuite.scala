@@ -3,13 +3,10 @@
  */
 package io.deepsense.graphexecutor
 
-import java.util.UUID
-
-import org.scalatest.{WordSpec, FunSuite, Matchers}
+import org.scalatest.{Matchers, WordSpec}
 
 import io.deepsense.commons.serialization.Serialization
 import io.deepsense.deeplang.doperations.{LoadDataFrame, SaveDataFrame}
-import io.deepsense.graph.Status._
 import io.deepsense.graph.{Edge, Endpoint, Graph, Node}
 import io.deepsense.models.entities.Entity
 
@@ -54,8 +51,8 @@ class GraphExecutorSuite
     val saveOp = new SaveDataFrame
     saveOp.parameters.getStringParameter(SaveDataFrame.nameParam).value = Some(dfName)
 
-    val node1 = Node(UUID.randomUUID(), loadOp)
-    val node2 = Node(UUID.randomUUID(), saveOp)
+    val node1 = Node(Node.Id.randomId, loadOp)
+    val node2 = Node(Node.Id.randomId, saveOp)
     val nodes = Set(node1, node2)
     val edgesList = List(
       (node1, node2, 0, 0))

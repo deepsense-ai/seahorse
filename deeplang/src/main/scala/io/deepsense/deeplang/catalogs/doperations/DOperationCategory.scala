@@ -4,7 +4,7 @@
 
 package io.deepsense.deeplang.catalogs.doperations
 
-import java.util.UUID
+import io.deepsense.commons.models
 
 /**
  * Category of DOperations.
@@ -16,11 +16,14 @@ import java.util.UUID
  * TODO use global id class when available
  */
 abstract class DOperationCategory(
-    val id: UUID,
+    val id: DOperationCategory.Id,
     val name: String,
     val parent: Option[DOperationCategory] = None) {
 
-  def this(id: UUID, name: String, parent: DOperationCategory) = this(id, name, Some(parent))
+  def this(
+    id: DOperationCategory.Id,
+    name: String,
+    parent: DOperationCategory) = this(id, name, Some(parent))
 
   /** List of categories on path from this category to some top-level category. */
   private[doperations] def pathToRoot: List[DOperationCategory] = parent match {
@@ -30,4 +33,9 @@ abstract class DOperationCategory(
 
   /** List of categories on path from some top-level category to this category. */
   private[doperations] def pathFromRoot: List[DOperationCategory] = pathToRoot.reverse
+}
+
+object DOperationCategory {
+  type Id = models.Id
+  val Id = models.Id
 }

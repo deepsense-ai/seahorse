@@ -72,6 +72,7 @@ case class Experiment(
 
 object Experiment {
   type Id = models.Id
+  val Id = models.Id
 
   def computeExperimentState(graph: Graph): Experiment.State = {
     import Experiment.State._
@@ -90,10 +91,6 @@ object Experiment {
     } else {
       aborted
     }
-  }
-
-  object Id {
-    def randomId = models.Id.randomId
   }
 
   object Status extends Enumeration {

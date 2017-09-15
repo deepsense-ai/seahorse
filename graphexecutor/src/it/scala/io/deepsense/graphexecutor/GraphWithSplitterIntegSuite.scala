@@ -21,7 +21,7 @@ class GraphWithSplitterIntegSuite extends GraphExecutionIntegSuite {
   import io.deepsense.deeplang.doperations.LoadDataFrame._
   val loadOp = new LoadDataFrame
   loadOp.parameters.getStringParameter(idParam).value =
-    Some(SimpleGraphExecutionIntegSuiteEntities.entityUuid)
+    Some(SimpleGraphExecutionIntegSuiteEntities.entityId.toString)
 
   val splitOp = Split(0.2, 1)
 

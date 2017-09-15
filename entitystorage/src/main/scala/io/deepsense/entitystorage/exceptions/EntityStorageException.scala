@@ -4,15 +4,13 @@
 
 package io.deepsense.entitystorage.exceptions
 
-import java.util.UUID
-
-import io.deepsense.commons.exception.{ExceptionDetails, DeepSenseException}
+import io.deepsense.commons.exception.{DeepSenseException, ExceptionDetails}
 
 /**
  * Base exception for all Entity Storage exceptions
  */
 abstract class EntityStorageException(
-    id: UUID,
+    id: DeepSenseException.Id,
     code: Int,
     title: String,
     message: String,

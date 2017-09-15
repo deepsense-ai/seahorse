@@ -4,8 +4,8 @@
 package io.deepsense.graphexecutor
 
 import java.net.{InetAddress, InetSocketAddress, URI}
+import java.util.List
 import java.util.concurrent.Executors
-import java.util.{List, UUID}
 
 import scala.collection.mutable
 
@@ -35,6 +35,7 @@ import io.deepsense.entitystorage.{EntityStorageClient, EntityStorageClientFacto
 import io.deepsense.graph.{Graph, Status}
 import io.deepsense.graphexecutor.protocol.GraphExecutorAvroRpcProtocol
 import io.deepsense.graphexecutor.util.BinarySemaphore
+import io.deepsense.models.entities.Entity
 import io.deepsense.models.experiments.Experiment
 
 object GraphExecutor extends LazyLogging {
@@ -74,7 +75,7 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
   implicit val conf: YarnConfiguration = new YarnConfiguration()
   val geConfig: Config = ConfigFactory.load(Constants.GraphExecutorConfName)
 
-  val dOperableCache = mutable.Map[UUID, DOperable]()
+  val dOperableCache = mutable.Map[Entity.Id, DOperable]()
 
   val nodeTiming = mutable.ListMap[String, Double]()
 

@@ -48,9 +48,9 @@ class MvpCase3IntegSuite extends GraphExecutionIntegSuite {
 
   val nodes = Seq(
     // Weather DataFrame
-    Node(loadDFWId, LoadDataFrame(BikesIntegSuiteEntities.weatherUuid)),
+    Node(loadDFWId, LoadDataFrame(BikesIntegSuiteEntities.weatherId.toString)),
     // Demand DataFrame
-    Node(loadDFDId, LoadDataFrame(BikesIntegSuiteEntities.demandUuid)),
+    Node(loadDFDId, LoadDataFrame(BikesIntegSuiteEntities.demandId.toString)),
     Node(joinId, joinOperation),
     Node(decomposeId, timestampDecomposer),
     Node(

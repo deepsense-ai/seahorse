@@ -4,14 +4,16 @@
 
 package io.deepsense.entitystorage.factories
 
-import java.util.UUID
+import scala.util.Random
 
 import io.deepsense.models.entities.{DataObjectReference, DataObjectReport}
 
-trait DataObjectFactory {
+trait DataObjectTestFactory {
+
+  private val random = new Random()
 
   def testDataObjectReport: DataObjectReport =
-    DataObjectReport(UUID.randomUUID().toString)
+    DataObjectReport(new String(random.alphanumeric.take(32).toArray))
 
   def testDataObjectReference: DataObjectReference = DataObjectReference("hdfs://whatever")
 }

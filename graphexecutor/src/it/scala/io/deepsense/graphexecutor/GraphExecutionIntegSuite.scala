@@ -3,8 +3,6 @@
  */
 package io.deepsense.graphexecutor
 
-import java.util.UUID
-
 import org.scalatest.{BeforeAndAfter, Matchers}
 
 import io.deepsense.commons.datetime.DateTimeConverter
@@ -68,7 +66,7 @@ abstract class GraphExecutionIntegSuite
     created,
     updated)
 
-  protected def node(operation: DOperation): Node = Node(UUID.randomUUID(), operation)
+  protected def node(operation: DOperation): Node = Node(Node.Id.randomId, operation)
 
   protected def nodes: Seq[Node]
 

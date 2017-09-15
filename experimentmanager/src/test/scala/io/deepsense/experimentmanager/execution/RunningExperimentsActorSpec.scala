@@ -3,8 +3,6 @@
  */
 package io.deepsense.experimentmanager.execution
 
-import java.util.UUID
-
 import scala.concurrent.duration._
 
 import akka.actor.Props
@@ -34,7 +32,7 @@ class RunningExperimentsActorSpec
   val created = DateTimeConverter.now
   val updated = created.plusHours(2)
   val experiment = Experiment(
-    UUID.randomUUID(),
+    Experiment.Id.randomId,
     tenantIdA,
     "Experiment",
     Graph(),
@@ -115,12 +113,12 @@ class RunningExperimentsActorSpec
       }
     }
     "list experiments" when {
-      val experiment1 = experiment.copy(id = UUID.randomUUID(), description = "1")
-      val experiment2 = experiment.copy(id = UUID.randomUUID(), description = "2")
-      val experiment3 = experiment.copy(id = UUID.randomUUID(), description = "3")
+      val experiment1 = experiment.copy(id = Experiment.Id.randomId, description = "1")
+      val experiment2 = experiment.copy(id = Experiment.Id.randomId, description = "2")
+      val experiment3 = experiment.copy(id = Experiment.Id.randomId, description = "3")
       val tenantIdOther = tenantIdA + "other"
       val experiment4 = experiment.copy(
-        id = UUID.randomUUID(),
+        id = Experiment.Id.randomId,
         tenantId = tenantIdOther,
         description = "4")
       val experiments = Set(experiment1, experiment2, experiment3, experiment4)
@@ -151,9 +149,9 @@ class RunningExperimentsActorSpec
       when(mockOperation.inArity).thenReturn(1)
       when(mockOperation.outArity).thenReturn(1)
       when(mockOperation.id).thenReturn(DOperation.Id.randomId)
-      val mockNode = Node(UUID.randomUUID(), mockOperation)
+      val mockNode = Node(Node.Id.randomId, mockOperation)
       val experimentWithNode = Experiment(
-        UUID.randomUUID(),
+        Experiment.Id.randomId,
         "A",
         "Experiment",
         Graph(Set(mockNode)),

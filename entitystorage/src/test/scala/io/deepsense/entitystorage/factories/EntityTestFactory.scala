@@ -8,7 +8,7 @@ package io.deepsense.entitystorage.factories
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.models.entities._
 
-trait EntityTestFactory extends DataObjectFactory {
+trait EntityTestFactory extends DataObjectTestFactory {
 
   val testTenantId = "Mr Crowley"
   val testName = "Operation"

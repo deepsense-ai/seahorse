@@ -4,9 +4,9 @@
 
 package io.deepsense.graph
 
-import java.util.UUID
-
+import io.deepsense.commons.models
 import io.deepsense.deeplang.DOperation
+import io.deepsense.models.entities.Entity
 
 case class Node(
   id: Node.Id,
@@ -19,7 +19,7 @@ case class Node(
   def markAborted: Node = copy(state = state.aborted)
   def withProgress(progress: Int) = copy(state = state.withProgress(Progress(progress, total)))
   def markRunning: Node = copy(state = State.running(Progress(0, total)))
-  def markCompleted(results: Seq[UUID]): Node = copy(state = state.completed(results))
+  def markCompleted(results: Seq[Entity.Id]): Node = copy(state = state.completed(results))
   // TODO: just a default value. Change it when DOperation will support it.
 
   def isDraft: Boolean = state.status == Status.Draft
@@ -32,11 +32,7 @@ case class Node(
 }
 
 object Node {
-  case class Id(value: UUID)
-
-  object Id {
-    def randomId = Id(UUID.randomUUID())
-    implicit def fromUuid(uuid: UUID): Id = Id(uuid)
-  }
+  type Id = models.Id
+  val Id = models.Id
 }
 

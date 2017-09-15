@@ -61,12 +61,12 @@ object SimpleGraphExecutionIntegSuiteEntities {
   val Name = "SimpleGraphExecutionIntegSuite"
 
   val entityTenantId = Constants.TestTenantId
-  val entityUuid = "87cced7a-2c47-4210-9243-245284f74d72"
-  val dataFrameLocation = Constants.TestDir + "/" + entityUuid
+  val entityId = Entity.Id.fromString("87cced7a-2c47-4210-9243-245284f74d72")
+  val dataFrameLocation = Constants.TestDir + "/" + entityId
 
   val entity = Entity(
     entityTenantId,
-    entityUuid,
+    entityId,
     "testEntity name",
     "testEntity description",
     "DataFrame",
@@ -82,12 +82,12 @@ object BikesIntegSuiteEntities {
 
   val bikesTenantId = Constants.TestTenantId
 
-  val demandUuid = "52df8588-b192-4446-a418-2c95f8a94d85"
-  val demandLocation = Constants.TestDir + "/" + demandUuid
+  val demandId: Entity.Id = Entity.Id.fromString("52df8588-b192-4446-a418-2c95f8a94d85")
+  val demandLocation = Constants.TestDir + "/" + demandId
 
   val demand = Entity(
     bikesTenantId,
-    demandUuid,
+    demandId,
     "demandEntity name",
     "demandEntity description",
     "DataFrame",
@@ -97,12 +97,12 @@ object BikesIntegSuiteEntities {
     DateTime.now,
     saved = true)
 
-  val weatherUuid = "7ff0e089-8059-491c-9a7e-557349633312"
-  val weatherLocation = Constants.TestDir + "/" + weatherUuid
+  val weatherId: Entity.Id = Entity.Id.fromString("7ff0e089-8059-491c-9a7e-557349633312")
+  val weatherLocation = Constants.TestDir + "/" + weatherId
 
   val weather = Entity(
     bikesTenantId,
-    weatherUuid,
+    weatherId,
     "weatherEntity name",
     "weatherEntity description",
     "DataFrame",

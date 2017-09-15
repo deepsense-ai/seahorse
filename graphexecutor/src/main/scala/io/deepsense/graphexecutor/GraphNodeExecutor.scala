@@ -3,8 +3,6 @@
  */
 package io.deepsense.graphexecutor
 
-import java.util.UUID
-
 import scala.collection.mutable
 import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.{Await, duration}
@@ -15,7 +13,7 @@ import io.deepsense.commons.metrics.Instrumented
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
 import io.deepsense.entitystorage.EntityStorageClient
 import io.deepsense.graph.{Graph, Node}
-import io.deepsense.models.entities.{DataObjectReference, InputEntity}
+import io.deepsense.models.entities.{DataObjectReference, Entity, InputEntity}
 
 /**
  * GraphNodeExecutor is responsible for execution of single node.
@@ -66,9 +64,9 @@ class GraphNodeExecutor(
           graphExecutor.graph.get.markAsCompleted(
             node.id,
             resultVector.map(dOperable => {
-              val uuid = storeAndRegister(dOperable)
-              graphExecutor.dOperableCache.put(uuid, dOperable)
-              uuid
+              val entityId = storeAndRegister(dOperable)
+              graphExecutor.dOperableCache.put(entityId, dOperable)
+              entityId
             }).toList)))
         logger.debug("Data registered for {}", nodeDescription)
       }
@@ -111,7 +109,7 @@ class GraphNodeExecutor(
    */
   def collectOutputs(
       graph: Graph,
-      dOperableCache: mutable.Map[UUID, DOperable]): Vector[DOperable] = {
+      dOperableCache: mutable.Map[Entity.Id, DOperable]): Vector[DOperable] = {
     var collectedOutputs = Vector.empty[DOperable]
     // Iterate through predecessors, constructing Vector of DOperable's
     // (predecessors are ordered by current node input port number connected with them)
@@ -136,7 +134,7 @@ class GraphNodeExecutor(
     resultVector
   }
 
-  private def storeAndRegister(dOperable: DOperable): UUID = {
+  private def storeAndRegister(dOperable: DOperable): Entity.Id = {
     logger.debug("storeAndRegister started for {}", nodeDescription)
 
     val experiment = graphExecutor.experiment.get
@@ -153,7 +151,7 @@ class GraphNodeExecutor(
     )
 
     logger.debug("createEntity started for {}", nodeDescription)
-    val result = createEntityTimer.time {
+    val result: Entity.Id = createEntityTimer.time {
       Await.result(
         entityStorageClient.createEntity(inputEntity).map(_.id),
         entityStorageResponseDelay).value

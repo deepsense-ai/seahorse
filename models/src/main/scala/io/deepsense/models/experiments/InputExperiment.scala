@@ -4,9 +4,6 @@
 
 package io.deepsense.models.experiments
 
-import java.util.UUID
-
-
 import org.joda.time.DateTime
 
 import io.deepsense.commons.auth.HasTenantId
@@ -28,7 +25,7 @@ case class InputExperiment(name: String, description: String = "", graph: Graph)
    */
   def toExperimentOf(owner: HasTenantId, creationDateTime: DateTime): Experiment = {
     Experiment(
-      UUID.randomUUID(),
+      Experiment.Id.randomId  ,
       owner.tenantId,
       name,
       graph,

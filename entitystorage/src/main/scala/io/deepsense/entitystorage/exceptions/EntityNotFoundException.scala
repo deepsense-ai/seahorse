@@ -4,8 +4,7 @@
 
 package io.deepsense.entitystorage.exceptions
 
-import java.util.UUID
-
+import io.deepsense.commons.exception.DeepSenseException
 import io.deepsense.models.entities.Entity
 
 /**
@@ -14,7 +13,7 @@ import io.deepsense.models.entities.Entity
  */
 case class EntityNotFoundException(entityId: Entity.Id)
   extends EntityStorageException(
-    UUID.randomUUID(),
+    DeepSenseException.Id.randomId,
     ErrorCodes.EntityNotFound,
     "Entity not found",
     s"Entity with id $entityId not found",

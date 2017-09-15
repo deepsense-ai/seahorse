@@ -4,14 +4,12 @@
 
 package io.deepsense.experimentmanager.rest.json
 
-import java.util.UUID
-
 import org.joda.time.DateTime
 import spray.httpx.SprayJsonSupport
 import spray.json._
 
-import io.deepsense.commons.json.{DateTimeJsonProtocol, ExceptionsJsonProtocol, IdJsonProtocol}
 import io.deepsense.commons.json.envelope.EnvelopeJsonFormat
+import io.deepsense.commons.json.{DateTimeJsonProtocol, ExceptionsJsonProtocol, IdJsonProtocol}
 import io.deepsense.deeplang.InferContext
 import io.deepsense.experimentmanager.models.{Count, ExperimentsList}
 import io.deepsense.graph.Graph
@@ -56,7 +54,7 @@ trait ExperimentJsonProtocol
 
     override def read(json: JsValue): Experiment = json match {
       case JsObject(fields) =>
-        val id = UUID.fromString(fields(Id).convertTo[String])
+        val id = Experiment.Id.fromString(fields(Id).convertTo[String])
         val tenantId = fields(TenantId).convertTo[String]
         val name = fields(Name).convertTo[String]
         val description = fields(Description).convertTo[String]

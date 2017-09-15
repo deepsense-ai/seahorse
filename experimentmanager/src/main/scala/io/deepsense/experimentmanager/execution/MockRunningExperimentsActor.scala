@@ -1,7 +1,5 @@
 package io.deepsense.experimentmanager.execution
 
-import java.util.UUID
-
 import scala.collection.mutable
 import scala.concurrent.duration
 import scala.concurrent.duration.FiniteDuration
@@ -14,6 +12,7 @@ import com.google.inject.name.Named
 import io.deepsense.experimentmanager.execution.MockRunningExperimentsActor.Tick
 import io.deepsense.experimentmanager.execution.RunningExperimentsActor._
 import io.deepsense.graph.Node
+import io.deepsense.models.entities.Entity
 import io.deepsense.models.experiments.Experiment
 
 class MockRunningExperimentsActor @Inject()(
@@ -98,7 +97,7 @@ class MockRunningExperimentsActor @Inject()(
         val currentProgress = node.state.progress.get
         val nextProgress = Math.min(currentProgress.total, currentProgress.current + 10)
         if (nextProgress == currentProgress.total) {
-          node.markCompleted(Seq.fill(node.operation.outArity)(UUID.randomUUID()))
+          node.markCompleted(Seq.fill(node.operation.outArity)(Entity.Id.randomId))
         } else {
           node.withProgress(nextProgress)
         }

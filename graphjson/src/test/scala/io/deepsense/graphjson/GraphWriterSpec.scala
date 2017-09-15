@@ -4,25 +4,24 @@
 
 package io.deepsense.graphjson
 
-import java.util.UUID
-
 import spray.json._
 
+import io.deepsense.deeplang.DOperation
 import io.deepsense.graph.{Edge, Endpoint, Graph, Node}
 
 class GraphWriterSpec extends GraphJsonTestSupport {
 
   import GraphJsonProtocol.GraphWriter
 
-  val operation1 = mockOperation(0, 1, UUID.randomUUID(), "name1", "version1")
-  val operation2 = mockOperation(1, 1, UUID.randomUUID(), "name2", "version2")
-  val operation3 = mockOperation(1, 1, UUID.randomUUID(), "name3", "version3")
-  val operation4 = mockOperation(2, 1, UUID.randomUUID(), "name4", "version4")
+  val operation1 = mockOperation(0, 1, DOperation.Id.randomId, "name1", "version1")
+  val operation2 = mockOperation(1, 1, DOperation.Id.randomId, "name2", "version2")
+  val operation3 = mockOperation(1, 1, DOperation.Id.randomId, "name3", "version3")
+  val operation4 = mockOperation(2, 1, DOperation.Id.randomId, "name4", "version4")
 
-  val node1 = Node(UUID.randomUUID(), operation1)
-  val node2 = Node(UUID.randomUUID(), operation2)
-  val node3 = Node(UUID.randomUUID(), operation3)
-  val node4 = Node(UUID.randomUUID(), operation4)
+  val node1 = Node(Node.Id.randomId, operation1)
+  val node2 = Node(Node.Id.randomId, operation2)
+  val node3 = Node(Node.Id.randomId, operation3)
+  val node4 = Node(Node.Id.randomId, operation4)
   val nodes = Set(node1, node2, node3, node4)
   val edgesList = List(
     (node1, node2, 0, 0),

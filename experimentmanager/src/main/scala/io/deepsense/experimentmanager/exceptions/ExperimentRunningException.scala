@@ -4,13 +4,12 @@
 
 package io.deepsense.experimentmanager.exceptions
 
-import java.util.UUID
-
+import io.deepsense.commons.exception.DeepSenseException
 import io.deepsense.commons.models.Id
 
 class ExperimentRunningException(experimentId: Id)
   extends ExperimentManagerException(
-    UUID.randomUUID(),
+    DeepSenseException.Id.randomId,
     ErrorCodes.ExperimentRunning,
     "Experiment is running and can not be updated",
     s"Experiment with id $experimentId is running and can not be updated. " +
