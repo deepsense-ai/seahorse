@@ -3,10 +3,11 @@
 angular.module('deepsense.graph-model').
 factory('Workflow', /*@ngInject*/function (GraphNode, Edge) {
   function Workflow() {
-    var that = this;
-    var internal = {};
-    internal.nodes = {};
-    internal.edges = {};
+    let that = this;
+    let internal = {
+      nodes: {},
+      edges: {}
+    };
 
     that.STATUS = {
       'DRAFT': 'status_draft',
@@ -20,6 +21,7 @@ factory('Workflow', /*@ngInject*/function (GraphNode, Edge) {
     that.name = 'empty';
     that.description = 'empty';
     that.STATUS_DEFAULT = that.STATUS.DRAFT;
+    that.lastExecutionReportTime = null;
 
     that.clearGraph = function clearGraph() {
       internal.nodes = {};
