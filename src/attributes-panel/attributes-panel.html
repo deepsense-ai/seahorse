@@ -1,7 +1,7 @@
 <aside class="ibox operation-attributes-panel animated fadeIn">
   <header class="ibox-title ibox-title--main">
     <section class="ibox-title">
-        <a href="/documentation/uuid/{{node.operationId}}.html" target="_blank"><h4 class="ibox-title__name">{{ node.name }}</h4></a>
+      <h4 class="ibox-title__name"><a href="/documentation/uuid/{{node.operationId}}.html" target="_blank">{{ node.name }}</a></h4>
       <a class="close-link" aria-label="Close" ng-click="closePanel()">
         <i class="fa fa-times"></i>
       </a>
@@ -21,6 +21,11 @@
            title="Status">
           {{node.state.status.replace('status_', '')}}
         </p>
+        <button ng-show="node.state.status === 'status_failed'"
+            ng-click="panel.showErrorMessage()"
+            class="btn btn-xs btn-success action-text fa fa-exclamation-triangle o-error-btn">
+          <span class="action-text__text-element">Click here to show errors</span>
+        </button>
       </header>
       <p class="operation-attributes-panel__time text-right"
          ng-show="node.state.ended">
@@ -31,15 +36,6 @@
           {{node.state.ended | date:'medium'}}
         </time>
       </p>
-      <section class="operation-attributes-panel__error o-error text-danger"
-               ng-if="node.state.error">
-        <header>
-          <p class="o-error__message">{{node.state.error.message}}</p>
-        </header>
-        <article>
-          <pre ng-if="node.state.error.details">{{node.state.error.details.stacktrace}}</pre>
-        </article>
-      </section>
     </section>
   </header>
   <section class="ibox-content" custom-scroll-bar>

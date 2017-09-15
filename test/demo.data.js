@@ -80,7 +80,12 @@ angular.module('test').
             "id": "b23dd1a8-8c41-434a-a465-ebcd9d3ef114",
             "code": 42,
             "title": "Question unknown",
-            "message": "Something that describes the problem more precisely",
+            "message": "Lorem ipsum dolor sit amet, consectetur adipisicing " +
+              "elit. Animi aut ducimus eaque error, fuga in ipsam magnam modi" +
+              " mollitia placeat provident, quasi qui reiciendis! Ad aliquid " +
+              "aut autem consectetur deserunt, dolore, eius eum facilis fugiat" +
+              " impedit magnam maxime odio omnis reiciendis suscipit tempora " +
+              "temporibus tenetur totam unde, voluptatum. Architecto, dolorum?",
             "details": {
               "stacktrace": "exception404\nexception502"
             }
@@ -102,9 +107,20 @@ angular.module('test').
             "id": "b23dd1a8-8c41-434a-a465-ebcd9d3ef114",
             "code": 42,
             "title": "Question unknown",
-            "message": "Something that describes the problem more precisely",
+            "message": "Lorem ipsum dolor sit amet, consectetur adipisicing" +
+              " elit. Alias eligendi error nam nulla optio? Aspernatur " +
+              "dignissimos enim facere impedit ipsa ipsam labore, minima " +
+              "nostrum officiis quidem repellat saepe, sit unde. Ad adipisci " +
+              "commodi cum dolorum iusto magnam mollitia nulla vitae, " +
+              "voluptatibus. Adipisci aperiam assumenda consequuntur cum dolor " +
+              "eveniet ex exercitationem harum hic ipsam iusto nostrum quas " +
+              "reprehenderit sapiente sed, totam velit, veritatis! Asperiores " +
+              "autem consequatur, cupiditate deserunt dolorem dolorum fugit " +
+              "iure magnam maxime nemo, non placeat possimus. Architecto " +
+              "assumenda error fuga fugit impedit nemo nihil optio quam quo " +
+              "soluta. Autem deleniti exercitationem expedita explicabo labore " +
+              "laboriosam laudantium reiciendis tenetur voluptatum.",
             "details": {
-              "stacktrace": "exception1\nexception2"
             }
           }
         },

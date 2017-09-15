@@ -15,7 +15,7 @@
   right: 3px;
   top: 0;
   overflow: hidden;
-  z-index: 9999;
+  z-index: 1020;
   border: 2px solid white;
   color: inherit;
 
@@ -251,6 +251,10 @@
 
   .action-text {
     width: 100%;
+
+    &__text-element {
+      margin-left: 10px;
+    }
   }
 
   .o-exclusion {
@@ -278,6 +282,19 @@
   .o-error {
     &__message {
       text-transform: none;
+    }
+  }
+
+  .o-error-btn {
+    margin: -10px 0 0 0;
+    border-radius: 0 0 5px 5px;
+  }
+}
+
+.o-modal {
+  &--error {
+    .modal-content {
+      padding: 10px;
     }
   }
 }
