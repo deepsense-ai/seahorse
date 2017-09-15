@@ -1,13 +1,13 @@
 .. Copyright (c) 2015, CodiLime, Inc.
 
-Score regressor
+Train regressor
 ===============
 
 ==========
 Descriptor
 ==========
 
-Scores DataFrame using trained model.
+Trains regression model on DataFrame, returning trained model.
 
 **Operation version:** 1
 
@@ -24,16 +24,15 @@ Input
      - Data Type
      - Description
    * - 0
-     - Scorable
-     - Predictive model
+     - Trainable
+     - Model to train
    * - 1
      - DataFrame
-     - DataFrame to score
+     - DataFrame to train model on
 
 ------
 Output
 ------
-
 .. list-table::
    :widths: 15 30 55
    :header-rows: 1
@@ -42,14 +41,14 @@ Output
      - Data Type
      - Description
    * - 0
-     - DataFrame
-     - Scored DataFrame
+     - Scorable
+     - Trained model
 
 
 ===========
 Description
 ===========
-Operation used to score DataFrame using previously trained regressor.
+Operation used to train regression model on DataFrame.
 It assumes that input DataFrame contains columns that were used to train model, and that they have
 numeric type.
 If not, ``ColumnsDoNotExistException`` or ``WrongColumnTypeException`` are thrown respectively.
@@ -58,3 +57,16 @@ with ``'_prediction'`` appended.
 If this name is occupied, ``'_1'`` will be appended to it
 (or ``'_2'``, ``'_3'`` etc. so that uniqueness of column names is preserved).
 Result column will be appended to scored DataFrame.
+
+------
+Params
+------
+
+1. ``feature columns: ColumnSelector`` - subset of the DataFrame columns, used to train model.
+   If columns selected by user have type different then Numeric, ``WrongColumnTypeException``
+   will be thrown. If some of selected columns do not exist,
+   ``ColumnDoesNotExistException`` will be thrown.
+2. ``target column: SingleColumnSelector`` - column containing target of training
+   (i. e. label to predict). If selected column has type different then ``Numeric``,
+   ``WrongColumnTypeException`` will be thrown. If selected column does not exist,
+   ``ColumnDoesNotExistException`` will be thrown.
