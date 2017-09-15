@@ -36,6 +36,5 @@ private [clusters] object StandaloneSparkLauncher {
       .addFile(config.weDepsPath)
       .setConf("spark.driver.host", clusterConfig.userIP)
       .setConf("spark.executorEnv.PYTHONPATH", config.weDepsPath)
-      .setConf("spark.driver.extraClassPath", config.weJarPath)
   }
 }

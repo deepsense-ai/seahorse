@@ -61,10 +61,12 @@ services:
       - "SPARK_APPLICATIONS_LOGS_DIR=/spark_applications_logs"
       - "SESSION_EXECUTOR_PATH=/opt/docker/we.jar"
       - "SESSION_EXECUTOR_DEPS_PATH=/opt/docker/we-deps.zip"
+      - "SPARK_RESOURCES_JARS=/resources/jars"
       - "TEMP_DIR=/tmp/seahorse/download"
       - "JDBC_URL=jdbc:h2:tcp://127.0.0.1:$EXPOSED_DB_PORT/sessionmanager;DATABASE_TO_UPPER=false;DB_CLOSE_DELAY=-1"
     volumes:
       - "./data:/resources/data"
+      - "./jars:/resources/jars"
       - "library:/library"
       - "./R_Libs:/opt/R_Libs"
       - "./spark_applications_logs:/spark_applications_logs:rw"

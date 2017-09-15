@@ -7,11 +7,11 @@
 set -e
 
 SYNCED_FOLDER="/vagrant"
-RELEASE_SYNCED_FOLDER="/resources/data"
 
 cd $SYNCED_FOLDER
 
-mkdir -p $RELEASE_SYNCED_FOLDER
+mkdir -p /resources/data
+mkdir -p /resources/jars
 mkdir -p /resources/spark_applications_logs
 cp docker-compose.yml /resources
 

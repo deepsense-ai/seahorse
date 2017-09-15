@@ -35,7 +35,6 @@ private [clusters] object MesosSparkLauncher {
       .addFile(config.weDepsPath)
       .setConf("spark.executor.uri",
         "http://d3kbcqa49mib13.cloudfront.net/spark-2.0.0-bin-hadoop2.7.tgz")
-      .setConf("spark.driver.extraClassPath", config.weJarPath)
   }
 
   private def env(

@@ -37,7 +37,6 @@ private [clusters] object YarnSparkLauncher {
       .addAppArgs(SessionExecutorArgs(sessionConfig, config, clusterConfig): _*)
       .addFile(config.weDepsPath)
       .setConf("spark.driver.host", clusterConfig.userIP)
-      .setConf("spark.driver.extraClassPath", config.weJarPath)
       .setConf("spark.executorEnv.PYTHONPATH", config.weDepsFileName)
       .setConf("spark.yarn.appMasterEnv.PYSPARK_PYTHON", config.pythonDriverBinary)
   }

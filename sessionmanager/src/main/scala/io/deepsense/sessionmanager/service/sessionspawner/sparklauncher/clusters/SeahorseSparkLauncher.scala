@@ -38,7 +38,15 @@ object SeahorseSparkLauncher {
         case ClusterType.mesos =>
           MesosSparkLauncher(sessionConfig, sparkLauncherConfig, clusterConfig, args)
       }
-      sparkLauncher.setConfOpt("spark.executor.memory", clusterConfig.executorMemory)
+
+      val jars = new java.io.File(sparkLauncherConfig.sparkResourcesJarsDir)
+        .listFiles.map(f => f.getAbsolutePath)
+        .filter(_.endsWith(".jar"))
+      val extraClassPath = s"${sparkLauncherConfig.weJarPath}:${jars.mkString(":")}"
+
+      jars.toList.foldLeft(sparkLauncher) { (acc, jar) => acc.addJar(jar) }
+        .setConf("spark.driver.extraClassPath", extraClassPath)
+        .setConfOpt("spark.executor.memory", clusterConfig.executorMemory)
         .setConfOpt("spark.driver.memory", clusterConfig.driverMemory)
         .setConfOpt("spark.executor.cores", clusterConfig.executorCores.map(_.toString))
         .setConfOpt("spark.cores.max", clusterConfig.totalExecutorCores.map(_.toString))

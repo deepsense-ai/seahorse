@@ -14,6 +14,7 @@ class SparkLauncherConfig @Inject()(
   @Named("session-executor.parameters.class-name") val className: String,
   @Named("session-executor.parameters.application-jar-path") val weJarPath: String,
   @Named("session-executor.parameters.deps-zip-path") val weDepsPath: String,
+  @Named("session-executor.parameters.spark-resources-jars-dir") val sparkResourcesJarsDir: String,
   @Named("session-executor.parameters.spark-home-path") val sparkHome: String,
   @Named("session-executor.parameters.queue.port") val queuePort: Int,
   @Named("session-executor.parameters.queue.user") val queueUser: String,

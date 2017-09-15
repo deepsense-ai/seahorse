@@ -34,7 +34,6 @@ private [clusters] object LocalSparkLauncher {
       .addAppArgs(LocalSessionExecutorArgs(sessionConfig, config, clusterConfig): _*)
       .addFile(config.weDepsPath)
       .setConf("spark.executorEnv.PYTHONPATH", config.weDepsPath)
-      .setConf("spark.driver.extraClassPath", config.weJarPath)
       .setConf("spark.default.parallelism", parallelism.toString)
   }
 
