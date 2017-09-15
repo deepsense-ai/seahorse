@@ -287,9 +287,9 @@ case class SessionExecutor(
 
   // Clients after receiving ready or heartbeat will assume
   // that we are listening for their response
-  private def waitUntilSubscribersAreReady(subscribers: Seq[Future[Unit]]): Unit = {
+  private def waitUntilSubscribersAreReady[T](subscribers: Seq[Future[T]]): Unit = {
     import scala.concurrent.ExecutionContext.Implicits.global
-    val subscribed: Future[Seq[Unit]] = Future.sequence(subscribers)
+    val subscribed: Future[Seq[T]] = Future.sequence(subscribers)
     logger.info("Waiting for subscribers...")
     Await.result(subscribed, subscriptionTimeout)
     logger.info("Subscribers READY!")

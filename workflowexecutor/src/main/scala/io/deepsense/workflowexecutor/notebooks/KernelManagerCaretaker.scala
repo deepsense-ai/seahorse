@@ -129,7 +129,7 @@ class KernelManagerCaretaker(
     val subscriberActor = actorSystem.actorOf(props, "KernelManagerSubscriber")
     communicationFactory.registerSubscriber(
       MQCommunication.Topic.kernelManagerSubscriptionTopic(workflowId, sessionId),
-      subscriberActor)
+      subscriberActor).map(_ => ())
   }
 
   private class KernelManagerSubscriber extends Actor with Logging {
