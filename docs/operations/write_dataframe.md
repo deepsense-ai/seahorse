@@ -98,7 +98,7 @@ Write DataFrame operation does not produce any output.
 
     <tr>
       <td>
-        <code id="output-file">output file</code>
+        <code id="output-file">outputFile</code>
       </td>
       <td>
         <code><a href="../parameter_types.html#string">String</a></code>
@@ -122,7 +122,7 @@ Write DataFrame operation does not produce any output.
     </tr>
     <tr>
       <td>
-        <code id="column-separator">column separator</code>
+        <code id="separator">separator</code>
       </td>
       <td>
         <code><a href="../parameter_types.html#single_choice">Single Choice</a></code>
@@ -130,33 +130,20 @@ Write DataFrame operation does not produce any output.
       <td>Valid only if <code>format = CSV</code>.
         Character separating fields in a row. Possible values are:
         <code>Comma</code>, <code>Semicolon</code>, <code>Colon</code>,
-        <code>Space</code>, <code>Tab</code>, <code>Custom column separator</code>.
+        <code>Space</code>, <code>Tab</code>, <code>Custom</code>.
         Default value: <code>Comma</code>.
       </td>
     </tr>
 
     <tr>
       <td>
-        <code id="custom-column-separator">custom column separator</code>
+        <code id="custom-separator">custom separator</code>
       </td>
       <td>
         <code><a href="../parameter_types.html#string">String</a></code>
       </td>
-      <td>Valid only if <code>column separator = Custom column separator</code>.
+      <td>Valid only if <code>column separator = Custom</code>.
         A custom column separator.
-      </td>
-    </tr>
-
-    <tr>
-      <td>
-        <code id="write-header">write header</code>
-      </td>
-      <td>
-        <code><a href="../parameter_types.html#boolean">Boolean</a></code>
-      </td>
-      <td>Valid only if <code>format = CSV</code>.
-        If <code>true</code> then columns' names will be written at the
-        beginning of the output file.
       </td>
     </tr>
 

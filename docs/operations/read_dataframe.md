@@ -50,13 +50,13 @@ Escaping of separator sign is done by double quotes sign.
 Moreover, all not escaped values will be trimmed before parsing.
 For example, assuming comma as separator, following line
 
-``1,abc,"a,b,c",""x"",, z  ," z  "``
+<code>1,abc,"a,b,c","""x""",, z ," z&nbsp;&nbsp;"</code>
 
 will be parsed as:
 
-``1``  ``abc``  ``a,b,c``  ``"x"`` ``_``  ``z`` ``_z__``
+``1.0``  ``abc``  ``a,b,c``  ``"x"`` <code>&nbsp;</code> ``_z_``  ``_z__``
 
-where ``_`` denotes space.
+where ``_`` denotes space and the fifth value is an empty string.
 
 ### `PARQUET`
 <a target="_blank" href="http://spark.apache.org/docs/latest/sql-programming-guide.html#parquet-files">Parquet Files</a>
@@ -156,19 +156,19 @@ Read DataFrame does not take any input.
       <td>Valid only if <code>format = CSV</code>.
         Character separating fields in a row. Possible values are:
         <code>Comma</code>, <code>Semicolon</code>, <code>Colon</code>,
-        <code>Space</code>, <code>Tab</code>, <code>Custom column separator</code>.
+        <code>Space</code>, <code>Tab</code>, <code>Custom</code>.
         Default value: <code>Comma</code>.
       </td>
     </tr>
 
     <tr>
       <td>
-        <code id="custom-column-separator">custom column separator</code>
+        <code id="custom-separator">custom separator</code>
       </td>
       <td>
         <code><a href="../parameter_types.html#string">String</a></code>
       </td>
-      <td>Valid only if <code>separator = Custom column separator</code>.
+      <td>Valid only if <code>separator = Custom</code>.
         A custom column separator.
       </td>
     </tr>
