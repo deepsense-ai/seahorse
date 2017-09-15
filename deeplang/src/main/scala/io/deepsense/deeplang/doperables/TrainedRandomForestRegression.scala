@@ -42,7 +42,7 @@ case class TrainedRandomForestRegression(
 
   override def predict(vectors: RDD[Vector]): RDD[Double] = model.predict(vectors)
 
-  override def report: Report = {
+  override def report(executionContext: ExecutionContext): Report = {
     val featureColumnsColumn = featureColumns.get.toList.map(Some.apply)
     val targetColumnColumn = List(targetColumn)
     val rows = featureColumnsColumn.zipAll(targetColumnColumn, Some(""), Some(""))

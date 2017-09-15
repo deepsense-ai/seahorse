@@ -63,7 +63,7 @@ case class MathematicalTransformation(formula: Option[String]) extends Transform
     }
   }
 
-  override def report: Report = {
+  override def report(executionContext: ExecutionContext): Report = {
     val table = Table("Mathematical Formula", "", Some(List("Formula")), None, List(List(formula)))
     Report(ReportContent(
       "Report for MathematicalTransformation", List(table)))

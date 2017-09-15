@@ -27,7 +27,8 @@ import org.apache.spark.sql.{ColumnName, Row}
 
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.utils.DoubleUtils
-import io.deepsense.deeplang.doperables.Report
+import io.deepsense.deeplang.ExecutionContext
+import io.deepsense.deeplang.doperables.{ReportLevel, Report}
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMetadata
 import io.deepsense.reportlib.model
 import io.deepsense.reportlib.model._
@@ -40,7 +41,9 @@ import io.deepsense.deeplang.doperables.dataframe.StatType._
 
 trait DataFrameReportGenerator {
 
-  def report(sparkDataFrame: org.apache.spark.sql.DataFrame): Report = {
+  def report(
+      executionContext: ExecutionContext,
+      sparkDataFrame: org.apache.spark.sql.DataFrame): Report = {
     val dataFrameEmpty: Boolean = sparkDataFrame.rdd.isEmpty()
     safeDataFrameCache(sparkDataFrame)
     val columnsSubset: List[String] =
@@ -49,7 +52,7 @@ trait DataFrameReportGenerator {
     val categoricalMetadata = CategoricalMetadata(sparkDataFrame)
 
     val (distributions, dataFrameSize) =
-      columnsDistributions(limitedDataFrame, dataFrameEmpty, categoricalMetadata)
+      columnsDistributions(executionContext, limitedDataFrame, dataFrameEmpty, categoricalMetadata)
     val sampleTable = dataSampleTable(limitedDataFrame, categoricalMetadata)
     val sizeTable = dataFrameSizeTable(sparkDataFrame.schema, dataFrameSize)
     Report(ReportContent(
@@ -89,6 +92,7 @@ trait DataFrameReportGenerator {
    * (up to 100 columns).
    */
   private def columnsDistributions(
+      executionContext: ExecutionContext,
       sparkDataFrame: org.apache.spark.sql.DataFrame,
       dataFrameEmpty: Boolean,
       categoricalMetadata: CategoricalMetadata): (Map[String, Distribution], Long) = {
@@ -100,22 +104,36 @@ trait DataFrameReportGenerator {
         Some(Statistics.colStats(sparkDataFrame.rdd.map(row2DoubleVector(categoricalMetadata))))
       }
     val dataFrameSize: Long = basicStats.map(_.count).getOrElse(0L)
-    val distributions = sparkDataFrame.schema.zipWithIndex.map(p => {
-      val rdd: RDD[Double] =
-        columnAsDoubleRDDWithoutMissingValues(sparkDataFrame, categoricalMetadata, p._2)
-      rdd.cache()
-      distributionType(p._1, categoricalMetadata) match {
-        case Continuous => continuousDistribution(
-          p._1,
-          rdd,
-          basicStats.map(_.min(p._2)),
-          basicStats.map(_.max(p._2)),
-          dataFrameSize,
-          categoricalMetadata)
-        case Categorical => categoricalDistribution(dataFrameSize, p._1, rdd, categoricalMetadata)
+
+    if (executionContext.reportLevel == ReportLevel.LOW) {
+      // Turn off generating any distributions when reportLevel == LOW
+      (Map(), dataFrameSize)
+
+    } else {
+      val columnsForDistributionGeneration = if (executionContext.reportLevel == ReportLevel.HIGH) {
+        sparkDataFrame.schema
+      } else {
+        // Omit generating distributions for 'Continuous' columns when reportLevel == MEDIUM
+        sparkDataFrame.schema.filterNot(s => Continuous == distributionType(s, categoricalMetadata))
       }
-    })
-    (distributions.map(d => d.name -> d).toMap, dataFrameSize)
+      val distributions = columnsForDistributionGeneration.zipWithIndex.map(p => {
+        val rdd: RDD[Double] =
+          columnAsDoubleRDDWithoutMissingValues(sparkDataFrame, categoricalMetadata, p._2)
+        rdd.cache()
+        distributionType(p._1, categoricalMetadata) match {
+          case Continuous =>
+            continuousDistribution(
+              p._1,
+              rdd,
+              basicStats.map(_.min(p._2)),
+              basicStats.map(_.max(p._2)),
+              dataFrameSize,
+              categoricalMetadata)
+          case Categorical => categoricalDistribution(dataFrameSize, p._1, rdd, categoricalMetadata)
+        }
+      })
+      (distributions.map(d => d.name -> d).toMap, dataFrameSize)
+    }
   }
 
   private def columnAsDoubleRDDWithoutMissingValues(

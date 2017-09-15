@@ -23,6 +23,7 @@ import akka.actor._
 
 import io.deepsense.commons.exception.{FailureCode, DeepSenseFailure, FailureDescription}
 import io.deepsense.commons.utils.Logging
+import io.deepsense.deeplang.doperables.ReportLevel.ReportLevel
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
 import io.deepsense.graph.{CyclicGraphException, GraphKnowledge, Graph, Node}
 import io.deepsense.models.entities.Entity
@@ -41,7 +42,6 @@ class WorkflowExecutorActor(executionContext: ExecutionContext)
 
   import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages._
 
-  var generateReports: Boolean = false
   var result: Promise[GraphFinished] = _
   var graph: Graph = _
   var dOperableCache: Results = Map.empty
@@ -50,13 +50,12 @@ class WorkflowExecutorActor(executionContext: ExecutionContext)
   val progressReporter = WorkflowProgress()
 
   override def receive: Receive = {
-    case Launch(g, withReports, resultPromise) => launch(g, withReports, resultPromise)
+    case Launch(g, resultPromise) => launch(g, resultPromise)
     case NodeStarted(id) => nodeStarted(id)
     case NodeFinished(node, results) => nodeFinished(node, results)
   }
 
-  def launch(g: Graph, generateReports: Boolean, result: Promise[GraphFinished]): Unit = {
-    this.generateReports = generateReports
+  def launch(g: Graph, result: Promise[GraphFinished]): Unit = {
     this.result = result
     graph = g
 
@@ -95,11 +94,9 @@ class WorkflowExecutorActor(executionContext: ExecutionContext)
     logger.debug(s"Node finished: $node")
     graph = graph.withChangedNode(node)
 
-    if (generateReports) {
-      Try(collectReports(results)).recover { case e =>
-        node.markFailed(e)
-        graph = graph.withChangedNode(node)
-      }
+    Try(collectReports(results)).recover { case e =>
+      node.markFailed(e)
+      graph = graph.withChangedNode(node)
     }
 
     dOperableCache = dOperableCache ++ results
@@ -146,7 +143,7 @@ class WorkflowExecutorActor(executionContext: ExecutionContext)
   }
 
   def collectReports(results: Results): Unit = {
-    val reports = results.mapValues(_.report.content)
+    val reports = results.mapValues(_.report(executionContext).content)
     this.reports = this.reports ++ reports
   }
 }
@@ -163,7 +160,6 @@ object WorkflowExecutorActor {
     sealed trait Message
     case class Launch(
         graph: Graph,
-        generateReports: Boolean,
         result: Promise[GraphFinished])
       extends Message
     case class NodeStarted(nodeId: Node.Id) extends Message

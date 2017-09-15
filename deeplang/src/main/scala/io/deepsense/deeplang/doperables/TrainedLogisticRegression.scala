@@ -48,7 +48,7 @@ case class TrainedLogisticRegression(
 
   override def url: Option[String] = physicalPath
 
-  override def report: Report = {
+  override def report(executionContext: ExecutionContext): Report = {
     val featureColumnsColumn = featureColumns.get.toList.map(Some.apply)
     val targetColumnColumn = List(targetColumn)
     val rows = featureColumnsColumn.zipAll(targetColumnColumn, Some(""), Some(""))

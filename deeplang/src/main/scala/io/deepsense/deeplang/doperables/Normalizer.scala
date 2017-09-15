@@ -58,7 +58,8 @@ case class Normalizer(columns: Seq[String], scaler: StandardScalerModel) extends
     }
   }
 
-  override def report: Report = Report(ReportContent("Report for Normalizer"))
+  override def report(executionContext: ExecutionContext): Report =
+    Report(ReportContent("Report for Normalizer"))
 
   override def toInferrable: DOperable = new Normalizer()
 

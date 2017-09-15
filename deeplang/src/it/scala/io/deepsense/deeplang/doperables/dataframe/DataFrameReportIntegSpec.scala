@@ -25,12 +25,18 @@ import org.joda.time.DateTime
 
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.DeeplangIntegTestSupport
-import io.deepsense.deeplang.doperables.Report
+import io.deepsense.deeplang.doperables.{ReportLevel, Report}
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoriesMapping, MappingMetadataConverter}
 import io.deepsense.reportlib.model.{CategoricalDistribution, ContinuousDistribution, Statistics, Table}
 
 
 class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTestFactory {
+
+  override def beforeAll(): Unit = {
+    super.beforeAll()
+    // Tests verify correctness of reports at HIGH level of report details
+    executionContext.reportLevel = ReportLevel.HIGH
+  }
 
   "DataFrame" should {
     "generate report with data sample table" when {
@@ -63,7 +69,7 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
         val dataFrame =
           executionContext.dataFrameBuilder.buildDataFrame(schema, rdd, Seq(nameColumnName))
 
-        val report = dataFrame.report
+        val report = dataFrame.report(executionContext)
 
         val tables: Map[String, Table] = report.content.tables
         val dataSampleTable = tables.get(DataFrameReportGenerator.dataSampleTableName).get
@@ -79,7 +85,7 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
           StructType(List(StructField(timestampColumnName, TimestampType))),
           sparkContext.parallelize(List(Row(new Timestamp(now.getMillis)))))
 
-        val report = dataFrame.report
+        val report = dataFrame.report(executionContext)
 
         val tables: Map[String, Table] = report.content.tables
         val dataSampleTable = tables.get(DataFrameReportGenerator.dataSampleTableName).get
@@ -91,7 +97,7 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
     "generate report with correct column Distribution" in {
       val dataFrame = testDataFrame(executionContext.dataFrameBuilder, sparkContext)
 
-      val report = dataFrame.report
+      val report = dataFrame.report(executionContext)
 
       testCategoricalDistribution(report, DataFrameTestFactory.stringColumnName, 1L, Seq(), Seq())
       testCategoricalDistribution(
@@ -139,7 +145,7 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
     "generate column Distribution for one value DataFrame" in {
       val dataFrame = oneValueDataFrame(executionContext.dataFrameBuilder, sparkContext)
 
-      val report = dataFrame.report
+      val report = dataFrame.report(executionContext)
 
       testCategoricalDistribution(report, DataFrameTestFactory.stringColumnName, 0L, Seq(), Seq())
       testCategoricalDistribution(
@@ -200,7 +206,7 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
             schema,
             sparkContext.parallelize(Seq.empty[Row]))
 
-        val report = emptyDataFrame.report
+        val report = emptyDataFrame.report(executionContext)
 
         val tables = report.content.tables
         val dataSampleTable = tables.get(DataFrameReportGenerator.dataSampleTableName).get
@@ -276,7 +282,7 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
       buildSchema(dataFrameColumnsNumber, columnNameBase),
       buildRDDWithStringValues(dataFrameColumnsNumber, dataFrameRowsNumber, cellValue))
 
-    val report = dataFrame.report
+    val report = dataFrame.report(executionContext)
 
     val tables: Map[String, Table] = report.content.tables
     testDataSampleTable(

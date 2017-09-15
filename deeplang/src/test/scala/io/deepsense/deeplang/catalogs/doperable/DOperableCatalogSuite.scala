@@ -34,7 +34,7 @@ object SampleInheritance {
   trait T extends DOperable
   abstract class A extends T3 {
     override def toInferrable: DOperable = ???
-    override def report: Report = ???
+    override def report(executionContext: ExecutionContext): Report = ???
     override def save(executionContext: ExecutionContext)(path: String): Unit = ???
   }
   case class B() extends A with T

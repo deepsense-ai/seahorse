@@ -45,7 +45,7 @@ case class SaveDataFrame() extends DOperation1To0[DataFrame] {
     DOperableSaver.saveDOperableWithEntityStorageRegistration(
       context)(
       dataFrame,
-      inputEntity(context, uniqueFilename, dataFrame.report, dataFrame.metadata.get))
+      inputEntity(context, uniqueFilename, dataFrame.report(context), dataFrame.metadata.get))
   }
 
   private def inputEntity(

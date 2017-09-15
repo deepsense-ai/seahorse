@@ -166,7 +166,7 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
         csvColumnSeparator = ",",
         csvNamesIncluded = false
       )
-      dataFrame.report shouldBe an[Report]
+      dataFrame.report(executionContext) shouldBe an[Report]
     }
 
     "read categorical columns provided by index" in {

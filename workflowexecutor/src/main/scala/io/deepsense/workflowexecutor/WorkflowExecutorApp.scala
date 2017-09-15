@@ -33,6 +33,9 @@ import spray.json._
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.CatalogRecorder
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
+import io.deepsense.deeplang.doperables.ReportLevel
+import io.deepsense.deeplang.doperables.ReportLevel
+import io.deepsense.deeplang.doperables.ReportLevel.ReportLevel
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow._
 import io.deepsense.models.workflows._
@@ -55,34 +58,41 @@ object WorkflowExecutorApp
   private val parser: OptionParser[ExecutionParams]
       = new scopt.OptionParser[ExecutionParams](BuildInfo.name) {
     head(BuildInfo.toString)
-    opt[Unit]('r', "generate-report") action {
-      (_, c) => c.copy(generateReport = true)
-    } text "compute ExecutionReport (very time consuming option)"
-    opt[String]('w', "workflow-filename") required() valueName "<file-name>" action {
+
+    opt[String]('r', "report-level") valueName "LEVEL" action {
+      (x, c) => c.copy(reportLevel = ReportLevel.withName(x.toUpperCase))
+    } text "level of details for DataFrame report generation; " +
+      "LEVEL is 'high', 'medium', or 'low' (default: 'medium')"
+
+    opt[String]('w', "workflow-filename") required() valueName "FILENAME" action {
       (x, c) => c.copy(workflowFilename = x)
     } text "workflow filename"
-    opt[String]('o', "output-directory") required() valueName "<dir-path>" action {
+
+    opt[String]('o', "output-directory") required() valueName "DIR" action {
       (x, c) => c.copy(outputDirectoryPath = x)
     } text
       "output directory path; directory will be created if it does not exists; " +
         "execution fails if any file is to be overwritten"
-    opt[String]('u', "report-upload-host") valueName "<host>" action {
+
+    opt[String]('u', "report-upload-host") valueName "HOST" action {
       (x, c) => c.copy(reportUploadHost = Some(x))
     } text "hostname or IP of the server where execution report should be uploaded"
-    help("help") text "print this help message"
+
+    help("help") text "print this help message and exit"
     version("version") text "print product version and exit"
     note("See http://deepsense.io for more details")
   }
 
   def main(args: Array[String]): Unit = {
-    logger.info("Starting WorkflowExecutor.")
     val cmdParams = parser.parse(args, ExecutionParams())
+
+    logger.info("Starting WorkflowExecutor.")
 
     cmdParams match {
       case None => System.exit(-1)
       case Some(params) =>
         val workflowWithVariables = loadWorkflow(params.workflowFilename)
-        val executionReport = executeWorkflow(workflowWithVariables, params.generateReport)
+        val executionReport = executeWorkflow(workflowWithVariables, params.reportLevel)
         handleExecutionReport(params.outputDirectoryPath, executionReport, workflowWithVariables,
           params.reportUploadHost)
     }
@@ -90,11 +100,11 @@ object WorkflowExecutorApp
 
   private def executeWorkflow(
       workflow: WorkflowWithVariables,
-      generateReport: Boolean): Try[ExecutionReport] = {
+      reportLevel: ReportLevel): Try[ExecutionReport] = {
     // Run executor
     logger.info("Executing the workflow.")
     logger.debug("Executing the workflow: " +  workflow)
-    WorkflowExecutor(workflow, generateReport).execute()
+    WorkflowExecutor(workflow, reportLevel).execute()
   }
 
   private def loadWorkflow(filename: String): WorkflowWithVariables =
@@ -160,7 +170,7 @@ object WorkflowExecutorApp
       val resultUrl = Await.ready(uploadReport, reportUploadTimeout.seconds).value.get
       resultUrl match {
         case Success(url) =>
-          logger.info(s"Report uploaded. You can see the results at: ${url}")
+          logger.info(s"Report uploaded. You can see the results at: $url")
         case Failure(ex) =>
           logger.error(s"Report upload failed: ${ex.getMessage}.", ex)
       }
@@ -176,6 +186,6 @@ object WorkflowExecutorApp
   private case class ExecutionParams(
     workflowFilename: String = "",
     outputDirectoryPath: String = "",
-    generateReport: Boolean = false,
+    reportLevel: ReportLevel = ReportLevel.MEDIUM,
     reportUploadHost: Option[String] = None)
 }

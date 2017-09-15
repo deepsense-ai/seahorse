@@ -38,7 +38,7 @@ case class File(
 
   override def toInferrable: DOperable = new File()
 
-  override def report: Report = {
+  override def report(executionContext: ExecutionContext): Report = {
     val table = File.prepareReportTable(reportParams.get)
     Report(ReportContent("File details", List(table)))
   }

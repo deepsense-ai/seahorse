@@ -30,6 +30,7 @@ import io.deepsense.commons.spark.sql.UserDefinedFunctions
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
+import io.deepsense.deeplang.doperables.ReportLevel.ReportLevel
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.models.entities.Entity
 import io.deepsense.models.workflows.{ExecutionReport, WorkflowWithVariables}
@@ -40,7 +41,7 @@ import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.{GraphFinish
  */
 case class WorkflowExecutor(
     workflow: WorkflowWithVariables,
-    generateReports: Boolean)
+    reportLevel: ReportLevel)
   extends Logging {
 
   val dOperableCache = mutable.Map[Entity.Id, DOperable]()
@@ -53,7 +54,7 @@ case class WorkflowExecutor(
     val workflowExecutorActor = actorSystem.actorOf(WorkflowExecutorActor.props(executionContext))
 
     val resultPromise: Promise[GraphFinished] = Promise()
-    workflowExecutorActor ! Launch(workflow.graph, generateReports, resultPromise)
+    workflowExecutorActor ! Launch(workflow.graph, resultPromise)
 
     logger.debug("Awaiting execution end...")
     actorSystem.awaitTermination()
@@ -86,6 +87,7 @@ case class WorkflowExecutor(
     executionContext.dataFrameBuilder = DataFrameBuilder(executionContext.sqlContext)
     executionContext.fsClient = FileSystemClientStub() // TODO temporarily mocked
     executionContext.entityStorageClient = null // Not used
+    executionContext.reportLevel = reportLevel
     executionContext
   }
 

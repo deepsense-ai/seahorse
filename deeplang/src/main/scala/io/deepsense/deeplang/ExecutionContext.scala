@@ -20,6 +20,7 @@ import org.apache.spark.SparkContext
 import org.apache.spark.sql.SQLContext
 
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
+import io.deepsense.deeplang.doperables.ReportLevel.ReportLevel
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.entitystorage.UniqueFilenameUtil
 
@@ -31,6 +32,9 @@ class ExecutionContext(
   var sparkContext: SparkContext = _
   var sqlContext: SQLContext = _
   var fsClient: FileSystemClient = _
+
+  // Level of details for generated reports
+  var reportLevel: ReportLevel = _
 
   def uniqueFsFileName(entityCategory: String): String =
     UniqueFilenameUtil.getUniqueFsFilename(tenantId, entityCategory)

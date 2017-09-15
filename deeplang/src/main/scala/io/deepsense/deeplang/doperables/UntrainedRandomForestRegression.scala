@@ -66,7 +66,8 @@ case class UntrainedRandomForestRegression(
     }
   }
 
-  override def report: Report = Report(ReportContent("Report for UntrainedRandomForestRegression"))
+  override def report(executionContext: ExecutionContext): Report =
+    Report(ReportContent("Report for UntrainedRandomForestRegression"))
 
   override def save(context: ExecutionContext)(path: String): Unit = ???
 }

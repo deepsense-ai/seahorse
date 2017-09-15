@@ -25,6 +25,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 import org.scalatest.BeforeAndAfterAll
 
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
+import io.deepsense.deeplang.doperables.ReportLevel
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.entitystorage.EntityStorageClientInMemoryImpl
 import io.deepsense.models.entities.Entity
@@ -55,6 +56,7 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
     executionContext.dataFrameBuilder = DataFrameBuilder(sqlContext)
     executionContext.tenantId = "testTenantId"
     executionContext.fsClient = fileSystemClient
+    executionContext.reportLevel = ReportLevel.HIGH
     prepareEntityStorageClient
   }
 

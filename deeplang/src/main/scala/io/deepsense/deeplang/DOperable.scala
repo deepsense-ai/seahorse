@@ -46,7 +46,7 @@ trait DOperable {
     */
   def metadata: Option[M] = None
 
-  def report: Report
+  def report(executionContext: ExecutionContext): Report
 
   /**
    * Saves DOperable on FS under specified path.

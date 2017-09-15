@@ -96,8 +96,8 @@ case class DataFrame private[dataframe] (
     })
   }
 
-  override def report: Report = {
-    report(sparkDataFrame)
+  override def report(executionContext: ExecutionContext): Report = {
+    report(executionContext, sparkDataFrame)
   }
 }
 

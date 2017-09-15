@@ -67,7 +67,8 @@ case class UntrainedRidgeRegression(
     }
   }
 
-  override def report: Report = Report(ReportContent("Report for UntrainedRidgeRegression"))
+  override def report(executionContext: ExecutionContext): Report =
+    Report(ReportContent("Report for UntrainedRidgeRegression"))
 
   override def save(context: ExecutionContext)(path: String): Unit =
     throw new UnsupportedOperationException

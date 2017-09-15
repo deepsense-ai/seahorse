@@ -50,7 +50,7 @@ case class TrainedRidgeRegression(
 
   override def predict(vectors: RDD[Vector]): RDD[Double] = preparedModel.predict(vectors)
 
-  override def report: Report = {
+  override def report(executionContext: ExecutionContext): Report = {
     val featureColumnsColumn = "" +: featureColumns.get.toList
     val weights: Array[Double] = model.get.intercept +: model.get.weights.toArray
     val rows = featureColumnsColumn.zip(weights).map {

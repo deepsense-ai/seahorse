@@ -117,8 +117,7 @@ class WorkflowExecutorActorSpec
       shutdownerProbe.expectMsgType[String] shouldBe shutdownMessage
     }
 
-    def launchGraph(shouldStartExecutors: Boolean = true,
-        generateReports: Boolean = false): Future[GraphFinished] = {
+    def launchGraph(shouldStartExecutors: Boolean = true): Future[GraphFinished] = {
       val nodes = List(mockNode(), mockNode())
       val nodeExecutors = Seq(TestProbe(), TestProbe())
       val running = graph.markRunning
@@ -129,7 +128,7 @@ class WorkflowExecutorActorSpec
       wea.expectedDOperableCache = Map.empty
 
       val resultPromise: Promise[GraphFinished] = Promise()
-      weaRef ! Launch(graph, generateReports, resultPromise)
+      weaRef ! Launch(graph, resultPromise)
 
       if (shouldStartExecutors) {
         wea.nodeExecutors(0).expectMsg(WorkflowNodeExecutorActor.Messages.Start())
@@ -253,7 +252,7 @@ class WorkflowExecutorActorSpec
         }
       };()}
       "it receives NodeFinished and report generation fails" in { new TestCase {
-        val result = launchGraph(generateReports = true)
+        val result = launchGraph()
         val finishedNode = mockFinishedNode()
         val finishedGraph = mock[Graph]
         val runningGraph = mock[Graph]
@@ -263,7 +262,7 @@ class WorkflowExecutorActorSpec
         when(runningGraph.readyNodes) thenReturn List.empty
         when(runningGraph.runningNodes) thenReturn Set.empty[Node]
         when(finishedGraph.state) thenReturn mock[GraphState]
-        when(dOperable.report) thenThrow classOf[Exception]
+        when(dOperable.report(executionContext)) thenThrow classOf[Exception]
 
         wea.graph = runningGraph
         weaRef ! WorkflowExecutorActor.Messages.NodeFinished(

@@ -30,9 +30,14 @@ case class Report(content: ReportContent = ReportContent("empty report"))
   override def toInferrable: DOperable = new Report()
 
   import ReportJsonProtocol._
-  override def report: Report = this
+  override def report(executionContext: ExecutionContext): Report = this
 
   def toDataObjectReport: DataObjectReport = DataObjectReport(content.toJson.prettyPrint)
 
   override def save(context: ExecutionContext)(path: String): Unit = ???
+}
+
+object ReportLevel extends Enumeration {
+  type ReportLevel = Value
+  val HIGH, MEDIUM, LOW = Value
 }
