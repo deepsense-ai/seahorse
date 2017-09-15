@@ -16,17 +16,20 @@
 
 package io.deepsense.deeplang.params.choice
 
-import scala.reflect.runtime.universe._
-
-import spray.json.{JsObject, JsValue}
-
 import io.deepsense.deeplang.params.ParameterType
+import spray.json.DefaultJsonProtocol._
+import spray.json._
+
+import scala.reflect.runtime.universe._
 
 case class MultipleChoiceParam[T <: Choice](
     name: String,
     description: String)
   (implicit tag: TypeTag[T])
   extends AbstractChoiceParam[T, Set[T]] {
+
+  override protected def serializeDefault(choices: Set[T]): JsValue =
+    JsArray(choices.toSeq.map(choice => JsString(choice.name)): _*)
 
   val parameterType = ParameterType.MultipleChoice
 

@@ -34,18 +34,26 @@ abstract class Param[T] {
 
   /**
    * Describes json representation of this parameter.
-   * @param default Optional default value of parameter. Should be of type Option[T], but we need
-   *                to receive Any because Params have to use this method without knowing T.
+   * @param maybeDefault Optional default value of parameter. Should be of type Option[T],
+   *                     but we need to receive Any because Params have to use this method
+   *                     without knowing T.
    */
-  def toJson(default: Option[Any]): JsObject = {
+  def toJson(maybeDefault: Option[Any]): JsObject = {
     val basicFields = Map(
       "name" -> name.toJson,
       "type" -> parameterType.toString.toJson, // TODO json format for parameterType
       "description" -> description.toJson,
-      "default" -> default.map(_.asInstanceOf[T]).map(valueToJson).getOrElse(JsNull)
+      "default" -> maybeDefault.map(default =>
+        serializeDefault(default.asInstanceOf[T])).getOrElse(JsNull)
     )
     JsObject(basicFields ++ extraJsFields)
   }
+
+  /**
+    * Describes default serialization of default values.
+    * @param default Default value of parameter
+    */
+  protected def serializeDefault(default: T): JsValue = valueToJson(default)
 
   /**
    * Subclasses should overwrite this method if they want to

@@ -33,18 +33,20 @@ abstract class AbstractParamSpec[T, U <: Param[T]]
 
   val defaultValue: T = valueFixture._1
 
+  def serializeDefaultValue(default: T): JsValue = paramFixture._1.valueToJson(default)
+
   className should {
     "serialize itself to JSON" when {
       "default value is not provided" in {
         val (param, expectedJson) = paramFixture
-        param.toJson(default = None) shouldBe expectedJson
+        param.toJson(maybeDefault = None) shouldBe expectedJson
       }
       "default value is provided" in {
         val (param, expectedJson) = paramFixture
         val expectedJsonWithDefault = JsObject(
-          expectedJson.asJsObject.fields + ("default" -> param.valueToJson(defaultValue))
+          expectedJson.asJsObject.fields + ("default" -> serializeDefaultValue(defaultValue))
         )
-        param.toJson(default = Some(defaultValue)) shouldBe expectedJsonWithDefault
+        param.toJson(maybeDefault = Some(defaultValue)) shouldBe expectedJsonWithDefault
       }
     }
   }
