@@ -27,7 +27,7 @@ trait SupportVectorMachineInterfaceParameters {
 
   private val numberOfIterations = NumericParameter(
     description = "The number of iterations for SGD",
-    default = Some(100.0),
+    default = Some(10.0),
     validator = RangeValidator(begin = 1.0, end = 1000000.0, step = Some(1.0)))
 
   private val regularizationParameterParameter = NumericParameter(

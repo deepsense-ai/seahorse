@@ -40,7 +40,7 @@ case class CreateLogisticRegression() extends DOperation0To1[UntrainedLogisticRe
       validator = RangeValidator(begin = 0.0, end = Double.PositiveInfinity)),
     IterationsNumberKey -> NumericParameter(
       description = "Max number of iterations to perform",
-      default = Some(1.0),
+      default = Some(10.0),
       validator = RangeValidator(begin = 1.0, end = EndOfRange, step = Some(1.0))),
     Tolerance -> NumericParameter(
       description = "The convergence tolerance of iterations for LBFGS. " +

@@ -26,8 +26,8 @@ trait RandomForestParams {
 
   private val numTreesParameter = NumericParameter(
     description = "Number of trees in the random forest",
-    default = Some(1.0),
-    validator = RangeValidator(begin = 1.0, end = 1000, step = Some(1.0)))
+    default = Some(30.0),
+    validator = RangeValidator(begin = 1.0, end = 10000, step = Some(1.0)))
   private val featureSubsetStrategyParameter = ChoiceParameter(
     description = "Number of features to consider for splits at each node",
     default = Some("auto"),

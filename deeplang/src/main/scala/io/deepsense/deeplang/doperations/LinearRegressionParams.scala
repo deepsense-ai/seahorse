@@ -26,7 +26,7 @@ trait LinearRegressionParams {
 
   val iterationsNumberParameter = NumericParameter(
     description = "Number of iterations to perform",
-    default = Some(1.0),
+    default = Some(10.0),
     validator = RangeValidator(begin = 1.0, end = 1000000, step = Some(1.0)))
 
   val miniBatchFractionParameter = NumericParameter(

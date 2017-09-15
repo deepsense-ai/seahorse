@@ -24,10 +24,10 @@ trait GradientBoostedTreesParams {
 
   private val numIterationsParameter = NumericParameter(
     description = "Number of iterations",
-    default = Some(1.0),
-    validator = RangeValidator(begin = 1.0, end = 1000, step = Some(1.0)))
+    default = Some(100.0),
+    validator = RangeValidator(begin = 1.0, end = 1000000.0, step = Some(1.0)))
   private val lossParameter = ChoiceParameter(
-    description = "Loss function",
+    description = "Loss function used for minimization during gradient boosting",
     default = Some(lossOptions(0)),
     options = ListMap(lossOptions.map(_ -> ParametersSchema()): _*))
   private val impurityParameter = ChoiceParameter(
@@ -37,10 +37,10 @@ trait GradientBoostedTreesParams {
   private val maxDepthParameter = NumericParameter(
     description = "Maximum depth of the tree",
     default = Some(4.0),
-    validator = RangeValidator(begin = 1.0, end = 1000, step = Some(1.0)))
+    validator = RangeValidator(begin = 1.0, end = 100000, step = Some(1.0)))
   private val maxBinsParameter = NumericParameter(
     description = "Maximum number of bins used for splitting features",
-    default = Some(100.0),
+    default = Some(32.0),
     validator = RangeValidator(begin = 1.0, end = 100000, step = Some(1.0)))
 
   val lossOptions: Seq[String]
