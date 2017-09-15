@@ -31,3 +31,6 @@ Wine Properties
     Run Workflow Local
     Check Report
 
+Mushrooms
+    Run Workflow Local
+    Check Report
