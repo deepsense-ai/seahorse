@@ -1,10 +1,8 @@
 FROM rabbitmq:latest
 
 COPY rabbitmq.config /etc/rabbitmq/
-
-RUN rabbitmq-plugins enable rabbitmq_stomp
-RUN rabbitmq-plugins enable rabbitmq_web_stomp
-RUN rabbitmq-plugins enable rabbitmq_management
+COPY definitions.json /etc/rabbitmq
+COPY enabled_plugins /etc/rabbitmq
 
 EXPOSE 61613
 EXPOSE 15672
