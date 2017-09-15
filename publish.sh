@@ -135,6 +135,7 @@ calculate_full_version
 calculate_repository_url
 add_build_info_file
 add_version_file
+echo "FULL_VERSION="$FULL_VERSION > env.properties
 package
 publishVersion "${FULL_VERSION}.zip" "${FULL_VERSION}"
 publishLatest "${FULL_VERSION}.zip"
