@@ -1,9 +1,9 @@
-<div>
+<div class="attribute-input">
   <input type="text" class="form-control"
          ng-class="{ 'invalid-param-value': !parameter.validate() }"
          ng-model="valueBuffer"
   >
-  <label ng-if="parameter.defaultValue === valueBuffer" class="default-label">
+  <label ng-if="valueBuffer == parameter.schema.default" class="default-label">
     <i>Default value</i>
   </label>
 </div>
