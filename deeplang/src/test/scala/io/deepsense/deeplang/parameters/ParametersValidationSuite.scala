@@ -1,36 +1,20 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
  *
- * Owner: Radoslaw Kotowski
+ * Owner: Witold Jedrzejewski
  */
 
 package io.deepsense.deeplang.parameters
 
+import org.mockito.Mockito._
 import org.scalatest.FunSuite
+import org.scalatest.mock.MockitoSugar
 
 import io.deepsense.deeplang.parameters.exceptions._
 
-class ParametersValidationSuite extends FunSuite {
+class ParametersValidationSuite extends FunSuite with MockitoSugar {
 
-  /** Parameter that always throws ValidationException, regardless of held value. */
-  case class MockParameter(
-      description: String,
-      default: Option[Nothing],
-      required: Boolean)
-    extends Parameter {
-    type HeldValue = Null
-    val parameterType = null
-
-    def value = Some(null)
-
-    def replicate = copy()
-
-    override def validateDefined(any: Null): Unit = {
-      throw new ValidationException("Mock exception") {}
-    }
-  }
-
-  test("Validation of valid parameters is possible") {
+  test("Validation of valid parameters is successful") {
     val param1 = NumericParameter("example1", None, true, RangeValidator(3, 4))
     val param2 = StringParameter("example2", Some("default"), true, RegexValidator("abc".r))
 
@@ -104,54 +88,31 @@ class ParametersValidationSuite extends FunSuite {
     assert(exception == MatchException("abc", regex))
   }
 
-  test("Choosing nonexistent choice in single choice parameter should throw an exception") {
-    intercept[IllegalChoiceException] {
-      val possibleChoices = Map.empty[String, ParametersSchema]
-      val choice = ChoiceParameter("choice", None, true, possibleChoices)
-      choice.fill("nonexistent", x => { })
-    }
+  test("Validation of choice parameter should validate chosen schema") {
+    val mockSchema = mock[ParametersSchema]
+    val possibleChoices = Map("onlyChoice" -> mockSchema)
+    val choice = ChoiceParameter("choice", None, true, possibleChoices)
+    choice.value = Some("onlyChoice")
+    choice.validate
+    verify(mockSchema).validate
   }
 
-  test("Choosing nonexistent choice in multiple choice parameter should throw an exception") {
-    intercept[IllegalChoiceException] {
-      val possibleChoices = Map.empty[String, ParametersSchema]
-      val choice = MultipleChoiceParameter("choice", None, true, possibleChoices)
-      choice.fill(Map("nonexistent" -> (x => { })))
-    }
+  test("Validation of multipleChoice parameter should validate chosen schemas") {
+    val mockSchema1 = mock[ParametersSchema]
+    val mockSchema2 = mock[ParametersSchema]
+    val possibleChoices = Map("firstChoice" -> mockSchema1, "secondChoice" -> mockSchema2)
+    val multipleChoices = MultipleChoiceParameter("choice", None, true, possibleChoices)
+    multipleChoices.value = Some(Traversable("firstChoice", "secondChoice"))
+    multipleChoices.validate
+    verify(mockSchema1).validate
+    verify(mockSchema2).validate
   }
 
-  test("Validation of choice parameter with invalid value should throw an exception") {
-    intercept[ValidationException] {
-      val param = MockParameter("example", None, true)
-      val choiceSchema = ParametersSchema("x" -> param)
-      val possibleChoices = Map("onlyChoice" -> choiceSchema)
-
-      val choice = ChoiceParameter("choice", None, true, possibleChoices)
-      choice.fill("onlyChoice", _ => { })
-      choice.validate
-    }
-  }
-
-  test("Validation of multipleChoice parameter with invalid parameter should throw an exception") {
-    intercept[ValidationException] {
-      val param = MockParameter("example", None, true)
-      val choiceSchema = ParametersSchema("x" -> param)
-      val possibleChoices = Map("onlyChoice" -> choiceSchema)
-
-      val multipleChoices = MultipleChoiceParameter("choice", None, true, possibleChoices)
-      multipleChoices.fill(Map("onlyChoice" -> (x => { })))
-      multipleChoices.validate
-    }
-  }
-
-  test("Validation of multiplier parameter with invalid parameter should throw an exception") {
-    intercept[ValidationException] {
-      val param = MockParameter("example", None, true)
-      val schema = ParametersSchema("x" -> param)
-      val multiplicator = MultiplierParameter("description", None, true, schema)
-
-      multiplicator.fill(List(x => { }, x => { }))
-      multiplicator.validate
-    }
+  test("Validation of parameters sequence should validate inner schemas") {
+    val mockSchema = mock[ParametersSchema]
+    val multiplicator = ParametersSequence("description", true, mockSchema)
+    multiplicator.value = Some(Vector(mockSchema, mockSchema))
+    multiplicator.validate
+    verify(mockSchema, times(2)).validate
   }
 }

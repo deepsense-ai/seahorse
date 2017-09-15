@@ -34,7 +34,3 @@ class UserContextAuthorizator @Inject()(
     })
   }
 }
-
-trait AuthorizatorProvider {
-  def forContext(userContext: Future[UserContext]): Authorizator
-}

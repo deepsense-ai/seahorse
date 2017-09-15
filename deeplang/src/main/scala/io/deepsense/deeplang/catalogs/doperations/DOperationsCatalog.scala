@@ -7,6 +7,7 @@
 package io.deepsense.deeplang.catalogs.doperations
 
 import java.lang.reflect.Constructor
+import java.util.UUID
 
 import scala.collection.mutable
 import scala.reflect.runtime.{universe => ru}
@@ -23,8 +24,8 @@ abstract class DOperationsCatalog {
   /** Tree describing categories structure. */
   def categoryTree: DOperationCategoryNode
 
-  /** Set of all registered operations. */
-  def operations: Set[DOperationDescriptor]
+  /** Map of all registered operation descriptors, where their ids are keys. */
+  def operations: Map[UUID, DOperationDescriptor]
 
   /**
    * Creates instance of requested DOperation class.
@@ -35,13 +36,15 @@ abstract class DOperationsCatalog {
   /**
    * Registers DOperation, which can be later viewed and created.
    * DOperation has to have parameterless constructor.
-   * @param name name for given operation
+   * @param id id of operation
    * @param category category to which this operation directly belongs
    * @param description description of operation
    * @tparam T DOperation class to register
    */
+  // TODO: currently operation.name identifies operation.
+  // Move id field to DOperation and let id identify operation
   def registerDOperation[T <: DOperation : ru.TypeTag](
-      name: String,
+      id: UUID,
       category: DOperationCategory,
       description: String): Unit
 }
@@ -55,7 +58,7 @@ object DOperationsCatalog {
 
   private class DOperationsCatalogImpl() extends DOperationsCatalog {
     var categoryTree = DOperationCategoryNode()
-    var operations = Set.empty[DOperationDescriptor]
+    var operations = Map.empty[UUID, DOperationDescriptor]
     private val operationsConstructors = mutable.Map.empty[String, Constructor[_]]
 
     private def constructorForType(operationType: ru.Type) = {
@@ -66,18 +69,20 @@ object DOperationsCatalog {
     }
 
     def registerDOperation[T <: DOperation : ru.TypeTag](
-        name: String,
+        id: UUID,
         category: DOperationCategory,
         description: String): Unit = {
       val operationType = ru.typeOf[T]
       val constructor = constructorForType(operationType)
       val operationInstance = DOperationsCatalog.createDOperation(constructor)
+      val name = operationInstance.name
+      val parameters = operationInstance.parameters
       val inPortTypes = operationInstance.inPortTypes.map(_.tpe)
       val outPortTypes = operationInstance.outPortTypes.map(_.tpe)
       val operationDescriptor = DOperationDescriptor(
-          name, description, category, inPortTypes, outPortTypes)
+          id, name, description, category, parameters, inPortTypes, outPortTypes)
 
-      operations += operationDescriptor
+      operations += id -> operationDescriptor
       categoryTree = categoryTree.addOperation(operationDescriptor, category)
       operationsConstructors(name) = constructor
     }

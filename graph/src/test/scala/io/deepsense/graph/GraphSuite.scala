@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
  *
- * Owner: Wojciech Jurczyk
+ * Owner: Radoslaw Kotowski
  */
 
 package io.deepsense.graph
@@ -13,6 +13,7 @@ import org.scalatest.{FunSuite, Matchers}
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
+import io.deepsense.deeplang.parameters.ParametersSchema
 
 object DClassesForDOperations {
   trait A extends DOperable
@@ -31,24 +32,28 @@ object DOperationTestClasses {
     override protected def _execute(context: ExecutionContext)(): A1 = ???
 
     override val name: String = ""
+    override val parameters: ParametersSchema = ParametersSchema()
   }
 
   class DOperation1To0Test extends DOperation1To0[A1] {
     override protected def _execute(context: ExecutionContext)(t0: A1): Unit = ???
 
     override val name: String = ""
+    override val parameters: ParametersSchema = ParametersSchema()
   }
 
   class DOperation1To1Test extends DOperation1To1[A1, A] {
     override protected def _execute(context: ExecutionContext)(t1: A1): A = ???
 
     override val name: String = ""
+    override val parameters: ParametersSchema = ParametersSchema()
   }
 
   class DOperation2To1Test extends DOperation2To1[A1, A2, A] {
     override protected def _execute(context: ExecutionContext)(t1: A1, t2: A2): A = ???
 
     override val name: String = ""
+    override val parameters: ParametersSchema = ParametersSchema()
   }
 }
 

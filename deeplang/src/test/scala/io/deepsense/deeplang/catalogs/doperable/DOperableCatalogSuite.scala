@@ -96,17 +96,17 @@ class DOperableCatalogSuite extends FunSuite with Matchers {
     h.registerDOperable[H.B]()
     h.registerDOperable[H.C]()
 
-    val traits = TraitDescriptor("DOperable", Nil)::
+    val traits = (TraitDescriptor("DOperable", Nil)::
       TraitDescriptor("T2", List("T1"))::
       TraitDescriptor("T", List("DOperable"))::
       TraitDescriptor("T1", List("DOperable"))::
       TraitDescriptor("T3", List("T1"))::
-      Nil
+      Nil).map(t => t.name -> t).toMap
 
-    val classes = ClassDescriptor("A", None, List("T3"))::
+    val classes = (ClassDescriptor("A", None, List("T3"))::
       ClassDescriptor("B", Some("A"), List("T"))::
       ClassDescriptor("C", Some("A"), List("T2"))::
-      Nil
+      Nil).map(c => c.name -> c).toMap
 
     val descriptor = h.descriptor
     descriptor.traits should contain theSameElementsAs traits

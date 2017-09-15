@@ -6,6 +6,7 @@
 
 package io.deepsense.experimentmanager.app.rest.json
 
+
 import spray.httpx.SprayJsonSupport
 import spray.json.DefaultJsonProtocol
 
@@ -22,5 +23,4 @@ trait RestJsonProtocol
   with ActionsJsonProtocol
   with IdJsonProtocol
   with ExceptionsJsonProtocol
-  with ExperimentJsonProtocol {
-}
+  with ExperimentJsonProtocol

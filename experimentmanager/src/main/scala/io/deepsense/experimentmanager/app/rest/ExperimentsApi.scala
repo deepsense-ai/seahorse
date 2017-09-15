@@ -31,17 +31,14 @@ import io.deepsense.graphjson.GraphJsonProtocol.GraphReader
 /**
  * Exposes Experiment Manager through a REST API.
  */
-class RestApi @Inject() (
+class ExperimentsApi @Inject() (
     val tokenTranslator: TokenTranslator,
     experimentManagerProvider: ExperimentManagerProvider,
     @Named("experiments.api.prefix") apiPrefix: String,
     override val graphReader: GraphReader,
     override val inferContext: InferContext)
     (implicit ec: ExecutionContext)
-  extends Directives
-  with RestComponent
-  with AuthDirectives
-  with RestJsonProtocol {
+  extends RestService with RestComponent with RestJsonProtocol {
 
   assert(StringUtils.isNoneBlank(apiPrefix))
   private val pathPrefixMatcher = PathMatchers.separateOnSlashes(apiPrefix)
@@ -144,26 +141,10 @@ class RestApi @Inject() (
     }
   }
 
-  private def exceptionHandler(implicit log: LoggingContext): ExceptionHandler = {
-    ExceptionHandler {
-      case e: ExperimentNotFoundException =>
-        complete(StatusCodes.NotFound, RestException.fromException(e))
-      case e: NoRoleException =>
-        complete(StatusCodes.Unauthorized)
-      case e: ResourceAccessDeniedException =>
-        complete(StatusCodes.NotFound)
-      case e: InvalidTokenException =>
-        // Works as a wildcard for all ITEs. Can be expanded for logging
-        complete(StatusCodes.Unauthorized)
-    }
-  }
-
-  private val rejectionHandler: RejectionHandler = {
-    RejectionHandler {
-      case MissingHeaderRejection(param) :: _ if param == TokenHeader =>
-        complete(StatusCodes.Unauthorized, s"Request is missing required header '$param'")
-      case ValidationRejection(message, cause) :: _ =>
-        complete(StatusCodes.BadRequest)
+  override def exceptionHandler(implicit log: LoggingContext): ExceptionHandler = {
+    super.exceptionHandler(log) orElse ExceptionHandler {
+        case e: ExperimentNotFoundException =>
+          complete(StatusCodes.NotFound, RestException.fromException(e))
     }
   }
 }

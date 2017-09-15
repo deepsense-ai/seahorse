@@ -6,32 +6,39 @@
 
 package io.deepsense.deeplang.catalogs.doperations
 
-import io.deepsense.deeplang._
-import io.deepsense.deeplang.catalogs.doperations.exceptions._
+import scala.reflect.runtime.universe.{TypeTag, typeTag}
+
+import java.util.UUID
+
+import org.scalatest.mock.MockitoSugar
 import org.scalatest.{FunSuite, Matchers}
 
-import scala.reflect.runtime.universe.{TypeTag, typeTag}
+import io.deepsense.deeplang._
+import io.deepsense.deeplang.catalogs.doperations.exceptions._
+import io.deepsense.deeplang.parameters.ParametersSchema
 
 object DOperationCatalogTestResources {
   object CategoryTree {
-    object IO extends DOperationCategory("Input/Output")
+    object IO extends DOperationCategory(UUID.randomUUID(), "Input/Output")
 
     object DataManipulation
-      extends DOperationCategory("Data manipulation")
+      extends DOperationCategory(UUID.randomUUID(), "Data manipulation")
 
-    object ML extends DOperationCategory("Machine learning") {
+    object ML extends DOperationCategory(UUID.randomUUID(), "Machine learning") {
 
-      object Regression extends DOperationCategory("Regression", ML)
+      object Regression extends DOperationCategory(UUID.randomUUID(), "Regression", ML)
 
-      object Classification extends DOperationCategory("Classification", ML)
+      object Classification extends DOperationCategory(UUID.randomUUID(), "Classification", ML)
 
-      object Clustering extends DOperationCategory("Clustering", ML)
+      object Clustering extends DOperationCategory(UUID.randomUUID(), "Clustering", ML)
 
-      object Evaluation extends DOperationCategory("Evaluation", ML)
+      object Evaluation extends DOperationCategory(UUID.randomUUID(), "Evaluation", ML)
     }
 
-    object Utils extends DOperationCategory("Utilities", None)
+    object Utils extends DOperationCategory(UUID.randomUUID(), "Utilities", None)
   }
+
+  val parametersSchema = ParametersSchema()
 
   abstract class DOperationMock extends DOperation {
     def inPortTypes: Vector[TypeTag[_]] = Vector()
@@ -44,7 +51,9 @@ object DOperationCatalogTestResources {
 
     def execute(context: ExecutionContext)(l: Vector[DOperable]): Vector[DOperable] = ???
 
-    override val name: String = ""
+    override val inArity: Int = 2
+    override val outArity: Int = 3
+    override val parameters = parametersSchema
   }
 
   case class X() extends DOperable
@@ -53,41 +62,43 @@ object DOperationCatalogTestResources {
   val XTypeTag = typeTag[X]
   val YTypeTag = typeTag[Y]
 
+  val nameA = "nameA"
+  val nameB = "nameB"
+  val nameC = "nameC"
+  val nameD = "nameD"
+
   case class DOperationA() extends DOperationMock {
-    override val inArity: Int = 2
-    override val outArity: Int = 3
+    override val name = nameA
   }
 
   case class DOperationB() extends DOperationMock {
-    override val inArity: Int = 1
-    override val outArity: Int = 2
+    override val name = nameB
   }
 
   case class DOperationC() extends DOperationMock {
-    override val inArity: Int = 0
-    override val outArity: Int = 1
+    override val name = nameC
   }
 
   case class DOperationD() extends DOperationMock {
-    override val inArity: Int = 2
-    override val outArity: Int = 1
+    override val name = nameD
     override val inPortTypes: Vector[TypeTag[_]] = Vector(XTypeTag, YTypeTag)
     override val outPortTypes: Vector[TypeTag[_]] = Vector(XTypeTag)
   }
 
   case class DOperationWithoutParameterlessConstructor(x: Int) extends DOperationMock {
+    override val name = "some name"
     override val inArity: Int = 2
     override val outArity: Int = 3
   }
 }
 
-object ViewingTestResources {
+object ViewingTestResources extends MockitoSugar {
   import DOperationCatalogTestResources._
 
-  val nameA = "nameA"
-  val nameB = "nameB"
-  val nameC = "nameC"
-  val nameD = "nameD"
+  val idA = UUID.randomUUID()
+  val idB = UUID.randomUUID()
+  val idC = UUID.randomUUID()
+  val idD = UUID.randomUUID()
 
   val descriptionA = "descriptionA"
   val descriptionB = "descriptionB"
@@ -101,26 +112,29 @@ object ViewingTestResources {
 
   val catalog = DOperationsCatalog()
 
-  catalog.registerDOperation[DOperationA](nameA, categoryA, descriptionA)
-  catalog.registerDOperation[DOperationB](nameB, categoryB, descriptionB)
-  catalog.registerDOperation[DOperationC](nameC, categoryC, descriptionC)
-  catalog.registerDOperation[DOperationD](nameD, categoryD, descriptionD)
+  catalog.registerDOperation[DOperationA](idA, categoryA, descriptionA)
+  catalog.registerDOperation[DOperationB](idB, categoryB, descriptionB)
+  catalog.registerDOperation[DOperationC](idC, categoryC, descriptionC)
+  catalog.registerDOperation[DOperationD](idD, categoryD, descriptionD)
 
-  val expectedA = DOperationDescriptor(nameA, descriptionA, categoryA, Nil, Nil)
-  val expectedB = DOperationDescriptor(nameB, descriptionB, categoryB, Nil, Nil)
-  val expectedC = DOperationDescriptor(nameC, descriptionC, categoryC, Nil, Nil)
+  val expectedA = DOperationDescriptor(
+    idA, nameA, descriptionA, categoryA, parametersSchema, Nil, Nil)
+  val expectedB = DOperationDescriptor(
+    idB, nameB, descriptionB, categoryB, parametersSchema, Nil, Nil)
+  val expectedC = DOperationDescriptor(
+    idC, nameC, descriptionC, categoryC, parametersSchema, Nil, Nil)
   val expectedD = DOperationDescriptor(
-    nameD, descriptionD, categoryD, List(XTypeTag.tpe, YTypeTag.tpe), List(XTypeTag.tpe))
+    idD, nameD, descriptionD, categoryD, parametersSchema,
+    List(XTypeTag.tpe, YTypeTag.tpe), List(XTypeTag.tpe))
 }
 
-class DOperationsCatalogSuite extends FunSuite with Matchers {
+class DOperationsCatalogSuite extends FunSuite with Matchers with MockitoSugar {
 
   test("It is possible to create instance of registered DOperation") {
     import DOperationCatalogTestResources._
     val catalog = DOperationsCatalog()
-    val name = "name"
-    catalog.registerDOperation[DOperationA](name, CategoryTree.ML.Regression, "")
-    val instance = catalog.createDOperation(name)
+    catalog.registerDOperation[DOperationA](UUID.randomUUID(), CategoryTree.ML.Regression, "")
+    val instance = catalog.createDOperation(nameA)
     assert(instance == DOperationA())
   }
 
@@ -136,13 +150,17 @@ class DOperationsCatalogSuite extends FunSuite with Matchers {
       import DOperationCatalogTestResources._
       val catalog = DOperationsCatalog()
       catalog.registerDOperation[DOperationWithoutParameterlessConstructor](
-        "name", CategoryTree.ML.Regression, "description")
+        UUID.randomUUID(), CategoryTree.ML.Regression, "description")
     }
   }
 
   test("It is possible to view list of registered DOperations descriptors") {
     import ViewingTestResources._
-    assert(catalog.operations == Set(expectedA, expectedB, expectedC, expectedD))
+    catalog.operations shouldBe Map(
+      idA -> expectedA,
+      idB -> expectedB,
+      idC -> expectedC,
+      idD -> expectedD)
   }
 
   test("It is possible to get tree of registered categories and DOperations") {
@@ -150,18 +168,22 @@ class DOperationsCatalogSuite extends FunSuite with Matchers {
     import ViewingTestResources._
 
     val root: DOperationCategoryNode = catalog.categoryTree
+    root.category shouldBe None
     root.operations shouldBe empty
     root.successors.keys should contain theSameElementsAs Seq(ML)
 
     val mlNode = root.successors(ML)
+    mlNode.category shouldBe Some(ML)
     mlNode.operations shouldBe Set(expectedD)
     mlNode.successors.keys should contain theSameElementsAs Seq(ML.Regression, ML.Classification)
 
     val regressionNode = mlNode.successors(ML.Regression)
+    regressionNode.category shouldBe Some(ML.Regression)
     regressionNode.operations should contain theSameElementsAs Seq(expectedA, expectedB)
     regressionNode.successors.keys shouldBe empty
 
     val classificationNode = mlNode.successors(ML.Classification)
+    classificationNode.category shouldBe Some(ML.Classification)
     classificationNode.operations should contain theSameElementsAs Seq(expectedC)
     classificationNode.successors.keys shouldBe empty
   }

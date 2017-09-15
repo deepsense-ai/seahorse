@@ -15,7 +15,7 @@ import io.deepsense.deeplang.{DOperation1To0, ExecutionContext}
  */
 class WriteDataFrame extends DOperation1To0[DataFrame] {
 
-  parameters = ParametersSchema("path" -> StringParameter(
+  override val parameters = ParametersSchema("path" -> StringParameter(
     "path to dataframe", None, required = true, validator = new AcceptAllRegexValidator))
 
   override val name: String = "Write DataFrame"

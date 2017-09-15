@@ -126,14 +126,7 @@ class TimestampDecomposerIntegSpec extends SparkIntegTestSupport {
     val columnParam = operation.parameters.getSingleColumnSelectorParameter("timestampColumn")
     columnParam.value = Some(NameSingleColumnSelection("timestampColumn"))
     val timeUnitsParam = operation.parameters.getMultipleChoiceParameter("parts")
-    timeUnitsParam.fill(Map(
-      "year" -> (_ => ()),
-      "month" -> (_ => ()),
-      "day" -> (_ => ()),
-      "hour" -> (_ => ()),
-      "minutes" -> (_ => ()),
-      "seconds" -> (_ => ())
-    ))
+    timeUnitsParam.value = Some(Seq("year", "month", "day", "hour", "minutes", "seconds"))
     operation
   }
 }

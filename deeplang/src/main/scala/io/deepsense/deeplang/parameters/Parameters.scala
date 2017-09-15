@@ -1,23 +1,33 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
  *
- * Owner: Radoslaw Kotowski
+ * Owner: Witold Jedrzejewski
  */
 
 package io.deepsense.deeplang.parameters
+
+import spray.json._
 
 case class BooleanParameter(
     description: String,
     default: Option[Boolean],
     required: Boolean)
-  extends Parameter {
+  extends Parameter
+  with CanHaveDefault {
+
   type HeldValue = Boolean
 
   val parameterType = ParameterType.Boolean
 
-  var value: Option[Boolean] = None
-
   private[parameters] def replicate: Parameter = copy()
+
+  override protected def defaultValueToJson(defaultValue: Boolean) = defaultValue.toJson
+
+  override protected def definedValueToJson(definedValue: Boolean): JsValue = definedValue.toJson
+
+  override protected def valueFromDefinedJson(jsValue: JsValue): Boolean = {
+    jsValue.convertTo[Boolean]
+  }
 }
 
 case class NumericParameter(
@@ -26,14 +36,22 @@ case class NumericParameter(
     required: Boolean,
     validator: Validator[Double])
   extends Parameter
-  with HasValidator {
+  with HasValidator
+  with CanHaveDefault {
+
   type HeldValue = Double
 
   val parameterType = ParameterType.Numeric
 
-  var value: Option[Double] = None
-
   private[parameters] def replicate: Parameter = copy()
+
+  override protected def defaultValueToJson(defaultValue: Double): JsValue = defaultValue.toJson
+
+  override protected def definedValueToJson(definedValue: Double): JsValue = definedValue.toJson
+
+  override protected def valueFromDefinedJson(jsValue: JsValue): Double = {
+    jsValue.convertTo[Double]
+  }
 }
 
 case class StringParameter(
@@ -42,146 +60,192 @@ case class StringParameter(
     required: Boolean,
     validator: Validator[String])
   extends Parameter
-  with HasValidator {
+  with HasValidator
+  with CanHaveDefault {
+
   type HeldValue = String
 
   val parameterType = ParameterType.String
 
-  var value: Option[String] = None
-
   private[parameters] def replicate: Parameter = copy()
+
+  override protected def defaultValueToJson(defaultValue: String): JsValue = defaultValue.toJson
+
+  override protected def definedValueToJson(definedValue: String): JsValue = definedValue.toJson
+
+  override protected def valueFromDefinedJson(jsValue: JsValue): String = {
+    jsValue.convertTo[String]
+  }
 }
 
 /**
  * Holds choice parameter - its possible values and chosen value.
- * Its value is one of possible choice values.
- * After the value is set to be one of the possible options,
- * its internal schema should be set to the schema of chosen
- * option. Therefore referential equality between chosen option
- * schema and one of the possible options schemas is assumed.
+ * Its value is label pointing to one of possible choice values.
+ * @param default label of option selected by default
  * @param options possible choices - their labels and schemas
  */
 case class ChoiceParameter(
     description: String,
-    default: Option[Selection],
+    default: Option[String],
     required: Boolean,
     options: Map[String, ParametersSchema])
   extends Parameter
-  with HasChoice {
-  type HeldValue = Selection
+  with HasOptions
+  with CanHaveDefault {
+
+  type HeldValue = String
 
   val parameterType = ParameterType.Choice
 
-  private var _value: Option[Selection] = None
-
-  def value: Option[Selection] = _value
-
-  override def validateDefined(definedValue: Selection): Unit = {
-    validateChoices(Traversable(definedValue))
-  }
-
-  /**
-   * Fills this parameter with value. Label tells which option is chosen. Filler is function
-   * that is able to fill selected schema with values. If selected label does not exist
-   * in options, IllegalChoiceException is thrown.
-   * @param label label of option that is chosen
-   * @param filler function able to fill selected option schema
-   */
-  def fill(label: String, filler: ParametersSchema => Unit) = {
-    _value = Some(fillChosen(Map(label -> filler)).head)
+  override protected def validateDefined(definedValue: String): Unit = {
+    validateChoice(definedValue)
   }
 
   private[parameters] def replicate: Parameter = copy()
+
+  override protected def defaultValueToJson(defaultValue: String): JsValue = defaultValue.toJson
+
+  override protected def definedValueToJson(definedValue: String): JsValue = {
+    JsObject(choiceToJson(definedValue))
+  }
+
+  /**
+   * Side effect of this function is filling selected schemas with corresponding json.
+   */
+  override protected def valueFromDefinedJson(jsValue: JsValue): String = jsValue match {
+    case JsObject(map) =>
+      if (map.size != 1) {
+        throw new DeserializationException(s"There should be only one selected option in choice" +
+          s"parameter, but there are ${map.size} in $jsValue.")
+      }
+      val (label, innerJsValue) = map.iterator.next()
+      choiceFromJson(label, innerJsValue)
+      label
+    case _ => throw new DeserializationException(s"Cannot fill choice parameter with $jsValue:" +
+      s"object expected.")
+  }
+
+  def selection: Option[Selection] = value.map(selectionForChoice)
 }
 
 /**
  * Holds multiple choice parameter - its possible values and chosen values.
- * Its value is a set of chosen values.
- * After the value is set to be a set of the possible options,
- * its internal schemas should be equal to the schema of chosen
- * options. Therefore referential equality between chosen options
- * schemas and some of the possible options schemas (namely selected ones) is assumed.
+ * Its value is a set of chosen labels.
+ * @param default labels of options selected by default
  * @param options possible choices - their labels and schemas
  */
 case class MultipleChoiceParameter(
     description: String,
-    default: Option[MultipleSelection],
+    default: Option[Traversable[String]],
     required: Boolean,
     options: Map[String, ParametersSchema])
   extends Parameter
-  with HasChoice {
-  type HeldValue = MultipleSelection
+  with HasOptions
+  with CanHaveDefault {
+
+  type HeldValue = Traversable[String]
 
   val parameterType = ParameterType.MultipleChoice
 
-  private var _value: Option[MultipleSelection] = None
-
-  def value: Option[MultipleSelection] = _value
-
-  override def validateDefined(definedValue: MultipleSelection): Unit = {
-    validateChoices(definedValue.choices)
-  }
-
-  /**
-   * Fills this parameter with values. Receives map from label to filling function.
-   * Each filling function has to be able to fill schema associated with its label.
-   * If some label from fillers map does not exist in options, IllegalChoiceException is thrown.
-   * @param fillers map from labels to filling functions
-   */
-  def fill(fillers: Map[String, ParametersSchema => Unit]) = {
-    _value = Some(MultipleSelection(fillChosen(fillers)))
+  override protected def validateDefined(definedValue: Traversable[String]): Unit = {
+    for (choice <- definedValue) {
+      validateChoice(choice)
+    }
   }
 
   private[parameters] def replicate: Parameter = copy()
+
+  override protected def defaultValueToJson(defaultValue: Traversable[String]): JsValue = {
+    defaultValue.toList.toJson
+  }
+
+  override protected def definedValueToJson(definedValue: Traversable[String]): JsValue = {
+    val fields = for (choice <- definedValue.toSeq) yield choiceToJson(choice)
+    JsObject(fields: _*)
+  }
+
+  /**
+   * Side effect of this function is filling selected schemas with corresponding json.
+   */
+  override protected def valueFromDefinedJson(jsValue: JsValue): Traversable[String] = {
+    jsValue match {
+      case JsObject(map) =>
+        for ((label, innerJsValue) <- map) yield {
+          choiceFromJson(label, innerJsValue)
+          label
+        }
+      case _ => throw new DeserializationException(s"Cannot fill multiple choice parameter" +
+        s"with $jsValue: object expected.")
+    }
+  }
+
+  def selections: Option[Traversable[Selection]] = {
+    value.map(labels => labels.map(selectionForChoice))
+  }
 }
 
 /**
  * Value of this parameter is list of filled schemas which all conform to the predefined schema.
- * @param valuesSchema predefined schema that all schemas in value should conform to
+ * @param predefinedSchema predefined schema that all schemas in value should conform to
  */
-case class MultiplierParameter(
+case class ParametersSequence(
     description: String,
-    default: Option[Multiplied],
     required: Boolean,
-    valuesSchema: ParametersSchema)
+    predefinedSchema: ParametersSchema)
   extends Parameter {
-  type HeldValue = Multiplied
+  type HeldValue = Vector[ParametersSchema]
 
-  val parameterType = ParameterType.Multiplicator
-
-  private var _value: Option[Multiplied] = None
-
-  def value: Option[Multiplied] = _value
-
-  /** Validates each filled schema. */
-  override def validateDefined(definedValue: Multiplied): Unit = {
-    definedValue.schemas.foreach(_.validate)
-  }
+  val parameterType = ParameterType.Multiplier
 
   /**
-   * Fills this holder with values. Receives list of functions, which for given schema
-   * can fill it with values. All schemas provided to fillers will by copies of valuesSchema.
-   * @param fillers list of functions able to fill valuesSchema
+   * Validates each filled schema.
+   * Does not check if all filled schemas conform to predefined schema.
    */
-  def fill(fillers: List[ParametersSchema => Unit]) = {
-    val filled = for (filler <- fillers) yield {
-      val another = valuesSchema.replicate
-      filler(another)
-      another
-    }
-    _value = Some(Multiplied(filled))
+  override protected def validateDefined(definedValue: Vector[ParametersSchema]): Unit = {
+    definedValue.foreach(_.validate)
   }
 
   private[parameters] def replicate: Parameter = copy()
+
+  override def toJson: JsObject = {
+    JsObject(basicJsonFields + ("values" -> predefinedSchema.toJson))
+  }
+
+  override protected def definedValueToJson(definedValue: Vector[ParametersSchema]): JsValue = {
+    val fields = for (schema <- definedValue) yield schema.valueToJson
+    JsArray(fields:_*)
+  }
+
+  /**
+   * Side effect of this function is creating schemas conforming to predefined schema
+   * and filling them with corresponding json.
+   */
+  override protected def valueFromDefinedJson(jsValue: JsValue): Vector[ParametersSchema] = {
+    jsValue match {
+      case JsArray(vector) =>
+        for (innerJsValue <- vector) yield {
+          val replicatedSchema = predefinedSchema.replicate
+          replicatedSchema.fillValuesWithJson(innerJsValue)
+          replicatedSchema
+        }
+      case _ => throw new DeserializationException(s"Cannot fill parameters sequence" +
+        s"with $jsValue: array expected.")
+    }
+  }
 }
 
 /**
  * Abstract parameter that allows to select columns.
  */
-abstract class AbstractColumnSelectorParameter extends Parameter {
-  val default: Option[HeldValue] = None
-
+abstract sealed class AbstractColumnSelectorParameter extends Parameter {
   val parameterType = ParameterType.ColumnSelector
+
+  /** Tells if this selectors selects single column or many. */
+  protected val isSingle: Boolean
+
+  override def toJson: JsObject = {
+    JsObject(basicJsonFields + ("isSingle" -> isSingle.toJson))
+  }
 }
 
 /**
@@ -193,9 +257,17 @@ case class SingleColumnSelectorParameter(
   extends AbstractColumnSelectorParameter {
   type HeldValue = SingleColumnSelection
 
-  var value: Option[SingleColumnSelection] = None
+  protected val isSingle = true
 
   private[parameters] def replicate: Parameter = copy()
+
+  override protected def definedValueToJson(definedValue: SingleColumnSelection): JsValue = {
+    definedValue.toJson
+  }
+
+  override protected def valueFromDefinedJson(jsValue: JsValue): SingleColumnSelection = {
+    SingleColumnSelection.fromJson(jsValue)
+  }
 }
 
 /**
@@ -207,7 +279,16 @@ case class ColumnSelectorParameter(
   extends AbstractColumnSelectorParameter {
   type HeldValue = MultipleColumnSelection
 
-  var value: Option[MultipleColumnSelection] = None
+  protected val isSingle = false
 
   private[parameters] def replicate: Parameter = copy()
+
+  override protected def definedValueToJson(definedValue: MultipleColumnSelection): JsValue = {
+    val fields = definedValue.selections.map(_.toJson)
+    JsArray(fields:_*)
+  }
+
+  override protected def valueFromDefinedJson(jsValue: JsValue): MultipleColumnSelection = {
+    MultipleColumnSelection.fromJson(jsValue)
+  }
 }

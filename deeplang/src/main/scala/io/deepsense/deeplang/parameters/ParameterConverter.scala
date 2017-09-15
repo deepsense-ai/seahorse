@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
  *
- * Owner: Radoslaw Kotowski
+ * Owner: Witold Jedrzejewski
  */
 
 package io.deepsense.deeplang.parameters
@@ -61,10 +61,10 @@ object ParameterConversions {
   }
 
   implicit object ToMultiplicatedParameter
-    extends ParameterConverter[MultiplierParameter] {
+    extends ParameterConverter[ParametersSequence] {
 
     def convertPF = {
-      case p: MultiplierParameter => p
+      case p: ParametersSequence => p
     }
   }
 

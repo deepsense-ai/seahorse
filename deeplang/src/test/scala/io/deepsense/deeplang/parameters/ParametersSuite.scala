@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
  *
- * Owner: Radoslaw Kotowski
+ * Owner: Witold Jedrzejewski
  */
 
 package io.deepsense.deeplang.parameters
@@ -10,94 +10,123 @@ import org.scalatest.{FunSuite, Matchers}
 
 import io.deepsense.deeplang.parameters.exceptions.TypeConversionException
 
-class ParametersSuite extends FunSuite with Matchers {
+import org.scalatest.mock.MockitoSugar
 
-  test("Getting Boolean Parameter") {
+class ParametersSuite extends FunSuite with Matchers with MockitoSugar {
+
+  test("Getting BooleanParameter from schema") {
+    val param = mock[BooleanParameter]
+    val parametersSchema = ParametersSchema("x" -> param)
+    assert(parametersSchema.getBooleanParameter("x") eq param)
+  }
+
+  test("Getting NumericParameter from schema") {
+    val param = mock[NumericParameter]
+    val parametersSchema = ParametersSchema("x" -> param)
+    assert(parametersSchema.getNumericParameter("x") eq param)
+  }
+
+  test("Getting StringParameter from schema") {
+    val param = mock[StringParameter]
+    val parametersSchema = ParametersSchema("x" -> param)
+    assert(parametersSchema.getStringParameter("x") eq param)
+  }
+
+  test("Getting ChoiceParameter from schema") {
+    val param = mock[ChoiceParameter]
+    val parametersSchema = ParametersSchema("x" -> param)
+    assert(parametersSchema.getChoiceParameter("x") eq param)
+  }
+
+  test("Getting MultipleChoiceParameter from schema") {
+    val param = mock[MultipleChoiceParameter]
+    val parametersSchema = ParametersSchema("x" -> param)
+    assert(parametersSchema.getMultipleChoiceParameter("x") eq param)
+  }
+
+  test("Getting ParametersSequence from schema") {
+    val param = mock[ParametersSequence]
+    val parametersSchema = ParametersSchema("x" -> param)
+    assert(parametersSchema.getParametersSequence("x") eq param)
+  }
+
+  test("Getting SingleColumnSelector from schema") {
+    val param = mock[SingleColumnSelectorParameter]
+    val parametersSchema = ParametersSchema("x" -> param)
+    assert(parametersSchema.getSingleColumnSelectorParameter("x") eq param)
+  }
+
+  test("Getting ColumnSelector from schema") {
+    val param = mock[ColumnSelectorParameter]
+    val parametersSchema = ParametersSchema("x" -> param)
+    assert(parametersSchema.getColumnSelectorParameter("x") eq param)
+  }
+
+  test("Getting wrong type of parameter should throw an exception") {
+    val parameter = Some("abc")
+    val expectedTargetTypeName = "io.deepsense.deeplang.parameters.NumericParameter"
+    val param = mock[StringParameter]
+    val exception = intercept[TypeConversionException] {
+      val parametersSchema = ParametersSchema("x" -> param)
+      parametersSchema.getNumericParameter("x")
+    }
+    assert(exception == TypeConversionException(param, expectedTargetTypeName))
+  }
+
+  test("Getting BooleanParameter value from schema") {
     val param = BooleanParameter("example", Some(true), true)
     param.value = Some(true)
     val parametersSchema = ParametersSchema("x" -> param)
-    assert(parametersSchema.getBoolean("x").get == true)
+    assert(parametersSchema.getBoolean("x") == param.value)
   }
 
-  test("Getting Numeric Parameter") {
+  test("Getting NumericParameter value from schema") {
     val param = NumericParameter("example", Some(3.1), true, RangeValidator(3, 4))
     param.value = Some(3.2)
     val parametersSchema = ParametersSchema("x" -> param)
-    assert(parametersSchema.getDouble("x").get == 3.2)
+    assert(parametersSchema.getDouble("x") == param.value)
   }
 
-  test("Getting String Parameter") {
+  test("Getting StringParameter value from schema") {
     val param = StringParameter("example", Some("default"), true, RegexValidator("a".r))
     param.value = Some("abc")
     val parametersSchema = ParametersSchema("x" -> param)
-    assert(parametersSchema.getString("x").get == "abc")
+    assert(parametersSchema.getString("x") == param.value)
   }
 
-  test("Getting Choice Parameters") {
-    val paramNumeric = NumericParameter("description1", None, true, RangeValidator(3, 4))
-    val paramBoolean = BooleanParameter("description2", None, true)
-
-    val choiceSchema = ParametersSchema("x" -> paramNumeric, "y" -> paramBoolean)
+  test("Getting ChoiceParameter value from schema") {
+    val choiceSchema = mock[ParametersSchema]
     val possibleChoices = Map("onlyChoice" -> choiceSchema)
 
     val choice = ChoiceParameter("description", None, true, possibleChoices)
-    choice.fill("onlyChoice", schema => {
-      schema.getNumericParameter("x").value = Some(3.5)
-      schema.getBooleanParameter("y").value = Some(true)
-    })
+    choice.value = Some("onlyChoice")
 
     val parametersSchema = ParametersSchema("choice" -> choice)
-    parametersSchema.getChoice("choice").get match {
-      case Selection("onlyChoice", chosen) =>
-        assert(chosen.getDouble("x").get == 3.5)
-        assert(chosen.getBoolean("y").get == true)
-    }
+    assert(parametersSchema.getChoice("choice").get == Selection("onlyChoice", choiceSchema))
   }
 
-  test("Getting MultipleChoice Parameters") {
-    val paramNumeric = NumericParameter("description1", None, true, RangeValidator(3, 4))
-    val paramBoolean = BooleanParameter("description2", None, true)
-
-    val choiceSchema = ParametersSchema("x" -> paramNumeric, "y" -> paramBoolean)
+  test("Getting MultipleChoiceParameter value from schema") {
+    val choiceSchema = mock[ParametersSchema]
     val possibleChoices = Map("onlyChoice" -> choiceSchema)
-
-    val multipleChoice = MultipleChoiceParameter("description", None, true, possibleChoices)
-    multipleChoice.fill(Map("onlyChoice" -> (schema => {
-      schema.getNumericParameter("x").value = Some(3.5)
-      schema.getBooleanParameter("y").value = Some(true)
-    })))
-
+    val multipleChoice = MultipleChoiceParameter("", None, true, possibleChoices)
+    multipleChoice.value = Some(Traversable("onlyChoice"))
     val parametersSchema = ParametersSchema("multipleChoice" -> multipleChoice)
-    parametersSchema.getMultipleChoice("multipleChoice").get match {
-      case MultipleSelection(chosen) =>
-        val expected = Traversable(Selection("onlyChoice", choiceSchema))
-        assert(chosen == expected)
-        assert(choiceSchema.getDouble("x").get == 3.5)
-        assert(choiceSchema.getBoolean("y").get == true)
-    }
+    val actualMultipleSelection = parametersSchema.getMultipleChoice("multipleChoice").get
+    val expectedMultipleSelection = Traversable(Selection("onlyChoice", choiceSchema))
+    assert(actualMultipleSelection == expectedMultipleSelection)
   }
 
-  test("Getting Parameters from Multiplier") {
-    val param = BooleanParameter("example", None, true)
-    val schema = ParametersSchema("x" -> param)
-    val multiplicator = MultiplierParameter("description", None, true, schema)
-
-    val booleanParameter1 = Some(false)
-    val booleanParameter2 = Some(true)
-
-    multiplicator.fill(List(
-      schema => schema.getBooleanParameter("x").value = booleanParameter1,
-      schema => schema.getBooleanParameter("x").value = booleanParameter2))
-
-    val parametersSchema = ParametersSchema("key" -> multiplicator)
-    parametersSchema.getMultiplicated("key").get match {
-      case Multiplied(schema1 :: schema2 :: Nil) =>
-        assert(schema1.getBoolean("x") == booleanParameter1)
-        assert(schema2.getBoolean("x") == booleanParameter2)
-    }
+  test("Getting MultiplierParameter value from schema") {
+    val schema = mock[ParametersSchema]
+    val parametersSequence = ParametersSequence("", true, schema)
+    val schema1 = mock[ParametersSchema]
+    val schema2 = mock[ParametersSchema]
+    parametersSequence.value = Some(Vector(schema1, schema2))
+    val parametersSchema = ParametersSchema("key" -> parametersSequence)
+    assert(parametersSchema.getMultiplicatedSchema("key") == parametersSequence.value)
   }
 
-  test("Getting single columns selector parameter") {
+  test("Getting SingleColumnsSelector value from schema") {
     val param = SingleColumnSelectorParameter("description", true)
     val schema = ParametersSchema("x" -> param)
     val parameter = IndexSingleColumnSelection(1)
@@ -105,16 +134,16 @@ class ParametersSuite extends FunSuite with Matchers {
     assert(schema.getSingleColumnSelection("x").get == parameter)
   }
 
-  test("Getting multiple columns selector parameter") {
+  test("Getting ColumnSelector value from schema") {
     val param = ColumnSelectorParameter("description", true)
     val schema = ParametersSchema("x" -> param)
     val values = IndexColumnSelection(List(1, 3))
-    val parameter = MultipleColumnSelection(List(values))
+    val parameter = MultipleColumnSelection(Vector(values))
     param.value = Some(parameter)
     assert(schema.getColumnSelection("x").get == parameter)
   }
 
-  test("Getting wrong type of parameter should throw an exception") {
+  test("Getting wrong type of parameter value should throw an exception") {
     val parameter = Some("abc")
     val expectedTargetTypeName = "io.deepsense.deeplang.parameters.NumericParameter"
     val param = StringParameter("description", None, true, RegexValidator("a".r))

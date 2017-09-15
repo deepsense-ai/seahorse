@@ -21,13 +21,13 @@ class DataFrameBuilder private (sqlContext: SQLContext) extends HasSchemaValidat
     // TODO: validation will be removed. Just for testing purposes.
     validateSchema(schema)
     val dataFrame: sql.DataFrame = sqlContext.createDataFrame(data, schema)
-    new DataFrame(dataFrame)
+    new DataFrame(Some(dataFrame))
   }
 
   def buildDataFrame(dataFrame: sql.DataFrame): DataFrame = {
     // TODO: validation will be removed. Just for testing purposes.
     validateSchema(dataFrame.schema)
-    new DataFrame(dataFrame)
+    new DataFrame(Some(dataFrame))
   }
 }
 

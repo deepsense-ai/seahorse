@@ -27,13 +27,13 @@ class ExperimentManagerImpl @Inject()(
   authorizatorProvider: AuthorizatorProvider,
   storage: ExperimentStorage,
   @Assisted userContextFuture: Future[UserContext],
-  @Named("roles.get") roleGet: String,
-  @Named("roles.update") roleUpdate: String,
-  @Named("roles.create") roleCreate: String,
-  @Named("roles.list") roleList: String,
-  @Named("roles.delete") roleDelete: String,
-  @Named("roles.launch") roleLaunch: String,
-  @Named("roles.abort") roleAbort: String)
+  @Named("roles.experiments.get") roleGet: String,
+  @Named("roles.experiments.update") roleUpdate: String,
+  @Named("roles.experiments.create") roleCreate: String,
+  @Named("roles.experiments.list") roleList: String,
+  @Named("roles.experiments.delete") roleDelete: String,
+  @Named("roles.experiments.launch") roleLaunch: String,
+  @Named("roles.experiments.abort") roleAbort: String)
   (implicit ec: ExecutionContext) extends ExperimentManager {
 
   private def authorizator: Authorizator = authorizatorProvider.forContext(userContextFuture)

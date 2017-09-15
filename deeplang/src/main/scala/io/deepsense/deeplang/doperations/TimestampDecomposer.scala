@@ -26,7 +26,7 @@ import io.deepsense.deeplang.{DOperation1To1, ExecutionContext}
  */
 class TimestampDecomposer extends DOperation1To1[DataFrame, DataFrame] {
 
-  parameters = ParametersSchema(
+  override val parameters = ParametersSchema(
     timestampColumnParamKey ->
       SingleColumnSelectorParameter("Timestamp column to decompose", true),
     timestampPartsParamKey ->
@@ -41,9 +41,9 @@ class TimestampDecomposer extends DOperation1To1[DataFrame, DataFrame] {
     val timestampUnitColumnCreator =
       timestampUnitColumn(dataFrame.sparkDataFrame, timestampColumnName) _
     val selectedParts: Set[String] =
-      parameters.getMultipleChoice(timestampPartsParamKey).get.choices.map(_.label).toSet
+      parameters.getMultipleChoice(timestampPartsParamKey).get.map(_.label).toSet
     val newColumns: Traversable[Column] = timestampParts.filter(
-      p => selectedParts.contains(p.name)).map(timestampUnitColumnCreator(_))
+      p => selectedParts.contains(p.name)).map(timestampUnitColumnCreator)
     val columns: List[Column] = new ColumnName("*") :: newColumns.toList
     val newSparkDataFrame = dataFrame.sparkDataFrame.select(columns:_*)
     context.dataFrameBuilder.buildDataFrame(newSparkDataFrame)

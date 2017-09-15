@@ -4,7 +4,7 @@
  * Owner: Wojciech Jurczyk
  */
 
-package io.deepsense.experimentmanager.app.rest
+package io.deepsense.experimentmanager.app.rest.json
 
 import java.util.UUID
 
@@ -18,12 +18,15 @@ import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.parameters.ParametersSchema
 import io.deepsense.deeplang.{DKnowledge, DOperable, DOperation, InferContext}
 import io.deepsense.experimentmanager.app.models.Experiment
-import io.deepsense.experimentmanager.app.rest.json.RestJsonProtocol
 import io.deepsense.experimentmanager.{StandardSpec, UnitTestSupport}
 import io.deepsense.graph.{Edge, Endpoint, Graph, Node}
 import io.deepsense.graphjson.GraphJsonProtocol.GraphReader
 
-class RestJsonProtocolSpec extends StandardSpec with UnitTestSupport with RestJsonProtocol {
+class RestJsonProtocolSpec
+  extends StandardSpec
+  with UnitTestSupport
+  with RestJsonProtocol
+  with HierarchyDescriptorJsonProtocol {
 
   val operable = mock[DOperable]
 

@@ -10,10 +10,12 @@ package io.deepsense.deeplang.catalogs.doperations
  * Node in DOperationCategoryTree.
  * Represents certain category, holds its subcategories and assigned operations.
  * Objects of this class are immutable.
+ * @param category category represented by this node or None if it is root
  * @param successors map from all direct child-categories to nodes representing them
  * @param operations operations directly in category represented by this node
  */
 case class DOperationCategoryNode(
+    category: Option[DOperationCategory] = None,
     successors: Map[DOperationCategory, DOperationCategoryNode] = Map.empty,
     operations: Set[DOperationDescriptor] = Set.empty) {
 
@@ -27,11 +29,11 @@ case class DOperationCategoryNode(
       operation: DOperationDescriptor,
       path: List[DOperationCategory]): DOperationCategoryNode = {
     path match {
-      case Nil => DOperationCategoryNode(successors, operations + operation)
+      case Nil => copy(operations = operations + operation)
       case category :: tail =>
-        val successor = successors.getOrElse(category, DOperationCategoryNode())
+        val successor = successors.getOrElse(category, DOperationCategoryNode(Some(category)))
         val updatedSuccessor = successor.addOperationAtPath(operation, tail)
-        DOperationCategoryNode(successors + (category -> updatedSuccessor), operations)
+        copy(successors = successors + (category -> updatedSuccessor))
     }
   }
 

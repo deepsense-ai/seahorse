@@ -9,6 +9,7 @@
 package io.deepsense.graphexecutor
 
 import io.deepsense.deeplang._
+import io.deepsense.deeplang.parameters.ParametersSchema
 
 object DClassesForDOperations {
   trait A extends DOperable
@@ -30,6 +31,8 @@ object DOperationTestClasses {
     }
 
     override val name: String = ""
+
+    override val parameters = ParametersSchema()
   }
 
   class DOperation1To0Test extends DOperation1To0[A1] {
@@ -38,6 +41,8 @@ object DOperationTestClasses {
     }
 
     override val name: String = ""
+
+    override val parameters = ParametersSchema()
   }
 
   class DOperation1To1Test extends DOperation1To1[A1, A] {
@@ -47,6 +52,8 @@ object DOperationTestClasses {
     }
 
     override val name: String = ""
+
+    override val parameters = ParametersSchema()
   }
 
   class DOperation2To1Test extends DOperation2To1[A1, A2, A] {
@@ -56,5 +63,7 @@ object DOperationTestClasses {
     }
 
     override val name: String = ""
+
+    override val parameters = ParametersSchema()
   }
 }

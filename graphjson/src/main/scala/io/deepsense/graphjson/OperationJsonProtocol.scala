@@ -35,7 +35,7 @@ object OperationJsonProtocol {
         val operationJs = fields(Operation).asJsObject
         val operation = catalog
           .createDOperation(operationJs.fields(Name).convertTo[String])
-        operation.parameters.fillValueWithJson(fields(Parameters))
+        operation.parameters.fillValuesWithJson(fields(Parameters))
         operation
       case x =>
         throw new DeserializationException(s"Expected JsObject with a node but got $x")

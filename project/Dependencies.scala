@@ -67,7 +67,7 @@ object Dependencies {
     sparkSql,
     sparkCore,
     sprayJson
-  ) ++ Seq(scalatest).map(_ % "test")
+  ) ++ Seq(scalatest, mockitoCore).map(_ % "test")
 
   val experimentmanager = Seq(
     jclouds,

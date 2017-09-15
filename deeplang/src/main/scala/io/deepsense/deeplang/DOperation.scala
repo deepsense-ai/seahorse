@@ -6,9 +6,9 @@
 
 package io.deepsense.deeplang
 
-import io.deepsense.deeplang.parameters.ParametersSchema
-
 import scala.reflect.runtime.{universe => ru}
+
+import io.deepsense.deeplang.parameters.ParametersSchema
 
 /**
  * DOperation that receives and returns instances of DOperable.
@@ -19,7 +19,7 @@ abstract class DOperation extends Serializable {
   val inArity: Int
   val outArity: Int
   val name: String
-  var parameters: ParametersSchema = _
+  val parameters: ParametersSchema
 
   def inPortTypes: Vector[ru.TypeTag[_]]
 

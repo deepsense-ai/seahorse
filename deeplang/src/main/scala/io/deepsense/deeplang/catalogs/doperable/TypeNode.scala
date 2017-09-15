@@ -9,6 +9,8 @@ package io.deepsense.deeplang.catalogs.doperable
 import scala.collection.mutable
 import scala.reflect.runtime.{universe => ru}
 
+import io.deepsense.deeplang.TypeUtils
+
 /**
  * Node that represents type in hierarchy stored in DOperableCatalog.
  */
@@ -35,7 +37,7 @@ private[doperable] abstract class TypeNode {
   private[doperable] val fullName: String = javaType.getName.replaceAllLiterally("$", ".")
 
   /** Display, short name of type. */
-  private[doperable] val displayName: String = fullName.substring(fullName.lastIndexOf('.') + 1)
+  private[doperable] val displayName: String = TypeUtils.shortNameOfType(fullName)
 
   private[doperable] def setParent(node: TypeNode): Unit = parent = Some(node)
 

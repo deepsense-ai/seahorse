@@ -14,7 +14,7 @@ import io.deepsense.deeplang.{DOperation0To1, ExecutionContext}
  * Operation which is able to read DataFrame and deserialize it.
  */
 class ReadDataFrame extends DOperation0To1[DataFrame] {
-  parameters = ParametersSchema("path" -> StringParameter(
+  override val parameters = ParametersSchema("path" -> StringParameter(
     "path to dataframe", None, required = true, validator = new AcceptAllRegexValidator))
 
   override val name: String = "Read DataFrame"

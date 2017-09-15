@@ -6,8 +6,9 @@
 
 package io.deepsense.experimentmanager
 
-import com.google.inject.AbstractModule
+import com.google.inject.{Scopes, AbstractModule}
 
+import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.experimentmanager.akka.AkkaModule
 import io.deepsense.experimentmanager.app.{ApisModule, ServicesModule}
 import io.deepsense.experimentmanager.config.ConfigModule
@@ -33,6 +34,7 @@ class ExperimentManagerAppModule extends AbstractModule {
   }
 
   private def installServices(): Unit = {
+    bind(classOf[DOperableCatalog]).in(Scopes.SINGLETON)
     install(new ServicesModule)
   }
 
