@@ -23,7 +23,6 @@ function LibraryService($q, $log, LibraryDataConverterService, LibraryApiService
 
   service.addDirectory = addDirectory;
   service.changeDirectory = changeDirectory;
-  service.cleanUploadingFiles = cleanUploadingFiles;
   service.fetchAll = fetchAll;
   service.getAll = getAll;  // Used once in LibraryConnector
   service.getCurrentDirectory = getCurrentDirectory;
@@ -60,18 +59,6 @@ function LibraryService($q, $log, LibraryDataConverterService, LibraryApiService
     currentDirectory.changeTo(newDirectory);
     // TODO: remove
     currentDirectoryUri = currentDirectory.uri;
-  }
-
-
-  // TODO: Do we need this method, it is not used anywhere
-  /**
-   * Manages the uploading files array to keep only uploads in progress.
-   * @returns {Array} with removed files from uploading list
-   */
-  function cleanUploadingFiles() {
-    return _.remove(uploading, (file) => {
-      return file.status === STATUS_COMPLETE || file.status === STATUS_ERROR;
-    });
   }
 
 

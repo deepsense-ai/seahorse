@@ -41,10 +41,8 @@ class FileElementController {
     this.extension = this.item.name ? this.getExtension(this.item.name) : '';
     this.canShowExtension = this.extension === 'json' || this.extension === 'csv';
 
-    if (this.item.parents) {
-      if (this.item.progress) {
-        this.formatParentsForUploadedFile();
-      }
+    if (this.item.parents && this.item.progress) {
+      this.formatParentsForUploadedFile();
     }
   }
 
@@ -56,6 +54,21 @@ class FileElementController {
 
   formatParentsForUploadedFile() {
     const parents = this.item.parents.slice(1);
+    this.parents = this.getVisibleParents(parents);
+  }
+
+
+  formatParentsForFilteredResource() {
+    const currentDirectory = this.LibraryService.getCurrentDirectory();
+
+    if (currentDirectory.isFiltered()) {
+      const parents = this.item.parents.slice(this.item.parents.indexOf(currentDirectory.directory) + 1);
+      this.parents = this.getVisibleParents(parents);
+    }
+  }
+
+
+  getVisibleParents(parents) {
     const visibleParents = parents.slice(-(VISIBLE_PARENTS_COUNT + 1));
 
     if (parents.length > VISIBLE_PARENTS_COUNT) {
@@ -66,27 +79,7 @@ class FileElementController {
       };
     }
 
-    this.parents = visibleParents;
-  }
-
-
-  formatParentsForFilteredResource() {
-    const currentDirectory = this.LibraryService.getCurrentDirectory();
-
-    if (currentDirectory.isFiltered()) {
-      const parents = this.item.parents.slice(this.item.parents.indexOf(currentDirectory.directory) + 1);
-      const visibleParents = parents.slice(-(VISIBLE_PARENTS_COUNT + 1));
-
-      if (parents.length > VISIBLE_PARENTS_COUNT) {
-        visibleParents[0] = {
-          name: '...',
-          title: visibleParents[0].name,
-          uri: visibleParents[0].uri
-        };
-      }
-
-      this.parents = visibleParents;
-    }
+    return visibleParents;
   }
 
 
