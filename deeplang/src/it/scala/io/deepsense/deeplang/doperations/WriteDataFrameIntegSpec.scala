@@ -29,7 +29,9 @@ import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoriesMapping, MappingMetadataConverter}
-import io.deepsense.deeplang.parameters.{FileFormat, ColumnType}
+import io.deepsense.deeplang.doperations.CsvParameters.ColumnSeparator
+import io.deepsense.deeplang.doperations.CsvParameters.ColumnSeparator.ColumnSeparator
+import io.deepsense.deeplang.parameters.ColumnType
 
 class WriteDataFrameIntegSpec
   extends DeeplangIntegTestSupport
@@ -82,34 +84,75 @@ class WriteDataFrameIntegSpec
   "WriteDataFrame" should {
     "write CSV file without header" in {
       val wdf = WriteDataFrame(
-        ",",
+        columnSep(ColumnSeparator.COMMA),
         false,
         absoluteWriteDataFrameTestPath + "/without-header")
       wdf.execute(executionContext)(Vector(dataframe))
-      verifySavedDataFrame("/without-header", rows, false)
+      verifySavedDataFrame("/without-header", rows, false, ",")
     }
 
     "write CSV file with header" in {
       val wdf = WriteDataFrame(
-        ",",
+        columnSep(ColumnSeparator.COMMA),
         true,
         absoluteWriteDataFrameTestPath + "/with-header")
       wdf.execute(executionContext)(Vector(dataframe))
-      verifySavedDataFrame("/with-header", rows, true)
+      verifySavedDataFrame("/with-header", rows, true, ",")
+    }
+
+    "write CSV file with semicolon separator" in {
+      val wdf = WriteDataFrame(
+        columnSep(ColumnSeparator.SEMICOLON),
+        false,
+        absoluteWriteDataFrameTestPath + "/semicolon-separator")
+      wdf.execute(executionContext)(Vector(dataframe))
+      verifySavedDataFrame("/semicolon-separator", rows, false, ";")
+    }
+
+    "write CSV file with colon separator" in {
+      val wdf = WriteDataFrame(
+        columnSep(ColumnSeparator.COLON),
+        false,
+        absoluteWriteDataFrameTestPath + "/colon-separator")
+      wdf.execute(executionContext)(Vector(dataframe))
+      verifySavedDataFrame("/colon-separator", rows, false, ":")
+    }
+
+    "write CSV file with space separator" in {
+      val wdf = WriteDataFrame(
+        columnSep(ColumnSeparator.SPACE),
+        false,
+        absoluteWriteDataFrameTestPath + "/space-separator")
+      wdf.execute(executionContext)(Vector(dataframe))
+      verifySavedDataFrame("/space-separator", rows, false, " ")
+    }
+
+    "write CSV file with tab separator" in {
+      val wdf = WriteDataFrame(
+        columnSep(ColumnSeparator.TAB),
+        false,
+        absoluteWriteDataFrameTestPath + "/tab-separator")
+      wdf.execute(executionContext)(Vector(dataframe))
+      verifySavedDataFrame("/tab-separator", rows, false, "\t")
     }
 
     "write CSV file with custom separator" in {
       val wdf = WriteDataFrame(
-        ";",
+        columnSep(ColumnSeparator.CUSTOM, Some("X")),
         false,
         absoluteWriteDataFrameTestPath + "/custom-separator")
       wdf.execute(executionContext)(Vector(dataframe))
-      verifySavedDataFrame("/custom-separator", rows, false, ";")
+      verifySavedDataFrame("/custom-separator", rows, false, "X")
     }
   }
 
+  private def columnSep(
+      columnSeparator: ColumnSeparator,
+      customSeparator: Option[String] = None): (ColumnSeparator, Option[String]) =
+    (columnSeparator, customSeparator)
+
   private def verifySavedDataFrame(savedFile: String, rows: Seq[Row],
-     withHeader: Boolean, separator: String = ",") {
+     withHeader: Boolean, separator: String) {
 
     implicit def bool2int(b: Boolean) = if (b) 1 else 0
 

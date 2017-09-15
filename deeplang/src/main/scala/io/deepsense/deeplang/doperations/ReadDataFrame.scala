@@ -20,23 +20,23 @@ package io.deepsense.deeplang.doperations
 import java.io.IOException
 import java.util.NoSuchElementException
 
-import org.apache.commons.lang3.StringUtils
-
 import scala.collection.immutable.ListMap
 import scala.reflect.ClassTag
 import scala.reflect.runtime.{universe => ru}
 
 import au.com.bytecode.opencsv.CSVParser
+import org.apache.commons.lang3.StringUtils
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.io.{LongWritable, Text}
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.types.{StructType, StringType, StructField}
+import org.apache.spark.sql.types.{StringType, StructField, StructType}
 import org.apache.spark.sql.{Row, types}
 
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
+import io.deepsense.deeplang.doperations.CsvParameters.ColumnSeparator
 import io.deepsense.deeplang.doperations.exceptions.{DeepSenseIOException, InvalidFileException}
 import io.deepsense.deeplang.parameters.FileFormat.FileFormat
 import io.deepsense.deeplang.parameters._
@@ -124,7 +124,7 @@ case class ReadDataFrame() extends DOperation0To1[DataFrame] with ReadDataFrameP
       categoricalColumnsSelection: Option[MultipleColumnSelection]): DataFrame = {
 
     val namesIncluded = csvNamesIncludedParameter.value.get
-    val lines = splitLinesIntoColumns(rdd, csvColumnSeparatorParameter.value.get).cache()
+    val lines = splitLinesIntoColumns(rdd, determineColumnSeparator()).cache()
 
     val (columnNames, dataLines) = if (namesIncluded) {
       val processedFirstLine = lines.first().map(_.trim).map(removeQuotes).map(sanitizeColumnName)
@@ -169,19 +169,8 @@ case class ReadDataFrame() extends DOperation0To1[DataFrame] with ReadDataFrameP
   override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }
 
-trait ReadDataFrameParameters {
+trait ReadDataFrameParameters extends CsvParameters {
   import io.deepsense.deeplang.doperations.ReadDataFrame._
-
-  val csvColumnSeparatorParameter = StringParameter(
-    "Column separator",
-    default = Some(","),
-    required = true,
-    validator = new SingleCharRegexValidator)
-
-  val csvNamesIncludedParameter = BooleanParameter(
-    "Does the first row include column names?",
-    default = Some(true),
-    required = true)
 
   val csvShouldConvertToBooleanParameter = BooleanParameter(
     "Should columns containing only 0 and 1 be converted to Boolean?",
@@ -255,7 +244,7 @@ object ReadDataFrame {
   def apply(
       filePath: String,
       lineSeparator: (LineSeparator.LineSeparator, Option[String]),
-      csvColumnSeparator: String,
+      csvColumnSeparator: (ColumnSeparator.ColumnSeparator, Option[String]),
       csvNamesIncluded: Boolean,
       csvShouldConvertToBoolean: Boolean,
       categoricalColumns: Option[MultipleColumnSelection]): ReadDataFrame = {
@@ -264,11 +253,10 @@ object ReadDataFrame {
 
     operation.formatParameter.value = Some("CSV")
     operation.lineSeparatorParameter.value = Some(lineSeparator._1.toString)
-    if (lineSeparator._2.isDefined) {
-      operation.customLineSeparatorParameter.value = lineSeparator._2
-    }
+    operation.customLineSeparatorParameter.value = lineSeparator._2
     operation.sourceFileParameter.value = Some(filePath)
-    operation.csvColumnSeparatorParameter.value = Some(csvColumnSeparator)
+    operation.csvColumnSeparatorParameter.value = Some(csvColumnSeparator._1.toString)
+    operation.csvCustomColumnSeparatorParameter.value = csvColumnSeparator._2
     operation.csvNamesIncludedParameter.value = Some(csvNamesIncluded)
     operation.csvShouldConvertToBooleanParameter.value = Some(csvShouldConvertToBoolean)
     operation.categoricalColumnsParameter.value = categoricalColumns
@@ -345,9 +333,9 @@ object ReadDataFrame {
    * Splits string lines by separator, but escapes separator within double quotes.
    * For example, line "a,b,\"x,y,z\"" will be split into ["a","b","\"x,y,z\""].
    */
-  private def splitLinesIntoColumns(lines: RDD[String], separator: String) = {
+  private def splitLinesIntoColumns(lines: RDD[String], separator: Char) = {
     lines.map(
-      new CSVParser(separator(0), CSVParser.NULL_CHARACTER, CSVParser.NULL_CHARACTER)
+      new CSVParser(separator, CSVParser.NULL_CHARACTER, CSVParser.NULL_CHARACTER)
         .parseLine(_).toSeq
     )
   }

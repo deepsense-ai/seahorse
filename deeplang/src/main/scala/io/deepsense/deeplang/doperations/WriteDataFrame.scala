@@ -30,30 +30,17 @@ import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoricalMapper, CategoricalMetadata}
-import io.deepsense.deeplang.doperations.WriteDataFrame._
+import io.deepsense.deeplang.doperations.CsvParameters.ColumnSeparator
 import io.deepsense.deeplang.doperations.exceptions.DeepSenseIOException
 import io.deepsense.deeplang.parameters.FileFormat.FileFormat
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{DOperation1To0, ExecutionContext}
 
-case class WriteDataFrame() extends DOperation1To0[DataFrame] {
+case class WriteDataFrame() extends DOperation1To0[DataFrame] with CsvParameters {
 
   override val id: Id = "9e460036-95cc-42c5-ba64-5bc767a40e4e"
 
   override val name: String = "Write DataFrame"
-
-  val columnSeparatorParameter = StringParameter(
-    description = "Character separating fields in a row",
-    default = Some(","),
-    required = true,
-    validator = new SingleCharRegexValidator
-  )
-
-  val writeHeaderParameter = BooleanParameter(
-    description = "Should the output file include a header with column names?",
-    default = Some(true),
-    required = true
-  )
 
   val formatParameter = ChoiceParameter(
     description = "Format of the output file",
@@ -61,8 +48,8 @@ case class WriteDataFrame() extends DOperation1To0[DataFrame] {
     required = true,
     options = ListMap(
       FileFormat.CSV.toString -> ParametersSchema(
-        "column separator" -> columnSeparatorParameter,
-        "write header" -> writeHeaderParameter),
+        "column separator" -> csvColumnSeparatorParameter,
+        "write header" -> csvNamesIncludedParameter),
       FileFormat.PARQUET.toString -> ParametersSchema(),
       FileFormat.JSON.toString -> ParametersSchema()
     )
@@ -88,7 +75,7 @@ case class WriteDataFrame() extends DOperation1To0[DataFrame] {
         val csv = dataFrame.sparkDataFrame.rdd
           .map(rowToStringArray(categoricalMetadata) andThen convertToCsv)
 
-        val result = if (writeHeaderParameter.value.get) {
+        val result = if (csvNamesIncludedParameter.value.get) {
           context.sparkContext.parallelize(Seq(
             convertToCsv (dataFrame.sparkDataFrame.schema.fieldNames)
           )).union(csv)
@@ -142,10 +129,10 @@ case class WriteDataFrame() extends DOperation1To0[DataFrame] {
   val convertToCsv = (data: Array[String]) => {
     import scala.collection.JavaConversions._
     val buf = new StringWriter
-    val writer = new CSVWriter(buf, columnSeparatorParameter.value.get.charAt(0),
-      CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.NO_ESCAPE_CHARACTER)
+    val writer = new CSVWriter(buf, determineColumnSeparator(),
+      CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.NO_ESCAPE_CHARACTER, "")
     writer.writeAll(List(data))
-    buf.toString.trim
+    buf.toString
   }
 
   @transient
@@ -167,14 +154,16 @@ object WriteDataFrame {
    * WriteDataFrame: CSV file type.
    */
   def apply(
-      columnSeparator: String,
+      columnSeparator: (ColumnSeparator.ColumnSeparator, Option[String]),
       writeHeader: Boolean,
       path: String): WriteDataFrame = {
 
+    val (separator, customSeparator) = columnSeparator
     val writeDataFrame = WriteDataFrame()
     writeDataFrame.formatParameter.value = Some(FileFormat.CSV.toString)
-    writeDataFrame.columnSeparatorParameter.value = Some(columnSeparator)
-    writeDataFrame.writeHeaderParameter.value = Some(writeHeader)
+    writeDataFrame.csvColumnSeparatorParameter.value = Some(separator.toString)
+    writeDataFrame.csvCustomColumnSeparatorParameter.value = customSeparator
+    writeDataFrame.csvNamesIncludedParameter.value = Some(writeHeader)
     writeDataFrame.outputFileParameter.value = Some(path)
     writeDataFrame
   }
