@@ -60,7 +60,7 @@ function Experiment() {
   that.createNode = function createNode(options) {
     let operation = options.operation,
         paramSchemas = operation.parameters || {},
-        paramValues = options.paramValues || {};
+        paramValues = options.parameters || {};
 
     return new GraphNode({
       'id': options.id,
