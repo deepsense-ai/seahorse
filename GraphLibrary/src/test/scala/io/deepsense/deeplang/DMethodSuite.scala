@@ -37,7 +37,7 @@ class DMethodSuite extends FunSuite {
     assert(c.f.infer(context)(2)(DKnowledge(new A())) == DKnowledge(new B()))
   }
 
-  test("It is possible to override infering in DMethod") {
+  test("It is possible to override inferring in DMethod") {
     import DClassesForDMethods._
 
     class C extends DOperable {
