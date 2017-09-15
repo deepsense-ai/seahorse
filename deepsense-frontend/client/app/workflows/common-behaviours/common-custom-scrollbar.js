@@ -9,6 +9,7 @@ function CustomScrollBar() {
         .mCustomScrollbar({
           axis: 'y',
           theme: 'deepsense',
+          advanced:{ autoScrollOnFocus: false },
           scrollInertia: 300
         });
     }
