@@ -49,13 +49,13 @@ This operation does not take any input.
 <tr>
 <td><code>alpha</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Param for the alpha parameter in the implicit preference formulation (>= 0).</td>
+<td>Param for the alpha parameter in the implicit preference formulation.</td>
 </tr>
 
 <tr>
 <td><code>checkpoint interval</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Checkpoint interval (>= 1).</td>
+<td>Checkpoint interval.</td>
 </tr>
 
 <tr>
@@ -73,7 +73,7 @@ This operation does not take any input.
 <tr>
 <td><code>max iterations</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Maximum number of iterations (>= 0).</td>
+<td>Maximum number of iterations.</td>
 </tr>
 
 <tr>
@@ -85,13 +85,13 @@ This operation does not take any input.
 <tr>
 <td><code>num item blocks</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Number of item blocks (>= 1).</td>
+<td>Number of item blocks.</td>
 </tr>
 
 <tr>
 <td><code>num user blocks</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Number of user blocks (>= 1).</td>
+<td>Number of user blocks.</td>
 </tr>
 
 <tr>
@@ -103,7 +103,7 @@ This operation does not take any input.
 <tr>
 <td><code>rank</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Rank of the matrix factorization (>= 1).</td>
+<td>Rank of the matrix factorization.</td>
 </tr>
 
 <tr>
@@ -115,7 +115,7 @@ This operation does not take any input.
 <tr>
 <td><code>regularization param</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Regularization parameter (>= 0).</td>
+<td>Regularization parameter.</td>
 </tr>
 
 <tr>

@@ -49,7 +49,7 @@ This operation does not take any input.
 <tr>
 <td><code>elastic net param</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>The ElasticNet mixing parameter, in range [0, 1]. For alpha = 0, the penalty is an L2 penalty. For alpha = 1, it is an L1 penalty.</td>
+<td>The ElasticNet mixing parameter. For alpha = 0, the penalty is an L2 penalty. For alpha = 1, it is an L1 penalty.</td>
 </tr>
 
 <tr>
@@ -61,13 +61,13 @@ This operation does not take any input.
 <tr>
 <td><code>max iterations</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Maximum number of iterations (>= 0).</td>
+<td>Maximum number of iterations.</td>
 </tr>
 
 <tr>
 <td><code>regularization param</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Regularization parameter (>= 0).</td>
+<td>Regularization parameter.</td>
 </tr>
 
 <tr>
@@ -115,7 +115,7 @@ This operation does not take any input.
 <tr>
 <td><code>threshold</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Threshold in binary classification prediction, in range [0, 1].</td>
+<td>Threshold in binary classification prediction.</td>
 </tr>
 
 </tbody>

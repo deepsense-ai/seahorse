@@ -44,8 +44,8 @@ List of all currently supported operations:
     * [Execute Mathematical Transformation](operations/execute_mathematical_transformation.html)
     * [Execute SQL Expression](operations/execute_sql_expression.html)
     * [Normalize](operations/normalize.html)
-    * [One Hot Encode](operations/one_hot_encode.html)
-    * [Polynomial Expand](operations/polynomial_expand.html)
+    * [One Hot Encoder](operations/one_hot_encoder.html)
+    * [Polynomial Expansion](operations/polynomial_expansion.html)
     * [String Indexer](operations/string_indexer.html)
     * [Vector Indexer](operations/vector_indexer.html)
   * Feature Scaling

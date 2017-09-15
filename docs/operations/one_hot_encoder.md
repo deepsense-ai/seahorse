@@ -1,14 +1,14 @@
 ---
 layout: documentation
-displayTitle: Polynomial Expand
-title: Polynomial Expand
-description: Polynomial Expand
+displayTitle: One Hot Encoder
+title: One Hot Encoder
+description: One Hot Encoder
 usesMathJax: true
 includeOperationsMenu: true
 ---
-Applies polynomial expansion to vector columns.
+Maps a column of category indices to a column of binary vectors.
 
-This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.feature.PolynomialExpansion">org.apache.spark.ml.feature.PolynomialExpansion documentation</a>.
+This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.feature.OneHotEncoder">org.apache.spark.ml.feature.OneHotEncoder documentation</a>.
 
 **Since**: Seahorse 1.0.0
 
@@ -60,9 +60,9 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 <tbody>
 
 <tr>
-<td><code>degree</code></td>
-<td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>The polynomial degree to expand, which should be >= 1. Value of 1 means no expansion.</td>
+<td><code>drop last</code></td>
+<td><code><a href="../parameter_types.html#boolean">Boolean</a></code></td>
+<td>Whether to drop the last category in the encoded vector.</td>
 </tr>
 
 <tr>
@@ -74,4 +74,5 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 </tbody>
 </table>
 
-{% markdown operations/examples/PolynomialExpand.md %}
+
+{% markdown operations/examples/OneHotEncode.md %}

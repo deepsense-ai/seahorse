@@ -62,7 +62,7 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 <tr>
 <td><code>numFeatures</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Number of features. Should be > 0.</td>
+<td>Number of features.</td>
 </tr>
 
 <tr>
@@ -73,5 +73,6 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 
 </tbody>
 </table>
+
 
 {% markdown operations/examples/HashingTF.md %}

@@ -62,7 +62,7 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 <tr>
 <td><code>max categories</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Threshold for the number of values a categorical feature can take. If a feature is found to have > maxCategories values, then it is declared continuous. Must be >= 2.</td>
+<td>Threshold for the number of values a categorical feature can take. If a feature is found to have > maxCategories values, then it is declared continuous.</td>
 </tr>
 
 <tr>
@@ -79,5 +79,6 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 
 </tbody>
 </table>
+
 
 {% markdown operations/examples/VectorIndexer.md %}

@@ -86,4 +86,5 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 </tbody>
 </table>
 
+
 {% markdown operations/examples/MinMaxScaler.md %}

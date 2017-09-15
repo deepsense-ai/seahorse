@@ -49,7 +49,7 @@ This operation does not take any input.
 <tr>
 <td><code>max depth</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Maximum depth of each tree in the forest (>= 0).</td>
+<td>Maximum depth of each tree in the forest.</td>
 </tr>
 
 <tr>
@@ -61,19 +61,19 @@ This operation does not take any input.
 <tr>
 <td><code>min instances per node</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Minimum number of instances each child must have after split (>= 1).</td>
+<td>Minimum number of instances each child must have after split.</td>
 </tr>
 
 <tr>
 <td><code>min info gain</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Minimum information gain for a split to be considered at a tree node (>= 0).</td>
+<td>Minimum information gain for a split to be considered at a tree node.</td>
 </tr>
 
 <tr>
 <td><code>max memory</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Maximum memory in MB allocated to histogram aggregation (>= 0).</td>
+<td>Maximum memory in MB allocated to histogram aggregation.</td>
 </tr>
 
 <tr>
@@ -85,7 +85,7 @@ This operation does not take any input.
 <tr>
 <td><code>checkpoint interval</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Specifies how often to checkpoint the cached node IDs in intervals (>= 1).</td>
+<td>Specifies how often to checkpoint the cached node IDs in intervals.</td>
 </tr>
 
 <tr>
@@ -97,7 +97,7 @@ This operation does not take any input.
 <tr>
 <td><code>subsampling rate</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Fraction of the training data used for learning each decision tree, in range (0, 1].</td>
+<td>Fraction of the training data used for learning each decision tree.</td>
 </tr>
 
 <tr>
@@ -109,7 +109,7 @@ This operation does not take any input.
 <tr>
 <td><code>num trees</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Number of trees to train (>= 1).</td>
+<td>Number of trees to train.</td>
 </tr>
 
 <tr>

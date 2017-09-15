@@ -79,13 +79,13 @@ This operation does not take any input.
 <tr>
 <td><code>max depth</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Maximum depth of the tree (>= 0). E.g., depth 0 means 1 leaf node; depth 1 means 1 internal node + 2 leaf nodes.</td>
+<td>Maximum depth of the tree. E.g., depth 0 means 1 leaf node; depth 1 means 1 internal node + 2 leaf nodes.</td>
 </tr>
 
 <tr>
 <td><code>max iterations</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Maximum number of iterations (>= 0).</td>
+<td>Maximum number of iterations.</td>
 </tr>
 
 <tr>
@@ -97,7 +97,7 @@ This operation does not take any input.
 <tr>
 <td><code>min instances per node</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Minimum number of instances each child must have after split. If a split causes the left or right child to have fewer than minInstancesPerNode, the split will be discarded as invalid. Should be >= 1.</td>
+<td>Minimum number of instances each child must have after split. If a split causes the left or right child to have fewer than minInstancesPerNode, the split will be discarded as invalid.</td>
 </tr>
 
 <tr>
@@ -121,7 +121,7 @@ This operation does not take any input.
 <tr>
 <td><code>subsampling rate</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Fraction of the training data used for learning each decision tree, in range (0, 1].</td>
+<td>Fraction of the training data used for learning each decision tree.</td>
 </tr>
 
 </tbody>

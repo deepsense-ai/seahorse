@@ -1,8 +1,8 @@
 ---
 layout: documentation
-displayTitle: Tokenize with Regex
-title: Tokenize with Regex
-description: Tokenize with Regex
+displayTitle: Tokenize With Regex
+title: Tokenize With Regex
+description: Tokenize With Regex
 usesMathJax: true
 includeOperationsMenu: true
 ---
@@ -68,7 +68,7 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 <tr>
 <td><code>min token length</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Minimum token length, >= 0.</td>
+<td>Minimum token length.</td>
 </tr>
 
 <tr>
@@ -85,5 +85,6 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 
 </tbody>
 </table>
+
 
 {% markdown operations/examples/TokenizeWithRegex.md %}

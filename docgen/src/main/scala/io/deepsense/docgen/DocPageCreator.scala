@@ -18,11 +18,15 @@ package io.deepsense.docgen
 
 import java.io.{File, PrintWriter}
 
+import scala.reflect.runtime.universe.typeTag
+
 import io.deepsense.commons.BuildInfo
-import io.deepsense.deeplang.DOperation
+import io.deepsense.deeplang.doperables.Transformer
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.{EstimatorAsFactory, EstimatorAsOperation, EvaluatorAsFactory, TransformerAsOperation}
 import io.deepsense.deeplang.params._
 import io.deepsense.deeplang.params.choice.{AbstractChoiceParam, Choice, ChoiceParam, MultipleChoiceParam}
+import io.deepsense.deeplang.{DOperation, DOperation1To2}
 
 trait DocPageCreator {
 
@@ -60,6 +64,9 @@ trait DocPageCreator {
     writer.println(output(operation))
     writer.println()
     writer.println(parameters(operation))
+
+    appendExamplesSectionIfNecessary(writer, operation)
+
     writer.flush()
     writer.close()
     println("Created doc page for " + operation.name)
@@ -221,11 +228,12 @@ trait DocPageCreator {
   }
 
   private def parameterTableEntry(paramDescription: ParameterDescription): String = {
-    val anchor = paramTypeAnchor(paramDescription.paramType)
+    val paramType = paramDescription.paramType
+    val anchor = paramTypeAnchor(paramType)
     s"""
       |<tr>
       |<td><code>${paramDescription.name}</code></td>
-      |<td><code><a href="../parameters.html#$anchor">${paramDescription.paramType}</a></code></td>
+      |<td><code><a href="../parameter_types.html#$anchor">${paramType}</a></code></td>
       |<td>${paramDescription.description}</td>
       |</tr>
       |""".stripMargin
@@ -250,4 +258,28 @@ trait DocPageCreator {
     name: String,
     paramType: String,
     description: String)
+
+
+  private def appendExamplesSectionIfNecessary(writer: PrintWriter, operation: DOperation): Unit = {
+    val createExamplesSection: Boolean = operation match {
+      // It is impossible to match DOperation1To2[DataFrame, DataFrame, Transformer] in match-case
+      case op: DOperation1To2[_, _, _] =>
+        (op.tTagTI_0.tpe <:< typeTag[DataFrame].tpe) &&
+          (op.tTagTO_0.tpe <:< typeTag[DataFrame].tpe) &&
+          (op.tTagTO_1.tpe <:< typeTag[Transformer].tpe)
+      case op =>
+        false
+    }
+    if (createExamplesSection) {
+      // scalastyle:off println
+      println("\t\tAdding 'Example' section for " + operation.name)
+      writer.println()
+      writer.println(examples(operation))
+      // scalastyle:on println
+    }
+  }
+
+  private def examples(operation: DOperation): String = {
+    "{% markdown operations/examples/" + operation.getClass.getSimpleName + ".md %}"
+  }
 }

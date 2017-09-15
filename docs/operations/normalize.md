@@ -6,7 +6,7 @@ description: Normalize
 usesMathJax: true
 includeOperationsMenu: true
 ---
-Normalize vector columns using given p-norm.
+Normalizes vector columns using given p-norm.
 
 This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.feature.Normalizer">org.apache.spark.ml.feature.Normalizer documentation</a>.
 
@@ -62,7 +62,7 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 <tr>
 <td><code>p</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Normalization in L^p space. Must be >= 1.</td>
+<td>Normalization in L^p space.</td>
 </tr>
 
 <tr>
@@ -73,5 +73,6 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 
 </tbody>
 </table>
+
 
 {% markdown operations/examples/Normalize.md %}

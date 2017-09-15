@@ -1,8 +1,8 @@
 ---
 layout: documentation
-displayTitle: Convert to n-grams
-title: Convert to n-grams
-description: Convert to n-grams
+displayTitle: Convert To n-grams
+title: Convert To n-grams
+description: Convert To n-grams
 usesMathJax: true
 includeOperationsMenu: true
 ---
@@ -62,7 +62,7 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 <tr>
 <td><code>n</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Minimum n-gram length (>= 1).</td>
+<td>Minimum n-gram length.</td>
 </tr>
 
 <tr>
@@ -73,5 +73,6 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 
 </tbody>
 </table>
+
 
 {% markdown operations/examples/ConvertToNGrams.md %}

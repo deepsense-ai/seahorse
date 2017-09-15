@@ -35,7 +35,7 @@ class RowsFilterer extends Transformer {
   override val params: Array[Param[_]] = declareParams(condition)
 
   override private[deeplang] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
-    val uniqueDataFrameId = java.util.UUID.randomUUID.toString.replace('-', '_')
+    val uniqueDataFrameId = "row_filterer_" + java.util.UUID.randomUUID.toString.replace('-', '_')
     val resultantExpression = s"SELECT * FROM $uniqueDataFrameId WHERE $getCondition"
     logger.debug(s"RowsFilterer(expression = 'resultantExpression'," +
       s" uniqueDataFrameId = '$uniqueDataFrameId')")

@@ -55,13 +55,13 @@ This operation does not take any input.
 <tr>
 <td><code>k</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Number of clusters to create. Must be > 1.</td>
+<td>Number of clusters to create.</td>
 </tr>
 
 <tr>
 <td><code>max iterations</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Maximum number of iterations (>= 0).</td>
+<td>Maximum number of iterations.</td>
 </tr>
 
 <tr>

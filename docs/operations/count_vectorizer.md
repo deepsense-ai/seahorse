@@ -66,6 +66,12 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 </tr>
 
 <tr>
+<td><code>output column</code></td>
+<td><code><a href="../parameter_types.html#string">String</a></code></td>
+<td>Output column name.</td>
+</tr>
+
+<tr>
 <td><code>min different documents</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
 <td>Specifies the minimum number of different documents a term must appear in to be included in the vocabulary.</td>
@@ -78,12 +84,6 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 </tr>
 
 <tr>
-<td><code>output column</code></td>
-<td><code><a href="../parameter_types.html#string">String</a></code></td>
-<td>Output column name.</td>
-</tr>
-
-<tr>
 <td><code>max vocabulary size</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
 <td>Max size of the vocabulary.</td>
@@ -91,5 +91,6 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 
 </tbody>
 </table>
+
 
 {% markdown operations/examples/CountVectorizer.md %}

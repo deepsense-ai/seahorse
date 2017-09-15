@@ -74,7 +74,7 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 <tr>
 <td><code>max iterations</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Maximum number of iterations (>= 0).</td>
+<td>Maximum number of iterations.</td>
 </tr>
 
 <tr>
@@ -109,5 +109,6 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 
 </tbody>
 </table>
+
 
 {% markdown operations/examples/Word2Vec.md %}
