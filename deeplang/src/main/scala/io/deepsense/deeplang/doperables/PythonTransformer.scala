@@ -16,45 +16,22 @@
 
 package io.deepsense.deeplang.doperables
 
-
 import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperations.exceptions.CustomOperationExecutionException
+import io.deepsense.deeplang.OperationExecutionDispatcher.Result
 import io.deepsense.deeplang.params.{CodeSnippetLanguage, CodeSnippetParam}
 
-class PythonTransformer extends Transformer {
-  import io.deepsense.deeplang.doperations.PythonTransformation._
+class PythonTransformer extends CustomCodeTransformer {
 
-  val codeParameter = CodeSnippetParam(
+  override lazy val codeParameter = CodeSnippetParam(
     name = "code",
     description = "Operation source code.",
     language = CodeSnippetLanguage(CodeSnippetLanguage.python)
   )
   setDefault(codeParameter -> "def transform(dataframe):\n    return dataframe")
 
-  override val params = declareParams(codeParameter)
+  override def isValid(context: ExecutionContext, code: String): Boolean =
+    context.customCodeExecutor.isPythonValid(code)
 
-  override private[deeplang] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
-    val code = $(codeParameter)
-
-    if (!ctx.customCodeExecutor.isPythonValid(code)) {
-      throw CustomOperationExecutionException("Code validation failed")
-    }
-
-    ctx.dataFrameStorage.withInputDataFrame(InputPortNumber, df.sparkDataFrame) {
-      ctx.customCodeExecutor.runPython(code) match {
-        case Left(error) =>
-          throw CustomOperationExecutionException(s"Execution exception:\n\n$error")
-
-        case Right(_) =>
-          val sparkDataFrame =
-            ctx.dataFrameStorage.getOutputDataFrame(OutputPortNumber).getOrElse {
-              throw CustomOperationExecutionException(
-                "Operation finished successfully, but did not produce a DataFrame.")
-            }
-
-          DataFrame.fromSparkDataFrame(sparkDataFrame)
-      }
-    }
-  }
+  override def runCode(context: ExecutionContext, code: String): Result =
+    context.customCodeExecutor.runPython(code)
 }

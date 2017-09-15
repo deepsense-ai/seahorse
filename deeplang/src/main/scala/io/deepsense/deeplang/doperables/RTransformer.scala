@@ -17,47 +17,26 @@
 package io.deepsense.deeplang.doperables
 
 import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperations.exceptions.CustomOperationExecutionException
+import io.deepsense.deeplang.OperationExecutionDispatcher.Result
 import io.deepsense.deeplang.params.{CodeSnippetLanguage, CodeSnippetParam}
 
-class RTransformer extends Transformer {
-  import io.deepsense.deeplang.doperations.RTransformation._
+class RTransformer extends CustomCodeTransformer {
 
-  val codeParameter = CodeSnippetParam(
+  override lazy val codeParameter = CodeSnippetParam(
     name = "code",
     description = "Operation source code.",
     language = CodeSnippetLanguage(CodeSnippetLanguage.r)
   )
   setDefault(codeParameter ->
-    """
-      |transform <- function(dataframe) {
-      | return(dataframe)
+    """transform <- function(dataframe) {
+      |  return(dataframe)
       |}
-    """.stripMargin)
+    """.stripMargin
+  )
 
-  override val params = declareParams(codeParameter)
+  override def isValid(context: ExecutionContext, code: String): Boolean =
+    context.customCodeExecutor.isRValid(code)
 
-  override private[deeplang] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
-    val code = $(codeParameter)
-
-    if (!ctx.customCodeExecutor.isRValid(code)) {
-      throw CustomOperationExecutionException("Code validation failed")
-    }
-
-    ctx.dataFrameStorage.setInputDataFrame(InputPortNumber, df.sparkDataFrame)
-    ctx.customCodeExecutor.runR(code) match {
-      case Left(error) =>
-        throw CustomOperationExecutionException(s"Execution exception:\n\n$error")
-
-      case Right(_) =>
-        val sparkDataFrame =
-          ctx.dataFrameStorage.getOutputDataFrame(OutputPortNumber).getOrElse {
-            throw CustomOperationExecutionException(
-              "Operation finished successfully, but did not produce a DataFrame.")
-          }
-
-        DataFrame.fromSparkDataFrame(sparkDataFrame)
-    }
-  }
+  override def runCode(context: ExecutionContext, code: String): Result =
+    context.customCodeExecutor.runR(code)
 }

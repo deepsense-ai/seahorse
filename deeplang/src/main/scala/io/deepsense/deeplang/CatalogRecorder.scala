@@ -50,6 +50,7 @@ object CatalogRecorder {
     catalog.registerDOperable[SqlColumnTransformer]()
     catalog.registerDOperable[PythonTransformer]()
     catalog.registerDOperable[PythonColumnTransformer]()
+    catalog.registerDOperable[RTransformer]()
     catalog.registerDOperable[TypeConverter]()
     catalog.registerDOperable[CustomTransformer]()
     catalog.registerDOperable[GetFromVectorTransformer]()
