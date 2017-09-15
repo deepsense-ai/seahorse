@@ -1,0 +1,38 @@
+{
+  "executionReport": {
+    "nodes": {
+      "8c22f869-29d3-3064-f9ba-dcf81a05d393": {
+        "status": "FAILED", 
+        "results": null, 
+        "error": {
+          "code": "NodeFailure"
+        }
+      }, 
+      "3a6a9fd2-f3a3-c8ef-c585-1fc542931dea": {
+        "status": "ABORTED", 
+        "results": [], 
+        "error": null
+      }, 
+      "30cf5fd8-e777-f4c7-0cd1-eca1dcfcccfe": {
+        "status": "COMPLETED", 
+        "results": [
+          "2b884437-1b25-4ef5-bf89-9a48e59110d7"
+        ], 
+        "error": null
+      }, 
+      "5da9e672-4d55-2974-8090-abbf2e6808f7": {
+        "status": "COMPLETED", 
+        "results": [
+          "f4a9305a-cfe4-44cf-b399-ccc306e3f4a1", 
+          "dca60047-e78c-4a1e-a880-9a861150515b"
+        ], 
+        "error": null
+      }
+    }, 
+    "resultEntities": {
+      "dca60047-e78c-4a1e-a880-9a861150515b": {}, 
+      "2b884437-1b25-4ef5-bf89-9a48e59110d7": {}, 
+      "f4a9305a-cfe4-44cf-b399-ccc306e3f4a1": {}
+    }
+  }
+}

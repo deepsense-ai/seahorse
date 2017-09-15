@@ -365,7 +365,7 @@
           }
         }
       },
-      "name": "EXAMPLE 5: Wine Properties",
+      "name": "EXAMPLE 6: Wine Properties",
       "description": "Finding important features of wines that define wine quality as perceived by tasters"
     },
     "notebooks": {
