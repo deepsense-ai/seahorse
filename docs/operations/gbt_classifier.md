@@ -8,7 +8,15 @@ includeOperationsMenu: true
 ---
 Gradient-Boosted Trees (GBTs) is a learning algorithm for classification. It supports binary labels, as well as both continuous and categorical features. Note: Multiclass labels are not currently supported.
 
-This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.classification.GBTClassifier">org.apache.spark.ml.classification.GBTClassifier documentation</a>.
+This operation is ported from Spark ML.
+
+
+For a comprehensive introduction, see
+<a target="_blank" href="https://spark.apache.org/docs/1.6.0/ml-classification-regression.html#gradient-boosted-tree-classifier">Spark documentation</a>.
+
+
+For scala docs details, see
+<a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.classification.GBTClassifier">org.apache.spark.ml.classification.GBTClassifier documentation</a>.
 
 **Since**: Seahorse 1.0.0
 
@@ -28,7 +36,7 @@ This operation does not take any input.
 </tr>
 </thead>
 <tbody>
-    <tr><td><code>0</code></td><td><code><a href="../classes/estimator.html">Estimator</a></code></td><td>An Estimator that can be used in <a href="fit.html">Fit</a> operation.</td></tr>
+    <tr><td><code>0</code></td><td><code><a href="../classes/estimator.html">Estimator</a></code></td><td>An <code>Estimator</code> that can be used in a <a href="fit.html">Fit</a> operation.</td></tr>
 </tbody>
 </table>
 

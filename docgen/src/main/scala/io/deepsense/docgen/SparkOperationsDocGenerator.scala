@@ -41,8 +41,8 @@ object SparkOperationsDocGenerator
   with RedirectCreator
   with LinkPrinter {
 
-  val sparkVersion = "1.6.0"
-  val sparkDocPrefix = s"http://spark.apache.org/docs/$sparkVersion/api/scala/index.html#"
+  val sparkVersion = org.apache.spark.SPARK_VERSION
+  val scalaDocPrefix = s"http://spark.apache.org/docs/$sparkVersion/api/scala/index.html#"
 
   // scalastyle:off println
   def main(args: Array[String]): Unit = {

@@ -18,6 +18,7 @@ package io.deepsense.deeplang.doperations
 
 import scala.reflect.runtime.universe.TypeTag
 
+import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.SqlColumnTransformer
 
@@ -30,4 +31,6 @@ case class SqlColumnTransformation()
     "Executes a SQL transformation on a column of a DataFrame"
 
   override lazy val tTagTO_1: TypeTag[SqlColumnTransformer] = typeTag
+
+  override val since: Version = Version(0, 4, 0)
 }

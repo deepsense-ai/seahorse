@@ -24,6 +24,7 @@ import scala.reflect.runtime.{universe => ru}
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.{DataFrame => SparkDataFrame}
 
+import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.ReadDataFrame._
@@ -43,6 +44,8 @@ case class ReadDataFrame()
   override val name: String = "Read DataFrame"
   override val description: String =
     "Reads a DataFrame from a file or database"
+
+  override val since: Version = Version(0, 4, 0)
 
   val params = declareParams(storageType)
   setDefault(storageType, InputStorageTypeChoice.File())

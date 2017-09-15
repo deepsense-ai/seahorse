@@ -18,6 +18,7 @@ package io.deepsense.deeplang.doperations
 
 import scala.reflect.runtime.universe.TypeTag
 
+import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.ColumnsFilterer
 
@@ -29,4 +30,6 @@ class FilterColumns extends TransformerAsOperation[ColumnsFilterer] {
     "Creates a DataFrame containing only selected columns"
 
   override lazy val tTagTO_1: TypeTag[ColumnsFilterer] = typeTag
+
+  override val since: Version = Version(0, 4, 0)
 }

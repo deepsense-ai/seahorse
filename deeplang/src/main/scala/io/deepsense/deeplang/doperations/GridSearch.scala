@@ -24,7 +24,7 @@ import org.apache.spark.ml.tuning.{CrossValidator, CrossValidatorModel, ParamGri
 import spray.json.{JsNull, JsValue}
 
 import io.deepsense.commons.types.ColumnType
-import io.deepsense.commons.utils.DoubleUtils
+import io.deepsense.commons.utils.{DoubleUtils, Version}
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
@@ -45,6 +45,8 @@ case class GridSearch()
   override val id: Id = "9163f706-eaaf-46f6-a5b0-4114d92032b7"
   override val description: String = "Uses Cross-validation to find the best set of parameters " +
     "for input estimator. User can specify a list of parameter values to test and compare."
+
+  override val since: Version = Version(1, 0, 0)
 
   val estimatorParams = new GridSearchParam(
     name = "Parameters of input Estimator",

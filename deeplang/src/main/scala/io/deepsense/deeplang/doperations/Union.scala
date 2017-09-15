@@ -20,9 +20,10 @@ import scala.reflect.runtime.{universe => ru}
 
 import org.apache.spark.sql.types.StructType
 
+import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperations.exceptions.{InvalidDataFrameException, SchemaMismatchException}
+import io.deepsense.deeplang.doperations.exceptions.SchemaMismatchException
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.Params
 import io.deepsense.deeplang.{DKnowledge, DOperation2To1, ExecutionContext}
@@ -33,6 +34,8 @@ case class Union() extends DOperation2To1[DataFrame, DataFrame, DataFrame] with 
   override val name: String = "Union"
   override val description: String =
     "Creates a DataFrame containing all rows from both input DataFrames"
+
+  override val since: Version = Version(0, 4, 0)
 
   val params = declareParams()
 

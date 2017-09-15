@@ -18,6 +18,7 @@ package io.deepsense.deeplang.doperations
 
 import scala.reflect.runtime.universe.TypeTag
 
+import io.deepsense.deeplang.documentation.OperationDocumentation
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.{Estimator, Transformer}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}

@@ -18,6 +18,7 @@ package io.deepsense.deeplang.doperations
 
 import scala.reflect.runtime.universe.TypeTag
 
+import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.PythonColumnTransformer
 
@@ -30,4 +31,6 @@ class PythonColumnTransformation
     "Executes a custom Python transformation on a column of a DataFrame"
 
   override lazy val tTagTO_1: TypeTag[PythonColumnTransformer] = typeTag
+
+  override val since: Version = Version(1, 0, 0)
 }

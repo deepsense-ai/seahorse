@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2016, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,17 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperations
-
-import scala.reflect.runtime.universe.TypeTag
+package io.deepsense.deeplang.documentation
 
 import io.deepsense.commons.utils.Version
-import io.deepsense.deeplang.DOperation.Id
-import io.deepsense.deeplang.doperables.SqlTransformer
 
-class SqlTransformation extends TransformerAsOperation[SqlTransformer] {
-
-  override val id: Id = "6cba4400-d966-4a2a-8356-b37f37b4c73f"
-  override val name: String = "SQL Transformation"
-  override val description: String =
-    "Executes an SQL transformation on a DataFrame"
-
-  override lazy val tTagTO_1: TypeTag[SqlTransformer] = typeTag
-
-  override val since: Version = Version(0, 4, 0)
+/**
+ * Represents documentation attributes.
+ */
+trait Documentable {
+  /**
+   * Since Seahorse version. Format: Major.Minor.Patch
+   */
+  def since: Version
+  def generateDocs: Option[String] = None
 }

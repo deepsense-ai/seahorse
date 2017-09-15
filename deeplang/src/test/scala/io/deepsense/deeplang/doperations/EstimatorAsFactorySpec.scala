@@ -18,6 +18,7 @@ package io.deepsense.deeplang.doperations
 
 import org.apache.spark.sql.types.StructType
 
+import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.report.Report
@@ -93,5 +94,6 @@ object EstimatorAsFactorySpec {
     override val id: Id = Id.randomId
     override val name: String = "Mock Estimator factory used for tests purposes"
     override val description: String = "Description"
+    override val since: Version = Version(0, 0, 0)
   }
 }

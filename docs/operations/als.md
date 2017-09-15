@@ -8,7 +8,15 @@ includeOperationsMenu: true
 ---
 Creates an ALS recommendation model.
 
-This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.recommendation.ALS">org.apache.spark.ml.recommendation.ALS documentation</a>.
+This operation is ported from Spark ML.
+
+
+For a comprehensive introduction, see
+<a target="_blank" href="https://spark.apache.org/docs/1.6.0/mllib-collaborative-filtering.html#collaborative-filtering">Spark documentation</a>.
+
+
+For scala docs details, see
+<a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.recommendation.ALS">org.apache.spark.ml.recommendation.ALS documentation</a>.
 
 **Since**: Seahorse 1.0.0
 
@@ -28,7 +36,7 @@ This operation does not take any input.
 </tr>
 </thead>
 <tbody>
-    <tr><td><code>0</code></td><td><code><a href="../classes/estimator.html">Estimator</a></code></td><td>An Estimator that can be used in <a href="fit.html">Fit</a> operation.</td></tr>
+    <tr><td><code>0</code></td><td><code><a href="../classes/estimator.html">Estimator</a></code></td><td>An <code>Estimator</code> that can be used in a <a href="fit.html">Fit</a> operation.</td></tr>
 </tbody>
 </table>
 

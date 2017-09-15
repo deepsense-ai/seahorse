@@ -6,13 +6,18 @@ description: Min-Max Scaler
 usesMathJax: true
 includeOperationsMenu: true
 ---
-Rescales each feature individually to a common range [min, max] linearly using
-column summary statistics which is also known as Min-Max normalization or rescaling.
+Linearly rescales each feature to a common range [min, max] using column summary statistics.
+The operation is also known as Min-Max normalization or rescaling.
 
-This operation is ported from Spark ML. For more details, see:
-<a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.feature.MinMaxScaler">
-org.apache.spark.ml.feature.MinMaxScaler documentation
-</a>.
+This operation is ported from Spark ML.
+
+
+For a comprehensive introduction, see
+<a target="_blank" href="https://spark.apache.org/docs/1.6.0/ml-features.html#minmaxscaler">Spark documentation</a>.
+
+
+For scala docs details, see
+<a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.feature.MinMaxScaler">org.apache.spark.ml.feature.MinMaxScaler documentation</a>.
 
 **Since**: Seahorse 1.0.0
 
@@ -45,7 +50,7 @@ org.apache.spark.ml.feature.MinMaxScaler documentation
 </tr>
 </thead>
 <tbody>
-    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>The output DataFrame.</td></tr><tr><td><code>1</code></td><td><code><a href="../classes/transformer.html">Transformer</a></code></td><td>A Transformer that allows to apply the operation on other DataFrames using <a href="transform.html">Transform</a>.</td></tr>
+    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>The output <code>DataFrame</code>.</td></tr><tr><td><code>1</code></td><td><code><a href="../classes/transformer.html">Transformer</a></code></td><td>A <code>Transformer</code> that allows to apply the operation on other<code>DataFrames</code> using a <a href="transform.html">Transform</a>.</td></tr>
 </tbody>
 </table>
 

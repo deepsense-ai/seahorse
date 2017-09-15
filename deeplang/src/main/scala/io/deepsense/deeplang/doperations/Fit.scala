@@ -20,6 +20,7 @@ import scala.reflect.runtime.universe.TypeTag
 
 import spray.json.{JsNull, JsValue}
 
+import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.{Estimator, Transformer}
@@ -34,6 +35,8 @@ case class Fit() extends DOperation2To1[DataFrame, Estimator[Transformer], Trans
   override val name: String = "Fit"
   override val description: String =
     "Fits an Estimator on a DataFrame"
+
+  override val since: Version = Version(1, 0, 0)
 
   val estimatorParams = new DynamicParam(
     name = "Parameters of input Estimator",

@@ -20,6 +20,7 @@ import scala.reflect.runtime.{universe => ru}
 
 import org.scalatest.mock.MockitoSugar
 
+import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.DOperableMock
 import io.deepsense.graph.DeeplangGraph.DeeplangNode
@@ -44,6 +45,8 @@ object DOperationTestClasses {
     override val name: String = ""
 
     override val description: String = ""
+
+    override val since: Version = Version(0, 0, 0)
 
     val params = declareParams()
   }

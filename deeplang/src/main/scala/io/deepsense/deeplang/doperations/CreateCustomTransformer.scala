@@ -20,13 +20,14 @@ import scala.reflect.runtime.universe.TypeTag
 
 import spray.json._
 
+import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
-import io.deepsense.deeplang.doperations.custom.{Sink, Source}
-import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
-import io.deepsense.deeplang.params.custom.PublicParam
-import io.deepsense.deeplang.params.{WorkflowParam, Param}
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.CustomTransformer
+import io.deepsense.deeplang.doperations.custom.{Sink, Source}
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
+import io.deepsense.deeplang.params.custom.PublicParam
+import io.deepsense.deeplang.params.{Param, WorkflowParam}
 import io.deepsense.graph.Node
 
 case class CreateCustomTransformer() extends DOperation0To1[CustomTransformer] {
@@ -36,6 +37,8 @@ case class CreateCustomTransformer() extends DOperation0To1[CustomTransformer] {
   override val id: Id = "65240399-2987-41bd-ba7e-2944d60a3404"
   override val name: String = "Create Custom Transformer"
   override val description: String = "Creates custom transformer"
+
+  override val since: Version = Version(1, 0, 0)
 
   val innerWorkflow = WorkflowParam(
     name = "inner workflow",

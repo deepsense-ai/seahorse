@@ -22,6 +22,7 @@ import scala.reflect.runtime.universe.{TypeTag, typeTag}
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{FunSuite, Matchers}
 
+import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperations.exceptions._
 import io.deepsense.deeplang.doperables.DOperableMock
@@ -50,6 +51,9 @@ object DOperationCatalogTestResources {
   }
 
   abstract class DOperationMock extends DOperation {
+
+    override val since: Version = Version(0, 0, 0)
+
     def inPortTypes: Vector[TypeTag[_]] = Vector()
 
     def outPortTypes: Vector[TypeTag[_]] = Vector()

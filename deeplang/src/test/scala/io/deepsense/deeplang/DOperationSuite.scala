@@ -20,6 +20,7 @@ import scala.reflect.runtime.{universe => ru}
 
 import org.scalatest.FunSuite
 
+import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.DOperableMock
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
@@ -39,6 +40,7 @@ object DOperationForPortTypes {
     override val id: DOperation.Id = DOperation.Id.randomId
     override val name: String = ""
     override val description: String = ""
+    override val since: Version = Version(0, 0, 0)
     val params = declareParams()
     override lazy val tTagTI_0: ru.TypeTag[A1] = ru.typeTag[A1]
     override lazy val tTagTO_0: ru.TypeTag[A2] = ru.typeTag[A2]
@@ -63,6 +65,8 @@ class DOperationSuite extends FunSuite with DeeplangTestSupport {
       }
       override val name: String = "Some name"
       override val description: String = "Some description"
+
+      override val since: Version = Version(0, 0, 0)
 
       override lazy val tTagTI_0: ru.TypeTag[A1] = ru.typeTag[A1]
       override lazy val tTagTO_0: ru.TypeTag[A] = ru.typeTag[A]
@@ -105,6 +109,8 @@ class DOperationSuite extends FunSuite with DeeplangTestSupport {
 
       override val name: String = ""
       override val description: String = ""
+
+      override val since: Version = Version(0, 0, 0)
 
       val params = declareParams()
 

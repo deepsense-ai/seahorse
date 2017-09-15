@@ -55,9 +55,9 @@ trait DocPageCreator {
     writer.println(header(operation))
     writer.println(description(operation))
     writer.println()
-    writer.println(sparkDocLink(sparkClassName))
+    writer.println(sparkDocLink(operation, sparkClassName))
     writer.println()
-    writer.println(sinceSeahorseVersion())
+    writer.println(sinceSeahorseVersion(operation))
     writer.println()
     writer.println(input(operation))
     writer.println()
@@ -88,16 +88,26 @@ trait DocPageCreator {
     DocUtils.forceDotAtEnd(operation.description)
   }
 
-  private def sparkDocLink(sparkClassName: String) = {
-    val url = SparkOperationsDocGenerator.sparkDocPrefix + sparkClassName
-    "This operation is ported from Spark ML." +
-      " For more details, see: " +
-      "<a target=\"_blank\" href=\"" + url + "\">" + sparkClassName + " documentation</a>."
+  private def sparkDocLink(operation: DOperation, sparkClassName: String) = {
+    val scalaDocUrl = SparkOperationsDocGenerator.scalaDocPrefix + sparkClassName
+    val additionalDocs = operation.generateDocs match {
+      case None => ""
+      case Some(docs) => docs
+    }
+
+    s"""|This operation is ported from Spark ML.
+        |
+        |
+        |$additionalDocs
+        |
+        |
+        |For scala docs details, see
+        |<a target="_blank" href="$scalaDocUrl">$sparkClassName documentation</a>.""".stripMargin
   }
 
-  private def sinceSeahorseVersion(): String = {
+  private def sinceSeahorseVersion(operation: DOperation): String = {
     val version = BuildInfo.version.replace("-SNAPSHOT", "")
-    s"**Since**: Seahorse $version"
+    s"**Since**: Seahorse ${operation.since.humanReadable}"
   }
 
   private def input(operation: DOperation): String = {

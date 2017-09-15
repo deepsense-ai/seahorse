@@ -6,9 +6,18 @@ description: Count Vectorizer
 usesMathJax: true
 includeOperationsMenu: true
 ---
-Extracts a vocabulary from a given collection of documents and generates a vector of token counts for each.
+Extracts the vocabulary from a given collection of documents and generates a vector
+of token counts for each document.
 
-This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.feature.CountVectorizer">org.apache.spark.ml.feature.CountVectorizer documentation</a>.
+This operation is ported from Spark ML.
+
+
+For a comprehensive introduction, see
+<a target="_blank" href="https://spark.apache.org/docs/1.6.0/ml-features.html#countvectorizer">Spark documentation</a>.
+
+
+For scala docs details, see
+<a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.feature.CountVectorizer">org.apache.spark.ml.feature.CountVectorizer documentation</a>.
 
 **Since**: Seahorse 1.0.0
 
@@ -41,7 +50,7 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 </tr>
 </thead>
 <tbody>
-    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>The output DataFrame.</td></tr><tr><td><code>1</code></td><td><code><a href="../classes/transformer.html">Transformer</a></code></td><td>A Transformer that allows to apply the operation on other DataFrames using <a href="transform.html">Transform</a>.</td></tr>
+    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>The output <code>DataFrame</code>.</td></tr><tr><td><code>1</code></td><td><code><a href="../classes/transformer.html">Transformer</a></code></td><td>A <code>Transformer</code> that allows to apply the operation on other<code>DataFrames</code> using a <a href="transform.html">Transform</a>.</td></tr>
 </tbody>
 </table>
 
