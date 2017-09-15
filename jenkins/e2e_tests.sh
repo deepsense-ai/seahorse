@@ -24,6 +24,7 @@ MESOS_SPARK_DOCKER_COMPOSE="testing/mesos-spark-cluster/mesos-cluster.dc.yml"
 function cleanup {
     $SPARK_STANDALONE_MANAGEMENT down
     docker-compose -f $MESOS_SPARK_DOCKER_COMPOSE down
+    (cd deployment/docker-compose ; ./docker-compose $FRONTEND_TAG $BACKEND_TAG logs > docker-compose.log)
     (cd deployment/docker-compose ; ./docker-compose $FRONTEND_TAG $BACKEND_TAG down)
 }
 trap cleanup EXIT
