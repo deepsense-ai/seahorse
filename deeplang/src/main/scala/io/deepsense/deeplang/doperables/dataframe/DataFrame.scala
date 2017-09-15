@@ -14,22 +14,31 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.{StructField, StructType}
 
 import io.deepsense.deeplang.doperables.Report
+import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
 import io.deepsense.deeplang.doperations.exceptions.{ColumnDoesNotExistException, ColumnsDoNotExistException, WrongColumnTypeException}
 import io.deepsense.deeplang.parameters.ColumnType.ColumnType
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
 
-/*
-* @param sparkDataFrame spark representation of data.
-*                       User of this class has to assure that
-*                       sparkDataFrame data fulfills its internal schema.
-*/
-case class DataFrame(sparkDataFrame: sql.DataFrame)
+/**
+ * @param sparkDataFrame Spark representation of data.
+ *                       User of this class has to assure that
+ *                       sparkDataFrame data fulfills its internal schema.
+ * @param inferredMetadata Used only if this instance is used for inference.
+ *                         Contains metadata inferred so far for this instance.
+ */
+case class DataFrame private[dataframe] (
+    sparkDataFrame: sql.DataFrame,
+    override val inferredMetadata: Option[DataFrameMetadata] = None)
   extends DOperable
   with DataFrameReportGenerator
   with DataFrameColumnsGetter {
 
+  type M = DataFrameMetadata
+
   def this() = this(null)
+
+  override def metadata = Option(DataFrameMetadata.fromSchema(sparkDataFrame.schema))
 
   override def save(context: ExecutionContext)(path: String): Unit =
     sparkDataFrame.write.parquet(path)
@@ -95,7 +104,7 @@ object DataFrame {
    * Throws [[WrongColumnTypeException]] if column has different type than expected.
    */
   def assertExpectedColumnType(column: StructField, expectedType: ColumnType): Unit = {
-    val actualType = DataFrameColumnsGetter.sparkColumnTypeToColumnType(column.dataType)
+    val actualType = SparkConversions.sparkColumnTypeToColumnType(column.dataType)
     if (actualType != expectedType) {
       throw WrongColumnTypeException(column.name, actualType, expectedType)
     }

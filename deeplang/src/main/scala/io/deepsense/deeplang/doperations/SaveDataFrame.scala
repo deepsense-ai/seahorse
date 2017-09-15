@@ -47,9 +47,9 @@ case class SaveDataFrame() extends DOperation1To0[DataFrame] {
       context.tenantId,
       name,
       description,
-      "DataFrame",
-      Some(DataObjectReference(uniqueFilename)),
-      Some(DataObjectReport(dataFrameReport.content.toJson.prettyPrint)),
+      dClass = DataFrame.getClass.toString,  // TODO https://codilime.atlassian.net/browse/DS-869
+      data = Some(DataObjectReference(uniqueFilename)),
+      report = Some(DataObjectReport(dataFrameReport.content.toJson.prettyPrint)),
       saved = true)
   }
 

@@ -4,7 +4,7 @@
 
 package io.deepsense.deeplang.doperations.transformations
 
-import io.deepsense.deeplang.ExecutionContext
+import io.deepsense.deeplang.{DMethod1To1, ExecutionContext}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.{Report, Transformation}
 import io.deepsense.deeplang.doperations.exceptions.MathematicalOperationExecutionException
@@ -14,11 +14,14 @@ class MathematicalTransformation(formula: Option[String]) extends Transformation
 
   def this() = this(None)
 
-  override def transform(dataFrame: DataFrame): DataFrame = {
-    try {
-      DataFrame(dataFrame.sparkDataFrame.selectExpr("*", formula.get))
-    } catch {
-      case e: Exception => throw new MathematicalOperationExecutionException(formula.get, Some(e))
+  override val transform = new DMethod1To1[Unit, DataFrame, DataFrame] {
+    override def apply(context: ExecutionContext)(p: Unit)(dataFrame: DataFrame): DataFrame = {
+      val transformedSparkDataFrame = try {
+        dataFrame.sparkDataFrame.selectExpr("*", formula.get)
+      } catch {
+        case e: Exception => throw new MathematicalOperationExecutionException(formula.get, Some(e))
+      }
+      context.dataFrameBuilder.buildDataFrame(transformedSparkDataFrame)
     }
   }
 

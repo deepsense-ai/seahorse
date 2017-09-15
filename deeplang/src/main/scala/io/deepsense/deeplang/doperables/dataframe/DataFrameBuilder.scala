@@ -15,7 +15,7 @@ import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalM
  * DeepSense DataFrame builder. Builder performs basic schema validation.
  * @param sqlContext Spark sql context.
  */
-class DataFrameBuilder private (sqlContext: SQLContext) {
+case class DataFrameBuilder(sqlContext: SQLContext) {
 
   def buildDataFrame(schema: StructType, data: RDD[Row]): DataFrame = {
     val dataFrame: sql.DataFrame = sqlContext.createDataFrame(data, schema)
@@ -33,8 +33,16 @@ class DataFrameBuilder private (sqlContext: SQLContext) {
   def buildDataFrame(sparkDataFrame: sql.DataFrame): DataFrame = {
     DataFrame(sparkDataFrame)
   }
-}
 
-object DataFrameBuilder {
-  def apply(sqlContext: SQLContext): DataFrameBuilder = new DataFrameBuilder(sqlContext)
+  def buildDataFrame(metadata: DataFrameMetadata, data: RDD[Row]): DataFrame = {
+    buildDataFrame(schema = metadata.toSchema, data)
+  }
+
+  /**
+   * @return DataFrame object that can be used _only_ for inference,
+   *         i.e. it contains only metadata of this DataFrame.
+   */
+  def buildDataFrameForInference(metadata: DataFrameMetadata): DataFrame = {
+    DataFrame(null, Some(metadata))
+  }
 }

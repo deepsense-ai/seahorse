@@ -6,9 +6,9 @@ package io.deepsense.deeplang.doperables.dataframe
 
 import scala.annotation.tailrec
 
-import org.apache.spark.sql
 import org.apache.spark.sql.types.StructType
 
+import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
 import io.deepsense.deeplang.doperations.exceptions.{ColumnDoesNotExistException, ColumnsDoNotExistException}
 import io.deepsense.deeplang.parameters.ColumnType.ColumnType
 import io.deepsense.deeplang.parameters._
@@ -18,12 +18,12 @@ trait DataFrameColumnsGetter {
   this: DataFrame =>
 
   /**
-   * Returns name of column basing on selection.
+   * Returns name of column based on selection.
    * Throws [[ColumnDoesNotExistException]] if out-of-range index
    * or non-existing column name is selected.
    */
   def getColumnName(singleColumnSelection: SingleColumnSelection): String =
-    tryGetColumnName(singleColumnSelection).getOrElse{
+    tryGetColumnName(singleColumnSelection).getOrElse {
       throw ColumnDoesNotExistException(singleColumnSelection, this)
     }
 
@@ -54,13 +54,13 @@ trait DataFrameColumnsGetter {
    * Column type by column name.
    */
   def columnType(columnName: String): ColumnType =
-    DataFrameColumnsGetter.sparkColumnTypeToColumnType(sparkDataFrame.schema(columnName).dataType)
+    SparkConversions.sparkColumnTypeToColumnType(sparkDataFrame.schema(columnName).dataType)
 
 
   /**
    * Method useful for generating names for new columns. When we want to add new columns
    * to a dataframe, we need to generate a new name for them assuring that this name is not already
-   * used in the dataframe. Common use case is when we generate new columns' names basing on
+   * used in the dataframe. Common use case is when we generate new columns' names based on
    * existing column name by adding some sort of extension. When new name generated using base
    * column name and extension is already used, we want to add level number.
    * E. g. assume that we have column named 'xyz' and we want to add two new columns, with
@@ -125,7 +125,6 @@ object DataFrameColumnsGetter {
    * Throws [[ColumnsDoNotExistException]] if out-of-range indexes
    * or non-existing column names are selected.
    */
-  // TODO better support for categorical type
   def getColumnNames(
     schema: StructType,
     multipleColumnSelection: MultipleColumnSelection): Seq[String] = {
@@ -134,7 +133,7 @@ object DataFrameColumnsGetter {
     val selectedColumns = for {
       (column, index) <- schema.fields.zipWithIndex
       columnName = column.name
-      columnType = DataFrameColumnsGetter.sparkColumnTypeToColumnType(column.dataType)
+      columnType = SparkConversions.sparkColumnTypeToColumnType(column.dataType)
       selection <- multipleColumnSelection.selections
       if DataFrameColumnsGetter.isFieldSelected(columnName, index, columnType, selection)
     } yield columnName
@@ -201,17 +200,4 @@ object DataFrameColumnsGetter {
       columnIndex >= lowerBound && columnIndex <= upperBound
     case IndexRangeColumnSelection(None, None) => false
   }
-
-  /**
-   * Converts spark's column type used in schemas to column type.
-   */
-  def sparkColumnTypeToColumnType(sparkColumnType: sql.types.DataType): ColumnType =
-    sparkColumnType match {
-      case sql.types.DoubleType => ColumnType.numeric
-      case sql.types.StringType => ColumnType.string
-      case sql.types.BooleanType => ColumnType.boolean
-      case sql.types.TimestampType => ColumnType.timestamp
-      case sql.types.LongType => ColumnType.ordinal
-      case sql.types.IntegerType => ColumnType.categorical
-    }
 }

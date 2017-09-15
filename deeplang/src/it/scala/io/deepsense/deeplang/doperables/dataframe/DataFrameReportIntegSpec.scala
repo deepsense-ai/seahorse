@@ -8,7 +8,7 @@ import java.sql.Timestamp
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
-import org.apache.spark.sql.types._
+import org.apache.spark.sql.types.{Metadata => SparkMetadata, _}
 import org.joda.time.DateTime
 
 import io.deepsense.commons.datetime.DateTimeConverter
@@ -176,7 +176,7 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
       "DataFrame is empty" in {
         val categories = Seq("red", "blue", "green")
         val mapping = CategoriesMapping(categories)
-        val metadata = MappingMetadataConverter.mappingToMetadata(mapping, Metadata.empty)
+        val metadata = MappingMetadataConverter.mappingToMetadata(mapping, SparkMetadata.empty)
         val schema = StructType(Seq(
           StructField("string", StringType),
           StructField("numeric", DoubleType),
@@ -186,7 +186,7 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
           StructField("boolean", BooleanType)))
         val emptyDataFrame = executionContext.dataFrameBuilder.buildDataFrame(
             schema,
-            sparkContext.parallelize(Seq()))
+            sparkContext.parallelize(Seq.empty[Row]))
 
         val report = emptyDataFrame.report
 

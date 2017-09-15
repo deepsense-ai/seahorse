@@ -10,6 +10,7 @@ import org.apache.spark.sql
 import org.apache.spark.sql.{Column, Row}
 
 import io.deepsense.deeplang.DOperation.Id
+import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMetadata
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
 import io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException
@@ -57,7 +58,7 @@ case class Join() extends DOperation2To1[DataFrame, DataFrame, DataFrame] {
     leftJoinColumnNames.foreach { col =>
       DataFrame.assertExpectedColumnType(
         lsdf.schema.apply(col),
-        DataFrameColumnsGetter.sparkColumnTypeToColumnType(rsdf.schema.apply(col).dataType))
+        SparkConversions.sparkColumnTypeToColumnType(rsdf.schema.apply(col).dataType))
     }
 
     logger.debug("Prepare rename columns map")

@@ -37,7 +37,7 @@ Output
 ===========
 Description
 ===========
-Creates a Transformation that adds a new column basing on the mathematical formula provided by the user.
+Creates a Transformation that adds a new column based on the mathematical formula provided by the user.
 The formula grammar is based on SQL expressions. Sample formulas:
 
 - ``MAXIMUM(someColumn1, someColumn2) as col_max``

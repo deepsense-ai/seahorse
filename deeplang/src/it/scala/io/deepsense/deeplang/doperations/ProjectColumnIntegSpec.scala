@@ -41,7 +41,7 @@ class ProjectColumnIntegSpec
   val data = Seq(row1, row2, row3)
 
   "ProjectColumn" should {
-    "select correct columns basing on the column selection" in {
+    "select correct columns based on the column selection" in {
       val projected = projectColumns(Set("z", "b"), Set(1, 2), Set(ColumnType.ordinal))
       val selectedIndices = Set(1, 2, 4) // b a z
       val expectedColumns = selectWithIndices[StructField](selectedIndices, columns)

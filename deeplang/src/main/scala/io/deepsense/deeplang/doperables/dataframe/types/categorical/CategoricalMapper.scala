@@ -10,8 +10,10 @@ import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types.{IntegerType, StringType, StructType}
 import org.joda.time.DateTime
 
-import io.deepsense.deeplang.doperables.dataframe.types.Conversions
-import io.deepsense.deeplang.doperables.dataframe.{DataFrameColumnsGetter, DataFrame, DataFrameBuilder}
+import io.deepsense.deeplang.doperables.dataframe.types.{SparkConversions, Conversions}
+import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMapper.CategoricalMappingsMap
+import io.deepsense.deeplang.doperables.dataframe.types.categorical.MappingMetadataConverter._
+import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder, DataFrameColumnsGetter}
 import io.deepsense.deeplang.parameters.ColumnType
 
 case class CategoricalMapper(dataFrame: DataFrame, dataFrameBuilder: DataFrameBuilder) {
@@ -46,13 +48,13 @@ case class CategoricalMapper(dataFrame: DataFrame, dataFrameBuilder: DataFrameBu
       udf[String, String](identity[String])
     } else {
       Conversions.UdfConverters(
-        DataFrameColumnsGetter.sparkColumnTypeToColumnType(convertFrom.dataType),
+        SparkConversions.sparkColumnTypeToColumnType(convertFrom.dataType),
         ColumnType.string
       )
     }
   }
 
-  private def mapCategoricals(mappings: Map[Int, CategoriesMapping]): RDD[Row] = {
+  private def mapCategoricals(mappings: CategoricalMappingsMap): RDD[Row] = {
     sparkDataFrame.map(r => {
       val seq = Row.unapplySeq(r).get.zipWithIndex
       val mappedSeq = seq.map { case (value, index) =>
@@ -76,17 +78,35 @@ case class CategoricalMapper(dataFrame: DataFrame, dataFrameBuilder: DataFrameBu
 
   private def dataFrameWithMappingMetadata(
       rdd: RDD[Row],
-      mappings: Map[Int, CategoriesMapping]): DataFrame = {
+      mappings: CategoricalMappingsMap): DataFrame = {
     val schema = sparkDataFrame.schema
+    val updatedSchema = CategoricalMapper.categorizedSchema(schema, mappings)
+    dataFrameBuilder.buildDataFrame(updatedSchema, rdd)
+  }
+}
+
+object CategoricalMapper {
+
+  /**
+   * A map from column index to categorical mapping for this column
+   */
+  type CategoricalMappingsMap = Map[Int, CategoriesMapping]
+
+  def categorizedSchema(schema: StructType, mappings: Map[Int, CategoriesMapping]): StructType = {
     val mappedType = schema.iterator.zipWithIndex.map { case (field, index) =>
       mappings
         .get(index)
         .map { m =>
-          val updatedMetadata = MappingMetadataConverter.mappingToMetadata(m, field.metadata)
-          field.copy(metadata = updatedMetadata, dataType = IntegerType)
-        }.getOrElse(field)
+        val updatedMetadata = MappingMetadataConverter.mappingToMetadata(m, field.metadata)
+        field.copy(metadata = updatedMetadata, dataType = IntegerType)
+      }.getOrElse(field)
     }
-    val updatedSchema = StructType(mappedType.toSeq)
-    dataFrameBuilder.buildDataFrame(updatedSchema, rdd)
+    StructType(mappedType.toSeq)
+  }
+
+  def mappingsMapFromSchema(schema: StructType): CategoricalMappingsMap = {
+    schema.zipWithIndex.flatMap {
+      case (field, index) => mappingFromMetadata(field.metadata).map(index -> _)
+    }.toMap
   }
 }

@@ -43,12 +43,10 @@ trait MappingMetadataConverter {
       .build()
 
   /**
-   * Converts mapping to metadata object (by creating a new metadata object).
-   * Stores the mapping under a key 'categorical'. Overwrites previous version
-   * of the mapping in the metadata object (if any).
-   * @param mapping Mapping to be writen to metadata.
+   * @param mapping Mapping to be written to metadata.
    * @return New metadata object (a copy of the input metadata object) with mapping saved
-   *         under a key 'categorical'.
+   *         under a key 'categorical'. Previous version of the mapping in the metadata object
+   *         (if any) are overwritten.
    */
   def mappingToMetadata(mapping: CategoriesMapping): Metadata =
     new MetadataBuilder()

@@ -10,7 +10,7 @@ import org.apache.spark.sql.types.DataType
 import org.apache.spark.sql.{Column, UserDefinedFunction}
 
 import io.deepsense.deeplang.DOperation.Id
-import io.deepsense.deeplang.doperables.dataframe.types.Conversions
+import io.deepsense.deeplang.doperables.dataframe.types.{SparkConversions, Conversions}
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoricalMapper, CategoricalMetadata}
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
 import io.deepsense.deeplang.parameters.ColumnType.ColumnType
@@ -67,10 +67,9 @@ case class ConvertType() extends DOperation1To1[DataFrame, DataFrame] {
 
     columnDataTypes.collect {
       case (columnName, sourceDataType)
-        if DataFrameColumnsGetter.sparkColumnTypeToColumnType(sourceDataType) != targetType =>
-        val converter: UserDefinedFunction = findConverter(
-          dataFrame, columnName, targetType, sourceDataType)
-        columnName -> converter
+        if SparkConversions.sparkColumnTypeToColumnType(sourceDataType) != targetType =>
+          val converter = findConverter(dataFrame, columnName, targetType, sourceDataType)
+          columnName -> converter
     }
   }
 
@@ -79,13 +78,13 @@ case class ConvertType() extends DOperation1To1[DataFrame, DataFrame] {
       columnName: String,
       targetType: ColumnType,
       sourceDataType: DataType): UserDefinedFunction = {
-    val sourceColumnType = DataFrameColumnsGetter.sparkColumnTypeToColumnType(sourceDataType)
+    val sourceColumnType = SparkConversions.sparkColumnTypeToColumnType(sourceDataType)
     if (sourceColumnType == ColumnType.categorical) {
       val mapping = CategoricalMetadata(dataFrame)
       Conversions.generateCategoricalConversion(mapping.mapping(columnName), targetType)
     } else {
       Conversions.UdfConverters(
-        (DataFrameColumnsGetter.sparkColumnTypeToColumnType(sourceDataType), targetType))
+        (SparkConversions.sparkColumnTypeToColumnType(sourceDataType), targetType))
     }
   }
 
