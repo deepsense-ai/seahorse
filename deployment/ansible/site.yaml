@@ -10,10 +10,7 @@
 
   tasks:
     - include: tasks/create_download_dir.yml
-    - include: tasks/artifactory.yml artifactid={{es_artifact_id}} version={{es_build_version}}
     - include: tasks/artifactory.yml artifactid={{wm_artifact_id}} version={{wm_build_version}}
-    - include: tasks/artifactory.yml artifactid={{ge_artifact_id}} version={{ge_build_version}}
-    - include: tasks/artifactory.yml artifactid={{dms_artifact_id}} version={{dms_build_version}}
     - include: tasks/download_supervisor.yml
 
 - name: Perform cassandra migration
@@ -24,10 +21,6 @@
     - vars/deployment.yml
 
   roles:
-    - { role: cassandra_migration,
-        cql_dir: "{{es_cql_dir}}",
-        module: "entitystorage"
-      }
     - { role: cassandra_migration,
         cql_dir: "{{wm_cql_dir}}",
         module: "workflowmanager"
@@ -47,19 +40,8 @@
 
   roles:
     - supervisor
-    - { role: entitystorage,
-        install_dir: "{{es_install_dir}}",
-        akka_host: "{{master_host}}",
-        es_auth_service_password: "{{es_service_password}}"
-      }
     - { role: workflowmanager,
         install_dir: "{{wm_install_dir}}",
         akka_host: "{{master_host}}",
         wm_auth_service_password: "{{wm_service_password}}"
-      }
-    - { role: graphexecutor,
-        install_dir: "{{ge_install_dir}}"
-      }
-    - { role: deploymodel,
-        install_dir: "{{dms_install_dir}}",
       }

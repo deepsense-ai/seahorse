@@ -37,11 +37,7 @@ if [ "$ROLES_COUNT" == 5 ]; then
   workflows:list
   workflows:delete
   workflows:launch
-  workflows:abort
-  entities:get
-  entities:create
-  entities:update
-  entities:delete")
+  workflows:abort")
 
   # Add an "admin" role. Keystone interprets "admin" role in a special way
   keystone role-create --name admin
@@ -53,9 +49,7 @@ if [ "$ROLES_COUNT" == 5 ]; then
   # Create a special tenant "service" for DS.io service
   keystone tenant-create --name service
 
-  # Create special users for entity storage and workflow manager service
-  keystone user-create --name entity-storage --tenant service --pass $ES_PASSWORD
-  keystone user-role-add --user entity-storage --role admin --tenant service
+  # Create special users for workflow manager service
   keystone user-create --name workflow-manager --tenant service --pass $WM_PASSWORD
   keystone user-role-add --user workflow-manager --role admin --tenant service
 
