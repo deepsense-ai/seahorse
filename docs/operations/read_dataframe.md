@@ -8,8 +8,11 @@ includeOperationsMenu: true
 
 Reads a `DataFrame` from a specified data storage.
 
-It supports reading files (in CSV, JSON or PARQUET formats) both from local file system and
-HDFS (it supports reading Hadoop-compatible partitioned files).
+It supports reading files (in CSV, JSON or PARQUET formats) from HDFS (it supports reading Hadoop-compatible partitioned files).
+Path to the file needs to be prefixed with ``hdfs://``.
+
+CSV and JSON files can be also loaded from local computer using [Files Library](../seahorse_editor_overview.html#files-library).
+File uploaded to the library can be selected with the widget in the ``source`` parameter.
 
 In addition, HTTP/HTTPS and FTP URLs are supported. E.g. specifying
 ``https://s3.amazonaws.com/workflowexecutor/examples/data/transactions.csv`` as the ``source`` parameter will result

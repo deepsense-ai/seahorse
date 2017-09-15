@@ -10,8 +10,13 @@ includeOperationsMenu: true
 The `Write DataFrame` operation saves a [DataFrame](../classes/dataframe.html) to a specified data
 storage.
 
-It supports writing files (in CSV, JSON or PARQUET formats) both to the local file system and HDFS.
+It supports writing files (in CSV, JSON or PARQUET formats) to HDFS.
 The output is a Hadoop-compatible partitioned file.
+Path to the file needs to be prefixed with ``hdfs://``.
+
+CSV and JSON files can be also saved to [Files Library](../seahorse_editor_overview.html#files-library) using widget in the ``output file`` parameter.
+Files in the library can be downloaded to local computer.
+
 It is possible to customize the file format (e.g. the values separator in CSV format)
 by setting appropriate parameters.
 

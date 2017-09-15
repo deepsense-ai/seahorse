@@ -98,16 +98,31 @@ on the output port of the node representing the operation on the on **Workflow C
 
 ### Workflow Operations Menu
 
-This panel allows the users to:
+This panel allows the user to:
 
 * Export workflow as a JSON file.
 * Start/Stop Editing. This starts/stops the interactive session on Apache Spark.
 * Clear. Removes all the operations from the **Workflow Canvas**.
 * Run. Executes current workflow.
 Available only if the Seahorse in in the Editing Mode.
+* Library. Opens the [Files Library](#files-library).
 * Documentation. A link to the Seahorse documentation.
 
 <div class="centered-container" markdown="1">
   ![Top level menu](./img/editor_top_level_menu.png){: .centered-image .img-responsive}
   *Top level menu*
 </div>
+
+### Files Library
+
+**Files Library** allows the user to upload files from their computer to Seahorse.
+Files uploaded this way can be then used by [Read DataFrame](operations/read_dataframe.html) operation.
+The user can also write DataFrames to the **Files Library** using [Write DataFrame](operations/write_dataframe.html) operation,
+and then download created files to their computer.
+
+<div class="centered-container" markdown="1">
+  ![Files library](./img/editor_files_library.png){: .centered-image .img-responsive}
+  *Files Library*
+</div>
+
+
