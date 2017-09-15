@@ -58,7 +58,8 @@ class InnerWorkflowExecutorImpl(override val graphReader: GraphReader)
     statefulWorkflow.launch(nodesToExecute)
 
     statefulWorkflow.currentExecution.executionReport.error.map { e =>
-      throw CustomOperationExecutionException(e.title + "\n" + e.message.getOrElse(""))
+      throw CustomOperationExecutionException(
+        e.title + "\n" + e.message.getOrElse("") + "\n" + e.details.values.mkString("\n"))
     }
 
     statefulWorkflow.nodeStarted(innerWorkflow.source.id)

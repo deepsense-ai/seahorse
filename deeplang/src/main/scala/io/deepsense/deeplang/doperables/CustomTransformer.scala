@@ -20,6 +20,7 @@ import org.apache.spark.sql.types.StructType
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperations.exceptions.CustomOperationExecutionException
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.deeplang.params.{ParamMap, Param}
 import io.deepsense.deeplang.params.custom.{PublicParam, InnerWorkflow}
@@ -44,7 +45,15 @@ case class CustomTransformer(
         Vector(DKnowledge(DataFrame.forInference(schema))))
     ))
 
-    workflow.graph.inferKnowledge(inferCtx, initialKnowledge)
+    val graphKnowledge = workflow.graph.inferKnowledge(inferCtx, initialKnowledge)
+
+    if (graphKnowledge.errors.nonEmpty) {
+      throw CustomOperationExecutionException(
+        "Inner workflow contains errors:\n" +
+          graphKnowledge.errors.values.flatten.map(_.toString).mkString("\n"))
+    }
+
+    graphKnowledge
       .getKnowledge(workflow.sink.id)(0).asInstanceOf[DKnowledge[DataFrame]].single.schema
   }
 
