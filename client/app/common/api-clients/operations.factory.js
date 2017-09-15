@@ -1,33 +1,7 @@
 'use strict';
 
 /* @ngInject */
-function OperationsFactory(OperationsApiClient, $q, $log) {
-  const CATEGORY_ICONS = {
-    '5a39e324-15f4-464c-83a5-2d7fba2858aa': 'fa-exchange', // Input/Output
-    '3fcc6ce8-11df-433f-8db3-fa1dcc545ed8': 'fa-bolt', // Transformation
-    '6c730c11-9708-4a84-9dbd-3845903f32ac': 'fa-pencil-square-o', // Data Manipulation
-    'c80397a8-7840-4bdb-83b3-dc12f1f5bc3c': 'fa-line-chart', // Regression
-    'ff13cbbd-f4ec-4df3-b0c3-f6fd4b019edf': 'fa-tag', // Classification
-    'a6114fc2-3144-4828-b350-4232d0d32f91': 'fa-filter', // Filtering
-    '5d6ed17f-7dc5-4b50-954c-8b2bbe6da2fd': 'fa-adjust', // Clustering
-    'daf4586c-4107-4aab-bfab-2fe4e1652784': 'fa-star', // Recommendation
-    'a112511e-5433-4ed2-a675-098a14a63c00': 'fa-sort-amount-desc', // Dimensionality reduction
-    'b5d34823-3f2c-4a9a-9114-3c126ce8dfb6': 'fa-tachometer' // Model evaluation
-  };
-
-  const OPERATION_ICONS = {
-    '0c2ff818-977b-11e5-8994-feff819cdc9f': 'fa-gears', // Fit
-    '643d8706-24db-4674-b5b4-10b5129251fc': 'fa-bolt', // Transform
-    '1cb153f1-3731-4046-a29b-5ad64fde093f': 'fa-gears fa-bolt', // Fit + Transform
-    'a88eaf35-9061-4714-b042-ddd2049ce917': 'fa-tachometer', // Evaluate
-    '9163f706-eaaf-46f6-a5b0-4114d92032b7': 'fa-table', // Grid Search
-    'e76ca616-0322-47a5-b390-70c9668265dd': 'sa-python', // Python Notebook
-    '89198bfd-6c86-40de-8238-68f7e0a0b50e': 'sa-r', // R Notebook
-    '08752b37-3f90-4b8d-8555-e911e2de5662': 'fa-exclamation-circle' // Unknown operation
-  };
-
-  const DEFAULT_ICON = 'fa-square';
-
+function OperationsFactory(OperationsApiClient, OperationsHierarchyService, $q, $log) {
   const SINK_OPERATION_ID = 'e652238f-7415-4da6-95c6-ee33808561b2';
   const SOURCE_OPERATION_ID = 'f94b04d7-ec34-42f7-8100-93fe235c89f8';
 
@@ -49,52 +23,6 @@ function OperationsFactory(OperationsApiClient, $q, $log) {
       }
       if (category.catalog) {
         createCategoryMap(category.catalog, category.id);
-      }
-    }
-  };
-
-  var updateItemIcons = function(category) {
-    return function(item) {
-      if (item.id in OPERATION_ICONS) {
-        item.icon = OPERATION_ICONS[item.id];
-      } else {
-        item.icon = category.icon;
-      }
-    };
-  };
-
-  var updateCategoryIcons = function updateCategoryIcons() {
-    for (let id in categoryMap) {
-      let category = categoryMap[id];
-      if (CATEGORY_ICONS[id]) {
-        category.icon = CATEGORY_ICONS[id];
-      } else {
-        let parentId = category.parentId;
-        while (parentId && categoryMap[parentId]) {
-          if (CATEGORY_ICONS[parentId]) {
-            category.icon = CATEGORY_ICONS[parentId];
-            break;
-          }
-          parentId = categoryMap[parentId].parentId;
-        }
-        if (!category.icon) {
-          category.icon = DEFAULT_ICON;
-        }
-      }
-      if (category.items) {
-        _.forEach(category.items, updateItemIcons(category));
-      }
-    }
-  };
-
-  var updateOperationIcons = function updateOperationIcons() {
-    for (let id in operationsData) {
-      let operation = operationsData[id];
-      let category = categoryMap[operation.category];
-      if (id in OPERATION_ICONS) {
-        operation.icon = OPERATION_ICONS[id];
-      } else {
-        operation.icon = category ? category.icon : DEFAULT_ICON;
       }
     }
   };
@@ -133,8 +61,6 @@ function OperationsFactory(OperationsApiClient, $q, $log) {
         catalogData = data.catalog;
         categoryMap = {};
         createCategoryMap(catalogData);
-        updateCategoryIcons();
-        updateOperationIcons();
         Object.freeze(catalogData);
         Object.freeze(categoryMap);
         return catalogData;
@@ -237,6 +163,14 @@ function OperationsFactory(OperationsApiClient, $q, $log) {
         items: catalog.items.filter(filter)
       });
     }).filter((catalog) => catalog.items.length || catalog.catalog.length);
+  };
+
+  service.getFilterForTypeQualifier = function(inputQualifier) {
+    return (item) => {
+      return service.get(item.id).ports.input.filter((port) =>
+        OperationsHierarchyService.IsDescendantOf(inputQualifier, port.typeQualifier)
+      ).length;
+    };
   };
 
   return service;

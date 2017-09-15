@@ -136,7 +136,9 @@ class EditorController {
         newNodeData.nodeId = endpoint.getParameter('nodeId');
         newNodeData.portIndex = endpoint.getParameter('portIndex');
         newNodeData.typeQualifier = this.workflow.getNodeById(newNodeData.nodeId).output[newNodeData.portIndex].typeQualifier;
-        this.categories = this.Operations.filterCatalog(this.Operations.getCatalog(), this.getFilterForCatalog(newNodeData.typeQualifier));
+        const catalog = this.Operations.getCatalog();
+        const filterForCatalog = this.Operations.getFilterForTypeQualifier(newNodeData.typeQualifier);
+        this.categories = this.Operations.filterCatalog(catalog, filterForCatalog);
       } else {
         this.categories = this.Operations.getCatalog();
       }
@@ -180,15 +182,6 @@ class EditorController {
       this.workflow.addEdge(newEdge);
     }
     this.newNodeData = null;
-  }
-
-  //TODO move to service that is aware of OperationsHierarchy Service and Operation and GraphNode??
-  getFilterForCatalog(inputQualifier) {
-    return (item) => {
-      return this.Operations.get(item.id).ports.input.filter((port) =>
-        this.OperationsHierarchyService.IsDescendantOf(inputQualifier, port.typeQualifier)
-      ).length;
-    };
   }
 
   //TODO move to service that is aware of OperationsHierarchy Service and GraphNode

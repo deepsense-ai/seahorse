@@ -204,7 +204,9 @@ class AdapterService {
 
       jsPlumbPort.bind('mouseover', (endpoint) => {
         this.onMouseOver(endpoint.canvas, port);
-        jsPlumbPort.addClass('port-active');
+        if (endpoint.isSource) {
+          jsPlumbPort.addClass('port-active');
+        }
       });
 
       jsPlumbPort.bind('mouseout', () => {

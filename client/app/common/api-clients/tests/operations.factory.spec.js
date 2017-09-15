@@ -59,6 +59,9 @@ describe('Operations', () => {
     require('./../operations.factory.js')
       .inject(module);
 
+    require('./../operations-hierarchy.service.js')
+      .inject(module);
+
     angular.mock.module('test');
     angular.mock.module(($provide) => {
       $provide.constant('config', {

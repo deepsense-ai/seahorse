@@ -76,10 +76,11 @@ const INPUT_STYLE = {
 };
 
 class GraphStyleService {
-  constructor(OperationsHierarchyService) {
+  constructor(OperationsHierarchyService, Operations) {
     'ngInject';
 
     this.OperationsHierarchyService = OperationsHierarchyService;
+    this.Operations = Operations;
   }
 
   getStyleForPort(port) {
@@ -99,6 +100,7 @@ class GraphStyleService {
         stroke: color
       });
 
+      portStyle.isSource = this.canPortBeSource(port);
       portStyle.connectorStyle = connectorStyle;
       portStyle.connectorHoverStyle = connectorHoverStyle;
     }
@@ -109,6 +111,14 @@ class GraphStyleService {
     }
 
     return portStyle;
+  }
+
+  canPortBeSource(port) {
+    const catalog = this.Operations.getCatalog();
+    const filter = this.Operations.getFilterForTypeQualifier(port.typeQualifier);
+    const categories = this.Operations.filterCatalog(catalog, filter);
+
+    return categories.length > 0;
   }
 
   getPortEndingTypeForQualifier(typeQualifier) {
