@@ -17,58 +17,61 @@
 import sbt._
 
 object Version {
-  val akka               = "2.3.4-spark"
-  val amazonS3           = "1.10.16"
-  val spark              = "1.4.0"
-  val hadoop             = "2.6.0"
-  val apacheCommons      = "3.3.+"
-  val sprayJson          = "1.3.1"
-  val mockito            = "1.10.19"
-  val nsscalaTime        = "1.8.0"
-  val scala              = "2.10.5"
-  val scalacheck         = "1.12.2"
-  val scalatest          = "3.0.0-SNAP4"
-  val spray              = "1.3.3"
-  val scoverage          = "1.0.4"
-  val cassandra          = "2.1.5"
+  val akka = "2.3.4-spark"
+  val amazonS3 = "1.10.16"
+  val apacheCommons = "3.3.+"
+  val cassandra = "2.1.5"
   val cassandraConnector = "1.4.0"
-  val cassandraUnit      = "2.1.3.1"
+  val cassandraUnit = "2.1.3.1"
+  val hadoop = "2.6.0"
+  val mockito = "1.10.19"
+  val nsscalaTime = "1.8.0"
+  val scala = "2.10.5"
+  val scalacheck = "1.12.2"
+  val scalatest = "3.0.0-SNAP4"
+  val scoverage = "1.0.4"
+  val spark = "1.4.0"
+  val spray = "1.3.3"
+  val sprayJson = "1.3.1"
 }
 
 object Library {
-  val akka    = (name: String) => "org.spark-project.akka"    %% s"akka-$name"               % Version.akka
-  val spark   = (name: String) => "org.apache.spark"          %% s"spark-$name"              % Version.spark
-  val spray   = (name: String) => "io.spray"                  %% s"spray-$name"              % Version.spray
-  val hadoop  = (name: String) => "org.apache.hadoop"          % s"hadoop-$name"             % Version.hadoop
+  val akka = (name: String) => "org.spark-project.akka" %% s"akka-$name" % Version.akka
+  val spark = (name: String) => "org.apache.spark" %% s"spark-$name" % Version.spark
+  val spray = (name: String) => "io.spray" %% s"spray-$name" % Version.spray
+  val hadoop = (name: String) => "org.apache.hadoop" % s"hadoop-$name" % Version.hadoop
 
-  val akkaActor          = akka("actor")
-  val akkaTestkit        = akka("testkit")
-  val amazonS3           = "com.amazonaws"                     % "aws-java-sdk-s3"           % Version.amazonS3 exclude("com.fasterxml.jackson.core", "jackson-databind")
-  val apacheCommons      = "org.apache.commons"                % "commons-lang3"             % Version.apacheCommons
-  val log4JExtras        = "log4j"                             % "apache-log4j-extras"       % "1.2.17"
-  val nscalaTime         = "com.github.nscala-time"           %% "nscala-time"               % Version.nsscalaTime
-  val mockitoCore        = "org.mockito"                       % "mockito-core"              % Version.mockito
-  val scalacheck         = "org.scalacheck"                   %% "scalacheck"                % Version.scalacheck
-  val slf4j              = "org.slf4j"                         % "slf4j-api"                 % "1.7.12"
-  val slf4jLog4j         = "org.slf4j"                         % "slf4j-log4j12"             % "1.7.12"
-  val sprayCan           = spray("can")
-  val sprayClient        = spray("client")
-  val sprayHttpx         = spray("httpx")
-  val sprayJson          = "io.spray"                         %% "spray-json"                % Version.sprayJson
-  val scalaReflect       = "org.scala-lang"                    % "scala-reflect"             % Version.scala
-  val scalatest          = "org.scalatest"                    %% "scalatest"                 % Version.scalatest
-  val scopt              = "com.github.scopt"                 %% "scopt"                     % "3.3.0"
-  val scoverage          = "org.scoverage"                    %% "scalac-scoverage-runtime"  % "1.0.4"
-  val sparkCore          = spark("core")
-  val sparkCSV           = "com.databricks"                   %% "spark-csv"                 % "1.2.0"
-  val sparkMLLib         = spark("mllib")
-  val sparkSql           = spark("sql")
-  val hadoopAWS          = hadoop("aws")
-  val hadoopClient       = hadoop("client")
-  val hadoopCommon       = hadoop("common")
-  val cassandra          = "com.datastax.cassandra"            % "cassandra-driver-core"     % Version.cassandra
-  val cassandraConnector = "com.datastax.spark"               %% "spark-cassandra-connector" % Version.cassandraConnector
-  val cassandraUnit      = "org.cassandraunit"                 % "cassandra-unit"            % Version.cassandraUnit
+  val akkaActor = akka("actor")
+  val akkaTestkit = akka("testkit")
+  val amazonS3 = "com.amazonaws" % "aws-java-sdk-s3" %
+    Version.amazonS3 exclude("com.fasterxml.jackson.core", "jackson-databind")
+  val apacheCommons = "org.apache.commons" % "commons-lang3" % Version.apacheCommons
+  val cassandra = "com.datastax.cassandra" % "cassandra-driver-core" % Version.cassandra
+  val cassandraConnector = "com.datastax.spark" %% "spark-cassandra-connector" %
+    Version.cassandraConnector
+  val cassandraUnit = "org.cassandraunit" % "cassandra-unit" % Version.cassandraUnit
+  val hadoopAWS = hadoop("aws")
+  val hadoopClient = hadoop("client")
+  val hadoopCommon = hadoop("common")
+  val log4JExtras = "log4j"                             % "apache-log4j-extras"       % "1.2.17"
+  val nscalaTime = "com.github.nscala-time" %% "nscala-time" % Version.nsscalaTime
+  val mockitoCore = "org.mockito" % "mockito-core" % Version.mockito
+  val rabbitmq = "com.thenewmotion.akka" %% "akka-rabbitmq" % "1.2.4"
+  val scalacheck = "org.scalacheck" %% "scalacheck" % Version.scalacheck
+  val slf4j = "org.slf4j" % "slf4j-api" % "1.7.12"
+  val slf4jLog4j = "org.slf4j" % "slf4j-log4j12" % "1.7.12"
+  val sparkCSV = "com.databricks" %% "spark-csv" % "1.2.0"
+  val sprayCan = spray("can")
+  val sprayClient = spray("client")
+  val sprayHttpx = spray("httpx")
+  val sprayJson = "io.spray" %% "spray-json" % Version.sprayJson
+  val scalaReflect = "org.scala-lang" % "scala-reflect" % Version.scala
+  val scalatest = "org.scalatest" %% "scalatest" % Version.scalatest
+  val scopt = "com.github.scopt" %% "scopt" % "3.3.0"
+  val scoverage = "org.scoverage" %% "scalac-scoverage-runtime" % "1.0.4"
+  val sparkCore = spark("core")
+  val sparkMLLib = spark("mllib")
+  val sparkSql = spark("sql")
 }
 
 object Dependencies {
@@ -78,7 +81,8 @@ object Dependencies {
   val resolvers = Seq(
     "typesafe.com" at "http://repo.typesafe.com/typesafe/repo/",
     "sonatype.org" at "https://oss.sonatype.org/content/repositories/releases",
-    "spray.io"     at "http://repo.spray.io"
+    "spray.io"     at "http://repo.spray.io",
+    "The New Motion Public Repo" at "http://nexus.thenewmotion.com/content/groups/public/"
   )
 
   val commons = Seq(
@@ -127,6 +131,8 @@ object Dependencies {
 
   val workflowexecutor = Seq(
     scopt,
-    sprayClient
-  ) ++ Seq(sparkCore, sparkSql).map(_ % Provided) ++ Seq(akkaTestkit, mockitoCore, scalatest).map(_ % s"$Test,it")
+    sprayClient,
+    rabbitmq
+  ) ++ Seq(sparkCore, sparkSql).map(_ % Provided) ++
+    Seq(akkaTestkit, mockitoCore, scalatest).map(_ % s"$Test,it")
 }
