@@ -11,7 +11,12 @@ import java.util.UUID
 /**
  * Experiment model.
  */
-case class Experiment(id: Experiment.Id, name: String, description: Option[String])
+case class Experiment(
+    id: Experiment.Id,
+    name: String,
+    description: String = "",
+    graph: Graph = Graph())
+  extends BaseExperiment(name, description, graph)
 
 object Experiment {
 

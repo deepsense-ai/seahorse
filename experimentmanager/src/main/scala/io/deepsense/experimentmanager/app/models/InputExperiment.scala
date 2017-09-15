@@ -7,6 +7,7 @@
 package io.deepsense.experimentmanager.app.models
 
 /**
- * Input experiment. Experiment Manager input parameter.
+ * An experiment's representation used when creating a new experiment.
  */
-case class InputExperiment(name: String, description: Option[String])
+case class InputExperiment(name: String, description: String = "", graph: Graph = Graph())
+  extends BaseExperiment(name, description, graph)

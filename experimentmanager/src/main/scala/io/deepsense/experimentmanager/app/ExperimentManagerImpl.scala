@@ -15,7 +15,7 @@ import scala.concurrent._
 import com.google.inject.Inject
 
 import io.deepsense.experimentmanager.app.models.Experiment.{Id, Status}
-import io.deepsense.experimentmanager.app.models.{Experiment, InputExperiment, Node}
+import io.deepsense.experimentmanager.app.models.{Experiment, Graph, InputExperiment, Node}
 
 /**
  * Implementation of Experiment Manager (currently a mock)
@@ -23,9 +23,9 @@ import io.deepsense.experimentmanager.app.models.{Experiment, InputExperiment, N
 class ExperimentManagerImpl @Inject()(implicit executionContext: ExecutionContext)
   extends ExperimentManager {
   private val experiments: mutable.Set[Experiment] = mutable.Set(
-    Experiment(UUID.randomUUID(), "A mocked experiment", Some(s"A mocked experiment1")),
-    Experiment(UUID.randomUUID(), "A mocked experiment", Some(s"A mocked experiment2")),
-    Experiment(UUID.randomUUID(), "A mocked experiment", Some(s"A mocked experiment3")))
+    Experiment(UUID.randomUUID(), "A mocked experiment", "A mocked experiment1", Graph()),
+    Experiment(UUID.randomUUID(), "A mocked experiment", "A mocked experiment2", Graph()),
+    Experiment(UUID.randomUUID(), "A mocked experiment", "A mocked experiment3", Graph()))
 
   override def get(id: Id): Future[Option[Experiment]] = future {
     experiments.find(_.id == id)
@@ -57,8 +57,8 @@ class ExperimentManagerImpl @Inject()(implicit executionContext: ExecutionContex
     experiment
   }
 
-  override def create(experiment: InputExperiment): Future[Experiment] = future {
-    val created = Experiment(UUID.randomUUID(), experiment.name, experiment.description)
+  override def create(input: InputExperiment): Future[Experiment] = future {
+    val created = Experiment(UUID.randomUUID(), input.name, input.description, input.graph)
     experiments += created
     created
   }

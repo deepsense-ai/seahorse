@@ -11,7 +11,7 @@ import java.util.UUID
 import spray.httpx.SprayJsonSupport
 import spray.json._
 
-import io.deepsense.experimentmanager.app.models.{Experiment, InputExperiment, Node}
+import io.deepsense.experimentmanager.app.models.{Graph, Experiment, InputExperiment, Node}
 import io.deepsense.experimentmanager.app.rest.actions.{AbortAction, Action, LaunchAction}
 
 /**
@@ -28,8 +28,9 @@ object RestJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
     }
   }
 
-  implicit val experimentFormat = jsonFormat3(Experiment.apply)
-  implicit val inputExperimentFormat = jsonFormat2(InputExperiment.apply)
+  implicit val graphFormat = jsonFormat0(Graph.apply)
+  implicit val experimentFormat = jsonFormat4(Experiment.apply)
+  implicit val inputExperimentFormat = jsonFormat3(InputExperiment.apply)
 
   implicit object NodeIdFormat extends RootJsonFormat[Node.Id] {
     override def write(obj: Node.Id) = JsString(obj.value.toString)
