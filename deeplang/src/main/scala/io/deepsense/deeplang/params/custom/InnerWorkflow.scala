@@ -21,11 +21,12 @@ import spray.json.JsObject
 import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.doperations.custom.{Sink, Source}
 import io.deepsense.graph.DeeplangGraph.DeeplangNode
-import io.deepsense.graph.{DeeplangGraph}
+import io.deepsense.graph.{Node, DeeplangGraph}
 
 case class InnerWorkflow(
    graph: DeeplangGraph,
-   thirdPartyData: JsObject) {
+   thirdPartyData: JsObject,
+   publicParams: List[PublicParam] = List.empty) {
 
   require(findNodeOfType(Source.id).isDefined, "Inner workflow must have source node")
   require(findNodeOfType(Sink.id).isDefined, "Inner workflow must have sink node")
@@ -38,3 +39,5 @@ case class InnerWorkflow(
   }
 
 }
+
+case class PublicParam(nodeId: Node.Id, paramName: String, publicName: String)
