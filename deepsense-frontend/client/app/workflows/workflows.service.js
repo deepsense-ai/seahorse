@@ -54,11 +54,12 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
         });
       });
 
-      $rootScope.$on('ServerCommunication.MESSAGE.heartbeat', () => {
+      const unregister = $rootScope.$on('ServerCommunication.MESSAGE.heartbeat', (event, data) => {
         const workflow = this.getRootWorkflow();
-        if(workflow.sessionStatus !== 'running_and_ready') {
+        if(data.sessionId === workflow.id && workflow.sessionStatus !== 'running_and_ready') {
           console.log('WorkflowService', 'Received first heartbeat. Executor is running and ready');
           workflow.sessionStatus = SessionStatus.RUNNING_AND_READY;
+          unregister();
         }
       });
 
