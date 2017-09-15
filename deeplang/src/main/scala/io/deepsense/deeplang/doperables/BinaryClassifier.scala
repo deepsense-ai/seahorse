@@ -4,6 +4,5 @@
 
 package io.deepsense.deeplang.doperables
 
-import io.deepsense.deeplang.DOperable
+trait BinaryClassifier extends Classifier
 
-trait BinaryClassifier extends DOperable
