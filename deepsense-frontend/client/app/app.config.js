@@ -17,7 +17,6 @@ function AppConfig($urlRouterProvider, $compileProvider, toastrConfig, config) {
       'warning': 'toast-warning'
     }
   });
-  $compileProvider.debugInfoEnabled(config.debugInfoEnabled);
   $urlRouterProvider.otherwise('/');
 }
 

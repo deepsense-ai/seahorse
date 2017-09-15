@@ -17,6 +17,5 @@ angular.module('ds.lab').constant('config', {
   'socketConnectionHost': 'http://localhost:15674/',
   'socketReconnectionInterval': 1000,
   'mqUser': 'guest',
-  'mqPass': 'guest',
-  'debugInfoEnabled': true
+  'mqPass': 'guest'
 });
