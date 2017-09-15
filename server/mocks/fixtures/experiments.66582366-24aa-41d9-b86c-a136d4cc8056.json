@@ -2,133 +2,133 @@
   "experiment": {
     "name": "Location Attractiveness",
     "state": {
-      "status": "DRAFT",
+      "status": "COMPLETED",
       "error": null,
       "nodes": {
         "86cc0a8e-5198-4004-b6a0-76823da71f2a": {
           "ended": null,
           "results": null,
           "progress": null,
-          "status": "DRAFT",
+          "status": "COMPLETED",
           "started": null
         },
         "d4772acf-0867-4c06-9bae-85b6cbd68c40": {
           "ended": null,
           "results": null,
           "progress": null,
-          "status": "DRAFT",
+          "status": "COMPLETED",
           "started": null
         },
         "c3cf202c-9035-4e11-851c-7c4869be0ed3": {
           "ended": null,
           "results": null,
           "progress": null,
-          "status": "DRAFT",
+          "status": "COMPLETED",
           "started": null
         },
         "721ca7fd-77cb-441e-8e09-1ca8dbdc9d02": {
           "ended": null,
           "results": null,
           "progress": null,
-          "status": "DRAFT",
+          "status": "COMPLETED",
           "started": null
         },
         "b8b4af03-ff57-4beb-8ace-ef64e9081119": {
           "ended": null,
           "results": null,
           "progress": null,
-          "status": "DRAFT",
+          "status": "COMPLETED",
           "started": null
         },
         "92b0bf0b-58e9-4389-b995-a8709fd9fce1": {
           "ended": null,
           "results": null,
           "progress": null,
-          "status": "DRAFT",
+          "status": "COMPLETED",
           "started": null
         },
         "846ef527-ac65-445e-8bcc-a86f9e32d4d0": {
           "ended": null,
           "results": null,
           "progress": null,
-          "status": "DRAFT",
+          "status": "COMPLETED",
           "started": null
         },
         "74900904-06d8-4372-9500-317c785dedd9": {
           "ended": null,
           "results": null,
           "progress": null,
-          "status": "DRAFT",
+          "status": "COMPLETED",
           "started": null
         },
         "46f7225b-5a36-4056-afc9-4a5f8794044f": {
           "ended": null,
           "results": null,
           "progress": null,
-          "status": "DRAFT",
+          "status": "COMPLETED",
           "started": null
         },
         "148a8ce9-5585-43bc-a562-96e1a30236e6": {
           "ended": null,
           "results": null,
           "progress": null,
-          "status": "DRAFT",
+          "status": "COMPLETED",
           "started": null
         },
         "b3597790-732c-4664-a203-da29bd9b8688": {
           "ended": null,
           "results": null,
           "progress": null,
-          "status": "DRAFT",
+          "status": "COMPLETED",
           "started": null
         },
         "6a27687a-dd30-4245-86bc-7cf4db670eab": {
           "ended": null,
           "results": null,
           "progress": null,
-          "status": "DRAFT",
+          "status": "COMPLETED",
           "started": null
         },
         "ad3c82f3-3afa-4fd6-b1ee-075180914592": {
           "ended": null,
           "results": null,
           "progress": null,
-          "status": "DRAFT",
+          "status": "COMPLETED",
           "started": null
         },
         "fe185651-9489-4aee-97bf-16a0bbc70661": {
           "ended": null,
           "results": null,
           "progress": null,
-          "status": "DRAFT",
+          "status": "COMPLETED",
           "started": null
         },
         "d2dd9574-1a76-4c87-ae4e-aba0b959a0cc": {
           "ended": null,
           "results": null,
           "progress": null,
-          "status": "DRAFT",
+          "status": "COMPLETED",
           "started": null
         },
         "c932363d-e0a3-4243-a306-8689d573f66a": {
           "ended": null,
           "results": null,
           "progress": null,
-          "status": "DRAFT",
+          "status": "COMPLETED",
           "started": null
         },
         "9c7c8ee0-a8bb-4727-8b64-433cf18750aa": {
           "ended": null,
           "results": null,
           "progress": null,
-          "status": "DRAFT",
+          "status": "COMPLETED",
           "started": null
         },
         "3d55ea34-1897-4128-8025-90c73ed69a4d": {
           "ended": null,
           "results": null,
           "progress": null,
-          "status": "DRAFT",
+          "status": "COMPLETED",
           "started": null
         }
       }

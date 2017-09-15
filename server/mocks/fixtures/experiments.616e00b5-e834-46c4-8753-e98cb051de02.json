@@ -2,21 +2,21 @@
   "experiment": {
     "name": "Demand Forecasting",
     "state": {
-      "status": "DRAFT",
+      "status": "COMPLETED",
       "error": null,
       "nodes": {
         "cbfb2037-9718-435d-ab13-a91d52b363df": {
           "ended": null,
           "results": null,
           "progress": null,
-          "status": "DRAFT",
+          "status": "COMPLETED",
           "started": null
         },
         "eda8cb04-852f-4b08-afd4-c0c5ad4b9329": {
           "ended": null,
           "results": null,
           "progress": null,
-          "status": "DRAFT",
+          "status": "COMPLETED",
           "started": null
         },
         "b6144d6a-7bc2-4cf5-99aa-8a979c739d94": {
@@ -30,70 +30,70 @@
           "ended": null,
           "results": null,
           "progress": null,
-          "status": "DRAFT",
+          "status": "COMPLETED",
           "started": null
         },
         "6e2e0166-d3cf-49fe-a2da-b17bb91edb95": {
           "ended": null,
           "results": null,
           "progress": null,
-          "status": "DRAFT",
+          "status": "COMPLETED",
           "started": null
         },
         "1359022f-c5d9-4031-acf5-4789c9ab3028": {
           "ended": null,
           "results": null,
           "progress": null,
-          "status": "DRAFT",
+          "status": "COMPLETED",
           "started": null
         },
         "29a71538-a84f-44d9-ad3a-9029e542bf54": {
           "ended": null,
           "results": null,
           "progress": null,
-          "status": "DRAFT",
+          "status": "COMPLETED",
           "started": null
         },
         "53f213af-a04c-4f33-a341-8751c8e0df23": {
           "ended": null,
           "results": null,
           "progress": null,
-          "status": "DRAFT",
+          "status": "COMPLETED",
           "started": null
         },
         "b13fa9ff-4728-49df-9d3a-f354a1b4d483": {
           "ended": null,
           "results": null,
           "progress": null,
-          "status": "DRAFT",
+          "status": "COMPLETED",
           "started": null
         },
         "30bcd39d-8783-43a0-a314-f9680ccf7975": {
           "ended": null,
           "results": null,
           "progress": null,
-          "status": "DRAFT",
+          "status": "COMPLETED",
           "started": null
         },
         "f8f6adb9-d80e-4b9d-a9a1-d649e7b187a1": {
           "ended": null,
           "results": null,
           "progress": null,
-          "status": "DRAFT",
+          "status": "COMPLETED",
           "started": null
         },
         "387ca1cb-0009-46b3-8440-7c1d6b3008f4": {
           "ended": null,
           "results": null,
           "progress": null,
-          "status": "DRAFT",
+          "status": "COMPLETED",
           "started": null
         },
         "958441de-a859-4500-9171-f3a89183add3": {
           "ended": null,
           "results": null,
           "progress": null,
-          "status": "DRAFT",
+          "status": "COMPLETED",
           "started": null
         }
       }
