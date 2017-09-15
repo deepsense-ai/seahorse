@@ -38,10 +38,6 @@ function AttributeMultiplierType($compile, $rootScope, DeepsenseNodeParameters) 
         removeItem(itemIndex) {
           if (window.confirm('Are you sure to remove the multiplier item?')) {
             this.parameter.parametersLists.splice(itemIndex, 1);
-
-            $rootScope.$applyAsync(() => {
-              $rootScope.$broadcast('AttributesPanel.UPDATED');
-            });
           }
         }
       });

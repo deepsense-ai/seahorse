@@ -141,11 +141,6 @@ function OperationAttributes($rootScope, AttributesPanelService, config, version
         });
       };
 
-      this.customNameSaved = function () {
-        $rootScope.$applyAsync(() => {
-          $rootScope.$broadcast('AttributesPanel.UPDATED');
-        });
-      };
     },
     controllerAs: 'controller'
   };

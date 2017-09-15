@@ -24,16 +24,10 @@ function AttributeCodeSnippetTypeCtrl($rootScope, $uibModal) {
     modalInstance.result.then(function (modifiedCode) {
       if(that.value !== modifiedCode) {
         that.value = modifiedCode;
-        $rootScope.$applyAsync(function() {
-          that.broadcastUpdate();
-        });
       }
     }, function () {});
   };
 
-  that.broadcastUpdate = function() {
-    $rootScope.$broadcast('AttributesPanel.UPDATED');
-  };
 }
 
 angular.module('deepsense.attributes-panel').
