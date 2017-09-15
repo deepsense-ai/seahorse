@@ -55,6 +55,7 @@ object CatalogRecorder {
     catalog.registerDOperable[TypeConverter]()
     catalog.registerDOperable[CustomTransformer]()
     catalog.registerDOperable[GetFromVectorTransformer]()
+    catalog.registerDOperable[SortTransformer]()
 
     // wrapped Spark ML estimators & models
     catalog.registerDOperable[LogisticRegression]()
@@ -181,6 +182,9 @@ object CatalogRecorder {
       DOperationCategories.SetOperation)
 
     catalog.registerDOperation[SqlCombine](
+      DOperationCategories.SetOperation)
+
+    catalog.registerDOperation[SortTransformation](
       DOperationCategories.SetOperation)
 
     catalog.registerDOperation[FilterColumns](
@@ -354,5 +358,6 @@ object CatalogRecorder {
 
     catalog.registerDOperation[CreateRegressionEvaluator](
       DOperationCategories.ML.ModelEvaluation)
+
   }
 }

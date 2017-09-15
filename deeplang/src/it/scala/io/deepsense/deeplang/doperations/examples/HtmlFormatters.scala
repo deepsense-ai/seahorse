@@ -17,12 +17,10 @@
 package io.deepsense.deeplang.doperations.examples
 
 import scala.collection.mutable
-
 import org.apache.spark.sql.Row
 import spray.json._
-
 import io.deepsense.deeplang.DOperation
-import io.deepsense.deeplang.doperables.Projector
+import io.deepsense.deeplang.doperables.{Projector, SortColumnParam}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.params.ParameterType
 
@@ -206,6 +204,8 @@ object ParametersHtmlFormatter {
         Seq(handleColumnPairs(name, value))
       case (name, value: JsArray) if isColumnProjection(value) =>
         Seq(handleColumnProjection(name, value))
+      case (name, value: JsArray) if isSortColumnParam(value) =>
+        Seq(handleSortColumnParams(name, value))
       case (name, value: JsObject) if value.fields.size == 1 =>
         val (fieldName, innerFieldObject) = value.fields.head
         (name, fieldName) +: extractParamValues(innerFieldObject.asJsObject)
@@ -258,6 +258,16 @@ object ParametersHtmlFormatter {
         isColumn(v.asJsObject.fields(leftColumnFieldName).asJsObject) &&
         isColumn(v.asJsObject.fields(rightColumnFieldName).asJsObject)
     }
+  }
+
+  private def isSortColumnParam(value: JsArray): Boolean = {
+    value.elements.forall( v =>
+      v.isInstanceOf[JsObject] &&
+      v.asJsObject.fields.contains(SortColumnParam.columnNameParamName) &&
+      v.asJsObject.fields.contains(SortColumnParam.descendingFlagParamName) &&
+      v.asJsObject.fields(SortColumnParam.columnNameParamName).isInstanceOf[JsObject] &&
+      isColumn(v.asJsObject.fields(SortColumnParam.columnNameParamName).asJsObject)
+    )
   }
 
   private def isUserDefinedMissingValue(value: JsArray): Boolean = {
@@ -324,6 +334,22 @@ object ParametersHtmlFormatter {
     }.mkString(", ")
 
     (name, s"Select columns: $pairs")
+  }
+
+  private def handleSortColumnParams(name: String, sortColumnParams: JsArray): (String, String) = {
+    val sortColumns = sortColumnParams.elements.map( v => {
+      val colName = extractColumnName(v,
+        SortColumnParam.columnNameParamName)
+      val ascDesc =
+        if (v.asJsObject.fields(SortColumnParam.descendingFlagParamName).
+          asInstanceOf[JsBoolean].value) {
+          "DESC"
+        } else {
+          "ASC"
+        }
+      s"$colName $ascDesc"
+    })
+    (name, s"Sort by ${sortColumns.mkString(", ")}")
   }
 
 
