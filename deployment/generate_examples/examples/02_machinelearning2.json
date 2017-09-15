@@ -179,26 +179,11 @@
     }, {
       "id": "79136692-200b-e2f2-b8cc-6e17cab9cfc7",
       "operation": {
-        "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
-        "name": "Read DataFrame"
+        "id": "1a3b32f0-f56d-4c44-a396-29d2dfd43423",
+        "name": "Read Datasource"
       },
       "parameters": {
-        "data storage type": {
-          "FILE": {
-            "source": "https://s3.amazonaws.com/workflowexecutor/examples/data/transactions.csv",
-            "format": {
-              "CSV": {
-                "separator": {
-                  ",": {
-
-                  }
-                },
-                "names included": true,
-                "convert to boolean": false
-              }
-            }
-          }
-        }
+        "datasourceId": "10659556-d079-9709-b41b-89e81e938ebd"
       }
     }],
     "connections": [{

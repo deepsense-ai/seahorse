@@ -3,15 +3,11 @@
     "nodes": [{
       "id": "30cf5fd8-e777-f4c7-0cd1-eca1dcfcccfe",
       "operation": {
-        "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
-        "name": "Read DataFrame"
+        "id": "1a3b32f0-f56d-4c44-a396-29d2dfd43423",
+        "name": "Read Datasource"
       },
       "parameters": {
-        "data storage type": {
-          "FILE": {
-            "source": "https://s3.amazonaws.com/workflowexecutor/examples/data/transactions.csv"
-          }
-        }
+        "datasourceId": "10659556-d079-9709-b41b-89e81e938ebd"
       }
     }, {
       "id": "8c22f869-29d3-3064-f9ba-dcf81a05d393",

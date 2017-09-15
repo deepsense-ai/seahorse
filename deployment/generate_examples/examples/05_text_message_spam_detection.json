@@ -204,26 +204,11 @@
     }, {
       "id": "96470bf5-4a9e-472e-3e4b-59cf42153bbb",
       "operation": {
-        "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
-        "name": "Read DataFrame"
+        "id": "1a3b32f0-f56d-4c44-a396-29d2dfd43423",
+        "name": "Read Datasource"
       },
       "parameters": {
-        "data storage type": {
-          "FILE": {
-            "source": "https://s3.amazonaws.com/workflowexecutor/examples/data/SMSSpamCollection.csv",
-            "format": {
-              "CSV": {
-                "separator": {
-                  "Tab": {
-
-                  }
-                },
-                "names included": true,
-                "convert to boolean": false
-              }
-            }
-          }
-        }
+        "datasourceId": "638ff978-306d-4883-b0c6-59dff1da827c"
       }
     }, {
       "id": "e9eec70d-55f1-0a51-ac73-8e40cef1f8b0",

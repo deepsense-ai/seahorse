@@ -168,26 +168,11 @@
     }, {
       "id": "65f08acd-ce21-be5d-72ab-3bd92cca8b43",
       "operation": {
-        "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
-        "name": "Read DataFrame"
+        "id": "1a3b32f0-f56d-4c44-a396-29d2dfd43423",
+        "name": "Read Datasource"
       },
       "parameters": {
-        "data storage type": {
-          "FILE": {
-            "source": "https://s3.amazonaws.com/workflowexecutor/examples/data/adult.data",
-            "format": {
-              "CSV": {
-                "separator": {
-                  ",": {
-
-                  }
-                },
-                "names included": true,
-                "convert to boolean": false
-              }
-            }
-          }
-        }
+        "datasourceId": "1d351f2a-8cfc-4b84-8943-1bf8494e86c2"
       }
     }, {
       "id": "781acc08-fc7a-108d-f00c-71b59bd0f2a8",

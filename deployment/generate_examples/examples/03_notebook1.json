@@ -3,26 +3,11 @@
     "nodes": [{
       "id": "1cff64e7-8d3c-338a-0827-38f0195eaa0e",
       "operation": {
-        "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
-        "name": "Read DataFrame"
+        "id": "1a3b32f0-f56d-4c44-a396-29d2dfd43423",
+        "name": "Read Datasource"
       },
       "parameters": {
-        "data storage type": {
-          "FILE": {
-            "source": "https://s3.amazonaws.com/workflowexecutor/examples/data/grades_2_0.csv",
-            "format": {
-              "CSV": {
-                "separator": {
-                  ",": {
-
-                  }
-                },
-                "names included": true,
-                "convert to boolean": false
-              }
-            }
-          }
-        }
+        "datasourceId": "ad3904a7-26b8-4a51-bce1-7aeb680c89ff"
       }
     }, {
       "id": "44218dc2-081a-be2c-c122-7cedb0f8fcee",
