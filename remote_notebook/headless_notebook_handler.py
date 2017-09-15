@@ -2,6 +2,7 @@
 
 
 import os
+import copy
 from nbconvert.exporters.export import exporter_map
 from nbconvert.writers.files import FilesWriter
 from nbconvert.preprocessors import ExecutePreprocessor
@@ -43,6 +44,25 @@ class HeadlessNotebookHandler(IPythonHandler):
         except Exception as e:
             raise web.HTTPError(500, "nbconvert failed: %s" % e)
 
+    # get HTML-ized un-editable notebook
+    def get(self, param1, param2):
+        workflow_id = param1
+        node_id = param2
+        language = "irrelevant"
+        path = SeahorseNotebookPath(workflow_id, node_id, language, node_id, 0)
+
+        Exporter = exporter_map["html"]
+        updated_config = self.no_execution_config(self.config)
+        exporter = Exporter(config=updated_config, log=self.log)
+        serialized_path = path.serialize()
+        model = self.contents_manager.get(path=serialized_path)
+
+        try:
+            output, _ = exporter.from_notebook_node(model['content'])
+            self.write(output)
+        except Exception as e:
+            raise web.HTTPError(500, "nbconvert failed: %s" % e)
+
     def post(self):
         data = escape.json_decode(self.request.body)
         workflow_id, node_id, language = data["workflow_id"], data["node_id"], data["language"]
@@ -65,6 +85,13 @@ class HeadlessNotebookHandler(IPythonHandler):
         return "{0}{1}_{2}.html".format(
             HeadlessNotebookHandler.notebook_storage_folder(), workflow_id, node_id)
 
+    @staticmethod
+    def no_execution_config(config):
+        new_config = copy.deepcopy(config)
+        new_config.ClearOutputPreprocessor.enabled = False
+        new_config.ExecutePreprocessor.enabled = False
+        return new_config
+
 def load_jupyter_server_extension(nb_server_app):
     """
     Called when the extension is loaded.
@@ -77,6 +104,8 @@ def load_jupyter_server_extension(nb_server_app):
     base_url = web_app.settings['base_url']
     route_pattern = url_path_join(base_url, '/HeadlessNotebook')
     web_app.add_handlers(host_pattern, [(route_pattern, HeadlessNotebookHandler)])
+    web_app.add_handlers(host_pattern, [(url_path_join(base_url,
+        '/OfflineNotebook/(?P<param1>[^\/_]+)_(?P<param2>[^\/_]+)'), HeadlessNotebookHandler)])
     route_pattern_with_workflow_id = url_path_join(base_url, '/HeadlessNotebook/([^/]+)')
     web_app.add_handlers(host_pattern,
                          [(route_pattern_with_workflow_id, web.StaticFileHandler, {"path": "/home/jovyan/work/"})])
