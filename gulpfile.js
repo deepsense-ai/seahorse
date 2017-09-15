@@ -156,7 +156,11 @@ gulp.task('browserify', function () {
 
 
 gulp.task('build', function (callback) {
-  runSequence('clean', ['fonts', 'images', 'html', 'less', 'libs:css', 'libs:js', 'jshint', 'browserify'], callback);
+  runSequence(
+    'clean',
+    ['fonts', 'images', 'html', 'less', 'libs:css', 'libs:js', 'jshint', 'browserify'],
+    callback
+  );
 });
 
 gulp.task('start', function (callback) {
@@ -165,7 +169,10 @@ gulp.task('start', function (callback) {
     gulp.watch(client.path + client.html, ['html', browserSync.reload]);
     gulp.watch(client.path + client.images, ['images', browserSync.reload]);
     gulp.watch(client.path + client.less, ['less']);
-    gulp.watch(client.path + client.js, ['jshint', 'browserify', browserSync.reload]);
+    gulp.watch(
+      [client.path + client.js, '!' + config.files.tests.client],
+      ['jshint', 'browserify', browserSync.reload]
+    );
   }
 });
 
@@ -174,7 +181,10 @@ gulp.task('watch', function (callback) {
   runSequence('browser-sync', callback);
   gulp.watch(client.path + client.html, ['html', browserSync.reload]);
   gulp.watch(client.path + client.less, ['less']);
-  gulp.watch(client.path + client.js, ['jshint', 'browserify', browserSync.reload]);
+  gulp.watch(
+    [client.path + client.js, '!' + config.files.tests.client],
+    ['jshint', 'browserify', browserSync.reload]
+  );
 });
 
 gulp.task('default', function () {
