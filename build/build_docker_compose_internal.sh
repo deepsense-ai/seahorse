@@ -24,5 +24,5 @@ GIT_TAG=$1
 
 echo "Generating docker compose file with docker images tagged with $GIT_TAG"
 
-ARTIFACT_NAME="docker-compose-internal.yml"
+ARTIFACT_NAME="docker-compose.yml"
 deployment/docker-compose/docker-compose.py --generate-only --yaml-file $ARTIFACT_NAME -f $GIT_TAG -b $GIT_TAG

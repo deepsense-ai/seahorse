@@ -19,6 +19,5 @@ cd `dirname $0`"/../"
 
 GIT_TAG=`git rev-parse HEAD`
 
-
 ./build/build_docker_compose_internal.sh $GIT_TAG
 ./build/manage-docker.py -b --all

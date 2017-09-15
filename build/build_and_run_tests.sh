@@ -29,9 +29,14 @@ find . -name target -type d -exec rm -rf {} \; || true
 )
 
 run_tests() {
-    sbt clean
-    sbt -DSPARK_VERSION=$1 test ds-it
+  sbt clean
+  sbt -DSPARK_VERSION=$1 test ds-it
 }
 run_tests 2.1.1
 run_tests 2.0.2
 run_tests 1.6.1
+
+(
+  cd seahorse-workflow-executor
+  ./build/build_and_run_tests.sh
+)
