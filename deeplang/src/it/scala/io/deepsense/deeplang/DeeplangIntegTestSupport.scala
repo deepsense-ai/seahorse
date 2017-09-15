@@ -44,7 +44,12 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
     sparkContext = new SparkContext(sparkConf)
     sqlContext = new SQLContext(sparkContext)
     UserDefinedFunctions.registerFunctions(sqlContext.udf)
-    rawHdfsClient = new DFSClient(new URI(hdfsPath), new Configuration())
+    val config = new Configuration()
+    // TODO: Proper configuration files usage
+    config.addResource("core-site.xml")
+    config.addResource("hdfs-site.xml")
+    // TODO: Configuration string instead of hardcoded hdfsPath
+    rawHdfsClient = new DFSClient(new URI(hdfsPath), config)
 
     executionContext = new ExecutionContext
     executionContext.sparkContext = sparkContext
