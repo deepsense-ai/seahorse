@@ -1,7 +1,7 @@
 # Copyright (c) 2015, CodiLime Inc.
 
 spark_version: "2.0.0"
-spark_package_filename: "spark-{{spark_version}}-bin-hadoop2.6.tgz"
+spark_package_filename: "spark-{{spark_version}}-bin-hadoop2.7.tgz"
 spark_install_dir: "/opt"
-spark_dir: "{{spark_install_dir}}/spark-{{spark_version}}-bin-hadoop2.6"
+spark_dir: "{{spark_install_dir}}/spark-{{spark_version}}-bin-hadoop2.7"
 spark_user: "vagrant"

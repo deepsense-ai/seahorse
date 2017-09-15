@@ -39,7 +39,7 @@ services:
       - library
       - notebooks
   sessionmanager:
-    image: a16c02adf002
+    image: $DOCKER_REPOSITORY/deepsense-sessionmanager:$DOCKER_TAG
     network_mode: "host"
     environment:
       - "SM_HOST=127.0.0.1"

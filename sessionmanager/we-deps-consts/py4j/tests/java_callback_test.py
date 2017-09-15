@@ -13,9 +13,13 @@ import unittest
 
 from py4j.compat import range
 from py4j.java_gateway import (
-    JavaGateway, PythonProxyPool, CallbackServerParameters)
+    JavaGateway, PythonProxyPool, CallbackServerParameters,
+    set_default_callback_accept_timeout)
 from py4j.tests.java_gateway_test import (
     PY4J_JAVA_PATH, safe_shutdown, sleep, test_gateway_connection)
+
+
+set_default_callback_accept_timeout(0.125)
 
 
 def start_example_server():
@@ -154,6 +158,7 @@ class TestIntegration(unittest.TestCase):
         self.p = start_example_app_process()
         self.gateway = JavaGateway(
             callback_server_parameters=CallbackServerParameters())
+        sleep()
 
     def tearDown(self):
         safe_shutdown(self)
@@ -190,8 +195,16 @@ class TestIntegration(unittest.TestCase):
             "This is Hello;\n10MyMy!\n;",
             example.callHello2(impl))
         self.assertEqual(2, len(self.gateway.gateway_property.pool))
+
+        # Make sure that finalizers do not block
+        impl2 = IHelloImpl()
+        self.assertEqual("This is Hello!", example.callHello(impl2))
+        self.assertEqual(3, len(self.gateway.gateway_property.pool))
+
         self.gateway.jvm.java.lang.System.gc()
-        sleep(1)
+
+        # Leave time for sotimeout
+        sleep(3)
         self.assertTrue(len(self.gateway.gateway_property.pool) < 2)
 
     def testDoubleCallbackServer(self):
@@ -213,11 +226,39 @@ class TestIntegration(unittest.TestCase):
         self.assertTrue(oe2 is not None)
 
 
+class TestResetCallbackClient(unittest.TestCase):
+    def setUp(self):
+        self.p = start_example_app_process()
+        self.gateway = JavaGateway(
+            callback_server_parameters=CallbackServerParameters(port=0))
+        sleep()
+
+    def tearDown(self):
+        safe_shutdown(self)
+        self.p.join()
+        sleep()
+
+    def testProxy(self):
+        sleep()
+        pythonAddress = self.gateway.java_gateway_server.getPythonAddress()
+        port = self.gateway.get_callback_server().get_listening_port()
+        self.gateway.java_gateway_server.resetCallbackClient(
+            pythonAddress, port)
+
+        example = self.gateway.entry_point.getNewExample()
+        impl = IHelloImpl()
+        self.assertEqual("This is Hello!", example.callHello(impl))
+        self.assertEqual(
+            "This is Hello;\n10MyMy!\n;",
+            example.callHello2(impl))
+
+
 class TestPeriodicCleanup(unittest.TestCase):
     def setUp(self):
         self.p = start_example_app_process2()
         self.gateway = JavaGateway(
             callback_server_parameters=CallbackServerParameters())
+        sleep()
 
     def tearDown(self):
         safe_shutdown(self)
@@ -262,6 +303,7 @@ class InterfaceTest(unittest.TestCase):
         self.p = start_example_app_process3()
         self.gateway = JavaGateway(
             callback_server_parameters=CallbackServerParameters())
+        sleep()
 
     def tearDown(self):
         safe_shutdown(self)
