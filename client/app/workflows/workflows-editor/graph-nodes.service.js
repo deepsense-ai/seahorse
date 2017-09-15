@@ -3,13 +3,12 @@
 class GraphNodesService {
 
   /* @ngInject */
-  constructor($q, DeepsenseNodeParameters, $rootScope, Operations, WorkflowService, MultiSelectionService,
+  constructor($q, DeepsenseNodeParameters, $rootScope, Operations, MultiSelectionService,
     UUIDGenerator) {
     this.$q = $q;
     this.DeepsenseNodeParameters = DeepsenseNodeParameters;
     this.$rootScope = $rootScope;
     this.Operations = Operations;
-    this.WorkflowService = WorkflowService;
     this.MultiSelectionService = MultiSelectionService;
     this.UUIDGenerator = UUIDGenerator;
   }
@@ -46,8 +45,6 @@ class GraphNodesService {
       this._setEdgeConnectionFromClone(node, clones, cloningNodeIds);
       workflow.cloneEdges(node, clones[index]);
     });
-
-    this.WorkflowService.saveWorkflow();
     return clones;
   }
 

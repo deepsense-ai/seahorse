@@ -55,6 +55,8 @@ class NodeCopyPasteVisitor {
       this.$rootScope.$broadcast('INTERACTION-PANEL.FIT', {
         zoomId: this.WorkflowsEditorController.zoomId
       });
+
+      this.WorkflowService.saveWorkflow();
     });
   }
 
