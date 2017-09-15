@@ -13,5 +13,6 @@ package io.deepsense.experimentmanager.app.exceptions
 // Please consult spray.http.StatusCodes for details
 object ErrorCodes {
   val ExperimentNotFound = 5
+  val ExperimentRunning = 10
   // val SomeOtherCode = 10 // TODO
 }
