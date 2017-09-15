@@ -25,6 +25,20 @@
         }
       }
     }, {
+      "id": "9c7f230b-3bc8-6994-e60a-b1573cab0444",
+      "operation": {
+        "id": "d273c42f-b840-4402-ba6b-18282cc68de3",
+        "name": "Split"
+      },
+      "parameters": {
+        "split mode": {
+          "RANDOM": {
+            "split ratio": 0.7,
+            "seed": 0.0
+          }
+        }
+      }
+    }, {
       "id": "c1212cd6-fd16-cfc9-83fe-644e91d4bcb0",
       "operation": {
         "id": "33af92e5-57f2-4586-b176-961eb72ce5b0",
@@ -87,20 +101,6 @@
         "Parameters of input Transformer": {
           "dataframe id": "ds",
           "expression": "select IF (ds.prediction = 0 AND ds.`is-over` = 0, 'true_negative',\n       IF (ds.prediction = 1 AND ds.`is-over` = 1, 'true_positive', \n       IF (ds.prediction = 0 AND ds.`is-over` = 1, 'false_negative',\n       IF (ds.prediction = 1 AND ds.`is-over` = 0, 'false_positive', 'other')))) as correctness,\n       \n       ds.prediction = ds.`is-over` as prediction_correct\n       \n       from ds"
-        }
-      }
-    }, {
-      "id": "9c7f230b-3bc8-6994-e60a-b1573cab0444",
-      "operation": {
-        "id": "d273c42f-b840-4402-ba6b-18282cc68de3",
-        "name": "Split"
-      },
-      "parameters": {
-        "split mode": {
-          "RANDOM": {
-            "split ratio": 0.7,
-            "seed": 0.0
-          }
         }
       }
     }, {
@@ -218,6 +218,33 @@
     }],
     "connections": [{
       "from": {
+        "nodeId": "440de059-cef6-6f6c-a158-8277c585610a",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "8add554c-94dc-35ff-1686-606fcfe4c67f",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "d509364d-9db2-7d6c-97ca-974d3ad88270",
+        "portIndex": 1
+      },
+      "to": {
+        "nodeId": "108e19cb-9bc8-a708-204b-902e90a6b2fe",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "9c7f230b-3bc8-6994-e60a-b1573cab0444",
+        "portIndex": 1
+      },
+      "to": {
+        "nodeId": "8add554c-94dc-35ff-1686-606fcfe4c67f",
+        "portIndex": 1
+      }
+    }, {
+      "from": {
         "nodeId": "781acc08-fc7a-108d-f00c-71b59bd0f2a8",
         "portIndex": 0
       },
@@ -237,15 +264,6 @@
     }, {
       "from": {
         "nodeId": "9c7f230b-3bc8-6994-e60a-b1573cab0444",
-        "portIndex": 1
-      },
-      "to": {
-        "nodeId": "21eab7ee-2598-e9ea-88e3-23e4e9a1730d",
-        "portIndex": 0
-      }
-    }, {
-      "from": {
-        "nodeId": "dc403a98-f9e8-e1ce-9f44-4557c13308fd",
         "portIndex": 0
       },
       "to": {
@@ -255,37 +273,10 @@
     }, {
       "from": {
         "nodeId": "9c7f230b-3bc8-6994-e60a-b1573cab0444",
-        "portIndex": 0
-      },
-      "to": {
-        "nodeId": "440de059-cef6-6f6c-a158-8277c585610a",
-        "portIndex": 0
-      }
-    }, {
-      "from": {
-        "nodeId": "9c7f230b-3bc8-6994-e60a-b1573cab0444",
         "portIndex": 1
       },
       "to": {
-        "nodeId": "8add554c-94dc-35ff-1686-606fcfe4c67f",
-        "portIndex": 0
-      }
-    }, {
-      "from": {
-        "nodeId": "440de059-cef6-6f6c-a158-8277c585610a",
-        "portIndex": 0
-      },
-      "to": {
-        "nodeId": "8add554c-94dc-35ff-1686-606fcfe4c67f",
-        "portIndex": 1
-      }
-    }, {
-      "from": {
-        "nodeId": "d509364d-9db2-7d6c-97ca-974d3ad88270",
-        "portIndex": 1
-      },
-      "to": {
-        "nodeId": "108e19cb-9bc8-a708-204b-902e90a6b2fe",
+        "nodeId": "21eab7ee-2598-e9ea-88e3-23e4e9a1730d",
         "portIndex": 1
       }
     }, {
@@ -295,7 +286,7 @@
       },
       "to": {
         "nodeId": "108e19cb-9bc8-a708-204b-902e90a6b2fe",
-        "portIndex": 0
+        "portIndex": 1
       }
     }, {
       "from": {
@@ -317,6 +308,15 @@
       }
     }, {
       "from": {
+        "nodeId": "dc403a98-f9e8-e1ce-9f44-4557c13308fd",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "440de059-cef6-6f6c-a158-8277c585610a",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
         "nodeId": "8add554c-94dc-35ff-1686-606fcfe4c67f",
         "portIndex": 0
       },
@@ -331,105 +331,105 @@
       },
       "to": {
         "nodeId": "21eab7ee-2598-e9ea-88e3-23e4e9a1730d",
-        "portIndex": 1
+        "portIndex": 0
       }
     }]
   },
   "thirdPartyData": {
     "gui": {
+      "name": "EXAMPLE 7: Income Prediction",
+      "description": "Predicting whether an individual earn more than 50$/yr based on various data",
       "predefColors": ["#00B1EB", "#1ab394", "#2f4050", "#f8ac59", "#ed5565", "#DD6D3F"],
       "nodes": {
         "65f08acd-ce21-be5d-72ab-3bd92cca8b43": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5259,
-            "x": 5274
+            "x": 4620,
+            "y": 4988
           }
         },
         "7e0b5504-c265-3cc9-49d9-21f73673e0c2": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5259,
-            "x": 5497
+            "x": 4768,
+            "y": 5071
           }
         },
         "108e19cb-9bc8-a708-204b-902e90a6b2fe": {
-          "color": "#00B1EB",
           "uiName": "Metrics",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5807,
-            "x": 6118
+            "x": 5346,
+            "y": 5768
           }
         },
         "440de059-cef6-6f6c-a158-8277c585610a": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5543,
-            "x": 5861
+            "x": 5019,
+            "y": 5446
           }
         },
         "d509364d-9db2-7d6c-97ca-974d3ad88270": {
-          "color": "#00B1EB",
           "uiName": "Metrics",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5809,
-            "x": 5850
+            "x": 5052,
+            "y": 5702
           }
         },
         "dc403a98-f9e8-e1ce-9f44-4557c13308fd": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5414,
-            "x": 5695
+            "x": 4801,
+            "y": 5343
           }
         },
         "21eab7ee-2598-e9ea-88e3-23e4e9a1730d": {
-          "color": "#00B1EB",
           "uiName": "T = 0.3",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5687,
-            "x": 6111
+            "x": 5345,
+            "y": 5582
           }
         },
         "c1212cd6-fd16-cfc9-83fe-644e91d4bcb0": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5259,
-            "x": 5715
+            "x": 4924,
+            "y": 5162
           }
         },
         "8add554c-94dc-35ff-1686-606fcfe4c67f": {
-          "color": "#00B1EB",
           "uiName": "Default",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5688,
-            "x": 5941
+            "x": 5018,
+            "y": 5578
           }
         },
         "781acc08-fc7a-108d-f00c-71b59bd0f2a8": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5257,
-            "x": 5939
+            "x": 5078,
+            "y": 5250
           }
         },
         "9c7f230b-3bc8-6994-e60a-b1573cab0444": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5416,
-            "x": 5942
+            "x": 5218,
+            "y": 5344
           }
         }
-      },
-      "name": "EXAMPLE 7: Income Prediction",
-      "description": "Predicting whether an individual earn more than 50$/yr based on various data"
+      }
     },
     "notebooks": {
 
@@ -438,7 +438,7 @@
   "variables": {
 
   },
-  "id": "4a7d31b7-927b-4d99-b268-df3d8d0bf680",
+  "id": "70475889-6e9b-4622-978e-84d8e7412d32",
   "metadata": {
     "type": "batch",
     "apiVersion": "1.3.0"

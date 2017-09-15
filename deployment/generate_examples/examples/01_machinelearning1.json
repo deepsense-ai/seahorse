@@ -35,13 +35,18 @@
         "fit intercept": true
       }
     }, {
-      "id": "01cb5592-1e87-498e-e453-c7d8c2d89b3e",
+      "id": "75e3e35e-86d2-98c9-c175-484e9abd3f1a",
       "operation": {
-        "id": "58368deb-68d0-4657-ae3f-145160cb1e2b",
-        "name": "Write Transformer"
+        "id": "d273c42f-b840-4402-ba6b-18282cc68de3",
+        "name": "Split"
       },
       "parameters": {
-        "output path": "/resources/data/model_example_1"
+        "split mode": {
+          "RANDOM": {
+            "split ratio": 0.3,
+            "seed": 0.0
+          }
+        }
       }
     }, {
       "id": "49f8ce4a-f425-3ea6-927f-bdce0ad10006",
@@ -102,15 +107,24 @@
 
             }
           },
-          "label column": {
-            "type": "column",
-            "value": "price"
-          },
           "prediction column": {
             "type": "column",
             "value": "prediction"
+          },
+          "label column": {
+            "type": "column",
+            "value": "price"
           }
         }
+      }
+    }, {
+      "id": "01cb5592-1e87-498e-e453-c7d8c2d89b3e",
+      "operation": {
+        "id": "58368deb-68d0-4657-ae3f-145160cb1e2b",
+        "name": "Write Transformer"
+      },
+      "parameters": {
+        "output path": "/resources/data/model_example_1"
       }
     }, {
       "id": "11982311-bc25-ff8b-037c-ad969b69acdf",
@@ -127,20 +141,6 @@
           "excluding": true
         },
         "output column": "features"
-      }
-    }, {
-      "id": "75e3e35e-86d2-98c9-c175-484e9abd3f1a",
-      "operation": {
-        "id": "d273c42f-b840-4402-ba6b-18282cc68de3",
-        "name": "Split"
-      },
-      "parameters": {
-        "split mode": {
-          "RANDOM": {
-            "split ratio": 0.7,
-            "seed": 0.0
-          }
-        }
       }
     }, {
       "id": "79136692-200b-e2f2-b8cc-6e17cab9cfc7",
@@ -169,16 +169,16 @@
     }],
     "connections": [{
       "from": {
-        "nodeId": "173c865f-bd36-362b-3c88-4157ee09cfd7",
+        "nodeId": "49f8ce4a-f425-3ea6-927f-bdce0ad10006",
         "portIndex": 0
       },
       "to": {
-        "nodeId": "e19cb77e-8a35-1341-31f4-34244d36ff8c",
-        "portIndex": 1
+        "nodeId": "eb4e701a-87e8-f487-2165-3aac47182c74",
+        "portIndex": 0
       }
     }, {
       "from": {
-        "nodeId": "f2d6f3f8-e75e-6182-b183-331d154cfcb8",
+        "nodeId": "75e3e35e-86d2-98c9-c175-484e9abd3f1a",
         "portIndex": 0
       },
       "to": {
@@ -196,20 +196,20 @@
       }
     }, {
       "from": {
+        "nodeId": "75e3e35e-86d2-98c9-c175-484e9abd3f1a",
+        "portIndex": 1
+      },
+      "to": {
+        "nodeId": "eb4e701a-87e8-f487-2165-3aac47182c74",
+        "portIndex": 1
+      }
+    }, {
+      "from": {
         "nodeId": "eb4e701a-87e8-f487-2165-3aac47182c74",
         "portIndex": 0
       },
       "to": {
         "nodeId": "e19cb77e-8a35-1341-31f4-34244d36ff8c",
-        "portIndex": 0
-      }
-    }, {
-      "from": {
-        "nodeId": "49f8ce4a-f425-3ea6-927f-bdce0ad10006",
-        "portIndex": 0
-      },
-      "to": {
-        "nodeId": "eb4e701a-87e8-f487-2165-3aac47182c74",
         "portIndex": 1
       }
     }, {
@@ -223,20 +223,20 @@
       }
     }, {
       "from": {
-        "nodeId": "75e3e35e-86d2-98c9-c175-484e9abd3f1a",
+        "nodeId": "f2d6f3f8-e75e-6182-b183-331d154cfcb8",
         "portIndex": 0
       },
       "to": {
-        "nodeId": "eb4e701a-87e8-f487-2165-3aac47182c74",
+        "nodeId": "49f8ce4a-f425-3ea6-927f-bdce0ad10006",
         "portIndex": 0
       }
     }, {
       "from": {
-        "nodeId": "75e3e35e-86d2-98c9-c175-484e9abd3f1a",
-        "portIndex": 1
+        "nodeId": "173c865f-bd36-362b-3c88-4157ee09cfd7",
+        "portIndex": 0
       },
       "to": {
-        "nodeId": "49f8ce4a-f425-3ea6-927f-bdce0ad10006",
+        "nodeId": "e19cb77e-8a35-1341-31f4-34244d36ff8c",
         "portIndex": 0
       }
     }, {
@@ -260,72 +260,72 @@
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 5764,
-            "y": 5539
+            "x": 4911,
+            "y": 5403
           }
         },
         "eb4e701a-87e8-f487-2165-3aac47182c74": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 5245,
-            "y": 5539
+            "x": 5575,
+            "y": 5399
           }
         },
         "49f8ce4a-f425-3ea6-927f-bdce0ad10006": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 5499,
-            "y": 5422
+            "x": 5284,
+            "y": 5280
           }
         },
         "f2d6f3f8-e75e-6182-b183-331d154cfcb8": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 5498,
-            "y": 5315
+            "x": 4904,
+            "y": 5189
           }
         },
         "75e3e35e-86d2-98c9-c175-484e9abd3f1a": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 5241,
-            "y": 5314
+            "x": 5492,
+            "y": 5182
           }
         },
         "e19cb77e-8a35-1341-31f4-34244d36ff8c": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 5383,
-            "y": 5653
+            "x": 5448,
+            "y": 5527
           }
         },
         "11982311-bc25-ff8b-037c-ad969b69acdf": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 5240,
-            "y": 5201
+            "x": 5211,
+            "y": 5094
           }
         },
         "79136692-200b-e2f2-b8cc-6e17cab9cfc7": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 5244,
-            "y": 5073
+            "x": 4904,
+            "y": 5002
           }
         },
         "173c865f-bd36-362b-3c88-4157ee09cfd7": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 5508,
-            "y": 5538
+            "x": 5224,
+            "y": 5403
           }
         }
       }
@@ -337,7 +337,7 @@
   "variables": {
 
   },
-  "id": "1471d9ee-a52d-4dc8-ac28-781e7e26021b",
+  "id": "fd13795e-711e-4360-ac76-3e95eec0e70d",
   "metadata": {
     "type": "batch",
     "apiVersion": "1.3.0"

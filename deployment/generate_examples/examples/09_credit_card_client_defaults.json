@@ -17,8 +17,8 @@
       },
       "parameters": {
         "Parameters of input Estimator": {
-          "max depth": 10,
           "num trees": 20,
+          "max depth": 10,
           "label column": {
             "type": "column",
             "value": "default_payment_next_month"
@@ -33,14 +33,14 @@
       },
       "parameters": {
         "Parameters of input Evaluator": {
-          "label column": {
-            "type": "column",
-            "value": "default_payment_next_month"
-          },
           "binary metric": {
             "Area under ROC": {
 
             }
+          },
+          "label column": {
+            "type": "column",
+            "value": "default_payment_next_month"
           }
         }
       }
@@ -58,6 +58,15 @@
         }
       }
     }, {
+      "id": "7e3457c6-7b37-1740-1393-9650f7c9a385",
+      "operation": {
+        "id": "89198bfd-6c86-40de-8238-68f7e0a0b50e",
+        "name": "R Notebook"
+      },
+      "parameters": {
+
+      }
+    }, {
       "id": "a5e471f2-84fc-af78-9bf7-cdd942798abd",
       "operation": {
         "id": "9163f706-eaaf-46f6-a5b0-4114d92032b7",
@@ -65,21 +74,9 @@
       },
       "parameters": {
         "Parameters of input Estimator": {
-          "max depth": {
-            "values": [{
-              "type": "seq",
-              "value": {
-                "sequence": [5, 10, 20]
-              }
-            }]
-          },
           "features column": {
             "type": "column",
             "value": "features"
-          },
-          "label column": {
-            "type": "column",
-            "value": "default_payment_next_month"
           },
           "num trees": {
             "values": [{
@@ -88,6 +85,18 @@
                 "sequence": [20, 40]
               }
             }]
+          },
+          "max depth": {
+            "values": [{
+              "type": "seq",
+              "value": {
+                "sequence": [5, 10, 20]
+              }
+            }]
+          },
+          "label column": {
+            "type": "column",
+            "value": "default_payment_next_month"
           }
         },
         "Parameters of input Evaluator": {
@@ -98,15 +107,6 @@
           }
         },
         "number of folds": 3.0
-      }
-    }, {
-      "id": "7e3457c6-7b37-1740-1393-9650f7c9a385",
-      "operation": {
-        "id": "89198bfd-6c86-40de-8238-68f7e0a0b50e",
-        "name": "R Notebook"
-      },
-      "parameters": {
-
       }
     }, {
       "id": "9e3f6242-25cd-146c-56b1-773ad71b5445",
@@ -220,12 +220,30 @@
     }],
     "connections": [{
       "from": {
-        "nodeId": "186789b3-e143-a8c2-011f-1350b1b1ca19",
+        "nodeId": "b730d778-2d60-9643-af8d-eac5b2b417b1",
         "portIndex": 0
       },
       "to": {
-        "nodeId": "a1d818ac-bde3-efd4-dfc3-21b680553006",
+        "nodeId": "a5e471f2-84fc-af78-9bf7-cdd942798abd",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "a15f294a-e88a-3098-a26b-2e50d05b1267",
         "portIndex": 1
+      },
+      "to": {
+        "nodeId": "a5e471f2-84fc-af78-9bf7-cdd942798abd",
+        "portIndex": 1
+      }
+    }, {
+      "from": {
+        "nodeId": "e50621be-eca8-6af8-f851-098111514757",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "9e3f6242-25cd-146c-56b1-773ad71b5445",
+        "portIndex": 0
       }
     }, {
       "from": {
@@ -238,30 +256,12 @@
       }
     }, {
       "from": {
-        "nodeId": "b730d778-2d60-9643-af8d-eac5b2b417b1",
-        "portIndex": 0
-      },
-      "to": {
-        "nodeId": "a5e471f2-84fc-af78-9bf7-cdd942798abd",
-        "portIndex": 1
-      }
-    }, {
-      "from": {
         "nodeId": "3fd9f850-a6e0-a191-fe79-905db72b4ee6",
         "portIndex": 0
       },
       "to": {
         "nodeId": "a15f294a-e88a-3098-a26b-2e50d05b1267",
         "portIndex": 0
-      }
-    }, {
-      "from": {
-        "nodeId": "e50621be-eca8-6af8-f851-098111514757",
-        "portIndex": 0
-      },
-      "to": {
-        "nodeId": "9e3f6242-25cd-146c-56b1-773ad71b5445",
-        "portIndex": 1
       }
     }, {
       "from": {
@@ -274,29 +274,11 @@
       }
     }, {
       "from": {
-        "nodeId": "a15f294a-e88a-3098-a26b-2e50d05b1267",
-        "portIndex": 0
-      },
-      "to": {
-        "nodeId": "9e3f6242-25cd-146c-56b1-773ad71b5445",
-        "portIndex": 0
-      }
-    }, {
-      "from": {
         "nodeId": "b730d778-2d60-9643-af8d-eac5b2b417b1",
         "portIndex": 0
       },
       "to": {
         "nodeId": "e50621be-eca8-6af8-f851-098111514757",
-        "portIndex": 1
-      }
-    }, {
-      "from": {
-        "nodeId": "a15f294a-e88a-3098-a26b-2e50d05b1267",
-        "portIndex": 1
-      },
-      "to": {
-        "nodeId": "a5e471f2-84fc-af78-9bf7-cdd942798abd",
         "portIndex": 0
       }
     }, {
@@ -311,11 +293,20 @@
     }, {
       "from": {
         "nodeId": "a15f294a-e88a-3098-a26b-2e50d05b1267",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "9e3f6242-25cd-146c-56b1-773ad71b5445",
+        "portIndex": 1
+      }
+    }, {
+      "from": {
+        "nodeId": "a15f294a-e88a-3098-a26b-2e50d05b1267",
         "portIndex": 1
       },
       "to": {
         "nodeId": "e50621be-eca8-6af8-f851-098111514757",
-        "portIndex": 0
+        "portIndex": 1
       }
     }, {
       "from": {
@@ -324,7 +315,7 @@
       },
       "to": {
         "nodeId": "a1d818ac-bde3-efd4-dfc3-21b680553006",
-        "portIndex": 0
+        "portIndex": 1
       }
     }, {
       "from": {
@@ -333,6 +324,15 @@
       },
       "to": {
         "nodeId": "7e3457c6-7b37-1740-1393-9650f7c9a385",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "186789b3-e143-a8c2-011f-1350b1b1ca19",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "a1d818ac-bde3-efd4-dfc3-21b680553006",
         "portIndex": 0
       }
     }, {
@@ -357,124 +357,125 @@
   },
   "thirdPartyData": {
     "gui": {
+      "name": "EXAMPLE 9: Credit Card Client Defaults",
+      "description": "Determining the probability of default of credit card clients",
       "predefColors": ["#00B1EB", "#1ab394", "#2f4050", "#f8ac59", "#ed5565", "#DD6D3F"],
       "nodes": {
         "a15f294a-e88a-3098-a26b-2e50d05b1267": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5485,
-            "x": 4747
+            "x": 5367,
+            "y": 5319
           }
         },
         "9e3f6242-25cd-146c-56b1-773ad71b5445": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5645,
-            "x": 4885
+            "x": 5209,
+            "y": 5526
           }
         },
         "a1d818ac-bde3-efd4-dfc3-21b680553006": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5734,
-            "x": 5052
+            "x": 5646,
+            "y": 5678
           }
         },
         "3fd9f850-a6e0-a191-fe79-905db72b4ee6": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5372,
-            "x": 4774
+            "x": 5221,
+            "y": 5230
           }
         },
         "7e3457c6-7b37-1740-1393-9650f7c9a385": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5244,
-            "x": 5157
+            "x": 5436,
+            "y": 5086
           }
         },
         "186789b3-e143-a8c2-011f-1350b1b1ca19": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5537,
-            "x": 5294
+            "x": 5613,
+            "y": 5319
           }
         },
         "a5e471f2-84fc-af78-9bf7-cdd942798abd": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5723,
-            "x": 5228
+            "x": 5399,
+            "y": 5530
           }
         },
         "c15444fc-cec5-1584-fc62-32a54100d8e5": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5755,
-            "x": 4687
+            "x": 5000,
+            "y": 5675
           }
         },
         "b730d778-2d60-9643-af8d-eac5b2b417b1": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5418,
-            "x": 5113
+            "x": 4978,
+            "y": 5231
           }
         },
         "e50621be-eca8-6af8-f851-098111514757": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5539,
-            "x": 5059
+            "x": 4998,
+            "y": 5441
           }
         },
         "50480747-34be-209b-5fc3-f80935eb3ea7": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5161,
-            "x": 4851
+            "x": 5218,
+            "y": 5086
           }
         },
         "dec021c8-876a-1e0d-c47b-026e6dea51d9": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5040,
-            "x": 5010
+            "x": 5327,
+            "y": 5000
           }
         },
         "db8cf00a-a81a-f88a-70e9-7e16c7e503f6": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5243,
-            "x": 4730
+            "x": 5436,
+            "y": 5171
           }
         }
-      },
-      "name": "EXAMPLE 9: Credit Card Client Defaults",
-      "description": "Determining the probability of default of credit card clients"
+      }
     },
     "notebooks": {
       "c15444fc-cec5-1584-fc62-32a54100d8e5": {
+        "nbformat_minor": 0,
         "cells": [{
+          "source": ["### Computing confusion matrix, precision and recall\n", "###### NOTE: Due to differences in implementation between Spark versions, the exact results you are getting might be slightly different from the ones presented below."],
           "cell_type": "markdown",
           "metadata": {
 
-          },
-          "source": ["### Computing confusion matrix, precision and recall\n", "###### NOTE: Due to differences in implementation between Spark versions, the exact results you are getting might be slightly different from the ones presented below."]
+          }
         }, {
           "source": ["df <- dataframe()"],
           "execution_count": 1,
@@ -495,74 +496,75 @@
           "source": ["(confusion_matrix <- base::table(df_subset))"],
           "execution_count": 3,
           "outputs": [{
+            "output_type": "display_data",
             "data": {
               "text/plain": ["          default_payment_next_month\n", "prediction    0    1\n", "         0 6717 1244\n", "         1  377  740"]
             },
             "metadata": {
 
-            },
-            "output_type": "display_data"
+            }
           }],
           "cell_type": "code",
           "metadata": {
             "collapsed": false
           }
         }, {
+          "source": ["*Precision*"],
           "cell_type": "markdown",
           "metadata": {
 
-          },
-          "source": ["*Precision*"]
+          }
         }, {
           "source": ["confusion_matrix[2,2] / sum(confusion_matrix[2,])"],
           "execution_count": 4,
           "outputs": [{
+            "output_type": "display_data",
             "data": {
-              "text/html": ["0.662488809310654"],
-              "text/latex": ["0.662488809310654"],
+              "text/plain": ["[1] 0.6624888"],
               "text/markdown": ["0.662488809310654"],
-              "text/plain": ["[1] 0.6624888"]
+              "text/html": ["0.662488809310654"],
+              "text/latex": ["0.662488809310654"]
             },
             "metadata": {
 
-            },
-            "output_type": "display_data"
+            }
           }],
           "cell_type": "code",
           "metadata": {
             "collapsed": false
           }
         }, {
+          "source": ["*Recall*"],
           "cell_type": "markdown",
           "metadata": {
 
-          },
-          "source": ["*Recall*"]
+          }
         }, {
           "source": ["confusion_matrix[2,2] / sum(confusion_matrix[,2])"],
           "execution_count": 5,
           "outputs": [{
+            "output_type": "display_data",
             "data": {
-              "text/html": ["0.372983870967742"],
-              "text/latex": ["0.372983870967742"],
+              "text/plain": ["[1] 0.3729839"],
               "text/markdown": ["0.372983870967742"],
-              "text/plain": ["[1] 0.3729839"]
+              "text/html": ["0.372983870967742"],
+              "text/latex": ["0.372983870967742"]
             },
             "metadata": {
 
-            },
-            "output_type": "display_data"
+            }
           }],
           "cell_type": "code",
           "metadata": {
             "collapsed": false
           }
         }],
+        "nbformat": 4,
         "metadata": {
           "kernelspec": {
             "display_name": "SparkR",
-            "language": "R",
-            "name": "forwarding_kernel_r"
+            "name": "forwarding_kernel_r",
+            "language": "R"
           },
           "language_info": {
             "mimetype": "text/x-r-source",
@@ -572,17 +574,16 @@
             "version": "3.2.3",
             "file_extension": ".r"
           }
-        },
-        "nbformat": 4,
-        "nbformat_minor": 0
+        }
       },
       "7e3457c6-7b37-1740-1393-9650f7c9a385": {
+        "nbformat_minor": 0,
         "cells": [{
+          "source": ["###### NOTE: Due to differences in implementation between Spark versions, the exact results you are getting might be slightly different from the ones presented below."],
           "cell_type": "markdown",
           "metadata": {
 
-          },
-          "source": ["###### NOTE: Due to differences in implementation between Spark versions, the exact results you are getting might be slightly different from the ones presented below."]
+          }
         }, {
           "source": ["df <- dataframe()"],
           "execution_count": 8,
@@ -595,15 +596,15 @@
           "source": ["head(df, 3)"],
           "execution_count": 9,
           "outputs": [{
+            "output_type": "display_data",
             "data": {
-              "text/html": ["<table>\n", "<thead><tr><th scope=col>ID</th><th scope=col>LIMIT_BAL</th><th scope=col>SEX</th><th scope=col>EDUCATION</th><th scope=col>MARRIAGE</th><th scope=col>AGE</th><th scope=col>PAY_0</th><th scope=col>PAY_2</th><th scope=col>PAY_3</th><th scope=col>PAY_4</th><th scope=col>...</th><th scope=col>BILL_AMT4</th><th scope=col>BILL_AMT5</th><th scope=col>BILL_AMT6</th><th scope=col>PAY_AMT1</th><th scope=col>PAY_AMT2</th><th scope=col>PAY_AMT3</th><th scope=col>PAY_AMT4</th><th scope=col>PAY_AMT5</th><th scope=col>PAY_AMT6</th><th scope=col>default_payment_next_month</th></tr></thead>\n", "<tbody>\n", "\t<tr><td>1     </td><td> 20000</td><td>2     </td><td>2     </td><td>1     </td><td>24    </td><td> 2    </td><td>2     </td><td>-1    </td><td>-1    </td><td>...   </td><td>    0 </td><td>    0 </td><td>    0 </td><td>   0  </td><td> 689  </td><td>   0  </td><td>   0  </td><td>   0  </td><td>   0  </td><td>1     </td></tr>\n", "\t<tr><td>2     </td><td>120000</td><td>2     </td><td>2     </td><td>2     </td><td>26    </td><td>-1    </td><td>2     </td><td> 0    </td><td> 0    </td><td>...   </td><td> 3272 </td><td> 3455 </td><td> 3261 </td><td>   0  </td><td>1000  </td><td>1000  </td><td>1000  </td><td>   0  </td><td>2000  </td><td>1     </td></tr>\n", "\t<tr><td>3     </td><td> 90000</td><td>2     </td><td>2     </td><td>2     </td><td>34    </td><td> 0    </td><td>0     </td><td> 0    </td><td> 0    </td><td>...   </td><td>14331 </td><td>14948 </td><td>15549 </td><td>1518  </td><td>1500  </td><td>1000  </td><td>1000  </td><td>1000  </td><td>5000  </td><td>0     </td></tr>\n", "</tbody>\n", "</table>\n"],
+              "text/plain": ["  ID LIMIT_BAL SEX EDUCATION MARRIAGE AGE PAY_0 PAY_2 PAY_3 PAY_4 ... BILL_AMT4\n", "1 1   20000    2   2         1        24   2    2     -1    -1    ...     0    \n", "2 2  120000    2   2         2        26  -1    2      0     0    ...  3272    \n", "3 3   90000    2   2         2        34   0    0      0     0    ... 14331    \n", "  BILL_AMT5 BILL_AMT6 PAY_AMT1 PAY_AMT2 PAY_AMT3 PAY_AMT4 PAY_AMT5 PAY_AMT6\n", "1     0         0        0      689        0        0        0        0    \n", "2  3455      3261        0     1000     1000     1000        0     2000    \n", "3 14948     15549     1518     1500     1000     1000     1000     5000    \n", "  default_payment_next_month\n", "1 1                         \n", "2 1                         \n", "3 0                         "],
               "text/latex": ["\\begin{tabular}{r|lllllllllllllllllllllllll}\n", " ID & LIMIT\\_BAL & SEX & EDUCATION & MARRIAGE & AGE & PAY\\_0 & PAY\\_2 & PAY\\_3 & PAY\\_4 & ... & BILL\\_AMT4 & BILL\\_AMT5 & BILL\\_AMT6 & PAY\\_AMT1 & PAY\\_AMT2 & PAY\\_AMT3 & PAY\\_AMT4 & PAY\\_AMT5 & PAY\\_AMT6 & default\\_payment\\_next\\_month\\\\\n", "\\hline\n", "\t 1      &  20000 & 2      & 2      & 1      & 24     &  2     & 2      & -1     & -1     & ...    &     0  &     0  &     0  &    0   &  689   &    0   &    0   &    0   &    0   & 1     \\\\\n", "\t 2      & 120000 & 2      & 2      & 2      & 26     & -1     & 2      &  0     &  0     & ...    &  3272  &  3455  &  3261  &    0   & 1000   & 1000   & 1000   &    0   & 2000   & 1     \\\\\n", "\t 3      &  90000 & 2      & 2      & 2      & 34     &  0     & 0      &  0     &  0     & ...    & 14331  & 14948  & 15549  & 1518   & 1500   & 1000   & 1000   & 1000   & 5000   & 0     \\\\\n", "\\end{tabular}\n"],
-              "text/plain": ["  ID LIMIT_BAL SEX EDUCATION MARRIAGE AGE PAY_0 PAY_2 PAY_3 PAY_4 ... BILL_AMT4\n", "1 1   20000    2   2         1        24   2    2     -1    -1    ...     0    \n", "2 2  120000    2   2         2        26  -1    2      0     0    ...  3272    \n", "3 3   90000    2   2         2        34   0    0      0     0    ... 14331    \n", "  BILL_AMT5 BILL_AMT6 PAY_AMT1 PAY_AMT2 PAY_AMT3 PAY_AMT4 PAY_AMT5 PAY_AMT6\n", "1     0         0        0      689        0        0        0        0    \n", "2  3455      3261        0     1000     1000     1000        0     2000    \n", "3 14948     15549     1518     1500     1000     1000     1000     5000    \n", "  default_payment_next_month\n", "1 1                         \n", "2 1                         \n", "3 0                         "]
+              "text/html": ["<table>\n", "<thead><tr><th scope=col>ID</th><th scope=col>LIMIT_BAL</th><th scope=col>SEX</th><th scope=col>EDUCATION</th><th scope=col>MARRIAGE</th><th scope=col>AGE</th><th scope=col>PAY_0</th><th scope=col>PAY_2</th><th scope=col>PAY_3</th><th scope=col>PAY_4</th><th scope=col>...</th><th scope=col>BILL_AMT4</th><th scope=col>BILL_AMT5</th><th scope=col>BILL_AMT6</th><th scope=col>PAY_AMT1</th><th scope=col>PAY_AMT2</th><th scope=col>PAY_AMT3</th><th scope=col>PAY_AMT4</th><th scope=col>PAY_AMT5</th><th scope=col>PAY_AMT6</th><th scope=col>default_payment_next_month</th></tr></thead>\n", "<tbody>\n", "\t<tr><td>1     </td><td> 20000</td><td>2     </td><td>2     </td><td>1     </td><td>24    </td><td> 2    </td><td>2     </td><td>-1    </td><td>-1    </td><td>...   </td><td>    0 </td><td>    0 </td><td>    0 </td><td>   0  </td><td> 689  </td><td>   0  </td><td>   0  </td><td>   0  </td><td>   0  </td><td>1     </td></tr>\n", "\t<tr><td>2     </td><td>120000</td><td>2     </td><td>2     </td><td>2     </td><td>26    </td><td>-1    </td><td>2     </td><td> 0    </td><td> 0    </td><td>...   </td><td> 3272 </td><td> 3455 </td><td> 3261 </td><td>   0  </td><td>1000  </td><td>1000  </td><td>1000  </td><td>   0  </td><td>2000  </td><td>1     </td></tr>\n", "\t<tr><td>3     </td><td> 90000</td><td>2     </td><td>2     </td><td>2     </td><td>34    </td><td> 0    </td><td>0     </td><td> 0    </td><td> 0    </td><td>...   </td><td>14331 </td><td>14948 </td><td>15549 </td><td>1518  </td><td>1500  </td><td>1000  </td><td>1000  </td><td>1000  </td><td>5000  </td><td>0     </td></tr>\n", "</tbody>\n", "</table>\n"]
             },
             "metadata": {
 
-            },
-            "output_type": "display_data"
+            }
           }],
           "cell_type": "code",
           "metadata": {
@@ -613,15 +614,15 @@
           "source": ["collect(agg(groupBy(df, df$EDUCATION), \n", "            \"count\" = n(df$ID),\n", "            \"default_fraction\" = mean(df$default_payment_next_month)))"],
           "execution_count": 10,
           "outputs": [{
+            "output_type": "display_data",
             "data": {
-              "text/html": ["<table>\n", "<thead><tr><th scope=col>EDUCATION</th><th scope=col>count</th><th scope=col>default_fraction</th></tr></thead>\n", "<tbody>\n", "\t<tr><td>0         </td><td>   14     </td><td>0.00000000</td></tr>\n", "\t<tr><td>1         </td><td>10585     </td><td>0.19234766</td></tr>\n", "\t<tr><td>4         </td><td>  123     </td><td>0.05691057</td></tr>\n", "\t<tr><td>3         </td><td> 4917     </td><td>0.25157616</td></tr>\n", "\t<tr><td>2         </td><td>14030     </td><td>0.23734854</td></tr>\n", "\t<tr><td>6         </td><td>   51     </td><td>0.15686275</td></tr>\n", "\t<tr><td>5         </td><td>  280     </td><td>0.06428571</td></tr>\n", "</tbody>\n", "</table>\n"],
+              "text/plain": ["  EDUCATION count default_fraction\n", "1 0            14 0.00000000      \n", "2 1         10585 0.19234766      \n", "3 4           123 0.05691057      \n", "4 3          4917 0.25157616      \n", "5 2         14030 0.23734854      \n", "6 6            51 0.15686275      \n", "7 5           280 0.06428571      "],
               "text/latex": ["\\begin{tabular}{r|lll}\n", " EDUCATION & count & default\\_fraction\\\\\n", "\\hline\n", "\t 0          &    14      & 0.00000000\\\\\n", "\t 1          & 10585      & 0.19234766\\\\\n", "\t 4          &   123      & 0.05691057\\\\\n", "\t 3          &  4917      & 0.25157616\\\\\n", "\t 2          & 14030      & 0.23734854\\\\\n", "\t 6          &    51      & 0.15686275\\\\\n", "\t 5          &   280      & 0.06428571\\\\\n", "\\end{tabular}\n"],
-              "text/plain": ["  EDUCATION count default_fraction\n", "1 0            14 0.00000000      \n", "2 1         10585 0.19234766      \n", "3 4           123 0.05691057      \n", "4 3          4917 0.25157616      \n", "5 2         14030 0.23734854      \n", "6 6            51 0.15686275      \n", "7 5           280 0.06428571      "]
+              "text/html": ["<table>\n", "<thead><tr><th scope=col>EDUCATION</th><th scope=col>count</th><th scope=col>default_fraction</th></tr></thead>\n", "<tbody>\n", "\t<tr><td>0         </td><td>   14     </td><td>0.00000000</td></tr>\n", "\t<tr><td>1         </td><td>10585     </td><td>0.19234766</td></tr>\n", "\t<tr><td>4         </td><td>  123     </td><td>0.05691057</td></tr>\n", "\t<tr><td>3         </td><td> 4917     </td><td>0.25157616</td></tr>\n", "\t<tr><td>2         </td><td>14030     </td><td>0.23734854</td></tr>\n", "\t<tr><td>6         </td><td>   51     </td><td>0.15686275</td></tr>\n", "\t<tr><td>5         </td><td>  280     </td><td>0.06428571</td></tr>\n", "</tbody>\n", "</table>\n"]
             },
             "metadata": {
 
-            },
-            "output_type": "display_data"
+            }
           }],
           "cell_type": "code",
           "metadata": {
@@ -631,15 +632,15 @@
           "source": ["collect(summarize(df, mean(df$default_payment_next_month)))"],
           "execution_count": 11,
           "outputs": [{
+            "output_type": "display_data",
             "data": {
-              "text/html": ["<table>\n", "<thead><tr><th scope=col>avg(default_payment_next_month)</th></tr></thead>\n", "<tbody>\n", "\t<tr><td>0.2212</td></tr>\n", "</tbody>\n", "</table>\n"],
+              "text/plain": ["  avg(default_payment_next_month)\n", "1 0.2212                         "],
               "text/latex": ["\\begin{tabular}{r|l}\n", " avg(default\\_payment\\_next\\_month)\\\\\n", "\\hline\n", "\t 0.2212\\\\\n", "\\end{tabular}\n"],
-              "text/plain": ["  avg(default_payment_next_month)\n", "1 0.2212                         "]
+              "text/html": ["<table>\n", "<thead><tr><th scope=col>avg(default_payment_next_month)</th></tr></thead>\n", "<tbody>\n", "\t<tr><td>0.2212</td></tr>\n", "</tbody>\n", "</table>\n"]
             },
             "metadata": {
 
-            },
-            "output_type": "display_data"
+            }
           }],
           "cell_type": "code",
           "metadata": {
@@ -649,26 +650,27 @@
           "source": ["collect(summary(df))"],
           "execution_count": 12,
           "outputs": [{
+            "output_type": "display_data",
             "data": {
-              "text/html": ["<table>\n", "<thead><tr><th scope=col>summary</th><th scope=col>ID</th><th scope=col>LIMIT_BAL</th><th scope=col>SEX</th><th scope=col>EDUCATION</th><th scope=col>MARRIAGE</th><th scope=col>AGE</th><th scope=col>PAY_0</th><th scope=col>PAY_2</th><th scope=col>PAY_3</th><th scope=col>...</th><th scope=col>BILL_AMT4</th><th scope=col>BILL_AMT5</th><th scope=col>BILL_AMT6</th><th scope=col>PAY_AMT1</th><th scope=col>PAY_AMT2</th><th scope=col>PAY_AMT3</th><th scope=col>PAY_AMT4</th><th scope=col>PAY_AMT5</th><th scope=col>PAY_AMT6</th><th scope=col>default_payment_next_month</th></tr></thead>\n", "<tbody>\n", "\t<tr><td>count               </td><td>30000               </td><td>30000               </td><td>30000               </td><td>30000               </td><td>30000               </td><td>30000               </td><td>30000               </td><td>30000               </td><td>30000               </td><td>...                 </td><td>30000               </td><td>30000               </td><td>30000               </td><td>30000               </td><td>30000               </td><td>30000               </td><td>30000               </td><td>30000               </td><td>30000               </td><td>30000               </td></tr>\n", "\t<tr><td>mean                </td><td>15000.5             </td><td>167484.32266666667  </td><td>1.6037333333333332  </td><td>1.8531333333333333  </td><td>1.5518666666666667  </td><td>35.4855             </td><td>-0.0167             </td><td>-0.13376666666666667</td><td>-0.1662             </td><td>...                 </td><td>43262.94896666666   </td><td>40311.40096666667   </td><td>38871.7604          </td><td>5663.5805           </td><td>5921.1635           </td><td>5225.6815           </td><td>4826.076866666666   </td><td>4799.387633333334   </td><td>5215.502566666667   </td><td>0.2212              </td></tr>\n", "\t<tr><td>stddev              </td><td>8660.398374208891   </td><td>129747.66156720243  </td><td>0.4891291960902604  </td><td>0.790348659720729   </td><td>0.5219696006132485  </td><td>9.21790406809019    </td><td>1.1238015279973348  </td><td>1.1971859730345529  </td><td>1.196867568446573   </td><td>...                 </td><td>64332.85613391627   </td><td>60797.15577026491   </td><td>59554.10753674577   </td><td>16563.280354025777  </td><td>23040.870402057226  </td><td>17606.96146980311   </td><td>15666.159744031995  </td><td>15278.305679144793  </td><td>17777.4657754353    </td><td>0.41506180569093337 </td></tr>\n", "\t<tr><td>min                 </td><td>1.0                 </td><td>10000.0             </td><td>1.0                 </td><td>0.0                 </td><td>0.0                 </td><td>21.0                </td><td>-2.0                </td><td>-2.0                </td><td>-2.0                </td><td>...                 </td><td>-170000.0           </td><td>-81334.0            </td><td>-339603.0           </td><td>0.0                 </td><td>0.0                 </td><td>0.0                 </td><td>0.0                 </td><td>0.0                 </td><td>0.0                 </td><td>0.0                 </td></tr>\n", "\t<tr><td>max                 </td><td>30000.0             </td><td>1000000.0           </td><td>2.0                 </td><td>6.0                 </td><td>3.0                 </td><td>79.0                </td><td>8.0                 </td><td>8.0                 </td><td>8.0                 </td><td>...                 </td><td>891586.0            </td><td>927171.0            </td><td>961664.0            </td><td>873552.0            </td><td>1684259.0           </td><td>896040.0            </td><td>621000.0            </td><td>426529.0            </td><td>528666.0            </td><td>1.0                 </td></tr>\n", "</tbody>\n", "</table>\n"],
+              "text/plain": ["  summary ID                LIMIT_BAL          SEX               \n", "1 count   30000             30000              30000             \n", "2 mean    15000.5           167484.32266666667 1.6037333333333332\n", "3 stddev  8660.398374208891 129747.66156720243 0.4891291960902604\n", "4 min     1.0               10000.0            1.0               \n", "5 max     30000.0           1000000.0          2.0               \n", "  EDUCATION          MARRIAGE           AGE              PAY_0             \n", "1 30000              30000              30000            30000             \n", "2 1.8531333333333333 1.5518666666666667 35.4855          -0.0167           \n", "3 0.790348659720729  0.5219696006132485 9.21790406809019 1.1238015279973348\n", "4 0.0                0.0                21.0             -2.0              \n", "5 6.0                3.0                79.0             8.0               \n", "  PAY_2                PAY_3             ... BILL_AMT4        \n", "1 30000                30000             ... 30000            \n", "2 -0.13376666666666667 -0.1662           ... 43262.94896666666\n", "3 1.1971859730345529   1.196867568446573 ... 64332.85613391627\n", "4 -2.0                 -2.0              ... -170000.0        \n", "5 8.0                  8.0               ... 891586.0         \n", "  BILL_AMT5         BILL_AMT6         PAY_AMT1           PAY_AMT2          \n", "1 30000             30000             30000              30000             \n", "2 40311.40096666667 38871.7604        5663.5805          5921.1635         \n", "3 60797.15577026491 59554.10753674577 16563.280354025777 23040.870402057226\n", "4 -81334.0          -339603.0         0.0                0.0               \n", "5 927171.0          961664.0          873552.0           1684259.0         \n", "  PAY_AMT3          PAY_AMT4           PAY_AMT5           PAY_AMT6         \n", "1 30000             30000              30000              30000            \n", "2 5225.6815         4826.076866666666  4799.387633333334  5215.502566666667\n", "3 17606.96146980311 15666.159744031995 15278.305679144793 17777.4657754353 \n", "4 0.0               0.0                0.0                0.0              \n", "5 896040.0          621000.0           426529.0           528666.0         \n", "  default_payment_next_month\n", "1 30000                     \n", "2 0.2212                    \n", "3 0.41506180569093337       \n", "4 0.0                       \n", "5 1.0                       "],
               "text/latex": ["\\begin{tabular}{r|llllllllllllllllllllllllll}\n", " summary & ID & LIMIT\\_BAL & SEX & EDUCATION & MARRIAGE & AGE & PAY\\_0 & PAY\\_2 & PAY\\_3 & ... & BILL\\_AMT4 & BILL\\_AMT5 & BILL\\_AMT6 & PAY\\_AMT1 & PAY\\_AMT2 & PAY\\_AMT3 & PAY\\_AMT4 & PAY\\_AMT5 & PAY\\_AMT6 & default\\_payment\\_next\\_month\\\\\n", "\\hline\n", "\t count                & 30000                & 30000                & 30000                & 30000                & 30000                & 30000                & 30000                & 30000                & 30000                & ...                  & 30000                & 30000                & 30000                & 30000                & 30000                & 30000                & 30000                & 30000                & 30000                & 30000               \\\\\n", "\t mean                 & 15000.5              & 167484.32266666667   & 1.6037333333333332   & 1.8531333333333333   & 1.5518666666666667   & 35.4855              & -0.0167              & -0.13376666666666667 & -0.1662              & ...                  & 43262.94896666666    & 40311.40096666667    & 38871.7604           & 5663.5805            & 5921.1635            & 5225.6815            & 4826.076866666666    & 4799.387633333334    & 5215.502566666667    & 0.2212              \\\\\n", "\t stddev               & 8660.398374208891    & 129747.66156720243   & 0.4891291960902604   & 0.790348659720729    & 0.5219696006132485   & 9.21790406809019     & 1.1238015279973348   & 1.1971859730345529   & 1.196867568446573    & ...                  & 64332.85613391627    & 60797.15577026491    & 59554.10753674577    & 16563.280354025777   & 23040.870402057226   & 17606.96146980311    & 15666.159744031995   & 15278.305679144793   & 17777.4657754353     & 0.41506180569093337 \\\\\n", "\t min                  & 1.0                  & 10000.0              & 1.0                  & 0.0                  & 0.0                  & 21.0                 & -2.0                 & -2.0                 & -2.0                 & ...                  & -170000.0            & -81334.0             & -339603.0            & 0.0                  & 0.0                  & 0.0                  & 0.0                  & 0.0                  & 0.0                  & 0.0                 \\\\\n", "\t max                  & 30000.0              & 1000000.0            & 2.0                  & 6.0                  & 3.0                  & 79.0                 & 8.0                  & 8.0                  & 8.0                  & ...                  & 891586.0             & 927171.0             & 961664.0             & 873552.0             & 1684259.0            & 896040.0             & 621000.0             & 426529.0             & 528666.0             & 1.0                 \\\\\n", "\\end{tabular}\n"],
-              "text/plain": ["  summary ID                LIMIT_BAL          SEX               \n", "1 count   30000             30000              30000             \n", "2 mean    15000.5           167484.32266666667 1.6037333333333332\n", "3 stddev  8660.398374208891 129747.66156720243 0.4891291960902604\n", "4 min     1.0               10000.0            1.0               \n", "5 max     30000.0           1000000.0          2.0               \n", "  EDUCATION          MARRIAGE           AGE              PAY_0             \n", "1 30000              30000              30000            30000             \n", "2 1.8531333333333333 1.5518666666666667 35.4855          -0.0167           \n", "3 0.790348659720729  0.5219696006132485 9.21790406809019 1.1238015279973348\n", "4 0.0                0.0                21.0             -2.0              \n", "5 6.0                3.0                79.0             8.0               \n", "  PAY_2                PAY_3             ... BILL_AMT4        \n", "1 30000                30000             ... 30000            \n", "2 -0.13376666666666667 -0.1662           ... 43262.94896666666\n", "3 1.1971859730345529   1.196867568446573 ... 64332.85613391627\n", "4 -2.0                 -2.0              ... -170000.0        \n", "5 8.0                  8.0               ... 891586.0         \n", "  BILL_AMT5         BILL_AMT6         PAY_AMT1           PAY_AMT2          \n", "1 30000             30000             30000              30000             \n", "2 40311.40096666667 38871.7604        5663.5805          5921.1635         \n", "3 60797.15577026491 59554.10753674577 16563.280354025777 23040.870402057226\n", "4 -81334.0          -339603.0         0.0                0.0               \n", "5 927171.0          961664.0          873552.0           1684259.0         \n", "  PAY_AMT3          PAY_AMT4           PAY_AMT5           PAY_AMT6         \n", "1 30000             30000              30000              30000            \n", "2 5225.6815         4826.076866666666  4799.387633333334  5215.502566666667\n", "3 17606.96146980311 15666.159744031995 15278.305679144793 17777.4657754353 \n", "4 0.0               0.0                0.0                0.0              \n", "5 896040.0          621000.0           426529.0           528666.0         \n", "  default_payment_next_month\n", "1 30000                     \n", "2 0.2212                    \n", "3 0.41506180569093337       \n", "4 0.0                       \n", "5 1.0                       "]
+              "text/html": ["<table>\n", "<thead><tr><th scope=col>summary</th><th scope=col>ID</th><th scope=col>LIMIT_BAL</th><th scope=col>SEX</th><th scope=col>EDUCATION</th><th scope=col>MARRIAGE</th><th scope=col>AGE</th><th scope=col>PAY_0</th><th scope=col>PAY_2</th><th scope=col>PAY_3</th><th scope=col>...</th><th scope=col>BILL_AMT4</th><th scope=col>BILL_AMT5</th><th scope=col>BILL_AMT6</th><th scope=col>PAY_AMT1</th><th scope=col>PAY_AMT2</th><th scope=col>PAY_AMT3</th><th scope=col>PAY_AMT4</th><th scope=col>PAY_AMT5</th><th scope=col>PAY_AMT6</th><th scope=col>default_payment_next_month</th></tr></thead>\n", "<tbody>\n", "\t<tr><td>count               </td><td>30000               </td><td>30000               </td><td>30000               </td><td>30000               </td><td>30000               </td><td>30000               </td><td>30000               </td><td>30000               </td><td>30000               </td><td>...                 </td><td>30000               </td><td>30000               </td><td>30000               </td><td>30000               </td><td>30000               </td><td>30000               </td><td>30000               </td><td>30000               </td><td>30000               </td><td>30000               </td></tr>\n", "\t<tr><td>mean                </td><td>15000.5             </td><td>167484.32266666667  </td><td>1.6037333333333332  </td><td>1.8531333333333333  </td><td>1.5518666666666667  </td><td>35.4855             </td><td>-0.0167             </td><td>-0.13376666666666667</td><td>-0.1662             </td><td>...                 </td><td>43262.94896666666   </td><td>40311.40096666667   </td><td>38871.7604          </td><td>5663.5805           </td><td>5921.1635           </td><td>5225.6815           </td><td>4826.076866666666   </td><td>4799.387633333334   </td><td>5215.502566666667   </td><td>0.2212              </td></tr>\n", "\t<tr><td>stddev              </td><td>8660.398374208891   </td><td>129747.66156720243  </td><td>0.4891291960902604  </td><td>0.790348659720729   </td><td>0.5219696006132485  </td><td>9.21790406809019    </td><td>1.1238015279973348  </td><td>1.1971859730345529  </td><td>1.196867568446573   </td><td>...                 </td><td>64332.85613391627   </td><td>60797.15577026491   </td><td>59554.10753674577   </td><td>16563.280354025777  </td><td>23040.870402057226  </td><td>17606.96146980311   </td><td>15666.159744031995  </td><td>15278.305679144793  </td><td>17777.4657754353    </td><td>0.41506180569093337 </td></tr>\n", "\t<tr><td>min                 </td><td>1.0                 </td><td>10000.0             </td><td>1.0                 </td><td>0.0                 </td><td>0.0                 </td><td>21.0                </td><td>-2.0                </td><td>-2.0                </td><td>-2.0                </td><td>...                 </td><td>-170000.0           </td><td>-81334.0            </td><td>-339603.0           </td><td>0.0                 </td><td>0.0                 </td><td>0.0                 </td><td>0.0                 </td><td>0.0                 </td><td>0.0                 </td><td>0.0                 </td></tr>\n", "\t<tr><td>max                 </td><td>30000.0             </td><td>1000000.0           </td><td>2.0                 </td><td>6.0                 </td><td>3.0                 </td><td>79.0                </td><td>8.0                 </td><td>8.0                 </td><td>8.0                 </td><td>...                 </td><td>891586.0            </td><td>927171.0            </td><td>961664.0            </td><td>873552.0            </td><td>1684259.0           </td><td>896040.0            </td><td>621000.0            </td><td>426529.0            </td><td>528666.0            </td><td>1.0                 </td></tr>\n", "</tbody>\n", "</table>\n"]
             },
             "metadata": {
 
-            },
-            "output_type": "display_data"
+            }
           }],
           "cell_type": "code",
           "metadata": {
             "collapsed": false
           }
         }],
+        "nbformat": 4,
         "metadata": {
           "kernelspec": {
             "display_name": "SparkR",
-            "language": "R",
-            "name": "forwarding_kernel_r"
+            "name": "forwarding_kernel_r",
+            "language": "R"
           },
           "language_info": {
             "mimetype": "text/x-r-source",
@@ -678,16 +680,14 @@
             "version": "3.2.3",
             "file_extension": ".r"
           }
-        },
-        "nbformat": 4,
-        "nbformat_minor": 0
+        }
       }
     }
   },
   "variables": {
 
   },
-  "id": "0a3c986f-28db-4e5b-bb8e-d096c49ff5bc",
+  "id": "6c0d0f00-956b-4050-af75-498981dea632",
   "metadata": {
     "type": "batch",
     "apiVersion": "1.3.0"

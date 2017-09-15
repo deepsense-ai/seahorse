@@ -35,50 +35,6 @@
         "fit intercept": true
       }
     }, {
-      "id": "e19cb77e-8a35-1341-31f4-34244d36ff8c",
-      "operation": {
-        "id": "a88eaf35-9061-4714-b042-ddd2049ce917",
-        "name": "Evaluate"
-      },
-      "parameters": {
-        "Parameters of input Evaluator": {
-          "regression metric": {
-            "rmse": {
-
-            }
-          },
-          "label column": {
-            "type": "column",
-            "value": "price"
-          },
-          "prediction column": {
-            "type": "column",
-            "value": "prediction"
-          }
-        }
-      }
-    }, {
-      "id": "173c865f-bd36-362b-3c88-4157ee09cfd7",
-      "operation": {
-        "id": "d9c3026c-a3d0-4365-8d1a-464a656b72de",
-        "name": "Regression Evaluator"
-      },
-      "parameters": {
-        "regression metric": {
-          "rmse": {
-
-          }
-        },
-        "prediction column": {
-          "type": "column",
-          "value": "prediction"
-        },
-        "label column": {
-          "type": "column",
-          "value": "price"
-        }
-      }
-    }, {
       "id": "e9701be1-c0e7-14ed-00e8-d9729b3b112c",
       "operation": {
         "id": "c9df7000-9ea0-41c0-b66c-3062fd57851b",
@@ -96,6 +52,20 @@
                 "output column": "city_index"
               }
             }
+          }
+        }
+      }
+    }, {
+      "id": "75e3e35e-86d2-98c9-c175-484e9abd3f1a",
+      "operation": {
+        "id": "d273c42f-b840-4402-ba6b-18282cc68de3",
+        "name": "Split"
+      },
+      "parameters": {
+        "split mode": {
+          "RANDOM": {
+            "split ratio": 0.3,
+            "seed": 0.0
           }
         }
       }
@@ -147,6 +117,50 @@
         }
       }
     }, {
+      "id": "173c865f-bd36-362b-3c88-4157ee09cfd7",
+      "operation": {
+        "id": "d9c3026c-a3d0-4365-8d1a-464a656b72de",
+        "name": "Regression Evaluator"
+      },
+      "parameters": {
+        "regression metric": {
+          "rmse": {
+
+          }
+        },
+        "prediction column": {
+          "type": "column",
+          "value": "prediction"
+        },
+        "label column": {
+          "type": "column",
+          "value": "price"
+        }
+      }
+    }, {
+      "id": "e19cb77e-8a35-1341-31f4-34244d36ff8c",
+      "operation": {
+        "id": "a88eaf35-9061-4714-b042-ddd2049ce917",
+        "name": "Evaluate"
+      },
+      "parameters": {
+        "Parameters of input Evaluator": {
+          "regression metric": {
+            "rmse": {
+
+            }
+          },
+          "label column": {
+            "type": "column",
+            "value": "price"
+          },
+          "prediction column": {
+            "type": "column",
+            "value": "prediction"
+          }
+        }
+      }
+    }, {
       "id": "11982311-bc25-ff8b-037c-ad969b69acdf",
       "operation": {
         "id": "c57a5b99-9184-4095-9037-9359f905628d",
@@ -161,20 +175,6 @@
           "excluding": true
         },
         "output column": "features"
-      }
-    }, {
-      "id": "75e3e35e-86d2-98c9-c175-484e9abd3f1a",
-      "operation": {
-        "id": "d273c42f-b840-4402-ba6b-18282cc68de3",
-        "name": "Split"
-      },
-      "parameters": {
-        "split mode": {
-          "RANDOM": {
-            "split ratio": 0.7,
-            "seed": 0.0
-          }
-        }
       }
     }, {
       "id": "79136692-200b-e2f2-b8cc-6e17cab9cfc7",
@@ -203,16 +203,16 @@
     }],
     "connections": [{
       "from": {
-        "nodeId": "173c865f-bd36-362b-3c88-4157ee09cfd7",
+        "nodeId": "49f8ce4a-f425-3ea6-927f-bdce0ad10006",
         "portIndex": 0
       },
       "to": {
-        "nodeId": "e19cb77e-8a35-1341-31f4-34244d36ff8c",
-        "portIndex": 1
+        "nodeId": "eb4e701a-87e8-f487-2165-3aac47182c74",
+        "portIndex": 0
       }
     }, {
       "from": {
-        "nodeId": "f2d6f3f8-e75e-6182-b183-331d154cfcb8",
+        "nodeId": "75e3e35e-86d2-98c9-c175-484e9abd3f1a",
         "portIndex": 0
       },
       "to": {
@@ -230,20 +230,20 @@
       }
     }, {
       "from": {
+        "nodeId": "75e3e35e-86d2-98c9-c175-484e9abd3f1a",
+        "portIndex": 1
+      },
+      "to": {
+        "nodeId": "eb4e701a-87e8-f487-2165-3aac47182c74",
+        "portIndex": 1
+      }
+    }, {
+      "from": {
         "nodeId": "eb4e701a-87e8-f487-2165-3aac47182c74",
         "portIndex": 0
       },
       "to": {
         "nodeId": "e19cb77e-8a35-1341-31f4-34244d36ff8c",
-        "portIndex": 0
-      }
-    }, {
-      "from": {
-        "nodeId": "49f8ce4a-f425-3ea6-927f-bdce0ad10006",
-        "portIndex": 0
-      },
-      "to": {
-        "nodeId": "eb4e701a-87e8-f487-2165-3aac47182c74",
         "portIndex": 1
       }
     }, {
@@ -257,17 +257,8 @@
       }
     }, {
       "from": {
-        "nodeId": "75e3e35e-86d2-98c9-c175-484e9abd3f1a",
+        "nodeId": "f2d6f3f8-e75e-6182-b183-331d154cfcb8",
         "portIndex": 0
-      },
-      "to": {
-        "nodeId": "eb4e701a-87e8-f487-2165-3aac47182c74",
-        "portIndex": 0
-      }
-    }, {
-      "from": {
-        "nodeId": "75e3e35e-86d2-98c9-c175-484e9abd3f1a",
-        "portIndex": 1
       },
       "to": {
         "nodeId": "49f8ce4a-f425-3ea6-927f-bdce0ad10006",
@@ -291,95 +282,104 @@
         "nodeId": "e9701be1-c0e7-14ed-00e8-d9729b3b112c",
         "portIndex": 0
       }
+    }, {
+      "from": {
+        "nodeId": "173c865f-bd36-362b-3c88-4157ee09cfd7",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "e19cb77e-8a35-1341-31f4-34244d36ff8c",
+        "portIndex": 0
+      }
     }]
   },
   "thirdPartyData": {
     "gui": {
+      "name": "EXAMPLE 2: Better Regression Model",
+      "description": "Better regression model",
       "predefColors": ["#00B1EB", "#1ab394", "#2f4050", "#f8ac59", "#ed5565", "#DD6D3F"],
       "nodes": {
         "e9701be1-c0e7-14ed-00e8-d9729b3b112c": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5026,
-            "x": 5238
+            "x": 4784,
+            "y": 5077
           }
         },
         "eb4e701a-87e8-f487-2165-3aac47182c74": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5539,
-            "x": 5245
+            "x": 5218,
+            "y": 5526
           }
         },
         "49f8ce4a-f425-3ea6-927f-bdce0ad10006": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5422,
-            "x": 5499
+            "x": 5164,
+            "y": 5430
           }
         },
         "f2d6f3f8-e75e-6182-b183-331d154cfcb8": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5315,
-            "x": 5498
+            "x": 4938,
+            "y": 5341
           }
         },
         "d4c3f87a-5af4-1134-b55e-a71f7b37299c": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5116,
-            "x": 5239
+            "x": 4956,
+            "y": 5167
           }
         },
         "75e3e35e-86d2-98c9-c175-484e9abd3f1a": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5314,
-            "x": 5241
+            "x": 5304,
+            "y": 5342
           }
         },
         "e19cb77e-8a35-1341-31f4-34244d36ff8c": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5653,
-            "x": 5383
+            "x": 5159,
+            "y": 5622
           }
         },
         "11982311-bc25-ff8b-037c-ad969b69acdf": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5208,
-            "x": 5238
+            "x": 5139,
+            "y": 5256
           }
         },
         "79136692-200b-e2f2-b8cc-6e17cab9cfc7": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 4931,
-            "x": 5237
+            "x": 4619,
+            "y": 5003
           }
         },
         "173c865f-bd36-362b-3c88-4157ee09cfd7": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5538,
-            "x": 5508
+            "x": 5000,
+            "y": 5531
           }
         }
-      },
-      "name": "EXAMPLE 2: Better Regression Model",
-      "description": "Better regression model"
+      }
     },
     "notebooks": {
 
@@ -388,7 +388,7 @@
   "variables": {
 
   },
-  "id": "0fdb79ec-b927-48f4-ba05-fb603c65a7a7",
+  "id": "e274105f-af30-400c-b031-f02edad4fc17",
   "metadata": {
     "type": "batch",
     "apiVersion": "1.3.0"

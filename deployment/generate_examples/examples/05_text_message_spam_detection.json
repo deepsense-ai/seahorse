@@ -1,29 +1,6 @@
 {
   "workflow": {
     "nodes": [{
-      "id": "9a1256c8-2453-658a-674a-b9bb0cc44751",
-      "operation": {
-        "id": "a88eaf35-9061-4714-b042-ddd2049ce917",
-        "name": "Evaluate"
-      },
-      "parameters": {
-        "Parameters of input Evaluator": {
-          "raw prediction column": {
-            "type": "column",
-            "value": "rawPrediction"
-          },
-          "binary metric": {
-            "Area under PR": {
-
-            }
-          },
-          "label column": {
-            "type": "column",
-            "value": "class"
-          }
-        }
-      }
-    }, {
       "id": "5169cfbd-079b-dfc1-ed05-73b4308d8a6b",
       "operation": {
         "id": "a721fe2a-5d7f-44b3-a1e7-aade16252ead",
@@ -33,26 +10,18 @@
         "code": "def transform(df):\n    text = df['text']\n    cls = df['class']\n    pred = df['prediction']\n    return df.select(text, cls, pred, (cls == pred).alias('correct'))"
       }
     }, {
-      "id": "54e77b85-8bb8-9574-50b1-ecc7181ed79f",
+      "id": "759f34de-8bc0-9b0b-c72c-c78f103ddf1d",
       "operation": {
-        "id": "e76ca616-0322-47a5-b390-70c9668265dd",
-        "name": "Notebook"
+        "id": "643d8706-24db-4674-b5b4-10b5129251fc",
+        "name": "Transform"
       },
       "parameters": {
-
-      }
-    }, {
-      "id": "d59b610d-7c5a-255f-2b08-b7b84ce6215f",
-      "operation": {
-        "id": "d273c42f-b840-4402-ba6b-18282cc68de3",
-        "name": "Split"
-      },
-      "parameters": {
-        "split mode": {
-          "RANDOM": {
-            "split ratio": 0.7,
-            "seed": 0.0
-          }
+        "Parameters of input Transformer": {
+          "input column": {
+            "type": "column",
+            "value": "text_feature"
+          },
+          "min term frequency": 1
         }
       }
     }, {
@@ -102,6 +71,25 @@
         }
       }
     }, {
+      "id": "9a1256c8-2453-658a-674a-b9bb0cc44751",
+      "operation": {
+        "id": "a88eaf35-9061-4714-b042-ddd2049ce917",
+        "name": "Evaluate"
+      },
+      "parameters": {
+        "Parameters of input Evaluator": {
+          "binary metric": {
+            "Area under PR": {
+
+            }
+          },
+          "label column": {
+            "type": "column",
+            "value": "class"
+          }
+        }
+      }
+    }, {
       "id": "a74d1f41-61f5-1ddf-eac5-c6dd218ce8de",
       "operation": {
         "id": "643d8706-24db-4674-b5b4-10b5129251fc",
@@ -117,6 +105,37 @@
           "prediction column": "prediction",
           "probability column": "probability",
           "raw prediction column": "rawPrediction"
+        }
+      }
+    }, {
+      "id": "702dbca8-1f0c-d30f-d2fc-ca583bdbd1c5",
+      "operation": {
+        "id": "464ce3fa-e915-4a5d-a9d1-442c1e4b7aa7",
+        "name": "Binary Classification Evaluator"
+      },
+      "parameters": {
+        "binary metric": {
+          "Area under PR": {
+
+          }
+        },
+        "label column": {
+          "type": "column",
+          "value": "label"
+        }
+      }
+    }, {
+      "id": "d59b610d-7c5a-255f-2b08-b7b84ce6215f",
+      "operation": {
+        "id": "d273c42f-b840-4402-ba6b-18282cc68de3",
+        "name": "Split"
+      },
+      "parameters": {
+        "split mode": {
+          "RANDOM": {
+            "split ratio": 0.7,
+            "seed": 0.0
+          }
         }
       }
     }, {
@@ -174,6 +193,15 @@
         }
       }
     }, {
+      "id": "54e77b85-8bb8-9574-50b1-ecc7181ed79f",
+      "operation": {
+        "id": "e76ca616-0322-47a5-b390-70c9668265dd",
+        "name": "Python Notebook"
+      },
+      "parameters": {
+
+      }
+    }, {
       "id": "96470bf5-4a9e-472e-3e4b-59cf42153bbb",
       "operation": {
         "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
@@ -218,43 +246,6 @@
         "max vocabulary size": 262144.0
       }
     }, {
-      "id": "702dbca8-1f0c-d30f-d2fc-ca583bdbd1c5",
-      "operation": {
-        "id": "464ce3fa-e915-4a5d-a9d1-442c1e4b7aa7",
-        "name": "Binary Classification Evaluator"
-      },
-      "parameters": {
-        "binary metric": {
-          "Area under PR": {
-
-          }
-        },
-        "raw prediction column": {
-          "type": "column",
-          "value": "rawPrediction"
-        },
-        "label column": {
-          "type": "column",
-          "value": "label"
-        }
-      }
-    }, {
-      "id": "759f34de-8bc0-9b0b-c72c-c78f103ddf1d",
-      "operation": {
-        "id": "643d8706-24db-4674-b5b4-10b5129251fc",
-        "name": "Transform"
-      },
-      "parameters": {
-        "Parameters of input Transformer": {
-          "output column": "vector",
-          "min term frequency": 1,
-          "input column": {
-            "type": "column",
-            "value": "text_feature"
-          }
-        }
-      }
-    }, {
       "id": "62890c24-2a94-c6ef-e068-136a914968b5",
       "operation": {
         "id": "c9df7000-9ea0-41c0-b66c-3062fd57851b",
@@ -278,11 +269,11 @@
     }],
     "connections": [{
       "from": {
-        "nodeId": "d59b610d-7c5a-255f-2b08-b7b84ce6215f",
-        "portIndex": 1
+        "nodeId": "75a8c3fc-3ea6-853f-8c4e-c22c9d8128d9",
+        "portIndex": 0
       },
       "to": {
-        "nodeId": "759f34de-8bc0-9b0b-c72c-c78f103ddf1d",
+        "nodeId": "8fe19680-d295-636d-c0c5-ce00b908ea1c",
         "portIndex": 0
       }
     }, {
@@ -293,6 +284,24 @@
       "to": {
         "nodeId": "62890c24-2a94-c6ef-e068-136a914968b5",
         "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "d59b610d-7c5a-255f-2b08-b7b84ce6215f",
+        "portIndex": 1
+      },
+      "to": {
+        "nodeId": "759f34de-8bc0-9b0b-c72c-c78f103ddf1d",
+        "portIndex": 1
+      }
+    }, {
+      "from": {
+        "nodeId": "e9eec70d-55f1-0a51-ac73-8e40cef1f8b0",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "8fe19680-d295-636d-c0c5-ce00b908ea1c",
+        "portIndex": 1
       }
     }, {
       "from": {
@@ -314,21 +323,21 @@
       }
     }, {
       "from": {
+        "nodeId": "759f34de-8bc0-9b0b-c72c-c78f103ddf1d",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "a74d1f41-61f5-1ddf-eac5-c6dd218ce8de",
+        "portIndex": 1
+      }
+    }, {
+      "from": {
         "nodeId": "62890c24-2a94-c6ef-e068-136a914968b5",
         "portIndex": 0
       },
       "to": {
         "nodeId": "d6d89982-bcf7-e65d-9df2-495cd8fc3876",
         "portIndex": 0
-      }
-    }, {
-      "from": {
-        "nodeId": "75a8c3fc-3ea6-853f-8c4e-c22c9d8128d9",
-        "portIndex": 0
-      },
-      "to": {
-        "nodeId": "8fe19680-d295-636d-c0c5-ce00b908ea1c",
-        "portIndex": 1
       }
     }, {
       "from": {
@@ -341,20 +350,20 @@
       }
     }, {
       "from": {
-        "nodeId": "8fe19680-d295-636d-c0c5-ce00b908ea1c",
-        "portIndex": 0
+        "nodeId": "e9eec70d-55f1-0a51-ac73-8e40cef1f8b0",
+        "portIndex": 1
       },
       "to": {
-        "nodeId": "a74d1f41-61f5-1ddf-eac5-c6dd218ce8de",
-        "portIndex": 1
+        "nodeId": "759f34de-8bc0-9b0b-c72c-c78f103ddf1d",
+        "portIndex": 0
       }
     }, {
       "from": {
-        "nodeId": "759f34de-8bc0-9b0b-c72c-c78f103ddf1d",
+        "nodeId": "702dbca8-1f0c-d30f-d2fc-ca583bdbd1c5",
         "portIndex": 0
       },
       "to": {
-        "nodeId": "a74d1f41-61f5-1ddf-eac5-c6dd218ce8de",
+        "nodeId": "9a1256c8-2453-658a-674a-b9bb0cc44751",
         "portIndex": 0
       }
     }, {
@@ -368,7 +377,7 @@
       }
     }, {
       "from": {
-        "nodeId": "702dbca8-1f0c-d30f-d2fc-ca583bdbd1c5",
+        "nodeId": "a74d1f41-61f5-1ddf-eac5-c6dd218ce8de",
         "portIndex": 0
       },
       "to": {
@@ -377,20 +386,11 @@
       }
     }, {
       "from": {
-        "nodeId": "e9eec70d-55f1-0a51-ac73-8e40cef1f8b0",
-        "portIndex": 1
-      },
-      "to": {
-        "nodeId": "759f34de-8bc0-9b0b-c72c-c78f103ddf1d",
-        "portIndex": 1
-      }
-    }, {
-      "from": {
-        "nodeId": "e9eec70d-55f1-0a51-ac73-8e40cef1f8b0",
+        "nodeId": "8fe19680-d295-636d-c0c5-ce00b908ea1c",
         "portIndex": 0
       },
       "to": {
-        "nodeId": "8fe19680-d295-636d-c0c5-ce00b908ea1c",
+        "nodeId": "a74d1f41-61f5-1ddf-eac5-c6dd218ce8de",
         "portIndex": 0
       }
     }, {
@@ -400,15 +400,6 @@
       },
       "to": {
         "nodeId": "5169cfbd-079b-dfc1-ed05-73b4308d8a6b",
-        "portIndex": 0
-      }
-    }, {
-      "from": {
-        "nodeId": "a74d1f41-61f5-1ddf-eac5-c6dd218ce8de",
-        "portIndex": 0
-      },
-      "to": {
-        "nodeId": "9a1256c8-2453-658a-674a-b9bb0cc44751",
         "portIndex": 0
       }
     }]
@@ -423,112 +414,112 @@
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 4047,
-            "y": 4575
+            "x": 4828,
+            "y": 5067
           }
         },
         "8fe19680-d295-636d-c0c5-ce00b908ea1c": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 3931,
-            "y": 4994
+            "x": 5001,
+            "y": 5555
           }
         },
         "96470bf5-4a9e-472e-3e4b-59cf42153bbb": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 3793,
-            "y": 4573
+            "x": 4672,
+            "y": 4982
           }
         },
         "54e77b85-8bb8-9574-50b1-ecc7181ed79f": {
           "uiName": "Incorrect",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 4094,
-            "y": 5237
+            "x": 5154,
+            "y": 5874
           }
         },
         "e9eec70d-55f1-0a51-ac73-8e40cef1f8b0": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 3940,
-            "y": 4786
+            "x": 5095,
+            "y": 5446
           }
         },
         "5169cfbd-079b-dfc1-ed05-73b4308d8a6b": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 4029,
-            "y": 5112
+            "x": 5302,
+            "y": 5764
           }
         },
         "75a8c3fc-3ea6-853f-8c4e-c22c9d8128d9": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 3964,
-            "y": 4905
+            "x": 4795,
+            "y": 5445
           }
         },
         "9a1256c8-2453-658a-674a-b9bb0cc44751": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 4287,
-            "y": 5161
+            "x": 5034,
+            "y": 5763
           }
         },
         "d59b610d-7c5a-255f-2b08-b7b84ce6215f": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 4085,
-            "y": 4683
+            "x": 5303,
+            "y": 5344
           }
         },
         "702dbca8-1f0c-d30f-d2fc-ca583bdbd1c5": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 4320,
-            "y": 5065
+            "x": 4782,
+            "y": 5652
           }
         },
         "d6d89982-bcf7-e65d-9df2-495cd8fc3876": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 4286,
-            "y": 4575
+            "x": 4984,
+            "y": 5162
           }
         },
         "a74d1f41-61f5-1ddf-eac5-c6dd218ce8de": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 4200,
-            "y": 5012
+            "x": 5216,
+            "y": 5648
           }
         },
         "b250f954-3cc2-8e54-2801-d4c8da8d1c4d": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 4523,
-            "y": 4573
+            "x": 5139,
+            "y": 5256
           }
         },
         "759f34de-8bc0-9b0b-c72c-c78f103ddf1d": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 4204,
-            "y": 4861
+            "x": 5413,
+            "y": 5552
           }
         }
       }
@@ -536,20 +527,19 @@
     "notebooks": {
       "54e77b85-8bb8-9574-50b1-ecc7181ed79f": {
         "nbformat_minor": 0,
-        "nbformat": 4,
         "cells": [{
           "source": ["df = dataframe()\n", "text = df['text']\n", "cls = df['class']\n", "pred = df['prediction']\n", "\n", "df.select(text, cls, pred).where(cls != pred).toPandas()"],
           "execution_count": 19,
           "outputs": [{
             "execution_count": 19,
-            "output_type": "execute_result",
-            "data": {
-              "text/plain": ["                                                 text  class  prediction\n", "0   FreeMsg Hey there darling it's been 3 week's n...      1           0\n", "1   Did you hear about the new \"Divorce Barbie\"? I...      1           0\n", "2   Will u meet ur dream partner soon? Is ur caree...      1           0\n", "3   Your credits have been topped up for http://ww...      1           0\n", "4   88800 and 89034 are premium phone services cal...      1           0\n", "5   Will purchase d stuff today and mail to you. D...      0           1\n", "6   Email AlertFrom: Jeri StewartSize: 2KBSubject:...      1           0\n", "7   How about getting in touch with folks waiting ...      1           0\n", "8   Dear U've been invited to XCHAT. This is our f...      1           0\n", "9        Where can download clear movies. Dvd copies.      0           1\n", "10  Me too watching surya movie only. . .after 6 p...      0           1\n", "11  I don't know u and u don't know me. Send CHAT ...      1           0\n", "12  FREE entry into our Â£250 weekly comp just send...      1           0\n", "13  Hungry gay guys feeling hungry and up 4 it, no...      1           0\n", "14  Ur balance is now Â£500. Ur next question is: W...      1           0\n", "15  Monthly password for wap. mobsi.com is 391784....      1           0\n", "16  Hello. They are going to the village pub at 8 ...      0           1\n", "17  Hi ya babe x u 4goten bout me?' scammers getti...      1           0\n", "18  <Forwarded from 88877>FREE entry into our Â£250...      1           0\n", "19  I don't know u and u don't know me. Send CHAT ...      1           0\n", "20  They can try! They can get lost, in fact. Tee hee      0           1\n", "21  Hello darling how are you today? I would love ...      1           0\n", "22  I don't know u and u don't know me. Send CHAT ...      1           0\n", "23  If I get there before you after your ten billi...      0           1\n", "24  LORD OF THE RINGS:RETURN OF THE KING in store ...      1           0\n", "25                  K k :-):-) then watch some films.      0           1\n", "26  Sorry I missed your call let's talk when you h...      1           0\n", "27  Welcome! Please reply with your AGE and GENDER...      1           0\n", "28  Not heard from U4 a while. Call me now am here...      1           0\n", "29  Auction round 4. The highest bid is now Â£54. N...      1           0\n", "30            How much would it cost to hire a hitman      0           1\n", "31  My house here e sky quite dark liao... If rain...      0           1\n", "32  GOD ASKED, \"What is forgiveness?\" A little chi...      0           1\n", "33  They have a thread on the wishlist section of ...      0           1\n", "34  cmon babe, make me horny, *turn* me on! Txt me...      1           0\n", "35  thesmszone.com lets you send free anonymous an...      1           0\n", "36  Money i have won wining number 946 wot do i do...      1           0\n", "37  Hi babe its Chloe, how r u? I was smashed on s...      1           0\n", "38                Wif my family booking tour package.      0           1\n", "39  Hi this is Amy, we will be sending you a free ...      1           0\n", "40  You can donate Â£2.50 to UNICEF's Asian Tsunami...      1           0"],
-              "text/html": ["<div>\n", "<table border=\"1\" class=\"dataframe\">\n", "  <thead>\n", "    <tr style=\"text-align: right;\">\n", "      <th></th>\n", "      <th>text</th>\n", "      <th>class</th>\n", "      <th>prediction</th>\n", "    </tr>\n", "  </thead>\n", "  <tbody>\n", "    <tr>\n", "      <th>0</th>\n", "      <td>FreeMsg Hey there darling it's been 3 week's n...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>1</th>\n", "      <td>Did you hear about the new \"Divorce Barbie\"? I...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>2</th>\n", "      <td>Will u meet ur dream partner soon? Is ur caree...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>3</th>\n", "      <td>Your credits have been topped up for http://ww...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>4</th>\n", "      <td>88800 and 89034 are premium phone services cal...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>5</th>\n", "      <td>Will purchase d stuff today and mail to you. D...</td>\n", "      <td>0</td>\n", "      <td>1</td>\n", "    </tr>\n", "    <tr>\n", "      <th>6</th>\n", "      <td>Email AlertFrom: Jeri StewartSize: 2KBSubject:...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>7</th>\n", "      <td>How about getting in touch with folks waiting ...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>8</th>\n", "      <td>Dear U've been invited to XCHAT. This is our f...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>9</th>\n", "      <td>Where can download clear movies. Dvd copies.</td>\n", "      <td>0</td>\n", "      <td>1</td>\n", "    </tr>\n", "    <tr>\n", "      <th>10</th>\n", "      <td>Me too watching surya movie only. . .after 6 p...</td>\n", "      <td>0</td>\n", "      <td>1</td>\n", "    </tr>\n", "    <tr>\n", "      <th>11</th>\n", "      <td>I don't know u and u don't know me. Send CHAT ...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>12</th>\n", "      <td>FREE entry into our Â£250 weekly comp just send...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>13</th>\n", "      <td>Hungry gay guys feeling hungry and up 4 it, no...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>14</th>\n", "      <td>Ur balance is now Â£500. Ur next question is: W...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>15</th>\n", "      <td>Monthly password for wap. mobsi.com is 391784....</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>16</th>\n", "      <td>Hello. They are going to the village pub at 8 ...</td>\n", "      <td>0</td>\n", "      <td>1</td>\n", "    </tr>\n", "    <tr>\n", "      <th>17</th>\n", "      <td>Hi ya babe x u 4goten bout me?' scammers getti...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>18</th>\n", "      <td>&lt;Forwarded from 88877&gt;FREE entry into our Â£250...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>19</th>\n", "      <td>I don't know u and u don't know me. Send CHAT ...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>20</th>\n", "      <td>They can try! They can get lost, in fact. Tee hee</td>\n", "      <td>0</td>\n", "      <td>1</td>\n", "    </tr>\n", "    <tr>\n", "      <th>21</th>\n", "      <td>Hello darling how are you today? I would love ...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>22</th>\n", "      <td>I don't know u and u don't know me. Send CHAT ...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>23</th>\n", "      <td>If I get there before you after your ten billi...</td>\n", "      <td>0</td>\n", "      <td>1</td>\n", "    </tr>\n", "    <tr>\n", "      <th>24</th>\n", "      <td>LORD OF THE RINGS:RETURN OF THE KING in store ...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>25</th>\n", "      <td>K k :-):-) then watch some films.</td>\n", "      <td>0</td>\n", "      <td>1</td>\n", "    </tr>\n", "    <tr>\n", "      <th>26</th>\n", "      <td>Sorry I missed your call let's talk when you h...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>27</th>\n", "      <td>Welcome! Please reply with your AGE and GENDER...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>28</th>\n", "      <td>Not heard from U4 a while. Call me now am here...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>29</th>\n", "      <td>Auction round 4. The highest bid is now Â£54. N...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>30</th>\n", "      <td>How much would it cost to hire a hitman</td>\n", "      <td>0</td>\n", "      <td>1</td>\n", "    </tr>\n", "    <tr>\n", "      <th>31</th>\n", "      <td>My house here e sky quite dark liao... If rain...</td>\n", "      <td>0</td>\n", "      <td>1</td>\n", "    </tr>\n", "    <tr>\n", "      <th>32</th>\n", "      <td>GOD ASKED, \"What is forgiveness?\" A little chi...</td>\n", "      <td>0</td>\n", "      <td>1</td>\n", "    </tr>\n", "    <tr>\n", "      <th>33</th>\n", "      <td>They have a thread on the wishlist section of ...</td>\n", "      <td>0</td>\n", "      <td>1</td>\n", "    </tr>\n", "    <tr>\n", "      <th>34</th>\n", "      <td>cmon babe, make me horny, *turn* me on! Txt me...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>35</th>\n", "      <td>thesmszone.com lets you send free anonymous an...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>36</th>\n", "      <td>Money i have won wining number 946 wot do i do...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>37</th>\n", "      <td>Hi babe its Chloe, how r u? I was smashed on s...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>38</th>\n", "      <td>Wif my family booking tour package.</td>\n", "      <td>0</td>\n", "      <td>1</td>\n", "    </tr>\n", "    <tr>\n", "      <th>39</th>\n", "      <td>Hi this is Amy, we will be sending you a free ...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>40</th>\n", "      <td>You can donate Â£2.50 to UNICEF's Asian Tsunami...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "  </tbody>\n", "</table>\n", "</div>"]
-            },
             "metadata": {
 
-            }
+            },
+            "data": {
+              "text/html": ["<div>\n", "<table border=\"1\" class=\"dataframe\">\n", "  <thead>\n", "    <tr style=\"text-align: right;\">\n", "      <th></th>\n", "      <th>text</th>\n", "      <th>class</th>\n", "      <th>prediction</th>\n", "    </tr>\n", "  </thead>\n", "  <tbody>\n", "    <tr>\n", "      <th>0</th>\n", "      <td>FreeMsg Hey there darling it's been 3 week's n...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>1</th>\n", "      <td>Did you hear about the new \"Divorce Barbie\"? I...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>2</th>\n", "      <td>Will u meet ur dream partner soon? Is ur caree...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>3</th>\n", "      <td>Your credits have been topped up for http://ww...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>4</th>\n", "      <td>88800 and 89034 are premium phone services cal...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>5</th>\n", "      <td>Will purchase d stuff today and mail to you. D...</td>\n", "      <td>0</td>\n", "      <td>1</td>\n", "    </tr>\n", "    <tr>\n", "      <th>6</th>\n", "      <td>Email AlertFrom: Jeri StewartSize: 2KBSubject:...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>7</th>\n", "      <td>How about getting in touch with folks waiting ...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>8</th>\n", "      <td>Dear U've been invited to XCHAT. This is our f...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>9</th>\n", "      <td>Where can download clear movies. Dvd copies.</td>\n", "      <td>0</td>\n", "      <td>1</td>\n", "    </tr>\n", "    <tr>\n", "      <th>10</th>\n", "      <td>Me too watching surya movie only. . .after 6 p...</td>\n", "      <td>0</td>\n", "      <td>1</td>\n", "    </tr>\n", "    <tr>\n", "      <th>11</th>\n", "      <td>I don't know u and u don't know me. Send CHAT ...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>12</th>\n", "      <td>FREE entry into our Â£250 weekly comp just send...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>13</th>\n", "      <td>Hungry gay guys feeling hungry and up 4 it, no...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>14</th>\n", "      <td>Ur balance is now Â£500. Ur next question is: W...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>15</th>\n", "      <td>Monthly password for wap. mobsi.com is 391784....</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>16</th>\n", "      <td>Hello. They are going to the village pub at 8 ...</td>\n", "      <td>0</td>\n", "      <td>1</td>\n", "    </tr>\n", "    <tr>\n", "      <th>17</th>\n", "      <td>Hi ya babe x u 4goten bout me?' scammers getti...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>18</th>\n", "      <td>&lt;Forwarded from 88877&gt;FREE entry into our Â£250...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>19</th>\n", "      <td>I don't know u and u don't know me. Send CHAT ...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>20</th>\n", "      <td>They can try! They can get lost, in fact. Tee hee</td>\n", "      <td>0</td>\n", "      <td>1</td>\n", "    </tr>\n", "    <tr>\n", "      <th>21</th>\n", "      <td>Hello darling how are you today? I would love ...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>22</th>\n", "      <td>I don't know u and u don't know me. Send CHAT ...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>23</th>\n", "      <td>If I get there before you after your ten billi...</td>\n", "      <td>0</td>\n", "      <td>1</td>\n", "    </tr>\n", "    <tr>\n", "      <th>24</th>\n", "      <td>LORD OF THE RINGS:RETURN OF THE KING in store ...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>25</th>\n", "      <td>K k :-):-) then watch some films.</td>\n", "      <td>0</td>\n", "      <td>1</td>\n", "    </tr>\n", "    <tr>\n", "      <th>26</th>\n", "      <td>Sorry I missed your call let's talk when you h...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>27</th>\n", "      <td>Welcome! Please reply with your AGE and GENDER...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>28</th>\n", "      <td>Not heard from U4 a while. Call me now am here...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>29</th>\n", "      <td>Auction round 4. The highest bid is now Â£54. N...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>30</th>\n", "      <td>How much would it cost to hire a hitman</td>\n", "      <td>0</td>\n", "      <td>1</td>\n", "    </tr>\n", "    <tr>\n", "      <th>31</th>\n", "      <td>My house here e sky quite dark liao... If rain...</td>\n", "      <td>0</td>\n", "      <td>1</td>\n", "    </tr>\n", "    <tr>\n", "      <th>32</th>\n", "      <td>GOD ASKED, \"What is forgiveness?\" A little chi...</td>\n", "      <td>0</td>\n", "      <td>1</td>\n", "    </tr>\n", "    <tr>\n", "      <th>33</th>\n", "      <td>They have a thread on the wishlist section of ...</td>\n", "      <td>0</td>\n", "      <td>1</td>\n", "    </tr>\n", "    <tr>\n", "      <th>34</th>\n", "      <td>cmon babe, make me horny, *turn* me on! Txt me...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>35</th>\n", "      <td>thesmszone.com lets you send free anonymous an...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>36</th>\n", "      <td>Money i have won wining number 946 wot do i do...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>37</th>\n", "      <td>Hi babe its Chloe, how r u? I was smashed on s...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>38</th>\n", "      <td>Wif my family booking tour package.</td>\n", "      <td>0</td>\n", "      <td>1</td>\n", "    </tr>\n", "    <tr>\n", "      <th>39</th>\n", "      <td>Hi this is Amy, we will be sending you a free ...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "    <tr>\n", "      <th>40</th>\n", "      <td>You can donate Â£2.50 to UNICEF's Asian Tsunami...</td>\n", "      <td>1</td>\n", "      <td>0</td>\n", "    </tr>\n", "  </tbody>\n", "</table>\n", "</div>"],
+              "text/plain": ["                                                 text  class  prediction\n", "0   FreeMsg Hey there darling it's been 3 week's n...      1           0\n", "1   Did you hear about the new \"Divorce Barbie\"? I...      1           0\n", "2   Will u meet ur dream partner soon? Is ur caree...      1           0\n", "3   Your credits have been topped up for http://ww...      1           0\n", "4   88800 and 89034 are premium phone services cal...      1           0\n", "5   Will purchase d stuff today and mail to you. D...      0           1\n", "6   Email AlertFrom: Jeri StewartSize: 2KBSubject:...      1           0\n", "7   How about getting in touch with folks waiting ...      1           0\n", "8   Dear U've been invited to XCHAT. This is our f...      1           0\n", "9        Where can download clear movies. Dvd copies.      0           1\n", "10  Me too watching surya movie only. . .after 6 p...      0           1\n", "11  I don't know u and u don't know me. Send CHAT ...      1           0\n", "12  FREE entry into our Â£250 weekly comp just send...      1           0\n", "13  Hungry gay guys feeling hungry and up 4 it, no...      1           0\n", "14  Ur balance is now Â£500. Ur next question is: W...      1           0\n", "15  Monthly password for wap. mobsi.com is 391784....      1           0\n", "16  Hello. They are going to the village pub at 8 ...      0           1\n", "17  Hi ya babe x u 4goten bout me?' scammers getti...      1           0\n", "18  <Forwarded from 88877>FREE entry into our Â£250...      1           0\n", "19  I don't know u and u don't know me. Send CHAT ...      1           0\n", "20  They can try! They can get lost, in fact. Tee hee      0           1\n", "21  Hello darling how are you today? I would love ...      1           0\n", "22  I don't know u and u don't know me. Send CHAT ...      1           0\n", "23  If I get there before you after your ten billi...      0           1\n", "24  LORD OF THE RINGS:RETURN OF THE KING in store ...      1           0\n", "25                  K k :-):-) then watch some films.      0           1\n", "26  Sorry I missed your call let's talk when you h...      1           0\n", "27  Welcome! Please reply with your AGE and GENDER...      1           0\n", "28  Not heard from U4 a while. Call me now am here...      1           0\n", "29  Auction round 4. The highest bid is now Â£54. N...      1           0\n", "30            How much would it cost to hire a hitman      0           1\n", "31  My house here e sky quite dark liao... If rain...      0           1\n", "32  GOD ASKED, \"What is forgiveness?\" A little chi...      0           1\n", "33  They have a thread on the wishlist section of ...      0           1\n", "34  cmon babe, make me horny, *turn* me on! Txt me...      1           0\n", "35  thesmszone.com lets you send free anonymous an...      1           0\n", "36  Money i have won wining number 946 wot do i do...      1           0\n", "37  Hi babe its Chloe, how r u? I was smashed on s...      1           0\n", "38                Wif my family booking tour package.      0           1\n", "39  Hi this is Amy, we will be sending you a free ...      1           0\n", "40  You can donate Â£2.50 to UNICEF's Asian Tsunami...      1           0"]
+            },
+            "output_type": "execute_result"
           }],
           "cell_type": "code",
           "metadata": {
@@ -574,14 +564,15 @@
             "nbconvert_exporter": "python",
             "file_extension": ".py"
           }
-        }
+        },
+        "nbformat": 4
       }
     }
   },
   "variables": {
 
   },
-  "id": "3b70eb16-7860-428a-a378-b6fafb57e879",
+  "id": "de580526-4cae-41b4-b4be-6450dfd1ee6c",
   "metadata": {
     "type": "batch",
     "apiVersion": "1.3.0"
