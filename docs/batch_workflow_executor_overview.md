@@ -15,7 +15,7 @@ description: Seahorse Batch Workflow Executor
 ## Overview
 
 Production-ready [workflows](workflowfile.html) can be exported as standalone
-Spark applications and executed on any cluster in a batch mode.
+Apache Spark applications and executed on any cluster in a batch mode.
 
 Seahorse Batch Workflow Executor {{ site.WORKFLOW_EXECUTOR_VERSION }} is an Apache Spark
 application that allows you to execute standalone workflows.
@@ -34,17 +34,32 @@ and manage the execution of workflows outside of Seahorse Editor.
 Compiled version of Seahorse Batch Workflow Executor is available at
 [Try Seahorse page](/downloads.html).
 
+### Configure Environment Variables
+
+It is necessary to set the `SPARK_HOME` and `PYTHONPATH` environment variables to allow
+Seahorse Batch Workflow Executor's Python module to use Apache Spark specific libraries.
+Localize your Apache Spark {{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }} installation
+and set the `SPARK_HOME` variable:
+{% highlight bash %}
+# Replace /opt/spark with a path to your Apache Spark {{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }} installation
+export SPARK_HOME=/opt/spark
+{% endhighlight %}
+Now set the `PYTHONPATH` variable (it depends on `SPARK_HOME`):
+{% highlight bash %}
+export PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.9-src.zip:$PYTHONPATH
+{% endhighlight %}
+
 
 
 ## How to Run Seahorse Batch Workflow Executor
 
-Seahorse Batch Workflow Executor can be submitted to a Spark cluster as any other Spark application.
+Seahorse Batch Workflow Executor can be submitted to an Apache Spark cluster as any other Apache Spark application.
 Example `spark-submit` commands can be found in the following subsections.
 Replace `./bin/spark-submit` with a path to the script in Apache Spark's directory.
-For more detailed information about submitting Spark applications, visit:
+For more detailed information about submitting Apache Spark applications, visit:
 <a target="_blank" href="https://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/submitting-applications.html">https://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/submitting-applications.html</a>
 
-#### Local Spark (single machine)
+#### Local Apache Spark (single machine)
 {% highlight bash %}
 # Run Application Locally (on 8 cores)
 ./bin/spark-submit \
@@ -58,9 +73,9 @@ For more detailed information about submitting Spark applications, visit:
     --python-executor-path workflowexecutor.jar
 {% endhighlight %}
 
-#### Spark Standalone Cluster
+#### Apache Spark Standalone Cluster
 {% highlight bash %}
-# Run on a Spark Standalone Cluster in Client Deploy Mode
+# Run on Apache Spark Standalone Cluster in Client Deploy Mode
 ./bin/spark-submit \
   --driver-class-path workflowexecutor.jar \
   --class io.deepsense.workflowexecutor.WorkflowExecutorApp \
@@ -74,7 +89,7 @@ For more detailed information about submitting Spark applications, visit:
 
 #### YARN Cluster
 {% highlight bash %}
-# Run on a YARN Cluster
+# Run on YARN Cluster
 export HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop   # location of Hadoop cluster configuration directory
 ./bin/spark-submit \
   --driver-class-path workflowexecutor.jar \
@@ -88,7 +103,7 @@ export HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop   # location of Hadoop cluster con
 {% endhighlight %}
 
 Option ``--python-executor-path`` is required (`workflowexecutor.jar` contains the PyExecutor).
-Option ``--files workflow.json`` is necessary to distribute workflow file within the Spark cluster.
+Option ``--files workflow.json`` is necessary to distribute workflow file within the Apache Spark cluster.
 It is necessary to pass the same filename to ``--workflow-filename workflow.json`` option,
 in order to tell Seahorse Batch Workflow Executor under which name it should look for a workflow file.
 
@@ -96,7 +111,7 @@ If `spark-assembly-{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}-hadoop2.6.0.jar` i
 on HDFS cluster, it is possible to reduce the time necessary for files propagation on the YARN cluster. Use the `spark-submit` option
 ``--conf spark.yarn.jar=hdfs:///path/to/spark-assembly-{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}-hadoop2.6.0.jar``
 with a proper HDFS path.
-Spark assembly jar can be found in Spark {{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}
+Apache Spark assembly jar can be found in Apache Spark {{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}
 compiled for Hadoop 2.6.0 package.
 
 
@@ -143,22 +158,22 @@ it has to be surrounded by quotation marks (“”).
 
 ## Seahorse Batch Workflow Executor Logs
 
-Depending on Spark application deployment mode and cluster configuration, execution logs can be
+Depending on Apache Spark application deployment mode and cluster configuration, execution logs can be
 redirected to several locations, e.g.:
 
-* Submitter's console (running Spark locally or when deploy mode is `client`)
+* Submitter's console (running Apache Spark locally or when deploy mode is `client`)
 
 * YARN logs directory on cluster nodes
 
-* Spark logs directory on cluster nodes
+* Apache Spark logs directory on cluster nodes
 
 * HDFS directory
 
 For detailed information about logging with regard to your cluster configuration,
-for running Spark on YARN, visit:
+for running Apache Spark on YARN, visit:
 <a target="_blank" href="http://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/running-on-yarn.html#debugging-your-application">http://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/running-on-yarn.html#debugging-your-application</a>,
-for Spark Standalone cluster, visit:
+for Apache Spark Standalone cluster, visit:
 <a target="_blank" href="http://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/spark-standalone.html#monitoring-and-logging">http://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/spark-standalone.html#monitoring-and-logging</a>.
 
-For details on how Spark runs on clusters, visit:
+For details on how Apache Spark runs on clusters, visit:
 <a target="_blank" href="http://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/cluster-overview.html">http://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/cluster-overview.html</a>.
