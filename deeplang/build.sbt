@@ -22,7 +22,7 @@ import CommonSettingsPlugin._
 name := "deepsense-seahorse-deeplang"
 
 // Integration tests using Spark Clusters need jar
-(test in OurIT) <<= (test in OurIT).dependsOn (assembly)
+(test in OurIT) := ((test in OurIT).dependsOn (assembly)).value
 
 // Only one spark context per JVM
 def assignTestsToJVMs(testDefs: Seq[TestDefinition]) = {

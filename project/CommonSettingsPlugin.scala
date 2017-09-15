@@ -65,7 +65,7 @@ object CommonSettingsPlugin extends AutoPlugin {
     // Disable using the Scala version in output paths and artifacts
     crossPaths := true
   ) ++ ouritSettings ++ testSettings ++ Seq(
-    test <<= test in Test
+    test := (test in Test).value
   ) ++ Seq(
     publishTo := {
       Some(Resolver.file("ds-workflow-executor-ivy-repo", new File( "./target/ds-workflow-executor-ivy-repo" )))

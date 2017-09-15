@@ -25,7 +25,7 @@ name := "deepsense-api"
 description := "API used between subcomponents of Seahorse"
 
 lazy val javaSourceManaged = settingKey[File]("root directory of generated Java files")
-lazy val buildSwaggerClients = taskKey[Seq[File]]("build datasourcemanager client")
+lazy val buildSwaggerClients: TaskKey[Seq[File]] = taskKey[Seq[File]]("build datasourcemanager client")
 lazy val swaggerPackages = settingKey[Seq[(String, String)]](
   "(package, swagger.json) pairs for which Java classes should be generated." +
     " Swagger location is relative to api/ project.")
@@ -36,7 +36,7 @@ swaggerPackages := Seq(
 javaSourceManaged := target.value / "java" / "srcManaged"
 
 managedSourceDirectories in Compile += javaSourceManaged.value
-sourceGenerators in Compile <+= (buildSwaggerClients in Compile)
+sourceGenerators in Compile += (buildSwaggerClients in Compile).taskValue
 buildSwaggerClients in Compile := {
   swaggerPackages.value.flatMap { case (pack, swaggerRelativeLocation) =>
     val tmpDir = {
