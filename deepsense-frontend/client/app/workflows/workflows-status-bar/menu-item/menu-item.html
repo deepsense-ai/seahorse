@@ -9,4 +9,11 @@
   <span class="c-workflows-status-bar__text">
     {{::miCtrl.label}}
   </span>
+  <span class="c-workflows-status-bar__popover-span"
+        uib-popover="{{::miCtrl.label}}"
+        popover-placement="bottom"
+        popover-trigger="mouseenter"
+        popover-append-to-body="true"
+  >
+  </span>
 </a>
