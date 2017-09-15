@@ -41,7 +41,9 @@ function prepare_environment() {
   echo "** Preparing Environment **"
   sudo npm install -g gulp
   sudo npm install -g npmrc
-  npmrc -c codilime
+  # this returns an error unless it's run for the first time on a machine
+  # we know about it and want to continue anyway
+  npmrc -c codilime || test 1
   npmrc codilime
   npm set registry $NPM_REGISTRY_URL
   npm install
