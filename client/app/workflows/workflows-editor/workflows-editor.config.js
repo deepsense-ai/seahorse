@@ -16,28 +16,24 @@ function WorkflowsConfig($stateProvider) {
     resolve: {
       workflowWithResults: /* @ngInject */ ($q, $state, $rootScope, $stateParams,
         $timeout, WorkflowsApiClient, Operations, OperationsHierarchyService,
-        ErrorService, ServerCommunication
-      ) => {
+        ErrorService, ServerCommunication) => {
         let workflowWithResultsDeferred = $q.defer();
-
         ServerCommunication.init($stateParams.id);
 
         $rootScope.$on('ServerCommunication.MESSAGE.workflowWithResults', (event, data) => {
           workflowWithResultsDeferred.resolve(data);
         });
 
-        $timeout(() => {
-          $state.go(ErrorService.getErrorState('408'), {
-            type: 'workflow'
-          });
-          workflowWithResultsDeferred.reject();
-          ServerCommunication.stopReconnecting = true;
-        }, 5000, false);
-
         return $q.all([
           workflowWithResultsDeferred.promise,
           Operations.load().then(OperationsHierarchyService.load)
-        ]);
+        ]).then((results) => {
+          $rootScope.stateData.dataIsLoaded = true;
+
+          let deferred = $q.defer();
+          deferred.resolve(results);
+          return deferred.promise;
+        });
       }
     }
   });

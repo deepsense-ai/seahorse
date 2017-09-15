@@ -215,7 +215,7 @@ describe('WorkflowsApiClient', () => {
       });
 
       spyOn(WorkflowsApiClient, 'updateWorkflow').and.callThrough();
-      spyOn(ServerCommunication, 'updateWorkflow');
+      spyOn(ServerCommunication, 'sendUpdateWorkflowToWorkflowExchange');
     });
 
     afterEach(() => {
@@ -228,25 +228,14 @@ describe('WorkflowsApiClient', () => {
         .toEqual(jasmine.any(Function));
     });
 
-    it('has been called', () => {
-      WorkflowsApiClient.updateWorkflow(serializedWorkflow);
-      expect(WorkflowsApiClient.updateWorkflow).toHaveBeenCalled();
-    });
-
     it('has been called with proper parameters', () => {
       WorkflowsApiClient.updateWorkflow(serializedWorkflow);
       expect(WorkflowsApiClient.updateWorkflow).toHaveBeenCalledWith(serializedWorkflow);
     });
 
-    it('which call ServerCommunication.updateWorkflow with proper parameters', () => {
+    it('which call ServerCommunication.sendUpdateWorkflowToWorkflowExchange with proper parameters', () => {
       WorkflowsApiClient.updateWorkflow(serializedWorkflow);
-      expect(WorkflowsApiClient.updateWorkflow).toHaveBeenCalled();
-      //expect(ServerCommunication.updateWorkflow).toHaveBeenCalled();
-    });
-
-    it('which call ServerCommunication.updateWorkflow with proper parameters', () => {
-      WorkflowsApiClient.updateWorkflow(serializedWorkflow);
-      expect(ServerCommunication.updateWorkflow).toHaveBeenCalledWith(dataRequest);
+      expect(ServerCommunication.sendUpdateWorkflowToWorkflowExchange).toHaveBeenCalledWith(dataRequest);
     });
   });
 

@@ -1,13 +1,11 @@
 'use strict';
 
 class WorkflowStatusBarService {
-  constructor($rootScope, $stateParams, config, NotificationService, ServerCommunication) {
+  constructor($rootScope, $stateParams, config) {
 
     this.$rootScope = $rootScope;
     this.$stateParams = $stateParams;
     this.config = config;
-    this.serverCommunicationData = ServerCommunication.data;
-    this.NotificationService = NotificationService;
 
     this.data = {
       menuItems: [{
@@ -32,21 +30,14 @@ class WorkflowStatusBarService {
   }
 
   executionRun() {
-    if (this.serverCommunicationData.subscription) {
-      let abortButton = {
-        label: 'Abort',
-        icon: 'fa-ban',
-        callFunction: this.executionAbort.bind(this)
-      };
-      this.data.menuItems.pop();
-      this.data.menuItems.push(abortButton);
-      this.$rootScope.$broadcast('StatusBar.RUN');
-    } else {
-      this.NotificationService.showError({
-        title: 'Error',
-        message: 'Error during connection!'
-      }, 'Could not connect to WebSocket!');
-    }
+    let abortButton = {
+      label: 'Abort',
+      icon: 'fa-ban',
+      callFunction: this.executionAbort.bind(this)
+    };
+    this.data.menuItems.pop();
+    this.data.menuItems.push(abortButton);
+    this.$rootScope.$broadcast('StatusBar.RUN');
   }
 
   executionAbort() {

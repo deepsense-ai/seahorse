@@ -1,16 +1,16 @@
 angular.module('ds.lab').constant('config', {
-  'apiHost': 'https://editor.seahorse.deepsense.io',
+  'apiHost': 'http://localhost',
   'docsHost': 'https://seahorse.deepsense.io',
-  'apiPort': '443',
-  'apiVersion': '0.6.0',
+  'apiPort': '9080',
+  'apiVersion': '1.0.0',
   'editorVersion': '1.0.0',
   'urlApiVersion': 'v1',
   'resultsRefreshInterval': 10000,
-  'socketConnectionHost': 'http://127.0.0.1:15674/',
+  'socketConnectionHost': 'http://localhost:15674/',
   'socketReconnectionInterval': 1000,
-  'queueRoutes': {
-    'connect': '/exchange/seahorse/to_executor',
-    'executionStatus': '/exchange/<%= workflowId %>/to_editor',
-    'launch/abort': '/exchange/<%= workflowId %>/to_executor'
+  'seahorseExchange': 'seahorse',
+  'topic': {
+    'toEditor': 'to_editor',
+    'toExecutor': 'to_executor'
   }
 });

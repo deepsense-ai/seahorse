@@ -19,7 +19,7 @@ function NewWorkflowModalController($uibModalInstance, WorkflowsApiClient) {
           description: this.description || ''
         })
         .then((response) => {
-          $uibModalInstance.close(response.id);
+          $uibModalInstance.close(response.workflowId);
         })
         .catch(({
           data

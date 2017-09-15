@@ -77,7 +77,7 @@ class WorkflowsEditorController extends WorkflowReports {
       super.initListeners(data.resultEntities);
       this.GraphPanelRendererService.rerender();
     }
-  };
+  }
 
   init() {
     this.PageService.setTitle('Workflow editor');
@@ -87,17 +87,21 @@ class WorkflowsEditorController extends WorkflowReports {
     this.CopyPasteService.add(this.multipleCopyParams);
     this.updateAndRerenderEdges(this.workflow);
     this.initListeners();
-    this.ServerCommunication.init(this.workflow.id);
     this.loadReports(this.workflow);
   }
 
   initListeners() {
+    this.$scope.$on('ServerCommunication.MESSAGE.ready', (event, data) => {
+      this.$log.debug('Received a Ready message from Session Executor. Reconnecting.');
+      this.ServerCommunication.reconnect();
+    });
+
     this.$scope.$on('ServerCommunication.MESSAGE.executionStatus', (event, data) => {
       this.WorkflowService.getWorkflow().updateState(data);
       this.loadReports(data);
     });
 
-    this.$scope.$on('ServerCommunication.MESSAGE.knowledge', (event, data) => {
+    this.$scope.$on('ServerCommunication.MESSAGE.inferredState', (event, data) => {
       if (this.WorkflowService.workflowIsSet()) {
         this.$rootScope.$broadcast('Workflow.UPDATE.KNOWLEDGE', data);
         this.updateAndRerenderEdges(data);
@@ -111,9 +115,8 @@ class WorkflowsEditorController extends WorkflowReports {
       this.unbindListeners();
       this.isReportMode = true;
       this.isRunning = true;
-      let serialized = this.WorkflowService.getWorkflow().serialize();
       let nodesToExecute = this.MultiSelectionService.getSelectedNodes();
-      this.ServerCommunication.launch(serialized, nodesToExecute);
+      this.ServerCommunication.sendLaunchToWorkflowExchange(nodesToExecute);
     });
 
     this.$scope.$on('AttributePanel.UNSELECT_NODE', () => {
@@ -125,7 +128,7 @@ class WorkflowsEditorController extends WorkflowReports {
       this.initUnbindableListeners();
       this.isReportMode = false;
       this.isRunning = false;
-      this.ServerCommunication.abort();
+      this.ServerCommunication.sendAbortToWorkflowExchange();
     });
 
     this.$scope.$on('GraphNode.CLICK', (event, data) => {

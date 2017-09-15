@@ -54,7 +54,7 @@ function WorkflowsApiClientFactory(BaseApiClient, ServerCommunication, config) {
         thirdPartyData: serializedWorkflow.thirdPartyData
       };
 
-      this.ServerCommunication.updateWorkflow(data);
+      this.ServerCommunication.sendUpdateWorkflowToWorkflowExchange(data);
     }
 
     getDownloadWorkflowMethodUrl(workflowId) {
