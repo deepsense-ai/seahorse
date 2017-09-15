@@ -19,6 +19,7 @@ package io.deepsense.deeplang.doperations
 import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.{DKnowledge, DOperable, DOperation, ExecutionContext}
 import io.deepsense.deeplang.DOperation._
+import io.deepsense.deeplang.doperations.exceptions.UnknownOperationExecutionException
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 
 import scala.reflect.runtime.{universe => ru}
@@ -43,11 +44,11 @@ class UnknownOperation extends DOperation {
   override val params = declareParams()
 
   override def executeUntyped(arguments: Vector[DOperable])(context: ExecutionContext): Vector[DOperable] = {
-    Vector()
+    throw new UnknownOperationExecutionException
   }
 
   override def inferKnowledgeUntyped(knowledge: Vector[DKnowledge[DOperable]])(
       context: InferContext): (Vector[DKnowledge[DOperable]], InferenceWarnings) = {
-    (Vector(), InferenceWarnings.empty)
+    throw new UnknownOperationExecutionException
   }
 }
