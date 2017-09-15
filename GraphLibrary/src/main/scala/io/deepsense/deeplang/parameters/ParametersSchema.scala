@@ -28,6 +28,12 @@ class ParametersSchema protected (schemaMap: Map[String, ParameterHolder] = Map.
   def getStringParameter(name: String): Option[StringParameter] = get[StringParameter](name)
 
   def getNumericParameter(name: String): Option[NumericParameter] = get[NumericParameter](name)
+
+  def getChoiceParameter(name: String): Option[ChoiceParameter] = get[ChoiceParameter](name)
+
+  def getMultipleChoiceParameter(name: String): Option[MultipleChoiceParameter] = {
+    get[MultipleChoiceParameter](name)
+  }
   // TODO: add get method for other parameter types
 }
 

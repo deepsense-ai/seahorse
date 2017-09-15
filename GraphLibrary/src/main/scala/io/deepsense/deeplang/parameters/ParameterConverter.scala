@@ -47,4 +47,16 @@ object ParameterConversions {
       case parameter: BooleanParameter => parameter
     }
   }
+
+  implicit object ToChoiceParameter extends ParameterConverter[ChoiceParameter] {
+    def convertPF = {
+      case parameter: ChoiceParameter => parameter
+    }
+  }
+
+  implicit object ToMultipleChoiceParameter extends ParameterConverter[MultipleChoiceParameter] {
+    def convertPF = {
+      case parameter: MultipleChoiceParameter => parameter
+    }
+  }
 }

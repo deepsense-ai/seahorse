@@ -8,9 +8,22 @@ package io.deepsense.deeplang.parameters
 
 import org.scalatest.FunSuite
 
+import io.deepsense.deeplang.parameters.exceptions.ValidationException
 import io.deepsense.deeplang.parameters.exceptions._
 
 class ParametersValidationSuite extends FunSuite {
+  case class MockParameterHolder(
+      description: String,
+      default: Option[Nothing],
+      required: Boolean)
+    extends ParameterHolder {
+    type HeldParameter = Nothing
+    val parameterType = null
+    override def validate: Unit = {
+      throw new ValidationException("Mock exception") {}
+    }
+  }
+
   test("Validation of valid parameters is possible") {
     val holder1 = NumericParameterHolder("example1", None, true, RangeValidator(3, 4))
     val holder2 = StringParameterHolder("example2", "default", true, RegexValidator("abc".r))
@@ -83,5 +96,39 @@ class ParametersValidationSuite extends FunSuite {
       parametersSchema.validate
     }
     assert(exception == MatchException("abc", regex))
+  }
+
+  test("Validation of choice parameter with invalid parameter should throw an exception") {
+    intercept[ValidationException] {
+      val holder = MockParameterHolder("example", None, true)
+      val choiceSchema = ParametersSchema("x" -> holder)
+      val possibleChoices = Map("onlyChoice" -> choiceSchema)
+
+      val choice = ChoiceParameterHolder("choice", None, true, possibleChoices)
+      choice.value = Some(ChoiceParameter("onlyChoice", choice.options("onlyChoice")))
+      choice.validate
+    }
+  }
+
+  test("Choosing nonexistent choice should throw an exception") {
+    intercept[IllegalChoiceException] {
+      val possibleChoices = Map.empty[String, ParametersSchema]
+      val choice = ChoiceParameterHolder("choice", None, true, possibleChoices)
+      choice.value = Some(ChoiceParameter("nonexistent", ParametersSchema()))
+      choice.validate
+    }
+  }
+
+  test("Validation of multipleChoice parameter with invalid parameter should throw an exception") {
+    intercept[ValidationException] {
+      val holder = MockParameterHolder("example", None, true)
+      val choiceSchema = ParametersSchema("x" -> holder)
+      val possibleChoices = Map("onlyChoice" -> choiceSchema)
+
+      val multipleChoices = MultipleChoiceParameterHolder("choice", None, true, possibleChoices)
+      val choices = Set(ChoiceParameter("onlyChoice", multipleChoices.options("onlyChoice")))
+      multipleChoices.value = Some(MultipleChoiceParameter(choices))
+      multipleChoices.validate
+    }
   }
 }

@@ -11,4 +11,6 @@ object ParameterType extends Enumeration {
   val Boolean = Value("boolean")
   val Numeric = Value("numeric")
   val String = Value("string")
+  val Choice = Value("choice")
+  val MultipleChoice = Value("multipleChoice")
 }
