@@ -18,7 +18,7 @@ import org.jclouds.ContextBuilder
 import org.jclouds.compute.ComputeServiceContext
 import org.jclouds.domain.Credentials
 import org.jclouds.openstack.keystone.v2_0.domain.Access
-import org.scalatest.BeforeAndAfter
+import org.scalatest.{BeforeAndAfterAll, BeforeAndAfter}
 import spray.routing.Route
 
 import io.deepsense.experimentmanager.IntegTestSupport
@@ -32,27 +32,33 @@ class RestApiIntegSpec extends RestApiSpec with IntegTestSupport with BeforeAndA
   var experimentB: Experiment = null
   var experimentStorage: ExperimentStorage = null
 
+  lazy val validTokenA = validAuthToken("userA")
+  lazy val validTokenB = validAuthToken("userB")
+  lazy val apiPrefixFromConfig = getConfig.getString("experiments.api.prefix")
+  lazy val tenantA = tenantId("userA")
+  lazy val tenantB = tenantId("userB")
+
   override def experimentOfTenantA = experimentA
   override def experimentOfTenantB = experimentB
 
-  override def tenantAId: String = tenantId("userA")
+  override def tenantAId: String = tenantA
 
-  override def tenantBId: String = tenantId("userB")
+  override def tenantBId: String = tenantB
 
   /**
    * A valid Auth Token of a user of tenant A. This user has to have roles
    * for all actions in ExperimentManager
    */
-  override def validAuthTokenTenantA: String = validAuthToken("userA")
+  override def validAuthTokenTenantA: String = validTokenA
 
   /**
    * A valid Auth Token of a user of tenant B. This user has to have no roles.
    */
-  override def validAuthTokenTenantB: String = validAuthToken("userB")
+  override def validAuthTokenTenantB: String = validTokenB
 
   override protected def testRoute: Route = getRestServiceInstance
 
-  override def apiPrefix: String = getConfig.getString("experiments.api.prefix")
+  override def apiPrefix: String = apiPrefixFromConfig
 
   before {
     experimentA = Experiment(
