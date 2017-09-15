@@ -129,7 +129,7 @@ def build_dockers(docker_configurations):
     simple_command_confs = [conf for conf in docker_configurations if conf.type == simple_command_type]
     for conf in simple_command_confs:
         print(conf.command)
-        subprocess.call(conf.command, shell=True, cwd=cwd)
+        subprocess.check_call(conf.command, shell=True, cwd=cwd)
 
     sbt_confs = [conf for conf in docker_configurations if conf.type == sbt_type]
     if sbt_confs:
@@ -137,7 +137,7 @@ def build_dockers(docker_configurations):
         batched_sbt_tasks = ' '.join(sbt_commands)
         final_sbt_command = sbt_clean_more_cmd + "sbt -DSPARK_VERSION={} {}".format(spark_version, batched_sbt_tasks)
         print(final_sbt_command)
-        subprocess.call(final_sbt_command, shell=True, cwd=cwd)
+        subprocess.check_call(final_sbt_command, shell=True, cwd=cwd)
 
 
 def check_images_provided_by_user(user_provided_images):
