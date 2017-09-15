@@ -116,15 +116,12 @@ class FilterColumnsIntegSpec
   private def operation(
       names: Set[String],
       ids: Set[Int],
-      types: Set[ColumnType]): FilterColumns = {
-    val operation = new FilterColumns
-    val valueParam = operation.parameters.getColumnSelectorParameter(operation.selectedColumns)
-    valueParam.value = Some(MultipleColumnSelection(Vector(
-      NameColumnSelection(names),
-      IndexColumnSelection(ids),
-      TypeColumnSelection(types)), false))
-    operation
-  }
+      types: Set[ColumnType]): FilterColumns =
+    new FilterColumns().setSelectedColumns(
+      MultipleColumnSelection(Vector(
+        NameColumnSelection(names),
+        IndexColumnSelection(ids),
+        TypeColumnSelection(types)), false))
 
   private def selectWithIndices[T](indices: Set[Int], sequence: Seq[T]): Seq[T] =
     sequence.zipWithIndex
