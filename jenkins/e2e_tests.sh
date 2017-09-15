@@ -81,7 +81,7 @@ trap cleanup EXIT
 
 ## Start Seahorse dockers
 (
- cp jenkins/resources/a_e2etests_dev_override_build.sbt seahorse-sdk-example/a_e2etests_dev_override_build.sbt
+ ./jenkins/prepare_sdk_dependencies.sh
  cd seahorse-sdk-example
  sbt clean assembly
  cd ../deployment/docker-compose
