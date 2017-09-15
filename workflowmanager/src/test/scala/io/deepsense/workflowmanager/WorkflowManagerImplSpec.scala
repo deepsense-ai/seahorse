@@ -78,6 +78,9 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
         when(workflowStorage.get(any()))
           .thenReturn(Future.successful(None))
 
+        when(notebookStorage.get(any()))
+          .thenReturn(Future.successful(None))
+
         val eventualWorkflow = workflowManager.get(Workflow.Id.randomId)
         whenReady(eventualWorkflow) { _ shouldBe None }
       }
@@ -85,6 +88,8 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
     "return workflow from the storage" in {
       when(workflowStorage.get(storedWorkflowId))
         .thenReturn(Future.successful(Some(Right(storedWorkflow))))
+      when(notebookStorage.get(storedWorkflowId))
+        .thenReturn(Future.successful(None))
 
       val eventualWorkflow = workflowManager.get(storedWorkflowId)
       whenReady(eventualWorkflow) { _.get shouldEqual Right(storedWorkflowWithKnowledge) }

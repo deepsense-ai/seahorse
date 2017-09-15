@@ -66,28 +66,41 @@ class WorkflowsApiSpec
     ExecutionReportWithId.Id.randomId,
     newWorkflowWithResults(workflowBId, workflowB)._1)
 
+  val workflowWithoutNotebookId = Workflow.Id.randomId
+  val (workflowWithoutNotebook, _) = newWorkflowAndKnowledge()
+
   val noVersionWorkflowId = Workflow.Id.randomId
   val obsoleteVersionWorkflowId = Workflow.Id.randomId
+  val obsoleteVersionWorkflowWithNotebookId = Workflow.Id.randomId
   val incorrectVersionFormatWorkflowId = Workflow.Id.randomId
   val noVersionWorkflowResultId = Workflow.Id.randomId
   val obsoleteVersionWorkflowResultId = Workflow.Id.randomId
   val incorrectVersionFormatWorkflowResultId = Workflow.Id.randomId
 
-  val noVersionWorkflowJson = JsObject("foo" -> JsString("bar"))
+  val noVersionWorkflowJson = JsObject(
+    "foo" -> JsString("bar"),
+    "thirdPartyData" -> JsObject())
   val obsoleteVersionWorkflowJson =
-    JsObject("metadata" -> JsObject("apiVersion" -> JsString("0.0.0")))
+    JsObject(
+      "metadata" -> JsObject("apiVersion" -> JsString("0.0.0")),
+      "thirdPartyData" -> JsObject())
+  val obsoleteVersionWorkflowWithNotebookJson = obsoleteVersionWorkflowJson.copy()
   val incorrectVersionFormatWorkflowJson =
-    JsObject("metadata" -> JsObject("apiVersion" -> JsString("foobar")))
+    JsObject(
+      "metadata" -> JsObject("apiVersion" -> JsString("foobar")),
+      "thirdPartyData" -> JsObject())
 
   val noVersionWorkflow = noVersionWorkflowJson.prettyPrint
   val obsoleteVersionWorkflow = obsoleteVersionWorkflowJson.prettyPrint
+  val obsoleteVersionWorkflowWithNotebook = obsoleteVersionWorkflowWithNotebookJson.prettyPrint
   val incorrectVersionFormatWorkflow = incorrectVersionFormatWorkflowJson.prettyPrint
   val noVersionWorkflowResult = noVersionWorkflow
   val obsoleteVersionWorkflowResult = obsoleteVersionWorkflow
   val incorrectVersionFormatWorkflowResult = incorrectVersionFormatWorkflow
 
-  val notebookA = "notebook A content"
-  val notebookB = "notebook B content"
+  val notebookA = "{ \"notebook A content\": {} }"
+  val notebookB = "{ \"notebook B content\": {} }"
+  val obsoleteNotebook = "{ \"obsolete notebook content\": {} }"
 
   def newWorkflowAndKnowledge(apiVersion: String = BuildInfo.version, name: String = workflowAName)
       : (Workflow, GraphKnowledge) = {
@@ -239,6 +252,9 @@ class WorkflowsApiSpec
             'graph(workflowA.graph),
             'additionalData(workflowA.additionalData)
           )
+          val thirdPartyData = returnedWorkflow.additionalData.data.parseJson.asJsObject
+          thirdPartyData.fields.get("notebook") shouldBe None
+
           val resultJs = response.entity.asString.parseJson.asJsObject
           resultJs.fields("knowledge") shouldBe knowledgeA.results.toJson
           resultJs.fields("id") shouldBe workflowAId.toJson
@@ -386,7 +402,7 @@ class WorkflowsApiSpec
       }
     }
     "return an workflow" when {
-      "auth token is correct, user has roles and version is current" in {
+      "auth token is correct, user has roles and version is current (with notebook)" in {
         Get(s"/$apiPrefix/$workflowAId/download?format=json") ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
@@ -399,7 +415,26 @@ class WorkflowsApiSpec
             workflowAId,
             workflowA.metadata,
             workflowA.graph,
-            workflowA.additionalData,
+            thirdPartyDataWithNotebook(workflowA.additionalData, notebookA),
+            Variables()
+          )
+        }
+        ()
+      }
+      "auth token is correct, user has roles and version is current (without notebook)" in {
+        Get(s"/$apiPrefix/$workflowWithoutNotebookId/download?format=json") ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.OK)
+          header("Content-Disposition") shouldBe Some(
+            `Content-Disposition`(
+              "attachment",
+              Map("filename" -> "Very nice workflow__workflow.json")))
+
+          responseAs[WorkflowWithVariables] shouldBe WorkflowWithVariables(
+            workflowWithoutNotebookId,
+            workflowWithoutNotebook.metadata,
+            workflowWithoutNotebook.graph,
+            workflowWithoutNotebook.additionalData,
             Variables()
           )
         }
@@ -441,6 +476,21 @@ class WorkflowsApiSpec
               Map("filename" -> "workflow.json")))
 
           responseAs[JsObject] shouldBe obsoleteVersionWorkflowJson
+        }
+        ()
+      }
+      "auth token is correct, user has roles, version is obsolete and notebook is present" in {
+        Get(s"/$apiPrefix/$obsoleteVersionWorkflowWithNotebookId/download?format=json") ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.OK)
+          header("Content-Disposition") shouldBe Some(
+            `Content-Disposition`(
+              "attachment",
+              Map("filename" -> "workflow.json")))
+
+          val expectedJson = jsonWithNotebook(
+            obsoleteVersionWorkflowWithNotebookJson, obsoleteNotebook)
+          responseAs[JsObject] shouldBe expectedJson
         }
         ()
       }
@@ -499,7 +549,6 @@ class WorkflowsApiSpec
           status should be(StatusCodes.OK)
           header("Content-Disposition") shouldBe Some(
             `Content-Disposition`("attachment", Map("filename" -> "report.json")))
-
           responseAs[JsObject] shouldBe noVersionWorkflowJson
         }
         ()
@@ -806,6 +855,8 @@ class WorkflowsApiSpec
     val (workflow, knowledge) = newWorkflowAndKnowledge()
     val updatedWorkflow = workflow.copy(
       metadata = workflow.metadata.copy(apiVersion = BuildInfo.version))
+    val updatedWorkflowWithNotebook = updatedWorkflow.copy(
+      additionalData = ThirdPartyData(notebookA))
 
     "process authorization before reading PUT content" in {
       val invalidContent = JsObject()
@@ -814,7 +865,7 @@ class WorkflowsApiSpec
       }
     }
     "update the workflow and return Ok" when {
-      "user updates his workflow" in {
+      "user updates his workflow without notebook" in {
         Put(s"/$apiPrefix/$workflowAId", updatedWorkflow) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
@@ -827,6 +878,24 @@ class WorkflowsApiSpec
             'metadata (updatedWorkflow.metadata),
             'additionalData (updatedWorkflow.additionalData)
           )
+          val resultJs = response.entity.asString.parseJson.asJsObject
+          resultJs.fields("knowledge") shouldBe knowledge.results.toJson
+          resultJs.fields("id") shouldBe workflowAId.toJson
+        }
+        ()
+      }
+      "user updates his workflow with notebook" in {
+        Put(s"/$apiPrefix/$workflowAId", updatedWorkflowWithNotebook) ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.OK)
+
+          val savedWorkflow = responseAs[Workflow]
+          savedWorkflow should have(
+            'graph (updatedWorkflowWithNotebook.graph),
+            'metadata (updatedWorkflowWithNotebook.metadata),
+            'additionalData (updatedWorkflowWithNotebook.additionalData)
+          )
+
           val resultJs = response.entity.asString.parseJson.asJsObject
           resultJs.fields("knowledge") shouldBe knowledge.results.toJson
           resultJs.fields("id") shouldBe workflowAId.toJson
@@ -1052,10 +1121,12 @@ class WorkflowsApiSpec
     val storage = new TestWorkflowStorage()
     storage.save(workflowAId, workflowA)
     storage.save(workflowBId, workflowB)
+    storage.save(workflowWithoutNotebookId, workflowWithoutNotebook)
     storage.saveExecutionResults(workflowBWithSavedResults)
 
     storage.saveString(noVersionWorkflowId, noVersionWorkflow)
     storage.saveString(obsoleteVersionWorkflowId, obsoleteVersionWorkflow)
+    storage.saveString(obsoleteVersionWorkflowWithNotebookId, obsoleteVersionWorkflowWithNotebook)
     storage.saveString(incorrectVersionFormatWorkflowId, incorrectVersionFormatWorkflow)
     storage
   }
@@ -1064,7 +1135,22 @@ class WorkflowsApiSpec
     val storage = new TestNotebookStorage
     storage.save(workflowAId, notebookA)
     storage.save(workflowBId, notebookB)
+    storage.save(obsoleteVersionWorkflowWithNotebookId, obsoleteNotebook)
     storage
+  }
+
+  private def thirdPartyDataWithNotebook(additionalData: ThirdPartyData, notebook: String) = {
+    val thirdPartyDataJson = additionalData.data.parseJson.asJsObject
+    ThirdPartyData(
+      JsObject(
+        thirdPartyDataJson.fields.updated("notebook", notebook.parseJson)).toString)
+  }
+
+  private def jsonWithNotebook(workflowJson: JsValue, notebook: String) = {
+    val thirdPartyData = workflowJson.asJsObject.fields("thirdPartyData")
+    val thirdPartyDataWithNotebook = JsObject(
+      thirdPartyData.asJsObject.fields.updated("notebook", notebook.parseJson))
+    JsObject(workflowJson.asJsObject.fields.updated("thirdPartyData", thirdPartyDataWithNotebook))
   }
 
   class TestResultsStorage extends WorkflowResultsStorage {
