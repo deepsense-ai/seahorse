@@ -6,14 +6,14 @@ description: Read DataFrame
 includeOperationsMenu: true
 ---
 
-Reads a DataFrame from a specified data storage.
+Reads a `DataFrame` from a specified data storage.
 
 It supports reading files (CSV, JSON or PARQUET) from local file system, Amazon S3 and HDFS
 (it supports reading Hadoop-compatible partitioned files).
 
-Additionally, HTTP/HTTPS and FTP URLs are supported. E.g. specifying
-``https://seahorse.deepsense.io/_static/transactions.csv`` as ``source`` parameter will download
-the example file from HTTP server.
+In addition, HTTP/HTTPS and FTP URLs are supported. E.g. specifying
+``https://seahorse.deepsense.io/_static/transactions.csv`` as the ``source`` parameter will result
+in downloading the example file from HTTP server.
 
 It also supports reading data from JDBC compatible databases.
 For more detailed information on using JDBC drivers in the Batch Workflow Executor, visit
@@ -32,15 +32,15 @@ so that all the values can be represented in that type.
 Empty cells are treated as ``null``, unless column type is inferred as a ``String`` - in this
 case, they are treated as empty strings.
 
-If `convert to boolean` mode is enabled, columns that contain only zeros, ones and empty values will be
-inferred as `Boolean`.
-In particular, column consisting of empty cells will be inferred as ``Boolean`` containing ``null`` values only.
+If the `convert to boolean` mode is enabled, the columns that contain only zeros, ones or empty values will be
+inferred as a `Boolean`.
+In particular, a column consisting of empty cells will be inferred as ``Boolean`` with ``null`` values only.
 
-The operation assumes that each row in file has the same number of fields.
+The operation assumes that each row in the file has the same number of fields.
 In other case, behavior of operation is undefined.
 
-If the file defines column names, they will be used in the output DataFrame.
-If a name is missing (or it's empty) for some column then the column will
+If the file defines column names, they will be used in the output `DataFrame`.
+If a name is missing (or it is empty) for some column then the column will
 be named ``unnamed_X`` (where ``X`` is the smallest non-negative number so that
 column names are unique). If names are not included in the input file
 or are all empty then the columns will be named ``unnamed_X`` where ``X`` are
@@ -58,13 +58,13 @@ will be parsed as:
 where ``_`` denotes a space and the fifth value is an empty string.
 
 ### `PARQUET`
-<a target="_blank" href="http://spark.apache.org/docs/latest/sql-programming-guide.html#parquet-files">Parquet Files</a>
+<a target="_blank" href="http://spark.apache.org/docs/1.6.0/sql-programming-guide.html#parquet-files">Parquet Files</a>
 
 ### `JSON`
 <a target="_blank" href="https://en.wikipedia.org/wiki/JSON">JSON</a>
 file format does not preserve column order.
 
-Timestamp columns are converted to string columns
+`Timestamp` columns are converted to `String` columns
 (values of that columns are converted to its string representations by Apache Spark).
 
 
@@ -72,7 +72,7 @@ Timestamp columns are converted to string columns
 
 ## Input
 
-Read DataFrame does not take any input.
+The `Read DataFrame` operation does not take any input.
 
 ## Output
 
@@ -94,7 +94,7 @@ Read DataFrame does not take any input.
           <a href="../classes/dataframe.html">DataFrame</a>
         </code>
       </td>
-      <td>Data from the loaded file as a DataFrame</td>
+      <td>The data read from the source as a <code>DataFrame</code>.</td>
     </tr>
   </tbody>
 </table>
@@ -153,7 +153,7 @@ Read DataFrame does not take any input.
         <code><a href="../parameter_types.html#single-choice">Single Choice</a></code>
       </td>
       <td>Valid only if <code>format = CSV</code>.
-        Character separating fields in a row. Possible values are:
+        The character separating fields in a row. Possible values are:
         <code>Comma</code>, <code>Semicolon</code>, <code>Colon</code>,
         <code>Space</code>, <code>Tab</code>, <code>Custom</code>.
         Default value: <code>Comma</code>.
@@ -181,7 +181,7 @@ Read DataFrame does not take any input.
       </td>
       <td>Valid only if <code>format = CSV</code>.
         If <code>true</code> then values in the first row will be used as columns'
-        names in the output DataFrame.
+        names in the output <code>DataFrame</code>.
       </td>
     </tr>
 
