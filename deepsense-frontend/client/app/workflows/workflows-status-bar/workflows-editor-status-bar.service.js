@@ -15,7 +15,7 @@ class WorkflowStatusBarService {
       documentation: {
         label: 'Documentation',
         icon: 'fa-book',
-        href: this.config.docsHost + '/docs/latest/index.html',
+        href: this.config.docsHost + '/docs/' + this.config.apiVersion + '/index.html',
         target: '_blank'
       },
       export: {
