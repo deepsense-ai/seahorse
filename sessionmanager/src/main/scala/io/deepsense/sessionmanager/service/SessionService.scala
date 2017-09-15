@@ -6,7 +6,7 @@ package io.deepsense.sessionmanager.service
 
 import java.util.concurrent.TimeUnit
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 import akka.actor.ActorRef
 import akka.pattern.ask
@@ -15,12 +15,13 @@ import com.google.inject.Inject
 import com.google.inject.name.Named
 
 import io.deepsense.commons.models.Id
+import io.deepsense.sessionmanager.rest.responses.ListSessionsResponse
 import io.deepsense.sessionmanager.service.SessionServiceActor.KillResponse
 
 class SessionService @Inject() (
   @Named("SessionService.Actor") private val serviceActor: ActorRef,
   @Named("session-service.timeout") private val timeout: Int
-) {
+)(implicit ec: ExecutionContext) {
 
   private implicit val implicitTimeout = Timeout(timeout, TimeUnit.MILLISECONDS)
 
@@ -32,8 +33,10 @@ class SessionService @Inject() (
     (serviceActor ? SessionServiceActor.CreateRequest(workflowId)).mapTo[Session]
   }
 
-  def listSessions(): Future[List[Session]] = {
-    (serviceActor ? SessionServiceActor.ListRequest()).mapTo[List[Session]]
+  def listSessions(): Future[ListSessionsResponse] = {
+    (serviceActor ? SessionServiceActor.ListRequest())
+      .mapTo[List[Session]]
+      .map(ListSessionsResponse)
   }
 
   def killSession(workflowId: Id): Future[KillResponse] = {

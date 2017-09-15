@@ -11,8 +11,10 @@ import scala.concurrent.ExecutionContext
 import com.google.inject.Inject
 import spray.routing.{Directives, PathMatchers, Route}
 
+import io.deepsense.commons.json.envelope.{Envelope, EnvelopeJsonFormat}
 import io.deepsense.commons.rest.{Cors, RestComponent}
-import io.deepsense.sessionmanager.service.SessionService
+import io.deepsense.sessionmanager.rest.requests.CreateSession
+import io.deepsense.sessionmanager.service.{Session, SessionService}
 
 class SessionsApi @Inject() (
   @Named("session-api.prefix") private val sessionsApiPrefix: String,
@@ -24,6 +26,8 @@ class SessionsApi @Inject() (
 
   private val sessionsPathPrefixMatcher = PathMatchers.separateOnSlashes(sessionsApiPrefix)
 
+  implicit val envelopedSessionFormat = new EnvelopeJsonFormat[Session]("session")
+
   override def route: Route = {
     cors {
       path("") {
@@ -34,17 +38,26 @@ class SessionsApi @Inject() (
       pathPrefix(sessionsPathPrefixMatcher) {
         path(JavaUUID) { sessionId =>
           get {
-            complete(sessionService.getSession(sessionId))
+            complete {
+              val session = sessionService.getSession(sessionId)
+              session.map(_.map(Envelope(_)))
+            }
           } ~
           delete {
             complete(sessionService.killSession(sessionId))
-          } ~
-          post {
-            complete(sessionService.createSession(sessionId))
           }
         } ~
-        get {
-          complete(sessionService.listSessions())
+        pathEndOrSingleSlash {
+          post {
+            entity(as[CreateSession]) { request =>
+              val session = sessionService.createSession(request.workflowId)
+              val enveloped = session.map(Envelope(_))
+              complete(enveloped)
+            }
+          } ~
+          get {
+            complete(sessionService.listSessions())
+          }
         }
       }
     }

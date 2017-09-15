@@ -8,6 +8,8 @@ import spray.httpx.SprayJsonSupport
 import spray.json._
 
 import io.deepsense.commons.json.IdJsonProtocol
+import io.deepsense.sessionmanager.rest.requests.CreateSession
+import io.deepsense.sessionmanager.rest.responses.ListSessionsResponse
 import io.deepsense.sessionmanager.service.Session
 import io.deepsense.sessionmanager.service.SessionServiceActor.KillResponse
 
@@ -19,7 +21,8 @@ trait SessionsJsonProtocol
   implicit val sessionFormat = new RootJsonFormat[Session] {
     override def write(obj: Session): JsValue = {
       JsObject(
-        "id" -> obj.handle.workflowId.toJson,
+        "workflowId" -> obj.handle.workflowId.toJson,
+        "sessionId" -> obj.handle.workflowId.toJson,
         "status" -> JsString(obj.status.toString)
       )
     }
@@ -27,8 +30,19 @@ trait SessionsJsonProtocol
     override def read(json: JsValue): Session =
       throw new UnsupportedOperationException()
   }
-
   implicit val killResponseFormat = jsonFormat2(KillResponse)
+  implicit val createSessionFormat = jsonFormat1(CreateSession)
+
+  implicit val listSessionsResponseFormat = new RootJsonFormat[ListSessionsResponse] {
+    override def write(obj: ListSessionsResponse): JsValue = {
+      JsObject(
+        "sessions" -> JsArray(obj.sessions.map(_.toJson): _*)
+      )
+    }
+
+    override def read(json: JsValue): ListSessionsResponse =
+      throw new UnsupportedOperationException()
+  }
 }
 
 object SessionsJsonProtocol extends SessionsJsonProtocol

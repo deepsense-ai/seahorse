@@ -14,8 +14,11 @@ import spray.json._
 import spray.routing.Route
 
 import io.deepsense.commons.json.IdJsonProtocol
+import io.deepsense.commons.json.envelope.{Envelope, EnvelopeJsonFormat}
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
+import io.deepsense.sessionmanager.rest.requests.CreateSession
+import io.deepsense.sessionmanager.rest.responses.ListSessionsResponse
 import io.deepsense.sessionmanager.service.SessionServiceActor.KillResponse
 import io.deepsense.sessionmanager.service._
 
@@ -30,7 +33,7 @@ class SessionsApiSpec
     new SessionsApi(apiPrefix, service).route
   }
 
-  implicit val sessionFormat = new RootJsonFormat[Session] with IdJsonProtocol {
+  implicit val rawSessionFormat = new RootJsonFormat[Session] with IdJsonProtocol {
     val sessionWriter: RootJsonWriter[Session] =
       SessionsJsonProtocol.sessionFormat
 
@@ -38,7 +41,7 @@ class SessionsApiSpec
       val obj = json.asJsObject
       Session(
         LivySessionHandle(
-          obj.fields("id").convertTo[Id], 0),
+          obj.fields("workflowId").convertTo[Id], 0),
           Status.withName(obj.fields("status").convertTo[String]))
     }
 
@@ -47,6 +50,24 @@ class SessionsApiSpec
     }
   }
 
+  implicit val envelopedSessionFormat = new EnvelopeJsonFormat[Session]("session")
+
+  implicit val listSessionsResponseFormat = new RootJsonFormat[ListSessionsResponse] {
+    val protocolFormat = SessionsJsonProtocol.listSessionsResponseFormat
+
+    override def read(json: JsValue): ListSessionsResponse = {
+      val sessions = json.asJsObject.fields("sessions")
+        .asInstanceOf[JsArray]
+        .elements.map(_.convertTo[Session](rawSessionFormat)).toList
+      ListSessionsResponse(sessions)
+    }
+
+    override def write(obj: ListSessionsResponse): JsValue = {
+      obj.toJson(protocolFormat)
+    }
+  }
+
+  implicit val createSessionFormat = SessionsJsonProtocol.createSessionFormat
   implicit val killedFormat = SessionsJsonProtocol.killResponseFormat
 
   "GET /sessions" should {
@@ -64,12 +85,13 @@ class SessionsApiSpec
       )
 
       val service = mock[SessionService]
-      when(service.listSessions()).thenReturn(Future.successful(sessions))
+      when(service.listSessions())
+        .thenReturn(Future.successful(ListSessionsResponse(sessions)))
 
       Get(s"/$apiPrefix") ~> testRoute(service) ~> check {
         status shouldBe StatusCodes.OK
-        responseAs[List[Session]]
-          .map(s => (s.handle.workflowId, s.status)) should contain theSameElementsAs
+        responseAs[ListSessionsResponse]
+          sessions.map(s => (s.handle.workflowId, s.status)) should contain theSameElementsAs
           List(
             (workflowId1, status1),
             (workflowId2, status2),
@@ -89,7 +111,7 @@ class SessionsApiSpec
 
         Get(s"/$apiPrefix/$workflowId") ~> testRoute(service) ~> check {
           status shouldBe StatusCodes.OK
-          val returnedSession = responseAs[Session]
+          val returnedSession = responseAs[Envelope[Session]].content
           returnedSession.handle.workflowId shouldBe workflowId
           returnedSession.status shouldBe sessionStatus
         }
@@ -107,7 +129,7 @@ class SessionsApiSpec
     }
   }
 
-  "POST /sessions/:id" should {
+  "POST /sessions" should {
     "return a session" in {
       val workflowId: Id = Id.randomId
       val sessionStatus: Status.Value = Status.Error
@@ -115,9 +137,9 @@ class SessionsApiSpec
       val service = mock[SessionService]
       when(service.createSession(workflowId)).thenReturn(Future.successful(s))
 
-      Post(s"/$apiPrefix/$workflowId") ~> testRoute(service) ~> check {
+      Post(s"/$apiPrefix", CreateSession(workflowId)) ~> testRoute(service) ~> check {
         status shouldBe StatusCodes.OK
-        val returnedSession = responseAs[Session]
+        val returnedSession = responseAs[Envelope[Session]].content
         returnedSession.handle.workflowId shouldBe workflowId
         returnedSession.status shouldBe sessionStatus
       }
