@@ -33,11 +33,7 @@ trait ReportContentTestFactory {
       ReportContentTestFactory.continuousDistName ->
       DistributionTestFactory.testContinuousDistribution(
         ReportContentTestFactory.continuousDistName)
-    ),
-    Some(StructType(Seq(
-      StructField("x", IntegerType, nullable = true),
-      StructField("y", DoubleType, nullable = false)
-    )))
+    )
   )
 
 }

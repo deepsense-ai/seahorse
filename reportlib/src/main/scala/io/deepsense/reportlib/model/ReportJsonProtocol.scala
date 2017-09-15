@@ -99,7 +99,7 @@ trait ReportJsonProtocol
   }
 
   implicit val tableFormat = jsonFormat6(Table.apply)
-  implicit val reportFormat = jsonFormat5(ReportContent.apply)
+  implicit val reportFormat = jsonFormat4(ReportContent.apply)
 }
 
 object ReportJsonProtocol extends ReportJsonProtocol

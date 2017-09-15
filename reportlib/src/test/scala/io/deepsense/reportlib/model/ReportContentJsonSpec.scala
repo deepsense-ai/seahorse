@@ -34,31 +34,14 @@ class ReportContentJsonSpec
       "name" -> JsString(reportName),
       "reportType" -> JsString(reportType.toString),
       "tables" -> JsArray(),
-      "distributions" -> JsObject(),
-      "schema" -> JsNull
+      "distributions" -> JsObject()
     )
     val report = testReport
     val reportJson: JsObject = JsObject(
       "name" -> JsString(reportName),
       "reportType" -> JsString(reportType.toString),
       "tables" -> JsArray(report.tables.map(_.toJson): _*),
-      "distributions" -> JsObject(report.distributions.mapValues(_.toJson)),
-      "schema" -> JsObject(
-        "fields" -> JsArray(
-          JsObject(
-            "name" -> JsString("x"),
-            "dataType" -> JsString("integer"),
-            "deeplangType" -> JsString("numeric"),
-            "nullable" -> JsTrue
-          ),
-          JsObject(
-            "name" -> JsString("y"),
-            "dataType" -> JsString("double"),
-            "deeplangType" -> JsString("numeric"),
-            "nullable" -> JsFalse
-          )
-        )
-      )
+      "distributions" -> JsObject(report.distributions.mapValues(_.toJson))
     )
 
     "serialize" when {
