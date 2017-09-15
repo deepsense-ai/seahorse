@@ -21,10 +21,13 @@ frontend seahorse
   bind 0.0.0.0:80
   bind 0.0.0.0:443 ssl crt /usr/local/etc/haproxy/editor.seahorse.deepsense.io.pem crt /usr/local/etc/haproxy/deepsense.io.pem
 
-  redirect scheme https code 301 if !{ ssl_fc }
-
   acl acl_editor hdr(Host) -i editor.deepsense.io editor.seahorse.deepsense.io
   acl acl_documentation hdr(Host) -i seahorse.deepsense.io
+  acl acl_aws_health_check hdr_beg(User-Agent) -i Amazon\ Route\ 53\ Health\ Check\ Service
+
+  http-request set-header User-Agent Amazon\ Route\ 53\ Health\ Check\ Service if acl_aws_health_check
+
+  redirect scheme https code 301 if !{ ssl_fc }
 
   use_backend editor if acl_editor
   use_backend documentation if acl_documentation
@@ -33,6 +36,10 @@ frontend seahorse
 frontend workflow_manager
   log global
   bind 0.0.0.0:{{ds_wm_public_port}} ssl crt /usr/local/etc/haproxy/editor.seahorse.deepsense.io.pem crt /usr/local/etc/haproxy/deepsense.io.pem
+
+  acl acl_aws_health_check hdr_beg(User-Agent) -i Amazon\ Route\ 53\ Health\ Check\ Service
+
+  http-request set-header User-Agent Amazon\ Route\ 53\ Health\ Check\ Service if acl_aws_health_check
 
   default_backend workflow_manager
 
