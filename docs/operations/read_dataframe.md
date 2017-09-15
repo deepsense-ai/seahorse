@@ -69,12 +69,6 @@ file format does not preserve column order.
 Timestamp columns are converted to string columns
 (values of that columns are converted to its string representations by Apache Spark).
 
-It is possible to select columns to be Categorical
-(by index, by name or by inferred type) using ``column selector``.
-When categorizing a non-string column all values will be cast to strings and trimmed first.
-Empty strings will be converted to null values.
-
-
 
 **Since**: Seahorse 0.4.0
 
@@ -205,45 +199,6 @@ Read DataFrame does not take any input.
       </td>
     </tr>
 
-    <tr>
-      <td>
-        <code id="categorical-columns">categorical columns</code>
-      </td>
-      <td>
-        <code><a href="../parameters.html#multiple_column_selector">MultipleColumnSelector</a></code>
-      </td>
-      <td>Valid only if <code>format = CSV</code>, <code>format = JSON</code> or <code>data storage type = JDBC</code>.
-        Selects the columns that should be converted to <code>Categorical</code> type.
-      </td>
-    </tr>
-
-    <tr>
-      <td>
-        <code id="line-separator">line separator</code>
-      </td>
-      <td>
-        <code><a href="../parameters.html#single_choice">Choice</a></code>
-      </td>
-      <td>Valid only if <code>format = CSV</code>.
-        A line separator used in the input file. Possible values:
-        <code>UNIX</code>,
-        <code>WINDOWS</code>,
-        <code>CUSTOM</code>. The last one allows to set a custom line separator.
-      </td>
-    </tr>
-
-    </tr>
-    <tr>
-      <td>
-        <code id="custom-line-separator">custom line separator</code>
-      </td>
-      <td>
-        <code><a href="../parameters.html#string">String</a></code>
-      </td>
-      <td>Valid only if <code>line separator = CUSTOM</code>.
-        A line separator used in the input file.
-      </td>
-    </tr>
 
     <tr>
       <td>

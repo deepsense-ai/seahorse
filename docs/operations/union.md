@@ -16,12 +16,6 @@ with no deduplication effort.
 
 The schemas of $$ A $$ and $$ B $$ have to be the same.
 
-If $$ A $$ and $$ B $$ contain
-[categorical columns](../classes/dataframe.html#categorical-data-type),
-and the mappings (from integer category to a value) differ between the two DataFrames,
-the resulting categorical mapping will be an extension of the mapping in $$ A $$
-with new categories from $$ B $$.
-
 The order of rows in $$ A $$ and $$ B $$ is not guaranteed to be preserved in the $$ D $$.
 
 **Since**: Seahorse 0.4.0

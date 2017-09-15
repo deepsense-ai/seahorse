@@ -11,16 +11,14 @@ Converts types of columns in a DataFrame. It can convert one or more columns at 
 All of the selected columns are converted to the same (selected) type. The conversion is done in
 place.
 
-Supports conversions from all types to String type, Numeric type and Categorical type.
-When a non-string column is converted to Categorical it is first converted to String.
-Empty strings in columns converted to Categorical are converted to null values.
+Supports conversions from all types to String, Boolean, Timestamp, Double, Float, Long,
+and Integer type.
+
 Every null value stays a null value in the result DataFrame (despite the column type change).
 When a Timestamp column is converted to Numeric then each value is represented
 by the number of milliseconds since 1 January 1970.
 
 Boolean converted to String generates a column of 'true' and 'false' strings.
-Categorical can be converted to Numeric as long as all categories' names are String representation
-of a numeric value.
 
 String column can be converted to Numeric as long as all values in the column represent a numeric value.
 
@@ -90,7 +88,8 @@ or by index does not exist the operation will fail at runtime with <code>Columns
 <tr>
 <td><code>target type</code></td>
 <td><code><a href="../parameters.html#single_choice">Choice</a></code></td>
-<td>Target type of the conversion. Possible values are: <code>[Numeric,String,Categorical]</code>.</td>
+<td>Target type of the conversion. Possible values are: <code>[String, Boolean, Timestamp, Double, Float, Long,
+Integer]</code>.</td>
 </tr>
 </tbody>
 </table>
