@@ -6,7 +6,6 @@ package io.deepsense.deeplang.doperations
 
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
-import org.scalatest.Ignore
 
 import io.deepsense.deeplang.doperables.Transformation
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMetadata
@@ -15,7 +14,6 @@ import io.deepsense.deeplang.doperations.exceptions.DOperationExecutionException
 import io.deepsense.deeplang.{DOperable, DeeplangIntegTestSupport}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 
-@Ignore
 class MathematicalOperationIntegSpec extends DeeplangIntegTestSupport {
 
   val resultColumn = 3
@@ -24,6 +22,7 @@ class MathematicalOperationIntegSpec extends DeeplangIntegTestSupport {
   val column1 = "c1"
   val column2 = "c2"
   val column3 = "c3"
+  val column3needsEscaping = "c.strange name!"
 
   "MathematicalOperation" should {
 
@@ -32,7 +31,7 @@ class MathematicalOperationIntegSpec extends DeeplangIntegTestSupport {
     }
 
     "create Transformation that counts POW properly" in {
-      runTest(s"POW($column1, 2.0) as $column3", Seq(1, 1.21, 1.44, 1.69, null))
+      runTest(s"POW($column1, 2.0) as $column3", Seq(1.0, 1.21, 1.44, 1.69, null))
     }
 
     "create Transformation that counts SQRT properly" in {
@@ -55,32 +54,51 @@ class MathematicalOperationIntegSpec extends DeeplangIntegTestSupport {
       runTest(s"LN($column2) as $column3", Seq(-1.609, 0.788, null, 1.435, null))
     }
 
-    "create Transformation that counts MIN properly" in {
-      runTest(s"MIN($column1, $column2) as $column3", Seq(0.4, 1.48, null, -1.3, null))
+    "create Transformation that counts MINIMUM properly" in {
+      runTest(s"MINIMUM($column1, $column2) as $column3", Seq(0.2, -1.1, null, -1.3, null))
     }
 
-    "create Transformation that counts MAX properly" in {
-      runTest(s"MIN($column1, $column2) as $column3", Seq(0.4, 1.48, null, 2.04, null))
+    "create Transformation that counts MAXIMUM properly" in {
+      runTest(s"MAXIMUM($column1, $column2) as $column3", Seq(1.0, 2.2, null, 4.2, null))
     }
 
     "create Transformation that counts complex formulas properly" in {
-      runTest(s"MAX(POW($column1,$column2), $column1*$column2)+ABS($column1) as $column3",
-        Seq(0.4, 1.48, null, -1.3, null))
+      runTest(s"MAXIMUM(SIN($column2) + 1.0, ABS($column1 - 2.0)) as $column3",
+        Seq(1.19, 3.1, null, 3.3, null))
+    }
+
+    "create Transformation that produces properly escaped column name" in {
+      val dataFrame = applyFormulaToDataFrame(
+        s"COS($column1) as `$column3needsEscaping`",
+        prepareDataFrame())
+      val rows = dataFrame.sparkDataFrame.collect()
+      validateColumn(rows, Seq(0.540, 0.453, 0.362, 0.267, null))
+      val schema = dataFrame.sparkDataFrame.schema
+      schema.fieldNames shouldBe Array(column0, column1, column2, column3needsEscaping)
+    }
+
+    "fail when 2 comma-separated formulas are provided" in {
+      intercept[DOperationExecutionException] {
+        val dataFrame = applyFormulaToDataFrame(
+          s"MAXIMUM($column1), SIN($column1)",
+          prepareDataFrame())
+        dataFrame.sparkDataFrame.collect()
+      }
     }
 
     "fail when formula is not correct" in {
       intercept[DOperationExecutionException] {
-        val dataFrame = applyFormulaToDataFrame("MAX(", prepareDataFrame())
+        val dataFrame = applyFormulaToDataFrame("MAXIMUM(", prepareDataFrame())
         dataFrame.sparkDataFrame.collect()
       }
     }
 
-    "fail when argument to the function is not correct" in {
+    "produce NaN if the argument given to the function is not correct" in {
       // counting LN from negative number
-      intercept[DOperationExecutionException] {
-        val dataFrame = applyFormulaToDataFrame(s"LN($column1) as $column3", prepareDataFrame())
-        dataFrame.sparkDataFrame.collect()
-      }
+      val dataFrame = applyFormulaToDataFrame(s"LN($column1) as $column3", prepareDataFrame())
+      val rowWithNegativeValue = 1
+      val rowWithNaN = dataFrame.sparkDataFrame.collect()(rowWithNegativeValue)
+      rowWithNaN.getDouble(resultColumn).isNaN shouldBe true
     }
 
     "retain the categorical column type" in {
@@ -138,7 +156,7 @@ class MathematicalOperationIntegSpec extends DeeplangIntegTestSupport {
       case (expectedVal, i) => {
         val value = rows(i).get(column)
         value match {
-          case d: Double => expectedVal shouldBe d +- delta
+          case d: Double => d should equal (expectedVal.asInstanceOf[Double] +- delta)
           case _ => expectedVal shouldBe value
         }
       }

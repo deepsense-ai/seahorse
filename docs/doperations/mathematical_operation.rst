@@ -40,16 +40,19 @@ Description
 Creates a Transformation that adds a new column basing on the mathematical formula provided by the user.
 The formula grammar is based on SQL expressions. Sample formulas:
 
-- ``MAX(someColumn1, someColumn2) as col_max``
+- ``MAXIMUM(someColumn1, someColumn2) as col_max``
 
-- ``POW(SIN(score), 2.0) + 1.0 as score_transformed``
+- ``POW(SIN(score), 2.0) + 1.0 as `score transformed```
 
-- ``MIN(age, 5.0) as age_cutoff``
+- ``MINIMUM(age, 5.0) as `age.cutoff```
 
 The name of the new column can be provide with the ``as`` keyword like in the examples above.
+Please note that the column name can contain space and other special characters but it needs to be escaped
+with back quote as in the example above.
 If the name is not provided the whole formula will be used as a new column name.
 The formula parser is case sensitive - function names have to be written in uppercase,
 column names parsing is also case sensitive. I.e. SCORE is different than score.
+Comma separated expressions are not valid - `SIN(someColumn), COS(someColumn)`` will not be parsed properly.
 
 Please make sure that the formula is always producing Double values i.e.
 ``MIN(weight, 2)`` will produce Integer value in some cases,
@@ -80,9 +83,9 @@ Available functions and operators:
 
   - ``LN(expr: Double)`` returns the natural logarithm of the expression
 
-  - ``MIN(expr1: Double, expr2: Double)`` returns minimum of the given expressions
+  - ``MINIMUM(expr1: Double, expr2: Double)`` returns minimum of the given expressions
 
-  - ``MAX(expr1: Double, expr2: Double)`` returns maximum of the given expressions
+  - ``MAXIMUM(expr1: Double, expr2: Double)`` returns maximum of the given expressions
 
 ------
 Params
@@ -98,7 +101,7 @@ Example
 Input Data
 ----------
 
-1. formula = "MIN(Weight, 10.0) as WeightCutoff"
+1. formula = "MINIMUM(Weight, 10.0) as WeightCutoff"
 
 -----------
 Output Data

@@ -15,6 +15,7 @@ import org.apache.spark.sql.{Row, SQLContext}
 import org.apache.spark.{SparkConf, SparkContext}
 import org.scalatest.BeforeAndAfterAll
 
+import io.deepsense.commons.spark.sql.UserDefinedFunctions
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.entitystorage.EntityStorageClientTestInMemoryImpl
 import io.deepsense.models.entities.Entity
@@ -37,6 +38,7 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
     sparkConf = new SparkConf().setMaster("local[4]").setAppName("TestApp")
     sparkContext = new SparkContext(sparkConf)
     sqlContext = new SQLContext(sparkContext)
+    UserDefinedFunctions.registerFunctions(sqlContext.udf)
     rawHdfsClient = new DFSClient(new URI(hdfsPath), new Configuration())
 
     executionContext = new ExecutionContext

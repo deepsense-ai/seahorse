@@ -108,6 +108,7 @@ object Dependencies {
     logbackClassic,
     logbackCore,
     scalaLogging,
+    sparkSql,
     sprayCan,
     sprayJson,
     sprayRouting,

@@ -29,6 +29,7 @@ import org.apache.spark.sql.SQLContext
 import org.apache.spark.{SparkConf, SparkContext}
 
 import io.deepsense.commons.config.ConfigModule
+import io.deepsense.commons.spark.sql.UserDefinedFunctions
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.{DOperable, DSHdfsClient, ExecutionContext}
 import io.deepsense.entitystorage.{EntityStorageClient, EntityStorageClientFactory}
@@ -138,6 +139,7 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
 
       executionContext.sparkContext = sparkContext
       executionContext.sqlContext = new SQLContext(sparkContext)
+      UserDefinedFunctions.registerFunctions(executionContext.sqlContext.udf)
       executionContext.dataFrameBuilder = DataFrameBuilder(executionContext.sqlContext)
       executionContext.entityStorageClient = entityStorageClient
       executionContext.hdfsClient =
