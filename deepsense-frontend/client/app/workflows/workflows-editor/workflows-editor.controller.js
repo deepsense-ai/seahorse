@@ -206,6 +206,9 @@ class WorkflowsEditorController {
           x: positionX > elementOffsetX ? positionX - elementOffsetX : 0,
           y: positionY > elementOffsetY ? positionY - elementOffsetY : 0
         });
+        // Call of $apply assures that a DOM element for the node is added before method exit.
+        // It prevents exceptions in browser's console.
+        this.$rootScope.$apply();
       }),
 
       this.$scope.$on('StatusBar.HOME_CLICK', () => {
