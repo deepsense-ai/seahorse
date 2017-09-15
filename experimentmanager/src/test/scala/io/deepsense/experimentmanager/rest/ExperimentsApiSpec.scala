@@ -464,7 +464,7 @@ class ExperimentsApiSpec
 
   class MockExperimentManager(userContext: Future[UserContext]) extends ExperimentManager {
 
-    var storedExperiments: List[Experiment] = List(
+    var storedExperiments = Seq(
       experimentOfTenantA, experimentOfTenantA2, experimentOfTenantB)
 
     override def get(id: Id): Future[Option[Experiment]] = {
@@ -525,7 +525,7 @@ class ExperimentsApiSpec
       })
     }
 
-    override def launch(id: Id, targetNodes: List[Node.Id]): Future[Experiment] = {
+    override def launch(id: Id, targetNodes: Seq[Node.Id]): Future[Experiment] = {
       val wantedRole = "experiments:launch"
       userContext.flatMap(uc => {
         if (!uc.roles.contains(Role(wantedRole))) {
@@ -542,7 +542,7 @@ class ExperimentsApiSpec
       })
     }
 
-    override def abort(id: Id, nodes: List[Node.Id]): Future[Experiment] = {
+    override def abort(id: Id, nodes: Seq[Node.Id]): Future[Experiment] = {
       val wantedRole = "experiments:abort"
       userContext.flatMap(uc => {
         if (!uc.roles.contains(Role(wantedRole))) {

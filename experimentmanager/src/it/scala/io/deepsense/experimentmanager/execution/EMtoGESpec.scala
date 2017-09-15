@@ -1,8 +1,6 @@
 /**
  * Copyright (c) 2015, CodiLime, Inc.
- *
  */
-
 package io.deepsense.experimentmanager.execution
 
 import scala.concurrent.duration._
@@ -15,28 +13,23 @@ import akka.util.Timeout
 import com.typesafe.scalalogging.LazyLogging
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
-import org.scalatest.{FlatSpec, Matchers}
 
 import io.deepsense.deeplang.doperations.LoadDataFrame
-import io.deepsense.experimentmanager.execution.RunningExperimentsActor.{GetStatus, Launch, Status}
+import io.deepsense.experimentmanager.execution.RunningExperimentsActor.{Launched, GetStatus, Launch, Status}
 import io.deepsense.graph.{Graph, Node}
 import io.deepsense.graphexecutor.{HdfsIntegTestSupport, SimpleGraphExecutionIntegSuiteEntities}
 import io.deepsense.models.experiments.Experiment
 
-class EMCommunicatesWithGEIntegSpec
-  extends FlatSpec
-  with MockitoSugar
-  with Matchers
-  with ScalaFutures
-  with HdfsIntegTestSupport
-  with LazyLogging {
+class EMtoGESpec extends HdfsIntegTestSupport
+    with MockitoSugar
+    with ScalaFutures
+    with LazyLogging {
 
   implicit var system: ActorSystem = _
   var actorRef: TestActorRef[RunningExperimentsActor] = _
   var testProbe: TestProbe = _
 
-  implicit val timeout: Timeout = Timeout(1 second)
-  val tenantId = "tenantId"
+  implicit val timeout: Timeout = 1.second
 
   // Timeout for test is 1 minute = 30 * 2000ms
   val GetStatusInterval = 2000
@@ -44,14 +37,20 @@ class EMCommunicatesWithGEIntegSpec
 
   "ExperimentManager" should "launch graph on GraphExecutor" in {
     testProbe.send(actorRef, Launch(experiment))
+    testProbe.expectMsgPF() {
+      case Launched(exp) => exp.state == Experiment.State.running
+    }
 
     var success = false
     breakable {
       for (i <- 0 until MaxRetryNumber) {
         testProbe.send(actorRef, GetStatus(experiment.id))
         val status = testProbe.expectMsgType[Status]
-        logger.info("Received status: {}", status)
-        getFailedNodes(status.experiment.get.graph.nodes) shouldBe empty
+        logger.debug(s"Received status: $status")
+        forAll(status.experiment.get.graph.nodes) { node =>
+          import io.deepsense.graph.Status.Failed
+          node.state.status shouldNot be (Failed)
+        }
         if (graphCompleted(status)) {
           success = true
           break()
@@ -65,37 +64,21 @@ class EMCommunicatesWithGEIntegSpec
   }
 
   def graphCompleted(status: Status): Boolean = {
-    val inProgressStatuses = Set(
-      io.deepsense.graph.Status.Draft,
-      io.deepsense.graph.Status.Queued,
-      io.deepsense.graph.Status.Running)
-
+    import io.deepsense.graph.Status._
+    val inProgressStatuses = Set(Draft, Queued, Running)
     !status.experiment.get.graph.nodes.exists(n => inProgressStatuses.contains(n.state.status))
   }
 
-  def getFailedNodes(nodes: Set[Node]): Set[Node] = {
-    nodes.filter(n => n.state.status == io.deepsense.graph.Status.Failed)
-  }
-
   private val graph = Graph(
-    Set(Node(Node.Id.randomId, createLoadDataFrameOperation)),
-    Set())
+    Set(Node(Node.Id.randomId, LoadDataFrame(SimpleGraphExecutionIntegSuiteEntities.entityUuid))))
 
-  private val experiment: Experiment = Experiment(
+  private val experiment = Experiment(
     Experiment.Id.randomId,
     SimpleGraphExecutionIntegSuiteEntities.entityTenantId,
     "name",
     graph,
     "experiment description"
   )
-
-  private def createLoadDataFrameOperation: LoadDataFrame = {
-    val loadOp = new LoadDataFrame
-    loadOp.parameters.getStringParameter(LoadDataFrame.idParam).value =
-      Some(SimpleGraphExecutionIntegSuiteEntities.entityUuid)
-    loadOp
-  }
-
 
   override def beforeAll(): Unit = {
     super.beforeAll()
@@ -110,7 +93,5 @@ class EMCommunicatesWithGEIntegSpec
     copyDataFrameToHdfs()
   }
 
-  override def afterAll(): Unit = {
-    system.shutdown()
-  }
+  override def afterAll(): Unit = system.shutdown()
 }

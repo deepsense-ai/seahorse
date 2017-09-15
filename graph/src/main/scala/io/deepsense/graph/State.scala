@@ -25,9 +25,9 @@ case class State private[graph](
     ended: Option[DateTime] = None,
     progress: Option[Progress] = None,
     // TODO: results should be changed to list of datasets UUIDs
-    results: Option[List[UUID]] = None) {
+    results: Option[Seq[UUID]] = None) {
 
-  private[graph] def completed(results: List[UUID]): State = {
+  private[graph] def completed(results: Seq[UUID]): State = {
     copy(status = Status.Completed,
       ended = Some(DateTimeConverter.now),
       progress = Some(Progress(progress.get.total, progress.get.total)),

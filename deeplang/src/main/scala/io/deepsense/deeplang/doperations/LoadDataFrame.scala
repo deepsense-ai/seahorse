@@ -10,6 +10,7 @@ import io.deepsense.deeplang.doperables.DOperableLoader
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, ParametersSchema, StringParameter}
 import io.deepsense.deeplang.{DOperation, DOperation0To1, ExecutionContext}
+import io.deepsense.models.entities.Entity
 
 /**
  * Operation which is able to load DataFrame and deserialize it.
@@ -34,4 +35,10 @@ class LoadDataFrame extends DOperation0To1[DataFrame] {
 
 object LoadDataFrame {
   val idParam = "id"
+
+  def apply(id: String): LoadDataFrame = {
+    val loadDF = new LoadDataFrame
+    loadDF.parameters.getStringParameter(LoadDataFrame.idParam).value = Some(id)
+    loadDF
+  }
 }

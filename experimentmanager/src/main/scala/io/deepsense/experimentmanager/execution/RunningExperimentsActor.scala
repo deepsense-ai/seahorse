@@ -1,7 +1,5 @@
 /**
  * Copyright (c) 2015, CodiLime, Inc.
- *
- * Owner: Grzegorz Chilkiewicz
  */
 package io.deepsense.experimentmanager.execution
 
@@ -10,6 +8,7 @@ import javax.inject.{Inject, Named}
 import scala.collection.mutable
 import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.{Future, duration}
+import scala.util.{Failure, Success}
 
 import akka.actor.{Actor, ActorLogging}
 import akka.pattern.pipe
@@ -34,7 +33,7 @@ class RunningExperimentsActor @Inject() (
   import InternalMessages._
   import context.dispatcher
 
-  context.system.scheduler.schedule(refreshDelay, refreshDelay, self, Tick())
+  context.system.scheduler.schedule(refreshDelay, refreshDelay, self, Tick)
 
   override def receive: Receive = {
     case internal: InternalMessage => processInternal(internal)
@@ -43,7 +42,7 @@ class RunningExperimentsActor @Inject() (
   }
 
   private def processInternal(message: InternalMessage): Unit = message match {
-    case Tick() => refreshStatuses()
+    case Tick => refreshStatuses()
     case ExperimentStatusUpdated(experiment) =>
       statusUpdated(experiment)
   }
@@ -57,9 +56,9 @@ class RunningExperimentsActor @Inject() (
     case Launch(experiment) => launch(experiment)
     case Abort(experimentId) => abort(experimentId)
     case GetStatus(experimentId) => requestStatus(experimentId)
-    case ListExperiments(tenantId) => listExperiments(tenantId)
-    case DeleteExperiment(experimentId) => delete(experimentId)
-    case e: Experiments => unhandled(e)
+    case ExperimentsByTenant(tenantId) => listExperiments(tenantId)
+    case Delete(experimentId) => delete(experimentId)
+    case e: ExperimentsMap => unhandled(e)
     case s: Status => unhandled(s)
   }
 
@@ -68,21 +67,24 @@ class RunningExperimentsActor @Inject() (
     val gec = graphExecutorFactory.create()
     val resultExp = experiment.markRunning
     experiments.put(resultExp.id, (resultExp, gec))
-    sender() ! Status(Some(resultExp))
-    Future({
+    val s = sender()
+    Future {
       gec.spawnOnCluster(entitystorageLabel)
       gec.waitForSpawn(Constants.WaitForGraphExecutorClientInitDelay)
       gec.sendExperiment(resultExp)
-    })
-  }
-
-  private def delete(experimentId: Id): Unit = {
-    experiments.get(experimentId).foreach { case (toDelete, _) =>
-      if (toDelete.state.status != Experiment.Status.Running) {
-        experiments.remove(toDelete.id)
-      }
+    }.onComplete {
+      case Success(result) =>
+        s ! Launched(resultExp)
+      case Failure(ex) =>
+        log.error(ex, s"Launching experiment failed $experiment")
     }
   }
+
+  private def delete(experimentId: Id): Unit =
+    for {
+      (exp, _) <- experiments.get(experimentId)
+      if exp.state.status != Experiment.Status.Running
+    } experiments.remove(exp.id)
 
   private def abort(id: Id): Unit = {
     log.info(s"RunningExperimentsActor starts aborting experiment: $id")
@@ -120,8 +122,8 @@ class RunningExperimentsActor @Inject() (
     log.info(s"RunningExperimentsActor finishes listing experiments $tenantId")
     tenantId match {
       case Some(tenant) =>
-        sender() ! Experiments(experimentsByTenant.filter(p => p._1 == tenant))
-      case None => sender() ! Experiments(experimentsByTenant)
+        sender() ! ExperimentsMap(experimentsByTenant.filter(p => p._1 == tenant))
+      case None => sender() ! ExperimentsMap(experimentsByTenant)
     }
   }
 
@@ -135,18 +137,19 @@ class RunningExperimentsActor @Inject() (
 
   private object InternalMessages {
     sealed abstract class InternalMessage
-    case class Tick() extends InternalMessage
+    case object Tick extends InternalMessage
     case class ExperimentStatusUpdated(experiment: Experiment) extends InternalMessage
   }
 }
 
 object RunningExperimentsActor {
-  sealed abstract class Message
+  sealed trait Message
   case class Launch(experiment: Experiment) extends Message
+  case class Launched(experiment: Experiment) extends Message
   case class Abort(experimentId: Id) extends Message
   case class GetStatus(experimentId: Id) extends Message
-  case class ListExperiments(tenantId: Option[String]) extends Message
+  case class ExperimentsByTenant(tenantId: Option[String]) extends Message
   case class Status(experiment: Option[Experiment]) extends Message
-  case class Experiments(experimentsByTenantId: Map[String, Set[Experiment]]) extends Message
-  case class DeleteExperiment(experimentId: Id) extends Message
+  case class ExperimentsMap(experimentsByTenantId: Map[String, Set[Experiment]]) extends Message
+  case class Delete(experimentId: Id) extends Message
 }

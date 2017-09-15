@@ -1,7 +1,5 @@
 /**
  * Copyright (c) 2015, CodiLime, Inc.
- *
- * Owner: Wojciech Jurczyk
  */
 package io.deepsense.experimentmanager.execution
 
@@ -26,7 +24,6 @@ import io.deepsense.models.experiments.Experiment
 class RunningExperimentsActorSpec
   extends StandardSpec
   with UnitTestSupport
-  with Matchers
   with WordSpecLike
   with BeforeAndAfter
   with Eventually
@@ -64,7 +61,7 @@ class RunningExperimentsActorSpec
     "launch experiment" when {
       "received Launch" in {
         probe.send(actorRef, Launch(experiment))
-        probe.expectMsg(Status(Some(launched)))
+        probe.expectMsg(Launched(launched))
         eventually {
           actor.experiments should contain key experiment.id
           verify(graphExecutorClient).sendExperiment(launched)
@@ -74,7 +71,7 @@ class RunningExperimentsActorSpec
     "answer with Status(Some(...))" when {
       "received GetStatus and the experiment was queued" in {
         probe.send(actorRef, Launch(experiment))
-        probe.expectMsgAnyClassOf(classOf[Status])
+        probe.expectMsgAnyClassOf(classOf[Launched])
         probe.send(actorRef, GetStatus(experiment.id))
         probe.expectMsg(Status(Some(launched)))
       }
@@ -115,8 +112,8 @@ class RunningExperimentsActorSpec
 
       "received ListExperiments with tenantId and tenant has experiments" in {
         withLaunchedExperiments(experiments) {
-          probe.send(actorRef, ListExperiments(Some(experiment1.tenantId)))
-          val receivedExperiments = probe.expectMsgAnyClassOf(classOf[Experiments])
+          probe.send(actorRef, ExperimentsByTenant(Some(experiment1.tenantId)))
+          val receivedExperiments = probe.expectMsgAnyClassOf(classOf[ExperimentsMap])
           receivedExperiments.experimentsByTenantId should have size 1
           receivedExperiments.experimentsByTenantId(experiment1.tenantId) should
             contain theSameElementsAs expectedExperimentsOfTenant1(experiment1.tenantId)
@@ -124,8 +121,8 @@ class RunningExperimentsActorSpec
       }
       "received ListExperiments without tenantId" in {
         withLaunchedExperiments(experiments) {
-          probe.send(actorRef, ListExperiments(None))
-          val receivedExperiments = probe.expectMsgAnyClassOf(classOf[Experiments])
+          probe.send(actorRef, ExperimentsByTenant(None))
+          val receivedExperiments = probe.expectMsgAnyClassOf(classOf[ExperimentsMap])
           receivedExperiments.experimentsByTenantId should have size 2
           receivedExperiments.experimentsByTenantId(experiment1.tenantId) should
             contain theSameElementsAs expectedExperimentsOfTenant1(experiment1.tenantId)
@@ -136,8 +133,8 @@ class RunningExperimentsActorSpec
     }
     "answer with empty map" when {
       "received ListExperiments with tenantId and tenant has no experiments" in {
-        probe.send(actorRef, ListExperiments(Some("tenantWithNoExperiments")))
-        probe.expectMsgAnyClassOf(classOf[Experiments])
+        probe.send(actorRef, ExperimentsByTenant(Some("tenantWithNoExperiments")))
+        probe.expectMsgAnyClassOf(classOf[ExperimentsMap])
           .experimentsByTenantId shouldBe Map.empty
       }
     }

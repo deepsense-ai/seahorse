@@ -1,9 +1,6 @@
 /**
  * Copyright (c) 2015, CodiLime, Inc.
- *
- * Owner: Wojciech Jurczyk
  */
-
 package io.deepsense.experimentmanager
 
 import java.util.concurrent.TimeUnit
@@ -74,7 +71,7 @@ class ExperimentManagerImpl @Inject()(
               if runningExperiment.state.status == Experiment.Status.Running =>
                 throw new ExperimentRunningException(experimentId)
             case _ =>
-              runningExperimentsActor ! DeleteExperiment(experimentId)
+              runningExperimentsActor ! Delete(experimentId)
               val updatedExperiment = oldExperiment
                 .assureOwnedBy(userContext)
                 .updatedWith(experiment)
@@ -96,11 +93,11 @@ class ExperimentManagerImpl @Inject()(
     page: Option[Int],
     status: Option[Experiment.Status.Value]): Future[ExperimentsList] = {
     authorizator.withRole(roleList) { userContext =>
-      val tenantExperimentsFuture: Future[List[Experiment]] =
+      val tenantExperimentsFuture: Future[Seq[Experiment]] =
         storage.list(userContext, limit, page, status)
       val runningExperimentsFuture: Future[Map[Id, Experiment]] = runningExperimentsActor
-        .ask(ListExperiments(Some(userContext.tenantId)))
-        .mapTo[Experiments]
+        .ask(ExperimentsByTenant(Some(userContext.tenantId)))
+        .mapTo[ExperimentsMap]
         .map(_.experimentsByTenantId.getOrElse(userContext.tenantId, Set())
           .map(experiment => experiment.id -> experiment).toMap)
 
@@ -129,7 +126,7 @@ class ExperimentManagerImpl @Inject()(
 
   def launch(
     id: Id,
-    targetNodes: List[Node.Id]): Future[Experiment] = {
+    targetNodes: Seq[Node.Id]): Future[Experiment] = {
     authorizator.withRole(roleLaunch) { userContext =>
       val experimentFuture = storage.get(id)
       experimentFuture.flatMap {
@@ -137,14 +134,14 @@ class ExperimentManagerImpl @Inject()(
           val ownedExperiment = experiment.assureOwnedBy(userContext)
           runningExperimentsActor
             .ask(Launch(ownedExperiment))
-            .mapTo[Status]
-            .map(_.experiment.get)
+            .mapTo[Launched]
+            .map(_.experiment)
         case None => throw new ExperimentNotFoundException(id)
       }
     }
   }
 
-  def abort(id: Id, nodes: List[Node.Id]): Future[Experiment] = {
+  def abort(id: Id, nodes: Seq[Node.Id]): Future[Experiment] = {
     authorizator.withRole(roleAbort) { userContext =>
       val experimentFuture = storage.get(id)
       experimentFuture.flatMap {

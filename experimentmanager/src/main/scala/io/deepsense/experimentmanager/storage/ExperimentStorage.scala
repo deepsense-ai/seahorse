@@ -53,5 +53,5 @@ trait ExperimentStorage {
     tenant: HasTenantId,
     limit: Option[Int],
     page: Option[Int],
-    status: Option[Experiment.Status.Value]): Future[List[Experiment]]
+    status: Option[Experiment.Status.Value]): Future[Seq[Experiment]]
 }

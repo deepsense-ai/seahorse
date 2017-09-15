@@ -37,7 +37,7 @@ class MockRunningExperimentsActor @Inject()(
     case Launch(experiment) => launch(experiment)
     case Abort(id) => abort(id)
     case GetStatus(id) => getStatus(id)
-    case ListExperiments(tenantId) => listExperiments(tenantId)
+    case ExperimentsByTenant(tenantId) => listExperiments(tenantId)
     case Tick() => updateProgress()
     case x => unhandled(x)
   }
@@ -66,10 +66,10 @@ class MockRunningExperimentsActor @Inject()(
       case Some(tenant) =>
         val tenantExperiments =
           experiments.values.groupBy(_.tenantId).getOrElse(tenant, Set()).toSet
-        sender() ! Experiments(Map(tenant -> tenantExperiments))
+        sender() ! ExperimentsMap(Map(tenant -> tenantExperiments))
       case None =>
         val experimentsByTenant = experiments.values.groupBy(_.tenantId).mapValues(_.toSet)
-        sender () ! Experiments(experimentsByTenant)
+        sender () ! ExperimentsMap(experimentsByTenant)
     }
   }
 
@@ -98,7 +98,7 @@ class MockRunningExperimentsActor @Inject()(
         val currentProgress = node.state.progress.get
         val nextProgress = Math.min(currentProgress.total, currentProgress.current + 10)
         if (nextProgress == currentProgress.total) {
-          node.markCompleted(List.fill(node.operation.outArity)(UUID.randomUUID()))
+          node.markCompleted(Seq.fill(node.operation.outArity)(UUID.randomUUID()))
         } else {
           node.withProgress(nextProgress)
         }

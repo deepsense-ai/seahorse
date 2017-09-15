@@ -1,9 +1,6 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Wojciech Jurczyk
  */
-
 package io.deepsense.experimentmanager
 
 import scala.concurrent.Future
@@ -69,7 +66,7 @@ trait ExperimentManager {
    */
   def launch(
       id: Id,
-      targetNodes: List[Node.Id]): Future[Experiment]
+      targetNodes: Seq[Node.Id]): Future[Experiment]
 
   /**
    * Aborts an experiment. Allows to specify nodes to abort. If nodes list is
@@ -78,5 +75,5 @@ trait ExperimentManager {
    * @param nodes List of experiment's nodes to abort.
    * @return The aborted experiment.
    */
-  def abort(id: Id, nodes: List[Node.Id]): Future[Experiment]
+  def abort(id: Id, nodes: Seq[Node.Id]): Future[Experiment]
 }

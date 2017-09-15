@@ -11,7 +11,7 @@ import java.nio.ByteBuffer
 import scala.collection.JavaConverters._
 import scala.util.Try
 
-import com.typesafe.config.{Config, ConfigFactory}
+import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.avro.AvroRuntimeException
 import org.apache.avro.ipc.NettyTransceiver
@@ -183,7 +183,7 @@ class GraphExecutorClient extends Closeable with LazyLogging {
     amContainer.setCommands(List(
       // TODO: Move spark-master string to configuration file
       "/opt/spark/bin/spark-submit --class io.deepsense.graphexecutor.GraphExecutor " +
-        " --master spark://" + getHdfsHostnameFromConfig() + ":7077  --executor-memory 512m " +
+        " --master spark://" + getHdfsHostnameFromConfig + ":7077  --executor-memory 512m " +
         s" ./graphexecutor.jar $esFactoryName " + Utils.logRedirection
     ).asJava)
 
@@ -225,10 +225,8 @@ class GraphExecutorClient extends Closeable with LazyLogging {
     }
   }
 
-  private def getHdfsHostnameFromConfig(): String = {
-    val geConfig: Config = ConfigFactory.load(Constants.GraphExecutorConfName)
-    geConfig.getString("hdfs.hostname")
-  }
+  private def getHdfsHostnameFromConfig: String =
+    ConfigFactory.load(Constants.GraphExecutorConfName).getString("hdfs.hostname")
 
   /**
    * Releases all resources associated with this object.

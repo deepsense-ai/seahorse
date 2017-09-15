@@ -105,9 +105,9 @@ class ExperimentManagerImplSpec extends StandardSpec with UnitTestSupport {
         when(storage.get(any()))
           .thenReturn(Future.successful(Some(storedExperiment)))
 
-        val eventualExperiment = experimentManager.launch(storedExperiment.id, List())
+        val eventualExperiment = experimentManager.launch(storedExperiment.id, Seq.empty)
         probe.expectMsg(Launch(storedExperiment))
-        probe.reply(Status(Some(launchedExperiment)))
+        probe.reply(Launched(launchedExperiment))
         whenReady(eventualExperiment) { _ shouldEqual launchedExperiment }
       }
     }
@@ -116,7 +116,7 @@ class ExperimentManagerImplSpec extends StandardSpec with UnitTestSupport {
         when(storage.get(any()))
           .thenReturn(Future.successful(None))
 
-        val eventualExperiment = experimentManager.launch(storedExperiment.id, List())
+        val eventualExperiment = experimentManager.launch(storedExperiment.id, Seq.empty)
         whenReady(eventualExperiment.failed) {
           _ shouldBe new ExperimentNotFoundException(storedExperiment.id)
         }
@@ -142,9 +142,8 @@ class ExperimentManagerImplSpec extends StandardSpec with UnitTestSupport {
     }
     "return fail" when {
       "the experiment does not exists" in {
-        when(storage.get(any()))
-          .thenReturn(Future.successful(None))
-        val eventualExperiment = experimentManager.abort(storedExperiment.id, List())
+        when(storage.get(any())).thenReturn(Future.successful(None))
+        val eventualExperiment = experimentManager.abort(storedExperiment.id, Seq.empty)
         whenReady(eventualExperiment.failed) {
           _ shouldBe new ExperimentNotFoundException(storedExperiment.id)
         }
@@ -167,13 +166,13 @@ class ExperimentManagerImplSpec extends StandardSpec with UnitTestSupport {
       val runningExperiment = mock[Experiment]
       when(runningExperiment.id).thenReturn(runningExperimentId)
 
-      val storedExperiments = List(e1, e2, e3, e4)
+      val storedExperiments = Seq(e1, e2, e3, e4)
       when(storage.list(any(), any(), any(), any()))
         .thenReturn(Future.successful(storedExperiments))
 
       val mergedExperiments = experimentManager.experiments(None, None, None)
-      probe.expectMsg(ListExperiments(Some(tenantId)))
-      probe.reply(Experiments(Map(tenantId -> Set(runningExperiment))))
+      probe.expectMsg(ExperimentsByTenant(Some(tenantId)))
+      probe.reply(ExperimentsMap(Map(tenantId -> Set(runningExperiment))))
       whenReady(mergedExperiments) { experimentsLists =>
         val experiments = experimentsLists.experiments
         val experimentsById = experiments.map( experiment => experiment.id -> experiment).toMap

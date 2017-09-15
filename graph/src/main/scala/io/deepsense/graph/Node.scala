@@ -21,7 +21,7 @@ case class Node(
   def markAborted: Node = copy(state = state.aborted)
   def withProgress(progress: Int) = copy(state = state.withProgress(Progress(progress, total)))
   def markRunning: Node = copy(state = State.running(Progress(0, total)))
-  def markCompleted(results: List[UUID]): Node = copy(state = state.completed(results))
+  def markCompleted(results: Seq[UUID]): Node = copy(state = state.completed(results))
   // TODO: just a default value. Change it when DOperation will support it.
 
   def isDraft: Boolean = state.status == Status.Draft

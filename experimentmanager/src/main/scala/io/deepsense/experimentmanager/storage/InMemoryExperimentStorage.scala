@@ -37,7 +37,7 @@ class InMemoryExperimentStorage extends ExperimentStorage {
     tenant: HasTenantId,
     limit: Option[Int],
     page: Option[Int],
-    status: Option[Status.Value]): Future[List[Experiment]] = {
+    status: Option[Status.Value]): Future[Seq[Experiment]] = {
     // TODO: Implement filtering by status and pagination (using page and limit)
     Future.successful(experiments.filter(_._2.tenantMatches(tenant)).values.toList)
   }
