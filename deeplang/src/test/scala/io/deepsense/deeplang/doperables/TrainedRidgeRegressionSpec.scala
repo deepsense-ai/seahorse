@@ -56,8 +56,8 @@ class TrainedRidgeRegressionSpec extends ScorableSpec[TrainedRidgeRegression]{
           "Target column" -> Table(
             "Target column", "", None, None, List(List(Some(targetColumn)))
           ),
-          "intercept" -> Table(
-            "intercept", "", None, None, List(List(Some(intercept.toString)))
+          "Intercept" -> Table(
+            "Intercept", "", None, None, List(List(Some(intercept.toString)))
           )
         )
       ))
