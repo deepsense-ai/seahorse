@@ -91,34 +91,37 @@ function DrawingService() {
     var inputPrefix = 'input';
 
     for (var i = 0; i < edges.length; i++) {
-      var edge = edges[i];
-      jsPlumb.connect({
-        uuids: [outputPrefix + '-' + edge.startPortId + '-' + edge.startNodeId,
-          inputPrefix + '-' + edge.endPortId + '-' + edge.endNodeId
-        ]
-      });
-      console.log(edges[i]);
+      var edge = edges[i],
+          connection = jsPlumb.connect({
+            uuids: [
+              outputPrefix + '-' + edge.startPortId + '-' + edge.startNodeId,
+              inputPrefix + '-' + edge.endPortId + '-' + edge.endNodeId
+            ]
+          });
+      edge.setId(connection.id);
     }
+    that.bindConnectionEvents();
   };
 
   that.addOutputPoint = function addOutputPoint(node, ports) {
     var anchors = ['BottomCenter', 'BottomLeft', 'BottomRight'];
-    for (var i = 0; i < ports.length; i++) {
-      jsPlumb.addEndpoint(node, outputStyle, {
+    for (let i = 0; i < ports.length; i++) {
+      let port = jsPlumb.addEndpoint(node, outputStyle, {
         anchor: anchors[i],
         uuid: ports[i].id
       });
+      port.setParameter('portIndex', i);
     }
   };
 
   that.addInputPoint = function addInputPoint(node, ports) {
     var anchors = ['TopCenter', 'TopLeft', 'TopRight'];
-    for (var i = 0; i < ports.length; i++) {
-      jsPlumb.addEndpoint(node, inputStyle, {
+    for (let i = 0; i < ports.length; i++) {
+      let port = jsPlumb.addEndpoint(node, inputStyle, {
         anchor: anchors[i],
         uuid: ports[i].id
       });
-      console.log(ports[i].id);
+      port.setParameter('portIndex', i);
     }
   };
 
@@ -139,6 +142,38 @@ function DrawingService() {
 
     jsPlumb.addEndpoint(node, inputStyle, {
       anchor: place
+    });
+  };
+
+  that.bindConnectionEvents = function bindConnectionEvents() {
+    if (that.connectionEventsBinded) {
+      return;
+    }
+    that.connectionEventsBinded = true;
+
+    jsPlumb.bind('connection', (info) => {
+      let data = {
+          'from': {
+            'node': info.sourceId,
+            'portIndex': info.sourceEndpoint.getParameter('portIndex')
+          },
+          'to': {
+            'node': info.targetId,
+            'portIndex': info.targetEndpoint.getParameter('portIndex')
+          }
+        },
+        edge = internal.experiment.createConnection(data);
+      edge.setId(info.connection.id);
+    });
+
+    jsPlumb.bind('connectionDetached', (info) => {
+      if (info.targetEndpoint.isTarget && info.sourceEndpoint.isSource) {
+        internal.experiment.removeEdge(info.connection.id);
+      }
+    });
+
+    jsPlumb.bind('connectionMoved', function(info) {
+       internal.experiment.removeEdge(info.connection.id);
     });
   };
 

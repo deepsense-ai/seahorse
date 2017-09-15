@@ -24,7 +24,8 @@ GraphNode.prototype.fetchPorts = function fetchPorts(type, ports) {
   var array = [];
   for (var i = 0; i < ports.length; i++) {
     var port = new Port({
-      portId: type + '-' + ports[i].portIndex + '-' + this.id,
+      nodeId: this.id,
+      type: type,
       portIndex: ports[i].portIndex,
       required: ports[i].required,
       typeQualifier: ports[i].typeQualifier

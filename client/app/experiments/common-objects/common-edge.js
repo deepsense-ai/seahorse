@@ -11,6 +11,25 @@ function Edge(options) {
 }
 
 /**
+ * Sets edge id.
+ *
+ * @param id {string}
+ */
+Edge.prototype.setId = function setId(id) {
+  this.id = id;
+};
+
+/**
+ * Returns edge id.
+ *
+ * @return {string}
+ */
+Edge.prototype.getId = function getId() {
+  return this.id;
+};
+
+
+/**
  * Serializes edge data to transfer format.
  *
  * @return {object}

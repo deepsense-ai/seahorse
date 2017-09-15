@@ -39,6 +39,24 @@ function Experiment() {
     }
   };
 
+  /**
+   * Removes edge form internal data.
+   *
+   * @param {string} edgeId
+   *
+   * @return {boolean}
+   */
+  that.removeEdge = function removeEdge(edgeId) {
+    for (let i = internal.edges.length - 1; i >= 0; i--) {
+      let edge = internal.edges[i];
+      if (edge.getId() === edgeId) {
+        internal.edges.splice(i, 1);
+        return true;
+      }
+    }
+    return false;
+  };
+
   that.setData = function setData(data) {
     internal.id = data.id;
     internal.name = data.name;
@@ -64,15 +82,34 @@ function Experiment() {
     }
   };
 
+
+  /**
+   * Create connection.
+   *
+   * @param {object} data
+   *
+   * @return {Edge}
+   */
+  that.createConnection = function createConnection(data) {
+    var edge = new Edge({
+      startNodeId: data.from.node,
+      startPortId: data.from.portIndex,
+      endNodeId: data.to.node,
+      endPortId: data.to.portIndex
+    });
+    internal.edges.push(edge);
+
+    return edge;
+  };
+
+  /**
+   * Create connections.
+   *
+   * @param {object} connections
+   */
   that.createConnections = function createConnections(connections) {
     for (var i = 0; i < connections.length; i++) {
-      var edge = new Edge({
-        startNodeId: connections[i].from.node,
-        startPortId: connections[i].from.portIndex,
-        endNodeId: connections[i].to.node,
-        endPortId: connections[i].to.portIndex
-      });
-      internal.edges.push(edge);
+      that.createConnection(connections[i]);
     }
   };
 

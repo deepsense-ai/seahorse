@@ -34,6 +34,15 @@ describe('edge', () => {
     expect(Edge).toEqual(jasmine.any(Function));
   });
 
+  it('should have methods for setting & getting id', () => {
+    let edge = new Edge(initData);
+    expect(edge.setId).toEqual(jasmine.any(Function));
+    expect(edge.getId).toEqual(jasmine.any(Function));
+
+    let id = 'test-1';
+    edge.setId(id);
+    expect(edge.getId()).toEqual(id);
+  });
 
   it('should have serialaze method', () => {
     let edge = new Edge(initData);
