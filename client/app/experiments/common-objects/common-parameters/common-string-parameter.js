@@ -13,7 +13,7 @@ function StringParameter(options) {
   this.name = options.name;
   this.value = this.initValue(options.value, options.schema);
   this.schema = options.schema;
-  this.schema.validator = ValidatorFactory.createValidator(this.schema.type, this.schema.validator);
+  this.validator = ValidatorFactory.createValidator(this.schema.type, this.schema.validator);
 }
 
 StringParameter.prototype = new GenericParameter();
@@ -24,7 +24,7 @@ StringParameter.prototype.serialize = function () {
 };
 
 StringParameter.prototype.validate = function () {
-  return this.schema.validator.validate(this.value);
+  return this.validator.validate(this.value);
 };
 
 module.exports = StringParameter;
