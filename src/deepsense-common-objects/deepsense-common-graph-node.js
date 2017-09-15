@@ -19,6 +19,7 @@ angular.module('deepsense.graph-model').
       this.edges = {};
       this.x = options.x;
       this.y = options.y;
+      this.nodeGetter = options.nodeGetter;
 
       if (options.parametersValues) {
         this.parametersValues = options.parametersValues;
@@ -96,7 +97,7 @@ angular.module('deepsense.graph-model').
 
     GraphNode.prototype.setParameters = function setParameters(parametersSchema, DeepsenseNodeParameters) {
       if (this.parametersValues) {
-        this.parameters = DeepsenseNodeParameters.factory.createParametersList(this.parametersValues, parametersSchema);
+        this.parameters = DeepsenseNodeParameters.factory.createParametersList(this.parametersValues, parametersSchema, this);
         this.parametersValues = null;
       }
     };
@@ -112,13 +113,19 @@ angular.module('deepsense.graph-model').
     };
 
     /**
-     * Edge incoming to this node in given portIndex
-     * @param {Number} portIndex Index of node's port to which edge is connected
-     * @returns {Object|undefined} Edge that incomes to [[portIndex]], or undefined if no edge is connected
+     * Knowledge incoming to this node in given portIndex
+     * @param {Number} portIndex Index of node's port to which knowledge incomes
+     * @returns {Object|undefined} Knowledge that incomes to [[portIndex]], or undefined if no edge is connected
      */
-    GraphNode.prototype.getIncomingEdge = function getIncomingEdge(portIndex) {
+    GraphNode.prototype.getIncomingKnowledge = function getIncomingEdge(portIndex) {
       let edges = _.values(this.edges);
-      return _.find(edges, edge => edge.endPortId === portIndex);
+      let incomingEdge =  _.find(edges, edge =>  (edge.endNodeId === this.id && edge.endPortId === portIndex));
+      if (incomingEdge) {
+        let {startPortId, startNodeId} = incomingEdge;
+        let parentNode = this.nodeGetter(startNodeId);
+        return parentNode.output[startPortId];
+      }
+      return undefined;
     };
 
     GraphNode.CLICK = 'GraphNode.CLICK';

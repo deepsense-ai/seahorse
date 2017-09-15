@@ -77,7 +77,8 @@ factory('Workflow', /*@ngInject*/function (GraphNode, Edge) {
         'input': operation.ports.input,
         'output': operation.ports.output,
         'x': options.x,
-        'y': options.y
+        'y': options.y,
+        'nodeGetter': that.getNodeById
       });
     };
 
@@ -121,22 +122,6 @@ factory('Workflow', /*@ngInject*/function (GraphNode, Edge) {
 
     that.getEdgesByNodeId = function getEdgesByNodeId(nodeId) {
       return internal.nodes[nodeId].edges;
-    };
-
-    /**
-	 * Knowledge incoming to node on selected port
-     * @param {Object} node Node that receives knowledge
-     * @param {Number} portIndex Index of input port of [[node]] where knowledge is put
-     * @return {Object|undefined} knowledge object, or undefined if edge does not exist
-     */
-    that.getIncomingKnowledge = function getIncomingKnowledge(node, portIndex) {
-      let incomingEdge = node.getIncomingEdge(portIndex);
-      if (incomingEdge) {
-        let {startPortId, startNodeId} = incomingEdge;
-        let parentNode = that.getNodeById(startNodeId);
-        return parentNode.output[startPortId]
-      }
-      return undefined;
     };
 
     that.setStatus = function setStatus(state) {

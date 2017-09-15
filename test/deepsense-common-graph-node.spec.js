@@ -12,6 +12,7 @@ describe('graphNode', () => {
   let initOperationId = '55-55-55';
   let initName = 'Sample operation';
   let initVersion = '1.1';
+
   let initData = {
     'id': initId,
     'operationId': initOperationId,
@@ -107,25 +108,38 @@ describe('graphNode', () => {
     expect(graphNode.getResult(2)).not.toBeDefined();
   });
 
-  it('should return edge incoming to port index if edge exists', () => {
+  it('should return knowledge incoming to port index if edge exists', () => {
+
     let graphNode = new GraphNode(initData);
 
     let startNodeId = '11';
-    let startPortId = 0;
-    let endPortId = 0;
+    let startPortId = 1;
+    let endPortId = 2;
     let edge = new Edge({
       'startNodeId': startNodeId,
       'startPortId': startPortId,
       'endNodeId': graphNode.id,
       'endPortId': endPortId
     });
+    let knowledgeFromPort0 = "knowledge-from-port-0";
+    let knowledgeFromPort1 = "knowledge-from-port-1";
+
+    let mockNodeGetter = (nodeId) => {
+      if (nodeId === startNodeId) {
+        return {
+          output: [knowledgeFromPort0, knowledgeFromPort1]
+        }
+      }
+    };
+
+    graphNode.nodeGetter = mockNodeGetter;
     graphNode.edges[edge.id] = edge;
 
-    expect(graphNode.getIncomingEdge(0)).toEqual(edge);
+    expect(graphNode.getIncomingKnowledge(endPortId)).toEqual(knowledgeFromPort1);
   });
 
-  it('should return undefined as parent node id by port index if edge does not exist', () => {
+  it('should return undefined as incoming knowledge if edge does not exist', () => {
     let graphNode = new GraphNode(initData);
-    expect(graphNode.getIncomingEdge(0)).not.toBeDefined();
+    expect(graphNode.getIncomingKnowledge(0)).not.toBeDefined();
   });
 });
