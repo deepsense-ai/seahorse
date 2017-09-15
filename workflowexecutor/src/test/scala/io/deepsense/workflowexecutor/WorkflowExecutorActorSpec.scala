@@ -148,7 +148,7 @@ class WorkflowExecutorActorSpec
       }
       "infer graph knowledge, fail graph and send status on exception" in {
         val workflow = workflowInvalidInference(Workflow.Id.randomId)
-        val (probe, wea, _, statusListeners, publisher, testWMClientProbe) =
+        val (probe, wea, _, statusListeners, _, testWMClientProbe) =
           initializedStateFixture(workflow)
 
         sendLaunch(probe, wea, workflow.graph.nodes.map(_.id))
@@ -210,7 +210,7 @@ class WorkflowExecutorActorSpec
 
         eventually {
           statusListeners.foreach { receiver =>
-            val stat = receiver.expectMsgClass(classOf[ExecutionStatus])
+            receiver.expectMsgClass(classOf[ExecutionStatus])
           }
           verify(statefulWorkflow).nodeFinished(
             completedId,
@@ -246,11 +246,11 @@ class WorkflowExecutorActorSpec
                 None),
               Set(node1.id)))
           when(statefulWorkflow.startReadyNodes()).thenReturn(Seq.empty)
-          val (probe, wea, _, statusListeners, _, testWMClientProbe) =
+          val (probe, wea, _, _, _, testWMClientProbe) =
             launchedStateFixture(workflow)
           wea.underlyingActor.statefulWorkflow = statefulWorkflow
 
-          val (completedId, nodeCompletedMessage, _) = nodeCompleted()
+          val (_, nodeCompletedMessage, _) = nodeCompleted()
 
           probe.send(wea, nodeCompletedMessage)
 
@@ -337,30 +337,14 @@ class WorkflowExecutorActorSpec
     NodeStateWithResults(NodeState(status, Some(EntitiesMap())), Map(), None)
   }
 
-  def createNodeCompletedMessage(nodeId: Id): (NodeCompleted, EntitiesMap) = {
-    val eId: Entity.Id = Entity.Id.randomId
-    val reports: Map[Entity.Id, ReportContent] = Map(eId -> ReportContentTestFactory.someReport)
-    val dOperables: Map[Entity.Id, DOperable] = Map(eId -> mock[DOperable])
-    val nodeCompletedMessage = NodeCompleted(
-      nodeId,
-      NodeExecutionResults(Seq(eId), reports, dOperables))
-    (nodeCompletedMessage, EntitiesMap(dOperables, reports))
-  }
-
-  def sendLaunch(
+  private def sendLaunch(
       probe: TestProbe,
       wea: TestActorRef[WorkflowExecutorActor],
       nodes: Set[Node.Id]): Unit = {
     probe.send(wea, Launch(nodes))
   }
 
-  def emptyExecution: IdleExecution = Execution.empty
-
-  def verifyStatusSent(receivers: Seq[TestProbe]): Unit = {
-    verifyStatus(receivers)(_ => ())
-  }
-
-  def verifyStatus(receivers: Seq[TestProbe])(f: (ExecutionStatus) => Unit): Unit = {
+  private def verifyStatus(receivers: Seq[TestProbe])(f: (ExecutionStatus) => Unit): Unit = {
     eventually {
       receivers.foreach { receiver =>
         f(receiver.expectMsgClass(classOf[ExecutionStatus]))
@@ -368,7 +352,7 @@ class WorkflowExecutorActorSpec
     }
   }
 
-  def becomeLaunched(
+  private def becomeLaunched(
       wea: TestActorRef[WorkflowExecutorActor],
       workflow: WorkflowWithResults): Unit = {
     val statefulWorkflow = StatefulWorkflow(
@@ -380,7 +364,7 @@ class WorkflowExecutorActorSpec
     wea.underlyingActor.context.become(wea.underlyingActor.launched())
   }
 
-  def becomeFinished(
+  private def becomeFinished(
       wea: TestActorRef[WorkflowExecutorActor],
       workflow: WorkflowWithResults): Unit = {
     val statefulWorkflow = new StatefulWorkflow(
@@ -404,113 +388,26 @@ class WorkflowExecutorActorSpec
     context
   }
 
-  def verifyNodesStarted(
-      wea: WorkflowExecutorActor,
-      readyNodes: Seq[ReadyNode],
-      executors: Seq[TestProbe]): Unit = {
-    eventually {
-      val execution = wea.execution
-      readyNodes.foreach { rn => verify(execution).nodeStarted(rn.node.id) }
-      executors.foreach {
-        _.expectMsg(Start())
-      }
-    }
+  private def nodeCompleted(): (Id, NodeCompleted, NodeExecutionResults) = {
+    val completedId = node1.id
+    val results = mockResults(2)
+    (completedId, NodeCompleted(completedId, results), results)
   }
 
-  def mockResults(size: Int): NodeExecutionResults = {
+  private def mockResults(size: Int): NodeExecutionResults = {
     val ids = (1 to size).map(_ => Entity.Id.randomId).toSeq
     val reports = ids.map { id => id -> mock[ReportContent]}.toMap
     val operables = ids.map { id => id -> mock[DOperable]}.toMap
     NodeExecutionResults(ids, reports, operables)
   }
 
-  def mockReadyNode(): ReadyNode = {
-    val node = mock[DeeplangNode]
-    when(node.id).thenReturn(Node.Id.randomId)
-    val dOperation = mock[DOperation]
-    when(dOperation.name).thenReturn("mockedName")
-    when(node.value).thenReturn(dOperation)
-    ReadyNode(node, Seq())
-  }
-
-  def nodeCompleted(): (Id, NodeCompleted, NodeExecutionResults) = {
-    val completedId = node1.id
-    val results = mockResults(2)
-    (completedId, NodeCompleted(completedId, results), results)
-  }
-
-  def nodeFailed(): (Node.Id, NodeFailed, Exception) = {
+  private def nodeFailed(): (Node.Id, NodeFailed, Exception) = {
     val failedId = node1.id
     val cause = new IllegalStateException("A node failed because a test told him to do so!")
     (failedId, NodeFailed(failedId, cause), cause)
   }
 
-  def runningExecutionWithReadyNodes(readyNodes: Seq[ReadyNode]): RunningExecution = {
-    val execution = mock[RunningExecution]
-    when(execution.states).thenReturn(Map[Node.Id, NodeStateWithResults]())
-    when(execution.readyNodes).thenReturn(readyNodes)
-    when(execution.nodeStarted(any())).thenReturn(execution)
-    when(execution.error).thenReturn(None)
-    execution
-  }
-
-  def readyExecution(): (RunningExecution, Seq[ReadyNode]) = {
-    val readyNodes = Seq(mockReadyNode(), mockReadyNode())
-    (runningExecutionWithReadyNodes(readyNodes), readyNodes)
-  }
-
-  def noReadyExecution(): RunningExecution =
-    runningExecutionWithReadyNodes(Seq.empty)
-
-  def executionWithOkInference(
-      idleExecution: IdleExecution,
-      enqueueResult: RunningExecution,
-      readyNodes: Seq[ReadyNode]): (IdleExecution, Seq[ReadyNode]) = {
-    when(idleExecution.enqueue).thenReturn(enqueueResult)
-    when(idleExecution.inferAndApplyKnowledge(any())).thenReturn(idleExecution)
-    when(idleExecution.error).thenReturn(None)
-    when(idleExecution.isRunning).thenReturn(false)
-    (idleExecution, readyNodes)
-  }
-
-  def failedExecution(): IdleExecution = {
-    val execution = mock[IdleExecution]
-    when(execution.states).thenReturn(Map[Node.Id, NodeStateWithResults]())
-    when(execution.error).thenReturn(Some(
-      FailureDescription(
-        DeepSenseFailure.Id.randomId,
-        FailureCode.UnexpectedError,
-        "Mock title"
-      )
-    ))
-    when(execution.readyNodes).thenReturn(Seq())
-    execution
-  }
-
-  def completedExecution(): Execution = {
-    val execution = mock[Execution]
-    when(execution.states).thenReturn(Map[Node.Id, NodeStateWithResults]())
-    when(execution.readyNodes).thenReturn(Seq())
-    when(execution.isRunning).thenReturn(false)
-    when(execution.error).thenReturn(None)
-    execution
-  }
-
-  def executionWithThrowingInference(): IdleExecution = {
-    val graph = mock[IdleExecution]
-    val failed = failedExecution()
-    when(graph.inferAndApplyKnowledge(any(classOf[InferContext])))
-      .thenReturn(failed)
-    graph
-  }
-
-  def nodeExecutorFactory(): GraphNodeExecutorFactory = {
-    val factory = mock[GraphNodeExecutorFactory]
-    when(factory.createGraphNodeExecutor(any(), any(), any(), any())).thenReturn(TestProbe().ref)
-    factory
-  }
-
-  def fixture(workflow: WorkflowWithResults, useWorkflowManagerProbe: Boolean = true):
+  private def fixture(workflow: WorkflowWithResults, useWorkflowManagerProbe: Boolean = true):
     (TestProbe,
       TestActorRef[WorkflowExecutorActor],
       Seq[TestProbe],
@@ -558,17 +455,7 @@ class WorkflowExecutorActorSpec
     (probe, wea, executors, statusListeners, subscriber, testWMClientProbe)
   }
 
-  def blankStateFixture(workflow: WorkflowWithResults):
-    (TestProbe,
-      TestActorRef[WorkflowExecutorActor],
-      Seq[TestProbe],
-      Seq[TestProbe],
-      TestProbe,
-      TestProbe) = {
-    fixture(workflow)
-  }
-
-  def initializedStateFixture(workflow: WorkflowWithResults):
+  private def initializedStateFixture(workflow: WorkflowWithResults):
     (TestProbe,
       TestActorRef[WorkflowExecutorActor],
       Seq[TestProbe],
@@ -580,7 +467,7 @@ class WorkflowExecutorActorSpec
     (probe, wea, executors, statusListeners, subscriber, testWMClientProbe)
   }
 
-  def launchedStateFixture(workflow: WorkflowWithResults):
+  private def launchedStateFixture(workflow: WorkflowWithResults):
     (TestProbe,
       TestActorRef[WorkflowExecutorActor],
       Seq[TestProbe],
@@ -592,7 +479,7 @@ class WorkflowExecutorActorSpec
     (probe, wea, executors, statusListeners, subscriber, testWMClientProbe)
   }
 
-  def finishedStateFixture(workflow: WorkflowWithResults):
+  private def finishedStateFixture(workflow: WorkflowWithResults):
     (TestProbe,
       TestActorRef[WorkflowExecutorActor],
       Seq[TestProbe],
@@ -602,29 +489,6 @@ class WorkflowExecutorActorSpec
     val (probe, wea, executors, statusListeners, subscriber, testWMClientProbe) = fixture(workflow)
     becomeFinished(wea, workflow)
     (probe, wea, executors, statusListeners, subscriber, testWMClientProbe)
-  }
-
-  private def linearGraph(nodesIds: IndexedSeq[Id], runningNode: Option[Id]): StatefulGraph = {
-    // A -> B -> ... -> N
-    val nodes = nodesIds.map(Node(_, mockDOperation()))
-    val edges = (0 until nodesIds.length - 1).map(i => Edge(nodes(i), 0, nodes(i + 1), 0))
-    val time = DateTimeConverter.now.minusHours(1)
-    val runningNodeIdx: Int = runningNode.map(nodesIds.indexOf(_)).getOrElse(-1)
-    val completedNodes = nodesIds.take(runningNodeIdx)
-      .map(_ -> completedState())
-    val queuedNodes = nodesIds.drop(runningNodeIdx + 1).map(_ -> nodeState(Queued()))
-    val statefulGraph = StatefulGraph(
-      DeeplangGraph(nodes.toSet, edges.toSet),
-      (completedNodes ++ Seq(nodesIds.head -> nodeState(Running(time))) ++ queuedNodes).toMap,
-      None)
-    statefulGraph
-  }
-
-  private def mockDOperation(): DOperation = {
-    val operation = mock[DOperation]
-    when(operation.inArity).thenReturn(1)
-    when(operation.outArity).thenReturn(1)
-    operation
   }
 
   private def completedState(): NodeStateWithResults = {
@@ -639,7 +503,7 @@ class WorkflowExecutorActorSpec
     None)
   }
 
-  def wmClientActor(
+  private def wmClientActor(
       workflows: Map[Workflow.Id, WorkflowWithResults]): ActorRef = {
     TestActorRef(new TestWMClientActor(workflows))
   }
@@ -658,7 +522,7 @@ class WorkflowExecutorActorSpec
     WriteDataFrame().setStorageType(outputFile))
   val invalidNode = Node(Node.Id.randomId, new WriteDataFrame())
 
-  def workflowWithResults(id: Workflow.Id): WorkflowWithResults = WorkflowWithResults(
+  private def workflowWithResults(id: Workflow.Id): WorkflowWithResults = WorkflowWithResults(
     id,
     WorkflowMetadata(WorkflowType.Batch, "1.0.0"),
     DeeplangGraph(
@@ -668,7 +532,7 @@ class WorkflowExecutorActorSpec
     ExecutionReport(Map(node1.id -> NodeState.draft, node2.id -> NodeState.draft))
   )
 
-  def workflowInvalidInference(workflowId: Workflow.Id): WorkflowWithResults =
+  private def workflowInvalidInference(workflowId: Workflow.Id): WorkflowWithResults =
     workflowWithResults(workflowId).copy(
       id = workflowId,
       graph = workflowWithResults(workflowId).graph.copy(nodes = Set(node1, node2, invalidNode)),
@@ -678,7 +542,7 @@ class WorkflowExecutorActorSpec
           node2.id -> NodeState.draft,
           invalidNode.id -> NodeState.draft)))
 
-  class TestWMClientActor(workflows: Map[Workflow.Id, WorkflowWithResults])
+  private class TestWMClientActor(workflows: Map[Workflow.Id, WorkflowWithResults])
       extends Actor
       with Logging {
     override def receive: Receive = {
