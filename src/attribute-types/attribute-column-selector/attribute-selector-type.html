@@ -1,46 +1,7 @@
 <div class="selector-type-parameter">
-  <div ng-if="showItemsChoices()">
-    <select class="form-control"
-            ng-model="createItemType"
-            ng-options="itemType.verbose for itemType in ::itemTypes"></select>
-
-    <div class="action-button-wrapper">
-      <button class="btn btn-info btn-xs o-action-text add-selector-item"
-          type="button" ng-click="addItem()">
-        <i class="fa fa-plus"></i>
-        <span>Add selector</span>
-      </button>
-    </div>
-  </div>
-  <label class="o-exclusion" ng-if="parameter.hasOwnProperty('excluding')">
-    <span class="o-exclusion__text"
-          title="Include mode. Click to change to exclude."
-          ng-show="!parameter.excluding">Select the following:</span>
-    <span class="o-exclusion__text"
-          title="Exclude mode. Click to change to include."
-          ng-show="parameter.excluding">Select all, excluding:</span>
-    <input type="checkbox"
-           data-action="excluding"
-           ng-model="parameter.excluding"
-           ng-true-value="false"
-           ng-false-value="true"
-           ui-switch="{color: '#1ab394', secondaryColor: '#E43B11', size: 'small'}" />
-  </label>
-  <div class="ibox selector-item" ng-repeat="item in parameter.items">
-    <div class="ibox-title">
-      <span>{{ item.type.verbose }}</span>
-      <a class="close-link" aria-label="Close" ng-click="removeItem($index)">
-        <i class="fa fa-times"></i>
-      </a>
-    </div>
-    <div class="ibox-content" ng-switch="item.type.id">
-      <type-list-selector-item ng-switch-when="typeList"></type-list-selector-item>
-
-      <index-list-selector-item ng-switch-when="index"></index-list-selector-item>
-      <index-list-selector-item ng-switch-when="indexRange"></index-list-selector-item>
-
-      <column-list-selector-item ng-switch-when="column"></column-list-selector-item>
-      <column-list-selector-item ng-switch-when="columnList"></column-list-selector-item>
-    </div>
-  </div>
+  <section class="o-selected-items">
+    <attributes-serialized-view></attributes-serialized-view>
+    <button class="btn btn-info btn-xs o-action-text add-selector-item"
+            ng-click="openSelector()">Edit selection</button>
+  </section>
 </div>

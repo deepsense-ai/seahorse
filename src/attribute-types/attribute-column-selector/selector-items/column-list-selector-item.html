@@ -2,23 +2,24 @@
   <div class="column-list-values">
     <div ng-if="selectorIsSingle()" class="selector-param-is-single">
       <div class="column-list-value">
-        <input ng-model="item.column.name" type="text" class="form-control">
+        <input ng-model="item.column.name" placeholder="Enter column name" type="text" class="form-control o-custom">
       </div>
     </div>
     <div ng-if="!selectorIsSingle()">
-      <div class="action-button-wrapper action-button-wrapper--spaced">
-        <button class="btn btn-info btn-xs o-action-text" type="button"
-            ng-click="addColumn()">
-          <i class="fa fa-plus"></i>
-          <span>Add name</span>
-        </button>
-      </div>
-      <div ng-repeat="_ in item.columns" class="spaced-around flex-content flex-content--spaced-first">
-        <input ng-model="item.columns[$index].name" type="text" class="form-control">
-        <a class="close-link" aria-label="Close" ng-click="removeColumn($index)">
+      <div ng-repeat="_ in item.columns" class="u-flex u-flex--center-center m-b-sm">
+        <input ng-model="item.columns[$index].name"
+               placeholder="Enter column name"
+               type="text"
+               class="form-control o-custom">
+        <a class="m-l-sm close-link" aria-label="Close" ng-click="removeColumn($index)">
           <i class="fa fa-times"></i>
         </a>
       </div>
+      <button class="btn btn-info btn-xs o-action-text" type="button"
+              ng-click="addColumn()">
+        <i class="fa fa-plus"></i>
+        <span>Add name</span>
+      </button>
     </div>
   </div>
 </div>

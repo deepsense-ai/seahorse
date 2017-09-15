@@ -18,11 +18,14 @@ function LabelToFirstUnlabeled ($timeout) {
 
         if (
           nextSibling &&
-          (nextCheckbox = nextSibling.querySelector('input[type="checkbox"]')) &&
+          (
+            nextCheckbox = nextSibling.querySelector('input') ||
+            nextSibling.querySelector('textarea')
+          ) &&
           nextCheckbox.parentNode.tagName !== 'LABEL'
         ) {
           nextCheckbox.id = uniqueId;
-          element[0].querySelector('label').setAttribute('for', uniqueId);
+          $('label', element).attr('for', uniqueId);
         }
       });
     }

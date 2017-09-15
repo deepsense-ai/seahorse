@@ -434,7 +434,17 @@ angular.module('test').
         }
       ],
       [],
-      [],
+      [
+        {
+          "name": "selectors-new",
+          "type": "selector",
+          "description": "Selector for new design",
+          "port": 1,
+          "default": null,
+          "required": true,
+          "isSingle": false
+        }
+      ],
       []
     ];
 
@@ -508,7 +518,12 @@ angular.module('test').
         "creator-sample-parameter": "sample text"
       },
       {},
-      {},
+      {
+        "selectors-new": {
+          "excluding": false,
+          "selections": []
+        }
+      },
       {}
     ];
 

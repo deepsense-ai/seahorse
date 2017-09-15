@@ -7,7 +7,7 @@
 'use strict';
 
 /*@ngInject*/
-function AttributeSelectorType($timeout) {
+function AttributeSelectorType($timeout, $modal) {
   return {
     restrict: 'E',
     templateUrl: 'attribute-types/attribute-column-selector/attribute-selector-type.html',
@@ -21,20 +21,39 @@ function AttributeSelectorType($timeout) {
           selectorItemFactory.getAllItemsTypes().multipleSelectorItems;
 
       _.assign(scope, {
-        createItemType: types[0],
         itemTypes: types,
-        addItem() {
+        modal: null,
+
+        openSelector() {
+          this.modal = $modal.open({
+            templateUrl: 'attribute-types/attribute-column-selector/attribute-selector-type-modal.html',
+            size: 'lg',
+            scope: scope,
+            windowClass: 'selection-modal'
+          });
+        },
+        checkUnique(id) {
+          return !!(id === 'columnList' || id === 'typesList');
+        },
+        isItemIdInList(id) {
+          return _.find(scope.parameter.items, (lists) => lists.type.id === id);
+        },
+        getItemsThisType(id) {
+          return _.filter(scope.parameter.items, (lists) => lists.type.id === id);
+        },
+        getCurrentItemIndex(item) {
+          return scope.parameter.items.indexOf(item);
+        },
+        addItem(id) {
           let selectorItem = selectorItemFactory.createItem({
-            'type': this.createItemType.id,
+            'type': id,
             'values': []
           });
 
           scope.parameter.items.push(selectorItem);
         },
         removeItem(itemIndex) {
-          if (window.confirm('Are you sure to remove the selector item?')) {
-            this.parameter.items.splice(itemIndex, 1);
-          }
+          this.parameter.items.splice(itemIndex, 1);
         },
         selectorIsSingle: selectorIsSingle,
         showItemsChoices() {

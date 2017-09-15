@@ -1,0 +1,53 @@
+<header class="modal-header u-flex u-flex--center-center">
+  <h3 class="no-margins">Selection for:</h3>
+  <span class="text-uppercase text-success u-as-h3 u-space u-flex__1">{{parameter.name}}</span>
+  <div ng-if="!selectorIsSingle()">
+    <span class="font-bold">Mode:</span>
+    <div class="btn-group">
+      <label class="btn btn-sm btn-info"
+             ng-model="parameter.excluding"
+             btn-radio="false"
+             tooltip-placement="bottom"
+             tooltip="Selects following columns"
+             tooltip-trigger="mouseenter"
+             tooltip-append-to-body="true">
+        Including
+      </label>
+      <label class="btn btn-sm btn-info"
+             ng-model="parameter.excluding"
+             btn-radio="true"
+             tooltip-placement="bottom"
+             tooltip="Select all columns, excluding following"
+             tooltip-trigger="mouseenter"
+             tooltip-append-to-body="true">
+        Excluding
+      </label>
+    </div>
+  </div>
+</header>
+<article class="modal-body u-flex">
+  <section class="o-modal-selector__item u-flex__1"
+           ng-repeat="itemType in ::itemTypes">
+    <h4 class="text-center">{{::itemType.verbose}}</h4>
+    <div class="o-modal-selector__list--empty text-navy
+                fa fa-plus-circle fa-5x
+                u-flex u-flex--center-center u-fill-parent u-cursor-pointer"
+         ng-click="addItem(itemType.id)"
+         ng-hide="isItemIdInList(itemType.id)"></div>
+    <div ng-switch="itemType.id"
+         ng-repeat="item in getItemsThisType(itemType.id)"
+         ng-show="isItemIdInList(itemType.id)"
+         class="o-modal-selector__list o-modal-selector__list--{{itemType.id | lowercase}}">
+      <type-list-selector-item ng-switch-when="typeList"></type-list-selector-item>
+
+      <index-list-selector-item ng-switch-when="index"></index-list-selector-item>
+      <index-list-selector-item ng-switch-when="indexRange"></index-list-selector-item>
+
+      <column-list-selector-item ng-switch-when="column"></column-list-selector-item>
+      <column-list-selector-item ng-switch-when="columnList"></column-list-selector-item>
+    </div>
+  </section>
+</article>
+<footer class="modal-footer">
+  <button class="btn btn-sm btn-info" ng-click="modal.close()">Done</button>
+</footer>

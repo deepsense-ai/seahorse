@@ -34,5 +34,70 @@
 
 .o-error-btn {
   margin: -10px 0 0 0;
-  border-radius: 0 0 5px 5px;
+  border-radius: 0 0 .25em .25em;
+}
+
+.o-custom {
+  &[type="text"],
+  &[type="number"], {
+    border-top: 0;
+    border-right: 0;
+    border-left: 0;
+    padding: 0;
+  }
+}
+
+.u-flex {
+  display: flex;
+
+  &--baseline {
+    align-items: baseline;
+  }
+
+  &--center-center {
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__1 {
+    flex: 1;
+  }
+
+  &__align-self {
+    align-self: center;
+  }
+
+  &__align-self--end {
+    align-self: flex-end;
+  }
+}
+
+.u-fill-parent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+.u-as-h3 {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.u-space {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.u-cursor-pointer {
+  cursor: pointer;
+}
+
+.u-inline-block {
+  display: inline-block;
+
+  &--spaced {
+    margin: 0 0 0 3px;
+  }
 }

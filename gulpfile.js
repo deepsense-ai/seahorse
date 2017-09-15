@@ -9,6 +9,7 @@ var gulp = require('gulp');
 var runSequence = require('run-sequence');
 var plugins = require('gulp-load-plugins')({lazy: false});
 var templateCache = require('gulp-angular-templatecache');
+var connect = require('gulp-connect');
 
 var config = require('./config.json');
 
@@ -25,7 +26,8 @@ gulp.task('html', function () {
         .pipe(templateCache({
             module: config.names.mainModule
         }))
-        .pipe(gulp.dest(config.temp));
+        .pipe(gulp.dest(config.temp))
+        .pipe(connect.reload());
 });
 
 gulp.task('js', function () {
@@ -37,14 +39,16 @@ gulp.task('js', function () {
             // jshint -W106
             single_quotes: true
         }))
-        .pipe(gulp.dest(config.temp));
+        .pipe(gulp.dest(config.temp))
+        .pipe(connect.reload());
 });
 
 gulp.task('less', function () {
     return gulp.src(config.src + '**/*.less')
         .pipe(plugins.less())
         .pipe(plugins.minifyCss())
-        .pipe(gulp.dest(config.temp));
+        .pipe(gulp.dest(config.temp))
+        .pipe(connect.reload());
 });
 
 gulp.task('concat:js', function () {
@@ -69,8 +73,15 @@ gulp.task('build', function () {
     return runSequence('clean', ['js', 'less', 'html'], ['concat:js', 'concat:css'], 'clean-temp');
 });
 
+gulp.task('connect', function() {
+    connect.server({
+        root: [__dirname, 'test/'],
+        livereload: true
+    });
+});
+
 gulp.task('start', function () {
-    runSequence('build', 'serve');
+    runSequence('build', 'connect', 'serve');
 });
 
 gulp.task('default', ['build']);
