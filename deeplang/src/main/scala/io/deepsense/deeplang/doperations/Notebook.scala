@@ -16,13 +16,17 @@
 
 package io.deepsense.deeplang.doperations
 
+import java.io.{ByteArrayInputStream, InputStream, PrintWriter, StringWriter}
+
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
 import scala.reflect.runtime.{universe => ru}
 
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.{DOperation, DOperation1To0}
 import io.deepsense.deeplang.documentation.OperationDocumentation
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.params.choice.{Choice, MultipleChoiceParam}
 import io.deepsense.deeplang.params.{Params, StringParam}
+import io.deepsense.deeplang.{DOperation1To0, ExecutionContext}
 
 
 abstract class Notebook()
@@ -44,6 +48,60 @@ abstract class Notebook()
 
   override val params: Array[io.deepsense.deeplang.params.Param[_]] =
     Array(shouldExecuteParam)
+
+  val notebookType: String
+
+  def headlessExecution(context: ExecutionContext) : Unit = {
+
+    context.notebooksClient.map(_.as.dispatcher).foreach { implicit ec =>
+      for {
+        _ <- getShouldExecute
+        generatedNotebookFutOpt = context.notebooksClient.map(_.generateAndFetchPdf(notebookType))
+        streamFut <- generatedNotebookFutOpt.map(_.map(new ByteArrayInputStream(_)))
+      } {
+        logger.info(s"Generating pdf")
+
+        streamFut.onFailure {
+          case t =>
+            val stackWriter = new StringWriter()
+            t.printStackTrace(new PrintWriter(stackWriter))
+            sendMail("Notebook execution failed", "Sorry! The execution of your notebook has failed.\n" +
+              stackWriter.toString, context, None)
+        }
+
+        Await.result(for {
+          stream <- streamFut
+        } yield {
+          sendMail("Notebook execution result",
+            "Hi, please find the attached pdf with notebook execution result.",
+            context,
+            Some((stream, Some("application/pdf")))
+          )
+
+        }, Duration.Inf)
+      }
+    }
+  }
+
+  private def sendMail(subject: String,
+      body: String,
+      context: ExecutionContext,
+      attachment: Option[(InputStream, Option[String])]
+  ): Unit = {
+    for {
+      shouldExecute <- getShouldExecute
+      mailAddress <- shouldExecute.getSendEmail
+      sender <- context.emailSender
+      email = mailAddress.getEmailAddress
+      msg = sender.createPlainMessage(subject, body, Seq(email))
+      msgWithAttachment = attachment.map {
+        case (stream, contentTypeOpt) =>
+          sender.attachAttachment(msg, stream, "notebook.pdf", contentTypeOpt)
+      }.getOrElse(msg)
+    } {
+      sender.sendEmail(msgWithAttachment).foreach(throw _)
+    }
+  }
 
   @transient
   override lazy val tTagTI_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
@@ -95,3 +153,5 @@ object Notebook {
 
   object EmailAddressChoice extends EmailAddressChoice
 }
+
+

@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2016, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,8 @@
  * limitations under the License.
  */
 
-package io.deepsense.workflowexecutor.communication.message.workflow
+package io.deepsense.commons.rest.client.req
 
-import spray.json.RootJsonFormat
+import io.deepsense.commons.models.Id
 
-import io.deepsense.commons.json.IdJsonProtocol._
-import io.deepsense.commons.utils.Logging
-import io.deepsense.models.workflows.Workflow
-import spray.json.DefaultJsonProtocol._
-
-case class Abort(workflowId: Workflow.Id)
-
-trait AbortJsonProtocol extends Logging {
-
-  implicit val abortFormat: RootJsonFormat[Abort] = jsonFormat1(Abort.apply)
-}
-
-object AbortJsonProtocol extends AbortJsonProtocol
+case class NotebookClientRequest(workflowId: Id, nodeId: Id, language: String)

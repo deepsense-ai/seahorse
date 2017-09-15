@@ -20,6 +20,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 
 import io.deepsense.commons.BuildInfo
 import io.deepsense.commons.mail.EmailSender
+import io.deepsense.commons.rest.client.NotebooksClientFactory
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
 import io.deepsense.commons.utils.{Logging, Version}
 import io.deepsense.deeplang._

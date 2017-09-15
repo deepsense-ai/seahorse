@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2016, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,19 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang
+package io.deepsense.commons.json
 
-import java.net.URL
+import spray.json.DefaultJsonProtocol._
+import spray.json.RootJsonFormat
 
-import io.deepsense.deeplang.Model.Id
+import io.deepsense.commons.json.IdJsonProtocol._
+import io.deepsense.commons.rest.client.req.NotebookClientRequest
 
-// TODO implement
-class NotebooksClient(
-    notebooksServerAddress: URL,
-    workflow: Id,
-    node: Id) {
-  def foo: Int = 42
+trait NotebookRestClientProtocol {
 
-  def toFactory = new NotebooksClientFactory(notebooksServerAddress)
+  implicit val reqFormat: RootJsonFormat[NotebookClientRequest] = jsonFormat(NotebookClientRequest,
+    "workflow_id", "node_id", "language")
+
 }
 
-class NotebooksClientFactory(notebooksServerAddress: URL) {
-  def createNotebookForNode(workflow: Id, node: Id): NotebooksClient = {
-    new NotebooksClient(notebooksServerAddress, workflow, node)
-  }
-}
+object NotebookRestClientProtocol extends NotebookRestClientProtocol

@@ -143,6 +143,8 @@ object Dependencies {
   val usedSpark = new Spark(Version.spark)
 
   val commons = usedSpark.onlyInTests ++ Seq(
+    akkaActor,
+    sprayClient,
     apacheCommonsLang3,
     config,
     javaMail,
@@ -157,6 +159,8 @@ object Dependencies {
   ) ++ Seq(mockitoCore, scalatest, scoverage).map(_ % Test)
 
   val deeplang = usedSpark.onlyInTests ++ Hadoop.onlyInTests ++ GoogleServicesApi.components ++ Seq(
+    akkaActor,
+    sprayClient,
     apacheCommonsLang3,
     amazonS3,
     nscalaTime,

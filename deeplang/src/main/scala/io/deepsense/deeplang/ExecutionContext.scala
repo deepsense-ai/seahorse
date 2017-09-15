@@ -18,12 +18,14 @@ package io.deepsense.deeplang
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
+
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.{DataFrame => SparkDataFrame}
 
 import io.deepsense.commons.mail.EmailSender
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.utils.Logging
+import io.deepsense.commons.rest.client.{NotebookRestClient, NotebooksClientFactory}
 import io.deepsense.deeplang.OperationExecutionDispatcher.Result
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.inference.InferContext
@@ -88,7 +90,7 @@ case class ExecutionContext(
     tenantId: String,
     innerWorkflowExecutor: InnerWorkflowExecutor,
     dataFrameStorage: ContextualDataFrameStorage,
-    notebooksClient: Option[NotebooksClient],
+    notebooksClient: Option[NotebookRestClient],
     emailSender: Option[EmailSender],
     customCodeExecutor: ContextualCustomCodeExecutor) extends Logging {
 

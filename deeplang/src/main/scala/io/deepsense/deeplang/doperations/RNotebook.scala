@@ -30,7 +30,10 @@ case class RNotebook()
 
   override val since: Version = Version(1, 3, 0)
 
+  override val notebookType: String = "r"
+
   override protected def execute(dataFrame: DataFrame)(context: ExecutionContext): Unit = {
     context.dataFrameStorage.setInputDataFrame(0, dataFrame.sparkDataFrame)
+    headlessExecution(context)
   }
 }

@@ -19,6 +19,7 @@ package io.deepsense.deeplang
 import scala.concurrent.Future
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe.TypeTag
+
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
@@ -28,10 +29,10 @@ import org.scalatest.mockito.MockitoSugar._
 
 import io.deepsense.commons.mail.EmailSender
 import io.deepsense.commons.models.Id
+import io.deepsense.commons.rest.client.{NotebookRestClient, NotebooksClientFactory}
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
 import io.deepsense.deeplang.OperationExecutionDispatcher.Result
-import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
-import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.deeplang.utils.DataFrameMatchers
 import io.deepsense.sparkutils.SparkSQLSession
@@ -124,7 +125,7 @@ private class MockedExecutionContext(
     override val tenantId: String,
     override val innerWorkflowExecutor: InnerWorkflowExecutor,
     override val dataFrameStorage: ContextualDataFrameStorage,
-    override val notebooksClient: Option[NotebooksClient],
+    override val notebooksClient: Option[NotebookRestClient],
     override val emailSender: Option[EmailSender],
     override val customCodeExecutor: ContextualCustomCodeExecutor)
   extends ExecutionContext(

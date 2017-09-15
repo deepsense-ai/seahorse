@@ -18,12 +18,12 @@ package io.deepsense.commons.json
 
 import java.util.UUID
 
-import spray.httpx.SprayJsonSupport
 import spray.json._
 
 import io.deepsense.commons.models.Id
 
-trait IdJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
+trait IdJsonProtocol {
+
   implicit object IdFormat extends RootJsonFormat[Id] {
     override def write(obj: Id): JsValue = JsString(obj.value.toString)
     override def read(json: JsValue): Id = json match {

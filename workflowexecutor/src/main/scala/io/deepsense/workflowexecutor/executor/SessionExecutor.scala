@@ -27,8 +27,8 @@ import com.rabbitmq.client.ConnectionFactory
 import com.thenewmotion.akka.rabbitmq._
 import com.typesafe.config.ConfigFactory
 import org.apache.spark.SparkContext
-
 import io.deepsense.commons.mail.{EmailSender, EmailSenderAuthorizationConfig, EmailSenderConfig}
+import io.deepsense.commons.rest.client.NotebooksClientFactory
 import io.deepsense.deeplang.catalogs.CatalogPair
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang._
@@ -245,7 +245,7 @@ case class SessionExecutor(
           password = mailServerPassword)))
       EmailSender(emailSenderConfig)
     }
-    val notebooksClientFactory = new NotebooksClientFactory(notebookServerAddress)
+    val notebooksClientFactory = new NotebooksClientFactory(notebookServerAddress, 1 second, 3600)(system)
 
     val executionContext = createExecutionContext(
       dataFrameStorage = dataFrameStorage,

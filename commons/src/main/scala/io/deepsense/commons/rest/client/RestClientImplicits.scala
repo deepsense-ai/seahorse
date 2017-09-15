@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2016, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-package io.deepsense.workflowexecutor.communication.message.workflow
+package io.deepsense.commons.rest.client
 
-import spray.json.RootJsonFormat
+import scala.concurrent.ExecutionContext
 
-import io.deepsense.commons.json.IdJsonProtocol._
-import io.deepsense.commons.utils.Logging
-import io.deepsense.models.workflows.Workflow
-import spray.json.DefaultJsonProtocol._
+import akka.actor.ActorSystem
+import akka.util.Timeout
 
-case class Abort(workflowId: Workflow.Id)
+trait RestClientImplicits {
 
-trait AbortJsonProtocol extends Logging {
-
-  implicit val abortFormat: RootJsonFormat[Abort] = jsonFormat1(Abort.apply)
+  implicit val ctx: ExecutionContext
+  implicit val as: ActorSystem
+  implicit val timeout: Timeout
 }
-
-object AbortJsonProtocol extends AbortJsonProtocol
