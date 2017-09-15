@@ -37,7 +37,7 @@ class EMCommunicatesWithGEIntegSpec
 
   implicit val timeout: Timeout = Timeout(1 second)
   val tenantId = "tenantId"
-  val maxRetryNumber = 10
+  val maxRetryNumber = 20
 
   "ExperimentManager" should "launch graph on GraphExecutor" in {
     testProbe.send(actorRef, Launch(experiment))
