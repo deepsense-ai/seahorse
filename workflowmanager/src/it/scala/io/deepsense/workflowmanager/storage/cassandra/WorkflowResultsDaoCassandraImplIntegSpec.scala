@@ -14,16 +14,16 @@ import org.scalatest.{BeforeAndAfter, Matchers}
 
 import io.deepsense.commons.StandardSpec
 import io.deepsense.commons.cassandra.CassandraTestSupport
+import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
 import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.deeplang.parameters.{BooleanParameter, ParametersSchema}
-import io.deepsense.graph.{Edge, Endpoint, Graph, Node}
+import io.deepsense.graph._
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
-import io.deepsense.models.workflows.{ThirdPartyData, Workflow, WorkflowMetadata, WorkflowType}
+import io.deepsense.models.workflows._
 
-
-class WorkflowDaoCassandraImplIntegSpec
+class WorkflowResultsDaoCassandraImplIntegSpec
   extends StandardSpec
   with ScalaFutures
   with MockitoSugar
@@ -32,11 +32,11 @@ class WorkflowDaoCassandraImplIntegSpec
   with CassandraTestSupport
   with GraphJsonTestSupport {
 
-  var workflowsDao: WorkflowDaoCassandraImpl = _
+  var workflowResultsDao: WorkflowResultsDaoCassandraImpl = _
   val catalog = mock[DOperationsCatalog]
   val graphReader: GraphReader = new GraphReader(catalog)
   val inferContext: InferContext = mock[InferContext]
-  val rowMapper = new WorkflowRowMapper(graphReader, inferContext)
+  val rowMapper = new WorkflowResultsRowMapper(graphReader, inferContext)
 
   val paramSchema = ParametersSchema("param1" -> new BooleanParameter("desc", None, false, None))
 
@@ -50,49 +50,43 @@ class WorkflowDaoCassandraImplIntegSpec
   when(catalog.createDOperation(operation3.id)).thenReturn(operation3)
   when(catalog.createDOperation(operation4.id)).thenReturn(operation4)
 
-  val w1@(workflow1Id, workflow1) = createWorkflow(graph = Graph())
-  val w2@(workflow2Id, workflow2) = createWorkflow(graph = createGraph())
+  val workflowId: Workflow.Id = Workflow.Id.randomId
+  val result1 = createWorkflow(workflowId, graph = Graph())
+  val result2 = createWorkflow(workflowId, graph = createGraph())
 
-  val storedWorkflows = Set(w1, w2)
+  val storedWorkflows = Set(result1, result2)
 
-  def cassandraTableName: String = "workflows"
+  def cassandraTableName: String = "workflowresults"
   def cassandraKeySpaceName: String = "workflowmanager"
 
   before {
-    WorkflowTableCreator.create(cassandraTableName, session)
-    workflowsDao = new WorkflowDaoCassandraImpl(cassandraTableName, session, rowMapper)
+    WorkflowResultsTableCreator.create(cassandraTableName, session)
+    workflowResultsDao = new WorkflowResultsDaoCassandraImpl(cassandraTableName, session, rowMapper)
   }
 
-  "WorkflowsDao" should {
+  "WorkflowsResultsDao" should {
 
-    "not get deleted workflow" in withStoredWorkflows(storedWorkflows) {
-      whenReady(workflowsDao.delete(workflow2Id)) { _ =>
-        whenReady(workflowsDao.get(workflow2Id)) { workflow =>
-          workflow shouldBe None
-        }
+    "return empty list when non existing workflow" in {
+      whenReady(workflowResultsDao.get(Workflow.Id.randomId)) { results =>
+        results shouldBe List()
       }
     }
 
-    "update workflow" in withStoredWorkflows(storedWorkflows) {
-      val modifiedWorkflow2 = workflow2.copy(additionalData = ThirdPartyData("[]"))
-      whenReady(workflowsDao.save(workflow2Id, modifiedWorkflow2)) { _ =>
-        whenReady(workflowsDao.get(workflow2Id)) { workflow =>
-          workflow.get shouldBe modifiedWorkflow2
+    "save and get workflow results" in {
+      whenReady(workflowResultsDao.save(workflowId, result1)) { _ =>
+        whenReady(workflowResultsDao.save(workflowId, result2)) { _ =>
+          whenReady(workflowResultsDao.get(workflowId)) { results =>
+            results shouldBe List(result1, result2)
+          }
         }
-      }
-    }
-
-    "find workflow by id" in withStoredWorkflows(storedWorkflows) {
-      whenReady(workflowsDao.get(workflow1Id)) { workflow =>
-        workflow shouldBe Some(workflow1)
       }
     }
   }
 
   private def withStoredWorkflows(
-      storedWorkflows: Set[(Workflow.Id, Workflow)])(testCode: => Any): Unit = {
+      storedWorkflows: Set[(Workflow.Id, WorkflowWithResults)])(testCode: => Any): Unit = {
     val s = Future.sequence(storedWorkflows.map {
-      case (id, workflow) => workflowsDao.save(id, workflow)
+      case (id, workflow) => workflowResultsDao.save(id, workflow)
     })
     Await.ready(s, operationDuration)
     try {
@@ -102,10 +96,15 @@ class WorkflowDaoCassandraImplIntegSpec
     }
   }
 
-  def createWorkflow(graph: Graph): (Workflow.Id, Workflow) = {
+  def createWorkflow(id: Workflow.Id, graph: Graph): WorkflowWithResults = {
     val metadata = WorkflowMetadata(apiVersion = "x.x.x", workflowType = WorkflowType.Batch)
     val thirdPartyData = ThirdPartyData("{}")
-    (Workflow.Id.randomId, Workflow(metadata, graph, thirdPartyData))
+    val executionReport: ExecutionReport = ExecutionReport(
+      Status.Failed,
+      Some(FailureDescription(DeepSenseFailure.Id.randomId, FailureCode.NodeFailure, "title")),
+      Map(Node.Id.randomId -> State(Status.Failed)),
+      EntitiesMap())
+    WorkflowWithResults(id, metadata, graph, thirdPartyData, executionReport)
   }
 
   def createGraph() : Graph = {
