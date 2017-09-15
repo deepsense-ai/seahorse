@@ -5,6 +5,7 @@ import './canvas-toolbar.less';
 
 const CanvasToolbarComponent = {
   bindings: {
+    'isEditable': '<',
     'onZoomIn': '&',
     'onZoomOut': '&',
     'onNewNode': '&',

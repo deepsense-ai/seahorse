@@ -1,22 +1,17 @@
 <div class="canvas-toolbar">
+  <div class="canvas-toolbar__drag-handle"></div>
   <div ng-click="$ctrl.onNewNode({$event: $event})"
-       class="canvas-toolbar__item"
+       class="canvas-toolbar__item node active"
        draggable-type="exact"
        draggable-exact-type="graphNode"
        draggable="true"
-  >
-    <img alt="Create new node" src="img/toolbar-node.svg" class="canvas-toolbar__image">
-  </div>
-  <div ng-click="$ctrl.onZoomIn({$event: $event})" class="canvas-toolbar__item">
-    <img alt="Zoom in" src="img/toolbar-zoom-max.svg" class="canvas-toolbar__image">
-  </div>
-  <div ng-click="$ctrl.onZoomOut({$event: $event})" class="canvas-toolbar__item">
-    <img alt="Zoom out" src="img/toolbar-zoom-min.svg" class="canvas-toolbar__image">
-  </div>
-  <div ng-click="$ctrl.onFit({$event: $event})" class="canvas-toolbar__item">
-    <img alt="Fit on canvas" src="img/toolbar-fit.svg" class="canvas-toolbar__image">
-  </div>
-  <div ng-click="$ctrl.onFullScreen({$event: $event})" class="canvas-toolbar__item">
-    <img alt="Fullscreen" src="img/toolbar-fullscreen.svg" class="canvas-toolbar__image">
-  </div>
+       ng-if="$ctrl.isEditable"
+  ></div>
+  <div class="canvas-toolbar__item node"
+       ng-if="!$ctrl.isEditable"
+  ></div>
+  <div ng-click="$ctrl.onZoomIn({$event: $event})" class="canvas-toolbar__item zoomin active"></div>
+  <div ng-click="$ctrl.onZoomOut({$event: $event})" class="canvas-toolbar__item zoomout active"></div>
+  <div ng-click="$ctrl.onFit({$event: $event})" class="canvas-toolbar__item fit active"></div>
+  <div ng-click="$ctrl.onFullScreen({$event: $event})" class="canvas-toolbar__item fullscreen active"></div>
 </div>

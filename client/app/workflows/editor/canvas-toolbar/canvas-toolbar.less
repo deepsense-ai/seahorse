@@ -1,23 +1,61 @@
+@import '../../../../css/variables';
+
+@hover-grey: #b3b3b3;
+@border-grey: #999;
+@toolbar-border: #9ab3b3;
+
+@item-size: 44px;
+
 .canvas-toolbar {
-  background: #fff;
-  width: 50px;
+  background-color: @color-light-grey;
+  border: 1px solid @toolbar-border;
+  width: @item-size;
   overflow: hidden;
   position: absolute;
   z-index: 2;
+  margin: 10px;
 
-  &__image {
-    width: 50px;
-    height: 50px;
-    pointer-events: none;
-    display: block;
+  &__drag-handle{
+    height: 12px;
+    background-color: @seahorse-blue;
   }
 
   &__item {
-    border: 1px solid #000;
-    width: 50px;
-    height: 50px;
+    border-top: 1px solid @border-grey;
+    width: @item-size;
+    height: @item-size;
     cursor: pointer;
     user-select: none;
+    background-position: center center;
+    background-repeat: no-repeat;
+
+    &.active:hover {
+      background-color: @hover-grey;
+    }
+
+    &.fit {
+      background-image: url('./img/toolbar-fit.svg');
+    }
+
+    &.fullscreen {
+      background-image: url('./img/toolbar-fullscreen.svg');
+    }
+
+    &.zoomout {
+      background-image: url('./img/toolbar-zoom-min.svg');
+    }
+
+    &.zoomin {
+      background-image: url('./img/toolbar-zoom-max.svg');
+    }
+
+    &.node {
+      background-image: url('./img/toolbar-node-off.svg');
+    }
+
+    &.node.active {
+      background-image: url('./img/toolbar-node.svg');
+    }
   }
 
 }
