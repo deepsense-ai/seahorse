@@ -11,14 +11,19 @@ channel = connection.channel()
 channel.queue_declare(queue='gateway_requests')
 channel.queue_declare(queue='gateway_responses')
 
+
 def respond_with_gateway_location(ch, method, properties, body):
     request = json.loads(body)
     print request
     message_body = {
-        "messageType": "gatewayAddress",
+        "messageType": "pythonGatewayAddress",
         "messageBody": {
-            "hostname": "localhost",
-            "port": 25555
+            [
+                {
+                    "hostname": "localhost",
+                    "port": 25555
+                }
+            ]
         }
     }
     channel.basic_publish(exchange='', routing_key='gateway_responses', body=json.dumps(message_body))
