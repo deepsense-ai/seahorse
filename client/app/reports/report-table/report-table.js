@@ -10,7 +10,7 @@ function ReportTable() {
     scope: {
       'data':'='
     },
-    templateUrl: 'app/reports/report-table.html',
+    templateUrl: 'app/reports/report-table/report-table.html',
     replace: 'true'
   };
 }

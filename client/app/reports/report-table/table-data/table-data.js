@@ -6,16 +6,17 @@
 
 'use strict';
 
+let ReportSidePanel = require('./../../report-side-panel/report-side-panel.js');
+
 function TableData() {
   return {
-    templateUrl: 'app/reports/table-data/table-data.html',
+    templateUrl: 'app/reports/report-table/table-data/table-data.html',
     controller: TableController,
     replace: 'true',
     link: function (scope, element, args, controller) {
       element.on('click', function(event) {
-        // this == element[0]
-        controller.showDetails(this);
         controller.selectColumn(this, event);
+        controller.showDetails(this);
       });
     }
   };
@@ -54,15 +55,18 @@ function TableController($rootScope, TopWalkerService) {
       allClasses.remove(allClasses[indexOfDimensionClass]);
     }
 
-    $rootScope.$broadcast(eventName);
+    let index = tableHolder.querySelector('td.info').cellIndex + 1;
+    $rootScope.$broadcast(eventName, {
+      colName: tableHolder.querySelector(`th:nth-child(${ index })`).innerHTML
+    });
   };
 
   that.hideDetails = function hideDetails (tableHolder) {
-    return internals.toggleTable(tableHolder, internals.tableDimensions.DETAILS_OFF, 'REPORT.HIDE_DETAILS');
+    return internals.toggleTable(tableHolder, internals.tableDimensions.DETAILS_OFF, ReportSidePanel.EVENTS.SHRINK_PANEL);
   };
 
   that.showDetails = function showDetails (tableHolder) {
-    return internals.toggleTable(tableHolder, internals.tableDimensions.DETAILS_ON, 'REPORT.SHOW_DETAILS');
+    return internals.toggleTable(tableHolder, internals.tableDimensions.DETAILS_ON, ReportSidePanel.EVENTS.EXTEND_PANEL);
   };
 
   that.selectColumn = function selectColumn (tableHolder, event) {
@@ -77,7 +81,7 @@ function TableController($rootScope, TopWalkerService) {
       return tagName === 'td' || tagName === 'th';
     }, tableHolder);
 
-    // if we clicked somehow above the td, th
+    // if we clicked somewhere above the td, th
     if (!cell) {
       return false;
     }

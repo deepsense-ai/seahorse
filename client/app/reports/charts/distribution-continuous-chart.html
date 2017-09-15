@@ -1,0 +1,13 @@
+<div class="distribution-chart">
+  <div class="btn-group" data-toggle="buttons">
+    <label class="btn btn-sm btn-white"
+           ng-repeat="plot in plots"
+           ng-class="{ 'active': chosenPlot.value === plot.type }"
+           ng-click="chosenPlot.value = plot.type">{{ plot.name }}</label>
+  </div>
+
+  <div ng-switch="chosenPlot.value">
+    <box-plot ng-switch-when="box"></box-plot>
+    <column-plot ng-switch-when="column"></column-plot>
+  </div>
+</div>

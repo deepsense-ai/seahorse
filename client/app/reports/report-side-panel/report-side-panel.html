@@ -1,0 +1,6 @@
+<div class="report-side-panel col-xs-6">
+  <div ng-switch="distObject.subtype">
+    <distribution-categorical-chart ng-switch-when="categorical"></distribution-categorical-chart>
+    <distribution-continuous-chart ng-switch-when="continuous"></distribution-continuous-chart>
+  </div>
+</div>

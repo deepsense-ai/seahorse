@@ -13,7 +13,9 @@
     "jsPlumb": true,
     "console": true,
     "Mousetrap": true,
-    "_": true
+    "_": true,
+    "$": true,
+    "Highcharts": true
   },
   "globalstrict": false,
   "jasmine": true,

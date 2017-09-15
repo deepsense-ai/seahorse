@@ -116,7 +116,10 @@
           "./node_modules/angular-bootstrap/dist/ui-bootstrap.js",
           "./bower_components/jsPlumb/dist/js/dom.jsPlumb-1.7.4.js",
           "./bower_components/mousetrap/mousetrap.js",
-          "./bower_components/lodash/lodash.js"
+          "./bower_components/lodash/lodash.js",
+          "./bower_components/jquery/dist/jquery.min.js",
+          "./bower_components/highcharts-release/highcharts.js",
+          "./bower_components/highcharts-release/highcharts-more.js"
         ],
         "css": [
           "./node_modules/bootstrap/dist/css/bootstrap.css",
@@ -130,7 +133,10 @@
           "./node_modules/angular-bootstrap/dist/ui-bootstrap.min.js",
           "./bower_components/jsPlumb/dist/js/dom.jsPlumb-1.7.4-min.js",
           "./bower_components/mousetrap/mousetrap.min.js",
-          "./bower_components/lodash/lodash.min.js"
+          "./bower_components/lodash/lodash.min.js",
+          "./bower_components/jquery/dist/jquery.min.js",
+          "./bower_components/highcharts-release/highcharts.js",
+          "./bower_components/highcharts-release/highcharts-more.js"
         ],
         "css": [
           "./node_modules/bootstrap/dist/css/bootstrap.min.css",

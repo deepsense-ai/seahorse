@@ -8,7 +8,7 @@
 
 function TableStatistics() {
   return {
-    templateUrl: 'app/reports/table-statistics/table-statistics.html',
+    templateUrl: 'app/reports/report-table/table-statistics/table-statistics.html',
     replace: 'true'
   };
 }

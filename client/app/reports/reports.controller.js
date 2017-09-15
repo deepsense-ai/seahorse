@@ -4,24 +4,33 @@
 'use strict';
 
 /* @ngInject */
-function Report($state, EntitiesAPIClient) {
+function Report($scope, $state, $stateParams, EntitiesAPIClient) {
 
-  var that = this;
-  var internal = {};
+  let that = this;
+  let internal = {};
+  let entityId = $stateParams.id;
 
   internal.closeReport = function closeReport () {
-    console.log($state);
-    // TODO $state go to previous page ... now it is some error with approach $state.go('^')
+    history.back();
   };
 
-  EntitiesAPIClient.getReport('test-01').then((data) => {
+  that.messageError = '';
+
+  EntitiesAPIClient.getReport(entityId).then((data) => {
     internal.tables = data.tables;
-  }, (error) => {
-    console.log('error', error);
+    internal.distributions = data.distributions;
+  }, () => {
+    that.messageError = `The report with id equals to ${entityId} does not exist!`;
   });
 
-  that.getData = function getData() {
+  that.getTable = function getTable() {
     return internal.tables && internal.tables.DataSample;
+  };
+
+  that.getDistributionObject = function getDistributionObject(colName) {
+    if (internal.distributions) {
+      return internal.distributions[colName + '_Distribution'];
+    }
   };
 
   that.dismiss = function dismiss () {

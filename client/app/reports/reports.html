@@ -1,6 +1,14 @@
-<div class="report report-dismissible" role="report">
-  <button type="button" class="close" ng-click="report.dismiss()" data-dismiss="report" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-  </button>
-  <report-table data="report.getData()"></report-table>
+<div class="report">
+  <div ng-if="!report.messageError">
+    <button type="button" class="close" ng-click="report.dismiss()" data-dismiss="report" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+
+    <report-table data="report.getTable()"></report-table>
+
+    <report-side-panel></report-side-panel>
+  </div>
+  <div ng-if="report.messageError" class="lead">
+    {{ ::report.messageError }}
+  </div>
 </div>
