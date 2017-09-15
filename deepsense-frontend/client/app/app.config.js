@@ -1,7 +1,7 @@
 'use strict';
 
 /* @ngInject */
-function AppConfig($urlRouterProvider, toastrConfig) {
+function AppConfig($urlRouterProvider, toastrConfig, $cookiesProvider) {
   angular.extend(toastrConfig, {
     'allowHtml': true,
     'newestOnTop': false,
@@ -18,6 +18,10 @@ function AppConfig($urlRouterProvider, toastrConfig) {
     }
   });
   $urlRouterProvider.otherwise('/');
+
+  const expiresDate = new Date();
+  expiresDate.setFullYear(expiresDate.getFullYear() + 2);
+  $cookiesProvider.defaults.expires = expiresDate;
 }
 
 exports.inject = function(module) {
