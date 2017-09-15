@@ -38,6 +38,7 @@
       name="workflow.getWorkflow().name"
       description="workflow.getWorkflow().description"
       public-params="workflow.WorkflowService.getCurrentWorkflow().publicParams"
+      disabled-mode="!workflow.isEditable()"
       ng-if="!workflow.getSelectedNode()"
       resizable
       resizable-panel-name="rightPanel"
