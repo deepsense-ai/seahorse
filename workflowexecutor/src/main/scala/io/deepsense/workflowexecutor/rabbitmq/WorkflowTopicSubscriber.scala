@@ -21,6 +21,7 @@ import akka.actor._
 import io.deepsense.commons.utils.Logging
 import io.deepsense.models.workflows.Workflow
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.{Init, UpdateStruct}
+import io.deepsense.workflowexecutor.communication.message.global.PoisonPill
 import io.deepsense.workflowexecutor.communication.message.workflow.{Abort, Launch, UpdateWorkflow}
 import io.deepsense.workflowexecutor.executor.Executor
 import io.deepsense.workflowexecutor.{SessionWorkflowExecutorActorProvider, WorkflowExecutorActor}
@@ -51,6 +52,9 @@ case class WorkflowTopicSubscriber(
     case UpdateWorkflow(id, workflow) if id == workflowId =>
       logger.debug(s"UPDATE STRUCT '$workflowId'")
       executorActor ! UpdateStruct(workflow)
+    case PoisonPill() =>
+      logger.info("Got PoisonPill! Shutting down Actor System!")
+      context.system.shutdown()
     case x =>
       logger.error(s"Unexpected '$x' from '${sender()}'!")
   }

@@ -21,6 +21,7 @@ import java.nio.charset.Charset
 import spray.json._
 
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
+import io.deepsense.workflowexecutor.communication.message.global.{PoisonPill, PoisonPillJsonProtocol}
 import io.deepsense.workflowexecutor.communication.message.notebook._
 import io.deepsense.workflowexecutor.communication.message.workflow._
 import io.deepsense.workflowexecutor.communication.mq.serialization.MessageMQDeserializer
@@ -31,7 +32,8 @@ case class ProtocolJsonDeserializer(graphReader: GraphReader)
   with AbortJsonProtocol
   with InitJsonProtocol
   with UpdateWorkflowJsonProtocol
-  with KernelManagerReadyJsonProtocol {
+  with KernelManagerReadyJsonProtocol
+  with PoisonPillJsonProtocol {
 
   import JsonSerialization._
 
@@ -53,6 +55,7 @@ case class ProtocolJsonDeserializer(graphReader: GraphReader)
       case InMessageType.getPythonGatewayAddress => GetPythonGatewayAddress()
       case InMessageType.updateWorkflow => body.convertTo[UpdateWorkflow]
       case InMessageType.kernelManagerReady => body.convertTo[KernelManagerReady]
+      case InMessageType.poisonPill => body.convertTo[PoisonPill]
     }
   }
 
