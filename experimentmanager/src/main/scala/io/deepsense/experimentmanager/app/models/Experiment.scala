@@ -29,5 +29,5 @@ object Experiment {
     val RUNNING = Value(1, "running")
   }
 
-  case class State(status: Experiment.Status.Value /*, error: Optional[Error]*/)
+  case class State(status: Experiment.Status.Value /* , error: Optional[Error] */)
 }

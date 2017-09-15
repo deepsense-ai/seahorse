@@ -28,7 +28,8 @@ class RestApi @Inject() (experimentManager: ExperimentManager)(implicit ec: Exec
     path("") {
       get {
         complete {
-          "Try /experiments & /experiments/:id  eg. /experiments/b93b65f4-0a92-4ced-b244-98b79674cde8"
+          "Try /experiments & /experiments/:id" +
+            "eg. /experiments/b93b65f4-0a92-4ced-b244-98b79674cde8"
         }
       }
     } ~
