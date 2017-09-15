@@ -4,8 +4,6 @@
 
 package io.deepsense.deeplang.doperables.dataframe
 
-import java.sql.Timestamp
-
 import scala.annotation.tailrec
 
 import org.apache.spark.mllib.linalg.{Vector => SparkVector, Vectors}
@@ -13,22 +11,22 @@ import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql
 import org.apache.spark.sql.Row
-import org.apache.spark.sql.types.{StructField, StructType, TimestampType}
+import org.apache.spark.sql.types.{StructField, StructType}
 
-import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.doperables.Report
 import io.deepsense.deeplang.doperations.exceptions.{ColumnDoesNotExistException, ColumnsDoNotExistException, WrongColumnTypeException}
 import io.deepsense.deeplang.parameters.ColumnType.ColumnType
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
-import io.deepsense.reportlib.model.{ReportContent, Table}
 
 /*
 * @param optionalSparkDataFrame spark representation of data.
 *                               Client of this class has to assure that
 *                               sparkDataFrame data fulfills its internal schema.
 */
-case class DataFrame(optionalSparkDataFrame: Option[sql.DataFrame]) extends DOperable {
+case class DataFrame(optionalSparkDataFrame: Option[sql.DataFrame])
+  extends DOperable
+  with DataFrameReportGenerator {
 
   def this() = this(None)
 
@@ -197,36 +195,8 @@ case class DataFrame(optionalSparkDataFrame: Option[sql.DataFrame]) extends DOpe
   }
 
   override def report: Report = {
-    val sampleTable = dataSampleTable()
-    Report(ReportContent("DataFrame Report", Map(sampleTable.name -> sampleTable), Map()))
+    report(sparkDataFrame)
   }
-
-  private def dataSampleTable(): Table = {
-    val columnsNames: List[String] =
-      sparkDataFrame.columns.toList.take(DataFrame.maxColumnsNumberInReport)
-    val columnsNumber = columnsNames.size
-    val rows: Array[Row] = sparkDataFrame.take(DataFrame.maxRowsNumberInReport)
-    val values: List[List[String]] = rows.map(row =>
-      (0 until columnsNumber).map(cellToString(row, _)).toList).toList
-    Table(
-      DataFrame.dataSampleTableName,
-      s"Data Sample. First $columnsNumber columns and ${rows.length} randomly chosen rows",
-      Some(columnsNames),
-      None,
-      values
-    )
-  }
-
-  private def cellToString(row: Row, index: Int): String =
-    Option(row(index)).map { cell =>
-      row.schema.apply(index).dataType match {
-        case TimestampType =>
-          DateTimeConverter.toString(
-            DateTimeConverter.fromMillis(cell.asInstanceOf[Timestamp].getTime)
-          )
-        case _ => cell.toString
-      }
-    }.orNull
 }
 
 object DataFrame {

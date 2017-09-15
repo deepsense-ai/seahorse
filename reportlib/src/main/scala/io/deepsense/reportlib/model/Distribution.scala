@@ -7,19 +7,22 @@ package io.deepsense.reportlib.model
 sealed abstract class Distribution(
   val name: String,
   val subtype: String,
-  val description: String)
+  val description: String,
+  val missingValues: Long)
 
 sealed abstract class UnivariateDistribution(
     name: String,
     subtype: String,
     description: String,
+    missingValues: Long,
     buckets: Seq[String],
     counts: Seq[Long])
-  extends Distribution(name, subtype, description)
+  extends Distribution(name, subtype, description, missingValues)
 
 case class CategoricalDistribution(
     override val name: String,
     override val description: String,
+    override  val missingValues: Long,
     buckets: Seq[String],
     counts: Seq[Long],
     override val subtype: String = CategoricalDistribution.subtype,
@@ -28,11 +31,13 @@ case class CategoricalDistribution(
     name,
     CategoricalDistribution.subtype,
     description,
+    missingValues,
     buckets,
     counts) {
   require(subtype == CategoricalDistribution.subtype)
   require(blockType == DistributionJsonProtocol.typeName)
-  require(buckets.size == counts.size)
+  require(buckets.size == counts.size, "buckets size does not match count size. " +
+    s"Buckets size is: ${buckets.size}, counts size is: ${counts.size}")
 }
 
 object CategoricalDistribution {
@@ -42,7 +47,8 @@ object CategoricalDistribution {
 case class ContinuousDistribution(
     override val name: String,
     override val description: String,
-    buckets: Seq[Double],
+    override val missingValues: Long,
+    buckets: Seq[String],
     counts: Seq[Long],
     statistics: Statistics,
     override val subtype: String = ContinuousDistribution.subtype,
@@ -51,11 +57,13 @@ case class ContinuousDistribution(
     name,
     ContinuousDistribution.subtype,
     description,
+    missingValues,
     buckets.map(_.toString),
     counts) with ReportJsonProtocol {
   require(subtype == ContinuousDistribution.subtype)
   require(blockType == DistributionJsonProtocol.typeName)
-  require(buckets.size == counts.size)
+  require(buckets.size == counts.size, "buckets size does not match count size. " +
+    s"Buckets size is: ${buckets.size}, counts size is: ${counts.size}")
 }
 
 object ContinuousDistribution {
@@ -63,10 +71,10 @@ object ContinuousDistribution {
 }
 
 case class Statistics(
-  median: Double,
-  max: Double,
-  min: Double,
-  mean: Double,
-  firstQuartile: Double,
-  thirdQuartile: Double,
-  outliers: Seq[Double])
+  median: String,
+  max: String,
+  min: String,
+  mean: String,
+  firstQuartile: String,
+  thirdQuartile: String,
+  outliers: Seq[String])

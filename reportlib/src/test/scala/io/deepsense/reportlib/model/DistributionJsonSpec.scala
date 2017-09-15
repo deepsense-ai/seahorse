@@ -23,6 +23,7 @@ class DistributionJsonSpec
       "blockType" -> JsString("distribution"),
       "subtype" -> JsString("categorical"),
       "description" -> JsString(DistributionTestFactory.distributionDescription),
+      "missingValues" -> JsNumber(0),
       "buckets" ->
         JsArray(DistributionTestFactory.categoricalDistributionBuckets.map(JsString(_)).toVector),
       "counts" -> JsArray(DistributionTestFactory.distributionCounts.map(JsNumber(_)).toVector)
@@ -43,17 +44,18 @@ class DistributionJsonSpec
       "blockType" -> JsString("distribution"),
       "subtype" -> JsString("continuous"),
       "description" -> JsString(DistributionTestFactory.distributionDescription),
+      "missingValues" -> JsNumber(0),
       "buckets" ->
-        JsArray(DistributionTestFactory.continuousDistributionBuckets.map(JsNumber(_)).toVector),
+        JsArray(DistributionTestFactory.continuousDistributionBuckets.map(JsString(_)).toVector),
       "counts" -> JsArray(DistributionTestFactory.distributionCounts.map(JsNumber(_)).toVector),
       "statistics" -> JsObject(
-        "median" -> JsNumber(statistics.median),
-        "max" -> JsNumber(statistics.max),
-        "min" -> JsNumber(statistics.min),
-        "mean" -> JsNumber(statistics.mean),
-        "firstQuartile" -> JsNumber(statistics.firstQuartile),
-        "thirdQuartile" -> JsNumber(statistics.thirdQuartile),
-        "outliers" -> JsArray(statistics.outliers.map(JsNumber(_)).toVector)
+        "median" -> JsString(statistics.median),
+        "max" -> JsString(statistics.max),
+        "min" -> JsString(statistics.min),
+        "mean" -> JsString(statistics.mean),
+        "firstQuartile" -> JsString(statistics.firstQuartile),
+        "thirdQuartile" -> JsString(statistics.thirdQuartile),
+        "outliers" -> JsArray(statistics.outliers.map(JsString(_)).toVector)
       )
     )
     "serialize to Json" in {

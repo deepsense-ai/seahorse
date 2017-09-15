@@ -13,6 +13,7 @@ trait ReportJsonProtocol extends DefaultJsonProtocol with ProductFormatsInstance
     CategoricalDistribution.apply,
     DistributionJsonProtocol.nameKey,
     DistributionJsonProtocol.descriptionKey,
+    DistributionJsonProtocol.missingValuesKey,
     DistributionJsonProtocol.bucketsKey,
     DistributionJsonProtocol.countsKey,
     DistributionJsonProtocol.subtypeKey,
@@ -21,6 +22,7 @@ trait ReportJsonProtocol extends DefaultJsonProtocol with ProductFormatsInstance
     ContinuousDistribution.apply,
     DistributionJsonProtocol.nameKey,
     DistributionJsonProtocol.descriptionKey,
+    DistributionJsonProtocol.missingValuesKey,
     DistributionJsonProtocol.bucketsKey,
     DistributionJsonProtocol.countsKey,
     DistributionJsonProtocol.statisticsKey,
@@ -43,7 +45,8 @@ trait ReportJsonProtocol extends DefaultJsonProtocol with ProductFormatsInstance
         DistributionJsonProtocol.nameKey -> JsString(distribution.name),
         DistributionJsonProtocol.typeKey -> JsString(DistributionJsonProtocol.typeName),
         DistributionJsonProtocol.subtypeKey -> JsString(distribution.subtype),
-        DistributionJsonProtocol.descriptionKey -> JsString(distribution.description)
+        DistributionJsonProtocol.descriptionKey -> JsString(distribution.description),
+        DistributionJsonProtocol.missingValuesKey -> JsNumber(distribution.missingValues)
       )
       distribution match  {
         case d: ContinuousDistribution => JsObject(basicFields ++ Map(
@@ -69,6 +72,7 @@ object DistributionJsonProtocol {
   val nameKey = "name"
   val typeKey = "blockType"
   val subtypeKey = "subtype"
+  val missingValuesKey = "missingValues"
   val descriptionKey = "description"
   val bucketsKey = "buckets"
   val countsKey = "counts"
