@@ -11,6 +11,7 @@ function GraphNode(options) {
   that.init = function init() {
     that.name = options.name;
     that.id = options.id;
+    that.operationId = options.operationId;
     that.type = options.type;
     that.description = options.description;
     that.input = that.fetchPorts('input', options.input);

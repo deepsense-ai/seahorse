@@ -42,6 +42,10 @@ function ExperimentController($stateParams, $rootScope, Operations, DrawingServi
     return internal.experiment;
   };
 
+  that.getParametersSchemaById = function getParametersSchemaById(id) {
+    return internal.experiment.getParametersSchema()[id];
+  };
+
   that.getSelectedNode = function getSelectedNode() {
     return internal.selectedNode;
   };

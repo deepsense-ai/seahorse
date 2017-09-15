@@ -12,18 +12,31 @@ function Experiment() {
   var internal = {};
   internal.nodes = {};
   internal.edges = [];
+  internal.parameters = {};
 
-  that.getNodes = function () {
+  that.getNodes = function getNodes() {
     return internal.nodes;
   };
 
-  that.getNodeById = function (nodeId) {
+  that.getNodeById = function getNodeById(nodeId) {
     var nodes = that.getNodes();
     return nodes[nodeId];
   };
 
-  that.getEdges = function () {
+  that.getEdges = function getEdges() {
     return internal.edges;
+  };
+
+  that.getParametersSchema = function getParametersSchema() {
+    return internal.parameters;
+  };
+
+  that.saveParametersSchema = function saveParametersSchema(operations) {
+    for (let operationId in operations) {
+      if (operations.hasOwnProperty(operationId)) {
+        internal.parameters[operationId] = operations[operationId].parameters;
+      }
+    }
   };
 
   that.createNodes = function createNodes(nodes, operations) {
@@ -31,6 +44,7 @@ function Experiment() {
       var operation = operations[nodes[i].operation.id];
       var node = new GraphNode({
         id: nodes[i].id,
+        operationId: operation.id,
         description: operation.description,
         name: operation.name,
         x: nodes[i].ui.x,

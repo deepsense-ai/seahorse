@@ -16,9 +16,8 @@
           },
           "note": "My super note",
           "parameters": {
-            "connection_string": {
-              "value": "jdbc:mysql://localhost/test"
-            }
+            "connection_string": "jdbc:mysql://localhost/test",
+            "boolean_attr_test": false
           }
         },
         {
@@ -29,15 +28,9 @@
             "version": "1.0.3"
           },
           "parameters": {
-            "column_name": {
-              "value": "ExampleColumn"
-            },
-            "condition_type": {
-              "value": "less_than"
-            },
-            "condition_threshold": {
-              "value": 5
-            }
+            "column_name": "ExampleColumn",
+            "condition_type": "less_than",
+            "condition_threshold": 5
           }
         },
         {
@@ -47,7 +40,10 @@
             "name": "Neural Network",
             "version": "1.2.3"
           },
-          "note": "Other note"
+          "note": "Other note",
+          "parameters": {
+            "sample_snippet": "R <- 42"
+          }
         }
       ],
       "edges": [

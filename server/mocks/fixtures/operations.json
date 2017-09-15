@@ -27,6 +27,26 @@
             "typeQualifier": ["OtherDOperation"]
           }
         ]
+      },
+      "parameters": {
+        "connection_string": {
+          "type": "string",
+          "description": "jdbc address",
+          "default": "jdbc:",
+          "required": true,
+          "validator": {
+            "type": "regex",
+            "configuration": {
+              "regex": "^jdbc:[a-z:/]*$"
+            }
+          }
+        },
+        "boolean_attr_test": {
+          "type": "boolean",
+          "description": "boolean attr test",
+          "default": true,
+          "required": true
+        }
       }
     },
     "23456-78901-83752": {
@@ -128,6 +148,30 @@
             "typeQualifier": ["OtherDOperation"]
           }
         ]
+      },
+      "parameters": {
+        "column_name": {
+
+        },
+        "condition_type": {
+
+        },
+        "condition_threshold": {
+          "type": "numeric",
+          "description": "condition threshold",
+          "default": 5,
+          "required": true,
+          "validator": {
+            "type": "range",
+            "configuration": {
+              "begin": 1,
+              "end": 10,
+              "beginIncluded": true,
+              "endIncluded": true,
+              "step": 1
+            }
+          }
+        }
       }
     },
     "11111-111111-11111": {
@@ -224,6 +268,15 @@
             "typeQualifier": ["OtherDOperation"]
           }
         ]
+      },
+      "parameters": {
+        "sample_snippet": {
+          "type": "snippet",
+          "description": "This is a snippet parameter.",
+          "language": "R",
+          "default": "m <- 1000",
+          "required": true
+        }
       }
     },
     "11111-111111-55555": {
