@@ -53,6 +53,7 @@ object Library {
   val rabbitmq = "com.thenewmotion.akka" %% "akka-rabbitmq" % "2.2" excludeAkkaActor
   val scalaReflect = "org.scala-lang" % "scala-reflect" % Version.scala
   val scalatest = "org.scalatest" %% "scalatest" % Version.scalatest
+  val scalaz = "org.scalaz" %% "scalaz-core" % "7.2.4"
   val scoverage = "org.scoverage" %% "scalac-scoverage-runtime" % Version.scoverage
   val seahorseCommons = seahorse("commons")
   val seahorseDeeplang = seahorse("deeplang")
@@ -151,4 +152,13 @@ object Dependencies {
     sparkLauncher
   ) ++ Seq(akkaTestkit, mockitoCore, scalatest, scoverage, sprayTestkit, wiremock)
     .map(_ % s"$Test,it")
+
+  val integrationtests = Seq(
+    "com.typesafe.play" %% "play-ws" % "2.4.3",
+    "org.jfarcand" % "wcs" % "1.4", // won't currently work with scala 2.11
+    // Author released 1.5 only for scala 2.11 so operator %% won't work.
+    scalaz
+  ) ++ Seq(scalatest).map(_ % s"$Test,it")
+
+
 }
