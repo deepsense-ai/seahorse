@@ -13,6 +13,7 @@ case class ClusterDetails(
     hadoopUser: Option[String] = None,
     isEditable: Boolean = true,
     isDefault: Boolean = false,
+    driverMemory: Option[String] = None,
     executorMemory: Option[String] = None,
     totalExecutorCores: Option[Int] = None,
     executorCores: Option[Int] = None,

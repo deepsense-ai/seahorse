@@ -41,12 +41,11 @@ class PresetService @Inject()(presetStore: PresetsDao,
     presetStore.getPreset(presetId)
   }
 
-  def updatePreset(presetId: Long, clusterConfig: ClusterDetails): Future[Long] = Future {
-    presetStore.updatePreset(presetId, clusterConfig)
-    presetId
+  def updatePreset(presetId: Long, clusterConfig: ClusterDetails): Future[Long] = {
+    presetStore.updatePreset(presetId, clusterConfig).map(_ => presetId)
   }
 
-  def removePreset(presetId: Long): Future[Unit] = Future {
+  def removePreset(presetId: Long): Future[Unit] = {
     presetStore.removePreset(presetId)
   }
 

@@ -32,6 +32,7 @@ object SeahorseSparkLauncher {
         }
       } yield sparkLauncher
         .setConfOpt("spark.executor.memory", clusterConfig.executorMemory)
+        .setConfOpt("spark.driver.memory", clusterConfig.driverMemory)
         .setConfOpt("spark.executor.cores", clusterConfig.executorCores.map(_.toString))
         .setConfOpt("spark.cores.max", clusterConfig.totalExecutorCores.map(_.toString))
         .setConfOpt("spark.executor.instances", clusterConfig.numExecutors.map(_.toString))

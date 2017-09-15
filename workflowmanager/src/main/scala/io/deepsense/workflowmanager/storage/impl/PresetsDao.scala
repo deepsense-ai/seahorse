@@ -6,9 +6,7 @@ package io.deepsense.workflowmanager.storage.impl
 
 import java.util.UUID
 
-import scala.concurrent.duration.{Duration, FiniteDuration}
-import scala.concurrent.{Await, ExecutionContext, Future, duration}
-import scala.util.{Failure, Success}
+import scala.concurrent.{ExecutionContext, Future}
 
 import com.google.inject.Inject
 import com.google.inject.name.Named
@@ -19,30 +17,28 @@ import io.deepsense.commons.utils.Logging
 import io.deepsense.models.workflows.Workflow._
 import io.deepsense.workflowmanager.model.WorkflowPreset
 
-
 class PresetsDao @Inject()(
    @Named("workflowmanager") db: JdbcDriver#API#Database,
-   @Named("workflowmanager") driver: JdbcDriver)(implicit ec: ExecutionContext)
-      extends Logging {
+   @Named("workflowmanager") driver: JdbcDriver)(implicit ec: ExecutionContext) extends Logging {
 
   import driver.api._
 
-
   def savePreset(clusterDetails: ClusterDetails): Future[Long] = {
-    val insert = (presets returning presets.map(_.id)) += (clusterDetails)
+    val insert = (presets returning presets.map(_.id)) += clusterDetails
     db.run(insert)
   }
 
-  def updatePreset(presetId: Long, clusterConfig: ClusterDetails): Future[Unit] = Future {
-    db.run(presets.filter(x => x.id === presetId && x.isEditable === true).update(clusterConfig))
+  def updatePreset(presetId: Long, clusterConfig: ClusterDetails): Future[Unit] = {
+    val updatedCount = db.run(
+      presets.filter(x => x.id === presetId && x.isEditable === true).update(clusterConfig))
+    updatedCount.map(_ => ())
   }
 
-  def getPreset(presetId : Long): Future[Option[ClusterDetails]] = {
+  def getPreset(presetId: Long): Future[Option[ClusterDetails]] = {
     db.run(presets.filter(_.id === presetId).result.headOption)
   }
 
-
-  def getPresets: Future[Seq[ClusterDetails]] = {
+  def getPresets(): Future[Seq[ClusterDetails]] = {
     val query = presets.result
     val storedPresets = db.run(query)
     storedPresets.onSuccess {
@@ -51,46 +47,29 @@ class PresetsDao @Inject()(
     storedPresets
   }
 
-  def removePreset(presetId: Long): Future[Unit] = Future {
+  def removePreset(presetId: Long): Future[Unit] = {
     val q = presets.filter(x => x.id === presetId && x.isDefault =!= true)
     val action = q.delete
-    val affectedRowsCount: Future[Int] = db.run(action)
+    db.run(action).map(_ => ())
   }
 
-  val tableName: String = "PRESETS"
-
   private class PresetsTable(tag: Tag)
-    extends Table[ClusterDetails](tag, tableName) {
+    extends Table[ClusterDetails](tag, "PRESETS") {
 
-    private val idColumn = "id"
-    private val nameColumn = "name"
-    private val clusterTypeColumn = "clusterType"
-    private val uriColumn = "uri"
-    private val userIPColumn = "userIP"
-    private val hadoopUserColumn = "hadoopUser"
-    private val isEditableColumn = "isEditable"
-    private val isDefaultColumn = "isDefault"
-    private val executorMemoryColumn = "executorMemory"
-    private val totalExecutorCoresColumn = "totalExecutorCores"
-    private val executorCoresColumn = "executorCores"
-    private val numExecutorsColumn = "numExecutors"
-    private val paramsColumn = "params"
-
-
-    def id: Rep[Long] = column[Long](idColumn, O.PrimaryKey, O.AutoInc)
-    def name: Rep[String] = column[String](nameColumn)
-    def clusterType: Rep[String] = column[String](clusterTypeColumn)
-    def uri: Rep[String] = column[String](uriColumn)
-    def userIP: Rep[String] = column[String](userIPColumn)
-    def hadoopUser: Rep[Option[String]] = column[Option[String]](hadoopUserColumn)
-    def isEditable: Rep[Boolean] = column[Boolean](isEditableColumn)
-    def isDefault: Rep[Boolean] = column[Boolean](isDefaultColumn)
-    def executorMemory: Rep[Option[String]] = column[Option[String]](executorMemoryColumn)
-    def totalExecutorCores: Rep[Option[Int]] = column[Option[Int]](totalExecutorCoresColumn)
-    def executorCores: Rep[Option[Int]] = column[Option[Int]](executorCoresColumn)
-    def numExecutors: Rep[Option[Int]] = column[Option[Int]](numExecutorsColumn)
-    def params: Rep[Option[String]] = column[Option[String]](paramsColumn)
-
+    def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+    def name = column[String]("name")
+    def clusterType = column[String]("clusterType")
+    def uri = column[String]("uri")
+    def userIP = column[String]("userIP")
+    def hadoopUser = column[Option[String]]("hadoopUser")
+    def isEditable = column[Boolean]("isEditable")
+    def isDefault = column[Boolean]("isDefault")
+    def driverMemory = column[Option[String]]("driverMemory")
+    def executorMemory = column[Option[String]]("executorMemory")
+    def totalExecutorCores = column[Option[Int]]("totalExecutorCores")
+    def executorCores = column[Option[Int]]("executorCores")
+    def numExecutors = column[Option[Int]]("numExecutors")
+    def params = column[Option[String]]("params")
 
     override def * = (
       id.?,
@@ -101,6 +80,7 @@ class PresetsDao @Inject()(
       hadoopUser,
       isEditable,
       isDefault,
+      driverMemory,
       executorMemory,
       totalExecutorCores,
       executorCores,
@@ -110,30 +90,29 @@ class PresetsDao @Inject()(
 
   private val presets = TableQuery[PresetsTable]
 
-
   def matchesError(ex: java.sql.SQLException, errorCode: Int): Boolean =
     ex.getErrorCode == errorCode
 
-  object ErrorCodes {
-    val UniqueViolation = 23505 // Defined in SQL Standard
-  }
-
-  def saveWorkflowsPreset(workflowPreset: WorkflowPreset): Future[Unit] = Future {
+  def saveWorkflowsPreset(workflowPreset: WorkflowPreset): Future[Unit] = {
     val insert = workflowsPreset.insertOrUpdate(workflowPreset)
-    db.run(insert)
+    db.run(insert).map(_ => ())
   }
 
   def getWorkflowsPreset(workflowId: Id): Future[Option[ClusterDetails]] = {
+    val presetForWorkflowDBIO = for {
+      workflowPreset <- workflowsPreset.filter(
+        _.workflow_id === workflowId.value
+      ).result.headOption
+      presetsResult <- {
+        val filteredPreset = workflowPreset match {
+          case Some(x) => presets.filter(_.id === x.presetId)
+          case None => presets.filter(_.isDefault === true)
+        }
+        filteredPreset.result.headOption
+      }
+    } yield presetsResult
 
-    val headWorkflowsPreset : Future[Option[WorkflowPreset]] =
-      db.run(workflowsPreset.filter(_.workflow_id === workflowId.value).result.headOption)
-
-    headWorkflowsPreset flatMap {
-          case Some(x) =>
-            db.run(presets.filter(w => w.id === x.presetId).result.headOption)
-          case _ =>
-            db.run(presets.filter(x => x.isDefault === true).result.headOption)
-    }
+    db.run(presetForWorkflowDBIO)
   }
 
   val workflowPresetTableName: String = "WORKFLOWSPRESETS"
@@ -144,9 +123,8 @@ class PresetsDao @Inject()(
     private val workflowIdColumn = "workflow_id"
     private val presetIdColumn = "preset_id"
 
-
-    def workflow_id: Rep[UUID] = column[UUID](workflowIdColumn, O.PrimaryKey)
-    def preset_id: Rep[Long] = column[Long](presetIdColumn)
+    def workflow_id = column[UUID](workflowIdColumn, O.PrimaryKey)
+    def preset_id = column[Long](presetIdColumn)
 
     override def * = (
       workflow_id,

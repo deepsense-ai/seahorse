@@ -15,7 +15,7 @@ trait ClusterDetailsJsonProtocol
   with IdJsonProtocol
   with SprayJsonSupport {
 
-  implicit val clusterDetailsFormat = jsonFormat13(ClusterDetails)
+  implicit val clusterDetailsFormat = jsonFormat14(ClusterDetails)
 }
 
 object ClusterDetailsJsonProtocol extends ClusterDetailsJsonProtocol
