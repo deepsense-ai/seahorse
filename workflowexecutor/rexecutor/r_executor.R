@@ -39,3 +39,14 @@ tryCatch({
       SparkR:::callJMethod(entryPoint, "executionFailed", workflowId, nodeId,  paste(err))
 })
 
+
+valid <- ls(SparkR:::.validJobjs)
+for(objId in valid) {
+ # customCodeEntryPoint shouldn't be removed
+ if(objId != entryPointId) {
+   SparkR:::removeJObject(objId)
+ }
+}
+
+rm(list = valid, envir = SparkR:::.validJobjs)
+
