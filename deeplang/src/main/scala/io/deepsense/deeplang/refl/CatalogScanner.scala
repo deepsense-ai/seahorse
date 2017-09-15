@@ -16,10 +16,14 @@
 
 package io.deepsense.deeplang.refl
 
+import java.io.File
+import java.net.{URL, URLClassLoader}
+
 import scala.collection.JavaConversions._
 import scala.reflect.runtime.{universe => ru}
 
 import org.reflections.Reflections
+import org.reflections.util.{ClasspathHelper, ConfigurationBuilder}
 
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
@@ -27,6 +31,19 @@ import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.deeplang.{DOperable, DOperation, DOperationCategories, TypeUtils}
 
 object CatalogScanner extends Logging {
+
+  val resourcesDirname = "/resources/jars"
+
+  lazy val resourcesURLs: Seq[URL] = {
+    val resourcesDir = new File(resourcesDirname)
+    try {
+      resourcesDir.listFiles().map(_.toURI.toURL)
+    } catch {
+      case e: Exception =>
+        logger.warn(s"Couldn't list files in $resourcesDirname dir", e)
+        Seq()
+    }
+  }
 
   /**
     * Scans jars on classpath for classes annotated with [[io.deepsense.deeplang.refl.Register Register]]
@@ -51,7 +68,12 @@ object CatalogScanner extends Logging {
   }
 
   private def scanForRegistrables() : Set[Class[_]] = {
-    val reflections = new Reflections()
+    val cl = URLClassLoader.newInstance(resourcesURLs.toArray)
+    val reflections = new Reflections(
+      ConfigurationBuilder.build(ClasspathHelper.forJavaClassPath())
+        .addUrls(resourcesURLs: _*)
+        .addClassLoader(cl)
+    )
     reflections.getTypesAnnotatedWith(classOf[Register]).toSet
   }
 
