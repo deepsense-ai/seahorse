@@ -46,7 +46,9 @@ class GraphNodeExecutorActor(
       executionStart = System.currentTimeMillis()
       logger.info(">>> Start(node={})", node.id)
       val msg = NodeStarted(node.id)
-      sender ! NodeStarted(node.id)
+      // FIXME Duplication to GEA's NodeStarted message handling
+      val runningNode = node.markRunning
+      sender ! msg
       logger.info("<<< {}", msg)
 
       logger.debug("Collecting data for operation input ports for {}", nodeDescription)
@@ -55,21 +57,21 @@ class GraphNodeExecutorActor(
 
       try {
         val resultVector = executeOperation(collectedOutput)
-        logger.debug("Operation executed (without reports)")
+        logger.debug("Operation executed (without reports): {}", resultVector)
 
-        logger.info(s"${node.id}) Registering data from operation output ports")
+        logger.info(s"${runningNode.id} Registering data from operation output ports")
         val results: Map[Entity.Id, DOperable] = resultVector.map { dOperable =>
           val uuid = storeAndRegister(dOperable)
           uuid -> dOperable
         }.toMap
-        logger.debug("Data registered for {}", nodeDescription)
-        val finished = NodeFinished(node.markCompleted(results.keys.toSeq), results) // TODO
+        logger.debug("Data registered for {}: results={}", nodeDescription, results)
+        val finished = NodeFinished(runningNode.markCompleted(results.keys.toSeq), results) // TODO
         sender ! finished
         logger.info("<<< {}", finished)
       } catch {
         case e: Throwable =>
-          logger.error(s"[nodeId: ${node.id}] Graph execution failed", e)
-          val failed = NodeFinished(node.markFailed(e), results = Map.empty)
+          logger.error(s"[nodeId: ${runningNode.id}] Graph execution failed", e)
+          val failed = NodeFinished(runningNode.markFailed(e), results = Map.empty)
           sender ! failed
           logger.info("<<< {}", failed)
       } finally {

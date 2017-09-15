@@ -63,7 +63,7 @@ class EMtoGESpec
         experimentById(experiment.id) shouldBe 'Failed
         val failureDescription: FailureDescription = state.error.get
         failureDescription.code shouldBe NodeFailure
-        failureDescription.title shouldBe Experiment.failureMessage(experiment.id)
+        failureDescription.title shouldBe Experiment.nodeFailureMessage
         failureDescription.message shouldBe None
         failureDescription.details shouldBe Map()
       }

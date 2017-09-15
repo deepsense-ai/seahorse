@@ -4,126 +4,86 @@
 
 package io.deepsense.graphexecutor
 
-import org.scalatest.WordSpecLike
+import akka.actor.{ActorSystem, Props}
+import akka.testkit.{ImplicitSender, TestKit}
+import org.mockito.Matchers._
+import org.mockito.Mockito._
+import org.scalatest.mock.MockitoSugar
+import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
+
+import io.deepsense.deeplang.{DOperable, DOperation, ExecutionContext}
+import io.deepsense.graph.{Endpoint, Graph, Node}
+import io.deepsense.graphexecutor.GraphExecutorActor.Messages.{NodeFinished, NodeStarted}
+import io.deepsense.graphexecutor.GraphNodeExecutorActor.Messages.Start
+import io.deepsense.models.entities.Entity
+import io.deepsense.models.experiments.Experiment
 
 class GraphNodeExecutorActorSpec
-  extends WordSpecLike {
+  extends TestKit(ActorSystem("GraphNodeExecutorActorSpec"))
+  with WordSpecLike
+  with Matchers
+  with MockitoSugar
+  with BeforeAndAfterAll
+  with ImplicitSender {
 
-  "GraphNodeExecutorActor" should {
-    "start execution of its Node and respond NodeStarted" when {
-      "receives Start" is pending
-    }
-    "respond NodeFinished with results" when {
-      "its Node execution finishes" is pending
-    }
-    "respond NodeFinished with appropriate failure description" when {
-      "its Node throws an exception" is pending
-    }
+  override protected def afterAll(): Unit = {
+    system.shutdown()
   }
 
-  // ============= Jacek's draft code:
-  //
-  // private def mkMockedActor(
-  //      ctx: ExecutionContext, node: Node): TestActorRef[GraphNodeExecutor] = {
-  //    TestActorRef[GraphNodeExecutor](Props(new GraphNodeExecutor(ctx, node)))
-  //  }
-  //
-  // test("GraphNodeExecutor should properly collect DOperables to pass them between DOperations") {
-  //    val ctx = new ExecutionContext()
-  //
-  //    val nodeId1 = Node.Id.randomId
-  //    val nodeId2 = Node.Id.randomId
-  //    var graph = createMockedGraphWithTwoNodesOfHigherArity(nodeId1, nodeId2)
-  //    val resultId1 = Entity.Id.randomId
-  //    val resultId2 = Entity.Id.randomId
-  //    val resultDataframe1 = new DataFrame()
-  //    val resultDataframe2 = new DataFrame()
-  //
-  //    val probe = TestProbe()
-  //
-  //    val graphNodeExecutor1 = mkMockedActor(ctx, graph.node(nodeId1))
-  //
-  //    var dOperableCache = Map[Entity.Id, DOperable]()
-  //    probe.send(graphNodeExecutor1, Start(graph, dOperableCache))
-  //    eventually(timeout(1.seconds), interval(100.milliseconds)) {
-  //      val collectedOutput1 = Map[Entity.Id, DOperable]()
-  //      probe.expectMsg(Completed(nodeId1, collectedOutput1))
-  //      // Node 1 has input arity == 0, vector should be empty
-  //      collectedOutput1 shouldBe Vector()
-  //    }
-  //
-  //    // Mark first node as completed, prepare its output for consecutive nodes
-  //    graph = graph.markAsRunning(nodeId1)
-  //    graph = graph.markAsCompleted(nodeId1, List(resultId1, resultId2))
-  //    dOperableCache = dOperableCache + (resultId1 -> resultDataframe1)
-  //    dOperableCache = dOperableCache + (resultId2 -> resultDataframe2)
-  //
-  //    val graphNodeExecutor2 = mkMockedActor(ctx, graph.node(nodeId2))
-  //
-  //    probe.send(graphNodeExecutor1, Start(graph, dOperableCache))
-  //    eventually(timeout(1.seconds), interval(100.milliseconds)) {
-  //      val collectedOutput2 = Map[Entity.Id, DOperable]()
-  //      probe.expectMsg(Completed(nodeId1, collectedOutput2))
-  //      // NOTE: node1 first (second) output goes to second (first) input port of node2
-  //      collectedOutput2 shouldBe Vector(resultDataframe2, resultDataframe1)
-  //    }
-  //  }
+  "GraphNodeExecutorActor" should {
+    "start execution of Nodes and respond NodeStarted (and NodeFinished)" when {
+      "receives Start" in {
+        val mEC = mock[ExecutionContext]
 
-  //  // TODO: this classes could be replaced with real DOperations with the same arity
-  //  object DClassesForDOperations {
-  //    trait A extends DOperableMock
-  //    case class A1() extends A
-  //    case class A2() extends A
-  //  }
-  //
-  //  object DOperationTestClasses {
-  //    import DClassesForDOperations._
-  //
-  //    class DOperation0To2Test extends DOperation0To2[A1, A1] {
-  //      override val id: Id = DOperation.Id.randomId
-  //
-  //      override protected def _execute(context: ExecutionContext)(): (A1, A1) = {
-  //        Thread.sleep(10000)
-  //        (new A1(), new A1())
-  //      }
-  //
-  //      override val name: String = ""
-  //
-  //      override val parameters = ParametersSchema()
-  //    }
-  //
-  //    class DOperation2To1Test extends DOperation2To1[A1, A1, A] {
-  //      override val id: Id = DOperation.Id.randomId
-  //
-  //      override protected def _execute(context: ExecutionContext)(t0: A1, t1: A1): A = {
-  //        Thread.sleep(10000)
-  //        new A1()
-  //      }
-  //
-  //      override val name: String = ""
-  //
-  //      override val parameters = ParametersSchema()
-  //    }
-  //  }
-  //
-  //  /**
-  //   * Creates mocked graph with nodes of arity > 1
-  //   * @return Mocked graph with nodes of arity > 1
-  //   */
-  //  def createMockedGraphWithTwoNodesOfHigherArity(nodeId1: Node.Id, nodeId2: Node.Id): Graph = {
-  //    import DOperationTestClasses._
-  //    val node1 = Node(nodeId1, new DOperation0To2Test)
-  //    val node2 = Node(nodeId2, new DOperation2To1Test)
-  //    val nodes = Set(node1, node2)
-  //    // NOTE: node1 first (second) output goes to second (first) input port of node2
-  //    val edges = Set(
-  //      Edge(node1, 0, node2, 1),
-  //      Edge(node1, 1, node2, 0)
-  //    )
-  //    Graph(nodes, edges)
-  //  }
-  // }
-  //
-  // ========== Jacek's Code End
+        val mDOp = mock[DOperation]
+        when(mDOp.name).thenReturn("mockedName")
+        when(mDOp.execute(any[ExecutionContext])(any[Vector[DOperable]]))
+          .thenReturn(Vector[DOperable]())
 
+        // FIXME node in DRAFT state must not be Completed -> None.get exception
+        val node = Node(Node.Id.randomId, mDOp).markRunning
+
+        val mExperiment = mock[Experiment]
+        val mGraph = mock[Graph]
+        when(mExperiment.graph).thenReturn(mGraph)
+        val predecessors: Map[Node.Id, IndexedSeq[Option[Endpoint]]] = Map(node.id -> Vector())
+        when(mGraph.predecessors).thenReturn(predecessors)
+        val dOperationCache = Map.empty[Entity.Id, DOperable]
+
+        val gnea = system.actorOf(
+          Props(new GraphNodeExecutorActor(mEC, node, mExperiment, dOperationCache)))
+        gnea ! Start()
+
+        expectMsgType[NodeStarted] shouldBe NodeStarted(node.id)
+        expectMsgType[NodeFinished].node shouldBe 'Completed
+      }
+    }
+    "respond NodeFinished with appropriate failure description" when {
+      "its Node throws an exception" in {
+        val mEC = mock[ExecutionContext]
+
+        val mDOp = mock[DOperation]
+        when(mDOp.name).thenReturn("mockedName")
+        when(mDOp.execute(any[ExecutionContext])(any[Vector[DOperable]]))
+          .thenThrow(new RuntimeException("Exception from mock"))
+
+        // FIXME node in DRAFT state must not be Completed -> None.get exception
+        val node = Node(Node.Id.randomId, mDOp).markRunning
+
+        val mExperiment = mock[Experiment]
+        val mGraph = mock[Graph]
+        when(mExperiment.graph).thenReturn(mGraph)
+        val predecessors: Map[Node.Id, IndexedSeq[Option[Endpoint]]] = Map(node.id -> Vector())
+        when(mGraph.predecessors).thenReturn(predecessors)
+        val dOperationCache = Map.empty[Entity.Id, DOperable]
+
+        val gnea = system.actorOf(
+          Props(new GraphNodeExecutorActor(mEC, node, mExperiment, dOperationCache)))
+        gnea ! Start()
+
+        expectMsgType[NodeStarted] shouldBe NodeStarted(node.id)
+        expectMsgType[NodeFinished].node shouldBe 'Failed
+      }
+    }
+  }
 }
