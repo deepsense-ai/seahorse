@@ -29,7 +29,7 @@ import io.deepsense.deeplang.CommonExecutionContext
 import io.deepsense.models.workflows._
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.Init
 import io.deepsense.workflowexecutor.WorkflowManagerClientActorProtocol.GetWorkflow
-import io.deepsense.workflowexecutor.communication.message.global.Heartbeat
+import io.deepsense.workflowexecutor.communication.message.global.{Heartbeat, Ready}
 import io.deepsense.workflowexecutor.partialexecution.Execution
 
 /**
@@ -40,7 +40,8 @@ class SessionWorkflowExecutorActor(
     nodeExecutorFactory: GraphNodeExecutorFactory,
     workflowManagerClientActor: ActorRef,
     publisher: ActorRef,
-    seahorseTopicPublisher: ActorRef,
+    heartbeatPublisher: ActorRef,
+    notebookPublisher: ActorRef,
     wmTimeout: Int,
     sessionId: String,
     heartbeatInterval: FiniteDuration)
@@ -87,6 +88,7 @@ class SessionWorkflowExecutorActor(
 
   override protected def onInitiated(): Unit = {
     scheduleHeartbeats()
+    notebookPublisher ! Ready(sessionId)
   }
 
   private def scheduleHeartbeats(): Unit = {
@@ -96,7 +98,7 @@ class SessionWorkflowExecutorActor(
       context.system.scheduler.schedule(
         Duration.Zero,
         heartbeatInterval,
-        seahorseTopicPublisher,
+        heartbeatPublisher,
         heartbeat))
   }
 
@@ -112,7 +114,8 @@ object SessionWorkflowExecutorActor {
     ec: CommonExecutionContext,
     workflowManagerClientActor: ActorRef,
     publisher: ActorRef,
-    seahorseTopicPublisher: ActorRef,
+    heartbeatPublisher: ActorRef,
+    notebookPublisher: ActorRef,
     wmTimeout: Int,
     sessionId: String,
     heartbeatInterval: FiniteDuration): Props =
@@ -121,7 +124,8 @@ object SessionWorkflowExecutorActor {
       new GraphNodeExecutorFactoryImpl,
       workflowManagerClientActor,
       publisher,
-      seahorseTopicPublisher,
+      heartbeatPublisher,
+      notebookPublisher,
       wmTimeout,
       sessionId,
       heartbeatInterval))

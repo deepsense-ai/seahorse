@@ -27,7 +27,7 @@ import io.deepsense.models.workflows.Workflow
 class SessionWorkflowExecutorActorProvider(
   executionContext: CommonExecutionContext,
   workflowManagerClientActor: ActorRef,
-  seahorseTopicPublisher: ActorRef,
+  heartbeatPublisher: ActorRef,
   notebookTopicPublisher: ActorRef,
   workflowManagerTimeout: Int,
   publisher: ActorRef,
@@ -40,7 +40,8 @@ class SessionWorkflowExecutorActorProvider(
         executionContext,
         workflowManagerClientActor,
         publisher,
-        seahorseTopicPublisher,
+        heartbeatPublisher,
+        notebookTopicPublisher,
         workflowManagerTimeout,
         sessionId,
         heartbeatInterval),

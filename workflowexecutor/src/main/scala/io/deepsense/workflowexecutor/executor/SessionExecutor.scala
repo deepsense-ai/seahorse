@@ -22,7 +22,8 @@ import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.language.postfixOps
 
-import akka.actor.{ActorRef, ActorSystem}
+import akka.actor.{ActorRef, ActorSystem, Props}
+import akka.routing._
 import com.rabbitmq.client.ConnectionFactory
 import com.thenewmotion.akka.rabbitmq._
 import com.typesafe.config.ConfigFactory
@@ -102,12 +103,8 @@ case class SessionExecutor(
         graphReader))
 
     val communicationFactory: MQCommunicationFactory = createCommunicationFactory(system)
-    val seahorsePublisher = communicationFactory.createPublisher(
-      MQCommunication.Topic.seahorsePublicationTopic(sessionId),
-      MQCommunication.Actor.Publisher.seahorse)
 
     val workflowsSubscriberActor: ActorRef = createWorkflowsSubscriberActor(
-      seahorsePublisher,
       sparkContext,
       sqlContext,
       dOperableCatalog,
@@ -121,14 +118,7 @@ case class SessionExecutor(
       MQCommunication.Topic.allWorkflowsSubscriptionTopic(sessionId),
       workflowsSubscriberActor)
 
-    val notebookSubscriberReady: Future[Unit] =
-      createNotebookSubscriber(
-        hostAddress,
-        pythonExecutionCaretaker,
-        system,
-        communicationFactory)
-
-    waitUntilSubscribersAreReady(Seq(notebookSubscriberReady, workflowsSubscriberReady))
+    waitUntilSubscribersAreReady(Seq(workflowsSubscriberReady))
 
     val kernelManagerCaretaker = new KernelManagerCaretaker(
       system,
@@ -153,24 +143,7 @@ case class SessionExecutor(
     logger.debug("SessionExecutor ends")
   }
 
-  def createNotebookSubscriber(
-      hostAddress: InetAddress,
-      pythonExecutionCaretaker: PythonExecutionCaretaker,
-      system: ActorSystem,
-      communicationFactory: MQCommunicationFactory): Future[Unit] = {
-    val notebookSubscriberActor = system.actorOf(
-      NotebookKernelTopicSubscriber.props(
-        "user/" + MQCommunication.Actor.Publisher.notebook,
-        pythonExecutionCaretaker.gatewayListeningPort _,
-        hostAddress.getHostAddress),
-      MQCommunication.Actor.Subscriber.notebook)
-    communicationFactory.registerSubscriber(
-      MQCommunication.Topic.notebookSubscriptionTopic,
-      notebookSubscriberActor)
-  }
-
   private def createWorkflowsSubscriberActor(
-      seahorsePublisher: ActorRef,
       sparkContext: SparkContext,
       sqlContext: SQLContext,
       dOperableCatalog: DOperableCatalog,
@@ -180,6 +153,28 @@ case class SessionExecutor(
       workflowManagerClientActor: ActorRef,
       communicationFactory: MQCommunicationFactory): ActorRef = {
 
+    def createHeartbeatPublisher: ActorRef = {
+      val seahorsePublisher = communicationFactory.createPublisher(
+        MQCommunication.Topic.seahorsePublicationTopic(sessionId),
+        MQCommunication.Actor.Publisher.seahorse)
+
+      val heartbeatBroadcaster = communicationFactory.createBroadcaster(
+        MQCommunication.Exchange.heartbeats(workflowId),
+        MQCommunication.Actor.Publisher.heartbeat(workflowId)
+      )
+
+      val routeePaths = scala.collection.immutable.Iterable(seahorsePublisher, heartbeatBroadcaster)
+        .map(_.path.toString)
+
+      val heartbeatPublisher = system.actorOf(
+        Props.empty.withRouter(BroadcastGroup(routeePaths)),
+        "heartbeatBroadcastingRouter"
+      )
+      heartbeatPublisher
+    }
+
+    val heartbeatPublisher: ActorRef = createHeartbeatPublisher
+
     val executionContext = createExecutionContext(
       dataFrameStorage,
       pythonExecutionCaretaker,
@@ -187,9 +182,9 @@ case class SessionExecutor(
       sqlContext,
       dOperableCatalog = Some(dOperableCatalog))
 
-    val notebookPublisher = communicationFactory.createPublisher(
-      MQCommunication.Topic.notebookPublicationTopic,
-      MQCommunication.Actor.Publisher.notebook)
+    val readyBroadcaster = communicationFactory.createBroadcaster(
+      MQCommunication.Exchange.ready(workflowId),
+      MQCommunication.Actor.Publisher.ready(workflowId))
 
     val publisher: ActorRef = communicationFactory.createPublisher(
       MQCommunication.Topic.workflowPublicationTopic(workflowId, sessionId),
@@ -198,8 +193,8 @@ case class SessionExecutor(
     val actorProvider = new SessionWorkflowExecutorActorProvider(
       executionContext,
       workflowManagerClientActor,
-      seahorsePublisher,
-      notebookPublisher,
+      heartbeatPublisher,
+      readyBroadcaster,
       workflowManagerTimeout,
       publisher,
       sessionId,

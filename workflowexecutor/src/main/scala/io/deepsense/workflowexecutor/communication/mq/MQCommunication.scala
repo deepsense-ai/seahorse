@@ -29,7 +29,9 @@ object MQCommunication {
 
     object Publisher {
       val seahorse = prefixedName("seahorse")
-      val notebook = prefixedName("notebook")
+      def notebook(id: Workflow.Id): String = prefixedName(s"notebook_$id")
+      def heartbeat(id: Workflow.Id): String = prefixedName(s"heartbeat_$id")
+      def ready(id: Workflow.Id): String = prefixedName(s"ready_$id")
       def workflow(id: Workflow.Id): String = prefixedName(id.toString)
       private def prefixedName = name("publisher") _
     }
@@ -45,12 +47,14 @@ object MQCommunication {
 
   object Exchange {
     val seahorse = "seahorse"
+
+    def heartbeats(workflowId: Workflow.Id): String = s"${seahorse}_heartbeats_$workflowId"
+    def ready(workflowId: Workflow.Id): String = s"${seahorse}_ready_$workflowId"
   }
 
   object Topic {
     private val workflowPrefix = "workflow"
     private val notebook = "notebook"
-    private val seahorse = "seahorse"
     private val kernelManager = "kernelmanager"
     def allWorkflowsSubscriptionTopic(sessionId: String): String =
       subscriptionTopic(s"$workflowPrefix.$sessionId.*")

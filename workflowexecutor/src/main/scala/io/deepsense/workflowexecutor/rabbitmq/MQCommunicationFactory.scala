@@ -51,6 +51,11 @@ case class MQCommunicationFactory(
     system.actorOf(PublisherActor.props(topic, publisher), publisherActorName)
   }
 
+  def createBroadcaster(exchange: String, publishingActorName: String): ActorRef = {
+    val publisher = createMQBroadcaster(exchange)
+    system.actorOf(PublisherActor.props(exchange, publisher), publishingActorName)
+  }
+
   private def setupSubscriber(
     topic: String,
     subscriber: ActorRef)(
@@ -72,6 +77,18 @@ case class MQCommunicationFactory(
     val channelActor: ActorRef =
       connection.createChannel(ChannelActor.props(), Some(publisherName))
     MQPublisher(MQCommunication.Exchange.seahorse, mqMessageSerializer, channelActor)
+  }
+
+  private  def createMQBroadcaster(exchange: String): MQPublisher = {
+    val publisherName = MQCommunication.publisherName(exchange)
+
+    def setupChannel(channel: Channel, self: ActorRef) = {
+      channel.exchangeDeclare(exchange, "fanout")
+    }
+
+    val channelActor: ActorRef =
+      connection.createChannel(ChannelActor.props(setupChannel), Some(publisherName))
+    MQPublisher(exchange, mqMessageSerializer, channelActor)
   }
 }
 

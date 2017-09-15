@@ -307,6 +307,7 @@ class WorkflowExecutorActorSpec
             wmClient.ref,
             publisher.ref,
             TestProbe().ref,
+            TestProbe().ref,
             3,
             "",
             3.seconds), Workflow.Id.randomId.toString)
@@ -449,6 +450,7 @@ class WorkflowExecutorActorSpec
         nodeExecutorFactory,
         wmClient,
         publisher.ref,
+        TestProbe().ref,
         TestProbe().ref,
         5,
         "",
