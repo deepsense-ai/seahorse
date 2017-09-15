@@ -170,6 +170,6 @@ For ready-to-use Seahorse in cloud deployment, you can try Seahorse
 on [Data Scientist Workbench](dswb.html) or [Trusted Analytics Platform](tap.html).
 
 To learn more about scaling up and using Seahorse in production,
-see the [Enterprise](enterprise.html) page.
+please <a target="_blank" href="http://deepsense.io/about-us/contact/#contact-form">contact us for details</a>.
 
 {% include contact_box.html %}

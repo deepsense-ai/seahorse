@@ -91,6 +91,6 @@ services:
 
 
 To learn more about using Seahorse in production and such features as security, additional authorization methods and custom deployment requirements,
-see the [Enterprise](deployment/enterprise.html) page.
+please <a target="_blank" href="http://deepsense.io/about-us/contact/#contact-form">contact us for details</a>.
 
 {% include contact_box.html %}
