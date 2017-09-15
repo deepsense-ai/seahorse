@@ -128,7 +128,7 @@ option in Seahorse Editor in the upper-right corner.
 
 By default, Vagrant keeps boxes and configuration in `%HOMEPATH%/.vagrant.d`,
 but cannot access it when a `%HOMEPATH%` includes non-ASCII characters.
-It's a well known <a target="_blank" href="https://github.com/mitchellh/vagrant/issues/4966">Vagrant bug</a> and results in:
+It is a well known <a target="_blank" href="https://github.com/mitchellh/vagrant/issues/4966">Vagrant bug</a> and results in:
 
     > vagrant up
     ...

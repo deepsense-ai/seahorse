@@ -38,7 +38,7 @@ To create a new workflow:
 * Name your workflow and add a description.
 * Press the **Create** button.
 
-You've been redirected to workflow editor where you can create your application in a visual way.
+You have been redirected to workflow editor where you can create your application in a visual way.
 
 <p style="text-align:center;">
     <img class="centered-image img-responsive" src="./img/empty_workflow.png">
@@ -143,7 +143,7 @@ the scoring will be produced (model performance report).
      * Select **Excluding** mode in the top-right corner - this will include all values
          except the ones selected in the features column
      * Add <code>city</code> and <code>price</code> to the list - we have to exclude the <code>city</code>
-       column, because it doesn't contain numeric values and <code>price</code>, because it contains
+       column, because it does not contain numeric values and <code>price</code>, because it contains
        the actual results
    * Put <code>features</code> in the **OUTPUT COLUMN** parameter - the operation will add a column
      with this name to the dataset
