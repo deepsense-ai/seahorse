@@ -4,16 +4,20 @@
 'use strict';
 
 /* @ngInject */
-function ExperimentController($stateParams, $rootScope, OperationsAPIClient, DrawingService, ExperimentFactory, ExperimentAPIClient) {
+function ExperimentController($stateParams, $rootScope, Operations, DrawingService, ExperimentFactory, ExperimentAPIClient) {
 
   var that = this;
   var operations;
   var experiment;
 
   that.init = function () {
-    OperationsAPIClient.getAll()
+    Operations.getCatalog().then((data) => {
+      that.operationsCatalog = data;
+    });
+
+    Operations.getAll()
       .then(function (data) {
-        operations = data.operations;
+        operations = data;
       })
       .then(function () {
         ExperimentAPIClient.getData($stateParams.id).then(function (data) {

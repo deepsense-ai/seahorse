@@ -222,6 +222,6 @@ describe('Operations', () => {
 
   testMethod('getAll', 'getAll', mockOperations);
   testMethod('get', 'getAll', mockOperations['id-02'], 'id-02');
-  testMethod('getCatalog', 'getCatalog', mockCatalog);
+  testMethod('getCatalog', 'getCatalog', mockCatalog.catalog);
 
 });

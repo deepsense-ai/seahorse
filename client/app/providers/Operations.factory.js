@@ -86,7 +86,7 @@ function OperationsFactory(OperationsAPIClient, $q) {
     }
 
     return OperationsAPIClient.getCatalog().then((data) => {
-      catalogData = data;
+      catalogData = data.catalog;
       return catalogData;
     });
   };
