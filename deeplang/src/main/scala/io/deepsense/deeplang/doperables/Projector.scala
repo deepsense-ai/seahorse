@@ -24,6 +24,7 @@ import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGe
 import io.deepsense.deeplang.params.selections.SingleColumnSelection
 import io.deepsense.deeplang.params._
 import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
+import io.deepsense.deeplang.utils.SparkUtils
 
 class Projector extends Transformer {
 
@@ -40,9 +41,9 @@ class Projector extends Transformer {
     val exprSeq = getProjectionColumns.map { cp =>
       val renameExpressionPart = cp.getRenameColumn.getColumnName match {
         case None => ""
-        case Some(columnName) => s" AS `$columnName`"
+        case Some(columnName) => s" AS ${SparkUtils.escapeColumnName(columnName)}"
       }
-      df.getColumnName(cp.getOriginalColumn) + renameExpressionPart
+      SparkUtils.escapeColumnName(df.getColumnName(cp.getOriginalColumn)) + renameExpressionPart
     }
     if (exprSeq.isEmpty) {
       DataFrame.empty(ctx)

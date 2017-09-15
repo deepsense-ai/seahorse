@@ -25,6 +25,7 @@ import io.deepsense.deeplang.doperations.exceptions._
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.params.selections.NameColumnSelection
 import io.deepsense.deeplang.params.{Param, StringParam}
+import io.deepsense.deeplang.utils.SparkUtils
 
 case class SqlColumnTransformer() extends MultiColumnTransformer {
 
@@ -49,21 +50,21 @@ case class SqlColumnTransformer() extends MultiColumnTransformer {
       outputColumn: String,
       context: ExecutionContext,
       dataFrame: DataFrame): DataFrame = {
-    val inputColumnAlias = getInputColumnAlias.replace("`", "``")
+    val inputColumnAlias = SparkUtils.escapeColumnName(getInputColumnAlias)
     val formula = getFormula
-    val inputColumnName = inputColumn.replace("`", "``")
-    val outputColumnName = outputColumn.replace("`", "``")
+    val inputColumnName = SparkUtils.escapeColumnName(inputColumn)
+    val outputColumnName = SparkUtils.escapeColumnName(outputColumn)
 
     val dataFrameSchema = dataFrame.sparkDataFrame.schema
     validate(dataFrameSchema)
 
     val (transformedSparkDataFrame, schema) = try {
 
-      val inputColumnNames = dataFrameSchema.map(c => "`" + c.name.replace("`", "``") + "`")
-      val outputColumnNames = inputColumnNames :+ s"$formula AS `$outputColumnName`"
+      val inputColumnNames = dataFrameSchema.map(c => SparkUtils.escapeColumnName(c.name))
+      val outputColumnNames = inputColumnNames :+ s"$formula AS $outputColumnName"
 
       val outputDataFrame = dataFrame.sparkDataFrame
-        .selectExpr("*", s"`$inputColumnName` AS `$inputColumnAlias`")
+        .selectExpr("*", s"$inputColumnName AS $inputColumnAlias")
         .selectExpr(outputColumnNames: _*)
 
       val schema = StructType(outputDataFrame.schema.map {

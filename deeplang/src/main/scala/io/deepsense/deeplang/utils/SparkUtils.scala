@@ -38,4 +38,12 @@ object SparkUtils {
     CountOccurrencesWithKeyLimitAggregator(limit).execute(rdd)
   }
 
+  /**
+    * Returns Spark's DataFrame column name safe for using in SQL expressions.
+    * @param columnName
+    * @return properly escaped column name
+    */
+  def escapeColumnName(columnName: String): String = {
+    "`" + columnName.replace("`", "``") + "`"
+  }
 }

@@ -41,10 +41,12 @@ class ProjectorIntegSpec
   import DeeplangIntegTestSupport._
   import TransformerSerialization._
 
+  val specialCharactersName = "a`a-z"
+
   val columns = Seq(
     StructField("c", IntegerType),
     StructField("b", StringType),
-    StructField("a", DoubleType),
+    StructField(specialCharactersName, DoubleType),
     StructField("x", TimestampType),
     StructField("z", BooleanType))
 
@@ -59,12 +61,12 @@ class ProjectorIntegSpec
 
   "Projector" should {
     val expectedSchema = StructType(Seq(
-      StructField("a", DoubleType),
-      StructField("renamed_a", DoubleType)))
+      StructField(specialCharactersName, DoubleType),
+      StructField(s"renamed_$specialCharactersName", DoubleType)))
     val transformer = new Projector().setProjectionColumns(Seq(
-      ColumnProjection().setOriginalColumn(NameSingleColumnSelection("a")),
-      ColumnProjection().setOriginalColumn(NameSingleColumnSelection("a"))
-        .setRenameColumn(new Yes().setColumnName("renamed_a"))
+      ColumnProjection().setOriginalColumn(NameSingleColumnSelection(specialCharactersName)),
+      ColumnProjection().setOriginalColumn(NameSingleColumnSelection(specialCharactersName))
+        .setRenameColumn(new Yes().setColumnName(s"renamed_$specialCharactersName"))
     ))
 
     "select correctly the same column multiple times" in {
@@ -112,7 +114,7 @@ class ProjectorIntegSpec
       }
      "the output DataFrame has duplicated columns" when {
        val transformer = new Projector().setProjectionColumns(Seq(
-         ColumnProjection().setOriginalColumn(NameSingleColumnSelection("a"))
+         ColumnProjection().setOriginalColumn(NameSingleColumnSelection(specialCharactersName))
            .setRenameColumn(new Yes().setColumnName("duplicatedName")),
          ColumnProjection().setOriginalColumn(NameSingleColumnSelection("b"))
            .setRenameColumn(new Yes().setColumnName("duplicatedName"))
