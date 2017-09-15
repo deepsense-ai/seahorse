@@ -8,7 +8,7 @@ description: Seahorse documentation homepage
 ---
 
 A `DataFrame` is a distributed collection of data organized into named columns
-backed by <a target="_blank" href="{{ site.SPARK_DOCS }}/sql-programming-guide.html#dataframes">Spark SQL’s DataFrame</a>.
+backed by <a target="_blank" href="{{ site.SPARK_DOCS }}/sql-programming-guide.html#datasets-and-dataframes">Spark SQL’s DataFrame</a>.
 
 The use of Spark’s `DataFrame` data structure allows Seahorse to construct `DataFrames`
 from a wide array of sources, e.g. structured data files, tables in Hive or

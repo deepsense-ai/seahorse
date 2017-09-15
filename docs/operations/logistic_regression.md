@@ -12,11 +12,11 @@ This operation is ported from Spark ML.
 
 
 For a comprehensive introduction, see
-<a target="_blank" href="https://spark.apache.org/docs/1.6.1/ml-classification-regression.html#logistic-regression">Spark documentation</a>.
+<a target="_blank" href="https://spark.apache.org/docs/2.0.0/ml-classification-regression.html#logistic-regression">Spark documentation</a>.
 
 
 For scala docs details, see
-<a target="_blank" href="https://spark.apache.org/docs/1.6.1/api/scala/index.html#org.apache.spark.ml.classification.LogisticRegression">org.apache.spark.ml.classification.LogisticRegression documentation</a>.
+<a target="_blank" href="https://spark.apache.org/docs/2.0.0/api/scala/index.html#org.apache.spark.ml.classification.LogisticRegression">org.apache.spark.ml.classification.LogisticRegression documentation</a>.
 
 **Since**: Seahorse 1.0.0
 

@@ -14,11 +14,11 @@ This operation is ported from Spark ML.
 
 
 For a comprehensive introduction, see
-<a target="_blank" href="https://spark.apache.org/docs/1.6.1/ml-classification-regression.html#decision-tree-classifier">Spark documentation</a>.
+<a target="_blank" href="https://spark.apache.org/docs/2.0.0/ml-classification-regression.html#decision-tree-classifier">Spark documentation</a>.
 
 
 For scala docs details, see
-<a target="_blank" href="https://spark.apache.org/docs/1.6.1/api/scala/index.html#org.apache.spark.ml.classification.DecisionTreeClassifier">org.apache.spark.ml.classification.DecisionTreeClassifier documentation</a>.
+<a target="_blank" href="https://spark.apache.org/docs/2.0.0/api/scala/index.html#org.apache.spark.ml.classification.DecisionTreeClassifier">org.apache.spark.ml.classification.DecisionTreeClassifier documentation</a>.
 
 **Since**: Seahorse 1.1.0
 

@@ -12,11 +12,11 @@ This operation is ported from Spark ML.
 
 
 For a comprehensive introduction, see
-<a target="_blank" href="https://spark.apache.org/docs/1.6.1/mllib-evaluation-metrics.html#regression-model-evaluation">Spark documentation</a>.
+<a target="_blank" href="https://spark.apache.org/docs/2.0.0/mllib-evaluation-metrics.html#regression-model-evaluation">Spark documentation</a>.
 
 
 For scala docs details, see
-<a target="_blank" href="https://spark.apache.org/docs/1.6.1/api/scala/index.html#org.apache.spark.ml.evaluation.RegressionEvaluator">org.apache.spark.ml.evaluation.RegressionEvaluator documentation</a>.
+<a target="_blank" href="https://spark.apache.org/docs/2.0.0/api/scala/index.html#org.apache.spark.ml.evaluation.RegressionEvaluator">org.apache.spark.ml.evaluation.RegressionEvaluator documentation</a>.
 
 **Since**: Seahorse 1.0.0
 

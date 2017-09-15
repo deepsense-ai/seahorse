@@ -32,6 +32,6 @@ class IDF extends EstimatorAsOperation[IDFEstimator, IDFModel]
     "of a collection of documents"
 
   override protected[this] val docsGuideLocation =
-    Some("ml-features.html#tf-idf-hashingtf-and-idf")
+    Some("ml-features.html#tf-idf")
   override val since: Version = Version(1, 0, 0)
 }

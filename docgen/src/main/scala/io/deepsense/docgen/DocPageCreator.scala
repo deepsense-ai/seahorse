@@ -75,7 +75,7 @@ trait DocPageCreator {
 
   private def header(operation: DOperation): String = {
     s"""---
-       |layout: documentation
+       |layout: global
        |displayTitle: ${operation.name}
        |title: ${operation.name}
        |description: ${operation.name}

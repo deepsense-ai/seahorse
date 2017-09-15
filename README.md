@@ -7,11 +7,11 @@ application that allows user to execute <a target="_blank" href="http://seahorse
 
 Workflow Executor requires:
 
-* Scala version: 2.10.+
+* Scala version: 2.11.8+
 
-* Spark version: 1.6.1
+* Spark version: 2.0.0
 
-* Hadoop version: 2.6.0
+* Hadoop version: 2.7.0
 
 ## Building Workflow Executor from Sources
 
@@ -35,7 +35,7 @@ Workflow Executor can be submitted to Spark cluster as any other Spark applicati
 Example spark-submit commands can be found in following subsections.
 Replace `./bin/spark-submit` with path to script in Apache Spark's directory.
 For more detailed information about submitting Spark applications, visit:
-<a target="_blank" href="https://spark.apache.org/docs/1.6.1/submitting-applications.html">https://spark.apache.org/docs/1.6.1/submitting-applications.html</a>
+<a target="_blank" href="{{site.SPARK_DOCS}}/submitting-applications.html">{{site.SPARK_DOCS}}/submitting-applications.html</a>
 
 #### Local (single machine) Spark
     # Run application locally (on 8 cores)
@@ -78,13 +78,13 @@ Option ``--files workflow.json`` is necessary to distribute workflow file to Spa
 It is necessary to pass the same filename to ``--workflow-filename workflow.json`` option,
 in order to tell Workflow Executor under which name it should look for workflow file.
 
-If spark-assembly-1.6.1-hadoop2.6.0.jar is already distributed
+If spark-assembly-2.0.0-hadoop2.7.0.jar is already distributed
 on HDFS cluster, it is possible to reduce time necessary for files propagation on YARN cluster.
 Use spark-submit option
-``--conf spark.yarn.jar=hdfs:///path/to/spark-assembly-1.6.1-hadoop2.6.0.jar``
+``--conf spark.yarn.jar=hdfs:///path/to/spark-assembly-2.0.0-hadoop2.7.0.jar``
 with proper HDFS path.
-Spark assembly jar can be found in Spark 1.6.1 compiled for
-Hadoop 2.6.0 package (Seahorse uses Scala 2.10, Spark has to be built with Scala 2.10 support).
+Spark assembly jar can be found in Spark 2.0.0 compiled for
+Hadoop 2.7.0 package (Seahorse uses Scala 2.11, Spark has to be built with Scala 2.11 support).
 
 
 
@@ -120,9 +120,9 @@ redirected to several locations, e.g.:
 
 You have to look for detailed information about logging with regard to Your cluster configuration,
 for running Spark on YARN, visit:
-<a target="_blank" href="http://spark.apache.org/docs/1.6.1/running-on-yarn.html#debugging-your-application">http://spark.apache.org/docs/1.6.1/running-on-yarn.html#debugging-your-application</a>,
+<a target="_blank" href="{{site.SPARK_DOCS}}/running-on-yarn.html#debugging-your-application">{{site.SPARK_DOCS}}/running-on-yarn.html#debugging-your-application</a>,
 for Spark Standalone cluster, visit:
-<a target="_blank" href="http://spark.apache.org/docs/1.6.1/spark-standalone.html#monitoring-and-logging">http://spark.apache.org/docs/1.6.1/spark-standalone.html#monitoring-and-logging</a>.
+<a target="_blank" href="{{site.SPARK_DOCS}}/spark-standalone.html#monitoring-and-logging">{{site.SPARK_DOCS}}/spark-standalone.html#monitoring-and-logging</a>.
 
 For details on how Spark runs on clusters, visit:
-<a target="_blank" href="http://spark.apache.org/docs/1.6.1/cluster-overview.html">http://spark.apache.org/docs/1.6.1/cluster-overview.html</a>.
+<a target="_blank" href="{{site.SPARK_DOCS}}/cluster-overview.html">{{site.SPARK_DOCS}}/cluster-overview.html</a>.
