@@ -7,7 +7,7 @@ angular.module('deepsense.graph-model').
       this.id = options.id;
       this.description = options.description;
       this.name = options.name;
-      this.uiName = options.uiName || options.name;
+      this.uiName = options.uiName || '';
       this.operationId = options.operationId;
       this.version = options.version;
       this.icon = options.icon;
