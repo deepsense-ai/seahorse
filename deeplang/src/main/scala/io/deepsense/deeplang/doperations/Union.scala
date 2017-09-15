@@ -46,7 +46,7 @@ case class Union() extends DOperation2To1[DataFrame, DataFrame, DataFrame] with 
       first.sparkDataFrame.unionAll(second.sparkDataFrame).rdd)
   }
 
-  override protected def _inferTypeKnowledge
+  override protected def _inferKnowledge
       (context: InferContext)
       (df1Knowledge: DKnowledge[DataFrame],
         df2Knowledge: DKnowledge[DataFrame]): (DKnowledge[DataFrame], InferenceWarnings) = {

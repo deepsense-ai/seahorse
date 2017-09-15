@@ -39,7 +39,7 @@ case class Sink() extends DOperation1To1[DataFrame, DataFrame] {
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): DataFrame =
     dataFrame
 
-  override protected def _inferTypeKnowledge(context: InferContext)(
+  override protected def _inferKnowledge(context: InferContext)(
     inputKnowledge: DKnowledge[DataFrame]): (DKnowledge[DataFrame], InferenceWarnings) = {
     (inputKnowledge, InferenceWarnings.empty)
   }

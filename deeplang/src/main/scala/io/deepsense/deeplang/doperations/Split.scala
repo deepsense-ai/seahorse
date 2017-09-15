@@ -65,7 +65,7 @@ case class Split()
     df.sparkDataFrame.rdd.randomSplit(Array(range, 1.0 - range), seed)
   }
 
-  override protected def _inferFullKnowledge(context: InferContext)
+  override protected def _inferKnowledge(context: InferContext)
       (knowledge: DKnowledge[DataFrame]):
       ((DKnowledge[DataFrame], DKnowledge[DataFrame]), InferenceWarnings) = {
     ((knowledge, knowledge), InferenceWarnings.empty)
