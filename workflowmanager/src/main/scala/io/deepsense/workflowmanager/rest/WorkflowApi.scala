@@ -33,7 +33,7 @@ import io.deepsense.models.json.workflow._
 import io.deepsense.models.json.workflow.exceptions.WorkflowVersionException
 import io.deepsense.models.workflows._
 import io.deepsense.workflowmanager.exceptions._
-import io.deepsense.workflowmanager.model.{WorkflowDescription, WorkflowDescriptionJsonProtocol}
+import io.deepsense.workflowmanager.model.{WorkflowDescription, WorkflowDescriptionJsonProtocol, WorkflowPreset, WorkflowPresetJsonProtocol}
 import io.deepsense.workflowmanager.{PresetService, WorkflowManagerProvider}
 
 
@@ -55,6 +55,7 @@ abstract class WorkflowApi @Inject() (
   with WorkflowJsonProtocol
   with WorkflowWithVariablesJsonProtocol
   with WorkflowWithResultsJsonProtocol
+  with WorkflowPresetJsonProtocol
   with DOperationEnvelopesJsonProtocol
   with Cors
   with WorkflowVersionUtil {
@@ -104,7 +105,6 @@ abstract class WorkflowApi @Inject() (
     new EnvelopeJsonFormat[Workflow.Id]("workflowId")
 
   private val presetPathPrefixMatcher = PathMatchers.separateOnSlashes("v1/presets")
-
   def respondWithPresetId(presetId: Long) =
     respondWithHeader(RawHeader("Location", presetId.toString))
 
@@ -232,6 +232,22 @@ abstract class WorkflowApi @Inject() (
                         case None =>
                           complete(StatusCodes.NotFound)
                       }
+                    }
+                  }
+                }
+              } ~
+              path(JavaUUID / "preset") { workflowId =>
+                get {
+                  withUserId { userContext =>
+                    val preset = presetService.getWorkflowsPreset(workflowId)
+                    complete(preset)
+                  }
+                } ~
+                post {
+                  withUserId { userContext =>
+                    entity(as[WorkflowPreset]) {
+                      workflowPreset => presetService.saveWorkflowsPreset(workflowPreset)
+                      complete(StatusCodes.OK)
                     }
                   }
                 }

@@ -4,7 +4,11 @@
 
 package io.deepsense.workflowmanager.storage.impl
 
-import scala.concurrent.{ExecutionContext, Future}
+import java.util.UUID
+
+import scala.concurrent.duration.{Duration, FiniteDuration}
+import scala.concurrent.{Await, ExecutionContext, Future, duration}
+import scala.util.{Failure, Success}
 
 import com.google.inject.Inject
 import com.google.inject.name.Named
@@ -12,6 +16,8 @@ import slick.driver.JdbcDriver
 
 import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.commons.utils.Logging
+import io.deepsense.models.workflows.Workflow._
+import io.deepsense.workflowmanager.model.WorkflowPreset
 
 
 class PresetsDao @Inject()(
@@ -112,4 +118,47 @@ class PresetsDao @Inject()(
     val UniqueViolation = 23505 // Defined in SQL Standard
   }
 
+  def saveWorkflowsPreset(workflowPreset: WorkflowPreset): Future[Unit] = Future {
+    val insert = workflowsPreset.insertOrUpdate(workflowPreset)
+    db.run(insert)
+  }
+
+  def getWorkflowsPreset(workflowId: Id): Future[Option[ClusterDetails]] = {
+
+    val headWorkflowsPreset : Future[Option[WorkflowPreset]] =
+      db.run(workflowsPreset.filter(_.workflow_id === workflowId.value).result.headOption)
+
+    headWorkflowsPreset flatMap {
+          case Some(x) =>
+            db.run(presets.filter(w => w.id === x.presetId).result.headOption)
+          case _ =>
+            db.run(presets.filter(x => x.isDefault === true).result.headOption)
+    }
+  }
+
+  val workflowPresetTableName: String = "WORKFLOWSPRESETS"
+
+  private class WorkflowsPresetTable(tag: Tag)
+    extends Table[WorkflowPreset](tag, workflowPresetTableName) {
+
+    private val workflowIdColumn = "workflow_id"
+    private val presetIdColumn = "preset_id"
+
+
+    def workflow_id: Rep[UUID] = column[UUID](workflowIdColumn, O.PrimaryKey)
+    def preset_id: Rep[Long] = column[Long](presetIdColumn)
+
+    override def * = (
+      workflow_id,
+      preset_id) <> (
+      {
+        tuple: (UUID, Long) =>
+          WorkflowPreset(Id.fromUuid(tuple._1), tuple._2)
+      },
+      { w: WorkflowPreset =>
+          Some((w.id.value, w.presetId))
+      })
+  }
+
+  private val workflowsPreset = TableQuery[WorkflowsPresetTable]
 }
