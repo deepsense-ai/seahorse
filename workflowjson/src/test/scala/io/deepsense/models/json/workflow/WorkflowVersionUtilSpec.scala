@@ -57,13 +57,6 @@ class WorkflowVersionUtilSpec
       workflowOrString(incorrectVersionJsonString) shouldBe Left(incorrectVersionJsonString)
     }
 
-    "parse a WorkflowWithSavedResults and return an object or a string if version is invalid" in {
-      workflowWithSavedResultsOrString(workflowWithSavedResults.toJson.compactPrint) shouldBe
-        Right(workflowWithSavedResults)
-      workflowWithSavedResultsOrString(incorrectVersionJsonString) shouldBe
-        Left(incorrectVersionJsonString)
-    }
-
     "expose a JsonReader for Workflow that checks the version" in {
       correctWorkflowString.parseJson.convertTo[Workflow](versionedWorkflowReader) shouldBe
         correctWorkflow
@@ -81,17 +74,6 @@ class WorkflowVersionUtilSpec
       an[WorkflowVersionFormatException] shouldBe
         thrownBy(incorrectVersionJsonString.parseJson
           .convertTo[WorkflowWithResults](versionedWorkflowWithResultsReader))
-    }
-
-    "expose a JsonReader for WorkflowWithSavedResults that checks the version" in {
-      workflowWithSavedResultsString
-        .parseJson
-        .convertTo[WorkflowWithSavedResults](versionedWorkflowWithSavedResultsReader) shouldBe
-        workflowWithSavedResults
-
-      an[WorkflowVersionFormatException] shouldBe
-        thrownBy(incorrectVersionJsonString.parseJson
-          .convertTo[WorkflowWithSavedResults](versionedWorkflowWithSavedResultsReader))
     }
   }
 
@@ -116,17 +98,4 @@ class WorkflowVersionUtilSpec
       EntitiesMap(), None))
 
   val workflowWithResultsString = workflowWithResults.toJson.compactPrint
-
-  val workflowWithSavedResults = WorkflowWithSavedResults(
-    Workflow.Id.randomId,
-    correctVersionMeta,
-    DirectedGraph(),
-    ThirdPartyData("{}"),
-    ExecutionReportWithId(
-      ExecutionReportWithId.Id.randomId,
-      ExecutionReport(
-        Map(),
-        EntitiesMap(), None)))
-
-  val workflowWithSavedResultsString = workflowWithSavedResults.toJson.prettyPrint
 }

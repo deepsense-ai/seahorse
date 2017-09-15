@@ -62,10 +62,6 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
     } text
       "output directory path; directory will be created if it does not exists"
 
-    opt[Unit]('u', "upload-report") action {
-      (_, c) => c.copy(uploadReport = true)
-    } text "upload execution report to Seahorse Editor"
-
     note("")
     note("Miscellaneous:")
     opt[String]('r', "report-level") valueName "LEVEL" action {
@@ -108,8 +104,8 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
       val nonInteractiveRequirements: Requirements = Seq(
         (config.workflowFilename.isEmpty && config.workflowId.isEmpty,
           "one of --workflow-filename or --download-workflow is required in noninteractive mode"),
-        (config.outputDirectoryPath.isEmpty && !config.uploadReport,
-          "one of --output-directory or --upload-report is required in noninteractive mode"))
+        (config.outputDirectoryPath.isEmpty,
+          "--output-directory is required in noninteractive mode"))
 
       val commonRequirements: Requirements = Seq(
         (config.pyExecutorPath.isEmpty,
