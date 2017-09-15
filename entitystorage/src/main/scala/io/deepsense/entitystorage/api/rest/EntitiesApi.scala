@@ -8,8 +8,9 @@ import scala.concurrent.ExecutionContext
 
 import com.google.inject.Inject
 import com.google.inject.name.Named
+import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
-import spray.http.StatusCodes
+import spray.http._
 import spray.routing.{ExceptionHandler, PathMatchers, Route}
 import spray.util.LoggingContext
 
@@ -19,15 +20,17 @@ import io.deepsense.commons.json.ExceptionsJsonProtocol
 import io.deepsense.commons.rest.{RestApi, RestComponent}
 import io.deepsense.entitystorage.exceptions.EntityNotFoundException
 import io.deepsense.entitystorage.json.EntityJsonProtocol
-import io.deepsense.entitystorage.services.EntityService
-import io.deepsense.models.entities.{Entity, UpdateEntityRequest}
+import io.deepsense.entitystorage.services.{EntityService, FileUploadService}
+import io.deepsense.models.entities._
 
 class EntitiesApi @Inject() (
     val tokenTranslator: TokenTranslator,
     entityService: EntityService,
+    fileUploadService: FileUploadService,
     authorizatorProvider: AuthorizatorProvider,
     @Named("entities.api.prefix") apiPrefix: String,
     @Named("roles.entities.get") roleGet: String,
+    @Named("roles.entities.create") roleCreate: String,
     @Named("roles.entities.update") roleUpdate: String,
     @Named("roles.entities.delete") roleDelete: String)
     (implicit ec: ExecutionContext)
@@ -79,6 +82,23 @@ class EntitiesApi @Inject() (
                   entityService.deleteEntity(userContext.tenantId, entityId).map( _ => "")
                 }
               )
+            }
+          }
+        } ~
+        path("upload") {
+          put {
+            withUserContext { userContext =>
+              handleWith { data: MultipartFormData =>
+                authorizatorProvider.forContext(userContext).withRole(roleCreate) { userContext =>
+
+                  val part = data.fields.filter(_.name.get.equals("file")).head
+
+                  fileUploadService.uploadFile(userContext.tenantId,
+                    part.filename.get, IOUtils.toInputStream(part.entity.asString)) map {
+                    entityId => Map("id" -> entityId)
+                  }
+                }
+              }
             }
           }
         } ~

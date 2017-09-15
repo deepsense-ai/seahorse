@@ -11,7 +11,7 @@ import org.mockito.Mockito._
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 import org.scalatest.Matchers
-import spray.http.StatusCodes
+import spray.http._
 import spray.json.DefaultJsonProtocol
 import spray.routing._
 
@@ -20,8 +20,7 @@ import io.deepsense.commons.auth.{Authorizator, AuthorizatorProvider}
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.entitystorage.factories.EntityTestFactory
 import io.deepsense.entitystorage.json.EntityJsonProtocol
-import io.deepsense.entitystorage.models._
-import io.deepsense.entitystorage.services.EntityService
+import io.deepsense.entitystorage.services.{EntityService, FileUploadService}
 import io.deepsense.models.entities._
 
 class EntitiesApiSpec
@@ -47,6 +46,7 @@ class EntitiesApiSpec
   val notAddedEntityUpdate = UpdateEntityRequest(notAddedEntity)
 
   val entityService = createMockEntityService
+  val fileUploadService = createMockFileUploadService
 
   "GET /entities" should {
     "return entities" in {
@@ -118,6 +118,20 @@ class EntitiesApiSpec
     }
   }
 
+  "PUT /upload" should {
+    "upload file to HDFS and return Status OK" in {
+      Put(s"/$apiPrefix/upload", MultipartFormData(Seq(
+        BodyPart(FormFile("file name",
+          HttpEntity("file content").asInstanceOf[HttpEntity.NonEmpty]), "file"))
+      )) ~>
+        addHeader("X-Auth-Token", correctTenantA) ~> testRoute ~> check {
+        status should be(StatusCodes.OK)
+        verify(fileUploadService).uploadFile(any(), any(), any())
+      }
+      ()
+    }
+  }
+
   protected def testRoute = {
     val tokenTranslator = mock[TokenTranslator]
     when(tokenTranslator.translate(any(classOf[String])))
@@ -139,6 +153,7 @@ class EntitiesApiSpec
     val entityService = mock[EntityService]
     when(entityService.getAllSaved(anyString())).thenReturn(Future.successful(entities.map(_.info)))
     when(entityService.deleteEntity(any(), any())).thenReturn(Future.successful(()))
+    when(entityService.createEntity(any())).thenReturn(Future.successful(Entity.Id.randomId))
     when(entityService.updateEntity(any(), any(), any())).thenAnswer(
       new Answer[Future[Option[EntityWithReport]]] {
         override def answer(
@@ -160,11 +175,19 @@ class EntitiesApiSpec
     entityService
   }
 
+  private def createMockFileUploadService: FileUploadService = {
+    val fileUploadService = mock[FileUploadService]
+    when(fileUploadService.uploadFile(any(), any(), any()))
+      .thenReturn(Future.successful(Entity.Id.randomId))
+    fileUploadService
+  }
+
   private def createRestComponent(tokenTranslator: TokenTranslator): Route = new EntitiesApi(
-    tokenTranslator,
-    entityService,
-    new AllAllowedAuthorizationProvider(),
-    apiPrefix, "role1", "role2", "role3").route
+      tokenTranslator,
+      entityService,
+      fileUploadService,
+      new AllAllowedAuthorizationProvider(),
+      apiPrefix, "role1", "role2", "role3", "role4").route
 
   private class AllAllowedAuthorizationProvider extends AuthorizatorProvider {
     override def forContext(userContext: Future[UserContext]): Authorizator = {
