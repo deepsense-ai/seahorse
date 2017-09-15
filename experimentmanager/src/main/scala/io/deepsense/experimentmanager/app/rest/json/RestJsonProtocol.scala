@@ -11,6 +11,7 @@ import java.util.UUID
 import spray.httpx.SprayJsonSupport
 import spray.json._
 
+import io.deepsense.deeplang.catalogs.doperable.{ClassDescriptor, TraitDescriptor, HierarchyDescriptor}
 import io.deepsense.experimentmanager.app.exceptions.ExceptionDetails
 import io.deepsense.experimentmanager.app.models.Graph.Node
 import io.deepsense.experimentmanager.app.models.{Experiment, Graph, Id, InputExperiment}
@@ -20,7 +21,7 @@ import io.deepsense.experimentmanager.app.rest.actions.{AbortAction, Action, Lau
 /**
  * Defines how models are serialized to JSON and deserialized from it.
  */
-object RestJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
+object RestJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport with NullOptions {
 
   implicit object IdFormat extends RootJsonFormat[Id] {
     override def write(obj: Id) = JsString(obj.value.toString)
@@ -33,10 +34,13 @@ object RestJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
 
   implicit val graphFormat = jsonFormat0(Graph.apply)
   implicit val experimentFormat = jsonFormat5(Experiment.apply)
-  implicit val inputExperimentFormat = jsonFormat3(InputExperiment.apply)
+  implicit val inputExperimentFormat = jsonFormat3(InputExperiment)
   implicit val nodeFormat = jsonFormat1(Node.apply)
-  implicit val launchActionFormat = jsonFormat1(LaunchAction.apply)
-  implicit val abortActionFormat = jsonFormat1(AbortAction.apply)
+  implicit val launchActionFormat = jsonFormat1(LaunchAction)
+  implicit val abortActionFormat = jsonFormat1(AbortAction)
+  implicit val traitDescriptorFormat = jsonFormat2(TraitDescriptor)
+  implicit val classDescriptorFormat = jsonFormat3(ClassDescriptor)
+  implicit val hierarchyDescriptorFormat = jsonFormat2(HierarchyDescriptor)
 
   implicit object ActionJsonFormat extends RootJsonReader[Action] {
     val abortName = "abort"

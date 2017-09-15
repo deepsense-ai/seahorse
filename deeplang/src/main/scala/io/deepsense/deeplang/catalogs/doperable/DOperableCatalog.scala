@@ -141,7 +141,15 @@ class DOperableCatalog {
   /** Returns descriptor that describes currently registered hierarchy. */
   def descriptor: HierarchyDescriptor = {
     val (traits, classes) = nodes.values.partition(_.isTrait)
-    HierarchyDescriptor(traits.map(_.descriptor), classes.map(_.descriptor))
+    HierarchyDescriptor(
+      traits.map(t => {
+        val traitDescriptor = t.descriptor.asInstanceOf[TraitDescriptor]
+        traitDescriptor.name -> traitDescriptor
+      }).toMap,
+      classes.map(c => {
+        val classDescriptor = c.descriptor.asInstanceOf[ClassDescriptor]
+        classDescriptor.name -> classDescriptor
+      }).toMap)
   }
 }
 

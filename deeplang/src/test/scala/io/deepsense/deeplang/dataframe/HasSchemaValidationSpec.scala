@@ -9,7 +9,7 @@ package io.deepsense.deeplang.dataframe
 import io.deepsense.deeplang.UnitSpec
 import org.apache.spark.sql.types._
 
-class HasSchemaValidationTest extends UnitSpec {
+class HasSchemaValidationSpec extends UnitSpec {
 
   class Validator extends HasSchemaValidation
 
