@@ -7,13 +7,13 @@
 'use strict';
 
 /*@ngInject*/
-function AttributeSelectorType() {
+function AttributeSelectorType($timeout) {
   return {
     restrict: 'E',
     templateUrl: 'attribute-types/attribute-column-selector/attribute-selector-type.html',
     replace: true,
     scope: true,
-    link: function(scope) {
+    link: function(scope, element) {
       let selectorIsSingle = () => scope.parameter.schema.isSingle;
       let selectorItemFactory = scope.parameter.factoryItem;
       let types = selectorIsSingle() ?
@@ -41,6 +41,13 @@ function AttributeSelectorType() {
           let isSingle = this.selectorIsSingle();
           return !isSingle || (isSingle && this.parameter.items.length !== 1);
         }
+      });
+
+      // should init with initial correct value
+      scope.$applyAsync(() => {
+        $timeout(() => {
+          jQuery('[data-action="excluding"]', element).click();
+        });
       });
     }
   };
