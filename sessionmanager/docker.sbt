@@ -13,7 +13,7 @@ pythonAndRDeps := {
   Seq("sessionmanager/prepare-deps.sh", weSparkVersion).!!
   target.value / "we-deps.zip"
 }
-pythonAndRDeps <<= pythonAndRDeps dependsOn weJar
+pythonAndRDeps := (pythonAndRDeps dependsOn weJar.toTask).value
 
 dockerBaseImage :=
   s"docker-repo.deepsense.codilime.com/deepsense_io/deepsense-mesos-spark:${SbtGit.GitKeys.gitHeadCommit.value.get}"

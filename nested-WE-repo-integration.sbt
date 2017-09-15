@@ -8,6 +8,6 @@ cleanWe := {
   shell :+ "cd seahorse-workflow-executor; sbt clean" !
 }
 
-clean <<= clean dependsOn cleanWe
+clean := (clean dependsOn cleanWe.toTask).value
 
 // scalastyle:on

@@ -36,6 +36,6 @@ object DeepsenseUniversalSettingsPlugin extends AutoPlugin {
     },
     mappings in Universal += gitVersionFile.value -> "build-info.txt"
   ) ++ Seq(
-    publish <<= publish dependsOn (packageBin in Universal)
+    publish := (publish dependsOn (packageBin in Universal)).value
   ) ++ SettingsHelper.makeDeploymentSettings(Universal, packageBin in Universal, "zip")
 }

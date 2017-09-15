@@ -35,7 +35,7 @@ object CommonSettingsPlugin extends AutoPlugin {
     unmanagedResourceDirectories in Runtime += globalResources,
     unmanagedResourceDirectories in Test += globalResources
   ) ++ ouritSettings ++ testSettings ++ Seq(
-    test <<= test in Test
+    test := (test in Test).value
   )
 
   lazy val ouritSettings = inConfig(OurIT)(Defaults.testSettings) ++ inConfig(OurIT) {
