@@ -78,7 +78,7 @@ class ParamsSpec extends UnitSpec {
           p.param1.name -> JsNull,
           p.param2.name -> 6.toJson
         ))
-        p.get1 shouldBe 4
+        p.get1 shouldBe defaultForParam1
         p.get2 shouldBe 6
       }
     }

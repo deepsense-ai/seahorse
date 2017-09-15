@@ -53,8 +53,8 @@ trait Params extends Serializable with HasInferenceResult {
   }
 
   /**
-   * Sequence of paramPairs for this class parsed from Json.
-   * If name of parameter is unknown, exception will be thrown.
+   * Sequence of paramPairs for this class, parsed from Json.
+   * If a name of a parameter is unknown, an exception will be thrown.
    * JsNull is treated as empty object.
    * JsNull as value of parameter is ignored.
    */
@@ -66,23 +66,45 @@ trait Params extends Serializable with HasInferenceResult {
           case (Some(parameter), _) => Some(ParamPair(
             parameter.asInstanceOf[Param[Any]],
             parameter.valueFromJson(value)))
-          case (None, _) => throw new DeserializationException(
-            s"Cannot fill parameters schema with $jsValue: unknown parameter label $label.")
+          case (None, _) => throw unknownParamLabelException(jsValue, label)
         }
       }
       pairs.flatten.toSeq
     case JsNull => Seq.empty
-    case _ => throw new DeserializationException(s"Cannot fill parameters schema with $jsValue:" +
-      s"object expected.")
+    case _ => throw objectExpectedException(jsValue)
+  }
+
+  /**
+   * Sequence of params without values for this class, parsed from Json.
+   * If a name of a parameter is unknown, an exception will be thrown.
+   * JsNull is treated as empty object.
+   * JsNull as a value of a parameter unsets param's value.
+   */
+  def noValueParamsFromJson(jsValue: JsValue): Seq[Param[_]] = jsValue match {
+    case JsObject(map) =>
+      val pairs = for ((label, value) <- map) yield {
+        (paramsByName.get(label), value) match {
+          case (p @ Some(parameter), JsNull) => p
+          case (Some(parameter), _) => None
+          case (None, _) => throw unknownParamLabelException(jsValue, label)
+        }
+      }
+      pairs.flatten.toSeq
+    case JsNull => Seq.empty
+    case _ => throw objectExpectedException(jsValue)
   }
 
   /**
    * Sets param values based on provided json.
-   * If name of parameter is unknown, exception will be thrown.
+   * If a name of a parameter is unknown, an exception will be thrown.
    * JsNull is treated as empty object.
-   * JsNull as value of parameter is ignored.
+   * JsNull as a value of a parameter unsets param's value.
    */
-  def setParamsFromJson(jsValue: JsValue): this.type = set(paramPairsFromJson(jsValue): _*)
+  def setParamsFromJson(jsValue: JsValue): this.type = {
+    set(paramPairsFromJson(jsValue): _*)
+    noValueParamsFromJson(jsValue).foreach(clear)
+    this
+  }
 
   val params: Array[Param[_]]
 
@@ -242,6 +264,17 @@ trait Params extends Serializable with HasInferenceResult {
       values = paramValuesToJson
     ))
   }
+
+  private def objectExpectedException(jsValue: JsValue): DeserializationException =
+    new DeserializationException(s"Cannot fill parameters schema with $jsValue object expected.")
+
+  private def unknownParamLabelException(
+      jsValue: JsValue,
+      label: String): DeserializationException = {
+    new DeserializationException(
+      s"Cannot fill parameters schema with $jsValue: unknown parameter label $label.")
+  }
+
 
   private val paramMap: ParamMap = ParamMap.empty
 
