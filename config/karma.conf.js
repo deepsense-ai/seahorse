@@ -1,45 +1,72 @@
 'use strict';
 
-// Don't use it, no need to know...
+module.exports = function (config) {
+  const params = {
+    basePath: '..',
 
-module.exports = function(config) {
-  var settings = require('../config.json');
-  var params = {
-      basePath: '..',
+    files: [
+      './node_modules/angular/angular.js',
+      './node_modules/angular-mocks/angular-mocks.js',
+      './node_modules/lodash/lodash.min.js',
+      './client/app/**/*.spec.js'
+    ],
 
-      files: [
-        '../node_modules/angular/angular.js',
-        '../node_modules/angular-ui-router/release/angular-ui-router.js',
-        '../node_modules/angular-ui-bootstrap/dist/ui-bootstrap.js',
-        '../node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js',
-        '../node_modules/angular-mocks/angular-mocks.js',
-        '../node_modules/lodash/lodash.min.js',
-        '../node_modules/angular-toastr/dist/angular-toastr.tpls.min.js',
-        '../node_modules/stompjs/lib/stomp.js',
-        '../node_modules/sockjs-client/lib/bundle.js',
-        settings.files.tests.client
-      ],
+    autoWatch: true,
 
-      autoWatch: true,
-      singleRun: false,
+    singleRun: true,
 
-      frameworks: ['jasmine'],
+    frameworks: ['jasmine'],
 
-      browsers: ['PhantomJS'],
+    browsers: ['PhantomJS'],
 
-      plugins: [
-        'karma-chrome-launcher',
-        'karma-jasmine',
-        'karma-phantomjs-launcher'
-      ],
+    plugins: [
+      'karma-webpack',
+      'karma-chrome-launcher',
+      'karma-jasmine',
+      'karma-phantomjs-launcher'
+    ],
 
-      preprocessors: {},
+    // preprocess matching files before serving them to the browser
+    // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
+    preprocessors: {
+      'client/**/*.spec.js': ['webpack']
+    },
 
-      junitReporter : {
-        outputFile: 'test_out/unit.xml',
-        suite: 'unit'
-      }
-    };
+    junitReporter: {
+      outputFile: 'test_out/unit.xml',
+      suite: 'unit'
+    },
+
+    webpack: {
+      module: {
+        loaders: [
+          {
+            test: /.json$/,
+            loaders: [
+              'json'
+            ]
+          },
+          {
+            test: /\.js$/,
+            exclude: /node_modules/,
+            loaders: [
+              'ng-annotate',
+              'babel-loader'
+            ]
+          },
+          {
+            test: /.html$/,
+            loaders: [
+              'html'
+            ]
+          },
+        ]
+      },
+      plugins: [],
+      debug: true,
+      devtool: 'cheap-source-map'
+    }
+  };
 
   config.set(params);
 };

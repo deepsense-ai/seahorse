@@ -21,8 +21,8 @@
     "serve": "cross-env NODE_ENV=development webpack-dev-server --progress --port 3000",
     "serve:dist": "cross-env NODE_ENV=production webpack-dev-server --progress --port 3000",
     "start": "cross-env NODE_ENV=development webpack-dev-server --progress --port 3000",
-    "test": "karma start ./config/karma-dummy.conf.js",
-    "test:watch": "karma start --autoWatch=true --singleRun=false ./config/karma-dummy.conf.js"
+    "test": "karma start ./config/karma.conf.js",
+    "test:watch": "karma start --autoWatch=true --singleRun=false ./config/karma.conf.js"
   },
   "dependencies": {
     "ace-webapp": "~0.2.0",
