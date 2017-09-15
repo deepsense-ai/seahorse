@@ -4,30 +4,30 @@
 
 package io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.clusters
 
-import org.apache.spark.launcher.SparkLauncher
 import org.scalatest.mock.MockitoSugar
-import org.mockito.Mockito._
 import org.scalatest.{FunSuite, Matchers}
 
-import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.clusters.SeahorseSparkLauncher.RichSparkLauncher
-
+import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.spark.SparkArgumentParser._
 
 class SeahorseSparkLauncherSpec extends FunSuite with Matchers  with MockitoSugar {
-  test("Merging Configuration Option - no merging needed") {
-    val sparkMock = mock[SparkLauncher]
-    val richSparkLauncher = new RichSparkLauncher(sparkMock)
-    richSparkLauncher.mergeConfOption("key", "value",
-      Map[String, String]("--conf" -> "otherKey=5", "--con" -> "value=otherValue"))
-
-    verify(sparkMock, times(1)).setConf("key", "value")
+  test("Merging Configuration Option") {
+    testCases.foreach { testCase =>
+      val output = testCase.inputArgs.updateConfOptions(testCase.inputKey, testCase.inputValue)
+      output shouldBe testCase.output
+    }
   }
-  test("Merging Configuration Option - merging needed") {
-    val sparkMock = mock[SparkLauncher]
-    val richSparkLauncher = new RichSparkLauncher(sparkMock)
-    richSparkLauncher.mergeConfOption("key", "value",
-      Map[String, String]("--conf" -> "key=valueOther"))
 
-    verify(sparkMock, times(1)).setConf("key", "valueOther,value")
-  }
+  val testCases = Seq(
+    TestCase("key", "value", Map("--conf" -> Set("otherKey=5"), "--con" -> Set("value=otherValue")),
+      Map("--conf" -> Set("otherKey=5", "key=value"), "--con" -> Set("value=otherValue"))),
+    TestCase("key", "value", Map(("--conf" -> Set("key=valueOther", "key2=value2"))),
+      Map("--conf" -> Set("key=valueOther,value", "key2=value2")))
+  )
+
+  case class TestCase(
+    inputKey: String,
+    inputValue: String,
+    inputArgs: Map[String, Set[String]],
+    output: Map[String, Set[String]])
 
 }

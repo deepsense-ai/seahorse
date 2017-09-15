@@ -13,7 +13,7 @@ import org.scalatest.time.{Second, Seconds, Span}
 
 import io.deepsense.commons.StandardSpec
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.clusters.SeahorseSparkLauncher
-import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.spark.SparkAgumentParser.UnknownOption
+import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.spark.SparkArgumentParser.UnknownOption
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.{SparkLauncherConfig, SparkLauncherError}
 
 class SparkLauncherErrorHandlingTest extends StandardSpec with Futures with Inside {

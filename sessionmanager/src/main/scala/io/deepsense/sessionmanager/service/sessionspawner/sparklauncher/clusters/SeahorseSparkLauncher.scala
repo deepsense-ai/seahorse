@@ -6,38 +6,44 @@ package io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.cluster
 
 import scala.collection._
 import scalaz.Scalaz._
-import scalaz._
+import scalaz.{Failure, Success, Validation}
+import scalaz.Validation.FlatMap._
 
 import org.apache.spark.launcher.SparkLauncher
 
 import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.sessionmanager.service.sessionspawner._
+import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.spark.SparkArgumentParser
+import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.spark.SparkArgumentParser._
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.{SparkLauncherConfig, SparkLauncherError, UnexpectedException}
 
 object SeahorseSparkLauncher {
 
-  def apply(
-      sessionConfig: SessionConfig,
-      sparkLauncherConfig: SparkLauncherConfig,
-      clusterConfig: ClusterDetails) = handleUnexpectedExceptions {
-      for {
-        sparkLauncher <- clusterConfig.clusterType match {
-          case ClusterType.local =>
-            LocalSparkLauncher(sessionConfig, sparkLauncherConfig, clusterConfig)
-          case ClusterType.standalone =>
-            StandaloneSparkLauncher(sessionConfig, sparkLauncherConfig, clusterConfig)
-          case ClusterType.yarn =>
-            YarnSparkLauncher(sessionConfig, sparkLauncherConfig, clusterConfig)
-          case ClusterType.mesos =>
-            MesosSparkLauncher(sessionConfig, sparkLauncherConfig, clusterConfig)
-        }
-      } yield sparkLauncher
-        .setConfOpt("spark.executor.memory", clusterConfig.executorMemory)
+  def apply(sessionConfig: SessionConfig,
+            sparkLauncherConfig: SparkLauncherConfig,
+            clusterConfig: ClusterDetails) = handleUnexpectedExceptions {
+
+    for {
+      basicArgs <- SparkArgumentParser.parse(clusterConfig.params)
+    } yield {
+      val args = basicArgs.updateConfOptions(
+        "spark.driver.extraJavaOptions", "-Dfile.encoding=UTF8", delimiter = " ")
+      val sparkLauncher = clusterConfig.clusterType match {
+        case ClusterType.local =>
+          LocalSparkLauncher(sessionConfig, sparkLauncherConfig, clusterConfig, args)
+        case ClusterType.standalone =>
+          StandaloneSparkLauncher(sessionConfig, sparkLauncherConfig, clusterConfig, args)
+        case ClusterType.yarn =>
+          YarnSparkLauncher(sessionConfig, sparkLauncherConfig, clusterConfig, args)
+        case ClusterType.mesos =>
+          MesosSparkLauncher(sessionConfig, sparkLauncherConfig, clusterConfig, args)
+      }
+      sparkLauncher.setConfOpt("spark.executor.memory", clusterConfig.executorMemory)
         .setConfOpt("spark.driver.memory", clusterConfig.driverMemory)
         .setConfOpt("spark.executor.cores", clusterConfig.executorCores.map(_.toString))
         .setConfOpt("spark.cores.max", clusterConfig.totalExecutorCores.map(_.toString))
         .setConfOpt("spark.executor.instances", clusterConfig.numExecutors.map(_.toString))
-        .setConf("spark.driver.extraJavaOptions", "-Dfile.encoding=UTF8")
+    }
   }
 
   private def handleUnexpectedExceptions[T, E <: SparkLauncherError](code: => Validation[E, T]) =
@@ -55,28 +61,7 @@ object SeahorseSparkLauncher {
       }
     }
 
-    def mergeConfOption(key: String,
-                        value: String,
-                        args: Map[String, String],
-                        delimiter: String = ","): SparkLauncher = {
-
-      val selectedConfOption = args.filter {
-        case(k, v) => (("--conf" == k) && (v != null))
-      }.values.collect {
-        case v if v.split("=", 2)(0) == key => v.split("=", 2)(1)
-      }
-
-      selectedConfOption match {
-        case Nil => self.setConf(key, value)
-        case head::rest => selectedConfOption.foldLeft(self) {
-          case (akk, head) =>
-            akk.setConf(key, s"$head$delimiter$value")
-        }
-      }
-
-    }
-
-    def setSparkArgs(args: Map[String, String]): SparkLauncher =
+    def setSparkArgs(args: SparkArgumentParser.SparkOptionsMultiMap): SparkLauncher =
       args.filterKeys(key =>
         !disabledKeys.contains(key)
       ).foldLeft(self) { (sparkLauncher, keyValue) =>
@@ -85,7 +70,9 @@ object SeahorseSparkLauncher {
         if (isNoValueArgument) {
           sparkLauncher.addSparkArg(key)
         } else {
-          sparkLauncher.addSparkArg(key, value)
+          value.foldLeft(sparkLauncher) { case (sparkLauncher, v) =>
+            sparkLauncher.addSparkArg(key, v)
+          }
         }
       }
 

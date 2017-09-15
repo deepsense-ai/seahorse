@@ -13,19 +13,17 @@ import io.deepsense.sessionmanager.service.sessionspawner.SessionConfig
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.SparkLauncherConfig
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.clusters.SeahorseSparkLauncher.RichSparkLauncher
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.executor.{CommonEnv, SessionExecutorArgs}
-import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.spark.SparkAgumentParser
-import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.spark.SparkAgumentParser.UnknownOption
+import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.spark.SparkArgumentParser.{SparkOptionsMultiMap, UnknownOption}
 
 private [clusters] object MesosSparkLauncher {
   import scala.collection.JavaConversions._
 
-  def apply(
-      sessionConfig: SessionConfig,
-      config: SparkLauncherConfig,
-      clusterConfig: ClusterDetails): Validation[UnknownOption, SparkLauncher] = for {
-    args <- SparkAgumentParser.parseAsMap(clusterConfig.params)
-  } yield new SparkLauncher(env(config, clusterConfig))
-      .setSparkArgs(args.toMap)
+  def apply(sessionConfig: SessionConfig,
+            config: SparkLauncherConfig,
+            clusterConfig: ClusterDetails,
+            args: SparkOptionsMultiMap): SparkLauncher = {
+    new SparkLauncher(env(config, clusterConfig))
+      .setSparkArgs(args)
       .setVerbose(true)
       .setMainClass(config.className)
       .setMaster(clusterConfig.uri)
@@ -38,6 +36,7 @@ private [clusters] object MesosSparkLauncher {
       .setConf("spark.executor.uri",
         "http://d3kbcqa49mib13.cloudfront.net/spark-2.0.0-bin-hadoop2.7.tgz")
       .setConf("spark.driver.extraClassPath", config.weJarPath)
+  }
 
   private def env(
       config: SparkLauncherConfig,
