@@ -9,6 +9,7 @@
   "evil": false,
   "forin": false,
   "globals": {
+    "angular": true
   },
   "globalstrict": false,
   "jasmine": true,

@@ -14,7 +14,7 @@ describe('Account test', function() {
   });
 
   describe('dataset list', function() {
-    var scope, ctrl;
+    var ctrl;
     beforeEach(function() {
       angular.mock.inject(function($controller, $rootScope) {
         ctrl = $controller('Account');
