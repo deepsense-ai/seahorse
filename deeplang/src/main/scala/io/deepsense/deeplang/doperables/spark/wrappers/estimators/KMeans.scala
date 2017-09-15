@@ -30,19 +30,13 @@ import io.deepsense.deeplang.params.wrappers.spark.{ChoiceParamWrapper, IntParam
 class KMeans
   extends SparkEstimatorWrapper[SparkKMeansModel, SparkKMeans, KMeansModel]
   with PredictorParams
+  with HasNumberOfClustersParam
   with HasMaxIterationsParam
   with HasSeedParam
   with HasTolerance {
 
   override lazy val maxIterationsDefault = 20.0
   override lazy val toleranceDefault = 1E-4
-
-  val k = new IntParamWrapper[SparkKMeans](
-    "k",
-    "The number of clusters to create.",
-    _.k,
-    validator = RangeValidator(begin = 2.0, end = Int.MaxValue, step = Some(1.0)))
-  setDefault(k, 2.0)
 
   val initMode = new ChoiceParamWrapper[SparkKMeans, KMeansInitMode](
     "init mode",

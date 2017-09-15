@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2016, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,20 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.params.common
 
-import scala.language.reflectiveCalls
+import org.apache.spark.ml
 
 import io.deepsense.deeplang.params.Params
+import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
+import io.deepsense.deeplang.params.wrappers.spark.SingleColumnSelectorParamWrapper
 
-trait PredictorParams
-  extends Params
-  with HasFeaturesColumn
-  with HasPredictionColumnCreatorParam
+trait HasFeaturesColumn extends Params {
+
+  val featuresColumn =
+    new SingleColumnSelectorParamWrapper[
+      ml.param.Params { val featuresCol: ml.param.Param[String] }](
+      name = "features column",
+      description = "The features column for model fitting.",
+      sparkParamGetter = _.featuresCol,
+      portIndex = 0)
+  setDefault(featuresColumn, NameSingleColumnSelection("features"))
+}

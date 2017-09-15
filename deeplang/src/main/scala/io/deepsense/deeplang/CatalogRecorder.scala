@@ -62,6 +62,8 @@ object CatalogRecorder {
     catalog.registerDOperable[ALSModel]()
     catalog.registerDOperable[KMeans]()
     catalog.registerDOperable[KMeansModel]()
+    catalog.registerDOperable[LDA]()
+    catalog.registerDOperable[LDAModel]()
     catalog.registerDOperable[GBTRegressor]()
     catalog.registerDOperable[GBTRegressionModel]()
     catalog.registerDOperable[IsotonicRegression]()
@@ -275,6 +277,9 @@ object CatalogRecorder {
       DOperationCategories.ML.Classification)
 
     catalog.registerDOperation[CreateKMeans](
+      DOperationCategories.ML.Clustering)
+
+    catalog.registerDOperation[CreateLDA](
       DOperationCategories.ML.Clustering)
 
     catalog.registerDOperation[ChiSqSelector](

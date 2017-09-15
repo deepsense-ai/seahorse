@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2016, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,18 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.params.common
 
-import scala.language.reflectiveCalls
+import org.apache.spark.ml
 
 import io.deepsense.deeplang.params.Params
+import io.deepsense.deeplang.params.validators.RangeValidator
+import io.deepsense.deeplang.params.wrappers.spark.IntParamWrapper
 
-trait PredictorParams
-  extends Params
-  with HasFeaturesColumn
-  with HasPredictionColumnCreatorParam
+trait HasNumberOfClustersParam extends Params {
+
+  val k = new IntParamWrapper[ml.param.Params { val k: ml.param.IntParam }](
+    "k",
+    "The number of clusters to create.",
+    _.k,
+    validator = RangeValidator(begin = 2.0, end = Int.MaxValue, step = Some(1.0)))
+  setDefault(k, 2.0)
+}

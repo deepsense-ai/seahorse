@@ -33,7 +33,8 @@ class ALS
   with HasUserColumnParam
   with HasMaxIterationsParam
   with HasSeedParam
-  with HasRegularizationParam {
+  with HasRegularizationParam
+  with HasCheckpointInterval {
 
   val alpha = new DoubleParamWrapper[SparkALS](
     name = "alpha",
@@ -41,13 +42,6 @@ class ALS
     sparkParamGetter = _.alpha,
     validator = RangeValidator(0.0, Double.PositiveInfinity))
   setDefault(alpha, 1.0)
-
-  val checkpointInterval = new IntParamWrapper[SparkALS](
-    name = "checkpoint interval",
-    description = "The checkpoint interval.",
-    sparkParamGetter = _.checkpointInterval,
-    validator = RangeValidator(begin = 1.0, end = Int.MaxValue, step = Some(1.0)))
-  setDefault(checkpointInterval, 10.0)
 
   val implicitPrefs = new BooleanParamWrapper[SparkALS](
     name = "implicit prefs",

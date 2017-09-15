@@ -32,6 +32,7 @@ class RandomForestRegression
   with PredictorParams
   with HasLabelColumnParam
   with HasSeedParam
+  with HasCheckpointInterval
   with Logging {
 
   val maxDepth = new IntParamWrapper[SparkRFR](
@@ -75,13 +76,6 @@ class RandomForestRegression
     description = "The caching nodes IDs. Can speed up training of deeper trees.",
     sparkParamGetter = _.cacheNodeIds)
   setDefault(cacheNodeIds, false)
-
-  val checkpointInterval = new IntParamWrapper[SparkRFR](
-    name = "checkpoint interval",
-    description = "Specifies how often to checkpoint the cached node IDs in intervals.",
-    sparkParamGetter = _.checkpointInterval,
-    validator = RangeValidator(begin = 1.0, end = Int.MaxValue, step = Some(1.0)))
-  setDefault(checkpointInterval, 10.0)
 
   val impurity = new ChoiceParamWrapper[SparkRFR, Impurity.Criterion](
     name = "impurity",

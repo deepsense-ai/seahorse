@@ -63,7 +63,8 @@ This operation does not take any input.
 <tr>
 <td><code>checkpoint interval</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>The checkpoint interval.</td>
+<td>The checkpoint interval. E.g. 10 means that the cache will get checkpointed
+every 10 iterations.</td>
 </tr>
 
 <tr>

@@ -23,6 +23,7 @@ import io.deepsense.deeplang.UnitSpec
 import io.deepsense.deeplang.doperations.inout.InputStorageTypeChoice.File
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.params.ParameterType._
+import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
 import io.deepsense.deeplang.params.exceptions.ParamValueNotProvidedException
 
 class ParamsSpec extends UnitSpec {
@@ -229,6 +230,11 @@ class ParamsSpec extends UnitSpec {
   }
 
   "declareParams()" should {
+    "accept parameters" when {
+      "there are parameters with the same name in different choice options" in {
+        ParamsWithChoice()
+      }
+    }
     "throw IllegalArgumentException" when {
       import DeclareParamsFixtures._
       "some declared params are defined outside of class" in {
@@ -293,9 +299,44 @@ object ParamsSpec extends UnitSpec {
     setDefault(param1 -> defaultForParam1)
   }
 
-
   class WithParamsA extends WithParams
   class WithParamsB extends WithParams
+
+  case class ParamsWithChoice() extends Params {
+    val choiceParam = ChoiceParam[ChoiceWithRepeatedParameter](
+      name = "choice",
+      description = "choice")
+
+    def setChoice(v: ChoiceWithRepeatedParameter): this.type = set(choiceParam, v)
+
+    override val params = declareParams(choiceParam)
+  }
+
+  sealed trait ChoiceWithRepeatedParameter extends Choice {
+    override val choiceOrder: List[Class[_ <: ChoiceWithRepeatedParameter]] = List(
+      classOf[ChoiceOne],
+      classOf[ChoiceTwo])
+  }
+
+  case class ChoiceOne() extends ChoiceWithRepeatedParameter {
+    override val name = "one"
+
+    val numericParam = NumericParam(
+      name = "x",
+      description = "numericParam")
+
+    override val params = declareParams(numericParam)
+  }
+
+  case class ChoiceTwo() extends ChoiceWithRepeatedParameter {
+    override val name = "two"
+
+    val numericParam = NumericParam(
+      name = "x",
+      description = "numericParam")
+
+    override val params = declareParams(numericParam)
+  }
 
   object DeclareParamsFixtures {
     val outsideParam = MockParam("outside name")
