@@ -48,8 +48,7 @@ let ParameterFactory = {
         case 'choice':
         case 'multipleChoice':
           options.possibleChoicesList = {};
-          for (let j = 0; j < options.schema.values.length; ++j) {
-            let choiceObject = options.schema.values[j];
+          _.forEach(options.schema.values, (choiceObject) => {
             let choiceName = choiceObject.name;
             let choiceParamValues = (options.value || {})[choiceName] || {};
             let choiceParamSchema = choiceObject.schema;
@@ -58,20 +57,20 @@ let ParameterFactory = {
               choiceParamValues,
               choiceParamSchema
             );
-          }
+          });
 
           break;
         case 'multiplier':
           options.parametersLists = [];
           paramValue = paramValue || [];
-          for (let j = 0; i < paramValue.length; ++j) {
+          _.forEach(paramValue, (multiplier) => {
             let nestedParametersList = ParameterFactory.createParametersList(
-              paramValue[j],
+              multiplier,
               options.schema.values
             );
 
-            options.parametersLists.push(nestedParametersList);
-          }
+            options.parametersLists.push(nestedParametersList)
+          });
 
           break;
       }
