@@ -264,7 +264,9 @@ factory('Workflow', /*@ngInject*/function (GraphNode, Edge) {
             'predefColors': that.predefColors,
             'nodes': {}
           }
-        }
+        },
+        'metadata': that.metadata,
+        'variables': that.variables || {}
       };
 
       for (let id in internal.nodes) {
