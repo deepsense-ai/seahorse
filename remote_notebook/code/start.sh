@@ -19,6 +19,10 @@ case $key in
   WORKING_DIR="$2"
   shift # past argument
   ;;
+  --python-binary)
+  PYTHON_BINARY="$2"
+  shift # past argument
+  ;;
   -a|--additional-python-path)
   ADDITIONAL_PYTHON_PATH="$2"
   shift # past argument
@@ -57,6 +61,7 @@ done
 
 # Verifying if all required parameters are set
 if [ -z "$WORKING_DIR" ];  then echo "Parameter --working-dir is required"; exit -1; fi
+if [ -z "$PYTHON_BINARY" ]; then echo "Parameter --python-binary is required"; exit -1; fi
 if [ -z "$ADDITIONAL_PYTHON_PATH" ]; then echo "Parameter --additional-python-path is required"; exit -1; fi
 if [ -z "$GATEWAY_HOST" ]; then echo "Parameter --gateway-host is required"; exit -1; fi
 if [ -z "$GATEWAY_PORT" ]; then echo "Parameter --gateway-port is required"; exit -1; fi
@@ -72,15 +77,19 @@ cd $WORKING_DIR
 
 echo "INSTALLING DEPENDENCIES"
 
-export PATH=/opt/conda/bin:$PATH
+PYTHON_DIRECTORY=$(dirname $(dirname $PYTHON_BINARY))
+
+export PATH=$PYTHON_DIRECTORY/bin:$PATH
 export LOCAL_PATH=$(pwd)/local-packages
 pip install --root $LOCAL_PATH pika-0.10.0.tar.gz
 
-export PYTHONPATH="$LOCAL_PATH/opt/conda/lib/python2.7/site-packages/:$ADDITIONAL_PYTHON_PATH"
+export PYTHONPATH="$LOCAL_PATH/$PYTHON_DIRECTORY/lib/python2.7/site-packages/:$ADDITIONAL_PYTHON_PATH"
 echo "PYTHONPATH=$PYTHONPATH"
 
+sed -i s#PYTHON_BINARY#"$PYTHON_BINARY"# executing_kernel/kernel.json
+
 echo "start executing_kernel_manager"
-python executing_kernel/executing_kernel_manager.py \
+exec $PYTHON_BINARY executing_kernel/executing_kernel_manager.py \
   --gateway-host "$GATEWAY_HOST" \
   --gateway-port "$GATEWAY_PORT" \
   --mq-host "$MQ_HOST" \

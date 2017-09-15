@@ -58,7 +58,8 @@ class SparkLauncherSessionSpawner @Inject()(
     "-d", config.weDepsFileName,
     "--wm-username", config.wmUsername,
     "--wm-password", config.wmPassword,
-    "--user-id", userId
+    "--user-id", userId,
+    "--python-binary", config.pythonBinary
   )
 
   private class AppHandleListener extends SparkAppHandle.Listener {

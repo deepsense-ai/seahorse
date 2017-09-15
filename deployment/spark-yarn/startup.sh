@@ -2,6 +2,8 @@
 
 # Copyright (c) 2016, CodiLime Inc.
 
+echo 'export PATH="/opt/conda/bin:$PATH"' >> /usr/local/hadoop/etc/hadoop/hadoop-env.sh
+
 /etc/bootstrap.sh
 
 echo "spark.yarn.appMasterEnv.PYSPARK_PYTHON /opt/conda/bin/python" >> /usr/local/spark/conf/spark-defaults.conf
