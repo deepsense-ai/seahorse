@@ -6,8 +6,8 @@
 /* @ngInject */
 function ExperimentController(
   experiment,
-  $http, $modal, $timeout, $scope, $stateParams,
-  PageService, Operations, GraphPanelRendererService, ExperimentService, ExperimentAPIClient, UUIDGenerator, OperationsHierarchyService
+  $http, $modal, $timeout, $scope,
+  PageService, Operations, GraphPanelRendererService, ExperimentService, ExperimentAPIClient, UUIDGenerator, MouseEvent
 ) {
   const RUN_STATE_CHECK_INTERVAL = 2000;
 
@@ -190,17 +190,10 @@ function ExperimentController(
   });
 
   $scope.$on('FlowChartBox.ELEMENT_DROPPED', function elementDropped(event, args) {
+    let dropElementOffset = MouseEvent.getEventOffsetOfElement(args.dropEvent, args.target[0]);
     let operation = Operations.get(args.classId);
-    let offsetX = args.dropEvent.offsetX;
-    let offsetY = args.dropEvent.offsetY;
-
-    // TODO create transparent container in order to cover right offset. Becuase dropping now above node causing error
-    // FireFox bug
-    if (!offsetX && !offsetY) {
-      offsetX = args.dropEvent.layerX - args.dropEvent.currentTarget.offsetLeft;
-      offsetY = args.dropEvent.layerY - args.dropEvent.currentTarget.offsetTop;
-    }
-
+    let offsetX = dropElementOffset.x;
+    let offsetY = dropElementOffset.y;
     let positionX = offsetX || 0;
     let positionY = offsetY || 0;
     let elementOffsetX = 100;

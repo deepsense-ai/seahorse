@@ -116,7 +116,7 @@ function GraphPanelRendererService($rootScope, $document) {
     };
   };
 
-  that.setZoom = function setZoom (zoom, transformOrigin) {
+  that.setZoom = function setZoom (zoom, transformOrigin, translate) {
     transformOrigin = transformOrigin || [ 0.5, 0.5 ];
 
     var instance = jsPlumb;
@@ -126,16 +126,21 @@ function GraphPanelRendererService($rootScope, $document) {
       return false;
     }
 
-    var p = ['webkit', 'moz', 'ms', 'o'];
-    var s = 'scale(' + zoom + ')';
-    var oString = (transformOrigin[0] * 100) + '% ' + (transformOrigin[1] * 100) + '%';
+    var p = ['webkit', 'moz', 'ms', 'o'],
+      s = 'scale(' + zoom + ')',
+      oString = (transformOrigin[0]) + 'px ' + (transformOrigin[1]) + 'px',
+      tString = translate ?
+        'translate(' + translate.x + 'px, ' + translate.y + 'px' + ')' :
+        '';
+
+    console.log(tString);
 
     for (var i = 0; i < p.length; i++) {
-      el.style[p[i] + 'Transform'] = s;
       el.style[p[i] + 'TransformOrigin'] = oString;
+      el.style[p[i] + 'Transform'] = tString + s;
     }
 
-    el.style.transform = s;
+    el.style.transform = tString + s;
     el.style.transformOrigin = oString;
 
     instance.setZoom(zoom, true);

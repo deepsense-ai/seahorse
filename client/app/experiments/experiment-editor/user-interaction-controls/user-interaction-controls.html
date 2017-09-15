@@ -1,26 +1,4 @@
 <ul class="interaction-controls">
-  <ds-move  class-set="move"
-            icon="move"
-
-            related-to=".flowchart-paint-area"
-            width="5000"
-            height="5000"
-            top="0"
-            left="0">
-  </ds-move>
-  <ds-default-zoom
-            class-set="default-zoom"
-            icon="resize-small"
-
-            related-to=".flowchart-paint-area">
-  </ds-default-zoom>
-  <ds-fit   class-set="default-fit"
-            icon="fullscreen"
-
-            related-to=".flowchart-paint-area"
-            run="true"
-            padding="50">
-  </ds-fit>
   <ds-zoom  class-set="zoom"
             icon="zoom-out"
 
@@ -28,7 +6,7 @@
             max="2.3"
             step="0.05"
             initial-value="1">
-    <input type="range" min="{{::min}}" max="{{::max}}" ng-model="value" step="{{::step}}" />
+    <input type="range" min="{{::min}}" max="{{::max}}" ng-model="rangeValue" step="{{::step}}" />
     <a href="" ng-class="{'text-warning': activeAdditionalItem}" ng-click="activateAdditionalItem($event)">
       <i class="glyphicon glyphicon-zoom-in"></i>
     </a>

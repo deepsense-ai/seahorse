@@ -33,31 +33,32 @@ function Zoom() {
 }
 
 /* @ngInject */
-function ZoomController($document, $scope, $timeout, GraphPanelRendererService) {
+function ZoomController($document, $scope, $timeout, GraphPanelRendererService, MouseEvent) {
   var that = this;
   var internal = {};
+
+  internal.BORDER_SHIFT = 3;
 
   internal.max    = $scope.max;
   internal.step   = $scope.step;
   internal.relatedToElement         = $document[0].querySelector($scope.relatedTo);
   internal.viewPort                 = internal.relatedToElement.parentNode;
   internal.relatedToElementStaticWidth  = internal.relatedToElement.clientWidth;
+  internal.relatedToElementStaticHeight = internal.relatedToElement.clientHeight;
   internal.viewPortStaticWidth          = internal.viewPort.clientWidth;
-  internal.min    = internal.viewPortStaticWidth / internal.relatedToElementStaticWidth;
+  internal.min    = 0.4; // internal.viewPortStaticWidth / internal.relatedToElementStaticWidth
 
-  internal.getMinElementZoom = function getMinElementZoom () {
-    return internal.relatedToElementStaticWidth * internal.min;
-  };
+  // TODO change $scope.value behaviour in order to have only one executing
 
   internal.zoomIn = function zoomIn () {
     var result = $scope.value;
 
-    if ($scope.value <= internal.max) {
-      result = +($scope.value += internal.step).toFixed(2);
+    if (result <= internal.max) {
+      result = +(result + internal.step).toFixed(2);
     }
 
     if (result >= internal.max) {
-      result = $scope.value = internal.max;
+      result = internal.max;
     }
 
     return result;
@@ -66,15 +67,20 @@ function ZoomController($document, $scope, $timeout, GraphPanelRendererService) 
   internal.zoomOut = function zoomOut () {
     var result = $scope.value;
 
-    if ($scope.value >= internal.min) {
-      result = +($scope.value -= internal.step).toFixed(2);
+    if (result >= internal.min) {
+      result = +(result - internal.step).toFixed(2);
     }
 
     if (result <= internal.min) {
-      result = $scope.value = internal.min;
+      result = internal.min;
     }
 
     return result;
+  };
+
+  var old = {
+    x: 0,
+    y: 0
   };
 
   internal.wheelListener = function wheelListener (event) {
@@ -89,29 +95,52 @@ function ZoomController($document, $scope, $timeout, GraphPanelRendererService) 
       zoom = internal.zoomIn();
     }
 
-    var dimensionsBeforeZoom = {
-      y: internal.relatedToElement.getBoundingClientRect().height,
-      x: internal.relatedToElement.getBoundingClientRect().width
+    event.preventDefault();
+
+    if (zoom === internal.min || zoom === internal.max) {
+      return false;
+    }
+
+    $scope.value = zoom;
+
+    var eventOccurredIn = MouseEvent.getEventOffsetOfElement(event, internal.relatedToElement);
+    console.log(old);
+    console.log(eventOccurredIn.x, eventOccurredIn.y);
+    eventOccurredIn.y = eventOccurredIn.y - internal.BORDER_SHIFT;
+
+    var dif = {
+      x: 0,
+      y: 0
     };
 
-    // GraphPanelRendererService.setCenter();
-    GraphPanelRendererService.setZoom(zoom);
+    if (old.x && old.y && (eventOccurredIn.x - old.x > 50 || eventOccurredIn.y - old.y > 50)) {
+      dif = {
+        x: eventOccurredIn.x - old.x,
+        y: eventOccurredIn.y - old.y
+      };
+    }
 
-    var difAfterZoom = {
-      y: GraphPanelRendererService.getDifferenceAfterZoom(internal.relatedToElement, 'height', dimensionsBeforeZoom.y),
-      x: GraphPanelRendererService.getDifferenceAfterZoom(internal.relatedToElement, 'width', dimensionsBeforeZoom.x)
+    var result = {
+      x: dif.x * (zoom),
+      y: dif.y * (zoom)
     };
 
-    console.log(difAfterZoom);
+    old = eventOccurredIn;
 
-    console.log(internal.relatedToElement.style.left);
-    console.log(internal.relatedToElement.style.top);
+    console.log(dif);
 
-    internal.relatedToElement.style.left = parseInt(internal.relatedToElement.style.left) - difAfterZoom.x / 2 + 'px';
-    internal.relatedToElement.style.top = parseInt(internal.relatedToElement.style.top) - difAfterZoom.y / 2 + 'px';
+    GraphPanelRendererService.setZoom(
+      zoom,
 
-    console.log(internal.relatedToElement.style.left);
-    console.log(internal.relatedToElement.style.top);
+      [
+        eventOccurredIn.x,
+        eventOccurredIn.y
+      ],
+
+      result
+    );
+
+    console.log(zoom);
 
     /*if (
       GraphPanelRendererService.getDifferenceAfterZoom(internal.relatedToElement, 'width') -
@@ -125,43 +154,54 @@ function ZoomController($document, $scope, $timeout, GraphPanelRendererService) 
       parseInt(internal.relatedToElement.style.top) < 0
     ) {
       GraphPanelRendererService.setZero('top');
-    }*/
-
-    event.preventDefault();
+    });*/
   };
 
   internal.updateState = function updateState () {
-    $scope.value = jsPlumb.getZoom();
+     $scope.value = jsPlumb.getZoom();
   };
 
   internal.relatedToElement.addEventListener('wheel', internal.wheelListener);
-  $scope.$on('GraphPanel.CENTERED', internal.updateState);
+  /*$scope.$on('GraphPanel.CENTERED', internal.updateState);
   $scope.$on('GraphPanel.ZERO', internal.updateState);
-  $scope.$on('Zoom', internal.updateState);
+  $scope.$on('Zoom', internal.updateState);*/
 
-  $scope.$watch('value', function (newValue) {
-    GraphPanelRendererService.setZoom(newValue);
-  });
+  // TODO normal two way binding
+  /*$scope.$watch('rangeValue', function (newValue) {
+    var pseudoCenter = GraphPanelRendererService.getPseudoContainerCenter();
 
-  $scope.activateItem = function activateItem (event) {
+    $scope.value = newValue;
+
+    GraphPanelRendererService.setZoom($scope.value, [pseudoCenter.x / internal.relatedToElementStaticWidth, pseudoCenter.y / internal.relatedToElementStaticHeight]);
+  });*/
+
+  /*$scope.activateItem = function activateItem (event) {
+    var pseudoCenter = GraphPanelRendererService.getPseudoContainerCenter();
+
     $scope.active = true;
     // Show to user that it has been clicked -> user experience
     $timeout(function () {
       $scope.active = false;
     }, 100);
 
-    internal.zoomOut();
+    $scope.value = internal.zoomOut();
+
+    GraphPanelRendererService.setZoom($scope.value, [pseudoCenter.x / internal.relatedToElementStaticWidth, pseudoCenter.y / internal.relatedToElementStaticHeight]);
   };
 
   $scope.activateAdditionalItem = function activateAdditionalItem (event) {
+    var pseudoCenter = GraphPanelRendererService.getPseudoContainerCenter();
+
     $scope.activeAdditionalItem = true;
     // Show to user that it has been clicked -> user experience
     $timeout(function () {
       $scope.activeAdditionalItem = false;
     }, 100);
 
-    internal.zoomIn();
-  };
+    $scope.value = internal.zoomIn();
+
+    GraphPanelRendererService.setZoom($scope.value, [pseudoCenter.x / internal.relatedToElementStaticWidth, pseudoCenter.y / internal.relatedToElementStaticHeight]);
+  };*/
 
   return that;
 }

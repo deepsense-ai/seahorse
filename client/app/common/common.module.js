@@ -14,5 +14,6 @@ require('./loading-spinner/loading-spinner.js').inject(common);
 require('./loading-spinner/loading-spinner-sm.js').inject(common);
 require('./sticky-window/sticky-window.js').inject(common);
 require('./page.service.js').inject(common);
+require('./mouse-event.service.js').inject(common);
 
 module.exports = common;
