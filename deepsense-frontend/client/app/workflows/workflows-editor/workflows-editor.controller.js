@@ -7,7 +7,7 @@ import { GraphPanelRendererBase } from './../graph-panel/graph-panel-renderer/gr
 class WorkflowsEditorController {
 
   /* @ngInject */
-  constructor(workflowWithResults, $scope, $state, $q, $rootScope, $log, $timeout,
+  constructor(workflowWithResults, $scope, $state, $q, $rootScope, $log, $timeout, specialOperations,
     GraphNode, Edge, config, Report, MultiSelectionService, PageService, Operations, GraphPanelRendererService,
     WorkflowService, MouseEvent, ConfirmationModalService, ExportModalService, GraphNodesService, NotificationService,
     ServerCommunication, CopyPasteService, SideBarService, BottomBarService, NodeCopyPasteVisitorService) {
@@ -15,7 +15,7 @@ class WorkflowsEditorController {
     WorkflowService.initRootWorkflow(workflowWithResults);
 
     _.assign(this, {
-      $scope, $state, $q, $rootScope, $log, $timeout,
+      $scope, $state, $q, $rootScope, $log, $timeout, specialOperations,
       GraphNode, Edge, config, Report, MultiSelectionService, PageService, Operations, GraphPanelRendererService,
       WorkflowService, MouseEvent, ConfirmationModalService, ExportModalService, GraphNodesService, NotificationService,
       ServerCommunication, CopyPasteService, SideBarService, BottomBarService, NodeCopyPasteVisitorService
@@ -176,7 +176,7 @@ class WorkflowsEditorController {
         let offsetY = dropElementOffset.y;
         let positionX = offsetX || 0;
         let positionY = offsetY || 0;
-        let elementOffsetX = 100;
+        let elementOffsetX = _.has(this.specialOperations, args.elementId) ? 40 : 100;
         let elementOffsetY = 30;
         this.GraphNodesService.createNodeAndAdd(this.getWorkflow(), {
           operation: operation,
