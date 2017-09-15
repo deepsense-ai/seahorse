@@ -25,7 +25,7 @@ import io.deepsense.deeplang.{DOperation0To1, ExecutionContext}
 
 case class Source() extends DOperation0To1[DataFrame] {
 
-  override val id: Id = "f94b04d7-ec34-42f7-8100-93fe235c89f8"
+  override val id: Id = Source.id
   override val name: String = "Source"
   override val description: String = "Custom transformer source"
   override val params: Array[Param[_]] = declareParams()
@@ -35,4 +35,8 @@ case class Source() extends DOperation0To1[DataFrame] {
 
   override protected def _execute(context: ExecutionContext)(): DataFrame =
     throw new IllegalStateException("should not be executed")
+}
+
+object Source {
+  val id: Id = "f94b04d7-ec34-42f7-8100-93fe235c89f8"
 }

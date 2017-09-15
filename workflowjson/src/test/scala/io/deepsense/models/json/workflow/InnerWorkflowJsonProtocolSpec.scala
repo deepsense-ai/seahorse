@@ -19,9 +19,7 @@ package io.deepsense.models.json.workflow
 import spray.json._
 
 import io.deepsense.deeplang.params.custom.InnerWorkflow
-import io.deepsense.graph.Node
 import io.deepsense.models.json.graph.GraphJsonProtocol.{GraphReader, GraphWriter}
-
 
 class InnerWorkflowJsonProtocolSpec extends WorkflowTestSupport with InnerWorkflowJsonProtocol {
 
@@ -40,22 +38,16 @@ class InnerWorkflowJsonProtocolSpec extends WorkflowTestSupport with InnerWorkfl
   }
 
   def innerWorkflowFixture: (InnerWorkflow, JsObject) = {
-    val sourceId = Node.Id.randomId
-    val sinkId = Node.Id.randomId
     val innerWorkflow = InnerWorkflow(
-      graph,
+      innerWorkflowGraph,
       JsObject(
         "example" -> JsArray(JsNumber(1), JsNumber(2), JsNumber(3))
-      ),
-      sourceId,
-      sinkId)
+      ))
     val innerWorkflowJson = JsObject(
-      "workflow" -> graph.toJson(GraphWriter),
+      "workflow" -> innerWorkflowGraph.toJson(GraphWriter),
       "thirdPartyData" -> JsObject(
         "example" -> JsArray(Vector(1, 2, 3).map(JsNumber(_)))
-      ),
-      "source" -> sourceId.toJson,
-      "sink" -> sinkId.toJson
+      )
     )
     (innerWorkflow, innerWorkflowJson)
   }

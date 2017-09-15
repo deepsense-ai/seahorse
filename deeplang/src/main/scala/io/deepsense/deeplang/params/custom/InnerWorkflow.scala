@@ -18,10 +18,23 @@ package io.deepsense.deeplang.params.custom
 
 import spray.json.JsObject
 
-import io.deepsense.graph.{Node, DeeplangGraph}
+import io.deepsense.deeplang.DOperation
+import io.deepsense.deeplang.doperations.custom.{Sink, Source}
+import io.deepsense.graph.DeeplangGraph.DeeplangNode
+import io.deepsense.graph.{DeeplangGraph}
 
 case class InnerWorkflow(
    graph: DeeplangGraph,
-   thirdPartyData: JsObject,
-   source: Node.Id,
-   sink: Node.Id)
+   thirdPartyData: JsObject) {
+
+  require(findNodeOfType(Source.id).isDefined, "Inner workflow must have source node")
+  require(findNodeOfType(Sink.id).isDefined, "Inner workflow must have sink node")
+
+  val source: DeeplangNode = findNodeOfType(Source.id).get
+  val sink: DeeplangNode = findNodeOfType(Sink.id).get
+
+  private def findNodeOfType(operationId: DOperation.Id): Option[DeeplangNode] = {
+    graph.nodes.find(_.value.id == operationId)
+  }
+
+}

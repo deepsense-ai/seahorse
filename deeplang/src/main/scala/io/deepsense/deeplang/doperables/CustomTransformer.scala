@@ -47,11 +47,11 @@ case class CustomTransformer() extends Transformer with DefaultCustomTransformer
       schema: StructType, inferCtx: InferContext): Option[StructType] = {
     val workflow = inferCtx.innerWorkflowParser.parse(getInnerWorkflow)
     val initialKnowledge = GraphKnowledge(Map(
-      workflow.source -> NodeInferenceResult(Vector(DKnowledge(DataFrame.forInference(schema))))
+      workflow.source.id -> NodeInferenceResult(Vector(DKnowledge(DataFrame.forInference(schema))))
     ))
 
     workflow.graph.inferKnowledge(inferCtx, initialKnowledge)
-      .getKnowledge(workflow.sink)(0).asInstanceOf[DKnowledge[DataFrame]].single.schema
+      .getKnowledge(workflow.sink.id)(0).asInstanceOf[DKnowledge[DataFrame]].single.schema
   }
 
   override def report(executionContext: ExecutionContext): Report = Report()

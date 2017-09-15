@@ -34,6 +34,6 @@ trait InnerWorkflowJsonProtocol
   with GraphJsonProtocol {
 
   implicit val innerWorkflowFormat = jsonFormat(
-    InnerWorkflow.apply, "workflow", "thirdPartyData", "source", "sink")
+    InnerWorkflow.apply, "workflow", "thirdPartyData")
 
 }

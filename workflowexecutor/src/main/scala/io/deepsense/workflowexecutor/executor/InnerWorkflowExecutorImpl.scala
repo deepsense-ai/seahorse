@@ -61,14 +61,15 @@ class InnerWorkflowExecutorImpl(override val graphReader: GraphReader)
       throw CustomOperationExecutionException(e.title + "\n" + e.message.getOrElse(""))
     }
 
-    statefulWorkflow.nodeStarted(innerWorkflow.source)
+    statefulWorkflow.nodeStarted(innerWorkflow.source.id)
 
     nodeCompleted(statefulWorkflow,
-      innerWorkflow.source, nodeExecutionResultsFrom(Vector(dataFrame)))
+      innerWorkflow.source.id, nodeExecutionResultsFrom(Vector(dataFrame)))
 
     run(statefulWorkflow, executionContext)
 
-    val (_, result) = statefulWorkflow.currentExecution.states(innerWorkflow.sink).dOperables.head
+    val (_, result) =
+      statefulWorkflow.currentExecution.states(innerWorkflow.sink.id).dOperables.head
     result.asInstanceOf[DataFrame]
   }
 

@@ -59,7 +59,7 @@ class CustomTransformerSpec extends UnitSpec {
   "CustomTransfromer" should {
 
     "execute inner workflow" in {
-      val workflow = InnerWorkflow(simpleGraph, JsObject(), sourceNodeId, sinkNodeId)
+      val workflow = InnerWorkflow(simpleGraph, JsObject())
       val outputDataFrame = mock[DataFrame]
 
       val innerWorkflowExecutor = mock[InnerWorkflowExecutor]
@@ -93,7 +93,7 @@ class CustomTransformerSpec extends UnitSpec {
         innerWorkflowParser)
 
       when(innerWorkflowParser.parse(any())).thenReturn(
-        InnerWorkflow(simpleGraph, JsObject(), sourceNodeId, sinkNodeId))
+        InnerWorkflow(simpleGraph, JsObject()))
 
       val transformer = CustomTransformer()
 
