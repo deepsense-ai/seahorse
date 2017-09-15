@@ -330,6 +330,13 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Deepse
     });
   };
 
+  that.rerender = function rerender() {
+    this.init();
+    this.renderPorts();
+    this.renderEdges();
+    this.repaintEverything();
+  };
+
   return that;
 }
 

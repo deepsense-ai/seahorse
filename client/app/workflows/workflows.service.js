@@ -1,7 +1,7 @@
 'use strict';
 
 /* @ngInject */
-function WorkflowService(Workflow, OperationsHierarchyService) {
+function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClient, $rootScope) {
   let internal = {};
 
   class WorkflowServiceClass {
@@ -38,8 +38,8 @@ function WorkflowService(Workflow, OperationsHierarchyService) {
       internal.workflow = null;
     }
 
-    updateTypeKnowledge (workflowData) {
-      internal.workflow.updateTypeKnowledge(workflowData.workflow.knowledge);
+    updateTypeKnowledge (knowledge) {
+      internal.workflow.updateTypeKnowledge(knowledge);
     }
 
     updateEdgesStates() {
@@ -48,6 +48,20 @@ function WorkflowService(Workflow, OperationsHierarchyService) {
 
     workflowIsSet () {
       return !_.isNull(internal.workflow);
+    }
+
+    saveWorkflow() {
+      return WorkflowsApiClient.
+        updateWorkflow(internal.workflow.serialize()).
+        then((data) => {
+          if (this.workflowIsSet()) {
+            $rootScope.$broadcast('Workflow.SAVE.SUCCESS');
+            return data;
+          }
+        }).
+        catch((error) => {
+          $rootScope.$broadcast('Workflow.SAVE.ERROR', error);
+        });
     }
   }
 

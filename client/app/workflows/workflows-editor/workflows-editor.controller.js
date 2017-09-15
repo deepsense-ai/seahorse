@@ -8,8 +8,7 @@ function WorkflowsController(
   workflow,
   $scope, $timeout,
   GraphNode, Edge,
-  PageService, Operations, GraphPanelRendererService, WorkflowService,
-  WorkflowsApiClient, UUIDGenerator, MouseEvent,
+  PageService, Operations, GraphPanelRendererService, WorkflowService, UUIDGenerator, MouseEvent,
   DeepsenseNodeParameters
 ) {
   let that = this;
@@ -27,11 +26,11 @@ function WorkflowsController(
     GraphPanelRendererService.setWorkflow(WorkflowService.getWorkflow());
     GraphPanelRendererService.setZoom(1.0);
 
-    //internal.updateAndRerenderEdges(experiment);
+    internal.updateAndRerenderEdges(workflow.knowledge);
 
     $scope.$on('FlowChartBox.Rendered', () => {
       $timeout(() => {
-        that.updateFlowchartBox();
+        GraphPanelRendererService.rerender();
       }, 0, false);
     });
   };
@@ -46,32 +45,19 @@ function WorkflowsController(
     internal.rerenderEdges();
   };
 
-  internal.saveWorkflow = function saveWorkflow() {
-    let serializedWorkflow = WorkflowService.getWorkflow().serialize();
-    return WorkflowsApiClient.
-      updateWorkflow(serializedWorkflow).
-      then((result) => {
-        if (WorkflowService.workflowIsSet()) {
-          //internal.updateAndRerenderEdges(result);
-          $scope.$emit('Workflow.SAVE.SUCCESS');
-        }
-      }, (error) => {
-        $scope.$emit('Workflow.SAVE.ERROR', error);
-      });
-  };
-
-  that.updateFlowchartBox = function updateFlowchartBox() {
-    GraphPanelRendererService.init();
-    GraphPanelRendererService.renderPorts();
-    GraphPanelRendererService.renderEdges();
-    GraphPanelRendererService.repaintEverything();
-    $scope.$broadcast('Workflow.RENDER_FINISHED');
-  };
-
   that.getWorkflow = WorkflowService.getWorkflow;
 
   that.getSelectedNode = function getSelectedNode() {
     return internal.selectedNode;
+  };
+
+  that.saveWorkflow = function saveWorkflow() {
+    WorkflowService.saveWorkflow().
+      then((data) => {
+        if (!_.isUndefined(data)) {
+          internal.updateAndRerenderEdges(data.knowledge);
+        }
+      });
   };
 
   that.unselectNode = function unselectNode() {
@@ -96,33 +82,29 @@ function WorkflowsController(
     }
   });
 
-  $scope.$on('Workflow.SAVE', () => {
-    internal.saveWorkflow();
-  });
-
   $scope.$on('StatusBar.CLEAR_CLICK',() => {
     WorkflowService.clearGraph();
-    that.updateFlowchartBox();
-    internal.saveWorkflow();
+    GraphPanelRendererService.rerender();
+    that.saveWorkflow();
   });
 
   $scope.$on(Edge.CREATE, (data, args)  => {
     WorkflowService.getWorkflow().addEdge(args.edge);
-    internal.saveWorkflow();
+    that.saveWorkflow();
   });
 
   $scope.$on(Edge.REMOVE, (data, args)  => {
     WorkflowService.getWorkflow().removeEdge(args.edge);
-    internal.saveWorkflow();
+    that.saveWorkflow();
   });
 
-  $scope.$on('Keyboard.KEY_PRESSED_DEL', (event, data) => {
+  $scope.$on('Keyboard.KEY_PRESSED_DEL', () => {
     if (internal.selectedNode) {
       WorkflowService.getWorkflow().removeNode(internal.selectedNode.id);
       GraphPanelRendererService.removeNode(internal.selectedNode.id);
       that.unselectNode();
       $scope.$digest();
-      internal.saveWorkflow();
+      that.saveWorkflow();
     }
   });
 
@@ -143,7 +125,7 @@ function WorkflowsController(
       });
 
     WorkflowService.getWorkflow().addNode(node);
-    internal.saveWorkflow();
+    that.saveWorkflow();
   });
 
   $scope.$on('AttributePanel.UNSELECT_NODE', () => {
@@ -156,10 +138,12 @@ function WorkflowsController(
     GraphPanelRendererService.clearWorkflow();
   });
 
+  $scope.$on('StatusBar.SAVE_CLICK', that.saveWorkflow);
+
   $scope.$watchCollection('workflow.getWorkflow().getNodesIds()', (newValue, oldValue) => {
     if (newValue !== oldValue) {
       $scope.$applyAsync(() => {
-        that.updateFlowchartBox();
+        GraphPanelRendererService.rerender();
       });
     }
   });

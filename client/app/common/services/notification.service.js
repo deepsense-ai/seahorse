@@ -29,62 +29,62 @@ class NotificationService extends LogHandlingService {
     this.messages = [];
 
     this.staticMessages = {
-      'Experiment.RUN': {
-        message: 'Running experiment ...',
-        title: 'Experiment event',
+      'Workflow.RUN': {
+        message: 'Running workflow ...',
+        title: 'Workflow event',
 
         notificationType: 'info'
       },
-      'Experiment.RUN.SUCCESS': {
-        message: 'The experiment has been <b>run</b> successfully',
-        title: 'Experiment event',
+      'Workflow.RUN.SUCCESS': {
+        message: 'The workflow has been <b>run</b> successfully',
+        title: 'Workflow event',
 
         notificationType: 'success'
       },
 
-      'Experiment.SAVE': {
-        message: 'Saving experiment ...',
-        title: 'Experiment event',
+      'Workflow.SAVE': {
+        message: 'Saving workflow ...',
+        title: 'Workflow event',
 
         notificationType: 'info'
       },
-      'Experiment.SAVE.SUCCESS': {
-        message: 'The experiment has been <b>saved</b> successfully',
-        title: 'Experiment event',
+      'Workflow.SAVE.SUCCESS': {
+        message: 'The workflow has been <b>saved</b> successfully',
+        title: 'Workflow event',
 
         notificationType: 'success'
       },
 
-      'Experiment.ABORT': {
-        message: 'Aborting experiment ...',
-        title: 'Experiment event',
+      'Workflow.ABORT': {
+        message: 'Aborting workflow ...',
+        title: 'Workflow event',
 
         notificationType: 'warning'
       },
-      'Experiment.ABORT.SUCCESS': {
-        message: 'The experiment has been <b>aborted</b> successfully',
-        title: 'Experiment event',
+      'Workflow.ABORT.SUCCESS': {
+        message: 'The workflow has been <b>aborted</b> successfully',
+        title: 'Workflow event',
 
         notificationType: 'success'
       }
     };
 
     this.dynamicMessages = {
-      'Experiment.RUN.ERROR': (event, error) => {
+      'Workflow.RUN.ERROR': (event, error) => {
         this.showError(
-          NotificationService.getCommonErrorMessage('Experiment RUN', error),
+          NotificationService.getCommonErrorMessage('Workflow RUN', error),
           error
         );
       },
-      'Experiment.SAVE.ERROR': (event, error) => {
+      'Workflow.SAVE.ERROR': (event, error) => {
         this.showError(
-          NotificationService.getCommonErrorMessage('Experiment SAVE', error),
+          NotificationService.getCommonErrorMessage('Workflow SAVE', error),
           error
         );
       },
-      'Experiment.ABORT.ERROR': (event, error) => {
+      'Workflow.ABORT.ERROR': (event, error) => {
         this.showError(
-          NotificationService.getCommonErrorMessage('Experiment ABORT', error),
+          NotificationService.getCommonErrorMessage('Workflow ABORT', error),
           error
         );
       }
@@ -177,7 +177,7 @@ class NotificationService extends LogHandlingService {
           ${dynamicPart.data} <br />
           ${dynamicPart.statusText}
         `,
-        title: 'Experiment event'
+        title: 'Workflow event'
       }
     };
 

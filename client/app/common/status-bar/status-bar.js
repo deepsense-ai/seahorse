@@ -11,13 +11,12 @@ function WorkflowEditorStatusBar($rootScope) {
     replace: true,
     scope: {},
     link: function (scope) {
-
       scope.exportWorkflow = function exportWorkflow () {
         $rootScope.$broadcast('Workflow.EXPORT');
       };
 
       scope.saveWorkflow = function saveWorkflow () {
-        $rootScope.$broadcast('Workflow.SAVE');
+        $rootScope.$broadcast('StatusBar.SAVE_CLICK');
       };
 
       scope.clearWorkflow = function clearWorkflow () {
