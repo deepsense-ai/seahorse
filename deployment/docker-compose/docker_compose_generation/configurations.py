@@ -88,6 +88,11 @@ class Service(object):
         return [d for d in self.depends_on() if d.network_mode != 'host']
 
 
+class Documentation(Service):
+    def port_mapping(self):
+        return PortMappings().add(PortMappings.Mapping(80, 60112))
+
+
 class Mail(Service):
     def port_mapping(self):
         return PortMappings().add(PortMappings.Mapping(25, 60111))
@@ -105,7 +110,8 @@ class Proxy(Service):
             Notebooks,
             RabbitMQ,
             Frontend,
-            Authorization
+            Authorization,
+            Documentation
         ]
 
     def environment(self):
@@ -119,6 +125,7 @@ class Proxy(Service):
             LIBRARY_HOST=self._service_address(Library),
             JUPYTER_HOST=self._service_address(Notebooks),
             FRONTEND_HOST=self._service_address(Frontend),
+            DOCUMENTATION_HOST=self._service_address(Documentation),
             AUTHORIZATION_HOST=self._service_address(Authorization),
             RABBITMQ_HOST=self._service_address(RabbitMQ, 'websocket'),
             PORT=33321) + \
@@ -275,6 +282,7 @@ class Frontend(Service):
 
     def depends_on(self):
         return [
+            Documentation,
             WorkflowManager,
             SessionManager,
             Library,
@@ -351,8 +359,6 @@ class Notebooks(Service):
 
     def port_mapping(self):
         return PortMappings().add(PortMappings.Mapping(8888, 60105))
-
-
 
 
 class Authorization(Service):
@@ -478,6 +484,7 @@ class LinuxConfiguration(Configuration):
         SessionManager,
         SchedulingManager,
         Mail,
+        Documentation,
         Proxy,
         Frontend,
         Library,
@@ -497,6 +504,7 @@ class MacConfiguration(Configuration):
         SessionManagerBridgeNetwork,
         SchedulingManager,
         Mail,
+        Documentation,
         Proxy,
         Frontend,
         Library,

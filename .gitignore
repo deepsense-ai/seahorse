@@ -44,6 +44,9 @@ sessionmanager.trace.db
 # Swagger-generated code
 datasourcemanager/src/generated/*
 
+# Jekyll
+_site/
+
 # Other
 remote_notebook/notebook_executing_kernel.zip
 docker-compose.yml

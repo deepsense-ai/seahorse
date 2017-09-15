@@ -26,7 +26,7 @@ function DocumentationLink(config, version) {
     replace: true,
     scope: {},
     link: function (scope) {
-      scope.url = config.docsHost + '/docs/' + version.getDocsVersion() + '/index.html';
+      scope.url = config.docsHost + '/docs/index.html';
     }
   };
 }

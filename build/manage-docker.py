@@ -86,7 +86,8 @@ image_confs = [
     simple_docker("seahorse-notebooks", "remote_notebook"),
     simple_docker("seahorse-authorization", "deployment/authorization-docker"),
     simple_docker("seahorse-mail", "deployment/exim"),
-    simple_command_docker("seahorse-frontend", "frontend/docker/build-frontend.sh")
+    simple_command_docker("seahorse-frontend", "frontend/docker/build-frontend.sh"),
+    simple_command_docker("seahorse-documentation", "./build/build_documentation_docker.sh")
 ]
 image_conf_by_name = {conf.docker_image_name: conf for conf in image_confs}
 

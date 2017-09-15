@@ -65,6 +65,10 @@ const serviceMapping = [authorization, {
     "host": process.env["RABBITMQ_HOST"],
     "name": "rabbitmq"
 }, {
+    "path": "/docs",
+    "host": process.env["DOCUMENTATION_HOST"],
+    "name": "documentation"
+}, {
     "path": "/",
     "host": process.env["FRONTEND_HOST"],
     "name": "frontend"
