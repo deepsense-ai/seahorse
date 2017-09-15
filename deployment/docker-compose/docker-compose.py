@@ -65,7 +65,7 @@ def main():
 
     args, extra_args = parser.parse_known_args()
 
-    configuration = {'linux': LinuxConfiguration, 'mac': MacConfiguration}[args.configuration]
+    configuration = {'linux': LinuxConfiguration, 'mac': MacConfiguration}[args.operating_system]
 
     if args.custom_frontend is not None:
         frontend_address = args.custom_frontend.split(':')
