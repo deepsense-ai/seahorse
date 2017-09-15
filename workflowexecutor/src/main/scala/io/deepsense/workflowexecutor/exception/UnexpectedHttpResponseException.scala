@@ -14,20 +14,9 @@
  * limitations under the License.
  */
 
-resolvers += Classpaths.sbtPluginReleases
+package io.deepsense.workflowexecutor.exception
 
-resolvers += "sonatype-releases" at "https://oss.sonatype.org/content/repositories/releases/"
+import spray.http.StatusCode
 
-addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.0.4")
-
-addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "0.7.0")
-
-addSbtPlugin("io.spray" % "sbt-revolver" % "0.7.2")
-
-// Assembly plugin allows creation a fat JAR of project with all of its dependencies.
-addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.13.0")
-
-// Plugin provides build info to use in code
-addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.4.0")
-
-logLevel := Level.Warn
+case class UnexpectedHttpResponseException(val statusCode: StatusCode, val content: String)
+    extends Exception(s"Unexpected HTTP response: ${statusCode}")

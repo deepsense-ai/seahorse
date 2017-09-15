@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-resolvers += Classpaths.sbtPluginReleases
+package io.deepsense.models.json.workflow
 
-resolvers += "sonatype-releases" at "https://oss.sonatype.org/content/repositories/releases/"
+import io.deepsense.models.workflows._
 
-addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.0.4")
+trait WorkflowWithSavedResultsJsonProtocol extends WorkflowWithResultsJsonProtocol {
 
-addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "0.7.0")
+  implicit val executionReportWithIdFormat = jsonFormat5(ExecutionReportWithId.apply)
 
-addSbtPlugin("io.spray" % "sbt-revolver" % "0.7.2")
+  implicit val workflowWithSavedResultsFormat =
+    jsonFormat(WorkflowWithSavedResults.apply,
+      "id", "metadata", "workflow", "thirdPartyData", "executionReport")
 
-// Assembly plugin allows creation a fat JAR of project with all of its dependencies.
-addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.13.0")
-
-// Plugin provides build info to use in code
-addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.4.0")
-
-logLevel := Level.Warn
+}

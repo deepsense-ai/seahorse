@@ -20,6 +20,8 @@ name := "deepsense-seahorse-workflowexecutor"
 
 libraryDependencies ++= Dependencies.workflowexecutor
 
+unmanagedClasspath in Runtime += (baseDirectory.value / "conf")
+
 // Necessary while assembling uber-jar (omitting MANIFEST.MF file from constituent jar files)
 assemblyMergeStrategy in assembly := {
   case PathList("META-INF", "MANIFEST.MF")               => MergeStrategy.discard
@@ -27,6 +29,7 @@ assemblyMergeStrategy in assembly := {
   case PathList("META-INF", "ECLIPSEF.SF")               => MergeStrategy.discard
   case PathList("META-INF", "ECLIPSEF.RSA")              => MergeStrategy.discard
   case PathList("META-INF", "services", "org.apache.hadoop.fs.FileSystem") => MergeStrategy.concat
+  case "reference.conf"                                  => MergeStrategy.concat
   case _ => MergeStrategy.first
 }
 // Skip test while assembling uber-jar

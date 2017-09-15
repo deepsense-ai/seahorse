@@ -49,6 +49,7 @@ object Library {
   val slf4j              = "org.slf4j"                         % "slf4j-api"                 % "1.7.12"
   val slf4jLog4j         = "org.slf4j"                         %  "slf4j-log4j12"            % "1.7.12"
   val sprayCan           = spray("can")
+  val sprayClient        = spray("client")
   val sprayHttpx         = spray("httpx")
   val sprayJson          = "io.spray"                         %% "spray-json"                % Version.sprayJson
   val scalaReflect       = "org.scala-lang"                    % "scala-reflect"             % Version.scala
@@ -115,6 +116,7 @@ object Dependencies {
   ) ++ Seq(scalatest, mockitoCore).map(_ % Test)
 
   val workflowexecutor = Seq(
-    scopt
+    scopt,
+    sprayClient
   ) ++ Seq(sparkCore, sparkSql).map(_ % Provided) ++ Seq(akkaTestkit, mockitoCore, scalatest).map(_ % s"$Test,it")
 }
