@@ -14,18 +14,8 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang
+package io.deepsense.deeplang.doperables.descriptions
 
-import io.deepsense.deeplang.doperables.Report
-import io.deepsense.deeplang.doperables.descriptions.HasInferenceResult
-
-/**
- * Objects of classes with this trait can be used in two ways.
- * 1. It can be object on which you can perform DOperations.
- * 2. It can be used to infer knowledge about objects that will be used later in workflow,
- * before it's execution.
- * DOperable that can be used for execution can ALWAYS be used for inference, but not vice-versa.
- */
-trait DOperable extends HasInferenceResult {
-  def report(executionContext: ExecutionContext): Report
+trait HasInferenceResult {
+  def inferenceResult: Option[InferenceResult] = None
 }

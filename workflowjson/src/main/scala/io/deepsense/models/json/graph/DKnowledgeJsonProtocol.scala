@@ -18,6 +18,7 @@ package io.deepsense.models.json.graph
 
 import spray.json._
 
+import io.deepsense.deeplang.doperables.descriptions.InferenceResult
 import io.deepsense.deeplang.params.Params
 import io.deepsense.deeplang.{DKnowledge, DOperable}
 
@@ -25,29 +26,26 @@ trait DKnowledgeJsonProtocol extends DefaultJsonProtocol {
 
   implicit object DKnowledgeJsonFormat
     extends JsonFormat[DKnowledge[DOperable]]
+    with InferenceResultJsonProtocol
     with DefaultJsonProtocol {
 
     override def write(dKnowledge: DKnowledge[DOperable]): JsValue = {
       val types = typeArray(dKnowledge)
-      val params = inferredParams(dKnowledge)
+      val result = inferenceResult(dKnowledge)
 
       JsObject(
         "types" -> types,
-        "params" -> params.getOrElse(JsNull)
+        "result" -> result.getOrElse(JsNull)
       )
     }
 
-    def inferredParams(dKnowledge: DKnowledge[DOperable]): Option[JsObject] = {
-      if (dKnowledge.size == 1) {
-        dKnowledge.single match {
-          case dOperable: DOperable with Params =>
-            val schema = dOperable.paramsToJson
-            val values = dOperable.paramValuesToJson
-            Some(JsObject("schema" -> schema, "values" -> values))
-          case _ => None
-        }
-      } else {
+    def inferenceResult(dKnowledge: DKnowledge[DOperable]): Option[JsValue] = {
+      if (dKnowledge.size != 1) {
         None
+      } else {
+        dKnowledge.single
+          .inferenceResult
+          .map(_.toJson)
       }
     }
 

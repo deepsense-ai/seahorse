@@ -23,6 +23,7 @@ import org.apache.spark.sql.types.{StructField, StructType}
 import io.deepsense.commons.types.ColumnType.ColumnType
 import io.deepsense.deeplang.doperables.Report
 import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
+import io.deepsense.deeplang.doperables.descriptions.DataFrameInferenceResult
 import io.deepsense.deeplang.doperations.exceptions.WrongColumnTypeException
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
 
@@ -54,6 +55,9 @@ case class DataFrame private[dataframe] (
   override def report(executionContext: ExecutionContext): Report = {
     report(executionContext, sparkDataFrame)
   }
+
+  override def inferenceResult: Option[DataFrameInferenceResult] =
+    schema.map(DataFrameInferenceResult)
 }
 
 object DataFrame {

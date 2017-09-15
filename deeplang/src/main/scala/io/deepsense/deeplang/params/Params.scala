@@ -21,6 +21,7 @@ import java.lang.reflect.Modifier
 import spray.json._
 
 import io.deepsense.commons.utils.CollectionExtensions._
+import io.deepsense.deeplang.doperables.descriptions.{HasInferenceResult, ParamsInferenceResult}
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.params.exceptions.ParamValueNotProvidedException
 
@@ -29,7 +30,7 @@ import io.deepsense.deeplang.params.exceptions.ParamValueNotProvidedException
  * Parameters are discovered by reflection.
  * This trait also provides method for managing values and default values of parameters.
  */
-trait Params extends Serializable {
+trait Params extends Serializable with HasInferenceResult {
 
   def paramsToJson: JsValue = JsArray(params.map {
     case param =>
@@ -219,6 +220,13 @@ trait Params extends Serializable {
       }
     }
     to
+  }
+
+  override def inferenceResult: Option[ParamsInferenceResult] = {
+    Some(ParamsInferenceResult(
+      schema = paramsToJson,
+      values = paramValuesToJson
+    ))
   }
 
   private val paramMap: ParamMap = ParamMap.empty

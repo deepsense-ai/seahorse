@@ -45,14 +45,12 @@ class ReportContentJsonSpec
           JsObject(
             "name" -> JsString("x"),
             "dataType" -> JsString("integer"),
-            "nullable" -> JsTrue,
-            "metadata" -> JsObject()
+            "nullable" -> JsTrue
           ),
           JsObject(
             "name" -> JsString("y"),
             "dataType" -> JsString("double"),
-            "nullable" -> JsFalse,
-            "metadata" -> JsObject()
+            "nullable" -> JsFalse
           )
         )
       )

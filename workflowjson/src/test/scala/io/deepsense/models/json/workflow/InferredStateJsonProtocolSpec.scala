@@ -16,11 +16,14 @@
 
 package io.deepsense.models.json.workflow
 
+import org.apache.spark.sql.types._
 import org.joda.time.DateTime
 import org.mockito.Mockito._
 import spray.json._
 
 import io.deepsense.commons.models.Entity
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.descriptions.{ParamsInferenceResult, DataFrameInferenceResult}
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.inference.{InferenceWarning, InferenceWarnings}
 import io.deepsense.deeplang.params.Params
@@ -56,11 +59,22 @@ class InferredStateJsonProtocolSpec
   }
 
   def graphKnowledgeFixture: (GraphKnowledge, JsObject) = {
-    val parametricOperable = mock[ParametricOperable]
+    val parametricOperable = mock[ParametricOperable]("ParametricOperable")
     val paramSchema: JsString = JsString("Js with ParamSchema")
     val paramValues: JsString = JsString("Js with ParamValues")
-    when(parametricOperable.paramsToJson).thenReturn(paramSchema)
-    when(parametricOperable.paramValuesToJson).thenReturn(paramValues)
+    when(parametricOperable.inferenceResult).thenReturn(
+      Some(ParamsInferenceResult(paramSchema, paramValues))
+    )
+
+    val dataFrame = mock[DataFrame]
+    val meta = new MetadataBuilder().putString("someKey", "someValue").build()
+    val dataFrameDescription = DataFrameInferenceResult(
+      StructType(Seq(
+        StructField("col1", StringType, nullable = true),
+        StructField("col2", DoubleType, nullable = false, metadata = meta)
+      ))
+    )
+    when(dataFrame.inferenceResult).thenReturn(Some(dataFrameDescription))
 
     val graphKnowledge = GraphKnowledge().addInference(
       node1.id,
@@ -68,7 +82,8 @@ class InferredStateJsonProtocolSpec
         Vector(
           DKnowledge(Set(operable)),
           DKnowledge(Set(operable, parametricOperable)),
-          DKnowledge(Set[DOperable](parametricOperable))
+          DKnowledge(Set[DOperable](parametricOperable)),
+          DKnowledge(Set[DOperable](dataFrame))
         ),
         InferenceWarnings(
           new InferenceWarning("warning1") {},
@@ -80,24 +95,50 @@ class InferredStateJsonProtocolSpec
       )
     )
 
+    def dOperableJsName(o: DOperable): JsString = JsString(o.getClass.getCanonicalName)
+    val mockOperableName = dOperableJsName(operable)
+    val parametricOperableName = dOperableJsName(parametricOperable)
+    val dataFrameName = dOperableJsName(dataFrame)
+
     val knowledgeJson = JsObject(
       node1.id.toString -> JsObject(
         "ports" -> JsArray(
           JsObject(
-            "types" -> JsArray(JsString(operable.getClass.getCanonicalName)),
-            "params" -> JsNull
+            "types" -> JsArray(mockOperableName),
+            "result" -> JsNull
           ),
           JsObject(
             "types" -> JsArray(
-              JsString(operable.getClass.getCanonicalName),
-              JsString(parametricOperable.getClass.getCanonicalName)),
-            "params" -> JsNull
+              mockOperableName,
+              parametricOperableName),
+            "result" -> JsNull
           ),
           JsObject(
-            "types" -> JsArray(JsString(parametricOperable.getClass.getCanonicalName)),
-            "params" -> JsObject(
-              "schema" -> paramSchema,
-              "values" -> paramValues
+            "types" -> JsArray(parametricOperableName),
+            "result" -> JsObject(
+              "params" -> JsObject(
+                "schema" -> paramSchema,
+                "values" -> paramValues
+              )
+            )
+          ),
+          JsObject(
+            "types" -> JsArray(dataFrameName),
+            "result" -> JsObject(
+              "schema" -> JsObject(
+                "fields" -> JsArray(
+                  JsObject(
+                    "name" -> JsString("col1"),
+                    "dataType" -> JsString("string"),
+                    "nullable" -> JsTrue
+                  ),
+                  JsObject(
+                    "name" -> JsString("col2"),
+                    "dataType" -> JsString("double"),
+                    "nullable" -> JsFalse
+                  )
+                )
+              )
             )
           )
         ),

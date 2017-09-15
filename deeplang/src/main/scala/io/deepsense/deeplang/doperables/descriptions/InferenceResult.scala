@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package io.deepsense.reportlib.model
+package io.deepsense.deeplang.doperables.descriptions
 
-import org.apache.spark.sql.types.{StructField, StructType}
-import spray.json._
+import org.apache.spark.sql.types.StructType
+import spray.json.JsValue
 
-trait StructTypeJsonProtocol
-  extends DefaultJsonProtocol
-  with StructFieldJsonProtocol {
+sealed trait InferenceResult
 
-  val structTypeConstructor: (Array[StructField] => StructType) = StructType.apply
-  implicit val structTypeFormat = jsonFormat(structTypeConstructor, "fields")
-}
+case class DataFrameInferenceResult(schema: StructType) extends InferenceResult
+
+case class ParamsInferenceResult(
+  schema: JsValue,
+  values: JsValue
+) extends InferenceResult
