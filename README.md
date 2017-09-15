@@ -14,6 +14,7 @@ Prerequisites:
 * docker-compose 1.9
 * sbt 0.13
 * python 2.7
+  * pygments library
 * npm 4.6 (with npmrc)
 * jekyll 3.2
 
