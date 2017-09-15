@@ -9,8 +9,10 @@ assign(".scStartTime", as.integer(Sys.time()), envir = SparkR:::.sparkREnv)
 
 entryPoint <- SparkR:::getJobj(entryPointId)
 
-assign("sc", SparkR:::callJMethod(entryPoint, "getSparkContext"), envir = .GlobalEnv)
-assign("spark", SparkR:::callJMethod(entryPoint, "getSparkSession"), envir = .GlobalEnv)
+assign(".sparkRjsc", SparkR:::callJMethod(entryPoint, "getSparkSession"), envir = SparkR:::.sparkREnv)
+assign("sc", get(".sparkRjsc", envir = SparkR:::.sparkREnv), envir = .GlobalEnv)
+assign(".sparkRsession", SparkR:::callJMethod(entryPoint, "getSparkSession"), envir = SparkR:::.sparkREnv)
+assign("spark", get(".sparkRsession", envir = SparkR:::.sparkREnv), envir = .GlobalEnv)
 
 dataframe <- function() {
     if (!exists("workflow_id") || !exists("node_id") || !exists("port_number")) {
