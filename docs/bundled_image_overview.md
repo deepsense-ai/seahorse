@@ -39,7 +39,6 @@ Seahorse supports databases compliant with JDBC. The Bundled Image includes JDBC
 Vagrantfile describing image containing all necessary components of Seahorse can be downloaded from
 [Downloads page](/downloads.html).
 Seahorse bundled image is based on <a target="_blank" href="http://www.ubuntu.com/">Ubuntu</a> and contains Spark distribution in it.
-Currently in the Seahorse community edition there is no possibility to connect to an external Spark cluster.
 
 ### Run Command
 To run Seahorse bundled image you have to navigate to the directory where you downloaded the Vagrantfile and execute:
