@@ -23,9 +23,9 @@ class ExternalFileModalController {
           url: '',
           fileFormat: 'csv',
           csvFileFormatParams: {
-            includeHeader: false,
+            includeHeader: true,
             convert01ToBoolean: false,
-            separatorType: '',
+            separatorType: 'comma',
             customSeparator: ''
           }
         }

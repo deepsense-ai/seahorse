@@ -3,7 +3,7 @@
 .datasources-toolbar {
   width: 100%;
   margin-top: 20px;
-  background-color: #50c7e2;
+  background-color: @seahorse-light-blue;
   color: @color-white;
   min-height: 40px;
   font-weight: bold;
@@ -17,18 +17,25 @@
     margin-left: 50px;
     display: flex;
     align-items: center;
+    margin-right: 10px;
   }
 
   .btn-modal {
+    padding: 0 10px;
     max-height: 34px;
-    margin: 3px 10px;
+    margin: 3px;
     background-color: @color-white;
     color: #000;
     display: flex;
     align-items: center;
+    transition: background ease-in 0.2s;
+
+    &:hover {
+      background-color: #D7FBFF;
+    }
 
     &__icon {
-      font-size: 23px;
+      font-size: 30px;
       color: @seahorse-blue;
       padding-right: 3px;
     }

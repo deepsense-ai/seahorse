@@ -79,7 +79,7 @@ function WorkflowStatusBarController($scope, UserService, ClusterModalService, D
   }
 
   function openDatasources() {
-    DatasourcesPanelService.openDatasources();
+    DatasourcesPanelService.openDatasourcesForBrowsing();
   }
 }
 

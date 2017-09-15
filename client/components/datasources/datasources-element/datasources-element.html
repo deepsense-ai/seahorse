@@ -3,7 +3,7 @@
 >
   <div
     class="datasources-element__name-wrapper"
-    ng-class="{'datasources-element__name-wrapper--disabled': !$ctrl.isSelectable()}"
+    ng-class="{'datasources-element__name-wrapper--disabled': !$ctrl.isSelectable($ctrl.element)}"
     ng-click="$ctrl.onSelect({datasource: $ctrl.element})"
   >
     <div

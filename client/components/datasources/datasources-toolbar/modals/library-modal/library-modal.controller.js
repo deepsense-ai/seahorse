@@ -3,10 +3,15 @@
 import footerTpl from '../modal-footer/modal-footer.html';
 
 class LibraryModalController {
-  constructor($scope, $log, $uibModalInstance, LibraryModalService, datasourcesService, datasource) {
+  constructor($scope, $log, $uibModalInstance, LibraryModalService,
+              datasourcesService, datasource, DatasourcesPanelService) {
     'ngInject';
 
-    _.assign(this, {$log, $uibModalInstance, LibraryModalService, datasourcesService});
+    this.$log = $log;
+    this.$uibModalInstance = $uibModalInstance;
+    this.LibraryModalService = LibraryModalService;
+    this.datasourcesService = datasourcesService;
+    this.DatasourcesPanelService = DatasourcesPanelService;
 
     this.footerTpl = footerTpl;
 
@@ -31,6 +36,8 @@ class LibraryModalController {
       };
     }
 
+    this.openLibrary();
+
     $scope.$watch(() => this.datasourceParams, (newSettings) => {
       this.datasourceParams = newSettings;
       this.canAddNewDatasource = this.checkCanAddNewDatasource();
@@ -48,25 +55,43 @@ class LibraryModalController {
   checkIsSeparatorValid() {
     const {separatorType, customSeparator} = this.datasourceParams.libraryFileParams.csvFileFormatParams;
 
-    if (separatorType) {
-      if (separatorType === 'custom') {
-        return customSeparator !== '';
+    if (this.extension === 'csv') {
+      if (separatorType) {
+        return separatorType === 'custom' ? customSeparator !== '' : true;
       } else {
-        return true;
+        return false;
       }
-    } else {
-      return false;
     }
+    return true;
   }
 
   openLibrary() {
-    this.LibraryModalService.openLibraryModal('read-file')
-      .then((file) => {
-        this.extension = file.name.substr(file.name.lastIndexOf('.') + 1);
-        this.datasourceParams.libraryFileParams.libraryPath = file.uri;
-        this.datasourceParams.libraryFileParams.fileFormat = this.extension;
-        this.datasourceParams.name = file.name.split('.').slice(0, file.name.split('.').length - 1).join('.');
-      });
+    if (this.DatasourcesPanelService.isOpenedForWrite()) {
+      this.LibraryModalService.openLibraryModal('write-to-file')
+        .then((fullFilePath) => {
+          if (fullFilePath) {
+            this.setParametersForDatasourceParams(fullFilePath);
+          }
+        });
+    } else {
+      this.LibraryModalService.openLibraryModal('read-file')
+        .then((file) => {
+          if (file) {
+            this.setParametersForDatasourceParams(file.uri);
+          }
+        });
+    }
+  }
+
+  setParametersForDatasourceParams(fullFilePath) {
+    this.extension = fullFilePath.substr(fullFilePath.lastIndexOf('.') + 1);
+    this.datasourceParams.libraryFileParams.libraryPath = fullFilePath;
+    this.datasourceParams.libraryFileParams.fileFormat = this.extension;
+    this.datasourceParams.name = fullFilePath
+      .split('.')
+      .slice(0, fullFilePath.split('.').length - 1)
+      .join('.')
+      .replace('library://', '');
   }
 
   onFileSettingsChange(data) {

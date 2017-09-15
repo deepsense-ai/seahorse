@@ -46,7 +46,10 @@ const DatasourcesElementComponent = {
       }, COOKIE_NAME);
     }
 
-    isSelectable() {
+    isSelectable(datasource) {
+      if (this.context === datasourceContext.WRITE_DATASOURCE) {
+        return datasource.params.datasourceType !== 'externalFile';
+      }
       return this.context !== datasourceContext.BROWSE_DATASOURCE;
     }
 

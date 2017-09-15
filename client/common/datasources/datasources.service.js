@@ -2,12 +2,13 @@
 
 
 export default class DatasourcesService {
-  constructor(datasourcesApiService, UUIDGenerator, $log) {
+  constructor(datasourcesApiService, UUIDGenerator, UserService, $log) {
     'ngInject';
 
     this.$log = $log;
     this.datasourcesApi = datasourcesApiService;
     this.uuid = UUIDGenerator;
+    this.UserService = UserService;
 
     this.datasources = [];
   }
@@ -56,5 +57,9 @@ export default class DatasourcesService {
       .then(() => {
         this.fetchDatasources();
       });
+  }
+
+  isCurrentUserOwnerOfDatasource(datasource) {
+    return this.UserService.getSeahorseUser().id === datasource.ownerId;
   }
 }

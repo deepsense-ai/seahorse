@@ -23,7 +23,7 @@ const FileSettingsComponent = {
         }
       });
 
-      $scope.$watch(() => this.fileSettings.separator, (newValue) => {
+      $scope.$watch(() => this.fileSettings.csvFileFormatParams.separatorType, (newValue) => {
         if (newValue === 'custom') {
           document.querySelector('#custom-separator').focus();
         }

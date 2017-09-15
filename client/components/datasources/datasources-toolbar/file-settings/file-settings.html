@@ -66,7 +66,7 @@
             type="radio"
             value="comma"
           />
-          <span class="radio-title">. (coma)</span>
+          <span class="radio-title">. (comma)</span>
         </label>
       </div>
       <div class="radio-wrapper">
@@ -131,6 +131,7 @@
               ng-change="$ctrl.onChange({fileSettings: $ctrl.fileSettings})"
               ng-model="$ctrl.fileSettings.csvFileFormatParams.customSeparator"
               ng-focus="$ctrl.onFocus()"
+              maxlength="1"
               placeholder="custom"
               id="custom-separator"
               type="text"

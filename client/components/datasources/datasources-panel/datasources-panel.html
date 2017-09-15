@@ -5,11 +5,15 @@
     </div>
   </div>
 
-  <datasources-toolbar></datasources-toolbar>
+  <datasources-toolbar
+    context="$ctrl.context"
+  >
+  </datasources-toolbar>
 
   <datasources-list
+    on-select="$ctrl.onSelect({datasource: datasource})"
     datasources="$ctrl.datasources"
-    context="$ctrl.test"
+    context="$ctrl.context"
   ></datasources-list>
 
 </div>

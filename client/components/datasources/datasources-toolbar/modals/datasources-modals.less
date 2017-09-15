@@ -78,7 +78,7 @@
       }
 
       &.active {
-        background-color: #50c7e2;
+        background-color: @seahorse-light-blue;
         color: @color-white;
         border: 1px solid @color-grey;
 
@@ -93,7 +93,6 @@
 
       input[type=checkbox] + span:before {
         .input-basic-styles();
-        border: 1px solid @deepsense-blue;
         border-radius: 2px;
         width: 1em;
         height: 1em;
@@ -112,7 +111,7 @@
         content: "\0056";
         color: #fff;
         background: @seahorse-blue;
-        padding-left: 1px;
+        padding: 1px 0 0 1px;
       }
 
       input[type=radio]:checked + span:before {
@@ -131,7 +130,7 @@
 
     label.format-form-label:hover {
       input[type=radio] + span:before {
-        background-color: #50c7e2;
+        background-color: @seahorse-light-blue;
       }
 
       input[type=radio]:checked + span:before {
