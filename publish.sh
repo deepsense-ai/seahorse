@@ -64,6 +64,15 @@ function calculate_full_version() {
   fi
 }
 
+function add_build_info_file() {
+  GIT_SHA=`git rev-parse HEAD`
+  BUILD_DATE=`date`
+  RESULT_FILE="build/build-info.txt"
+  echo "API VERSION: "$FULL_VERSION > $RESULT_FILE
+  echo "BUILD DATE: "$BUILD_DATE >> $RESULT_FILE
+  echo "GIT SHA: "$GIT_SHA >> $RESULT_FILE
+}
+
 function package() {
   echo "** Preparing zip package **"
   zip -r -q "${FULL_VERSION}.zip" build
@@ -120,6 +129,7 @@ build
 calculate_is_snapshot_version
 calculate_full_version
 calculate_repository_url
+add_build_info_file
 package
 publishVersion "${FULL_VERSION}.zip" "${FULL_VERSION}"
 publishLatest "${FULL_VERSION}.zip"
