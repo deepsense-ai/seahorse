@@ -46,8 +46,8 @@ echo "Publish to S3 workflowexecutor uber-jars"
 rm -f workflowexecutor.jar
 
 wget --output-document=workflowexecutor.jar \
-  "${ARTIFACTORY_URL}/${SEAHORSE_DISTRIBUTION_REPOSITORY}/io/deepsense/${SEAHORSE_BUILD_TAG}/workflowexecutor/workflowexecutor-2.11-2.0.2.jar"
-aws s3 cp workflowexecutor.jar s3://${WE_RELEASE_PATH}/workflowexecutor_2.11-${API_VERSION}.jar --acl public-read
+  "${ARTIFACTORY_URL}/${SEAHORSE_DISTRIBUTION_REPOSITORY}/io/deepsense/${SEAHORSE_BUILD_TAG}/workflowexecutor/workflowexecutor-2.11-2.1.1.jar"
+aws s3 cp workflowexecutor.jar s3://${WE_RELEASE_PATH}/workflowexecutor_2.11-${API_VERSION}-2.1.1.jar --acl public-read
 
 
 DOCKER_COMPOSE_YML="docker-compose.yml"
