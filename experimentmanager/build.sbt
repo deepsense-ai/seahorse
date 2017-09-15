@@ -34,7 +34,8 @@ libraryDependencies ++= {
     "com.typesafe.akka"   %% "akka-testkit"  % akkaV      % "test",
     "org.specs2"          %% "specs2-core"   % "2.3.7"    % "test",
     "org.mockito"         %  "mockito-core"  % "1.10.19"  % "test",
-    "org.scalatest"       %% "scalatest"     % scalaTestV % "test"
+    "org.scalatest"       %% "scalatest"     % scalaTestV % "test",
+    "org.apache.jclouds"  %  "jclouds-all"   % "1.8.1"
   )
 }
 
