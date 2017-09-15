@@ -14,26 +14,19 @@
  * limitations under the License.
  */
 
-package io.deepsense.commons.utils
+package io.deepsense.deeplang.utils.aggregators
 
-object CollectionExtensions {
+case class CountOccurenceAggregator[T](elementToCount: T) extends Aggregator[Long, T] {
 
-  implicit class RichSeq[T](seq: Seq[T]) {
+  override def initialElement: Long = 0
 
-    def hasUniqueValues: Boolean = seq.distinct.size == seq.size
-
-    def hasDuplicates: Boolean = !hasUniqueValues
-
-    /**
-     * Works like groupBy, but assumes function f is injective, so there is
-     * only one element for each key.
-     */
-    def lookupBy[R](f: T => R): Map[R, T] = {
-      val mapEntries = seq.map(e => f(e) -> e)
-      assert(mapEntries.size == seq.size,
-        "Function f must be injective, otherwise we would override some key")
-      mapEntries.toMap
+  override def mergeValue(acc: Long, elem: T): Long = {
+    if (elem == elementToCount) {
+      acc + 1
+    } else {
+      acc
     }
   }
 
+  override def mergeCombiners(left: Long, right: Long): Long = left + right
 }

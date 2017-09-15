@@ -88,7 +88,7 @@ case class ExecutionContext(
     sqlContext: SQLContext,
     inferContext: InferContext,
     fsClient: FileSystemClient,
-    reportLevel: ReportLevel,
+    reportLevel: ReportLevel, // TODO REMOVE
     tenantId: String,
     innerWorkflowExecutor: InnerWorkflowExecutor,
     dataFrameStorage: ContextualDataFrameStorage,

@@ -14,26 +14,19 @@
  * limitations under the License.
  */
 
-package io.deepsense.commons.utils
+package io.deepsense.deeplang.doperables.dataframe.report
 
-object CollectionExtensions {
+import org.apache.spark.sql.Row
 
-  implicit class RichSeq[T](seq: Seq[T]) {
+import io.deepsense.deeplang.utils.SparkTypeConverter
 
-    def hasUniqueValues: Boolean = seq.distinct.size == seq.size
+private [report] object ReportUtils {
 
-    def hasDuplicates: Boolean = !hasUniqueValues
-
-    /**
-     * Works like groupBy, but assumes function f is injective, so there is
-     * only one element for each key.
-     */
-    def lookupBy[R](f: T => R): Map[R, T] = {
-      val mapEntries = seq.map(e => f(e) -> e)
-      assert(mapEntries.size == seq.size,
-        "Function f must be injective, otherwise we would override some key")
-      mapEntries.toMap
+  def shortenLongStrings(value: String, maxLength: Int): String =
+    if (value.length < maxLength) {
+      value
+    } else {
+      value.take(maxLength) + "..."
     }
-  }
 
 }

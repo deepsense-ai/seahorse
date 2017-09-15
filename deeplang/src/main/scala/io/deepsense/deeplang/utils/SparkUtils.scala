@@ -17,8 +17,11 @@
 package io.deepsense.deeplang.utils
 
 import scala.collection._
+import scala.reflect.ClassTag
 
 import org.apache.spark.rdd.RDD
+
+import io.deepsense.deeplang.utils.aggregators.{CountOccurrencesWithKeyLimitAggregator, Aggregator}
 
 /**
   * Utils for spark.
@@ -32,50 +35,7 @@ object SparkUtils {
     *         `Some(result)` if amount of distinct values is within `limit`.
     */
   def countOccurrencesWithKeyLimit[T](rdd: RDD[T], limit: Long): Option[Map[T, Long]] = {
-
-    // Accumulate allows seq and comb function to mutate first argument and return it.
-    // This approach saves memory allocations while aggregating data.
-
-    def seq[T](
-        accOpt: Option[mutable.Map[T, Long]],
-        next: T): Option[mutable.Map[T, Long]] = {
-      accOpt.foreach { acc =>
-        addOccurrencesToMap(acc, next, 1)
-      }
-      replacedWithNoneIfLimitExceeded(accOpt)
-    }
-
-    def comb[T](
-        leftOpt: Option[mutable.Map[T, Long]],
-        rightOpt: Option[mutable.Map[T, Long]]): Option[mutable.Map[T, Long]] = {
-      for (left <- leftOpt; rightMap <- rightOpt) {
-        rightMap.foreach { case (element, count) =>
-          addOccurrencesToMap(left, element, count)
-        }
-      }
-      replacedWithNoneIfLimitExceeded(leftOpt)
-    }
-
-    def addOccurrencesToMap[T](
-        occurrences: mutable.Map[T, Long],
-        element: T,
-        count: Long): Unit = {
-      occurrences(element) = occurrences.getOrElse(element, 0L) + count
-    }
-
-
-    def replacedWithNoneIfLimitExceeded[T](
-        mapOpt: Option[mutable.Map[T, Long]]): Option[mutable.Map[T, Long]] = {
-      mapOpt.flatMap { map =>
-        if (map.size <= limit) {
-          mapOpt
-        } else {
-          None
-        }
-      }
-    }
-
-    rdd.aggregate(Option(mutable.Map.empty[T, Long]))(seq _, comb _)
+    CountOccurrencesWithKeyLimitAggregator(limit).execute(rdd)
   }
 
 }

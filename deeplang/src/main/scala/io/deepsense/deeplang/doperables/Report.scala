@@ -33,6 +33,8 @@ case class Report(content: ReportContent = ReportContent("empty report"))
 /**
   * Level of details for generated reports
   */
+// TODO Remove
+@deprecated(message = "To be removed. Not used anymore", since = "2015-12-16")
 object ReportLevel extends Enumeration {
   type ReportLevel = Value
   val HIGH, MEDIUM, LOW = Value

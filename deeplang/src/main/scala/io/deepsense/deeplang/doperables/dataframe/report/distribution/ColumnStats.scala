@@ -14,26 +14,16 @@
  * limitations under the License.
  */
 
-package io.deepsense.commons.utils
+package io.deepsense.deeplang.doperables.dataframe.report.distribution
 
-object CollectionExtensions {
+import org.apache.spark.mllib.stat.MultivariateStatisticalSummary
 
-  implicit class RichSeq[T](seq: Seq[T]) {
+case class ColumnStats(min: Double, max: Double, mean: Double)
 
-    def hasUniqueValues: Boolean = seq.distinct.size == seq.size
-
-    def hasDuplicates: Boolean = !hasUniqueValues
-
-    /**
-     * Works like groupBy, but assumes function f is injective, so there is
-     * only one element for each key.
-     */
-    def lookupBy[R](f: T => R): Map[R, T] = {
-      val mapEntries = seq.map(e => f(e) -> e)
-      assert(mapEntries.size == seq.size,
-        "Function f must be injective, otherwise we would override some key")
-      mapEntries.toMap
-    }
+object ColumnStats {
+  def fromMultiVarStats(
+      multiVarStats: MultivariateStatisticalSummary,
+      column: Int): ColumnStats = {
+    ColumnStats(multiVarStats.min(column), multiVarStats.max(column), multiVarStats.mean(column))
   }
-
 }

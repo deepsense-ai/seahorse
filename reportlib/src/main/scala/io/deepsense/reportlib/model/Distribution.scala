@@ -22,6 +22,15 @@ sealed abstract class Distribution(
   val description: String,
   val missingValues: Long)
 
+case class NoDistribution(
+    override val name: String,
+    override val description: String)
+  extends Distribution(name, NoDistribution.subtype, description, 0)
+
+object NoDistribution {
+  val subtype = "no_distribution"
+}
+
 sealed abstract class UnivariateDistribution(
     name: String,
     subtype: String,
@@ -35,17 +44,17 @@ case class DiscreteDistribution(
     override val name: String,
     override val description: String,
     override  val missingValues: Long,
-    buckets: Seq[String],
+    categories: Seq[String],
     counts: Seq[Long])
   extends UnivariateDistribution(
     name,
     DiscreteDistribution.subtype,
     description,
     missingValues,
-    buckets,
+    categories,
     counts) {
-  require(buckets.size == counts.size, "buckets size does not match count size. " +
-    s"Buckets size is: ${buckets.size}, counts size is: ${counts.size}")
+  require(categories.size == counts.size, "buckets size does not match count size. " +
+    s"Buckets size is: ${categories.size}, counts size is: ${counts.size}")
 }
 
 object DiscreteDistribution {
@@ -66,11 +75,9 @@ case class ContinuousDistribution(
     missingValues,
     buckets.map(_.toString),
     counts) with ReportJsonProtocol {
-  require(buckets.size != 1, "Buckets size cannot be 1")
-  require((buckets.isEmpty && counts.isEmpty)
-    || (!buckets.isEmpty && (buckets.size == counts.size + 1)),
-    "Either buckets and counts should be empty or " +
-      "buckets size should be equal to count size + 1. " +
+  require(buckets.size > 1, "Buckets size must be larger than 1")
+  require((buckets.size == counts.size + 1),
+      "Buckets size should be equal to count size + 1. " +
       s"Buckets size is: ${buckets.size}, counts size is: ${counts.size}")
 }
 
@@ -82,7 +89,6 @@ case class Statistics(
   max: Option[String],
   min: Option[String],
   mean: Option[String])
-
 
 object Statistics {
   def apply(): Statistics = new Statistics(None, None, None)

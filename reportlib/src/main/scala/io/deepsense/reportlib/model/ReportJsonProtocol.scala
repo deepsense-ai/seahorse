@@ -49,6 +49,11 @@ trait ReportJsonProtocol
       DistributionJsonProtocol.countsKey,
       DistributionJsonProtocol.statisticsKey)
 
+    val noDistributionFormat = jsonFormat(
+      NoDistribution.apply,
+      DistributionJsonProtocol.nameKey,
+      DistributionJsonProtocol.descriptionKey)
+
     override def read(json: JsValue): Distribution = {
       val fields: Map[String, JsValue] = json.asJsObject.fields
       require(fields.get(DistributionJsonProtocol.typeKey) ==
@@ -57,6 +62,7 @@ trait ReportJsonProtocol
       subtype match {
         case DiscreteDistribution.subtype => json.convertTo(categoricalDistributionFormat)
         case ContinuousDistribution.subtype => json.convertTo(continuousDistributionFormat)
+        case NoDistribution.subtype => json.convertTo(noDistributionFormat)
       }
     }
     override def write(distribution: Distribution): JsValue = {
@@ -75,8 +81,9 @@ trait ReportJsonProtocol
         ))
         case d: DiscreteDistribution => JsObject(basicFields ++ Map(
           DistributionJsonProtocol.countsKey -> d.counts.toJson,
-          DistributionJsonProtocol.bucketsKey -> d.buckets.toJson
+          DistributionJsonProtocol.bucketsKey -> d.categories.toJson
         ))
+        case d: NoDistribution => JsObject(basicFields)
       }
     }
   }

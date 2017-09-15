@@ -14,26 +14,15 @@
  * limitations under the License.
  */
 
-package io.deepsense.commons.utils
+package io.deepsense.deeplang.doperables.dataframe.report.distribution
 
-object CollectionExtensions {
+import org.apache.spark.sql.Row
 
-  implicit class RichSeq[T](seq: Seq[T]) {
+import io.deepsense.deeplang.utils.aggregators.Aggregator
+import io.deepsense.deeplang.utils.aggregators.AggregatorBatch.BatchedResult
+import io.deepsense.reportlib.model.Distribution
 
-    def hasUniqueValues: Boolean = seq.distinct.size == seq.size
-
-    def hasDuplicates: Boolean = !hasUniqueValues
-
-    /**
-     * Works like groupBy, but assumes function f is injective, so there is
-     * only one element for each key.
-     */
-    def lookupBy[R](f: T => R): Map[R, T] = {
-      val mapEntries = seq.map(e => f(e) -> e)
-      assert(mapEntries.size == seq.size,
-        "Function f must be injective, otherwise we would override some key")
-      mapEntries.toMap
-    }
-  }
-
+trait DistributionBuilder {
+  def allAggregators: Seq[Aggregator[_, Row]]
+  def build(results: BatchedResult): Distribution
 }

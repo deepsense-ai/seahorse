@@ -14,26 +14,20 @@
  * limitations under the License.
  */
 
-package io.deepsense.commons.utils
+package io.deepsense.deeplang.doperables.dataframe.report.distribution
 
-object CollectionExtensions {
+import org.apache.spark.sql.types.DataType
 
-  implicit class RichSeq[T](seq: Seq[T]) {
+object NoDistributionReasons {
 
-    def hasUniqueValues: Boolean = seq.distinct.size == seq.size
+  val TooManyDistinctCategoricalValues = "Too many distinct categorical values"
 
-    def hasDuplicates: Boolean = !hasUniqueValues
+  val NoData = "No data to calculate distribution"
 
-    /**
-     * Works like groupBy, but assumes function f is injective, so there is
-     * only one element for each key.
-     */
-    def lookupBy[R](f: T => R): Map[R, T] = {
-      val mapEntries = seq.map(e => f(e) -> e)
-      assert(mapEntries.size == seq.size,
-        "Function f must be injective, otherwise we would override some key")
-      mapEntries.toMap
-    }
-  }
+  val OnlyNulls = "No data to calculate distribution - only nulls"
 
+  val SimplifiedReport = "No distributions for simplified report"
+
+  def NotApplicableForType(dataType: DataType): String =
+    s"Distribution not applicable for type ${dataType.typeName}"
 }

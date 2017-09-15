@@ -22,6 +22,7 @@ import org.apache.spark.sql.types.{StructField, StructType}
 
 import io.deepsense.commons.types.ColumnType.ColumnType
 import io.deepsense.deeplang.doperables.Report
+import io.deepsense.deeplang.doperables.dataframe.report.DataFrameReportGenerator
 import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
 import io.deepsense.deeplang.doperables.descriptions.DataFrameInferenceResult
 import io.deepsense.deeplang.doperations.exceptions.WrongColumnTypeException
@@ -38,7 +39,6 @@ case class DataFrame private[dataframe] (
     sparkDataFrame: sql.DataFrame,
     schema: Option[StructType])
   extends DOperable
-  with DataFrameReportGenerator
   with DataFrameColumnsGetter {
 
   def this() = this(null, None)
@@ -53,7 +53,7 @@ case class DataFrame private[dataframe] (
   }
 
   override def report(executionContext: ExecutionContext): Report = {
-    report(executionContext, sparkDataFrame)
+    DataFrameReportGenerator.report(sparkDataFrame)
   }
 
   override def inferenceResult: Option[DataFrameInferenceResult] =

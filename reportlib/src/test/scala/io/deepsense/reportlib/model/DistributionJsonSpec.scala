@@ -29,6 +29,28 @@ class DistributionJsonSpec
   with Matchers
   with ReportJsonProtocol {
 
+  "NoDistribution" should {
+    val noDistribution: Distribution = NoDistribution(
+      DistributionTestFactory.distributionName,
+      DistributionTestFactory.distributionDescription
+    )
+    val jsonNoDistribution: JsObject = JsObject(
+      "name" -> JsString(DistributionTestFactory.distributionName),
+      "blockType" -> JsString("distribution"),
+      "subtype" -> JsString("no_distribution"),
+      "description" -> JsString(DistributionTestFactory.distributionDescription),
+      "missingValues" -> JsNumber(0)
+    )
+    "serialize to Json" in {
+      val json = noDistribution.toJson
+      json shouldBe jsonNoDistribution
+    }
+    "deserialize from Json" in {
+      val distributionObject = jsonNoDistribution.convertTo[Distribution]
+      distributionObject shouldBe noDistribution
+    }
+  }
+
   "DiscreteDistribution" should {
     val jsonCategoricalDistribution: JsObject = JsObject(
       "name" -> JsString(DistributionTestFactory.distributionName),
