@@ -41,7 +41,7 @@ function publish_component() {
 }
 
 calculate_full_version
-for component in entitystorage experimentmanager graphexecutor deploy-model-service
+for component in entitystorage workflowmanager graphexecutor deploy-model-service
 do
   publish_component ${component}
 done
