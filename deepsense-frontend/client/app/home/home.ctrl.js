@@ -1,8 +1,8 @@
 'use strict';
 
 /* @ngInject */
-function Home($rootScope, $uibModal, $state, $q, WorkflowService, PageService, ConfirmationModalService, SessionManagerApi,
-              NotificationService, WorkflowCloneService, WorkflowsApiClient, SessionManager, config, UserService) {
+function Home($rootScope, $uibModal, $state, WorkflowService, PageService, ConfirmationModalService, SessionManagerApi,
+              WorkflowCloneService, SessionManager, config, UserService) {
   this.init = () => {
     PageService.setTitle('Home');
     $rootScope.stateData.dataIsLoaded = true;
@@ -19,7 +19,7 @@ function Home($rootScope, $uibModal, $state, $q, WorkflowService, PageService, C
     this.downloadWorkflows();
 
     $rootScope.$watch(() => {
-      return { sessions: SessionManager.sessions, workflows: this.workflows }
+      return {sessions: SessionManager.sessions, workflows: this.workflows}
     }, () => {
       _.forEach(this.workflows, (w) => {
         w.sessionStatus = SessionManager.statusForWorkflowId(w.id);
@@ -38,6 +38,12 @@ function Home($rootScope, $uibModal, $state, $q, WorkflowService, PageService, C
     }, () => {
       this.isErrorConnectingToVagrant = true;
     });
+  };
+
+  this.search = (workflow) => {
+    return !this.filterString ||
+      (workflow.name.toLowerCase().includes(this.filterString.toLowerCase())) ||
+      (workflow.ownerName.toLowerCase().includes(this.filterString.toLowerCase()));
   };
 
   this.reloadPage = () => {

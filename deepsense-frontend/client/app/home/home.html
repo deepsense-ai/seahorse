@@ -70,8 +70,9 @@
         </td>
       </tr>
       <tr ng-repeat="workflow in home.workflows |
-                     orderBy : home.sort.column : home.sort.descending |
-                     filter: { name: home.filterString } track by workflow.id">
+                     filter: home.search |
+                     orderBy : home.sort.column : home.sort.descending
+                     track by workflow.id">
         <td class="vertical-align">
           <a ng-click="home.goToWorkflowEditor(workflow.id)">
             {{$index+1}}
