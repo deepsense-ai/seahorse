@@ -14,6 +14,7 @@ import scala.language.postfixOps
 import scala.util.Try
 import scalaz.Scalaz._
 import scalaz._
+import io.deepsense.sessionmanager.service.{Status => SessionStatus}
 
 import com.ning.http.client.AsyncHttpClient
 import com.ning.http.client.multipart.ByteArrayPart
@@ -27,6 +28,7 @@ import org.scalatest.time.{Seconds, Span}
 import org.scalatest.{Matchers, Suite}
 import play.api.libs.json.{JsArray, JsObject, JsString, Json}
 import play.api.libs.ws.ning.{NingWSClient, NingWSResponse}
+import org.scalactic.source.Position
 
 import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.commons.utils.Logging
@@ -139,10 +141,10 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
           .stripMargin)
   }
 
-  def withExecutor[T](workflowId: String)(code: ExecutorContext => T): Unit = {
+  def withExecutor[T](workflowId: String, clusterDetails: ClusterDetails)(code: ExecutorContext => T): Unit = {
     logger.info(s"Starting executor for workflow $workflowId")
 
-    httpClient.url(sessionsUrl).post(Json.parse(createSessionBody(workflowId)))
+    httpClient.url(sessionsUrl).post(Json.parse(createSessionBody(workflowId, clusterDetails)))
 
     ensureExecutorIsRunning(workflowId)
     logger.info(s"Executor for workflow $workflowId started")
@@ -176,20 +178,13 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
     Await.result(httpClient.url(s"$sessionsUrl/$workflowId").delete(), 10 seconds)
   }
 
-  private def createSessionBody(workflowId: String) = {
+  private def createSessionBody(workflowId: String, clusterDetails: ClusterDetails) = {
     import spray.json._
     import SessionsJsonProtocol._
 
-    val ignoredInLocal = ""
     val request = CreateSession(
       workflowId = workflowId,
-      cluster = ClusterDetails(
-        name = "some-name" + UUID.randomUUID(),
-        id = Some(1L),
-        clusterType = "local",
-        uri = ignoredInLocal,
-        userIP = ignoredInLocal
-      )
+      cluster = clusterDetails
     )
     request.toJson.compactPrint
   }
@@ -206,7 +201,7 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
 
   private def ensureExecutorIsRunning(workflowId: String): Unit = {
     eventually {
-      val status = Await.result(
+      val statusString = Await.result(
         httpClient.url(sessionsUrl)
           .get
           .map(request => {
@@ -217,7 +212,7 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
             ).get
             jsonSessionForWorkflow.value("status").asInstanceOf[JsString].value
           }), httpTimeout)
-      status shouldEqual "running" // TODO Reuzyc consta
+      SessionStatus.withName(statusString) shouldEqual SessionStatus.Running
     }
   }
 
@@ -225,12 +220,13 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
       (workflowId: String)
       (implicit ctx: ExecutorContext): Unit = {
     val numberOfNodes = calculateNumberOfNodes(workflowId)
+
     val nodesResult = eventually {
       val failedNodes = ctx.websocketMessages.filter { msg =>
         msg.contains("executionStatus") && msg.contains("FAILED")
       }
 
-      if (failedNodes.size > 0) {
+      if (failedNodes.nonEmpty) {
         s"Failed nodes: ${failedNodes.toString()} for workflow $workflowId".failure
       } else {
         val completedNodeMessages = ctx.websocketMessages.filter { msg =>
@@ -243,7 +239,7 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
 
         "All nodes completed".success
       }
-    }(PatienceConfig(timeout = workflowTimeout, interval = 5 seconds))
+    }(PatienceConfig(timeout = workflowTimeout, interval = 5 seconds), implicitly[Position])
 
     nodesResult match {
       case Success(_) =>

@@ -21,13 +21,13 @@ object SeahorseSparkLauncher {
       clusterConfig: ClusterDetails) = handleUnexpectedExceptions {
       for {
         sparkLauncher <- clusterConfig.clusterType match {
-          case "local" =>
+          case ClusterType.local =>
             LocalSparkLauncher(sessionConfig, sparkLauncherConfig, clusterConfig)
-          case "standalone" =>
+          case ClusterType.standalone =>
             StandaloneSparkLauncher(sessionConfig, sparkLauncherConfig, clusterConfig)
-          case "yarn" =>
+          case ClusterType.yarn =>
             YarnSparkLauncher(sessionConfig, sparkLauncherConfig, clusterConfig)
-          case "mesos" =>
+          case ClusterType.mesos =>
             MesosSparkLauncher(sessionConfig, sparkLauncherConfig, clusterConfig)
         }
       } yield sparkLauncher
