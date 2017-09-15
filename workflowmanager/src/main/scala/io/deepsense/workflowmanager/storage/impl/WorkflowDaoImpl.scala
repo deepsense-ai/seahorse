@@ -42,8 +42,9 @@ case class WorkflowDaoImpl @Inject()(
   }
 
   override def update(id: Id, workflow: Workflow): Future[Unit] = {
-    val query = for { w <- workflows if w.id === id.value } yield w.workflow
-    db.run(query.update(workflow.toJson.compactPrint)).map(_ => ())
+    val query = for { w <- workflows if w.id === id.value } yield (w.workflow, w.updated)
+    db.run(query.update((workflow.toJson.compactPrint, DateTimeConverter.now.getMillis)))
+      .map(_ => ())
   }
 
   override def delete(id: Id): Future[Unit] = {
