@@ -122,6 +122,7 @@ function GraphPanelRendererService($rootScope, $document) {
     jsPlumb.unbind('connectionDetached');
     jsPlumb.unbind('connectionMoved');
     jsPlumb.unbind('connectionDrag');
+    jsPlumb.setZoom(1, true);
   };
 
   that.init = function init() {
