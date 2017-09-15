@@ -70,6 +70,8 @@ object CatalogRecorder {
     catalog.registerDOperable[Word2VecModel]()
     catalog.registerDOperable[CountVectorizer]()
     catalog.registerDOperable[CountVectorizerModel]()
+    catalog.registerDOperable[RandomForestRegression]()
+    catalog.registerDOperable[RandomForestRegressionModel]()
 
     // wrapped Spark transformers
     catalog.registerDOperable[Binarizer]()
@@ -154,6 +156,9 @@ object CatalogRecorder {
       DOperationCategories.ML.Regression)
 
     catalog.registerDOperation[CreateLogisticRegression](
+      DOperationCategories.ML.Regression)
+
+    catalog.registerDOperation[CreateRandomForestRegression](
       DOperationCategories.ML.Regression)
 
     catalog.registerDOperation[CreatePCA](
