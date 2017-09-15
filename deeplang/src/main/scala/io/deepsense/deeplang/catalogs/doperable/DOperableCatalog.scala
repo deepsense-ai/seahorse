@@ -156,7 +156,10 @@ class DOperableCatalog {
 object DOperableCatalog {
   /** Intersection of collection of sets. */
   private def intersectSets[T](sets: Traversable[Set[T]]): Set[T] = {
-    if (sets.size == 0) Set[T]()
-    else sets.foldLeft(sets.head)((x, y) => x & y)
+    if (sets.size == 0) {
+      Set[T]()
+    } else {
+      sets.foldLeft(sets.head)((x, y) => x & y)
+    }
   }
 }
