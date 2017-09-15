@@ -51,12 +51,12 @@ class GridSearchIntegSpec extends DeeplangIntegTestSupport with DefaultJsonProto
       val bestMetricsTable = tables.head
       bestMetricsTable.values.size shouldBe 1
       bestMetricsTable.values shouldBe
-        List(List(Some("10.0"), Some("5.0"), Some("9.51E+4")))
+        List(List(Some("10.0"), Some("5.0"), Some("95104.6")))
 
       val expectedMetrics = List(
-        List(Some("10.0"), Some("5.0"), Some("9.51E+4")),
-        List(Some("10.0"), Some("0.5"), Some("9.511E+4")),
-        List(Some("10.0"), Some("0.01"), Some("9.511E+4")))
+        List(Some("10.0"), Some("5.0"), Some("95104.6")),
+        List(Some("10.0"), Some("0.5"), Some("95105.5")),
+        List(Some("10.0"), Some("0.01"), Some("95105.6")))
       val metricsTable = tables(1)
       metricsTable.values.size shouldBe 3
       metricsTable.values shouldBe expectedMetrics

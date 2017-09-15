@@ -38,17 +38,17 @@ class DoubleUtilsSpec extends StandardSpec with UnitTestSupport {
         (d, s) <- numbers
       } DoubleUtils.double2String(d) shouldBe s
     }
-    "return decimal rounded formatting to rounded 4 significant figures" in {
+    "return decimal rounded formatting to rounded 6 significant figures" in {
       val numbers = List(
-        (0.0000001, "1E-7"),
-        (0.00000012345, "1.235E-7"),
-        (0.12345, "0.1235"),
-        (12.345, "12.35"),
-        (1234.5, "1235"),
-        (0.55454545, "0.5545"),
-        (100.55454545, "100.6"),
-        (1000000.999999999D, "1E+6"),
-        (77777777777.7777777, "7.778E+10")
+        (0.0000001, "1e-7"),
+        (0.00000012345, "1.2345e-7"),
+        (0.12345, "0.12345"),
+        (12.345, "12.345"),
+        (1234.5, "1234.5"),
+        (0.55454545, "0.554545"),
+        (100.55454545, "100.555"),
+        (1000000.999999999D, "1e+6"),
+        (77777777777.7777777, "7.77778e+10")
       )
       for {
         (d, s) <- numbers
