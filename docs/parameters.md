@@ -3,12 +3,13 @@ layout: documentation
 displayTitle: Parameters
 docTab: parameters
 title: Parameters
+includeDeeplangMenu: true
 description: Parameters documentation
 ---
 
 Each parameter has a name, description and a type. A type of a parameter defines what kind of value it receives (along with some validation logic).
 
-Each [operation](deeplang.html#operations) defines its parameters. In order for an operation to be executed, all its parameters have to be filled with valid values.
+Each [operation](deeplang_overview.html#operations) defines its parameters. In order for an operation to be executed, all its parameters have to be filled with valid values.
 There are several predefined types of parameters in Deeplang:
 
 ### Numeric

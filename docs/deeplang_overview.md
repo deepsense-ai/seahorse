@@ -1,8 +1,8 @@
 ---
 layout: documentation
-displayTitle: Deeplang
-docTab: deeplang
-title: Deeplang
+displayTitle: Deeplang Overview
+docTab: deeplang_overview
+title: Deeplang Overview
 usesMathJax: true
 includeDeeplangMenu: true
 

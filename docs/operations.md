@@ -3,7 +3,7 @@ layout: documentation
 displayTitle: Operations
 docTab: operations
 title: Operations
-includeOperationsMenu: true
+includeDeeplangMenu: true
 
 description: Deepsense documentation homepage
 ---

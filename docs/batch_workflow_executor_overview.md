@@ -1,9 +1,10 @@
 ---
 layout: documentation
-displayTitle: Workflow Executor
-docTab: workflow_executor
-title: Workflow Executor
-description: Deepsense documentation homepage
+displayTitle: Seahorse Batch Workflow Executor
+docTab: batch_workflow_executor_overview
+title: Seahorse Batch Workflow Executor
+includeTechnicalOverviewMenu: true
+description: Seahorse Batch Workflow Executor
 ---
 
 **Table of Contents**

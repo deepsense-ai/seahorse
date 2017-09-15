@@ -3,7 +3,7 @@ layout: documentation
 displayTitle: Classes and Traits
 docTab: entities
 title: Classes and Traits
-includeOperablesMenu: true
+includeDeeplangMenu: true
 
 description: Deepsense documentation homepage
 ---
@@ -11,7 +11,7 @@ description: Deepsense documentation homepage
 Entity is an object representation of data used in a workflow.
 Each entity has a class.
 Classes can have traits.
-Detailed description of entities, classes and traits can be found [here](deeplang.html#entities).
+Detailed description of entities, classes and traits can be found [here](deeplang_overview.html#entities).
 
 List of all supported classes and traits:
 
