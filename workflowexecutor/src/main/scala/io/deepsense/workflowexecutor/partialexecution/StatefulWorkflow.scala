@@ -39,6 +39,14 @@ class StatefulWorkflow(
   private var execution: Execution = startingExecution
   private var additionalData = thirdPartyData
 
+  def getNodesRemovedByWorkflow(workflow: Workflow) : Set[DeeplangNode] = {
+    val previousNodes = execution.graph.nodes
+    val newNodes = workflow.graph.nodes
+    val removedNodesId = previousNodes.map(node => node.id).diff(
+      newNodes.map(node => node.id))
+    previousNodes.filter(node => removedNodesId.contains(node.id))
+  }
+
   def launch(nodes: Set[Node.Id]): Unit = {
     execution match {
       case idleExecution: IdleExecution => {

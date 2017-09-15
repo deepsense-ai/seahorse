@@ -55,6 +55,8 @@ trait DataFrameStorage {
    */
   def setOutputDataFrame(
     workflowId: Id, nodeId: Id, portNumber: Int, dataFrame: SparkDataFrame): Unit
+
+  def removeNodeOutputDataFrames(workflowId: Id, nodeId: Id) : Unit
 }
 
 object DataFrameStorage {

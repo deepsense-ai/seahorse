@@ -17,21 +17,20 @@
 package io.deepsense.workflowexecutor
 
 import akka.actor.{ActorRef, ActorSystem, Props}
-import akka.testkit.{TestKit, TestProbe}
+import akka.testkit.{TestActorRef, TestKit, TestProbe}
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatest.concurrent.Eventually
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll, Matchers, WordSpecLike}
-
 import io.deepsense.deeplang.doperables.report.Report
 import io.deepsense.deeplang.inference.InferenceWarnings
-import io.deepsense.deeplang.{DKnowledge, DOperable, DOperation, ExecutionContext}
+import io.deepsense.deeplang._
 import io.deepsense.graph.DeeplangGraph.DeeplangNode
 import io.deepsense.graph.Node
 import io.deepsense.reportlib.model.ReportContent
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.{NodeCompleted, NodeFailed, NodeStarted}
-import io.deepsense.workflowexecutor.WorkflowNodeExecutorActor.Messages.Start
+import io.deepsense.workflowexecutor.WorkflowNodeExecutorActor.Messages.{Delete, Start}
 
 class WorkflowNodeExecutorActorSpec
   extends TestKit(ActorSystem("WorkflowNodeExecutorActorSpec"))
@@ -54,6 +53,29 @@ class WorkflowNodeExecutorActorSpec
         eventually {
           verify(operation).inferKnowledge(any())(any())
           verify(operation).execute(any())(same(input))
+        }
+      }
+    }
+    "receives delete" should {
+      "use delete DataFrame from storage" in {
+
+        val node = mock[DeeplangNode]
+        when(node.id).thenReturn(Node.Id.randomId)
+        val dOperation = mockOperation
+        when(node.value).thenReturn(dOperation)
+
+        val removedExecutedContext = mock[ExecutionContext]
+        val dataFrameStorage = mock[ContextualDataFrameStorage]
+        when(removedExecutedContext.dataFrameStorage).thenReturn(dataFrameStorage)
+
+        val wnea: TestActorRef[WorkflowNodeExecutorActor] = TestActorRef(
+          new WorkflowNodeExecutorActor(removedExecutedContext, node, Vector.empty))
+        val probe = TestProbe()
+        probe.send(wnea, Delete())
+
+        eventually {
+          verify(removedExecutedContext).dataFrameStorage
+          verify(dataFrameStorage).removeNodeOutputDataFrames()
         }
       }
     }

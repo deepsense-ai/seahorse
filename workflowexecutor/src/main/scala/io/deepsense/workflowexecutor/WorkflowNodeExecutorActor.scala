@@ -68,6 +68,8 @@ class WorkflowNodeExecutorActor(
         logger.info(s"Ending execution of node $nodeDescription (duration: $duration seconds)")
         self ! PoisonPill
       }
+    case Delete() =>
+      executionContext.dataFrameStorage.removeNodeOutputDataFrames()
   }
 
   def sendFailed(e: Exception): Unit = {
@@ -133,5 +135,6 @@ object WorkflowNodeExecutorActor {
   object Messages {
     sealed trait Message
     case class Start() extends Message
+    case class Delete() extends Message
   }
 }

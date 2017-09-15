@@ -17,7 +17,6 @@
 package io.deepsense.workflowexecutor
 
 import scala.concurrent.duration._
-
 import akka.actor.{Actor, ActorRef, ActorSystem}
 import akka.testkit.{TestActorRef, TestKit, TestProbe}
 import org.mockito.Matchers._
@@ -28,7 +27,6 @@ import org.scalatest._
 import org.scalatest.concurrent.{Eventually, ScalaFutures, ScaledTimeSpans}
 import org.scalatest.mock.MockitoSugar
 import spray.json.JsObject
-
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.models.Entity
 import io.deepsense.commons.utils.Logging
@@ -37,6 +35,7 @@ import io.deepsense.deeplang.doperations.inout._
 import io.deepsense.deeplang.doperations.{ReadDataFrame, WriteDataFrame}
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.deeplang.{CommonExecutionContext, DOperable, ExecutionContext}
+import io.deepsense.graph.DeeplangGraph.DeeplangNode
 import io.deepsense.graph.Node.Id
 import io.deepsense.graph._
 import io.deepsense.graph.nodestate.{Aborted, NodeStatus, Queued, Running}
@@ -45,6 +44,7 @@ import io.deepsense.reportlib.model.ReportContent
 import io.deepsense.reportlib.model.factory.ReportContentTestFactory
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages._
 import io.deepsense.workflowexecutor.WorkflowManagerClientActorProtocol.{GetWorkflow, SaveState, SaveWorkflow}
+import io.deepsense.workflowexecutor.WorkflowNodeExecutorActor.Messages.Delete
 import io.deepsense.workflowexecutor.executor.Executor
 import io.deepsense.workflowexecutor.partialexecution._
 
@@ -290,19 +290,83 @@ class WorkflowExecutorActorSpec
     "receive StructUpdate" should {
       "update state, send update to WM and to editor" in {
         val statefulWorkflow: StatefulWorkflow = mock[StatefulWorkflow]
+
         val wmClient = TestProbe()
         val publisher = TestProbe()
         val probe = TestProbe()
+
+        val wnea = TestProbe()
+        val nodeExecutorFactory = mock[GraphNodeExecutorFactory]
+        when(nodeExecutorFactory.createGraphNodeExecutor(any(), any(), any(), any()))
+          .thenReturn(wnea.ref)
+
         val wea: TestActorRef[WorkflowExecutorActor] = TestActorRef(
-          SessionWorkflowExecutorActor.props(
+          new SessionWorkflowExecutorActor(
             mock[CommonExecutionContext],
+            nodeExecutorFactory,
             wmClient.ref,
             publisher.ref,
             TestProbe().ref,
             TestProbe().ref,
-            3,
-            "",
-            3.seconds), Workflow.Id.randomId.toString)
+            3, "", 3.seconds), Workflow.Id.randomId.toString)
+
+        wea.underlyingActor.statefulWorkflow = statefulWorkflow
+        wea.underlyingActor.context.become(wea.underlyingActor.ready())
+
+        val workflow: Workflow = mock[Workflow]
+        val workflowWithResults: WorkflowWithResults = mock[WorkflowWithResults]
+        val inferredState = mock[InferredState]
+        when(statefulWorkflow.workflowWithResults).thenReturn(workflowWithResults)
+        when(statefulWorkflow.inferState).thenReturn(inferredState)
+        when(statefulWorkflow.getNodesRemovedByWorkflow(workflow)).thenReturn(Set[DeeplangNode]())
+
+        probe.send(wea, UpdateStruct(workflow))
+
+        eventually {
+          verify(statefulWorkflow).updateStructure(workflow)
+          verify(statefulWorkflow).workflowWithResults
+          verify(nodeExecutorFactory, never()).createGraphNodeExecutor(any(), any(), any(), any())
+          val saveWorkflow = wmClient.expectMsgClass(classOf[SaveWorkflow])
+          saveWorkflow shouldBe SaveWorkflow(workflowWithResults)
+
+          val inferred = publisher.expectMsgClass(classOf[InferredState])
+          inferred shouldBe inferredState
+        }
+      }
+    }
+
+    "call updateStructure with nodes deleted" should {
+      "send delete to WorkflowNodeExecutorActor" in {
+        val statefulWorkflow: StatefulWorkflow = mock[StatefulWorkflow]
+
+        val removedNodes = Set(node1, node2)
+        val wmClient = TestProbe()
+        val publisher = TestProbe()
+        val probe = TestProbe()
+
+        val nodeExecutors = Seq.fill(2)(TestProbe())
+        val nodeExecutorFactory = mock[GraphNodeExecutorFactory]
+        when(nodeExecutorFactory.createGraphNodeExecutor(any(), any(), any(), any()))
+          .thenAnswer(new Answer[ActorRef] {
+            var i = 0
+            override def answer(invocation: InvocationOnMock): ActorRef = {
+              val executor = nodeExecutors(i)
+              i = i + 1
+              executor.ref
+            }
+          })
+
+        val wea: TestActorRef[WorkflowExecutorActor] = TestActorRef(
+          new SessionWorkflowExecutorActor(
+            mock[CommonExecutionContext],
+            nodeExecutorFactory,
+            wmClient.ref,
+            publisher.ref,
+            TestProbe().ref,
+            TestProbe().ref,
+            3, "", 3.seconds), Workflow.Id.randomId.toString)
+
+
         wea.underlyingActor.statefulWorkflow = statefulWorkflow
         wea.underlyingActor.context.become(wea.underlyingActor.ready())
         val workflow: Workflow = mock[Workflow]
@@ -310,18 +374,12 @@ class WorkflowExecutorActorSpec
         val inferredState = mock[InferredState]
         when(statefulWorkflow.workflowWithResults).thenReturn(workflowWithResults)
         when(statefulWorkflow.inferState).thenReturn(inferredState)
+        doReturn(removedNodes).when(statefulWorkflow).getNodesRemovedByWorkflow(workflow)
 
         probe.send(wea, UpdateStruct(workflow))
 
         eventually {
-          verify(statefulWorkflow).updateStructure(workflow)
-          verify(statefulWorkflow).workflowWithResults
-
-          val saveWorkflow = wmClient.expectMsgClass(classOf[SaveWorkflow])
-          saveWorkflow shouldBe SaveWorkflow(workflowWithResults)
-
-          val inferred = publisher.expectMsgClass(classOf[InferredState])
-          inferred shouldBe inferredState
+          nodeExecutors.foreach(ne => ne.expectMsgClass(classOf[Delete]))
         }
       }
     }

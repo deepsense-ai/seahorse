@@ -22,8 +22,6 @@ import org.apache.spark.sql.{DataFrame => SparkDataFrame}
 
 import io.deepsense.commons.models.Id
 import io.deepsense.deeplang.DataFrameStorage
-import io.deepsense.deeplang.DataFrameStorage.{DataFrameId, DataFrameName}
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
 
 class DataFrameStorageImpl extends DataFrameStorage {
 
@@ -45,4 +43,7 @@ class DataFrameStorageImpl extends DataFrameStorage {
   override def setOutputDataFrame(
       workflowId: Id, nodeId: Id, portNumber: Int, dataFrame: SparkDataFrame): Unit =
     outputDataFrames.put((workflowId, nodeId, portNumber), dataFrame)
+
+  override def removeNodeOutputDataFrames(workflowId: Id, nodeId: Id) : Unit =
+    outputDataFrames.retain((k, _) => k._1 != workflowId || k._2 != nodeId)
 }

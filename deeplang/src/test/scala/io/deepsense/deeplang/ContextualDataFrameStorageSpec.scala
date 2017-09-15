@@ -61,5 +61,11 @@ class ContextualDataFrameStorageSpec
 
       storage.getOutputDataFrame(portNumber) shouldBe Some(sparkDataFrame)
     }
+
+    "delete output dataFrame" in {
+      storage.removeNodeOutputDataFrames
+      verify(dataFrameStorage).removeNodeOutputDataFrames(workflowId, nodeId)
+    }
+
   }
 }

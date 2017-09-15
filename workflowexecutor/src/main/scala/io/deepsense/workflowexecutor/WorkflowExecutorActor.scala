@@ -87,7 +87,14 @@ abstract class WorkflowExecutorActor(
   }
 
   private def updateStruct(workflow: Workflow): Unit = {
+    val removedNodes = statefulWorkflow.getNodesRemovedByWorkflow(workflow)
     statefulWorkflow.updateStructure(workflow)
+
+    removedNodes.foreach (node => {
+      val nodeRef = getGraphNodeExecutor(node, Vector.empty)
+      nodeRef ! WorkflowNodeExecutorActor.Messages.Delete()
+    })
+
     val workflowWithResults: WorkflowWithResults = statefulWorkflow.workflowWithResults
     workflowManagerClientActor.foreach(_ ! SaveWorkflow(workflowWithResults))
     sendInferredState(statefulWorkflow.inferState)
@@ -156,13 +163,17 @@ abstract class WorkflowExecutorActor(
     val readyNodes: Seq[ReadyNode] = statefulWorkflow.startReadyNodes()
     readyNodes.foreach {case readyNode =>
         val input = readyNode.input.toVector
-        val nodeExecutionContext = executionContext.createExecutionContext(
-          workflowId, readyNode.node.id)
-        val nodeRef = nodeExecutorFactory
-          .createGraphNodeExecutor(context, nodeExecutionContext, readyNode.node, input)
+        val nodeRef = getGraphNodeExecutor(readyNode.node, input)
         nodeRef ! WorkflowNodeExecutorActor.Messages.Start()
         logger.debug(s"Starting node $readyNode")
     }
+  }
+
+  private def getGraphNodeExecutor(node: DeeplangNode, dooperable: Vector[DOperable]): ActorRef = {
+    val nodeExecutionContext = executionContext.createExecutionContext(
+      workflowId, node.id)
+    nodeExecutorFactory
+      .createGraphNodeExecutor(context, nodeExecutionContext, node, dooperable)
   }
 
   def nodeStarted(id: Node.Id): Unit = logger.debug("{}", NodeStarted(id))

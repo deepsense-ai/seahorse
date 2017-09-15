@@ -109,6 +109,10 @@ case class ContextualDataFrameStorage(
 
   def setOutputDataFrame(portNumber: Int, dataFrame: SparkDataFrame): Unit =
     dataFrameStorage.setOutputDataFrame(workflowId, nodeId, portNumber, dataFrame)
+
+  def removeNodeOutputDataFrames(): Unit =
+    dataFrameStorage.removeNodeOutputDataFrames(workflowId, nodeId)
+
 }
 
 case class ContextualPythonCodeExecutor(

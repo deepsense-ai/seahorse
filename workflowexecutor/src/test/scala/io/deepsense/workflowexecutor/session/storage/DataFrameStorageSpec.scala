@@ -78,5 +78,19 @@ class DataFrameStorageSpec
       storage.getOutputDataFrame(workflow1Id, node2Id, 1) shouldBe Some(sparkDataFrame3)
       storage.getOutputDataFrame(workflow2Id, node2Id, 2) shouldBe None
     }
+
+    "delete some output dataFrames" in {
+      storage.setOutputDataFrame(workflow1Id, node1Id, 0, sparkDataFrame1)
+      storage.setOutputDataFrame(workflow1Id, node2Id, 0, sparkDataFrame2)
+      storage.setOutputDataFrame(workflow1Id, node2Id, 1, sparkDataFrame3)
+      storage.setOutputDataFrame(workflow2Id, node2Id, 1, sparkDataFrame3)
+
+      storage.removeNodeOutputDataFrames(workflow1Id, node2Id)
+
+      storage.getOutputDataFrame(workflow1Id, node1Id, 0) shouldBe Some(sparkDataFrame1)
+      storage.getOutputDataFrame(workflow1Id, node2Id, 0) shouldBe None
+      storage.getOutputDataFrame(workflow1Id, node2Id, 1) shouldBe None
+      storage.getOutputDataFrame(workflow2Id, node2Id, 1) shouldBe Some(sparkDataFrame3)
+    }
   }
 }
