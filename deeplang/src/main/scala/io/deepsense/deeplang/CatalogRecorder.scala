@@ -59,6 +59,7 @@ object CatalogRecorder {
     catalog.registerDOperable[RegexTokenizer]()
     catalog.registerDOperable[StringTokenizer]()
     catalog.registerDOperable[VectorAssembler]()
+    catalog.registerDOperable[HashingTFTransformer]()
 
     // wrapped Spark evaluators
     catalog.registerDOperable[BinaryClassificationEvaluator]()
@@ -149,6 +150,9 @@ object CatalogRecorder {
       DOperationCategories.Transformation)
 
     catalog.registerDOperation[AssembleVector](
+      DOperationCategories.Transformation)
+
+    catalog.registerDOperation[HashingTF](
       DOperationCategories.Transformation)
 
     // operations generated from Spark evaluators

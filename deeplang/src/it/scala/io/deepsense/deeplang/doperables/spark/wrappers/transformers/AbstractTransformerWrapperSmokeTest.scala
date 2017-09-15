@@ -32,6 +32,7 @@ abstract class AbstractTransformerWrapperSmokeTest[+T <: Transformer]
   final def className: String = transformerWithParams.getClass.getSimpleName
 
   val inputDataFrameSchema = StructType(Seq(
+    StructField("as", ArrayType(StringType, containsNull = true)),
     StructField("s", StringType),
     StructField("i", IntegerType),
     StructField("i2", IntegerType),
@@ -41,8 +42,8 @@ abstract class AbstractTransformerWrapperSmokeTest[+T <: Transformer]
 
   val inputDataFrame: DataFrame = {
     val rowSeq = Seq(
-      Row("aAa bBb cCc", 0, 0, 0.0, Vectors.dense(0.0, 0.0, 0.0)),
-      Row("das99213 99721 8i!#@!", 1, 1, 1.0, Vectors.dense(1.0, 1.0, 1.0))
+      Row(Array("ala", "kot", "ala"), "aAa bBb cCc", 0, 0, 0.0, Vectors.dense(0.0, 0.0, 0.0)),
+      Row(Array(null), "das99213 99721 8i!#@!", 1, 1, 1.0, Vectors.dense(1.0, 1.0, 1.0))
     )
     val sparkDF = sqlContext.createDataFrame(sparkContext.parallelize(rowSeq), inputDataFrameSchema)
     DataFrame.fromSparkDataFrame(sparkDF)
