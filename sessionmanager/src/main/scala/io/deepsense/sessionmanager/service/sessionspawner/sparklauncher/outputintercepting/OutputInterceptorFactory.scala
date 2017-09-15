@@ -61,7 +61,8 @@ class OutputInterceptorFactory @Inject()(
       val time = Calendar.getInstance().getTime()
       val format = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss")
       val formattedTime = format.format(time)
-      s"$formattedTime-${clusterDetails.name}.log"
+      val illegalFileNameCharactersRegExp = "[^a-zA-Z0-9.-]"
+      s"$formattedTime-${clusterDetails.name.replaceAll(illegalFileNameCharactersRegExp, "_")}.log"
     }
     val fileHandler = new FileHandler(s"$executorsLogDirectory/$fileName")
     fileHandler.setFormatter(new SimpleFormaterWithoutOutputRedirectorNoise)
