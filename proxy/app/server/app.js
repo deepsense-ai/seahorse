@@ -8,7 +8,8 @@ const cookieParser = require('cookie-parser');
 const compression = require('compression');
 const timeout = require('connect-timeout');
 const reverseProxy = require('./reverse-proxy');
-const authorizationQuota = require('./authorization-quota/authorization-quota');
+const authorizationQuota = require('./authorization-middleware/authorization-quota');
+const resendLinkHack = require('./authorization-middleware/resend-link-hack');
 const config = require('./config/config');
 
 const app = express();
@@ -31,6 +32,7 @@ app.all("/quota.html");
 app.all("/trial-expired.html");
 
 app.all("/authorization/create_account*",
+  resendLinkHack.forwardResendActivationLinkToForgotPasswordLink,
   authorizationQuota.forward,
   reverseProxy.forward
 );
