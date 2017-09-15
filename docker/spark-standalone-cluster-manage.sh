@@ -18,15 +18,36 @@ fi
 
 NETWORK_NAME="sbt-test-$CLUSTER_ID"
 
+function networkCreate {
+  networkName=$1
+  for subnet in `seq 2 255`; do
+    set +e
+    docker network create --subnet=10.255.$subnet.1/24 $networkName
+    created=$?
+    set -e
+
+    if [ $created == 0 ]; then
+      break
+    fi
+  done
+}
+
+function networkRm {
+  networkName=$1
+  docker network rm $1 || : # this fails if the network doesn't exist
+}
+
 case $1 in
   up)
-    docker network create --subnet=10.255.2.1/24 $NETWORK_NAME
+    spark-standalone-cluster/build-cluster-node-docker.sh
+    networkRm $NETWORK_NAME
+    networkCreate $NETWORK_NAME
     docker-compose -f spark-standalone-cluster.dc.yml up -d
     ;;
   down)
     docker-compose -f spark-standalone-cluster.dc.yml kill
     docker-compose -f spark-standalone-cluster.dc.yml down
-    docker network rm $NETWORK_NAME || : # this may fail when down if called before up
+    networkRm $NETWORK_NAME
     ;;
   *)
     echo 'Unknown action!'
