@@ -8,7 +8,7 @@ class Report {
       currentReport: '=report'
     };
     this.templateUrl = 'app/workflows/reports/reports.html';
-    this.controller = 'ReportCtrl as report';
+    this.controller = 'ReportCtrl as controller';
     this.bindToController = true;
   }
 

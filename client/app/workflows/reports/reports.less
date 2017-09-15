@@ -1,11 +1,7 @@
-@import "report-dataframe/report-dataframe.less";
-@import "report-cross-validate-regressor/report-cross-validate-regressor.less";
-@import "report-evaluate-classification/report-evaluate-classification.less";
-@import "report-evaluate-scoring/report-evaluate-scoring.less";
-@import "report-table/report-table.less";
+@import "report-dataframe-full/report-dataframe-full.less";
 @import "report-default/report-default.less";
+@import "report-table/report-table.less";
 @import "charts/charts.less";
-
 .c-report {
   position: relative;
   height: 100%;
@@ -19,6 +15,11 @@
   [class^="report"][ng-switch-default] > .panel {
     border: 0;
     border-radius: 0;
+  }
+
+  .report-header {
+    margin-left: 30px;
+    margin-top: 30px;
   }
 
   .panel {

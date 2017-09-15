@@ -30,6 +30,10 @@ function ReportCtrl($scope, $rootScope, $uibModal, PageService) {
     this.autoHeight = values < 10;
   };
 
+  that.getReport = () => {
+    return that.currentReport;
+  };
+
   that.getTables = () => {
     internal.checkHeight();
     return that.currentReport && that.currentReport.tables;

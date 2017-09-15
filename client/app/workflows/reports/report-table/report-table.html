@@ -2,10 +2,12 @@
   <table class="table table-striped table-hover">
     <thead>
     <tr>
-      <th ng-repeat="columnData in reportTableBody.tableColumnsData">
+      <th ng-click="controller.showDistribution(columnData)"
+          ng-repeat="columnData in controller.tableColumnsData"
+          ng-class="{'has-distribution': columnData.distributionType}">
         <span data-column-name="{{columnData.columnName}}" class="col-name">{{ columnData.columnName }}
         </span>
-        <span class="col-type">({{columnData.type}})</span>
+        <span ng-if="controller.datatypesVisible" class="col-type">({{columnData.type}})</span>
         <span class="col-icon" ng-switch="columnData.distributionType">
           <i ng-switch-when="discrete" class="fa fa-pie-chart"></i>
           <i ng-switch-when="continuous" class="fa fa-bar-chart-o" ></i>
@@ -14,7 +16,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="row in reportTableBody.tableData.values">
+    <tr ng-repeat="row in controller.table.values">
       <td ng-repeat="value in row track by $index">{{ value }}</td>
     </tr>
     </tbody>

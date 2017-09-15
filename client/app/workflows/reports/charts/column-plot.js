@@ -12,7 +12,7 @@ function ColumnPlot() {
       function displayChart(data) {
 
         let categories = _.map(_.sliding(data.buckets, 2), ([start, end]) =>
-          start + " - " + end
+          start + ' - ' + end
         );
 
         $(element)
