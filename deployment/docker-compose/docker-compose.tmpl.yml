@@ -139,7 +139,7 @@ services:
     volumes:
       - "library:/library"
   authorization:
-    image: $DOCKER_REPOSITORY/deepsense-authorization:$DOCKER_TAG
+    image: $DOCKER_REPOSITORY/deepsense-authorization:$BACKEND_TAG
     restart: always
     ports:
      - "127.0.0.1:$EXPOSED_AUTHORIZATION_PORT:8080"
