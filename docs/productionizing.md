@@ -84,7 +84,7 @@ For more detailed information about submitting Apache Spark applications visit
   workflowexecutor.jar \
     --workflow-filename workflow.json \
     --output-directory test-output \
-    --python-executor-path workflowexecutor.jar
+    --custom-code-executors-path workflowexecutor.jar
 {% endhighlight %}
 
 #### Apache Spark Standalone Cluster
@@ -98,7 +98,7 @@ For more detailed information about submitting Apache Spark applications visit
   workflowexecutor.jar \
     --workflow-filename workflow.json \
     --output-directory test-output \
-    --python-executor-path workflowexecutor.jar
+    --custom-code-executors-path workflowexecutor.jar
 {% endhighlight %}
 
 #### YARN Cluster
@@ -108,15 +108,16 @@ export HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop   # location of Hadoop cluster con
 ./bin/spark-submit \
   --driver-class-path workflowexecutor.jar \
   --class io.deepsense.workflowexecutor.WorkflowExecutorApp \
-  --master yarn-cluster \  # can also be `yarn-client` for client mode
+  --master yarn \
+  --deploy-mode client \  # can be cluster for cluster mode
   --files workflow.json \
   workflowexecutor.jar \
     --workflow-filename workflow.json \
     --output-directory test-output \
-    --python-executor-path workflowexecutor.jar
+    --custom-code-executors-path workflowexecutor.jar
 {% endhighlight %}
 
-Option ``--python-executor-path`` is required (`workflowexecutor.jar` contains the PyExecutor).
+Option ``--custom-code-executors-path`` is required (`workflowexecutor.jar` contains PyExecutor and RExecutor).
 Option ``--files workflow.json`` is necessary to distribute workflow file within the Apache Spark cluster.
 It is necessary to pass the same filename to ``--workflow-filename workflow.json`` option,
 in order to tell Seahorse Batch Workflow Executor under which name it should look for a workflow file.
