@@ -84,7 +84,6 @@ class WorkflowsEditorController {
   }
 
   initListeners() {
-
     this.$scope.$on('ServerCommunication.MESSAGE.ready', (event, ready) => {
       this.$log.debug('Received a Ready message from Session Executor. Reconnecting.');
 
@@ -193,11 +192,6 @@ class WorkflowsEditorController {
         this.$rootScope.$apply();
       }),
 
-      this.$scope.$on('StatusBar.HOME_CLICK', () => {
-        let url = this.$state.href('home');
-        window.open(url, '_blank');
-      }),
-
       this.$scope.$on('StatusBar.CLEAR_CLICK', () => {
         this.ConfirmationModalService.showModal({
           message: 'The operation clears the whole workflow graph and it cannot be undone afterwards.'
@@ -252,6 +246,15 @@ class WorkflowsEditorController {
       this.$scope.$on('$destroy', () => {
         this.GraphPanelRendererService.clearWorkflow();
         this.NotificationService.clearToasts();
+      }),
+
+      this.$scope.$on('AttributesPanel.OPEN_INNER_WORKFLOW', (event, data) => {
+        let workflow = this.WorkflowService._innerWorkflowByNodeId[data.nodeId];
+        this.WorkflowService._workflowsStack.push(workflow);
+      }),
+
+      this.$scope.$on('StatusBar.CLOSE-INNER-WORKFLOW', () => {
+        this.WorkflowService._workflowsStack.pop();
       })
     ];
   }

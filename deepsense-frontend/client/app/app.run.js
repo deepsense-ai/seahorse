@@ -12,14 +12,27 @@ function AppRun($rootScope, $uibModalStack) {
     $rootScope.stateData.dataIsLoaded = undefined;
     $rootScope.showView = undefined;
 
-    while ($uibModalStack.getTop()) {
-      $uibModalStack.dismiss($uibModalStack.getTop().key);
-    }
+    _unbindDeepsenseCustomListeners();
+    _clearModalsFromStack();
   });
 
   $rootScope.$on('$stateChangeSuccess', () => {
     $rootScope.stateData.showView = true;
   });
+
+  function _unbindDeepsenseCustomListeners() {
+    for(let key in $rootScope.$$listeners) {
+      if (key[0] !== '$') {
+        delete $rootScope.$$listeners[key];
+      }
+    }
+  }
+
+  function _clearModalsFromStack() {
+    while ($uibModalStack.getTop()) {
+      $uibModalStack.dismiss($uibModalStack.getTop().key);
+    }
+  }
 }
 
 exports.function = AppRun;

@@ -11,6 +11,10 @@ function Home($rootScope, $uibModal, $state, WorkflowService, PageService, Confi
       column: 'updated',
       descending: true
     };
+
+    WorkflowService.downloadWorkflows().then(() => {
+      this.workflows = WorkflowService.getAllWorkflows();
+    });
   };
 
   this.getTriggerEventBasedOnDescriptionLength = (description) => {

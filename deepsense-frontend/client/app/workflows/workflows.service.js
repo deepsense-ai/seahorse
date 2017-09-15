@@ -30,26 +30,20 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
     }
 
     init() {
-      WorkflowsApiClient.getAllWorkflows().then((data) => {
+      this.downloadWorkflows();
+    }
+
+    downloadWorkflows() {
+      return WorkflowsApiClient.getAllWorkflows().then((data) => {
         this._workflowsData = data;
         this._isLoading = false;
       }, (failure) => {
         this._isLoading = false;
       });
-
-      $rootScope.$on('AttributesPanel.OPEN_INNER_WORKFLOW', (event, {
-        nodeId
-      }) => {
-        let workflow = this._innerWorkflowByNodeId[nodeId];
-        this._workflowsStack.push(workflow);
-      });
-
-      $rootScope.$on('StatusBar.CLOSE-INNER-WORKFLOW', () => {
-        this._workflowsStack.pop();
-      });
     }
 
     initRootWorkflow(workflowData) {
+      this._workflowsStack = [];
       let workflow = this._deserializeWorkflow(workflowData);
       workflow.workflowType = 'root';
       workflow.workflowStatus = 'editor';
@@ -58,11 +52,8 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
       nodes.filter((n) => n.operationId === CUSTOM_TRANSFORMER_ID)
         .forEach((node) => this.initInnerWorkflow(node));
 
-
       $rootScope.$watch(() => workflow.serialize(), this._saveWorkflow, true);
-
       this._watchForNewCustomTransformers(workflow);
-
       this._workflowsStack.push(workflow);
     }
 

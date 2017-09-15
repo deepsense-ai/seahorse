@@ -4,12 +4,8 @@
 function WorkflowsConfig($stateProvider) {
   $stateProvider.state('workflows.editor', {
     url: '/:id/editor',
-    views: {
-      'reportView': {
-        templateUrl: 'app/workflows/workflows-editor/workflows-editor.html',
-        controller: 'WorkflowsEditorController as workflow'
-      }
-    },
+    templateUrl: 'app/workflows/workflows-editor/workflows-editor.html',
+    controller: 'WorkflowsEditorController as workflow',
     resolve: {
       workflowWithResults: /* @ngInject */ ($q, $state, $rootScope, $stateParams,
         $timeout, WorkflowsApiClient, Operations, OperationsHierarchyService,

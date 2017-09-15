@@ -1,10 +1,10 @@
 'use strict';
 
 /* @ngInject */
-function NavigationController($rootScope, config, PageService, WorkflowService) {
+function NavigationController($state, config, WorkflowService) {
   _.assign(this, {
-    home() {
-        $rootScope.$broadcast('StatusBar.HOME_CLICK');
+      goToHomeView() {
+        $state.go('home', {}, {reload: true});
       },
       getAPIVersion() {
         return config.editorVersion;

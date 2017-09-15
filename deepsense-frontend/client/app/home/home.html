@@ -58,7 +58,7 @@
           <b>Actions</b>
         </td>
       </tr>
-      <tr ng-repeat="workflow in home.getAllWorkflows() |
+      <tr ng-repeat="workflow in home.workflows |
                      orderBy : home.sort.column : home.sort.descending |
                      filter: { name: home.filterString } track by workflow.id">
         <td class="vertical-align">

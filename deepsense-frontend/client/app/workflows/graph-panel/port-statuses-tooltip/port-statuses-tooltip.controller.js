@@ -27,18 +27,6 @@ function PortStatusesTooltipController($rootScope, $scope, $element) {
     $scope.$digest();
   };
 
-  $rootScope.$on('InputPoint.MOUSEOVER', (event, data) => {
-    internal.mouseoverHandler(data.portElement, data.portObject);
-  });
-  $rootScope.$on('InputPoint.MOUSEOUT', internal.hideTooltip);
-
-  $rootScope.$on('OutputPoint.MOUSEOVER', (event, data) => {
-    internal.mouseoverHandler(data.portElement, data.portObject);
-  });
-  $rootScope.$on('OutputPoint.MOUSEOUT', internal.hideTooltip);
-
-  $scope.$on('Keyboard.KEY_PRESSED_DEL', internal.hideTooltip);
-
   that.getTypes = () => {
     let outputTypes = _.map(that.portObject.typeQualifier, (typeQualifier) => _.last(typeQualifier.split('.')));
     if (outputTypes.length > 3) {
@@ -69,6 +57,20 @@ function PortStatusesTooltipController($rootScope, $scope, $element) {
       (that.portObject.type === 'output' ? 10 : 0) // a slight adjustment for output ports
     );
   };
+
+  $rootScope.$on('InputPoint.MOUSEOVER', (event, data) => {
+    internal.mouseoverHandler(data.portElement, data.portObject);
+  });
+
+  $rootScope.$on('InputPoint.MOUSEOUT', internal.hideTooltip);
+
+  $rootScope.$on('OutputPoint.MOUSEOVER', (event, data) => {
+    internal.mouseoverHandler(data.portElement, data.portObject);
+  });
+
+  $rootScope.$on('OutputPoint.MOUSEOUT', internal.hideTooltip);
+
+  $scope.$on('Keyboard.KEY_PRESSED_DEL', internal.hideTooltip);
 
   return that;
 }
