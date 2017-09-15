@@ -103,7 +103,11 @@ module.exports = function apiProxy(config) {
       request.customHandler = resource.handler;
       request.resourcePath = urlPathParts.slice(2).join('/');
       request.url = '/' + config.version + request.url;
-      proxy.web(request, response);
+      let params = {};
+      if (resource.url) {
+        params.target = resource.url;
+      }
+      proxy.web(request, response, params);
     } else {
       response.writeHead(404, {
         'Content-Type': 'text/plain; charset=UTF-8'

@@ -19,6 +19,12 @@ if (args.host && args.token) {
   apiConfig.url = args.host;
   apiConfig.token = args.token;
   console.log('log:', 'using custom api host (' + apiConfig.url + ')');
+
+  for (let resource in apiConfig.resources) {
+    if (args['host-' + resource]) {
+      apiConfig.resources[resource].url = args['host-' + resource];
+    }
+  }
 }
 
 // TODO: remove after removing deploy mock

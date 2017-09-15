@@ -56,7 +56,20 @@ gulp.task('nodemon', function (callback) {
 
   // TODO: remove after full login implementation
   if (gutil.env.host && gutil.env.token) {
-    config.args = ['--host', gutil.env.host, '--token', gutil.env.token];
+    var args = ['--host', gutil.env.host, '--token', gutil.env.token],
+        apiConfig = require('./server/api/apiConfig.js'),
+        resource;
+    if (gutil.env.deployURL) {
+      args.push('--deployURL');
+      args.push(gutil.env.deployURL);
+    }
+    for (resource in apiConfig.resources) {
+      if (gutil.env['host-' + resource]) {
+        args.push('--host-' + resource);
+        args.push(gutil.env['host-' + resource]);
+      }
+    }
+    config.args = args;
   }
 
 
