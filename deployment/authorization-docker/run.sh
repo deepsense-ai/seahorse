@@ -8,4 +8,9 @@ service exim4 start
 [ ! -f "$UAA_CONFIG_PATH/uaa.yml" ] && export CLOUD_FOUNDRY_CONFIG_PATH="/opt/uaa"
 
 export JAVA_OPTS="$JAVA_OPTS -Djava.security.egd=file:/dev/./urandom"
-$CATALINA_HOME/bin/catalina.sh run
+if [[ -n "$ENABLE_AUTHORIZATION" && "$ENABLE_AUTHORIZATION" == "true" ]]; then
+  $CATALINA_HOME/bin/catalina.sh run
+else
+  echo "Authorization is not starting because ENABLE_AUTHORIZATION is not true"
+  /opt/docker-dummy-authorization.sh
+fi

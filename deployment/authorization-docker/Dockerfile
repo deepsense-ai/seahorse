@@ -26,6 +26,7 @@ RUN mkdir -p /opt/WEB-INF/lib/ && \
     mv /tomcat/webapps/ROOT.war /tomcat/webapps/authorization.war
 
 # New run.sh starts postfix MTA
+ADD docker-dummy-authorization.sh /opt/
 ADD run.sh /tmp/
 RUN chmod +x /tmp/run.sh
 

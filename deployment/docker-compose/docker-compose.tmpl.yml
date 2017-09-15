@@ -4,11 +4,11 @@ services:
     image: $DOCKER_REPOSITORY/deepsense-proxy:$FRONTEND_TAG
     restart: always
     network_mode: "host"
-    environment:
+    environment: &proxy_environment_value
       VCAP_SERVICES: "{\"user-provided\":[{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_AUTHORIZATION_PORT\",\"authorizationUri\":\"/authorization/oauth/authorize\",\"logoutUri\":\"/authorization/logout.do\",\"tokenUri\":\"http://127.0.0.1:$EXPOSED_AUTHORIZATION_PORT/authorization/oauth/token\",\"clientId\":\"Seahorse\",\"clientSecret\":\"seahorse01\",\"userInfoUri\":\"http://127.0.0.1:$EXPOSED_AUTHORIZATION_PORT/authorization/userinfo\"},\"name\":\"sso\"},{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_WM_PORT\"},\"name\":\"workflow-manager\"},{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_LIBRARY_PORT\"},\"name\":\"library\"},{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_SM_PORT\"},\"name\":\"session-manager\"},{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_NOTEBOOK_PORT\"},\"name\":\"jupyter\"},{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_MQ_WEBSOCKET_PORT\"},\"name\":\"rabbitmq\"},{\"credentials\":{\"host\":\"http://127.0.0.1:$EXPOSED_FRONTEND_PORT\"},\"name\":\"frontend\"}]}"
       HOST: "127.0.0.1"
       PORT: "33321"
-      DISABLE_OAUTH: "true"
+      ENABLE_AUTHORIZATION: "false"
       FORCE_HTTPS: "false"
       WM_AUTH_USER: "oJkTZ8BV"
       WM_AUTH_PASS: "8Ep9GqRr"
@@ -143,6 +143,7 @@ services:
     restart: always
     ports:
      - "127.0.0.1:$EXPOSED_AUTHORIZATION_PORT:8080"
+    environment: *proxy_environment_value
     volumes:
       - "./uaa:/uaa:rw"
     links:
