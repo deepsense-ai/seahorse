@@ -11,7 +11,7 @@
       <label>
         {{ ::parameter.name }}
       </label>
-      <span ng-if="::(isInnerWorkflow() && isRootLevelParameter)" ng-switch="getVisibility(parameter.name)">
+      <span ng-if="::(isInnerWorkflow() && isRootLevelParameter && !isDynamic(parameter))" ng-switch="getVisibility(parameter.name)">
         <i class="attributes-list__icon fa fa-lock toggleable-icon"
            ng-switch-when="private"
            ng-click="setVisibility(parameter.name, 'public')"

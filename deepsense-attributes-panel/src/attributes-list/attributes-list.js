@@ -15,6 +15,12 @@ function AttributesList(AttributesPanelService) {
     link: function (scope, element, _, attributesPanelCtrl) {
       scope.noParamValues = () => (Object.keys(scope.parametersList.parameters).length === 0);
 
+      // Exposing dynamic params results in having dynamic param of dynamic param in outside workflow.
+      // This causes stack overflow. Quick fix is to prevent from exposing dynamic params
+      scope.isDynamic = (parameter) => {
+        return parameter.schema.type === 'dynamic';
+      };
+
       scope.isInnerWorkflow = () => {
         return attributesPanelCtrl.isInnerWorkflow();
       };

@@ -147,7 +147,10 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
     that.repaintEverything();
     if (selectedPortId) {
       let previouslySelected = jsPlumb.getEndpoint(selectedPortId);
-      previouslySelected.toggleType('selected');
+      // This might be null after opening inner workflow.
+      if (previouslySelected) {
+        previouslySelected.toggleType('selected');
+      }
     }
   };
 
