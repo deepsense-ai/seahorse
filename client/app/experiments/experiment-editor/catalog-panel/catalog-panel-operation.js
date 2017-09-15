@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 function OperationItemView() {
   return {
@@ -14,7 +14,7 @@ function OperationItemView() {
         console.log(element);
       });
     }
-  }
+  };
 }
 
 exports.inject = function (module) {

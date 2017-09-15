@@ -22,7 +22,8 @@ var gulp = require('gulp'),
     size = require('gulp-size'),
     less = require('gulp-less'),
     minifyCSS = require('gulp-minify-css'),
-    jshint = require('gulp-jshint');
+    jshint = require('gulp-jshint'),
+    exit = require('gulp-exit');
 require('jshint-stylish');
 
 var config = require('./package.json'),
@@ -30,7 +31,8 @@ var config = require('./package.json'),
     server = config.files.server,
     build = config.files.build,
     libs = config.files.libs,
-    devMode = !!gutil.env.dev;
+    devMode = !!gutil.env.dev,
+    CIMode = !!gutil.env.ci;
 client.path = __dirname + '/' + client.path;
 
 var BROWSER_SYNC_RELOAD_DELAY = 2000;
@@ -47,7 +49,7 @@ gulp.task('nodemon', function (callback) {
           'js': 'node --harmony'
       },
       script: server.path + server.app,
-    verbose: false,
+      verbose: true,
       watch: [server.path]
     })
     .on('start', function () {
@@ -128,7 +130,9 @@ gulp.task('jshint', function () {
       './gulpfile.js'
     ])
     .pipe(jshint())
-    .pipe(jshint.reporter('jshint-stylish'));
+    .pipe(jshint.reporter('jshint-stylish'))
+    .pipe(CIMode ? jshint.reporter('fail') : gutil.noop())
+    .pipe(CIMode ? exit() : gutil.noop());
 });
 
 gulp.task('browserify', function () {
