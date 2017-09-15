@@ -5,7 +5,7 @@
 package io.deepsense.workflowmanager
 
 import akka.actor.ActorSystem
-import com.google.inject.Guice
+import com.google.inject.{Guice, Stage}
 
 import io.deepsense.commons.rest.RestServer
 import io.deepsense.deeplang.CatalogRecorder
@@ -17,7 +17,7 @@ import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
  */
 object WorkflowManagerApp extends App {
   val insecure: Boolean = args.headOption.map("insecure".equalsIgnoreCase(_)).getOrElse(true)
-  val injector = Guice.createInjector(new WorkflowManagerAppModule(insecure))
+  val injector = Guice.createInjector(Stage.PRODUCTION, new WorkflowManagerAppModule(insecure))
 
   CatalogRecorder.registerDOperables(injector.getInstance(classOf[DOperableCatalog]))
   CatalogRecorder.registerDOperations(injector.getInstance(classOf[DOperationsCatalog]))
