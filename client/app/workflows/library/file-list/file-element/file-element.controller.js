@@ -1,3 +1,4 @@
+// TODO think of refactor this controller as it's trying to resolve all cases
 require('./file-element.less');
 
 import fileTpl from './templates/file.template.html';
@@ -15,6 +16,8 @@ const templateMap = {
 const COOKIE_NAME = 'DELETE_DATAFRAME_COOKIE';
 const VISIBLE_PARENTS_COUNT = 2;
 
+const ESC_CODE = 27;
+const ENTER_CODE = 13;
 
 class FileElementController {
   constructor($scope, DeleteModalService, LibraryModalService, LibraryService) {
@@ -44,6 +47,24 @@ class FileElementController {
     if (this.item.parents && this.item.progress) {
       this.formatParentsForUploadedFile();
     }
+  }
+
+
+  onKeyDownHandler(event) {
+    const keyCode = event.keyCode;
+    if (keyCode === ESC_CODE) {
+      event.preventDefault();
+      this.LibraryModalService.hideNewDirectoryInput();
+    } else if (keyCode === ENTER_CODE && (this.newDirectoryName !== '' && !this.isDirectoryNameUsed())) {
+      this.saveNewDir();
+    }
+  }
+
+
+  isDirectoryNameUsed() {
+    return this.LibraryService
+      .getCurrentDirectory()
+      .containsDirectory(this.newDirectoryName);
   }
 
 

@@ -8,11 +8,13 @@
       class="new-directory__input"
       ng-init="$ctrl.newDirectoryName = ''"
       ng-model="$ctrl.newDirectoryName"
+      ng-keydown="$ctrl.onKeyDownHandler($event)"
       maxlength="30"
       autofocus
     />
     <span
       class="new-directory__ok"
+      ng-class="{'disabled': $ctrl.newDirectoryName === '' || $ctrl.isDirectoryNameUsed()}"
       ng-click="$ctrl.saveNewDir()">
       Ok
     </span>
@@ -20,6 +22,11 @@
       class="new-directory__cancel"
       ng-click="$ctrl.cancelAddingNewDir()">
       Cancel
+    </span>
+    <span
+      class="new-directory__exists"
+      ng-if="$ctrl.isDirectoryNameUsed()">
+      Directory with this name already exists
     </span>
   </div>
 </div>

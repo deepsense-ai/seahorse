@@ -121,14 +121,24 @@
         &:hover {
           cursor: pointer;
         }
+
+        &.disabled {
+          color: grey;
+          pointer-events: none;
+        }
       }
 
       &__cancel {
         color: grey;
         &:hover {
-          font-weight: 900;
           cursor: pointer;
         }
+      }
+
+      &__exists {
+        color: @seahorse-error-red;
+        font-weight: bold;
+        padding-left: 10px;
       }
     }
   }

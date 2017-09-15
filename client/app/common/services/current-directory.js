@@ -64,4 +64,11 @@ export default class CurrentDirectory {
 
     this.items = results;
   }
+
+
+  containsDirectory(directoryName) {
+    return this.items.filter((item) => {
+        return item.kind === 'directory' && item.name === directoryName;
+      }).length > 0;
+  }
 }

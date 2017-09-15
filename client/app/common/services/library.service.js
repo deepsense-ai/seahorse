@@ -34,6 +34,7 @@ function LibraryService($q, $log, LibraryDataConverterService, LibraryApiService
   service.removeUploadingFile = removeUploadingFile;
   service.setFilter = setFilter;
   service.uploadFiles = uploadFiles;
+  service.doesDirectoryAlreadyExists = doesDirectoryAlreadyExists;
 
   fetchAll();
 
@@ -118,10 +119,10 @@ function LibraryService($q, $log, LibraryDataConverterService, LibraryApiService
     }
 
     const [fileName, items] = (
-        (parts) => (
-          (prefix, path) => [path.pop(), library.get(`${prefix}${path.join('/')}`).items]
-        )(parts[0], parts[1].split('/'))
-      )(parsedUri.slice(1));
+      (parts) => (
+        (prefix, path) => [path.pop(), library.get(`${prefix}${path.join('/')}`).items]
+      )(parts[0], parts[1].split('/'))
+    )(parsedUri.slice(1));
 
     return _.find(items, {name: fileName});
   }
@@ -250,9 +251,18 @@ function LibraryService($q, $log, LibraryDataConverterService, LibraryApiService
     }
     return $q.all(promisesArray);
   }
+
+  /**
+   * @param {String} name of directory to be created
+   * @returns {Bool}
+   */
+  function doesDirectoryAlreadyExists(directoryName) {
+    return currentDirectory.containsDirectory(directoryName);
+  }
+
 }
 
 
-exports.inject = function(module) {
+exports.inject = function (module) {
   module.service('LibraryService', LibraryService);
 };
