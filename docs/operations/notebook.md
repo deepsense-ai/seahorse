@@ -7,7 +7,7 @@ includeOperationsMenu: true
 ---
 
 The `Notebook` operation combines the capabilities of the
-<a target="_blank" href="https://spark.apache.org/docs/1.6.0/api/python/">PySpark</a> shell with
+<a target="_blank" href="{{ site.SPARK_DOCS }}/api/python/">PySpark</a> shell with
 the rich selection of features the <a target="_blank" href="https://jupyter.org/">Jupyter
 notebook</a> offers. It provides users with a unique environment to explore their data sets.
 

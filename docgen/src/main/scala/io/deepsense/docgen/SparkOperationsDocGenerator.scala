@@ -42,7 +42,7 @@ object SparkOperationsDocGenerator
   with LinkPrinter {
 
   val sparkVersion = org.apache.spark.SPARK_VERSION
-  val scalaDocPrefix = s"http://spark.apache.org/docs/$sparkVersion/api/scala/index.html#"
+  val scalaDocPrefix = s"https://spark.apache.org/docs/$sparkVersion/api/scala/index.html#"
 
   // scalastyle:off println
   def main(args: Array[String]): Unit = {

@@ -28,7 +28,7 @@ If you are using Seahorse Desktop please read about
 <a target="_blank" href="https://en.wikipedia.org/wiki/Comma-separated_values">Comma-separated values</a>
 
 ### `PARQUET`
-<a target="_blank" href="http://spark.apache.org/docs/1.6.0/sql-programming-guide.html#parquet-files">Parquet</a>
+<a target="_blank" href="{{ site.SPARK_DOCS }}/sql-programming-guide.html#parquet-files">Parquet</a>
 format does not allow using characters ``, ;{}()\n\t=`` in column names.
 
 ### `JSON`

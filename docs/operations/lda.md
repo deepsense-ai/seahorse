@@ -16,11 +16,11 @@ This operation is ported from Spark ML.
 
 
 For a comprehensive introduction, see
-<a target="_blank" href="https://spark.apache.org/docs/1.6.0/ml-clustering.html#latent-dirichlet-allocation-lda">Spark documentation</a>.
+<a target="_blank" href="https://spark.apache.org/docs/1.6.1/ml-clustering.html#latent-dirichlet-allocation-lda">Spark documentation</a>.
 
 
 For scala docs details, see
-<a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.clustering.LDA">org.apache.spark.ml.clustering.LDA documentation</a>.
+<a target="_blank" href="https://spark.apache.org/docs/1.6.1/api/scala/index.html#org.apache.spark.ml.clustering.LDA">org.apache.spark.ml.clustering.LDA documentation</a>.
 
 **Since**: Seahorse 1.1.0
 

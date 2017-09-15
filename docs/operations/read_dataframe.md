@@ -60,7 +60,7 @@ parsed as ``"x"``, since ``""`` inside an already quoted value translates to ``"
 escaping a ``"`` sign inside a quoted value is done by prefixing it with another ``"``.
 
 ### `PARQUET`
-<a target="_blank" href="http://spark.apache.org/docs/1.6.0/sql-programming-guide.html#parquet-files">Parquet Files</a>
+<a target="_blank" href="{{ site.SPARK_DOCS }}/sql-programming-guide.html#parquet-files">Parquet Files</a>
 
 ### `JSON`
 <a target="_blank" href="https://en.wikipedia.org/wiki/JSON">JSON</a>

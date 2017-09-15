@@ -14,7 +14,7 @@ include:
 # These allow the documentation to be updated with newer releases
 WORKFLOW_EXECUTOR_SCALA_VERSION: 2.10.5
 WORKFLOW_EXECUTOR_HADOOP_VERSION: 2.6.0
-WORKFLOW_EXECUTOR_SPARK_VERSION: 1.6.0
+WORKFLOW_EXECUTOR_SPARK_VERSION: 1.6.1
 
 WORKFLOW_EXECUTOR_GITHUB_URL: https://github.com/deepsense-io/seahorse-workflow-executor
 WORKFLOW_EXECUTOR_GITHUB_REPO_NAME: seahorse-workflow-executor
@@ -22,3 +22,7 @@ WORKFLOW_EXECUTOR_GITHUB_REPO_NAME: seahorse-workflow-executor
 SEAHORSE_EDITOR_ADDRESS: http://172.28.128.100:8000
 
 PANDAS_LIBRARY_ADDRESS: http://pandas.pydata.org
+
+SPARK_DOCS: https://spark.apache.org/docs/1.6.1
+
+SPARK_ASSEMBLY_PATH: spark-assembly-1.6.1-hadoop2.6.0.jar
