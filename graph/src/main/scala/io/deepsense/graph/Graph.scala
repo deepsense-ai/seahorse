@@ -188,13 +188,13 @@ case class Graph(
   def runningNodes: Set[Node] = nodes.filter(_.isRunning)
 
   /**
-   * If graph state is draft, it returns graph with updated state based on state of its nodes.
+   * If graph state is not failed, it returns graph with updated state based on state of its nodes.
    */
   def updateState(): Graph = {
     // TODO precise semantics of this method
     // TODO rewrite this method to be more effective (single counting)
     import io.deepsense.graph.GraphState._
-    if (state != GraphState.draft) {
+    if (state.status == Status.Failed) {
       this
     } else {
       copy(state = if (nodes.isEmpty) {
