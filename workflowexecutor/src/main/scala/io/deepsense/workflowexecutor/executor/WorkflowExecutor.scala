@@ -34,6 +34,7 @@ import io.deepsense.commons.models.{Entity, Id}
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.CustomOperationExecutor.Result
 import io.deepsense.deeplang._
+import io.deepsense.graph.CyclicGraphException
 import io.deepsense.models.json.workflow.exceptions._
 import io.deepsense.models.workflows.{ExecutionReport, WorkflowWithResults, WorkflowWithVariables}
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.Launch
@@ -55,6 +56,12 @@ case class WorkflowExecutor(
   private val actorSystemName = "WorkflowExecutor"
 
   def execute(): Try[ExecutionReport] = {
+
+    if (workflow.graph.containsCycle) {
+      val cyclicGraphException = new CyclicGraphException
+      logger.error("WorkflowExecutorActor failed due to incorrect workflow: ", cyclicGraphException)
+      throw cyclicGraphException
+    }
 
     val dataFrameStorage = new DataFrameStorageImpl
 
