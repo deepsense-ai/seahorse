@@ -115,7 +115,7 @@ abstract class WorkflowExecutorActor(
   def launch(nodes: Set[Node.Id]): Unit = {
     val startingPointExecution = statefulWorkflow.currentExecution
     val nodesToExecute = if (nodes.isEmpty) {
-      startingPointExecution.graph.nodes.map(_.id)
+      startingPointExecution.graph.notExecutedNodes
     } else {
       nodes
     }

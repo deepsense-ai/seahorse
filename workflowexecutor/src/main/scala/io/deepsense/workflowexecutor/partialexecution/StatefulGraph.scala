@@ -188,6 +188,10 @@ case class StatefulGraph(
   def executionReport: ExecutionReport =
     ExecutionReport(states.mapValues(_.nodeState), executionFailure)
 
+  def notExecutedNodes: Set[Node.Id] = {
+    states.collect { case (nodeId, state) if state.isDraft || state.isAborted => nodeId }.toSet
+  }
+
   private def markChildrenDraft(
       states: Map[Node.Id, NodeStateWithResults],
       draftNodeId: Node.Id): Map[Node.Id, NodeStateWithResults] = {
