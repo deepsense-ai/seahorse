@@ -16,8 +16,8 @@
 
 package io.deepsense.workflowexecutor
 
-
 import java.io.{File, FileWriter, PrintWriter}
+import java.net.InetAddress
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
@@ -41,7 +41,6 @@ import io.deepsense.models.json.workflow._
 import io.deepsense.models.json.workflow.exceptions._
 import io.deepsense.models.workflows._
 import io.deepsense.workflowexecutor.exception.{UnexpectedHttpResponseException, WorkflowExecutionException}
-
 
 /**
  * WorkflowExecutor
@@ -126,34 +125,76 @@ object WorkflowExecutorApp
     configureLogging()
 
     val cmdParams = parser.parse(args, ExecutionParams())
-
-    logger.info("Starting WorkflowExecutor.")
-
-    val result = cmdParams.map { params =>
-      loadWorkflow(params)
-        .map(workflow => (workflow, executeWorkflow(workflow, params.reportLevel).get))
-        .flatMap { case (workflow, report) => handleExecutionReport(params, report, workflow) }
+    if (cmdParams.isEmpty) {
+      System.exit(1)
     }
+    val params = cmdParams.get
 
-    result match {
-      case None =>
-        System.exit(1)
-      case Some(res) =>
-        val resultUrl = Await.ready(res, Duration.Inf).value.get
-        resultUrl match {
-          case Success(Some(reportId)) =>
-            logger.info(s"Report uploaded. Report id: $reportId. " +
-              s"You can see the results at: ${reportUrl(reportId)}, or at Your custom location.")
-          case Success(None) =>
-            logger.info("Workflow execution finished.")
+    val workflow = loadWorkflow(params)
+    val executionReport = workflow.map(w => executeWorkflow(w, params.reportLevel).get)
+    val workflowWithResultsFuture = workflow.flatMap(w =>
+      executionReport.map(r => WorkflowWithResults(w.id, w.metadata, w.graph, w.thirdPartyData, r))
+    )
+
+    // Await for workflow execution
+    val workflowWithResultsTry = Await.ready(workflowWithResultsFuture, Duration.Inf).value.get
+
+    workflowWithResultsTry match {
+      // Workflow execution failed
+      case Failure(exception) => exception match {
+        case e: WorkflowVersionException => handleVersionException(e)
+        case e: DeserializationException => handleDeserializationException(e)
+        case e: WorkflowExecutionException => logger.error(e.getMessage, e)
+        case e: Exception => logger.error("Unexpected workflow execution exception", e)
+      }
+      // Workflow excecution succeeded
+      case Success(workflowWithResults) => {
+        logger.info("Handling execution report")
+        // Uploading execution report
+        val reportUrlFuture: Future[Option[String]] = params.uploadReport match {
+          case false => Future.successful(None)
+          case true =>
+            val reportUploadAddress = workflowManagerConfig.address(params.apiAddress)
+            val reportPreviewAddress = reportPreviewConfig.defaultAddress
+            uploadExecutionReport(reportUploadAddress, reportPreviewAddress, workflowWithResults)
+              .map(Some(_))
+        }
+        // Saving execution report to file
+        val reportPathFuture: Future[Option[String]] = params.outputDirectoryPath match {
+          case None => Future.successful(None)
+          case Some(path) => saveWorkflowToFile(path, workflowWithResults)
+        }
+
+        val reportUrlTry = Await.ready(reportUrlFuture, 1.minute).value.get
+        val reportPathTry = Await.ready(reportPathFuture, 1.minute).value.get
+
+        if (reportUrlTry.isFailure || reportPathTry.isFailure) {
+          logger.error("Execution report dump: \n" + workflowWithResults.toJson.prettyPrint)
+        }
+
+        reportUrlTry match {
+          case Success(None) => // Uploading execution report was not requested
+          case Success(Some(url)) =>
+            logger.info(s"Exceution report successfully uploaded to: $url")
           case Failure(exception) => exception match {
             case e: WorkflowVersionException => handleVersionException(e)
             case e: DeserializationException => handleDeserializationException(e)
-            case e: WorkflowExecutionException => logger.error(e.getMessage, e)
             case e: UnexpectedHttpResponseException => logger.error(e.getMessage)
-            case e: Exception => logger.error(s"Unexpected exception", e)
+            case e: Exception => logger.error("Uploading exceution report failed", e)
           }
         }
+        reportPathTry match {
+          case Success(None) => // Saving execution report to file was not requested
+          case Success(Some(path)) =>
+            logger.info(s"Execution report successfully saved to file under path: $path")
+          case Failure(exception) => exception match {
+            case e: WorkflowVersionException => handleVersionException(e)
+            case e: DeserializationException => handleDeserializationException(e)
+            case e: UnexpectedHttpResponseException => logger.error(e.getMessage)
+            case e: Exception => logger.error("Saving execution report to file failed", e)
+          }
+        }
+      }
     }
   }
 
@@ -212,45 +253,6 @@ object WorkflowExecutorApp
     ).downloadWorkflow(workflowId)
   }
 
-  private def handleExecutionReport(
-      params: ExecutionParams,
-      executionReport: ExecutionReport,
-      workflow: WorkflowWithVariables): Future[Option[String]] = {
-
-    val result = WorkflowWithResults(
-      workflow.id,
-      workflow.metadata,
-      workflow.graph,
-      workflow.thirdPartyData,
-      executionReport
-    )
-
-    params.outputDirectoryPath.foreach { path =>
-      saveWorkflowWithResults(path, result)
-    }
-
-    if (params.uploadReport) {
-      val reportUploadAddress = workflowManagerConfig.address(params.apiAddress)
-      val reportPreviewAddress = reportPreviewConfig.defaultAddress
-      uploadExecutionReport(reportUploadAddress, reportPreviewAddress, result).map(Some(_))
-    } else {
-      Future.successful(None)
-    }
-  }
-
-  private def saveWorkflowWithResults(outputDir: String, result: WorkflowWithResults): Unit = {
-    val resultsFile = new File(outputDir, outputFile)
-    val parentFile = resultsFile.getParentFile
-    if (parentFile != null) {
-      parentFile.mkdirs()
-    }
-    logger.info(s"Writing result to: ${resultsFile.getPath}")
-    val writer = new PrintWriter(new FileWriter(resultsFile, false))
-    writer.write(result.toJson.prettyPrint)
-    writer.flush()
-    writer.close()
-  }
-
   private def uploadExecutionReport(
       reportUploadAddress: String,
       reportPreviewAddress: String,
@@ -261,6 +263,39 @@ object WorkflowExecutorApp
       workflowManagerConfig.timeout,
       graphReader
     ).uploadReport(result)
+  }
+
+  private def saveWorkflowToFile(
+      outputDir: String,
+      result: WorkflowWithResults): Future[Option[String]] = {
+    logger.info(s"Execution report file ($outputFile) will be written on host: " +
+      s"${InetAddress.getLocalHost.getHostName} (${InetAddress.getLocalHost.getHostAddress})")
+    var writerOption: Option[PrintWriter] = None
+    try {
+      val resultsFile = new File(outputDir, outputFile)
+      val parentFile = resultsFile.getParentFile
+      if (parentFile != null) {
+        parentFile.mkdirs()
+      }
+      logger.info(s"Writing execution report file to: ${resultsFile.getPath}")
+      writerOption = Some(new PrintWriter(new FileWriter(resultsFile, false)))
+      writerOption.get.write(result.toJson.prettyPrint)
+      writerOption.get.flush()
+      writerOption.get.close()
+      Future.successful(Some(resultsFile.getPath))
+    } catch {
+      case e =>
+        writerOption.map {
+          writer =>
+            try {
+              writer.close()
+            } catch {
+              case e =>
+                logger.warn("Exception during emergency closing of PrintWriter", e)
+            }
+        }
+        return Future.failed(e)
+    }
   }
 
   private def dOperationsCatalog(): DOperationsCatalog = {
