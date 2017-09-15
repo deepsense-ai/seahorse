@@ -116,7 +116,7 @@ Detailed information about command line parameters can be obtained by executing 
 | ``-o DIR``<BR/>``--output-directory DIR``                       | Output directory path. If specified, execution report will be saved to passed location. Directory will be created if it does not exist. |
 | ``-u``<BR/>``--upload-report``                                  | Upload execution report. If specified, POST request with execution report will be sent after completing workflow execution. |
 | ``-r LEVEL``<BR/>``--report-level LEVEL``                       | Level of details for DataFrame report generation; LEVEL is 'high', 'medium', or 'low' (default: 'medium'). |
-| ``-a ADDRESS``<BR/>``--api-address ADDRESS``                    | Address of Seahorse Editor API. If not specified, the default of ``https://editor.seahorse.deepsense.io:9080`` will be used.  |
+| ``-a ADDRESS``<BR/>``--api-address ADDRESS``                    | Address of Seahorse Editor API. If not specified, the default of ``https://editor.seahorse.deepsense.io`` will be used.  |
 
 
 * **NOTE:** At least one of ``-w FILE`` or ``-d ID`` (or their long names) needs to be

@@ -100,7 +100,7 @@ object WorkflowExecutorApp
 
     opt[String]('a', "api-address") valueName "ADDRESS" action {
       (x, c) => c.copy(apiAddress = Some(x))
-    } text "address of Seahorse Editor API. e.g. https://editor.seahorse.deepsense.io:9080"
+    } text "address of Seahorse Editor API. e.g. https://editor.seahorse.deepsense.io"
 
     help("help") text "print this help message and exit"
     version("version") text "print product version and exit"
