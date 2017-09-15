@@ -25,12 +25,10 @@ import io.deepsense.deeplang.params.wrappers.spark.SparkParamUtils.{defaultDescr
 class DoubleParamWrapper(
     val sparkParam: ml.param.DoubleParam,
     override val validator: Validator[Double] = RangeValidator(Double.MinValue, Double.MaxValue),
-    override val index: Int = 0,
     val customName: Option[String] = None,
     val customDescription: Option[String] = None)
   extends NumericParam(
     customName.getOrElse(defaultName(sparkParam)),
     customDescription.getOrElse(defaultDescription(sparkParam)),
-    validator,
-    index)
+    validator)
   with ForwardSparkParamWrapper[Double]

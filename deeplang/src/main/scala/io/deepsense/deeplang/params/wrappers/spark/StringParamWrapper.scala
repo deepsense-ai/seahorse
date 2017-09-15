@@ -24,13 +24,11 @@ import io.deepsense.deeplang.params.wrappers.spark.SparkParamUtils.{defaultDescr
 
 class StringParamWrapper(
     val sparkParam: ml.param.Param[String],
-    override val index: Int = 0,
     override val validator: Validator[String] = new AcceptAllRegexValidator,
     val customName: Option[String] = None,
     val customDescription: Option[String] = None)
   extends StringParam(
     customName.getOrElse(defaultName(sparkParam)),
     customDescription.getOrElse(defaultDescription(sparkParam)),
-    index,
     validator)
   with ForwardSparkParamWrapper[String]

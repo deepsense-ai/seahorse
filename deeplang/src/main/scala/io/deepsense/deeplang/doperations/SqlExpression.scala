@@ -21,7 +21,7 @@ import scala.reflect.runtime.{universe => ru}
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, ParametersSchema, StringParameter}
-import io.deepsense.deeplang.params.{StringParam, Params}
+import io.deepsense.deeplang.params.{Param, StringParam, Params}
 import io.deepsense.deeplang.{DOperation1To1, ExecutionContext}
 
 case class SqlExpression() extends DOperation1To1[DataFrame, DataFrame] with Params {
@@ -44,6 +44,8 @@ case class SqlExpression() extends DOperation1To1[DataFrame, DataFrame] with Par
 
   def getExpression: String = $(expression)
   def setExpression(value: String): this.type = set(expression, value)
+
+  val params = declareParams(dataFrameId, expression)
 
   override val name: String = "SQL Expression"
   override val id: Id = "530e1420-7fbe-416b-b685-6c1e0f1137fc"

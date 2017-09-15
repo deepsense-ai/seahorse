@@ -26,14 +26,12 @@ import io.deepsense.deeplang.params.wrappers.spark.SparkParamUtils.{defaultDescr
 class FloatParamWrapper(
     val sparkParam: ml.param.FloatParam,
     override val validator: Validator[Double] = RangeValidator(Float.MinValue, Float.MaxValue),
-    override val index: Int = 0,
     val customName: Option[String] = None,
     val customDescription: Option[String] = None)
   extends NumericParam(
     customName.getOrElse(defaultName(sparkParam)),
     customDescription.getOrElse(defaultDescription(sparkParam)),
-    validator,
-    index)
+    validator)
   with SparkParamWrapper[Float, Double] {
 
   override def convert(value: Double)(df: DataFrame): Float = value.toFloat

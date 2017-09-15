@@ -30,11 +30,6 @@ abstract class Param[T] {
 
   val parameterType: ParameterType
 
-  /**
-   * Used to sort parameters in Params class when describing as Json.
-   */
-  val index = 0
-
   def validate(value: T): Vector[DeepLangException] = Vector.empty
 
   def toJson: JsObject = {

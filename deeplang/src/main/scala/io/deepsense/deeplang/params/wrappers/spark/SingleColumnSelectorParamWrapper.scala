@@ -27,14 +27,12 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 class SingleColumnSelectorParamWrapper(
     val sparkParam: ml.param.Param[String],
     override val portIndex: Int,
-    override val index: Int = 0,
     val customName: Option[String] = None,
     val customDescription: Option[String] = None)
   extends SingleColumnSelectorParam(
     customName.getOrElse(defaultName(sparkParam)),
     customDescription.getOrElse(defaultDescription(sparkParam)),
-    portIndex,
-    index)
+    portIndex)
   with SparkParamWrapper[String, SingleColumnSelection] {
 
   override def convert(value: SingleColumnSelection)(df: DataFrame): String = {

@@ -21,7 +21,7 @@ import scala.reflect.runtime.{universe => ru}
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.parameters._
-import io.deepsense.deeplang.params.{ColumnSelectorParam, Params}
+import io.deepsense.deeplang.params.{Param, ColumnSelectorParam, Params}
 import io.deepsense.deeplang.{DOperation1To1, ExecutionContext}
 
 case class FilterColumns() extends DOperation1To1[DataFrame, DataFrame] with Params {
@@ -44,6 +44,8 @@ case class FilterColumns() extends DOperation1To1[DataFrame, DataFrame] with Par
       MultipleColumnSelection(
         Vector(NameColumnSelection(retainedColumns.toSet)),
         excluding = false))
+
+  val params = declareParams(selectedColumns)
 
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): DataFrame = {
     val columns = dataFrame.getColumnNames(getSelectedColumns)

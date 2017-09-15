@@ -18,7 +18,7 @@ package io.deepsense.deeplang.params.choice
 
 import spray.json.{JsArray, JsObject, JsString}
 
-import io.deepsense.deeplang.params.BooleanParam
+import io.deepsense.deeplang.params.{Param, BooleanParam}
 
 sealed trait ChoiceABC extends Choice {
   override val choiceOrder: List[Class[_ <: ChoiceABC]] = List(
@@ -34,15 +34,19 @@ case class OptionA() extends ChoiceABC {
     name = "bool",
     description = "description")
 
+  override val params = declareParams(bool)
+
   def setBool(b: Boolean): this.type = set(bool, b)
 }
 
 case class OptionB() extends ChoiceABC {
   override val name = "B"
+  override val params: Array[Param[_]] = declareParams()
 }
 
 case class OptionC() extends ChoiceABC {
   override val name = "C"
+  override val params: Array[Param[_]] = declareParams()
 }
 
 sealed trait BaseChoice extends Choice {
@@ -52,6 +56,7 @@ sealed trait BaseChoice extends Choice {
 
 case class ChoiceWithoutNoArgConstructor(x: String) extends BaseChoice {
   override val name: String = "choiceWithoutNoArgConstructor"
+  override val params: Array[Param[_]] = declareParams()
 }
 
 object ChoiceFixtures {

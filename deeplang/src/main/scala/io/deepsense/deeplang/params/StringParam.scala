@@ -23,7 +23,6 @@ import spray.json.DefaultJsonProtocol.StringJsonFormat
 case class StringParam(
     val name: String,
     val description: String,
-    override val index: Int = 0,
     val validator: Validator[String] = new AcceptAllRegexValidator)
   extends ParamWithJsFormat[String]
   with HasValidator[String] {

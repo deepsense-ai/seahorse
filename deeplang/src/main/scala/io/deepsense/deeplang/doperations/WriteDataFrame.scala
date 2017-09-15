@@ -32,7 +32,7 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMapper
 import io.deepsense.deeplang.doperations.exceptions.{DeepSenseIOException, WriteFileException}
 import io.deepsense.deeplang.doperations.inout._
-import io.deepsense.deeplang.params.Params
+import io.deepsense.deeplang.params.{Param, Params}
 import io.deepsense.deeplang.params.choice.ChoiceParam
 import io.deepsense.deeplang.{DOperation1To0, ExecutionContext, FileSystemClient}
 
@@ -47,10 +47,12 @@ case class WriteDataFrame()
   val storageType = ChoiceParam[OutputStorageTypeChoice](
     name = "data storage type",
     description = "Storage type")
-  setDefault(storageType, OutputStorageTypeChoice.File())
 
   def getStorageType: OutputStorageTypeChoice = $(storageType)
   def setStorageType(value: OutputStorageTypeChoice): this.type = set(storageType, value)
+
+  val params = declareParams(storageType)
+  setDefault(storageType, OutputStorageTypeChoice.File())
 
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): Unit = {
     try {

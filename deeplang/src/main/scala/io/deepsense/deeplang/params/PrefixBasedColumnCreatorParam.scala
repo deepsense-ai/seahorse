@@ -22,8 +22,7 @@ import spray.json.DefaultJsonProtocol.StringJsonFormat
 
 case class PrefixBasedColumnCreatorParam(
     name: String,
-    description: String,
-    override val index: Int = 0)
+    description: String)
   extends ParamWithJsFormat[String] {
 
   val parameterType = ParameterType.PrefixBasedColumnCreator

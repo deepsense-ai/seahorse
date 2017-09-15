@@ -27,14 +27,12 @@ class IntParamWrapper(
     val sparkParam: ml.param.IntParam,
     override val validator: Validator[Double] =
       RangeValidator(Int.MinValue, Int.MaxValue, step = Some(1.0)),
-    override val index: Int = 0,
     val customName: Option[String] = None,
     val customDescription: Option[String] = None)
   extends NumericParam(
     customName.getOrElse(defaultName(sparkParam)),
     customDescription.getOrElse(defaultDescription(sparkParam)),
-    validator,
-    index)
+    validator)
   with SparkParamWrapper[Int, Double] {
 
   override def convert(value: Double)(df: DataFrame): Int = value.toInt

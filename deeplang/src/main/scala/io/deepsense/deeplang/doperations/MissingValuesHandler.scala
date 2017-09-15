@@ -33,7 +33,7 @@ import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.parameters.ChoiceParameter.BinaryChoice
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
-import io.deepsense.deeplang.params.{PrefixBasedColumnCreatorParam, StringParam, ColumnSelectorParam, Params}
+import io.deepsense.deeplang.params._
 import io.deepsense.deeplang.{DKnowledge, DOperation1To1, ExecutionContext}
 
 case class MissingValuesHandler()
@@ -77,6 +77,8 @@ case class MissingValuesHandler()
   def getMissingValueIndicator: MissingValueIndicatorChoice = $(missingValueIndicator)
   def setMissingValueIndicator(value: MissingValueIndicatorChoice): this.type =
     set(missingValueIndicator, value)
+
+  val params = declareParams(selectedColumns, strategy, missingValueIndicator)
 
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): DataFrame = {
 
@@ -245,22 +247,25 @@ object MissingValuesHandler {
   object Strategy {
     case class RemoveRow() extends Strategy {
       override val name: String = "remove row"
+      override val params: Array[Param[_]] = declareParams()
     }
 
     case class RemoveColumn() extends Strategy {
       override val name: String = "remove column"
+      override val params: Array[Param[_]] = declareParams()
     }
 
     case class ReplaceWithCustomValue() extends Strategy {
 
       override val name: String = "replace with custom value"
-
       val customValue = StringParam(
         name = "value",
         description = "Replacement for missing values")
 
       def getCustomValue: String = $(customValue)
       def setCustomValue(value: String): this.type = set(customValue, value)
+
+      override val params: Array[Param[_]] = declareParams(customValue)
     }
 
     case class ReplaceWithMode() extends Strategy {
@@ -275,6 +280,8 @@ object MissingValuesHandler {
       def getEmptyColumnStrategy: EmptyColumnsStrategy = $(emptyColumnStrategy)
       def setEmptyColumnStrategy(value: EmptyColumnsStrategy): this.type =
         set(emptyColumnStrategy, value)
+
+      override val params: Array[Param[_]] = declareParams(emptyColumnStrategy)
     }
   }
 
@@ -289,9 +296,11 @@ object MissingValuesHandler {
   object EmptyColumnsStrategy {
     case class RemoveEmptyColumns() extends EmptyColumnsStrategy {
       override val name: String = "remove"
+      override val params: Array[Param[_]] = declareParams()
     }
     case class RetainEmptyColumns() extends EmptyColumnsStrategy {
       override val name: String = "retain"
+      override val params: Array[Param[_]] = declareParams()
     }
   }
 
@@ -318,11 +327,15 @@ object MissingValuesHandler {
 
       override def getIndicatorPrefix: Option[String] = Some($(indicatorPrefix))
       def setIndicatorPrefix(value: String): this.type = set(indicatorPrefix, value)
+
+      override val params: Array[Param[_]] = declareParams(indicatorPrefix)
     }
     case class No() extends MissingValueIndicatorChoice {
       override val name: String = "No"
 
       override def getIndicatorPrefix: Option[String] = None
+
+      override val params: Array[Param[_]] = declareParams()
     }
   }
 }

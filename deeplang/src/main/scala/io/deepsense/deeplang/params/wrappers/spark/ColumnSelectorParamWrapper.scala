@@ -27,14 +27,12 @@ import io.deepsense.deeplang.params.wrappers.spark.SparkParamUtils.{defaultDescr
 class ColumnSelectorParamWrapper(
     val sparkParam: ml.param.StringArrayParam,
     override val portIndex: Int = 0,
-    override val index: Int = 0,
     val customName: Option[String] = None,
     val customDescription: Option[String] = None)
   extends ColumnSelectorParam(
     customName.getOrElse(defaultName(sparkParam)),
     customDescription.getOrElse(defaultDescription(sparkParam)),
-    portIndex,
-    index)
+    portIndex)
   with SparkParamWrapper[Array[String], MultipleColumnSelection] {
 
   override def convert(value: MultipleColumnSelection)(df: DataFrame): Array[String] =

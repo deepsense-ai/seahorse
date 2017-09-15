@@ -22,8 +22,7 @@ import spray.json.DefaultJsonProtocol._
 
 case class MultipleColumnCreatorParam(
     name: String,
-    description: String,
-    override val index: Int = 0)
+    description: String)
   extends ParamWithJsFormat[Array[String]] {
 
   val parameterType = ParameterType.MultipleColumnCreator

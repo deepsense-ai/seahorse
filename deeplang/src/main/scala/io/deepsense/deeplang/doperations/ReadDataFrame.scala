@@ -32,19 +32,22 @@ import io.deepsense.deeplang.doperations.ReadDataFrame._
 import io.deepsense.deeplang.doperations.exceptions.DeepSenseIOException
 import io.deepsense.deeplang.doperations.inout._
 import io.deepsense.deeplang.parameters._
-import io.deepsense.deeplang.params.Params
+import io.deepsense.deeplang.params.{Param, Params}
 import io.deepsense.deeplang.params.choice.ChoiceParam
 import io.deepsense.deeplang.{DOperation0To1, ExecutionContext, FileSystemClient}
 
 case class ReadDataFrame()
     extends DOperation0To1[DataFrame]
+    with ReadDataFrameParameters
     with CategoricalExtraction
     with CsvReader
-    with Params
-    with ReadDataFrameParameters {
+    with Params {
 
   override val id: Id = "c48dd54c-6aef-42df-ad7a-42fc59a09f0e"
   override val name = "Read DataFrame"
+
+  val params = declareParams(storageType)
+  setDefault(storageType, InputStorageTypeChoice.File())
 
   override protected def _execute(context: ExecutionContext)(): DataFrame = {
     implicit val ec = context
@@ -216,7 +219,6 @@ object ReadDataFrame {
     val storageType = ChoiceParam[InputStorageTypeChoice](
       name = "data storage type",
       description = "Storage type")
-    setDefault(storageType, InputStorageTypeChoice.File())
 
     def getStorageType: InputStorageTypeChoice = $(storageType)
     def setStorageType(value: InputStorageTypeChoice): this.type = set(storageType, value)

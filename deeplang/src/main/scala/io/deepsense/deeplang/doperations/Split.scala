@@ -26,7 +26,7 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.parameters.{NumericParameter, ParametersSchema, RangeValidator}
 
-import io.deepsense.deeplang.params.{NumericParam, Params}
+import io.deepsense.deeplang.params.{Param, NumericParam, Params}
 
 case class Split()
   extends DOperation1To2[DataFrame, DataFrame, DataFrame]
@@ -38,9 +38,7 @@ case class Split()
   val splitRatio = NumericParam(
     name = "split ratio",
     description = "Percentage of rows that should end up in the first output DataFrame",
-    validator = RangeValidator(0.0, 1.0, true, true),
-    index = 0
-  )
+    validator = RangeValidator(0.0, 1.0, true, true))
 
   def getSplitRatio: Double = $(splitRatio)
   def setSplitRatio(value: Double): this.type = set(splitRatio, value)
@@ -53,6 +51,8 @@ case class Split()
 
   def getSeed: Int = $(seed).toInt
   def setSeed(value: Int): this.type = set(seed, value.toDouble)
+
+  val params = declareParams(splitRatio, seed)
 
   override protected def _execute(context: ExecutionContext)
                                  (df: DataFrame): (DataFrame, DataFrame) = {

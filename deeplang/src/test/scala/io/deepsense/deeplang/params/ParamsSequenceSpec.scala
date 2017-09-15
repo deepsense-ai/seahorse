@@ -22,14 +22,18 @@ import io.deepsense.deeplang.parameters.AcceptAllRegexValidator
 import io.deepsense.deeplang.params.exceptions.NoArgumentConstructorRequiredException
 
 case class ClassWithParams() extends Params {
-  val string = StringParam("string", "", 0)
-  val bool = BooleanParam("bool", "", 1)
+  val string = StringParam("string", "")
+  val bool = BooleanParam("bool", "")
+
+  val params = declareParams(string, bool)
 
   def setBool(b: Boolean): this.type = set(bool, b)
   def setString(s: String): this.type = set(string, s)
 }
 
-case class ParamsWithoutNoArgConstructor(x: String) extends Params
+case class ParamsWithoutNoArgConstructor(x: String) extends Params {
+  val params = declareParams()
+}
 
 class ParamsSequenceSpec
   extends AbstractParamSpec[Seq[ClassWithParams], ParamsSequence[ClassWithParams]] {

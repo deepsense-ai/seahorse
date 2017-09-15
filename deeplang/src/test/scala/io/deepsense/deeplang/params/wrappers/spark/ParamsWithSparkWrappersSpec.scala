@@ -31,8 +31,10 @@ class ParamsWithSparkWrappersSpec extends WordSpec
     val sparkParamA = new Param[String]("", "paramA", "descA")
     val sparkParamB = new IntParam("", "paramB", "descB")
 
-    val paramA = new StringParamWrapper(sparkParamA, index = 0)
-    val paramB = new IntParamWrapper(sparkParamB, index = 1)
+    val paramA = new StringParamWrapper(sparkParamA)
+    val paramB = new IntParamWrapper(sparkParamB)
+
+    val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(paramA, paramB)
 
     def setParamA(v: String): this.type = set(paramA, v)
     def setParamB(v: Double): this.type = set(paramB, v)

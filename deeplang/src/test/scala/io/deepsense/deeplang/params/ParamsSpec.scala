@@ -27,7 +27,7 @@ class ParamsSpec extends UnitSpec {
 
   case class MockException(override val message: String) extends DeepLangException(message)
 
-  case class MockParam(name: String, override val index: Int = 0) extends Param[Int] {
+  case class MockParam(name: String) extends Param[Int] {
     override val description: String = "description"
     override val parameterType: ParameterType = mock[ParameterType]
 
@@ -43,8 +43,10 @@ class ParamsSpec extends UnitSpec {
 
   // This class also shows how Params trait is to be used
   case class WithParams() extends Params {
-    val param2 = MockParam("name of param2", index = 1)
-    val param1 = MockParam("name of param1", index = 2)
+    val param2 = MockParam("name of param2")
+    val param1 = MockParam("name of param1")
+
+    val params = declareParams(param2, param1)
 
     def set1(v: Int): this.type = set(param1 -> v)
     def set2(v: Int): this.type = set(param2 -> v)

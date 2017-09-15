@@ -24,8 +24,7 @@ import io.deepsense.deeplang.parameters.ParameterType
 
 case class MultipleChoiceParam[T <: Choice](
     name: String,
-    description: String,
-    override val index: Int = 0)
+    description: String)
   (implicit tag: TypeTag[T])
   extends AbstractChoiceParam[T, Set[T]] {
 

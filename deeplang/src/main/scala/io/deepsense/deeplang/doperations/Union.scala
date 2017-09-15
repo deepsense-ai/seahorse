@@ -27,7 +27,7 @@ import io.deepsense.deeplang.doperables.dataframe.types.categorical.{Categorical
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameMetadata}
 import io.deepsense.deeplang.doperations.exceptions.SchemaMismatchException
 import io.deepsense.deeplang.parameters.ParametersSchema
-import io.deepsense.deeplang.params.Params
+import io.deepsense.deeplang.params.{Param, Params}
 import io.deepsense.deeplang.{DOperation2To1, ExecutionContext}
 
 
@@ -35,6 +35,8 @@ case class Union() extends DOperation2To1[DataFrame, DataFrame, DataFrame] with 
 
   override val id: Id = "90fed07b-d0a9-49fd-ae23-dd7000a1d8ad"
   override val name: String = "Union"
+
+  val params = declareParams()
 
   override protected def _execute(
       context: ExecutionContext)(first: DataFrame, second: DataFrame): DataFrame = {

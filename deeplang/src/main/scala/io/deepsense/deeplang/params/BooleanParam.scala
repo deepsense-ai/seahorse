@@ -22,8 +22,7 @@ import io.deepsense.deeplang.parameters.ParameterType
 
 case class BooleanParam(
     val name: String,
-    val description: String,
-    override val index: Int = 0)
+    val description: String)
   extends ParamWithJsFormat[Boolean] {
 
   override val parameterType = ParameterType.Boolean

@@ -28,7 +28,7 @@ import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMetadata
 import io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException
 import io.deepsense.deeplang.parameters._
-import io.deepsense.deeplang.params.{ParamsSequence, PrefixBasedColumnCreatorParam, SingleColumnSelectorParam, Params}
+import io.deepsense.deeplang.params._
 import io.deepsense.deeplang.{DOperation2To1, ExecutionContext}
 
 case class Join()
@@ -63,6 +63,8 @@ case class Join()
 
   def getJoinColumns: Seq[ColumnPair] = $(joinColumns)
   def setJoinColumns(value: Seq[ColumnPair]): this.type = set(joinColumns, value)
+
+  val params = declareParams(leftPrefix, rightPrefix, joinColumns)
 
   override protected def _execute(context: ExecutionContext)
                                  (ldf: DataFrame, rdf: DataFrame): DataFrame = {
@@ -224,5 +226,7 @@ object Join {
 
     def getRightColumn: SingleColumnSelection = $(rightColumn)
     def setRightColumn(value: SingleColumnSelection): this.type = set(rightColumn, value)
+
+    val params = declareParams(leftColumn, rightColumn)
   }
 }

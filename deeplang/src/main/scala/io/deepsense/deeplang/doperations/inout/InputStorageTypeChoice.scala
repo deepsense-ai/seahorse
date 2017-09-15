@@ -17,7 +17,7 @@
 package io.deepsense.deeplang.doperations.inout
 
 import io.deepsense.deeplang.parameters.StorageType
-import io.deepsense.deeplang.params.StringParam
+import io.deepsense.deeplang.params.{Param, StringParam}
 import io.deepsense.deeplang.params.choice.{ChoiceParam, Choice}
 
 sealed trait InputStorageTypeChoice extends Choice {
@@ -49,6 +49,8 @@ object InputStorageTypeChoice {
 
     def getFileFormat: InputFileFormatChoice = $(fileFormat)
     def setFileFormat(value: InputFileFormatChoice): this.type = set(fileFormat, value)
+
+    override val params: Array[Param[_]] = declareParams(sourceFile, fileFormat)
   }
 
   case class Jdbc()
@@ -57,6 +59,8 @@ object InputStorageTypeChoice {
     with HasCategoricalColumnsParam {
 
     override val name: String = StorageType.JDBC.toString
+    override val params: Array[Param[_]] =
+      declareParams(jdbcUrl, jdbcDriverClassName, jdbcTableName, categoricalColumns)
   }
 
   case class Cassandra()
@@ -65,5 +69,7 @@ object InputStorageTypeChoice {
     with HasCategoricalColumnsParam {
 
     override val name: String = StorageType.CASSANDRA.toString
+    override val params: Array[Param[_]] =
+      declareParams(cassandraKeyspace, cassandraTable, categoricalColumns)
   }
 }

@@ -23,11 +23,9 @@ import io.deepsense.deeplang.params.wrappers.spark.SparkParamUtils.{defaultDescr
 
 class PrefixBasedColumnCreatorParamWrapper(
     val sparkParam: ml.param.Param[String],
-    override val index: Int = 0,
     val customName: Option[String] = None,
     val customDescription: Option[String] = None)
   extends PrefixBasedColumnCreatorParam(
     customName.getOrElse(defaultName(sparkParam)),
-    customDescription.getOrElse(defaultDescription(sparkParam)),
-    index
-  ) with ForwardSparkParamWrapper[String]
+    customDescription.getOrElse(defaultDescription(sparkParam)))
+  with ForwardSparkParamWrapper[String]

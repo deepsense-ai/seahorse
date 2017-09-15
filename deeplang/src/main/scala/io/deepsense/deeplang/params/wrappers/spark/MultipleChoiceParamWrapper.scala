@@ -26,13 +26,11 @@ import io.deepsense.deeplang.params.wrappers.spark.SparkParamUtils.{defaultDescr
 
 class MultipleChoiceParamWrapper[T <: Choice : TypeTag](
     val sparkParam: ml.param.StringArrayParam,
-    override val index: Int = 0,
     val customName: Option[String] = None,
     val customDescription: Option[String] = None)
   extends MultipleChoiceParam[T](
     customName.getOrElse(defaultName(sparkParam)),
-    customDescription.getOrElse(defaultDescription(sparkParam)),
-    index)
+    customDescription.getOrElse(defaultDescription(sparkParam)))
   with SparkParamWrapper[Array[String], Set[T]] {
 
   override def convert(value: Set[T])(df: DataFrame): Array[String] = value.map(_.name).toArray

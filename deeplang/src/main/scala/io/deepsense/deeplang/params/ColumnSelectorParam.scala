@@ -25,8 +25,7 @@ import MultipleColumnSelectionProtocol._
 case class ColumnSelectorParam(
     name: String,
     description: String,
-    portIndex: Int,
-    override val index: Int = 0)
+    portIndex: Int)
   extends AbstractColumnSelectorParam[MultipleColumnSelection] {
 
   override val parameterType = ParameterType.ColumnSelector

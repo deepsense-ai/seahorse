@@ -80,17 +80,30 @@ trait Params extends Serializable with ParameterJsonContainer {
    */
   def setParamsFromJson(jsValue: JsValue): this.type = set(paramPairsFromJson(jsValue): _*)
 
+  val params: Array[Param[_]]
+
   /**
-   * Params are inferred from reflection and sorted by their index.
+   * Allows to declare parameters order conveniently and makes sure
+   * that all parameters are declared.
    */
-  lazy val params: Array[Param[_]] = {
+  protected def declareParams(params: Param[_]*): Array[Param[_]] = {
+    val declaredParamSet = params.toSet
+    val reflectionParamSet = getParamsByReflection.toSet
+    if(declaredParamSet != reflectionParamSet) {
+      throw new RuntimeException(
+        s"[${getClass.getName}] Not all parameters {${reflectionParamSet.mkString(", ")}}" +
+        s" were declared in {${declaredParamSet.mkString(", ")}}")
+    }
+    params.toArray
+  }
+
+  private def getParamsByReflection: Array[Param[_]] = {
     val methods = this.getClass.getMethods
     methods.filter { m =>
       Modifier.isPublic(m.getModifiers) &&
         classOf[Param[_]].isAssignableFrom(m.getReturnType) &&
         m.getParameterTypes.isEmpty
     }.map(m => m.invoke(this).asInstanceOf[Param[_]])
-    .sortBy(_.index)
   }
 
   private lazy val paramsByName: Map[String, Param[_]] =

@@ -23,8 +23,7 @@ import SingleColumnSelectionProtocol._
 case class SingleColumnSelectorParam(
     name: String,
     description: String,
-    portIndex: Int,
-    override val index: Int = 0)
+    portIndex: Int)
   extends AbstractColumnSelectorParam[SingleColumnSelection]
   with SingleColumnSelectionProtocol {
 
