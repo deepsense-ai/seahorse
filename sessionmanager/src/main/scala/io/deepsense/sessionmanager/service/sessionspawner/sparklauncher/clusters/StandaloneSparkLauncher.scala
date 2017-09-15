@@ -5,11 +5,14 @@
 package io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.clusters
 
 import org.apache.spark.launcher.SparkLauncher
-
+import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.clusters.SeahorseSparkLauncher.RichSparkLauncher
 import io.deepsense.sessionmanager.rest.requests.ClusterDetails
 import io.deepsense.sessionmanager.service.sessionspawner.SessionConfig
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.SparkLauncherConfig
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.executor.{CommonEnv, SessionExecutorArgs}
+import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.spark.SparkAgumentParser.UnknownOption
+
+import scalaz.Validation
 
 private [clusters] object StandaloneSparkLauncher {
   import scala.collection.JavaConversions._
@@ -17,8 +20,10 @@ private [clusters] object StandaloneSparkLauncher {
   def apply(
       sessionConfig: SessionConfig,
       config: SparkLauncherConfig,
-      clusterConfig: ClusterDetails): SparkLauncher = {
-    new SparkLauncher(CommonEnv(config, clusterConfig))
+      clusterConfig: ClusterDetails): Validation[UnknownOption, SparkLauncher] = for {
+    args <- clusterConfig.parsedParams
+  } yield new SparkLauncher(CommonEnv(config, clusterConfig))
+      .setSparkArgs(args.toMap)
       .setVerbose(true)
       .setMainClass(config.className)
       .setMaster(clusterConfig.uri)
@@ -32,6 +37,4 @@ private [clusters] object StandaloneSparkLauncher {
       .setConf("spark.driver.extraClassPath", config.weJarPath)
       .setConf("spark.driver.extraJavaOptions",
         "-XX:MaxPermSize=1024m -XX:PermSize=256m -Dfile.encoding=UTF8")
-  }
-
 }

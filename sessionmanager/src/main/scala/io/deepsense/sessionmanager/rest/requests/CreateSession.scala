@@ -5,6 +5,11 @@
 package io.deepsense.sessionmanager.rest.requests
 
 import io.deepsense.commons.models.Id
+import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.spark.SparkAgumentParser
+import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.spark.SparkAgumentParser.UnknownOption
+
+import scala.collection.Map
+import scalaz.Validation
 
 case class CreateSession(workflowId: Id, cluster: ClusterDetails)
 
@@ -21,4 +26,9 @@ case class ClusterDetails(
     totalExecutorCores: Option[Int] = None,
     executorCores: Option[Int] = None,
     numExecutors: Option[Int] = None,
-    params: Option[String] = None)
+    params: Option[String] = None) {
+
+  def parsedParams: Validation[UnknownOption, Map[String, String]] =
+    SparkAgumentParser.parse(params).map(_.toMap)
+
+}
