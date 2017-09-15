@@ -19,4 +19,5 @@
       shell: vagrant up {{vagrant_box_name}} &>install.log chdir=vagrant executable=/bin/bash
     - name: Export provisioned VM to image file
       shell: vagrant package --output seahorse-vm.box &>package.log chdir=vagrant executable=/bin/bash
-
+    - name: Remove created VM
+      shell: vagrant destroy -f {{vagrant_box_name}} &>destroy.log chdir=vagrant executable=/bin/bash

@@ -2,6 +2,8 @@
 
 vagrant_wm_build_version: "deepsense-workflowmanager-latest"
 vagrant_wm_version: "1.0.0-SNAPSHOT"
+vagrant_sm_build_version: "deepsense-sessionmanager-latest"
+vagrant_sm_version: "1.0.0-SNAPSHOT"
 vagrant_ds_frontend_package_name: "frontend-latest"
 vagrant_api_version: "1.0.0"
 vagrant_workflowexecutor_build_version: "latest"

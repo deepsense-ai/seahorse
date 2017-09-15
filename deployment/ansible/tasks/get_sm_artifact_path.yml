@@ -1,7 +1,7 @@
-- set_fact: sm_artifact_path="deepsense-backend-release/io/deepsense/deepsense-sessionmanager/{{sm_build_version}}/deepsense-sessionmanager-{{sm_build_version}}.zip"
-
 - set_fact: sm_artifact_path="deepsense-backend-snapshot/io/deepsense/deepsense-sessionmanager/{{sm_build_version}}/{{sm_build_version}}.zip"
-  when: sm_build_version | search('.*latest')
 
 - set_fact: sm_artifact_path="deepsense-backend-snapshot/io/deepsense/deepsense-sessionmanager/{{sm_build_version|regex_replace('^(.+)-SNAPSHOT-.*$','\\1-SNAPSHOT')}}/{{sm_build_version}}/deepsense-sessionmanager-{{sm_build_version}}.zip"
   when: sm_build_version | search("SNAPSHOT")
+
+- set_fact: sm_artifact_path="deepsense-backend-release/io/deepsense/deepsense-sessionmanager/{{sm_build_version}}/deepsense-sessionmanager-{{sm_build_version}}.zip"
+  when: sm_build_version | match('[0-9]+\.[0-9]+\.[0-9]+')
