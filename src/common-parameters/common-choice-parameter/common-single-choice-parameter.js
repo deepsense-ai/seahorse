@@ -30,12 +30,15 @@ SingleChoiceParameter.prototype.initChoices = function (options) {
 
 SingleChoiceParameter.prototype.serialize = function () {
   let serializedObject = ChoiceParameter.prototype.serialize.call(this);
+  let choicesNum = Object.keys(serializedObject).length;
 
-  if (Object.keys(serializedObject).length > 1) {
+  if (choicesNum > 1) {
     throw `too many choices in the SingleChoiceParameter object: ${ this.name }`;
   }
 
-  return serializedObject;
+  return choicesNum === 0 ?
+    null :
+    serializedObject;
 };
 
 SingleChoiceParameter.prototype.validate = function () {
