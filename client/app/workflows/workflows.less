@@ -69,6 +69,30 @@
     flex: 1;
     width: 100%;
   }
+
+  .datasources-component-wrapper {
+    position: absolute;
+    left: -60vw;
+    top: 0;
+    background-color: white;
+    height: ~"calc(100vh - 25px)";
+    width: 50vw;
+    z-index: 1000;
+    transition: all 1s ease;
+
+    .cross {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      cursor: pointer;
+      font-size: 36px;
+      font-family: seahorse-symbol;
+    }
+
+    &.active {
+      left: 0;
+    }
+  }
 }
 
 .c-navigation-bar {

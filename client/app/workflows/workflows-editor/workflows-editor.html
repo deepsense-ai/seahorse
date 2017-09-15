@@ -1,5 +1,16 @@
 <div class="c-workflow-container">
   <section class="c-workflow-container__content" resizable-listener="height">
+
+    <div class="datasources-component-wrapper"
+         ng-class="{'active': workflow.isDatasourcesOpened}"
+    >
+      <div ng-click="workflow.closeDatasources()"
+           class="cross"
+      >X</div>
+
+      <datasources-panel></datasources-panel>
+    </div>
+
     <editor
       class="c-workflow-container__editor"
       is-editable="workflow.isEditable()"

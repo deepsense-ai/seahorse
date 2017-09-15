@@ -4,14 +4,14 @@ class WorkflowsEditorController {
 
   /* @ngInject */
   constructor(workflowWithResults, $scope, $state, $rootScope, WorkflowCloneService,
-              Report, MultiSelectionService, WorkflowService,
+              Report, MultiSelectionService, WorkflowService, DatasourcesPanelService,
               ConfirmationModalService, ExportModalService, GraphNodesService, NotificationService,
               ServerCommunication, CopyPasteService, BottomBarService, NodeCopyPasteVisitorService,
               EventsService, WorkflowsEditorService, AdapterService, MouseEvent) {
 
     _.assign(this, {
       workflowWithResults, $scope, $state, $rootScope, WorkflowCloneService,
-      Report, MultiSelectionService, WorkflowService,
+      Report, MultiSelectionService, WorkflowService, DatasourcesPanelService,
       ConfirmationModalService, ExportModalService, GraphNodesService, NotificationService,
       ServerCommunication, CopyPasteService, BottomBarService, NodeCopyPasteVisitorService,
       EventsService, WorkflowsEditorService, AdapterService, MouseEvent
@@ -29,6 +29,10 @@ class WorkflowsEditorController {
       }
     });
 
+    $scope.$watch(() => this.DatasourcesPanelService.isDatasourcesOpened, (newValue) => {
+      this.isDatasourcesOpened = newValue;
+    });
+
     this.AdapterService.setMouseClickOnPortFunction((data) => {
       this.openReport(data);
     });
@@ -37,6 +41,10 @@ class WorkflowsEditorController {
     this.selectedNode = null;
     this._editableModeEventListeners = [];
     this.init(workflowWithResults);
+  }
+
+  closeDatasources() {
+    this.DatasourcesPanelService.closeDatasources();
   }
 
   _loadReports(data) {
