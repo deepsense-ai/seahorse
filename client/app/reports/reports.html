@@ -6,15 +6,15 @@
       distributions-types="::report.getDistributionsTypes()">
     </report-dataframe>
     <report-cross-validate-regressor
-      ng-switch-when="CrossValidateRegressor"
+      ng-switch-when="Cross-validate Regressor Report"
       data="::report.getTables()">
     </report-cross-validate-regressor>
     <report-evaluate-scoring
-      ng-switch-when="EvaluateRegression"
+      ng-switch-when="Evaluate Regression Report"
       data="::report.getTables()">
     </report-evaluate-scoring>
     <report-evaluate-classification
-      ng-switch-when="evaluateClassification"
+      ng-switch-when="Evaluate Classification Report"
       data="::report.getTables()">
     </report-evaluate-classification>
   </div>
