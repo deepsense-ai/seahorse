@@ -56,6 +56,8 @@ object CatalogRecorder {
     catalog.registerDOperable[LogisticRegressionModel]()
     catalog.registerDOperable[NaiveBayes]()
     catalog.registerDOperable[NaiveBayesModel]()
+    catalog.registerDOperable[AFTSurvivalRegression]()
+    catalog.registerDOperable[AFTSurvivalRegressionModel]()
     catalog.registerDOperable[ALS]()
     catalog.registerDOperable[ALSModel]()
     catalog.registerDOperable[KMeans]()
@@ -244,6 +246,9 @@ object CatalogRecorder {
 
     catalog.registerDOperation[GridSearch](
       DOperationCategories.ML.HyperOptimization)
+
+    catalog.registerDOperation[CreateAFTSurvivalRegression](
+      DOperationCategories.ML.Regression)
 
     catalog.registerDOperation[CreateLinearRegression](
       DOperationCategories.ML.Regression)

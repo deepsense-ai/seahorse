@@ -21,9 +21,9 @@ import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.sql.types.StructType
 
 import io.deepsense.deeplang.DeeplangIntegTestSupport
-import io.deepsense.deeplang.doperables.{Transformer, Estimator}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.spark.wrappers.estimators.AbstractEstimatorModelWrapperSmokeTest.TestDataFrameRow
+import io.deepsense.deeplang.doperables.{Estimator, Transformer}
 import io.deepsense.deeplang.params.ParamPair
 
 abstract class AbstractEstimatorModelWrapperSmokeTest extends DeeplangIntegTestSupport {
@@ -36,12 +36,14 @@ abstract class AbstractEstimatorModelWrapperSmokeTest extends DeeplangIntegTestS
 
   val dataFrame: DataFrame = {
     val rowSeq = Seq(
-      TestDataFrameRow(0.0, 0.5, Vectors.dense(1.0, 2.0, 3.0), 0, 0, 0.2,
-        Seq("a", "a", "a", "b", "b", "c").toArray),
-      TestDataFrameRow(1.0, 2.0, Vectors.dense(4.0, 5.0, 6.0), 1, 1, 0.4,
-        Seq("a", "b", "c", "d", "d", "d").toArray),
-      TestDataFrameRow(1.0, 0.0, Vectors.dense(16.0, 11.0, 9.0), 2, 3, 0.4,
-        Seq("a", "c", "d", "f", "f", "g").toArray)
+      TestDataFrameRow(0.0, 0.5, Vectors.dense(1.0, 2.0, 3.0), 0, 0, 0.2, 1.0, 0.5,
+        Seq("a", "a", "a", "b", "b", "c").toArray, Vectors.dense(0.3, 0.5, 1)),
+      TestDataFrameRow(1.0, 2.0, Vectors.dense(4.0, 5.0, 6.0), 1, 1, 0.4, 0.0, 0.2,
+        Seq("a", "b", "c", "d", "d", "d").toArray, Vectors.dense(0.2, 0.1, 0.5)),
+      TestDataFrameRow(1.0, 0.0, Vectors.dense(16.0, 11.0, 9.0), 2, 3, 0.4, 1.0, 0.8,
+        Seq("a", "c", "d", "f", "f", "g").toArray, Vectors.dense(0.2, 0.1, 1)),
+      TestDataFrameRow(0.0, 1.0, Vectors.dense(32.0, 11.0, 9.0), 4, 3, 0.2, 0.0, 0.1,
+        Seq("b", "d", "d", "f", "f", "g").toArray, Vectors.dense(0.1, 0.2, 0.1))
     )
     val sparkDF = sqlContext.createDataFrame(rowSeq)
     DataFrame.fromSparkDataFrame(sparkDF)
@@ -83,5 +85,8 @@ object AbstractEstimatorModelWrapperSmokeTest {
     myItemId: Int,
     myUserId: Int,
     myRating: Double,
-    myStringFeatures: Array[String])
+    myCensor: Double,
+    myNoZeroLabel: Double,
+    myStringFeatures: Array[String],
+    myStandardizedFeatures: mllib.linalg.Vector)
 }

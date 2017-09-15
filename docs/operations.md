@@ -71,6 +71,7 @@ List of all currently supported operations:
     * [Multilayer Perceptron Classifier](operations/multilayer_perceptron_classifier.html)
     * [Naive Bayes](operations/naive_bayes.html)
   * Regression
+    * [AFT Survival Regression](operations/aft_survival_regression.html)
     * [GBT Regressor](operations/gbt_regressor.html)
     * [Isotonic Regression](operations/isotonic_regression.html)
     * [Linear Regression](operations/linear_regression.html)
