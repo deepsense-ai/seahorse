@@ -28,6 +28,7 @@ import org.scalatest.{Matchers, WordSpec}
 import spray.http._
 
 import io.deepsense.commons.models.Id
+import io.deepsense.commons.utils.RetryActor.RetryLimitReachedException
 
 class NotebookRestClientSpec
   extends WordSpec
@@ -120,7 +121,7 @@ class NotebookRestClientSpec
           Await.result(
             uut.generateAndPollNbData("python").failed,
             Duration.Inf
-          ) shouldBe a [RetryLimitReachedExcepion]
+          ) shouldBe a [RetryLimitReachedException]
         }
       }
 
@@ -134,7 +135,7 @@ class NotebookRestClientSpec
           )
 
           exception shouldBe a [NotebookHttpException]
-          exception.asInstanceOf[NotebookHttpException].statusCode shouldBe 501
+          exception.asInstanceOf[NotebookHttpException].httpResponse.status.intValue shouldBe 501
 
         }
       }
@@ -149,7 +150,7 @@ class NotebookRestClientSpec
           )
 
           exception shouldBe a [NotebookHttpException]
-          exception.asInstanceOf[NotebookHttpException].statusCode shouldBe 500
+          exception.asInstanceOf[NotebookHttpException].httpResponse.status.intValue shouldBe 500
 
         }
       }

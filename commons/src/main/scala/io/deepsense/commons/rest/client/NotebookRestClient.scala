@@ -16,7 +16,6 @@
 
 package io.deepsense.commons.rest.client
 
-import java.io.FileNotFoundException
 import java.net.URL
 
 import scala.concurrent._
@@ -24,25 +23,24 @@ import scala.concurrent.duration._
 import scala.language.postfixOps
 
 import akka.actor._
-import akka.pattern.ask
 import akka.util.Timeout
 import spray.client.pipelining._
 import spray.http.{HttpResponse, StatusCodes}
 import spray.httpx.SprayJsonSupport
 
+import io.deepsense.commons.json.NotebookRestClientProtocol._
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.rest.client.req.NotebookClientRequest
 import io.deepsense.commons.utils.Logging
-import io.deepsense.commons.json.NotebookRestClientProtocol._
 
 /**
   * Exception that will translate to an http error response with a specific
   * status code.
   */
 case class NotebookHttpException(
-                                statusCode: Int,
-                                msg: String,
-                                cause: Throwable = null)
+    httpResponse: HttpResponse,
+    msg: String,
+    cause: Throwable = null)
   extends Exception(msg, cause)
 
 
@@ -60,37 +58,22 @@ class NotebookRestClient(
   def userId: Option[java.util.UUID] = None
   def userName: Option[String] = None
 
-  implicit val timeout: Timeout = 10.minutes
+  implicit val timeout: Timeout = 70 minutes
 
   private val filenameExtension = "html"
 
   private val postPath = endpointPath("HeadlessNotebook")
-  private val getPath = endpointPath(f"HeadlessNotebook/$workflowId%s_$nodeId%s.$filenameExtension")
+  private val getPath = endpointPath(s"HeadlessNotebook/${workflowId}_$nodeId.$filenameExtension")
 
-  private val poller: ActorRef = as.actorOf(Props(new NotebookDataPollActor(this, pollInterval, retryCountLimit)))
+  private val poller = NotebookPoller(this, pollInterval, retryCountLimit, workflowId, nodeId, getPath)
 
-  def fetchNotebookData(): Future[Array[Byte]] = fetchHttpResponse(Get(getPath)).flatMap { resp =>
-    resp.status match {
-      case StatusCodes.NotFound =>
-        Future.failed(new FileNotFoundException(s"File containing output data for workflow " +
-          s"s$workflowId and node s$nodeId not found"))
-      case StatusCodes.OK =>
-        Future.successful(resp.entity.data.toByteArray)
-      case statusCode =>
-        Future.failed(NotebookHttpException(statusCode.intValue, s"Notebook server responded with $statusCode " +
-          s"when asked for file for workflow $workflowId and node $nodeId"))
-    }
-  }
-
-  def pollForNotebookData(): Future[Array[Byte]] = {
-    (poller ? NotebookDataPollActor.GetData(workflowId, nodeId)).mapTo[Array[Byte]]
-  }
+  def pollForNotebookData(): Future[Array[Byte]] = poller.tryWork
 
   def generateNotebookData(language: String): Future[HttpResponse] = {
     val req = NotebookClientRequest(workflowId, nodeId, language)
     fetchHttpResponse(Post(postPath, req)).flatMap { resp => resp.status match {
       case StatusCodes.Success(_) => Future.successful(resp)
-      case statusCode => Future.failed(NotebookHttpException(statusCode.intValue,
+      case statusCode => Future.failed(NotebookHttpException(resp,
         s"Notebook server responded with $statusCode when asked to generate notebook data"
       ))
     }}
