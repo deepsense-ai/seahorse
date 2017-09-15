@@ -6,4 +6,10 @@ libraryDependencies ++= Dependencies.deploymodelservice
 
 Revolver.settings
 
-enablePlugins(JavaAppPackaging)
+enablePlugins(JavaAppPackaging, GitVersioning, UniversalDeployPlugin)
+
+// Disable tgz as set by UniversalDeployPlugin
+packagedArtifacts in Universal := {
+  (packagedArtifacts in Universal).value.filterNot { case (artifact, _) =>
+    artifact.extension == "tgz" }
+}
