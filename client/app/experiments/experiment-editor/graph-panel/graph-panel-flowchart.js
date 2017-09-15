@@ -22,10 +22,6 @@ function FlowChartBox() {
           scope.$apply();
         }
       });
-
-      element.on('contextmenu',(event) => {
-        event.preventDefault();
-      });
     }
   };
 }

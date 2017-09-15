@@ -26,5 +26,6 @@ require('./experiment-editor/catalog-panel/catalog-panel.js').inject(experiments
 require('./experiment-editor/catalog-panel/catalog-panel-operation.js').inject(experiments);
 require('./experiment-editor/attributes-panel/attributes-panel.module.js').inject(experiments);
 require('./utils/uuid-generator.js').inject(experiments);
+require('./common-behaviours/context-menu-blocker.js').inject(experiments);
 
 module.exports = experiments;
