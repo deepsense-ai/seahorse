@@ -165,4 +165,7 @@ object Dependencies {
     sprayJson,
     sprayHttpx
   )
+
+  val sdk = Seq()
+
 }

@@ -38,6 +38,11 @@ lazy val workflowexecutormqprotocol = project dependsOn (
   commons,
   commons % "test->test",
   models) settings LicenceReportSettings.settings
+
+lazy val sdk                    = project dependsOn (
+  deeplang
+) settings LicenceReportSettings.settings
+
 lazy val workflowexecutor       = project dependsOn (
   commons % "test->test",
   deeplang,
@@ -46,6 +51,7 @@ lazy val workflowexecutor       = project dependsOn (
   models,
   workflowjson,
   workflowjson % "test -> test",
+  sdk,
   workflowexecutormqprotocol,
   workflowexecutormqprotocol % "test -> test") settings LicenceReportSettings.settings
 
