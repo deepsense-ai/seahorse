@@ -2,7 +2,7 @@
 
 /* @ngInject */
 function WorkflowStatusBarController($scope, UserService, ClusterModalService, LibraryModalService, SessionStatus,
-                                     SessionManager, WorkflowService, WorkflowStatusBarService, LibraryService) {
+                                     SessionManager, WorkflowService, WorkflowStatusBarService, LibraryService, PredefinedUser) {
 
   const vm = this;
 
@@ -23,6 +23,7 @@ function WorkflowStatusBarController($scope, UserService, ClusterModalService, L
   vm.isOwner = isOwner;
   vm.isViewerMode = isViewerMode;
   vm.openLibrary = openLibrary;
+  vm.predefinedUserId = PredefinedUser.id;
 
   $scope.$watch(getCurrentPreset, (newValue, oldValue) => {
     if (newValue && newValue !== oldValue) {

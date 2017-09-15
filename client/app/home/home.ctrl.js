@@ -6,7 +6,7 @@ import newWorkflowTpl from '../common/modals/new-workflow-modal/new-workflow-mod
 
 /* @ngInject */
 function Home($rootScope, $uibModal, $state, WorkflowService, ConfirmationModalService, SessionManagerApi,
-              WorkflowCloneService, ServerCommunication, SessionManager, config, UserService) {
+              WorkflowCloneService, ServerCommunication, SessionManager, config, UserService, PredefinedUser) {
   this.init = () => {
     $rootScope.stateData.dataIsLoaded = true;
     $rootScope.pageTitle = 'Workflows';
@@ -20,7 +20,7 @@ function Home($rootScope, $uibModal, $state, WorkflowService, ConfirmationModalS
       column: 'updated',
       descending: true
     };
-
+    this.predefinedUserId = PredefinedUser.id;
     this.downloadWorkflows();
 
     SessionManager
