@@ -18,7 +18,7 @@ class AllInputWorkflowsCorrectTest extends WordSpec {
     new GraphReader(operationsCatalog)
   }
 
-  TestWorkflowsIterator.foreach { case TestWorkflowsIterator.Input(uri, file, fileContents) =>
+  TestWorkflowsIterator.foreach { case TestWorkflowsIterator.Input(uri, fileContents) =>
     s"Workflow from '$uri'" should {
       "be correctly formatted" in {
         val workflow = new WorkflowJsonConverter(graphReader).parseWorkflow(fileContents)

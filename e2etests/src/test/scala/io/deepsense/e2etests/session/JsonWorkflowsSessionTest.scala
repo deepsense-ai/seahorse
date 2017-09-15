@@ -20,7 +20,7 @@ class JsonWorkflowsSessionTest
 
   insertDatasourcesForTest()
 
-  TestWorkflowsIterator.foreach { case TestWorkflowsIterator.Input(uri, file, fileContents) =>
+  TestWorkflowsIterator.foreach { case TestWorkflowsIterator.Input(uri, fileContents) =>
     s"Workflow loaded from '$uri'" should {
       "be correct - all nodes run and completed successfully" when {
         for (cluster <- TestClusters.allAvailableClusters) {

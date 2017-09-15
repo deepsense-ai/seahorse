@@ -1,3 +1,6 @@
+/**
+ * Copyright (c) 2016, CodiLime Inc.
+ */
 package io.deepsense.e2etests.batch
 
 import java.io.File

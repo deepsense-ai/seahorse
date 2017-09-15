@@ -11,12 +11,16 @@ import scala.language.postfixOps
 import org.scalatest._
 
 import io.deepsense.commons.utils.OptionOpts._
-import io.deepsense.e2etests.{SeahorseIntegrationTestDSL, TestClusters}
+import io.deepsense.e2etests.{ExampleWorkflowsFetcher, SeahorseIntegrationTestDSL, TestClusters}
 import io.deepsense.models.workflows.WorkflowInfo
 import io.deepsense.workflowmanager.model.WorkflowDescription
 
 
-class AllExampleWorkflowsWorkOnLocalClusterSessionTest extends FreeSpec with Matchers with SeahorseIntegrationTestDSL {
+class AllExampleWorkflowsWorkOnLocalClusterSessionTest
+  extends FreeSpec
+  with Matchers
+  with SeahorseIntegrationTestDSL
+  with ExampleWorkflowsFetcher {
 
   info("Assuming application will be accessible under localhost:33321")
 
@@ -51,15 +55,6 @@ class AllExampleWorkflowsWorkOnLocalClusterSessionTest extends FreeSpec with Mat
     } yield {
       workflow
     }
-  }
-
-  def fetchExampleWorkflows(): Future[Seq[WorkflowInfo]] = {
-    val workflowsFut = wmclient.fetchWorkflows()
-    val exampleWorkflows = workflowsFut.map(_.filter(_.ownerName == "seahorse"))
-    // Order matters because of
-    // - `Write Transformer` in Example 1
-    // - `Read Transformer` in Example 4
-    exampleWorkflows.map(_.sortBy(_.name))
   }
 
 }
