@@ -84,11 +84,13 @@ function forwardRequest(req, res) {
   }
 
   proxy.web(req, res, options, function (e) {
-             console.error(e);
-             var waitPage = url.format({protocol: req.protocol, host: req.get("host"), pathname: "wait.html"})
-             res.writeHead(302, {'Location': waitPage});
-             res.end();
-   });
+        console.error(e);
+        if (typeof service.timeoutRedirectionPage !== 'undefined') {
+          var waitPage = url.format({protocol: req.protocol, host: req.get("host"), pathname: "wait.html"})
+          res.writeHead(302, {'Location': waitPage});
+          res.end();
+        }
+  });
 }
 
 function forwardWebSocket(req, socket, head) {

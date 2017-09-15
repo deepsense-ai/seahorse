@@ -32,7 +32,8 @@
 }, {
   "path": "/authorization",
   "name": "sso",
-  "proxyTimeout": 1000
+  "proxyTimeout": 1000,
+  "timeoutRedirectionPage": "wait.html"
 }, {
   "path": "/",
   "name": "frontend"
