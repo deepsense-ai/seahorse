@@ -467,7 +467,7 @@ class ParametersJsonSuite extends FunSuite with MockitoSugar {
     columnSelectorParameter.value = Some(MultipleColumnSelection(Vector(
       NameColumnSelection(Set("abc", "def")),
       IndexColumnSelection(Set(1, 4, 7)),
-      RangeIndexColumnSelection(5, 6),
+      IndexRangeColumnSelection(Some(5), Some(6)),
       TypeColumnSelection(Set(ColumnType.categorical, ColumnType.ordinal))
     )))
 
@@ -514,7 +514,7 @@ class ParametersJsonSuite extends FunSuite with MockitoSugar {
     val expectedValue = Some(MultipleColumnSelection(Vector(
       NameColumnSelection(Set("abc", "def")),
       IndexColumnSelection(Set(1, 4, 7)),
-      RangeIndexColumnSelection(5, 6),
+      IndexRangeColumnSelection(Some(5), Some(6)),
       TypeColumnSelection(Set(ColumnType.categorical, ColumnType.ordinal))
     )))
     assert(columnSelectorParameter.value == expectedValue)

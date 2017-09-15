@@ -9,7 +9,6 @@ package io.deepsense.deeplang.parameters
 import spray.json.DefaultJsonProtocol._
 import spray.json._
 
-import io.deepsense.deeplang.parameters.ColumnRole._
 import io.deepsense.deeplang.parameters.ColumnType._
 
 /**
@@ -42,8 +41,8 @@ object ColumnSelection {
           IndexColumnSelection.fromJson(value)
         case JsString(TypeColumnSelection.typeName) =>
           TypeColumnSelection.fromJson(value)
-        case JsString(RangeIndexColumnSelection.typeName) =>
-          RangeIndexColumnSelection.fromJson(value)
+        case JsString(IndexRangeColumnSelection.typeName) =>
+          IndexRangeColumnSelection.fromJson(value)
         case unknownType =>
           throw new DeserializationException(s"Cannot create column selection with $jsValue:" +
             s"unknown type $unknownType")
@@ -86,18 +85,21 @@ object IndexColumnSelection {
   }
 }
 
-case class RangeIndexColumnSelection(lowerBound: Int, upperBound: Int)
-  extends ColumnSelection(RangeIndexColumnSelection.typeName) {
+case class IndexRangeColumnSelection(lowerBound: Option[Int], upperBound: Option[Int])
+  extends ColumnSelection(IndexRangeColumnSelection.typeName) {
 
   override protected def valuesToJson: JsValue = List(lowerBound, upperBound).toJson
 }
 
-object RangeIndexColumnSelection {
+object IndexRangeColumnSelection {
   val typeName = "indexList" // TODO Find a new name
 
-  def fromJson(jsValue: JsValue): RangeIndexColumnSelection = {
+  def fromJson(jsValue: JsValue): IndexRangeColumnSelection = {
     val bounds = jsValue.convertTo[List[Int]]
-    RangeIndexColumnSelection(bounds(0), bounds(1))
+    if (bounds.isEmpty) IndexRangeColumnSelection(None, None)
+    else if (bounds.size == 1) IndexRangeColumnSelection(Some(bounds.head), Some(bounds.head))
+    else if (bounds.size == 2) IndexRangeColumnSelection(Some(bounds.head), Some(bounds(1)))
+    else throw new IllegalArgumentException(s"Invalid input for IndexRangeColumnSelection: $bounds")
   }
 }
 
