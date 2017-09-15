@@ -9,6 +9,7 @@
 /* @ngInject */
 function ExperimentAPIClientFactory(BaseAPIClient) {
   const PATH_EXPERIMENTS = '/experiments';
+  const PATH_ACTION = '/action';
 
   function ExperimentAPIClient() {
     BaseAPIClient.call(this);
@@ -47,6 +48,29 @@ function ExperimentAPIClientFactory(BaseAPIClient) {
     return this.makeRequest(
       this.METHOD_PUT,
       this.API_PATH + PATH_EXPERIMENTS + '/' + data.experiment.id,
+      data
+    );
+  };
+
+  /**
+   * Runs experiment.
+   *
+   * @param {string} id
+   * @param {object} params
+   *
+   * @return {Promise}
+   */
+  ExperimentAPIClient.prototype.runExperiment = function(id, params) {
+    let data = {
+      'lunch': {}
+    };
+    if (params && params.targetNodes) {
+      data.lunch.targetNodes = params.targetNodes;
+    }
+
+    return this.makeRequest(
+      this.METHOD_POST,
+      this.API_PATH + PATH_EXPERIMENTS + '/' + id + PATH_ACTION,
       data
     );
   };

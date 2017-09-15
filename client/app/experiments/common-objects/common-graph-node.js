@@ -6,7 +6,6 @@
 var Port = require('./common-port.js');
 
 function GraphNode(options) {
-  console.log(options);
   this.name = options.name;
   this.id = options.id;
   this.operationId = options.operationId;
