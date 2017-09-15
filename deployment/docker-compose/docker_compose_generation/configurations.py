@@ -353,7 +353,7 @@ class Authorization(Service):
         return Env(
             ENABLE_AUTHORIZATION=self.enable_authorization(),
             JDBC_URL=self.services.Database.internal_jdbc_url(db="uaa"),
-            SEAHORSE_ADMIN_EMAIL="seahorse-admin@deepsense.io")
+            SEAHORSE_ADMIN_EMAIL="seahorse-admin@deepsense.ai")
 
     def port_mapping(self):
         return PortMappings().add(PortMappings.Mapping(8080, 60109))

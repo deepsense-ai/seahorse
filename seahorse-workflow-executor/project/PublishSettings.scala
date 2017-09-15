@@ -33,7 +33,7 @@ object PublishSettings {
   publishArtifact in Test := false,
   pomIncludeRepository := { _ => false },
   pomExtra := (
-    <url>https://github.com/deepsense-io/seahorse-workflow-executor</url>
+    <url>https://github.com/deepsense-ai/seahorse</url>
       <licenses>
         <license>
           <name>Apache 2.0</name>
@@ -41,16 +41,16 @@ object PublishSettings {
         </license>
       </licenses>
       <scm>
-        <url>git@github.com:deepsense.io/seahorse-workflow-executor.git</url>
-        <connection>scm:git:git@github.com:deepsense.io/seahorse-workflow-executor.git</connection>
+        <url>git@github.com:deepsense.ai/seahorse.git</url>
+        <connection>scm:git:git@github.com:deepsense.ai/seahorse.git</connection>
       </scm>
       <developers>
         <developer>
-          <name>Deepsense</name>
-          <email>contact@deepsense.io</email>
-          <url>http://deepsense.io/</url>
-          <organization>Deepsense.io</organization>
-          <organizationUrl>http://deepsense.io/</organizationUrl>
+          <name>deepsense.ai</name>
+          <email>contact@deepsense.ai</email>
+          <url>https://deepsense.ai/</url>
+          <organization>deepsense.ai</organization>
+          <organizationUrl>https://deepsense.ai/</organizationUrl>
         </developer>
       </developers>))
 

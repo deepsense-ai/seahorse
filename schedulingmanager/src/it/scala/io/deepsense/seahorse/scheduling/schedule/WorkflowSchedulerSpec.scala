@@ -68,7 +68,7 @@ class WorkflowSchedulerSpec extends WordSpec with Matchers {
   }
   private[this] val scheduleId = "31bcb49d-fad5-4ab7-aca4-f2b8fb8ccca9"
   private[this] val workflowId = "fb36193c-7b8a-4b89-91ff-5c85f5bbd79e"
-  private[this] val email = "foo@deepsense.io"
+  private[this] val email = "foo@deepsense.ai"
   private[this] val presetId = 22
   private[this] val everyMinute = "* * * * *"
   private[this] val everyMinuteSchedule = WorkflowSchedule(

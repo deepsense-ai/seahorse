@@ -151,7 +151,7 @@ object WorkflowExecutorApp extends Logging {
     version("version") text "print product version and exit"
     note("")
 
-    note("Visit https://seahorse.deepsense.io for more details")
+    note("Visit https://seahorse.deepsense.ai for more details")
 
     checkConfig { config =>
       type FailureCondition = Boolean

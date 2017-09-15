@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 # Copyright (c) 2016, CodiLime Inc.
 #
-# Function for publishing artifacts to deepsense.io internal artifactory
+# Function for publishing artifacts to deepsense.ai internal artifactory
 #
 # Usage:
 # source jenkins/publish_to_artifactory_function.sh

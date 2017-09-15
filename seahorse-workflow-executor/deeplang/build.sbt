@@ -1,8 +1,5 @@
-import sbt.Tests.{SubProcess, Group}
-import CommonSettingsPlugin._
-
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2015, deepsense.ai
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +13,10 @@ import CommonSettingsPlugin._
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import sbt.Tests.{SubProcess, Group}
+import CommonSettingsPlugin._
+
 
 // scalastyle:off
 
