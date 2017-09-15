@@ -50,8 +50,11 @@ function WorkflowsApiClientFactory(BaseApiClient, ServerCommunication, config) {
       return this.makeRequest(this.METHOD_POST, this.API_URL + PATH_WORKFLOWS, data);
     }
 
-    cloneWorkflow(workflowId) {
-      return this.makeRequest(this.METHOD_POST, `${this.API_URL}${PATH_WORKFLOWS}/${workflowId}/clone`);
+    cloneWorkflow(workflowToClone) {
+      return this.makeRequest(this.METHOD_POST, `${this.API_URL}${PATH_WORKFLOWS}/${workflowToClone.id}/clone`, {
+        name: workflowToClone.name,
+        description: workflowToClone.description
+      });
     }
 
     deleteWorkflow(workflowId) {

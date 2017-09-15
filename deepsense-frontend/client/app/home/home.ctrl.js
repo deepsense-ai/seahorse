@@ -74,20 +74,33 @@ function Home($rootScope, $uibModal, $state, WorkflowService, NotificationServic
     $state.go('workflows.editor', {id: workflowId});
   };
 
-  this.cloneWorkflow = (workflowId) => {
-    WorkflowsApiClient.cloneWorkflow(workflowId).then((response) => {
-      this.downloadWorkflows();
-    }, () => {
-      NotificationService.showWithParams({
-        message: 'There was an error during copying this workflow.',
-        title: 'Workflow copy',
-        settings: {timeOut: 10000},
-        notificationType: 'error'
+  this.cloneWorkflow = (workflow) => {
+    const modal = $uibModal.open({
+      animation: true,
+      templateUrl: 'app/common/modals/workflow-clone-modal/workflow-clone-modal.html',
+      controller: 'WorkflowCloneModalCtrl as controller',
+      backdrop: 'static',
+      keyboard: true,
+      resolve: {
+        workflow: () => angular.copy(workflow)
+      }
+    });
+
+    modal.result.then((workflowToClone) => {
+      WorkflowsApiClient.cloneWorkflow(workflowToClone).then(() => {
+        this.downloadWorkflows();
+      }, () => {
+        NotificationService.showWithParams({
+          message: 'There was an error during copying this workflow.',
+          title: 'Workflow copy',
+          settings: {timeOut: 10000},
+          notificationType: 'error'
+        });
       });
     });
   };
 
-  this.deleteWorkflow = function(workflow) {
+  this.deleteWorkflow = function (workflow) {
     ConfirmationModalService.showModal({
       message: 'The operation will delete workflow "' + workflow.name + '". Deletion cannot be undone afterwards.'
     }).
@@ -99,7 +112,7 @@ function Home($rootScope, $uibModal, $state, WorkflowService, NotificationServic
   this.displayCreateWorkflowPopup = (event) => {
     event.preventDefault();
 
-    let modal = $uibModal.open({
+    const modal = $uibModal.open({
       animation: true,
       templateUrl: 'app/common/modals/new-workflow-modal/new-workflow-modal.html',
       controller: 'NewWorkflowModalController as controller',
@@ -117,7 +130,7 @@ function Home($rootScope, $uibModal, $state, WorkflowService, NotificationServic
   this.displayUploadWorkflowPopup = (event) => {
     event.preventDefault();
 
-    let modal = $uibModal.open({
+    const modal = $uibModal.open({
       animation: true,
       templateUrl: 'app/common/modals/upload-workflow-modal/upload-workflow-modal.html',
       controller: 'UploadWorkflowModalController as controller',
@@ -135,7 +148,7 @@ function Home($rootScope, $uibModal, $state, WorkflowService, NotificationServic
   this.displayUploadExecutionWorkflowPopup = (event) => {
     event.preventDefault();
 
-    let modal = $uibModal.open({
+    const modal = $uibModal.open({
       animation: false,
       templateUrl: 'app/common/modals/upload-execution-report-modal/upload-execution-report-modal.html',
       controller: 'UploadWorkflowExecutionReportModalController as controller',
@@ -155,6 +168,6 @@ function Home($rootScope, $uibModal, $state, WorkflowService, NotificationServic
 
 exports.function = Home;
 
-exports.inject = function(module) {
+exports.inject = function (module) {
   module.controller('Home', Home);
 };
