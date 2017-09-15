@@ -9,7 +9,7 @@
       "parameters": {
         "data storage type": {
           "FILE": {
-            "source": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/resources/negativeTests/missingParameterValue/input.csv",
+            "source": "hdfs://spark-cluster-1/system_tests/missingParameterValue/input.csv",
             "format": {
               "CSV": {
                 "separator": {

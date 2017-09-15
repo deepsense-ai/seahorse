@@ -1,0 +1,96 @@
+{
+  "executionReport": {
+    "nodes": {
+      "806d1a75-7f9b-3de1-3fc9-6f644684835d": {
+        "status": "COMPLETED", 
+        "results": [
+          "cb38ec92-9dcb-4ca3-8577-118e105cc674"
+        ], 
+        "error": null
+      }, 
+      "a80b6bed-5c11-52ff-7ce6-a5a986fa88ff": {
+        "status": "FAILED", 
+        "results": null, 
+        "error": {
+          "code": "NodeFailure"
+        }
+      }
+    }, 
+    "resultEntities": {
+      "cb38ec92-9dcb-4ca3-8577-118e105cc674": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "1", 
+                  "4"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "numbers"
+              ], 
+              "columnTypes": [
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "1"
+                ], 
+                [
+                  "2"
+                ], 
+                [
+                  "3"
+                ], 
+                [
+                  "4"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "numbers": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "4", 
+                "mean": "2.5", 
+                "min": "1"
+              }, 
+              "name": "numbers", 
+              "missingValues": 0
+            }
+          }, 
+          "schema": {
+            "fields": [
+              {
+                "dataType": "double", 
+                "metadata": {}, 
+                "name": "numbers", 
+                "nullable": true
+              }
+            ]
+          }
+        }
+      }
+    }, 
+    "error": null
+  }
+}
