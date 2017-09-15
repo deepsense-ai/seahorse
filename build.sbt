@@ -6,6 +6,9 @@ name := "deepsense-backend"
 
 lazy val commons                = project
 lazy val reportlib              = project
+lazy val `model-deploying`  = project dependsOn (
+  commons,
+  commons % "test->test")
 lazy val models                 = project dependsOn graph
 lazy val deeplang               = project dependsOn (
   commons,
@@ -48,4 +51,5 @@ addCommandAlias("ds-it",
     ";graph/it:test " +
     ";graphexecutor/it:test " +
     ";reportlib/it:test " +
-    ";graphjson/it:test")
+    ";graphjson/it:test " +
+    ";model-deploying/it:test")
