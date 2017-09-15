@@ -197,5 +197,53 @@ class ExecutionSpec
 
       finished shouldBe a[IdleExecution]
     }
+    "reset successors state when predecessor is replaced" in {
+      val changedC = Node(Node.Id.randomId, op1To1) // Notice: different Id
+      checkSuccessorsStatesAfterANodeChange(changedC)
+    }
+    "reset successors state when predecessor's parameters are modified" in pendingUntilFixed {
+      val changedC = Node(idC, op1To1) // Notice: the same id; different parameters!
+      checkSuccessorsStatesAfterANodeChange(changedC)
+    }
+  }
+
+  def checkSuccessorsStatesAfterANodeChange(changedC: Node): Unit = {
+    val graph = DirectedGraph(nodeSet, edgeSet)
+
+    val edgeBtoC = Edge(nodeB, 0, changedC, 0)
+    val edgeCtoD = Edge(changedC, 0, nodeD, 0)
+    val updatedGraph = DirectedGraph(
+      Set(nodeA, nodeB, changedC, nodeD, nodeE),
+      Set(edge1, edgeBtoC, edgeCtoD, edge4, edge5)
+    )
+
+    val statefulGraph = StatefulGraph(
+      graph,
+      Map(
+        idA -> nodeCompletedId(idA),
+        idB -> nodeCompletedId(idB),
+        idC -> nodeCompletedId(idC),
+        idD -> nodeCompletedId(idD),
+        idE -> nodeCompletedId(idE)
+      ),
+      None)
+
+    val execution = IdleExecution(
+      statefulGraph,
+      statefulGraph.nodes.map(_.id))
+
+    val updatedExecution = execution.updateStructure(updatedGraph, Set(idE))
+    updatedExecution.states(idA) shouldBe statefulGraph.states(idA)
+    updatedExecution.states(idB) shouldBe statefulGraph.states(idB)
+    updatedExecution.states(changedC.id) shouldBe nodestate.Draft
+    updatedExecution.states(idD) shouldBe nodestate.Draft
+    updatedExecution.states(idE) shouldBe nodestate.Draft
+
+    val queuedExecution = updatedExecution.enqueue
+    queuedExecution.states(idA) shouldBe statefulGraph.states(idA)
+    queuedExecution.states(idB) shouldBe statefulGraph.states(idB)
+    queuedExecution.states(changedC.id) shouldBe nodestate.Draft
+    queuedExecution.states(idD) shouldBe nodestate.Draft
+    queuedExecution.states(idE) shouldBe nodestate.Queued
   }
 }

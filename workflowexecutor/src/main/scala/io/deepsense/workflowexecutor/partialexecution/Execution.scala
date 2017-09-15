@@ -119,23 +119,22 @@ case class IdleExecution(
       newStructure: DirectedGraph,
       substructure: DirectedGraph,
       nodes: Set[Node.Id]): NodeStates = {
-    val noMissingStates = newStructure.nodes.foldLeft(states) { (s, n) =>
-      if (s.contains(n.id)) {
-        s
-      } else {
-        s.updated(n.id, nodestate.Draft)
-      }
-    }
 
-    val bigGraph = StatefulGraph(newStructure, noMissingStates, None)
+    val noMissingStates = newStructure.nodes.map {
+      case Node(id, _) => id -> states.getOrElse(id, nodestate.Draft)
+    }.toMap
 
-    substructure.nodes.foldLeft(bigGraph){
-      case (g, node) =>
-        if (g.states(node.id).isCompleted && !nodes.contains(node.id)) {
-          g
-        } else {
-          g.draft(node.id)
-        }
+    val wholeGraph = StatefulGraph(newStructure, noMissingStates, None)
+    val newNodes = newStructure.nodes.diff(graph.directedGraph.nodes).map(_.id)
+
+    val nodesToExecute = substructure.nodes.filter { case Node(id, _) =>
+      nodes.contains(id) || !wholeGraph.states(id).isCompleted
+    }.map(_.id)
+
+    val nodesNeedingDrafting = newNodes ++ nodesToExecute
+
+    nodesNeedingDrafting.foldLeft(wholeGraph){
+      case (g, id) => g.draft(id)
     }.states
   }
 
