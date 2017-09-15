@@ -8,8 +8,8 @@ import scala.concurrent.Future
 
 import io.deepsense.commons.models.Id
 import io.deepsense.graph.Node
-import io.deepsense.models.workflows.{InputWorkflow, Workflow}
-import io.deepsense.workflowmanager.models.WorkflowsList
+import io.deepsense.models.actions.Action
+import io.deepsense.models.workflows.{WorkflowsList, InputWorkflow, Workflow}
 
 /**
  * Experiment Manager's API
@@ -77,4 +77,12 @@ trait WorkflowManager {
    * @return The aborted experiment.
    */
   def abort(id: Id, nodes: Seq[Node.Id]): Future[Workflow]
+
+  /**
+   * Runs action.
+   * @param id An identifier of the workflow to run oction on.
+   * @param action to run
+   * @return Workflow a
+   */
+  def runAction(id: Id, action: Action): Future[Workflow]
 }

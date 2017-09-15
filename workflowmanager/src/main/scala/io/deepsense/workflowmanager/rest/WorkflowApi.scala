@@ -20,14 +20,14 @@ import io.deepsense.commons.models.Id
 import io.deepsense.commons.rest.{RestApi, RestComponent}
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.graph.CyclicGraphException
-import io.deepsense.graphjson.GraphJsonProtocol.GraphReader
+import io.deepsense.model.json.graph.GraphJsonProtocol.GraphReader
+import io.deepsense.model.json.workflow.{MetadataInferenceResultJsonProtocol, WorkflowJsonProtocol}
+import io.deepsense.models.actions.Action
+import io.deepsense.models.metadata.MetadataInference
 import io.deepsense.models.workflows.{InputWorkflow, Workflow}
 import io.deepsense.workflowmanager.WorkflowManagerProvider
 import io.deepsense.workflowmanager.conversion.FileConverter
 import io.deepsense.workflowmanager.exceptions.{FileNotFoundException, WorkflowNotFoundException, WorkflowRunningException}
-import io.deepsense.workflowmanager.rest.actions.Action
-import io.deepsense.workflowmanager.rest.json.{MetadataInferenceResultJsonProtocol, WorkflowJsonProtocol}
-import io.deepsense.workflowmanager.rest.metadata.MetadataInference
 
 /**
  * Exposes Experiment Manager through a REST API.
@@ -98,8 +98,8 @@ class WorkflowApi @Inject() (
             post {
               withUserContext { userContext =>
                 entity(as[Action]) { action =>
-                  onComplete(action.run(experimentId, experimentManagerProvider
-                    .forContext(userContext))) {
+                  onComplete(experimentManagerProvider.forContext(userContext)
+                    .runAction(experimentId, action)) {
                     case Success(experiment) => complete(
                       StatusCodes.Accepted, Envelope(experiment))
                     case Failure(exception) => failWith(exception)

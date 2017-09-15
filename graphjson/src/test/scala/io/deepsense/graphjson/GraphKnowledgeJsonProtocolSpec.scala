@@ -7,6 +7,7 @@ package io.deepsense.graphjson
 import spray.json._
 
 import io.deepsense.deeplang.{DKnowledge, DOperable}
+import io.deepsense.model.json.graph.GraphKnowledgeJsonProtocol
 
 class GraphKnowledgeJsonProtocolSpec extends GraphJsonTestSupport {
 

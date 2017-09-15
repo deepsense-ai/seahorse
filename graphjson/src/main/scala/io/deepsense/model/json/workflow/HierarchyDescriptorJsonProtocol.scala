@@ -2,7 +2,7 @@
  * Copyright (c) 2015, CodiLime Inc.
  */
 
-package io.deepsense.workflowmanager.rest.json
+package io.deepsense.model.json.workflow
 
 import spray.httpx.SprayJsonSupport
 import spray.json._

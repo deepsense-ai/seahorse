@@ -12,7 +12,8 @@ import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.commons.exception.json.FailureDescriptionJsonProtocol
 import io.deepsense.graph.Graph
-import io.deepsense.graphjson.GraphJsonProtocol.GraphReader
+import io.deepsense.model.json.graph.GraphJsonProtocol
+import GraphJsonProtocol.GraphReader
 import io.deepsense.models.workflows.Workflow
 
 

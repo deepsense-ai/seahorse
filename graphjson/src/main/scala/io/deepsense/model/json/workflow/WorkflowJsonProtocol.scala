@@ -2,7 +2,7 @@
  * Copyright (c) 2015, CodiLime Inc.
  */
 
-package io.deepsense.workflowmanager.rest.json
+package io.deepsense.model.json.workflow
 
 import org.joda.time.DateTime
 import spray.httpx.SprayJsonSupport
@@ -14,11 +14,10 @@ import io.deepsense.commons.json.{DateTimeJsonProtocol, ExceptionsJsonProtocol, 
 import io.deepsense.deeplang.DOperable.AbstractMetadata
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.deeplang.{DKnowledge, DOperable}
-import io.deepsense.workflowmanager.models.{Count, WorkflowsList}
 import io.deepsense.graph.Graph
-import io.deepsense.graphjson.GraphJsonProtocol.{GraphReader, GraphWriter}
-import io.deepsense.graphjson._
-import io.deepsense.models.workflows.{Workflow, InputWorkflow}
+import io.deepsense.model.json.graph.GraphJsonProtocol.{GraphReader, GraphWriter}
+import io.deepsense.model.json.graph.{GraphKnowledgeJsonProtocol, NodeJsonProtocol, NodeStateJsonProtocol}
+import io.deepsense.models.workflows.{Count, InputWorkflow, Workflow, WorkflowsList}
 
 trait WorkflowJsonProtocol
   extends DefaultJsonProtocol

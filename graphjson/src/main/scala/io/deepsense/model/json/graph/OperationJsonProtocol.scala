@@ -2,7 +2,7 @@
  * Copyright (c) 2015, CodiLime Inc.
  */
 
-package io.deepsense.graphjson
+package io.deepsense.model.json.graph
 
 import spray.json._
 

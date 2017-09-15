@@ -22,7 +22,8 @@ import io.deepsense.deeplang.doperables.Transformation
 import io.deepsense.deeplang.doperations.MathematicalOperation
 import io.deepsense.deeplang.{DOperation, DOperationCategories}
 import io.deepsense.graph.{Graph, Node}
-import io.deepsense.graphjson.GraphJsonProtocol.GraphReader
+import io.deepsense.model.json.graph.GraphJsonProtocol
+import GraphJsonProtocol.GraphReader
 import io.deepsense.models.workflows.Workflow
 import io.deepsense.workflowmanager.conversion.FileConverter
 import io.deepsense.workflowmanager.storage.WorkflowStorage
@@ -48,9 +49,9 @@ class WorkflowsApiIntegSpec
   lazy val tenantA = tenantId("userA")
   lazy val tenantB = tenantId("userB")
 
-  override def experimentOfTenantA: Workflow = workflowA
-  override def experimentOfTenantAWithNode = workflowAN
-  override def experimentOfTenantB: Workflow = workflowB
+  override def workflowOfTenantA: Workflow = workflowA
+  override def workflowOfTenantAWithNode = workflowAN
+  override def workflowOfTenantB: Workflow = workflowB
 
   override val tenantAId: String = tenantA
 

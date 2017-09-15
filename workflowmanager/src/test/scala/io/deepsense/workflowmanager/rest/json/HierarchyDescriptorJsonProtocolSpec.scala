@@ -10,6 +10,7 @@ import org.scalatest.mock.MockitoSugar
 import spray.json._
 
 import io.deepsense.deeplang.catalogs.doperable.{ClassDescriptor, HierarchyDescriptor, TraitDescriptor}
+import io.deepsense.model.json.workflow.HierarchyDescriptorJsonProtocol
 
 class HierarchyDescriptorJsonProtocolSpec
   extends FlatSpec

@@ -2,7 +2,7 @@
  * Copyright (c) 2015, CodiLime Inc.
  */
 
-package io.deepsense.workflowmanager.rest.json
+package io.deepsense.model.json.workflow
 
 import io.deepsense.commons.json.envelope.EnvelopeJsonWriter
 import io.deepsense.deeplang.DOperation

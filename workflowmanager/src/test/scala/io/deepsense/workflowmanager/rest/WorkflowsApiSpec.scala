@@ -4,15 +4,13 @@
 
 package io.deepsense.workflowmanager.rest
 
-import io.deepsense.deeplang.doperations.{FileToDataFrame, MathematicalOperation}
-
 import scala.concurrent._
 
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
-import spray.http.{HttpCharsets, HttpCharset, StatusCodes}
+import spray.http.StatusCodes
 import spray.json._
 import spray.routing.Route
 
@@ -22,20 +20,20 @@ import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.json.envelope.Envelope
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
-import io.deepsense.deeplang.inference.InferContext
-import io.deepsense.deeplang.{DOperationCategories, ExecutionContext, DOperation0To1}
+import io.deepsense.deeplang.DOperationCategories
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
+import io.deepsense.deeplang.doperations.{FileToDataFrame, MathematicalOperation}
+import io.deepsense.deeplang.inference.InferContext
+import io.deepsense.graph.{Edge, Graph, Node}
+import io.deepsense.model.json.graph.GraphJsonProtocol.GraphReader
+import io.deepsense.model.json.workflow.WorkflowJsonProtocol
+import io.deepsense.models.actions.{Action, AbortAction, LaunchAction}
+import io.deepsense.models.workflows.Workflow.Status
+import io.deepsense.models.workflows._
 import io.deepsense.workflowmanager.conversion.FileConverter
 import io.deepsense.workflowmanager.exceptions.WorkflowNotFoundException
-import io.deepsense.workflowmanager.models.{Count, WorkflowsList}
-import io.deepsense.workflowmanager.rest.actions.{AbortAction, LaunchAction}
-import io.deepsense.workflowmanager.rest.json.WorkflowJsonProtocol
 import io.deepsense.workflowmanager.{WorkflowManager, WorkflowManagerProvider}
-import io.deepsense.graph.{Edge, Graph, Node}
-import io.deepsense.graphjson.GraphJsonProtocol.GraphReader
-import io.deepsense.models.workflows.Workflow.Status
-import io.deepsense.models.workflows.{Workflow, Workflow$, InputWorkflow}
 
 class WorkflowsApiSpec
   extends StandardSpec
@@ -62,11 +60,11 @@ class WorkflowsApiSpec
   /**
    * Returns an InputExperiment. Used for testing Experiment creation.
    */
-  def inputExperiment: InputWorkflow = InputWorkflow("test name", "test description", Graph())
+  def inputWorkflow: InputWorkflow = InputWorkflow("test name", "test description", Graph())
 
-  def envelopedInputExperiment: Envelope[InputWorkflow] = Envelope(inputExperiment)
+  def envelopedInputWorkflow: Envelope[InputWorkflow] = Envelope(inputWorkflow)
 
-  def cyclicExperiment: InputWorkflow = {
+  def cyclicWorkflow: InputWorkflow = {
     val node1 = Node(Node.Id.randomId, FileToDataFrame())
     val node2 = Node(Node.Id.randomId, FileToDataFrame())
     val graph = Graph(Set(node1, node2), Set(Edge(node1, 0, node2, 0), Edge(node2, 0, node1, 0)))
@@ -87,41 +85,41 @@ class WorkflowsApiSpec
    */
   def validAuthTokenTenantB: String = tenantBId
 
-  val experimentAId = Workflow.Id.randomId
-  val experimentAWithNodeId = Workflow.Id.randomId
-  val experimentA2Id = Workflow.Id.randomId
-  val experimentBId = Workflow.Id.randomId
+  val workflowAId = Workflow.Id.randomId
+  val workflowAWithNodeId = Workflow.Id.randomId
+  val workflowA2Id = Workflow.Id.randomId
+  val workflowBId = Workflow.Id.randomId
 
-  protected def experimentOfTenantA = Workflow(
-    experimentAId,
+  protected def workflowOfTenantA = Workflow(
+    workflowAId,
     tenantAId,
-    "Experiment of Tenant A",
+    "Workflow of Tenant A",
     Graph(),
     created,
     updated)
 
   val nodeUUID = Node.Id.randomId
 
-  protected def experimentOfTenantAWithNode = Workflow(
-    experimentAWithNodeId,
+  protected def workflowOfTenantAWithNode = Workflow(
+    workflowAWithNodeId,
     tenantAId,
-    "Experiment of Tenant A with node",
+    "Workflow of Tenant A with node",
     Graph(Set(Node(nodeUUID, MathematicalOperation("2")))),
     created,
     updated)
 
-  protected def experimentOfTenantA2 = Workflow(
-    experimentA2Id,
+  protected def workflowOfTenantA2 = Workflow(
+    workflowA2Id,
     tenantAId,
-    "Second experiment of Tenant A",
+    "Second workflow of Tenant A",
     Graph(),
     created,
     updated)
 
-  protected def experimentOfTenantB = Workflow(
-    experimentBId,
+  protected def workflowOfTenantB = Workflow(
+    workflowBId,
     tenantBId,
-    "Experiment of Tenant B",
+    "Workflow of Tenant B",
     Graph(),
     created,
     updated)
@@ -203,7 +201,7 @@ class WorkflowsApiSpec
     }
     "return Not found" when {
       "asked for Experiment from other tenant" in {
-        Get(s"/$apiPrefix/${experimentOfTenantB.id.toString}") ~>
+        Get(s"/$apiPrefix/${workflowOfTenantB.id.toString}") ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
@@ -217,11 +215,11 @@ class WorkflowsApiSpec
     }
     "return an experiment" when {
       "auth token is correct, user has roles and the experiment belongs to him" in {
-        Get(s"/$apiPrefix/${experimentOfTenantA.id}") ~>
+        Get(s"/$apiPrefix/${workflowOfTenantA.id}") ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
           val response = responseAs[Envelope[Workflow]].content
-          response shouldBe experimentOfTenantA
+          response shouldBe workflowOfTenantA
         }
       }
     }
@@ -236,7 +234,7 @@ class WorkflowsApiSpec
         }
       }
       "tried to delete others' experiment" in {
-        Delete(s"/$apiPrefix/${experimentOfTenantB.id}") ~>
+        Delete(s"/$apiPrefix/${workflowOfTenantB.id}") ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
@@ -244,7 +242,7 @@ class WorkflowsApiSpec
     }
     "return Ok" when {
       "experiment existed and is deleted now" in {
-        Delete(s"/$apiPrefix/${experimentOfTenantA.id}") ~>
+        Delete(s"/$apiPrefix/${workflowOfTenantA.id}") ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
         }
@@ -280,14 +278,14 @@ class WorkflowsApiSpec
     }
     "return created" when {
       "inputExperiment was send" in {
-        Post(s"/$apiPrefix", envelopedInputExperiment) ~>
+        Post(s"/$apiPrefix", envelopedInputWorkflow) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be (StatusCodes.Created)
           val savedExperiment = responseAs[Envelope[Workflow]].content
           savedExperiment should have (
-            'name (inputExperiment.name),
-            'description (inputExperiment.description),
-            'graph (inputExperiment.graph),
+            'name (inputWorkflow.name),
+            'description (inputWorkflow.description),
+            'graph (inputWorkflow.graph),
             'tenantId (tenantAId)
           )
         }
@@ -295,7 +293,7 @@ class WorkflowsApiSpec
     }
     "return Bad Request" when {
       "inputExperiment contains cyclic graph" in {
-        Post(s"/$apiPrefix", Envelope(cyclicExperiment)) ~>
+        Post(s"/$apiPrefix", Envelope(cyclicWorkflow)) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be (StatusCodes.BadRequest)
         }
@@ -303,19 +301,19 @@ class WorkflowsApiSpec
     }
     "return Unauthorized" when {
       "invalid auth token was send (when InvalidTokenException occures)" in {
-        Post(s"/$apiPrefix", envelopedInputExperiment) ~>
+        Post(s"/$apiPrefix", envelopedInputWorkflow) ~>
           addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
       "the user does not have the requested role (on NoRoleExeption)" in {
-        Post(s"/$apiPrefix", envelopedInputExperiment) ~>
+        Post(s"/$apiPrefix", envelopedInputWorkflow) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
       "no auth token was send (on MissingHeaderRejection)" in {
-        Post(s"/$apiPrefix", envelopedInputExperiment) ~> testRoute ~> check {
+        Post(s"/$apiPrefix", envelopedInputWorkflow) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
@@ -325,7 +323,7 @@ class WorkflowsApiSpec
   s"POST /experiments/:id/action" should {
     "process authorization before reading POST content" in {
       val invalidContent = JsObject()
-      Post(s"/$apiPrefix/${experimentOfTenantA.id}/action", invalidContent) ~> testRoute ~> check {
+      Post(s"/$apiPrefix/${workflowOfTenantA.id}/action", invalidContent) ~> testRoute ~> check {
         status should be(StatusCodes.Unauthorized)
       }
     }
@@ -337,21 +335,21 @@ class WorkflowsApiSpec
         LaunchAction(
           Some(
             List(
-              Node.Id(experimentOfTenantA.id.value)))))
+              Node.Id(workflowOfTenantA.id.value)))))
       "invalid auth token was send (when InvalidTokenException occures)" in {
-        Post(s"/$apiPrefix/${experimentOfTenantA.id}/action", launchAction) ~>
+        Post(s"/$apiPrefix/${workflowOfTenantA.id}/action", launchAction) ~>
           addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
       "the user does not have the requested role (on NoRoleExeption)" in {
-        Post(s"/$apiPrefix/${experimentOfTenantA.id}/action", launchAction) ~>
+        Post(s"/$apiPrefix/${workflowOfTenantA.id}/action", launchAction) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
       "no auth token was send (on MissingHeaderRejection)" in {
-        Post(s"/$apiPrefix/${experimentOfTenantA.id}/action", launchAction) ~> testRoute ~> check {
+        Post(s"/$apiPrefix/${workflowOfTenantA.id}/action", launchAction) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
@@ -367,7 +365,7 @@ class WorkflowsApiSpec
       }
       "experiment belongs to other tenant" in {
         val launchAction = LaunchActionWrapper(LaunchAction(Some(List(Node.Id.randomId))))
-        Post(s"/$apiPrefix/${experimentOfTenantB.id}/action", launchAction) ~>
+        Post(s"/$apiPrefix/${workflowOfTenantB.id}/action", launchAction) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
@@ -376,11 +374,11 @@ class WorkflowsApiSpec
     "return Accepted" when {
       "experiments belongs to the user" ignore {
         val launchAction = LaunchActionWrapper(LaunchAction(Some(List(Node.Id.randomId))))
-        Post(s"/$apiPrefix/${experimentOfTenantA.id}/action", launchAction) ~>
+        Post(s"/$apiPrefix/${workflowOfTenantA.id}/action", launchAction) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.Accepted)
           val response = responseAs[Envelope[Workflow]].content
-          response shouldBe experimentOfTenantA
+          response shouldBe workflowOfTenantA
         }
       }
     }
@@ -390,19 +388,19 @@ class WorkflowsApiSpec
     "return Unauthorized" when {
       val abortAction = AbortActionWrapper(AbortAction(Some(List(Node.Id.randomId))))
       "invalid auth token was send (when InvalidTokenException occures)" in {
-        Post(s"/$apiPrefix/${experimentOfTenantA.id}/action", abortAction) ~>
+        Post(s"/$apiPrefix/${workflowOfTenantA.id}/action", abortAction) ~>
           addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
       "the user does not have the requested role (on NoRoleExeption)" in {
-        Post(s"/$apiPrefix/${experimentOfTenantA.id}/action", abortAction) ~>
+        Post(s"/$apiPrefix/${workflowOfTenantA.id}/action", abortAction) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
       "no auth token was send (on MissingHeaderRejection)" in {
-        Post(s"/$apiPrefix/${experimentOfTenantA.id}/action", abortAction) ~> testRoute ~> check {
+        Post(s"/$apiPrefix/${workflowOfTenantA.id}/action", abortAction) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
@@ -420,7 +418,7 @@ class WorkflowsApiSpec
       }
       "experiment belongs to other tenant" in {
         val abortAction = AbortActionWrapper(AbortAction(Some(List(Node.Id.randomId))))
-        Post(s"/$apiPrefix/${experimentOfTenantB.id}/action", abortAction) ~>
+        Post(s"/$apiPrefix/${workflowOfTenantB.id}/action", abortAction) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
@@ -429,11 +427,11 @@ class WorkflowsApiSpec
     "return Accepted" when {
       "experiments belongs to the user" in {
         val abortAction = AbortActionWrapper(AbortAction(Some(List(Node.Id.randomId))))
-        Post(s"/$apiPrefix/${experimentOfTenantA.id}/action", abortAction) ~>
+        Post(s"/$apiPrefix/${workflowOfTenantA.id}/action", abortAction) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.Accepted)
           val response = responseAs[Envelope[Workflow]].content
-          response shouldBe experimentOfTenantA
+          response shouldBe workflowOfTenantA
         }
       }
     }
@@ -451,13 +449,13 @@ class WorkflowsApiSpec
     }
     "update the experiment and return Ok" when {
       "user updates his experiment" in {
-        Put(s"/$apiPrefix/${experimentOfTenantA.id}", envlopedNewExperiment) ~>
+        Put(s"/$apiPrefix/${workflowOfTenantA.id}", envlopedNewExperiment) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
           val response = responseAs[Envelope[Workflow]].content
           response should have(
-            'id (experimentOfTenantA.id),
-            'tenantId (experimentOfTenantA.tenantId),
+            'id (workflowOfTenantA.id),
+            'tenantId (workflowOfTenantA.tenantId),
             'description (newExperiment.description),
             'graph (newExperiment.graph),
             'name (newExperiment.name))
@@ -475,7 +473,7 @@ class WorkflowsApiSpec
       }
       "the user has no right to that experiment" in {
 
-        Put(s"/$apiPrefix/${experimentOfTenantB.id}", envlopedNewExperiment) ~>
+        Put(s"/$apiPrefix/${workflowOfTenantB.id}", envlopedNewExperiment) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
@@ -483,19 +481,19 @@ class WorkflowsApiSpec
     }
     "return Unauthorized" when {
       "invalid auth token was send (when InvalidTokenException occures)" in {
-        Put(s"/$apiPrefix/" + experimentOfTenantA.id, envlopedNewExperiment) ~>
+        Put(s"/$apiPrefix/" + workflowOfTenantA.id, envlopedNewExperiment) ~>
           addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
       "the user does not have the requested role (on NoRoleExeption)" in {
-        Put(s"/$apiPrefix/" + experimentOfTenantA.id, envlopedNewExperiment) ~>
+        Put(s"/$apiPrefix/" + workflowOfTenantA.id, envlopedNewExperiment) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
       "no auth token was send (on MissingHeaderRejection)" in {
-        Put(s"/$apiPrefix/" + experimentOfTenantA.id, envlopedNewExperiment) ~> testRoute ~> check {
+        Put(s"/$apiPrefix/" + workflowOfTenantA.id, envlopedNewExperiment) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
@@ -508,7 +506,7 @@ class WorkflowsApiSpec
   s"GET /experiments/:id/metadata" should {
     "return Metadata" when {
       "auth token is correct, user has roles and the experiment belongs to him" in {
-        Get(s"/$apiPrefix/${experimentOfTenantAWithNode.id}/metadata" + metadataParamsString) ~>
+        Get(s"/$apiPrefix/${workflowOfTenantAWithNode.id}/metadata" + metadataParamsString) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
 
@@ -530,7 +528,7 @@ class WorkflowsApiSpec
         }
       }
       "the user has no right to that experiment" in {
-        Get(s"/$apiPrefix/${experimentOfTenantB.id}/metadata" + metadataParamsString) ~>
+        Get(s"/$apiPrefix/${workflowOfTenantB.id}/metadata" + metadataParamsString) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
@@ -538,19 +536,19 @@ class WorkflowsApiSpec
     }
     "return Unauthorized" when {
       "invalid auth token was send (when InvalidTokenException occures)" in {
-        Get(s"/$apiPrefix/${experimentOfTenantA.id}/metadata" + metadataParamsString) ~>
+        Get(s"/$apiPrefix/${workflowOfTenantA.id}/metadata" + metadataParamsString) ~>
           addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
       "the user does not have the requested role (on NoRoleExeption)" in {
-        Get(s"/$apiPrefix/${experimentOfTenantA.id}/metadata" + metadataParamsString) ~>
+        Get(s"/$apiPrefix/${workflowOfTenantA.id}/metadata" + metadataParamsString) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
       "no auth token was send (on MissingHeaderRejection)" in {
-        Get(s"/$apiPrefix/${experimentOfTenantA.id}/metadata" +
+        Get(s"/$apiPrefix/${workflowOfTenantA.id}/metadata" +
             metadataParamsString) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
@@ -567,10 +565,10 @@ class WorkflowsApiSpec
   class MockWorkflowManager(userContext: Future[UserContext]) extends WorkflowManager {
 
     var storedExperiments = Seq(
-      experimentOfTenantA, experimentOfTenantAWithNode, experimentOfTenantA2, experimentOfTenantB)
+      workflowOfTenantA, workflowOfTenantAWithNode, workflowOfTenantA2, workflowOfTenantB)
 
     var storedExperimentsWithoutNodes = Seq(
-      experimentOfTenantA, experimentOfTenantA2, experimentOfTenantB)
+      workflowOfTenantA, workflowOfTenantA2, workflowOfTenantB)
 
     override def get(id: Id): Future[Option[Workflow]] = {
       val wantedRole = "experiments:get"
@@ -701,6 +699,11 @@ class WorkflowsApiSpec
               filteredExperiments))
         }
       })
+    }
+
+    override def runAction(id: Id, action: Action): Future[Workflow] = action match {
+      case AbortAction(nodes) => abort(id, nodes.getOrElse(List()))
+      case LaunchAction(nodes) => launch(id, nodes.getOrElse(List()))
     }
   }
 }

@@ -14,6 +14,7 @@ import spray.json._
 import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.catalogs.doperations.{DOperationCategory, DOperationDescriptor}
 import io.deepsense.deeplang.parameters.ParametersSchema
+import io.deepsense.model.json.workflow.DOperationDescriptorJsonProtocol
 
 object HelperTypes {
   class A

@@ -19,8 +19,8 @@ import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.catalogs.doperable.{ClassDescriptor, DOperableCatalog, HierarchyDescriptor, TraitDescriptor}
 import io.deepsense.deeplang.catalogs.doperations.{DOperationCategory, DOperationCategoryNode, DOperationDescriptor, DOperationsCatalog}
 import io.deepsense.deeplang.parameters.ParametersSchema
+import io.deepsense.model.json.workflow.DeepLangJsonProtocol
 import io.deepsense.models.workflows.Workflow
-import io.deepsense.workflowmanager.rest.json.DeepLangJsonProtocol
 
 class OperationsApiSpec
   extends StandardSpec

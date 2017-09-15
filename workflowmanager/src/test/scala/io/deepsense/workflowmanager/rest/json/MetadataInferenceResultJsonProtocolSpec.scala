@@ -9,7 +9,8 @@ import io.deepsense.deeplang.doperables.dataframe.{CommonColumnMetadata, DataFra
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.inference.{InferenceWarning, InferenceWarnings}
 import io.deepsense.deeplang.parameters.ColumnType
-import io.deepsense.workflowmanager.rest.metadata.MetadataInferenceResult
+import io.deepsense.model.json.workflow.MetadataInferenceResultJsonProtocol
+import io.deepsense.models.metadata.MetadataInferenceResult
 
 import spray.json._
 

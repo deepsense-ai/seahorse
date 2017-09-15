@@ -11,6 +11,7 @@ import io.deepsense.commons.json.IdJsonProtocol
 import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.parameters.ParametersSchema
 import io.deepsense.graph.Node
+import io.deepsense.model.json.graph.NodeJsonProtocol
 
 class NodeJsonProtocolSpec extends GraphJsonTestSupport with IdJsonProtocol {
 

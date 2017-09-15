@@ -11,9 +11,9 @@ import com.google.inject.name.Names.named
 
 import io.deepsense.commons.auth.AuthModule
 import io.deepsense.commons.rest.{RestComponent, VersionApi}
+import io.deepsense.model.json.workflow.GraphReaderModule
 import io.deepsense.workflowmanager.deeplang.DeepLangModule
 import io.deepsense.workflowmanager.rest._
-import io.deepsense.workflowmanager.rest.json.GraphReaderModule
 
 /**
  * Configures all existing APIs.

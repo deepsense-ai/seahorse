@@ -19,7 +19,9 @@ import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.parameters.ParametersSchema
 import io.deepsense.deeplang.{DKnowledge, DOperable, DOperation}
 import io.deepsense.graph.{Edge, Endpoint, Graph, Node}
-import io.deepsense.graphjson.GraphJsonProtocol.GraphReader
+import io.deepsense.model.json.graph.GraphJsonProtocol
+import GraphJsonProtocol.GraphReader
+import io.deepsense.model.json.workflow.{WorkflowJsonProtocol, HierarchyDescriptorJsonProtocol}
 import io.deepsense.models.workflows.Workflow
 import io.deepsense.models.workflows.Workflow.State
 

@@ -2,13 +2,13 @@
  * Copyright (c) 2015, CodiLime Inc.
  */
 
-package io.deepsense.workflowmanager.rest.json
+package io.deepsense.model.json.workflow
 
 import spray.httpx.SprayJsonSupport
 import spray.json._
 
-import io.deepsense.workflowmanager.rest.actions.{AbortAction, Action, LaunchAction}
-import io.deepsense.graphjson.NodeJsonProtocol
+import io.deepsense.model.json.graph.NodeJsonProtocol
+import io.deepsense.models.actions.{Action, AbortAction, LaunchAction}
 
 trait ActionsJsonProtocol
   extends DefaultJsonProtocol

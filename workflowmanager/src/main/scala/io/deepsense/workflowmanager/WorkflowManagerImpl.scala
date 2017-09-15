@@ -22,10 +22,10 @@ import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.utils.Logging
 import io.deepsense.graph.Node
+import io.deepsense.models.actions.{LaunchAction, AbortAction, Action}
 import io.deepsense.models.messages._
-import io.deepsense.models.workflows.{InputWorkflow, Workflow}
+import io.deepsense.models.workflows.{Count, InputWorkflow, Workflow, WorkflowsList}
 import io.deepsense.workflowmanager.exceptions.{WorkflowNotFoundException, WorkflowNotRunningException, WorkflowRunningException}
-import io.deepsense.workflowmanager.models.{Count, WorkflowsList}
 import io.deepsense.workflowmanager.storage.WorkflowStorage
 
 /**
@@ -175,6 +175,11 @@ class WorkflowManagerImpl @Inject()(
         case None => throw new WorkflowNotFoundException(id)
       }
     }
+  }
+
+  override def runAction(id: Id, action: Action): Future[Workflow] = action match {
+    case AbortAction(nodes) => abort(id, nodes.getOrElse(List()))
+    case LaunchAction(nodes) => launch(id, nodes.getOrElse(List()))
   }
 
   private def runningExperiment(id: Id): Future[Option[Workflow]] = {

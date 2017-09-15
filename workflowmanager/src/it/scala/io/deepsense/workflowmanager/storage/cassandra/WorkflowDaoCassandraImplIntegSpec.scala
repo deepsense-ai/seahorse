@@ -20,7 +20,8 @@ import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.deeplang.parameters.{BooleanParameter, ParametersSchema}
 import io.deepsense.graph.{Edge, Endpoint, Graph, Node}
-import io.deepsense.graphjson.GraphJsonProtocol.GraphReader
+import io.deepsense.model.json.graph.GraphJsonProtocol
+import GraphJsonProtocol.GraphReader
 import io.deepsense.graphjson.GraphJsonTestSupport
 import io.deepsense.models.workflows.Workflow
 import io.deepsense.models.workflows.Workflow.State

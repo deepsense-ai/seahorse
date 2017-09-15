@@ -12,6 +12,7 @@ import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.exception.{DeepSenseFailure, FailureDescription}
 import io.deepsense.commons.json.DateTimeJsonProtocol
 import io.deepsense.graph.{Progress => GraphProgress, State}
+import io.deepsense.model.json.graph.NodeStateJsonProtocol
 import io.deepsense.models.entities.Entity
 import io.deepsense.commons.exception.FailureCode
 

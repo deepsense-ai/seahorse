@@ -2,11 +2,12 @@
  * Copyright (c) 2015, CodiLime Inc.
  */
 
-package io.deepsense.workflowmanager.rest.json
+package io.deepsense.model.json.workflow
 
-import io.deepsense.deeplang.inference.{InferenceWarnings, InferenceWarning}
 import spray.httpx.SprayJsonSupport
 import spray.json._
+
+import io.deepsense.deeplang.inference.{InferenceWarning, InferenceWarnings}
 
 trait InferenceWarningJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
   implicit object InferenceWarningMappingFormat extends JsonFormat[InferenceWarning] {

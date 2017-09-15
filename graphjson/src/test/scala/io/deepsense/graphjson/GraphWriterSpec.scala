@@ -8,6 +8,7 @@ import spray.json._
 
 import io.deepsense.deeplang.DOperation
 import io.deepsense.graph.{Edge, Endpoint, Graph, Node}
+import io.deepsense.model.json.graph.{NodeJsonProtocol, GraphJsonProtocol}
 
 class GraphWriterSpec extends GraphJsonTestSupport {
 

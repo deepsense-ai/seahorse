@@ -2,9 +2,7 @@
  * Copyright (c) 2015, CodiLime Inc.
  */
 
-package io.deepsense.workflowmanager.models
-
-import io.deepsense.models.workflows.Workflow
+package io.deepsense.models.workflows
 
 case class WorkflowsList(count: Count, experiments: Seq[Workflow])
 

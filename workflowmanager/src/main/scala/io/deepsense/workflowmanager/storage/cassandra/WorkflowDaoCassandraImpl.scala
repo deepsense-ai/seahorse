@@ -17,7 +17,8 @@ import com.google.inject.name.Named
 import spray.json._
 
 import io.deepsense.commons.exception.json.FailureDescriptionJsonProtocol
-import io.deepsense.graphjson.GraphJsonProtocol.GraphWriter
+import io.deepsense.model.json.graph.GraphJsonProtocol
+import GraphJsonProtocol.GraphWriter
 import io.deepsense.models.entities.Entity
 import io.deepsense.models.workflows.Workflow
 import io.deepsense.workflowmanager.storage.WorkflowStorage

@@ -7,6 +7,7 @@ package io.deepsense.graphjson
 import spray.json._
 
 import io.deepsense.graph.{Edge, Endpoint, Node}
+import io.deepsense.model.json.graph.EdgeJsonProtocol
 
 class EdgeJsonProtocolSpec extends GraphJsonTestSupport {
 

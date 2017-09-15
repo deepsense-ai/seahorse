@@ -2,14 +2,14 @@
  * Copyright (c) 2015, CodiLime Inc.
  */
 
-package io.deepsense.graphjson
+package io.deepsense.model.json.graph
 
 import spray.json._
 
 import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.graph.{Edge, Graph, Node}
-import io.deepsense.graphjson.OperationJsonProtocol.DOperationReader
+import io.deepsense.model.json.graph.OperationJsonProtocol.DOperationReader
 
 object GraphJsonProtocol {
 

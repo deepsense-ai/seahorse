@@ -2,13 +2,12 @@
  * Copyright (c) 2015, CodiLime Inc.
  */
 
-package io.deepsense.graphjson
+package io.deepsense.model.json.graph
 
 import spray.json._
 
 import io.deepsense.commons.json.DateTimeJsonProtocol._
 import io.deepsense.commons.json.ExceptionsJsonProtocol
-import io.deepsense.graph.Status.Status
 import io.deepsense.graph.{Progress, State}
 
 trait NodeStateJsonProtocol

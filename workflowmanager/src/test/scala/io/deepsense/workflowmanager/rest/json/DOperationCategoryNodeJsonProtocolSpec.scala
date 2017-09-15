@@ -11,7 +11,8 @@ import spray.json._
 
 import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.catalogs.doperations.{DOperationCategory, DOperationCategoryNode, DOperationDescriptor}
-import io.deepsense.workflowmanager.rest.json.DOperationCategoryNodeJsonProtocol._
+import io.deepsense.model.json.workflow.DOperationCategoryNodeJsonProtocol
+import DOperationCategoryNodeJsonProtocol._
 
 class DOperationCategoryNodeJsonProtocolSpec extends FlatSpec with Matchers with MockitoSugar {
 

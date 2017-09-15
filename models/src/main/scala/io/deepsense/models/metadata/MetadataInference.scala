@@ -2,7 +2,7 @@
  * Copyright (c) 2015, CodiLime Inc.
  */
 
-package io.deepsense.workflowmanager.rest.metadata
+package io.deepsense.models.metadata
 
 import io.deepsense.deeplang.DOperable
 import io.deepsense.deeplang.DOperable.AbstractMetadata

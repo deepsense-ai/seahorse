@@ -32,7 +32,7 @@ lazy val graphexecutor = project dependsOn (
   deeplang % "test->test",
   graph,
   models)
-lazy val graphjson     = project dependsOn (commons, deeplang, graph)
+lazy val graphjson     = project dependsOn (commons, deeplang, graph, models)
 
 
 // Assembly and deploy GE without dependencies jar
