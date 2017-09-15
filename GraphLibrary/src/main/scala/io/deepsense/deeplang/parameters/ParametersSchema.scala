@@ -6,7 +6,7 @@
 
 package io.deepsense.deeplang.parameters
 
-import ParameterConversions._
+import io.deepsense.deeplang.parameters.ParameterConversions._
 import io.deepsense.deeplang.parameters.exceptions.NoSuchParameterException
 
 /**
