@@ -29,8 +29,10 @@ case class PrefixBasedColumnCreatorParam(
   val parameterType = ParameterType.PrefixBasedColumnCreator
 
   override def replicate(name: String): PrefixBasedColumnCreatorParam = copy(name = name)
+}
 
+trait NonEmptyPrefixValidator extends PrefixBasedColumnCreatorParam {
   override def validate(value: String): Vector[DeepLangException] = {
-    ColumnPrefixNameValidator.validate(name, value)
+    ColumnPrefixNameValidator.validate(name, value) ++ super.validate(value)
   }
 }

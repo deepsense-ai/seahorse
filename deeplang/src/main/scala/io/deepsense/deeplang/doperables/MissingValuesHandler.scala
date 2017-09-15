@@ -21,8 +21,8 @@ import java.sql.Timestamp
 import scala.util.Try
 
 import org.apache.spark.sql
-import org.apache.spark.sql.types._
 import org.apache.spark.sql.functions.col
+import org.apache.spark.sql.types._
 
 import io.deepsense.commons.types.SparkConversions
 import io.deepsense.deeplang.ExecutionContext
@@ -387,10 +387,10 @@ object MissingValuesHandler {
 
       override val name: String = "Yes"
 
-      val indicatorPrefix = PrefixBasedColumnCreatorParam(
+      val indicatorPrefix = new PrefixBasedColumnCreatorParam(
         name = "indicator column prefix",
         description = "Prefix for columns indicating presence of missing values."
-      )
+      ) with NonEmptyPrefixValidator
       setDefault(indicatorPrefix, "")
 
       override def getIndicatorPrefix: Option[String] = Some($(indicatorPrefix))

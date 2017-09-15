@@ -74,9 +74,11 @@ object DOperationsCatalog {
       )
 
       if (operations.contains(id)) {
-        val alreadyRegisteredOperationName = operations(id).name
+        val alreadyRegisteredOperation = operations(id)
         throw new RuntimeException(
-          s"DOperation $alreadyRegisteredOperationName is already registered with UUID $id!")
+          s"Trying to register operation '$name' with UUID $id, " +
+          s"but there is already operation '${alreadyRegisteredOperation.name}' with the same UUID value. " +
+          s"Please change UUID of one of them.")
       }
       operations += id -> operationDescriptor
       if(visible) {

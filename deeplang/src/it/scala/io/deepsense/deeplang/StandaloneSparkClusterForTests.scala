@@ -63,7 +63,7 @@ object StandaloneSparkClusterForTests {
   }
 
   def startDockerizedCluster(): Unit = {
-    Process(Seq(clusterManagementScript, "up"), None, clusterIdEnv).!
+    Process(Seq(clusterManagementScript, "up"), None, clusterIdEnv).!!
 
     // We turn off the safe mode for hdfs - we don't need it for testing.
     // The loop is here because we don't have control over when the docker is ready
@@ -79,7 +79,7 @@ object StandaloneSparkClusterForTests {
   }
 
   def stopDockerizedCluster(): Unit =
-    Process(Seq(clusterManagementScript, "down"), None, clusterIdEnv).!
+    Process(Seq(clusterManagementScript, "down"), None, clusterIdEnv).!!
 
   def generateSomeHdfsTmpPath(): String =
     FileScheme.HDFS.pathPrefix + s"$hdfsAddress/root/tmp/seahorse_tests/" + UUID.randomUUID()
