@@ -17,6 +17,7 @@
 package io.deepsense.deeplang.doperations
 
 import java.io.{IOException, StringWriter}
+import java.sql.Timestamp
 
 import scala.collection.immutable.ListMap
 import scala.reflect.runtime.{universe => ru}
@@ -25,6 +26,7 @@ import au.com.bytecode.opencsv.CSVWriter
 import org.apache.commons.lang3.StringEscapeUtils
 import org.apache.spark.sql.Row
 
+import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMetadata
@@ -118,6 +120,7 @@ case class WriteDataFrame() extends DOperation1To0[DataFrame] {
       case true => "1"
       case false => "0"
       case s: String => StringEscapeUtils.escapeCsv(s)
+      case t: Timestamp => DateTimeConverter.toString(DateTimeConverter.fromMillis(t.getTime))
       case x => x.toString
     }
   }

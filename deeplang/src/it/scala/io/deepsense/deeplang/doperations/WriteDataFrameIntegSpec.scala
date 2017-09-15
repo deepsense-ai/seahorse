@@ -17,6 +17,7 @@
 package io.deepsense.deeplang.doperations
 
 import java.io.File
+import java.sql.Timestamp
 
 import scala.io.Source
 
@@ -37,7 +38,8 @@ class WriteDataFrameIntegSpec
 
   val absoluteWriteDataFrameTestPath =  absoluteTestsDirPath + "/WriteDataFrameTest"
 
-  val timestamp = DateTimeConverter.now
+  val dateTime = DateTimeConverter.now
+  val timestamp = new Timestamp(dateTime.getMillis)
 
   val schema: StructType = StructType(Seq(
     StructField("boolean",
@@ -63,10 +65,10 @@ class WriteDataFrameIntegSpec
   val q = "\""
 
   val rowsAsCsv = (sep: String) => Seq(
-    s"1${sep}A${sep}0.45${sep}3.14${sep}${DateTimeConverter.toString(timestamp)}",
+    s"1${sep}A${sep}0.45${sep}3.14${sep}${DateTimeConverter.toString(dateTime)}",
     s"0${sep}B${sep}${sep}${q}${q}${q}testing...${q}${q}${q}${sep}",
     s"0${sep}C${sep}3.14159${sep}${q}Hello, world!${q}${sep}"
-      + s"${DateTimeConverter.toString(timestamp)}",
+      + s"${DateTimeConverter.toString(dateTime)}",
     s"${sep}${sep}${sep}${sep}"
   )
 
