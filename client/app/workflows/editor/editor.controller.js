@@ -115,7 +115,7 @@ class EditorController {
 
   onConnectionAbort(newNodeData) {
     const portPositionX = newNodeData.x - (NEW_NODE_ELEMENT_WIDTH / 2 * this.CanvasService.scale);
-    const portPositionY = newNodeData.y - this.$canvas.offset().top;
+    const portPositionY = newNodeData.y - this.$element[0].getBoundingClientRect().top;
     const [x, y] = this.CanvasService.translateScreenToCanvasPosition(portPositionX, portPositionY);
     this.startWizard(x, y, newNodeData.endpoint);
   }
