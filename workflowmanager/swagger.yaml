@@ -1,0 +1,291 @@
+swagger: '2.0'
+
+info:
+  version: "0.0.0"
+  title: WorkflowManager Workflow API
+
+basePath: "/v1"
+
+paths:
+  /{user_id}/workflows/{workflow_id}:
+    parameters:
+      - $ref: '#/parameters/UserIdParam'
+      - $ref: "#/parameters/WorkflowIdParam"
+
+    get:
+      description: ''
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: '#/definitions/WorkflowWithResults'
+
+    delete:
+      responses:
+        200:
+          description: Successful deletion
+        404:
+          description: Not found
+
+    put:
+      description: ''
+      parameters:
+        - name: workflow_with_results
+          in: body
+          description: ''
+          required: true
+          schema:
+            $ref: '#/definitions/WorkflowWithResults'
+
+
+      responses:
+        200:
+          description: Successful response
+
+
+  /{user_id}/workflows/{workflow_id}/download:
+    get:
+      description: 'This is downloaded as a file, not simple json'
+      parameters:
+        - $ref: '#/parameters/UserIdParam'
+        - $ref: '#/parameters/WorkflowIdParam'
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: file
+            $ref: '#/definitions/WorkflowWithVariables'
+          headers:
+            Content-Disposition:
+              type: string
+              description: attachment; filename=workflow_name.json
+
+  /{user_id}/workflows/{workflow_id}/clone:
+    post:
+      description: ''
+      parameters:
+        - $ref: '#/parameters/UserIdParam'
+        - $ref: '#/parameters/WorkflowIdParam'
+      responses:
+        201:
+          description: Workflow cloned
+          schema:
+            type: object
+            properties:
+              workflowId:
+                $ref: '#/definitions/Id'
+
+  /{user_id}/workflows/upload:
+    post:
+      consumes:
+        - multipart/form-data
+      description: |
+        This resource accepts a file upload, not json in the request body.
+      parameters:
+        - $ref: '#/parameters/UserIdParam'
+        - name: workflowFile
+          type: file
+          format: Workflow
+          in: formData
+          description: ''
+          required: true
+      responses:
+        201:
+          description: Workflow uploaded
+          schema:
+            type: object
+            properties:
+              workflowId:
+                $ref: '#/definitions/Id'
+
+  /{user_id}/workflows/{workflow_id}/notebook/{node_id}:
+    parameters:
+        - name: workflow_id
+          in: path
+          description: ''
+          required: true
+          type: string
+          format: uuid
+        - name: node_id
+          in: path
+          description: ''
+          required: true
+          type: string
+          format: uuid
+        - name: user_id
+          in: path
+          description: ''
+          required: true
+          type: string
+    get:
+      responses:
+        200:
+          description: 'Serialized notebook'
+          schema:
+            type: string
+    post:
+      parameters:
+        - name: notebook
+          in: body
+          description: ''
+          required: true
+          schema:
+            type: string
+      responses:
+        201:
+          description: 'Notebook saved'
+
+  /{user_id}/workflows/:
+    parameters:
+      - name: user_id
+        in: path
+        description: ''
+        required: true
+        type: string
+    get:
+      description: |
+        This request returns a list of short workflow's descriptions.
+
+        All workflows visible to the user are returned, in particular,
+        ones that the user doesn't own.
+      responses:
+        200:
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/WorkflowInfo'
+    post:
+      parameters:
+        - name: 'workflow'
+          in: body
+          description: ''
+          required: true
+          schema:
+            $ref: '#/definitions/Workflow'
+      responses:
+        201:
+          description: Workflow uploaded
+          schema:
+            type: object
+            properties:
+              workflowId:
+                $ref: '#/definitions/Id'
+
+  /{user_id}/reports/{workflow_id}:
+    put:
+      parameters:
+        - name: workflow_id
+          in: path
+          description: ''
+          required: true
+          type: string
+          format: uuid
+        - name: user_id
+          in: path
+          description: ''
+          required: true
+          type: string
+        - name: execution_report
+          in: body
+          description: ''
+          required: true
+          schema:
+            $ref: '#/definitions/ExecutionReport'
+      responses:
+        200:
+          description: OK
+
+
+
+parameters:
+  WorkflowIdParam:
+    name: workflow_id
+    in: path
+    description: ''
+    required: true
+    type: string
+
+  UserIdParam:
+    name: user_id
+    in: path
+    description: ''
+    required: true
+    type: string
+
+definitions:
+  WorkflowWithResults:
+    type: object
+    properties:
+      id:
+        $ref: '#/definitions/Id'
+      workflow:
+        $ref: '#/definitions/DeeplangGraph'
+      metadata:
+        $ref: '#/definitions/WorkflowMetadata'
+      thirdPartyData:
+        $ref: '#/definitions/ThirdPartyData'
+      executionReport:
+        $ref: '#/definitions/ExecutionReport'
+
+  WorkflowWithVariables:
+    type: object
+    properties:
+      id:
+        $ref: '#/definitions/Id'
+      workflow:
+        $ref: '#/definitions/DeeplangGraph'
+      metadata:
+        $ref: '#/definitions/WorkflowMetadata'
+      thirdPartyData:
+        $ref: '#/definitions/ThirdPartyData'
+      variables:
+        $ref: '#/definitions/Variables'
+
+  Workflow:
+    type: object
+    properties:
+      metadata:
+        $ref: '#/definitions/WorkflowMetadata'
+      workflow:
+        $ref: '#/definitions/DeeplangGraph'
+      thirdPartyData:
+        $ref: '#/definitions/ThirdPartyData'
+
+  WorkflowInfo:
+    type: object
+    properties:
+      id:
+        $ref: '#/definitions/Id'
+      name:
+        type: string
+      description:
+        type: string
+      created:
+        type: string
+      updated:
+        type: string
+      owner:
+        type: string
+
+  Id:
+    type: string
+    format: uuid
+
+  WorkflowMetadata:
+    type: object
+    properties:
+      workflowType:
+        type: string
+
+  DeeplangGraph:
+    type: object
+
+  ThirdPartyData:
+    type: object
+
+  ExecutionReport:
+    type: object
+
+  Variables:
+    type: object
