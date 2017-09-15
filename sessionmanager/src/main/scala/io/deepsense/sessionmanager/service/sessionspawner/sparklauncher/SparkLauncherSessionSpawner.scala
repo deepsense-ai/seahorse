@@ -46,8 +46,10 @@ class SparkLauncherSessionSpawner @Inject()(
 
   private def args(workflowId: Id, userId: String) = Seq(
     "--interactive-mode",
-    "-m", config.queueHost,
+    "--message-queue-host", config.queueHost,
     "--message-queue-port", config.queuePort.toString,
+    "--message-queue-user", config.queueUser,
+    "--message-queue-pass", config.queuePass,
     "--wm-address", config.wmAddress,
     "--workflow-id", workflowId.toString(),
     "-d", config.weDepsPath,

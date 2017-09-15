@@ -38,10 +38,14 @@ class MqModule extends AbstractModule with Logging {
   def createConnection(
       system: ActorSystem,
       @Named("queue.host") host: String,
-      @Named("queue.port") port: Int): ActorRef = {
+      @Named("queue.port") port: Int,
+      @Named("queue.user") user: String,
+      @Named("queue.pass") pass: String): ActorRef = {
     val factory = new ConnectionFactory()
     factory.setHost(host)
     factory.setPort(port)
+    factory.setUsername(user)
+    factory.setPassword(pass)
     system.actorOf(
       ConnectionActor.props(factory),
       MQCommunication.mqActorSystemName)

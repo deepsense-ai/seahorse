@@ -13,8 +13,9 @@ from rabbit_mq_client import RabbitMQClient
 
 class HeartbeatHandler(object):
 
-    def __init__(self, rabbit_mq_address, heartbeat_interval, missed_heartbeat_limit, session_id):
+    def __init__(self, rabbit_mq_address, rabbit_mq_credentials, heartbeat_interval, missed_heartbeat_limit, session_id):
         self._rabbit_mq_address = rabbit_mq_address
+        self._rabbit_mq_credentials = rabbit_mq_credentials
         self._heartbeat_interval = heartbeat_interval
         self._missed_heartbeat_limit = missed_heartbeat_limit
         self._exchange_name = 'seahorse_heartbeats_{}'.format(session_id)
@@ -32,7 +33,10 @@ class HeartbeatHandler(object):
 
     def _handler_thread(self, on_heartbeat_error):
         debug("HeartbeatHandler::_handler_thread")
-        connection = RabbitMQClient(self._rabbit_mq_address, self._exchange_name, 'fanout')
+        connection = RabbitMQClient(address=self._rabbit_mq_address,
+                                    credentials=self._rabbit_mq_credentials,
+                                    exchange=self._exchange_name,
+                                    exchange_type='fanout')
 
         def heartbeat_missed():
             debug("HeartbeatHandler::heartbeat_missed ({}) {}".format(self._session_id,
@@ -52,13 +56,3 @@ class HeartbeatHandler(object):
                 assert("Received unexpected message: {}".format(response))
 
         connection.consume(self._heartbeat_interval, handle_message, heartbeat_missed)
-
-    @staticmethod
-    def _establish_connection_to_mq(address):
-        while True:
-            try:
-                return pika.BlockingConnection(
-                    pika.ConnectionParameters(host=address[0],
-                                              port=address[1]))
-            except ConnectionClosed:
-                time.sleep(1)

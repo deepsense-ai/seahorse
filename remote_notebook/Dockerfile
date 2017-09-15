@@ -15,6 +15,8 @@ COPY wmcontents /opt/conda/lib/python3.5/site-packages/wmcontents
 
 EXPOSE 8888
 
+ENV MQ_USER guest
+ENV MQ_PASS guest
 ENV HEARTBEAT_INTERVAL 2.0
 ENV MISSED_HEARTBEAT_LIMIT 30
 

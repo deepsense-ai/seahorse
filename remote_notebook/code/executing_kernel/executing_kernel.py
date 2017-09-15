@@ -48,7 +48,6 @@ class ExecutingKernel(IPythonKernel):
         self._init_kernel()
 
     def _init_kernel(self):
-        mq_host, mq_port = self._rabbit_mq_address
         gateway_host, gateway_port = self._gateway_address
         kernel_init_file = os.path.join(os.getcwd(), "executing_kernel/kernel_init.py")
 
@@ -64,8 +63,6 @@ class ExecutingKernel(IPythonKernel):
 
         self._execute_code('gateway_address = "{}"'.format(gateway_host))
         self._execute_code('gateway_port = {}'.format(gateway_port))
-        self._execute_code('mq_address = "{}"'.format(mq_host))
-        self._execute_code('mq_port = {}'.format(mq_port))
         self._execute_code(open(kernel_init_file, "r").read())
 
     def _send_zmq_forward_to_rabbit(self, stream_name, message):
@@ -141,8 +138,15 @@ class ExecutingKernel(IPythonKernel):
         port = self._extract_argument(self.parent.argv, '--mq-port')
         return host, int(port)
 
+    @property
+    def _rabbit_mq_credentials(self):
+        user = self._extract_argument(self.parent.argv, '--mq-user')
+        password = self._extract_argument(self.parent.argv, '--mq-pass')
+        return user, password
+
     def _init_rabbit_clients(self):
         rabbit_client = RabbitMQClient(address=self._rabbit_mq_address,
+                                       credentials=self._rabbit_mq_credentials,
                                        exchange=self.EXCHANGE)
         sender = RabbitMQJsonSender(rabbit_mq_client=rabbit_client,
                                     topic=self.EXECUTION_PUBLISHING_TOPIC.format(kernel_id=self._kernel_id))

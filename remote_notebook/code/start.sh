@@ -39,6 +39,14 @@ case $key in
   MQ_PORT="$2"
   shift # past argument
   ;;
+  --mq-user)
+  MQ_USER="$2"
+  shift # past argument
+  ;;
+  --mq-pass)
+  MQ_PASS="$2"
+  shift # past argument
+  ;;
   -w|--workflow-id)
   WORKFLOW_ID="$2"
   shift # past argument
@@ -62,6 +70,8 @@ if [ -z "$GATEWAY_HOST" ]; then echo "Parameter --gateway-host is required"; exi
 if [ -z "$GATEWAY_PORT" ]; then echo "Parameter --gateway-port is required"; exit -1; fi
 if [ -z "$MQ_HOST" ];      then echo "Parameter --mq-host is required"; exit -1; fi
 if [ -z "$MQ_PORT" ];      then echo "Parameter --mq-port is required"; exit -1; fi
+if [ -z "$MQ_USER" ];      then echo "Parameter --mq-user is required"; exit -1; fi
+if [ -z "$MQ_PASS" ];      then echo "Parameter --mq-pass is required"; exit -1; fi
 if [ -z "$WORKFLOW_ID" ];  then echo "Parameter --workflow-id is required"; exit -1; fi
 if [ -z "$SESSION_ID" ];   then echo "Parameter --session-id is required"; exit -1; fi
 
@@ -85,5 +95,7 @@ exec python executing_kernel/executing_kernel_manager.py \
   --gateway-port "$GATEWAY_PORT" \
   --mq-host "$MQ_HOST" \
   --mq-port "$MQ_PORT" \
+  --mq-user "$MQ_USER" \
+  --mq-pass "$MQ_PASS" \
   --workflow-id "$WORKFLOW_ID" \
   --session-id "$SESSION_ID"

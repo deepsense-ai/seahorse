@@ -21,6 +21,7 @@ from notebook_server_client import NotebookServerClient
 from utils import debug
 
 RABBIT_MQ_ADDRESS = None
+RABBIT_MQ_CREDENTIALS = None
 HEARTBEAT_INTERVAL = None
 MISSED_HEARTBEAT_LIMIT = None
 
@@ -53,7 +54,7 @@ class ForwardingKernel(IPythonKernel):
         nb_client = NotebookServerClient("localhost", 8888, self._kernel_id)
         self._session_id, self._node_id, self._port_number = nb_client.extract_dataframe_source()
 
-        es, ms, rl = self._init_rabbit_clients(RABBIT_MQ_ADDRESS)
+        es, ms, rl = self._init_rabbit_clients(RABBIT_MQ_ADDRESS, RABBIT_MQ_CREDENTIALS)
         self._rabbit_execution_sender_client = es
         self._rabbit_management_sender_client = ms
         self._rabbit_listener = rl
@@ -61,17 +62,20 @@ class ForwardingKernel(IPythonKernel):
         self._socket_forwarders = self._init_socket_forwarders()
 
         mq_address, mq_port = RABBIT_MQ_ADDRESS
-        self._ready_handler = ReadyHandler([mq_address, mq_port], self._session_id)
+        self._ready_handler = ReadyHandler([mq_address, mq_port], RABBIT_MQ_CREDENTIALS, self._session_id)
         self._ready_handler.handle_ready(nb_client.restart_kernel)
 
         self._heartbeat_handler = HeartbeatHandler([mq_address, mq_port],
+                                                   RABBIT_MQ_CREDENTIALS,
                                                    HEARTBEAT_INTERVAL,
                                                    MISSED_HEARTBEAT_LIMIT,
                                                    self._session_id)
         self._heartbeat_handler.handle_heartbeat(lambda: nb_client.stop_kernel())
 
-    def _init_rabbit_clients(self, rabbit_mq_address):
-        rabbit_client = RabbitMQClient(address=rabbit_mq_address, exchange=self.EXCHANGE)
+    def _init_rabbit_clients(self, rabbit_mq_address, rabbit_mq_credentials):
+        rabbit_client = RabbitMQClient(address=rabbit_mq_address,
+                                       credentials=rabbit_mq_credentials,
+                                       exchange=self.EXCHANGE)
         execution_sender = RabbitMQJsonSender(
             rabbit_mq_client=rabbit_client,
             topic=self.EXECUTION_PUBLISHING_TOPIC.format(kernel_id=self._kernel_id))
@@ -178,6 +182,7 @@ class ForwardingKernelApp(IPKernelApp):
 
 if __name__ == '__main__':
     RABBIT_MQ_ADDRESS = (os.environ['MQ_HOST'], int(os.environ['MQ_PORT']))
+    RABBIT_MQ_CREDENTIALS = (os.environ['MQ_USER'], os.environ['MQ_PASS'])
     MISSED_HEARTBEAT_LIMIT = int(os.environ['MISSED_HEARTBEAT_LIMIT'])
     HEARTBEAT_INTERVAL = float(os.environ['HEARTBEAT_INTERVAL'])
 

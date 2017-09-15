@@ -19,6 +19,8 @@ class SparkLauncherConfig @Inject()(
   @Named("session-executor.parameters.spark-home-path") val sparkHome: String,
   @Named("session-executor.parameters.queue.host") private val configQueueHost: String,
   @Named("session-executor.parameters.queue.port") val queuePort: Int,
+  @Named("session-executor.parameters.queue.user") val queueUser: String,
+  @Named("session-executor.parameters.queue.pass") val queuePass: String,
   @Named("session-executor.parameters.queue.autodetect-host") private val queueHostAuto: Boolean,
   @Named("session-executor.parameters.workflow-manager.scheme") private val wmScheme: String,
   @Named("session-executor.parameters.workflow-manager.host") private val wmHost: String,

@@ -9,8 +9,9 @@ from utils import debug
 
 class ReadyHandler(object):
 
-    def __init__(self, rabbit_mq_address, session_id):
+    def __init__(self, rabbit_mq_address, rabbit_mq_credentials, session_id):
         self._connection = RabbitMQClient(address=rabbit_mq_address,
+                                          credentials=rabbit_mq_credentials,
                                           exchange='seahorse_ready_{}'.format(session_id),
                                           exchange_type='fanout')
 

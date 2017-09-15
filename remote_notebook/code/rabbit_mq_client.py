@@ -13,9 +13,10 @@ from utils import debug
 class RabbitMQClient(object):
     _channel_impl = None
 
-    def __init__(self, address, exchange, exchange_type='topic'):
+    def __init__(self, address, credentials, exchange, exchange_type='topic'):
         self._address = address
         self._exchange = exchange
+        self._credentials = credentials
         self._exchange_type = exchange_type
 
         self._reset_consumer_thread(start=False)
@@ -63,16 +64,17 @@ class RabbitMQClient(object):
     @property
     def _channel(self):
         if not self._channel_impl:
-            connection = self._establish_connection_to_mq(self._address)
+            connection = self._establish_connection_to_mq(self._address, self._credentials)
             self._channel_impl = connection.channel()
         return self._channel_impl
 
     @staticmethod
-    def _establish_connection_to_mq(address):
+    def _establish_connection_to_mq(address, credentials):
         while True:
             try:
                 return pika.BlockingConnection(
-                    pika.ConnectionParameters(host=address[0], port=address[1]))
+                    pika.ConnectionParameters(host=address[0], port=address[1],
+                        credentials=pika.PlainCredentials(credentials[0], credentials[1])))
             except ConnectionClosed:
                 time.sleep(1)
 

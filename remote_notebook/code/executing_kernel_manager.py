@@ -28,7 +28,8 @@ class ExecutingKernelManager(object):
 
     EXECUTING_KERNEL_NAME = 'ExecutingKernel'
 
-    def __init__(self, gateway_address, rabbit_mq_address, session_id, workflow_id, executing_kernel_source_dir):
+    def __init__(self, gateway_address, rabbit_mq_address, rabbit_mq_credentials,
+                 session_id, workflow_id, executing_kernel_source_dir):
         super(ExecutingKernelManager, self).__init__()
 
         signal.signal(signal.SIGINT, self.exit_gracefully)
@@ -37,6 +38,7 @@ class ExecutingKernelManager(object):
         self._executing_kernel_source_dir = executing_kernel_source_dir
         self._gateway_address = gateway_address
         self._rabbit_mq_address = rabbit_mq_address
+        self._rabbit_mq_credentials = rabbit_mq_credentials
         self._session_id = session_id
         self._workflow_id = workflow_id
 
@@ -44,7 +46,9 @@ class ExecutingKernelManager(object):
         self._multi_kernel_manager = self._init_kernel_manager()
         self._rabbit_listener = self._init_rabbit_client()
         self._sx_sender = RabbitMQJsonSender(
-            rabbit_mq_client=RabbitMQClient(address=self._rabbit_mq_address, exchange=self.SX_EXCHANGE),
+            rabbit_mq_client=RabbitMQClient(address=self._rabbit_mq_address,
+                                            credentials=self._rabbit_mq_credentials,
+                                            exchange=self.SX_EXCHANGE),
             topic=self.SX_PUBLISHING_TOPIC.format(session_id=self._session_id,
                                                   workflow_id=self._workflow_id))
 
@@ -106,6 +110,8 @@ class ExecutingKernelManager(object):
                            '--gateway-port', str(self._gateway_address[1]),
                            '--mq-host', self._rabbit_mq_address[0],
                            '--mq-port', str(self._rabbit_mq_address[1]),
+                           '--mq-user', self._rabbit_mq_credentials[0],
+                           '--mq-pass', str(self._rabbit_mq_credentials[1]),
                            '--workflow-id', self._workflow_id
                            ]
 
@@ -127,6 +133,7 @@ class ExecutingKernelManager(object):
 
     def _init_rabbit_client(self):
         rabbit_client = RabbitMQClient(address=self._rabbit_mq_address,
+                                       credentials=self._rabbit_mq_credentials,
                                        exchange=self.EXCHANGE)
         return RabbitMQJsonReceiver(rabbit_client)
 
@@ -147,14 +154,17 @@ if __name__ == '__main__':
     parser.add_argument('--gateway-port', action='store', dest='gateway_port')
     parser.add_argument('--mq-host', action='store', dest='mq_host')
     parser.add_argument('--mq-port', action='store', dest='mq_port')
+    parser.add_argument('--mq-user', action='store', dest='mq_user')
+    parser.add_argument('--mq-pass', action='store', dest='mq_pass')
     parser.add_argument('--session-id',  action='store', dest='session_id')
     parser.add_argument('--workflow-id', action='store', dest='workflow_id')
     args = parser.parse_args()
 
     gateway_address = (args.gateway_host, int(args.gateway_port))
     mq_address = (args.mq_host, int(args.mq_port))
+    mq_credentials = (args.mq_user, args.mq_pass)
 
     kernel_source_dir = os.path.join(os.getcwd(), 'executing_kernel')
-    ekm = ExecutingKernelManager(gateway_address, mq_address, args.session_id, args.workflow_id,
-                                 executing_kernel_source_dir=kernel_source_dir)
+    ekm = ExecutingKernelManager(gateway_address, mq_address, mq_credentials, args.session_id,
+                                 args.workflow_id, executing_kernel_source_dir=kernel_source_dir)
     ekm.run()

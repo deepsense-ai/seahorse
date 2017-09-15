@@ -28,8 +28,8 @@ services:
       - "API_HOST=http://${SEAHORSE_HOST}"
       - "API_PORT=${SEAHORSE_PORT}"
       - "SESSION_API_PORT=${SEAHORSE_PORT}"
-      - "MQ_USER=guest"
-      - "MQ_PASS=guest"
+      - "MQ_USER=yNNp7VJS"
+      - "MQ_PASS=1ElYfGNW"
       - "SOCKETS_ADDRESS=http://${SEAHORSE_HOST}:${SEAHORSE_PORT}/"
       - "NOTEBOOKS_HOST=http://${SEAHORSE_HOST}:${SEAHORSE_PORT}/jupyter"
     links:
@@ -48,6 +48,8 @@ services:
     environment:
       - "MQ_HOST=rabbitmq"
       - "MQ_PORT=5672"
+      - "MQ_USER=yNNp7VJS"
+      - "MQ_PASS=1ElYfGNW"
       - "WM_HOST=workflowmanager"
       - "WM_PORT=9080"
       - "WM_AUTH_USER=oJkTZ8BV"
@@ -74,6 +76,8 @@ services:
       - "WM_AUTH_PASS=8Ep9GqRr"
       - "MQ_HOST=rabbitmq"
       - "MQ_PORT=5672"
+      - "MQ_USER=yNNp7VJS"
+      - "MQ_PASS=1ElYfGNW"
       - "HEARTBEAT_INTERVAL=2.0"
       - "MISSED_HEARTBEAT_LIMIT=30"
     links:
@@ -90,5 +94,5 @@ services:
   rabbitmq:
     image: quay.io/deepsense_io/deepsense-rabbitmq:seahorse_on_bdu-latest
     environment:
-     - "RABBITMQ_USER=guest"
-     - "RABBITMQ_PASS=guest"
+     - "RABBITMQ_USER=yNNp7VJS"
+     - "RABBITMQ_PASS=1ElYfGNW"
