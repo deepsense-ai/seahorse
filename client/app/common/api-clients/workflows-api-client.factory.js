@@ -70,6 +70,10 @@ function WorkflowsApiClientFactory(BaseApiClient, config) {
     getUploadReportMethodUrl() {
       return `${this.API_URL}${PATH_WORKFLOWS}/report/upload`;
     }
+
+    getResultsUploadTime(workflowId) {
+      return this.makeRequest(this.METHOD_GET, `${this.API_URL}${PATH_WORKFLOWS}/${workflowId}/results-upload-time`);
+    }
   }
 
   return new WorkflowsApiClient();

@@ -3,5 +3,6 @@ angular.module('ds.lab').constant('config', {
   'apiPort': '9080',
   'apiVersion': '0.4.0',
   'editorVersion': '1.0.0',
-  'urlApiVersion': 'v1'
+  'urlApiVersion': 'v1',
+  'resultsRefreshInterval': 10000
 });

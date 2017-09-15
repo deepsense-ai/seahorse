@@ -87,6 +87,20 @@ class NotificationService extends LogHandlingService {
           NotificationService.getCommonErrorMessage('Workflow ABORT', error),
           error
         );
+      },
+      'LastExecutionReportService.REPORT_HAS_BEEN_UPLOADED': (event, data) => {
+        this.showLastExecution(
+          {
+            message: 'The report for this workflow is already available',
+            title: 'Workflow event',
+            settings: {
+              timeOut: 0,
+              extendedTimeOut: 0,
+            },
+
+            notificationType: 'info'
+          }
+        );
       }
     };
 
@@ -95,6 +109,12 @@ class NotificationService extends LogHandlingService {
 
   transportEventToShowByName (event) {
     this.showNotificationByEventName(event.name);
+  }
+
+  showLastExecution (options) {
+    let toast = this.toastr[options.notificationType](options.message, options.title, options.settings);
+
+    this.handleSameMessages(options.message, toast);
   }
 
   showError (data, error) {
@@ -130,6 +150,12 @@ class NotificationService extends LogHandlingService {
     });
 
     this.messages.push({ name, toast });
+  }
+
+  clearToasts() {
+    this.messages.map((messsage) => {
+      this.toastr.clear(messsage.toast);
+    });
   }
 
   replaceInfoMessagesWithSuccess (name, toast) {

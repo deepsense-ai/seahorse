@@ -19,7 +19,8 @@
     "Mousetrap": true,
     "_": true,
     "$": true,
-    "Highcharts": true
+    "Highcharts": true,
+    "moment": true
   },
   "globalstrict": false,
   "jasmine": true,

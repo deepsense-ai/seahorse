@@ -10,6 +10,7 @@ function AppConfig($urlRouterProvider, toastrConfig) {
     'allowHtml': true,
     'newestOnTop': false,
     'positionClass': 'toast-bottom-left',
+    'closeButton': true,
     'progressBar': true,
     'timeOut': 3500,
     'maxOpened': 5,

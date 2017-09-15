@@ -8,7 +8,7 @@ function WorkflowsEditorController(workflow,
                                    GraphNode, Edge,
                                    PageService, Operations, GraphPanelRendererService, WorkflowService, UUIDGenerator, MouseEvent,
                                    DeepsenseNodeParameters, ConfirmationModalService, ExportModalService,
-                                   RunModalFactory) {
+                                   RunModalFactory, LastExecutionReportService, NotificationService) {
   let that = this;
   let internal = {};
 
@@ -22,6 +22,7 @@ function WorkflowsEditorController(workflow,
     WorkflowService.createWorkflow(workflow, Operations.getData());
     GraphPanelRendererService.setRenderMode(GraphPanelRendererBase.EDITOR_RENDER_MODE);
     GraphPanelRendererService.setZoom(1.0);
+    LastExecutionReportService.setTimeout();
     internal.updateAndRerenderEdges(workflow);
   };
 
@@ -115,6 +116,8 @@ function WorkflowsEditorController(workflow,
   $scope.$on('$destroy', () => {
     WorkflowService.clearWorkflow();
     GraphPanelRendererService.clearWorkflow();
+    LastExecutionReportService.clearTimeout();
+    NotificationService.clearToasts();
   });
 
   $scope.$on('StatusBar.SAVE_CLICK', () => {
@@ -152,16 +155,10 @@ function WorkflowsEditorController(workflow,
   });
 
   $scope.$on('StatusBar.LAST_EXECUTION_REPORT', () => {
-    ConfirmationModalService.showModal({
-      message: `The operation redirects to the view that displays the latest report for this workflow.
-      The workflow had to be executed at least once. Make sure you saved the current state of the workflow.`
-    }).
-    then(() => {
-      let url = $state.href('workflows.latest_report', {
-        'id': $stateParams.id
-      });
-      window.open(url, '_blank');
+    let url = $state.href('workflows.latest_report', {
+      'id': $stateParams.id
     });
+    window.open(url, '_blank');
   });
 
   $scope.$watchCollection('workflow.getWorkflow().getNodesIds()', (newValue, oldValue) => {

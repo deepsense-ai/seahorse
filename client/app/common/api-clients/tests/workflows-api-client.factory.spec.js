@@ -360,4 +360,53 @@ describe('WorkflowsApiClient', () => {
       );
     });
   });
+
+  describe('should have getResultsUploadTime method', () => {
+    let $httpBackend;
+    let mockRequest;
+
+    let workflowId = 'workflow-id';
+    let url = `/${URL_API_VERSION}/workflows/${workflowId}/results-upload-time`;
+    let dataResponse = 'date';
+
+    beforeEach(() => {
+      angular.mock.inject(($injector) => {
+        $httpBackend = $injector.get('$httpBackend');
+        mockRequest = $httpBackend.
+          when('GET', url).
+          respond(dataResponse);
+      });
+    });
+
+    afterEach(() => {
+      $httpBackend.verifyNoOutstandingExpectation();
+      $httpBackend.verifyNoOutstandingRequest();
+    });
+
+    it('which is valid function', () => {
+      expect(WorkflowsApiClient.getResultsUploadTime).toEqual(jasmine.any(Function));
+    });
+
+    it('which return promise', () => {
+      resultIsPromise(
+        $httpBackend,
+        () => WorkflowsApiClient.getResultsUploadTime(workflowId),
+        () => { $httpBackend.expectGET(url); }
+      );
+    });
+
+    it('which return promise & resolve it on request success', () => {
+      promiseIsResolved($httpBackend, url, dataResponse,
+        () => WorkflowsApiClient.getResultsUploadTime(workflowId),
+        () => { $httpBackend.expectGET(url); }
+      );
+    });
+
+    it('which return promise & rejects it on request error', () => {
+      promiseIsRejected($httpBackend, mockRequest,
+        () => WorkflowsApiClient.getResultsUploadTime(workflowId),
+        () => { $httpBackend.expectGET(url); }
+      );
+    });
+  });
 });
