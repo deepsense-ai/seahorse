@@ -18,15 +18,8 @@ package io.deepsense.deeplang.doperations.exceptions
 
 import io.deepsense.deeplang.parameters.ColumnType.ColumnType
 
-case class WrongColumnTypeException(override val message: String)
-  extends DOperationExecutionException(message, None)
-
-object WrongColumnTypeException {
-  def apply(
-      columnName: String,
-      actualType: ColumnType,
-      expectedTypes: ColumnType*): WrongColumnTypeException =
-    WrongColumnTypeException(
-      s"Column '$columnName' has type '$actualType' instead of " +
-        s"expected ${expectedTypes.map(t => s"'${t.toString}'").mkString(", ")}")
-}
+case class WrongReplacementValueException(value: String, colName: String, colType: ColumnType)
+  extends DOperationExecutionException(
+    "Replacement value \"" + value + "\" can't be placed in column \"" + colName + "\" " +
+      "of type \"" + colType.toString + "\"",
+    None)

@@ -18,15 +18,9 @@ package io.deepsense.deeplang.doperations.exceptions
 
 import io.deepsense.deeplang.parameters.ColumnType.ColumnType
 
-case class WrongColumnTypeException(override val message: String)
-  extends DOperationExecutionException(message, None)
-
-object WrongColumnTypeException {
-  def apply(
-      columnName: String,
-      actualType: ColumnType,
-      expectedTypes: ColumnType*): WrongColumnTypeException =
-    WrongColumnTypeException(
-      s"Column '$columnName' has type '$actualType' instead of " +
-        s"expected ${expectedTypes.map(t => s"'${t.toString}'").mkString(", ")}")
-}
+case class MultipleTypesReplacementException(columnTypes: Map[String, ColumnType])
+  extends DOperationExecutionException(
+    "Missing value replacement is impossible - selected columns: " +
+      s"${columnTypes.keys.mkString(", ")} have different column types: " +
+      s"${columnTypes.keys.map(columnTypes(_)).mkString(", ")}",
+    None)

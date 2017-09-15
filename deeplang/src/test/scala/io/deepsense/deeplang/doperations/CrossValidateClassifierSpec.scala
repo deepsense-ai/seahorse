@@ -24,8 +24,9 @@ import org.scalatest.mock.MockitoSugar
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.machinelearning.logisticregression.{UntrainedLogisticRegression, TrainedLogisticRegression}
+import io.deepsense.deeplang.doperables.machinelearning.logisticregression.{TrainedLogisticRegression, UntrainedLogisticRegression}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
+import io.deepsense.deeplang.parameters.ChoiceParameter.BinaryChoice
 import io.deepsense.deeplang.parameters.{MultipleColumnSelection, SingleColumnSelection}
 import io.deepsense.deeplang.{DKnowledge, DMethod1To1, ExecutionContext, UnitSpec}
 import io.deepsense.reportlib.model.ReportContent
@@ -38,7 +39,7 @@ class CrossValidateClassifierSpec extends UnitSpec with MockitoSugar {
   val classifier = new CrossValidateClassifier
   // NOTE: When folds == 0, only training is performed (returned report is empty)
   classifier.numberOfFoldsParameter.value = Some(0.0)
-  classifier.shuffleParameter.value = Some(CrossValidate.BinaryChoice.NO.toString)
+  classifier.shuffleParameter.value = Some(BinaryChoice.NO.toString)
   classifier.seedShuffleParameter.value = Some(0.0)
 
   val trainableParametersStub = Trainable.Parameters(

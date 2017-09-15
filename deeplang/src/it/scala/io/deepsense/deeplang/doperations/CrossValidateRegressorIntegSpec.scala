@@ -27,6 +27,7 @@ import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.machinelearning.ridgeregression.TrainedRidgeRegression
 import io.deepsense.deeplang.doperations.exceptions.InvalidDataFrameException
+import io.deepsense.deeplang.parameters.ChoiceParameter.BinaryChoice
 import io.deepsense.deeplang.parameters.{MultipleColumnSelection, NameColumnSelection, NameSingleColumnSelection}
 
 class CrossValidateRegressorIntegSpec
@@ -75,7 +76,7 @@ class CrossValidateRegressorIntegSpec
   val numberOfFolds = 4
   val regressor = new CrossValidateRegressor
   regressor.numberOfFoldsParameter.value = Some(numberOfFolds * 1.0)
-  regressor.shuffleParameter.value = Some(CrossValidate.BinaryChoice.YES.toString)
+  regressor.shuffleParameter.value = Some(BinaryChoice.YES.toString)
   regressor.seedShuffleParameter.value = Some(0.0)
 
   regressor.targetColumnParameter.value =

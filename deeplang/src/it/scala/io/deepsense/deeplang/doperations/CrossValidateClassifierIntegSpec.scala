@@ -25,6 +25,7 @@ import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.machinelearning.logisticregression.TrainedLogisticRegression
 import io.deepsense.deeplang.doperables.{ClassificationReporter, Report}
+import io.deepsense.deeplang.parameters.ChoiceParameter.BinaryChoice
 import io.deepsense.deeplang.parameters.{MultipleColumnSelection, NameColumnSelection, NameSingleColumnSelection}
 import io.deepsense.reportlib.model.ReportJsonProtocol._
 
@@ -76,7 +77,7 @@ class CrossValidateClassifierIntegSpec
 
   def createClassifier(numberOfFolds: Int) = {
     val classifier = new CrossValidateRegressor
-    classifier.shuffleParameter.value = Some(CrossValidate.BinaryChoice.YES.toString)
+    classifier.shuffleParameter.value = Some(BinaryChoice.YES.toString)
     classifier.seedShuffleParameter.value = Some(0.0)
     classifier.numberOfFoldsParameter.value = Some(numberOfFolds)
 

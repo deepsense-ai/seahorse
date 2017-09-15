@@ -25,8 +25,9 @@ import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.machinelearning.ridgeregression.{UntrainedRidgeRegression, TrainedRidgeRegression}
-import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
+import io.deepsense.deeplang.doperables.machinelearning.ridgeregression.{TrainedRidgeRegression, UntrainedRidgeRegression}
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
+import io.deepsense.deeplang.parameters.ChoiceParameter.BinaryChoice
 import io.deepsense.deeplang.parameters.{MultipleColumnSelection, SingleColumnSelection}
 import io.deepsense.reportlib.model.ReportContent
 
@@ -38,7 +39,7 @@ class CrossValidateRegressorSpec extends UnitSpec with MockitoSugar {
   val regressor = new CrossValidateRegressor
   // NOTE: When folds == 0, only regression train is performed (returned report is empty)
   regressor.numberOfFoldsParameter.value = Some(0.0)
-  regressor.shuffleParameter.value = Some(CrossValidate.BinaryChoice.NO.toString)
+  regressor.shuffleParameter.value = Some(BinaryChoice.NO.toString)
   regressor.seedShuffleParameter.value = Some(0.0)
 
   val trainableParametersStub = Trainable.Parameters(

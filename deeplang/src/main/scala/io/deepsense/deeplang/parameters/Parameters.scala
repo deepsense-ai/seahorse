@@ -145,6 +145,32 @@ case class ChoiceParameter(
   def selection: Option[Selection] = value.map(selectionForChoice)
 }
 
+object ChoiceParameter {
+  object BinaryChoice extends Enumeration {
+    type BinaryChoice = Value
+    val YES = Value("Yes")
+    val NO = Value("No")
+  }
+
+  def binaryChoice(
+      description: String,
+      default: Option[String],
+      required: Boolean,
+      yesSchema: ParametersSchema,
+      noSchema: ParametersSchema): ChoiceParameter = {
+
+    ChoiceParameter(
+      description,
+      default,
+      required,
+      options = ListMap(
+        BinaryChoice.YES.toString -> yesSchema,
+        BinaryChoice.NO.toString -> noSchema
+      )
+    )
+  }
+}
+
 /**
  * Holds multiple choice parameter - its possible values and chosen values.
  * Its value is a set of chosen labels.

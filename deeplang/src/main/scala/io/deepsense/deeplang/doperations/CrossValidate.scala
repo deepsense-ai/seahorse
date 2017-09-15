@@ -18,9 +18,7 @@ package io.deepsense.deeplang.doperations
 
 import java.util.UUID
 
-import scala.collection.immutable.ListMap
 import scala.reflect.runtime.{universe => ru}
-
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
@@ -29,7 +27,8 @@ import org.apache.spark.sql.catalyst.expressions.GenericRow
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.InvalidDataFrameException
-import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
+import io.deepsense.deeplang.parameters.ChoiceParameter.BinaryChoice
 import io.deepsense.deeplang.parameters.{ChoiceParameter, NumericParameter, ParametersSchema, RangeValidator}
 import io.deepsense.deeplang.{DKnowledge, DOperation2To2, ExecutionContext}
 import io.deepsense.reportlib.model.ReportContent
@@ -40,8 +39,6 @@ abstract class CrossValidate[T <: Evaluable]()
     Scorable with T, Report]
   with CrossValidateParams
   with WithTrainParameters {
-
-  import CrossValidate._
 
   def reportName: String
 
@@ -176,7 +173,6 @@ abstract class CrossValidate[T <: Evaluable]()
 }
 
 trait CrossValidateParams {
-  import CrossValidate._
   val numberOfFoldsParameter = NumericParameter(
     "How many folds should be used in cross-validation?",
     Some(10.0),
@@ -193,22 +189,11 @@ trait CrossValidateParams {
       Int.MinValue / 2, Int.MaxValue / 2, beginIncluded = true, endIncluded = true, Some(1.0)),
     value = None)
 
-  val shuffleParameter = ChoiceParameter(
+  val shuffleParameter = ChoiceParameter.binaryChoice(
     "Should the DataFrame be shuffled before cross-validation?",
     Some(BinaryChoice.YES.toString),
     required = true,
-    options = ListMap(
-      BinaryChoice.NO.toString -> ParametersSchema(),
-      BinaryChoice.YES.toString -> ParametersSchema(
-        "seed" -> seedShuffleParameter)
-    )
+    yesSchema = ParametersSchema("seed" -> seedShuffleParameter),
+    noSchema = ParametersSchema()
   )
-}
-
-object CrossValidate {
-  object BinaryChoice extends Enumeration {
-    type BinaryChoice = Value
-    val YES = Value("Yes")
-    val NO = Value("No")
-  }
 }
