@@ -24,18 +24,16 @@ class WorkflowsEditorReports {
 
     this.$scope.$on('OutputPort.LEFT_CLICK', (event, data) => {
       let node = this.WorkflowService.getWorkflow().getNodeById(data.portObject.nodeId);
-      this.$scope.$applyAsync(() => {
-        let reportEntityId = node.getResult(data.reference.getParameter('portIndex'));
+      let reportEntityId = node.getResult(data.reference.getParameter('portIndex'));
 
-        if (this.Report.hasReportEntity(reportEntityId)) {
-          this.Report.getReport(reportEntityId).then(report => {
-            this.reportName = '';
-            this.report = report;
-            this.reportName = report.name;
-            this.Report.openReport();
-          });
-        }
-      });
+      if (this.Report.hasReportEntity(reportEntityId)) {
+        this.Report.getReport(reportEntityId).then(report => {
+          this.reportName = '';
+          this.report = report;
+          this.reportName = report.name;
+          this.Report.openReport();
+        });
+      }
     });
 
     this.inited = true;

@@ -8,8 +8,7 @@ function ReportDefault() {
     templateUrl: 'app/workflows/reports/report-default/report-default.html',
     replace: 'true',
     controller: function() {},
-    controllerAs: 'controller',
-    bindToController: true
+    controllerAs: 'controller'
   };
 }
 

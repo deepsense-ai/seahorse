@@ -12,30 +12,27 @@ function ReportTable() {
       'distributions': '=',
       'datatypesVisible': '=?'
     },
-    controller: function($rootScope) {
-      let columnTypeByName = _.object(_.zip(this.table.columnNames, this.table.columnTypes));
-      this.tableColumnsData = _.map(this.table.columnNames, (columnName) => {
-        let distributionType = this.distributions && this.distributions[columnName];
-        return {
-          'columnName': columnName,
-          'type': columnTypeByName[columnName],
-          'distributionType': distributionType
-        };
-      });
+    controller: function($scope, $rootScope) {
+      $scope.getColumnType = (columnName) => {
+        // Not using zip to avoid object allocation every digest cycle.
+        let indexOfColumn = $scope.table.columnNames.indexOf(columnName);
+        return $scope.table.columnTypes[indexOfColumn];
+      };
 
-      this.showDistribution = function(columnData) {
-        if (columnData.distributionType) {
+      $scope.getDistributionType = (columnName) => {
+        return $scope.distributions && $scope.distributions[columnName];
+      };
+
+      this.showDistribution = (columnName) => {
+        if ($scope.getDistributionType(columnName)) {
           $rootScope.$broadcast(REPORT_EVENTS.SELECT_COLUMN, {
-            colName: columnData.columnName
+            colName: columnName
           });
         }
-
       };
 
     },
-    controllerAs: 'controller',
-    bindToController: true,
-    replace: 'true'
+    controllerAs: 'controller'
   };
 }
 

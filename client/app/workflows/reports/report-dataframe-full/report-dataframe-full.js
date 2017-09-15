@@ -7,20 +7,15 @@ function ReportDataframeFull() {
     },
     templateUrl: 'app/workflows/reports/report-dataframe-full/report-dataframe-full.html',
     replace: 'true',
-    controller: function() {
-      let tableByName = () => _.object(_.map(this.report.tables, (table) => [table.name, table]));
-      this.dataSample = () => tableByName()['Data Sample'];
-      let tableSizes = () => tableByName()['DataFrame Size'];
-      this.dataframeHeaderData = () => {
-        return {
-          columnCount: tableSizes().values[0][0],
-          rowCount: tableSizes().values[0][1],
-          previewRowCount: this.dataSample().values.length
-        };
-      };
+    controller: function($scope) {
+      $scope._getTableByName = (tableName) => _.find($scope.report.tables, (t) => t.name === tableName);
+      $scope.getDataSample = () => $scope._getTableByName('Data Sample');
+      $scope.getTableSizes = () => $scope._getTableByName('DataFrame Size');
+      $scope.getColumnCount = () => $scope.getTableSizes().values[0][0];
+      $scope.getRowCount = () => $scope.getTableSizes().values[0][1];
+      $scope.getPreviewRowCount = () => $scope.getDataSample().values.length;
     },
-    controllerAs: 'controller',
-    bindToController: true
+    controllerAs: 'controller'
   };
 }
 

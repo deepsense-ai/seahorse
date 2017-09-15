@@ -10,20 +10,21 @@
 
           <small>Columns</small>
           <h4>
-            <span> {{ controller.dataframeHeaderData().columnCount }} </span>
+            <span> {{ getColumnCount() }} </span>
           </h4>
         </div>
         <div class="col-xs-6">
           <small>Rows</small>
           <h4>
-            {{ controller.dataframeHeaderData().previewRowCount }} <span>/ {{ controller.dataframeHeaderData().rowCount }} </span>
+            {{ getPreviewRowCount() }} <span>/
+            {{ getRowCount() }} </span>
           </h4>
         </div>
       </div>
     </div>
 
-    <report-table table="controller.dataSample()"
-                  distributions="controller.report.distributions"
+    <report-table table="getDataSample()"
+                  distributions="report.distributions"
                   datatypes-visible="true"></report-table>
 
   </div>
