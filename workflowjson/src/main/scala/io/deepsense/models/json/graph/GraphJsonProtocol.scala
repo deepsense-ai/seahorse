@@ -20,7 +20,7 @@ import spray.json._
 
 import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
-import io.deepsense.graph.{Edge, Node, StatefulGraph}
+import io.deepsense.graph.{DirectedGraph, Edge, Node}
 import io.deepsense.models.json.graph.OperationJsonProtocol.DOperationReader
 
 object GraphJsonProtocol {
@@ -33,12 +33,12 @@ object GraphJsonProtocol {
   val NodeId = "id"
 
   class GraphReader(catalog: DOperationsCatalog)
-    extends JsonReader[StatefulGraph]
+    extends JsonReader[DirectedGraph]
     with DefaultJsonProtocol {
 
     private val dOperationReader = new DOperationReader(catalog)
 
-    override def read(json: JsValue): StatefulGraph = json match {
+    override def read(json: JsValue): DirectedGraph = json match {
       case JsObject(fields) => read(fields)
       case x =>
         throw new DeserializationException(s"Expected JsObject with a Graph but got $x")
@@ -48,7 +48,7 @@ object GraphJsonProtocol {
       case JsObject(fields) =>
         val nodeId = try {
           fields(NodeId).convertTo[String]
-        } catch { case e =>
+        } catch { case e: Throwable =>
           throw new DeserializationException(s"Node is missing a string field '$NodeId'", e)
         }
         val operation = nodeJs.convertTo[DOperation](dOperationReader)
@@ -69,18 +69,18 @@ object GraphJsonProtocol {
         throw new DeserializationException(s"Expected JsArray with edges but got $x")
     }
 
-    private def read(fields: Map[String, JsValue]): StatefulGraph = {
+    private def read(fields: Map[String, JsValue]): DirectedGraph = {
       val nodes: Set[Node] = fields.get(Nodes).map(readNodes).getOrElse(Set())
       val edges: Set[Edge] = fields.get(Edges).map(readEdges).getOrElse(Set())
-      StatefulGraph(nodes, edges)
+      DirectedGraph(nodes, edges)
     }
   }
 
-  implicit object GraphWriter extends JsonWriter[StatefulGraph] with DefaultJsonProtocol {
-    override def write(graph: StatefulGraph): JsValue = {
+  implicit object GraphWriter extends JsonWriter[DirectedGraph] with DefaultJsonProtocol {
+    override def write(graph: DirectedGraph): JsValue = {
       JsObject(
-        Nodes -> JsArray(graph.directedGraph.nodes.map(_.toJson).toVector),
-        Edges -> JsArray(graph.directedGraph.edges.map(_.toJson).toVector))
+        Nodes -> JsArray(graph.nodes.map(_.toJson).toVector),
+        Edges -> JsArray(graph.edges.map(_.toJson).toVector))
     }
   }
 }

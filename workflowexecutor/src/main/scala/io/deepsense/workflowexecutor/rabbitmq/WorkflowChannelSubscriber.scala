@@ -29,6 +29,6 @@ case class WorkflowChannelSubscriber(
     case Launch(workflow) =>
       logger.debug(s"LAUNCH! $workflow")
       val selection = context.actorSelection(executionDispatcher.path./(workflow.id.toString))
-      selection ! WorkflowExecutorActor.Messages.Launch(workflow.graph.directedGraph)
+      selection ! WorkflowExecutorActor.Messages.Launch(workflow.graph)
   }
 }

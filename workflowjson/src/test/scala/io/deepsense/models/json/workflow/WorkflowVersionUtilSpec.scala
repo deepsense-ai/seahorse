@@ -24,8 +24,7 @@ import spray.json._
 
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.utils.{Logging, Version}
-import io.deepsense.graph.StatefulGraph
-import io.deepsense.graph.graphstate.Completed
+import io.deepsense.graph.{DirectedGraph, StatefulGraph}
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.exceptions.WorkflowVersionFormatException
 import io.deepsense.models.json.{StandardSpec, UnitTestSupport}
@@ -40,7 +39,7 @@ class WorkflowVersionUtilSpec
   val currentVersionString = "1.2.3"
   override def currentVersion: Version = Version(currentVersionString)
   override val graphReader = mock[GraphReader]
-  when(graphReader.read(any())).thenReturn(StatefulGraph())
+  when(graphReader.read(any())).thenReturn(DirectedGraph())
 
   "WorkflowVersionUtil" should {
     "allow to extract the version as a string and as an object" in {
@@ -100,7 +99,7 @@ class WorkflowVersionUtilSpec
   val correctVersionMeta = WorkflowMetadata(WorkflowType.Batch, currentVersionString)
   val incorrectVersionMeta = correctVersionMeta.copy(apiVersion = "X" + currentVersionString)
 
-  val correctWorkflow = Workflow(correctVersionMeta, StatefulGraph(), ThirdPartyData("{}"))
+  val correctWorkflow = Workflow(correctVersionMeta, DirectedGraph(), ThirdPartyData("{}"))
   val correctWorkflowString = correctWorkflow.toJson.prettyPrint
 
   val incorrectVersionJson = JsObject(
@@ -112,7 +111,7 @@ class WorkflowVersionUtilSpec
   val workflowWithResults = WorkflowWithResults(
     Workflow.Id.randomId,
     correctVersionMeta,
-    StatefulGraph(),
+    DirectedGraph(),
     ThirdPartyData("{}"),
     ExecutionReport(
       DateTimeConverter.now,
@@ -125,7 +124,7 @@ class WorkflowVersionUtilSpec
   val workflowWithSavedResults = WorkflowWithSavedResults(
     Workflow.Id.randomId,
     correctVersionMeta,
-    StatefulGraph(),
+    DirectedGraph(),
     ThirdPartyData("{}"),
     ExecutionReportWithId(
       ExecutionReportWithId.Id.randomId,

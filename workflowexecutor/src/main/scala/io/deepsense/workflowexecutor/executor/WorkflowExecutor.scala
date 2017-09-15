@@ -66,7 +66,7 @@ case class WorkflowExecutor(
 
     val startedTime = DateTimeConverter.now
     workflowExecutorActor ! Connect(workflow.id)
-    workflowExecutorActor ! Launch(workflow.graph.directedGraph)
+    workflowExecutorActor ! Launch(workflow.graph)
 
     logger.debug("Awaiting execution end...")
     actorSystem.awaitTermination()

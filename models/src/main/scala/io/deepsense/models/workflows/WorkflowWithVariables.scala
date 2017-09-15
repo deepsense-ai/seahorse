@@ -16,11 +16,11 @@
 
 package io.deepsense.models.workflows
 
-import io.deepsense.graph.StatefulGraph
+import io.deepsense.graph.DirectedGraph
 
 case class WorkflowWithVariables(
     id: Workflow.Id,
     metadata: WorkflowMetadata,
-    graph: StatefulGraph,
+    graph: DirectedGraph,
     thirdPartyData: ThirdPartyData,
     variables: Variables)

@@ -17,11 +17,11 @@
 package io.deepsense.models.workflows
 
 import io.deepsense.commons.models
-import io.deepsense.graph.StatefulGraph
+import io.deepsense.graph.DirectedGraph
 
 case class Workflow(
     metadata: WorkflowMetadata,
-    graph: StatefulGraph,
+    graph: DirectedGraph,
     additionalData: ThirdPartyData)
 
 object Workflow {
