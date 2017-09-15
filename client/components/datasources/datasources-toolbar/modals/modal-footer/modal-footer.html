@@ -1,7 +1,13 @@
 <div class="datasources-modal__footer">
   <div class="datasources-modal__footer-input">
     <label class="title">Name</label>
-    <input type="text" class="form-control" placeholder="my-file">
+    <input
+      ng-model="$ctrl.datasourceParams.name"
+      ng-focus="$ctrl.stopCopyingFromUserField()"
+      placeholder="Name"
+      class="form-control"
+      type="text"
+    />
   </div>
   <button
     ng-disabled="!$ctrl.canAddNewDatasource"

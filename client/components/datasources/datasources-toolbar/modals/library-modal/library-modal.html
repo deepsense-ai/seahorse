@@ -8,7 +8,7 @@
       <label class="title">Source</label>
       <div class="library-source">
         <input
-          ng-model="$ctrl.settings.source"
+          ng-model="$ctrl.datasourceParams.libraryFileParams.libraryPath"
           class="form-control"
           type="text"
           placeholder="library/your-file.csv"
@@ -33,9 +33,12 @@
       <div class="public-param-row">
         <div class="checkbox-wrapper">
           <label class="format-form-label"
-                 ng-class="{'active': $ctrl.settings.publicData}">
+                 ng-class="{'active': $ctrl.datasourceParams.visibility === 'publicVisibility'}"
+          >
             <input
-              ng-model="$ctrl.settings.publicData"
+              ng-model="$ctrl.datasourceParams.visibility"
+              ng-true-value="'publicVisibility'"
+              ng-false-value="'privateVisibility'"
               type="checkbox"
             />
             <span>Public</span>

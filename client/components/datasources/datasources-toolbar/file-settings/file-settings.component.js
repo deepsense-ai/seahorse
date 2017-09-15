@@ -14,17 +14,20 @@ const FileSettingsComponent = {
       'ngInject';
 
       this.fileSettings = {
-        selectedFormat: '',
-        includesNames: null,
-        convertToBool: null,
-        separator: ''
+        fileFormat: '',
+        csvFileFormatParams: {
+          includeHeader: false,
+          convert01ToBoolean: false,
+          separatorType: '',
+          customSeparator: ''
+        }
       };
 
       $scope.$watch(() => this.extension, (newValue, oldValue) => {
         if (newValue !== oldValue && newValue === 'csv') {
-          this.fileSettings.includesNames = true;
-          this.fileSettings.convertToBool = false;
-          this.fileSettings.separator = 'coma';
+          this.fileSettings.csvFileFormatParams.includeHeader = true;
+          this.fileSettings.csvFileFormatParams.convert01ToBoolean = false;
+          this.fileSettings.csvFileFormatParams.separatorType = 'comma';
           this.onChange({fileSettings: this.fileSettings});
         }
       });
@@ -39,12 +42,7 @@ const FileSettingsComponent = {
     }
 
     onFocus() {
-      this.focused = true;
-      this.fileSettings.separator = 'custom';
-    }
-
-    onBlur() {
-      this.focused = false;
+      this.fileSettings.csvFileFormatParams.separator = 'custom';
     }
   }
 };

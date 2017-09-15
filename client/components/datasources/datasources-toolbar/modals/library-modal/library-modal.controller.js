@@ -3,42 +3,48 @@
 import footerTpl from '../modal-footer/modal-footer.html';
 
 class LibraryModalController {
-  constructor(LibraryModalService, $scope, $uibModalInstance) {
+  constructor($scope, $log, $uibModalInstance, LibraryModalService, datasourcesService) {
     'ngInject';
+
+    _.assign(this, {$log, $uibModalInstance, LibraryModalService, datasourcesService});
 
     this.footerTpl = footerTpl;
 
-    this.settings = {
-      source: '',
-      fileSettings: {
-        selectedFormat: '',
-        includesNames: false,
-        convertToBool: false,
-        separator: ''
-      },
-      publicData: false
+    this.datasourceParams = {
+      name: '',
+      visibility: 'privateVisibility',
+      datasourceType: 'libraryFile',
+      libraryFileParams: {
+        libraryPath: '',
+        fileFormat: '',
+        csvFileFormatParams: {
+          includeHeader: false,
+          convert01ToBoolean: false,
+          separatorType: '',
+          customSeparator: ''
+        }
+      }
     };
 
-    $scope.$watch(() => this.settings, (newSettings) => {
-      this.settings = newSettings;
+    $scope.$watch(() => this.datasourceParams, (newSettings) => {
+      this.datasourceParams = newSettings;
       this.canAddNewDatasource = this.checkCanAddNewDatasource();
     }, true);
-
-    _.assign(this, {LibraryModalService, $uibModalInstance});
   }
 
   checkCanAddNewDatasource() {
     const isSeparatorValid = this.checkIsSeparatorValid();
-    const isSourceValid = this.settings.source !== '';
+    const isSourceValid = this.datasourceParams.libraryFileParams.libraryPath !== '';
+    const isNameValid = this.datasourceParams.name !== '';
 
-    return isSeparatorValid && isSourceValid;
+    return isSeparatorValid && isSourceValid && isNameValid;
   }
 
   checkIsSeparatorValid() {
-    const {separator, customSeparator} = this.settings.fileSettings;
+    const {separatorType, customSeparator} = this.datasourceParams.libraryFileParams.csvFileFormatParams;
 
-    if (separator) {
-      if (separator === 'custom') {
+    if (separatorType) {
+      if (separatorType === 'custom') {
         return customSeparator !== '';
       } else {
         return true;
@@ -51,13 +57,15 @@ class LibraryModalController {
   openLibrary() {
     this.LibraryModalService.openLibraryModal('read-file')
       .then((file) => {
-        this.settings.source = file.uri;
         this.extension = file.name.substr(file.name.lastIndexOf('.') + 1);
+        this.datasourceParams.libraryFileParams.libraryPath = file.uri;
+        this.datasourceParams.libraryFileParams.fileFormat = this.extension;
+        this.datasourceParams.name = file.name.split('.').slice(0, file.name.split('.').length - 1).join('.');
       });
   }
 
   onFileSettingsChange(data) {
-    this.settings.fileSettings = data;
+    this.datasourceParams.libraryFileParams = Object.assign({}, this.datasourceParams.libraryFileParams, data);
   }
 
   cancel() {
@@ -65,7 +73,14 @@ class LibraryModalController {
   }
 
   ok() {
-    this.$uibModalInstance.close();
+    this.datasourcesService.addDatasource(this.datasourceParams)
+      .then((result) => {
+        this.$log.info('result ', result);
+        this.$uibModalInstance.close();
+      })
+      .catch((error) => {
+        this.$log.info('error ', error);
+      });
   }
 }
 

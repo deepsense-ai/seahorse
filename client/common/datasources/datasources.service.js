@@ -20,7 +20,9 @@ export default class DatasourcesService {
 
     return this.datasourcesApi
       .putDatasource(datasourceId, params)
-      .then(this.fetchDatasources);
+      .then(() => {
+        this.fetchDatasources();
+      });
   }
 
 
@@ -29,7 +31,9 @@ export default class DatasourcesService {
 
     return this.datasourcesApi
       .deleteDatasource(datasourceId)
-      .then(this.fetchDatasources);
+      .then(() => {
+        this.fetchDatasources();
+      });
   }
 
 
@@ -49,6 +53,8 @@ export default class DatasourcesService {
 
     return this.datasourcesApi
       .putDatasource(datasource.id, datasource.params)
-      .then(this.fetchDatasources);
+      .then(() => {
+        this.fetchDatasources();
+      });
   }
 }

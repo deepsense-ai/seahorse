@@ -4,44 +4,51 @@
   </div>
 
   <div class="datasources-modal__body">
-    <div class="datasources-modal__body-row">
+    <div class="datasources-modal__body-row half-width">
       <label class="title">Driver</label>
-      <select ng-init="$ctrl.selectedFormat = $ctrl.formats[0]"
-              ng-options="format for format in $ctrl.formats"
-              ng-model="$ctrl.selectedFormat"
-              class="form-control">
+      <select
+        ng-init="$ctrl.datasourceParams.jdbcParams.driver = $ctrl.drivers[0]"
+        ng-options="driver for driver in $ctrl.drivers"
+        ng-model="$ctrl.datasourceParams.jdbcParams.driver"
+        class="form-control"
+      >
       </select>
     </div>
 
     <div class="datasources-modal__body-row">
       <label class="title">JDBC connection string</label>
       <input
-        type="text"
-        class="form-control"
+        ng-model="$ctrl.datasourceParams.jdbcParams.url"
         placeholder="Connection string"
+        class="form-control"
+        type="text"
       />
     </div>
 
     <div class="datasources-modal__body-row">
       <div class="radio-row">
         <div class="radio-wrapper">
-          <label class="format-form-label"
-                 ng-class="{'active': $ctrl.queryType === 'table'}">
+          <label
+            ng-class="{'active': $ctrl.type === 'table'}"
+            class="format-form-label"
+          >
             <input
               type="radio"
               value="table"
-              ng-model="$ctrl.queryType"
+              ng-model="$ctrl.type"
             />
             <span class="radio-title">Table name</span>
           </label>
         </div>
         <div class="radio-wrapper">
-          <label class="format-form-label"
-                 ng-class="{'active': $ctrl.queryType === 'customQuery'}">
+          <label
+            ng-class="{'active': $ctrl.type === 'query'}"
+            class="format-form-label"
+          >
             <input
+              ng-model="$ctrl.type"
+              value="query"
               type="radio"
-              value="customQuery"
-              ng-model="$ctrl.queryType"
             />
             <span class="radio-title">Custom SQL query</span>
           </label>
@@ -49,10 +56,10 @@
       </div>
       <div class="query-row">
         <input
-          type="text"
-          class="form-control"
-          ng-model="$ctrl.query"
+          ng-model="$ctrl.sqlInstruction"
           placeholder="Custom query"
+          class="form-control"
+          type="text"
         />
       </div>
     </div>
@@ -60,10 +67,16 @@
     <div class="datasources-modal__body-row">
       <div class="public-param-row">
         <div class="checkbox-wrapper">
-          <label class="format-form-label"
-                 ng-class="{'active': $ctrl.public}">
-            <input type="checkbox"
-                   ng-model="$ctrl.public"/>
+          <label
+            ng-class="{'active': $ctrl.datasourceParams.visibility === 'publicVisibility'}"
+            class="format-form-label"
+          >
+            <input
+              ng-model="$ctrl.datasourceParams.visibility"
+              ng-true-value="'publicVisibility'"
+              ng-false-value="'privateVisibility'"
+              type="checkbox"
+            />
             <span>Public</span>
           </label>
         </div>
