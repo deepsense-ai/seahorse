@@ -84,6 +84,10 @@
     <level value="WARN"/>
   </logger>
 
+  <logger name="org.spark_project.jetty">
+    <level value="WARN"/>
+  </logger>
+
   <root>
     <priority value ="debug" />
     <appender-ref ref="console" />
