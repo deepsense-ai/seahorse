@@ -44,14 +44,14 @@ trait HdfsIntegTestSupport
       config))
 
     cli.get.delete(s"/$uberJarFilename", true)
-    cli.get.delete(s"/entitystorage-communication.conf", true)
+    cli.get.delete(s"/graphexecutor.conf", true)
     cli.get
       .mkdirs(Constants.TestDir, new FsPermission(FsAction.ALL, FsAction.ALL, FsAction.ALL), true)
     // NOTE: We assume here that uber-jar has been assembled immediately before test task
     copyFromLocal(geUberJarPath, s"/$uberJarFilename")
     copyFromLocal(
-      "../graphexecutor/src/main/resources/entitystorage-communication.conf",
-      "/entitystorage-communication.conf")
+      "../graphexecutor/src/main/resources/graphexecutor.conf",
+      "/graphexecutor.conf")
   }
 
   override def afterAll(): Unit = {

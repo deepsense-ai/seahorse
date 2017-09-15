@@ -39,7 +39,7 @@ object Constants {
   val EMControlInterval = 2 * 1000
 
   /** Time in ms that Experiment Manager mock will wait for start of Graph Executor */
-  val WaitForGraphExecutorClientInitDelay = 20 * 1000
+  val WaitForGraphExecutorClientInitDelay = 60 * 1000
 
   /** Time interval in ms that Experiment Manager mock will check for start of Graph Executor */
   val EMGraphExecutorClientInitInterval = 100
@@ -60,9 +60,14 @@ object Constants {
   val GraphExecutorLibraryLocation = "/deepsense-graphexecutor-assembly-0.1.0.jar"
 
   /**
+   *  Configuration file's name on cluster HDFS
+   */
+  val GraphExecutorConfigName = "graphexecutor.conf"
+
+  /**
    * Location of configuration file on cluster HDFS
    */
-  val GraphExecutorConfigLocation = "/entitystorage-communication.conf"
+  val GraphExecutorConfigLocation = "/" + GraphExecutorConfigName
 
   /**
    * Hostname of cluster master node

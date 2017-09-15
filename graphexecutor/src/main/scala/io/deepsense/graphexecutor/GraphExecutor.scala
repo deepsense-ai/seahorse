@@ -26,6 +26,7 @@ import org.apache.hadoop.yarn.conf.YarnConfiguration
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.{SparkConf, SparkContext}
 
+import io.deepsense.commons.config.ConfigModule
 import io.deepsense.deeplang.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
 import io.deepsense.entitystorage.{EntityStorageClient, EntityStorageClientFactory}
@@ -38,8 +39,11 @@ object GraphExecutor {
   var entityStorageClientFactory: EntityStorageClientFactory = _
 
   def main(args: Array[String]): Unit = {
-    val injector = Guice.createInjector(new GraphExecutorModule, new GraphExecutorTestModule)
-    var entityStorageClientFactory = injector.getInstance(
+    val injector = Guice.createInjector(
+      new ConfigModule,
+      new GraphExecutorModule,
+      new GraphExecutorTestModule)
+    val entityStorageClientFactory = injector.getInstance(
       Key.get(classOf[EntityStorageClientFactory], Names.named(args(0))))
     val graphExecutor = new GraphExecutor(entityStorageClientFactory)
     graphExecutor.mainLoop()
@@ -273,7 +277,7 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
 
   private def createEntityStorageClient(entityStorageClientFactory: EntityStorageClientFactory)
       : EntityStorageClient = {
-    val config = ConfigFactory.load("entitystorage-communication.conf")
+    val config = ConfigFactory.load(Constants.GraphExecutorConfigName)
     val actorSystemName = config.getString("entityStorage.actorSystemName")
     val hostName = config.getString("entityStorage.hostname")
     val port = config.getInt("entityStorage.port")

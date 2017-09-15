@@ -11,16 +11,14 @@ import com.google.inject.{AbstractModule, Provides, Scopes, Singleton}
 import io.deepsense.entitystorage.{EntityStorageClientFactory, EntityStorageClientFactoryImpl}
 
 class GraphExecutorModule extends AbstractModule {
-  override def configure(): Unit = {
-    bind(classOf[EntityStorageClientFactory])
-      .to(classOf[EntityStorageClientFactoryImpl])
-      .in(Scopes.SINGLETON)
-  }
+  override def configure(): Unit = { }
 
   @Provides
   @Singleton
   @Named("default")
-  def provide: EntityStorageClientFactory = {
-    new EntityStorageClientFactoryImpl
+  def provide(
+      @Named("entityStorage.client.localAddress") host: String,
+      @Named("entityStorage.client.localPort") port: Int): EntityStorageClientFactory = {
+    new EntityStorageClientFactoryImpl(host, port)
   }
 }

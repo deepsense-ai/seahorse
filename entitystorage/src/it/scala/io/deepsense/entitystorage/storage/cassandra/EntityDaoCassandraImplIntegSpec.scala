@@ -14,7 +14,7 @@ import org.scalatest.concurrent.ScalaFutures
 
 import io.deepsense.commons.StandardSpec
 import io.deepsense.commons.datetime.DateTimeConverter
-import io.deepsense.entitystorage.CassandraTestSupport
+import io.deepsense.entitystorage.{EntitiesTableCreator, CassandraTestSupport}
 import io.deepsense.entitystorage.factories.EntityTestFactory
 import io.deepsense.models.entities.{DataObjectReference, Entity}
 
@@ -29,7 +29,7 @@ class EntityDaoCassandraImplIntegSpec
   var entities: EntityDaoCassandraImpl = _
 
   before {
-    session.execute(createTableCommand(table))
+    EntitiesTableCreator.create(table, session)
     entities = new EntityDaoCassandraImpl(table, session)
   }
 
@@ -107,23 +107,5 @@ class EntityDaoCassandraImplIntegSpec
     } finally {
       session.execute(QueryBuilder.truncate(table))
     }
-  }
-
-  private def createTableCommand(table: String): String = {
-    s"create table if not exists $table (" +
-    """
-      tenantid text,
-      id uuid,
-      name text,
-      description text,
-      dclass text,
-      created timestamp,
-      updated timestamp,
-      url text,
-      saved boolean,
-      report text,
-      primary key (tenantid, id)
-      );
-    """
   }
 }

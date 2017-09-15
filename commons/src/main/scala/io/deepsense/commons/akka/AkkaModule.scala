@@ -7,10 +7,12 @@
 package io.deepsense.commons.akka
 
 import scala.concurrent.ExecutionContext
+import scala.util.Try
 
 import akka.actor.{ActorRefFactory, ActorSystem}
 import com.google.inject
 import com.google.inject.{AbstractModule, Injector, Provider, Provides}
+import com.typesafe.config.{ConfigException, Config, ConfigFactory}
 
 /**
  * This module defines the bindings required to support Guice injectable Akka actors.
@@ -44,8 +46,12 @@ class AkkaModule extends AbstractModule {
    */
   @Provides
   @inject.Singleton
-  def provideActorSystem(injector: Injector) : ActorSystem = {
-    val system = ActorSystem("root-actor-system")
+  def provideActorSystem(injector: Injector, config: Config) : ActorSystem = {
+    val system: ActorSystem = Try(config.getConfig("deepsense")).map(akkaConfig =>
+      ActorSystem("root-actor-system", akkaConfig)
+    ).recoverWith {
+      case _: ConfigException.Missing => Try(ActorSystem("root-actor-system"))
+    }.get
     // initialize and register extension to allow akka to create actors using Guice
     GuiceAkkaExtension(system).initialize(injector)
     system
