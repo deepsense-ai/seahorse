@@ -26,7 +26,12 @@ function ReportTable() {
         return $scope.distributions && $scope.distributions[columnName];
       };
 
-      $scope.isLongEnoughToBeCutOff = (value) => value.length > $scope.maxLength;
+      $scope.isLongEnoughToBeCutOff = (value) => {
+        if (value) {
+          return value.length > $scope.maxLength;
+        }
+        return false;
+      };
 
       this.showDistribution = (columnName) => {
         if ($scope.getDistributionType(columnName)) {

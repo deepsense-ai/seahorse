@@ -3,22 +3,27 @@
     <thead>
     <tr>
       <th ng-repeat="columnName in table.columnNames">
-        <span data-column-name="{{columnName}}" class="col-name">{{ ::columnName }}</span>
-        <span ng-if="datatypesVisible" class="col-type">({{::getColumnType(columnName)}})</span>
-        <span class="col-icon has-distribution" ng-switch="::getDistributionType(columnName).subtype"
-              ng-click="controller.showDistribution(columnName)"
-        >
-          <i ng-switch-when="discrete"
-             popover-trigger="mouseenter"
-             uib-popover="Open discrete distibution"
-             class="fa fa-pie-chart">
-          </i>
-          <i ng-switch-when="continuous"
-             popover-trigger="mouseenter"
-             uib-popover="Open continuous distibution"
-             class="fa fa-bar-chart-o">
-          </i>
-        </span>
+        <div>
+          <p class="break-mid-words">
+            <span class="has-distribution" ng-switch="::getDistributionType(columnName).subtype"
+                  ng-click="controller.showDistribution(columnName)" >
+              <i ng-switch-when="discrete"
+                 popover-trigger="mouseenter"
+                 uib-popover="Open discrete distibution"
+                 class="fa fa-pie-chart">
+              </i>
+              <i ng-switch-when="continuous"
+                 popover-trigger="mouseenter"
+                 uib-popover="Open continuous distibution"
+                 class="fa fa-bar-chart-o">
+              </i>
+            </span>
+            <span>{{ ::columnName }}</span>
+          </p>
+        </div>
+        <div>
+          <span ng-if="datatypesVisible" class="col-type">({{::getColumnType(columnName)}})</span>
+        </div>
       </th>
     </tr>
     </thead>
