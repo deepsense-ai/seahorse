@@ -46,14 +46,24 @@ class WorkflowStateDaoImplIntegSpec
   val workflowState2@(workflowId2, state2) = createState(completedNoReports, draftWithReports)
   val workflowState3@(workflowId3, state3) = createState(completedWithReports, draftWithReports)
 
+  val expectedState1 = draftStates(state1)
+  val expectedState2 = draftStates(state2)
+
   private def createState(
       nodes: (Node.Id, NodeState)*): (Workflow.Id, Map[Node.Id, NodeState]) =
     (Workflow.Id.randomId, nodes.toMap)
 
+  private def draftStates(states: Map[Workflow.Id, NodeState]): Map[Workflow.Id, NodeState] = {
+    states.map {
+      case (workflowId, nodeState) =>
+        (workflowId, nodeState.draft)
+    }
+  }
+
   "WorkflowStateDao" should {
     "retrieve stored state" in withStored(workflowState1, workflowState2) {
       whenReady(workflowStateDao.get(workflowId1)) { state =>
-        state shouldBe state1
+        state shouldBe expectedState1
       }
     }
 
@@ -66,7 +76,7 @@ class WorkflowStateDaoImplIntegSpec
     "save state" in withStored() {
       whenReady(workflowStateDao.save(workflowId1, state1)) { _ =>
         whenReady(workflowStateDao.get(workflowId1)) { state =>
-          state shouldBe state1
+          state shouldBe expectedState1
         }
       }
     }
@@ -78,7 +88,7 @@ class WorkflowStateDaoImplIntegSpec
 
       whenReady(workflowStateDao.save(workflowId1, Map(nodeId -> newState))) { _ =>
         whenReady(workflowStateDao.get(workflowId1)) { state =>
-          state shouldBe state1.updated(nodeId, newState)
+          state shouldBe expectedState1.updated(nodeId, newState)
         }
       }
     }
@@ -95,7 +105,7 @@ class WorkflowStateDaoImplIntegSpec
 
       whenReady(workflowStateDao.save(workflowId3, Map(nodeId -> stateUpdate))) { _ =>
         whenReady(workflowStateDao.get(workflowId3)) { state =>
-          state shouldBe state3.updated(draftWithReports._1, newState)
+          state shouldBe draftStates(state3.updated(draftWithReports._1, newState))
         }
       }
     }

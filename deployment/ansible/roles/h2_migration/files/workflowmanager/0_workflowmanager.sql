@@ -16,7 +16,7 @@ create table if not exists WORKFLOW_STATES (
   workflow_id UUID,
   node_id UUID,
   update_time BIGINT,
-  state VARCHAR2,
+  results VARCHAR2,
   reports VARCHAR2,
   primary key(workflow_id, node_id)
 );

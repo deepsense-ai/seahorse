@@ -96,7 +96,7 @@ trait WorkflowManager {
   def updateStates(workflowId: Workflow.Id, executionReport: ExecutionReport): Future[Unit]
 
   /**
-   * Updates an workflow, and then updates its nodes states.
+   * Updates a workflow, and then updates its nodes states.
    *
    * @param workflowId Id of the workflow.
    * @param workflowWithResults Updated workflow and its updated results to save.

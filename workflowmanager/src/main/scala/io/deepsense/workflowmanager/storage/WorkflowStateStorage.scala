@@ -13,7 +13,8 @@ import io.deepsense.models.workflows.{NodeState, Workflow}
 trait WorkflowStateStorage {
 
   /**
-   * Retrieves the state of all nodes in workflow.
+   * Retrieves result entities' ids and reports for all operations in the specified workflow.
+   * The returned statuses are always Draft().
    * Note, that this method doesn't know anything about the current structure of the workflow,
    * therefore it might return nodes that are not in the workflow anymore.
    */
@@ -21,6 +22,7 @@ trait WorkflowStateStorage {
 
   /**
    * For each entry in state, inserts/updates the appropriate row in storage.
+   * Persists only result entities' ids and reports. Statuses are not persisted.
    * Note, that if reports are None, the field will not be updated.
    * In order to remove reports from a row, empty EntitiesMap should be passed.
    */

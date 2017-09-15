@@ -79,6 +79,7 @@ class SessionStorageImplIntegSpec
           whenReady(sessionsStorage.get(id)) { getResult =>
             getResult shouldBe Some(SessionRow(id, None, version))
           }
+        case _ => fail()
       }
     }
 
@@ -98,8 +99,10 @@ class SessionStorageImplIntegSpec
                   getResultAfterSave =>
                     getResultAfterSave shouldBe expectedStored
                 }
+              case _ => fail()
             }
         }
+      case _ => fail()
       }
     }
 
@@ -157,7 +160,9 @@ class SessionStorageImplIntegSpec
                   getNewResult shouldBe Some(newSessionRow.copy(version = newVersion2))
                 }
               }
+            case _ => fail()
           }
+        case _ => fail()
       }
     }
 
@@ -187,6 +192,7 @@ class SessionStorageImplIntegSpec
               resultAfter shouldBe expectedGetAfter
             }
           }
+        case _ => fail()
       }
     }
 
