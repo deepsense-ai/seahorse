@@ -10,6 +10,11 @@ function ColumnPlot() {
     },
     link: function(scope, element) {
       function displayChart(data) {
+
+        let categories = _.map(_.sliding(data.buckets, 2), ([start, end]) =>
+          start + " - " + end
+        );
+
         $(element)
           .highcharts({
             chart: {
@@ -18,13 +23,20 @@ function ColumnPlot() {
             title: null,
             subtitle: null,
             xAxis: {
-              categories: data.buckets,
+              categories: categories,
               labels: {
                 rotation: -45,
                 style: {
                   fontSize: '13px',
                   fontFamily: 'Verdana, sans-serif'
                 }
+              }
+            },
+            plotOptions: {
+              column: {
+                groupPadding: 0,
+                pointPadding: 0,
+                borderWidth: 1
               }
             },
             legend: {
@@ -34,7 +46,7 @@ function ColumnPlot() {
               formatter: function() {
                 return `
                 <p>Value range:
-                  <b>${this.x} - ${data.buckets[this.point.index === data.buckets.length - 1 ? this.point.index : this.point.index + 1]}</b>
+                  <b>${this.x}</b>
                 </p>
                 <br />
                 <p>Occurrence count: <b>${this.point.y}</b></p>
