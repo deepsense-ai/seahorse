@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 import tpl from './recent-files-indicator.template.html';
 import RecentFilesController from './recent-files-indicator.controller.js';
 

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 'use strict';
 
 require('./../deepsense-graph-model/deepsense-graph-model.module.js');

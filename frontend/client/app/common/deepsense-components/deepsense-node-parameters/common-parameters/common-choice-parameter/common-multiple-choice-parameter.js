@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 'use strict';
 
 let ChoiceParameter = require('./common-choice-parameter.js');

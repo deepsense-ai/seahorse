@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 require('./operations-catalogue.less');
 
 import tpl from './operations-catalogue.template.html';

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 import tpl from './file-upload-section.template.html';
 import FileUploadSectionController from './file-upload-section.controller.js';
 

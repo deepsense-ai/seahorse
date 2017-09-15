@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 require('./breadcrumbs.less');
 
 const MAX_PARENT_NUMBER_VISIBLE = 4;

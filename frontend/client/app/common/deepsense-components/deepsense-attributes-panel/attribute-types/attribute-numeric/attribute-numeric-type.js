@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 'use strict';
 
 import tpl from './attribute-numeric-type.html';

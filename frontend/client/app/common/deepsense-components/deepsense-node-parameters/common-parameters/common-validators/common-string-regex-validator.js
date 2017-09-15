@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 'use strict';
 
 let GenericValidator = require('./common-generic-validator.js');

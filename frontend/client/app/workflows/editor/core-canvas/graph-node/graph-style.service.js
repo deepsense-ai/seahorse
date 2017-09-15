@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import jsPlumb from 'jsplumb';
 
 const ESTIMATOR = ['io.deepsense.deeplang.doperables.Estimator'];

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 require('./attribute-boolean/attribute-boolean-type.js');
 require('./attribute-code-snippet/attribute-code-snippet-type.js');
 require('./attribute-column-selector/attribute-selector-type.js');

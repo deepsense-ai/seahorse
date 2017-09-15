@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 import tpl from './file-list.template.html';
 import FileListController from './file-list.controller.js';
 

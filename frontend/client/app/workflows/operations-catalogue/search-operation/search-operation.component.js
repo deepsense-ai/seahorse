@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 require('./search-operation.less');
 
 import tpl from './search-operation.template.html';

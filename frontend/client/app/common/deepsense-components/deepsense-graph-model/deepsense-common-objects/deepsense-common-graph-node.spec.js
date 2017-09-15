@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 'use strict';
 
 require('./deepsense-common-graph-node.js');

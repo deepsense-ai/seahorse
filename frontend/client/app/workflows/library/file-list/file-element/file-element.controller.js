@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 // TODO think of refactor this controller as it's trying to resolve all cases
 require('./file-element.less');
 

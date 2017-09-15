@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 'use strict';
 
 let GenericParameter = require('./../common-generic-parameter.js');

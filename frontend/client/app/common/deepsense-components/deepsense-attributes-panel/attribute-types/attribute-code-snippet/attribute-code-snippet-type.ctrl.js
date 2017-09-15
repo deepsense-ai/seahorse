@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 'use strict';
 
 require('./attribute-code-snippet-type-modal/attribute-code-snippet-type-modal.ctrl.js');

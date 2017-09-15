@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import angular from 'angular';
 import OperationCatalogue from './operations-catalogue.component';
 import OperationsList from './operations-list/operations-list.component';

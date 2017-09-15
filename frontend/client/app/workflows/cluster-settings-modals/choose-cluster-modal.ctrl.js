@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 'use strict';
 
 const COOKIE_NAME = 'SEAHORSE_DELETE_PRESET_CONFIRMATION';

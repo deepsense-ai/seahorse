@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 'use strict';
 
 import tpl from './loading-spinner-lg.tpl.html';

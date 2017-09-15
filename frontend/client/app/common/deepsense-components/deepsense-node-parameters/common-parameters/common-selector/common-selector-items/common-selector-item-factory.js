@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 'use strict';
 
 let SingleColumnSelectorItem = require('./common-single-column-selector-item.js');

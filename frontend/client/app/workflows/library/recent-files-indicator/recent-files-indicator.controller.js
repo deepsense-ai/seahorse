@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 require('./recent-files-indicator.less');
 
 class RecentFilesIndicatorController {

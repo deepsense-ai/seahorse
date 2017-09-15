@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 'use strict';
 
 require('./attributes-serialized-view/attributes-serialized-view.js');

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 'use strict';
 
 let StringRegexValidator = require('./common-string-regex-validator.js');

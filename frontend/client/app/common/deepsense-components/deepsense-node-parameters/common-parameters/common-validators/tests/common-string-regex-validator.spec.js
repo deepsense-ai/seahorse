@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 'use strict';
 
 describe('String regex validator', () => {

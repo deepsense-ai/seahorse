@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 'use strict';
 
 const spinner = angular.module('deepsense.spinner', []);

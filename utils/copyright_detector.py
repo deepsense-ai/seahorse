@@ -212,6 +212,7 @@ def apache_license_lines(year):
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 """.format(year=year).splitlines(True)
 
 

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 require('./column-list-selector-item.js');
 require('./index-list-selector-item.js');
 require('./type-list-selector-item.js');
