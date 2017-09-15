@@ -14,7 +14,7 @@ title: Getting Started
 
 Seahorse is a data analytics platform letting users to create
 <a target="_blank" href="https://spark.apache.org/">Apache Spark</a> applications in a intuitive and visual way.
-All while connected to any Spark Cluster (YARN, Mesos, Standalone) or a bundled local Spark.
+All while connected to any Spark Cluster (YARN, Mesos, Standalone) or to a bundled local Spark.
 
 For more detailed overview go to [Overview](./index.html).
 
@@ -28,7 +28,7 @@ and Windows
 <img class="img-responsive" style="display: inline-block; width:auto; height:15px;" src="./img/os_icons/windows.png">
 is distributed in a form of Vagrant image.
 
-1. Install Vagrant (required). You can find the Vagrant installation guide at [vagrantup.com](https://www.vagrantup.com/docs/installation/).
+1. Install **Vagrant (required)**. You can find the Vagrant installation guide at [vagrantup.com](https://www.vagrantup.com/docs/installation/).
 2. Download `Vagrantfile` from [get Seahorse page](http://deepsense.io/get-seahorse/).
 3. Go to the catalog with `Vagrantfile` file and run `vagrant up` from the command line.
 4. Go to <a target="_blank" href="{{ site.SEAHORSE_EDITOR_ADDRESS }}">{{ site.SEAHORSE_EDITOR_ADDRESS }}</a> and start using Seahorse!
@@ -41,7 +41,7 @@ Seahorse for Linux
 <img class="img-responsive" style="display: inline-block; width:auto; height:15px;" src="./img/os_icons/linux.png">
 is distributed in a form of docker images.
 
-1. Install Docker (required) and docker-compose (required). You can find Docker installation guide at [docs.docker.com/engine](https://docs.docker.com/engine/installation/)
+1. Install **Docker (required)** and **docker-compose (required)**. You can find Docker installation guide at [docs.docker.com/engine](https://docs.docker.com/engine/installation/)
   and docker-compose installation guide at [docs.docker.com/compose](https://docs.docker.com/compose/install/).
 2. Download `docker-compose.yml` from [get Seahorse page](http://deepsense.io/get-seahorse/).
 3. Go to the catalog with `docker-compose.yml` file and run `docker-compose up` from the command line.
@@ -63,7 +63,7 @@ Then we will apply simple transformation to the data.
     <em>Home Screen of Seahorse</em>
 </p>
 
-Home screen of Seahorse is a list of all workflows - initially filled with examples. For now let's  create a new workflow.
+Home screen of Seahorse is a list of all workflows - initially filled with examples. For now let's create a new workflow.
 
 * Create the new workflow using the **New Workflow** button. A Workflow Editor will get opened.
 
