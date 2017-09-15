@@ -1,3 +1,5 @@
+import jsPlumb from 'jsplumb';
+
 const ESTIMATOR = ['io.deepsense.deeplang.doperables.Estimator'];
 const TRANSFORMER = ['io.deepsense.deeplang.doperables.Transformer'];
 const EVALUATOR = ['io.deepsense.deeplang.doperables.Evaluator'];
@@ -14,31 +16,31 @@ const SEAHORSE_ALLPORTS = '#1e6c71';
 
 // paint styles
 const DEFAULT_PAINT_STYLE = {
-  fillStyle: SEAHORSE_BLUE
+  fill: SEAHORSE_BLUE
 };
 
 const STYLES_MAP = {
   'estimator': {
-    fillStyle: SEAHORSE_SEA_GREEN
+    fill: SEAHORSE_SEA_GREEN
   },
   'transformer': {
-    fillStyle: SEAHORSE_MADISON
+    fill: SEAHORSE_MADISON
   },
   'evaluator': {
-    fillStyle: SEAHORSE_ALLPORTS
+    fill: SEAHORSE_ALLPORTS
   },
   'default': {
-    fillStyle: SEAHORSE_BLUE
+    fill: SEAHORSE_BLUE
   }
 };
 
 const CONNECTOR_STYLE_DEFAULT = {
-  lineWidth: 2,
+  strokeWidth: 2,
 };
 
 const CONNECTOR_HOVER_STYLE = {
   endpoint: 'Dot',
-  strokeStyle: SEAHORSE_BLUE
+  stroke: SEAHORSE_BLUE
 };
 
 // port basic settings
@@ -81,13 +83,13 @@ class GraphStyleService {
     } else {
       portStyle = Object.create(OUTPUT_STYLE);
 
-      const color = this.getPortPaintStyleForQualifier(port.typeQualifier[0]).fillStyle;
+      const color = this.getPortPaintStyleForQualifier(port.typeQualifier[0]).fill;
       const connectorStyle = Object.assign({}, CONNECTOR_STYLE_DEFAULT, {
-        strokeStyle: color
+        stroke: color
       });
 
       const connectorHoverStyle = Object.assign({}, CONNECTOR_STYLE_DEFAULT, {
-        strokeStyle: color
+        stroke: color
       });
 
       portStyle.connectorStyle = connectorStyle;

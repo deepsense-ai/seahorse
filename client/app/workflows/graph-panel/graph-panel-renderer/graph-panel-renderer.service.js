@@ -3,6 +3,8 @@
 // TODO Remove jshint ignore and refactor code.
 /* jshint ignore:start */
 
+import jsPlumb from 'jsplumb';
+
 const connectorPaintStyleDefault = {
   lineWidth: 2,
   outlineColor: 'white',

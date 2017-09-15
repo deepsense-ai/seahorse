@@ -1,5 +1,7 @@
 'use strict';
 
+import jsPlumb from 'jsplumb';
+
 let internal = {};
 class MultiSelection {
   constructor($document, $timeout, $rootScope, MouseEvent, MultiSelectionService, debounce) {

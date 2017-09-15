@@ -10,7 +10,6 @@ require('angular-xeditable');
 require('angucomplete-alt');
 require('ace-webapp');
 require("font-awesome-webpack!./font-awesome.config.js");
-require('imports?this=>window!script!jsplumb'); //TODO remove
 require('jquery');
 require('lodash');
 require('imports?this=>window!script!malihu-custom-scrollbar-plugin');

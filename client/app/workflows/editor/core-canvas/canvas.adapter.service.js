@@ -1,4 +1,5 @@
-require('imports?this=>window!script!jsplumb');
+import jsPlumb from 'jsplumb';
+import {GraphTypesStyle} from './graph-node/graph-types-styles.const.js';
 
 const POSITION_MAP = {
   OUTPUT: {
@@ -30,7 +31,6 @@ const NEW_NODE_EDGE = {
   endPortId: 0
 };
 
-import {GraphTypesStyle} from './graph-node/graph-types-styles.const.js';
 
 class AdapterService {
   /*@ngInject*/

@@ -1,5 +1,7 @@
 'use strict';
 
+import jsPlumb from 'jsplumb';
+
 /* @ngInject */
 function DraggableDirective($rootScope, GraphNode) {
   return {
