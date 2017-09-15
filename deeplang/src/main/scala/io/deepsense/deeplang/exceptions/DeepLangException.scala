@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.exceptions
 
-import io.deepsense.commons.exception.{FailureCode, DeepSenseException}
+import io.deepsense.commons.exception.{FailureDescription, FailureCode, DeepSenseException}
 
 abstract class DeepLangException(
     override val message: String,
@@ -25,4 +25,8 @@ abstract class DeepLangException(
     FailureCode.NodeFailure,
     "DeepLang Exception",
     message,
-    Option(cause))
+    Option(cause),
+    Option(cause)
+      .map(e => FailureDescription.stacktraceDetails(e.getStackTrace))
+      .getOrElse(Map())
+  )

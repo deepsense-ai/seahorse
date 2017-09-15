@@ -16,6 +16,8 @@
 
 package io.deepsense.graph
 
+import org.apache.spark.SparkException
+
 import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription, DeepSenseException}
 import io.deepsense.commons.models
 import io.deepsense.commons.utils.Logging
@@ -43,6 +45,18 @@ case class Node(
     // (current) only descendant nodes of failed node? / only queued nodes? / all other nodes?
     val failureDescription = reason match {
       case e: DeepSenseException => e.failureDescription
+      case e: SparkException =>
+        val messageLines = e.getMessage.split("\n")
+        val stacktrace = messageLines.drop(1).mkString("\n")
+        val driverStacktrace =
+          FailureDescription.stacktraceDetails(reason.getStackTrace)("stacktrace")
+        FailureDescription(
+          errorId,
+          FailureCode.UnexpectedError,
+          failureTitle,
+          Some(messageLines(0)),
+          Map("stacktrace" -> (stacktrace + "\n" + driverStacktrace))
+        )
       case e => FailureDescription(
         errorId,
         FailureCode.UnexpectedError,
