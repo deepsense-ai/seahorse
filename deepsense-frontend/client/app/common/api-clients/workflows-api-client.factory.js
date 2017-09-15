@@ -74,11 +74,18 @@ function WorkflowsApiClientFactory(BaseApiClient, ServerCommunication, config) {
       return `${this.API_URL}${PATH_WORKFLOWS}/upload`;
     }
 
+    cloneNotebookNode(workflowId, sourceNodeId, destinationNodeId) {
+      return this.makeRequest(
+        this.METHOD_POST,
+        `${this.API_URL}${PATH_WORKFLOWS}/${workflowId}/notebook/${sourceNodeId}/copy/${destinationNodeId}`
+      );
+    }
+
   }
 
   return new WorkflowsApiClient();
 }
 
-exports.inject = function(module) {
+exports.inject = function (module) {
   module.factory('WorkflowsApiClient', WorkflowsApiClientFactory);
 };
