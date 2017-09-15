@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperations.readwritedataframe
+package io.deepsense.deeplang.doperations.readwritedataframe.filestorage
 
 import java.io.{BufferedWriter, FileOutputStream, IOException, OutputStreamWriter}
-import java.nio.file.{FileAlreadyExistsException, Files, Paths}
+import java.nio.file.{Files, Paths}
 import java.util.UUID
 
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FileSystem, Path}
+
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperations.exceptions.DeepSenseIOException
+import io.deepsense.deeplang.doperations.readwritedataframe.FilePath
 
-object FileDownloader {
+private[filestorage] object FileDownloader {
 
   def downloadFile(url: String)(implicit context: ExecutionContext): FilePath = {
     if (context.tempPath.startsWith("hdfs://")) {

@@ -20,7 +20,7 @@ NETWORK_NAME="sbt-test-$CLUSTER_ID"
 
 function networkCreate {
   networkName=$1
-  for subnet in `seq 2 255`; do
+  for subnet in `seq 5 255`; do
     set +e
     docker network create --subnet=10.255.$subnet.1/24 $networkName
     created=$?

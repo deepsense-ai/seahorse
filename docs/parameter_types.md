@@ -101,8 +101,7 @@ A parameter of this type defines a set of options. Exactly one option must be se
 
 **Example of use:** a target type of conversion in operation converting types of columns of a `DataFrame`.
 
-**Example of use:** In the `Read DataFrame` operation, the user should specify `data storage type` parameter. The parameter exposes three options: `FILE`, `JDBC`, `CASSANDRA`.
-If the user selects `FILE`, he additionally has to provide a value for the string parameter `source`.
+**Example of use:** In the `Read DataFrame` operation, the user should specify `data storage type` parameter. Some possible values of storage type are `FILE` and `JDBC`.
 
 ### Multiple Choice
 This parameter is similar to [single choice selector](#single-choice), but here the user is allowed to select multiple options at once. User does not have to select any option.

@@ -78,7 +78,6 @@ class TransformerAsOperationSpec extends UnitSpec {
     override val name: String = ""
     override val id: Id = "6d924962-9456-11e5-8994-feff819cdc9f"
     override val description: String = ""
-    override val since: Version = Version(0, 0, 0)
   }
 
   "TransformerAsOperation" should {
@@ -95,7 +94,7 @@ class TransformerAsOperationSpec extends UnitSpec {
     "execute transform using transformer with properly set params and return it" in {
       val op = operation
       op.set(op.transformer.paramA -> 2)
-      val result = op.execute(mock[ExecutionContext])(Vector(mock[DataFrame]))
+      val result = op.executeUntyped(Vector(mock[DataFrame]))(mock[ExecutionContext])
 
       result should have length 2
       result(0).asInstanceOf[DataFrame] shouldBe outputDataFrame2
@@ -108,7 +107,7 @@ class TransformerAsOperationSpec extends UnitSpec {
 
       val inputDF = inputDataFrame
       val (result, warnings) =
-        op.inferKnowledge(mock[InferContext])(Vector(DKnowledge(inputDF)))
+        op.inferKnowledgeUntyped(Vector(DKnowledge(inputDF)))(mock[InferContext])
 
       warnings shouldBe InferenceWarnings.empty
 

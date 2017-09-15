@@ -26,6 +26,7 @@ import spray.json.{JsNull, JsValue}
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.commons.utils.{DoubleUtils, Version}
 import io.deepsense.deeplang.DOperation.Id
+import io.deepsense.deeplang.documentation.OperationDocumentation
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.report.Report
@@ -39,7 +40,7 @@ import io.deepsense.deeplang.{DKnowledge, DOperation3To1, ExecutionContext}
 import io.deepsense.reportlib.model.{ReportContent, ReportType, Table}
 
 case class GridSearch()
-  extends DOperation3To1[DataFrame, Estimator[Transformer], Evaluator, Report] {
+  extends DOperation3To1[DataFrame, Estimator[Transformer], Evaluator, Report] with OperationDocumentation {
 
   override val name: String = "Grid Search"
   override val id: Id = "9163f706-eaaf-46f6-a5b0-4114d92032b7"
@@ -87,11 +88,11 @@ case class GridSearch()
   override lazy val tTagTI_2: TypeTag[Evaluator] = typeTag
   override lazy val tTagTO_0: TypeTag[Report] = typeTag
 
-  override protected def _execute(
-      context: ExecutionContext)(
+  override protected def execute(
       dataFrame: DataFrame,
       estimator: Estimator[Transformer],
-      evaluator: Evaluator): Report = {
+      evaluator: Evaluator)(
+      context: ExecutionContext): Report = {
 
     val estimatorParams = estimator.paramPairsFromJson(getEstimatorParams)
     val estimatorWithParams = createEstimatorWithParams(estimator, estimatorParams)
@@ -111,11 +112,11 @@ case class GridSearch()
   }
 
 
-  override protected def _inferKnowledge(
-      context: InferContext)(
+  override protected def inferKnowledge(
       dataFrameKnowledge: DKnowledge[DataFrame],
       estimatorKnowledge: DKnowledge[Estimator[Transformer]],
-      evaluatorKnowledge: DKnowledge[Evaluator]): (DKnowledge[Report], InferenceWarnings) = {
+      evaluatorKnowledge: DKnowledge[Evaluator])(
+      context: InferContext): (DKnowledge[Report], InferenceWarnings) = {
 
     val estimator = estimatorKnowledge.single
     val evaluator = evaluatorKnowledge.single

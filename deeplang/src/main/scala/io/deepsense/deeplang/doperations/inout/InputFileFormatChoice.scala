@@ -25,23 +25,23 @@ sealed trait InputFileFormatChoice extends Choice {
 }
 
 object InputFileFormatChoice {
-  case class Csv()
-      extends InputFileFormatChoice
-      with CsvParameters
-      with HasShouldConvertToBooleanParam {
+  class Csv()
+    extends InputFileFormatChoice
+    with CsvParameters
+    with HasShouldConvertToBooleanParam {
 
     override val name: String = FileFormat.CSV.toString
     override val params: Array[Param[_]] =
       Array(
         csvColumnSeparator,
-        csvNamesIncluded,
+        namesIncluded,
         shouldConvertToBoolean)
   }
-  case class Parquet() extends InputFileFormatChoice {
+  class Parquet() extends InputFileFormatChoice {
     override val name: String = FileFormat.PARQUET.toString
     override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array()
   }
-  case class Json() extends InputFileFormatChoice {
+  class Json() extends InputFileFormatChoice {
     override val name: String = FileFormat.JSON.toString
     override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array()
   }

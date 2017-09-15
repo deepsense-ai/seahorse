@@ -19,6 +19,11 @@ package io.deepsense.commons.utils
 import java.io.File
 
 object FileOperations {
+
+  def mkdirsParents(f: File) = {
+    f.getParentFile.mkdirs()
+  }
+
   def deleteRecursively(f: File): Boolean = {
     if (f.isFile) {
       f.delete()

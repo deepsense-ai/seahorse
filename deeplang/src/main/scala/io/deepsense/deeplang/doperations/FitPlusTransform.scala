@@ -17,11 +17,11 @@
 package io.deepsense.deeplang.doperations
 
 import scala.reflect.runtime.universe._
-
 import spray.json.{JsNull, JsValue}
 
 import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
+import io.deepsense.deeplang.documentation.OperationDocumentation
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.{Estimator, Transformer}
 import io.deepsense.deeplang.doperations.exceptions.TooManyPossibleTypesException
@@ -30,7 +30,7 @@ import io.deepsense.deeplang.params.{DynamicParam, Param}
 import io.deepsense.deeplang.{DKnowledge, DOperation2To2, ExecutionContext}
 
 class FitPlusTransform
-  extends DOperation2To2[DataFrame, Estimator[Transformer], DataFrame, Transformer] {
+  extends DOperation2To2[DataFrame, Estimator[Transformer], DataFrame, Transformer] with OperationDocumentation {
 
   override val id: Id = "1cb153f1-3731-4046-a29b-5ad64fde093f"
   override val name: String = "Fit + Transform"
@@ -52,20 +52,20 @@ class FitPlusTransform
   def setEstimatorParams(jsValue: JsValue): this.type = set(estimatorParams -> jsValue)
   override val params: Array[Param[_]] = Array(estimatorParams)
 
-  override protected def _execute(
-      context: ExecutionContext)(
+  override protected def execute(
       dataFrame: DataFrame,
-      estimator: Estimator[Transformer]): (DataFrame, Transformer) = {
+      estimator: Estimator[Transformer])(
+      context: ExecutionContext): (DataFrame, Transformer) = {
     val estimatorToRun = estimatorWithParams(estimator)
     val transformer: Transformer = estimatorToRun.fit(context)(())(dataFrame)
     val transformed: DataFrame = transformer.transform(context)(())(dataFrame)
     (transformed, transformer)
   }
 
-  override protected def _inferKnowledge(
-      context: InferContext)(
+  override protected def inferKnowledge(
       inputDataFrameKnowledge: DKnowledge[DataFrame],
-      estimatorKnowledge: DKnowledge[Estimator[Transformer]])
+      estimatorKnowledge: DKnowledge[Estimator[Transformer]])(
+      context: InferContext)
       : ((DKnowledge[DataFrame], DKnowledge[Transformer]), InferenceWarnings) = {
 
     val (transformerKnowledge, transformerWarnings) =

@@ -94,8 +94,8 @@ def default_infer_implementation(out_arity, pass_type_tag):
 def print_operation(in_arity, out_arity):
   operation_class = "DOperation"
   parameters_class = "DParameters"
-  inner_exec = "_execute"
-  inner_infer = "_inferKnowledge"
+  inner_exec = "execute"
+  inner_infer = "inferKnowledge"
   arguments = "arguments"
   knowledge = "knowledge"
 
@@ -135,33 +135,33 @@ def print_operation(in_arity, out_arity):
   print textwrap.dedent("""\
     abstract class {operation_class}{in_arity}To{out_arity}[{generics_list}]
       extends DOperation {{
-      val inArity = {in_arity}
-      val outArity = {out_arity}
+      override final val inArity = {in_arity}
+      override final val outArity = {out_arity}
 
       {typetag_fields}
 
       @transient
-      override lazy val inPortTypes: Vector[ru.TypeTag[_]] = Vector({in_port_types})
+      override final lazy val inPortTypes: Vector[ru.TypeTag[_]] = Vector({in_port_types})
 
       @transient
-      override lazy val outPortTypes: Vector[ru.TypeTag[_]] = Vector({out_port_types})
+      override final lazy val outPortTypes: Vector[ru.TypeTag[_]] = Vector({out_port_types})
 
-      override def execute({exec_context_name}: {exec_context_class})(
-          {arguments}: Vector[{operable_class}]): Vector[{operable_class}] = {{
-        {inner_exec}({exec_context_name})({casted_arguments}){maybe_empty_result}
+      override final def executeUntyped({arguments}: Vector[{operable_class}])(
+          {exec_context_name}: {exec_context_class}): Vector[{operable_class}] = {{
+        {inner_exec}({casted_arguments})({exec_context_name}){maybe_empty_result}
       }}
 
-      override def inferKnowledge({infer_context_name}: {infer_context_class})(
-          {knowledge}: Vector[{knowledge_class}[{operable_class}]]): \
+      override final def inferKnowledgeUntyped({knowledge}: Vector[{knowledge_class}[{operable_class}]])(
+          {infer_context_name}: {infer_context_class}): \
 (Vector[{knowledge_class}[{operable_class}]], {warnings_class}) = {{
-        {inner_infer}({infer_context_name})({casted_knowledge}){maybe_empty_infer_result}
+        {inner_infer}({casted_knowledge})({infer_context_name}){maybe_empty_infer_result}
       }}
 
-      protected def {inner_exec}({exec_context_name}: {exec_context_class})\
-({exec_arguments}): {exec_return}
+      protected def {inner_exec}({exec_arguments})\
+({exec_context_name}: {exec_context_class}): {exec_return}
 
-      protected def {inner_infer}({infer_context_name}: {infer_context_class})\
-({infer_arguments}): {infer_return} = {{ {infer_implementation}
+      protected def {inner_infer}({infer_arguments})\
+({infer_context_name}: {infer_context_class}): {infer_return} = {{ {infer_implementation}
       }}
     }}""".format(
       in_arity=in_arity,

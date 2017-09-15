@@ -36,12 +36,11 @@ object DClassesForDOperations {
 object DOperationForPortTypes {
   import DClassesForDOperations._
   class SimpleOperation extends DOperation1To1[A1, A2] {
-    override protected def _execute(context: ExecutionContext)(t0: A1): A2 = ???
+    override protected def execute(t0: A1)(context: ExecutionContext): A2 = ???
     override val id: DOperation.Id = DOperation.Id.randomId
     override val name: String = ""
     override val description: String = ""
-    override val since: Version = Version(0, 0, 0)
-    val params: Array[io.deepsense.deeplang.params.Param[_]] = Array()
+    override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array()
     override lazy val tTagTI_0: ru.TypeTag[A1] = ru.typeTag[A1]
     override lazy val tTagTO_0: ru.TypeTag[A2] = ru.typeTag[A2]
   }
@@ -60,13 +59,11 @@ class DOperationSuite extends FunSuite with DeeplangTestSupport {
 
       val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(param)
 
-      override protected def _execute(context: ExecutionContext)(t1: A1, t2: A2): A = {
+      override protected def execute(t1: A1, t2: A2)(context: ExecutionContext): A = {
         if ($(param) % 2 == 1) t1 else t2
       }
       override val name: String = "Some name"
       override val description: String = "Some description"
-
-      override val since: Version = Version(0, 0, 0)
 
       override lazy val tTagTI_0: ru.TypeTag[A1] = ru.typeTag[A1]
       override lazy val tTagTO_0: ru.TypeTag[A] = ru.typeTag[A]
@@ -79,8 +76,8 @@ class DOperationSuite extends FunSuite with DeeplangTestSupport {
     secondPicker.setParam(2)
 
     val input = Vector(A1(), A2())
-    assert(firstPicker.execute(mock[ExecutionContext])(input) == Vector(A1()))
-    assert(secondPicker.execute(mock[ExecutionContext])(input) == Vector(A2()))
+    assert(firstPicker.executeUntyped(input)(mock[ExecutionContext]) == Vector(A1()))
+    assert(secondPicker.executeUntyped(input)(mock[ExecutionContext]) == Vector(A2()))
 
     val h = new DOperableCatalog
     h.registerDOperable[A1]()
@@ -88,7 +85,7 @@ class DOperationSuite extends FunSuite with DeeplangTestSupport {
     val context = createInferContext(h)
 
     val knowledge = Vector[DKnowledge[DOperable]](DKnowledge(A1()), DKnowledge(A2()))
-    val (result, warnings) = firstPicker.inferKnowledge(context)(knowledge)
+    val (result, warnings) = firstPicker.inferKnowledgeUntyped(knowledge)(context)
     assert(result == Vector(DKnowledge(A1(), A2())))
     assert(warnings == InferenceWarnings.empty)
   }
@@ -101,16 +98,14 @@ class DOperationSuite extends FunSuite with DeeplangTestSupport {
     class GeneratorOfA extends DOperation0To1[A] {
       override val id: DOperation.Id = DOperation.Id.randomId
 
-      override protected def _execute(context: ExecutionContext)(): A = ???
-      override protected def _inferKnowledge(context: InferContext)()
+      override protected def execute()(context: ExecutionContext): A = ???
+      override protected def inferKnowledge()(context: InferContext)
           : (DKnowledge[A], InferenceWarnings) = {
         (DKnowledge(A1(), A2()), mockedWarnings)
       }
 
       override val name: String = ""
       override val description: String = ""
-
-      override val since: Version = Version(0, 0, 0)
 
       val params: Array[io.deepsense.deeplang.params.Param[_]] = Array()
 
@@ -124,7 +119,7 @@ class DOperationSuite extends FunSuite with DeeplangTestSupport {
     h.registerDOperable[A2]()
     val context = createInferContext(h)
 
-    val (results, warnings) = generator.inferKnowledge(context)(Vector())
+    val (results, warnings) = generator.inferKnowledgeUntyped(Vector())(context)
     assert(results == Vector(DKnowledge(A1(), A2())))
     assert(warnings == mockedWarnings)
   }

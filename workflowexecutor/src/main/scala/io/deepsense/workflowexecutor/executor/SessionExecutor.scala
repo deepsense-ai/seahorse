@@ -29,8 +29,9 @@ import com.thenewmotion.akka.rabbitmq._
 import com.typesafe.config.ConfigFactory
 import org.apache.spark.SparkContext
 
+import io.deepsense.deeplang.catalogs.CatalogPair
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
-import io.deepsense.deeplang.{CustomCodeExecutionProvider, OperationExecutionDispatcher}
+import io.deepsense.deeplang.{CatalogRecorder, CustomCodeExecutionProvider, OperationExecutionDispatcher}
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.workflows.Workflow
 import io.deepsense.sparkutils.SparkSQLSession
@@ -73,7 +74,9 @@ case class SessionExecutor(
   private val wmWorkflowsPath = config.getString("workflow-manager.workflows.path")
   private val wmReportsPath = config.getString("workflow-manager.reports.path")
 
-  val graphReader = new GraphReader(createDOperationsCatalog())
+  val CatalogPair(dOperableCatalog, dOperationsCatalog) = CatalogRecorder.createCatalogs()
+
+  val graphReader = new GraphReader(dOperationsCatalog)
 
   /**
    * WARNING: Performs an infinite loop.
@@ -82,7 +85,6 @@ case class SessionExecutor(
     logger.info(s"SessionExecutor for '$workflowId' starts...")
     val sparkContext = createSparkContext()
     val sparkSQLSession = createSparkSQLSession(sparkContext)
-    val dOperableCatalog = createDOperableCatalog()
     val dataFrameStorage = new DataFrameStorageImpl
 
     val hostAddress: InetAddress = HostAddressResolver.findHostAddress()

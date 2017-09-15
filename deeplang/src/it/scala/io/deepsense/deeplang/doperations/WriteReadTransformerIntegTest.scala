@@ -10,9 +10,9 @@ abstract class WriteReadTransformerIntegTest extends DeeplangIntegTestSupport {
     val writeTransformer: WriteTransformer = WriteTransformer(outputFile)
     val readTransformer: ReadTransformer = ReadTransformer(outputFile)
 
-    writeTransformer.execute(executionContext)(Vector(transformer))
+    writeTransformer.executeUntyped(Vector(transformer))(executionContext)
     val deserializedTransformer =
-      readTransformer.execute(executionContext)(Vector()).head.asInstanceOf[Transformer]
+      readTransformer.executeUntyped(Vector())(executionContext).head.asInstanceOf[Transformer]
 
     deserializedTransformer shouldBe transformer
   }

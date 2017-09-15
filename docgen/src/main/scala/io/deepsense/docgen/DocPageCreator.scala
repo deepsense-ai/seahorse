@@ -28,7 +28,6 @@ import io.deepsense.deeplang.params.choice.{AbstractChoiceParam, Choice, ChoiceP
 import io.deepsense.deeplang.{DOperation, DOperation1To2}
 
 trait DocPageCreator {
-
   /**
     * @return number of pages created
     */
@@ -49,7 +48,7 @@ trait DocPageCreator {
   }
 
   // scalastyle:off println
-  private def createDocPage(sparkPageFile: File, operation: DOperation, sparkClassName: String) = {
+  private def createDocPage(sparkPageFile: File, operation: DocumentedOperation, sparkClassName: String) = {
     val writer = new PrintWriter(sparkPageFile)
     writer.println(header(operation))
     writer.println(description(operation))
@@ -72,7 +71,7 @@ trait DocPageCreator {
   }
   // scalastyle:on println
 
-  private def header(operation: DOperation): String = {
+  private def header(operation: DocumentedOperation): String = {
     s"""---
        |layout: global
        |displayTitle: ${operation.name}
@@ -83,11 +82,11 @@ trait DocPageCreator {
        |---""".stripMargin
   }
 
-  private def description(operation: DOperation): String = {
+  private def description(operation: DocumentedOperation): String = {
     DocUtils.forceDotAtEnd(operation.description)
   }
 
-  private def sparkDocLink(operation: DOperation, sparkClassName: String) = {
+  private def sparkDocLink(operation: DocumentedOperation, sparkClassName: String) = {
     val scalaDocUrl = SparkOperationsDocGenerator.scalaDocPrefix + sparkClassName
     val additionalDocs = operation.generateDocs match {
       case None => ""
@@ -104,11 +103,11 @@ trait DocPageCreator {
         |<a target="_blank" href="$scalaDocUrl">$sparkClassName documentation</a>.""".stripMargin
   }
 
-  private def sinceSeahorseVersion(operation: DOperation): String = {
+  private def sinceSeahorseVersion(operation: DocumentedOperation): String = {
     s"**Since**: Seahorse ${operation.since.humanReadable}"
   }
 
-  private def input(operation: DOperation): String = {
+  private def input(operation: DocumentedOperation): String = {
     val inputTable = operation match {
       case (t: TransformerAsOperation[_]) =>
         inputOutputTable(Seq(
@@ -128,7 +127,7 @@ trait DocPageCreator {
     "## Input\n\n" + inputTable
   }
 
-  private def output(operation: DOperation): String = {
+  private def output(operation: DocumentedOperation): String = {
     val outputTable = operation match {
       case (t: TransformerAsOperation[_]) =>
         inputOutputTable(Seq(
@@ -190,11 +189,11 @@ trait DocPageCreator {
     }).reduce((s1, s2) => s1 + s2)
   }
 
-  private def parameters(operation: DOperation): String = {
+  private def parameters(operation: DocumentedOperation): String = {
     "## Parameters\n\n" + parametersTable(operation)
   }
 
-  private def parametersTable(operation: DOperation): String = {
+  private def parametersTable(operation: DocumentedOperation): String = {
     """
       |<table class="table">
       |<thead>
@@ -212,7 +211,7 @@ trait DocPageCreator {
       |""".stripMargin
   }
 
-  private def extractParameters(operation: DOperation): String = {
+  private def extractParameters(operation: DocumentedOperation): String = {
     operation.params.map(param =>
       ParameterDescription(
         param.name,
@@ -273,7 +272,7 @@ trait DocPageCreator {
     description: String)
 
 
-  private def appendExamplesSectionIfNecessary(writer: PrintWriter, operation: DOperation): Unit = {
+  private def appendExamplesSectionIfNecessary(writer: PrintWriter, operation: DocumentedOperation): Unit = {
     val createExamplesSection: Boolean = operation match {
       // It is impossible to match DOperation1To2[DataFrame, DataFrame, Transformer] in match-case
       case op: DOperation1To2[_, _, _] =>
@@ -292,7 +291,7 @@ trait DocPageCreator {
     }
   }
 
-  private def examples(operation: DOperation): String = {
+  private def examples(operation: DocumentedOperation): String = {
     "{% markdown operations/examples/" + operation.getClass.getSimpleName + ".md %}"
   }
 }

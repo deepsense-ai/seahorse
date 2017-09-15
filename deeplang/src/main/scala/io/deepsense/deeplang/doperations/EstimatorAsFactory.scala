@@ -33,14 +33,11 @@ abstract class EstimatorAsFactory[E <: Estimator[Transformer]]
 
   setDefault(estimator.extractParamMap().toSeq: _*)
 
-  override protected def _execute(context: ExecutionContext)(): E =
+  override protected def execute()(context: ExecutionContext): E =
     updatedEstimator
 
-  override def inferKnowledge(
-      context: InferContext)(
-      knowledge: Vector[DKnowledge[DOperable]])
-        : (Vector[DKnowledge[DOperable]], InferenceWarnings) = {
-    (Vector(DKnowledge[DOperable](updatedEstimator)), InferenceWarnings.empty)
+  override def inferKnowledge()(context: InferContext): (DKnowledge[E], InferenceWarnings) = {
+    (DKnowledge[E](updatedEstimator), InferenceWarnings.empty)
   }
 
   private def updatedEstimator: E = estimator.set(extractParamMap())

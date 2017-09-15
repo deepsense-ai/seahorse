@@ -14,12 +14,6 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperations.readwritedataframe
+name := "deepsense-seahorse-sdk"
 
-import io.deepsense.deeplang.exceptions.DeepLangException
-
-case object ParquetNotSupported
-  extends DeepLangException({
-    val supportedScheme = FileScheme.supportedByParquet.mkString("[", ",", "]")
-    s"Parquet file format supported only with $supportedScheme file schemes"
-  })
+libraryDependencies ++= Dependencies.sdk

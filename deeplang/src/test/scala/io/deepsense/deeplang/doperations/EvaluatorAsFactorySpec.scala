@@ -43,7 +43,7 @@ class EvaluatorAsFactorySpec extends UnitSpec {
       val mockFactory = new MockEvaluatorFactory
       mockFactory.set(mockFactory.evaluator.param -> paramValue1)
       val Vector(evaluator: MockEvaluator) =
-        mockFactory.execute(mock[ExecutionContext])(Vector.empty)
+        mockFactory.executeUntyped(Vector.empty)(mock[ExecutionContext])
 
       evaluator.get(mockFactory.evaluator.param) shouldBe Some(paramValue1)
     }
@@ -63,8 +63,7 @@ class EvaluatorAsFactorySpec extends UnitSpec {
       val mockFactory = new MockEvaluatorFactory
       mockFactory.set(mockFactory.evaluator.param -> paramValue1)
 
-      val (Vector(knowledge), warnings) =
-        mockFactory.inferKnowledge(mock[InferContext])(Vector.empty)
+      val (Vector(knowledge), warnings) = mockFactory.inferKnowledgeUntyped(Vector.empty)(mock[InferContext])
 
       knowledge should have size 1
       knowledge.single shouldBe a[MockEvaluator]
@@ -76,7 +75,7 @@ class EvaluatorAsFactorySpec extends UnitSpec {
   }
 
   private def execute(factory: MockEvaluatorFactory): MockEvaluator =
-    factory.execute(mock[ExecutionContext])(Vector.empty).head.asInstanceOf[MockEvaluator]
+    factory.executeUntyped(Vector.empty)(mock[ExecutionContext]).head.asInstanceOf[MockEvaluator]
 }
 
 object EvaluatorAsFactorySpec {
@@ -100,6 +99,5 @@ object EvaluatorAsFactorySpec {
     override val id: Id = Id.randomId
     override val name: String = "Mock Evaluator factory used for tests purposes"
     override val description: String = "Description"
-    override val since: Version = Version(0, 0, 0)
   }
 }

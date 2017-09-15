@@ -18,35 +18,31 @@ package io.deepsense.deeplang.doperations
 
 import java.io._
 import java.net.UnknownHostException
-import java.nio.file.{Files, Paths}
-import java.util.UUID
 
 import scala.reflect.runtime.{universe => ru}
 
-import org.apache.hadoop.conf.Configuration
-import org.apache.hadoop.fs.{FileSystem, Path}
-import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
-import org.apache.spark.sql.{Row, DataFrame => SparkDataFrame}
+import org.apache.spark.sql.{DataFrame => SparkDataFrame}
 
 import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
+import io.deepsense.deeplang.documentation.OperationDocumentation
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.ReadDataFrame.ReadDataFrameParameters
 import io.deepsense.deeplang.doperations.exceptions.{DeepSenseIOException, DeepSenseUnknownHostException}
-import io.deepsense.deeplang.doperations.inout.InputFileFormatChoice.Csv
 import io.deepsense.deeplang.doperations.inout._
-import io.deepsense.deeplang.doperations.readwritedataframe._
-import io.deepsense.deeplang.doperations.readwritedataframe.csv.CsvSchemaInferencerAfterReading
+import io.deepsense.deeplang.doperations.readwritedataframe.filestorage.DataFrameFromFileReader
+import io.deepsense.deeplang.doperations.readwritedataframe.googlestorage.DataFrameFromGoogleSheetReader
 import io.deepsense.deeplang.doperations.readwritedataframe.validators.{FilePathHasValidFileScheme, ParquetSupportedOnClusterOnly}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
-import io.deepsense.deeplang.params.Params
 import io.deepsense.deeplang.params.choice.ChoiceParam
+import io.deepsense.deeplang.params.{Param, Params}
 import io.deepsense.deeplang.{DKnowledge, DOperation0To1, ExecutionContext}
 
 case class ReadDataFrame()
     extends DOperation0To1[DataFrame]
     with ReadDataFrameParameters
-    with Params {
+    with Params
+    with OperationDocumentation {
 
   override val id: Id = "c48dd54c-6aef-42df-ad7a-42fc59a09f0e"
   override val name: String = "Read DataFrame"
@@ -55,16 +51,19 @@ case class ReadDataFrame()
 
   override val since: Version = Version(0, 4, 0)
 
-  val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(storageType)
-  setDefault(storageType, InputStorageTypeChoice.File())
+  val params: Array[Param[_]] = Array(storageType)
+  setDefault(storageType, new InputStorageTypeChoice.File())
 
-  override protected def _execute(context: ExecutionContext)(): DataFrame = {
+  override protected def execute()(context: ExecutionContext): DataFrame = {
     implicit val ec = context
 
     try {
       val dataframe = getStorageType() match {
         case jdbcChoice: InputStorageTypeChoice.Jdbc => readFromJdbc(jdbcChoice)
-        case fileChoice: InputStorageTypeChoice.File => readFromFile(fileChoice)
+        case googleSheet: InputStorageTypeChoice.GoogleSheet => DataFrameFromGoogleSheetReader.readFromGoogleSheet(
+          googleSheet
+        )
+        case fileChoice: InputStorageTypeChoice.File => DataFrameFromFileReader.readFromFile(fileChoice)
       }
       DataFrame.fromSparkDataFrame(dataframe)
     } catch {
@@ -73,37 +72,12 @@ case class ReadDataFrame()
     }
   }
 
-  override protected def _inferKnowledge(context: InferContext)():
+  override protected def inferKnowledge()(context: InferContext):
       (DKnowledge[DataFrame], InferenceWarnings) = {
     FilePathHasValidFileScheme.validate(this)
     ParquetSupportedOnClusterOnly.validate(this)
-    super._inferKnowledge(context)()
+    super.inferKnowledge()(context)
   }
-
-  private def readFromFile(fileChoice: InputStorageTypeChoice.File)
-                          (implicit context: ExecutionContext) = {
-    val path = FilePath(fileChoice.getSourceFile)
-    val rawDataFrame = readUsingProvidedFileScheme(path, fileChoice.getFileFormat)
-    val postprocessed = fileChoice.getFileFormat match {
-      case csv: Csv => CsvSchemaInferencerAfterReading.postprocess(csv)(rawDataFrame)
-      case other => rawDataFrame
-    }
-    postprocessed
-  }
-
-  private def readUsingProvidedFileScheme
-      (path: FilePath, fileFormat: InputFileFormatChoice)
-      (implicit context: ExecutionContext): SparkDataFrame =
-    path.fileScheme match {
-      case FileScheme.Library =>
-        val filePath = FilePathFromLibraryPath(path)
-        readUsingProvidedFileScheme(filePath, fileFormat)
-      case FileScheme.File => DriverFiles.read(path.pathWithoutScheme, fileFormat)
-      case FileScheme.HTTP | FileScheme.HTTPS | FileScheme.FTP =>
-        val downloadedPath = FileDownloader.downloadFile(path.fullPath)
-        readUsingProvidedFileScheme(downloadedPath, fileFormat)
-      case FileScheme.HDFS => ClusterFiles.read(path, fileFormat)
-    }
 
   private def readFromJdbc
       (jdbcChoice: InputStorageTypeChoice.Jdbc)
@@ -140,12 +114,12 @@ object ReadDataFrame {
       csvConvertToBoolean: Boolean) : ReadDataFrame = {
     new ReadDataFrame()
       .setStorageType(
-        InputStorageTypeChoice.File()
+        new InputStorageTypeChoice.File()
           .setSourceFile(fileName)
           .setFileFormat(
-            InputFileFormatChoice.Csv()
+            new InputFileFormatChoice.Csv()
               .setCsvColumnSeparator(csvColumnSeparator)
-              .setCsvNamesIncluded(csvNamesIncluded)
+              .setNamesIncluded(csvNamesIncluded)
               .setShouldConvertToBoolean(csvConvertToBoolean)))
   }
 }

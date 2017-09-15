@@ -23,6 +23,7 @@ import org.apache.spark.sql.types.StructType
 
 import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
+import io.deepsense.deeplang.documentation.OperationDocumentation
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.inference.{InferenceWarnings, SqlSchemaInferrer}
@@ -31,10 +32,10 @@ import io.deepsense.deeplang.params.{CodeSnippetLanguage, CodeSnippetParam, Para
 import io.deepsense.deeplang.{DOperation2To1, DataFrame2To1Operation, ExecutionContext}
 import io.deepsense.sparkutils.{SQL, SparkSQLSession}
 
-
 final class SqlCombine
   extends DOperation2To1[DataFrame, DataFrame, DataFrame]
-  with DataFrame2To1Operation {
+  with DataFrame2To1Operation
+  with OperationDocumentation {
 
   override val id: Id = "8f254d75-276f-48b7-872d-e4a18b6a86c6"
   override val name: String = "SQL Combine"
@@ -67,8 +68,7 @@ final class SqlCombine
   def getSqlCombineExpression: String = $(sqlCombineExpression)
   def setSqlCombineExpression(expression: String): this.type = set(sqlCombineExpression, expression)
 
-  override protected def _execute(ctx: ExecutionContext)
-                                 (left: DataFrame, right: DataFrame): DataFrame = {
+  override protected def execute(left: DataFrame, right: DataFrame)(ctx: ExecutionContext): DataFrame = {
     logger.debug(s"SqlCombine(expression = '$getSqlCombineExpression', " +
       s"leftTableName = '$getLeftTableName', " +
       s"rightTableName = '$getRightTableName')")

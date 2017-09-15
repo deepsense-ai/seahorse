@@ -20,7 +20,19 @@ import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
 import io.deepsense.deeplang.params.validators.SingleCharRegexValidator
 import io.deepsense.deeplang.params.{BooleanParam, Params, StringParam}
 
-trait CsvParameters {
+trait NamesIncludedParam {
+  this: Params =>
+
+  val namesIncluded = BooleanParam(
+    name = "names included",
+    description = "Does the first row include column names?")
+  setDefault(namesIncluded, true)
+
+  def getNamesIncluded: Boolean = $(namesIncluded)
+  def setNamesIncluded(value: Boolean): this.type = set(namesIncluded, value)
+}
+
+trait CsvParameters extends NamesIncludedParam {
   this: Params =>
 
   import CsvParameters._
@@ -33,14 +45,6 @@ trait CsvParameters {
   def getCsvColumnSeparator(): ColumnSeparatorChoice = $(csvColumnSeparator)
   def setCsvColumnSeparator(value: ColumnSeparatorChoice): this.type =
     set(csvColumnSeparator, value)
-
-  val csvNamesIncluded = BooleanParam(
-    name = "names included",
-    description = "Does the first row include column names?")
-  setDefault(csvNamesIncluded, true)
-
-  def getCsvNamesIncluded: Boolean = $(csvNamesIncluded)
-  def setCsvNamesIncluded(value: Boolean): this.type = set(csvNamesIncluded, value)
 
   def determineColumnSeparator(): Char =
     CsvParameters.determineColumnSeparatorOf(getCsvColumnSeparator())

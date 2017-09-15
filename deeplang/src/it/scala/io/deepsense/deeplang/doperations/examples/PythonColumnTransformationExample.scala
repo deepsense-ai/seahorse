@@ -19,7 +19,7 @@ package io.deepsense.deeplang.doperations.examples
 import org.apache.spark.sql.functions.when
 
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
-import io.deepsense.deeplang.doperables.TargetTypeChoices
+import io.deepsense.deeplang.doperables.{PythonColumnTransformer, TargetTypeChoices}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.SingleColumnChoice
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.NoInPlaceChoice
@@ -32,15 +32,15 @@ class PythonColumnTransformationExample
   val inputColumnName = "Weight"
   val outputColumnName = "WeightCutoff"
 
+  // This is mocked because Python executor is not available in tests.
   class PythonColumnTransformationMock extends PythonColumnTransformation {
-    override def execute(context: ExecutionContext)
-                        (arguments: Vector[DOperable]): Vector[DOperable] = {
-      val sdf = arguments.head.asInstanceOf[DataFrame].sparkDataFrame
+    override def execute(arg: DataFrame)(context: ExecutionContext): (DataFrame, PythonColumnTransformer) = {
+      val sdf = arg.sparkDataFrame
       val resultSparkDataFrame = sdf.select(
         sdf("*"),
         when(sdf(inputColumnName) > 2.0, 2.0).otherwise(sdf(inputColumnName))
           .alias(outputColumnName))
-      Vector(DataFrame.fromSparkDataFrame(resultSparkDataFrame))
+      (DataFrame.fromSparkDataFrame(resultSparkDataFrame), mock[PythonColumnTransformer])
     }
   }
 

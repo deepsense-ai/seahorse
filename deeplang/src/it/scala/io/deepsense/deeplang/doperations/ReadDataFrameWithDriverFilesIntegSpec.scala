@@ -23,7 +23,8 @@ import org.scalatest.BeforeAndAfter
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.report.Report
 import io.deepsense.deeplang.doperations.inout.{CsvParameters, InputFileFormatChoice, InputStorageTypeChoice}
-import io.deepsense.deeplang.doperations.readwritedataframe.{FileScheme, ParquetNotSupported, UnknownFileSchemaForPath}
+import io.deepsense.deeplang.doperations.readwritedataframe.filestorage.ParquetNotSupported
+import io.deepsense.deeplang.doperations.readwritedataframe.{FileScheme, UnknownFileSchemaForPath}
 import io.deepsense.deeplang.{DOperable, DeeplangIntegTestSupport, TestFiles}
 
 class ReadDataFrameWithDriverFilesIntegSpec
@@ -185,28 +186,24 @@ class ReadDataFrameWithDriverFilesIntegSpec
     "throw exception at inference time when using parquet with local driver files" in {
       val rdf = ReadDataFrame()
         .setStorageType(
-          InputStorageTypeChoice.File()
+          new InputStorageTypeChoice.File()
             .setSourceFile(FileScheme.File.pathPrefix + "/some_path/some_file.parquet")
-            .setFileFormat(InputFileFormatChoice.Parquet()))
+            .setFileFormat(new InputFileFormatChoice.Parquet()))
 
       an [ParquetNotSupported.type] shouldBe thrownBy {
-        rdf.inferKnowledge(
-          executionContext.inferContext
-        )(Vector())
+        rdf.inferKnowledgeUntyped(Vector())(executionContext.inferContext)
       }
     }
 
     "throw exception at inference time when using invalid file scheme" in {
       val rdf = ReadDataFrame()
         .setStorageType(
-          InputStorageTypeChoice.File()
+          new InputStorageTypeChoice.File()
             .setSourceFile("invalidscheme://some_path/some_file.json")
-            .setFileFormat(InputFileFormatChoice.Json()))
+            .setFileFormat(new InputFileFormatChoice.Json()))
 
       an [UnknownFileSchemaForPath] shouldBe thrownBy {
-        rdf.inferKnowledge(
-          executionContext.inferContext
-        )(Vector())
+        rdf.inferKnowledgeUntyped(Vector())(executionContext.inferContext)
       }
     }
 
@@ -222,7 +219,7 @@ class ReadDataFrameWithDriverFilesIntegSpec
       csvColumnSeparator,
       csvNamesIncluded,
       csvConvertToBoolean
-    ).execute(executionContext)(Vector.empty[DOperable])
+    ).executeUntyped(Vector.empty[DOperable])(executionContext)
       .head
       .asInstanceOf[DataFrame]
   }

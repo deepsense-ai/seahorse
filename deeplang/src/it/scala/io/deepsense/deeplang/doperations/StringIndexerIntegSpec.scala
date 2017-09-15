@@ -73,7 +73,7 @@ class StringIndexerIntegSpec extends DeeplangIntegTestSupport {
             val out = "out_c1"
             val indexer = singleColumnStringIndexer(Some(in), Some(out))
             val knowledge =
-              indexer.inferKnowledge(executionContext.inferContext)(knownSchemaKnowledgeVector)
+              indexer.inferKnowledgeUntyped(knownSchemaKnowledgeVector)(executionContext.inferContext)
             validate(knowledge) {
               case (dataFrameKnowledge, transformerKnowledge) =>
                 val expectedSchema = StructType(Seq(
@@ -97,7 +97,7 @@ class StringIndexerIntegSpec extends DeeplangIntegTestSupport {
             val out = "out_"
             val indexer = multiColumnStringIndexer(Some(in), Some(out))
             val knowledge =
-              indexer.inferKnowledge(executionContext.inferContext)(knownSchemaKnowledgeVector)
+              indexer.inferKnowledgeUntyped(knownSchemaKnowledgeVector)(executionContext.inferContext)
             validate(knowledge) {
               case (dataFrameKnowledge, transformerKnowledge) =>
                 val expectedSchema = StructType(Seq(
@@ -120,7 +120,7 @@ class StringIndexerIntegSpec extends DeeplangIntegTestSupport {
           "infer SingleColumnStringIndexerModel without parameters" in pendingUntilFixed {
             val indexer = singleColumnStringIndexer(None, None)
             val knowledge =
-              indexer.inferKnowledge(executionContext.inferContext)(knownSchemaKnowledgeVector)
+              indexer.inferKnowledgeUntyped(knownSchemaKnowledgeVector)(executionContext.inferContext)
             validate(knowledge) {
               case (dataFrameKnowledge, transformerKnowledge) =>
                 validateSingleColumnParams(transformerKnowledge, None, None)
@@ -136,7 +136,7 @@ class StringIndexerIntegSpec extends DeeplangIntegTestSupport {
           "infer StringIndexerModel without parameters" in pendingUntilFixed {
             val indexer = multiColumnStringIndexer(None, None)
             val knowledge =
-              indexer.inferKnowledge(executionContext.inferContext)(knownSchemaKnowledgeVector)
+              indexer.inferKnowledgeUntyped(knownSchemaKnowledgeVector)(executionContext.inferContext)
             validate(knowledge) {
               case (dataFrameKnowledge, transformerKnowledge) =>
                 validateMultiColumnParams(transformerKnowledge, None, None)
@@ -158,7 +158,7 @@ class StringIndexerIntegSpec extends DeeplangIntegTestSupport {
             val out = "out_c1"
             val indexer = singleColumnStringIndexer(Some(in), Some(out))
             val knowledge =
-              indexer.inferKnowledge(executionContext.inferContext)(unknownSchemaKnowledgeVector)
+              indexer.inferKnowledgeUntyped(unknownSchemaKnowledgeVector)(executionContext.inferContext)
             validate(knowledge) {
               case (dataFrameKnowledge, transformerKnowledge) =>
                 validateSingleColumnParams(transformerKnowledge, Some(in), Some(out))
@@ -176,7 +176,7 @@ class StringIndexerIntegSpec extends DeeplangIntegTestSupport {
             val out = "out_"
             val indexer = multiColumnStringIndexer(Some(in), Some(out))
             val knowledge =
-              indexer.inferKnowledge(executionContext.inferContext)(unknownSchemaKnowledgeVector)
+              indexer.inferKnowledgeUntyped(unknownSchemaKnowledgeVector)(executionContext.inferContext)
             validate(knowledge) {
               case (dataFrameKnowledge, transformerKnowledge) =>
                 validateMultiColumnParams(transformerKnowledge, Some(in), Some(out))
@@ -194,14 +194,14 @@ class StringIndexerIntegSpec extends DeeplangIntegTestSupport {
           "throw DeepLangException" in {
             val indexer = singleColumnStringIndexer(None, None)
             a [DeepLangException] shouldBe thrownBy(
-              indexer.inferKnowledge(executionContext.inferContext)(unknownSchemaKnowledgeVector))
+              indexer.inferKnowledgeUntyped(unknownSchemaKnowledgeVector)(executionContext.inferContext))
           }
         }
         "in multi column mode" should {
           "throw DeepLangException" in {
             val indexer = multiColumnStringIndexer(None, None)
             a [DeepLangException] shouldBe thrownBy(
-              indexer.inferKnowledge(executionContext.inferContext)(unknownSchemaKnowledgeVector))
+              indexer.inferKnowledgeUntyped(unknownSchemaKnowledgeVector)(executionContext.inferContext))
           }
         }
       }

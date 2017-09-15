@@ -34,7 +34,7 @@ class OneHotEncodeExample extends AbstractOperationExample[OneHotEncode]{
       DataFrame.fromSparkDataFrame(sparkSQLSession.createDataFrame(data).toDF("features"))
     val x = new StringIndexer()
       .setSingleColumn("features", "labels")
-      .execute(executionContext)(Vector(rawDataFrame))
+      .executeUntyped(Vector(rawDataFrame))(executionContext)
     Seq(x.head.asInstanceOf[DataFrame])
   }
 }

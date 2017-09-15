@@ -86,7 +86,7 @@ class DOperableCatalog {
    * @param t runtime type of class being registered
    * @return Some(node) if succeed and None otherwise
    */
-  private def register(t: ru.Type): Option[TypeNode] = {
+  def register(t: ru.Type): Option[TypeNode] = {
     register(t, TypeUtils.typeToClass(t))
   }
 

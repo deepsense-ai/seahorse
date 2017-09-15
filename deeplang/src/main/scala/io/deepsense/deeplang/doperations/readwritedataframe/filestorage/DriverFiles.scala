@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperations.readwritedataframe
+package io.deepsense.deeplang.doperations.readwritedataframe.filestorage
 
 import java.io.PrintWriter
 
@@ -29,7 +29,8 @@ import io.deepsense.commons.resources.ManagedResource
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.inout.{InputFileFormatChoice, OutputFileFormatChoice}
-import io.deepsense.deeplang.doperations.readwritedataframe.csv.CsvOptions
+import io.deepsense.deeplang.doperations.readwritedataframe.filestorage.csv.CsvOptions
+import io.deepsense.deeplang.doperations.readwritedataframe.{FilePath, FileScheme}
 import io.deepsense.sparkutils.SQL
 
 object DriverFiles {
@@ -54,7 +55,7 @@ object DriverFiles {
   private def readCsv
       (driverPath: String, csvChoice: InputFileFormatChoice.Csv)
       (implicit context: ExecutionContext): SparkDataFrame = {
-    val params = CsvOptions.map(csvChoice.getCsvNamesIncluded, csvChoice.getCsvColumnSeparator())
+    val params = CsvOptions.map(csvChoice.getNamesIncluded, csvChoice.getCsvColumnSeparator())
     val lines = Source.fromFile(driverPath).getLines().toStream
     val fileLinesRdd = context.sparkContext.parallelize(lines)
 
@@ -70,7 +71,7 @@ object DriverFiles {
   private def writeCsv
       (path: FilePath, csvChoice: OutputFileFormatChoice.Csv, dataFrame: DataFrame)
       (implicit context: ExecutionContext): Unit = {
-    val params = CsvOptions.map(csvChoice.getCsvNamesIncluded, csvChoice.getCsvColumnSeparator())
+    val params = CsvOptions.map(csvChoice.getNamesIncluded, csvChoice.getCsvColumnSeparator())
 
     DataframeToDriverCsvFileWriter.write(
       dataFrame.sparkDataFrame,

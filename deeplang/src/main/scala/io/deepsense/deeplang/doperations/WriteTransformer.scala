@@ -23,6 +23,7 @@ import scala.reflect.runtime.{universe => ru}
 import io.deepsense.commons.utils.Version
 import io.deepsense.commons.utils.FileOperations.deleteRecursivelyIfExists
 import io.deepsense.deeplang.DOperation.Id
+import io.deepsense.deeplang.documentation.OperationDocumentation
 import io.deepsense.deeplang.doperables.Transformer
 import io.deepsense.deeplang.doperations.exceptions.DeepSenseIOException
 import io.deepsense.deeplang.params.{Params, StringParam}
@@ -30,7 +31,8 @@ import io.deepsense.deeplang.{DOperation1To0, ExecutionContext}
 
 case class WriteTransformer()
   extends DOperation1To0[Transformer]
-  with Params {
+  with Params
+  with OperationDocumentation {
 
   override val id: Id = "58368deb-68d0-4657-ae3f-145160cb1e2b"
   override val name: String = "Write Transformer"
@@ -47,7 +49,7 @@ case class WriteTransformer()
 
   val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(outputPath)
 
-  override protected def _execute(context: ExecutionContext)(transformer: Transformer): Unit = {
+  override protected def execute(transformer: Transformer)(context: ExecutionContext): Unit = {
     val outputDictPath = getOutputPath
     try {
       deleteRecursivelyIfExists(new File(outputDictPath))

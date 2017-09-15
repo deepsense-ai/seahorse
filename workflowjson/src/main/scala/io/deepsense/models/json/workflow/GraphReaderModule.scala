@@ -19,8 +19,7 @@ package io.deepsense.models.json.workflow
 import com.google.inject.{AbstractModule, Provides, Singleton}
 
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
-import io.deepsense.models.json.graph.GraphJsonProtocol
-import GraphJsonProtocol.GraphReader
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 
 class GraphReaderModule extends AbstractModule {
   override def configure(): Unit = {

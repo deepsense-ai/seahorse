@@ -22,13 +22,14 @@ import spray.json.{JsNull, JsValue}
 
 import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
+import io.deepsense.deeplang.documentation.OperationDocumentation
 import io.deepsense.deeplang.doperables.Transformer
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.DynamicParam
 import io.deepsense.deeplang.{DKnowledge, DOperation2To1, ExecutionContext}
 
-case class Transform() extends DOperation2To1[DataFrame, Transformer, DataFrame] {
+case class Transform() extends DOperation2To1[DataFrame, Transformer, DataFrame] with OperationDocumentation {
 
   override val id: Id = "643d8706-24db-4674-b5b4-10b5129251fc"
   override val name: String = "Transform"
@@ -52,17 +53,17 @@ case class Transform() extends DOperation2To1[DataFrame, Transformer, DataFrame]
   override lazy val tTagTI_1: TypeTag[Transformer] = typeTag
   override lazy val tTagTO_0: TypeTag[DataFrame] = typeTag
 
-  override protected def _execute(
-      context: ExecutionContext)(
+  override protected def execute(
       dataFrame: DataFrame,
-      transformer: Transformer): DataFrame = {
+      transformer: Transformer)(
+      context: ExecutionContext): DataFrame = {
     transformerWithParams(transformer).transform(context)(())(dataFrame)
   }
 
-  override protected def _inferKnowledge(
-      context: InferContext)(
+  override protected def inferKnowledge(
       dataFrameKnowledge: DKnowledge[DataFrame],
-      transformerKnowledge: DKnowledge[Transformer]): (DKnowledge[DataFrame], InferenceWarnings) = {
+      transformerKnowledge: DKnowledge[Transformer])(
+      context: InferContext): (DKnowledge[DataFrame], InferenceWarnings) = {
 
     if (transformerKnowledge.size > 1) {
       (DKnowledge(DataFrame.forInference()), InferenceWarnings.empty)

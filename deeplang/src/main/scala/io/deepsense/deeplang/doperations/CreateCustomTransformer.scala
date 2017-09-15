@@ -23,6 +23,7 @@ import spray.json._
 import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang._
+import io.deepsense.deeplang.documentation.OperationDocumentation
 import io.deepsense.deeplang.doperables.CustomTransformer
 import io.deepsense.deeplang.doperations.custom.{Sink, Source}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
@@ -30,7 +31,7 @@ import io.deepsense.deeplang.params.{Param, WorkflowParam}
 import io.deepsense.deeplang.utils.CustomTransformerFactory
 import io.deepsense.graph.{GraphKnowledge, Node}
 
-case class CreateCustomTransformer() extends TransformerAsFactory[CustomTransformer] {
+case class CreateCustomTransformer() extends TransformerAsFactory[CustomTransformer] with OperationDocumentation  {
 
   import DefaultCustomTransformerWorkflow._
 
@@ -60,16 +61,12 @@ case class CreateCustomTransformer() extends TransformerAsFactory[CustomTransfor
 
   override lazy val tTagTO_0: TypeTag[CustomTransformer] = typeTag
 
-  override protected def _execute(context: ExecutionContext)(): CustomTransformer =
+  override protected def execute()(context: ExecutionContext): CustomTransformer =
     customTransformer(context.innerWorkflowExecutor)
 
-  override def inferKnowledge(
-      context: InferContext)(
-      knowledge: Vector[DKnowledge[DOperable]])
-        : (Vector[DKnowledge[DOperable]], InferenceWarnings) = {
-
+  override def inferKnowledge()(context: InferContext): (DKnowledge[CustomTransformer], InferenceWarnings) = {
     val transformer = customTransformer(context.innerWorkflowParser)
-    (Vector(DKnowledge[DOperable](transformer)), InferenceWarnings.empty)
+    (DKnowledge[CustomTransformer](transformer), InferenceWarnings.empty)
   }
 
   override def inferGraphKnowledgeForInnerWorkflow(context: InferContext): GraphKnowledge = {

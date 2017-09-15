@@ -27,7 +27,8 @@ import org.scalatest.BeforeAndAfter
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.doperations.exceptions.UnsupportedColumnTypeException
 import io.deepsense.deeplang.doperations.inout._
-import io.deepsense.deeplang.doperations.readwritedataframe.{FileScheme, ParquetNotSupported, UnknownFileSchemaForPath}
+import io.deepsense.deeplang.doperations.readwritedataframe.filestorage.ParquetNotSupported
+import io.deepsense.deeplang.doperations.readwritedataframe.{FileScheme, UnknownFileSchemaForPath}
 import io.deepsense.deeplang.{DKnowledge, DeeplangIntegTestSupport, TestFiles}
 import io.deepsense.sparkutils
 
@@ -96,13 +97,13 @@ class WriteDataFrameWithDriverFilesIntegSpec
       val wdf =
         new WriteDataFrame()
           .setStorageType(
-            OutputStorageTypeChoice.File()
+            new OutputStorageTypeChoice.File()
               .setOutputFile(absoluteTestsDirPath.fullPath + "without-header")
               .setFileFormat(
-                OutputFileFormatChoice.Csv()
+                new OutputFileFormatChoice.Csv()
                   .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Comma())
-                  .setCsvNamesIncluded(false)))
-      wdf.execute(executionContext)(Vector(dataframe))
+                  .setNamesIncluded(false)))
+      wdf.executeUntyped(Vector(dataframe))(executionContext)
       verifySavedDataFrame("without-header", rows, withHeader = false, ",")
     }
 
@@ -110,13 +111,13 @@ class WriteDataFrameWithDriverFilesIntegSpec
       val wdf =
         new WriteDataFrame()
           .setStorageType(
-            OutputStorageTypeChoice.File()
+            new OutputStorageTypeChoice.File()
               .setOutputFile(absoluteTestsDirPath.fullPath + "with-header")
               .setFileFormat(
-                OutputFileFormatChoice.Csv()
+                new OutputFileFormatChoice.Csv()
                   .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Comma())
-                  .setCsvNamesIncluded(true)))
-      wdf.execute(executionContext)(Vector(dataframe))
+                  .setNamesIncluded(true)))
+      wdf.executeUntyped(Vector(dataframe))(executionContext)
       verifySavedDataFrame("with-header", rows, withHeader = true, ",")
     }
 
@@ -124,13 +125,13 @@ class WriteDataFrameWithDriverFilesIntegSpec
       val wdf =
         new WriteDataFrame()
           .setStorageType(
-            OutputStorageTypeChoice.File()
+            new OutputStorageTypeChoice.File()
               .setOutputFile(absoluteTestsDirPath.fullPath + "semicolon-separator")
               .setFileFormat(
-                OutputFileFormatChoice.Csv()
+                new OutputFileFormatChoice.Csv()
                   .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Semicolon())
-                  .setCsvNamesIncluded(false)))
-      wdf.execute(executionContext)(Vector(dataframe))
+                  .setNamesIncluded(false)))
+      wdf.executeUntyped(Vector(dataframe))(executionContext)
       verifySavedDataFrame("semicolon-separator", rows, withHeader = false, ";")
     }
 
@@ -138,13 +139,13 @@ class WriteDataFrameWithDriverFilesIntegSpec
       val wdf =
         new WriteDataFrame()
           .setStorageType(
-            OutputStorageTypeChoice.File()
+            new OutputStorageTypeChoice.File()
               .setOutputFile(absoluteTestsDirPath.fullPath + "colon-separator")
               .setFileFormat(
-                OutputFileFormatChoice.Csv()
+                new OutputFileFormatChoice.Csv()
                   .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Colon())
-                  .setCsvNamesIncluded(false)))
-      wdf.execute(executionContext)(Vector(dataframe))
+                  .setNamesIncluded(false)))
+      wdf.executeUntyped(Vector(dataframe))(executionContext)
       verifySavedDataFrame("colon-separator", rows, withHeader = false, ":")
     }
 
@@ -155,7 +156,7 @@ class WriteDataFrameWithDriverFilesIntegSpec
 //        columnSep(ColumnSeparator.SPACE),
 //        writeHeader = false,
 //        absoluteWriteDataFrameTestPath + "space-separator")
-//      wdf.execute(executionContext)(Vector(dataframe))
+//      wdf.execute(Vector(dataframe))(executionContext)
 //      verifySavedDataFrame("space-separator", rows, withHeader = false, " ")
 //    }
 
@@ -166,7 +167,7 @@ class WriteDataFrameWithDriverFilesIntegSpec
 //        columnSep(ColumnSeparator.TAB),
 //        writeHeader = false,
 //        absoluteWriteDataFrameTestPath + "tab-separator")
-//      wdf.execute(executionContext)(Vector(dataframe))
+//      wdf.execute(Vector(dataframe))(executionContext)
 //      verifySavedDataFrame("tab-separator", rows, withHeader = false, "\t")
 //    }
 
@@ -174,15 +175,15 @@ class WriteDataFrameWithDriverFilesIntegSpec
       val wdf =
         new WriteDataFrame()
           .setStorageType(
-            OutputStorageTypeChoice.File()
+            new OutputStorageTypeChoice.File()
               .setOutputFile(absoluteTestsDirPath.fullPath + "custom-separator")
               .setFileFormat(
-                OutputFileFormatChoice.Csv()
+                new OutputFileFormatChoice.Csv()
                   .setCsvColumnSeparator(
                     CsvParameters.ColumnSeparatorChoice.Custom()
                       .setCustomColumnSeparator("X"))
-                  .setCsvNamesIncluded(false)))
-      wdf.execute(executionContext)(Vector(dataframe))
+                  .setNamesIncluded(false)))
+      wdf.executeUntyped(Vector(dataframe))(executionContext)
       verifySavedDataFrame("custom-separator", rows, withHeader = false, "X")
     }
 
@@ -190,51 +191,49 @@ class WriteDataFrameWithDriverFilesIntegSpec
       val wdf =
         new WriteDataFrame()
           .setStorageType(
-            OutputStorageTypeChoice.File()
+            new OutputStorageTypeChoice.File()
               .setOutputFile(absoluteTestsDirPath.fullPath + "json-array")
-              .setFileFormat(OutputFileFormatChoice.Json()))
-      wdf.execute(executionContext)(Vector(arrayDataFrame))
+              .setFileFormat(new OutputFileFormatChoice.Json()))
+      wdf.executeUntyped(Vector(arrayDataFrame))(executionContext)
     }
 
     "throw an exception when writing ArrayType to CSV" in {
       val wdf =
         new WriteDataFrame()
           .setStorageType(
-            OutputStorageTypeChoice.File()
+            new OutputStorageTypeChoice.File()
               .setOutputFile(absoluteTestsDirPath.fullPath + "csv-array")
               .setFileFormat(
-                OutputFileFormatChoice.Csv()
+                new OutputFileFormatChoice.Csv()
                   .setCsvColumnSeparator(
                     CsvParameters.ColumnSeparatorChoice.Comma())
-                  .setCsvNamesIncluded(false)))
+                  .setNamesIncluded(false)))
       an [UnsupportedColumnTypeException] shouldBe thrownBy {
-        wdf.execute(executionContext)(Vector(arrayDataFrame))
+        wdf.executeUntyped(Vector(arrayDataFrame))(executionContext)
       }
     }
 
     "throw exception at inference time when using parquet with local driver files" in {
-      val wdf = WriteDataFrame()
+      val wdf = new WriteDataFrame()
         .setStorageType(
-          OutputStorageTypeChoice.File()
+          new OutputStorageTypeChoice.File()
             .setOutputFile(FileScheme.File.pathPrefix + "/some_path/some_file.parquet")
-            .setFileFormat(OutputFileFormatChoice.Parquet()))
+            .setFileFormat(new OutputFileFormatChoice.Parquet()))
 
       an [ParquetNotSupported.type] shouldBe thrownBy {
-        wdf.inferKnowledge(executionContext.inferContext)(
-            Vector(DKnowledge(dataframe)))
+        wdf.inferKnowledgeUntyped(Vector(DKnowledge(dataframe)))(executionContext.inferContext)
       }
     }
 
     "throw exception at inference time when using invalid file scheme" in {
-      val wdf = WriteDataFrame()
+      val wdf = new WriteDataFrame()
         .setStorageType(
-          OutputStorageTypeChoice.File()
+          new OutputStorageTypeChoice.File()
             .setOutputFile("invalidscheme://some_path/some_file.json")
-            .setFileFormat(OutputFileFormatChoice.Parquet()))
+            .setFileFormat(new OutputFileFormatChoice.Parquet()))
 
       an [UnknownFileSchemaForPath] shouldBe thrownBy {
-        wdf.inferKnowledge(executionContext.inferContext)(
-          Vector(DKnowledge(dataframe)))
+        wdf.inferKnowledgeUntyped(Vector(DKnowledge(dataframe)))(executionContext.inferContext)
       }
     }
 
@@ -243,24 +242,24 @@ class WriteDataFrameWithDriverFilesIntegSpec
       val wdf =
         new WriteDataFrame()
           .setStorageType(
-            OutputStorageTypeChoice.File()
+            new OutputStorageTypeChoice.File()
               .setOutputFile(absoluteTestsDirPath.fullPath + outputName)
               .setFileFormat(
-                OutputFileFormatChoice.Csv()
+                new OutputFileFormatChoice.Csv()
                   .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Comma())
-                  .setCsvNamesIncluded(false)))
-      wdf.execute(executionContext)(Vector(dataframe))
+                  .setNamesIncluded(false)))
+      wdf.executeUntyped(Vector(dataframe))(executionContext)
 
       val wdf1 =
         new WriteDataFrame()
           .setStorageType(
-            OutputStorageTypeChoice.File()
+            new OutputStorageTypeChoice.File()
               .setOutputFile(absoluteTestsDirPath.fullPath + outputName)
               .setFileFormat(
-                OutputFileFormatChoice.Csv()
+                new OutputFileFormatChoice.Csv()
                   .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Comma())
-                  .setCsvNamesIncluded(true)))
-      wdf1.execute(executionContext)(Vector(dataframe))
+                  .setNamesIncluded(true)))
+      wdf1.executeUntyped(Vector(dataframe))(executionContext)
       verifySavedDataFrame(outputName, rows, withHeader = true, ",")
     }
   }

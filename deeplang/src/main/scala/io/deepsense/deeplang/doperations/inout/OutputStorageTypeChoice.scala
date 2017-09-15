@@ -16,6 +16,7 @@
 
 package io.deepsense.deeplang.doperations.inout
 
+import io.deepsense.deeplang.doperations.readwritedataframe.googlestorage._
 import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
 import io.deepsense.deeplang.params.library.SaveToLibraryParam
 import io.deepsense.deeplang.params.{Param, StorageType, StringParam}
@@ -25,12 +26,14 @@ sealed trait OutputStorageTypeChoice extends Choice {
 
   override val choiceOrder: List[Class[_ <: OutputStorageTypeChoice]] = List(
     classOf[File],
-    classOf[Jdbc])
+    classOf[Jdbc],
+    classOf[GoogleSheet]
+  )
 }
 
 object OutputStorageTypeChoice {
 
-  case class File() extends OutputStorageTypeChoice {
+  class File() extends OutputStorageTypeChoice {
 
     override val name: String = StorageType.FILE.toString
 
@@ -44,7 +47,7 @@ object OutputStorageTypeChoice {
     val fileFormat = ChoiceParam[OutputFileFormatChoice](
       name = "format",
       description = "Format of the output file.")
-    setDefault(fileFormat, OutputFileFormatChoice.Csv())
+    setDefault(fileFormat, new OutputFileFormatChoice.Csv())
 
     def getFileFormat(): OutputFileFormatChoice = $(fileFormat)
     def setFileFormat(value: OutputFileFormatChoice): this.type = set(fileFormat, value)
@@ -52,7 +55,7 @@ object OutputStorageTypeChoice {
     override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(outputFile, fileFormat)
   }
 
-  case class Jdbc()
+  class Jdbc()
     extends OutputStorageTypeChoice
     with JdbcParameters {
 
@@ -60,4 +63,16 @@ object OutputStorageTypeChoice {
     override val params: Array[Param[_]] =
       Array(jdbcUrl, jdbcDriverClassName, jdbcTableName)
   }
+
+  class GoogleSheet()
+    extends OutputStorageTypeChoice with GoogleSheetParams with NamesIncludedParam
+    with HasShouldConvertToBooleanParam  {
+
+    override val name = "Google Sheet"
+    override lazy val params: Array[Param[_]] = Array(
+      googleSheetId, serviceAccountCredentials, namesIncluded, shouldConvertToBoolean
+    )
+
+  }
+
 }

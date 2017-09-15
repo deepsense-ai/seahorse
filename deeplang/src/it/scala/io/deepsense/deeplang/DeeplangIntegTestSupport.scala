@@ -40,61 +40,7 @@ import io.deepsense.sparkutils.SparkSQLSession
 /**
  * Adds features to facilitate integration testing using Spark
  */
-trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
-
-  var commonExecutionContext: CommonExecutionContext = _
-  implicit var executionContext: ExecutionContext = _
-
-  val sparkConf: SparkConf = DeeplangIntegTestSupport.sparkConf
-  val sparkContext: SparkContext = DeeplangIntegTestSupport.sparkContext
-  val sparkSQLSession: SparkSQLSession = DeeplangIntegTestSupport.sparkSQLSession
-
-  val dOperableCatalog = {
-    val catalog = new DOperableCatalog
-    CatalogRecorder.registerDOperables(catalog)
-    catalog
-  }
-
-  override def beforeAll(): Unit = {
-    commonExecutionContext = prepareCommonExecutionContext()
-    executionContext = prepareExecutionContext()
-  }
-
-  protected def prepareCommonExecutionContext(): CommonExecutionContext = {
-    val inferContext = InferContext(
-      DataFrameBuilder(sparkSQLSession),
-      "testTenantId",
-      dOperableCatalog,
-      mock[InnerWorkflowParser])
-
-    new MockedCommonExecutionContext(
-      sparkContext,
-      sparkSQLSession,
-      inferContext,
-      LocalFileSystemClient(),
-      "testTenantId",
-      mock[InnerWorkflowExecutor],
-      mock[DataFrameStorage],
-      mock[CustomCodeExecutionProvider])
-  }
-
-  protected def prepareExecutionContext(): ExecutionContext = {
-    val inferContext = InferContext(
-      DataFrameBuilder(sparkSQLSession),
-      "testTenantId",
-      dOperableCatalog,
-      mock[InnerWorkflowParser])
-
-    new MockedExecutionContext(
-      sparkContext,
-      sparkSQLSession,
-      inferContext,
-      LocalFileSystemClient(),
-      "testTenantId",
-      mock[InnerWorkflowExecutor],
-      mock[ContextualDataFrameStorage],
-      new MockedContextualCodeExecutor)
-  }
+trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll with LocalExecutionContext {
 
   protected def createDataFrame(rows: Seq[Row], schema: StructType): DataFrame = {
     val rdd: RDD[Row] = sparkContext.parallelize(rows)
@@ -103,7 +49,7 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
   }
 
   def executeOperation(op: DOperation, dfs: DataFrame*): DataFrame =
-    op.execute(executionContext)(dfs.toVector).head.asInstanceOf[DataFrame]
+    op.executeUntyped(dfs.toVector)(executionContext).head.asInstanceOf[DataFrame]
 
   def createDir(path: String): Unit = {
     new java.io.File(path + "/id").getParentFile.mkdirs()

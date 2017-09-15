@@ -16,16 +16,17 @@
 
 package io.deepsense.workflowexecutor
 
+import io.deepsense.deeplang.catalogs.CatalogPair
 import io.deepsense.deeplang.doperations.custom.{Sink, Source}
 import io.deepsense.deeplang.doperations.{CreateCustomTransformer, DefaultCustomTransformerWorkflow}
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.deeplang.inference.exceptions.NoInputEdgesException
 import io.deepsense.deeplang.params.custom.InnerWorkflow
-import io.deepsense.deeplang.{DOperation, InnerWorkflowExecutor}
+import io.deepsense.deeplang.{CatalogRecorder, DOperation, InnerWorkflowExecutor}
 import io.deepsense.graph.{AbstractInferenceSpec, DeeplangGraph, GraphKnowledge, Node}
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.InnerWorkflowJsonProtocol
-import io.deepsense.workflowexecutor.executor.{Executor, InnerWorkflowExecutorImpl}
+import io.deepsense.workflowexecutor.executor.InnerWorkflowExecutorImpl
 
 class KnowledgeInferenceSpec
   extends AbstractInferenceSpec
@@ -90,6 +91,5 @@ class KnowledgeInferenceSpec
     InferContext(null, null, dOperableCatalog, executor)
   }
   override protected lazy val graphReader = new GraphReader(operationCatalog)
-  private lazy val operationCatalog = Executor.createDOperationsCatalog()
-  private lazy val dOperableCatalog = Executor.createDOperableCatalog()
+  private lazy val CatalogPair(dOperableCatalog, operationCatalog) = CatalogRecorder.createCatalogs()
 }

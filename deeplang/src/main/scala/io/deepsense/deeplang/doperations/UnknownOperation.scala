@@ -19,6 +19,7 @@ package io.deepsense.deeplang.doperations
 import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.{DKnowledge, DOperable, DOperation, ExecutionContext}
 import io.deepsense.deeplang.DOperation._
+import io.deepsense.deeplang.doperations.exceptions.UnknownOperationExecutionException
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 
 import scala.reflect.runtime.{universe => ru}
@@ -26,8 +27,8 @@ import scala.reflect.runtime.{universe => ru}
 
 class UnknownOperation extends DOperation {
 
-  val inArity = 0
-  val outArity = 0
+  override val inArity = 0
+  override val outArity = 0
 
   @transient
   override lazy val inPortTypes: Vector[ru.TypeTag[_]] = Vector()
@@ -40,17 +41,14 @@ class UnknownOperation extends DOperation {
   override val name: String = "Unknown Operation"
   override val description: String = "Operation that could not be recognized by Seahorse"
 
-  override val since: Version = Version(1, 4, 0)
-
   override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array()
 
-  override def execute(context: ExecutionContext)(
-    arguments: Vector[DOperable]): Vector[DOperable] = {
-    Vector()
+  override def executeUntyped(arguments: Vector[DOperable])(context: ExecutionContext): Vector[DOperable] = {
+    throw new UnknownOperationExecutionException
   }
 
-  override def inferKnowledge(context: InferContext)(
-    knowledge: Vector[DKnowledge[DOperable]]): (Vector[DKnowledge[DOperable]], InferenceWarnings) = {
-    (Vector(), InferenceWarnings.empty)
+  override def inferKnowledgeUntyped(knowledge: Vector[DKnowledge[DOperable]])(
+      context: InferContext): (Vector[DKnowledge[DOperable]], InferenceWarnings) = {
+    throw new UnknownOperationExecutionException
   }
 }

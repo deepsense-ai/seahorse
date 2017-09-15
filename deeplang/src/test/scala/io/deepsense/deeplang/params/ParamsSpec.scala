@@ -215,8 +215,8 @@ class ParamsSpec extends UnitSpec {
         withParamsA.sameAs(withParamsB) shouldBe false
       }
       "parameters have different values" in {
-        val file1 = File()
-        val file2 = File()
+        val file1 = new File()
+        val file2 = new File()
         file1.setSourceFile("path")
 
         file1.sameAs(file2) shouldBe false

@@ -22,14 +22,15 @@ import io.deepsense.commons.BuildInfo
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
 import io.deepsense.commons.utils.{Logging, Version}
 import io.deepsense.deeplang._
+import io.deepsense.deeplang.catalogs.CatalogPair
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
-import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.sparkutils.SparkSQLSession
 
 trait Executor extends Logging {
+
 
   def currentVersion: Version =
     Version(BuildInfo.apiVersionMajor, BuildInfo.apiVersionMinor, BuildInfo.apiVersionPatch)
@@ -42,17 +43,17 @@ trait Executor extends Logging {
       tempPath: String,
       dOperableCatalog: Option[DOperableCatalog] = None): CommonExecutionContext = {
 
-    val catalog = dOperableCatalog.getOrElse(createDOperableCatalog())
+    val CatalogPair(operableCatalog, operationsCatalog) = CatalogRecorder.createCatalogs()
 
     val tenantId = ""
 
     val innerWorkflowExecutor = new InnerWorkflowExecutorImpl(
-      new GraphReader(createDOperationsCatalog()))
+      new GraphReader(operationsCatalog))
 
     val inferContext = InferContext(
       DataFrameBuilder(sparkSQLSession),
       tenantId,
-      catalog,
+      operableCatalog,
       innerWorkflowExecutor)
 
     CommonExecutionContext(
@@ -81,18 +82,6 @@ trait Executor extends Logging {
     val sparkSQLSession = new SparkSQLSession(sparkContext)
     UserDefinedFunctions.registerFunctions(sparkSQLSession.udfRegistration)
     sparkSQLSession
-  }
-
-  def createDOperableCatalog(): DOperableCatalog = {
-    val catalog = new DOperableCatalog
-    CatalogRecorder.registerDOperables(catalog)
-    catalog
-  }
-
-  def createDOperationsCatalog(): DOperationsCatalog = {
-    val catalog = DOperationsCatalog()
-    CatalogRecorder.registerDOperations(catalog)
-    catalog
   }
 
 }

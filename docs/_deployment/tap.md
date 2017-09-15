@@ -92,6 +92,6 @@ your workflow will stop working.
 
 Above limitations refer only to Seahorse on Trusted Analytics Platform.
 To learn more about scaling up and using Seahorse in production,
-see the [Enterprise](enterprise.html) page.
+please <a target="_blank" href="http://deepsense.io/about-us/contact/#contact-form">contact us for details</a>.
 
 {% include contact_box.html %}

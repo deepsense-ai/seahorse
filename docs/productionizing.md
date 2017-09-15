@@ -61,7 +61,7 @@ export SPARK_HOME=/opt/spark
 {% endhighlight %}
 Now set the `PYTHONPATH` variable (it depends on `SPARK_HOME`):
 {% highlight bash %}
-export PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.9-src.zip:$PYTHONPATH
+export PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.1-src.zip:$PYTHONPATH
 {% endhighlight %}
 
 
@@ -158,12 +158,27 @@ and
 a proper JDBC driver has to be accessible during workflow's execution.
 This requirement can be satisfied by:
 
-* adding the JDBC jar library to cluster deployment or,
+* adding the JDBC jar library to cluster deployment, or
 
 * adding the JDBC jar to the driver's classpath during `spark-submit` command (`--jars` option).
 
 To specify JDBC jar during execution, use `spark-submit`'s option
-``--driver-class-path``. I.e. ``--driver-class-path "path/to/jdbc-driver1.jar:path/to/jdbc-driver2.jar:workflowexecutor.jar"``.
+``--driver-class-path``, e.g. ``--driver-class-path "path/to/jdbc-driver1.jar:path/to/jdbc-driver2.jar:workflowexecutor.jar"``.
+For more information, please visit
+<a target="_blank" href="{{ site.SPARK_DOCS }}/configuration.html#runtime-environment">Apache Spark documentation</a>.
+
+## Using SDK
+
+To execute workflow containing user-defined operations (see: [SDK User Guide](sdk_user_guide.html)),
+user has to specify jars containing those operation to be accessible during workflow's execution.
+This requirement can be satisfied by:
+
+* adding the SDK jar to cluster deployment, or
+
+* adding the SDK jar to the driver's classpath during `spark-submit` command (`--jars` option).
+
+To specify Seahorse SDK jar during execution, use `spark-submit`'s option
+``--driver-class-path``, e.g. ``--driver-class-path "path/to/skd1.jar:path/to/sdk2.jar:workflowexecutor.jar"``.
 For more information, please visit
 <a target="_blank" href="{{ site.SPARK_DOCS }}/configuration.html#runtime-environment">Apache Spark documentation</a>.
 

@@ -17,11 +17,11 @@
 package io.deepsense.deeplang.doperations
 
 import scala.reflect.runtime.universe.TypeTag
-
 import spray.json.{JsNull, JsValue}
 
 import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
+import io.deepsense.deeplang.documentation.OperationDocumentation
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.{Evaluator, MetricValue}
 import io.deepsense.deeplang.doperations.exceptions.TooManyPossibleTypesException
@@ -29,7 +29,7 @@ import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.DynamicParam
 import io.deepsense.deeplang.{DKnowledge, DOperation2To1, ExecutionContext}
 
-case class Evaluate() extends DOperation2To1[DataFrame, Evaluator, MetricValue] {
+case class Evaluate() extends DOperation2To1[DataFrame, Evaluator, MetricValue] with OperationDocumentation {
 
   override val id: Id = "a88eaf35-9061-4714-b042-ddd2049ce917"
   override val name: String = "Evaluate"
@@ -53,17 +53,14 @@ case class Evaluate() extends DOperation2To1[DataFrame, Evaluator, MetricValue] 
   override lazy val tTagTI_1: TypeTag[Evaluator] = typeTag
   override lazy val tTagTO_0: TypeTag[MetricValue] = typeTag
 
-  override protected def _execute(
-      context: ExecutionContext)(
-      dataFrame: DataFrame,
-      evaluator: Evaluator): MetricValue = {
+  override protected def execute(dataFrame: DataFrame, evaluator: Evaluator)(context: ExecutionContext): MetricValue = {
     evaluatorWithParams(evaluator).evaluate(context)(())(dataFrame)
   }
 
-  override protected def _inferKnowledge(
-      context: InferContext)(
+  override protected def inferKnowledge(
       dataFrameKnowledge: DKnowledge[DataFrame],
-      evaluatorKnowledge: DKnowledge[Evaluator]): (DKnowledge[MetricValue], InferenceWarnings) = {
+      evaluatorKnowledge: DKnowledge[Evaluator])(
+      context: InferContext): (DKnowledge[MetricValue], InferenceWarnings) = {
 
     if (evaluatorKnowledge.size > 1) {
       throw TooManyPossibleTypesException()

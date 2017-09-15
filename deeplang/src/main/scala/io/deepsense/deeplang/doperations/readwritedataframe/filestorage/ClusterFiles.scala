@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperations.readwritedataframe
+package io.deepsense.deeplang.doperations.readwritedataframe.filestorage
 
 import scala.reflect.runtime.{universe => ru}
 
-import org.apache.spark.sql.{DataFrame => SparkDataFrame, SaveMode}
+import org.apache.spark.sql.{SaveMode, DataFrame => SparkDataFrame}
 
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.inout.OutputFileFormatChoice.Csv
 import io.deepsense.deeplang.doperations.inout.{InputFileFormatChoice, OutputFileFormatChoice}
-import io.deepsense.deeplang.doperations.readwritedataframe.csv.CsvOptions
+import io.deepsense.deeplang.doperations.readwritedataframe.FilePath
+import io.deepsense.deeplang.doperations.readwritedataframe.filestorage.csv.CsvOptions
 
-object ClusterFiles {
+private[filestorage] object ClusterFiles {
 
   import CsvOptions._
 
@@ -45,15 +46,15 @@ object ClusterFiles {
     val clusterPath = path.fullPath
     val writer = fileFormat match {
       case (csvChoice: Csv) =>
-        val namesIncluded = csvChoice.getCsvNamesIncluded
+        val namesIncluded = csvChoice.getNamesIncluded
         dataFrame
           .sparkDataFrame
           .write.format("com.databricks.spark.csv")
           .options(CsvOptions.map(namesIncluded, csvChoice.getCsvColumnSeparator()))
-      case OutputFileFormatChoice.Parquet() =>
+      case _: OutputFileFormatChoice.Parquet =>
         // TODO: DS-1480 Writing DF in parquet format when column names contain forbidden chars
         dataFrame.sparkDataFrame.write.format("parquet")
-      case OutputFileFormatChoice.Json() =>
+      case _: OutputFileFormatChoice.Json =>
         dataFrame.sparkDataFrame.write.format("json")
     }
     writer.mode(SaveMode.Overwrite).save(clusterPath)
@@ -63,7 +64,7 @@ object ClusterFiles {
                      (implicit context: ExecutionContext) =
     context.sparkSQLSession.read
       .format("com.databricks.spark.csv")
-      .setCsvOptions(csvChoice.getCsvNamesIncluded, csvChoice.getCsvColumnSeparator())
+      .setCsvOptions(csvChoice.getNamesIncluded, csvChoice.getCsvColumnSeparator())
       .load(clusterPath)
 
 }

@@ -21,6 +21,7 @@ import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
 import spray.json._
 
 import io.deepsense.commons.exception.DeepSenseException
+import io.deepsense.deeplang.catalogs.CatalogPair
 import io.deepsense.deeplang.doperables.SqlColumnTransformer
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.SingleColumnChoice
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.NoInPlaceChoice
@@ -29,7 +30,7 @@ import io.deepsense.deeplang.doperations.custom.{Sink, Source}
 import io.deepsense.deeplang.doperations.spark.wrappers.evaluators.CreateRegressionEvaluator
 import io.deepsense.deeplang.params.custom.InnerWorkflow
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
-import io.deepsense.deeplang.{DeeplangIntegTestSupport, InnerWorkflowExecutor}
+import io.deepsense.deeplang.{CatalogRecorder, DeeplangIntegTestSupport, InnerWorkflowExecutor}
 import io.deepsense.graph.{DeeplangGraph, Edge, Node}
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.InnerWorkflowJsonProtocol
@@ -98,7 +99,8 @@ class InnerWorkflowExecutorSpec
     Set(sourceNode, sinkNode, otherNode),
     Set(Edge(sourceNode, 0, sinkNode, 0)))
 
-  val graphReader = new GraphReader(Executor.createDOperationsCatalog())
+  val CatalogPair(_, dOperationsCatalog) = CatalogRecorder.createCatalogs()
+  val graphReader = new GraphReader(dOperationsCatalog)
   val executor: InnerWorkflowExecutor = new InnerWorkflowExecutorImpl(graphReader)
 
   val schema = StructType(List(
