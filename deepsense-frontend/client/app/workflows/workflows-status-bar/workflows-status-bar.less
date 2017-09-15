@@ -8,7 +8,6 @@
   display: flex;
   justify-content: space-around;
   flex-direction: column;
-  width: 100%;
 
   &__upper-section {
     display: flex;
@@ -37,16 +36,34 @@
 
     &-user {
       font-size: 16px;
-
+      margin-right: 20px;
       text-overflow: ellipsis;
       white-space: nowrap;
       width: 30%;
       overflow: hidden;
       text-align: right;
+      vertical-align: middle;
+
+      & i {
+        font-size: 20px;
+        color: @dark-blue;
+      }
 
       @media (max-width: @bigger-media-break) {
         font-size: 14px;
         width: 100%;
+      }
+    }
+
+    &-logout {
+      margin-right: 10px;
+      font-size: 14px;
+      min-width: 60px;
+
+      @media (max-width: @media-break) {
+        position: absolute;
+        top: 15px;
+        right: 15px;
       }
     }
 
@@ -142,11 +159,17 @@
     justify-content: center;
     align-items: center;
 
+    @media (max-width: @bigger-media-break) {
+      & i {
+        font-size: 18px;
+      }
+    }
+
     @media (max-width: @media-break) {
       flex: 1;
     }
-    flex: 0.15;
 
+    flex: 0.15;
   }
 
   &__popover-span {

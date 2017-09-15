@@ -1,5 +1,4 @@
-@dark-blue: #02A3D8;
-@bright-blue: #01b1eb;
+@import "../../css/variables";
 
 @font-face {
   font-family: 'open_sanslight';
@@ -82,6 +81,10 @@
 .table-workflows {
   font-size: 15px;
 
+  @media (max-width: @bigger-media-break) {
+    font-size: 12px;
+  }
+
   .table {
     &__centered {
       text-align: center;
@@ -128,10 +131,12 @@
 .logged-user {
   position: absolute;
   top: 18px;
-  right: 260px;
+  right: 10px;
   font-size: 16px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  width: 320px;
 
   &__icon {
     margin-right: 5px;

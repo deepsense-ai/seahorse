@@ -9,6 +9,11 @@
       <span>{{::getCurrentUser().name}}</span>
       <span ng-if="::isOwner(workflow)">(owner)</span>
     </div>
+    <div class="c-workflows-status-bar__upper-section-logout">
+      <a href="/logout">
+        <span>Log out</span>
+      </a>
+    </div>
   </div>
   <div class="c-workflows-status-bar__lower-section">
     <menu-item ng-repeat="item in getMenuItems(workflow)"

@@ -10,7 +10,7 @@ var _ues = {
   tab_font_size: 20,
   tab_image_hash: 'ZmVlZGJhY2s%3D',
   tab_chat_hash: 'Y2hhdA%3D%3D',
-  tab_alignment: 'top',
+  tab_alignment: 'left',
   tab_text_color: '#ffffff',
   tab_text_shadow_color: '#00000055',
   tab_bg_color: '#00b1eb',
