@@ -5,6 +5,8 @@
 #
 # Usage: `jenkins/publish_base_docker_images_internal.sh VERSION` from deepsense-backend catalog
 
+./jenkins/scripts/checkout-submodules.sh
+
 # Check if number of parameters is correct
 if [ $# != 1 ]; then
   echo ">>> Exactly one parameter must be provided."

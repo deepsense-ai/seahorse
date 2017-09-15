@@ -3,6 +3,8 @@
 #
 # Usage ./build_vagrant_with_docker.sh SEAHORSE_BUILD_TAG
 
+./jenkins/scripts/checkout-submodules.sh
+
 # Check if number of parameters is correct
 if [ $# != 1 ]; then
   echo ">>> Exactly one parameter must be provided."

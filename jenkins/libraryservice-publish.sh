@@ -7,6 +7,8 @@
 # Example usage from jenkins:
 # ./jenkins/libraryservice-publish.sh
 
+./jenkins/scripts/checkout-submodules.sh
+
 SEAHORSE_BUILD_TAG="${SEAHORSE_BUILD_TAG?Need to set SEAHORSE_BUILD_TAG. For example export SEAHORSE_BUILD_TAG=SEAHORSE_BUILD_TAG=\`date +%Y%m%d_%H%M%S\`-\$GIT_TAG}"
 
 # Set working directory to project root file

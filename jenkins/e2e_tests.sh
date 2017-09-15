@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+./jenkins/scripts/checkout-submodules.sh
+
 (cd deployment/docker-compose ; ./docker-compose $SEAHORSE_BUILD_TAG pull)
 # destroy dockercompose_default, so we can recreate it with proper id
 (cd deployment/docker-compose ; ./docker-compose $SEAHORSE_BUILD_TAG down)

@@ -7,6 +7,8 @@
 
 set -e
 
+./jenkins/scripts/checkout-submodules.sh
+
 DEEPSENSE_REGISTRY="docker-repo.deepsense.codilime.com/deepsense_io"
 SEAHORSE_BUILD_TAG=$1
 

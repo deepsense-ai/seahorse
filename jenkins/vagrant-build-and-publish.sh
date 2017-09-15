@@ -5,6 +5,8 @@
 # $SEAHORSE_BUILD_TAG required for deployment
 # $API_VERSION requred for deployment
 
+./jenkins/scripts/checkout-submodules.sh
+
 SEAHORSE_BUILD_TAG="${SEAHORSE_BUILD_TAG?Need to set SEAHORSE_BUILD_TAG. For example export SEAHORSE_BUILD_TAG=SEAHORSE_BUILD_TAG=\`date +%Y%m%d_%H%M%S\`-\$GIT_TAG}"
 API_VERSION="${API_VERSION?Need to set SEAHORSE_BUILD_TAG. For example export API_VERSION="1.3.0"}"
 

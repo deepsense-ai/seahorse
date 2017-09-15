@@ -7,6 +7,8 @@
 # $API_VERSION
 # $RELEASE_TO_S3
 
+./jenkins/scripts/checkout-submodules.sh
+
 SEAHORSE_BUILD_TAG="${SEAHORSE_BUILD_TAG?Need to set SEAHORSE_BUILD_TAG. For example export SEAHORSE_BUILD_TAG=SEAHORSE_BUILD_TAG=\`date +%Y%m%d_%H%M%S\`-\$GIT_TAG}"
 API_VERSION="${API_VERSION?Need to set API_VERSION. For example setting it to 1.3.0"
 RELEASE_TO_S3="${RELEASE_TO_S3?Need to set RELEASE_TO_S3 to \"false\" for not releasing to S3. Set RELEASE_TO_S3 to anything else for releasing to S3."
