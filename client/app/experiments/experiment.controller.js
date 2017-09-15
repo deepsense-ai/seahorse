@@ -54,9 +54,22 @@ function ExperimentController($stateParams, $rootScope, Operations, DrawingServi
     internal.selectedNode = null;
   };
 
+  that.saveData = function saveData() {
+    let data = that.getExperiment().serialize();
+    ExperimentAPIClient.saveData({
+      'experiment': data
+    }).then(() => {
+      // TODO: compare sent data with response / update experiment if needed
+    });
+  };
+
   $rootScope.$on(GraphNode.CLICK, function(event, data) {
     internal.selectedNode = data.selectedNode;
     $rootScope.$apply();
+  });
+
+  $rootScope.$on(GraphNode.MOVE, function() {
+    that.saveData();
   });
 
   internal.init();

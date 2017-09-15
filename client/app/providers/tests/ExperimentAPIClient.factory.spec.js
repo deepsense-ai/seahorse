@@ -226,9 +226,9 @@ describe('ExperimentAPIClient', () => {
     });
 
     it('which return promise', () => {
-      $httpBackend.expectPUT(url);
+      $httpBackend.expectPUT(url, {'experiment': data});
 
-      let promise = ExperimentAPIClient.saveData(data);
+      let promise = ExperimentAPIClient.saveData({'experiment': data});
       expect(promise).toEqual(jasmine.any(Object));
       expect(promise.then).toEqual(jasmine.any(Function));
       expect(promise.catch).toEqual(jasmine.any(Function));
@@ -241,9 +241,9 @@ describe('ExperimentAPIClient', () => {
           error   = false,
           responseData;
 
-      $httpBackend.expectPUT(url);
+      $httpBackend.expectPUT(url, {'experiment': data});
 
-      let promise = ExperimentAPIClient.saveData(data);
+      let promise = ExperimentAPIClient.saveData({'experiment': data});
       promise.then((data) => {
         success = true;
         responseData = data;
@@ -262,9 +262,9 @@ describe('ExperimentAPIClient', () => {
       let success = false,
           error   = false;
 
-      $httpBackend.expectPUT(url);
+      $httpBackend.expectPUT(url, {'experiment': data});
 
-      let promise = ExperimentAPIClient.saveData(data);
+      let promise = ExperimentAPIClient.saveData({'experiment': data});
       promise.then(() => {
         success = true;
       }).catch(() => {
