@@ -43,4 +43,13 @@
       {{type}}
     </span>
   </li>
+  <li ng-if="selectorIsSingle() && getName()" class="u-flex u-flex__wrap">
+    <p class="m-b-none u-flex__1 u-flex__25">Select by {{parameter.items[0].type.id}}:</p>
+    <span class="badge label-info u-normal-words">{{getName()}}</span>
+  </li>
+  <li ng-if="selectorIsSingle() && (getIndex() >= 0 && getIndex() !== null)"
+      class="u-flex u-flex__wrap">
+    <p class="m-b-none u-flex__1">Select by {{parameter.items[0].type.id}}:</p>
+    <span class="badge label-info u-white-space--normal">{{getIndex()}}</span>
+  </li>
 </ul>

@@ -20,6 +20,16 @@ function AttributesSerializedView() {
           if (typesList && typesList.types) {
             return _.any(_.values(typesList.types)) ? typesList.types : null;
           }
+        },
+        getName() {
+          let nameObj = scope.getItemsThisType('column')[0];
+          return nameObj && nameObj.column.name;
+        },
+        getIndex() {
+          let nameObj = scope.getItemsThisType('index')[0];
+
+          return nameObj && nameObj.firstNum >= 0 && !_.isNull(nameObj.firstNum) ?
+            nameObj.firstNum : null;
         }
       });
     }

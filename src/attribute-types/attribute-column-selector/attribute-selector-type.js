@@ -55,6 +55,10 @@ function AttributeSelectorType($timeout, $modal) {
         removeItem(itemIndex) {
           this.parameter.items.splice(itemIndex, 1);
         },
+        switchItem (item) {
+          scope.parameter.items.splice(0, 1);
+          this.addItem(item.id);
+        },
         selectorIsSingle: selectorIsSingle,
         showItemsChoices() {
           let isSingle = this.selectorIsSingle();

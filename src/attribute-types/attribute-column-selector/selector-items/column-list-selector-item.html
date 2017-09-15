@@ -2,7 +2,7 @@
   <div class="column-list-values">
     <div ng-if="selectorIsSingle()" class="selector-param-is-single">
       <div class="column-list-value">
-        <input ng-model="item.column.name" placeholder="Enter column name" type="text" class="form-control o-custom">
+        <input focused autofocus ng-model="item.column.name" placeholder="Enter column name" type="text" class="form-control o-custom">
       </div>
     </div>
     <div ng-if="!selectorIsSingle()">

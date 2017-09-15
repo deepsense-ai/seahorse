@@ -20,7 +20,8 @@ function LabelToFirstUnlabeled ($timeout) {
           nextSibling &&
           (
             nextCheckbox = nextSibling.querySelector('input') ||
-            nextSibling.querySelector('textarea')
+            nextSibling.querySelector('textarea') ||
+            nextSibling.querySelector('button')
           ) &&
           nextCheckbox.parentNode.tagName !== 'LABEL'
         ) {

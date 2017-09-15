@@ -445,7 +445,17 @@ angular.module('test').
           "isSingle": false
         }
       ],
-      []
+      [
+        {
+          "name": "selectors-single-test",
+          "type": "selector",
+          "description": "sample desc",
+          "port": 1,
+          "default": null,
+          "required": true,
+          "isSingle": true
+        }
+      ]
     ];
 
     var parameterValues = [
@@ -493,7 +503,7 @@ angular.module('test').
         },
         "sample-selectors-empty": null,
         "sample-single-column-selector": {
-          "type": "column",
+          "type": "column", // name
           "value": "kozik"
         },
         "sample-single-index-selector": {
@@ -524,7 +534,12 @@ angular.module('test').
           "selections": []
         }
       },
-      {}
+      {
+        "selectors-single-test": {
+          "type": "index",
+          "value": 1
+        }
+      }
     ];
 
     for (var i = 0; i < nodes.length; ++i) {

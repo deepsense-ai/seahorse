@@ -33,7 +33,14 @@
                 fa fa-plus-circle fa-5x
                 u-flex u-flex--center-center u-fill-parent u-cursor-pointer"
          ng-click="addItem(itemType.id)"
-         ng-hide="isItemIdInList(itemType.id)"></div>
+         ng-hide="isItemIdInList(itemType.id)"
+         ng-if="!selectorIsSingle()"></div>
+    <div class="o-modal-selector__list--empty o-modal-selector__list--single text-navy
+                fa fa-arrows-h fa-5x
+                u-flex u-flex--center-center u-fill-parent u-cursor-pointer"
+         ng-click="switchItem(itemType)"
+         ng-hide="isItemIdInList(itemType.id)"
+         ng-if="selectorIsSingle()"></div>
     <div ng-switch="itemType.id"
          ng-repeat="item in getItemsThisType(itemType.id)"
          ng-show="isItemIdInList(itemType.id)"
