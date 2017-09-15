@@ -45,7 +45,6 @@ case class WriteTransformer()
   def setOutputFile(value: String): this.type = set(outputPath, value)
 
   val params = declareParams(outputPath)
-  setDefault(outputPath, "file:///tmp/seahorse_transformer")
 
   override protected def _execute(context: ExecutionContext)(transformer: Transformer): Unit = {
     val outputDictPath = getOutputPath

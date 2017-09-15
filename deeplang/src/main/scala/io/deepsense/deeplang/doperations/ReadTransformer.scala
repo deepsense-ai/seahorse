@@ -40,7 +40,6 @@ case class ReadTransformer()
   override val since: Version = Version(1, 1, 0)
 
   val params = declareParams(sourcePath)
-  setDefault(sourcePath, "file:///tmp/path_to_file")
 
   override protected def _execute(context: ExecutionContext)(): Transformer = {
     val path = getSourcePath
