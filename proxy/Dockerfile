@@ -1,5 +1,5 @@
 # Copyright (c) 2016, CodiLime Inc.
-FROM  node:6.11-stretch
+FROM  node:6.11-slim
 
 RUN npm install webpack -g
 RUN npm install webpack-node-externals --save-dev -g
