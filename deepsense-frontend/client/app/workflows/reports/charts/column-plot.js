@@ -2,7 +2,6 @@
 
 function ColumnPlot() {
 
-  const LABEL_PRECISION = 4;
   const maxChartHeight = 400;
   const labelLengthThreshold = 20;
   const maxLabelChars = 40;
@@ -62,9 +61,6 @@ function ColumnPlot() {
           if (scope.columnType === 'timestamp') {
             start = moment(new Date(start)).format('YYYY-MM-DD HH:mm:ss');
             end = moment(new Date(end)).format('YYYY-MM-DD HH:mm:ss');
-          } else {
-            start = parseFloat(start).toPrecision(LABEL_PRECISION);
-            end = parseFloat(end).toPrecision(LABEL_PRECISION);
           }
 
           const str = `${start} - ${end}`;

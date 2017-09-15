@@ -16,11 +16,14 @@ function removeTrailingZeros (str) {
 
 
 function precision() {
-  const DEFAULT_PRECISION = 4;
+  const DEFAULT_PRECISION = 6;
 
   return function(value, digits) {
-    const numVal = parseFloat(value);
+    if (_.includes(value, 'e') || _.includes(value, 'E')) {
+      return value;
+    }
 
+    const numVal = parseFloat(value);
     if (_.isNaN(numVal)) {
       return value;
     }
