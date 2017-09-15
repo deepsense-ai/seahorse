@@ -14,3 +14,5 @@ URL="https://s3.amazonaws.com/${RELEASE_PATH}/${BOX_NAME}"
 sed "s#seahorsevm.vm.box_url = \"\"#seahorsevm.vm.box_url = \"${URL}\"#" Vagrantfile.template > VagrantfileS3
 
 aws s3 cp VagrantfileS3 s3://${RELEASE_PATH}/Vagrantfile --acl public-read
+
+echo "PATH: https://s3.amazonaws.com/${RELEASE_PATH}/Vagrantfile"
