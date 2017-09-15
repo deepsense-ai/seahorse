@@ -11,53 +11,26 @@ import io.deepsense.seahorse.datasource.model._
 object TestData {
 
   def someDatasources() = Seq(
-    someJdbcDatasource(),
-    someJsonFileDatasource(),
-    someCsvFileDatasource()
+    someJdbcDatasource()
   )
 
-  def someJdbcDatasource() = Datasource(
-    id = UUID.randomUUID(),
+  def someDatasource() = someJdbcDatasource()
+
+  def someJdbcDatasource() = DatasourceParams(
     name = "some-name" + UUID.randomUUID(),
     downloadUri = None,
+    visibility = Visibility.privateVisibility,
     datasourceType = DatasourceType.jdbc,
     jdbcParams = Some(JdbcParams(
-      url = "jdbc://some/url",
+      url = "jdbc://some/url" + UUID.randomUUID(),
       driver = "com.postgresql.driver",
-      table = "some_table"
+      table = Some("some_table" + UUID.randomUUID()),
+      query = None
     )),
-    fileParams = None
-  )
-
-  def someJsonFileDatasource() = Datasource(
-    id = UUID.randomUUID(),
-    name = "some-name" + UUID.randomUUID(),
-    downloadUri = None,
-    datasourceType = DatasourceType.file,
-    jdbcParams = None,
-    fileParams = Some(FileParams(
-      path = "hdfs://some/path",
-      fileScheme = FileScheme.hdfs,
-      fileFormat = FileFormat.json,
-      csvFileFormatParams = None
-    ))
-  )
-
-  def someCsvFileDatasource() = Datasource(
-    id = UUID.randomUUID(),
-    name = "some-name" + UUID.randomUUID(),
-    downloadUri = None,
-    datasourceType = DatasourceType.file,
-    jdbcParams = None,
-    fileParams = Some(FileParams(
-      path = "hdfs://some/path",
-      fileScheme = FileScheme.hdfs,
-      fileFormat = FileFormat.csv,
-      csvFileFormatParams = Some(CsvFileFormatParams(
-        separator = ",",
-        includeHeader = true
-      ))
-    ))
+    externalFileParams = None,
+    libraryFileParams = None,
+    hdfsParams = None,
+    googleSpreadsheetParams = None
   )
 
 }
