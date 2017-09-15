@@ -18,9 +18,10 @@ package io.deepsense.deeplang.doperations.spark.wrappers.estimators
 
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.spark.wrappers.estimators.PCAEstimator
+import io.deepsense.deeplang.doperables.spark.wrappers.models.PCAModel
 import io.deepsense.deeplang.doperations.EstimatorAsOperation
 
-class PCA extends EstimatorAsOperation[PCAEstimator] {
+class PCA extends EstimatorAsOperation[PCAEstimator, PCAModel] {
 
   override val id: Id = "fe1ac5fa-329a-4e3e-9cfc-67ee165053db"
   override val name: String = "PCA"

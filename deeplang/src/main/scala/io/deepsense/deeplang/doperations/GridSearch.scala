@@ -38,7 +38,8 @@ import io.deepsense.deeplang.params.{DynamicParam, NumericParam, ParamPair}
 import io.deepsense.deeplang.{DKnowledge, DOperation3To1, ExecutionContext}
 import io.deepsense.reportlib.model.{ReportContent, ReportType, Table}
 
-case class GridSearch() extends DOperation3To1[DataFrame, Estimator, Evaluator, Report] {
+case class GridSearch()
+  extends DOperation3To1[DataFrame, Estimator[Transformer], Evaluator, Report] {
 
   override val name: String = "Grid Search"
   override val id: Id = "9163f706-eaaf-46f6-a5b0-4114d92032b7"
@@ -79,14 +80,14 @@ case class GridSearch() extends DOperation3To1[DataFrame, Estimator, Evaluator, 
   override val params = declareParams(estimatorParams, evaluatorParams, numberOfFolds)
 
   override lazy val tTagTI_0: TypeTag[DataFrame] = typeTag
-  override lazy val tTagTI_1: TypeTag[Estimator] = typeTag
+  override lazy val tTagTI_1: TypeTag[Estimator[Transformer]] = typeTag
   override lazy val tTagTI_2: TypeTag[Evaluator] = typeTag
   override lazy val tTagTO_0: TypeTag[Report] = typeTag
 
   override protected def _execute(
       context: ExecutionContext)(
       dataFrame: DataFrame,
-      estimator: Estimator,
+      estimator: Estimator[Transformer],
       evaluator: Evaluator): Report = {
 
     val estimatorParams = estimator.paramPairsFromJson(getEstimatorParams)
@@ -110,7 +111,7 @@ case class GridSearch() extends DOperation3To1[DataFrame, Estimator, Evaluator, 
   override protected def _inferKnowledge(
       context: InferContext)(
       dataFrameKnowledge: DKnowledge[DataFrame],
-      estimatorKnowledge: DKnowledge[Estimator],
+      estimatorKnowledge: DKnowledge[Estimator[Transformer]],
       evaluatorKnowledge: DKnowledge[Evaluator]): (DKnowledge[Report], InferenceWarnings) = {
 
     val estimator = estimatorKnowledge.single
@@ -208,8 +209,8 @@ case class GridSearch() extends DOperation3To1[DataFrame, Estimator, Evaluator, 
   }
 
   private def createEstimatorWithParams(
-      estimator: Estimator,
-      estimatorParams: Seq[ParamPair[_]]): Estimator = {
+      estimator: Estimator[Transformer],
+      estimatorParams: Seq[ParamPair[_]]): Estimator[Transformer] = {
     estimator.replicate().set(estimatorParams: _*)
   }
 

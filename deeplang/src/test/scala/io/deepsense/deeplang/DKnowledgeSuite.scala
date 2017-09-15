@@ -50,11 +50,11 @@ class DKnowledgeSuite extends FunSuite with Matchers {
 
     class A extends DOperableMock {
       override def equals(any: Any): Boolean = isAOrB(any)
-      override def hashCode: Int = ???
+      override def hashCode: Int = 1234567
     }
     class B extends DOperableMock {
       override def equals(any: Any): Boolean = isAOrB(any)
-      override def hashCode: Int = ???
+      override def hashCode: Int = 1234567
     }
 
     val knowledge1: DKnowledge[A] = DKnowledge(new A)

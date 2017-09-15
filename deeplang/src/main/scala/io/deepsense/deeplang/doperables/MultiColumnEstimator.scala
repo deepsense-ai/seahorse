@@ -17,21 +17,19 @@
 package io.deepsense.deeplang.doperables
 
 import scala.language.reflectiveCalls
+import scala.reflect.runtime.universe.TypeTag
 
 import org.apache.spark.sql.types.StructType
 
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.multicolumn.{MultiColumnParams, HasSpecificParams}
-import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.MultiColumnInPlaceChoices.{MultiColumnYesInPlace, MultiColumnNoInPlace}
-import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoice
+import io.deepsense.deeplang.doperables.multicolumn.HasSpecificParams
+import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.MultiColumnInPlaceChoices.{MultiColumnNoInPlace, MultiColumnYesInPlace}
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.{MultiColumnChoice, SingleColumnChoice}
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.NoInPlaceChoice
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.HasInputColumn
-import io.deepsense.deeplang.inference.InferenceWarnings
 import io.deepsense.deeplang.params.IOColumnsParam
-import io.deepsense.deeplang.params.choice.ChoiceParam
-import io.deepsense.deeplang.params.selections.{MultipleColumnSelection, NameColumnSelection, NameSingleColumnSelection}
+import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
 /**
  * MultiColumnEstimator is a [[io.deepsense.deeplang.doperables.Estimator]]
@@ -45,7 +43,8 @@ import io.deepsense.deeplang.params.selections.{MultipleColumnSelection, NameCol
  * In single-column mode, a MultiColumnTransformer will be returned.
  * In multi-column mode, an AlwaysMultiColumnTransformer will be returned.
  */
-abstract class MultiColumnEstimator extends Estimator with HasSpecificParams {
+// TODO change Transformer to T <: Transformer
+abstract class MultiColumnEstimator extends Estimator[Transformer] with HasSpecificParams {
 
   val singleOrMultiChoiceParam = IOColumnsParam()
   override lazy val params = getSpecificParams :+ singleOrMultiChoiceParam

@@ -18,6 +18,7 @@ package io.deepsense.deeplang.doperations.spark.wrappers.estimators
 
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.spark.wrappers.estimators.GBTClassifier
+import io.deepsense.deeplang.doperables.spark.wrappers.models.GBTClassificationModel
 import io.deepsense.deeplang.doperations.EstimatorAsFactory
 
 class CreateGBTClassifier extends EstimatorAsFactory[GBTClassifier] {

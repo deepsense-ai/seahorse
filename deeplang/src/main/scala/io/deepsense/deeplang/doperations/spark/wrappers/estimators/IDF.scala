@@ -18,9 +18,10 @@ package io.deepsense.deeplang.doperations.spark.wrappers.estimators
 
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.spark.wrappers.estimators.IDFEstimator
+import io.deepsense.deeplang.doperables.spark.wrappers.models.IDFModel
 import io.deepsense.deeplang.doperations.EstimatorAsOperation
 
-class IDF extends EstimatorAsOperation[IDFEstimator] {
+class IDF extends EstimatorAsOperation[IDFEstimator, IDFModel] {
 
   override val id: Id = "36d31a98-9238-4159-8298-64eb8e3ca55a"
   override val name: String = "IDF"

@@ -22,13 +22,13 @@ import org.apache.spark.sql.types.StructType
 import org.apache.spark.{ml, sql}
 
 import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables.Estimator
+import io.deepsense.deeplang.doperables.{Transformer, Estimator}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.params.wrappers.deeplang.ParamWrapper
 
 class EstimatorWrapper(
     executionContext: ExecutionContext,
-    estimator: Estimator)
+    estimator: Estimator[Transformer])
   extends ml.Estimator[TransformerWrapper] {
 
   override def fit(dataset: sql.DataFrame): TransformerWrapper = {

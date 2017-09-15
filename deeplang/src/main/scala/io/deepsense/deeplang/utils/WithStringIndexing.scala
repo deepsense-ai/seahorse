@@ -33,12 +33,12 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.spark.wrappers.estimators.SimpleSparkEstimatorWrapper
 import io.deepsense.deeplang.params.Param
 
-trait WithStringIndexing[M <: Model[M]] {
+trait WithStringIndexing[M <: Model[M], T <: Transformer] {
 
   def fitWithStringIndexing(
       executionContext: ExecutionContext,
       dataFrame: DataFrame,
-      estimator: SimpleSparkEstimatorWrapper[M],
+      estimator: SimpleSparkEstimatorWrapper[M, T],
       labelColumnName: String,
       predictionColumnName: String): SparkCustomTransformerWrapper = {
 
@@ -69,7 +69,7 @@ trait WithStringIndexing[M <: Model[M]] {
 
   private def fitPipeline(
       sparkDataFrame: sql.DataFrame,
-      estimator: SimpleSparkEstimatorWrapper[M],
+      estimator: SimpleSparkEstimatorWrapper[M, T],
       pipeline: Pipeline): SparkCustomTransformerWrapper = {
     val paramMap = estimator.sparkParamMap(estimator.sparkEstimator, sparkDataFrame.schema)
     new SparkCustomTransformerWrapper(

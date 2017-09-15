@@ -28,7 +28,7 @@ import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.DynamicParam
 import io.deepsense.deeplang.{DKnowledge, DOperation2To1, ExecutionContext}
 
-case class Fit() extends DOperation2To1[DataFrame, Estimator, Transformer] {
+case class Fit() extends DOperation2To1[DataFrame, Estimator[Transformer], Transformer] {
 
   override val id: Id = "0c2ff818-977b-11e5-8994-feff819cdc9f"
   override val name: String = "Fit"
@@ -46,20 +46,21 @@ case class Fit() extends DOperation2To1[DataFrame, Estimator, Transformer] {
   override val params = declareParams(estimatorParams)
 
   override lazy val tTagTI_0: TypeTag[DataFrame] = typeTag
-  override lazy val tTagTI_1: TypeTag[Estimator] = typeTag
+  override lazy val tTagTI_1: TypeTag[Estimator[Transformer]] = typeTag
   override lazy val tTagTO_0: TypeTag[Transformer] = typeTag
 
   override protected def _execute(
       ctx: ExecutionContext)(
       dataFrame: DataFrame,
-      estimator: Estimator): Transformer = {
+      estimator: Estimator[Transformer]): Transformer = {
     estimatorWithParams(estimator).fit(ctx)(())(dataFrame)
   }
 
   override protected def _inferKnowledge(
       ctx: InferContext)(
       dataFrameKnowledge: DKnowledge[DataFrame],
-      estimatorKnowledge: DKnowledge[Estimator]): (DKnowledge[Transformer], InferenceWarnings) = {
+      estimatorKnowledge: DKnowledge[Estimator[Transformer]])
+    : (DKnowledge[Transformer], InferenceWarnings) = {
 
     if (estimatorKnowledge.size > 1) {
       throw TooManyPossibleTypesException()
@@ -72,7 +73,7 @@ case class Fit() extends DOperation2To1[DataFrame, Estimator, Transformer] {
    * Note that DOperation should never mutate input DOperable.
    * This method copies input estimator and sets parameters in copy.
    */
-  private def estimatorWithParams(estimator: Estimator): Estimator = {
+  private def estimatorWithParams(estimator: Estimator[Transformer]): Estimator[Transformer] = {
     val estimatorWithParams = estimator.replicate().setParamsFromJson($(estimatorParams))
     validateDynamicParams(estimatorWithParams)
     estimatorWithParams

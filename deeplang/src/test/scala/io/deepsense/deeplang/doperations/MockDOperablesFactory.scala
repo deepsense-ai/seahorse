@@ -43,9 +43,7 @@ object MockDOperablesFactory extends UnitSpec {
   }
 
   def dataFrameKnowledge(s: StructType): DKnowledge[DataFrame] = {
-    val k = mock[DKnowledge[DataFrame]]
-    when(k.types).thenReturn(Set(DataFrame.forInference(s)))
-    k
+    DKnowledge(Seq(DataFrame.forInference(s)))
   }
 
   val transformedDataFrame1 = mock[DataFrame]
@@ -65,7 +63,7 @@ object MockDOperablesFactory extends UnitSpec {
   val metricValueKnowledge1 = DKnowledge(MetricValue.forInference("name1"))
   val metricValueKnowledge2 = DKnowledge(MetricValue.forInference("name2"))
 
-  class MockEstimator extends Estimator {
+  class MockEstimator extends Estimator[Transformer] {
     val paramA = NumericParam("b", "desc", RangeValidator(0.0, Double.MaxValue))
     setDefault(paramA -> DefaultForA)
     override val params: Array[Param[_]] = declareParams(paramA)

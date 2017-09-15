@@ -16,14 +16,17 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
+import scala.reflect.runtime.universe.TypeTag
+
 import org.apache.spark.ml
 import org.apache.spark.ml.Model
 
-import io.deepsense.deeplang.doperables.Estimator
+import io.deepsense.deeplang.doperables.{Transformer, Estimator}
 import io.deepsense.deeplang.params.wrappers.spark.ParamsWithSparkWrappers
 
-abstract class SimpleSparkEstimatorWrapper[M <: Model[M]]
-  extends Estimator
+abstract class SimpleSparkEstimatorWrapper[M <: Model[M], T <: Transformer]
+    ()(implicit typeTag: TypeTag[T])
+  extends Estimator[T]
   with ParamsWithSparkWrappers {
 
   def sparkEstimator: ml.Estimator[M]

@@ -17,11 +17,11 @@
 package io.deepsense.deeplang.doperations.spark.wrappers.estimators
 
 import io.deepsense.deeplang.DOperation._
-import io.deepsense.deeplang.doperables.StringIndexerEstimator
+import io.deepsense.deeplang.doperables.{Transformer, StringIndexerModel, StringIndexerEstimator}
 import io.deepsense.deeplang.doperations.{EstimatorAsOperation, MultiColumnEstimatorParamsForwarder}
 
 class StringIndexer
-  extends EstimatorAsOperation[StringIndexerEstimator]
+  extends EstimatorAsOperation[StringIndexerEstimator, Transformer]
   with MultiColumnEstimatorParamsForwarder[StringIndexerEstimator] {
 
   override val id: Id = "c9df7000-9ea0-41c0-b66c-3062fd57851b"

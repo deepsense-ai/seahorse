@@ -26,7 +26,7 @@ import io.deepsense.deeplang.{DKnowledge, ExecutionContext, UnitSpec}
 class EstimatorIntegSpec extends UnitSpec {
 
   private def estimator = {
-    val e = mock[Estimator]
+    val e = mock[Estimator[Transformer]]
     when(e.fit) thenCallRealMethod()
     e
   }

@@ -38,12 +38,12 @@ import io.deepsense.deeplang.{ExecutionContext, TypeUtils}
 abstract class SparkEstimatorWrapper
     [MD <: ml.Model[MD], E <: ml.Estimator[MD], MW <: SparkModelWrapper[MD, E]]
     (implicit val modelWrapperTag: TypeTag[MW], implicit val estimatorTag: TypeTag[E])
-  extends Estimator
+  extends Estimator[MW]
   with ParamsWithSparkWrappers {
 
   val sparkEstimator: E = createEstimatorInstance()
 
-  override private[deeplang] def _fit(ctx: ExecutionContext, dataFrame: DataFrame): Transformer = {
+  override private[deeplang] def _fit(ctx: ExecutionContext, dataFrame: DataFrame): MW = {
     val sparkParams = sparkParamMap(sparkEstimator, dataFrame.sparkDataFrame.schema)
     val sparkModel = sparkEstimator.fit(
       dataFrame.sparkDataFrame,
@@ -51,7 +51,7 @@ abstract class SparkEstimatorWrapper
     createModelWrapperInstance().setModel(sparkModel).setParent(this)
   }
 
-  override private[deeplang] def _fit_infer(maybeSchema: Option[StructType]): Transformer = {
+  override private[deeplang] def _fit_infer(maybeSchema: Option[StructType]): MW = {
     // We want to throw validation exceptions here
     validateParams(maybeSchema)
     createModelWrapperInstance().setParent(this)

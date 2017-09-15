@@ -18,9 +18,10 @@ package io.deepsense.deeplang.doperations.spark.wrappers.estimators
 
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.spark.wrappers.estimators.CountVectorizerEstimator
+import io.deepsense.deeplang.doperables.spark.wrappers.models.CountVectorizerModel
 import io.deepsense.deeplang.doperations.EstimatorAsOperation
 
-class CountVectorizer extends EstimatorAsOperation[CountVectorizerEstimator] {
+class CountVectorizer extends EstimatorAsOperation[CountVectorizerEstimator, CountVectorizerModel] {
 
   override val id: Id = "e640d7df-d464-4ac0-99c4-235c29a0aa31"
   override val name: String = "Count Vectorizer"

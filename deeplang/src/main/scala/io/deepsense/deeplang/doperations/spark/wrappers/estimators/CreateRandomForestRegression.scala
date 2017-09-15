@@ -18,9 +18,11 @@ package io.deepsense.deeplang.doperations.spark.wrappers.estimators
 
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.spark.wrappers.estimators.RandomForestRegression
+import io.deepsense.deeplang.doperables.spark.wrappers.models.RandomForestRegressionModel
 import io.deepsense.deeplang.doperations.EstimatorAsFactory
 
-class CreateRandomForestRegression extends EstimatorAsFactory[RandomForestRegression] {
+class CreateRandomForestRegression
+  extends EstimatorAsFactory[RandomForestRegression] {
 
   override val id: Id = "2ec65504-bbe2-4ba2-a9b4-192e2f45ff16"
   override val name: String = "Random Forest Regression"

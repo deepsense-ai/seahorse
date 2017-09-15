@@ -18,6 +18,7 @@ package io.deepsense.deeplang.doperations.spark.wrappers.estimators
 
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.spark.wrappers.estimators.GBTRegressor
+import io.deepsense.deeplang.doperables.spark.wrappers.models.GBTRegressionModel
 import io.deepsense.deeplang.doperations.EstimatorAsFactory
 
 class CreateGBTRegressor extends EstimatorAsFactory[GBTRegressor] {

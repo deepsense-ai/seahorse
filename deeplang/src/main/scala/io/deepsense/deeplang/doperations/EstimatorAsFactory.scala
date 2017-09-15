@@ -19,21 +19,21 @@ package io.deepsense.deeplang.doperations
 import scala.reflect.runtime.universe.TypeTag
 
 import io.deepsense.deeplang._
-import io.deepsense.deeplang.doperables.Estimator
+import io.deepsense.deeplang.doperables.{Transformer, Estimator}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.Param
 
-abstract class EstimatorAsFactory[T <: Estimator]
-  (implicit typeTag: TypeTag[T])
-  extends DOperation0To1[T] {
+abstract class EstimatorAsFactory[E <: Estimator[Transformer]]
+  (implicit typeTagE: TypeTag[E])
+  extends DOperation0To1[E] {
 
-  val estimator: T = TypeUtils.instanceOfType(typeTag)
-  override lazy val tTagTO_0: TypeTag[T] = typeTag[T]
+  val estimator: E = TypeUtils.instanceOfType(typeTagE)
+  override lazy val tTagTO_0: TypeTag[E] = typeTag[E]
   override val params: Array[Param[_]] = estimator.params
 
   setDefault(estimator.extractParamMap().toSeq: _*)
 
-  override protected def _execute(context: ExecutionContext)(): T =
+  override protected def _execute(context: ExecutionContext)(): E =
     updatedEstimator
 
   override def inferKnowledge(
@@ -43,5 +43,5 @@ abstract class EstimatorAsFactory[T <: Estimator]
     (Vector(DKnowledge[DOperable](updatedEstimator)), InferenceWarnings.empty)
   }
 
-  private def updatedEstimator: T = estimator.set(extractParamMap())
+  private def updatedEstimator: E = estimator.set(extractParamMap())
 }

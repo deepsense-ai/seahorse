@@ -23,11 +23,11 @@ import io.deepsense.deeplang.doperables.{Estimator, Transformer}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.{DKnowledge, DOperation1To2, ExecutionContext, TypeUtils}
 
-abstract class EstimatorAsOperation[T <: Estimator]
-    ()(implicit typeTag: TypeTag[T])
-  extends DOperation1To2[DataFrame, DataFrame, Transformer] {
+abstract class EstimatorAsOperation[E <: Estimator[T], T <: Transformer]
+    ()(implicit typeTagE: TypeTag[E], typeTagT: TypeTag[T])
+  extends DOperation1To2[DataFrame, DataFrame, T] {
 
-  val estimator: T = TypeUtils.instanceOfType(typeTag)
+  val estimator: E = TypeUtils.instanceOfType(typeTagE)
 
   val params = estimator.params
 
@@ -35,7 +35,7 @@ abstract class EstimatorAsOperation[T <: Estimator]
 
   override protected def _execute(
       context: ExecutionContext)(
-      t0: DataFrame): (DataFrame, Transformer) = {
+      t0: DataFrame): (DataFrame, T) = {
     estimator.set(extractParamMap())
     val transformer = estimator.fit(context)(())(t0)
     val transformedDataFrame = transformer.transform(context)(())(t0)
@@ -45,7 +45,7 @@ abstract class EstimatorAsOperation[T <: Estimator]
   override protected def _inferKnowledge(
       context: InferContext)(
       k0: DKnowledge[DataFrame])
-    : ((DKnowledge[DataFrame], DKnowledge[Transformer]), InferenceWarnings) = {
+    : ((DKnowledge[DataFrame], DKnowledge[T]), InferenceWarnings) = {
 
     estimator.set(extractParamMap())
     val (transformerKnowledge, fitWarnings) = estimator.fit.infer(context)(())(k0)
@@ -57,5 +57,5 @@ abstract class EstimatorAsOperation[T <: Estimator]
 
   override lazy val tTagTI_0: TypeTag[DataFrame] = typeTag[DataFrame]
   override lazy val tTagTO_0: TypeTag[DataFrame] = typeTag[DataFrame]
-  override lazy val tTagTO_1: TypeTag[Transformer] = typeTag[Transformer]
+  override lazy val tTagTO_1: TypeTag[T] = typeTag[T]
 }

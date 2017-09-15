@@ -18,9 +18,10 @@ package io.deepsense.deeplang.doperations.spark.wrappers.estimators
 
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.spark.wrappers.estimators.MinMaxScalerEstimator
+import io.deepsense.deeplang.doperables.spark.wrappers.models.MinMaxScalerModel
 import io.deepsense.deeplang.doperations.EstimatorAsOperation
 
-class MinMaxScaler extends EstimatorAsOperation[MinMaxScalerEstimator] {
+class MinMaxScaler extends EstimatorAsOperation[MinMaxScalerEstimator, MinMaxScalerModel] {
 
   override val id: Id = "a63b6de3-793b-4cbd-ae81-76de216d90d5"
   override val name: String = "Min-Max Scaler"

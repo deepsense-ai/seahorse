@@ -82,7 +82,7 @@ class EstimatorAsOperationSpec extends UnitSpec {
 
 object EstimatorAsOperationSpec extends UnitSpec {
   class MockEstimatorOperation
-    extends EstimatorAsOperation[MockEstimator] {
+    extends EstimatorAsOperation[MockEstimator, Transformer] {
     override val id: Id = Id.randomId
     override val name: String = "Mock Estimator as an Operation"
     override val description: String = "Description"

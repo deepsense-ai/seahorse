@@ -33,10 +33,10 @@ import io.deepsense.deeplang.utils.WithStringIndexing
 import io.deepsense.deeplang.{doperables, ExecutionContext, TypeUtils}
 
 class GBTClassifier()
-  extends SimpleSparkEstimatorWrapper[SparkGBTClassificationModel]
+  extends SimpleSparkEstimatorWrapper[SparkGBTClassificationModel, GBTClassificationModel]
   with GBTParams
   with Logging
-  with WithStringIndexing[SparkGBTClassificationModel] {
+  with WithStringIndexing[SparkGBTClassificationModel, GBTClassificationModel] {
 
   import GBTClassifier._
 
@@ -49,7 +49,7 @@ class GBTClassifier()
   override def sparkEstimator: ml.Estimator[SparkGBTClassificationModel] = estimator
 
   override private[deeplang] def _fit_infer(
-      maybeSchema: Option[StructType]): doperables.Transformer = {
+      maybeSchema: Option[StructType]): GBTClassificationModel = {
     validateParameters(maybeSchema)
     new GBTClassificationModel()
   }
@@ -60,7 +60,7 @@ class GBTClassifier()
 
   override private[deeplang] def _fit(
       ctx: ExecutionContext,
-      dataFrame: DataFrame): doperables.Transformer = {
+      dataFrame: DataFrame): GBTClassificationModel = {
     val labelColumnName = dataFrame.getColumnName($(labelColumn))
     val predictionColumnName: String = $(predictionColumn)
     val transformer =

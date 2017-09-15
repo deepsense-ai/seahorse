@@ -21,7 +21,7 @@ import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.sql.types.StructType
 
 import io.deepsense.deeplang.DeeplangIntegTestSupport
-import io.deepsense.deeplang.doperables.Estimator
+import io.deepsense.deeplang.doperables.{Transformer, Estimator}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.spark.wrappers.estimators.AbstractEstimatorModelWrapperSmokeTest.TestDataFrameRow
 import io.deepsense.deeplang.params.ParamPair
@@ -30,7 +30,7 @@ abstract class AbstractEstimatorModelWrapperSmokeTest extends DeeplangIntegTestS
 
   def className: String
 
-  val estimator: Estimator
+  val estimator: Estimator[Transformer]
 
   val estimatorParams: Seq[ParamPair[_]]
 
@@ -66,7 +66,7 @@ abstract class AbstractEstimatorModelWrapperSmokeTest extends DeeplangIntegTestS
       val estimatorWithParams = estimator.set(estimatorParams: _*)
       estimatorWithParams._fit_infer(None)
     }
-    "succesfully run report" in {
+    "successfully run report" in {
       val estimatorWithParams = estimator.set(estimatorParams: _*)
       estimatorWithParams.report
     }

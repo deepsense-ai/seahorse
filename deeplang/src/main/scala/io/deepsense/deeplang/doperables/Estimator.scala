@@ -16,6 +16,8 @@
 
 package io.deepsense.deeplang.doperables
 
+import scala.reflect.runtime.universe.TypeTag
+
 import org.apache.spark.sql.types.StructType
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
@@ -26,30 +28,33 @@ import io.deepsense.deeplang.{DKnowledge, DMethod1To1, DOperable, ExecutionConte
 import io.deepsense.reportlib.model.ReportType
 
 /**
- * Can create a Transformer based on a DataFrame.
+ * Can create a Transformer of type T based on a DataFrame.
  */
-abstract class Estimator extends DOperable with Params {
+abstract class Estimator[+T <: Transformer]
+    ()(implicit typeTag: TypeTag[T])
+  extends DOperable
+  with Params {
 
   /**
    * Creates a Transformer based on a DataFrame.
    */
-  private[deeplang] def _fit(ctx: ExecutionContext, df: DataFrame): Transformer
+  private[deeplang] def _fit(ctx: ExecutionContext, df: DataFrame): T
 
   /**
    * Creates an instance of Transformer for inference.
     *
     * @param schema the schema for inference, or None if it's unknown.
    */
-  private[deeplang] def _fit_infer(schema: Option[StructType]): Transformer
+  private[deeplang] def _fit_infer(schema: Option[StructType]): T
 
-  def fit: DMethod1To1[Unit, DataFrame, Transformer] = {
-    new DMethod1To1[Unit, DataFrame, Transformer] {
-      override def apply(ctx: ExecutionContext)(p: Unit)(df: DataFrame): Transformer = {
+  def fit: DMethod1To1[Unit, DataFrame, T] = {
+    new DMethod1To1[Unit, DataFrame, T] {
+      override def apply(ctx: ExecutionContext)(p: Unit)(df: DataFrame): T = {
         _fit(ctx, df)
       }
 
       override def infer(ctx: InferContext)(p: Unit)(k: DKnowledge[DataFrame])
-      : (DKnowledge[Transformer], InferenceWarnings) = {
+      : (DKnowledge[T], InferenceWarnings) = {
         val transformer = _fit_infer(k.single.schema)
         (DKnowledge(transformer), InferenceWarnings.empty)
       }

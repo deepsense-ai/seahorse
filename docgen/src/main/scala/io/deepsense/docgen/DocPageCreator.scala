@@ -107,7 +107,7 @@ trait DocPageCreator {
           ("<code><a href=\"../classes/dataframe.html\">DataFrame</a></code>",
             "The input DataFrame.")
         ))
-      case (es: EstimatorAsOperation[_]) =>
+      case (es: EstimatorAsOperation[_, _]) =>
         inputOutputTable(Seq(
           ("<code><a href=\"../classes/dataframe.html\">DataFrame</a></code>",
             "The input DataFrame.")
@@ -130,7 +130,7 @@ trait DocPageCreator {
             "A <code>Transformer</code> that allows to apply the operation on other " +
               "<code>DataFrames</code> using a <a href=\"transform.html\">Transform</a>.")
         ))
-      case (eso: EstimatorAsOperation[_]) =>
+      case (eso: EstimatorAsOperation[_, _]) =>
         inputOutputTable(Seq(
           ("<code><a href=\"../classes/dataframe.html\">DataFrame</a></code>",
             "The output <code>DataFrame</code>."),

@@ -28,7 +28,8 @@ import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.{DynamicParam, Param}
 import io.deepsense.deeplang.{DKnowledge, DOperation2To2, ExecutionContext}
 
-class FitPlusTransform extends DOperation2To2[DataFrame, Estimator, DataFrame, Transformer] {
+class FitPlusTransform
+  extends DOperation2To2[DataFrame, Estimator[Transformer], DataFrame, Transformer] {
 
   override val id: Id = "1cb153f1-3731-4046-a29b-5ad64fde093f"
   override val name: String = "Fit + Transform"
@@ -36,7 +37,7 @@ class FitPlusTransform extends DOperation2To2[DataFrame, Estimator, DataFrame, T
   override lazy val tTagTO_0: TypeTag[DataFrame] = typeTag[DataFrame]
   override lazy val tTagTO_1: TypeTag[Transformer] = typeTag[Transformer]
   override lazy val tTagTI_0: TypeTag[DataFrame] = typeTag[DataFrame]
-  override lazy val tTagTI_1: TypeTag[Estimator] = typeTag[Estimator]
+  override lazy val tTagTI_1: TypeTag[Estimator[Transformer]] = typeTag[Estimator[Transformer]]
 
   val estimatorParams = new DynamicParam(
     name = "Parameters of input Estimator",
@@ -50,7 +51,7 @@ class FitPlusTransform extends DOperation2To2[DataFrame, Estimator, DataFrame, T
   override protected def _execute(
       context: ExecutionContext)(
       dataFrame: DataFrame,
-      estimator: Estimator): (DataFrame, Transformer) = {
+      estimator: Estimator[Transformer]): (DataFrame, Transformer) = {
     val estimatorToRun = estimatorWithParams(estimator)
     val transformer: Transformer = estimatorToRun.fit(context)(())(dataFrame)
     val transformed: DataFrame = transformer.transform(context)(())(dataFrame)
@@ -60,7 +61,7 @@ class FitPlusTransform extends DOperation2To2[DataFrame, Estimator, DataFrame, T
   override protected def _inferKnowledge(
       context: InferContext)(
       inputDataFrameKnowledge: DKnowledge[DataFrame],
-      estimatorKnowledge: DKnowledge[Estimator])
+      estimatorKnowledge: DKnowledge[Estimator[Transformer]])
       : ((DKnowledge[DataFrame], DKnowledge[Transformer]), InferenceWarnings) = {
 
     val (transformerKnowledge, transformerWarnings) =
@@ -73,7 +74,7 @@ class FitPlusTransform extends DOperation2To2[DataFrame, Estimator, DataFrame, T
     ((transformedDataFrameKnowledge, transformerKnowledge), warningsSum)
   }
 
-  private def estimatorWithParams(estimator: Estimator): Estimator = {
+  private def estimatorWithParams(estimator: Estimator[Transformer]): Estimator[Transformer] = {
     val estimatorWithParams = estimator.replicate().setParamsFromJson($(estimatorParams))
     validateDynamicParams(estimatorWithParams)
     estimatorWithParams
@@ -91,18 +92,18 @@ class FitPlusTransform extends DOperation2To2[DataFrame, Estimator, DataFrame, T
 
   private def inferTransformer(
       context: InferContext,
-      estimatorKnowledge: DKnowledge[Estimator],
+      estimatorKnowledge: DKnowledge[Estimator[Transformer]],
       inputDataFrameKnowledge: DKnowledge[DataFrame])
       : (DKnowledge[Transformer], InferenceWarnings) = {
     throwIfToManyTypes(estimatorKnowledge)
-    val estimator: Estimator = estimatorWithParams(estimatorKnowledge.single)
+    val estimator = estimatorWithParams(estimatorKnowledge.single)
     val (transformerKnowledge, transformerWarnings) =
       estimator.fit.infer(context)(())(inputDataFrameKnowledge)
     (transformerKnowledge, transformerWarnings)
   }
 
   private def throwIfToManyTypes(estimatorKnowledge: DKnowledge[_]): Unit = {
-    if (estimatorKnowledge.types.size > 1) {
+    if (estimatorKnowledge.size > 1) {
       throw TooManyPossibleTypesException()
     }
   }

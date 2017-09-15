@@ -51,8 +51,8 @@ case class Union() extends DOperation2To1[DataFrame, DataFrame, DataFrame] with 
       (df1Knowledge: DKnowledge[DataFrame],
         df2Knowledge: DKnowledge[DataFrame]): (DKnowledge[DataFrame], InferenceWarnings) = {
 
-    val df1Schema = df1Knowledge.types.head.schema
-    val df2Schema = df2Knowledge.types.head.schema
+    val df1Schema = df1Knowledge.single.schema
+    val df2Schema = df2Knowledge.single.schema
 
     if (df1Schema.isDefined && df2Schema.isDefined) {
       checkSchemaMismatch(df1Schema.get, df2Schema.get)
