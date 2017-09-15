@@ -67,21 +67,23 @@
         background-color: rgba(26, 179, 148, 0.2);
       }
 
+      &:hover {
+        box-shadow: 0 0 1px #337ab7 inset;
+        color: #337ab7;
+      }
+
       .operations-item-body {
-        display: inline-block;
+        display: flex;
         font-size: 12px;
-
-        & > .fa {
-          margin-right: 2px;
-        }
-
-        &:hover {
-          color: #346789;
-          border-color: #123456;
-        }
+        align-items: center;
 
         &:active {
           background: #fff;
+        }
+
+        &__name {
+          flex: 1;
+          margin: 0 10px;
         }
       }
     }

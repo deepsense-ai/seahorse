@@ -40,6 +40,11 @@ angular.module('test', ['deepsense-catalogue-panel'])
     {
       "items": [
         {
+          "id": "ecb9bc36-5f7c-4a62-aa18-8db6e2d73223",
+          "name": "Create Mathematical Transformation Over Time",
+          "$$hashKey": "object:89"
+        },
+        {
           "id": "ecb9bc36-5f7c-4a62-aa18-8db6e2d73251",
           "name": "Mathematical Operation",
           "$$hashKey": "object:35"
