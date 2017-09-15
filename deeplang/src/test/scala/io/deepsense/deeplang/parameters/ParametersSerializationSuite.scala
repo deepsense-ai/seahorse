@@ -98,6 +98,24 @@ class ParametersSerializationSuite
     testParameterSerialization(param)
   }
 
+  test("SingleColumnCreatorParameter and it's value should be serializable") {
+    val param = SingleColumnCreatorParameter("", None, false)
+    param.value = Some("abc")
+    testParameterSerialization(param)
+  }
+
+  test("MultipleColumnCreatorParameter and it's value should be serializable") {
+    val param = MultipleColumnCreatorParameter("", None, false)
+    param.value = Some(Vector("a", "b", "c"))
+    testParameterSerialization(param)
+  }
+
+  test("PrefixBasedColumnCreatorParameter and it's value should be serializable") {
+    val param = PrefixBasedColumnCreatorParameter("", None, false)
+    param.value = Some("customPrefix")
+    testParameterSerialization(param)
+  }
+
   private[this] def testParameterSerialization(param: Parameter): Unit = {
     val result = serializeDeserialize(param)
     result shouldBe param

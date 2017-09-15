@@ -81,4 +81,28 @@ object ParameterConversions {
       case p: ColumnSelectorParameter => p
     }
   }
+
+  implicit object ToSingleColumnCreatorParameter
+    extends ParameterConverter[SingleColumnCreatorParameter] {
+
+    def convertPF: PartialFunction[Any, SingleColumnCreatorParameter] = {
+      case p: SingleColumnCreatorParameter => p
+    }
+  }
+
+  implicit object ToMultipleColumnCreatorParameter
+    extends ParameterConverter[MultipleColumnCreatorParameter] {
+
+    def convertPF: PartialFunction[Any, MultipleColumnCreatorParameter] = {
+      case p: MultipleColumnCreatorParameter => p
+    }
+  }
+
+  implicit object ToPrefixBasedColumnCreatorParameter
+    extends ParameterConverter[PrefixBasedColumnCreatorParameter] {
+
+    def convertPF: PartialFunction[Any, PrefixBasedColumnCreatorParameter] = {
+      case p: PrefixBasedColumnCreatorParameter => p
+    }
+  }
 }

@@ -4,6 +4,8 @@
 
 package io.deepsense.deeplang.parameters
 
+import io.deepsense.deeplang.parameters.ValidatorType.ValidatorType
+
 import scala.collection.immutable.ListMap
 
 import org.mockito.Mockito._
@@ -652,6 +654,123 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
         )
       ))
     }
+  }
+
+  test("SingleColumnCreator parameter can provide its json representation") {
+    val description = "example single column creator parameter description"
+    val default = "defaultColumnName"
+    val required = true
+    val singleColumnCreatorParameter = SingleColumnCreatorParameter(
+      description, Some(default), required)
+
+    val expectedFields = Map(
+      "type" -> JsString("creator"),
+      "description" -> JsString(description),
+      "default" -> JsString(default),
+      "required" -> JsBoolean(required)
+    )
+    assert(singleColumnCreatorParameter.jsDescription == expectedFields)
+  }
+
+  test("SingleColumnCreator parameter can provide json representation of it's value") {
+    val singleColumnCreatorParameter = SingleColumnCreatorParameter(
+      "", None, required = false)
+    val value = "abc"
+    singleColumnCreatorParameter.value = Some(value)
+    assert(singleColumnCreatorParameter.valueToJson == JsString(value))
+  }
+
+  test("SingleColumnCreator parameter can be filled with json") {
+    val singleColumnCreatorParameter = SingleColumnCreatorParameter(
+      "", None, required = false)
+    val value = "abcd"
+    singleColumnCreatorParameter.fillValueWithJson(JsString(value))
+    assert(singleColumnCreatorParameter.value == Some(value))
+  }
+
+  test("SingleColumnCreator parameter can be filled with JsNull") {
+    val singleColumnCreatorParameter = SingleColumnCreatorParameter(
+      "", None, required = false)
+    singleColumnCreatorParameter.fillValueWithJson(JsNull)
+    assert(singleColumnCreatorParameter.value == None)
+  }
+
+  test("MultipleColumnCreator parameter can provide its json representation") {
+    val description = "example multiple column creator parameter description"
+    val default = Vector("col1", "col2", "col3")
+    val required = true
+    val multipleColumnCreatorParameter = MultipleColumnCreatorParameter(
+      description, Some(default), required)
+
+    val expectedFields = Map(
+      "type" -> JsString("multipleCreator"),
+      "description" -> JsString(description),
+      "default" -> JsArray(default.map(JsString(_))),
+      "required" -> JsBoolean(required)
+    )
+    assert(multipleColumnCreatorParameter.jsDescription == expectedFields)
+  }
+
+  test("MultipleColumnCreator parameter can provide json representation of it's value") {
+    val multipleColumnCreatorParameter = MultipleColumnCreatorParameter(
+      "", None, required = false)
+    val value = Vector("a", "b", "c")
+    multipleColumnCreatorParameter.value = Some(value)
+    assert(multipleColumnCreatorParameter.valueToJson == JsArray(value.map(JsString(_))))
+  }
+
+  test("MultipleColumnCreator parameter can be filled with json") {
+    val multipleColumnCreatorParameter = MultipleColumnCreatorParameter(
+      "", None, required = false)
+    val value = Vector("a", "b", "c")
+    multipleColumnCreatorParameter.fillValueWithJson(JsArray(value.map(JsString(_))))
+    assert(multipleColumnCreatorParameter.value == Some(value))
+  }
+
+  test("MultipleColumnCreator parameter can be filled with JsNull") {
+    val multipleColumnCreatorParameter = MultipleColumnCreatorParameter(
+      "", None, required = false)
+    multipleColumnCreatorParameter.fillValueWithJson(JsNull)
+    assert(multipleColumnCreatorParameter.value == None)
+  }
+
+  test("PrefixBasedColumnCreator parameter can provide its json representation") {
+    val description = "example prefix based column creator parameter description"
+    val default = "defaultPrefix"
+    val required = true
+    val prefixBasedCreatorParameter = PrefixBasedColumnCreatorParameter(
+      description, Some(default), required)
+
+    val expectedFields = Map(
+      "type" -> JsString("prefixBasedCreator"),
+      "description" -> JsString(description),
+      "default" -> JsString(default),
+      "required" -> JsBoolean(required)
+    )
+    assert(prefixBasedCreatorParameter.jsDescription == expectedFields)
+  }
+
+  test("PrefixBasedColumnCreator parameter can provide json representation of it's value") {
+    val prefixBasedCreatorParameter = PrefixBasedColumnCreatorParameter(
+      "", None, required = false)
+    val value = "abc"
+    prefixBasedCreatorParameter.value = Some(value)
+    assert(prefixBasedCreatorParameter.valueToJson == JsString(value))
+  }
+
+  test("PrefixBasedColumnCreator parameter can be filled with json") {
+    val prefixBasedCreatorParameter = PrefixBasedColumnCreatorParameter(
+      "", None, required = false)
+    val value = "abcd"
+    prefixBasedCreatorParameter.fillValueWithJson(JsString(value))
+    assert(prefixBasedCreatorParameter.value == Some(value))
+  }
+
+  test("PrefixBasedColumnCreator parameter can be filled with JsNull") {
+    val prefixBasedCreatorParameter = PrefixBasedColumnCreatorParameter(
+      "", None, required = false)
+    prefixBasedCreatorParameter.fillValueWithJson(JsNull)
+    assert(prefixBasedCreatorParameter.value == None)
   }
 
   private def choicesAndJsFieldsForParametersWithOptions: (
