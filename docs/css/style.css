@@ -13,20 +13,19 @@ h1 {
 h2 {
   font-size: 30px;
   font-weight: 600;
-  padding-top: 10px;
+  padding-top: 30px;
   padding-bottom: 10px;
 }
 h3 {
   font-size: 24px;
   font-weight: 600;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding-top: 20px;
+  padding-bottom: 5px;
 }
 h4 {
   font-size: 18px;
   font-weight: 600;
   padding-top: 10px;
-  padding-bottom: 10px;
 }
 h5 {
   font-size: 15px;
@@ -313,6 +312,22 @@ p.footer-text span {
 */
 .centered-image {
   margin: 0 auto;
+  display: block;
+}
+
+.image-with-caption-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.image-with-caption-container em {
+  color: #777;
+}
+
+.align-left {
+  margin-left: 80px;
   display: block;
 }
 

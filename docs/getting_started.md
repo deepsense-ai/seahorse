@@ -58,19 +58,21 @@ Then we will apply a simple transformation to the data.
 
 * Run Seahorse on your machine and go to <a target="_blank" href="{{ site.SEAHORSE_EDITOR_ADDRESS }}">{{ site.SEAHORSE_EDITOR_ADDRESS }}</a>.
 
-<p style="text-align:center;">
-    <img class="centered-image img-responsive bordered-image" style="width: 700px" src="./img/seahorse_main.png">
-    <em>Home Screen of Seahorse</em>
-</p>
-
-Home screen of Seahorse is a list of all workflows - initially filled with examples. For now let's create a new workflow.
+<div class="align-left">
+    <div class="img-responsive image-with-caption-container" style="width: 700px">
+        <img class="img-responsive bordered-image" src="./img/seahorse_main.png">
+        <em>Home screen of Seahorse is a list of all workflows - initially filled with examples.</em>
+    </div>
+</div>
 
 * Create the new workflow using the **New Workflow** button. Workflow Editor will start.
 
-<p style="text-align:center;">
-    <img class="centered-image img-responsive bordered-image" style="width: 700px" src="./img/getting_started/editor_empty_workflow.png">
-    <em>Workflow Editor</em>
-</p>
+<div class="align-left">
+    <div class="img-responsive image-with-caption-container" style="width: 700px">
+        <img class="img-responsive bordered-image" src="./img/getting_started/editor_empty_workflow.png">
+        <em>Workflow Editor</em>
+    </div>
+</div>
 
 * Start editing by clicking
   <img class="img-responsive" style="display: inline-block; width:auto; height:15px;" src="./img/getting_started/start_editing.png" />
@@ -84,36 +86,40 @@ Home screen of Seahorse is a list of all workflows - initially filled with examp
 
 <!--This screen is needed because 'Library' icon visually separates `SOURCE` -->
 <!-- and text input and it can be hard for user to know at once where should he input the text -->
-<img class="centered-image img-responsive bordered-image" style="width:300px; height:auto" src="./img/getting_started/source_param.png" />
+<img class="align-left img-responsive bordered-image" style="width:300px; height:auto" src="./img/getting_started/source_param.png" />
 
 * Run the operation by clicking
   <img class="img-responsive" style="display: inline-block; width:auto; height:15px;" src="./img/getting_started/run.png" />
   button from the top menu.
+* Click <img class="img-responsive" style="display: inline-block; width:auto; height:15px;" src="./img/getting_started/report_icon.png" /> 
+  on the operation node to preview Dataframe.
 
-Dataframe read by `Read Dataframe` operation is represented by
-<img class="img-responsive" style="display: inline-block; width:auto; height:15px;" src="./img/getting_started/report_icon.png" />
-report icon. You can click it to preview the data.
 
-<p style="text-align:center;">
-    <img class="centered-image img-responsive bordered-image" style="margin: 0 auto; width:60%; height:auto" src="./img/getting_started/transactions_sample.png"/>
-    <em>DataFrame Report opened after clicking report icon</em>
-</p>
+<div class="align-left">
+    <div class="img-responsive image-with-caption-container" style="width: 600px">
+        <img class="img-responsive bordered-image" src="./img/getting_started/transactions_sample.png">
+        <em>DataFrame Report opened after clicking report icon</em>
+    </div>
+</div>
 
 #### Transform Your Data
-
-<img class="img-responsive" style="float:right; width:250px; height:auto" src="./img/getting_started/dragging_dataframe.png" />
 
 In the next step you will apply a simple transformation to our data.
 
 * Drag a `Filter Columns` operation onto canvas.
 * Drag the Dataframe produced by `Read Dataframe` operation to the `Filter Columns` operation.
+
+<img class="align-left img-responsive" style="width:250px; height:auto" src="./img/getting_started/dragging_dataframe.png" />
+
 * Set `selected column` parameter of `Filter Columns` to some set of columns of your choice.
 * Run your workflow again and view the transformed Dataframe produced by `Filter Columns`!
 
-<p style="text-align:center;">
-    <img class="centered-image img-responsive bordered-image" style="margin: 0 auto; width:60%; height:auto" src="./img/getting_started/transactions_sample_after_filtering.png"/>
-    <em>DataFrame Report with filtered columns</em>
-</p>
+<div class="align-left">
+    <div class="img-responsive image-with-caption-container" style="width: 600px">
+        <img class="img-responsive bordered-image" src="./img/getting_started/transactions_sample_after_filtering.png">
+        <em>DataFrame Report with filtered columns</em>
+    </div>
+</div>
 
 Congratulations! You have successfully created your first Seahorse workflow.
 
