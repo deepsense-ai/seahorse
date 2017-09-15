@@ -102,6 +102,21 @@ Example:
 
         vagrant reload
 
+### Note for Windows users
+
+By default, Vagrant keeps boxes and configuration in `%HOMEPATH%/.vagrant.d`, but can't access it when a `%HOMEPATH%` includes non-ASCII characters. It's a well known <a target="_blank" href="https://github.com/mitchellh/vagrant/issues/4966">Vagrant bug</a> and results in:
+
+    > vagrant up
+    ...
+    Failed writing body (0 != 16383)
+
+There are at least two ways to overcome the problem:
+
+* Change user name to one with ASCII characters only
+* Change Vagrant home directory to one with ASCII characters only:
+
+        setx VAGRANT_HOME=c:\.vagrant.d
+
 ## Replacing Seahorse Bundled Image With the Latest Version
 If you want to replace your Seahorse with the newest version you need to invoke
 the commands below. ***Please keep in mind that the current version of Seahorse will be
