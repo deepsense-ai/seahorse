@@ -8,9 +8,9 @@ package io.deepsense.commons.auth
 
 import org.mockito.Mockito._
 
+import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.commons.auth.exceptions.ResourceAccessDeniedException
 import io.deepsense.commons.auth.usercontext.UserContext
-import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 
 class OwnableSpec extends StandardSpec with UnitTestSupport {
 

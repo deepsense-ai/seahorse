@@ -15,6 +15,7 @@ inConfig(Test) {
       // Put results in target/test-reports
       Tests.Argument(TestFrameworks.ScalaTest, "-o", "-u", "target/test-reports")
     ),
+    javaOptions := Seq(s"-DlogFile=${name.value}"),
     fork := true,
     unmanagedClasspath += baseDirectory.value / "conf"
   )
@@ -30,9 +31,11 @@ inConfig(IntegTest) {
       // Show full stacktraces (F), Put results in target/test-reports
       Tests.Argument(TestFrameworks.ScalaTest, "-oF", "-u", "target/test-reports")
     ),
+    javaOptions := Seq(s"-DlogFile=${name.value}"),
     fork := true
   )
 }
 
-def integFilter(name: String) = name.endsWith("IntegSpec")
-def unitFilter(name: String) = name.endsWith("Spec") && !integFilter(name)
+def integFilter(name: String) = name.endsWith("IntegSpec") || name.endsWith("IntegSuite")
+def unitFilter(name: String) =
+  (name.endsWith("Spec") || name.endsWith("Suite")) && !integFilter(name)

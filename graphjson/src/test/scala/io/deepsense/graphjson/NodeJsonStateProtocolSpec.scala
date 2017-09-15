@@ -12,6 +12,8 @@ import org.joda.time.DateTime
 import org.mockito.Mockito._
 import spray.json._
 
+import io.deepsense.commons.datetime.DateTimeConverter
+import io.deepsense.commons.json.DateTimeJsonProtocol
 import io.deepsense.graph.{Progress => GraphProgress, State}
 
 class NodeJsonStateProtocolSpec extends GraphJsonTestSupport {
@@ -23,8 +25,8 @@ class NodeJsonStateProtocolSpec extends GraphJsonTestSupport {
 
   "Node state translated to Json" should {
     "have all fields printed if they were set" in {
-      val started = DateTime.now
-      val ended = DateTime.now
+      val started = DateTimeConverter.now
+      val ended = DateTimeConverter.now
       val progress = GraphProgress(3, 14)
       val state = mock[State]
       val results = List(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID())

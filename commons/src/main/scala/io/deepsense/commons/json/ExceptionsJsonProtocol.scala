@@ -4,19 +4,18 @@
  * Owner: Wojciech Jurczyk
  */
 
-package io.deepsense.experimentmanager.rest.json
+package io.deepsense.commons.json
 
 import spray.httpx.SprayJsonSupport
 import spray.json._
 
-import io.deepsense.experimentmanager.exceptions.ExceptionDetails
-import io.deepsense.experimentmanager.rest.RestException
+import io.deepsense.commons.exception.{ExceptionDetails, FailureDescription}
 
 trait ExceptionsJsonProtocol
   extends DefaultJsonProtocol
   with SprayJsonSupport {
 
-  implicit val restExceptionJsonWriter = jsonFormat4(RestException.apply)
+  implicit val restExceptionJsonWriter = jsonFormat4(FailureDescription.apply)
 
   implicit object ExceptionDetailsWriter extends JsonWriter[ExceptionDetails] {
     override def write(obj: ExceptionDetails): JsValue = {

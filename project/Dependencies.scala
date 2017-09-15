@@ -1,20 +1,24 @@
 import sbt._
 
 object Version {
-  val akka        = "2.3.9"
-  val avro        = "1.7.7"
-  val guice       = "3.0"
-  val hadoop      = "2.6.0"
-  val jclouds     = "1.9.0"
-  val jsr305      = "3.0.0"
-  val logback     = "1.1.3"
-  val mockito     = "1.10.19"
-  val nsscalaTime = "1.8.0"
-  val scala       = "2.11.6"
-  val scalatest   = "3.0.0-SNAP4"
-  val spark       = "1.3.0"
-  val spray       = "1.3.3"
-  val sprayJson   = "1.3.1"
+  val akka          = "2.3.9"
+  val apacheCommons = "3.3.+"
+  val avro          = "1.7.7"
+  val cassandra     = "2.1.5"
+  val cassandraUnit = "2.1.3.1"
+  val guava         = "17.0"
+  val guice         = "3.0"
+  val hadoop        = "2.6.0"
+  val jclouds       = "1.9.0"
+  val jsr305        = "3.0.0"
+  val logback       = "1.1.2"
+  val mockito       = "1.10.19"
+  val nsscalaTime   = "1.8.0"
+  val scala         = "2.11.6"
+  val scalatest     = "3.0.0-SNAP4"
+  val spark         = "1.3.0"
+  val spray         = "1.3.3"
+  val sprayJson     = "1.3.1"
 }
 
 object Library {
@@ -28,11 +32,13 @@ object Library {
   val spray   = (name: String) => "io.spray"               %% s"spray-$name"      % Version.spray
 
   val akkaActor          = akka("actor")
-  val apacheCommons      = "org.apache.commons"           %  "commons-lang3"      % "3.3.+"
+  val apacheCommons      = "org.apache.commons"           %  "commons-lang3"      % Version.apacheCommons
   val akkaTestkit        = akka("testkit")
   val avroCore           = avro("")
   // Please mind the dash to handle empty main module in avro and avro-ipc
   val avroRpc            = avro("-ipc")
+  val cassandraUnit      = "org.cassandraunit"        %  "cassandra-unit"         % Version.cassandraUnit
+  val datastaxCassandra  = "com.datastax.cassandra"   %  "cassandra-driver-core"  % Version.cassandra
   val guice              = "com.google.inject"            % "guice"               % Version.guice
   val guiceMultibindings = "com.google.inject.extensions" % "guice-multibindings" % Version.guice
   val hadoopClient       = hadoop("client")
@@ -70,23 +76,26 @@ object Dependencies {
   )
 
   val entitystorage = Seq(
-
-  ) ++ Seq(scalatest, mockitoCore).map(_ % "test")
+    akkaActor
+  ) ++ Seq(scalatest, mockitoCore, sprayTestkit, cassandraUnit).map(_ % "test")
 
   val commons = Seq(
     akkaActor,
-    jcloudsKeystone,
+    apacheCommons,
+    datastaxCassandra,
     jcloudsCompute,
+    jcloudsKeystone,
     jcloudsNova,
-    scalaLogging,
     logbackClassic,
     logbackCore,
+    scalaLogging,
     sprayCan,
     sprayJson,
     sprayRouting,
     guice,
-    guiceMultibindings
-  )  ++ Seq(sprayTestkit, akkaTestkit, mockitoCore, scalatest).map(_ % "test")
+    guiceMultibindings,
+    nscalaTime
+  ) ++ Seq(sprayTestkit, akkaTestkit, mockitoCore, scalatest, cassandraUnit).map(_ % "test")
 
   val deeplang = Seq(
     nscalaTime,

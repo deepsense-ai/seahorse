@@ -16,7 +16,6 @@ import org.jclouds.openstack.keystone.v2_0.features.TokenApi
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
-
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 
 class KeystoneTokenTranslatorSpec extends StandardSpec with UnitTestSupport {

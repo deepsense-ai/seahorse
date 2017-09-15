@@ -16,6 +16,7 @@ import spray.http.StatusCodes
 import spray.json._
 import spray.routing.Route
 
+import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.commons.auth.usercontext.{TokenTranslator, UserContext}
 import io.deepsense.commons.auth.{Authorizator, AuthorizatorProvider, UserContextAuthorizator}
 import io.deepsense.deeplang.DOperation
@@ -23,7 +24,6 @@ import io.deepsense.deeplang.catalogs.doperable.{ClassDescriptor, DOperableCatal
 import io.deepsense.deeplang.catalogs.doperations.{DOperationCategory, DOperationCategoryNode, DOperationDescriptor, DOperationsCatalog}
 import io.deepsense.deeplang.parameters.ParametersSchema
 import io.deepsense.experimentmanager.rest.json.DeepLangJsonProtocol
-import io.deepsense.experimentmanager.{StandardSpec, UnitTestSupport}
 
 class OperationsApiSpec
   extends StandardSpec

@@ -12,7 +12,7 @@ import org.apache.spark.sql.types.StructType
 import org.apache.spark.sql.{Row, SQLContext}
 
 /**
- * Deepsense DataFrame builder. Builder performs basic schema validation.
+ * DeepSense DataFrame builder. Builder performs basic schema validation.
  * @param sqlContext Spark sql context.
  */
 class DataFrameBuilder private (sqlContext: SQLContext) extends HasSchemaValidation {

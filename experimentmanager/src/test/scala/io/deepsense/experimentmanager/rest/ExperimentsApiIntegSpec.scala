@@ -20,12 +20,15 @@ import org.jclouds.openstack.keystone.v2_0.domain.Access
 import org.scalatest.BeforeAndAfter
 import spray.routing.Route
 
-import io.deepsense.experimentmanager.IntegTestSupport
+import io.deepsense.experimentmanager.ExperimentManagerIntegTestSupport
 import io.deepsense.experimentmanager.models.Experiment
 import io.deepsense.experimentmanager.storage.ExperimentStorage
 import io.deepsense.graph.Graph
 
-class ExperimentsApiIntegSpec extends ExperimentsApiSpec with IntegTestSupport with BeforeAndAfter {
+class ExperimentsApiIntegSpec
+  extends ExperimentsApiSpec
+  with ExperimentManagerIntegTestSupport
+  with BeforeAndAfter {
 
   var experimentA: Experiment = null
   var experimentB: Experiment = null

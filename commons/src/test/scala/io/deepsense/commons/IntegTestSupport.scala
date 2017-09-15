@@ -4,14 +4,14 @@
  * Owner: Wojciech Jurczyk
  */
 
-package io.deepsense.experimentmanager
+package io.deepsense.commons
 
 import scala.collection.JavaConversions.asScalaSet
 import scala.concurrent.duration._
 import scala.reflect.{ClassTag, classTag}
 
-import akka.actor.ActorRefFactory
-import com.google.inject.{AbstractModule, Guice, Provides}
+import _root_.akka.actor.ActorRefFactory
+import com.google.inject.{AbstractModule, Guice, Module, Provides}
 import com.typesafe.config.Config
 import org.scalatest.concurrent.IntegrationPatience
 
@@ -34,12 +34,14 @@ import io.deepsense.commons.rest.{RestComponent, RestService}
 trait IntegTestSupport extends IntegrationPatience {
   suite: StandardSpec =>
 
+  protected def appGuiceModule: Module
+
   /**
    * An injector that creates the entire integrated object graph
    */
   private val injector = Guice.createInjector(new AbstractModule {
     override def configure(): Unit = {
-      install(new ExperimentManagerAppModule)
+      install(appGuiceModule)
     }
 
     /**

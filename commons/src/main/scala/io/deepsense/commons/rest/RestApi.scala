@@ -4,7 +4,7 @@
  * Owner: Wojciech Jurczyk
  */
 
-package io.deepsense.experimentmanager.rest
+package io.deepsense.commons.rest
 
 import spray.http.StatusCodes
 import spray.routing._
@@ -14,15 +14,15 @@ import io.deepsense.commons.auth.directives.AuthDirectives
 import io.deepsense.commons.auth.exceptions.{NoRoleException, ResourceAccessDeniedException}
 import io.deepsense.commons.auth.usercontext.InvalidTokenException
 
-trait RestService extends Directives with AuthDirectives {
+trait RestApi extends Directives with AuthDirectives {
 
   def exceptionHandler(implicit log: LoggingContext): ExceptionHandler = {
     ExceptionHandler {
-      case e: NoRoleException =>
+      case _: NoRoleException =>
         complete(StatusCodes.Unauthorized)
-      case e: ResourceAccessDeniedException =>
+      case _: ResourceAccessDeniedException =>
         complete(StatusCodes.NotFound)
-      case e: InvalidTokenException =>
+      case _: InvalidTokenException =>
         // Works as a wildcard for all ITEs. Can be expanded for logging
         complete(StatusCodes.Unauthorized)
     }

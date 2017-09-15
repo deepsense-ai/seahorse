@@ -16,10 +16,10 @@ import org.mockito.Mockito._
 import org.scalatest.concurrent.{Eventually, ScaledTimeSpans}
 import org.scalatest.{BeforeAndAfter, Matchers, WordSpecLike}
 
+import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.deeplang.DOperation
 import io.deepsense.experimentmanager.execution.RunningExperimentsActor._
 import io.deepsense.experimentmanager.models.Experiment
-import io.deepsense.experimentmanager.{StandardSpec, UnitTestSupport}
 import io.deepsense.graph.{Graph, Node}
 import io.deepsense.graphexecutor.GraphExecutorClient
 

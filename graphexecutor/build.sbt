@@ -34,7 +34,7 @@ inConfig(Test) {
       Tests.Argument(TestFrameworks.ScalaTest, "-o", "-u", "target/test-reports")
     ),
     fork := true,
-    javaOptions := Seq("-Denv=test"),
+    javaOptions := Seq("-Denv=test", s"-DlogFile=${name.value}"),
     unmanagedClasspath += baseDirectory.value / "conf"
   )
 }
@@ -49,7 +49,7 @@ inConfig(IntegTest) {
       // Show full stacktraces (F), Put results in target/test-reports
       Tests.Argument(TestFrameworks.ScalaTest, "-oF", "-u", "target/test-reports")
     ),
-    javaOptions := Seq("-Denv=integtest"),
+    javaOptions := Seq("-Denv=integtest", s"-DlogFile=${name.value}"),
     fork := true
   )
 }

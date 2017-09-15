@@ -17,8 +17,9 @@ import spray.routing.{ExceptionHandler, PathMatchers}
 import spray.util.LoggingContext
 
 import io.deepsense.commons.auth.usercontext.TokenTranslator
+import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.commons.models.Id
-import io.deepsense.commons.rest.RestComponent
+import io.deepsense.commons.rest.{RestApi, RestComponent}
 import io.deepsense.deeplang.InferContext
 import io.deepsense.experimentmanager.ExperimentManagerProvider
 import io.deepsense.experimentmanager.exceptions.ExperimentNotFoundException
@@ -37,7 +38,7 @@ class ExperimentsApi @Inject() (
     override val graphReader: GraphReader,
     override val inferContext: InferContext)
     (implicit ec: ExecutionContext)
-  extends RestService with RestComponent with ExperimentJsonProtocol {
+  extends RestApi with RestComponent with ExperimentJsonProtocol {
 
   assert(StringUtils.isNoneBlank(apiPrefix))
   private val pathPrefixMatcher = PathMatchers.separateOnSlashes(apiPrefix)
@@ -143,7 +144,7 @@ class ExperimentsApi @Inject() (
   override def exceptionHandler(implicit log: LoggingContext): ExceptionHandler = {
     super.exceptionHandler(log) orElse ExceptionHandler {
         case e: ExperimentNotFoundException =>
-          complete(StatusCodes.NotFound, RestException.fromException(e))
+          complete(StatusCodes.NotFound, FailureDescription.fromException(e))
     }
   }
 }

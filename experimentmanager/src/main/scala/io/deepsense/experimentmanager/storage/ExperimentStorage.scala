@@ -46,7 +46,7 @@ trait ExperimentStorage {
    * @param limit Size of the list (page)
    * @param page Page number.
    * @param status Allows to filter experiments with the specified status.
-   *               If not specified then experiments will not be filltered out.
+   *               If not specified then experiments will not be filtered out.
    * @return A filtered list of experiments that is a certain page of a certain size.
    */
   def list(
