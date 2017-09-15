@@ -110,7 +110,7 @@ class SimpleGraphExecutionIntegSuite
     val node1 = Node(UUID.randomUUID(), readOp)
 
     val splitOp = new DataFrameSpliter
-    splitOp.parameters.getNumericParameter(splitOp.splitRangeParam).value = Some(0.2)
+    splitOp.parameters.getNumericParameter(splitOp.splitRatioParam).value = Some(0.2)
     splitOp.parameters.getNumericParameter(splitOp.seedParam).value = Some(1)
     val node2 = Node(UUID.randomUUID(), splitOp)
 
