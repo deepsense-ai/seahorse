@@ -61,8 +61,10 @@ class WorkflowExecutorClient(object):
 
 
 def spark_submit_command(**kwargs):
+  # TODO: Fix --python-executor-path /home/ubuntu/PyExecutor/pyexecutor.py according to DS-2177
   return """spark-submit --class {we_class} --master {spark_master} --files {workflow_filename}\\
-    {spark_submit_options} {jar} --noninteractive-mode\\
+    --driver-class-path {jar} {spark_submit_options} {jar}\\
+    --noninteractive-mode --python-executor-path /home/ubuntu/PyExecutor/pyexecutor.py\\
     --workflow-filename {workflow_filename} --output-directory {output_dir}\\
     --report-level high""".format(
     we_class=kwargs['we_class'],
