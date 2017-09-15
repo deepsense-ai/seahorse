@@ -9,7 +9,7 @@ package io.deepsense.deeplang.parameters
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{FunSuite, Matchers}
 
-import io.deepsense.deeplang.parameters.exceptions.TypeConversionException
+import io.deepsense.deeplang.parameters.exceptions.{NoSuchParameterException, TypeConversionException}
 
 class ParametersSuite extends FunSuite with Matchers with MockitoSugar {
 
@@ -151,5 +151,16 @@ class ParametersSuite extends FunSuite with Matchers with MockitoSugar {
       parametersSchema.getDouble("x")
     }
     assert(exception == TypeConversionException(param, expectedTargetTypeName))
+  }
+
+  test("Merging two ParametersSchema objects") {
+    val param1 = mock[NumericParameter]
+    val parametersSchema1 = ParametersSchema("x1" -> param1)
+    val param2 = mock[NumericParameter]
+    val parametersSchema2 = ParametersSchema("x2" -> param2)
+
+    val mergedSchema = parametersSchema1 ++ parametersSchema2
+    assert(mergedSchema.getNumericParameter("x1") eq param1)
+    assert(mergedSchema.getNumericParameter("x2") eq param2)
   }
 }

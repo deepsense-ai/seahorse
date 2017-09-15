@@ -119,6 +119,10 @@ class ParametersSchema protected (private val schemaMap: Map[String, Parameter] 
   def getColumnSelection(name: String): Option[MultipleColumnSelection] = {
     getColumnSelectorParameter(name).value
   }
+
+  def ++(other: ParametersSchema): ParametersSchema = {
+    new ParametersSchema(schemaMap ++ other.schemaMap)
+  }
 }
 
 object ParametersSchema {

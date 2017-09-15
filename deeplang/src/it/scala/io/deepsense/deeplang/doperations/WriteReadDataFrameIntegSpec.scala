@@ -24,12 +24,6 @@ class WriteReadDataFrameIntegSpec
   with BeforeAndAfter
   with DOperationsFactory {
 
-  val testDir = "/tests/readWriteDataFrameTest"
-
-  before {
-    rawHdfsClient.delete(testDir, true)
-  }
-
   "Write and Read DataFrame operations" should {
     "correctly write and read dataFrame from HDFS" in {
       val context = executionContext

@@ -37,14 +37,17 @@ class EMCommunicatesWithGEIntegSpec
 
   implicit val timeout: Timeout = Timeout(1 second)
   val tenantId = "tenantId"
-  val maxRetryNumber = 20
+
+  // Timeout for test is 1 minute = 30 * 2000ms
+  val GetStatusInterval = 2000
+  val MaxRetryNumber = 30
 
   "ExperimentManager" should "launch graph on GraphExecutor" in {
     testProbe.send(actorRef, Launch(experiment))
 
     var success = false
     breakable {
-      for (i <- 0 until maxRetryNumber) {
+      for (i <- 0 until MaxRetryNumber) {
         testProbe.send(actorRef, GetStatus(experiment.id))
         val status = testProbe.expectMsgType[Status]
         logger.info("Received status: {}", status)
@@ -53,11 +56,11 @@ class EMCommunicatesWithGEIntegSpec
           success = true
           break()
         }
-        Thread.sleep(1500)
+        Thread.sleep(GetStatusInterval)
       }
     }
     if (!success) {
-      fail(s"Max retry: $maxRetryNumber and experiment did not run. Communication FAILED!!!")
+      fail(s"Max retry: $MaxRetryNumber and experiment did not run. Communication FAILED!!!")
     }
   }
 

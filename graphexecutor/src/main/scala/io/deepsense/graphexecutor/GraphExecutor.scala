@@ -136,6 +136,7 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
       sparkConf.set("spark.executor.memory", "512m")
       val sparkContext = new SparkContext(sparkConf)
 
+      executionContext.sparkContext = sparkContext
       executionContext.sqlContext = new SQLContext(sparkContext)
       executionContext.dataFrameBuilder = DataFrameBuilder(executionContext.sqlContext)
       executionContext.entityStorageClient = entityStorageClient
@@ -147,6 +148,7 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
 
       logger.debug("Loop until there are nodes in graph that are ready to or during execution")
       while (graphGuard.synchronized {
+        // NOTE: Graph.readyNodes does not support optional inputs
         graph.get.readyNodes.nonEmpty ||
           graph.get.nodes.filter(n => n.state.status == Status.Running).nonEmpty
       }) {

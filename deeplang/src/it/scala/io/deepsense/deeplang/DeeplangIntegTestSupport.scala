@@ -40,6 +40,7 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
     rawHdfsClient = new DFSClient(new URI(hdfsPath), new Configuration())
 
     executionContext = new ExecutionContext
+    executionContext.sparkContext = sparkContext
     executionContext.sqlContext = sqlContext
     executionContext.dataFrameBuilder = DataFrameBuilder(sqlContext)
     executionContext.entityStorageClient =

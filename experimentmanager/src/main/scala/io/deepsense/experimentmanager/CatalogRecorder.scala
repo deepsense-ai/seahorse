@@ -21,6 +21,7 @@ object CatalogRecorder {
     catalog.registerDOperable[DataFrame]()
     catalog.registerDOperable[UntrainedRidgeRegression]()
     catalog.registerDOperable[TrainedRidgeRegression]()
+    catalog.registerDOperable[Report]()
   }
 
   def registerDOperations(catalog: DOperationsCatalog) = {
@@ -51,5 +52,9 @@ object CatalogRecorder {
     catalog.registerDOperation[ScoreRegressor](
       DOperationCategories.ML.Regression,
       "Scores trained linear regression model")
+
+    catalog.registerDOperation[CrossValidateRegressor](
+      DOperationCategories.ML.Regression,
+      "Cross-validates regression model")
   }
 }

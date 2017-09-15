@@ -28,6 +28,7 @@ case class CreateRidgeRegression() extends DOperation0To1[UntrainedRidgeRegressi
   override protected def _execute(context: ExecutionContext)(): UntrainedRidgeRegression = {
     val regParam = parameters.getDouble(RegularizationKey).get
     val model = new RidgeRegressionWithSGD()
+    model.setIntercept(true)
     model.optimizer
       .setRegParam(regParam)
       .setNumIterations(IterationsNumber)
