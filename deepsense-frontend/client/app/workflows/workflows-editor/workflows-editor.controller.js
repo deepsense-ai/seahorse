@@ -179,6 +179,11 @@ class WorkflowsEditorController {
       }),
 
       this.$scope.$on('FlowChartBox.ELEMENT_DROPPED', (event, args) => {
+        // BUG DS-2605 - Remove after resolving
+        console.log('FlowchartBox - element dropped: event', event);
+        console.log('FlowchartBox - element dropped: args', args);
+        console.log('FlowchartBox - element dropped: this', this);
+
         let dropElementOffset = this.MouseEvent.getEventOffsetOfElement(args.dropEvent, args.target);
         let operation = this.Operations.get(args.elementId);
         let offsetX = dropElementOffset.x;
