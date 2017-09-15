@@ -17,6 +17,11 @@
       "get": {
         "description": "Returns list of all datasources",
         "operationId": "getDatasources",
+        "parameters": [
+          {
+            "$ref": "#/parameters/userIdParam"
+          }
+        ],
         "responses": {
           "200": {
             "description": "List of all datasources",
@@ -35,6 +40,9 @@
         "operationId": "getDatasource",
         "parameters": [
           {
+            "$ref": "#/parameters/userIdParam"
+          },
+          {
             "name": "datasourceId",
             "in": "path",
             "required": true,
@@ -47,6 +55,12 @@
             "description": "Inserted or updated datasource",
             "schema": {
               "$ref": "#/definitions/Datasource"
+            }
+          },
+          "403": {
+            "description": "Datasource forbidden",
+            "schema": {
+              "$ref": "#/definitions/Error"
             }
           },
           "404": {
@@ -62,6 +76,9 @@
         "operationId": "putDatasource",
         "parameters": [
           {
+            "$ref": "#/parameters/userIdParam"
+          },
+          {
             "name": "datasourceId",
             "in": "path",
             "required": true,
@@ -69,11 +86,11 @@
             "format": "uuid"
           },
           {
-            "name": "datasource",
+            "name": "datasourceParams",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/Datasource"
+              "$ref": "#/definitions/DatasourceParams"
             }
           }
         ],
@@ -83,12 +100,27 @@
             "schema": {
               "$ref": "#/definitions/Datasource"
             }
+          },
+          "403": {
+            "description": "Datasource forbidden",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Invalid datasource object. For example jdbcParams not defined for datasourceType==JDBC",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       },
       "delete": {
         "operationId": "deleteDatasource",
         "parameters": [
+          {
+            "$ref": "#/parameters/userIdParam"
+          },
           {
             "name": "datasourceId",
             "in": "path",
@@ -101,6 +133,12 @@
           "200": {
             "description": "Datasource deleted successfully"
           },
+          "403": {
+            "description": "Datasource forbidden",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
           "404": {
             "description": "Datasource not exists",
             "schema": {
@@ -111,17 +149,46 @@
       }
     }
   },
+  "parameters": {
+    "userIdParam": {
+      "name": "x-seahorse-userid",
+      "description": "Seahorse user id. When used in frontend this parameter is set by proxy.",
+      "in": "header",
+      "required": true,
+      "type": "string",
+      "format": "uuid"
+    }
+  },
   "definitions": {
     "Datasource": {
       "type": "object",
-      "required": ["id", "name", "datasourceType"],
+      "required": ["id", "ownerId", "accessLevel", "params"],
       "properties": {
         "id": {
           "type": "string",
           "format": "uuid"
         },
+        "ownerId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "accessLevel": {
+          "$ref": "#/definitions/AccessLevel"
+        },
+        "params": {
+          "$ref": "#/definitions/DatasourceParams"
+        }
+      }
+    },
+    "DatasourceParams": {
+      "type": "object",
+      "required": ["name", "visibility", "datasourceType"],
+      "properties": {
         "name": {
           "type": "string"
+        },
+        "visibility": {
+          "$ref": "#/definitions/Visibility"
         },
         "downloadUri": {
           "description": "Read only. Any updates to this field will be ignored.",
@@ -130,55 +197,44 @@
         "datasourceType": {
           "$ref": "#/definitions/DatasourceType"
         },
+        "externalFileParams": {
+          "$ref": "#/definitions/ExternalFileParams"
+        },
+        "libraryFileParams": {
+          "$ref": "#/definitions/LibraryFileParams"
+        },
+        "hdfsParams": {
+          "$ref": "#/definitions/HdfsParams"
+        },
         "jdbcParams": {
           "$ref": "#/definitions/JdbcParams"
         },
-        "fileParams": {
-          "$ref": "#/definitions/FileParams"
+        "googleSpreadsheetParams": {
+          "$ref": "#/definitions/GoogleSpreadsheetParams"
         }
       }
     },
     "DatasourceType": {
+      "description": "Type of datasource. Relevant params object must be defined",
       "type": "string",
       "enum": [
+        "externalFile",
+        "libraryFile",
+        "hdfs",
         "jdbc",
-        "file"
+        "googleSpreadsheet"
       ]
     },
-    "JdbcParams": {
-      "description": "Defined for JDBC datasource type",
+    "ExternalFileParams": {
+      "description": "Defined for External File datasource type",
       "type": "object",
       "required": [
         "url",
-        "driver",
-        "table"
+        "fileFormat"
       ],
       "properties": {
         "url": {
           "type": "string"
-        },
-        "driver": {
-          "type": "string"
-        },
-        "table": {
-          "type": "string"
-        }
-      }
-    },
-    "FileParams": {
-      "description": "Defined for File datasource type",
-      "type": "object",
-      "required": [
-        "path",
-        "fileScheme",
-        "fileFormat"
-      ],
-      "properties": {
-        "path": {
-          "type": "string"
-        },
-        "fileScheme": {
-          "$ref": "#/definitions/FileScheme"
         },
         "fileFormat": {
           "$ref": "#/definitions/FileFormat"
@@ -187,6 +243,97 @@
           "$ref": "#/definitions/CsvFileFormatParams"
         }
       }
+    },
+    "LibraryFileParams": {
+      "description": "Defined for Library File datasource type",
+      "type": "object",
+      "required": [
+        "libraryPath",
+        "fileFormat"
+      ],
+      "properties": {
+        "libraryPath": {
+          "type": "string"
+        },
+        "fileFormat": {
+          "$ref": "#/definitions/FileFormat"
+        },
+        "csvFileFormatParams": {
+          "$ref": "#/definitions/CsvFileFormatParams"
+        }
+      }
+    },
+    "HdfsParams": {
+      "description": "Defined for HDFS datasource type",
+      "type": "object",
+      "required": [
+        "hdfsPath",
+        "fileFormat"
+      ],
+      "properties": {
+        "hdfsPath": {
+          "type": "string"
+        },
+        "fileFormat": {
+          "$ref": "#/definitions/FileFormat"
+        },
+        "csvFileFormatParams": {
+          "$ref": "#/definitions/CsvFileFormatParams"
+        }
+      }
+    },
+    "JdbcParams": {
+      "description": "Defined for JDBC datasource type. Either query or table must be defined.",
+      "type": "object",
+      "required": [
+        "url",
+        "driver"
+      ],
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "driver": {
+          "type": "string"
+        },
+        "query": {
+          "type": "string"
+        },
+        "table": {
+          "type": "string"
+        }
+      }
+    },
+    "GoogleSpreadsheetParams": {
+      "description": "Defined for Google Spreadsheet datasource type",
+      "type": "object",
+      "required": [
+        "googleSpreadsheetId",
+        "googleServiceAccountCredentials"
+      ],
+      "properties": {
+        "googleSpreadsheetId": {
+          "type": "string"
+        },
+        "googleServiceAccountCredentials": {
+          "type": "string",
+          "format": "json"
+        }
+      }
+    },
+    "AccessLevel": {
+      "type": "string",
+      "enum": [
+        "read",
+        "writeRead"
+      ]
+    },
+    "Visibility": {
+      "type": "string",
+      "enum": [
+        "publicVisibility",
+        "privateVisibility"
+      ]
     },
     "FileFormat": {
       "type": "string",
@@ -200,26 +347,35 @@
       "type": "object",
       "description": "Defined for csv format type",
       "required": [
-        "separator",
-        "includeHeader"
+        "includeHeader",
+        "convert01ToBoolean",
+        "separatorType"
       ],
       "properties": {
-        "separator": {
-          "type": "string"
-        },
         "includeHeader": {
           "type": "boolean"
+        },
+        "convert01ToBoolean": {
+          "type": "boolean"
+        },
+        "separatorType": {
+          "$ref": "#/definitions/CsvSeparatorType"
+        },
+        "customSeparator": {
+          "description": "Defined only if separatorType == custom",
+          "type": "string"
         }
       }
     },
-    "FileScheme": {
+    "CsvSeparatorType": {
       "type": "string",
       "enum": [
-        "http",
-        "https",
-        "ftp",
-        "hdfs",
-        "file"
+        "comma",
+        "semicolon",
+        "colon",
+        "space",
+        "tab",
+        "custom"
       ]
     },
     "Error": {
