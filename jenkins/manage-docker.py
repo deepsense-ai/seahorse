@@ -36,7 +36,7 @@ def simple_command_docker(docker_image_name, command):
 
 
 def sbt_docker(docker_image_name, project_name):
-    return SbtDockerConfig(docker_image_name, sbt_type, "{}/docker:publishLocal".format(project_name))
+    return SbtDockerConfig(docker_image_name, sbt_type, "{}/docker".format(project_name))
 
 
 def git_sha():

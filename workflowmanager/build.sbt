@@ -12,10 +12,4 @@ Revolver.settings
 
 enablePlugins(JavaAppPackaging, GitVersioning, DeepsenseUniversalSettingsPlugin)
 
-// Docker related configuration
-
-dockerBaseImage := "anapsix/alpine-java:jre8"
-dockerUpdateLatest := true
-version in Docker := SbtGit.GitKeys.gitHeadCommit.value.get
-
 WorkflowExamples.defaultSettings

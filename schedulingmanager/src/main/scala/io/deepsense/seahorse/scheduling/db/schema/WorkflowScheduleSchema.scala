@@ -42,8 +42,7 @@ object WorkflowScheduleSchema {
 
 // sbt-native-package won't work with multiple Mains
 // https://github.com/sbt/sbt-native-packager/pull/319
-// TODO use sbt-docker with sbt-assembly and define mainClass in assembly as
-// it's solved in Neptune
+// TODO use sbt-assembly and define mainClass in assembly as it's solved in Neptune
 /*
 object PrintDDL extends App {
   import Database.api._

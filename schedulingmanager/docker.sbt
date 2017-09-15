@@ -1,11 +1,10 @@
 import com.typesafe.sbt.SbtGit
-import com.typesafe.sbt.packager.docker.Cmd
 
-dockerBaseImage := "anapsix/alpine-java:jre8"
-dockerExposedPorts := Seq(8080)
-dockerUpdateLatest := true
-dockerCommands ++= Seq(
-  Cmd("USER", "root"),
-  Cmd("ENV", "SMTP_PORT", "60111")
-)
-version in Docker := SbtGit.GitKeys.gitHeadCommit.value.get
+enablePlugins(sbtdocker.DockerPlugin, JavaAppPackaging)
+
+imageNames in docker := Seq(ImageName(s"deepsense-schedulingmanager:${SbtGit.GitKeys.gitHeadCommit.value.get}"))
+
+// TODO SMTP_PORT should be in docker compose instead
+// 601xx ports are container-level and docker-compose level details concepts
+dockerfile in docker := NativePackagerJavaAppDockerfile(stage.value, executableScriptName.value)
+    .env("SMTP_PORT", "60111")
