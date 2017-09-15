@@ -1,0 +1,55 @@
+{
+  "count" : {
+    "all" : 6,
+    "filtered" : 6
+  },
+  "experiments" : [{
+      "id" : "22f560a9-97e3-e23a-93ce-edad4cab7ccc",
+      "name" : "My experiment",
+      "created" : "2015-01-20T21:11:09Z",
+      "updated" : "2015-01-20T22:11:09Z",
+      "status" : "COMPLETED",
+      "description" : "IS A SIMPLE LINEAR REGRESSION ABLE TO KNOCK SPOTS OFF SVM AND RANDOM FOREST?"
+    },
+    {
+      "id" : "3db2ab66-7fc2-02c7-f0a6-98b8ac670005",
+      "name" : "Pretty heat maps",
+      "created" : "2015-01-20T20:06:33Z",
+      "updated" : "2015-01-20T21:06:33Z",
+      "status" : "COMPLETED",
+      "description" : "Do you know where Kamil Stoch earns most of his points in season 2013/2014?"
+    },
+    {
+      "id" : "04d5bb5d-0fce-3c7b-5660-edea3917e5ca",
+      "name" : "New Experiment",
+      "created" : "2015-01-21T20:06:33Z",
+      "updated" : "2015-01-21T21:06:33Z",
+      "status" : "INDRAFT",
+      "description" : "A new experiment"
+    },
+    {
+      "id" : "d6f4ae28-1ccd-2276-ef89-bc9352223c73",
+      "name" : "Draft",
+      "created" : "2015-01-22T20:06:33Z",
+      "updated" : "2015-01-22T21:06:33Z",
+      "status" : "INDRAFT",
+      "description" : "Testing"
+    },
+    {
+      "id" : "1ab1db2a-8d22-9d82-ef11-0ff55f0c09d5",
+      "name" : "Test",
+      "created" : "2015-01-23T20:06:33Z",
+      "updated" : "2015-01-23T21:06:33Z",
+      "status" : "FAILED",
+      "description" : "Pretty sure this one will fail"
+    },
+    {
+      "id" : "6e8a006c-7f9e-549c-8f8e-e93728fd66f7",
+      "name" : "Slo mo",
+      "created" : "2015-01-24T20:06:33Z",
+      "updated" : "2015-01-24T21:06:33Z",
+      "status" : "ABORTED",
+      "description" : "A lot of computations"
+    }
+  ]
+}

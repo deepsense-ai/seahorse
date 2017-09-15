@@ -1,0 +1,125 @@
+{
+  "experiment": {
+    "id": "22f560a9-97e3-e23a-93ce-edad4cab7ccc",
+    "name": "My experiment",
+    "description": "IS A SIMPLE LINEAR REGRESSION ABLE TO KNOCK SPOTS OFF SVM AND RANDOM FOREST?",
+    "created": "2015-01-20T21:11:09Z",
+    "updated": "2015-01-20T21:11:09Z",
+    "graph": {
+      "nodes": {
+        "88f560a9-97e3-4fa2-93ce-edad4cab7ea9": {
+          "operation": {
+            "id": "342342-123123-434234-12334",
+            "name": "Sql Reader",
+            "version": "3.1.4"
+          },
+          "note": "My super note",
+          "parameters": {
+            "connection_string": {
+              "value": "jdbc:mysql://localhost/test"
+            }
+          }
+        },
+        "210ce781-0a9f-477d-99a7-5be31f7bfc02": {
+          "operation": {
+          "id": "342342-123123-434234-12334",
+            "name": "Row Filter"
+          },
+          "parameters": {
+            "column_name": {
+              "value": "ExampleColumn"
+            },
+            "condition_type": {
+              "value": "less_than"
+            },
+            "condition_threshold": {
+              "value": 5
+            }
+          }
+        },
+        "0a6a8b82-7dd2-45fb-8551-08af6c0fa0b1": {
+          "entity": {
+            "id": "43241264-6318434-f34d234",
+            "name": "ScientificDatasetA"
+          }
+        },
+        "edc02822-b8ee-4225-b070-f892a87dbf11": {
+          "operation": {
+            "id": "43241264-6318434-f34d234",
+            "name": "Simple Persister",
+            "version": "0.1.3"
+          },
+          "note": "Other note"
+        }
+      },
+      "edges": [
+        {
+          "from": {
+            "node": "88f560a9-97e3-4fa2-93ce-edad4cab7ea9",
+            "port": 0
+          },
+          "to": {
+            "node": "210ce781-0a9f-477d-99a7-5be31f7bfc02",
+            "port": 0
+          }
+        },
+        {
+          "from": {
+            "node": "210ce781-0a9f-477d-99a7-5be31f7bfc02",
+            "port": 0
+          },
+          "to": {
+            "node": "edc02822-b8ee-4225-b070-f892a87dbf11",
+            "port": 0
+          }
+        }
+      ]
+    },
+    "state": {
+      "status": "RUNNING",
+      "error": null,
+      "nodes": {
+        "88f560a9-97e3-4fa2-93ce-edad4cab7ea9": {
+          "status": "COMPLETED",
+          "started": "2015-01-20T21:11:09Z",
+          "ended": "2015-01-20T21:12:09Z"
+        },
+        "210ce781-0a9f-477d-99a7-5be31f7bfc02": {
+          "status": "RUNNING",
+          "started": "2015-01-20T21:12:09Z",
+          "progress": {
+            "current": 312,
+            "total": 542124
+          }
+        },
+        "0a6a8b82-7dd2-45fb-8551-08af6c0fa0b1": {
+          "status": "COMPLETED",
+          "started": "2015-01-20T21:11:09Z",
+          "ended": "2015-01-20T21:11:39Z",
+          "results": [
+            "084d85c2-e914-43cc-bc58-7579060a0c17",
+            "64619d6a-0653-4a31-b009-bda02fe8aa4c",
+            "dfe9b07c-ff27-4b67-a074-d61e62d6ba87"
+          ]
+        },
+        "edc02822-b8ee-4225-b070-f892a87dbf11": {
+          "status": "QUEUED"
+        }
+      }
+    },
+    "typeKnowledge": {
+      "88f560a9-97e3-4fa2-93ce-edad4cab7ea9": [
+        ["DataFrame"]
+      ],
+      "210ce781-0a9f-477d-99a7-5be31f7bfc02": [
+        ["DataFrame"]
+      ],
+      "0a6a8b82-7dd2-45fb-8551-08af6c0fa0b1": [
+        ["DataFrame"]
+      ],
+      "edc02822-b8ee-4225-b070-f892a87dbf11": [
+        ["DataFrame"]
+      ]
+    }
+  }
+}
