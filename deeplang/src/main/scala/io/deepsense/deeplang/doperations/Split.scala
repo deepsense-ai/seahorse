@@ -26,30 +26,37 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.parameters.{NumericParameter, ParametersSchema, RangeValidator}
 
-case class Split() extends DOperation1To2[DataFrame, DataFrame, DataFrame] with OldOperation {
+import io.deepsense.deeplang.params.{NumericParam, Params}
+
+case class Split()
+  extends DOperation1To2[DataFrame, DataFrame, DataFrame]
+  with Params {
+
   override val name: String = "Split"
   override val id: DOperation.Id = "d273c42f-b840-4402-ba6b-18282cc68de3"
 
-  val splitRatioParam = NumericParameter(
-    "Percentage of rows that should end up in the first output DataFrame",
-    default = Some(0.5),
-    RangeValidator(0.0, 1.0, true, true),
-    _value = None
+  val splitRatio = NumericParam(
+    name = "splitRatio",
+    description = "Percentage of rows that should end up in the first output DataFrame",
+    validator = RangeValidator(0.0, 1.0, true, true),
+    index = 0
   )
 
-  val seedParam = NumericParameter(
-    "Seed for random generator used during splitting",
-    default = Some(1.0),
-    // TODO Fix RangeValidator, because now it can't handle Int.MinValue and Int.MaxValue
-    RangeValidator(Int.MinValue / 2, Int.MaxValue / 2, true, true, Some(1.0)),
-    _value = None
+  def getSplitRatio: Double = $(splitRatio)
+  def setSplitRatio(value: Double): this.type = set(splitRatio, value)
+
+  val seed = NumericParam(
+    name = "seed",
+    description = "Seed for random generator used during splitting",
+    validator = RangeValidator(Int.MinValue, Int.MaxValue, true, true, Some(1.0))
   )
+
+  def getSeed: Int = $(seed).toInt
+  def setSeed(value: Int): this.type = set(seed, value.toDouble)
 
   override protected def _execute(context: ExecutionContext)
                                  (df: DataFrame): (DataFrame, DataFrame) = {
-    val range: Double = splitRatioParam.value
-    val seed: Long = seedParam.value.toLong
-    val Array(f1: RDD[Row], f2: RDD[Row]) = split(df, range, seed)
+    val Array(f1: RDD[Row], f2: RDD[Row]) = split(df, getSplitRatio, getSeed)
     val schema = df.sparkDataFrame.schema
     val dataFrame1 = context.dataFrameBuilder.buildDataFrame(schema, f1)
     val dataFrame2 = context.dataFrameBuilder.buildDataFrame(schema, f2)
@@ -59,11 +66,6 @@ case class Split() extends DOperation1To2[DataFrame, DataFrame, DataFrame] with 
   def split(df: DataFrame, range: Double, seed: Long): Array[RDD[Row]] = {
     df.sparkDataFrame.rdd.randomSplit(Array(range, 1.0 - range), seed)
   }
-
-  override val parameters: ParametersSchema = ParametersSchema(
-    "split ratio" -> splitRatioParam,
-    "seed" -> seedParam
-  )
 
   override protected def _inferFullKnowledge(context: InferContext)
       (knowledge: DKnowledge[DataFrame]):
@@ -80,10 +82,7 @@ case class Split() extends DOperation1To2[DataFrame, DataFrame, DataFrame] with 
 }
 
 object Split {
-  def apply(splitRatio: Double, seed: Long): Split = {
-    val splitter = new Split
-    splitter.splitRatioParam.value = splitRatio
-    splitter.seedParam.value = seed
-    splitter
+  def apply(splitRatio: Double, seed: Int): Split = {
+    new Split().setSplitRatio(splitRatio).setSeed(seed)
   }
 }

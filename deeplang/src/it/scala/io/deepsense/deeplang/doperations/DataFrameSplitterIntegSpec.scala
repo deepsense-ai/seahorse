@@ -35,10 +35,20 @@ class DataFrameSplitterIntegSpec
 
   "SplitDataFrame" should {
     "split one df into two df in given range" in {
-      forAll((s: Set[Int], range: Double, seed: Int) => {
-        val rdd = createData(s.toSeq)
+
+      val input = Range(1, 100).toSeq
+
+      val parameterPairs = List(
+        (0.0, 0),
+        (0.3, 1),
+        (0.5, 2),
+        (0.8, 3),
+        (1.0, 4))
+
+      for((splitRatio, seed) <- parameterPairs) {
+        val rdd = createData(input)
         val df = executionContext.dataFrameBuilder.buildDataFrame(createSchema, rdd)
-        val (df1, df2) = executeOperation(executionContext, Split(range, seed / 2))(df)
+        val (df1, df2) = executeOperation(executionContext, Split(splitRatio, seed / 2))(df)
         val dfCount = df.sparkDataFrame.count()
         val df1Count = df1.sparkDataFrame.count()
         val df2Count = df2.sparkDataFrame.count()
@@ -49,7 +59,7 @@ class DataFrameSplitterIntegSpec
         intersect.size shouldBe 0
         (df1Count + df2Count) shouldBe dfCount
         rowsDf.toSet shouldBe rowsDf1.toSet.union(rowsDf2.toSet)
-      })
+      }
     }
   }
 
@@ -70,8 +80,4 @@ class DataFrameSplitterIntegSpec
     val df2 = operationResult.last.asInstanceOf[DataFrame]
     (df1, df2)
   }
-
-  // Create double generator in rage <0,1> with 0.1 step
-  lazy val evenInts: Gen[Double] = for (n <- Gen.choose(0, 10)) yield n.toDouble / 10
-  implicit lazy val arbConsumer: Arbitrary[Double] = Arbitrary(evenInts)
 }
