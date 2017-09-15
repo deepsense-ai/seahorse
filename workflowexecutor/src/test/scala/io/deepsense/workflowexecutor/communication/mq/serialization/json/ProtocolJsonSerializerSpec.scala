@@ -63,6 +63,7 @@ class ProtocolJsonSerializerSpec
       protocolJsonSerializer.serializeMessage(Synchronize()) shouldBe
         expectedSerializationResult("synchronize", JsObject())
     }
+
   }
 
   private def expectedSerializationResult(messageType: String, jsonObject: JsValue): Array[Byte] = {

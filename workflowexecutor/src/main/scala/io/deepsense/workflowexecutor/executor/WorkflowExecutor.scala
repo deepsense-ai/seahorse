@@ -34,7 +34,7 @@ import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang._
 import io.deepsense.graph.CyclicGraphException
 import io.deepsense.models.json.workflow.exceptions._
-import io.deepsense.models.workflows.{ExecutionReport, WorkflowWithResults, WorkflowWithVariables}
+import io.deepsense.models.workflows.{ExecutionReport, WorkflowInfo, WorkflowWithResults, WorkflowWithVariables}
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.Launch
 import io.deepsense.workflowexecutor.WorkflowExecutorApp._
 import io.deepsense.workflowexecutor._
@@ -96,7 +96,8 @@ case class WorkflowExecutor(
       workflow.metadata,
       workflow.graph,
       workflow.thirdPartyData,
-      ExecutionReport(Map(), None))
+      ExecutionReport(Map(), None),
+      WorkflowInfo.forId(workflow.id))
     val workflowExecutorActor = actorSystem.actorOf(
       BatchWorkflowExecutorActor.props(executionContext, statusReceiverActor, workflowWithResults),
       workflow.id.toString)
@@ -148,7 +149,9 @@ object WorkflowExecutor extends Logging {
     val workflowWithResultsFuture = workflow.flatMap(w =>
       executionReport
         .map {
-          case Success(r) => WorkflowWithResults(w.id, w.metadata, w.graph, w.thirdPartyData, r)
+          case Success(r) =>
+            val emptyWorkflowInfo = WorkflowInfo.forId(w.id)
+            WorkflowWithResults(w.id, w.metadata, w.graph, w.thirdPartyData, r, emptyWorkflowInfo)
           case Failure(ex) => throw ex;
         }
     )

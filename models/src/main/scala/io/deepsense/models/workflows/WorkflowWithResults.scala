@@ -25,4 +25,5 @@ case class WorkflowWithResults(
   metadata: WorkflowMetadata,
   graph: DeeplangGraph,
   thirdPartyData: JsObject,
-  executionReport: ExecutionReport)
+  executionReport: ExecutionReport,
+  workflowInfo: WorkflowInfo)

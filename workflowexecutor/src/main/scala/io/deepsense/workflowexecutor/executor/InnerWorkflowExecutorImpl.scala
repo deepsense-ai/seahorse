@@ -49,12 +49,16 @@ class InnerWorkflowExecutorImpl(override val graphReader: GraphReader)
       innerWorkflow: InnerWorkflow,
       dataFrame: DataFrame): DataFrame = {
 
+    val workflowId = Workflow.Id.randomId
+
     val workflowWithResults = WorkflowWithResults(
-      Workflow.Id.randomId,
+      workflowId,
       WorkflowMetadata(WorkflowType.Batch, BuildInfo.version),
       innerWorkflow.graph,
       innerWorkflow.thirdPartyData,
-      ExecutionReport(Map()))
+      ExecutionReport(Map()),
+      WorkflowInfo.forId(workflowId)
+    )
     val statefulWorkflow = StatefulWorkflow(
       executionContext, workflowWithResults, Execution.defaultExecutionFactory)
 

@@ -31,6 +31,7 @@ class StatefulWorkflow(
   private val executionContext: CommonExecutionContext,
   val workflowId: Workflow.Id,
   val metadata: WorkflowMetadata,
+  val workflowInfo: WorkflowInfo,
   private val thirdPartyData: JsObject,
   private val startingExecution: Execution,
   private val stateInferrer: StateInferrer) extends Logging {
@@ -73,7 +74,8 @@ class StatefulWorkflow(
     metadata,
     execution.graph.directedGraph,
     additionalData,
-    executionReport
+    executionReport,
+    workflowInfo
   )
 
   def node(id: Node.Id): DeeplangNode = execution.node(id)
@@ -142,6 +144,7 @@ object StatefulWorkflow extends Logging {
       executionContext,
       workflow.id,
       workflow.metadata,
+      workflow.workflowInfo,
       workflow.thirdPartyData,
       execution,
       new DefaultStateInferrer(executionContext, workflow.id)

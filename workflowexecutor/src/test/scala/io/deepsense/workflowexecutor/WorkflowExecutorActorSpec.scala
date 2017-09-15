@@ -365,6 +365,7 @@ class WorkflowExecutorActorSpec
       wea.underlyingActor.executionContext,
       workflow.id,
       workflow.metadata,
+      WorkflowInfo.forId(workflow.id),
       workflow.thirdPartyData,
       Execution(StatefulGraph(
         workflow.graph,
@@ -526,7 +527,8 @@ class WorkflowExecutorActorSpec
       Set(node1, node2),
       Set(Edge(node1, 0, node2, 0))),
     JsObject(),
-    ExecutionReport(Map(node1.id -> NodeState.draft, node2.id -> NodeState.draft))
+    ExecutionReport(Map(node1.id -> NodeState.draft, node2.id -> NodeState.draft)),
+    WorkflowInfo.forId(id)
   )
 
   private def workflowInvalidInference(workflowId: Workflow.Id): WorkflowWithResults =

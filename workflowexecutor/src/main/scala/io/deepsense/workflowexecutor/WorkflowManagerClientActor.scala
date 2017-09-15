@@ -17,13 +17,11 @@
 package io.deepsense.workflowexecutor
 
 import scala.concurrent.Future
-
-import akka.actor.{Props, Actor}
+import akka.actor.{Actor, Props}
 import akka.pattern.pipe
 import spray.client.pipelining._
-import spray.http.{HttpRequest, HttpResponse, StatusCodes}
+import spray.http.{BasicHttpCredentials, HttpRequest, HttpResponse, StatusCodes}
 import spray.json._
-
 import io.deepsense.commons.utils.Logging
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.WorkflowWithResultsJsonProtocol
@@ -32,6 +30,9 @@ import io.deepsense.workflowexecutor.WorkflowManagerClientActorProtocol.{GetWork
 import io.deepsense.workflowexecutor.exception.UnexpectedHttpResponseException
 
 class WorkflowManagerClientActor(
+    val workflowOwnerId: String,
+    val wmUsername: String,
+    val wmPassword: String,
     val workflowApiAddress: String,
     val workflowApiPrefix: String,
     val reportsApiPrefix: String,
@@ -42,7 +43,7 @@ class WorkflowManagerClientActor(
 
   import context.dispatcher
 
-  private val pipeline: HttpRequest => Future[HttpResponse] = sendReceive
+  private val SeahorseUserIdHeaderName = "X-Seahorse-UserId"
 
   override def receive: Receive = {
     case r: Request => r match {
@@ -94,16 +95,31 @@ class WorkflowManagerClientActor(
         "Upload failed", response.status, response.entity.data.asString)
     }
   }
+
+  private val addUserIdHeader: HttpRequest => HttpRequest =
+    _ ~> addHeader(SeahorseUserIdHeaderName, workflowOwnerId)
+
+  private val addWMCredentials: HttpRequest => HttpRequest =
+    _ ~> addCredentials(BasicHttpCredentials(wmUsername, wmPassword))
+
+  private val pipeline: HttpRequest => Future[HttpResponse] =
+    addUserIdHeader andThen addWMCredentials andThen sendReceive
 }
 
 object WorkflowManagerClientActor {
   def props(
+      workflowOwnerId: String,
+      wmUsername: String,
+      wmPassword: String,
       workflowApiAddress: String,
       workflowApiPrefix: String,
       reportsApiPrefix: String,
       graphReader: GraphReader): Props = {
     Props(
       new WorkflowManagerClientActor(
+        workflowOwnerId,
+        wmUsername: String,
+        wmPassword: String,
         workflowApiAddress,
         workflowApiPrefix,
         reportsApiPrefix,
