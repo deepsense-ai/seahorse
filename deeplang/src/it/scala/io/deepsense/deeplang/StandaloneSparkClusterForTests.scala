@@ -26,7 +26,6 @@ import org.scalatest.concurrent.Eventually._
 import org.scalatest.time.SpanSugar._
 
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
-import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.doperations.readwritedataframe.FileScheme
 import io.deepsense.deeplang.inference.InferContext
@@ -110,11 +109,7 @@ object StandaloneSparkClusterForTests {
 
     UserDefinedFunctions.registerFunctions(sparkSQLSession.udfRegistration)
 
-    val dOperableCatalog = {
-      val catalog = new DOperableCatalog
-      CatalogRecorder.registerDOperables(catalog)
-      catalog
-    }
+    val dOperableCatalog = CatalogRecorder.catalogs.dOperableCatalog
 
     val inferContext = InferContext(
       DataFrameBuilder(sparkSQLSession),

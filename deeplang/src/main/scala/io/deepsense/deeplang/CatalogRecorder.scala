@@ -38,7 +38,7 @@ import io.deepsense.deeplang.refl.CatalogScanner
  */
 object CatalogRecorder {
 
-  def registerDOperables(catalog: DOperableCatalog): Unit = {
+  private def registerDOperables(catalog: DOperableCatalog): Unit = {
     catalog.registerDOperable[DataFrame]()
     catalog.registerDOperable[Report]()
     catalog.registerDOperable[MetricValue]()
@@ -133,7 +133,7 @@ object CatalogRecorder {
     catalog.registerDOperable[RegressionEvaluator]()
   }
 
-  def registerDOperations(catalog: DOperationsCatalog): Unit = {
+  private def registerDOperations(catalog: DOperationsCatalog): Unit = {
 
     catalog.registerDOperation(DOperationCategories.Other, (() => new UnknownOperation), visible = false)
     catalog.registerDOperation(DOperationCategories.IO, () => new PythonNotebook())
@@ -239,7 +239,7 @@ object CatalogRecorder {
     catalog
   }
 
-  def createCatalogs(): CatalogPair = {
+  lazy val catalogs: CatalogPair = {
     val dOperableCatalog = createDOperableCatalog()
     val dOperationsCatalog = createDOperationsCatalog()
 

@@ -16,7 +16,7 @@
 
 package io.deepsense.docgen
 
-import io.deepsense.deeplang.catalogs.doperations.{DOperationCategory, DOperationsCatalog}
+import io.deepsense.deeplang.catalogs.doperations.DOperationCategory
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.stringindexingwrapper.StringIndexingEstimatorWrapper
 import io.deepsense.deeplang.doperations.{EstimatorAsFactory, EstimatorAsOperation, EvaluatorAsFactory, TransformerAsOperation}
@@ -24,8 +24,7 @@ import io.deepsense.deeplang.{CatalogRecorder, DOperation}
 
 trait SparkOperationsExtractor {
 
-  private val catalog = DOperationsCatalog()
-  CatalogRecorder.registerDOperations(catalog)
+  private val catalog = CatalogRecorder.catalogs.dOperationsCatalog
 
   def sparkOperations(): Seq[OperationWithSparkClassName] = {
     val operationIds = catalog.operations.keys

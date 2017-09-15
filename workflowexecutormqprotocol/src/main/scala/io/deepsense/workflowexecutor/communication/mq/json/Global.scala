@@ -19,8 +19,6 @@ package io.deepsense.workflowexecutor.communication.mq.json
 import java.nio.charset.Charset
 
 import io.deepsense.deeplang.CatalogRecorder
-import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
-import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.InferredStateJsonProtocol
 import io.deepsense.models.json.workflow.InferredStateJsonProtocol._
@@ -36,11 +34,7 @@ import io.deepsense.workflowexecutor.communication.message.global.LaunchJsonProt
 object Global {
   val charset = Charset.forName("UTF-8")
 
-  val dOperationsCatalog = DOperationsCatalog()
-  val dOperablesCatalog = new DOperableCatalog()
-
-  CatalogRecorder.registerDOperables(dOperablesCatalog)
-  CatalogRecorder.registerDOperations(dOperationsCatalog)
+  val dOperationsCatalog = CatalogRecorder.catalogs.dOperationsCatalog
 
   val graphReader = new GraphReader(dOperationsCatalog)
 

@@ -21,7 +21,6 @@ import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
 import spray.json._
 
 import io.deepsense.commons.exception.DeepSenseException
-import io.deepsense.deeplang.catalogs.CatalogPair
 import io.deepsense.deeplang.doperables.SqlColumnTransformer
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.SingleColumnChoice
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.NoInPlaceChoice
@@ -34,7 +33,7 @@ import io.deepsense.deeplang.{CatalogRecorder, DeeplangIntegTestSupport, InnerWo
 import io.deepsense.graph.{DeeplangGraph, Edge, Node}
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.InnerWorkflowJsonProtocol
-import io.deepsense.workflowexecutor.executor.{Executor, InnerWorkflowExecutorImpl}
+import io.deepsense.workflowexecutor.executor.InnerWorkflowExecutorImpl
 
 class InnerWorkflowExecutorSpec
   extends DeeplangIntegTestSupport
@@ -99,7 +98,7 @@ class InnerWorkflowExecutorSpec
     Set(sourceNode, sinkNode, otherNode),
     Set(Edge(sourceNode, 0, sinkNode, 0)))
 
-  val CatalogPair(_, dOperationsCatalog) = CatalogRecorder.createCatalogs()
+  val dOperationsCatalog = CatalogRecorder.catalogs.dOperationsCatalog
   val graphReader = new GraphReader(dOperationsCatalog)
   val executor: InnerWorkflowExecutor = new InnerWorkflowExecutorImpl(graphReader)
 

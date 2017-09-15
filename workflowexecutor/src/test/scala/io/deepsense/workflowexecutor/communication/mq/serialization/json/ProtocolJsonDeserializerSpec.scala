@@ -23,12 +23,10 @@ import spray.json._
 
 import io.deepsense.commons.StandardSpec
 import io.deepsense.deeplang.CatalogRecorder
-import io.deepsense.deeplang.catalogs.CatalogPair
 import io.deepsense.graph.DeeplangGraph
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.workflows.{Workflow, WorkflowMetadata, WorkflowType}
 import io.deepsense.workflowexecutor.communication.message.workflow.{Abort, Synchronize, UpdateWorkflow}
-import io.deepsense.workflowexecutor.executor.Executor
 
 class ProtocolJsonDeserializerSpec
   extends StandardSpec
@@ -49,7 +47,7 @@ class ProtocolJsonDeserializerSpec
       readMessage shouldBe Abort(workflowId)
     }
     "deserialize UpdateWorkflow messages" in {
-      val CatalogPair(_, dOperationsCatalog) = CatalogRecorder.createCatalogs()
+      val dOperationsCatalog = CatalogRecorder.catalogs.dOperationsCatalog
       val graphReader = new GraphReader(dOperationsCatalog)
       val protocolDeserializer = ProtocolJsonDeserializer(graphReader)
       val workflowId = Workflow.Id.randomId

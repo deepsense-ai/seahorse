@@ -25,7 +25,6 @@ import org.mockito.stubbing.Answer
 import spray.json.JsObject
 
 import io.deepsense.deeplang._
-import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.InnerWorkflowTestFactory._
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.deeplang.doperations.ConvertType
@@ -54,8 +53,7 @@ class CustomTransformerSpec extends UnitSpec {
 
     "infer knowledge" in {
       val innerWorkflowParser = mock[InnerWorkflowParser]
-      val catalog = new DOperableCatalog()
-      CatalogRecorder.registerDOperables(catalog)
+      val catalog = CatalogRecorder.catalogs.dOperableCatalog
       val inferContext = InferContext(
         mock[DataFrameBuilder],
         "",
@@ -147,8 +145,7 @@ class CustomTransformerSpec extends UnitSpec {
 
       "inferring schema" in {
         val innerWorkflowParser = mock[InnerWorkflowParser]
-        val catalog = new DOperableCatalog()
-        CatalogRecorder.registerDOperables(catalog)
+        val catalog = CatalogRecorder.catalogs.dOperableCatalog
         val inferContext = InferContext(
           mock[DataFrameBuilder],
           "",

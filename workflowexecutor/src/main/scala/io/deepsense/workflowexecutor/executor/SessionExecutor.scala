@@ -16,22 +16,24 @@
 
 package io.deepsense.workflowexecutor.executor
 
-import java.net.{InetAddress, URI, URL}
+import java.net.{InetAddress, URL}
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.language.postfixOps
+
 import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.routing._
 import com.rabbitmq.client.ConnectionFactory
 import com.thenewmotion.akka.rabbitmq._
 import com.typesafe.config.ConfigFactory
 import org.apache.spark.SparkContext
+
 import io.deepsense.commons.mail.{EmailSender, EmailSenderAuthorizationConfig, EmailSenderConfig}
 import io.deepsense.commons.rest.client.NotebooksClientFactory
+import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.CatalogPair
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
-import io.deepsense.deeplang._
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.workflows.Workflow
 import io.deepsense.sparkutils.SparkSQLSession
@@ -80,7 +82,7 @@ case class SessionExecutor(
   private val wmWorkflowsPath = config.getString("workflow-manager.workflows.path")
   private val wmReportsPath = config.getString("workflow-manager.reports.path")
 
-  val CatalogPair(dOperableCatalog, dOperationsCatalog) = CatalogRecorder.createCatalogs()
+  val CatalogPair(dOperableCatalog, dOperationsCatalog) = CatalogRecorder.catalogs
 
   val graphReader = new GraphReader(dOperationsCatalog)
 

@@ -16,14 +16,13 @@
 
 package io.deepsense.deeplang.catalogs.doperable
 
-import io.deepsense.deeplang.{DOperable, CatalogRecorder, UnitSpec}
+import io.deepsense.deeplang.{CatalogRecorder, DOperable, UnitSpec}
 
 class DOperableRegistrationSpec extends UnitSpec {
 
   "DOperableCatalog" should {
     "successfully register and create all DOperables" in {
-      val catalog = new DOperableCatalog()
-      CatalogRecorder.registerDOperables(catalog)
+      val catalog = CatalogRecorder.catalogs.dOperableCatalog
       catalog.concreteSubclassesInstances[DOperable]
     }
   }

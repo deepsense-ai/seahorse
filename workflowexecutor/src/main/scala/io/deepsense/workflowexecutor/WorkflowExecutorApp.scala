@@ -23,7 +23,6 @@ import scopt.OptionParser
 
 import io.deepsense.commons.utils.{Logging, Version}
 import io.deepsense.deeplang.CatalogRecorder
-import io.deepsense.deeplang.catalogs.CatalogPair
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow._
 import io.deepsense.workflowexecutor.buildinfo.BuildInfo
@@ -36,7 +35,7 @@ import io.deepsense.workflowexecutor.pyspark.PythonPathGenerator
  */
 object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
 
-  val CatalogPair(_, dOperationsCatalog) = CatalogRecorder.createCatalogs()
+  val dOperationsCatalog = CatalogRecorder.catalogs.dOperationsCatalog
   override val graphReader = new GraphReader(dOperationsCatalog)
 
   private val parser: OptionParser[ExecutionParams]

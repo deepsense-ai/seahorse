@@ -48,7 +48,7 @@ trait Executor extends Logging {
       tempPath: String,
       dOperableCatalog: Option[DOperableCatalog] = None): CommonExecutionContext = {
 
-    val CatalogPair(operableCatalog, operationsCatalog) = CatalogRecorder.createCatalogs()
+    val CatalogPair(operableCatalog, operationsCatalog) = CatalogRecorder.catalogs
 
     val tenantId = ""
 

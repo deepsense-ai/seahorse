@@ -32,7 +32,6 @@ import spray.json.JsObject
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.models.Entity
 import io.deepsense.commons.utils.Logging
-import io.deepsense.deeplang.catalogs.CatalogPair
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.inout._
 import io.deepsense.deeplang.doperations.readwritedataframe.{FilePath, FileScheme}
@@ -49,7 +48,6 @@ import io.deepsense.reportlib.model.factory.ReportContentTestFactory
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages._
 import io.deepsense.workflowexecutor.WorkflowManagerClientActorProtocol.{GetWorkflow, SaveState, SaveWorkflow}
 import io.deepsense.workflowexecutor.WorkflowNodeExecutorActor.Messages.Delete
-import io.deepsense.workflowexecutor.executor.Executor
 import io.deepsense.workflowexecutor.partialexecution._
 
 class WorkflowExecutorActorSpec
@@ -496,7 +494,7 @@ class WorkflowExecutorActorSpec
         wmClientActor(Map[Workflow.Id, WorkflowWithResults](workflow.id -> workflow))
       }
     val commonExecutionContext = mock[CommonExecutionContext]
-    val CatalogPair(dOperableCatalog, _) = CatalogRecorder.createCatalogs()
+    val dOperableCatalog = CatalogRecorder.catalogs.dOperableCatalog
     val inferContext =
       InferContext(null, null, dOperableCatalog, null)
     when(commonExecutionContext.inferContext).thenReturn(inferContext)

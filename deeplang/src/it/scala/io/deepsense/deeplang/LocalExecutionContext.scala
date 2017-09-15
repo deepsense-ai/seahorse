@@ -20,7 +20,6 @@ import org.apache.spark.{SparkConf, SparkContext}
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.mockito.MockitoSugar._
 
-import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.sparkutils.SparkSQLSession
@@ -34,11 +33,7 @@ trait LocalExecutionContext { self: BeforeAndAfterAll =>
   val sparkContext: SparkContext = DeeplangIntegTestSupport.sparkContext
   val sparkSQLSession: SparkSQLSession = DeeplangIntegTestSupport.sparkSQLSession
 
-  val dOperableCatalog = {
-    val catalog = new DOperableCatalog
-    CatalogRecorder.registerDOperables(catalog)
-    catalog
-  }
+  val dOperableCatalog = CatalogRecorder.catalogs.dOperableCatalog
 
   protected override def beforeAll(): Unit = {
     commonExecutionContext = prepareCommonExecutionContext()

@@ -91,5 +91,5 @@ class KnowledgeInferenceSpec
     InferContext(null, null, dOperableCatalog, executor)
   }
   override protected lazy val graphReader = new GraphReader(operationCatalog)
-  private lazy val CatalogPair(dOperableCatalog, operationCatalog) = CatalogRecorder.createCatalogs()
+  private lazy val CatalogPair(dOperableCatalog, operationCatalog) = CatalogRecorder.catalogs
 }

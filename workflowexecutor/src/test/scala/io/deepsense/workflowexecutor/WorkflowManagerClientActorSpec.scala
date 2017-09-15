@@ -34,7 +34,6 @@ import spray.json._
 
 import io.deepsense.commons.StandardSpec
 import io.deepsense.deeplang.CatalogRecorder
-import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.graph.DeeplangGraph
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.WorkflowWithResultsJsonProtocol
@@ -242,8 +241,7 @@ class WorkflowManagerClientActorSpec
   }
 
   private def createGraphReader(): GraphReader = {
-    val catalog = DOperationsCatalog()
-    CatalogRecorder.registerDOperations(catalog)
+    val catalog = CatalogRecorder.catalogs.dOperationsCatalog
     new GraphReader(catalog)
   }
 }

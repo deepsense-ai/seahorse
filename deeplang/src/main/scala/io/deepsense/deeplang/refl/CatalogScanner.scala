@@ -22,27 +22,18 @@ import java.net.{URL, URLClassLoader}
 import scala.collection.JavaConversions._
 
 import org.reflections.Reflections
-import org.reflections.util.{ClasspathHelper, ConfigurationBuilder}
+import org.reflections.util.ConfigurationBuilder
 
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
-import io.deepsense.deeplang.{DOperable, DOperation, DOperationCategories, TypeUtils}
+import io.deepsense.deeplang.{DOperation, DOperationCategories, TypeUtils}
 
 object CatalogScanner extends Logging {
 
   val resourcesDirname = "/resources/jars"
 
-  lazy val resourcesURLs: Seq[URL] = {
-    val resourcesDir = new File(resourcesDirname)
-    try {
-      resourcesDir.listFiles().map(_.toURI.toURL)
-    } catch {
-      case e: Exception =>
-        logger.warn(s"Couldn't list files in $resourcesDirname dir", e)
-        Seq()
-    }
-  }
+
 
   /**
     * Scans jars on classpath for classes annotated with [[io.deepsense.deeplang.refl.Register Register]]
@@ -65,14 +56,47 @@ object CatalogScanner extends Logging {
   }
 
   private def scanForRegistrables() : Set[Class[_]] = {
-    val cl = URLClassLoader.newInstance(resourcesURLs.toArray)
-    val reflections = new Reflections(
-      ConfigurationBuilder.build(ClasspathHelper.forJavaClassPath())
-        .addUrls(resourcesURLs: _*)
-        .addClassLoader(cl)
-    )
-    reflections.getTypesAnnotatedWith(classOf[Register]).toSet
+
+    val urls = thisJarURLOpt ++ resourcesURLs
+
+    if (urls.nonEmpty) {
+
+      val configBuilder = ConfigurationBuilder.build(urls.toSeq: _*)
+
+      if (resourcesURLs.nonEmpty) {
+        configBuilder.addClassLoader(URLClassLoader.newInstance(resourcesURLs.toArray))
+      }
+
+      new Reflections(configBuilder).getTypesAnnotatedWith(classOf[Register]).toSet
+    } else {
+      Set()
+    }
+
   }
+
+  private lazy val resourcesURLs: Seq[URL] = {
+    val resourcesDir = new File(resourcesDirname)
+    try {
+      resourcesDir.listFiles().map(_.toURI.toURL)
+    } catch {
+      case e: Exception =>
+        logger.warn(s"Couldn't list files in $resourcesDirname dir", e)
+        Seq()
+    }
+  }
+
+  private lazy val thisJarURLOpt: Option[URL] = {
+    val jarRegex = """jar:(file:.*\.jar)!.*""".r
+
+    val url = getClass.getClassLoader.getResource(
+      getClass.getCanonicalName.replaceAll("\\.", File.separator) + ".class")
+
+    url.toString match {
+      case jarRegex(jar) => Some(new URL(jar))
+      case _ => None
+    }
+  }
+
 
   private def registerDOperation(
     catalog: DOperationsCatalog,

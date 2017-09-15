@@ -22,8 +22,7 @@ class DOperationRegistrationSpec extends UnitSpec {
 
   "DOperationsCatalog" should {
     "successfully register and create all DOperations" in {
-      val catalog = DOperationsCatalog()
-      CatalogRecorder.registerDOperations(catalog)
+      val catalog = CatalogRecorder.catalogs.dOperationsCatalog
       catalog.operations.keys.foreach(id => catalog.createDOperation(id))
     }
   }

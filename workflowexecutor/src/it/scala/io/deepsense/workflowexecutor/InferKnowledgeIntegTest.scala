@@ -19,12 +19,11 @@ package io.deepsense.workflowexecutor
 import io.deepsense.deeplang.catalogs.CatalogPair
 import io.deepsense.deeplang.{CatalogRecorder, DOperation, DeeplangIntegTestSupport, DeeplangTestSupport}
 import io.deepsense.graph.{DefaultKnowledgeService, Node, NodeInferenceImpl, NodeInferenceResult}
-import io.deepsense.workflowexecutor.executor.Executor
 
 class InferKnowledgeIntegTest extends DeeplangIntegTestSupport with DeeplangTestSupport {
   val nodeInference = new NodeInferenceImpl{}
 
-  val CatalogPair(doplCatalog, dopsCatalog) = CatalogRecorder.createCatalogs()
+  val CatalogPair(doplCatalog, dopsCatalog) = CatalogRecorder.catalogs
   val inferCtx = createInferContext(doplCatalog)
 
   for (operation <- dopsCatalog.operations.values) {
