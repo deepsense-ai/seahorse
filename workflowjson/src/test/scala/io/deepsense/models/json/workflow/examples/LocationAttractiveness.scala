@@ -24,8 +24,8 @@ import io.deepsense.graph.{Edge, Node}
 
 object LocationAttractiveness extends WorkflowCreator {
 
-  val testFilePath: String = "/home/ubuntu/workflows/input/LocationAttractiveness.csv"
-  val resultFilePath: String = "/home/ubuntu/workflows/results/LocationAttractiveness.csv"
+  val testFilePath: String = "file:///home/ubuntu/workflows/input/LocationAttractiveness.csv"
+  val resultFilePath: String = "file:///home/ubuntu/workflows/results/LocationAttractiveness.csv"
 
   val readDataFrame: ReadDataFrame = ReadDataFrame(
     testFilePath,
@@ -93,7 +93,7 @@ object LocationAttractiveness extends WorkflowCreator {
   val targetColumnName = "rating"
   val predictionColumnName = "rating_prediction"
   val trainRegressor = TrainRegressor(SelectImportantFeatures.ColumnsNames.toSet, targetColumnName)
-  val scoreRegressor = ScoreRegressor("target")
+  val scoreRegressor = ScoreRegressor("rating_prediction")
   val evaluateRegressor = EvaluateRegression(
     targetColumnName = targetColumnName,
     predictionColumnName = predictionColumnName)
