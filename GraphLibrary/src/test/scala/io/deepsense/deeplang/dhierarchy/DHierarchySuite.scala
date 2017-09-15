@@ -42,6 +42,18 @@ object Constructors {
   class WithDefault(val i: Int = 1) extends DOperable
 }
 
+object TraitInheritance {
+  class C1 extends DOperable
+  trait T1 extends C1
+  trait T2 extends T1
+  class C2 extends T2
+
+  trait S1 extends DOperable
+  trait S2 extends DOperable
+  class A1 extends DOperable
+  trait S3 extends A1 with S1 with S2
+}
+
 class DHierarchySuite extends FunSuite with Matchers {
 
   def testGettingSubclasses[T <: DOperable : ru.TypeTag](
@@ -140,5 +152,21 @@ class DHierarchySuite extends FunSuite with Matchers {
     import Constructors._
     val h = new DHierarchy
     h.registerDOperable[AuxiliaryParameterLess]()
+  }
+
+  test("Registering hierarchy with trait extending class should produce exception") {
+    intercept[TraitInheritingFromClassException] {
+      import TraitInheritance._
+      val h = new DHierarchy
+      h.registerDOperable[C2]()
+    }
+  }
+
+  test("Registering trait extending class should produce exception") {
+    intercept[TraitInheritingFromClassException] {
+      import TraitInheritance._
+      val h = new DHierarchy
+      h.registerDOperable[S3]()
+    }
   }
 }

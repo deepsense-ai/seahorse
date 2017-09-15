@@ -45,14 +45,17 @@ class DHierarchy {
     if (registeredNode.isDefined)
       return registeredNode
 
-    val superTraits = javaType.getInterfaces.map(register).flatten
+    val superTraits = javaType.getInterfaces.filter(_ != null).map(register).flatten
     superTraits.foreach(_.addSuccessor(node))
     superTraits.foreach(node.addSupertrait)
 
-    val parentClass = register(javaType.getSuperclass)
-    if (parentClass.isDefined) {
-      parentClass.get.addSuccessor(node)
-      node.addParent(parentClass.get)
+    val parentJavaType = node.getParentJavaType(baseType)
+    if (parentJavaType.isDefined) {
+      val parentClass = register(parentJavaType.get)
+        if (parentClass.isDefined) {
+          parentClass.get.addSuccessor(node)
+          node.addParent(parentClass.get)
+        }
     }
 
     addNode(node)
@@ -60,7 +63,6 @@ class DHierarchy {
   }
 
   private def register(javaType: Class[_]): Option[Node] = {
-    if (javaType == null) return None
     register(DHierarchy.classToType(javaType), javaType)
   }
 
@@ -113,11 +115,11 @@ class DHierarchy {
 object DHierarchy {
   private val mirror = ru.runtimeMirror(getClass.getClassLoader)
 
-  private def classToType(c: Class[_]): ru.Type = mirror.classSymbol(c).toType
+  private[dhierarchy] def classToType(c: Class[_]): ru.Type = mirror.classSymbol(c).toType
 
-  private def typeToClass(t: ru.Type): Class[_] = mirror.runtimeClass(t.typeSymbol.asClass)
+  private[dhierarchy] def typeToClass(t: ru.Type): Class[_] = mirror.runtimeClass(t.typeSymbol.asClass)
 
-  private def symbolToType(s: ru.Symbol): ru.Type = s.asClass.toType
+  private[dhierarchy] def symbolToType(s: ru.Symbol): ru.Type = s.asClass.toType
 
   private def isParametrized(t: ru.Type): Boolean = t.typeSymbol.asClass.typeParams.nonEmpty
 

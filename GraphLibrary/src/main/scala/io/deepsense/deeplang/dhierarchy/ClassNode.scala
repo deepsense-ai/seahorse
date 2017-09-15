@@ -13,6 +13,12 @@ import scala.reflect.runtime.{universe => ru}
  */
 private[dhierarchy] class ClassNode(protected override val javaType: Class[_]) extends Node {
 
+  private[dhierarchy] override def getParentJavaType(upperBoundType: ru.Type): Option[Class[_]] = {
+    val parentJavaType = javaType.getSuperclass
+    val parentType = DHierarchy.classToType(parentJavaType)
+    if (parentType <:< upperBoundType) Some(parentJavaType) else None
+  }
+
   private[dhierarchy] override def info: TypeInfo = {
     val parentName = if (parent.isDefined) Some(parent.get.displayName) else None
     ClassInfo(displayName, parentName, supertraits.values.map(_.displayName).toList)

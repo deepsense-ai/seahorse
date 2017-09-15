@@ -7,6 +7,7 @@
 package io.deepsense.deeplang.dhierarchy
 
 import scala.collection.mutable
+import scala.reflect.runtime.{universe => ru}
 
 /**
  * Node that represents type in DHierarchy graph.
@@ -36,6 +37,11 @@ private[dhierarchy] abstract class Node {
   private def addSubclass(node: Node): Unit = subclasses(node.fullName) = node
 
   private def addSubtrait(node: Node): Unit = subtraits(node.fullName) = node
+
+  /**
+   * Returns java type of parent DClass of node if such parent exists.
+   */
+  private[dhierarchy] def getParentJavaType(upperBoundType: ru.Type): Option[Class[_]]
 
   private[dhierarchy] def info: TypeInfo
 
