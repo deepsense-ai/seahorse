@@ -2,7 +2,7 @@
 layout: documentation
 displayTitle: Workflow File Format
 docTab: workflowfile
-title: Workflow File
+title: Workflow File Format
 includeTechnicalOverviewMenu: true
 description: Deepsense documentation homepage
 ---
