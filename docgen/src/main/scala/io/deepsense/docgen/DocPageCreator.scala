@@ -125,28 +125,30 @@ trait DocPageCreator {
       case (t: TransformerAsOperation[_]) =>
         inputOutputTable(Seq(
           ("<code><a href=\"../classes/dataframe.html\">DataFrame</a></code>",
-            "The output DataFrame."),
+            "The output <code>DataFrame</code>."),
           ("<code><a href=\"../classes/transformer.html\">Transformer</a></code>",
-            "A Transformer that allows to apply the operation on other DataFrames using " +
-            "<a href=\"transform.html\">Transform</a>.")
+            "A <code>Transformer</code> that allows to apply the operation on other " +
+              "<code>DataFrames</code> using a <a href=\"transform.html\">Transform</a>.")
         ))
       case (eso: EstimatorAsOperation[_]) =>
         inputOutputTable(Seq(
           ("<code><a href=\"../classes/dataframe.html\">DataFrame</a></code>",
-            "The output DataFrame."),
+            "The output <code>DataFrame</code>."),
           ("<code><a href=\"../classes/transformer.html\">Transformer</a></code>",
-            "A Transformer that allows to apply the operation on other DataFrames using " +
-              "<a href=\"transform.html\">Transform</a>.")
+            "A <code>Transformer</code> that allows to apply the operation on other" +
+              "<code>DataFrames</code> using a <a href=\"transform.html\">Transform</a>.")
         ))
       case (e: EstimatorAsFactory[_]) =>
         inputOutputTable(Seq(
           ("<code><a href=\"../classes/estimator.html\">Estimator</a></code>",
-            "An Estimator that can be used in <a href=\"fit.html\">Fit</a> operation.")
+            "An <code>Estimator</code> that can be used in " +
+              "a <a href=\"fit.html\">Fit</a> operation.")
         ))
       case (ev: EvaluatorAsFactory[_]) =>
         inputOutputTable(Seq(
           ("<code><a href=\"../classes/evaluator.html\">Evaluator</a></code>",
-            "An Evaluator that can be used in <a href=\"evaluate.html\">Evaluate</a> operation.")
+            "An <code>Evaluator</code> that can be used in " +
+              "an <a href=\"evaluate.html\">Evaluate</a> operation.")
         ))
     }
     "## Output\n\n" + outputTable

@@ -11,6 +11,9 @@ Creates a [DataFrame](../classes/dataframe.html) containing only rows satisfying
 Condition should be simple SQL condition (as used in `WHERE` condition).
 Order of the columns is preserved.
 
+Also returns a [Transformer](../classes/transformer.html) that can be later applied
+to another [DataFrame](../classes/dataframe.html) using a [Transform](transform.html) operation.
+
 **Since**: Seahorse 1.0.0
 
 ## Input
@@ -47,6 +50,12 @@ Order of the columns is preserved.
 <td><code>0</code></td>
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
 <td>The <code>DataFrame</code> containing only rows satisfying given condition.</td>
+</tr>
+<tr>
+<td><code>1</code></td><td>
+<code><a href="../classes/transformer.html">Transformer</a></code></td>
+<td>A <code>Transformer</code> that allows to apply the operation on other <code>DataFrames</code> using
+a <a href="transform.html">Transform</a>.</td>
 </tr>
 </tbody>
 </table>
