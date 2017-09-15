@@ -52,6 +52,7 @@ def dataframe():
         if dataframe_storage_type == 'output':
             java_data_frame = gateway.entry_point.retrieveOutputDataFrame(workflow_id, node_id, port_number)
         else:
+            assert dataframe_storage_type == 'input'
             java_data_frame = gateway.entry_point.retrieveInputDataFrame(workflow_id, node_id, port_number)
     except Py4JJavaError:
         raise Exception("Input operation is not yet executed")

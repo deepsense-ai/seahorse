@@ -140,13 +140,19 @@ class ForwardingKernel(IPythonKernel, Logging):
         return forwarders
 
     def start(self):
+        # If seahorse_notebook_path is not defined then we are in an interactive mode, where user
+        # executes cells from the UI and should use output frame of notebook parent.
+        # If seahorse_notebook_path is defined then we are in headless mode. Notebook is executed
+        # by Session Executor. We should use input frame of notebook node, because in this case, the
+        # operation is able to register the incoming dataframe as its input in dataFrameStorage.
+        dataframe_storage_type = 'output' if self.argv.seahorse_notebook_path is None else 'input'
         self._rabbit_management_sender_client.send({
             'type': 'start_kernel',
             'kernel_id': self._kernel_id,
             'kernel_name': KERNEL_NAME,
             'signature_key': self._signature_key,
             'dataframe_source': {
-                'dataframe_storage_type':  'output' if self.argv.seahorse_notebook_path is None else 'input',
+                'dataframe_storage_type': dataframe_storage_type,
                 'node_id': self._node_id,
                 'port_number': self._port_number
                 },

@@ -101,9 +101,10 @@ class ExecutingKernelManager(Logging):
             return
 
         if message['type'] == 'start_kernel':
-            dataframe_storage_type = message['dataframe_source']['dataframe_storage_type']
-            node_id = message['dataframe_source']['node_id'] if 'node_id' in message['dataframe_source'] else None
-            port_number = message['dataframe_source']['port_number'] if 'port_number' in message['dataframe_source'] else None
+            dataframe_source = message['dataframe_source']
+            dataframe_storage_type = dataframe_source['dataframe_storage_type']
+            node_id = dataframe_source['node_id']
+            port_number = dataframe_source['port_number']
             kernel_name = message['kernel_name']
             self.start_kernel(kernel_id=message['kernel_id'],
                               signature_key=message['signature_key'],

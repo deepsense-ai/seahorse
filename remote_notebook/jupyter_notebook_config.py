@@ -42,10 +42,10 @@ c.NotebookApp.server_extensions = [
 c.Exporter.preprocessors = ['execute_saver.ExecuteSaver']
 c.ClearOutputPreprocessor.enabled = True
 c.ExecutePreprocessor.enabled = True
+c.ExecutePreprocessor.allow_errors = True
 c.ExecutePreprocessor.timeout = -1
-#c.coalesce_streams.enabled = True
 c.SVG2PDFPreprocessor.enabled = True
 c.CSSHTMLHeaderPreprocessor.enabled = True
 c.LatexPreprocessor.enabled = True
 c.HighlightMagicsPreprocessor.enabled = True
-c.ExtractOutputPreprocessor.enabled = True
+

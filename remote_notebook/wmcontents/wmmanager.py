@@ -89,19 +89,19 @@ class WMContentsManager(ContentsManager):
             "mimetype": None,
         }
 
-    def _create_notebook(self, notebook_info):
+    def _create_notebook(self, seahorse_notebook_path):
 
         return {
             "cells": [],
             "metadata": {
                 "kernelspec": {
-                    "display_name": self.KERNEL_TYPES[notebook_info.language]['display_name'],
-                    "name": self.KERNEL_TYPES[notebook_info.language]['name'],
-                    "language": notebook_info.language
+                    "display_name": self.KERNEL_TYPES[seahorse_notebook_path.language]['display_name'],
+                    "name": self.KERNEL_TYPES[seahorse_notebook_path.language]['name'],
+                    "language": seahorse_notebook_path.language
                 },
                 "language_info": {
-                    "name": notebook_info.language,
-                    "version": self.KERNEL_TYPES[notebook_info.language]['version']
+                    "name": seahorse_notebook_path.language,
+                    "version": self.KERNEL_TYPES[seahorse_notebook_path.language]['version']
                 }
             },
             "nbformat": NBFORMAT_VERSION,
@@ -125,23 +125,24 @@ class WMContentsManager(ContentsManager):
     def get(self, path, content=True, type=None, format=None):
         assert isinstance(path, str)
         try:
-            notebook_info = SeahorseNotebookPath.deserialize(path)
+            seahorse_notebook_path = SeahorseNotebookPath.deserialize(path)
         except SeahorseNotebookPath.DeserializationFailed as e:
             raise web.HTTPError(400, e.message)
 
         try:
-            response = urlopen(self._create_request(self._get_wm_notebook_url(notebook_info)))
+            response = urlopen(self._create_request(self._get_wm_notebook_url(seahorse_notebook_path)))
             if response.getcode() == 200:
                 content_json = response.read().decode("utf-8")
-                return self.create_model(content_json if content else None, notebook_info)
+                return self.create_model(content_json if content else None, seahorse_notebook_path)
             else:
                 raise web.HTTPError(response.status, response.msg)
         except web.HTTPError:
             raise
         except HTTPError as e:
             if e.code == 404:
-                content_json = writes(from_dict(self._create_notebook(notebook_info)), NBFORMAT_VERSION)
-                return self._save_notebook(notebook_info, content_json, content)
+                content_json = writes(from_dict(
+                    self._create_notebook(seahorse_notebook_path)), NBFORMAT_VERSION)
+                return self._save_notebook(seahorse_notebook_path, content_json, content)
             else:
                 raise web.HTTPError(e.code, e.msg)
         except Exception as e:
@@ -150,7 +151,7 @@ class WMContentsManager(ContentsManager):
     def save(self, model, path):
         assert isinstance(path, str)
         try:
-            notebook_info = SeahorseNotebookPath.deserialize(path)
+            seahorse_notebook_path = SeahorseNotebookPath.deserialize(path)
         except SeahorseNotebookPath.DeserializationFailed as e:
             raise web.HTTPError(400, e.message)
 
@@ -159,7 +160,7 @@ class WMContentsManager(ContentsManager):
             return model
 
         content_json = writes(from_dict(model['content']), NBFORMAT_VERSION)
-        return self._save_notebook(notebook_info, content_json, False)
+        return self._save_notebook(seahorse_notebook_path, content_json, False)
 
     def delete_file(self, path):
         raise web.HTTPError(400, "Unsupported: delete_file {}".format(path))

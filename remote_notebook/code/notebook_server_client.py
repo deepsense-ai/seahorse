@@ -7,7 +7,11 @@ import urllib2
 from utils import Logging
 from seahorse_notebook_path import SeahorseNotebookPath
 
+
 class NotebookServerClient(Logging):
+    # Passed seahorse_notebook_path enforces NotebookServerClient to use this path for finding/saving
+    # notebook. When seahorse_notebook_path is not defined then NotebookServerClient will connect to session
+    # endpoint to find its path
     def __init__(self, nb_host, nb_port, kernel_id, seahorse_notebook_path=None):
         super(NotebookServerClient, self).__init__()
         self._nb_host = nb_host
@@ -34,6 +38,8 @@ class NotebookServerClient(Logging):
                                                                           self._kernel_id), "")
 
     def stop_kernel(self):
+        # When seahorse_notebook_path is not defined then no session is on notebook server.
+        # We don't have to delete the session.
         if self.seahorse_notebook_path is not None:
             return
         self.logger.debug("Getting session")

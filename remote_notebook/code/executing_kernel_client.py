@@ -15,7 +15,8 @@ from utils import Logging
 class ExecutingKernelClientSettings:
     def __init__(self, gateway_address, r_backend_address,
                  rabbit_mq_address, rabbit_mq_credentials,
-                 session_id, workflow_id, node_id=None, port_number=None, dataframe_storage_type='input'):
+                 session_id, workflow_id, node_id=None, port_number=None,
+                 dataframe_storage_type='input'):
 
         self._gateway_address = gateway_address
         self._r_backend_address = r_backend_address

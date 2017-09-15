@@ -7,7 +7,7 @@ import json
 class SeahorseNotebookPath(object):
     class DeserializationFailed(Exception):
         def __init__(self, path):
-            super(SeahorseNotebookPath.DeserializationFailed.DeserializationFailed, self).__init__(
+            super(SeahorseNotebookPath.DeserializationFailed, self).__init__(
                     "Deserialization of Path '{}' failed".format(path))
 
     def __init__(self, workflow_id, node_id, language, datasource_node_id=None, datasource_node_port=None):
@@ -29,13 +29,12 @@ class SeahorseNotebookPath(object):
             workflow_id, node_id, params = seahorse_notebook_path.split('/')
             deserialized_params = json.loads(base64.decodestring(params.encode()).decode('utf-8'))
             # If nothing is connected to the Notebook node, we don't expect a source
-            if len(deserialized_params['dataframeSource']) == 0:
-                dataframe_owner_node_id = None
-                output_port_number = None
-            else:
+            if 'dataframeSource' in deserialized_params and len(deserialized_params['dataframeSource']) > 0:
                 dataframe_owner_node_id = deserialized_params['dataframeSource']['nodeId']
                 output_port_number = deserialized_params['dataframeSource']['port']
-            print( [dataframe_owner_node_id, output_port_number] )
+            else:
+                dataframe_owner_node_id = None
+                output_port_number = None
             return cls(workflow_id, node_id, deserialized_params['language'], dataframe_owner_node_id,
                        output_port_number)
         except ValueError:

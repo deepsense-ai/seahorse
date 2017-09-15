@@ -15,10 +15,15 @@ COPY code/rabbit_mq_client.py \
      /usr/local/share/jupyter/kernels/pyspark/
 COPY code/forwarding_kernel_py/ /usr/local/share/jupyter/kernels/forwarding_kernel_py/
 COPY code/forwarding_kernel_r/ /usr/local/share/jupyter/kernels/forwarding_kernel_r/
+# seahorse_notebook_path is copied two times, because it is needed
+# by forwarding_kernel (python 2.7) and by notebook server (python 3.5)
 COPY seahorse_notebook_path /usr/local/lib/python2.7/site-packages
 
 COPY jupyter_notebook_config.py /home/jovyan/.jupyter
 COPY wmcontents /opt/conda/lib/python3.5/site-packages/wmcontents
+
+# seahorse_notebook_path is copied two times, because it is needed
+# by forwarding_kernel (python 2.7) and by notebook server (python 3.5)
 COPY seahorse_notebook_path /opt/conda/lib/python3.5/site-packages/
 COPY execute_saver /opt/conda/lib/python3.5/site-packages/execute_saver
 COPY headless_notebook_handler.py /opt/conda/lib/python3.5/site-packages/headless_notebook_handler/
