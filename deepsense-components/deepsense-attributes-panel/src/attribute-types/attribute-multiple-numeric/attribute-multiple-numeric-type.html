@@ -1,5 +1,10 @@
-<input type="text" class="form-control"
-       ng-class="{ 'invalid-param-value': !parameter.validateRawValue(rawValue) }"
-       ng-model="rawValue"
-       placeholder="{{ parameter.convertToRawValue(parameter.defaultValue) }}"
->
+<div class="attribute-input" ng-init="rawValue = parameter.parseRawValue(parameter.defaultValue)">
+  <input type="text" class="form-control"
+         ng-class="{ 'invalid-param-value': !parameter.validateRawValue(rawValue) }"
+         ng-model="rawValue"
+  >
+  <label ng-if="isDefault" class="default-label">
+    <i>Default value</i>
+  </label>
+</div>
+

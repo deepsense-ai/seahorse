@@ -1,4 +1,4 @@
-<div class="multiple-choice-panel" ng-style="parameter.isDefault ? { opacity: 0.5 } : { opacity: 1 }">
+<div class="multiple-choice-panel">
   <div ng-repeat="(choiceName, parametersList) in ::parameter.possibleChoicesList" class="ibox choice-item">
     <label>
       <input type="checkbox"
@@ -9,4 +9,7 @@
     </label>
     <div id="attr-list-{{ ::parameter.name }}-{{ ::choiceName }}" class="nested-attributes-view"></div>
   </div>
+  <label ng-if="parameter.isDefault" class="default-label">
+    <i>Default value</i>
+  </label>
 </div>

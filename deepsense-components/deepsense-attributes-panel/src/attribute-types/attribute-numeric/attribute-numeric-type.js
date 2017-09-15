@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Grzegorz Swatowski
- */
-
 'use strict';
 
 /*@ngInject*/
@@ -12,8 +6,12 @@ function AttributeNumericType() {
     restrict: 'E',
     templateUrl: 'attribute-types/attribute-numeric/attribute-numeric-type.html',
     replace: true,
-    link: function(scope, element) {
+    link: function (scope, element) {
 
+      if (_.isUndefined(scope.parameter.value) || _.isNull(scope.parameter.value)) {
+        scope.parameter.value = scope.parameter.defaultValue;
+      }
+      
       // These watches are set to avoid setting undefined parameter value
       // while typing minus, dot or plus signs. Null value is set instead.
       scope.$watch('parameter.value', function (newValue) {
@@ -30,17 +28,10 @@ function AttributeNumericType() {
 
       let validator = scope.parameter.validator;
       if (validator && validator.schema && validator.schema.type === 'range') {
-        let begin = validator.schema.configuration.begin;
-
-        if (begin < -5e+324) {
-          element[0].setAttribute('min', begin);
-        }
-        element[0].setAttribute('max', validator.schema.configuration.end);
-        element[0].setAttribute('step', validator.schema.configuration.step || 0.1);
+        element[0].children[0].setAttribute('step', validator.schema.configuration.step || 0.1);
       }
     }
   };
 }
 
-angular.module('deepsense.attributes-panel').
-    directive('attributeNumericType', AttributeNumericType);
+angular.module('deepsense.attributes-panel').directive('attributeNumericType', AttributeNumericType);
