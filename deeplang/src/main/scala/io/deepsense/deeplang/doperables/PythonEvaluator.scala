@@ -65,20 +65,21 @@ case class PythonEvaluator()
       throw CustomOperationExecutionException("Code validation failed")
     }
 
-    ctx.dataFrameStorage.setInputDataFrame(InputPortNumber, df.sparkDataFrame)
-    ctx.pythonCodeExecutor.run(composedCode) match {
-      case Left(error) =>
-        throw CustomOperationExecutionException(s"Execution exception:\n\n$error")
+    ctx.dataFrameStorage.withInputDataFrame(InputPortNumber, df.sparkDataFrame) {
+      ctx.pythonCodeExecutor.run(composedCode) match {
+        case Left(error) =>
+          throw CustomOperationExecutionException(s"Execution exception:\n\n$error")
 
-      case Right(_) =>
-        val sparkDataFrame =
-          ctx.dataFrameStorage.getOutputDataFrame(OutputPortNumber).getOrElse {
-            throw CustomOperationExecutionException(
-              "Function `evaluate` finished successfully, but did not produce a metric.")
-          }
+        case Right(_) =>
+          val sparkDataFrame =
+            ctx.dataFrameStorage.getOutputDataFrame(OutputPortNumber).getOrElse {
+              throw CustomOperationExecutionException(
+                "Function `evaluate` finished successfully, but did not produce a metric.")
+            }
 
-        val metricValue = sparkDataFrame.collect.head.getAs[Double](0)
-        MetricValue(getMetricName, metricValue)
+          val metricValue = sparkDataFrame.collect.head.getAs[Double](0)
+          MetricValue(getMetricName, metricValue)
+      }
     }
   }
 

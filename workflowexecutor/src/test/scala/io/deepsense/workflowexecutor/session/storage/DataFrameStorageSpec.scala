@@ -67,6 +67,22 @@ class DataFrameStorageSpec
       storage.getInputDataFrame(workflow2Id, node2Id, 2) shouldBe None
     }
 
+    "delete input dataFrames" in {
+      storage.setInputDataFrame(workflow1Id, node1Id, 0, sparkDataFrame1)
+      storage.setInputDataFrame(workflow1Id, node2Id, 0, sparkDataFrame2)
+      storage.setInputDataFrame(workflow1Id, node2Id, 1, sparkDataFrame3)
+      storage.setInputDataFrame(workflow2Id, node2Id, 0, sparkDataFrame3)
+
+      storage.removeNodeInputDataFrames(workflow1Id, node2Id, 0)
+
+      storage.getInputDataFrame(workflow1Id, node1Id, 0) shouldBe Some(sparkDataFrame1)
+      storage.getInputDataFrame(workflow1Id, node1Id, 1) shouldBe None
+      storage.getInputDataFrame(workflow1Id, node2Id, 0) shouldBe None
+      storage.getInputDataFrame(workflow1Id, node2Id, 1) shouldBe Some(sparkDataFrame3)
+      storage.getInputDataFrame(workflow2Id, node2Id, 2) shouldBe None
+      storage.getInputDataFrame(workflow2Id, node2Id, 0) shouldBe Some(sparkDataFrame3)
+    }
+
     "register output dataFrames" in {
       storage.setOutputDataFrame(workflow1Id, node1Id, 0, sparkDataFrame1)
       storage.setOutputDataFrame(workflow1Id, node2Id, 0, sparkDataFrame2)

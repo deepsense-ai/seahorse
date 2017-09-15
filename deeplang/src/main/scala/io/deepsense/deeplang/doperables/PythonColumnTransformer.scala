@@ -23,6 +23,7 @@ import org.apache.spark.sql.types._
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe._
 import io.deepsense.deeplang.doperations.exceptions.CustomOperationExecutionException
+import io.deepsense.deeplang.CustomOperationExecutor._
 import io.deepsense.deeplang.params.choice.ChoiceParam
 import io.deepsense.deeplang.params.{CodeSnippetLanguage, CodeSnippetParam, Param}
 
@@ -108,9 +109,9 @@ case class PythonColumnTransformer() extends MultiColumnTransformer {
       throw CustomOperationExecutionException("Code validation failed")
     }
 
-    context.dataFrameStorage.setInputDataFrame(InputPortNumber, dataFrame.sparkDataFrame)
-
-    executePythonCode(code, inputColumn, outputColumn, context, dataFrame)
+    context.dataFrameStorage.withInputDataFrame(InputPortNumber, dataFrame.sparkDataFrame) {
+      executePythonCode(code, inputColumn, outputColumn, context, dataFrame)
+    }
   }
 
   override def transformSingleColumnSchema(

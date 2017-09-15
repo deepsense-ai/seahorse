@@ -18,10 +18,8 @@ package io.deepsense.deeplang
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
-
 import org.apache.spark.SparkContext
-import org.apache.spark.sql.{DataFrame => SparkDataFrame, SQLContext}
-
+import org.apache.spark.sql.{SQLContext, DataFrame => SparkDataFrame}
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.CustomOperationExecutor.Result
@@ -104,6 +102,9 @@ case class ContextualDataFrameStorage(
   def setInputDataFrame(portNumber: Int, dataFrame: SparkDataFrame): Unit =
     dataFrameStorage.setInputDataFrame(workflowId, nodeId, portNumber, dataFrame)
 
+  def removeNodeInputDataFrames(portNumber: Int): Unit =
+    dataFrameStorage.removeNodeInputDataFrames(workflowId, nodeId, portNumber)
+
   def getOutputDataFrame(portNumber: Int): Option[SparkDataFrame] =
     dataFrameStorage.getOutputDataFrame(workflowId, nodeId, portNumber)
 
@@ -113,6 +114,15 @@ case class ContextualDataFrameStorage(
   def removeNodeOutputDataFrames(): Unit =
     dataFrameStorage.removeNodeOutputDataFrames(workflowId, nodeId)
 
+
+  def withInputDataFrame[T](portNumber: Int, dataFrame: SparkDataFrame)(block: => T) : T = {
+    setInputDataFrame(portNumber, dataFrame)
+    try {
+      block
+    } finally {
+      removeNodeInputDataFrames(portNumber)
+    }
+  }
 }
 
 case class ContextualPythonCodeExecutor(

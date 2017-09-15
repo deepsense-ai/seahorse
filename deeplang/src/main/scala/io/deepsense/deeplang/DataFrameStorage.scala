@@ -39,6 +39,7 @@ trait DataFrameStorage {
   def setInputDataFrame(
       workflowId: Id, nodeId: Id, portNumber: Int, dataFrame: SparkDataFrame): Unit
 
+  def removeNodeInputDataFrames(workflowId: Id, nodeId: Id, portNumber: Int) : Unit
   /**
    * Returns custom operation's output dataframe.
    * @param workflowId workflow id.

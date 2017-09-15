@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.doperables
 
-import scala.reflect.runtime.{universe => ru}
+import io.deepsense.deeplang.CustomOperationExecutor._
 
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
@@ -42,19 +42,22 @@ class PythonTransformer extends Transformer {
       throw CustomOperationExecutionException("Code validation failed")
     }
 
-    ctx.dataFrameStorage.setInputDataFrame(InputPortNumber, df.sparkDataFrame)
-    ctx.pythonCodeExecutor.run(code) match {
-      case Left(error) =>
-        throw CustomOperationExecutionException(s"Execution exception:\n\n$error")
 
-      case Right(_) =>
-        val sparkDataFrame =
-          ctx.dataFrameStorage.getOutputDataFrame(OutputPortNumber).getOrElse {
-            throw CustomOperationExecutionException(
-              "Operation finished successfully, but did not produce a DataFrame.")
-          }
 
-        DataFrame.fromSparkDataFrame(sparkDataFrame)
+    ctx.dataFrameStorage.withInputDataFrame(InputPortNumber, df.sparkDataFrame) {
+      ctx.pythonCodeExecutor.run(code) match {
+        case Left(error) =>
+          throw CustomOperationExecutionException(s"Execution exception:\n\n$error")
+
+        case Right(_) =>
+          val sparkDataFrame =
+            ctx.dataFrameStorage.getOutputDataFrame(OutputPortNumber).getOrElse {
+              throw CustomOperationExecutionException(
+                "Operation finished successfully, but did not produce a DataFrame.")
+            }
+
+          DataFrame.fromSparkDataFrame(sparkDataFrame)
+      }
     }
   }
 }

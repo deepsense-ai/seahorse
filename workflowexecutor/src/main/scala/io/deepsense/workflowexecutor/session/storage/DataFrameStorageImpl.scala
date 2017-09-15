@@ -36,6 +36,9 @@ class DataFrameStorageImpl extends DataFrameStorage {
       workflowId: Id, nodeId: Id, portNumber: Int, dataFrame: SparkDataFrame): Unit =
     inputDataFrames.put((workflowId, nodeId, portNumber), dataFrame)
 
+  override def removeNodeInputDataFrames(workflowId: Id, nodeId: Id, portNumber: Int) : Unit =
+    inputDataFrames.remove((workflowId, nodeId, portNumber))
+
   override def getOutputDataFrame(
       workflowId: Id, nodeId: Id, portNumber: Int): Option[SparkDataFrame] =
     outputDataFrames.get((workflowId, nodeId, portNumber))
