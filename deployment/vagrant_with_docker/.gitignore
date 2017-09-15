@@ -1,0 +1,8 @@
+# Vagrant machine
+.vagrant/
+
+# Build logs
+*.log
+
+# Downloaded docker-compose.yml
+docker-compose.yml
