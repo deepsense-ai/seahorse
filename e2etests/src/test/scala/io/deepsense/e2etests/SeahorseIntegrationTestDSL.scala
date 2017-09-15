@@ -140,11 +140,11 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
         httpClient.url(sessionsUrl)
           .get
           .map(request => {
-            val JsArray(jsonSessions: Seq[JsObject]) =
+            val JsArray(jsonSessions: Seq[_]) =
               request.json.asInstanceOf[JsObject].value("sessions")
-            val jsonSessionForWorkflow = jsonSessions.find(
-              _.value("workflowId").asInstanceOf[JsString].value == workflowId.toString()
-            ).get
+            val jsonSessionForWorkflow = jsonSessions.find { case obj: JsObject =>
+              obj.value("workflowId").asInstanceOf[JsString].value == workflowId.toString()
+            }.get.asInstanceOf[JsObject]
             jsonSessionForWorkflow.value("status").asInstanceOf[JsString].value
           }), httpTimeout)
       SessionStatus.withName(statusString) shouldEqual SessionStatus.Running

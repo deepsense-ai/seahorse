@@ -81,7 +81,7 @@ class MqModule extends AbstractModule with Logging {
       case NonFatal(e) =>
         logger.error(s"Haven't subscribed to Heartbeats after '$timeout' millis." +
           " Shutting down!")
-        system.shutdown()
+        system.terminate()
     }
 
     subscribedWithTimeout

@@ -189,7 +189,7 @@ class PresetApiSpec
 
     "return OK" in {
       presetsServiceMock = mock[PresetService]
-      when(presetsServiceMock.removePreset(2)).thenReturn(Future.successful())
+      when(presetsServiceMock.removePreset(2)).thenReturn(Future.successful(()))
       Delete(s"/$presetPrefix/2") ~>
         addCredentials(credentials) ~> testRoute ~> check {
         status should be(StatusCodes.OK)
@@ -293,7 +293,7 @@ class PresetApiSpec
       val workflowPreset = WorkflowPreset(workflowAId, 2L)
       when(presetsServiceMock.saveWorkflowsPreset(
         any(), Matchers.eq(workflowAId), Matchers.eq(workflowPreset))).
-        thenReturn(Future.successful())
+        thenReturn(Future.successful(()))
       Post(s"/$apiPrefix/$workflowAId/preset", workflowPreset) ~>
         addCredentials(credentials) ~>
         addHeaders(validHeaders()) ~> testRoute ~> check {
@@ -323,7 +323,7 @@ class PresetApiSpec
       val workflowPreset = WorkflowPreset(workflowAId, 2L)
       when(presetsServiceMock.saveWorkflowsPreset(
         any(), Matchers.eq(workflowAId), Matchers.eq(workflowPreset))).
-        thenReturn(Future.successful())
+        thenReturn(Future.successful(()))
       Post(s"/$apiPrefix/$workflowAId/preset", workflowPreset) ~>
         addCredentials(credentials) ~> testRoute ~> check {
         status should be(StatusCodes.BadRequest)
@@ -335,7 +335,7 @@ class PresetApiSpec
       val workflowPreset = WorkflowPreset(workflowAId, 2L)
       when(presetsServiceMock.saveWorkflowsPreset(
         any(), Matchers.eq(workflowAId), Matchers.eq(workflowPreset))).
-        thenReturn(Future.successful())
+        thenReturn(Future.successful(()))
       Post(s"/$apiPrefix/$workflowAId/preset", workflowPreset) ~>
         addCredentials(invalidCredentials) ~>
         addHeaders(validHeaders()) ~> sealRoute(testRoute) ~> check {

@@ -5,7 +5,7 @@
 package io.deepsense.workflowmanager.storage
 
 import org.mockito.Mockito._
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
 import spray.json.{DefaultJsonProtocol, JsObject}
 

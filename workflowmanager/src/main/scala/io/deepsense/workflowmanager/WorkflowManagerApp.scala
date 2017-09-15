@@ -6,12 +6,14 @@ package io.deepsense.workflowmanager
 
 import akka.actor.ActorSystem
 import com.google.inject.{Guice, Stage}
-
 import io.deepsense.commons.rest.RestServer
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.CatalogRecorder
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
+
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
 
 /**
  * This is the entry point of the Workflow Manager application.
@@ -26,7 +28,7 @@ object WorkflowManagerApp extends App with Logging {
     CatalogRecorder.registerDOperables(injector.getInstance(classOf[DOperableCatalog]))
     CatalogRecorder.registerDOperations(injector.getInstance(classOf[DOperationsCatalog]))
     injector.getInstance(classOf[RestServer]).start()
-    injector.getInstance(classOf[ActorSystem]).awaitTermination()
+    Await.result(injector.getInstance(classOf[ActorSystem]).whenTerminated, Duration.Inf)
   } catch {
     case e: Exception =>
       logger.error("Application context creation failed", e)

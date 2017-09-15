@@ -8,7 +8,7 @@ import scala.concurrent.{Await, Future}
 
 import org.joda.time.DateTime
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfter, Matchers}
 
 import io.deepsense.commons.StandardSpec

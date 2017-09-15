@@ -69,6 +69,9 @@ object Library {
   val h2 = "com.h2database" % "h2" % Version.h2
   val wiremock = "com.github.tomakehurst" % "wiremock" % Version.wiremock
   val flyway = "org.flywaydb" % "flyway-core" % Version.flyway
+  // to suppress "Nullable" warning, as per
+  // http://stackoverflow.com/questions/13162671/missing-dependency-class-javax-annotation-nullable.
+  val findBugs = "com.google.code.findbugs" % "jsr305" % "3.0.1"
 }
 
 object Dependencies {
@@ -96,6 +99,7 @@ object Dependencies {
   val commons = Seq(
     akkaActor,
     apacheCommons,
+    findBugs,
     guice,
     guiceMultibindings,
     jcloudsCompute,

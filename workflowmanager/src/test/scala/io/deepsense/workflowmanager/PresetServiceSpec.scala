@@ -10,7 +10,7 @@ import scala.util.{Failure, Success}
 
 import org.mockito.Matchers._
 import org.mockito.Mockito._
-import org.scalatest.mock.MockitoSugar.mock
+import org.scalatest.mockito.MockitoSugar.mock
 
 import io.deepsense.commons.StandardSpec
 import io.deepsense.commons.auth.exceptions.NoRoleException

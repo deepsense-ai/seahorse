@@ -30,8 +30,8 @@ class RestServiceSupervisor extends Actor with Logging {
   override val supervisorStrategy =
     OneForOneStrategy() {
       case exception: ActorInitializationException =>
-        logger.error("An ActorInitializationException occurred! Shutting down!", exception)
-        context.system.shutdown()
+        logger.error("An ActorInitializationException occurred! Terminating!", exception)
+        context.system.terminate()
         Stop
     }
 }

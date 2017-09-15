@@ -4,7 +4,7 @@
 
 package io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.clusters
 
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{FunSuite, Matchers}
 
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.spark.SparkArgumentParser._
