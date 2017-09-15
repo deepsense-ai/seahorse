@@ -3,12 +3,12 @@
     "nodes": {
       "75759e25-3236-82b6-fc04-85ad03ab7a41": {
         "status": "ABORTED", 
-        "results": null, 
+        "results": [], 
         "error": null
       }, 
       "1870441c-f2c1-27aa-c9d5-026f9d392529": {
         "status": "ABORTED", 
-        "results": null, 
+        "results": [], 
         "error": null
       }
     }, 

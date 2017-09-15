@@ -3,7 +3,7 @@
     "nodes": {
       "38fc9517-698f-9e76-77be-933cccb9b5ff": {
         "status": "ABORTED", 
-        "results": null, 
+        "results": [], 
         "error": null
       }
     }, 

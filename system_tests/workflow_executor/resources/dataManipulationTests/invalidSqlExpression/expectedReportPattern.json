@@ -17,7 +17,7 @@
       }, 
       "4c433dfc-9f43-d1d7-2032-bb37847d4f37": {
         "status": "ABORTED", 
-        "results": null, 
+        "results": [], 
         "error": null
       }
     }, 

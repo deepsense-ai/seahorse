@@ -9,7 +9,7 @@
       "parameters": {
         "data storage type": {
           "FILE": {
-            "source": "hdfs://spark-cluster-1/system_tests/readWriteHdfs/input.csv",
+            "source": "hdfs://spark-cluster-1/system_tests/readWriteHdfs/input_NOT_EXISTS.csv",
             "format": {
               "CSV": {
                 "separator": {

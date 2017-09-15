@@ -32,14 +32,17 @@ fi
 
 # Zip system_tests files into single archive
 # NOTE: system_tests-$ARTIFACT_VERSION.zip is automatically removed from set of files to include in archive
+rm $ARTIFACT_FILE_PATH
 if [ "$1" == "workflow_executor" ]; then
-    find . -not -path "./ds_studio/*" -not -name "ds_studio" -not -path "./test-output/*"\
+    find . -not -path "./workflow_executor/python/*" -not -path "./workflow_executor/python"\
+        -not -path "./ds_studio/*" -not -name "ds_studio" -not -path "./test-output/*"\
         -not -name "test-output" -not -name "publish.sh" -not -name "*.zip" -not -name "\.*"\
         -not -name "*.pyc" -not -name "*.html" -not -name "*.xml"\
         -not -name "workflowexecutor*.jar"\
         | zip -@ $ARTIFACT_FILE_PATH
 elif [ "$1" == "ds_studio" ]; then
-    find . -not -path "./workflow_executor/*" -not -name "workflow_executor" -not -path "./test-output/*"\
+    find . -not -path "./ds_studio/python/*" -not -name "./ds_studio/python"\
+        -not -path "./workflow_executor/*" -not -name "workflow_executor" -not -path "./test-output/*"\
         -not -name "test-output" -not -name "publish.sh" -not -name "*.zip" -not -name "\.*"\
         -not -name "*.pyc" -not -name "*.html" -not -name "*.xml"\
         -not -name "workflowexecutor*.jar"\

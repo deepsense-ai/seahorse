@@ -3,17 +3,17 @@
     "nodes": {
       "4c03846a-f675-08b3-f2b8-9d74a29e3f35": {
         "status": "ABORTED", 
-        "results": null, 
+        "results": [], 
         "error": null
       }, 
       "b58affc0-9671-d0ea-e9ef-182b64d6de9a": {
         "status": "ABORTED", 
-        "results": null, 
+        "results": [], 
         "error": null
       }, 
       "308404c1-de47-edd0-4c86-c701dd7b0399": {
         "status": "ABORTED", 
-        "results": null, 
+        "results": [], 
         "error": null
       }
     }, 

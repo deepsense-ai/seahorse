@@ -111,6 +111,19 @@ Example:
 }
 ```
 
+### Adding new system tests
+
+* Create new system test (`workflow.json` and all necessary input files, but do not create `expectedReportPattern.json`);
+
+* Clear `output` directory;
+
+* Run that single test using pybot;
+
+* Verify correctness of `result.json` created in `output` directory;
+
+* execute script `generate_expected_reports.py` (it will generate `expectedReportPattern.json` for new system test).
+
+
 ## DS Studio tests
 
 To execute DS Studio system tests on development environment, you need to run Experiment Manager,

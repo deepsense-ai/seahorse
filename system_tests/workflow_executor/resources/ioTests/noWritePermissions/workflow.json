@@ -9,7 +9,7 @@
       "parameters": {
         "data storage type": {
           "FILE": {
-            "source": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/resources/ioTests/readWriteLocal/input.csv",
+            "source": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/resources/ioTests/noWritePermissions/input.csv",
             "format": {
               "CSV": {
                 "separator": {
