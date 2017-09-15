@@ -349,7 +349,7 @@ class WorkflowsApiSpec
           header("Content-Disposition") shouldBe Some(
             `Content-Disposition`(
               "attachment",
-              Map("filename" -> "Very nice workflow__workflow.json")))
+              Map("filename" -> "Very_nice_workflow__workflow.json")))
 
           responseAs[WorkflowWithVariables] shouldBe WorkflowWithVariables(
             workflowAId,
@@ -368,7 +368,7 @@ class WorkflowsApiSpec
           header("Content-Disposition") shouldBe Some(
             `Content-Disposition`(
               "attachment",
-              Map("filename" -> "Very nice workflow__workflow.json")))
+              Map("filename" -> "Very_nice_workflow__workflow.json")))
 
           responseAs[WorkflowWithVariables] shouldBe WorkflowWithVariables(
             workflowWithoutNotebookId,

@@ -305,7 +305,7 @@ abstract class WorkflowApi @Inject() (
     Try(thirdPartyData
       .fields("gui").asJsObject
       .fields("name").asInstanceOf[JsString].value) match {
-      case Success(name) => name.replaceAll("[^ a-zA-Z0-9.-]", "_") + ".json"
+      case Success(name) => name.replaceAll("[^a-zA-Z0-9.-]", "_") + ".json"
       case Failure(_) => workflowDownloadName
     }
   }
