@@ -20,6 +20,19 @@ Ridge Regression
     Clean Output Directory
     Remove Hdfs Path    /system_tests/ridgeRegression
 
+Lasso Regression
+    ${dir} =    Set Variable    resources/regressionTests/lassoRegression/
+    Remove Hdfs Path    /system_tests/lassoRegression
+    Upload To Hdfs    /system_tests/lassoRegression/training.csv    resources/regressionTests/training.csv
+    Upload To Hdfs    /system_tests/lassoRegression/test.csv    resources/regressionTests/test.csv
+    Remove Directory    lassoRegressionOutput    recursive=yes
+    Create Output Directory    lassoRegressionOutput
+    Run Workflow    ${dir}workflow.json
+    Check Execution Status
+    Check Report    resources/regressionTests/expectedReportPattern.json
+    Clean Output Directory
+    Remove Hdfs Path    /system_tests/lassoRegression
+
 Random Forest
     ${dir} =    Set Variable    resources/regressionTests/randomForest/
     Remove Hdfs Path    /system_tests/randomForest
