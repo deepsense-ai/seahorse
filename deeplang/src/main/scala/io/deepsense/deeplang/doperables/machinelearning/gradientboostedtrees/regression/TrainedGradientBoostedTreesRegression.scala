@@ -44,46 +44,17 @@ case class TrainedGradientBoostedTreesRegression(
   override def url: Option[String] = None
 
   override def report(executionContext: ExecutionContext): Report = {
-    val featureColumnsColumn = featureColumns.toList.map(Some.apply)
-    val targetColumnColumn = List(Some(targetColumn))
-
-    val columnsInfo = featureColumnsColumn.zipAll(targetColumnColumn, Some(""), Some(""))
-      .map{ case (a, b) => List(a, b) }
-
-    val firstRow = columnsInfo.head ++ List(
-      Some(modelParameters.numIterations.toString),
-      Some(modelParameters.loss),
-      Some(modelParameters.impurity),
-      Some(modelParameters.maxDepth.toString),
-      Some(modelParameters.maxBins.toString))
-
-    val otherRows = columnsInfo.tail.map(shortList =>
-      shortList ++ List.fill(5)(Some("")))
-
-    val table = Table(
-      "Trained Gradient Boosted Trees Regression",
-      model.toString,
-      Some(List(
-        "Feature columns",
-        "Target column",
-        "Num iterations",
-        "Loss",
-        "Impurity",
-        "Max depth",
-        "Max bins")),
-      List(
-        ColumnType.string,
-        ColumnType.string,
-        ColumnType.numeric,
-        ColumnType.numeric,
-        ColumnType.numeric,
-        ColumnType.numeric,
-        ColumnType.numeric
-      ),
-      None,
-      firstRow :: otherRows)
-
-    Report(ReportContent("Report for GradientBoostedTreesRegression", List(table)))
+    DOperableReporter("Trained Gradient Boosted Trees Regression")
+      .withParameters(
+        description = model.toString,
+        ("Num iterations", ColumnType.numeric, modelParameters.numIterations.toString),
+        ("Loss", ColumnType.string, modelParameters.loss),
+        ("Impurity", ColumnType.string, modelParameters.impurity),
+        ("Max depth", ColumnType.numeric, modelParameters.maxDepth.toString),
+        ("Max bins", ColumnType.numeric, modelParameters.maxBins.toString)
+      )
+      .withVectorScoring(this)
+      .report
   }
 
   override def save(context: ExecutionContext)(path: String): Unit = ???

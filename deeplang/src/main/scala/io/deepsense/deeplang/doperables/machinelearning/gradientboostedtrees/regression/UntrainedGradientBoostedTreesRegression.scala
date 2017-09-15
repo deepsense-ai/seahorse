@@ -99,40 +99,16 @@ case class UntrainedGradientBoostedTreesRegression(
   }
 
   override def report(executionContext: ExecutionContext): Report = {
-
-    val parametersList = List(
-      "Num iterations",
-      "Loss",
-      "Impurity",
-      "Max depth",
-      "Max bins")
-
-    val parametersTypes = List(
-      ColumnType.numeric,
-      ColumnType.numeric,
-      ColumnType.numeric,
-      ColumnType.numeric,
-      ColumnType.numeric)
-
-    val rows = List(
-      List(
-        Some(modelParameters.numIterations.toString),
-        Some(modelParameters.loss),
-        Some(modelParameters.impurity),
-        Some(modelParameters.maxDepth.toString),
-        Some(modelParameters.maxBins.toString)
+    DOperableReporter("Untrained Gradient Boosted Trees Regression")
+      .withParameters(
+        description = "",
+        ("Num iterations", ColumnType.numeric, modelParameters.numIterations.toString),
+        ("Loss", ColumnType.string, modelParameters.loss),
+        ("Impurity", ColumnType.string, modelParameters.impurity),
+        ("Max depth", ColumnType.numeric, modelParameters.maxDepth.toString),
+        ("Max bins", ColumnType.numeric, modelParameters.maxBins.toString)
       )
-    )
-
-    val parametersTable = Table(
-      "Parameters",
-      "",
-      Some(parametersList),
-      parametersTypes,
-      None,
-      rows)
-
-    Report(ReportContent("Report for UntrainedGradientBoostedTrees", List(parametersTable)))
+      .report
   }
 
   override def save(context: ExecutionContext)(path: String): Unit = ???
