@@ -36,7 +36,7 @@ case class Split()
   override val id: DOperation.Id = "d273c42f-b840-4402-ba6b-18282cc68de3"
 
   val splitRatio = NumericParam(
-    name = "splitRatio",
+    name = "split ratio",
     description = "Percentage of rows that should end up in the first output DataFrame",
     validator = RangeValidator(0.0, 1.0, true, true),
     index = 0

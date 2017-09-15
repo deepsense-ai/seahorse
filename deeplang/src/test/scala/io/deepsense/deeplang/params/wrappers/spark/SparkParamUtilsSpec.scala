@@ -28,7 +28,7 @@ class SparkParamUtilsSpec extends WordSpec
 
     "split camel case variable names to uppercase words" in {
       val paramMock = new Param[String]("", name = "minInstancesPerNode", "")
-      SparkParamUtils.defaultName(paramMock) shouldBe "MIN INSTANCES PER NODE"
+      SparkParamUtils.defaultName(paramMock) shouldBe "min instances per node"
     }
 
     "convert description's first letter to uppercase" in {

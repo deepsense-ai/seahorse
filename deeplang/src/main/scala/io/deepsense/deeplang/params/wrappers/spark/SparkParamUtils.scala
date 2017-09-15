@@ -21,7 +21,7 @@ import org.apache.spark.ml.param.Param
 object SparkParamUtils {
 
   def defaultName(sparkParam: Param[_]): String =
-    sparkParam.name.replaceAll("([A-Z])", " $1").toUpperCase
+    sparkParam.name.replaceAll("([A-Z])", " $1").toLowerCase
 
   def defaultDescription(sparkParam: Param[_]): String =
     sparkParam.doc.substring(0, 1).toUpperCase + sparkParam.doc.substring(1)
