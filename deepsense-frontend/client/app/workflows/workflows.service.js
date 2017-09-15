@@ -73,7 +73,7 @@ function WorkflowService($rootScope, Workflow, OperationsHierarchyService, Workf
       this._workflowsStack.push(workflow);
 
       const unregisterSynchronization = $rootScope.$on('ServerCommunication.MESSAGE.heartbeat', (event, data) => {
-        if (data.sessionId === workflow.id) {
+        if (data.workflowId === workflow.id) {
           console.log('Received first hearbeat. Synchronizing with executor...');
           ServerCommunication.sendSynchronize();
           unregisterSynchronization();
