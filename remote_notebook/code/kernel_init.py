@@ -5,6 +5,7 @@ from pyspark import SparkConf
 from pyspark.sql import SQLContext
 from pyspark.sql import DataFrame
 from py4j.java_gateway import JavaGateway, GatewayClient, java_import
+from py4j.protocol import Py4JJavaError
 from ready_handler import ReadyHandler
 import urllib2
 
