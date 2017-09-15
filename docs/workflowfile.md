@@ -289,7 +289,7 @@ but used by other applications including Seahorse Editor.
       "parameters": {
         "data storage type": {
           "FILE": {
-            "outputFile": "file:///root/filtered_transactions.csv",
+            "output file": "file:///root/filtered_transactions.csv",
             "format": {
               "CSV": {
                 "separator": {

@@ -54,7 +54,7 @@ The `Write Transformer` operation does not produce any output.
   <tbody>
     <tr>
       <td>
-        <code id="output-file">outputFile</code>
+        <code id="output-file">output path</code>
       </td>
       <td>
         <code><a href="../parameter_types.html#string">String</a></code>

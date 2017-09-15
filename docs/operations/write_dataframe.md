@@ -91,14 +91,14 @@ The `Write DataFrame` operation does not produce any output.
       <td>
         <code><a href="../parameter_types.html#single-choice">Single Choice</a></code>
       </td>
-      <td>The input data storage type. Possible values are:
+      <td>The output data storage type. Possible values are:
         <code>FILE</code>, <code>JDBC</code>.
       </td>
     </tr>
 
     <tr>
       <td>
-        <code id="output-file">outputFile</code>
+        <code id="output-file">output file</code>
       </td>
       <td>
         <code><a href="../parameter_types.html#string">String</a></code>

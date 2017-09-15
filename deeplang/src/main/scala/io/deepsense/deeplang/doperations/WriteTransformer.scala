@@ -33,16 +33,16 @@ case class WriteTransformer()
 
   override val id: Id = "58368deb-68d0-4657-ae3f-145160cb1e2b"
   override val name: String = "Write Transformer"
-  override val description: String = "Writes a Transformer to a file"
+  override val description: String = "Writes a Transformer to a directory"
 
   override val since: Version = Version(1, 1, 0)
 
   val outputPath = StringParam(
-    name = "outputPath",
-    description = "The output path.")
+    name = "output path",
+    description = "The output path for writing the Transformer.")
 
   def getOutputPath: String = $(outputPath)
-  def setOutputFile(value: String): this.type = set(outputPath, value)
+  def setOutputPath(value: String): this.type = set(outputPath, value)
 
   val params = declareParams(outputPath)
 
@@ -52,7 +52,7 @@ case class WriteTransformer()
       transformer.save(context, outputDictPath)
     } catch {
       case e: IOException =>
-        logger.error(s"WriteTransformer error. Could not write transformer to file", e)
+        logger.error(s"WriteTransformer error. Could not write transformer to the directory", e)
         throw DeepSenseIOException(e)
     }
   }
@@ -62,7 +62,7 @@ case class WriteTransformer()
 }
 
 object WriteTransformer {
-  def apply(outputFile: String): WriteTransformer = {
-    new WriteTransformer().setOutputFile(outputFile)
+  def apply(outputPath: String): WriteTransformer = {
+    new WriteTransformer().setOutputPath(outputPath)
   }
 }

@@ -35,7 +35,7 @@ case class ReadTransformer()
 
   override val id: Id = "424dc996-a471-482d-b08c-bc12849f0b68"
   override val name: String = "Read Transformer"
-  override val description: String = "Reads a Transformer from a file"
+  override val description: String = "Reads a Transformer from a directory"
 
   override val since: Version = Version(1, 1, 0)
 
@@ -60,13 +60,13 @@ object ReadTransformer {
 
     val sourcePath = StringParam(
       name = "source",
-      description = "A path to the Transformer file.")
+      description = "A path to the Transformer directory.")
 
     def getSourcePath: String = $(sourcePath)
     def setSourcePath(value: String): this.type = set(sourcePath, value)
   }
 
-  def apply(fileName: String): ReadTransformer = {
-    new ReadTransformer().setSourcePath(fileName)
+  def apply(sourcePath: String): ReadTransformer = {
+    new ReadTransformer().setSourcePath(sourcePath)
   }
 }
