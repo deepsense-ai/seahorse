@@ -356,12 +356,10 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
   };
 
   that.disablePortHighlightings = function disablePortHighlightings() {
-    $timeout(() => {
-      if (internal.renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE) {
-        ConnectionHinterService.setDefaultPortColors(internal.renderMode);
-        ConnectionHinterService.disableHighlightingOoperations();
-      }
-    }, 0, false);
+    if (internal.renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE) {
+      ConnectionHinterService.setDefaultPortColors(internal.renderMode);
+      ConnectionHinterService.disableHighlightingOoperations();
+    }
   };
 
   return that;
