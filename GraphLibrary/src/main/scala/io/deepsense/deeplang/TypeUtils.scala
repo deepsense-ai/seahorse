@@ -6,6 +6,8 @@
 
 package io.deepsense.deeplang
 
+import java.lang.reflect.Constructor
+
 import scala.reflect.runtime.{universe => ru}
 
 private[deeplang] object TypeUtils {
@@ -20,4 +22,19 @@ private[deeplang] object TypeUtils {
   def isParametrized(t: ru.Type): Boolean = t.typeSymbol.asClass.typeParams.nonEmpty
 
   def isAbstract(c: Class[_]): Boolean = classToType(c).typeSymbol.asClass.isAbstractClass
+
+  def constructorForClass(c: Class[_]): Option[Constructor[_]] = {
+    val constructors = c.getConstructors
+    val isParameterLess: (Constructor[_] => Boolean) = constructor =>
+      constructor.getParameterTypes.length == 0
+    constructors.find(isParameterLess)
+  }
+
+  def constructorForType(t: ru.Type): Option[Constructor[_]] = {
+    constructorForClass(typeToClass(t))
+  }
+
+  def createInstance[T](constructor: Constructor[_]) = {
+    constructor.newInstance().asInstanceOf[T]
+  }
 }

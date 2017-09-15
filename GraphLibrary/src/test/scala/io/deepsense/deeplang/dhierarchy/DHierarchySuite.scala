@@ -139,7 +139,7 @@ class DHierarchySuite extends FunSuite with Matchers {
   }
 
   test("Registering concrete class with no parameter-less constructor should produce exception") {
-    intercept[NoParameterLessConstructorException] {
+    intercept[NoParameterLessConstructorInClassException] {
       import Constructors._
       val h = new DHierarchy
       h.registerDOperable[NotParameterLess]()
@@ -147,7 +147,7 @@ class DHierarchySuite extends FunSuite with Matchers {
   }
 
   test("Registering class with constructor with default parameters should produce exception") {
-    intercept[NoParameterLessConstructorException] {
+    intercept[NoParameterLessConstructorInClassException] {
       import Constructors._
       val h = new DHierarchy
       h.registerDOperable[WithDefault]()
