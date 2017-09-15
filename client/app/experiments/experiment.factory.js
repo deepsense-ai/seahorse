@@ -13,7 +13,6 @@ function ExperimentFactory() {
     var experiment = new Experiment();
     experiment.setData(data.experiment);
     experiment.setStatus(data.experiment.state);
-    experiment.saveParametersSchema(operations);
     experiment.createNodes(data.experiment.graph.nodes, operations, data.experiment.state);
     experiment.createEdges(data.experiment.graph.edges);
     return experiment;

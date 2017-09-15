@@ -17,34 +17,12 @@ function OperationsFactory(OperationsAPIClient, $q) {
   const DEFAULT_ICON = 'fa-square';
 
 
-  var service = {};
+  var service = {},
+      isLoaded = false;
 
-  var operationsData = null,
-      catalogData = null,
-      categoryMap = null;
-
-
-  /**
-   * Gets operation data.
-   *
-   * @param {string} id
-   *
-   * @return {Object}
-   */
-  var getOperationData = function getOperationData(id) {
-    return operationsData[id] || null;
-  };
-
-  /**
-   * Gets operation category data.
-   *
-   * @param {string} id
-   *
-   * @return {Object}
-   */
-  var getCategoryData = function getCategoryData(id) {
-    return categoryMap[id] || null;
-  };
+  var operationsData = {},
+      catalogData = {},
+      categoryMap = {};
 
 
   /**
@@ -96,14 +74,14 @@ function OperationsFactory(OperationsAPIClient, $q) {
   var updateOperationIcons = function updateOperationIcons() {
     for (let id in operationsData) {
       let operation = operationsData[id],
-          category = categoryMap && categoryMap[operation.category];
+          category = categoryMap[operation.category];
       operation.icon = category ? category.icon : DEFAULT_ICON;
     }
   };
 
 
   /**
-   * Loads operation data from API.
+   * Loads operations list from API.
    *
    * @return {Promise}
    */
@@ -117,7 +95,7 @@ function OperationsFactory(OperationsAPIClient, $q) {
   };
 
   /**
-   * Loads catalog & category data.
+   * Loads catalog & category data from API.
    *
    * @return {Promise}
    */
@@ -127,7 +105,6 @@ function OperationsFactory(OperationsAPIClient, $q) {
       categoryMap = {};
       createCategoryMap(catalogData);
       updateCategoryIcons();
-      updateOperationIcons();
       Object.freeze(catalogData);
       Object.freeze(categoryMap);
       return catalogData;
@@ -136,52 +113,65 @@ function OperationsFactory(OperationsAPIClient, $q) {
 
 
   /**
-   * Returns operation data.
-   *
-   * @param {string} id
+   * Loads operations catalog & data.
    *
    * @return {Promise}
    */
-  service.get = function get(id) {
-    if (operationsData) {
+  service.load = function load() {
+    if (isLoaded) {
       let deferred = $q.defer();
-      deferred.resolve(getOperationData(id));
+      deferred.resolve();
       return deferred.promise;
     }
-
-    return loadData().then(() => {
-      return getOperationData(id);
+    return $q.all([
+      loadCatalog(),
+      loadData()
+    ]).then(() => {
+      isLoaded = true;
     });
   };
 
   /**
-   * Returns operations full list.
+   * Returns operations list data.
    *
-   * @return {Promise}
+   * @return {object}
    */
-  service.getAll = function getAll() {
-    if (operationsData) {
-      let deferred = $q.defer();
-      deferred.resolve(operationsData);
-      return deferred.promise;
+  service.getData = function getData(id) {
+    if (!isLoaded) {
+      console.error('Operations not loaded!');
+      return null;
     }
-
-    return loadData();
+    return operationsData;
   };
 
   /**
-   * Returns operation catalog.
+   * Returns operation data.
    *
-   * @return {Promise}
+   * @param {string} id
+   *
+   * @return {object}
    */
-  service.getCatalog = function getCatalog() {
-    if (catalogData) {
-      let deferred = $q.defer();
-      deferred.resolve(catalogData);
-      return deferred.promise;
+  service.get = function get(id) {
+    if (!isLoaded) {
+      console.error('Operations not loaded!');
+      return null;
     }
+    return operationsData[id] || null;
+  };
 
-    return loadCatalog();
+  /**
+   * Returns category catalog data.
+   *
+   * @param {string} id
+   *
+   * @return {object}
+   */
+  service.getCatalog = function getCatalog(id) {
+    if (!isLoaded) {
+      console.error('Operations not loaded!');
+      return null;
+    }
+    return catalogData;
   };
 
   /**
@@ -189,18 +179,14 @@ function OperationsFactory(OperationsAPIClient, $q) {
    *
    * @param {string} id
    *
-   * @return {Promise}
+   * @return {object}
    */
   service.getCategory = function getCategory(id) {
-    if (catalogData) {
-      let deferred = $q.defer();
-      deferred.resolve(getCategoryData(id));
-      return deferred.promise;
+    if (!isLoaded) {
+      console.error('Operations not loaded!');
+      return null;
     }
-
-    return loadCatalog().then(() => {
-      return getCategoryData(id);
-    });
+    return categoryMap[id] || null;
   };
 
 

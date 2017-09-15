@@ -13,7 +13,6 @@ function Experiment() {
   var internal = {};
   internal.nodes = {};
   internal.edges = {};
-  internal.parameters = {};
 
   that.STATUS = {
     'DRAFT':     'status_draft',
@@ -95,18 +94,6 @@ function Experiment() {
     }
   };
 
-  that.getParametersSchema = function getParametersSchema() {
-    return internal.parameters;
-  };
-
-  that.saveParametersSchema = function saveParametersSchema(operations) {
-    for (let operationId in operations) {
-      if (operations.hasOwnProperty(operationId)) {
-        internal.parameters[operationId] = operations[operationId].parameters;
-      }
-    }
-  };
-
   that.removeEdges = function removeEdges(nodeId) {
     for (var edge in internal.nodes[nodeId].edges) {
       that.removeEdge(internal.nodes[nodeId].edges[edge]);
@@ -165,22 +152,6 @@ function Experiment() {
    */
   that.isRunning = function isRunning() {
     return that.getStatus() === that.STATUS.RUNNING;
-  };
-
-  that.getParametersSchemaById = function getParametersSchemaById(id) {
-    return internal.experiment.getParametersSchema()[id];
-  };
-
-  that.getParametersSchema = function getParametersSchema() {
-    return internal.parameters;
-  };
-
-  that.saveParametersSchema = function saveParametersSchema(operations) {
-    for (let operationId in operations) {
-      if (operations.hasOwnProperty(operationId)) {
-        internal.parameters[operationId] = operations[operationId].parameters;
-      }
-    }
   };
 
   /**

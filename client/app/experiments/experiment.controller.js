@@ -17,25 +17,14 @@ function ExperimentController(
   var GraphNode = require('./common-objects/common-graph-node.js');
   var Edge = require('./common-objects/common-edge.js');
 
-  internal.operations = null;
   internal.experiment = null;
   internal.selectedNode = null;
+  internal.isDataLoaded = false;
 
-  internal.loadCatalog = () => {
-    return Operations
-      .getCatalog()
-      .then((operationCatalog) => {
-        console.log('Catalog downloaded successfully');
-        that.operationsCatalog = operationCatalog;
-      });
-  };
-
-  internal.loadOperations = () => {
-    return Operations.getAll()
-      .then((operations) => {
-        console.log('Operations downloaded successfully');
-        internal.operations = operations;
-      });
+  internal.initializeOperations = () => {
+    return Operations.load().then(() => {
+      console.log('Operations data downloaded successfully');
+    });
   };
 
   internal.loadExperiment = () => {
@@ -44,15 +33,14 @@ function ExperimentController(
       .then((data) => {
         console.log('Experiment downloaded successfully');
         $rootScope.headerTitle = 'Experiment: ' + data.experiment.name;
-        internal.experiment = ExperimentFactory.createExperiment(data, internal.operations);
+        internal.experiment = ExperimentFactory.createExperiment(data, Operations.getData());
         DrawingService.renderExperiment(internal.experiment);
+        internal.isDataLoaded = true;
       });
   };
 
   internal.init = function init() {
-    internal.loadCatalog()
-      .then(internal.loadOperations)
-      .then(internal.loadExperiment);
+    internal.initializeOperations().then(internal.loadExperiment);
   };
 
   that.onRenderFinish = function onRenderFinish() {
@@ -121,23 +109,11 @@ function ExperimentController(
   };
 
   that.getCatalog = function getCatalog() {
-    return that.operationsCatalog;
-  };
-
-  that.getOperations = function getOperations() {
-    return internal.operations;
-  };
-
-  that.getOperationById = function getOperationById(id) {
-    return internal.operations[id];
+    return internal.isDataLoaded ? Operations.getCatalog() : undefined;
   };
 
   that.getExperiment = function getExperiment() {
     return internal.experiment;
-  };
-
-  that.getParametersSchemaById = function getParametersSchemaById(id) {
-    return internal.experiment.getParametersSchema()[id];
   };
 
   that.getSelectedNode = function getSelectedNode() {
@@ -196,7 +172,7 @@ function ExperimentController(
   });
 
   $scope.$on('FlowChartBox.ELEMENT_DROPPED', function elementDropped(event, args) {
-    let operation = that.getOperationById(args.classId),
+    let operation = Operations.get(args.classId),
         boxPosition = args.target[0].getBoundingClientRect(),
         positionX = (args.dropEvent.pageX - boxPosition.left - window.scrollX) || 0,
         positionY = (args.dropEvent.pageY - boxPosition.top - window.scrollY) || 0,

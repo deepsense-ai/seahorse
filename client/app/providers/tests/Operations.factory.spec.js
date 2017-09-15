@@ -99,165 +99,33 @@ describe('Operations', () => {
   });
 
   it('should have defined methods', () => {
-    expect(Operations.getAll).toEqual(jasmine.any(Function));
+    expect(Operations.load).toEqual(jasmine.any(Function));
+    expect(Operations.getData).toEqual(jasmine.any(Function));
     expect(Operations.get).toEqual(jasmine.any(Function));
     expect(Operations.getCatalog).toEqual(jasmine.any(Function));
     expect(Operations.getCategory).toEqual(jasmine.any(Function));
   });
 
 
-  function testMethod(methodName, apiMethodName, expectedData, paramId) {
-    describe(methodName + ' method should', () => {
-      it('return promise', () => {
-        let promise = Operations[methodName](paramId);
-        expect(promise).toEqual(jasmine.any(Object));
-        expect(promise.then).toEqual(jasmine.any(Function));
-        expect(promise.catch).toEqual(jasmine.any(Function));
-      });
-
-      it(
-        'resolve promise on api request success',
-        angular.mock.inject(($rootScope, OperationsAPIClient) =>
-      {
-        let success = false,
-            error   = false,
-            responseData;
-
-        OperationsAPIClient.changeRequestState(true);
-
-        Operations[methodName](paramId).then((data) => {
-          success = true;
-          responseData = data;
-        }, () => {
-          error = true;
-        });
-        $rootScope.$apply();
-
-        expect(success).toBe(true);
-        expect(error).toBe(false);
-        expect(responseData).toEqual(expectedData);
-      }));
-
-      it(
-        'request api only once / use cache for next calls',
-        angular.mock.inject(($rootScope, OperationsAPIClient) =>
-      {
-        let success = false,
-            error   = false,
-            responseData;
-
-        OperationsAPIClient.changeRequestState(true);
-
-        spyOn(OperationsAPIClient, apiMethodName).and.callThrough();
-        spyOn(Operations, methodName).and.callThrough();
-
-        Operations[methodName](paramId).then((data) => {
-          success = true;
-          responseData = data;
-        }, () => {
-          error = true;
-        });
-        $rootScope.$apply();
-
-        expect(Operations[methodName]).toHaveBeenCalled();
-        expect(OperationsAPIClient[apiMethodName]).toHaveBeenCalled();
-        expect(success).toBe(true);
-        expect(error).toBe(false);
-        expect(responseData).toEqual(expectedData);
-
-        success = false;
-        error = false;
-        responseData = null;
-
-        Operations[methodName](paramId).then((data) => {
-          success = true;
-          responseData = data;
-        }, () => {
-          error = true;
-        });
-        $rootScope.$apply();
-
-        expect(Operations[methodName]).toHaveBeenCalled();
-        expect(Operations[methodName].calls.count()).toBe(2);
-        expect(OperationsAPIClient[apiMethodName].calls.count()).toBe(1);
-        expect(success).toBe(true);
-        expect(error).toBe(false);
-        expect(responseData).toEqual(expectedData);
-      }));
-
-      it(
-        'reject promise on api request error',
-        angular.mock.inject(($rootScope, OperationsAPIClient) =>
-      {
-        let success = false,
-            error   = false;
-
-        OperationsAPIClient.changeRequestState(false);
-
-        Operations[methodName](paramId).then(() => {
-          success = true;
-        }, () => {
-          error = true;
-        });
-        $rootScope.$apply();
-
-        expect(success).toBe(false);
-        expect(error).toBe(true);
-      }));
-
-      if (paramId) {
-        it(
-          'resolve promise with empty response for unknown id',
-          angular.mock.inject(($rootScope, OperationsAPIClient) =>
-        {
-          let success = false,
-              error   = false,
-              responseData;
-
-          OperationsAPIClient.changeRequestState(true);
-
-          Operations[methodName]('xxx').then((data) => {
-            success = true;
-            responseData = data;
-          }, () => {
-            error = true;
-          });
-          $rootScope.$apply();
-
-          expect(success).toBe(true);
-          expect(error).toBe(false);
-          expect(responseData).toBeNull();
-        }));
-      }
-    });
-  }
-
-  testMethod('getAll', 'getAll', mockOperations);
-  testMethod('get', 'getAll', mockOperations['id-02'], 'id-02');
-  testMethod('getCatalog', 'getCatalog', mockCatalog.catalog);
-
-
-  describe('getCategory method should', () => {
-    it('return promise', () => {
-      let promise = Operations.getCategory(category1);
+  describe('should have load method', () => {
+    it('which return promise', () => {
+      let promise = Operations.load();
       expect(promise).toEqual(jasmine.any(Object));
       expect(promise.then).toEqual(jasmine.any(Function));
       expect(promise.catch).toEqual(jasmine.any(Function));
     });
 
     it(
-      'return category data for known id',
+      'resolve promise on requests success',
       angular.mock.inject(($rootScope, OperationsAPIClient) =>
     {
       let success = false,
-          error   = false,
-          responseData;
+          error   = false;
 
       OperationsAPIClient.changeRequestState(true);
 
-      Operations.getCategory(category1).then((data) => {
+      Operations.load().then(() => {
         success = true;
-        responseData = data;
       }, () => {
         error = true;
       });
@@ -265,9 +133,103 @@ describe('Operations', () => {
 
       expect(success).toBe(true);
       expect(error).toBe(false);
-      expect(responseData.id).toBe(category1);
-      expect(responseData.icon).toBeDefined();
-      expect(responseData.icon).toEqual(jasmine.any(String));
+    }));
+
+    it(
+      'request api only once / use cache for next calls',
+      angular.mock.inject(($rootScope, OperationsAPIClient) =>
+    {
+      let success = false,
+          error   = false;
+
+      OperationsAPIClient.changeRequestState(true);
+
+      spyOn(OperationsAPIClient, 'getAll').and.callThrough();
+      spyOn(OperationsAPIClient, 'getCatalog').and.callThrough();
+      spyOn(Operations, 'load').and.callThrough();
+
+      Operations.load().then(() => {
+        success = true;
+      }, () => {
+        error = true;
+      });
+      $rootScope.$apply();
+
+      expect(Operations.load).toHaveBeenCalled();
+      expect(OperationsAPIClient.getAll).toHaveBeenCalled();
+      expect(OperationsAPIClient.getCatalog).toHaveBeenCalled();
+      expect(success).toBe(true);
+      expect(error).toBe(false);
+
+      success = false;
+      error = false;
+
+      Operations.load().then(() => {
+        success = true;
+      }, () => {
+        error = true;
+      });
+      $rootScope.$apply();
+
+      expect(Operations.load).toHaveBeenCalled();
+      expect(Operations.load.calls.count()).toBe(2);
+      expect(OperationsAPIClient.getAll.calls.count()).toBe(1);
+      expect(OperationsAPIClient.getCatalog.calls.count()).toBe(1);
+      expect(success).toBe(true);
+      expect(error).toBe(false);
+    }));
+
+    it(
+      'reject promise on api request error',
+      angular.mock.inject(($rootScope, OperationsAPIClient) =>
+    {
+      let success = false,
+          error   = false;
+
+      OperationsAPIClient.changeRequestState(false);
+
+      Operations.load().then(() => {
+        success = true;
+      }, () => {
+        error = true;
+      });
+      $rootScope.$apply();
+
+      expect(success).toBe(false);
+      expect(error).toBe(true);
+    }));
+  });
+
+
+  describe('returns proper data after load for', () => {
+    beforeEach(angular.mock.inject(($rootScope, OperationsAPIClient) => {
+      OperationsAPIClient.changeRequestState(true);
+      Operations.load();
+      $rootScope.$apply();
+    }));
+
+    it('catalog', angular.mock.inject(($rootScope, OperationsAPIClient) => {
+      expect(Operations.getCatalog()).toEqual(mockCatalog.catalog);
+    }));
+
+    it('known category', angular.mock.inject(($rootScope, OperationsAPIClient) => {
+      expect(Operations.getCategory(category1)).toEqual(mockCatalog.catalog[0]);
+    }));
+
+    it('unknown category', angular.mock.inject(($rootScope, OperationsAPIClient) => {
+      expect(Operations.getCategory('categoryX')).toBeNull();
+    }));
+
+    it('operation list', angular.mock.inject(($rootScope, OperationsAPIClient) => {
+      expect(Operations.getData()).toEqual(mockOperations);
+    }));
+
+    it('known operation', angular.mock.inject(($rootScope, OperationsAPIClient) => {
+      expect(Operations.get('id-01')).toEqual(mockOperations['id-01']);
+    }));
+
+    it('unknown operation', angular.mock.inject(($rootScope, OperationsAPIClient) => {
+      expect(Operations.get('id-X')).toBeNull();
     }));
   });
 
