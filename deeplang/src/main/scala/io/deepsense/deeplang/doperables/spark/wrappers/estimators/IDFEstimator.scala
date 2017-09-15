@@ -29,7 +29,7 @@ class IDFEstimator extends SparkSingleColumnEstimatorWrapper[SparkIDFModel, Spar
 
   val minDocFreq = new IntParamWrapper[SparkIDF](
     name = "min documents frequency",
-    description = "The minimum of documents in which a term should appear.",
+    description = "The minimum number of documents in which a term should appear.",
     sparkParamGetter = _.minDocFreq,
     validator = RangeValidator(begin = 0.0, end = Int.MaxValue, step = Some(1.0)))
   setDefault(minDocFreq, 0.0)

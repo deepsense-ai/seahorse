@@ -29,8 +29,9 @@ class RemoveStopWords extends TransformerAsOperation[StopWordsRemover]
 
   override val id: Id = "39acf60c-3f57-4346-ada7-6959a76568a5"
   override val name: String = "Remove Stop Words"
-  override val description: String = "Filters out default English stop words from input. " +
-    "Null values from the input array are preserved."
+  override val description: String =
+    """Filters out default English stop words from the input.
+      |Null values from the input array are preserved.""".stripMargin
 
   override lazy val tTagTO_1: TypeTag[StopWordsRemover] = typeTag
 

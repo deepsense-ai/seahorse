@@ -48,7 +48,7 @@ see the <a href="https://seahorse.deepsense.io/enterprise.html">Enterprise</a> p
 	</div>
 	<div class="contact-block-container">
 		<div class="contact-block-button">
-			<a target="_blank" href="http://deepsense.io/about-us/contact/">
+			<a target="_blank" href="http://deepsense.io/about-us/contact/#contact-form-anchor">
 			Contact us for details!
 			</a>
 		</div>

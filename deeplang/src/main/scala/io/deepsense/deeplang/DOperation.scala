@@ -73,7 +73,7 @@ abstract class DOperation extends Operation
 
   /**
    * Infers knowledge for this operation.
- *
+   *
    * @param context Infer context to be used in inference.
    * @param inputKnowledge Vector of knowledge objects to be put in input ports of this operation.
    *                       This method assumes that size of this vector is equal to [[inArity]].

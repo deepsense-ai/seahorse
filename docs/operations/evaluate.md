@@ -7,11 +7,11 @@ usesMathJax: true
 includeOperationsMenu: true
 ---
 
-An `Evaluate` operation is used to calculate a metric value from a given
+The `Evaluate` operation is used to calculate a metric value from a given
 [DataFrame](../classes/dataframe.html) and an [Evaluator](../classes/evaluator.html).
 
 **Usage example**:
-![Evaluate example](../img/evaluator_example.png){: .img-responsive}
+![Evaluate example](../img/evaluator_example.png){: .img-responsive .spacer .centered-image }
 
 **Since**: Seahorse 1.0.0
 

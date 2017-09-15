@@ -27,13 +27,13 @@ trait MinMaxParams extends Params {
 
   val min = new DoubleParamWrapper[ml.param.Params { val min: ml.param.DoubleParam }](
     name = "min",
-    description = "Lower bound after transformation, shared by all features.",
+    description = "The lower bound after transformation, shared by all features.",
     sparkParamGetter = _.min)
   setDefault(min, 0.0)
 
   val max = new DoubleParamWrapper[ml.param.Params { val max: ml.param.DoubleParam }](
     name = "max",
-    description = "Upper bound after transformation, shared by all features.",
+    description = "The upper bound after transformation, shared by all features.",
     sparkParamGetter = _.max)
   setDefault(max, 1.0)
 

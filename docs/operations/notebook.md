@@ -6,28 +6,34 @@ description: Notebook
 includeOperationsMenu: true
 ---
 
-A `Notebook` is a special type of operation.
-It gives Spark shell capabilities in a web browser, so the user can quickly explore the data.
-In the `Notebook`, the user can write the code using Apache Spark Python API and accessing objects available in Spark context.
-Blocks of Python code can be executed and the results are immediately returned to the `Notebook`.
+The `Notebook` operation combines the capabilities of the
+<a target="_blank" href="https://spark.apache.org/docs/1.6.0/api/python/">PySpark</a> shell with
+the rich selection of features the <a target="_blank" href="https://jupyter.org/">Jupyter
+notebook</a> offers. It provides users with a unique environment to explore their data sets.
 
-To use the `Notebook` the user has to drag and drop the `Notebook` operation onto the canvas
-and connect a [DataFrame](../classes/dataframe.html) to its input port. The user can access the connected `DataFrame` from within
-the `Notebook` by calling the `dataframe()` function.
+`Notebooks` allow the user to analyze their data by operating directly on the input `DataFrame`
+by means of Apache Spark Python API. The results of Python code execution are presented immediately
+and retained across user's sessions. Due to their versatility, `Notebooks` serve both as a way to
+get familiarized with the data and as a record of completed research.
 
-The user can start editing the code by clicking the `Open notebook` button in the `Notebook` operation's
+In order to use the `Notebook`, the user has to drag and drop the operation onto the canvas and
+connect a [DataFrame](../classes/dataframe.html) to its input port. The connected `DataFrame` can
+be accessed from within the `Notebook` by calling the `dataframe()` function.
+
+The user can start editing the code by clicking **Open notebook** in the `Notebook` operation's
 parameters panel.
 
 The variables and functions available in the `Notebooks`' global scope:
 
-* <code>dataframe()</code> - a function that returns the input `DataFrame` for this `Notebook`.
-Everytime the input `Dataframe` changes, the `dataframe()` returns the updated `DataFrame`.
+* `dataframe()` - a function that returns the input `DataFrame` for this `Notebook`.
+Everytime the input `DataFrame` changes, the `dataframe()` returns the updated `DataFrame`.
 
-* <code>sc</code> - Spark Context
+* `sc` - Spark Context
 
-* <code>sqlContext</code> - SQL Context
+* `sqlContext` - SQL Context
 
-To visualize the data the user can use <a target="_blank" href="{{ site.PANDAS_LIBRARY_ADDRESS }}">pandas</a> library.
+Data visualization can be achieved using the
+<a target="_blank" href="{{ site.PANDAS_LIBRARY_ADDRESS }}">pandas</a> library.
 
 **Remark**: In case of big `DataFrames`, the user should sample the DataFrame before using pandas.
 
@@ -96,7 +102,7 @@ df['atemp'].plot()
 <tr>
 <td><code>0</code></td>
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>The input <code>DataFrame</code> that can be used in the operation.</td>
+<td>The input <code>DataFrame</code> that can be accessed by calling <code>dataframe()</code>.</td>
 </tr>
 </tbody>
 </table>
