@@ -10,8 +10,27 @@ import io.deepsense.deeplang.{DOperable, DKnowledge, InferContext}
 trait KnowledgeInference {
   self: Graph =>
 
-  /** Returns graph knowledge with knowledge inferred for the given node. */
+  /** Returns a graph knowledge with inferred knowledge for every node. */
+  def inferKnowledge(context: InferContext): GraphKnowledge = {
+    val sorted = topologicallySorted.get
+    sorted
+      .foldLeft(GraphKnowledge())((knowledge, node) => inferKnowledge(node, context, knowledge))
+  }
+
+  /** Returns a graph knowledge with knowledge inferred up to given node and port. */
   def inferKnowledge(
+      nodeId: Node.Id,
+      outPortIndex: Int,
+      context: InferContext): DKnowledge[DOperable] = {
+    val subgraphNodes = allPredecessorsOf(nodeId) + nodeById(nodeId)
+    val subgraphEdges = edges.filter(edge =>
+      subgraphNodes.contains(nodeById(edge.from.nodeId)) &&
+        subgraphNodes.contains(nodeById(edge.to.nodeId)))
+    Graph(subgraphNodes, subgraphEdges).inferKnowledge(context).getKnowledge(nodeId)(outPortIndex)
+  }
+
+  /** Returns graph knowledge with knowledge inferred for the given node. */
+  private def inferKnowledge(
       node: Node,
       context: InferContext,
       graphKnowledge: GraphKnowledge): GraphKnowledge = {
@@ -19,13 +38,6 @@ trait KnowledgeInference {
       yield inputKnowledgeForInputPort(node, context, graphKnowledge, portIndex)
     val inferredKnowledge = node.operation.inferKnowledge(context)(knowledge.toVector)
     graphKnowledge.addKnowledge(node.id, inferredKnowledge)
-  }
-
-  /** Returns a graph knowledge with inferred knowledge for every node. */
-  def inferKnowledge(context: InferContext): GraphKnowledge = {
-    val sorted = topologicallySorted.get
-    sorted
-      .foldLeft(GraphKnowledge())((knowledge, node) => inferKnowledge(node, context, knowledge))
   }
 
   /** Returns suitable input knowledge for the given input port index. */

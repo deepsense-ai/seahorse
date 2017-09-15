@@ -27,6 +27,18 @@ case class Graph(nodes: Set[Node] = Set(), edges: Set[Edge] = Set()) extends Kno
    */
   val predecessors: Map[Node.Id, IndexedSeq[Option[Endpoint]]] = preparePredecessors
 
+  /**
+   * Find all (direct and indirect) predecessors of given node.
+   */
+  def allPredecessorsOf(id: Node.Id): Set[Node] = {
+    predecessors(id).foldLeft(Set[Node]())((acc: Set[Node], predecessor: Option[Endpoint]) =>
+      predecessor match {
+          case None => acc
+          case Some(endpoint) => (acc + nodeById(endpoint.nodeId)) ++
+            allPredecessorsOf(endpoint.nodeId)
+        })
+  }
+
   def readyNodes: List[Node] = {
     nodes.filter(_.state.status == Status.Queued)
       .filter(predecessorsCompleted)
