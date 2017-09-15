@@ -95,6 +95,7 @@ object Dependencies {
     nscalaTime,
     slf4j,
     slf4jLog4j,
+    sparkMLLib,
     sparkSql,
     sprayCan,
     sprayHttpx,
