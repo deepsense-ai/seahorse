@@ -32,5 +32,8 @@ class MinMaxScalerEstimator
   with HasInputColumn
   with HasOutputColumn {
 
+  override def convertInputNumericToVector: Boolean = true
+  override def convertOutputVectorToDouble: Boolean = true
+
   override def getSpecificParams: Array[Param[_]] = Array(min, max)
 }

@@ -25,6 +25,9 @@ import io.deepsense.deeplang.params.wrappers.spark.DoubleParamWrapper
 
 class Normalizer extends SparkTransformerAsMultiColumnTransformer[SparkNormalizer] {
 
+  override def convertInputNumericToVector: Boolean = true
+  override def convertOutputVectorToDouble: Boolean = true
+
   val p = new DoubleParamWrapper[SparkNormalizer](
     name = "p",
     description = "Normalization in L^p space.",

@@ -35,6 +35,9 @@ abstract class Estimator[+T <: Transformer]
   extends DOperable
   with Params {
 
+  def convertInputNumericToVector: Boolean = false
+  def convertOutputVectorToDouble: Boolean = false
+
   /**
    * Creates a Transformer based on a DataFrame.
    */

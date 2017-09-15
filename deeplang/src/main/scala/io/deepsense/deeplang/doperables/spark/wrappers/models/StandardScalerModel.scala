@@ -28,6 +28,9 @@ import io.deepsense.deeplang.params.Param
 class StandardScalerModel
   extends SparkSingleColumnModelWrapper[SparkStandardScalerModel, SparkStandardScaler] {
 
+  override def convertInputNumericToVector: Boolean = true
+  override def convertOutputVectorToDouble: Boolean = true
+
   override protected def getSpecificParams: Array[Param[_]] = Array()
 
   override def report: Report = {

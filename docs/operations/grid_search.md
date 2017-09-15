@@ -144,7 +144,7 @@ In the report below, every parameter combination is listed along with its grade.
   <tbody>
     <tr>
       <td>
-        <code id="number-of-folds">number of folds</code>
+        <code>number of folds</code>
       </td>
       <td>
         <code><a href="../parameter_types.html#numeric">Numeric</a></code>

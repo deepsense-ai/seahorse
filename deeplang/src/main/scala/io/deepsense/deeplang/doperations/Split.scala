@@ -16,6 +16,8 @@
 
 package io.deepsense.deeplang.doperations
 
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, Future}
 import scala.reflect.runtime.{universe => ru}
 
 import org.apache.spark.rdd.RDD
@@ -27,13 +29,14 @@ import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.HasSeedParam
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
+import io.deepsense.deeplang.params.StorageType.{apply => _}
+import io.deepsense.deeplang.params._
+import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
 import io.deepsense.deeplang.params.validators.RangeValidator
-import io.deepsense.deeplang.params.{NumericParam, Params}
 
 case class Split()
   extends DOperation1To2[DataFrame, DataFrame, DataFrame]
-  with Params
-  with HasSeedParam {
+  with Params {
 
   override val id: DOperation.Id = "d273c42f-b840-4402-ba6b-18282cc68de3"
   override val name: String = "Split"
@@ -42,34 +45,91 @@ case class Split()
 
   override val since: Version = Version(0, 4, 0)
 
-  val splitRatio = NumericParam(
-    name = "split ratio",
-    description = "Percentage of rows that should end up in the first output DataFrame.",
-    validator = RangeValidator(0.0, 1.0, beginIncluded = true, endIncluded = true))
-  setDefault(splitRatio, 0.5)
+  val splitMode = ChoiceParam[SplitModeChoice](
+    name = "split mode",
+    description =
+      """There are two split modes:
+        |`RANDOM` where rows are split randomly with specified `ratio` and `seed`;
+        |`CONDITIONAL` where rows are split into two `DataFrames` -
+        |satisfying an SQL `condition` and not satisfying it.
+        |""".stripMargin)
+  setDefault(splitMode, SplitModeChoice.Random())
 
-  def getSplitRatio: Double = $(splitRatio)
-  def setSplitRatio(value: Double): this.type = set(splitRatio, value)
+  def getSplitMode: SplitModeChoice = $(splitMode)
+  def setSplitMode(value: SplitModeChoice): this.type = set(splitMode, value)
 
-  def getSeed: Int = $(seed).toInt
-  def setSeed(value: Int): this.type = set(seed, value.toDouble)
-
-  val params = declareParams(splitRatio, seed)
+  val params = declareParams(splitMode)
 
   override def outPortsLayout: Vector[DPortPosition] =
     Vector(DPortPosition.Left, DPortPosition.Right)
 
   override protected def _execute(context: ExecutionContext)
                                  (df: DataFrame): (DataFrame, DataFrame) = {
-    val Array(f1: RDD[Row], f2: RDD[Row]) = split(df, getSplitRatio, getSeed)
+    implicit val inputDataFrame = df
+    implicit val executionContext = context
+
+    getSplitMode match {
+      case randomChoice: SplitModeChoice.Random =>
+        executeRandomSplit(randomChoice)
+      case conditionalChoice: SplitModeChoice.Conditional =>
+        executeConditionalSplit(conditionalChoice)
+    }
+  }
+
+  private def executeRandomSplit
+      (randomChoice: SplitModeChoice.Random)
+      (implicit context: ExecutionContext, df: DataFrame): (DataFrame, DataFrame) = {
+    val Array(f1: RDD[Row], f2: RDD[Row]) =
+      randomSplit(df, randomChoice.getSplitRatio, randomChoice.getSeed)
     val schema = df.sparkDataFrame.schema
     val dataFrame1 = context.dataFrameBuilder.buildDataFrame(schema, f1)
     val dataFrame2 = context.dataFrameBuilder.buildDataFrame(schema, f2)
     (dataFrame1, dataFrame2)
   }
 
-  def split(df: DataFrame, range: Double, seed: Long): Array[RDD[Row]] = {
+  private def randomSplit(df: DataFrame, range: Double, seed: Long): Array[RDD[Row]] =
     df.sparkDataFrame.rdd.randomSplit(Array(range, 1.0 - range), seed)
+
+  private def executeConditionalSplit
+      (conditionalChoice: SplitModeChoice.Conditional)
+      (implicit context: ExecutionContext, df: DataFrame): (DataFrame, DataFrame) = {
+
+    import scala.concurrent.ExecutionContext.Implicits.global
+
+    val condition = conditionalChoice.getCondition
+
+    val inputDataFrameId =
+      "split_conditional_" + java.util.UUID.randomUUID.toString.replace('-', '_')
+
+    df.sparkDataFrame.registerTempTable(inputDataFrameId)
+    logger.debug(s"Table '$inputDataFrameId' registered. Executing the expression")
+
+    val selectFromExpression = s"SELECT * FROM $inputDataFrameId"
+
+    // TODO Should we evaluate condition to additional column and then just select it for both dfs?
+    lazy val (leftExpression, rightExpression) =
+      (s"$selectFromExpression WHERE $condition",
+       s"$selectFromExpression WHERE not ($condition)")
+
+    def runExpression(expression: String): DataFrame = {
+      val sqlResult = df.sparkDataFrame.sqlContext.sql(expression)
+      DataFrame.fromSparkDataFrame(sqlResult)
+    }
+
+    val results = Future.sequence(Seq(
+      Future(runExpression(leftExpression)),
+      Future(runExpression(rightExpression)))
+    ).map {
+      case Seq(leftDataFrame, rightDataFrame) => (leftDataFrame, rightDataFrame)
+    }
+
+    results.onComplete {
+      _ =>
+        logger.debug(s"Unregistering the temporary table '$inputDataFrameId'")
+        df.sparkDataFrame.sqlContext.dropTempTable(inputDataFrameId)
+    }
+
+    Await.result(results, Duration.Inf)
   }
 
   override protected def _inferKnowledge(context: InferContext)
@@ -84,4 +144,58 @@ case class Split()
   override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
   @transient
   override lazy val tTagTO_1: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
+}
+
+sealed trait SplitModeChoice extends Choice {
+  import SplitModeChoice._
+
+  override val choiceOrder: List[Class[_ <: SplitModeChoice]] = List(
+    classOf[Random],
+    classOf[Conditional])
+}
+
+object SplitModeChoice {
+
+  case class Random()
+    extends SplitModeChoice
+    with HasSeedParam {
+
+    override val name: String = "RANDOM"
+
+    val splitRatio = NumericParam(
+      name = "split ratio",
+      description = "Percentage of rows that should end up in the first output DataFrame.",
+      validator = RangeValidator(0.0, 1.0, beginIncluded = true, endIncluded = true))
+    setDefault(splitRatio, 0.5)
+
+    def getSplitRatio: Double = $(splitRatio)
+    def setSplitRatio(value: Double): this.type = set(splitRatio, value)
+
+    def getSeed: Int = $(seed).toInt
+    def setSeed(value: Int): this.type = set(seed, value.toDouble)
+
+    override val params = declareParams(splitRatio, seed)
+  }
+
+  case class Conditional()
+    extends SplitModeChoice {
+
+    override val name: String = "CONDITIONAL"
+
+    val condition = CodeSnippetParam(
+      name = "condition",
+      description =
+        """Condition used to split rows.
+          |Rows that satisfy condition will be placed in the first DataFrame
+          |and rows that do not satisfy it - in the second.
+          |Use SQL syntax.""".stripMargin,
+      language = CodeSnippetLanguage(CodeSnippetLanguage.sql)
+    )
+
+    def getCondition: String = $(condition)
+    def setCondition(value: String): this.type = set(condition, value)
+
+    override val params = declareParams(condition)
+  }
+
 }

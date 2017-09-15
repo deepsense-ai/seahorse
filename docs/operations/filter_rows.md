@@ -9,7 +9,7 @@ includeOperationsMenu: true
 
 Creates a [DataFrame](../classes/dataframe.html) containing only rows satisfying given condition.
 The condition should be
-<a target="_blank" href="http://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/sql-programming-guide.html#sql">Spark SQL</a>
+<a target="_blank" href="{{ site.SPARK_DOCS }}/sql-programming-guide.html#sql">Spark SQL</a>
 (enriched with some [User Defined Functions](../spark_sql_udf.html))
 condition (as used in `WHERE` condition).
 The order of the columns is preserved.

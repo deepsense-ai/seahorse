@@ -33,6 +33,7 @@ List of all currently supported operations:
   * [Filter Columns](operations/filter_columns.html)
   * [Filter Rows](operations/filter_rows.html)
   * [Handle Missing Values](operations/handle_missing_values.html)
+  * [Projection](operations/projection.html)
 * Transformation
   * Custom
     * [Create Custom Transformer](operations/create_custom_transformer.html)
@@ -48,6 +49,7 @@ List of all currently supported operations:
     * [Convert Type](operations/convert_type.html)
     * [DCT](operations/dct.html)
     * [Decompose Datetime](operations/decompose_datetime.html)
+    * [Get From Vector](operations/get_from_vector.html)
     * [Normalize](operations/normalize.html)
     * [One Hot Encoder](operations/one_hot_encoder.html)
     * [Polynomial Expansion](operations/polynomial_expansion.html)
@@ -93,6 +95,7 @@ List of all currently supported operations:
   * Dimensionality Reduction
     * [PCA](operations/pca.html)
   * Model Evaluation
+    * [Python Evaluator](operations/python_evaluator.html)
     * [Binary Classification Evaluator](operations/binary_classification_evaluator.html)
     * [Multiclass Classification Evaluator](operations/multiclass_classification_evaluator.html)
     * [Regression Evaluator](operations/regression_evaluator.html)

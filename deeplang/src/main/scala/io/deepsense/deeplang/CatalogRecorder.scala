@@ -43,6 +43,7 @@ object CatalogRecorder {
     catalog.registerDOperable[ColumnsFilterer]()
     catalog.registerDOperable[RowsFilterer]()
     catalog.registerDOperable[MissingValuesHandler]()
+    catalog.registerDOperable[Projector]()
     catalog.registerDOperable[DatetimeDecomposer]()
     catalog.registerDOperable[SqlTransformer]()
     catalog.registerDOperable[SqlColumnTransformer]()
@@ -50,6 +51,7 @@ object CatalogRecorder {
     catalog.registerDOperable[PythonColumnTransformer]()
     catalog.registerDOperable[TypeConverter]()
     catalog.registerDOperable[CustomTransformer]()
+    catalog.registerDOperable[GetFromVectorTransformer]()
 
     // wrapped Spark ML estimators & models
     catalog.registerDOperable[LogisticRegression]()
@@ -116,6 +118,7 @@ object CatalogRecorder {
     catalog.registerDOperable[StringTokenizer]()
     catalog.registerDOperable[VectorAssembler]()
     catalog.registerDOperable[HashingTFTransformer]()
+    catalog.registerDOperable[PythonEvaluator]()
 
     // wrapped Spark evaluators
     catalog.registerDOperable[BinaryClassificationEvaluator]()
@@ -179,6 +182,9 @@ object CatalogRecorder {
     catalog.registerDOperation[HandleMissingValues](
       DOperationCategories.Filtering)
 
+    catalog.registerDOperation[Projection](
+      DOperationCategories.Filtering)
+
     catalog.registerDOperation[CreateCustomTransformer](
       DOperationCategories.Transformation.Custom)
 
@@ -207,6 +213,9 @@ object CatalogRecorder {
       DOperationCategories.Transformation.FeatureConversion)
 
     catalog.registerDOperation[DecomposeDatetime](
+      DOperationCategories.Transformation.FeatureConversion)
+
+    catalog.registerDOperation[GetFromVector](
       DOperationCategories.Transformation.FeatureConversion)
 
     catalog.registerDOperation[Normalize](
@@ -310,6 +319,9 @@ object CatalogRecorder {
 
     catalog.registerDOperation[PCA](
       DOperationCategories.ML.DimensionalityReduction)
+
+    catalog.registerDOperation[CreatePythonEvaluator](
+      DOperationCategories.ML.ModelEvaluation)
 
     // operations generated from Spark evaluators
     catalog.registerDOperation[CreateBinaryClassificationEvaluator](

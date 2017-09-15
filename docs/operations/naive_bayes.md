@@ -17,11 +17,11 @@ This operation is ported from Spark ML.
 
 
 For a comprehensive introduction, see
-<a target="_blank" href="https://spark.apache.org/docs/1.6.0/mllib-naive-bayes.html">Spark documentation</a>.
+<a target="_blank" href="https://spark.apache.org/docs/1.6.1/mllib-naive-bayes.html">Spark documentation</a>.
 
 
 For scala docs details, see
-<a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.classification.NaiveBayes">org.apache.spark.ml.classification.NaiveBayes documentation</a>.
+<a target="_blank" href="https://spark.apache.org/docs/1.6.1/api/scala/index.html#org.apache.spark.ml.classification.NaiveBayes">org.apache.spark.ml.classification.NaiveBayes documentation</a>.
 
 **Since**: Seahorse 1.1.0
 

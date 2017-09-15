@@ -45,6 +45,25 @@ class CodeExecutor(object):
             stacktrace = traceback.format_exc(e)
             self.entry_point.executionFailed(workflow_id, node_id, stacktrace)
 
+    def _convert_data_to_data_frame(self, data):
+        sqlContext = self.sql_context
+        sc = self.spark_context
+        try:
+            import pandas
+            self.is_pandas_available = True
+        except ImportError:
+            self.is_pandas_available = False
+        if isinstance(data, DataFrame):
+            return data
+        elif self.is_pandas_available and isinstance(data, pandas.DataFrame):
+            return sqlContext.createDataFrame(data)
+        elif isinstance(data, (list, tuple)) and all(isinstance(el, (list, tuple)) for el in data):
+            return sqlContext.createDataFrame(sc.parallelize(data))
+        elif isinstance(data, (list, tuple)):
+            return sqlContext.createDataFrame(sc.parallelize(map(lambda x: (x,), data)))
+        else:
+            return sqlContext.createDataFrame(sc.parallelize([(data,)]))
+
     def _run_custom_code(self, workflow_id, node_id, custom_operation_code):
         """
         :param workflow_id:
@@ -70,16 +89,20 @@ class CodeExecutor(object):
 
         exec custom_operation_code in context
 
-        output_data_frame = context[self.TRANSFORM_FUNCTION_NAME](input_data_frame)
+        output_data = context[self.TRANSFORM_FUNCTION_NAME](input_data_frame)
+        try:
+            output_data_frame = self._convert_data_to_data_frame(output_data)
+        except:
+            raise Exception('Operation returned {} instead of a DataFrame'.format(output_data) + \
+                ' (or pandas.DataFrame, single value, tuple/list of single values,' + \
+                ' tuple/list of tuples/lists of single values) (pandas library available: ' + \
+                str(self.is_pandas_available) + ').')
 
-        if isinstance(output_data_frame, DataFrame):
-            # noinspection PyProtectedMember
-            self.entry_point.registerOutputDataFrame(workflow_id,
-                                                     node_id,
-                                                     CodeExecutor.OUTPUT_PORT_NUMBER,
-                                                     output_data_frame._jdf)
-        else:
-            raise Exception('Operation returned {} instead of a DataFrame.'.format(output_data_frame))
+        # noinspection PyProtectedMember
+        self.entry_point.registerOutputDataFrame(workflow_id,
+                                                 node_id,
+                                                 CodeExecutor.OUTPUT_PORT_NUMBER,
+                                                 output_data_frame._jdf)
 
     # noinspection PyPep8Naming
     def isValid(self, custom_operation_code):

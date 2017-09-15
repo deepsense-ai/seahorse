@@ -28,7 +28,7 @@ If you are using Seahorse Desktop please read about
 <a target="_blank" href="https://en.wikipedia.org/wiki/Comma-separated_values">Comma-separated values</a>
 
 ### `PARQUET`
-<a target="_blank" href="http://spark.apache.org/docs/1.6.0/sql-programming-guide.html#parquet-files">Parquet</a>
+<a target="_blank" href="{{ site.SPARK_DOCS }}/sql-programming-guide.html#parquet-files">Parquet</a>
 format does not allow using characters ``, ;{}()\n\t=`` in column names.
 
 ### `JSON`
@@ -87,7 +87,7 @@ The `Write DataFrame` operation does not produce any output.
   <tbody>
     <tr>
       <td>
-        <code id="data-storage-type">data storage type</code>
+        <code>data storage type</code>
       </td>
       <td>
         <code><a href="../parameter_types.html#single-choice">Single Choice</a></code>
@@ -99,7 +99,7 @@ The `Write DataFrame` operation does not produce any output.
 
     <tr>
       <td>
-        <code id="output-file">output file</code>
+        <code>output file</code>
       </td>
       <td>
         <code><a href="../parameter_types.html#string">String</a></code>
@@ -110,7 +110,7 @@ The `Write DataFrame` operation does not produce any output.
     </tr>
     <tr>
       <td>
-        <code id="format">format</code>
+        <code>format</code>
       </td>
       <td>
         <code><a href="../parameter_types.html#single-choice">Single Choice</a></code>
@@ -123,7 +123,7 @@ The `Write DataFrame` operation does not produce any output.
     </tr>
     <tr>
       <td>
-        <code id="separator">separator</code>
+        <code>separator</code>
       </td>
       <td>
         <code><a href="../parameter_types.html#single-choice">Single Choice</a></code>
@@ -138,7 +138,7 @@ The `Write DataFrame` operation does not produce any output.
 
     <tr>
       <td>
-        <code id="custom-separator">custom separator</code>
+        <code>custom separator</code>
       </td>
       <td>
         <code><a href="../parameter_types.html#string">String</a></code>
@@ -150,7 +150,7 @@ The `Write DataFrame` operation does not produce any output.
 
     <tr>
       <td>
-        <code id="names-included">names included</code>
+        <code>names included</code>
       </td>
       <td>
         <code><a href="../parameter_types.html#boolean">Boolean</a></code>
@@ -162,7 +162,7 @@ The `Write DataFrame` operation does not produce any output.
 
     <tr>
       <td>
-        <code id="url">url</code>
+        <code>url</code>
       </td>
       <td>
         <code><a href="../parameter_types.html#string">String</a></code>
@@ -173,7 +173,7 @@ The `Write DataFrame` operation does not produce any output.
     </tr>
     <tr>
       <td>
-        <code id="driver">driver</code>
+        <code>driver</code>
       </td>
       <td>
         <code><a href="../parameter_types.html#string">String</a></code>
@@ -184,7 +184,7 @@ The `Write DataFrame` operation does not produce any output.
     </tr>
     <tr>
       <td>
-        <code id="table">table</code>
+        <code>table</code>
       </td>
       <td>
         <code><a href="../parameter_types.html#string">String</a></code>

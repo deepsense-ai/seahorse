@@ -27,7 +27,7 @@ import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGe
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleColumnInPlaceChoice
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.{NoInPlaceChoice, YesInPlaceChoice}
 import io.deepsense.deeplang.doperables.multicolumn._
-import io.deepsense.deeplang.doperables.spark.wrappers.params.common.HasInputColumn
+import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasInputColumn, HasOutputColumn}
 import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.wrappers.spark.ParamsWithSparkWrappers
 
@@ -40,31 +40,70 @@ abstract class SparkSingleColumnModelWrapper[
   with HasSingleInPlaceParam
   with HasSpecificParams {
 
+  def convertInputNumericToVector: Boolean = false
+  def convertOutputVectorToDouble: Boolean = false
+
   private var outputColumnValue: Option[String] = None
 
   override lazy val params: Array[Param[_]] =
     Array(inputColumn, singleInPlaceChoice) ++ getSpecificParams
 
   override private[deeplang] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
-    $(singleInPlaceChoice) match {
+    val schema = df.schema.get
+    val inputColumnName = DataFrameColumnsGetter.getColumnName(schema, $(inputColumn))
+    val conversionDoubleToVectorIsNecessary = convertInputNumericToVector &&
+      NumericToVectorUtils.isColumnNumeric(schema, inputColumnName)
+    val convertedDataFrame = if (conversionDoubleToVectorIsNecessary) {
+      // Automatically convert numeric input column to one-element vector column
+      DataFrame.fromSparkDataFrame(NumericToVectorUtils.convertDataFrame(df, inputColumnName, ctx))
+    } else {
+      df
+    }
+
+    val transformedDataFrame = $(singleInPlaceChoice) match {
       case YesInPlaceChoice() =>
         SingleColumnTransformerUtils.transformSingleColumnInPlace(
-          df.getColumnName($(inputColumn)),
-          df,
+          convertedDataFrame.getColumnName($(inputColumn)),
+          convertedDataFrame,
           ctx,
-          transformTo(ctx, df))
+          transformTo(ctx, convertedDataFrame))
       case no: NoInPlaceChoice =>
-        transformTo(ctx, df)(no.getOutputColumn)
+        transformTo(ctx, convertedDataFrame)(no.getOutputColumn)
+    }
+
+    if(conversionDoubleToVectorIsNecessary && convertOutputVectorToDouble) {
+      val expectedSchema = _transformSchema(schema)
+      val revertedTransformedDf =
+        NumericToVectorUtils.revertDataFrame(
+          transformedDataFrame.sparkDataFrame,
+          expectedSchema.get,
+          inputColumnName,
+          getOutputColumnName(inputColumnName),
+          ctx,
+          convertOutputVectorToDouble)
+      DataFrame.fromSparkDataFrame(revertedTransformedDf)
+    } else {
+      transformedDataFrame
     }
   }
 
   override private[deeplang] def _transformSchema(schema: StructType): Option[StructType] = {
-    $(singleInPlaceChoice) match {
+    val inputColumnName = DataFrameColumnsGetter.getColumnName(schema, $(inputColumn))
+    val conversionDoubleToVectorIsNecessary = convertInputNumericToVector &&
+      NumericToVectorUtils.isColumnNumeric(schema, inputColumnName)
+    val convertedSchema = if (conversionDoubleToVectorIsNecessary) {
+      // Automatically convert numeric input column to one-element vector column
+      NumericToVectorUtils.convertSchema(schema, inputColumnName)
+    } else {
+      schema
+    }
+
+    val transformedSchemaOption = $(singleInPlaceChoice) match {
       case YesInPlaceChoice() =>
-        val inputColumnName = DataFrameColumnsGetter.getColumnName(schema, $(inputColumn))
         val temporaryColumnName =
           DataFrameColumnsGetter.uniqueSuffixedColumnName(inputColumnName)
-        val temporarySchema: Option[StructType] = transformSchemaTo(schema, temporaryColumnName)
+        val temporarySchema: Option[StructType] =
+          transformSchemaTo(convertedSchema, temporaryColumnName)
 
         temporarySchema.map { schema =>
           StructType(schema.collect {
@@ -75,7 +114,19 @@ abstract class SparkSingleColumnModelWrapper[
           })
         }
       case no: NoInPlaceChoice =>
-        transformSchemaTo(schema, no.getOutputColumn)
+        transformSchemaTo(convertedSchema, no.getOutputColumn)
+    }
+
+    if(conversionDoubleToVectorIsNecessary && convertOutputVectorToDouble) {
+      transformedSchemaOption.map { case transformedSchema =>
+        NumericToVectorUtils.revertSchema(
+          transformedSchema,
+          inputColumnName,
+          getOutputColumnName(inputColumnName),
+          convertOutputVectorToDouble)
+      }
+    } else {
+      transformedSchemaOption
     }
   }
 
@@ -117,6 +168,13 @@ abstract class SparkSingleColumnModelWrapper[
       f
     } finally {
       outputColumnValue = None
+    }
+  }
+
+  private def getOutputColumnName(inputColumnName: String): String = {
+    $(singleInPlaceChoice) match {
+      case YesInPlaceChoice() => inputColumnName
+      case no: NoInPlaceChoice => no.getOutputColumn
     }
   }
 

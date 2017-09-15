@@ -57,7 +57,7 @@ see the <a href="https://seahorse.deepsense.io/enterprise.html">Enterprise</a> p
 
 ### Bundled Dependencies
 
-* Apache Spark, version 1.6.0
+* Apache Spark, version {{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}
 * Python, version 2.7.6
 * NumPy, version 1.8.2
 * JDBC drivers:

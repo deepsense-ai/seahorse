@@ -8,7 +8,7 @@ includeOperationsMenu: true
 ---
 
 Executes a
-<a target="_blank" href="http://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/sql-programming-guide.html#sql">Spark SQL</a>
+<a target="_blank" href="{{ site.SPARK_DOCS }}/sql-programming-guide.html#sql">Spark SQL</a>
 (enriched with some [User Defined Functions](../spark_sql_udf.html))
 formula (as used in `SELECT` statement) provided by the user on a column (columns)
 of [DataFrame](../classes/dataframe.html) connected to its input port.

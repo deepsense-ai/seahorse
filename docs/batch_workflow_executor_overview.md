@@ -57,7 +57,7 @@ Seahorse Batch Workflow Executor can be submitted to an Apache Spark cluster as 
 Example `spark-submit` commands can be found in the following subsections.
 Replace `./bin/spark-submit` with a path to the script in Apache Spark's directory.
 For more detailed information about submitting Apache Spark applications, visit:
-<a target="_blank" href="https://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/submitting-applications.html">https://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/submitting-applications.html</a>
+<a target="_blank" href="{{ site.SPARK_DOCS }}/submitting-applications.html">{{ site.SPARK_DOCS }}/submitting-applications.html</a>
 
 #### Local Apache Spark (single machine)
 {% highlight bash %}
@@ -107,12 +107,12 @@ Option ``--files workflow.json`` is necessary to distribute workflow file within
 It is necessary to pass the same filename to ``--workflow-filename workflow.json`` option,
 in order to tell Seahorse Batch Workflow Executor under which name it should look for a workflow file.
 
-If `spark-assembly-{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}-hadoop2.6.0.jar` is already distributed
+If `{{ site.SPARK_ASSEMBLY_PATH }}` is already distributed
 on HDFS cluster, it is possible to reduce the time necessary for files propagation on the YARN cluster. Use the `spark-submit` option
-``--conf spark.yarn.jar=hdfs:///path/to/spark-assembly-{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}-hadoop2.6.0.jar``
+``--conf spark.yarn.jar=hdfs:///path/to/{{ site.SPARK_ASSEMBLY_PATH }}``
 with a proper HDFS path.
 Apache Spark assembly jar can be found in Apache Spark {{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}
-compiled for Hadoop 2.6.0 package.
+compiled for Hadoop {{ site.WORKFLOW_EXECUTOR_HADOOP_VERSION }} package.
 
 **NOTE:** Paths of files listed in the `--files` option cannot contain white or special characters.
 
@@ -132,7 +132,7 @@ This requirement can be satisfied by:
 To specify JDBC jar during execution, use `spark-submit`'s option
 ``--driver-class-path``. I.e. ``--driver-class-path "path/to/jdbc-driver1.jar:path/to/jdbc-driver2.jar:workflowexecutor.jar"``.
 For more information, please visit
-<a target="_blank" href="http://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/configuration.html#runtime-environment">Apache Spark documentation</a>.
+<a target="_blank" href="{{ site.SPARK_DOCS }}/configuration.html#runtime-environment">Apache Spark documentation</a>.
 
 ## Seahorse Batch Workflow Executor Command Line Parameters
 
@@ -171,9 +171,9 @@ redirected to several locations, e.g.:
 
 For detailed information about logging with regard to your cluster configuration,
 for running Apache Spark on YARN, visit:
-<a target="_blank" href="http://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/running-on-yarn.html#debugging-your-application">http://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/running-on-yarn.html#debugging-your-application</a>,
+<a target="_blank" href="{{ site.SPARK_DOCS }}/running-on-yarn.html#debugging-your-application">{{ site.SPARK_DOCS }}/running-on-yarn.html#debugging-your-application</a>,
 for Apache Spark Standalone cluster, visit:
-<a target="_blank" href="http://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/spark-standalone.html#monitoring-and-logging">http://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/spark-standalone.html#monitoring-and-logging</a>.
+<a target="_blank" href="{{ site.SPARK_DOCS }}/spark-standalone.html#monitoring-and-logging">{{ site.SPARK_DOCS }}/spark-standalone.html#monitoring-and-logging</a>.
 
 For details on how Apache Spark runs on clusters, visit:
-<a target="_blank" href="http://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/cluster-overview.html">http://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/cluster-overview.html</a>.
+<a target="_blank" href="{{ site.SPARK_DOCS }}/cluster-overview.html">{{ site.SPARK_DOCS }}/cluster-overview.html</a>.

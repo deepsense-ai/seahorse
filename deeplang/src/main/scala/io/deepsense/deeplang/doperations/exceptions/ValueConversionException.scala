@@ -18,8 +18,8 @@ package io.deepsense.deeplang.doperations.exceptions
 
 import org.apache.spark.sql.types.StructField
 
-case class WrongReplacementValueException(value: String, field: StructField)
+case class ValueConversionException(value: String, field: StructField)
   extends DOperationExecutionException(
-    "Replacement value \"" + value + "\" can't be placed in column \"" + field.name + "\" " +
-      "of type \"" + field.dataType.simpleString + "\"",
+    "Value \"" + value + "\" can't be converted to a column \"" + field.name + "\" " +
+      "type \"" + field.dataType.simpleString + "\"",
     None)

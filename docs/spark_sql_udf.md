@@ -9,7 +9,7 @@ usesMathJax: true
 ---
 
 Seahorse uses
-<a target="_blank" href="http://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/sql-programming-guide.html#sql">Spark SQL</a>
+<a target="_blank" href="{{ site.SPARK_DOCS }}/sql-programming-guide.html#sql">Spark SQL</a>
 as syntax for conditions, formulas and expressions in a few operations.
 `Spark SQL` allows execution of simple SQL or HiveQL queries.
 

@@ -22,6 +22,7 @@ import org.apache.spark.sql.Row
 import spray.json._
 
 import io.deepsense.deeplang.DOperation
+import io.deepsense.deeplang.doperables.Projector
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 
 object ExampleHtmlFormatter {
@@ -135,6 +136,8 @@ object ParametersHtmlFormatter {
   private val valueFieldName: String = "value"
   private val valuesFieldName: String = "values"
   private val selectionsFieldName: String = "selections"
+  private val userDefinedMissingValues: String = "user-defined missing values"
+  private val missingValue: String = "missing value"
 
   def toHtml(dOperation: DOperation): String = {
     if (dOperation.paramValuesToJson.asJsObject.fields.isEmpty) {
@@ -192,8 +195,13 @@ object ParametersHtmlFormatter {
 
   private def extractParamValues(jsObject: JsObject): Seq[(String, String)] = {
     jsObject.fields.toSeq.flatMap {
+      case (name, value: JsArray)
+        if name == userDefinedMissingValues && isUserDefinedMissingValue(value) =>
+          Seq(handleUserDefinedMissingValues(name, value))
       case (name, value: JsArray) if isColumnPairs(value) =>
         Seq(handleColumnPairs(name, value))
+      case (name, value: JsArray) if isColumnProjection(value) =>
+        Seq(handleColumnProjection(name, value))
       case (name, value: JsObject) if value.fields.size == 1 =>
         val (fieldName, innerFieldObject) = value.fields.head
         (name, fieldName) +: extractParamValues(innerFieldObject.asJsObject)
@@ -214,13 +222,14 @@ object ParametersHtmlFormatter {
         |  </tr>""".stripMargin
   }
 
+  private def isColumn(jsObject: JsObject): Boolean = {
+    jsObject.fields.contains(typeFieldName) &&
+      jsObject.fields(typeFieldName).isInstanceOf[JsString]
+    jsObject.fields(typeFieldName).asInstanceOf[JsString].value == "column" &&
+      jsObject.fields.contains(valueFieldName)
+  }
+
   private def isColumnPairs(value: JsArray): Boolean = {
-    def isColumn(jsObject: JsObject): Boolean = {
-      jsObject.fields.contains(typeFieldName) &&
-        jsObject.fields(typeFieldName).isInstanceOf[JsString]
-      jsObject.fields(typeFieldName).asInstanceOf[JsString].value == "column" &&
-        jsObject.fields.contains(valueFieldName)
-    }
     value.elements.forall { v =>
       v.isInstanceOf[JsObject] &&
         v.asJsObject.fields.contains(leftColumnFieldName) &&
@@ -232,14 +241,32 @@ object ParametersHtmlFormatter {
     }
   }
 
-  private def handleColumnPairs(name: String, value: JsArray): (String, String) = {
-    def extractColumnName(v: JsValue, key: String): String = {
-      v.asJsObject
-        .fields(key)
-        .asInstanceOf[JsObject]
-        .fields(valueFieldName).asInstanceOf[JsString].value
+  private def isUserDefinedMissingValue(value: JsArray): Boolean = {
+    value.elements.forall { v =>
+      v.isInstanceOf[JsObject] &&
+        v.asJsObject.fields.contains(missingValue) &&
+        v.asJsObject.fields(missingValue).isInstanceOf[JsString]
     }
-    val pairs = value.elements.map { v =>
+  }
+
+  private def isColumnProjection(value: JsArray): Boolean = {
+    value.elements.forall { v =>
+      v.isInstanceOf[JsObject] &&
+        v.asJsObject.fields.contains(Projector.OriginalColumnParameterName) &&
+        v.asJsObject.fields(Projector.OriginalColumnParameterName).isInstanceOf[JsObject] &&
+        isColumn(v.asJsObject.fields(Projector.OriginalColumnParameterName).asJsObject)
+    }
+  }
+
+  private def extractColumnName(v: JsValue, key: String): String = {
+    v.asJsObject
+      .fields(key)
+      .asInstanceOf[JsObject]
+      .fields(valueFieldName).asInstanceOf[JsString].value
+  }
+
+  private def handleColumnPairs(name: String, pairsJs: JsArray): (String, String) = {
+    val pairs = pairsJs.elements.map { v =>
       val leftColumn = extractColumnName(v, leftColumnFieldName)
       val rightColumn = extractColumnName(v, rightColumnFieldName)
       s"left.$leftColumn == right.$rightColumn"
@@ -248,14 +275,48 @@ object ParametersHtmlFormatter {
     (name, s"Join on $pairs")
   }
 
+  private def handleUserDefinedMissingValues(name: String, missingValues: JsArray)
+      : (String, String) = {
+    val missingValuesFormatted =
+      missingValues
+        .elements
+        .map(_.asJsObject)
+        .map(_.fields(missingValue).asInstanceOf[JsString])
+        .mkString("[", ", ", "]")
+    (name, s"User-defined missing values: $missingValuesFormatted")
+  }
+
+  private def handleColumnProjection(name: String, projectionsJs: JsArray): (String, String) = {
+    val pairs = projectionsJs.elements.map { v =>
+      val originalColumn = extractColumnName(v, Projector.OriginalColumnParameterName)
+      val renameDesc =
+        if (v.asJsObject.fields.contains(Projector.RenameColumnParameterName) &&
+            v.asJsObject.fields(Projector.RenameColumnParameterName)
+              .asJsObject.fields.contains("Yes")) {
+          " (renamed to <code>" +
+            v.asJsObject.fields(Projector.RenameColumnParameterName).asJsObject
+              .fields.get("Yes").get.asJsObject.fields(Projector.ColumnNameParameterName)
+              .asInstanceOf[JsString].value +
+            "</code>)"
+        } else {
+          ""
+        }
+      s"<code>$originalColumn</code>$renameDesc"
+    }.mkString(", ")
+
+    (name, s"Select columns: $pairs")
+  }
+
+
   private def isMultipleColumnSelection(name: String, value: JsObject): Boolean = {
     value.fields.size == 2 &&
       value.fields.contains(selectionsFieldName) &&
       value.fields.contains("excluding")
   }
 
-  private def handleMultipleColumnSelection(name: String, value: JsObject): (String, String) = {
-    val rawSelections = value.fields(selectionsFieldName).asInstanceOf[JsArray]
+  private def handleMultipleColumnSelection(name: String, selectionsJs: JsObject)
+      : (String, String) = {
+    val rawSelections = selectionsJs.fields(selectionsFieldName).asInstanceOf[JsArray]
     val selections = rawSelections.elements.map(_.asJsObject).map {
       case s: JsObject if s.fields(typeFieldName).asInstanceOf[JsString].value == "columnList" =>
         val selectedColumns = s.fields(valuesFieldName).prettyPrint

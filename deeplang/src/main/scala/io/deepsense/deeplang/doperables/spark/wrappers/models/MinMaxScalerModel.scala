@@ -30,6 +30,9 @@ class MinMaxScalerModel
   extends SparkSingleColumnModelWrapper[SparkMinMaxScalerModel, SparkMinMaxScaler]
   with MinMaxParams {
 
+  override def convertInputNumericToVector: Boolean = true
+  override def convertOutputVectorToDouble: Boolean = true
+
   override protected def getSpecificParams: Array[Param[_]] = Array(min, max)
 
   override def report: Report = {
