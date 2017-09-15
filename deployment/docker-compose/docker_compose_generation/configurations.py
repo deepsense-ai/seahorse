@@ -376,9 +376,6 @@ class Database(Service):
 
 
 class Notebooks(Service):
-
-    network_mode = 'host'
-
     def depends_on(self):
         return [
             RabbitMQ,
@@ -389,12 +386,12 @@ class Notebooks(Service):
         return Env(
             MISSED_HEARTBEAT_LIMIT=30,
             WM_URL='http://{}'.format(self.services.WorkflowManager.exposed_address().as_string()),
-            JUPYTER_LISTENING_IP='127.0.0.1',
-            JUPYTER_LISTENING_PORT=self.port_mapping().get().exposed,
+            JUPYTER_LISTENING_IP='0.0.0.0',
+            JUPYTER_LISTENING_PORT=self.port_mapping().get().internal,
             HEARTBEAT_INTERVAL=2.0) \
                + self.services.WorkflowManager.credentials().as_env() \
                + self.services.RabbitMQ.credentials().as_env() \
-               + self.services.RabbitMQ.exposed_address().as_env('MQ_HOST', 'MQ_PORT')
+               + self.services.RabbitMQ.internal_address().as_env('MQ_HOST', 'MQ_PORT')
 
     def port_mapping(self):
         return PortMappings().add(PortMappings.Mapping(8888, 60105))
