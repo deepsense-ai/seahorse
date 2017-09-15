@@ -127,7 +127,7 @@ class ServerCommunication {
     this.$rootScope.$broadcast('ServerCommunication.CONNECTION_ESTABLISHED');
   }
 
-  _connectToWebSocket(user = 'guest', pass = 'guest') {
+  _connectToWebSocket(user = `${this.config.mqUser}`, pass = `${this.config.mqPass}`) {
     this.socket = new SockJS(`${this.config.socketConnectionHost}stomp`);
     this.client = Stomp.over(this.socket);
 

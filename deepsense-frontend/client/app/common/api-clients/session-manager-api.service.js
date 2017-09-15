@@ -10,7 +10,9 @@ function SessionManagerApi($http, config) {
   service.deleteSessionById = deleteSessionById;
   service.startSession = startSession;
 
-  const URL = `${config.apiHost}:${config.sessionApiPort}/v1/sessions`;
+  const URL = config.sessionApiPort ?
+    `${config.apiHost}:${config.sessionApiPort}/${config.urlApiVersion}/sessions` :
+    `${config.apiHost}/${config.urlApiVersion}/sessions`;
 
   function downloadSessions() {
     return $http.get(URL).then(function processResult(result) {
