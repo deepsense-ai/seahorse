@@ -48,6 +48,11 @@
 
   &__details {
     padding: 0 @main-space / 2;
+
+    .label-draft {
+      background-color: #d1dade;
+      color: #5e5e5e;
+    }
   }
 
   &__open-button {
@@ -82,6 +87,13 @@
         max-height: none;
       }
     }
+  }
+
+  &__documentation {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   // internal iboxes

@@ -25,13 +25,15 @@
 
       <p class="operation-attributes-panel__description"
          title="{{ node.description }}">{{ node.description }}</p>
-      <a ng-href="{{controller.getDocsHost()}}/docs/{{controller.getDocsVersion()}}/uuid/{{node.operationId}}.html" target="_blank"
-         class="o-read-more block m-t m-b"
-         ng-if="hasDocumentation"
-      >
-        <i class="fa fa-book"></i>
-        <span>Documentation</span>
-      </a>
+      <div class="operation-attributes-panel__documentation">
+        <a ng-href="{{controller.getDocsHost()}}/docs/{{controller.getDocsVersion()}}/uuid/{{node.operationId}}.html" target="_blank"
+           class="o-read-more block"
+           ng-if="hasDocumentation"
+        >
+          <i class="fa fa-book"></i>
+          <span>Documentation</span>
+        </a>
+      </div>
       <button class="operation-attributes-panel__open-button"
               ng-if="controller.hasCodeEdit() && !disabledMode" ng-click="controller.showNotebook()">
         <i class="fa fa-file-text-o"></i>
@@ -46,7 +48,8 @@
            ng-class="{
             'label-success': node.state.status === 'status_completed',
             'label-danger': node.state.status === 'status_failed',
-            'label-warning': node.state.status === 'status_aborted'
+            'label-warning': node.state.status === 'status_aborted',
+            'label-draft': node.state.status === 'status_draft'
            }"
            title="Status">
           {{node.state.status.replace('status_', '')}}

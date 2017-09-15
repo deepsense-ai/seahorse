@@ -62,7 +62,7 @@ function CalculatedSelectedColumns() {
         if (selectedIndices.length > 0) {
           selectedIndices = withPlaceholders(selectedIndices, fields.length);
         }
-        return _.filter(fields, (field, index) => _.contains(selectedIndices, index));
+        return _.filter(fields, (field, index) => _.includes(selectedIndices, index));
       };
     }
   };
