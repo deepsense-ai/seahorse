@@ -43,7 +43,11 @@ sc = SparkContext(
 
 sqlContext = SQLContext(sc)
 
+
 def dataframe():
-    # workflow_id and node_id are set in the kernel
-    java_data_frame = gateway.entry_point.getDataFrame(workflow_id, node_id)
+    # workflow_id, node_id and port_number are set in the kernel
+    if node_id is None or port_number is None:
+        raise Exception("No edge is connected to this Notebook")
+
+    java_data_frame = gateway.entry_point.retrieveOutputDataFrame(workflow_id, node_id, port_number)
     return DataFrame(jdf=java_data_frame, sql_ctx=sqlContext)
