@@ -13,25 +13,27 @@ class ServerCommunication {
     this.config = config;
     this.connectionAttemptId = Math.floor(Math.random() * 1000000);
 
-    this.seahorseExchangeListeningUri = () => {
-      return '/exchange/' + config.seahorseExchange + '/' + config.topic.toEditor;
+    this.seahorseTopicListeningUri = () => {
+      return '/exchange/seahorse/seahorse.to';
     };
 
-    this.seahorseExchangeSendingUri = () => {
-      return '/exchange/' + config.seahorseExchange + '/' + config.topic.toExecutor;
+    this.workflowTopicListeningUri = () => {
+      return '/exchange/seahorse/workflow.' + this.workflowId + '.to';
     };
 
-    this.workflowExchangeListeningUri = () => {
-      return '/exchange/' + this.workflowId + '/' + config.topic.toEditor;
-    };
-
-    this.workflowExchangeSendingUri = () => {
-      return '/exchange/' + this.workflowId + '/' + config.topic.toExecutor;
+    this.workflowTopicSendingUri = () => {
+      return '/exchange/seahorse/workflow.' + this.workflowId + '.from';
     };
   }
 
-  isMessageKnown(msgType) {
-    let messages = ['ready', 'workflowWithResults', 'executionStatus', 'inferredState', 'terminated'];
+  static isMessageKnown(msgType) {
+    let messages = [
+      'executionStatus',
+      'inferredState',
+      'ready',
+      'terminated',
+      'workflowWithResults'
+    ];
     return messages.indexOf(msgType) !== -1;
   }
 
@@ -40,7 +42,7 @@ class ServerCommunication {
     this.$log.info('ServerCommunication messageHandler messageType and messageBody',
       parsedBody.messageType, parsedBody.messageBody);
 
-    if (!this.isMessageKnown(parsedBody.messageType)) {
+    if (!ServerCommunication.isMessageKnown(parsedBody.messageType)) {
       this.$log.error('ServerCommunication messageHandler. Unknown message type "' + parsedBody.messageType + '"');
       return;
     }
@@ -76,7 +78,7 @@ class ServerCommunication {
   }
 
   sendLaunchToWorkflowExchange(nodesToExecute) {
-    this.send(this.workflowExchangeSendingUri(), {}, JSON.stringify({
+    this.send(this.workflowTopicSendingUri(), {}, JSON.stringify({
       messageType: 'launch',
       messageBody: {
         workflowId: this.workflowId,
@@ -86,7 +88,7 @@ class ServerCommunication {
   }
 
   sendAbortToWorkflowExchange() {
-    this.send(this.workflowExchangeSendingUri(), {}, JSON.stringify({
+    this.send(this.workflowTopicSendingUri(), {}, JSON.stringify({
       messageType: 'abort',
       messageBody: {
         workflowId: this.workflowId
@@ -96,7 +98,7 @@ class ServerCommunication {
 
   sendUpdateWorkflowToWorkflowExchange(data) {
     this.$log.info('ServerCommunication updateWorkflow');
-    this.send(this.workflowExchangeSendingUri(), {}, JSON.stringify({
+    this.send(this.workflowTopicSendingUri(), {}, JSON.stringify({
       messageType: 'updateWorkflow',
       messageBody: data
     }));
@@ -104,18 +106,8 @@ class ServerCommunication {
 
   sendInitToWorkflowExchange() {
     this.$log.info('ServerCommunication sendInitToWorkflowExchange');
-    this.send(this.workflowExchangeSendingUri(), {}, JSON.stringify({
+    this.send(this.workflowTopicSendingUri(), {}, JSON.stringify({
       messageType: 'init',
-      messageBody: {
-        workflowId: this.workflowId
-      }
-    }));
-  }
-
-  sendConnectToSeahorseExchange() {
-    this.$log.info('ServerCommunication sendConnectToSeahorseExchange');
-    this.send(this.seahorseExchangeSendingUri(), {}, JSON.stringify({
-      messageType: 'connect',
       messageBody: {
         workflowId: this.workflowId
       }
@@ -131,12 +123,9 @@ class ServerCommunication {
 
   onWebSocketConnect() {
     this.$log.info('ServerCommunication onWebSocketConnect');
-    this.subscribeToExchange(this.seahorseExchangeListeningUri());
-    this.sendConnectToSeahorseExchange();
-    this.$timeout(() => {
-      this.subscribeToExchange(this.workflowExchangeListeningUri());
-      this.sendInitToWorkflowExchange();
-    }, this.config.socketReconnectionInterval, false);
+    this.subscribeToExchange(this.seahorseTopicListeningUri());
+    this.subscribeToExchange(this.workflowTopicListeningUri());
+    this.sendInitToWorkflowExchange();
   }
 
   connectToWebSocket(user = 'guest', pass = 'guest') {

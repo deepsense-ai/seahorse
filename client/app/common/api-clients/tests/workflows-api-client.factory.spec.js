@@ -197,14 +197,16 @@ describe('WorkflowsApiClient', () => {
       },
       thirdPartyData: {}
     };
+
     let dataRequest = {
-      metadata: {
-        type: API_TYPE,
-        apiVersion: API_VERSION
-      },
-      workflow: serializedWorkflow.workflow,
-      thirdPartyData: serializedWorkflow.thirdPartyData
+      workflowId: id,
+      workflow: _.cloneDeep(serializedWorkflow)
     };
+    dataRequest.workflow.metadata = {
+      type: API_TYPE,
+      apiVersion: API_VERSION
+    };
+
     let dataResponse = dataRequest;
 
     beforeEach(() => {

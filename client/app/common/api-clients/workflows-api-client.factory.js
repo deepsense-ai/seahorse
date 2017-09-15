@@ -52,12 +52,13 @@ function WorkflowsApiClientFactory(BaseApiClient, ServerCommunication, config) {
 
     updateWorkflow(serializedWorkflow) {
       let data = {
-        metadata: {
-          type: API_TYPE,
-          apiVersion: config.apiVersion
-        },
-        workflow: serializedWorkflow.workflow,
-        thirdPartyData: serializedWorkflow.thirdPartyData
+        workflowId: serializedWorkflow.id,
+        workflow: _.clone(serializedWorkflow)
+      };
+
+      data.workflow.metadata = {
+        type: API_TYPE,
+        apiVersion: config.apiVersion
       };
 
       this.ServerCommunication.sendUpdateWorkflowToWorkflowExchange(data);

@@ -8,10 +8,5 @@ angular.module('ds.lab').constant('config', {
   'urlApiVersion': 'v1',
   'resultsRefreshInterval': 10000,
   'socketConnectionHost': 'http://localhost:15674/',
-  'socketReconnectionInterval': 1000,
-  'seahorseExchange': 'seahorse',
-  'topic': {
-    'toEditor': 'to_editor',
-    'toExecutor': 'to_executor'
-  }
+  'socketReconnectionInterval': 1000
 });
