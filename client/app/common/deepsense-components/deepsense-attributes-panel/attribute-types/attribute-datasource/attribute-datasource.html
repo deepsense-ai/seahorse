@@ -4,13 +4,11 @@
     ng-class="{'disable-mask': disabledMode}"
     class="datasource-wrapper error-wrapper"
   >
-    <div>
-      <span
-        ng-if="error"
-        class="datasource-wrapper__error-info"
-      >
-        {{error}}
-      </span>
+    <div
+      ng-if="error"
+      class="datasource-wrapper__error-info"
+    >
+      {{error}}
     </div>
     <div class="datasource-wrapper__select">
       <span class="error-icon fa fa-exclamation-circle"></span>
@@ -28,8 +26,7 @@
   >
     <div
       ng-class="{'disable-mask': disabledMode}"
-      ng-class="typeIcon[datasource.params.datasourceType]"
-      class="datasource-wrapper__icon sa"
+      class="datasource-wrapper__icon sa {{typeIcon[datasource.params.datasourceType]}}"
     ></div>
     <div
       ng-class="{'disable-mask': disabledMode}"
@@ -40,14 +37,15 @@
       {{datasource.params.name}}
     </div>
     <div
-      ng-class="{'disable-mask': disabledMode}"
       ng-click="clearDatasource()"
+      ng-class="{'disable-mask': disabledMode}"
       class="datasource-wrapper__icon sa sa-cross"
       title="Clear datasource"
     ></div>
     <div
       ng-if="isOwner()"
       ng-click="editDatasource()"
+      ng-class="{'disable-mask': disabledMode}"
       class="datasource-wrapper__icon sa sa-edit"
       title="Edit datasource"
     ></div>
