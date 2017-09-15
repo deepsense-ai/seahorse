@@ -31,16 +31,17 @@ function publish() {
 
 function publishVersion() {
   artifactLocalName=$1
-  artifactVersion=$2
+  artifactRemoteName=$2
+  artifactVersion=$3
 
-  url="$ARTIFACTORY_URL/$REPOSITORY/io/deepsense/${artifactVersion}/vagrant/${artifactLocalName}"
+  url="$ARTIFACTORY_URL/$REPOSITORY/io/deepsense/${artifactVersion}/vagrant/${artifactRemoteName}"
 
   publish $artifactLocalName $artifactVersion $url
 }
 
-publishVersion "${BOX_NAME}" "${SEAHORSE_BUILD_TAG}"
+publishVersion "${BOX_NAME}" "${BOX_NAME}" "${SEAHORSE_BUILD_TAG}"
 
 URL="$ARTIFACTORY_URL/$REPOSITORY/io/deepsense/${SEAHORSE_BUILD_TAG}/vagrant/${BOX_NAME}"
 sed "s#seahorsevm.vm.box_url = \"\"#seahorsevm.vm.box_url = \"${URL}\"#" Vagrantfile.template > Vagrantfile
 
-publishVersion "Vagrantfile" "${SEAHORSE_BUILD_TAG}"
+publishVersion "Vagrantfile" "Vagrantfile-internal" "${SEAHORSE_BUILD_TAG}"
