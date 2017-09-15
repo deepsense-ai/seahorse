@@ -6,7 +6,7 @@ function AttributeCodeSnippetTypeCtrl($uibModal) {
   that.editInWindow = function() {
     var modalInstance = $uibModal.open({
       animation: true,
-      templateUrl: '../../../src/attribute-types/attribute-code-snippet/attribute-code-snippet-type-modal/attribute-code-snippet-type-modal.html',
+      templateUrl: 'attribute-types/attribute-code-snippet/attribute-code-snippet-type-modal/attribute-code-snippet-type-modal.html',
       controller: 'AttributeCodeSnippetTypeModalCtrl',
       controllerAs: 'acstmCtrl',
       size: 'lg',
@@ -14,14 +14,14 @@ function AttributeCodeSnippetTypeCtrl($uibModal) {
         codeSnippet: function () {
           return {
             code: that.value,
-            language: that.language.name.toLowerCase()
+            language: that.language.toLowerCase()
           };
         }
       }
     });
 
     modalInstance.result.then(function (modifiedCode) {
-      acstCtrl.value = modifiedCode;
+      that.value = modifiedCode;
     }, function () {});
   };
 
