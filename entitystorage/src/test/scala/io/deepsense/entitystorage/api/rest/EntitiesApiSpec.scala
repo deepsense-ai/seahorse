@@ -22,7 +22,7 @@ import io.deepsense.entitystorage.factories.EntityTestFactory
 import io.deepsense.entitystorage.json.EntityJsonProtocol
 import io.deepsense.entitystorage.models._
 import io.deepsense.entitystorage.services.EntityService
-import io.deepsense.models.entities.{UserEntityDescriptor, CompactEntityDescriptor, Entity}
+import io.deepsense.models.entities._
 
 class EntitiesApiSpec
   extends StandardSpec
@@ -37,15 +37,14 @@ class EntitiesApiSpec
   val apiPrefix: String = "v1/entities"
 
   val entities = List(
-    testEntity(correctTenantA, 1, Some(testDataObjectReference), Some(testDataObjectReport)),
-    testEntity(correctTenantA, 2, Some(testDataObjectReference), Some(testDataObjectReport)))
+    testEntityWithReport(correctTenantA, 1),
+    testEntityWithReport(correctTenantA, 2))
 
   val addedEntity = entities.head
-  val addedEntityDescriptor = UserEntityDescriptor(addedEntity)
+  val addedEntityUpdate = EntityUpdate(addedEntity)
 
-  val notAddedEntity = testEntity(
-    correctTenantA, 3, Some(testDataObjectReference), Some(testDataObjectReport))
-  val notAddedEntityDescriptor = UserEntityDescriptor(notAddedEntity)
+  val notAddedEntity = testEntityWithReport(correctTenantA, 3)
+  val notAddedEntityUpdate = EntityUpdate(notAddedEntity)
 
   val entityService = createMockEntityService
 
@@ -56,33 +55,32 @@ class EntitiesApiSpec
         status should be(StatusCodes.OK)
 
         implicit val entityProtocol = EntityJsonProtocol
-        val expectedEntitiesMap: Map[String, Map[String, CompactEntityDescriptor]] =
-          Map("entities" ->
-            entities.map(e => e.id.value.toString -> CompactEntityDescriptor(e)).toMap)
-
-        responseAs[Map[String, Map[String, CompactEntityDescriptor]]] shouldBe expectedEntitiesMap
+        responseAs[Map[String, List[EntityInfo]]] shouldBe Map("entities" -> entities.map(_.info))
       }
+      ()
     }
   }
 
   "GET /entities/:id/report" should {
     "return entities" in {
-      Get(s"/$apiPrefix/${addedEntity.id}/report") ~>
+      Get(s"/$apiPrefix/${addedEntity.info.id}/report") ~>
         addHeader("X-Auth-Token", correctTenantA) ~> testRoute ~> check {
         status should be(StatusCodes.OK)
 
         implicit val entityProtocol = EntityJsonProtocol
-        val expectedEntity = Map("entity" -> addedEntity.reportOnly)
+        val expectedEntity = Map("entity" -> addedEntity)
 
-        responseAs[Map[String, Entity]] shouldBe expectedEntity
+        responseAs[Map[String, EntityWithReport]] shouldBe expectedEntity
       }
+      ()
     }
     "return NotFound" when {
       "entity does not exists" in {
-        Get(s"/$apiPrefix/${notAddedEntity.id}/report") ~>
+        Get(s"/$apiPrefix/${notAddedEntity.info.id}/report") ~>
           addHeader("X-Auth-Token", correctTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
+        ()
       }
     }
   }
@@ -90,38 +88,32 @@ class EntitiesApiSpec
   "PUT /entities/:id" should {
     "return NotFound" when {
       "entity does not exists" in {
-        Put(s"/$apiPrefix/${notAddedEntity.id}", notAddedEntityDescriptor) ~>
+        Put(s"/$apiPrefix/${notAddedEntity.info.id}", notAddedEntityUpdate) ~>
           addHeader("X-Auth-Token", correctTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
-      }
-    }
-    "return BadRequest" when {
-      "entity's Id from json does not match Id from request's URL" in {
-        val entity1 :: entity2 :: _ = entities
-        Put(s"/$apiPrefix/${entity1.id}", UserEntityDescriptor(entity2)) ~>
-          addHeader("X-Auth-Token", correctTenantA) ~> testRoute ~> check {
-          status should be(StatusCodes.BadRequest)
-        }
+        ()
       }
     }
     "update entity and return it's report" in {
-      Put(s"/$apiPrefix/${addedEntityDescriptor.id}", addedEntityDescriptor) ~>
+      Put(s"/$apiPrefix/${addedEntity.info.id}", addedEntityUpdate) ~>
         addHeader("X-Auth-Token", correctTenantA) ~> testRoute ~> check {
         status should be(StatusCodes.OK)
-        responseAs[Map[String, Entity]] shouldBe Map("entity" -> addedEntity)
-        verify(entityService).updateEntity(correctTenantA, addedEntityDescriptor)
+        responseAs[Map[String, EntityWithReport]] shouldBe Map("entity" -> addedEntity)
+        verify(entityService).updateEntity(correctTenantA, addedEntity.info.id, addedEntityUpdate)
       }
+      ()
     }
   }
 
   "DELETE /entities/:id" should {
     "return Status OK and delete entity" in {
-      Delete(s"/$apiPrefix/${addedEntityDescriptor.id}") ~>
+      Delete(s"/$apiPrefix/${addedEntity.info.id}") ~>
         addHeader("X-Auth-Token", correctTenantA) ~> testRoute ~> check {
         status should be(StatusCodes.OK)
-        verify(entityService).deleteEntity(correctTenantA, addedEntityDescriptor.id)
+        verify(entityService).deleteEntity(correctTenantA, addedEntity.info.id)
       }
+      ()
     }
   }
 
@@ -144,21 +136,23 @@ class EntitiesApiSpec
 
   private def createMockEntityService: EntityService = {
     val entityService = mock[EntityService]
-    when(entityService.getAll(anyString())).thenReturn(Future.successful(entities))
+    when(entityService.getAll(anyString())).thenReturn(Future.successful(entities.map(_.info)))
     when(entityService.deleteEntity(any(), any())).thenReturn(Future.successful(()))
-    when(entityService.updateEntity(any(), any())).thenAnswer(
-      new Answer[Future[Option[Entity]]] {
-        override def answer(invocationOnMock: InvocationOnMock): Future[Option[Entity]] = {
-          val entity = invocationOnMock.getArgumentAt(1, classOf[UserEntityDescriptor])
-          val result = if (entity == notAddedEntityDescriptor) None else Some(addedEntity)
+    when(entityService.updateEntity(any(), any(), any())).thenAnswer(
+      new Answer[Future[Option[EntityWithReport]]] {
+        override def answer(
+            invocationOnMock: InvocationOnMock): Future[Option[EntityWithReport]] = {
+          val entity = invocationOnMock.getArgumentAt(2, classOf[EntityUpdate])
+          val result = if (entity == notAddedEntityUpdate) None else Some(addedEntity)
           Future.successful(result)
         }
       })
     when(entityService.getEntityReport(any(), any())).thenAnswer(
-      new Answer[Future[Option[Entity]]] {
-        override def answer(invocationOnMock: InvocationOnMock): Future[Option[Entity]] = {
+      new Answer[Future[Option[EntityWithReport]]] {
+        override def answer(
+            invocationOnMock: InvocationOnMock): Future[Option[EntityWithReport]] = {
           val entityId = invocationOnMock.getArgumentAt(1, classOf[Entity.Id])
-          val result = if (entityId == notAddedEntity.id) None else Some(addedEntity.reportOnly)
+          val result = if (entityId == notAddedEntity.info.id) None else Some(addedEntity)
           Future.successful(result)
         }
       })

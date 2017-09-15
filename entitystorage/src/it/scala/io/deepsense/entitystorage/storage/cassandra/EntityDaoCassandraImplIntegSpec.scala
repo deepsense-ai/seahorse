@@ -14,7 +14,7 @@ import io.deepsense.commons.StandardSpec
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.entitystorage.EntitiesTableCreator
 import io.deepsense.entitystorage.factories.EntityTestFactory
-import io.deepsense.models.entities.{DataObjectReference, Entity}
+import io.deepsense.models.entities._
 import io.deepsense.commons.cassandra.CassandraTestSupport
 
 class EntityDaoCassandraImplIntegSpec
@@ -25,14 +25,14 @@ class EntityDaoCassandraImplIntegSpec
   with CassandraTestSupport
   with EntityTestFactory {
 
-  var entities: EntityDaoCassandraImpl = _
+  var entityDao: EntityDaoCassandraImpl = _
 
   def cassandraTableName : String = "entities"
   def cassandraKeySpaceName : String = "entitystorage"
 
   before {
     EntitiesTableCreator.create(cassandraTableName, session)
-    entities = new EntityDaoCassandraImpl(cassandraTableName, session)
+    entityDao = new EntityDaoCassandraImpl(cassandraTableName, session)
   }
 
   // Fixture
@@ -42,67 +42,69 @@ class EntityDaoCassandraImplIntegSpec
   val dataObjectReference = testDataObjectReference
   val dataObjectReport = testDataObjectReport
 
-  val entity1 = testEntity(tenantId, 3, Some(dataObjectReference), Some(dataObjectReport))
-  val entity2 = testEntity(tenantId, 14, None, Some(dataObjectReport))
-  val entity3 = testEntity(tenantId + "otherTenant", 15, None, Some(dataObjectReport))
-  val inDb = Set(entity1, entity2, entity3)
+  val entityInfos = List(
+    testEntityInfo(tenantId, 3),
+    testEntityInfo(tenantId, 14),
+    testEntityInfo(tenantId + "otherTenant"))
+  val entityCreates = List(
+    EntityCreate(entityInfos(0), Some(dataObjectReference), dataObjectReport),
+    EntityCreate(entityInfos(1), None, dataObjectReport),
+    EntityCreate(entityInfos(2), None, dataObjectReport))
+
+  val inDb = entityInfos.zip(entityCreates)
 
   "Entities" should {
     "select all rows from a tenant" in withStoredEntities(inDb) {
-      whenReady(entities.getAll(tenantId)) { tenantEntities =>
-        tenantEntities should contain theSameElementsAs Seq(entity1, entity2)
+      whenReady(entityDao.getAll(tenantId)) { tenantEntities =>
+        tenantEntities should contain theSameElementsAs Seq(entityInfos(0), entityInfos(1))
       }
     }
     "save and get an entity" that {
       val tenantId = "save_get_tenantId"
-      "is a report" in {
-        val entity = testEntity(tenantId, 0, None, Some(dataObjectReport))
-        whenReady(entities.upsert(entity)) { _ =>
-          whenReady(entities.get(tenantId, entity.id)) { getEntity =>
+      "has a report" in {
+        val entity = testEntityWithReport(tenantId, 0, dataObjectReport)
+        val entityCreate = EntityCreate(entity)
+        whenReady(entityDao.create(entity.info.id, entityCreate, entity.info.created)) { _ =>
+          whenReady(entityDao.getWithReport(tenantId, entity.info.id)) { getEntity =>
             getEntity shouldBe Some(entity)
           }
         }
       }
-      "is an url" in {
-        val entity = testEntity(tenantId, 0, Some(dataObjectReference), Some(dataObjectReport))
-        whenReady(entities.upsert(entity)) { _ =>
-          whenReady(entities.get(tenantId, entity.id)) { getEntity =>
+      "has data" in {
+        val entity = testEntityWithData(tenantId, 0, dataObjectReference)
+        val entityCreate = EntityCreate(entity.info, Some(entity.dataReference), dataObjectReport)
+        whenReady(entityDao.create(entity.info.id, entityCreate, entity.info.created)) { _ =>
+          whenReady(entityDao.getWithData(tenantId, entity.info.id)) { getEntity =>
             getEntity shouldBe Some(entity)
           }
         }
       }
     }
     "update an entity" in withStoredEntities(inDb) {
-      val differentEntity = modifyEntity(entity1)
-      whenReady(entities.upsert(differentEntity)) { _ =>
-        whenReady(entities.get(tenantId, entity1.id)) { getEntity =>
-          getEntity shouldBe Some(differentEntity)
+      val (info, create) = inDb(1)
+      val modifiedEntity = modifyEntity(EntityUpdate(create))
+      val now = DateTimeConverter.now
+      whenReady(entityDao.update(info.tenantId, info.id, modifiedEntity, now)) { _ =>
+        whenReady(entityDao.getWithReport(tenantId, info.id)) { getEntity =>
+          EntityUpdate(getEntity.get) shouldBe modifiedEntity
         }
       }
     }
     "delete an entity" in {
-      whenReady(entities.delete(tenantId, entity1.id)) { _ =>
-        whenReady(entities.get(tenantId, entity1.id)) { getEntity =>
+      val idToDelete = entityInfos(1).id
+      whenReady(entityDao.delete(tenantId, idToDelete)) { _ =>
+        whenReady(entityDao.getWithReport(tenantId, idToDelete)) { getEntity =>
           getEntity shouldBe None
         }
       }
     }
   }
 
-  private def modifyEntity(entity: Entity): Entity = {
-    val s = "modified"
-    entity.copy(
-      name = entity.name + s,
-      description = entity.description + s,
-      dClass = entity.dClass + s,
-      created = entity.created.plusDays(1),
-      updated = entity.updated.plusDays(1),
-      data = Some(DataObjectReference(entity.name + entity.description)),
-      saved = !entity.saved)
-  }
-
-  private def withStoredEntities(storedEntities: Set[Entity])(testCode: => Any): Unit = {
-    val s = Future.sequence(storedEntities.map(entities.upsert))
+  private def withStoredEntities(
+      storedEntities: List[(EntityInfo, EntityCreate)])(testCode: => Any): Unit = {
+    val s = Future.sequence(storedEntities.map {
+      case (info, entity) => entityDao.create(info.id, entity, info.created)
+    })
     Await.ready(s, operationDuration)
     try {
       testCode

@@ -6,10 +6,12 @@ package io.deepsense.entitystorage
 
 import scala.concurrent.duration._
 
+import org.joda.time.DateTime
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{BeforeAndAfter, Matchers}
 
 import io.deepsense.commons.StandardSpec
+import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.rest.RestServer
 import io.deepsense.commons.cassandra.CassandraTestSupport
 import io.deepsense.entitystorage.factories.EntityTestFactory
@@ -47,31 +49,41 @@ class EntityStorageClientIntegSpec
 
   "EntityStorageClient.createEntity(...)" should {
     "create an entity" in {
-      val inputEntity = testInputEntity
-      val eventualEntity = client.createEntity(inputEntity)
-      whenReady(eventualEntity) { entity =>
-        whenReady(entityDao.get(inputEntity.tenantId, entity.id)) { maybeEntity =>
-          maybeEntity.get should have(
+      val inputEntity = testEntityCreate()
+      val eventualEntityId = client.createEntity(inputEntity)
+      whenReady(eventualEntityId) { entityId =>
+        whenReady(entityDao.getWithReport(inputEntity.tenantId, entityId)) { maybeEntity =>
+          val entity = maybeEntity.get
+          entity.info should have(
+            'id (entityId),
             'tenantId (inputEntity.tenantId),
             'name (inputEntity.name),
             'description (inputEntity.description),
             'dClass (inputEntity.dClass),
-            'data (inputEntity.data),
-            'report (inputEntity.report),
             'saved (inputEntity.saved)
           )
+          entity.info.created shouldBe entity.info.updated
+          entity.report shouldBe inputEntity.report
+        }
+        whenReady(entityDao.getWithData(inputEntity.tenantId, entityId)) { maybeEntity =>
+          val entity = maybeEntity.get
+          entity.dataReference shouldBe inputEntity.dataReference.get
         }
       }
+      ()
     }
   }
   "EntityStorageClient.getEntityData()" should {
     "return an entity if it exists" in {
-      val existingEntity = testEntity
-      whenReady(entityDao.upsert(existingEntity)) { _ =>
+      val existingEntity = testEntityCreate()
+      val id = Entity.Id.randomId
+      val created = DateTimeConverter.now
+      whenReady(entityDao.create(id, existingEntity, created)) { _ =>
         whenReady(client.getEntityData(
-          existingEntity.tenantId,
-          existingEntity.id)) { maybeEntity =>
-          maybeEntity.get shouldBe existingEntity.dataOnly
+          existingEntity.tenantId, id)) { maybeEntity =>
+            val entity = maybeEntity.get
+            entity.info shouldBe existingEntity.toEntityInfo(id, created, created)
+            entity.dataReference shouldBe existingEntity.dataReference.get
         }
       }
     }

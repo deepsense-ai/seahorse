@@ -10,38 +10,44 @@ import scala.collection.concurrent.TrieMap
 import scala.concurrent.Future
 import scala.concurrent.duration.FiniteDuration
 
+import org.joda.time.DateTime
+
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.models.entities.Entity.Id
-import io.deepsense.models.entities.{Entity, InputEntity}
+import io.deepsense.models.entities.{EntityWithData, Entity, EntityCreate}
 
-case class EntityStorageClientTestInMemoryImpl(initState: Map[(String, Entity.Id), Entity] = Map())
+case class EntityStorageClientTestInMemoryImpl(
+    initState: Map[(String, Entity.Id), EntityCreate] = Map())
   extends EntityStorageClient {
+
+  case class Record(entityCreate: EntityCreate, created: DateTime)
 
   implicit val timeout = FiniteDuration(5, TimeUnit.SECONDS)
 
-  val storage = TrieMap[(String, Entity.Id), Entity](initState.toSeq: _*)
+  val now = DateTimeConverter.now
+
+  val storage = TrieMap[(String, Entity.Id), Record](initState.mapValues(Record(_, now)).toSeq: _*)
 
   override def getEntityData(tenantId: String, id: Id)
-    (implicit duration: FiniteDuration): Future[Option[Entity]] = {
-    Future.successful(storage.get((tenantId, id)))
+    (implicit duration: FiniteDuration): Future[Option[EntityWithData]] = {
+    Future.successful(blockingGetEntityData(tenantId, id))
   }
 
-  override def createEntity(inputEntity: InputEntity)
-    (implicit duration: FiniteDuration): Future[Entity] = {
+  private def blockingGetEntityData(tenantId: String, id: Id): Option[EntityWithData] = {
+    storage.get((tenantId, id)).map { record =>
+      record.entityCreate.toEntityWithData(id, record.created, record.created)
+    }
+  }
+
+  override def createEntity(entity: EntityCreate)
+    (implicit duration: FiniteDuration): Future[Entity.Id] = {
     val now = DateTimeConverter.now
-    val entity = Entity(
-      inputEntity.tenantId,
-      Entity.Id.randomId,
-      inputEntity.name,
-      inputEntity.description,
-      inputEntity.dClass,
-      inputEntity.data,
-      inputEntity.report,
-      now,
-      now)
-    storage.put((inputEntity.tenantId, entity.id), entity)
-    Future.successful(entity)
+    val entityId = Entity.Id.randomId
+    storage.put((entity.tenantId, entityId), Record(entity, now))
+    Future.successful(entityId)
   }
 
-  def getAllEntities: Seq[Entity] = storage.values.toSeq
+  def getAllEntities: Seq[EntityWithData] = storage.toSeq.map { case ((tenantId, id), record) =>
+    record.entityCreate.toEntityWithData(id, record.created, record.created)
+  }
 }

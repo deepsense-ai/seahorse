@@ -14,7 +14,7 @@ import io.deepsense.deeplang.{DOperable, ExecutionContext}
 import io.deepsense.graph.{Graph, Node}
 import io.deepsense.graphexecutor.GraphExecutorActor.Messages.{NodeFinished, NodeStarted}
 import io.deepsense.graphexecutor.GraphExecutorActor.Results
-import io.deepsense.models.entities.{DataObjectReference, Entity, InputEntity}
+import io.deepsense.models.entities.{DataObjectReference, Entity, EntityCreate}
 import io.deepsense.models.experiments.Experiment
 
 /**
@@ -34,9 +34,7 @@ class GraphNodeExecutorActor(
 
   implicit val entityStorageResponseDelay = 5.seconds
 
-  import scala.concurrent.ExecutionContext.Implicits.global
   import io.deepsense.graphexecutor.GraphNodeExecutorActor.Messages._
-
 
   lazy val nodeDescription = s"'${node.operation.name}-${node.id}'"
   var executionStart: Long = _
@@ -116,19 +114,19 @@ class GraphNodeExecutorActor(
   private def storeAndRegister(dOperable: DOperable): Entity.Id = {
     logger.debug("storeAndRegister started for {}", nodeDescription)
 
-    val inputEntity = InputEntity(
+    val inputEntity = EntityCreate(
       tenantId = experiment.tenantId,
       name = dOperable.getClass.toString,
       description = s"Output from Operation: $nodeDescription",
       dClass = dOperable.getClass.toString,
-      data = dOperable.url.map(DataObjectReference),
-      report = Some(dOperable.report.toDataObjectReport),
+      dataReference = dOperable.url.map(DataObjectReference),
+      report = dOperable.report.toDataObjectReport,
       saved = false
     )
 
     logger.debug("createEntity started")
     val result: Entity.Id = Await.result(
-      executionContext.entityStorageClient.createEntity(inputEntity).map(_.id),
+      executionContext.entityStorageClient.createEntity(inputEntity),
       entityStorageResponseDelay).value
     logger.debug("createEntity finished for {}", nodeDescription)
     logger.debug("storeAndRegister finished for {}", nodeDescription)

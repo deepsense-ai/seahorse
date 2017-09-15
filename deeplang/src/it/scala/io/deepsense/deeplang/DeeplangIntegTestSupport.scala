@@ -17,7 +17,7 @@ import org.scalatest.BeforeAndAfterAll
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.entitystorage.EntityStorageClientTestInMemoryImpl
-import io.deepsense.models.entities.Entity
+import io.deepsense.models.entities.{EntityCreate, Entity}
 
 /**
  * Adds features to facilitate integration testing using Spark and entitystorage
@@ -77,7 +77,7 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
     }
   }
 
-  protected def entityStorageInitState: Map[(String, Entity.Id), Entity] = Map()
+  protected def entityStorageInitState: Map[(String, Entity.Id), EntityCreate] = Map()
 
   protected def createDataFrame(rows: Seq[Row], schema: StructType): DataFrame = {
     val rdd: RDD[Row] = sparkContext.parallelize(rows)

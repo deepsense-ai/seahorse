@@ -16,7 +16,7 @@ import org.scalatest.BeforeAndAfter
 
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.deeplang.{DOperable, DeeplangIntegTestSupport, ExecutionContext}
-import io.deepsense.models.entities.{DataObjectReference, DataObjectReport, Entity, InputEntity}
+import io.deepsense.models.entities.{DataObjectReference, DataObjectReport, Entity, EntityCreate}
 
 class LoadDataFrameIntegSpec
   extends DeeplangIntegTestSupport
@@ -37,11 +37,11 @@ class LoadDataFrameIntegSpec
       val context = executionContext
       val dataFrame: DataFrame = testDataFrame(context.dataFrameBuilder)
       dataFrame.sparkDataFrame.write.parquet(testDir)
-      val entity = registerDataFrame(context)
+      val entityId = registerDataFrame(context)
 
-      val operation = createLoadDataFrameOperation(entity.id.toString)
+      val operation = createLoadDataFrameOperation(entityId.toString)
 
-      logger.info("Loading dataframe from entity id: {}", entity.id)
+      logger.info("Loading dataframe from entity id: {}", entityId)
       val operationResult = operation.execute(context)(Vector.empty[DOperable])
       val operationDataFrame = operationResult.head.asInstanceOf[DataFrame]
       // We cannot guarantee order of rows in loaded DataFrame
@@ -49,18 +49,18 @@ class LoadDataFrameIntegSpec
     }
   }
 
-  def registerDataFrame(context: ExecutionContext): Entity = {
+  def registerDataFrame(context: ExecutionContext): Entity.Id = {
     import scala.concurrent.duration._
     implicit val timeout = 5.seconds
-    val entityF = context.entityStorageClient.createEntity(InputEntity(
+    val future = context.entityStorageClient.createEntity(EntityCreate(
       context.tenantId,
       "testEntity name",
       "testEntity description",
       "DataFrame",
       Some(DataObjectReference(testDir)),
-      Some(DataObjectReport("testEntity Report")),
+      DataObjectReport("testEntity Report"),
       saved = true))
-    Await.result(entityF, timeout)
+    Await.result(future, timeout)
   }
 
   def testDataFrame(builder: DataFrameBuilder): DataFrame = {

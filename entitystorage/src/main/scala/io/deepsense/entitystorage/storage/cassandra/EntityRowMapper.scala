@@ -7,7 +7,7 @@ package io.deepsense.entitystorage.storage.cassandra
 import com.datastax.driver.core.Row
 
 import io.deepsense.commons.datetime.DateTimeConverter
-import io.deepsense.models.entities.{DataObjectReference, DataObjectReport, Entity}
+import io.deepsense.models.entities._
 
 object EntityRowMapper {
 
@@ -22,23 +22,30 @@ object EntityRowMapper {
   val Saved = "saved"
   val Report = "report"
 
-  def fromRow(row: Row): Entity =
-    Entity(
-      row.getString(TenantId),
-      Entity.Id(row.getUUID(Id)),
-      row.getString(Name),
-      row.getString(Description),
-      row.getString(DClass),
-      readData(row),
-      readReport(row),
-      DateTimeConverter.fromMillis(row.getDate(Created).getTime),
-      DateTimeConverter.fromMillis(row.getDate(Updated).getTime),
-      row.getBool(Saved)
-    )
+  lazy val EntityInfoFields: Seq[String] = Seq(
+    Id, TenantId, Name, Description, DClass, Created, Updated, Saved)
 
-  def readData(row: Row): Option[DataObjectReference] =
-    Option(row.getString(Url)).map(DataObjectReference)
+  lazy val EntityWithDataFields: Seq[String] = EntityInfoFields :+ Url
 
-  def readReport(row: Row): Option[DataObjectReport] =
-    Option(row.getString(Report)).map(DataObjectReport)
+  lazy val EntityWithReportFields: Seq[String] = EntityInfoFields :+ Report
+
+  def toEntityInfo(row: Row): EntityInfo = EntityInfo(
+    id = Entity.Id(row.getUUID(Id)),
+    tenantId = row.getString(TenantId),
+    name = row.getString(Name),
+    description = row.getString(Description),
+    dClass = row.getString(DClass),
+    created = DateTimeConverter.fromMillis(row.getDate(Created).getTime),
+    updated = DateTimeConverter.fromMillis(row.getDate(Updated).getTime),
+    saved = row.getBool(Saved))
+
+  def toEntityWithData(row: Row): EntityWithData = EntityWithData(
+    info = toEntityInfo(row),
+    dataReference = DataObjectReference(row.getString(Url))
+  )
+
+  def toEntityWithReport(row: Row): EntityWithReport = EntityWithReport(
+    info = toEntityInfo(row),
+    report = DataObjectReport(row.getString(Report))
+  )
 }

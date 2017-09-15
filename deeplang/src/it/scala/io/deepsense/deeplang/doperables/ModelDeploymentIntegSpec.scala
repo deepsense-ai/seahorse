@@ -12,7 +12,7 @@ import org.scalatest.BeforeAndAfter
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.factories.TrainedRidgeRegressionTestFactory
 import io.deepsense.deploymodelservice.{CreateModelResponse, Model}
-import io.deepsense.models.entities.{DataObjectReference, Entity, InputEntity}
+import io.deepsense.models.entities.{DataObjectReport, DataObjectReference, Entity, EntityCreate}
 
 
 class ModelDeploymentIntegSpec
@@ -26,13 +26,13 @@ class ModelDeploymentIntegSpec
     rawHdfsClient.delete(testFilePath, true)
   }
 
-  private def inputEntity = InputEntity(
+  private def inputEntity = EntityCreate(
     executionContext.tenantId,
     "name",
     "desc",
     "dclass",
     Some(DataObjectReference(testFilePath)),
-    None,
+    DataObjectReport("some report"),
     saved = true)
 
   "Model" should {
@@ -41,7 +41,6 @@ class ModelDeploymentIntegSpec
         .saveDOperableWithEntityStorageRegistration(executionContext)(
           testTrainedRidgeRegression,
           inputEntity)
-        .id
 
       val retrieved: Deployable = DOperableLoader.load(
         executionContext.entityStorageClient)(

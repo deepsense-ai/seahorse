@@ -20,7 +20,7 @@ import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
 import io.deepsense.commons.models.Id
 import io.deepsense.entitystorage.factories.EntityTestFactory
 import io.deepsense.entitystorage.services.EntityService
-import io.deepsense.models.entities.Entity
+import io.deepsense.models.entities.{EntityWithData, Entity}
 import io.deepsense.models.protocols.EntitiesApiActorProtocol.{Create, Get}
 
 class EntitiesApiActorSpec
@@ -39,27 +39,27 @@ class EntitiesApiActorSpec
   implicit val timeout: Timeout = Timeout(1 second)
   val tenantId = "tenantId"
   val notExistingEntityId = Entity.Id.randomId
-  val entity = testEntity
-  val inputEntity = testInputEntity
-  val existingEntityId = entity.id
+  val entity = testEntityWithData()
+  val inputEntity = testEntityCreate()
+  val existingEntityId = entity.info.id
 
   "EntityApiActor" should "send entity if exists" in {
     testProbe.send(actorRef, Get(tenantId, existingEntityId))
 
-    testProbe.expectMsgType[Option[Entity]] shouldBe Some(entity.dataOnly)
+    testProbe.expectMsgType[Option[EntityWithData]] shouldBe Some(entity)
   }
 
   it should "send None when entity does not exist" in {
     testProbe.send(actorRef, Get(tenantId, notExistingEntityId))
 
-    testProbe.expectMsgType[Option[Entity]] shouldBe None
+    testProbe.expectMsgType[Option[EntityWithData]] shouldBe None
   }
 
   it should "create Entity in the storage" in {
     testProbe.send(actorRef, Create(inputEntity))
 
     verify(entityService, times(1)).createEntity(inputEntity)
-    testProbe.expectMsgType[Entity] shouldBe entity
+    testProbe.expectMsgType[Entity.Id] shouldBe entity.info.id
   }
 
   override def beforeAll(): Unit = {
@@ -78,8 +78,8 @@ class EntitiesApiActorSpec
     when(entityService.getEntityData(org.mockito.Matchers.eq(tenantId), isA(classOf[Id])))
       .thenReturn(Future.successful(None))
     when(entityService.getEntityData(tenantId, existingEntityId))
-      .thenReturn(Future.successful(Some(entity.dataOnly)))
-    when(entityService.createEntity(inputEntity)).thenReturn(Future.successful(entity))
+      .thenReturn(Future.successful(Some(entity)))
+    when(entityService.createEntity(inputEntity)).thenReturn(Future.successful(entity.info.id))
     entityService
   }
 }

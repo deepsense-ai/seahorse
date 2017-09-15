@@ -7,29 +7,28 @@ package io.deepsense.deeplang.doperables
 import scala.concurrent.Await
 
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
-import io.deepsense.models.entities.{Entity, InputEntity}
-
+import io.deepsense.models.entities.{EntityCreate, Entity}
 trait DOperableSaver {
 
   def saveDOperableWithEntityStorageRegistration(
       context: ExecutionContext)(
       dOperable: DOperable,
-      inputEntity: InputEntity): Entity = {
-    val uniqueFilename: String = inputEntity.data.get.url
+      entity: EntityCreate): Entity.Id = {
+    val uniqueFilename: String = entity.dataReference.get.url
     dOperable.save(context)(uniqueFilename)
-    saveEntity(context, uniqueFilename, inputEntity)
+    saveEntity(context, uniqueFilename, entity)
   }
 
   private def saveEntity(
       context: ExecutionContext,
       uniqueFilename: String,
-      inputEntity: InputEntity): Entity = {
+      inputEntity: EntityCreate): Entity.Id = {
     import scala.concurrent.duration._
     // TODO: duration from configuration (and possibly a little longer timeout)
     implicit val timeout = 5.seconds
-    val entityF = context.entityStorageClient.createEntity(inputEntity)
+    val future = context.entityStorageClient.createEntity(inputEntity)
     // TODO: be sure that this will fail if timeout expired
-    Await.result(entityF, timeout)
+    Await.result(future, timeout)
   }
 }
 

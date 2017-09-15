@@ -259,7 +259,7 @@ class ExperimentsApiSpec
   "POST /experiments" should {
     "process authorization before reading POST content" in {
       val invalidContent = JsObject()
-      Post(s"/$apiPrefix", envelopedInputExperiment) ~> testRoute ~> check {
+      Post(s"/$apiPrefix", invalidContent) ~> testRoute ~> check {
         status should be(StatusCodes.Unauthorized)
       }
     }

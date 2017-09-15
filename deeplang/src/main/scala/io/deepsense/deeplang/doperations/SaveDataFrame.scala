@@ -11,7 +11,7 @@ import io.deepsense.deeplang.doperables.{DOperableSaver, Report}
 import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, ParametersSchema, StringParameter}
 import io.deepsense.deeplang.{DOperation, DOperation1To0, ExecutionContext}
 import io.deepsense.entitystorage.UniqueFilenameUtil
-import io.deepsense.models.entities.{DataObjectReference, DataObjectReport, InputEntity}
+import io.deepsense.models.entities.{DataObjectReference, DataObjectReport, EntityCreate}
 
 /**
  * Operation which is able to serialize DataFrame and save it.
@@ -39,17 +39,16 @@ case class SaveDataFrame() extends DOperation1To0[DataFrame] {
   private def inputEntity(
       context: ExecutionContext,
       uniqueFilename: String,
-      dataFrameReport: Report): InputEntity = {
+      dataFrameReport: Report): EntityCreate = {
     val name = parameters.getStringParameter(SaveDataFrame.nameParam).value.get
     val description = parameters.getStringParameter(SaveDataFrame.descriptionParam).value.get
-    import io.deepsense.reportlib.model.ReportJsonProtocol._
-    InputEntity(
+    EntityCreate(
       context.tenantId,
       name,
       description,
       dClass = DataFrame.getClass.toString,  // TODO https://codilime.atlassian.net/browse/DS-869
-      data = Some(DataObjectReference(uniqueFilename)),
-      report = Some(DataObjectReport(dataFrameReport.content.toJson.prettyPrint)),
+      dataReference = Some(DataObjectReference(uniqueFilename)),
+      report = dataFrameReport.toDataObjectReport,
       saved = true)
   }
 
