@@ -44,12 +44,12 @@ class ColorPickerController {
                 ng-style="{'background': predefColor}"
                 ng-click="node.color = predefColor"
                 ng-repeat="predefColor in predefColors"
-                tooltip="{{::$first ? 'This is default color' : ''}}">
+                uib-tooltip="{{::$first ? 'This is default color' : ''}}">
               <a class="c-predefined-colors__remove-color"
                  aria-label="Remove color"
                  ng-click="colorPicker.removeColor($index)"
                  ng-if="$index > 5"
-                 tooltip="Remove this color"
+                 uib-tooltip="Remove this color"
                  tooltip-append-to-body="true"
                  data-close="false">
                 <i class="fa fa-times"></i>

@@ -35,10 +35,10 @@ function OperationAttributes($rootScope, AttributesPanelService ,config) {
         });
       });
     },
-    controller: function ($scope, $element, $timeout, $modal) {
+    controller: function ($scope, $element, $timeout, $uibModal) {
       this.getDocsHost = () => config.docsHost;
       this.showErrorMessage = function showErrorMessage () {
-        $scope.modal = $modal.open({
+        $scope.modal = $uibModal.open({
           scope: $scope,
           template: `
             <button type="button" class="close" aria-label="Close" ng-click="modal.close()">

@@ -4,7 +4,7 @@
       <span color-picker></span>
       <h4 class="ibox-title__name"
           tooltip-placement="left"
-          tooltip="{{!disabledMode && node.uiName ? 'Click to change name' : ''}}"
+          uib-tooltip="{{!disabledMode && node.uiName ? 'Click to change name' : ''}}"
           tooltip-trigger="mouseenter"
           tooltip-append-to-body="true">
         <span editable-text="node.uiName" onaftersave="controller.customNameSaved()" ng-if="!disabledMode">{{node.uiName || 'Create custom name'}}</span>

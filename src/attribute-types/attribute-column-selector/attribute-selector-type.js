@@ -7,7 +7,7 @@
 'use strict';
 
 /*@ngInject*/
-function AttributeSelectorType($timeout, $modal, $rootScope) {
+function AttributeSelectorType($timeout, $uibModal, $rootScope) {
   return {
     restrict: 'E',
     templateUrl: 'attribute-types/attribute-column-selector/attribute-selector-type.html',
@@ -35,7 +35,7 @@ function AttributeSelectorType($timeout, $modal, $rootScope) {
         openSelector() {
           let oldParameter = JSON.stringify(scope.parameter.serialize());
 
-          this.modal = $modal.open({
+          this.modal = $uibModal.open({
             templateUrl: 'attribute-types/attribute-column-selector/attribute-selector-type-modal.html',
             size: 'lg',
             scope: scope,
