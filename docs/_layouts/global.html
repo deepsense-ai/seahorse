@@ -39,7 +39,14 @@
           <ul class="nav navbar-nav">
             <li class="{% if page.menuTab == 'overview' %}active{% endif %}"><a href="{{base}}">Overview</a></li>
             <li class="{% if page.menuTab == 'downloads' %}active{% else %}editor-link{% endif %}"><a href="{{base}}/downloads.html">Try Seahorse</a></li>
-            <li class="{% if page.menuTab == 'enterprise' %}active{% else %}editor-link{% endif %}"><a href="{{base}}/enterprise.html">Enterprise</a></li>
+            <li class="{% if page.menuTab == 'deployment' %}active{% endif %} dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Deployment Modes<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                {% for mode in site.deployment %}
+                  <li class="{% if page.title == mode.title %}active{% endif %}"><a href="{{base}}{{ mode.url }}">{{ mode.title }}</a></li>
+                {% endfor %}
+              </ul>
+            </li>
             <li class="{% if page.menuTab == 'caseStudy' %}active{% endif %} dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Examples<span class="caret"></span></a>
               <ul class="dropdown-menu">

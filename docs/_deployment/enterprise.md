@@ -1,7 +1,7 @@
 ---
 layout: global
 displayTitle: Enterprise
-menuTab: enterprise
+menuTab: deployment
 title: Seahorse Enterprise
 ---
 
@@ -9,14 +9,14 @@ title: Seahorse Enterprise
 
 <div style="overflow: auto">
     <p style="float:right; margin-left:25px; width:55%; text-align:center;">
-      <img class="centered-image img-responsive" src="img/enterprise_architecture.png" />
+      <img class="centered-image img-responsive" src="../img/enterprise_architecture.png" />
         <em>Seahorse in a Production Environment</em>
     </p>
 
     Enterprise deployments of Seahorse:
     <ul class="features-list">
-        <li>can process virtually unlimited data by utilizing Spark clusters of any size and processing power - as easily as with the Seahorse Desktop,
-        </li><li>support multiple clusters, so that your team can manage its computational backends used for various purposes,
+        <li>can process virtually unlimited data by utilizing Spark clusters of any size and processing power - as easily as with the Seahorse Standalone,
+        </li><li>DO ZMIANY NA HA: support multiple clusters, so that your team can manage its computational backends used for various purposes,
         </li><li>work with with both cloud and on-premise infrastructure, including the location of Spark clusters,
         </li><li>easily integrate with your organization’s storage layer and legacy systems,
         </li><li>can be customized for a desired level of availability and failover capabilities,

@@ -16,6 +16,8 @@ exclude:
 collections:
   casestudies:
     output: true
+  deployment:
+    output: true
 
 # These allow the documentation to be updated with newer releases
 WORKFLOW_EXECUTOR_VERSION: 0.4
