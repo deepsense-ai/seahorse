@@ -22,9 +22,7 @@ var exit = require('gulp-exit');
 var templateCache = require('gulp-angular-templatecache');
 var htmlreplace = require('gulp-html-replace');
 var prettify = require('gulp-jsbeautifier');
-var debug  = require('gulp-debug');
 var exec = require('child_process').exec;
-var filenames = require('gulp-filenames');
 
 require('jshint-stylish');
 
