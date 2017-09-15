@@ -27,7 +27,7 @@ import io.deepsense.deeplang.{DOperable, ExecutionContext}
  */
 case class DataFrame private[dataframe] (
     sparkDataFrame: sql.DataFrame,
-    override val inferredMetadata: Option[DataFrameMetadata] = None)
+    override val inferredMetadata: Option[DataFrameMetadata] = Some(DataFrameMetadata.empty))
   extends DOperable
   with DataFrameReportGenerator
   with DataFrameColumnsGetter {
@@ -41,6 +41,8 @@ case class DataFrame private[dataframe] (
 
   override def save(context: ExecutionContext)(path: String): Unit =
     sparkDataFrame.write.parquet(path)
+
+  override def toInferrable: DOperable = DataFrame(null, metadata)
 
   /**
    * Creates new DataFrame with new columns added.

@@ -4,8 +4,9 @@
 
 package io.deepsense.deeplang.inference
 
-import io.deepsense.deeplang.CommonContext
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
+import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
+import io.deepsense.entitystorage.EntityStorageClient
 
 /**
  * Holds information needed by DOperations and DMethods during knowledge inference.
@@ -14,8 +15,12 @@ import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
  */
 class InferContext(
     val dOperableCatalog: DOperableCatalog,
-    val fullInference: Boolean = false)
-  extends CommonContext
+    val fullInference: Boolean = false) {
+
+  var dataFrameBuilder: DataFrameBuilder = _
+  var entityStorageClient: EntityStorageClient = _
+  var tenantId: String = _
+}
 
 object InferContext {
 
@@ -24,17 +29,6 @@ object InferContext {
 
   def apply(baseContext: InferContext, fullInference: Boolean): InferContext = {
     val context = new InferContext(baseContext.dOperableCatalog, fullInference)
-    context.dataFrameBuilder = baseContext.dataFrameBuilder
-    context.entityStorageClient = baseContext.entityStorageClient
-    context.tenantId = baseContext.tenantId
-    context
-  }
-
-  def apply(
-      baseContext: CommonContext,
-      dOperableCatalog: DOperableCatalog,
-      fullInference: Boolean): InferContext = {
-    val context = new InferContext(dOperableCatalog, fullInference)
     context.dataFrameBuilder = baseContext.dataFrameBuilder
     context.entityStorageClient = baseContext.entityStorageClient
     context.tenantId = baseContext.tenantId

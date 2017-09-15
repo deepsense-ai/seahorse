@@ -46,6 +46,12 @@ trait DOperable {
    * @return path where DOperable is stored, if None is returned then DOperable is not persisted.
    */
   def url: Option[String] = None
+
+  /**
+   * Called on executable version of object, produces an inferrable version of this object.
+   * @return Inferrable version of this DOperable.
+   */
+  def toInferrable: DOperable
 }
 
 object DOperable {

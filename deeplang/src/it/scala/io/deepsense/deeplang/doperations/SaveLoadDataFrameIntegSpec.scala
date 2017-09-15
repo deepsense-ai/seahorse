@@ -52,9 +52,8 @@ class SaveLoadDataFrameIntegSpec
       val dataFrame: DataFrame = createDataFrame
       val dataFrameId = saveDataFrame(context, dataFrame, "test name", "test description")
       val doperableCatalog = mock[DOperableCatalog]
-      val inferContext = InferContext(context, doperableCatalog, fullInference = true)
       val loadDF = LoadDataFrame(dataFrameId)
-      val (knowledge, warnings) = loadDF.inferKnowledge(inferContext)(Vector.empty)
+      val (knowledge, warnings) = loadDF.inferKnowledge(context)(Vector.empty)
 
       warnings.warnings should have size 0
       knowledge should have size 1

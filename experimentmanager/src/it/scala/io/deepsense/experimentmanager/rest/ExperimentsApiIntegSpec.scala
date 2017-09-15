@@ -17,13 +17,13 @@ import org.scalatest.BeforeAndAfter
 import spray.routing.Route
 
 import io.deepsense.commons.cassandra.CassandraTestSupport
-import io.deepsense.deeplang.DOperation
+import io.deepsense.deeplang.{DOperationCategories, DOperation}
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.deeplang.doperables.Transformation
 import io.deepsense.deeplang.doperations.MathematicalOperation
 import io.deepsense.experimentmanager.conversion.FileConverter
 import io.deepsense.experimentmanager.storage.ExperimentStorage
-import io.deepsense.experimentmanager.{DOperationCategories, ExperimentManagerIntegTestSupport, ExperimentsTableCreator}
+import io.deepsense.experimentmanager.{ExperimentManagerIntegTestSupport, ExperimentsTableCreator}
 import io.deepsense.graph.{Graph, Node}
 import io.deepsense.graphjson.GraphJsonProtocol.GraphReader
 import io.deepsense.models.experiments.Experiment

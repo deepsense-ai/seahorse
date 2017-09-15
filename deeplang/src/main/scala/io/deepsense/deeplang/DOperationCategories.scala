@@ -2,7 +2,7 @@
  * Copyright (c) 2015, CodiLime Inc.
  */
 
-package io.deepsense.experimentmanager
+package io.deepsense.deeplang
 
 import io.deepsense.deeplang.catalogs.doperations.DOperationCategory
 

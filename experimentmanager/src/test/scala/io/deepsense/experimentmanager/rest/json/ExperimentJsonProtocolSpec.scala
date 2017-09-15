@@ -109,7 +109,8 @@ class ExperimentJsonProtocolSpec
       })
 
       val knowledge = experimentJson.fields("knowledge").asJsObject
-      val graphKnowledge = graph.inferKnowledge(inferContext) // Null is OK because of mocked Operations.
+      val graphKnowledge = graph.inferKnowledge(inferContext)
+      // Null is OK because of mocked Operations.
       knowledge.fields.foreach(keyValue => {
         val (nodeId, knowledgeJson) = keyValue
         val knowledgeJsonJsObject = knowledgeJson.asJsObject

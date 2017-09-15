@@ -138,11 +138,11 @@ case class DataFrameMetadata(
     case TypeColumnSelection(types) => columnType.exists(types.contains(_))
     case IndexRangeColumnSelection(Some(lowerBound), Some(upperBound)) =>
       columnIndex.exists(index => (index >= lowerBound && index <= upperBound))
-    case IndexRangeColumnSelection(_,_) => false
+    case IndexRangeColumnSelection(_, _) => false
   }
 
   private def assertColumnSelectionsValid(
-      multipleColumnSelection: MultipleColumnSelection): Seq[InferenceWarning]  = {
+      multipleColumnSelection: MultipleColumnSelection): Seq[InferenceWarning] = {
     val selections = multipleColumnSelection.selections
     val warnings = new ListBuffer[InferenceWarning]()
     for (selection <- selections) {
@@ -174,7 +174,7 @@ case class DataFrameMetadata(
     case IndexRangeColumnSelection(Some(lowerBound), Some(upperBound)) =>
       val metadataIndexes = indexesSet()
       (lowerBound to upperBound).toSet.subsetOf(metadataIndexes)
-    case IndexRangeColumnSelection(_,_) => true
+    case IndexRangeColumnSelection(_, _) => true
   }
 
   private def indexesSet(): Set[Int] = {
@@ -185,6 +185,9 @@ case class DataFrameMetadata(
 }
 
 object DataFrameMetadata {
+
+  def empty: DataFrameMetadata = DataFrameMetadata(
+    isExact = false, isColumnCountExact = false, columns = Map.empty)
 
   def fromSchema(schema: StructType): DataFrameMetadata = {
     DataFrameMetadata(

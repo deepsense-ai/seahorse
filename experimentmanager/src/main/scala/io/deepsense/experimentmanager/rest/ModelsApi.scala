@@ -47,7 +47,7 @@ class ModelsApi @Inject()(
   val hdfsPort = config.getString("hdfs.port")
 
   val deeplangContext: deeplang.ExecutionContext = {
-    val ctx = new DExecutionContext
+    val ctx = new DExecutionContext(null)
     ctx.hdfsClient = new DSHdfsClient(
       new DFSClient(new URI(s"hdfs://$hdfsHostname:$hdfsPort"), new Configuration()))
     ctx

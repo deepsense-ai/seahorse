@@ -8,6 +8,7 @@ import akka.actor.ActorSystem
 import com.google.inject.Guice
 
 import io.deepsense.commons.rest.RestServer
+import io.deepsense.deeplang.CatalogRecorder
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 

@@ -18,6 +18,8 @@ case class UntrainedRidgeRegression(
 
   def this() = this(None)
 
+  override def toInferrable: DOperable = new UntrainedRidgeRegression()
+
   override val train = new DMethod1To1[Trainable.Parameters, DataFrame, Scorable] {
     override def apply(
         context: ExecutionContext)(

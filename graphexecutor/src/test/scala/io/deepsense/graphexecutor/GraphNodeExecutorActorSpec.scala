@@ -11,7 +11,8 @@ import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
-import io.deepsense.deeplang.{DOperable, DOperation, ExecutionContext}
+import io.deepsense.deeplang.inference.InferenceWarnings
+import io.deepsense.deeplang.{DKnowledge, DOperable, DOperation, ExecutionContext}
 import io.deepsense.graph.{Endpoint, Graph, Node}
 import io.deepsense.graphexecutor.GraphExecutorActor.Messages.{NodeFinished, NodeStarted}
 import io.deepsense.graphexecutor.GraphNodeExecutorActor.Messages.Start
@@ -30,6 +31,7 @@ class GraphNodeExecutorActorSpec
     system.shutdown()
   }
 
+  // TODO increase coverage of these tests: https://codilime.atlassian.net/browse/DS-823
   "GraphNodeExecutorActor" should {
     "start execution of Nodes and respond NodeStarted (and NodeFinished)" when {
       "receives Start" in {
@@ -39,6 +41,8 @@ class GraphNodeExecutorActorSpec
         when(mDOp.name).thenReturn("mockedName")
         when(mDOp.execute(any[ExecutionContext])(any[Vector[DOperable]]))
           .thenReturn(Vector[DOperable]())
+        when(mDOp.inferKnowledge(any())(any()))
+          .thenReturn((Vector[DKnowledge[DOperable]](), mock[InferenceWarnings]))
 
         // FIXME node in DRAFT state must not be Completed -> None.get exception
         val node = Node(Node.Id.randomId, mDOp).markRunning
@@ -64,8 +68,35 @@ class GraphNodeExecutorActorSpec
 
         val mDOp = mock[DOperation]
         when(mDOp.name).thenReturn("mockedName")
+        when(mDOp.inferKnowledge(any())(any()))
+          .thenReturn((Vector[DKnowledge[DOperable]](), mock[InferenceWarnings]))
         when(mDOp.execute(any[ExecutionContext])(any[Vector[DOperable]]))
           .thenThrow(new RuntimeException("Exception from mock"))
+
+        // FIXME node in DRAFT state must not be Completed -> None.get exception
+        val node = Node(Node.Id.randomId, mDOp).markRunning
+
+        val mExperiment = mock[Experiment]
+        val mGraph = mock[Graph]
+        when(mExperiment.graph).thenReturn(mGraph)
+        val predecessors: Map[Node.Id, IndexedSeq[Option[Endpoint]]] = Map(node.id -> Vector())
+        when(mGraph.predecessors).thenReturn(predecessors)
+        val dOperationCache = Map.empty[Entity.Id, DOperable]
+
+        val gnea = system.actorOf(
+          Props(new GraphNodeExecutorActor(mEC, node, mExperiment, dOperationCache)))
+        gnea ! Start()
+
+        expectMsgType[NodeStarted] shouldBe NodeStarted(node.id)
+        expectMsgType[NodeFinished].node shouldBe 'Failed
+      }
+      "its Node inference throws an exception" in {
+        val mEC = mock[ExecutionContext]
+
+        val mDOp = mock[DOperation]
+        when(mDOp.name).thenReturn("mockedName")
+        when(mDOp.inferKnowledge(any())(any()))
+          .thenThrow(new RuntimeException("Inference exception from mock"))
 
         // FIXME node in DRAFT state must not be Completed -> None.get exception
         val node = Node(Node.Id.randomId, mDOp).markRunning

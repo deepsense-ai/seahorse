@@ -16,6 +16,7 @@ import org.scalatest.concurrent.{Eventually, ScaledTimeSpans}
 import org.scalatest.mock.MockitoSugar
 
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
+import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.{DOperation, DOperable, ExecutionContext}
 import io.deepsense.graph.{Graph, Node}
 import io.deepsense.graphexecutor.GraphExecutorActor._
@@ -36,7 +37,7 @@ class GraphExecutorActorSpec
   trait TestCase {
     val gec = TestProbe()
     val gecPath = gec.ref.path.toStringWithoutAddress
-    val executionContext = new ExecutionContext
+    val executionContext = new ExecutionContext(mock[DOperableCatalog])
     val graph = mock[Graph]
     when(graph.enqueueNodes) thenReturn graph
 

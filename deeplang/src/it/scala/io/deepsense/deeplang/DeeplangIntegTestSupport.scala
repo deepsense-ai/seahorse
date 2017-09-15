@@ -15,6 +15,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 import org.scalatest.BeforeAndAfterAll
 
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
+import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.entitystorage.EntityStorageClientTestInMemoryImpl
 import io.deepsense.models.entities.{CreateEntityRequest, Entity}
@@ -53,7 +54,7 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
   }
 
   protected def prepareExecutionContext(): Unit = {
-    executionContext = new ExecutionContext
+    executionContext = new ExecutionContext(mock[DOperableCatalog])
     executionContext.sparkContext = sparkContext
     executionContext.sqlContext = sqlContext
     executionContext.dataFrameBuilder = DataFrameBuilder(sqlContext)

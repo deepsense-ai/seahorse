@@ -10,7 +10,7 @@ import org.apache.spark.mllib.classification.LogisticRegressionModel
 import org.apache.spark.mllib.linalg.Vector
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.{DMethod1To1, ExecutionContext, Model}
+import io.deepsense.deeplang.{DOperable, DMethod1To1, ExecutionContext, Model}
 import io.deepsense.reportlib.model.ReportContent
 
 case class TrainedLogisticRegression(
@@ -22,6 +22,8 @@ case class TrainedLogisticRegression(
   with RegressionScoring {
 
   def this() = this(None, None, None)
+
+  override def toInferrable: DOperable = new TrainedLogisticRegression()
 
   private var physicalPath: Option[String] = None
 

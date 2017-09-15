@@ -56,8 +56,8 @@ class DOperationSuite extends FunSuite with MockitoSugar {
     secondPicker.parameters.getNumericParameter("param").value = Some(2)
 
     val input = Vector(A1(), A2())
-    assert(firstPicker.execute(new ExecutionContext)(input) == Vector(A1()))
-    assert(secondPicker.execute(new ExecutionContext)(input) == Vector(A2()))
+    assert(firstPicker.execute(mock[ExecutionContext])(input) == Vector(A1()))
+    assert(secondPicker.execute(mock[ExecutionContext])(input) == Vector(A2()))
 
     val h = new DOperableCatalog
     h.registerDOperable[A1]()

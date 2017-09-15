@@ -28,8 +28,9 @@ import org.apache.spark.{SparkConf, SparkContext}
 import io.deepsense.commons.akka.RemoteAddressExtension
 import io.deepsense.commons.config.ConfigModule
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
+import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
-import io.deepsense.deeplang.{DOperable, DSHdfsClient, ExecutionContext}
+import io.deepsense.deeplang.{CatalogRecorder, DOperable, DSHdfsClient, ExecutionContext}
 import io.deepsense.entitystorage.{EntityStorageClient, EntityStorageClientFactory}
 import io.deepsense.models.entities.Entity
 import io.deepsense.models.experiments.Experiment
@@ -86,7 +87,9 @@ case class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
     resourceManagerClient.start()
     logger.debug("AMRMClientAsyncImpl started")
 
-    val executionContext = new ExecutionContext()
+    val dOperableCatalog = new DOperableCatalog
+    CatalogRecorder.registerDOperables(dOperableCatalog)
+    val executionContext = new ExecutionContext(dOperableCatalog)
 
     val sparkConf = new SparkConf()
     sparkConf.setAppName("Spark DeepSense Akka")

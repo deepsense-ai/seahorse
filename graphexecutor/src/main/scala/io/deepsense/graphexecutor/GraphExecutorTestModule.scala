@@ -8,6 +8,7 @@ import com.google.inject.name.Named
 import com.google.inject.{AbstractModule, Provides, Singleton}
 import org.joda.time.DateTime
 
+import io.deepsense.deeplang.doperables.dataframe.DataFrameMetadata
 import io.deepsense.entitystorage.{EntityStorageClient, EntityStorageClientFactory, EntityStorageClientTestInMemoryImpl}
 import io.deepsense.models.entities._
 
@@ -70,6 +71,10 @@ object GraphExecutorTest {
   val TestTenantId = "TestTenantId"
 }
 
+object MockedDataFrameMetadata {
+  def create: String = DataFrameMetadata.empty.serializeToJson.toString()
+}
+
 object SimpleGraphExecutionIntegSuiteEntities {
   val Name = "SimpleGraphExecutionIntegSuite"
 
@@ -87,7 +92,7 @@ object SimpleGraphExecutionIntegSuiteEntities {
       DateTime.now,
       DateTime.now,
       saved = true),
-      Some(DataObjectReference(dataFrameLocation, "{}")),
+      Some(DataObjectReference(dataFrameLocation, MockedDataFrameMetadata.create)),
       DataObjectReport("testEntity Report"))
 }
 
@@ -109,7 +114,7 @@ object BikesIntegSuiteEntities {
       DateTime.now,
       DateTime.now,
       saved = true),
-      Some(DataObjectReference(demandLocation, "{}")),
+      Some(DataObjectReference(demandLocation, MockedDataFrameMetadata.create)),
       DataObjectReport("demandEntity Report"))
 
   val weatherId: Entity.Id = Entity.Id.fromString("7ff0e089-8059-491c-9a7e-557349633312")
@@ -125,6 +130,6 @@ object BikesIntegSuiteEntities {
       DateTime.now,
       DateTime.now,
       saved = true),
-      Some(DataObjectReference(weatherLocation, "{}")),
+      Some(DataObjectReference(weatherLocation, MockedDataFrameMetadata.create)),
       DataObjectReport("weatherEntity Report"))
 }

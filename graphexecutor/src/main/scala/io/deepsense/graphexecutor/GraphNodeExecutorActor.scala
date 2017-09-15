@@ -10,7 +10,7 @@ import akka.actor.{Actor, PoisonPill}
 import com.typesafe.scalalogging.LazyLogging
 
 import io.deepsense.commons.metrics.Instrumented
-import io.deepsense.deeplang.{DOperable, ExecutionContext}
+import io.deepsense.deeplang.{DKnowledge, DOperable, ExecutionContext}
 import io.deepsense.graph.{Graph, Node}
 import io.deepsense.graphexecutor.GraphExecutorActor.Messages.{NodeFinished, NodeStarted}
 import io.deepsense.graphexecutor.GraphExecutorActor.Results
@@ -106,6 +106,10 @@ class GraphNodeExecutorActor(
 
   private def executeOperation(inputVector: Vector[DOperable]): Vector[DOperable] = {
     logger.debug("{} inputVector.size = {}", nodeDescription, inputVector.size.toString)
+    val inputKnowledge = inputVector.map { dOperable => DKnowledge(dOperable.toInferrable) }
+    // if inference throws, we do not perform execution
+    node.operation.inferKnowledge(executionContext)(inputKnowledge)
+
     val resultVector = node.operation.execute(executionContext)(inputVector)
     logger.debug("{} resultVector.size = {}", nodeDescription, resultVector.size.toString)
     resultVector

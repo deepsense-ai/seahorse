@@ -24,6 +24,8 @@ case class File(
 
   def this() = this(None, None)
 
+  override def toInferrable: DOperable = new File()
+
   override def report: Report = {
     val table = File.prepareReportTable(reportParams.get)
     Report(ReportContent("File details", Map(table.name -> table)))

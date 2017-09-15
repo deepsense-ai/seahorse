@@ -10,6 +10,4 @@ class CyclicGraphException
   extends DeepSenseException(
     FailureCode.IllegalArgumentException,
     "Cyclic graph",
-    "Graph cycle detected") {
-
-}
+    "Graph cycle detected")

@@ -15,6 +15,8 @@ case class Report(content: ReportContent = ReportContent("empty report"))
 
   def this() = this(ReportContent("empty report"))
 
+  override def toInferrable: DOperable = new Report()
+
   import ReportJsonProtocol._
   override def report: Report = this
 

@@ -7,18 +7,15 @@ package io.deepsense.graph
 import org.scalatest.mock.MockitoSugar
 
 import io.deepsense.deeplang._
-import io.deepsense.deeplang.doperables.Report
+import io.deepsense.deeplang.doperables.DOperableMock
 import io.deepsense.deeplang.parameters.ParametersSchema
 
 object RandomNodeFactory {
   def randomNode(operation: DOperation): Node = Node(Node.Id.randomId, operation)
 }
 
-object DClassesForDOperations extends MockitoSugar{
-  trait A extends DOperable {
-    def report: Report = ???
-    def save(context: ExecutionContext)(path: String): Unit = ???
-  }
+object DClassesForDOperations extends MockitoSugar {
+  trait A extends DOperableMock
   case class A1() extends A
   case class A2() extends A
 }

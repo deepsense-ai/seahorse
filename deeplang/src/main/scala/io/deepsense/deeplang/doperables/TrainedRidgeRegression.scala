@@ -11,7 +11,7 @@ import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.mllib.regression.RidgeRegressionModel
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.{DMethod1To1, ExecutionContext, Model}
+import io.deepsense.deeplang.{DOperable, DMethod1To1, ExecutionContext, Model}
 import io.deepsense.reportlib.model.ReportContent
 
 case class TrainedRidgeRegression(
@@ -25,6 +25,8 @@ case class TrainedRidgeRegression(
   with DOperableSaver {
 
   def this() = this(None, None, None, None)
+
+  def toInferrable: DOperable = new TrainedRidgeRegression()
 
   private var physicalPath: Option[String] = None
 

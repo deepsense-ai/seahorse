@@ -2,7 +2,7 @@
  * Copyright (c) 2015, CodiLime Inc.
  */
 
-package io.deepsense.experimentmanager
+package io.deepsense.deeplang
 
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
@@ -13,8 +13,7 @@ import io.deepsense.deeplang.doperations._
 import io.deepsense.deeplang.doperations.transformations.MathematicalTransformation
 
 /**
- * Object used to register all desired [[io.deepsense.deeplang.DOperable]]s
- * and [[io.deepsense.deeplang.DOperation]]s.
+ * Object used to register all desired DOperables and DOperations.
  */
 object CatalogRecorder {
 

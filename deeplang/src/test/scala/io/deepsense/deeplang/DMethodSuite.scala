@@ -32,7 +32,7 @@ class DMethodSuite extends FunSuite with MockitoSugar {
     }
 
     val c = new C
-    assert(c.f(new ExecutionContext)(2)(A(3)) == B(5))
+    assert(c.f(mock[ExecutionContext])(2)(A(3)) == B(5))
 
     val h = new DOperableCatalog
     h.registerDOperable[A]()

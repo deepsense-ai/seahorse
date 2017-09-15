@@ -23,7 +23,7 @@ import io.deepsense.commons.json.envelope.Envelope
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.deeplang.inference.InferContext
-import io.deepsense.deeplang.{ExecutionContext, DOperation0To1}
+import io.deepsense.deeplang.{DOperationCategories, ExecutionContext, DOperation0To1}
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.experimentmanager.conversion.FileConverter
@@ -31,7 +31,7 @@ import io.deepsense.experimentmanager.exceptions.ExperimentNotFoundException
 import io.deepsense.experimentmanager.models.{Count, ExperimentsList}
 import io.deepsense.experimentmanager.rest.actions.{AbortAction, LaunchAction}
 import io.deepsense.experimentmanager.rest.json.ExperimentJsonProtocol
-import io.deepsense.experimentmanager.{DOperationCategories, ExperimentManager, ExperimentManagerProvider}
+import io.deepsense.experimentmanager.{ExperimentManager, ExperimentManagerProvider}
 import io.deepsense.graph.{Edge, Graph, Node}
 import io.deepsense.graphjson.GraphJsonProtocol.GraphReader
 import io.deepsense.models.experiments.Experiment.Status
