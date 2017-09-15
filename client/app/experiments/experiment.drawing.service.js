@@ -65,36 +65,58 @@ function DrawingService() {
     });
   };
 
+  internal.getNodeById = function getNodeById(id) {
+    var idPrefix = '#node-';
+    return document.querySelector(idPrefix + id);
+  };
+
   that.renderExperiment = function renderExperiment(experiment) {
     internal.experiment = experiment;
   };
 
   that.renderPorts = function renderPorts() {
     var nodes = internal.experiment.getNodes();
-    var idPrefix = '#node-';
     for (var i = 0; i < nodes.length; i++) {
-      var node = document.querySelectorAll(idPrefix + nodes[i].id)[0];
+      var node = internal.getNodeById(nodes[i].id);
       that.addOutputPoint(node, nodes[i].output);
       that.addInputPoint(node, nodes[i].input);
     }
   };
 
-  that.addOutputPoint = function addOutputPoint(node, points) {
+  that.renderConnections = function renderConnections() {
+    var edges = internal.experiment.getEdges();
+    var outputPrefix = 'output';
+    var inputPrefix = 'input';
+
+    for (var i = 0; i < edges.length; i++) {
+      var edge = edges[i];
+      jsPlumb.connect({
+        uuids: [outputPrefix + '-' + edge.startPortId + '-' + edge.startNodeId,
+          inputPrefix + '-' + edge.endPortId + '-' + edge.endNodeId
+        ]
+      });
+      console.log(edges[i]);
+    }
+  };
+
+  that.addOutputPoint = function addOutputPoint(node, ports) {
     var anchors = ['BottomCenter', 'BottomLeft', 'BottomRight'];
-    console.log(node.id);
-    for (var i = 0; i < points.length; i++) {
+    for (var i = 0; i < ports.length; i++) {
       jsPlumb.addEndpoint(node, outputStyle, {
-        anchor: anchors[i]
+        anchor: anchors[i],
+        uuid: ports[i].id
       });
     }
   };
 
-  that.addInputPoint = function addInputPoint(node, points) {
+  that.addInputPoint = function addInputPoint(node, ports) {
     var anchors = ['TopCenter', 'TopLeft', 'TopRight'];
-    for (var i = 0; i < points.length; i++) {
+    for (var i = 0; i < ports.length; i++) {
       jsPlumb.addEndpoint(node, inputStyle, {
-        anchor: anchors[i]
+        anchor: anchors[i],
+        uuid: ports[i].id
       });
+      console.log(ports[i].id);
     }
   };
 

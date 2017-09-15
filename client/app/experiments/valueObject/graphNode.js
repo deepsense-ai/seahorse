@@ -14,16 +14,17 @@ function GraphNode(options) {
     that.id = options.id;
     that.type = options.type;
     that.description = options.description;
-    that.input = internal.fetchPorts(options.input);
-    that.output = internal.fetchPorts(options.output);
+    that.input = internal.fetchPorts('input', options.input);
+    that.output = internal.fetchPorts('output', options.output);
     that.x = options.x;
     that.y = options.y;
   };
 
-  internal.fetchPorts = function fetchPorts(ports) {
+  internal.fetchPorts = function fetchPorts(type, ports) {
     var array = [];
     for (var i = 0; i < ports.length; i++) {
       var port = new Port({
+        portId: type + '-' + ports[i].portIndex + '-' + that.id,
         portIndex: ports[i].portIndex,
         required: ports[i].required,
         typeQualifier: ports[i].typeQualifier

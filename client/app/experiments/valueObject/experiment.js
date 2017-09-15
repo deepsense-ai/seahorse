@@ -41,10 +41,10 @@ function Experiment() {
   that.createConnections = function createConnections(connections) {
     for (var i = 0; i < connections.length; i++) {
       var edge = new Edge({
-        startId: connections[i].from.node,
-        startPortId: connections[i].from.node.port,
-        endId: connections[i].to.node,
-        endPortId: connections[i].to.node.port
+        startNodeId: connections[i].from.node,
+        startPortId: connections[i].from.portIndex,
+        endNodeId: connections[i].to.node,
+        endPortId: connections[i].to.portIndex
       });
       internal.edges.push(edge);
     }

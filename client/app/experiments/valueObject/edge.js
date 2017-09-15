@@ -4,11 +4,12 @@
 'use strict';
 
 function Edge(options) {
-
   var that = this;
   that.init = function init() {
-    that.startId = options.startId;
-    that.endId = options.endId;
+    that.startNodeId = options.startNodeId;
+    that.endNodeId = options.endNodeId;
+    that.startPortId = options.startPortId;
+    that.endPortId = options.endPortId;
   };
   that.init();
 }

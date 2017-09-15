@@ -26,6 +26,7 @@ function ExperimentController($stateParams, $rootScope, OperationsAPIClient, Dra
 
   that.onRenderFinish = function onRenderFinish() {
     DrawingService.renderPorts();
+    DrawingService.renderConnections();
   };
 
   that.getExperiment = function getExperiment() {
