@@ -27,28 +27,30 @@ object Version {
   val scalacheck    = "1.12.2"
   val scalatest     = "3.0.0-SNAP4"
   val spray         = "1.3.3"
+  val scoverage     = "1.0.4"
 }
 
 object Library {
-  val akka      = (name: String) => "org.spark-project.akka"  %% s"akka-$name"          % Version.akka
-  val spark   = (name: String) => "org.apache.spark"          %% s"spark-$name"         % Version.spark
-  val spray   = (name: String) => "io.spray"                  %% s"spray-$name"         % Version.spray
+  val akka      = (name: String) => "org.spark-project.akka"  %% s"akka-$name"               % Version.akka
+  val spark   = (name: String) => "org.apache.spark"          %% s"spark-$name"              % Version.spark
+  val spray   = (name: String) => "io.spray"                  %% s"spray-$name"              % Version.spray
 
   val akkaActor          = akka("actor")
   val akkaTestkit        = akka("testkit")
-  val apacheCommons      = "org.apache.commons"                %  "commons-lang3"       % Version.apacheCommons
-  val log4JExtras        = "log4j"                             %  "apache-log4j-extras" % "1.2.17"
-  val nscalaTime         = "com.github.nscala-time"           %%  "nscala-time"         % Version.nsscalaTime
-  val mockitoCore        = "org.mockito"                       %  "mockito-core"        % Version.mockito
-  val scalacheck         = "org.scalacheck"                   %%  "scalacheck"          % Version.scalacheck
-  val slf4jLog4j         = "org.slf4j"                         %  "slf4j-log4j12"       % "1.7.12"
+  val apacheCommons      = "org.apache.commons"                %  "commons-lang3"            % Version.apacheCommons
+  val log4JExtras        = "log4j"                             %  "apache-log4j-extras"      % "1.2.17"
+  val nscalaTime         = "com.github.nscala-time"           %%  "nscala-time"              % Version.nsscalaTime
+  val mockitoCore        = "org.mockito"                       %  "mockito-core"             % Version.mockito
+  val scalacheck         = "org.scalacheck"                   %%  "scalacheck"               % Version.scalacheck
+  val slf4jLog4j         = "org.slf4j"                         %  "slf4j-log4j12"            % "1.7.12"
   val sprayCan           = spray("can")
   val sprayHttpx         = spray("httpx")
-  val sprayJson          = "io.spray"                         %% "spray-json"           % Version.sprayJson
-  val scalaLogging       = "com.typesafe.scala-logging"       %% "scala-logging"        % "3.1.0"
-  val scalaReflect       = "org.scala-lang"                    % "scala-reflect"        % Version.scala
-  val scalatest          = "org.scalatest"                    %% "scalatest"            % Version.scalatest
-  val scopt              = "com.github.scopt"                 %% "scopt"                % "3.3.0"
+  val sprayJson          = "io.spray"                         %% "spray-json"                % Version.sprayJson
+  val scalaLogging       = "com.typesafe.scala-logging"       %% "scala-logging"             % "3.1.0"
+  val scalaReflect       = "org.scala-lang"                    % "scala-reflect"             % Version.scala
+  val scalatest          = "org.scalatest"                    %% "scalatest"                 % Version.scalatest
+  val scopt              = "com.github.scopt"                 %% "scopt"                     % "3.3.0"
+  val scoverage          = "org.scoverage"                    %% "scalac-scoverage-runtime"  % "1.0.4"
   val sparkCore          = spark("core")
   val sparkMLLib         = spark("mllib")
   val sparkSql           = spark("sql")
@@ -74,16 +76,15 @@ object Dependencies {
     sprayCan,
     sprayHttpx,
     sprayJson
-  ) ++ Seq(mockitoCore, scalatest).map(_ % Test)
+  ) ++ Seq(mockitoCore, scalatest, scoverage).map(_ % Test)
 
   val deeplang = Seq(
     nscalaTime,
-//    sprayClient,
     scalaReflect,
     sparkSql,
     sparkMLLib,
     sparkCore
-  ) ++ Seq(scalatest, mockitoCore, scalacheck).map(_ % Test)
+  ) ++ Seq(scalatest, mockitoCore, scalacheck, scoverage).map(_ % Test)
 
   val entitystorageClient = Seq(
     akkaActor

@@ -18,7 +18,6 @@ package io.deepsense.deeplang
 
 import java.util.UUID
 
-import org.apache.hadoop.conf.Configuration
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.types._
 import org.apache.spark.sql.{Row, SQLContext}
@@ -37,26 +36,12 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
 
   var executionContext: ExecutionContext = _
 
-  var sparkConf: SparkConf = _
-  var sparkContext: SparkContext = _
-  var sqlContext: SQLContext = _
+  val sparkConf: SparkConf = DeeplangIntegTestSupport.sparkConf
+  val sparkContext: SparkContext = DeeplangIntegTestSupport.sparkContext
+  val sqlContext: SQLContext = DeeplangIntegTestSupport.sqlContext
   var fileSystemClient: FileSystemClient = _
 
   override def beforeAll(): Unit = {
-    sparkConf =
-      new SparkConf()
-        .setMaster("local[4]")
-        .setAppName("TestApp")
-        .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
-        .registerKryoClasses(Array())
-    sparkContext = new SparkContext(sparkConf)
-    sqlContext = new SQLContext(sparkContext)
-    UserDefinedFunctions.registerFunctions(sqlContext.udf)
-    val config = new Configuration()
-    // TODO: Proper configuration files usage
-    config.addResource("core-site.xml")
-    config.addResource("hdfs-site.xml")
-    // TODO: Configuration string instead of hardcoded fsPath
     fileSystemClient = LocalFileSystemClient()
     prepareExecutionContext
   }
@@ -75,9 +60,7 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
     executionContext.entityStorageClient =
       EntityStorageClientTestInMemoryImpl(entityStorageInitState)
   }
-
-  override def afterAll(): Unit = sparkContext.stop()
-
+  
   protected def assertDataFramesEqual(
       actualDf: DataFrame,
       expectedDf: DataFrame,
@@ -116,6 +99,18 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
   def createDir(path: String): Unit = {
     new java.io.File(path + "/id").getParentFile.mkdirs()
   }
+}
+
+object DeeplangIntegTestSupport {
+  val sparkConf: SparkConf = new SparkConf()
+    .setMaster("local[4]")
+    .setAppName("TestApp")
+    .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
+    .registerKryoClasses(Array())
+  val sparkContext: SparkContext = new SparkContext(sparkConf)
+  val sqlContext: SQLContext = new SQLContext(sparkContext)
+
+  UserDefinedFunctions.registerFunctions(sqlContext.udf)
 }
 
 private class MockedExecutionContext extends ExecutionContext(null) {

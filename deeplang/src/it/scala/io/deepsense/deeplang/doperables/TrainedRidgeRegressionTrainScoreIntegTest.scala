@@ -39,7 +39,7 @@ class TrainedRidgeRegressionTrainScoreIntegTest
     super.beforeAll()
     deleteDataFile()
     executionContext.fsClient.copyLocalFile(
-      this.getClass.getResource("/csv/almost_linear_function.csv").getPath,
+      getClass.getResource("/csv/almost_linear_function.csv").getPath,
       fileName)
   }
 

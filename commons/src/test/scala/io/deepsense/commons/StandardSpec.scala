@@ -30,4 +30,3 @@ class StandardSpec
   extends WordSpec
   with Matchers
   with ScalaFutures
-
