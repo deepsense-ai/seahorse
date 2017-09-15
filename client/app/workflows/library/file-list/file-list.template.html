@@ -12,7 +12,7 @@
   </file-element>
 
   <file-element
-    ng-repeat="item in $ctrl.items"
+    ng-repeat="item in $ctrl.items | orderBy:['kind', 'name']"
     item="item"
     is-last="$last"
     on-select="$ctrl.onSelect"
