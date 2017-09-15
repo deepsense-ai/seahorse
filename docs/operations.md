@@ -17,6 +17,8 @@ List of all currently supported operations:
 * Input/Output
   * [Read DataFrame](operations/read_dataframe.html)
   * [Write DataFrame](operations/write_dataframe.html)
+  * [Read Transformer](operations/read_transformer.html)
+  * [Write Transformer](operations/write_transformer.html)
   * [Notebook](operations/notebook.html)
 * Action
   * [Fit](operations/fit.html)
