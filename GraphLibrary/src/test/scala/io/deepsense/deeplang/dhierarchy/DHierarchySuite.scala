@@ -4,13 +4,14 @@
  * Owner: Witold Jedrzejewski
  */
 
-package io.deepsense.deeplang
+package io.deepsense.deeplang.dhierarchy
 
-import org.scalatest.{Matchers, FunSuite}
 import scala.collection.mutable
-import scala.reflect.runtime.{universe=>ru}
+import scala.reflect.runtime.{universe => ru}
 
-import io.deepsense.deeplang.DHierarchy.{ClassInfo, TraitInfo}
+import org.scalatest.{FunSuite, Matchers}
+
+import io.deepsense.deeplang.DOperable
 
 object H {
   trait T1 extends DOperable

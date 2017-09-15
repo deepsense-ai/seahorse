@@ -1,30 +1,15 @@
-/*
+/**
  * Copyright (c) 2015, CodiLime, Inc.
  *
  * Owner: Witold Jedrzejewski
  */
 
-package io.deepsense.deeplang
+package io.deepsense.deeplang.dhierarchy
 
 import scala.collection.mutable
 import scala.reflect.runtime.{universe => ru}
 
-import io.deepsense.deeplang.DHierarchy.{TraitInfo, ClassInfo, TypeInfo}
-
-object DHierarchy {
-  trait TypeInfo
-
-  case class ClassInfo(
-      val name: String,
-      val parent: Option[String],
-      val traits: List[String])
-    extends TypeInfo
-
-  case class TraitInfo(
-      val name: String,
-      val parents: List[String])
-    extends TypeInfo
-}
+import io.deepsense.deeplang.{DOperable, DOperation}
 
 /**
  * Allows to register and validate hierarchy of DClasses, DTraits and DOperations.
@@ -37,87 +22,6 @@ class DHierarchy {
   private val nodes: mutable.Map[String, Node] = mutable.Map()
 
   this.register(baseType)
-
-  private abstract class Node {
-    protected val typeInfo: Class[_]
-    private[DHierarchy] val isTrait: Boolean = typeInfo.isInterface
-
-    protected var parent: Option[Node] = None
-    protected val supertraits: mutable.Map[String, Node] = mutable.Map()
-    protected val subclasses: mutable.Map[String, Node] = mutable.Map()
-    protected val subtraits: mutable.Map[String, Node] = mutable.Map()
-    /** Name that unambiguously defines underlying type. */
-    private[DHierarchy] val fullName: String = typeInfo.getName.replaceAllLiterally("$", ".")
-    /** The part of the full name after the last '.' */
-    private[DHierarchy] val displayName: String = fullName.substring(fullName.lastIndexOf('.') + 1)
-
-    private[DHierarchy] def addParent(node: Node): Unit = parent = Some(node)
-
-    private[DHierarchy] def addSupertrait(node: Node): Unit = supertraits(node.fullName) = node
-
-    private[DHierarchy] def addSuccessor(node: Node): Unit = {
-      if (node.isTrait) addSubtrait(node) else addSubclass(node)
-    }
-
-    private def addSubclass(node: Node): Unit = subclasses(node.fullName) = node
-
-    private def addSubtrait(node: Node): Unit = subtraits(node.fullName) = node
-
-    private[DHierarchy] def info: TypeInfo
-
-    private def sumSets[T](sets: Iterable[mutable.Set[T]]): mutable.Set[T] = {
-      sets.foldLeft(mutable.Set[T]())((x, y) => x ++ y)
-    }
-
-    /** Returns set of all leaf-nodes that are descendants of this. */
-    private[DHierarchy] def leafNodes: mutable.Set[Node] = {
-      if (subclasses.isEmpty && subtraits.isEmpty) mutable.Set(this) // this is leaf-class
-      else {
-        val descendants = subclasses.values.map(_.leafNodes) ++ subtraits.values.map(_.leafNodes)
-        sumSets[Node](descendants)
-      }
-    }
-
-    /**
-     * Creates instance of type represented by this.
-     * Invokes first constructor and assumes that it takes no parameters.
-     */
-    private[DHierarchy] def createInstance(): DOperable = {
-      val constructor = typeInfo.getConstructors()(0)
-      constructor.newInstance().asInstanceOf[DOperable]
-    }
-
-    override def toString = s"Node($fullName)"
-  }
-
-  private class TraitNode(protected override val typeInfo: Class[_]) extends Node {
-
-    private[DHierarchy] override def addParent(node: Node): Unit = {
-      throw new RuntimeException // TODO: What is the exceptions convention here?
-    }
-
-    private[DHierarchy] override def info: TypeInfo = {
-      TraitInfo(displayName, supertraits.values.map(_.displayName).toList)
-    }
-  }
-
-  private class ClassNode(protected override val typeInfo: Class[_]) extends Node {
-
-    private[DHierarchy] override def info: TypeInfo = {
-      val parentName = if (parent.isDefined) Some(parent.get.displayName) else None
-      ClassInfo(displayName, parentName, supertraits.values.map(_.displayName).toList)
-    }
-  }
-
-  private object Node {
-    def apply(typeInfo: Class[_]): Node = {
-      if (typeInfo.isInterface) {
-        new TraitNode(typeInfo)
-      } else {
-        new ClassNode(typeInfo)
-      }
-    }
-  }
 
   private def classToType(c: Class[_]): ru.Type = mirror.classSymbol(c).toType
 
@@ -206,8 +110,7 @@ class DHierarchy {
     this.register(ru.typeOf[C])
   }
 
-  def registerDOperation[T <: DOperation](): Unit = ???
-
+  /** Returns structure describing hierarchy. */
   def info: (Iterable[TypeInfo], Iterable[TypeInfo]) = {
     val (traits, classes) = nodes.values.partition(_.isTrait)
     (traits.map(_.info), classes.map(_.info))
