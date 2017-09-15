@@ -5,6 +5,7 @@
 name := "deepsense-backend"
 
 lazy val deeplang          = project
+lazy val entitystorage     = project dependsOn (deeplang)
 lazy val experimentmanager = project dependsOn (deeplang, graphjson, graphexecutor)
 lazy val graph             = project dependsOn deeplang
 lazy val graphexecutor     = project dependsOn graph

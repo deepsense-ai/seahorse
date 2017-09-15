@@ -61,6 +61,10 @@ object Dependencies {
     "spray.io"     at "http://repo.spray.io"
   )
 
+  val entitystorage = Seq(
+
+  ) ++ Seq(scalatest, mockitoCore).map(_ % "test")
+
   val deeplang = Seq(
     nscalaTime,
     scalaReflect,
