@@ -5,9 +5,11 @@
 
 var Experiment = require('./common-objects/common-experiment.js');
 
-function ExperimentService() {
+function ExperimentService(OperationsHierarchyService) {
   var that = this;
-  var internal = {};
+  var internal = {
+    experiment: null
+  };
 
   that.createExperiment = function createExperiment(data, operations) {
     var experiment = new Experiment();
@@ -16,6 +18,7 @@ function ExperimentService() {
     experiment.createNodes(data.experiment.graph.nodes, operations, data.experiment.state);
     experiment.createEdges(data.experiment.graph.edges);
     experiment.updateState(data.experiment.state);
+    experiment.updateEdgesStates(OperationsHierarchyService);
 
     return experiment;
   };
@@ -28,8 +31,20 @@ function ExperimentService() {
     internal.experiment = experiment;
   };
 
-  that.clearExperiment = function clearExperiment () {
+  that.clearExperiment = function clearExperiment() {
     internal.experiment = null;
+  };
+
+  that.updateTypeKnowledge = function updateTypeKnowledge (data) {
+    internal.experiment.updateTypeKnowledge(data.experiment.typeKnowledge);
+  };
+
+  that.updateEdgesStates = function () {
+    internal.experiment.updateEdgesStates(OperationsHierarchyService);
+  };
+
+  that.experimentIsSet = function experimentIsSet () {
+    return !_.isNull(internal.experiment);
   };
 
   return that;

@@ -6,7 +6,8 @@
 /* @ngInject */
 function ExperimentController(
   $http, $modal, $timeout, $stateParams, $scope,
-  PageService, Operations, GraphPanelRendererService, ExperimentService, ExperimentAPIClient, UUIDGenerator
+  PageService, Operations, GraphPanelRendererService, ExperimentService, ExperimentAPIClient,
+  OperationsHierarchyService, UUIDGenerator
 ) {
   const RUN_STATE_CHECK_INTERVAL = 2000;
 
@@ -19,34 +20,22 @@ function ExperimentController(
   internal.selectedNode = null;
   internal.isDataLoaded = false;
 
-  internal.initializeOperations = () => {
-    return Operations.load().then(() => {
-      console.log('Operations data downloaded successfully');
-    });
-  };
-
-  internal.loadExperiment = () => {
-    return ExperimentAPIClient
-      .getData($stateParams.id)
-      .then((data) => {
+  /**
+   * Loads all view-specific data.
+   */
+  internal.init = function init() {
+    Operations.load().
+      then(OperationsHierarchyService.load).
+      then(() => ExperimentAPIClient.getData($stateParams.id)).
+      then((data) => {
         console.log('Experiment downloaded successfully');
+
         PageService.setTitle('Experiment: ' + data.experiment.name);
         ExperimentService.setExperiment(ExperimentService.createExperiment(data, Operations.getData()));
-        GraphPanelRendererService.renderExperiment(ExperimentService.getExperiment());
+        GraphPanelRendererService.setExperiment(ExperimentService.getExperiment());
+
         internal.isDataLoaded = true;
       });
-  };
-
-  internal.init = function init() {
-    internal.initializeOperations().then(internal.loadExperiment);
-  };
-
-  that.onRenderFinish = function onRenderFinish() {
-    GraphPanelRendererService.init();
-    GraphPanelRendererService.renderPorts();
-    GraphPanelRendererService.renderEdges();
-    GraphPanelRendererService.repaintEverything();
-    that.checkExperimentState();
   };
 
   /**
@@ -54,26 +43,79 @@ function ExperimentController(
    *
    * @param {object} data
    */
-  that.handleExperimentStateChange = function handleExperimentStateChange(data) {
-    let experiment = ExperimentService.getExperiment();
-    if (!_.isUndefined(experiment)) {
-      experiment.updateState(data.experiment.state);
+  internal.handleExperimentStateChange = function handleExperimentStateChange(data) {
+    if (ExperimentService.experimentIsSet()) {
+      ExperimentService.getExperiment().updateState(data.experiment.state);
       that.checkExperimentState();
     }
+  };
+
+  internal.rerenderEdges = function rerenderEdges() {
+    ExperimentService.updateEdgesStates();
+    GraphPanelRendererService.changeEdgesPaintStyles();
+  };
+
+  /**
+   * Updates edges' states and rerender all edges.
+   *
+   * @param {Object} data
+   */
+  internal.updateAndRerenderEdges = function updateAndRerenderEdges(data) {
+    ExperimentService.updateTypeKnowledge(data);
+    internal.rerenderEdges();
+  };
+
+  /**
+   * Saves the experiment data by sending a request to the server.
+   *
+   * @returns {Promise}
+   */
+  internal.saveExperiment = function saveExperiment() {
+    let serializedExperiment = ExperimentService.getExperiment().serialize();
+
+    return ExperimentAPIClient.
+      saveData({
+        'experiment': serializedExperiment
+      }).
+      then((result) => {
+        if (ExperimentService.experimentIsSet()) {
+          internal.handleExperimentStateChange(result);
+          internal.updateAndRerenderEdges(result);
+
+          // TODO: compare sent data with response / update experiment if needed
+        }
+      });
   };
 
   /**
    * Loads experiment state data.
    */
-  that.loadExperimentState = function loadExperimentState() {
-    let experiment = ExperimentService.getExperiment();
-    if (!_.isUndefined(experiment)) {
+  internal.loadExperimentState = function loadExperimentState() {
+    if (ExperimentService.experimentIsSet()) {
       ExperimentAPIClient.
-        getData(experiment.getId()).
-        then(that.handleExperimentStateChange, (error) => {
+        getData(ExperimentService.getExperiment().getId()).
+        then((data) => {
+          if (ExperimentService.experimentIsSet()) {
+            internal.handleExperimentStateChange(data);
+            internal.updateAndRerenderEdges(data);
+          }
+        }, (error) => {
           console.error('experiment fetch state error', error);
         });
     }
+  };
+
+  /**
+   * Executes when all nodes are rendered.
+   * It triggers the jsPlumb drawing.
+   */
+  that.onRenderFinish = function onRenderFinish() {
+    GraphPanelRendererService.init();
+    GraphPanelRendererService.renderPorts();
+    GraphPanelRendererService.renderEdges();
+    GraphPanelRendererService.repaintEverything();
+
+    that.checkExperimentState();
   };
 
   /**
@@ -82,7 +124,7 @@ function ExperimentController(
   that.checkExperimentState = function checkExperimentState() {
     $timeout.cancel(internal.runStateTimeout);
     if (ExperimentService.getExperiment().isRunning()) {
-      internal.runStateTimeout = $timeout(that.loadExperimentState, RUN_STATE_CHECK_INTERVAL, false);
+      internal.runStateTimeout = $timeout(internal.loadExperimentState, RUN_STATE_CHECK_INTERVAL, false);
     }
   };
 
@@ -100,15 +142,6 @@ function ExperimentController(
     internal.selectedNode = null;
   };
 
-  that.saveData = function saveData() {
-    let data = ExperimentService.getExperiment().serialize();
-    ExperimentAPIClient.saveData({
-      'experiment': data
-    }).then((result) => {
-      that.handleExperimentStateChange(result);
-      // TODO: compare sent data with response / update experiment if needed
-    });
-  };
 
   $scope.$on(GraphNode.CLICK, (event, data) => {
     let node = data.selectedNode;
@@ -129,19 +162,19 @@ function ExperimentController(
   });
 
   $scope.$on(GraphNode.MOVE, (data) => {
-    that.saveData();
+    internal.saveExperiment();
   });
 
   $scope.$on(Edge.CREATE, (data, args)  => {
     ExperimentService.getExperiment().addEdge(args.edge);
-    $scope.$digest();
-    that.saveData();
+    internal.rerenderEdges();
+    internal.saveExperiment();
   });
 
   $scope.$on(Edge.REMOVE, (data, args)  => {
     ExperimentService.getExperiment().removeEdge(args.edge);
-    $scope.$digest();
-    that.saveData();
+    internal.rerenderEdges();
+    internal.saveExperiment();
   });
 
   $scope.$on('Keyboard.KEY_PRESSED', (event, data) => {
@@ -149,9 +182,13 @@ function ExperimentController(
       ExperimentService.getExperiment().removeNode(internal.selectedNode.id);
       GraphPanelRendererService.removeNode(internal.selectedNode.id);
       that.unselectNode();
+
+      internal.rerenderEdges();
+
       that.onRenderFinish();
       $scope.$digest();
-      that.saveData();
+
+      internal.saveExperiment();
     }
   });
 
@@ -172,12 +209,12 @@ function ExperimentController(
     GraphPanelRendererService.repaintEverything();
     $scope.$digest();
     that.onRenderFinish();
-    that.saveData();
+    internal.saveExperiment();
   });
 
   $scope.$on('Experiment.RUN', () => {
     ExperimentAPIClient.runExperiment(ExperimentService.getExperiment().getId()).then((data) => {
-      that.handleExperimentStateChange(data);
+      internal.handleExperimentStateChange(data);
     }, (error) => {
       console.log('experiment launch error', error);
     });
@@ -185,7 +222,7 @@ function ExperimentController(
 
   $scope.$on('Experiment.ABORT', () => {
     ExperimentAPIClient.abortExperiment(ExperimentService.getExperiment().getId()).then((data) => {
-      that.handleExperimentStateChange(data);
+      internal.handleExperimentStateChange(data);
     }, (error) => {
       console.log('experiment abort error', error);
     });
@@ -220,6 +257,7 @@ function ExperimentController(
   // --- --- ---
 
   internal.init();
+
   return that;
 }
 

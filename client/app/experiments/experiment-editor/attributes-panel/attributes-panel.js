@@ -6,7 +6,7 @@
 
 'use strict';
 
-function OperationAttributesView() {
+function OperationAttributesView($timeout) {
   return {
     restrict: 'E',
     scope: false,
@@ -14,7 +14,8 @@ function OperationAttributesView() {
     replace: true,
     link: (scope, element, attrs) => {
       scope.closePanel = function () {
-        scope.experiment.unselectNode();
+        element.addClass('fadeOut');
+        $timeout(() => { scope.experiment.unselectNode(); }, 1000, false);
       };
 
       scope.$watch('experiment.getSelectedNode()', function() {

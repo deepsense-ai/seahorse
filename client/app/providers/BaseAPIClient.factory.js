@@ -28,7 +28,7 @@ function BaseAPIClientFactory($http, $q) {
    *
    * @return {Promise}
    */
-  BaseAPIClient.prototype.makeRequest = function (method, url, data) {
+  BaseAPIClient.prototype.makeRequest = function (method, url, data = {}) {
     let deferred = $q.defer();
     $http({
       'method': method,

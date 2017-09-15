@@ -46,12 +46,14 @@ describe('experiment', () => {
           'ports': {
             'input': [
               {
-                'portIndex': 0
+                'portIndex': 0,
+                'typeQualifier': ['T1']
               }
             ],
             'output': [
               {
-                'portIndex': 0
+                'portIndex': 0,
+                'typeQualifier': ['T21', 'T22']
               }
             ]
           },
@@ -64,12 +66,14 @@ describe('experiment', () => {
           'ports': {
             'input': [
               {
-                'portIndex': 0
+                'portIndex': 0,
+                'typeQualifier': ['T31', 'T32']
               }
             ],
             'output': [
               {
-                'portIndex': 0
+                'portIndex': 0,
+                'typeQualifier': ['T4']
               }
             ]
           },
@@ -240,7 +244,7 @@ describe('experiment', () => {
     expect(experiment.isRunning()).toBe(false);
     checkNodeStatuses(experiment, {
       '101': STATUS.DRAFT,
-      '102': STATUS.DRAFT,
+      '102': STATUS.DRAFT
     });
 
     experiment.updateState({
@@ -257,14 +261,14 @@ describe('experiment', () => {
     expect(experiment.isRunning()).toBe(true);
     checkNodeStatuses(experiment, {
       '101': STATUS.RUNNING,
-      '102': STATUS.QUEUED,
+      '102': STATUS.QUEUED
     });
 
     experiment.updateState({});
     expect(experiment.isRunning()).toBe(true);
     checkNodeStatuses(experiment, {
       '101': STATUS.RUNNING,
-      '102': STATUS.QUEUED,
+      '102': STATUS.QUEUED
     });
 
     experiment.updateState({
@@ -278,8 +282,114 @@ describe('experiment', () => {
     expect(experiment.isRunning()).toBe(false);
     checkNodeStatuses(experiment, {
       '101': STATUS.FAILED,
-      '102': STATUS.QUEUED,
+      '102': STATUS.QUEUED
     });
   });
 
+  it('updates type knowledge regarding output ports', () => {
+    let experiment = new Experiment();
+    experiment.createNodes(initNodes, initOperations, initState);
+
+    let nodes = experiment.getNodes();
+    let node0 = nodes[initNodes[0].id];
+    let node1 = nodes[initNodes[1].id];
+
+    expect(node0.input[0].typeQualifier).toEqual(initOperations.o1.ports.input[0].typeQualifier);
+    expect(node0.output[0].typeQualifier).toEqual(initOperations.o1.ports.output[0].typeQualifier);
+
+    expect(node1.input[0].typeQualifier).toEqual(initOperations.o2.ports.input[0].typeQualifier);
+    expect(node1.output[0].typeQualifier).toEqual(initOperations.o2.ports.output[0].typeQualifier);
+
+    let typeKnowledge = {};
+    typeKnowledge[node0.id] = [ ['T02'] ];
+    typeKnowledge[node1.id] = [ ['T04'] ];
+
+    experiment.updateTypeKnowledge(typeKnowledge);
+
+    expect(node0.input[0].typeQualifier).toEqual(initOperations.o1.ports.input[0].typeQualifier);
+    expect(node0.output[0].typeQualifier).toEqual(['T02']);
+
+    expect(node1.input[0].typeQualifier).toEqual(initOperations.o2.ports.input[0].typeQualifier);
+    expect(node1.output[0].typeQualifier).toEqual(['T04']);
+  });
+
+  describe('updates edges\' states.', () => {
+    let OperationsHierarchyService;
+    let initExperiment = (experiment) => {
+      experiment.createNodes(initNodes, initOperations, initState);
+      experiment.createEdges(initConnections);
+    };
+
+    beforeEach(() => {
+      angular.mock.module(($provide) => {
+        $provide.factory('OperationsHierarchyService', () => {
+          return {
+            IsDescendantOf: (node, ancestors) => {
+              let matrix = {
+                'T31': {
+                  'T21': true,
+                  'T22': true,
+                  'T23': true
+                },
+                'T32': {
+                  'T21': true,
+                  'T22': true
+                }
+              };
+
+              let result = true;
+              _.each(ancestors, (ancestor) => {
+                if (!(matrix[node] && matrix[node][ancestor])) {
+                  result = false;
+                }
+              });
+              return result;
+            }
+          };
+        });
+      });
+
+      angular.mock.inject((_OperationsHierarchyService_) => {
+        OperationsHierarchyService = _OperationsHierarchyService_;
+      });
+    });
+
+    it('The edge\'s state equals ALWAYS', angular.mock.inject((OperationsHierarchyService) => {
+      let experiment = new Experiment();
+      initExperiment(experiment);
+
+      // T21,T22 -> T31,T32
+      let edge = _.values(experiment.getEdges())[0];
+      experiment.updateEdgesStates(OperationsHierarchyService);
+      expect(edge.state).toBe(edge.STATE_TYPE.ALWAYS);
+    }));
+
+    it('The edge\'s state equals MAYBE', angular.mock.inject((OperationsHierarchyService) => {
+      let experiment = new Experiment();
+      initExperiment(experiment);
+
+      let typeKnowledge = {};
+      typeKnowledge[initNodes[0].id] = [ ['T22', 'T23'] ];
+      experiment.updateTypeKnowledge(typeKnowledge);
+
+      // T22,T23 -> T31,T32
+      let edge = _.values(experiment.getEdges())[0];
+      experiment.updateEdgesStates(OperationsHierarchyService);
+      expect(edge.state).toBe(edge.STATE_TYPE.MAYBE);
+    }));
+
+    it('The edge\'s state equals MAYBE', angular.mock.inject((OperationsHierarchyService) => {
+      let experiment = new Experiment();
+      initExperiment(experiment);
+
+      let typeKnowledge = {};
+      typeKnowledge[initNodes[0].id] = [ ['T23', 'T24'] ];
+      experiment.updateTypeKnowledge(typeKnowledge);
+
+      // T23,T24 -> T31,T32
+      let edge = _.values(experiment.getEdges())[0];
+      experiment.updateEdgesStates(OperationsHierarchyService);
+      expect(edge.state).toBe(edge.STATE_TYPE.NEVER);
+    }));
+  });
 });

@@ -9,6 +9,7 @@ function Edge(options) {
   this.startPortId = options.startPortId;
   this.endPortId = options.endPortId;
   this.id = this.generateId();
+  this.state = this.STATE_TYPE.UNKNOWN;
 }
 
 /**
@@ -24,7 +25,7 @@ Edge.prototype.generateId = function generateId() {
  * @return {object}
  */
 Edge.prototype.serialize = function serialize() {
-  let data = {
+  return {
     'from': {
       'nodeId': this.startNodeId,
       'portIndex': this.startPortId
@@ -34,9 +35,16 @@ Edge.prototype.serialize = function serialize() {
       'portIndex': this.endPortId
     }
   };
-
-  return data;
 };
+
+Edge.STATE_TYPE = {
+  'ALWAYS': 'Edge.STATE_TYPE.ALWAYS',
+  'MAYBE': 'Edge.STATE_TYPE.MAYBE',
+  'NEVER': 'Edge.STATE_TYPE.NEVER',
+  'UNKNOWN': 'Edge.STATE_TYPE.UNKNOWN'
+};
+
+Edge.prototype.STATE_TYPE = Edge.STATE_TYPE;
 
 Edge.CREATE = 'Edge.CREATE';
 Edge.REMOVE = 'Edge.REMOVE';

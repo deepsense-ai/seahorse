@@ -155,7 +155,6 @@ function Experiment() {
    * Add node from internal data.
    *
    * @param {Node} node
-   *
    */
   that.addNode = function addNode(node) {
     if (that.getNodeById(node.id)) {
@@ -168,7 +167,6 @@ function Experiment() {
    * Add edge from internal data.
    *
    * @param {Edge} edge
-   *
    */
   that.addEdge = function addEdge(edge) {
 
@@ -191,7 +189,6 @@ function Experiment() {
    * Removes edge
    *
    * @param {Edge} edge
-   *
    */
   that.removeEdge = function removeEdge(edge) {
     if (!edge.id) {
@@ -213,7 +210,6 @@ function Experiment() {
    * Removes node
    *
    * @param {string} nodeId
-   *
    */
   that.removeNode = function removeNode(nodeId) {
     try {
@@ -232,7 +228,6 @@ function Experiment() {
    *
    * @return {Edge}
    */
-
   that.createEdge = function createEdge(data) {
     var edge = new Edge({
       startNodeId: data.from.nodeId,
@@ -248,7 +243,6 @@ function Experiment() {
    *
    * @param {object} edges
    */
-
   that.createEdges = function createEdges(edges) {
     for (var i = 0; i < edges.length; i++) {
       var edge = that.createEdge(edges[i]);
@@ -261,7 +255,6 @@ function Experiment() {
    *
    * @return {object}
    */
-
   that.serialize = function serialize() {
     let data = {
       'id': internal.id,
@@ -282,6 +275,56 @@ function Experiment() {
     }
 
     return data;
+  };
+
+  /**
+   * Updates type knowledge concerning output ports
+   *
+   * @param {Object} typeKnowledge
+   */
+  that.updateTypeKnowledge = function (typeKnowledge) {
+    _.forEach(this.getNodes(), (node) => {
+      let newOutputPorts = typeKnowledge[node.id];
+      if (newOutputPorts) {
+        _.forEach(node.output, (port) => {
+          let newTypes = newOutputPorts[port.index];
+          if (newTypes) {
+            port.typeQualifier = newTypes.slice();
+          }
+        });
+      }
+    });
+  };
+
+  /**
+   * Updates all edges' states.
+   *
+   * @param {OperationsHierarchyService} OperationsHierarchyService
+   */
+  that.updateEdgesStates = function (OperationsHierarchyService) {
+    let nodes = this.getNodes();
+
+    _.forEach(this.getEdges(), (edge) => {
+      let startNode = nodes[edge.startNodeId];
+      let endNode = nodes[edge.endNodeId];
+      let outputTypes = _.find(startNode.output, (port) => port.index === edge.startPortId).typeQualifier;
+      let inputTypes = _.find(endNode.input, (port) => port.index === edge.endPortId).typeQualifier;
+
+      let numberOfValidTypes = 0;
+      _.each(inputTypes, (inputType) => {
+        numberOfValidTypes += (OperationsHierarchyService.IsDescendantOf(inputType, outputTypes) ? 1 : 0);
+      });
+
+      if (numberOfValidTypes === inputTypes.length) {
+        edge.state = edge.STATE_TYPE.ALWAYS;
+      } else if (numberOfValidTypes === 0) {
+        edge.state = edge.STATE_TYPE.NEVER;
+      } else {
+        edge.state = edge.STATE_TYPE.MAYBE;
+      }
+
+      //console.log(`(${startNode.name}, ${outputTypes}) -> (${endNode.name}, ${inputTypes})  ${edge.state}`);
+    });
   };
 }
 

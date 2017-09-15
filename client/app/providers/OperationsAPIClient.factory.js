@@ -10,6 +10,7 @@
 function OperationsAPIClientFactory(BaseAPIClient) {
   const PATH_OPERATIONS = '/operations';
   const PATH_CATALOG    = '/operations/catalog';
+  const PATH_HIERARCHY  = '/operations/hierarchy';
 
   function OperationsAPIClient() {
     BaseAPIClient.call(this);
@@ -42,6 +43,15 @@ function OperationsAPIClientFactory(BaseAPIClient) {
    */
   OperationsAPIClient.prototype.getCatalog = function getCatalog() {
     return this.makeRequest(this.METHOD_GET, this.API_PATH + PATH_CATALOG);
+  };
+
+  /**
+   * Returns operation's hierarchy data.
+   *
+   * @return {Promise}
+   */
+  OperationsAPIClient.prototype.getHierarchy = function getHierarchy() {
+    return this.makeRequest(this.METHOD_GET, this.API_PATH + PATH_HIERARCHY);
   };
 
   return new OperationsAPIClient();

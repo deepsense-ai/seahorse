@@ -22,7 +22,7 @@ describe('Operations', () => {
           'id': 'id-02',
           'category': 'c2',
           'value': 102
-        },
+        }
       },
       mockOperationsFull = {
         'id-01': {
@@ -43,7 +43,7 @@ describe('Operations', () => {
             'name': 'Category1',
             'items': [
               {
-                'id': id,
+                'id': id
               }
             ],
             'catalog': [
@@ -63,7 +63,7 @@ describe('Operations', () => {
             'name': 'Category2',
             'items': [
               {
-                'id': 'id-02',
+                'id': 'id-02'
               }
             ]
           }
@@ -226,27 +226,27 @@ describe('Operations', () => {
       $rootScope.$apply();
     }));
 
-    it('catalog', angular.mock.inject(($rootScope, OperationsAPIClient) => {
+    it('catalog', angular.mock.inject(() => {
       expect(Operations.getCatalog()).toEqual(mockCatalog.catalog);
     }));
 
-    it('known category', angular.mock.inject(($rootScope, OperationsAPIClient) => {
+    it('known category', angular.mock.inject(() => {
       expect(Operations.getCategory(category1)).toEqual(mockCatalog.catalog[0]);
     }));
 
-    it('unknown category', angular.mock.inject(($rootScope, OperationsAPIClient) => {
+    it('unknown category', angular.mock.inject(() => {
       expect(Operations.getCategory('categoryX')).toBeNull();
     }));
 
-    it('operation list', angular.mock.inject(($rootScope, OperationsAPIClient) => {
+    it('operation list', angular.mock.inject(() => {
       expect(Operations.getData()).toEqual(mockOperations);
     }));
 
-    it('known operation', angular.mock.inject(($rootScope, OperationsAPIClient) => {
+    it('known operation', angular.mock.inject(() => {
       expect(Operations.get(id)).toEqual(mockOperations[id]);
     }));
 
-    it('unknown operation', angular.mock.inject(($rootScope, OperationsAPIClient) => {
+    it('unknown operation', angular.mock.inject(() => {
       expect(Operations.get('id-X')).toBeNull();
     }));
   });
@@ -260,7 +260,7 @@ describe('Operations', () => {
     }));
 
     it('which return promise',
-      angular.mock.inject(($rootScope, OperationsAPIClient) =>
+      angular.mock.inject(() =>
     {
       let promise = Operations.getWithParams(id);
       expect(promise).toEqual(jasmine.any(Object));

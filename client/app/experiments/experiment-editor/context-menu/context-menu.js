@@ -20,7 +20,6 @@ function ContextMenu() {
     templateUrl: 'app/experiments/experiment-editor/context-menu/context-menu.html',
     link: function (scope, element, attribtues, controller) {
       scope.$watch('state', function(newValue) {
-        console.log(scope.positionX, scope.positionY);
         if (newValue === 'visible') {
           controller.open();
         } else {

@@ -8,10 +8,12 @@ function ReportOptionsController($scope, $rootScope, ReportOptionsService, Exper
     let port = data.reference;
     let nodeId = port.getParameter('nodeId');
     let currentNode = ExperimentService.getExperiment().getNodes()[nodeId];
+
     ReportOptionsService.setCurrentPort(port);
     ReportOptionsService.setCurrentNode(currentNode);
     ReportOptionsService.clearReportOptions();
     ReportOptionsService.updateReportOptions();
+
     $rootScope.$broadcast('ReportOptions.UPDATED', data);
   });
 

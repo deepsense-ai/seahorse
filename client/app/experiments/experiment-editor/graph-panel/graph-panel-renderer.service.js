@@ -6,12 +6,22 @@
 var jsPlumb = require('jsPlumb'),
   Edge = require('../../common-objects/common-edge.js');
 
-var connectorPaintStyle = {
+var connectorPaintStyleDefault = {
   lineWidth: 2,
-  strokeStyle: '#61B7CF',
   outlineColor: 'white',
   outlineWidth: 2
 };
+
+/**
+ * Maps edge's state to its style object
+ *
+ * @type {object}
+ */
+var connectorPaintStyles = {};
+connectorPaintStyles[Edge.STATE_TYPE.ALWAYS] = _.defaults({}, connectorPaintStyleDefault, { strokeStyle: '#61B7CF' });
+connectorPaintStyles[Edge.STATE_TYPE.MAYBE] = _.defaults({}, connectorPaintStyleDefault, { strokeStyle: '#F8AC59' });
+connectorPaintStyles[Edge.STATE_TYPE.NEVER] = _.defaults({}, connectorPaintStyleDefault, { strokeStyle: '#ED5565' });
+connectorPaintStyles[Edge.STATE_TYPE.UNKNOWN] = _.defaults({}, connectorPaintStyleDefault, { strokeStyle: 'gray' });
 
 var connectorHoverStyle = {
   strokeStyle: '#216477'
@@ -31,7 +41,7 @@ var outputStyle = {
   },
   isSource: true,
   connector: ['Bezier'],
-  connectorStyle: connectorPaintStyle,
+  connectorStyle: connectorPaintStyles[Edge.STATE_TYPE.UNKNOWN],
   hoverPaintStyle: endpointHoverStyle,
   connectorHoverStyle: connectorHoverStyle,
   maxConnections: -1
@@ -80,8 +90,12 @@ function GraphPanelRendererService($rootScope) {
     jsPlumb.repaintEverything();
   };
 
-  that.renderExperiment = function renderExperiment(experiment) {
+  that.setExperiment = function setExperiment(experiment) {
     internal.experiment = experiment;
+  };
+
+  that.clearExperiment = function clearExperiment() {
+    internal.experiment = null;
   };
 
   that.removeNode = function removeNode(nodeId) {
@@ -115,6 +129,21 @@ function GraphPanelRendererService($rootScope) {
           ]
         });
         connection.setParameter('edgeId', edge.id);
+      }
+    }
+
+    that.changeEdgesPaintStyles();
+  };
+
+  that.changeEdgesPaintStyles = function changeEdgesStates() {
+    let connections = jsPlumb.getConnections();
+    let edges = internal.experiment.getEdges();
+    for (let id in edges) {
+      let edge = edges[id];
+      let connection = _.find(connections, (connection) => connection.getParameter('edgeId') === edge.id );
+
+      if (!_.isUndefined(connection)) {
+        connection.setPaintStyle(connectorPaintStyles[edge.state]);
       }
     }
   };
@@ -161,26 +190,6 @@ function GraphPanelRendererService($rootScope) {
     }
   };
 
-  that.addEndpoint = function addEndpoint(node, place) {
-    var inputStyle = {
-      endpoint: 'Dot',
-      paintStyle: {
-        fillStyle: '#7AB02C',
-        radius: 10,
-        lineWidth: 2
-      },
-      isSource: true,
-      connector: ['Bezier'],
-      connectorStyle: connectorPaintStyle,
-      hoverPaintStyle: endpointHoverStyle,
-      connectorHoverStyle: connectorHoverStyle
-    };
-
-    jsPlumb.addEndpoint(node, inputStyle, {
-      anchor: place
-    });
-  };
-
   that.bindEdgeEvent = function bindEdgeEvents() {
     jsPlumb.bind('connection', (info, originalEvent) => {
       if (!originalEvent) {
@@ -196,8 +205,9 @@ function GraphPanelRendererService($rootScope) {
             'nodeId': info.targetId.slice(nodeIdPrefixLength),
             'portIndex': info.targetEndpoint.getParameter('portIndex')
           }
-        },
-        edge = internal.experiment.createEdge(data);
+        };
+      let edge = internal.experiment.createEdge(data);
+
       info.connection.setParameter('edgeId', edge.id);
       $rootScope.$broadcast(Edge.CREATE, {edge: edge});
     });
@@ -217,10 +227,6 @@ function GraphPanelRendererService($rootScope) {
     jsPlumb.bind('connectionDrag', () => {
       $rootScope.$broadcast(Edge.DRAG);
     });
-  };
-
-  that.clearExperiment = function clearExperiment () {
-    internal.experiment = null;
   };
 
   return that;

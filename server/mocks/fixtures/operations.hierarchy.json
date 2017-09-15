@@ -1,0 +1,120 @@
+{
+  "traits": {
+    "io.deepsense.deeplang.DOperable": {
+      "name": "io.deepsense.deeplang.DOperable",
+      "parents": []
+    },
+    "io.deepsense.deeplang.doperables.SingleTargetRegressor": {
+      "name": "io.deepsense.deeplang.doperables.SingleTargetRegressor",
+      "parents": [
+        "io.deepsense.deeplang.doperables.Regressor"
+      ]
+    },
+    "io.deepsense.deeplang.doperables.Scorable": {
+      "name": "io.deepsense.deeplang.doperables.Scorable",
+      "parents": [
+        "io.deepsense.deeplang.DOperable"
+      ]
+    },
+    "io.deepsense.deeplang.doperables.Regressor": {
+      "name": "io.deepsense.deeplang.doperables.Regressor",
+      "parents": [
+        "io.deepsense.deeplang.DOperable"
+      ]
+    },
+    "io.deepsense.deeplang.doperables.BinaryClassifier": {
+      "name": "io.deepsense.deeplang.doperables.BinaryClassifier",
+      "parents": [
+        "io.deepsense.deeplang.DOperable"
+      ]
+    },
+    "io.deepsense.deeplang.doperables.Trainable": {
+      "name": "io.deepsense.deeplang.doperables.Trainable",
+      "parents": [
+        "io.deepsense.deeplang.DOperable"
+      ]
+    }
+  },
+  "classes": {
+    "io.deepsense.deeplang.doperables.RidgeRegression": {
+      "name": "io.deepsense.deeplang.doperables.RidgeRegression",
+      "parent": "io.deepsense.deeplang.doperables.LinearModel",
+      "traits": [
+        "io.deepsense.deeplang.doperables.SingleTargetRegressor"
+      ]
+    },
+    "io.deepsense.deeplang.doperables.TrainedRidgeRegression": {
+      "name": "io.deepsense.deeplang.doperables.TrainedRidgeRegression",
+      "parent": "io.deepsense.deeplang.doperables.RidgeRegression",
+      "traits": [
+        "io.deepsense.deeplang.doperables.Scorable"
+      ]
+    },
+    "io.deepsense.deeplang.doperables.UntrainedLogisticRegression": {
+      "name": "io.deepsense.deeplang.doperables.UntrainedLogisticRegression",
+      "parent": "io.deepsense.deeplang.doperables.LogisticRegression",
+      "traits": [
+        "io.deepsense.deeplang.doperables.Trainable"
+      ]
+    },
+    "io.deepsense.deeplang.doperables.file.File": {
+      "name": "io.deepsense.deeplang.doperables.file.File",
+      "parent": null,
+      "traits": [
+        "io.deepsense.deeplang.DOperable"
+      ]
+    },
+    "io.deepsense.deeplang.doperables.LinearModel": {
+      "name": "io.deepsense.deeplang.doperables.LinearModel",
+      "parent": "io.deepsense.deeplang.doperables.SupervisedModel",
+      "traits": []
+    },
+    "io.deepsense.deeplang.doperables.UntrainedRidgeRegression": {
+      "name": "io.deepsense.deeplang.doperables.UntrainedRidgeRegression",
+      "parent": "io.deepsense.deeplang.doperables.RidgeRegression",
+      "traits": [
+        "io.deepsense.deeplang.doperables.Trainable"
+      ]
+    },
+    "io.deepsense.deeplang.doperables.LogisticRegression": {
+      "name": "io.deepsense.deeplang.doperables.LogisticRegression",
+      "parent": "io.deepsense.deeplang.doperables.LinearModel",
+      "traits": [
+        "io.deepsense.deeplang.doperables.BinaryClassifier"
+      ]
+    },
+    "io.deepsense.deeplang.doperables.Estimator": {
+      "name": "io.deepsense.deeplang.doperables.Estimator",
+      "parent": null,
+      "traits": [
+        "io.deepsense.deeplang.DOperable"
+      ]
+    },
+    "io.deepsense.deeplang.doperables.SupervisedModel": {
+      "name": "io.deepsense.deeplang.doperables.SupervisedModel",
+      "parent": "io.deepsense.deeplang.doperables.Estimator",
+      "traits": []
+    },
+    "io.deepsense.deeplang.doperables.TrainedLogisticRegression": {
+      "name": "io.deepsense.deeplang.doperables.TrainedLogisticRegression",
+      "parent": "io.deepsense.deeplang.doperables.LogisticRegression",
+      "traits": [
+        "io.deepsense.deeplang.doperables.Scorable"
+      ]
+    },
+    "io.deepsense.deeplang.doperables.dataframe.DataFrame": {
+      "name": "io.deepsense.deeplang.doperables.dataframe.DataFrame",
+      "parent": null,
+      "traits": [
+        "io.deepsense.deeplang.DOperable"
+      ]
+    },
+    "io.deepsense.deeplang.doperables.Report": {
+      "name": "io.deepsense.deeplang.doperables.Report",
+      "parent": null,
+      "traits": [
+        "io.deepsense.deeplang.DOperable"
+      ]
+    }
+  }
+}

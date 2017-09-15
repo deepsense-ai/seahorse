@@ -20,5 +20,6 @@ require('./EntitiesAPIClient.factory.js').inject(providers);
 require('./ReportOptions.service.js').inject(providers);
 require('./ReportOptions.controller.js').inject(providers);
 require('./Operations.factory.js').inject(providers);
+require('./OperationsHierarchy.service.js').inject(providers);
 
 module.exports = providers;

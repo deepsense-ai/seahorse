@@ -295,7 +295,7 @@
         "input": [
           {
             "portIndex": 0,
-            "typeQualifier": "io.deepsense.deeplang.doperables.dataframe.DataFrame",
+            "typeQualifier": ["io.deepsense.deeplang.doperables.dataframe.DataFrame"],
             "required": true
           }
         ],

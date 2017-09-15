@@ -36,17 +36,14 @@ function FlowChartBoxController($scope, $element, $window) {
   internal.closeContextMenu = function closeContextMenu () {
     $scope.$broadcast('ContextMenu.CLOSE');
     internal.contextMenuState = 'invisible';
-    console.log('Set invisible ', internal.contextMenuState);
     $scope.$digest();
   };
 
   internal.contextMenuOpener = function contextMenuOpener (event, data) {
-    console.log('Context menu getting the data');
     internal.contextMenuPosition.x = data.event.pageX;
     internal.contextMenuPosition.y = data.event.pageY;
     internal.contextMenuState = 'visible';
     $scope.$digest();
-    console.log('Changing the contextMenuState', internal.contextMenuState);
   };
 
   internal.isNotInternal = function isNotInternal (event) {

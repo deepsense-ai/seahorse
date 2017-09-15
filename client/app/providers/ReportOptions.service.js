@@ -9,7 +9,6 @@ function ReportOptionsService($rootScope) {
   internal.IS_DEPLOYABLE = 'io.deepsense.deeplang.doperables.Scorable';
 
   internal.goToDeploy = function goToDeploy() {
-    console.log('Triggering ' + 'Model.DEPLOY');
     $rootScope.$broadcast('Model.DEPLOY', {id: that.getReportId()});
   };
 
@@ -50,7 +49,6 @@ function ReportOptionsService($rootScope) {
 
   that.isCompleted = function isCompleted() {
     var status = that.getCurrentNode().status;
-    console.log(status, that.getCurrentNode().STATUS.COMPLETED);
     return status === that.getCurrentNode().STATUS.COMPLETED;
   };
 

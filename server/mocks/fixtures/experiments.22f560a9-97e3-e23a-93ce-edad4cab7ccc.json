@@ -151,7 +151,7 @@
           },
           "to": {
             "nodeId": "edc02822-b8ee-4225-b070-f892a87dbf11",
-            "portIndex": 0
+            "portIndex": 1
           }
         },
         {
@@ -161,7 +161,7 @@
           },
           "to": {
             "nodeId": "260917d6-aa20-cca0-1e5e-ead9605954b0",
-            "portIndex": 0
+            "portIndex": 1
           }
         },
         {
