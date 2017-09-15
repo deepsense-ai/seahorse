@@ -156,4 +156,6 @@ object Dependencies {
     nscalaTime,
     sprayJson
   ) ++ Seq(scalatest, mockitoCore).map(_ % Test)
+
+  val models = Seq(scalatest, mockitoCore).map(_ % Test)
 }

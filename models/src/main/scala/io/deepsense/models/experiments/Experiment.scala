@@ -70,10 +70,10 @@ object Experiment {
       completed
     } else if (nodes.forall(_.isDraft)) {
       draft
-    } else if (nodes.forall(n => n.isDraft || n.isQueued || n.isRunning)) {
-      running
     } else if (nodes.forall(n => n.isDraft || n.isCompleted)) {
       completed
+    } else if (nodes.forall(n => n.isDraft || n.isCompleted || n.isQueued || n.isRunning)) {
+      running
     } else if (nodes.exists(_.isFailed)) {
       val failedNodesCount = nodes.count(_.isFailed)
       failed(s"$failedNodesCount")

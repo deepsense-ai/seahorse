@@ -46,14 +46,20 @@ class RunningExperimentsActorSpec
 
   before {
     graphExecutorClient = createMockGraphExecutorClient(updatedGraph)
-    actorRef = createTestedActor
+    actorRef = createTestedActor(3L, 15000L)
     actor = actorRef.underlyingActor
     probe = TestProbe()
     when(mockClientFactory.create()).thenReturn(graphExecutorClient)
   }
 
-  def withLaunchedExperiments(experiments: Set[Experiment])(testCode: => Any): Unit = {
-    experiments.foreach(e => probe.send(actorRef, Launch(e)))
+  def withLaunchedExperiments(experiments: Set[Experiment])(testCode: => Any): Unit ={
+    withLaunchedExperiments(actorRef,experiments) _
+  }
+
+  def withLaunchedExperiments(
+      ar: TestActorRef[RunningExperimentsActor],
+      experiments: Set[Experiment])(testCode: => Any): Unit = {
+    experiments.foreach(e => probe.send(ar, Launch(e)))
     probe.receiveN(experiments.size)
     testCode
   }
@@ -90,11 +96,12 @@ class RunningExperimentsActorSpec
     }
     "abort experiment" when {
       "received Abort" in {
-        withLaunchedExperiments(Set(experiment)) {
+        val testedActor = createTestedActor(10000, 10000)
+        withLaunchedExperiments(testedActor,Set(experiment)) {
           val abortedExperiment = experiment.markAborted
-          probe.send(actorRef, Abort(experiment.id))
+          probe.send(testedActor, Abort(experiment.id))
           probe.expectMsg(Status(Some(abortedExperiment)))
-          probe.send(actorRef, GetStatus(experiment.id))
+          probe.send(testedActor, GetStatus(experiment.id))
           probe.expectMsg(Status(Some(abortedExperiment)))
           eventually {
             verify(graphExecutorClient).terminateExecution()
@@ -165,12 +172,13 @@ class RunningExperimentsActorSpec
     gec
   }
 
-  private def createTestedActor: TestActorRef[RunningExperimentsActor] = {
+  private def createTestedActor(
+      refreshIntervalMillis: Long,
+      refreshTimeoutMillis: Long): TestActorRef[RunningExperimentsActor] =
     TestActorRef(Props(new RunningExperimentsActor(
       SimpleGraphExecutionIntegSuiteEntities.Name,
       5000L,
-      3L,
-      15000L,
+      refreshIntervalMillis,
+      refreshTimeoutMillis,
       mockClientFactory)))
-  }
 }
