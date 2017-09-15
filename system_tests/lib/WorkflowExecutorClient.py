@@ -16,13 +16,14 @@ class WorkflowExecutorClient(object):
     self.spark_master = conf('sparkMaster')
     self.output_dir = "test-output"
 
-  def run_workflow(self, workflow_file_path, spark_master=None):
+  def run_workflow(self, workflow_file_path, spark_master=None, spark_submit_options=None):
     if spark_master == None:
       spark_master = self.spark_master
 
     command = spark_submit_command(
       we_class=self.workflow_executor_class,
       spark_master=spark_master,
+      spark_submit_options=spark_submit_options,
       jar=self.workflow_executor_jar,
       workflow_filename=workflow_file_path,
       output_dir=self.output_dir)
@@ -38,8 +39,8 @@ class WorkflowExecutorClient(object):
     if spark_submit.wait() != 0:
       raise AssertionError('spark-submit failed.')
 
-  def run_workflow_local(self, workflow_file_path):
-    self.run_workflow(workflow_file_path, "local[4]")
+  def run_workflow_local(self, workflow_file_path, spark_submit_options=None):
+    self.run_workflow(workflow_file_path, "local[4]", spark_submit_options)
 
   def check_execution_status(self, expected_status="COMPLETED"):
     actual_json = load_json(self.output_dir + "/result.json")
@@ -92,13 +93,15 @@ class WorkflowExecutorClient(object):
 
 def spark_submit_command(**kwargs):
   return """spark-submit --class {we_class} --master {spark_master} --files {workflow_filename}\\
-    {jar} --workflow-filename {workflow_filename} --output-directory {output_dir}\\
+    {spark_submit_options} {jar}\\
+    --workflow-filename {workflow_filename} --output-directory {output_dir}\\
     --report-level high""".format(
     we_class=kwargs['we_class'],
     spark_master=kwargs['spark_master'],
     jar=kwargs['jar'],
     workflow_filename=kwargs['workflow_filename'],
-    output_dir=kwargs['output_dir'])
+    output_dir=kwargs['output_dir'],
+    spark_submit_options=kwargs['spark_submit_options'])
 
 def load_json(filename):
   json_file = open(filename, 'r')

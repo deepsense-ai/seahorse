@@ -11,7 +11,9 @@
         "format": {
           "CSV": {
             "separator": {
-              "Comma": {}
+              "Comma": {
+
+              }
             },
             "names included": true,
             "convert to boolean": false,
@@ -63,18 +65,18 @@
       },
       "parameters": {
         "num iterations": 1.0,
-        "loss": {
-          "squared": {
-
-          }
-        },
         "impurity": {
           "variance": {
 
           }
         },
+        "max bins": 100.0,
         "max depth": 4.0,
-        "max bins": 100.0
+        "loss": {
+          "squared": {
+
+          }
+        }
       }
     }],
     "connections": [{
