@@ -192,6 +192,14 @@ trait Params extends Serializable {
     copyValues(that, extra)
   }
 
+  /**
+   * Compares 'this' and 'other' params. Objects are equal when they are of the same
+   * class and their parameters have the same values set.
+   * @return True, if 'this' and 'other' are the same.
+   */
+  def sameAs(other: Params): Boolean =
+    other.getClass == this.getClass && other.extractParamMap() == this.extractParamMap()
+
   protected def copyValues[T <: Params](to: T, extra: ParamMap = ParamMap.empty): T = {
     val map = extractParamMap(extra)
     params.foreach { param =>

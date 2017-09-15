@@ -50,8 +50,7 @@ abstract class AbstractChoiceParam[T <: Choice, U](implicit tag: TypeTag[T]) ext
         throw NoArgumentConstructorRequiredException(symbol.asClass.name.decoded)
       }.newInstance().asInstanceOf[T]
     val allSubclassesDeclared =
-      instances.foldLeft(true)(
-        (acc, instance) => acc && instance.choiceOrder.contains(instance.getClass))
+      instances.forall(instance => instance.choiceOrder.contains(instance.getClass))
     require(allSubclassesDeclared,
       "Not all choices were declared in choiceOrder map. " +
       s"Declared: {${instances.map(_.getClass.getSimpleName).mkString(", ")}}, " +

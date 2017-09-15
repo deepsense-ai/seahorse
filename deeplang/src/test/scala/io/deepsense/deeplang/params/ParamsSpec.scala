@@ -225,4 +225,43 @@ class ParamsSpec extends UnitSpec {
       )
     }
   }
+  "Params.sameAs" should {
+    class WithParamsA extends WithParams
+    class WithParamsB extends WithParams
+    val valueOne = 100
+    val valueTwo = 5
+    "return true" when {
+      "classes of both objects are the same and object have" +
+        " the same parameters with the same values" in {
+        val withParamsA1 = new WithParamsA
+        val withParamsA2 = new WithParamsA
+        withParamsA1.sameAs(withParamsA2) shouldBe true
+
+        withParamsA1.set1(valueOne)
+        withParamsA2.set1(valueOne)
+        withParamsA1.sameAs(withParamsA2) shouldBe true
+
+        withParamsA1.set2(valueTwo)
+        withParamsA2.set2(valueTwo)
+        withParamsA1.sameAs(withParamsA2) shouldBe true
+      }
+    }
+    "return false" when {
+      "classes of both objects are different" in {
+        val withParamsA = new WithParamsA
+        val withParamsB = new WithParamsB
+        withParamsA.sameAs(withParamsB) shouldBe false
+      }
+      "parameters have different values" in {
+        val withParamsA1 = new WithParamsA
+        val withParamsA2 = new WithParamsB
+        withParamsA1.set1(valueOne)
+        withParamsA1.sameAs(withParamsA2) shouldBe false
+
+        withParamsA2.set1(valueOne)
+        withParamsA2.set2(valueTwo)
+        withParamsA1.sameAs(withParamsA2) shouldBe false
+      }
+    }
+  }
 }
