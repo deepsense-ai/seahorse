@@ -12,25 +12,18 @@ import spray.json._
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.utils.{Logging, Version}
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
-import io.deepsense.models.json.workflow.{WorkflowVersionUtil, WorkflowWithSavedResultsJsonProtocol}
-import io.deepsense.models.workflows.{Workflow, WorkflowWithSavedResults}
+import io.deepsense.models.json.workflow.WorkflowVersionUtil
+import io.deepsense.models.workflows.Workflow
 import io.deepsense.workflowmanager.rest.CurrentBuild
 import io.deepsense.workflowmanager.storage.WorkflowWithDates
 
 case class WorkflowRowMapper @Inject() (
     override val graphReader: GraphReader)
-  extends WorkflowWithSavedResultsJsonProtocol
-  with WorkflowVersionUtil
+  extends WorkflowVersionUtil
   with Logging {
 
   def toWorkflow(row: Row): Workflow = {
     row.getString(WorkflowRowMapper.Workflow).parseJson.convertTo[Workflow]
-  }
-
-  def toWorkflowWithSavedResults(row: Row): Option[Either[String, WorkflowWithSavedResults]] = {
-    Option(row.getString(WorkflowRowMapper.Results)).map {
-      workflowWithSavedResultsOrString
-    }
   }
 
   def toWorkflowWithDates(row: Row): WorkflowWithDates = {
@@ -39,14 +32,7 @@ case class WorkflowRowMapper @Inject() (
       getDate(row, WorkflowRowMapper.Updated).get)
   }
 
-  def toResultsUploadTime(row: Row): Option[DateTime] = {
-    Option(row.getTimestamp(WorkflowRowMapper.ResultsUploadTime))
-      .map(s => DateTimeConverter.fromMillis(s.getTime))
-  }
-
   def workflowToCell(workflow: Workflow): String = workflow.toJson.compactPrint
-
-  def resultsToCell(results: WorkflowWithSavedResults): String = results.toJson.compactPrint
 
   def resultsUploadTimeToCell(resultsUploadTime: DateTime): Long =
     resultsUploadTime.getMillis
@@ -61,8 +47,6 @@ case class WorkflowRowMapper @Inject() (
 object WorkflowRowMapper {
   val Id = "id"
   val Workflow = "workflow"
-  val Results = "results"
-  val ResultsUploadTime = "results_upload_time"
   val Deleted = "deleted"
   val Created = "created"
   val Updated = "updated"

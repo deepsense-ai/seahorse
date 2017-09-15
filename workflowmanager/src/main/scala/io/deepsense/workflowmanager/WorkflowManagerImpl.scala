@@ -28,7 +28,6 @@ import io.deepsense.workflowmanager.storage._
 class WorkflowManagerImpl @Inject()(
     authorizatorProvider: AuthorizatorProvider,
     workflowStorage: WorkflowStorage,
-    workflowResultsStorage: WorkflowResultsStorage,
     workflowStateStorage: WorkflowStateStorage,
     notebookStorage: NotebookStorage,
     inferContext: InferContext,
@@ -119,40 +118,6 @@ class WorkflowManagerImpl @Inject()(
             )
         }.toSeq
       }
-    }
-  }
-
-  def saveWorkflowResults(
-    workflowWithResults: WorkflowWithResults): Future[WorkflowWithSavedResults] = {
-    authorizator.withRole(roleCreate) { userContext =>
-      val resultsId = ExecutionReportWithId.Id.randomId
-      val workflowWithSavedResults =
-        WorkflowWithSavedResults(resultsId, workflowWithResults)
-
-      workflowStorage.saveExecutionResults(workflowWithSavedResults)
-        .map(_ => workflowResultsStorage.save(workflowWithSavedResults))
-        .map(_ => workflowWithSavedResults)
-    }
-  }
-
-  override def getLatestExecutionReport(
-      workflowId: Workflow.Id): Future[Option[Either[String, WorkflowWithSavedResults]]] = {
-    authorizator.withRole(roleGet) { userContext =>
-      workflowStorage.getLatestExecutionResults(workflowId)
-    }
-  }
-
-
-  override def getResultsUploadTime(workflowId: Workflow.Id): Future[Option[DateTime]] = {
-    authorizator.withRole(roleGet) { _ =>
-      workflowStorage.getResultsUploadTime(workflowId)
-    }
-  }
-
-  override def getExecutionReport(
-      id: ExecutionReportWithId.Id): Future[Option[Either[String, WorkflowWithSavedResults]]] = {
-    authorizator.withRole(roleGet) { userContext =>
-      workflowResultsStorage.get(id)
     }
   }
 

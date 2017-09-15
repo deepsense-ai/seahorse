@@ -17,8 +17,6 @@ object WorkflowTableCreator {
       s"""
          id uuid,
          workflow text,
-         results text,
-         results_upload_time timestamp,
          deleted boolean,
          created timestamp,
          updated timestamp,

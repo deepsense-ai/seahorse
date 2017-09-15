@@ -15,7 +15,7 @@ import org.joda.time.DateTime
 
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.models.Id
-import io.deepsense.models.workflows.{Workflow, WorkflowWithSavedResults}
+import io.deepsense.models.workflows.Workflow
 import io.deepsense.workflowmanager.storage.{WorkflowWithDates, WorkflowStorage}
 
 class WorkflowDaoCassandraImpl @Inject() (
@@ -53,22 +53,6 @@ class WorkflowDaoCassandraImpl @Inject() (
     ).toMap)
   }
 
-  override def getLatestExecutionResults(
-      workflowId: Id): Future[Option[Either[String, WorkflowWithSavedResults]]] = {
-    Future(session.execute(getResultsQuery(workflowId)))
-      .map(rs => Option(rs.one()).flatMap(workflowRowMapper.toWorkflowWithSavedResults))
-  }
-
-  override def saveExecutionResults(results: WorkflowWithSavedResults): Future[Unit] = {
-    Future(session.execute(saveResultsQuery(results, DateTimeConverter.now)))
-  }
-
-  override def getResultsUploadTime(workflowId: Id): Future[Option[DateTime]] = {
-    Future(
-      session.execute(getResultsUploadTimeQuery(workflowId)))
-      .map(rs => Option(rs.one()).flatMap(workflowRowMapper.toResultsUploadTime))
-  }
-
   private def getWorkflowQuery(id: Workflow.Id): Select = {
     getQuery(id, Seq(WorkflowRowMapper.Id, WorkflowRowMapper.Workflow))
   }
@@ -82,13 +66,6 @@ class WorkflowDaoCassandraImpl @Inject() (
       .from(table)
       .where(QueryBuilder.eq(WorkflowRowMapper.Deleted, false))
   }
-
-  private def getResultsQuery(id: Workflow.Id): Select = {
-    getQuery(id, Seq(WorkflowRowMapper.Id, WorkflowRowMapper.Results))
-  }
-
-  private def getResultsUploadTimeQuery(id: Workflow.Id): Select =
-    getQuery(id, Seq(WorkflowRowMapper.ResultsUploadTime))
 
   private def getQuery(id: Workflow.Id, columns: Seq[String]): Select = {
     queryBuilder
@@ -112,15 +89,6 @@ class WorkflowDaoCassandraImpl @Inject() (
       (WorkflowRowMapper.Workflow, workflowRowMapper.workflowToCell(workflow)),
       (WorkflowRowMapper.Updated, DateTimeConverter.now.getMillis)
     ))
-  }
-
-  private def saveResultsQuery(
-    results: WorkflowWithSavedResults,
-    resultsUploadTime: DateTime): Update.Where = {
-    updateQuery(results.id, Seq(
-      (WorkflowRowMapper.Results, workflowRowMapper.resultsToCell(results)),
-      (WorkflowRowMapper.ResultsUploadTime,
-        workflowRowMapper.resultsUploadTimeToCell(resultsUploadTime))))
   }
 
   private def updateQuery(id: Id, valuesToSet: Seq[(String, Any)]): Update.Where = {

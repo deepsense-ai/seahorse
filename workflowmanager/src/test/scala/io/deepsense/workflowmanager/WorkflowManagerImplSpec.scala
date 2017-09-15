@@ -16,7 +16,7 @@ import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.graph._
 import io.deepsense.models.workflows._
-import io.deepsense.workflowmanager.storage.{NotebookStorage, WorkflowResultsStorage, WorkflowStateStorage, WorkflowStorage}
+import io.deepsense.workflowmanager.storage.{NotebookStorage, WorkflowStateStorage, WorkflowStorage}
 
 class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
   val tenantId = "tenantId"
@@ -45,7 +45,6 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
     thirdPartyData,
     ExecutionReport(Map[io.deepsense.graph.Node.Id, NodeState]()))
   val workflowStorage: WorkflowStorage = mock[WorkflowStorage]
-  val workflowResultStorage = mock[WorkflowResultsStorage]
   val workflowStateStorage = mock[WorkflowStateStorage]
   val notebookStorage = mock[NotebookStorage]
   val workflowWithResults = WorkflowWithResults(
@@ -54,12 +53,10 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
     mock[DirectedGraph],
     mock[ThirdPartyData],
     ExecutionReport(Map[io.deepsense.graph.Node.Id, NodeState]()))
-  Mockito.when(workflowResultStorage.save(any())).thenReturn(Future.successful(()))
 
   val workflowManager = new WorkflowManagerImpl(
     authorizatorProvider,
     workflowStorage,
-    workflowResultStorage,
     workflowStateStorage,
     notebookStorage,
     inferContext,
@@ -126,23 +123,6 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
       verify(workflowStateStorage)
         .save(storedWorkflowId, storedWorkflowWithResults.executionReport.states)
       ()
-    }
-  }
-
-  "WorkflowManager" should {
-    "generate id and store result in two tables" in {
-      reset(workflowStorage)
-      when(workflowStorage.saveExecutionResults(any())).thenReturn(Future.successful(()))
-
-      whenReady(workflowManager.saveWorkflowResults(workflowWithResults)) { results =>
-        val resultId = results.executionReport.id
-        val captor1 = ArgumentCaptor.forClass(classOf[WorkflowWithSavedResults])
-        val captor2 = ArgumentCaptor.forClass(classOf[WorkflowWithSavedResults])
-        verify(workflowStorage, times(1)).saveExecutionResults(captor1.capture())
-        verify(workflowResultStorage, times(1)).save(captor2.capture())
-        captor1.getValue.executionReport.id shouldBe resultId
-        captor2.getValue.executionReport.id shouldBe resultId
-      }
     }
   }
 }

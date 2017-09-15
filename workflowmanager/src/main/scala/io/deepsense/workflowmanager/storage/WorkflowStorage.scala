@@ -9,7 +9,7 @@ import scala.concurrent.Future
 import org.joda.time.DateTime
 
 import io.deepsense.commons.models.Id
-import io.deepsense.models.workflows.{Workflow, WorkflowWithSavedResults}
+import io.deepsense.models.workflows.Workflow
 
 /**
  * Abstraction layer to make implementation of Workflow Manager easier.
@@ -45,27 +45,6 @@ trait WorkflowStorage {
   def getAll(): Future[Map[Workflow.Id, WorkflowWithDates]]
 
   /**
-   * Returns latest execution results for given workflow id. If the workflow is compatible with the
-   * current API version it is returned as an object otherwise as a string.
-   * @param workflowId id of the workflow
-   * @return Latest execution results for given workflow.
-   */
-  def getLatestExecutionResults(
-    workflowId: Id): Future[Option[Either[String, WorkflowWithSavedResults]]]
-
-  /**
-   * Saves a workflow execution results.
-   * @param results Workflow results to be saved as latest.
-   */
-  def saveExecutionResults(results: WorkflowWithSavedResults): Future[Unit]
-
-  /**
-   * Retrieves the time that the last execution report of this workflow was uploaded,
-   * None if no execution report was ever uploaded.
-   */
-  def getResultsUploadTime(workflowId: Id): Future[Option[DateTime]]
-
-  /**
    * Removes an workflow with the specified id.
    * @param id Id of the workflow to be deleted.
    * @return Future.successful whether the workflow was found or not.
@@ -76,6 +55,6 @@ trait WorkflowStorage {
 }
 
 case class WorkflowWithDates(
-  workflow: Workflow,
-  created: DateTime,
-  updated: DateTime)
+    workflow: Workflow,
+    created: DateTime,
+    updated: DateTime)

@@ -40,7 +40,6 @@ abstract class WorkflowApi @Inject() (
     val tokenTranslator: TokenTranslator,
     workflowManagerProvider: WorkflowManagerProvider,
     @Named("workflows.api.prefix") workflowsApiPrefix: String,
-    @Named("reports.api.prefix") reportsApiPrefix: String,
     override val graphReader: GraphReader)
     (implicit ec: ExecutionContext)
   extends RestApiAbstractAuth
@@ -49,7 +48,6 @@ abstract class WorkflowApi @Inject() (
   with WorkflowWithVariablesJsonProtocol
   with WorkflowWithResultsJsonProtocol
   with MetadataInferenceResultJsonProtocol
-  with WorkflowWithSavedResultsJsonProtocol
   with DOperationEnvelopesJsonProtocol
   with Cors
   with WorkflowVersionUtil {
@@ -60,7 +58,6 @@ abstract class WorkflowApi @Inject() (
 
   assert(StringUtils.isNoneBlank(workflowsApiPrefix))
   private val workflowsPathPrefixMatcher = PathMatchers.separateOnSlashes(workflowsApiPrefix)
-  private val reportsPathPrefixMatcher = PathMatchers.separateOnSlashes(reportsApiPrefix)
   private val workflowFileMultipartId = "workflowFile"
   private val workflowDownloadName = "workflow.json"
 
@@ -163,84 +160,20 @@ abstract class WorkflowApi @Inject() (
                 }
               }
             } ~
-            path(JavaUUID / "results-upload-time") { idParameter =>
-              get {
-                withUserContext { userContext =>
-                  onSuccess(workflowManagerProvider
-                    .forContext(userContext)
-                    .getResultsUploadTime(idParameter)) { lastExecution =>
-                    import ResultsUploadTimeJsonProtocol.lastExecutionWriter
-                    complete(lastExecution.map(Envelope(_)))
-                  }
-
-                }
-              }
-            } ~
             path("upload") {
               post {
                 withUserContext {
                   userContext => {
                     implicit val unmarshaller = JsObjectUnmarshaller
                     entity(as[JsObject]) { jsObject =>
-                      val containsExecutionReport = jsObject.getFields("executionReport").nonEmpty
-
-                      val workflowWithResultsEntity = if (containsExecutionReport) {
-                        implicit val unmarshaller = WorkflowWithResultsUploadUnmarshaller
-                        Some(entity(as[WorkflowWithResults]))
-                      } else {
-                        None
-                      }
-
                       implicit val unmarshaller = WorkflowUploadUnmarshaller
                       entity(as[Workflow]) { workflow =>
                         val futureWorkflowId =
                           workflowManagerProvider.forContext(userContext).create(workflow)
                         onSuccess(futureWorkflowId) { workflowId =>
                           val envelopedWorkflowId = Envelope(workflowId)
-                          if (containsExecutionReport) {
-                            workflowWithResultsEntity.get {
-                              workflowWithResults => {
-                                onComplete(workflowManagerProvider
-                                  .forContext(userContext)
-                                  .saveWorkflowResults(workflowWithResults)) {
-                                  case Failure(exception) =>
-                                    logger.info("Uploaded workflow contained execution report, " +
-                                      "but execution report upload failed", exception)
-                                    failWith(exception)
-                                  case Success(_) =>
-                                    logger.info("Uploaded workflow contained execution report, " +
-                                      "and execution report upload succeed")
-                                    complete(StatusCodes.Created, envelopedWorkflowId)
-                                }
-                              }
-                            }
-                          } else {
-                            complete(StatusCodes.Created, envelopedWorkflowId)
-                          }
+                          complete(StatusCodes.Created, envelopedWorkflowId)
                         }
-                      }
-                    }
-                  }
-                }
-              }
-            } ~
-            path(JavaUUID / "report") { workflowId =>
-              get {
-                withUserContext { userContext =>
-                    workflowManagerProvider.forContext(userContext)
-                      .getLatestExecutionReport(workflowId)
-                }
-              }
-            } ~
-            path("report" / "upload") {
-              post {
-                withUserContext { userContext =>
-                  implicit val unmarshaller = WorkflowWithResultsUploadUnmarshaller
-                  entity(as[WorkflowWithResults]) { workflowWithResults => {
-                      onSuccess(workflowManagerProvider
-                        .forContext(userContext)
-                        .saveWorkflowResults(workflowWithResults)) { saved =>
-                          complete(StatusCodes.Created, saved)
                       }
                     }
                   }
@@ -282,29 +215,6 @@ abstract class WorkflowApi @Inject() (
                     onSuccess(workflowManagerProvider
                       .forContext(userContext).create(workflow)) { workflowId =>
                       complete(StatusCodes.Created, Envelope(workflowId))
-                    }
-                  }
-                }
-              }
-            }
-          } ~
-          pathPrefix(reportsPathPrefixMatcher) {
-            path(JavaUUID) { reportId =>
-              get {
-                withUserContext { userContext =>
-                    workflowManagerProvider.forContext(userContext).getExecutionReport(reportId)
-                }
-              }
-            } ~
-            path(JavaUUID / "download") { reportId =>
-              get {
-                withUserContext { userContext =>
-                  respondWithMediaType(`application/json`) {
-                    respondWithHeader(
-                      `Content-Disposition`("attachment", Map("filename" -> "report.json"))) {
-                      complete {
-                        workflowManagerProvider.forContext(userContext).getExecutionReport(reportId)
-                      }
                     }
                   }
                 }
@@ -361,14 +271,12 @@ class SecureWorkflowApi @Inject() (
   tokenTranslator: TokenTranslator,
   workflowManagerProvider: WorkflowManagerProvider,
   @Named("workflows.api.prefix") workflowsApiPrefix: String,
-  @Named("reports.api.prefix") reportsApiPrefix: String,
   override val graphReader: GraphReader)
   (implicit ec: ExecutionContext)
   extends WorkflowApi(
     tokenTranslator,
     workflowManagerProvider,
     workflowsApiPrefix,
-    reportsApiPrefix,
     graphReader)
   with AuthDirectives
 
@@ -376,13 +284,11 @@ class InsecureWorkflowApi @Inject() (
   tokenTranslator: TokenTranslator,
   workflowManagerProvider: WorkflowManagerProvider,
   @Named("workflows.api.prefix") workflowsApiPrefix: String,
-  @Named("reports.api.prefix") reportsApiPrefix: String,
   override val graphReader: GraphReader)
   (implicit ec: ExecutionContext)
   extends WorkflowApi(
     tokenTranslator,
     workflowManagerProvider,
     workflowsApiPrefix,
-    reportsApiPrefix,
     graphReader)
   with InsecureAuthDirectives

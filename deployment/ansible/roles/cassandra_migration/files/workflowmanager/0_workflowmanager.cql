@@ -6,19 +6,12 @@ use workflowmanager;
 create table if not exists workflows (
   id uuid,
   workflow text,
-  results text,
-  results_upload_time timestamp,
   deleted boolean,
   created timestamp,
   updated timestamp,
   primary key (id));
 
 create index if not exists deleted_workflows ON workflows(deleted);
-
-create table if not exists workflowresults (
-   id uuid,
-   results text,
-   primary key (id));
 
 create table if not exists notebooks (
    workflow_id uuid,
