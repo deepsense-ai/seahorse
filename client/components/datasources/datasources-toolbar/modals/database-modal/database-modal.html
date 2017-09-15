@@ -78,7 +78,7 @@
           ng-disabled="$ctrl.previewMode"
           ng-model="$ctrl.sqlInstruction"
           ng-change="$ctrl.onQueryTypeChange()"
-          placeholder="Custom query"
+          placeholder="{{($ctrl.type === 'table') ? 'Table name' : 'Custom query'}}"
           class="form-control"
           type="text"
         />
