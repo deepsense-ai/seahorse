@@ -17,6 +17,7 @@ function GraphNode(options) {
   this.input = this.fetchPorts('input', options.input);
   this.output = this.fetchPorts('output', options.output);
   this.edges = {};
+  this.results = [];
   this.x = options.x;
   this.y = options.y;
   if (options.parametersValues) {
@@ -86,6 +87,25 @@ GraphNode.prototype.setStatus = function setStatus(state) {
   } else if (!this.status) {
     this.status = this.STATUS_DEFAULT;
   }
+};
+
+/**
+ * Updates graph node state.
+ *
+ * @param {object} state
+ */
+GraphNode.prototype.updateState = function updateState(state) {
+  this.results = state.results;
+  this.setStatus(state);
+};
+
+/**
+ * Returns nodes result.
+ *
+ * @return {number} portIndex
+ */
+GraphNode.prototype.getResult = function getResult(portIndex) {
+  return this.results[portIndex];
 };
 
 /**

@@ -74,4 +74,22 @@ describe('graphNode', () => {
     expect(graphNode.status).toBe(graphNode.STATUS.QUEUED);
   });
 
+  it('handle state changes', () => {
+    let graphNode = new GraphNode(initData);
+    expect(graphNode.status).toBe(graphNode.STATUS_DEFAULT);
+    expect(graphNode.results).toEqual([]);
+
+    let results = ['result-1', 'result-2'];
+    graphNode.updateState({
+      'status': 'COMPLETED',
+      'results': results
+    });
+    expect(graphNode.status).toBe(graphNode.STATUS.COMPLETED);
+    expect(graphNode.results).toEqual(results);
+
+    expect(graphNode.getResult(0)).toEqual(results[0]);
+    expect(graphNode.getResult(1)).toEqual(results[1]);
+    expect(graphNode.getResult(2)).not.toBeDefined();
+  });
+
 });

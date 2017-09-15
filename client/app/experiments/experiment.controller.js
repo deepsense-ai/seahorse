@@ -151,7 +151,8 @@ function ExperimentController($timeout, $stateParams, $scope, PageService, Opera
     let data = that.getExperiment().serialize();
     ExperimentAPIClient.saveData({
       'experiment': data
-    }).then(() => {
+    }).then((result) => {
+      that.handleExperimentStateChange(result);
       // TODO: compare sent data with response / update experiment if needed
     });
   };

@@ -136,7 +136,7 @@ function Experiment() {
     for (let id in state.nodes) {
       let node = internal.nodes[id];
       if (node) {
-        node.setStatus(state.nodes[id]);
+        node.updateState(state.nodes[id]);
       }
     }
     that.setStatus(state);
