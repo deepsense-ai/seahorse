@@ -24,9 +24,10 @@ import org.scalatest.time.{Seconds, Span}
 import org.scalatest.{Matchers, Suite}
 import play.api.libs.json.{JsArray, JsObject, JsString, Json}
 import play.api.libs.ws.ning.NingWSClient
+
+import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.sessionmanager.rest._
 import io.deepsense.sessionmanager.rest.requests._
-
 import io.deepsense.commons.utils.Logging
 
 trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
@@ -152,7 +153,7 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
       workflowId = workflowId,
       cluster = ClusterDetails(
         name = "some-name" + UUID.randomUUID(),
-        id = UUID.randomUUID().toString,
+        id = 1L,
         clusterType = "local",
         uri = ignoredInLocal,
         userIP = ignoredInLocal
