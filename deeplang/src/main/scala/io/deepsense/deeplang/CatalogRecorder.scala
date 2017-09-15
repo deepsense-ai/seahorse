@@ -49,6 +49,16 @@ object CatalogRecorder {
       "Converts a file to a DataFrame"
     )
 
+    catalog.registerDOperation[ReadDataFrame](
+      DOperationCategories.IO,
+      "Loads a DataFrame from a file"
+    )
+
+    catalog.registerDOperation[WriteDataFrame](
+      DOperationCategories.IO,
+      "Saves a DataFrame to a file"
+    )
+
     catalog.registerDOperation[MathematicalOperation](
       DOperationCategories.Transformation,
       "Creates a Transformation that creates a new column based on a mathematical formula."
