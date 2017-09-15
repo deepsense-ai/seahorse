@@ -17,6 +17,7 @@
 package io.deepsense.deeplang.doperations
 
 
+import java.io.IOException
 import java.util.NoSuchElementException
 
 import scala.collection.immutable.ListMap
@@ -33,7 +34,7 @@ import org.apache.spark.sql.{Row, types}
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
-import io.deepsense.deeplang.doperations.exceptions.InvalidFileException
+import io.deepsense.deeplang.doperations.exceptions.{FileNotFoundException, InvalidFileException}
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{DOperation0To1, ExecutionContext}
 
@@ -62,16 +63,21 @@ case class ReadDataFrame() extends DOperation0To1[DataFrame] with ReadDataFrameP
       ReadDataFrame.recordDelimiterSettingName,
       determineLineSeparator())
 
-    val lines = sparkContext.newAPIHadoopFile(
-      path, classOf[TextInputFormat], classOf[LongWritable], classOf[Text], conf
-    ).map { case (_, text) => text.toString }
+    try {
+      val lines = sparkContext.newAPIHadoopFile(
+        path, classOf[TextInputFormat], classOf[LongWritable], classOf[Text], conf
+      ).map { case (_, text) => text.toString }
 
-    if (lines.isEmpty()) {
-      throw new InvalidFileException(path, "empty")
-    }
+      if (lines.isEmpty()) {
+        throw new InvalidFileException(path, "empty")
+      }
 
-    FileFormat.withName(formatParameter.value.get) match {
-      case FileFormat.CSV => dataFrameFromCSV(context, lines, csvCategoricalColumnsParameter.value)
+      FileFormat.withName(formatParameter.value.get) match {
+        case FileFormat.CSV =>
+          dataFrameFromCSV(context, lines, csvCategoricalColumnsParameter.value)
+      }
+    } catch {
+      case e: IOException => throw FileNotFoundException(e)
     }
   }
 

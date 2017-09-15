@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.doperations
 
-import java.io.StringWriter
+import java.io.{IOException, StringWriter}
 
 import scala.collection.immutable.ListMap
 import scala.reflect.runtime.{universe => ru}
@@ -29,6 +29,7 @@ import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMetadata
 import io.deepsense.deeplang.doperations.WriteDataFrame._
+import io.deepsense.deeplang.doperations.exceptions.FileNotFoundException
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{DOperation1To0, ExecutionContext}
 
@@ -101,8 +102,14 @@ case class WriteDataFrame() extends DOperation1To0[DataFrame] {
       csv
     }
 
-    result.saveAsTextFile(
-      StorageType.getPathWithProtocolPrefix(outputFileParameter.value.get, pathParameter.value.get))
+    try {
+      result.saveAsTextFile(
+        StorageType.getPathWithProtocolPrefix(
+          outputFileParameter.value.get, pathParameter.value.get)
+      )
+    } catch {
+      case e: IOException => throw FileNotFoundException(e)
+    }
   }
 
   private def contains(o: Option[String], value: String): Boolean = {
