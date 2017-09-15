@@ -24,6 +24,7 @@ import spray.json._
 import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.doperables.Projector
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.params.ParameterType
 
 object ExampleHtmlFormatter {
   def exampleHtml(
@@ -40,7 +41,7 @@ object ExampleHtmlFormatter {
         |### Output
         |
         |${outputHtml(outputDataFrames)}
-      """.stripMargin
+        |""".stripMargin
   }
 
   private def paramsHtml(operation: DOperation): String =
@@ -133,6 +134,7 @@ object ParametersHtmlFormatter {
   private val leftColumnFieldName: String = "left column"
   private val rightColumnFieldName: String = "right column"
   private val typeFieldName: String = "type"
+  private val nameFieldName: String = "name"
   private val valueFieldName: String = "value"
   private val valuesFieldName: String = "values"
   private val selectionsFieldName: String = "selections"
@@ -144,7 +146,9 @@ object ParametersHtmlFormatter {
       "\n"
     } else {
       val paramValues = extractParamValues(dOperation.paramValuesToJson.asJsObject).toMap
+      val paramTypes = extractParamTypes(dOperation.paramsToJson.asInstanceOf[JsArray]).toMap
       val paramsOrder = extractParamsOrder(dOperation.paramsToJson.asInstanceOf[JsArray])
+
       val orderedValues = paramsOrder.flatMap {
           case paramName =>
             paramValues.get(paramName).map(v => paramName -> v)
@@ -152,7 +156,7 @@ object ParametersHtmlFormatter {
 
       val paramsHtml = orderedValues.map {
           case (paramName, paramValue) =>
-            paramValueToHtml(paramName, paramValue)
+            paramValueToHtml(paramName, paramValue, paramTypes.get(paramName))
       }
 
       s"""|
@@ -188,7 +192,7 @@ object ParametersHtmlFormatter {
         Seq()
       }
 
-      paramObject.fields("name").asInstanceOf[JsString].value +:
+      paramObject.fields(nameFieldName).asInstanceOf[JsString].value +:
         subParams.distinct
     }
   }
@@ -215,10 +219,25 @@ object ParametersHtmlFormatter {
     }
   }
 
-  private def paramValueToHtml(name: String, value: String): String = {
+  private def extractParamTypes(json: JsArray): Seq[(String, String)] = {
+    json.elements.map {
+      case obj: JsObject => {
+        obj.fields(nameFieldName).asInstanceOf[JsString].value ->
+          obj.fields(typeFieldName).asInstanceOf[JsString].value
+      }
+    }
+  }
+
+  private def paramValueToHtml(name: String, value: String, paramType: Option[String]): String = {
+    val cellValue =
+      if (paramType.nonEmpty && ParameterType.CodeSnippet.toString.equals(paramType.get)) {
+        s"<pre>${value.substring(1, value.length - 1).replace("\\n", "\n")}</pre>"
+      } else {
+        value
+      }
     s"""|  <tr>
         |    <td><code>$name</code></td>
-        |    <td>$value</td>
+        |    <td>$cellValue</td>
         |  </tr>""".stripMargin
   }
 

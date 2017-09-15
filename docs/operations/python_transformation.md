@@ -22,6 +22,8 @@ The Python function that will be executed must:
 * return a `DataFrame` (or data which can be automatically converted to Spark `DataFrame`:
 pandas.DataFrame, single value, tuple/list of single values, tuple/list of tuples/lists of single values).
 
+{% markdown operations/python_global_scope.md %}
+
 #### Example Python code:
 {% highlight python %}
 from pyspark.sql.types import Row
@@ -95,3 +97,5 @@ presented in the operation's description.</td>
 </tr>
 </tbody>
 </table>
+
+{% markdown operations/examples/PythonTransformationMock.md %}

@@ -23,6 +23,8 @@ The function that will be executed has to:
 
 The function is applied to the input `DataFrame` in parallel for better performance.
 
+{% markdown operations/r_global_scope.md %}
+
 #### Example R code:
 {% highlight r %}
 transform.column <- function(column, column.name) {
@@ -110,3 +112,5 @@ transform.column <- function(column, column.name) {
 </tr>
 </tbody>
 </table>
+
+{% markdown operations/examples/RColumnTransformationMock.md %}

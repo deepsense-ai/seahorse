@@ -21,6 +21,8 @@ The R function that will be executed must:
 
 * return a SparkR `SparkDataFrame`, an R `data.frame`, or data that can be converted to R `data.frame` using `data.frame()` function (single value, vector etc).
 
+{% markdown operations/r_global_scope.md %}
+
 #### Example R code:
 {% highlight r %}
 transform <- function(dataframe) {
@@ -98,3 +100,5 @@ presented in the operation's description.</td>
 </tr>
 </tbody>
 </table>
+
+{% markdown operations/examples/RTransformationMock.md %}

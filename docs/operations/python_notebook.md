@@ -23,16 +23,7 @@ be accessed from within the `Python Notebook` by calling the `dataframe()` funct
 The user can start editing the code by clicking **Open notebook** in the `Python Notebook` operation's
 parameters panel.
 
-The variables and functions available in the `Python Notebooks`' global scope:
-
-* `dataframe()` - a function that returns the input `DataFrame` for this `Python Notebook`.
-Everytime the input `DataFrame` changes, the `dataframe()` returns the updated `DataFrame`.
-
-* `sc` - Spark Context
-
-* `spark` - Spark Session
-
-* `sqlContext` - SQL Context
+{% markdown operations/python_global_scope.md %}
 
 Data visualization can be achieved using the
 <a target="_blank" href="{{ site.PANDAS_LIBRARY_ADDRESS }}">pandas</a> library.

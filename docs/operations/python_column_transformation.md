@@ -23,6 +23,8 @@ The function that will be executed has to:
 
 The function is applied to the input `DataFrame` in parallel for better performance.
 
+{% markdown operations/python_global_scope.md %}
+
 #### Example Python code:
 {% highlight python %}
 def transform_value(value, column_name):
@@ -109,3 +111,5 @@ def transform_value(value, column_name):
 </tr>
 </tbody>
 </table>
+
+{% markdown operations/examples/PythonColumnTransformationMock.md %}

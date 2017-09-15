@@ -23,14 +23,7 @@ be accessed from within the `R Notebook` by calling the `dataframe()` function.
 The user can start editing the code by clicking **Open notebook** in the `R Notebook` operation's
 parameters panel.
 
-The variables and functions available in the `R Notebooks`' global scope:
-
-* `dataframe()` - a function that returns the input `DataFrame` for this `R Notebook`.
-Everytime the input `DataFrame` changes, the `dataframe()` returns the updated `DataFrame`.
-
-* `sc` - Spark Context
-
-* `spark` - Spark Session
+{% markdown operations/r_global_scope.md %}
 
 **Since**: Seahorse 1.3.0
 

@@ -28,6 +28,8 @@ abstract class CustomCodeTransformer extends Transformer {
   val OutputPortNumber: Int = 0
 
   val codeParameter: CodeSnippetParam
+  def getCodeParameter: String = $(codeParameter)
+  def setCodeParameter(value: String): this.type = set(codeParameter, value)
 
   override val params = declareParams(codeParameter)
 
