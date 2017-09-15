@@ -1,9 +1,9 @@
 'use strict';
 
-let REPORT_EVENTS = require('../../reports.controller.js').EVENTS;
+let REPORT_EVENTS = require('../reports.controller.js').EVENTS;
 
 /* @ngInject */
-function ReportTableBodyController($scope, $rootScope, $element) {
+function ReportTableController($scope, $rootScope, $element) {
   let that = this;
   let internals = {};
 
@@ -61,8 +61,8 @@ function ReportTableBodyController($scope, $rootScope, $element) {
   });
 }
 
-ReportTableBodyController.$inject = ['$scope', '$rootScope', '$element'];
+ReportTableController.$inject = ['$scope', '$rootScope', '$element'];
 
 exports.inject = function(module) {
-  module.controller('ReportTableBodyController', ReportTableBodyController);
+  module.controller('ReportTableController', ReportTableController);
 };

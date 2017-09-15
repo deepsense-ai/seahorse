@@ -1,19 +1,21 @@
 'use strict';
 
-function ReportTableBody() {
+function ReportTable() {
   return {
-    templateUrl: 'app/workflows/reports/report-table/report-table-body/report-table-body.html',
-    controller: 'ReportTableBodyController',
+    templateUrl: 'app/workflows/reports/report-table/report-table.html',
+    controller: 'ReportTableController',
     bindToController: true,
-    controllerAs: 'reportTableBody',
+    controllerAs: 'reportTable',
     replace: 'true',
     scope: {
       'tableData': '=',
       'tableColumnsData': '=',
-      'selectionColumnEnabled': '='
+      // TODO What is it for? Can we remove it?
+      'selectionColumnEnabled': '=',
+      'tableSizes': '='
     },
     link: function(scope, element, args, controller) {
-      if (scope.reportTableBody.selectionColumnEnabled) {
+      if (scope.reportTable.selectionColumnEnabled) {
         element.on('click', function(event) {
           scope.$apply(() => {
             controller.selectColumn(event);
@@ -26,5 +28,5 @@ function ReportTableBody() {
 }
 
 exports.inject = function(module) {
-  module.directive('reportTableBody', ReportTableBody);
+  module.directive('reportTable', ReportTable);
 };
