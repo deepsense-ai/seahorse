@@ -1,4 +1,4 @@
-<div class="datasources-modal">
+<div class="datasources-modal" ng-form="databaseForm">
   <div class="datasources-modal__header">
     <div class="modal-title">Select from Database</div>
   </div>
@@ -10,6 +10,7 @@
         <input
           ng-disabled="$ctrl.previewMode"
           ng-model="$ctrl.datasourceParams.jdbcParams.driver"
+          name="driver"
           placeholder="e.g. com.mysql.jdbc.Driver"
           class="form-control"
           type="text"
@@ -20,8 +21,8 @@
         >
           <div
             ng-class="{
-              'sa-ok status-ok': $ctrl.datasourceParams.jdbcParams.driver,
-              'status-error': !$ctrl.datasourceParams.jdbcParams.driver
+              'sa-ok status-ok': $ctrl.datasourceParams.jdbcParams.driver && (databaseForm.driver.$dirty || $ctrl.originalDatasource),
+              'status-error': !$ctrl.datasourceParams.jdbcParams.driver && (databaseForm.driver.$dirty || $ctrl.originalDatasource)
             }"
             class="sa icon"
           ></div>
@@ -35,6 +36,7 @@
         <input
           ng-disabled="$ctrl.previewMode"
           ng-model="$ctrl.datasourceParams.jdbcParams.url"
+          name="url"
           placeholder="Connection string"
           class="form-control"
           type="text"
@@ -45,8 +47,8 @@
         >
           <div
             ng-class="{
-              'sa-ok status-ok': $ctrl.datasourceParams.jdbcParams.url,
-              'status-error': !$ctrl.datasourceParams.jdbcParams.url
+              'sa-ok status-ok': $ctrl.datasourceParams.jdbcParams.url && (databaseForm.url.$dirty || $ctrl.originalDatasource),
+              'status-error': !$ctrl.datasourceParams.jdbcParams.url && (databaseForm.url.$dirty || $ctrl.originalDatasource)
             }"
             class="sa icon"
           ></div>
