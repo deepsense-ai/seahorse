@@ -5,11 +5,12 @@ package io.deepsense.batche2etests
 
 import java.io.File
 
-import io.deepsense.commons.models.ClusterDetails
-import io.deepsense.e2etests.{TestClusters, TestWorkflowsIterator}
+import scala.sys.process._
+
 import org.scalatest.{Matchers, WordSpec}
 
-import scala.sys.process._
+import io.deepsense.commons.models.ClusterDetails
+import io.deepsense.e2etests.{TestClusters, TestWorkflowsIterator}
 
 class JsonWorkflowsBatchTest extends WordSpec
   with Matchers
@@ -30,9 +31,12 @@ class JsonWorkflowsBatchTest extends WordSpec
           s"run on ${cluster.clusterType} cluster" in {
             clearExecutionResult(resultFilePath)
             runWorkflow(cluster, path)
-            assertSuccessfulExecution(resultFilePath)
+            try {
+              assertSuccessfulExecution(resultFilePath)
+            } finally {
+              clearExecutionResult(resultFilePath)
+            }
           }
-          clearExecutionResult(resultFilePath)
         }
       }
     }

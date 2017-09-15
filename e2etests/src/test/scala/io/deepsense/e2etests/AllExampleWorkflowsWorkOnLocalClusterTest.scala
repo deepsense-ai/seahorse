@@ -10,7 +10,8 @@ import scala.language.postfixOps
 
 import org.scalatest._
 
-import io.deepsense.models.workflows.{Workflow, WorkflowInfo}
+import io.deepsense.commons.utils.OptionOpts._
+import io.deepsense.models.workflows.WorkflowInfo
 import io.deepsense.workflowmanager.model.WorkflowDescription
 
 
@@ -27,7 +28,12 @@ class AllExampleWorkflowsWorkOnLocalClusterTest extends FreeSpec with Matchers w
           exampleWorkflow <- exampleWorkflows
         } {
           s"Workflow '${exampleWorkflow.name}'" in {
-            Await.result(cloneAndRunWorkflow(exampleWorkflow), workflowTimeout)
+            Await.result({
+              val workflowFut = cloneWorkflow(exampleWorkflow)
+              workflowFut.flatMap { workflow =>
+                runAndCleanupWorkflow(workflow, TestClusters.local())
+              }
+            }, workflowTimeout)
           }
         }), httpTimeout)
   }
@@ -41,21 +47,10 @@ class AllExampleWorkflowsWorkOnLocalClusterTest extends FreeSpec with Matchers w
 
     for {
       id <- clonedWorkflowIdFut
-      wflows <- wmclient.fetchWorkflows()
-      wflow = wflows.find(_.id == id)
+      workflows <- wmclient.fetchWorkflows()
+      workflow <- workflows.find(_.id == id).asFuture
     } yield {
-      wflow.get
-    }
-  }
-
-  def cloneAndRunWorkflow(wflow: WorkflowInfo): Future[Unit] = {
-    cloneWorkflow(wflow).flatMap { clonedWorkflow =>
-      val clonedWorkflowId = clonedWorkflow.id
-      createSessionSynchronously(clonedWorkflowId, TestClusters.local())
-      smclient.launchSession(clonedWorkflowId)
-      assertAllNodesCompletedSuccessfully(clonedWorkflow)
-      smclient.deleteSession(clonedWorkflowId)
-      wmclient.deleteWorkflow(clonedWorkflowId)
+      workflow
     }
   }
 

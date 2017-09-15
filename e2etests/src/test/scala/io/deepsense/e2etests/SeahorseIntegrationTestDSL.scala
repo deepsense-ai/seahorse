@@ -19,13 +19,12 @@ import org.scalactic.source.Position
 import org.scalatest.Matchers
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.{Seconds, Span}
+import spray.http.HttpResponse
 
 import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.CatalogRecorder
 import io.deepsense.deeplang.catalogs.CatalogPair
-import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
-import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.graph.nodestate.name.NodeStatusName
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.WorkflowJsonProtocol
@@ -83,6 +82,35 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging w
     }
   }
 
+  def runAndCleanupWorkflow(workflow: WorkflowInfo, cluster: ClusterDetails): Future[Unit] = {
+    for {
+      _ <- launchWorkflow(TestClusters.local(), workflow)
+      validation = assertAllNodesCompletedSuccessfully(workflow)
+      _ <- cleanSession(workflow)
+    } yield {
+      validation match {
+        case Success(_) =>
+        case Failure(nodeReport) =>
+          fail(s"Some nodes failed for workflow id: ${workflow.id}." +
+            s"name: ${workflow.name}'. Node report: $nodeReport")
+      }
+    }
+  }
+
+  private def cleanSession(workflow: WorkflowInfo): Future[Unit] = {
+    val id = workflow.id
+    for {
+      _ <- smclient.deleteSession(id)
+      _ <- wmclient.deleteWorkflow(id)
+    } yield ()
+  }
+
+  private def launchWorkflow(cluster: ClusterDetails, workflow: WorkflowInfo): Future[HttpResponse] = {
+    val id = workflow.id
+    createSessionSynchronously(id, cluster)
+    smclient.launchSession(id)
+  }
+
   def createSessionSynchronously(id: Workflow.Id, clusterDetails: ClusterDetails): Unit = {
     smclient.createSession(id, clusterDetails)
 
@@ -94,7 +122,7 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging w
     }
   }
 
-  def assertAllNodesCompletedSuccessfully(workflow: WorkflowInfo): Unit = {
+  def assertAllNodesCompletedSuccessfully(workflow: WorkflowInfo): Validation[String, String] = {
     val numberOfNodesFut = calculateNumberOfNodes(workflow.id)
 
     val nodesResult: Validation[String, String] = eventually {
@@ -117,11 +145,7 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging w
         }, httpTimeout)
     }(PatienceConfig(timeout = workflowTimeout, interval = 5 seconds), implicitly[Position])
 
-    nodesResult match {
-      case Success(_) =>
-      case Failure(nodeReport) =>
-        fail(s"Some nodes failed for workflow id: ${workflow.id}. name: ${workflow.name}'. Node report: $nodeReport")
-    }
+    nodesResult
   }
 
   def checkCompletedNodesNumber(errorNodeStatuses: Int,
@@ -153,5 +177,4 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging w
   private def calculateNumberOfNodes(workflowId: Workflow.Id): Future[Int] = {
     wmclient.fetchWorkflow(workflowId).map(_.graph.nodes.size)
   }
-
 }
