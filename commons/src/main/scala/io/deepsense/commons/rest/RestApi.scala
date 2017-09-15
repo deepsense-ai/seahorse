@@ -118,7 +118,7 @@ trait RestApiAbstractAuth
           case None => logger.info(message)
         }
         complete(StatusCodes.BadRequest)
-    }
+    } orElse RejectionHandler.Default
   }
 }
 
