@@ -4,6 +4,7 @@
 function SessionManager($interval, config, SessionManagerApi, SessionStatus) {
 
   const service = {
+    isReady: false,
     sessions: [],
     statusForWorkflowId: (workflowId) => {
       const session = _.find(service.sessions, (s) => s.workflowId === workflowId);
@@ -16,9 +17,14 @@ function SessionManager($interval, config, SessionManagerApi, SessionStatus) {
   };
 
   function pollSessionManager() {
-    SessionManagerApi.downloadSessions().then((result) => {
-      service.sessions = result;
-    });
+    SessionManagerApi.downloadSessions().
+      then((result) => {
+        service.sessions = result;
+        service.isReady = true;
+      }).
+      catch(() => {
+        service.isReady = false;
+      })
   }
 
   pollSessionManager();

@@ -7,7 +7,7 @@ function Home($rootScope, $uibModal, $state, WorkflowService, ConfirmationModalS
     $rootScope.stateData.dataIsLoaded = true;
     $rootScope.pageTitle = 'Workflows';
     ServerCommunication.unsubscribeFromAllExchanges();
-    this._isWorkflowLoading = false;
+    this.isWorkflowListLoaded = true;
     this.isWorkflowListEmpty = false;
     this.isErrorConnectingToVagrant = false;
     this.icon = '';
@@ -20,8 +20,13 @@ function Home($rootScope, $uibModal, $state, WorkflowService, ConfirmationModalS
     this.downloadWorkflows();
 
     $rootScope.$watch(() => {
-      return {sessions: SessionManager.sessions, workflows: this.workflows}
+      return {
+        sessions: SessionManager.sessions,
+        workflows: this.workflows,
+        isSessionManagerReady: SessionManager.isReady
+      }
     }, () => {
+
       _.forEach(this.workflows, (w) => {
         w.sessionStatus = SessionManager.statusForWorkflowId(w.id);
       });
@@ -29,14 +34,15 @@ function Home($rootScope, $uibModal, $state, WorkflowService, ConfirmationModalS
   };
 
   this.downloadWorkflows = () => {
-    this._isWorkflowLoading = true;
+    this.isWorkflowListLoaded = false;
     WorkflowService.downloadWorkflows().then((workflows) => {
       if (workflows && workflows.length === 0) {
         this.isWorkflowListEmpty = true;
       }
-      this._isWorkflowLoading = false;
+      this.isWorkflowListLoaded = true;
       this.workflows = workflows;
-    }, () => {
+    }).catch(() => {
+      this.isWorkflowListLoaded = true;
       this.isErrorConnectingToVagrant = true;
     });
   };
@@ -78,8 +84,12 @@ function Home($rootScope, $uibModal, $state, WorkflowService, ConfirmationModalS
     return UserService.getSeahorseUser().id === workflow.ownerId;
   };
 
-  this.isWorkflowLoading = () => {
-    return this._isWorkflowLoading;
+  this.showSpinner = () => {
+    return !this.isWorkflowListLoaded || !SessionManager.isReady && !this.isErrorConnectingToVagrant;
+  };
+
+  this.showWorkflowList = () => {
+    return SessionManager.isReady && !this.isErrorConnectingToVagrant;
   };
 
   this.getClass = (columnName) => {
