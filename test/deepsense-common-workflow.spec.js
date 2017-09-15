@@ -335,7 +335,7 @@ describe('workflow', () => {
 
     let knowledge = {
       [node0.id]: buildNodeKnowledge([{types: ['T02', 'T03']}]),
-      [node1.id]: buildNodeKnowledge([{types: ['T04'], params: 'xyz'}])
+      [node1.id]: buildNodeKnowledge([{types: ['T04'], result: 'xyz'}])
     };
 
     workflow.updateTypeKnowledge(knowledge);
@@ -345,7 +345,7 @@ describe('workflow', () => {
 
     expect(node1.input[0].typeQualifier).toEqual(initOperations.o2.ports.input[0].typeQualifier);
     expect(node1.output[0].typeQualifier).toEqual(['T04']);
-    expect(node1.output[0].params).toEqual('xyz');
+    expect(node1.output[0].result).toEqual('xyz');
   });
 
 });

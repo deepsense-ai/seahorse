@@ -303,12 +303,14 @@ factory('Workflow', /*@ngInject*/function (GraphNode, Edge) {
           let newOutputPorts = knowledge[node.id].ports;
           if (newOutputPorts) {
             _.forEach(node.output, (port) => {
-              let {types, params} = newOutputPorts[port.index];
+              let {types, result} = newOutputPorts[port.index];
+              // 'types' is array of identifier of possible output types.
+              // 'result' is optional field with detailed information about resulting entity.
               if (types) {
                 port.typeQualifier = types.slice();
               }
-              if (params) {
-                port.params = params;
+              if (result) {
+                port.result = result;
               }
             });
           }
