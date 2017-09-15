@@ -1,10 +1,9 @@
 'use strict';
-
+const CHECKING_SESSION_MANAGER_STATE_TIMEOUT = 10000;
 /* @ngInject */
 function SessionManager($interval, config, SessionManagerApi, SessionStatus) {
 
   const service = {
-    isReady: false,
     sessions: [],
     statusForWorkflowId: (workflowId) => {
       const session = _.find(service.sessions, (s) => s.workflowId === workflowId);
@@ -17,18 +16,17 @@ function SessionManager($interval, config, SessionManagerApi, SessionStatus) {
     clusterInfoForWorkflowId: (workflowId) => {
       const session = _.find(service.sessions, (s) => s.workflowId === workflowId);
       return session.cluster;
+    },
+    checkSessionManagerState: () => {
+      return SessionManagerApi.downloadSessions({timeout: CHECKING_SESSION_MANAGER_STATE_TIMEOUT});
     }
   };
 
   function pollSessionManager() {
     SessionManagerApi.downloadSessions().
-    then((result) => {
-      service.sessions = result;
-      service.isReady = true;
-    }).
-    catch(() => {
-      service.isReady = false;
-    });
+      then((result) => {
+        service.sessions = result;
+      })
   }
 
   pollSessionManager();

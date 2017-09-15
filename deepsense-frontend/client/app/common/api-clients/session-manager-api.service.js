@@ -14,8 +14,8 @@ function SessionManagerApi($http, config) {
     `${config.apiHost}:${config.sessionApiPort}/${config.urlApiVersion}/sessions` :
     `${config.apiHost}/${config.urlApiVersion}/sessions`;
 
-  function downloadSessions() {
-    return $http.get(URL).then(function processResult(result) {
+  function downloadSessions(config) {
+    return $http.get(URL, config).then(function processResult(result) {
       console.log('SessionManagerApi downloadSessions result', result);
       return result.data.sessions;
     });

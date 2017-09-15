@@ -7,9 +7,9 @@ function Home($rootScope, $uibModal, $state, WorkflowService, ConfirmationModalS
     $rootScope.stateData.dataIsLoaded = true;
     $rootScope.pageTitle = 'Workflows';
     ServerCommunication.unsubscribeFromAllExchanges();
-    this.isWorkflowListLoaded = true;
-    this.isWorkflowListEmpty = false;
-    this.isErrorConnectingToVagrant = false;
+    this.workflows = undefined;
+    this.sessionManagerState = 'UNDEFINED';
+    this.loadingWorkflowsState = 'UNDEFINED';
     this.icon = '';
     this.info = '';
     this.sort = {
@@ -19,14 +19,18 @@ function Home($rootScope, $uibModal, $state, WorkflowService, ConfirmationModalS
 
     this.downloadWorkflows();
 
+    SessionManager.checkSessionManagerState().then(() => {
+      this.sessionManagerState = 'WORKING'
+    }).catch(() => {
+      this.sessionManagerState = 'NOT_WORKING';
+    });
+
     $rootScope.$watch(() => {
       return {
         sessions: SessionManager.sessions,
-        workflows: this.workflows,
-        isSessionManagerReady: SessionManager.isReady
+        workflows: this.workflows
       }
     }, () => {
-
       _.forEach(this.workflows, (w) => {
         w.sessionStatus = SessionManager.statusForWorkflowId(w.id);
       });
@@ -34,16 +38,11 @@ function Home($rootScope, $uibModal, $state, WorkflowService, ConfirmationModalS
   };
 
   this.downloadWorkflows = () => {
-    this.isWorkflowListLoaded = false;
     WorkflowService.downloadWorkflows().then((workflows) => {
-      if (workflows && workflows.length === 0) {
-        this.isWorkflowListEmpty = true;
-      }
-      this.isWorkflowListLoaded = true;
       this.workflows = workflows;
+      this.loadingWorkflowsState = 'LOADED';
     }).catch(() => {
-      this.isWorkflowListLoaded = true;
-      this.isErrorConnectingToVagrant = true;
+      this.loadingWorkflowsState = 'ERROR';
     });
   };
 
@@ -84,12 +83,17 @@ function Home($rootScope, $uibModal, $state, WorkflowService, ConfirmationModalS
     return UserService.getSeahorseUser().id === workflow.ownerId;
   };
 
-  this.showSpinner = () => {
-    return !this.isWorkflowListLoaded || !SessionManager.isReady && !this.isErrorConnectingToVagrant;
+  this.isLoading = () => {
+    return this.sessionManagerState === 'UNDEFINED' ||
+      (this.sessionManagerState === 'WORKING' && this.loadingWorkflowsState === 'UNDEFINED');
   };
 
-  this.showWorkflowList = () => {
-    return SessionManager.isReady && !this.isErrorConnectingToVagrant;
+  this.isReady = () => {
+    return this.sessionManagerState === 'WORKING' && this.loadingWorkflowsState === 'LOADED';
+  };
+
+  this.isError = () => {
+    return this.sessionManagerState === 'NOT_WORKING' || this.loadingWorkflowsState === 'ERROR';
   };
 
   this.getClass = (columnName) => {
@@ -101,10 +105,6 @@ function Home($rootScope, $uibModal, $state, WorkflowService, ConfirmationModalS
 
   this.getVersion = () => {
     return config.editorVersion;
-  };
-
-  this.getAllWorkflows = () => {
-    return WorkflowService.getAllWorkflows();
   };
 
   this.goToWorkflowEditor = (workflowId) => {

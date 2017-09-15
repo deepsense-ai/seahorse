@@ -14,7 +14,7 @@ function WorkflowsApiClientFactory(BaseApiClient, ServerCommunication, config) {
     }
 
     getAllWorkflows() {
-      return this.makeRequest(this.METHOD_GET, `${this.API_URL}${PATH_WORKFLOWS}`);
+      return this.makeRequest(this.METHOD_GET, `${this.API_URL}${PATH_WORKFLOWS}`, null, 10000);
     }
 
     getWorkflow(workflowId) {

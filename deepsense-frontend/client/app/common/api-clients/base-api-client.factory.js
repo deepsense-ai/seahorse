@@ -14,12 +14,13 @@ function BaseApiClientFactory($http, $q, config) {
   BaseApiClient.prototype.METHOD_PUT = 'PUT';
   BaseApiClient.prototype.METHOD_DELETE = 'DELETE';
 
-  BaseApiClient.prototype.makeRequest = function(method, url, data = {}) {
+  BaseApiClient.prototype.makeRequest = function(method, url, data = {}, timeout) {
     let deferred = $q.defer();
     $http({
         'method': method,
         'url': url,
-        'data': data
+        'data': data,
+        'timeout': timeout
       })
       .
     then((result) => {

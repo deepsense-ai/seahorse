@@ -20,10 +20,10 @@
       </button>
     </div>
   </div>
-  <deepsense-loading-spinner-sm ng-if="home.showSpinner()"></deepsense-loading-spinner-sm>
-  <div ng-if="home.isWorkflowListLoaded">
-    <div ng-if="home.showWorkflowList()">
-      <div class="input-group search-field" ng-if="home.getAllWorkflows()">
+  <deepsense-loading-spinner-sm ng-if="home.isLoading()"></deepsense-loading-spinner-sm>
+  <div ng-if="home.isReady()">
+    <div ng-if="home.workflows.length > 0">
+      <div class="input-group search-field">
         <input type="text" class="text-center form-control input-search-workflow"
                ng-model="home.filterString" placeholder="SEARCH...">
       </div>
@@ -140,7 +140,7 @@
         </tr>
       </table>
     </div>
-    <div class="col-md-12" ng-if="home.isWorkflowListEmpty">
+    <div class="col-md-12" ng-if="home.workflows.length === 0">
       <div class="container center">
         <div class="no-worfklows">
           <div class="no-worfklows__icon">
@@ -150,16 +150,16 @@
         </div>
       </div>
     </div>
-    <div class="col-md-12" ng-if="home.isErrorConnectingToVagrant">
-      <div class="container center">
-        <div class="no-worfklows">
-          <div class="no-worfklows__icon">
-          <span>
-            <b>Seahorse is booting up.</b>
-          </span>
-            <br/>
-            <span>Please wait a few seconds and <a href="#" ng-click="home.reloadPage()">reload the page</a>.</span>
-          </div>
+  </div>
+  <div ng-if="home.isError()" class="col-md-12">
+    <div class="container center">
+      <div class="no-worfklows">
+        <div class="no-worfklows__icon">
+        <span>
+          <b>Seahorse is getting ready.</b>
+        </span>
+          <br/>
+          <span>Please wait a few seconds and <a href="#" ng-click="home.reloadPage()">reload the page</a>.</span>
         </div>
       </div>
     </div>
