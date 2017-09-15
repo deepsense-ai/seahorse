@@ -10,8 +10,7 @@ import io.deepsense.commons.mail.{EmailSender, EmailSenderConfig}
 import io.deepsense.seahorse.scheduling.SchedulingManagerConfig
 
 private[schedule] object EmailSenderApi {
-  private[this] val emailSenderConfig = EmailSenderConfig(SchedulingManagerConfig.config)
-  private[this] val sender = EmailSender(emailSenderConfig)
+  private[this] val sender = EmailSender(SchedulingManagerConfig.emailSender)
   def sendEmail(title: String, body: String, sendTo: String): Future[Unit] = {
     val msg = sender.createPlainMessage(title, body, Seq(sendTo))
     sender.sendEmail(msg).map(throw _)
