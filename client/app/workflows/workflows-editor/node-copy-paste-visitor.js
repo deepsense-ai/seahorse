@@ -42,20 +42,19 @@ class NodeCopyPasteVisitor {
     this.$q.all(nodeParametersPromises).then(
       nodes => this.GraphNodesService.cloneNodes(nodes)
     ).then((clonedNodes) => {
-        // mark clones as selected after they are created
-        this.$rootScope.$applyAsync(() => {
-          let nodesId = clonedNodes.map(node => node.id);
-          this.WorkflowsEditorController.unselectNode();
-          this.MultiSelectionService.clearSelection();
-          this.MultiSelectionService.addNodesToSelection(nodesId);
-          this.$rootScope.$broadcast('MultiSelection.ADD', nodesId);
-        });
+      // mark clones as selected after they are created
+      this.$rootScope.$applyAsync(() => {
+        let nodesId = clonedNodes.map(node => node.id);
+        this.WorkflowsEditorController.unselectNode();
+        this.MultiSelectionService.clearSelection();
+        this.MultiSelectionService.addNodesToSelection(nodesId);
+        this.$rootScope.$broadcast('MultiSelection.ADD', nodesId);
+      });
 
-        this.$rootScope.$broadcast('INTERACTION-PANEL.FIT', {
-          zoomId: this.WorkflowsEditorController.zoomId
-        })
-      }
-    );
+      this.$rootScope.$broadcast('INTERACTION-PANEL.FIT', {
+        zoomId: this.WorkflowsEditorController.zoomId
+      });
+    });
   }
 
 }
