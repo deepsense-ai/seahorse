@@ -40,6 +40,6 @@ object HostAddressResolver extends Logging {
             !(address.getHostAddress == "255.255.255.255")
         }
       }
-    }.get.headOption.getOrElse(throw new IllegalStateException("Could not get host address."))
+    }.get.headOption.getOrElse(InetAddress.getByName("127.0.0.1"))
   }
 }
