@@ -12,7 +12,6 @@ import org.scalatest.{FlatSpec, Matchers}
 import spray.json._
 
 import io.deepsense.commons.datetime.DateTimeConverter
-import io.deepsense.commons.models.Id
 import io.deepsense.deeplang.doperables.Report
 import io.deepsense.entitystorage.models._
 
@@ -85,6 +84,7 @@ class EntityJsonProtocolSpec extends FlatSpec with Matchers with EntityJsonProto
   private def testEntity(dClass: String, data: DataObject) = {
     val now = DateTimeConverter.now
     Entity(
+      UUID.randomUUID().toString, // random tenant Id
       Entity.Id.randomId,
       "testEntity",
       "entity Description",
@@ -102,6 +102,7 @@ class EntityJsonProtocolSpec extends FlatSpec with Matchers with EntityJsonProto
     JsObject(userEntityDescriptionMap(entity))
 
   private def entityMap(entity: Entity): Map[String, JsValue] = entityDescriptorMap(entity) ++ Map(
+    "tenantId" -> JsString(entity.tenantId),
     "data" -> jsonDataObject(entity.data))
 
   private def entityDescriptorMap(entity: Entity): Map[String, JsValue] =

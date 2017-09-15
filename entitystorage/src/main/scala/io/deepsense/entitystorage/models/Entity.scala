@@ -14,6 +14,7 @@ import io.deepsense.commons.models
  * Main concept of the entity storage.
  */
 case class Entity (
+  tenantId: String,
   id: Entity.Id,
   name: String,
   description: String,

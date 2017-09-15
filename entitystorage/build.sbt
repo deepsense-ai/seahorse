@@ -46,6 +46,3 @@ inConfig(IntegTest) {
 
 def integFilter(name: String) = name.endsWith("IntegSpec")
 def unitFilter(name: String) = name.endsWith("Spec") && !integFilter(name)
-
-// Always perform assembly task before it:test
-test in IntegTest <<= (test in IntegTest) dependsOn assembly

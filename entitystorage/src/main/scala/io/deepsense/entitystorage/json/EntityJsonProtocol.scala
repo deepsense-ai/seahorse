@@ -20,7 +20,7 @@ trait EntityJsonProtocol
   with DateTimeJsonProtocol
   with DataObjectJsonProtocol {
 
-  implicit val entityFormat = jsonFormat8(Entity.apply)
+  implicit val entityFormat = jsonFormat9(Entity.apply)
   implicit val entityDescriptorFormat = jsonFormat7(EntityDescriptor.apply)
   implicit val userEntityDescriptionFormat = jsonFormat4(UserEntityDescription)
 }

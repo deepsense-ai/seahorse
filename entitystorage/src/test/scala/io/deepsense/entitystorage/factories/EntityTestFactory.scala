@@ -14,6 +14,7 @@ trait EntityTestFactory {
   def testEntity(dClass: String, data: DataObject) = {
     val now = DateTimeConverter.now
     Entity(
+      "testTenantId",
       Entity.Id.randomId,
       "testEntity",
       "entity Description",

@@ -13,6 +13,7 @@ import io.deepsense.commons.config.ConfigModule
 import io.deepsense.commons.jclouds.{KeystoneApiModule, TokenApiModule}
 import io.deepsense.commons.rest.RestModule
 import io.deepsense.entitystorage.api.akka.EntitiesActorModule
+import io.deepsense.entitystorage.storage.cassandra.EntityDaoCassandraModule
 import io.deepsense.entitystorage.storage.{EntityDaoInMemoryImpl, EntityDao}
 
 /**
@@ -34,7 +35,7 @@ class EntityStorageAppModule extends AbstractModule {
   }
 
   private def installServices(): Unit = {
-    bind(classOf[EntityDao]).to(classOf[EntityDaoInMemoryImpl]).in(Scopes.SINGLETON)
+    install(new EntityDaoCassandraModule)
     install(new EntitiesActorModule)
   }
 

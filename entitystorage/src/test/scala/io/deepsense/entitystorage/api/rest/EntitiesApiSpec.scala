@@ -68,6 +68,7 @@ class EntitiesApiSpec
       created: DateTime,
       updated: DateTime,
       data: DataObject): Entity = Entity(
+    "tenantId",
     Entity.Id.randomId,
     s"name$index",
     s"description$index",
@@ -77,7 +78,7 @@ class EntitiesApiSpec
     data
   )
 
-  private def testRoute = {
+  protected def testRoute = {
     val tokenTranslator = mock[TokenTranslator]
     when(tokenTranslator.translate(any(classOf[String])))
       .thenAnswer(new Answer[Future[UserContext]] {

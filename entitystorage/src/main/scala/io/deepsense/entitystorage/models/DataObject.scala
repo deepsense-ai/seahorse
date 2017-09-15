@@ -12,7 +12,7 @@ import io.deepsense.deeplang.doperables.Report
  * Superclass represents data stored in Entity.
  * DataObject can be a Report or a reference containing hdfs path do actual data
  */
-abstract class DataObject
+sealed abstract class DataObject
 
 /**
  * Report representation with all its content.

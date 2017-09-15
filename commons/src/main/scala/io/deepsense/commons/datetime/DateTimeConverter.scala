@@ -17,4 +17,6 @@ object DateTimeConverter {
   def fromString(dateTimeString: String) =
     dateTimeFormatter.parseDateTime(dateTimeString).withZone(zone)
   def now = new DateTime(zone)
+  def fromMillis(millis: Long) =
+    new DateTime(zone).withMillis(millis)
 }
