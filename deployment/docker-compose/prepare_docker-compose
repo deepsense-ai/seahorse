@@ -30,6 +30,12 @@ sed -i 's|\$EXPOSED_NOTEBOOK_PORT|'"$EXPOSED_NOTEBOOK_PORT"'|g' $TARGET
 sed -i 's|\$EXPOSED_FRONTEND_PORT|'"$EXPOSED_FRONTEND_PORT"'|g' $TARGET
 sed -i 's|\$EXPOSED_LIBRARY_PORT|'"$EXPOSED_LIBRARY_PORT"'|g' $TARGET
 
-API_VERSION=`cat ../../version.sbt | sed -n  's/version in ThisBuild := "\([0-9.]\+\).*/\1/p'`
+
+VERSION_SBT_PATH=`dirname $0`"/../../version.sbt"
+API_VERSION=`cat "$VERSION_SBT_PATH" | sed -n  's/version in ThisBuild := "\([0-9.]\+\).*/\1/p'`
+if [ -z "$API_VERSION" ]; then
+	echo "Couldn't gather API_VERSION from $VERSION_SBT_PATH"
+	exit 3
+fi
 sed -i 's|\$API_VERSION|'"$API_VERSION"'|g' $TARGET
 
