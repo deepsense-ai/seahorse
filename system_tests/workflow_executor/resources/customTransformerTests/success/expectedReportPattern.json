@@ -1,0 +1,247 @@
+{
+  "executionReport": {
+    "nodes": {
+      "f4b2685b-8e80-4887-8683-1ec1edd009d2": {
+        "status": "COMPLETED", 
+        "results": [
+          "f0498eeb-4199-46df-b638-ef2309ed2235"
+        ], 
+        "error": null
+      }, 
+      "9bceb22b-10d4-4c9d-9967-bfc4f2ba5dc5": {
+        "status": "COMPLETED", 
+        "results": [
+          "b7135f0e-3d8e-44e2-956a-676ecc14a7ea"
+        ], 
+        "error": null
+      }, 
+      "06753647-d497-427c-b36e-671f7dcc02a3": {
+        "status": "COMPLETED", 
+        "results": [
+          "8850d421-dfee-4caf-b7c5-25d36a823623"
+        ], 
+        "error": null
+      }
+    }, 
+    "resultEntities": {
+      "f0498eeb-4199-46df-b638-ef2309ed2235": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "3", 
+                  "4"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "column1", 
+                "column2", 
+                "output"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "1", 
+                  "5", 
+                  "2"
+                ], 
+                [
+                  "2", 
+                  "6", 
+                  "4"
+                ], 
+                [
+                  "3", 
+                  "7", 
+                  "6"
+                ], 
+                [
+                  "4", 
+                  "8", 
+                  "8"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "output": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "8", 
+                "mean": "5", 
+                "min": "2"
+              }, 
+              "name": "output", 
+              "missingValues": 0
+            }, 
+            "column1": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "4", 
+                "mean": "2.5", 
+                "min": "1"
+              }, 
+              "name": "column1", 
+              "missingValues": 0
+            }, 
+            "column2": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "8", 
+                "mean": "6.5", 
+                "min": "5"
+              }, 
+              "name": "column2", 
+              "missingValues": 0
+            }
+          }, 
+          "schema": {
+            "fields": [
+              {
+                "dataType": "double", 
+                "name": "column1", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "double", 
+                "name": "column2", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "double", 
+                "name": "output", 
+                "nullable": true
+              }
+            ]
+          }
+        }
+      }, 
+      "8850d421-dfee-4caf-b7c5-25d36a823623": {
+        "report": {
+          "tables": {}, 
+          "distributions": {}, 
+          "schema": null
+        }
+      }, 
+      "b7135f0e-3d8e-44e2-956a-676ecc14a7ea": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "2", 
+                  "4"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "column1", 
+                "column2"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "1", 
+                  "5"
+                ], 
+                [
+                  "2", 
+                  "6"
+                ], 
+                [
+                  "3", 
+                  "7"
+                ], 
+                [
+                  "4", 
+                  "8"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "column1": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "4", 
+                "mean": "2.5", 
+                "min": "1"
+              }, 
+              "name": "column1", 
+              "missingValues": 0
+            }, 
+            "column2": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "8", 
+                "mean": "6.5", 
+                "min": "5"
+              }, 
+              "name": "column2", 
+              "missingValues": 0
+            }
+          }, 
+          "schema": {
+            "fields": [
+              {
+                "dataType": "double", 
+                "name": "column1", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "double", 
+                "name": "column2", 
+                "nullable": true
+              }
+            ]
+          }
+        }
+      }
+    }, 
+    "error": null
+  }
+}

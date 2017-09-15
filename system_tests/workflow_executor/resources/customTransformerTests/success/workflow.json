@@ -1,0 +1,209 @@
+{
+  "executionReport": {
+    "error": null,
+    "nodes": {},
+    "resultEntities": {}
+  },
+  "id": "11589f31-cb47-4107-8faf-27a9da8e78fb",
+  "metadata": {
+    "apiVersion": "1.0.0",
+    "type": "batch"
+  },
+  "thirdPartyData": {},
+  "variables": {},
+  "workflow": {
+    "connections": [
+      {
+        "from": {
+          "nodeId": "9bceb22b-10d4-4c9d-9967-bfc4f2ba5dc5",
+          "portIndex": 0
+        },
+        "to": {
+          "nodeId": "f4b2685b-8e80-4887-8683-1ec1edd009d2",
+          "portIndex": 1
+        }
+      },
+      {
+        "from": {
+          "nodeId": "06753647-d497-427c-b36e-671f7dcc02a3",
+          "portIndex": 0
+        },
+        "to": {
+          "nodeId": "f4b2685b-8e80-4887-8683-1ec1edd009d2",
+          "portIndex": 0
+        }
+      }
+    ],
+    "nodes": [
+      {
+        "id": "06753647-d497-427c-b36e-671f7dcc02a3",
+        "operation": {
+          "id": "65240399-2987-41bd-ba7e-2944d60a3404",
+          "name": "Create custom transformer"
+        },
+        "parameters": {
+          "inner workflow": {
+            "sink": "d7798d5e-b1c6-4027-873e-a6d653957418",
+            "source": "2603a7b5-aaa9-40ad-9598-23f234ec5c32",
+            "thirdPartyData": "{}",
+            "workflow": {
+              "connections": [
+                {
+                  "from": {
+                    "nodeId": "2603a7b5-aaa9-40ad-9598-23f234ec5c32",
+                    "portIndex": 0
+                  },
+                  "to": {
+                    "nodeId": "b22bd79e-337d-4223-b9ee-84c2526a1b75",
+                    "portIndex": 0
+                  }
+                },
+                {
+                  "from": {
+                    "nodeId": "b22bd79e-337d-4223-b9ee-84c2526a1b75",
+                    "portIndex": 0
+                  },
+                  "to": {
+                    "nodeId": "d7798d5e-b1c6-4027-873e-a6d653957418",
+                    "portIndex": 0
+                  }
+                }
+              ],
+              "nodes": [
+                {
+                  "id": "2603a7b5-aaa9-40ad-9598-23f234ec5c32",
+                  "operation": {
+                    "id": "f94b04d7-ec34-42f7-8100-93fe235c89f8",
+                    "name": "Source"
+                  },
+                  "parameters": {}
+                },
+                {
+                  "id": "d7798d5e-b1c6-4027-873e-a6d653957418",
+                  "operation": {
+                    "id": "e652238f-7415-4da6-95c6-ee33808561b2",
+                    "name": "Sink"
+                  },
+                  "parameters": {}
+                },
+                {
+                  "id": "b22bd79e-337d-4223-b9ee-84c2526a1b75",
+                  "operation": {
+                    "id": "012876d9-7a72-47f9-98e4-8ed26db14d6d",
+                    "name": "Execute Mathematical Transformation"
+                  },
+                  "parameters": {
+                    "formula": "2*x",
+                    "input column": {
+                      "type": "column",
+                      "value": "column1"
+                    },
+                    "input column alias": "x",
+                    "output column name": "output"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": "9bceb22b-10d4-4c9d-9967-bfc4f2ba5dc5",
+        "operation": {
+          "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
+          "name": "Read DataFrame"
+        },
+        "parameters": {
+          "data storage type": {
+            "FILE": {
+              "format": {
+                "CSV": {
+                  "convert to boolean": false,
+                  "names included": true,
+                  "separator": {
+                    ",": {}
+                  }
+                }
+              },
+              "source": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/resources/customTransformerTests/success/input.csv"
+            }
+          }
+        }
+      },
+      {
+        "id": "f4b2685b-8e80-4887-8683-1ec1edd009d2",
+        "operation": {
+          "id": "643d8706-24db-4674-b5b4-10b5129251fc",
+          "name": "Transform"
+        },
+        "parameters": {
+          "Parameters of input Transformer": {
+            "inner workflow": {
+              "sink": "d7798d5e-b1c6-4027-873e-a6d653957418",
+              "source": "2603a7b5-aaa9-40ad-9598-23f234ec5c32",
+              "thirdPartyData": "{}",
+              "workflow": {
+                "connections": [
+                  {
+                    "from": {
+                      "nodeId": "2603a7b5-aaa9-40ad-9598-23f234ec5c32",
+                      "portIndex": 0
+                    },
+                    "to": {
+                      "nodeId": "b22bd79e-337d-4223-b9ee-84c2526a1b75",
+                      "portIndex": 0
+                    }
+                  },
+                  {
+                    "from": {
+                      "nodeId": "b22bd79e-337d-4223-b9ee-84c2526a1b75",
+                      "portIndex": 0
+                    },
+                    "to": {
+                      "nodeId": "d7798d5e-b1c6-4027-873e-a6d653957418",
+                      "portIndex": 0
+                    }
+                  }
+                ],
+                "nodes": [
+                  {
+                    "id": "2603a7b5-aaa9-40ad-9598-23f234ec5c32",
+                    "operation": {
+                      "id": "f94b04d7-ec34-42f7-8100-93fe235c89f8",
+                      "name": "Source"
+                    },
+                    "parameters": {}
+                  },
+                  {
+                    "id": "d7798d5e-b1c6-4027-873e-a6d653957418",
+                    "operation": {
+                      "id": "e652238f-7415-4da6-95c6-ee33808561b2",
+                      "name": "Sink"
+                    },
+                    "parameters": {}
+                  },
+                  {
+                    "id": "b22bd79e-337d-4223-b9ee-84c2526a1b75",
+                    "operation": {
+                      "id": "012876d9-7a72-47f9-98e4-8ed26db14d6d",
+                      "name": "Execute Mathematical Transformation"
+                    },
+                    "parameters": {
+                      "formula": "2*x",
+                      "input column": {
+                        "type": "column",
+                        "value": "column1"
+                      },
+                      "input column alias": "x",
+                      "output column name": "output"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}
