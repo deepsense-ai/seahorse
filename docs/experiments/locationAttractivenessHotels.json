@@ -157,10 +157,6 @@
                   "meeting_roomsUnknown",
                   "accessibilityUnknown"
                 ]
-              },
-              {
-                "type": "indexList",
-                "values": []
               }
             ],
             "targetType": {
@@ -209,10 +205,6 @@
             "categoricalColumns": [
               {
                 "type": "columnList",
-                "values": []
-              },
-              {
-                "type": "indexList",
                 "values": []
               }
             ]

@@ -1,6 +1,6 @@
 {
   "experiment": {
-    "name": "Demand Forecasting (Bikes) (gzes)",
+    "name": "Demand Forecasting (Bikes)",
     "description": "Demand Forecasting (Bikes)",
     "graph": {
       "nodes": [{
@@ -167,9 +167,6 @@
           "selectedColumns": [{
             "type": "columnList",
             "values": ["datetime_year", "datetime_month", "datetime_day", "datetime_hour"]
-          }, {
-            "type": "indexList",
-            "values": [0]
           }],
           "targetType": {
             "categorical": {
