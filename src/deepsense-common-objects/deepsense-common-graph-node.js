@@ -4,25 +4,28 @@ angular.module('deepsense.graph-model').
   factory('GraphNode', /*@ngInject*/function(Port) {
 
     function GraphNode(options) {
-      this.name = options.name;
       this.id = options.id;
+      this.description = options.description;
+      this.name = options.name;
       this.operationId = options.operationId;
       this.version = options.version;
       this.icon = options.icon;
       this.type = options.type;
-      this.description = options.description;
       this.input = this.fetchPorts('input', options.input);
       this.output = this.fetchPorts('output', options.output);
       this.edges = {};
-      this.results = [];
       this.x = options.x;
       this.y = options.y;
+      this.results = [];
+
       if (options.parametersValues) {
         this.parametersValues = options.parametersValues;
       } else {
         this.parameters = options.parameters;
       }
+
       this.stateDetails = _.clone(options.state);
+
       this.setStatus(options.state);
     }
 
@@ -60,11 +63,7 @@ angular.module('deepsense.graph-model').
           'name': this.name,
           'version': this.version
         },
-        'parameters': this.parametersValues ? this.parametersValues : this.parameters.serialize(),
-        'ui': {
-          'x': this.x,
-          'y': this.y
-        }
+        'parameters': this.parametersValues ? this.parametersValues : this.parameters.serialize()
       };
 
       return data;

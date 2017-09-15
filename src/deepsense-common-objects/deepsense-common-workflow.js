@@ -74,10 +74,10 @@ angular.module('deepsense.graph-model').
 
       that.createNodes = function createNodes(nodes, operations, thirdPartyData) {
         for (let i = 0; i < nodes.length; i++) {
-          let data = nodes[i],
-            id = data.id,
-            operation = operations[data.operation.id],
-            node = that.createNode({
+          let data = nodes[i];
+          let id = data.id;
+          let operation = operations[data.operation.id];
+          let node = that.createNode({
               'id': id,
               'operation': operation,
               'parameters': data.parameters,
@@ -199,20 +199,33 @@ angular.module('deepsense.graph-model').
       that.serialize = function serialize() {
         let data = {
           'id': internal.id,
-          'name': internal.name,
-          'description': internal.description,
-          'graph': {
+          'workflow': {
             'nodes': [],
-            'edges': []
+            'connections': []
+          },
+          'thirdPartyData': {
+            'gui': {
+              'name': internal.name,
+              'description': internal.description,
+              'nodes': {
+
+              }
+            }
           }
         };
 
         for (let id in internal.nodes) {
-          data.graph.nodes.push(internal.nodes[id].serialize());
+          data.workflow.nodes.push(internal.nodes[id].serialize());
+          data.thirdPartyData.gui.nodes[id] = {
+            coordinates: {
+              x: internal.nodes[id].x,
+              y: internal.nodes[id].y
+            }
+          };
         }
 
         for (let id in internal.edges) {
-          data.graph.edges.push(internal.edges[id].serialize());
+          data.workflow.connections.push(internal.edges[id].serialize());
         }
 
         return data;
@@ -247,11 +260,11 @@ angular.module('deepsense.graph-model').
           });
 
           if (numberOfValidTypes === outputTypes.length) {
-            edge.state = edge.STATE_TYPE.ALWAYS;
+            edge.state = Edge.STATE_TYPE.ALWAYS;
           } else if (numberOfValidTypes === 0) {
-            edge.state = edge.STATE_TYPE.NEVER;
+            edge.state = Edge.STATE_TYPE.NEVER;
           } else {
-            edge.state = edge.STATE_TYPE.MAYBE;
+            edge.state = Edge.STATE_TYPE.MAYBE;
           }
         });
       };

@@ -41,7 +41,7 @@ describe('Edge', () => {
 
   it('should have generated id', () => {
     let edge = new Edge(initData);
-    let id = startNodeId + '#' + startPortId + '_' + endNodeId + '#' + endPortId;
+    let id = `${startNodeId}#${startPortId}_${endNodeId}#${endPortId}`;
     expect(edge.id).toEqual(id);
   });
 
