@@ -25,7 +25,7 @@
     </div>
   </div>
 </header>
-<article class="modal-body u-flex">
+<article class="modal-body u-flex o-modal-selector__main-panel">
   <section  class="o-modal-selector__item u-flex__1"
             ng-repeat="itemType in itemTypes"
             ng-hide="itemType.id === 'indexRange' && isItemIdInList('indexRange')">
@@ -61,8 +61,11 @@
 
 <article class="modal-body u-flex calculated-columns">
   <span ng-if="::parameter.dataFrameSchema">
+    <div class="o-modal-selector__show-all-checkbox">
+      <span class="font-bold">Show all</span>
+      <input type="checkbox" ng-model="showAllColumns">
+    </div>
     <strong>Selected column<span ng-if="::!selectorIsSingle()">s</span>:</strong>
-    <br/>
     <calculated-selected-columns></calculated-selected-columns>
   </span>
   <span ng-if="::!parameter.dataFrameSchema">

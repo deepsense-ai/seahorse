@@ -1,27 +1,5 @@
 @active-color: #19aa8d;
 
-.modal-xlg {
-  width: 85vw;
-
-  .modal-body {
-    min-height: 40vh;
-  }
-  .calculated-columns {
-    min-height: 30vh;
-    max-height: 30vh;
-  }
-}
-
-.modal-md {
-  .modal-body {
-    min-height: 20vh;
-  }
-  .calculated-columns {
-    min-height: 10vh;
-    max-height: 10vh;
-  }
-}
-
 .selection-modal {
   .modal-body {
     padding: 5px 15px;
@@ -29,6 +7,14 @@
   .calculated-columns {
     border-top: 1px solid #e5e5e5;
     overflow-y: auto;
+  }
+}
+
+.modal-lg {
+  .o-modal-selector {
+    &__main-panel {
+      min-height: 25vh;
+    }
   }
 }
 
@@ -53,6 +39,17 @@
 }
 
 .o-modal-selector {
+
+  &__main-panel {
+    min-height: 20vh;
+  }
+
+  &__show-all-checkbox {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+  }
+
   &__item {
     border-right: 1px solid #e5e5e5;
     position: relative;
