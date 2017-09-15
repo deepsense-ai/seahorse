@@ -64,8 +64,7 @@ abstract class MultiColumnTransformer
    * Transforms 'inputColumn' and stores the results in 'outputColumn'. This method should
    * throw an exception when the outputColumn already exists (especially when outputColumn equals
    * inputColumn). The has the same contract as transform() Spark
-   * [[http://spark.apache.org/docs/latest/api/scala/index.html#org.apache.spark.ml.UnaryTransformer
-   * UnaryTransformer]]'s one.
+   * [[http://spark.apache.org/docs/latest/api/scala/index.html#org.apache.spark.ml.UnaryTransformer]]'s one.
    * If the contract in UnaryTransformer change then this method will have to change, too.
    * Eg. when UnaryTransformer cease to throw on duplicated columns, the contract of this method
    * should be changed accordingly.
