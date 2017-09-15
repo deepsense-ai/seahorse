@@ -18,8 +18,8 @@ const NEW_NODE_NODE = {
   input: [{
     id: 'input-0-new-node',
     portPosition: 'center',
-    index: 0,
-    typeQualifier: ['dataframe']
+    typeQualifier: ['dataframe'],
+    index: 0
   }],
   output: []
 };

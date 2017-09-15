@@ -2,20 +2,25 @@
 
 .operations-catalogue {
   position: absolute;
-  top: 40px; //TODO change it because it depends of new node's height
   z-index: 1;
   background-color: @color-light-grey;
   color: @seahorse-blue;
+  transition: max-width 0.5s, min-width 0.5s;
 
   &.catalogue-results {
     left: 0;
+    max-width: 240px;
+    min-width: 0px;
   }
 
   &.search-results {
     border: 1px solid @color-grey;
     width: auto;
     left: 50%;
+    top: 40px;
     transform: translateX(-50%);
     white-space: nowrap;
+    max-width: 2000px;
+    min-width: 280px;
   }
 }
