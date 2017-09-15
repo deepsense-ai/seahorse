@@ -19,7 +19,7 @@ import io.deepsense.commons.rest.client.RestClient
 import io.deepsense.models.workflows.Workflow
 import io.deepsense.sessionmanager.rest.SessionsJsonProtocol
 import io.deepsense.sessionmanager.rest.requests.CreateSession
-import io.deepsense.sessionmanager.rest.responses.ListSessionsResponse
+import io.deepsense.sessionmanager.rest.responses.{ListSessionsResponse, NodeStatusesResponse}
 import io.deepsense.sessionmanager.service.Session
 
 class SessionManagerClient(val sessionManagerUrl: URL,
@@ -52,5 +52,9 @@ class SessionManagerClient(val sessionManagerUrl: URL,
 
   def launchSession(workflowId: Workflow.Id): Future[HttpResponse] = {
     fetchHttpResponse(Post(endpointPath(workflowId.toString)))
+  }
+
+  def queryNodeStatuses(workflowId: Workflow.Id): Future[NodeStatusesResponse] = {
+    fetchResponse[NodeStatusesResponse](Get(endpointPath(s"${workflowId.toString}/status")))
   }
 }

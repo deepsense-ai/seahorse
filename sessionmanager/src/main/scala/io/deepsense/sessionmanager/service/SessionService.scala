@@ -18,7 +18,8 @@ import com.google.inject.name.Named
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.commons.utils.Logging
-import io.deepsense.sessionmanager.rest.responses.ListSessionsResponse
+import io.deepsense.models.workflows.ExecutionReport
+import io.deepsense.sessionmanager.rest.responses.{ListSessionsResponse, NodeStatusesResponse}
 import io.deepsense.sessionmanager.service.actors.SessionServiceActor
 import io.deepsense.sessionmanager.service.sessionspawner.SessionConfig
 
@@ -56,5 +57,12 @@ class SessionService @Inject() (
   def launchSession(workflowId: Id): Future[Unit] = {
     logger.info(s"Launching nodes in session '$workflowId'")
     (serviceActor ? SessionServiceActor.LaunchRequest(workflowId)).mapTo[Try[Unit]].flatMap(Future.fromTry)
+  }
+
+  def nodeStatusesQuery(workflowId: Id): Future[NodeStatusesResponse] = {
+    logger.info(s"Asking for node statuses for session $workflowId")
+    (serviceActor ? SessionServiceActor.NodeStatusesRequest(workflowId))
+      .mapTo[Try[NodeStatusesResponse]]
+      .flatMap(Future.fromTry)
   }
 }

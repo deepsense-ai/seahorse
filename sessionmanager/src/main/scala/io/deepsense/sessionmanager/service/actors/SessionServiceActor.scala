@@ -5,13 +5,14 @@
 package io.deepsense.sessionmanager.service.actors
 
 import scala.collection.mutable
-import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext
 import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
 
-import akka.actor.Actor
+import akka.actor.{Actor, ActorRef}
+import akka.pattern.pipe
 import com.google.inject.Inject
-import com.google.inject.name.Named
+import com.rabbitmq.client.Channel
 
 import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.commons.utils.Logging
@@ -21,19 +22,27 @@ import io.deepsense.sessionmanager.service.actors.SessionServiceActor._
 import io.deepsense.sessionmanager.service.executor.SessionExecutorClients
 import io.deepsense.sessionmanager.service.sessionspawner.{ExecutorSession, SessionConfig, SessionSpawner}
 import io.deepsense.workflowexecutor.communication.message.global.Heartbeat
+import io.deepsense.workflowexecutor.communication.mq.MQCommunication.Topic
+import io.deepsense.workflowexecutor.rabbitmq.{ChannelSetupResult, MQCommunicationFactory}
 
 class SessionServiceActor @Inject()(
   private val sessionSpawner: SessionSpawner,
-  private val sessionExecutorClients: SessionExecutorClients
+  private val sessionExecutorClients: SessionExecutorClients,
+  private val communicationFactory: MQCommunicationFactory
 ) extends Actor with Logging {
+
+  implicit val ec: ExecutionContext = context.system.dispatcher
 
   // NOTE! No synchronising is needed because all mutations are in `receive` method call scope.
   // When modified from outside `receive` (possible throught futures!) scope add synchronization
   val sessionStateByWorkflowId = mutable.Map.empty[Id, ExecutorSession]
+  val workflowExecutionReportSubscribers = mutable.Map.empty[Id, (ActorRef, String, ActorRef)]
 
   override def receive: Receive = {
     case r: Request => handleRequest(r)
     case h: Heartbeat => handleHeartbeat(h)
+    case (i: Id, subscriber: ActorRef, queue: String, chAct: ActorRef) =>
+      workflowExecutionReportSubscribers(i) = (subscriber, queue, chAct)
     case x => unhandled(x)
   }
 
@@ -43,6 +52,7 @@ class SessionServiceActor @Inject()(
       case KillRequest(id) => sender() ! handleKill(id)
       case ListRequest() => sender() ! handleList()
       case LaunchRequest(id) => sender() ! handleLaunch(id)
+      case NodeStatusesRequest(id) => handleNodeStatusRequest(id, sender())
       case CreateRequest(sessionConfig, clusterConfig) =>
         sender() ! handleCreate(sessionConfig, clusterConfig)
     }
@@ -52,7 +62,27 @@ class SessionServiceActor @Inject()(
     if (sessionStateByWorkflowId.contains(id)) {
       Success(sessionExecutorClients.launchWorkflow(id))
     } else {
-      Failure(new IllegalArgumentException(s"Session for the given id not found: $id"))
+      Failure(sessionNotFoundException(id))
+    }
+  }
+
+  private def sessionNotFoundException(id: Id) =
+    new IllegalArgumentException(s"Session for the given id not found: $id")
+
+  private def createSubscriberForWorkflowEvents(id: Id): ActorRef = {
+    context.actorOf(ExecutionReportSubscriberActor(id))
+  }
+
+  private def subsribeForWorkflowEvents(id: Id): Unit = {
+    val subscriber = createSubscriberForWorkflowEvents(id)
+    val subscription =
+      communicationFactory.registerSubscriber(Topic.workflowPublicationTopic(id, id.toString), subscriber)
+    subscription.map({
+      case ChannelSetupResult(queue, chAct) => (id, subscriber, queue, chAct)
+    }) pipeTo self
+    subscription.onFailure {
+      case t => logger.error(s"Unable to subscribe SessionService to workflow $id execution events topic, " +
+        s"this means the service can't provide node statuses reports.")
     }
   }
 
@@ -60,6 +90,7 @@ class SessionServiceActor @Inject()(
       sessionConfig: SessionConfig,
       clusterDetails: ClusterDetails): Session = {
     val workflowId = sessionConfig.workflowId
+    subsribeForWorkflowEvents(workflowId)
     val session = sessionStateByWorkflowId.get(workflowId) match {
       case Some(existingSession) =>
         logger.warn(s"Session id=$workflowId already exists. Ignoring in the sake of idempotency.")
@@ -96,11 +127,28 @@ class SessionServiceActor @Inject()(
     sessionStateByWorkflowId.values.map(_.sessionForApi())
   }.toList
 
+  private def handleNodeStatusRequest(id: Id, whoAsks: ActorRef) = {
+    if (!sessionStateByWorkflowId.contains(id)) {
+      whoAsks ! Failure(sessionNotFoundException(id))
+    } else {
+      workflowExecutionReportSubscribers.get(id) match {
+        case Some((actor, _, _)) => actor ! ExecutionReportSubscriberActor.ReportQuery(whoAsks)
+        case None => whoAsks ! Failure(new NoSuchElementException(s"Subscriber for session id not found: $id"))
+      }
+    }
+  }
+
   private def handleKill(workflowId: Id): Unit = {
     sessionStateByWorkflowId.get(workflowId) match {
       case Some(session) =>
         session.kill()
         sessionStateByWorkflowId.remove(workflowId)
+        workflowExecutionReportSubscribers.get(workflowId).foreach({
+          case (subscriber, queue, chAct) =>
+            context.stop(subscriber)
+            communicationFactory.deleteQueue(queue, chAct)
+        })
+        workflowExecutionReportSubscribers.remove(workflowId)
       case None =>
     }
   }
@@ -117,5 +165,6 @@ object SessionServiceActor {
     clusterConfig: ClusterDetails
   ) extends Request
   case class LaunchRequest(id: Id) extends Request
+  case class NodeStatusesRequest(id: Id) extends Request
 
 }

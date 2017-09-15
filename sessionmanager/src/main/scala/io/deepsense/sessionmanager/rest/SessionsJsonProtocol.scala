@@ -10,15 +10,17 @@ import spray.json._
 import io.deepsense.commons.json.IdJsonProtocol
 import io.deepsense.commons.rest.ClusterDetailsJsonProtocol
 import io.deepsense.commons.rest.ClusterDetailsJsonProtocol._
+import io.deepsense.models.json.graph.NodeStatusJsonProtocol
 import io.deepsense.sessionmanager.rest.requests.CreateSession
-import io.deepsense.sessionmanager.rest.responses.ListSessionsResponse
+import io.deepsense.sessionmanager.rest.responses.{ListSessionsResponse, NodeStatusesResponse}
 import io.deepsense.sessionmanager.service.{Session, Status}
 
 
 trait SessionsJsonProtocol
   extends DefaultJsonProtocol
   with IdJsonProtocol
-  with SprayJsonSupport {
+  with SprayJsonSupport
+  with NodeStatusJsonProtocol {
 
   implicit val statusFormat = new RootJsonFormat[Status.Value] {
     override def read(json: JsValue): Status.Value = json match {
@@ -35,6 +37,8 @@ trait SessionsJsonProtocol
   }
 
   implicit val sessionFormat = jsonFormat3(Session.apply)
+
+  implicit val nodeStatusesResponseFormat = jsonFormat1(NodeStatusesResponse)
 
   implicit val createSessionFormat = jsonFormat2(CreateSession)
 

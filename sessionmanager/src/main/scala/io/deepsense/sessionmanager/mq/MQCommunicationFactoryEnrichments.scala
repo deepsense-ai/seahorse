@@ -6,7 +6,7 @@ package io.deepsense.sessionmanager.mq
 
 import java.util
 
-import scala.concurrent.{Future, Promise}
+import scala.concurrent.{ExecutionContext, Future, Promise}
 
 import akka.actor.{ActorRef, Props}
 import com.thenewmotion.akka.rabbitmq._
