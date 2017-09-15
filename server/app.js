@@ -61,8 +61,8 @@ Q.nfcall(fs.readFile, __dirname + '/' + settingsFile, 'utf-8')
   require('./orm.js')(function(waterline) {
       app.use(bodyParser.urlencoded({ extended: true }));
       app.use(bodyParser.json());
-      app.use('/apimock', require('./mock.js'));
-      app.use('/api', require('./rest.js')(waterline));
+      app.use('/apimock/V1', require('./mock.js'));
+      app.use('/api', require(__dirname + '/api/apiProxy.js'));
       app.use('/', express.static(__dirname + '/../build'));
 
       http.listen(config.env.dev.port);
