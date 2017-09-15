@@ -88,9 +88,19 @@ class WorkflowsEditorController {
   }
 
   initListeners() {
-    this.$scope.$on('ServerCommunication.MESSAGE.ready', (event, data) => {
+    this.$scope.$on('ServerCommunication.MESSAGE.ready', (event, ready) => {
       this.$log.debug('Received a Ready message from Session Executor. Reconnecting.');
-      this.ServerCommunication.reconnect();
+
+      // workflowId being null means that entire Session Executor has been restarted
+      if (!ready.workflowId || ready.workflowId === this.WorkflowService.getRootWorkflow().id) {
+        this.ServerCommunication.reconnect();
+        this.NotificationService.showWithParams({
+          notificationType: ready.content.msgType,
+          message: ready.content.text
+        });
+
+        this.$rootScope.$broadcast('ServerCommunication.EXECUTION_FINISHED');
+      }
     });
 
     this.$scope.$watch(() => this.getWorkflow(), () => {
