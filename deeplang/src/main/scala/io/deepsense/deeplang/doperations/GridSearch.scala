@@ -59,7 +59,11 @@ case class GridSearch() extends DOperation3To1[DataFrame, Estimator, Evaluator, 
   val numberOfFolds = new NumericParam(
     name = "number of folds",
     description = "Number of folds.",
-    validator = RangeValidator(begin = 2.0, end = Int.MaxValue, beginIncluded = true))
+    validator = RangeValidator(
+      begin = 2.0,
+      end = Int.MaxValue,
+      beginIncluded = true,
+      step = Some(1.0)))
   setDefault(numberOfFolds, 2.0)
 
   def getNumberOfFolds: Int = $(numberOfFolds).toInt
