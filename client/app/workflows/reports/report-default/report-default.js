@@ -7,9 +7,7 @@ function ReportDefault() {
     },
     templateUrl: 'app/workflows/reports/report-default/report-default.html',
     replace: 'true',
-    controller: function() {
-      this.getTables = () => _.values(this.report.tables);
-    },
+    controller: function() {},
     controllerAs: 'controller',
     bindToController: true
   };
