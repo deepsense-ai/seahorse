@@ -28,7 +28,7 @@ trait MappingMetadataConverter {
     }.toOption
 
   /**
-   * Writes mapping to metadata object (by creating a new metadata object).
+   * Adds mapping to metadata object (by creating a new metadata object).
    * Stores the mapping under a key 'categorical'. Overwrites previous version
    * of the mapping in the metadata object (if any).
    * @param mapping Mapping to be writen to metadata.
@@ -39,7 +39,20 @@ trait MappingMetadataConverter {
   def mappingToMetadata(mapping: CategoriesMapping, metadata: Metadata): Metadata =
     new MetadataBuilder()
       .withMetadata(metadata)
-      .putMetadata(MappingMetadataConverter.CategoricalKey, mappingToMetadata(mapping))
+      .putMetadata(MappingMetadataConverter.CategoricalKey, mappingToFlatMetadata(mapping))
+      .build()
+
+  /**
+   * Converts mapping to metadata object (by creating a new metadata object).
+   * Stores the mapping under a key 'categorical'. Overwrites previous version
+   * of the mapping in the metadata object (if any).
+   * @param mapping Mapping to be writen to metadata.
+   * @return New metadata object (a copy of the input metadata object) with mapping saved
+   *         under a key 'categorical'.
+   */
+  def mappingToMetadata(mapping: CategoriesMapping): Metadata =
+    new MetadataBuilder()
+      .putMetadata(MappingMetadataConverter.CategoricalKey, mappingToFlatMetadata(mapping))
       .build()
 
   /**
@@ -47,7 +60,7 @@ trait MappingMetadataConverter {
    * @param mapping Mapping to be translated
    * @return Metadata object with mapping description.
    */
-  private def mappingToMetadata(mapping: CategoriesMapping): Metadata = {
+  private def mappingToFlatMetadata(mapping: CategoriesMapping): Metadata = {
     val metadataBuilder = new MetadataBuilder()
       .putStringArray(MappingMetadataConverter.ValuesKey, mapping.values.toArray)
     mapping.values

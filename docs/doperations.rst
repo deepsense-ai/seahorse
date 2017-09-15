@@ -26,3 +26,4 @@ Contents:
    doperations/one_hot_encoder
    doperations/apply_transformation
    doperations/join
+   doperations/convert_type
