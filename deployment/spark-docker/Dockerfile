@@ -45,6 +45,10 @@ RUN wget -q -O /tmp/Miniconda2-latest-Linux-x86_64.sh \
     /opt/conda/bin/conda install --yes -c r r-irkernel=0.7 && \
     /opt/conda/bin/conda clean --all --yes
 
+# Flag to use old g++ ABI (necessary for compilation of r-igraph package)
+RUN mkdir -p /root/.R && \
+    echo "CXXFLAGS+=-D_GLIBCXX_USE_CXX11_ABI=0" >> /root/.R/Makevars
+
 ENV PATH $PATH:/opt/conda/bin
 
 COPY startup.sh /opt/
