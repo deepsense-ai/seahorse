@@ -169,11 +169,11 @@ function DrawingService($rootScope) {
 
       let data = {
           'from': {
-            'node': info.sourceId,
+            'node': info.sourceId.substr(5, info.sourceId.length),
             'portIndex': info.sourceEndpoint.getParameter('portIndex')
           },
           'to': {
-            'node': info.targetId,
+            'node': info.targetId.substr(5, info.targetId.length),
             'portIndex': info.targetEndpoint.getParameter('portIndex')
           }
         },
@@ -183,10 +183,19 @@ function DrawingService($rootScope) {
     });
 
     jsPlumb.bind('connectionDetached', (info, originalEvent) => {
-      if (info.targetEndpoint.isTarget && info.sourceEndpoint.isSource && originalEvent) {
+
+      var edgeId = internal.experiment.getEdgeById(info.connection.getParameter('edgeId'));
+      console.log(edgeId);
+
+
+      //internal.experiment.removeEdge(edge);
+
+      //console.log(info,originalEvent);
+      /* if (info.targetEndpoint.isTarget && info.sourceEndpoint.isSource && originalEvent) {
         internal.experiment.removeEdge(info.connection.getParameter('edgeId'));
+       console.log(internal.experiment.getEdges());
         $rootScope.$emit(Edge.REMOVE, {});
-      }
+       }*/
     });
 
     jsPlumb.bind('connectionMoved', function (info) {
