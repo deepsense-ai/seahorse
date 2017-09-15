@@ -1,8 +1,6 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
  *
- * Owner: Witold Jedrzejewski
- *
  * This is a place for all types of values that can be put in Parameters.
  */
 

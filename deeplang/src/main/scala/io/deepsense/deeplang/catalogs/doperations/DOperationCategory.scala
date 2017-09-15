@@ -1,7 +1,5 @@
 /**
  * Copyright (c) 2015, CodiLime, Inc.
- *
- * Owner: Michal Iwanowski
  */
 
 package io.deepsense.deeplang.catalogs.doperations

@@ -1,8 +1,7 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Witold Jedrzejewski
  */
+
 // TODO This class is also in experimentmanager package.
 // It should be extracted to some common package
 package io.deepsense.graphjson

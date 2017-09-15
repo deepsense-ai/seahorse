@@ -1,8 +1,6 @@
 /**
  * Copyright (c) 2015, CodiLime, Inc.
  *
- * Owner: Grzegorz Chilkiewicz
- *
  * Utilities for submitting YARN applications.
  */
 package io.deepsense.graphexecutor.util

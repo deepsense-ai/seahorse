@@ -1,7 +1,5 @@
 /**
  * Copyright (c) 2015, CodiLime, Inc.
- *
- * Owner: Dominik Miszkiewicz
  */
 package io.deepsense.deeplang.doperations
 

@@ -1,8 +1,6 @@
 /**
  * Copyright (c) 2015, CodiLime, Inc.
  *
- * Owner: Grzegorz Chilkiewicz
- *
  * Wraps all constants. This class is an ersatz of configuration library.
  *
  * TODO: This class usage should be replaced with usage

@@ -1,6 +1,4 @@
 // Copyright (c) 2015, CodiLime, Inc.
-//
-// Owner: Robert Pohnke
 
 resolvers += Classpaths.sbtPluginReleases
 

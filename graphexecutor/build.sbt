@@ -1,6 +1,4 @@
 // Copyright (c) 2015, CodiLime, Inc.
-//
-// Owner: Grzegorz Chilkiewicz
 
 import sbtassembly.PathList
 
