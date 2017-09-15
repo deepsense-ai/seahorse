@@ -20,6 +20,9 @@ mainClass in Compile := Some("io.deepsense.sessionmanager.SessionManagerApp")
 val weJar = taskKey[File]("Workflow executor runnable jar")
 val weSparkVersion = DeepsenseUniversalSettingsPlugin.weSparkVersion
 
+unmanagedResourceDirectories in Runtime += CommonSettingsPlugin.globalResources
+unmanagedResourceDirectories in Compile += CommonSettingsPlugin.globalResources
+
 weJar := {
   val jar =
     new File(s"seahorse-workflow-executor/target/workflowexecutor.jar")

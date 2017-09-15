@@ -27,7 +27,7 @@ case class WorkflowDaoImpl @Inject()(
     @Named("workflowmanager") db: JdbcDriver#API#Database,
     @Named("workflowmanager") driver: JdbcDriver,
     override val graphReader: GraphReader,
-    @Named("scheduling-manager.user.id") schedulerUserId: String)
+    @Named("predefined-users.scheduler.id") schedulerUserId: String)
     (implicit ec: ExecutionContext)
   extends WorkflowStorage
   with WorkflowVersionUtil

@@ -11,11 +11,13 @@ import akka.actor.ActorSystem
 import io.deepsense.seahorse.scheduling.SchedulingManagerConfig
 
 private[schedule] object RunWorkflowJobContext {
-  val actorSystem = ActorSystem("scheduling-manager-run-workflow-job", SchedulingManagerConfig.config)
-  private[this] val schedulingManagerUserConfig = SchedulingManagerConfig.config.getConfig("scheduling-manager")
-  val userId = UUID.fromString(schedulingManagerUserConfig.getString("user.id"))
-  val userName = schedulingManagerUserConfig.getString("user.name")
-  def generateWorkflowUrl(uuid: UUID): String = {
-    schedulingManagerUserConfig.getString("workflowUrlPattern").format(uuid.toString)
-  }
+  private[this] val config = SchedulingManagerConfig.config
+
+  val actorSystem = ActorSystem("scheduling-manager-run-workflow-job", config)
+
+  val userId = UUID.fromString(config.getString("predefined-users.scheduler.id"))
+  val userName = config.getString("predefined-users.scheduler.name")
+
+  def generateWorkflowUrl(uuid: UUID): String =
+    config.getString("scheduling-manager.workflowUrlPattern").format(uuid.toString)
 }
