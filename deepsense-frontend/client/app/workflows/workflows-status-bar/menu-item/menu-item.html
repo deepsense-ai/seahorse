@@ -27,12 +27,10 @@
     </span>
   </a>
 
-    <ng-include
-      ng-if="miCtrl.additionalHtml"
-      src="miCtrl.additionalHtml"
-    >
-    </ng-include>
-
-
+  <ng-include
+    ng-if="miCtrl.additionalHtmlForOwner && miCtrl.isOwner()"
+    src="miCtrl.additionalHtmlForOwner"
+  >
+  </ng-include>
 
 </div>

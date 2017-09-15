@@ -16,7 +16,7 @@ function MenuItem() {
       color: '@',
       additionalClass: '@',
       additionalIconClass: '@',
-      additionalHtml: '@'
+      additionalHtmlForOwner: '@'
     },
     controller: 'MenuItemController as miCtrl',
     bindToController: true

@@ -48,14 +48,14 @@ function WorkflowStatusBarService($rootScope, config, version, WorkflowService, 
       forOwnerOnly: true,
       icon: 'fa fa-pencil',
       callFunction: () => $rootScope.$emit('StatusBar.START_EDITING'),
-      additionalHtml: 'app/workflows/workflows-status-bar/additional-html/starting-popover.html'
+      additionalHtmlForOwner: 'app/workflows/workflows-status-bar/additional-html/starting-popover.html'
     },
     startingEditing: {
       label: 'Starting...',
       icon: 'fa-cog',
       additionalClass: 'menu-item-disabled',
       additionalIconClass: 'fa-spin',
-      additionalHtml: 'app/workflows/workflows-status-bar/additional-html/running-executor-popover.html'
+      additionalHtmlForOwner: 'app/workflows/workflows-status-bar/additional-html/running-executor-popover.html'
     },
     stopEditing: {
       label: 'Stop editing',
@@ -98,11 +98,11 @@ function WorkflowStatusBarService($rootScope, config, version, WorkflowService, 
 
   const _menuItemViews = {
     editorWithExecutor: [menuItems.export, menuItems.clone, menuItems.stopEditing, menuItems.clear, menuItems.run, menuItems.documentation],
-    editorWithoutReadyExecutor: [menuItems.export, menuItems.clone, menuItems.startingEditing,  menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
+    editorWithoutReadyExecutor: [menuItems.export, menuItems.clone, menuItems.startingEditing, menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
     editorWithoutExecutorForOwner: [menuItems.export, menuItems.clone, menuItems.startEditing, menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
     editorWithoutExecutor: [menuItems.export, menuItems.clone, menuItems.disabledStartEditing, menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
     running: [menuItems.disabledExport, menuItems.disabledClone, menuItems.disabledClear, menuItems.abort, menuItems.documentation],
-    aborting: [menuItems.disabledExport, menuItems.disabledClone, menuItems.disabledClear,  menuItems.aborting,  menuItems.documentation],
+    aborting: [menuItems.disabledExport, menuItems.disabledClone, menuItems.disabledClear, menuItems.aborting, menuItems.documentation],
     editInnerWorkflow: [menuItems.documentation, menuItems.closeInnerWorkflow]
   };
 
@@ -153,12 +153,12 @@ function WorkflowStatusBarService($rootScope, config, version, WorkflowService, 
   service.isRunningExecutorPopoverVisible = () => {
     return this.popovers.runningExecutorPopoverVisible;
   };
-  
+
   service.closeStartingPopover = () => {
     this.popovers.startingPopoverVisible = false;
   };
 
-  service.closeRunningExecutorPopover = () =>  {
+  service.closeRunningExecutorPopover = () => {
     this.popovers.runningExecutorPopoverVisible = false;
   };
 
