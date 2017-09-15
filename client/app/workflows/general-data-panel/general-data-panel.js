@@ -9,9 +9,8 @@ function GeneralDataPanel () {
     scope: {
       'name': '=',
       'description': '=',
-      'status': '=',
-      'executionStarted': '=',
-      'executionEnded': '='
+      'state': '=',
+      'isReportMode': '='
     },
     controller: 'GeneralDataPanelController as controller',
     bindToController: true

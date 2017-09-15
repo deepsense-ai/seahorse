@@ -1,6 +1,7 @@
 // Common things for all panels on both workflow views
 // Variables
 @panelMainWidth: 250px;
+@generalPanelPadding: 14px 15px 7px 5px;
 
 // Mixins
 @import "./mixins.less";
@@ -48,6 +49,24 @@
 
 .o-general-data-panel {
   &:extend(.operation-attributes-panel);
+
+  margin-left: 0;
+
+  &__content {
+    padding: @generalPanelPadding;
+  }
+
+  &__ibox-title {
+    &--editor-mode {
+      padding: @generalPanelPadding;
+      height: 64px;
+    }
+
+    &--report-mode {
+      padding: @generalPanelPadding;
+      height: 48px;
+    }
+  }
 }
 
 .o-panel {
@@ -59,11 +78,11 @@
     font-weight: bold;
     text-transform: uppercase;
     width: 100%;
-    border: 1px solid white;
+    border: 1px solid lighten(@color-active, 40%);
+    cursor: text;
 
     &:hover {
-      border: 1px solid black;
-      cursor: pointer;
+      border: 1px solid @color-active;
     }
   }
 
@@ -73,22 +92,31 @@
 
   &__description {
     width: 100%;
-    max-height: 21ex;
+    max-height: 22ex;
     overflow: hidden;
-    border: 1px solid white;
+    border: 1px solid lighten(@color-active, 40%);
+    margin: 0;
+    cursor: text;
 
     &:hover {
-      border: 1px solid black;
-      cursor: pointer;
+      border: 1px solid @color-active;
     }
 
-    // new method of clipping by line numbers
-    @supports (display: -webkit-box) {
-      & {
-        display: -webkit-box;
-        -webkit-line-clamp: 8;
-        -webkit-box-orient: vertical;
-        max-height: none;
+    &--read-only {
+      border: 0;
+
+      &:hover {
+        border: 0;
+      }
+
+      // new method of clipping by line numbers
+      @supports (display: -webkit-box) {
+        & {
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          max-height: none;
+        }
       }
     }
   }

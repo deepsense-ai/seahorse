@@ -22,7 +22,7 @@ function NewWorkflowModalController($modalInstance, WorkflowsApiClient) {
           $modalInstance.close(response.id);
         }).
         catch(({ data } = {}) => {
-          let { message } = data;
+          let { message } = (data || {});
           this.loading = false;
           this.errorMessage = message || 'Server error';
         });

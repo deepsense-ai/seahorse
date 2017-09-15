@@ -1,25 +1,32 @@
-<aside class="ibox o-general-data-panel o-panel o-panel--scroll-right
-    animated fadeInRight">
-  <header class="ibox-title">
-    <input type="text" size="30" class="o-panel__title text-success no-margins"
-           ng-model="controller.name" ng-blur="controller.saveWorkflow()"/>
+<aside class="ibox o-general-data-panel o-panel o-panel--scroll-right animated fadeInRight">
+  <header class="o-general-data-panel__ibox-title--editor-mode" ng-if="!controller.isReportMode">
+    <input type="text" size="30" class="o-panel__title text-success form-control no-margins"
+           ng-model="controller.name" ng-blur="controller.saveWorkflow()"
+           tooltip="Edit workflow's name" tooltip-placement="left" tooltip-append-to-body="true"/>
   </header>
-  <section class="ibox-content o-panel__content" custom-scroll-bar calculate-available-view-height>
+  <header class="o-general-data-panel__ibox-title--report-mode" ng-if="controller.isReportMode">
+    <h4 class="text-success no-margins">{{::controller.name}}</h4>
+  </header>
+  <section class="ibox-content o-general-data-panel__content" custom-scroll-bar calculate-available-view-height>
     <header>
-      <auto-text-area value="controller.description"/>
+      <auto-text-area value="controller.description"
+                      ng-if="!controller.isReportMode"
+                      tooltip="Edit workflow's description" tooltip-placement="left" tooltip-append-to-body="true"></auto-text-area>
+      <p ng-if="controller.isReportMode"
+         class="o-panel__description o-panel__description--read-only"
+         tooltip="{{::controller.description}}" tooltip-placement="left" tooltip-append-to-body="true">{{::controller.description}}</p>
     </header>
-    <section ng-if="controller.status">
+    <section ng-if="controller.isReportMode">
       <header>
         <p class="o-state__status label font-bold"
            ng-class="::{
-            'label-success': controller.status === 'COMPLETED',
-            'label-danger': controller.status === 'FAILED',
-            'label-warning': controller.status === 'ABORTED'
-           }"
-           title="Status">
-          {{::controller.status}}
+            'label-success': controller.state.status === 'status_completed',
+            'label-danger': controller.state.status === 'status_failed',
+            'label-warning': controller.state.status === 'status_aborted'
+           }" tooltip="Status" tooltip-placement="left" tooltip-append-to-body="true">
+          {{ ::controller.getVerboseStatus() }}
         </p>
-        <button ng-show="::controller.status === 'FAILED'"
+        <button ng-show="::controller.state.status === 'status_failed'"
                 ng-click="controller.showErrorMessage()"
                 class="btn btn-xs btn-success action-text fa fa-exclamation-triangle
                   o-error-btn o-error-btn--full-width">
@@ -29,17 +36,17 @@
       <p class="o-state__time text-right text-uppercase font-bold navy-bg">
         <span class="block">Last execution started</span>
         <i class="fa fa-clock-o"></i>
-        <time datetime="{{::controller.started}}"
+        <time datetime="{{::controller.state.started}}"
               class="text-right">
-          {{::controller.started | date:'medium'}}
+          {{::controller.state.started | date:'medium'}}
         </time>
       </p>
       <p class="o-state__time text-right text-uppercase font-bold lazur-bg">
         <span class="block">Last execution ended</span>
         <i class="fa fa-clock-o"></i>
-        <time datetime="{{::controller.ended}}"
+        <time datetime="{{::controller.state.ended}}"
               class="text-right">
-          {{::controller.ended | date:'medium'}}
+          {{::controller.state.ended | date:'medium'}}
         </time>
       </p>
     </section>
