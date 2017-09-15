@@ -25,7 +25,7 @@ import io.deepsense.deeplang.TypeUtils
 import io.deepsense.deeplang.doperables.SparkEstimatorWrapper
 import io.deepsense.deeplang.doperables.spark.wrappers.models.{GBTClassificationModel, VanillaGBTClassificationModel}
 import io.deepsense.deeplang.doperables.spark.wrappers.params.GBTParams
-import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasClassificationImpurityParam, ClassificationImpurity}
+import io.deepsense.deeplang.doperables.spark.wrappers.params.common.HasClassificationImpurityParam
 import io.deepsense.deeplang.doperables.stringindexingwrapper.StringIndexingEstimatorWrapper
 import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.choice.Choice

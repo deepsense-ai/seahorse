@@ -18,9 +18,11 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.classification.{MultilayerPerceptronClassificationModel => SparkMultilayerPerceptronClassifierModel, MultilayerPerceptronClassifier => SparkMultilayerPerceptronClassifier}
 
+import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.SparkModelWrapper
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
+import io.deepsense.deeplang.doperables.serialization.CustomPersistence
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.PredictorParams
 import io.deepsense.deeplang.params.Param
 
@@ -61,5 +63,11 @@ class MultilayerPerceptronClassifierModel
           numberOfFeatures,
           layers,
           weights)))
+  }
+
+  override protected def loadModel(
+      ctx: ExecutionContext,
+      path: String): SparkMultilayerPerceptronClassifierModel = {
+    CustomPersistence.load(ctx.sparkContext, path)
   }
 }

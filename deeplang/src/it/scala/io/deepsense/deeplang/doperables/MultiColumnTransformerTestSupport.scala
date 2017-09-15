@@ -31,6 +31,8 @@ import io.deepsense.deeplang.{DeeplangIntegTestSupport, ExecutionContext}
 trait MultiColumnTransformerTestSupport {
   self: DeeplangIntegTestSupport =>
 
+  import DeeplangIntegTestSupport._
+
   /**
    * Transformer name. Used as a test subject's name.
    * Visible in tests output.

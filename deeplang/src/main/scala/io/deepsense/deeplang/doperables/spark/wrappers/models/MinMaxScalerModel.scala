@@ -18,6 +18,7 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.feature.{MinMaxScaler => SparkMinMaxScaler, MinMaxScalerModel => SparkMinMaxScalerModel}
 
+import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.SparkSingleColumnModelWrapper
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
@@ -46,4 +47,7 @@ class MinMaxScalerModel
       .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))
   }
 
+  override protected def loadModel(ctx: ExecutionContext, path: String): SparkMinMaxScalerModel = {
+    SparkMinMaxScalerModel.load(path)
+  }
 }

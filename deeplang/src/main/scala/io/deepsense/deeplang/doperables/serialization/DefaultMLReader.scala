@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2016, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperables.multicolumn
 
-import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleColumnInPlaceChoice
-import io.deepsense.deeplang.params.Params
-import io.deepsense.deeplang.params.choice.ChoiceParam
+package io.deepsense.deeplang.doperables.serialization
 
-trait HasSingleInPlaceParam extends Params {
-  val singleInPlaceChoice = ChoiceParam[SingleColumnInPlaceChoice](
-    name = "output",
-    description = "Output generation mode."
-  )
+import org.apache.spark.ml.util.MLReader
+
+import io.deepsense.deeplang.doperables.Transformer
+
+class DefaultMLReader[T] extends MLReader[T] {
+
+  override def load(path: String): T = {
+    val modelPath = Transformer.modelFilePath(path)
+    CustomPersistence.load(sqlContext.sparkContext, modelPath)
+  }
 }

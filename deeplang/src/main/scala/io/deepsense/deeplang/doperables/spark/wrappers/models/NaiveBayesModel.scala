@@ -18,6 +18,7 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.classification.{NaiveBayes => SparkNaiveBayes, NaiveBayesModel => SparkNaiveBayesModel}
 
+import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.SparkModelWrapper
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
@@ -50,5 +51,9 @@ class NaiveBayesModel
 
     super.report
       .withAdditionalTable(CommonTablesGenerators.modelSummary(List(pi) ++ List(theta)))
+  }
+
+  override protected def loadModel(ctx: ExecutionContext, path: String): SparkNaiveBayesModel = {
+    SparkNaiveBayesModel.load(path)
   }
 }

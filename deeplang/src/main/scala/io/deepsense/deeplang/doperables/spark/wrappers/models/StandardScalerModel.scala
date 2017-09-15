@@ -18,6 +18,7 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.feature.{StandardScaler => SparkStandardScaler, StandardScalerModel => SparkStandardScalerModel}
 
+import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.SparkSingleColumnModelWrapper
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
@@ -43,5 +44,11 @@ class StandardScalerModel
 
     super.report
       .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))
+  }
+
+  override protected def loadModel(
+    ctx: ExecutionContext,
+    path: String): SparkStandardScalerModel = {
+    SparkStandardScalerModel.load(path)
   }
 }

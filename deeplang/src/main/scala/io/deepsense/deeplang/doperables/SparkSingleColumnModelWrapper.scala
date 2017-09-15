@@ -20,14 +20,13 @@ import org.apache.spark.ml
 import org.apache.spark.ml.param.{ParamMap => SparkParamMap, Params}
 import org.apache.spark.sql.types.StructType
 
-import io.deepsense.deeplang.{params, ExecutionContext}
+import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleColumnInPlaceChoice
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.{NoInPlaceChoice, YesInPlaceChoice}
-import io.deepsense.deeplang.doperables.multicolumn.{HasSingleInPlaceParam, HasSpecificParams, SingleColumnTransformerUtils}
+import io.deepsense.deeplang.doperables.multicolumn._
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.HasInputColumn
-import io.deepsense.deeplang.params.{ParamMap, Param}
-import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
+import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.wrappers.spark.ParamsWithSparkWrappers
 
 abstract class SparkSingleColumnModelWrapper[

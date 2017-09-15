@@ -18,9 +18,11 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.regression.{GBTRegressionModel => SparkGBTRegressionModel, GBTRegressor => SparkGBTRegressor}
 
+import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.SparkModelWrapper
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
+import io.deepsense.deeplang.doperables.serialization.CustomPersistence
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.PredictorParams
 import io.deepsense.deeplang.params.Param
 
@@ -41,5 +43,9 @@ class GBTRegressionModel extends SparkModelWrapper[SparkGBTRegressionModel, Spar
       .withReportName(s"${this.getClass.getSimpleName} with ${model.numTrees} trees")
       .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))
       .withAdditionalTable(CommonTablesGenerators.decisionTree(model.treeWeights, model.trees), 2)
+  }
+
+  override protected def loadModel(ctx: ExecutionContext, path: String): SparkGBTRegressionModel = {
+    CustomPersistence.load(ctx.sparkContext, path)
   }
 }

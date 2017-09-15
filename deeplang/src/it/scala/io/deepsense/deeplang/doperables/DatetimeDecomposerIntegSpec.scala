@@ -26,13 +26,16 @@ import org.joda.time.DateTime
 
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.spark.wrappers.transformers.TransformerSerialization
 import io.deepsense.deeplang.doperations.exceptions.{ColumnDoesNotExistException, WrongColumnTypeException}
 import io.deepsense.deeplang.params.selections.{IndexSingleColumnSelection, NameSingleColumnSelection}
 
-class DatetimeDecomposerIntegSpec extends DeeplangIntegTestSupport {
+class DatetimeDecomposerIntegSpec extends DeeplangIntegTestSupport with TransformerSerialization {
 
   private[this] val timestampColumnName = "timestampColumn"
   private[this] val t1 = new DateTime(2015, 3, 30, 15, 25)
+
+  import TransformerSerialization._
 
   "DatetimeDecomposer" should {
     "decompose timestamp column without prefix" in {
@@ -168,6 +171,19 @@ class DatetimeDecomposerIntegSpec extends DeeplangIntegTestSupport {
       expectedData: Seq[Row],
       prefix: String): Unit = {
     val operation: DatetimeDecomposer = operationWithParamsSet(prefix)
+    val deserialized = operation.loadSerializedTransformer(tempDir)
+
+    shouldDecomposeTimestamp(schema, data, expectedData, prefix, operation)
+    shouldDecomposeTimestamp(schema, data, expectedData, prefix, deserialized)
+  }
+
+  private def shouldDecomposeTimestamp(
+      schema: StructType,
+      data: RDD[Row],
+      expectedData: Seq[Row],
+      prefix: String,
+      operation: Transformer): Unit = {
+
     val dataFrame = executionContext.dataFrameBuilder.buildDataFrame(schema, data)
 
     val resultDataFrame: DataFrame = decomposeDatetime(operation, dataFrame)
@@ -216,7 +232,7 @@ class DatetimeDecomposerIntegSpec extends DeeplangIntegTestSupport {
   }
 
   private def decomposeDatetime(
-      decomposeDatetime: DatetimeDecomposer,
+      decomposeDatetime: Transformer,
       dataFrame: DataFrame): DataFrame = {
     decomposeDatetime.transform.apply(executionContext)(())(dataFrame)
   }

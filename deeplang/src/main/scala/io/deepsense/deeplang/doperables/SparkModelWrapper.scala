@@ -18,13 +18,15 @@ package io.deepsense.deeplang.doperables
 
 import org.apache.spark.ml
 import org.apache.spark.ml.param.ParamMap
+import org.apache.spark.ml.util.MLWritable
 import org.apache.spark.sql.types.StructType
 
-import io.deepsense.deeplang.{params, ExecutionContext}
+import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.serialization.{CustomPersistence, ParamsSerialization}
 import io.deepsense.deeplang.inference.exceptions.SparkTransformSchemaException
-import io.deepsense.deeplang.params.{ParamPair, Param}
 import io.deepsense.deeplang.params.wrappers.spark.ParamsWithSparkWrappers
+import io.deepsense.deeplang.params.{Param, ParamPair}
 
 /**
  * Wrapper for creating deeplang Transformers from spark.ml Models.
@@ -111,4 +113,38 @@ abstract class SparkModelWrapper[
       .setParent(replicatedEstimatorWrapper)
       .setModel(modelCopy)
   }
+
+  override def loadTransformer(ctx: ExecutionContext, path: String): Unit = {
+    setParent(loadParentEstimator(ctx, path))
+    setModel(loadModel(ctx, Transformer.modelFilePath(path)))
+  }
+
+  override protected def saveTransformer(ctx: ExecutionContext, path: String): Unit = {
+    val modelPath = Transformer.modelFilePath(path)
+    model match {
+      case writable: MLWritable =>
+        saveModel(modelPath, writable)
+      case _ =>
+        CustomPersistence.save(ctx.sparkContext, model, modelPath)
+    }
+    saveParentEstimator(ctx, path)
+  }
+
+  private def saveModel(modelPath: String, writable: MLWritable): Unit = {
+    writable.save(modelPath)
+  }
+
+  private def saveParentEstimator(ctx: ExecutionContext, path: String): Unit = {
+    val parentEstimatorFilePath = Transformer.parentEstimatorFilePath(path)
+    parentEstimator.saveObjectWithParams(ctx, parentEstimatorFilePath)
+  }
+
+  private def loadParentEstimator(
+    ctx: ExecutionContext,
+    path: String): SparkEstimatorWrapper[MD, E, _] = {
+    ParamsSerialization.load(ctx, Transformer.parentEstimatorFilePath(path))
+      .asInstanceOf[SparkEstimatorWrapper[MD, E, _]]
+  }
+
+  protected def loadModel(ctx: ExecutionContext, path: String): MD
 }

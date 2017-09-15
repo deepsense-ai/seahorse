@@ -18,6 +18,7 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.feature.{Word2Vec => SparkWord2Vec, Word2VecModel => SparkWord2VecModel}
 
+import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.SparkSingleColumnModelWrapper
 import io.deepsense.deeplang.doperables.spark.wrappers.params.Word2VecParams
 import io.deepsense.deeplang.params.Param
@@ -33,4 +34,8 @@ class Word2VecModel
     vectorSize,
     numPartitions,
     minCount)
+
+  override protected def loadModel(ctx: ExecutionContext, path: String): SparkWord2VecModel = {
+    SparkWord2VecModel.load(path)
+  }
 }

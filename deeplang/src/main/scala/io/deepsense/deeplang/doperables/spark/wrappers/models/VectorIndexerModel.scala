@@ -18,6 +18,7 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.feature.{VectorIndexer => SparkVectorIndexer, VectorIndexerModel => SparkVectorIndexerModel}
 
+import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.SparkSingleColumnModelWrapper
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
 import io.deepsense.deeplang.params.Param
@@ -30,5 +31,9 @@ class VectorIndexerModel
   override def report: Report = {
     super.report
       .withAdditionalTable(CommonTablesGenerators.categoryMaps(model.categoryMaps))
+  }
+
+  override protected def loadModel(ctx: ExecutionContext, path: String): SparkVectorIndexerModel = {
+    SparkVectorIndexerModel.load(path)
   }
 }

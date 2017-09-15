@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2016, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperables.multicolumn
+package io.deepsense.deeplang.doperables.serialization
 
-import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleColumnInPlaceChoice
-import io.deepsense.deeplang.params.Params
-import io.deepsense.deeplang.params.choice.ChoiceParam
+import spray.json._
 
-trait HasSingleInPlaceParam extends Params {
-  val singleInPlaceChoice = ChoiceParam[SingleColumnInPlaceChoice](
-    name = "output",
-    description = "Output generation mode."
-  )
+import io.deepsense.deeplang.ExecutionContext
+
+object JsonObjectPersistence {
+
+  def saveJsonToFile(ctx: ExecutionContext, path: String, json: JsValue): Unit = {
+    ctx.sparkContext.parallelize(Seq(json.compactPrint), 1).saveAsTextFile(path)
+  }
+
+  def loadJsonFromFile(ctx: ExecutionContext, path: String): JsValue = {
+    val paramsString: String = ctx.sparkContext.textFile(path, 1).first()
+    paramsString.parseJson
+  }
 }

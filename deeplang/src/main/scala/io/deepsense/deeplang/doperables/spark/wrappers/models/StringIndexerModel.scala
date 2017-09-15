@@ -18,6 +18,7 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.feature.{StringIndexer => SparkStringIndexer, StringIndexerModel => SparkStringIndexerModel}
 
+import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
 import io.deepsense.deeplang.doperables.{MultiColumnModel, SparkSingleColumnModelWrapper, Transformer}
@@ -42,6 +43,10 @@ case class MultiColumnStringIndexerModel()
         (seqTables, accReport) =>
           seqTables.foldRight(accReport)((t, r) => r.withAdditionalTable(t)))
   }
+
+  override protected def loadModel(ctx: ExecutionContext, path: String): SparkStringIndexerModel = {
+    SparkStringIndexerModel.load(path)
+  }
 }
 
 class SingleColumnStringIndexerModel
@@ -60,6 +65,10 @@ class SingleColumnStringIndexerModel
 
     super.report
       .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))
+  }
+
+  override protected def loadModel(ctx: ExecutionContext, path: String): SparkStringIndexerModel = {
+    SparkStringIndexerModel.load(path)
   }
 }
 

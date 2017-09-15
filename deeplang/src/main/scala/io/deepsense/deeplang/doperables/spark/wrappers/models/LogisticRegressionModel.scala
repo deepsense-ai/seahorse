@@ -18,10 +18,11 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.classification.{LogisticRegression => SparkLogisticRegression, LogisticRegressionModel => SparkLogisticRegressionModel}
 
+import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.SparkModelWrapper
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
-import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasOptionalWeightColumnParam, HasThreshold, ProbabilisticClassifierParams}
+import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasThreshold, ProbabilisticClassifierParams}
 import io.deepsense.deeplang.params.Param
 
 class LogisticRegressionModel
@@ -61,5 +62,11 @@ class LogisticRegressionModel
 
     super.report
       .withAdditionalTable(CommonTablesGenerators.modelSummary(List(coefficients) ++ summary))
+  }
+
+  override protected def loadModel(
+    ctx: ExecutionContext,
+    path: String): SparkLogisticRegressionModel = {
+    SparkLogisticRegressionModel.load(path)
   }
 }

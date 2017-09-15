@@ -19,6 +19,7 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 import org.apache.spark.ml
 import org.apache.spark.ml.feature.{Bucketizer => SparkQuantileDiscretizerModel, QuantileDiscretizer => SparkQuantileDiscretizer}
 
+import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.SparkSingleColumnModelWrapper
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
@@ -48,4 +49,11 @@ class QuantileDiscretizerModel
     super.report
       .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))
   }
+
+  override protected def loadModel(
+    ctx: ExecutionContext,
+    path: String): SparkQuantileDiscretizerModel = {
+    SparkQuantileDiscretizerModel.load(path)
+  }
+
 }

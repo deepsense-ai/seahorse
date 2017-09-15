@@ -18,6 +18,7 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.regression.{LinearRegression => SparkLinearRegression, LinearRegressionModel => SparkLinearRegressionModel}
 
+import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.SparkModelWrapper
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
@@ -103,5 +104,11 @@ class LinearRegressionModel
 
     super.report
       .withAdditionalTable(CommonTablesGenerators.modelSummary(List(coefficients) ++ summary))
+  }
+
+  override protected def loadModel(
+    ctx: ExecutionContext,
+    path: String): SparkLinearRegressionModel = {
+    SparkLinearRegressionModel.load(path)
   }
 }

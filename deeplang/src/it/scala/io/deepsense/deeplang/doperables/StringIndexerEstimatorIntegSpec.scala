@@ -20,11 +20,16 @@ import io.deepsense.deeplang.doperables.StringIndexerEstimatorIntegSpec._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.{NoInPlaceChoice, YesInPlaceChoice}
 import io.deepsense.deeplang.doperables.spark.wrappers.estimators.StringIndexerEstimator
-import io.deepsense.deeplang.doperables.spark.wrappers.models.{SingleColumnStringIndexerModel, MultiColumnStringIndexerModel}
+import io.deepsense.deeplang.doperables.spark.wrappers.models.{MultiColumnStringIndexerModel, SingleColumnStringIndexerModel}
+import io.deepsense.deeplang.doperables.spark.wrappers.transformers.TransformerSerialization
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.deeplang.{DKnowledge, DeeplangIntegTestSupport}
 
-class StringIndexerEstimatorIntegSpec extends DeeplangIntegTestSupport {
+class StringIndexerEstimatorIntegSpec
+    extends DeeplangIntegTestSupport
+    with TransformerSerialization {
+
+  import DeeplangIntegTestSupport._
 
   "StringIndexerEstimator" should {
     "convert single column" in {
@@ -36,7 +41,7 @@ class StringIndexerEstimatorIntegSpec extends DeeplangIntegTestSupport {
       t.setInputColumn("c")
       t.setSingleInPlaceParam(NoInPlaceChoice().setOutputColumn("out"))
 
-      val transformed = t.transform(executionContext)(())(inputDataFrame)
+      val transformed = executeTransformation(t, inputDataFrame)
       assertDataFramesEqual(
         transformed,
         outputDataFrame,
@@ -54,7 +59,7 @@ class StringIndexerEstimatorIntegSpec extends DeeplangIntegTestSupport {
 
       t.transform(executionContext)(())(inputDataFrame)
 
-      val transformed = t.transform(executionContext)(())(inputDataFrame)
+      val transformed = executeTransformation(t, inputDataFrame)
       assertDataFramesEqual(
         transformed,
         outputDataFrameInPlace,
@@ -69,7 +74,7 @@ class StringIndexerEstimatorIntegSpec extends DeeplangIntegTestSupport {
       val t = si.fit(executionContext)(())(inputDataFrame)
         .asInstanceOf[MultiColumnStringIndexerModel]
 
-      val transformed = t.transform(executionContext)(())(inputDataFrame)
+      val transformed = executeTransformation(t, inputDataFrame)
       assertDataFramesEqual(
         transformed,
         multiOutputDataFrame,
@@ -85,7 +90,7 @@ class StringIndexerEstimatorIntegSpec extends DeeplangIntegTestSupport {
 
       t.validateParams shouldBe empty
 
-      val transformed = t.transform(executionContext)(())(inputDataFrame)
+      val transformed = executeTransformation(t, inputDataFrame)
       assertDataFramesEqual(
         transformed,
         multiOutputDataFrameInPlace,
@@ -122,6 +127,14 @@ class StringIndexerEstimatorIntegSpec extends DeeplangIntegTestSupport {
       val inferredSchema = outputKnowledge.single.schema.get
       assertSchemaEqual(inferredSchema, multiOutputDataFrame.schema.get)
     }
+  }
+
+  private def executeTransformation(
+      transformer: Transformer,
+      inputDataFrame: DataFrame): DataFrame = {
+    // TODO: https://codilime.atlassian.net/browse/DS-3082
+    // There is no serialization here
+    transformer.transform(executionContext)(())(inputDataFrame)
   }
 
   val rs = Seq(

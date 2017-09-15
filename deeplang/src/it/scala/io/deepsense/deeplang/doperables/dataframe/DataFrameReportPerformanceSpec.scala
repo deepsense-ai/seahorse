@@ -38,7 +38,7 @@ class DataFrameReportPerformanceSpec
 
   before {
     fileSystemClient.delete(testFile)
-    executionContext.fsClient.copyLocalFile(
+    fileSystemClient.copyLocalFile(
       this.getClass.getResource("/csv/demand_without_header.csv").getPath,
       testFile)
   }

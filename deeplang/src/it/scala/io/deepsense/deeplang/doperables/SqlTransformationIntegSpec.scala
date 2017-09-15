@@ -22,8 +22,12 @@ import org.apache.spark.sql.types._
 
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.spark.wrappers.transformers.TransformerSerialization
 
-class SqlTransformationIntegSpec extends DeeplangIntegTestSupport {
+class SqlTransformationIntegSpec extends DeeplangIntegTestSupport with TransformerSerialization {
+
+  import DeeplangIntegTestSupport._
+  import TransformerSerialization._
 
   val dataFrameId = "ThisIsAnId"
   val validExpression = s"select * from $dataFrameId"
@@ -75,11 +79,16 @@ class SqlTransformationIntegSpec extends DeeplangIntegTestSupport {
     }
   }
 
-  def executeSqlTransformation(expression: String, dataFrameId: String, input: DataFrame): DataFrame =
-    new SqlTransformer()
+  def executeSqlTransformation(
+    expression: String,
+    dataFrameId: String,
+    input: DataFrame): DataFrame = {
+
+    val transformer = new SqlTransformer()
       .setExpression(expression)
       .setDataFrameId(dataFrameId)
-      ._transform(executionContext, input)
+    transformer.applyTransformationAndSerialization(tempDir, input)
+  }
 
   def sampleDataFrame: DataFrame = createDataFrame(data, schema)
 

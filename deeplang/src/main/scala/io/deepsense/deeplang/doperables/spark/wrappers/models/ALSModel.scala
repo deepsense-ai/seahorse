@@ -18,6 +18,7 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.recommendation.{ALS => SparkALS, ALSModel => SparkALSModel}
 
+import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.SparkModelWrapper
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
@@ -45,5 +46,9 @@ class ALSModel
 
     super.report
       .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))
+  }
+
+  override protected def loadModel(ctx: ExecutionContext, path: String): SparkALSModel = {
+    SparkALSModel.load(path)
   }
 }

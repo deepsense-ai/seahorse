@@ -27,9 +27,9 @@ import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.MultiColum
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.MultiColumnChoice
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.{NoInPlaceChoice, YesInPlaceChoice}
 import io.deepsense.deeplang.inference.exceptions.SelectedIncorrectColumnsNumber
-import io.deepsense.deeplang.params.{ParamPair, ParamMap, Param}
 import io.deepsense.deeplang.params.selections.MultipleColumnSelection
 import io.deepsense.deeplang.params.wrappers.spark.ParamsWithSparkWrappers
+import io.deepsense.deeplang.params.{Param, ParamMap}
 
 /**
  * This class is returned from an Estimator when multiple column mode was selected during

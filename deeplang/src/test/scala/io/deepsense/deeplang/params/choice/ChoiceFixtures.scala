@@ -18,7 +18,7 @@ package io.deepsense.deeplang.params.choice
 
 import spray.json._
 
-import io.deepsense.deeplang.params.{Param, BooleanParam}
+import io.deepsense.deeplang.params.BooleanParam
 
 sealed trait ChoiceABC extends Choice {
   override val choiceOrder: List[Class[_ <: ChoiceABC]] = List(

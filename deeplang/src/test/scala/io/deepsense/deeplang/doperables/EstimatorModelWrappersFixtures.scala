@@ -24,7 +24,7 @@ import org.apache.spark.sql.types.StructType
 import org.apache.spark.sql.{DataFrame => SparkDataFrame}
 import org.scalatest.mock.MockitoSugar
 
-import io.deepsense.deeplang.DeeplangTestSupport
+import io.deepsense.deeplang.{ExecutionContext, DeeplangTestSupport}
 import io.deepsense.deeplang.doperables.report.Report
 import io.deepsense.deeplang.params.wrappers.spark.DoubleParamWrapper
 import io.deepsense.deeplang.params.{Param, Params}
@@ -112,6 +112,8 @@ object EstimatorModelWrappersFixtures extends MockitoSugar with DeeplangTestSupp
 
     override def report: Report = ???
     override val params: Array[Param[_]] = declareParams(numericParamWrapper)
+
+    override protected def loadModel(ctx: ExecutionContext, path: String): ExampleSparkModel = ???
   }
 
   val fitModel = new ExampleSparkModel()

@@ -25,6 +25,7 @@ import org.apache.spark.ml.param.{Param => SparkParam, ParamMap}
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types.{IntegerType, StructField, StructType}
 
+import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.report.Report
 import io.deepsense.deeplang.doperables.{SparkEstimatorWrapper, SparkModelWrapper}
 import io.deepsense.deeplang.params.wrappers.spark.SingleColumnCreatorParamWrapper
@@ -90,6 +91,8 @@ object EstimatorModelWrapperFixtures {
 
     override val params: Array[Param[_]] = declareParams(predictionColumn)
     override def report: Report = ???
+
+    override protected def loadModel(ctx: ExecutionContext, path: String): SimpleSparkModel = ???
   }
 
   class SimpleSparkEstimatorWrapper

@@ -22,6 +22,7 @@ import org.apache.spark.ml
 import org.apache.spark.sql.types.StructType
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.serialization.{Loadable, ParamsSerialization}
 import io.deepsense.deeplang.params.wrappers.spark.ParamsWithSparkWrappers
 import io.deepsense.deeplang.{ExecutionContext, TypeUtils}
 
@@ -39,7 +40,9 @@ abstract class SparkEstimatorWrapper
     [MD <: ml.Model[MD], E <: ml.Estimator[MD], MW <: SparkModelWrapper[MD, E]]
     (implicit val modelWrapperTag: TypeTag[MW], implicit val estimatorTag: TypeTag[E])
   extends Estimator[MW]
-  with ParamsWithSparkWrappers {
+  with ParamsWithSparkWrappers
+  with ParamsSerialization
+  with Loadable {
 
   val sparkEstimator: E = createEstimatorInstance()
 
@@ -60,4 +63,8 @@ abstract class SparkEstimatorWrapper
   def createEstimatorInstance(): E = TypeUtils.instanceOfType(estimatorTag)
 
   def createModelWrapperInstance(): MW = TypeUtils.instanceOfType(modelWrapperTag)
+
+  override def load(ctx: ExecutionContext, path: String): Unit = {
+    loadObjectWithParams(ctx, path)
+  }
 }

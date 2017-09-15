@@ -18,9 +18,11 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.classification.{DecisionTreeClassificationModel => SparkDecisionTreeClassificationModel, DecisionTreeClassifier => SparkDecisionTreeClassifier}
 
-import io.deepsense.deeplang.doperables.SparkModelWrapper
+import io.deepsense.deeplang.ExecutionContext
+import io.deepsense.deeplang.doperables.serialization.{CustomPersistence, SerializableSparkModel}
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.ProbabilisticClassifierParams
 import io.deepsense.deeplang.doperables.stringindexingwrapper.StringIndexingWrapperModel
+import io.deepsense.deeplang.doperables.{SparkModelWrapper, Transformer}
 import io.deepsense.deeplang.params.Param
 
 class DecisionTreeClassificationModel(
@@ -41,4 +43,14 @@ class VanillaDecisionTreeClassificationModel
     probabilityColumn,
     rawPredictionColumn,
     predictionColumn)
+
+  override protected def loadModel(
+      ctx: ExecutionContext,
+      path: String): SparkDecisionTreeClassificationModel = {
+    val modelPath = Transformer.modelFilePath(path)
+    CustomPersistence
+      .load[SerializableSparkModel[SparkDecisionTreeClassificationModel]](
+        ctx.sparkContext,
+        modelPath).model.asInstanceOf[SparkDecisionTreeClassificationModel]
+  }
 }

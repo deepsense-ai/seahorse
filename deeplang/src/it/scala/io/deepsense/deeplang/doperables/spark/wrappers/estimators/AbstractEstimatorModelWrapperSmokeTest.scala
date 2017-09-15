@@ -23,10 +23,16 @@ import org.apache.spark.sql.types.StructType
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.spark.wrappers.estimators.AbstractEstimatorModelWrapperSmokeTest.TestDataFrameRow
+import io.deepsense.deeplang.doperables.spark.wrappers.transformers.TransformerSerialization
 import io.deepsense.deeplang.doperables.{Estimator, Transformer}
 import io.deepsense.deeplang.params.ParamPair
 
-abstract class AbstractEstimatorModelWrapperSmokeTest extends DeeplangIntegTestSupport {
+abstract class AbstractEstimatorModelWrapperSmokeTest
+  extends DeeplangIntegTestSupport
+  with TransformerSerialization {
+
+  import DeeplangIntegTestSupport._
+  import TransformerSerialization._
 
   def className: String
 
@@ -51,15 +57,17 @@ abstract class AbstractEstimatorModelWrapperSmokeTest extends DeeplangIntegTestS
 
   def assertTransformedDF(dataFrame: DataFrame): Unit = {}
   def assertTransformedSchema(schema: StructType): Unit = {}
+  def isAlgorithmDeterministic: Boolean = true
 
   className should {
     "successfully run _fit(), _transform() and _transformSchema()" in {
       val estimatorWithParams = estimator.set(estimatorParams: _*)
       val transformer = estimatorWithParams._fit(executionContext, dataFrame)
       val transformed = transformer._transform(executionContext, dataFrame)
-       assertTransformedDF(transformed)
+      assertTransformedDF(transformed)
       val transformedSchema = transformer._transformSchema(dataFrame.sparkDataFrame.schema)
       assertTransformedSchema(transformedSchema.get)
+      testSerializedTransformer(transformer, transformed, transformedSchema.get)
     }
     "successfully run _fit_infer() and _transformSchema() with schema" in {
       val estimatorWithParams = estimator.set(estimatorParams: _*)
@@ -74,6 +82,31 @@ abstract class AbstractEstimatorModelWrapperSmokeTest extends DeeplangIntegTestS
       val estimatorWithParams = estimator.set(estimatorParams: _*)
       estimatorWithParams.report
     }
+  }
+
+  def testSerializedTransformer(
+    transformer: Transformer,
+    expectedDF: DataFrame,
+    expectedSchema: StructType): Unit = {
+
+    val (df, Some(schema)) = useSerializedTransformer(transformer, dataFrame)
+    assertTransformedDF(df)
+    if (isAlgorithmDeterministic) {
+      assertDataFramesEqual(expectedDF, df, checkRowOrder = false)
+    }
+    assertTransformedSchema(schema)
+    assertSchemaEqual(schema, expectedSchema)
+  }
+
+  def useSerializedTransformer(
+    transformer: Transformer,
+    dataFrame: DataFrame): (DataFrame, Option[StructType]) = {
+
+    val deserialized = transformer.loadSerializedTransformer(tempDir)
+    val resultDF = deserialized.transform.apply(executionContext)(())(dataFrame)
+    val resultSchema = deserialized._transformSchema(dataFrame.sparkDataFrame.schema)
+    deserialized.report
+    (resultDF, resultSchema)
   }
 }
 

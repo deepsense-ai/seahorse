@@ -21,6 +21,7 @@ import scala.language.reflectiveCalls
 import org.apache.spark.ml
 import org.apache.spark.ml.feature.{PCA => SparkPCA, PCAModel => SparkPCAModel}
 
+import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.SparkSingleColumnModelWrapper
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
 import io.deepsense.deeplang.params.Param
@@ -40,5 +41,9 @@ class PCAModel
   override def report: Report = {
     super.report
       .withAdditionalTable(CommonTablesGenerators.denseMatrix(model.pc))
+  }
+
+  override protected def loadModel(ctx: ExecutionContext, path: String): SparkPCAModel = {
+    SparkPCAModel.load(path)
   }
 }

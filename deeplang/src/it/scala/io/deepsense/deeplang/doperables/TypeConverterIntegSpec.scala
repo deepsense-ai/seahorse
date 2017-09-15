@@ -29,12 +29,16 @@ import io.deepsense.commons.types.ColumnType._
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.TargetTypeChoices.{DoubleTargetTypeChoice, StringTargetTypeChoice}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException
+import io.deepsense.deeplang.doperables.spark.wrappers.transformers.TransformerSerialization
 import io.deepsense.deeplang.params.selections.{IndexColumnSelection, MultipleColumnSelection, NameColumnSelection, TypeColumnSelection}
 
 class TypeConverterIntegSpec
   extends DeeplangIntegTestSupport
-  with MultiColumnTransformerTestSupport {
+  with MultiColumnTransformerTestSupport
+  with TransformerSerialization {
+
+  import DeeplangIntegTestSupport._
+  import TransformerSerialization._
 
   var inputDataFrame: DataFrame = _
 
@@ -386,11 +390,12 @@ class TypeConverterIntegSpec
   def toString(ids: Set[Int]): DataFrame = to(StringType, ids, None){ _.asString }
 
   private def useTypeConverter(
-      ids: Set[Int] = Set(),
-      names: Set[String] = Set(),
-      types: Set[ColumnType] = Set(),
-      targetTypeChoice: TargetTypeChoice,
-      dataFrame: DataFrame = inputDataFrame): DataFrame = {
+    ids: Set[Int],
+    names: Set[String],
+    types: Set[ColumnType],
+    targetTypeChoice: TargetTypeChoice,
+    dataFrame: DataFrame = inputDataFrame): DataFrame = {
+
     val operation = new TypeConverter()
       .setSelectedColumns(
         MultipleColumnSelection(
@@ -400,7 +405,7 @@ class TypeConverterIntegSpec
             TypeColumnSelection(types))))
       .setTargetType(targetTypeChoice)
 
-    operation.transform.apply(executionContext)(())(dataFrame)
+    operation.applyTransformationAndSerialization(tempDir, dataFrame)
   }
 
   override def transformerName: String = "TypeConverter"

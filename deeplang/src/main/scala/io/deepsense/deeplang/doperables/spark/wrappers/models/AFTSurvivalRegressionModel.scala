@@ -18,6 +18,7 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.regression.{AFTSurvivalRegression => SparkAFTSurvivalRegression, AFTSurvivalRegressionModel => SparkAFTSurvivalRegressionModel}
 
+import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.SparkModelWrapper
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
@@ -58,5 +59,12 @@ class AFTSurvivalRegressionModel
 
     super.report
       .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))
+  }
+
+  override protected def loadModel(
+    ctx: ExecutionContext,
+    path: String): SparkAFTSurvivalRegressionModel = {
+
+    SparkAFTSurvivalRegressionModel.load(path)
   }
 }

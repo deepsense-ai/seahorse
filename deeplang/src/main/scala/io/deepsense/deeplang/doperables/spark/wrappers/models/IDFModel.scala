@@ -18,6 +18,7 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.feature.{IDF => SparkIDF, IDFModel => SparkIDFModel}
 
+import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.SparkSingleColumnModelWrapper
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
@@ -40,4 +41,7 @@ class IDFModel
       .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))
   }
 
+  override protected def loadModel(ctx: ExecutionContext, path: String): SparkIDFModel = {
+    SparkIDFModel.load(path)
+  }
 }

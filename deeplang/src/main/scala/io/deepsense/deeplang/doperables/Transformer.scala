@@ -16,21 +16,28 @@
 
 package io.deepsense.deeplang.doperables
 
+import org.apache.hadoop.fs.Path
 import org.apache.spark.sql.types.StructType
 
 import io.deepsense.commons.utils.Logging
+import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
+import io.deepsense.deeplang.doperables.serialization.{Loadable, ParamsSerialization}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.Params
-import io.deepsense.deeplang.{DKnowledge, DMethod1To1, DOperable, ExecutionContext}
 import io.deepsense.reportlib.model.ReportType
 
 /**
  * Able to transform a DataFrame into another DataFrame.
  * Can have mutable parameters.
  */
-abstract class Transformer extends DOperable with Params with Logging {
+abstract class Transformer
+    extends DOperable
+    with Params
+    with Logging
+    with ParamsSerialization
+    with Loadable {
 
   /**
    * Creates a transformed DataFrame based on input DataFrame.
@@ -74,4 +81,55 @@ abstract class Transformer extends DOperable with Params with Logging {
       .withReportName(s"${this.getClass.getSimpleName} Report")
       .withReportType(ReportType.Model)
       .withAdditionalTable(CommonTablesGenerators.params(extractParamMap()))
+
+  def save(ctx: ExecutionContext, path: String): Unit = {
+    saveObjectWithParams(ctx, path)
+    saveTransformer(ctx, path)
+  }
+
+  override def load(ctx: ExecutionContext, path: String): Unit = {
+    loadObjectWithParams(ctx, path)
+    loadTransformer(ctx, path)
+  }
+
+  protected def saveTransformer(ctx: ExecutionContext, path: String): Unit = {}
+
+  protected def loadTransformer(ctx: ExecutionContext, path: String): Unit = {}
+}
+
+object Transformer {
+
+  private val modelFilePath = "deepsenseModel"
+  private val transformerFilePath = "deepsenseTransformer"
+  private val parentEstimatorFilePath = "deepsenseParentEstimator"
+  private val pipelineFilePath = "deepsensePipeline"
+  private val wrappedModelFilePath = "deepsenseWrappedModel"
+
+  def load(ctx: ExecutionContext, path: String): Transformer = {
+    ParamsSerialization.load(ctx, path).asInstanceOf[Transformer]
+  }
+
+  def modelFilePath(path: String): String = {
+    combinePaths(path, modelFilePath)
+  }
+
+  def parentEstimatorFilePath(path: String): String = {
+    combinePaths(path, parentEstimatorFilePath)
+  }
+
+  def stringIndexerPipelineFilePath(path: String): String = {
+    combinePaths(modelFilePath(path), pipelineFilePath)
+  }
+
+  def stringIndexerWrappedModelFilePath(path: String): String = {
+    combinePaths(modelFilePath(path), wrappedModelFilePath)
+  }
+
+  def transformerSparkTransformerFilePath(path: String): String = {
+    combinePaths(path, transformerFilePath)
+  }
+
+  private def combinePaths(path1: String, path2: String): String = {
+    new Path(path1, path2).toString
+  }
 }

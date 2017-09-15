@@ -26,13 +26,18 @@ import org.scalatest.prop.GeneratorDrivenPropertyChecks
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.spark.wrappers.transformers.TransformerSerialization
 import io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException
 import io.deepsense.deeplang.params.selections.{IndexColumnSelection, MultipleColumnSelection, NameColumnSelection, TypeColumnSelection}
 
 class ColumnsFiltererIntegSpec
   extends DeeplangIntegTestSupport
   with GeneratorDrivenPropertyChecks
-  with Matchers {
+  with Matchers
+  with TransformerSerialization {
+
+  import DeeplangIntegTestSupport._
+  import TransformerSerialization._
 
   val columns = Seq(
     StructField("c", DoubleType),
@@ -48,6 +53,7 @@ class ColumnsFiltererIntegSpec
   val row2 = Seq(2, "str2", 20.0, new Timestamp(DateTime.now.getMillis), false)
   val row3 = Seq(3, "str3", 30.0, new Timestamp(DateTime.now.getMillis), false)
   val data = Seq(row1, row2, row3)
+  val dataFrame = createDataFrame(data.map(Row.fromSeq), schema)
 
   "ColumnsFilterer" should {
     val names: Set[String] = Set("z", "b")
@@ -57,10 +63,13 @@ class ColumnsFiltererIntegSpec
     val expectedSchema = StructType(expectedColumns)
 
     "select correct columns based on the column selection" in {
-      val filtered = filterColumns(names, indices)
+      val transformer = filterColumnTransformer(names, indices)
+      val filtered = filterColumns(transformer)
       val expectedData = data.map(r => selectWithIndices[Any](selectedIndices, r.toList))
       val expectedDataFrame = createDataFrame(expectedData.map(Row.fromSeq), expectedSchema)
       assertDataFramesEqual(filtered, expectedDataFrame)
+      val filteredBySerializedTransformer = filterColumnsUsingSerializedTransformer(transformer)
+      assertDataFramesEqual(filtered, filteredBySerializedTransformer)
     }
     "infer correct schema" in {
       val filteredSchema = filterColumnsSchema(names, indices)
@@ -119,9 +128,15 @@ class ColumnsFiltererIntegSpec
   }
 
   private def filterColumns(names: Set[String], ids: Set[Int]): DataFrame = {
-    filterColumnTransformer(names, ids)._transform(
-      executionContext,
-      createDataFrame(data.map(Row.fromSeq), schema))
+    filterColumns(filterColumnTransformer(names, ids))
+  }
+
+  private def filterColumns(transformer: Transformer): DataFrame = {
+    transformer._transform(executionContext, dataFrame)
+  }
+
+  private def filterColumnsUsingSerializedTransformer(transformer: Transformer): DataFrame = {
+    transformer.loadSerializedTransformer(tempDir)._transform(executionContext, dataFrame)
   }
 
   private def filterColumnsSchema(names: Set[String], ids: Set[Int]): Option[StructType] =

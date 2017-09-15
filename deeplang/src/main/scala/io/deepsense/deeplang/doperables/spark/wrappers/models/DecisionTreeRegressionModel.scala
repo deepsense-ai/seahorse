@@ -18,7 +18,9 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.regression.{DecisionTreeRegressionModel => SparkDecisionTreeRegressionModel, DecisionTreeRegressor => SparkDecisionTreeRegressor}
 
+import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.SparkModelWrapper
+import io.deepsense.deeplang.doperables.serialization.CustomPersistence
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasFeaturesColumnParam, HasPredictionColumnCreatorParam}
 import io.deepsense.deeplang.params.Param
 
@@ -32,4 +34,10 @@ class DecisionTreeRegressionModel
   override val params: Array[Param[_]] = declareParams(
     featuresColumn,
     predictionColumn)
+
+  override protected def loadModel(
+      ctx: ExecutionContext,
+      path: String): SparkDecisionTreeRegressionModel = {
+    CustomPersistence.load(ctx.sparkContext, path)
+  }
 }

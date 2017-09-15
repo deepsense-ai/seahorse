@@ -16,8 +16,9 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.models
 
-import org.apache.spark.ml.clustering.{LDA => SparkLDA, LDAModel => SparkLDAModel}
+import org.apache.spark.ml.clustering.{LDA => SparkLDA, LDAModel => SparkLDAModel, DistributedLDAModel, LocalLDAModel}
 
+import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.SparkModelWrapper
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
@@ -49,5 +50,15 @@ class LDAModel extends SparkModelWrapper[SparkLDAModel, SparkLDA]
         List(
           vocabularySize,
           estimatedDocConcentration)))
+  }
+
+  override protected def loadModel(ctx: ExecutionContext, path: String): SparkLDAModel = {
+    try {
+      LocalLDAModel.load(path)
+    } catch {
+      case e: IllegalArgumentException =>
+        logger.warn(s"LocalLDAModel.load($path) failed. Trying to load DistributedLDAModel.", e)
+        DistributedLDAModel.load(path)
+    }
   }
 }

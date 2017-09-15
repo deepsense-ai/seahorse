@@ -20,12 +20,14 @@ import java.util.UUID
 
 import org.apache.spark.annotation.DeveloperApi
 import org.apache.spark.ml.feature.{IndexToString, StringIndexer}
-import org.apache.spark.ml.util.Identifiable
+import org.apache.spark.ml.param.Params
+import org.apache.spark.ml.util._
 import org.apache.spark.ml.{Estimator => SparkEstimator, Pipeline}
 import org.apache.spark.sql.types.{DataType, StructType}
-import org.apache.spark.{ml, sql}
+import org.apache.spark.{SparkContext, ml, sql}
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.serialization.{DefaultMLReader, DefaultMLWriter}
 
 /**
   * In order to add string-indexing behaviour to estimators we need to put it into Sparks Pipeline
@@ -54,6 +56,7 @@ private [stringindexingwrapper] object StringIndexingPipeline {
 
     val tempLabelsColumnName = UUID.randomUUID().toString
     val predictionColumnType = sparkDataFrame.schema(labelColumnName).dataType
+    val sparkContext: SparkContext = dataFrame.sparkDataFrame.sqlContext.sparkContext
     new Pipeline().setStages(Array(
       stringIndexer,
       new RenameColumnTransformer(labelColumnName, tempLabelsColumnName),
@@ -67,110 +70,133 @@ private [stringindexingwrapper] object StringIndexingPipeline {
         predictionColumnType,
         predictedLabelsColumnName)))
   }
+}
 
-  /**
-    * Transformer that filters out prediction column and renames
-    * predictedLabels column to prediction column.
-    */
-  private class SetUpPredictionColumnTransformer(
-      predictionColumnName: String,
-      predictionColumnType: DataType,
-      predictedLabelsColumnName: String)
-    extends ml.Transformer {
+/**
+  * Transformer that changes column name.
+  *
+  * @param originalColumnName column name to change.
+  * @param newColumnName new column name.
+  */
+class RenameColumnTransformer(
+  private val originalColumnName: String,
+  private val newColumnName: String) extends ml.Transformer with MLWritable with Params {
 
-    import org.apache.spark.sql.functions._
-
-    private val outSet =
-      Set(predictedLabelsColumnName, predictionColumnName)
-
-    override def transform(dataset: sql.DataFrame): sql.DataFrame = {
-      val columnsNames = dataset.schema.fieldNames.filterNot(outSet.contains)
-      val predictionColumnType = dataset.schema(predictionColumnName).dataType
-      val cols = columnsNames.map(col) :+
-        col(predictedLabelsColumnName).as(predictionColumnName).cast(predictionColumnType)
-      dataset.select(cols: _*)
-    }
-
-    override def copy(extra: ml.param.ParamMap): ml.Transformer =
-      new SetUpPredictionColumnTransformer(
-        predictionColumnName,
-        predictionColumnType,
-        predictedLabelsColumnName)
-
-    @DeveloperApi
-    override def transformSchema(schema: StructType): StructType = {
-      val columns = schema.fields.filterNot(field => outSet.contains(field.name)) :+
-        schema(predictedLabelsColumnName).copy(
-          name = predictionColumnName,
-          dataType = predictionColumnType)
-      StructType(columns)
-    }
-
-    override val uid: String = Identifiable.randomUID("SetUpPredictionColumnTransformer")
-  }
-
-  /**
-    * Transformer that changes column name.
-    *
-    * @param originalColumnName column name to change.
-    * @param newColumnName new column name.
-    */
-  private class RenameColumnTransformer(
-      private val originalColumnName: String,
-      private val newColumnName: String) extends ml.Transformer {
-
-    override def transform(dataset: sql.DataFrame): sql.DataFrame = {
-      // WARN: cannot use dataset.withColumnRenamed - it does not preserve metadata.
-      val fieldsNames = dataset.schema.fieldNames
-      val columns = fieldsNames.map { case name =>
-        if (name == originalColumnName) {
-          dataset(name).as(newColumnName)
-        } else {
-          dataset(name)
-        }
+  override def transform(dataset: sql.DataFrame): sql.DataFrame = {
+    // WARN: cannot use dataset.withColumnRenamed - it does not preserve metadata.
+    val fieldsNames = dataset.schema.fieldNames
+    val columns = fieldsNames.map { case name =>
+      if (name == originalColumnName) {
+        dataset(name).as(newColumnName)
+      } else {
+        dataset(name)
       }
-      val transformed = dataset.select(columns: _*)
-      transformed
     }
-
-    override def copy(extra: ml.param.ParamMap): ml.Transformer =
-      new RenameColumnTransformer(originalColumnName, newColumnName)
-
-    @DeveloperApi
-    override def transformSchema(schema: StructType): StructType =
-      StructType(schema.fields.map { case field =>
-        if (field.name == originalColumnName) {
-          field.copy(name = newColumnName)
-        } else {
-          field
-        }
-      })
-
-    override val uid: String = Identifiable.randomUID("RenameColumnTransformer")
+    val transformed = dataset.select(columns: _*)
+    transformed
   }
 
-  /**
-    * Transformer that filters out columns specified in columnsToOmit.
-    *
-    * @param columnsToOmit columns to filter out.
-    */
-  private class FilterNotTransformer(
-      private val columnsToOmit: Set[String]) extends ml.Transformer {
+  override def copy(extra: ml.param.ParamMap): ml.Transformer =
+    new RenameColumnTransformer(originalColumnName, newColumnName)
 
-    override def transform(dataset: sql.DataFrame): sql.DataFrame = {
-      val fieldsNames = dataset.schema.fieldNames.filterNot(columnsToOmit.contains)
-      val columns = fieldsNames.map(dataset(_))
-      val transformed = dataset.select(columns: _*)
-      transformed
-    }
+  @DeveloperApi
+  override def transformSchema(schema: StructType): StructType =
+    StructType(schema.fields.map { case field =>
+      if (field.name == originalColumnName) {
+        field.copy(name = newColumnName)
+      } else {
+        field
+      }
+    })
 
-    override def copy(extra: ml.param.ParamMap): ml.Transformer =
-      new FilterNotTransformer(columnsToOmit)
+  override val uid: String = Identifiable.randomUID("RenameColumnTransformer")
 
-    @DeveloperApi
-    override def transformSchema(schema: StructType): StructType =
-      StructType(schema.fields.filterNot(field => columnsToOmit.contains(field.name)))
+  override def write: MLWriter = new DefaultMLWriter(this)
+}
 
-    override val uid: String = Identifiable.randomUID("FilterNotTransformer")
+object RenameColumnTransformer extends MLReadable[RenameColumnTransformer] {
+
+  override def read: MLReader[RenameColumnTransformer] =
+    new DefaultMLReader[RenameColumnTransformer]()
+}
+
+/**
+  * Transformer that filters out columns specified in columnsToOmit.
+  *
+  * @param columnsToOmit columns to filter out.
+  */
+class FilterNotTransformer(
+  private val columnsToOmit: Set[String]) extends ml.Transformer with MLWritable {
+
+  override def transform(dataset: sql.DataFrame): sql.DataFrame = {
+    val fieldsNames = dataset.schema.fieldNames.filterNot(columnsToOmit.contains)
+    val columns = fieldsNames.map(dataset(_))
+    val transformed = dataset.select(columns: _*)
+    transformed
   }
+
+  override def copy(extra: ml.param.ParamMap): ml.Transformer =
+    new FilterNotTransformer(columnsToOmit)
+
+  @DeveloperApi
+  override def transformSchema(schema: StructType): StructType =
+    StructType(schema.fields.filterNot(field => columnsToOmit.contains(field.name)))
+
+  override val uid: String = Identifiable.randomUID("FilterNotTransformer")
+
+  override def write: MLWriter = new DefaultMLWriter(this)
+}
+
+object FilterNotTransformer extends MLReadable[FilterNotTransformer] {
+
+  override def read: MLReader[FilterNotTransformer] = new DefaultMLReader[FilterNotTransformer]()
+}
+
+/**
+  * Transformer that filters out prediction column and renames
+  * predictedLabels column to prediction column.
+  */
+class SetUpPredictionColumnTransformer(
+  predictionColumnName: String,
+  predictionColumnType: DataType,
+  predictedLabelsColumnName: String)
+  extends ml.Transformer with MLWritable {
+
+  import org.apache.spark.sql.functions._
+
+  private val outSet =
+    Set(predictedLabelsColumnName, predictionColumnName)
+
+  override def transform(dataset: sql.DataFrame): sql.DataFrame = {
+    val columnsNames = dataset.schema.fieldNames.filterNot(outSet.contains)
+    val predictionColumnType = dataset.schema(predictionColumnName).dataType
+    val cols = columnsNames.map(col) :+
+      col(predictedLabelsColumnName).as(predictionColumnName).cast(predictionColumnType)
+    dataset.select(cols: _*)
+  }
+
+  override def copy(extra: ml.param.ParamMap): ml.Transformer =
+    new SetUpPredictionColumnTransformer(
+      predictionColumnName,
+      predictionColumnType,
+      predictedLabelsColumnName)
+
+  @DeveloperApi
+  override def transformSchema(schema: StructType): StructType = {
+    val columns = schema.fields.filterNot(field => outSet.contains(field.name)) :+
+      schema(predictedLabelsColumnName).copy(
+        name = predictionColumnName,
+        dataType = predictionColumnType)
+    StructType(columns)
+  }
+
+  override val uid: String = Identifiable.randomUID("SetUpPredictionColumnTransformer")
+
+  override def write: MLWriter = new DefaultMLWriter(this)
+}
+
+object SetUpPredictionColumnTransformer extends MLReadable[SetUpPredictionColumnTransformer] {
+
+  override def read: MLReader[SetUpPredictionColumnTransformer] =
+    new DefaultMLReader[SetUpPredictionColumnTransformer]()
 }
