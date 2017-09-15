@@ -25,6 +25,7 @@ object Library {
   val spray  = (name: String) => "io.spray"          %% s"spray-$name"  % Version.spray
 
   val akkaActor          = akka("actor")
+  val apacheCommons      = "org.apache.commons"           %  "commons-lang3"      % "3.3.+"
   val akkaTestkit        = akka("testkit")
   val avroCore           = avro("")
   // Please mind the dash to handle empty main module in avro and avro-ipc
@@ -64,7 +65,8 @@ object Dependencies {
     nscalaTime,
     scalaReflect,
     sparkSql,
-    sparkCore
+    sparkCore,
+    sprayJson
   ) ++ Seq(scalatest).map(_ % "test")
 
   val experimentmanager = Seq(
@@ -74,7 +76,8 @@ object Dependencies {
     sprayCan,
     sprayRouting,
     sprayJson,
-    akkaActor
+    akkaActor,
+    apacheCommons
   ) ++ Seq(sprayTestkit, akkaTestkit, mockitoCore, scalatest).map(_ % "test")
 
   val graph = Seq(
@@ -91,4 +94,9 @@ object Dependencies {
     avroCore,
     avroRpc
   ) ++ Seq(sparkCore).map(_ % "provided")
+
+  val graphJson = Seq(
+    nscalaTime,
+    sprayJson
+  ) ++ Seq(scalatest, mockitoCore).map(_ % "test")
 }

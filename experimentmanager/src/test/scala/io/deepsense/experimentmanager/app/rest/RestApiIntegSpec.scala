@@ -8,6 +8,8 @@ package io.deepsense.experimentmanager.app.rest
 
 import java.util.UUID
 
+import io.deepsense.graph.Graph
+
 import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.{Await, duration}
 
@@ -38,9 +40,7 @@ class RestApiIntegSpec extends RestApiSpec with IntegTestSupport with BeforeAndA
 
   override def experimentOfTenantA = experimentA
   override def experimentOfTenantB = experimentB
-
   override def tenantAId: String = tenantA
-
   override def tenantBId: String = tenantB
 
   /**
@@ -62,12 +62,14 @@ class RestApiIntegSpec extends RestApiSpec with IntegTestSupport with BeforeAndA
     experimentA = Experiment(
       UUID.randomUUID(),
       tenantAId,
-      "Experiment of Tenant A")
+      "Experiment of Tenant A",
+      Graph())
 
     experimentB = Experiment(
       UUID.randomUUID(),
       tenantBId,
-      "Experiment of Tenant B")
+      "Experiment of Tenant B",
+      Graph())
 
     experimentStorage = getInstance[ExperimentStorage]
     Await.ready(experimentStorage.save(experimentA), FiniteDuration(2, duration.SECONDS))

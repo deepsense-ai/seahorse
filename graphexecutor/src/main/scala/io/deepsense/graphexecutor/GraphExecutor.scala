@@ -19,7 +19,7 @@ import org.apache.hadoop.yarn.client.api.async.impl.AMRMClientAsyncImpl
 import org.apache.hadoop.yarn.conf.YarnConfiguration
 
 import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.graph.{Graph, Node}
+import io.deepsense.graph.{Status, Graph, Node}
 import io.deepsense.graphexecutor.protocol.GraphExecutorAvroRpcProtocol
 import io.deepsense.graphexecutor.util.BinarySemaphore
 
@@ -82,14 +82,14 @@ class GraphExecutor extends AMRMClientAsync.CallbackHandler {
       println("waitForGraph succeeded " + System.currentTimeMillis)
       // All nodes are marked as queued (there is no partial execution).
       graphGuard.synchronized {
-        graph.get.nodesList.foreach(n => graph.get.markAsQueued(n.id))
+        graph = Some(Graph(graph.get.nodes.map(_.markQueued), graph.get.edges))
       }
       val executionContext = new ExecutionContext()
 
       // Loop until there are nodes in graph that are ready to or during execution
       while (graphGuard.synchronized {
         graph.get.readyNodes.nonEmpty ||
-          graph.get.nodesList.filter(n => n.state.status == Node.State.Status.RUNNING).nonEmpty
+          graph.get.nodes.filter(n => n.state.status == Status.Running).nonEmpty
       }) {
 
         // Retrieve list of nodes ready for execution in synchronized manner and use this list:
@@ -97,7 +97,7 @@ class GraphExecutor extends AMRMClientAsync.CallbackHandler {
         graphGuard.synchronized {
           for (node <- graph.get.readyNodes) {
             // Synchronization guarantees that this node is still ready for execution
-            graph.get.markAsRunning(node.id)
+            graph = Some(graph.get.markAsRunning(node.id))
             // executorPool won't throw RejectedExecutionException thanks to comprehensive
             // synchronization in GraphExecutorAvroRpcImpl.terminateExecution().
             // NOTE: Threads executing graph nodes are created in main thread for thread-safety.
@@ -119,10 +119,10 @@ class GraphExecutor extends AMRMClientAsync.CallbackHandler {
 
       // Mark as aborted all nodes that Graph Executor wasn't able to execute
       graphGuard.synchronized {
-        graph.get
-          .nodesList
-          .filter(n => n.state.status == Node.State.Status.QUEUED)
-          .foreach(n => graph.get.markAsAborted(n.id))
+        val aborted = graph.get.nodes.map(node => {
+          if (node.isQueued) node.markAborted else node
+        })
+        graph = Some(Graph(aborted, graph.get.edges))
       }
     }
 
@@ -136,7 +136,7 @@ class GraphExecutor extends AMRMClientAsync.CallbackHandler {
    * @return true if graph has been received in specified timeout and false otherwise
    */
   private def waitForGraph(timeout: Int): Boolean = {
-    var startOfWaitingForGraphMs = System.currentTimeMillis
+    val startOfWaitingForGraphMs = System.currentTimeMillis
     while (graph.isEmpty &&
       System.currentTimeMillis - startOfWaitingForGraphMs < timeout) {
       val remainingTimeToWait = timeout - (System.currentTimeMillis - startOfWaitingForGraphMs)
@@ -203,7 +203,7 @@ class GraphExecutor extends AMRMClientAsync.CallbackHandler {
     graphGuard.synchronized {
       graph match {
         case Some(graph) =>
-          val allNodes = graph.nodesList
+          val allNodes = graph.nodes
           val allCount = allNodes.size
           val startedCount = allNodes.count(n => n.state.started.nonEmpty && n.state.ended.isEmpty)
           val endedCount = allNodes.count(n => n.state.ended.nonEmpty)

@@ -6,6 +6,8 @@
 
 package io.deepsense.experimentmanager.app.models
 
+import io.deepsense.graph.Graph
+
 /**
  * The common part of e.g. Experiment and InputExperiment models.
  * @param name Name of the experiment.

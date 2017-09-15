@@ -13,11 +13,11 @@ import com.google.inject.assistedinject.Assisted
 import com.google.inject.name.Named
 
 import io.deepsense.experimentmanager.app.exceptions.ExperimentNotFoundException
-import io.deepsense.experimentmanager.app.models.Graph.Node
 import io.deepsense.experimentmanager.app.models.{Experiment, InputExperiment}
 import io.deepsense.experimentmanager.app.storage.ExperimentStorage
 import io.deepsense.experimentmanager.auth.usercontext.UserContext
 import io.deepsense.experimentmanager.auth.{Authorizator, AuthorizatorProvider}
+import io.deepsense.graph.Node
 
 
 /**
@@ -60,6 +60,7 @@ class ExperimentManagerImpl @Inject()(
       }
     }
   }
+
   def create(inputExperiment: InputExperiment): Future[Experiment] = {
     authorizator.withRole(roleCreate) { userContext =>
       storage.save(inputExperiment.toExperimentOf(userContext))

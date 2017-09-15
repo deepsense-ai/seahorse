@@ -10,7 +10,7 @@ import scala.concurrent.Future
 
 import io.deepsense.experimentmanager.app.ExperimentManager
 import io.deepsense.experimentmanager.app.models.Experiment
-import io.deepsense.experimentmanager.app.models.Graph.Node
+import io.deepsense.graph.Node
 
 /**
  * Launch experiment action.

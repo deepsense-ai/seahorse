@@ -6,12 +6,11 @@
 
 package io.deepsense.deeplang
 
-import scala.reflect.runtime.{universe => ru}
-
-import org.scalatest.FunSuite
-
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.parameters.ParametersSchema
+import org.scalatest.FunSuite
+
+import scala.reflect.runtime.{universe => ru}
 
 object DClassesForDOperations {
   trait A extends DOperable
@@ -27,6 +26,7 @@ object DOperationForPortTypes {
   import DClassesForDOperations._
   class SimpleOperation extends DOperation1To1[A1, A2] {
     override protected def _execute(context: ExecutionContext)(t0: A1): A2 = ???
+    override val name: String = ""
   }
 }
 
@@ -42,6 +42,7 @@ class DOperationSuite extends FunSuite {
         val intParam = parameters.asInstanceOf[IntParam]
         if (intParam.i % 2 == 1) t1 else t2
       }
+      override val name: String = ""
     }
 
     val firstPicker: DOperation = new PickOne
@@ -70,6 +71,7 @@ class DOperationSuite extends FunSuite {
       override protected def _inferKnowledge(context: InferContext)(): DKnowledge[A] = {
         new DKnowledge(new A1, new A2)
       }
+      override val name: String = ""
     }
 
     val generator: DOperation = new GeneratorOfA

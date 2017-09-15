@@ -6,12 +6,11 @@
 
 package io.deepsense.deeplang.catalogs.doperations
 
-import scala.reflect.runtime.universe.{TypeTag, typeTag}
-
-import org.scalatest.{FunSuite, Matchers}
-
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperations.exceptions._
+import org.scalatest.{FunSuite, Matchers}
+
+import scala.reflect.runtime.universe.{TypeTag, typeTag}
 
 object DOperationCatalogTestResources {
   object CategoryTree {
@@ -44,6 +43,8 @@ object DOperationCatalogTestResources {
         l: Vector[DKnowledge[DOperable]]): Vector[DKnowledge[DOperable]] = ???
 
     def execute(context: ExecutionContext)(l: Vector[DOperable]): Vector[DOperable] = ???
+
+    override val name: String = ""
   }
 
   case class X() extends DOperable
