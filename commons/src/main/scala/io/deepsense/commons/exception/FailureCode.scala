@@ -27,6 +27,7 @@ object FailureCode extends Enumeration {
   val UnexpectedError = Value(6)
   val IllegalArgumentException = Value(7)
   val IncorrectWorkflow = Value(8)
+  val IncorrectNode = Value(9)
 
   def fromCode(code: Int): Option[FailureCode] = FailureCode.values.find(_.id == code)
 }

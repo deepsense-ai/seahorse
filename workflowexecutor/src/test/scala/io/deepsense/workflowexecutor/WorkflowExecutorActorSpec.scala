@@ -56,6 +56,12 @@ class WorkflowExecutorActorSpec
       val g = mock[Graph]
       when(g.enqueueNodes) thenReturn g
       when(g.markRunning) thenReturn g
+      when(g.abortNodes) thenReturn g
+      when(g.markFailed(any())) thenReturn g
+      when(g.markAsFailed(any(), any())) thenReturn g
+      when(g.markRunning) thenReturn g
+      when(g.updateState) thenReturn g
+      when(g.withChangedNode(any())) thenReturn g
 
       val knowledgeWithoutErrors = mock[GraphKnowledge]
       when(knowledgeWithoutErrors.errors)
@@ -199,8 +205,11 @@ class WorkflowExecutorActorSpec
         when(graph.markFailed(any())) thenReturn failedGraph
         when(failedGraph.state) thenReturn failedState
         when(failedGraph.abortNodes) thenReturn failedGraphWithAbortedNodes
+        when(failedGraph.markAsFailed(any(), any())) thenReturn failedGraph
         when(failedGraphWithAbortedNodes.state) thenReturn failedState
         when(failedGraphWithAbortedNodes.updateState()) thenCallRealMethod()
+        when(failedGraphWithAbortedNodes.markAsFailed(
+          any(), any())) thenReturn failedGraphWithAbortedNodes
 
         val result = launchGraph(shouldStartExecutors = false)
 

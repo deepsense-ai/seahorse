@@ -21,11 +21,12 @@ import scala.util.{Failure, Success, Try}
 
 import akka.actor._
 
-import io.deepsense.commons.exception.{FailureCode, DeepSenseFailure, FailureDescription}
+import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
 import io.deepsense.commons.utils.Logging
-import io.deepsense.deeplang.doperables.ReportLevel.ReportLevel
+import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
-import io.deepsense.graph.{CyclicGraphException, GraphKnowledge, Graph, Node}
+import io.deepsense.graph.GraphKnowledge.InferenceErrors
+import io.deepsense.graph.{CyclicGraphException, Graph, GraphKnowledge, Node}
 import io.deepsense.models.entities.Entity
 import io.deepsense.models.workflows.EntitiesMap
 import io.deepsense.reportlib.model.ReportContent
@@ -59,27 +60,67 @@ class WorkflowExecutorActor(executionContext: ExecutionContext)
     this.result = result
     graph = g
 
-    val errors = Try(graph.inferKnowledge(executionContext)) match {
+    val success = Try(graph.inferKnowledge(executionContext)) match {
       case Success(knowledge) =>
-        knowledge.errors.headOption.map(_ =>
-          WorkflowExecutorActor.inferenceErrorsFailureDescription(knowledge))
+        handleInferredKnowledge(knowledge)
       case Failure(ex: CyclicGraphException) =>
-        Some(WorkflowExecutorActor.cyclicGraphFailureDescription)
+        handleException(Some(WorkflowExecutorActor.cyclicGraphFailureDescription))
       case Failure(ex) =>
-        Some(WorkflowExecutorActor.genericFailureDescription(ex))
+        handleException(Some(WorkflowExecutorActor.genericFailureDescription(ex)))
     }
 
-    if (errors.isDefined) {
-      logger.error("Workflow is incorrect - cannot launch. Errors: {}", errors.get)
-      graph = graph.markFailed(errors.get)
-      graph = graph.abortNodes
+    if (success) {
+      launchWorkflow()
+    }
+  }
+
+  def handleInferredKnowledge(knowledge: GraphKnowledge): Boolean = {
+    if (knowledge.errors.nonEmpty) {
+      embedErrorInfoInWorkflow(knowledge)
       endExecution()
-    } else {
-      graph = graph.markRunning
-      logger.debug("launch(graph={})", graph)
-      launchReadyNodes(graph)
-      if (graph.readyNodes.isEmpty) {
-        endExecution()
+    }
+    knowledge.errors.isEmpty
+  }
+
+  def handleException(errors: Option[FailureDescription]): Boolean = {
+    logger.error("Workflow is incorrect - cannot launch. Errors: {}", errors.get)
+    graph = graph.markFailed(errors.get)
+    graph = graph.abortNodes
+    endExecution()
+    false
+  }
+
+  def embedErrorInfoInWorkflow(knowledge: GraphKnowledge): Unit = {
+    logger.error("Workflow is incorrect - cannot launch. Errors: {}",
+      knowledge.errors.headOption.map(_ =>
+        WorkflowExecutorActor.inferenceErrorsDebugDescription(knowledge)))
+    markWorkflowAsIncorrect()
+    graph = graph.abortNodes
+    markNodesWithErrorsAsFailed(knowledge)
+  }
+
+  def launchWorkflow(): Unit = {
+    graph = graph.markRunning
+    logger.debug("launch(graph={})", graph)
+    launchReadyNodes(graph)
+    if (graph.readyNodes.isEmpty) {
+      endExecution()
+    }
+  }
+
+  def markWorkflowAsIncorrect(): Unit = {
+    graph = graph.markFailed(FailureDescription(
+      DeepSenseFailure.Id.randomId,
+      FailureCode.IncorrectWorkflow,
+      title = "Incorrect workflow",
+      message = Some("Provided workflow cannot be launched, because it contains errors")))
+  }
+
+  def markNodesWithErrorsAsFailed(knowledge: GraphKnowledge): Unit = {
+    knowledge.errors.foreach {
+      case (nodeId: Node.Id, nodeErrors: InferenceErrors) => {
+        graph = graph.markAsFailed(
+          nodeId, WorkflowExecutorActor.nodeErrorsFailureDescription(nodeId, nodeErrors))
       }
     }
   }
@@ -167,17 +208,30 @@ object WorkflowExecutorActor {
     case class GraphFinished(graph: Graph, entitiesMap: EntitiesMap) extends Message
   }
 
-  def inferenceErrorsFailureDescription(graphKnowledge: GraphKnowledge): FailureDescription = {
+  def inferenceErrorsDebugDescription(graphKnowledge: GraphKnowledge): FailureDescription = {
     FailureDescription(
       DeepSenseFailure.Id.randomId,
       FailureCode.IncorrectWorkflow,
-      "Incorrect workflow",
-      Some("Provided workflow cannot be launched, because it contains errors"),
+      title = "Incorrect workflow",
+      message = Some("Provided workflow cannot be launched, because it contains errors"),
       details = graphKnowledge.errors.map {
         case (id, errors) => (id.toString, errors.map(_.toString).mkString("\n"))
       }
     )
   }
+
+  def nodeErrorsFailureDescription(
+      nodeId: Node.Id, nodeErrors: InferenceErrors): FailureDescription = {
+
+    FailureDescription(
+      DeepSenseFailure.Id.randomId,
+      FailureCode.IncorrectNode,
+      title = "Incorrect node",
+      message = Some("Node contains errors that prevent workflow from being executed:\n\n" +
+        nodeErrors.map(formatNodeError(_)).mkString("\n")))
+  }
+
+  def formatNodeError(error: DeepLangException): String = "* " + error.message
 
   def cyclicGraphFailureDescription: FailureDescription = {
     FailureDescription(DeepSenseFailure.Id.randomId,
