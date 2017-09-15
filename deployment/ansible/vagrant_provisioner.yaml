@@ -1,6 +1,6 @@
 # Copyright (c) 2015, CodiLime Inc.
 
-- hosts: deepsense-vm
+- hosts: seahorse-vm
   gather_facts: false
   tasks:
     - include: tasks/install_docker.yml
@@ -9,13 +9,15 @@
 
 - include: cassandra.yml
 
-- hosts: deepsense-vm
+- hosts: seahorse-vm
   gather_facts: false
   vars_files:
     - vars/env.yml
   tasks:
     - name: Wait for Cassandra to come up
       wait_for: host={{cassandra_server_ip}} port={{cassandra_server_port}}
+    - name: Wait 15s for clients to reconnect
+      wait_for: timeout=15
 
 - hosts: localhost
   gather_facts: false
@@ -34,7 +36,7 @@
 - include: workflowexecutor.yaml
 - include: notebook.yml
 
-- hosts: deepsense-vm
+- hosts: seahorse-vm
   gather_facts: false
   vars_files:
     - vars/deployment.yml

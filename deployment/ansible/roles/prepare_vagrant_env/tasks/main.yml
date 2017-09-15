@@ -12,7 +12,7 @@
 - name: Remove old logs and old image file
   file: path=vagrant/{{item}} state=absent
   with_items:
-    - deepsense-vm.box
+    - seahorse-vm.box
     - destroy.log
     - install.log
     - package.log

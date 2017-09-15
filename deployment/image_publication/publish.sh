@@ -9,7 +9,7 @@
 
 REPOSITORY="seahorse-bundled-image"
 VERSION=$(date +%s)
-BOX_NAME="deepsense-vm.box"
+BOX_NAME="seahorse-vm.box"
 
 #Publishes file (first parameter) with given version (second parameter)
 function publish() {
@@ -42,6 +42,6 @@ function publishVersion() {
 publishVersion "${BOX_NAME}" "${VERSION}"
 
 URL="$ARTIFACTORY_URL/$REPOSITORY/${VERSION}/${BOX_NAME}"
-sed "s#deepsensevm.vm.box_url = \"\"#deepsensevm.vm.box_url = \"${URL}\"#" Vagrantfile.template > Vagrantfile
+sed "s#seahorsevm.vm.box_url = \"\"#seahorsevm.vm.box_url = \"${URL}\"#" Vagrantfile.template > Vagrantfile
 
 publishVersion "Vagrantfile" "${VERSION}"

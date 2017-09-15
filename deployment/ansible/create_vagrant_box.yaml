@@ -18,5 +18,5 @@
     - name: Create and provision VM
       shell: vagrant up {{vagrant_box_name}} &>install.log chdir=vagrant executable=/bin/bash
     - name: Export provisioned VM to image file
-      shell: vagrant package --output deepsense-vm.box &>package.log chdir=vagrant executable=/bin/bash
+      shell: vagrant package --output seahorse-vm.box &>package.log chdir=vagrant executable=/bin/bash
 

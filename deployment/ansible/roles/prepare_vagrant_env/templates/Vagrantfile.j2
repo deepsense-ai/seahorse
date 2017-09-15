@@ -1,23 +1,23 @@
 Vagrant.configure(2) do |config|
-  config.vm.define "deepsense-vm" do |deepsensevm|
-    deepsensevm.vm.box = "ubuntu/trusty64"
-    deepsensevm.vm.hostname = "{{vagrant_box_name}}"
-    deepsensevm.vm.boot_timeout = 600
+  config.vm.define "seahorse-vm" do |seahorsevm|
+    seahorsevm.vm.box = "ubuntu/trusty64"
+    seahorsevm.vm.hostname = "{{vagrant_box_name}}"
+    seahorsevm.vm.boot_timeout = 600
     #editor:
-    deepsensevm.vm.network "forwarded_port", guest: 8000, host: 8000, host_ip: "127.0.0.1"
+    seahorsevm.vm.network "forwarded_port", guest: 8000, host: 8000, host_ip: "127.0.0.1"
     #WM:
-    deepsensevm.vm.network "forwarded_port", guest: 9080, host: 9080, host_ip: "127.0.0.1"
+    seahorsevm.vm.network "forwarded_port", guest: 9080, host: 9080, host_ip: "127.0.0.1"
     #Spark Master UI:
-    deepsensevm.vm.network "forwarded_port", guest: 8080, host: 8080, host_ip: "127.0.0.1"
+    seahorsevm.vm.network "forwarded_port", guest: 8080, host: 8080, host_ip: "127.0.0.1"
     #RabbitMQ Web-STOMP:
-    deepsensevm.vm.network "forwarded_port", guest: 15674, host: 15674, host_ip: "127.0.0.1"
+    seahorsevm.vm.network "forwarded_port", guest: 15674, host: 15674, host_ip: "127.0.0.1"
     #RabbitMQ STOMP:
-    deepsensevm.vm.network "forwarded_port", guest: 61613, host: 61613, host_ip: "127.0.0.1"
+    seahorsevm.vm.network "forwarded_port", guest: 61613, host: 61613, host_ip: "127.0.0.1"
     #RabbitMQ Management:
-    deepsensevm.vm.network "forwarded_port", guest: 15672, host: 15672, host_ip: "127.0.0.1"
+    seahorsevm.vm.network "forwarded_port", guest: 15672, host: 15672, host_ip: "127.0.0.1"
     #Notebook server:
-    deepsensevm.vm.network "forwarded_port", guest: 8888, host: 8888, host_ip: "127.0.0.1"
-    deepsensevm.vm.provision "ansible" do |ansible|
+    seahorsevm.vm.network "forwarded_port", guest: 8888, host: 8888, host_ip: "127.0.0.1"
+    seahorsevm.vm.provision "ansible" do |ansible|
       ansible.playbook = "../vagrant_provisioner.yaml"
       ansible.sudo = true
       ansible.extra_vars = {
@@ -40,16 +40,16 @@ Vagrant.configure(2) do |config|
       }
       ansible.verbose = "vv"
       ansible.groups = {
-        "master" => ["deepsense-vm"],
-        "frontend" => ["deepsense-vm"],
-        "cassandra" => ["deepsense-vm"],
-        "java_hosts" => ["deepsense-vm"],
+        "master" => ["seahorse-vm"],
+        "frontend" => ["seahorse-vm"],
+        "cassandra" => ["seahorse-vm"],
+        "java_hosts" => ["seahorse-vm"],
       }
     end
   end
   config.vm.provider "virtualbox" do |vb|
     vb.memory = "4096"
     vb.cpus = 4
-    vb.name = "deepsense-vm"
+    vb.name = "seahorse-vm"
   end
 end
