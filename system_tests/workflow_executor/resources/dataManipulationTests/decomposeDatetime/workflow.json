@@ -13,12 +13,11 @@
             "format": {
               "CSV": {
                 "separator": {
-                  "Comma": {
+                  ",": {
 
                   }
                 },
                 "names included": true,
-                "categorical columns": null,
                 "convert to boolean": true
               }
             }
@@ -28,7 +27,7 @@
     }, {
       "id": "f84dd741-883d-736e-d2bf-e7d388a4ce3f",
       "operation": {
-        "id": "42f2eb12-e28b-11e4-8a00-1681e6b88ec1",
+        "id": "6c18b05e-7db7-4315-bce1-3291ed530675",
         "name": "Decompose Datetime"
       },
       "parameters": {
@@ -52,7 +51,7 @@
     }, {
       "id": "0bad8fe5-759c-589e-683f-1d733618d66a",
       "operation": {
-        "id": "42f2eb12-e28b-11e4-8a00-1681e6b88ec1",
+        "id": "6c18b05e-7db7-4315-bce1-3291ed530675",
         "name": "Decompose Datetime"
       },
       "parameters": {

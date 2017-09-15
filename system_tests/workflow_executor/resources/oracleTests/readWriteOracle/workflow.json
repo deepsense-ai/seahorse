@@ -11,8 +11,7 @@
           "JDBC": {
             "url": "jdbc:oracle:thin:system/oracle@localhost:1521",
             "driver": "oracle.jdbc.driver.OracleDriver",
-            "table": "read_write_in",
-            "categorical columns": null
+            "table": "read_write_in"
           }
         }
       }

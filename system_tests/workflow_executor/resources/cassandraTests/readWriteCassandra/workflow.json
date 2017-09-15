@@ -10,14 +10,7 @@
         "data storage type": {
           "CASSANDRA": {
             "keyspace": "system_tests",
-            "table": "test_in",
-            "categorical columns": {
-              "selections": [{
-                "type": "columnList",
-                "values": ["categorical_col"]
-              }],
-              "excluding": false
-            }
+            "table": "test_in"
           }
         }
       }

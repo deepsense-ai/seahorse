@@ -13,18 +13,11 @@
             "format": {
               "CSV": {
                 "separator": {
-                  "Comma": {
+                  ",": {
 
                   }
                 },
                 "names included": true,
-                "categorical columns": {
-                  "selections": [{
-                    "type": "columnList",
-                    "values": ["col_a"]
-                  }],
-                  "excluding": false
-                },
                 "convert to boolean": true
               }
             }
@@ -42,15 +35,15 @@
           "FILE": {
             "format": {
               "CSV": {
-                "column separator": {
-                  "Comma": {
+                "separator": {
+                  ",": {
 
                   }
                 },
-                "write header": true
+                "names included": true
               }
             },
-            "output file": "/output.csv"
+            "outputFile": "/output.csv"
           }
         }
       }

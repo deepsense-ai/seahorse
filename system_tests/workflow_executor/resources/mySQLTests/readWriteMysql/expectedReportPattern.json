@@ -4,7 +4,7 @@
       "02f14ccc-c877-c242-bb82-534d0cac90d3": {
         "status": "COMPLETED", 
         "results": [
-          "d9bb7f88-b9d9-47c2-a8aa-5c4aa33e1b38"
+          "e19b6c85-a321-4623-b6b5-f65b8f29ad95"
         ], 
         "error": null
       }, 
@@ -15,7 +15,7 @@
       }
     }, 
     "resultEntities": {
-      "d9bb7f88-b9d9-47c2-a8aa-5c4aa33e1b38": {
+      "e19b6c85-a321-4623-b6b5-f65b8f29ad95": {
         "report": {
           "tables": {
             "DataFrame Size": {
@@ -49,7 +49,7 @@
               "columnTypes": [
                 "string", 
                 "numeric", 
-                "categorical", 
+                "string", 
                 "timestamp", 
                 "boolean"
               ], 
@@ -82,7 +82,7 @@
           }, 
           "distributions": {
             "categorical_col": {
-              "subtype": "categorical", 
+              "subtype": "discrete", 
               "blockType": "distribution", 
               "name": "categorical_col", 
               "missingValues": 0
@@ -98,8 +98,14 @@
               "name": "numeric_col", 
               "missingValues": 0
             }, 
+            "string_col": {
+              "subtype": "discrete", 
+              "blockType": "distribution", 
+              "name": "string_col", 
+              "missingValues": 0
+            }, 
             "boolean_col": {
-              "subtype": "categorical", 
+              "subtype": "discrete", 
               "blockType": "distribution", 
               "name": "boolean_col", 
               "missingValues": 0
@@ -115,6 +121,50 @@
               "name": "timestamp_col", 
               "missingValues": 0
             }
+          }, 
+          "schema": {
+            "fields": [
+              {
+                "dataType": "string", 
+                "metadata": {
+                  "name": "string_col"
+                }, 
+                "name": "string_col", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "double", 
+                "metadata": {
+                  "name": "numeric_col"
+                }, 
+                "name": "numeric_col", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "string", 
+                "metadata": {
+                  "name": "categorical_col"
+                }, 
+                "name": "categorical_col", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "timestamp", 
+                "metadata": {
+                  "name": "timestamp_col"
+                }, 
+                "name": "timestamp_col", 
+                "nullable": false
+              }, 
+              {
+                "dataType": "boolean", 
+                "metadata": {
+                  "name": "boolean_col"
+                }, 
+                "name": "boolean_col", 
+                "nullable": true
+              }
+            ]
           }
         }
       }

@@ -1,7 +1,7 @@
 # Copyright (c) 2015, CodiLime Inc.
 
 *** Variables ***
-${SUITE} =  negativeTests
+${SUITE} =    negativeTests
 
 *** Keywords ***
 Upload File To HDFS
@@ -15,11 +15,11 @@ Suite Teardown  Standard Suite Teardown
 Test Setup      Standard Test Setup
 Test Teardown   Standard Test Teardown
 
-Library    OperatingSystem
 Library    Collections
-Library    ../lib/WorkflowExecutorClient.py
-Library    ../lib/HdfsClient.py
+Library    OperatingSystem
 Library    ../lib/CommonSetupsAndTeardowns.py
+Library    ../lib/HdfsClient.py
+Library    ../lib/WorkflowExecutorClient.py
 
 
 *** Test Cases ***
@@ -39,10 +39,6 @@ Type Mismatch
     Run Workflow
     Check Report
 
-Empty Column Selector
-    Run Workflow
-    Check Report
-
 #Trivial Cycle
 #    Run Workflow
 #    Check Report
@@ -52,13 +48,6 @@ Empty Column Selector
 #    Check Report
 
 Column Name Duplication
-    [Setup]  Standard Hdfs Test Setup
-    Upload File To HDFS    input.csv
-    Run Workflow
-    Check Report
-    [Teardown]  Standard Hdfs Test Teardown
-
-One Category Feature
     [Setup]  Standard Hdfs Test Setup
     Upload File To HDFS    input.csv
     Run Workflow

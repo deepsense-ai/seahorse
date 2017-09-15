@@ -3,12 +3,16 @@
     "nodes": [{
       "id": "a4918563-8fd0-d012-7b4c-fbe642bf2d5f",
       "operation": {
-        "id": "ecb9bc36-5f7c-4a62-aa18-8db6e2d73251",
-        "name": "Mathematical Operation"
+        "id": "012876d9-7a72-47f9-98e4-8ed26db14d6d",
+        "name": "Execute Mathematical Transformation"
       },
       "parameters": {
         "formula": "2 * x",
-        "column name": "y"
+        "input column": {
+          "type": "column",
+          "value": "z"
+        },
+        "output column name": "y"
       }
     }, {
       "id": "178880ae-e53d-519c-f819-8731c14fcf23",
@@ -23,45 +27,26 @@
             "format": {
               "CSV": {
                 "separator": {
-                  "Comma": {
+                  ",": {
 
                   }
                 },
                 "names included": true,
-                "categorical columns": null,
                 "convert to boolean": true
               }
             }
           }
         }
       }
-    }, {
-      "id": "085cee75-7692-2056-8993-580f164b2e74",
-      "operation": {
-        "id": "f6e1f59b-d04d-44e2-ae35-2fcada44d23f",
-        "name": "Apply Transformation"
-      },
-      "parameters": {
-
-      }
     }],
     "connections": [{
-      "from": {
-        "nodeId": "a4918563-8fd0-d012-7b4c-fbe642bf2d5f",
-        "portIndex": 0
-      },
-      "to": {
-        "nodeId": "085cee75-7692-2056-8993-580f164b2e74",
-        "portIndex": 0
-      }
-    }, {
       "from": {
         "nodeId": "178880ae-e53d-519c-f819-8731c14fcf23",
         "portIndex": 0
       },
       "to": {
-        "nodeId": "085cee75-7692-2056-8993-580f164b2e74",
-        "portIndex": 1
+        "nodeId": "a4918563-8fd0-d012-7b4c-fbe642bf2d5f",
+        "portIndex": 0
       }
     }]
   },
@@ -80,12 +65,6 @@
           "coordinates": {
             "x": 410,
             "y": 64
-          }
-        },
-        "085cee75-7692-2056-8993-580f164b2e74": {
-          "coordinates": {
-            "x": 369,
-            "y": 245
           }
         }
       }

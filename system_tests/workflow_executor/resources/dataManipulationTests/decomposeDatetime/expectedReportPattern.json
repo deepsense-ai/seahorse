@@ -4,27 +4,163 @@
       "22aaa582-b365-e0ee-eb9e-afc5a57819eb": {
         "status": "COMPLETED", 
         "results": [
-          "d80523db-963d-4af4-83ce-47ca8fa04f84"
+          "d1caf1bd-7f9b-4167-82f4-674fe52fd08c"
         ], 
         "error": null
       }, 
       "f84dd741-883d-736e-d2bf-e7d388a4ce3f": {
         "status": "COMPLETED", 
         "results": [
-          "6e9eb1e8-7ce1-4255-8ece-41d8f90ca52d"
+          "a99597ba-8202-424a-bf1d-cae3046300e1", 
+          "606655f8-ba83-4f99-a82f-e86446fb54e8"
         ], 
         "error": null
       }, 
       "0bad8fe5-759c-589e-683f-1d733618d66a": {
         "status": "COMPLETED", 
         "results": [
-          "c1b26d06-0e9b-426a-8f4f-96b0688bbef5"
+          "a61f9c9b-271f-4b94-a8a7-af5cef5501e8", 
+          "09b97a9d-5201-4423-8896-82b62f0b9b86"
         ], 
         "error": null
       }
     }, 
     "resultEntities": {
-      "c1b26d06-0e9b-426a-8f4f-96b0688bbef5": {
+      "09b97a9d-5201-4423-8896-82b62f0b9b86": {
+        "report": {
+          "tables": {}, 
+          "distributions": {}, 
+          "schema": null
+        }
+      }, 
+      "606655f8-ba83-4f99-a82f-e86446fb54e8": {
+        "report": {
+          "tables": {}, 
+          "distributions": {}, 
+          "schema": null
+        }
+      }, 
+      "d1caf1bd-7f9b-4167-82f4-674fe52fd08c": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "2", 
+                  "10"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "packed_day", 
+                "packed_timestamp"
+              ], 
+              "columnTypes": [
+                "timestamp", 
+                "timestamp"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "2015-10-05T12:30:56.000Z", 
+                  "2015-10-05T08:00:00.000Z"
+                ], 
+                [
+                  "2015-10-06T13:10:02.000Z", 
+                  "2015-10-05T08:00:00.000Z"
+                ], 
+                [
+                  "2015-10-07T15:44:01.000Z", 
+                  "2015-10-05T12:00:00.000Z"
+                ], 
+                [
+                  "2015-11-12T09:10:08.000Z", 
+                  "2015-10-05T12:00:00.000Z"
+                ], 
+                [
+                  "2015-11-13T16:15:09.000Z", 
+                  "2015-10-05T08:00:00.000Z"
+                ], 
+                [
+                  "2015-12-09T17:08:15.000Z", 
+                  "2015-10-05T08:00:00.000Z"
+                ], 
+                [
+                  "2015-12-20T16:12:01.000Z", 
+                  "2015-10-05T12:00:00.000Z"
+                ], 
+                [
+                  "2015-12-24T15:21:00.000Z", 
+                  "2015-10-05T12:00:00.000Z"
+                ], 
+                [
+                  "2015-12-29T17:49:41.000Z", 
+                  "2015-10-05T08:00:00.000Z"
+                ], 
+                [
+                  "2015-12-29T18:08:12.000Z", 
+                  "2015-10-05T08:00:00.000Z"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "packed_timestamp": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "2015-10-05T12:00:00.000Z", 
+                "mean": "2015-10-05T09:36:00.000Z", 
+                "min": "2015-10-05T08:00:00.000Z"
+              }, 
+              "name": "packed_timestamp", 
+              "missingValues": 0
+            }, 
+            "packed_day": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "2015-12-29T18:08:12.000Z", 
+                "mean": "2015-11-21T17:32:56.500Z", 
+                "min": "2015-10-05T12:30:56.000Z"
+              }, 
+              "name": "packed_day", 
+              "missingValues": 0
+            }
+          }, 
+          "schema": {
+            "fields": [
+              {
+                "dataType": "timestamp", 
+                "metadata": {}, 
+                "name": "packed_day", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "timestamp", 
+                "metadata": {}, 
+                "name": "packed_timestamp", 
+                "nullable": true
+              }
+            ]
+          }
+        }
+      }, 
+      "a61f9c9b-271f-4b94-a8a7-af5cef5501e8": {
         "report": {
           "tables": {
             "DataFrame Size": {
@@ -76,7 +212,7 @@
                   "2015", 
                   "10", 
                   "5", 
-                  "8", 
+                  "10", 
                   "0", 
                   "0"
                 ], 
@@ -86,7 +222,7 @@
                   "2015", 
                   "10", 
                   "6", 
-                  "8", 
+                  "10", 
                   "0", 
                   "0"
                 ], 
@@ -96,7 +232,7 @@
                   "2015", 
                   "10", 
                   "7", 
-                  "12", 
+                  "14", 
                   "0", 
                   "0"
                 ], 
@@ -106,7 +242,7 @@
                   "2015", 
                   "11", 
                   "12", 
-                  "12", 
+                  "14", 
                   "0", 
                   "0"
                 ], 
@@ -116,7 +252,7 @@
                   "2015", 
                   "11", 
                   "13", 
-                  "8", 
+                  "10", 
                   "0", 
                   "0"
                 ], 
@@ -126,7 +262,7 @@
                   "2015", 
                   "12", 
                   "9", 
-                  "8", 
+                  "10", 
                   "0", 
                   "0"
                 ], 
@@ -136,7 +272,7 @@
                   "2015", 
                   "12", 
                   "20", 
-                  "12", 
+                  "14", 
                   "0", 
                   "0"
                 ], 
@@ -146,7 +282,7 @@
                   "2015", 
                   "12", 
                   "24", 
-                  "12", 
+                  "14", 
                   "0", 
                   "0"
                 ], 
@@ -156,7 +292,7 @@
                   "2015", 
                   "12", 
                   "29", 
-                  "8", 
+                  "10", 
                   "0", 
                   "0"
                 ], 
@@ -166,7 +302,7 @@
                   "2015", 
                   "12", 
                   "29", 
-                  "8", 
+                  "10", 
                   "0", 
                   "0"
                 ]
@@ -223,9 +359,9 @@
               "subtype": "continuous", 
               "blockType": "distribution", 
               "statistics": {
-                "max": "12", 
-                "mean": "9.6", 
-                "min": "8"
+                "max": "14", 
+                "mean": "11.6", 
+                "min": "10"
               }, 
               "name": "timestamp_hour", 
               "missingValues": 0
@@ -263,10 +399,62 @@
               "name": "day", 
               "missingValues": 0
             }
+          }, 
+          "schema": {
+            "fields": [
+              {
+                "dataType": "timestamp", 
+                "metadata": {}, 
+                "name": "packed_day", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "timestamp", 
+                "metadata": {}, 
+                "name": "packed_timestamp", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "double", 
+                "metadata": {}, 
+                "name": "year", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "double", 
+                "metadata": {}, 
+                "name": "month", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "double", 
+                "metadata": {}, 
+                "name": "day", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "double", 
+                "metadata": {}, 
+                "name": "timestamp_hour", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "double", 
+                "metadata": {}, 
+                "name": "timestamp_minutes", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "double", 
+                "metadata": {}, 
+                "name": "timestamp_seconds", 
+                "nullable": true
+              }
+            ]
           }
         }
       }, 
-      "6e9eb1e8-7ce1-4255-8ece-41d8f90ca52d": {
+      "a99597ba-8202-424a-bf1d-cae3046300e1": {
         "report": {
           "tables": {
             "DataFrame Size": {
@@ -436,110 +624,40 @@
               "name": "month", 
               "missingValues": 0
             }
-          }
-        }
-      }, 
-      "d80523db-963d-4af4-83ce-47ca8fa04f84": {
-        "report": {
-          "tables": {
-            "DataFrame Size": {
-              "name": "DataFrame Size", 
-              "columnNames": [
-                "Number of columns", 
-                "Number of rows"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "2", 
-                  "10"
-                ]
-              ], 
-              "blockType": "table"
-            }, 
-            "Data Sample": {
-              "name": "Data Sample", 
-              "columnNames": [
-                "packed_day", 
-                "packed_timestamp"
-              ], 
-              "columnTypes": [
-                "timestamp", 
-                "timestamp"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "2015-10-05T12:30:56.000Z", 
-                  "2015-10-05T08:00:00.000Z"
-                ], 
-                [
-                  "2015-10-06T13:10:02.000Z", 
-                  "2015-10-05T08:00:00.000Z"
-                ], 
-                [
-                  "2015-10-07T15:44:01.000Z", 
-                  "2015-10-05T12:00:00.000Z"
-                ], 
-                [
-                  "2015-11-12T09:10:08.000Z", 
-                  "2015-10-05T12:00:00.000Z"
-                ], 
-                [
-                  "2015-11-13T16:15:09.000Z", 
-                  "2015-10-05T08:00:00.000Z"
-                ], 
-                [
-                  "2015-12-09T17:08:15.000Z", 
-                  "2015-10-05T08:00:00.000Z"
-                ], 
-                [
-                  "2015-12-20T16:12:01.000Z", 
-                  "2015-10-05T12:00:00.000Z"
-                ], 
-                [
-                  "2015-12-24T15:21:00.000Z", 
-                  "2015-10-05T12:00:00.000Z"
-                ], 
-                [
-                  "2015-12-29T17:49:41.000Z", 
-                  "2015-10-05T08:00:00.000Z"
-                ], 
-                [
-                  "2015-12-29T18:08:12.000Z", 
-                  "2015-10-05T08:00:00.000Z"
-                ]
-              ], 
-              "blockType": "table"
-            }
           }, 
-          "distributions": {
-            "packed_timestamp": {
-              "subtype": "continuous", 
-              "blockType": "distribution", 
-              "statistics": {
-                "max": "2015-10-05T12:00:00.000Z", 
-                "mean": "2015-10-05T09:36:00.000Z", 
-                "min": "2015-10-05T08:00:00.000Z"
+          "schema": {
+            "fields": [
+              {
+                "dataType": "timestamp", 
+                "metadata": {}, 
+                "name": "packed_day", 
+                "nullable": true
               }, 
-              "name": "packed_timestamp", 
-              "missingValues": 0
-            }, 
-            "packed_day": {
-              "subtype": "continuous", 
-              "blockType": "distribution", 
-              "statistics": {
-                "max": "2015-12-29T18:08:12.000Z", 
-                "mean": "2015-11-21T17:32:56.500Z", 
-                "min": "2015-10-05T12:30:56.000Z"
+              {
+                "dataType": "timestamp", 
+                "metadata": {}, 
+                "name": "packed_timestamp", 
+                "nullable": true
               }, 
-              "name": "packed_day", 
-              "missingValues": 0
-            }
+              {
+                "dataType": "double", 
+                "metadata": {}, 
+                "name": "year", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "double", 
+                "metadata": {}, 
+                "name": "month", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "double", 
+                "metadata": {}, 
+                "name": "day", 
+                "nullable": true
+              }
+            ]
           }
         }
       }

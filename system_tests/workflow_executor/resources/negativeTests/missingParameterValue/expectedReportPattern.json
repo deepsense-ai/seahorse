@@ -1,16 +1,162 @@
 {
   "executionReport": {
     "nodes": {
-      "38fc9517-698f-9e76-77be-933cccb9b5ff": {
-        "status": "ABORTED", 
-        "results": [], 
+      "c9a629a2-6716-5ae8-9c0c-6e2afcfa2dba": {
+        "status": "FAILED", 
+        "results": null, 
+        "error": {
+          "code": "NodeFailure"
+        }
+      }, 
+      "b2367b9d-3c7d-4db8-c5b4-40b99be2d8ea": {
+        "status": "COMPLETED", 
+        "results": [
+          "9befd7c1-78bd-4d94-81c3-a9f5ba84eb41"
+        ], 
         "error": null
       }
     }, 
-    "resultEntities": {}, 
-    "error": {
-      "code": "IncorrectWorkflow", 
-      "title": "Incorrect workflow"
-    }
+    "resultEntities": {
+      "9befd7c1-78bd-4d94-81c3-a9f5ba84eb41": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "3", 
+                  "50"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "col_a", 
+                "col_b", 
+                "col_c"
+              ], 
+              "columnTypes": [
+                "string", 
+                "numeric", 
+                "string"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "red", 
+                  "-2.5", 
+                  "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
+                ], 
+                [
+                  "blue", 
+                  "-2.25", 
+                  "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
+                ], 
+                [
+                  "red", 
+                  "-2", 
+                  "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
+                ], 
+                [
+                  "blue", 
+                  "-1.75", 
+                  "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
+                ], 
+                [
+                  "red", 
+                  "-1.5", 
+                  "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
+                ], 
+                [
+                  "blue", 
+                  "-1.25", 
+                  "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
+                ], 
+                [
+                  "red", 
+                  "-1", 
+                  "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
+                ], 
+                [
+                  "blue", 
+                  "-0.75", 
+                  "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
+                ], 
+                [
+                  "red", 
+                  "-0.5", 
+                  "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
+                ], 
+                [
+                  "blue", 
+                  "-0.25", 
+                  "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "col_b": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "9.75", 
+                "mean": "3.625", 
+                "min": "-2.5"
+              }, 
+              "name": "col_b", 
+              "missingValues": 0
+            }, 
+            "col_c": {
+              "subtype": "discrete", 
+              "blockType": "distribution", 
+              "name": "col_c", 
+              "missingValues": 0
+            }, 
+            "col_a": {
+              "subtype": "discrete", 
+              "blockType": "distribution", 
+              "name": "col_a", 
+              "missingValues": 0
+            }
+          }, 
+          "schema": {
+            "fields": [
+              {
+                "dataType": "string", 
+                "metadata": {}, 
+                "name": "col_a", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "double", 
+                "metadata": {}, 
+                "name": "col_b", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "string", 
+                "metadata": {}, 
+                "name": "col_c", 
+                "nullable": true
+              }
+            ]
+          }
+        }
+      }
+    }, 
+    "error": null
   }
 }

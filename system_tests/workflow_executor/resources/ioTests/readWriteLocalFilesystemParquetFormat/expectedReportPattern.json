@@ -9,13 +9,13 @@
       "b2367b9d-3c7d-4db8-c5b4-40b99be2d8ea": {
         "status": "COMPLETED", 
         "results": [
-          "ccd2f2c6-5868-46d7-aec2-4920c296fa2e"
+          "9c5a57b1-694e-4e12-b06a-32715ceb3c12"
         ], 
         "error": null
       }
     }, 
     "resultEntities": {
-      "ccd2f2c6-5868-46d7-aec2-4920c296fa2e": {
+      "9c5a57b1-694e-4e12-b06a-32715ceb3c12": {
         "report": {
           "tables": {
             "DataFrame Size": {
@@ -45,59 +45,59 @@
                 "col_c"
               ], 
               "columnTypes": [
-                "categorical", 
+                "numeric", 
                 "numeric", 
                 "string"
               ], 
               "rowNames": null, 
               "values": [
                 [
-                  "red", 
+                  "1", 
                   "-2.5", 
                   "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
                 ], 
                 [
-                  "blue", 
+                  "0", 
                   "-2.25", 
                   "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
                 ], 
                 [
-                  "red", 
+                  "1", 
                   "-2", 
                   "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
                 ], 
                 [
-                  "blue", 
+                  "0", 
                   "-1.75", 
                   "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
                 ], 
                 [
-                  "red", 
+                  "1", 
                   "-1.5", 
                   "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
                 ], 
                 [
-                  "blue", 
+                  "0", 
                   "-1.25", 
                   "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
                 ], 
                 [
-                  "red", 
+                  "1", 
                   "-1", 
                   "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
                 ], 
                 [
-                  "blue", 
+                  "0", 
                   "-0.75", 
                   "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
                 ], 
                 [
-                  "red", 
+                  "1", 
                   "-0.5", 
                   "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
                 ], 
                 [
-                  "blue", 
+                  "0", 
                   "-0.25", 
                   "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
                 ]
@@ -117,12 +117,54 @@
               "name": "col_b", 
               "missingValues": 0
             }, 
-            "col_a": {
-              "subtype": "categorical", 
+            "col_c": {
+              "subtype": "discrete", 
               "blockType": "distribution", 
+              "name": "col_c", 
+              "missingValues": 0
+            }, 
+            "col_a": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "1", 
+                "mean": "0.5", 
+                "min": "0"
+              }, 
               "name": "col_a", 
               "missingValues": 0
             }
+          }, 
+          "schema": {
+            "fields": [
+              {
+                "dataType": "integer", 
+                "metadata": {
+                  "categorical": {
+                    "blue": 0, 
+                    "values": [
+                      "blue", 
+                      "red"
+                    ], 
+                    "red": 1
+                  }
+                }, 
+                "name": "col_a", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "double", 
+                "metadata": {}, 
+                "name": "col_b", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "string", 
+                "metadata": {}, 
+                "name": "col_c", 
+                "nullable": true
+              }
+            ]
           }
         }
       }

@@ -9,13 +9,13 @@
       "b2367b9d-3c7d-4db8-c5b4-40b99be2d8ea": {
         "status": "COMPLETED", 
         "results": [
-          "9d91ba39-462e-434c-84ae-559990fbdd64"
+          "4919d161-5b6f-4dcd-aa9a-459de7e5e654"
         ], 
         "error": null
       }
     }, 
     "resultEntities": {
-      "9d91ba39-462e-434c-84ae-559990fbdd64": {
+      "4919d161-5b6f-4dcd-aa9a-459de7e5e654": {
         "report": {
           "tables": {
             "DataFrame Size": {
@@ -45,7 +45,7 @@
                 "col_c"
               ], 
               "columnTypes": [
-                "categorical", 
+                "string", 
                 "numeric", 
                 "string"
               ], 
@@ -117,12 +117,40 @@
               "name": "col_b", 
               "missingValues": 0
             }, 
+            "col_c": {
+              "subtype": "discrete", 
+              "blockType": "distribution", 
+              "name": "col_c", 
+              "missingValues": 0
+            }, 
             "col_a": {
-              "subtype": "categorical", 
+              "subtype": "discrete", 
               "blockType": "distribution", 
               "name": "col_a", 
               "missingValues": 0
             }
+          }, 
+          "schema": {
+            "fields": [
+              {
+                "dataType": "string", 
+                "metadata": {}, 
+                "name": "col_a", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "double", 
+                "metadata": {}, 
+                "name": "col_b", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "string", 
+                "metadata": {}, 
+                "name": "col_c", 
+                "nullable": true
+              }
+            ]
           }
         }
       }

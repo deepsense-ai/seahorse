@@ -3,8 +3,8 @@
     "nodes": [{
       "id": "7afb7a78-9165-3917-f9e2-3ad06a1f2380",
       "operation": {
-        "id": "e1120fbc-375b-4967-9c23-357ab768272f",
-        "name": "Missing Values Handler"
+        "id": "d5f4e717-429f-4a28-a0d3-eebba036363a",
+        "name": "Handle Missing Values"
       },
       "parameters": {
         "columns": {
@@ -32,8 +32,8 @@
     }, {
       "id": "2a726929-714b-4d28-365b-5254670ca5ce",
       "operation": {
-        "id": "e1120fbc-375b-4967-9c23-357ab768272f",
-        "name": "Missing Values Handler"
+        "id": "d5f4e717-429f-4a28-a0d3-eebba036363a",
+        "name": "Handle Missing Values"
       },
       "parameters": {
         "columns": {
@@ -57,8 +57,8 @@
     }, {
       "id": "a31ce0cd-d2f5-e11e-28ed-a1c56be8fa31",
       "operation": {
-        "id": "e1120fbc-375b-4967-9c23-357ab768272f",
-        "name": "Missing Values Handler"
+        "id": "d5f4e717-429f-4a28-a0d3-eebba036363a",
+        "name": "Handle Missing Values"
       },
       "parameters": {
         "columns": {
@@ -82,8 +82,8 @@
     }, {
       "id": "ee2deaf3-a7f0-09c3-b1fe-f1d3cba1c7b5",
       "operation": {
-        "id": "e1120fbc-375b-4967-9c23-357ab768272f",
-        "name": "Missing Values Handler"
+        "id": "d5f4e717-429f-4a28-a0d3-eebba036363a",
+        "name": "Handle Missing Values"
       },
       "parameters": {
         "columns": {
@@ -115,15 +115,15 @@
           "FILE": {
             "format": {
               "CSV": {
-                "column separator": {
-                  "Comma": {
+                "separator": {
+                  ",": {
 
                   }
                 },
-                "write header": true
+                "names included": true
               }
             },
-            "output file": "hdfs://spark-cluster-1/system_tests/missingValuesHandler/output.csv"
+            "outputFile": "hdfs://spark-cluster-1/system_tests/missingValuesHandler/output.csv"
           }
         }
       }
@@ -140,18 +140,11 @@
             "format": {
               "CSV": {
                 "separator": {
-                  "Comma": {
+                  ",": {
 
                   }
                 },
                 "names included": true,
-                "categorical columns": {
-                  "selections": [{
-                    "type": "columnList",
-                    "values": ["col5"]
-                  }],
-                  "excluding": false
-                },
                 "convert to boolean": true
               }
             }
@@ -161,8 +154,8 @@
     }, {
       "id": "76ca6d08-2a1e-6ae3-0b20-a528ea3f0e81",
       "operation": {
-        "id": "e1120fbc-375b-4967-9c23-357ab768272f",
-        "name": "Missing Values Handler"
+        "id": "d5f4e717-429f-4a28-a0d3-eebba036363a",
+        "name": "Handle Missing Values"
       },
       "parameters": {
         "columns": {

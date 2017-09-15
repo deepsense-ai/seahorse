@@ -13,12 +13,11 @@
             "format": {
               "CSV": {
                 "separator": {
-                  "Comma": {
+                  ",": {
 
                   }
                 },
                 "names included": true,
-                "categorical columns": null,
                 "convert to boolean": true
               }
             }
@@ -36,15 +35,15 @@
           "FILE": {
             "format": {
               "CSV": {
-                "column separator": {
-                  "Comma": {
+                "separator": {
+                  ",": {
 
                   }
                 },
-                "write header": true
+                "names included": true
               }
             },
-            "output file": "s3n://AKIAIRRLCDDWK5JBPVLQ:GOK9kdzDLPA+t8vpcBiCVbUmDB6pUrCdmsUNVg1u@seahorse-dev/system_tests/readWriteS3/output.csv"
+            "outputFile": "s3n://AKIAIRRLCDDWK5JBPVLQ:GOK9kdzDLPA+t8vpcBiCVbUmDB6pUrCdmsUNVg1u@seahorse-dev/system_tests/readWriteS3/output.csv"
           }
         }
       }

@@ -3,22 +3,16 @@
     "nodes": [{
       "id": "1b48956f-9733-1306-fa2d-d2916521b41c",
       "operation": {
-        "id": "f8b3c5d0-febe-11e4-b939-0800200c9a66",
-        "name": "Convert Type"
+        "id": "012876d9-7a72-47f9-98e4-8ed26db14d6d",
+        "name": "Execute Mathematical Transformation"
       },
       "parameters": {
-        "selected columns": {
-          "selections": [{
-            "type": "columnList",
-            "values": ["colname"]
-          }],
-          "excluding": false
+        "formula": "2",
+        "input column": {
+          "type": "column",
+          "value": "two"
         },
-        "target type": {
-          "numeric": {
-
-          }
-        }
+        "output column name": "two_modified"
       }
     }],
     "connections": [{
@@ -34,7 +28,7 @@
   },
   "thirdPartyData": {
     "gui": {
-      "name": "Cycle",
+      "name": "TrivialCycle",
       "description": "",
       "nodes": {
         "1b48956f-9733-1306-fa2d-d2916521b41c": {

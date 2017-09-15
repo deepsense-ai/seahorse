@@ -11,14 +11,7 @@
           "JDBC": {
             "url": "jdbc:mysql://localhost:3306?user=system_tests&password=pass",
             "driver": "com.mysql.jdbc.Driver",
-            "table": "mysql.read_write_mysql_in",
-            "categorical columns": {
-              "selections": [{
-                "type": "columnList",
-                "values": ["categorical_col"]
-              }],
-              "excluding": false
-            }
+            "table": "mysql.read_write_mysql_in"
           }
         }
       }

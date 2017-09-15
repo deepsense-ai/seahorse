@@ -13,16 +13,12 @@
             "format": {
               "CSV": {
                 "separator": {
-                  "Comma": {
+                  ",": {
 
                   }
                 },
                 "names included": true,
-                "convert to boolean": false,
-                "categorical columns": {
-                  "selections": [],
-                  "excluding": false
-                }
+                "convert to boolean": false
               }
             }
           }

@@ -47,7 +47,7 @@
               ], 
               "columnTypes": [
                 "numeric", 
-                "categorical", 
+                "string", 
                 "numeric", 
                 "numeric"
               ], 
@@ -130,7 +130,7 @@
               "missingValues": 0
             }, 
             "unnamed_1": {
-              "subtype": "categorical", 
+              "subtype": "discrete", 
               "blockType": "distribution", 
               "name": "unnamed_1", 
               "missingValues": 0

@@ -4,14 +4,15 @@
       "a47fa4cf-9833-8541-31cd-98bfe9c57aab": {
         "status": "COMPLETED", 
         "results": [
-          "8b9ab6e4-0024-49fd-9dd4-e441e7fb2f69"
+          "372ed339-baf1-4dbf-badf-9c50d779f423"
         ], 
         "error": null
       }, 
       "b3fb1448-9874-3f6c-f259-89b08c4c3689": {
         "status": "COMPLETED", 
         "results": [
-          "964a5430-e709-410b-89be-ecffe2155862"
+          "c26d29fa-eaaa-468a-bce7-c34fcd3be366", 
+          "d813dcc3-8a89-4de6-b725-4ee794289e75"
         ], 
         "error": null
       }, 
@@ -22,7 +23,7 @@
       }
     }, 
     "resultEntities": {
-      "964a5430-e709-410b-89be-ecffe2155862": {
+      "c26d29fa-eaaa-468a-bce7-c34fcd3be366": {
         "report": {
           "tables": {
             "DataFrame Size": {
@@ -73,6 +74,12 @@
             }
           }, 
           "distributions": {
+            "city": {
+              "subtype": "discrete", 
+              "blockType": "distribution", 
+              "name": "city", 
+              "missingValues": 0
+            }, 
             "avg_salary": {
               "subtype": "continuous", 
               "blockType": "distribution", 
@@ -84,10 +91,33 @@
               "name": "avg_salary", 
               "missingValues": 0
             }
+          }, 
+          "schema": {
+            "fields": [
+              {
+                "dataType": "string", 
+                "metadata": {}, 
+                "name": "city", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "double", 
+                "metadata": {}, 
+                "name": "avg_salary", 
+                "nullable": true
+              }
+            ]
           }
         }
       }, 
-      "8b9ab6e4-0024-49fd-9dd4-e441e7fb2f69": {
+      "d813dcc3-8a89-4de6-b725-4ee794289e75": {
+        "report": {
+          "tables": {}, 
+          "distributions": {}, 
+          "schema": null
+        }
+      }, 
+      "372ed339-baf1-4dbf-badf-9c50d779f423": {
         "report": {
           "tables": {
             "DataFrame Size": {
@@ -201,6 +231,12 @@
               "name": "salary", 
               "missingValues": 0
             }, 
+            "city": {
+              "subtype": "discrete", 
+              "blockType": "distribution", 
+              "name": "city", 
+              "missingValues": 0
+            }, 
             "employee_id": {
               "subtype": "continuous", 
               "blockType": "distribution", 
@@ -223,6 +259,34 @@
               "name": "work_time", 
               "missingValues": 0
             }
+          }, 
+          "schema": {
+            "fields": [
+              {
+                "dataType": "double", 
+                "metadata": {}, 
+                "name": "employee_id", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "string", 
+                "metadata": {}, 
+                "name": "city", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "double", 
+                "metadata": {}, 
+                "name": "salary", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "double", 
+                "metadata": {}, 
+                "name": "work_time", 
+                "nullable": true
+              }
+            ]
           }
         }
       }

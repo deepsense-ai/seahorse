@@ -4,20 +4,93 @@
       "806d1a75-7f9b-3de1-3fc9-6f644684835d": {
         "status": "COMPLETED", 
         "results": [
-          "46ca0012-4fd3-4620-a771-1f0a2567d860"
+          "bdfb83cf-fe59-4780-8c0f-c8c665008a4d"
         ], 
         "error": null
       }, 
       "a80b6bed-5c11-52ff-7ce6-a5a986fa88ff": {
         "status": "COMPLETED", 
         "results": [
-          "2c4abf0e-27ce-496e-b060-64db8bf0cf55"
+          "bfd4a98e-0ce0-45ed-aa6d-3793c8d6a359"
         ], 
         "error": null
       }
     }, 
     "resultEntities": {
-      "2c4abf0e-27ce-496e-b060-64db8bf0cf55": {
+      "bdfb83cf-fe59-4780-8c0f-c8c665008a4d": {
+        "report": {
+          "tables": {
+            "DataFrame Size": {
+              "name": "DataFrame Size", 
+              "columnNames": [
+                "Number of columns", 
+                "Number of rows"
+              ], 
+              "columnTypes": [
+                "numeric", 
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "1", 
+                  "4"
+                ]
+              ], 
+              "blockType": "table"
+            }, 
+            "Data Sample": {
+              "name": "Data Sample", 
+              "columnNames": [
+                "numbers"
+              ], 
+              "columnTypes": [
+                "numeric"
+              ], 
+              "rowNames": null, 
+              "values": [
+                [
+                  "1"
+                ], 
+                [
+                  "2"
+                ], 
+                [
+                  "3"
+                ], 
+                [
+                  "4"
+                ]
+              ], 
+              "blockType": "table"
+            }
+          }, 
+          "distributions": {
+            "numbers": {
+              "subtype": "continuous", 
+              "blockType": "distribution", 
+              "statistics": {
+                "max": "4", 
+                "mean": "2.5", 
+                "min": "1"
+              }, 
+              "name": "numbers", 
+              "missingValues": 0
+            }
+          }, 
+          "schema": {
+            "fields": [
+              {
+                "dataType": "double", 
+                "metadata": {}, 
+                "name": "numbers", 
+                "nullable": true
+              }
+            ]
+          }
+        }
+      }, 
+      "bfd4a98e-0ce0-45ed-aa6d-3793c8d6a359": {
         "report": {
           "tables": {
             "DataFrame Size": {
@@ -94,69 +167,22 @@
               "name": "_1", 
               "missingValues": 0
             }
-          }
-        }
-      }, 
-      "46ca0012-4fd3-4620-a771-1f0a2567d860": {
-        "report": {
-          "tables": {
-            "DataFrame Size": {
-              "name": "DataFrame Size", 
-              "columnNames": [
-                "Number of columns", 
-                "Number of rows"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "1", 
-                  "4"
-                ]
-              ], 
-              "blockType": "table"
-            }, 
-            "Data Sample": {
-              "name": "Data Sample", 
-              "columnNames": [
-                "numbers"
-              ], 
-              "columnTypes": [
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "1"
-                ], 
-                [
-                  "2"
-                ], 
-                [
-                  "3"
-                ], 
-                [
-                  "4"
-                ]
-              ], 
-              "blockType": "table"
-            }
           }, 
-          "distributions": {
-            "numbers": {
-              "subtype": "continuous", 
-              "blockType": "distribution", 
-              "statistics": {
-                "max": "4", 
-                "mean": "2.5", 
-                "min": "1"
+          "schema": {
+            "fields": [
+              {
+                "dataType": "double", 
+                "metadata": {}, 
+                "name": "_1", 
+                "nullable": true
               }, 
-              "name": "numbers", 
-              "missingValues": 0
-            }
+              {
+                "dataType": "double", 
+                "metadata": {}, 
+                "name": "_2", 
+                "nullable": true
+              }
+            ]
           }
         }
       }

@@ -23,12 +23,11 @@
             "format": {
               "CSV": {
                 "separator": {
-                  "Comma": {
+                  ",": {
 
                   }
                 },
                 "names included": true,
-                "categorical columns": null,
                 "convert to boolean": true
               }
             }

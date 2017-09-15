@@ -1,7 +1,7 @@
 # Copyright (c) 2015, CodiLime Inc.
 
 *** Variables ***
-${SUITE} =  dataManipulationTests
+${SUITE} =    dataManipulationTests
 
 *** Keywords ***
 
@@ -29,11 +29,6 @@ Decompose Datetime
     Run Workflow
     Check Report
 
-One Hot Encoder
-    Upload Resource File To Hdfs  input.csv
-    Run Workflow
-    Check Report
-
 SQL Expression
     Upload Resource File To Hdfs  input.csv
     Run Workflow
@@ -41,12 +36,6 @@ SQL Expression
 
 Invalid SQL Expression
     Upload Resource File To Hdfs  input.csv
-    Run Workflow
-    Check Report
-
-Train Normalizer
-    Upload Resource File To Hdfs  frame1.csv
-    Upload Resource File To Hdfs  frame2.csv
     Run Workflow
     Check Report
 

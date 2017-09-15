@@ -4,7 +4,7 @@
       "02f14ccc-c877-c242-bb82-534d0cac90d3": {
         "status": "COMPLETED", 
         "results": [
-          "29d4e533-5402-46a0-a3a6-011b7921cf9e"
+          "c94feaec-f90f-4f1c-9d68-5ec2ecc046ae"
         ], 
         "error": null
       }, 
@@ -15,7 +15,7 @@
       }
     }, 
     "resultEntities": {
-      "29d4e533-5402-46a0-a3a6-011b7921cf9e": {
+      "c94feaec-f90f-4f1c-9d68-5ec2ecc046ae": {
         "report": {
           "tables": {
             "DataFrame Size": {
@@ -72,6 +72,18 @@
               "name": "TIMESTAMP_COL", 
               "missingValues": 0
             }
+          }, 
+          "schema": {
+            "fields": [
+              {
+                "dataType": "timestamp", 
+                "metadata": {
+                  "name": "TIMESTAMP_COL"
+                }, 
+                "name": "TIMESTAMP_COL", 
+                "nullable": true
+              }
+            ]
           }
         }
       }

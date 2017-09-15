@@ -32,7 +32,7 @@
 
               }
             },
-            "output file": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/output/ioTests/readWriteLocalFilesystemParquetFormat/output.parquet"
+            "outputFile": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/output/ioTests/readWriteLocalFilesystemParquetFormat/output.parquet"
           }
         }
       }

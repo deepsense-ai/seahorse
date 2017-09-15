@@ -13,12 +13,11 @@
             "format": {
               "CSV": {
                 "separator": {
-                  "Comma": {
+                  ",": {
 
                   }
                 },
                 "names included": true,
-                "categorical columns": null,
                 "convert to boolean": true
               }
             }
@@ -28,7 +27,7 @@
     }, {
       "id": "b3fb1448-9874-3f6c-f259-89b08c4c3689",
       "operation": {
-        "id": "530e1420-7fbe-416b-b685-6c1e0f1137fc",
+        "id": "6cba4400-d966-4a2a-8356-b37f37b4c73f",
         "name": "SQL Expression"
       },
       "parameters": {
@@ -46,15 +45,15 @@
           "FILE": {
             "format": {
               "CSV": {
-                "column separator": {
-                  "Comma": {
+                "separator": {
+                  ",": {
 
                   }
                 },
-                "write header": true
+                "names included": true
               }
             },
-            "output file": "hdfs://spark-cluster-1/system_tests/invalidSqlExpression/output.csv"
+            "outputFile": "hdfs://spark-cluster-1/system_tests/invalidSqlExpression/output.csv"
           }
         }
       }
@@ -81,7 +80,7 @@
   },
   "thirdPartyData": {
     "gui": {
-      "name": "SQL Expression",
+      "name": "InvalidSqlExpression",
       "description": "",
       "nodes": {
         "a47fa4cf-9833-8541-31cd-98bfe9c57aab": {

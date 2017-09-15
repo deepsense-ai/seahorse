@@ -13,18 +13,11 @@
             "format": {
               "CSV": {
                 "separator": {
-                  "Semicolon": {
+                  ";": {
 
                   }
                 },
                 "names included": false,
-                "categorical columns": {
-                  "selections": [{
-                    "type": "indexRange",
-                    "values": [1, 1]
-                  }],
-                  "excluding": false
-                },
                 "convert to boolean": true
               }
             }
@@ -42,15 +35,15 @@
           "FILE": {
             "format": {
               "CSV": {
-                "column separator": {
-                  "Semicolon": {
+                "separator": {
+                  ";": {
 
                   }
                 },
-                "write header": true
+                "names included": true
               }
             },
-            "output file": "hdfs://spark-cluster-1/system_tests/readWriteHdfs/output.csv"
+            "outputFile": "hdfs://spark-cluster-1/system_tests/readWriteHdfs/output.csv"
           }
         }
       }

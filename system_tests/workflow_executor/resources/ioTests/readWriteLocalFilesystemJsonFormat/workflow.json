@@ -12,13 +12,6 @@
             "source": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/resources/ioTests/readWriteLocalFilesystemJsonFormat/input.json",
             "format": {
               "JSON": {
-                "categorical columns": {
-                  "selections": [{
-                    "type": "columnList",
-                    "values": ["col_a"]
-                  }],
-                  "excluding": false
-                }
               }
             }
           }
@@ -38,7 +31,7 @@
 
               }
             },
-            "output file": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/output/ioTests/readWriteLocalFilesystemJsonFormat/output.json"
+            "outputFile": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/output/ioTests/readWriteLocalFilesystemJsonFormat/output.json"
           }
         }
       }

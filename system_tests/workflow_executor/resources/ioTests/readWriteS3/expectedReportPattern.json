@@ -9,13 +9,13 @@
       "b2367b9d-3c7d-4db8-c5b4-40b99be2d8ea": {
         "status": "COMPLETED", 
         "results": [
-          "35671e49-0ea5-4066-a376-2419c7eb9750"
+          "c14f634e-6195-4b79-a228-6e10edb90882"
         ], 
         "error": null
       }
     }, 
     "resultEntities": {
-      "35671e49-0ea5-4066-a376-2419c7eb9750": {
+      "c14f634e-6195-4b79-a228-6e10edb90882": {
         "report": {
           "tables": {
             "DataFrame Size": {
@@ -185,6 +185,40 @@
               "name": "col_e", 
               "missingValues": 0
             }
+          }, 
+          "schema": {
+            "fields": [
+              {
+                "dataType": "double", 
+                "metadata": {}, 
+                "name": "col_a", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "double", 
+                "metadata": {}, 
+                "name": "col_b", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "double", 
+                "metadata": {}, 
+                "name": "col_c", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "double", 
+                "metadata": {}, 
+                "name": "col_d", 
+                "nullable": true
+              }, 
+              {
+                "dataType": "double", 
+                "metadata": {}, 
+                "name": "col_e", 
+                "nullable": true
+              }
+            ]
           }
         }
       }
