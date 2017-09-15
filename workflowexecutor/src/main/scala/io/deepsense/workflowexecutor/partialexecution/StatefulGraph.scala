@@ -207,12 +207,12 @@ case class StatefulGraph(
       : Map[Node.Id, NodeStateWithResults] = {
     val children: Set[Node.Id] = directedGraph.successorsOf(nodeId)
     val previousState = states.get(nodeId)
-    val draftedState =
+    val updatedState =
       previousState.map(s => states.updated(nodeId, updateNodeState(s))).getOrElse(states)
     if (children.isEmpty) {
-      draftedState
+      updatedState
     } else {
-      children.toSeq.foldLeft(draftedState){ (states, node) =>
+      children.toSeq.foldLeft(updatedState){ (states, node) =>
         recursiveStateUpdate(states, node, updateNodeState)
       }
     }

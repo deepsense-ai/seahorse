@@ -162,7 +162,7 @@ class WorkflowExecutorActorSpec
       }
       "after relaunch handle only changed nodes" in {
         val workflow = workflowInvalidInference(Workflow.Id.randomId)
-        val (probe, wea, _, statusListeners, publisher, testWMClientProbe) =
+        val (_, wea, _, statusListeners, _, testWMClientProbe) =
           finishedStateFixture(workflow)
 
         sendLaunch(TestProbe(), wea, Set(node2.id))
@@ -661,6 +661,7 @@ class WorkflowExecutorActorSpec
     Node.Id.randomId,
     WriteDataFrame().setStorageType(outputFile))
   val invalidNode = Node(Node.Id.randomId, new WriteDataFrame())
+
   def workflowWithResults(id: Workflow.Id): WorkflowWithResults = WorkflowWithResults(
     id,
     WorkflowMetadata(WorkflowType.Batch, "1.0.0"),
@@ -670,6 +671,7 @@ class WorkflowExecutorActorSpec
     ThirdPartyData(),
     ExecutionReport(Map(node1.id -> NodeState.draft, node2.id -> NodeState.draft))
   )
+
   def workflowInvalidInference(workflowId: Workflow.Id): WorkflowWithResults =
     workflowWithResults(workflowId).copy(
       id = workflowId,

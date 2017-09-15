@@ -226,11 +226,64 @@ class ExecutionSpec
     }
     "reset successors state when predecessor is replaced" in {
       val changedC = Node(Node.Id.randomId, op1To1) // Notice: different Id
-      checkSuccessorsStatesAfterANodeChange(changedC)
+
+      def validate(
+          changedC: DeeplangNode,
+          updatedGraph: DeeplangGraph,
+          statefulGraph: StatefulGraph,
+          stateWD: NodeStateWithResults,
+          stateWE: NodeStateWithResults,
+          stateC: NodeStateWithResults,
+          execution: IdleExecution): Unit = {
+        val updatedExecution = execution.updateStructure(updatedGraph, Set(idE))
+        updatedExecution.states(idA) shouldBe statefulGraph.states(idA)
+        updatedExecution.states(idB) shouldBe statefulGraph.states(idB)
+        updatedExecution.states(changedC.id) shouldBe NodeStateWithResults.draft
+        updatedExecution.states(idD) shouldBe stateWD.draft.clearKnowledge
+        updatedExecution.states(idE) shouldBe stateWE.draft
+
+        val queuedExecution = updatedExecution.enqueue
+        queuedExecution.states(idA) shouldBe statefulGraph.states(idA)
+        queuedExecution.states(idB) shouldBe statefulGraph.states(idB)
+        queuedExecution.states(changedC.id) shouldBe NodeStateWithResults.draft
+        queuedExecution.states(idD) shouldBe stateWD.draft.clearKnowledge
+        queuedExecution.states(idE) shouldBe stateWE.draft.enqueue
+      }
+
+
+      checkSuccessorsStatesAfterANodeChange(changedC, validate)
     }
-    "reset successors state when predecessor's parameters are modified" in pendingUntilFixed {
-      val changedC = Node(idC, op1To1) // Notice: the same id; different parameters!
-      checkSuccessorsStatesAfterANodeChange(changedC)
+    "reset successors state when predecessor's parameters are modified" in {
+      val changedCOp = createOp1To1
+      when(changedCOp.sameAs(any())).thenReturn(false) // Notice: the same id; different parameters!
+      val changedC = Node(idC, changedCOp)
+
+
+      def validate(
+          changedC: DeeplangNode,
+          updatedGraph: DeeplangGraph,
+          statefulGraph: StatefulGraph,
+          stateWD: NodeStateWithResults,
+          stateWE: NodeStateWithResults,
+          stateC: NodeStateWithResults,
+          execution: IdleExecution): Unit = {
+        val updatedExecution = execution.updateStructure(updatedGraph, Set(idE))
+        updatedExecution.states(idA) shouldBe statefulGraph.states(idA)
+        updatedExecution.states(idB) shouldBe statefulGraph.states(idB)
+        updatedExecution.states(changedC.id) shouldBe stateC.draft.clearKnowledge
+        updatedExecution.states(idD) shouldBe stateWD.draft.clearKnowledge
+        updatedExecution.states(idE) shouldBe stateWE.draft
+
+        val queuedExecution = updatedExecution.enqueue
+        queuedExecution.states(idA) shouldBe statefulGraph.states(idA)
+        queuedExecution.states(idB) shouldBe statefulGraph.states(idB)
+        queuedExecution.states(changedC.id) shouldBe stateC.draft.clearKnowledge
+        queuedExecution.states(idD) shouldBe stateWD.draft.clearKnowledge
+        queuedExecution.states(idE) shouldBe stateWE.draft.enqueue
+      }
+
+
+      checkSuccessorsStatesAfterANodeChange(changedC, validate)
     }
     "be idle" when {
       "stated with an empty structure and enqueued" in {
@@ -263,9 +316,11 @@ class ExecutionSpec
         val op1 = mock[DOperation]
         when(op1.inArity).thenReturn(0)
         when(op1.outArity).thenReturn(1)
+        when(op1.sameAs(any())).thenReturn(true)
         val op2 = mock[DOperation]
         when(op2.inArity).thenReturn(1)
         when(op2.outArity).thenReturn(0)
+        when(op2.sameAs(any())).thenReturn(true)
         val node1 = Node(Node.Id.randomId, op1)
         val node2 = Node(Node.Id.randomId, op2)
         val node3 = Node(Node.Id.randomId, op1)
@@ -287,7 +342,16 @@ class ExecutionSpec
     }
   }
 
-  def checkSuccessorsStatesAfterANodeChange(changedC: DeeplangNode): Unit = {
+  def checkSuccessorsStatesAfterANodeChange(
+      changedC: DeeplangNode,
+      validate: (
+        DeeplangNode,
+          DeeplangGraph,
+          StatefulGraph,
+          NodeStateWithResults,
+          NodeStateWithResults,
+          NodeStateWithResults,
+          IdleExecution) => Unit): Unit = {
     val graph = DeeplangGraph(nodeSet, edgeSet)
 
     val edgeBtoC = Edge(nodeB, 0, changedC, 0)
@@ -299,12 +363,13 @@ class ExecutionSpec
 
     val stateWD = nodeCompletedIdState(idD).withKnowledge(mock[NodeInferenceResult])
     val stateWE = nodeCompletedIdState(idE).withKnowledge(mock[NodeInferenceResult])
+    val stateC = nodeCompletedIdState(idC).withKnowledge(mock[NodeInferenceResult])
     val statefulGraph = StatefulGraph(
       graph,
       Map(
         idA -> nodeCompletedIdState(idA).withKnowledge(mock[NodeInferenceResult]),
         idB -> nodeCompletedIdState(idB).withKnowledge(mock[NodeInferenceResult]),
-        idC -> nodeCompletedIdState(idC).withKnowledge(mock[NodeInferenceResult]),
+        idC -> stateC,
         idD -> stateWD,
         idE -> stateWE
       ),
@@ -314,19 +379,7 @@ class ExecutionSpec
       statefulGraph,
       statefulGraph.nodes.map(_.id))
 
-    val updatedExecution = execution.updateStructure(updatedGraph, Set(idE))
-    updatedExecution.states(idA) shouldBe statefulGraph.states(idA)
-    updatedExecution.states(idB) shouldBe statefulGraph.states(idB)
-    updatedExecution.states(changedC.id) shouldBe NodeStateWithResults.draft
-    updatedExecution.states(idD) shouldBe stateWD.draft.clearKnowledge
-    updatedExecution.states(idE) shouldBe stateWE.draft
-
-    val queuedExecution = updatedExecution.enqueue
-    queuedExecution.states(idA) shouldBe statefulGraph.states(idA)
-    queuedExecution.states(idB) shouldBe statefulGraph.states(idB)
-    queuedExecution.states(changedC.id) shouldBe NodeStateWithResults.draft
-    queuedExecution.states(idD) shouldBe stateWD.draft.clearKnowledge
-    queuedExecution.states(idE) shouldBe stateWE.draft.enqueue
+    validate(changedC, updatedGraph, statefulGraph, stateWD, stateWE, stateC, execution)
   }
 
   private def nodeCompletedState: NodeStateWithResults = {

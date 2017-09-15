@@ -16,6 +16,7 @@
 
 package io.deepsense.graph
 
+import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 
@@ -32,13 +33,17 @@ trait GraphTestSupport {
     val m = mock[DOperation0To1[DOperable]]
     when(m.inArity).thenReturn(0)
     when(m.outArity).thenReturn(1)
+    when(m.sameAs(any())).thenReturn(true)
     m
   }
 
-  val op1To1 = {
+  val op1To1 = createOp1To1
+
+  def createOp1To1: DOperation1To1[DOperable, DOperable] = {
     val m = mock[DOperation1To1[DOperable, DOperable]]
     when(m.inArity).thenReturn(1)
     when(m.outArity).thenReturn(1)
+    when(m.sameAs(any())).thenReturn(true)
     m
   }
 
@@ -46,6 +51,7 @@ trait GraphTestSupport {
     val m = mock[DOperation2To2[DOperable, DOperable, DOperable, DOperable]]
     when(m.inArity).thenReturn(2)
     when(m.outArity).thenReturn(2)
+    when(m.sameAs(any())).thenReturn(true)
     m
   }
 

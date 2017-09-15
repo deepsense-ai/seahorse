@@ -145,6 +145,16 @@ case class IdleExecution(
     (selected, subgraph)
   }
 
+  private def operationParamsChanged(
+      newNode: DeeplangGraph.DeeplangNode,
+      graph: StatefulGraph): Boolean = {
+    graph.nodes.find(_.id == newNode.id) match {
+      case Some(oldNode) =>
+        !newNode.value.sameAs(oldNode.value)
+      case None => true
+    }
+  }
+
   private def findStates(
       newStructure: DeeplangGraph,
       substructure: DeeplangGraph,
@@ -164,10 +174,15 @@ case class IdleExecution(
         nodes.contains(id) || !wholeGraph.states(id).isCompleted
       }.map(_.id)
 
-      val changedNodes = newStructure.nodes.map(_.id).diff(newNodes).filter { id =>
-        newStructure.predecessors(id) != graph.predecessors(id)
+      val predecessorsChangedNodes = newStructure.nodes.map(_.id).diff(newNodes).filter {
+        id => newStructure.predecessors(id) != graph.predecessors(id)
       }
 
+      val changedParameters = newStructure.nodes.collect {
+        case node if operationParamsChanged(node, graph) => node.id
+      }
+
+      val changedNodes = predecessorsChangedNodes ++ changedParameters
       val nodesNeedingDrafting = newNodes ++ nodesToExecute ++ changedNodes
 
       val transformGraph = draftNodes(nodesNeedingDrafting) _ andThen
