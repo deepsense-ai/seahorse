@@ -16,27 +16,38 @@ function ExperimentController($scope,$stateParams, $rootScope, Operations, Drawi
   internal.experiment = null;
   internal.selectedNode = null;
 
-  internal.init = function init() {
-    console.log('Initiating experiment');
-
-    Operations.getCatalog().then((data) => {
-      console.log('Catalog downloaded successfully');
-      that.operationsCatalog = data;
-    });
-
-    Operations.getAll()
-      .then((data) => {
-        console.log('Operations downloaded successfully');
-        internal.operations = data;
-      })
-      .then(()=> {
-        ExperimentAPIClient.getData($stateParams.id).then((data) => {
-          console.log('Experiment downloaded successfully');
-          $rootScope.headerTitle = 'Experiment: ' + data.experiment.name;
-          internal.experiment = ExperimentFactory.createExperiment(data, internal.operations);
-          DrawingService.renderExperiment(internal.experiment);
-        });
+  internal.loadCatalog = () => {
+    return Operations
+      .getCatalog()
+      .then((operationCatalog) => {
+        console.log('Catalog downloaded successfully');
+        that.operationsCatalog = operationCatalog;
       });
+  };
+
+  internal.loadOperations = () => {
+    return Operations.getAll()
+      .then((operations) => {
+        console.log('Operations downloaded successfully');
+        internal.operations = operations;
+      });
+  };
+
+  internal.loadExperiment = () => {
+    return ExperimentAPIClient
+      .getData($stateParams.id)
+      .then((data) => {
+        console.log('Experiment downloaded successfully');
+        $rootScope.headerTitle = 'Experiment: ' + data.experiment.name;
+        internal.experiment = ExperimentFactory.createExperiment(data, internal.operations);
+        DrawingService.renderExperiment(internal.experiment);
+      });
+  };
+
+  internal.init = function init() {
+    internal.loadCatalog()
+      .then(internal.loadOperations)
+      .then(internal.loadExperiment);
   };
 
   that.onRenderFinish = function onRenderFinish() {
