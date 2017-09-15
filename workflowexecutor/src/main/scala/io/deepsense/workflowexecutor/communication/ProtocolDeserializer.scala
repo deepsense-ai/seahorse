@@ -16,30 +16,28 @@
 
 package io.deepsense.workflowexecutor.communication
 
-import spray.json.{RootJsonFormat, DefaultJsonProtocol, JsObject}
+import spray.json._
 
-import io.deepsense.commons.utils.{Logging, Version}
+import io.deepsense.commons.utils.Version
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
-import io.deepsense.models.json.workflow.WorkflowVersionUtil
-import io.deepsense.workflowexecutor.communication.ConnectJsonProtocol._
 
 case class ProtocolDeserializer(
     override val graphReader: GraphReader,
     override val currentVersion: Version)
   extends MQMessageDeserializer
-  with Logging
-  with DefaultJsonProtocol
-  with WorkflowVersionUtil {
-
-  def launchReader: RootJsonFormat[Launch] = jsonFormat1(Launch.apply)
+  with ConnectJsonProtocol
+  with LaunchJsonProtocol
+  with GetPythonGatewayAddressJsonProtocol {
 
   override protected def deserializeJson(jsObject: JsObject): ReadMessageMQ = {
     val fields = jsObject.fields
-    val messageType: String = fields(MessageMQ.messageTypeKey).convertTo[String]
+    val messageType = fields(MessageMQ.messageTypeKey).convertTo[String]
+    val body = fields(MessageMQ.messageBodyKey)
+
     messageType match {
-      case Connect.messageType => fields(MessageMQ.messageBodyKey).convertTo[Connect]
-      case Launch.messageType =>
-        fields(MessageMQ.messageBodyKey).convertTo[Launch](launchReader)
+      case Connect.messageType => body.convertTo[Connect]
+      case Launch.messageType => body.convertTo[Launch]
+      case GetPythonGatewayAddress.messageType => body.convertTo[GetPythonGatewayAddress]
     }
   }
 }

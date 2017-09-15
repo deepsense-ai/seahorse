@@ -18,5 +18,7 @@ package io.deepsense.workflowexecutor.communication
 
 object MQCommunication {
   val mqActorSystemName = "rabbitmq"
+  val seahorseExchange = "seahorse"
   val editorTopic = "to_editor"
+  val kernelTopic = "to_kernel"
 }

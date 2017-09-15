@@ -16,7 +16,7 @@
 
 package io.deepsense.workflowexecutor.executor
 
-import akka.actor.{ActorSystem, Props}
+import akka.actor.{ActorRef, ActorSystem, Props}
 import com.rabbitmq.client.ConnectionFactory
 import com.thenewmotion.akka.rabbitmq.ConnectionActor
 import org.apache.spark.SparkContext
@@ -50,6 +50,9 @@ case class SessionExecutor(
     implicit val system = ActorSystem()
     val statusLogger = system.actorOf(Props[StatusLoggingActor], "status-logger")
 
+    val pythonGateway = PythonGateway(PythonGateway.GatewayConfig(), sparkContext)
+    pythonGateway.start()
+
     val executionDispatcher = system.actorOf(ExecutionDispatcherActor.props(
       sparkContext,
       dOperableCatalog,
@@ -62,20 +65,18 @@ case class SessionExecutor(
     val connection = system.actorOf(
       ConnectionActor.props(factory),
       MQCommunication.mqActorSystemName)
-    val exchange = "seahorse"
+
     val messageDeserializer = ProtocolDeserializer(graphReader, currentVersion)
-
     val communicationFactory = MQCommunicationFactory(system, connection, messageDeserializer)
-    val seahorseSubscriber = system.actorOf(
-      SeahorseChannelSubscriber.props(executionDispatcher, communicationFactory),
-      "communication")
 
-    val globalPublisher: MQPublisher = communicationFactory.createCommunicationChannel(
-      exchange, seahorseSubscriber)
+    def createSeahorseSubscriber(publisher: MQPublisher): ActorRef =
+      system.actorOf(
+        SeahorseChannelSubscriber.props(
+          executionDispatcher, communicationFactory, publisher, pythonGateway),
+        "communication")
 
-    val gatewayConfig = PythonGateway.GatewayConfig()
-    val gateway = PythonGateway(gatewayConfig, sparkContext)
-    gateway.start()
+    communicationFactory.createCommunicationChannel(
+      MQCommunication.seahorseExchange, createSeahorseSubscriber _)
 
     system.awaitTermination()
     cleanup(sparkContext)

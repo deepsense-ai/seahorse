@@ -28,7 +28,7 @@ object Connect {
 }
 
 trait ConnectJsonProtocol extends DefaultJsonProtocol with IdJsonProtocol {
-  implicit def connectFormat: RootJsonFormat[Connect] = jsonFormat1(Connect.apply)
+  implicit val connectFormat: RootJsonFormat[Connect] = jsonFormat1(Connect.apply)
 }
 
 object ConnectJsonProtocol extends ConnectJsonProtocol

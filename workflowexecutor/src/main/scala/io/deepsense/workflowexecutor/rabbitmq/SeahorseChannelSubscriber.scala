@@ -23,11 +23,14 @@ import akka.util.Timeout
 
 import io.deepsense.commons.utils.Logging
 import io.deepsense.models.workflows.Workflow
-import io.deepsense.workflowexecutor.communication.Connect
+import io.deepsense.workflowexecutor.communication._
+import io.deepsense.workflowexecutor.pythongateway.PythonGateway
 
 case class SeahorseChannelSubscriber(
   executionDispatcher: ActorRef,
-  communicationFactory: MQCommunicationFactory) extends Actor with Logging {
+  communicationFactory: MQCommunicationFactory,
+  publisher: MQPublisher,
+  pythonGateway: PythonGateway) extends Actor with Logging {
 
   implicit val timeout: Timeout = Timeout(3, TimeUnit.SECONDS)
   var publishers: Map[Workflow.Id, ActorRef] = Map()
@@ -39,20 +42,32 @@ case class SeahorseChannelSubscriber(
         val subscriberActor =
           context.actorOf(Props(WorkflowChannelSubscriber(executionDispatcher)), workflowIdString)
         val publisher: MQPublisher =
-          communicationFactory.createCommunicationChannel(workflowId.toString, subscriberActor)
+          communicationFactory.createCommunicationChannel(workflowIdString, subscriberActor)
         val internalPublisher =
           context.actorOf(Props(new PublisherActor(publisher)), s"publishers_$workflowId")
         publishers += (workflowId -> internalPublisher)
       }
       val publisherPath: ActorPath = publishers(workflowId).path
       executionDispatcher ! WorkflowConnect(c, publisherPath)
+
+    case get: GetPythonGatewayAddress =>
+      pythonGateway.listeningPort foreach { port =>
+        publisher.publish(
+          MQCommunication.kernelTopic,
+          PythonGatewayAddress(List(SingleAddress("localhost", port))))
+      }
   }
 }
 
 case class WorkflowConnect(connect: Connect, publisherPath: ActorPath)
 
 object SeahorseChannelSubscriber {
-  def props(executionDispatcher: ActorRef, communicationFactory: MQCommunicationFactory): Props = {
-    Props(new SeahorseChannelSubscriber(executionDispatcher, communicationFactory))
+  def props(
+      executionDispatcher: ActorRef,
+      communicationFactory: MQCommunicationFactory,
+      publisher: MQPublisher,
+      pythonGateway: PythonGateway): Props = {
+    Props(new SeahorseChannelSubscriber(
+      executionDispatcher, communicationFactory, publisher, pythonGateway))
   }
 }

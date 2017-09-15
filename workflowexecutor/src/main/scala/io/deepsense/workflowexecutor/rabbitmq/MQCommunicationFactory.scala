@@ -37,6 +37,11 @@ case class MQCommunicationFactory(
     createPublisher(name)
   }
 
+  def createCommunicationChannel(name: String, subscriber: MQPublisher => ActorRef): Unit = {
+    val publisher = createPublisher(name)
+    createSubscriber(name, SubscriberActor(subscriber(publisher), mQMessageDeserializer))
+  }
+
   private def createSubscriber(exchangeName: String, subscriber: SubscriberActor): Unit = {
     val subscriberName = s"${exchangeName}_subscriber"
     connection ! CreateChannel(

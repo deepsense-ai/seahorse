@@ -16,7 +16,7 @@
 
 package io.deepsense.workflowexecutor
 
-import akka.actor.{ActorSelection, ActorContext, ActorRef, ActorSystem}
+import akka.actor.{ActorContext, ActorRef, ActorSelection, ActorSystem}
 import akka.testkit.{TestActorRef, TestKit, TestProbe}
 import org.apache.spark.SparkContext
 import org.scalatest.concurrent.{Eventually, ScalaFutures, ScaledTimeSpans}
@@ -26,7 +26,6 @@ import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.ReportLevel
-import io.deepsense.deeplang.doperables.ReportLevel.ReportLevel
 import io.deepsense.deeplang.doperables.ReportLevel.ReportLevel
 import io.deepsense.models.workflows.Workflow
 import io.deepsense.workflowexecutor.communication.Connect
