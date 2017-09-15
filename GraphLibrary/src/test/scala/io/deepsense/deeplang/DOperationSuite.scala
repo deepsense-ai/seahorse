@@ -11,6 +11,7 @@ import scala.reflect.runtime.{universe => ru}
 import org.scalatest.FunSuite
 
 import io.deepsense.deeplang.dhierarchy.DHierarchy
+import io.deepsense.deeplang.parameters.ParametersSchema
 
 object DClassesForDOperations {
   trait A extends DOperable
@@ -34,7 +35,7 @@ class DOperationSuite extends FunSuite {
   test("It is possible to implement simple operations") {
     import DClassesForDOperations._
 
-    case class IntParam(i: Int) extends DParameters
+    case class IntParam(i: Int) extends ParametersSchema
 
     class PickOne extends DOperation2To1[A1, A2, A] {
       override protected def _execute(context: ExecutionContext)(t1: A1, t2: A2): A = {

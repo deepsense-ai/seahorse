@@ -8,6 +8,8 @@ package io.deepsense.deeplang
 
 import scala.reflect.runtime.{universe => ru}
 
+import io.deepsense.deeplang.parameters.ParametersSchema
+
 /**
  * DOperation that receives and returns instances of DOperable.
  * Can infer its output type basing on type knowledge.
@@ -15,7 +17,7 @@ import scala.reflect.runtime.{universe => ru}
 abstract class DOperation {
   val inArity: Int
   val outArity: Int
-  var parameters: DParameters = _
+  var parameters: ParametersSchema = _
 
   def inPortTypes: Vector[ru.TypeTag[_]]
 
