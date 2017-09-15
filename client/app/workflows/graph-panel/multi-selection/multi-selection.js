@@ -2,15 +2,15 @@
 
 let internal = {};
 class MultiSelection {
-  constructor($document, $timeout, $rootScope, MouseEvent, WorkflowService, MultiSelectionService, debounce) {
+  constructor($document, $timeout, $rootScope, MouseEvent, MultiSelectionService, debounce) {
     internal = {
-      $document, $timeout, $rootScope, MouseEvent, WorkflowService, MultiSelectionService, debounce
+      $document, $timeout, $rootScope, MouseEvent, MultiSelectionService, debounce
     };
     this.restrict = 'A';
   }
-
   link(scope, element, attrs) {
     let that = {};
+
     const CLASS_NAME = 'selection-element';
     const CTRL_KEY = true;
     let selectionElement = internal.$document[0].createElement('div');
@@ -44,6 +44,10 @@ class MultiSelection {
         B.left <= A.right;
     };
 
+    that._getWorkflowFromInheritedScope = () => {
+      return scope.flowChartBoxCtrl.workflow
+    };
+
     that.startPainting = () => {
       internal.$document.on('mousemove', that.paint);
       internal.$document.on('mouseup', that.endPainting);
@@ -54,7 +58,7 @@ class MultiSelection {
 
       startPoint = internal.MouseEvent.getEventOffsetOfElement(event, element[0]);
 
-      workflowNodes = workflowNodes || _.map(internal.WorkflowService.getWorkflow().getNodes(),
+      workflowNodes = workflowNodes || _.map(that._getWorkflowFromInheritedScope().getNodes(),
         node => {
           return {
             x: node.x,
@@ -282,12 +286,12 @@ class MultiSelection {
   }
 
   /* @ngInject */
-  static directiveFactory($document, $timeout, $rootScope, MouseEvent, WorkflowService, MultiSelectionService, debounce) {
-    MultiSelection.instance = new MultiSelection($document, $timeout, $rootScope, MouseEvent, WorkflowService, MultiSelectionService, debounce);
+  static directiveFactory($document, $timeout, $rootScope, MouseEvent, MultiSelectionService, debounce) {
+    MultiSelection.instance = new MultiSelection($document, $timeout, $rootScope, MouseEvent, MultiSelectionService, debounce);
     return MultiSelection.instance;
   }
 }
-MultiSelection.directiveFactory.$inject = ['$document', '$timeout', '$rootScope', 'MouseEvent', 'WorkflowService', 'MultiSelectionService', 'debounce'];
+MultiSelection.directiveFactory.$inject = ['$document', '$timeout', '$rootScope', 'MouseEvent', 'MultiSelectionService', 'debounce'];
 
 exports.inject = function(module) {
   module.directive('multiSelection', MultiSelection.directiveFactory);
