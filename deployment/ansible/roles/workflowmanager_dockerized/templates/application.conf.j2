@@ -1,0 +1,75 @@
+server {
+  host = "0.0.0.0"
+  port = {{ds_wm_port}}
+  startup.timeout = {{startup_timeout}}
+}
+
+auth-service {
+  endpoint = "{{auth_service_endpoint}}"
+  identity = "{{wm_auth_service_identity}}"
+  password = "{{wm_auth_service_password}}"
+  timeout {
+    connection = {{auth_service_timeout_connection}}
+    socket = {{auth_service_timeout_socket}}
+  }
+}
+
+roles {
+  workflows {
+    get = "{{roles_workflows_get}}"
+    update = "{{roles_workflows_update}}"
+    create = "{{roles_workflows_create}}"
+    list = "{{roles_workflows_list}}"
+    delete = "{{roles_workflows_delete}}"
+    launch = "{{roles_workflows_launch}}"
+    abort = "{{roles_workflows_abort}}"
+  }
+}
+
+workflows.api.prefix = "{{workflows_api_prefix}}"
+operations.api.prefix = "{{operations_api_prefix}}"
+models.api.prefix = "{{models_api_prefix}}"
+reports.api.prefix = "{{reports_api_prefix}}"
+
+cassandra {
+  host = "{{cassandra_host}}"
+  port = {{cassandra_port}}
+  reconnect.delay = {{cassandra_reconnect_delay}}
+  credentials {
+    user = "{{cassandra_user}}"
+    password = "{{cassandra_pass}}"
+  }
+  workflowmanager {
+    keyspace = "{{wm_cassandra_keyspace}}"
+    workflow {
+      table = "{{workflows_cassandra_table}}"
+    }
+    workflowresults {
+      table = "{{workflowresults_cassandra_table}}"
+    }
+  }
+}
+
+deployment {
+  root = "/deepsense"
+
+  lib {
+    main {
+      location = ${deployment.root}/lib/graphexecutor.jar
+    }
+    deps {
+      location = ${deployment.root}/lib/graphexecutor-deps.jar
+    }
+  }
+
+  etc {
+    applicationconf {
+      name = "application.conf"
+      location = ${deployment.root}/etc/${deployment.etc.applicationconf.name}
+    }
+    log4j {
+      name = "log4j.xml"
+      location = ${deployment.root}/etc/${deployment.etc.log4j.name}
+    }
+  }
+}

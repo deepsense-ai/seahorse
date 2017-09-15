@@ -1,0 +1,78 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+---
+- name: Download WorkflowManager package
+  hosts: localhost
+  vars_files:
+    - vars/env.yml
+    - vars/deployment.yml
+    - vars/artifacts.yml
+  tasks:
+    - include: tasks/create_download_dir.yml
+    - include: tasks/artifactory_get.yml artifact_path={{wm_artifact_path}} artifactid={{wm_artifact_id}}
+
+- name: Builds WorkflowManager docker image
+  hosts: localhost
+  vars_files:
+    - vars/deployment.yml
+    - vars/artifacts.yml
+    - vars/env.yml
+    - vars/docker.yml
+    - vars/wm.yml
+  roles:
+    - workflowmanager_dockerized
+
+- name: Exports WorkflowManager docker image
+  hosts: localhost
+  vars_files:
+    - vars/env.yml
+    - vars/wm.yml
+  tasks:
+    - include: tasks/save_docker_image.yml docker_image={{ds_wm_docker_image}} download_dir="{{ds_wm_download_dir}}"
+
+- name: Copies WorkflowManager docker image
+  hosts: master
+  user: ubuntu
+  sudo: yes
+  vars_files:
+    - vars/env.yml
+    - vars/wm.yml
+  tasks:
+    - name: Assures docker dir exists
+      file: path={{ds_wm_download_dir}} state=directory
+    - include: tasks/copy_docker_image.yml docker_tar_image={{ds_wm_docker_image}}-docker.tar docker_dir={{ds_wm_download_dir}} download_dir="{{ds_wm_download_dir}}"
+
+- name: Imports WorkflowManager docker image
+  hosts: master
+  user: ubuntu
+  sudo: yes
+  vars_files:
+    - vars/env.yml
+    - vars/wm.yml
+  tasks:
+    - include: tasks/load_docker_image.yml docker_image={{ds_wm_docker_image}} docker_dir={{ds_wm_download_dir}}
+
+- name: Runs WorkflowManager image
+  hosts: master
+  user: ubuntu
+  sudo: yes
+  vars_files:
+    - vars/env.yml
+    - vars/wm.yml
+  tasks:
+    - name: Register running Docker containers
+      register: docker_containers
+      command: docker ps -a
+
+    - name: Remove previous container
+      command: docker rm -f {{ds_wm_docker_image}}
+      when: docker_containers.stdout.find(' {{ds_wm_docker_image}} ') != -1
+
+    - name: Run WorkflowManager container
+      docker:
+        name: "{{ds_wm_docker_image}}"
+        image: "{{ds_wm_docker_image}}"
+        state: started
+        restart_policy: always
+        ports:
+          - "{{ds_wm_ip}}:{{ds_wm_port}}:{{ds_wm_port}}"

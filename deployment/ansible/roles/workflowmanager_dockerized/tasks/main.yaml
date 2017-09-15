@@ -1,0 +1,27 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+---
+- include: ../../../tasks/create_download_dir.yml
+
+- include: ../../../tasks/artifactory_get.yml
+  vars:
+    artifact_path: "{{wm_artifact_path}}"
+    artifactid: "{{wm_artifact_id}}"
+
+- include: ../../../tasks/deploy_package.yml
+  vars:
+    artifactid: "{{wm_artifact_id}}"
+    version: "{{wm_version}}"
+    package_path: "{{download_dir}}/{{artifactid}}.zip"
+
+- name: Assures docker dir exists
+  file: path={{ds_wm_download_dir}} state=directory
+
+- name: Create WorkflowManager dockerfile
+  template: src=Dockerfile.j2 dest="{{ds_wm_download_dir}}/Dockerfile"
+
+- name: Create config file
+  template: src=application.conf.j2 dest="{{install_dir}}/application.conf"
+
+- name: Build WorkflowManager docker image
+  command: docker build -t {{ds_wm_docker_image}} {{ds_wm_download_dir}}
