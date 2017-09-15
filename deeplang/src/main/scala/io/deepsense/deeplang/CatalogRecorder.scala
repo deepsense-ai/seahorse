@@ -53,6 +53,8 @@ object CatalogRecorder {
     catalog.registerDOperable[ALSModel]()
     catalog.registerDOperable[KMeans]()
     catalog.registerDOperable[KMeansModel]()
+    catalog.registerDOperable[IsotonicRegression]()
+    catalog.registerDOperable[IsotonicRegressionModel]()
     catalog.registerDOperable[LinearRegression]()
     catalog.registerDOperable[LinearRegressionModel]()
     catalog.registerDOperable[RandomForestRegression]()
@@ -156,6 +158,9 @@ object CatalogRecorder {
 
     catalog.registerDOperation[CreateKMeans](
       DOperationCategories.ML.Clustering)
+
+    catalog.registerDOperation[CreateIsotonicRegression](
+      DOperationCategories.ML.Regression)
 
     catalog.registerDOperation[CreateLinearRegression](
       DOperationCategories.ML.Regression)
