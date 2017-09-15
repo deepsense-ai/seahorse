@@ -31,6 +31,8 @@ case class ExecutionParams(
   wmAddress: Option[String] = None,
   wmUsername: Option[String] = None,
   wmPassword: Option[String] = None,
+  mailServerAddress: Option[String] = None,
+  notebookServerAddress: Option[String] = None,
   depsZip: Option[String] = None,
   userId: Option[String] = None,
   tempPath: Option[String] = None)

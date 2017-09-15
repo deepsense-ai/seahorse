@@ -104,13 +104,21 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
       (x, c) => c.copy(userId = Some(x))
     } text "id of the workflow's owner"
 
-    opt[String]( "wm-username") hidden() valueName "USER" action {
+    opt[String]("wm-username") hidden() valueName "USER" action {
       (x, c) => c.copy(wmUsername = Some(x))
     } text "user for accessing Workflow Manager API"
 
-    opt[String]( "wm-password") hidden() valueName "PASSWORD" action {
+    opt[String]("wm-password") hidden() valueName "PASSWORD" action {
       (x, c) => c.copy(wmPassword = Some(x))
     } text "password for accessing Workflow Manager API"
+
+    opt[String]("mail-server-address") hidden() valueName "URI" action {
+      (x, c) => c.copy(mailServerAddress = Some(x))
+    }
+
+    opt[String]("notebook-server-address") hidden() valueName "URI" action {
+      (x, c) => c.copy(notebookServerAddress = Some(x))
+    }
 
     opt[String]('x', "custom-code-executors-path") optional() valueName "PATH" action {
       (x, c) => c.copy(customCodeExecutorsPath = Some(x))
@@ -148,7 +156,9 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
         (config.userId.isEmpty, "--user-id is required in interactive mode"),
         (config.tempPath.isEmpty, "--temp-dir is required in interactive mode"),
         (config.customCodeExecutorsPath.isDefined,
-          "--custom-code-executors-path is forbidden in interactive mode")
+          "--custom-code-executors-path is forbidden in interactive mode"),
+        (config.mailServerAddress.isEmpty, "--mail-server-address is required in interactive mode"),
+        (config.notebookServerAddress.isEmpty, "--notebook-server-address is required in interactive mode")
       )
 
       val nonInteractiveRequirements: Requirements = Seq(
@@ -190,18 +200,20 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
     if (params.interactiveMode) {
       // Interactive mode (SessionExecutor)
       SessionExecutor(
-        params.messageQueueHost.get,
-        params.messageQueuePort.get,
-        params.messageQueueUser.get,
-        params.messageQueuePass.get,
-        params.workflowId.get,
-        params.wmAddress.get,
-        params.wmUsername.get,
-        params.wmPassword.get,
-        params.depsZip.get,
-        params.userId.get,
-        params.tempPath.get,
-        params.pythonBinaryPath
+        messageQueueHost = params.messageQueueHost.get,
+        messageQueuePort = params.messageQueuePort.get,
+        messageQueueUser = params.messageQueueUser.get,
+        messageQueuePass = params.messageQueuePass.get,
+        workflowId = params.workflowId.get,
+        wmAddress = params.wmAddress.get,
+        wmUsername = params.wmUsername.get,
+        wmPassword = params.wmPassword.get,
+        mailServerAddress = params.mailServerAddress.get,
+        notebookServerAddress = params.notebookServerAddress.get,
+        depsZip = params.depsZip.get,
+        workflowOwnerId = params.userId.get,
+        tempPath = params.tempPath.get,
+        pythonBinaryPath = params.pythonBinaryPath
       ).execute()
     } else {
       // Running in non-interactive mode

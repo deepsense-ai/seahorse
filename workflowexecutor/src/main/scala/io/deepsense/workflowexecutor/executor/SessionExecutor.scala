@@ -16,12 +16,11 @@
 
 package io.deepsense.workflowexecutor.executor
 
-import java.net.InetAddress
+import java.net.{InetAddress, URI, URL}
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.language.postfixOps
-
 import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.routing._
 import com.rabbitmq.client.ConnectionFactory
@@ -59,6 +58,8 @@ case class SessionExecutor(
     wmAddress: String,
     wmUsername: String,
     wmPassword: String,
+    mailServerAddress: String,
+    notebookServerAddress: String,
     depsZip: String,
     workflowOwnerId: String,
     tempPath: String,
