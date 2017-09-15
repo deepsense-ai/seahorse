@@ -3,42 +3,49 @@ import jsPlumb from 'jsplumb';
 const ESTIMATOR = ['io.deepsense.deeplang.doperables.Estimator'];
 const TRANSFORMER = ['io.deepsense.deeplang.doperables.Transformer'];
 const EVALUATOR = ['io.deepsense.deeplang.doperables.Evaluator'];
+const DATAFRAME = ['io.deepsense.deeplang.doperables.dataframe.DataFrame'];
 
 // output types
 const DOT_ENDPOINT = 'Dot';
 const RECTANGLE_ENDPOINT = 'Rectangle';
 
 // colors
-const SEAHORSE_SEA_GREEN = '#34b5ba';
-const SEAHORSE_BLUE = '#0197c8';
-const SEAHORSE_MADISON = '#021f4e';
-const SEAHORSE_ALLPORTS = '#1e6d71';
+const ESTIMATOR_COLOR = '#62b77a';
+const DEFAULT_COLOR = '#0197c8';
+const TRANSFORMER_COLOR = '#021f4e';
+const EVALUATOR_COLOR = '#afaf3c';
+const READ_ONLY_COLOR = '#076575';
 
 // paint styles
 const DEFAULT_PAINT_STYLE = {
-  fill: SEAHORSE_BLUE
+  fill: DEFAULT_COLOR
 };
 
 const STYLES_MAP = {
   'estimator': {
     stroke: 'transparent',
     strokeWidth: 5,
-    fill: SEAHORSE_SEA_GREEN
+    fill: ESTIMATOR_COLOR
   },
   'transformer': {
     stroke: 'transparent',
     strokeWidth: 5,
-    fill: SEAHORSE_MADISON
+    fill: TRANSFORMER_COLOR
   },
   'evaluator': {
     stroke: 'transparent',
     strokeWidth: 5,
-    fill: SEAHORSE_ALLPORTS
+    fill: EVALUATOR_COLOR
   },
-  'default': {
+  'dataframe': {
     stroke: 'transparent',
     strokeWidth: 3,
-    fill: SEAHORSE_BLUE
+    fill: DEFAULT_COLOR
+  },
+  'readonly': {
+    stroke: 'transparent',
+    strokeWidth: 3,
+    fill: READ_ONLY_COLOR
   }
 };
 
@@ -48,7 +55,7 @@ const CONNECTOR_STYLE_DEFAULT = {
 
 const CONNECTOR_HOVER_STYLE = {
   endpoint: 'Dot',
-  stroke: SEAHORSE_BLUE
+  stroke: DEFAULT_COLOR
 };
 
 // port basic settings
@@ -90,8 +97,9 @@ class GraphStyleService {
       portStyle = Object.create(INPUT_STYLE);
     } else {
       portStyle = Object.create(OUTPUT_STYLE);
+      const isSource = this.canPortBeSource(port);
 
-      const color = this.getPortPaintStyleForQualifier(port.typeQualifier[0]).fill;
+      const color = isSource ? this.getPortPaintStyleForQualifier(port.typeQualifier[0]).fill : READ_ONLY_COLOR;
       const connectorStyle = Object.assign({}, CONNECTOR_STYLE_DEFAULT, {
         stroke: color
       });
@@ -100,7 +108,7 @@ class GraphStyleService {
         stroke: color
       });
 
-      portStyle.isSource = this.canPortBeSource(port);
+      portStyle.isSource = isSource;
       portStyle.connectorStyle = connectorStyle;
       portStyle.connectorHoverStyle = connectorHoverStyle;
     }
@@ -124,7 +132,7 @@ class GraphStyleService {
   getPortEndingTypeForQualifier(typeQualifier) {
     const type = this.getOutputTypeFromQualifier(typeQualifier);
 
-    if (type === 'default') {
+    if (type === 'dataframe' || type === 'readonly') {
       return DOT_ENDPOINT;
     } else {
       return RECTANGLE_ENDPOINT;
@@ -143,8 +151,10 @@ class GraphStyleService {
       return 'transformer';
     } else if (this.OperationsHierarchyService.IsDescendantOf(typeQualifier, EVALUATOR)) {
       return 'evaluator';
+    } else if (this.OperationsHierarchyService.IsDescendantOf(typeQualifier, DATAFRAME)) {
+      return 'dataframe';
     } else {
-      return 'default';
+      return 'readonly';
     }
   }
 
@@ -153,9 +163,7 @@ class GraphStyleService {
     const sourceNodeId = sourceEndpoint.getParameter('nodeId');
     const sourcePortIndex = sourceEndpoint.getParameter('portIndex');
     const sourcePort = nodes[sourceNodeId].output[sourcePortIndex];
-
     const outputType = this.getOutputTypeFromQualifier(sourcePort.typeQualifier[0]);
-    const cssClass = `matching-port-${outputType}`;
 
     const endpointTargets =
       _.chain(nodes)
@@ -195,7 +203,7 @@ class GraphStyleService {
         .value();
 
     endpointTargets.forEach((endpoint) => {
-      endpoint.addClass(cssClass);
+      endpoint.addClass('matching-port');
     });
   }
 
@@ -210,7 +218,7 @@ class GraphStyleService {
       .value();
 
     endpointTargets.forEach((endpoint) => {
-      endpoint.removeClass('matching-port-default matching-port-estimator matching-port-evaluator matching-port-transformer');
+      endpoint.removeClass('matching-port');
     });
   }
 

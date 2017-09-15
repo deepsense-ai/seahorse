@@ -219,9 +219,9 @@ class AdapterService {
       jsPlumbPort.bind('click', (reference) => {
         if (hasReport) {
           this.selectedPortId = jsPlumbPort.id;
-          jsPlumbPort.addClass('port-active');
           this.onMouseClick({reference, port});
           this.removeActivePortClasses();
+          jsPlumbPort.addClass('port-active');
         }
       });
 
@@ -236,6 +236,7 @@ class AdapterService {
         jsPlumbPort.addClass('has-report sa sa-chart');
       }
 
+      jsPlumbPort.addClass('output');
       jsPlumbPort.addClass(portType);
       jsPlumbPort.setParameter('portIndex', port.index);
       jsPlumbPort.setParameter('nodeId', node.id);
@@ -245,6 +246,7 @@ class AdapterService {
   renderInputPorts(node, ports) {
     ports.forEach((port) => {
       const style = this.GraphStyleService.getStyleForPort(port);
+      const portType = this.GraphStyleService.getOutputTypeFromQualifier(port.typeQualifier[0]);
 
       const jsPlumbPort = jsPlumb.addEndpoint(node, style, {
         anchor: POSITION_MAP.INPUT[port.portPosition],
@@ -261,6 +263,7 @@ class AdapterService {
         jsPlumbPort.removeClass('port-active');
       });
 
+      jsPlumbPort.addClass(portType);
       jsPlumbPort.setParameter('portIndex', port.index);
     });
   }
