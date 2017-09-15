@@ -7,7 +7,7 @@ package io.deepsense.deeplang.doperations
 import scala.reflect.ClassTag
 
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.types.{StructField, StructType}
+import org.apache.spark.sql.types.{StringType, StructField, StructType}
 import org.apache.spark.sql.{Row, types}
 
 import io.deepsense.commons.datetime.DateTimeConverter
@@ -94,7 +94,10 @@ class FileToDataFrame extends DOperation1To1[File, DataFrame] {
       }
     ))
 
-    context.dataFrameBuilder.buildDataFrame(schema, convertedData, categoricalColumnNames)
+    val convertedSchema = StructType(schema.zipWithIndex.map { case (column, index) =>
+      if (categoricalColumnIndices.contains(index)) column.copy(dataType = StringType) else column
+    })
+    context.dataFrameBuilder.buildDataFrame(convertedSchema, convertedData, categoricalColumnNames)
   }
 
   /**
