@@ -219,6 +219,11 @@ function LibraryService($q, $log, LibraryDataConverterService, LibraryApiService
       }
     };
 
+    const alreadyUploadedIndex = uploading.findIndex((uploaded) => uploaded.path === uploadingFile.path);
+
+    if (alreadyUploadedIndex > -1) {
+      uploading.splice(alreadyUploadedIndex, 1);
+    }
     uploading.push(uploadingFile);
 
     return LibraryApiService
