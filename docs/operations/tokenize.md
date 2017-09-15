@@ -60,9 +60,9 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 <tbody>
 
 <tr>
-<td><code>one or many</code></td>
-<td><code><a href="../parameters.html#single_choice">SingleChoice</a></code></td>
-<td>Transform one or many columns. Possible values: <code>["Transform one column", "Transform multiple columns"]</code></td>
+<td><code>operate on</code></td>
+<td><code><a href="../parameters.html#input_output_column_selector">InputOutputColumnSelector</a></code></td>
+<td>Input and output columns for the operation.</td>
 </tr>
 
 </tbody>

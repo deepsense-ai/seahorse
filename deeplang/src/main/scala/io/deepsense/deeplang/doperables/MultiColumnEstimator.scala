@@ -28,6 +28,7 @@ import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMu
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.{MultiColumnChoice, SingleColumnChoice}
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.NoInPlaceChoice
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.HasInputColumn
+import io.deepsense.deeplang.params.IOColumnsParam
 import io.deepsense.deeplang.params.choice.ChoiceParam
 import io.deepsense.deeplang.params.selections.{MultipleColumnSelection, NameColumnSelection, NameSingleColumnSelection}
 
@@ -44,10 +45,8 @@ import io.deepsense.deeplang.params.selections.{MultipleColumnSelection, NameCol
  * In multi-column mode, an AlwaysMultiColumnTransformer will be returned.
  */
 abstract class MultiColumnEstimator extends Estimator with HasSpecificParams {
-  val singleOrMultiChoiceParam = ChoiceParam[SingleOrMultiColumnChoice](
-    name = "one or many",
-    description = "Transform one or many columns."
-  )
+
+  val singleOrMultiChoiceParam = IOColumnsParam()
   override lazy val params = getSpecificParams :+ singleOrMultiChoiceParam
 
   def setSingleColumn(inputColumnName: String, outputColumnName: String): this.type = {

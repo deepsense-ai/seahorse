@@ -66,9 +66,9 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 </tr>
 
 <tr>
-<td><code>one or many</code></td>
-<td><code><a href="../parameters.html#single_choice">SingleChoice</a></code></td>
-<td>Transform one or many columns. Possible values: <code>["Transform one column", "Transform multiple columns"]</code></td>
+<td><code>operate on</code></td>
+<td><code><a href="../parameters.html#input_output_column_selector">InputOutputColumnSelector</a></code></td>
+<td>Input and output columns for the operation.</td>
 </tr>
 
 </tbody>
@@ -91,16 +91,16 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 <td>2.0</td>
 </tr>
 <tr>
-<td><code>one or many</code></td>
-<td>transform one column</td>
+<td><code>operate on</code></td>
+<td>one column</td>
 </tr>
 <tr>
 <td><code>input column</code></td>
 <td>assembled</td>
 </tr>
 <tr>
-<td><code>transform in place</code></td>
-<td>transform in place</td>
+<td><code>output</code></td>
+<td>replace input column</td>
 </tr>
 </tbody>
 </table>

@@ -30,7 +30,7 @@ object SingleColumnParams {
       List(classOf[YesInPlaceChoice], classOf[NoInPlaceChoice])
 
     case class YesInPlaceChoice() extends SingleColumnInPlaceChoice {
-      override val name: String = "transform in place"
+      override val name: String = "replace input column"
       override val params: Array[Param[_]] = declareParams()
     }
 
@@ -39,7 +39,7 @@ object SingleColumnParams {
         name = "output column",
         description = "Column to save results."
       )
-      override val name: String = "create a new column"
+      override val name: String = "append new column"
       override val params: Array[Param[_]] = declareParams(outputColumnCreatorParam)
 
       def setOutputColumn(columnName: String): this.type = set(outputColumnCreatorParam, columnName)

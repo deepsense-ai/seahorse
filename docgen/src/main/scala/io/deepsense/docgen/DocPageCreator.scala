@@ -205,6 +205,7 @@ trait DocPageCreator {
 
   private def sparkParamType(param: Param[_]): String = {
     param match {
+      case (p: IOColumnsParam) => "InputOutputColumnSelector"
       case (p: BooleanParam) => "Boolean"
       case (p: ChoiceParam[_]) => "SingleChoice"
       case (p: ColumnSelectorParam) => "MultipleColumnSelector"
@@ -236,6 +237,7 @@ trait DocPageCreator {
 
   private def extraDescription(param: Param[_]): String = {
     param match {
+      case (p: IOColumnsParam) => ""
       case (p: AbstractChoiceParam[_, _]) => " Possible values: " + choiceValues(p.choiceInstances)
       case _ => ""
     }

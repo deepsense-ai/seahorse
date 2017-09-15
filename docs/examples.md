@@ -149,15 +149,15 @@ executing linear regression algorithm on the data.
    * Add [String Indexer](operations/string_indexer.html) to the canvas
      * This operation will create a new column, <code>city_index</code>, with numbers representing
        text values from the original column
-     * Select <code>Transform one column</code> in **ONE OR MANY** selector
+     * Select <code>one column</code> in **OPERATE ON** selector
      * Select <code>city</code> in the **INPUT COLUMN**
-     * Select <code>create a new column</code> in **TRANSFORM IN PLACE** selector
+     * Select <code>append new column</code> in **OUTPUT** selector
      * Put <code>city_index</code> in the **OUTPUT COLUMN**
    * Add [One Hot Encoder](operations/one_hot_excoder.html) to the canvas
      * This operation will create separate columns for each value from the original column
-     * Select <code>Transform one column</code> in **ONE OR MANY** selector
+     * Select <code>one column</code> in **OPERATE ON** selector
      * Select <code>city_index</code> in the **INPUT COLUMN**
-     * Select <code>create a new column</code> in **TRANSFORM IN PLACE** selector
+     * Select <code>append new column</code> in **OUTPUT** selector
      * Put <code>city_encoded</code> in the **OUTPUT COLUMN**
    * As a result of executing the two operations above, in our dataset we will have additional
      columns with values <code>0</code> or <code>1</code> for each possible value of <code>city</code>

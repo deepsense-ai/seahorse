@@ -49,6 +49,43 @@ The multiple column selector exposes additional boolean flag: _excluding_, which
 
 **Example value:** excluding: false, names: {"a", "b"}, ranges: {1-5, 10-14}, types: {`numeric`, `boolean`}
 
+### <a name="input_output_column_selector"></a>Input Output Column Selector
+Serves to specify input and output columns for an operation.
+
+There are two input column modes:
+
+* `one column` - operate on one input column and output one column
+* `multiple columns` - operate on multiple input columns and output that many columns
+
+In both modes, input column(s) and output generation mode have to be specified.
+
+Available output generation modes are:
+
+* `replace input column(s)` - output goes into input columns and replaces previous values
+* `append new column(s)` - output goes into new columns that are appended to the `DataFrame`
+
+For `one column` input mode with `append new column` output mode, a name for newly created column
+has to be specified.
+
+For `multiple columns` input mode with `append new columns` output mode, a prefix for newly created
+columns has to be specified. Every new column will have corresponding input column's name with
+given prefix prepended.
+
+#### Example of use
+
+Operation `Convert Type`
+
+Input DataFrame columns: `a`, `b`, `c`
+
+Parameters:
+
+* operate on = `multiple columns`
+* input columns = `{ a, b, c }`
+* output mode = `append new columns`
+* column name prefix = `"converted_"`
+
+Output DataFrame columns: `a`, `b`, `c`, `converted_a`, `converted_b`, `converted_c`
+
 ### <a name="single_choice"></a>Single Choice
 A parameter of this type defines a set of options. Exactly one option must be selected. Additionally, each option can have internal parameters that should be filled if this particular option is selected.
 

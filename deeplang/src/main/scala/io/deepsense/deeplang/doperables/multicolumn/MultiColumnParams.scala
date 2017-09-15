@@ -16,6 +16,7 @@
 
 package io.deepsense.deeplang.doperables.multicolumn
 
+import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.MultiColumnInPlaceChoices.MultiColumnYesInPlace
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleColumnInPlaceChoice
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.YesInPlaceChoice
 import io.deepsense.deeplang.params._
@@ -33,11 +34,11 @@ object MultiColumnParams {
       List(classOf[MultiColumnYesInPlace], classOf[MultiColumnNoInPlace])
 
     case class MultiColumnYesInPlace() extends MultiColumnInPlaceChoice {
-      override val name: String = "Transform in place"
+      override val name: String = "replace input columns"
       override val params: Array[Param[_]] = declareParams()
     }
     case class MultiColumnNoInPlace() extends MultiColumnInPlaceChoice {
-      override val name: String = "Append columns"
+      override val name: String = "append new columns"
 
       val outputColumnsPrefixParam = PrefixBasedColumnCreatorParam(
         name = "column name prefix",
@@ -60,17 +61,17 @@ object MultiColumnParams {
       List(classOf[SingleColumnChoice], classOf[MultiColumnChoice])
 
     case class SingleColumnChoice() extends SingleOrMultiColumnChoice {
-      override val name: String = "Transform one column"
+      override val name: String = "one column"
 
       val inputColumn = SingleColumnSelectorParam(
         name = "input column",
-        description = "A column to be transformed.",
+        description = "Column to transform.",
         portIndex = 0
       )
 
       val singleInPlaceChoice = ChoiceParam[SingleColumnInPlaceChoice](
-        name = "transform in place",
-        description = "Should the transformation be done in place?"
+        name = "output",
+        description = "Output generation mode."
       )
       setDefault(singleInPlaceChoice, YesInPlaceChoice())
 
@@ -85,7 +86,7 @@ object MultiColumnParams {
     }
 
     case class MultiColumnChoice() extends SingleOrMultiColumnChoice {
-      override val name: String = "Transform multiple columns"
+      override val name: String = "multiple columns"
 
       val inputColumnsParam = ColumnSelectorParam(
         name = "input columns",
@@ -94,9 +95,10 @@ object MultiColumnParams {
       )
 
       val multiInPlaceChoiceParam = ChoiceParam[MultiColumnInPlaceChoice](
-        name = "transform in place",
-        description = "Should the transformation be done in place?"
+        name = "output",
+        description = "Output generation mode."
       )
+      setDefault(multiInPlaceChoiceParam, MultiColumnYesInPlace());
 
       override val params: Array[Param[_]] = declareParams(
         inputColumnsParam,

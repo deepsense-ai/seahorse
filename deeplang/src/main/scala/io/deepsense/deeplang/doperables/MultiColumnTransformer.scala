@@ -25,6 +25,7 @@ import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMu
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.{NoInPlaceChoice, YesInPlaceChoice}
 import io.deepsense.deeplang.doperables.multicolumn.{HasSpecificParams, MultiColumnParams, SingleColumnTransformerUtils}
 import io.deepsense.deeplang.inference.exceptions.TransformSchemaException
+import io.deepsense.deeplang.params.IOColumnsParam
 import io.deepsense.deeplang.params.choice.ChoiceParam
 import io.deepsense.deeplang.params.selections.MultipleColumnSelection
 
@@ -44,10 +45,7 @@ abstract class MultiColumnTransformer
 
   import MultiColumnParams._
 
-  val singleOrMultiChoiceParam = ChoiceParam[SingleOrMultiColumnChoice](
-    name = "one or many",
-    description = "Transform one or many columns."
-  )
+  val singleOrMultiChoiceParam = IOColumnsParam()
   setDefault(singleOrMultiChoiceParam, SingleColumnChoice())
 
   override lazy val params = declareParams(getSpecificParams :+ singleOrMultiChoiceParam: _*)
