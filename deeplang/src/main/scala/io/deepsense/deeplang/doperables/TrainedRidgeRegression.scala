@@ -11,8 +11,7 @@ import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.mllib.regression.RidgeRegressionModel
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.{DMethod1To1, ExecutionContext}
-import io.deepsense.deploymodelservice.{CreateModelResponse, Model}
+import io.deepsense.deeplang.{DMethod1To1, ExecutionContext, Model}
 import io.deepsense.reportlib.model.ReportContent
 
 case class TrainedRidgeRegression(
@@ -83,7 +82,7 @@ case class TrainedRidgeRegressionDescriptor(
   targetColumn: String,
   scaleStd: Vector,
   scalerMean: Vector) extends Deployable {
-  override def deploy(f: Model => Future[CreateModelResponse]): Future[CreateModelResponse] = {
+  override def deploy(f: Model => Future[String]): Future[String] = {
     val model = new Model(false, modelIntercept, modelWeights.toArray.toSeq,
       scalerMean.toArray.toSeq, scaleStd.toArray.toSeq)
       f(model)

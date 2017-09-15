@@ -8,6 +8,7 @@ import akka.actor.ActorRefFactory
 import spray.http._
 
 import io.deepsense.commons.StandardSpec
+import io.deepsense.deeplang.Model
 import io.deepsense.deploymodelservice.DeployModelJsonProtocol._
 
 class DeployModelServiceSpec extends StandardSpec {

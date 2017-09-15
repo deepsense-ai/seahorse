@@ -8,6 +8,7 @@ import spray.httpx.SprayJsonSupport
 import spray.json.DefaultJsonProtocol
 
 import io.deepsense.commons.json.IdJsonProtocol
+import io.deepsense.deeplang.Model
 
 object DeployModelJsonProtocol
   extends DefaultJsonProtocol

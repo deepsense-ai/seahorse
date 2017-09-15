@@ -2,7 +2,7 @@
  * Copyright (c) 2015, CodiLime Inc.
  */
 
-package io.deepsense.deploymodelservice
+package io.deepsense.deeplang
 
 import io.deepsense.commons.models
 
@@ -13,8 +13,8 @@ case class Model(
     means: Seq[Double],
     stdDevs: Seq[Double]) {
 
-  def score(getScoringRequest: GetScoringRequest): Double = {
-    val centered = getScoringRequest.features.zip(means).map { case (f, m) => f - m }
+  def score(features: Seq[Double]): Double = {
+    val centered = features.zip(means).map { case (f, m) => f - m }
     val scaled = centered.zip(stdDevs).map { case (c, sd) => if (sd == 0) 0 else c / sd }
     val dot = scaled.zip(weights).map { case (s, w) => s * w }
     val score = dot.sum + intercept

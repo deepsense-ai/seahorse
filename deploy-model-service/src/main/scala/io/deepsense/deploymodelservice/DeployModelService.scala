@@ -12,6 +12,7 @@ import spray.http.HttpHeaders
 import spray.routing._
 
 import io.deepsense.commons.utils.Logging
+import io.deepsense.deeplang.Model
 import io.deepsense.deploymodelservice.DeployModelJsonProtocol._
 
 class DeployModelServiceActor extends Actor with DeployModelService {
@@ -46,7 +47,7 @@ trait DeployModelService extends HttpService with Logging {
           entity(as[GetScoringRequest]) { request =>
             logger.debug("Get Scoring: {}", id)
             val model = repository(id)
-            val score = model.score(request)
+            val score = model.score(request.features)
             complete(ScoreModelResponse(score))
           }
         }

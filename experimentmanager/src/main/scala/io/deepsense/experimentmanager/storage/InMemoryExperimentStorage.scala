@@ -7,7 +7,6 @@ package io.deepsense.experimentmanager.storage
 import scala.collection.concurrent.TrieMap
 import scala.concurrent.Future
 
-import io.deepsense.commons.auth.HasTenantId
 import io.deepsense.commons.models
 import io.deepsense.models.experiments.Experiment
 import io.deepsense.models.experiments.Experiment._

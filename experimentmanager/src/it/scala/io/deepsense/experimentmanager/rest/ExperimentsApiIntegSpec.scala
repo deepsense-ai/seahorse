@@ -17,6 +17,7 @@ import org.scalatest.BeforeAndAfter
 import spray.routing.Route
 
 import io.deepsense.commons.cassandra.CassandraTestSupport
+import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.deeplang.doperables.Transformation
 import io.deepsense.deeplang.doperations.MathematicalOperation

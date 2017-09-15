@@ -3,13 +3,13 @@
 name := "deepsense-backend"
 
 lazy val commons                = project
+lazy val models                 = project dependsOn (commons, graph)
+lazy val deeplang               = project dependsOn (commons)
 lazy val `deploy-model-service` = project dependsOn (
   commons,
-  commons % "test->test")
-lazy val models                 = project dependsOn (commons, graph)
-lazy val deeplang               = project dependsOn (
-  commons,
-  `deploy-model-service`)
+  commons % "test->test",
+  deeplang)
+lazy val `entitystorage-model`  = project dependsOn commons
 lazy val entitystorage          = project dependsOn (
   commons,
   commons % "test->test",
