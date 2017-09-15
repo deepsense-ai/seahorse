@@ -1,15 +1,14 @@
 <div class="status-bar">
-  <a
-    class="btn btn-w-m btn-success btn-sm run-experiment-button"
-    ng-hide="status === undefined"
-    ng-disabled="status === 'status_running'"
-  >
+  <a class="btn btn-w-m btn-success btn-sm run-experiment-button"
+     ng-hide="status === undefined"
+     ng-disabled="status === 'status_running'">
     <span class="fa fa-caret-square-o-right"></span> run experiment
   </a>
-  <a
-    class="btn btn-outline btn-warning btn-sm abort-experiment-button"
-    ng-hide="status !== 'status_running'"
-  >
+  <a class="btn btn-outline btn-warning btn-sm abort-experiment-button"
+     ng-hide="status !== 'status_running'">
     <span class="fa fa-times-circle-o"></span> abort
   </a>
-  </div>
+  <a class="btn btn-w-m btn-success btn-sm save-experiment-button">
+    <span class="fa fa-caret-square-o-right"></span> save experiment
+  </a>
+</div>

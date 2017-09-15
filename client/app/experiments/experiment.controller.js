@@ -6,8 +6,8 @@
 /* @ngInject */
 function ExperimentController(
   experiment,
-  $http, $modal, $timeout, $scope,
-  PageService, Operations, GraphPanelRendererService, ExperimentService, ExperimentAPIClient, UUIDGenerator
+  $http, $modal, $timeout, $scope, $stateParams,
+  PageService, Operations, GraphPanelRendererService, ExperimentService, ExperimentAPIClient, UUIDGenerator, OperationsHierarchyService
 ) {
   const RUN_STATE_CHECK_INTERVAL = 2000;
 
@@ -154,6 +154,10 @@ function ExperimentController(
     }
   });
 
+  $scope.$on('Experiment.SAVE', (event, data) => {
+    internal.saveExperiment();
+  });
+
   $scope.$on(GraphNode.MOVE, (data) => {
     internal.saveExperiment();
   });
@@ -243,7 +247,7 @@ function ExperimentController(
   $scope.$on('Model.DEPLOY', (event, data) => {
     console.log('catching Model.DEPLOY');
     $modal.open({
-      template: '<div class="inmodal"><div class="modal-header"><h4 class="modal-title">Deploy model</h4></div><div class="modal-body" style="min-height:75px;"><loading-spinner-sm ng-if="!linkValue && !error" style="font-size:10px;position:relative;"></loading-spinner-sm><div ng-hide="linkValue===undefined"><p>GET: <input type="text" class="form-control" value="{{::linkValue}}" ng-focus="linkValue!==undefined" readonly="true"></p><p>sample content:<textarea readonly="true" style="width:100%;height:75px;font-size:14px;padding:6px 12px;resize:none;background-color:#eee;border:1px solid #E5E6E7;">{'+'\n'+'    "features" : [1.1, 1.9, 5.7, 7.7]'+'\n'+'}</textarea></p><p>sample result:<textarea readonly="true" style="width:100%;height:75px;font-size:14px;padding:6px 12px;resize:none;background-color:#eee;border:1px solid #E5E6E7;">{'+'\n'+'    "score": 0.1'+'\n'+'}</textarea></p></div><p ng-hide="error!==true" style="color:red;margin-top:10px;">Error occurred while deploying model!</p></div><div class="modal-footer"><button type="button" class="btn btn-white" ng-click="close()">Close</button></div></div>',
+      template: '<div class="inmodal"><div class="modal-header"><h4 class="modal-title">Deploy model</h4></div><div class="modal-body" style="min-height:75px;"><loading-spinner-sm ng-if="!linkValue && !error" style="font-size:10px;position:relative;"></loading-spinner-sm><div ng-hide="linkValue===undefined"><p>GET: <input type="text" class="form-control" value="{{::linkValue}}" ng-focus="linkValue!==undefined" readonly="true"></p><p>sample content:<textarea readonly="true" style="width:100%;height:75px;font-size:14px;padding:6px 12px;resize:none;background-color:#eee;border:1px solid #E5E6E7;">{' + '\n' + '    "features" : [1.1, 1.9, 5.7, 7.7]' + '\n' + '}</textarea></p><p>sample result:<textarea readonly="true" style="width:100%;height:75px;font-size:14px;padding:6px 12px;resize:none;background-color:#eee;border:1px solid #E5E6E7;">{' + '\n' + '    "score": 0.1' + '\n' + '}</textarea></p></div><p ng-hide="error!==true" style="color:red;margin-top:10px;">Error occurred while deploying model!</p></div><div class="modal-footer"><button type="button" class="btn btn-white" ng-click="close()">Close</button></div></div>',
       controller: ($scope, $modalInstance) => {
         $scope.close = function () {
           $modalInstance.close();

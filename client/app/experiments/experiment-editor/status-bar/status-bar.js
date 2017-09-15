@@ -11,12 +11,19 @@ function StatusBar() {
     scope: {
       'status': '='
     },
-    link: function (scope, element, attrs) {
-      element[0].querySelector('.run-experiment-button').addEventListener('click', () => {
-        scope.$emit('Experiment.RUN', {});
+    link: function (scope, element) {
+      let runExperimentButton = element[0].querySelector('.run-experiment-button');
+      let abortExperimentButton = element[0].querySelector('.abort-experiment-button');
+      let saveExperimentButton = element[0].querySelector('.save-experiment-button');
+
+      runExperimentButton.addEventListener('click', () => {
+        scope.$emit('Experiment.RUN');
       });
-      element[0].querySelector('.abort-experiment-button').addEventListener('click', () => {
-        scope.$emit('Experiment.ABORT', {});
+      abortExperimentButton.addEventListener('click', () => {
+        scope.$emit('Experiment.ABORT');
+      });
+      saveExperimentButton.addEventListener('click', () => {
+        scope.$emit('Experiment.SAVE');
       });
     }
   };
