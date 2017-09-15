@@ -42,6 +42,7 @@ object TestClusters extends Logging {
   def local() = ClusterDetails(
     name = "some-local" + UUID.randomUUID(),
     id = None,
+    executorMemory = Some("2G"),
     clusterType = ClusterType.local,
     uri = ignoredInLocal,
     userIP = ignoredInLocal
