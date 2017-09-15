@@ -35,11 +35,11 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
   private val mqUser = "yNNp7VJS"
   private val mqPass = "1ElYfGNW"
 
-  private val baseUrl = "http://localhost:8080"
+  private val baseUrl = "http://localhost:33321"
   private val workflowsUrl = s"$baseUrl/v1/workflows"
   private val sessionsUrl = s"$baseUrl/v1/sessions"
 
-  private val ws = "ws://localhost:8080/stomp/645/bg1ozddg/websocket"
+  private val ws = "ws://localhost:33321/stomp/645/bg1ozddg/websocket"
 
   private val httpTimeout = 10 seconds
   private val workflowTimeout = 30 minutes

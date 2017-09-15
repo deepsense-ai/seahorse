@@ -9,7 +9,7 @@ import org.scalatest.{Matchers, WordSpec}
 class AllExampleWorkflowsCompletesTest extends WordSpec with Matchers with
   SeahorseIntegrationTestDSL {
 
-  info("Assuming application will be accessible under localhost:8080")
+  info("Assuming application will be accessible under localhost:33321")
 
   "All examples workflows" should {
     "be correct - all nodes run and completed successfully" in {
