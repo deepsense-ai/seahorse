@@ -15,8 +15,6 @@ print(code)
 
 rm(args)
 
-sparkDFName <- ifelse(sparkVersion == "2.0.0", "SparkDataFrame", "DataFrame")
-
 # R will install packages to first lib path in here. We will mount it as docker volume to persist packages.
 .libPaths(c(file.path("/opt/R_Libs"), file.path(Sys.getenv('SPARK_HOME'), 'R', 'lib'), .libPaths()))
 library(SparkR)
@@ -50,11 +48,14 @@ df <- SparkR:::dataFrame(SparkR:::callJMethod(spark,
 tryCatch({
   eval(parse(text = code))
   transformedDF <- transform(df)
-  if (class(transformedDF) != sparkDFName) {
-    transformedDF <- ifelse(
-      sparkVersion == "2.0.0",
-      createDataFrame(data.frame(transformedDF)),
-      createDataFrame(data.frame(spark, transformedDF)))
+  if (sparkVersion == "2.0.0") {
+    if (class(transformedDF) != "SparkDataFrame") {
+      transformedDF <- createDataFrame(data.frame(transformedDF))
+    }
+  } else { # spark 1.6.1
+    if (class(transformedDF) != "DataFrame") {
+      transformedDF <- createDataFrame(data.frame(spark, transformedDF))
+    }
   }
 
   SparkR:::callJMethod(entryPoint, "registerOutputDataFrame", workflowId, nodeId, as.integer(0), transformedDF@sdf)
