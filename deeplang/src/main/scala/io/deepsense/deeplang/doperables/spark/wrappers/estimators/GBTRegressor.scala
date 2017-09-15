@@ -16,53 +16,42 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
-import org.apache.spark.ml.classification.{GBTClassificationModel => SparkGBTClassificationModel, GBTClassifier => SparkGBTClassifier}
+import org.apache.spark.ml
+import org.apache.spark.ml.regression.{GBTRegressionModel => SparkGBTRegressionModel, GBTRegressor => SparkGBTRegressor}
 
-import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables._
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.spark.wrappers.models.GBTClassificationModel
+import io.deepsense.deeplang.doperables.spark.wrappers.models.GBTRegressionModel
 import io.deepsense.deeplang.doperables.spark.wrappers.params.GBTParams
+import io.deepsense.deeplang.doperables.{Report, SparkEstimatorWrapper}
 import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.choice.Choice
 import io.deepsense.deeplang.params.wrappers.spark.ChoiceParamWrapper
-import io.deepsense.deeplang.utils.WithStringIndexing
 
-class GBTClassifier()
+class GBTRegressor
   extends SparkEstimatorWrapper[
-    SparkGBTClassificationModel,
-    SparkGBTClassifier,
-    GBTClassificationModel]
-  with GBTParams
-  with Logging
-  with WithStringIndexing[
-    SparkGBTClassificationModel,
-    SparkGBTClassifier,
-    GBTClassificationModel] {
+    SparkGBTRegressionModel,
+    SparkGBTRegressor,
+    GBTRegressionModel]
+  with GBTParams {
 
-  import GBTClassifier._
+  import GBTRegressor._
 
   override val maxIterationsDefault: Double = 20.0
   override val stepSizeDefault: Double = 0.1
 
-  override private[deeplang] def _fit(ctx: ExecutionContext, dataFrame: DataFrame): Transformer = {
-    val labelColumnName = dataFrame.getColumnName($(labelColumn))
-    val predictionColumnName: String = $(predictionColumn)
-    fitWithStringIndexing(ctx, dataFrame, this, labelColumnName, predictionColumnName)
-  }
-
-  val impurity = new ChoiceParamWrapper[SparkGBTClassifier, Impurity](
+  val impurity = new ChoiceParamWrapper[
+    ml.param.Params { val impurity: ml.param.Param[String] }, Impurity](
     name = "impurity",
     description = "Criterion used for information gain calculation",
     sparkParamGetter = _.impurity)
-  setDefault(impurity, Gini())
+  setDefault(impurity, Variance())
 
-  val lossType = new ChoiceParamWrapper[SparkGBTClassifier, LossType](
+  val lossType = new ChoiceParamWrapper[
+    ml.param.Params { val lossType: ml.param.Param[String] }, LossType](
     name = "loss function",
     description = "Loss function which GBT tries to minimize",
     sparkParamGetter = _.lossType)
-  setDefault(lossType, Logistic())
+  setDefault(lossType, Squared())
 
   override def report(executionContext: ExecutionContext): Report = Report()
 
@@ -82,28 +71,25 @@ class GBTClassifier()
     subsamplingRate)
 }
 
-object GBTClassifier {
+object GBTRegressor {
 
   sealed abstract class Impurity(override val name: String) extends Choice {
-
     override val params: Array[Param[_]] = declareParams()
-
     override val choiceOrder: List[Class[_ <: Choice]] = List(
-      classOf[Entropy],
-      classOf[Gini]
+      classOf[Variance]
     )
   }
-  case class Entropy() extends Impurity("entropy")
-  case class Gini() extends Impurity("gini")
+  case class Variance() extends Impurity("variance")
 
   sealed abstract class LossType(override val name: String) extends Choice {
-
     override val params: Array[Param[_]] = declareParams()
 
     override val choiceOrder: List[Class[_ <: Choice]] = List(
-      classOf[Logistic]
+      classOf[Squared],
+      classOf[Absolute]
     )
   }
-  case class Logistic() extends LossType("logistic")
+  case class Squared() extends LossType("squared")
+  case class Absolute() extends LossType("absolute")
 
 }

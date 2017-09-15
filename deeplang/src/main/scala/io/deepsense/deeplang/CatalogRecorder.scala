@@ -53,6 +53,8 @@ object CatalogRecorder {
     catalog.registerDOperable[ALSModel]()
     catalog.registerDOperable[KMeans]()
     catalog.registerDOperable[KMeansModel]()
+    catalog.registerDOperable[GBTRegressor]()
+    catalog.registerDOperable[GBTRegressionModel]()
     catalog.registerDOperable[IsotonicRegression]()
     catalog.registerDOperable[IsotonicRegressionModel]()
     catalog.registerDOperable[LinearRegression]()
@@ -152,6 +154,9 @@ object CatalogRecorder {
       DOperationCategories.ML.Evaluation)
 
     // operations generated from Spark estimators
+    catalog.registerDOperation[CreateGBTRegressor](
+      DOperationCategories.ML.Regression)
+
     catalog.registerDOperation[CreateLogisticRegression](
       DOperationCategories.ML.Classification)
 

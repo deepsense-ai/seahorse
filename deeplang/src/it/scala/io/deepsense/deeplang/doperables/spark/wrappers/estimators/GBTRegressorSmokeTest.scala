@@ -16,20 +16,16 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
-import org.apache.spark.ml.classification.{GBTClassifier => SparkGBTClassifier}
-import org.apache.spark.sql.types.{DoubleType, Metadata, StructType}
+import org.apache.spark.ml.regression.{GBTRegressor => SparkGBTRegressor}
 
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.params.ParamPair
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
-import io.deepsense.deeplang.utils.DataFrameUtils
 
-class GBTClassifierSmokeTest
-  extends AbstractEstimatorModelWrapperSmokeTest[SparkGBTClassifier] {
+class GBTRegressorSmokeTest extends AbstractEstimatorModelWrapperSmokeTest[SparkGBTRegressor] {
 
-  override def className: String = "GBTClassifier"
+  override def className: String = "GBTRegressor"
 
-  override val estimatorWrapper = new GBTClassifier()
+  override val estimatorWrapper = new GBTRegressor()
 
   private val labelColumnName = "myRating"
 
@@ -37,9 +33,9 @@ class GBTClassifierSmokeTest
 
   override val estimatorParams: Seq[ParamPair[_]] = Seq(
     featuresColumn -> NameSingleColumnSelection("myFeatures"),
-    impurity -> GBTClassifier.Entropy(),
+    impurity -> GBTRegressor.Variance(),
     labelColumn -> NameSingleColumnSelection(labelColumnName),
-    lossType -> GBTClassifier.Logistic(),
+    lossType -> GBTRegressor.Squared(),
     maxBins -> 2.0,
     maxDepth -> 6.0,
     maxIterations -> 10.0,
@@ -50,18 +46,4 @@ class GBTClassifierSmokeTest
     stepSize -> 0.11,
     subsamplingRate -> 0.999
   )
-
-  override def assertTransformedDF(dataFrame: DataFrame): Unit = {
-    val possibleValues = DataFrameUtils.collectValues(dataFrame, labelColumnName)
-    val actualValues = DataFrameUtils.collectValues(dataFrame, "prediction")
-
-    actualValues.diff(possibleValues) shouldBe empty
-  }
-
-  override def assertTransformedSchema(schema: StructType): Unit = {
-    val predictionColumn = schema.fields.last
-    predictionColumn.name shouldBe "prediction"
-    predictionColumn.dataType shouldBe DoubleType
-    predictionColumn.metadata shouldBe Metadata.empty
-  }
 }
