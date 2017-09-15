@@ -52,7 +52,6 @@ class BinaryClassificationEvaluator
       case rawPredictionChoice: RawPredictionMetric =>
         evaluateRawPrediction(dataFrame, labelColumnName, rawPredictionChoice)
       case predChoice: PredictionMetric =>
-        val predictionColumnName = dataFrame.getColumnName(predChoice.getPredictionColumnParam)
         evaluatePrediction(dataFrame, labelColumnName, predChoice)
     }
     MetricValue(getMetricName, metric)
@@ -97,7 +96,7 @@ class BinaryClassificationEvaluator
   override def _infer(k: DKnowledge[DataFrame]): MetricValue = {
     // TODO: When dataset metadata will be implemented in Spark,
     // check rawPredictionCol vector length = 2.
-    val schema = k.single.schema.map {
+    k.single.schema.foreach {
       schema =>
         val labelColumnName = DataFrameColumnsGetter.getColumnName(schema, $(labelColumn))
         DataFrame.assertExpectedColumnType(

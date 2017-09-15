@@ -9,7 +9,7 @@ includeOperationsMenu: true
 
 A `Write Transformer` operation saves a [Transformer](../classes/transformer.html) to a directory at the specified location.
 
-It supports writing data to local file system and HDFS.
+It supports writing `Transformers` to the local file system and HDFS.
 
 **Since**: Seahorse 1.1.0
 

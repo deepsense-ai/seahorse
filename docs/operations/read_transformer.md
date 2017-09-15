@@ -8,7 +8,7 @@ includeOperationsMenu: true
 
 Reads a [Transformer](../classes/transformer.html) from a directory at the specified location.
 
-It supports reading data from local file system and HDFS.
+It supports reading `Transformers` from the local file system and HDFS.
 
 **Since**: Seahorse 1.1.0
 
