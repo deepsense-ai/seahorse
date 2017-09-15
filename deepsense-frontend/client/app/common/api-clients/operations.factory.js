@@ -12,6 +12,11 @@ function OperationsFactory(OperationsApiClient, $q) {
   };
   const DEFAULT_ICON = 'fa-square';
 
+  const SINK_OPERATION_ID = 'e652238f-7415-4da6-95c6-ee33808561b2';
+  const SOURCE_OPERATION_ID = 'f94b04d7-ec34-42f7-8100-93fe235c89f8';
+
+  const HIDDEN_OPERATION_IDS_ARRAY = [SINK_OPERATION_ID, SOURCE_OPERATION_ID];
+
   var service = {},
     isLoaded = false;
 
@@ -64,6 +69,10 @@ function OperationsFactory(OperationsApiClient, $q) {
   var loadData = function loadData() {
     return OperationsApiClient.getAll()
       .then((data) => {
+        let sinkOperation = data.operations[SINK_OPERATION_ID];
+        if (sinkOperation) {
+          removeOutputPortsForSinkOperation(sinkOperation);
+        }
         operationsData = data.operations;
         Object.freeze(operationsData);
         return operationsData;
@@ -74,6 +83,7 @@ function OperationsFactory(OperationsApiClient, $q) {
     return OperationsApiClient.get(id)
       .then((data) => {
         if (_.isUndefined(operationsData[id].parameters)) {
+          removeOutputPortsForSinkOperation(data.operation);
           operationsData[id].parameters = Object.freeze(data.operation.parameters || {});
           Object.freeze(operationsData[id]);
         }
@@ -109,11 +119,15 @@ function OperationsFactory(OperationsApiClient, $q) {
     catalog.items = filteredItems;
   };
 
-  const HIDDEN_OPERATIONS = {
-    source: 'f94b04d7-ec34-42f7-8100-93fe235c89f8',
-    sink: 'e652238f-7415-4da6-95c6-ee33808561b2'
-  };
-  const HIDDEN_OPERATION_IDS_ARRAY = _.values(HIDDEN_OPERATIONS);
+  // Due to backend design flaw operation API says that SINK operation has one output port.
+  // Eventually we probably will fix that. For now we are hacking it around in frontend
+  // by manually removing output ports for sink operation.
+  // TODO Remove it once API is fixed
+  function removeOutputPortsForSinkOperation(operation) {
+    if (operation.id === SINK_OPERATION_ID) {
+      operation.ports.output = [];
+    }
+  }
 
   service.load = function load() {
     if (isLoaded) {
