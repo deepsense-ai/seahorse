@@ -111,6 +111,16 @@ angular.module('deepsense.graph-model').
         join('<br/>');
     };
 
+    /**
+     * Edge incoming to this node in given portIndex
+     * @param {Number} portIndex Index of node's port to which edge is connected
+     * @returns {Object|undefined} Edge that incomes to [[portIndex]], or undefined if no edge is connected
+     */
+    GraphNode.prototype.getIncomingEdge = function getIncomingEdge(portIndex) {
+      let edges = _.values(this.edges);
+      return _.find(edges, edge => edge.endPortId === portIndex);
+    };
+
     GraphNode.CLICK = 'GraphNode.CLICK';
     GraphNode.MOVE = 'GraphNode.MOVE';
     GraphNode.MOUSEDOWN = 'GraphNode.MOUSEDOWN';

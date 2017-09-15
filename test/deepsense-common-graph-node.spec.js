@@ -5,6 +5,7 @@
 'use strict';
 
 describe('graphNode', () => {
+  let Edge;
   let GraphNode;
   let DeepsenseNodeParameters;
   let initId = '111-111-111';
@@ -17,7 +18,11 @@ describe('graphNode', () => {
     'name': initName,
     'version': initVersion,
     'description': 'Aaaaa Bbbbb Cccc...',
-    'input': [],
+    'input': [{
+      "required": true,
+      "portIndex": 0,
+      "typeQualifier": ["smth"]
+    }],
     'output': [],
     'parametersValues': {}
   };
@@ -33,9 +38,10 @@ describe('graphNode', () => {
 
   beforeEach(() => {
     angular.mock.module('deepsense.graph-model');
-    angular.mock.inject((_GraphNode_, _DeepsenseNodeParameters_) => {
+    angular.mock.inject((_GraphNode_, _DeepsenseNodeParameters_, _Edge_) => {
       GraphNode = _GraphNode_;
       DeepsenseNodeParameters = _DeepsenseNodeParameters_;
+      Edge = _Edge_;
     });
   });
 
@@ -99,5 +105,27 @@ describe('graphNode', () => {
     expect(graphNode.getResult(0)).toEqual(results[0]);
     expect(graphNode.getResult(1)).toEqual(results[1]);
     expect(graphNode.getResult(2)).not.toBeDefined();
+  });
+
+  it('should return edge incoming to port index if edge exists', () => {
+    let graphNode = new GraphNode(initData);
+
+    let startNodeId = '11';
+    let startPortId = 0;
+    let endPortId = 0;
+    let edge = new Edge({
+      'startNodeId': startNodeId,
+      'startPortId': startPortId,
+      'endNodeId': graphNode.id,
+      'endPortId': endPortId
+    });
+    graphNode.edges[edge.id] = edge;
+
+    expect(graphNode.getIncomingEdge(0)).toEqual(edge);
+  });
+
+  it('should return undefined as parent node id by port index if edge does not exist', () => {
+    let graphNode = new GraphNode(initData);
+    expect(graphNode.getIncomingEdge(0)).not.toBeDefined();
   });
 });

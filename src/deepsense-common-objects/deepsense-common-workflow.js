@@ -39,6 +39,9 @@ factory('Workflow', /*@ngInject*/function (GraphNode, Edge) {
       return _.map(internal.nodes, (node) => node.id);
     };
 
+    /**
+     * @returns node, or undefined if given id doesn't exist
+       */
     that.getNodeById = function getNodeById(nodeId) {
       return internal.nodes[nodeId];
     };
@@ -118,6 +121,21 @@ factory('Workflow', /*@ngInject*/function (GraphNode, Edge) {
 
     that.getEdgesByNodeId = function getEdgesByNodeId(nodeId) {
       return internal.nodes[nodeId].edges;
+    };
+
+    /**
+     * @param {Object} node Node that receives knowledge
+     * @param {Number} portIndex Index of input port of [[node]] where knowledge is put
+     * @return {Object|undefined} knowledge object, or undefined if edge does not exist
+     */
+    that.getIncomingKnowledge = function getIncomingKnowledge(node, portIndex) {
+      let incomingEdge = node.getIncomingEdge(portIndex);
+      if (incomingEdge) {
+        let {startPortId, startNodeId} = incomingEdge;
+        let parentNode = that.getNodeById(startNodeId);
+        return parentNode.output[startPortId]
+      }
+      return undefined;
     };
 
     that.setStatus = function setStatus(state) {
@@ -243,7 +261,7 @@ factory('Workflow', /*@ngInject*/function (GraphNode, Edge) {
       return edge;
     };
 
-    that.createEdges = function createEdges(edges) {
+    that.createEdges = function createEdges(edges) {  // TODO rename to addEdges
       for (var i = 0; i < edges.length; i++) {
         var edge = that.createEdge(edges[i]);
         that.addEdge(edge);

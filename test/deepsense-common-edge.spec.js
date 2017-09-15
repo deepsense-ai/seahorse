@@ -50,5 +50,4 @@ describe('Edge', () => {
     expect(edge.serialize).toEqual(jasmine.any(Function));
     expect(edge.serialize()).toEqual(serializedData);
   });
-
 });

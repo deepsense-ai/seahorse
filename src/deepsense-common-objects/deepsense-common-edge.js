@@ -6,8 +6,8 @@ angular.module('deepsense.graph-model').
       constructor(options) {
         this.startNodeId = options.startNodeId;
         this.endNodeId = options.endNodeId;
-        this.startPortId = options.startPortId;
-        this.endPortId = options.endPortId;
+        this.startPortId = options.startPortId; // TODO rename it to startPortIndex
+        this.endPortId = options.endPortId;     // TODO rename it to endPortIndex
         this.state = Edge.STATE_TYPE.UNKNOWN;
         this.id = this.generateId();
       }

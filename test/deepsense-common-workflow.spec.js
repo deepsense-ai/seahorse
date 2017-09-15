@@ -346,4 +346,28 @@ describe('workflow', () => {
     expect(node1.input[0].typeQualifier).toEqual(initOperations.o2.ports.input[0].typeQualifier);
     expect(node1.output[0].typeQualifier).toEqual(['T04']);
   });
+
+  it('returns incoming knowledge for node and port index if edge exists', () => {
+    let workflow = new Workflow();
+    workflow.createNodes(initNodes, initOperations, initState);
+
+    workflow.createEdges(initConnections);
+
+    let nodes = workflow.getNodes();
+    let node0 = nodes[initNodes[0].id];
+    let node1 = nodes[initNodes[1].id];
+
+    let knowledge = workflow.getIncomingKnowledge(node1, 0)
+    expect(knowledge).toEqual(node0.output[0]);
+  });
+
+  it('returns undefined for node and port index if edge does not exist', () => {
+    let workflow = new Workflow();
+    workflow.createNodes(initNodes, initOperations, initState);
+    let nodes = workflow.getNodes();
+    let node1 = nodes[initNodes[1].id];
+
+    let knowledge = workflow.getIncomingKnowledge(node1, 0)
+    expect(knowledge).not.toBeDefined();
+  });
 });
