@@ -50,12 +50,18 @@ fi
 git fetch origin
 
 # TODO Automatically derive branches. Make it work with any dev_* bramches
-for BRANCH in master seahorse_on_desktop seahorse_on_tap seahorse_on_bdu;
-do
-  if [ "$GIT_SHA" = "$(git rev-parse origin/$BRANCH)" ]
-  then
-    echo "This GIT_SHA is also tip of the origin/$BRANCH! Publishing $BRANCH-latest image"
-    docker tag $DOCKER_IMAGE $DEEPSENSE_REGISTRY/$NAMESPACE/$PROJECT_NAME:$BRANCH-latest
-    docker push $DEEPSENSE_REGISTRY/$NAMESPACE/$PROJECT_NAME:$BRANCH-latest
-  fi
-done
+if [[ -z $(git status --porcelain) ]]
+then
+  echo "There are no unstaged changes. publishing *-latest for matching branches"
+  for BRANCH in master seahorse_on_desktop seahorse_on_tap seahorse_on_bdu;
+  do
+    if [ "$GIT_SHA" = "$(git rev-parse origin/$BRANCH)" ]
+    then
+      echo "This GIT_SHA is also tip of the origin/$BRANCH! Publishing $BRANCH-latest image"
+      docker tag $DOCKER_IMAGE $DEEPSENSE_REGISTRY/$NAMESPACE/$PROJECT_NAME:$BRANCH-latest
+      docker push $DEEPSENSE_REGISTRY/$NAMESPACE/$PROJECT_NAME:$BRANCH-latest
+    fi
+  done
+else
+  echo "There are unstaged changes. Won't publish *-latest!"
+fi
