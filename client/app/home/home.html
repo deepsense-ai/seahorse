@@ -38,7 +38,7 @@
         <a ng-href="{{home.getWorkflowUrl(workflow.id)}}">{{workflow.created | date:"hh:mm:ss - dd/MM/yyyy"}}</a>
       </td>
       <td>
-        <a title="Delete" ng-click="home.deleteWorkflow(workflow)">
+        <a uib-tooltip="Delete" tooltip-placement="right" ng-click="home.deleteWorkflow(workflow)">
           <span class="glyphicon glyphicon-remove"></span>
         </a>
       </td>
