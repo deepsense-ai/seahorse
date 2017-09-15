@@ -37,19 +37,17 @@ else
   exit 1
 fi
 
-# Save docker images to files
-DEEPSENSE_REGISTRY="docker-repo.deepsense.codilime.com/deepsense_io"
-
 docker-compose pull
 
 echo "Save docker images to files"
-DOCKER_IMAGES=(`cat docker-compose.yml | grep image: | cut -d":" -f 2 | rev | cut -d"/" -f 1 | rev | tr " " "\n"`)
+DOCKER_IMAGES=(`cat docker-compose.yml | grep image: | cut -d" " -f 6 | tr " " "\n"`)
 for DOCKER_IMAGE in ${DOCKER_IMAGES[*]}
 do
-  echo "Save docker image to $DOCKER_IMAGE.tar"
-  DOCKER_IMAGE_FULL=$DEEPSENSE_REGISTRY/$DOCKER_IMAGE:$SEAHORSE_BUILD_TAG
-  rm -f $DOCKER_IMAGE.tar
-  docker save --output $DOCKER_IMAGE.tar $DOCKER_IMAGE_FULL
+  # Strip docker repository and docker tag from image.
+  IMAGE_FILE_NAME=`echo "$DOCKER_IMAGE" | cut -d "/" -f 3 | rev | cut -d ":" -f 2 | rev`
+  echo "Save docker image to $IMAGE_FILE_NAME.tar"
+  rm -f $IMAGE_FILE_NAME.tar
+  docker save --output $IMAGE_FILE_NAME.tar $DOCKER_IMAGE
 done
 
 # Create Vagrant box

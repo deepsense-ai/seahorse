@@ -17,22 +17,18 @@ object SessionExecutorArgs {
       config: SparkLauncherConfig,
       clusterConfig: ClusterDetails): Seq[String] = Seq(
     "--interactive-mode",
-    "--message-queue-host", "127.0.0.1",
+    "--message-queue-host", config.queueHost,
     "--message-queue-port", config.queuePort.toString,
     "--message-queue-user", config.queueUser,
     "--message-queue-pass", config.queuePass,
-    "--wm-address", wmAddress(config),
-    "--workflow-id", sessionConfig.workflowId.toString(),
-    "--deps-zip", config.weDepsPath,
+    "--wm-address", s"${config.wmScheme}://${config.wmAddress}",
     "--wm-username", config.wmUsername,
     "--wm-password", config.wmPassword,
+    "--workflow-id", sessionConfig.workflowId.toString(),
+    "--deps-zip", config.weDepsPath,
     "--user-id", sessionConfig.userId,
     "--temp-dir", config.tempDir,
     "--python-binary", config.pythonDriverBinary
   )
-
-  private def wmAddress(
-    config: SparkLauncherConfig): String =
-  s"${config.wmScheme}://127.0.0.1:${config.wmPort}"
 
 }

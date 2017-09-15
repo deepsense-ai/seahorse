@@ -4,6 +4,9 @@
 *.class
 *.log
 
+### Python ###
+*.pyc
+
 # sbt specific
 .cache/
 .history/
@@ -45,3 +48,5 @@ datasourcemanager/src/generated/*
 remote_notebook/notebook_executing_kernel.zip
 docker-compose.yml
 deployment/mesos-spark-docker/Dockerfile
+
+/credentials/

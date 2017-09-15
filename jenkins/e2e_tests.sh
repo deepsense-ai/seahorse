@@ -4,6 +4,7 @@
 
 set -ex
 
+# `dirname $0` gives folder containing script
 cd `dirname $0`"/../"
 
 BACKEND_TAG=`git rev-parse HEAD`
@@ -22,8 +23,8 @@ SPARK_VERSION="2.0.0"
 function cleanup {
     $SPARK_STANDALONE_MANAGEMENT down $SPARK_VERSION
     docker-compose -f $MESOS_SPARK_DOCKER_COMPOSE down
-    (cd deployment/docker-compose ; ./docker-compose $FRONTEND_TAG $BACKEND_TAG logs > docker-compose.log)
-    (cd deployment/docker-compose ; ./docker-compose $FRONTEND_TAG $BACKEND_TAG down)
+    deployment/docker-compose/docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG logs > docker-compose.log
+    deployment/docker-compose/docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG down
 }
 trap cleanup EXIT
 
@@ -31,8 +32,17 @@ cleanup # in case something was already running
 
 ## Start Seahorse dockers
 
-(cd deployment/docker-compose ; ./docker-compose $FRONTEND_TAG $BACKEND_TAG pull)
-(cd deployment/docker-compose ; ./docker-compose $FRONTEND_TAG $BACKEND_TAG up -d)
+deployment/docker-compose/docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG pull
+# destroy dockercompose_default, so we can recreate it with proper id
+deployment/docker-compose/docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG down
+(
+ cd e2etestssdk
+ sbt clean assembly
+ cd ../deployment/docker-compose
+ mkdir -p jars
+ cp -r ../../e2etestssdk/target/scala-2.11/*.jar jars
+ ./docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG up -d
+)
 
 ## Start Spark Standalone cluster dockers
 

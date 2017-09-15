@@ -6,8 +6,7 @@ package io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.cluster
 
 import scala.collection._
 import scalaz.Scalaz._
-import scalaz.{Failure, Success, Validation}
-import scalaz.Validation.FlatMap._
+import scalaz.Validation
 
 import org.apache.spark.launcher.SparkLauncher
 

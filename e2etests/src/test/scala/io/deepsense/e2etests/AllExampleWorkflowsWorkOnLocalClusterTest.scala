@@ -4,7 +4,7 @@
 
 package io.deepsense.e2etests
 
-import org.scalatest.{FreeSpec, Matchers, WordSpec}
+import org.scalatest.{FreeSpec, Matchers}
 
 import io.deepsense.e2etests.client.WorkflowManagerClient
 import io.deepsense.models.workflows.WorkflowInfo
