@@ -19,12 +19,16 @@ import io.deepsense.graphexecutor.Constants
  */
 object DeployOnHdfs {
 
-  val uberJarFilename = BuildInfo.name + "-assembly-" + BuildInfo.version + ".jar"
+  val geJarFilename = BuildInfo.name + "-assembly-" + BuildInfo.version + ".jar"
+  val geDepsJarFilename = BuildInfo.name + "-assembly-" + BuildInfo.version + "-deps.jar"
 
-  val geUberJarPath = s"../graphexecutor/target/scala-2.11/$uberJarFilename"
+  val geJarPath = s"../graphexecutor/target/scala-2.11/$geJarFilename"
+  val geDepsJarPath = s"../graphexecutor/target/scala-2.11/$geDepsJarFilename"
 
   def main(args: Array[String]): Unit = {
     println("DeepSense.io deployment on HDFS starts")
+
+    val deployGeWithDeps = args.length == 1 && args(0) == "deployGeWithDeps"
 
     val config = new Configuration()
     config.addResource(getClass().getResource("/conf/hadoop/core-site.xml"))
@@ -32,7 +36,7 @@ object DeployOnHdfs {
     config.addResource(getClass().getResource("/conf/hadoop/hdfs-site.xml"))
     val dfsClient = new DFSClient(new URI(getHdfsAddressFromConfig()), config)
     val dsHdfsClient = new DSHdfsClient(dfsClient)
-    deployOnHdfs(dsHdfsClient)
+    deployOnHdfs(dsHdfsClient, deployGeWithDeps)
 
     println("SUCCESS! DeepSense.io deployment on HDFS succeeded!")
   }
@@ -41,9 +45,13 @@ object DeployOnHdfs {
    * Copies to HDFS all GE configuration files and uber-jar with GE code.
    * @param dsHdfsClient client for connection to HDFS
    */
-  def deployOnHdfs(dsHdfsClient: DSHdfsClient): Unit = {
+  def deployOnHdfs(dsHdfsClient: DSHdfsClient, deployGeWithDeps: Boolean): Unit = {
+    println("DeepSense.io deployment on HDFS: deploy also deps jar = " + deployGeWithDeps)
     // Delete previously deployed library and configuration file
-    dsHdfsClient.hdfsClient.delete(Constants.GraphExecutorLibraryLocation, true)
+    dsHdfsClient.hdfsClient.delete(Constants.GraphExecutorJarLocation, true)
+    if (deployGeWithDeps) {
+      dsHdfsClient.hdfsClient.delete(Constants.GraphExecutorDepsJarLocation, true)
+    }
     dsHdfsClient.hdfsClient.delete(Constants.GraphExecutorConfigLocation, true)
 
     // Create DeepSense.io directories on HDFS
@@ -73,7 +81,10 @@ object DeployOnHdfs {
       true)
 
     // NOTE: We assume here that uber-jar has been assembled immediately before this task
-    dsHdfsClient.copyLocalFile(geUberJarPath, Constants.GraphExecutorLibraryLocation)
+    dsHdfsClient.copyLocalFile(geJarPath, Constants.GraphExecutorJarLocation)
+    if (deployGeWithDeps) {
+      dsHdfsClient.copyLocalFile(geDepsJarPath, Constants.GraphExecutorDepsJarLocation)
+    }
     dsHdfsClient.copyLocalFile(
       getClass().getResource("/graphexecutor.conf").getPath,
       Constants.GraphExecutorConfigLocation)

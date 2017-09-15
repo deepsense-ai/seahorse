@@ -165,7 +165,6 @@ class GraphExecutorClient extends Closeable with LazyLogging {
    */
   def spawnOnCluster(
       esFactoryName: String = "default",
-      geUberJarLocation: String = Constants.GraphExecutorLibraryLocation,
       applicationConfLocation: String = Constants.GraphExecutorConfigLocation): Unit = {
     implicit val conf = new YarnConfiguration()
     // TODO: Configuration resource access should follow proper configuration access convention
@@ -186,13 +185,17 @@ class GraphExecutorClient extends Closeable with LazyLogging {
         " --master spark://" + geConfig.getString(HdfsHostnameProperty) + ":7077" +
         " --executor-memory " + geConfig.getString(ExecutorMemoryProperty) +
         " --driver-memory " + geConfig.getString(DriverMemoryProperty) +
+        " --jars ./graphexecutor-deps.jar " +
         s" ./graphexecutor.jar $esFactoryName " + Utils.logRedirection
     logger.debug("Prepared {}", command)
     amContainer.setCommands(List(command).asJava)
 
-    val appMasterJar = Utils.getConfiguredLocalResource(new Path(geUberJarLocation))
+    val geJar = Utils.getConfiguredLocalResource(new Path(Constants.GraphExecutorJarLocation))
+    val geDepsJar =
+      Utils.getConfiguredLocalResource(new Path(Constants.GraphExecutorDepsJarLocation))
     amContainer.setLocalResources(Map(
-      "graphexecutor.jar" -> appMasterJar
+      "graphexecutor.jar" -> geJar,
+      "graphexecutor-deps.jar" -> geDepsJar
     ).asJava)
 
     // Setup env to get all yarn and hadoop classes in classpath

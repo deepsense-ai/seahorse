@@ -58,9 +58,15 @@ object Constants {
   val DeepSenseIoDeploymentDirectory = "/deepsense"
 
   /**
-   * Location of Graph Executor library on cluster HDFS
+   * Location of Graph Executor dependencies jar on cluster HDFS
    */
-  val GraphExecutorLibraryLocation = DeepSenseIoDeploymentDirectory + "/lib" + "/graphexecutor.jar"
+  val GraphExecutorDepsJarLocation =
+    DeepSenseIoDeploymentDirectory + "/lib" + "/graphexecutor-deps.jar"
+
+  /**
+   * Location of Graph Executor jar on cluster HDFS
+   */
+  val GraphExecutorJarLocation = DeepSenseIoDeploymentDirectory + "/lib" + "/graphexecutor.jar"
 
   /**
    *  Configuration file's name on cluster HDFS
