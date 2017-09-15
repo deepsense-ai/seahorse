@@ -22,7 +22,7 @@ import org.scalactic.EqualityPolicy.Spread
 class UntrainedRidgeRegressionIntegSpec
   extends UntrainedRegressionIntegSpec[RidgeRegressionModel] {
 
-  val testDir: String = "target/tests/UntrainedRidgeRegressionIntegSpec"
+  val testDataDir: String = testsDir + "/UntrainedRidgeRegressionIntegSpec"
 
   override def regressionName: String = "UntrainedRidgeRegression"
 

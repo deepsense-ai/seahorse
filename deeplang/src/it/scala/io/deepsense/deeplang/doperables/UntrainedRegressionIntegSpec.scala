@@ -37,7 +37,7 @@ abstract class UntrainedRegressionIntegSpec[T <: GeneralizedLinearModel]
   with BeforeAndAfter {
 
   protected def regressionName: String
-  protected val testDir: String
+  protected val testDataDir: String
   protected def modelType: Class[T]
   protected def constructUntrainedModel: Trainable
   protected val mockUntrainedModel: GeneralizedLinearAlgorithm[T]
@@ -64,7 +64,7 @@ abstract class UntrainedRegressionIntegSpec[T <: GeneralizedLinearModel]
       val fsClient = executionContext.fsClient
       val mockContext: ExecutionContext = mock[ExecutionContext]
       when(mockContext.fsClient).thenReturn(fsClient)
-      when(mockContext.uniqueFsFileName(isA(classOf[String]))).thenReturn(testDir)
+      when(mockContext.uniqueFsFileName(isA(classOf[String]))).thenReturn(testDataDir)
 
       val mockTrainedModel = Mockito.mock(modelType)
 
@@ -96,7 +96,7 @@ abstract class UntrainedRegressionIntegSpec[T <: GeneralizedLinearModel]
       val result = regression.train(mockContext)(parameters)(inputDataFrame)
       validateResult(mockTrainedModel, result)
 
-      fsClient.fileExists(testDir) shouldBe true
+      fsClient.fileExists(testDataDir) shouldBe true
     }
 
     "throw an exception" when {
@@ -144,11 +144,11 @@ abstract class UntrainedRegressionIntegSpec[T <: GeneralizedLinearModel]
   }
 
   after {
-    fileSystemClient.delete(testDir)
+    fileSystemClient.delete(testsDir)
   }
 
   before {
-    fileSystemClient.delete(testDir)
-    new java.io.File(testDir).getParentFile.mkdirs()
+    fileSystemClient.delete(testsDir)
+    createDir(testsDir)
   }
 }

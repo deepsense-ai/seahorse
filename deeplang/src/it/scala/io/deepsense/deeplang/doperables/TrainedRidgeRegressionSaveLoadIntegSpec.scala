@@ -26,11 +26,11 @@ class TrainedRidgeRegressionSaveLoadIntegSpec
   with BeforeAndAfter
   with TrainedRidgeRegressionTestFactory {
 
-  private val testFilePath: String = "target/tests/trainedRidgeRegressionSerializationTest"
+  private val testFilePath: String = testsDir + "/trainedRidgeRegressionSerializationTest"
 
   before {
     fileSystemClient.delete(testFilePath)
-    createDir("target/tests")
+    createDir(testsDir)
   }
 
   "TrainedRidgeRegression" should {

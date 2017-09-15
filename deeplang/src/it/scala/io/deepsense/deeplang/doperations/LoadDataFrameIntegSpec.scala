@@ -20,34 +20,34 @@ import java.sql.Timestamp
 
 import scala.concurrent.Await
 
-import com.typesafe.scalalogging.LazyLogging
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.joda.time.DateTime
 import org.scalatest.BeforeAndAfter
 
+import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.deeplang.{DOperable, DeeplangIntegTestSupport, ExecutionContext}
-import io.deepsense.models.entities.{DataObjectReference, DataObjectReport, Entity, CreateEntityRequest}
+import io.deepsense.models.entities.{CreateEntityRequest, DataObjectReference, DataObjectReport, Entity}
 
 class LoadDataFrameIntegSpec
   extends DeeplangIntegTestSupport
   with BeforeAndAfter
-  with LazyLogging {
+  with Logging {
 
   val timestamp: Timestamp = new Timestamp(new DateTime(2007, 12, 2, 3, 10, 11).getMillis)
 
-  val testDir = "target/tests/LoadDataFrameTest"
+  val testDataDir = testsDir + "/LoadDataFrameTest"
 
   before {
-    fileSystemClient.delete(testDir)
+    fileSystemClient.delete(testsDir)
   }
 
   "LoadDataFrame" should {
     "load saved DataFrame" in {
       val context = executionContext
       val dataFrame: DataFrame = testDataFrame(context.dataFrameBuilder)
-      dataFrame.sparkDataFrame.write.parquet(testDir)
+      dataFrame.sparkDataFrame.write.parquet(testsDir)
       val entityId = registerDataFrame(context)
 
       val operation = LoadDataFrame(entityId.toString)
@@ -68,7 +68,7 @@ class LoadDataFrameIntegSpec
       "testEntity name",
       "testEntity description",
       "DataFrame",
-      Some(DataObjectReference(testDir, serializedMetadata)),
+      Some(DataObjectReference(testsDir, serializedMetadata)),
       DataObjectReport("testEntity Report"),
       saved = true))
     Await.result(future, timeout)

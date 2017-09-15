@@ -24,12 +24,12 @@ import io.deepsense.deeplang.{DOperable, DeeplangIntegTestSupport}
 class ReadFileIntegSpec
   extends DeeplangIntegTestSupport
   with BeforeAndAfter {
-  val testDir = "target/tests/ReadFileTest"
+  val testDataDir = testsDir + "/ReadFileTest"
 
   before {
-    fileSystemClient.delete(testDir)
-    new java.io.File(testDir + "/id").getParentFile.mkdirs()
-    executionContext.fsClient.copyLocalFile(getClass.getResource("/csv/").getPath, testDir)
+    fileSystemClient.delete(testsDir)
+    new java.io.File(testsDir + "/id").getParentFile.mkdirs()
+    executionContext.fsClient.copyLocalFile(getClass.getResource("/csv/").getPath, testsDir)
   }
 
   "ReadFile" should {
@@ -76,7 +76,7 @@ class ReadFileIntegSpec
       val operation = new ReadFile()
       val parameters = operation.parameters
       parameters.getStringParameter(ReadFile.pathParam).value =
-        Some(testDir + "/X_separated.csv")
+        Some(testsDir + "/X_separated.csv")
       parameters.getChoiceParameter(ReadFile.lineSeparatorParam).value =
         Some(ReadFile.customLineSeparatorLabel)
       parameters.getChoiceParameter(ReadFile.lineSeparatorParam)
@@ -102,7 +102,7 @@ class ReadFileIntegSpec
   def readFile(fileName: String, separator: String) : File = {
     val operation = new ReadFile()
     operation.parameters.getStringParameter(ReadFile.pathParam).value =
-      Some(testDir + "/" + fileName)
+      Some(testsDir + "/" + fileName)
     operation.parameters.getChoiceParameter(ReadFile.lineSeparatorParam).value =
       Some(separator)
     operation

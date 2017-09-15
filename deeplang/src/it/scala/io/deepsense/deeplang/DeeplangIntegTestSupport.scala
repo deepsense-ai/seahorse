@@ -34,6 +34,7 @@ import io.deepsense.models.entities.Entity
  */
 trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
 
+  val testsDir = "target/tests"
   var executionContext: ExecutionContext = _
 
   val sparkConf: SparkConf = DeeplangIntegTestSupport.sparkConf
