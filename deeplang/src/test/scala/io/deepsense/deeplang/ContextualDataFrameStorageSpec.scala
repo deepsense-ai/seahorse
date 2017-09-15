@@ -21,18 +21,18 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfter
 
 import io.deepsense.commons.models.Id
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
 
 class ContextualDataFrameStorageSpec
     extends UnitSpec
-    with BeforeAndAfter {
+    with BeforeAndAfter
+    with DeeplangTestSupport {
 
   val workflowId = Id.randomId
   val nodeId = Id.randomId
   val portNumber = 332
 
-  val dataFrame = mock[DataFrame]
-  val sparkDataFrame = mock[SparkDataFrame]
+  val dataFrame = createDataFrame()
+  val sparkDataFrame = dataFrame.sparkDataFrame
 
   val dataFrameStorage = mock[DataFrameStorage]
 

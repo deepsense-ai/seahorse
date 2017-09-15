@@ -28,16 +28,18 @@ import io.deepsense.deeplang.doperables.report.Report
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.validators.RangeValidator
 import io.deepsense.deeplang.params.{NumericParam, Param, ParamMap}
-import io.deepsense.deeplang.{DKnowledge, ExecutionContext, UnitSpec}
+import io.deepsense.deeplang.{DKnowledge, DeeplangTestSupport, ExecutionContext, UnitSpec}
 
-object MockTransformers extends UnitSpec {
+object MockTransformers extends UnitSpec with DeeplangTestSupport {
   val DefaultForA = 1
 
-  val outputDataFrame1 = mock[DataFrame]
-  val outputDataFrame2 = mock[DataFrame]
+  val inputDataFrame = createDataFrame()
+  val outputDataFrame1 = createDataFrame()
+  val outputDataFrame2 = createDataFrame()
 
-  val outputSchema1 = mock[StructType]
-  val outputSchema2 = mock[StructType]
+  val inputSchema = inputDataFrame.schema.get
+  val outputSchema1 = outputDataFrame1.schema.get
+  val outputSchema2 = outputDataFrame2.schema.get
 
   class MockTransformer extends Transformer {
     val paramA = NumericParam("a", "desc", RangeValidator(0.0, Double.MaxValue))
@@ -100,7 +102,7 @@ class TransformerAsOperationSpec extends UnitSpec {
       val op = operation
       op.set(op.transformer.paramA -> 2)
 
-      val inputDF = DataFrame.forInference(mock[StructType])
+      val inputDF = inputDataFrame
       val (result, warnings) =
         op.inferKnowledge(mock[InferContext])(Vector(DKnowledge(inputDF)))
 

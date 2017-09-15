@@ -58,7 +58,7 @@ class StatisticsForContinuousIntegSpec extends DeeplangIntegTestSupport with Dat
     }
   }
 
-  val columnName = "column_name"
+  lazy val columnName = "column_name"
 
   private def distributionForDouble(data: Double*): ContinuousDistribution = {
     distributionFor(data, DoubleType)

@@ -25,7 +25,7 @@ import io.deepsense.commons.types.SparkConversions
 import io.deepsense.deeplang.doperables.dataframe.report.DataFrameReportGenerator
 import io.deepsense.deeplang.doperables.descriptions.DataFrameInferenceResult
 import io.deepsense.deeplang.doperables.report.Report
-import io.deepsense.deeplang.doperations.exceptions.WrongColumnTypeException
+import io.deepsense.deeplang.doperations.exceptions.{DuplicatedColumnsException, WrongColumnTypeException}
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
 
 /**
@@ -42,6 +42,17 @@ case class DataFrame private[dataframe] (
   with DataFrameColumnsGetter {
 
   def this() = this(null, None)
+
+  schema.foreach(
+    struct => {
+      val duplicatedColumnNames = struct.fieldNames.groupBy(identity).collect {
+        case (col, list) if list.length > 1 => col
+      }
+      if (duplicatedColumnNames.nonEmpty) {
+        throw DuplicatedColumnsException(duplicatedColumnNames.toList)
+      }
+    }
+  )
 
   /**
    * Creates new DataFrame with new columns added.

@@ -16,9 +16,9 @@
 
 package io.deepsense.deeplang.doperations
 
-import org.apache.spark.sql.types.StructType
 import spray.json.{JsNumber, JsObject}
 
+import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.Transformer
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.MockDOperablesFactory._
@@ -26,9 +26,8 @@ import io.deepsense.deeplang.doperations.exceptions.TooManyPossibleTypesExceptio
 import io.deepsense.deeplang.exceptions.DeepLangMultiException
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.ParamsMatchers._
-import io.deepsense.deeplang.{DKnowledge, DOperable, ExecutionContext, UnitSpec}
 
-class FitSpec extends UnitSpec {
+class FitSpec extends UnitSpec with DeeplangTestSupport {
 
   "Fit" should {
     "fit input Estimator on input DataFrame with proper parameters set" in {
@@ -60,7 +59,7 @@ class FitSpec extends UnitSpec {
       val estimator = new MockEstimator
 
       def testInference(op: Fit, expectedTransformerKnowledge: DKnowledge[Transformer]): Unit = {
-        val inputDF = DataFrame.forInference(mock[StructType])
+        val inputDF = DataFrame.forInference(createSchema())
         val (knowledge, warnings) =
           op.inferKnowledge(mock[InferContext])(Vector(DKnowledge(inputDF), DKnowledge(estimator)))
         // Currently, InferenceWarnings are always empty.
@@ -81,14 +80,14 @@ class FitSpec extends UnitSpec {
 
       val paramsForEstimator = JsObject(estimator.paramA.name -> JsNumber(2))
       val op = Fit().setEstimatorParams(paramsForEstimator)
-      val inputDF = DataFrame.forInference(mock[StructType])
+      val inputDF = DataFrame.forInference(createSchema())
       op.inferKnowledge(mock[InferContext])(Vector(DKnowledge(inputDF), DKnowledge(estimator)))
 
       estimator should have (theSameParamsAs (originalEstimator))
     }
     "throw Exception" when {
       "there are more than one Estimator in input Knowledge" in {
-        val inputDF = DataFrame.forInference(mock[StructType])
+        val inputDF = DataFrame.forInference(createSchema())
         val estimators = Set[DOperable](new MockEstimator, new MockEstimator)
 
         val op = Fit()
@@ -97,7 +96,7 @@ class FitSpec extends UnitSpec {
         }
       }
       "Estimator's dynamic parameters are invalid" in {
-        val inputDF = DataFrame.forInference(mock[StructType])
+        val inputDF = DataFrame.forInference(createSchema())
         val estimator = new MockEstimator
         val fit = Fit().setEstimatorParams(JsObject(estimator.paramA.name -> JsNumber(-2)))
         a[DeepLangMultiException] shouldBe thrownBy {

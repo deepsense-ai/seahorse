@@ -16,15 +16,14 @@
 
 package io.deepsense.deeplang.doperables
 
-import org.apache.spark.sql.types.StructType
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
-import io.deepsense.deeplang.{DKnowledge, ExecutionContext, UnitSpec}
+import io.deepsense.deeplang.{DKnowledge, DeeplangTestSupport, ExecutionContext, UnitSpec}
 
-class TransformerSpec extends UnitSpec {
+class TransformerSpec extends UnitSpec with DeeplangTestSupport {
 
   private def transformer = {
     val t = mock[Transformer]
@@ -33,11 +32,11 @@ class TransformerSpec extends UnitSpec {
     t
   }
 
-  val inputDF = mock[DataFrame]
-  val outputDF = mock[DataFrame]
+  val inputDF = createDataFrame()
+  val outputDF = createDataFrame()
 
-  val inputSchema = mock[StructType]
-  val outputSchema = mock[StructType]
+  val inputSchema = inputDF.schema.get
+  val outputSchema = outputDF.schema.get
 
   val execCtx = mock[ExecutionContext]
   val inferCtx = mock[InferContext]

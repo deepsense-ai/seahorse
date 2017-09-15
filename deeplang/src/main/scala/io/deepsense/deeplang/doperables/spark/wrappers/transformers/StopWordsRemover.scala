@@ -41,8 +41,8 @@ class StopWordsRemover extends SparkTransformerAsMultiColumnTransformer[SparkSto
       outputColumn: String,
       schema: StructType): Option[StructType] = {
     try {
-      val inputFields = schema.fields
-      require(!inputFields.exists(_.name == outputColumn),
+      val inputFields = schema.fieldNames
+      require(!inputFields.contains(outputColumn),
         s"Output column $outputColumn already exists.")
     } catch {
       case e: Exception => throw new SparkTransformSchemaException(e)

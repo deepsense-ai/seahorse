@@ -16,14 +16,12 @@
 
 package io.deepsense.deeplang.doperables
 
-import org.apache.spark.sql.types.StructType
-
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.inference.exceptions.SparkTransformSchemaException
 import io.deepsense.deeplang.params.ParamMap
-import io.deepsense.deeplang.{ExecutionContext, UnitSpec}
+import io.deepsense.deeplang.{DeeplangTestSupport, ExecutionContext, UnitSpec}
 
-class SparkModelWrapperSpec extends UnitSpec {
+class SparkModelWrapperSpec extends UnitSpec with DeeplangTestSupport{
 
   import EstimatorModelWrappersFixtures._
 
@@ -34,16 +32,16 @@ class SparkModelWrapperSpec extends UnitSpec {
     }
     "transform a DataFrame" in {
       val wrapper = prepareWrapperWithParams()
-      wrapper._transform(mock[ExecutionContext], mockInputDataFrame()) shouldBe
+      wrapper._transform(mock[ExecutionContext], createDataFrame()) shouldBe
         DataFrame.fromSparkDataFrame(fitDataFrame)
     }
     "transform schema" in {
-      val inputSchema = mock[StructType]
+      val inputSchema = createSchema()
       val wrapper = prepareWrapperWithParams()
       wrapper._transformSchema(inputSchema) shouldBe Some(transformedSchema)
     }
     "forward an exception thrown by transformSchema wrapped in DeepLangException" in {
-      val inputSchema = mock[StructType]
+      val inputSchema = createSchema()
       val wrapper = prepareWrapperWithParams()
       wrapper.parentEstimator.sparkEstimator.setTransformSchemaShouldThrow(true)
       val e = intercept[SparkTransformSchemaException] {

@@ -21,9 +21,9 @@ import org.mockito.Mockito._
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
-import io.deepsense.deeplang.{DKnowledge, ExecutionContext, UnitSpec}
+import io.deepsense.deeplang.{DeeplangTestSupport, DKnowledge, ExecutionContext, UnitSpec}
 
-class EstimatorIntegSpec extends UnitSpec {
+class EstimatorIntegSpec extends UnitSpec with DeeplangTestSupport {
 
   private def estimator = {
     val e = mock[Estimator[Transformer]]
@@ -44,7 +44,7 @@ class EstimatorIntegSpec extends UnitSpec {
     }
     "infer" when {
       "input DKnowledge contains exactly one type" in {
-        val schema = mock[StructType]
+        val schema = createSchema()
         val inputDKnowledge = DKnowledge(
           DataFrame.forInference(schema)
         )
@@ -55,8 +55,8 @@ class EstimatorIntegSpec extends UnitSpec {
         warnings shouldBe InferenceWarnings.empty
       }
       "input DKnowledge contains more than one type (by taking the first type)" in {
-        val schema = mock[StructType]
-        val schema2 = mock[StructType]
+        val schema = createSchema()
+        val schema2 = createSchema()
         val inputDKnowledge = DKnowledge(
           DataFrame.forInference(schema),
           DataFrame.forInference(schema2)

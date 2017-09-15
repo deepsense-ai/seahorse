@@ -16,9 +16,9 @@
 
 package io.deepsense.deeplang.doperations
 
-import org.apache.spark.sql.types.StructType
 import spray.json.{JsNumber, JsObject}
 
+import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.MetricValue
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.MockDOperablesFactory._
@@ -26,9 +26,8 @@ import io.deepsense.deeplang.doperations.exceptions.TooManyPossibleTypesExceptio
 import io.deepsense.deeplang.exceptions.DeepLangMultiException
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.ParamsMatchers._
-import io.deepsense.deeplang.{DKnowledge, DOperable, ExecutionContext, UnitSpec}
 
-class EvaluateSpec extends UnitSpec {
+class EvaluateSpec extends UnitSpec with DeeplangTestSupport {
 
   "Evaluate" should {
 
@@ -64,7 +63,7 @@ class EvaluateSpec extends UnitSpec {
       val evaluator = new MockEvaluator
 
       def testInference(op: Evaluate, expectedKnowledge: DKnowledge[MetricValue]): Unit = {
-        val inputDF = DataFrame.forInference(mock[StructType])
+        val inputDF = DataFrame.forInference(createSchema())
         val (knowledge, warnings) = op.inferKnowledge(mock[InferContext])(
           Vector(DKnowledge(inputDF), DKnowledge(evaluator)))
         // Currently, InferenceWarnings are always empty.
@@ -87,7 +86,7 @@ class EvaluateSpec extends UnitSpec {
 
       val paramsForEvaluator = JsObject(evaluator.paramA.name -> JsNumber(2))
       val op = Evaluate().setEvaluatorParams(paramsForEvaluator)
-      val inputDF = DataFrame.forInference(mock[StructType])
+      val inputDF = DataFrame.forInference(createSchema())
       op.inferKnowledge(mock[InferContext])(Vector(DKnowledge(inputDF), DKnowledge(evaluator)))
 
       evaluator should have (theSameParamsAs (originalEvaluator))
@@ -95,7 +94,7 @@ class EvaluateSpec extends UnitSpec {
 
     "throw Exception" when {
       "there is more than one Evaluator in input Knowledge" in {
-        val inputDF = DataFrame.forInference(mock[StructType])
+        val inputDF = DataFrame.forInference(createSchema())
         val evaluators = Set[DOperable](new MockEvaluator, new MockEvaluator)
 
         val op = Evaluate()
@@ -107,7 +106,7 @@ class EvaluateSpec extends UnitSpec {
       "values of dynamic parameters are invalid" in {
         val evaluator = new MockEvaluator
 
-        val inputDF = DataFrame.forInference(mock[StructType])
+        val inputDF = DataFrame.forInference(createSchema())
 
         val paramsForEvaluator = JsObject(evaluator.paramA.name -> JsNumber(-2))
         val evaluatorWithParams = Evaluate().setEvaluatorParams(paramsForEvaluator)

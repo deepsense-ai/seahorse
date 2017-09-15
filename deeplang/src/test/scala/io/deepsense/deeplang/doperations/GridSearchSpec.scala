@@ -16,7 +16,6 @@
 
 package io.deepsense.deeplang.doperations
 
-import org.apache.spark.sql.types.StructType
 import spray.json.{JsNumber, JsObject}
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
@@ -24,12 +23,12 @@ import io.deepsense.deeplang.doperables.report.Report
 import io.deepsense.deeplang.doperations.MockDOperablesFactory.{MockEstimator, MockEvaluator}
 import io.deepsense.deeplang.exceptions.DeepLangMultiException
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
-import io.deepsense.deeplang.{DKnowledge, UnitSpec}
+import io.deepsense.deeplang.{DKnowledge, DeeplangTestSupport, UnitSpec}
 
-class GridSearchSpec extends UnitSpec {
+class GridSearchSpec extends UnitSpec with DeeplangTestSupport {
   "GridSearch" should {
     "infer knowledge when dynamic parameters are valid" in {
-      val inputDF = DataFrame.forInference(mock[StructType])
+      val inputDF = DataFrame.forInference(createSchema())
       val estimator = new MockEstimator
       val evaluator = new MockEvaluator
 
@@ -55,7 +54,7 @@ class GridSearchSpec extends UnitSpec {
       estimatorParamValue: Option[Double],
       evaluatorParamValue: Option[Double]): Unit = {
 
-    val inputDF = DataFrame.forInference(mock[StructType])
+    val inputDF = DataFrame.forInference(createSchema())
     val estimator = new MockEstimator
     val evaluator = new MockEvaluator
 

@@ -28,9 +28,9 @@ import io.deepsense.deeplang.doperables.report.Report
 import io.deepsense.deeplang.inference.exceptions.SparkTransformSchemaException
 import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.wrappers.spark.DoubleParamWrapper
-import io.deepsense.deeplang.{ExecutionContext, UnitSpec}
+import io.deepsense.deeplang.{DeeplangTestSupport, ExecutionContext, UnitSpec}
 
-class SparkTransformerWrapperSpec extends UnitSpec {
+class SparkTransformerWrapperSpec extends UnitSpec with DeeplangTestSupport {
 
   import SparkTransformerWrapperSpec._
 
@@ -40,7 +40,7 @@ class SparkTransformerWrapperSpec extends UnitSpec {
         ExampleSparkTransformerWrapper().setParamWrapper(paramValueToSet)
 
       val context = mock[ExecutionContext]
-      val inputDataFrame = mockInputDataFrame()
+      val inputDataFrame = createDataFrame()
 
       sparkTransformerWrapper._transform(context, inputDataFrame) shouldBe
         DataFrame.fromSparkDataFrame(outputDataFrame)
@@ -48,12 +48,12 @@ class SparkTransformerWrapperSpec extends UnitSpec {
     "infer schema" in {
       val sparkTransformerWrapper =
         ExampleSparkTransformerWrapper().setParamWrapper(paramValueToSet)
-      val inputSchema = mock[StructType]
+      val inputSchema = createSchema()
       sparkTransformerWrapper._transformSchema(inputSchema) shouldBe
         Some(outputSchema)
     }
     "forward an exception thrown by transformSchema wrapped in DeepLangException" in {
-      val inputSchema = mock[StructType]
+      val inputSchema = createSchema()
       val wrapper = ExampleSparkTransformerWrapper().setParamWrapper(paramValueToSet)
       wrapper.sparkTransformer.setTransformSchemaShouldThrow(true)
       val e = intercept[SparkTransformSchemaException] {
@@ -61,16 +61,6 @@ class SparkTransformerWrapperSpec extends UnitSpec {
       }
       e.exception shouldBe exceptionThrownByTransformSchema
     }
-  }
-
-  private def mockInputDataFrame() = {
-    val inputSparkDataFrame = mock[SparkDataFrame]
-    when(inputSparkDataFrame.schema).thenReturn(StructType(Seq()))
-
-    val inputDataFrame = mock[DataFrame]
-    when(inputDataFrame.sparkDataFrame).thenReturn(inputSparkDataFrame)
-
-    inputDataFrame
   }
 }
 
@@ -123,9 +113,9 @@ object SparkTransformerWrapperSpec extends MockitoSugar {
     }
   }
 
+  val outputSchema = StructType(Seq())
   val outputDataFrame = mock[SparkDataFrame]
-
-  val outputSchema = mock[StructType]
+  when(outputDataFrame.schema).thenReturn(outputSchema)
 
   val paramValueToSet = 12.0
 

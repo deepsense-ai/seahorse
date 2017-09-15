@@ -27,7 +27,7 @@ import io.deepsense.deeplang.doperations.MockDOperablesFactory._
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.ParamMap
 
-class EstimatorAsOperationSpec extends UnitSpec {
+class EstimatorAsOperationSpec extends UnitSpec with DeeplangTestSupport {
   import EstimatorAsOperationSpec._
 
   "EstimatorAsOperation" should {
@@ -61,7 +61,7 @@ class EstimatorAsOperationSpec extends UnitSpec {
           expectedSchema: StructType,
           expectedTransformerKnowledge: DKnowledge[Transformer]): Unit = {
 
-        val inputDF = DataFrame.forInference(mock[StructType])
+        val inputDF = DataFrame.forInference(createSchema())
         val (knowledge, warnings) =
           op.inferKnowledge(mock[InferContext])(Vector(DKnowledge(inputDF)))
         // Warnings should be a sum of transformer inference warnings

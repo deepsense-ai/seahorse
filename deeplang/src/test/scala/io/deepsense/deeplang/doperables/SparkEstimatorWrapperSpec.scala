@@ -16,33 +16,30 @@
 
 package io.deepsense.deeplang.doperables
 
-import org.apache.spark.sql.types.StructType
-import org.apache.spark.sql.{DataFrame => SparkDataFrame}
+import io.deepsense.deeplang.{DeeplangTestSupport, ExecutionContext, UnitSpec}
 
-import io.deepsense.deeplang.{ExecutionContext, UnitSpec}
-
-class SparkEstimatorWrapperSpec extends UnitSpec {
+class SparkEstimatorWrapperSpec extends UnitSpec with DeeplangTestSupport {
 
   import EstimatorModelWrappersFixtures._
 
   "SparkEstimatorWrapper" should {
     "fit a DataFrame" in {
       val wrapper = new ExampleSparkEstimatorWrapper().setNumericParamWrapper(paramValueToSet)
-      val inputDataFrame = mockInputDataFrame()
+      val inputDataFrame = createDataFrame()
 
       val modelWrapper =
-        wrapper._fit(mock[ExecutionContext], inputDataFrame).asInstanceOf[ExampleSparkModelWrapper]
+        wrapper._fit(mock[ExecutionContext], inputDataFrame)
       modelWrapper.model shouldBe fitModel
     }
     "infer knowledge when schema is provided" in {
       val wrapper = new ExampleSparkEstimatorWrapper().setNumericParamWrapper(paramValueToSet)
-      val inferredModelWrapper = wrapper._fit_infer(Some(mock[StructType]))
+      val inferredModelWrapper = wrapper._fit_infer(Some(createSchema()))
         .asInstanceOf[ExampleSparkModelWrapper]
       inferredModelWrapper.parentEstimator.sparkEstimator shouldBe wrapper.sparkEstimator
     }
     "infer knowledge when schema isn't provided" in {
       val wrapper = new ExampleSparkEstimatorWrapper()
-      val inferredModelWrapper = wrapper._fit_infer(None).asInstanceOf[ExampleSparkModelWrapper]
+      val inferredModelWrapper = wrapper._fit_infer(None)
       inferredModelWrapper.parentEstimator.sparkEstimator shouldBe wrapper.sparkEstimator
     }
   }

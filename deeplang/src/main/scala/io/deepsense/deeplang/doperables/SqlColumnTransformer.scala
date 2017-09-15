@@ -79,15 +79,6 @@ case class SqlColumnTransformer() extends MultiColumnTransformer {
           inputColumnName, formula, outputColumnName, Some(e))
     }
 
-    val columns = transformedSparkDataFrame.columns
-    if (columns.distinct.length != columns.length) {
-      throw new SqlColumnTransformationExecutionException(
-        inputColumnName,
-        formula,
-        outputColumnName,
-        Some(DuplicatedColumnsException(List(outputColumnName))))
-    }
-
     context.dataFrameBuilder.buildDataFrame(schema, transformedSparkDataFrame.rdd)
 
   }

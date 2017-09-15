@@ -20,15 +20,15 @@ import org.apache.spark.sql.types.StructType
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 
+import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.report.Report
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.validators.RangeValidator
 import io.deepsense.deeplang.params.{NumericParam, Param}
-import io.deepsense.deeplang.{DKnowledge, DMethod1To1, ExecutionContext, UnitSpec}
 
-object MockDOperablesFactory extends UnitSpec {
+object MockDOperablesFactory extends UnitSpec with DeeplangTestSupport {
 
   val DefaultForA = 1
 
@@ -46,14 +46,16 @@ object MockDOperablesFactory extends UnitSpec {
     DKnowledge(Seq(DataFrame.forInference(s)))
   }
 
-  val transformedDataFrame1 = mock[DataFrame]
-  val transformedDataFrame2 = mock[DataFrame]
-  val transformedDataFrameSchema1 = mock[StructType]
-  val transformedDataFrameSchema2 = mock[StructType]
+  val transformedDataFrame1 = createDataFrame()
+  val transformedDataFrame2 = createDataFrame()
+  val transformedDataFrameSchema1 = transformedDataFrame1.schema.get
+  val transformedDataFrameSchema2 = transformedDataFrame2.schema.get
   val transformedDataFrameKnowledge1 = dataFrameKnowledge(transformedDataFrameSchema1)
   val transformedDataFrameKnowledge2 = dataFrameKnowledge(transformedDataFrameSchema2)
   val transformer1 = mockTransformer(transformedDataFrame1, transformedDataFrameKnowledge1)
+  when(transformer1._transformSchema(any(), any())).thenReturn(Some(transformedDataFrameSchema1))
   val transformer2 = mockTransformer(transformedDataFrame2, transformedDataFrameKnowledge2)
+  when(transformer2._transformSchema(any(), any())).thenReturn(Some(transformedDataFrameSchema2))
   val transformerKnowledge1 = DKnowledge(transformer1)
   val transformerKnowledge2 = DKnowledge(transformer2)
 

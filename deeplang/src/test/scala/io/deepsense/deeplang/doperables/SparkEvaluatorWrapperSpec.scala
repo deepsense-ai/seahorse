@@ -20,7 +20,6 @@ import org.apache.spark.ml
 import org.apache.spark.ml.param.{DoubleParam, ParamMap}
 import org.apache.spark.sql.types.{StringType, StructField, StructType}
 import org.apache.spark.sql.{DataFrame => SparkDataFrame}
-import org.mockito.Mockito._
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.report.Report
@@ -28,16 +27,16 @@ import io.deepsense.deeplang.doperations.exceptions.ColumnDoesNotExistException
 import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.selections.{NameSingleColumnSelection, SingleColumnSelection}
 import io.deepsense.deeplang.params.wrappers.spark.{DoubleParamWrapper, SingleColumnSelectorParamWrapper}
-import io.deepsense.deeplang.{DKnowledge, ExecutionContext, UnitSpec}
+import io.deepsense.deeplang.{DKnowledge, DeeplangTestSupport, ExecutionContext, UnitSpec}
 
-class SparkEvaluatorWrapperSpec extends UnitSpec {
+class SparkEvaluatorWrapperSpec extends UnitSpec with DeeplangTestSupport {
 
   import SparkEvaluatorWrapperSpec._
 
   "SparkEvaluatorWrapper" should {
     "evaluate a DataFrame" in {
       val wrapper = new ExampleEvaluatorWrapper().setParamWrapper(metricValue)
-      val inputDataFrame = mockInputDataFrame()
+      val inputDataFrame = mockInputDataFrame
 
       val value = wrapper._evaluate(mock[ExecutionContext], inputDataFrame)
       value shouldBe MetricValue("test", metricValue)
@@ -50,7 +49,7 @@ class SparkEvaluatorWrapperSpec extends UnitSpec {
     "validate params" in {
       val wrapper = new ExampleEvaluatorWrapper().setColumnWrapper(
         NameSingleColumnSelection("invalid"))
-      val inputDataFrame = mockInputDataFrame()
+      val inputDataFrame = mockInputDataFrame
 
       a[ColumnDoesNotExistException] should be thrownBy {
         wrapper._evaluate(mock[ExecutionContext], inputDataFrame)
@@ -60,26 +59,16 @@ class SparkEvaluatorWrapperSpec extends UnitSpec {
       val wrapper = new ExampleEvaluatorWrapper().setColumnWrapper(
         NameSingleColumnSelection("invalid"))
       a[ColumnDoesNotExistException] should be thrownBy {
-        wrapper._infer(DKnowledge(mockInputDataFrame()))
+        wrapper._infer(DKnowledge(mockInputDataFrame))
       }
     }
   }
 
-  def mockInputDataFrame(): DataFrame = {
-
+  def mockInputDataFrame: DataFrame = {
     val schema = StructType(Seq(
       StructField("column", StringType)
     ))
-
-    val sparkDataFrame = mock[SparkDataFrame]
-    when(sparkDataFrame.schema).thenReturn(schema)
-
-    val inputDataFrame = mock[DataFrame]
-    when(inputDataFrame.sparkDataFrame).thenReturn(sparkDataFrame)
-
-    when(inputDataFrame.schema).thenReturn(Some(schema))
-
-    inputDataFrame
+    createDataFrame(schema)
   }
 }
 

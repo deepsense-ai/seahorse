@@ -22,26 +22,14 @@ import org.apache.spark.ml
 import org.apache.spark.ml.param.{BooleanParam, DoubleParam, ParamMap}
 import org.apache.spark.sql.types.StructType
 import org.apache.spark.sql.{DataFrame => SparkDataFrame}
-import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.DeeplangTestSupport
 import io.deepsense.deeplang.doperables.report.Report
 import io.deepsense.deeplang.params.wrappers.spark.DoubleParamWrapper
 import io.deepsense.deeplang.params.{Param, Params}
 
-object EstimatorModelWrappersFixtures extends MockitoSugar {
-
-  def mockInputDataFrame(): DataFrame = {
-
-    val sparkDataFrame = mock[SparkDataFrame]
-    when(sparkDataFrame.schema).thenReturn(mock[StructType])
-
-    val inputDataFrame = mock[DataFrame]
-    when(inputDataFrame.sparkDataFrame).thenReturn(sparkDataFrame)
-
-    inputDataFrame
-  }
+object EstimatorModelWrappersFixtures extends MockitoSugar with DeeplangTestSupport {
 
   trait HasNumericParam extends Params {
     val numericParamWrapper = new DoubleParamWrapper[
@@ -127,8 +115,8 @@ object EstimatorModelWrappersFixtures extends MockitoSugar {
   }
 
   val fitModel = new ExampleSparkModel()
-  val fitDataFrame = mock[SparkDataFrame]
-  val transformedSchema = mock[StructType]
+  val fitDataFrame = createSparkDataFrame()
+  val transformedSchema = createSchema()
   val paramValueToSet = 12.0
 
   val exceptionThrownByTransformSchema = new Exception("mock exception")

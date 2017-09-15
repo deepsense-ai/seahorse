@@ -16,9 +16,9 @@
 
 package io.deepsense.deeplang.doperations
 
-import org.apache.spark.sql.types.StructType
 import spray.json.{JsNumber, JsObject}
 
+import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.MockDOperablesFactory._
 import io.deepsense.deeplang.doperations.MockTransformers._
@@ -26,9 +26,8 @@ import io.deepsense.deeplang.doperations.exceptions.TooManyPossibleTypesExceptio
 import io.deepsense.deeplang.exceptions.DeepLangMultiException
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.ParamsMatchers._
-import io.deepsense.deeplang.{DKnowledge, DOperable, ExecutionContext, UnitSpec}
 
-class TransformSpec extends UnitSpec {
+class TransformSpec extends UnitSpec with DeeplangTestSupport {
 
   "Transform" should {
 
@@ -37,7 +36,7 @@ class TransformSpec extends UnitSpec {
 
       def testTransform(op: Transform, expectedDataFrame: DataFrame): Unit = {
         val Vector(outputDataFrame) = op.execute(mock[ExecutionContext])(
-          Vector(mock[DataFrame], transformer))
+          Vector(createDataFrame(), transformer))
         outputDataFrame shouldBe expectedDataFrame
       }
 
@@ -64,7 +63,7 @@ class TransformSpec extends UnitSpec {
       val transformer = new MockTransformer
 
       def testInference(op: Transform, expecteDataFrameKnowledge: DKnowledge[DataFrame]): Unit = {
-        val inputDF = DataFrame.forInference(mock[StructType])
+        val inputDF = createDataFrame()
         val (knowledge, warnings) = op.inferKnowledge(mock[InferContext])(
           Vector(DKnowledge(inputDF), DKnowledge(transformer)))
         // Currently, InferenceWarnings are always empty.
@@ -87,7 +86,7 @@ class TransformSpec extends UnitSpec {
 
       val paramsForTransformer = JsObject(transformer.paramA.name -> JsNumber(2))
       val op = Transform().setTransformerParams(paramsForTransformer)
-      val inputDF = DataFrame.forInference(mock[StructType])
+      val inputDF = DataFrame.forInference(createSchema())
       op.inferKnowledge(mock[InferContext])(Vector(DKnowledge(inputDF), DKnowledge(transformer)))
 
       transformer should have (theSameParamsAs (originalTransformer))
@@ -95,7 +94,7 @@ class TransformSpec extends UnitSpec {
 
     "throw Exception" when {
       "there is more than one Transformer in input Knowledge" in {
-        val inputDF = DataFrame.forInference(mock[StructType])
+        val inputDF = DataFrame.forInference(createSchema())
         val transformers = Set[DOperable](new MockTransformer, new MockTransformer)
 
         val op = Transform()
@@ -105,7 +104,7 @@ class TransformSpec extends UnitSpec {
         }
       }
       "Transformer's dynamic parameters are invalid" in {
-        val inputDF = DataFrame.forInference(mock[StructType])
+        val inputDF = DataFrame.forInference(createSchema())
         val transformer = new MockTransformer
         val transform = Transform().setTransformerParams(
           JsObject(transformer.paramA.name -> JsNumber(-2)))
