@@ -50,6 +50,7 @@ class AdapterService {
   bindEvents() {
     // Edge management
     jsPlumb.bind('connection', (jsPlumbEvent, originalEvent) => {
+      this.stopDragging();
       if (!originalEvent) {
         return;
       }
@@ -74,7 +75,6 @@ class AdapterService {
         this.workflow.removeEdge(edge);
         jsPlumb.detach(jsPlumbEvent.connection);
       }
-      this.GraphStyleService.disablePortHighlighting(this.nodes);
     });
 
     jsPlumb.bind('connectionDetached', (jsPlumbEvent, originalEvent) => {
@@ -94,11 +94,11 @@ class AdapterService {
     });
 
     jsPlumb.bind('connectionDrag', (connection) => {
-      this.GraphStyleService.enablePortHighlighting(this.nodes, connection.endpoints[0]);
+      this.startDragging(connection);
     });
 
     jsPlumb.bind('connectionDragStop', () => {
-      this.GraphStyleService.disablePortHighlighting(this.nodes);
+      this.stopDragging();
     });
 
     jsPlumb.bind('connectionAborted', (connection, originalEvent) => {
@@ -206,7 +206,7 @@ class AdapterService {
 
       jsPlumbPort.bind('mouseover', (endpoint) => {
         this.onMouseOver(endpoint.canvas, port);
-        if (endpoint.isSource) {
+        if (endpoint.isSource && !this.isConnectionDragged) {
           jsPlumbPort.addClass('port-active');
         }
       });
@@ -245,6 +245,16 @@ class AdapterService {
     });
   }
 
+  startDragging(connection) {
+    this.isConnectionDragged = true;
+    this.GraphStyleService.enablePortHighlighting(this.nodes, connection.endpoints[0]);
+  }
+
+  stopDragging() {
+    this.isConnectionDragged = false;
+    this.GraphStyleService.disablePortHighlighting(this.nodes);
+  }
+
   renderInputPorts(node, ports) {
     ports.forEach((port) => {
       const style = this.GraphStyleService.getStyleForPort(port);
@@ -257,7 +267,9 @@ class AdapterService {
 
       jsPlumbPort.bind('mouseover', (endpoint) => {
         this.onMouseOver(endpoint.canvas, port);
-        jsPlumbPort.addClass('port-active');
+        if (!this.isConnectionDragged) {
+          jsPlumbPort.addClass('port-active');
+        }
       });
 
       jsPlumbPort.bind('mouseout', () => {
