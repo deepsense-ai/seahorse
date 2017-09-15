@@ -6,7 +6,8 @@
 /* @ngInject */
 function ExperimentController(
   experiment,
-  $http, $modal, $timeout, $scope, $log,
+  $timeout, $scope,
+  GraphNode, Edge,
   PageService, Operations, GraphPanelRendererService, ExperimentService,
   ExperimentApiClient, UUIDGenerator, MouseEvent,
   DeepsenseNodeParameters, FreezeService, NotificationService
@@ -15,9 +16,6 @@ function ExperimentController(
 
   var that = this;
   var internal = {};
-
-  var GraphNode = require('./common-objects/common-graph-node.js');
-  var Edge = require('./common-objects/common-edge.js');
 
   internal.selectedNode = null;
 

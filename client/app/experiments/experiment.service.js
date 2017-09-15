@@ -1,11 +1,11 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
  */
+
 'use strict';
 
-var Experiment = require('./common-objects/common-experiment.js');
-
-function ExperimentService(OperationsHierarchyService) {
+/* @ngInject */
+function ExperimentService(OperationsHierarchyService, Experiment) {
   var that = this;
   var internal = {
     experiment: null

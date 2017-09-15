@@ -6,9 +6,8 @@
 
 'use strict';
 
-var GraphNode = require('./../../../common-objects/common-graph-node.js');
-
-function GraphNodeView() {
+/*@ngInject*/
+function GraphNodeView(GraphNode) {
   return {
     restrict: 'E',
     scope: {

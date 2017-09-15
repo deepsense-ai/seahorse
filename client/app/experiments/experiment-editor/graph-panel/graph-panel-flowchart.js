@@ -5,9 +5,6 @@
 
 'use strict';
 
-var GraphNode = require('../../common-objects/common-graph-node.js');
-var Edge = require('../../common-objects/common-edge.js');
-
 /* @ngInject */
 function FlowChartBox() {
   return {
@@ -32,7 +29,7 @@ function FlowChartBox() {
 function FlowChartBoxController($scope, $element, $window,
                                 ExperimentService, ReportOptionsService,
                                 GraphPanelRendererService, DeployModelService,
-                                MouseEvent) {
+                                GraphNode, Edge) {
   var that = this;
   var internal = {};
 

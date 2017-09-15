@@ -1,52 +1,25 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
  */
+
 'use strict';
 
-var Edge = require('./../../common-objects/common-edge.js');
-
-var connectorPaintStyleDefault = {
+const connectorPaintStyleDefault = {
   lineWidth: 2,
   outlineColor: 'white',
   outlineWidth: 2
 };
 
-/**
- * Maps edge's state to its style object
- *
- * @type {object}
- */
-var connectorPaintStyles = {};
-connectorPaintStyles[Edge.STATE_TYPE.ALWAYS] = _.defaults({}, connectorPaintStyleDefault, { strokeStyle: '#61B7CF' });
-connectorPaintStyles[Edge.STATE_TYPE.MAYBE] = _.defaults({}, connectorPaintStyleDefault, { strokeStyle: '#F8AC59' });
-connectorPaintStyles[Edge.STATE_TYPE.NEVER] = _.defaults({}, connectorPaintStyleDefault, { strokeStyle: '#ED5565' });
-connectorPaintStyles[Edge.STATE_TYPE.UNKNOWN] = _.defaults({}, connectorPaintStyleDefault, { strokeStyle: 'gray' });
-
-var connectorHoverStyle = {
+const connectorHoverStyle = {
   strokeStyle: '#216477'
 };
 
-var endpointHoverStyle = {
+const endpointHoverStyle = {
   fillStyle: '#216477',
   strokeStyle: '#216477'
 };
 
-var outputStyle = {
-  endpoint: 'Dot',
-  paintStyle: {
-    fillStyle: '#1AB394',
-    radius: 10,
-    lineWidth: 2
-  },
-  isSource: true,
-  connector: ['Bezier', { curviness: 75 }],
-  connectorStyle: connectorPaintStyles[Edge.STATE_TYPE.UNKNOWN],
-  hoverPaintStyle: endpointHoverStyle,
-  connectorHoverStyle: connectorHoverStyle,
-  maxConnections: -1
-};
-
-var inputStyle = {
+const inputStyle = {
   endpoint: 'Rectangle',
   paintStyle: {
     fillStyle: '#1AB394'
@@ -61,7 +34,28 @@ var inputStyle = {
 };
 
 /* @ngInject */
-function GraphPanelRendererService($rootScope, $document) {
+function GraphPanelRendererService($rootScope, $document, Edge) {
+  const connectorPaintStyles = {
+    [Edge.STATE_TYPE.ALWAYS]: _.defaults({}, connectorPaintStyleDefault, { strokeStyle: '#61B7CF' }),
+    [Edge.STATE_TYPE.MAYBE]: _.defaults({}, connectorPaintStyleDefault, { strokeStyle: '#F8AC59' }),
+    [Edge.STATE_TYPE.NEVER]: _.defaults({}, connectorPaintStyleDefault, { strokeStyle: '#ED5565' }),
+    [Edge.STATE_TYPE.UNKNOWN]: _.defaults({}, connectorPaintStyleDefault, { strokeStyle: 'gray' })
+  };
+
+  const outputStyle = {
+    endpoint: 'Dot',
+    paintStyle: {
+      fillStyle: '#1AB394',
+      radius: 10,
+      lineWidth: 2
+    },
+    isSource: true,
+    connector: ['Bezier', { curviness: 75 }],
+    connectorStyle: connectorPaintStyles[Edge.STATE_TYPE.UNKNOWN],
+    hoverPaintStyle: endpointHoverStyle,
+    connectorHoverStyle: connectorHoverStyle,
+    maxConnections: -1
+  };
 
   const nodeIdPrefix = 'node-';
   const nodeIdPrefixLength = nodeIdPrefix.length;

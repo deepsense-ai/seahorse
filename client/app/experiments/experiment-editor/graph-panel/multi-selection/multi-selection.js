@@ -6,10 +6,8 @@
 
 'use strict';
 
-var GraphNode = require('./../../../common-objects/common-graph-node.js');
-
 /* @ngInject */
-function MultiSelection(MouseEvent, ExperimentService,
+function MultiSelection(GraphNode, MouseEvent, ExperimentService,
                         $document, $timeout, $rootScope,
                         debounce) {
   return {
