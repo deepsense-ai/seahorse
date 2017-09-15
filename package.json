@@ -128,7 +128,7 @@
       }
     },
     "tests": {
-      "client": "./client/app/**/*.test.js",
+      "client": "./client/app/**/*.spec.js",
       "e2e": "./e2e-tests/**/*.spec.js"
     }
   },

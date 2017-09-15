@@ -3,26 +3,26 @@
  */
 'use strict';
 
-describe('Account test', function() {
+describe('Datasets test', function() {
   var mod;
 
-  mod = require('./account.module.js');
+  mod = require('../datasets.module.js');
 
   beforeEach(function() {
     angular.mock.module('ui.router');
-    angular.mock.module('ds.account');
+    angular.mock.module('ds.datasets');
   });
 
   describe('dataset list', function() {
     var ctrl;
     beforeEach(function() {
       angular.mock.inject(function($controller, $rootScope) {
-        ctrl = $controller('Account');
+        ctrl = $controller('DatasetList');
       });
     });
 
-    it('should have label', function() {
-      expect(ctrl.label).toBe('Account info / settings page');
+    it('should say you do not have any datasets', function() {
+      expect(ctrl.setsLabel).toBe('You do not have any datasets!');
     });
   });
 });

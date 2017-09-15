@@ -6,7 +6,7 @@
 describe('Home test', function() {
   var home;
 
-  home = require('./home.module.js');
+  home = require('../home.module.js');
 
   beforeEach(function() {
     angular.mock.module('ui.router');
