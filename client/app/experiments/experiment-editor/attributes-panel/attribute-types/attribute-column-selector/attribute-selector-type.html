@@ -1,7 +1,6 @@
 <div class="selector-type-parameter">
   <div ng-if="showItemsChoices()">
-    <select id="attr-{{ ::parameter.name }}"
-            class="form-control"
+    <select class="form-control"
             ng-model="createItemType"
             ng-options="itemType.verbose for itemType in ::itemTypes"></select>
 

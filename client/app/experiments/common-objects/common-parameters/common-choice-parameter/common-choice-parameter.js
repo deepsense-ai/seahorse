@@ -22,8 +22,8 @@ ChoiceParameter.prototype.init = function(options) {
   for (let choiceName in this.possibleChoicesList) {
     this.choices[choiceName] = false;
   }
-  for (let choiceName of options.choices) {
-    this.choices[choiceName] = true;
+  for (let i = 0; i < options.choices.length; ++i) {
+    this.choices[options.choices[i]] = true;
   }
 };
 

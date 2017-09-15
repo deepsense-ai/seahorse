@@ -1,0 +1,25 @@
+.multiplier-panel {
+  .action-text {
+    font-size: 12px;
+  }
+
+  .multiplier-item {
+    &:first-child {
+      margin-top: 5px;
+    }
+
+    .panel:first-child {
+      margin-bottom: 5px;
+    }
+
+    & > div.panel-heading {
+      position: relative;
+
+      & > button.close {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+      }
+    }
+  }
+}

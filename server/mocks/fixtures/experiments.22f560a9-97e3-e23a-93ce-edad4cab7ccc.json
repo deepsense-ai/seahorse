@@ -25,7 +25,16 @@
               "choice2-some-example-text": {
                 "name_002": "42-42+42"
               }
-            }
+            },
+            "sample-multiplier": [
+              {
+                "http-field": "http://www.codilime.com/",
+                "ftp-field": "ftp://10.0.0.1/"
+              },
+              {
+                "http-field": "http://www.google.com/"
+              }
+            ]
           }
         },
         {

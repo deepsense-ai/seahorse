@@ -21,8 +21,9 @@ function TypeListSelectorItem(options) {
     'time interval': false
   };
 
-  for (let type of options.item.values) {
-    this.types[type] = true;
+  let types = options.item.values;
+  for (let i = 0; i < types.length; ++i) {
+    this.types[types[i]] = true;
   }
 }
 

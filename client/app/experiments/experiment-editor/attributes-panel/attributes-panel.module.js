@@ -19,4 +19,5 @@ exports.inject = function (module) {
   require('./attribute-types/attribute-numeric/attribute-numeric-type.js').inject(module);
   require('./attribute-types/attribute-snippet/attribute-snippet-type.js').inject(module);
   require('./attribute-types/attribute-string/attribute-string-type.js').inject(module);
+  require('./attribute-types/attribute-multiplier/attribute-multiplier-type.js').inject(module);
 };

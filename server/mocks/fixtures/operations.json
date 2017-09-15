@@ -86,6 +86,37 @@
               }
             }
           }
+        },
+        "sample-multiplier": {
+          "type": "multiplier",
+          "description": "This is a multiplier parameter.",
+          "required": true,
+          "values": {
+            "http-field": {
+              "type": "string",
+              "description": "sample1",
+              "default": "http://",
+              "required": true,
+              "validator": {
+                "type": "regex",
+                "configuration": {
+                  "regex": "^http://"
+                }
+              }
+            },
+            "ftp-field": {
+              "type": "string",
+              "description": "sample1",
+              "default": "ftp://",
+              "required": true,
+              "validator": {
+                "type": "regex",
+                "configuration": {
+                  "regex": "^ftp://"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -394,6 +425,11 @@
             },
             "choice3": {
               "name31": {
+                "type": "snippet",
+                "description": "31 desc",
+                "language": "R",
+                "default": "let codilime <- 42;",
+                "required": true
               }
             }
           }

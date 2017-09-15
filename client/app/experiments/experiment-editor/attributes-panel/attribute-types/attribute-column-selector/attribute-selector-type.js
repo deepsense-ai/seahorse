@@ -33,13 +33,13 @@ function AttributeSelectorType() {
         },
         removeItem(itemIndex) {
           if (window.confirm('Are you sure to remove the selector item?')) {
-            scope.parameter.items.splice(itemIndex, 1);
+            this.parameter.items.splice(itemIndex, 1);
           }
         },
         selectorIsSingle: selectorIsSingle,
         showItemsChoices() {
           let isSingle = this.selectorIsSingle();
-          return !isSingle || (isSingle && scope.parameter.items.length !== 1);
+          return !isSingle || (isSingle && this.parameter.items.length !== 1);
         }
       });
     }

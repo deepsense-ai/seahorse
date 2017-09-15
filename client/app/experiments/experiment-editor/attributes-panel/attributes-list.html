@@ -1,6 +1,6 @@
-<div>
+<div id="attributes-list-{{ :: $id }}">
   <div class="panel panel-default parameter-item" ng-repeat="parameter in parametersList.parameters">
-    <div class="panel-heading"><label for="attr-{{ ::parameter.name }}">{{ ::parameter.name }}</label></div>
+    <div class="panel-heading"><label>{{ ::parameter.name }}</label></div>
     <div class="panel-body">
       <div class="attributes-value-view" ng-switch="::parameter.schema.type">
         <attribute-boolean-type ng-switch-when="boolean"></attribute-boolean-type>
@@ -16,6 +16,8 @@
         <attribute-string-type ng-switch-when="string"></attribute-string-type>
 
         <attribute-selector-type ng-switch-when="selector"></attribute-selector-type>
+
+        <attribute-multiplier-type ng-switch-when="multiplier"></attribute-multiplier-type>
       </div>
     </div>
   </div>

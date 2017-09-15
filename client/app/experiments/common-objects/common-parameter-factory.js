@@ -14,6 +14,7 @@ let SnippetParameterConstructor = require('./common-parameters/common-snippet-pa
 let SingleChoiceParameterConstructor = require('./common-parameters/common-choice-parameter/common-single-choice-parameter.js');
 let MultipleChoiceParameterConstructor = require('./common-parameters/common-choice-parameter/common-multiple-choice-parameter.js');
 let SelectorParameterConstructor = require('./common-parameters/common-selector/common-selector-parameter.js');
+let MultiplierParameterConstructor = require('./common-parameters/common-multiplier-parameter.js');
 
 /*
  * (API parameter's type value) => (constructor)
@@ -25,7 +26,8 @@ let parameterConstructors = {
   'snippet': SnippetParameterConstructor,
   'choice': SingleChoiceParameterConstructor,
   'multipleChoice': MultipleChoiceParameterConstructor,
-  'selector': SelectorParameterConstructor
+  'selector': SelectorParameterConstructor,
+  'multiplier': MultiplierParameterConstructor
 };
 
 let ParameterFactory = {
@@ -56,11 +58,24 @@ let ParameterFactory = {
           }
 
           break;
+        case 'multiplier':
+          options.parametersLists = [];
+          paramValue = paramValue || [];
+          for (let i = 0; i < paramValue.length; ++i) {
+            let nestedParametersList = ParameterFactory.createParametersList(
+              paramValue[i],
+              options.schema.values
+            );
+
+            options.parametersLists.push(nestedParametersList);
+          }
+
+          break;
       }
 
       if (parameterConstructors[paramSchema.type]) {
         let Constructor = parameterConstructors[paramSchema.type];
-        if (typeof Constructor !== 'undefined') {
+        if (!_.isUndefined(Constructor)) {
           parametersList[paramName] = new Constructor(options);
         }
       }

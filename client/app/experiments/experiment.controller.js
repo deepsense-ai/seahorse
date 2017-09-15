@@ -91,7 +91,7 @@ function ExperimentController(
   that.checkExperimentState = function checkExperimentState() {
     $timeout.cancel(internal.runStateTimeout);
     if (internal.experiment.isRunning()) {
-      internal.runStateTimeout = $timeout(that.loadExperiemntState, RUN_STATE_CHECK_INTERVAL);
+      internal.runStateTimeout = $timeout(that.loadExperiemntState, RUN_STATE_CHECK_INTERVAL, false);
     }
   };
 
