@@ -9,6 +9,7 @@ if (browser.chrome && version >= 40) {
     'ui.router',
     'ui.bootstrap',
     'ngSanitize',
+    'ngCookies',
     'debounce',
     'ds.lab.partials',
     'deepsense.spinner',
@@ -28,6 +29,7 @@ if (browser.chrome && version >= 40) {
   ]);
   require('./app.config.js').inject(lab);
   require('./version.factory.js').inject(lab);
+  require('./UserService.js').inject(lab);
   require('./app.run.js').inject(lab);
 } else {
   document.body.innerHTML =

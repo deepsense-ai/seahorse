@@ -1,15 +1,21 @@
 'use strict';
 
 /* ngInject */
-function WorkflowStatusBarService($rootScope, config, version, SessionStatus) {
+function WorkflowStatusBarService($rootScope, config, version, WorkflowService, SessionStatus, UserService) {
 
   const service = this;
 
   service.getMenuItems = getMenuItems;
 
+  const currentWorkflow = WorkflowService.getCurrentWorkflow();
+  const userId = UserService.getSeahorseUser().id;
+  const isOwner = currentWorkflow.owner.id === userId;
+  const smallLabel = isOwner ? null : 'Owner only';
+
   const menuItems = {
     clear: {
       label: 'Clear',
+      smallLabel: smallLabel,
       icon: 'fa-trash-o',
       callFunction: () => $rootScope.$broadcast('StatusBar.CLEAR_CLICK')
     },
@@ -26,18 +32,20 @@ function WorkflowStatusBarService($rootScope, config, version, SessionStatus) {
     },
     run: {
       label: 'Run',
+      smallLabel: smallLabel,
       icon: 'fa-play',
       callFunction: () => $rootScope.$broadcast('StatusBar.RUN')
     },
     startExecutor: {
-      label: 'Start executor',
-      icon: 'fa-play',
+      label: 'Start editing',
+      smallLabel: smallLabel,
+      icon: 'fa fa-pencil',
       callFunction: () => $rootScope.$emit('StatusBar.START_EXECUTOR')
     },
     startingExecutor: {
       label: 'Start executor...',
       icon: 'fa-cog',
-      additionalClass: 'disabled',
+      additionalClass: 'menu-item-disabled',
       additionalIconClass: 'fa-spin'
     },
     stopExecutor: {
@@ -54,7 +62,7 @@ function WorkflowStatusBarService($rootScope, config, version, SessionStatus) {
       label: 'Aborting...',
       icon: 'fa-ban',
       color: '#216477',
-      additionalClass: 'disabled'
+      additionalClass: 'menu-item-disabled'
     },
     closeInnerWorkflow: {
       label: 'Close inner workflow',
@@ -64,21 +72,25 @@ function WorkflowStatusBarService($rootScope, config, version, SessionStatus) {
     }
   };
 
+  menuItems.disabledStartExecutor = angular.copy(menuItems.startExecutor);
+  menuItems.disabledStartExecutor.additionalClass = 'menu-item-disabled';
+
   menuItems.disabledClear = angular.copy(menuItems.clear);
-  menuItems.disabledClear.additionalClass = 'disabled';
+  menuItems.disabledClear.additionalClass = 'menu-item-disabled';
 
   menuItems.disabledExport = angular.copy(menuItems.export);
-  menuItems.disabledExport.additionalClass = 'disabled';
+  menuItems.disabledExport.additionalClass = 'menu-item-disabled';
 
   menuItems.disabledRun = angular.copy(menuItems.run);
-  menuItems.disabledRun.additionalClass = 'disabled';
+  menuItems.disabledRun.additionalClass = 'menu-item-disabled';
 
   const _menuItemViews = {
-    editorWithExecutor: [menuItems.clear, menuItems.export, menuItems.documentation, menuItems.stopExecutor, menuItems.run],
-    editorWithoutReadyExecutor: [menuItems.disabledClear, menuItems.export, menuItems.documentation, menuItems.startingExecutor, menuItems.disabledRun],
-    editorWithoutExecutor: [menuItems.disabledClear, menuItems.export, menuItems.documentation, menuItems.startExecutor, menuItems.disabledRun],
-    running: [menuItems.disabledClear, menuItems.disabledExport, menuItems.documentation, menuItems.abort],
-    aborting: [menuItems.disabledClear, menuItems.disabledExport, menuItems.documentation, menuItems.aborting],
+    editorWithExecutor: [menuItems.export, menuItems.stopExecutor, menuItems.clear, menuItems.run, menuItems.documentation],
+    editorWithoutReadyExecutor: [menuItems.export, menuItems.startingExecutor,  menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
+    editorWithoutExecutorForOwner: [menuItems.export, menuItems.startExecutor, menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
+    editorWithoutExecutor: [menuItems.export, menuItems.disabledStartExecutor, menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
+    running: [menuItems.disabledExport, menuItems.disabledClear, menuItems.abort, menuItems.documentation],
+    aborting: [menuItems.disabledExport, menuItems.disabledClear,  menuItems.aborting,  menuItems.documentation],
     editInnerWorkflow: [menuItems.documentation, menuItems.closeInnerWorkflow]
   };
 
@@ -95,6 +107,9 @@ function WorkflowStatusBarService($rootScope, config, version, SessionStatus) {
           case 'editor':
             switch (workflow.sessionStatus) {
               case SessionStatus.NOT_RUNNING:
+                return isOwner ?
+                  'editorWithoutExecutorForOwner'
+                  : 'editorWithoutExecutor';
                 return 'editorWithoutExecutor';
               case SessionStatus.STARTING:
               case SessionStatus.RUNNING:

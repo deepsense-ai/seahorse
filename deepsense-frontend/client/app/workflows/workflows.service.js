@@ -2,7 +2,8 @@
 
 /* @ngInject */
 function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiClient, Operations, $rootScope,
-  DefaultInnerWorkflowGenerator, debounce, nodeTypes, SessionManagerApi, SessionStatus) {
+                         DefaultInnerWorkflowGenerator, debounce, nodeTypes, SessionManagerApi, SessionStatus,
+                        UserService) {
 
   const INNER_WORKFLOW_PARAM_NAME = 'inner workflow';
 
@@ -30,6 +31,14 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
       workflow.workflowStatus = 'editor';
       workflow.sessionStatus = workflowData.sessionStatus;
 
+      // TODO Comply to API and remove this mock
+      // workflow.owner = workflowData.owner;
+      workflow.owner = {
+        id: '32215f1c-077b-446a-b922-5069a442dc64',
+        name: 'lol@deepsense.io'
+      };
+      workflow.owner = UserService.getSeahorseUser();
+
       let nodes = _.values(workflow.getNodes());
       nodes.filter((n) => n.operationId === nodeTypes.CUSTOM_TRANSFORMER)
         .forEach((node) => this.initInnerWorkflow(node));
@@ -55,7 +64,7 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
 
       $rootScope.$on('ServerCommunication.MESSAGE.heartbeat', (event, data) => {
         const workflow = this.getRootWorkflow();
-        if(data.sessionId === workflow.id && workflow.sessionStatus !== 'running_and_ready') {
+        if (data.sessionId === workflow.id && workflow.sessionStatus !== 'running_and_ready') {
           console.log('WorkflowService', 'Received first heartbeat. Executor is running and ready');
           workflow.sessionStatus = SessionStatus.RUNNING_AND_READY;
         }
@@ -214,7 +223,7 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
     _assignStatusToWorkflow(workflow, sessions) {
       const sessionByWorkflowId = _.object(_.map(sessions, s => [s.workflowId, s]));
       const session = sessionByWorkflowId[workflow.id];
-      if(session && session.status === 'error') {
+      if (session && session.status === 'error') {
         // TODO Design and implement proper error handling.
         console.warn('Session status is `error` for ', session);
       }
@@ -223,12 +232,11 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
   }
 
 
-
   return new WorkflowServiceClass();
 }
 
 exports.function = WorkflowService;
 
-exports.inject = function(module) {
+exports.inject = function (module) {
   module.factory('WorkflowService', WorkflowService);
 };
