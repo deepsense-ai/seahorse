@@ -16,7 +16,9 @@ if [ "$CLUSTER_ID" == "" ]; then
   export CLUSTER_ID="SOME_ID"
 fi
 
-NETWORK_NAME="sbt-test-$CLUSTER_ID"
+if [ "$NETWORK_NAME" == "" ]; then
+  export NETWORK_NAME="sbt-test-$CLUSTER_ID"
+fi
 
 function networkCreate {
   networkName=$1
