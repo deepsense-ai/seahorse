@@ -9,6 +9,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import com.google.inject.Inject
 import com.google.inject.assistedinject.Assisted
 import com.google.inject.name.Named
+import org.joda.time.DateTime
 
 import io.deepsense.commons.auth.usercontext.UserContext
 import io.deepsense.commons.auth.{Authorizator, AuthorizatorProvider}
@@ -114,6 +115,13 @@ class WorkflowManagerImpl @Inject()(
       workflowId: Workflow.Id): Future[Option[Either[String, WorkflowWithSavedResults]]] = {
     authorizator.withRole(roleGet) { userContext =>
       workflowStorage.getLatestExecutionResults(workflowId)
+    }
+  }
+
+
+  override def getResultsUploadTime(workflowId: Workflow.Id): Future[Option[DateTime]] = {
+    authorizator.withRole(roleGet) { _ =>
+      workflowStorage.getResultsUploadTime(workflowId)
     }
   }
 

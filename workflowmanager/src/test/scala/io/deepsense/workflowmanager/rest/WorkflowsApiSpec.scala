@@ -8,6 +8,7 @@ import scala.collection.concurrent.TrieMap
 import scala.concurrent._
 
 import org.joda.time
+import org.joda.time.DateTime
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.mockito.invocation.InvocationOnMock
@@ -281,6 +282,60 @@ class WorkflowsApiSpec
         Delete(s"/$apiPrefix/${Workflow.Id.randomId}") ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
+      }
+    }
+  }
+
+  "GET /workflows/:id/results-upload-time" should {
+    "return Unauthorized" when {
+      "invalid auth token was send (when InvalidTokenException occurs)" in {
+        Get(s"/$apiPrefix/${Workflow.Id.randomId}/results-upload-time") ~>
+          addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
+          status should be(StatusCodes.Unauthorized)
+        }
+        ()
+      }
+      "the user does not have the requested role (on NoRoleException)" in {
+        Get(s"/$apiPrefix/${Workflow.Id.randomId}/results-upload-time") ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
+          status should be(StatusCodes.Unauthorized)
+        }
+        ()
+      }
+      "no auth token was send (on MissingHeaderRejection)" in {
+        Get(s"/$apiPrefix/${Workflow.Id.randomId}/results-upload-time") ~> testRoute ~> check {
+          status should be(StatusCodes.Unauthorized)
+        }
+        ()
+      }
+    }
+    "return Not Found" when {
+      "workflow does not exist" in {
+        Get(s"/$apiPrefix/${Workflow.Id.randomId}/results-upload-time") ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.NotFound)
+        }
+        ()
+      }
+      "workflow has no execution reports uploaded yet" in {
+        Get(s"/$apiPrefix/$workflowAId/results-upload-time") ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.NotFound)
+        }
+        ()
+      }
+    }
+    "return last execution time" when {
+      "at least execution report exist" in {
+        Get(s"/$apiPrefix/$workflowBId/results-upload-time") ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.OK)
+          val response = responseAs[JsObject]
+          val lastExecutionKey = "resultsUploadTime"
+          response.fields should contain key lastExecutionKey
+          response.fields(lastExecutionKey).convertTo[DateTime]
+        }
+        ()
       }
     }
   }

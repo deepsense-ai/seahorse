@@ -21,6 +21,7 @@ import spray.util.LoggingContext
 
 import io.deepsense.commons.auth.directives._
 import io.deepsense.commons.auth.usercontext.TokenTranslator
+import io.deepsense.commons.json.envelope.Envelope
 import io.deepsense.commons.rest.{RestApiAbstractAuth, RestComponent}
 import io.deepsense.commons.utils.Version
 import io.deepsense.graph.CyclicGraphException
@@ -30,6 +31,7 @@ import io.deepsense.models.json.workflow.exceptions.WorkflowVersionException
 import io.deepsense.models.workflows._
 import io.deepsense.workflowmanager.WorkflowManagerProvider
 import io.deepsense.workflowmanager.exceptions._
+import io.deepsense.workflowmanager.rest.protocols.ResultsUploadTimeJsonProtocol
 
 /**
  * Exposes Workflow Manager through a REST API.
@@ -49,6 +51,7 @@ abstract class WorkflowApi @Inject() (
   with WorkflowWithResultsJsonProtocol
   with MetadataInferenceResultJsonProtocol
   with WorkflowWithSavedResultsJsonProtocol
+  with DOperationEnvelopesJsonProtocol
   with Cors
   with WorkflowVersionUtil {
 
@@ -153,6 +156,19 @@ abstract class WorkflowApi @Inject() (
                 }
               }
             } ~
+            path(JavaUUID / "results-upload-time") { idParameter =>
+              get {
+                withUserContext { userContext =>
+                  onSuccess(workflowManagerProvider
+                    .forContext(userContext)
+                    .getResultsUploadTime(idParameter)) { lastExecution =>
+                    import ResultsUploadTimeJsonProtocol.lastExecutionWriter
+                    complete(lastExecution.map(Envelope(_)))
+                  }
+
+                }
+              }
+            } ~
             path("upload") {
               post {
                 withUserContext { userContext =>
@@ -239,11 +255,10 @@ abstract class WorkflowApi @Inject() (
   }
 
   implicit def checkEither[T : Marshaller](x: Future[Option[Either[String, T]]]): Route = {
-    onComplete(x) {
-      case Success(Some(Left(s))) => complete(StatusCodes.Conflict, s)
-      case Success(Some(Right(r))) => complete(StatusCodes.OK, r)
-      case Success(None) => complete(StatusCodes.NotFound)
-      case Failure(exception) => failWith(exception)
+    onSuccess(x) {
+      case Some(Left(s)) => complete(StatusCodes.Conflict, s)
+      case Some(Right(r)) => complete(StatusCodes.OK, r)
+      case None => complete(StatusCodes.NotFound)
     }
   }
 

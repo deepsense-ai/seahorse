@@ -6,6 +6,8 @@ package io.deepsense.workflowmanager
 
 import scala.concurrent.Future
 
+import org.joda.time.DateTime
+
 import io.deepsense.commons.models.Id
 import io.deepsense.models.workflows._
 
@@ -77,4 +79,12 @@ trait WorkflowManager {
    */
   def getLatestExecutionReport(workflowId: Workflow.Id):
     Future[Option[Either[String, WorkflowWithSavedResults]]]
+
+  /**
+   * Returns the upload time of the recently uploaded execution report of the specified workflow.
+   * @param workflowId An identifier of the workflow to return the execution report' upload time.
+   * @return The upload time or None if the workflow does not exist or no execution report exist
+   *         for the specified id.
+   */
+  def getResultsUploadTime(workflowId: Workflow.Id): Future[Option[DateTime]]
 }

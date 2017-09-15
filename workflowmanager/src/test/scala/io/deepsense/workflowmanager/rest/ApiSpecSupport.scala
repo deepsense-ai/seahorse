@@ -23,7 +23,7 @@ trait ApiSpecSupport extends MockitoSugar {
 
   def createRestComponent(tokenTranslator: TokenTranslator): Route
 
-  protected def testRoute = {
+  protected def testRoute: Route = {
     val tokenTranslator = mock[TokenTranslator]
     when(tokenTranslator.translate(any(classOf[String])))
       .thenAnswer(new Answer[Future[UserContext]] {
