@@ -4,10 +4,14 @@
 'use strict';
 
 /* @ngInject */
-function Home($rootScope, PageService) {
+function Home($rootScope, $scope, PageService) {
   PageService.setTitle('Home');
 
   $rootScope.stateData.dataIsLoaded = true;
+
+  $scope.uploadExecutionReport = function uploadExecutionReport (event) {
+    event.preventDefault();
+  };
 }
 
 exports.function = Home;
