@@ -51,6 +51,18 @@
      opacity: 0.4;
    }
 
+  .trial-has-expired__log-out {
+     position: absolute;
+     right: 20px;
+     top: 20px;
+     cursor: pointer;
+  }
+
+  .trial-has-expired__log-out a {
+    text-decoration: none;
+    color: #337ab7;
+  }
+
   .trial-has-expired__logo {
      display: flex;
      justify-content: center;
@@ -87,6 +99,12 @@
 
 <div class="trial-has-expired">
   <div class="trial-has-expired__disable-mask"></div>
+
+  <span class="trial-has-expired__log-out">
+    <a href="/logout" >
+      <span>Log out</span>
+    </a>
+  </span>
 
   <div class="trial-has-expired__logo">
     <img src="static/seahorse-main.png">
