@@ -10,6 +10,7 @@ require('./workflows.config.js').inject(workflows);
 require('./workflows.service.js').inject(workflows);
 require('./common-behaviours/common-behaviours.module.js').inject(workflows);
 require('./graph-panel/graph-panel.module.js').inject(workflows);
+require('./inner-workflows/public-param/public-params-list.js').inject(workflows);
 require('./inner-workflows/default-inner-workflow-generator.service.js').inject(workflows);
 require('./workflows-editor/workflows-editor.module.js').inject(workflows);
 require('./workflows-status-bar/workflows-status-bar.drv.js').inject(workflows);

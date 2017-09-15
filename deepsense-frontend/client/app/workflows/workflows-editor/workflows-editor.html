@@ -22,6 +22,8 @@
 
     <deepsense-operation-attributes
       workflow="workflow.WorkflowService.getCurrentWorkflow().id"
+      public-params="workflow.WorkflowService.getCurrentWorkflow().publicParams"
+      is-inner-workflow="workflow.WorkflowService.getCurrentWorkflow().workflowType == 'inner'"
       node="workflow.getSelectedNode()"
       ng-if="workflow.getSelectedNode()"
       disabled-mode="workflow.isReportMode"
@@ -35,8 +37,10 @@
     </deepsense-operation-attributes>
 
     <general-data-panel
+      workflow="workflow.getWorkflow()"
       name="workflow.getWorkflow().name"
       description="workflow.getWorkflow().description"
+      public-params="workflow.WorkflowService.getCurrentWorkflow().publicParams"
       ng-if="!workflow.getSelectedNode()"
       toggle
       toggle-on="StatusBar.ABORT ServerCommunication.EXECUTION_FINISHED"

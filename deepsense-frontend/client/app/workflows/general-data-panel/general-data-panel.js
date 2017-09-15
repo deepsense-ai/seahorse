@@ -8,7 +8,9 @@ function GeneralDataPanel() {
     replace: true,
     scope: {
       'name': '=',
+      'workflow': '=',
       'description': '=',
+      'publicParams': '=',
       'state': '=',
       'isReportMode': '='
     },

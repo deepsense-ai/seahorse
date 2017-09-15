@@ -1,5 +1,5 @@
 <aside class="ibox o-general-data-panel o-panel o-panel--scroll-right animated fadeInRight">
-  <header class="o-general-data-panel__ibox-title--editor-mode" ng-if="!controller.isReportMode">
+  <header class="o-general-data-panel__ibox-title--editor-mode">
     <h4 class="ibox-title__name"
         uib-tooltip="{{controller.name ? 'Edit workflow name' : ''}}"
         tooltip-placement="left"
@@ -10,23 +10,19 @@
       </span>
     </h4>
   </header>
-  <header class="o-general-data-panel__ibox-title--report-mode" ng-if="controller.isReportMode">
-    <h4 class="text-success no-margins">{{::controller.name}}</h4>
-  </header>
   <section class="ibox-content o-general-data-panel__content" custom-scroll-bar>
     <header>
       <auto-text-area value="controller.description"
-                      ng-if="!controller.isReportMode"
                       uib-tooltip="Edit workflow's description"
                       tooltip-placement="left"
                       tooltip-append-to-body="true"></auto-text-area>
-      <p ng-if="controller.isReportMode"
-         class="o-panel__description o-panel__description--read-only"
-         uib-tooltip="{{::controller.description}}"
-         tooltip-placement="left"
-         tooltip-append-to-body="true">
-        {{::controller.description}}
-      </p>
     </header>
   </section>
+  <section ng-if="controller.publicParams.length > 0">
+      <public-params-list
+              workflow="controller.workflow"
+              public-params="controller.publicParams"
+      ></public-params-list>
+  </section>
+
 </aside>

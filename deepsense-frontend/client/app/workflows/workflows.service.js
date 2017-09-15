@@ -58,6 +58,7 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
       let innerWorkflowData = node.parametersValues[INNER_WORKFLOW_PARAM_NAME];
       let innerWorkflow = this._deserializeInnerWorkflow(innerWorkflowData);
       innerWorkflow.workflowType = 'inner';
+      innerWorkflow.publicParams = innerWorkflow.publicParams || [];
       this._innerWorkflowByNodeId[node.id] = innerWorkflow;
 
       let nestedCustomTransformerNodes = _.filter(_.values(innerWorkflow.getNodes()), (n) => n.operationId === CUSTOM_TRANSFORMER_ID);
