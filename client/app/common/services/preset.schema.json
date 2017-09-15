@@ -53,12 +53,12 @@
         },
         "executorCores": {
           "type": "integer",
-          "minimum": 0,
+          "minimum": 1,
           "invalidMessage": "executorCores is not a valid integer"
         },
         "totalExecutorCores": {
           "type": "integer",
-          "minimum": 0,
+          "minimum": 1,
           "invalidMessage": "totalExecutorCores is not a valid integer > 0"
         },
         "params": {
@@ -120,12 +120,12 @@
         },
         "executorCores": {
           "type": "integer",
-          "minimum": 0,
+          "minimum": 1,
           "invalidMessage": "executorCores is not a valid integer"
         },
         "totalExecutorCores": {
           "type": "integer",
-          "minimum": 0,
+          "minimum": 1,
           "invalidMessage": "totalExecutorCores is not a valid integer > 0"
         },
         "params": {
