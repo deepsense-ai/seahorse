@@ -30,14 +30,16 @@ class WriteReadDataFrameIntegSpec
     hdfsClient.delete(testDir, true)
   }
 
-  "Write and Read DataFrame operations" should "correctly write and read dataFrame from HDFS" in {
-    val context = executionContext
-    val dataFrame: DataFrame = createDataFrame
+  "Write and Read DataFrame operations" should {
+    "correctly write and read dataFrame from HDFS" in {
+      val context = executionContext
+      val dataFrame: DataFrame = createDataFrame
 
-    val dataFrameId = writeDataFrame(context, dataFrame, "test name", "test description")
+      val dataFrameId = writeDataFrame(context, dataFrame, "test name", "test description")
 
-    val retrievedDataFrame = readDataFrame(context, dataFrameId)
-    assertDataFramesEqual(dataFrame, retrievedDataFrame)
+      val retrievedDataFrame = readDataFrame(context, dataFrameId)
+      assertDataFramesEqual(dataFrame, retrievedDataFrame)
+    }
   }
 
   private def createDataFrame: DataFrame = {

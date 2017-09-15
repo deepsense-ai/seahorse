@@ -20,21 +20,25 @@ import io.deepsense.deeplang.DeeplangIntegTestSupport
 
 class TrainedRidgeRegressionIntegSpec extends DeeplangIntegTestSupport {
 
-  "TrainedRidgeRegression" should "produce dataframe with column with '_prediction' suffix" in {
-    testRegression(
-      inputColumnNames = Seq("column1", "column2", "column3", "column4"),
-      targetColumnName = "some_target",
-      expectedPredictionColumnSuffix = "_prediction")
+  "TrainedRidgeRegression" should {
+    "produce dataframe with column with '_prediction' suffix" in {
+      testRegression(
+        inputColumnNames = Seq("column1", "column2", "column3", "column4"),
+        targetColumnName = "some_target",
+        expectedPredictionColumnSuffix = "_prediction")
+    }
   }
 
-  it should "produce dataframe with column with '_prediction_2' suffix " +
-    "if '_prediction' and '_prediction_1' are occupied" in {
+  it should {
+    "produce dataframe with column with '_prediction_2' suffix " +
+      "if '_prediction' and '_prediction_1' are occupied" in {
 
-    testRegression(
-      inputColumnNames = Seq(
-        "column1", "some_target_prediction_1", "column3", "some_target_prediction"),
-      targetColumnName = "some_target",
-      expectedPredictionColumnSuffix = "_prediction_2")
+      testRegression(
+        inputColumnNames = Seq(
+          "column1", "some_target_prediction_1", "column3", "some_target_prediction"),
+        targetColumnName = "some_target",
+        expectedPredictionColumnSuffix = "_prediction_2")
+    }
   }
 
   private def testRegression(

@@ -14,7 +14,7 @@ import org.joda.time.DateTime
 import org.scalatest.BeforeAndAfter
 
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
-import io.deepsense.deeplang.{DeeplangIntegTestSupport, DOperable}
+import io.deepsense.deeplang.{DOperable, DeeplangIntegTestSupport}
 import io.deepsense.entitystorage.EntityStorageClientTestInMemoryImpl
 
 class WriteDataFrameIntegSpec
@@ -24,20 +24,22 @@ class WriteDataFrameIntegSpec
 
   val timestamp: Timestamp = new Timestamp(new DateTime(2007, 12, 2, 3, 10, 11).getMillis)
 
-  "WriteDataFrame" should "write created DataFrame" in {
-    val rowsSeq: Seq[Row] = Seq(
-      Row("aaa", 1L, 1.2, timestamp),
-      Row("bbb", 2L, 2.2, timestamp),
-      Row("ccc", 3L, 3.4, timestamp))
-    testSimpleDataFrameSchemaWithRowsSeq(rowsSeq)
-  }
+  "WriteDataFrame" should {
+    "write created DataFrame" in {
+      val rowsSeq: Seq[Row] = Seq(
+        Row("aaa", 1L, 1.2, timestamp),
+        Row("bbb", 2L, 2.2, timestamp),
+        Row("ccc", 3L, 3.4, timestamp))
+      testSimpleDataFrameSchemaWithRowsSeq(rowsSeq)
+    }
 
-  "WriteDataFrame" should "write created DataFrame with missing values" in {
-    val rowsSeq: Seq[Row] = Seq(
-      Row("aaa", 1L, 1.2, null),
-      Row("bbb", 2L, null, timestamp),
-      Row("ccc", null, 3.4, timestamp))
-    testSimpleDataFrameSchemaWithRowsSeq(rowsSeq)
+    "write created DataFrame with missing values" in {
+      val rowsSeq: Seq[Row] = Seq(
+        Row("aaa", 1L, 1.2, null),
+        Row("bbb", 2L, null, timestamp),
+        Row("ccc", null, 3.4, timestamp))
+      testSimpleDataFrameSchemaWithRowsSeq(rowsSeq)
+    }
   }
 
   def testSimpleDataFrameSchemaWithRowsSeq(rowsSeq: Seq[Row]): Unit = {

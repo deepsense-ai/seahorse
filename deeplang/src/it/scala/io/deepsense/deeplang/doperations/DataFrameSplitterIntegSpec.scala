@@ -22,22 +22,24 @@ class DataFrameSplitterIntegSpec
   with GeneratorDrivenPropertyChecks
   with Matchers {
 
-  "SplitDataFrame" should "split one df into two df in given range" in {
-    forAll((s: Set[Int], range: Double, seed: Int) => {
-      val rdd = createData(s.toSeq)
-      val df = executionContext.dataFrameBuilder.buildDataFrame(createSchema, rdd)
-      val (df1, df2) = executeOperation(executionContext, operation(range, seed / 2))(df)
-      val dfCount = df.sparkDataFrame.count()
-      val df1Count = df1.sparkDataFrame.count()
-      val df2Count = df2.sparkDataFrame.count()
-      val rowsDf = df.sparkDataFrame.collectAsList().asScala
-      val rowsDf1 = df1.sparkDataFrame.collectAsList().asScala
-      val rowsDf2 = df2.sparkDataFrame.collectAsList().asScala
-      val intersect = rowsDf1.intersect(rowsDf2)
-      intersect.size should be(0)
-      (df1Count + df2Count) should be(dfCount)
-      rowsDf.toSet should be(rowsDf1.toSet.union(rowsDf2.toSet))
-    })
+  "SplitDataFrame" should {
+    "split one df into two df in given range" in {
+      forAll((s: Set[Int], range: Double, seed: Int) => {
+        val rdd = createData(s.toSeq)
+        val df = executionContext.dataFrameBuilder.buildDataFrame(createSchema, rdd)
+        val (df1, df2) = executeOperation(executionContext, operation(range, seed / 2))(df)
+        val dfCount = df.sparkDataFrame.count()
+        val df1Count = df1.sparkDataFrame.count()
+        val df2Count = df2.sparkDataFrame.count()
+        val rowsDf = df.sparkDataFrame.collectAsList().asScala
+        val rowsDf1 = df1.sparkDataFrame.collectAsList().asScala
+        val rowsDf2 = df2.sparkDataFrame.collectAsList().asScala
+        val intersect = rowsDf1.intersect(rowsDf2)
+        intersect.size should be(0)
+        (df1Count + df2Count) should be(dfCount)
+        rowsDf.toSet should be(rowsDf1.toSet.union(rowsDf2.toSet))
+      })
+    }
   }
 
   private def createSchema: StructType = {

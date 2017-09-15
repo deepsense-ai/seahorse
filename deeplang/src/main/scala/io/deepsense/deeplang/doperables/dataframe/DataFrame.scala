@@ -6,17 +6,22 @@
 
 package io.deepsense.deeplang.doperables.dataframe
 
+import java.sql.Timestamp
+
 import scala.annotation.tailrec
 
 import org.apache.spark.mllib.linalg.{Vector => SparkVector, Vectors}
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql
+import org.apache.spark.sql.Row
+import org.apache.spark.sql.types.{StructField, TimestampType}
 
+import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.doperables.Report
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
-import io.deepsense.reportlib.model.ReportContent
+import io.deepsense.reportlib.model.{ReportContent, Table}
 
 /*
 * @param optionalSparkDataFrame spark representation of data.
@@ -74,7 +79,8 @@ case class DataFrame(optionalSparkDataFrame: Option[sql.DataFrame]) extends DOpe
    * @param labelColumn Column name to use as label.
    */
   def toSparkLabeledPointRDD(
-      columns: List[String], labelColumn: String): RDD[LabeledPoint] = {
+      columns: List[String],
+      labelColumn: String): RDD[LabeledPoint] = {
 
     sparkDataFrame.select(labelColumn, columns:_*).map(row => {
       val head :: tail = row.toSeq.asInstanceOf[Seq[Double]]
@@ -126,8 +132,39 @@ case class DataFrame(optionalSparkDataFrame: Option[sql.DataFrame]) extends DOpe
     DataFrame.createColumnName(originalColumnName, columnNameSuffix, level)
   }
 
-  override def report: Report =
-    Report(ReportContent(s"This a report of DataFrame: $optionalSparkDataFrame"))
+  override def report: Report = {
+    val sampleTable = dataSampleTable()
+    Report(ReportContent("DataFrame Report", Map(sampleTable.name -> sampleTable), Map()))
+  }
+
+  private def dataSampleTable(): Table = {
+    val columnsNames: List[String] =
+      sparkDataFrame.columns.toList.take(DataFrame.maxColumnsNumberInReport)
+    val columnsNumber = columnsNames.size
+    val rows: Array[Row] = sparkDataFrame.take(DataFrame.maxRowsNumberInReport)
+    val values: List[List[String]] = rows.map(row =>
+      (0 until columnsNumber).map(cellToString(row, _)).toList).toList
+    Table(
+      DataFrame.dataSampleTableName,
+      s"Data Sample. First $columnsNumber columns and ${rows.length} randomly chosen rows",
+      Some(columnsNames),
+      None,
+      values
+    )
+  }
+
+  private def cellToString(row: Row, index: Int): String = {
+    val structField: StructField = row.schema.apply(index)
+    if (row(index) != null) {
+      structField.dataType match {
+        case TimestampType => DateTimeConverter.convertToString(
+          DateTimeConverter.fromMillis(row.get(index).asInstanceOf[Timestamp].getTime))
+        case _ => row(index).toString
+      }
+    } else {
+      null
+    }
+  }
 }
 
 object DataFrame {
@@ -144,4 +181,7 @@ object DataFrame {
     val levelSuffix = if (level > 0) "_" + level else ""
     baseColumnName + "_" + addedPart + levelSuffix
   }
+  val dataSampleTableName = "Data Sample"
+  val maxRowsNumberInReport = 100
+  val maxColumnsNumberInReport = 100
 }

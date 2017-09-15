@@ -41,50 +41,52 @@ class ProjectColumnIntegSpec
   val row3 = Seq(3, "str3", 30.0, new Timestamp(DateTime.now.getMillis), false)
   val data = Seq(row1, row2, row3)
 
-  "ProjectColumn" should "select correct columns basing on the column selection" in {
-    val projected = projectColumns(Set("z", "b"), Set(1, 2), Set(ColumnType.ordinal))
-    val selectedIndices = Set(1, 2, 5)
-    val expectedColumns = selectWithIndices[StructField](selectedIndices, columns)
-    val expectedSchema = StructType(expectedColumns)
-    val expectedData = data.map(r => selectWithIndices[Any](selectedIndices, r.toList))
-    val expectedDataFrame = createDataFrame(expectedData.map(Row.fromSeq), expectedSchema)
-    assertDataFramesEqual(projected, expectedDataFrame)
-  }
+  "ProjectColumn" should {
+    "select correct columns basing on the column selection" in {
+      val projected = projectColumns(Set("z", "b"), Set(1, 2), Set(ColumnType.ordinal))
+      val selectedIndices = Set(1, 2, 5)
+      val expectedColumns = selectWithIndices[StructField](selectedIndices, columns)
+      val expectedSchema = StructType(expectedColumns)
+      val expectedData = data.map(r => selectWithIndices[Any](selectedIndices, r.toList))
+      val expectedDataFrame = createDataFrame(expectedData.map(Row.fromSeq), expectedSchema)
+      assertDataFramesEqual(projected, expectedDataFrame)
+    }
 
-  "ProjectColumn" should "throw an exception when the columns selected by name does not exist" in {
-    intercept[ColumnsDoesNotExistException]{
-      val nonExistingColumnName = "thisColumnDoesNotExist"
-      projectColumns(
-        Set(nonExistingColumnName),
+    "throw an exception when the columns selected by name does not exist" in {
+      intercept[ColumnsDoesNotExistException]{
+        val nonExistingColumnName = "thisColumnDoesNotExist"
+        projectColumns(
+          Set(nonExistingColumnName),
+          Set.empty,
+          Set.empty)
+      }
+    }
+
+    "throw an exception when the columns selected by index does not exist" in {
+      intercept[ColumnsDoesNotExistException]{
+        val nonExistingColumnIndex = 1000
+        projectColumns(
+          Set.empty,
+          Set(nonExistingColumnIndex),
+          Set.empty)
+      }
+    }
+
+    "produce an empty set when selecting a type that does not exist" in {
+      val emptyDataFrame = projectColumns(
+        Set.empty,
+        Set.empty,
+        Set(ColumnType.ordinal))
+      emptyDataFrame.sparkDataFrame.collectAsList().asScala shouldBe empty
+    }
+
+    "produce an empty set on empty selection" in {
+      val emptyDataFrame = projectColumns(
+        Set.empty,
         Set.empty,
         Set.empty)
+      emptyDataFrame.sparkDataFrame.collectAsList().asScala shouldBe empty
     }
-  }
-
-  it should "throw an exception when the columns selected by index does not exist" in {
-    intercept[ColumnsDoesNotExistException]{
-      val nonExistingColumnIndex = 1000
-      projectColumns(
-        Set.empty,
-        Set(nonExistingColumnIndex),
-        Set.empty)
-    }
-  }
-
-  it should "produce an empty set when selecting a type that does not exist" in {
-    val emptyDataFrame = projectColumns(
-      Set.empty,
-      Set.empty,
-      Set(ColumnType.ordinal))
-    emptyDataFrame.sparkDataFrame.collectAsList().asScala shouldBe empty
-  }
-
-  it should "produce an empty set on empty selection" in {
-    val emptyDataFrame = projectColumns(
-      Set.empty,
-      Set.empty,
-      Set.empty)
-    emptyDataFrame.sparkDataFrame.collectAsList().asScala shouldBe empty
   }
 
   private def projectColumns(

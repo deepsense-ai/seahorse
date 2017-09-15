@@ -10,15 +10,14 @@ import java.sql.Timestamp
 import scala.concurrent.Await
 
 import com.typesafe.scalalogging.LazyLogging
-import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.joda.time.DateTime
 import org.scalatest.BeforeAndAfter
 
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
-import io.deepsense.deeplang.{DeeplangIntegTestSupport, ExecutionContext, DOperable}
-import io.deepsense.models.entities.{Entity, DataObjectReference, DataObjectReport, InputEntity}
+import io.deepsense.deeplang.{DOperable, DeeplangIntegTestSupport, ExecutionContext}
+import io.deepsense.models.entities.{DataObjectReference, DataObjectReport, Entity, InputEntity}
 
 class ReadDataFrameIntegSpec
   extends DeeplangIntegTestSupport
@@ -34,18 +33,20 @@ class ReadDataFrameIntegSpec
     hdfsClient.delete(testDir, true)
   }
 
-  "ReadDataFrame" should "read saved DataFrame" in {
-    val context = executionContext
-    val dataFrame: DataFrame = testDataFrame(context.dataFrameBuilder)
-    dataFrame.sparkDataFrame.saveAsParquetFile(testDir)
-    val entity = registerDataFrame(context)
+  "ReadDataFrame" should {
+    "read saved DataFrame" in {
+      val context = executionContext
+      val dataFrame: DataFrame = testDataFrame(context.dataFrameBuilder)
+      dataFrame.sparkDataFrame.saveAsParquetFile(testDir)
+      val entity = registerDataFrame(context)
 
-    val operation = createReadDataFrameOperation(entity.id.toString)
+      val operation = createReadDataFrameOperation(entity.id.toString)
 
-    logger.info("Reading dataframe from entity id: {}", entity.id)
-    val operationResult = operation.execute(context)(Vector.empty[DOperable])
-    val operationDataFrame = operationResult.head.asInstanceOf[DataFrame]
-    assertDataFramesEqual(dataFrame, operationDataFrame)
+      logger.info("Reading dataframe from entity id: {}", entity.id)
+      val operationResult = operation.execute(context)(Vector.empty[DOperable])
+      val operationDataFrame = operationResult.head.asInstanceOf[DataFrame]
+      assertDataFramesEqual(dataFrame, operationDataFrame)
+    }
   }
 
   def registerDataFrame(context: ExecutionContext): Entity = {
