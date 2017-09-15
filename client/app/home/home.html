@@ -129,7 +129,7 @@
           </td>
           <td class="table__cell table__action-icons table__right table__no-wrap">
           <span>
-            <a ng-if="home.isWorkflowOwnedByCurrentUser(workflow) && workflow.sessionStatus !== 'not_running'"
+            <a ng-if="workflow.sessionStatus !== 'not_running'"
                ng-click="home.deleteSession(workflow.id)"
                popover-placement="left"
                uib-popover="Stop session"
