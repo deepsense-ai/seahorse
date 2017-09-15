@@ -23,13 +23,18 @@ SEAHORSE_BUILD_TAG=$1
 (
 echo "Building and publishing deepsense-spark:$SEAHORSE_BUILD_TAG"
 cd deployment/spark-docker
-docker build -t $DEEPSENSE_REGISTRY/deepsense-spark:$SEAHORSE_BUILD_TAG .
+docker build \
+    -t $DEEPSENSE_REGISTRY/deepsense-spark:$SEAHORSE_BUILD_TAG \
+    -t $DEEPSENSE_REGISTRY/deepsense-spark:latest \
+    .
 docker push $DEEPSENSE_REGISTRY/deepsense-spark:$SEAHORSE_BUILD_TAG
+docker push $DEEPSENSE_REGISTRY/deepsense-spark:latest
 )
 
 (
 echo "Building and publishing deepsense-mesos-spark:$SEAHORSE_BUILD_TAG"
 cd deployment/mesos-spark-docker
-docker build -t $DEEPSENSE_REGISTRY/deepsense-mesos-spark:$SEAHORSE_BUILD_TAG .
+./build_mesos_base_docker_image.sh $SEAHORSE_BUILD_TAG
 docker push $DEEPSENSE_REGISTRY/deepsense-mesos-spark:$SEAHORSE_BUILD_TAG
+docker push $DEEPSENSE_REGISTRY/deepsense-mesos-spark:latest
 )

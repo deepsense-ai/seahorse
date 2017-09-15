@@ -6,7 +6,7 @@ Image is versioned by using Seahorse build tag as a docker tag (i.e. `20160926_2
 
 1. Build the image (with tag: `20160926_230009-seahorse_on_desktop`)
 
-   $ docker build -t docker-repo.deepsense.codilime.com/deepsense_io/deepsense-mesos-spark:20160926_230009-seahorse_on_desktop .
+   $ ./build_mesos_base_docker_image.sh 20160926_230009-seahorse_on_desktop
 
 2. Running the image (substitute {MACHINE_IP_VISIBLE_FROM_CLUSTER} with proper IP address)
 
