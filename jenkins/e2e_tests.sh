@@ -75,11 +75,12 @@ deployment/docker-compose/docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG pul
 # destroy dockercompose_default, so we can recreate it with proper id
 deployment/docker-compose/docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG down
 (
- cd e2etestssdk
+ cp jenkins/resources/a_e2etests_dev_override_build.sbt seahorse-sdk-example/a_e2etests_dev_override_build.sbt
+ cd seahorse-sdk-example
  sbt clean assembly
  cd ../deployment/docker-compose
  mkdir -p jars
- cp -r ../../e2etestssdk/target/scala-2.11/*.jar jars
+ cp -r ../../seahorse-sdk-example/target/scala-2.11/*.jar jars
  ./docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG --generate-only --yaml-file docker-compose.yml
  ./docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG up -d
 )
