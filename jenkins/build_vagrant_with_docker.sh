@@ -36,10 +36,12 @@ mv $ARTIFACT_NAME docker-compose.yml
 docker-compose pull
 
 echo "Save docker images to files"
-DOCKER_IMAGES=$(grep image: docker-compose.yml | cut -d "/" -f 3 | rev | cut -d ":" -f 2 | rev)
+DOCKER_IMAGES=$(grep image: docker-compose.yml | cut -d "/" -f 3)
+     
 for DOCKER_IMAGE in $DOCKER_IMAGES
 do
-  IMAGE_FILE_NAME="$DOCKER_IMAGE.tar"
+  IMAGE_NAME=$(rev <<<$DOCKER_IMAGE | cut -d ":" -f 2 | rev)  
+  IMAGE_FILE_NAME="$IMAGE_NAME.tar"
   echo "Save docker image to $IMAGE_FILE_NAME"
   rm -f $IMAGE_FILE_NAME
   docker save --output $IMAGE_FILE_NAME $DOCKER_IMAGE
