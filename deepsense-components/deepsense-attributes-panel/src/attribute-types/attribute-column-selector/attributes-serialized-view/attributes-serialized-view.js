@@ -5,7 +5,6 @@ function AttributesSerializedView() {
   return {
     restrict: 'E',
     templateUrl: 'attribute-types/attribute-column-selector/attributes-serialized-view/attributes-serialized-view.html',
-    replace: true,
     link: function (scope) {
       _.assign(scope, {
         getNamesList() {
