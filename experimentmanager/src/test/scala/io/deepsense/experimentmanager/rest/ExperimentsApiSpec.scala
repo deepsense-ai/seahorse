@@ -394,6 +394,8 @@ class ExperimentsApiSpec
   }
 
   s"PUT /experiments/:id" should {
+    val newExperiment = InputExperiment("New Name", "New Desc", Graph())
+
     "process authorization before reading PUT content" in {
       val invalidContent = JsObject()
       Put(s"/$apiPrefix/" + Experiment.Id.randomId, invalidContent) ~> testRoute ~> check {
@@ -402,13 +404,6 @@ class ExperimentsApiSpec
     }
     "update the experiment and return Ok" when {
       "user updates his experiment" in {
-        val newExperiment = Experiment(
-          experimentOfTenantA.id,
-          tenantAId,
-          "New Name",
-          Graph(),
-          "New Desc")
-
         Put(s"/$apiPrefix/${experimentOfTenantA.id}", newExperiment) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
@@ -424,25 +419,14 @@ class ExperimentsApiSpec
     }
     "return NotFound" when {
       "the experiment does not exist" in {
-        val newExperiment = Experiment(
-          UUID.randomUUID(),
-          tenantAId,
-          "New Name",
-          Graph(),
-          "New Desc")
+        val nonExistingId = UUID.randomUUID()
 
-        Put(s"/$apiPrefix/${newExperiment.id}", newExperiment) ~>
+        Put(s"/$apiPrefix/$nonExistingId", newExperiment) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
       }
       "the user has no right to that experiment" in {
-        val newExperiment = Experiment(
-          experimentOfTenantB.id,
-          tenantBId,
-          "New Name",
-          Graph(),
-          "New Desc")
 
         Put(s"/$apiPrefix/${experimentOfTenantB.id}", newExperiment) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
@@ -451,30 +435,21 @@ class ExperimentsApiSpec
       }
     }
     "return Unauthorized" when {
-      val newExperiment = Experiment(UUID.randomUUID(), "asd", "New Name", Graph(), "New Desc")
       "invalid auth token was send (when InvalidTokenException occures)" in {
-        Put(s"/$apiPrefix/" + newExperiment.id, newExperiment) ~>
+        Put(s"/$apiPrefix/" + experimentOfTenantA.id, newExperiment) ~>
           addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
       "the user does not have the requested role (on NoRoleExeption)" in {
-        Put(s"/$apiPrefix/" + newExperiment.id, newExperiment) ~>
+        Put(s"/$apiPrefix/" + experimentOfTenantA.id, newExperiment) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
       "no auth token was send (on MissingHeaderRejection)" in {
-        Put(s"/$apiPrefix/" + newExperiment.id, newExperiment) ~> testRoute ~> check {
+        Put(s"/$apiPrefix/" + experimentOfTenantA.id, newExperiment) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
-        }
-      }
-    }
-    "return BadRequest" when {
-      "Experiment's Id from Json does not match Id from request's URL" in {
-        Put(s"/$apiPrefix/" + experimentOfTenantA.id, experimentOfTenantA2) ~>
-          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
-          status should be(StatusCodes.BadRequest)
         }
       }
     }
@@ -502,13 +477,13 @@ class ExperimentsApiSpec
       })
     }
 
-    override def update(experiment: Experiment): Future[Experiment] = {
+    override def update(experimentId: Id, experiment: InputExperiment): Future[Experiment] = {
       val wantedRole = "experiments:update"
       userContext.flatMap(uc => {
         if (!uc.roles.contains(Role(wantedRole))) {
           throw new NoRoleException(uc, wantedRole)
         } else {
-          val oldExperiment = storedExperiments.find(_.id == experiment.id)
+          val oldExperiment = storedExperiments.find(_.id == experimentId)
           Future(oldExperiment match {
             case Some(oe) if oe.tenantId == uc.tenantId => Experiment(
               oe.id,
@@ -518,7 +493,7 @@ class ExperimentsApiSpec
               experiment.description)
             case Some(oe) if oe.tenantId != uc.tenantId =>
               throw new ResourceAccessDeniedException(uc, oe)
-            case None => throw new ExperimentNotFoundException(experiment.id)
+            case None => throw new ExperimentNotFoundException(experimentId)
           })
         }
       })

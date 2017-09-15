@@ -27,10 +27,11 @@ trait ExperimentManager {
 
   /**
    * Updates an experiment.
+   * @param experimentId Id of experiment to be updated.
    * @param experiment An experiment to be updated.
    * @return The updated experiment.
    */
-  def update(experiment: Experiment): Future[Experiment]
+  def update(experimentId: Id, experiment: InputExperiment): Future[Experiment]
 
   /**
    * Creates new experiment.

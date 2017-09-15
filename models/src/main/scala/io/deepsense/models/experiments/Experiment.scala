@@ -28,14 +28,15 @@ case class Experiment(
   with Serializable {
 
   /**
-   * Creates an updated version of the experiment using other experiment.
+   * Creates an updated version of the experiment using some input experiment.
    * Rewrites to the new experiment all fields from the other experiment,
    * but does not change id or tenant id.
-   * @param other The other experiment to update with.
+   * @param inputExperiment The input experiment to update with.
    * @return Updated version of an experiment.
    */
-  def updatedWith(other: Experiment): Experiment = {
-    Experiment(id, tenantId, other.name, other.graph, other.description)
+  def updatedWith(inputExperiment: InputExperiment): Experiment = {
+    Experiment(
+      id, tenantId, inputExperiment.name, inputExperiment.graph, inputExperiment.description)
   }
 
   def markAborted: Experiment = {

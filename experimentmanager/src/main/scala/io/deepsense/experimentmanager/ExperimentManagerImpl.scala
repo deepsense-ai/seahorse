@@ -64,23 +64,23 @@ class ExperimentManagerImpl @Inject()(
     }
   }
 
-  def update(experiment: Experiment): Future[Experiment] = {
+  def update(experimentId: Id, experiment: InputExperiment): Future[Experiment] = {
     authorizator.withRole(roleUpdate) { userContext =>
-      val oldExperimentOption = storage.get(experiment.id)
+      val oldExperimentOption = storage.get(experimentId)
       oldExperimentOption.flatMap {
         case Some(oldExperiment) =>
-          runningExperiment(experiment.id).flatMap {
+          runningExperiment(experimentId).flatMap {
             case Some(runningExperiment)
               if runningExperiment.state.status == Experiment.Status.Running =>
-                throw new ExperimentRunningException(experiment.id)
+                throw new ExperimentRunningException(experimentId)
             case _ =>
-              runningExperimentsActor ! DeleteExperiment(experiment)
+              runningExperimentsActor ! DeleteExperiment(experimentId)
               val updatedExperiment = oldExperiment
                 .assureOwnedBy(userContext)
                 .updatedWith(experiment)
               storage.save(updatedExperiment)
           }
-        case None => throw new ExperimentNotFoundException(experiment.id)
+        case None => throw new ExperimentNotFoundException(experimentId)
       }
     }
   }

@@ -63,20 +63,10 @@ class ExperimentsApi @Inject() (
             } ~
             put {
               withUserContext { userContext =>
-                entity(as[Experiment]) { experiment => validate(
-                  experiment.id.equals(experimentId), // TODO Return Json
-                  // For now, when you PUT an experiment on a UUID other than the specified
-                  // in the URL there will be a validation exception. As a result a "Bad request"
-                  // will be returned. The problem is (is it a problem?) that the response body
-                  // (so the description of the error) is a text message not a Json (see the
-                  // second argument of validate(...)). If we do not want this kind of
-                  // behavior then we have to implement own Rejection Handler (in sense of Spray).
-                  "Experiment's Id from Json does not match Id from request's URL") {
-                    complete {
-                      experimentManagerProvider
-                        .forContext(userContext)
-                        .update(experiment)
-                    }
+                entity(as[InputExperiment]) { inputExperiment =>
+                  complete {experimentManagerProvider
+                      .forContext(userContext)
+                      .update(experimentId, inputExperiment)
                   }
                 }
               }

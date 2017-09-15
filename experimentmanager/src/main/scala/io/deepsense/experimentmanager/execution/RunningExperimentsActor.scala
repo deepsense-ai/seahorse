@@ -58,7 +58,7 @@ class RunningExperimentsActor @Inject() (
     case Abort(experimentId) => abort(experimentId)
     case GetStatus(experimentId) => requestStatus(experimentId)
     case ListExperiments(tenantId) => listExperiments(tenantId)
-    case DeleteExperiment(experiment) => delete(experiment)
+    case DeleteExperiment(experimentId) => delete(experimentId)
     case e: Experiments => unhandled(e)
     case s: Status => unhandled(s)
   }
@@ -76,8 +76,8 @@ class RunningExperimentsActor @Inject() (
     })
   }
 
-  private def delete(experiment: Experiment): Unit = {
-    experiments.get(experiment.id).foreach { case (toDelete, _) =>
+  private def delete(experimentId: Id): Unit = {
+    experiments.get(experimentId).foreach { case (toDelete, _) =>
       if (toDelete.state.status != Experiment.Status.Running) {
         experiments.remove(toDelete.id)
       }
@@ -148,5 +148,5 @@ object RunningExperimentsActor {
   case class ListExperiments(tenantId: Option[String]) extends Message
   case class Status(experiment: Option[Experiment]) extends Message
   case class Experiments(experimentsByTenantId: Map[String, Set[Experiment]]) extends Message
-  case class DeleteExperiment(experiment: Experiment) extends Message
+  case class DeleteExperiment(experimentId: Id) extends Message
 }
