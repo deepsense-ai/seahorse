@@ -74,16 +74,6 @@ class WorkflowsEditorController {
   }
 
   initListeners() {
-    this.$scope.$on('ServerCommunication.MESSAGE.ready', (event, ready) => {
-      this.$log.debug('Received a Ready message from Session Executor. Reconnecting.');
-
-      // workflowId being null means that entire Session Executor has been restarted
-      if (!ready.workflowId || ready.workflowId === this.WorkflowService.getRootWorkflow().id) {
-        this.ServerCommunication.reconnect();
-        this._setEditableMode();
-      }
-    });
-
     this.$scope.$watch(() => this.getWorkflow(), () => {
       // So attributes panel does not show attributes from previous workflow node.
       this.unselectNode();

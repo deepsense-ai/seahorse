@@ -54,15 +54,13 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
         });
       });
 
-      const unregister = $rootScope.$on('ServerCommunication.MESSAGE.heartbeat', (event, data) => {
+      $rootScope.$on('ServerCommunication.MESSAGE.heartbeat', (event, data) => {
         const workflow = this.getRootWorkflow();
         if(data.sessionId === workflow.id && workflow.sessionStatus !== 'running_and_ready') {
           console.log('WorkflowService', 'Received first heartbeat. Executor is running and ready');
           workflow.sessionStatus = SessionStatus.RUNNING_AND_READY;
-          unregister();
         }
       });
-
     }
 
     // TODO Add enums for workflowType, workflowStatus

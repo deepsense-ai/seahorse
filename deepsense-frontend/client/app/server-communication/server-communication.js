@@ -107,16 +107,6 @@ class ServerCommunication {
     }));
   }
 
-  _sendInitToWorkflowExchange() {
-    this.$log.info('ServerCommunication sendInitToWorkflowExchange');
-    this.send(this.workflowTopicSendingUri(), {}, JSON.stringify({
-      messageType: 'init',
-      messageBody: {
-        workflowId: this.workflowId
-      }
-    }));
-  }
-
   // uri - exchange name
   _subscribeToExchange(uri) {
     let previousSubscription = this.exchangeSubscriptions[uri];
@@ -134,7 +124,6 @@ class ServerCommunication {
     this.$log.info('ServerCommunication onWebSocketConnect');
     this._subscribeToExchange(this.seahorseTopicListeningUri());
     this._subscribeToExchange(this.workflowTopicListeningUri());
-    this._sendInitToWorkflowExchange();
     this.$rootScope.$broadcast('ServerCommunication.CONNECTION_ESTABLISHED');
   }
 
