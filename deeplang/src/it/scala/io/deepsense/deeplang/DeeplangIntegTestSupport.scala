@@ -38,7 +38,7 @@ import io.deepsense.entitystorage.EntityStorageClientInMemoryImpl
 import io.deepsense.models.entities.Entity
 
 /**
- * Adds features to facilitate integration testing using Spark and entitystorage
+ * Adds features to facilitate integration testing using Spark
  */
 trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
 
@@ -163,7 +163,7 @@ private class MockedCommonExecutionContext(
     pythonCodeExecutor,
     new MockedCustomOperationExecutor) {
 
-  override def createExecutionContext(worflowId: Id, nodeId: Id) =
+  override def createExecutionContext(worflowId: Id, nodeId: Id): MockedExecutionContext =
     new MockedExecutionContext(sparkContext,
       sqlContext,
       inferContext,

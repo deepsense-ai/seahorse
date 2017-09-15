@@ -18,15 +18,17 @@ package io.deepsense.deeplang.doperables
 
 import java.sql.Timestamp
 
-import org.apache.spark.SparkException
 import org.apache.spark.sql.Row
+import org.apache.spark.sql.catalyst.util.DateTimeUtils
 import org.apache.spark.sql.types._
+import org.apache.spark.unsafe.types.UTF8String
 import org.joda.time.{DateTime, DateTimeZone}
 
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.commons.types.ColumnType._
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.TypeConverter.TargetTypeChoice
+import io.deepsense.deeplang.doperables.TypeConverter.TargetTypeChoices.{DoubleTargetTypeChoice, StringTargetTypeChoice}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException
 import io.deepsense.deeplang.params.selections.{IndexColumnSelection, MultipleColumnSelection, NameColumnSelection, TypeColumnSelection}
@@ -37,7 +39,7 @@ class TypeConverterIntegSpec extends DeeplangIntegTestSupport {
 
   "TypeConverter" when {
     "converting columns to String" which {
-      val targetType = StringType
+      val targetType = StringTargetTypeChoice()
       "are Doubles" should {
         "cast them to String" in {
           val converted = useTypeConverter(Set(doubleId), Set.empty, Set.empty, targetType)
@@ -101,7 +103,7 @@ class TypeConverterIntegSpec extends DeeplangIntegTestSupport {
         }
       }
       "are Decimals" should {
-        "cast them to String" in pendingUntilFixed {
+        "cast them to String" in {
           val converted = useTypeConverter(Set(decimalId), Set.empty, Set.empty, targetType)
           val expected = toString(Set(decimalId))
           assertDataFramesEqual(converted, expected)
@@ -109,7 +111,7 @@ class TypeConverterIntegSpec extends DeeplangIntegTestSupport {
       }
     }
     "converting columns to Double" which {
-      val targetType = DoubleType
+      val targetType = DoubleTargetTypeChoice()
       "are strings" should {
         "return values as Double" when {
           "strings represent numbers" in {
@@ -118,12 +120,11 @@ class TypeConverterIntegSpec extends DeeplangIntegTestSupport {
             assertDataFramesEqual(converted, expected)
           }
         }
-        "fail" when {
+        "produce nulls" when {
           "strings DO NOT represent numbers" in {
-            a[SparkException] should be thrownBy {
-              useTypeConverter(Set(nonNumStrId), Set.empty, Set.empty, targetType)
-                .sparkDataFrame.collect()
-            }
+            val converted = useTypeConverter(Set(nonNumStrId), Set.empty, Set.empty, targetType)
+            val expected = toDouble(Set(nonNumStrId))
+            assertDataFramesEqual(converted, expected)
           }
         }
       }
@@ -177,7 +178,7 @@ class TypeConverterIntegSpec extends DeeplangIntegTestSupport {
         }
       }
       "are Decimals" should {
-        "cast them to Double" in pendingUntilFixed {
+        "cast them to Double" in {
           val converted = useTypeConverter(Set(decimalId), Set.empty, Set.empty, targetType)
           val expected = toDouble(Set(decimalId))
           assertDataFramesEqual(converted, expected)
@@ -202,7 +203,7 @@ class TypeConverterIntegSpec extends DeeplangIntegTestSupport {
             TypeColumnSelection(Set(ColumnType.numeric)),
             NameColumnSelection(Set("col5"))
           )))
-        .setTargetType(TargetTypeChoice.StringTargetTypeChoice())
+        .setTargetType(StringTargetTypeChoice())
         ._transformSchema(originalSchema)
 
       transformedSchema shouldBe Some(StructType(Seq(
@@ -225,7 +226,7 @@ class TypeConverterIntegSpec extends DeeplangIntegTestSupport {
             MultipleColumnSelection(Vector(
               NameColumnSelection(Set("non-existent"))
             )))
-          .setTargetType(TargetTypeChoice.StringTargetTypeChoice())
+          .setTargetType(StringTargetTypeChoice())
 
         a[ColumnsDoNotExistException] should be thrownBy {
           operation._transformSchema(originalSchema)
@@ -244,14 +245,15 @@ class TypeConverterIntegSpec extends DeeplangIntegTestSupport {
   // Fixtures Seq(normal, string, double)
   val doubleColumn = {
     val original = Seq(5.123456789, null, 3.14)
-    val asString = Seq("5.123457", null, "3.14")
+    val asString = Seq("5.123456789", null, "3.14")
     ColumnContainer(original, original, asString, emptyMetadata)
   }
 
   // String type
   val strColumn = {
     val original = Seq("string1", null, "string3")
-    ColumnContainer(original, null, original, emptyMetadata)
+    val asDouble = Seq(null, null, null)
+    ColumnContainer(original, asDouble, original, emptyMetadata)
   }
 
   // Numerical string type
@@ -269,15 +271,22 @@ class TypeConverterIntegSpec extends DeeplangIntegTestSupport {
   }
 
   val timestampColumn = {
-    val dateTime1 = new DateTime(1989, 4, 23, 3, 14, 15, 926, DateTimeZone.UTC)
+    val dateTime1 = new DateTime(1989, 4, 23, 3, 14, 15, 926, DateTimeZone.getDefault)
     val dateTime2 = dateTime1.plusDays(1).plusMinutes(1)
     val timestamp1 = new Timestamp(dateTime1.getMillis)
     val timestamp2 = new Timestamp(dateTime2.getMillis)
-    val dateTime1String = "1989-04-23T03:14:15.926Z"
-    val dateTime2String = "1989-04-24T03:15:15.926Z"
+    val dateTime1String = "1989-04-23 03:14:15.926"
+    val dateTime2String = "1989-04-24 03:15:15.926"
     val original = Seq(timestamp1, null, timestamp2)
     val asString = Seq(dateTime1String, null, dateTime2String)
-    val asDouble = Seq(dateTime1.getMillis.toDouble, null, dateTime2.getMillis.toDouble)
+
+    def timestampStringToSparkDouble(ts: String): Double = // Welcome to Spark.
+      DateTimeUtils.stringToTimestamp(UTF8String.fromString(ts)).get.toDouble / 1000000.0d
+
+    val asDouble = Seq(
+      timestampStringToSparkDouble(dateTime1String),
+      null,
+      timestampStringToSparkDouble(dateTime2String))
     ColumnContainer(original, asDouble, asString, emptyMetadata)
   }
 
@@ -297,7 +306,7 @@ class TypeConverterIntegSpec extends DeeplangIntegTestSupport {
 
   val floatColumn = {
     val original = Seq(1.5f, null, 42.0f)
-    val asString = Seq("1.5", null, "42")
+    val asString = Seq("1.5", null, "42.0")
     val asDouble = Seq(1.5, null, 42.0)
     ColumnContainer(original, asDouble, asString, emptyMetadata)
   }
@@ -317,8 +326,8 @@ class TypeConverterIntegSpec extends DeeplangIntegTestSupport {
   }
 
   val decimalColumn = {
-    val original = Seq(Decimal(3.14), null, Decimal(42.0))
-    val asString = Seq("3.14", null, "42.0")
+    val original = Seq(Decimal("3.14"), null, Decimal("42.0"))
+    val asString = Seq("3.14000", null, "42.00000") // DataType is DecimalType(10, 5)
     val asDouble = Seq(3.14, null, 42.0)
     ColumnContainer(original, asDouble, asString, emptyMetadata)
   }
@@ -353,7 +362,7 @@ class TypeConverterIntegSpec extends DeeplangIntegTestSupport {
     StructField("floats", FloatType), // 7
     StructField("bytes", ByteType), // 8
     StructField("shorts", ShortType), // 9
-    StructField("decimals", DecimalType()) // 10
+    StructField("decimals", DecimalType(10, 5)) // 10
   ))
 
   val rowsNumber = 3
@@ -398,7 +407,7 @@ class TypeConverterIntegSpec extends DeeplangIntegTestSupport {
       ids: Set[Int] = Set(),
       names: Set[String] = Set(),
       types: Set[ColumnType] = Set(),
-      targetType: DataType,
+      targetTypeChoice: TargetTypeChoice,
       dataFrame: DataFrame = inputDataFrame): DataFrame = {
     val operation = new TypeConverter()
       .setSelectedColumns(
@@ -407,7 +416,7 @@ class TypeConverterIntegSpec extends DeeplangIntegTestSupport {
             NameColumnSelection(names),
             IndexColumnSelection(ids),
             TypeColumnSelection(types))))
-      .setTargetType(TargetTypeChoice.fromColumnType(targetType))
+      .setTargetType(targetTypeChoice)
 
     operation.transform.apply(executionContext)(())(dataFrame)
   }

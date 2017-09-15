@@ -16,13 +16,11 @@
 
 package io.deepsense.deeplang.doperables
 
-import org.apache.spark.sql.types.{DataType, DoubleType, StringType, StructType}
-import org.apache.spark.sql.{Column, UserDefinedFunction}
+import org.apache.spark.sql.types._
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.TypeConverter.TargetTypeChoice
 import io.deepsense.deeplang.doperables.dataframe._
-import io.deepsense.deeplang.doperables.dataframe.types.Conversions
 import io.deepsense.deeplang.params.ColumnSelectorParam
 import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
 import io.deepsense.deeplang.params.selections.MultipleColumnSelection
@@ -48,15 +46,15 @@ case class TypeConverter() extends Transformer {
 
   override def _transform(context: ExecutionContext, dataFrame: DataFrame): DataFrame = {
     val targetType = getTargetType.columnType
-    val columns = dataFrame.getColumnNames(getSelectedColumns)
+    val columnsToConvert = dataFrame.getColumnNames(getSelectedColumns)
+    val allColumns = dataFrame.sparkDataFrame.schema.map(_.name)
 
-    logger.debug("Finding converters...")
-    val converters = findConverters(dataFrame, columns, targetType)
-    val columnsOldToNew = findColumnNameMapping(converters.keys, dataFrame)
-    logger.debug("Executing converters and selecting converted columns...")
-    val cleanedUpDf = convert(dataFrame, converters, columnsOldToNew)
-    logger.debug("Building DataFrame...")
-    DataFrame.fromSparkDataFrame(cleanedUpDf)
+    val transformingExpression =
+      buildTransformingExpression(allColumns, columnsToConvert.toSet, targetType)
+
+    val sparkDataFrame = dataFrame.sparkDataFrame.selectExpr(transformingExpression: _*)
+
+    DataFrame.fromSparkDataFrame(sparkDataFrame)
   }
 
   override def _transformSchema(schema: StructType): Option[StructType] = {
@@ -71,47 +69,19 @@ case class TypeConverter() extends Transformer {
     Some(StructType(convertedFields))
   }
 
-  private def findConverters(
-      dataFrame: DataFrame,
-      columns: Seq[String],
-      targetDataType: DataType): Map[String, UserDefinedFunction] = {
-    val columnDataTypes = columns
-      .map(n => n -> dataFrame.sparkDataFrame.schema.apply(n).dataType)
-      .toMap
+  private def buildTransformingExpression(
+    allColumns: Seq[String],
+    columnsToConvert: Set[String],
+    targetType: DataType): Seq[String] = {
+    val typeName = targetType.typeName
 
-    columnDataTypes.collect {
-      case (columnName, sourceDataType)
-        if sourceDataType != targetDataType =>
-          columnName -> Conversions.UdfConverters((sourceDataType, targetDataType))
-    }
-  }
-
-  private def findColumnNameMapping(columnsToConvert: Iterable[String], dataFrame: DataFrame) = {
-    val pairs = columnsToConvert.map(old => (old, dataFrame.uniqueColumnName(old, "convert_type")))
-    val oldToNew = pairs.toMap
-    oldToNew
-  }
-
-  private def convert(
-      dataFrame: DataFrame,
-      converters: Map[String, UserDefinedFunction],
-      columnsOldToNew: Map[String, String]) = {
-    val convertedColumns: Seq[Column] = converters.toSeq.map {
-      case (columnName: String, converter: UserDefinedFunction) =>
-        val column = converter(dataFrame.sparkDataFrame(columnName))
-        val alias = columnsOldToNew(columnName)
-        column.as(alias)
-    }
-    val dfWithConvertedColumns =
-      dataFrame.sparkDataFrame.select(new Column("*") +: convertedColumns: _*)
-    val correctColumns: Seq[Column] = dataFrame.sparkDataFrame.columns.toSeq.map(name => {
-      if (columnsOldToNew.contains(name)) {
-        new Column(columnsOldToNew(name)).as(name)
+    allColumns.map { column =>
+      if (columnsToConvert.contains(column)) {
+        s"cast(`$column` as $typeName) as `$column`"
       } else {
-        new Column(name)
+        s"`$column`"
       }
-    })
-    dfWithConvertedColumns.select(correctColumns: _*)
+    }
   }
 
   override def report(executionContext: ExecutionContext): Report = Report()
@@ -119,33 +89,29 @@ case class TypeConverter() extends Transformer {
 
 object TypeConverter {
 
-  sealed trait TargetTypeChoice extends Choice {
-    import TargetTypeChoice._
+  sealed abstract class TargetTypeChoice(val columnType: DataType) extends Choice {
+    override val choiceOrder: List[Class[_ <: Choice]] = TargetTypeChoices.choiceOrder
 
-    val columnType: DataType
-    override val choiceOrder: List[Class[_ <: Choice]] = List(
-      classOf[StringTargetTypeChoice],
-      classOf[NumericTargetTypeChoice])
+    override val params = declareParams()
+    val name = columnType.simpleString
   }
 
-  object TargetTypeChoice {
-    def fromColumnType(targetType: DataType): TargetTypeChoice = {
-      targetType match {
-        case StringType => StringTargetTypeChoice()
-        case DoubleType => NumericTargetTypeChoice()
-      }
-    }
+  object TargetTypeChoices {
+    val choiceOrder = List(
+      StringTargetTypeChoice(),
+      BooleanTargetTypeChoice(),
+      TimestampTargetTypeChoice(),
+      DoubleTargetTypeChoice(),
+      FloatTargetTypeChoice(),
+      LongTargetTypeChoice(),
+      IntegerTargetTypeChoice()).map(_.getClass)
 
-    case class StringTargetTypeChoice() extends TargetTypeChoice {
-      override val name = "string"
-      override val columnType = StringType
-      override val params = declareParams()
-    }
-
-    case class NumericTargetTypeChoice() extends TargetTypeChoice {
-      override val name = "numeric"
-      override val columnType = DoubleType
-      override val params = declareParams()
-    }
+    case class StringTargetTypeChoice() extends TargetTypeChoice(StringType)
+    case class DoubleTargetTypeChoice() extends TargetTypeChoice(DoubleType)
+    case class TimestampTargetTypeChoice() extends TargetTypeChoice(TimestampType)
+    case class BooleanTargetTypeChoice() extends TargetTypeChoice(BooleanType)
+    case class IntegerTargetTypeChoice() extends TargetTypeChoice(IntegerType)
+    case class FloatTargetTypeChoice() extends TargetTypeChoice(FloatType)
+    case class LongTargetTypeChoice() extends TargetTypeChoice(LongType)
   }
 }
