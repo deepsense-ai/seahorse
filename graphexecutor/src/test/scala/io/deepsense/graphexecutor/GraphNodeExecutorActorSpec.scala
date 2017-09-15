@@ -28,7 +28,7 @@ class GraphNodeExecutorActorSpec
   //    TestActorRef[GraphNodeExecutor](Props(new GraphNodeExecutor(ctx, node)))
   //  }
   //
-  //  test("GraphNodeExecutor should properly collect DOperables to pass them between DOperations") {
+  // test("GraphNodeExecutor should properly collect DOperables to pass them between DOperations") {
   //    val ctx = new ExecutionContext()
   //
   //    val nodeId1 = Node.Id.randomId
@@ -122,7 +122,7 @@ class GraphNodeExecutorActorSpec
   //    )
   //    Graph(nodes, edges)
   //  }
-  //}
+  // }
   //
   // ========== Jacek's Code End
 

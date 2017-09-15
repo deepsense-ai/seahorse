@@ -47,7 +47,7 @@ class GraphExecutorActorSpec
       graph = graph))
 
     class Wrapper(target: ActorRef) extends Actor {
-      def receive = {
+      def receive: Receive = {
         case x => target forward x
       }
     }
@@ -146,7 +146,8 @@ class GraphExecutorActorSpec
 
         val nodeId = Node.Id.randomId
         val updatedGraph = mock[Graph]
-        val updatedExperiment = experiment.copy(graph = updatedGraph, state = experiment.state.running)
+        val updatedExperiment =
+          experiment.copy(graph = updatedGraph, state = experiment.state.running)
         when(graph.markAsRunning(nodeId)) thenReturn updatedGraph
         geaRef ! GraphExecutorActor.Messages.NodeStarted(nodeId)
         gec.expectMsg(Update(updatedExperiment))

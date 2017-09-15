@@ -148,19 +148,10 @@ class EMtoGESpec
 
     system = ActorSystem(actorSystemName, akkaConfig)
     testProbe = TestProbe()
-    val gecMaker: (ActorRefFactory, String, String) => ActorRef = {
-      (f, entitystorageLabel, experimentId) =>
-        f.actorOf(
-          Props(new GraphExecutorClientActor(
-            entitystorageLabel,
-            DefaultClusterSpawner)),
-          experimentId)
-    }
     runningExperimentsActorRef = TestActorRef(
-      Props(classOf[RunningExperimentsActor],
-        SimpleGraphExecutionIntegSuiteEntities.Name,
-        3000L,
-        gecMaker),
+      Props(new RunningExperimentsActor(SimpleGraphExecutionIntegSuiteEntities.Name,
+        timeoutMillis = 3000L,
+        DefaultClusterSpawner) with ProductionGraphExecutorClientFactory),
       actorName)
   }
 

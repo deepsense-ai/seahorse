@@ -19,7 +19,6 @@ import io.deepsense.commons.auth.{AuthorizatorProvider, UserContextAuthorizator}
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.experimentmanager.ExperimentManagerImpl
 import io.deepsense.experimentmanager.exceptions.ExperimentNotFoundException
-import io.deepsense.experimentmanager.execution.RunningExperimentsActor._
 import io.deepsense.experimentmanager.storage.ExperimentStorage
 import io.deepsense.models.experiments.Experiment
 import io.deepsense.models.messages._
@@ -81,7 +80,7 @@ class ExperimentManagerImplSpec extends StandardSpec with UnitTestSupport {
 
       val eventualExperiment = experimentManager.get(id)
       probe.expectMsg(io.deepsense.models.messages.Get(id))
-      probe.reply(Status(None))
+      probe.reply(None)
       whenReady(eventualExperiment) { _.get shouldEqual storedExperiment }
     }
     "return running experiment" in {
@@ -91,7 +90,7 @@ class ExperimentManagerImplSpec extends StandardSpec with UnitTestSupport {
 
       val eventualExperiment = experimentManager.get(storedExperiment.id)
       probe.expectMsg(io.deepsense.models.messages.Get(storedExperiment.id))
-      probe.reply(Status(Some(runningExperiment)))
+      probe.reply(Some(runningExperiment))
       whenReady(eventualExperiment) { _.get shouldEqual runningExperiment }
     }
   }
@@ -119,7 +118,7 @@ class ExperimentManagerImplSpec extends StandardSpec with UnitTestSupport {
       }
     }
     "fail" when {
-      "the experiment is already running" in pending
+      "the experiment is already running" is pending
     }
   }
 
@@ -170,7 +169,7 @@ class ExperimentManagerImplSpec extends StandardSpec with UnitTestSupport {
         .thenReturn(Future.successful(storedExperiments))
 
       val mergedExperiments = experimentManager.experiments(None, None, None)
-      probe.expectMsg(GetAllByTenantId(Some(tenantId)))
+      probe.expectMsg(GetAllByTenantId(tenantId))
       probe.reply(ExperimentsMap(Map(tenantId -> Set(runningExperiment))))
       whenReady(mergedExperiments) { experimentsLists =>
         val experiments = experimentsLists.experiments

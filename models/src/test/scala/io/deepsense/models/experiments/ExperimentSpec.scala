@@ -22,15 +22,7 @@ class ExperimentSpec
       val experiment = newExperiment(Set.empty)
       experiment.updateState().state shouldBe Experiment.State.completed
     }
-    "return Running on graph with at least one running node" in {
-      val experiment = newExperiment(Set(
-        newNode().markDraft,
-        newNode().markFailed(mock[FailureDescription]),
-        newNode().markRunning.withProgress(0).markCompleted(Seq.empty),
-        newNode().markQueued,
-        newNode().markRunning))
-      experiment.updateState().state shouldBe Experiment.State.running
-    }
+    "return Running on graph with at least one running node" is pending
     "return Draft if all nodes are in draft" in {
       val experiment = newExperiment(Set(
         newNode().markDraft,

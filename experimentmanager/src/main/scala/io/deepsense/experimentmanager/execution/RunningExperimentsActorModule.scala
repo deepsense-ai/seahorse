@@ -19,7 +19,8 @@ class RunningExperimentsActorModule extends AbstractModule {
   @Named("RunningExperimentsActor")
   def provideRunningExperimentsActorRef(system: ActorSystem): ActorRef = {
     system.actorOf(
-      GuiceAkkaExtension(system).props[RunningExperimentsActor],
+      GuiceAkkaExtension(system).props[RunningExperimentsActor
+        with ProductionGraphExecutorClientFactory],
       "RunningExperimentsActor")
   }
 }

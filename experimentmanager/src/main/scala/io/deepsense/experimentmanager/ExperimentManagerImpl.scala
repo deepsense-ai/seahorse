@@ -107,7 +107,7 @@ class ExperimentManagerImpl @Inject()(
       val tenantExperimentsFuture: Future[Seq[Experiment]] =
         storage.list(userContext, limit, page, status)
       val runningExperimentsFuture: Future[Map[Id, Experiment]] = runningExperimentsActor
-        .ask(GetAllByTenantId(Some(userContext.tenantId)))
+        .ask(GetAllByTenantId(userContext.tenantId))
         .mapTo[ExperimentsMap]
         .map(_.experimentsByTenantId.getOrElse(userContext.tenantId, Set())
           .map(experiment => experiment.id -> experiment).toMap)
@@ -144,7 +144,8 @@ class ExperimentManagerImpl @Inject()(
       storage.get(id).flatMap {
         case Some(experiment) =>
           val ownedExperiment = experiment.assureOwnedBy(userContext)
-          val launchedExp = runningExperimentsActor.ask(Launch(ownedExperiment)).mapTo[Try[Experiment]]
+          val launchedExp = runningExperimentsActor.ask(Launch(ownedExperiment))
+            .mapTo[Try[Experiment]]
           launchedExp.map {
             case Success(e) => e
             case Failure(e) => throw new ExperimentRunningException(experiment.id)

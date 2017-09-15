@@ -18,7 +18,7 @@ case class Abort(experimentId: Id) extends RunningExperimentsActorMessage
 
 case class Get(experimentId: Id) extends RunningExperimentsActorMessage
 
-case class GetAllByTenantId(tenantId: Option[String]) extends RunningExperimentsActorMessage
+case class GetAllByTenantId(tenantId: String) extends RunningExperimentsActorMessage
 
 case class Update(experiment: Experiment) extends RunningExperimentsActorMessage
 
