@@ -1,5 +1,5 @@
 <div class="report-table-body table-responsive">
-  <table class="table table-striped table-hover">
+  <table class="table table-striped table-hover report-table">
     <thead>
     <tr>
       <th ng-repeat="columnName in table.columnNames"
@@ -14,7 +14,7 @@
       </th>
     </tr>
     </thead>
-    <tbody>
+    <tbody class="table-container">
     <tr ng-repeat="row in table.values">
       <td ng-repeat="value in row track by $index">
         <span ng-switch="value === null">

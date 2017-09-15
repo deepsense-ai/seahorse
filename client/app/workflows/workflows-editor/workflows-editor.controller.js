@@ -17,7 +17,7 @@ class WorkflowsEditorController {
     GraphNode, Edge,
     PageService, Operations, GraphPanelRendererService, WorkflowService, MouseEvent,
     ConfirmationModalService, ExportModalService, GraphNodesService,
-    NotificationService, ServerCommunication, CopyPasteService, SideBarService, WorkflowStatusBarService) {
+    NotificationService, ServerCommunication, CopyPasteService, SideBarService, BottomBarService, WorkflowStatusBarService) {
 
     this.Report = Report;
     this.ServerCommunication = ServerCommunication;
@@ -44,7 +44,8 @@ class WorkflowsEditorController {
     this.eventListeners = [];
     this.zoomId = 'flowchart-box';
     this.CopyPasteService = CopyPasteService;
-    this.data = SideBarService.data;
+    this.SideBarData = SideBarService.data;
+    this.BottomBarData = BottomBarService.tabsState;
     this.WorkflowStatusBarService = WorkflowStatusBarService;
     this.GraphNodesService = GraphNodesService;
     this.workflow = null;
@@ -76,13 +77,19 @@ class WorkflowsEditorController {
       let workflowId = data.workflowId;
       let workflow = this.WorkflowService.getWorkflowById(workflowId);
       let node = workflow.getNodeById(data.portObject.nodeId);
+
+      this.MultiSelectionService.clearSelection();
+      this.MultiSelectionService.addNodesToSelection([node.id]);
+      this.workflowIdForReport = workflowId;
+      this.nodeIdForReport = node.id;
+      this.selectedNode = node;
+      this.loadParametersForNode();
+
       let reportEntityId = node.getResult(data.reference.getParameter('portIndex'));
 
       if (this.Report.hasReportEntity(reportEntityId)) {
         this.Report.getReport(reportEntityId).then(report => {
-          this.reportName = '';
           this.report = report;
-          this.reportName = report.name;
           this.Report.openReport();
         });
       }
@@ -142,6 +149,15 @@ class WorkflowsEditorController {
       this.$scope.$digest();
     });
 
+    this.$scope.$on('OpenReportTab.SELECT_NODE', () => {
+      if (this.workflowIdForReport && this.nodeIdForReport) {
+        let workflow = this.WorkflowService.getWorkflowById(this.workflowIdForReport);
+        let node = workflow.getNodeById(this.nodeIdForReport);
+        this.selectedNode = node;
+        this.loadParametersForNode();
+      }
+    });
+
     this.$scope.$on('ServerCommunication.EXECUTION_FINISHED', () => {
       this.restoreEditableMode();
       this.isRunning = false;
@@ -158,13 +174,9 @@ class WorkflowsEditorController {
     this.$scope.$on('GraphNode.CLICK', (event, data) => {
       if (!data.originalEvent.ctrlKey) {
         this.selectedNode = data.selectedNode;
-        this.GraphNodesService.getNodeParameters(this.selectedNode).then((node, mode) => {
-          if (mode === 'sync') {
-            this.$scope.$digest();
-          }
-        });
+        this.loadParametersForNode();
       } else if (data.originalEvent.ctrlKey && this.selectedNode && this.selectedNode.id === data.selectedNode.id) {
-        this.selectedNode = null;
+        this.unselectNode();
       }
     });
 
@@ -261,6 +273,14 @@ class WorkflowsEditorController {
     ];
   }
 
+  loadParametersForNode() {
+    this.GraphNodesService.getNodeParameters(this.selectedNode).then((node, mode) => {
+      if (mode === 'sync') {
+        this.$scope.$digest();
+      }
+    });
+  }
+
   restoreEditableMode() {
     this.initUnbindableListeners();
     this.isReportMode = false;
@@ -301,7 +321,10 @@ class WorkflowsEditorController {
   }
 
   unselectNode() {
-    this.selectedNode = null;
+    if (this.selectedNode) {
+      this.MultiSelectionService.removeNodesFromSelection([this.selectedNode.id]);
+      this.selectedNode = null;
+    }
   }
 
 }

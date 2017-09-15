@@ -2,9 +2,10 @@
 
 let selectedNodes = [];
 class MultiSelectionService {
-
   /* @ngInject */
-  constructor() {}
+  constructor($rootScope) {
+    this.$rootScope = $rootScope;
+  }
 
   addNodesToSelection(nodes) {
     selectedNodes = _.union(selectedNodes, nodes);
@@ -15,6 +16,7 @@ class MultiSelectionService {
   }
 
   clearSelection() {
+    this.$rootScope.$broadcast('MultiSelection.CLEAR_ALL');
     selectedNodes = [];
   }
 

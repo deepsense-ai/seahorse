@@ -3,7 +3,7 @@
     <side-bar></side-bar>
 
     <operation-catalogue
-      ng-style="{'display' : workflow.data.operationCatalogue ? 'block' : 'none'}"
+      ng-style="{'display' : workflow.SideBarData.operationCatalogue ? 'block' : 'none'}"
       catalog-collection="::workflow.catalog"
       custom-scroll-bar
       toggle
@@ -58,17 +58,18 @@
     resizable-invisible="true"
     resizable-position="top"
     resizable-min-start="25"
+    ng-show="workflow.BottomBarData.reportTab"
   >
-    <tabify-tab label="Report">
-      <p class="o-tabify-tab__label"
-         ng-class="{'o-tabify-tab__label--active': workflow.report}">
-        <i class="fa fa-file-text"></i>
-        Report
-      </p>
-      <report
-        report="workflow.report"
-        ng-if="workflow.report"
-      ></report>
-    </tabify-tab>
+
+    <report
+      style="overflow-y: scroll;"
+      report="workflow.report"
+      ng-if="workflow.BottomBarData.reportTab"
+    >
+    </report>
+
   </section>
+
+  <bottom-bar></bottom-bar>
+
 </div>

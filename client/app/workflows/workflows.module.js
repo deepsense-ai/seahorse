@@ -23,4 +23,8 @@ require('./workflows-status-bar/menu-item/menu-item.controller.js').inject(workf
 require('./workflows-editor/side-bar/side-bar.directive.js').inject(workflows);
 require('./workflows-editor/side-bar/side-bar.controller.js').inject(workflows);
 require('./workflows-editor/side-bar/side-bar.service.js').inject(workflows);
+require('./workflows-editor/bottom-bar/bottom-bar.directive.js').inject(workflows);
+require('./workflows-editor/bottom-bar/bottom-bar.controller.js').inject(workflows);
+require('./workflows-editor/bottom-bar/bottom-bar.service.js').inject(workflows);
+
 module.exports = workflows;

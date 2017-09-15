@@ -38,3 +38,33 @@
     }
   }
 }
+
+.table-container {
+  max-height: 350px;
+}
+
+.report-table {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+  width: 100%;
+
+  thead {
+    display: table;
+    table-layout: fixed;
+    flex: 0 0 auto;
+    width: calc(100% - 0.9em);
+  }
+
+  tbody {
+    flex: 1 1 auto;
+    display: block;
+    overflow-y: auto;
+  }
+
+  tbody tr {
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+  }
+}

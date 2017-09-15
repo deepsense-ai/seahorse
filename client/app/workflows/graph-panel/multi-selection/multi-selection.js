@@ -280,6 +280,9 @@ class MultiSelection {
           id
         }));
       });
+      scope.$on('MultiSelection.CLEAR_ALL', (event) => {
+        that.clearAllFromSelection();
+      })
     };
 
     that.init();

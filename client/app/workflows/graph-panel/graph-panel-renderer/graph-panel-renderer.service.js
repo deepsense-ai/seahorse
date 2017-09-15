@@ -213,7 +213,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
           reference: port,
           portObject: ports[i],
           event: event,
-          workflowId: workflow.id,
+          workflowId: workflow.id
         });
 
         event.stopPropagation();

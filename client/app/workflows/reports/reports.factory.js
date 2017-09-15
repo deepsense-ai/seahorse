@@ -1,7 +1,7 @@
 'use strict';
 
 /* @ngInject */
-function ReportsFactory($q, $rootScope) {
+function ReportsFactory($q, $rootScope, BottomBarService) {
   let reportsStorage = new Map();
 
   let createReportEntities = (reportId, resultEntities) => {
@@ -37,16 +37,7 @@ function ReportsFactory($q, $rootScope) {
   };
 
   let openReport = () => {
-    $rootScope.$broadcast('Resizable.CHANGE', {
-      selector: '.c-workflow-container__content',
-      amount: '250px'
-    });
-
-    $rootScope.$broadcast('Resizable.FIT', {
-      name: 'height',
-      amount: '250px',
-      selector: '.c-bottom-tabs'
-    });
+    BottomBarService.activatePanel('reportTab');
   };
 
   return {

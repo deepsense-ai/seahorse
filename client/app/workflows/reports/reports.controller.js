@@ -6,17 +6,18 @@ var EVENTS = {
 };
 
 /* @ngInject */
-function ReportCtrl($scope, $rootScope, $uibModal, PageService) {
+function ReportCtrl($scope, $rootScope, $timeout, $uibModal, BottomBarService) {
   let that = this;
   let internal = {};
   let obj = {};
 
-  PageService.setTitle(`Report: ${this.currentReport.name}`);
+  if (this.currentReport) {
+    internal.name = this.currentReport.name;
+    internal.tables = this.currentReport.tables;
+    internal.distributions = this.currentReport.distributions || {};
+    internal.reportId = this.currentReport.reportId;
+  }
 
-  internal.name = this.currentReport.name;
-  internal.tables = this.currentReport.tables;
-  internal.distributions = this.currentReport.distributions || {};
-  internal.reportId = this.currentReport.reportId;
   internal.checkHeight = () => {
     if (!this.currentReport) {
       return false;
@@ -63,18 +64,7 @@ function ReportCtrl($scope, $rootScope, $uibModal, PageService) {
   };
 
   that.close = () => {
-    that.currentReport = null;
-
-    $rootScope.$broadcast('Resizable.CHANGE', {
-      selector: '.c-workflow-container__content',
-      amount: '25px'
-    });
-
-    $rootScope.$broadcast('Resizable.FIT', {
-      name: 'height',
-      amount: '25px',
-      selector: '.c-bottom-tabs'
-    });
+    BottomBarService.deactivatePanel('reportTab');
   };
 
   $scope.$on(EVENTS.SELECT_COLUMN, function(event, data) {

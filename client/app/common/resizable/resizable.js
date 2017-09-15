@@ -64,8 +64,8 @@ class Resizable {
             triggerEvent(dimensions.width);
           }
           if (dimensions.height) {
-            element[0].style.height = `${dimensions.height}px`;
-            triggerEvent(dimensions.height);
+            element[0].style.height = '25px';
+            triggerEvent(25);
           }
         } catch (e) {
           console.log(e);
@@ -79,7 +79,7 @@ class Resizable {
           localStorage.setItem(attrs.resizablePanelName, JSON.stringify({
             width: width
           }));
-        } else if (attrs.resizablePosition === 'top' && height) {
+        } else if (attrs.resizablePosition === 'top' && height && height > 50) {
           localStorage.setItem(attrs.resizablePanelName, JSON.stringify({
             height: height
           }));
@@ -114,10 +114,12 @@ class Resizable {
       });
 
       scope.$on('Resizable.FIT', (e, data) => {
-        if (data.name === 'height' && $(element[0]).is(data.selector)) {
-          element[0].style[data.name] = data.amount;
-          height = parseInt(element[0].style.height);
-        }
+        deps.$rootScope.$applyAsync(() => {
+          if (data.name === 'height' && $(element[0]).is(data.selector)) {
+            element[0].style[data.name] = data.amount;
+            height = parseInt(element[0].style.height);
+          }
+        });
       });
 
       resizeElement.css(attrs.resizablePosition, '+=' + attrs.resizableAddShift);
