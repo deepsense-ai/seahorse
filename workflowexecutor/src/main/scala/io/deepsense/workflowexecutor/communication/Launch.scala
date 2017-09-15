@@ -16,18 +16,27 @@
 
 package io.deepsense.workflowexecutor.communication
 
-import spray.json.{RootJsonFormat, DefaultJsonProtocol}
+import spray.json.{DefaultJsonProtocol, RootJsonFormat}
 
 import io.deepsense.commons.utils.Logging
-import io.deepsense.models.json.workflow.WorkflowVersionUtil
-import io.deepsense.models.workflows.WorkflowWithVariables
+import io.deepsense.graph.{DirectedGraph, Node}
+import io.deepsense.models.json.workflow.WorkflowJsonProtocol
+import io.deepsense.models.workflows.Workflow
 
-case class Launch(workflow: WorkflowWithVariables) extends ReadMessageMQ
+case class Launch(
+    workflowId: Workflow.Id,
+    workflow: DirectedGraph,
+    nodesToExecute: Seq[Node.Id])
+  extends ReadMessageMQ
 
 object Launch {
   val messageType: String = "launch"
 }
 
-trait LaunchJsonProtocol extends DefaultJsonProtocol with WorkflowVersionUtil with Logging {
-  implicit val launchFormat: RootJsonFormat[Launch] = jsonFormat1(Launch.apply)
+trait LaunchJsonProtocol
+    extends DefaultJsonProtocol
+    with Logging {
+  self: WorkflowJsonProtocol =>
+
+  implicit val launchFormat: RootJsonFormat[Launch] = jsonFormat3(Launch.apply)
 }

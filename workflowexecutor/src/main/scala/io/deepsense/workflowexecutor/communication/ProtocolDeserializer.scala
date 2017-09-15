@@ -18,13 +18,13 @@ package io.deepsense.workflowexecutor.communication
 
 import spray.json._
 
-import io.deepsense.commons.utils.Version
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
+import io.deepsense.models.json.workflow.WorkflowJsonProtocol
 
 case class ProtocolDeserializer(
-    override val graphReader: GraphReader,
-    override val currentVersion: Version)
+    override val graphReader: GraphReader)
   extends MQMessageDeserializer
+  with WorkflowJsonProtocol
   with ConnectJsonProtocol
   with LaunchJsonProtocol
   with GetPythonGatewayAddressJsonProtocol {

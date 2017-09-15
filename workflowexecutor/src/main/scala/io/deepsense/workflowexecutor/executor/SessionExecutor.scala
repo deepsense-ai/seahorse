@@ -66,7 +66,7 @@ case class SessionExecutor(
       ConnectionActor.props(factory),
       MQCommunication.mqActorSystemName)
 
-    val messageDeserializer = ProtocolDeserializer(graphReader, currentVersion)
+    val messageDeserializer = ProtocolDeserializer(graphReader)
     val communicationFactory = MQCommunicationFactory(system, connection, messageDeserializer)
 
     def createSeahorseSubscriber(publisher: MQPublisher): ActorRef =
