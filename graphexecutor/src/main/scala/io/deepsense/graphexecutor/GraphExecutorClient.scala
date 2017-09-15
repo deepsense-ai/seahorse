@@ -191,10 +191,14 @@ class GraphExecutorClient extends Closeable with LazyLogging {
     logger.debug("Prepared {}", command)
     amContainer.setCommands(List(command).asJava)
 
+    val geConf = Utils.getConfiguredLocalResource(new Path(Constants.GraphExecutorConfigLocation))
+    val esConf = Utils.getConfiguredLocalResource(new Path(Constants.EntityStorageConfigLocation))
     val geJar = Utils.getConfiguredLocalResource(new Path(Constants.GraphExecutorJarLocation))
     val geDepsJar =
       Utils.getConfiguredLocalResource(new Path(Constants.GraphExecutorDepsJarLocation))
     amContainer.setLocalResources(Map(
+      Constants.GraphExecutorConfName -> geConf,
+      Constants.EntityStorageConfName -> esConf,
       "graphexecutor.jar" -> geJar,
       "graphexecutor-deps.jar" -> geDepsJar
     ).asJava)

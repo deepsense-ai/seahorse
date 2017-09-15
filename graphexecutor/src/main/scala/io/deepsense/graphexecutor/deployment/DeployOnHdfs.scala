@@ -28,6 +28,9 @@ object DeployOnHdfs {
   val geJarPath = s"../graphexecutor/target/scala-2.11/$geJarFilename"
   val geDepsJarPath = s"../graphexecutor/target/scala-2.11/$geDepsJarFilename"
 
+  val geConfPath = getClass().getResource("/graphexecutor.conf").getPath
+  val esConfPath = "../deeplang/target/scala-2.11/classes/entitystorage-communication.conf"
+
   def main(args: Array[String]): Unit = {
     println("DeepSense.io deployment on HDFS starts")
 
@@ -56,6 +59,7 @@ object DeployOnHdfs {
       dsHdfsClient.hdfsClient.delete(Constants.GraphExecutorDepsJarLocation, true)
     }
     dsHdfsClient.hdfsClient.delete(Constants.GraphExecutorConfigLocation, true)
+    dsHdfsClient.hdfsClient.delete(Constants.EntityStorageConfigLocation, true)
 
     // Create DeepSense.io directories on HDFS
     dsHdfsClient.hdfsClient.mkdirs(
@@ -89,8 +93,11 @@ object DeployOnHdfs {
       dsHdfsClient.copyLocalFile(geDepsJarPath, Constants.GraphExecutorDepsJarLocation)
     }
     dsHdfsClient.copyLocalFile(
-      getClass().getResource("/graphexecutor.conf").getPath,
+      geConfPath,
       Constants.GraphExecutorConfigLocation)
+    dsHdfsClient.copyLocalFile(
+      esConfPath,
+      Constants.EntityStorageConfigLocation)
   }
 
   private def getHdfsAddressFromConfig(): String = {

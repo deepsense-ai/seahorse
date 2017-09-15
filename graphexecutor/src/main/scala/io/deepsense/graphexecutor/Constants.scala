@@ -78,4 +78,15 @@ object Constants {
    * Location of configuration file on cluster HDFS
    */
   val GraphExecutorConfigLocation = DeepSenseIoDeploymentDirectory + "/etc/" + GraphExecutorConfName
+
+  /**
+   *  Configuration file's name on cluster HDFS
+   */
+  val EntityStorageConfName = "entitystorage-communication.conf"
+
+  /**
+   * Location of configuration file on cluster HDFS
+   */
+  val EntityStorageConfigLocation =
+    DeepSenseIoDeploymentDirectory + "/etc/" + EntityStorageConfName
 }
