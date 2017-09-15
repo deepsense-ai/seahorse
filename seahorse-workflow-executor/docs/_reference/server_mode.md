@@ -107,6 +107,6 @@ services:
 </div>
 
 To learn more about using Seahorse in production and such features as security, additional authorization methods (LDAP, Google, etc.) or custom deployment requirements,
-please <a target="_blank" href="http://deepsense.ai/about-us/contact/#contact-form">contact us for details</a>.
+please <a target="_blank" href="https://deepsense.ai/contact">contact us for details</a>.
 
 {% include contact_box.html %}

@@ -49,7 +49,7 @@ It's recommended to run a single session at a time.
 This guarantees that multiple sessions don't compete for limited resources.
 
 To learn more about scaling up and using Seahorse in production,
-please <a target="_blank" href="http://deepsense.ai/about-us/contact/#contact-form">contact us for details</a>.
+please <a target="_blank" href="https://deepsense.ai/contact">contact us for details</a>.
 
 ## Changelog
 
@@ -64,8 +64,8 @@ please <a target="_blank" href="http://deepsense.ai/about-us/contact/#contact-fo
 * Completely redesigned UI for building workflows
 * Spark 2.0.2 support
 * Added operations:
-  * [Sort](/1.4/operations/sort.html)
-  * [SQL Combine](/1.4/operations/sql_combine.html)
+  * `Sort`
+  * `SQL Combine`
 
 #### Known Issues
 
@@ -83,24 +83,24 @@ please <a target="_blank" href="http://deepsense.ai/about-us/contact/#contact-fo
   * Upload and download datasets between local machine and Seahorse Library
   * Read and write data between Seahorse Library and Spark Cluster
 * Added operations:
-  * [R Notebook](/1.3/operations/r_notebook.html)
-  * [R Column Transformation](/1.3/operations/r_column_transformation.html)
-  * [R Transformation](/1.3/operations/r_transformation.html)
-  * [R Evaluator](/1.3/operations/r_evaluator.html)
-  * [Compose Datetime](/1.3/operations/compose_datetime.html)
+  * `R Notebook`
+  * `R Column Transformation`
+  * `R Transformation`
+  * `R Evaluator`
+  * `Compose Datetime`
 
 ### Seahorse 1.2
 
 #### What is New
 * Added operations:
   * Filtering:
-    * [Projection](/1.2/operations/projection.html)
+    * `Projection`
   * Transformation:
     * Feature Conversion:
-      * [Get From Vector](/1.2/operations/get_from_vector.html)
+      * `Get From Vector`
     * Model Evaluation
-      * [Python Evaluator](/1.2/operations/python_evaluator.html)
-* Extended [Split](/1.2/operations/split.html) and [Handle Missing Values](/1.2/operations/handle_missing_values.html) operations
+      * `Python Evaluator`
+* Extended `Split` and `Handle Missing Values` operations
 * Improved operations on vectors
 * Improved reports formatting
 
@@ -110,44 +110,44 @@ please <a target="_blank" href="http://deepsense.ai/about-us/contact/#contact-fo
 * Introduced model exporting.
 * Added operations:
   * Input/Output:
-    * [Read Transformer](/1.1/operations/read_transformer.html)
-    * [Write Transformer](/1.1/operations/write_transformer.html)
+    * `Read Transformer`
+    * `Write Transformer`
   * Machine Learning:
     * Classification:
-      * [Decision Tree Classifier](/1.1/operations/decision_tree_classifier.html)
-      * [Multilayer Perceptron Classifier](/1.1/operations/multilayer_perceptron_classifier.html)
-      * [Naive Bayes](/1.1/operations/naive_bayes.html)
-      * [Random Forest Classifier](/1.1/operations/random_forest_classifier.html)
+      * `Decision Tree Classifier`
+      * `Multilayer Perceptron Classifier`
+      * `Naive Bayes`
+      * `Random Forest Classifier`
     * Clustering:
-      * [LDA](/1.1/operations/lda.html)
+      * `LDA`
     * Feature Selection:
-      * [Chi-Squared Selector](/1.1/operations/chi-squared_selector.html)
+      * `Chi-Squared Selector`
     * Model Evaluation:
-      * [Binary Classification Evaluator](/1.1/operations/binary_classification_evaluator.html)
+      * `Binary Classification Evaluator`
         * F1 Score
         * Precision
         * Recall
     * Regression:
-      * [AFT Survival Regression](/1.1/operations/aft_survival_regression.html)
-      * [Decision Tree Regression](/1.1/operations/decision_tree_regression.html)
+      * `AFT Survival Regression`
+      * `Decision Tree Regression`
     * Transformation:
       * Custom:
         * SQL:
-          * [SQL Column Transformation](/1.1/operations/sql_column_transformation.html)
+          * `SQL Column Transformation`
       * Feature Conversion:
-        * [Quantile Discretizer](/1.1/operations/quantile_discretizer.html)
+        * `Quantile Discretizer`
 * Removed operations:
   * Transformation:
     * Feature Conversion:
-      * [Execute Mathematical Transformation](/1.0/operations/execute_mathematical_transformation.html) - replaced with more generic `SQL Column Transformation`.
+      * `Execute Mathematical Transformation` - replaced with more generic `SQL Column Transformation`.
 * Added a possibility to clone an existing workflow.
 * Introduced <a target="_blank" href="http://nvd3.org/">NVD3</a> library for charts presentation.
-* Added inference in [Custom Transformer](/1.1/operations/create_custom_transformer.html).
+* Added inference in `Custom Transformer`.
 
 #### Known Issues
-* [SQL Transformation](/1.1/operations/sql_transformation.html) does not accept some valid identifiers as `DATAFRAME ID` parameter value.
+* `SQL Transformation` does not accept some valid identifiers as `DATAFRAME ID` parameter value.
 The problem is caused by an Apache Spark bug <a target="_blank" href="https://issues.apache.org/jira/browse/SPARK-12982">SPARK-12982</a>.
-* [Fit](/1.1/operations/fit.html) on [Linear Regression](/1.1/operations/linear_regression.html) can fail with
+* `Fit` on `Linear Regression` can fail with
 `java.lang.AssertionError: assertion failed: lapack.dpotrs returned 65`.
 This problem is related to an Apache Spark issue <a target="_blank" href="https://issues.apache.org/jira/browse/SPARK-11918">SPARK-11918</a>.
 The workaround is to change `SOLVER` param of `Linear Regression` to **l-bfgs**.
@@ -161,15 +161,15 @@ The workaround is to change `SOLVER` param of `Linear Regression` to **l-bfgs**.
 * Added a possibility to execute selected operations only.
 * Redesigned the Operation Catalogue to reflect the structure of Spark ML.
 * Integrated <a target="_blank" href="http://jupyter.org/">Jupyter Notebook</a>.
-* Introduced custom code execution by a [Custom Python Operation](/1.0/operations/custom_python_operation.html)
-and a [Custom Python Column Operation](/1.0/operations/custom_python_column_operation.html).
-* Introduced [Custom Transformers](/1.0/operations/create_custom_transformer.html).
-* Added a [Grid Search](/1.0/operations/grid_search.html) operation for automatic hyperparameter tuning.
+* Introduced custom code execution by a `Custom Python Operation`
+and a `Custom Python Column Operation`.
+* Introduced `Custom Transformers`.
+* Added a `Grid Search` operation for automatic hyperparameter tuning.
 * Bundled set of workflow examples.
 
 #### Known Issues
-* [String Indexer](/1.0/operations/string_indexer.html), when operating on 1 column, returns a faulty `SingleStringIndexerModel`
-which cannot be supplied to a [Transform](/1.0/operations/transform.html) operation. However, the `StringIndexer`
-still can be used to transform a [DataFrame](/1.0/classes/dataframe.html).
+* `String Indexer`, when operating on 1 column, returns a faulty `SingleStringIndexerModel`
+which cannot be supplied to a `Transform` operation. However, the `StringIndexer`
+still can be used to transform a `DataFrame`.
 * `Execute Mathematical Transformation` fails if executed on a `DataFrame` containing columns
 with certain chars (e.g. spaces) in their names.

@@ -13,22 +13,22 @@ title: Seahorse Deployment
 ## Overview
 
 You can install and run Seahorse on your local computer
-or set it up in a server mode (for details see [Server Mode](../reference/server_mode.html) section).
+or set it up in a server mode (for details see [Server Mode](reference/server_mode.html) section).
 
 Seahorse
 * works with self-contained local Spark;
 * can connect to any external Spark cluster (YARN, Mesos or Spark Standalone);
 * works on multiple platforms, including
-<img src="../img/os_icons/windows.png" alt="Windows" height="18" width="18"> Windows,
-<img src="../img/os_icons/osx.png" alt="OS X" height="18" width="18"> OS X and
-<img src="../img/os_icons/linux.png" alt="Linux" height="18" width="18"> Linux.
+<img src="img/os_icons/windows.png" alt="Windows" height="18" width="18"> Windows,
+<img src="img/os_icons/osx.png" alt="OS X" height="18" width="18"> OS X and
+<img src="img/os_icons/linux.png" alt="Linux" height="18" width="18"> Linux.
 
-If you want to install Seahorse on <img src="../img/os_icons/linux.png" alt="Linux" height="18" width="18"> Linux
+If you want to install Seahorse on <img src="img/os_icons/linux.png" alt="Linux" height="18" width="18"> Linux
 you should use [Dockerized Seahorse](#dockerized-seahorse).
 
 If you want to install Seahorse on
-<img src="../img/os_icons/osx.png" alt="OS X" height="18" width="18"> OS X or
-<img src="../img/os_icons/windows.png" alt="Windows" height="18" width="18"> Windows
+<img src="img/os_icons/osx.png" alt="OS X" height="18" width="18"> OS X or
+<img src="img/os_icons/windows.png" alt="Windows" height="18" width="18"> Windows
 you should use [Seahorse as a Vagrant Image](#seahorse-as-a-vagrant-image).
 
 You can also build Seahorse from source code. Follow instructions at
@@ -38,7 +38,7 @@ Seahorse github repo
 
 ## Dockerized Seahorse
 
-**Works on:** <img src="../img/os_icons/linux.png" alt="Linux" height="18" width="18"> Linux
+**Works on:** <img src="img/os_icons/linux.png" alt="Linux" height="18" width="18"> Linux
 
 ### Installation
 
@@ -54,7 +54,7 @@ installing a complex application along with its dependencies without cluttering 
 * <a target="_blank" href="https://docs.docker.com/compose/">Docker Compose</a> (tested on versions
 1.7.0 and 1.7.1)
 * <a target="_blank" href="https://www.google.com/chrome/">Google Chrome</a> (version >= 51)
-or <a target="_blank" href="https://www.mozilla.org/firefox/">Mozilla Firefox</a> (version >= 48)
+or <a target="_blank" href="https://www.mozilla.org/en-US/firefox/">Mozilla Firefox</a> (version >= 48)
 
 **Running Seahorse**
 
@@ -87,9 +87,9 @@ Seahorse, it will be available under the address with the new port.
 
 ## Seahorse as a Vagrant Image
 
-**Works on:** <img src="../img/os_icons/osx.png" alt="OS X" height="18" width="18"> OS X,
-              <img src="../img/os_icons/windows.png" alt="Windows" height="18" width="18"> Windows,
-              <img src="../img/os_icons/linux.png" alt="Linux" height="18" width="18"> Linux
+**Works on:** <img src="img/os_icons/osx.png" alt="OS X" height="18" width="18"> OS X,
+              <img src="img/os_icons/windows.png" alt="Windows" height="18" width="18"> Windows,
+              <img src="img/os_icons/linux.png" alt="Linux" height="18" width="18"> Linux
 
 ### Installation
 
@@ -103,7 +103,7 @@ image.
 * <a target="_blank" href="https://www.virtualbox.org/">VirtualBox</a> (tested on version 5.0.10,
 there is an issue with version 5.0.12)
 * <a target="_blank" href="https://www.google.com/chrome/">Google Chrome</a> (version >= 51)
-or <a target="_blank" href="https://www.mozilla.org/firefox/">Mozilla Firefox</a> (version >= 48)
+or <a target="_blank" href="https://www.mozilla.org/en-US/firefox/">Mozilla Firefox</a> (version >= 48)
 
 **Running Seahorse**
 
@@ -170,6 +170,6 @@ install
 ## Seahorse in Production Environment
 
 To learn more about scaling up and using Seahorse in production,
-please <a target="_blank" href="http://deepsense.ai/about-us/contact/#contact-form">contact us for details</a>.
+please <a target="_blank" href="https://deepsense.ai/contact">contact us for details</a>.
 
 {% include contact_box.html %}
