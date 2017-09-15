@@ -27,8 +27,7 @@ import org.joda.time.{DateTime, DateTimeZone}
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.commons.types.ColumnType._
 import io.deepsense.deeplang.DeeplangIntegTestSupport
-import io.deepsense.deeplang.doperables.TypeConverter.TargetTypeChoice
-import io.deepsense.deeplang.doperables.TypeConverter.TargetTypeChoices.{DoubleTargetTypeChoice, StringTargetTypeChoice}
+import io.deepsense.deeplang.doperables.TargetTypeChoices.{DoubleTargetTypeChoice, StringTargetTypeChoice}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException
 import io.deepsense.deeplang.params.selections.{IndexColumnSelection, MultipleColumnSelection, NameColumnSelection, TypeColumnSelection}

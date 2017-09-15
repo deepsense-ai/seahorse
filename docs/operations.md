@@ -33,6 +33,7 @@ List of all currently supported operations:
 * Transformation
   * [Create Custom Transformer](operations/create_custom_transformer.html)
   * [Custom Python Operation](operations/custom_python_operation.html)
+  * [Custom Python Column Operation](operations/custom_python_column_operation.html)
   * Feature Conversion
     * [Assemble Vector](operations/assemble_vector.html)
     * [Binarize](operations/binarize.html)

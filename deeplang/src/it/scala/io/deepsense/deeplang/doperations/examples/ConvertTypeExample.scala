@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.doperations.examples
 
-import io.deepsense.deeplang.doperables.TypeConverter.TargetTypeChoices.IntegerTargetTypeChoice
+import io.deepsense.deeplang.doperables.TargetTypeChoices.IntegerTargetTypeChoice
 import io.deepsense.deeplang.doperations.ConvertType
 
 class ConvertTypeExample extends AbstractOperationExample[ConvertType] {

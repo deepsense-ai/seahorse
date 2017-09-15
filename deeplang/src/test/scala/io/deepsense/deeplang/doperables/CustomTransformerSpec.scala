@@ -44,7 +44,7 @@ class CustomTransformerSpec extends UnitSpec {
 
   val innerNodeOperation = {
     val params = TypeConverter()
-      .setTargetType(TypeConverter.TargetTypeChoices.StringTargetTypeChoice())
+      .setTargetType(TargetTypeChoices.StringTargetTypeChoice())
       .setSelectedColumns(MultipleColumnSelection(Vector(NameColumnSelection(Set("column1")))))
       .paramValuesToJson
     new ConvertType().setParamsFromJson(params)

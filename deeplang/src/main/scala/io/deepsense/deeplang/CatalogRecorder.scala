@@ -46,6 +46,7 @@ object CatalogRecorder {
     catalog.registerDOperable[SqlExpression]()
     catalog.registerDOperable[TypeConverter]()
     catalog.registerDOperable[CustomTransformer]()
+    catalog.registerDOperable[CustomPythonColumnOperationTransformer]()
 
     // wrapped Spark ML estimators & models
     catalog.registerDOperable[LogisticRegression]()
@@ -151,6 +152,9 @@ object CatalogRecorder {
       DOperationCategories.Transformation)
 
     catalog.registerDOperation[CustomPythonOperation](
+      DOperationCategories.Transformation)
+
+    catalog.registerDOperation[CustomPythonColumnOperation](
       DOperationCategories.Transformation)
 
     catalog.registerDOperation[ExecuteMathematicalTransformation](

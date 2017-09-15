@@ -19,7 +19,7 @@ package io.deepsense.deeplang.doperables
 import org.apache.spark.sql.types._
 
 import io.deepsense.deeplang._
-import io.deepsense.deeplang.doperables.TypeConverter.TargetTypeChoice
+import io.deepsense.deeplang.doperables.TargetTypeChoice
 import io.deepsense.deeplang.doperables.dataframe._
 import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
@@ -53,34 +53,5 @@ case class TypeConverter() extends MultiColumnTransformer {
     MultiColumnTransformer.assertColumnExist(inputColumn, schema)
     MultiColumnTransformer.assertColumnDoesNotExist(outputColumn, schema)
     Some(schema.add(StructField(outputColumn, getTargetType.columnType, nullable = true)))
-  }
-}
-
-object TypeConverter {
-
-  sealed abstract class TargetTypeChoice(val columnType: DataType) extends Choice {
-    override val choiceOrder: List[Class[_ <: Choice]] = TargetTypeChoices.choiceOrder
-
-    override val params = declareParams()
-    val name = columnType.simpleString
-  }
-
-  object TargetTypeChoices {
-    val choiceOrder = List(
-      StringTargetTypeChoice(),
-      BooleanTargetTypeChoice(),
-      TimestampTargetTypeChoice(),
-      DoubleTargetTypeChoice(),
-      FloatTargetTypeChoice(),
-      LongTargetTypeChoice(),
-      IntegerTargetTypeChoice()).map(_.getClass)
-
-    case class StringTargetTypeChoice() extends TargetTypeChoice(StringType)
-    case class DoubleTargetTypeChoice() extends TargetTypeChoice(DoubleType)
-    case class TimestampTargetTypeChoice() extends TargetTypeChoice(TimestampType)
-    case class BooleanTargetTypeChoice() extends TargetTypeChoice(BooleanType)
-    case class IntegerTargetTypeChoice() extends TargetTypeChoice(IntegerType)
-    case class FloatTargetTypeChoice() extends TargetTypeChoice(FloatType)
-    case class LongTargetTypeChoice() extends TargetTypeChoice(LongType)
   }
 }
