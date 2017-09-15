@@ -55,7 +55,7 @@ abstract class EstimatorAsOperation[T <: Estimator]
     ((dataFrameKnowledge, transformerKnowledge), warnings)
   }
 
-  override val tTagTI_0: TypeTag[DataFrame] = typeTag[DataFrame]
-  override val tTagTO_0: TypeTag[DataFrame] = typeTag[DataFrame]
-  override val tTagTO_1: TypeTag[Transformer] = typeTag[Transformer]
+  override lazy val tTagTI_0: TypeTag[DataFrame] = typeTag[DataFrame]
+  override lazy val tTagTO_0: TypeTag[DataFrame] = typeTag[DataFrame]
+  override lazy val tTagTO_1: TypeTag[Transformer] = typeTag[Transformer]
 }

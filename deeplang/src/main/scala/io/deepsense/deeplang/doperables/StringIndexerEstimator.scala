@@ -23,7 +23,7 @@ import org.apache.spark.ml.feature.{StringIndexer => SparkStringIndexer, StringI
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.params.Param
 
-class StringIndexer
+class StringIndexerEstimator
   extends SparkMultiColumnEstimatorWrapper[
     SparkStringIndexerModel,
     SparkStringIndexer,

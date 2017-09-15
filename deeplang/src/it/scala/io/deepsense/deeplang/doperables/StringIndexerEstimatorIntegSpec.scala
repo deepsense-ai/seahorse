@@ -16,17 +16,17 @@
 
 package io.deepsense.deeplang.doperables
 
-import io.deepsense.deeplang.doperables.StringIndexerIntegSpec.{IndexedR, MultiIndexedR, R}
+import io.deepsense.deeplang.doperables.StringIndexerEstimatorIntegSpec.{IndexedR, MultiIndexedR, R}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.NoInPlaceChoice
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.deeplang.{DKnowledge, DeeplangIntegTestSupport}
 
-class StringIndexerIntegSpec extends DeeplangIntegTestSupport {
+class StringIndexerEstimatorIntegSpec extends DeeplangIntegTestSupport {
 
-  "StringIndexer" should {
+  "StringIndexerEstimator" should {
     "convert single column" in {
-      val si = new StringIndexer()
+      val si = new StringIndexerEstimator()
       si.setSingleColumn("a", "overriddenBelow")
       val t = si.fit(executionContext)(())(inputDataFrame)
         .asInstanceOf[SingleStringIndexerModel]
@@ -42,7 +42,7 @@ class StringIndexerIntegSpec extends DeeplangIntegTestSupport {
         checkNullability = false)
     }
     "convert multiple columns" in {
-      val si = new StringIndexer()
+      val si = new StringIndexerEstimator()
       val outputPrefix = "idx"
       si.setMultipleColumn(Set("a", "b"), outputPrefix)
 
@@ -57,7 +57,7 @@ class StringIndexerIntegSpec extends DeeplangIntegTestSupport {
         checkNullability = false)
     }
     "infer knowledge in single-column mode" in {
-      val si = new StringIndexer()
+      val si = new StringIndexerEstimator()
       si.setSingleColumn("a", "out")
 
       val inputKnowledge: DKnowledge[DataFrame] = DKnowledge(Set(inputDataFrame))
@@ -73,7 +73,7 @@ class StringIndexerIntegSpec extends DeeplangIntegTestSupport {
       assertSchemaEqual(inferredSchema, outputDataFrame.schema.get)
     }
     "infer knowledge in multi-column mode" in {
-      val si = new StringIndexer()
+      val si = new StringIndexerEstimator()
       val outputPrefix = "idx"
       si.setMultipleColumn(Set("a", "b"), outputPrefix)
 
@@ -128,7 +128,7 @@ class StringIndexerIntegSpec extends DeeplangIntegTestSupport {
   }
 }
 
-object StringIndexerIntegSpec {
+object StringIndexerEstimatorIntegSpec {
   case class R(a: String, b: String, c: String)
   case class IndexedR(a: String, b: String, c: String, out: Double)
   case class MultiIndexedR(a: String, b: String, c: String, idx_a: Double, idx_b: Double)

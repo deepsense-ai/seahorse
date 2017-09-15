@@ -69,7 +69,7 @@ object CatalogRecorder {
     catalog.registerDOperable[MinMaxScalerModel]()
     catalog.registerDOperable[VectorIndexer]()
     catalog.registerDOperable[VectorIndexerModel]()
-    catalog.registerDOperable[StringIndexer]()
+    catalog.registerDOperable[StringIndexerEstimator]()
     catalog.registerDOperable[StringIndexerModel]()
     catalog.registerDOperable[SingleStringIndexerModel]()
     catalog.registerDOperable[Word2Vec]()
@@ -201,6 +201,9 @@ object CatalogRecorder {
 
     // operations generated from Spark transformers
     catalog.registerDOperation[Binarize](
+      DOperationCategories.Transformation)
+
+    catalog.registerDOperation[StringIndexer](
       DOperationCategories.Transformation)
 
     catalog.registerDOperation[DCT](
