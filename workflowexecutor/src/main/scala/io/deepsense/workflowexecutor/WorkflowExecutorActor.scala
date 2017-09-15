@@ -28,6 +28,7 @@ import io.deepsense.deeplang.{CommonExecutionContext, DOperable, ExecutionContex
 import io.deepsense.graph._
 import io.deepsense.models.workflows._
 import io.deepsense.reportlib.model.ReportContent
+import io.deepsense.workflowexecutor.WorkflowManagerClientActorProtocol.SaveState
 import io.deepsense.workflowexecutor.WorkflowManagerClientActorProtocol.SaveWorkflow
 import io.deepsense.workflowexecutor.communication.message.workflow.ExecutionStatus
 import io.deepsense.workflowexecutor.partialexecution._
@@ -133,6 +134,9 @@ abstract class WorkflowExecutorActor(
     logger.debug(s"Status for '$workflowId': Error: ${executionStatus.executionReport.error}, " +
       s"States of nodes: ${executionStatus.executionReport.nodesStatuses.mkString("\n")}")
     publisher.foreach(_ ! executionStatus)
+    workflowManagerClientActor.get ! SaveState(
+      workflowId,
+      executionStatus.executionReport)
   }
 
   def executionToStatus(execution: Execution): ExecutionStatus = {
