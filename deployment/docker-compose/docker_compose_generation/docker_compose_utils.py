@@ -10,6 +10,7 @@ class Services(object):
 
     def add_service(self, service):
         self.services.append(service)
+        service.service_no = len(self.services) - 1
 
     def __getattr__(self, item):
         return [s for s in self.services if s.name().lower() == item.lower()][0]
@@ -51,9 +52,12 @@ class Subnet(object):
         return "Subnet('{}')".format(self.as_string())
 
     def default_gateway(self):
+        return self.subnet_ip(1)
+
+    def subnet_ip(self, ip_offset=0):
         return socket.inet_ntoa(
             struct.pack(
-                "!I", struct.unpack("!I", socket.inet_aton(self.ip))[0] + 1))
+                "!I",  struct.unpack("!I", socket.inet_aton(self.ip))[0] + ip_offset))
 
     @classmethod
     def masked_ip(cls, ip, mask_length):
@@ -90,6 +94,7 @@ class PortMappings(object):
 
     def __init__(self):
         self.mappings = {}
+        self.generate = False
 
     def add(self, mapping, name=None):
         assert isinstance(mapping, PortMappings.Mapping)

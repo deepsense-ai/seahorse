@@ -33,12 +33,18 @@ class Service(object):
     def __init__(self, services, generation_config):
         self.services = services
         self.generation_config = generation_config
+        self.service_no = -1
 
     def exposed_address(self, name=None):
         return Address('127.0.0.1', self.port_mapping().get(name).exposed)
 
     def internal_address(self, name=None):
         return Address(self.name(), self.port_mapping().get(name).internal)
+
+    def internal_ip(self, name=None):
+        address = self.internal_address(name)
+        address.host = self.generation_config.subnet.subnet_ip(self.service_no + 2)
+        return address
 
     def port_mapping(self):
         return PortMappings()
@@ -99,7 +105,9 @@ class Proxy(Service):
                self.services.WorkflowManager.credentials().as_env()
 
     def port_mapping(self):
-        return PortMappings().add(PortMappings.Mapping(33321, 33321))
+        mappings = PortMappings().add(PortMappings.Mapping(33321, 33321))
+        mappings.generate = True
+        return mappings
 
     def service_address(self, service, name=None):
         return getattr(self.services, service.name()).internal_address(name).as_string()
@@ -205,9 +213,9 @@ class SessionManager(Service):
         return Env(
             SM_HOST=self.generation_config.gateway,
             SM_PORT=self.port_mapping().get().internal,
-            JDBC_URL=self.services.Database.exposed_jdbc_url(db='sessionmanager'),
-            NOTEBOOK_SERVER_ADDRESS='http://{}'.format(self.services.Notebooks.exposed_address().as_string()),
-            DATASOURCE_SERVER_ADDRESS=self.services.DatasourceManager.exposed_datasource_url(),
+            JDBC_URL=self.services.Database.internal_ip_jdbc_url(db='sessionmanager'),
+            NOTEBOOK_SERVER_ADDRESS='http://{}'.format(self.services.Notebooks.internal_ip().as_string()),
+            DATASOURCE_SERVER_ADDRESS=self.services.DatasourceManager.internal_ip_datasource_url(),
             SX_PARAM_SESSION_EXECUTOR_PATH='/opt/docker/we.jar',
             SX_PARAM_SESSION_EXECUTOR_DEPS_PATH='/opt/docker/we-deps.zip',
             SX_PARAM_PYTHON_EXECUTOR_BINARY='python',
@@ -215,11 +223,11 @@ class SessionManager(Service):
             SX_PARAM_SPARK_APPLICATIONS_LOGS_DIR='/spark_applications_logs',
             SX_PARAM_TEMP_DIR='/tmp/seahorse/download',
             SX_PARAM_PYTHON_DRIVER_BINARY='/opt/conda/bin/python',
-            SX_PARAM_WM_ADDRESS=self.services.WorkflowManager.exposed_address().as_string()) + \
+            SX_PARAM_WM_ADDRESS=self.services.WorkflowManager.internal_ip().as_string()) + \
                self.services.RabbitMQ.credentials().as_env() + \
-               self.services.RabbitMQ.exposed_address().as_env('MQ_HOST', 'MQ_PORT') + \
+               self.services.RabbitMQ.internal_ip().as_env('MQ_HOST', 'MQ_PORT') + \
                self.services.WorkflowManager.credentials().as_env('SX_PARAM_WM_AUTH_USER', 'SX_PARAM_WM_AUTH_PASS') + \
-               self.services.Mail.exposed_address().as_env('MAIL_SERVER_HOST', 'MAIL_SERVER_PORT')
+               self.services.Mail.internal_ip().as_env('MAIL_SERVER_HOST', 'MAIL_SERVER_PORT')
 
     def port_mapping(self):
         return PortMappings().add(PortMappings.Mapping(9082, 60100))
@@ -260,6 +268,10 @@ class SessionManagerBridgeNetwork(SessionManager):
                    SX_PARAM_WM_ADDRESS=self.services.WorkflowManager.internal_address().as_string()) + \
                self.services.RabbitMQ.internal_address().as_env('MQ_HOST', 'MQ_PORT') + \
                self.services.Mail.internal_address().as_env('MAIL_SERVER_HOST', 'MAIL_SERVER_PORT')
+
+    def internal_address(self, name=None):
+        return Address(self.name(), self.port_mapping().get(name).internal)
+
 
 
 class WorkflowManager(Service):
@@ -368,6 +380,9 @@ class Database(Service):
     def internal_jdbc_url(self, db):
         return 'jdbc:h2:tcp://{}/{};DATABASE_TO_UPPER=false;DB_CLOSE_DELAY=-1'.format(self.internal_address(), db)
 
+    def internal_ip_jdbc_url(self, db):
+        return 'jdbc:h2:tcp://{}/{};DATABASE_TO_UPPER=false;DB_CLOSE_DELAY=-1'.format(self.internal_ip(), db)
+
     def exposed_jdbc_url(self, db):
         return 'jdbc:h2:tcp://{}/{};DATABASE_TO_UPPER=false;DB_CLOSE_DELAY=-1'.format(self.exposed_address(), db)
 
@@ -454,6 +469,9 @@ class DataSourceManager(Service):
 
     def exposed_datasource_url(self):
         return 'http://{}/datasourcemanager/v1/'.format(self.exposed_address())
+
+    def internal_ip_datasource_url(self):
+       return 'http://{}/datasourcemanager/v1/'.format(self.internal_ip())
 
 
 class Library(Service):

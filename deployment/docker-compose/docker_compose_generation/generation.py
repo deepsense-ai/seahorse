@@ -57,9 +57,18 @@ class ServiceGeneration(object):
             'depends_on': [c.name() for c in self.service.depends_on()] or None,
             'links': [c.name() for c in self.service.links()] or None,
             'volumes': self.service.volumes() or None,
-            'ports': [Ports.exposed_on_localhost(pm.exposed, pm.internal) for pm in self.service.port_mapping()],
+            'ports': [Ports.exposed_on_localhost(pm.exposed, pm.internal)
+                      for pm in self.service.port_mapping()
+                      if self.service.port_mapping().generate],
             'restart': self.service.restart
         }
+
+        if self.service.network_mode != 'host':
+            properties['networks'] = {
+                'default': {
+                    'ipv4_address': self.service.internal_ip().host
+                }
+            }
 
         return self.service.name(), {k: v for (k, v) in properties.iteritems() if v is not None}
 
