@@ -16,7 +16,7 @@ object Version {
   val slick = "3.1.1"
   val spray = "1.3.3"
   val sprayJson = "1.3.1"
-  val seahorse = "1.1.0-SNAPSHOT"
+  val seahorse = "1.1.0"
 }
 
 object Library {
