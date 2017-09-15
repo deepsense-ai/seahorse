@@ -17,6 +17,7 @@ import io.deepsense.experimentmanager.config.TestInjectable.Params
 class ConfigModuleSpec extends FunSpec with Matchers {
   def loadConfig(fileName: String): Config = {
     System.setProperty("config.trace", "loads")
+    ConfigFactory.invalidateCaches()
     ConfigFactory.load(fileName)
   }
 

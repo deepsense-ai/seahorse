@@ -10,36 +10,64 @@ import java.util.UUID
 
 import scala.concurrent._
 
-
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
-import spray.http.{HttpRequest, StatusCodes}
+import spray.http.StatusCodes
 
+import io.deepsense.experimentmanager.app.exceptions.ExperimentNotFoundException
 import io.deepsense.experimentmanager.app.models.Experiment.Status
 import io.deepsense.experimentmanager.app.models.Graph.Node
-import io.deepsense.experimentmanager.app.{ExperimentManagerProvider, ExperimentManager}
-import io.deepsense.experimentmanager.app.exceptions.ExperimentNotFoundException
 import io.deepsense.experimentmanager.app.models.{Experiment, Graph, Id, InputExperiment}
 import io.deepsense.experimentmanager.app.rest.actions.{AbortAction, LaunchAction}
 import io.deepsense.experimentmanager.app.rest.json.RestJsonProtocol._
-import io.deepsense.experimentmanager.auth.exceptions.{ResourceAccessDeniedException, NoRoleException}
-import io.deepsense.experimentmanager.auth.usercontext.{Role, CannotGetUserException, TokenTranslator, UserContext}
+import io.deepsense.experimentmanager.app.{ExperimentManager, ExperimentManagerProvider}
+import io.deepsense.experimentmanager.auth.exceptions.{NoRoleException, ResourceAccessDeniedException}
+import io.deepsense.experimentmanager.auth.usercontext.{CannotGetUserException, Role, TokenTranslator, UserContext}
 import io.deepsense.experimentmanager.{StandardSpec, UnitTestSupport}
 
 class RestApiSpec extends StandardSpec with UnitTestSupport {
-
-  val inputExperiment = InputExperiment("test name", "test description", Graph())
 
   case class LaunchActionWrapper(launch: LaunchAction)
   case class AbortActionWrapper(abort: AbortAction)
   implicit val launchWrapperFormat = jsonFormat1(LaunchActionWrapper.apply)
   implicit val abortWrapperFormat = jsonFormat1(AbortActionWrapper.apply)
 
-  val validAuthTokenTenantA = "A" // TODO: def -> with all roles
-  val validAuthTokenTenantB = "B" // TODO: def -> with no roles
-  val rolesForTenantA = Set(
+  /**
+   * Returns an InputExperiment. Used for testing Experiment creation.
+   */
+  def inputExperiment: InputExperiment = InputExperiment("test name", "test description", Graph())
+
+  def tenantAId: String = "A"
+  def tenantBId: String = "B"
+
+  /**
+   * A valid Auth Token of a user of tenant A. This user has to have roles
+   * for all actions in ExperimentManager
+   */
+  def validAuthTokenTenantA: String = tenantAId
+
+  /**
+   * A valid Auth Token of a user of tenant B. This user has to have no roles.
+   */
+  def validAuthTokenTenantB: String = tenantBId
+
+  val experimentAId = UUID.randomUUID()
+  val experimentBId = UUID.randomUUID()
+
+  def experimentOfTenantA = Experiment(
+    experimentAId,
+    tenantAId,
+    "Experiment of Tenant A")
+
+  def experimentOfTenantB = Experiment(
+    experimentBId,
+    tenantBId,
+    "Experiment of Tenant B")
+
+  // roles mock
+  private val rolesForTenantA = Set(
       new Role("experiments:get"),
       new Role("experiments:list"),
       new Role("experiments:delete"),
@@ -47,16 +75,6 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
       new Role("experiments:create"),
       new Role("experiments:launch"),
       new Role("experiments:about"))
-
-  val experimentOfTenantA = Experiment(
-    UUID.randomUUID(),
-    "A",
-    "Experiment of Tenant A")
-
-  val experimentOfTenantB = Experiment(
-    UUID.randomUUID(),
-    "B",
-    "Experiment of Tenant B")
 
   protected def testRoute = {
     val tokenTranslator = mock[TokenTranslator]
@@ -108,7 +126,7 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
           status should be(StatusCodes.Unauthorized)
         }
       }
-      "the user has not the requested role (on NoRoleExeption)" in {
+      "the user does not have the requested role (on NoRoleExeption)" in {
         Get("/experiments") ~>
           addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
@@ -129,7 +147,7 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
           status should be(StatusCodes.Unauthorized)
         }
       }
-      "the user has not the requested role (on NoRoleExeption)" in {
+      "the user does not have the requested role (on NoRoleExeption)" in {
         Get("/experiments/" + UUID.randomUUID()) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
@@ -157,7 +175,7 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
     }
     "return an experiment" when {
       "auth token is correct, user has roles and the experiment belongs to him" in {
-        Get("/experiments/" + experimentOfTenantA.id.toString) ~>
+        Get("/experiments/" + experimentOfTenantA.id) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
           val response = responseAs[Experiment]
@@ -197,7 +215,7 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
           status should be(StatusCodes.Unauthorized)
         }
       }
-      "the user has not the requested role (on NoRoleExeption)" in {
+      "the user does not have the requested role (on NoRoleExeption)" in {
         Delete("/experiments/" + UUID.randomUUID()) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
@@ -222,7 +240,7 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
             'name (inputExperiment.name),
             'description (inputExperiment.description),
             'graph (inputExperiment.graph),
-            'tenantId (validAuthTokenTenantA)
+            'tenantId (tenantAId)
           )
         }
       }
@@ -234,7 +252,7 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
           status should be(StatusCodes.Unauthorized)
         }
       }
-      "the user has not the requested role (on NoRoleExeption)" in {
+      "the user does not have the requested role (on NoRoleExeption)" in {
         Post("/experiments", inputExperiment) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
@@ -250,21 +268,23 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
 
   "POST /experiments/:id/action (with LaunchAction)" should {
     "return Unauthorized" when {
-      val launchAction = LaunchActionWrapper(LaunchAction(Some(List(experimentOfTenantA.id))))
+      def launchAction = LaunchActionWrapper(LaunchAction(Some(List(experimentOfTenantA.id))))
       "invalid auth token was send (when InvalidTokenException occures)" in {
         Post(s"/experiments/${experimentOfTenantA.id}/action", launchAction) ~>
           addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
-      "the user has not the requested role (on NoRoleExeption)" in {
+      "the user does not have the requested role (on NoRoleExeption)" in {
         Post(s"/experiments/${experimentOfTenantA.id}/action", launchAction) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
       "no auth token was send (on MissingHeaderRejection)" in {
-        Post(s"/experiments/${experimentOfTenantA.id}/action", launchAction) ~> testRoute ~> check {
+        Post(
+          s"/experiments/${experimentOfTenantA.id}/action",
+          launchAction) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
@@ -308,7 +328,7 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
           status should be(StatusCodes.Unauthorized)
         }
       }
-      "the user has not the requested role (on NoRoleExeption)" in {
+      "the user does not have the requested role (on NoRoleExeption)" in {
         Post(s"/experiments/${experimentOfTenantA.id}/action", abortAction) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
@@ -352,7 +372,13 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
   "PUT /experiments/:id" should {
     "update the experiment and return Ok" when {
       "user updates his experiment" in {
-        val newExperiment = Experiment(experimentOfTenantA.id, "asd", "New Name", "New Desc", Graph())
+        val newExperiment = Experiment(
+          experimentOfTenantA.id,
+          tenantAId,
+          "New Name",
+          "New Desc",
+          Graph())
+
         Put(s"/experiments/${experimentOfTenantA.id}", newExperiment) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
@@ -368,14 +394,26 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
     }
     "return NotFound" when {
       "the experiment does not exist" in {
-        val newExperiment = Experiment(UUID.randomUUID(), "asd", "New Name", "New Desc", Graph())
+        val newExperiment = Experiment(
+          UUID.randomUUID(),
+          tenantAId,
+          "New Name",
+          "New Desc",
+          Graph())
+
         Put(s"/experiments/${newExperiment.id}", newExperiment) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
       }
       "the user has no right to that experiment" in {
-        val newExperiment = Experiment(experimentOfTenantB.id, "asd", "New Name", "New Desc", Graph())
+        val newExperiment = Experiment(
+          experimentOfTenantB.id,
+          tenantBId,
+          "New Name",
+          "New Desc",
+          Graph())
+
         Put(s"/experiments/${experimentOfTenantB.id}", newExperiment) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
@@ -390,7 +428,7 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
           status should be(StatusCodes.Unauthorized)
         }
       }
-      "the user has not the requested role (on NoRoleExeption)" in {
+      "the user does not have the requested role (on NoRoleExeption)" in {
         Put("/experiments/" + newExperiment.id, newExperiment) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)

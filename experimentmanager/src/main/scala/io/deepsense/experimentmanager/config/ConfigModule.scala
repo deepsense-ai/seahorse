@@ -56,6 +56,7 @@ class ConfigModule extends ScalaModule {
 
   protected[this] def loadConfig(): Config = {
     ConfigFactoryExt.enableEnvOverride()
+    ConfigFactory.invalidateCaches()
     val config = ConfigFactory.load
     config
   }

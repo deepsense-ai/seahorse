@@ -10,6 +10,6 @@ import net.codingwell.scalaguice.ScalaModule
 
 class ExperimentStorageModule extends ScalaModule {
   override def configure(): Unit = {
-    bind[ExperimentStorage].to[MockedExperimentStorage]
+    bind[ExperimentStorage].to[MockedExperimentStorage].asEagerSingleton()
   }
 }

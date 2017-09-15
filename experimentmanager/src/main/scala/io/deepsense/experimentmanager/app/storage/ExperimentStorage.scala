@@ -48,7 +48,8 @@ trait ExperimentStorage {
    *               If not specified then experiments will not be filltered out.
    * @return A filtered list of experiments that is a certain page of a certain size.
    */
-  def list(tenant: HasTenantId,
+  def list(
+    tenant: HasTenantId,
     limit: Option[Int],
     page: Option[Int],
     status: Option[Experiment.Status.Value]): Future[List[Experiment]]
