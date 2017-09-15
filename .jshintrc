@@ -1,0 +1,27 @@
+{
+  "bitwise": true,
+  "browser": true,
+  "browserify": true,
+  "camelcase": true,
+  "curly": true,
+  "eqeqeq": true,
+  "esnext": true,
+  "evil": false,
+  "forin": false,
+  "globals": {
+  },
+  "globalstrict": false,
+  "jasmine": true,
+  "jquery": true,
+  "maxparams": 3,
+  "newcap": true,
+  "noarg": true,
+  "nonbsp": true,
+  "plusplus": false,
+  "quotmark": true,
+  "smarttabs": true,
+  "strict": true,
+  "trailing": true,
+  "undef": true,
+  "unused": "vars"
+}
