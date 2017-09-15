@@ -7,6 +7,7 @@ Created on Dec 10, 2009
 from __future__ import unicode_literals, absolute_import
 
 from collections import deque
+from contextlib import contextmanager
 from decimal import Decimal
 import gc
 import math
@@ -27,17 +28,36 @@ from py4j.finalizer import ThreadSafeFinalizer
 from py4j.java_gateway import (
     JavaGateway, JavaMember, get_field, get_method,
     GatewayClient, set_field, java_import, JavaObject, is_instance_of,
-    GatewayParameters, CallbackServerParameters, quiet_close)
+    GatewayParameters, CallbackServerParameters, quiet_close, DEFAULT_PORT,
+    set_default_callback_accept_timeout, GatewayConnectionGuard)
 from py4j.protocol import (
     Py4JError, Py4JJavaError, Py4JNetworkError, decode_bytearray,
-    encode_bytearray, escape_new_line, unescape_new_line)
+    encode_bytearray, escape_new_line, unescape_new_line, smart_decode)
 
 
 SERVER_PORT = 25333
 TEST_PORT = 25332
-PY4J_JAVA_PATH = os.path.join(
-    os.path.dirname(os.path.realpath(__file__)),
-    "../../../../py4j-java/bin")
+PY4J_PREFIX_PATH = os.path.dirname(os.path.realpath(__file__))
+PY4J_JAVA_PATHS = [
+    os.path.join(PY4J_PREFIX_PATH,
+                 "../../../../py4j-java/build/classes/main"),  # gradle
+    os.path.join(PY4J_PREFIX_PATH,
+                 "../../../../py4j-java/build/classes/test"),  # gradle
+    os.path.join(PY4J_PREFIX_PATH,
+                 "../../../../py4j-java/build/resources/main"),  # gradle
+    os.path.join(PY4J_PREFIX_PATH,
+                 "../../../../py4j-java/build/resources/test"),  # gradle
+    os.path.join(PY4J_PREFIX_PATH,
+                 "../../../../py4j-java/target/classes/"),  # maven
+    os.path.join(PY4J_PREFIX_PATH,
+                 "../../../../py4j-java/target/test-classes/"),  # maven
+    os.path.join(PY4J_PREFIX_PATH,
+                 "../../../../py4j-java/bin"),  # ant
+]
+PY4J_JAVA_PATH = os.pathsep.join(PY4J_JAVA_PATHS)
+
+
+set_default_callback_accept_timeout(0.125)
 
 
 def sleep(sleep_time=0.250):
@@ -78,7 +98,7 @@ def test_gateway_connection():
     test_gateway = JavaGateway()
     try:
         # Call a dummy method just to make sure we can connect to the JVM
-        test_gateway.jvm.System.lineSeparator()
+        test_gateway.jvm.System.currentTimeMillis()
     except Py4JNetworkError:
         # We could not connect. Let"s wait a long time.
         # If it fails after that, there is a bug with our code!
@@ -94,10 +114,34 @@ def get_socket():
 
 
 def safe_shutdown(instance):
+    if hasattr(instance, 'gateway'):
+        try:
+            instance.gateway.shutdown()
+        except Exception:
+            print_exc()
+
+
+@contextmanager
+def gateway(*args, **kwargs):
+    g = JavaGateway(
+        gateway_parameters=GatewayParameters(
+            *args, auto_convert=True, **kwargs))
+    time = g.jvm.System.currentTimeMillis()
     try:
-        instance.gateway.shutdown()
-    except Exception:
-        print_exc()
+        yield g
+        # Call a dummy method to make sure we haven't corrupted the streams
+        assert time <= g.jvm.System.currentTimeMillis()
+    finally:
+        g.shutdown()
+
+
+@contextmanager
+def example_app_process():
+    p = start_example_app_process()
+    try:
+        yield p
+    finally:
+        p.join()
 
 
 class TestConnection(object):
@@ -154,20 +198,20 @@ class ProtocolTest(unittest.TestCase):
         p = start_echo_server_process()
         try:
             testSocket = get_socket()
-            testSocket.sendall("yo\n".encode("utf-8"))
-            testSocket.sendall("yro0\n".encode("utf-8"))
-            testSocket.sendall("yo\n".encode("utf-8"))
-            testSocket.sendall("ysHello World\n".encode("utf-8"))
+            testSocket.sendall("!yo\n".encode("utf-8"))
+            testSocket.sendall("!yro0\n".encode("utf-8"))
+            testSocket.sendall("!yo\n".encode("utf-8"))
+            testSocket.sendall("!ysHello World\n".encode("utf-8"))
             # No extra echange (method3) because it is already cached.
-            testSocket.sendall("yi123\n".encode("utf-8"))
-            testSocket.sendall("yd1.25\n".encode("utf-8"))
-            testSocket.sendall("yo\n".encode("utf-8"))
-            testSocket.sendall("yn\n".encode("utf-8"))
-            testSocket.sendall("yo\n".encode("utf-8"))
-            testSocket.sendall("ybTrue\n".encode("utf-8"))
-            testSocket.sendall("yo\n".encode("utf-8"))
-            testSocket.sendall("yL123\n".encode("utf-8"))
-            testSocket.sendall("ydinf\n".encode("utf-8"))
+            testSocket.sendall("!yi123\n".encode("utf-8"))
+            testSocket.sendall("!yd1.25\n".encode("utf-8"))
+            testSocket.sendall("!yo\n".encode("utf-8"))
+            testSocket.sendall("!yn\n".encode("utf-8"))
+            testSocket.sendall("!yo\n".encode("utf-8"))
+            testSocket.sendall("!ybTrue\n".encode("utf-8"))
+            testSocket.sendall("!yo\n".encode("utf-8"))
+            testSocket.sendall("!yL123\n".encode("utf-8"))
+            testSocket.sendall("!ydinf\n".encode("utf-8"))
             testSocket.close()
             sleep()
 
@@ -202,13 +246,13 @@ class IntegrationTest(unittest.TestCase):
     def testIntegration(self):
         try:
             testSocket = get_socket()
-            testSocket.sendall("yo\n".encode("utf-8"))
-            testSocket.sendall("yro0\n".encode("utf-8"))
-            testSocket.sendall("yo\n".encode("utf-8"))
-            testSocket.sendall("ysHello World\n".encode("utf-8"))
-            testSocket.sendall("yro1\n".encode("utf-8"))
-            testSocket.sendall("yo\n".encode("utf-8"))
-            testSocket.sendall("ysHello World2\n".encode("utf-8"))
+            testSocket.sendall("!yo\n".encode("utf-8"))
+            testSocket.sendall("!yro0\n".encode("utf-8"))
+            testSocket.sendall("!yo\n".encode("utf-8"))
+            testSocket.sendall("!ysHello World\n".encode("utf-8"))
+            testSocket.sendall("!yro1\n".encode("utf-8"))
+            testSocket.sendall("!yo\n".encode("utf-8"))
+            testSocket.sendall("!ysHello World2\n".encode("utf-8"))
             testSocket.close()
             sleep()
 
@@ -227,10 +271,10 @@ class IntegrationTest(unittest.TestCase):
     def testException(self):
         try:
             testSocket = get_socket()
-            testSocket.sendall("yo\n".encode("utf-8"))
-            testSocket.sendall("yro0\n".encode("utf-8"))
-            testSocket.sendall("yo\n".encode("utf-8"))
-            testSocket.sendall(b"x\n")
+            testSocket.sendall("!yo\n".encode("utf-8"))
+            testSocket.sendall("!yro0\n".encode("utf-8"))
+            testSocket.sendall("!yo\n".encode("utf-8"))
+            testSocket.sendall(b"!x\n")
             testSocket.close()
             sleep()
 
@@ -467,6 +511,10 @@ class TypeConversionTest(unittest.TestCase):
         java_nan = self.gateway.jvm.java.lang.Double.parseDouble("NaN")
         self.assertTrue(math.isnan(java_nan))
 
+    def testUnboxingInt(self):
+        ex = self.gateway.getNewExample()
+        self.assertEqual(4, ex.getInteger(4))
+
 
 class UnicodeTest(unittest.TestCase):
     def setUp(self):
@@ -494,6 +542,42 @@ class UnicodeTest(unittest.TestCase):
         self.assertEqual(len(s2), len(array2))
         self.assertEqual(ord(s1[0]), array1[0])
         self.assertEqual(ord(s2[4]), array2[4])
+
+
+class StreamTest(unittest.TestCase):
+    def setUp(self):
+        self.p = start_example_app_process()
+        self.gateway = JavaGateway()
+
+    def tearDown(self):
+        safe_shutdown(self)
+        self.p.join()
+
+    def testBinarySuccess(self):
+        e = self.gateway.getNewExample()
+
+        # not binary - just get the Java object
+        v1 = e.getStream()
+        self.assertTrue(
+            is_instance_of(
+                self.gateway, v1, "java.nio.channels.ReadableByteChannel"))
+
+        # pull it as a binary stream
+        with e.getStream.stream() as conn:
+            self.assertTrue(isinstance(conn, GatewayConnectionGuard))
+            expected =\
+                u"Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+            self.assertEqual(expected, smart_decode(conn.read(len(expected))))
+
+    def testBinaryFailure(self):
+        e = self.gateway.getNewExample()
+        self.assertRaises(Py4JJavaError, lambda: e.getBrokenStream())
+        self.assertRaises(Py4JJavaError, lambda: e.getBrokenStream.stream())
+
+    def testNotAStream(self):
+        e = self.gateway.getNewExample()
+        self.assertEqual(1, e.method1())
+        self.assertRaises(Py4JError, lambda: e.method1.stream())
 
 
 class ByteTest(unittest.TestCase):
@@ -671,6 +755,11 @@ class JVMTest(unittest.TestCase):
     def testNone(self):
         ex = self.gateway.entry_point.getNewExample()
         ex.method4(None)
+
+    def testJavaGatewayServer(self):
+        server = self.gateway.java_gateway_server
+        self.assertEqual(
+            server.getListeningPort(), DEFAULT_PORT)
 
     def testJVMView(self):
         newView = self.gateway.new_jvm_view("myjvm")

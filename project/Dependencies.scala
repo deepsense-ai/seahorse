@@ -1,7 +1,7 @@
 import sbt._
 
 object Version {
-  val akka = "2.3.11"
+  val akka = "2.4.9"
   val apacheCommons = "3.3.2"
   val avro = "1.7.7"
   val guice = "3.0"
@@ -10,12 +10,12 @@ object Version {
   val metricsScala = "3.5.4_a2.3"
   val mockito = "1.10.19"
   val nsscalaTime = "1.8.0"
-  val scala = "2.11.6"
+  val scala = "2.11.8"
   val scalatest = "3.0.0-SNAP4"
   val scalatra = "2.4.0"
   val scoverage = "1.0.4"
   val slick = "3.1.1"
-  val spark = "1.6.1"
+  val spark = "2.0.0"
   val spray = "1.3.3"
   val sprayJson = "1.3.1"
   val seahorse = "1.2.0-DESKTOP-SNAPSHOT"
@@ -103,7 +103,8 @@ object Dependencies {
     val components = Seq(
       sparkCore,
       sparkMLLib)
-    val provided = components.map(_ % Provided)
+    // val provided = components.map(_ % Provided)
+    val provided = components
     val test = components.map(_ % s"$Test,it")
     val onlyInTests = provided ++ test
   }

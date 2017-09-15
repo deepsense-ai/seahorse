@@ -5,9 +5,13 @@ The image contains Spark and python libraries required for running SX inside a d
 
 1. Building the image
 
-   $ docker build -t deepsense-spark .
+   $ docker build -t quay.io/deepsense_io/deepsense-spark:2.0.0 .
 
 2. Running the image
 
-   $ docker run -h sandbox -d deepsense-spark
-   $ docker run -it -p 8088:8088 -p 8042:8042 -p 4040:4040 -h sandbox deepsense-spark bash
+   $ docker run -h sandbox -d quay.io/deepsense_io/deepsense-spark:2.0.0
+   $ docker run -it -p 8088:8088 -p 8042:8042 -p 4040:4040 -h sandbox quay.io/deepsense_io/deepsense-spark:2.0.0 bash
+
+3. Publishing the image
+
+   $ docker push quay.io/deepsense_io/deepsense-spark:2.0.0

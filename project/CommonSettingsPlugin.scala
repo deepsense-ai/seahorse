@@ -24,7 +24,7 @@ object CommonSettingsPlugin extends AutoPlugin {
 
   override def projectSettings = Seq(
     organization := "io.deepsense",
-    scalaVersion := "2.10.6",
+    scalaVersion := "2.11.6",
     scalacOptions := Seq(
       "-unchecked", "-deprecation", "-encoding", "utf8", "-feature",
       "-language:existentials", "-language:implicitConversions"

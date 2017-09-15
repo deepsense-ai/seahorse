@@ -24,7 +24,7 @@ from threading import Thread, RLock
 import weakref
 
 from py4j.compat import (
-    range, hasattr2, basestring, CompatThread, Queue)
+    range, hasattr2, basestring, CompatThread, Queue, WeakSet)
 from py4j.finalizer import ThreadSafeFinalizer
 from py4j import protocol as proto
 from py4j.protocol import (
@@ -48,6 +48,16 @@ DEFAULT_PYTHON_PROXY_PORT = 25334
 DEFAULT_CALLBACK_SERVER_ACCEPT_TIMEOUT = 5
 PY4J_SKIP_COLLECTIONS = "PY4J_SKIP_COLLECTIONS"
 PY4J_TRUE = set(["yes", "y", "t", "true"])
+
+
+def set_default_callback_accept_timeout(accept_timeout):
+    """Sets default accept timeout of callback server.
+
+    TODO: Create a CallbackServer parameter for this value. Because it is only
+    used during testing, this is not a major issue for now.
+    """
+    global DEFAULT_CALLBACK_SERVER_ACCEPT_TIMEOUT
+    DEFAULT_CALLBACK_SERVER_ACCEPT_TIMEOUT = accept_timeout
 
 
 def deprecated(name, last_version, use_instead="", level=logging.DEBUG,
@@ -86,9 +96,15 @@ def find_jar_path():
     """
     paths = []
     jar_file = "py4j{0}.jar".format(__version__)
+    maven_jar_file = "py4j-{0}.jar".format(__version__)
     paths.append(jar_file)
+    # ant
     paths.append(os.path.join(os.path.dirname(
         os.path.realpath(__file__)), "../../../py4j-java/" + jar_file))
+    # maven
+    paths.append(os.path.join(
+        os.path.dirname(os.path.realpath(__file__)),
+        "../../../py4j-java/target" + maven_jar_file))
     paths.append(os.path.join(os.path.dirname(
         os.path.realpath(__file__)), "../share/py4j/" + jar_file))
     paths.append("../../../current-release/" + jar_file)
@@ -102,7 +118,7 @@ def find_jar_path():
 
 def launch_gateway(port=0, jarpath="", classpath="", javaopts=[],
                    die_on_exit=False, redirect_stdout=None,
-                   redirect_stderr=None, daemonize_redirect=False):
+                   redirect_stderr=None, daemonize_redirect=True):
     """Launch a `Gateway` in a new Java process.
 
     The redirect parameters accept file-like objects, Queue, or deque. When
@@ -138,8 +154,8 @@ def launch_gateway(port=0, jarpath="", classpath="", javaopts=[],
     :param daemonize_redirect: if True, the consumer threads will be daemonized
         and will not prevent the main Python process from exiting. This means
         the file descriptors (stderr, stdout, redirect_stderr, redirect_stdout)
-        might not be properly closed. This is not usually a problem, but the
-        default is conservatively set to False.
+        might not be properly closed. This is not usually a problem, but in
+        case of errors related to file descriptors, set this flag to False.
 
     :rtype: the port number of the `Gateway` server.
     """
@@ -174,8 +190,7 @@ def launch_gateway(port=0, jarpath="", classpath="", javaopts=[],
     if redirect_stdout is None:
         redirect_stdout = open(os.devnull, "w")
 
-    proc = Popen(command, stdout=PIPE, stdin=PIPE, stderr=stderr,
-                 close_fds=True)
+    proc = Popen(command, stdout=PIPE, stdin=PIPE, stderr=stderr)
 
     # Determine which port the server started on (needed to support
     # ephemeral ports)
@@ -286,6 +301,10 @@ def quiet_close(closable):
 
     :param closable: Object with a ``close`` method.
     """
+    if closable is None:
+        # Do not attempt to close a None. This logs unecessary exceptions.
+        return
+
     try:
         closable.close()
     except Exception:
@@ -297,6 +316,10 @@ def quiet_shutdown(socket_instance):
 
     :param socket_instance: Socket with ``shutdown`` method.
     """
+    if socket_instance is None:
+        # Do not attempt to close a None. This logs unecessary exceptions.
+        return
+
     try:
         socket_instance.shutdown(socket.SHUT_RDWR)
     except Exception:
@@ -361,21 +384,26 @@ def gateway_help(gateway_client, var, pattern=None, short_name=True,
 
 
 def _garbage_collect_object(gateway_client, target_id):
-    ThreadSafeFinalizer.remove_finalizer(
-        smart_decode(gateway_client.address) +
-        smart_decode(gateway_client.port) +
-        target_id)
-    if target_id != proto.ENTRY_POINT_OBJECT_ID and\
-            gateway_client.is_connected:
-        try:
-            gateway_client.send_command(
-                proto.MEMORY_COMMAND_NAME +
-                proto.MEMORY_DEL_SUBCOMMAND_NAME +
-                target_id +
-                "\ne\n")
-        except Exception:
-            logger.debug("Exception while garbage collecting an object",
-                         exc_info=True)
+    try:
+        ThreadSafeFinalizer.remove_finalizer(
+            smart_decode(gateway_client.address) +
+            smart_decode(gateway_client.port) +
+            target_id)
+        if target_id != proto.ENTRY_POINT_OBJECT_ID and\
+                target_id != proto.GATEWAY_SERVER_OBJECT_ID and\
+                gateway_client.is_connected:
+            try:
+                gateway_client.send_command(
+                    proto.MEMORY_COMMAND_NAME +
+                    proto.MEMORY_DEL_SUBCOMMAND_NAME +
+                    target_id +
+                    "\ne\n")
+            except Exception:
+                logger.debug("Exception while garbage collecting an object",
+                             exc_info=True)
+    except Exception:
+        logger.debug("Exception while garbage collecting an object",
+                     exc_info=True)
 
 
 def _garbage_collect_connection(socket_instance):
@@ -451,10 +479,13 @@ class GatewayParameters(object):
 
     def __init__(
             self, address=DEFAULT_ADDRESS, port=DEFAULT_PORT, auto_field=False,
-            auto_close=True, auto_convert=False, eager_load=False):
+            auto_close=True, auto_convert=False, eager_load=False,
+            ssl_context=None):
         """
         :param address: the address to which the client will request a
-         connection
+         connection. If you're assing a `SSLContext` with `check_hostname=True`
+         then this address must match (one of) the hostname(s) in the
+         certificate the gateway server presents.
 
         :param port: the port to which the client will request a connection.
          Default is 25333.
@@ -476,6 +507,9 @@ class GatewayParameters(object):
         :param eager_load: if `True`, the gateway tries to connect to the JVM
          by calling System.currentTimeMillis. If the gateway cannot connect to
          the JVM, it shuts down itself and raises an exception.
+
+        :param ssl_context: if not None, SSL connections will be made using
+         this SSLContext
         """
         self.address = address
         self.port = port
@@ -483,6 +517,7 @@ class GatewayParameters(object):
         self.auto_close = auto_close
         self.auto_convert = auto_convert
         self.eager_load = eager_load
+        self.ssl_context = ssl_context
 
 
 class CallbackServerParameters(object):
@@ -492,7 +527,8 @@ class CallbackServerParameters(object):
 
     def __init__(
             self, address=DEFAULT_ADDRESS, port=DEFAULT_PYTHON_PROXY_PORT,
-            daemonize=False, daemonize_connections=False, eager_load=True):
+            daemonize=False, daemonize_connections=False, eager_load=True,
+            ssl_context=None):
         """
         :param address: the address to which the client will request a
             connection
@@ -511,12 +547,15 @@ class CallbackServerParameters(object):
         :param eager_load: If `True`, the callback server is automatically
             started when the JavaGateway is created.
 
+        :param ssl_context: if not None, the SSLContext's certificate will be
+         presented to callback connections.
         """
         self.address = address
         self.port = port
         self.daemonize = daemonize
         self.daemonize_connections = daemonize_connections
         self.eager_load = eager_load
+        self.ssl_context = ssl_context
 
 
 class DummyRLock(object):
@@ -536,6 +575,24 @@ class DummyRLock(object):
         pass
 
 
+class GatewayConnectionGuard(object):
+    def __init__(self, client, connection):
+        self._client = client
+        self._connection = connection
+
+    def __enter__(self):
+        return self
+
+    def read(self, hint=-1):
+        return self._connection.stream.read(hint)
+
+    def __exit__(self, type, value, traceback):
+        if value is None:
+            self._client._give_back_connection(self._connection)
+        else:
+            self._connection.close()
+
+
 class GatewayClient(object):
     """Responsible for managing connections to the JavaGateway.
 
@@ -549,7 +606,7 @@ class GatewayClient(object):
     connections, which is essential when using callbacks.  """
 
     def __init__(self, address=DEFAULT_ADDRESS, port=25333, auto_close=True,
-                 gateway_property=None):
+                 gateway_property=None, ssl_context=None):
         """
         :param address: the address to which the client will request a
          connection
@@ -562,12 +619,16 @@ class GatewayClient(object):
 
         :param gateway_property: used to keep gateway preferences without a
          cycle with the gateway
+
+        :param ssl_context: if not None, SSL connections will be made using
+         this SSLContext
         """
         self.address = address
         self.port = port
         self.is_connected = True
         self.auto_close = auto_close
         self.gateway_property = gateway_property
+        self.ssl_context = ssl_context
         self.deque = deque()
 
     def _get_connection(self):
@@ -581,7 +642,8 @@ class GatewayClient(object):
 
     def _create_connection(self):
         connection = GatewayConnection(
-            self.address, self.port, self.auto_close, self.gateway_property)
+            self.address, self.port, self.auto_close, self.gateway_property,
+            self.ssl_context)
         connection.start()
         return connection
 
@@ -607,7 +669,7 @@ class GatewayClient(object):
             logger.debug("Error while shutting down gateway.", exc_info=True)
             self.shutdown_gateway()
 
-    def send_command(self, command, retry=True):
+    def send_command(self, command, retry=True, binary=False):
         """Sends a command to the JVM. This method is not intended to be
            called directly by Py4J users. It is usually called by
            :class:`JavaMember` instances.
@@ -618,23 +680,41 @@ class GatewayClient(object):
         :param retry: if `True`, the GatewayClient tries to resend a message
          if it fails.
 
-        :rtype: the `string` answer received from the JVM. The answer follows
-         the Py4J protocol.
+        :param binary: if `True`, we won't wait for a Py4J-protocol response
+         from the other end; we'll just return the raw connection to the
+         caller. The caller becomes the owner of the connection, and is
+         responsible for closing the connection (or returning it this
+         `GatewayClient` pool using `_give_back_connection`).
+
+        :rtype: the `string` answer received from the JVM (The answer follows
+         the Py4J protocol). The guarded `GatewayConnection` is also returned
+         if `binary` is `True`.
         """
         connection = self._get_connection()
         try:
             response = connection.send_command(command)
-            self._give_back_connection(connection)
+            if binary:
+                return response, self._create_connection_guard(connection)
+            else:
+                self._give_back_connection(connection)
         except Py4JNetworkError:
-            if retry:
+            if connection:
+                connection.close()
+            if self._should_retry(retry, connection):
                 logging.info("Exception while sending command.", exc_info=True)
-                response = self.send_command(command)
+                response = self.send_command(command, binary=binary)
             else:
                 logging.exception(
                     "Exception while sending command.")
                 response = proto.ERROR
 
         return response
+
+    def _create_connection_guard(self, connection):
+        return GatewayConnectionGuard(self, connection)
+
+    def _should_retry(self, retry, connection):
+        return retry
 
     def close(self):
         """Closes all currently opened connections.
@@ -659,7 +739,7 @@ class GatewayConnection(object):
        with the Java Virtual Machine."""
 
     def __init__(self, address=DEFAULT_ADDRESS, port=25333, auto_close=True,
-                 gateway_property=None):
+                 gateway_property=None, ssl_context=None):
         """
         :param address: the address to which the connection will be established
 
@@ -671,16 +751,23 @@ class GatewayConnection(object):
 
         :param gateway_property: contains gateway preferences to avoid a cycle
          with gateway
+
+        :param ssl_context: if not None, SSL connections will be made using
+         this SSLContext
         """
         self.address = address
         self.port = port
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        if ssl_context:
+            self.socket = ssl_context.wrap_socket(
+                self.socket, server_hostname=address)
         self.is_connected = False
         self.auto_close = auto_close
         self.gateway_property = gateway_property
         self.wr = weakref.ref(
             self,
             lambda wr, socket_instance=self.socket:
+            _garbage_collect_connection and
             _garbage_collect_connection(socket_instance))
 
     def start(self):
@@ -689,10 +776,10 @@ class GatewayConnection(object):
         try:
             self.socket.connect((self.address, self.port))
             self.is_connected = True
-            self.stream = self.socket.makefile("rb", 0)
+            self.stream = self.socket.makefile("rb")
         except Exception as e:
             msg = "An error occurred while trying to connect to the Java "\
-                "server"
+                "server ({0}:{1})".format(self.address, self.port)
             logger.exception(msg)
             raise Py4JNetworkError(msg, e)
 
@@ -709,7 +796,7 @@ class GatewayConnection(object):
            if the lifecycle of the Java program must be tied to the Python
            program.
         """
-        if (not self.is_connected):
+        if not self.is_connected:
             raise Py4JError("Gateway must be connected to send shutdown cmd.")
 
         try:
@@ -731,14 +818,17 @@ class GatewayConnection(object):
         :param command: the `string` command to send to the JVM. The command
          must follow the Py4J protocol.
 
-        :rtype: the `string` answer received from the JVM. The answer follows
-         the Py4J protocol.
+        :rtype: the `string` answer received from the JVM (The answer follows
+         the Py4J protocol).
         """
         logger.debug("Command to send: {0}".format(command))
         try:
             self.socket.sendall(command.encode("utf-8"))
+
             answer = smart_decode(self.stream.readline()[:-1])
             logger.debug("Answer received: {0}".format(answer))
+            if answer.startswith(proto.RETURN_MESSAGE):
+                answer = answer[1:]
             # Happens when a the other end is dead. There might be an empty
             # answer before the socket raises an error.
             if answer.strip() == "":
@@ -793,7 +883,7 @@ class JavaMember(object):
 
         return (new_args, temp_args)
 
-    def __call__(self, *args):
+    def _build_args(self, *args):
         if self.converters is not None and len(self.converters) > 0:
             (new_args, temp_args) = self._get_args(args)
         else:
@@ -802,6 +892,36 @@ class JavaMember(object):
 
         args_command = "".join(
             [get_command_part(arg, self.pool) for arg in new_args])
+
+        return args_command, temp_args
+
+    def stream(self, *args):
+        """
+        Call the method using the 'binary' protocol.
+
+        :rtype: The `GatewayConnection` that the call command was sent to.
+        """
+
+        args_command, temp_args = self._build_args(*args)
+
+        command = proto.STREAM_COMMAND_NAME +\
+            self.command_header +\
+            args_command +\
+            proto.END_COMMAND_PART
+        answer, connection = self.gateway_client.send_command(
+            command, binary=True)
+
+        # parse the return value to throw an exception if necessary
+        get_return_value(
+            answer, self.gateway_client, self.target_id, self.name)
+
+        for temp_arg in temp_args:
+            temp_arg._detach()
+
+        return connection
+
+    def __call__(self, *args):
+        args_command, temp_args = self._build_args(*args)
 
         command = proto.CALL_COMMAND_NAME +\
             self.command_header +\
@@ -845,7 +965,7 @@ class JavaObject(object):
         value = weakref.ref(
             self,
             lambda wr, cc=self._gateway_client, id=self._target_id:
-            _garbage_collect_object(cc, id))
+            _garbage_collect_object and _garbage_collect_object(cc, id))
 
         ThreadSafeFinalizer.add_finalizer(key, value)
 
@@ -859,7 +979,6 @@ class JavaObject(object):
     def __doc__(self):
         # The __doc__ string is used by IPython/PyDev/etc to generate
         # help string, therefore provide useful help
-        print("HELLO")
         if self._gateway_doc is None:
             self._gateway_doc = gateway_help(
                 self._gateway_client, self, display=False)
@@ -1213,6 +1332,9 @@ class JavaGateway(object):
     * The `entry_point` field of a `JavaGateway` instance is connected to
       the `Gateway.entryPoint` instance on the Java side.
 
+    * The `java_gateway_server` field of a `JavaGateway` instance is connected
+      to the `GatewayServer` instance on the Java side.
+
     * The `jvm` field of `JavaGateway` enables user to access classes, static
       members (fields and methods) and call constructors.
 
@@ -1269,13 +1391,9 @@ class JavaGateway(object):
             deprecated("JavaGateway.gateway_client", "1.0",
                        "GatewayParameters")
         else:
-            gateway_client = GatewayClient(
-                address=self.gateway_parameters.address,
-                port=self.gateway_parameters.port,
-                auto_close=self.gateway_parameters.auto_close)
+            gateway_client = self._create_gateway_client()
 
-        self.gateway_property = GatewayProperty(
-            self.gateway_parameters.auto_field, PythonProxyPool())
+        self.gateway_property = self._create_gateway_property()
         self._python_proxy_port = python_proxy_port
 
         # Setup gateway client
@@ -1288,6 +1406,19 @@ class JavaGateway(object):
             self._eager_load()
         if self.callback_server_parameters.eager_load:
             self.start_callback_server(self.callback_server_parameters)
+
+    def _create_gateway_client(self):
+        gateway_client = GatewayClient(
+            address=self.gateway_parameters.address,
+            port=self.gateway_parameters.port,
+            auto_close=self.gateway_parameters.auto_close,
+            ssl_context=self.gateway_parameters.ssl_context)
+        return gateway_client
+
+    def _create_gateway_property(self):
+        gateway_property = GatewayProperty(
+            self.gateway_parameters.auto_field, PythonProxyPool())
+        return gateway_property
 
     def set_gateway_client(self, gateway_client):
         """Sets the gateway client for this JavaGateway. This sets the
@@ -1306,6 +1437,9 @@ class JavaGateway(object):
         self.entry_point = JavaObject(
             proto.ENTRY_POINT_OBJECT_ID, self._gateway_client)
 
+        self.java_gateway_server = JavaObject(
+            proto.GATEWAY_SERVER_OBJECT_ID, self._gateway_client)
+
         self.jvm = JVMView(
             self._gateway_client, jvm_name=proto.DEFAULT_JVM_NAME,
             id=proto.DEFAULT_JVM_ID)
@@ -1319,6 +1453,9 @@ class JavaGateway(object):
         except Exception:
             self.shutdown()
             raise
+
+    def get_callback_server(self):
+        return self._callback_server
 
     def start_callback_server(self, callback_server_parameters=None):
         """Starts the callback server.
@@ -1337,9 +1474,9 @@ class JavaGateway(object):
         if not callback_server_parameters:
             callback_server_parameters = self.callback_server_parameters
 
-        self._callback_server = CallbackServer(
-            self.gateway_property.pool, self._gateway_client,
-            callback_server_parameters=callback_server_parameters)
+        self._callback_server = self._create_callback_server(
+            callback_server_parameters)
+
         try:
             self._callback_server.start()
         except Py4JNetworkError:
@@ -1349,6 +1486,12 @@ class JavaGateway(object):
             raise
 
         return True
+
+    def _create_callback_server(self, callback_server_parameters):
+        callback_server = CallbackServer(
+            self.gateway_property.pool, self._gateway_client,
+            callback_server_parameters=callback_server_parameters)
+        return callback_server
 
     def new_jvm_view(self, name="custom jvm"):
         """Creates a new JVM view with its own imports. A JVM view ensures
@@ -1424,6 +1567,9 @@ class JavaGateway(object):
         :param raise_exception: If `True`, raise an exception if an error
             occurs while shutting down (very likely with sockets).
         """
+        if self._callback_server is None:
+            # Nothing to shutdown
+            return
         try:
             self._callback_server.shutdown()
         except Exception:
@@ -1491,7 +1637,7 @@ class JavaGateway(object):
     def launch_gateway(
             cls, port=0, jarpath="", classpath="", javaopts=[],
             die_on_exit=False, redirect_stdout=None,
-            redirect_stderr=None, daemonize_redirect=False):
+            redirect_stderr=None, daemonize_redirect=True):
         """Launch a `Gateway` in a new Java process and create a default
         :class:`JavaGateway <py4j.java_gateway.JavaGateway>` to connect to
         it.
@@ -1525,8 +1671,8 @@ class JavaGateway(object):
             daemonized and will not prevent the main Python process from
             exiting. This means the file descriptors (stderr, stdout,
             redirect_stderr, redirect_stdout) might not be properly closed.
-            This is not usually a problem, but the default is conservatively
-            set to False.
+            This is not usually a problem, but in case of errors related
+            to file descriptors, set this flag to False.
 
         :rtype: a :class:`JavaGateway <py4j.java_gateway.JavaGateway>`
             connected to the `Gateway` server.
@@ -1573,8 +1719,9 @@ class CallbackServer(object):
 
         self.port = self.callback_server_parameters.port
         self.address = self.callback_server_parameters.address
+        self.ssl_context = self.callback_server_parameters.ssl_context
         self.pool = pool
-        self.connections = []
+        self.connections = WeakSet()
         # Lock is used to isolate critical region like connection creation.
         # Some code can produce exceptions when ran in parallel, but
         # They will be caught and dealt with.
@@ -1589,8 +1736,11 @@ class CallbackServer(object):
             socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         try:
             self.server_socket.bind((self.address, self.port))
+            self._listening_address, self._listening_port = \
+                self.server_socket.getsockname()
         except Exception as e:
-            msg = "An error occurred while trying to start the callback server"
+            msg = "An error occurred while trying to start the callback "\
+                  "server ({0}:{1})".format(self.address, self.port)
             logger.exception(msg)
             raise Py4JNetworkError(msg, e)
 
@@ -1600,6 +1750,19 @@ class CallbackServer(object):
         # Default is False
         self.thread.daemon = self.callback_server_parameters.daemonize
         self.thread.start()
+
+    def get_listening_port(self):
+        """Returns the port on which the callback server is listening to.
+        Different than `port` when port is 0.
+        """
+        return self._listening_port
+
+    def get_listening_address(self):
+        """Returns the address on which the callback server is listening to.
+        May be different than `address` if `address` was an alias (e.g.,
+        localhost).
+        """
+        return self._listening_address
 
     def run(self):
         """Starts listening and accepting connection requests.
@@ -1628,13 +1791,15 @@ class CallbackServer(object):
 
                 for s in readable:
                     socket_instance, _ = self.server_socket.accept()
-                    input = socket_instance.makefile("rb", 0)
-                    connection = CallbackConnection(
-                        self.pool, input, socket_instance, self.gateway_client,
-                        self.callback_server_parameters)
+                    if self.ssl_context:
+                        socket_instance = self.ssl_context.wrap_socket(
+                            socket_instance, server_side=True)
+                    input = socket_instance.makefile("rb")
+                    connection = self._create_connection(
+                        socket_instance, input)
                     with self.lock:
                         if not self.is_shutdown:
-                            self.connections.append(connection)
+                            self.connections.add(connection)
                             connection.start()
                         else:
                             quiet_shutdown(connection.socket)
@@ -1644,6 +1809,12 @@ class CallbackServer(object):
                 logger.info("Error while waiting for a connection.")
             else:
                 logger.exception("Error while waiting for a connection.")
+
+    def _create_connection(self, socket_instance, stream):
+        connection = CallbackConnection(
+            self.pool, stream, socket_instance, self.gateway_client,
+            self.callback_server_parameters)
+        return connection
 
     def shutdown(self):
         """Stops listening and accepting connection requests. All live
@@ -1703,17 +1874,23 @@ class CallbackConnection(Thread):
                 elif command == proto.GARBAGE_COLLECT_PROXY_COMMAND_NAME:
                     self.input.readline()
                     del(self.pool[obj_id])
+                    self.socket.sendall(
+                        proto.SUCCESS_RETURN_MESSAGE.encode("utf-8"))
                 else:
                     logger.error("Unknown command {0}".format(command))
+                    # We're sending something to prevent blokincg, but at this
+                    # point, the protocol is broken.
+                    self.socket.sendall(
+                        proto.ERROR_RETURN_MESSAGE.encode("utf-8"))
         except Exception:
             # This is a normal exception...
             logger.info(
                 "Error while callback connection was waiting for"
                 "a message", exc_info=True)
 
-            logger.info("Closing down connection")
-            quiet_shutdown(self.socket)
-            quiet_close(self.socket)
+        logger.info("Closing down connection")
+        quiet_shutdown(self.socket)
+        quiet_close(self.socket)
 
     def _call_proxy(self, obj_id, input):
         return_message = proto.ERROR_RETURN_MESSAGE
@@ -1722,7 +1899,7 @@ class CallbackConnection(Thread):
                 method = smart_decode(input.readline())[:-1]
                 params = self._get_params(input)
                 return_value = getattr(self.pool[obj_id], method)(*params)
-                return_message = "y" +\
+                return_message = proto.RETURN_MESSAGE + proto.SUCCESS +\
                     get_command_part(return_value, self.pool)
             except Exception:
                 logger.exception("There was an exception while executing the "
@@ -1758,15 +1935,18 @@ class PythonProxyPool(object):
         self.dict = {}
         self.next_id = 0
 
-    def put(self, object):
+    def put(self, object, force_id=None):
         """Adds a proxy to the pool.
 
         :param object: The proxy to add to the pool.
         :rtype: A unique identifier associated with the object.
         """
         with self.lock:
-            id = proto.PYTHON_PROXY_PREFIX + smart_decode(self.next_id)
-            self.next_id += 1
+            if force_id:
+                id = force_id
+            else:
+                id = proto.PYTHON_PROXY_PREFIX + smart_decode(self.next_id)
+                self.next_id += 1
             self.dict[id] = object
         return id
 

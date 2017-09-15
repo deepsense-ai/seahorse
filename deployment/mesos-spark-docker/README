@@ -5,15 +5,19 @@ The image contains Mesos, Spark and python libraries required for running SX ins
 
 1. Build the image
 
-   $ docker build -t deepsense-mesos-spark .
+   $ docker build -t docker-repo.deepsense.codilime.com/deepsense_io/deepsense-mesos-spark:2.0.0 .
 
 2. Running the image (substitute {MACHINE_IP_VISIBLE_FROM_CLUSTER} with proper IP address)
 
-   $ docker run --net=host -it deepsense-mesos-spark /bin/bash
-   $ docker run --env LIBPROCESS_ADVERTISE_IP={MACHINE_IP_VISIBLE_FROM_CLUSTER} --env LIBPROCESS_IP={MACHINE_IP_VISIBLE_FROM_CLUSTER} --net=host -it deepsense-mesos-spark /bin/bash
+   $ docker run --net=host -it docker-repo.deepsense.codilime.com/deepsense_io/deepsense-mesos-spark:2.0.0 /bin/bash
+   $ docker run --env LIBPROCESS_ADVERTISE_IP={MACHINE_IP_VISIBLE_FROM_CLUSTER} --env LIBPROCESS_IP={MACHINE_IP_VISIBLE_FROM_CLUSTER} --net=host -it docker-repo.deepsense.codilime.com/deepsense_io/deepsense-mesos-spark:2.0.0 /bin/bash
 
 3. Running spark-shell on mesos://10.10.1.221:5050 cluster (substitute {MACHINE_IP_VISIBLE_FROM_CLUSTER} with proper IP address)
 
    $ LIBPROCESS_ADVERTISE_IP={MACHINE_IP_VISIBLE_FROM_CLUSTER}
    $ LIBPROCESS_IP={MACHINE_IP_VISIBLE_FROM_CLUSTER}
-   $ spark-shell --master mesos://10.10.1.221:5050 --conf spark.executor.uri=http://d3kbcqa49mib13.cloudfront.net/spark-1.6.1-bin-hadoop2.6.tgz
+   $ spark-shell --master mesos://10.10.1.221:5050 --conf spark.executor.uri=http://d3kbcqa49mib13.cloudfront.net/spark-2.0.0-bin-hadoop2.7.tgz
+
+4. Publishing the image
+
+   $ docker push docker-repo.deepsense.codilime.com/deepsense_io/deepsense-mesos-spark:2.0.0
