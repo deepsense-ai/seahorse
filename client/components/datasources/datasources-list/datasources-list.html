@@ -65,10 +65,12 @@
       ></span>
     </div>
   </div>
-  <datasources-element
-    ng-repeat="datasource in $ctrl.datasources | orderBy:$ctrl.filterType:$ctrl.filterOrder"
-    element="datasource"
-    context="$ctrl.context"
-    on-select="$ctrl.onSelect({datasource: datasource})"
-  ></datasources-element>
+  <div class="datasources-list__list-wrapper">
+    <datasources-element
+      ng-repeat="datasource in $ctrl.datasources | orderBy:$ctrl.filterType:$ctrl.filterOrder"
+      element="datasource"
+      context="$ctrl.context"
+      on-select="$ctrl.onSelect({datasource: datasource})"
+    ></datasources-element>
+  </div>
 </div>
