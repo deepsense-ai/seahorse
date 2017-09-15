@@ -130,32 +130,32 @@ class WorkflowDaoCassandraImplIntegSpec
       }
     }
 
-    "get last execution time" when {
+    "get results upload time" when {
       "the entire row is not there" in {
-        whenReady(workflowsDao.getLastExecutionTime(Workflow.Id.randomId)) { result =>
+        whenReady(workflowsDao.getResultsUploadTime(Workflow.Id.randomId)) { result =>
           result shouldBe None
         }
       }
 
-      "the row is there without the last execution time" in withStoredWorkflows(storedWorkflows) {
-        whenReady(workflowsDao.getLastExecutionTime(workflow1Id)) { result =>
+      "the row is there without the results upload time" in withStoredWorkflows(storedWorkflows) {
+        whenReady(workflowsDao.getResultsUploadTime(workflow1Id)) { result =>
           result shouldBe None
         }
       }
 
-      // Note, that this tests updating the last execution time
+      // Note, that this tests updating the results upload time
       // when saveExecutionResults is called
-      "the last execution time is there" in withStoredWorkflows(storedWorkflows) {
+      "the results upload time is there" in withStoredWorkflows(storedWorkflows) {
         val resultId = ExecutionReportWithId.Id.randomId
         val startTime = DateTimeConverter.now
 
         whenReady(workflowsDao.saveExecutionResults(
           executionResults(workflow1Id, workflow1, resultId))) { _ =>
 
-          whenReady(workflowsDao.getLastExecutionTime(workflow1Id)) { dateTimeOpt =>
+          whenReady(workflowsDao.getResultsUploadTime(workflow1Id)) { dateTimeOpt =>
             val endTime = DateTimeConverter.now
             dateTimeOpt match {
-              case None => fail("Couldn't retrieve last execution time")
+              case None => fail("Couldn't retrieve results upload time")
               case Some(dateTime: DateTime) =>
                 logger.info(s"TIMES: $startTime, $dateTime")
                 (dateTime.isAfter(startTime) || dateTime.isEqual(startTime)) shouldBe true

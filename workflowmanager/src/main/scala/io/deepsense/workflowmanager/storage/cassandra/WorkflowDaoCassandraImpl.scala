@@ -50,10 +50,10 @@ class WorkflowDaoCassandraImpl @Inject() (
     Future(session.execute(saveResultsQuery(results, DateTimeConverter.now)))
   }
 
-  override def getLastExecutionTime(workflowId: Id): Future[Option[DateTime]] = {
+  override def getResultsUploadTime(workflowId: Id): Future[Option[DateTime]] = {
     Future(
-      session.execute(getLastExecutionTimeQuery(workflowId)))
-      .map(rs => Option(rs.one()).flatMap(workflowRowMapper.toLastExecutionTime))
+      session.execute(getResultsUploadTimeQuery(workflowId)))
+      .map(rs => Option(rs.one()).flatMap(workflowRowMapper.toResultsUploadTime))
   }
 
   private def getWorkflowQuery(id: Workflow.Id): Select = {
@@ -64,8 +64,8 @@ class WorkflowDaoCassandraImpl @Inject() (
     getQuery(id, Seq(WorkflowRowMapper.Id, WorkflowRowMapper.Results))
   }
 
-  private def getLastExecutionTimeQuery(id: Workflow.Id): Select =
-    getQuery(id, Seq(WorkflowRowMapper.LastExecutionTime))
+  private def getResultsUploadTimeQuery(id: Workflow.Id): Select =
+    getQuery(id, Seq(WorkflowRowMapper.ResultsUploadTime))
 
   private def getQuery(id: Workflow.Id, columns: Seq[String]): Select = {
     QueryBuilder.select(columns: _*).from(table)
@@ -81,14 +81,14 @@ class WorkflowDaoCassandraImpl @Inject() (
 
   private def saveResultsQuery(
     results: WorkflowWithSavedResults,
-    lastExecutionTime: DateTime): Update.Where = {
+    resultsUploadTime: DateTime): Update.Where = {
     updateQuery(results.id, Seq(
       (WorkflowRowMapper.Results, workflowRowMapper.resultsToCell(results)),
-      (WorkflowRowMapper.LastExecutionTime,
-        workflowRowMapper.lastExecutionTimeToCell(lastExecutionTime))))
+      (WorkflowRowMapper.ResultsUploadTime,
+        workflowRowMapper.resultsUploadTimeToCell(resultsUploadTime))))
   }
 
-  private def updateQuery(id: Id, valuesToSet: Seq[(String, String)]): Update.Where = {
+  private def updateQuery(id: Id, valuesToSet: Seq[(String, Any)]): Update.Where = {
     val queryWithAssignments =
       valuesToSet.foldLeft(QueryBuilder.update(table).`with`()) {
         case (assignments, (field, value)) => assignments.and(set(field, value))

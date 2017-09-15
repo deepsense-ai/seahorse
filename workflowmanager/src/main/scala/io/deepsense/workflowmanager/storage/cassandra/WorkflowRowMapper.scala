@@ -33,16 +33,16 @@ case class WorkflowRowMapper @Inject() (
     }
   }
 
-  def toLastExecutionTime(row: Row): Option[DateTime] =
-    Option(row.getString(WorkflowRowMapper.LastExecutionTime))
-      .map(DateTimeConverter.parseDateTime)
+  def toResultsUploadTime(row: Row): Option[DateTime] =
+    Option(row.getDate(WorkflowRowMapper.ResultsUploadTime))
+      .map(s => DateTimeConverter.fromMillis(s.getTime))
 
   def workflowToCell(workflow: Workflow): String = workflow.toJson.compactPrint
 
   def resultsToCell(results: WorkflowWithSavedResults): String = results.toJson.compactPrint
 
-  def lastExecutionTimeToCell(lastExecutionTime: DateTime): String =
-    DateTimeConverter.toString(lastExecutionTime)
+  def resultsUploadTimeToCell(resultsUploadTime: DateTime): Long =
+    resultsUploadTime.getMillis
 
   override def currentVersion: Version = CurrentBuild.version
 }
@@ -51,6 +51,6 @@ object WorkflowRowMapper {
   val Id = "id"
   val Workflow = "workflow"
   val Results = "results"
-  val LastExecutionTime = "last_execution_time"
+  val ResultsUploadTime = "results_upload_time"
   val Deleted = "deleted"
 }

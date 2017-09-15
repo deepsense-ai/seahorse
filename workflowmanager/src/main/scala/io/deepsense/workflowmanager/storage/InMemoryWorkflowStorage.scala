@@ -23,7 +23,7 @@ class InMemoryWorkflowStorage extends WorkflowStorage {
 
   override def save(id: Workflow.Id, workflow: Workflow): Future[Unit] = {
     def withNewWorkflow(old: Option[Entry]): Entry =
-      Entry(workflow, old.flatMap(_.results), old.flatMap(_.lastExecutionTime))
+      Entry(workflow, old.flatMap(_.results), old.flatMap(_.resultsUploadTime))
 
     var oldEntry = workflows.get(id)
     var newEntry = withNewWorkflow(oldEntry)
@@ -63,11 +63,11 @@ class InMemoryWorkflowStorage extends WorkflowStorage {
     Future.successful(())
   }
 
-  override def getLastExecutionTime(workflowId: Id): Future[Option[DateTime]] =
-    Future.successful(workflows.get(workflowId).flatMap(_.lastExecutionTime))
+  override def getResultsUploadTime(workflowId: Id): Future[Option[DateTime]] =
+    Future.successful(workflows.get(workflowId).flatMap(_.resultsUploadTime))
 
   private case class Entry(
       workflow: Workflow,
       results: Option[WorkflowWithSavedResults],
-      lastExecutionTime: Option[DateTime])
+      resultsUploadTime: Option[DateTime])
 }

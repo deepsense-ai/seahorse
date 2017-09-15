@@ -49,7 +49,7 @@ trait WorkflowStorage {
    * Retrieves the time that the last execution report of this workflow was uploaded,
    * None if no execution report was ever uploaded.
    */
-  def getLastExecutionTime(workflowId: Id): Future[Option[DateTime]]
+  def getResultsUploadTime(workflowId: Id): Future[Option[DateTime]]
 
   /**
    * Removes an workflow with the specified id.

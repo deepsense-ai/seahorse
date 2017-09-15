@@ -910,8 +910,8 @@ class WorkflowsApiSpec
     override def saveExecutionResults(results: WorkflowWithSavedResults): Future[Unit] =
       storage.saveExecutionResults(results)
 
-    override def getLastExecutionTime(workflowId: Id): Future[Option[time.DateTime]] =
-      storage.getLastExecutionTime(workflowId)
+    override def getResultsUploadTime(workflowId: Id): Future[Option[time.DateTime]] =
+      storage.getResultsUploadTime(workflowId)
 
     override def save(id: Id, workflow: Workflow): Future[Unit] = storage.save(id, workflow)
 
