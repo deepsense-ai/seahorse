@@ -7,14 +7,9 @@ function UserInteractionControls() {
   return {
     restrict: 'E',
     replace: true,
-    templateUrl: 'app/experiments/experiment-editor/user-interaction-controls/user-interaction-controls.html',
-    controller: UserInteractionControlsController,
-    controllerAs: 'userInteractionControlsController'
+    scope: {},
+    templateUrl: 'app/experiments/experiment-editor/user-interaction-controls/user-interaction-controls.html'
   };
-}
-
-function UserInteractionControlsController ($scope) {
-  $scope.test = 10;
 }
 
 exports.inject = function (module) {

@@ -119,23 +119,21 @@ function GraphPanelRendererService($rootScope, $document) {
   that.setZoom = function setZoom (zoom, transformOrigin, translate) {
     transformOrigin = transformOrigin || [ 0.5, 0.5 ];
 
-    var instance = jsPlumb;
-    var el = instance.getContainer();
+    let instance = jsPlumb;
+    let el = instance.getContainer();
 
     if (!el) {
       return false;
     }
 
-    var p = ['webkit', 'moz', 'ms', 'o'],
-      s = 'scale(' + zoom + ')',
-      oString = (transformOrigin[0]) + 'px ' + (transformOrigin[1]) + 'px',
-      tString = translate ?
-        'translate(' + translate.x + 'px, ' + translate.y + 'px' + ')' :
-        '';
+    let p = ['webkit', 'moz', 'ms', 'o'];
+    let s = 'scale(' + zoom + ')';
+    let oString = (transformOrigin[0]) + 'px ' + (transformOrigin[1]) + 'px';
+    let tString = translate ?
+      'translate(' + translate.x + 'px, ' + translate.y + 'px' + ')' :
+      '';
 
-    console.log(tString);
-
-    for (var i = 0; i < p.length; i++) {
+    for (let i = 0; i < p.length; i++) {
       el.style[p[i] + 'TransformOrigin'] = oString;
       el.style[p[i] + 'Transform'] = tString + s;
     }
@@ -207,7 +205,6 @@ function GraphPanelRendererService($rootScope, $document) {
     jsPlumb.unbind('connectionDetached');
     jsPlumb.unbind('connectionMoved');
     jsPlumb.unbind('connectionDrag');
-    jsPlumb.setZoom(1, true);
   };
 
   that.init = function init() {

@@ -1,14 +1,11 @@
 <ul class="interaction-controls">
-  <ds-zoom  class-set="zoom"
-            icon="zoom-out"
+  <ds-move  class-set="move"
+            icon="move"
 
             related-to=".flowchart-paint-area"
-            max="2.3"
-            step="0.05"
-            initial-value="1">
-    <input type="range" min="{{::min}}" max="{{::max}}" ng-model="rangeValue" step="{{::step}}" />
-    <a href="" ng-class="{'text-warning': activeAdditionalItem}" ng-click="activateAdditionalItem($event)">
-      <i class="glyphicon glyphicon-zoom-in"></i>
-    </a>
-  </ds-zoom>
+            width="5000"
+            height="5000"
+            top="0"
+            left="0">
+  </ds-move>
 </ul>

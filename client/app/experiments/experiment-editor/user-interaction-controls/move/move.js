@@ -30,18 +30,18 @@ function MoveController($document, $scope) {
   var internal = {};
 
   (internal.settings = {}).css = {
-    width:  $scope.width,
-    height: $scope.height,
+    width:  $scope.width * 0.75,
+    height: $scope.height * 0.75,
     top:    $scope.top,
     left:   $scope.left
   };
-  internal.settings.initialStyles = `
-    position: absolute;
-    width: ${internal.settings.css.width}px;
-    height: ${internal.settings.css.height}px;
-    top: ${internal.settings.css.top}px;
-    left: ${internal.settings.css.left}px;
-  `;
+  internal.settings.initialStyles = {
+    position: 'absolute',
+    width: internal.settings.css.width + 'px',
+    height: internal.settings.css.height + 'px',
+    top: internal.settings.css.top + 'px',
+    left: internal.settings.css.left + 'px'
+  };
   internal.spacePressed = false;
   internal.itemActivated = false;
   internal.REVERSE = true;
@@ -75,13 +75,14 @@ function MoveController($document, $scope) {
    * Return after moving beyond border
    */
   internal.setMaximumPosition = function setMaximumPosition (direction, isReverse) {
-    var movableElementPosition = internal.relatedToElement.getBoundingClientRect();
-    var staticElementWidth = internal.relatedToElement.clientWidth;
+    //var movableElementPosition = internal.relatedToElement.getBoundingClientRect();
+    //var staticElementWidth = internal.relatedToElement.clientWidth;
     // TODO make for height the same.
-    var actualShift = (staticElementWidth - movableElementPosition.width) / 2; // 3000 - 1411 / 2;
+    //var actualShift = (staticElementWidth - movableElementPosition.width) / 2; // 3000 - 1411 / 2;
 
     if (!isReverse) {
-      internal.settings.css[direction] = -actualShift; // 0
+      // TODO: temporary
+      internal.settings.css[direction] = 0;
     }
   };
 
@@ -108,11 +109,12 @@ function MoveController($document, $scope) {
       preventMoving = true;
     }
 
+    console.log(preventMoving);
     return preventMoving;
   };
 
   internal.setMovement = function setMovement (direction, subtraction, eventMovementValue) {
-    console.log(`${direction.toUpperCase()}? `, eventMovementValue < 0, eventMovementValue);
+    //console.log(`${direction.toUpperCase()}? `, eventMovementValue < 0, eventMovementValue);
 
     if (eventMovementValue < 0) {
       if (internal.preventMovingBeyondViewPort(direction, internal.REVERSE) === false) {
@@ -176,7 +178,7 @@ function MoveController($document, $scope) {
   };
 
   internal.init = function init () {
-    internal.relatedToElement.setAttribute('style', internal.settings.initialStyles);
+    $(internal.relatedToElement).css(internal.settings.initialStyles);
     internal.relatedToElement.addEventListener('mousedown', internal.moveStartListener);
 
     $document.on('mouseup', internal.moveEndListener);
