@@ -33,7 +33,7 @@ apiConfig.resources.models = {
   'deployURL': 'http://localhost:3000/webservice/regression/',
   'handler': (data, request) => {
     let deferred = Q.defer();
-    data.link = apiConfig.resources.models.deployURL + data.id;
+    data.link = apiConfig.resources.models.deployURL + '/' + data.id;
     deferred.resolve(data);
     return deferred.promise;
   }
