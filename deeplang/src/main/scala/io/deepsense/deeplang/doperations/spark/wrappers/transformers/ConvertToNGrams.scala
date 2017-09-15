@@ -26,9 +26,10 @@ class ConvertToNGrams extends TransformerAsOperation[NGramTransformer] {
 
   override val id: Id = "06a73bfe-4e1a-4cde-ae6c-ad5a31f72496"
   override val name: String = "Convert To n-grams"
-  override val description: String = "Converts arrays of strings to arrays of n-grams. " +
-    "Null values in the input arrays are ignored. " +
-    "Each n-gram is represented by a space-separated string of words."
+  override val description: String = "Converts arrays of strings to arrays of n-grams. Null " +
+    "values in the input arrays are ignored. Each n-gram is represented by a space-separated " +
+    "string of words. When the input is empty, an empty array is returned. When the input array " +
+    "is shorter than n (number of elements per n-gram), no n-grams are returned."
 
   override lazy val tTagTO_1: TypeTag[NGramTransformer] = typeTag
 }

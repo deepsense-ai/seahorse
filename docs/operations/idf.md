@@ -6,9 +6,10 @@ description: IDF
 usesMathJax: true
 includeOperationsMenu: true
 ---
-Computes the Inverse Document Frequency (IDF) given a collection of documents.
+Computes the Inverse Document Frequency (IDF) given a collection of vectors of tokens counts.
 
 This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.feature.IDF">org.apache.spark.ml.feature.IDF documentation</a>.
+A comprehensive introduction is available at <a target="_blank" href="http://spark.apache.org/docs/1.6.0/mllib-feature-extraction.html#tf-idf">MLlib IDF Guide</a>.
 
 **Since**: Seahorse 1.0.0
 

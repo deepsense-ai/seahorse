@@ -25,5 +25,5 @@ class IDF extends EstimatorAsOperation[IDFEstimator] {
   override val id: Id = "36d31a98-9238-4159-8298-64eb8e3ca55a"
   override val name: String = "IDF"
   override val description: String = "Computes the Inverse Document Frequency (IDF) " +
-    "given a collection of documents"
+    "given a collection of vectors of tokens counts"
 }

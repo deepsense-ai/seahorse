@@ -6,7 +6,7 @@ description: Count Vectorizer
 usesMathJax: true
 includeOperationsMenu: true
 ---
-Extracts a vocabulary from document collections and generates a CountVectorizerModel.
+Extracts a vocabulary from a given collection of documents and generates a vector of token counts for each.
 
 This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.feature.CountVectorizer">org.apache.spark.ml.feature.CountVectorizer documentation</a>.
 

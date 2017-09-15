@@ -25,5 +25,6 @@ class CountVectorizer extends EstimatorAsOperation[CountVectorizerEstimator] {
   override val id: Id = "e640d7df-d464-4ac0-99c4-235c29a0aa31"
   override val name: String = "Count Vectorizer"
   override val description: String =
-    "Extracts a vocabulary from document collections and generates a CountVectorizerModel"
+    "Extracts a vocabulary from a given collection of documents and generates a vector of token " +
+      "counts for each."
 }

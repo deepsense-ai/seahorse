@@ -6,7 +6,9 @@ description: Remove Stop Words
 usesMathJax: true
 includeOperationsMenu: true
 ---
-Filters out default English stop words from input. Null values from input array are preserved.
+Filters out default English Stop Words from input. Null values from input array are preserved.
+
+List of English Stop Words was prepared by <a target="_blank" href="http://ir.dcs.gla.ac.uk/resources/linguistic_utils/stop_words">Glasgow Information Retrieval Group</a>.
 
 This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.feature.StopWordsRemover">org.apache.spark.ml.feature.StopWordsRemover documentation</a>.
 
