@@ -3,7 +3,7 @@
 # Copyright (c) 2016, CodiLime Inc.
 
 VERSION=$1
-if [ -z ${VERSION+x} ]; then VERSION=$(date +"%d-%m-%Y_%H-%M-%S"); else echo "VERSION='$VERSION'"; fi
+if [ -z ${VERSION+x} ]; then VERSION=$(date +"Y-%m-%d_%H-%M-%S"); else echo "VERSION='$VERSION'"; fi
 
 BOX_NAME="seahorse-vm.box"
 RELEASE_PATH=workflowexecutor/seahorse/releases/${VERSION}

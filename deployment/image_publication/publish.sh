@@ -6,7 +6,7 @@
 VERSION=$1
 if [ -z "$VERSION" ]
 then
-    VERSION=$(date +"%d-%m-%Y_%H-%M-%S")
+    VERSION=$(date +"%Y-%m-%d_%H-%M-%S")
     REPOSITORY="seahorse-bundled-image"
 else
     echo "VERSION='$VERSION'"
