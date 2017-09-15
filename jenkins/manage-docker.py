@@ -18,8 +18,8 @@ simple_command_type = 'simple_command'
 sbt_type = 'sbt'
 
 
-spark_version = "1.6.1"
-hadoop_version = "2.6"
+spark_version = "2.1.1"
+hadoop_version = "2.7"
 
 
 # This is added here since sbt clean doesn't clean everything; in particular, it doesn't clean

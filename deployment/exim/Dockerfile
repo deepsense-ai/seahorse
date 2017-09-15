@@ -1,6 +1,7 @@
 FROM alpine:3.4
 RUN echo -en 'http://dl-cdn.alpinelinux.org/alpine/edge/main\n\
-http://dl-cdn.alpinelinux.org/alpine/edge/testing\n' >> /etc/apk/repositories
+http://dl-cdn.alpinelinux.org/alpine/edge/testing\n\
+http://dl-cdn.alpinelinux.org/alpine/edge/community\n' >> /etc/apk/repositories
 
 RUN apk update && apk add exim tini
 RUN mkdir -p /var/log/exim && \
