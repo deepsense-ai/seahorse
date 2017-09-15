@@ -73,18 +73,24 @@ angular.module('deepsense.graph-model').
       };
 
       that.createNodes = function createNodes(nodes, operations, thirdPartyData) {
+        let getCoordinate = (id, cord) => {
+          try {
+            return thirdPartyData.gui.nodes[id].coordinates[cord];
+          } catch(e) {
+            return 0;
+          }
+        };
+
         for (let i = 0; i < nodes.length; i++) {
           let data = nodes[i];
           let id = data.id;
           let operation = operations[data.operation.id];
-          let guiData = thirdPartyData.gui || {};
-          let coordinates = (guiData.nodes || {})[id] || {};
           let node = that.createNode({
               'id': id,
               'operation': operation,
               'parameters': data.parameters,
-              'x': coordinates.x || 0,
-              'y': coordinates.y || 0
+              'x': getCoordinate(id, 'x'),
+              'y': getCoordinate(id, 'y')
               //'state': state.nodes[id]
             });
           that.addNode(node);
