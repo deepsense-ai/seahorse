@@ -78,11 +78,176 @@ angular.module('test').
           },
           {
             portIndex: 1,
-            typeQualifier: ['io.deepsense.type1', 'io.seahorse.type2']
+            typeQualifier: ['io.deepsense.type1', 'io.seahorse.type2', 'io.seahorse.type3']
           },
           {
             portIndex: 2,
-            typeQualifier: ['io.deepsense.type3', 'io.seahorse.type4', 'io.deepsense.type5']
+            typeQualifier: ['io.deepsense.type3'],
+            result: {
+              schema: {
+                fields: [
+                  {
+                    name: "x",
+                    dataType: "integer"
+                  },
+                  {
+                    name: "y",
+                    dataType: "string"
+                  },
+                  {
+                    name: "abc",
+                    dataType: "string"
+                  },
+                  {
+                    name: "cde",
+                    dataType: "string"
+                  },
+                  {
+                    name: "x1",
+                    dataType: "integer"
+                  },
+                  {
+                    name: "y2",
+                    dataType: "string"
+                  },
+                  {
+                    name: "abc3",
+                    dataType: "string"
+                  },
+                  {
+                    name: "cde4",
+                    dataType: "string"
+                  },
+                  {
+                    name: "x11",
+                    dataType: "integer"
+                  },
+                  {
+                    name: "y22",
+                    dataType: "string"
+                  },
+                  {
+                    name: "abc33",
+                    dataType: "string"
+                  },
+                  {
+                    name: "cde44",
+                    dataType: "string"
+                  },
+                  {
+                    name: "x111",
+                    dataType: "integer"
+                  },
+                  {
+                    name: "y222",
+                    dataType: "string"
+                  },
+                  {
+                    name: "abc333",
+                    dataType: "string"
+                  },
+                  {
+                    name: "cde444",
+                    dataType: "string"
+                  },
+                  {
+                    name: "x1111",
+                    dataType: "integer"
+                  },
+                  {
+                    name: "y2222",
+                    dataType: "string"
+                  },
+                  {
+                    name: "abc3333",
+                    dataType: "string"
+                  },
+                  {
+                    name: "cde4444",
+                    dataType: "string"
+                  },
+                  {
+                    name: "x5",
+                    dataType: "integer"
+                  },
+                  {
+                    name: "y6",
+                    dataType: "string"
+                  },
+                  {
+                    name: "abc7",
+                    dataType: "string"
+                  },
+                  {
+                    name: "cde8",
+                    dataType: "string"
+                  },
+                  {
+                    name: "xx",
+                    dataType: "integer"
+                  },
+                  {
+                    name: "yy",
+                    dataType: "string"
+                  },
+                  {
+                    name: "abcabc",
+                    dataType: "string"
+                  },
+                  {
+                    name: "cdecde",
+                    dataType: "string"
+                  },
+                  {
+                    name: "xx1",
+                    dataType: "integer"
+                  },
+                  {
+                    name: "yy2",
+                    dataType: "string"
+                  },
+                  {
+                    name: "abcabc3",
+                    dataType: "string"
+                  },
+                  {
+                    name: "cdecde4",
+                    dataType: "string"
+                  },{
+                    name: "xx11",
+                    dataType: "integer"
+                  },
+                  {
+                    name: "yy22",
+                    dataType: "string"
+                  },
+                  {
+                    name: "abcabc33",
+                    dataType: "string"
+                  },
+                  {
+                    name: "cdecde44",
+                    dataType: "string"
+                  },
+                  {
+                    name: "xx5",
+                    dataType: "integer"
+                  },
+                  {
+                    name: "yy6",
+                    dataType: "string"
+                  },
+                  {
+                    name: "abcabc7",
+                    dataType: "string"
+                  },
+                  {
+                    name: "cdecde8",
+                    dataType: "string"
+                  }
+                ]
+              }
+            }
           }
         ]
       },
@@ -343,6 +508,15 @@ angular.module('test').
                   "regex": "^ftp://"
                 }
               }
+            },
+            {
+              "name": "some-cols",
+              "type": "selector",
+              "description": "sample desc",
+              "default": null,
+              "required": true,
+              "isSingle": true,
+              "portIndex": 1
             }
           ]
         },
@@ -439,7 +613,7 @@ angular.module('test').
           "name": "sample-selectors",
           "type": "selector",
           "description": "sample desc",
-          "port": 1,
+          "portIndex": 1,
           "default": null,
           "required": true,
           "isSingle": false
@@ -448,16 +622,34 @@ angular.module('test').
           "name": "sample-selectors-empty",
           "type": "selector",
           "description": "sample desc",
-          "port": 1,
+          "portIndex": 1,
           "default": null,
           "required": true,
           "isSingle": false
         },
         {
+          "name": "multi-selector-known-cols",
+          "type": "selector",
+          "description": "this tests multi-selector where columns are known",
+          "portIndex": 2,
+          "default": null,
+          "required": true,
+          "isSingle": false
+        },
+        {
+          "name": "single-selector-known-cols",
+          "type": "selector",
+          "description": "this tests single-selector where columns are known",
+          "portIndex": 2,
+          "default": null,
+          "required": true,
+          "isSingle": true
+        },
+        {
           "name": "sample-single-index-selector",
           "type": "selector",
           "description": "sample desc",
-          "port": 1,
+          "portIndex": 1,
           "default": null,
           "required": true,
           "isSingle": true
@@ -466,7 +658,7 @@ angular.module('test').
           "name": "sample-single-column-selector",
           "type": "selector",
           "description": "sample desc",
-          "port": 1,
+          "portIndex": 1,
           "default": null,
           "required": true,
           "isSingle": true
@@ -606,7 +798,7 @@ angular.module('test').
           "name": "selectors-new",
           "type": "selector",
           "description": "Selector for new design",
-          "port": 1,
+          "portIndex": 1,
           "default": null,
           "required": true,
           "isSingle": false
@@ -638,7 +830,7 @@ angular.module('test').
           "name": "selectors-single-test",
           "type": "selector",
           "description": "sample desc",
-          "port": 1,
+          "portIndex": 1,
           "default": null,
           "required": true,
           "isSingle": true

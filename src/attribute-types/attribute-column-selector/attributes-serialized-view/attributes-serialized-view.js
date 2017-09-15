@@ -10,7 +10,7 @@ function AttributesSerializedView() {
       _.assign(scope, {
         getNamesList() {
           let columnListObject = scope.getItemsThisType('columnList')[0];
-          return columnListObject && columnListObject.columns;
+          return columnListObject && columnListObject.columns;  // TODO shorten when there is a lot of names
         },
         getIndexList() {
           return scope.getItemsThisType('indexRange');

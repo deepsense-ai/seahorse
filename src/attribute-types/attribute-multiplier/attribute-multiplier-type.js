@@ -39,9 +39,7 @@ function AttributeMultiplierType($compile, $rootScope, DeepsenseNodeParameters) 
 
       _.assign(scope, {
         addItem() {
-          this.parameter.parametersLists.push(
-            DeepsenseNodeParameters.factory.createParametersList({}, this.parameter.schema.values)
-          );
+          this.parameter.parametersLists.push(angular.copy(scope.parameter.emptyItem));
         },
         removeItem(itemIndex) {
           if (window.confirm('Are you sure to remove the multiplier item?')) {

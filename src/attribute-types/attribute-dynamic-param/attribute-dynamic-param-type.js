@@ -9,7 +9,6 @@ function AttributeDynamicParamType($compile) {
     replace: true,
     scope: true,
     link: (scope, element) => {
-      scope.internalParams = scope.parameter.internalParams;
       let internal = {};
 
       internal.renderParametersList = function renderParametersList() {
@@ -17,10 +16,10 @@ function AttributeDynamicParamType($compile) {
           let $parametersListContainer = angular.element(element[0].querySelector('.nested-attributes-view'));
           let template = `
             <attributes-list
-              parameters-list="internalParams"
-              ng-if="internalParams"
+              parameters-list="parameter.internalParams"
+              ng-if="parameter.internalParams"
             ></attributes-list>
-            <p ng-if="!internalParams">
+            <p ng-if="!parameter.internalParams">
               Parameters can not be inferred in current state
             </p>`;
           let $renderedParametersList = $compile(template)($parametersListContainer.scope());

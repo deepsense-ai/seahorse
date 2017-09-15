@@ -1,7 +1,7 @@
 <header class="modal-header u-flex u-flex--center-center">
   <h3 class="no-margins">Selection for:</h3>
-  <span class="text-uppercase text-success u-as-h3 u-space u-flex__1">{{parameter.name}}</span>
-  <div ng-if="!selectorIsSingle()">
+  <span class="text-uppercase text-success u-as-h3 u-space u-flex__1">{{::parameter.name}}</span>
+  <div ng-if="::!selectorIsSingle()">
     <span class="font-bold">Mode:</span>
     <div class="btn-group">
       <label class="btn btn-sm btn-info"
@@ -25,11 +25,11 @@
     </div>
   </div>
 </header>
-<article class="modal-body u-flex">
+<article ng-if="!parameter.dataFrameSchema" class="modal-body u-flex">
   <section  class="o-modal-selector__item u-flex__1"
-            ng-repeat="itemType in ::itemTypes"
+            ng-repeat="itemType in itemTypes"
             ng-hide="itemType.id === 'indexRange' && isItemIdInList('indexRange')">
-    <h4 class="text-center">{{::itemType.verbose}}</h4>
+    <h4 class="text-center">{{itemType.verbose}}</h4>
 
     <div class="o-modal-selector__list--empty text-navy
                 fa fa-plus-circle fa-5x
@@ -58,6 +58,9 @@
     </section>
   </section>
 </article>
+
+<known-cols-selector-item ng-if="::parameter.dataFrameSchema"></known-cols-selector-item>
+
 <footer class="modal-footer">
   <button class="btn btn-sm btn-info" ng-click="modal.close()">Done</button>
 </footer>

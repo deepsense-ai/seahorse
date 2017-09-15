@@ -6,7 +6,7 @@ module.controller('TestCtrl', ['$scope', '$element', 'Model', function ($scope, 
   let workflowId = Model.getWorkflowId();
 
   _.assign($scope, {
-    currentNode: nodes[5].id,
+    currentNode: nodes[1].id,
     testData: nodes,
     getNode: () => _.find(nodes, node => node.id === $scope.currentNode),
     getWorkflowId: () => workflowId

@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Grzegorz Swatowski
- */
-
 'use strict';
 
 /*@ngInject*/
@@ -31,7 +25,6 @@ function AttributeSelectorType($timeout, $uibModal, $rootScope) {
       _.assign(scope, {
         itemTypes: types,
         modal: null,
-
         openSelector() {
           let oldParameter = JSON.stringify(scope.parameter.serialize());
 
@@ -79,6 +72,7 @@ function AttributeSelectorType($timeout, $uibModal, $rootScope) {
           });
 
           scope.parameter.items.push(selectorItem);
+          return selectorItem;
         },
         removeItem(itemIndex) {
           this.parameter.items.splice(itemIndex, 1);
