@@ -4,15 +4,15 @@ object Version {
   val akka = "2.3.4-spark"
   val apacheCommons = "3.3.2"
   val avro = "1.7.7"
-  val cassandraConnector = "1.5.0-M2"
-  val cassandraUnit = "2.1.3.1"
   val guice = "3.0"
+  val h2 = "1.4.191"
   val jclouds = "1.9.0"
   val metricsScala = "3.5.1_a2.3"
   val mockito = "1.10.19"
   val nsscalaTime = "1.8.0"
   val scala = "2.11.6"
   val scalatest = "3.0.0-SNAP4"
+  val slick = "3.1.1"
   val spray = "1.3.3"
   val sprayJson = "1.3.1"
   val seahorse = "1.0.0-SNAPSHOT"
@@ -31,9 +31,6 @@ object Library {
   val akkaActor = akka("actor")
   val akkaTestkit = akka("testkit")
   val apacheCommons = "org.apache.commons" % "commons-lang3" % Version.apacheCommons
-  val cassandraUnit = "org.cassandraunit" % "cassandra-unit" % Version.cassandraUnit
-  val cassandraConnector = "com.datastax.spark" %% "spark-cassandra-connector" %
-    Version.cassandraConnector
   val guice = "com.google.inject" % "guice" % Version.guice
   val guiceMultibindings = "com.google.inject.extensions" % "guice-multibindings"   % Version.guice
   val jcloudsKeystone = jclouds("keystone")
@@ -50,11 +47,13 @@ object Library {
   val seahorseGraph = seahorse("graph")
   val seahorseWorkflowJson = seahorse("workflow-json")
   val seahorseReportlib = seahorse("reportlib")
+  val slick = "com.typesafe.slick" %% "slick" % Version.slick
   val sprayCan = spray("can")
   val sprayRouting = spray("routing")
   val sprayTestkit = spray("testkit")
   val sprayClient = spray("client")
   val sprayJson = "io.spray" %% "spray-json" % Version.sprayJson
+  val h2 = "com.h2database" % "h2" % Version.h2
 }
 
 object Dependencies {
@@ -73,7 +72,6 @@ object Dependencies {
   val commons = Seq(
     akkaActor,
     apacheCommons,
-    cassandraConnector,
     guice,
     guiceMultibindings,
     jcloudsCompute,
@@ -85,18 +83,19 @@ object Dependencies {
     sprayCan,
     sprayJson,
     sprayRouting
-  ) ++ Seq(akkaTestkit, cassandraUnit, mockitoCore, scalatest, sprayTestkit).map(_ % Test)
+  ) ++ Seq(akkaTestkit, mockitoCore, scalatest, sprayTestkit).map(_ % Test)
 
   val workflowmanager = Seq(
     akkaActor,
     apacheCommons,
-    cassandraConnector,
     guice,
     guiceMultibindings,
+    h2,
     seahorseDeeplang,
     seahorseGraph,
     seahorseReportlib,
     seahorseWorkflowJson,
+    slick,
     sprayCan,
     sprayClient,
     sprayJson,

@@ -2,33 +2,32 @@
  * Copyright (c) 2015, CodiLime Inc.
  */
 
-package io.deepsense.workflowmanager.storage.cassandra
+package io.deepsense.workflowmanager.storage.impl
 
 import scala.concurrent.{Await, Future}
 
-import com.datastax.driver.core.querybuilder.QueryBuilder
 import org.apache.commons.lang3.RandomStringUtils
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{BeforeAndAfter, Matchers}
 
 import io.deepsense.commons.StandardSpec
-import io.deepsense.commons.cassandra.CassandraTestSupport
-import io.deepsense.commons.models.Id
 import io.deepsense.commons.utils.Logging
 import io.deepsense.graph.Node
 import io.deepsense.models.workflows.Workflow
+import io.deepsense.workflowmanager.storage.GraphJsonTestSupport
 
-class NotebookDaoCassandraImplIntegSpec
+class NotebookDaoImplIntegSpec
   extends StandardSpec
   with ScalaFutures
   with MockitoSugar
   with Matchers
   with BeforeAndAfter
-  with CassandraTestSupport
-  with GraphJsonTestSupport with Logging {
+  with GraphJsonTestSupport
+  with SlickTestSupport
+  with Logging {
 
-  var notebooksDao: NotebookDaoCassandraImpl = _
+  var notebooksDao: NotebookDaoImpl = _
 
   val n1@(notebook1Id, node1Id, notebook1) = createNotebook()
   val n2@(notebook2Id, node2Id, notebook2) = createNotebook()
@@ -37,12 +36,8 @@ class NotebookDaoCassandraImplIntegSpec
 
   val storedNotebooks = Set(n1, n2, n4)
 
-  def cassandraTableName: String = "notebooks"
-  def cassandraKeySpaceName: String = "workflowmanager"
-
   before {
-    NotebookTableCreator.create(cassandraTableName, session)
-    notebooksDao = new NotebookDaoCassandraImpl(cassandraTableName, session)
+    notebooksDao = new NotebookDaoImpl(db, driver)
   }
 
   "NotebooksDao" should {
@@ -87,14 +82,18 @@ class NotebookDaoCassandraImplIntegSpec
 
   private def withStoredNotebooks(
       storedNotebooks: Set[(Workflow.Id, Node.Id, String)])(testCode: => Any): Unit = {
+
+    Await.ready(notebooksDao.create(), operationDuration)
+
     val s = Future.sequence(storedNotebooks.map {
       case (workflowId, nodeId, notebook) => notebooksDao.save(workflowId, nodeId, notebook)
     })
     Await.ready(s, operationDuration)
+
     try {
       testCode
     } finally {
-      session.execute(new QueryBuilder(session.getCluster).truncate(cassandraTableName))
+      Await.ready(notebooksDao.drop(), operationDuration)
     }
   }
 

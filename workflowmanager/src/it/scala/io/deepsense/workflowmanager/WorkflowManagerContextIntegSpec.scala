@@ -7,11 +7,10 @@ package io.deepsense.workflowmanager
 import com.google.inject.Guice
 
 import io.deepsense.commons.StandardSpec
-import io.deepsense.commons.cassandra.CassandraTestSupport
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.workflowmanager.rest.{InsecureOperationsApi, InsecureWorkflowApi}
 
-class WorkflowManagerContextIntegSpec extends StandardSpec with CassandraTestSupport {
+class WorkflowManagerContextIntegSpec extends StandardSpec {
 
   val injector = Guice.createInjector(new WorkflowManagerAppModule(withMockedSecurity = false))
 
@@ -28,8 +27,4 @@ class WorkflowManagerContextIntegSpec extends StandardSpec with CassandraTestSup
     val instance2: T = injector.getInstance(clazz)
     assert(instance1 eq instance2)
   }
-
-  override def cassandraTableName: String = "foobar"
-
-  override def cassandraKeySpaceName: String = "workflowmanager"
 }

@@ -2,7 +2,7 @@
  * Copyright (c) 2015, CodiLime Inc.
  */
 
-package io.deepsense.workflowmanager.storage.cassandra
+package io.deepsense.workflowmanager.storage
 
 import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
