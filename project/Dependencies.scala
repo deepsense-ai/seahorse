@@ -103,4 +103,12 @@ object Dependencies {
     sprayJson,
     sprayRouting
   ) ++ Seq(akkaTestkit, mockitoCore, scalatest, scoverage, sprayTestkit).map(_ % s"$Test,it")
+
+  val sessionmanager = Seq(
+    akkaActor,
+    sprayCan,
+    sprayClient,
+    sprayJson,
+    sprayRouting
+  ) ++ Seq(akkaTestkit, mockitoCore, scalatest, scoverage, sprayTestkit).map(_ % s"$Test,it")
 }
