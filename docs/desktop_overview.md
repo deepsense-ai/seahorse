@@ -84,50 +84,6 @@ So, for example, let's say Seahorse Desktop has been started in the `/tmp/seahor
 A file `/tmp/seahorse/data/my_data.csv` will be visible in Seahorse as
 `/resources/data/my_data.csv`.
 
-## General Information
-
-### Bundled Software Packages
-
-* Apache Spark, version {{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}
-* Python, version 2.7.6
-* NumPy, version 1.8.2
-* JDBC drivers:
-
-    -   MySQL, version 5.1.38
-    -   PostgreSQL, version 9.4.1207
-
-### Minimum Hardware Requirements
-* 6 GB of a free disk space
-* 6 GB of RAM (Please note, that if you're running Seahorse Desktop as a Vagrant Image, or
-inside a Docker Machine, the VM has to have this amount of memory available).
-* A processor with virtualization support
-
-### Seahorse Desktop Limitations
-
-* Max DataFrame size: 500 MB
-* Max number of rows in a DataFrame: 4 M
-* Max number of columns in a DataFrame: 100
-* Max row size: 1 MB
-
-Above limitations refer only to Seahorse Desktop.
-To learn more about scaling up and using Seahorse in production,
-see the <a href="https://seahorse.deepsense.io/enterprise.html">Enterprise</a> page.
-
-
-<div class="contact-block">
-	<div class="contact-info">
-		<p>Learn more about Seahorse enterprise-scale deployments
-		- includes customized set-up, integration and 24/7 support.</p>
-	</div>
-	<div class="contact-block-container">
-		<div class="contact-block-button">
-			<a target="_blank" href="http://deepsense.io/about-us/contact/#contact-form-anchor">
-			Contact us for details!
-			</a>
-		</div>
-	</div>
-</div>
-
 ## Upgrading To the Latest Version
 
 If you want to replace your Seahorse Desktop with the newest version you need to invoke
