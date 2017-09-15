@@ -428,11 +428,13 @@ angular.module('test').
       ],
       [
         {
-          "name": "sample_snippet",
-          "type": "snippet",
-          "description": "This is a snippet parameter.",
-          "language": "R",
-          "default": "m <- 1000",
+          "name": "sample_codeSnippet",
+          "type": "codeSnippet",
+          "description": "This is a codeSnippet parameter.",
+          "language": {
+            "name": "Python"
+          },
+          "default": "def operation_main(data_frame_1):\n  return out_data_frame_1",
           "required": true
         },
         {
@@ -489,10 +491,12 @@ angular.module('test').
                 },
                 {
                   "name": "name22",
-                  "type": "snippet",
+                  "type": "codeSnippet",
                   "description": "22 desc",
-                  "language": "R",
-                  "default": "exit 42;",
+                  "language": {
+                    "name": "Python"
+                  },
+                  "default": "def operation_main(data_frame_1):\n  return out_data_frame_1",
                   "required": true
                 }
               ]
@@ -502,7 +506,7 @@ angular.module('test').
               "schema": [
                 {
                   "name": "name31",
-                  "type": "snippet",
+                  "type": "codeSnippet",
                   "description": "31 desc",
                   "language": "R",
                   "default": "let codilime <- 42;",
@@ -631,7 +635,7 @@ angular.module('test').
         }
       },
       {
-        "sample_snippet": "K <- 42;",
+        "sample_codeSnippet": "K <- 42;",
         "sample_choice": {
           "choice1": {
             "name21": "word42"
