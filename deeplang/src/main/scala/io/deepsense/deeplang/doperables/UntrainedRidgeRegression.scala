@@ -6,7 +6,8 @@
 
 package io.deepsense.deeplang.doperables
 
-import org.apache.spark.mllib.regression.RidgeRegressionWithSGD
+import org.apache.spark.mllib.regression.{LabeledPoint, RidgeRegressionWithSGD}
+import org.apache.spark.mllib.feature.{StandardScalerModel, StandardScaler}
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.{DKnowledge, DMethod1To1, ExecutionContext, InferContext}
@@ -28,8 +29,16 @@ case class UntrainedRidgeRegression(
       val labelColumn = dataframe.getColumnName(parameters.targetColumn)
 
       val labeledPoints = dataframe.toSparkLabeledPointRDD(featureColumns, labelColumn)
-      val trainedModel = model.get.run(labeledPoints)
-      TrainedRidgeRegression(Some(trainedModel), Some(featureColumns), Some(labelColumn))
+
+      val scaler: StandardScalerModel = new StandardScaler(withStd = true, withMean = true)
+          .fit(labeledPoints.map(_.features))
+      val scaledLabeledPoints = labeledPoints.map(lp => {
+        LabeledPoint(lp.label, scaler.transform(lp.features))
+      })
+
+      val trainedModel = model.get.run(scaledLabeledPoints)
+      TrainedRidgeRegression(
+        Some(trainedModel), Some(featureColumns), Some(labelColumn), Some(scaler))
     }
 
     override def infer(

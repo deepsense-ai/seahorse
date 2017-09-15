@@ -6,6 +6,7 @@
 
 package io.deepsense.deeplang.doperables
 
+import org.apache.spark.mllib.feature.StandardScalerModel
 import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.mllib.regression.RidgeRegressionModel
 import org.apache.spark.rdd.RDD
@@ -19,17 +20,19 @@ import io.deepsense.reportlib.model.ReportContent
 case class TrainedRidgeRegression(
     model: Option[RidgeRegressionModel],
     featureColumns: Option[Seq[String]],
-    targetColumn: Option[String])
+    targetColumn: Option[String],
+    scaler: Option[StandardScalerModel])
   extends RidgeRegression
   with Scorable {
 
-  def this() = this(None, None, None)
+  def this() = this(None, None, None, None)
 
   override val score = new DMethod1To1[Unit, DataFrame, DataFrame] {
 
     override def apply(context: ExecutionContext)(p: Unit)(dataframe: DataFrame): DataFrame = {
       val vectors: RDD[Vector] = dataframe.toSparkVectorRDD(featureColumns.get)
-      val predictionsRDD: RDD[Double] = model.get.predict(vectors)
+      val scaledVectors = scaler.get.transform(vectors)
+      val predictionsRDD: RDD[Double] = model.get.predict(scaledVectors)
 
       val uniqueLabelColumnName = dataframe.uniqueColumnName(
         targetColumn.get, TrainedRidgeRegression.labelColumnSuffix)

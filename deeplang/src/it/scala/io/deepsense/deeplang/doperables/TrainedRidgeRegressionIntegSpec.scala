@@ -5,6 +5,7 @@
 
 package io.deepsense.deeplang.doperables
 
+import org.apache.spark.mllib.feature.StandardScalerModel
 import org.apache.spark.mllib.linalg.{Vector => SparkVector, Vectors}
 import org.apache.spark.mllib.regression.RidgeRegressionModel
 import org.apache.spark.rdd.RDD
@@ -17,7 +18,7 @@ import org.mockito.stubbing.Answer
 
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperations.exceptions.{WrongColumnTypeException, ColumnsDoNotExistException}
+import io.deepsense.deeplang.doperations.exceptions.{ColumnsDoNotExistException, WrongColumnTypeException}
 
 class TrainedRidgeRegressionIntegSpec extends DeeplangIntegTestSupport {
 
@@ -95,10 +96,17 @@ class TrainedRidgeRegressionIntegSpec extends DeeplangIntegTestSupport {
       Vectors.dense(1.6, 3.6),
       Vectors.dense(1.7, 3.7))
 
+    val scaledVectors = Seq(
+      Vectors.dense(-0.1, 0.2),
+      Vectors.dense(0.0, 0.4),
+      Vectors.dense(0.1, -0.2))
+
     val resultDoubles = Seq(4.5, 4.6, 4.7)
 
+    val mockScaler = createScalerMock(
+        expectedInput = inputVectors, output = scaledVectors)
     val mockModel = createRegressionModelMock(
-        expectedInput = inputVectors, output = resultDoubles)
+      expectedInput = scaledVectors, output = resultDoubles)
 
     val expectedPredictionColumnName = targetColumnName + expectedPredictionColumnSuffix
     val expectedOutputDataFrame = createExpectedOutputDataFrame(
@@ -107,7 +115,8 @@ class TrainedRidgeRegressionIntegSpec extends DeeplangIntegTestSupport {
     val regression = TrainedRidgeRegression(
       model = Some(mockModel),
       featureColumns = Some(featureColumnNames),
-      targetColumn = Some(targetColumnName))
+      targetColumn = Some(targetColumnName),
+      scaler = Some(mockScaler))
 
     val resultDataframe = regression.score(executionContext)(())(inputDataframe)
 
@@ -127,6 +136,21 @@ class TrainedRidgeRegressionIntegSpec extends DeeplangIntegTestSupport {
       }
     })
     mockModel
+  }
+
+  private def createScalerMock(
+      expectedInput: Seq[SparkVector],
+      output: Seq[SparkVector]): StandardScalerModel = {
+
+    val mockScaler = mock[StandardScalerModel]
+    when(mockScaler.transform(any[RDD[SparkVector]]())).thenAnswer(new Answer[RDD[SparkVector]] {
+      override def answer(invocationOnMock: InvocationOnMock): RDD[SparkVector] = {
+        val receivedRDD = invocationOnMock.getArgumentAt(0, classOf[RDD[SparkVector]])
+        receivedRDD.collect() shouldBe expectedInput
+        sparkContext.parallelize(output)
+      }
+    })
+    mockScaler
   }
 
   private def createExpectedOutputDataFrame(

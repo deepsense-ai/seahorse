@@ -4,7 +4,6 @@
 
 package io.deepsense.deeplang.doperables
 
-import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.regression.{LabeledPoint, RidgeRegressionModel, RidgeRegressionWithSGD}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
@@ -15,7 +14,7 @@ import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 
 import io.deepsense.deeplang.DeeplangIntegTestSupport
-import io.deepsense.deeplang.doperations.exceptions.{WrongColumnTypeException, ColumnsDoNotExistException, ColumnDoesNotExistException}
+import io.deepsense.deeplang.doperations.exceptions.{ColumnDoesNotExistException, ColumnsDoNotExistException, WrongColumnTypeException}
 import io.deepsense.deeplang.parameters.{MultipleColumnSelection, NameColumnSelection, NameSingleColumnSelection}
 
 class UntrainedRidgeRegressionIntegSpec extends DeeplangIntegTestSupport {
@@ -23,9 +22,9 @@ class UntrainedRidgeRegressionIntegSpec extends DeeplangIntegTestSupport {
   "UntrainedRidgeRegression" should {
 
     val inputRows: Seq[Row] = Seq(
-      Row(-1.11, "x", -2.22, 3.33),
-      Row(-11.1, "y", -22.2, 33.3),
-      Row(-1111.0, "z", -2222.0, 3333.0))
+      Row(-2.0, "x", -2.22, 1000.0),
+      Row(-2.0, "y", -22.2, 2000.0),
+      Row(-2.0, "z", -2222.0, 6000.0))
 
     val inputSchema: StructType = StructType(Seq(
       StructField("column1", DoubleType),
@@ -46,11 +45,17 @@ class UntrainedRidgeRegressionIntegSpec extends DeeplangIntegTestSupport {
         new Answer[RidgeRegressionModel] {
           override def answer(invocationOnMock: InvocationOnMock) = {
             val receivedRDD = invocationOnMock.getArgumentAt(0, classOf[RDD[LabeledPoint]])
-            receivedRDD.collect() shouldBe Seq(
-              LabeledPoint(-2.22, Vectors.dense(-1.11, 3.33)),
-              LabeledPoint(-22.2, Vectors.dense(-11.1, 33.3)),
-              LabeledPoint(-2222, Vectors.dense(-1111, 3333))
-            )
+            val collected = receivedRDD.collect()
+            val allLabels = collected.map(_.label)
+            allLabels shouldBe Seq(-2.22, -22.2, -2222.0)
+            val allFeatures = collected.map(_.features)
+            allFeatures(0)(0) shouldBe 0.0
+            allFeatures(0)(1) shouldBe -0.755 +- 0.01
+            allFeatures(1)(0) shouldBe 0.0
+            allFeatures(1)(1) shouldBe -0.377 +- 0.01
+            allFeatures(2)(0) shouldBe 0.0
+            allFeatures(2)(1) shouldBe 1.133 +- 0.01
+
             mockTrainedModel
           }
         })
