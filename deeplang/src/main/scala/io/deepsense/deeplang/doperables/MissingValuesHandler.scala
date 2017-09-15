@@ -14,45 +14,45 @@
  * limitations under the License.
  */
 
-/** TODO as Transformer and without types
-package io.deepsense.deeplang.doperations
+package io.deepsense.deeplang.doperables
 
 import java.sql.Timestamp
 
-import scala.collection.immutable.ListMap
 import scala.reflect.runtime.{universe => ru}
 
 import org.apache.spark.sql.types._
 
-import io.deepsense.commons.types.ColumnType
-import io.deepsense.commons.types.ColumnType.ColumnType
-import io.deepsense.deeplang.DOperation._
-import io.deepsense.deeplang.doperables.dataframe.{CategoricalColumnMetadata, ColumnMetadata, DataFrame}
-import io.deepsense.deeplang.doperations.MissingValuesHandler.{EmptyColumnsStrategy, Strategy}
-import io.deepsense.deeplang.doperations.exceptions.{MultipleTypesReplacementException, WrongReplacementValueException}
-import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
-import io.deepsense.deeplang.parameters.ChoiceParameter.BinaryChoice
+import io.deepsense.deeplang.ExecutionContext
+import io.deepsense.deeplang.doperables.dataframe.{DataFrameColumnsGetter, DataFrame}
+import io.deepsense.deeplang.doperations.exceptions.{WrongReplacementValueException, MultipleTypesReplacementException}
 import io.deepsense.deeplang.parameters._
-import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
 import io.deepsense.deeplang.params._
-import io.deepsense.deeplang.{DKnowledge, DOperation1To1, ExecutionContext}
+import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
 
 case class MissingValuesHandler()
-  extends DOperation1To1[DataFrame, DataFrame]
+  extends Transformer
   with Params {
 
-  import MissingValuesHandler._
+  import io.deepsense.deeplang.doperables.MissingValuesHandler._
 
-  override val name: String = "Missing Values Handler"
-  override val id: Id = "e1120fbc-375b-4967-9c23-357ab768272f"
-
-  override protected def _inferFullKnowledge(context: InferContext)
-                                            (knowledge: DKnowledge[DataFrame])
-  : ((DKnowledge[DataFrame]), InferenceWarnings) = {
-    // TODO Check column selection correctness (this applies to other operations as well)
-    // TODO New column metadata if "missing value indicator" is checked
-    ((knowledge), InferenceWarnings.empty)
+  override def _transformSchema(schema: StructType): Option[StructType] = {
+    getStrategy match {
+      case Strategy.RemoveColumn() => None
+      case _ => {
+        val indicator = getMissingValueIndicator.getIndicatorPrefix
+        indicator match {
+          case Some(prefix) =>
+            val columnNames = DataFrameColumnsGetter.getColumnNames(schema, getSelectedColumns)
+            val newColumns = columnNames.map(s => StructField(prefix + s, BooleanType, false))
+            val inferredSchema = StructType(schema.fields ++ newColumns)
+            Some(inferredSchema)
+          case None => Some(schema)
+        }
+      }
+    }
   }
+
+  override def report(executionContext: ExecutionContext): Report = Report()
 
   val selectedColumns = ColumnSelectorParam(
     name = "columns",
@@ -79,9 +79,9 @@ case class MissingValuesHandler()
   def setMissingValueIndicator(value: MissingValueIndicatorChoice): this.type =
     set(missingValueIndicator, value)
 
-  val params = declareParams(selectedColumns, strategy, missingValueIndicator)
+  override val params = declareParams(selectedColumns, strategy, missingValueIndicator)
 
-  override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): DataFrame = {
+  override def _transform(context: ExecutionContext, dataFrame: DataFrame): DataFrame = {
 
     val strategy = getStrategy
     val columns = dataFrame.getColumnNames(getSelectedColumns)
@@ -148,7 +148,7 @@ case class MissingValuesHandler()
     val columnsWithNulls = columns.filter(column =>
       dataFrame.sparkDataFrame.select(column).filter(column + " is null").count() > 0)
     val retainedColumns = dataFrame.sparkDataFrame.columns filterNot columnsWithNulls.contains
-    context.dataFrameBuilder.buildDataFrame(
+    DataFrame.fromSparkDataFrame(
       dataFrame.sparkDataFrame.select(retainedColumns.head, retainedColumns.tail: _*))
   }
 
@@ -159,19 +159,20 @@ case class MissingValuesHandler()
       customValue: String,
       indicator: Option[String]) = {
 
-    val columnMetadata = dataFrame.metadata.get.columns
+    val columnDataTypes = Map(columns.map(columnName =>
+      columnName -> dataFrame.schema.get(columnName).dataType): _*)
 
-    val columnTypes = Map(columns.map(columnName =>
-      columnName -> dataFrame.columnType(columnName)): _*)
-
-    if (columnTypes.values.toSet.size != 1) {
-      throw new MultipleTypesReplacementException(columnTypes)
+    if (columnDataTypes.values.toSet.size != 1) {
+      throw new MultipleTypesReplacementException(columnDataTypes)
     }
 
-    MissingValuesHandlerUtils.replaceNulls(context, dataFrame, columns,
-      columnName =>
-        ReplaceWithCustomValueStrategy.convertReplacementValue(
-        customValue, columnMetadata(columnName), columnTypes(columnName)))
+    MissingValuesHandlerUtils.replaceNulls(
+      context,
+      dataFrame,
+      columns,
+      columnName => ReplaceWithCustomValueStrategy.convertReplacementValue(
+        customValue,
+        dataFrame.schema.get(columnName)))
   }
 
   private def replaceWithMode(
@@ -196,7 +197,7 @@ case class MissingValuesHandler()
     if (emptyColumnStrategy == EmptyColumnsStrategy.RemoveEmptyColumns()) {
       val retainedColumns = dataFrame.sparkDataFrame.columns.filter(
         !allEmptyColumns.toList.contains(_))
-      resultDF = context.dataFrameBuilder.buildDataFrame(
+      resultDF = DataFrame.fromSparkDataFrame(
         resultDF.sparkDataFrame.select(retainedColumns.head, retainedColumns.tail: _*))
     }
 
@@ -226,17 +227,12 @@ case class MissingValuesHandler()
       Some(resultArray(0)(0))
     }
   }
-
-  @transient
-  override lazy val tTagTI_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
-  @transient
-  override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }
 
 object MissingValuesHandler {
 
   sealed trait Strategy extends Choice {
-    import Strategy._
+    import io.deepsense.deeplang.doperables.MissingValuesHandler.Strategy._
 
     override val choiceOrder: List[Class[_ <: Choice]] = List(
       classOf[RemoveRow],
@@ -287,7 +283,7 @@ object MissingValuesHandler {
   }
 
   sealed trait EmptyColumnsStrategy extends Choice {
-    import EmptyColumnsStrategy._
+    import io.deepsense.deeplang.doperables.MissingValuesHandler.EmptyColumnsStrategy._
 
     override val choiceOrder: List[Class[_ <: EmptyColumnsStrategy]] = List(
       classOf[RemoveEmptyColumns],
@@ -306,7 +302,7 @@ object MissingValuesHandler {
   }
 
   sealed trait MissingValueIndicatorChoice extends Choice {
-    import MissingValueIndicatorChoice._
+    import io.deepsense.deeplang.doperables.MissingValuesHandler.MissingValueIndicatorChoice._
 
     def getIndicatorPrefix: Option[String]
     override val choiceOrder: List[Class[_ <: MissingValueIndicatorChoice]] =
@@ -366,28 +362,27 @@ private object MissingValuesHandlerUtils {
 
     context.dataFrameBuilder.buildDataFrame(df.schema, resultSparkDF.rdd)
   }
-
 }
 
 private object ReplaceWithCustomValueStrategy {
-
-  def convertReplacementValue(
-      rawValue: String, colMetadata: ColumnMetadata, colType: ColumnType): Any = {
-
+  def convertReplacementValue(rawValue: String, field: StructField): Any = {
     try {
-      colType match {
-        case ColumnType.numeric => rawValue.toDouble
-        case ColumnType.boolean => rawValue.toBoolean
-        case ColumnType.string => rawValue
-        case ColumnType.timestamp => Timestamp.valueOf(rawValue)
-        case ColumnType.categorical =>
-          colMetadata.asInstanceOf[CategoricalColumnMetadata].categories.get.valueToId(rawValue)
+      field.dataType match {
+        case _: ByteType => rawValue.toByte
+        case _: DecimalType => new java.math.BigDecimal(rawValue)
+        case _: DoubleType => rawValue.toDouble
+        case _: FloatType => rawValue.toFloat
+        case _: IntegerType => rawValue.toInt
+        case _: LongType => rawValue.toLong
+        case _: ShortType => rawValue.toShort
+
+        case _: BooleanType => rawValue.toBoolean
+        case _: StringType => rawValue
+        case _: TimestampType => Timestamp.valueOf(rawValue)
       }
     } catch {
       case e: Exception =>
-        throw new WrongReplacementValueException(rawValue, colMetadata.name, colType)
+        throw new WrongReplacementValueException(rawValue, field)
     }
   }
-
 }
-*/
