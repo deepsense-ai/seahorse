@@ -15,18 +15,8 @@ pythonAndRDeps := {
 }
 pythonAndRDeps <<= pythonAndRDeps dependsOn weJar
 
-dockerBaseImage := {
-  // Require environment variable SEAHORSE_BUILD_TAG to be set
-  // This variable indicates tag of base image for sessionmanager image
-  val seahorseBuildTag = {
-    scala.util.Properties.envOrNone("SEAHORSE_BUILD_TAG").getOrElse {
-      println("SEAHORSE_BUILD_TAG is not defined. Trying to use $GITBRANCH-latest")
-      s"${SbtGit.GitKeys.gitCurrentBranch.value}-latest"
-    }
-  }
-  // TODO set image with proper spark version
-  s"docker-repo.deepsense.codilime.com/deepsense_io/deepsense-mesos-spark:$seahorseBuildTag"
-}
+dockerBaseImage :=
+  s"docker-repo.deepsense.codilime.com/deepsense_io/deepsense-mesos-spark:${SbtGit.GitKeys.gitHeadCommit.value.get}"
 
 lazy val tiniVersion = "v0.10.0"
 
