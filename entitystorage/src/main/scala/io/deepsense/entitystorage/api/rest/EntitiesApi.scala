@@ -16,7 +16,6 @@ import spray.util.LoggingContext
 
 import io.deepsense.commons.auth.AuthorizatorProvider
 import io.deepsense.commons.auth.usercontext.TokenTranslator
-import io.deepsense.commons.json.ExceptionsJsonProtocol
 import io.deepsense.commons.rest.{RestApi, RestComponent}
 import io.deepsense.entitystorage.exceptions.EntityNotFoundException
 import io.deepsense.entitystorage.json.EntityJsonProtocol
@@ -34,7 +33,9 @@ class EntitiesApi @Inject() (
     @Named("roles.entities.update") roleUpdate: String,
     @Named("roles.entities.delete") roleDelete: String)
     (implicit ec: ExecutionContext)
-  extends RestApi with RestComponent with EntityJsonProtocol with ExceptionsJsonProtocol {
+  extends RestApi
+  with RestComponent
+  with EntityJsonProtocol {
 
   require(StringUtils.isNoneBlank(apiPrefix))
   private val pathPrefixMatcher = PathMatchers.separateOnSlashes(apiPrefix)

@@ -18,6 +18,7 @@ import spray.routing.Route
 
 import io.deepsense.commons.auth.usercontext.{TokenTranslator, UserContext}
 import io.deepsense.commons.auth.{AuthorizatorProvider, UserContextAuthorizator}
+import io.deepsense.commons.buildinfo.BuildInfo
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
 import io.deepsense.commons.models.Id
@@ -82,7 +83,7 @@ class WorkflowsApiSpec
   val obsoleteVersionWorkflowResult = obsoleteVersionWorkflow
   val incorrectVersionFormatWorkflowResult = incorrectVersionFormatWorkflow
 
-  def newWorkflowAndKnowledge(apiVersion: String = ApisModule.SUPPORTED_API_VERSION)
+  def newWorkflowAndKnowledge(apiVersion: String = BuildInfo.version)
       : (Workflow, GraphKnowledge) = {
     val node1 = Node(Node.Id.randomId, FileToDataFrame())
     val node2 = Node(Node.Id.randomId, FileToDataFrame())
@@ -116,7 +117,7 @@ class WorkflowsApiSpec
     val node2 = Node(Node.Id.randomId, FileToDataFrame())
     val graph = Graph(Set(node1, node2), Set(Edge(node1, 0, node2, 0), Edge(node2, 0, node1, 0)))
     val metadata = WorkflowMetadata(
-      WorkflowType.Batch, apiVersion = ApisModule.SUPPORTED_API_VERSION)
+      WorkflowType.Batch, apiVersion = BuildInfo.version)
     val thirdPartyData = ThirdPartyData("{}")
     val workflow = Workflow(metadata, graph, thirdPartyData)
     workflow
@@ -493,6 +494,9 @@ class WorkflowsApiSpec
         Post(s"/$apiPrefix", cyclicWorkflow) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be (StatusCodes.BadRequest)
+
+          val failureDescription = responseAs[FailureDescription]
+          failureDescription.code shouldBe FailureCode.IllegalArgumentException
         }
         ()
       }
@@ -501,6 +505,8 @@ class WorkflowsApiSpec
         Post(s"/$apiPrefix", createdWorkflow) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.BadRequest)
+
+          assertFailureDescriptionHasVersionInfo(responseAs[FailureDescription])
         }
         ()
       }
@@ -546,6 +552,8 @@ class WorkflowsApiSpec
           addHeaders(
             RawHeader("X-Auth-Token", validAuthTokenTenantA)) ~> testRoute ~> check {
           status should be(StatusCodes.BadRequest)
+
+          assertFailureDescriptionHasVersionInfo(responseAs[FailureDescription])
         }
         ()
       }
@@ -601,6 +609,8 @@ class WorkflowsApiSpec
           addHeaders(
             RawHeader("X-Auth-Token", validAuthTokenTenantA)) ~> testRoute ~> check {
           status should be(StatusCodes.BadRequest)
+
+          assertFailureDescriptionHasVersionInfo(responseAs[FailureDescription])
         }
         ()
       }
@@ -634,7 +644,7 @@ class WorkflowsApiSpec
   s"PUT /workflows/:id" should {
     val (workflow, knowledge) = newWorkflowAndKnowledge()
     val updatedWorkflow = workflow.copy(
-      metadata = workflow.metadata.copy(apiVersion = ApisModule.SUPPORTED_API_VERSION))
+      metadata = workflow.metadata.copy(apiVersion = BuildInfo.version))
 
     "process authorization before reading PUT content" in {
       val invalidContent = JsObject()
@@ -680,6 +690,8 @@ class WorkflowsApiSpec
         Put(s"/$apiPrefix/$workflowAId", wrongUpdatedWorkflow) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.BadRequest)
+
+          assertFailureDescriptionHasVersionInfo(responseAs[FailureDescription])
         }
         ()
       }
@@ -822,6 +834,12 @@ class WorkflowsApiSpec
         ()
       }
     }
+  }
+
+  def assertFailureDescriptionHasVersionInfo(fd: FailureDescription): Unit = {
+    fd.code shouldBe FailureCode.IncorrectWorkflow
+    fd.details should (
+      contain key "workflowApiVersion" and contain key "supportedApiVersion")
   }
 
   def mockResultsStorage(): WorkflowResultsStorage = {

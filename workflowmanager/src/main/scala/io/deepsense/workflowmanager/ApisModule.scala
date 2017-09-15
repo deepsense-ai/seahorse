@@ -38,7 +38,3 @@ class ApisModule(withMockedSecurity: Boolean) extends AbstractModule {
     bindApi.to(classOf[VersionApi])
   }
 }
-
-object ApisModule {
-  val SUPPORTED_API_VERSION = "0.4.0"
-}
