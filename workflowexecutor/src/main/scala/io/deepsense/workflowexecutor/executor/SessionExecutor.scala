@@ -131,6 +131,8 @@ case class SessionExecutor(
       pythonPathGenerator,
       communicationFactory,
       kernelManagerArchive,
+      hostAddress.getHostAddress,
+      pythonExecutionCaretaker.gatewayListeningPort.get,
       messageQueueHost,
       messageQueuePort,
       sessionId,

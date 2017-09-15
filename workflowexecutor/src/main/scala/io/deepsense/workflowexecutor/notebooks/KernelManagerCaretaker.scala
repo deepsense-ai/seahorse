@@ -38,6 +38,8 @@ class KernelManagerCaretaker(
   private val pythonPathGenerator: PythonPathGenerator,
   private val communicationFactory: MQCommunicationFactory,
   private val archive: String,
+  private val gatewayHost: String,
+  private val gatewayPort: Int,
   private val mqHost: String,
   private val mqPort: Int,
   private val sessionId: String,
@@ -105,6 +107,8 @@ class KernelManagerCaretaker(
     val command = s"$kernelManagerPath" +
       s" --working-dir $workingDir" +
       s" --additional-python-path ${pythonPathGenerator.pythonPath()}" +
+      s" --gateway-host $gatewayHost" +
+      s" --gateway-port $gatewayPort" +
       s" --mq-host $mqHost" +
       s" --mq-port $mqPort" +
       s" --workflow-id $workflowId" +
