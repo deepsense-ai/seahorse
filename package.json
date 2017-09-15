@@ -1,12 +1,12 @@
 {
   "name": "deepsense-graph-model",
-  "version": "0.0.30",
+  "version": "0.0.31",
   "main": "deepsense-graph-model.js",
   "description": "Graph model",
   "license": "ISC",
   "dependencies": {
     "angular": "^1.4.1",
-    "deepsense-node-parameters": "0.0.11",
+    "deepsense-node-parameters": "0.0.22",
     "lodash": "^3.9.3"
   },
   "devDependencies": {
