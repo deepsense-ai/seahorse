@@ -21,6 +21,8 @@ function LibraryService($q, $log, LibraryApiService) {
   service.cleanUploadingFiles = cleanUploadingFiles;
   service.removeUploadingFileByName = removeUploadingFileByName;
 
+  fetchAll();
+
   /**
    * Fetches library from the server to local object
    * @returns {Promise}

@@ -17,7 +17,8 @@
     </div>
     <div class="btn-group" role="group">
       <button type="button" class="btn-blue btn text-uppercase btn-workflow btn-workflow__upload"
-              ng-click="home.displayUploadWorkflowPopup($event)">Upload Workflow
+              ng-click="home.displayUploadWorkflowPopup($event)"
+              ng-disabled="!home.isReady()">Upload Workflow
       </button>
     </div>
   </div>

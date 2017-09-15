@@ -8,6 +8,7 @@ function FileUploadChange() {
       const fileUploadHandler = scope.$eval(attrs.fileUploadChange);
       element.bind('change', (event) => {
         fileUploadHandler(event.target.files);
+        element.val(null);
       });
     }
   };

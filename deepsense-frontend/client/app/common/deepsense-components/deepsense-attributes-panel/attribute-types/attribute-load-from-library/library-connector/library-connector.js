@@ -17,8 +17,8 @@ function LibraryConnector() {
 
       vm.openLibrary = openLibrary;
 
-      $scope.$watch(() => vm.fileUri, (newValue) => {
-        const file = LibraryService.getFileByURI(newValue);
+      $scope.$watchGroup([() => vm.fileUri, () => LibraryService.getAll()], () => {
+        const file = LibraryService.getFileByURI(vm.fileUri);
         vm.label = file ? file.name : 'Library';
       });
 
