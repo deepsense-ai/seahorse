@@ -8,7 +8,6 @@ includeOperationsMenu: true
 ---
 
 A `Write Transformer` operation saves a [Transformer](../classes/transformer.html) to a directory at the specified location.
-If a directory with that name already exists, it will be overwritten.
 
 It can be subsequently read using the [Read Transformer](read_transformer.html) operation.
 
@@ -68,6 +67,16 @@ The `Write Transformer` operation does not produce any output.
         <code><a href="../parameter_types.html#string">String</a></code>
       </td>
       <td>The path where the output directory will be saved.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>overwrite</code>
+      </td>
+      <td>
+        <code><a href="../parameter_types.html#boolean">Boolean</a></code>
+      </td>
+      <td>Whether saving the transformer should overwrite an existing one with the same name.
       </td>
     </tr>
   </tbody>

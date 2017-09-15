@@ -20,7 +20,6 @@ import java.io.IOException
 import java.util.Properties
 
 import scala.reflect.runtime.{universe => ru}
-
 import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang._
@@ -34,6 +33,7 @@ import io.deepsense.deeplang.doperations.readwritedataframe.validators.{FilePath
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.choice.ChoiceParam
 import io.deepsense.deeplang.params.{Param, Params}
+import org.apache.spark.sql.SaveMode
 
 class WriteDataFrame()
   extends DOperation1To0[DataFrame]
@@ -85,8 +85,9 @@ class WriteDataFrame()
 
     val jdbcUrl = jdbcChoice.getJdbcUrl
     val jdbcTableName = jdbcChoice.getJdbcTableName
+    val saveMode = if (jdbcChoice.getShouldOverwrite) SaveMode.Overwrite else SaveMode.ErrorIfExists
 
-    dataFrame.sparkDataFrame.write.jdbc(jdbcUrl, jdbcTableName, properties)
+    dataFrame.sparkDataFrame.write.mode(saveMode).jdbc(jdbcUrl, jdbcTableName, properties)
   }
 
   override protected def inferKnowledge(k0: DKnowledge[DataFrame])(context: InferContext): (Unit, InferenceWarnings) = {

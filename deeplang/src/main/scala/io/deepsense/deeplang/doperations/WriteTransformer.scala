@@ -19,15 +19,17 @@ package io.deepsense.deeplang.doperations
 import java.io.{File, IOException}
 
 import scala.reflect.runtime.{universe => ru}
-
 import io.deepsense.commons.utils.Version
 import io.deepsense.commons.utils.FileOperations.deleteRecursivelyIfExists
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.documentation.OperationDocumentation
 import io.deepsense.deeplang.doperables.Transformer
 import io.deepsense.deeplang.doperations.exceptions.DeepSenseIOException
-import io.deepsense.deeplang.params.{Params, StringParam}
+import io.deepsense.deeplang.params.{BooleanParam, Params, StringParam}
 import io.deepsense.deeplang.{DOperation1To0, ExecutionContext}
+
+import java.net.URI
+import org.apache.hadoop.fs.{FileSystem, Path}
 
 case class WriteTransformer()
   extends DOperation1To0[Transformer]
@@ -40,6 +42,15 @@ case class WriteTransformer()
 
   override val since: Version = Version(1, 1, 0)
 
+  val shouldOverwrite = BooleanParam(
+    name = "overwrite",
+    description = "Should an existing transformer with the same name be overwritten?"
+  )
+  setDefault(shouldOverwrite, true)
+
+  def getShouldOverwrite: Boolean = $(shouldOverwrite)
+  def setShouldOverwrite(value: Boolean): this.type = set(shouldOverwrite, value)
+
   val outputPath = StringParam(
     name = "output path",
     description = "The output path for writing the Transformer.")
@@ -47,18 +58,37 @@ case class WriteTransformer()
   def getOutputPath: String = $(outputPath)
   def setOutputPath(value: String): this.type = set(outputPath, value)
 
-  val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(outputPath)
+  val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(outputPath, shouldOverwrite)
 
   override protected def execute(transformer: Transformer)(context: ExecutionContext): Unit = {
     val outputDictPath = getOutputPath
     try {
-      deleteRecursivelyIfExists(new File(outputDictPath))
+      if (getShouldOverwrite) {
+        removeDirectory(context, outputDictPath)
+      }
       transformer.save(context, outputDictPath)
     } catch {
       case e: IOException =>
         logger.error(s"WriteTransformer error. Could not write transformer to the directory", e)
         throw DeepSenseIOException(e)
     }
+  }
+
+  private def removeDirectory(context: ExecutionContext, path: String): Unit = {
+    if (path.startsWith("hdfs://")) {
+      val configuration = context.sparkContext.hadoopConfiguration
+      val hdfs = FileSystem.get(new URI(extractHdfsAddress(path)), configuration)
+      hdfs.delete(new Path(path), true)
+    } else {
+      deleteRecursivelyIfExists(new File(path))
+    }
+  }
+
+  private def extractHdfsAddress(path: String): String = {
+    // first group: "hdfs://ip.addr.of.hdfs", second group: "/some/path/on/hdfs"
+    val regex = "(hdfs:\\/\\/[^\\/]*)(.*)".r
+    val regex(hdfsAddress, _) = path
+    hdfsAddress
   }
 
   @transient

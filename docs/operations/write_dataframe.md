@@ -198,7 +198,18 @@ The `Write DataFrame` operation does not produce any output.
       </td>
       <td>Valid only if <code>data storage type = JDBC</code>.
         The JDBC table's name.
-        A table with an appropriate schema will be created; if the table already exists, an exception will be thrown.
+        A table with an appropriate schema will be created.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>overwrite</code>
+      </td>
+      <td>
+        <code><a href="../parameter_types.html#boolean">Boolean</a></code>
+      </td>
+      <td>Valid only if <code>data storage type = FILE</code> or <code>data storage type = JDBC</code>.
+        Value determining whether saving a file or table should overwrite an existing one with the same name.
       </td>
     </tr>
   </tbody>

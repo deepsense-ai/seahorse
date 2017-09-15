@@ -17,7 +17,6 @@
 package io.deepsense.deeplang.doperations.readwritedataframe.filestorage
 
 import org.apache.spark.SparkException
-
 import io.deepsense.commons.utils.LoggerForCallerClass
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.WriteFileException
@@ -27,6 +26,7 @@ import io.deepsense.deeplang.doperations.readwritedataframe.{FilePath, FilePathF
 import io.deepsense.deeplang.doperations.readwritedataframe.filestorage.csv.CsvSchemaStringifierBeforeCsvWriting
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.{ExecutionContext, FileSystemClient}
+import org.apache.spark.sql.SaveMode
 
 object DataFrameToFileWriter {
 
@@ -40,13 +40,14 @@ object DataFrameToFileWriter {
 
     val path = FileSystemClient.replaceLeadingTildeWithHomeDirectory(fileChoice.getOutputFile())
     val filePath = FilePath(path)
+    val saveMode = if (fileChoice.getShouldOverwrite) SaveMode.Overwrite else SaveMode.ErrorIfExists
 
     try {
       val preprocessed = fileChoice.getFileFormat() match {
         case csv: Csv => CsvSchemaStringifierBeforeCsvWriting.preprocess(dataFrame)
         case other => dataFrame
       }
-      writeUsingProvidedFileScheme(fileChoice, preprocessed, filePath)
+      writeUsingProvidedFileScheme(fileChoice, preprocessed, filePath, saveMode)
     } catch {
       case e: SparkException =>
         logger.error(s"WriteDataFrame error: Spark problem. Unable to write file to $path", e)
@@ -55,7 +56,7 @@ object DataFrameToFileWriter {
   }
 
   private def writeUsingProvidedFileScheme(
-      fileChoice: OutputStorageTypeChoice.File, dataFrame: DataFrame, path: FilePath
+      fileChoice: OutputStorageTypeChoice.File, dataFrame: DataFrame, path: FilePath, saveMode: SaveMode
     )(implicit context: ExecutionContext): Unit = {
     import FileScheme._
     path.fileScheme match {
@@ -63,9 +64,9 @@ object DataFrameToFileWriter {
         val filePath = FilePathFromLibraryPath(path)
         val FilePath(_, libraryPath) = filePath
         new java.io.File(libraryPath).getParentFile.mkdirs()
-        writeUsingProvidedFileScheme(fileChoice, dataFrame, filePath)
-      case FileScheme.File => DriverFiles.write(dataFrame, path, fileChoice.getFileFormat())
-      case HDFS => ClusterFiles.write(dataFrame, path, fileChoice.getFileFormat())
+        writeUsingProvidedFileScheme(fileChoice, dataFrame, filePath, saveMode)
+      case FileScheme.File => DriverFiles.write(dataFrame, path, fileChoice.getFileFormat(), saveMode)
+      case HDFS => ClusterFiles.write(dataFrame, path, fileChoice.getFileFormat(), saveMode)
       case HTTP | HTTPS | FTP => throw NotSupportedScheme(path.fileScheme)
     }
   }

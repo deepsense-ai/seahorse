@@ -16,15 +16,12 @@
 
 package io.deepsense.deeplang.doperations.readwritedataframe.filestorage
 
-import java.io.PrintWriter
+import java.io.{File, IOException, PrintWriter}
 
 import scala.io.Source
-import scala.reflect.runtime.{universe => ru}
-
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.execution.datasources.csv.{DataframeToDriverCsvFileWriter, RawCsvRDDToDataframe}
-import org.apache.spark.sql.{DataFrame => SparkDataFrame}
-
+import org.apache.spark.sql.{SaveMode, DataFrame => SparkDataFrame}
 import io.deepsense.commons.resources.ManagedResource
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
@@ -42,9 +39,12 @@ object DriverFiles {
     case parquet: InputFileFormatChoice.Parquet => throw ParquetNotSupported
   }
 
-  def write(dataFrame: DataFrame, path: FilePath, fileFormat: OutputFileFormatChoice)
+  def write(dataFrame: DataFrame, path: FilePath, fileFormat: OutputFileFormatChoice, saveMode: SaveMode)
            (implicit context: ExecutionContext): Unit = {
     path.verifyScheme(FileScheme.File)
+    if (saveMode == SaveMode.ErrorIfExists && new File(path.pathWithoutScheme).exists()){
+      throw new IOException(s"Output file ${path.fullPath} already exists")
+    }
     fileFormat match {
       case csv: OutputFileFormatChoice.Csv => writeCsv(path, csv, dataFrame)
       case json: OutputFileFormatChoice.Json => writeJson(path, dataFrame)

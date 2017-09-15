@@ -19,13 +19,11 @@ package io.deepsense.deeplang.doperations
 import java.sql.Timestamp
 
 import scala.io.Source
-
 import org.apache.spark.sql._
 import org.apache.spark.sql.types._
 import org.scalatest.BeforeAndAfter
-
 import io.deepsense.commons.datetime.DateTimeConverter
-import io.deepsense.deeplang.doperations.exceptions.UnsupportedColumnTypeException
+import io.deepsense.deeplang.doperations.exceptions.{DeepSenseIOException, UnsupportedColumnTypeException}
 import io.deepsense.deeplang.doperations.inout._
 import io.deepsense.deeplang.doperations.readwritedataframe.filestorage.ParquetNotSupported
 import io.deepsense.deeplang.doperations.readwritedataframe.{FileScheme, UnknownFileSchemaForPath}
@@ -237,30 +235,59 @@ class WriteDataFrameWithDriverFilesIntegSpec
       }
     }
 
-    "overwrite file when it already exists" in {
+    "overwrite file when it already exists and the overwrite param is set to true" in {
       val outputName = "some-name"
       val wdf =
         new WriteDataFrame()
           .setStorageType(
             new OutputStorageTypeChoice.File()
               .setOutputFile(absoluteTestsDirPath.fullPath + outputName)
+              .setShouldOverwrite(true)
               .setFileFormat(
                 new OutputFileFormatChoice.Csv()
                   .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Comma())
                   .setNamesIncluded(false)))
       wdf.executeUntyped(Vector(dataframe))(executionContext)
-
       val wdf1 =
         new WriteDataFrame()
           .setStorageType(
             new OutputStorageTypeChoice.File()
               .setOutputFile(absoluteTestsDirPath.fullPath + outputName)
+              .setShouldOverwrite(true)
               .setFileFormat(
                 new OutputFileFormatChoice.Csv()
                   .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Comma())
                   .setNamesIncluded(true)))
       wdf1.executeUntyped(Vector(dataframe))(executionContext)
       verifySavedDataFrame(outputName, rows, withHeader = true, ",")
+    }
+
+    "throw an exception when the file already exists and the overwrite param is set to false" in {
+      val outputName = "some-name"
+      val wdf =
+        new WriteDataFrame()
+          .setStorageType(
+            new OutputStorageTypeChoice.File()
+              .setOutputFile(absoluteTestsDirPath.fullPath + outputName)
+              .setShouldOverwrite(false)
+              .setFileFormat(
+                new OutputFileFormatChoice.Csv()
+                  .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Comma())
+                  .setNamesIncluded(false)))
+      wdf.executeUntyped(Vector(dataframe))(executionContext)
+      val wdf1 =
+        new WriteDataFrame()
+          .setStorageType(
+            new OutputStorageTypeChoice.File()
+              .setOutputFile(absoluteTestsDirPath.fullPath + outputName)
+              .setShouldOverwrite(false)
+              .setFileFormat(
+                new OutputFileFormatChoice.Csv()
+                  .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Comma())
+                  .setNamesIncluded(true)))
+      a [DeepSenseIOException] shouldBe thrownBy {
+        wdf1.executeUntyped(Vector(dataframe))(executionContext)
+      }
     }
   }
 

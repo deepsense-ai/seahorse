@@ -41,7 +41,7 @@ private[filestorage] object ClusterFiles {
     }
   }
 
-  def write(dataFrame: DataFrame, path: FilePath, fileFormat: OutputFileFormatChoice)
+  def write(dataFrame: DataFrame, path: FilePath, fileFormat: OutputFileFormatChoice, saveMode: SaveMode)
            (implicit context: ExecutionContext): Unit = {
     val clusterPath = path.fullPath
     val writer = fileFormat match {
@@ -57,7 +57,7 @@ private[filestorage] object ClusterFiles {
       case _: OutputFileFormatChoice.Json =>
         dataFrame.sparkDataFrame.write.format("json")
     }
-    writer.mode(SaveMode.Overwrite).save(clusterPath)
+    writer.mode(saveMode).save(clusterPath)
   }
 
   private def readCsv(clusterPath: String, csvChoice: InputFileFormatChoice.Csv)

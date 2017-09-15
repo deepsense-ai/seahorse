@@ -19,7 +19,7 @@ package io.deepsense.deeplang.doperations.inout
 import io.deepsense.deeplang.doperations.readwritedataframe.googlestorage._
 import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
 import io.deepsense.deeplang.params.library.SaveToLibraryParam
-import io.deepsense.deeplang.params.{Param, StorageType, StringParam}
+import io.deepsense.deeplang.params.{BooleanParam, Param, StorageType, StringParam}
 
 sealed trait OutputStorageTypeChoice extends Choice {
   import OutputStorageTypeChoice._
@@ -44,6 +44,15 @@ object OutputStorageTypeChoice {
     def getOutputFile(): String = $(outputFile)
     def setOutputFile(value: String): this.type = set(outputFile, value)
 
+    val shouldOverwrite = BooleanParam(
+      name = "overwrite",
+      description = "Should saving a file overwrite an existing file with the same name?"
+    )
+    setDefault(shouldOverwrite, true)
+
+    def getShouldOverwrite: Boolean = $(shouldOverwrite)
+    def setShouldOverwrite(value: Boolean): this.type = set(shouldOverwrite, value)
+
     val fileFormat = ChoiceParam[OutputFileFormatChoice](
       name = "format",
       description = "Format of the output file.")
@@ -52,16 +61,25 @@ object OutputStorageTypeChoice {
     def getFileFormat(): OutputFileFormatChoice = $(fileFormat)
     def setFileFormat(value: OutputFileFormatChoice): this.type = set(fileFormat, value)
 
-    override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(outputFile, fileFormat)
+    override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(outputFile, shouldOverwrite, fileFormat)
   }
 
   class Jdbc()
     extends OutputStorageTypeChoice
     with JdbcParameters {
 
+    val shouldOverwrite = BooleanParam(
+      name = "overwrite",
+      description = "Should saving a table overwrite an existing table with the same name?"
+    )
+    setDefault(shouldOverwrite, true)
+
+    def getShouldOverwrite: Boolean = $(shouldOverwrite)
+    def setShouldOverwrite(value: Boolean): this.type = set(shouldOverwrite, value)
+
     override val name: String = StorageType.JDBC.toString
     override val params: Array[Param[_]] =
-      Array(jdbcUrl, jdbcDriverClassName, jdbcTableName)
+      Array(jdbcUrl, jdbcDriverClassName, jdbcTableName, shouldOverwrite)
   }
 
   class GoogleSheet()
