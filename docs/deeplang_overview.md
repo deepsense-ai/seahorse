@@ -190,8 +190,6 @@ Note that if two branches of workflow do not depend on each other, they can be e
 
 #### Example
 
-TODO: replace with a nice-looking diagram:
-
 <div class="centered-container" markdown="1">
   ![workflow](./img/deeplang_workflow.png){: .centered-image .img-responsive}
 </div>
