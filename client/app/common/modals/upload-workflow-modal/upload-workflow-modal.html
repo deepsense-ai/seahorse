@@ -7,7 +7,7 @@
       <deepsense-loading-spinner-sm ng-if="controller.status === 'loading'"></deepsense-loading-spinner-sm>
       <button type="button" class="center-block btn btn-info c-upload-report-modal__upload-button"
               ng-if="controller.status === 'preparing' || controller.status === 'failure'" ngf-select
-              ngf-change="controller.upload($file)">Choose a file
+              ngf-change="controller.upload($file)" focused>Choose a file
       </button>
       <div class="text-center c-upload-report-modal__upload-progress" ng-if="controller.status === 'loading'">
         {{controller.progress + ' %' }}
