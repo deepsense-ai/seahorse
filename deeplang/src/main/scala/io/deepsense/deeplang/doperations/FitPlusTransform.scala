@@ -79,7 +79,8 @@ class FitPlusTransform
   }
 
   private def estimatorWithParams(estimator: Estimator[Transformer]): Estimator[Transformer] = {
-    val estimatorWithParams = estimator.replicate().setParamsFromJson($(estimatorParams))
+    val estimatorWithParams = estimator.replicate()
+      .setParamsFromJson($(estimatorParams), ignoreNulls = true)
     validateDynamicParams(estimatorWithParams)
     estimatorWithParams
   }

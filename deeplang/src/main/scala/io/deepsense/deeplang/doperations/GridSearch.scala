@@ -217,7 +217,7 @@ case class GridSearch()
   }
 
   private def createEvaluatorWithParams(evaluator: Evaluator): Evaluator = {
-    evaluator.replicate().setParamsFromJson($(evaluatorParams))
+    evaluator.replicate().setParamsFromJson($(evaluatorParams), ignoreNulls = true)
   }
 
   private def createGridSearchParams(

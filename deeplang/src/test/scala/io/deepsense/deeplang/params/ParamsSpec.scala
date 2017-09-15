@@ -81,6 +81,16 @@ class ParamsSpec extends UnitSpec {
         p.get1 shouldBe defaultForParam1
         p.get2 shouldBe 6
       }
+      "ignoreNulls is set" in {
+        val p = WithParams()
+        p.set1(4)
+        p.setParamsFromJson(JsObject(
+          p.param1.name -> JsNull,
+          p.param2.name -> 6.toJson
+        ), ignoreNulls = true)
+        p.get1 shouldBe 4
+        p.get2 shouldBe 6
+      }
     }
     "throw Deserialization exception" when {
       "unknown param name is used it should be ignored" in {

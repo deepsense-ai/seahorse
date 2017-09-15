@@ -73,7 +73,8 @@ case class Transform() extends DOperation2To1[DataFrame, Transformer, DataFrame]
   }
 
   private def transformerWithParams(transformer: Transformer): Transformer = {
-    val transformerWithParams = transformer.replicate().setParamsFromJson(getTransformerParams)
+    val transformerWithParams = transformer.replicate()
+      .setParamsFromJson(getTransformerParams, ignoreNulls = true)
     validateDynamicParams(transformerWithParams)
     transformerWithParams
   }

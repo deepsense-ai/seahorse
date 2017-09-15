@@ -43,12 +43,10 @@ trait Params extends Serializable with HasInferenceResult with DefaultJsonProtoc
 
   /**
    * Json describing values associated to parameters.
-   * If there is no value given for parameter, default value is returned.
-   * If it's also not there, parameter won't appear in json at all.
    */
   def paramValuesToJson: JsValue = {
     val fields = for (param <- params) yield {
-      getOrDefaultOption(param).map {
+      get(param).map {
         case paramValue => param.name -> param.anyValueToJson(paramValue)
       }
     }
@@ -141,11 +139,15 @@ trait Params extends Serializable with HasInferenceResult with DefaultJsonProtoc
    * Sets param values based on provided json.
    * If a name of a parameter is unknown, it's ignored
    * JsNull is treated as empty object.
-   * JsNull as a value of a parameter unsets param's value.
+   *
+   * When ignoreNulls = false, JsNull as a value of a parameter unsets param's value.
+   * When ignoreNulls = true, parameters with JsNull values are ignored.
    */
-  def setParamsFromJson(jsValue: JsValue): this.type = {
+  def setParamsFromJson(jsValue: JsValue, ignoreNulls: Boolean = false): this.type = {
     set(paramPairsFromJson(jsValue): _*)
-    noValueParamsFromJson(jsValue).foreach(clear)
+    if (!ignoreNulls) {
+      noValueParamsFromJson(jsValue).foreach(clear)
+    }
     this
   }
 
@@ -303,7 +305,7 @@ trait Params extends Serializable with HasInferenceResult with DefaultJsonProtoc
   }
 
   protected def copyValues[T <: Params](to: T, extra: ParamMap = ParamMap.empty): T = {
-    val map = extractParamMap(extra)
+    val map = paramMap ++ extra
     params.foreach { param =>
       if (map.contains(param) && to.hasParam(param.name)) {
         to.set(param.name, map(param))

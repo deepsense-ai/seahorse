@@ -73,7 +73,8 @@ case class Evaluate() extends DOperation2To1[DataFrame, Evaluator, MetricValue] 
   }
 
   private def evaluatorWithParams(evaluator: Evaluator): Evaluator = {
-    val evaluatorWithParams = evaluator.replicate().setParamsFromJson(getEvaluatorParams)
+    val evaluatorWithParams = evaluator.replicate()
+      .setParamsFromJson(getEvaluatorParams, ignoreNulls = true)
     validateDynamicParams(evaluatorWithParams)
     evaluatorWithParams
   }

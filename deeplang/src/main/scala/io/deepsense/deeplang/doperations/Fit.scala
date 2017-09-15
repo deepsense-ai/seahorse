@@ -77,7 +77,8 @@ case class Fit() extends DOperation2To1[DataFrame, Estimator[Transformer], Trans
    * This method copies input estimator and sets parameters in copy.
    */
   private def estimatorWithParams(estimator: Estimator[Transformer]): Estimator[Transformer] = {
-    val estimatorWithParams = estimator.replicate().setParamsFromJson($(estimatorParams))
+    val estimatorWithParams = estimator.replicate()
+      .setParamsFromJson($(estimatorParams), ignoreNulls = true)
     validateDynamicParams(estimatorWithParams)
     estimatorWithParams
   }
