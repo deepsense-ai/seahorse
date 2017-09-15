@@ -13,7 +13,10 @@ A `Transformer` is an abstraction of direct data processing. It consumes a [Data
 
 `Transformers` can be executed using a [Transform](../operations/transform.html) operation.
 
-![transformer diagram](../img/transformer.png){: .img-responsive .centered-image .spacer}
+<div class="centered-container" markdown="1">
+  ![Transformer usage diagram](../img/transformer.png){: .centered-image .img-responsive .spacer}
+  *Transformer usage diagram*
+</div>
 
 ## Example
 

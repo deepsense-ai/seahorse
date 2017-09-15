@@ -22,7 +22,7 @@ If Seahorse Desktop was set up correctly, you will see the main page of Seahorse
 user interface:
 
 <p style="text-align:center;">
-    <img class="centered-image img-responsive spacer" src="./img/seahorse_main.png">
+    <img class="centered-image img-responsive" src="./img/seahorse_main.png">
     <em>Home Screen of Seahorse</em>
 </p>
 On the main page of Seahorse you can see a list of all available projects which we call `workflows`.
@@ -41,8 +41,8 @@ To create a new workflow:
 You've been redirected to workflow editor where you can create your application in a visual way.
 
 <p style="text-align:center;">
-    <img class="centered-image img-responsive spacer" src="./img/empty_workflow.png">
-    <em>Seahorse</em>
+    <img class="centered-image img-responsive" src="./img/empty_workflow.png">
+    <em>Empty canvas of Seahorse workflow editor</em>
 </p>
 
 In Seahorse, an application is represented as a graph of connected [operations](operations.html).

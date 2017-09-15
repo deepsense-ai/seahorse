@@ -15,7 +15,10 @@ An `Evaluator` is an abstraction of calculating [DataFrame](../classes/dataframe
 It consumes a `DataFrame` and produces a [MetricValue](../classes/metric_value.html).
 
 
-![evaluator diagram](../img/evaluator.png){: .img-responsive .centered-image .spacer}
+<div class="centered-container" markdown="1">
+  ![Evaluator usage diagram](../img/evaluator.png){: .centered-image .img-responsive}
+  *Evaluator usage diagram*
+</div>
 
 ## Example
 A [Regression Evaluator](../operations/regression_evaluator.html) is an operation that outputs an `Evaluator`.

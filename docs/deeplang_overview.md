@@ -36,6 +36,7 @@ entities (as they are immutable).
 
 <div class="centered-container" markdown="1">
   ![operations](./img/operations.png){: .centered-image .img-responsive}
+  *Operation schema*
 </div>
 
 You can think about an operation as a function that receives a tuple of entities and parameters'

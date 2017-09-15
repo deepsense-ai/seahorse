@@ -22,7 +22,12 @@ production use, this is why it is limited to a single-node Spark cluster.
 To learn more about scaling up and using Seahorse in production, see the
 <a href="https://seahorse.deepsense.io/enterprise.html">Enterprise</a> page.
 
-<img class="img-responsive" src="./img/bundled_image_overview.png" />
+<div class="centered-container" markdown="1">
+  ![Seahorse Bundled Image Overview](./img/bundled_image_overview.png){: .centered-image .img-responsive}
+  *Seahorse Bundled Image Overview*
+</div>
+
+
 
 ### Seahorse Desktop Limitations
 
@@ -101,7 +106,12 @@ Example:
 
     cp /path/to/the/dataset/data.csv /path/to/the/dir/where/vagrantfile/is/
 
-<img class="img-responsive" src="./img/file_param.png" />
+<div class="centered-container" markdown="1">
+  ![Filled parameters of Read DataFrame operation](./img/file_param.png){: .centered-image .img-responsive}
+  *Filled parameters of Read DataFrame operation*
+</div>
+
+
 
 ## Troubleshooting
 * If you cannot start Seahorse virtual machine, please check your BIOS if you have virtualization enabled.

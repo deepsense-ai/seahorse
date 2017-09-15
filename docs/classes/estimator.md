@@ -14,7 +14,10 @@ An `Estimator` is a generalization of a machine learning algorithm. It consumes 
 [Transformer](../operations/transform.html).
 `Estimators` can be executed using a [Fit](../operations/fit.html) operation.
 
-![estimator diagram](../img/estimator.png){: .img-responsive .centered-image .spacer}
+<div class="centered-container" markdown="1">
+  ![Estimator usage diagram](../img/estimator.png){: .centered-image .img-responsive}
+  *Estimator usage diagram*
+</div>
 
 ## Example
 
