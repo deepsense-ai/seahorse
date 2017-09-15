@@ -41,7 +41,7 @@
         "name": "Write Transformer"
       },
       "parameters": {
-        "output path": "/vagrant/model_example_1"
+        "output path": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/output/examples/model_example_1"
       }
     }, {
       "id": "49f8ce4a-f425-3ea6-927f-bdce0ad10006",
