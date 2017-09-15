@@ -172,6 +172,13 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
         hoverClass: GraphPanelStyler.getOutputEndpointDefaultHoverCssClass(internal.renderMode, hasReport)
       });
 
+      /*
+       * The editor render mode enables users to add edges, whereas the report mode forbids them from adding new edges.
+       */
+      if (internal.renderMode === GraphPanelRendererBase.REPORT_RENDER_MODE) {
+        outputStyle.isSource = false;
+      }
+
       let port = jsPlumb.addEndpoint(nodeElement, outputStyle, {
         anchor: anchors[i],
         uuid: ports[i].id

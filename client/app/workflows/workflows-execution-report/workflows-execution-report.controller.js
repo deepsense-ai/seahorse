@@ -4,7 +4,7 @@ import { GraphPanelRendererBase } from './../graph-panel/graph-panel-renderer/gr
 
 /* @ngInject */
 function WorkflowsReportController(
-  $state, $scope, report, ConfirmationModalService, Report,
+  $state, $scope, report, Report,
   GraphNode, PageService, Operations, GraphPanelRendererService, WorkflowService, DeepsenseNodeParameters
 ) {
   let that = this;
