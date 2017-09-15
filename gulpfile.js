@@ -25,6 +25,7 @@ var gulp = require('gulp'),
     jshint = require('gulp-jshint'),
     exit = require('gulp-exit'),
     shell = require('gulp-shell');
+
 require('jshint-stylish');
 
 var config = require('./package.json'),
@@ -34,6 +35,7 @@ var config = require('./package.json'),
     libs = config.files.libs,
     devMode = !!gutil.env.dev,
     CIMode = !!gutil.env.ci;
+
 client.path = __dirname + '/' + client.path;
 
 var BROWSER_SYNC_RELOAD_DELAY = 2000;
@@ -93,7 +95,6 @@ gulp.task('browser-sync', ['nodemon'], function () {
     proxy: config.env.dev.host + ':' + config.env.dev.port
   });
 });
-
 
 gulp.task('html', function () {
   return gulp.src([client.path + client.html])
@@ -180,16 +181,15 @@ gulp.task('browserify', function () {
     .pipe(gulp.dest(build.path));
 });
 
-gulp.task('killAllNode',
+gulp.task('kill-all-node-instances',
   shell.task(['killall -9 node'], {
     ignoreErrors: true
   })
 );
 
-
 gulp.task('build', function (callback) {
   runSequence(
-    'killAllNode',
+    'kill-all-node-instances',
     'clean',
     ['fonts', 'images', 'html', 'less', 'libs:css', 'libs:js', 'jshint', 'browserify'],
     callback

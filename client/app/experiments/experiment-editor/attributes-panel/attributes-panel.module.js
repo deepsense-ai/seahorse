@@ -9,6 +9,7 @@
 exports.inject = function (module) {
   require('./attributes-panel.js').inject(module);
   require('./attributes-list.js').inject(module);
+
   require('./attribute-types/attribute-boolean/attribute-boolean-type.js').inject(module);
   require('./attribute-types/attribute-single-choice/attribute-single-choice-type.js').inject(module);
   require('./attribute-types/attribute-multiple-choice/attribute-multiple-choice-type.js').inject(module);

@@ -58,7 +58,7 @@ function FitController($document, $scope, $timeout, $rootScope, GraphPanelRender
   };
 
   internal.setFit = function setFit (visibleDimensions) {
-    var pseudoPosition = GraphPanelRendererService.getPseudoPosition();
+    var pseudoPosition = GraphPanelRendererService.getPseudoContainerPosition();
     var centerOfPseudo = GraphPanelRendererService.getPseudoContainerCenter();
 
     var centerOfFlowChartBox = {

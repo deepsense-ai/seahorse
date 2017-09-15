@@ -3,8 +3,7 @@
  */
 'use strict';
 
-var jsPlumb = require('jsPlumb'),
-  Edge = require('../../common-objects/common-edge.js');
+var Edge = require('./../../common-objects/common-edge.js');
 
 var connectorPaintStyleDefault = {
   lineWidth: 2,
@@ -70,7 +69,7 @@ function GraphPanelRendererService($rootScope, $document) {
   var that = this;
   var internal = {};
 
-  that.getAllInternalElementsPosition = function getAllInternalElementsPosition () {
+  internal.getAllInternalElementsPosition = function getAllInternalElementsPosition () {
     var elementsToFit = jsPlumb.getContainer().children;
     var elementsToFitPositions = _.map(elementsToFit, function (el) {
       var elementDimensions = el.getBoundingClientRect();
@@ -86,24 +85,19 @@ function GraphPanelRendererService($rootScope, $document) {
     return elementsToFitPositions;
   };
 
-  that.getPseudoPosition = function getPseudoPosition () {
-    var elementsToFitPositions = that.getAllInternalElementsPosition();
+  that.getPseudoContainerPosition = function getPseudoContainerPosition () {
+    var elementsToFitPositions = internal.getAllInternalElementsPosition();
 
     return {
-      topmost: Math.min.apply(Math, _.map(elementsToFitPositions, (elPos) => { return elPos.top;     })),
-      leftmost: Math.min.apply(Math, _.map(elementsToFitPositions, (elPos) => { return elPos.left;    })),
-      rightmost: Math.max.apply(Math, _.map(elementsToFitPositions, (elPos) => { return elPos.right;   })),
-      bottommost: Math.max.apply(Math, _.map(elementsToFitPositions, (elPos) => { return elPos.bottom;  }))
+      topmost: Math.min.apply(Math, _.map(elementsToFitPositions, (elPos) => elPos.top )),
+      leftmost: Math.min.apply(Math, _.map(elementsToFitPositions, (elPos) => elPos.left )),
+      rightmost: Math.max.apply(Math, _.map(elementsToFitPositions, (elPos) => elPos.right )),
+      bottommost: Math.max.apply(Math, _.map(elementsToFitPositions, (elPos) => elPos.bottom ))
     };
   };
 
   that.getPseudoContainerCenter = function getPseudoContainerCenter () {
-    var pseudoContainerPosition = that.getPseudoPosition();
-
-    console.log('CENTER OF PSEUDO: ', {
-      y: pseudoContainerPosition.topmost  + ((pseudoContainerPosition.bottommost - pseudoContainerPosition.topmost) / 2),
-      x: pseudoContainerPosition.leftmost + ((pseudoContainerPosition.rightmost - pseudoContainerPosition.leftmost) / 2)
-    });
+    var pseudoContainerPosition = that.getPseudoContainerPosition();
 
     return {
       y: pseudoContainerPosition.topmost  + ((pseudoContainerPosition.bottommost - pseudoContainerPosition.topmost) / 2),
@@ -111,25 +105,30 @@ function GraphPanelRendererService($rootScope, $document) {
     };
   };
 
-  that.getZoom = function getZoom () {
+  that.getZoomRatio = function getZoomRatio () {
     return jsPlumb.getZoom();
   };
 
-  that.getNewCenterOf = function getNewCenterOf (ratio, centerFrom, centerTo) {
+  that.getNewCenterOf = function getNewCenterOf (zoomRatio, centerFrom, centerTo) {
     return {
-      y: ratio * centerTo.y + (1 - ratio) * centerFrom.y,
-      x: ratio * centerTo.x + (1 - ratio) * centerFrom.x
+      y: zoomRatio * centerTo.y + (1 - zoomRatio) * centerFrom.y,
+      x: zoomRatio * centerTo.x + (1 - zoomRatio) * centerFrom.x
     };
   };
 
   that.setZoom = function setZoom (zoom, transformOrigin) {
-    transformOrigin = transformOrigin || [0.5, 0.5];
+    transformOrigin = transformOrigin || [ 0.5, 0.5 ];
+
     var instance = jsPlumb;
     var el = instance.getContainer();
-    if (!el) {return false;}
-    var p = ['webkit', 'moz', 'ms', 'o'],
-      s = 'scale(' + zoom + ')',
-      oString = (transformOrigin[0] * 100) + '% ' + (transformOrigin[1] * 100) + '%';
+
+    if (!el) {
+      return false;
+    }
+
+    var p = ['webkit', 'moz', 'ms', 'o'];
+    var s = 'scale(' + zoom + ')';
+    var oString = (transformOrigin[0] * 100) + '% ' + (transformOrigin[1] * 100) + '%';
 
     for (var i = 0; i < p.length; i++) {
       el.style[p[i] + 'Transform'] = s;
@@ -154,7 +153,6 @@ function GraphPanelRendererService($rootScope, $document) {
 
   // TODO do not move beyond borders
   internal.moveElement = function moveElement (element, movement) {
-    console.log(movement);
     $(element).animate({
       top: movement.y,
       left: movement.x
@@ -166,7 +164,7 @@ function GraphPanelRendererService($rootScope, $document) {
 
     container.style[direction] = 0;
 
-    if (that.getZoom() !== 1) {
+    if (that.getZoomRatio() !== 1) {
       let directionToDimension = direction === 'left' ? 'width' : 'height';
       container.style[direction] = that.getDifferenceAfterZoom(container, directionToDimension) + 'px';
     }
@@ -198,8 +196,18 @@ function GraphPanelRendererService($rootScope, $document) {
     $rootScope.$broadcast('GraphPanel.CENTERED');
   };
 
+  internal.reset = () => {
+    jsPlumb.deleteEveryEndpoint();
+    jsPlumb.unbind('connection');
+    jsPlumb.unbind('connectionDetached');
+    jsPlumb.unbind('connectionMoved');
+    jsPlumb.unbind('connectionDrag');
+    jsPlumb.setZoom(1, true);
+  };
+
   that.init = function init() {
-    // jsPlumb.reset();
+    internal.reset();
+
     jsPlumb.setContainer($document[0].querySelector('.flowchart-paint-area'));
     jsPlumb.importDefaults({
       DragOptions: {
@@ -223,12 +231,7 @@ function GraphPanelRendererService($rootScope, $document) {
   };
 
   that.clearExperiment = function clearExperiment() {
-    jsPlumb.deleteEveryEndpoint();
-    jsPlumb.unbind('connection');
-    jsPlumb.unbind('connectionDetached');
-    jsPlumb.unbind('connectionMoved');
-    jsPlumb.unbind('connectionDrag');
-    jsPlumb.setZoom(1, true);
+    internal.reset();
     internal.experiment = null;
   };
 
@@ -369,20 +372,25 @@ function GraphPanelRendererService($rootScope, $document) {
       let edge = internal.experiment.createEdge(data);
 
       info.connection.setParameter('edgeId', edge.id);
+
       $rootScope.$broadcast(Edge.CREATE, {edge: edge});
     });
 
     jsPlumb.bind('connectionDetached', (info, originalEvent) => {
       var edge = internal.experiment.getEdgeById(info.connection.getParameter('edgeId'));
       if (edge && info.targetEndpoint.isTarget && info.sourceEndpoint.isSource && originalEvent) {
-        $rootScope.$broadcast(Edge.REMOVE, {edge: edge});
+        $rootScope.$broadcast(Edge.REMOVE, {
+          edge: edge
+        });
       }
     });
 
     jsPlumb.bind('connectionMoved', function (info) {
       var edge = internal.experiment.getEdgeById(info.connection.getParameter('edgeId'));
       if (edge) {
-        $rootScope.$broadcast(Edge.REMOVE, {edge: edge});
+        $rootScope.$broadcast(Edge.REMOVE, {
+          edge: edge
+        });
       }
     });
 

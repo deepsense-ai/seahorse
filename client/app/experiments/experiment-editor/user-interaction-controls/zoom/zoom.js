@@ -131,7 +131,7 @@ function ZoomController($document, $scope, $timeout, GraphPanelRendererService) 
   };
 
   internal.updateState = function updateState () {
-    $scope.value = jsPlumb.getZoom();
+    $scope.value = jsPlumb.getZoomRatio();
   };
 
   internal.relatedToElement.addEventListener('wheel', internal.wheelListener);

@@ -6,7 +6,6 @@
 
 'use strict';
 
-var jsPlumb = require('jsPlumb');
 var GraphNode = require('../common-objects/common-graph-node.js');
 
 /* @ngInject */

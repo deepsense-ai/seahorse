@@ -9,7 +9,7 @@
 function RenderFinish($timeout) {
   return {
     restrict: 'A',
-    link: function (scope, element, attrs) {
+    link: function (scope) {
       if (scope.$last === true) {
         $timeout(function () {
           scope.experiment.onRenderFinish();
