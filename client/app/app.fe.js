@@ -25,10 +25,14 @@ var _ues = {
   var s = document.getElementsByTagName('script')[0];
   _ue.onload = function() {
     UE.Popin.preload();
+    var oldClose = UE.Dialog.close;
+    UE.Dialog.close = function() {
+      window.focus();
+      oldClose.apply(this, arguments);
+    };
   };
   s.parentNode.insertBefore(_ue, s);
 })();
-/* jshint ignore:end */
 
 (function cache() {
   var FEEDBACK_WINDOW_TIMEOUT = 240000;
@@ -93,3 +97,5 @@ var _ues = {
     window.addEventListener('blur', blurListener);
   }
 })();
+
+/* jshint ignore:end */
