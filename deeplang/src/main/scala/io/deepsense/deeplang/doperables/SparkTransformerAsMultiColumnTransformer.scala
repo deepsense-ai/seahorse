@@ -20,8 +20,6 @@ import scala.language.reflectiveCalls
 import scala.reflect.runtime.universe._
 
 import org.apache.spark.ml.{Transformer => SparkTransformer}
-import org.apache.spark.mllib.linalg.{DenseVector, VectorUDT, Vectors}
-import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
@@ -55,52 +53,6 @@ abstract class SparkTransformerAsMultiColumnTransformer[T <: SparkTransformer {
 
   override protected def getSpecificParams: Array[Param[_]] = Array()
 
-  private def updateSchema(schema: StructType, colName: String, dataType: DataType): StructType = {
-    updateSchema(schema, schema.fieldIndex(colName), dataType)
-  }
-
-  private def updateSchema(schema: StructType, idx: Int, dataType: DataType): StructType = {
-    schema.copy(schema.fields.clone().updated(idx, schema(idx).copy(dataType = dataType)))
-  }
-
-  private def isColumnNumeric(schema: StructType, colName: String): Boolean = {
-    schema(colName).dataType.isInstanceOf[NumericType]
-  }
-
-  private def convertAndTransformSingleColumn(
-      inputColumn: String,
-      outputColumn: String,
-      context: ExecutionContext,
-      dataFrame: DataFrame,
-      transformer: T): org.apache.spark.sql.DataFrame = {
-    val inputColumnIdx = dataFrame.schema.get.fieldIndex(inputColumn)
-    val convertedRdd = dataFrame.sparkDataFrame.map { r =>
-      Row.fromSeq(r.toSeq.updated(inputColumnIdx, Vectors.dense(r.getDouble(inputColumnIdx))))
-    }
-    val convertedSchema = updateSchema(dataFrame.schema.get, inputColumn, new VectorUDT())
-    val convertedDf = context.sqlContext.createDataFrame(convertedRdd, convertedSchema)
-
-    val transformed = transformer.transform(convertedDf)
-
-    val transformedInputColumnRdd = transformed.rdd.map { r => Row.fromSeq(
-      r.toSeq.updated(inputColumnIdx, r.get(inputColumnIdx).asInstanceOf[DenseVector].apply(0)))
-    }
-
-    val transformedRdd = if (convertOutputVectorToDouble) {
-      val outputColumnIdx = transformed.schema.fieldIndex(outputColumn)
-      // Transformed column is always appended as a new column at the end
-      transformedInputColumnRdd.map { r => Row.fromSeq(
-        r.toSeq.updated(outputColumnIdx, r.get(outputColumnIdx).asInstanceOf[DenseVector].apply(0)))
-      }
-    } else {
-      transformedInputColumnRdd
-    }
-
-    context.sqlContext.createDataFrame(
-      transformedRdd,
-      transformSingleColumnSchema(inputColumn, outputColumn, dataFrame.schema.get).get)
-  }
-
   override def transformSingleColumn(
       inputColumn: String,
       outputColumn: String,
@@ -109,11 +61,26 @@ abstract class SparkTransformerAsMultiColumnTransformer[T <: SparkTransformer {
     val transformer = sparkTransformerWithParams(dataFrame.sparkDataFrame.schema)
     transformer.setInputCol(inputColumn)
     transformer.setOutputCol(outputColumn)
-    if (convertInputNumericToVector && isColumnNumeric(dataFrame.schema.get, inputColumn)) {
+    if (convertInputNumericToVector
+        && NumericToVectorUtils.isColumnNumeric(dataFrame.schema.get, inputColumn)) {
       // Automatically convert numeric input column to one-element vector column
-      val transformedDf =
-        convertAndTransformSingleColumn(inputColumn, outputColumn, context, dataFrame, transformer)
-      DataFrame.fromSparkDataFrame(transformedDf)
+      val convertedDf = NumericToVectorUtils
+        .convertDataFrame(dataFrame, inputColumn, context)
+
+      val transformedDf = transformer.transform(convertedDf)
+
+      val expectedSchema =
+        transformSingleColumnSchema(inputColumn, outputColumn, dataFrame.schema.get).get
+      val revertedTransformedDf =
+        NumericToVectorUtils.revertDataFrame(
+          transformedDf,
+          expectedSchema,
+          inputColumn,
+          outputColumn,
+          context,
+          convertOutputVectorToDouble)
+
+      DataFrame.fromSparkDataFrame(revertedTransformedDf)
     } else {
       // Input column type is vector
       DataFrame.fromSparkDataFrame(transformer.transform(dataFrame.sparkDataFrame))
@@ -128,17 +95,21 @@ abstract class SparkTransformerAsMultiColumnTransformer[T <: SparkTransformer {
     transformer.setInputCol(inputColumn)
     transformer.setOutputCol(outputColumn)
     try {
-      if (convertInputNumericToVector && isColumnNumeric(schema, inputColumn)) {
+      if (convertInputNumericToVector
+          && NumericToVectorUtils.isColumnNumeric(schema, inputColumn)) {
         // Automatically convert numeric input column to one-element vector column
-        val convertedSchema = updateSchema(schema, inputColumn, new VectorUDT())
+        val convertedSchema =
+          NumericToVectorUtils.convertSchema(schema, inputColumn)
+
         val transformedSchema = transformer.transformSchema(convertedSchema)
-        val convertedTransformedSchema = updateSchema(transformedSchema, inputColumn, DoubleType)
-        if (convertOutputVectorToDouble) {
-          // Automatically convert one-element vector output column to double column
-          Some(updateSchema(convertedTransformedSchema, outputColumn, DoubleType))
-        } else {
-          Some(convertedTransformedSchema)
-        }
+
+        val revertedTransformedSchema =
+          NumericToVectorUtils.revertSchema(
+            transformedSchema,
+            inputColumn,
+            outputColumn,
+            convertOutputVectorToDouble)
+        Some(revertedTransformedSchema)
       } else {
         // Input column type is vector
         val transformedSchema = transformer.transformSchema(schema)

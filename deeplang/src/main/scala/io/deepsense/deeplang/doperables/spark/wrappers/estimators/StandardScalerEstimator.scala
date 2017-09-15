@@ -29,6 +29,9 @@ class StandardScalerEstimator
     SparkStandardScaler,
     StandardScalerModel] {
 
+  override def convertInputNumericToVector: Boolean = true
+  override def convertOutputVectorToDouble: Boolean = true
+
   val withMean = new BooleanParamWrapper[SparkStandardScaler](
     name = "with mean",
     description = "Centers the data with mean before scaling.",
