@@ -22,8 +22,7 @@ Vagrant.configure(2) do |config|
         ds_wm_ip: "0.0.0.0",
         ds_wm_port: 9080,
         rabbitmq_server_ip: "0.0.0.0",
-        workflowexecutor_build_version: "{{vagrant_workflowexecutor_build_version}}",
-        pyexecutor_build_version: "{{vagrant_pyexecutor_build_version}}",
+        workflowexecutor_build_version: "{{vagrant_workflowexecutor_build_version}}"
       }
       ansible.verbose = "vv"
       ansible.groups = {

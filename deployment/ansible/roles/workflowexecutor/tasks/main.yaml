@@ -4,9 +4,6 @@
 - name: Create install directory
   file: path="{{install_dir}}" state=directory mode=0755 owner=ubuntu
 
-- name: Extract zip package
-  unarchive: src="{{download_dir}}/{{pyexecutor_artifact_id}}.zip" dest="{{install_dir}}"
-
 - name: Copy WorkflowExecutor jar file
   copy: src={{download_dir}}/{{workflowexecutor_artifact_id}}.jar dest={{install_dir}}
 
