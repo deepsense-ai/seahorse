@@ -17,13 +17,13 @@ describe('MultiSelectionService', () => {
   });
 
   it('should return empty array is nothing is selected', () => {
-    expect(MultiSelectionService.getSelectedNodes()).toEqual([]);
+    expect(MultiSelectionService.getSelectedNodeIds()).toEqual([]);
   });
 
   it('should return nodeId when an element was added to selection', () => {
     let nodeId = 'node-' + Math.random().toString();
-    MultiSelectionService.addNodesToSelection([nodeId]);
-    expect(MultiSelectionService.getSelectedNodes()).toContain(nodeId);
+    MultiSelectionService.addNodeIdsToSelection([nodeId]);
+    expect(MultiSelectionService.getSelectedNodeIds()).toContain(nodeId);
   });
 
   it('should return the same amount of elements that are added to selection if there are no duplicates', () => {
@@ -31,24 +31,24 @@ describe('MultiSelectionService', () => {
     let nodes = [];
     for (let i = 0; i < numberOfNodesAdded; i++) {
       let nodeId = 'node-' + Math.random().toString();
-      MultiSelectionService.addNodesToSelection([nodeId]);
+      MultiSelectionService.addNodeIdsToSelection([nodeId]);
       nodes.push(nodeId);
     }
-    expect(MultiSelectionService.getSelectedNodes()).toEqual(nodes);
+    expect(MultiSelectionService.getSelectedNodeIds()).toEqual(nodes);
   });
 
   it('shouldnt remove the added element', () => {
     let nodeId = 'node-' + Math.random().toString();
-    MultiSelectionService.addNodesToSelection([nodeId]);
-    MultiSelectionService.removeNodesFromSelection([nodeId]);
-    expect(MultiSelectionService.getSelectedNodes()).toEqual([]);
+    MultiSelectionService.addNodeIdsToSelection([nodeId]);
+    MultiSelectionService.removeNodeIdsFromSelection([nodeId]);
+    expect(MultiSelectionService.getSelectedNodeIds()).toEqual([]);
   });
 
   it('shouldnt add the same elements twice', () => {
     let nodeId = 'node-' + Math.random().toString();
-    MultiSelectionService.addNodesToSelection([nodeId]);
-    MultiSelectionService.addNodesToSelection([nodeId]);
-    expect(MultiSelectionService.getSelectedNodes()).toEqual([nodeId]);
+    MultiSelectionService.addNodeIdsToSelection([nodeId]);
+    MultiSelectionService.addNodeIdsToSelection([nodeId]);
+    expect(MultiSelectionService.getSelectedNodeIds()).toEqual([nodeId]);
   });
 
 });

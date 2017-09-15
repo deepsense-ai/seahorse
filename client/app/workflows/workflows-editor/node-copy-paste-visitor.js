@@ -18,11 +18,11 @@ class NodeCopyPasteVisitor {
   }
 
   isThereAnythingToCopy() {
-    return this.MultiSelectionService.getSelectedNodes().length > 0;
+    return this.MultiSelectionService.getSelectedNodeIds().length > 0;
   }
 
   getSerializedDataToCopy() {
-    let nodeIds = this.MultiSelectionService.getSelectedNodes();
+    let nodeIds = this.MultiSelectionService.getSelectedNodeIds();
     let nodeIdsJoined = nodeIds.join();
     return nodeIdsJoined;
   }
@@ -48,7 +48,7 @@ class NodeCopyPasteVisitor {
         let nodesId = clonedNodes.map(node => node.id);
         this.WorkflowsEditorController.unselectNode();
         this.MultiSelectionService.clearSelection();
-        this.MultiSelectionService.addNodesToSelection(nodesId);
+        this.MultiSelectionService.addNodeIdsToSelection(nodesId);
         this.$rootScope.$broadcast('MultiSelection.ADD', nodesId);
       });
 

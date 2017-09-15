@@ -136,7 +136,7 @@ class MultiSelection {
         });
       });
       _.each(interceptedNodes, (node) => {
-        internal.MultiSelectionService.addNodesToSelection([node.id]);
+        internal.MultiSelectionService.addNodeIdsToSelection([node.id]);
         that.addToSelection([node.id]);
       });
     };
@@ -235,10 +235,10 @@ class MultiSelection {
 
       if (data.originalEvent.ctrlKey) {
         if (internal.MultiSelectionService.isAlreadyAddedToSelection(data.selectedNode)) {
-          internal.MultiSelectionService.removeNodesFromSelection([data.selectedNode.id]);
+          internal.MultiSelectionService.removeNodeIdsFromSelection([data.selectedNode.id]);
           that.removeFromSelection([data.selectedNode.id]);
         } else {
-          internal.MultiSelectionService.addNodesToSelection([data.selectedNode.id]);
+          internal.MultiSelectionService.addNodeIdsToSelection([data.selectedNode.id]);
           that.addToSelection([data.selectedNode.id]);
         }
       } else {
@@ -246,7 +246,7 @@ class MultiSelection {
           internal.MultiSelectionService.clearSelection();
           that.clearAllFromSelection();
         }
-        internal.MultiSelectionService.addNodesToSelection([data.selectedNode.id]);
+        internal.MultiSelectionService.addNodeIdsToSelection([data.selectedNode.id]);
         that.addToSelection([data.selectedNode.id]);
       }
       that.endPainting();

@@ -5,14 +5,16 @@ class MultiSelectionService {
   /* @ngInject */
   constructor($rootScope) {
     this.$rootScope = $rootScope;
+
+    window.multi = this;
   }
 
-  addNodesToSelection(nodes) {
-    selectedNodes = _.union(selectedNodes, nodes);
+  addNodeIdsToSelection(nodeIds) {
+    selectedNodes = _.union(selectedNodes, nodeIds);
   }
 
   isAlreadyAddedToSelection(node) {
-    return this.getSelectedNodes().indexOf(node.id) > -1;
+    return this.getSelectedNodeIds().indexOf(node.id) > -1;
   }
 
   clearSelection() {
@@ -20,15 +22,15 @@ class MultiSelectionService {
     selectedNodes = [];
   }
 
-  removeNodesFromSelection(nodes) {
-    selectedNodes = _.difference(selectedNodes, nodes);
+  removeNodeIdsFromSelection(nodeIds) {
+    selectedNodes = _.difference(selectedNodes, nodeIds);
   }
 
-  setSelectedNodes(nodes) {
-    selectedNodes = nodes;
+  setSelectedNodeIds(nodeIds) {
+    selectedNodes = nodeIds;
   }
 
-  getSelectedNodes() {
+  getSelectedNodeIds() {
     return selectedNodes;
   }
 

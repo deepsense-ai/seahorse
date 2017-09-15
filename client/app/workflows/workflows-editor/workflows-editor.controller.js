@@ -61,7 +61,7 @@ class WorkflowsEditorController {
         node: node
       };
       this.MultiSelectionService.clearSelection();
-      this.MultiSelectionService.addNodesToSelection([node.id]);
+      this.MultiSelectionService.addNodeIdsToSelection([node.id]);
       this.workflowIdForReport = workflow.id;
       this.nodeIdForReport = node.id;
       this.selectedNode = node;
@@ -75,7 +75,6 @@ class WorkflowsEditorController {
   }
 
   init(workflowWithResults) {
-
     this.PageService.setTitle('Workflow editor');
     this.GraphPanelRendererService.setRenderMode(GraphPanelRendererBase.EDITOR_RENDER_MODE);
     this.GraphPanelRendererService.setZoom(1.0);
@@ -125,7 +124,7 @@ class WorkflowsEditorController {
       this.isReportMode = true;
       this.isRunning = true;
       this.CopyPasteService.setEnabled(false);
-      let nodesToExecute = this.MultiSelectionService.getSelectedNodes();
+      let nodesToExecute = this.MultiSelectionService.getSelectedNodeIds();
       this.ServerCommunication.sendLaunchToWorkflowExchange(nodesToExecute);
     });
 
@@ -216,8 +215,21 @@ class WorkflowsEditorController {
       }),
 
       this.$scope.$on('Keyboard.KEY_PRESSED_DEL', () => {
-        this.getWorkflow().removeNodes(this.MultiSelectionService.getSelectedNodes());
-        this.GraphPanelRendererService.removeNodes(this.MultiSelectionService.getSelectedNodes());
+        let selectedNodeIds = this.MultiSelectionService.getSelectedNodeIds();
+        let sinkOrSourceNodeIds = _.filter(selectedNodeIds, (nodeId) => {
+          let node = this.getWorkflow().getNodeById(nodeId);
+          return this._isSinkOrSource(node)
+        });
+        if (sinkOrSourceNodeIds.length > 0) {
+          let msg = "Cannot delete source nor sink nodes"
+          this.NotificationService.showError({
+            title: "Illegal node deletion",
+            message: msg
+          }, msg);
+        }
+        let nodeIdsToBeRemoved = _.difference(selectedNodeIds, sinkOrSourceNodeIds);
+        this.getWorkflow().removeNodes(nodeIdsToBeRemoved);
+        this.GraphPanelRendererService.removeNodes(nodeIdsToBeRemoved);
         this.MultiSelectionService.clearSelection();
         this.unselectNode();
         this.$scope.$apply();
@@ -305,10 +317,16 @@ class WorkflowsEditorController {
 
   unselectNode() {
     if (this.selectedNode) {
-      this.MultiSelectionService.removeNodesFromSelection([this.selectedNode.id]);
+      this.MultiSelectionService.removeNodeIdsFromSelection([this.selectedNode.id]);
       this.selectedNode = null;
       this.selectedNodeBeforeRun = null;
     }
+  }
+
+  _isSinkOrSource(node) {
+    let sourceId = 'f94b04d7-ec34-42f7-8100-93fe235c89f8';
+    let sinkId = 'e652238f-7415-4da6-95c6-ee33808561b2';
+    return node.operationId === sourceId || node.operationId === sinkId;
   }
 
 }
