@@ -74,6 +74,6 @@ class SessionExecutorRequestBodyBuilder @Inject() (
   }
 
   private def getFileName(path: String): String = {
-    new File(new URI(path).getPath()).getName
+    new File(new URI(path).getPath).getName
   }
 }

@@ -14,10 +14,9 @@ import com.google.inject.Inject
 import com.google.inject.name.Named
 import spray.client.pipelining._
 import spray.http.{HttpRequest, _}
-import spray.httpx.unmarshalling.FromResponseUnmarshaller
 
 import io.deepsense.commons.models.Id
-import io.deepsense.sessionmanager.service.livy.responses.{Batch, BatchList}
+import io.deepsense.sessionmanager.service.livy.responses.Batch
 
 class DefaultLivy @Inject() (
   private val system: ActorSystem,
@@ -38,55 +37,14 @@ class DefaultLivy @Inject() (
       requestBuilder.createSession(workflowId)))
   }
 
-  override def killSession(id: Int): Future[Boolean] = {
-    killSessionPipeline(Delete(batchUrl(id)))
-  }
-
-  override def listSessions(): Future[BatchList] = {
-    listSessionsPipeline(Get(batchesUrl))
-  }
-
-  override def getSession(id: Int): Future[Option[Batch]] = {
-    getSessionPipeline(Get(batchUrl(id)))
-  }
-
   private def createSessionPipeline: (HttpRequest) => Future[Batch] =
     basePipeline ~> unmarshal[Batch]
 
-  private def killSessionPipeline: (HttpRequest) => Future[Boolean] = {
-    basePipeline ~> convertToBoolean
-  }
-
-  private def listSessionsPipeline: (HttpRequest) => Future[BatchList] =
-    basePipeline ~> unmarshal[BatchList]
-
-  private def getSessionPipeline: (HttpRequest) => Future[Option[Batch]] = {
-    basePipeline ~> convertOption[Batch]
-  }
-
-  private def convertToBoolean: Future[HttpResponse] => Future[Boolean] = {
-    (futRes: Future[HttpResponse]) => futRes.map {
-      _.status != StatusCodes.NotFound
-    }
-  }
 
   private def basePipeline = {
     addCredentials(credentials) ~> sendReceive
   }
   private type ConvertOptionFunction[T] = Future[HttpResponse] => Future[Option[T]]
 
-  private def convertOption[T](
-    implicit unmarshaller: FromResponseUnmarshaller[T]): ConvertOptionFunction[T] = {
-    (futRes: Future[HttpResponse]) => futRes.map {
-      res =>
-        if (res.status == StatusCodes.NotFound) {
-          None
-        } else {
-          Some(unmarshal[T](unmarshaller)(res))
-        }
-    }
-  }
-
   private def batchesUrl: String = s"$baseUrl/batches"
-  private def batchUrl(id: Int): String = s"$batchesUrl/$id"
 }

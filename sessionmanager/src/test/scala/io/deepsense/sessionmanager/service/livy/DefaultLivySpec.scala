@@ -54,75 +54,6 @@ class DefaultLivySpec
   }
 
   "DefaultLivy" when {
-    "getting a non existing session" should {
-      "return None" in {
-        stubFor(get(urlEqualTo("/batches/123"))
-          .willReturn(aResponse()
-            .withStatus(StatusCodes.NotFound.intValue)
-            .withHeader("Content-Type", "application/json; charset=UTF-8")))
-
-        whenReady(createTestLivy.getSession(123)) {
-          _ shouldBe None
-        }
-      }
-    }
-    "getting an existing session" should {
-      "return the requested session" in {
-        val status = BatchState.Running
-        val id: Int = 123
-        stubFor(get(urlEqualTo(s"/batches/$id"))
-          .willReturn(aResponse()
-            .withStatus(StatusCodes.OK.intValue)
-            .withHeader("Content-Type", "application/json; charset=UTF-8")
-            .withBody(sessionJson(id, status).compactPrint)))
-
-        whenReady(createTestLivy.getSession(id)) {
-          _ shouldBe Some(Batch(id, status))
-        }
-      }
-    }
-
-    "listing sessions" should {
-      "return a list of sessions" in {
-        stubFor(get(urlEqualTo(s"/batches"))
-          .willReturn(aResponse()
-            .withStatus(StatusCodes.OK.intValue)
-            .withHeader("Content-Type", "application/json; charset=UTF-8")
-            .withBody(sessionsJson.compactPrint)))
-
-        whenReady(createTestLivy.listSessions()) {
-          _.sessions should contain theSameElementsAs sessionsObjects
-        }
-      }
-    }
-
-    "killing a session" should {
-      "call an appropriate url" in {
-        val id: Int = 123
-        whenReady(createTestLivy.killSession(id)) { _ =>
-          verify(deleteRequestedFor(urlEqualTo(s"/batches/$id")))
-        }
-      }
-      "return false if no job was killed" in {
-        val id: Int = 123
-        stubFor(delete(urlEqualTo(s"/batches/$id"))
-          .willReturn(aResponse()
-            .withStatus(StatusCodes.NotFound.intValue)
-            .withHeader("Content-Type", "application/json; charset=UTF-8")))
-
-        whenReady(createTestLivy.killSession(id))(_ shouldBe false)
-      }
-      "return true if a job was killed" in {
-        val id: Int = 123
-        stubFor(delete(urlEqualTo(s"/batches/$id"))
-          .willReturn(aResponse()
-            .withStatus(StatusCodes.OK.intValue)
-            .withHeader("Content-Type", "application/json; charset=UTF-8")))
-
-        whenReady(createTestLivy.killSession(id))(_ shouldBe true)
-      }
-    }
-
     "creating a session" should {
       "return the created session" in {
         val workflowId: Id = Id.randomId
@@ -172,20 +103,6 @@ class DefaultLivySpec
 
   private def createTestLivy: Livy = {
     new DefaultLivy(testSystem, defaultTimeout, s"http://$httpHost:$httpPort", requestBuilder)
-  }
-
-
-  private val (sessionsJson, sessionsObjects) = {
-    val batches = Seq(
-      Batch(3, BatchState.Ok),
-      Batch(1, BatchState.Error),
-      Batch(4, BatchState.Idle))
-
-    val json = JsObject(
-      "sessions" -> JsArray(batches.map(b => sessionJson(b.id, b.state)): _*)
-    )
-
-    (json, batches)
   }
 
   private def sessionJson(id: Int, state: BatchState): JsObject = JsObject(

@@ -15,12 +15,14 @@ import com.google.inject.Inject
 import com.google.inject.name.Named
 
 import io.deepsense.commons.models.Id
+import io.deepsense.commons.utils.Logging
 import io.deepsense.sessionmanager.rest.responses.ListSessionsResponse
+import io.deepsense.sessionmanager.service.actors.SessionServiceActor
 
 class SessionService @Inject() (
   @Named("SessionService.Actor") private val serviceActor: ActorRef,
   @Named("session-service.timeout") private val timeout: Int
-)(implicit ec: ExecutionContext) {
+)(implicit ec: ExecutionContext) extends Logging {
 
   private implicit val implicitTimeout = Timeout(timeout, TimeUnit.MILLISECONDS)
 

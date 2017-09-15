@@ -10,7 +10,7 @@ import spray.httpx.SprayJsonSupport
 import spray.json._
 
 import io.deepsense.sessionmanager.service.livy.requests.Create
-import io.deepsense.sessionmanager.service.livy.responses.{Batch, BatchList, BatchState}
+import io.deepsense.sessionmanager.service.livy.responses.{Batch, BatchState}
 
 trait LivyJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
 
@@ -32,5 +32,4 @@ trait LivyJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
 
   implicit val createFormat = jsonFormat5(Create)
   implicit val batchFormat = jsonFormat2(Batch)
-  implicit val batchListFormat = jsonFormat1(BatchList)
 }

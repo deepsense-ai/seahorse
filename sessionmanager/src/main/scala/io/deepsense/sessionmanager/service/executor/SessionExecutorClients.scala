@@ -15,7 +15,9 @@ import io.deepsense.workflowexecutor.rabbitmq.MQCommunicationFactory
 class SessionExecutorClients @Inject() (private val communicationFactory: MQCommunicationFactory) {
   private val clients = mutable.Map[Workflow.Id, SessionExecutorClient]()
 
-  def get(id: Workflow.Id): SessionExecutorClient = {
+  def sendPoisonPill(id: Workflow.Id): Unit = get(id).sendPoisonPill()
+
+  private def get(id: Workflow.Id): SessionExecutorClient = {
     clients.get(id) match {
       case Some(client) => client
       case None =>

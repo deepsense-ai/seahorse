@@ -4,7 +4,7 @@
 
 package io.deepsense.sessionmanager.rest
 
-import scala.concurrent.Future
+import scala.concurrent.{Future, Promise}
 
 import org.mockito.Matchers._
 import org.mockito.Mockito._
@@ -26,49 +26,21 @@ class SessionsApiSpec
     with UnitTestSupport
     with DefaultJsonProtocol
     with SprayJsonSupport
-    with IdJsonProtocol {
+    with IdJsonProtocol
+    with SessionsJsonProtocol {
   val apiPrefix: String = "sessions"
 
-  def testRoute(service: SessionService): Route = {
-    new SessionsApi(apiPrefix, service).route
+  def testRoute(
+      service: SessionService,
+      subscribed: Future[Unit] = Future.successful(())): Route = {
+    new SessionsApi(apiPrefix, subscribed, service).route
   }
 
-  implicit val rawSessionFormat = new RootJsonFormat[Session] with IdJsonProtocol {
-    val sessionWriter: RootJsonWriter[Session] =
-      SessionsJsonProtocol.sessionFormat
-
-    override def read(json: JsValue): Session = {
-      val obj = json.asJsObject
-      Session(
-        LivySessionHandle(
-          obj.fields("workflowId").convertTo[Id], 0),
-          Status.withName(obj.fields("status").convertTo[String]))
-    }
-
-    override def write(obj: Session): JsValue = {
-      obj.toJson(sessionWriter)
-    }
-  }
+  val falsePromise = Promise[Unit]()
+  val notReadyFuture = falsePromise.future
 
   implicit val envelopedSessionFormat = new EnvelopeJsonFormat[Session]("session")
   implicit val envelopedSessionIdFormat = new EnvelopeJsonFormat[Id]("sessionId")
-
-  implicit val listSessionsResponseFormat = new RootJsonFormat[ListSessionsResponse] {
-    val protocolFormat = SessionsJsonProtocol.listSessionsResponseFormat
-
-    override def read(json: JsValue): ListSessionsResponse = {
-      val sessions = json.asJsObject.fields("sessions")
-        .asInstanceOf[JsArray]
-        .elements.map(_.convertTo[Session](rawSessionFormat)).toList
-      ListSessionsResponse(sessions)
-    }
-
-    override def write(obj: ListSessionsResponse): JsValue = {
-      obj.toJson(protocolFormat)
-    }
-  }
-
-  implicit val createSessionFormat = SessionsJsonProtocol.createSessionFormat
 
   "GET /sessions" should {
     "list all sessions" in {
@@ -79,9 +51,9 @@ class SessionsApiSpec
       val status2 = Status.Error
       val status3 = Status.Running
       val sessions = List(
-        session(workflowId1, status1),
-        session(workflowId2, status2),
-        session(workflowId3, status3)
+        Session(workflowId1, status1),
+        Session(workflowId2, status2),
+        Session(workflowId3, status3)
       )
 
       val service = mock[SessionService]
@@ -98,6 +70,14 @@ class SessionsApiSpec
             (workflowId3, status3))
       }
     }
+    "return ServiceUnavailable" when {
+      "not yet subscribed to Heartbeats" in {
+        Get(s"/$apiPrefix") ~>
+          testRoute(mock[SessionService], notReadyFuture) ~> check {
+          status shouldBe StatusCodes.ServiceUnavailable
+        }
+      }
+    }
   }
 
   "GET /sessions/:id" should {
@@ -105,7 +85,7 @@ class SessionsApiSpec
       "session exists" in {
         val workflowId: Id = Id.randomId
         val sessionStatus: Status.Value = Status.Error
-        val s = session(workflowId, sessionStatus)
+        val s = Session(workflowId, sessionStatus)
         val service = mock[SessionService]
         when(service.getSession(workflowId)).thenReturn(Future.successful(Some(s)))
 
@@ -127,12 +107,19 @@ class SessionsApiSpec
         }
       }
     }
+    "return ServiceUnavailable" when {
+      "not yet subscribed to Heartbeats" in {
+        Get(s"/$apiPrefix/${Id.randomId}") ~>
+          testRoute(mock[SessionService], notReadyFuture) ~> check {
+          status shouldBe StatusCodes.ServiceUnavailable
+        }
+      }
+    }
   }
 
   "POST /sessions" should {
     "return a session" in {
       val workflowId: Id = Id.randomId
-      val sessionStatus: Status.Value = Status.Error
       val s = workflowId
       val service = mock[SessionService]
       when(service.createSession(workflowId)).thenReturn(Future.successful(s))
@@ -141,6 +128,14 @@ class SessionsApiSpec
         status shouldBe StatusCodes.OK
         val returnedSessionId = responseAs[Envelope[Id]].content
         returnedSessionId shouldBe workflowId
+      }
+    }
+    "return ServiceUnavailable" when {
+      "not yet subscribed to Heartbeats" in {
+        Post(s"/$apiPrefix", CreateSession(Id.randomId)) ~>
+          testRoute(mock[SessionService], notReadyFuture) ~> check {
+          status shouldBe StatusCodes.ServiceUnavailable
+        }
       }
     }
   }
@@ -156,9 +151,13 @@ class SessionsApiSpec
         verify(service, times(1)).killSession(workflowId)
       }
     }
-  }
-
-  private def session(workflowId: Id, status: Status.Value): Session = {
-    Session(LivySessionHandle(workflowId, 0), status)
+    "return ServiceUnavailable" when {
+      "not yet subscribed to Heartbeats" in {
+        Delete(s"/$apiPrefix/${Id.randomId}")~>
+          testRoute(mock[SessionService], notReadyFuture) ~> check {
+          status shouldBe StatusCodes.ServiceUnavailable
+        }
+      }
+    }
   }
 }
