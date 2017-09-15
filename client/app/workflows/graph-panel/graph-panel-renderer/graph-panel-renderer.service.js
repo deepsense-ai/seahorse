@@ -186,7 +186,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
         hoverClass: GraphPanelStyler.getOutputEndpointDefaultHoverCssClass(internal.renderMode, hasReport)
       });
 
-      if (internal.renderMode === GraphPanelRendererBase.REPORT_RENDER_MODE) {
+      if (internal.renderMode === GraphPanelRendererBase.RUNNING_RENDER_MODE) {
         outputStyle.isSource = false;
       }
 
@@ -341,7 +341,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
 
   that.setRenderMode = function setRenderMode(renderMode) {
     if (renderMode !== GraphPanelRendererBase.EDITOR_RENDER_MODE &&
-      renderMode !== GraphPanelRendererBase.REPORT_RENDER_MODE) {
+      renderMode !== GraphPanelRendererBase.RUNNING_RENDER_MODE) {
       throw `render mode should be either 'editor' or 'report'`;
     }
 

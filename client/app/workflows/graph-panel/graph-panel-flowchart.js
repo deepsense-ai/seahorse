@@ -50,7 +50,6 @@ function FlowChartBox($rootScope, GraphPanelRendererService) {
     scope: {
       'selectedNode': '=',
       'nodes': '=',
-      'reportMode': '=',
       'isRunning': '=',
       'zoomId': '@'
     },
@@ -62,16 +61,12 @@ function FlowChartBox($rootScope, GraphPanelRendererService) {
         }
       });
 
-      function setRenderReportMode(isReportMode) {
-        GraphPanelRendererService.setRenderMode(
-          isReportMode ?
-          GraphPanelRendererBase.REPORT_RENDER_MODE :
-          GraphPanelRendererBase.EDITOR_RENDER_MODE);
-      }
-
-      scope.$watch('flowChartBoxCtrl.reportMode', function(newValue) {
+      scope.$watch('flowChartBoxCtrl.isRunning', function(newValue) {
         scope.$evalAsync(() => {
-          setRenderReportMode(newValue);
+          let newRenderMode = newValue ?
+            GraphPanelRendererBase.RUNNING_RENDER_MODE :
+            GraphPanelRendererBase.EDITOR_RENDER_MODE;
+          GraphPanelRendererService.setRenderMode(newRenderMode);
           GraphPanelRendererService.rerender();
         });
       });
