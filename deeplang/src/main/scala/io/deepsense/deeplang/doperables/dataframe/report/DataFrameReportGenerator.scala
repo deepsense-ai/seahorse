@@ -34,7 +34,7 @@ object DataFrameReportGenerator {
   val DataSchemaTableName = "Column Names and Types"
   val DataFrameSizeTableName = "DataFrame Size"
 
-  val MaxRowsNumberInReport = 200
+  val MaxRowsNumberInReport = 20
   val ColumnNumberToGenerateSimplerReportThreshold = 20
   val StringPreviewMaxLength = 40
 
