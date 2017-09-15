@@ -1,16 +1,31 @@
 # Copyright (c) 2015, CodiLime Inc.
 
-*** Settings ***
-Suite Setup       Connect To Database    pymysql    mysql    system_tests    pass    spark-cluster-1    3306
-Suite Teardown    Disconnect From Database
-Library           DatabaseLibrary
-Library           OperatingSystem
+*** Keywords ***
+Connect To Docker Mysql Database
+    Build Docker Image    system_tests/mysql    resources/mySQLTests
+    Kill Docker Container    mysqld
+    Remove Docker Container    mysqld
+    Run Docker Container    system_tests/mysql    mysqld    -e    MYSQL_USER=system_tests    -e    MYSQL_PASS=pass    -p    3306:3306
+    Delay    30.0
+    Connect To Database    pymysql    mysql    system_tests    pass    localhost    3306
 
-Library    OperatingSystem
+Disconnect From Docker Mysql Database
+    Disconnect From Database
+    Kill Docker Container    mysqld
+
+
+*** Settings ***
+Suite Setup       Connect To Docker Mysql Database
+Suite Teardown    Disconnect From Docker Mysql Database
+
 Library    Collections
+Library    DatabaseLibrary
+Library    OperatingSystem
+Library    ../lib/DockerClient.py
 Library    ../lib/HdfsClient.py
 Library    ../lib/S3Client.py
 Library    ../lib/WorkflowExecutorClient.py
+
 
 *** Test Cases ***
 Read Write MySQL

@@ -9,7 +9,7 @@
       "parameters": {
         "data storage type": {
           "JDBC": {
-            "url": "jdbc:mysql://spark-cluster-1:3306?user=system_tests&password=pass",
+            "url": "jdbc:mysql://localhost:3306?user=system_tests&password=pass",
             "driver": "com.mysql.jdbc.Driver",
             "table": "mysql.read_write_mysql_in",
             "categorical columns": {
@@ -31,7 +31,7 @@
       "parameters": {
         "data storage type": {
           "JDBC": {
-            "url": "jdbc:mysql://spark-cluster-1:3306?user=system_tests&password=pass",
+            "url": "jdbc:mysql://localhost:3306?user=system_tests&password=pass",
             "driver": "com.mysql.jdbc.Driver",
             "table": "mysql.read_write_mysql_out"
           }
