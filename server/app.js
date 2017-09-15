@@ -21,6 +21,21 @@ if (args.host && args.token) {
   console.log('using custom api host (' + apiConfig.url + ')');
 }
 
+// TODO: remove after removing deploy mock
+let Q = require('q');
+apiConfig.resources.models = {
+  'deployURL': 'http://localhost:3000/webservice/',
+  'handler': (data, request) => {
+    let deferred = Q.defer();
+    data.link = apiConfig.resources.models.deployURL + data.id;
+    deferred.resolve(data);
+    return deferred.promise;
+  }
+};
+if (args.deployURL) {
+  apiConfig.resources.models.deployURL = args.deployURL;
+}
+
 
 require('./api/ormHandler.js')((orm) => {
   apiConfig.localDB = orm;
