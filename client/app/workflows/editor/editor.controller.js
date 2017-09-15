@@ -1,8 +1,8 @@
 'use strict';
 
-import _ from 'lodash';
-
+const NEW_NODE_ELEMENT_WIDTH = 240;
 const ZOOM_STEP = 0.1;
+const TRANSITION_TIME = 0.5;
 
 class EditorController {
   constructor($rootScope, CanvasService, AdapterService, UUIDGenerator, Operations, OperationsHierarchyService, MouseEvent,  $element) {
@@ -110,12 +110,15 @@ class EditorController {
   }
 
   newNode($event) {
-    const [x, y] = this.CanvasService.translatePosition(100, 100);
+    const [x, y] = this.CanvasService.translateScreenToCanvasPosition(100, 100);
     this.startWizard(x, y);
   }
 
   onConnectionAbort(newNodeData) {
-    this.startWizard(newNodeData.x, newNodeData.y, newNodeData.endpoint);
+    const portPositionX = newNodeData.x - (NEW_NODE_ELEMENT_WIDTH / 2 * this.CanvasService.scale);
+    const portPositionY = newNodeData.y - this.$canvas.offset().top;
+    const [x, y] = this.CanvasService.translateScreenToCanvasPosition(portPositionX , portPositionY);
+    this.startWizard(x, y, newNodeData.endpoint);
   }
 
   startWizard(x, y, endpoint = null) {
@@ -144,8 +147,13 @@ class EditorController {
   }
 
   onDisplayRectChange(rect) {
-    const {right, bottom} = this.containment[0].getBoundingClientRect();
-    this.CanvasService.moveWindow(Math.min(right - rect.right, 0) * this.CanvasService.scale, Math.min(bottom - rect.bottom, 0) * this.CanvasService.scale, 0.5);
+    const {left, right, bottom} = this.containment[0].getBoundingClientRect();
+    const rightDelta = Math.min(right - rect.right, 0);
+    const leftDelta = Math.max(left - rect.left, rightDelta);
+    this.CanvasService.moveWindow(
+      leftDelta,
+      Math.min(bottom - rect.bottom, 0),
+      TRANSITION_TIME);
   }
 
   onSelect(operationId) {
@@ -193,41 +201,6 @@ class EditorController {
       }
     });
     return portIndex;
-  }
-
-  //TODO move it to service which is aware of endpoints and nodes
-  getTypeQualifierForEndpoint(endpoint) {
-    const node = this.workflow.getNodeById(endpoint.getParameter('nodeId'));
-    const port = node.originalOutput[endpoint.getParameter('portIndex')];
-
-    return [...port.typeQualifier];
-  }
-
-  //TODO move it to service which is aware of endpoints and their params
-  getAvailableOperations(workflow, sourceEndpoint) {
-    const sourceNodeId = sourceEndpoint.getParameter('nodeId');
-    const sourceNode = workflow.getNodeById(sourceNodeId);
-    const sourcePortIndex = sourceEndpoint.getParameter('portIndex');
-    const sourcePort = sourceNode.output[sourcePortIndex];
-
-
-    const operations = this.Operations.getData();
-    const operationsMatch = [];
-    _.forEach(operations, (operation) => {
-      const inputMatches = _.reduce(operation.ports.input, (acc, input) => {
-        const typesMatch = _.every(_.map(
-          sourcePort.typeQualifier,
-          typeQualifier => this.OperationsHierarchyService.IsDescendantOf(typeQualifier, input.typeQualifier)
-        ));
-
-        acc.push(typesMatch);
-
-        return acc;
-      }, []);
-      operationsMatch[operation.id] = _.some(inputMatches);
-    });
-
-    return operationsMatch;
   }
 
   showTooltip(portEl, portObject) {

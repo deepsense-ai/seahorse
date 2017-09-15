@@ -143,10 +143,10 @@ class CanvasService {
     this.zoomToPosition(zoomDelta, this.slidingWindowSize.width/2, this.slidingWindowSize.height/2);
   }
 
-  translatePosition(x, y) {
+  translateScreenToCanvasPosition(x, y) {
     return [
-      -1 * this.slidingWindowPosition.x / this.scale + x,
-      -1 * this.slidingWindowPosition.y / this.scale + y
+      (-this.slidingWindowPosition.x + x) / this.scale,
+      (-this.slidingWindowPosition.y + y) / this.scale
     ];
   }
 }

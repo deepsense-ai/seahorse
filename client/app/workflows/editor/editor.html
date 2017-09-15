@@ -13,7 +13,8 @@
     selectedNode="$ctrl.selectedNode"
     workflow="$ctrl.workflow"
     on-connection-abort="$ctrl.onConnectionAbort(newNodeData)">
-    <new-node class="flowchart-box__new-node"
+    <new-node
+      class="flowchart-box__new-node new-node"
       id="node-new-node"
       categories="$ctrl.categories"
       containment="$ctrl.containment"
@@ -27,7 +28,6 @@
       jsplumb-draggable
     ></new-node>
   </core-canvas>
-
   <port-status-tooltip
     ng-if="$ctrl.isTooltipVisible"
     ng-style="{

@@ -3,9 +3,6 @@
 import NewNodeTemplate from './new-node.html';
 import './new-node.less';
 
-const NEW_NODE_WIDTH = 290;
-const NEW_NODE_HEIGHT = 295;
-
 const NewNodeComponent = {
   bindings: {
     'categories': '<',
@@ -26,13 +23,8 @@ const NewNodeComponent = {
       });
 
       this.$timeout(() => {
-        const {top, left} = this.$element[0].getBoundingClientRect();
-        const rect = {
-          top,
-          left,
-          right: left + NEW_NODE_WIDTH,
-          bottom: top + NEW_NODE_HEIGHT
-        };
+        const {top, left, right, bottom} = this.$element[0].getBoundingClientRect();
+        const rect = {top, left, right, bottom};
         this.onDisplayRectChange({rect});
       }, 0);
     }

@@ -33,8 +33,9 @@ const NEW_NODE_EDGE = {
 
 
 class AdapterService {
-  /*@ngInject*/
   constructor(WorkflowService, GraphStyleService) {
+    'ngInject';
+
     this.WorkflowService = WorkflowService;
     this.GraphStyleService = GraphStyleService;
 
@@ -104,8 +105,8 @@ class AdapterService {
         return;
       }
       this.onConnectionAbort({newNodeData: {
-        x: (originalEvent.layerX - originalEvent.x) * -1,
-        y: (originalEvent.layerY - originalEvent.y + 60) * -1,
+        x: originalEvent.clientX,
+        y: originalEvent.clientY,
         endpoint: connection.endpoints[0]
       }});
     });
