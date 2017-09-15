@@ -36,6 +36,7 @@ class CanvasService {
   initialize(jsPlumbContainer, slidingWindow) {
     this.$slidingWindow = $(slidingWindow);
     this.AdapterService.initialize(jsPlumbContainer);
+
     this.$rootScope.$watch(() => this.getWindowSize(), (newValue, oldValue) => {
       if (newValue !== oldValue) {
         this.fit();
@@ -96,6 +97,10 @@ class CanvasService {
   }
 
   fit() {
+    if (!this.$slidingWindow) {
+      return;
+    }
+
     this.slidingWindowSize = this.getWindowSize();
     const boundaries = {
       left: Infinity,
