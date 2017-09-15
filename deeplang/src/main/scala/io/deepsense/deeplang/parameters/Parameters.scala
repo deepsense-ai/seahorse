@@ -26,6 +26,11 @@ case class BooleanParameter(
   override protected def defaultValueToJson(defaultValue: Boolean) = defaultValue.toJson
 
   override protected def definedValueToJson(definedValue: Boolean): JsValue = definedValue.toJson
+
+  override protected def valueFromJsonPF: PartialFunction[JsValue, Unit] = {
+    case JsNull => value = None
+    case JsBoolean(x) => value = Some(x)
+  }
 }
 
 case class NumericParameter(
@@ -48,6 +53,12 @@ case class NumericParameter(
   override protected def defaultValueToJson(defaultValue: Double): JsValue = defaultValue.toJson
 
   override protected def definedValueToJson(definedValue: Double): JsValue = definedValue.toJson
+
+  override protected def valueFromJsonPF: PartialFunction[JsValue, Unit] = {
+    case JsNull => value = None
+    case JsNumber(x) => value = Some(x.toDouble)
+    // TODO Here we convert from BigDecimal. Maybe we should throw some our exception here?
+  }
 }
 
 case class StringParameter(
@@ -70,6 +81,11 @@ case class StringParameter(
   override protected def defaultValueToJson(defaultValue: String): JsValue = defaultValue.toJson
 
   override protected def definedValueToJson(definedValue: String): JsValue = definedValue.toJson
+
+  override protected def valueFromJsonPF: PartialFunction[JsValue, Unit] = {
+    case JsNull => value = None
+    case JsString(x) => value = Some(x)
+  }
 }
 
 /**
@@ -120,6 +136,17 @@ case class ChoiceParameter(
 
   override protected def definedValueToJson(definedValue: Selection): JsValue = {
     JsObject(selectionToJson(definedValue))
+  }
+
+  override protected def valueFromJsonPF: PartialFunction[JsValue, Unit] = {
+    case JsNull => _value = None
+    case jsValue@JsObject(map) =>
+      if (map.size != 1) {
+        throw new DeserializationException(s"There should be only one selected option in choice" +
+          s"parameter, but there are ${map.size} in $jsValue")
+      }
+      val (label, innerJsValue) = map.iterator.next()
+      fill(label, schema => schema.fillValuesWithJson(innerJsValue))
   }
 }
 
@@ -174,6 +201,12 @@ case class MultipleChoiceParameter(
     val fields = for (selection <- definedValue.choices.toSeq) yield selectionToJson(selection)
     JsObject(fields: _*)
   }
+
+  override protected def valueFromJsonPF: PartialFunction[JsValue, Unit] = {
+    case JsNull => _value = None
+    case JsObject(map) =>
+      fill(map.mapValues(innerJsValue => _.fillValuesWithJson(innerJsValue)))
+  }
 }
 
 /**
@@ -203,7 +236,7 @@ case class MultiplierParameter(
    * can fill it with values. All schemas provided to fillers will by copies of valuesSchema.
    * @param fillers list of functions able to fill valuesSchema
    */
-  def fill(fillers: List[ParametersSchema => Unit]) = {
+  def fill(fillers: Vector[ParametersSchema => Unit]) = {
     val filled = for (filler <- fillers) yield {
       val another = valuesSchema.replicate
       filler(another)
@@ -221,6 +254,15 @@ case class MultiplierParameter(
   override protected def definedValueToJson(definedValue: Multiplied): JsValue = {
     val fields = for (schema <- definedValue.schemas) yield schema.valueToJson
     JsArray(fields:_*)
+  }
+
+  private def fillerForJsValue(jsValue: JsValue)(schema: ParametersSchema): Unit = {
+    schema.fillValuesWithJson(jsValue)
+  }
+
+  override protected def valueFromJsonPF: PartialFunction[JsValue, Unit] = {
+    case JsNull => _value = None
+    case JsArray(vector) => fill(vector.map(fillerForJsValue))
   }
 }
 
@@ -256,6 +298,11 @@ case class SingleColumnSelectorParameter(
   override protected def definedValueToJson(definedValue: SingleColumnSelection): JsValue = {
     definedValue.toJson
   }
+
+  override protected def valueFromJsonPF: PartialFunction[JsValue, Unit] = {
+    case JsNull => value = None
+    case x => value = Some(SingleColumnSelection.fromJson(x))
+  }
 }
 
 /**
@@ -276,5 +323,10 @@ case class ColumnSelectorParameter(
   override protected def definedValueToJson(definedValue: MultipleColumnSelection): JsValue = {
     val fields = definedValue.selections.map(_.toJson)
     JsArray(fields:_*)
+  }
+
+  override protected def valueFromJsonPF: PartialFunction[JsValue, Unit] = {
+    case JsNull => value = None
+    case x => value = Some(MultipleColumnSelection.fromJson(x))
   }
 }

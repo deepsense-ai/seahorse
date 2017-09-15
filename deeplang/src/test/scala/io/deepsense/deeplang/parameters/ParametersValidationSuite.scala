@@ -128,7 +128,7 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
     val mockSchema = mock[ParametersSchema]
     when(mockSchema.replicate) thenReturn mockSchema
     val multiplicator = MultiplierParameter("description", true, mockSchema)
-    multiplicator.fill(List(x => { }, x => { }))
+    multiplicator.fill(Vector(x => { }, x => { }))
     multiplicator.validate
     verify(mockSchema, times(2)).validate
   }

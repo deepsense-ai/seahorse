@@ -85,13 +85,13 @@ class ParametersSuite extends FunSuite with Matchers {
     val booleanParameter1 = Some(false)
     val booleanParameter2 = Some(true)
 
-    multiplier.fill(List(
+    multiplier.fill(Vector(
       schema => schema.getBooleanParameter("x").value = booleanParameter1,
       schema => schema.getBooleanParameter("x").value = booleanParameter2))
 
     val parametersSchema = ParametersSchema("key" -> multiplier)
     parametersSchema.getMultiplicated("key").get match {
-      case Multiplied(schema1 :: schema2 :: Nil) =>
+      case Multiplied(Vector(schema1, schema2)) =>
         assert(schema1.getBoolean("x") == booleanParameter1)
         assert(schema2.getBoolean("x") == booleanParameter2)
     }
@@ -109,7 +109,7 @@ class ParametersSuite extends FunSuite with Matchers {
     val param = ColumnSelectorParameter("description", true)
     val schema = ParametersSchema("x" -> param)
     val values = IndexColumnSelection(List(1, 3))
-    val parameter = MultipleColumnSelection(List(values))
+    val parameter = MultipleColumnSelection(Vector(values))
     param.value = Some(parameter)
     assert(schema.getColumnSelection("x").get == parameter)
   }

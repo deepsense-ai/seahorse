@@ -6,10 +6,10 @@
 
 package io.deepsense.deeplang.parameters
 
-import spray.json.{JsObject, JsValue}
+import spray.json.{DeserializationException, JsObject, JsValue}
 
 import io.deepsense.deeplang.parameters.ParameterConversions._
-import io.deepsense.deeplang.parameters.exceptions.{ValidationException, NoSuchParameterException}
+import io.deepsense.deeplang.parameters.exceptions.NoSuchParameterException
 
 /**
  * Schema for a given set of DOperation parameters
@@ -49,6 +49,19 @@ class ParametersSchema protected (schemaMap: Map[String, Parameter] = Map.empty)
    * Json representation of values held by this schema's parameters.
    */
   def valueToJson: JsValue = JsObject(schemaMap.mapValues(_.valueToJson))
+
+  def fillValuesWithJson(jsValue: JsValue): Unit = jsValue match {
+    case JsObject(map) =>
+      for ((label, value) <- map) {
+        schemaMap.get(label) match {
+          case Some(parameter) => parameter.fillValueWithJson(value)
+          case None => throw new DeserializationException(s"Cannot fill parameters schema with " +
+            s"$jsValue: unknown parameter label $label.")
+        }
+      }
+    case _ => throw new DeserializationException(s"Cannot fill parameters schema with $jsValue:" +
+      s"object expected.")
+  }
 
   def getBooleanParameter(name: String): BooleanParameter = get[BooleanParameter](name)
 

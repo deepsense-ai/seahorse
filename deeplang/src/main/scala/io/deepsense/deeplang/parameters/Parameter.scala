@@ -82,4 +82,11 @@ abstract class Parameter extends DefaultJsonProtocol {
    * Json representation of value held by parameter if it is provided.
    */
   protected def definedValueToJson(definedValue: HeldValue): JsValue
+
+  def fillValueWithJson(jsValue: JsValue): Unit = {
+    valueFromJsonPF.applyOrElse(jsValue, (_: Any) =>
+      throw new DeserializationException(s"Cannot fill parameter using $jsValue."))
+  }
+
+  protected def valueFromJsonPF: PartialFunction[JsValue, Unit]
 }
