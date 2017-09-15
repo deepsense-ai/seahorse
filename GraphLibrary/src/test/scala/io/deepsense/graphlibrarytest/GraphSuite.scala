@@ -97,4 +97,19 @@ class GraphSuite extends FunSuite {
     assert(readyList.length == 1)
     assert(readyList.head == nodeReady)
   }
+
+  test("Programmer can validate if graph doesn't contain a cycle") {
+    val graph = new Graph
+    val node1 = graph.addNode(UUID.randomUUID(), new Operation(UUID.randomUUID(), 1, 1))
+    val node2 = graph.addNode(UUID.randomUUID(), new Operation(UUID.randomUUID(), 1, 1))
+    val node3 = graph.addNode(UUID.randomUUID(), new Operation(UUID.randomUUID(), 1, 1))
+    val node4 = graph.addNode(UUID.randomUUID(), new Operation(UUID.randomUUID(), 1, 1))
+    graph.addEdge(node1.id, node2.id, 0, 0)
+    graph.addEdge(node2.id, node3.id, 0, 0)
+    graph.addEdge(node3.id, node4.id, 0, 0)
+    assert(graph.containsCycle == false)
+
+    graph.addEdge(node4.id, node2.id, 0, 0)
+    assert(graph.containsCycle == true)
+  }
 }

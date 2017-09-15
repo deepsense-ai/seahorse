@@ -12,6 +12,18 @@ import io.deepsense.graphlibrary.Node.State
 import io.deepsense.graphlibrary.Node.State.{Progress, Status}
 
 /**
+ * Colours of node.
+ *
+ * Used for cycle checking. This object should be inner object
+ * of Graph. However it makes serialization of Graph impossible.
+ * This is why a decision was made to move it outside of Graph.
+ */
+private[graphlibrary] object Color extends Enumeration {
+  type Color = Value
+  val WHITE, GREY, BLACK = Value
+}
+
+/**
  * Execution Graph of the experiment.
  * It can be serialized for the purpose of sending it over the network.
  * Nodes of this graph contain operations and state.
@@ -20,13 +32,20 @@ import io.deepsense.graphlibrary.Node.State.{Progress, Status}
 @SerialVersionUID(100L)
 class Graph extends Serializable {
   private case class GraphNode(id: Node.Id, operation: Operation) extends Node {
+    var color: Color.Color = Color.WHITE
     var state: State = State.inDraft
-    val predecessors: Array[Node] = new Array(operation.degIn)
-    val successors: Array[Set[Node]] = Array.fill(operation.degOut) { Set() }
+    val predecessors: Array[GraphNode] = new Array(operation.degIn)
+    val successors: Array[Set[GraphNode]] = Array.fill(operation.degOut) { Set() }
 
-    def addPredecessor(index: Int, node: Node): Unit = predecessors(index) = node
+    def addPredecessor(index: Int, node: GraphNode): Unit = predecessors(index) = node
 
-    def addSuccessor(index: Int, node: Node): Unit = successors(index) += node
+    def addSuccessor(index: Int, node: GraphNode): Unit = successors(index) += node
+
+    def markWhite: Unit = color = Color.WHITE
+
+    def markGrey: Unit = color = Color.GREY
+
+    def markBlack: Unit = color = Color.BLACK
 
     override def toString(): String = id.toString
   }
@@ -84,6 +103,31 @@ class Graph extends Serializable {
     val node = nodes(id)
     node.state = node.state.withProgress(Progress(current, node.operation.total))
   }
+
+  def containsCycle: Boolean = {
+    val cycleFound = nodes.values.exists(onCycle(_))
+    restoreColors
+    cycleFound
+  }
+
+  /**
+   * Checks if any node reachable from the start node lays on cycle.
+   */
+  private def onCycle(node: GraphNode): Boolean = {
+    if (node == null) false // nothing is connected to the given input port
+    else node.color match {
+      case Color.BLACK => false
+      case Color.GREY => true
+      case Color.WHITE => {
+        node.markGrey
+        val cycleFound = node.predecessors.exists(onCycle(_))
+        node.markBlack
+        cycleFound
+      }
+    }
+  }
+
+  private def restoreColors: Unit = nodes.values.foreach(_.markWhite)
 
   def size: Int = nodes.size
 
