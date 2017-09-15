@@ -113,9 +113,6 @@ function ExperimentController(
     GraphPanelRendererService.renderEdges();
     GraphPanelRendererService.repaintEverything();
 
-    // TODO: temporary
-    GraphPanelRendererService.setZoom(0.75, [0, 0]);
-
     that.checkExperimentState();
 
     $scope.$broadcast('Experiment.RENDER_FINISHED');

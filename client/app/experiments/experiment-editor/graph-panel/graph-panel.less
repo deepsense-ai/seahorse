@@ -45,12 +45,23 @@ path,
 
   .flowchart-paint-area {
     position: absolute;
-    width: 100%;
-    height: 800px;
+    width: 3000px;
+    height: 3000px;
     z-index: 1;
+  }
+
+  .deepsense-interaction-toolbar {
+    display: flex;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
   }
 }
 
 @import "./graph-panel-node/graph-panel-node.less";
-@import "./user-interaction-controls/user-interaction-controls.less";
 @import "./multi-selection/multi-selection.less";

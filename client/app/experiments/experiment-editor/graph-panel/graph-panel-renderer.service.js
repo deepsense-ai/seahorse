@@ -109,94 +109,11 @@ function GraphPanelRendererService($rootScope, $document) {
     return jsPlumb.getZoom();
   };
 
-  that.getNewCenterOf = function getNewCenterOf (zoomRatio, centerFrom, centerTo) {
-    return {
-      y: zoomRatio * centerTo.y + (1 - zoomRatio) * centerFrom.y,
-      x: zoomRatio * centerTo.x + (1 - zoomRatio) * centerFrom.x
-    };
-  };
-
-  that.setZoom = function setZoom (zoom, transformOrigin, translate) {
-    transformOrigin = transformOrigin || [ 0.5, 0.5 ];
-
+  that.setZoom = function setZoom (zoom) {
     let instance = jsPlumb;
-    let el = instance.getContainer();
-
-    if (!el) {
-      return false;
-    }
-
-    let p = ['webkit', 'moz', 'ms', 'o'];
-    let s = 'scale(' + zoom + ')';
-    let oString = (transformOrigin[0]) + 'px ' + (transformOrigin[1]) + 'px';
-    let tString = translate ?
-      'translate(' + translate.x + 'px, ' + translate.y + 'px' + ')' :
-      '';
-
-    for (let i = 0; i < p.length; i++) {
-      el.style[p[i] + 'TransformOrigin'] = oString;
-      el.style[p[i] + 'Transform'] = tString + s;
-    }
-
-    el.style.transform = tString + s;
-    el.style.transformOrigin = oString;
 
     instance.setZoom(zoom, true);
     instance.repaintEverything();
-
-    $rootScope.$broadcast('Zoom');
-  };
-
-  that.getDifferenceAfterZoom = function getDifferenceAfterZoom (container, property, previous) {
-    return (
-      container.getBoundingClientRect()[property] -
-      previous || container['client' + (property.slice(0, 1).toUpperCase() + property.slice(1))]
-    ) / 2;
-  };
-
-  // TODO do not move beyond borders
-  internal.moveElement = function moveElement (element, movement) {
-    $(element).animate({
-      top: movement.y,
-      left: movement.x
-    }, 0);
-  };
-
-  that.setZero = function setZero (direction) {
-    var container = jsPlumb.getContainer();
-
-    container.style[direction] = 0;
-
-    if (that.getZoomRatio() !== 1) {
-      let directionToDimension = direction === 'left' ? 'width' : 'height';
-      container.style[direction] = that.getDifferenceAfterZoom(container, directionToDimension) + 'px';
-    }
-
-    $rootScope.$broadcast('GraphPanel.ZERO');
-  };
-
-  that.setCenter = function setCenter (centerTo) {
-    var container                 = jsPlumb.getContainer();
-    var containerParent           = container.parentNode;
-
-    var centerOfMask              = {
-      y: containerParent.clientHeight / 2,
-      x: containerParent.clientWidth / 2
-    };
-
-    /*var centerOfPseudoContainer   = {
-      y: pseudoContainer.topmost  + ((pseudoContainer.bottommost - pseudoContainer.topmost) / 2),
-      x: pseudoContainer.leftmost + ((pseudoContainer.rightmost - pseudoContainer.leftmost) / 2)
-    };*/
-
-    var movement = {
-      y: centerOfMask.y - centerTo.y,
-      x: centerOfMask.x - centerTo.x
-    };
-
-    internal.moveElement(container, movement);
-
-    $rootScope.$broadcast('GraphPanel.CENTERED');
   };
 
   internal.reset = () => {
@@ -217,6 +134,7 @@ function GraphPanelRendererService($rootScope, $document) {
         zIndex: 2000
       }
     });
+
     that.bindEdgeEvent();
   };
 

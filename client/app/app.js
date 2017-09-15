@@ -18,6 +18,7 @@ var lab = angular.module('ds.lab', [
   'deepsense-context-menu',
   'deepsense-catalogue-panel',
   'deepsense.attributes-panel',
+  'deepsense.navigation-panel',
   require('./home/home.module.js').name,
   require('./account/account.module.js').name,
   require('./experiments/experiments.module.js').name,

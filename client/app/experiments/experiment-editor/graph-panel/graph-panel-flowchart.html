@@ -1,5 +1,5 @@
 <div context-menu-blocker class="flowchart-box">
-  <div class="flowchart-paint-area" multi-selection drop-target drop-target-to="parent">
+  <div class="flowchart-paint-area" multi-selection deepsense-interactive zoom-id="flowchart-box" drop-target drop-target-to="parent">
     <graph-node on-render-finish
                 jsplumb-draggable
                 keyboard
@@ -17,7 +17,7 @@
                   position-y="flowChartBoxController.getContextMenuPositionY()"
                   state="flowChartBoxController.getContextMenuState()">
     </context-menu>
-    <user-interaction-controls></user-interaction-controls>
+    <deepsense-interaction-toolbar zoom-id="flowchart-box"></deepsense-interaction-toolbar>
   </div>
 
   <div ng-controller="PortStatusesTooltipController as portStatusesTooltipController">

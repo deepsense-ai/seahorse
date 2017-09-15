@@ -15,6 +15,7 @@ function FlowChartBox() {
     controller: FlowChartBoxController,
     controllerAs: 'flowChartBoxController',
     replace: true,
+    scope: true,
     templateUrl: 'app/experiments/experiment-editor/graph-panel/graph-panel-flowchart.html',
     link: (scope, element) => {
       element.on('click', function (event) {
@@ -29,7 +30,7 @@ function FlowChartBox() {
 
 /* @ngInject */
 function FlowChartBoxController($scope, $element, $window,
-                                ExperimentService, ReportOptionsService) {
+                                ExperimentService, ReportOptionsService, GraphPanelRendererService) {
   var that = this;
   var internal = {};
 
@@ -109,6 +110,10 @@ function FlowChartBoxController($scope, $element, $window,
 
   $window.addEventListener('mousedown', internal.checkClickAndClose);
   $window.addEventListener('blur', internal.closeContextMenu);
+
+  $scope.$on('ZOOM.ZOOM_PERFORMED', (event, data) => {
+    GraphPanelRendererService.setZoom(data.zoomRatio);
+  });
 
   $scope.$on('$destroy', () => {
     $window.removeEventListener('mousedown', internal.checkClickAndClose);

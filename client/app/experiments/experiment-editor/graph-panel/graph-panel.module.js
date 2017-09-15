@@ -11,8 +11,6 @@ exports.inject = function (module) {
 
   require('./port-statuses-tooltip/port-statuses-tooltip.controller.js').inject(module);
 
-  require('./user-interaction-controls/user-interaction-controls.module.js').inject(module);
-
   require('./graph-panel-flowchart.js').inject(module);
   require('./graph-panel-renderer.service.js').inject(module);
 
