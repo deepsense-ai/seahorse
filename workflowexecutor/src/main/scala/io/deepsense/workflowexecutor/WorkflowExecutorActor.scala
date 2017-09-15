@@ -75,15 +75,30 @@ class WorkflowExecutorActor(
       }
   }
 
-  private def reset(): Unit = {
-    dOperableCache.clear()
-    reports.clear()
+  /**
+   * Removes all unnecessary dOperables and their reports from the cache.
+   * A DOperable/Report is unnecessary when an operation that produced
+   * the DOperable/Report has been deleted or changed. DOperables and reports
+   * are needed only when the producing operation's state has not changed since
+   * the last execution (it remains Completed).
+   */
+  private def invalidateCache(execution: Execution): Unit = {
+    val completedNodes = execution.states.valuesIterator.filter(_.isCompleted)
+    val validDOperables: Set[Entity.Id] = completedNodes.flatMap {
+      case nodestate.Completed(_, _, results) => results
+      case _ => Seq()
+    }.toSet
+
+    val doperablesToDelete = dOperableCache.keys.filterNot(id => validDOperables.contains(id))
+    val reportsToDelete = reports.keys.filterNot(id => validDOperables.contains(id))
+
+    dOperableCache --= doperablesToDelete
+    reports --= reportsToDelete
   }
 
   def finished(finishedExecution: IdleExecution): Receive = {
     case Launch(graph, nodes) =>
       val nodeSet = nodes.toSet
-      reset()
       val updatedStructure = finishedExecution.updateStructure(graph, nodeSet)
       launch(updatedStructure, nodes)
     case Connect(_) =>
@@ -100,7 +115,11 @@ class WorkflowExecutorActor(
 
   def launch(execution: IdleExecution, nodes: Seq[Node.Id]): Unit = {
     val inferred = execution.inferAndApplyKnowledge(executionContext.inferContext)
-    val enqueued = inferred.error.map(_ => inferred).getOrElse(inferred.enqueue)
+    val enqueued = inferred.error.map(_ => inferred).getOrElse {
+      val enqueued = inferred.enqueue
+      invalidateCache(enqueued)
+      enqueued
+    }
     updateExecutionState(execution, enqueued)
   }
 

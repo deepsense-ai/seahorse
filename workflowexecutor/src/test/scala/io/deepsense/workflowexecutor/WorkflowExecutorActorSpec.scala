@@ -18,6 +18,7 @@ package io.deepsense.workflowexecutor
 
 import akka.actor.{ActorRef, ActorSystem}
 import akka.testkit.{TestActorRef, TestKit, TestProbe}
+import org.joda.time.DateTime
 import org.mockito.Matchers._
 import org.mockito.Mockito
 import org.mockito.Mockito._
@@ -171,7 +172,6 @@ class WorkflowExecutorActorSpec
         verifyNodesStarted(runningExecution, readyNodes, executors)
         verifyStatusSent(statusListeners)
       }
-
       "infer graph knowledge, fail graph and send status on exception" in {
         val probe = TestProbe()
         val publisher = TestProbe()
@@ -190,6 +190,55 @@ class WorkflowExecutorActorSpec
         }
 
         verifyStatus(Seq(subscriber, publisher)){ _.executionFailure.isDefined shouldBe true }
+      }
+      "after relaunch reset dOperableCache and reports only for nodes that changed" in {
+        val wea = TestActorRef(new WorkflowExecutorActor(
+          executionContext,
+          nodeExecutorFactory(),
+          mock[ExecutionFactory],
+          None,
+          None))
+
+        // Simulate that an execution finished: A -> B -> C
+        // Now, we relaunch B. Only A's output entity should stay in cache.
+        val entityId1 = Entity.Id.randomId
+        val entityId2 = Entity.Id.randomId
+        val entityReport1: ReportContent = mock[ReportContent]("MockedReport")
+        wea.underlyingActor.reports.put(entityId1, entityReport1)
+        wea.underlyingActor.reports.put(entityId2, mock[ReportContent])
+        val doperable1: DOperable = mock[DOperable]("MockedDOperable")
+        wea.underlyingActor.dOperableCache.put(entityId1, doperable1)
+        wea.underlyingActor.dOperableCache.put(entityId2, mock[DOperable])
+
+        def nodeCompleted(entity: Entity.Id): NodeState = {
+          nodestate.Completed(DateTime.now(), DateTime.now(), Seq(entity))
+        }
+
+        val finishedExecution = mock[IdleExecution]
+        val states = Map(
+          Node.Id.randomId -> nodeCompleted(entityId1),
+          Node.Id.randomId -> nodestate.Draft,
+          Node.Id.randomId -> nodestate.Draft
+        )
+
+        val enqueued = mock[RunningExecution]
+        when(enqueued.readyNodes).thenReturn(Seq())
+        when(finishedExecution.states).thenReturn(states)
+        when(finishedExecution.error).thenReturn(None)
+        when(finishedExecution.updateStructure(any(), any())).thenReturn(finishedExecution)
+        when(finishedExecution.inferAndApplyKnowledge(any())).thenReturn(finishedExecution)
+        when(finishedExecution.enqueue).thenReturn(enqueued)
+        when(enqueued.states).thenReturn(states)
+        becomeFinished(wea, finishedExecution)
+
+        sendLaunch(TestProbe(), wea)
+
+        eventually {
+          wea.underlyingActor.dOperableCache should
+            contain theSameElementsAs Map(entityId1 -> doperable1)
+          wea.underlyingActor.reports should
+            contain theSameElementsAs Map(entityId1 -> entityReport1)
+        }
       }
     }
     "received NodeCompleted" should {
@@ -362,10 +411,17 @@ class WorkflowExecutorActorSpec
   }
 
   def becomeLaunched(
-    wea: TestActorRef[WorkflowExecutorActor],
-    execution: RunningExecution): Unit = {
+      wea: TestActorRef[WorkflowExecutorActor],
+      execution: RunningExecution): Unit = {
     wea.underlyingActor.context
       .become(wea.underlyingActor.launched(execution))
+  }
+
+  def becomeFinished(
+      wea: TestActorRef[WorkflowExecutorActor],
+      execution: IdleExecution): Unit = {
+    wea.underlyingActor.context
+      .become(wea.underlyingActor.finished(execution))
   }
 
   val executionContext = {
