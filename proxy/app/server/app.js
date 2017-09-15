@@ -49,10 +49,10 @@ if (config.get('ENABLE_AUTHORIZATION') === "true") {
 auth.init(app);
 app.use(auth.login);
 app.use(userCookieMiddleware);
-//if (config.get('ENABLE_AUTHORIZATION') === "true") { // Depends on userCookieMiddleware
-//  const trialTimeLimitMiddleware = require('./trial/time-limit').middleware;
-//  app.use(trialTimeLimitMiddleware)
-//}
+if (config.get('ENABLE_AUTHORIZATION') === "true") { // Depends on userCookieMiddleware
+  const trialTimeLimitMiddleware = require('./trial/time-limit').middleware;
+  app.use(trialTimeLimitMiddleware)
+}
 
 app.get('/', reverseProxy.forward);
 app.all('/**', reverseProxy.forward);
