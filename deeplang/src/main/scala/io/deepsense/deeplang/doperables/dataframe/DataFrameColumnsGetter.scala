@@ -37,7 +37,7 @@ trait DataFrameColumnsGetter {
    */
   def getColumnName(singleColumnSelection: SingleColumnSelection): String =
     tryGetColumnName(singleColumnSelection).getOrElse {
-      throw ColumnDoesNotExistException(singleColumnSelection, this.metadata.get)
+      throw ColumnDoesNotExistException(singleColumnSelection, this.schema.get)
     }
 
   private def tryGetColumnName(singleColumnSelection: SingleColumnSelection): Option[String] =

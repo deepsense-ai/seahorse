@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+/** TODO as Transformer and without types
 package io.deepsense.deeplang.doperations
 
 import java.sql.Timestamp
@@ -389,3 +390,4 @@ private object ReplaceWithCustomValueStrategy {
   }
 
 }
+*/

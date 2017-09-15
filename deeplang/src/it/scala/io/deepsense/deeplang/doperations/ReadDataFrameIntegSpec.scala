@@ -29,6 +29,7 @@ import io.deepsense.deeplang.{DOperable, DeeplangIntegTestSupport}
 
 class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfter {
 
+  /** TODO remove categoricals
   before {
     fileSystemClient.delete(testsDir)
     new java.io.File(testsDir + "/id").getParentFile.mkdirs()
@@ -314,4 +315,5 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
 
   def schemaWithDefaultColumnNames(types: Seq[DataType]): StructType =
     schemaOf(generatedColumnNames(types.length), types)
+   */
 }

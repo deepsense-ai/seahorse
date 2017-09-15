@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+/** TODO without categoricals
 package io.deepsense.deeplang.doperations
 
 import java.io.IOException
@@ -184,3 +185,4 @@ object WriteDataFrame {
       })
   }
 }
+*/

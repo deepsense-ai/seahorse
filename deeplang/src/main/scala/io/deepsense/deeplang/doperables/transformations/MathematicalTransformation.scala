@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+/** TODO remake as Transformer
 package io.deepsense.deeplang.doperables.transformations
 
 import org.apache.spark.sql.types.StructType
@@ -31,7 +32,7 @@ case class MathematicalTransformation(
 
   def this() = this(null, null)
 
-  override def toInferrable: DOperable = new MathematicalTransformation()
+  override def toInferable: DOperable = new MathematicalTransformation()
 
   override val transform = new DMethod1To1[Unit, DataFrame, DataFrame] {
     override def apply(context: ExecutionContext)(p: Unit)(dataFrame: DataFrame): DataFrame = {
@@ -83,3 +84,4 @@ case class MathematicalTransformation(
 
   override def save(executionContext: ExecutionContext)(path: String): Unit = ???
 }
+ */

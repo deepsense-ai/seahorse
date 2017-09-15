@@ -25,7 +25,6 @@ import org.scalatest.BeforeAndAfter
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
-import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoriesMapping, MappingMetadataConverter}
 import io.deepsense.deeplang.doperations.inout._
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{CassandraTestSupport, DeeplangIntegTestSupport}
@@ -40,6 +39,7 @@ class WriteReadDataFrameIntegSpec
   override def cassandraKeySpaceName: String = "dataframes"
   override def cassandraTableName: String = "dataframe"
 
+  /** TODO no categoricals
   val timestamp = new Timestamp(System.currentTimeMillis())
 
   val schema: StructType =
@@ -209,4 +209,5 @@ class WriteReadDataFrameIntegSpec
       |  PRIMARY KEY(id)
       |)""".stripMargin)
   }
+   */
 }

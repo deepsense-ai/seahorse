@@ -36,10 +36,8 @@ trait WorkflowJsonProtocol
   with IdJsonProtocol
   with FailureDescriptionJsonProtocol
   with DateTimeJsonProtocol
-  with AbstractMetadataJsonProtocol
-  with MetadataInferenceResultJsonProtocol
-  with InferenceErrorJsonProtocol
-  with InferenceWarningJsonProtocol {
+  with InferenceWarningsJsonProtocol
+  with InferenceErrorJsonProtocol {
 
   val graphReader: GraphReader
 

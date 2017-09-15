@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+/** TODO without categoricals
 package io.deepsense.deeplang.doperations
 
 import scala.reflect.runtime.{universe => ru}
@@ -148,3 +149,4 @@ case class Union() extends DOperation2To1[DataFrame, DataFrame, DataFrame] with 
   @transient
   override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }
+*/

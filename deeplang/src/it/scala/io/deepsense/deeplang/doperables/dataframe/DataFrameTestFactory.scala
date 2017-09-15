@@ -26,6 +26,7 @@ import org.joda.time.DateTime
 
 import io.deepsense.commons.datetime.DateTimeConverter
 
+/** TODO rewrite
 trait DataFrameTestFactory {
 
   def testDataFrame(dataFrameBuilder: DataFrameBuilder, sparkContext: SparkContext): DataFrame =
@@ -92,3 +93,4 @@ object DataFrameTestFactory extends DataFrameTestFactory {
   val timestampColumnName = "AccountCreationDate"
   val categoricalColumnName = "Season"
 }
+*/

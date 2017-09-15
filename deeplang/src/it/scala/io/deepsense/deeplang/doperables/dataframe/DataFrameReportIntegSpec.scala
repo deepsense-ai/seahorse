@@ -26,11 +26,10 @@ import org.joda.time.DateTime
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.DeeplangIntegTestSupport
-import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoriesMapping, MappingMetadataConverter}
-import io.deepsense.deeplang.doperables.{Report, ReportLevel}
+import io.deepsense.deeplang.doperables.Report
 import io.deepsense.reportlib.model.{CategoricalDistribution, ContinuousDistribution, Statistics, Table}
 
-
+/** TODO rewrite
 class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTestFactory {
 
   override def beforeAll(): Unit = {
@@ -372,3 +371,4 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
     sparkContext.parallelize(
       List.fill(numberOfRows)(Row(List.fill(numberOfColumns)(value.orNull): _*)))
 }
+*/

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+/** TODO as transformer
 package io.deepsense.deeplang.doperations
 
 import scala.reflect.runtime.{universe => ru}
@@ -65,3 +66,4 @@ case class SqlExpression() extends DOperation1To1[DataFrame, DataFrame] with Par
     }
   }
 }
+*/

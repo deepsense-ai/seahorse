@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
+/* TODO without categoricals */
 package io.deepsense.deeplang.doperations
 
 import scala.collection.mutable
 import scala.reflect.runtime.{universe => ru}
 
 import org.apache.spark.sql
-import org.apache.spark.sql.{Column, Row}
+import org.apache.spark.sql.Column
 
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
-import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMetadata
 import io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.params._
@@ -113,6 +113,8 @@ case class Join()
     val prefixedLeftJoinColumnNames = leftJoinColumnNames.map(renamedLeftColumns(_))
     val prefixedRightJoinColumnNames = rightJoinColumnNames.map(renamedRightColumns(_))
 
+    /*
+    TODO remove
     logger.debug("Change CategoricalMapping in right DataFrame to allow join with left DataFrame")
     val lcm = CategoricalMetadata(lsdf)
     val rcm = CategoricalMetadata(rsdf)
@@ -132,6 +134,7 @@ case class Join()
         rsdf = context.sqlContext.createDataFrame(rddWithFinalMapping, rsdf.schema)
       }
     }
+    */
 
     logger.debug("Prepare joining condition")
 

@@ -21,10 +21,10 @@ import org.apache.spark.sql.types._
 
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMetadata
 
 class SqlExpressionSpec extends DeeplangIntegTestSupport {
 
+  /** TODO no categoricals
   val dataFrameId = "ThisIsAnId"
   val validExpression = s"select * from $dataFrameId"
   val invalidExpresion = "foobar"
@@ -118,4 +118,5 @@ class SqlExpressionSpec extends DeeplangIntegTestSupport {
     }
     createDataFrame(subData, subSchema, Seq(categoricalColumn))
   }
+   */
 }

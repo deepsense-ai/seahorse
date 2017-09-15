@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+/* TODO remove categoricals
 package io.deepsense.deeplang.doperables.dataframe.types
 
 import java.lang.{Boolean => JavaBoolean, Double => JavaDouble, Integer => JavaInteger}
@@ -99,3 +100,4 @@ object Conversions {
     case b: JavaBoolean => booleanToString(b)
   }
 }
+*/

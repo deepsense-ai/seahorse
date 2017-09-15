@@ -31,7 +31,6 @@ import io.deepsense.commons.utils.DoubleUtils
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.ReportLevel.ReportLevel
 import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
-import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMetadata
 import io.deepsense.deeplang.doperables.{Report, ReportLevel}
 import io.deepsense.reportlib.model
 import io.deepsense.reportlib.model._
@@ -45,8 +44,12 @@ import io.deepsense.deeplang.doperables.dataframe.StatType._
 trait DataFrameReportGenerator {
 
   def report(
-      executionContext: ExecutionContext,
-      sparkDataFrame: org.apache.spark.sql.DataFrame): Report = {
+    executionContext: ExecutionContext,
+    sparkDataFrame: org.apache.spark.sql.DataFrame): Report = {
+    ???
+  }
+}
+    /** TODO rewrite without categoricals
     val dataFrameEmpty: Boolean = sparkDataFrame.rdd.isEmpty()
     safeDataFrameCache(sparkDataFrame)
     val columnsSubset: List[String] =
@@ -383,3 +386,4 @@ private case class Quartiles(
   third: Option[String],
   outliers: Seq[String])
 
+*/

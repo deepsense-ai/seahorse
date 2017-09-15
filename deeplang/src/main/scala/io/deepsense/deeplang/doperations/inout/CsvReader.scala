@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+/** TODO remove categoricals
+
 package io.deepsense.deeplang.doperations.inout
 
 import org.apache.commons.lang3.StringUtils
@@ -187,3 +189,4 @@ object CsvReader {
         canBeTimestamp = canBeTimestamp && other.canBeTimestamp)
   }
 }
+*/

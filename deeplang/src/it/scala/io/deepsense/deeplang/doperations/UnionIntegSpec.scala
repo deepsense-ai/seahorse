@@ -21,11 +21,11 @@ import org.apache.spark.sql.types.{DoubleType, StringType, StructField, StructTy
 
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMetadata
 import io.deepsense.deeplang.doperations.exceptions.SchemaMismatchException
 
 class UnionIntegSpec extends DeeplangIntegTestSupport {
 
+  /** TODO no categoricals
   val schema1 = StructType(List(
     StructField("column1", DoubleType),
     StructField("column2", DoubleType)))
@@ -146,5 +146,5 @@ class UnionIntegSpec extends DeeplangIntegTestSupport {
         Union().execute(executionContext)(Vector(df1, df2))
       }
     }
-  }
+  }*/
 }

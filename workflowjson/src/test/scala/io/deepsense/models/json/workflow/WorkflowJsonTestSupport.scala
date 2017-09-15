@@ -96,7 +96,6 @@ trait WorkflowJsonTestSupport
 
   def mockOperable(): DOperable = {
     val dOperable = mock[DOperable]
-    when(dOperable.inferredMetadata).thenReturn(None)
     dOperable
   }
 }

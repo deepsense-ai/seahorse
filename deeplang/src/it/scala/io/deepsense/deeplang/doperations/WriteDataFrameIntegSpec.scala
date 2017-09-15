@@ -29,13 +29,12 @@ import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
-import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoriesMapping, MappingMetadataConverter}
 import io.deepsense.deeplang.doperations.inout.{CsvParameters, OutputFileFormatChoice, OutputStorageTypeChoice}
-
 class WriteDataFrameIntegSpec
   extends DeeplangIntegTestSupport
   with BeforeAndAfter {
 
+  /** TODO no categoricals
   val absoluteWriteDataFrameTestPath = absoluteTestsDirPath + "/WriteDataFrameTest"
 
   val dateTime = DateTimeConverter.now
@@ -237,4 +236,5 @@ class WriteDataFrameIntegSpec
       lines(idx) shouldBe rowsAsCsv(separator)(idx)
     }
   }
+   */
 }

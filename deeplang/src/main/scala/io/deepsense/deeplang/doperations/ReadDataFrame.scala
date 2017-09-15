@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+/** TODO without categoricals
 package io.deepsense.deeplang.doperations
 
 import java.io.IOException
@@ -224,3 +225,4 @@ object ReadDataFrame {
     def setStorageType(value: InputStorageTypeChoice): this.type = set(storageType, value)
   }
 }
+*/

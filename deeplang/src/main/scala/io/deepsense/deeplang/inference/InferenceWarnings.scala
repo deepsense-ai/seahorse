@@ -16,9 +16,6 @@
 
 package io.deepsense.deeplang.inference
 
-import io.deepsense.deeplang.doperables.dataframe.DataFrameMetadata
-import io.deepsense.deeplang.parameters.{SingleColumnSelection, ColumnSelection}
-
 /**
  * Container for inference warnings.
  */

@@ -21,6 +21,7 @@ import spray.json._
 import io.deepsense.graph.NodeInferenceResult
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphWriter
 import io.deepsense.models.json.graph.GraphKnowledgeJsonProtocol
+import io.deepsense.models.json.workflow.WorkflowJsonProtocol
 import io.deepsense.models.workflows.WorkflowWithKnowledge
 
 /**

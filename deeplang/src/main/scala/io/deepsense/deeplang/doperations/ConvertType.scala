@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+/* TODO rewrite as Transformer
 package io.deepsense.deeplang.doperations
 
 import scala.collection.immutable.ListMap
@@ -250,3 +251,4 @@ object ConvertType {
   }
 
 }
+*/

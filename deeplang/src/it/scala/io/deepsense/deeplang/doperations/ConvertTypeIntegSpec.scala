@@ -27,11 +27,11 @@ import io.deepsense.commons.types.ColumnType
 import io.deepsense.commons.types.ColumnType._
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoriesMapping, MappingMetadataConverter}
 import io.deepsense.deeplang.parameters._
 
 class ConvertTypeIntegSpec extends DeeplangIntegTestSupport {
 
+  /** TODO rewrite without categoricals
   var inputDataFrame: DataFrame = _
 
   "Convert Type" when {
@@ -366,5 +366,6 @@ class ConvertTypeIntegSpec extends DeeplangIntegTestSupport {
 
     executeOperation(operation, dataFrame)
   }
+   */
 
 }
