@@ -116,7 +116,7 @@ class ReadDatasource()
   }
 
   private def wrapAsSubQuery(query: String): String =
-    s"($query) as ${UUID.randomUUID.toString.replace("-", "")}"
+    s"($query) as tmp${UUID.randomUUID.toString.replace("-", "")}"
 }
 
 object ReadDatasource {
