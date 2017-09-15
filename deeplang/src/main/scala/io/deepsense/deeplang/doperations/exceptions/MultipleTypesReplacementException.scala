@@ -16,11 +16,11 @@
 
 package io.deepsense.deeplang.doperations.exceptions
 
-import org.apache.spark.sql.types.DataType
+import io.deepsense.commons.types.ColumnType.ColumnType
 
-case class MultipleTypesReplacementException(columnDataTypes: Map[String, DataType])
+case class MultipleTypesReplacementException(columnTypes: Map[String, ColumnType])
   extends DOperationExecutionException(
     "Missing value replacement is impossible - selected columns: " +
-      s"${columnDataTypes.keys.mkString(", ")} have different column types: " +
-      s"${columnDataTypes.keys.map(columnDataTypes(_)).mkString(", ")}",
+      s"${columnTypes.keys.mkString(", ")} have different column types: " +
+      s"${columnTypes.keys.map(columnTypes(_)).mkString(", ")}",
     None)

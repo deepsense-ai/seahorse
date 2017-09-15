@@ -25,4 +25,6 @@ object ColumnType extends Enumeration {
   val boolean = Value("boolean")
   val string = Value("string")
   val timestamp = Value("timestamp")
+
+  val other = Value("other")
 }

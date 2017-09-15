@@ -43,10 +43,10 @@ class WriteReadDataFrameIntegSpec
 
   val schema: StructType =
     StructType(Seq(
-      StructField("boolean", SparkConversions.columnTypeToSparkColumnType(ColumnType.boolean)),
-      StructField("numeric", SparkConversions.columnTypeToSparkColumnType(ColumnType.numeric)),
-      StructField("string", SparkConversions.columnTypeToSparkColumnType(ColumnType.string)),
-      StructField("timestamp", SparkConversions.columnTypeToSparkColumnType(ColumnType.timestamp))
+      StructField("boolean", BooleanType),
+      StructField("double", DoubleType),
+      StructField("string", StringType),
+      StructField("timestamp", TimestampType)
     ))
 
   val rows = Seq(
@@ -116,7 +116,7 @@ class WriteReadDataFrameIntegSpec
     "write and read JSON file" in {
       val convertedSchema = StructType(schema.map {
         case field@StructField("timestamp", _, _, _) =>
-          field.copy(dataType = SparkConversions.columnTypeToSparkColumnType(ColumnType.string))
+          field.copy(dataType = StringType)
         case field => field
       })
 
@@ -160,7 +160,7 @@ class WriteReadDataFrameIntegSpec
     "write and read from cassandra" in {
       // Cassandra requires non-null primary key column
       val idField =
-        StructField("id", SparkConversions.columnTypeToSparkColumnType(ColumnType.string))
+        StructField("id", StringType)
       val convertedSchema = schema.copy(fields = idField +: schema.fields)
       val convertedRows = rows.zipWithIndex.map { case (r, i) => Row(i.toString +: r.toSeq: _*) }
       val dataFrame = createDataFrame(convertedRows, convertedSchema)
@@ -191,7 +191,7 @@ class WriteReadDataFrameIntegSpec
     session.execute(s"""
       |CREATE TABLE IF NOT EXISTS $cassandraTableName (
       |  boolean BOOLEAN,
-      |  numeric DOUBLE,
+      |  double DOUBLE,
       |  string TEXT,
       |  timestamp TIMESTAMP,
       |  id TEXT,

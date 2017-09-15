@@ -23,6 +23,7 @@ import scala.reflect.runtime.{universe => ru}
 import org.apache.spark.sql.types._
 
 import io.deepsense.deeplang.ExecutionContext
+import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
 import io.deepsense.deeplang.doperables.dataframe.{DataFrameColumnsGetter, DataFrame}
 import io.deepsense.deeplang.doperations.exceptions.{WrongReplacementValueException, MultipleTypesReplacementException}
 import io.deepsense.deeplang.parameters._
@@ -159,11 +160,12 @@ case class MissingValuesHandler()
       customValue: String,
       indicator: Option[String]) = {
 
-    val columnDataTypes = Map(columns.map(columnName =>
-      columnName -> dataFrame.schema.get(columnName).dataType): _*)
+    val columnTypes = Map(columns.map(columnName =>
+      columnName -> SparkConversions
+        .sparkColumnTypeToColumnType(dataFrame.schema.get(columnName).dataType)): _*)
 
-    if (columnDataTypes.values.toSet.size != 1) {
-      throw new MultipleTypesReplacementException(columnDataTypes)
+    if (columnTypes.values.toSet.size != 1) {
+      throw new MultipleTypesReplacementException(columnTypes)
     }
 
     MissingValuesHandlerUtils.replaceNulls(

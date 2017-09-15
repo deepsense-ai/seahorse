@@ -24,10 +24,11 @@ import org.joda.time.DateTime
 import org.scalatest.Matchers
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.{MultipleTypesReplacementException, WrongReplacementValueException}
-import io.deepsense.deeplang.parameters.{IndexRangeColumnSelection, MultipleColumnSelection}
+import io.deepsense.deeplang.parameters.{IndexRangeColumnSelection, MultipleColumnSelection, TypeColumnSelection}
 
 class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
   with GeneratorDrivenPropertyChecks
@@ -122,45 +123,63 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
       assertDataFramesEqual(resultDf, expectedDf)
     }
 
-    "replace doubles while using REPLACE_WITH_CUSTOM_VALUE strategy" in {
+    "replace numerics while using REPLACE_WITH_CUSTOM_VALUE strategy" in {
       val values = Seq(
-        Row(1.0, null),
-        Row(2.0, null),
-        Row(null, null),
-        Row(4.0, null)
+        Row(1.toByte, BigDecimal("1.0"), 1.0, 1.0f, 1, 1L, 1.toShort, null),
+        Row(2.toByte, BigDecimal("2.0"), 2.0, 2.0f, 2, 2L, 2.toShort, null),
+        Row(null, null, null, null, null, null, null, null),
+        Row(4.toByte, BigDecimal("4.0"), 4.0, 4.0f, 4, 4L, 4.toShort, null)
       )
 
       val df = createDataFrame(values, StructType(List(
-        StructField("value1", DoubleType, nullable = true),
-        StructField("value2", StringType, nullable = true)
+        StructField("value1", ByteType, nullable = true),
+        StructField("value2", DecimalType(5, 3), nullable = true),
+        StructField("value3", DoubleType, nullable = true),
+        StructField("value4", FloatType, nullable = true),
+        StructField("value5", IntegerType, nullable = true),
+        StructField("value6", LongType, nullable = true),
+        StructField("value7", ShortType, nullable = true),
+        StructField("value8", StringType, nullable = true)
       )))
 
-      val columnSelection = MultipleColumnSelection(
-        Vector(IndexRangeColumnSelection(Some(0), Some(0))))
+      val columnSelection =
+        MultipleColumnSelection(Vector(TypeColumnSelection(Set(ColumnType.numeric))))
 
-      val handler =
-        new MissingValuesHandler()
-          .setSelectedColumns(columnSelection)
-          .setStrategy(
-            MissingValuesHandler.Strategy.ReplaceWithCustomValue()
-              .setCustomValue("3"))
-          .setMissingValueIndicator(
-            MissingValuesHandler.MissingValueIndicatorChoice.Yes()
-              .setIndicatorPrefix("prefix_"))
+      val handler = new MissingValuesHandler()
+        .setSelectedColumns(columnSelection)
+        .setStrategy(MissingValuesHandler.Strategy.ReplaceWithCustomValue().setCustomValue("3"))
+        .setMissingValueIndicator(
+          MissingValuesHandler.MissingValueIndicatorChoice.Yes().setIndicatorPrefix("prefix_"))
 
       val resultDf = executeTransformer(handler, df)
 
       val expectedDf = createDataFrame(
         Seq(
-          Row(1.0, null, false),
-          Row(2.0, null, false),
-          Row(3.0, null, true),
-          Row(4.0, null, false)),
+          Row(1.toByte, BigDecimal("1.0"), 1.0, 1.0f, 1, 1L, 1.toShort, null,
+            false, false, false, false, false, false, false),
+          Row(2.toByte, BigDecimal("2.0"), 2.0, 2.0f, 2, 2L, 2.toShort, null,
+            false, false, false, false, false, false, false),
+          Row(3.toByte, BigDecimal("3"), 3.0, 3.0f, 3, 3L, 3.toShort, null,
+            true, true, true, true, true, true, true),
+          Row(4.toByte, BigDecimal("4.0"), 4.0, 4.0f, 4, 4L, 4.toShort, null,
+            false, false, false, false, false, false, false)),
         StructType(List(
-          StructField("value1", DoubleType, nullable = true),
-          StructField("value2", StringType, nullable = true),
-          StructField("prefix_value1", BooleanType, nullable = false)))
-      )
+          StructField("value1", ByteType, nullable = true),
+          StructField("value2", DecimalType(5, 3), nullable = true),
+          StructField("value3", DoubleType, nullable = true),
+          StructField("value4", FloatType, nullable = true),
+          StructField("value5", IntegerType, nullable = true),
+          StructField("value6", LongType, nullable = true),
+          StructField("value7", ShortType, nullable = true),
+          StructField("value8", StringType, nullable = true),
+          StructField("prefix_value1", BooleanType, nullable = false),
+          StructField("prefix_value2", BooleanType, nullable = false),
+          StructField("prefix_value3", BooleanType, nullable = false),
+          StructField("prefix_value4", BooleanType, nullable = false),
+          StructField("prefix_value5", BooleanType, nullable = false),
+          StructField("prefix_value6", BooleanType, nullable = false),
+          StructField("prefix_value7", BooleanType, nullable = false)))
+        )
 
       assertDataFramesEqual(resultDf, expectedDf)
     }
@@ -289,9 +308,6 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
 
       assertDataFramesEqual(resultDf, expectedDf)
     }
-
-    // TODO: After fixing DS-2134
-    // Tests for replacements of other numeric types: Byte, Decimal, Int, Float, Long, Short
 
     "throw an exception with different types using REPLACE_WITH_CUSTOM_VALUE strategy" in {
       val values = Seq(

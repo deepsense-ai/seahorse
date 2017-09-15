@@ -42,14 +42,10 @@ class WriteDataFrameIntegSpec
   val timestamp = new Timestamp(dateTime.getMillis)
 
   val schema: StructType = StructType(Seq(
-    StructField("boolean",
-      SparkConversions.columnTypeToSparkColumnType(ColumnType.boolean)),
-    StructField("numeric",
-      SparkConversions.columnTypeToSparkColumnType(ColumnType.numeric)),
-    StructField("string",
-      SparkConversions.columnTypeToSparkColumnType(ColumnType.string)),
-    StructField("timestamp",
-      SparkConversions.columnTypeToSparkColumnType(ColumnType.timestamp))))
+    StructField("boolean", BooleanType),
+    StructField("double", DoubleType),
+    StructField("string", StringType),
+    StructField("timestamp", TimestampType)))
 
   val rows = Seq(
     Row(true, 0.45, "3.14", timestamp),
