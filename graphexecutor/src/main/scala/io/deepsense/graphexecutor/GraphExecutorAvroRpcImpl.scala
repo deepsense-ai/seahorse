@@ -11,6 +11,7 @@ import io.deepsense.graph.{Status, Graph, Node}
 import io.deepsense.graphexecutor.protocol.GraphExecutorAvroRpcProtocol
 import io.deepsense.graphexecutor.util.ObjectInputStreamWithCustomClassLoader
 import io.deepsense.models.experiments.Experiment
+import io.deepsense.models.experiments.Experiment.State
 
 /**
  * Avro RPC server implementation, allows:
@@ -99,7 +100,9 @@ class GraphExecutorAvroRpcImpl(graphExecutor: GraphExecutor) extends GraphExecut
           val abortedNodes = graph.nodes
             .map(node => if (node.isQueued) node.markAborted else node)
           graphExecutor.experiment =
-            Some(graphExecutor.experiment.get.copy(graph = Graph(abortedNodes, graph.edges)))
+            Some(graphExecutor.experiment.get.copy(
+              graph = Graph(abortedNodes, graph.edges),
+              state = State.aborted))
           graphExecutor.executorsPool.shutdownNow()
           graphExecutor.graphEventBinarySemaphore.release()
           true

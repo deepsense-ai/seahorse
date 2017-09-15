@@ -163,11 +163,15 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
 
       // Mark as aborted all nodes that Graph Executor wasn't able to execute
       graphGuard.synchronized {
-        val aborted = graph.get.nodes.map(node => {
-          if (node.isQueued) node.markAborted else node
-        })
-        experiment = Some(experiment.get
-          .copy(graph = Graph(aborted, graph.get.edges)))
+        if (graph.get.nodes.forall(_.isCompleted)) {
+          experiment = Some(experiment.get.markCompleted)
+        } else {
+          if (graph.get.nodes.exists(_.isFailed)) {
+            experiment = Some(experiment.get.markFailed("Not all nodes were executed"))
+          } else {
+            experiment = Some(experiment.get.markAborted)
+          }
+        }
       }
     }
 
