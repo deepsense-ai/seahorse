@@ -21,8 +21,8 @@ import org.apache.spark.mllib.tree.model.RandomForestModel
 import org.apache.spark.rdd.RDD
 
 import io.deepsense.commons.types.ColumnType
+import io.deepsense.deeplang.doperables.ColumnTypesPredicates.Predicate
 import io.deepsense.deeplang.doperables._
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.machinelearning.randomforest.RandomForestParameters
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
 
@@ -42,12 +42,11 @@ case class TrainedRandomForestClassification(
 
   override def url: Option[String] = None
 
+  override def featurePredicate: Predicate = ColumnTypesPredicates.isNumericOrCategorical
+
   override def transformFeatures(v: RDD[Vector]): RDD[Vector] = v
 
-  override def vectors(dataFrame: DataFrame): RDD[Vector] =
-    dataFrame.selectSparkVectorRDD(featureColumns, ColumnTypesPredicates.isNumericOrCategorical)
-
-  override def predict(vectors: RDD[Vector]): RDD[Double] = model.predict(vectors)
+  override def predict(features: RDD[Vector]): RDD[Double] = model.predict(features)
 
   override def report(executionContext: ExecutionContext): Report = {
     DOperableReporter("Trained Random Forest Classification")

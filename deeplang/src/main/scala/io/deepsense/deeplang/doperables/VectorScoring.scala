@@ -34,11 +34,9 @@ trait VectorScoring {
 
   val targetColumn: String
 
-  def vectors(dataFrame: DataFrame): RDD[Vector]
-
   def transformFeatures(v: RDD[Vector]): RDD[Vector]
 
-  def predict(vectors: RDD[Vector]): RDD[Double]
+  def predict(features: RDD[Vector]): RDD[Double]
 
   override val score = new DMethod1To1[String, DataFrame, DataFrame] {
 
@@ -46,9 +44,14 @@ trait VectorScoring {
         context: ExecutionContext)(
         predictionColumnName: String)(
         dataFrame: DataFrame): DataFrame = {
-      val transformedVectors = transformFeatures(vectors(dataFrame))
+
+      val transformedVectors = transformFeatures(
+        dataFrame.selectSparkVectorRDD(featureColumns, featurePredicate))
       transformedVectors.cache()
+
       val predictionsRDD: RDD[Double] = predict(transformedVectors)
+
+      transformedVectors.unpersist()
 
       val outputSchema = StructType(dataFrame.sparkDataFrame.schema.fields :+
         StructField(predictionColumnName, DoubleType))
@@ -76,4 +79,6 @@ trait VectorScoring {
       (dKnowledge, InferenceWarnings.empty)
     }
   }
+
+  protected def featurePredicate: ColumnTypesPredicates.Predicate
 }

@@ -68,10 +68,6 @@ abstract class UntrainedRegressionIntegSpec[T <: GeneralizedLinearModel]
   def withMockedModel(expectedLabels: Seq[Any])(
       testCode: (Trainable, T, ExecutionContext) => Any): Unit = {
 
-    val mockContext: ExecutionContext = mock[ExecutionContext]
-    when(mockContext.fsClient).thenReturn(executionContext.fsClient)
-    when(mockContext.uniqueFsFileName(isA(classOf[String]))).thenReturn(testDataDir)
-
     val trainedModelMock = Mockito.mock(modelType)
     val untrainedModelMock = mockUntrainedModel()
 
@@ -100,9 +96,7 @@ abstract class UntrainedRegressionIntegSpec[T <: GeneralizedLinearModel]
     testCode(
       constructUntrainedModel(untrainedModelMock),
       trainedModelMock,
-      mockContext)
-
-    executionContext.fsClient.fileExists(testDataDir) shouldBe true
+      mock[ExecutionContext])
   }
 
   regressionName should {

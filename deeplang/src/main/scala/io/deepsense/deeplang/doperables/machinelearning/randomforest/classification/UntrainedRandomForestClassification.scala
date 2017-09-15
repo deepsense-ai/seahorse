@@ -20,9 +20,11 @@ import org.apache.spark.mllib.tree.{RandomForest => SparkRandomForest}
 
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang._
-import io.deepsense.deeplang.doperables._
+import io.deepsense.deeplang.doperables.ColumnTypesPredicates.Predicate
+import io.deepsense.deeplang.doperables.Trainable.Parameters
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.machinelearning.randomforest.RandomForestParameters
+import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 
 case class UntrainedRandomForestClassification(
@@ -33,46 +35,31 @@ case class UntrainedRandomForestClassification(
 
   def this() = this(null)
 
-  override def toInferrable: DOperable = new UntrainedRandomForestClassification()
+  override protected def runTraining: RunTraining = runTrainingWithLabeledPoints
 
-  override val train = new DMethod1To1[Trainable.Parameters, DataFrame, Scorable] {
-    override def apply(context: ExecutionContext)(
-        parameters: Trainable.Parameters)(
-        dataFrame: DataFrame): Scorable = {
-
-      val (featureColumns, targetColumn) = parameters.columnNames(dataFrame)
-
-      val labeledPoints = dataFrame.selectAsSparkLabeledPointRDD(
-        targetColumn,
-        featureColumns,
-        labelPredicate = ColumnTypesPredicates.isNumericOrBinaryValued,
-        featurePredicate = ColumnTypesPredicates.isNumericOrCategorical)
-
-      labeledPoints.cache()
-
-      val trainedModel = SparkRandomForest.trainClassifier(
-        labeledPoints,
+  override protected def actualTraining: TrainScorable = (trainParameters) => {
+    val trainedModel =
+      SparkRandomForest.trainClassifier(
+        trainParameters.labeledPoints,
         2,
-        extractCategoricalFeatures(dataFrame, featureColumns),
+        extractCategoricalFeatures(trainParameters.dataFrame, trainParameters.features),
         modelParameters.numTrees,
         modelParameters.featureSubsetStrategy,
         modelParameters.impurity,
         modelParameters.maxDepth,
         modelParameters.maxBins)
 
-      val result = TrainedRandomForestClassification(
-        modelParameters, trainedModel, featureColumns, targetColumn)
-
-      labeledPoints.unpersist()
-      result
-    }
-
-    override def infer(context: InferContext)(
-        parameters: Trainable.Parameters)(
-        dataframeKnowledge: DKnowledge[DataFrame]): (DKnowledge[Scorable], InferenceWarnings) = {
-      (DKnowledge(new TrainedRandomForestClassification()), InferenceWarnings.empty)
-    }
+    TrainedRandomForestClassification(
+      modelParameters, trainedModel, trainParameters.features, trainParameters.target)
   }
+
+  override protected def actualInference(
+      context: InferContext)(
+      parameters: Parameters)(
+      dataFrame: DKnowledge[DataFrame]): (DKnowledge[Scorable], InferenceWarnings) =
+    (DKnowledge(new TrainedRandomForestClassification()), InferenceWarnings.empty)
+
+  override def toInferrable: DOperable = new UntrainedRandomForestClassification()
 
   override def report(executionContext: ExecutionContext): Report = {
     DOperableReporter("Untrained Random Forest Classification")
@@ -88,4 +75,7 @@ case class UntrainedRandomForestClassification(
   }
 
   override def save(context: ExecutionContext)(path: String): Unit = ???
+
+  override protected def labelPredicate: Predicate = ColumnTypesPredicates.isNumericOrBinaryValued
+  override protected def featurePredicate: Predicate = ColumnTypesPredicates.isNumericOrCategorical
 }

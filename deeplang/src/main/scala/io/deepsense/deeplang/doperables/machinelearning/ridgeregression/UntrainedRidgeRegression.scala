@@ -20,6 +20,8 @@ import org.apache.spark.mllib.feature.{StandardScaler, StandardScalerModel}
 import org.apache.spark.mllib.regression.{LabeledPoint, RidgeRegressionWithSGD}
 
 import io.deepsense.deeplang._
+import io.deepsense.deeplang.doperables.ColumnTypesPredicates.Predicate
+import io.deepsense.deeplang.doperables.Trainable.Parameters
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.{ColumnTypesPredicates, Report, Scorable, Trainable}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
@@ -33,49 +35,46 @@ case class UntrainedRidgeRegression(
 
   override def toInferrable: DOperable = new UntrainedRidgeRegression()
 
-  override val train = new DMethod1To1[Trainable.Parameters, DataFrame, Scorable] {
-    override def apply(
-        context: ExecutionContext)(
-        parameters: Trainable.Parameters)(
-        dataframe: DataFrame): Scorable = {
+  override protected def runTraining: RunTraining = runTrainingWithUncachedLabeledPoints
 
-      val (featureColumns, targetColumn) = parameters.columnNames(dataframe)
+  override protected def actualTraining: TrainScorable = (trainParameters) => {
+    trainParameters.labeledPoints.cache()
 
-      val labeledPoints = dataframe.selectAsSparkLabeledPointRDD(
-        targetColumn,
-        featureColumns,
-        labelPredicate = ColumnTypesPredicates.isNumeric,
-        featurePredicate = ColumnTypesPredicates.isNumeric)
+    val scaler: StandardScalerModel =
+      new StandardScaler(withStd = true, withMean = true)
+        .fit(trainParameters.labeledPoints.map(_.features))
 
-      labeledPoints.cache()
+    val scaledLabeledPoints =
+      trainParameters.labeledPoints
+        .map(lp => LabeledPoint(lp.label, scaler.transform(lp.features)))
 
-      val scaler: StandardScalerModel = new StandardScaler(withStd = true, withMean = true)
-        .fit(labeledPoints.map(_.features))
-      val scaledLabeledPoints = labeledPoints.map(lp => {
-        LabeledPoint(lp.label, scaler.transform(lp.features))
-      })
-      labeledPoints.unpersist()
-      scaledLabeledPoints.cache()
+    trainParameters.labeledPoints.unpersist()
 
-      val trainedModel = createModel().run(scaledLabeledPoints)
-      val result = TrainedRidgeRegression(
-        trainedModel, featureColumns, targetColumn, scaler)
-      scaledLabeledPoints.unpersist()
-      saveScorable(context, result)
-      result
-    }
+    scaledLabeledPoints.cache()
 
-    override def infer(
-        context: InferContext)(
-        parameters: Trainable.Parameters)(
-        dataframeKnowledge: DKnowledge[DataFrame]): (DKnowledge[Scorable], InferenceWarnings) = {
-      (DKnowledge(new TrainedRidgeRegression), InferenceWarnings.empty)
-    }
+    val result = TrainedRidgeRegression(
+      createModel().run(scaledLabeledPoints),
+      trainParameters.features,
+      trainParameters.target,
+      scaler)
+
+    scaledLabeledPoints.unpersist()
+
+    result
   }
+
+  override protected def actualInference(
+      context: InferContext)(
+      parameters: Parameters)(
+      dataFrame: DKnowledge[DataFrame]): (DKnowledge[Scorable], InferenceWarnings) =
+    (DKnowledge(new TrainedRidgeRegression), InferenceWarnings.empty)
 
   override def report(executionContext: ExecutionContext): Report =
     Report(ReportContent("Report for UntrainedRidgeRegression"))
 
   override def save(context: ExecutionContext)(path: String): Unit =
     throw new UnsupportedOperationException
+
+  override protected def featurePredicate: Predicate = ColumnTypesPredicates.isNumeric
+  override protected def labelPredicate: Predicate = ColumnTypesPredicates.isNumeric
 }

@@ -21,10 +21,11 @@ import org.apache.spark.mllib.classification.{LogisticRegressionModel, LogisticR
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.commons.utils.DoubleUtils
 import io.deepsense.deeplang._
+import io.deepsense.deeplang.doperables.ColumnTypesPredicates.Predicate
+import io.deepsense.deeplang.doperables.Trainable.Parameters
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
-import io.deepsense.reportlib.model.ReportContent
 
 case class UntrainedLogisticRegression(
     modelParameters: LogisticRegressionParameters,
@@ -34,41 +35,23 @@ case class UntrainedLogisticRegression(
 
   def this() = this(null, () => null)
 
-  override def toInferrable: DOperable = new UntrainedLogisticRegression()
+  override protected def runTraining: RunTraining = runTrainingWithLabeledPoints
 
-  override val train = new DMethod1To1[Trainable.Parameters, DataFrame, Scorable] {
-    override def apply(
-        context: ExecutionContext)(
-        parameters: Trainable.Parameters)(
-        dataFrame: DataFrame): Scorable = {
+  override protected def actualTraining: TrainScorable = (trainParameters) => {
+    val trainedModel: LogisticRegressionModel =
+      createModel().run(trainParameters.labeledPoints)
 
-      val featureColumns = dataFrame.getColumnNames(parameters.featureColumns.get)
-      val labelColumn = dataFrame.getColumnName(parameters.targetColumn.get)
-
-      val labeledPoints = dataFrame.selectAsSparkLabeledPointRDD(
-        labelColumn,
-        featureColumns,
-        labelPredicate = ColumnTypesPredicates.isNumericOrBinaryValued,
-        featurePredicate = ColumnTypesPredicates.isNumeric)
-
-      labeledPoints.cache()
-      val trainedModel: LogisticRegressionModel = createModel().run(labeledPoints)
-      val result = TrainedLogisticRegression(
-        modelParameters,
-        trainedModel,
-        featureColumns,
-        labelColumn)
-      saveScorable(context, result)
-      result
-    }
-
-    override def infer(
-        context: InferContext)(
-        parameters: Trainable.Parameters)(
-        dataframeKnowledge: DKnowledge[DataFrame]): (DKnowledge[Scorable], InferenceWarnings) = {
-      (DKnowledge(new TrainedLogisticRegression()), InferenceWarnings.empty)
-    }
+    TrainedLogisticRegression(
+      modelParameters, trainedModel, trainParameters.features, trainParameters.target)
   }
+
+  override protected def actualInference(
+      context: InferContext)(
+      parameters: Parameters)(
+      dataFrame: DKnowledge[DataFrame]): (DKnowledge[Scorable], InferenceWarnings) =
+    (DKnowledge(new TrainedLogisticRegression()), InferenceWarnings.empty)
+
+  override def toInferrable: DOperable = new UntrainedLogisticRegression()
 
   override def report(executionContext: ExecutionContext): Report = {
     DOperableReporter("Untrained Logistic Regression")
@@ -87,4 +70,6 @@ case class UntrainedLogisticRegression(
   override def save(context: ExecutionContext)(path: String): Unit =
     throw new UnsupportedOperationException
 
+  override protected def labelPredicate: Predicate = ColumnTypesPredicates.isNumericOrBinaryValued
+  override protected def featurePredicate: Predicate = ColumnTypesPredicates.isNumeric
 }

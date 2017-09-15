@@ -26,6 +26,7 @@ import io.deepsense.deeplang.doperables.machinelearning.logisticregression.{Untr
 import io.deepsense.deeplang.doperables.machinelearning.randomforest.classification.{UntrainedRandomForestClassification, TrainedRandomForestClassification}
 import io.deepsense.deeplang.doperables.machinelearning.randomforest.regression.{UntrainedRandomForestRegression, TrainedRandomForestRegression}
 import io.deepsense.deeplang.doperables.machinelearning.ridgeregression.{UntrainedRidgeRegression, TrainedRidgeRegression}
+import io.deepsense.deeplang.doperables.machinelearning.svm.classification.{UntrainedSupportVectorMachineClassifier, TrainedSupportVectorMachineClassifier}
 import io.deepsense.deeplang.doperations._
 import io.deepsense.deeplang.doperables.transformations.MathematicalTransformation
 
@@ -37,19 +38,34 @@ object CatalogRecorder {
   def registerDOperables(catalog: DOperableCatalog): Unit = {
     catalog.registerDOperable[File]()
     catalog.registerDOperable[DataFrame]()
-    catalog.registerDOperable[UntrainedRidgeRegression]()
-    catalog.registerDOperable[TrainedRidgeRegression]()
-    catalog.registerDOperable[UntrainedLogisticRegression]()
-    catalog.registerDOperable[MathematicalTransformation]()
-    catalog.registerDOperable[TrainedGradientBoostedTreesRegression]()
-    catalog.registerDOperable[UntrainedGradientBoostedTreesRegression]()
-    catalog.registerDOperable[TrainedLogisticRegression]()
-    catalog.registerDOperable[UntrainedRandomForestRegression]()
-    catalog.registerDOperable[TrainedRandomForestRegression]()
-    catalog.registerDOperable[UntrainedRandomForestClassification]()
-    catalog.registerDOperable[TrainedRandomForestClassification]()
     catalog.registerDOperable[Report]()
     catalog.registerDOperable[Normalizer]()
+
+    // Regression
+
+    catalog.registerDOperable[UntrainedRidgeRegression]()
+    catalog.registerDOperable[TrainedRidgeRegression]()
+
+    catalog.registerDOperable[TrainedGradientBoostedTreesRegression]()
+    catalog.registerDOperable[UntrainedGradientBoostedTreesRegression]()
+
+    catalog.registerDOperable[UntrainedRandomForestRegression]()
+    catalog.registerDOperable[TrainedRandomForestRegression]()
+
+    // Classification
+
+    catalog.registerDOperable[UntrainedRandomForestClassification]()
+    catalog.registerDOperable[TrainedRandomForestClassification]()
+
+    catalog.registerDOperable[UntrainedSupportVectorMachineClassifier]()
+    catalog.registerDOperable[TrainedSupportVectorMachineClassifier]()
+
+    catalog.registerDOperable[UntrainedLogisticRegression]()
+    catalog.registerDOperable[TrainedLogisticRegression]()
+
+    // Other
+
+    catalog.registerDOperable[MathematicalTransformation]()
   }
 
   def registerDOperations(catalog: DOperationsCatalog): Unit = {
@@ -162,6 +178,11 @@ object CatalogRecorder {
     catalog.registerDOperation[EvaluateClassification](
       DOperationCategories.ML.Classification,
       "Evaluates a classification model"
+    )
+
+    catalog.registerDOperation[CreateSupportVectorMachineClassification](
+      DOperationCategories.ML.Classification,
+      "Creates an untrained SVM classification model"
     )
 
     catalog.registerDOperation[ApplyTransformation](

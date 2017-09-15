@@ -22,12 +22,13 @@ import org.apache.spark.mllib.tree.loss.{AbsoluteError, Loss, SquaredError}
 import org.apache.spark.mllib.tree.{GradientBoostedTrees => SparkGradientBoostedTrees}
 
 import io.deepsense.commons.types.ColumnType
+import io.deepsense.deeplang.doperables.ColumnTypesPredicates.Predicate
+import io.deepsense.deeplang.doperables.Trainable.Parameters
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.machinelearning.gradientboostedtrees.GradientBoostedTreesParameters
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
-import io.deepsense.deeplang.{DKnowledge, DMethod1To1, DOperable, ExecutionContext}
-import io.deepsense.reportlib.model.{ReportContent, Table}
+import io.deepsense.deeplang.{DKnowledge, DOperable, ExecutionContext}
 
 case class UntrainedGradientBoostedTreesRegression(
     modelParameters: GradientBoostedTreesParameters)
@@ -37,66 +38,52 @@ case class UntrainedGradientBoostedTreesRegression(
 
   def this() = this(null)
 
-  override def toInferrable: DOperable = new UntrainedGradientBoostedTreesRegression()
 
-  override val train = new DMethod1To1[Trainable.Parameters, DataFrame, Scorable] {
-    override def apply(context: ExecutionContext)
-                      (parameters: Trainable.Parameters)
-                      (dataFrame: DataFrame): Scorable = {
+  override protected def runTraining: RunTraining = runTrainingWithLabeledPoints
 
-      val (featureColumns, targetColumn) = parameters.columnNames(dataFrame)
+  override protected def actualTraining: TrainScorable = (trainParameters) => {
+    val treeStrategy = new Strategy(
+      algo = Algo.Regression,
+      impurity = createImpurityObject(modelParameters.impurity),
+      maxDepth = modelParameters.maxDepth,
+      numClasses = 2,
+      maxBins = modelParameters.maxBins,
+      categoricalFeaturesInfo =
+        extractCategoricalFeatures(trainParameters.dataFrame, trainParameters.features))
 
-      val labeledPoints = dataFrame.selectAsSparkLabeledPointRDD(
-        targetColumn,
-        featureColumns,
-        labelPredicate = ColumnTypesPredicates.isNumeric,
-        featurePredicate = ColumnTypesPredicates.isNumericOrCategorical)
+    val boostingStrategy = BoostingStrategy(
+      treeStrategy,
+      loss = createLossObject(modelParameters.loss),
+      numIterations = modelParameters.numIterations)
 
-      labeledPoints.cache()
+    val trainedModel =
+      SparkGradientBoostedTrees.train(trainParameters.labeledPoints, boostingStrategy)
 
-      val treeStrategy = new Strategy(
-        algo = Algo.Regression,
-        impurity = createImpurityObject(modelParameters.impurity),
-        maxDepth = modelParameters.maxDepth,
-        numClasses = 2,
-        maxBins = modelParameters.maxBins,
-        categoricalFeaturesInfo = extractCategoricalFeatures(dataFrame, featureColumns))
+    TrainedGradientBoostedTreesRegression(
+      modelParameters, trainedModel, trainParameters.features, trainParameters.target)
+  }
 
-      val boostingStrategy = BoostingStrategy(
-        treeStrategy,
-        loss = createLossObject(modelParameters.loss),
-        numIterations = modelParameters.numIterations)
-
-      val trainedModel = SparkGradientBoostedTrees.train(labeledPoints, boostingStrategy)
-
-      val result = TrainedGradientBoostedTreesRegression(
-        modelParameters, trainedModel, featureColumns, targetColumn)
-
-      labeledPoints.unpersist()
-      result
-    }
-
-    override def infer(context: InferContext)
-                      (parameters: Trainable.Parameters)
-                      (dataframeKnowledge: DKnowledge[DataFrame])
-      : (DKnowledge[Scorable], InferenceWarnings) = {
-
-      (DKnowledge(new TrainedGradientBoostedTreesRegression()), InferenceWarnings.empty)
-    }
-
-    private def createLossObject(lossCode: String): Loss = {
-      lossCode match {
-        case "squared" => SquaredError
-        case "absolute" => AbsoluteError
-      }
-    }
-
-    private def createImpurityObject(impurityCode: String): Impurity = {
-      impurityCode match {
-        case "variance" => Variance
-      }
+  private def createLossObject(lossCode: String): Loss = {
+    lossCode match {
+      case "squared" => SquaredError
+      case "absolute" => AbsoluteError
     }
   }
+
+  private def createImpurityObject(impurityCode: String): Impurity = {
+    impurityCode match {
+      case "variance" => Variance
+    }
+  }
+
+  override protected def actualInference(
+      context: InferContext)(
+      parameters: Parameters)(
+      dataFrame: DKnowledge[DataFrame]): (DKnowledge[Scorable], InferenceWarnings) =
+    (DKnowledge(new TrainedGradientBoostedTreesRegression()), InferenceWarnings.empty)
+
+
+  override def toInferrable: DOperable = new UntrainedGradientBoostedTreesRegression()
 
   override def report(executionContext: ExecutionContext): Report = {
     DOperableReporter("Untrained Gradient Boosted Trees Regression")
@@ -112,4 +99,7 @@ case class UntrainedGradientBoostedTreesRegression(
   }
 
   override def save(context: ExecutionContext)(path: String): Unit = ???
+
+  override protected def labelPredicate: Predicate = ColumnTypesPredicates.isNumeric
+  override protected def featurePredicate: Predicate = ColumnTypesPredicates.isNumericOrCategorical
 }

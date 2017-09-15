@@ -21,11 +21,10 @@ import org.apache.spark.mllib.tree.model.GradientBoostedTreesModel
 import org.apache.spark.rdd.RDD
 
 import io.deepsense.commons.types.ColumnType
+import io.deepsense.deeplang.doperables.ColumnTypesPredicates._
 import io.deepsense.deeplang.doperables._
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.machinelearning.gradientboostedtrees.GradientBoostedTreesParameters
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
-import io.deepsense.reportlib.model.{ReportContent, Table}
 
 case class TrainedGradientBoostedTreesRegression(
     modelParameters: GradientBoostedTreesParameters,
@@ -59,10 +58,9 @@ case class TrainedGradientBoostedTreesRegression(
 
   override def save(context: ExecutionContext)(path: String): Unit = ???
 
-  override def vectors(dataFrame: DataFrame): RDD[linalg.Vector] =
-    dataFrame.selectSparkVectorRDD(featureColumns, ColumnTypesPredicates.isNumericOrCategorical)
+  override def featurePredicate: Predicate = ColumnTypesPredicates.isNumericOrCategorical
 
-  override def predict(vectors: RDD[linalg.Vector]): RDD[Double] = model.predict(vectors)
+  override def predict(features: RDD[linalg.Vector]): RDD[Double] = model.predict(features)
 
   override def transformFeatures(v: RDD[linalg.Vector]): RDD[linalg.Vector] = v
 

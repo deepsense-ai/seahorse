@@ -24,11 +24,10 @@ import org.apache.spark.mllib.regression.GeneralizedLinearModel
 import org.apache.spark.rdd.RDD
 
 import io.deepsense.commons.types.ColumnType
+import io.deepsense.deeplang.doperables.ColumnTypesPredicates._
 import io.deepsense.commons.utils.DoubleUtils
 import io.deepsense.deeplang.doperables._
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.{DOperable, ExecutionContext, Model}
-import io.deepsense.reportlib.model.{ReportContent, Table}
 
 case class TrainedLogisticRegression(
     modelParameters: LogisticRegressionParameters,
@@ -47,12 +46,11 @@ case class TrainedLogisticRegression(
 
   def preparedModel: GeneralizedLinearModel = model.clearThreshold()
 
+  override def featurePredicate: Predicate = ColumnTypesPredicates.isNumeric
+
   override def transformFeatures(v: RDD[Vector]): RDD[Vector] = v
 
-  override def vectors(dataFrame: DataFrame): RDD[Vector] =
-    dataFrame.selectSparkVectorRDD(featureColumns, ColumnTypesPredicates.isNumeric)
-
-  override def predict(vectors: RDD[Vector]): RDD[Double] = preparedModel.predict(vectors)
+  override def predict(features: RDD[Vector]): RDD[Double] = preparedModel.predict(features)
 
   override def url: Option[String] = physicalPath
 

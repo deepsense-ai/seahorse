@@ -46,7 +46,7 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
 
   override def beforeAll(): Unit = {
     fileSystemClient = LocalFileSystemClient()
-    prepareExecutionContext
+    prepareExecutionContext()
   }
 
   protected def prepareExecutionContext(): Unit = {
@@ -57,7 +57,7 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
     executionContext.tenantId = "testTenantId"
     executionContext.fsClient = fileSystemClient
     executionContext.reportLevel = ReportLevel.HIGH
-    prepareEntityStorageClient
+    prepareEntityStorageClient()
   }
 
   protected def prepareEntityStorageClient(): Unit = {
