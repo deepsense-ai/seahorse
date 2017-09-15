@@ -16,10 +16,14 @@ In addition, HTTP/HTTPS and FTP URLs are supported. E.g. specifying
 in downloading the example file from HTTP server.
 
 It also supports reading data from JDBC-compatible databases.
-For more detailed information on using JDBC drivers in the Batch Workflow Executor, visit
+By default, Seahorse supports JDBC drivers:
+
+- MySQL, version 5.1.38
+- PostgreSQL, version 9.4.1207
+
+For detailed information on using custom JDBC drivers in the Batch Workflow Executor, visit
 [Custom JDBC drivers](../batch_workflow_executor_overview.html#custom-jdbc-drivers) section.
-If you are using Seahorse Desktop please read about
-[JDBC drivers included in the bundled image](/desktop_overview.html#bundled-software-packages).
+
 
 ## Available File Formats
 
