@@ -100,7 +100,7 @@ class WorkflowExecutorActor(
     case Launch(graph, nodes) =>
       val nodeSet = nodes.toSet
       val updatedStructure = finishedExecution.updateStructure(graph, nodeSet)
-      launch(updatedStructure, nodes)
+      launch(finishedExecution, updatedStructure, nodes)
     case Connect(_) =>
       sendExecutionStatus(executionToStatus(finishedExecution))
   }
@@ -108,19 +108,23 @@ class WorkflowExecutorActor(
   override def receive: Receive = {
     case Launch(graph, nodes) =>
       val execution = executionFactory.create(graph, nodes)
-      launch(execution, nodes)
+      // Received Launch for the first time. Use an empty execution as the previous state.
+      launch(Execution.empty, execution, nodes)
     case Connect(_) =>
       sendExecutionStatus(ExecutionStatus(Map.empty, EntitiesMap()))
   }
 
-  def launch(execution: IdleExecution, nodes: Seq[Node.Id]): Unit = {
+  def launch(
+      previousExecution: IdleExecution,
+      execution: IdleExecution,
+      nodes: Seq[Node.Id]): Unit = {
     val inferred = execution.inferAndApplyKnowledge(executionContext.inferContext)
     val enqueued = inferred.error.map(_ => inferred).getOrElse {
       val enqueued = inferred.enqueue
       invalidateCache(enqueued)
       enqueued
     }
-    updateExecutionState(execution, enqueued)
+    updateExecutionState(previousExecution, enqueued)
   }
 
   def updateExecutionState(previous: Execution, current: Execution): Unit = {
@@ -159,7 +163,9 @@ class WorkflowExecutorActor(
   private def getChangedNodes(
       originalExecution: Execution,
       updatedExecution: Execution): Map[Id, NodeState] = {
-    updatedExecution.states.filter(p => p._2 != originalExecution.states(p._1))
+    updatedExecution.states.filterNot { case (id, state) =>
+      originalExecution.states.contains(id) && state == originalExecution.states(id)
+    }
   }
 
   private def createEntitiesMap(states: Seq[NodeState]): EntitiesMap = {

@@ -191,6 +191,62 @@ class WorkflowExecutorActorSpec
 
         verifyStatus(Seq(subscriber, publisher)){ _.executionFailure.isDefined shouldBe true }
       }
+      "after relaunch send statuses for all nodes that changed" in {
+        val testProbe = TestProbe()
+        val wea = TestActorRef(new WorkflowExecutorActor(
+          executionContext,
+          nodeExecutorFactory(),
+          mock[ExecutionFactory],
+          None,
+          Some(system.actorSelection(testProbe.ref.path))))
+
+        val finishedExecution: IdleExecution = mock[IdleExecution]
+        becomeFinished(wea, finishedExecution)
+
+        val id1 = Id.randomId
+        val id2 = Id.randomId
+        val id3 = Id.randomId
+        val id4 = Id.randomId
+        val id5 = Id.randomId
+
+        def completedState(): NodeState = {
+          nodestate.Completed(DateTime.now(), DateTime.now(), Seq())
+        }
+
+        val oldStates = Map(
+          id1 -> completedState(),
+          id2 -> nodestate.Draft,
+          id3 -> nodestate.Queued
+        )
+
+        val differentExecution: IdleExecution = mock[IdleExecution]
+        when(finishedExecution.updateStructure(any(), any())).thenReturn(finishedExecution)
+        when(finishedExecution.error).thenReturn(None)
+        when(finishedExecution.inferAndApplyKnowledge(any())).thenReturn(finishedExecution)
+        when(finishedExecution.enqueue).thenReturn(differentExecution)
+        when(finishedExecution.states).thenReturn(oldStates)
+
+        val newStates = Map(
+          id1 -> completedState(),
+          id2 -> nodestate.Draft,
+          id4 -> completedState(),
+          id5 -> nodestate.Draft
+        )
+
+        when(differentExecution.states).thenReturn(newStates)
+
+        val expectedStates = Map(
+          id1 -> newStates(id1),
+          id4 -> newStates(id4),
+          id5 -> newStates(id5)
+        )
+
+        sendLaunch(TestProbe(), wea)
+        eventually {
+          val executionStatus = testProbe.expectMsgType[ExecutionStatus]
+          executionStatus.nodes should contain theSameElementsAs expectedStates
+        }
+      }
       "after relaunch reset dOperableCache and reports only for nodes that changed" in {
         val wea = TestActorRef(new WorkflowExecutorActor(
           executionContext,
