@@ -124,6 +124,9 @@ class WorkflowsEditorController {
       this.updateAndRerenderEdges(data);
       if (data.states) {
         this.WorkflowService.onInferredState(data.states);
+        if (!this.WorkflowService.isWorkflowRunning()) {
+          this._setEditableMode();
+        }
       }
     });
 

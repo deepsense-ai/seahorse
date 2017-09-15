@@ -1,0 +1,12 @@
+<div class="disconnected-mask animated fadeIn" ng-show="lmCtrl.isDisconnected">
+  <div class="progress">
+    <div class="progress-bar progress-bar-{{lmCtrl.type}} progress-bar-striped active reconnecting-bar">
+      <span class="reconnecting-sign">
+        {{lmCtrl.string}}
+      </span>
+      <span class="dots">
+        {{lmCtrl.dots}}
+      </span>
+    </div>
+  </div>
+</div>

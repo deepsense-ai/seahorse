@@ -62,33 +62,33 @@
                      orderBy : home.sort.column : home.sort.descending |
                      filter: { name: home.filterString } track by workflow.id">
         <td class="vertical-align">
-          <a ng-href="{{home.getWorkflowUrl(workflow.id)}}">
+          <a ng-click="home.goToWorkflowEditor(workflow.id)">
             {{$index+1}}
           </a>
         </td>
         <td class="vertical-align">
-          <a ng-href="{{home.getWorkflowUrl(workflow.id)}}">{{workflow.name}}</a>
+          <a ng-click="home.goToWorkflowEditor(workflow.id)">{{workflow.name}}</a>
         </td>
         <td class="vertical-align">
           <a ng-if="workflow.description"
              uib-popover="{{workflow.description}}"
              popover-trigger="{{ home.getTriggerEventBasedOnDescriptionLength(workflow.description) }}"
              popover-append-to-body="true"
-             ng-href="{{home.getWorkflowUrl(workflow.id)}}">
+             ng-click="home.goToWorkflowEditor(workflow.id)">
             {{workflow.description | cut : true : 50 : ' ...' }}
           </a>
           <a ng-if="workflow.description.length == 0"
-             ng-href="{{home.getWorkflowUrl(workflow.id)}}">
+             ng-click="home.goToWorkflowEditor(workflow.id)">
             -
           </a>
         </td>
         <td class="vertical-align">
-          <a ng-href="{{home.getWorkflowUrl(workflow.id)}}">
+          <a ng-click="home.goToWorkflowEditor(workflow.id)">
             {{workflow.updated | date:"dd/MM/yyyy - hh:mm a"}}
           </a>
         </td>
         <td class="vertical-align">
-          <a ng-href="{{home.getWorkflowUrl(workflow.id)}}">
+          <a ng-click="home.goToWorkflowEditor(workflow.id)">
             {{workflow.created | date:"dd/MM/yyyy - hh:mm a"}}
           </a>
         </td>

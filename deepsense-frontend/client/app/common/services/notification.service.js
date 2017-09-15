@@ -16,16 +16,10 @@
 
 class NotificationService {
   constructor($rootScope, $log, toastr) {
-    this.$log = $log;
-
-    _.assign(this, {
-      'toastr': toastr,
-      '$rootScope': $rootScope
-    });
+    _.assign(this, {$rootScope, $log, toastr});
 
     /* Array of all messages in order to delete them after some time */
     this.messages = [];
-
     this.staticMessages = {};
 
     this.dynamicMessages = {

@@ -5,7 +5,7 @@
       <workflow-editor-status-bar
               workflow-type = "controller.getCurrentWorkflow().workflowType"
               workflow-status = "controller.getCurrentWorkflow().workflowStatus"
-              ng-show="stateData.dataIsLoaded">
+              ng-if="stateData.dataIsLoaded">
       </workflow-editor-status-bar>
     </div>
   </header>

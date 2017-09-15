@@ -2,7 +2,6 @@
 
 /* @ngInject */
 function Home($rootScope, $uibModal, $state, WorkflowService, PageService, ConfirmationModalService, config) {
-
   this.init = () => {
     PageService.setTitle('Home');
     this.$state = $state;
@@ -49,8 +48,8 @@ function Home($rootScope, $uibModal, $state, WorkflowService, PageService, Confi
     return WorkflowService.getAllWorkflows();
   };
 
-  this.getWorkflowUrl = (workflowId) => {
-    return '/#/workflows/' + workflowId + '/editor';
+  this.goToWorkflowEditor = (workflowId) => {
+    $state.go('workflows.editor', {id: workflowId});
   };
 
   this.deleteWorkflow = function(workflow) {

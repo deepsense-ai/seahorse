@@ -1,18 +1,12 @@
 'use strict';
 
 class ServerCommunication {
-
   /* @ngInject */
   constructor($log, $q, $timeout, $rootScope, config) {
+    _.assign(this, {$log, $q, $timeout, $rootScope, config});
+
     Stomp.WebSocketClass = SockJS;
-
-    this.$log = $log;
-    this.$q = $q;
-    this.$timeout = $timeout;
-    this.$rootScope = $rootScope;
-    this.config = config;
     this.connectionAttemptId = Math.floor(Math.random() * 1000000);
-
     this.exchangeSubscriptions = {};
 
     this.seahorseTopicListeningUri = () => {
@@ -62,6 +56,7 @@ class ServerCommunication {
     }
     this.$log.info('ServerCommunication onWebSocketConnectError. Error: ', error);
     this.$log.error('An error has occurred: ', error);
+    this.$rootScope.$broadcast('ServerCommunication.CONNECTION_LOST');
 
     this.client = this.socket = null;
     this.reconnect();
@@ -134,6 +129,7 @@ class ServerCommunication {
     this.subscribeToExchange(this.seahorseTopicListeningUri());
     this.subscribeToExchange(this.workflowTopicListeningUri());
     this.sendInitToWorkflowExchange();
+    this.$rootScope.$broadcast('ServerCommunication.CONNECTION_ESTABLISHED');
   }
 
   connectToWebSocket(user = 'guest', pass = 'guest') {
