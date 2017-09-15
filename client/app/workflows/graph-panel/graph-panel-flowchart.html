@@ -3,6 +3,7 @@
     <div class="flowchart-paint-area"
          multi-selection
          deepsense-interactive
+         deepsense-interactive-autorun="true"
          collection="flowChartBoxCtrl.nodes"
          collection-item-dimensions="flowChartBoxCtrl.getNodeDimensions()"
          zoom-id="flowchart-box"
@@ -22,6 +23,7 @@
   <div ng-if="flowChartBoxCtrl.reportMode" class="flowchart-mask">
     <div class="flowchart-paint-area"
          deepsense-interactive
+         deepsense-interactive-autorun="true"
          collection="flowChartBoxCtrl.nodes"
          collection-item-dimensions="flowChartBoxCtrl.getNodeDimensions()"
          zoom-id="flowchart-box"
@@ -43,5 +45,5 @@
       </span>
     </sticky-window>
   </div>
-  <deepsense-interaction-toolbar zoom-id="flowchart-box"></deepsense-interaction-toolbar>
+  <deepsense-interaction-toolbar zoom-id="flowchart-box" autorun="true"></deepsense-interaction-toolbar>
 </div>
