@@ -1,6 +1,7 @@
 'use strict';
 
 function PiePlot() {
+  const LABEL_PRECISION = 4;
   const directive = {
     restrict: 'E',
     templateUrl: 'app/workflows/reports/charts/plot.html',
@@ -20,8 +21,9 @@ function PiePlot() {
     const chart = nv.models.pieChart();
 
     const chartValues = _.map(data.counts, function (val, idx) {
+      const shortVal = parseFloat(val).toPrecision(LABEL_PRECISION);
       return {
-        x: `${data.buckets[idx]}: ${val}`,
+        x: `${data.buckets[idx]}: ${shortVal}`,
         y: val
       };
     });

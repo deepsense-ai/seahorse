@@ -16,11 +16,11 @@
         <dt>Missing values</dt>
         <dd>{{ graphModal.distObject.missingValues }}</dd>
         <dt>Min</dt>
-        <dd>{{ graphModal.distObject.statistics.min }}</dd>
+        <dd>{{ graphModal.distObject.statistics.min | precision }}</dd>
         <dt>Mean</dt>
-        <dd>{{ graphModal.distObject.statistics.mean }}</dd>
+        <dd>{{ graphModal.distObject.statistics.mean | precision }}</dd>
         <dt>Max</dt>
-        <dd>{{ graphModal.distObject.statistics.max }}</dd>
+        <dd>{{ graphModal.distObject.statistics.max | precision }}</dd>
       </dl>
     </div>
     <div ng-switch="graphModal.distObject.subtype" class="row">

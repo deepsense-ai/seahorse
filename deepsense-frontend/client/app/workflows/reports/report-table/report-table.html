@@ -35,7 +35,7 @@
           popover-append-to-body="true">
         <span ng-switch="value === null">
           <i ng-switch-when="true" class="null-value">(null)</i>
-          <span ng-switch-default class="whitespaces-preserved break-mid-words">{{value | cut : true : maxLength : ' ...'}}</span>
+          <span ng-switch-default class="whitespaces-preserved break-mid-words">{{value | precision | cut : true : maxLength : ' ...'}}</span>
         </span>
       </td>
     </tr>

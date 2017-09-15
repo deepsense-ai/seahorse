@@ -2,6 +2,7 @@
 
 function ColumnPlot() {
 
+  const LABEL_PRECISION = 4;
   const maxChartHeight = 400;
   const labelLengthThreshold = 20;
   const maxLabelChars = 40;
@@ -60,7 +61,10 @@ function ColumnPlot() {
     let longestLabel = 0;
 
     const labelTexts = _.map(_.sliding(labelData, 2), ([start, end]) => {
-        let str = `${start} - ${end}`;
+        start = parseFloat(start).toPrecision(LABEL_PRECISION);
+        end = parseFloat(end).toPrecision(LABEL_PRECISION);
+
+        const str = `${start} - ${end}`;
 
         if (str.length > longestLabel) {
           longestLabel = str.length;
