@@ -21,9 +21,9 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.{StructField, StructType}
 
 import io.deepsense.commons.types.ColumnType.ColumnType
+import io.deepsense.commons.types.SparkConversions
 import io.deepsense.deeplang.doperables.Report
 import io.deepsense.deeplang.doperables.dataframe.report.DataFrameReportGenerator
-import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
 import io.deepsense.deeplang.doperables.descriptions.DataFrameInferenceResult
 import io.deepsense.deeplang.doperations.exceptions.WrongColumnTypeException
 import io.deepsense.deeplang.{DOperable, ExecutionContext}

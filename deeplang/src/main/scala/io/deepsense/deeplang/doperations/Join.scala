@@ -22,9 +22,9 @@ import org.apache.spark.sql
 import org.apache.spark.sql.Column
 import org.apache.spark.sql.types.StructType
 
+import io.deepsense.commons.types.SparkConversions
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.{DataFrameColumnsGetter, DataFrame}
-import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
 import io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException
 import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
 import io.deepsense.deeplang.params._

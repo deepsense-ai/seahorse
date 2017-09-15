@@ -16,27 +16,35 @@
 
 package io.deepsense.reportlib.model
 
-import org.apache.spark.sql.types.{Metadata, StructField}
+import org.apache.spark.sql.types.{DataType, StructField}
 import spray.json._
+
+import io.deepsense.commons.json.EnumerationSerializer
+import io.deepsense.commons.types.{ColumnType, SparkConversions}
 
 trait StructFieldJsonProtocol
   extends DefaultJsonProtocol
   with MetadataJsonProtocol
   with DataTypeJsonProtocol {
 
-  // StructField format without metadata
+  implicit val failureCodeFormat = EnumerationSerializer.jsonEnumFormat(ColumnType)
+
+  // StructField format without metadata, with deeplangType appended
   implicit val structFieldFormat = new RootJsonFormat[StructField] {
-    val rawFormat = jsonFormat4(StructField.apply)
+    val c = (s: String, d: DataType, b: Boolean) => StructField(s, d, b)
+    implicit val rawFormat = jsonFormat(c, "name", "dataType", "nullable")
 
     override def write(obj: StructField): JsValue = {
-      JsObject(obj.toJson(rawFormat).asJsObject.fields.collect {
-        case (key, value) if key != "metadata" => (key, value)
-      })
+      val jsObject = obj.toJson(rawFormat).asJsObject
+
+      val deeplangType =
+        SparkConversions.sparkColumnTypeToColumnType(obj.dataType)
+
+      JsObject(jsObject.fields + ("deeplangType" -> deeplangType.toJson))
     }
 
     override def read(json: JsValue): StructField = {
-      val fields = json.asJsObject.fields + ("metadata" -> Metadata.empty.toJson)
-      JsObject(fields).convertTo(rawFormat)
+      json.convertTo(rawFormat)
     }
   }
 }

@@ -45,11 +45,13 @@ class ReportContentJsonSpec
           JsObject(
             "name" -> JsString("x"),
             "dataType" -> JsString("integer"),
+            "deeplangType" -> JsString("numeric"),
             "nullable" -> JsTrue
           ),
           JsObject(
             "name" -> JsString("y"),
             "dataType" -> JsString("double"),
+            "deeplangType" -> JsString("numeric"),
             "nullable" -> JsFalse
           )
         )

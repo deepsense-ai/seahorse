@@ -20,8 +20,8 @@ import java.sql.Timestamp
 
 import org.apache.spark.sql.types._
 
+import io.deepsense.commons.types.SparkConversions
 import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
 import io.deepsense.deeplang.doperations.exceptions.{MultipleTypesReplacementException, WrongReplacementValueException}
 import io.deepsense.deeplang.params._

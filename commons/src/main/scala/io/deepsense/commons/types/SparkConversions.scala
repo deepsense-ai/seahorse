@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperables.dataframe.types
+package io.deepsense.commons.types
 
 import org.apache.spark.sql.types._
 
-import io.deepsense.commons.types.ColumnType
 import io.deepsense.commons.types.ColumnType._
 
 object SparkConversions {

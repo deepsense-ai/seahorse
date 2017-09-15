@@ -21,12 +21,11 @@ import org.apache.spark.mllib.stat.{MultivariateStatisticalSummary, Statistics}
 import org.apache.spark.sql.types.StructType
 import org.apache.spark.sql.{DataFrame, Row}
 
-import io.deepsense.commons.types.ColumnType
+import io.deepsense.commons.types.{SparkConversions, ColumnType}
 import io.deepsense.commons.utils.CollectionExtensions
 import io.deepsense.deeplang.doperables.Report
 import io.deepsense.deeplang.doperables.dataframe.report.ReportUtils._
 import io.deepsense.deeplang.doperables.dataframe.report.distribution.{NoDistributionReasons, DistributionCalculator}
-import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
 import io.deepsense.deeplang.utils.SparkTypeConverter
 import io.deepsense.reportlib.model._
 

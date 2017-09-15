@@ -130,11 +130,13 @@ class InferredStateJsonProtocolSpec
                   JsObject(
                     "name" -> JsString("col1"),
                     "dataType" -> JsString("string"),
+                    "deeplangType" -> JsString("string"),
                     "nullable" -> JsTrue
                   ),
                   JsObject(
                     "name" -> JsString("col2"),
                     "dataType" -> JsString("double"),
+                    "deeplangType" -> JsString("numeric"),
                     "nullable" -> JsFalse
                   )
                 )
