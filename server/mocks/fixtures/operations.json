@@ -287,6 +287,29 @@
           }
         ]
       }
+    },
+    "1163bb76-ba65-4471-9632-dfb761d20dfb": {
+      "name": "Evaluate Classification",
+      "description": "Evaluate classification model",
+      "ports": {
+        "input": [
+          {
+            "portIndex": 0,
+            "typeQualifier": "io.deepsense.deeplang.doperables.dataframe.DataFrame",
+            "required": true
+          }
+        ],
+        "output": [
+          {
+            "portIndex": 0,
+            "typeQualifier": ["io.deepsense.deeplang.doperables.Report"]
+          }
+        ]
+      },
+      "version": "0.1.0",
+      "id": "1163bb76-ba65-4471-9632-dfb761d20dfb",
+      "category": "234234-756756-34234",
+      "deterministic": false
     }
   }
 }

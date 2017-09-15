@@ -97,6 +97,10 @@
             {
               "id": "11111-111111-55555",
               "name": "Decision Forest"
+            },
+            {
+              "id": "1163bb76-ba65-4471-9632-dfb761d20dfb",
+              "name": "Evaluate Classification"
             }
           ]
         }

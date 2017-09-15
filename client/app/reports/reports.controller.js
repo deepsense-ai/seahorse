@@ -17,6 +17,7 @@ function Report(PageService, $scope, $stateParams, $modal, EntitiesAPIClient) {
   that.messageError = '';
 
   EntitiesAPIClient.getReport(entityId).then((data) => {
+    internal.name = data.name;
     internal.tables = data.tables;
     internal.distributions = data.distributions || {};
     internal.distributionsTypes = _.reduce(
@@ -50,15 +51,8 @@ function Report(PageService, $scope, $stateParams, $modal, EntitiesAPIClient) {
     return internal.distributionsTypes;
   };
 
-  that.getReportType = function getReportType() {
-    let tables = that.getTables();
-    if (_.has(tables, 'Data Sample')) {
-      return 'Data Sample';
-    } else if (_.has(tables, 'CrossValidateRegressor')) {
-      return 'CrossValidateRegressor';
-    } else if (_.has(tables, 'EvaluateRegression')) {
-      return 'EvaluateRegression';
-    }
+  that.getReportName = function getReportName() {
+    return internal.name;
   };
 
   $scope.$on(EVENTS.SELECT_COLUMN, function (event, data) {

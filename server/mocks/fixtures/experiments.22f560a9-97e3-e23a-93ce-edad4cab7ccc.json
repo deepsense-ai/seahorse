@@ -112,6 +112,15 @@
             "version": "1.1.2"
           },
           "parameters": {}
+        },
+        {
+          "id": "fsdfsdff-87ds-sj2d-dsa2-das8ueqwjd99",
+          "operation": {
+            "id": "1163bb76-ba65-4471-9632-dfb761d20dfb",
+            "name": "Evaluate Classification",
+            "version": "0.1.0"
+          },
+          "parameters": {}
         }
       ],
       "edges": [
@@ -154,6 +163,16 @@
             "nodeId": "260917d6-aa20-cca0-1e5e-ead9605954b0",
             "portIndex": 0
           }
+        },
+        {
+          "from": {
+            "nodeId": "c1b7dc79-de57-91f4-4265-128119369bab",
+            "portIndex": 0
+          },
+          "to": {
+            "nodeId": "fsdfsdff-87ds-sj2d-dsa2-das8ueqwjd99",
+            "portIndex": 0
+          }
         }
       ]
     },
@@ -191,6 +210,12 @@
           "started": "2015-05-12T21:11:09Z",
           "ended": "2015-05-12T21:12:09Z",
           "results": ["test-04"]
+        },
+        "fsdfsdff-87ds-sj2d-dsa2-das8ueqwjd99": {
+          "status": "COMPLETED",
+          "started": "2015-05-12T21:11:09Z",
+          "ended": "2015-05-12T21:12:09Z",
+          "results": ["test-05"]
         }
       }
     },
@@ -210,6 +235,9 @@
       ],
       "260917d6-aa20-cca0-1e5e-ead9605954b0": [
         ["io.deepsense.deeplang.doperables.Scorable"]
+      ],
+      "fsdfsdff-87ds-sj2d-dsa2-das8ueqwjd99": [
+        ["io.deepsense.deeplang.doperables.Report"]
       ]
     }
   }
