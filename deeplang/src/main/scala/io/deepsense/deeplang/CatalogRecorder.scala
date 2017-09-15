@@ -159,13 +159,11 @@ class CatalogRecorder private (jars: Seq[URL]) {
 
   private def registerDOperations(catalog: DOperationsCatalog): Unit = {
 
-    catalog.registerDOperation(DOperationCategories.Other, (() => new UnknownOperation), visible = false)
+    catalog.registerDOperation(DOperationCategories.Other, () => new UnknownOperation, visible = false)
     catalog.registerDOperation(DOperationCategories.IO, () => new PythonNotebook())
     catalog.registerDOperation(DOperationCategories.IO, () => new RNotebook())
-    catalog.registerDOperation(DOperationCategories.IO, () => new ReadDataFrame())
     catalog.registerDOperation(DOperationCategories.IO, () => new ReadDatasource())
     catalog.registerDOperation(DOperationCategories.IO, () => new ReadTransformer())
-    catalog.registerDOperation(DOperationCategories.IO, () => new WriteDataFrame())
     catalog.registerDOperation(DOperationCategories.IO, () => new WriteDatasource())
     catalog.registerDOperation(DOperationCategories.IO, () => new WriteTransformer())
 

@@ -22,7 +22,7 @@ description: Seahorse Release Notes
 ### Minimum Hardware Requirements
 * 6 GB of a free disk space
 * 4 GB of RAM
-* Virtualbox must be supported
+* VirtualBox must be supported
 
 ### Local Cluster Limitations
 
@@ -49,7 +49,7 @@ please <a target="_blank" href="http://deepsense.io/about-us/contact/#contact-fo
 
 #### What is New
 
-* Support for defining reusable [data sources and sinks](/reference/datasources.html)
+* Support for defining reusable [data sources and sinks](/reference/data_sources.html)
 * Support for reading and writing from/to Google Spreadsheets
 * Support for user-defined operations via [Software Developement Kit](/reference/sdk_user_guide.html)
 * Scheduled workflow execution with customizable Notebook-based email notifications

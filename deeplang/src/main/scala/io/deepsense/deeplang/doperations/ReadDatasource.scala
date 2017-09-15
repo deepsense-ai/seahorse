@@ -47,7 +47,7 @@ class ReadDatasource()
   override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 
   override val id: Id = "1a3b32f0-f56d-4c44-a396-29d2dfd43423"
-  override val name: String = "Read Datasource"
+  override val name: String = "Read DataFrame"
   override val description: String = "Reads data from its source to Seahorse's memory"
 
   override def params: Array[Param[_]] = Array(datasourceId)

@@ -46,7 +46,7 @@ class WriteDatasource()
   override lazy val tTagTI_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 
   override val id: Id = "bf082da2-a0d9-4335-a62f-9804217a1436"
-  override val name: String = "Write Datasource"
+  override val name: String = "Write DataFrame"
   override val description: String = "Writes data to the data source"
 
   override def params: Array[Param[_]] = Array(datasourceId, shouldOverwrite)
