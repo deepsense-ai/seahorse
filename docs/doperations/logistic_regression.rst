@@ -43,3 +43,11 @@ Regression is performed using LBFGS minimizing following loss function:
 
 where :math:`x`
 is vector of features, :math:`y` is label (-1 or 1) and :math:`w` is vector of weights of model.
+
+------
+Params
+------
+
+1. ``iterationsNumber: Numeric`` - Max number of iterations for algorithm to perform.
+2. ``tolerance: Numeric`` - The convergence tolerance of iterations for LBFGS.
+   Smaller value will lead to higher accuracy with the cost of more iterations.
