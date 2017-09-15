@@ -24,15 +24,15 @@
              class="form-control o-custom index-list-selector-item__input"
              min="0"
              min-value
-             ng-attr-max="{{maxIndex}}"
+             ng-attr-max="{{index.secondNum ? index.secondNum : maxIndex}}"
              ng-attr-max-value
              ng-model="index.firstNum"
              required>
       <input type="number"
              placeholder="To"
              class="form-control o-custom index-list-selector-item__input"
-             ng-attr-min="{{index.firstNum ? index.firstNum : 0}}"
-             ng-attr-min-value
+             min="0"
+             min-value
              ng-attr-max="{{maxIndex}}"
              ng-attr-max-value
              ng-model="index.secondNum"
