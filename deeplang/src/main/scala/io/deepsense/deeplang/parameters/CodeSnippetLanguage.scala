@@ -16,17 +16,23 @@
 
 package io.deepsense.deeplang.parameters
 
-object ParameterType extends Enumeration {
-  type ParameterType = Value
-  val Boolean = Value("boolean")
-  val Numeric = Value("numeric")
-  val String = Value("string")
-  val Choice = Value("choice")
-  val MultipleChoice = Value("multipleChoice")
-  val Multiplier = Value("multiplier")
-  val ColumnSelector = Value("selector")
-  val SingleColumnCreator = Value("creator")
-  val MultipleColumnCreator = Value("multipleCreator")
-  val PrefixBasedColumnCreator = Value("prefixBasedCreator")
-  val CodeSnippet = Value("codeSnippet")
+import spray.json._
+
+/**
+ * Represents language of code snippet
+ * (it could be used for syntax validation and syntax highlighting in frontend).
+ */
+@SerialVersionUID(1)
+case class CodeSnippetLanguage(language: CodeSnippetLanguage.CodeSnippetLanguage) {
+
+  final def toJson: JsObject = {
+    import spray.json.DefaultJsonProtocol._
+    JsObject("name" -> language.toString.toJson)
+  }
+}
+
+object CodeSnippetLanguage extends Enumeration {
+  type CodeSnippetLanguage = Value
+  val Python = Value("Python")
+  val SparkSql = Value("SparkSql")
 }

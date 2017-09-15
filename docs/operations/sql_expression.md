@@ -7,7 +7,7 @@ usesMathJax: true
 includeOperationsMenu: true
 ---
 
-Executes an SQL expression provided by the user on a DataFrame connected to its input port.
+Executes an Spark SQL expression provided by the user on a DataFrame connected to its input port.
 Returns the results of the execution as a DataFrame.
 
 **Since**: Seahorse 0.4.0

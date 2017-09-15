@@ -128,6 +128,24 @@ class ParametersSerializationSuite
     testParameterSerialization(param)
   }
 
+  test("CodeSnippetParameter, it's validator and it's value should be serializable") {
+    val codeSnippetLang = new CodeSnippetLanguage(CodeSnippetLanguage.Python)
+    val param = CodeSnippetParameter("", None, language = codeSnippetLang)
+    param.value = Some("xyz")
+    val result = serializeDeserialize(param)
+
+    // TODO: Check if really we have to do it manually
+    val resultCodeSnippetLang = result.language
+    resultCodeSnippetLang shouldBe codeSnippetLang
+
+    // We replace validator of result with original validator,
+    // so that we can perform normal equality check on rest of the fields
+    val resultWithReplacedValidator = result.copy(language = codeSnippetLang)
+    resultWithReplacedValidator shouldBe param
+
+    result.value shouldBe param.value
+  }
+
   private[this] def testParameterSerialization(param: Parameter): Unit = {
     val result = serializeDeserialize(param)
     result shouldBe param

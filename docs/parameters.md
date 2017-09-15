@@ -31,6 +31,7 @@ The placeholders will be replaced by actual values based on
 
 **Example value:** “file:///tmp/example.csv”
 
+
 ### Boolean
 Represents a simple choice - yes or no.
 
@@ -65,6 +66,18 @@ This parameter is similar to [single choice selector](#single_choice), but here 
 Like in single choice selector, each option can have an internal parameters schema - a group of parameters that should be filled if this particular option is selected.
 
 **Example of use:** parts of DateTime on which the selected column is to be split in the `Decompose Datetime` operation.
+
+
+### Code Snippet
+Holds code snippet string value. Different languages (language is choosed by operation creator) can be used to syntax validation and syntax highlighting.
+
+**Example of use:** code snippet parameter for Python language in `CustomOperation` operation
+
+**Example value:**
+
+    def operation_main(data_frame_1):
+      return data_frame_1
+
 
 ### <a name="parameters_sequence"></a>Parameters Sequence
 This parameter can be used when operation requires user to specify the same group of parameters multiple times, possibly with different values. The parameters sequence defines an internal parameters schema. User can provide any number of sets of values for this schema.

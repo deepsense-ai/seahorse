@@ -117,4 +117,10 @@ object ParameterConversions {
       case p: PrefixBasedColumnCreatorParameter => p
     }
   }
+
+  implicit object ToCodeSnippetParameter extends ParameterConverter[CodeSnippetParameter] {
+    def convertPF: PartialFunction[Any, CodeSnippetParameter] = {
+      case p: CodeSnippetParameter => p
+    }
+  }
 }

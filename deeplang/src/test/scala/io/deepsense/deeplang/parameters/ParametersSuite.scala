@@ -91,6 +91,12 @@ class ParametersSuite extends FunSuite with Matchers with MockitoSugar {
     assert(parametersSchema.getPrefixBasedColumnCreatorParameter("x") eq param)
   }
 
+  test("Getting CodeSnippetParameter from schema") {
+    val param = mock[CodeSnippetParameter]
+    val parametersSchema = ParametersSchema("x" -> param)
+    assert(parametersSchema.getCodeSnippetParameter("x") eq param)
+  }
+
   test("Getting wrong type of parameter should throw an exception") {
     val expectedTargetTypeName = "io.deepsense.deeplang.parameters.NumericParameter"
     val param = mock[StringParameter]
@@ -193,6 +199,14 @@ class ParametersSuite extends FunSuite with Matchers with MockitoSugar {
     val value = "abc"
     param.value = Some(value)
     assert(schema.getNewColumnsPrefix("x") == param.value)
+  }
+
+  test("Getting CodeSnippetParameter value from schema") {
+    val codeSnippetLang = new CodeSnippetLanguage(CodeSnippetLanguage.Python)
+    val param = CodeSnippetParameter("example", Some("default"), codeSnippetLang)
+    param.value = Some("def operation_main(data_frame_1):\n  return out_data_frame_1")
+    val parametersSchema = ParametersSchema("x" -> param)
+    assert(parametersSchema.getCodeSnippet("x") == param.value)
   }
 
   test("Getting wrong type of parameter value should throw an exception") {

@@ -450,3 +450,30 @@ case class PrefixBasedColumnCreatorParameter(
     jsValue.convertTo[String]
   }
 }
+
+case class CodeSnippetParameter(
+    description: String,
+    default: Option[String],
+    language: CodeSnippetLanguage,
+    var _value: Option[String] = None)
+  extends Parameter
+  with CanHaveDefault {
+
+  type HeldValue = String
+
+  val parameterType = ParameterType.CodeSnippet
+
+  private[parameters] def replicate: Parameter = copy()
+
+  override protected def defaultValueToJson(defaultValue: String): JsValue = defaultValue.toJson
+
+  override protected def definedValueToJson(definedValue: String): JsValue = definedValue.toJson
+
+  override protected def valueFromDefinedJson(jsValue: JsValue): String = {
+    jsValue.convertTo[String]
+  }
+
+  override def jsDescription: Map[String, JsValue] = {
+    super.jsDescription + ("language" -> language.toJson)
+  }
+}

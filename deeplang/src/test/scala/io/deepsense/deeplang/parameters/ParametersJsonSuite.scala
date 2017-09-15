@@ -827,4 +827,44 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
     )
     (choices, expectedJsDescription)
   }
+
+  test("Code Snippet parameter can provide its json representation") {
+    val description = "example Code Snippet parameter description"
+    val default = "def operation_main(data_frame_1):\n  return out_data_frame_1"
+    val codeSnippetLang = new CodeSnippetLanguage(CodeSnippetLanguage.Python)
+    val codeSnippetParameter = CodeSnippetParameter(description, Some(default), codeSnippetLang)
+
+    val expectedFields = Map(
+      "type" -> JsString("codeSnippet"),
+      "description" -> JsString(description),
+      "default" -> JsString(default),
+      "language" -> JsObject(
+        "name" -> JsString(CodeSnippetLanguage.Python.toString)
+      )
+    )
+    assert(codeSnippetParameter.jsDescription == expectedFields)
+  }
+
+  test("Code Snippet parameter can provide json representation of it's value") {
+    val codeSnippetLang = new CodeSnippetLanguage(CodeSnippetLanguage.Python)
+    val codeSnippetParameter = CodeSnippetParameter("", None, codeSnippetLang, _value = None)
+    val value = "abc"
+    codeSnippetParameter.value = Some(value)
+    assert(codeSnippetParameter.valueToJson == JsString(value))
+  }
+
+  test("Code Snippet parameter can be filled with json") {
+    val codeSnippetLang = new CodeSnippetLanguage(CodeSnippetLanguage.Python)
+    val codeSnippetParameter = CodeSnippetParameter("", None, codeSnippetLang, _value = None)
+    val value = "abcd"
+    codeSnippetParameter.fillValueWithJson(JsString(value))
+    assert(codeSnippetParameter.value == value)
+  }
+
+  test("Code Snippet parameter can be filled with JsNull") {
+    val codeSnippetLang = new CodeSnippetLanguage(CodeSnippetLanguage.Python)
+    val codeSnippetParameter = CodeSnippetParameter("", None, codeSnippetLang, _value = None)
+    codeSnippetParameter.fillValueWithJson(JsNull)
+    assert(codeSnippetParameter.maybeValue == None)
+  }
 }

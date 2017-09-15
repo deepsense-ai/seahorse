@@ -133,6 +133,8 @@ class ParametersSchema protected (private val schemaMap: ListMap[String, Paramet
     get[PrefixBasedColumnCreatorParameter](name)
   }
 
+  def getCodeSnippetParameter(name: String): CodeSnippetParameter = get[CodeSnippetParameter](name)
+
   def getBoolean(name: String): Boolean = getBooleanParameter(name).value
 
   def getString(name: String): String = getStringParameter(name).value
@@ -168,6 +170,8 @@ class ParametersSchema protected (private val schemaMap: ListMap[String, Paramet
   def getNewColumnsPrefix(name: String): String = {
     getPrefixBasedColumnCreatorParameter(name).value
   }
+
+  def getCodeSnippet(name: String): String = getCodeSnippetParameter(name).value
 
   def ++(other: ParametersSchema): ParametersSchema = {
     new ParametersSchema(schemaMap ++ other.schemaMap)
