@@ -18,7 +18,7 @@
       </dl>
     </div>
     <div ng-switch="graphModal.distObject.subtype" class="row">
-      <distribution-categorical-chart ng-switch-when="categorical"
+      <distribution-categorical-chart ng-switch-when="discrete"
                                       data="graphModal.distObject"></distribution-categorical-chart>
       <distribution-continuous-chart ng-switch-when="continuous"
                                      data="graphModal.distObject"></distribution-continuous-chart>
