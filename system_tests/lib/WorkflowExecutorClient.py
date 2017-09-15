@@ -112,7 +112,7 @@ def check_json_containment(contained, container):
   """ in corresponding values from `container`. For arrays, strings and numerics  """
   """ containment is equivalent to equality.                                      """
   if type(contained) != type(container):
-    raise Exception(str(contained) + " and " + str(container) + "don't have the same type")
+    raise Exception(str(contained) + " and " + str(container) + " don't have the same type")
   elif type(contained) == dict:
     contained_key_set = set(contained.keys())
     container_key_set = set(container.keys())
