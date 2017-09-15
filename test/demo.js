@@ -1,6 +1,6 @@
 'use strict';
 var module = angular.module('test', ['deepsense.attributes-panel']);
-module.config = {};
+module.constant('config', {});
 module.controller('TestCtrl', ['$scope', '$element', 'Model', function ($scope, $element, Model) {
   var nodes = Model.getNodes();
 

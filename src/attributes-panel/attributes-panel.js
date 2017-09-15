@@ -1,7 +1,7 @@
 'use strict';
 
 /*@ngInject*/
-function OperationAttributes($rootScope,AttributesPanelService,config) {
+function OperationAttributes($rootScope, AttributesPanelService ,config) {
   return {
     restrict: 'E',
     scope: {
@@ -38,17 +38,26 @@ function OperationAttributes($rootScope,AttributesPanelService,config) {
     controller: function ($scope, $element, $timeout, $modal) {
       this.getDocsHost = () => config.docsHost;
       this.showErrorMessage = function showErrorMessage () {
-        $modal.open({
+        $scope.modal = $modal.open({
           scope: $scope,
           template: `
-            <h2>Error title:</h2>
+            <button type="button" class="close" aria-label="Close" ng-click="modal.close()">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h2>
+              Error title:
+            </h2>
             <pre class="o-error-trace">{{::node.state.error.title || 'No title'}}</pre>
             <h2>Error message:</h2>
             <pre class="o-error-trace">{{::node.state.error.message || 'No message'}}</pre>
             <div ng-if="::node.state.error.details.stacktrace">
               <h2>Stack trace:</h2>
               <pre class="o-error-trace">{{::node.state.error.details.stacktrace}}</pre>
-            </div>`,
+            </div>
+            <button type="button" class="btn btn-default pull-right" ng-click="modal.close()">
+              Close
+            </button>
+            <br style="clear: right;" />`,
           windowClass: 'o-modal--error'
         });
       };
