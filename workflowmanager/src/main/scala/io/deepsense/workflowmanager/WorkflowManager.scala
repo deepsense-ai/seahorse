@@ -8,7 +8,7 @@ import scala.concurrent.Future
 
 import io.deepsense.commons.models.Id
 import io.deepsense.models.workflows.{WorkflowWithResults, Workflow, WorkflowWithKnowledge, WorkflowWithVariables}
-import io.deepsense.workflowmanager.model.WorkflowWithSavedResults
+import io.deepsense.workflowmanager.model.{ExecutionReportWithId, WorkflowWithSavedResults}
 
 /**
  * Workflow Manager's API
@@ -59,5 +59,12 @@ trait WorkflowManager {
    */
   def saveWorkflowResults(
     workflowWithResults: WorkflowWithResults): Future[WorkflowWithSavedResults]
+
+  /**
+   * Get execution report by id.
+   * @param id workflow execution report id
+   * @return workflow execution report
+   */
+  def getExecutionReport(id: ExecutionReportWithId.Id): Future[Option[WorkflowWithSavedResults]]
 
 }

@@ -14,22 +14,22 @@ import io.deepsense.models.workflows._
 import io.deepsense.workflowmanager.model.{ExecutionReportWithId, WorkflowWithSavedResults}
 
 class WorkflowWithSavedResultsJsonProtocolSpec extends WorkflowJsonTestSupport
-    with WorkflowWithRegisteredResultsJsonProtocol {
+    with WorkflowWithSavedResultsJsonProtocol {
 
-  "WorkflowWithRegisteredResults" should {
+  "WorkflowWithSavedResults" should {
 
     "be serialized to json" in {
-      val (workflow, json) = workflowWithRegisteredResultsFixture
+      val (workflow, json) = workflowWithSavedResultsFixture
       workflow.toJson shouldBe json
     }
 
     "be deserialized from json" in {
-      val (workflow, json) = workflowWithRegisteredResultsFixture
+      val (workflow, json) = workflowWithSavedResultsFixture
       json.convertTo[WorkflowWithSavedResults] shouldBe workflow
     }
   }
 
-  def workflowWithRegisteredResultsFixture: (WorkflowWithSavedResults, JsObject) = {
+  def workflowWithSavedResultsFixture: (WorkflowWithSavedResults, JsObject) = {
 
     val (executionReport, executionReportJson) = executionReportFixture
 

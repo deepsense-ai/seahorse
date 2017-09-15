@@ -10,12 +10,12 @@ import spray.json._
 
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.workflows.Workflow
-import io.deepsense.workflowmanager.json.WorkflowWithRegisteredResultsJsonProtocol
+import io.deepsense.workflowmanager.json.WorkflowWithSavedResultsJsonProtocol
 import io.deepsense.workflowmanager.model.WorkflowWithSavedResults
 
 case class WorkflowRowMapper @Inject() (
     override val graphReader: GraphReader)
-  extends WorkflowWithRegisteredResultsJsonProtocol {
+  extends WorkflowWithSavedResultsJsonProtocol {
 
   def toWorkflow(row: Row): Workflow = {
     row.getString(WorkflowRowMapper.Workflow).parseJson.convertTo[Workflow](workflowFormat)

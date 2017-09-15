@@ -99,13 +99,22 @@ class WorkflowManagerImpl @Inject()(
 
   def saveWorkflowResults(
     workflowWithResults: WorkflowWithResults): Future[WorkflowWithSavedResults] = {
-    val resultsId = ExecutionReportWithId.Id.randomId
-    val workflowWithRegisteredResults =
-      WorkflowWithSavedResults(resultsId, workflowWithResults)
+    authorizator.withRole(roleCreate) { userContext =>
+      val resultsId = ExecutionReportWithId.Id.randomId
+      val workflowWithSavedResults =
+        WorkflowWithSavedResults(resultsId, workflowWithResults)
 
-    workflowStorage.saveExecutionResults(workflowWithRegisteredResults)
-      .map(_ => workflowResultsStorage.save(workflowWithRegisteredResults))
-      .map(_ => workflowWithRegisteredResults)
+      workflowStorage.saveExecutionResults(workflowWithSavedResults)
+        .map(_ => workflowResultsStorage.save(workflowWithSavedResults))
+        .map(_ => workflowWithSavedResults)
+    }
+  }
+
+  override def getExecutionReport(
+      id: ExecutionReportWithId.Id): Future[Option[WorkflowWithSavedResults]] = {
+    authorizator.withRole(roleGet) { userContext =>
+      workflowResultsStorage.get(id)
+    }
   }
 
   private def withKnowledge(id: Workflow.Id, workflow: Workflow): WorkflowWithKnowledge = {

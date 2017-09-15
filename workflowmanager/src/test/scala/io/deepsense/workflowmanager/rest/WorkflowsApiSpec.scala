@@ -18,7 +18,6 @@ import spray.routing.Route
 import io.deepsense.commons.auth.usercontext.{TokenTranslator, UserContext}
 import io.deepsense.commons.auth.{AuthorizatorProvider, UserContextAuthorizator}
 import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
-import io.deepsense.commons.models.Id
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.deeplang.DOperationCategories
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
@@ -29,8 +28,9 @@ import io.deepsense.graph._
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow._
 import io.deepsense.models.workflows._
-import io.deepsense.workflowmanager.model.WorkflowWithSavedResults$
-import io.deepsense.workflowmanager.storage.{InMemoryWorkflowStorage, WorkflowResultsStorage, WorkflowStorage}
+import io.deepsense.workflowmanager.json.WorkflowWithSavedResultsJsonProtocol
+import io.deepsense.workflowmanager.model.{ExecutionReportWithId, WorkflowWithSavedResults}
+import io.deepsense.workflowmanager.storage.{InMemoryWorkflowResultsStorage, InMemoryWorkflowStorage, WorkflowStorage}
 import io.deepsense.workflowmanager.{WorkflowManager, WorkflowManagerImpl, WorkflowManagerProvider}
 
 class WorkflowsApiSpec
@@ -40,7 +40,7 @@ class WorkflowsApiSpec
   with WorkflowJsonProtocol
   with WorkflowWithKnowledgeJsonProtocol
   with WorkflowWithVariablesJsonProtocol
-  with WorkflowWithResultsJsonProtocol {
+  with WorkflowWithSavedResultsJsonProtocol {
 
   val catalog = DOperationsCatalog()
   catalog.registerDOperation[FileToDataFrame](
@@ -53,7 +53,12 @@ class WorkflowsApiSpec
   override val graphReader: GraphReader = new GraphReader(catalog)
   val (workflowA, knowledgeA) = newWorkflowAndKnowledge
   val workflowAId = Workflow.Id.randomId
-  val workflowWithResults = newWorkflowWithResults(workflowAId, workflowA)
+  val workflowAWithResults = newWorkflowWithResults(workflowAId, workflowA)
+  val (workflowB, knowledgeB) = newWorkflowAndKnowledge
+  val workflowBId = Workflow.Id.randomId
+  val workflowBWithSavedResults = WorkflowWithSavedResults(
+    ExecutionReportWithId.Id.randomId,
+    newWorkflowWithResults(workflowBId, workflowB))
 
   def newWorkflowAndKnowledge: (Workflow, GraphKnowledge) = {
     val node1 = Node(Node.Id.randomId, FileToDataFrame())
@@ -102,6 +107,7 @@ class WorkflowsApiSpec
   def validAuthTokenTenantB: String = tenantBId
 
   val apiPrefix: String = "v1/workflows"
+  val reportsPrefix: String = "v1/reports"
 
   val roleGet = "workflows:get"
   val roleUpdate = "workflows:update"
@@ -115,6 +121,8 @@ class WorkflowsApiSpec
 
   override def createRestComponent(tokenTranslator: TokenTranslator): Route = {
     val workflowManagerProvider = mock[WorkflowManagerProvider]
+    val workflowResultsStorage = new InMemoryWorkflowResultsStorage()
+    workflowResultsStorage.save(workflowBWithSavedResults)
     when(workflowManagerProvider.forContext(any(classOf[Future[UserContext]])))
       .thenAnswer(new Answer[WorkflowManager]{
       override def answer(invocation: InvocationOnMock): WorkflowManager = {
@@ -126,14 +134,19 @@ class WorkflowsApiSpec
           .thenReturn(authorizator)
 
         val workflowStorage = mockStorage()
-        val workflowResultsStorage = mock[WorkflowResultsStorage]
         new WorkflowManagerImpl(
           authorizatorProvider, workflowStorage, workflowResultsStorage, inferContext,
           futureContext, roleGet, roleUpdate, roleDelete, roleCreate)
       }
     })
 
-    new SecureWorkflowApi(tokenTranslator, workflowManagerProvider, apiPrefix, graphReader).route
+    new SecureWorkflowApi(
+      tokenTranslator,
+      workflowManagerProvider,
+      workflowResultsStorage,
+      apiPrefix,
+      reportsPrefix,
+      graphReader).route
   }
 
   s"GET /workflows/:id" should {
@@ -387,7 +400,7 @@ class WorkflowsApiSpec
         val multipartData = MultipartFormData(Map(
           "workflowFile" -> BodyPart(HttpEntity(
             ContentType(MediaTypes.`application/json`),
-            workflowWithResultsFormat.write(workflowWithResults).toString())
+            workflowWithResultsFormat.write(workflowAWithResults).toString())
           )))
 
         Post(s"/$apiPrefix/report/upload", multipartData) ~>
@@ -397,10 +410,10 @@ class WorkflowsApiSpec
 
           val returnedReport = responseAs[WorkflowWithResults]
           returnedReport should have (
-            'metadata (workflowWithResults.metadata),
-            'graph (workflowWithResults.graph),
-            'thirdPartyData (workflowWithResults.thirdPartyData),
-            'executionReport (workflowWithResults.executionReport))
+            'metadata (workflowAWithResults.metadata),
+            'graph (workflowAWithResults.graph),
+            'thirdPartyData (workflowAWithResults.thirdPartyData),
+            'executionReport (workflowAWithResults.executionReport))
         }
         ()
       }
@@ -471,9 +484,57 @@ class WorkflowsApiSpec
     }
   }
 
+  s"GET /reports/:id" should {
+    "return Unauthorized" when {
+      "invalid auth token was send (when InvalidTokenException occurs)" in {
+        Get(s"/$reportsPrefix/${ExecutionReportWithId.Id.randomId}") ~>
+          addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
+          status should be(StatusCodes.Unauthorized)
+        }
+        ()
+      }
+      "the user does not have the requested role (on NoRoleException)" in {
+        Get(s"/$reportsPrefix/${ExecutionReportWithId.Id.randomId}") ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
+          status should be(StatusCodes.Unauthorized)
+        }
+        ()
+      }
+      "no auth token was send (on MissingHeaderRejection)" in {
+        Get(s"/$reportsPrefix/${ExecutionReportWithId.Id.randomId}") ~> testRoute ~> check {
+          status should be(StatusCodes.Unauthorized)
+        }
+        ()
+      }
+    }
+    "return Not found" when {
+      "asked for non existing Workflow" in {
+        Get(s"/$reportsPrefix/${ExecutionReportWithId.Id.randomId}") ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.NotFound)
+        }
+        ()
+      }
+    }
+    "return a result" when {
+      "auth token is correct, user has roles" in {
+        Get(s"/$reportsPrefix/${workflowBWithSavedResults.executionReport.id}") ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.OK)
+
+          val returnedWorkflow = responseAs[WorkflowWithSavedResults]
+          returnedWorkflow.executionReport.id shouldBe workflowBWithSavedResults.executionReport.id
+        }
+        ()
+      }
+    }
+  }
+
   def mockStorage(): WorkflowStorage = {
     val storage = new InMemoryWorkflowStorage()
     storage.save(workflowAId, workflowA)
+    storage.save(workflowBId, workflowB)
+    storage.saveExecutionResults(workflowBWithSavedResults)
     storage
   }
 }

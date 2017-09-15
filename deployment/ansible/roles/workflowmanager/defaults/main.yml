@@ -18,6 +18,7 @@ roles_workflows_abort: "workflows:abort"
 workflows_api_prefix: "v1/workflows"
 operations_api_prefix: "v1/operations"
 models_api_prefix: "v1/models"
+reports_api_prefix: "v1/reports"
 
 workflows_timeout: 3000
 

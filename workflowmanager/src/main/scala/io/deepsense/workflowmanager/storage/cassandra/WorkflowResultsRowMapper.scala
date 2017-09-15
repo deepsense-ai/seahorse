@@ -9,12 +9,12 @@ import com.google.inject.Inject
 import spray.json._
 
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
-import io.deepsense.workflowmanager.json.WorkflowWithRegisteredResultsJsonProtocol
+import io.deepsense.workflowmanager.json.WorkflowWithSavedResultsJsonProtocol
 import io.deepsense.workflowmanager.model.WorkflowWithSavedResults
 
 class WorkflowResultsRowMapper @Inject() (
   override val graphReader: GraphReader)
-  extends WorkflowWithRegisteredResultsJsonProtocol {
+  extends WorkflowWithSavedResultsJsonProtocol {
 
   def fromRow(row: Row): WorkflowWithSavedResults = {
     row.getString(WorkflowResultsRowMapper.Results)

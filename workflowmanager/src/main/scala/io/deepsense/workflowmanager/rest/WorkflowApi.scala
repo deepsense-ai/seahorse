@@ -26,7 +26,9 @@ import io.deepsense.models.json.workflow._
 import io.deepsense.models.workflows.{Workflow, WorkflowWithResults}
 import io.deepsense.workflowmanager.WorkflowManagerProvider
 import io.deepsense.workflowmanager.exceptions.{FileNotFoundException, WorkflowNotFoundException, WorkflowRunningException}
-import io.deepsense.workflowmanager.json.WorkflowWithRegisteredResultsJsonProtocol
+import io.deepsense.workflowmanager.json.WorkflowWithSavedResultsJsonProtocol
+import io.deepsense.workflowmanager.model.ExecutionReportWithId
+import io.deepsense.workflowmanager.storage.WorkflowResultsStorage
 
 /**
  * Exposes Workflow Manager through a REST API.
@@ -34,7 +36,8 @@ import io.deepsense.workflowmanager.json.WorkflowWithRegisteredResultsJsonProtoc
 abstract class WorkflowApi @Inject() (
     val tokenTranslator: TokenTranslator,
     workflowManagerProvider: WorkflowManagerProvider,
-    @Named("workflows.api.prefix") apiPrefix: String,
+    @Named("workflows.api.prefix") workflowsApiPrefix: String,
+    @Named("reports.api.prefix") reportsApiPrefix: String,
     override val graphReader: GraphReader)
     (implicit ec: ExecutionContext)
   extends RestApiAbstractAuth
@@ -43,13 +46,14 @@ abstract class WorkflowApi @Inject() (
   with WorkflowWithKnowledgeJsonProtocol
   with WorkflowWithVariablesJsonProtocol
   with MetadataInferenceResultJsonProtocol
-  with WorkflowWithRegisteredResultsJsonProtocol
+  with WorkflowWithSavedResultsJsonProtocol
   with Cors {
 
   self: AbstractAuthDirectives =>
 
-  assert(StringUtils.isNoneBlank(apiPrefix))
-  private val pathPrefixMatcher = PathMatchers.separateOnSlashes(apiPrefix)
+  assert(StringUtils.isNoneBlank(workflowsApiPrefix))
+  private val workflowsPathPrefixMatcher = PathMatchers.separateOnSlashes(workflowsApiPrefix)
+  private val reportsPathPrefixMatcher = PathMatchers.separateOnSlashes(reportsApiPrefix)
 
   private val workflowFileMultipartId = "workflowFile"
 
@@ -62,7 +66,7 @@ abstract class WorkflowApi @Inject() (
               complete("Workflow Manager")
             }
           } ~
-          pathPrefix(pathPrefixMatcher) {
+          pathPrefix(workflowsPathPrefixMatcher) {
             path(JavaUUID) { idParameter =>
               val workflowId = Id(idParameter)
               get {
@@ -167,6 +171,18 @@ abstract class WorkflowApi @Inject() (
                 }
               }
             }
+          } ~
+          pathPrefix(reportsPathPrefixMatcher) {
+            path(JavaUUID) { idParameter =>
+              val reportId = ExecutionReportWithId.Id(idParameter)
+              get {
+                withUserContext { userContext =>
+                  complete {
+                    workflowManagerProvider.forContext(userContext).getExecutionReport(reportId)
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -196,25 +212,31 @@ abstract class WorkflowApi @Inject() (
 class SecureWorkflowApi @Inject() (
   tokenTranslator: TokenTranslator,
   workflowManagerProvider: WorkflowManagerProvider,
-  @Named("workflows.api.prefix") apiPrefix: String,
+  workflowResultsStorage: WorkflowResultsStorage,
+  @Named("workflows.api.prefix") workflowsApiPrefix: String,
+  @Named("reports.api.prefix") reportsApiPrefix: String,
   override val graphReader: GraphReader)
   (implicit ec: ExecutionContext)
   extends WorkflowApi(
     tokenTranslator,
     workflowManagerProvider,
-    apiPrefix,
+    workflowsApiPrefix,
+    reportsApiPrefix,
     graphReader)
   with AuthDirectives
 
 class InsecureWorkflowApi @Inject() (
   tokenTranslator: TokenTranslator,
   workflowManagerProvider: WorkflowManagerProvider,
-  @Named("workflows.api.prefix") apiPrefix: String,
+  workflowResultsStorage: WorkflowResultsStorage,
+  @Named("workflows.api.prefix") workflowsApiPrefix: String,
+  @Named("reports.api.prefix") reportsApiPrefix: String,
   override val graphReader: GraphReader)
   (implicit ec: ExecutionContext)
   extends WorkflowApi(
     tokenTranslator,
     workflowManagerProvider,
-    apiPrefix,
+    workflowsApiPrefix,
+    reportsApiPrefix,
     graphReader)
   with InsecureAuthDirectives

@@ -7,11 +7,11 @@ package io.deepsense.workflowmanager.json
 import io.deepsense.models.json.workflow.WorkflowWithResultsJsonProtocol
 import io.deepsense.workflowmanager.model.{ExecutionReportWithId, WorkflowWithSavedResults}
 
-trait WorkflowWithRegisteredResultsJsonProtocol extends WorkflowWithResultsJsonProtocol {
+trait WorkflowWithSavedResultsJsonProtocol extends WorkflowWithResultsJsonProtocol {
 
   implicit val executionReportWithIdFormat = jsonFormat5(ExecutionReportWithId.apply)
 
-  implicit val workflowWithRegisteredResultsFormat =
+  implicit val workflowWithSavedResultsFormat =
     jsonFormat(WorkflowWithSavedResults.apply,
       "id", "metadata", "workflow", "thirdPartyData", "executionReport")
 
