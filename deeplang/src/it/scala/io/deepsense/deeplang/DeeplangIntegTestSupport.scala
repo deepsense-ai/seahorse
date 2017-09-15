@@ -51,11 +51,19 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
 
   override def afterAll(): Unit = sparkContext.stop()
 
-  protected def assertDataFramesEqual(actualDf: DataFrame, expectedDf: DataFrame): Unit = {
-    assert(actualDf.sparkDataFrame.schema == expectedDf.sparkDataFrame.schema)
+  protected def assertDataFramesEqual(
+      actualDf: DataFrame,
+      expectedDf: DataFrame,
+      checkRowOrder: Boolean = true): Unit = {
+    // Checks only semantic identity, not objects location in memory
+    actualDf.sparkDataFrame.schema.treeString shouldBe expectedDf.sparkDataFrame.schema.treeString
     val collectedRows1: Array[Row] = actualDf.sparkDataFrame.collect()
     val collectedRows2: Array[Row] = expectedDf.sparkDataFrame.collect()
-    collectedRows1 should be (collectedRows2)
+    if (checkRowOrder) {
+      collectedRows1 shouldBe collectedRows2
+    } else {
+      collectedRows1 should contain theSameElementsAs collectedRows2
+    }
   }
 
   protected def entityStorageInitState: Map[(String, Entity.Id), Entity] = Map()

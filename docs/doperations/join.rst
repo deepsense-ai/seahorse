@@ -70,6 +70,12 @@ respectively.
 
 The join operation skips ``null`` values in LEFT JOIN, i.e. ``null``s do not match and yield rows.
 
+Columns from right DataFrame with the names that currently exist in left DataFrame
+will be renamed by appending ``'_join'`` suffix.
+If this name is occupied, ``'_1'`` will be appended to it
+(or ``'_2'``, ``'_3'`` etc. so that uniqueness of column names is preserved).
+
+
 -----
 Input
 -----

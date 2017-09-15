@@ -6,15 +6,13 @@ package io.deepsense.deeplang.doperations
 
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
-import org.scalatest.Ignore
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMapper
+import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoricalMapper, CategoricalMetadata}
 import io.deepsense.deeplang.doperations.exceptions.{ColumnsDoNotExistException, WrongColumnTypeException}
 import io.deepsense.deeplang.parameters._
 
-@Ignore
 class JoinSpec extends DeeplangIntegTestSupport {
   "Join operation" should {
     "LEFT JOIN two DataFrames" when {
@@ -24,7 +22,7 @@ class JoinSpec extends DeeplangIntegTestSupport {
         val join = joinWithMultipleColumnSelection(joinColumns, Set.empty)
         val joinDF = executeOperation(join, ldf, rdf)
 
-        assertDataFramesEqual(joinDF, expected)
+        assertDataFramesEqual(joinDF, expected, checkRowOrder = false)
       }
       "based upon two columns" in {
         val (ldf, rdf, expected, joinColumns) = twoColumnsFixture()
@@ -32,7 +30,7 @@ class JoinSpec extends DeeplangIntegTestSupport {
         val join = joinWithMultipleColumnSelection(joinColumns, Set.empty)
         val joinDF = executeOperation(join, ldf, rdf)
 
-        assertDataFramesEqual(joinDF, expected)
+        assertDataFramesEqual(joinDF, expected, checkRowOrder = false)
       }
       "some rows from left dataframe have no corresponding values in the right one" in {
         val (ldf, rdf, expected, joinColumns) = noSomeRightValuesFixture()
@@ -40,7 +38,7 @@ class JoinSpec extends DeeplangIntegTestSupport {
         val join = joinWithMultipleColumnSelection(joinColumns, Set.empty)
         val joinDF = executeOperation(join, ldf, rdf)
 
-        assertDataFramesEqual(joinDF, expected)
+        assertDataFramesEqual(joinDF, expected, checkRowOrder = false)
       }
       "dataframes have no matching values" in {
         val (ldf, rdf, expected, joinColumns) = noMatchingValuesFixture()
@@ -48,7 +46,7 @@ class JoinSpec extends DeeplangIntegTestSupport {
         val join = joinWithMultipleColumnSelection(joinColumns, Set.empty)
         val joinDF = executeOperation(join, ldf, rdf)
 
-        assertDataFramesEqual(joinDF, expected)
+        assertDataFramesEqual(joinDF, expected, checkRowOrder = false)
       }
       "some column values are null" in {
         val (ldf, rdf, expected, joinColumns) = nullFixture()
@@ -56,7 +54,7 @@ class JoinSpec extends DeeplangIntegTestSupport {
         val join = joinWithMultipleColumnSelection(joinColumns, Set.empty)
         val joinDF = executeOperation(join, ldf, rdf)
 
-        assertDataFramesEqual(joinDF, expected)
+        assertDataFramesEqual(joinDF, expected, checkRowOrder = false)
       }
       "using categorical column" in {
         val (ldf, rdf, expected, joinColumns) = categoricalFixture()
@@ -64,7 +62,7 @@ class JoinSpec extends DeeplangIntegTestSupport {
         val join = joinWithMultipleColumnSelection(joinColumns, Set.empty)
         val joinDF = executeOperation(join, ldf, rdf)
 
-        assertDataFramesEqual(joinDF, expected)
+        assertDataFramesEqual(joinDF, expected, checkRowOrder = false)
       }
       "with null values only in left DataFrame" in {
         val (ldf, rdf, expected, joinColumns) = nullValuesInLeftDataFrameFixture()
@@ -72,7 +70,7 @@ class JoinSpec extends DeeplangIntegTestSupport {
         val join = joinWithMultipleColumnSelection(joinColumns, Set.empty)
         val joinDF = executeOperation(join, ldf, rdf)
 
-        assertDataFramesEqual(joinDF, expected)
+        assertDataFramesEqual(joinDF, expected, checkRowOrder = false)
       }
       "with columns of the same name in both and no join on them" in {
         val (ldf, rdf, expected, joinColumns) = sameColumnNamesFixture()
@@ -80,7 +78,7 @@ class JoinSpec extends DeeplangIntegTestSupport {
         val join = joinWithMultipleColumnSelection(joinColumns, Set.empty)
         val joinDF = executeOperation(join, ldf, rdf)
 
-        assertDataFramesEqual(joinDF, expected)
+        assertDataFramesEqual(joinDF, expected, false)
       }
       "with null values only in both DataFrames" is pending
       "with empty join column selection" is pending
@@ -419,7 +417,8 @@ class JoinSpec extends DeeplangIntegTestSupport {
     // join dataframe
     val joinRows = Seq(
       (1.5, null),
-      (1.6, null)
+      (1.6, null),
+      (null, null)
     ).map(Row.fromTuple)
     val joinSchema = StructType(schemaL.fields ++ schemaR.fields.filterNot(_.name == column1))
     val edf = createDataFrame(joinRows, joinSchema)
@@ -447,6 +446,9 @@ class JoinSpec extends DeeplangIntegTestSupport {
     val ldfCategorized =
       CategoricalMapper(ldf, executionContext.dataFrameBuilder).categorized(column1)
 
+    val lcm = CategoricalMetadata(ldfCategorized)
+    val lMapping = lcm.mapping(column1)
+
     // Right dataframe
     val colsR = Vector(column1, "owner")
     val schemaR = StructType(Seq(
@@ -462,14 +464,21 @@ class JoinSpec extends DeeplangIntegTestSupport {
     val rdfCategorized =
       CategoricalMapper(rdf, executionContext.dataFrameBuilder).categorized(column1)
 
+    val rcm = CategoricalMetadata(rdfCategorized)
+    val rMapping = rcm.mapping(column1)
+
+    val merged = lMapping.mergeWith(rMapping)
+    val finalMapping = merged.finalMapping
+
     // join dataframe
     val joinRows = Seq(
-      ("pies", 3, "Rafal"),
-      ("kot", 5, "Wojtek"),
-      ("krowa", 7, null),
-      ("pies", 1, "Rafal")
+      (finalMapping.valueToId("pies"), 3, "Rafal"),
+      (finalMapping.valueToId("kot"), 5, "Wojtek"),
+      (finalMapping.valueToId("krowa"), 7, null),
+      (finalMapping.valueToId("pies"), 1, "Rafal")
     ).map(Row.fromTuple)
-    val joinSchema = StructType(schemaL.fields ++ schemaR.fields.filterNot(_.name == column1))
+    val joinSchema = StructType(Seq(StructField(colsL(0), IntegerType)) ++ schemaL.fields.tail ++
+      schemaR.fields.filterNot(_.name == column1))
     val edf = createDataFrame(joinRows, joinSchema)
 
     (ldfCategorized, rdfCategorized, edf, joinColumns)
@@ -491,6 +500,9 @@ class JoinSpec extends DeeplangIntegTestSupport {
     val ldfCategorized =
       CategoricalMapper(ldf, executionContext.dataFrameBuilder).categorized(column1)
 
+    val lcm = CategoricalMetadata(ldfCategorized)
+    val lMapping = lcm.mapping(0)
+
     // Right dataframe
     val colsR = Vector(column1, "owner")
     val schemaR = StructType(Seq(
@@ -506,15 +518,24 @@ class JoinSpec extends DeeplangIntegTestSupport {
     val rdfCategorized =
       CategoricalMapper(rdf, executionContext.dataFrameBuilder).categorized(column1)
 
+    val rcm = CategoricalMetadata(rdfCategorized)
+    val rMapping = rcm.mapping(column1)
+
+    val merged = lMapping.mergeWith(rMapping)
+    val finalMapping = merged.finalMapping
+
     // join dataframe
-    val joinRows = Seq.empty[Row]
-    val joinSchema = StructType(schemaL.fields ++ schemaR.fields.filterNot(_.name == column1))
+    val joinRows = Seq(
+      (null, null)
+    ).map(Row.fromTuple)
+    val joinSchema = StructType(Seq(StructField(colsL(0), IntegerType)) ++
+      schemaL.fields.tail ++ schemaR.fields.filterNot(_.name == column1))
     val edf = createDataFrame(joinRows, joinSchema)
 
     (ldfCategorized, rdfCategorized, edf, joinColumns)
   }
 
-  def sameColumnNamesFixture(): (DataFrame, DataFrame, DataFrame, Set[String]) = {
+  private def sameColumnNamesFixture(): (DataFrame, DataFrame, DataFrame, Set[String]) = {
     val column1 = "nulls"
     val joinColumns = Set(column1)
 
@@ -555,11 +576,13 @@ class JoinSpec extends DeeplangIntegTestSupport {
     val rdf = createDataFrame(rowsR, schemaR)
 
     // join dataframe
-    val joinRows = Seq.empty[Row]
+    val joinRows = Seq(
+      (null, "s", 1, null, null, null, null)
+    ).map(Row.fromTuple)
     val joinSchema = StructType(schemaL.fields ++
       schemaR.fields.filterNot(_.name == column1).map {
         case s@StructField(name, dataType, _, _) if sameNameColumns.contains((name, dataType)) =>
-          s.copy(name = name + "_1")
+          s.copy(name = name + "_join")
         case s => s
       }
     )
@@ -570,7 +593,7 @@ class JoinSpec extends DeeplangIntegTestSupport {
 
   private def joinWithMultipleColumnSelection(names: Set[String], ids: Set[Int]): Join = {
     val operation = new Join
-    val valueParam = operation.parameters.getColumnSelectorParameter(operation.joinColumns)
+    val valueParam = operation.parameters.getColumnSelectorParameter(Join.joinColumnsParamKey)
     valueParam.value = Some(MultipleColumnSelection(Vector(
       NameColumnSelection(names),
       IndexColumnSelection(ids)
