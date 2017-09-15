@@ -3,10 +3,11 @@
 describe('NotificationService', function() {
   var NotificationService;
   var $rootScope;
+  var $uibModalStack;
   var toastr;
 
   beforeEach(function() {
-    var testModule = angular.module('test', ['ui.router', 'toastr']);
+    var testModule = angular.module('test', ['ui.router', 'ui.bootstrap', 'toastr']);
 
     if (typeof Function.prototype.bind !== 'function') {
       Function.prototype.bind = function() {
@@ -39,6 +40,7 @@ describe('NotificationService', function() {
     angular.mock.inject(function($injector, _NotificationService_) {
       NotificationService = _NotificationService_;
       $rootScope = $injector.get('$rootScope');
+      $uibModalStack = $injector.get('$uibModalStack');
       toastr = $injector.get('toastr');
     });
   });

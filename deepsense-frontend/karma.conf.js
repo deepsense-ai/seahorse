@@ -8,6 +8,8 @@ module.exports = function(config) {
       files: [
         './node_modules/angular/angular.js',
         './node_modules/angular-ui-router/release/angular-ui-router.js',
+        './node_modules/angular-ui-bootstrap/dist/ui-bootstrap.js',
+        './node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js',
         './node_modules/angular-mocks/angular-mocks.js',
         './bower_components/lodash/lodash.min.js',
         './node_modules/deepsense-node-parameters/dist/deepsense-node-parameters.js',

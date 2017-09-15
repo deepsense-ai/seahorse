@@ -1,7 +1,7 @@
 'use strict';
 
 /* @ngInject */
-function AppRun($rootScope) {
+function AppRun($rootScope, $uibModalStack) {
 
   $rootScope.stateData = {
     showView: undefined,
@@ -11,6 +11,10 @@ function AppRun($rootScope) {
   $rootScope.$on('$stateChangeStart', () => {
     $rootScope.stateData.dataIsLoaded = undefined;
     $rootScope.showView = undefined;
+
+    while ($uibModalStack.getTop()) {
+      $uibModalStack.dismiss($uibModalStack.getTop().key);
+    }
   });
 
   $rootScope.$on('$stateChangeSuccess', () => {
