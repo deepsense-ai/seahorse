@@ -164,7 +164,10 @@ class WorkflowsEditorController {
     this._unbindEditorListeners();
     this._editableModeEventListeners = [
       this.$scope.$on(this.Edge.CREATE, (data, args) => {
-        this.getWorkflow().addEdge(args.edge);
+        const workflow = this.getWorkflow();
+        workflow.addEdge(args.edge);
+        this.WorkflowService.updateEdgesStates();
+        this.GraphPanelRendererService.changeEdgesPaintStyles(workflow);
       }),
 
       this.$scope.$on(this.Edge.REMOVE, (data, args) => {
