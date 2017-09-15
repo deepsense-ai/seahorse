@@ -142,5 +142,5 @@ object PythonGateway {
   }
 
   case class GatewayConfig(
-    pyExecutorSetupTimeout: Duration = 5.seconds)
+    pyExecutorSetupTimeout: Duration = 30.seconds)
 }

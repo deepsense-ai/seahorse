@@ -50,6 +50,10 @@ case class SessionExecutor(
     val dOperableCatalog = createDOperableCatalog()
     val dataFrameStorage = new DataFrameStorageImpl
 
+    val pythonExecutionCaretaker =
+      new PythonExecutionCaretaker(pythonExecutorPath, sparkContext, dataFrameStorage)
+    pythonExecutionCaretaker.start()
+
     implicit val system = ActorSystem()
     val statusLogger = system.actorOf(Props[StatusLoggingActor], "status-logger")
     val workflowManagerClientActor = system.actorOf(
@@ -58,10 +62,6 @@ case class SessionExecutor(
         config.getString("workflow-manager.workflows.path"),
         config.getString("workflow-manager.reports.path"),
         graphReader))
-
-    val pythonExecutionCaretaker =
-      new PythonExecutionCaretaker(pythonExecutorPath, sparkContext, dataFrameStorage)
-    pythonExecutionCaretaker.start()
 
     val factory = new ConnectionFactory()
     factory.setHost(messageQueueHost)

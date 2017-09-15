@@ -48,6 +48,11 @@ class PythonExecutionCaretaker(
 
   import PythonExecutionCaretaker._
 
+  def waitForPythonExecutor(): Unit = {
+    pythonGateway.codeExecutor
+    pythonGateway.customOperationExecutor
+  }
+
   def start(): Unit = {
     sys.addShutdownHook {
       pythonGateway.stop()
@@ -56,6 +61,14 @@ class PythonExecutionCaretaker(
 
     pythonGateway.start()
     pyExecutorMonitorThread.start()
+
+    try {
+      waitForPythonExecutor()
+    } catch {
+      case e: Exception =>
+        stop()
+        throw e
+    }
   }
 
   def stop(): Unit = {
@@ -75,14 +88,13 @@ class PythonExecutionCaretaker(
 
   private val pyExecutorProcess = new AtomicReference[Option[Process]](None)
 
-  private def runPyExecutor(gatewayPort: Int): Process = {
-    val pyLogger = ProcessLogger(fout = logger.debug, ferr = logger.error)
-    logger.info(s"Initializing PyExecutor from: $pythonExecutorPath")
-    val pyExecutorFilesPath = if (pythonExecutorPath.endsWith(".jar")) {
+  private def extractPyExecutor(): String = {
+    if (pythonExecutorPath.endsWith(".jar")) {
       val zis: ZipInputStream = new ZipInputStream(new FileInputStream(pythonExecutorPath))
 
       val tempDir = Files.createTempDir()
       logger.info("Created temporary directory for PyExecutor: " + tempDir.getAbsolutePath)
+
       var entry = zis.getNextEntry
       while (entry != null) {
         if (entry.getName.startsWith("pyexecutor/")) {
@@ -102,14 +114,11 @@ class PythonExecutionCaretaker(
         entry = zis.getNextEntry
       }
       zis.close()
-      tempDir + "/pyexecutor/pyexecutor.py"
+
+      s"$tempDir/pyexecutor/pyexecutor.py"
     } else {
       pythonExecutorPath
     }
-    logger.info(s"PyExecutor code is located at: $pyExecutorFilesPath")
-    val command = s"$PythonExecutable $pyExecutorFilesPath --gateway-address localhost:$gatewayPort"
-    logger.info(s"Starting a new PyExecutor process: $command")
-    command run pyLogger
   }
 
   private def transferImpl(in: InputStream, out: OutputStream, close: Boolean): Unit = {
@@ -132,19 +141,31 @@ class PythonExecutionCaretaker(
     }
   }
 
+  private def runPyExecutor(gatewayPort: Int, pythonExecutable: String): Process = {
+    logger.info(s"Initializing PyExecutor from: $pythonExecutorPath")
+    val command =
+      s"$PythonExecutable $pythonExecutable --gateway-address localhost:$gatewayPort"
+    logger.info(s"Starting a new PyExecutor process: $command")
+
+    val pyLogger = ProcessLogger(fout = logger.debug, ferr = logger.error)
+    command run pyLogger
+  }
+
   /**
    * This thread starts PyExecutor in a loop as long
    * as gateway's listening port is available.
    */
   private val pyExecutorMonitorThread = new Thread(new Runnable {
     override def run(): Unit = {
+      val extractedPythonExecutorPath = extractPyExecutor()
+
       @tailrec
       def go(): Unit = {
         pythonGateway.listeningPort match {
           case None =>
             logger.info("Listening port unavailable, not running PyExecutor")
           case Some(port) =>
-            val process = runPyExecutor(port)
+            val process = runPyExecutor(port, extractedPythonExecutorPath)
             pyExecutorProcess.set(Some(process))
             val exitCode = process.exitValue()
             pyExecutorProcess.set(None)
