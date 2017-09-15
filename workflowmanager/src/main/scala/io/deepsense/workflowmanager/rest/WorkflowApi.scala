@@ -280,7 +280,7 @@ abstract class WorkflowApi @Inject() (
   private def selectFormPart(multipartFormData: MultipartFormData, partName: String): String =
     multipartFormData.fields
       .filter(_.name.get == partName)
-      .map(_.entity.asString)
+      .map(_.entity.asString(HttpCharsets.`UTF-8`))
       .mkString
 
   private def workflowFileName(workflow: WorkflowWithVariables): String = {

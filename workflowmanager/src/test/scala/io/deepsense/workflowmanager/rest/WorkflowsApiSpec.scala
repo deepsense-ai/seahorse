@@ -7,6 +7,7 @@ package io.deepsense.workflowmanager.rest
 import scala.collection.concurrent.TrieMap
 import scala.concurrent._
 
+import com.google.common.base.Charsets
 import org.joda.time
 import org.joda.time.DateTime
 import org.mockito.Matchers._
@@ -85,7 +86,7 @@ class WorkflowsApiSpec
   val obsoleteVersionWorkflowResult = obsoleteVersionWorkflow
   val incorrectVersionFormatWorkflowResult = incorrectVersionFormatWorkflow
 
-  def newWorkflowAndKnowledge(apiVersion: String = BuildInfo.version)
+  def newWorkflowAndKnowledge(apiVersion: String = BuildInfo.version, name: String = workflowAName)
       : (Workflow, GraphKnowledge) = {
     val node1 = Node(Node.Id.randomId, FileToDataFrame())
     val node2 = Node(Node.Id.randomId, FileToDataFrame())
@@ -93,7 +94,7 @@ class WorkflowsApiSpec
     val metadata = WorkflowMetadata(WorkflowType.Batch, apiVersion = apiVersion)
     val thirdPartyData = ThirdPartyData(JsObject(
       "gui" -> JsObject(
-        "name" -> JsString(workflowAName)
+        "name" -> JsString(name)
       )
     ).toString)
     val knowledge = graph.inferKnowledge(inferContext)
@@ -641,6 +642,36 @@ class WorkflowsApiSpec
           val resultJs = response.entity.asString.parseJson.asJsObject
           resultJs.fields("knowledge") shouldBe knowledge.results.toJson
           resultJs.fields should contain key "id"
+        }
+        ()
+      }
+    }
+
+    "return correct encoding" when {
+      "workflow with UTF-8 characters is sent" in {
+
+        // scalastyle:off
+        val workflowName = "zażółć gęślą jaźń"
+        // scalastyle:on
+
+        val (createdWorkflow, knowledge) = newWorkflowAndKnowledge(name = workflowName)
+
+        val multipartData = MultipartFormData(Map(
+          "workflowFile" -> BodyPart(HttpEntity(
+            ContentType(MediaTypes.`application/json`),
+            workflowFormat.write(createdWorkflow).toString.getBytes(Charsets.UTF_8))
+          )))
+
+        Post(s"/$apiPrefix/upload", multipartData) ~>
+          addHeaders(
+            RawHeader("X-Auth-Token", validAuthTokenTenantA)) ~> testRoute ~> check {
+          status should be (StatusCodes.Created)
+
+          val savedWorkflow = responseAs[Workflow]
+          val savedName = savedWorkflow.additionalData.data.parseJson.asJsObject
+            .fields("gui").asJsObject
+            .fields("name").asInstanceOf[JsString].value
+          savedName shouldBe workflowName
         }
         ()
       }
