@@ -16,20 +16,20 @@
 
 package io.deepsense.workflowexecutor.executor
 
-import java.io._
 import java.net.InetAddress
 import java.util.concurrent.atomic.AtomicReference
-import java.util.zip.ZipInputStream
 
 import scala.annotation.tailrec
+import scala.collection.JavaConverters._
 import scala.sys.process._
 
-import com.google.common.io.Files
+import com.typesafe.config.ConfigFactory
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.SQLContext
 
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.{CustomOperationExecutor, DataFrameStorage, PythonCodeExecutor}
+import io.deepsense.workflowexecutor.Unzip
 import io.deepsense.workflowexecutor.pythongateway.PythonGateway
 import io.deepsense.workflowexecutor.pythongateway.PythonGateway.GatewayConfig
 
@@ -45,12 +45,15 @@ import io.deepsense.workflowexecutor.pythongateway.PythonGateway.GatewayConfig
  */
 class PythonExecutionCaretaker(
   pythonExecutorPath: String,
+  pySparkPath: String,
   val sparkContext: SparkContext,
   val sqlContext: SQLContext,
   val dataFrameStorage: DataFrameStorage,
   val hostAddress: InetAddress) extends Logging {
 
-  import PythonExecutionCaretaker._
+  val config = ConfigFactory.load.getConfig("pythoncaretaker")
+  val pythonExecutable = config.getString("python-binary")
+  val additionalPythonPath = config.getStringList("pyspark-python-path").asScala
 
   def waitForPythonExecutor(): Unit = {
     pythonGateway.codeExecutor
@@ -94,65 +97,33 @@ class PythonExecutionCaretaker(
 
   private def extractPyExecutor(): String = {
     if (pythonExecutorPath.endsWith(".jar")) {
-      val zis: ZipInputStream = new ZipInputStream(new FileInputStream(pythonExecutorPath))
-
-      val tempDir = Files.createTempDir()
-      logger.info("Created temporary directory for PyExecutor: " + tempDir.getAbsolutePath)
-
-      var entry = zis.getNextEntry
-      while (entry != null) {
-        if (entry.getName.startsWith("pyexecutor/")) {
-          val entryFilename = entry.getName.substring(entry.getName.lastIndexOf('/') + 1)
-          val entryDirName = entry.getName.substring(0, entry.getName.lastIndexOf('/'))
-
-          logger.debug(s"Entry found in jar file: " +
-            s"directory: $entryDirName filename: $entryFilename isDirectory: " + entry.isDirectory)
-
-          new File(tempDir + "/" + entryDirName).mkdirs()
-          if (!entry.isDirectory) {
-            val target = new File(tempDir + "/" + entryDirName, entryFilename)
-            val fos = new BufferedOutputStream(new FileOutputStream(target, true))
-            transferImpl(zis, fos, close = false)
-          }
-        }
-        entry = zis.getNextEntry
-      }
-      zis.close()
-
+      val tempDir = Unzip.unzipToTmp(pythonExecutorPath, _.startsWith("pyexecutor/"))
       s"$tempDir/pyexecutor/pyexecutor.py"
     } else {
       pythonExecutorPath
     }
   }
 
-  private def transferImpl(in: InputStream, out: OutputStream, close: Boolean): Unit = {
-    try {
-      val buffer = new Array[Byte](4096)
-      def read(): Unit = {
-        val byteCount = in.read(buffer)
-        if (byteCount >= 0) {
-          out.write(buffer, 0, byteCount)
-          read()
-        }
-      }
-      read()
-      out.close()
-    }
-    finally {
-      if (close) {
-        in.close()
-      }
-    }
-  }
-
-  private def runPyExecutor(gatewayPort: Int, pythonExecutable: String): Process = {
+  private def runPyExecutor(
+      gatewayPort: Int,
+      pythonExecutorPath: String): Process = {
     logger.info(s"Initializing PyExecutor from: $pythonExecutorPath")
-    val command = s"$PythonExecutable $pythonExecutable " +
+    val command = s"$pythonExecutable $pythonExecutorPath " +
       s"--gateway-address ${hostAddress.getHostAddress}:$gatewayPort"
     logger.info(s"Starting a new PyExecutor process: $command")
 
-    val pyLogger = ProcessLogger(fout = logger.debug, ferr = logger.error)
-    command run pyLogger
+    val pyLogger = ProcessLogger(fout = logger.error, ferr = logger.error)
+    val pythonPathKey = "PYTHONPATH"
+    val pythonPath = Option(System.getenv().get(pythonPathKey))
+
+    val additionalPaths = additionalPythonPath.map(p => s"$pySparkPath/$p")
+
+    val modifiedPythonPath =
+      (pySparkPath +: (additionalPaths ++ pythonPath)).mkString(":")
+
+    val processBuilder: ProcessBuilder =
+      Process(command, None, pythonPathKey -> modifiedPythonPath)
+    processBuilder.run(pyLogger)
   }
 
   /**
@@ -175,6 +146,7 @@ class PythonExecutionCaretaker(
             pyExecutorProcess.set(None)
             logger.info(s"PyExecutor exited with code $exitCode")
 
+            Thread.sleep(250)
             go()
         }
       }
@@ -184,8 +156,4 @@ class PythonExecutionCaretaker(
   })
 
   private def destroyPyExecutorProcess(): Unit = pyExecutorProcess.get foreach { _.destroy() }
-}
-
-object PythonExecutionCaretaker {
-  val PythonExecutable = "python"
 }

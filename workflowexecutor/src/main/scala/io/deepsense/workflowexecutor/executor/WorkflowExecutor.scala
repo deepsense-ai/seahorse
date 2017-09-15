@@ -49,7 +49,8 @@ import io.deepsense.workflowexecutor._
  */
 case class WorkflowExecutor(
     workflow: WorkflowWithVariables,
-    pythonExecutorPath: String)
+    pythonExecutorPath: String,
+    pysparkPath: String)
   extends Executor {
 
   val dOperableCache = mutable.Map[Entity.Id, DOperable]()
@@ -73,6 +74,7 @@ case class WorkflowExecutor(
 
     val pythonExecutionCaretaker = new PythonExecutionCaretaker(
       pythonExecutorPath,
+      pysparkPath,
       sparkContext,
       sqlContext,
       dataFrameStorage,
@@ -143,19 +145,13 @@ object WorkflowExecutor extends Logging {
     timeout = config.getInt("workflow-manager.timeout")
   )
 
-  private val reportPreviewConfig = ReportPreviewConfig(
-    defaultAddress = config.getString("editor.address"),
-    path = config.getString("editor.report-preview.path")
-  )
-
   private val outputFile = "result.json"
 
-
-  def runInNoninteractiveMode(params: ExecutionParams): Unit = {
+  def runInNoninteractiveMode(params: ExecutionParams, pysparkPath: String): Unit = {
     val workflow = loadWorkflow(params)
 
     val executionReport = workflow.map(w => {
-      executeWorkflow(w, params.pyExecutorPath.get)
+      executeWorkflow(w, params.pyExecutorPath.get, pysparkPath)
     })
     val workflowWithResultsFuture = workflow.flatMap(w =>
       executionReport
@@ -236,12 +232,13 @@ object WorkflowExecutor extends Logging {
 
   private def executeWorkflow(
       workflow: WorkflowWithVariables,
-      pythonExecutorPath: String): Try[ExecutionReport] = {
+      pythonExecutorPath: String,
+      pysparkPath: String): Try[ExecutionReport] = {
 
     // Run executor
     logger.info("Executing the workflow.")
     logger.debug("Executing the workflow: " +  workflow)
-    WorkflowExecutor(workflow, pythonExecutorPath).execute()
+    WorkflowExecutor(workflow, pythonExecutorPath, pysparkPath).execute()
   }
 
   private def loadWorkflow(params: ExecutionParams): Future[WorkflowWithVariables] = {

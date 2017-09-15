@@ -46,7 +46,8 @@ import io.deepsense.workflowexecutor.{SessionWorkflowExecutorActorProvider, Work
 case class SessionExecutor(
     messageQueueHost: String,
     pythonExecutorPath: String,
-    sessionId: String)
+    sessionId: String,
+    pySparkPath: String)
   extends Executor {
 
   private val workflowId = Workflow.Id.fromString(sessionId)
@@ -55,7 +56,6 @@ case class SessionExecutor(
   private val keepAliveInterval = config.getInt("keep-alive.interval").seconds
   private val heartbeatInterval = config.getInt("heartbeat.interval").seconds
   private val workflowManagerTimeout = config.getInt("workflow-manager.timeout")
-  private val executorActorInitTimeout = config.getInt("executor-actor.init-timeout").seconds
 
   val graphReader = new GraphReader(createDOperationsCatalog())
 
@@ -74,6 +74,7 @@ case class SessionExecutor(
 
     val pythonExecutionCaretaker = new PythonExecutionCaretaker(
       pythonExecutorPath,
+      pySparkPath,
       sparkContext,
       sqlContext,
       dataFrameStorage,

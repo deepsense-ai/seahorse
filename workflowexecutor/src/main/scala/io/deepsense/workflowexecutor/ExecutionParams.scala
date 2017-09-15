@@ -23,4 +23,5 @@ case class ExecutionParams(
   interactiveMode: Boolean = false,
   messageQueueHost: Option[String] = None,
   pyExecutorPath: Option[String] = None,
-  jobId: Option[String] = None)
+  jobId: Option[String] = None,
+  pySparkPath: Option[String] = None)

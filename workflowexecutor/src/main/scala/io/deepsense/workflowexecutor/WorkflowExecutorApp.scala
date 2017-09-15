@@ -79,6 +79,10 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
       (x, c) => c.copy(pyExecutorPath = Some(x))
     } text "PyExecutor code (included in workflowexecutor.jar) path"
 
+    opt[String]('z', "pyspark-zip-path") valueName "PYSPARKPATH" action {
+      (x, c) => c.copy(pySparkPath = Some(x))
+    } text "Path to zip archive with pyspark"
+
     help("help") text "print this help message and exit"
     version("version") text "print product version and exit"
     note("")
@@ -129,17 +133,26 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
     }
     val params = cmdParams.get
 
-    if (params.interactiveMode) {
-      // Interactive mode (SessionExecutor)
-      SessionExecutor(
-        params.messageQueueHost.get,
-        params.pyExecutorPath.get,
-        params.jobId.get
-      ).execute()
-    } else {
-      // Running in non-interactive mode
-      WorkflowExecutor.runInNoninteractiveMode(params)
+    val pySparkPath = new pyspark.Loader(params.pySparkPath).load
+    pySparkPath match {
+      case Some(path) =>
+        if (params.interactiveMode) {
+          // Interactive mode (SessionExecutor)
+          SessionExecutor(
+            params.messageQueueHost.get,
+            params.pyExecutorPath.get,
+            params.jobId.get,
+            path
+          ).execute()
+        } else {
+          // Running in non-interactive mode
+          WorkflowExecutor.runInNoninteractiveMode(params, path)
+        }
+      case None =>
+        logger.error("Could not found PySpark!")
     }
+
+
   }
 
   def configureLogging(): Unit = {
