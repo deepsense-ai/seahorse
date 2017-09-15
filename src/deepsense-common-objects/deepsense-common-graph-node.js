@@ -14,6 +14,7 @@ angular.module('deepsense.graph-model').
       this.type = options.type;
       this.input = this.fetchPorts('input', options.input);
       this.output = this.fetchPorts('output', options.output);
+      this.originalOutput = _.cloneDeep(this.output, true);
       this.edges = {};
       this.x = options.x;
       this.y = options.y;
