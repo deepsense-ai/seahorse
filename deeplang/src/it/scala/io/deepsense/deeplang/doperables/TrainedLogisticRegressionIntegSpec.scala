@@ -9,7 +9,7 @@ import org.apache.spark.mllib.linalg.{Vector => SparkVector}
 import org.apache.spark.mllib.regression.GeneralizedLinearModel
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
-import org.mockito.Mockito.{times, verify}
+import org.mockito.Mockito.{times, verify, when}
 
 class TrainedLogisticRegressionIntegSpec
   extends TrainedRegressionIntegSpec[LogisticRegressionModel] {
@@ -19,16 +19,22 @@ class TrainedLogisticRegressionIntegSpec
   override val inputVectorsTransformer: (Seq[SparkVector]) => Seq[SparkVector] = identity
 
   override val regressionConstructor: (GeneralizedLinearModel, Seq[String], String) => Scorable =
-    (model, features, target) => TrainedLogisticRegression(
-      Some(model.asInstanceOf[LogisticRegressionModel]),
-      Some(features),
-      Some(target))
+    (model, features, target) => {
+      val castedModel = model.asInstanceOf[LogisticRegressionModel]
+      when(castedModel.clearThreshold()).thenReturn(castedModel)
+      TrainedLogisticRegression(
+        Some(castedModel),
+        Some(features),
+        Some(target))
+    }
 
   override val modelType: Class[LogisticRegressionModel] = classOf[LogisticRegressionModel]
 
   regressionName should {
     "clear Threshold on model" in {
       val model = mock[LogisticRegressionModel]
+      when(model.clearThreshold()).thenReturn(model)
+
       val logisticRegression =
         TrainedLogisticRegression(Some(model), Some(Seq("f1", "f2")), Some("t"))
       val df = createDataFrame(
@@ -41,6 +47,7 @@ class TrainedLogisticRegressionIntegSpec
       logisticRegression.score(executionContext)("prediction")(df)
 
       verify(model, times(1)).clearThreshold()
+      ()
     }
   }
 }

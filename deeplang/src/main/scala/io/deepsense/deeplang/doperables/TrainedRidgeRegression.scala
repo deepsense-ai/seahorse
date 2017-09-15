@@ -8,7 +8,8 @@ import scala.concurrent.Future
 
 import org.apache.spark.mllib.feature.StandardScalerModel
 import org.apache.spark.mllib.linalg.Vector
-import org.apache.spark.mllib.regression.RidgeRegressionModel
+import org.apache.spark.mllib.regression.{GeneralizedLinearModel, RidgeRegressionModel}
+import org.apache.spark.rdd.RDD
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.{DOperable, DMethod1To1, ExecutionContext, Model}
@@ -32,19 +33,9 @@ case class TrainedRidgeRegression(
 
   override def url: Option[String] = physicalPath
 
-  override val score = new DMethod1To1[String, DataFrame, DataFrame] {
+  def preparedModel: GeneralizedLinearModel = model.get
 
-    override def apply(context: ExecutionContext)
-        (predictionColumnName: String)
-        (dataframe: DataFrame): DataFrame =
-      scoreRegression(context)(
-        dataframe,
-        featureColumns.get,
-        targetColumn.get,
-        predictionColumnName,
-        scaler.get.transform,
-        model.get)
-  }
+  def transformFeatures(v: RDD[Vector]): RDD[Vector] = scaler.get.transform(v)
 
   override def report: Report = Report(ReportContent("Report for TrainedRidgeRegression.\n" +
     s"Feature columns: ${featureColumns.get.mkString(", ")}\n" +

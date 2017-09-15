@@ -8,6 +8,8 @@ import scala.concurrent.Future
 
 import org.apache.spark.mllib.classification.LogisticRegressionModel
 import org.apache.spark.mllib.linalg.Vector
+import org.apache.spark.mllib.regression.GeneralizedLinearModel
+import org.apache.spark.rdd.RDD
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.{DOperable, DMethod1To1, ExecutionContext, Model}
@@ -27,23 +29,11 @@ case class TrainedLogisticRegression(
 
   private var physicalPath: Option[String] = None
 
+  def preparedModel: GeneralizedLinearModel = model.get.clearThreshold()
+
+  def transformFeatures(v: RDD[Vector]): RDD[Vector] = v
+
   override def url: Option[String] = physicalPath
-
-  override val score = new DMethod1To1[String, DataFrame, DataFrame] {
-
-    override def apply(context: ExecutionContext)
-        (predictionColumnName: String)
-        (dataFrame: DataFrame): DataFrame = {
-      model.get.clearThreshold()
-      scoreRegression(context)(
-        dataFrame,
-        featureColumns.get,
-        targetColumn.get,
-        predictionColumnName,
-        identity,
-        model.get)
-    }
-  }
 
   override def report: Report = Report(ReportContent("Report for TrainedLogisticRegression.\n" +
     s"Feature columns: ${featureColumns.get.mkString(", ")}\n" +

@@ -24,4 +24,7 @@ object InferenceWarnings {
   def empty: InferenceWarnings = InferenceWarnings(Vector.empty[InferenceWarning])
 
   def apply(warnings: InferenceWarning*): InferenceWarnings = InferenceWarnings(warnings.toVector)
+
+  def flatten(inferenceWarnings: Vector[InferenceWarnings]): InferenceWarnings =
+    InferenceWarnings(inferenceWarnings.map(_.warnings).flatten)
 }

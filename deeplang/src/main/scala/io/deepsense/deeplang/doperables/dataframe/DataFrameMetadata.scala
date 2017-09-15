@@ -4,19 +4,20 @@
 
 package io.deepsense.deeplang.doperables.dataframe
 
-import io.deepsense.deeplang.doperations.exceptions.{ColumnDoesNotExistException, ColumnsDoNotExistException}
-import io.deepsense.deeplang.inference.{MultipleColumnsMayNotExistWarning, SingleColumnMayNotExistWarning}
-import io.deepsense.deeplang.inference.{InferenceWarning, InferenceWarnings}
+import scala.collection.mutable.ListBuffer
+
+import org.apache.spark.sql.types.{StructField, StructType}
+import spray.json._
+
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrameMetadataJsonProtocol._
 import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoriesMapping, MappingMetadataConverter}
-import io.deepsense.deeplang.parameters._
+import io.deepsense.deeplang.doperations.exceptions.{ColumnDoesNotExistException, ColumnsDoNotExistException}
+import io.deepsense.deeplang.inference.exceptions.NameNotUniqueException
+import io.deepsense.deeplang.inference.{InferenceWarning, InferenceWarnings, MultipleColumnsMayNotExistWarning, SingleColumnMayNotExistWarning}
 import io.deepsense.deeplang.parameters.ColumnType.ColumnType
-
-import scala.collection.mutable.ListBuffer
-import spray.json._
-import org.apache.spark.sql.types.{StructField, StructType}
+import io.deepsense.deeplang.parameters._
 
 /**
  * Metadata of DataFrame.
@@ -46,6 +47,22 @@ case class DataFrameMetadata(
     val sortedColumns = columns.values.toList.sortBy(_.index.get)
     val structFields = sortedColumns.map(_.toStructField)
     StructType(structFields)
+  }
+
+  /**
+   * Appends a column to metadata. If column count is exact, index of new column is calculated
+   * precisely. Otherwise index is set to unknown (None). In any case, index provided in metadata
+   * is ignored.
+   * Throws [[NameNotUniqueException]] if name is not unique.
+   */
+  def appendColumn(columnMetadata: ColumnMetadata): DataFrameMetadata = {
+    val newIndex = if (isColumnCountExact) Some(columns.size) else None
+    val columnWithIndex = columnMetadata.withIndex(newIndex)
+    val name = columnMetadata.name
+    if (columns.contains(name)) {
+      throw NameNotUniqueException(name)
+    }
+    copy(columns = columns + (name -> columnWithIndex))
   }
 
   /**
@@ -104,7 +121,7 @@ case class DataFrameMetadata(
     val values = columns.values
     val columnsSortedByIndex = values.filter(_.index.isDefined).toList.sortBy(_.index.get)
     val columnsWithoutIndex = values.filter(_.index.isEmpty).toList
-    return columnsSortedByIndex ++ columnsWithoutIndex
+    columnsSortedByIndex ++ columnsWithoutIndex
   }
 
   /**
@@ -204,6 +221,7 @@ object DataFrameMetadata {
     DOperable.AbstractMetadata.unwrap(jsValue).convertTo[DataFrameMetadata]
   }
 }
+
 /**
  * Represents knowledge about a column in DataFrame.
  */
@@ -224,6 +242,8 @@ sealed trait ColumnMetadata {
    * Assumes that this metadata contains full information.
    */
   private[dataframe] def toStructField: StructField
+
+  def withIndex(index: Option[Int]): ColumnMetadata
 }
 
 case class CommonColumnMetadata(
@@ -236,6 +256,8 @@ case class CommonColumnMetadata(
     name = name,
     dataType = SparkConversions.columnTypeToSparkColumnType(columnType.get)
   )
+
+  def withIndex(index: Option[Int]): ColumnMetadata = copy(index = index)
 }
 
 /**
@@ -258,6 +280,8 @@ case class CategoricalColumnMetadata(
     dataType = SparkConversions.columnTypeToSparkColumnType(columnType.get),
     metadata = MappingMetadataConverter.mappingToMetadata(categories.get)
   )
+
+  def withIndex(index: Option[Int]): ColumnMetadata = copy(index = index)
 }
 
 object CommonColumnMetadata {
