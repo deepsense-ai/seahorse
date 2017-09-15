@@ -153,5 +153,10 @@ object CatalogRecorder {
       DOperationCategories.Transformation,
       "Executes an SQL expression on a DataFrame"
     )
+
+    catalog.registerDOperation[TrainNormalizer](
+      DOperationCategories.Transformation,
+      "Trains Normalizer on a DataFrame"
+    )
   }
 }
