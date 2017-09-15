@@ -45,7 +45,7 @@ gulp.task('clean', function() {
     .pipe(clean({force: true}));
 });
 
-gulp.task('nodemon', function (callback) {
+gulp.task('server', function (callback) {
   var called = false,
       config = {
         execMap: {
@@ -53,46 +53,27 @@ gulp.task('nodemon', function (callback) {
         },
         script: server.path + server.app,
         verbose: true,
-        watch: [server.path]
+        watch: [ server.path ]
       };
 
-
-  // TODO: remove after full login implementation
-  if (gutil.env.host && gutil.env.token) {
-    var args = ['--host', gutil.env.host, '--token', gutil.env.token],
-        apiConfig = require('./server/api/apiConfig.js'),
-        resource;
-    if (gutil.env.deployURL) {
-      args.push('--deployURL');
-      args.push(gutil.env.deployURL);
-    }
-    for (resource in apiConfig.resources) {
-      if (gutil.env['host-' + resource]) {
-        args.push('--host-' + resource);
-        args.push(gutil.env['host-' + resource]);
-      }
-    }
-    config.args = args;
-  }
-
-
-  return nodemon(config).on('start', function () {
+  return nodemon(config).
+    on('start', function () {
       if (!called) {
         callback();
       }
       called = true;
-    })
-    .on('restart', function () {
+    }).
+    on('restart', function () {
       setTimeout(function () {
         browserSync.reload();
       }, BROWSER_SYNC_RELOAD_DELAY);
     });
 });
 
-gulp.task('browser-sync', ['nodemon'], function () {
+gulp.task('browser-sync', function () {
   return browserSync({
     open: !devMode,
-    proxy: config.env.dev.host + ':' + config.env.dev.port
+    proxy: config.env.frontend.host + ':' + config.env.frontend.port
   });
 });
 
@@ -145,11 +126,7 @@ gulp.task('libs:js', function () {
 
 gulp.task('jshint', function () {
   return gulp.src([
-      client.path + client.js,
       server.path + server.js,
-      config.files.tests.e2e,
-      './karma.conf.js',
-      './protractor.conf.js',
       './gulpfile.js'
     ])
     .pipe(jshint())
@@ -192,6 +169,7 @@ gulp.task('build', function (callback) {
     'kill-all-node-instances',
     'clean',
     ['fonts', 'images', 'html', 'less', 'libs:css', 'libs:js', 'jshint', 'browserify'],
+    'server',
     callback
   );
 });

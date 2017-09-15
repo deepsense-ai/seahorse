@@ -5,6 +5,7 @@
  */
 'use strict';
 
+let config = require('./../../../package.json');
 
 /* @ngInject */
 function BaseAPIClientFactory($http, $q) {
@@ -32,7 +33,7 @@ function BaseAPIClientFactory($http, $q) {
     let deferred = $q.defer();
     $http({
       'method': method,
-      'url': url,
+      'url': config.env.proxy.host + ':' + config.env.proxy.port + url,
       'data': data
     }).then((result) => {
       deferred.resolve(result.data);
