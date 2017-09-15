@@ -34,7 +34,7 @@ ColumnListSelectorItem.prototype.serialize = function serialize() {
 ColumnListSelectorItem.getType = () => {
   return {
     'id': 'columnList',
-    'verbose': 'Columns list'
+    'verbose': 'Names list'
   };
 };
 
