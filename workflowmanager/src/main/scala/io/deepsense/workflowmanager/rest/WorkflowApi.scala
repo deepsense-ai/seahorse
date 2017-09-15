@@ -10,6 +10,7 @@ import scala.util.{Failure, Success}
 import com.google.inject.Inject
 import com.google.inject.name.Named
 import org.apache.commons.lang3.StringUtils
+import spray.http.HttpHeaders.`Content-Disposition`
 import spray.http.{MultipartFormData, StatusCodes}
 import spray.json.{JsonParser, ParserInput}
 import spray.routing.{ExceptionHandler, PathMatchers, Route}
@@ -101,10 +102,13 @@ abstract class WorkflowApi @Inject() (
               val workflowId = Id(idParameter)
               get {
                 withUserContext { userContext =>
-                  complete {
-                    workflowManagerProvider
-                      .forContext(userContext)
-                      .download(workflowId)
+                  respondWithHeader(
+                    `Content-Disposition`("attachment", Map("filename" -> "workflow.json"))) {
+                      complete {
+                        workflowManagerProvider
+                          .forContext(userContext)
+                          .download(workflowId)
+                      }
                   }
                 }
               }

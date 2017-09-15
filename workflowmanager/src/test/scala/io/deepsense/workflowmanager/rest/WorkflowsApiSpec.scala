@@ -10,7 +10,7 @@ import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
-import spray.http.HttpHeaders.RawHeader
+import spray.http.HttpHeaders.{`Content-Disposition`, RawHeader}
 import spray.http._
 import spray.json._
 import spray.routing.Route
@@ -257,6 +257,8 @@ class WorkflowsApiSpec
         Get(s"/$apiPrefix/$workflowAId/download?format=json") ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
+          header("Content-Disposition") shouldBe Some(
+            `Content-Disposition`("attachment", Map("filename" -> "workflow.json")))
 
           responseAs[WorkflowWithVariables] shouldBe WorkflowWithVariables(
             workflowAId,
