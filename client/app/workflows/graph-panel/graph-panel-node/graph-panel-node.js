@@ -1,7 +1,7 @@
 'use strict';
 
 /*@ngInject*/
-function GraphNodeView($rootScope, $sce, GraphNode) {
+function GraphNodeView($rootScope, GraphNode) {
   return {
     restrict: 'E',
     scope: {
@@ -11,11 +11,10 @@ function GraphNodeView($rootScope, $sce, GraphNode) {
     templateUrl: 'app/workflows/graph-panel/graph-panel-node/graph-panel-node.html',
     controller: function($scope) {
       $scope.$watch('node.knowledgeErrors', () => {
-        $scope.tooltipMessage = $sce.trustAsHtml(`
-          <div class="text-left--important">
-            ${$scope.node.getFancyKnowledgeErrors()}
-          </div>
-        `);
+        $scope.getTooltipMessage = function() {
+          var errors = $scope.node.getFancyKnowledgeErrors();
+          return errors ? errors : '';
+        };
       });
     },
     link: function(scope, element) {
