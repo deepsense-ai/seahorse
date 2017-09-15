@@ -16,10 +16,9 @@
 
 package io.deepsense.deeplang.doperations.inout
 
-import io.deepsense.deeplang.doperations.readwritedataframe.googlestorage._
 import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
 import io.deepsense.deeplang.params.library.LoadFromLibraryParam
-import io.deepsense.deeplang.params.{Param, StorageType, StringParam}
+import io.deepsense.deeplang.params.{Param, StorageType}
 
 sealed trait InputStorageTypeChoice extends Choice {
   import InputStorageTypeChoice._

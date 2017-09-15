@@ -67,15 +67,14 @@ class ReadDatasource() extends DOperation0To1[DataFrame] with ReadDataSourcePara
       case DatasourceType.JDBC =>
         val jdbcParams = datasource.getParams.getJdbcParams
 
-        // TODO Handle SQL query
-        if (jdbcParams.getQuery != null) {
-          throw new DeepLangException("Query not yet supported")
-        } else {
-          new InputStorageTypeChoice.Jdbc()
-            .setJdbcDriverClassName(jdbcParams.getDriver)
-            .setJdbcTableName(jdbcParams.getTable)
-            .setJdbcUrl(jdbcParams.getUrl)
-        }
+        val from = Option(jdbcParams.getQuery).map(wrapAsSubQuery)
+          .orElse(Option(jdbcParams.getTable))
+          .get
+
+        new InputStorageTypeChoice.Jdbc()
+          .setJdbcDriverClassName(jdbcParams.getDriver)
+          .setJdbcTableName(from)
+          .setJdbcUrl(jdbcParams.getUrl)
 
       case DatasourceType.GOOGLESPREADSHEET =>
         val googleSheetParams = datasource.getParams.getGoogleSpreadsheetParams
@@ -100,6 +99,8 @@ class ReadDatasource() extends DOperation0To1[DataFrame] with ReadDataSourcePara
     case None => throw new DeepLangException(s"Failed to read data source with id = ${getDataSourceId()}")
   }
 
+  private def wrapAsSubQuery(query: String): String =
+    s"($query) as ${UUID.randomUUID.toString.replace("-", "")}"
 }
 
 object ReadDatasource {
