@@ -46,13 +46,13 @@ object InputFileFormatChoice {
   }
   case class Parquet() extends InputFileFormatChoice {
     override val name: String = FileFormat.PARQUET.toString
-    override val params: Array[Param[_]] = declareParams()
+    override val params = declareParams()
   }
   case class Json()
       extends InputFileFormatChoice
       with HasCategoricalColumnsParam {
 
     override val name: String = FileFormat.JSON.toString
-    override val params: Array[Param[_]] = declareParams(categoricalColumns)
+    override val params = declareParams(categoricalColumns)
   }
 }

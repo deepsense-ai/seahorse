@@ -73,23 +73,23 @@ object CsvParameters {
 
     case class Comma() extends ColumnSeparatorChoice {
       override val name = ","
-      override val params: Array[Param[_]] = declareParams()
+      override val params = declareParams()
     }
     case class Semicolon() extends ColumnSeparatorChoice {
       override val name = ";"
-      override val params: Array[Param[_]] = declareParams()
+      override val params = declareParams()
     }
     case class Colon() extends ColumnSeparatorChoice {
       override val name = ":"
-      override val params: Array[Param[_]] = declareParams()
+      override val params = declareParams()
     }
     case class Space() extends ColumnSeparatorChoice {
       override val name = "Space"
-      override val params: Array[Param[_]] = declareParams()
+      override val params = declareParams()
     }
     case class Tab() extends ColumnSeparatorChoice {
       override val name = "Tab"
-      override val params: Array[Param[_]] = declareParams()
+      override val params = declareParams()
     }
     case class Custom() extends ColumnSeparatorChoice {
       override val name = "Custom"
@@ -103,7 +103,7 @@ object CsvParameters {
       def getCustomColumnSeparator: String = $(customColumnSeparator)
       def setCustomColumnSeparator(value: String): this.type = set(customColumnSeparator, value)
 
-      override val params: Array[Param[_]] = declareParams(customColumnSeparator)
+      override val params = declareParams(customColumnSeparator)
     }
   }
 }

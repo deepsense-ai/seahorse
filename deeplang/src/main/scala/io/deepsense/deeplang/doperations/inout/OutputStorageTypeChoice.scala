@@ -50,7 +50,7 @@ object OutputStorageTypeChoice {
     def getFileFormat: OutputFileFormatChoice = $(fileFormat)
     def setFileFormat(value: OutputFileFormatChoice): this.type = set(fileFormat, value)
 
-    override val params: Array[Param[_]] = declareParams(outputFile, fileFormat)
+    override val params = declareParams(outputFile, fileFormat)
   }
 
   case class Jdbc()
@@ -67,6 +67,6 @@ object OutputStorageTypeChoice {
     with CassandraParameters {
 
     override val name: String = StorageType.CASSANDRA.toString
-    override val params: Array[Param[_]] = declareParams(cassandraKeyspace, cassandraTable)
+    override val params = declareParams(cassandraKeyspace, cassandraTable)
   }
 }

@@ -50,7 +50,7 @@ object InputStorageTypeChoice {
     def getFileFormat: InputFileFormatChoice = $(fileFormat)
     def setFileFormat(value: InputFileFormatChoice): this.type = set(fileFormat, value)
 
-    override val params: Array[Param[_]] = declareParams(sourceFile, fileFormat)
+    override val params = declareParams(sourceFile, fileFormat)
   }
 
   case class Jdbc()

@@ -89,11 +89,9 @@ trait Params extends Serializable with ParameterJsonContainer {
   protected def declareParams(params: Param[_]*): Array[Param[_]] = {
     val declaredParamSet = params.toSet
     val reflectionParamSet = getParamsByReflection.toSet
-    if(declaredParamSet != reflectionParamSet) {
-      throw new RuntimeException(
-        s"[${getClass.getName}] Not all parameters {${reflectionParamSet.mkString(", ")}}" +
+    require(declaredParamSet == reflectionParamSet,
+      s"[${getClass.getName}] Not all parameters {${reflectionParamSet.mkString(", ")}}" +
         s" were declared in {${declaredParamSet.mkString(", ")}}")
-    }
     params.toArray
   }
 

@@ -49,6 +49,13 @@ abstract class AbstractChoiceParam[T <: Choice, U](implicit tag: TypeTag[T]) ext
       yield TypeUtils.constructorForType(symbol.typeSignature).getOrElse {
         throw NoArgumentConstructorRequiredException(symbol.asClass.name.decoded)
       }.newInstance().asInstanceOf[T]
+    val allSubclassesDeclared =
+      instances.foldLeft(true)(
+        (acc, instance) => acc && instance.choiceOrder.contains(instance.getClass))
+    require(allSubclassesDeclared,
+      "Not all choices were declared in choiceOrder map. " +
+      s"Declared: {${instances.map(_.getClass.getSimpleName).mkString(", ")}}, " +
+      s"All choices: {${instances.map(_.getClass.getSimpleName).mkString(", ")}}")
     instances.toList.sortBy(choice => choice.choiceOrder.indexOf(choice.getClass))
   }
 

@@ -34,14 +34,14 @@ object OutputFileFormatChoice {
       extends OutputFileFormatChoice
       with CsvParameters {
     override val name: String = FileFormat.CSV.toString
-    override val params: Array[Param[_]] = declareParams(csvColumnSeparator, csvNamesIncluded)
+    override val params = declareParams(csvColumnSeparator, csvNamesIncluded)
   }
   case class Parquet() extends OutputFileFormatChoice {
     override val name: String = FileFormat.PARQUET.toString
-    override val params: Array[Param[_]] = declareParams()
+    override val params = declareParams()
   }
   case class Json() extends OutputFileFormatChoice {
     override val name: String = FileFormat.JSON.toString
-    override val params: Array[Param[_]] = declareParams()
+    override val params = declareParams()
   }
 }

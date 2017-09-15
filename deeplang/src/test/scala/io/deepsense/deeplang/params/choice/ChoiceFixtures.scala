@@ -41,12 +41,12 @@ case class OptionA() extends ChoiceABC {
 
 case class OptionB() extends ChoiceABC {
   override val name = "B"
-  override val params: Array[Param[_]] = declareParams()
+  override val params = declareParams()
 }
 
 case class OptionC() extends ChoiceABC {
   override val name = "C"
-  override val params: Array[Param[_]] = declareParams()
+  override val params = declareParams()
 }
 
 sealed trait BaseChoice extends Choice {
@@ -56,7 +56,7 @@ sealed trait BaseChoice extends Choice {
 
 case class ChoiceWithoutNoArgConstructor(x: String) extends BaseChoice {
   override val name: String = "choiceWithoutNoArgConstructor"
-  override val params: Array[Param[_]] = declareParams()
+  override val params = declareParams()
 }
 
 object ChoiceFixtures {
