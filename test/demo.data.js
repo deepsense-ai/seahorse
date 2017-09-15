@@ -68,10 +68,97 @@ angular.module('test').
                     description: "boolean attr test",
                     default: true,
                     required: true
+                  },
+                  {
+                    name: "inferred_numeric",
+                    type: "numeric",
+                    description: "numeric attr test",
+                    default: 123,
+                    required: true,
+                    isGriddable: true
+                  },
+                  {
+                    "name": "inferred_choice",
+                    "type": "choice",
+                    "description": "sample choice description",
+                    "default": "choice1",
+                    "required": true,
+                    "values": [
+                      {
+                        "name": "choice1",
+                        "schema": [
+                          {
+                            "name": "wrapped default",
+                            "type": "numeric",
+                            "description": "11 desc",
+                            "default": 42,
+                            "required": true,
+                            "isGriddable": true,
+                            "validator": {
+                              "type": "range",
+                              "configuration": {
+                                "begin": 40,
+                                "end": 50,
+                                "beginIncluded": true,
+                                "endIncluded": false,
+                                "step": 2
+                              }
+                            }
+                          },
+                          {
+                            "name": "overriden default",
+                            "type": "numeric",
+                            "description": "11 desc",
+                            "default": 42,
+                            "required": true,
+                            "isGriddable": true,
+                            "validator": {
+                              "type": "range",
+                              "configuration": {
+                                "begin": 40,
+                                "end": 50,
+                                "beginIncluded": true,
+                                "endIncluded": false,
+                                "step": 2
+                              }
+                            }
+                          },
+                          {
+                            "name": "name21",
+                            "type": "string",
+                            "description": "21 desc",
+                            "default": "word123",
+                            "required": true,
+                            "validator": {
+                              "type": "regex",
+                              "configuration": {
+                                "regex": "^word[\\d]+$"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "name": "choice4",
+                        "schema": null
+                      }
+                    ]
                   }
                 ],
                 values: {
-                  "inferred_string": "inferred string value"
+                  "inferred_string": "inferred string value",
+                  "inferred_choice": {
+                    "choice1": {
+                      "overriden default": {
+                        "values": [{
+                          "type": "seq",
+                          "value": {
+                            "sequence": [42, 44, 46, 48]
+                          }
+                        }]
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -500,6 +587,41 @@ angular.module('test').
         operationId: '11111-111111-55555',
         parameters: null,
         state: null
+      },
+      {
+        description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur et harum neque nostrum qui similique soluta veritatis. Doloribus eligendi explicabo illo iure nostrum quas ratione soluta veritatis vero voluptatem? Rem.',
+        id: 'a61a311f-ffc0-71b8-736c-3fb184df8e77',
+        name: 'Test of gridsearch params',
+        uiName: '',
+        color: '#00B1EB',
+        operationId: '11111-111111-33333',
+        parameters: null,
+        state: {
+          "status": "status_failed",
+          "started": "2012-08-20T21:11:09Z",
+          "ended": "2012-08-20T21:12:09Z",
+          "error": {
+            "id": "b23dd1a8-8c41-434a-a465-ebcd9d3ef114",
+            "code": 42,
+            "title": "Question unknown",
+            "message": "Lorem ipsum dolor sit amet, consectetur adipisicing" +
+            " elit. Alias eligendi error nam nulla optio? Aspernatur " +
+            "dignissimos enim facere impedit ipsa ipsam labore, minima " +
+            "nostrum officiis quidem repellat saepe, sit unde. Ad adipisci " +
+            "commodi cum dolorum iusto magnam mollitia nulla vitae, " +
+            "voluptatibus. Adipisci aperiam assumenda consequuntur cum dolor " +
+            "eveniet ex exercitationem harum hic ipsam iusto nostrum quas " +
+            "reprehenderit sapiente sed, totam velit, veritatis! Asperiores " +
+            "autem consequatur, cupiditate deserunt dolorem dolorum fugit " +
+            "iure magnam maxime nemo, non placeat possimus. Architecto " +
+            "assumenda error fuga fugit impedit nemo nihil optio quam quo " +
+            "soluta. Autem deleniti exercitationem expedita explicabo labore " +
+            "laboriosam laudantium reiciendis tenetur voluptatum.",
+            "details": {
+            }
+          }
+        },
+        stateDetails: null
       }
     ];
 
@@ -909,6 +1031,40 @@ angular.module('test').
           "default": "asd",
           "required": true
         }
+      ],
+      [
+        {
+          "name": "selectors-single-test",
+          "type": "selector",
+          "description": "sample desc",
+          "portIndex": 1,
+          "default": null,
+          "required": true,
+          "isSingle": true
+        },
+        {
+          name: "multiple-numeric-test",
+          type: "multipleNumeric",
+          description: "This tests standalone multiple numeric param",
+          default: null,
+          required: true
+        },
+        {
+          name: "gridsearch-param-test",
+          type: "gridSearch",
+          description: "this tests gridSearch param when params are inferred",
+          inputPort: 0,
+          default: null,
+          required: true
+        },
+        {
+          name: "gridsearch-param-test-1",
+          type: "gridSearch",
+          description: "this tests gridSearch param when params are NOT inferred",
+          inputPort: 1,
+          default: null,
+          required: true
+        }
       ]
     ];
 
@@ -1006,7 +1162,21 @@ angular.module('test').
           "value": 1
         }
       },
-      {"Sample workflow": {}}
+      {"Sample workflow": {}},
+      {
+        "selectors-single-test": {
+          "type": "index",
+          "value": 1
+        },
+        "multiple-numeric-test": {
+          values: [{
+            type: "seq",
+            value: {
+              sequence: [ -0.1, 0.0, 0.1 ]
+            }
+          }]
+        }
+      }
     ];
 
     // Mocked node. It can return its id and incomingKnowledge.

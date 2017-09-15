@@ -1,6 +1,13 @@
 <div id="attributes-list-{{ :: $id }}" class="attributes-list">
   <div class="ibox parameter-item" ng-repeat="parameter in parametersList.parameters">
     <div class="ibox-title" label-to-first-unlabeled>
+      <i class="fa fa-table"
+         ng-if="::parameter.schema.isGrid"
+         style="margin-right: 5px"
+         popover-placement="left"
+         uib-popover="This parameter is dedicated for Grid Search. It accepts multiple values separated by commas."
+         popover-trigger="mouseenter"
+         popover-append-to-body="true"></i>
       <label>
         {{ ::parameter.name }}
       </label>
@@ -24,6 +31,8 @@
         <attribute-selector-type ng-switch-when="selector"></attribute-selector-type>
         <attribute-multiplier-type ng-switch-when="multiplier"></attribute-multiplier-type>
         <attribute-dynamic-param-type ng-switch-when="dynamic"></attribute-dynamic-param-type>
+        <attribute-gridsearch-param-type ng-switch-when="gridSearch"></attribute-gridsearch-param-type>
+        <attribute-multiple-numeric-type ng-switch-when="multipleNumeric"></attribute-multiple-numeric-type>
       </div>
     </div>
   </div>

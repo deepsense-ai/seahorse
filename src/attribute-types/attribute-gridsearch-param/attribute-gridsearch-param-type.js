@@ -1,11 +1,11 @@
 'use strict';
 
 /*@ngInject*/
-function AttributeDynamicParamType($compile, DynamicParamTypeService) {
+function AttributeGridSearchParamType($compile, DynamicParamTypeService) {
 
   return {
     restrict: 'E',
-    templateUrl: 'attribute-types/attribute-dynamic-param/attribute-dynamic-param-type.html',
+    templateUrl: 'attribute-types/attribute-gridsearch-param/attribute-gridsearch-param-type.html',
     replace: true,
     scope: true,
     link: (scope, element) => {
@@ -34,4 +34,4 @@ function AttributeDynamicParamType($compile, DynamicParamTypeService) {
 }
 
 angular.module('deepsense.attributes-panel').
-    directive('attributeDynamicParamType', AttributeDynamicParamType);
+directive('attributeGridsearchParamType', AttributeGridSearchParamType);
