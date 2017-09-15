@@ -182,7 +182,6 @@ object WorkflowExecutorActor {
     case class NodeStarted(nodeId: Node.Id) extends Message
     case class NodeCompleted(id: Node.Id, results: NodeExecutionResults) extends Message
     case class NodeFailed(id: Node.Id, cause: Exception) extends Message
-    case class GraphFinished(graph: StatefulGraph, entitiesMap: EntitiesMap) extends Message
   }
 
   def inferenceErrorsDebugDescription(graphKnowledge: GraphKnowledge): FailureDescription = {

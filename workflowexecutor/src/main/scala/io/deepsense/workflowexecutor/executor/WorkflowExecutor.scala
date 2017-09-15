@@ -34,10 +34,11 @@ import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.ReportLevel.ReportLevel
+import io.deepsense.messageprotocol.WorkflowExecutorProtocol.ExecutionStatus
 import io.deepsense.models.entities.Entity
-import io.deepsense.models.json.workflow.exceptions.{WorkflowVersionException, WorkflowVersionFormatException, WorkflowVersionNotFoundException, WorkflowVersionNotSupportedException}
+import io.deepsense.models.json.workflow.exceptions._
 import io.deepsense.models.workflows.{ExecutionReport, WorkflowWithResults, WorkflowWithVariables}
-import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.{GraphFinished, Launch}
+import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.Launch
 import io.deepsense.workflowexecutor.WorkflowExecutorApp._
 import io.deepsense.workflowexecutor.communication.Connect
 import io.deepsense.workflowexecutor.exception.{UnexpectedHttpResponseException, WorkflowExecutionException}
@@ -58,32 +59,33 @@ case class WorkflowExecutor(
     val executionContext = createExecutionContext(reportLevel)
 
     val actorSystem = ActorSystem(actorSystemName)
-    val workflowExecutorActor = actorSystem.actorOf(WorkflowExecutorActor.props(executionContext))
+    val finishedExecutionStatus: Promise[ExecutionStatus] = Promise()
+    val statusReceiverActor =
+      actorSystem.actorOf(StatusReceiverActor.props(finishedExecutionStatus))
+    val workflowExecutorActor =
+      actorSystem.actorOf(WorkflowExecutorActor.props(executionContext, Some(statusReceiverActor)))
 
     val startedTime = DateTimeConverter.now
-
-    val resultPromise: Promise[GraphFinished] = Promise()
     workflowExecutorActor ! Connect(workflow.id)
     workflowExecutorActor ! Launch(workflow.graph)
 
+    logger.debug("Awaiting execution end...")
+    actorSystem.awaitTermination()
 
-    val report = resultPromise.future.value.get match {
+    val report: Try[ExecutionReport] = finishedExecutionStatus.future.value.get match {
       case Failure(exception) => // WEA failed with an exception
         logger.error("WorkflowExecutorActor failed: ", exception)
         throw exception
-      case Success(GraphFinished(graph, entitiesMap)) =>
+      case Success(ExecutionStatus(graphState, nodes, entitiesMap)) =>
         logger.debug(s"WorkflowExecutorActor finished successfully: ${workflow.graph}")
         Try(ExecutionReport(
-          graph.state,
+          graphState,
           startedTime,
           DateTimeConverter.now,
-          graph.states,
+          nodes,
           entitiesMap
         ))
     }
-
-    logger.debug("Awaiting execution end...")
-    actorSystem.awaitTermination()
 
     cleanup(actorSystem, executionContext)
     report
@@ -285,17 +287,17 @@ object WorkflowExecutor extends Logging {
       writerOption.get.close()
       Future.successful(Some(resultsFile.getPath))
     } catch {
-      case e =>
-        writerOption.map {
+      case e: Exception =>
+        writerOption.foreach {
           writer =>
             try {
               writer.close()
             } catch {
-              case e =>
+              case e: Exception =>
                 logger.warn("Exception during emergency closing of PrintWriter", e)
             }
         }
-        return Future.failed(e)
+        Future.failed(e)
     }
   }
 
