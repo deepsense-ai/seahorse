@@ -7,18 +7,32 @@ usesMathJax: true
 includeOperationsMenu: true
 ---
 
-Produces a Mathematical Transformation.
-The Transformation creates a new column basing on a mathematical formula.
-The Transformation can be applied to a [DataFrame](../classes/dataframe.html)
-with [Transform](transform.html)
-operation.
+Applies a mathematical formula to a [DataFrame](../classes/dataframe.html) and produces
+a Transformation that represents the mathematical formula.
+Later on, the Transformation can be applied to a [DataFrame](../classes/dataframe.html)
+with [Transform](transform.html) operation.
 
 
 **Since**: Seahorse 0.4.0
 
 ## Input
 
-Execute Mathematical Transformation does not take any input.
+<table>
+<thead>
+<tr>
+<th style="width:15%">Port</th>
+<th style="width:15%">Type Qualifier</th>
+<th style="width:70%">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>0</code></td>
+<td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
+<td>Input DataFrame.</td>
+</tr>
+</tbody>
+</table>
 
 ## Output
 
@@ -33,8 +47,14 @@ Execute Mathematical Transformation does not take any input.
 <tbody>
 <tr>
 <td><code>0</code></td><td>
+<code><a href="../classes/dataframe.html">DataFrame</a></code></td>
+<td>Results of the transformation.</td>
+</tr>
+<tr>
+<td><code>1</code></td><td>
 <code><a href="../classes/transformer.html">Transformer</a></code></td>
-<td>Transformer that allows to apply the operation on other DataFrames using <a href="transform.html">Transform</a></td>
+<td>Transformer that allows to apply the operation on other DataFrames using
+<a href="transform.html">Transform</a>.</td>
 </tr>
 </tbody>
 </table>
@@ -77,7 +97,8 @@ The name of the new column can be provided in ``column name`` parameter.
 
 The formula parser is case sensitive - function names have to be written in uppercase,
 column names parsing is also case sensitive.
-Comma separated expressions are not valid - ``SIN(someColumn), COS(someColumn)`` will not be parsed properly.
+Comma separated expressions are not valid - ``SIN(someColumn), COS(someColumn)`` will not be parsed
+ properly.
 
 Please make sure that the formula is always producing Double values i.e.
 ``MINIMUM(weight, 2)`` will produce Integer value in some cases,
@@ -96,7 +117,8 @@ Available functions and operators:
 
   - ``EXP(expr: Double)`` returns e to the power of the specified expression
 
-  - ``POW(expr: Double, pow: Double)`` returns the value of the specified expression to the specified power
+  - ``POW(expr: Double, pow: Double)`` returns the value of the specified expression to the
+  specified power
 
   - ``SQRT(expr: Double)`` return the square root of the specified float value.
 
@@ -112,8 +134,117 @@ Available functions and operators:
 
   - ``MAXIMUM(expr1: Double, expr2: Double)`` returns maximum of the given expressions
 
-  - ``CEIL(expr1: Double, expr2: Double)`` returns the smallest integer greater than or equal to the specified numeric expression
+  - ``CEIL(expr1: Double, expr2: Double)`` returns the smallest integer greater than or equal to
+  the specified numeric expression
 
-  - ``FLOOR(expr1: Double, expr2: Double)`` returns the largest integer less than or equal to the numeric expression
+  - ``FLOOR(expr1: Double, expr2: Double)`` returns the largest integer less than or equal to the
+  numeric expression
 
-  - ``SIGNUM(expr: Double)`` returns zero if the argument is zero, 1.0 if the argument is greater than zero, -1.0 if the argument is less than zero
+  - ``SIGNUM(expr: Double)`` returns zero if the argument is zero, 1.0 if the argument is greater
+  than zero, -1.0 if the argument is less than zero
+
+## Example
+
+### Parameters
+
+<table class="table">
+<thead>
+<tr>
+<th style="width:20%">Parameter name</th>
+<th style="width:80%">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>formula</code></td>
+<td>MINIMUM(Weight, 2.0)</td>
+</tr>
+<tr>
+<td><code>column name</code></td>
+<td>WeightCutoff</td>
+</tr>
+</tbody>
+</table>
+
+### Input DataFrame
+<table class="table">
+  <thead>
+  <tr>
+    <th style="width:15%">Animal</th>
+    <th style="width:15%">Kind</th>
+    <th style="width:70%">Weight</th>
+  </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Cow </td>
+      <td>Mammal </td>
+      <td>300.0</td>
+    </tr>
+    <tr>
+      <td>Ostrich </td>
+      <td>Bird </td>
+      <td>0.5</td>
+    </tr>
+    <tr>
+      <td>Dog </td>
+      <td>Mammal </td>
+      <td>5.0</td>
+    </tr>
+    <tr>
+      <td>Sparrow </td>
+      <td>Bird </td>
+      <td>0.5</td>
+    </tr>
+    <tr>
+      <td>Thing </td>
+      <td>null </td>
+      <td>null</td>
+    </tr>
+  </tbody>
+</table>
+
+### Output DataFrame
+
+<table class="table">
+  <thead>
+  <tr>
+    <th style="width:15%">Animal</th>
+    <th style="width:15%">Kind</th>
+    <th style="width:15%">Weight</th>
+    <th style="width:55%">WeightCutoff</th>
+  </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Cow </td>
+      <td>Mammal </td>
+      <td>300.0 </td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <td>Ostrich </td>
+      <td>Bird </td>
+      <td>0.5 </td>
+      <td>0.5</td>
+    </tr>
+    <tr>
+      <td>Dog </td>
+      <td>Mammal </td>
+      <td>5.0 </td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <td>Sparrow </td>
+      <td>Bird </td>
+      <td>0.5 </td>
+      <td>0.5</td>
+    </tr>
+    <tr>
+      <td>Thing </td>
+      <td>null </td>
+      <td>null </td>
+      <td>null</td>
+    </tr>
+  </tbody>
+</table>
