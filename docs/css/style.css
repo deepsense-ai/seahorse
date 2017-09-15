@@ -278,19 +278,22 @@ p.footer-text span {
     font-size: 10px;
   }
 }
-@media (max-width: 900px) {
+/*
+ * Menu dropdown appears at 767px (hard-coded in bootstrap)
+ */
+@media (min-width: 768px) and (max-width: 900px) {
   .nav>li>a {
     font-size: 7px;
   }
 }
-@media (max-width: 800px) {
+@media (max-width: 767px) {
   div#navbar {
     margin-top: 19px;
     background-color: #fff;
     border-bottom: 1px solid;
   }
-  .nav .navbar-inverse .navbar-nav .open .dropdown-menu>li>a {
-    font-size: 5px;
+  .navbar-inverse .navbar-nav .open .dropdown-menu>li>a {
+    font-size: 10px;
   }
   .navbar-nav {
     float: left;
@@ -316,7 +319,6 @@ p.footer-text span {
     display: none;
   }
 }
-
 .sidemenu .menu-group > a {
   color: #00B1EB;
 }
