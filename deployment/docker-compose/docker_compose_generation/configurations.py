@@ -6,9 +6,8 @@ from docker_compose_generation.docker_compose_utils import *
 
 
 class Directories(object):
-    class Volumes(object):
-        library = 'library'
 
+    library = './library'
     data = './data'
     h2_data = './h2-data'
     jars = './jars'
@@ -219,7 +218,7 @@ class SessionManager(Service):
             Directories.expose(Directories.jars, '/resources/jars'),
             Directories.expose(Directories.r_libs, '/opt/R_Libs'),
             Directories.expose(Directories.spark_application_logs, '/spark_applications_logs', 'rw'),
-            Directories.expose(Directories.Volumes.library, '/library')
+            Directories.expose(Directories.library, '/library')
         ]
 
 
@@ -406,7 +405,7 @@ class Library(Service):
 
     def volumes(self):
         return [
-            Directories.expose(Directories.Volumes.library, '/library')
+            Directories.expose(Directories.library, '/library')
         ]
 
 
@@ -523,10 +522,6 @@ class LinuxConfiguration(Configuration):
         DataSourceManager
     ]
 
-    volumes = [
-        Directories.Volumes.library
-    ]
-
 
 class MacConfiguration(Configuration):
 
@@ -543,8 +538,4 @@ class MacConfiguration(Configuration):
         WorkflowManagerBridgeNetwork,
         Database,
         DataSourceManager
-    ]
-
-    volumes = [
-        Directories.Volumes.library
     ]
