@@ -3,7 +3,6 @@
 import _ from 'lodash';
 
 const ZOOM_STEP = 0.1;
-const MAIN_HEADER_HEIGHT = 90;
 
 class EditorController {
   constructor($rootScope, CanvasService, AdapterService, UUIDGenerator, Operations, OperationsHierarchyService, MouseEvent,  $element) {
@@ -40,11 +39,13 @@ class EditorController {
     this.$toolbar = $(this.$element[0].querySelector('canvas-toolbar'));
     //Wheel handling
     this.$canvas.bind('wheel', (e) => {
+      const cursorX = e.originalEvent.clientX - this.$element[0].getBoundingClientRect().left;
+      const cursorY = e.originalEvent.clientY - this.$element[0].getBoundingClientRect().top;
       let zoomDelta = ZOOM_STEP;
       if (e.originalEvent.deltaY < 0) {
         zoomDelta = -1 * ZOOM_STEP;
       }
-      this.CanvasService.centerZoom(zoomDelta);
+      this.CanvasService.zoomToPosition(zoomDelta, cursorX, cursorY);
     });
 
     // Drag handling in JSPlumb
@@ -192,75 +193,6 @@ class EditorController {
       }
     });
     return portIndex;
-  }
-
-  //TODO move it to service which is aware of endpoints and nodes
-  getTypeQualifierForEndpoint(endpoint) {
-    const node = this.workflow.getNodeById(endpoint.getParameter('nodeId'));
-    const port = node.originalOutput[endpoint.getParameter('portIndex')];
-
-    return [...port.typeQualifier];
-  }
-
-  //TODO move it to service which is aware of endpoints and their params
-  getAvailableOperations(workflow, sourceEndpoint) {
-    const sourceNodeId = sourceEndpoint.getParameter('nodeId');
-    const sourceNode = workflow.getNodeById(sourceNodeId);
-    const sourcePortIndex = sourceEndpoint.getParameter('portIndex');
-    const sourcePort = sourceNode.output[sourcePortIndex];
-
-
-    const operations = this.Operations.getData();
-    const operationsMatch = [];
-    _.forEach(operations, (operation) => {
-      const inputMatches = _.reduce(operation.ports.input, (acc, input) => {
-        const typesMatch = _.every(_.map(
-          sourcePort.typeQualifier,
-          typeQualifier => this.OperationsHierarchyService.IsDescendantOf(typeQualifier, input.typeQualifier)
-        ));
-
-        acc.push(typesMatch);
-
-        return acc;
-      }, []);
-      operationsMatch[operation.id] = _.some(inputMatches);
-    });
-
-    return operationsMatch;
-  }
-
-  showTooltip(portEl, portObject) {
-    this.portElement = portEl;
-    this.portObject = portObject;
-    this.isTooltipVisible = true;
-
-    this.tooltipX = this.getPositionX();
-    this.tooltipY = this.getPositionY();
-  }
-
-  hideTooltip() {
-    this.portElement = null;
-    this.portObject = null;
-    this.isTooltipVisible = false;
-  }
-
-  getPositionX() {
-    return Math.round(
-      this.portElement.getBoundingClientRect()
-        .left +
-      this.portElement.getBoundingClientRect()
-        .width
-    );
-  }
-
-  getPositionY() {
-    const adjustment = (this.portObject.type === 'input') ? -5 : 5;
-
-    return Math.round(
-      this.portElement.getBoundingClientRect()
-        .top - MAIN_HEADER_HEIGHT
-      + adjustment
-    );
   }
 
   //TODO move it to service which is aware of endpoints and nodes

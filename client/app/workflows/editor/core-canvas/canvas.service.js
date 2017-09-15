@@ -129,14 +129,18 @@ class CanvasService {
     })
   }
 
-  centerZoom(zoomDelta) {
+  zoomToPosition(zoomDelta, posX, posY) {
     const initialScale = this.scale;
     this.setZoom(this.scale + zoomDelta);
     const ratio = this.scale / initialScale;
     this.setPosition({
-      x: this.slidingWindowSize.width/2 -(this.slidingWindowSize.width/2 - this.slidingWindowPosition.x) * ratio,
-      y: this.slidingWindowSize.height/2- (this.slidingWindowSize.height/2 - this.slidingWindowPosition.y) * ratio
+      x: posX - (posX - this.slidingWindowPosition.x) * ratio,
+      y: posY - (posY - this.slidingWindowPosition.y) * ratio
     })
+  }
+
+  centerZoom(zoomDelta) {
+    this.zoomToPosition(zoomDelta, this.slidingWindowSize.width/2, this.slidingWindowSize.height/2);
   }
 
   translatePosition(x, y) {
