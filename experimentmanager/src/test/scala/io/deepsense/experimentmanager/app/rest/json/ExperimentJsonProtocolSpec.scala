@@ -22,19 +22,23 @@ import io.deepsense.experimentmanager.{StandardSpec, UnitTestSupport}
 import io.deepsense.graph.{Edge, Endpoint, Graph, Node}
 import io.deepsense.graphjson.GraphJsonProtocol.GraphReader
 
-class RestJsonProtocolSpec
+class ExperimentJsonProtocolSpec
   extends StandardSpec
   with UnitTestSupport
-  with RestJsonProtocol
+  with ExperimentJsonProtocol
   with HierarchyDescriptorJsonProtocol {
 
   val operable = mock[DOperable]
 
   val dOperableCatalog = mock[DOperableCatalog]
-  when(dOperableCatalog.concreteSubclassesInstances(any(classOf[ru.TypeTag[DOperable]]))).thenReturn(Set(operable))
+  when(dOperableCatalog.concreteSubclassesInstances(
+    any(classOf[ru.TypeTag[DOperable]]))).thenReturn(Set(operable))
+
   override val inferContext: InferContext = mock[InferContext]
   when(inferContext.dOperableCatalog).thenReturn(dOperableCatalog)
+
   override val graphReader: GraphReader = mock[GraphReader]
+
   val operation1 = mockOperation(0, 1, UUID.randomUUID(), "name1", "version1")
   val operation2 = mockOperation(1, 1, UUID.randomUUID(), "name2", "version2")
   val operation3 = mockOperation(1, 1, UUID.randomUUID(), "name3", "version3")
@@ -98,11 +102,14 @@ class RestJsonProtocolSpec
     val dOperation = mock[DOperation]
     when(dOperation.inArity).thenReturn(inArity)
     when(dOperation.outArity).thenReturn(outArity)
-    when(dOperation.inPortTypes).thenReturn(Vector.fill(inArity)(implicitly[ru.TypeTag[DOperable]]))
-    when(dOperation.outPortTypes).thenReturn(Vector.fill(outArity)(implicitly[ru.TypeTag[DOperable]]))
+    when(dOperation.inPortTypes).thenReturn(
+      Vector.fill(inArity)(implicitly[ru.TypeTag[DOperable]]))
+    when(dOperation.outPortTypes).thenReturn(
+      Vector.fill(outArity)(implicitly[ru.TypeTag[DOperable]]))
     val knowledge = mock[DKnowledge[DOperable]]
     when(knowledge.types).thenReturn(Set[DOperable](mock[DOperable]))
-    when(dOperation.inferKnowledge(anyObject())(anyObject())).thenReturn(Vector.fill(outArity)(knowledge))
+    when(dOperation.inferKnowledge(anyObject())(anyObject())).thenReturn(
+      Vector.fill(outArity)(knowledge))
     when(dOperation.name).thenReturn(name)
     val parametersSchema = mock[ParametersSchema]
     when(dOperation.parameters).thenReturn(parametersSchema)

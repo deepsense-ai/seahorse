@@ -10,35 +10,58 @@ import java.util.UUID
 
 import scala.concurrent._
 
+import org.mockito.Mockito._
+import org.scalatest.Matchers
 import spray.http.StatusCodes
 import spray.json._
 import spray.routing.Route
 
-import io.deepsense.deeplang.catalogs.doperable.{HierarchyDescriptor, DOperableCatalog}
-import io.deepsense.deeplang.catalogs.doperations.{DOperationDescriptor, DOperationsCatalog}
-import io.deepsense.experimentmanager.app.rest.json.{UUIDJsonProtocol, HierarchyDescriptorJsonProtocol, DOperationDescriptorJsonProtocol}
+import io.deepsense.deeplang.catalogs.doperable.{ClassDescriptor, DOperableCatalog, HierarchyDescriptor, TraitDescriptor}
+import io.deepsense.deeplang.catalogs.doperations.{DOperationCategoryNode, DOperationCategory, DOperationDescriptor, DOperationsCatalog}
+import io.deepsense.deeplang.parameters.ParametersSchema
+import io.deepsense.experimentmanager.app.rest.json.{DeepLangJsonProtocol, HierarchyDescriptorJsonProtocol, UUIDJsonProtocol}
 import io.deepsense.experimentmanager.auth.usercontext.{TokenTranslator, UserContext}
 import io.deepsense.experimentmanager.auth.{Authorizator, AuthorizatorProvider, UserContextAuthorizator}
-import io.deepsense.experimentmanager.{CatalogRecorder, StandardSpec, UnitTestSupport}
+import io.deepsense.experimentmanager.{StandardSpec, UnitTestSupport}
 
 class OperationsApiSpec
   extends StandardSpec
   with UnitTestSupport
   with ApiSpecSupport
   with DefaultJsonProtocol
-  with HierarchyDescriptorJsonProtocol
-  with UUIDJsonProtocol {
+  with DeepLangJsonProtocol
+  with Matchers {
 
   val correctTenant: String = "A"
 
   override val authTokens: Map[String, Set[String]] = Map(
     correctTenant -> Set()
   )
+  val dOperableCatalog = mock[DOperableCatalog]
+
+  val hierarchyDescriptorMock = HierarchyDescriptor(
+    Map("test 1" -> TraitDescriptor("trait name", Nil)),
+    Map("test 2" -> ClassDescriptor("class name", None, Nil)))
+  when(dOperableCatalog.descriptor) thenReturn hierarchyDescriptorMock
+
+  val dOperationsCatalog = mock[DOperationsCatalog]
+
+  val existingOperationId = UUID.randomUUID()
+  val mockCategory = mock[DOperationCategory]
+  when(mockCategory.id) thenReturn UUID.randomUUID()
+  when(mockCategory.name) thenReturn "some category name"
+
+  val existingOperationDescriptor = DOperationDescriptor(
+    UUID.randomUUID(), "operation name", "operation description",
+    mockCategory, ParametersSchema(), Nil, Nil)
+
+  val operationsMapMock = Map(existingOperationId -> existingOperationDescriptor)
+  when(dOperationsCatalog.operations) thenReturn operationsMapMock
+
+  val categoryTreeMock = DOperationCategoryNode(Some(mockCategory), Map.empty, Set.empty)
+  when(dOperationsCatalog.categoryTree) thenReturn categoryTreeMock
 
   override def createRestComponent(tokenTranslator: TokenTranslator): Route  = {
-    val dOperableCatalog = new DOperableCatalog()
-    val dOperationsCatalog = DOperationsCatalog()
-    CatalogRecorder.registerDOperables(dOperableCatalog)
     new OperationsApi(
       tokenTranslator,
       dOperableCatalog,
@@ -55,7 +78,7 @@ class OperationsApiSpec
         Get(s"/$apiPrefix/hierarchy") ~>
           addHeader("X-Auth-Token", correctTenant) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
-          responseAs[HierarchyDescriptor]
+          responseAs[HierarchyDescriptor] shouldBe hierarchyDescriptorMock
         }
       }
 
@@ -73,8 +96,8 @@ class OperationsApiSpec
         Get(s"/$apiPrefix") ~>
           addHeader("X-Auth-Token", correctTenant) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
-          implicit val expectedDescriptorsFormat = DOperationDescriptorJsonProtocol.BaseFormat
-          responseAs[Map[UUID, DOperationDescriptor]]
+          implicit val operationDescriptor = DOperationDescriptorBaseFormat
+          responseAs[JsObject] shouldBe operationsMapMock.toJson
         }
       }
 
@@ -92,7 +115,8 @@ class OperationsApiSpec
         Get(s"/$apiPrefix/catalog") ~>
           addHeader("X-Auth-Token", correctTenant) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
-          responseAs[Map[String, JsValue]]
+          implicit val operationDescriptor = DOperationDescriptorShortFormat
+          responseAs[JsObject] shouldBe dOperationsCatalog.categoryTree.toJson
         }
       }
 

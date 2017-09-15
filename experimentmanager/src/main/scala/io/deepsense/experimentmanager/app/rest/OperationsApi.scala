@@ -16,7 +16,7 @@ import spray.routing.PathMatchers
 
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
-import io.deepsense.experimentmanager.app.rest.json.{DOperationCategoryNodeJsonProtocol, DOperationDescriptorJsonProtocol, HierarchyDescriptorJsonProtocol}
+import io.deepsense.experimentmanager.app.rest.json.{DeepLangJsonProtocol, DOperationCategoryNodeJsonProtocol, DOperationDescriptorJsonProtocol, HierarchyDescriptorJsonProtocol}
 import io.deepsense.experimentmanager.auth.AuthorizatorProvider
 import io.deepsense.experimentmanager.auth.usercontext.TokenTranslator
 import io.deepsense.experimentmanager.rest.RestComponent
@@ -33,8 +33,7 @@ class OperationsApi @Inject() (
     (implicit ec: ExecutionContext)
   extends RestService
   with RestComponent
-  with DOperationCategoryNodeJsonProtocol
-  with HierarchyDescriptorJsonProtocol
+  with DeepLangJsonProtocol
   with SprayJsonSupport {
 
   require(StringUtils.isNotBlank(apiPrefix))
@@ -61,7 +60,7 @@ class OperationsApi @Inject() (
           } ~
           pathEnd {
             get {
-              implicit val operationsFormat = DOperationDescriptorJsonProtocol.BaseFormat
+              implicit val operationsFormat = DOperationDescriptorBaseFormat
               withUserContext { userContext =>
                 complete(Future.successful(dOperationsCatalog.operations))
               }

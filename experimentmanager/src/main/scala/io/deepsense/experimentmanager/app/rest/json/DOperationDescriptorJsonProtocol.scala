@@ -17,12 +17,12 @@ import io.deepsense.deeplang.catalogs.doperations.DOperationDescriptor
  * Exposes various json formats of DOperationDescription.
  * Reading from json is not supported.
  */
-object DOperationDescriptorJsonProtocol
+trait DOperationDescriptorJsonProtocol
   extends DefaultJsonProtocol
   with UUIDJsonProtocol
   with SprayJsonSupport {
 
-  class ShortFormat extends RootJsonFormat[DOperationDescriptor] {
+  class DOperationDescriptorShortFormat extends RootJsonFormat[DOperationDescriptor] {
     override def write(obj: DOperationDescriptor): JsValue = {
       JsObject(
         "id" -> obj.id.toJson,
@@ -37,9 +37,9 @@ object DOperationDescriptorJsonProtocol
   /**
    * Only id and name of operation.
    */
-  object ShortFormat extends ShortFormat
+  object DOperationDescriptorShortFormat extends DOperationDescriptorShortFormat
 
-  class BaseFormat extends ShortFormat {
+  class DOperationDescriptorBaseFormat extends DOperationDescriptorShortFormat {
     override def write(obj: DOperationDescriptor): JsValue = {
       JsObject(super.write(obj).asJsObject.fields ++ Map(
         "category" -> obj.category.id.toJson,
@@ -76,14 +76,16 @@ object DOperationDescriptorJsonProtocol
   /**
    * All operation's info except for parameters.
    */
-  object BaseFormat extends BaseFormat
+  object DOperationDescriptorBaseFormat extends DOperationDescriptorBaseFormat
 
   /**
    * Full operation's info.
    */
-  object FullFormat extends BaseFormat {
+  object DOperationDescriptorFullFormat extends DOperationDescriptorBaseFormat {
     override def write(obj: DOperationDescriptor): JsValue = {
       JsObject(super.write(obj).asJsObject.fields.updated("parameters", obj.parameters.toJson))
     }
   }
 }
+
+object DOperationDescriptorJsonProtocol extends DOperationDescriptorJsonProtocol

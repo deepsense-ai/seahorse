@@ -24,7 +24,7 @@ import io.deepsense.experimentmanager.app.exceptions.ExperimentNotFoundException
 import io.deepsense.experimentmanager.app.models.Experiment.Status
 import io.deepsense.experimentmanager.app.models.{Experiment, Id, InputExperiment}
 import io.deepsense.experimentmanager.app.rest.actions.{AbortAction, LaunchAction}
-import io.deepsense.experimentmanager.app.rest.json.RestJsonProtocol
+import io.deepsense.experimentmanager.app.rest.json.{ExperimentJsonProtocol}
 import io.deepsense.experimentmanager.app.{ExperimentManager, ExperimentManagerProvider}
 import io.deepsense.experimentmanager.auth.exceptions.{NoRoleException, ResourceAccessDeniedException}
 import io.deepsense.experimentmanager.auth.usercontext.{Role, CannotGetUserException, TokenTranslator, UserContext}
@@ -32,7 +32,11 @@ import io.deepsense.experimentmanager.{StandardSpec, UnitTestSupport}
 import io.deepsense.graph.{Graph, Node}
 import io.deepsense.graphjson.GraphJsonProtocol.GraphReader
 
-class ExperimentsApiSpec extends StandardSpec with UnitTestSupport with ApiSpecSupport with RestJsonProtocol {
+class ExperimentsApiSpec
+  extends StandardSpec
+  with UnitTestSupport
+  with ApiSpecSupport
+  with ExperimentJsonProtocol {
 
   val catalog = mock[DOperationsCatalog]
   val dOperableCatalog = mock[DOperableCatalog]

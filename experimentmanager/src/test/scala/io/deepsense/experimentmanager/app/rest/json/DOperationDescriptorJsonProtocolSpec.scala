@@ -18,7 +18,11 @@ import spray.json._
 import io.deepsense.deeplang.catalogs.doperations.{DOperationCategory, DOperationDescriptor}
 import io.deepsense.deeplang.parameters.ParametersSchema
 
-class DOperationDescriptorJsonProtocolSpec extends FlatSpec with MockitoSugar with Matchers {
+class DOperationDescriptorJsonProtocolSpec
+  extends FlatSpec
+  with MockitoSugar
+  with Matchers
+  with DOperationDescriptorJsonProtocol {
 
   object HelperTypes {
     class A
@@ -29,14 +33,13 @@ class DOperationDescriptorJsonProtocolSpec extends FlatSpec with MockitoSugar wi
 
   "DOperationDescriptor" should "be correctly serialized to json" in {
     val (operationDescriptor, expectedJson) = operationDescriptorWithExpectedJsRepresentation
-    operationDescriptor.toJson(DOperationDescriptorJsonProtocol.FullFormat) shouldBe expectedJson
+    operationDescriptor.toJson(DOperationDescriptorFullFormat) shouldBe expectedJson
   }
 
   it should "be correctly serialized to json omitting its parameters" in {
     val (operationDescriptor, expectedJson) = operationDescriptorWithExpectedJsRepresentation
     val jsonWithoutParameters = JsObject(expectedJson.asJsObject.fields - "parameters")
-    val baseFormat = DOperationDescriptorJsonProtocol.BaseFormat
-    operationDescriptor.toJson(baseFormat) shouldBe jsonWithoutParameters
+    operationDescriptor.toJson(DOperationDescriptorBaseFormat) shouldBe jsonWithoutParameters
   }
 
   private[this] def operationDescriptorWithExpectedJsRepresentation:

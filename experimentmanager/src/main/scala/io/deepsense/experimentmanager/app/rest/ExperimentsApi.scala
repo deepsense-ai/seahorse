@@ -13,7 +13,7 @@ import com.google.inject.Inject
 import com.google.inject.name.Named
 import org.apache.commons.lang3.StringUtils
 import spray.http.StatusCodes
-import spray.routing.{Directives, ExceptionHandler, MissingHeaderRejection, PathMatchers, RejectionHandler, ValidationRejection}
+import spray.routing.{ExceptionHandler, PathMatchers}
 import spray.util.LoggingContext
 
 import io.deepsense.deeplang.InferContext
@@ -21,10 +21,8 @@ import io.deepsense.experimentmanager.app.ExperimentManagerProvider
 import io.deepsense.experimentmanager.app.exceptions.ExperimentNotFoundException
 import io.deepsense.experimentmanager.app.models.{Experiment, Id, InputExperiment}
 import io.deepsense.experimentmanager.app.rest.actions.Action
-import io.deepsense.experimentmanager.app.rest.json.RestJsonProtocol
-import io.deepsense.experimentmanager.auth.directives.AuthDirectives
-import io.deepsense.experimentmanager.auth.exceptions.{NoRoleException, ResourceAccessDeniedException}
-import io.deepsense.experimentmanager.auth.usercontext.{InvalidTokenException, TokenTranslator}
+import io.deepsense.experimentmanager.app.rest.json.ExperimentJsonProtocol
+import io.deepsense.experimentmanager.auth.usercontext.TokenTranslator
 import io.deepsense.experimentmanager.rest.RestComponent
 import io.deepsense.graphjson.GraphJsonProtocol.GraphReader
 
@@ -38,7 +36,7 @@ class ExperimentsApi @Inject() (
     override val graphReader: GraphReader,
     override val inferContext: InferContext)
     (implicit ec: ExecutionContext)
-  extends RestService with RestComponent with RestJsonProtocol {
+  extends RestService with RestComponent with ExperimentJsonProtocol {
 
   assert(StringUtils.isNoneBlank(apiPrefix))
   private val pathPrefixMatcher = PathMatchers.separateOnSlashes(apiPrefix)
