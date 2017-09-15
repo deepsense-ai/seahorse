@@ -83,10 +83,10 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
     }
     "return workflow from the storage" in {
       when(workflowStorage.get(storedWorkflowId))
-        .thenReturn(Future.successful(Some(storedWorkflow)))
+        .thenReturn(Future.successful(Some(Right(storedWorkflow))))
 
       val eventualWorkflow = workflowManager.get(storedWorkflowId)
-      whenReady(eventualWorkflow) { _.get shouldEqual storedWorkflowWithKnowledge }
+      whenReady(eventualWorkflow) { _.get shouldEqual Right(storedWorkflowWithKnowledge) }
     }
     "delete workflow from the storage" is pending
     "save workflow in storage" is pending

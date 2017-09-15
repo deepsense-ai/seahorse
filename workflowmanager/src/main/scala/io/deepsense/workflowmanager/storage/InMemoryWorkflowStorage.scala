@@ -9,8 +9,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 import io.deepsense.commons.models
-import io.deepsense.models.workflows.{Workflow, WorkflowWithSavedResults}
 import io.deepsense.models.workflows.Workflow._
+import io.deepsense.models.workflows.{Workflow, WorkflowWithSavedResults}
 
 /**
  * Thread-safe, in-memory WorkflowStorage.
@@ -28,8 +28,8 @@ class InMemoryWorkflowStorage extends WorkflowStorage {
     Future.successful(())
   }
 
-  override def get(id: Workflow.Id): Future[Option[Workflow]] = {
-    Future.successful(workflows.get(id).map(_.workflow))
+  override def get(id: Workflow.Id): Future[Option[Either[String, Workflow]]] = {
+    Future.successful(workflows.get(id).map(_.workflow).map(Right(_)))
   }
 
   override def delete(id: Workflow.Id): Future[Unit] = {
@@ -37,8 +37,8 @@ class InMemoryWorkflowStorage extends WorkflowStorage {
   }
 
   override def getLatestExecutionResults(
-      workflowId: Id): Future[Option[WorkflowWithSavedResults]] = {
-    Future(workflows.get(workflowId).flatMap(_.results))
+      workflowId: Id): Future[Option[Either[String, WorkflowWithSavedResults]]] = {
+    Future(workflows.get(workflowId).flatMap(_.results).map(Right(_)))
   }
 
   override def saveExecutionResults(

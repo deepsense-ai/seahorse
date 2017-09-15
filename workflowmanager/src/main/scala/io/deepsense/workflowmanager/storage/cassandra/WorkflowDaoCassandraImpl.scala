@@ -23,7 +23,7 @@ class WorkflowDaoCassandraImpl @Inject() (
     (implicit ec: ExecutionContext)
   extends WorkflowStorage  {
 
-  override def get(id: Workflow.Id): Future[Option[Workflow]] = {
+  override def get(id: Workflow.Id): Future[Option[Either[String, Workflow]]] = {
     Future(session.execute(getWorkflowQuery(id)))
       .map(rs => Option(rs.one()).map(workflowRowMapper.toWorkflow))
   }
@@ -37,7 +37,7 @@ class WorkflowDaoCassandraImpl @Inject() (
   }
 
   override def getLatestExecutionResults(
-      workflowId: Id): Future[Option[WorkflowWithSavedResults]] = {
+      workflowId: Id): Future[Option[Either[String, WorkflowWithSavedResults]]] = {
     Future(session.execute(getResultsQuery(workflowId)))
       .map(rs => Option(rs.one()).flatMap(workflowRowMapper.toWorkflowWithSavedResults))
   }

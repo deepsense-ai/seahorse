@@ -38,21 +38,22 @@ class WorkflowManagerImpl @Inject()(
 
   private def authorizator: Authorizator = authorizatorProvider.forContext(userContextFuture)
 
-  def get(id: Id): Future[Option[WorkflowWithKnowledge]] = {
+  def get(id: Id): Future[Option[Either[String, WorkflowWithKnowledge]]] = {
     logger.debug("Get workflow id: {}", id)
     authorizator.withRole(roleGet) { userContext =>
-      workflowStorage.get(id).map(_.map {
-        workflow => withKnowledge(id, workflow)
-      })
+      workflowStorage.get(id).map {
+        _.map { _.right.map(withKnowledge(id, _)) }
+      }
     }
   }
 
-  def download(id: Id): Future[Option[WorkflowWithVariables]] = {
+  def download(id: Id): Future[Option[Either[String, WorkflowWithVariables]]] = {
     logger.debug("Download workflow id: {}", id)
     authorizator.withRole(roleGet) { userContext =>
-      workflowStorage.get(id).map(_.map {
-        workflow => withVariables(id, workflow)
-      })
+      workflowStorage.get(id).map {
+          _.map { _.right.map(withVariables(id, _))
+        }
+      }
     }
   }
 
@@ -110,14 +111,14 @@ class WorkflowManagerImpl @Inject()(
   }
 
   override def getLatestExecutionReport(
-      workflowId: Workflow.Id): Future[Option[WorkflowWithSavedResults]] = {
+      workflowId: Workflow.Id): Future[Option[Either[String, WorkflowWithSavedResults]]] = {
     authorizator.withRole(roleGet) { userContext =>
       workflowStorage.getLatestExecutionResults(workflowId)
     }
   }
 
   override def getExecutionReport(
-      id: ExecutionReportWithId.Id): Future[Option[WorkflowWithSavedResults]] = {
+      id: ExecutionReportWithId.Id): Future[Option[Either[String, WorkflowWithSavedResults]]] = {
     authorizator.withRole(roleGet) { userContext =>
       workflowResultsStorage.get(id)
     }

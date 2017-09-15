@@ -5,10 +5,19 @@
 package io.deepsense.workflowmanager.rest
 
 import scala.concurrent.ExecutionContext
-import scala.util.{Try, Failure, Success}
+import scala.util.{Failure, Success, Try}
 
 import com.google.inject.Inject
 import com.google.inject.name.Named
+import org.apache.commons.lang3.StringUtils
+import spray.http.HttpHeaders.{`Content-Type`, `Content-Disposition`}
+import spray.http.MediaTypes._
+import spray.http._
+import spray.httpx.unmarshalling.Unmarshaller
+import spray.json._
+import spray.routing.{ExceptionHandler, PathMatchers, Route}
+import spray.util.LoggingContext
+
 import io.deepsense.commons.auth.directives._
 import io.deepsense.commons.auth.usercontext.TokenTranslator
 import io.deepsense.commons.models.Id
@@ -17,17 +26,9 @@ import io.deepsense.graph.CyclicGraphException
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow._
 import io.deepsense.models.workflows._
-import io.deepsense.workflowmanager.ApisModule
 import io.deepsense.workflowmanager.WorkflowManagerProvider
 import io.deepsense.workflowmanager.exceptions._
-import org.apache.commons.lang3.StringUtils
-import spray.http.HttpHeaders.`Content-Disposition`
-import spray.http.MediaTypes._
-import spray.http.{HttpRequestPart, MultipartFormData, StatusCodes}
-import spray.httpx.unmarshalling.Unmarshaller
-import spray.json._
-import spray.routing.{ExceptionHandler, PathMatchers, Route}
-import spray.util.LoggingContext
+import io.deepsense.workflowmanager.util.WorkflowVersionUtil
 
 /**
  * Exposes Workflow Manager through a REST API.
@@ -47,26 +48,33 @@ abstract class WorkflowApi @Inject() (
   with WorkflowWithResultsJsonProtocol
   with MetadataInferenceResultJsonProtocol
   with WorkflowWithSavedResultsJsonProtocol
-  with Cors {
+  with Cors
+  with WorkflowVersionUtil {
 
   self: AbstractAuthDirectives =>
 
   assert(StringUtils.isNoneBlank(workflowsApiPrefix))
   private val workflowsPathPrefixMatcher = PathMatchers.separateOnSlashes(workflowsApiPrefix)
   private val reportsPathPrefixMatcher = PathMatchers.separateOnSlashes(reportsApiPrefix)
-
   private val workflowFileMultipartId = "workflowFile"
+  private val workflowDownloadName = "workflow.json"
 
-  private val MultipartJsValueUnmarshaller: Unmarshaller[JsValue] =
-    Unmarshaller.delegate[MultipartFormData, JsValue](`multipart/form-data`) {
+  private val WorkflowWithResultsUploadUnmarshaller: Unmarshaller[WorkflowWithResults] =
+    Unmarshaller.delegate[MultipartFormData, WorkflowWithResults](`multipart/form-data`) {
       case multipartFormData =>
-        JsonParser(ParserInput(selectFormPart(multipartFormData, workflowFileMultipartId)))
+        val stringData = selectFormPart(multipartFormData, workflowFileMultipartId)
+        versionedWorkflowWithResultsReader.read(JsonParser(ParserInput(stringData)))
     }
 
-  private val JsValueUnmarshaller: Unmarshaller[JsValue] =
-    Unmarshaller.delegate[String, JsValue](`application/json`) { jsonString =>
-      JsonParser(ParserInput(jsonString))
+  private val WorkflowUploadUnmarshaller: Unmarshaller[Workflow] =
+    Unmarshaller.delegate[MultipartFormData, Workflow](`multipart/form-data`) {
+      case multipartFormData =>
+        val stringData = selectFormPart(multipartFormData, workflowFileMultipartId)
+        versionedWorkflowReader.read(JsonParser(ParserInput(stringData)))
     }
+
+  private val versionedWorkflowUnmarashaler: Unmarshaller[Workflow] =
+    sprayJsonUnmarshallerConverter[Workflow](versionedWorkflowReader)
 
   def route: Route = {
     cors {
@@ -91,10 +99,8 @@ abstract class WorkflowApi @Inject() (
               } ~
               put {
                 withUserContext { userContext =>
-                  implicit val unmarshaller = JsValueUnmarshaller
-                  entity(as[JsValue]) { workflowJson =>
-                    checkVersionSupport(workflowJson)
-                    val workflow = workflowJson.convertTo[Workflow]
+                  implicit val unmarshaller = versionedWorkflowUnmarashaler
+                  entity(as[Workflow]) { workflow =>
                     complete {
                       workflowManagerProvider
                         .forContext(userContext)
@@ -127,18 +133,24 @@ abstract class WorkflowApi @Inject() (
                       .forContext(userContext)
                       .download(workflowId)
                   ) {
-                    case Success(workflowWithVariables) => {
-                      if (workflowWithVariables != None) {
-                        complete(
-                          StatusCodes.OK,
-                          Seq(`Content-Disposition`(
-                            "attachment",
-                            Map("filename" -> workflowFileName(workflowWithVariables.get)))),
-                          workflowWithVariables)
+                    case Success(workflowWithVariables) =>
+                      if (workflowWithVariables.isDefined) {
+                        val outputFileName = workflowWithVariables.get match {
+                          case Left(stringWorkflow) => workflowDownloadName
+                          case Right(objectWorkflow) => workflowFileName(objectWorkflow)
+                        }
+                        respondWithMediaType(`application/json`) {
+                          complete(
+                            StatusCodes.OK,
+                            Seq(
+                              `Content-Disposition`(
+                                "attachment",
+                                Map("filename" -> outputFileName))),
+                            workflowWithVariables.get)
+                        }
                       } else {
                         complete(StatusCodes.NotFound)
                       }
-                    }
                     case Failure(exception) => failWith(exception)
                   }
                 }
@@ -147,10 +159,8 @@ abstract class WorkflowApi @Inject() (
             path("upload") {
               post {
                 withUserContext { userContext =>
-                  implicit val unmarshaller = MultipartJsValueUnmarshaller
-                  entity(as[JsValue]) { workflowJson =>
-                    checkVersionSupport(workflowJson)
-                    val workflow = workflowJson.convertTo[Workflow]
+                  implicit val unmarshaller = WorkflowUploadUnmarshaller
+                  entity(as[Workflow]) { workflow =>
                     onComplete(
                       workflowManagerProvider
                         .forContext(userContext)
@@ -177,10 +187,8 @@ abstract class WorkflowApi @Inject() (
             path("report" / "upload") {
               post {
                 withUserContext { userContext =>
-                  implicit val unmarshaller = MultipartJsValueUnmarshaller
-                  entity(as[JsValue]) { workflowJson => {
-                      checkVersionSupport(workflowJson)
-                      val workflowWithResults = workflowJson.convertTo[WorkflowWithResults]
+                  implicit val unmarshaller = WorkflowWithResultsUploadUnmarshaller
+                  entity(as[WorkflowWithResults]) { workflowWithResults => {
                       onComplete(workflowManagerProvider
                         .forContext(userContext)
                         .saveWorkflowResults(workflowWithResults)) {
@@ -195,10 +203,8 @@ abstract class WorkflowApi @Inject() (
             pathEndOrSingleSlash {
               post {
                 withUserContext { userContext =>
-                  implicit val unmarshaller = JsValueUnmarshaller
-                  entity(as[JsValue]) { workflowJson =>
-                    checkVersionSupport(workflowJson)
-                    val workflow = workflowJson.convertTo[Workflow]
+                  implicit val format = versionedWorkflowUnmarashaler
+                  entity(as[Workflow]) { workflow =>
                     onComplete(workflowManagerProvider
                       .forContext(userContext).create(workflow)) {
                       case Success(workflowWithKnowledge) => complete(
@@ -225,10 +231,12 @@ abstract class WorkflowApi @Inject() (
               val reportId = ExecutionReportWithId.Id(idParameter)
               get {
                 withUserContext { userContext =>
-                  respondWithHeader(
-                    `Content-Disposition`("attachment", Map("filename" -> "report.json"))) {
-                    complete {
-                      workflowManagerProvider.forContext(userContext).getExecutionReport(reportId)
+                  respondWithMediaType(`application/json`) {
+                    respondWithHeader(
+                      `Content-Disposition`("attachment", Map("filename" -> "report.json"))) {
+                      complete {
+                        workflowManagerProvider.forContext(userContext).getExecutionReport(reportId)
+                      }
                     }
                   }
                 }
@@ -268,24 +276,8 @@ abstract class WorkflowApi @Inject() (
       .fields("gui").asJsObject
       .fields("name").asInstanceOf[JsString].value) match {
       case Success(name) => name.replaceAll("[^ a-zA-Z0-9.-]", "_") + ".json"
-      case Failure(_) => "workflow.json"
+      case Failure(_) => workflowDownloadName
     }
-  }
-
-
-  private def checkVersionSupport(workflowJson: JsValue) : Unit = {
-    val workflowApiVersion = extractApiVersion(workflowJson)
-    if(workflowApiVersion != ApisModule.SUPPORTED_API_VERSION) {
-      throw new WorkflowVersionNotSupportedException(
-        workflowApiVersion,
-        ApisModule.SUPPORTED_API_VERSION)
-    }
-  }
-
-  private def extractApiVersion(workflowJson: JsValue): String = {
-    workflowJson.asJsObject.fields("metadata")
-        .asJsObject.fields("apiVersion")
-        .asInstanceOf[JsString].value
   }
 }
 

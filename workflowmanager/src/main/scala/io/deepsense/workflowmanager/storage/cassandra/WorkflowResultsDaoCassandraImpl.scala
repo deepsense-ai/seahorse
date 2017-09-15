@@ -12,19 +12,20 @@ import com.datastax.driver.core.querybuilder.{QueryBuilder, Select, Update}
 import com.google.inject.Inject
 import com.google.inject.name.Named
 
-import io.deepsense.models.workflows.{WorkflowWithSavedResults, ExecutionReportWithId}
+import io.deepsense.models.workflows.{ExecutionReportWithId, WorkflowWithSavedResults}
 import io.deepsense.workflowmanager.storage.WorkflowResultsStorage
 
 class WorkflowResultsDaoCassandraImpl @Inject() (
     @Named("cassandra.workflowmanager.workflowresults.table") table: String,
     @Named("WorkflowsSession") session: Session,
-    workflowResultsRowMapper: WorkflowResultsRowMapper)
+    workflowRowMapper: WorkflowRowMapper)
     (implicit ec: ExecutionContext)
   extends WorkflowResultsStorage {
 
-  override def get(id: ExecutionReportWithId.Id): Future[Option[WorkflowWithSavedResults]] = {
+  override def get(
+      id: ExecutionReportWithId.Id): Future[Option[Either[String, WorkflowWithSavedResults]]] = {
     Future(session.execute(getQuery(id)))
-      .map(rs => Option(rs.one()).map(workflowResultsRowMapper.fromRow))
+      .map(rs => Option(rs.one()).flatMap(workflowRowMapper.toWorkflowWithSavedResults))
   }
 
   override def save(results: WorkflowWithSavedResults): Future[Unit] = {
@@ -33,13 +34,13 @@ class WorkflowResultsDaoCassandraImpl @Inject() (
 
   private def getQuery(id: ExecutionReportWithId.Id): Select = {
     QueryBuilder.select().from(table)
-      .where(QueryBuilder.eq(WorkflowResultsRowMapper.Id, id.value))
+      .where(QueryBuilder.eq(WorkflowRowMapper.Id, id.value))
       .limit(1)
   }
 
   private def saveQuery(results: WorkflowWithSavedResults): Update.Where = {
     QueryBuilder.update(table)
-      .`with`(set(WorkflowResultsRowMapper.Results, workflowResultsRowMapper.resultToCell(results)))
-      .where(QueryBuilder.eq(WorkflowResultsRowMapper.Id, results.executionReport.id.value))
+      .`with`(set(WorkflowRowMapper.Results, workflowRowMapper.resultsToCell(results)))
+      .where(QueryBuilder.eq(WorkflowRowMapper.Id, results.executionReport.id.value))
   }
 }

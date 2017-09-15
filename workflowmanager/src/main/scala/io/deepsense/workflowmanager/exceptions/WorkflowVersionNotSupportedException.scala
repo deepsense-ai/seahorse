@@ -4,17 +4,16 @@
 
 package io.deepsense.workflowmanager.exceptions
 
-import io.deepsense.commons.exception.FailureCode
+import io.deepsense.workflowmanager.rest.Version
 
-class WorkflowVersionNotSupportedException(
-    workflowApiVersion: String,
-    supportedApiVersion: String)
-  extends WorkflowManagerException(
-    FailureCode.IncorrectWorkflow,
-    s"API version ${workflowApiVersion} is not supported.",
-    s"API version ${workflowApiVersion} is not supported. " +
-    s"Currently supported version is ${supportedApiVersion}") {
+case class WorkflowVersionNotSupportedException(
+    workflowApiVersion: Version,
+    supportedApiVersion: Version)
+  extends WorkflowVersionException(
+    s"API version ${workflowApiVersion.humanReadable} is not supported.",
+    s"API version ${workflowApiVersion.humanReadable} is not supported. " +
+    s"Currently supported version is ${supportedApiVersion.humanReadable}") {
   override protected def additionalDetails: Map[String, String] =
-    Map("workflowApiVersion" -> workflowApiVersion,
-        "supportedApiVersion" -> supportedApiVersion)
+    Map("workflowApiVersion" -> workflowApiVersion.humanReadable,
+        "supportedApiVersion" -> supportedApiVersion.humanReadable)
 }

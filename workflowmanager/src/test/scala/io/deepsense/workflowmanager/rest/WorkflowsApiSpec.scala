@@ -4,6 +4,7 @@
 
 package io.deepsense.workflowmanager.rest
 
+import scala.collection.concurrent.TrieMap
 import scala.concurrent._
 
 import org.mockito.Matchers._
@@ -19,7 +20,8 @@ import io.deepsense.commons.auth.usercontext.{TokenTranslator, UserContext}
 import io.deepsense.commons.auth.{AuthorizatorProvider, UserContextAuthorizator}
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
-import io.deepsense.commons.{StandardSpec, UnitTestSupport}
+import io.deepsense.commons.models.Id
+import io.deepsense.commons.{models, StandardSpec, UnitTestSupport}
 import io.deepsense.deeplang.DOperationCategories
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
@@ -29,7 +31,7 @@ import io.deepsense.graph._
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow._
 import io.deepsense.models.workflows._
-import io.deepsense.workflowmanager.storage.{InMemoryWorkflowResultsStorage, InMemoryWorkflowStorage, WorkflowStorage}
+import io.deepsense.workflowmanager.storage.{WorkflowResultsStorage, InMemoryWorkflowResultsStorage, InMemoryWorkflowStorage, WorkflowStorage}
 import io.deepsense.workflowmanager.{ApisModule, WorkflowManager, WorkflowManagerImpl, WorkflowManagerProvider}
 
 class WorkflowsApiSpec
@@ -59,6 +61,26 @@ class WorkflowsApiSpec
   val workflowBWithSavedResults = WorkflowWithSavedResults(
     ExecutionReportWithId.Id.randomId,
     newWorkflowWithResults(workflowBId, workflowB))
+
+  val noVersionWorkflowId = Workflow.Id.randomId
+  val obsoleteVersionWorkflowId = Workflow.Id.randomId
+  val incorrectVersionFormatWorkflowId = Workflow.Id.randomId
+  val noVersionWorkflowResultId = Workflow.Id.randomId
+  val obsoleteVersionWorkflowResultId = Workflow.Id.randomId
+  val incorrectVersionFormatWorkflowResultId = Workflow.Id.randomId
+
+  val noVersionWorkflowJson = JsObject("foo" -> JsString("bar"))
+  val obsoleteVersionWorkflowJson =
+    JsObject("metadata" -> JsObject("apiVersion" -> JsString("0.0.0")))
+  val incorrectVersionFormatWorkflowJson =
+    JsObject("metadata" -> JsObject("apiVersion" -> JsString("foobar")))
+
+  val noVersionWorkflow = noVersionWorkflowJson.prettyPrint
+  val obsoleteVersionWorkflow = obsoleteVersionWorkflowJson.prettyPrint
+  val incorrectVersionFormatWorkflow = incorrectVersionFormatWorkflowJson.prettyPrint
+  val noVersionWorkflowResult = noVersionWorkflow
+  val obsoleteVersionWorkflowResult = obsoleteVersionWorkflow
+  val incorrectVersionFormatWorkflowResult = incorrectVersionFormatWorkflow
 
   def newWorkflowAndKnowledge(apiVersion: String = ApisModule.SUPPORTED_API_VERSION)
       : (Workflow, GraphKnowledge) = {
@@ -129,8 +151,7 @@ class WorkflowsApiSpec
 
   override def createRestComponent(tokenTranslator: TokenTranslator): Route = {
     val workflowManagerProvider = mock[WorkflowManagerProvider]
-    val workflowResultsStorage = new InMemoryWorkflowResultsStorage()
-    workflowResultsStorage.save(workflowBWithSavedResults)
+    val workflowResultsStorage = mockResultsStorage()
     when(workflowManagerProvider.forContext(any(classOf[Future[UserContext]])))
       .thenAnswer(new Answer[WorkflowManager]{
       override def answer(invocation: InvocationOnMock): WorkflowManager = {
@@ -286,7 +307,7 @@ class WorkflowsApiSpec
       }
     }
     "return an workflow" when {
-      "auth token is correct, user has roles" in {
+      "auth token is correct, user has roles and version is current" in {
         Get(s"/$apiPrefix/$workflowAId/download?format=json") ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
@@ -302,6 +323,45 @@ class WorkflowsApiSpec
             workflowA.additionalData,
             Variables()
           )
+        }
+        ()
+      }
+      "auth token is correct, user has roles and version is unknown" in {
+        Get(s"/$apiPrefix/$noVersionWorkflowId/download?format=json") ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.OK)
+          header("Content-Disposition") shouldBe Some(
+            `Content-Disposition`(
+              "attachment",
+              Map("filename" -> "workflow.json")))
+
+          responseAs[JsObject] shouldBe noVersionWorkflowJson
+        }
+        ()
+      }
+      "auth token is correct, user has roles and version is in incorrect format" in {
+        Get(s"/$apiPrefix/$incorrectVersionFormatWorkflowId/download?format=json") ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.OK)
+          header("Content-Disposition") shouldBe Some(
+            `Content-Disposition`(
+              "attachment",
+              Map("filename" -> "workflow.json")))
+
+          responseAs[JsObject] shouldBe incorrectVersionFormatWorkflowJson
+        }
+        ()
+      }
+      "auth token is correct, user has roles and version is obsolete" in {
+        Get(s"/$apiPrefix/$obsoleteVersionWorkflowId/download?format=json") ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.OK)
+          header("Content-Disposition") shouldBe Some(
+            `Content-Disposition`(
+              "attachment",
+              Map("filename" -> "workflow.json")))
+
+          responseAs[JsObject] shouldBe obsoleteVersionWorkflowJson
         }
         ()
       }
@@ -351,6 +411,39 @@ class WorkflowsApiSpec
 
           val returnedWorkflow = responseAs[WorkflowWithSavedResults]
           returnedWorkflow.executionReport.id shouldBe workflowBWithSavedResults.executionReport.id
+        }
+        ()
+      }
+      "auth token is correct, user has roles and report has no version" in {
+        Get(s"/$reportsPrefix/$noVersionWorkflowResultId/download") ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.OK)
+          header("Content-Disposition") shouldBe Some(
+            `Content-Disposition`("attachment", Map("filename" -> "report.json")))
+
+          responseAs[JsObject] shouldBe noVersionWorkflowJson
+        }
+        ()
+      }
+      "auth token is correct, user has roles and report has unsupported API version" in {
+        Get(s"/$reportsPrefix/$obsoleteVersionWorkflowResultId/download") ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.OK)
+          header("Content-Disposition") shouldBe Some(
+            `Content-Disposition`("attachment", Map("filename" -> "report.json")))
+
+          responseAs[JsObject] shouldBe obsoleteVersionWorkflowJson
+        }
+        ()
+      }
+      "auth token is correct, user has roles and report has version in incorrect format" in {
+        Get(s"/$reportsPrefix/$incorrectVersionFormatWorkflowResultId/download") ~>
+          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          status should be(StatusCodes.OK)
+          header("Content-Disposition") shouldBe Some(
+            `Content-Disposition`("attachment", Map("filename" -> "report.json")))
+
+          responseAs[JsObject] shouldBe incorrectVersionFormatWorkflowJson
         }
         ()
       }
@@ -704,11 +797,77 @@ class WorkflowsApiSpec
     }
   }
 
+  def mockResultsStorage(): WorkflowResultsStorage = {
+    val storage = new TestResultsStorage()
+    storage.save(workflowBWithSavedResults)
+    storage.saveString(noVersionWorkflowResultId, noVersionWorkflowResult)
+    storage.saveString(obsoleteVersionWorkflowResultId, obsoleteVersionWorkflowResult)
+    storage.saveString(incorrectVersionFormatWorkflowResultId, incorrectVersionFormatWorkflowResult)
+    storage
+  }
+
   def mockStorage(): WorkflowStorage = {
-    val storage = new InMemoryWorkflowStorage()
+    val storage = new TestWorkflowStorage()
     storage.save(workflowAId, workflowA)
     storage.save(workflowBId, workflowB)
     storage.saveExecutionResults(workflowBWithSavedResults)
+
+    storage.saveString(noVersionWorkflowId, noVersionWorkflow)
+    storage.saveString(obsoleteVersionWorkflowId, obsoleteVersionWorkflow)
+    storage.saveString(incorrectVersionFormatWorkflowId, incorrectVersionFormatWorkflow)
     storage
+  }
+
+  class TestResultsStorage extends WorkflowResultsStorage {
+    val storage = new InMemoryWorkflowResultsStorage()
+    val stringStorage: TrieMap[ExecutionReportWithId.Id, String] = TrieMap()
+
+    override def get(
+        id: ExecutionReportWithId.Id): Future[Option[Either[String, WorkflowWithSavedResults]]] = {
+      storage.get(id).map { x =>
+        x.orElse {
+          stringStorage.get(id).map(Left(_))
+        }
+      }
+    }
+
+    override def save(results: WorkflowWithSavedResults): Future[Unit] = {
+      storage.save(results)
+    }
+
+    def saveString(id: Id, results: String): Unit = {
+      stringStorage.put(id, results)
+    }
+  }
+
+  class TestWorkflowStorage extends WorkflowStorage {
+    private val storage = new InMemoryWorkflowStorage()
+    private val stringStorage: TrieMap[models.Id, String] = TrieMap()
+
+    override def get(id: Id): Future[Option[Either[String, Workflow]]] = {
+      storage.get(id).map { _.orElse {
+          stringStorage.get(id).map(Left(_))
+        }
+      }
+    }
+
+    override def getLatestExecutionResults(
+        workflowId: Id): Future[Option[Either[String, WorkflowWithSavedResults]]] = {
+      storage.getLatestExecutionResults(workflowId).map { _.orElse {
+          stringStorage.get(workflowId).map(Left(_))
+        }
+      }
+    }
+
+    override def delete(id: Id): Future[Unit] = storage.delete(id)
+
+    override def saveExecutionResults(results: WorkflowWithSavedResults): Future[Unit] =
+      storage.saveExecutionResults(results)
+
+    override def save(id: Id, workflow: Workflow): Future[Unit] = storage.save(id, workflow)
+
+    def saveString(id: Id, stringWorkflow: String): Future[Unit] = {
+      Future.successful(stringStorage.put(id, stringWorkflow))
+    }
   }
 }

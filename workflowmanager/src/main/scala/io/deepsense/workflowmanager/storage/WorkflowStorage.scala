@@ -15,11 +15,12 @@ import io.deepsense.models.workflows.{Workflow, WorkflowWithSavedResults}
 trait WorkflowStorage {
 
   /**
-   * Returns a workflow with the specified id.
+   * Returns a workflow with the specified id. If the workflow is compatible with the current
+   * API version it is returned as an object otherwise as a string.
    * @param id Id of the workflow.
-   * @return Workflow with the id or None.
+   * @return Workflow with the id as an object or String, or None if the workflow does not exist.
    */
-  def get(id: Id): Future[Option[Workflow]]
+  def get(id: Id): Future[Option[Either[String, Workflow]]]
 
   /**
    * Saves a workflow.
@@ -28,11 +29,13 @@ trait WorkflowStorage {
   def save(id: Id, workflow: Workflow): Future[Unit]
 
   /**
-   * Returns latest execution results for given workflow id.
+   * Returns latest execution results for given workflow id. If the workflow is compatible with the
+   * current API version it is returned as an object otherwise as a string.
    * @param workflowId id of the workflow
    * @return Latest execution results for given workflow.
    */
-  def getLatestExecutionResults(workflowId: Id): Future[Option[WorkflowWithSavedResults]]
+  def getLatestExecutionResults(
+    workflowId: Id): Future[Option[Either[String, WorkflowWithSavedResults]]]
 
   /**
    * Saves a workflow execution results.

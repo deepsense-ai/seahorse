@@ -16,9 +16,9 @@ class InMemoryWorkflowResultsStorage(
   val storage: TrieMap[ExecutionReportWithId.Id, WorkflowWithSavedResults] =
     TrieMap(initState.toSeq: _*)
 
-  override def get(id: ExecutionReportWithId.Id): Future[Option[WorkflowWithSavedResults]] =
-    Future.successful(storage.get(id))
-
+  override def get(
+      id: ExecutionReportWithId.Id): Future[Option[Either[String, WorkflowWithSavedResults]]] =
+    Future.successful(storage.get(id).map(Right(_)))
 
   override def save(results: WorkflowWithSavedResults): Future[Unit] =
     Future.successful(storage.put(results.executionReport.id, results))

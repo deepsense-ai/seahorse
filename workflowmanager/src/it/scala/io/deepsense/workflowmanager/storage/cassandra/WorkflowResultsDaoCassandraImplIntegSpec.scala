@@ -20,6 +20,7 @@ import io.deepsense.deeplang.parameters.{BooleanParameter, ParametersSchema}
 import io.deepsense.graph._
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.workflows._
+import io.deepsense.workflowmanager.rest.Version
 
 class WorkflowResultsDaoCassandraImplIntegSpec
   extends StandardSpec
@@ -34,7 +35,7 @@ class WorkflowResultsDaoCassandraImplIntegSpec
   val catalog = mock[DOperationsCatalog]
   val graphReader: GraphReader = new GraphReader(catalog)
   val inferContext: InferContext = mock[InferContext]
-  val rowMapper = new WorkflowResultsRowMapper(graphReader)
+  val rowMapper = new WorkflowRowMapper(graphReader)
 
   val paramSchema = ParametersSchema("param1" -> new BooleanParameter("desc", None, false, None))
 
@@ -70,7 +71,7 @@ class WorkflowResultsDaoCassandraImplIntegSpec
     "save and get workflow results" in {
       whenReady(workflowResultsDao.save(result)) { _ =>
         whenReady(workflowResultsDao.get(resultId)) { results =>
-          results shouldBe Some(result)
+          results shouldBe Some(Right(result))
         }
       }
     }
@@ -79,7 +80,9 @@ class WorkflowResultsDaoCassandraImplIntegSpec
   def createResult(
       resultId: ExecutionReportWithId.Id,
       graph: Graph): WorkflowWithSavedResults = {
-    val metadata = WorkflowMetadata(apiVersion = "x.x.x", workflowType = WorkflowType.Batch)
+    val metadata = WorkflowMetadata(
+      apiVersion = Version.currentVersion.humanReadable,
+      workflowType = WorkflowType.Batch)
     val thirdPartyData = ThirdPartyData("{}")
     val executionReport: ExecutionReportWithId = ExecutionReportWithId(
       resultId,

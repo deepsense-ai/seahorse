@@ -15,7 +15,7 @@ trait WorkflowResultsStorage {
    * @param id Id of the execution report.
    * @return Execution report.
    */
-  def get(id: ExecutionReportWithId.Id): Future[Option[WorkflowWithSavedResults]]
+  def get(id: ExecutionReportWithId.Id): Future[Option[Either[String, WorkflowWithSavedResults]]]
 
   /**
    * Saves workflow execution report.

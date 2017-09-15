@@ -15,18 +15,20 @@ import io.deepsense.models.workflows._
 trait WorkflowManager {
 
   /**
-   * Returns a workflow with knowledge with the specified Id.
+   * Returns a workflow with knowledge with the specified Id. If the workflow is compatible with
+   * the current API version it is returned as an object otherwise as a string.
    * @param id An identifier of the workflow.
    * @return A workflow with knowledge with the specified Id.
    */
-  def get(id: Id): Future[Option[WorkflowWithKnowledge]]
+  def get(id: Id): Future[Option[Either[String, WorkflowWithKnowledge]]]
 
   /**
-   * Returns a workflow with an empty variables section and specified Id.
+   * Returns a workflow with an empty variables section and specified Id. If the workflow is
+   * compatible with the current API version it is returned as an object otherwise as a string.
    * @param id An identifier of the workflow.
    * @return A workflow with an empty variables section and specified Id.
    */
-  def download(id: Id): Future[Option[WorkflowWithVariables]]
+  def download(id: Id): Future[Option[Either[String, WorkflowWithVariables]]]
 
   /**
    * Updates an workflow.
@@ -60,17 +62,19 @@ trait WorkflowManager {
     workflowWithResults: WorkflowWithResults): Future[WorkflowWithSavedResults]
 
   /**
-   * Get execution report by id.
+   * Gets execution report by id. If the workflow is compatible with the current API version
+   * it is returned as an object otherwise as a string.
    * @param id workflow execution report id
    * @return workflow execution report
    */
-  def getExecutionReport(id: ExecutionReportWithId.Id): Future[Option[WorkflowWithSavedResults]]
+  def getExecutionReport(id: ExecutionReportWithId.Id):
+    Future[Option[Either[String, WorkflowWithSavedResults]]]
 
   /**
    * Returns latest execution report for workflow with given id.
    * @param workflowId id of the workflow.
    * @return Latest execution report.
    */
-  def getLatestExecutionReport(workflowId: Workflow.Id): Future[Option[WorkflowWithSavedResults]]
-
+  def getLatestExecutionReport(workflowId: Workflow.Id):
+    Future[Option[Either[String, WorkflowWithSavedResults]]]
 }

@@ -22,6 +22,7 @@ import io.deepsense.deeplang.parameters.{BooleanParameter, ParametersSchema}
 import io.deepsense.graph.{Edge, Endpoint, Graph, Node, State}
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.workflows._
+import io.deepsense.workflowmanager.rest.Version
 
 
 class WorkflowDaoCassandraImplIntegSpec
@@ -78,14 +79,14 @@ class WorkflowDaoCassandraImplIntegSpec
       val modifiedWorkflow2 = workflow2.copy(additionalData = ThirdPartyData("[]"))
       whenReady(workflowsDao.save(workflow2Id, modifiedWorkflow2)) { _ =>
         whenReady(workflowsDao.get(workflow2Id)) { workflow =>
-          workflow.get shouldBe modifiedWorkflow2
+          workflow.get.right.get shouldBe modifiedWorkflow2
         }
       }
     }
 
     "find workflow by id" in withStoredWorkflows(storedWorkflows) {
       whenReady(workflowsDao.get(workflow1Id)) { workflow =>
-        workflow shouldBe Some(workflow1)
+        workflow shouldBe Some(Right(workflow1))
       }
     }
 
@@ -107,7 +108,7 @@ class WorkflowDaoCassandraImplIntegSpec
         whenReady(workflowsDao.saveExecutionResults(
           executionResults(workflow1Id, workflow1, resultId))) { _ =>
           whenReady(workflowsDao.getLatestExecutionResults(workflow1Id)) { result =>
-            result.get.executionReport.id shouldBe resultId
+            result.get.right.get.executionReport.id shouldBe resultId
           }
         }
       }
@@ -120,7 +121,7 @@ class WorkflowDaoCassandraImplIntegSpec
           whenReady(workflowsDao.saveExecutionResults(
             executionResults(workflow1Id, workflow1, resultId2))) { _ =>
             whenReady(workflowsDao.getLatestExecutionResults(workflow1Id)) { result =>
-              result.get.executionReport.id shouldBe resultId2
+              result.get.right.get.executionReport.id shouldBe resultId2
             }
           }
         }
@@ -161,7 +162,9 @@ class WorkflowDaoCassandraImplIntegSpec
   }
 
   def createWorkflow(graph: Graph): (Workflow.Id, Workflow) = {
-    val metadata = WorkflowMetadata(apiVersion = "x.x.x", workflowType = WorkflowType.Batch)
+    val metadata = WorkflowMetadata(
+      apiVersion = Version.currentVersion.humanReadable,
+      workflowType = WorkflowType.Batch)
     val thirdPartyData = ThirdPartyData("{}")
     (Workflow.Id.randomId, Workflow(metadata, graph, thirdPartyData))
   }
