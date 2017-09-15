@@ -21,7 +21,7 @@ It has to be set to such an IP of the machine with Seahorse that is visible from
 Conveniently, Seahorse allows you to store configurations for various clusters.
 
 <div class="centered-container" markdown="1">
-  ![Cluster Presets](./img/cluster_presets.png){: .centered-image .img-responsive .bordered-image}
+  ![Cluster Presets](/img/cluster_presets.png){: .centered-image .img-responsive .bordered-image}
   *Cluster Presets in Seahorse*
 </div>
 

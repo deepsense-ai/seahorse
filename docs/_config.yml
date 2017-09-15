@@ -18,6 +18,8 @@ collections:
     output: true
   deployment:
     output: true
+  reference:
+    output: true
 
 versions:
   - 1.4

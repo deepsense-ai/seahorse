@@ -22,7 +22,7 @@ This functionality can facilitate integration of Seahorse with other data proces
 and manage the execution of workflows outside of Seahorse Editor.
 
 <div class="centered-container" markdown="1">
-  ![Seahorse Batch Workflow Executor Overview](./img/batch_overview.png){: .centered-image .img-responsive}
+  ![Seahorse Batch Workflow Executor Overview](/img/batch_overview.png){: .centered-image .img-responsive}
   *Seahorse Batch Workflow Executor Overview*
 </div>
 
