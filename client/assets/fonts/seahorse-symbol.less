@@ -1,15 +1,17 @@
-@font-face {
-  font-family: 'seahorse-symbol';
-  src: url('~ASSETS/fonts/seahorse-symbol/seahorse-symbol.eot');
-  src: url('~ASSETS/fonts/seahorse-symbol/seahorse-symbol.woff') format('woff'),
-  url('~ASSETS/fonts/seahorse-symbol/seahorse-symbol.ttf') format('truetype'),
-  url('~ASSETS/fonts/seahorse-symbol/seahorse-symbol.svg') format('svg');
-  font-weight: normal;
-  font-style: normal;
-}
+@import "fonts.less";
+@import "open-sans.variables.less";
 
+
+// Variables
+@seahorsesymbol-font-path: "seahorse-symbol";
+@seahorsesymbol-font-name: "Seahorse Symbol";
+
+// Seahorse Symbol font faces
+.define-font-face(@seahorsesymbol-font-name; @seahorsesymbol-font-path; "seahorse-symbol"; "eot", "woff", "ttf", "svg");
+
+// Seahorse Symbol icon class
 .sa {
-  font: normal normal normal 14px/1 seahorse-symbol;
+  font: normal normal normal 14px/1 @seahorsesymbol-font-name;
   display: inline-block;
   font-size: inherit;
   text-rendering: auto;
@@ -17,13 +19,12 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+// Seahorse Symbol glyphs definitions
 .sa-python:before {
-  font-family: seahorse-symbol;
   content: "\0070";
 }
 
 .sa-r:before {
-  font-family: seahorse-symbol;
   content: "\0072";
 }
 

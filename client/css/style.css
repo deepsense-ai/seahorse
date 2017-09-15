@@ -1,40 +1,10 @@
-@font-face {
-  font-family: 'Open Sans';
-  src: local('Open Sans Semibold'), local('OpenSans-Semibold'),
-  url('~ASSETS/fonts/OpenSans/OpenSans-Semibold.woff2') format('woff2'),
-  url('~ASSETS/fonts/OpenSans/OpenSans-Semibold.woff') format('woff'),
-  url('~ASSETS/fonts/OpenSans/OpenSans-Semibold.ttf') format('truetype');
-  font-weight: 600;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Open Sans';
-  src: local('Open Sans'), local('OpenSans'),
-  url('~ASSETS/fonts/OpenSans/OpenSans.woff2') format('woff2'),
-  url('~ASSETS/fonts/OpenSans/OpenSans.woff') format('woff'),
-  url('~ASSETS/fonts/OpenSans/OpenSans.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Open Sans';
-  src: local('Open Sans Bold'), local('OpenSans-Bold'),
-  url('~ASSETS/fonts/OpenSans/OpenSans-Bold.woff2') format('woff2'),
-  url('~ASSETS/fonts/OpenSans/OpenSans-Bold.woff') format('woff'),
-  url('~ASSETS/fonts/OpenSans/OpenSans-Bold.ttf') format('truetype');
-  font-weight: bold;
-  font-style: normal;
-}
-
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-  font-weight: 100;
+  font-weight: 400;
 }
 
 h1 {
@@ -69,7 +39,7 @@ h5 {
 }
 
 body {
-  font-family: "open sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   background-color: #2f4050;
   font-size: 13px;
   color: #676a6c;
