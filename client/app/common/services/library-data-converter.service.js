@@ -4,41 +4,31 @@
 /* @ngInject */
 function LibraryDataConverter(config, LibraryApiService) {
   const service = this;
-  const Resource = Object.create({}, {
-    uri: {
-      get: function () {
-        return `${config.libraryPrefix}${this.path}`;
-      }
-    }
-  });
-
 
   service.decodeResponseData = decodeResponseData;
-  service.makeItem = makeItem;
+  service.makeLibraryFile = makeLibraryFile;
+
 
   function decodeResponseData(data) {
-    let library = new Map();
+    const library = new Map();
+    const ROOT_DIRECTORY_URI = addDirectoryToLibrary(library, data).uri;
 
-    addDirectoryToLibrary(library, data);
+    library.getRootDirectory = function getRootDirectory() {
+      return library.get(ROOT_DIRECTORY_URI);
+    };
 
     return library;
   }
 
 
   function addDirectoryToLibrary(library, directoryData, parentDirectory) {
-    let directory = makeDirectory(directoryData, parentDirectory);
-
-    if (directory.root) {
-      library.getRootDirectory = function () {
-        return this.get(directory.uri);
-      };
-    }
+    const directory = makeLibraryDirectory(directoryData, parentDirectory);
 
     library.set(directory.uri, directory);
 
     directory.items = directoryData.children.map((child) => {
       if (child.kind === 'file') {
-        return makeItem(child, directory);
+        return makeLibraryFile(child, directory);
       } else {
         return addDirectoryToLibrary(library, child, directory);
       }
@@ -48,26 +38,65 @@ function LibraryDataConverter(config, LibraryApiService) {
   }
 
 
-  function makeDirectory(directory, parentDirectory) {
-    return Object.create(Resource, {
-      root: {value: !parentDirectory},
-      kind: {value: directory.kind, enumerable: true},
-      name: {value: directory.name, enumerable: true},
-      path: {value: makeResourcePath(directory, parentDirectory), enumerable: true},
-      parents: {value: getParentsList(parentDirectory), enumerable: true}
+  function makeLibraryResource(resourceData = {}, parentDirectory = null) {
+    return Object.create({
+      isDirectory: function isDirectory() {
+        return this.kind === 'directory';
+      },
+      isFile: function isFile() {
+        return this.kind === 'file';
+      },
+      isRoot: function isRoot() {
+        return this.isDirectory() && !this.parent;
+      },
+      toString: function toString() {
+        return this.path;
+      }
+    }, {
+      kind: {value: resourceData.kind, enumerable: true},
+      name: {value: resourceData.name, enumerable: true},
+      parent: {value: parentDirectory, enumerable: true},
+      parents: {
+        get: function getParents() {
+          if (this.isRoot()) {
+            return [];
+          }
+          return [...this.parent.parents, this.parent];
+        }
+      },
+      path: {
+        get: function getPath() {
+          if (this.isRoot()) {
+            return '/';
+          }
+          if (this.parent.isRoot()) {
+            return `/${this.name}`;
+          }
+          return `${this.parent.path}/${this.name}`;
+        }
+      },
+      // TODO: remove uri property, use path instead
+      uri: {
+        get: function () {
+          // Dirty hack, but uri will be removed anyway
+          return `${config.libraryPrefix}${this.path}`.replace('///', '//');
+        }
+      }
     });
   }
 
 
-  function makeItem(child, parentDirectory, extraParams) {
+  function makeLibraryDirectory(directoryData, parentDirectory) {
+    return makeLibraryResource(directoryData, parentDirectory);
+  }
+
+
+  function makeLibraryFile(fileData, parentDirectory, extraParams) {
     return Object.assign(
-      Object.create(Resource, {
-        kind: {value: child.kind, enumerable: true},
-        name: {value: child.name, enumerable: true},
-        path: {value: makeResourcePath(child, parentDirectory), enumerable: true},
+      Object.create(makeLibraryResource(fileData, parentDirectory), {
         downloadUrl: {
           get: function () {
-            return `${LibraryApiService.URL}/${this.path}`;
+            return LibraryApiService.getResourceUrl(this.path);
           }
         }
       }),
@@ -75,31 +104,6 @@ function LibraryDataConverter(config, LibraryApiService) {
     );
   }
 
-
-  function makeResourcePath(resource, parentDirectory) {
-    let path = '';
-
-    if (parentDirectory) {
-      path = resource.name;
-      if (!parentDirectory.root) {
-        path = `${parentDirectory.path}/${path}`;
-      }
-    }
-
-    return path;
-  }
-
-
-  function getParentsList(directory) {
-    if (!directory) {
-      return [];
-    }
-
-    return [...directory.parents, {
-      name: directory.name,
-      uri: directory.uri
-    }];
-  }
 }
 
 

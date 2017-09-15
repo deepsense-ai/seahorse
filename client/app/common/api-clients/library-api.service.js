@@ -7,6 +7,7 @@ function LibraryApi($http, config) {
 
   service.addDirectory = addDirectory;
   service.getAll = getAll;
+  service.getResourceUrl = getResourceUrl;
   service.removeFile = removeFile;
   service.uploadFile = uploadFile;
 
@@ -14,13 +15,14 @@ function LibraryApi($http, config) {
   service.remove = remove;
   service.getDownloadUrlForFile = getDownloadUrlForFile;
   service.getUriForFile = getUriForFile;
-  service.URL = URL;
 
 
   function addDirectory(directoryName, parentDirectoryPath) {
-    const newDirectoryUrl = _.compact([URL, parentDirectoryPath, directoryName]).join('/');
+    const directoryPath = parentDirectoryPath +
+      (parentDirectoryPath.endsWith('/') ? '' : '/') +
+      directoryName;
 
-    return $http.post(newDirectoryUrl);
+    return $http.post(getResourceUrl(directoryPath));
   }
 
 
@@ -32,6 +34,11 @@ function LibraryApi($http, config) {
       .then((result) => {
         return result.data;
       });
+  }
+
+
+  function getResourceUrl(resourcePath) {
+    return `${URL}${resourcePath}`;
   }
 
 

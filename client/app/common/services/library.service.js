@@ -82,7 +82,7 @@ function LibraryService($q, $log, LibraryDataConverterService, LibraryApiService
 
   function searchFilesInDirectory(pattern, directoryUri = currentDirectoryUri) {
     let directory = getDirectoryContent(directoryUri);
-    let uriPrefix = directory.uri + (directory.root ? '' : '/');
+    let uriPrefix = directory.uri + (directory.isRoot() ? '' : '/');
     let uriPrefixLength = uriPrefix.length;
     let results = [];
 
@@ -145,7 +145,7 @@ function LibraryService($q, $log, LibraryDataConverterService, LibraryApiService
    */
   function uploadFile(file) {
     const workingDirectory = getDirectoryContent();
-    const uploadingFile = LibraryDataConverterService.makeItem({
+    const uploadingFile = LibraryDataConverterService.makeLibraryFile({
         kind: 'file',
         name: file.name
       },
