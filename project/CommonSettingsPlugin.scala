@@ -33,17 +33,17 @@ object CommonSettingsPlugin extends AutoPlugin {
   override def projectSettings = Seq(
     organization := "io.deepsense",
     // Default scala version
-    scalaVersion := "2.11.6",
+    scalaVersion := "2.11.8",
     // Scala versions used for cross-builds
-    // (use `sbt clean "+ publish"` to publish using scala 2.11.6)
-    crossScalaVersions := Seq("2.10.5", "2.11.6"),
+    // (use `sbt clean "+ publish"` to publish using scala 2.11.8)
+    crossScalaVersions := Seq("2.11.8"),
     scalacOptions := Seq(
       "-unchecked", "-deprecation", "-encoding", "utf8", "-feature",
       "-language:existentials", "-language:implicitConversions"
     ),
     javacOptions ++= Seq(
-      "-source", "1.7",
-      "-target", "1.7"
+      "-source", "1.8",
+      "-target", "1.8"
     ),
     resolvers ++= Dependencies.resolvers,
     // Disable using the Scala version in output paths and artifacts

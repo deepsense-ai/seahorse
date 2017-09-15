@@ -32,7 +32,7 @@ import io.deepsense.deeplang.ExecutionContext
  */
 object DataframeToRawCsvRDD {
 
-  val defaultCsvFormat = com.databricks.spark.csv.defaultCsvFormat
+  // val defaultCsvFormat = com.databricks.spark.csv.defaultCsvFormat
 
   def apply(dataFrame: DataFrame, parameters: Map[String, String] = Map())
            (implicit ctx: ExecutionContext): RDD[String] = {
@@ -70,7 +70,7 @@ object DataframeToRawCsvRDD {
 
     val nullValue = parameters.getOrElse("nullValue", "null")
 
-    val csvFormat = defaultCsvFormat
+    /* val csvFormat = defaultCsvFormat
       .withDelimiter(delimiterChar)
       .withQuote(quoteChar)
       .withEscape(escapeChar)
@@ -91,7 +91,8 @@ object DataframeToRawCsvRDD {
       csvFormat.format(row.toSeq.map(_.asInstanceOf[AnyRef]): _*)
     })
 
-    headerRdd union rowsRdd
+    headerRdd union rowsRdd */
+    null
   }
 
 }

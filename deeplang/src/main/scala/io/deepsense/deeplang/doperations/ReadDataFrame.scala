@@ -24,7 +24,8 @@ import scala.reflect.runtime.{universe => ru}
 
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FileSystem, Path}
-import org.apache.spark.sql.{DataFrame => SparkDataFrame}
+import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
+import org.apache.spark.sql.{Row, DataFrame => SparkDataFrame}
 
 import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
@@ -35,7 +36,7 @@ import io.deepsense.deeplang.doperations.inout.InputFileFormatChoice.Csv
 import io.deepsense.deeplang.doperations.inout._
 import io.deepsense.deeplang.doperations.readwritedataframe._
 import io.deepsense.deeplang.doperations.readwritedataframe.csv.CsvSchemaInferencerAfterReading
-import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.Params
 import io.deepsense.deeplang.params.choice.ChoiceParam
 import io.deepsense.deeplang.{DKnowledge, DOperation0To1, ExecutionContext}

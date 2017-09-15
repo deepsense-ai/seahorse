@@ -42,8 +42,7 @@ class ReadDataFrameWithDriverFilesIntegSpec
     Row("a2", "", "c2"),
     Row("a3", "b3", ""))
 
-  val threeStringsSchema =
-    schemaWithDefaultColumnNames(Seq(StringType, StringType, StringType))
+  val threeStringsSchema = schemaWithDefaultColumnNames(Seq(StringType, StringType, StringType))
 
   "ReadDataFrame" should {
     "read simple csv file with strings" in {

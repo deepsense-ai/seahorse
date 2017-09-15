@@ -17,7 +17,7 @@
 package io.deepsense.deeplang.doperables.spark.wrappers.evaluators
 
 import org.apache.spark.mllib.evaluation.{BinaryClassificationMetrics, MulticlassMetrics}
-import org.apache.spark.mllib.linalg.Vector
+import org.apache.spark.ml.linalg.Vector
 import org.apache.spark.sql.Row
 
 import io.deepsense.commons.types.ColumnType

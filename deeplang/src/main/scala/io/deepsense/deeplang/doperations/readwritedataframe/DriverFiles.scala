@@ -21,8 +21,9 @@ import java.io.PrintWriter
 import scala.io.Source
 import scala.reflect.runtime.{universe => ru}
 
-import com.databricks.spark.csv.{CsvRelation, DeepsenseDefaultSource}
+import org.apache.spark.sql.execution.datasources.csv.CSVRelation
 import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.sources.BaseRelation
 import org.apache.spark.sql.{DataFrame => SparkDataFrame}
 
 import io.deepsense.commons.resources.ManagedResource
@@ -59,10 +60,11 @@ object DriverFiles {
     val lines = Source.fromFile(driverPath).getLines().toStream
     val fileLinesRdd = context.sparkContext.parallelize(lines)
 
-    val relation = DeepsenseDefaultSource.createRelation(
-      context.sparkSession, params, fileLinesRdd
-    ).asInstanceOf[CsvRelation]
-    context.sparkSession.baseRelationToDataFrame(relation)
+    val df = context.sparkSession.read
+      .option("header", csvChoice.getCsvNamesIncluded)
+      // TODO: GZES: sep - separator
+      .csv(driverPath)
+    df
   }
 
   private def readJson(driverPath: String)(implicit context: ExecutionContext) = {

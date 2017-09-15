@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.transformers
 
-import org.apache.spark.mllib.linalg.{VectorUDT, Vectors}
+import org.apache.spark.ml.linalg.Vectors
 import org.apache.spark.sql.types._
 
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.SingleColumnChoice
@@ -50,12 +50,12 @@ class HashingTFTransformerSmokeTest
     )
 
     arrays.zip(Seq(
-      Vectors.sparse(20, Array(3, 7, 15, 16, 19), Array(1.0, 1.0, 1.0, 1.0, 2.0)),
-      Vectors.sparse(20, Array(3, 8, 16, 19), Array(1.0, 1.0, 1.0, 1.0)),
-      Vectors.sparse(20, Array(6), Array(4.0))))
+      Vectors.sparse(20, Array(2, 8, 9), Array(3.0, 2.0, 1.0)),
+      Vectors.sparse(20, Array(4, 8, 9, 11), Array(1.0, 1.0, 1.0, 1.0)),
+      Vectors.sparse(20, Array(3), Array(4.0))))
   }
 
   override def inputType: DataType = ArrayType(StringType)
 
-  override def outputType: DataType = new VectorUDT
+  override def outputType: DataType = new org.apache.spark.hacks.SparkVectors.VectorUDT
 }

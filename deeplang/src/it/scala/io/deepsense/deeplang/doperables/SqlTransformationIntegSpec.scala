@@ -96,7 +96,7 @@ class SqlTransformationIntegSpec extends DeeplangIntegTestSupport with Transform
     }
     "unregister the input DataFrame if execution failed" in {
       val dataFrame = sampleDataFrame
-      a [RuntimeException] should be thrownBy {
+      a [org.apache.spark.sql.catalyst.parser.ParseException] should be thrownBy {
         executeSqlTransformation(invalidExpression, dataFrameId, dataFrame)
       }
       assertTableUnregistered()

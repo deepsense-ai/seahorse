@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.doperables
 
-import org.apache.spark.mllib.linalg.{VectorUDT, Vectors}
+import org.apache.spark.ml.linalg.Vectors
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 
@@ -55,7 +55,7 @@ object NumericToVectorUtils {
    * Converts schema by changing `inputColumn` type to vector
    */
   def convertSchema(schema: StructType, inputColumn: String): StructType = {
-    updateSchema(schema, inputColumn, new VectorUDT())
+    updateSchema(schema, inputColumn, new org.apache.spark.hacks.SparkVectors.VectorUDT())
   }
 
   /**
@@ -116,7 +116,7 @@ object NumericToVectorUtils {
       if (vector != null) {
         Row.fromSeq(r.toSeq.updated(
           columnIdx,
-          vector.asInstanceOf[org.apache.spark.mllib.linalg.Vector].apply(0)))
+          vector.asInstanceOf[org.apache.spark.ml.linalg.Vector].apply(0)))
       } else {
         Row.fromSeq(r.toSeq.updated(columnIdx, null))
       }

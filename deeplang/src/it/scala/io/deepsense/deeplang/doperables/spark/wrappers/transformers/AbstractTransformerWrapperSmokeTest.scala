@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.transformers
 
-import org.apache.spark.mllib.linalg.{VectorUDT, Vectors}
+import org.apache.spark.ml.linalg.Vectors
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 
@@ -43,7 +43,7 @@ abstract class AbstractTransformerWrapperSmokeTest[+T <: Transformer]
     StructField("i", IntegerType),
     StructField("i2", IntegerType),
     StructField("d", DoubleType),
-    StructField("v", new VectorUDT)
+    StructField("v", new org.apache.spark.hacks.SparkVectors.VectorUDT)
   ))
 
   lazy val inputDataFrame: DataFrame = {
@@ -51,7 +51,8 @@ abstract class AbstractTransformerWrapperSmokeTest[+T <: Transformer]
       Row(Array("ala", "kot", "ala"), "aAa bBb cCc", 0, 0, 0.0, Vectors.dense(0.0, 0.0, 0.0)),
       Row(Array(null), "das99213 99721 8i!#@!", 1, 1, 1.0, Vectors.dense(1.0, 1.0, 1.0))
     )
-    val sparkDF = sparkSession.createDataFrame(sparkContext.parallelize(rowSeq), inputDataFrameSchema)
+    val sparkDF =
+      sparkSession.createDataFrame(sparkContext.parallelize(rowSeq), inputDataFrameSchema)
     DataFrame.fromSparkDataFrame(sparkDF)
   }
 

@@ -17,7 +17,6 @@
 package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.classification.{RandomForestClassificationModel => SparkRandomForestClassificationModel, RandomForestClassifier => SparkRandomForestClassifier}
-import org.apache.spark.mllib.linalg.VectorUDT
 import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
 
 import io.deepsense.deeplang.ExecutionContext
@@ -50,8 +49,8 @@ class VanillaRandomForestClassificationModel
     val rawPredictionColumnName = $(rawPredictionColumn)
     Some(StructType(schema.fields ++ Seq(
       StructField(predictionColumnName, DoubleType),
-      StructField(probabilityColumnName, new VectorUDT),
-      StructField(rawPredictionColumnName, new VectorUDT)
+      StructField(probabilityColumnName, new org.apache.spark.hacks.SparkVectors.VectorUDT),
+      StructField(rawPredictionColumnName, new org.apache.spark.hacks.SparkVectors.VectorUDT)
     )))
   }
 

@@ -16,8 +16,6 @@
 
 package io.deepsense.deeplang.doperations.examples
 
-import org.apache.spark.mllib.linalg.Vectors
-
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.spark.wrappers.estimators.QuantileDiscretizer
 

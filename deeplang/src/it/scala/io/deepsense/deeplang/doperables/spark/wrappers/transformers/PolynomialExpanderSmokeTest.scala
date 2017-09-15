@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.transformers
 
-import org.apache.spark.mllib.linalg.{VectorUDT, Vectors}
+import org.apache.spark.ml.linalg.Vectors
 import org.apache.spark.sql.types.DataType
 
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.SingleColumnChoice
@@ -56,7 +56,7 @@ class PolynomialExpanderSmokeTest
     input.zip(inputAfterDCT)
   }
 
-  override def inputType: DataType = new VectorUDT
+  override def inputType: DataType = new org.apache.spark.hacks.SparkVectors.VectorUDT
 
-  override def outputType: DataType = new VectorUDT
+  override def outputType: DataType = new org.apache.spark.hacks.SparkVectors.VectorUDT
 }
