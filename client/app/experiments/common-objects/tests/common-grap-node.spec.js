@@ -23,7 +23,7 @@ describe('graphNode', () => {
         'y': initY,
         'input': [],
         'output': [],
-        'parameters': {}
+        'parameters': []
       },
       serializedData = {
         'id': initId,
@@ -36,7 +36,7 @@ describe('graphNode', () => {
           'x': initX,
           'y': initY
         },
-        'parameters': {}
+        'parameters': []
       };
 
   beforeEach(() => {
@@ -44,7 +44,7 @@ describe('graphNode', () => {
 
     angular.mock.module('test');
     angular.mock.inject((DeepsenseNodeParameters) => {
-      initData.parameters = DeepsenseNodeParameters.factory.createParametersList({}, {});
+      initData.parameters = DeepsenseNodeParameters.factory.createParametersList([], []);
     });
   });
 
