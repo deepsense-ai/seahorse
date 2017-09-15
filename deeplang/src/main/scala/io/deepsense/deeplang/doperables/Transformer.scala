@@ -16,14 +16,13 @@
 
 package io.deepsense.deeplang.doperables
 
-import org.apache.hadoop.fs.Path
 import org.apache.spark.sql.types.StructType
 
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
-import io.deepsense.deeplang.doperables.serialization.{Loadable, ParamsSerialization}
+import io.deepsense.deeplang.doperables.serialization.{Loadable, ParamsSerialization, PathsUtils}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.Params
 import io.deepsense.reportlib.model.ReportType
@@ -87,14 +86,15 @@ abstract class Transformer
     saveTransformer(ctx, path)
   }
 
-  override def load(ctx: ExecutionContext, path: String): Unit = {
-    loadObjectWithParams(ctx, path)
-    loadTransformer(ctx, path)
+  override def load(ctx: ExecutionContext, path: String): this.type = {
+    loadObjectWithParams(ctx, path).loadTransformer(ctx, path)
   }
 
   protected def saveTransformer(ctx: ExecutionContext, path: String): Unit = {}
 
-  protected def loadTransformer(ctx: ExecutionContext, path: String): Unit = {}
+  protected def loadTransformer(ctx: ExecutionContext, path: String): this.type = {
+    this
+  }
 }
 
 object Transformer {
@@ -110,26 +110,22 @@ object Transformer {
   }
 
   def modelFilePath(path: String): String = {
-    combinePaths(path, modelFilePath)
+    PathsUtils.combinePaths(path, modelFilePath)
   }
 
   def parentEstimatorFilePath(path: String): String = {
-    combinePaths(path, parentEstimatorFilePath)
+    PathsUtils.combinePaths(path, parentEstimatorFilePath)
   }
 
   def stringIndexerPipelineFilePath(path: String): String = {
-    combinePaths(modelFilePath(path), pipelineFilePath)
+    PathsUtils.combinePaths(modelFilePath(path), pipelineFilePath)
   }
 
   def stringIndexerWrappedModelFilePath(path: String): String = {
-    combinePaths(modelFilePath(path), wrappedModelFilePath)
+    PathsUtils.combinePaths(modelFilePath(path), wrappedModelFilePath)
   }
 
   def transformerSparkTransformerFilePath(path: String): String = {
-    combinePaths(path, transformerFilePath)
-  }
-
-  private def combinePaths(path1: String, path2: String): String = {
-    new Path(path1, path2).toString
+    PathsUtils.combinePaths(path, transformerFilePath)
   }
 }

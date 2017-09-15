@@ -114,9 +114,10 @@ abstract class SparkModelWrapper[
       .setModel(modelCopy)
   }
 
-  override def loadTransformer(ctx: ExecutionContext, path: String): Unit = {
-    setParent(loadParentEstimator(ctx, path))
-    setModel(loadModel(ctx, Transformer.modelFilePath(path)))
+  override def loadTransformer(ctx: ExecutionContext, path: String): this.type = {
+    this
+      .setParent(loadParentEstimator(ctx, path))
+      .setModel(loadModel(ctx, Transformer.modelFilePath(path)))
   }
 
   override protected def saveTransformer(ctx: ExecutionContext, path: String): Unit = {

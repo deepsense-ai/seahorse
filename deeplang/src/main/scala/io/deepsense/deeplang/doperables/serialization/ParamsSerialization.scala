@@ -16,12 +16,11 @@
 
 package io.deepsense.deeplang.doperables.serialization
 
-import org.apache.hadoop.fs.Path
-import spray.json.{DefaultJsonProtocol, JsValue, JsString, JsObject}
+import spray.json.{DefaultJsonProtocol, JsObject, JsString, JsValue}
 
 import io.deepsense.deeplang.catalogs.doperable.exceptions.NoParameterlessConstructorInClassException
-import io.deepsense.deeplang.{TypeUtils, ExecutionContext}
 import io.deepsense.deeplang.params.Params
+import io.deepsense.deeplang.{ExecutionContext, TypeUtils}
 
 trait ParamsSerialization {
 
@@ -32,7 +31,7 @@ trait ParamsSerialization {
     saveParams(ctx, path)
   }
 
-  def loadObjectWithParams(ctx: ExecutionContext, path: String): Unit = {
+  def loadObjectWithParams(ctx: ExecutionContext, path: String): this.type = {
     loadAndSetParams(ctx, path)
   }
 
@@ -49,7 +48,7 @@ trait ParamsSerialization {
     JsonObjectPersistence.saveJsonToFile(ctx, paramsFilePath, paramValuesToJson)
   }
 
-  private def loadAndSetParams(ctx: ExecutionContext, path: String): Unit = {
+  private def loadAndSetParams(ctx: ExecutionContext, path: String): this.type = {
     setParams(loadParams(ctx, path))
   }
 
@@ -78,18 +77,13 @@ object ParamsSerialization {
         .getOrElse(throw new NoParameterlessConstructorInClassException(clazz.getCanonicalName))
     ).asInstanceOf[Loadable]
     loadable.load(ctx, path)
-    loadable
   }
 
   def metadataFilePath(path: String): String = {
-    combinePaths(path, metadataFileName)
+    PathsUtils.combinePaths(path, metadataFileName)
   }
 
   def paramsFilePath(path: String): String = {
-    combinePaths(path, paramsFileName)
-  }
-
-  private def combinePaths(path1: String, path2: String): String = {
-    new Path(path1, path2).toString
+    PathsUtils.combinePaths(path, paramsFileName)
   }
 }

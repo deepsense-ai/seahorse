@@ -20,7 +20,6 @@ object Version {
   val akka = "2.3.11"
   val amazonS3 = "1.10.16"
   val apacheCommons = "3.3.+"
-  val hadoop = "2.6.0"
   val mockito = "1.10.19"
   val nsscalaTime = "1.8.0"
   val scala = "2.10.5"
@@ -37,17 +36,13 @@ object Library {
   val akka = (name: String) => "com.typesafe.akka" %% s"akka-$name" % Version.akka
   val spark = (name: String) => "org.apache.spark" %% s"spark-$name" % Version.spark
   val spray = (name: String) => "io.spray" %% s"spray-$name" % Version.spray
-  val hadoop = (name: String) => "org.apache.hadoop" % s"hadoop-$name" % Version.hadoop
 
   val akkaActor = akka("actor")
   val akkaTestkit = akka("testkit")
   val amazonS3 = "com.amazonaws" % "aws-java-sdk-s3" %
     Version.amazonS3 exclude("com.fasterxml.jackson.core", "jackson-databind")
   val apacheCommons = "org.apache.commons" % "commons-lang3" % Version.apacheCommons
-  val hadoopAWS = hadoop("aws")
-  val hadoopClient = hadoop("client")
-  val hadoopCommon = hadoop("common")
-  val log4JExtras = "log4j"                             % "apache-log4j-extras"       % "1.2.17"
+  val log4JExtras = "log4j" % "apache-log4j-extras" % "1.2.17"
   val nscalaTime = "com.github.nscala-time" %% "nscala-time" % Version.nsscalaTime
   val mockitoCore = "org.mockito" % "mockito-core" % Version.mockito
   val rabbitmq = "com.thenewmotion.akka" %% "akka-rabbitmq" % "1.2.4"
@@ -104,33 +99,30 @@ object Dependencies {
     sparkSql,
     sparkMLLib,
     sparkCore,
-    hadoopAWS,
-    hadoopClient,
-    hadoopCommon,
     sparkCSV
-  ) ++ Seq(scalatest, mockitoCore, scalacheck, scoverage).map(_ % Test)
+  ) ++ Seq(mockitoCore, scalacheck, scalatest, scoverage).map(_ % Test)
 
   val docgen = Seq()
 
-  val graph = Seq(nscalaTime) ++ Seq(scalatest, mockitoCore).map(_ % Test)
+  val graph = Seq(nscalaTime) ++ Seq(mockitoCore, scalatest).map(_ % Test)
 
   val workflowJson = Seq(
     nscalaTime,
     sprayJson
-  ) ++ Seq(scalatest, mockitoCore).map(_ % Test)
+  ) ++ Seq(mockitoCore, scalatest).map(_ % Test)
 
-  val models = Seq(scalatest, mockitoCore).map(_ % Test)
+  val models = Seq(mockitoCore, scalatest).map(_ % Test)
 
   val reportlib = Seq(
     sprayJson
-  ) ++ Seq(scalatest, mockitoCore).map(_ % Test)
+  ) ++ Seq(mockitoCore, scalatest).map(_ % Test)
 
   val workflowexecutor = Seq(
     akkaActor,
-    scopt,
-    sprayClient,
+    jsonLenses,
     rabbitmq,
-    jsonLenses
+    scopt,
+    sprayClient
   ) ++ Seq(sparkCore, sparkSql).map(_ % Provided) ++
   Seq(akkaTestkit, mockitoCore, scalatest, wireMock).map(_ % s"$Test,it")
 }

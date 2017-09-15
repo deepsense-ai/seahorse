@@ -74,13 +74,15 @@ abstract class StringIndexingWrapperModel[MD <: ml.Model[MD], E <: ml.Estimator[
 
   override def params: Array[Param[_]] = wrappedModel.params
 
-  override protected def loadTransformer(ctx: ExecutionContext, path: String): Unit = {
+  override protected def loadTransformer(ctx: ExecutionContext, path: String): this.type = {
     val pipelineModelPath = Transformer.stringIndexerPipelineFilePath(path)
     val wrappedModelPath = Transformer.stringIndexerWrappedModelFilePath(path)
     val loadedPipelineModel = PipelineModel.load(pipelineModelPath)
-    setPipelinedModel(loadedPipelineModel)
     val loadedWrappedModel = Transformer.load(ctx, wrappedModelPath)
-    setWrappedModel(loadedWrappedModel.asInstanceOf[SparkModelWrapper[MD, E]])
+
+    this
+      .setPipelinedModel(loadedPipelineModel)
+      .setWrappedModel(loadedWrappedModel.asInstanceOf[SparkModelWrapper[MD, E]])
   }
 
   override protected def saveTransformer(ctx: ExecutionContext, path: String): Unit = {

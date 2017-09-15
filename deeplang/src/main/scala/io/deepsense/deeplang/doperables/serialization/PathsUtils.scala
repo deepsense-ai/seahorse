@@ -16,9 +16,11 @@
 
 package io.deepsense.deeplang.doperables.serialization
 
-import io.deepsense.deeplang.ExecutionContext
+import org.apache.hadoop.fs.Path
 
-trait Loadable {
+object PathsUtils {
 
-  def load(ctx: ExecutionContext, path: String): this.type
+  def combinePaths(path1: String, path2: String): String = {
+    new Path(path1, path2).toString
+  }
 }
