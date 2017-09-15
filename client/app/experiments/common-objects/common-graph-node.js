@@ -24,6 +24,7 @@ function GraphNode(options) {
   } else {
     this.parameters = options.parameters;
   }
+  this.stateDetails = _.clone(options.state);
   this.setStatus(options.state);
 }
 
