@@ -87,7 +87,7 @@ pre {
 .sidemenu {
   position: relative;
   float: left;
-  top: 70px;
+  margin-top: 70px;
   background-color: #F8F5F1;
   border-bottom: 1px solid #CCC;
   border-right: 1px solid #CCC;
@@ -98,7 +98,7 @@ pre {
   -webkit-transition: all 0.2s;
   transition: all 0.2s;
   padding-left: 0;
-  margin-bottom: 40px;
+  margin-bottom: 70px;
 }
 .sidemenu-unactive {
   left: -200px !important;
@@ -215,6 +215,7 @@ footer {
 p.footer-text {
   background-color: #F8F5F1;
   padding: 15px;
+  padding-bottom: 18px;
   margin: 0;
   border-top: 1px solid #ccc;
 }

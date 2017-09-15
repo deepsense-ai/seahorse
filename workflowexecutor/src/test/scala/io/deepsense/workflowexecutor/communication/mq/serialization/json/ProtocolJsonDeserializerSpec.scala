@@ -18,7 +18,7 @@ package io.deepsense.workflowexecutor.communication.mq.serialization.json
 
 import java.nio.charset.StandardCharsets
 
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import spray.json._
 
 import io.deepsense.commons.StandardSpec

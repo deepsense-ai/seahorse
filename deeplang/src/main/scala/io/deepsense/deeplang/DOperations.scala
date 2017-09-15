@@ -22,7 +22,7 @@ import io.deepsense.deeplang.ToVectorConversions._
 import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
 
 /**
- * Implicit conversions used to convert results of execute and _inferKnowledge to Vectors
+ * Implicit conversions used to convert results of execute and inferKnowledge to Vectors
  */
 private object ToVectorConversions {
 
@@ -63,6 +63,7 @@ private object ToVectorConversions {
 
 /** Following classes are generated automatically. */
 // scalastyle:off
+
 abstract class DOperation0To1[
     TO_0 <: DOperable : ru.TypeTag]
   extends DOperation {

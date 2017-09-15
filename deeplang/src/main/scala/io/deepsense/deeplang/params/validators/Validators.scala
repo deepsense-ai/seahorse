@@ -18,10 +18,11 @@ package io.deepsense.deeplang.params.validators
 
 import scala.util.matching.Regex
 
-import spray.json.JsObject
+import spray.json.{JsObject, JsString}
 
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.params.exceptions._
+import io.deepsense.deeplang.params.validators.ValidatorType.ValidatorType
 
 /**
  * Validates if NumericParameter value is within range bounds.
@@ -267,25 +268,8 @@ object ComplexArrayValidator {
  * Validates if StringParameter value matches the given regex.
  */
 case class RegexValidator(
-    regex: Regex)
-  extends Validator[String] {
-
-  val validatorType = ValidatorType.Regex
-
-  override def validate(name: String, parameter: String): Vector[DeepLangException] = {
-    if (parameter matches regex.toString) {
-      Vector.empty
-    } else {
-      Vector(MatchException(parameter, regex))
-    }
-  }
-
-
-  override def configurationToJson: JsObject = {
-    import ValidatorsJsonProtocol.regexValidatorFormat
-    regexValidatorFormat.write(this).asJsObject
-  }
-}
+    override val regex: Regex)
+  extends RegexValidatorLike
 
 /**
  * Validator which accepts all strings.
@@ -297,27 +281,49 @@ class AcceptAllRegexValidator() extends RegexValidator(".*".r)
  */
 class SingleCharRegexValidator() extends RegexValidator(".".r)
 
+
+trait RegexValidatorLike extends Validator[String] {
+  val regex: Regex
+
+  override val validatorType: ValidatorType = ValidatorType.Regex
+
+  override def configurationToJson: JsObject = {
+    JsObject("regex" -> JsString(regex.toString()))
+  }
+
+  override def validate(name: String, parameter: String): Vector[DeepLangException] = {
+    if (parameter matches regex.toString) {
+      Vector.empty
+    } else {
+      Vector(MatchException(parameter, regex))
+    }
+  }
+
+}
+
 /**
- * Validator which accepts a proper column name.
- */
-class ColumnRegexValidator() extends RegexValidator(ColumnRegexValidator.regex.r) {
+  * Validator which accepts a string that can be or be part of proper column name.
+  * Column name cannot be empty and must be without backticks.
+  * Column with a backtick character fails in some operations (e.g. Convert Type).
+  */
+trait ColumnNameStringValidator extends RegexValidatorLike {
+  val regex = "[^`]+".r
+
+  def exception: ValidationException
+
   override def validate(name: String, parameter: String): Vector[DeepLangException] = {
     if (parameter.nonEmpty) {
-      if (parameter matches regex.toString) {
-        Vector.empty
-      } else {
-        Vector(MatchException(parameter, regex))
-      }
+      super.validate(name, parameter)
     } else {
-      Vector(EmptyColumnNameException())
+      Vector(exception)
     }
   }
 }
 
-object ColumnRegexValidator {
-  /**
-   * Cannot be empty and without backticks.
-   * Column with a bactick character fails in some operations (e.g. Convert Type).
-   */
-  val regex = "[^`]+"
+object ColumnNameValidator extends ColumnNameStringValidator {
+  override def exception: ValidationException = EmptyColumnNameException
+}
+
+object ColumnPrefixNameValidator extends ColumnNameStringValidator {
+  override def exception: ValidationException = EmptyColumnPrefixNameException
 }

@@ -26,7 +26,7 @@ import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, ScalaFutures, ScaledTimeSpans}
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import spray.json.JsObject
 
 import io.deepsense.commons.datetime.DateTimeConverter

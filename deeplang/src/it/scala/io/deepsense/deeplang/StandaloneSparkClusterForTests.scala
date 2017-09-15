@@ -16,25 +16,81 @@
 
 package io.deepsense.deeplang
 
-import java.io.File
+import java.net.{Inet4Address, NetworkInterface}
+import java.util.UUID
+
+import scala.sys.process.Process
 
 import org.apache.spark.sql.SparkSession
-import org.apache.spark.{SparkContext, SparkConf}
+import org.apache.spark.{SparkConf, SparkContext}
+import org.scalatest.concurrent.Eventually._
+import org.scalatest.time.SpanSugar._
 
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
+import io.deepsense.deeplang.doperations.readwritedataframe.FileScheme
 import io.deepsense.deeplang.inference.InferContext
 
 object StandaloneSparkClusterForTests {
 
+  private var hdfsAddress: String = _
+  private var sparkMasterAddress: String = _
+  private val runId = UUID.randomUUID().toString.substring(0, 8)
+
+  // This env is used within docker-compose.yml and allows multiple instances of the cluster
+  // to run simultaneously
+  private val clusterIdEnv = "CLUSTER_ID" -> runId
+  private val clusterManagementScript = "docker/spark-standalone-cluster-manage.sh"
+
+  private val anIpAddress: String = {
+    import collection.JavaConverters._
+
+    NetworkInterface.getNetworkInterfaces.asScala.flatMap {
+      _.getInetAddresses.asScala.map {
+        case ip4: Inet4Address => Some(ip4.getHostAddress)
+        case _ => None
+      }.filter(_.isDefined)
+    }.next().get
+  }
+
+  private def address(container: String, port: Int) = {
+    def dockerInspect(container: String, format: String) =
+      Process(Seq("docker", "inspect", "--format", format, s"$container-$runId")).!!.stripLineEnd
+
+    val localPortFmt = "{{(index (index .NetworkSettings.Ports \"" + port + "/tcp\") 0).HostPort}}"
+    s"$anIpAddress:${dockerInspect(container, localPortFmt)}"
+  }
+
+  def startDockerizedCluster(): Unit = {
+    Process(Seq(clusterManagementScript, "up"), None, clusterIdEnv).!
+
+    // We turn off the safe mode for hdfs - we don't need it for testing.
+    // The loop is here because we don't have control over when the docker is ready
+    // for this command.
+    eventually(timeout(60.seconds), interval(1.second)) {
+      val exec = Seq("docker", "exec", "-u", "root")
+      val cmd = Seq("/usr/local/hadoop/bin/hdfs", "dfsadmin", "-safemode", "leave")
+      Process(exec ++ Seq(s"hdfs-$runId") ++ cmd, None, clusterIdEnv).!!
+    }
+
+    hdfsAddress = address("hdfs", 9000)
+    sparkMasterAddress = address("sparkMaster", 7077)
+  }
+
+  def stopDockerizedCluster(): Unit =
+    Process(Seq(clusterManagementScript, "down"), None, clusterIdEnv).!
+
+  def generateSomeHdfsTmpPath(): String =
+    FileScheme.HDFS.pathPrefix + s"$hdfsAddress/root/tmp/seahorse_tests/" + UUID.randomUUID()
+
   lazy val executionContext: ExecutionContext = {
     import org.scalatest.mockito.MockitoSugar._
 
-    System.setProperty("HADOOP_USER_NAME", "hdfs")
+    System.setProperty("HADOOP_USER_NAME", "root")
 
     val sparkConf: SparkConf = new SparkConf()
-      .setMaster("spark://10.10.1.199:7077")
+      .setMaster(s"spark://$sparkMasterAddress")
       .setAppName("TestApp")
       .setJars(Seq(
         "./deeplang/target/scala-2.11/" +

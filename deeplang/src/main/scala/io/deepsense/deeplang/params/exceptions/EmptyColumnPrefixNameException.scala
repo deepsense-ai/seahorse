@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2016, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,7 @@
  * limitations under the License.
  */
 
-package io.deepsense.commons
+package io.deepsense.deeplang.params.exceptions
 
-import org.scalatest.mockito.MockitoSugar
-
-/**
- * Extends StandardSpec with features to aid unit testing including:
- *   - Support for mockito mocking
- *   - Defines implicits required for future, akka and spray route testing
- */
-trait UnitTestSupport extends MockitoSugar {
-  suite: StandardSpec =>
-}
+case object EmptyColumnPrefixNameException extends
+  ValidationException("Column prefix name cannot be empty")

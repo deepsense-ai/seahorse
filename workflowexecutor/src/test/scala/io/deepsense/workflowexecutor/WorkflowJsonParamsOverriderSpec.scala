@@ -17,7 +17,7 @@
 package io.deepsense.workflowexecutor
 
 import org.scalatest.BeforeAndAfter
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import spray.json._
 
 import io.deepsense.commons.StandardSpec

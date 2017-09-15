@@ -242,8 +242,13 @@ case class StatefulGraph(
   protected def updateStates(knowledge: GraphKnowledge): Map[Id, NodeStateWithResults] = {
     knowledge.errors.toSeq.foldLeft(states) {
       case (modifiedStates, (id, nodeErrors)) =>
-        modifiedStates
-          .updated(id, states(id).fail(nodeErrorsFailureDescription(id, nodeErrors)))
+        // Inner workflow nodes are not in the states map; don't try to update their state
+        if (states.contains(id)) {
+          modifiedStates
+            .updated(id, states(id).fail(nodeErrorsFailureDescription(id, nodeErrors)))
+        } else {
+          modifiedStates
+        }
     }
   }
 

@@ -18,7 +18,7 @@ package io.deepsense.workflowexecutor
 
 import org.apache.spark.api.r._
 import org.scalatest.concurrent.Timeouts
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{Matchers, PrivateMethodTester, WordSpec}
 
 import io.deepsense.workflowexecutor.customcode.CustomCodeEntryPoint

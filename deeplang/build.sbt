@@ -26,23 +26,26 @@ name := "deepsense-seahorse-deeplang"
 
 // Only one spark context per JVM
 def assignTestsToJVMs(testDefs: Seq[TestDefinition]) = {
-  val (forJvm1, forJvm2) = testDefs.partition(_.name.contains("InputOutputSpec"))
+  val (forJvm1, forJvm2) = testDefs.partition(_.name.contains("ClusterDependentSpecsSuite"))
 
   Seq(
-    new Group(
+    Group(
       name = "tests_for_jvm_1",
       tests = forJvm1,
-      runPolicy = SubProcess(javaOptions = Seq.empty[String])
+      runPolicy = SubProcess(ForkOptions(runJVMOptions = Seq.empty))
     ),
-    new Group(
+    Group(
       name = "test_for_jvm_2",
       tests = forJvm2,
-      runPolicy = SubProcess(javaOptions = Seq.empty[String])
+      runPolicy = SubProcess(ForkOptions(runJVMOptions = Seq.empty))
     )
   )
 }
 
-testGrouping in OurIT <<= (definedTests in OurIT) map assignTestsToJVMs
+testGrouping in OurIT := {
+  val testDefinitions = (definedTests in OurIT).value
+  assignTestsToJVMs(testDefinitions)
+}
 
 libraryDependencies ++= Dependencies.deeplang
 

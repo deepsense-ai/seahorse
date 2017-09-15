@@ -18,6 +18,9 @@ package io.deepsense.deeplang.params
 
 import spray.json.DefaultJsonProtocol.StringJsonFormat
 
+import io.deepsense.deeplang.exceptions.DeepLangException
+import io.deepsense.deeplang.params.validators.ColumnPrefixNameValidator
+
 case class PrefixBasedColumnCreatorParam(
     name: String,
     description: String)
@@ -26,4 +29,8 @@ case class PrefixBasedColumnCreatorParam(
   val parameterType = ParameterType.PrefixBasedColumnCreator
 
   override def replicate(name: String): PrefixBasedColumnCreatorParam = copy(name = name)
+
+  override def validate(value: String): Vector[DeepLangException] = {
+    ColumnPrefixNameValidator.validate(name, value)
+  }
 }

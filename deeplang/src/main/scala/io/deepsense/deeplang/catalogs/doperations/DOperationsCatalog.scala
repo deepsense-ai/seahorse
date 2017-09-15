@@ -82,7 +82,7 @@ object DOperationsCatalog {
       if(visible) {
         categoryTree = categoryTree.addOperation(operationDescriptor, category)
       }
-        operationFactoryByOperationId(id) = factory
+      operationFactoryByOperationId(id) = factory
     }
 
     def createDOperation(id: DOperation.Id): DOperation = operationFactoryByOperationId.get(id) match {

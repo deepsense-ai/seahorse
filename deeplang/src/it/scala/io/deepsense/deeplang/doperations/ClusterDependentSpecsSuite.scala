@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2016, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package io.deepsense.commons
+package io.deepsense.deeplang.doperations
 
-import org.scalatest.mockito.MockitoSugar
+import org.scalatest.{BeforeAndAfterAll, Suites}
 
-/**
- * Extends StandardSpec with features to aid unit testing including:
- *   - Support for mockito mocking
- *   - Defines implicits required for future, akka and spray route testing
- */
-trait UnitTestSupport extends MockitoSugar {
-  suite: StandardSpec =>
+import io.deepsense.deeplang.StandaloneSparkClusterForTests
+
+class ClusterDependentSpecsSuite extends Suites(new InputOutputSpec) with BeforeAndAfterAll {
+  override def beforeAll(): Unit = StandaloneSparkClusterForTests.startDockerizedCluster()
+  override def afterAll(): Unit = StandaloneSparkClusterForTests.stopDockerizedCluster()
 }

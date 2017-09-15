@@ -21,7 +21,7 @@ import akka.testkit.{TestActorRef, TestKit, TestProbe}
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatest.concurrent.Eventually
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll, Matchers, WordSpecLike}
 import io.deepsense.deeplang.doperables.report.Report
 import io.deepsense.deeplang.inference.InferenceWarnings

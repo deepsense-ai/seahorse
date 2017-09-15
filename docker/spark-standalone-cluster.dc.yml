@@ -1,0 +1,42 @@
+version: '2'
+services:
+  sparkMaster:
+    container_name: sparkMaster-${CLUSTER_ID}
+    image: deepsense_io/docker-spark-standalone:local
+    entrypoint: "/usr/bin/supervisord --configuration=/opt/conf/master.conf"
+    links:
+      - hdfs
+    networks:
+      - sbt-test
+    ports:
+      - 7077
+  sparkSlave1:
+    container_name: sparkSlave1-${CLUSTER_ID}
+    image: deepsense_io/docker-spark-standalone:local
+    entrypoint: "/usr/bin/supervisord --configuration=/opt/conf/slave.conf"
+    links:
+      - sparkMaster
+      - hdfs
+    networks:
+      - sbt-test
+  sparkSlave2:
+    container_name: sparkSlave2-${CLUSTER_ID}
+    image: deepsense_io/docker-spark-standalone:local
+    entrypoint: "/usr/bin/supervisord --configuration=/opt/conf/slave.conf"
+    links:
+      - sparkMaster
+      - hdfs
+    networks:
+      - sbt-test
+  hdfs:
+    container_name: hdfs-${CLUSTER_ID}
+    image: sequenceiq/hadoop-docker:2.7.1
+    entrypoint: "/etc/bootstrap.sh -d"
+    networks:
+      - sbt-test
+    ports:
+      - 9000
+networks:
+  sbt-test:
+    external:
+      name: sbt-test-${CLUSTER_ID}

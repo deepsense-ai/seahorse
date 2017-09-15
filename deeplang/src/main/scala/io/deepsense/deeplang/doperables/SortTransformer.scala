@@ -25,10 +25,14 @@ import org.apache.spark.sql.functions.col
 import org.apache.spark.sql.types.StructType
 
 
+/**
+  * Sorts the input [[io.deepsense.deeplang.doperables.dataframe.DataFrame Dataframe]]
+  * according to selected columns.
+  */
 class SortTransformer extends Transformer {
 
   val columns = ParamsSequence[SortColumnParam](
-    name = "Sort columns",
+    name = "sort columns",
     description = "Columns to sort by"
   )
 
@@ -78,8 +82,8 @@ class SortColumnParam extends Params {
 
 object SortColumnParam {
 
-  val columnNameParamName = "Column name"
-  val descendingFlagParamName = "Descending flag"
+  val columnNameParamName = "column name"
+  val descendingFlagParamName = "descending"
 
   def columnParamToColumnExpression(scp: SortColumnParam, df: DataFrame): Column = {
     val column = col(DataFrameColumnsGetter.getColumnName(df.schema.get, scp.getColumn))

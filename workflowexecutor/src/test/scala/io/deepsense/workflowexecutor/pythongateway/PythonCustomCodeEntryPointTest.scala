@@ -22,7 +22,7 @@ import scala.concurrent.duration._
 
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.SparkSession
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
 
 import io.deepsense.deeplang.{CustomCodeExecutor, DataFrameStorage, OperationExecutionDispatcher}

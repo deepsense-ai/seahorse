@@ -18,7 +18,7 @@ package io.deepsense.workflowexecutor.partialexecution
 
 import org.mockito.Matchers._
 import org.mockito.Mockito._
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 
 import io.deepsense.commons.StandardSpec
 import io.deepsense.commons.exception.FailureDescription
