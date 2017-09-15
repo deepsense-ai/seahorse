@@ -55,19 +55,24 @@ object Constants {
   val TestTenantId = "TestTenantId"
 
   /**
+   * DeepSense.io deployment directory (directory on HDFS)
+   */
+  val DeepSenseIoDeploymentDirectory = "/deepsense"
+
+  /**
    * Location of Graph Executor library on cluster HDFS
    */
-  val GraphExecutorLibraryLocation = "/deepsense-graphexecutor-assembly-0.1.0.jar"
+  val GraphExecutorLibraryLocation = DeepSenseIoDeploymentDirectory + "/lib" + "/graphexecutor.jar"
 
   /**
    *  Configuration file's name on cluster HDFS
    */
-  val GraphExecutorConfigName = "graphexecutor.conf"
+  val GraphExecutorConfName = "graphexecutor.conf"
 
   /**
    * Location of configuration file on cluster HDFS
    */
-  val GraphExecutorConfigLocation = "/" + GraphExecutorConfigName
+  val GraphExecutorConfigLocation = DeepSenseIoDeploymentDirectory + "/etc/" + GraphExecutorConfName
 
   /**
    * Hostname of cluster master node

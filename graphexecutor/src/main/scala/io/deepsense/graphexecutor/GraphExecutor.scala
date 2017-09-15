@@ -305,7 +305,7 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
 
   private def createEntityStorageClient(
       entityStorageClientFactory: EntityStorageClientFactory) : EntityStorageClient = {
-    val config = ConfigFactory.load(Constants.GraphExecutorConfigName)
+    val config = ConfigFactory.load(Constants.GraphExecutorConfName)
     val actorSystemName = config.getString("entityStorage.actorSystemName")
     val hostName = config.getString("entityStorage.hostname")
     val port = config.getInt("entityStorage.port")

@@ -26,28 +26,32 @@ object UniqueFilenameUtil {
    * cli.get.mkdirs(directoryName, new FsPermission(FsAction.ALL, FsAction.ALL, FsAction.ALL), true)
    * @param tenantId tenant id
    * @param entityCategory category of entity (file/dataframe/etc..)
-   * @param appLocation optional: HDFS location of deepsense application
+   * @param deploymentDirName optional: HDFS location of deepsense application
    * @return directory name for storing files of given properties
    */
   def getHdfsDirectoryName(
       tenantId: String,
       entityCategory: String,
-      appLocation: String = "deepsense"): String = {
-    s"/$appLocation/$tenantId/$entityCategory"
+      deploymentDirName: String = "deepsense",
+      isTemporary: Boolean = false): String = {
+    val subDirectory = if (isTemporary) "tmp" else "data"
+    s"/$deploymentDirName/$subDirectory/$tenantId/$entityCategory"
   }
 
   /**
    * Returns unique HDFS filename for file of given properties.
    * @param tenantId tenant id
    * @param entityCategory category of entity (file/dataframe/etc..)
-   * @param appLocation optional: HDFS location of deepsense application
+   * @param deploymentDirName optional: HDFS location of deepsense application
    * @return unique HDFS filename for file of given properties
    */
   def getUniqueHdfsFilename(
       tenantId: String,
       entityCategory: String,
-      appLocation: String = "deepsense"): String = {
-    val directoryName = getHdfsDirectoryName(tenantId, entityCategory, appLocation)
+      deploymentDirName: String = "deepsense",
+      isTemporary: Boolean = false): String = {
+    val directoryName =
+      getHdfsDirectoryName(tenantId, entityCategory, deploymentDirName, isTemporary)
     val uniqueNumberStr = "%06d".format(numberGenerator.incrementAndGet())
     s"$directoryName/${uniqueString}_file$uniqueNumberStr"
   }

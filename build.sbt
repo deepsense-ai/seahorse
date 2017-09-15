@@ -55,3 +55,7 @@ addCommandAlias("ds-it",
     ";reportlib/it:test " +
     ";graphjson/it:test " +
     ";deploy-model-service/it:test")
+
+addCommandAlias("deployOnly",
+  ";graphexecutor/runMain io.deepsense.graphexecutor.deployment.DeployOnHdfs")
+addCommandAlias("deploy", ";graphexecutor/assembly ;deployOnly")

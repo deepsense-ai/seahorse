@@ -15,6 +15,7 @@ import org.apache.hadoop.hdfs.DFSClient
 import org.scalatest._
 
 import io.deepsense.deeplang.DSHdfsClient
+import io.deepsense.graphexecutor.deployment.DeployOnHdfs
 
 /**
  * Adds features to aid integration testing using HDFS.
@@ -27,10 +28,6 @@ trait HdfsIntegTestSupport
   with Inside
   with Inspectors
   with BeforeAndAfterAll {
-
-  val uberJarFilename = BuildInfo.name + "-assembly-" + BuildInfo.version + ".jar"
-
-  val geUberJarPath = s"../graphexecutor/target/scala-2.11/$uberJarFilename"
 
   private val config = new Configuration()
 
@@ -47,15 +44,9 @@ trait HdfsIntegTestSupport
       config))
     dsHdfsClient = Some(new DSHdfsClient(cli.get))
 
-    cli.get.delete(s"/$uberJarFilename", true)
-    cli.get.delete(s"/graphexecutor.conf", true)
     cli.get
       .mkdirs(Constants.TestDir, new FsPermission(FsAction.ALL, FsAction.ALL, FsAction.ALL), true)
-    // NOTE: We assume here that uber-jar has been assembled immediately before test task
-    copyFromLocal(geUberJarPath, s"/$uberJarFilename")
-    copyFromLocal(
-      "../graphexecutor/src/main/resources/graphexecutor.conf",
-      "/graphexecutor.conf")
+    DeployOnHdfs.deployOnHdfs(dsHdfsClient.get)
   }
 
   override def afterAll(): Unit = {
@@ -78,7 +69,7 @@ trait HdfsIntegTestSupport
   }
 
   /**
-   * Copies example DataFrame to hdfs
+   * Copies example DataFrame to HDFS
    */
   def copyDataFrameToHdfs(): Unit = {
     cli.get.delete(SimpleGraphExecutionIntegSuiteEntities.dataFrameLocation, true)
