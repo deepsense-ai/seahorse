@@ -5,6 +5,8 @@ The image contains Spark libraries required for running inside a docker containe
 Can be used as a base image for applications requiring spark libraries.
 Contains preinstalled Kerberos libs and programs, including ktinit.
 
+NOTE: This image is built on top of CentOS, as Intel's kerberos lib depends on it.
+
 1. Building the image
 
    $ docker build -t deepsense-spark-krb .

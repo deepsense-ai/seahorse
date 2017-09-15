@@ -1,14 +1,14 @@
 # Copyright (c) 2016, CodiLime Inc.
-FROM quay.io/deepsense_io/deepsense-spark-base:1.6.1
+FROM centos:6.6
 
-# Install krb5
-RUN apt-get update && \
-    apt-get install -y krb5-user unzip && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+RUN yum --assumeyes install openssl-devel java-1.8.0-openjdk-headless.x86_64 krb5-workstation wget unzip tar \
+        && wget http://krb5jwt.s3-website-us-east-1.amazonaws.com/kerberos-jwt-1.1.zip \
+        && unzip -o kerberos-jwt-1.1.zip \
+        && mkdir /var/krb5kdc
 
-# Install ktinit
-RUN cd / && \
-    wget http://krb5jwt.s3-website-us-east-1.amazonaws.com/kerberos-jwt-1.1.zip && \
-    unzip -o kerberos-jwt-1.1.zip && \
-    rm kerberos-jwt-1.1.zip
+ENV SPARK_HOME="/opt/spark"
+RUN mkdir $SPARK_HOME \
+        && SPARK_TAR="spark-1.6.1-bin-hadoop2.6.tgz" \
+        && wget http://www-us.apache.org/dist/spark/spark-1.6.1/$SPARK_TAR \
+        && tar -zxf $SPARK_TAR -C $SPARK_HOME --strip-components=1 && rm -f $SPARK_TAR \
+        && cp $SPARK_HOME/conf/log4j.properties.template $SPARK_HOME/conf/log4j.properties
