@@ -17,8 +17,9 @@
 package io.deepsense.deeplang.doperations
 
 import java.io.IOException
-import java.util.UUID
+import java.nio.file.Files
 
+import scala.reflect.io.File
 import scala.reflect.runtime.{universe => ru}
 
 import org.apache.spark.SparkContext
@@ -142,17 +143,11 @@ case class ReadDataFrame()
   }
 
   private def downloadFile(url: String, sparkContext: SparkContext): String = {
-    val prefix = if (sparkContext.isLocal) {
-      "file://"
-    } else {
-      "hdfs://"
-    }
-
-    val fileName = s"$prefix/tmp/deepsense/download/${UUID.randomUUID().toString}"
+    // TODO DS-2355 this saves the file in local filesystem, which will not work in non-local modes
     val content = scala.io.Source.fromURL(url).mkString
-    val lines = content.split("\n")
-    sparkContext.parallelize(lines).saveAsTextFile(fileName)
-    fileName
+    val file = Files.createTempFile("download", ".csv")
+    File(file.toString).writeAll(content)
+    s"file:///$file"
   }
 
   @transient
