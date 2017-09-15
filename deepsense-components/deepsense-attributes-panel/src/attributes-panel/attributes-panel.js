@@ -102,7 +102,8 @@ function OperationAttributes($rootScope, AttributesPanelService, config, version
           scope: $scope,
           template: `<iframe style="height: calc(100% - 60px); width:100%" frameborder="0" ng-src="{{::controller.getNotebookUrl()}}"></iframe>
                      <button type="button" class="btn btn-default pull-right" ng-click="modal.close()">Close</button>`,
-          windowClass: 'o-modal--notebook'
+          windowClass: 'o-modal--notebook',
+          backdrop : 'static'
         });
       };
 
