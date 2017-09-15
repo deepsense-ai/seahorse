@@ -8,9 +8,9 @@ description: Seahorse in Server Mode
 
 [Dockerized Seahorse Standalone](deployment/standalone.html#dockerized-seahorse-standalone)
 is designed to work as a server application,
-which allows multiple users to utilize a single instance of Seahorse.
+which allows multiple users to access a single instance of Seahorse.
 
-Enabling Server Mode comes down to telling Seahorse the IP address it should be available at.
+Enabling Server Mode requires telling Seahorse the IP address it should be available at.
 By default, it listens only for local connections. Below you can find a comparison of relevant portions of the
 `docker-compose.yml` file with the assumption that Seahorse should be accessible under all IP addresses
 of the machine.

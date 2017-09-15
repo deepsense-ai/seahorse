@@ -12,7 +12,8 @@ title: Seahorse Standalone
 
 ## Overview
 
-Seahorse Standalone allows you to install and run Seahorse on your local computer.
+Seahorse Standalone allows you to install and run Seahorse on your local computer
+or set it up in a server mode (for details see [Server Mode](../server_mode.html) section).
 
 Seahorse Standalone:
 
@@ -89,8 +90,8 @@ Seahorse Standalone, it will be available under the address with the new port.
 
 ### Installation
 
-Despite being a mature technology, on some operating systems Docker is still quite new and is
-not supported natively. That's why we also distribute Seahorse Standalone as a Vagrant
+On some operating systems Docker is not supported natively.
+That's why we also distribute Seahorse Standalone as a Vagrant
 image.
 
 **Prerequisites**
@@ -149,7 +150,7 @@ There are at least two ways to overcome the problem:
 ## Other Deployment Modes
 
 For ready-to-use Seahorse in cloud deployment, you can try Seahorse
-on [Data Scienctist Workbench](dswb.html) or [Trusted Analytics Platform](tap.html).
+on [Data Scientist Workbench](dswb.html) or [Trusted Analytics Platform](tap.html).
 
 To learn more about scaling up and using Seahorse in production,
 see the [Enterprise](enterprise.html) page.

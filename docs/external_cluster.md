@@ -8,18 +8,17 @@ description: Using External Cluster
 
 ## Overview
 
-Seahorse Standalone is capable of running a Spark application without the need of any external
-resources. However, in order to fully assess its capabilities, you may want to use Seahorse
-with your own Spark cluster of any size.
+Seahorse Standalone comes bundled with a local, single-node Spark cluster to allow you to get started quickly.
+To assess its full potential, however, configure Seahorse to utilize external clusters.
 
-In order to connect to a cluster, machine with Seahorse must be addressable from every node of the cluster.
+In order to connect to a cluster, the machine with Seahorse must be addressable from every node of the cluster.
 This is because Seahorse runs applications in client mode - your machine runs Spark driver.
 
 In Seahorse Editor, you can specify all options needed to connect to your cluster.
 Aside from the `Spark Master URL`, probably the most important option is the `User IP`.
-It has to be set to the visible-from-cluster IP of the machine with Seahorse.
+It has to be set to such an IP of the machine with Seahorse that is visible from the cluster.
 
-Conveniently, Seahorse allows you to store configuration for various clusters.
+Conveniently, Seahorse allows you to store configurations for various clusters.
 
 <div class="centered-container" markdown="1">
   ![Cluster Presets](./img/cluster_presets.png){: .centered-image .img-responsive .bordered-image}
