@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2016, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperations.inout
+package io.deepsense.deeplang.doperations.readwritedataframe.csv
 
 import org.apache.commons.lang3.StringUtils
 import org.apache.spark.rdd.RDD
@@ -23,14 +23,19 @@ import org.apache.spark.sql.{DataFrame => SparkDataFrame, Row, types}
 
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperations.ReadDataFrame.ReadDataFrameParameters
+import io.deepsense.deeplang.doperations.inout.InputFileFormatChoice
 
-trait CsvReader {
-  self: ReadDataFrameParameters =>
+/**
+  * In CSV there are no type hints/formats. Everything is plain text between separators.
+  *
+  * Schema immediately after reading is all strings.
+  *
+  * Logic here looks for the most strict common subtype of all values per each column
+  * and converts schema to have more rich types than strings.
+  */
+object CsvSchemaInferencerAfterReading {
 
-  import CsvReader._
-
-  def inferAndConvert
+  def postprocess
     (csvChoice: InputFileFormatChoice.Csv)
     (sparkDataFrame: SparkDataFrame)
     (implicit context: ExecutionContext): SparkDataFrame = {
@@ -93,9 +98,7 @@ trait CsvReader {
       case (columnName, inferredType) => StructField(columnName, inferredType)
     })
   }
-}
 
-object CsvReader {
   private def cellTypeInference(cell: String, convertToBoolean: Boolean): TypeInference = {
     val trimmedCell = cell.trim
     if (trimmedCell.isEmpty) {
@@ -157,7 +160,11 @@ object CsvReader {
     }
   }
 
-  case class TypeInference(canBeBoolean: Boolean, canBeNumeric: Boolean, canBeTimestamp: Boolean) {
+  private case class TypeInference(
+     canBeBoolean: Boolean,
+     canBeNumeric: Boolean,
+     canBeTimestamp: Boolean
+   ) {
 
     def toType: types.DataType = if (canBeBoolean) {
       types.BooleanType

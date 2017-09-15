@@ -22,6 +22,7 @@ import java.nio.file.{Files, Paths}
 import org.apache.hadoop.fs.FileUtil
 
 import io.deepsense.commons.datetime.DateTimeConverter
+import io.deepsense.commons.resources.ManagedResource
 import io.deepsense.commons.serialization.Serialization
 
 case class LocalFileSystemClient() extends FileSystemClient with Serialization {
@@ -32,11 +33,8 @@ case class LocalFileSystemClient() extends FileSystemClient with Serialization {
     localFilePath: String,
     remoteFilePath: String): Unit = {
     def copyFile(f: File, dest: String): Unit = {
-      val fis: FileInputStream = new FileInputStream(f)
-      try {
+      ManagedResource(new FileInputStream(f)) { fis =>
         saveInputStreamToFile(fis, dest)
-      } finally {
-        fis.close()
       }
     }
     val input = new File(localFilePath)
@@ -50,30 +48,20 @@ case class LocalFileSystemClient() extends FileSystemClient with Serialization {
 
   override def saveObjectToFile[T <: Serializable](path: String, instance: T): Unit = {
     val inputStream = new BufferedInputStream(new ByteArrayInputStream(serialize(instance)))
-    try {
+    ManagedResource(inputStream) { inputStream =>
       saveInputStreamToFile(inputStream, path)
-    } finally {
-      inputStream.close()
     }
   }
 
-  override def saveInputStreamToFile(inputStream: InputStream, destinationPath: String): Unit = {
-    val fos = new BufferedOutputStream(new FileOutputStream(destinationPath))
-    try {
+  override def saveInputStreamToFile(inputStream: InputStream, destinationPath: String): Unit =
+    ManagedResource(new BufferedOutputStream(new FileOutputStream(destinationPath))) { fos =>
       org.apache.commons.io.IOUtils.copy(inputStream, fos)
-    } finally {
-      fos.close()
     }
-  }
 
-  override def readFileAsObject[T <: Serializable](path: String): T = {
-    val inputStream: FileInputStream = new FileInputStream(path)
-    try {
+  override def readFileAsObject[T <: Serializable](path: String): T =
+    ManagedResource(new FileInputStream(path)) { inputStream =>
       deserialize(org.apache.commons.io.IOUtils.toByteArray(inputStream))
-    } finally {
-      inputStream.close()
     }
-  }
 
   override def getFileInfo(path: String): Option[FileInfo] = {
     val file = new File(path)

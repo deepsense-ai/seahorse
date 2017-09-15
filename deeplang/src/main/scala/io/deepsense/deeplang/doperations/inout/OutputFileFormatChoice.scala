@@ -44,3 +44,19 @@ object OutputFileFormatChoice {
     override val params = declareParams()
   }
 }
+
+object OutputFromInputFileFormat {
+
+  def apply(inputFileFormatChoice: InputFileFormatChoice): OutputFileFormatChoice =
+    inputFileFormatChoice match {
+      case csv: InputFileFormatChoice.Csv =>
+        val output = OutputFileFormatChoice.Csv()
+        csv.copyValues(output)
+      case json: InputFileFormatChoice.Json => OutputFileFormatChoice.Json()
+      case parquet: InputFileFormatChoice.Parquet => OutputFileFormatChoice.Parquet()
+      case unsupported => throw new IllegalStateException(
+        s"Unsupported input file format $inputFileFormatChoice"
+      )
+    }
+
+}

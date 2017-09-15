@@ -46,7 +46,7 @@ abstract class AbstractTransformerWrapperSmokeTest[+T <: Transformer]
     StructField("v", new VectorUDT)
   ))
 
-  val inputDataFrame: DataFrame = {
+  lazy val inputDataFrame: DataFrame = {
     val rowSeq = Seq(
       Row(Array("ala", "kot", "ala"), "aAa bBb cCc", 0, 0, 0.0, Vectors.dense(0.0, 0.0, 0.0)),
       Row(Array(null), "das99213 99721 8i!#@!", 1, 1, 1.0, Vectors.dense(1.0, 1.0, 1.0))

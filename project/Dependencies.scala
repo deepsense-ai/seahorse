@@ -49,7 +49,8 @@ object Library {
   val akkaTestkit = akka("testkit")
   val amazonS3 = "com.amazonaws" % "aws-java-sdk-s3" %
     Version.amazonS3 exclude("com.fasterxml.jackson.core", "jackson-databind")
-  val apacheCommons = "org.apache.commons" % "commons-lang3" % Version.apacheCommons
+  val apacheCommonsLang3 = "org.apache.commons" % "commons-lang3" % Version.apacheCommons
+  val apacheCommonsCsv = "org.apache.commons" % "commons-csv" % "1.1" // Also used by spark-csv
   val guava = "com.google.guava" % "guava" % Version.guava
   val hadoopAWS = hadoop("aws")
   val hadoopClient = hadoop("client")
@@ -114,7 +115,7 @@ object Dependencies {
   }
 
   val commons = Spark.onlyInTests ++ Seq(
-    apacheCommons,
+    apacheCommonsLang3,
     log4JExtras,
     nscalaTime,
     slf4j,
@@ -125,10 +126,11 @@ object Dependencies {
   ) ++ Seq(mockitoCore, scalatest, scoverage).map(_ % Test)
 
   val deeplang = Spark.onlyInTests ++ Hadoop.onlyInTests ++ Seq(
-    apacheCommons,
+    apacheCommonsLang3,
     amazonS3,
     nscalaTime,
     scalaReflect,
+    apacheCommonsCsv,
     sparkCSV
   ) ++ Seq(mockitoCore, scalacheck, scalatest, scoverage).map(_ % Test)
 

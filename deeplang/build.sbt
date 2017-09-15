@@ -1,3 +1,7 @@
+import sbt.IvyConsole.Dependencies
+import sbt.Tests.{SubProcess, Group}
+import CommonSettingsPlugin._
+
 /**
  * Copyright 2015, deepsense.io
  *
@@ -14,6 +18,33 @@
  * limitations under the License.
  */
 
+// scalastyle:off
+
 name := "deepsense-seahorse-deeplang"
 
+// Integration tests using Spark Clusters need jar
+(test in OurIT) <<= (test in OurIT).dependsOn (assembly)
+
+// Only one spark context per JVM
+def assignTestsToJVMs(testDefs: Seq[TestDefinition]) = {
+  val (forJvm1, forJvm2) = testDefs.partition(_.name.contains("InputOutputSpec"))
+
+  Seq(
+    new Group(
+      name = "tests_for_jvm_1",
+      tests = forJvm1,
+      runPolicy = SubProcess(javaOptions = Seq.empty[String])
+    ),
+    new Group(
+      name = "test_for_jvm_2",
+      tests = forJvm2,
+      runPolicy = SubProcess(javaOptions = Seq.empty[String])
+    )
+  )
+}
+
+testGrouping in OurIT <<= (definedTests in OurIT) map assignTestsToJVMs
+
 libraryDependencies ++= Dependencies.deeplang
+
+// scalastyle:on

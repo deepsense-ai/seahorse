@@ -20,12 +20,8 @@ import io.deepsense.deeplang.params.{FileFormat, Param}
 import io.deepsense.deeplang.params.choice.Choice
 
 sealed trait InputFileFormatChoice extends Choice {
-  import InputFileFormatChoice._
-
-  override val choiceOrder: List[Class[_ <: InputFileFormatChoice]] = List(
-    classOf[Csv],
-    classOf[Parquet],
-    classOf[Json])
+  override val choiceOrder: List[Class[_ <: InputFileFormatChoice]] =
+    InputFileFormatChoice.choiceOrder
 }
 
 object InputFileFormatChoice {
@@ -49,4 +45,10 @@ object InputFileFormatChoice {
     override val name: String = FileFormat.JSON.toString
     override val params = declareParams()
   }
+
+  val choiceOrder: List[Class[_ <: InputFileFormatChoice]] = List(
+    classOf[Csv],
+    classOf[Parquet],
+    classOf[Json]
+  )
 }

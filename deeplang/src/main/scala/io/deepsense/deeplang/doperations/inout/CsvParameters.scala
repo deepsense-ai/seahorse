@@ -30,7 +30,7 @@ trait CsvParameters {
     description = "Column separator.")
   setDefault(csvColumnSeparator, ColumnSeparatorChoice.Comma())
 
-  def getCsvColumnSeparator: ColumnSeparatorChoice = $(csvColumnSeparator)
+  def getCsvColumnSeparator(): ColumnSeparatorChoice = $(csvColumnSeparator)
   def setCsvColumnSeparator(value: ColumnSeparatorChoice): this.type =
     set(csvColumnSeparator, value)
 
@@ -42,8 +42,14 @@ trait CsvParameters {
   def getCsvNamesIncluded: Boolean = $(csvNamesIncluded)
   def setCsvNamesIncluded(value: Boolean): this.type = set(csvNamesIncluded, value)
 
-  def determineColumnSeparator(): Char = {
-    getCsvColumnSeparator match {
+  def determineColumnSeparator(): Char =
+    CsvParameters.determineColumnSeparatorOf(getCsvColumnSeparator())
+}
+
+object CsvParameters {
+
+  def determineColumnSeparatorOf(choice: ColumnSeparatorChoice): Char = {
+    choice match {
       case ColumnSeparatorChoice.Comma() => ','
       case ColumnSeparatorChoice.Semicolon() => ';'
       case ColumnSeparatorChoice.Tab() => '\t'
@@ -53,9 +59,6 @@ trait CsvParameters {
         customChoice.getCustomColumnSeparator(0)
     }
   }
-}
-
-object CsvParameters {
 
   sealed trait ColumnSeparatorChoice extends Choice {
     import ColumnSeparatorChoice._

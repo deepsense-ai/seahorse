@@ -22,6 +22,7 @@ import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.ReadDataFrame
 import io.deepsense.deeplang.doperations.inout.CsvParameters.ColumnSeparatorChoice.Comma
+import io.deepsense.deeplang.doperations.readwritedataframe.FileScheme
 import io.deepsense.deeplang.{DOperable, DOperation, DeeplangIntegTestSupport}
 
 abstract class AbstractOperationExample[T <: DOperation]
@@ -36,7 +37,7 @@ abstract class AbstractOperationExample[T <: DOperation]
 
   def loadCsv(fileName: String): DataFrame = {
     ReadDataFrame(
-      this.getClass.getResource(s"/test_files/$fileName.csv").getPath,
+      FileScheme.File.pathPrefix + this.getClass.getResource(s"/test_files/$fileName.csv").getPath,
       Comma(),
       csvNamesIncluded = true,
       csvConvertToBoolean = false
@@ -56,9 +57,13 @@ abstract class AbstractOperationExample[T <: DOperation]
       val html =
         ExampleHtmlFormatter.exampleHtml(op, inputDataFrames, outputDfs)
 
+      // If this is run from root path (ex: run from InteliJ) it will
+      // fail, because ../ points out of project directory.
+      // TODO Make it not rely on relative path it's run from
       val examplePageFile = new File(
         "../docs/operations/examples/" + className + ".md")
 
+      examplePageFile.getParentFile.mkdirs()
       examplePageFile.createNewFile()
 
       val writer = new PrintWriter(examplePageFile)

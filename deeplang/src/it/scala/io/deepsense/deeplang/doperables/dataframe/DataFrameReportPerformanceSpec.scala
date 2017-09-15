@@ -35,7 +35,7 @@ class DataFrameReportPerformanceSpec
     with BeforeAndAfter
     with TestFiles
     with Logging {
-  val testFile = absoluteTestsDirPath + "/demand_without_header.csv"
+  val testFile = absoluteTestsDirPath.pathWithoutScheme + "/demand_without_header.csv"
 
   "DataFrame" should {
     "generate report" when {

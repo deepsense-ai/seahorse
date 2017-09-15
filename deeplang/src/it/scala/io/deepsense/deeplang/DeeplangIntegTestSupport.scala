@@ -24,7 +24,7 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.types._
 import org.apache.spark.sql.{Row, SQLContext}
 import org.apache.spark.{SparkConf, SparkContext}
-import org.scalatest.BeforeAndAfterAll
+import org.scalatest.{Matchers, BeforeAndAfterAll}
 import org.scalatest.mock.MockitoSugar._
 
 import io.deepsense.commons.models.Id
@@ -33,6 +33,7 @@ import io.deepsense.deeplang.OperationExecutionDispatcher.Result
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.deeplang.inference.InferContext
+import io.deepsense.deeplang.utils.DataFrameMatchers
 
 
 /**
@@ -114,7 +115,7 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
 
 }
 
-object DeeplangIntegTestSupport extends UnitSpec {
+object DeeplangIntegTestSupport extends UnitSpec with DataFrameMatchers {
   val sparkConf: SparkConf = new SparkConf()
     .setMaster("local[4]")
     .setAppName("TestApp")
@@ -124,41 +125,6 @@ object DeeplangIntegTestSupport extends UnitSpec {
   val sqlContext: SQLContext = new SQLContext(sparkContext)
 
   UserDefinedFunctions.registerFunctions(sqlContext.udf)
-
-  def assertDataFramesEqual(
-      actualDf: DataFrame,
-      expectedDf: DataFrame,
-      checkRowOrder: Boolean = true,
-      checkNullability: Boolean = true): Unit = {
-    // Checks only semantic identity, not objects location in memory
-    assertSchemaEqual(
-      actualDf.sparkDataFrame.schema, expectedDf.sparkDataFrame.schema, checkNullability)
-    val collectedRows1: Array[Row] = actualDf.sparkDataFrame.collect()
-    val collectedRows2: Array[Row] = expectedDf.sparkDataFrame.collect()
-    if (checkRowOrder) {
-      collectedRows1 shouldBe collectedRows2
-    } else {
-      collectedRows1 should contain theSameElementsAs collectedRows2
-    }
-  }
-
-  def assertSchemaEqual(
-      actualSchema: StructType,
-      expectedSchema: StructType,
-      checkNullability: Boolean): Unit = {
-    val (actual, expected) = if (checkNullability) {
-      (actualSchema, expectedSchema)
-    } else {
-      val actualNonNull = StructType(actualSchema.map(_.copy(nullable = false)))
-      val expectedNonNull = StructType(expectedSchema.map(_.copy(nullable = false)))
-      (actualNonNull, expectedNonNull)
-    }
-    assertSchemaEqual(actual, expected)
-  }
-
-  def assertSchemaEqual(actualSchema: StructType, expectedSchema: StructType): Unit = {
-    actualSchema.treeString shouldBe expectedSchema.treeString
-  }
 }
 
 private class MockedCommonExecutionContext(
@@ -192,6 +158,7 @@ private class MockedCommonExecutionContext(
       new MockedContextualCodeExecutor)
 }
 
+// TODO Unnecessary intermediate object. Remove.
 private class MockedExecutionContext(
     override val sparkContext: SparkContext,
     override val sqlContext: SQLContext,

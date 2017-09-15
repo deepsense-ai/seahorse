@@ -80,10 +80,7 @@ object CommonSettingsPlugin extends AutoPlugin {
         Tests.Argument(
           TestFrameworks.ScalaTest,
           "-o",
-          "-u", "target/test-reports",
-          "-y", "org.scalatest.FlatSpec",
-          "-y", "org.scalatest.WordSpec",
-          "-y", "org.scalatest.FunSuite"
+          "-u", "target/test-reports"
         )
       ),
       fork := true,

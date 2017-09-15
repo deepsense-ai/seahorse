@@ -17,22 +17,28 @@
 package io.deepsense.deeplang.doperations
 
 import java.io.IOException
-import java.sql.Timestamp
 import java.util.Properties
 
 import scala.reflect.runtime.{universe => ru}
+
 import org.apache.spark.SparkException
-import org.apache.spark.sql.{Row, SaveMode}
-import org.apache.spark.sql.types._
-import io.deepsense.commons.datetime.DateTimeConverter
+import org.apache.spark.sql.SaveMode
+
 import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperations.exceptions.{DeepSenseIOException, UnsupportedColumnTypeException, WriteFileException}
+import io.deepsense.deeplang.doperations.exceptions.{DeepSenseIOException, WriteFileException}
+import io.deepsense.deeplang.doperations.inout.OutputFileFormatChoice.Csv
+import io.deepsense.deeplang.doperations.inout.OutputFileFormatChoice._
+import io.deepsense.deeplang.doperations.inout.OutputStorageTypeChoice.File
 import io.deepsense.deeplang.doperations.inout._
+import io.deepsense.deeplang.doperations.readwritedataframe._
+import io.deepsense.deeplang.doperations.readwritedataframe.csv.{CsvSchemaInferencerAfterReading, CsvSchemaStringifierBeforeCsvWriting}
+import io.deepsense.deeplang.exceptions.DeepLangException
+import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
 import io.deepsense.deeplang.params.Params
 import io.deepsense.deeplang.params.choice.ChoiceParam
-import io.deepsense.deeplang.{DOperation1To0, ExecutionContext, FileSystemClient}
+import io.deepsense.deeplang._
 
 case class WriteDataFrame()
   extends DOperation1To0[DataFrame]
@@ -48,19 +54,18 @@ case class WriteDataFrame()
     name = "data storage type",
     description = "Storage type.")
 
-  def getStorageType: OutputStorageTypeChoice = $(storageType)
+  def getStorageType(): OutputStorageTypeChoice = $(storageType)
   def setStorageType(value: OutputStorageTypeChoice): this.type = set(storageType, value)
 
   val params = declareParams(storageType)
   setDefault(storageType, OutputStorageTypeChoice.File())
 
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): Unit = {
+    import OutputStorageTypeChoice._
     try {
-      getStorageType match {
-        case (jdbcChoice: OutputStorageTypeChoice.Jdbc) =>
-          writeToJdbc(jdbcChoice, context, dataFrame)
-        case (fileChoice: OutputStorageTypeChoice.File) =>
-          writeToFile(fileChoice, context, dataFrame)
+      getStorageType() match {
+        case jdbcChoice: Jdbc => writeToJdbc(jdbcChoice, context, dataFrame)
+        case fileChoice: File => writeToFile(fileChoice, context, dataFrame)
       }
     } catch {
       case e: IOException =>
@@ -69,11 +74,16 @@ case class WriteDataFrame()
     }
   }
 
+  override protected def _inferKnowledge(
+      context: InferContext)(k0: DKnowledge[DataFrame]): (Unit, InferenceWarnings) = {
+    ParquetSupportedOnClusterOnly.validate(this)
+    super._inferKnowledge(context)(k0)
+  }
+
   private def writeToJdbc(
       jdbcChoice: OutputStorageTypeChoice.Jdbc,
       context: ExecutionContext,
       dataFrame: DataFrame): Unit = {
-
     val properties = new Properties()
     properties.setProperty("driver", jdbcChoice.getJdbcDriverClassName)
 
@@ -87,29 +97,17 @@ case class WriteDataFrame()
       fileChoice: OutputStorageTypeChoice.File,
       context: ExecutionContext,
       dataFrame: DataFrame): Unit = {
+    implicit val ctx = context
 
-    val path =
-      FileSystemClient.replaceLeadingTildeWithHomeDirectory(fileChoice.getOutputFile)
+    val path = FileSystemClient.replaceLeadingTildeWithHomeDirectory(fileChoice.getOutputFile)
+    val filePath = FilePath(path)
 
     try {
-      val writer = fileChoice.getFileFormat match {
-        case (csvChoice: OutputFileFormatChoice.Csv) =>
-          requireNoComplexTypes(dataFrame)
-          val namesIncluded = csvChoice.getCsvNamesIncluded
-          val columnSeparator = csvChoice.determineColumnSeparator().toString
-          prepareDataFrameForCsv(context, dataFrame)
-            .sparkDataFrame
-            .write.format("com.databricks.spark.csv")
-            .option("header", if (namesIncluded) "true" else "false")
-            .option("delimiter", columnSeparator)
-        case OutputFileFormatChoice.Parquet() =>
-          // TODO: DS-1480 Writing DF in parquet format when column names contain forbidden chars
-          dataFrame.sparkDataFrame.write.format("parquet")
-
-        case OutputFileFormatChoice.Json() =>
-          dataFrame.sparkDataFrame.write.format("json")
+      val preprocessed = fileChoice.getFileFormat() match {
+        case csv: Csv => CsvSchemaStringifierBeforeCsvWriting.preprocess(dataFrame)
+        case other => dataFrame
       }
-      writer.mode(SaveMode.Overwrite).save(path)
+      writeUsingProvidedFileScheme(fileChoice, preprocessed, filePath)
     } catch {
       case e: SparkException =>
         logger.error(s"WriteDataFrame error: Spark problem. Unable to write file to $path", e)
@@ -117,52 +115,17 @@ case class WriteDataFrame()
     }
   }
 
-  private def requireNoComplexTypes(dataFrame: DataFrame): Unit = {
-    dataFrame.sparkDataFrame.schema.fields.map(structField =>
-        (structField.dataType, structField.name)
-    ).foreach {
-      case (dataType, columnName) => dataType match {
-        case _: ArrayType | _: MapType | _: StructType =>
-          throw UnsupportedColumnTypeException(columnName, dataType)
-        case _ => ()
-      }
-    }
-
+  private def writeUsingProvidedFileScheme(
+      fileChoice: File, dataFrame: DataFrame, path: FilePath)
+      (implicit context: ExecutionContext): Unit = path.fileScheme match {
+    case FileScheme.File => DriverFiles.write(dataFrame, path, fileChoice.getFileFormat())
+    case FileScheme.HDFS => ClusterFiles.write(dataFrame, path, fileChoice.getFileFormat())
+    case unsupportedFileScheme => throw NotSupportedScheme(unsupportedFileScheme)
   }
 
-  private def prepareDataFrameForCsv(context: ExecutionContext, dataFrame: DataFrame): DataFrame = {
-    val schema = dataFrame.sparkDataFrame.schema
-
-    def stringifySelectedTypes(schema: StructType): StructType = {
-      StructType(
-        schema.map {
-          case field: StructField => field.copy(dataType = StringType)
-        }
-      )
-    }
-
-    context.dataFrameBuilder.buildDataFrame(
-      stringifySelectedTypes(schema),
-      dataFrame.sparkDataFrame.map(WriteDataFrame.stringifySelectedCells(schema)))
-  }
+  case class NotSupportedScheme(fileScheme: FileScheme)
+    extends DeepLangException(s"Not supported file scheme ${fileScheme.pathPrefix}")
 
   @transient
   override lazy val tTagTI_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
-}
-
-object WriteDataFrame {
-  def stringifySelectedCells(originalSchema: StructType)(row: Row): Row = {
-    Row.fromSeq(
-      row.toSeq.zipWithIndex map { case (value, index) =>
-        (value, originalSchema(index).dataType) match {
-          case (null, _) => ""
-          case (_, BooleanType) =>
-            if (value.asInstanceOf[Boolean]) "1" else "0"
-          case (_, TimestampType) =>
-            DateTimeConverter.toString(
-              DateTimeConverter.fromMillis(value.asInstanceOf[Timestamp].getTime))
-          case (x, _) => value.toString
-        }
-      })
-  }
 }

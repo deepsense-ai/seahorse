@@ -23,10 +23,11 @@ import org.scalatest.BeforeAndAfter
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.report.Report
-import io.deepsense.deeplang.doperations.inout.CsvParameters
+import io.deepsense.deeplang.doperations.inout.{InputFileFormatChoice, InputStorageTypeChoice, CsvParameters}
+import io.deepsense.deeplang.doperations.readwritedataframe.{ParquetNotSupported, FileScheme}
 import io.deepsense.deeplang.{TestFiles, DOperable, DeeplangIntegTestSupport}
 
-class ReadDataFrameIntegSpec
+class ReadDataFrameWithDriverFilesIntegSpec
   extends DeeplangIntegTestSupport with BeforeAndAfter with TestFiles {
 
   import DeeplangIntegTestSupport._
@@ -186,6 +187,21 @@ class ReadDataFrameIntegSpec
       )
       dataFrame.report shouldBe an[Report]
     }
+
+    "throw exception at inference time when using parquet with local driver files" in {
+      val rdf = new ReadDataFrame()
+        .setStorageType(
+          InputStorageTypeChoice.File()
+            .setSourceFile(FileScheme.File.pathPrefix + "/some_path/some_file.parquet")
+            .setFileFormat(InputFileFormatChoice.Parquet()))
+
+      an [ParquetNotSupported.type] shouldBe thrownBy {
+        rdf.inferKnowledge(
+          executionContext.inferContext
+        )(Vector())
+      }
+    }
+
   }
 
   def readDataFrame(
@@ -194,7 +210,7 @@ class ReadDataFrameIntegSpec
       csvNamesIncluded: Boolean,
       csvConvertToBoolean: Boolean) : DataFrame = {
     ReadDataFrame(
-      absoluteTestsDirPath + "/" + fileName,
+      absoluteTestsDirPath.fullPath + fileName,
       csvColumnSeparator,
       csvNamesIncluded,
       csvConvertToBoolean

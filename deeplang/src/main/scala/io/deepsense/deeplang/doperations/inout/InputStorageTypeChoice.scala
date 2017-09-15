@@ -37,7 +37,7 @@ object InputStorageTypeChoice {
       name = "source",
       description = "Path to the DataFrame file.")
 
-    def getSourceFile: String = $(sourceFile)
+    def getSourceFile(): String = $(sourceFile)
     def setSourceFile(value: String): this.type = set(sourceFile, value)
 
     val fileFormat = ChoiceParam[InputFileFormatChoice](
@@ -45,7 +45,7 @@ object InputStorageTypeChoice {
       description = "Format of the input file.")
     setDefault(fileFormat, InputFileFormatChoice.Csv())
 
-    def getFileFormat: InputFileFormatChoice = $(fileFormat)
+    def getFileFormat(): InputFileFormatChoice = $(fileFormat)
     def setFileFormat(value: InputFileFormatChoice): this.type = set(fileFormat, value)
 
     override val params = declareParams(sourceFile, fileFormat)

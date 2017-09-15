@@ -22,16 +22,16 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.scalatest.BeforeAndAfter
 
+import io.deepsense.deeplang.doperations.readwritedataframe.FileScheme
 import io.deepsense.deeplang.{TestFiles, DeeplangIntegTestSupport}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.inout._
 
-class WriteReadDataFrameIntegSpec
+class WriteReadDataFrameWithDriverFilesIntegSpec
   extends DeeplangIntegTestSupport
   with BeforeAndAfter with TestFiles {
 
   import DeeplangIntegTestSupport._
-  val absoluteWriteReadDataFrameTestPath = absoluteTestsDirPath + "/WriteReadDataFrameTest"
 
   val timestamp = new Timestamp(System.currentTimeMillis())
 
@@ -43,14 +43,19 @@ class WriteReadDataFrameIntegSpec
       StructField("timestamp", TimestampType)
     ))
 
-  val rows = Seq(
-    Row(true, 0.45, "3.14", timestamp),
-    Row(false, null, "\"testing...\"", null),
-    Row(false, 3.14159, "Hello, world!", timestamp),
-    // in case of CSV, an empty string is the same as null - no way around it
-    Row(null, null, "", null))
+  val rows = {
+    val base = Seq(
+      Row(true, 0.45, "3.14", timestamp),
+      Row(false, null, "\"testing...\"", null),
+      Row(false, 3.14159, "Hello, world!", timestamp),
+      // in case of CSV, an empty string is the same as null - no way around it
+      Row(null, null, "", null)
+    )
+    val repeatedFewTimes = (1 to 10).flatMap(_ => base)
+    repeatedFewTimes
+  }
 
-  val dataFrame = createDataFrame(rows, schema)
+  lazy val dataFrame = createDataFrame(rows, schema)
 
   "WriteDataFrame and ReadDataFrame" should {
     "write and read CSV file" in {
@@ -58,7 +63,7 @@ class WriteReadDataFrameIntegSpec
         new WriteDataFrame()
           .setStorageType(
             OutputStorageTypeChoice.File()
-              .setOutputFile(absoluteWriteReadDataFrameTestPath + "/test_files")
+              .setOutputFile(absoluteTestsDirPath.fullPath + "/test_files")
               .setFileFormat(
                 OutputFileFormatChoice.Csv()
                   .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Tab())
@@ -69,31 +74,11 @@ class WriteReadDataFrameIntegSpec
         new ReadDataFrame()
           .setStorageType(
             InputStorageTypeChoice.File()
-              .setSourceFile(absoluteWriteReadDataFrameTestPath + "/test_files")
+              .setSourceFile(absoluteTestsDirPath.fullPath + "/test_files")
               .setFileFormat(InputFileFormatChoice.Csv()
                 .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Tab())
                 .setCsvNamesIncluded(true)
                 .setShouldConvertToBoolean(true)))
-      val loadedDataFrame = rdf.execute(executionContext)(Vector()).head.asInstanceOf[DataFrame]
-
-      assertDataFramesEqual(loadedDataFrame, dataFrame, checkRowOrder = false)
-    }
-
-    "write and read PARQUET file" in {
-      val wdf =
-        new WriteDataFrame()
-          .setStorageType(
-            OutputStorageTypeChoice.File()
-              .setOutputFile(absoluteWriteReadDataFrameTestPath + "/parquet")
-              .setFileFormat(OutputFileFormatChoice.Parquet()))
-      wdf.execute(executionContext)(Vector(dataFrame))
-
-      val rdf =
-        new ReadDataFrame()
-          .setStorageType(
-            InputStorageTypeChoice.File()
-              .setSourceFile(absoluteWriteReadDataFrameTestPath + "/parquet")
-              .setFileFormat(InputFileFormatChoice.Parquet()))
       val loadedDataFrame = rdf.execute(executionContext)(Vector()).head.asInstanceOf[DataFrame]
 
       assertDataFramesEqual(loadedDataFrame, dataFrame, checkRowOrder = false)
@@ -124,7 +109,7 @@ class WriteReadDataFrameIntegSpec
       val wdf =
         new WriteDataFrame()
           .setStorageType(OutputStorageTypeChoice.File()
-            .setOutputFile(absoluteWriteReadDataFrameTestPath + "/json")
+            .setOutputFile(absoluteTestsDirPath.fullPath + "json")
             .setFileFormat(OutputFileFormatChoice.Json()))
 
       wdf.execute(executionContext)(Vector(dataFrame))
@@ -132,7 +117,7 @@ class WriteReadDataFrameIntegSpec
       val rdf =
         new ReadDataFrame()
           .setStorageType(InputStorageTypeChoice.File()
-            .setSourceFile(absoluteWriteReadDataFrameTestPath + "/json")
+            .setSourceFile(absoluteTestsDirPath.fullPath + "json")
             .setFileFormat(InputFileFormatChoice.Json()))
       val loadedDataFrame = rdf.execute(executionContext)(Vector()).head.asInstanceOf[DataFrame]
 

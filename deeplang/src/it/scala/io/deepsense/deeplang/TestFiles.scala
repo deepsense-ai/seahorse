@@ -18,9 +18,11 @@ package io.deepsense.deeplang
 
 import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll}
 
+import io.deepsense.deeplang.doperations.readwritedataframe.{FilePath, FileScheme}
+
 trait TestFiles { self: BeforeAndAfter with BeforeAndAfterAll =>
 
-  private val fileSystemClient = LocalFileSystemClient()
+  private def fileSystemClient = LocalFileSystemClient()
 
   before {
     fileSystemClient.delete(testsDir)
@@ -33,6 +35,8 @@ trait TestFiles { self: BeforeAndAfter with BeforeAndAfterAll =>
   }
 
   private val testsDir = "target/tests"
-  val absoluteTestsDirPath = new java.io.File(testsDir).getAbsoluteFile.toString
+
+  def absoluteTestsDirPath: FilePath = FilePath(FileScheme.File, rawAbsoluteTestsDirPath)
+  private def rawAbsoluteTestsDirPath = new java.io.File(testsDir).getAbsoluteFile.toString + "/"
 
 }
