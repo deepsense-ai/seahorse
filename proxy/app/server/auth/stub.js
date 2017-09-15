@@ -15,6 +15,10 @@ function init(app) {
     };
     next();
   });
+
+  app.get('/logout', function (req, res) {
+    res.redirect('/');
+  });
 }
 
 function login(req, res, next) {
