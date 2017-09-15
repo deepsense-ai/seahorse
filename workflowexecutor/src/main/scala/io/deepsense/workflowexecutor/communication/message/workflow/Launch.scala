@@ -32,3 +32,5 @@ trait LaunchJsonProtocol
 
   implicit val launchFormat: RootJsonFormat[Launch] = jsonFormat2(Launch.apply)
 }
+
+object LaunchJsonProtocol extends LaunchJsonProtocol

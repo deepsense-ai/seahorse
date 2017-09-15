@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2016, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,10 @@
  * limitations under the License.
  */
 
-package io.deepsense.workflowexecutor.communication.message.workflow
+package io.deepsense.workflowexecutor.communication.mq.json
 
-import spray.json.{DefaultJsonProtocol, RootJsonFormat}
+import spray.json.JsObject
 
-import io.deepsense.commons.json.IdJsonProtocol
-import io.deepsense.models.workflows.Workflow
-
-case class Init(workflowId: Workflow.Id)
-
-trait InitJsonProtocol extends DefaultJsonProtocol with IdJsonProtocol {
-  implicit val initFormat: RootJsonFormat[Init] = jsonFormat1(Init.apply)
+trait JsonMessageDeserializer {
+  def deserialize: PartialFunction[(String, JsObject), Any]
 }
-
-object InitJsonProtocol extends InitJsonProtocol

@@ -32,6 +32,10 @@ lazy val graph                  = project dependsOn (
 lazy val workflowjson           = project dependsOn (commons, deeplang, graph, models)
 lazy val models                 = project dependsOn (commons, deeplang, graph)
 lazy val reportlib              = project dependsOn commons
+lazy val workflowexecutormqprotocol = project dependsOn (
+  commons,
+  commons % "test->test",
+  models)
 lazy val workflowexecutor       = project dependsOn (
   commons % "test->test",
   deeplang,
@@ -39,7 +43,9 @@ lazy val workflowexecutor       = project dependsOn (
   deeplang % "test->it",
   models,
   workflowjson,
-  workflowjson % "test -> test")
+  workflowjson % "test -> test",
+  workflowexecutormqprotocol,
+  workflowexecutormqprotocol % "test -> test")
 
 // Sequentially perform integration tests
 addCommandAlias("ds-it",
@@ -49,7 +55,8 @@ addCommandAlias("ds-it",
     ";workflowjson/it:test " +
     ";models/it:test " +
     ";reportlib/it:test " +
-    ";workflowexecutor/it:test")
+    ";workflowexecutor/it:test" +
+    ";workflowexecutormqprotocol/it:test")
 
 addCommandAlias("sPublish", "aetherDeploy")
 addCommandAlias("sPublishLocal", "aetherInstall")

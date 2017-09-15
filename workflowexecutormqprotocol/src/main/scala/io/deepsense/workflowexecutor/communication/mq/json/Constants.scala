@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2016, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,17 @@
  * limitations under the License.
  */
 
-package io.deepsense.workflowexecutor.communication.mq.serialization
+package io.deepsense.workflowexecutor.communication.mq.json
 
-trait MessageMQDeserializer {
+object Constants {
+  object JsonKeys {
+    val messageTypeKey = "messageType"
+    val messageBodyKey = "messageBody"
+  }
 
-  def  deserializeMessage(data: Array[Byte]): Any
+  object MessagesTypes {
+    val heartbeat = "heartbeat"
+    val poisonPill = "poisonPill"
+    val ready = "ready"
+  }
 }

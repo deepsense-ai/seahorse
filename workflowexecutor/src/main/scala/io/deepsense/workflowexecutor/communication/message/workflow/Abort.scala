@@ -28,3 +28,5 @@ trait AbortJsonProtocol extends IdJsonProtocol with Logging {
 
   implicit val abortFormat: RootJsonFormat[Abort] = jsonFormat1(Abort.apply)
 }
+
+object AbortJsonProtocol extends AbortJsonProtocol

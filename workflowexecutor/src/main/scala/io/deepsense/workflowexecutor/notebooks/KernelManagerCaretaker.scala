@@ -27,10 +27,10 @@ import com.typesafe.config.ConfigFactory
 
 import io.deepsense.commons.utils.Logging
 import io.deepsense.models.workflows.Workflow
+import io.deepsense.workflowexecutor.rabbitmq.MQCommunicationFactory
 import io.deepsense.workflowexecutor.communication.message.notebook.KernelManagerReady
 import io.deepsense.workflowexecutor.communication.mq.MQCommunication
 import io.deepsense.workflowexecutor.pyspark.PythonPathGenerator
-import io.deepsense.workflowexecutor.rabbitmq.MQCommunicationFactory
 
 class KernelManagerCaretaker(
   private val actorSystem: ActorSystem,

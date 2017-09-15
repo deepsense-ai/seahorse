@@ -28,7 +28,6 @@ import io.deepsense.models.json.graph.NodeStatusJsonProtocol
 import io.deepsense.models.workflows._
 import io.deepsense.reportlib.model.ReportContent
 import io.deepsense.workflowexecutor.WorkflowManagerClientActorProtocol.{SaveState, SaveWorkflow}
-import io.deepsense.workflowexecutor.communication.message.workflow.ExecutionStatus
 import io.deepsense.workflowexecutor.partialexecution._
 
 /**
@@ -127,7 +126,7 @@ abstract class WorkflowExecutorActor(
     val inferredState = statefulWorkflow.currentExecution match {
       case idle: IdleExecution =>
         logger.debug(s"End of execution")
-        terminationListener.foreach(_ ! getExecutionStatus)
+        terminationListener.foreach(_ ! getExecutionReport)
         context.unbecome()
         context.become(ready())
         Some(statefulWorkflow.inferState)
@@ -142,23 +141,22 @@ abstract class WorkflowExecutorActor(
         context.become(waitingForFinish())
         None
     }
-    val executionStatus: ExecutionStatus =
-      ExecutionStatus(statefulWorkflow.changesExecutionReport(startingPointExecution))
-    sendExecutionStatus(executionStatus)
+    val executionReport: ExecutionReport =
+      statefulWorkflow.changesExecutionReport(startingPointExecution)
+    sendExecutionReport(executionReport)
 
     inferredState.foreach(inferredState => sendInferredState(inferredState))
   }
 
-  def sendExecutionStatus(executionStatus: ExecutionStatus): Unit = {
-    logger.debug(s"Status for '$workflowId': Error: ${executionStatus.executionReport.error}, " +
-      s"States of nodes: ${executionStatus.executionReport.nodesStatuses.mkString("\n")}")
-    publisher.foreach(_ ! executionStatus)
-    workflowManagerClientActor.foreach(_ ! SaveState(workflowId, executionStatus.executionReport))
+  def sendExecutionReport(executionReport: ExecutionReport): Unit = {
+    logger.debug(s"Status for '$workflowId': Error: ${executionReport.error}, " +
+      s"States of nodes: ${executionReport.nodesStatuses.mkString("\n")}")
+    publisher.foreach(_ ! executionReport)
+    workflowManagerClientActor.foreach(_ ! SaveState(workflowId, executionReport))
   }
 
-  def executionToStatus(execution: Execution): ExecutionStatus = {
-    ExecutionStatus(ExecutionReport(execution.graph.states.mapValues(_.nodeState)))
-  }
+  def executionToReport(execution: Execution): ExecutionReport =
+    ExecutionReport(execution.graph.states.mapValues(_.nodeState))
 
   def launchReadyNodes(): Unit = {
     logger.debug("launchReadyNodes")
@@ -210,9 +208,7 @@ abstract class WorkflowExecutorActor(
     }
   }
 
-  def getExecutionStatus: ExecutionStatus = {
-    ExecutionStatus(statefulWorkflow.executionReport)
-  }
+  def getExecutionReport: ExecutionReport = statefulWorkflow.executionReport
 
   def execution: Execution = statefulWorkflow.currentExecution
 

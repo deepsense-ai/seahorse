@@ -35,10 +35,15 @@ object Version {
 }
 
 object Library {
+
+  implicit class RichModuleID(m: ModuleID) {
+    def excludeAkkaActor: ModuleID = m excludeAll ExclusionRule("com.typesafe.akka")
+  }
+
   val akka = (name: String) => "com.typesafe.akka" %% s"akka-$name" % Version.akka
   val hadoop = (name: String) => "org.apache.hadoop" % s"hadoop-$name" % Version.hadoop
   val spark = (name: String) => "org.apache.spark" %% s"spark-$name" % Version.spark
-  val spray = (name: String) => "io.spray" %% s"spray-$name" % Version.spray
+  val spray = (name: String) => "io.spray" %% s"spray-$name" % Version.spray excludeAkkaActor
 
   val akkaActor = akka("actor")
   val akkaTestkit = akka("testkit")
@@ -52,7 +57,7 @@ object Library {
   val log4JExtras = "log4j" % "apache-log4j-extras" % "1.2.17"
   val nscalaTime = "com.github.nscala-time" %% "nscala-time" % Version.nsscalaTime
   val mockitoCore = "org.mockito" % "mockito-core" % Version.mockito
-  val rabbitmq = "com.thenewmotion.akka" %% "akka-rabbitmq" % "2.2"
+  val rabbitmq = "com.thenewmotion.akka" %% "akka-rabbitmq" % "2.2" excludeAkkaActor
   val scalacheck = "org.scalacheck" %% "scalacheck" % Version.scalacheck
   val slf4j = "org.slf4j" % "slf4j-api" % "1.7.12"
   val slf4jLog4j = "org.slf4j" % "slf4j-log4j12" % "1.7.12"
@@ -150,4 +155,11 @@ object Dependencies {
     sprayClient,
     rabbitmq
   ) ++ Seq(akkaTestkit, mockitoCore, scalatest, wireMock).map(_ % s"$Test,it")
+
+  val workflowexecutorMqProtocol = Seq(
+    akkaActor,
+    rabbitmq,
+    sprayJson,
+    sprayHttpx
+  )
 }

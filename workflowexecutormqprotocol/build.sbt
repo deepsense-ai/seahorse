@@ -14,20 +14,6 @@
  * limitations under the License.
  */
 
-package io.deepsense.workflowexecutor.communication.message.notebook
+name := "deepsense-seahorse-workflowexecutor-mq-protocol"
 
-import spray.json._
-
-case class PythonGatewayAddress(addresses: List[Address])
-
-case class Address(hostname: String, port: Int)
-
-trait AddressJsonProtocol extends DefaultJsonProtocol {
-  implicit val addressFormat = jsonFormat2(Address)
-}
-
-trait PythonGatewayAddressJsonProtocol extends DefaultJsonProtocol with AddressJsonProtocol {
-  implicit val pythonGatewayAddressFormat = jsonFormat1(PythonGatewayAddress)
-}
-
-object PythonGatewayAddressJsonProtocol extends PythonGatewayAddressJsonProtocol
+libraryDependencies ++= Dependencies.workflowexecutorMqProtocol

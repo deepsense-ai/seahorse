@@ -25,7 +25,7 @@ import io.deepsense.commons.StandardSpec
 import io.deepsense.graph.DeeplangGraph
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.workflows.{Workflow, WorkflowMetadata, WorkflowType}
-import io.deepsense.workflowexecutor.communication.message.workflow.{Abort, Init, Launch, UpdateWorkflow}
+import io.deepsense.workflowexecutor.communication.message.workflow.{Abort, Launch, UpdateWorkflow}
 import io.deepsense.workflowexecutor.executor.Executor
 
 class ProtocolJsonDeserializerSpec
@@ -65,20 +65,6 @@ class ProtocolJsonDeserializerSpec
 
       val readMessage: Any = serializeAndRead(protocolDeserializer, rawMessage)
       readMessage shouldBe Abort(workflowId)
-    }
-    "deserialize Init messages" in {
-      val protocolDeserializer = ProtocolJsonDeserializer(mock[GraphReader])
-      val workflowId = Workflow.Id.randomId
-
-      val rawMessage = JsObject(
-        "messageType" -> JsString("init"),
-        "messageBody" -> JsObject(
-          "workflowId" -> JsString(workflowId.toString)
-        )
-      )
-
-      val readMessage: Any = serializeAndRead(protocolDeserializer, rawMessage)
-      readMessage shouldBe Init(workflowId)
     }
     "deserialize UpdateWorkflow messages" in {
       val graphReader = new GraphReader(Executor.createDOperationsCatalog())

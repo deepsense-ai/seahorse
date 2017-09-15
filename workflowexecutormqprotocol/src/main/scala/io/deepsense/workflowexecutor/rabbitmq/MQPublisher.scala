@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2016, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,14 @@
 package io.deepsense.workflowexecutor.rabbitmq
 
 import akka.actor.ActorRef
-import com.rabbitmq.client.Channel
-import com.thenewmotion.akka.rabbitmq.ChannelMessage
+import com.thenewmotion.akka.rabbitmq.{Channel, ChannelMessage}
 
 import io.deepsense.commons.utils.Logging
-import io.deepsense.workflowexecutor.communication.mq.serialization.MessageMQSerializer
+import io.deepsense.workflowexecutor.communication.mq.MQSerializer
 
 /**
   * Class used to publish data to exchange under given topic.
+ *
   * @param exchange name of the Exchange
   * @param messageSerializer implementation of MessageMQSerializer that is able to serialize
   *                          all messages published using this publisher
@@ -32,7 +32,7 @@ import io.deepsense.workflowexecutor.communication.mq.serialization.MessageMQSer
   */
 case class MQPublisher(
     exchange: String,
-    messageSerializer: MessageMQSerializer,
+    messageSerializer: MQSerializer,
     publisherActor: ActorRef)
   extends Logging {
 

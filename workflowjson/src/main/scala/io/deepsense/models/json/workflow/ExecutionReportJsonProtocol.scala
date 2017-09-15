@@ -57,3 +57,5 @@ trait ExecutionReportJsonProtocol
     }
   }
 }
+
+object ExecutionReportJsonProtocol extends ExecutionReportJsonProtocol

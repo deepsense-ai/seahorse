@@ -31,14 +31,11 @@ import io.deepsense.models.json.workflow.{ExecutionReportJsonProtocol, InferredS
 import io.deepsense.models.workflows._
 import io.deepsense.reportlib.model.factory.ReportContentTestFactory
 import io.deepsense.workflowexecutor.communication.message.global._
-import io.deepsense.workflowexecutor.communication.message.notebook.{Address, PythonGatewayAddress, PythonGatewayAddressJsonProtocol}
-import io.deepsense.workflowexecutor.communication.message.workflow.ExecutionStatus
 
 class ProtocolJsonSerializerSpec
   extends StandardSpec
   with MockitoSugar
   with ExecutionReportJsonProtocol
-  with PythonGatewayAddressJsonProtocol
   with WorkflowWithResultsJsonProtocol
   with InferredStateJsonProtocol
   with HeartbeatJsonProtocol {
@@ -48,8 +45,8 @@ class ProtocolJsonSerializerSpec
   "ProtocolJsonSerializer" should {
     val protocolJsonSerializer = ProtocolJsonSerializer(graphReader)
 
-    "serialize ExecutionStatus" in {
-      val executionStatus = ExecutionStatus(
+    "serialize ExecutionReport" in {
+      val executionReport = ExecutionReport(
         Map(Node.Id.randomId -> io.deepsense.graph.nodestate.Draft()),
         EntitiesMap(
           Map[Entity.Id, DOperable](
@@ -57,16 +54,8 @@ class ProtocolJsonSerializerSpec
           Map(Entity.Id.randomId -> ReportContentTestFactory.someReport)),
         None)
 
-      protocolJsonSerializer.serializeMessage(executionStatus) shouldBe
-      expectedSerializationResult("executionStatus", executionStatus.executionReport.toJson)
-    }
-
-    "serialize PythonGatewayAddress" in {
-      val pythonGatewayAddress = PythonGatewayAddress(
-        List(Address("south.park", 123), Address("not.funny.com", 1111)))
-
-      protocolJsonSerializer.serializeMessage(pythonGatewayAddress) shouldBe
-      expectedSerializationResult("pythonGatewayAddress", pythonGatewayAddress.toJson)
+      protocolJsonSerializer.serializeMessage(executionReport) shouldBe
+        expectedSerializationResult("executionStatus", executionReport.toJson)
     }
 
     "serialize WorkflowWithResults" in {
@@ -79,19 +68,6 @@ class ProtocolJsonSerializerSpec
 
       protocolJsonSerializer.serializeMessage(workflowWithResults) shouldBe
       expectedSerializationResult("workflowWithResults", workflowWithResults.toJson)
-    }
-
-    "serialize InferredState" in {
-      val inferredState =
-        InferredState(Workflow.Id.randomId, GraphKnowledge(), ExecutionReport(Map()))
-      protocolJsonSerializer.serializeMessage(inferredState) shouldBe
-      expectedSerializationResult("inferredState", inferredState.toJson)
-    }
-
-    "serialize Heartbeat" in {
-      val heartbeat = Heartbeat("SomeSession")
-      protocolJsonSerializer.serializeMessage(heartbeat) shouldBe
-        expectedSerializationResult("heartbeat", heartbeat.toJson)
     }
   }
 

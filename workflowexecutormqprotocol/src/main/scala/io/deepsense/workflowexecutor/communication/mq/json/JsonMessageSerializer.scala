@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2016, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
-package io.deepsense.workflowexecutor.communication.message.notebook
+package io.deepsense.workflowexecutor.communication.mq.json
 
-case class GetPythonGatewayAddress()
+import spray.json.JsObject
+
+trait JsonMessageSerializer {
+  def serialize: PartialFunction[Any, JsObject]
+}

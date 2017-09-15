@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2016, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +17,15 @@
 package io.deepsense.workflowexecutor.rabbitmq
 
 import akka.actor.ActorRef
-import com.rabbitmq.client.AMQP.BasicProperties
-import com.rabbitmq.client.{Envelope, Channel, DefaultConsumer}
+import com.thenewmotion.akka.rabbitmq.{BasicProperties, Channel, DefaultConsumer, Envelope}
 
 import io.deepsense.commons.serialization.Serialization
 import io.deepsense.commons.utils.Logging
-import io.deepsense.workflowexecutor.communication.mq.serialization.MessageMQDeserializer
+import io.deepsense.workflowexecutor.communication.mq.MQDeserializer
 
 case class MQSubscriber(
   subscriberActor: ActorRef,
-  mqMessageDeserializer: MessageMQDeserializer,
+  mqMessageDeserializer: MQDeserializer,
   channel: Channel
 ) extends DefaultConsumer(channel)
     with Logging

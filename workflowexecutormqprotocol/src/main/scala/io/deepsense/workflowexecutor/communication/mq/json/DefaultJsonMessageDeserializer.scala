@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package io.deepsense.workflowexecutor.communication.message.notebook
+package io.deepsense.workflowexecutor.communication.mq.json
 
-import spray.json.{DefaultJsonProtocol, RootJsonFormat}
+import spray.json.{JsObject, JsonReader}
 
-case class KernelManagerReady()
+class DefaultJsonMessageDeserializer[T : JsonReader](handledName: String)
+    extends JsonMessageDeserializer {
 
-trait KernelManagerReadyJsonProtocol
-  extends DefaultJsonProtocol {
-  implicit val kernelManagerReadyFormat: RootJsonFormat[KernelManagerReady] =
-    jsonFormat0(KernelManagerReady)
+  val deserialize: PartialFunction[(String, JsObject), Any] = {
+    case (name, body) if isHandled(name) => handle(body)
+  }
+
+  private def isHandled(name: String): Boolean = name == handledName
+  private def handle(body: JsObject): Any = body.convertTo[T]
 }
-
-object KernelManagerReadyJsonProtocol extends KernelManagerReadyJsonProtocol

@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2016, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,19 +21,17 @@ import java.util
 import scala.concurrent.{Future, Promise}
 
 import akka.actor.{ActorRef, ActorSystem, Props}
-import com.rabbitmq.client.Channel
 import com.thenewmotion.akka.rabbitmq.ChannelActor.{Connected, Disconnected}
 import com.thenewmotion.akka.rabbitmq._
 
-import io.deepsense.workflowexecutor.communication.mq.MQCommunication
-import io.deepsense.workflowexecutor.communication.mq.serialization.{MessageMQDeserializer, MessageMQSerializer}
+import io.deepsense.workflowexecutor.communication.mq.{MQCommunication, MQDeserializer, MQSerializer}
 import io.deepsense.workflowexecutor.rabbitmq.MQCommunicationFactory.NotifyingChannelActor
 
 case class MQCommunicationFactory(
   system: ActorSystem,
   connection: ActorRef,
-  mqMessageSerializer: MessageMQSerializer,
-  mqMessageDeserializer: MessageMQDeserializer) {
+  mqMessageSerializer: MQSerializer,
+  mqMessageDeserializer: MQDeserializer) {
 
   val exchangeType = "topic"
 

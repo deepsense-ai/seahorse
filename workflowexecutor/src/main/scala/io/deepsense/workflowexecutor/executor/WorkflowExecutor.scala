@@ -38,7 +38,6 @@ import io.deepsense.models.workflows.{ExecutionReport, WorkflowWithResults, Work
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.Launch
 import io.deepsense.workflowexecutor.WorkflowExecutorApp._
 import io.deepsense.workflowexecutor._
-import io.deepsense.workflowexecutor.communication.message.workflow.ExecutionStatus
 import io.deepsense.workflowexecutor.exception.{UnexpectedHttpResponseException, WorkflowExecutionException}
 import io.deepsense.workflowexecutor.pyspark.PythonPathGenerator
 import io.deepsense.workflowexecutor.session.storage.DataFrameStorageImpl
@@ -88,7 +87,7 @@ case class WorkflowExecutor(
       sqlContext)
 
     val actorSystem = ActorSystem(actorSystemName)
-    val finishedExecutionStatus: Promise[ExecutionStatus] = Promise()
+    val finishedExecutionStatus: Promise[ExecutionReport] = Promise()
     val statusReceiverActor =
       actorSystem.actorOf(TerminationListenerActor.props(finishedExecutionStatus))
 
@@ -111,7 +110,7 @@ case class WorkflowExecutor(
       case Failure(exception) => // WEA failed with an exception
         logger.error("WorkflowExecutorActor failed: ", exception)
         throw exception
-      case Success(ExecutionStatus(executionReport)) =>
+      case Success(executionReport: ExecutionReport) =>
         logger.debug(s"WorkflowExecutorActor finished successfully: ${workflow.graph}")
         executionReport
     }

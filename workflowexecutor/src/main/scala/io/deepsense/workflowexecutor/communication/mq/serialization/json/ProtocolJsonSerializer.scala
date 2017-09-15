@@ -16,50 +16,12 @@
 
 package io.deepsense.workflowexecutor.communication.mq.serialization.json
 
-import java.nio.charset.Charset
-
-import spray.json._
-
-import io.deepsense.commons.utils.Logging
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
-import io.deepsense.models.json.workflow.{ExecutionReportJsonProtocol, InferredStateJsonProtocol, WorkflowWithResultsJsonProtocol}
-import io.deepsense.models.workflows.{InferredState, WorkflowWithResults}
-import io.deepsense.workflowexecutor.communication.message.global.{Heartbeat, HeartbeatJsonProtocol, Ready, ReadyJsonProtocol}
-import io.deepsense.workflowexecutor.communication.message.notebook.{PythonGatewayAddress, PythonGatewayAddressJsonProtocol}
-import io.deepsense.workflowexecutor.communication.message.workflow._
-import io.deepsense.workflowexecutor.communication.mq.serialization.MessageMQSerializer
+import io.deepsense.workflowexecutor.communication.mq.json.JsonMQSerializer
 
 case class ProtocolJsonSerializer(graphReader: GraphReader)
-  extends MessageMQSerializer
-  with ExecutionReportJsonProtocol
-  with PythonGatewayAddressJsonProtocol
-  with WorkflowWithResultsJsonProtocol
-  with InferredStateJsonProtocol
-  with HeartbeatJsonProtocol
-  with ReadyJsonProtocol
-  with Logging {
-
-  import JsonSerialization._
-
-  override def serializeMessage(message: Any): Array[Byte] = {
-    messageToJson(message).compactPrint.getBytes(Charset.forName("UTF-8"))
-  }
-
-  private def messageToJson(message: Any): JsObject = {
-    message match {
-      case m: ExecutionStatus =>
-        toJsonMQMessage(OutMessages.executionStatus, m.executionReport.toJson)
-      case m: WorkflowWithResults =>
-        toJsonMQMessage(OutMessages.workflowWithResults, m.toJson)
-      case m: InferredState => toJsonMQMessage(OutMessages.inferredState, m.toJson)
-      case m: PythonGatewayAddress => toJsonMQMessage(OutMessages.pythonGatewayAddress, m.toJson)
-      case m: Heartbeat => toJsonMQMessage(OutMessages.heartbeat, m.toJson)
-      case m: Ready => toJsonMQMessage(OutMessages.ready, m.toJson)
-    }
-  }
-
-  private def toJsonMQMessage(messageType: String, jsMessageBody: JsValue): JsObject = JsObject(
-    messageTypeKey -> JsString(messageType),
-    messageBodyKey -> jsMessageBody
-  )
-}
+  extends JsonMQSerializer(
+    Seq(
+      WorkflowProtocol.ExecutionStatusSerializer,
+      WorkflowProtocol.InferredStateSerializer(graphReader),
+      WorkflowProtocol.WorkflowWithResultsSerializer(graphReader)))

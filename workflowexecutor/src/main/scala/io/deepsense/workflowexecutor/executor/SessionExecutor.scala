@@ -42,6 +42,8 @@ import io.deepsense.workflowexecutor.pyspark.PythonPathGenerator
 import io.deepsense.workflowexecutor.rabbitmq._
 import io.deepsense.workflowexecutor.session.storage.DataFrameStorageImpl
 import io.deepsense.workflowexecutor._
+import io.deepsense.workflowexecutor.rabbitmq.MQCommunicationFactory
+import io.deepsense.workflowexecutor.communication.mq.json.Global.{GlobalMQDeserializer, GlobalMQSerializer}
 
 /**
  * SessionExecutor waits for user instructions in an infinite loop.
@@ -212,8 +214,8 @@ case class SessionExecutor(
 
   private def createCommunicationFactory(system: ActorSystem): MQCommunicationFactory = {
     val connection: ActorRef = createConnection(system)
-    val messageDeserializer = ProtocolJsonDeserializer(graphReader)
-    val messageSerializer = ProtocolJsonSerializer(graphReader)
+    val messageDeserializer = ProtocolJsonDeserializer(graphReader).orElse(GlobalMQDeserializer)
+    val messageSerializer = ProtocolJsonSerializer(graphReader).orElse(GlobalMQSerializer)
     MQCommunicationFactory(system, connection, messageSerializer, messageDeserializer)
   }
 

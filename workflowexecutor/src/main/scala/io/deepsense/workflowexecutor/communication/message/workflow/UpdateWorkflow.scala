@@ -34,3 +34,4 @@ trait UpdateWorkflowJsonProtocol
   implicit val updateWorkflowFormat: RootJsonFormat[UpdateWorkflow] =
     jsonFormat2(UpdateWorkflow.apply)
 }
+
