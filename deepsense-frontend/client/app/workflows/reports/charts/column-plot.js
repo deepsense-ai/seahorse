@@ -1,7 +1,7 @@
 'use strict';
 
 /* @ngInject */
-function ColumnPlot($filter) {
+function ColumnPlot($filter, HelpersService) {
 
   const maxChartHeight = 400;
   const labelLengthThreshold = 20;
@@ -64,7 +64,7 @@ function ColumnPlot($filter) {
       function getLabels(labelData) {
         let longestLabel = 0;
 
-        const labelTexts = _.map(_.sliding(labelData, 2), ([start, end]) => {
+        const labelTexts = _.map(HelpersService.sliding(labelData, 2), ([start, end]) => {
           if (scope.columnType === 'timestamp') {
             start = moment(new Date(start)).format('YYYY-MM-DD HH:mm:ss');
             end = moment(new Date(end)).format('YYYY-MM-DD HH:mm:ss');

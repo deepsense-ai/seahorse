@@ -9,6 +9,7 @@ require('./dots/dots.js').inject(common);
 require('./filters/cut-words.js').inject(common);
 require('./filters/precision.js').inject(common);
 require('./focusElement/focus-element.js').inject(common);
+require('./helpers/helpers.service.js').inject(common);
 require('./loading-mask/loading-mask.module.js').inject(common);
 require('./modals/modals.module.js').inject(common);
 require('./resizable/resizable.js').inject(common);
