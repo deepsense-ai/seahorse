@@ -7,26 +7,28 @@
 function ExperimentController($stateParams, $rootScope, Operations, DrawingService, ExperimentFactory, ExperimentAPIClient, UPDATE_CLICKED_NODE) {
 
   var that = this;
-  var operations;
-  var experiment;
-  var selectedNodeId;
+  var internal = {};
 
-  that.init = function () {
+  internal.operations = null;
+  internal.experiment = null;
+  internal.selectedNode = null;
+
+  internal.init = function init() {
     Operations.getCatalog().then((data) => {
       that.operationsCatalog = data;
-    });
+  });
 
-    Operations.getAll()
-      .then(function (data) {
-        operations = data;
-      })
-      .then(function () {
-        ExperimentAPIClient.getData($stateParams.id).then(function (data) {
-          $rootScope.headerTitle = 'Experiment: ' + data.experiment.name;
-          experiment = ExperimentFactory.createExperiment(data, operations);
-          DrawingService.renderExperiment(experiment);
-        });
+  Operations.getAll()
+    .then(function (data) {
+      internal.operations = data;
+    })
+    .then(function () {
+      ExperimentAPIClient.getData($stateParams.id).then(function (data) {
+        $rootScope.headerTitle = 'Experiment: ' + data.experiment.name;
+        internal.experiment = ExperimentFactory.createExperiment(data, internal.operations);
+        DrawingService.renderExperiment(internal.experiment);
       });
+    });
   };
 
   that.onRenderFinish = function onRenderFinish() {
@@ -35,27 +37,23 @@ function ExperimentController($stateParams, $rootScope, Operations, DrawingServi
   };
 
   that.getExperiment = function getExperiment() {
-    return experiment;
+    return internal.experiment;
   };
 
   that.getSelectedNode = function getSelectedNode() {
-    var experiment = that.getExperiment();
-    if (experiment) {
-      return experiment.getNodeById(selectedNodeId);
-    }
+    return internal.selectedNode;
   };
 
-  that.showOperationAttributesPanel = { value: false };
+  that.unselectNode = function unselectNode() {
+    internal.selectedNode = null;
+  };
 
   $rootScope.$on(UPDATE_CLICKED_NODE, function(event, data) {
-    if (!that.showOperationAttributesPanel.value) {
-      that.showOperationAttributesPanel.value = true;
-    }
-    selectedNodeId = data.selectedNodeId;
+    internal.selectedNode = data.selectedNode;
     $rootScope.$apply();
   });
 
-  that.init();
+  internal.init();
   return that;
 }
 

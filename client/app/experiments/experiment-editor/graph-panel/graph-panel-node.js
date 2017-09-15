@@ -17,7 +17,7 @@ function GraphNode(UPDATE_CLICKED_NODE) {
     link: function (scope, element, attrs) {
       element.on('click', function () {
         scope.$emit(UPDATE_CLICKED_NODE, {
-          selectedNodeId: scope.node.id
+          selectedNode: scope.node
         });
       });
     }

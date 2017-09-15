@@ -9,17 +9,13 @@
 function OperationAttributesView() {
   return {
     restrict: 'E',
-    scope: {
-      node: '=',
-      showOperationAttributesPanel: '='
-    },
+    scope: false,
     templateUrl: 'app/experiments/experiment-editor/attributes-panel/attributes-panel.html',
     replace: true,
     link: function (scope, element, attrs) {
-      element.find('button').on('click', function() {
-        scope.showOperationAttributesPanel.value = false;
-        scope.$apply();
-      });
+      scope.closePanel = function() {
+        scope.experiment.unselectNode();
+      };
 
       scope.$watch('node', function() {
         var container = element[0],

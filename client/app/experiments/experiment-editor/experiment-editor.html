@@ -1,7 +1,5 @@
 <div>
   <operation-catalogue></operation-catalogue>
   <flow-chart-box></flow-chart-box>
-  <operation-attributes-view node="experiment.getSelectedNode()"
-                             show-operation-attributes-panel="experiment.showOperationAttributesPanel">
-  </operation-attributes-view>
+  <operation-attributes-view ng-if="experiment.getSelectedNode()"></operation-attributes-view>
 </div>

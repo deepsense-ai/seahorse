@@ -15,7 +15,7 @@ function FlowChartBox() {
     link: function (scope, element, attrs) {
       element.on('click', function(event) {
         if (event.target.classList.contains('flowchart-box')) {
-          scope.experiment.showOperationAttributesPanel.value = false;
+          scope.experiment.unselectNode();
           scope.$apply();
         }
       });
