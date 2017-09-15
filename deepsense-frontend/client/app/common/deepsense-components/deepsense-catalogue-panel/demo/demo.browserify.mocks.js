@@ -10,3 +10,4 @@ window.require = function() {};
 window.module = {
   exports: function() {}
 };
+window.exports = function () {};

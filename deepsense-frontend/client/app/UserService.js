@@ -1,10 +1,15 @@
 'use strict';
 
 /* @ngInject */
-function UserService($cookies) {
+function UserService($cookies, $interval) {
+  let user = $cookies.getObject('seahorse_user');
+
+  $interval(() => {
+     user = $cookies.getObject('seahorse_user');
+  }, 1000);
 
   this.getSeahorseUser = () => {
-    return $cookies.getObject('seahorse_user');
+    return user;
   };
 
 }

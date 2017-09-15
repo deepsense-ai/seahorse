@@ -1,0 +1,24 @@
+// ScrollBar namespace
+.mCS-deepsense {
+  &.mCSB_scrollTools {
+    width: 5px;
+  }
+
+  &.mCSB_inside {
+    > .mCSB_container {
+      margin-right: 8px;
+
+      &.mCS_no_scrollbar_y.mCS_y_hidden {
+        margin-right: 0;
+      }
+    }
+
+    .mCSB_dragger .mCSB_dragger_bar {
+      background-color: rgba(0, 0, 0, 0.25);
+    }
+
+    .mCSB_draggerRail {
+      background-color: white;
+    }
+  }
+}

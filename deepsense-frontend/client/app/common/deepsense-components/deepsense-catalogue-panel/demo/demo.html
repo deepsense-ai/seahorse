@@ -13,6 +13,7 @@
 
     <!-- Load your component main css file -->
     <link href="app/common/deepsense-components/deepsense-catalogue-panel/deepsense-catalogue-panel.less" rel="stylesheet/less" type="text/css">
+    <link href="app/common/custom-scrollbar/common-custom-scrollbar.less" rel="stylesheet/less" type="text/css">
     <!-- [END] Load your component main css file -->
     <style>
         html, body {
@@ -26,22 +27,6 @@
             padding: 3px;
             height: 810px;
             margin: 10px 5px 10px 10px;
-        }
-
-        .mCS-deepsense.mCSB_scrollTools {
-            width: 5px;
-        }
-
-        .mCSB_container {
-            margin-right: 10px;
-        }
-
-        .mCSB_inside > .mCSB_container {
-            margin-right: 15px;
-        }
-
-        .mCSB_scrollTools {
-            width: 10px;
         }
     </style>
     <script src="../node_modules/less/dist/less.js" type="text/javascript"></script>
@@ -57,13 +42,16 @@
     <script src="../node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js"></script>
     <script src="../node_modules/angular-ui-bootstrap/dist/ui-bootstrap.js"></script>
     <!-- Load your component main js file -->
-    <script src="app/common/deepsense-components/deepsense-catalogue-panel/demo/demo.browserify.mocks.js" type="application/javascript">
+    <script src="app/common/deepsense-components/deepsense-catalogue-panel/demo/demo.browserify.mocks.js" type="application/javascript"></script>
 
-    </script>
+    <script src="app/common/custom-scrollbar/common-custom-scrollbar.js" type="text/javascript"></script>
     <script src="app/common/deepsense-components/deepsense-catalogue-panel/catalogue-panel.module.js" type="text/javascript"></script>
     <script src="app/common/deepsense-components/deepsense-catalogue-panel/catalogue-panel/catalogue-panel.js" type="text/javascript"></script>
     <script src="app/common/deepsense-components/deepsense-catalogue-panel/catalogue-panel-operation/catalogue-panel-operation.js" type="text/javascript"></script>
     <script src="app/common/deepsense-components/deepsense-catalogue-panel/catalogue-panel-operations-category/catalogue-panel-operations-category.js" type="text/javascript"></script>
+    <script type="application/javascript">
+      angular.module('deepsense-catalogue-panel').directive('customScrollBar', CustomScrollBar);
+    </script>
     <!-- [END] Load your component main js file -->
     <script src="app/common/deepsense-components/deepsense-catalogue-panel/demo/demo.js"></script>
 </body>

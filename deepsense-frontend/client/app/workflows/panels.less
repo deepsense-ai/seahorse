@@ -21,10 +21,7 @@
 
 // Rules
 .operations-tree {
-  .spaceBetween(right, 3px);
-
   width: @panel-main-width;
-  padding: 0 1px 0 0;
   height: 100%;
   background-color: rgba(255, 255, 255, 0.75);
 
@@ -146,31 +143,10 @@
   }
 }
 
-// ScrollBar namespace
-.mCS-deepsense {
-  &.mCSB_scrollTools {
-    width: 5px;
-  }
-
-  &.mCSB_inside {
-    > .mCSB_container {
-      margin-right: 8px;
-
-      &.mCS_no_scrollbar_y.mCS_y_hidden {
-        margin-right: 0;
-      }
-    }
-
-    .mCSB_dragger .mCSB_dragger_bar {
-      background-color: rgba(0, 0, 0, 0.25);
-    }
-
-    .mCSB_draggerRail {
-      background-color: white;
-    }
-  }
-}
-
 deepsense-operation-attributes {
   min-width: 250px;
+  .mCSB_container {
+    // Used for correct height calculation of resizable directive
+    min-height: 100%;
+  }
 }

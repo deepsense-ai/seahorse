@@ -204,15 +204,3 @@ angular.module('test', ['deepsense-catalogue-panel'])
     }
   };
 })
-
-.run(function ($timeout) {
-    $timeout(function () {
-      jQuery('.operations-tree').mCustomScrollbar(
-        {
-          axis: 'y',
-          theme:'dark',
-          scrollInertia: 300
-        }
-      );
-    });
-});

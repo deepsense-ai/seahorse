@@ -5,6 +5,7 @@ var angular = require('angular');
 var common = angular.module('ds.common', []);
 
 require('./api-clients/api-clients.module.js').inject(common);
+require('./custom-scrollbar/common-custom-scrollbar.js').inject(common);
 require('./dots/dots.js').inject(common);
 require('./filters/cut-words.js').inject(common);
 require('./filters/precision.js').inject(common);

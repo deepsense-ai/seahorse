@@ -20,7 +20,7 @@ function isBrowserSupported() {
 }
 
 function getErrorMessageHTML() {
-  return '<div class="alert alert-danger" role="alert" style="font-size: 18px;">' +
+  return '<div class="alert alert-danger no-support-message" role="alert">' +
     'We\'re sorry, Seahorse doesn\'t support your browser yet.<br/>' +
     'We\'re working on it, in the meantime please use one of the following:' + getSupportedBrowsersText() + '.</div>';
 }
