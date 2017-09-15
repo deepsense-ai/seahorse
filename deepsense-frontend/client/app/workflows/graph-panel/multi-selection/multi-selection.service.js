@@ -4,7 +4,9 @@ let selectedNodes = [];
 class MultiSelectionService {
   /* @ngInject */
   constructor($rootScope) {
-    this.$rootScope = $rootScope;
+    $rootScope.$on('$viewContentLoading', () => {
+      this.clearSelection();
+    });
   }
 
   addNodeIdsToSelection(nodeIds) {
