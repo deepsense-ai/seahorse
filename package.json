@@ -99,7 +99,8 @@
     },
     "server": {
       "path": "./server/",
-      "app": "app.js"
+      "app": "app.js",
+      "js": "**/*.js"
     },
     "libs": {
       "dev": {
