@@ -45,15 +45,11 @@ class HeadlessNotebookHandler(IPythonHandler):
             raise web.HTTPError(500, "nbconvert failed: %s" % e)
 
     # get HTML-ized un-editable notebook
-    def get(self, workflow_id, node_id):
-        language = "irrelevant"
-        path = SeahorseNotebookPath(workflow_id, node_id, language, node_id, 0)
-
+    def get(self, seahorse_notebook_path):
         Exporter = exporter_map["html"]
         updated_config = self.no_execution_config(self.config)
         exporter = Exporter(config=updated_config, log=self.log)
-        serialized_path = path.serialize()
-        model = self.contents_manager.get(path=serialized_path)
+        model = self.contents_manager.get(path=seahorse_notebook_path)
 
         try:
             output, _ = exporter.from_notebook_node(model['content'])
@@ -103,7 +99,7 @@ def load_jupyter_server_extension(nb_server_app):
     route_pattern = url_path_join(base_url, '/HeadlessNotebook')
     web_app.add_handlers(host_pattern, [(route_pattern, HeadlessNotebookHandler)])
     web_app.add_handlers(host_pattern, [(url_path_join(base_url,
-        '/OfflineNotebook/(?P<workflow_id>[^\/_]+)/(?P<node_id>[^\/_]+)'), HeadlessNotebookHandler)])
+        '/OfflineNotebook/(?P<seahorse_notebook_path>.+)'), HeadlessNotebookHandler)])
     route_pattern_with_workflow_id = url_path_join(base_url, '/HeadlessNotebook/([^/]+)')
     web_app.add_handlers(host_pattern,
                          [(route_pattern_with_workflow_id, web.StaticFileHandler, {"path": "/home/jovyan/work/"})])
