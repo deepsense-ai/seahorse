@@ -11,7 +11,7 @@ SEAHORSE_BUILD_TAG="${SEAHORSE_BUILD_TAG?Need to set SEAHORSE_BUILD_TAG. For exa
 cd `dirname $0`"/../"
 
 SBT_OPTS="-XX:MaxPermSize=4G" \
-  sbt -Dsbt.log.noformat=true clean compile it:compile workflowmanager/docker:publishLocal
+  sbt clean publishWeClasses compile it:compile workflowmanager/docker:publishLocal
 
 cd deployment/docker
 ./publish-local-docker.sh ../../workflowmanager/ deepsense-workflowmanager $SEAHORSE_BUILD_TAG

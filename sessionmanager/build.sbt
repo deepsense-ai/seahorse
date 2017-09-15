@@ -1,5 +1,7 @@
 // Copyright (c) 2016, CodiLime Inc.
 
+// scalastyle:off println
+
 import com.typesafe.sbt.packager.docker._
 
 name := "deepsense-sessionmanager"
@@ -14,31 +16,30 @@ enablePlugins(JavaAppPackaging, GitVersioning, DeepsenseUniversalSettingsPlugin)
 // If there are many `App` objects in project, docker image will crash with cryptic message
 mainClass in Compile := Some("io.deepsense.sessionmanager.SessionManagerApp")
 
-// TODO Introduce new sbt task to generate we-deps.zip
+val weJar = taskKey[File]("Workflow executor runnable jar")
 
-val downloadWeJar = taskKey[File]("Downloads the latest we.jar")
+weJar := {
+  val jar =
+    new File("seahorse-workflow-executor/workflowexecutor/target/scala-2.11/workflowexecutor.jar")
 
-downloadWeJar := {
-  val location = target.value / "downloads" / "we.jar"
-  location.getParentFile.mkdirs()
-  val scalaMajorMinorOption = CrossVersion.partialVersion(scalaVersion.value)
-  val scalaMajorMinor = scalaMajorMinorOption.get._1 + "." + scalaMajorMinorOption.get._2
+  val assemblyCmd = "sbt workflowexecutor/assembly"
 
-  val urlLoc = if (isSnapshot.value) {
-    url(s"${CommonSettingsPlugin.artifactoryUrl.value}seahorse-workflowexecutor-snapshot/" +
-      s"io/deepsense/workflowexecutor_${scalaMajorMinor}/${version.value}/" +
-      s"${version.value}-latest/workflowexecutor_${scalaMajorMinor}-${version.value}-latest.jar")
+  if(jar.exists()) {
+    println(
+      s"""
+         |Workflow executor jar in nested repo already exist. Assuming it's up to date.
+         |If you need to rebuild we.jar run `$assemblyCmd` in embedded WE repo.
+          """.stripMargin
+    )
   } else {
-    url(s"${CommonSettingsPlugin.artifactoryUrl.value}seahorse-workflowexecutor-release/" +
-      s"io/deepsense/workflowexecutor_${scalaMajorMinor}/${version.value}/" +
-      s"workflowexecutor_${scalaMajorMinor}-${version.value}.jar")
+    val shell = Seq("bash", "-c")
+    shell :+ s"cd seahorse-workflow-executor; $assemblyCmd" !
   }
-  val weLoc = sys.props.get("workflowexecutor.jar").map(url(_)).getOrElse(urlLoc)
-  IO.download(weLoc, location)
-  location
+
+  jar
 }
 
-mappings in Universal += downloadWeJar.value -> "we.jar"
+mappings in Universal += weJar.value -> "we.jar"
 
 val preparePythonDeps = taskKey[File]("Generates we_deps.zip file with python dependencies")
 
@@ -48,14 +49,14 @@ preparePythonDeps := {
   target.value / "we-deps.zip"
 }
 
-preparePythonDeps <<= preparePythonDeps dependsOn downloadWeJar
+preparePythonDeps <<= preparePythonDeps dependsOn weJar
 
 mappings in Universal += preparePythonDeps.value -> "we-deps.zip"
 
 dockerBaseImage := {
   val pattern = "([0-9]+\\.[0-9]+\\.[0-9]+).*".r
   val pattern(versionNumber) = version.value
-  s"docker-repo.deepsense.codilime.com/deepsense_io/deepsense-mesos-spark:${versionNumber}"
+  s"docker-repo.deepsense.codilime.com/deepsense_io/deepsense-mesos-spark:$versionNumber"
 }
 
 dockerCommands ++= Seq(
@@ -64,3 +65,5 @@ dockerCommands ++= Seq(
   ExecCmd("ENTRYPOINT", "bin/deepsense-sessionmanager")
 )
 dockerUpdateLatest := true
+
+// scalastyle:on

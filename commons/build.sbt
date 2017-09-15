@@ -2,6 +2,8 @@
  * Copyright (c) 2015, CodiLime Inc.
  */
 
+// scalastyle:off
+
 name := "deepsense-commons"
 
 libraryDependencies ++= Dependencies.commons
@@ -80,3 +82,7 @@ buildInfoKeys ++= {
     }
   )
 }
+
+
+
+// scalastyle:on

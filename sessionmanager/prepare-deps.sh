@@ -14,8 +14,9 @@ mkdir $WE_DEPS_CONTENT
 
 echo "Copying pyexecutor from workflowexecutor jar"
 
-(cd $WE_DEPS_CONTENT; jar xf ../../downloads/we.jar pyexecutor)
-(cd $WE_DEPS_CONTENT; jar xf ../../downloads/we.jar r_executor.R)
+WE_JAR="../../../../seahorse-workflow-executor/workflowexecutor/target/scala-2.11/workflowexecutor.jar"
+(cd $WE_DEPS_CONTENT; jar xf $WE_JAR pyexecutor)
+(cd $WE_DEPS_CONTENT; jar xf $WE_JAR r_executor.R)
 
 echo "Copying executing kernel"
 (cd remote_notebook; ./pack_executing_kernel.sh)

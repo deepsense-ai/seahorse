@@ -4,8 +4,6 @@
 
 import java.util.Date
 
-import aether.AetherPlugin
-import aether.AetherKeys._
 import com.typesafe.sbt.GitPlugin
 import com.typesafe.sbt.SbtGit.git
 import com.typesafe.sbt.packager.SettingsHelper
@@ -20,7 +18,7 @@ object DeepsenseUniversalSettingsPlugin extends AutoPlugin {
 
   val gitVersionFile = taskKey[File]("Git version file")
 
-  override def requires = CommonSettingsPlugin && UniversalPlugin && GitPlugin && AetherPlugin
+  override def requires = CommonSettingsPlugin && UniversalPlugin && GitPlugin
 
   override def projectSettings = Seq(
     gitVersion := {
@@ -34,7 +32,6 @@ object DeepsenseUniversalSettingsPlugin extends AutoPlugin {
       IO.write(location, "API VERSION: " + version.value + "\n", append = true)
       location
     },
-    mappings in Universal += gitVersionFile.value -> "build-info.txt",
-    aetherPackageMain <<= packageBin in Universal
+    mappings in Universal += gitVersionFile.value -> "build-info.txt"
   ) ++ SettingsHelper.makeDeploymentSettings(Universal, packageBin in Universal, "zip")
 }

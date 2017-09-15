@@ -9,7 +9,6 @@ if [ $# != 1 ]; then
   exit 1
 fi
 
-
 # Settings
 SEAHORSE_BUILD_TAG=$1
 ARTIFACT_NAME="docker-compose-internal.yml"

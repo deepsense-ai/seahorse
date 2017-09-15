@@ -22,7 +22,20 @@ addCommandAlias("ds-it",
     ";workflowmanager/it:test " +
     ";libraryservice/it:test")
 
-addCommandAlias("sPublish", "aetherDeploy")
-addCommandAlias("sPublishLocal", "aetherInstall")
+val printWarning = (s: State) => {
+  // TODO Make compile depending on publishWeClasses instead
+  println(
+    """
+      |****************************
+      |******** ATTENTION *********
+      |****************************
+      |**
+      |** Run `sbt publishWeClasses` first to solve resolver problems with workflow executor packages
+      |**
+      |****************************
+    """.stripMargin)
+  s
+}
+onLoad in Global ~= (printWarning compose _)
 
 // scalastyle:on
