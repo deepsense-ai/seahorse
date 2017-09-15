@@ -40,7 +40,12 @@ function PortStatusesTooltipController($rootScope, $scope, $element) {
   $scope.$on('Keyboard.KEY_PRESSED_DEL', internal.hideTooltip);
 
   that.getTypes = () => {
-    return _.map(that.portObject.typeQualifier, (typeQualifier) => _.last(typeQualifier.split('.')));
+    let outputTypes = _.map(that.portObject.typeQualifier, (typeQualifier) => _.last(typeQualifier.split('.')));
+    if (outputTypes.length > 3) {
+      outputTypes = outputTypes.slice(0,3);
+      outputTypes.push('...');
+    }
+    return outputTypes;
   };
 
   that.getPositionX = () => {
