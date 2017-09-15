@@ -1,15 +1,48 @@
-<div class="index-list-selector-item">
-  <div class="index-list-values u-flex u-flex--center-center m-b-sm">
-    <input type="number" focused autofocus placeholder="{{selectorIsSingle() ? 'Index' : 'From'}}" class="form-control o-custom index-list-selector-item__input" min="0" min-value ng-model="item.firstNum" ng-class="{ 'single-selector': selectorIsSingle() }">
-    <input type="number" placeholder="To" class="form-control o-custom index-list-selector-item__input" min="0" min-value ng-model="item.secondNum" ng-if="!selectorIsSingle()">
-    <a class="close-link m-l-sm" aria-label="Close" ng-click="removeIndex(item)"
-       ng-if="!selectorIsSingle()">
-      <i class="fa fa-times"></i>
-    </a>
-  </div>
-  <button ng-if="!selectorIsSingle()" class="btn btn-info btn-xs o-action-text" data-action="add-range" type="button"
-          ng-click="addItem(itemType.id)">
-    <i class="fa fa-plus"></i>
-    <span ng-if="!selectorIsSingle()">Add range</span>
-  </button>
+<div class="index-list-selector-item u-flex u-flex--center-center m-b-sm">
+  <input type="number"
+         focused
+         autofocus
+         placeholder="Index"
+         class="form-control o-custom index-list-selector-item__input single-selector"
+         min="0"
+         min-value
+         ng-model="item.firstNum"
+         ng-if="selectorIsSingle()">
+
+  <form ng-if="!selectorIsSingle()"
+        novalidate
+        ng-submit="addIndex(index)"
+        name="indexForm">
+    <div  class="u-flex u-flex--center-center m-b-sm">
+      <input type="number"
+             focused
+             autofocus
+             placeholder="From"
+             class="form-control o-custom index-list-selector-item__input"
+             min="0"
+             min-value
+             ng-model="index.firstNum"
+             required>
+      <input type="number"
+             placeholder="To"
+             class="form-control o-custom index-list-selector-item__input"
+             min="0"
+             min-value
+             ng-model="index.secondNum"
+             required>
+    </div>
+
+    <button class="btn btn-info btn-xs o-action-text"
+            ng-disabled="indexForm.$invalid">
+      <i class="fa fa-plus"></i>
+      <span>Add index</span>
+    </button>
+
+    <span class="badge badge-default o-tag-unit" ng-repeat="index in getItemsThisType('indexRange') | filter:hasValues">
+      <span>{{::index.firstNum}}</span>
+      <span> - </span>
+      <span class="o-tag-unit__name">{{::index.secondNum}}</span>
+      <a class="close o-tag-unit__close" ng-click="removeIndex(index)">&times;</a>
+    </span>
+  </form>
 </div>

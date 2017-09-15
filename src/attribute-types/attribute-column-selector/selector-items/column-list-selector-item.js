@@ -9,10 +9,11 @@ function ColumnListSelectorItem($timeout) {
     link: function (scope, element) {
       _.assign(scope, {
         addColumn() {
-          scope.item.addColumn('');
+          scope.item.addColumn(scope.item.name);
 
           $timeout(() => {
-            $(element).find('.column-list-values input:last').focus();
+            scope.item.name = '';
+            $(element).find('[ng-model="item.name"]').focus();
           }, false);
         },
         removeColumn(columnIndex) {
@@ -23,10 +24,6 @@ function ColumnListSelectorItem($timeout) {
           }
         }
       });
-
-      if (scope.item.columns && scope.item.columns.length === 0) {
-        scope.item.addColumn('');
-      }
     }
   };
 }

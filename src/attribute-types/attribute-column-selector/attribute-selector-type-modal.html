@@ -26,21 +26,18 @@
   </div>
 </header>
 <article class="modal-body u-flex">
-  <section class="o-modal-selector__item u-flex__1"
-           ng-repeat="itemType in ::itemTypes">
+  <section  class="o-modal-selector__item u-flex__1"
+            ng-repeat="itemType in ::itemTypes"
+            ng-hide="itemType.id === 'indexRange' && isItemIdInList('indexRange')">
     <h4 class="text-center">{{::itemType.verbose}}</h4>
+
     <div class="o-modal-selector__list--empty text-navy
                 fa fa-plus-circle fa-5x
                 u-flex u-flex--center-center u-fill-parent u-cursor-pointer"
-         ng-click="addItem(itemType.id)"
-         ng-hide="isItemIdInList(itemType.id)"
-         ng-if="!selectorIsSingle()"></div>
-    <div class="o-modal-selector__list--empty o-modal-selector__list--single text-navy
-                fa fa-arrows-h fa-5x
-                u-flex u-flex--center-center u-fill-parent u-cursor-pointer"
-         ng-click="switchItem(itemType)"
-         ng-hide="isItemIdInList(itemType.id)"
-         ng-if="selectorIsSingle()"></div>
+         ng-class="{'o-modal-selector__list--single fa-arrows-h': selectorIsSingle()}"
+         ng-click="selectorIsSingle() ? switchItem(itemType) : addItem(itemType.id)"
+         ng-hide="isItemIdInList(itemType.id)"></div>
+
     <div ng-switch="itemType.id"
          ng-repeat="item in getItemsThisType(itemType.id)"
          ng-show="isItemIdInList(itemType.id)"
@@ -48,11 +45,17 @@
       <type-list-selector-item ng-switch-when="typeList"></type-list-selector-item>
 
       <index-list-selector-item ng-switch-when="index"></index-list-selector-item>
-      <index-list-selector-item ng-switch-when="indexRange"></index-list-selector-item>
 
       <column-list-selector-item ng-switch-when="column"></column-list-selector-item>
       <column-list-selector-item ng-switch-when="columnList"></column-list-selector-item>
     </div>
+  </section>
+  <section class="o-modal-selector__item u-flex__1"
+           ng-show="isItemIdInList('indexRange')">
+    <h4 class="text-center">Index range</h4>
+    <section class="o-modal-selector__list o-modal-selector__list--index">
+      <index-list-selector-item></index-list-selector-item>
+    </section>
   </section>
 </article>
 <footer class="modal-footer">

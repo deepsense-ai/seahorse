@@ -5,21 +5,30 @@
         <input focused autofocus ng-model="item.column.name" placeholder="Enter column name" type="text" class="form-control o-custom">
       </div>
     </div>
-    <div ng-if="!selectorIsSingle()">
-      <div ng-repeat="_ in item.columns" class="u-flex u-flex--center-center m-b-sm">
-        <input ng-model="item.columns[$index].name"
-               placeholder="Enter column name"
-               type="text"
-               class="form-control o-custom">
-        <a class="m-l-sm close-link" aria-label="Close" ng-click="removeColumn($index)">
-          <i class="fa fa-times"></i>
-        </a>
+
+    <form ng-if="!selectorIsSingle()"
+          novalidate
+          ng-submit="addColumn()"
+          name="selectorForm">
+      <div  class="u-flex u-flex--center-center m-b-sm">
+        <input
+          ng-model="item.name"
+          placeholder="Enter column name"
+          type="text"
+          class="form-control o-custom"
+          required>
       </div>
-      <button class="btn btn-info btn-xs o-action-text" type="button"
-              ng-click="addColumn()">
+
+      <button class="btn btn-info btn-xs o-action-text"
+              ng-disabled="selectorForm.$invalid">
         <i class="fa fa-plus"></i>
         <span>Add name</span>
       </button>
-    </div>
+
+      <span class="badge badge-info o-tag-unit" ng-repeat="column in item.columns">
+        <span class="o-tag-unit__name">{{::column.name}}</span>
+        <a class="close o-tag-unit__close" ng-click="removeColumn($index)">&times;</a>
+      </span>
+    </form>
   </div>
 </div>

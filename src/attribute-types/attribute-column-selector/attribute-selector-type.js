@@ -20,6 +20,14 @@ function AttributeSelectorType($timeout, $modal, $rootScope) {
           selectorItemFactory.getAllItemsTypes().singleSelectorItems :
           selectorItemFactory.getAllItemsTypes().multipleSelectorItems;
 
+      let clearEmptyParameters = function clearEmptyParameters () {
+        _.forEachRight(scope.parameter.items, (parameter, index) => {
+          if (scope.isEmptyParameter(parameter)) {
+            scope.removeItem(index);
+          }
+        });
+      };
+
       _.assign(scope, {
         itemTypes: types,
         modal: null,
@@ -36,6 +44,8 @@ function AttributeSelectorType($timeout, $modal, $rootScope) {
 
           this.modal.result.
             finally(() => {
+              clearEmptyParameters();
+
               let currParameter = JSON.stringify(scope.parameter.serialize());
               if (currParameter !== oldParameter) {
                 oldParameter = currParameter;
@@ -43,8 +53,15 @@ function AttributeSelectorType($timeout, $modal, $rootScope) {
               }
             });
         },
-        checkUnique(id) {
-          return !!(id === 'columnList' || id === 'typesList');
+        isEmptyParameter (parameter) {
+          switch (parameter.type.id) {
+            case 'indexRange':
+              return _.isUndefined(parameter.firstNum) || _.isUndefined(parameter.secondNum);
+            case 'columnList':
+              return parameter.columns.length === 0;
+            case 'typeList':
+              return !_.any(_.values(parameter.types));
+          }
         },
         isItemIdInList(id) {
           return _.find(scope.parameter.items, (lists) => lists.type.id === id);
