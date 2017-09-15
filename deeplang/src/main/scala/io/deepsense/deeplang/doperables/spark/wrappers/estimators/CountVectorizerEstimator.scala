@@ -27,7 +27,7 @@ import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.validators.RangeValidator
 import io.deepsense.deeplang.params.wrappers.spark.{IntParamWrapper, DoubleParamWrapper}
 
-class CountVectorizer
+class CountVectorizerEstimator
   extends SparkEstimatorWrapper[
     SparkCountVectorizerModel,
     SparkCountVectorizer,

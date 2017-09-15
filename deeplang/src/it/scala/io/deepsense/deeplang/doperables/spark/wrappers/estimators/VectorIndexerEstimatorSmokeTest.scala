@@ -21,12 +21,12 @@ import org.apache.spark.ml.feature.{VectorIndexer => SparkVectorIndexer}
 import io.deepsense.deeplang.params.ParamPair
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
-class VectorIndexerSmokeTest
+class VectorIndexerEstimatorSmokeTest
   extends AbstractEstimatorModelWrapperSmokeTest[SparkVectorIndexer] {
 
   override def className: String = "VectorIndexer"
 
-  override val estimatorWrapper = new VectorIndexer()
+  override val estimatorWrapper = new VectorIndexerEstimator()
 
   import estimatorWrapper._
 

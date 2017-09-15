@@ -17,13 +17,13 @@
 package io.deepsense.deeplang.doperations.spark.wrappers.estimators
 
 import io.deepsense.deeplang.DOperation.Id
-import io.deepsense.deeplang.doperables.spark.wrappers.estimators.Word2Vec
-import io.deepsense.deeplang.doperations.EstimatorAsFactory
+import io.deepsense.deeplang.doperables.spark.wrappers.estimators.IDFEstimator
+import io.deepsense.deeplang.doperations.EstimatorAsOperation
 
-class CreateWord2Vec extends EstimatorAsFactory[Word2Vec] {
+class IDF extends EstimatorAsOperation[IDFEstimator] {
 
-  override val id: Id = "131c6765-6b60-44c7-9a09-0f79fbb4ad2f"
-  override val name: String = "Word2Vec"
-  override val description: String = "Transforms a word into a code for further " +
-    "natural language processing or machine learning process."
+  override val id: Id = "36d31a98-9238-4159-8298-64eb8e3ca55a"
+  override val name: String = "IDF"
+  override val description: String = "Computes the Inverse Document Frequency (IDF) " +
+    "given a collection of documents"
 }

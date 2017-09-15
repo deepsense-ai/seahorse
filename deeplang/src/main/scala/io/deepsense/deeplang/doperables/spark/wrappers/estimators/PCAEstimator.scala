@@ -16,31 +16,29 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
-import org.apache.spark.ml.feature.{VectorIndexer => SparkVectorIndexer, VectorIndexerModel => SparkVectorIndexerModel}
+import org.apache.spark.ml.feature.{PCA => SparkPCA, PCAModel => SparkPCAModel}
 
 import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables.spark.wrappers.models.VectorIndexerModel
+import io.deepsense.deeplang.doperables.spark.wrappers.models.{PCAModel, LogisticRegressionModel}
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common._
 import io.deepsense.deeplang.doperables.{Report, SparkEstimatorWrapper}
 import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.validators.RangeValidator
-import io.deepsense.deeplang.params.wrappers.spark.IntParamWrapper
+import io.deepsense.deeplang.params.wrappers.spark._
 
-class VectorIndexer
-  extends SparkEstimatorWrapper[SparkVectorIndexerModel, SparkVectorIndexer, VectorIndexerModel]
+class PCAEstimator
+  extends SparkEstimatorWrapper[SparkPCAModel, SparkPCA, PCAModel]
   with HasInputColumn
   with HasOutputColumn {
 
-  val maxCategories = new IntParamWrapper[SparkVectorIndexer](
-    name = "max categories",
-    description = "Threshold for the number of values a categorical feature can take. " +
-      "If a feature is found to have > maxCategories values, then it is declared continuous. " +
-      "Must be >= 2",
-    sparkParamGetter = _.maxCategories,
-    validator = RangeValidator(begin = 2.0, end = Int.MaxValue, step = Some(1.0)))
-  setDefault(maxCategories, 20.0)
+  val k = new IntParamWrapper[SparkPCA](
+    name = "k",
+    description = "Number of principal components",
+    sparkParamGetter = _.k,
+    validator = RangeValidator(begin = 1.0, end = Int.MaxValue, step = Some(1.0)))
+  setDefault(k, 1.0)
 
   override def report(executionContext: ExecutionContext): Report = Report()
 
-  override val params: Array[Param[_]] = declareParams(maxCategories, inputColumn, outputColumn)
+  override val params: Array[Param[_]] = declareParams(k, inputColumn, outputColumn)
 }

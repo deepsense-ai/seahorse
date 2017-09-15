@@ -16,33 +16,31 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
-import org.apache.spark.ml.feature.{StandardScaler => SparkStandardScaler, StandardScalerModel => SparkStandardScalerModel}
+import org.apache.spark.ml.feature.{VectorIndexer => SparkVectorIndexer, VectorIndexerModel => SparkVectorIndexerModel}
 
 import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables.spark.wrappers.models.StandardScalerModel
+import io.deepsense.deeplang.doperables.spark.wrappers.models.VectorIndexerModel
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common._
 import io.deepsense.deeplang.doperables.{Report, SparkEstimatorWrapper}
 import io.deepsense.deeplang.params.Param
-import io.deepsense.deeplang.params.wrappers.spark.BooleanParamWrapper
+import io.deepsense.deeplang.params.validators.RangeValidator
+import io.deepsense.deeplang.params.wrappers.spark.IntParamWrapper
 
-class StandardScaler
-  extends SparkEstimatorWrapper[SparkStandardScalerModel, SparkStandardScaler, StandardScalerModel]
+class VectorIndexerEstimator
+  extends SparkEstimatorWrapper[SparkVectorIndexerModel, SparkVectorIndexer, VectorIndexerModel]
   with HasInputColumn
   with HasOutputColumn {
 
-  val withMean = new BooleanParamWrapper[SparkStandardScaler](
-    name = "with mean",
-    description = "Centers the data with mean before scaling",
-    sparkParamGetter = _.withMean)
-  setDefault(withMean, false)
-
-  val withStd = new BooleanParamWrapper[SparkStandardScaler](
-    name = "with std",
-    description = "Scales the data to unit standard deviation",
-    sparkParamGetter = _.withStd)
-  setDefault(withStd, true)
+  val maxCategories = new IntParamWrapper[SparkVectorIndexer](
+    name = "max categories",
+    description = "Threshold for the number of values a categorical feature can take. " +
+      "If a feature is found to have > maxCategories values, then it is declared continuous. " +
+      "Must be >= 2",
+    sparkParamGetter = _.maxCategories,
+    validator = RangeValidator(begin = 2.0, end = Int.MaxValue, step = Some(1.0)))
+  setDefault(maxCategories, 20.0)
 
   override def report(executionContext: ExecutionContext): Report = Report()
 
-  override val params: Array[Param[_]] = declareParams(withMean, withStd, inputColumn, outputColumn)
+  override val params: Array[Param[_]] = declareParams(maxCategories, inputColumn, outputColumn)
 }

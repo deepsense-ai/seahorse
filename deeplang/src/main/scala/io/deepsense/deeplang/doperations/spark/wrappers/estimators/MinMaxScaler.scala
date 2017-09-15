@@ -17,13 +17,14 @@
 package io.deepsense.deeplang.doperations.spark.wrappers.estimators
 
 import io.deepsense.deeplang.DOperation.Id
-import io.deepsense.deeplang.doperables.spark.wrappers.estimators.IDF
-import io.deepsense.deeplang.doperations.EstimatorAsFactory
+import io.deepsense.deeplang.doperables.spark.wrappers.estimators.MinMaxScalerEstimator
+import io.deepsense.deeplang.doperations.EstimatorAsOperation
 
-class CreateIDF extends EstimatorAsFactory[IDF] {
+class MinMaxScaler extends EstimatorAsOperation[MinMaxScalerEstimator] {
 
-  override val id: Id = "36d31a98-9238-4159-8298-64eb8e3ca55a"
-  override val name: String = "IDF"
-  override val description: String = "Computes the Inverse Document Frequency (IDF) " +
-    "given a collection of documents"
+  override val id: Id = "a63b6de3-793b-4cbd-ae81-76de216d90d5"
+  override val name: String = "Min-Max Scaler"
+  override val description: String = "Rescales each feature individually to a common " +
+    "range [min, max] linearly using column summary statistics, " +
+    "which is also known as min-max normalization or rescaling"
 }

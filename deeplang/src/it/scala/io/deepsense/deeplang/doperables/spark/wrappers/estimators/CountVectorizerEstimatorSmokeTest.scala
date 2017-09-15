@@ -21,12 +21,12 @@ import org.apache.spark.ml.feature.{CountVectorizer => SparkCountVectorizer}
 import io.deepsense.deeplang.params.ParamPair
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
-class CountVectorizerSmokeTest
+class CountVectorizerEstimatorSmokeTest
   extends AbstractEstimatorModelWrapperSmokeTest[SparkCountVectorizer] {
 
   override def className: String = "CountVectorizer"
 
-  override val estimatorWrapper = new CountVectorizer()
+  override val estimatorWrapper = new CountVectorizerEstimator()
 
   import estimatorWrapper._
 

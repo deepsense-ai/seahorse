@@ -16,29 +16,31 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
-import org.apache.spark.ml.feature.{IDF => SparkIDF, IDFModel => SparkIDFModel}
+import org.apache.spark.ml.feature.{Word2Vec => SparkWord2Vec, Word2VecModel => SparkWord2VecModel}
 
 import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables.spark.wrappers.models.IDFModel
-import io.deepsense.deeplang.doperables.spark.wrappers.params.common._
+import io.deepsense.deeplang.doperables.spark.wrappers.models.Word2VecModel
+import io.deepsense.deeplang.doperables.spark.wrappers.params.Word2VecParams
 import io.deepsense.deeplang.doperables.{Report, SparkEstimatorWrapper}
 import io.deepsense.deeplang.params.Param
-import io.deepsense.deeplang.params.validators.RangeValidator
-import io.deepsense.deeplang.params.wrappers.spark.IntParamWrapper
 
-class IDF
-  extends SparkEstimatorWrapper[SparkIDFModel, SparkIDF, IDFModel]
-  with HasInputColumn
-  with HasOutputColumn {
+class Word2VecEstimator
+  extends SparkEstimatorWrapper[SparkWord2VecModel, SparkWord2Vec, Word2VecModel]
+  with Word2VecParams {
 
-  val minDocFreq = new IntParamWrapper[SparkIDF](
-    name = "min documents frequency",
-    description = "The minimum of documents in which a term should appear",
-    sparkParamGetter = _.minDocFreq,
-    validator = RangeValidator(begin = 0.0, end = Int.MaxValue, step = Some(1.0)))
-  setDefault(minDocFreq, 0.0)
+  setDefault(stepSize, 0.025)
+
+  setDefault(maxIterations, 1.0)
 
   override def report(executionContext: ExecutionContext): Report = Report()
 
-  override val params: Array[Param[_]] = declareParams(minDocFreq, inputColumn, outputColumn)
+  override val params: Array[Param[_]] = declareParams(
+    inputColumn,
+    outputColumn,
+    maxIterations,
+    stepSize,
+    seed,
+    vectorSize,
+    numPartitions,
+    minCount)
 }

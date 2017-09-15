@@ -16,29 +16,33 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
-import org.apache.spark.ml.feature.{PCA => SparkPCA, PCAModel => SparkPCAModel}
+import org.apache.spark.ml.feature.{StandardScaler => SparkStandardScaler, StandardScalerModel => SparkStandardScalerModel}
 
 import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables.spark.wrappers.models.{PCAModel, LogisticRegressionModel}
+import io.deepsense.deeplang.doperables.spark.wrappers.models.StandardScalerModel
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common._
 import io.deepsense.deeplang.doperables.{Report, SparkEstimatorWrapper}
 import io.deepsense.deeplang.params.Param
-import io.deepsense.deeplang.params.validators.RangeValidator
-import io.deepsense.deeplang.params.wrappers.spark._
+import io.deepsense.deeplang.params.wrappers.spark.BooleanParamWrapper
 
-class PCA
-  extends SparkEstimatorWrapper[SparkPCAModel, SparkPCA, PCAModel]
+class StandardScalerEstimator
+  extends SparkEstimatorWrapper[SparkStandardScalerModel, SparkStandardScaler, StandardScalerModel]
   with HasInputColumn
   with HasOutputColumn {
 
-  val k = new IntParamWrapper[SparkPCA](
-    name = "k",
-    description = "Number of principal components",
-    sparkParamGetter = _.k,
-    validator = RangeValidator(begin = 1.0, end = Int.MaxValue, step = Some(1.0)))
-  setDefault(k, 1.0)
+  val withMean = new BooleanParamWrapper[SparkStandardScaler](
+    name = "with mean",
+    description = "Centers the data with mean before scaling",
+    sparkParamGetter = _.withMean)
+  setDefault(withMean, false)
+
+  val withStd = new BooleanParamWrapper[SparkStandardScaler](
+    name = "with std",
+    description = "Scales the data to unit standard deviation",
+    sparkParamGetter = _.withStd)
+  setDefault(withStd, true)
 
   override def report(executionContext: ExecutionContext): Report = Report()
 
-  override val params: Array[Param[_]] = declareParams(k, inputColumn, outputColumn)
+  override val params: Array[Param[_]] = declareParams(withMean, withStd, inputColumn, outputColumn)
 }

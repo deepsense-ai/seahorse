@@ -16,22 +16,28 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
-import org.apache.spark.ml.feature.{IDF => SparkIDF}
+import org.apache.spark.ml.feature.{Word2Vec => SparkWord2Vec}
 
 import io.deepsense.deeplang.params.ParamPair
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
-class IDFSmokeTest extends AbstractEstimatorModelWrapperSmokeTest[SparkIDF] {
+class Word2VecEstimatorSmokeTest
+  extends AbstractEstimatorModelWrapperSmokeTest[SparkWord2Vec] {
 
-  override def className: String = "IDF"
+  override def className: String = "Word2Vec"
 
-  override val estimatorWrapper = new IDF()
+  override val estimatorWrapper = new Word2VecEstimator()
 
   import estimatorWrapper._
 
   override val estimatorParams: Seq[ParamPair[_]] = Seq(
-    minDocFreq -> 0,
-    inputColumn -> NameSingleColumnSelection("myFeatures"),
-    outputColumn -> "testOutputColumn"
+    inputColumn -> NameSingleColumnSelection("myStringFeatures"),
+    outputColumn -> "testOutputColumn",
+    maxIterations -> 2,
+    stepSize -> 0.25,
+    seed -> 42,
+    vectorSize -> 99,
+    numPartitions -> 4,
+    minCount -> 1
   )
 }

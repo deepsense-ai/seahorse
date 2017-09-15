@@ -17,14 +17,13 @@
 package io.deepsense.deeplang.doperations.spark.wrappers.estimators
 
 import io.deepsense.deeplang.DOperation.Id
-import io.deepsense.deeplang.doperables.spark.wrappers.estimators.MinMaxScaler
-import io.deepsense.deeplang.doperations.EstimatorAsFactory
+import io.deepsense.deeplang.doperables.spark.wrappers.estimators.PCAEstimator
+import io.deepsense.deeplang.doperations.EstimatorAsOperation
 
-class CreateMinMaxScaler extends EstimatorAsFactory[MinMaxScaler] {
+class PCA extends EstimatorAsOperation[PCAEstimator] {
 
-  override val id: Id = "a63b6de3-793b-4cbd-ae81-76de216d90d5"
-  override val name: String = "Min-Max Scaler"
-  override val description: String = "Rescales each feature individually to a common " +
-    "range [min, max] linearly using column summary statistics, " +
-    "which is also known as min-max normalization or rescaling"
+  override val id: Id = "fe1ac5fa-329a-4e3e-9cfc-67ee165053db"
+  override val name: String = "PCA"
+  override val description: String = "Trains a model to project vectors " +
+    "to a low-dimensional space using PCA"
 }

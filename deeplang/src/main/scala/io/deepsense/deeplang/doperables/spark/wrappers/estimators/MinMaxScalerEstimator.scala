@@ -24,7 +24,7 @@ import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasInputCo
 import io.deepsense.deeplang.doperables.{Report, SparkEstimatorWrapper}
 import io.deepsense.deeplang.params.Param
 
-class MinMaxScaler
+class MinMaxScalerEstimator
   extends SparkEstimatorWrapper[SparkMinMaxScalerModel, SparkMinMaxScaler, MinMaxScalerModel]
   with MinMaxParams
   with HasInputColumn

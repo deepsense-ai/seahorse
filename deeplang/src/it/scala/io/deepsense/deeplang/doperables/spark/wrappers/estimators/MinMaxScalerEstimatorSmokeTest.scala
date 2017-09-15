@@ -16,22 +16,22 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
-import org.apache.spark.ml.feature.{PCA => SparkPCA}
+import org.apache.spark.ml.feature.{MinMaxScaler => SparkMinMaxScaler}
 
 import io.deepsense.deeplang.params.ParamPair
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
-class PCASmokeTest
-  extends AbstractEstimatorModelWrapperSmokeTest[SparkPCA] {
+class MinMaxScalerEstimatorSmokeTest extends AbstractEstimatorModelWrapperSmokeTest[SparkMinMaxScaler] {
 
-  override def className: String = "PCA"
+  override def className: String = "MinMaxScaler"
 
-  override val estimatorWrapper = new PCA()
+  override val estimatorWrapper = new MinMaxScalerEstimator()
 
   import estimatorWrapper._
 
   override val estimatorParams: Seq[ParamPair[_]] = Seq(
-    k -> 2,
+    min -> 0.0,
+    max -> 1.0,
     inputColumn -> NameSingleColumnSelection("myFeatures"),
     outputColumn -> "testOutputColumn"
   )

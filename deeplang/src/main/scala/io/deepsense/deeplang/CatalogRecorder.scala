@@ -61,22 +61,22 @@ object CatalogRecorder {
     catalog.registerDOperable[LinearRegressionModel]()
     catalog.registerDOperable[RandomForestRegression]()
     catalog.registerDOperable[RandomForestRegressionModel]()
-    catalog.registerDOperable[PCA]()
+    catalog.registerDOperable[PCAEstimator]()
     catalog.registerDOperable[PCAModel]()
-    catalog.registerDOperable[StandardScaler]()
+    catalog.registerDOperable[StandardScalerEstimator]()
     catalog.registerDOperable[StandardScalerModel]()
-    catalog.registerDOperable[MinMaxScaler]()
+    catalog.registerDOperable[MinMaxScalerEstimator]()
     catalog.registerDOperable[MinMaxScalerModel]()
-    catalog.registerDOperable[VectorIndexer]()
+    catalog.registerDOperable[VectorIndexerEstimator]()
     catalog.registerDOperable[VectorIndexerModel]()
     catalog.registerDOperable[StringIndexerEstimator]()
     catalog.registerDOperable[StringIndexerModel]()
     catalog.registerDOperable[SingleStringIndexerModel]()
-    catalog.registerDOperable[Word2Vec]()
+    catalog.registerDOperable[Word2VecEstimator]()
     catalog.registerDOperable[Word2VecModel]()
-    catalog.registerDOperable[CountVectorizer]()
+    catalog.registerDOperable[CountVectorizerEstimator]()
     catalog.registerDOperable[CountVectorizerModel]()
-    catalog.registerDOperable[IDF]()
+    catalog.registerDOperable[IDFEstimator]()
     catalog.registerDOperable[IDFModel]()
     catalog.registerDOperable[GBTClassifier]()
     catalog.registerDOperable[GBTClassificationModel]()
@@ -160,6 +160,9 @@ object CatalogRecorder {
     catalog.registerDOperation[CreateGBTRegressor](
       DOperationCategories.ML.Regression)
 
+    catalog.registerDOperation[CreateGBTClassifier](
+      DOperationCategories.ML.Classification)
+
     catalog.registerDOperation[CreateLogisticRegression](
       DOperationCategories.ML.Classification)
 
@@ -178,29 +181,26 @@ object CatalogRecorder {
     catalog.registerDOperation[CreateRandomForestRegression](
       DOperationCategories.ML.Regression)
 
-    catalog.registerDOperation[CreatePCA](
+    catalog.registerDOperation[PCA](
       DOperationCategories.ML)
 
-    catalog.registerDOperation[CreateStandardScaler](
+    catalog.registerDOperation[StandardScaler](
       DOperationCategories.ML)
 
-    catalog.registerDOperation[CreateMinMaxScaler](
+    catalog.registerDOperation[MinMaxScaler](
       DOperationCategories.ML)
 
-    catalog.registerDOperation[CreateVectorIndexer](
+    catalog.registerDOperation[VectorIndexer](
       DOperationCategories.ML)
 
-    catalog.registerDOperation[CreateWord2Vec](
+    catalog.registerDOperation[Word2Vec](
       DOperationCategories.ML)
 
-    catalog.registerDOperation[CreateCountVectorizer](
+    catalog.registerDOperation[CountVectorizer](
       DOperationCategories.ML)
 
-    catalog.registerDOperation[CreateIDF](
+    catalog.registerDOperation[IDF](
       DOperationCategories.ML)
-
-    catalog.registerDOperation[CreateGBTClassifier](
-      DOperationCategories.ML.Classification)
 
     // operations generated from Spark transformers
     catalog.registerDOperation[Binarize](

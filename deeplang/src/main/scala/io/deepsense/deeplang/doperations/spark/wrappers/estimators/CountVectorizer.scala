@@ -17,13 +17,13 @@
 package io.deepsense.deeplang.doperations.spark.wrappers.estimators
 
 import io.deepsense.deeplang.DOperation.Id
-import io.deepsense.deeplang.doperables.spark.wrappers.estimators.PCA
-import io.deepsense.deeplang.doperations.EstimatorAsFactory
+import io.deepsense.deeplang.doperables.spark.wrappers.estimators.CountVectorizerEstimator
+import io.deepsense.deeplang.doperations.EstimatorAsOperation
 
-class CreatePCA extends EstimatorAsFactory[PCA] {
+class CountVectorizer extends EstimatorAsOperation[CountVectorizerEstimator] {
 
-  override val id: Id = "fe1ac5fa-329a-4e3e-9cfc-67ee165053db"
-  override val name: String = "PCA"
-  override val description: String = "Trains a model to project vectors " +
-    "to a low-dimensional space using PCA"
+  override val id: Id = "e640d7df-d464-4ac0-99c4-235c29a0aa31"
+  override val name: String = "Count Vectorizer"
+  override val description: String =
+    "Extracts a vocabulary from document collections and generates a CountVectorizerModel"
 }
