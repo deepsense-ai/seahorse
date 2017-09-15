@@ -6,6 +6,8 @@
 
 package io.deepsense.deeplang.parameters
 
+import spray.json._
+
 import io.deepsense.deeplang.parameters.ParameterType.ParameterType
 import io.deepsense.deeplang.parameters.exceptions.ParameterRequiredException
 
@@ -15,15 +17,12 @@ import io.deepsense.deeplang.parameters.exceptions.ParameterRequiredException
  * Parameters are used to fill parameter
  * schemas with their values and validate them.
  */
-abstract class Parameter {
+abstract class Parameter extends DefaultJsonProtocol {
   type HeldValue <: Any
 
   val parameterType: ParameterType
 
   val description: String
-
-  /** Default value of the parameter. Can be None if not provided. */
-  val default: Option[HeldValue]
 
   /** Flag specifying if parameter is required. */
   val required: Boolean
@@ -56,4 +55,19 @@ abstract class Parameter {
    * This function does nothing by default.
    */
   protected def validateDefined(definedValue: HeldValue): Unit = { }
+
+  /**
+   * Provides Json representation describing this parameter.
+   */
+  def toJson: JsObject = JsObject(basicJsonFields)
+
+  /**
+   * Map of fields that should be used in each parameter's Json representation.
+   */
+  final protected def basicJsonFields: Map[String, JsValue] = {
+    Map(
+      "type" -> parameterType.toString.toJson,
+      "description" -> description.toJson,
+      "required" -> required.toJson)
+  }
 }

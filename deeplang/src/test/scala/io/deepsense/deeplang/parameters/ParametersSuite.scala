@@ -80,16 +80,16 @@ class ParametersSuite extends FunSuite with Matchers {
   test("Getting Parameters from Multiplier") {
     val param = BooleanParameter("example", None, true)
     val schema = ParametersSchema("x" -> param)
-    val multiplicator = MultiplierParameter("description", None, true, schema)
+    val multiplier = MultiplierParameter("description", true, schema)
 
     val booleanParameter1 = Some(false)
     val booleanParameter2 = Some(true)
 
-    multiplicator.fill(List(
+    multiplier.fill(List(
       schema => schema.getBooleanParameter("x").value = booleanParameter1,
       schema => schema.getBooleanParameter("x").value = booleanParameter2))
 
-    val parametersSchema = ParametersSchema("key" -> multiplicator)
+    val parametersSchema = ParametersSchema("key" -> multiplier)
     parametersSchema.getMultiplicated("key").get match {
       case Multiplied(schema1 :: schema2 :: Nil) =>
         assert(schema1.getBoolean("x") == booleanParameter1)

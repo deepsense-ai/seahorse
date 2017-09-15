@@ -6,6 +6,8 @@
 
 package io.deepsense.deeplang.parameters
 
+import spray.json.JsObject
+
 import io.deepsense.deeplang.parameters.ParameterConversions._
 import io.deepsense.deeplang.parameters.exceptions.NoSuchParameterException
 
@@ -31,6 +33,10 @@ class ParametersSchema protected (schemaMap: Map[String, Parameter] = Map.empty)
     val replicatedSchemaMap = for ((name, holder) <- schemaMap) yield (name, holder.replicate)
     new ParametersSchema(replicatedSchemaMap)
   }
+
+  def isEmpty: Boolean = schemaMap.isEmpty
+
+  def toJson: JsObject = JsObject(schemaMap.mapValues(_.toJson))
 
   def getBooleanParameter(name: String): BooleanParameter = get[BooleanParameter](name)
 

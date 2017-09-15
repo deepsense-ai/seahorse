@@ -7,6 +7,7 @@
 package io.deepsense.deeplang.parameters
 
 import org.scalatest.FunSuite
+import spray.json.JsonWriter
 
 import io.deepsense.deeplang.parameters.exceptions._
 
@@ -15,17 +16,17 @@ class ParametersValidationSuite extends FunSuite {
   /** Parameter that always throws ValidationException, regardless of held value. */
   case class MockParameter(
       description: String,
-      default: Option[Nothing],
       required: Boolean)
     extends Parameter {
-    type HeldValue = Null
-    val parameterType = null
+    type HeldValue = Integer
 
-    def value = Some(null)
+    val parameterType = ParameterType.Numeric
+
+    def value = Some(5)
 
     def replicate = copy()
 
-    override def validateDefined(any: Null): Unit = {
+    override def validateDefined(any: Integer): Unit = {
       throw new ValidationException("Mock exception") {}
     }
   }
@@ -122,7 +123,7 @@ class ParametersValidationSuite extends FunSuite {
 
   test("Validation of choice parameter with invalid value should throw an exception") {
     intercept[ValidationException] {
-      val param = MockParameter("example", None, true)
+      val param = MockParameter("example", true)
       val choiceSchema = ParametersSchema("x" -> param)
       val possibleChoices = Map("onlyChoice" -> choiceSchema)
 
@@ -134,7 +135,7 @@ class ParametersValidationSuite extends FunSuite {
 
   test("Validation of multipleChoice parameter with invalid parameter should throw an exception") {
     intercept[ValidationException] {
-      val param = MockParameter("example", None, true)
+      val param = MockParameter("example", true)
       val choiceSchema = ParametersSchema("x" -> param)
       val possibleChoices = Map("onlyChoice" -> choiceSchema)
 
@@ -146,9 +147,9 @@ class ParametersValidationSuite extends FunSuite {
 
   test("Validation of multiplier parameter with invalid parameter should throw an exception") {
     intercept[ValidationException] {
-      val param = MockParameter("example", None, true)
+      val param = MockParameter("example", true)
       val schema = ParametersSchema("x" -> param)
-      val multiplicator = MultiplierParameter("description", None, true, schema)
+      val multiplicator = MultiplierParameter("description", true, schema)
 
       multiplicator.fill(List(x => { }, x => { }))
       multiplicator.validate

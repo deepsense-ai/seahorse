@@ -6,11 +6,15 @@
 
 package io.deepsense.deeplang.parameters
 
+import spray.json._
+
 case class BooleanParameter(
     description: String,
     default: Option[Boolean],
     required: Boolean)
-  extends Parameter {
+  extends Parameter
+  with CanHaveDefault[Boolean] {
+
   type HeldValue = Boolean
 
   val parameterType = ParameterType.Boolean
@@ -18,6 +22,8 @@ case class BooleanParameter(
   var value: Option[Boolean] = None
 
   private[parameters] def replicate: Parameter = copy()
+
+  override protected def defaultValueToJson(defaultValue: Boolean) = defaultValue.toJson
 }
 
 case class NumericParameter(
@@ -26,7 +32,9 @@ case class NumericParameter(
     required: Boolean,
     validator: Validator[Double])
   extends Parameter
-  with HasValidator {
+  with HasValidator
+  with CanHaveDefault[Double] {
+
   type HeldValue = Double
 
   val parameterType = ParameterType.Numeric
@@ -34,6 +42,8 @@ case class NumericParameter(
   var value: Option[Double] = None
 
   private[parameters] def replicate: Parameter = copy()
+
+  override protected def defaultValueToJson(defaultValue: Double) = defaultValue.toJson
 }
 
 case class StringParameter(
@@ -42,7 +52,9 @@ case class StringParameter(
     required: Boolean,
     validator: Validator[String])
   extends Parameter
-  with HasValidator {
+  with HasValidator
+  with CanHaveDefault[String] {
+
   type HeldValue = String
 
   val parameterType = ParameterType.String
@@ -50,6 +62,8 @@ case class StringParameter(
   var value: Option[String] = None
 
   private[parameters] def replicate: Parameter = copy()
+
+  override protected def defaultValueToJson(defaultValue: String) = defaultValue.toJson
 }
 
 /**
@@ -59,15 +73,18 @@ case class StringParameter(
  * its internal schema should be set to the schema of chosen
  * option. Therefore referential equality between chosen option
  * schema and one of the possible options schemas is assumed.
+ * @param default label of option selected by default
  * @param options possible choices - their labels and schemas
  */
 case class ChoiceParameter(
     description: String,
-    default: Option[Selection],
+    default: Option[String],
     required: Boolean,
     options: Map[String, ParametersSchema])
   extends Parameter
-  with HasChoice {
+  with HasChoice
+  with CanHaveDefault[String] {
+
   type HeldValue = Selection
 
   val parameterType = ParameterType.Choice
@@ -92,6 +109,8 @@ case class ChoiceParameter(
   }
 
   private[parameters] def replicate: Parameter = copy()
+
+  override protected def defaultValueToJson(defaultValue: String) = defaultValue.toJson
 }
 
 /**
@@ -101,15 +120,18 @@ case class ChoiceParameter(
  * its internal schemas should be equal to the schema of chosen
  * options. Therefore referential equality between chosen options
  * schemas and some of the possible options schemas (namely selected ones) is assumed.
+ * @param default labels of options selected by default
  * @param options possible choices - their labels and schemas
  */
 case class MultipleChoiceParameter(
     description: String,
-    default: Option[MultipleSelection],
+    default: Option[Traversable[String]],
     required: Boolean,
     options: Map[String, ParametersSchema])
   extends Parameter
-  with HasChoice {
+  with HasChoice
+  with CanHaveDefault[Traversable[String]] {
+
   type HeldValue = MultipleSelection
 
   val parameterType = ParameterType.MultipleChoice
@@ -133,6 +155,10 @@ case class MultipleChoiceParameter(
   }
 
   private[parameters] def replicate: Parameter = copy()
+
+  override protected def defaultValueToJson(defaultValue: Traversable[String]) = {
+    defaultValue.toList.toJson
+  }
 }
 
 /**
@@ -141,13 +167,12 @@ case class MultipleChoiceParameter(
  */
 case class MultiplierParameter(
     description: String,
-    default: Option[Multiplied],
     required: Boolean,
     valuesSchema: ParametersSchema)
   extends Parameter {
   type HeldValue = Multiplied
 
-  val parameterType = ParameterType.Multiplicator
+  val parameterType = ParameterType.Multiplier
 
   private var _value: Option[Multiplied] = None
 
@@ -173,15 +198,24 @@ case class MultiplierParameter(
   }
 
   private[parameters] def replicate: Parameter = copy()
+
+  override def toJson: JsObject = {
+    JsObject(basicJsonFields + ("values" -> valuesSchema.toJson))
+  }
 }
 
 /**
  * Abstract parameter that allows to select columns.
  */
-abstract class AbstractColumnSelectorParameter extends Parameter {
-  val default: Option[HeldValue] = None
-
+abstract sealed class AbstractColumnSelectorParameter extends Parameter {
   val parameterType = ParameterType.ColumnSelector
+
+  /** Tells if this selectors selects single column or many. */
+  val isSingle: Boolean
+
+  override def toJson: JsObject = {
+    JsObject(basicJsonFields + ("isSingle" -> isSingle.toJson))
+  }
 }
 
 /**
@@ -192,6 +226,8 @@ case class SingleColumnSelectorParameter(
     required: Boolean)
   extends AbstractColumnSelectorParameter {
   type HeldValue = SingleColumnSelection
+
+  val isSingle = true
 
   var value: Option[SingleColumnSelection] = None
 
@@ -206,6 +242,8 @@ case class ColumnSelectorParameter(
     required: Boolean)
   extends AbstractColumnSelectorParameter {
   type HeldValue = MultipleColumnSelection
+
+  val isSingle = false
 
   var value: Option[MultipleColumnSelection] = None
 

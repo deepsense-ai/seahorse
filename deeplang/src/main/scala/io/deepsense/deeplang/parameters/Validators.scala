@@ -8,6 +8,8 @@ package io.deepsense.deeplang.parameters
 
 import scala.util.matching.Regex
 
+import spray.json.JsObject
+
 import io.deepsense.deeplang.parameters.exceptions.{MatchException, OutOfRangeException, OutOfRangeWithStepException}
 
 /**
@@ -19,7 +21,9 @@ case class RangeValidator(
     end: Double,
     beginIncluded: Boolean = true,
     endIncluded: Boolean = true,
-    step: Option[Double] = None) extends Validator[Double] {
+    step: Option[Double] = None)
+  extends Validator[Double] {
+
   require(begin <= end)
   step.foreach(s => require(s > 0))
   step.foreach(s => require(takeSteps(countStepsTo(end, s), s) == end,
@@ -54,16 +58,30 @@ case class RangeValidator(
 
   /** Computes the value after given number of steps starting at `begin` of range. */
   private def takeSteps(count: Int, step: Double): Double = begin + step * count
+
+  override def configurationToJson: JsObject = {
+    import ValidatorsJsonProtocol.rangeValidatorFormat
+    rangeValidatorFormat.write(this).asJsObject
+  }
 }
 
 /**
  * Validates if StringParameter value matches the given regex.
  */
-case class RegexValidator(regex: Regex) extends Validator[String] {
+case class RegexValidator(
+    regex: Regex)
+  extends Validator[String] {
+
   val validatorType = ValidatorType.Regex
+
   override def validate(parameter: String): Unit = {
     if (!(parameter matches regex.toString)) {
       throw MatchException(parameter, regex)
     }
+  }
+
+  override def configurationToJson: JsObject = {
+    import ValidatorsJsonProtocol.regexValidatorFormat
+    regexValidatorFormat.write(this).asJsObject
   }
 }

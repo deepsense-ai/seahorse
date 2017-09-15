@@ -6,6 +6,8 @@
 
 package io.deepsense.deeplang.parameters
 
+import spray.json._
+
 import io.deepsense.deeplang.parameters.exceptions.IllegalChoiceException
 
 /**
@@ -43,5 +45,11 @@ trait HasChoice extends Parameter {
         case None => throw IllegalChoiceException(label)
       }
     }
+  }
+
+  override def toJson: JsObject = {
+    val valuesField = "values" -> JsObject(options.mapValues({ option =>
+      if (option.isEmpty) JsNull else option.toJson}))
+    JsObject(super.toJson.fields + valuesField)
   }
 }
