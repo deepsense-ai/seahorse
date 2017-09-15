@@ -50,7 +50,7 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
       });
 
       this._watchForNewCustomTransformers(workflow);
-      this._workflowsStack.push(workflow);]
+      this._workflowsStack.push(workflow);
     }
 
     // TODO Add enums for workflowType, workflowStatus
