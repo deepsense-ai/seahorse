@@ -1,5 +1,6 @@
 <div class="dataframe-library-modal"
-     ng-class="{'select-mode' : controller.mode === 'read-file'}"
+     ng-class="{'read-mode' : controller.mode === 'read-file',
+                'write-mode': controller.mode === 'write-to-file'}"
 >
   <div class="modal-header dataframe-library-modal__header">
     <div class="title">Select Data Frame</div>
@@ -71,6 +72,19 @@
   </div>
 
   <div class="dataframe-library-modal__footer">
+    <input
+      ng-if="controller.mode === 'write-to-file'"
+      ng-model="controller.selectedItem"
+      class="file-input"
+      type="text"
+      placeholder="Name your file"
+    >
+    <button
+      ng-if="controller.mode === 'write-to-file'"
+      ng-click="controller.ok()"
+      ng-disabled="!controller.selectedItem"
+      type="button"
+      class="btn btn-blue" >Ok</button>
     <button type="button" class="btn btn-white" ng-click="controller.close()">Close</button>
   </div>
 </div>

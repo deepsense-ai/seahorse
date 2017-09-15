@@ -5,6 +5,7 @@
 @light-grey: #F2F2F2;
 @grey: #C6C6C6;
 @dark-grey: #999999;
+@border-blue: #166089;
 
 .dataframe-library-modal {
   &__header {
@@ -140,5 +141,42 @@
     display: flex;
     justify-content: center;
     padding: 15px;
+  }
+}
+
+.read-mode,
+.write-mode {
+  .name {
+    color: @seahorse-light-blue;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+
+.write-mode {
+  .dataframe-library-modal__footer {
+    background-color: @deepsense-blue;
+    padding: 20px;
+
+    .file-input {
+      flex: 1;
+      border: solid 1px @border-blue;
+      padding: 10px;
+    }
+
+    .btn {
+      margin-left: 20px;
+      width: 76px;
+      height: 40px;
+    }
+
+    .btn-blue {
+      color: #FFF;
+      font-weight: bold;
+      border: solid 1px @border-blue;
+      background-color: @seahorse-blue;
+    }
   }
 }

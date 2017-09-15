@@ -3,7 +3,7 @@
 const COOKIE_NAME = 'DELETE_DATAFRAME_COOKIE';
 
 /* @ngInject */
-function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, mode, DeleteModalService) {
+function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, mode, DeleteModalService, $log) {
   const vm = this;
 
   vm.loading = true;
@@ -11,6 +11,7 @@ function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, mode, Delet
   vm.uploadingFiles = [];
   vm.uploadedFiles = [];
   vm.mode = mode;
+  vm.selectedItem = '';
 
   vm.openFileBrowser = openFileBrowser;
   vm.onFileSelectedHandler = onFileSelectedHandler;
@@ -20,6 +21,7 @@ function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, mode, Delet
   vm.deleteUploadedFile = deleteUploadedFile;
   vm.onSelect = onSelect;
   vm.close = close;
+  vm.ok = ok;
 
   $scope.$watch(() => LibraryService.getDirectoryContent(), (newValue) => {
     handleResults(newValue);
@@ -87,12 +89,19 @@ function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, mode, Delet
     vm.items = result.items;
     vm.parents = result.parents;
     vm.currentDirName = result.name;
+    vm.currentDirUri = result.uri;
   }
 
   function onSelect(item) {
     if (vm.mode === 'read-file') {
       $uibModalInstance.close(item);
+    } else if (vm.mode === 'write-to-file') {
+      vm.selectedItem = item.name;
     }
+  }
+
+  function ok() {
+    $uibModalInstance.close(`${vm.currentDirUri}/${vm.selectedItem}`.replace('///', '//'));
   }
 }
 
