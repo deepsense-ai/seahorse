@@ -15,6 +15,8 @@ let PrefixBasedCreatorParameterConstructor = require('./common-prefix-based-crea
 let DynamicParameterConstructor = require('./common-dynamic-parameter.js');
 let LoadFromLibraryParameterConstructor = require('./common-load-from-library-parameter.js');
 let SaveToLibraryParameterConstructor = require('./common-save-to-library-parameter.js');
+let DatasourceReadParameterConstructor = require('./common-datasource-read-parameter.js');
+let DatasourceWriteParameterConstructor = require('./common-datasource-write-parameter.js');
 
 let GridSearchParameterConstructor = require('./common-gridsearch-parameter.js');
 let MultipleNumericParameterConstructor = require('./common-multiple-numeric.js');
@@ -38,7 +40,9 @@ let parameterConstructors = {
   'gridSearch': GridSearchParameterConstructor,
   'multipleNumeric': MultipleNumericParameterConstructor,
   'loadFromLibrary': LoadFromLibraryParameterConstructor,
-  'saveToLibrary': SaveToLibraryParameterConstructor
+  'saveToLibrary': SaveToLibraryParameterConstructor,
+  'datasourceIdForRead': DatasourceReadParameterConstructor,
+  'datasourceIdForWrite': DatasourceWriteParameterConstructor
 };
 
 let ParameterFactory = {

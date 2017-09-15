@@ -15,3 +15,5 @@ require('./attribute-save-to-library/attribute-save-to-library-type.js');
 require('./attribute-single-choice/attribute-single-choice-type.js');
 require('./attribute-string/attribute-string-type.js');
 require('./attribute-workflow/attribute-workflow-type.js');
+require('./attribute-datasource-read/attribute-datasource-read.js');
+require('./attribute-datasource-write/attribute-datasource-write.js');
