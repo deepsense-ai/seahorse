@@ -73,10 +73,10 @@ case class ContinuousDistribution(
     ContinuousDistribution.subtype,
     description,
     missingValues,
-    buckets.map(_.toString),
+    buckets,
     counts) with ReportJsonProtocol {
   require(buckets.size > 1, "Buckets size must be larger than 1")
-  require((buckets.size == counts.size + 1),
+  require(buckets.size == counts.size + 1,
       "Buckets size should be equal to count size + 1. " +
       s"Buckets size is: ${buckets.size}, counts size is: ${counts.size}")
 }

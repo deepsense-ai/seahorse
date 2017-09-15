@@ -20,6 +20,7 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 
+import io.deepsense.commons.datetime.DateTimeConverter.{dateTime, dateTimeFromUTC, toString => dateToString}
 import io.deepsense.commons.utils.DoubleUtils
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.report.DataFrameReportGenerator
@@ -71,8 +72,8 @@ class DistributionIntegSpec extends DeeplangIntegTestSupport with DataFrameTestF
         timestampTypeBuckets,
         Seq(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 3, 0, 0, 1),
         Statistics(
-          "2010-01-07T00:00:00.000Z",
-          "1954-12-18T00:43:00.000Z",
+          dateToString(dateTimeFromUTC(2010, 1, 7, 0, 0, 0)),
+          dateToString(dateTimeFromUTC(1954, 12, 18, 0, 43, 0)),
           "NaN")
       )
     }
@@ -95,7 +96,7 @@ class DistributionIntegSpec extends DeeplangIntegTestSupport with DataFrameTestF
           distributions,
           colName,
           0L,
-          (0 to 20).map(x => x * 0.05).toSeq.map(DoubleUtils.double2String(_)),
+          (0 to 20).map(x => x * 0.05).map(DoubleUtils.double2String),
           Seq(1L) ++ Seq.fill(18)(0L) ++ Seq(1L),
           Statistics("1", "0", "0.5"))
       })
@@ -115,23 +116,23 @@ class DistributionIntegSpec extends DeeplangIntegTestSupport with DataFrameTestF
         distributions,
         timestampColumnName,
         0L,
-        timestampBucketsForSparkTypesTest,
+        timestampBucketsForSparkTypesTestFromUTC,
         Seq(1L) ++ Seq.fill(18)(0L) ++ Seq(1L),
         Statistics(
-          "1970-01-22T00:00:00.000Z",
-          "1970-01-20T00:00:00.000Z",
-          "1970-01-21T00:00:00.000Z"))
+          dateToString(dateTimeFromUTC(1970, 1, 22, 0, 0, 0)),
+          dateToString(dateTimeFromUTC(1970, 1, 20, 0, 0, 0)),
+          dateToString(dateTimeFromUTC(1970, 1, 21, 0, 0, 0))))
 
       testContinuousDistribution(
         distributions,
         dateColumnName,
         0L,
-        timestampBucketsForSparkTypesTest,
+        timestampBucketsForSparkTypesTestFromDefault,
         Seq(1L) ++ Seq.fill(18)(0L) ++ Seq(1L),
         Statistics(
-          "1970-01-22T00:00:00.000Z",
-          "1970-01-20T00:00:00.000Z",
-          "1970-01-21T00:00:00.000Z"))
+          dateToString(dateTime(1970, 1, 22, 0, 0, 0)),
+          dateToString(dateTime(1970, 1, 20, 0, 0, 0)),
+          dateToString(dateTime(1970, 1, 21, 0, 0, 0))))
 
       Seq(binaryColumnName, arrayColumnName, mapColumnName, structColumnName, vectorColumnName)
         .foreach(colName =>
@@ -172,12 +173,13 @@ class DistributionIntegSpec extends DeeplangIntegTestSupport with DataFrameTestF
         distributions,
         timestampColumnName,
         0L,
-        Seq("1970-01-20T00:43:00.000Z", "1970-01-20T00:43:00.000Z"),
+        Seq(dateTimeFromUTC(1970, 1, 20, 0, 43, 0), dateTimeFromUTC(1970, 1, 20, 0, 43, 0))
+          .map(dateToString),
         Seq(10),
         Statistics(
-          "1970-01-20T00:43:00.000Z",
-          "1970-01-20T00:43:00.000Z",
-          "1970-01-20T00:43:00.000Z")
+          dateToString(dateTimeFromUTC(1970, 1, 20, 0, 43, 0)),
+          dateToString(dateTimeFromUTC(1970, 1, 20, 0, 43, 0)),
+          dateToString(dateTimeFromUTC(1970, 1, 20, 0, 43, 0)))
       )
     }
     "not generate string column distribution" when {
@@ -188,7 +190,7 @@ class DistributionIntegSpec extends DeeplangIntegTestSupport with DataFrameTestF
         val dataFrame = executionContext.dataFrameBuilder.buildDataFrame(
           schema,
           sparkContext.parallelize(
-            (1 to rowCount).toSeq.map(x => Row(x.toString))
+            (1 to rowCount).map(x => Row(x.toString))
           )
         )
         val report = dataFrame.report
@@ -220,23 +222,46 @@ class DistributionIntegSpec extends DeeplangIntegTestSupport with DataFrameTestF
 
   val integerTypeBuckets: Array[String] = Array("0", "0", "1", "2", "3")
 
-  val timestampTypeBuckets: Array[String] = Array("1954-12-18T00:43:00.000Z",
-    "1957-09-18T11:28:51.000Z", "1960-06-19T22:14:42.000Z", "1963-03-22T09:00:33.000Z",
-    "1965-12-21T19:46:24.000Z", "1968-09-22T06:32:15.000Z", "1971-06-24T17:18:06.000Z",
-    "1974-03-26T04:03:57.000Z", "1976-12-25T14:49:48.000Z", "1979-09-27T01:35:39.000Z",
-    "1982-06-28T12:21:30.000Z", "1985-03-29T23:07:21.000Z", "1987-12-30T09:53:12.000Z",
-    "1990-09-30T20:39:03.000Z", "1993-07-02T07:24:54.000Z", "1996-04-02T18:10:45.000Z",
-    "1999-01-03T04:56:36.000Z", "2001-10-04T15:42:27.000Z", "2004-07-06T02:28:18.000Z",
-    "2007-04-07T13:14:09.000Z", "2010-01-07T00:00:00.000Z")
+  val timestampTypeBuckets: Array[String] = Array(
+    dateTimeFromUTC(1954, 12, 18, 0, 43, 0), dateTimeFromUTC(1957, 9, 18, 11, 28, 51),
+    dateTimeFromUTC(1960, 6, 19, 22, 14, 42), dateTimeFromUTC(1963, 3, 22, 9, 0, 33),
+    dateTimeFromUTC(1965, 12, 21, 19, 46, 24), dateTimeFromUTC(1968, 9, 22, 6, 32, 15),
+    dateTimeFromUTC(1971, 6, 24, 17, 18, 6), dateTimeFromUTC(1974, 3, 26, 4, 3, 57),
+    dateTimeFromUTC(1976, 12, 25, 14, 49, 48), dateTimeFromUTC(1979, 9, 27, 1, 35, 39),
+    dateTimeFromUTC(1982, 6, 28, 12, 21, 30), dateTimeFromUTC(1985, 3, 29, 23, 7, 21),
+    dateTimeFromUTC(1987, 12, 30, 9, 53, 12), dateTimeFromUTC(1990, 9, 30, 20, 39, 3),
+    dateTimeFromUTC(1993, 7, 2, 7, 24, 54), dateTimeFromUTC(1996, 4, 2, 18, 10, 45),
+    dateTimeFromUTC(1999, 1, 3, 4, 56, 36), dateTimeFromUTC(2001, 10, 4, 15, 42, 27),
+    dateTimeFromUTC(2004, 7, 6, 2, 28, 18), dateTimeFromUTC(2007, 4, 7, 13, 14, 9),
+    dateTimeFromUTC(2010, 1, 7, 0, 0, 0)).map(dateToString)
 
-  val timestampBucketsForSparkTypesTest: Array[String] = Array("1970-01-20T00:00:00.000Z",
-    "1970-01-20T02:24:00.000Z", "1970-01-20T04:48:00.000Z", "1970-01-20T07:12:00.000Z",
-    "1970-01-20T09:36:00.000Z", "1970-01-20T12:00:00.000Z", "1970-01-20T14:24:00.000Z",
-    "1970-01-20T16:48:00.000Z", "1970-01-20T19:12:00.000Z", "1970-01-20T21:36:00.000Z",
-    "1970-01-21T00:00:00.000Z", "1970-01-21T02:24:00.000Z", "1970-01-21T04:48:00.000Z",
-    "1970-01-21T07:12:00.000Z", "1970-01-21T09:36:00.000Z", "1970-01-21T12:00:00.000Z",
-    "1970-01-21T14:24:00.000Z", "1970-01-21T16:48:00.000Z", "1970-01-21T19:12:00.000Z",
-    "1970-01-21T21:36:00.000Z", "1970-01-22T00:00:00.000Z")
+  val timestampBucketsForSparkTypesTestFromUTC: Array[String] =
+    Array(
+      dateTimeFromUTC(1970, 1, 20, 0, 0, 0), dateTimeFromUTC(1970, 1, 20, 2, 24, 0),
+      dateTimeFromUTC(1970, 1, 20, 4, 48, 0), dateTimeFromUTC(1970, 1, 20, 7, 12, 0),
+      dateTimeFromUTC(1970, 1, 20, 9, 36, 0), dateTimeFromUTC(1970, 1, 20, 12, 0, 0),
+      dateTimeFromUTC(1970, 1, 20, 14, 24, 0), dateTimeFromUTC(1970, 1, 20, 16, 48, 0),
+      dateTimeFromUTC(1970, 1, 20, 19, 12, 0), dateTimeFromUTC(1970, 1, 20, 21, 36, 0),
+      dateTimeFromUTC(1970, 1, 21, 0, 0, 0), dateTimeFromUTC(1970, 1, 21, 2, 24, 0),
+      dateTimeFromUTC(1970, 1, 21, 4, 48, 0), dateTimeFromUTC(1970, 1, 21, 7, 12, 0),
+      dateTimeFromUTC(1970, 1, 21, 9, 36, 0), dateTimeFromUTC(1970, 1, 21, 12, 0, 0),
+      dateTimeFromUTC(1970, 1, 21, 14, 24, 0), dateTimeFromUTC(1970, 1, 21, 16, 48, 0),
+      dateTimeFromUTC(1970, 1, 21, 19, 12, 0), dateTimeFromUTC(1970, 1, 21, 21, 36, 0),
+      dateTimeFromUTC(1970, 1, 22, 0, 0, 0)).map(dateToString)
+
+  val timestampBucketsForSparkTypesTestFromDefault: Array[String] =
+    Array(
+      dateTime(1970, 1, 20, 0, 0, 0), dateTime(1970, 1, 20, 2, 24, 0),
+      dateTime(1970, 1, 20, 4, 48, 0), dateTime(1970, 1, 20, 7, 12, 0),
+      dateTime(1970, 1, 20, 9, 36, 0), dateTime(1970, 1, 20, 12, 0, 0),
+      dateTime(1970, 1, 20, 14, 24, 0), dateTime(1970, 1, 20, 16, 48, 0),
+      dateTime(1970, 1, 20, 19, 12, 0), dateTime(1970, 1, 20, 21, 36, 0),
+      dateTime(1970, 1, 21, 0, 0, 0), dateTime(1970, 1, 21, 2, 24, 0),
+      dateTime(1970, 1, 21, 4, 48, 0), dateTime(1970, 1, 21, 7, 12, 0),
+      dateTime(1970, 1, 21, 9, 36, 0), dateTime(1970, 1, 21, 12, 0, 0),
+      dateTime(1970, 1, 21, 14, 24, 0), dateTime(1970, 1, 21, 16, 48, 0),
+      dateTime(1970, 1, 21, 19, 12, 0), dateTime(1970, 1, 21, 21, 36, 0),
+      dateTime(1970, 1, 22, 0, 0, 0)).map(dateToString)
 
   private def testDiscreteDistribution(
       distributions: Map[String, Distribution],

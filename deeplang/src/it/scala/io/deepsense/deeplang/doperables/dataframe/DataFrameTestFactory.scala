@@ -18,13 +18,12 @@ package io.deepsense.deeplang.doperables.dataframe
 
 import java.sql.Timestamp
 
-import io.deepsense.commons.datetime.DateTimeConverter
 import org.apache.spark.SparkContext
-import org.apache.spark.mllib.linalg.{Vectors, VectorUDT}
+import org.apache.spark.mllib.linalg.{VectorUDT, Vectors}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
-import org.joda.time.DateTime
+import io.deepsense.commons.datetime.DateTimeConverter.dateTimeFromUTC
 
 trait DataFrameTestFactory {
 
@@ -75,29 +74,29 @@ trait DataFrameTestFactory {
   ))
 
   def testRDD(sparkContext: SparkContext): RDD[Row] = sparkContext.parallelize(Seq(
-    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), 0),
-    Row("Name2", false, 1.95, timestamp(1990, 2, 11, 0, 43), 1),
-    Row("Name3", false, 1.87, timestamp(1999, 7, 2, 0, 43), 3),
-    Row("Name4", false, 1.7, timestamp(1954, 12, 18, 0, 43), 0),
-    Row("Name5", false, 2.07, timestamp(1987, 4, 27, 0, 43), null),
-    Row(null, true, 1.307, timestamp(2010, 1, 7, 0, 0), 2),
-    Row("Name7", null, 2.132, timestamp(2000, 4, 27, 0, 43), 1),
-    Row("Name8", true, 1.777, timestamp(1996, 10, 24, 0, 43), 1),
-    Row("Name9", true, null, timestamp(1999, 1, 6, 0, 0), 0),
+    Row("Name1", false, 1.67, timestampUTC(1970, 1, 20, 0, 43), 0),
+    Row("Name2", false, 1.95, timestampUTC(1990, 2, 11, 0, 43), 1),
+    Row("Name3", false, 1.87, timestampUTC(1999, 7, 2, 0, 43), 3),
+    Row("Name4", false, 1.7, timestampUTC(1954, 12, 18, 0, 43), 0),
+    Row("Name5", false, 2.07, timestampUTC(1987, 4, 27, 0, 43), null),
+    Row(null, true, 1.307, timestampUTC(2010, 1, 7, 0, 0), 2),
+    Row("Name7", null, 2.132, timestampUTC(2000, 4, 27, 0, 43), 1),
+    Row("Name8", true, 1.777, timestampUTC(1996, 10, 24, 0, 43), 1),
+    Row("Name9", true, null, timestampUTC(1999, 1, 6, 0, 0), 0),
     Row("Name10", true, 1.99, null, 1)
   ))
 
   def sameValueRDD(sparkContext: SparkContext): RDD[Row] = sparkContext.parallelize(Seq(
-    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), 1),
-    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), 1),
-    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), 1),
-    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), 1),
-    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), 1),
-    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), 1),
-    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), 1),
-    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), 1),
-    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), 1),
-    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), 1)
+    Row("Name1", false, 1.67, timestampUTC(1970, 1, 20, 0, 43), 1),
+    Row("Name1", false, 1.67, timestampUTC(1970, 1, 20, 0, 43), 1),
+    Row("Name1", false, 1.67, timestampUTC(1970, 1, 20, 0, 43), 1),
+    Row("Name1", false, 1.67, timestampUTC(1970, 1, 20, 0, 43), 1),
+    Row("Name1", false, 1.67, timestampUTC(1970, 1, 20, 0, 43), 1),
+    Row("Name1", false, 1.67, timestampUTC(1970, 1, 20, 0, 43), 1),
+    Row("Name1", false, 1.67, timestampUTC(1970, 1, 20, 0, 43), 1),
+    Row("Name1", false, 1.67, timestampUTC(1970, 1, 20, 0, 43), 1),
+    Row("Name1", false, 1.67, timestampUTC(1970, 1, 20, 0, 43), 1),
+    Row("Name1", false, 1.67, timestampUTC(1970, 1, 20, 0, 43), 1)
   ))
 
   def allTypesRDD(sparkContext: SparkContext): RDD[Row] = sparkContext.parallelize(Seq(
@@ -112,7 +111,7 @@ trait DataFrameTestFactory {
       "x",
       Array[Byte](),
       false,
-      timestamp(1970, 1, 20, 0, 0),
+      timestampUTC(1970, 1, 20, 0, 0),
       java.sql.Date.valueOf("1970-01-20"),
       Array(1, 2, 3),
       Map("x" -> 0),
@@ -129,7 +128,7 @@ trait DataFrameTestFactory {
       "y",
       Array[Byte](),
       true,
-      timestamp(1970, 1, 22, 0, 0),
+      timestampUTC(1970, 1, 22, 0, 0),
       java.sql.Date.valueOf("1970-01-22"),
       Array(4, 5, 6),
       Map("y" -> 1),
@@ -137,13 +136,15 @@ trait DataFrameTestFactory {
       Vectors.dense(4, 5, 6))
   ))
 
-  private def timestamp(
+  private def timestampUTC(
       year: Int,
       month: Int,
       day: Int,
-      hour: Int,
-      minutes: Int): Timestamp =
-    new Timestamp(new DateTime(year, month, day, hour, minutes, DateTimeConverter.zone).getMillis)
+      hour: Int = 0,
+      minutes: Int = 0,
+      seconds: Int = 0): Timestamp =
+    new Timestamp(
+      dateTimeFromUTC(year, month, day, hour, minutes, seconds).getMillis)
 }
 
 object DataFrameTestFactory extends DataFrameTestFactory {
