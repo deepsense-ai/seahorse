@@ -42,4 +42,8 @@ class VectorIndexerEstimator
   override def report(executionContext: ExecutionContext): Report = Report()
 
   override val params: Array[Param[_]] = declareParams(maxCategories, inputColumn, outputColumn)
+
+  def setMaxCategories(value: Int): this.type = {
+    set(maxCategories -> value)
+  }
 }

@@ -41,4 +41,8 @@ class PCAEstimator
   override def report(executionContext: ExecutionContext): Report = Report()
 
   override val params: Array[Param[_]] = declareParams(k, inputColumn, outputColumn)
+
+  def setK(value: Int): this.type = {
+    set(k -> value)
+  }
 }

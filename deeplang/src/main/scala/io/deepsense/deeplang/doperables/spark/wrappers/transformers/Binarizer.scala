@@ -32,4 +32,8 @@ class Binarizer extends SparkTransformerAsMultiColumnTransformer[SparkBinarizer]
   setDefault(threshold, 0.0)
 
   override protected def getSpecificParams: Array[Param[_]] = Array(threshold)
+
+  def setThreshold(value: Double): this.type = {
+    set(threshold, value)
+  }
 }

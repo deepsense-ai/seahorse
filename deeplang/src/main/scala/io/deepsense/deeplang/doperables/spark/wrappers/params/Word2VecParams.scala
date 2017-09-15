@@ -54,4 +54,11 @@ trait Word2VecParams extends Params
     validator = RangeValidator.positiveIntegers)
   setDefault(minCount -> 5)
 
+  def setMinCount(value: Int): this.type = {
+    set(minCount -> value)
+  }
+
+  def setVectorSize(value: Int): this.type = {
+    set(vectorSize -> value)
+  }
 }

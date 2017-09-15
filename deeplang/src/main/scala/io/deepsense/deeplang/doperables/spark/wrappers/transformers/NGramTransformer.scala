@@ -33,4 +33,8 @@ class NGramTransformer extends SparkTransformerAsMultiColumnTransformer[NGram] {
   setDefault(n, 2.0)
 
   override protected def getSpecificParams: Array[Param[_]] = Array(n)
+
+  def setN(value: Int): this.type = {
+    set(n -> value)
+  }
 }

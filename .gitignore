@@ -33,3 +33,4 @@ private_*/
 
 # Jekyll
 docs/_site
+docs/operations/examples/*.md

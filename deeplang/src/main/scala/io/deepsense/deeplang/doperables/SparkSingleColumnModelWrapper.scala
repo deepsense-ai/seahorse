@@ -83,10 +83,6 @@ abstract class SparkSingleColumnModelWrapper[
       .put(ml.param.ParamPair(parentEstimator.sparkEstimator.outputCol, outputColumnValue))
   }
 
-  def setInputColumn(name: String): this.type = {
-    set(inputColumn, NameSingleColumnSelection(name))
-  }
-
   def setSingleInPlaceParam(value: SingleColumnInPlaceChoice): this.type = {
     set(singleInPlaceParam -> value)
   }

@@ -32,7 +32,7 @@ import io.deepsense.deeplang.doperations.exceptions.DeepSenseIOException
 import io.deepsense.deeplang.doperations.inout._
 import io.deepsense.deeplang.params.Params
 import io.deepsense.deeplang.params.choice.ChoiceParam
-import io.deepsense.deeplang.{DOperation0To1, ExecutionContext, FileSystemClient}
+import io.deepsense.deeplang.{DOperable, DOperation0To1, ExecutionContext, FileSystemClient}
 
 case class ReadDataFrame()
     extends DOperation0To1[DataFrame]
@@ -166,5 +166,21 @@ object ReadDataFrame {
 
     def getStorageType: InputStorageTypeChoice = $(storageType)
     def setStorageType(value: InputStorageTypeChoice): this.type = set(storageType, value)
+  }
+
+  def apply(
+      fileName: String,
+      csvColumnSeparator: CsvParameters.ColumnSeparatorChoice,
+      csvNamesIncluded: Boolean,
+      csvConvertToBoolean: Boolean) : ReadDataFrame = {
+    new ReadDataFrame()
+      .setStorageType(
+        InputStorageTypeChoice.File()
+          .setSourceFile(fileName)
+          .setFileFormat(
+            InputFileFormatChoice.Csv()
+              .setCsvColumnSeparator(csvColumnSeparator)
+              .setCsvNamesIncluded(csvNamesIncluded)
+              .setShouldConvertToBoolean(csvConvertToBoolean)))
   }
 }

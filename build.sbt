@@ -52,3 +52,4 @@ addCommandAlias("ds-it",
 
 addCommandAlias("sPublish", "aetherDeploy")
 addCommandAlias("sPublishLocal", "aetherInstall")
+addCommandAlias("generateExamples", "deeplang/it:testOnly io.deepsense.deeplang.doperations.examples.*")

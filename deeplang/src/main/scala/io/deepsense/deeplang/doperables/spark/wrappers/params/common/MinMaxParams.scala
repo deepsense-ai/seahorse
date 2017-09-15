@@ -36,4 +36,12 @@ trait MinMaxParams extends Params {
     description = "Upper bound after transformation, shared by all features.",
     sparkParamGetter = _.max)
   setDefault(max, 1.0)
+
+  def setMin(value: Double): this.type = {
+    set(min, value)
+  }
+
+  def setMax(value: Double): this.type = {
+    set(max, value)
+  }
 }

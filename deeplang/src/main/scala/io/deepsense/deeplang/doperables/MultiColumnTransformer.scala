@@ -27,7 +27,7 @@ import io.deepsense.deeplang.doperables.multicolumn.{HasSpecificParams, MultiCol
 import io.deepsense.deeplang.inference.exceptions.TransformSchemaException
 import io.deepsense.deeplang.params.IOColumnsParam
 import io.deepsense.deeplang.params.choice.ChoiceParam
-import io.deepsense.deeplang.params.selections.MultipleColumnSelection
+import io.deepsense.deeplang.params.selections.{NameSingleColumnSelection, MultipleColumnSelection}
 
 /**
  * MultiColumnTransformer is a [[io.deepsense.deeplang.doperables.Transformer]]
@@ -52,6 +52,13 @@ abstract class MultiColumnTransformer
 
   def setSingleOrMultiChoice(value: SingleOrMultiColumnChoice): this.type =
     set(singleOrMultiChoiceParam, value)
+
+  def setSingleColumn(inputColumnName: String, outputColumnName: String): this.type = {
+    val choice = SingleColumnChoice()
+      .setInPlace(NoInPlaceChoice().setOutputColumn(outputColumnName))
+      .setInputColumn(NameSingleColumnSelection(inputColumnName))
+    set(singleOrMultiChoiceParam, choice)
+  }
 
   /**
    * Transforms 'inputColumn' and stores the results in 'outputColumn'. This method should

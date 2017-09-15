@@ -52,5 +52,5 @@ class CountVectorizerEstimator
   override def report(executionContext: ExecutionContext): Report = Report()
 
   override val params: Array[Param[_]] =
-    declareParams(inputColumn, minDF, minTF, outputColumn, vocabSize)
+    declareParams(inputColumn, outputColumn, minDF, minTF, vocabSize)
 }

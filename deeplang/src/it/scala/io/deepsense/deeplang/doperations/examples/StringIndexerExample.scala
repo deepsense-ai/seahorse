@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperations
+package io.deepsense.deeplang.doperations.examples
 
-import io.deepsense.deeplang.DOperation._
-import io.deepsense.deeplang.doperables.StringIndexerEstimator
+import io.deepsense.deeplang.doperations.spark.wrappers.estimators.StringIndexer
 
-class StringIndexer extends EstimatorAsOperation[StringIndexerEstimator] {
-  override val id: Id = "c9df7000-9ea0-41c0-b66c-3062fd57851b"
-  override val description: String = "Maps a string column of labels to a column of label indices."
-  override val name: String = "String Indexer"
+class StringIndexerExample extends AbstractOperationExample[StringIndexer] {
+
+  override def dOperation: StringIndexer =
+    new StringIndexer().setSingleColumn("city", "city_indexed")
+
+  override def fileNames: Seq[String] = Seq("example_city_price")
 }

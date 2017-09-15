@@ -33,4 +33,8 @@ class HashingTFTransformer extends SparkTransformerAsMultiColumnTransformer[Hash
   setDefault(numFeatures, (1 << 20).toDouble)
 
   override protected def getSpecificParams: Array[Param[_]] = Array(numFeatures)
+
+  def setNumFeatures(value: Int): this.type = {
+    set(numFeatures -> value)
+  }
 }

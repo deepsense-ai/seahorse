@@ -40,4 +40,8 @@ trait HasMinTermsFrequencyParam
     sparkParamGetter = _.minTF,
     RangeValidator(0.0, Double.MaxValue))
   setDefault(minTF, 1.0)
+
+  def setMinTF(value: Double): this.type = {
+    set(minTF, value)
+  }
 }

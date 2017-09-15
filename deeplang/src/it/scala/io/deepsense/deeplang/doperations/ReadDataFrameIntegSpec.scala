@@ -196,18 +196,12 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
       csvColumnSeparator: CsvParameters.ColumnSeparatorChoice,
       csvNamesIncluded: Boolean,
       csvConvertToBoolean: Boolean) : DataFrame = {
-    val operation =
-      new ReadDataFrame()
-        .setStorageType(
-          InputStorageTypeChoice.File()
-            .setSourceFile(absoluteTestsDirPath + "/" + fileName)
-            .setFileFormat(
-              InputFileFormatChoice.Csv()
-                .setCsvColumnSeparator(csvColumnSeparator)
-                .setCsvNamesIncluded(csvNamesIncluded)
-                .setShouldConvertToBoolean(csvConvertToBoolean)))
-    operation
-      .execute(executionContext)(Vector.empty[DOperable])
+    ReadDataFrame(
+      absoluteTestsDirPath + "/" + fileName,
+      csvColumnSeparator,
+      csvNamesIncluded,
+      csvConvertToBoolean
+    ).execute(executionContext)(Vector.empty[DOperable])
       .head
       .asInstanceOf[DataFrame]
   }

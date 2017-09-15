@@ -21,6 +21,7 @@ import scala.language.reflectiveCalls
 import org.apache.spark.ml
 
 import io.deepsense.deeplang.params.Params
+import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 import io.deepsense.deeplang.params.wrappers.spark.SingleColumnCreatorParamWrapper
 
 trait HasOutputColumn extends Params {
@@ -30,4 +31,8 @@ trait HasOutputColumn extends Params {
     name = "output column",
     description = "Output column name.",
     sparkParamGetter = _.outputCol)
+
+  def setOutputColumn(value: String): this.type = {
+    set(outputColumn, value)
+  }
 }
