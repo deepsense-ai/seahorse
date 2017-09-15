@@ -1,0 +1,823 @@
+{
+  "workflow": {
+    "nodes": [{
+      "id": "e6e2b11d-dad6-7d30-3cfc-0876ecc5319e",
+      "operation": {
+        "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
+        "name": "Read DataFrame"
+      },
+      "parameters": {
+        "data storage type": {
+          "FILE": {
+            "source": "hdfs://spark-cluster-1/system_tests/automaticConversionToVector/input.csv"
+          }
+        }
+      }
+    }, {
+      "id": "f7fe9543-4a7a-02da-0c09-587597cd50b3",
+      "operation": {
+        "id": "c57a5b99-9184-4095-9037-9359f905628d",
+        "name": "Assemble Vector"
+      },
+      "parameters": {
+        "input columns": {
+          "selections": [{
+            "type": "typeList",
+            "values": ["numeric"]
+          }],
+          "excluding": false
+        },
+        "output column": "vec"
+      }
+    }, {
+      "id": "e64a9737-15d0-b1c5-55ed-4980f951a0c4",
+      "operation": {
+        "id": "68cd1492-501d-4c4f-9fde-f742d652111a",
+        "name": "DCT"
+      },
+      "parameters": {
+        "operate on": {
+          "one column": {
+            "input column": {
+              "type": "column",
+              "value": "vec"
+            }
+          }
+        }
+      }
+    }, {
+      "id": "a106f0e1-0912-2c39-7ac0-922c24978f94",
+      "operation": {
+        "id": "68cd1492-501d-4c4f-9fde-f742d652111a",
+        "name": "DCT"
+      },
+      "parameters": {
+        "operate on": {
+          "one column": {
+            "input column": {
+              "type": "column",
+              "value": "data"
+            },
+            "output": {
+              "replace input column": {
+
+              }
+            }
+          }
+        }
+      }
+    }, {
+      "id": "20c4b5c3-3b61-3f08-0c38-7c0eb6d00214",
+      "operation": {
+        "id": "85007b46-210c-4e88-b7dc-cf46d3803b06",
+        "name": "Standard Scaler"
+      },
+      "parameters": {
+        "input column": {
+          "type": "column",
+          "value": "data"
+        },
+        "output": {
+          "append new column": {
+            "output column": "standard"
+          }
+        }
+      }
+    }, {
+      "id": "a96ac72b-d26a-0e7c-ca58-a821b4940c96",
+      "operation": {
+        "id": "4a741088-3180-4373-940d-741b2f1620de",
+        "name": "Polynomial Expansion"
+      },
+      "parameters": {
+        "operate on": {
+          "one column": {
+            "input column": {
+              "type": "column",
+              "value": "vec"
+            }
+          }
+        }
+      }
+    }, {
+      "id": "2fb3c8af-431f-be19-30ea-880365a42f59",
+      "operation": {
+        "id": "85007b46-210c-4e88-b7dc-cf46d3803b06",
+        "name": "Standard Scaler"
+      },
+      "parameters": {
+        "input column": {
+          "type": "column",
+          "value": "vec"
+        }
+      }
+    }, {
+      "id": "7b6dd308-c757-5af9-8ce9-1e0a5057cb5c",
+      "operation": {
+        "id": "a63b6de3-793b-4cbd-ae81-76de216d90d5",
+        "name": "Min-Max Scaler"
+      },
+      "parameters": {
+        "input column": {
+          "type": "column",
+          "value": "vec"
+        }
+      }
+    }, {
+      "id": "abd42cba-b37c-50fb-f726-dd61733a3874",
+      "operation": {
+        "id": "85007b46-210c-4e88-b7dc-cf46d3803b06",
+        "name": "Standard Scaler"
+      },
+      "parameters": {
+        "input column": {
+          "type": "column",
+          "value": "data"
+        },
+        "output": {
+          "replace input column": {
+
+          }
+        }
+      }
+    }, {
+      "id": "712fece9-0600-802a-d9b0-ae52d103c703",
+      "operation": {
+        "id": "a63b6de3-793b-4cbd-ae81-76de216d90d5",
+        "name": "Min-Max Scaler"
+      },
+      "parameters": {
+        "input column": {
+          "type": "column",
+          "value": "vec"
+        },
+        "output": {
+          "append new column": {
+            "output column": "min-max"
+          }
+        }
+      }
+    }, {
+      "id": "4133eca0-89ad-6ce1-bcb1-ec7fb6edcc79",
+      "operation": {
+        "id": "4a741088-3180-4373-940d-741b2f1620de",
+        "name": "Polynomial Expansion"
+      },
+      "parameters": {
+        "degree": 3.0,
+        "operate on": {
+          "one column": {
+            "input column": {
+              "type": "column",
+              "value": "data"
+            },
+            "output": {
+              "replace input column": {
+
+              }
+            }
+          }
+        }
+      }
+    }, {
+      "id": "206efc32-d7e8-d02c-ae97-4dce31b2f238",
+      "operation": {
+        "id": "4a741088-3180-4373-940d-741b2f1620de",
+        "name": "Polynomial Expansion"
+      },
+      "parameters": {
+        "degree": 3.0,
+        "operate on": {
+          "one column": {
+            "input column": {
+              "type": "column",
+              "value": "data"
+            },
+            "output": {
+              "append new column": {
+                "output column": "pe"
+              }
+            }
+          }
+        }
+      }
+    }, {
+      "id": "7b32dfea-4a82-e85b-f8d3-e4e2cfb92417",
+      "operation": {
+        "id": "a63b6de3-793b-4cbd-ae81-76de216d90d5",
+        "name": "Min-Max Scaler"
+      },
+      "parameters": {
+        "input column": {
+          "type": "column",
+          "value": "data"
+        },
+        "output": {
+          "replace input column": {
+
+          }
+        }
+      }
+    }, {
+      "id": "268c773a-8a7d-306e-751e-eb008971eb62",
+      "operation": {
+        "id": "68cd1492-501d-4c4f-9fde-f742d652111a",
+        "name": "DCT"
+      },
+      "parameters": {
+        "operate on": {
+          "one column": {
+            "input column": {
+              "type": "column",
+              "value": "vec"
+            },
+            "output": {
+              "append new column": {
+                "output column": "dct"
+              }
+            }
+          }
+        }
+      }
+    }, {
+      "id": "d1a9b941-4ef6-4f11-9d9e-66bffef8db06",
+      "operation": {
+        "id": "85007b46-210c-4e88-b7dc-cf46d3803b06",
+        "name": "Standard Scaler"
+      },
+      "parameters": {
+        "input column": {
+          "type": "column",
+          "value": "vec"
+        },
+        "output": {
+          "append new column": {
+            "output column": "standard"
+          }
+        }
+      }
+    }, {
+      "id": "17d43eef-1ab8-1d3b-7fca-fea00985485e",
+      "operation": {
+        "id": "9c3225d8-d430-48c0-a46e-fa83909ad054",
+        "name": "Projection"
+      },
+      "parameters": {
+        "projection columns": [{
+          "original column": {
+            "type": "column",
+            "value": "vec_1"
+          },
+          "rename column": {
+            "Yes": {
+              "column name": "data"
+            }
+          }
+        }]
+      }
+    }, {
+      "id": "4ac8b0df-04e3-362f-7f9f-f18d7248d8c4",
+      "operation": {
+        "id": "4a741088-3180-4373-940d-741b2f1620de",
+        "name": "Polynomial Expansion"
+      },
+      "parameters": {
+        "operate on": {
+          "one column": {
+            "input column": {
+              "type": "column",
+              "value": "vec"
+            },
+            "output": {
+              "append new column": {
+                "output column": "pe"
+              }
+            }
+          }
+        }
+      }
+    }, {
+      "id": "6b106484-dcbc-6e55-fa78-1909f59dfdd6",
+      "operation": {
+        "id": "20f3d9ef-9b04-49c6-8acd-7ddafdedcb39",
+        "name": "Normalize"
+      },
+      "parameters": {
+        "operate on": {
+          "one column": {
+            "input column": {
+              "type": "column",
+              "value": "data"
+            },
+            "output": {
+              "append new column": {
+                "output column": "normalize"
+              }
+            }
+          }
+        }
+      }
+    }, {
+      "id": "9d03f3e8-067a-68b4-a0d6-b010124bcfe8",
+      "operation": {
+        "id": "68cd1492-501d-4c4f-9fde-f742d652111a",
+        "name": "DCT"
+      },
+      "parameters": {
+        "operate on": {
+          "one column": {
+            "input column": {
+              "type": "column",
+              "value": "data"
+            },
+            "output": {
+              "append new column": {
+                "output column": "dct"
+              }
+            }
+          }
+        }
+      }
+    }, {
+      "id": "6b39adef-9a51-4655-8688-a1ae6dc831d7",
+      "operation": {
+        "id": "20f3d9ef-9b04-49c6-8acd-7ddafdedcb39",
+        "name": "Normalize"
+      },
+      "parameters": {
+        "p": 3.0,
+        "operate on": {
+          "one column": {
+            "input column": {
+              "type": "column",
+              "value": "vec"
+            },
+            "output": {
+              "append new column": {
+                "output column": "normalize"
+              }
+            }
+          }
+        }
+      }
+    }, {
+      "id": "e3a57ea7-3f22-8095-b708-8cffbbe94b49",
+      "operation": {
+        "id": "20f3d9ef-9b04-49c6-8acd-7ddafdedcb39",
+        "name": "Normalize"
+      },
+      "parameters": {
+        "operate on": {
+          "one column": {
+            "input column": {
+              "type": "column",
+              "value": "data"
+            },
+            "output": {
+              "replace input column": {
+
+              }
+            }
+          }
+        }
+      }
+    }, {
+      "id": "2e4dd4df-baeb-cb2d-b4fc-b194f0f300b2",
+      "operation": {
+        "id": "20f3d9ef-9b04-49c6-8acd-7ddafdedcb39",
+        "name": "Normalize"
+      },
+      "parameters": {
+        "p": 3.0,
+        "operate on": {
+          "one column": {
+            "input column": {
+              "type": "column",
+              "value": "vec"
+            }
+          }
+        }
+      }
+    }, {
+      "id": "0f60ec98-9e51-1ba1-e57c-247e10af10b2",
+      "operation": {
+        "id": "a63b6de3-793b-4cbd-ae81-76de216d90d5",
+        "name": "Min-Max Scaler"
+      },
+      "parameters": {
+        "input column": {
+          "type": "column",
+          "value": "data"
+        },
+        "output": {
+          "append new column": {
+            "output column": "min-max"
+          }
+        }
+      }
+    }],
+    "connections": [{
+      "from": {
+        "nodeId": "17d43eef-1ab8-1d3b-7fca-fea00985485e",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "6b106484-dcbc-6e55-fa78-1909f59dfdd6",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "17d43eef-1ab8-1d3b-7fca-fea00985485e",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "7b32dfea-4a82-e85b-f8d3-e4e2cfb92417",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "f7fe9543-4a7a-02da-0c09-587597cd50b3",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "e64a9737-15d0-b1c5-55ed-4980f951a0c4",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "f7fe9543-4a7a-02da-0c09-587597cd50b3",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "2e4dd4df-baeb-cb2d-b4fc-b194f0f300b2",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "f7fe9543-4a7a-02da-0c09-587597cd50b3",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "7b6dd308-c757-5af9-8ce9-1e0a5057cb5c",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "17d43eef-1ab8-1d3b-7fca-fea00985485e",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "0f60ec98-9e51-1ba1-e57c-247e10af10b2",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "0f60ec98-9e51-1ba1-e57c-247e10af10b2",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "20c4b5c3-3b61-3f08-0c38-7c0eb6d00214",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "712fece9-0600-802a-d9b0-ae52d103c703",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "d1a9b941-4ef6-4f11-9d9e-66bffef8db06",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "e6e2b11d-dad6-7d30-3cfc-0876ecc5319e",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "17d43eef-1ab8-1d3b-7fca-fea00985485e",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "e6e2b11d-dad6-7d30-3cfc-0876ecc5319e",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "f7fe9543-4a7a-02da-0c09-587597cd50b3",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "17d43eef-1ab8-1d3b-7fca-fea00985485e",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "e3a57ea7-3f22-8095-b708-8cffbbe94b49",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "17d43eef-1ab8-1d3b-7fca-fea00985485e",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "a106f0e1-0912-2c39-7ac0-922c24978f94",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "f7fe9543-4a7a-02da-0c09-587597cd50b3",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "a96ac72b-d26a-0e7c-ca58-a821b4940c96",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "f7fe9543-4a7a-02da-0c09-587597cd50b3",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "2fb3c8af-431f-be19-30ea-880365a42f59",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "9d03f3e8-067a-68b4-a0d6-b010124bcfe8",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "206efc32-d7e8-d02c-ae97-4dce31b2f238",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "f7fe9543-4a7a-02da-0c09-587597cd50b3",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "6b39adef-9a51-4655-8688-a1ae6dc831d7",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "6b39adef-9a51-4655-8688-a1ae6dc831d7",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "268c773a-8a7d-306e-751e-eb008971eb62",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "268c773a-8a7d-306e-751e-eb008971eb62",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "4ac8b0df-04e3-362f-7f9f-f18d7248d8c4",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "f7fe9543-4a7a-02da-0c09-587597cd50b3",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "712fece9-0600-802a-d9b0-ae52d103c703",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "17d43eef-1ab8-1d3b-7fca-fea00985485e",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "abd42cba-b37c-50fb-f726-dd61733a3874",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "6b106484-dcbc-6e55-fa78-1909f59dfdd6",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "9d03f3e8-067a-68b4-a0d6-b010124bcfe8",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "17d43eef-1ab8-1d3b-7fca-fea00985485e",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "4133eca0-89ad-6ce1-bcb1-ec7fb6edcc79",
+        "portIndex": 0
+      }
+    }]
+  },
+  "thirdPartyData": {
+    "gui": {
+      "name": "AutomaticConversionToVector",
+      "description": "",
+      "predefColors": ["#00B1EB", "#1ab394", "#2f4050", "#f8ac59", "#ed5565", "#DD6D3F"],
+      "nodes": {
+        "712fece9-0600-802a-d9b0-ae52d103c703": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 6193,
+            "y": 5440
+          }
+        },
+        "17d43eef-1ab8-1d3b-7fca-fea00985485e": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5411,
+            "y": 5275
+          }
+        },
+        "e6e2b11d-dad6-7d30-3cfc-0876ecc5319e": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5778,
+            "y": 5136
+          }
+        },
+        "2fb3c8af-431f-be19-30ea-880365a42f59": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5931,
+            "y": 5492
+          }
+        },
+        "e3a57ea7-3f22-8095-b708-8cffbbe94b49": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 4685,
+            "y": 5138
+          }
+        },
+        "4133eca0-89ad-6ce1-bcb1-ec7fb6edcc79": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 4697,
+            "y": 5353
+          }
+        },
+        "a96ac72b-d26a-0e7c-ca58-a821b4940c96": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 6753,
+            "y": 5327
+          }
+        },
+        "f7fe9543-4a7a-02da-0c09-587597cd50b3": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 6235,
+            "y": 5268
+          }
+        },
+        "9d03f3e8-067a-68b4-a0d6-b010124bcfe8": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5037,
+            "y": 5476
+          }
+        },
+        "268c773a-8a7d-306e-751e-eb008971eb62": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 6459,
+            "y": 5488
+          }
+        },
+        "e64a9737-15d0-b1c5-55ed-4980f951a0c4": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 6754,
+            "y": 5210
+          }
+        },
+        "20c4b5c3-3b61-3f08-0c38-7c0eb6d00214": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5355,
+            "y": 5538
+          }
+        },
+        "6b39adef-9a51-4655-8688-a1ae6dc831d7": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 6494,
+            "y": 5386
+          }
+        },
+        "206efc32-d7e8-d02c-ae97-4dce31b2f238": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5011,
+            "y": 5564
+          }
+        },
+        "2e4dd4df-baeb-cb2d-b4fc-b194f0f300b2": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 6751,
+            "y": 5095
+          }
+        },
+        "6b106484-dcbc-6e55-fa78-1909f59dfdd6": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5063,
+            "y": 5386
+          }
+        },
+        "0f60ec98-9e51-1ba1-e57c-247e10af10b2": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5354,
+            "y": 5418
+          }
+        },
+        "a106f0e1-0912-2c39-7ac0-922c24978f94": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 4691,
+            "y": 5243
+          }
+        },
+        "abd42cba-b37c-50fb-f726-dd61733a3874": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5586,
+            "y": 5495
+          }
+        },
+        "7b6dd308-c757-5af9-8ce9-1e0a5057cb5c": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5890,
+            "y": 5374
+          }
+        },
+        "7b32dfea-4a82-e85b-f8d3-e4e2cfb92417": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5627,
+            "y": 5371
+          }
+        },
+        "4ac8b0df-04e3-362f-7f9f-f18d7248d8c4": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 6441,
+            "y": 5586
+          }
+        },
+        "d1a9b941-4ef6-4f11-9d9e-66bffef8db06": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 6168,
+            "y": 5533
+          }
+        }
+      }
+    },
+    "notebooks": {
+
+    }
+  },
+  "variables": {
+
+  },
+  "id": "1c4926ba-c697-4353-8cdc-3b7590d70eb5",
+  "metadata": {
+    "type": "batch",
+    "apiVersion": "1.2.0"
+  }
+}
