@@ -242,10 +242,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
       GraphPanelStyler.styleSelectedOutputEndpoint(jsPlumbPort);
     }
 
-    // FIXME Quickfix to make reports browseable in read-only mode.
-    // There is a conflict between multiselection and output port click when isSource = false.
-    const eventForLeftClick = !internal.disabledMode ? 'click' : 'mousedown';
-    jsPlumbPort.bind(eventForLeftClick, (clickedPort, event) => {
+    const emitLeftClick = (clickedPort, event) => {
       if (hasReport) {
         $rootScope.$broadcast('OutputPort.LEFT_CLICK', {
           reference: clickedPort,
@@ -253,7 +250,13 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
           event: event
         });
       }
-    });
+    }
+    // FIXME Quickfix to make reports browseable in disabled mode.
+    // There is a conflict between multiselection and output port click when isSource = false.
+    // For isSource=true works 'click' event
+    // For isSource=false works 'mousedown' event
+    jsPlumbPort.bind('click', emitLeftClick);
+    jsPlumbPort.bind('mousedown', emitLeftClick);
 
     jsPlumbPort.bind('mouseover', (endpoint) => {
       internal.emitMouseOverEvent('OutputPoint.MOUSEOVER', endpoint.canvas, port);
