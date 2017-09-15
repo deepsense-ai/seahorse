@@ -4,20 +4,7 @@ Vagrant.configure(2) do |config|
     seahorsevm.vm.box_url = ""
     seahorsevm.vm.hostname = "seahorse-vm"
     seahorsevm.vm.boot_timeout = 600
-    #editor:
-    seahorsevm.vm.network "forwarded_port", guest: 8000, host: 8000, host_ip: "127.0.0.1"
-    #WM:
-    seahorsevm.vm.network "forwarded_port", guest: 9080, host: 9080, host_ip: "127.0.0.1"
-    #Spark Master UI:
-    seahorsevm.vm.network "forwarded_port", guest: 8080, host: 8080, host_ip: "127.0.0.1"
-    #RabbitMQ Web-STOMP:
-    seahorsevm.vm.network "forwarded_port", guest: 15674, host: 15674, host_ip: "127.0.0.1"
-    #RabbitMQ STOMP:
-    seahorsevm.vm.network "forwarded_port", guest: 61613, host: 61613, host_ip: "127.0.0.1"
-    #RabbitMQ Management:
-    seahorsevm.vm.network "forwarded_port", guest: 15672, host: 15672, host_ip: "127.0.0.1"
-    #Notebook server:
-    seahorsevm.vm.network "forwarded_port", guest: 8888, host: 8888, host_ip: "127.0.0.1"
+    seahorsevm.vm.network "private_network", ip: "172.28.128.100"
   end
   config.vm.provider "virtualbox" do |vb|
     vb.memory = "4096"

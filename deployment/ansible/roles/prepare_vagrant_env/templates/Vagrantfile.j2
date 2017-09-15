@@ -3,20 +3,7 @@ Vagrant.configure(2) do |config|
     seahorsevm.vm.box = "ubuntu/trusty64"
     seahorsevm.vm.hostname = "{{vagrant_box_name}}"
     seahorsevm.vm.boot_timeout = 600
-    #editor:
-    seahorsevm.vm.network "forwarded_port", guest: 8000, host: 8000, host_ip: "127.0.0.1"
-    #WM:
-    seahorsevm.vm.network "forwarded_port", guest: 9080, host: 9080, host_ip: "127.0.0.1"
-    #Spark Master UI:
-    seahorsevm.vm.network "forwarded_port", guest: 8080, host: 8080, host_ip: "127.0.0.1"
-    #RabbitMQ Web-STOMP:
-    seahorsevm.vm.network "forwarded_port", guest: 15674, host: 15674, host_ip: "127.0.0.1"
-    #RabbitMQ STOMP:
-    seahorsevm.vm.network "forwarded_port", guest: 61613, host: 61613, host_ip: "127.0.0.1"
-    #RabbitMQ Management:
-    seahorsevm.vm.network "forwarded_port", guest: 15672, host: 15672, host_ip: "127.0.0.1"
-    #Notebook server:
-    seahorsevm.vm.network "forwarded_port", guest: 8888, host: 8888, host_ip: "127.0.0.1"
+    seahorsevm.vm.network "private_network", ip: "172.28.128.100"
     seahorsevm.vm.provision "ansible" do |ansible|
       ansible.playbook = "../vagrant_provisioner.yaml"
       ansible.sudo = true
@@ -24,10 +11,10 @@ Vagrant.configure(2) do |config|
         ansible_ssh_user: 'vagrant',
         wm_build_version: "{{vagrant_wm_build_version}}",
         wm_version: "{{vagrant_wm_version}}",
-        ds_wm_public_address: "http://127.0.0.1",
+        ds_wm_public_address: "http://172.28.128.100",
         ds_wm_public_port: 9080,
-        notebook_public_address: "http://127.0.0.1:8888",
-        queue_public_address: "http://127.0.0.1:15674/",
+        notebook_public_address: "http://172.28.120.100:8888",
+        queue_public_address: "http://172.28.128.100:15674/",
         ds_frontend_package_name: "{{vagrant_ds_frontend_package_name}}",
         api_version: "{{vagrant_api_version}}",
         ds_editor_ip: "0.0.0.0",
