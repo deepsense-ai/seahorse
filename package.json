@@ -41,7 +41,6 @@
     "browserify": "^8.1.1",
     "browserify-ngannotate": "^0.7.1",
     "browserify-shim": "^3.8.2",
-    "del": "^1.1.1",
     "gulp": "^3.8.10",
     "gulp-clean": "^0.3.1",
     "gulp-concat": "^2.5.1",
