@@ -16,12 +16,9 @@
     "start": "gulp start",
     "predev": "npm install",
     "dev": "gulp start --dev",
-    "prejasmine": "npm install",
-    "jasmine": "jasmine-node server/tests --captureExceptions",
-    "prekarma": "npm install",
-    "karma": "karma start",
-    "pree2e": "npm install",
-    "e2e": "protractor"
+    "tests:server": "node --harmony node_modules/jasmine-node/bin/jasmine-node server/ --captureExceptions --color",
+    "tests:client": "karma start",
+    "tests:e2e": "protractor"
   },
   "dependencies": {
     "body-parser": "^1.12.0",

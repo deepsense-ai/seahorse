@@ -48,7 +48,10 @@ module.exports = function experimentHandler(config) {
       return data;
     }
     for (let nodeId in local.nodes) {
-      data.experiment.graph.nodes[nodeId].ui = local.nodes[nodeId];
+      let node = data.experiment.graph.nodes[nodeId];
+      if (node) {
+        node.ui = local.nodes[nodeId];
+      }
     }
     return data;
   };
