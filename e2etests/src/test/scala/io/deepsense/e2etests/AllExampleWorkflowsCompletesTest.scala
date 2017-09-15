@@ -30,4 +30,6 @@ class AllExampleWorkflowsCompletesTest extends WordSpec with Matchers with
     }
   }
 
+
+
 }

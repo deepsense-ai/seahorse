@@ -8,27 +8,30 @@ import java.util.UUID
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
-import scala.concurrent.Await
+import scala.concurrent.{Await, Future, Promise}
 import scala.concurrent.duration._
 import scala.language.postfixOps
 import scala.util.Try
 import scalaz.Scalaz._
 import scalaz._
 
+import com.ning.http.client.AsyncHttpClient
+import com.ning.http.client.multipart.ByteArrayPart
 import com.ning.http.client.providers.netty.NettyAsyncHttpProviderConfig
 import com.ning.http.client.ws.WebSocketListener
-import com.ning.http.client.{AsyncHttpClient, AsyncHttpClientConfig}
+import com.ning.http.client.{AsyncCompletionHandler, AsyncHttpClientConfig, Request}
+import com.ning.http.client.{Response => AHCResponse}
 import org.jfarcand.wcs.{Options, TextListener, WebSocket}
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.{Seconds, Span}
 import org.scalatest.{Matchers, Suite}
 import play.api.libs.json.{JsArray, JsObject, JsString, Json}
-import play.api.libs.ws.ning.NingWSClient
+import play.api.libs.ws.ning.{NingWSClient, NingWSResponse}
 
 import io.deepsense.commons.models.ClusterDetails
+import io.deepsense.commons.utils.Logging
 import io.deepsense.sessionmanager.rest._
 import io.deepsense.sessionmanager.rest.requests._
-import io.deepsense.commons.utils.Logging
 
 trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
 
@@ -78,6 +81,38 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
 
           examples.map(_.value("id").asInstanceOf[JsString].value)
         }, httpTimeout)
+  }
+
+  case class WorkflowId(workflowId: String)
+  implicit val workflowIdFormat = Json.format[WorkflowId]
+
+
+  def uploadWorkflow(js: String): String = {
+    val asyncHttpClient = httpClient.underlying[AsyncHttpClient]
+    val postBuilder = asyncHttpClient.preparePost(s"$workflowsUrl/upload")
+    val builder = postBuilder.addBodyPart(new ByteArrayPart("workflowFile", js.getBytes))
+    val updatedWorkflowId =
+      Await.result(httpClientExecute(asyncHttpClient, builder.build())
+      .map { response =>
+        response.json.as[WorkflowId]
+      }, httpTimeout)
+    updatedWorkflowId.workflowId
+  }
+
+  private def httpClientExecute(asyncHttpClient: AsyncHttpClient,
+                                request: Request) : Future[NingWSResponse] = {
+    val result = Promise[NingWSResponse]()
+    asyncHttpClient.executeRequest(request,
+      new AsyncCompletionHandler[AHCResponse]() {
+        override def onCompleted(response: AHCResponse) = {
+          result.success(NingWSResponse(response))
+          response
+        }
+        override def onThrowable(t: Throwable) = {
+          result.failure(t)
+        }
+      })
+    result.future
   }
 
   def cloneWorkflow(workflowId: String): String = {
