@@ -1,0 +1,76 @@
+{
+  "workflow": {
+    "nodes": [{
+      "id": "02f14ccc-c877-c242-bb82-534d0cac90d3",
+      "operation": {
+        "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
+        "name": "Read DataFrame"
+      },
+      "parameters": {
+        "data storage type": {
+          "JDBC": {
+            "url": "jdbc:oracle:thin:system/oracle@localhost:1521",
+            "driver": "oracle.jdbc.driver.OracleDriver",
+            "table": "read_write_in",
+            "categorical columns": null
+          }
+        }
+      }
+    }, {
+      "id": "8d0d2ebf-76e0-611c-82bc-af7f4689f526",
+      "operation": {
+        "id": "9e460036-95cc-42c5-ba64-5bc767a40e4e",
+        "name": "Write DataFrame"
+      },
+      "parameters": {
+        "data storage type": {
+          "JDBC": {
+            "url": "jdbc:oracle:thin:system/oracle@localhost:1521",
+            "driver": "oracle.jdbc.driver.OracleDriver",
+            "table": "read_write_out"
+          }
+        }
+      }
+    }],
+    "connections": [{
+      "from": {
+        "nodeId": "02f14ccc-c877-c242-bb82-534d0cac90d3",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "8d0d2ebf-76e0-611c-82bc-af7f4689f526",
+        "portIndex": 0
+      }
+    }]
+  },
+  "thirdPartyData": {
+    "gui": {
+      "name": "JDBC test",
+      "description": "",
+      "nodes": {
+        "02f14ccc-c877-c242-bb82-534d0cac90d3": {
+          "uiName": "",
+          "coordinates": {
+            "x": 414,
+            "y": 145
+          }
+        },
+        "8d0d2ebf-76e0-611c-82bc-af7f4689f526": {
+          "uiName": "",
+          "coordinates": {
+            "x": 412,
+            "y": 314
+          }
+        }
+      }
+    }
+  },
+  "variables": {
+
+  },
+  "id": "1f11a7ac-5dbf-43f1-afce-90626c1bc567",
+  "metadata": {
+    "type": "batch",
+    "apiVersion": "0.6.0"
+  }
+}

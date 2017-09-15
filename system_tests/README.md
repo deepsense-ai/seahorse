@@ -2,6 +2,21 @@
   Copyright (c) 2015, CodiLime Inc.
 -->
 
+# Dependencies
+
+To run tests that uses dockers (tests of databases connections),
+You have to install Docker and Oracle:
+
+DOCKER:
+* [installation manual](http://docs.docker.com/engine/installation/ubuntulinux/)
+
+ORACLE:
+* [installation manual](http://meandmyubuntulinux.blogspot.com/2012/05/installing-oracle-11g-r2-express.html)
+* [installation troubleshooting](https://mikesmithers.wordpress.com/2014/08/25/getting-python-to-play-with-oracle-using-cxoracle-on-mint-and-ubuntu/)
+* Oracle 11g Express does not allow setting timezone to UTC, set timezone to GMT (Reykjavik) using:
+sudo dpkg-reconfigure tzdata
+
+
 # Framework for DeepSense system tests
 
 This directory contains system tests for Workflow Executor and DS Studio.

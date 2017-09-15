@@ -6,3 +6,4 @@ robotframework==2.8.7
 requests==2.2.1
 PyMySQL==0.6
 cassandra-driver==2.5.1
+cx_Oracle==5.2

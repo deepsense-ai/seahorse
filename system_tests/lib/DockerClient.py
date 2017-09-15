@@ -11,6 +11,10 @@ class DockerClient(object):
   def __init__(self):
     pass
 
+  def pull_docker_image(self, name):
+    p = Popen(['docker', 'pull', name], stdout=PIPE)
+    wait_for_completion(p)
+
   def build_docker_image(self, tag, file_name):
     p = Popen(['docker', 'build', '-t', tag, file_name], stdout=PIPE)
     wait_for_completion(p)
