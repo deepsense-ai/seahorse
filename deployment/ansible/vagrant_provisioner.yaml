@@ -29,7 +29,10 @@
     - include: tasks/get_wm_artifact_path.yml
     - include: tasks/get_workflowexecutor_artifact_path.yml
 
+- include: generate_examples.yml
 - include: cassandra_migration.yml
+- include: remove_examples.yml
+
 - include: workflowmanager.yaml
 - include: frontend.yml
 - include: rabbitmq.yml

@@ -1,0 +1,8 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+---
+- name: Remove generated examples
+  hosts: localhost
+  sudo: yes
+  tasks:
+    - file: path=roles/cassandra_migration/files/workflowmanager/9_insert_examples.cql state=absent

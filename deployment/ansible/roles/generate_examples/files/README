@@ -1,0 +1,2 @@
+To automatically include example workflow in Seahorse image,
+create a workflow JSON file in 'examples' folder.
