@@ -6,14 +6,21 @@
 
 This directory contains system tests for Workflow Executor and DS Studio.
 
-To publish system test framework to artifactory, run:
+System tests are automatically published to Artifactory after merging changes to master
+and version branches.
+
+To manually publish system test framework to artifactory, run:
 ```
 ./publish.sh ds_studio|workflow_executor ARTIFACT_VERSION [--draft]
 ```
 
 If flag --draft is specified, system tests will be published to deepsense-system-tests-dev
 repository instead of deepsense-system-tests-release. This mode is suited for system test
-development.
+development. After publishing in draft versions, you can either use the Jenkins job
+"Workflow Executor (Development of system tests)" with your uploaded Workflow Executor
+or run the system tests on your local machine.
+
+To run the system tests locally, do the following:
 
 To install, run:
 ```
@@ -28,7 +35,6 @@ To run only selected test case, move to dir that contains _tests_ dir, and run
 pybot -t  DemandForecasting tests/RealLifeCases.robot
 ```
 
-
 You can configure system that you want to test using ``settings.conf``.
 You can provide your own configuration file by writing its path to environment variable 'ST_CONFIG'.
 
@@ -36,6 +42,9 @@ You can provide your own configuration file by writing its path to environment v
 
 To execute Workflow Executor system tests, you need to provide path to Workflow Executor jar
 in your settings file.
+
+You might have to change HDFS host name and local file paths in workflow files to successfully
+execute the system tests on your local machine.
 
 Also, the _spark_submit_ command must be globally visible.
 
