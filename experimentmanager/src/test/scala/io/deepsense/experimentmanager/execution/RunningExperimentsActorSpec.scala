@@ -12,13 +12,13 @@ import akka.testkit.{TestActorRef, TestProbe}
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatest.concurrent.{Eventually, ScaledTimeSpans}
-import org.scalatest.{BeforeAndAfter, Matchers, WordSpecLike}
+import org.scalatest.{BeforeAndAfter, WordSpecLike}
 
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.deeplang.DOperation
 import io.deepsense.experimentmanager.execution.RunningExperimentsActor._
 import io.deepsense.graph.{Graph, Node}
-import io.deepsense.graphexecutor.{SimpleGraphExecutionIntegSuiteEntities, GraphExecutorClient}
+import io.deepsense.graphexecutor.{GraphExecutorClient, SimpleGraphExecutionIntegSuiteEntities}
 import io.deepsense.models.experiments.Experiment
 
 class RunningExperimentsActorSpec
@@ -36,19 +36,20 @@ class RunningExperimentsActorSpec
     Graph())
 
   val updatedGraph = Graph()
-  val graphExecutorClient = createMockGraphExecutorClient(updatedGraph)
   val launched = experiment.markRunning
-  val mockClientFactory = mock[GraphExecutorClientFactory]
-  when(mockClientFactory.create()).thenReturn(graphExecutorClient)
 
   var actorRef: TestActorRef[RunningExperimentsActor] = createTestedActor
   var actor = actorRef.underlyingActor
   var probe = TestProbe()
+  var graphExecutorClient = createMockGraphExecutorClient(updatedGraph)
+  val mockClientFactory = mock[GraphExecutorClientFactory]
 
   before {
+    graphExecutorClient = createMockGraphExecutorClient(updatedGraph)
     actorRef = createTestedActor
     actor = actorRef.underlyingActor
     probe = TestProbe()
+    when(mockClientFactory.create()).thenReturn(graphExecutorClient)
   }
 
   def withLaunchedExperiments(experiments: Set[Experiment])(testCode: => Any): Unit = {
@@ -65,6 +66,17 @@ class RunningExperimentsActorSpec
         eventually {
           actor.experiments should contain key experiment.id
           verify(graphExecutorClient).sendExperiment(launched)
+        }
+      }
+    }
+    "should mark experiment as failed" when {
+      "launch fails" in {
+        when(graphExecutorClient.waitForSpawn(anyInt()))
+          .thenThrow(new RuntimeException("Launching failes"))
+        probe.send(actorRef, Launch(experiment))
+        probe.expectMsg(Launched(launched))
+        eventually {
+          actor.experiments(experiment.id)._1.state.status shouldBe Experiment.Status.Failed
         }
       }
     }

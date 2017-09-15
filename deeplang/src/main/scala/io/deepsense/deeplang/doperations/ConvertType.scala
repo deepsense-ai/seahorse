@@ -94,7 +94,8 @@ class ConvertType extends DOperation1To1[DataFrame, DataFrame] {
         column.as(alias)
       }
     }
-    val dfWithConvertedColumns = dataFrame.sparkDataFrame.select(new Column("*") +: convertedColumns: _*)
+    val dfWithConvertedColumns =
+      dataFrame.sparkDataFrame.select(new Column("*") +: convertedColumns: _*)
     val correctColumns: Seq[Column] = dataFrame.sparkDataFrame.columns.toSeq.map(name => {
       if (columnsOldToNew.contains(name)) {
         new Column(columnsOldToNew(name)).as(name)

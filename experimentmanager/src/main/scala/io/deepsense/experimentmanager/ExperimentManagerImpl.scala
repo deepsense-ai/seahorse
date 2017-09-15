@@ -28,19 +28,20 @@ import io.deepsense.models.experiments.{Experiment, InputExperiment}
  * Implementation of Experiment Manager
  */
 class ExperimentManagerImpl @Inject()(
-  authorizatorProvider: AuthorizatorProvider,
-  storage: ExperimentStorage,
-  @Assisted userContextFuture: Future[UserContext],
-  @Named("roles.experiments.get") roleGet: String,
-  @Named("roles.experiments.update") roleUpdate: String,
-  @Named("roles.experiments.create") roleCreate: String,
-  @Named("roles.experiments.list") roleList: String,
-  @Named("roles.experiments.delete") roleDelete: String,
-  @Named("roles.experiments.launch") roleLaunch: String,
-  @Named("roles.experiments.abort") roleAbort: String,
-  @Named("RunningExperimentsActor") runningExperimentsActor: ActorRef,
-  @Named("runningexperiments.timeout") timeoutMillis: Long)
-  (implicit ec: ExecutionContext) extends ExperimentManager {
+    authorizatorProvider: AuthorizatorProvider,
+    storage: ExperimentStorage,
+    @Assisted userContextFuture: Future[UserContext],
+    @Named("roles.experiments.get") roleGet: String,
+    @Named("roles.experiments.update") roleUpdate: String,
+    @Named("roles.experiments.create") roleCreate: String,
+    @Named("roles.experiments.list") roleList: String,
+    @Named("roles.experiments.delete") roleDelete: String,
+    @Named("roles.experiments.launch") roleLaunch: String,
+    @Named("roles.experiments.abort") roleAbort: String,
+    @Named("RunningExperimentsActor") runningExperimentsActor: ActorRef,
+    @Named("runningexperiments.timeout") timeoutMillis: Long)
+    (implicit ec: ExecutionContext)
+  extends ExperimentManager {
 
   implicit val runningExperimentsTimeout = Timeout(timeoutMillis, TimeUnit.MILLISECONDS)
 
@@ -89,9 +90,9 @@ class ExperimentManagerImpl @Inject()(
   }
 
   def experiments(
-    limit: Option[Int],
-    page: Option[Int],
-    status: Option[Experiment.Status.Value]): Future[ExperimentsList] = {
+      limit: Option[Int],
+      page: Option[Int],
+      status: Option[Experiment.Status.Value]): Future[ExperimentsList] = {
     authorizator.withRole(roleList) { userContext =>
       val tenantExperimentsFuture: Future[Seq[Experiment]] =
         storage.list(userContext, limit, page, status)
@@ -125,8 +126,8 @@ class ExperimentManagerImpl @Inject()(
   }
 
   def launch(
-    id: Id,
-    targetNodes: Seq[Node.Id]): Future[Experiment] = {
+      id: Id,
+      targetNodes: Seq[Node.Id]): Future[Experiment] = {
     authorizator.withRole(roleLaunch) { userContext =>
       val experimentFuture = storage.get(id)
       experimentFuture.flatMap {

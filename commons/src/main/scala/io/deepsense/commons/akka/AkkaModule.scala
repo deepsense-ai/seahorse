@@ -12,7 +12,7 @@ import scala.util.Try
 import akka.actor.{ActorRefFactory, ActorSystem}
 import com.google.inject
 import com.google.inject.{AbstractModule, Injector, Provider, Provides}
-import com.typesafe.config.{ConfigException, Config, ConfigFactory}
+import com.typesafe.config.{Config, ConfigException}
 
 /**
  * This module defines the bindings required to support Guice injectable Akka actors.

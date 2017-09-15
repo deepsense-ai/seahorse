@@ -9,7 +9,7 @@ import javax.inject.{Inject, Named}
 import scala.collection.mutable
 import scala.concurrent.Future
 import scala.concurrent.duration._
-import scala.util.{Failure, Success}
+import scala.util.Failure
 
 import akka.actor.{Actor, ActorLogging}
 import akka.pattern.{after, pipe}
@@ -47,8 +47,7 @@ class RunningExperimentsActor @Inject() (
 
   private def processInternal(message: InternalMessage): Unit = message match {
     case Tick => refreshStatuses()
-    case ExperimentStatusUpdated(experiment) =>
-      statusUpdated(experiment)
+    case ExperimentStatusUpdated(experiment) => statusUpdated(experiment)
   }
 
   private def statusUpdated(experiment: Experiment): Unit = {
@@ -72,15 +71,16 @@ class RunningExperimentsActor @Inject() (
     val resultExp = experiment.markRunning
     experiments.put(resultExp.id, (resultExp, gec))
     val s = sender()
+    s ! Launched(resultExp)
     Future {
       gec.spawnOnCluster(entitystorageLabel)
       gec.waitForSpawn(Constants.WaitForGraphExecutorClientInitDelay)
       gec.sendExperiment(resultExp)
     }.onComplete {
-      case Success(result) =>
-        s ! Launched(resultExp)
       case Failure(ex) =>
         log.error(ex, s"Launching experiment failed $experiment")
+        self ! ExperimentStatusUpdated(markExperimentAsFailed(resultExp.id, Option(ex.getMessage)))
+      case _ => ()
     }
   }
 
@@ -153,6 +153,15 @@ class RunningExperimentsActor @Inject() (
     sealed abstract class InternalMessage
     case object Tick extends InternalMessage
     case class ExperimentStatusUpdated(experiment: Experiment) extends InternalMessage
+  }
+
+  private def markExperimentAsFailed(
+      experimentId: Id,
+      failureMessage: Option[String]): Experiment = {
+    log.info(s"Marking experiment: $experimentId as failed with message: $failureMessage")
+    val message: String = s"Experiment $experimentId failed. " +
+      failureMessage.map(m => s"With message: $m").getOrElse("")
+    experiments(experimentId)._1.markFailed(message)
   }
 }
 
