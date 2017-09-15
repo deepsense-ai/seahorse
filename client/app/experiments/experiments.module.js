@@ -17,6 +17,7 @@ require('./common-behaviours/common-droppable.js').inject(experiments);
 require('./common-behaviours/common-drop-target.js').inject(experiments);
 require('./common-behaviours/common-render-finish.js').inject(experiments);
 require('./common-behaviours/common-keyboard.js').inject(experiments);
+require('./experiment-editor/context-menu/context-menu.js').inject(experiments);
 require('./experiment-editor/status-bar/status-bar.js').inject(experiments);
 require('./experiment-editor/graph-panel/graph-panel-flowchart.js').inject(experiments);
 require('./experiment-editor/graph-panel/graph-panel-node.js').inject(experiments);

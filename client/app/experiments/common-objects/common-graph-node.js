@@ -111,5 +111,6 @@ GraphNode.prototype.hasParameters = function hasParameters() {
 
 GraphNode.CLICK = 'GraphNode.CLICK';
 GraphNode.MOVE = 'GraphNode.MOVE';
+GraphNode.MOUSEDOWN = 'GraphNode.MOUSEDOWN';
 
 module.exports = GraphNode;

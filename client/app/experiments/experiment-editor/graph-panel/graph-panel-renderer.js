@@ -116,6 +116,20 @@ function DrawingService($rootScope) {
     }
   };
 
+  that.contextMenuHandler = function contextMenuHandler(endPoint, event) {
+    $rootScope.$broadcast('OutputPoint.CONTEXTMENU', {
+      event: event,
+      thisPoint: {
+        'type': 'endPoint',
+        'reference': endPoint
+      }
+    });
+  };
+
+  that.outputClickHandler = function clickHandler () {
+    $rootScope.$broadcast('OutputPoint.CLICK');
+  };
+
   that.addOutputPoint = function addOutputPoint(node, ports) {
     var anchors = ['BottomCenter', 'BottomLeft', 'BottomRight'];
     for (let i = 0; i < ports.length; i++) {
@@ -124,7 +138,14 @@ function DrawingService($rootScope) {
         uuid: ports[i].id
       });
       port.setParameter('portIndex', i);
+
+      port.bind('contextmenu', that.contextMenuHandler);
+      port.bind('click', that.outputClickHandler);
     }
+  };
+
+  that.inputClickHandler = function inputClickHandler () {
+    $rootScope.$broadcast('InputPoint.CLICK');
   };
 
   that.addInputPoint = function addInputPoint(node, ports) {
@@ -135,6 +156,8 @@ function DrawingService($rootScope) {
         uuid: ports[i].id
       });
       port.setParameter('portIndex', i);
+
+      port.bind('click', that.inputClickHandler);
     }
   };
 
@@ -189,6 +212,10 @@ function DrawingService($rootScope) {
     jsPlumb.bind('connectionMoved', function (info) {
       var edge = internal.experiment.getEdgeById(info.connection.getParameter('edgeId'));
       $rootScope.$broadcast(Edge.REMOVE, {edge: edge});
+    });
+
+    jsPlumb.bind('connectionDrag', () => {
+      $rootScope.$broadcast(Edge.DRAG);
     });
   };
 

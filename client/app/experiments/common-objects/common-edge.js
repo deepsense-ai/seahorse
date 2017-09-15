@@ -40,5 +40,6 @@ Edge.prototype.serialize = function serialize() {
 
 Edge.CREATE = 'Edge.CREATE';
 Edge.REMOVE = 'Edge.REMOVE';
+Edge.DRAG = 'Edge.DRAG';
 
 module.exports = Edge;

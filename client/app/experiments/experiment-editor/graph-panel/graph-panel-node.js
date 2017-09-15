@@ -22,6 +22,10 @@ function GraphNodeView() {
           selectedNode: scope.node
         });
       });
+
+      element.on('mousedown', function () {
+        scope.$emit(GraphNode.MOUSEDOWN);
+      });
     }
   };
 }
