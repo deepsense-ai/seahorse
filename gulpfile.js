@@ -24,6 +24,7 @@ var less = require('gulp-less');
 var minifyCSS = require('gulp-minify-css');
 var jshint = require('gulp-jshint');
 var exit = require('gulp-exit');
+var templateCache = require('gulp-angular-templatecache');
 
 require('jshint-stylish');
 
@@ -81,9 +82,21 @@ gulp.task('config', function () {
     .pipe(gulp.dest(build.path));
 });
 
-gulp.task('html', function () {
-  return gulp.src([client.path + client.html])
+gulp.task('html:index', function () {
+  return gulp.src([client.path + 'index.html'])
     .pipe(gulp.dest(build.path));
+});
+
+gulp.task('html:partials', function () {
+  var PARTIALS_MODULE_NAME = 'ds.lab.partials';
+
+  return gulp.src([client.path + client.html]).
+    pipe(templateCache({
+      module: PARTIALS_MODULE_NAME,
+      filename: build.bundle.partials,
+      standalone: true
+    })).
+    pipe(gulp.dest(build.path + build.js));
 });
 
 gulp.task('favicon', function () {
@@ -177,7 +190,7 @@ gulp.task('build', function (callback) {
   runSequence(
     'clean',
     [
-      'fonts', 'images', 'html', 'config', 'favicon', 'assets', 'less',
+      'fonts', 'images', 'html:index', 'html:partials', 'config', 'favicon', 'assets', 'less',
       'libs:css', 'libs:js', 'jshint', 'browserify'
     ],
     callback

@@ -6,7 +6,7 @@
 'use strict';
 
 /* @ngInject */
-function FlowChartBox($timeout) {
+function FlowChartBox(GraphPanelRendererService) {
   return {
     restrict: 'E',
     controller: FlowChartBoxController,
@@ -23,9 +23,7 @@ function FlowChartBox($timeout) {
       });
 
       scope.$applyAsync(() => {
-        $timeout(() => {
-          scope.$emit('FlowChartBox.Rendered');
-        }, 0, false);
+        GraphPanelRendererService.rerender();
       });
     }
   };
@@ -33,9 +31,7 @@ function FlowChartBox($timeout) {
 
 /* @ngInject */
 function FlowChartBoxController($scope, $element, $window,
-                                WorkflowService, ReportOptionsService,
-                                GraphPanelRendererService,
-                                GraphNode, Edge) {
+                                WorkflowService, ReportOptionsService, GraphPanelRendererService, GraphNode, Edge) {
   var that = this;
   var internal = {};
 

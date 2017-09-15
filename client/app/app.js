@@ -6,6 +6,7 @@ var lab = angular.module('ds.lab', [
   'ui.router',
   'ui.bootstrap',
   'debounce',
+  'ds.lab.partials',
   'deepsense.spinner',
   'deepsense-context-menu',
   'deepsense-catalogue-panel',

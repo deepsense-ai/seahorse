@@ -6,7 +6,7 @@
 /* @ngInject */
 function WorkflowsController(
   workflow,
-  $scope, $timeout, $state,
+  $scope, $state,
   GraphNode, Edge,
   PageService, Operations, GraphPanelRendererService, WorkflowService, UUIDGenerator, MouseEvent,
   DeepsenseNodeParameters, ConfirmationModalService, ExportModalService
@@ -36,12 +36,6 @@ function WorkflowsController(
     GraphPanelRendererService.setZoom(1.0);
 
     internal.updateAndRerenderEdges(workflow.knowledge);
-
-    $scope.$on('FlowChartBox.Rendered', () => {
-      $timeout(() => {
-        GraphPanelRendererService.rerender();
-      }, 0, false);
-    });
   };
 
   internal.rerenderEdges = function rerenderEdges() {
