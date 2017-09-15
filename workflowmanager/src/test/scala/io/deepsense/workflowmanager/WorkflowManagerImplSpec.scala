@@ -6,11 +6,12 @@ package io.deepsense.workflowmanager
 
 import scala.concurrent.Future
 
+import org.joda.time.DateTime
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import spray.json.{JsObject, JsString}
 
-import io.deepsense.commons.auth.usercontext.{Role, UserContext}
+import io.deepsense.commons.auth.usercontext.{Role, User, UserContext}
 import io.deepsense.commons.auth.{AuthorizatorProvider, UserContextAuthorizator}
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.graph.DeeplangGraph.DeeplangNode
@@ -18,14 +19,23 @@ import io.deepsense.graph._
 import io.deepsense.models.workflows._
 import io.deepsense.workflowmanager.model.WorkflowDescription
 import io.deepsense.workflowmanager.rest.CurrentBuild
-import io.deepsense.workflowmanager.storage.{NotebookStorage, WorkflowStateStorage, WorkflowStorage}
+import io.deepsense.workflowmanager.storage._
 
 class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
   val tenantId = "tenantId"
   val roleForAll = "aRole"
+  val ownerId = "ownerId"
+  val ownerName = "ownerName"
+
   val userContext = mock[UserContext]
   when(userContext.tenantId).thenReturn(tenantId)
   when(userContext.roles).thenReturn(Set(Role(roleForAll)))
+  when(userContext.user).thenReturn(User(
+    id = ownerId,
+    name = ownerName,
+    email = None,
+    enabled = Some(true),
+    tenantId = None))
   val userContextFuture: Future[UserContext] = Future.successful(userContext)
 
   val authorizator = new UserContextAuthorizator(userContextFuture)
@@ -60,6 +70,9 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
     mock[JsObject],
     ExecutionReport(Map[io.deepsense.graph.Node.Id, NodeState]()))
 
+  val storedWorkflowFullInfo = WorkflowFullInfo(
+    storedWorkflow, DateTime.now, DateTime.now, ownerId, ownerName)
+
   val workflowManager = new WorkflowManagerImpl(
     authorizatorProvider,
     workflowStorage,
@@ -89,7 +102,7 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
       reset(workflowStorage)
       reset(workflowStateStorage)
       when(workflowStorage.get(storedWorkflowId))
-        .thenReturn(Future.successful(Some(storedWorkflow)))
+        .thenReturn(Future.successful(Some(storedWorkflowFullInfo)))
       when(workflowStateStorage.get(storedWorkflowId))
         .thenReturn(Future.successful(Map[Node.Id, NodeState]()))
       when(notebookStorage.getAll(storedWorkflowId))
@@ -103,7 +116,7 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
     "update workflow in storage" in {
       reset(workflowStorage)
       when(workflowStorage.get(storedWorkflowId))
-        .thenReturn(Future.successful(Some(storedWorkflow)))
+        .thenReturn(Future.successful(Some(storedWorkflowFullInfo)))
       when(workflowStorage.update(storedWorkflowId, storedWorkflow))
         .thenReturn(Future.successful(()))
 
@@ -115,10 +128,10 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
     "clone workflow" in {
       reset(workflowStorage)
       when(workflowStorage.get(storedWorkflowId))
-        .thenReturn(Future.successful(Some(storedWorkflow)))
+        .thenReturn(Future.successful(Some(storedWorkflowFullInfo)))
       when(notebookStorage.getAll(any()))
         .thenReturn(Future.successful(Map[Node.Id, String]()))
-      when(workflowStorage.create(any(), any()))
+      when(workflowStorage.create(any(), any(), any(), any()))
         .thenReturn(Future.successful(()))
       val workflowDescription = WorkflowDescription("Brand new name", "Brand new desc")
 
@@ -140,7 +153,7 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
       reset(workflowStorage)
       reset(workflowStateStorage)
       when(workflowStorage.get(storedWorkflowId))
-        .thenReturn(Future.successful(Some(storedWorkflow)))
+        .thenReturn(Future.successful(Some(storedWorkflowFullInfo)))
       when(workflowStorage.update(storedWorkflowId, storedWorkflow))
         .thenReturn(Future.successful(()))
       when(

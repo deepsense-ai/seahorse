@@ -56,6 +56,9 @@ class WorkflowsApiSpec
   val dOperableCatalog = new DOperableCatalog
   override val graphReader: GraphReader = new GraphReader(catalog)
 
+  val ownerId = "ownerid"
+  val ownerName = "ownername"
+
   val nodeAId = Node.Id.randomId
   val workflowAId = Workflow.Id.randomId
   val workflowAName = "Very nice workflow&*workflow"
@@ -185,7 +188,7 @@ class WorkflowsApiSpec
       }
     })
 
-    new SecureWorkflowApi(
+    new InsecureWorkflowApi(
       tokenTranslator,
       workflowManagerProvider,
       apiPrefix,
@@ -194,29 +197,17 @@ class WorkflowsApiSpec
   }
 
   s"GET /workflows/:id" should {
-    "return Unauthorized" when {
-      "invalid auth token was send (when InvalidTokenException occurs)" in {
-        Get(s"/$apiPrefix/${Workflow.Id.randomId}") ~>
-          addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
-          status should be(StatusCodes.Unauthorized)
-        }
-      }
-      "the user does not have the requested role (on NoRoleException)" in {
-        Get(s"/$apiPrefix/${Workflow.Id.randomId}") ~>
-          addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
-          status should be(StatusCodes.Unauthorized)
-        }
-      }
-      "no auth token was send (on MissingHeaderRejection)" in {
+    "return BadRequest" when {
+      "no auth headers were sent (on MissingHeaderRejection)" in {
         Get(s"/$apiPrefix/${Workflow.Id.randomId}") ~> testRoute ~> check {
-          status should be(StatusCodes.Unauthorized)
+          status should be(StatusCodes.BadRequest)
         }
       }
     }
     "return Not found" when {
       "asked for non existing Workflow" in {
         Get(s"/$apiPrefix/${Workflow.Id.randomId}") ~>
-          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          addHeaders(validHeaders()) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
       }
@@ -224,7 +215,7 @@ class WorkflowsApiSpec
     "return a workflow with results" when {
       "auth token is correct, user has roles" in {
         Get(s"/$apiPrefix/$workflowAId") ~>
-          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          addHeaders(validHeaders()) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
 
           val returnedWorkflow = responseAs[WorkflowWithResults]
@@ -243,7 +234,7 @@ class WorkflowsApiSpec
     "return BadRequest" when {
       "workflow's API version is not compatible with current build" in {
         Get(s"/$apiPrefix/$obsoleteVersionWorkflowId") ~>
-          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          addHeaders(validHeaders()) ~> testRoute ~> check {
           status should be(StatusCodes.BadRequest)
 
           assertFailureDescriptionHasVersionInfo(responseAs[FailureDescription])
@@ -255,7 +246,7 @@ class WorkflowsApiSpec
   "GET /workflows" should {
     "list all stored workflows" in {
       Get(s"/$apiPrefix") ~>
-        addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+        addHeaders(validHeaders()) ~> testRoute ~> check {
         status should be(StatusCodes.OK)
 
         responseAs[JsArray].elements.size shouldBe 4
@@ -267,7 +258,7 @@ class WorkflowsApiSpec
     "return Not found" when {
       "workflow does not exists" in {
         Delete(s"/$apiPrefix/${Workflow.Id.randomId}") ~>
-          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          addHeaders(validHeaders()) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
       }
@@ -275,26 +266,22 @@ class WorkflowsApiSpec
     "return Ok" when {
       "workflow existed and is deleted now" in {
         Delete(s"/$apiPrefix/$workflowAId") ~>
-          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          addHeaders(validHeaders()) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
         }
       }
     }
-    "return Unauthorized" when {
-      "invalid auth token was send (when InvalidTokenException occurs)" in {
-        Delete(s"/$apiPrefix/${Workflow.Id.randomId}") ~>
-          addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
-          status should be(StatusCodes.Unauthorized)
-        }
-      }
-      "the user does not have the requested role (on NoRoleException)" in {
-        Delete(s"/$apiPrefix/${Workflow.Id.randomId}") ~>
-          addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
-          status should be(StatusCodes.Unauthorized)
-        }
-      }
-      "no auth token was send (on MissingHeaderRejection)" in {
+    "return BadRequest" when {
+      "no auth headers were sent (on MissingHeaderRejection)" in {
         Delete(s"/$apiPrefix/${Workflow.Id.randomId}") ~> testRoute ~> check {
+          status should be(StatusCodes.BadRequest)
+        }
+      }
+    }
+    "return Unauthorized" when {
+      "the owner of the workflow is different" in {
+        Delete(s"/$apiPrefix/$workflowAId") ~>
+          addHeaders(differentOwnerHeaders()) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
@@ -302,29 +289,17 @@ class WorkflowsApiSpec
   }
 
   s"GET /workflows/:id/download" should {
-    "return Unauthorized" when {
-      "invalid auth token was send (when InvalidTokenException occurs)" in {
-        Get(s"/$apiPrefix/${Workflow.Id.randomId}/download?format=json") ~>
-          addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
-          status should be(StatusCodes.Unauthorized)
-        }
-      }
-      "the user does not have the requested role (on NoRoleException)" in {
-        Get(s"/$apiPrefix/${Workflow.Id.randomId}/download?format=json") ~>
-          addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
-          status should be(StatusCodes.Unauthorized)
-        }
-      }
-      "no auth token was send (on MissingHeaderRejection)" in {
+    "return BadRequest" when {
+      "no auth headers were sent (on MissingHeaderRejection)" in {
         Get(s"/$apiPrefix/${Workflow.Id.randomId}/download?format=json") ~> testRoute ~> check {
-          status should be(StatusCodes.Unauthorized)
+          status should be(StatusCodes.BadRequest)
         }
       }
     }
     "return Not found" when {
       "asked for non existing Workflow" in {
         Get(s"/$apiPrefix/${Workflow.Id.randomId}/download?format=json") ~>
-          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          addHeaders(validHeaders()) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
       }
@@ -332,7 +307,7 @@ class WorkflowsApiSpec
     "return an workflow" when {
       "auth token is correct, user has roles and version is current (with notebook)" in {
         Get(s"/$apiPrefix/$workflowAId/download?format=json") ~>
-          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          addHeaders(validHeaders()) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
           header("Content-Disposition") shouldBe Some(
             `Content-Disposition`(
@@ -350,7 +325,7 @@ class WorkflowsApiSpec
       }
       "auth token is correct, user has roles and version is current (without notebook)" in {
         Get(s"/$apiPrefix/$workflowWithoutNotebookId/download?format=json") ~>
-          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          addHeaders(validHeaders()) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
           header("Content-Disposition") shouldBe Some(
             `Content-Disposition`(
@@ -373,14 +348,14 @@ class WorkflowsApiSpec
     "process authorization before reading POST content" in {
       val invalidContent = JsObject()
       Post(s"/$apiPrefix", invalidContent) ~> testRoute ~> check {
-        status should be(StatusCodes.Unauthorized)
+        status should be(StatusCodes.BadRequest)
       }
     }
     "return created" when {
       "inputWorkflow was send" in {
         val createdWorkflow = newWorkflow()
         Post(s"/$apiPrefix", createdWorkflow) ~>
-          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          addHeaders(validHeaders()) ~> testRoute ~> check {
           status should be (StatusCodes.Created)
 
           val resultJs = response.entity.asString.parseJson.asJsObject
@@ -392,29 +367,15 @@ class WorkflowsApiSpec
       "inputWorkflow contains wrong API version" in {
         val createdWorkflow = newWorkflow(apiVersion = "0.0.1")
         Post(s"/$apiPrefix", createdWorkflow) ~>
-          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          addHeaders(validHeaders()) ~> testRoute ~> check {
           status should be(StatusCodes.BadRequest)
 
           assertFailureDescriptionHasVersionInfo(responseAs[FailureDescription])
         }
       }
-    }
-    "return Unauthorized" when {
-      "invalid auth token was send (when InvalidTokenException occurs)" in {
-        Post(s"/$apiPrefix", workflowA) ~>
-          addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
-          status should be(StatusCodes.Unauthorized)
-        }
-      }
-      "the user does not have the requested role (on NoRoleExeption)" in {
-        Post(s"/$apiPrefix", workflowA) ~>
-          addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
-          status should be(StatusCodes.Unauthorized)
-        }
-      }
-      "no auth token was send (on MissingHeaderRejection)" in {
+      "no auth headers were sent (on MissingHeaderRejection)" in {
         Post(s"/$apiPrefix", workflowA) ~> testRoute ~> check {
-          status should be(StatusCodes.Unauthorized)
+          status should be(StatusCodes.BadRequest)
         }
       }
     }
@@ -433,8 +394,7 @@ class WorkflowsApiSpec
           )))
 
         Post(s"/$apiPrefix/upload", multipartData) ~>
-          addHeaders(
-            RawHeader("X-Auth-Token", validAuthTokenTenantA)) ~> testRoute ~> check {
+          addHeaders(validHeaders()) ~> testRoute ~> check {
           status should be(StatusCodes.BadRequest)
 
           assertFailureDescriptionHasVersionInfo(responseAs[FailureDescription])
@@ -453,8 +413,7 @@ class WorkflowsApiSpec
           )))
 
         Post(s"/$apiPrefix/upload", multipartData) ~>
-          addHeaders(
-            RawHeader("X-Auth-Token", validAuthTokenTenantA)) ~> testRoute ~> check {
+          addHeaders(validHeaders()) ~> testRoute ~> check {
           status should be(StatusCodes.Created)
 
           val resultJs = response.entity.asString.parseJson.asJsObject
@@ -473,8 +432,7 @@ class WorkflowsApiSpec
     "return NotFound" when {
       "workflow with specified id does not exist" in {
         Post(s"/$apiPrefix/${Workflow.Id.randomId}/clone", description) ~>
-          addHeaders(
-            RawHeader("X-Auth-Token", validAuthTokenTenantA)) ~> testRoute ~> check {
+          addHeaders(validHeaders()) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
       }
@@ -483,8 +441,7 @@ class WorkflowsApiSpec
     "return Created" when {
       "workflow with specified id exists" in {
         Post(s"/$apiPrefix/$workflowAId/clone", description) ~>
-          addHeaders(
-            RawHeader("X-Auth-Token", validAuthTokenTenantA)) ~> testRoute ~> check {
+          addHeaders(validHeaders()) ~> testRoute ~> check {
           status should be(StatusCodes.Created)
 
           val resultJs = response.entity.asString.parseJson.asJsObject
@@ -506,20 +463,20 @@ class WorkflowsApiSpec
     "process authorization before reading PUT content" in {
       val invalidContent = JsObject()
       Put(s"/$apiPrefix/" + Workflow.Id.randomId, invalidContent) ~> testRoute ~> check {
-        status should be(StatusCodes.Unauthorized)
+        status should be(StatusCodes.BadRequest)
       }
     }
     "update the workflow and return Ok" when {
       "user updates his workflow without notebook" in {
         Put(s"/$apiPrefix/$workflowAId", updatedWorkflowWithResults) ~>
-          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          addHeaders(validHeaders()) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
         }
       }
       "return BadRequest" when {
         "workflow's API version is not compatible with current build" in {
           Put(s"/$apiPrefix/$workflowAId", obsoleteVersionWorkflowWithResults) ~>
-            addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+            addHeaders(validHeaders()) ~> testRoute ~> check {
             status should be(StatusCodes.BadRequest)
 
             assertFailureDescriptionHasVersionInfo(responseAs[FailureDescription])
@@ -528,7 +485,7 @@ class WorkflowsApiSpec
       }
       "user updates his workflow with notebook" in {
         Put(s"/$apiPrefix/$workflowAId", updatedWorkflowWithResultsWithNotebook) ~>
-          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          addHeaders(validHeaders()) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
         }
       }
@@ -537,7 +494,7 @@ class WorkflowsApiSpec
       "the workflow does not exist" in {
         val nonExistingId = Workflow.Id.randomId
         Put(s"/$apiPrefix/$nonExistingId", updatedWorkflowWithResults) ~>
-          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          addHeaders(validHeaders()) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
       }
@@ -547,28 +504,22 @@ class WorkflowsApiSpec
         val wrongUpdatedWorkflow = workflowWithResults
           .copy(metadata = workflowWithResults.metadata.copy(apiVersion = "0.0.1"))
         Put(s"/$apiPrefix/$workflowAId", wrongUpdatedWorkflow) ~>
-          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          addHeaders(validHeaders()) ~> testRoute ~> check {
           status should be(StatusCodes.BadRequest)
 
           assertFailureDescriptionHasVersionInfo(responseAs[FailureDescription])
         }
       }
+      "no auth headers were sent (on MissingHeaderRejection)" in {
+        Put(s"/$apiPrefix/" + workflowAId, updatedWorkflowWithResults) ~> testRoute ~> check {
+          status should be(StatusCodes.BadRequest)
+        }
+      }
     }
     "return Unauthorized" when {
-      "invalid auth token was send (when InvalidTokenException occurs)" in {
+      "the owner of the workflow is different" in {
         Put(s"/$apiPrefix/" + workflowAId, updatedWorkflowWithResults) ~>
-          addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
-          status should be(StatusCodes.Unauthorized)
-        }
-      }
-      "the user does not have the requested role (on NoRoleExeption)" in {
-        Put(s"/$apiPrefix/" + workflowAId, updatedWorkflowWithResults) ~>
-          addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
-          status should be(StatusCodes.Unauthorized)
-        }
-      }
-      "no auth token was send (on MissingHeaderRejection)" in {
-        Put(s"/$apiPrefix/" + workflowAId, updatedWorkflowWithResults) ~> testRoute ~> check {
+          addHeaders(differentOwnerHeaders()) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
@@ -579,7 +530,7 @@ class WorkflowsApiSpec
     "return notebook" when {
       "notebook exists" in {
         Get(s"/$apiPrefix/$workflowAId/notebook/$nodeAId") ~>
-          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          addHeaders(validHeaders()) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
 
           val returnedNotebook = responseAs[String]
@@ -591,7 +542,7 @@ class WorkflowsApiSpec
     "return Not found" when {
       "notebook does not exists" in {
         Get(s"/$apiPrefix/${Workflow.Id.randomId}/notebook/${Node.Id.randomId}") ~>
-          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          addHeaders(validHeaders()) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
       }
@@ -602,7 +553,7 @@ class WorkflowsApiSpec
     "create notebook" in {
       val notebook = "notebook content"
       Post(s"/$apiPrefix/${Workflow.Id.randomId}/notebook/${Node.Id.randomId}", notebook) ~>
-        addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+        addHeaders(validHeaders()) ~> testRoute ~> check {
         status should be(StatusCodes.Created)
       }
     }
@@ -613,7 +564,7 @@ class WorkflowsApiSpec
       val notebook = "notebook content"
       Post(s"/$apiPrefix/${Workflow.Id.randomId}/" +
         s"notebook/${Node.Id.randomId}/copy/${Node.Id.randomId}", notebook) ~>
-        addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+        addHeaders(validHeaders()) ~> testRoute ~> check {
         status should be(StatusCodes.Created)
       }
     }
@@ -621,34 +572,36 @@ class WorkflowsApiSpec
 
   s"PUT /reports/:id" should {
     val executionReport = workflowAWithResults.executionReport
-    "return Unauthorized" when {
-      "invalid auth token was send (when InvalidTokenException occurs)" in {
-        Put(s"/$reportsPrefix/${Workflow.Id.randomId}", executionReport) ~>
-          addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
-          status should be(StatusCodes.Unauthorized)
-        }
-      }
-      "the user does not have the requested role (on NoRoleException)" in {
-        Put(s"/$reportsPrefix/${Workflow.Id.randomId}", executionReport) ~>
-          addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
-          status should be(StatusCodes.Unauthorized)
-        }
-      }
-      "no auth token was send (on MissingHeaderRejection)" in {
+    "return BadRequest" when {
+      "no auth headers were sent (on MissingHeaderRejection)" in {
         Put(s"/$reportsPrefix/${Workflow.Id.randomId}", executionReport) ~>
           testRoute ~> check {
-          status should be(StatusCodes.Unauthorized)
+          status should be(StatusCodes.BadRequest)
         }
       }
     }
     "save execution report" when {
       "auth token is correct, user has roles" in {
         Put(s"/$reportsPrefix/${workflowAWithResults.id}", executionReport) ~>
-          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+          addHeaders(validHeaders()) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
         }
       }
     }
+  }
+  
+  def validHeaders(): List[RawHeader] = {
+    List(
+      RawHeader("X-Seahorse-UserId", ownerId),
+      RawHeader("X-Seahorse-UserName", ownerName)
+    )
+  }
+
+  def differentOwnerHeaders(): List[RawHeader] = {
+    List(
+      RawHeader("X-Seahorse-UserId", s"not $ownerId"),
+      RawHeader("X-Seahorse-UserName", s"not $ownerName")
+    )
   }
 
   def assertFailureDescriptionHasVersionInfo(fd: FailureDescription): Unit = {
@@ -666,10 +619,10 @@ class WorkflowsApiSpec
 
   def mockStorage(): WorkflowStorage = {
     val storage = new InMemoryWorkflowStorage()
-    storage.create(workflowAId, workflowA)
-    storage.create(workflowBId, workflowB)
-    storage.create(workflowWithoutNotebookId, workflowWithoutNotebook)
-    storage.create(obsoleteVersionWorkflowId, obsoleteVersionWorkflow)
+    storage.create(workflowAId, workflowA, ownerId, ownerName)
+    storage.create(workflowBId, workflowB, ownerId, ownerName)
+    storage.create(workflowWithoutNotebookId, workflowWithoutNotebook, ownerId, ownerName)
+    storage.create(obsoleteVersionWorkflowId, obsoleteVersionWorkflow, ownerId, ownerName)
     storage
   }
 

@@ -20,7 +20,7 @@ import io.deepsense.graph.Node.Id
 import io.deepsense.models.json.workflow.exceptions.WorkflowVersionNotSupportedException
 import io.deepsense.models.workflows.Workflow.Id
 import io.deepsense.models.workflows._
-import io.deepsense.workflowmanager.exceptions.WorkflowNotFoundException
+import io.deepsense.workflowmanager.exceptions.{WorkflowOwnerMismatchException, WorkflowNotFoundException}
 import io.deepsense.workflowmanager.model.WorkflowDescription
 import io.deepsense.workflowmanager.rest.CurrentBuild
 import io.deepsense.workflowmanager.storage._
@@ -47,8 +47,8 @@ class WorkflowManagerImpl @Inject()(
     logger.debug("Get workflow id: {}", id)
     authorizator.withRole(roleGet) { userContext =>
       workflowStorage.get(id).flatMap{
-        case Some(workflow) =>
-          val result = withResults(id, workflow).map {
+        case Some(w) =>
+          val result = withResults(id, w.workflow).map {
             withResults =>
               checkAPICompatibility(withResults.metadata.apiVersion)
               Some(withResults)
@@ -73,8 +73,11 @@ class WorkflowManagerImpl @Inject()(
     logger.debug(s"Update workflow id: $workflowId, workflow: $workflow")
     authorizator.withRole(roleUpdate) { userContext =>
       workflowStorage.get(workflowId).flatMap {
-        case Some(_) =>
-          Future.successful(checkAPICompatibility(workflow.metadata.apiVersion)).flatMap {
+        case Some(w) =>
+          Future.successful {
+            checkAPICompatibility(workflow.metadata.apiVersion)
+            checkOwner(workflowId, w.ownerId, userContext.user.id)
+          }.flatMap {
             _ => workflowStorage.update(workflowId, workflow).map(_ => ())
           }
         case None => throw new WorkflowNotFoundException(workflowId)
@@ -89,13 +92,16 @@ class WorkflowManagerImpl @Inject()(
         val workflowId = Workflow.Id.randomId
         val notebooks = extractNotebooks(workflow)
         val workflowWithoutNotebook = workflowWithRemovedNotebooks(workflow)
+        val ownerId = userContext.user.id
+        val ownerName = userContext.user.name
         Future.successful(checkAPICompatibility(workflow.metadata.apiVersion)).flatMap(_ =>
-          workflowStorage.create(workflowId, workflowWithoutNotebook).flatMap(_ =>
-            Future.sequence(notebooks.map {
-              case (nodeId, notebookJson) =>
-                notebookStorage.save(workflowId, nodeId, notebookJson.toString)
-            }).map(_ => workflowId)
-          )
+          workflowStorage.create(workflowId, workflowWithoutNotebook, ownerId, ownerName)
+            .flatMap(_ =>
+              Future.sequence(notebooks.map {
+                case (nodeId, notebookJson) =>
+                  notebookStorage.save(workflowId, nodeId, notebookJson.toString)
+              }).map(_ => workflowId)
+            )
         )
       }
     }
@@ -105,8 +111,10 @@ class WorkflowManagerImpl @Inject()(
     logger.debug("Delete workflow id: {}", id)
     authorizator.withRole(roleDelete) { userContext =>
       workflowStorage.get(id).flatMap {
-        case Some(workflow) =>
-          workflowStorage.delete(id).map(_ => true)
+        case Some(w) =>
+          Future.successful(checkOwner(id, w.ownerId, userContext.user.id)).flatMap {
+            _ => workflowStorage.delete(id).map(_ => true)
+          }
         case None => Future.successful(false)
       }
     }
@@ -144,16 +152,17 @@ class WorkflowManagerImpl @Inject()(
         }
 
         val extractedThirdPartyData = workflows.mapValues {
-          case WorkflowWithDates(objectWorkflow, created, updated) =>
-            (objectWorkflow.additionalData, created, updated)
+          case WorkflowFullInfo(objectWorkflow, created, updated, ownerId, ownerName) =>
+            (objectWorkflow.additionalData, created, updated, ownerId, ownerName)
         }
 
         extractedThirdPartyData.map {
-          case (workflowId, (thirdPartyData, created, updated)) =>
+          case (workflowId, (thirdPartyData, created, updated, ownerId, ownerName)) =>
             val gui = thirdPartyData.fields.get("gui").map(_.asJsObject).getOrElse(JsObject())
             WorkflowInfo(workflowId,
               getOptionalString(gui, "name"), getOptionalString(gui, "description"),
-              created, updated
+              created, updated,
+              ownerId, ownerName
             )
         }.toSeq
       }
@@ -232,7 +241,7 @@ class WorkflowManagerImpl @Inject()(
 
   private def getWorkflowWithNotebook(id: Workflow.Id): Future[Option[Workflow]] = {
     workflowStorage.get(id).flatMap {
-      case Some(workflow) => objectWorkflowWithNotebooks(id, workflow)
+      case Some(w) => objectWorkflowWithNotebooks(id, w.workflow)
       case None => Future.successful(None)
     }
   }
@@ -265,6 +274,12 @@ class WorkflowManagerImpl @Inject()(
     val thirdPartyDataJson = workflow.additionalData
     val prunedThirdPartyData = JsObject(thirdPartyDataJson.fields - "notebooks")
     Workflow(workflow.metadata, workflow.graph, prunedThirdPartyData)
+  }
+
+  private def checkOwner(workflowId: Workflow.Id, owner: String, user: String): Unit = {
+    if (owner != user) {
+      throw new WorkflowOwnerMismatchException(workflowId)
+    }
   }
 
   private def checkAPICompatibility(workflowAPIVersion: String): Unit = {

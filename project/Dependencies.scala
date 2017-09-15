@@ -17,7 +17,7 @@ object Version {
   val spark = "1.6.1"
   val spray = "1.3.3"
   val sprayJson = "1.3.1"
-  val seahorse = "1.2.0-TAP-SNAPSHOT"
+  val seahorse = "1.2.0-TAP-MULTIUSER-SNAPSHOT"
   val wiremock = "1.57"
 }
 
@@ -108,7 +108,7 @@ object Dependencies {
     sprayRouting
   ) ++ Seq(akkaTestkit, mockitoCore, scalatest, sprayTestkit).map(_ % Test)
 
-  val workflowmanager = Spark.onlyInTests ++ Seq(
+  val workflowmanager = Spark.components ++ Seq(
     akkaActor,
     apacheCommons,
     guice,

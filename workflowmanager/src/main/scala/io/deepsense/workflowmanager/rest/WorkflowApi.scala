@@ -306,6 +306,8 @@ abstract class WorkflowApi @Inject() (
           complete(StatusCodes.BadRequest, e.failureDescription)
         case e: WorkflowVersionException =>
           complete(StatusCodes.BadRequest, e.failureDescription)
+        case e: WorkflowOwnerMismatchException =>
+          complete(StatusCodes.Unauthorized, e.failureDescription)
     } orElse super.exceptionHandler(log)
   }
 

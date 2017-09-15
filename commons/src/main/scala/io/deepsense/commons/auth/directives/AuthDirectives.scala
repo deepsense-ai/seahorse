@@ -7,6 +7,7 @@ package io.deepsense.commons.auth.directives
 import scala.concurrent.Future
 
 import shapeless._
+import spray.http.StatusCodes
 import spray.routing.Directive1
 import spray.routing.Directives._
 
@@ -35,6 +36,9 @@ trait AuthDirectives extends AbstractAuthDirectives {
 
 trait InsecureAuthDirectives extends AbstractAuthDirectives  {
 
+  val UserIdHeader = "X-Seahorse-UserId"
+  val UserNameHeader = "X-Seahorse-UserName"
+
   def withUserContext: Directive1[Future[UserContext]] = {
     val tenantId = "olympus"
     val tenant: Tenant = Tenant(tenantId, tenantId, tenantId, Some(true))
@@ -51,18 +55,27 @@ trait InsecureAuthDirectives extends AbstractAuthDirectives  {
       "entities:update",
       "entities:delete",
       "admin")
-    val context = Future.successful(
-      UserContextStruct(
-        Token("godmode", Some(tenant)),
-        tenant,
-        User(
-          id = "Zeus",
-          name = "Zeus",
-          email = None,
-          enabled = Some(true),
-          tenantId = Some(tenantId)),
-        godsRoles.map(Role(_)).toSet
-      ))
-    provide(context)
+
+    optionalHeaderValueByName(UserIdHeader).flatMap {
+      case Some(userId) => optionalHeaderValueByName(UserNameHeader).flatMap {
+        case Some(userName) =>
+          val user = User(
+            id = userId,
+            name = userName,
+            email = None,
+            enabled = Some(true),
+            tenantId = Some(tenantId))
+          val context = Future.successful(
+            UserContextStruct(
+              Token("godmode", Some(tenant)),
+              tenant,
+              user,
+              godsRoles.map(Role(_)).toSet
+            ))
+          provide(context)
+        case None => complete(StatusCodes.BadRequest)
+      }
+      case None => complete(StatusCodes.BadRequest)
+    }
   }
 }
