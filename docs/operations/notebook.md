@@ -10,15 +10,17 @@ Notebook is a special type of operation. It gives user capability to quickly exp
 In the notebook user can write code using Spark Python API.
 Blocks of python code can be executed and results are immediately returned to the notebook.
 
-To use the notebook user has to drag and drop Notebook operation into the canvas and connect a DataFrame to the input port.
-Notebook operation has to be executed using partial execution before running any code in the notebook.
-As a result required input DataFrame will be calculated and registered in the notebook.
+To use the notebook user has to drag and drop the Notebook operation onto the canvas
+and connect a DataFrame to its input port. User can access connected dataframe from within
+the notebook by calling `dataframe()` function.
 
-User can start editing code by selecting option in the Notebook operation's parameters panel.
+User can start editing code by clicking `Open notebook` button in the Notebook operation's
+parameters panel.
 
 Variables and functions available in the notebooks' global scope:
 
 * <code>dataframe()</code> - function that returns input DataFrame for this notebook.
+Everytime dataframe changes, `dataframe()` must be reevaluated to reflect updated state.
 
 * <code>sc</code> - Spark Context
 
