@@ -5,7 +5,7 @@ module.controller('TestCtrl', ['$scope', '$element', 'Model', function ($scope, 
   var nodes = Model.getNodes();
 
   _.assign($scope, {
-    currentNode: nodes[4].id,
+    currentNode: nodes[2].id,
     testData: nodes,
     getNode: function() {
       return _.find(nodes, function(node) {

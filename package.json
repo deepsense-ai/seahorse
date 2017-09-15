@@ -1,11 +1,13 @@
 {
   "name": "deepsense-attributes-panel",
-  "version": "0.0.51",
+  "version": "0.0.53",
   "main": "attributes-panel.js",
   "description": "Attributes panel",
   "license": "ISC",
   "dependencies": {
+    "ace-webapp": "^0.2.0",
     "angular": "^1.4.1",
+    "angular-ui-ace": "^0.2.3",
     "angular-ui-bootstrap": "^0.14.3",
     "angular-xeditable": "0.0.1",
     "animate.css": "^3.2.5",
