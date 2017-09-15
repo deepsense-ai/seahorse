@@ -59,6 +59,10 @@ function WorkflowsApiClientFactory(BaseApiClient, config) {
       return `${this.API_URL}${PATH_WORKFLOWS}/${workflowId}/download?format=json`;
     }
 
+    getDownloadReportUrl(reportId) {
+      return `${this.API_URL}${PATH_REPORTS}/${reportId}/download`;
+    }
+
     getUploadWorkflowMethodUrl() {
       return `${this.API_URL}${PATH_WORKFLOWS}/upload`;
     }

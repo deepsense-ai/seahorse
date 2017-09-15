@@ -1,7 +1,8 @@
 'use strict';
 
 /* @ngInject */
-function WorkflowStatusBarController($rootScope, additionalControls) {
+function WorkflowStatusBarController($rootScope, $stateParams, WorkflowService,
+                                     additionalControls, WorkflowsApiClient) {
   _.assign(this, {
     backToHome () {
       $rootScope.$broadcast('StatusBar.HOME_CLICK');
@@ -17,7 +18,13 @@ function WorkflowStatusBarController($rootScope, additionalControls) {
     },
     lastExecutedReport () {
       $rootScope.$broadcast('StatusBar.LAST_EXECUTION_REPORT');
-    }
+    },
+    getReportName () {
+      let name = WorkflowService.getWorkflow().getThirdPartyData().gui.name;
+      return name.toLowerCase().split(' ').join('-');
+    },
+    exportReportLink: WorkflowsApiClient
+      .getDownloadReportUrl($stateParams.reportId)
   });
 
   if (additionalControls) {
