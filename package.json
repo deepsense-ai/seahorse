@@ -28,7 +28,7 @@
     "angular-ui-router": "^0.2.15",
     "animate.css": "^3.2.5",
     "bootstrap": "^3.3.4",
-    "deepsense-attributes-panel": "0.0.14",
+    "deepsense-attributes-panel": "0.0.15",
     "deepsense-catalogue-panel": "0.0.5",
     "deepsense-context-menu": "0.0.1",
     "deepsense-cycle-analyser": "0.0.1",
