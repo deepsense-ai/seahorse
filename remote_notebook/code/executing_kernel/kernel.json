@@ -2,7 +2,7 @@
   "display_name": "PySpark",
   "language": "python",
   "argv": [
-    "/usr/bin/python2.7",
+    "/opt/cloudera/parcels/Anaconda-4.0.0/bin/python",
     "executing_kernel/executing_kernel.py",
     "-f",
     "{connection_file}"

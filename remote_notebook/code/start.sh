@@ -55,78 +55,21 @@ if [ -z "$MQ_PORT" ];     then echo "Parameter --mq-port is required"; exit -1; 
 if [ -z "$WORKFLOW_ID" ]; then echo "Parameter --workflow-id is required"; exit -1; fi
 if [ -z "$SESSION_ID" ];  then echo "Parameter --session-id is required"; exit -1; fi
 
-
-echo "DIAGNOSTIC CHECKS"
-echo "python processes"
-ps uax
-
-echo "executables"
-ls -l /usr/bin/ /usr/sbin/
-
-echo "whoami"
-whoami
-
-echo "pip"
-pip -V
-
-echo "pip2"
-pip2 -V
-
-echo "pip3"
-pip3 -V
-
-echo "python"
-which python
-
-echo "pyspark"
-pyspark --version
-
-echo "python3"
-python3 --version
-
-echo "system issue"
-cat /etc/issue
-
-echo "uname"
-uname -a
-
-echo "listing pip packages"
-pip list
-
-
-
 # Exit script after first erroneous instruction
 set -ex
 echo "INSTALLING DEPENDENCIES"
 
-PWD=`pwd`
-echo "PWD=$PWD"
+export PATH=/opt/cloudera/parcels/Anaconda-4.0.0/bin:$PATH
+export LOCAL_PATH=$(pwd)/local-packages
+pip install --root $LOCAL_PATH pika-0.10.0.tar.gz
 
-echo "download get_pip"
-wget https://bootstrap.pypa.io/get-pip.py
-
-echo "install pip"
-python2.7 get-pip.py -I --root $PWD
-
-export PIP_PATH="$PWD/usr/bin/pip"
-echo "PIP_PATH=$PIP_PATH"
-
-PREFIX_PATH="usr"
-
-export PYTHONPATH="$PWD/usr/lib/python2.7/dist-packages:$PWD/usr/lib/python2.7:$PWD/usr/lib/python2.7/site-packages:$ADDITIONAL_PYTHON_PATH"
+export PYTHONPATH="$LOCAL_PATH/opt/cloudera/parcels/Anaconda-4.0.0/lib/python2.7/site-packages/:$ADDITIONAL_PYTHON_PATH"
 echo "PYTHONPATH=$PYTHONPATH"
-
-$PIP_PATH install --install-option="--prefix=$PREFIX_PATH" -I --root $PWD ipykernel
-$PIP_PATH install --install-option="--prefix=$PREFIX_PATH" -I --root $PWD jupyter_client
-$PIP_PATH install --install-option="--prefix=$PREFIX_PATH" -I --root $PWD pika
-
-# STARTING EXECUTING KERNEL MANAGER
-# echo "listing the CWD"
 
 cd $WORKING_DIR
 
 echo "start executing_kernel_manager"
-python2.7 executing_kernel_manager.py \
+python executing_kernel/executing_kernel_manager.py \
   --mq-host "$MQ_HOST" \
   --mq-port "$MQ_PORT" \
   --workflow-id "$WORKFLOW_ID" \

@@ -7,7 +7,7 @@ mkdir $TMPDIR
 mkdir $TMPDIR/executing_kernel
 
 cp code/executing_kernel/executing_kernel.py code/executing_kernel/kernel.json $TMPDIR/executing_kernel
-cp code/*.py $TMPDIR
+cp code/*.py $TMPDIR/executing_kernel
 cp code/start.sh $TMPDIR
 
 rm notebook_executing_kernel.zip

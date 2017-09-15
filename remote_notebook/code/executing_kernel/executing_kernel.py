@@ -54,7 +54,7 @@ class ExecutingKernel(IPythonKernel):
         nb_host, nb_port = self._notebook_server_address
         gateway_resolver = GatewayResolver([mq_host, mq_port])
         gateway_host, gateway_port = gateway_resolver.get_gateway_address()
-        kernel_init_file = os.path.join(os.getcwd(), "kernel_init.py")
+        kernel_init_file = os.path.join(os.getcwd(), "executing_kernel/kernel_init.py")
 
         nb_client = NotebookServerClient(nb_host, nb_port, self._kernel_id)
         workflow_id, node_id, port_number = nb_client.extract_dataframe_source()

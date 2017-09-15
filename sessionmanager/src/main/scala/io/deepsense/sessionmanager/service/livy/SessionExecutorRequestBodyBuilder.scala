@@ -33,7 +33,9 @@ class SessionExecutorRequestBodyBuilder @Inject() (
   @Named("session-executor.parameters.workflow-manager.port") private val wmPort: String,
   @Named("session-executor.parameters.workflow-manager.autodetect-host")
   private val wmHostAuto: Boolean,
-  @Named("session-executor.parameters.kernel-manager.zip") private val kernelManagerZip: String
+  @Named("session-executor.parameters.kernel-manager.zip") private val kernelManagerZip: String,
+  @Named("session-executor.parameters.kernel-manager.pika.zip")
+  private val kernelManagerPikaZip: String
 
 ) extends RequestBodyBuilder {
 
@@ -71,7 +73,7 @@ class SessionExecutorRequestBodyBuilder @Inject() (
         "-z", pySparkZip,
         "-j", workflowId.toString()
       ),
-      files = Seq(pyExecutorFile, pySparkFile, kernelManagerZip),
+      files = Seq(pyExecutorFile, pySparkFile, kernelManagerZip, kernelManagerPikaZip),
       conf = Map("spark.driver.extraClassPath" -> pyExecutorJar)
     )
   }
