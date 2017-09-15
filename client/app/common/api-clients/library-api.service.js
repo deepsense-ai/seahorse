@@ -1,79 +1,77 @@
 'use strict';
 
-/* @ngInject */
-function LibraryApi($http, config) {
-  const URL = `${config.apiHost}:${config.apiPort}/library`;
-  const service = this;
-
-  service.addDirectory = addDirectory;
-  service.removeDirectory = removeDirectory;
-  service.getAll = getAll;
-  service.getResourceUri = getResourceUri;
-  service.getResourceUrl = getResourceUrl;
-  service.removeFile = removeFile;
-  service.uploadFile = uploadFile;
+const URL = Symbol('URL');
+const LIBRARY_PREFIX = Symbol('LIBRARY_PREFIX');
 
 
-  function addDirectory(directoryName, parentDirectoryPath) {
-    const directoryPath = parentDirectoryPath +
-      (parentDirectoryPath.endsWith('/') ? '' : '/') +
-      directoryName;
+export default class LibraryApi {
+  constructor($http, config) {
+    'ngInject';
 
-    return $http.post(getResourceUrl(directoryPath));
+    this.$http = $http;
+    this[URL] = `${config.apiHost}:${config.apiPort}/library`;
+    this[LIBRARY_PREFIX] = config.libraryPrefix;
   }
 
 
-  function removeDirectory(directoryPath) {
-    return $http.delete(getResourceUrl(directoryPath));
+  addDirectory(directoryName, parentDirectoryPath) {
+    const separator = parentDirectoryPath.endsWith('/') ? '' : '/';
+    const directoryPath = `${parentDirectoryPath}${separator}${directoryName}`;
+
+    return this.$http.post(this.getResourceUrl(directoryPath));
   }
 
 
   /**
    * @returns {Promise}
    */
-  function getAll() {
-    return $http.get(URL)
+  getAll() {
+    return this.$http
+      .get(this[URL])
       .then((result) => {
         return result.data;
       });
   }
 
 
-  function getResourceUri(resourcePath) {
-    // Dirty hack, but uri will be removed anyway
-    return `${config.libraryPrefix}${resourcePath}`.replace('///', '//');
+  getResourceUri(resourcePath) {
+    // Dirty hack
+    return `${this[LIBRARY_PREFIX]}${resourcePath}`.replace('///', '//');
   }
 
 
-  function getResourceUrl(resourcePath) {
-    return `${URL}${resourcePath}`;
+  getResourceUrl(resourcePath) {
+    return `${this[URL]}${resourcePath}`;
   }
 
 
-  function removeFile(fileUrl) {
-    return $http.delete(fileUrl);
+  removeDirectory(directoryPath) {
+    return this.$http.delete(this.getResourceUrl(directoryPath));
   }
 
 
-  function uploadFile(file, directory, progressHandler) {
+  // TODO: combine removeFile and removeDirectory into method removeResource
+  //       use resourcePath as input and generate resuurce URL internaly
+  removeFile(fileUrl) {
+    return this.$http.delete(fileUrl);
+  }
+
+
+  uploadFile(file, directoryPath, progressHandler) {
     const fd = new FormData();
-    const directoryUrl = _.compact([URL, directory]).join('/');
+    const directoryUrl = this.getResourceUrl(directoryPath);
 
     fd.append('file', file);
-    return $http.post(directoryUrl, fd, {
-      transformRequest: angular.identity,
-      headers: {'Content-Type': undefined},
-      uploadEventHandlers: {
-        progress: function (param) {
-          const uploadProgress = Math.ceil(param.loaded / param.total * 100);
-          progressHandler(uploadProgress);
+    return this.$http
+      .post(directoryUrl, fd, {
+        transformRequest: angular.identity,
+        headers: {'Content-Type': undefined},
+        uploadEventHandlers: {
+          progress: function (param) {
+            const uploadProgress = Math.ceil(param.loaded / param.total * 100);
+            progressHandler(uploadProgress);
+          }
         }
-      }
-    });
+      });
   }
 }
-
-
-exports.inject = function (module) {
-  module.service('LibraryApiService', LibraryApi);
-};

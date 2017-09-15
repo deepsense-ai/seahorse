@@ -13,7 +13,7 @@ class BreadcrumbsController {
   }
 
   goToParent(uri) {
-    this.LibraryService.getDirectoryContent(uri);
+    this.LibraryService.changeDirectory(uri);
   }
 
   shortenParentsArray(parents) {

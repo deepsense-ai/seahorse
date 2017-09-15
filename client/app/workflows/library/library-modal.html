@@ -29,46 +29,18 @@
           <recent-files-indicator></recent-files-indicator>
         </div>
 
-        <div ng-if="!controller.filterString">
-          <deepsense-loading-spinner-sm ng-if="controller.loading"></deepsense-loading-spinner-sm>
+        <deepsense-loading-spinner-sm ng-if="controller.loading"></deepsense-loading-spinner-sm>
 
-          <div class="file-list-wrapper" custom-scroll-bar>
-            <file-list
-              items="controller.items"
-              parents="controller.parents"
-              on-select="controller.onSelect"
-            ></file-list>
-          </div>
-
-          <div ng-if="controller.message" class="dataframe-info">
-            {{controller.message}}
-          </div>
+        <div class="file-list-wrapper" custom-scroll-bar>
+          <file-list
+            items="controller.items"
+            parents="controller.parents"
+            on-select="controller.onSelect"
+          ></file-list>
         </div>
 
-        <div class="dataframe-list" ng-if="controller.filterString">
-          <div class="list-wrapper" custom-scroll-bar>
-            <deepsense-loading-spinner-sm ng-if="controller.loading"></deepsense-loading-spinner-sm>
-
-            <div ng-repeat="folder in controller.searchResults" class="folder">
-              {{folder.name}}
-              <div class="dataframe" ng-repeat="dataframe in folder.items ">
-                <div class="dataframe-name"
-                     ng-click="controller.selectDataframe(dataframe)"
-                     ng-class="{'selectable-dataframe': controller.canChooseDataframe}">
-                  <span>{{dataframe.name}}</span>
-                </div>
-                <div class="actions">
-                  <a ng-href={{dataframe.downloadUrl}} download><span class="sa sa-download"></span></a>
-                  <span class="sa sa-delete" ng-click="controller.deleteFile(dataframe)"></span>
-                </div>
-              </div>
-
-              <div ng-if="controller.searchResults.length <= 1 && controller.searchResults[0].items.length < 1"
-                   class="dataframe-info">
-                There is no search results in this folder.
-              </div>
-            </div>
-          </div>
+        <div ng-if="controller.message" class="dataframe-info">
+          {{controller.message}}
         </div>
 
       </div>

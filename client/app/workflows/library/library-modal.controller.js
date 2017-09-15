@@ -19,19 +19,18 @@ function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, LibraryModa
   vm.ok = ok;
   vm.showNewDirectoryInput = showNewDirectoryInput;
 
-  $scope.$watch(() => LibraryService.getDirectoryContent(), (newValue) => {
-    handleResults(newValue);
+
+  $scope.$watch(() => LibraryService.getCurrentDirectoryContent(), () => {
+    handleResults(LibraryService.getCurrentDirectory());
   });
 
-  $scope.$watch(() => LibraryService.getSearchResults(), (newValue) => {
-    vm.searchResults = newValue;
+  $scope.$watch(() => vm.filterString, (newFilter) => {
+    LibraryService.setFilter(newFilter);
   });
 
-  $scope.$watchGroup([() => vm.filterString, () => vm.currentDirName], () => {
-    LibraryService.searchFilesInDirectory(vm.filterString);
-  });
 
-  LibraryService.fetchAll()
+  LibraryService
+    .fetchAll()
     .then(() => {
       vm.loading = false;
     })
@@ -39,6 +38,7 @@ function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, LibraryModa
       vm.loading = false;
       vm.message = 'There was an error during downloading list of files.';
     });
+
 
   function deleteFile(file) {
     DeleteModalService.handleDelete(() => {
@@ -49,9 +49,11 @@ function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, LibraryModa
     }, COOKIE_NAME);
   }
 
+
   function close() {
     $uibModalInstance.dismiss();
   }
+
 
   function showNewDirectoryInput() {
     const isUploadingFilesPopoverOpen = LibraryModalService.getUploadingFilesPopoverStatus();
@@ -59,6 +61,7 @@ function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, LibraryModa
       LibraryModalService.showNewDirectoryInput();
     }
   }
+
 
   function handleResults(result) {
     if (!result) {
@@ -71,6 +74,7 @@ function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, LibraryModa
     vm.currentDirUri = result.uri;
   }
 
+
   function onSelect(item) {
     if (vm.mode === 'read-file') {
       $uibModalInstance.close(item);
@@ -78,6 +82,7 @@ function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, LibraryModa
       vm.selectedItem = item.name;
     }
   }
+
 
   function ok() {
     $uibModalInstance.close(`${vm.currentDirUri}/${vm.selectedItem}`.replace('///', '//'));
