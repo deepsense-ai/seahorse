@@ -25,12 +25,23 @@ class PySparkKernel(IPythonKernel):
         gateway_resolver = GatewayResolver([os.environ['RABBIT_MQ_ADDRESS'],
                                             int(os.environ['RABBIT_MQ_PORT'])])
 
+        self._insert_metadata(kernel_id)
+
         self._insert_gateway_address(
             gateway_resolver.get_gateway_address())
 
         self._insert_workflow_id(workflow_id, node_id)
 
         self._initialize_pyspark()
+
+    def _insert_metadata(self, kernel_id):
+        self.do_execute('kernel_id = "{}"'.format(kernel_id), False)
+        self.do_execute('notebook_server_address = "{}"'.format(
+            os.environ['NOTEBOOK_SERVER_ADDRESS']), False)
+        self.do_execute('notebook_server_port = {}'.format(
+            os.environ['NOTEBOOK_SERVER_PORT']), False)
+        self.do_execute('mq_address = "{}"'.format(os.environ['RABBIT_MQ_ADDRESS']), False)
+        self.do_execute('mq_port = {}'.format(os.environ['RABBIT_MQ_PORT']), False)
 
     def _insert_gateway_address(self, gateway_address):
         host, port = gateway_address
