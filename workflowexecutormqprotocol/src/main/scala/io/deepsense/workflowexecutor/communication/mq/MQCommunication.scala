@@ -31,6 +31,7 @@ object MQCommunication {
       val seahorse = prefixedName("seahorse")
       def notebook(id: Workflow.Id): String = prefixedName(s"notebook_$id")
       def heartbeat(id: Workflow.Id): String = prefixedName(s"heartbeat_$id")
+      def heartbeatAll: String = prefixedName(s"heartbeat_all")
       def ready(id: Workflow.Id): String = prefixedName(s"ready_$id")
       def workflow(id: Workflow.Id): String = prefixedName(id.toString)
       private def prefixedName = name("publisher") _
@@ -49,6 +50,7 @@ object MQCommunication {
     val seahorse = "seahorse"
 
     def heartbeats(workflowId: Workflow.Id): String = s"${seahorse}_heartbeats_$workflowId"
+    def heartbeatsAll: String = s"${seahorse}_heartbeats_all"
     def ready(workflowId: Workflow.Id): String = s"${seahorse}_ready_$workflowId"
   }
 
