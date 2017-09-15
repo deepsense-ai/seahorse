@@ -28,13 +28,19 @@ module.exports = function (_path) {
       extensions: ['', '.js'],
       modulesDirectories: ['node_modules'],
       alias: {
-        _appRoot: path.join(_path, 'client', 'app'),
-        _fonts: path.join(_path, 'client', 'fonts'),
-        _images: path.join(_path, 'client', 'img'),
-        _static: path.join(_path, 'client', 'static'),
-        _styles: path.join(_path, 'client', 'css'),
-        _nodeModules: path.join(_path, 'node_modules')
+        APP: path.join(_path, 'client', 'app'),
+        ASSETS: path.join(_path, 'client', 'assets'),
+        COMMON: path.join(_path, 'client', 'common'),
+        COMPONENTS: path.join(_path, 'client', 'components'),
+        NODE_MODULES: path.join(_path, 'node_modules'),
+        SRC: path.join(_path, 'client'),
+        STATIC: path.join(_path, 'client', 'static'),
+        _styles: path.join(_path, 'client', 'css')
       }
+    },
+
+    eslint: {
+      configFile: path.join(_path, 'config', 'eslint', 'eslint-src.config.js')
     },
 
     module: {
