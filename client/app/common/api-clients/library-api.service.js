@@ -5,6 +5,7 @@ function LibraryApi($http, config) {
   const URL = `${config.apiHost}:${config.apiPort}/library`;
   const service = this;
 
+  service.addDirectory = addDirectory;
   service.getAll = getAll;
   service.removeFile = removeFile;
   service.uploadFile = uploadFile;
@@ -14,6 +15,13 @@ function LibraryApi($http, config) {
   service.getDownloadUrlForFile = getDownloadUrlForFile;
   service.getUriForFile = getUriForFile;
   service.URL = URL;
+
+
+  function addDirectory(directoryName, parentDirectoryPath) {
+    const newDirectoryUrl = _.compact([URL, parentDirectoryPath, directoryName]).join('/');
+
+    return $http.post(newDirectoryUrl);
+  }
 
 
   /**
@@ -34,7 +42,7 @@ function LibraryApi($http, config) {
 
   function uploadFile(file, directory, progressHandler) {
     const fd = new FormData();
-    let directoryUrl = _.compact([URL, directory]).join('/');
+    const directoryUrl = _.compact([URL, directory]).join('/');
 
     fd.append('file', file);
     return $http.post(directoryUrl, fd, {
