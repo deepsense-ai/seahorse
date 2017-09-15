@@ -73,6 +73,9 @@ case class DataFrame private[dataframe] (
 
 object DataFrame {
 
+  def apply(sparkDataFrame: sql.DataFrame, schema: StructType): DataFrame =
+    DataFrame(sparkDataFrame, Some(schema))
+
   /**
    * @return DataFrame object that can be used _only_ for inference,
    *         i.e. it contains only schema of this DataFrame.

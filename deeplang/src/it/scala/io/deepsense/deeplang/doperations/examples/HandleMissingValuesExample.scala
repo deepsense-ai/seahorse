@@ -25,6 +25,7 @@ class HandleMissingValuesExample extends AbstractOperationExample[HandleMissingV
   override def dOperation: HandleMissingValues = {
     val op = new HandleMissingValues()
     op.transformer
+        .setUserDefinedMissingValues(Seq("-1.0"))
       .setSelectedColumns(
         MultipleColumnSelection(Vector(NameColumnSelection(Set("baths", "price")))))
       .setStrategy(RemoveRow())

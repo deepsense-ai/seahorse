@@ -16,19 +16,12 @@
 
 package io.deepsense.deeplang.doperations.examples
 
-import java.io.{FileOutputStream, PrintWriter, File}
-import java.nio.channels.FileChannel
-
-import scala.collection.mutable
-
-import org.apache.spark.sql.Row
-import spray.json._
+import java.io.{File, PrintWriter}
 
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.ReadDataFrame
 import io.deepsense.deeplang.doperations.inout.CsvParameters.ColumnSeparatorChoice.Comma
-import io.deepsense.deeplang.params.{Param, Params}
 import io.deepsense.deeplang.{DOperable, DOperation, DeeplangIntegTestSupport}
 
 abstract class AbstractOperationExample[T <: DOperation]

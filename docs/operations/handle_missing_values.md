@@ -126,6 +126,12 @@ or by index does not exist the operation will fail at runtime with <code>Columns
   is set to <code>"Yes"</code>. It defines the prefix for generated missing value indicator columns.
 </td>
 </tr>
+<tr>
+<td><code>user-defined missing values</code></td>
+<td><code><a href="../parameter_types.html#parameters-sequence">Parameters Sequence</a></code></td>
+<td>The sequence of user-defined missing values. Provided value will be cast to all chosen column types if possible,
+so for example a value <code>-1</code> might be applied to all numeric and string columns.</td>
+</tr>
 </tbody>
 </table>
 

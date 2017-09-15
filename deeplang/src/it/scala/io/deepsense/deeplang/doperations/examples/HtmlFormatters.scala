@@ -136,6 +136,8 @@ object ParametersHtmlFormatter {
   private val valueFieldName: String = "value"
   private val valuesFieldName: String = "values"
   private val selectionsFieldName: String = "selections"
+  private val userDefinedMissingValues: String = "user-defined missing values"
+  private val missingValue: String = "missing value"
 
   def toHtml(dOperation: DOperation): String = {
     if (dOperation.paramValuesToJson.asJsObject.fields.isEmpty) {
@@ -193,6 +195,9 @@ object ParametersHtmlFormatter {
 
   private def extractParamValues(jsObject: JsObject): Seq[(String, String)] = {
     jsObject.fields.toSeq.flatMap {
+      case (name, value: JsArray)
+        if name == userDefinedMissingValues && isUserDefinedMissingValue(value) =>
+          Seq(handleUserDefinedMissingValues(name, value))
       case (name, value: JsArray) if isColumnPairs(value) =>
         Seq(handleColumnPairs(name, value))
       case (name, value: JsArray) if isColumnProjection(value) =>
@@ -236,6 +241,14 @@ object ParametersHtmlFormatter {
     }
   }
 
+  private def isUserDefinedMissingValue(value: JsArray): Boolean = {
+    value.elements.forall { v =>
+      v.isInstanceOf[JsObject] &&
+        v.asJsObject.fields.contains(missingValue) &&
+        v.asJsObject.fields(missingValue).isInstanceOf[JsString]
+    }
+  }
+
   private def isColumnProjection(value: JsArray): Boolean = {
     value.elements.forall { v =>
       v.isInstanceOf[JsObject] &&
@@ -252,8 +265,8 @@ object ParametersHtmlFormatter {
       .fields(valueFieldName).asInstanceOf[JsString].value
   }
 
-  private def handleColumnPairs(name: String, value: JsArray): (String, String) = {
-    val pairs = value.elements.map { v =>
+  private def handleColumnPairs(name: String, pairsJs: JsArray): (String, String) = {
+    val pairs = pairsJs.elements.map { v =>
       val leftColumn = extractColumnName(v, leftColumnFieldName)
       val rightColumn = extractColumnName(v, rightColumnFieldName)
       s"left.$leftColumn == right.$rightColumn"
@@ -262,8 +275,19 @@ object ParametersHtmlFormatter {
     (name, s"Join on $pairs")
   }
 
-  private def handleColumnProjection(name: String, value: JsArray): (String, String) = {
-    val pairs = value.elements.map { v =>
+  private def handleUserDefinedMissingValues(name: String, missingValues: JsArray)
+      : (String, String) = {
+    val missingValuesFormatted =
+      missingValues
+        .elements
+        .map(_.asJsObject)
+        .map(_.fields(missingValue).asInstanceOf[JsString])
+        .mkString("[", ", ", "]")
+    (name, s"User-defined missing values: $missingValuesFormatted")
+  }
+
+  private def handleColumnProjection(name: String, projectionsJs: JsArray): (String, String) = {
+    val pairs = projectionsJs.elements.map { v =>
       val originalColumn = extractColumnName(v, Projector.OriginalColumnParameterName)
       val renameDesc =
         if (v.asJsObject.fields.contains(Projector.RenameColumnParameterName) &&
@@ -290,8 +314,9 @@ object ParametersHtmlFormatter {
       value.fields.contains("excluding")
   }
 
-  private def handleMultipleColumnSelection(name: String, value: JsObject): (String, String) = {
-    val rawSelections = value.fields(selectionsFieldName).asInstanceOf[JsArray]
+  private def handleMultipleColumnSelection(name: String, selectionsJs: JsObject)
+      : (String, String) = {
+    val rawSelections = selectionsJs.fields(selectionsFieldName).asInstanceOf[JsArray]
     val selections = rawSelections.elements.map(_.asJsObject).map {
       case s: JsObject if s.fields(typeFieldName).asInstanceOf[JsString].value == "columnList" =>
         val selectedColumns = s.fields(valuesFieldName).prettyPrint

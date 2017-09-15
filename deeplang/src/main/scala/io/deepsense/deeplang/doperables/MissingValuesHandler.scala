@@ -18,17 +18,22 @@ package io.deepsense.deeplang.doperables
 
 import java.sql.Timestamp
 
+import scala.util.Try
+
+import org.apache.spark.sql
 import org.apache.spark.sql.types._
 
 import io.deepsense.commons.types.SparkConversions
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
-import io.deepsense.deeplang.doperations.exceptions.{MultipleTypesReplacementException, WrongReplacementValueException}
+import io.deepsense.deeplang.doperations.exceptions.{MultipleTypesReplacementException, ValueConversionException}
 import io.deepsense.deeplang.params._
 import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
 import io.deepsense.deeplang.params.selections.MultipleColumnSelection
+import io.deepsense.deeplang.params.validators.AcceptAllRegexValidator
 
-case class MissingValuesHandler() extends Transformer {
+case class MissingValuesHandler()
+  extends Transformer {
 
   import io.deepsense.deeplang.doperables.MissingValuesHandler._
 
@@ -65,6 +70,22 @@ case class MissingValuesHandler() extends Transformer {
   def getStrategy: Strategy = $(strategy)
   def setStrategy(value: Strategy): this.type = set(strategy, value)
 
+  val userDefinedMissingValues = ParamsSequence[UserDefinedMissingValue](
+    name = "user-defined missing values",
+    description = "Sequence of values to be considered as missing.")
+
+  def getUserDefinedMissingValues: Seq[String] = $(userDefinedMissingValues).map(_.getMissingValue)
+  def setUserDefinedMissingValues(value: Seq[String]): this.type =
+    set(userDefinedMissingValues,
+      value.map(UserDefinedMissingValue().setMissingValue(_)))
+
+  setDefault(
+    userDefinedMissingValues,
+    Seq(
+      UserDefinedMissingValue().setMissingValue("NA"),
+      UserDefinedMissingValue().setMissingValue("NaN")))
+
+
   val missingValueIndicator = ChoiceParam[MissingValueIndicatorChoice](
     name = "missing value indicator",
     description = "Generate missing value indicator column.")
@@ -74,7 +95,11 @@ case class MissingValuesHandler() extends Transformer {
   def setMissingValueIndicator(value: MissingValueIndicatorChoice): this.type =
     set(missingValueIndicator, value)
 
-  override val params = declareParams(selectedColumns, strategy, missingValueIndicator)
+  override val params = declareParams(
+    selectedColumns,
+    strategy,
+    missingValueIndicator,
+    userDefinedMissingValues)
 
   override def _transform(context: ExecutionContext, dataFrame: DataFrame): DataFrame = {
 
@@ -82,17 +107,31 @@ case class MissingValuesHandler() extends Transformer {
     val columns = dataFrame.getColumnNames(getSelectedColumns)
     val indicator = getMissingValueIndicator.getIndicatorPrefix
 
-    val indicatedDataFrame = addNullIndicatorColumns(context, dataFrame, columns, indicator)
+    val declaredAsMissingValues = $(userDefinedMissingValues).map(_.getMissingValue)
+
+    val indicatedDataFrame = addMissingIndicatorColumns(
+      context, dataFrame, declaredAsMissingValues, columns, indicator)
 
     strategy match {
       case Strategy.RemoveRow() =>
-        removeRowsWithEmptyValues(context, indicatedDataFrame, columns, indicator)
+        removeRowsWithEmptyValues(
+          context,
+          indicatedDataFrame,
+          declaredAsMissingValues,
+          columns,
+          indicator)
       case Strategy.RemoveColumn() =>
-        removeColumnsWithEmptyValues(context, indicatedDataFrame, columns, indicator)
+        removeColumnsWithEmptyValues(
+          context,
+          indicatedDataFrame,
+          declaredAsMissingValues,
+          columns,
+          indicator)
       case (replaceWithModeStrategy: Strategy.ReplaceWithMode) =>
         replaceWithMode(
           context,
           indicatedDataFrame,
+          declaredAsMissingValues,
           columns,
           replaceWithModeStrategy.getEmptyColumnStrategy,
           indicator)
@@ -100,21 +139,24 @@ case class MissingValuesHandler() extends Transformer {
         replaceWithCustomValue(
           context,
           indicatedDataFrame,
+          declaredAsMissingValues,
           columns,
           customValueStrategy.getCustomValue,
           indicator)
     }
   }
 
-  private def addNullIndicatorColumns(
+  private def addMissingIndicatorColumns(
       context: ExecutionContext,
       dataFrame: DataFrame,
+      declaredAsMissingValues: Seq[String],
       columns: Seq[String],
       indicator: Option[String]) = {
 
     indicator match {
       case Some(prefix) =>
-        val attachedColumns = columns.map(missingValueIndicatorColumn(dataFrame, _, prefix))
+        val attachedColumns = columns.map(
+          missingValueIndicatorColumn(dataFrame, declaredAsMissingValues, _, prefix))
         dataFrame.withColumns(context, attachedColumns)
       case None =>
         dataFrame
@@ -124,30 +166,42 @@ case class MissingValuesHandler() extends Transformer {
   private def removeRowsWithEmptyValues(
       context: ExecutionContext,
       dataFrame: DataFrame,
+      declaredAsMissingValues: Seq[String],
       columns: Seq[String],
       indicator: Option[String]) = {
 
-    val rdd = dataFrame.sparkDataFrame.rdd.filter(
-      row => !row.getValuesMap(columns).values.toList.contains(null))
-    context.dataFrameBuilder.buildDataFrame(dataFrame.sparkDataFrame.schema, rdd)
+    val df = dataFrame.sparkDataFrame
+
+    val resultDF =
+      df.filter(!CommonQueries.isMissingInRowPredicate(df, columns, declaredAsMissingValues))
+    DataFrame(resultDF, df.schema)
   }
 
   private def removeColumnsWithEmptyValues(
       context: ExecutionContext,
       dataFrame: DataFrame,
+      declaredAsMissingValues: Seq[String],
       columns: Seq[String],
       indicator: Option[String]) = {
 
-    val columnsWithNulls = columns.filter(column =>
-      dataFrame.sparkDataFrame.select(column).filter(s"`$column` is null").count() > 0)
-    val retainedColumns = dataFrame.sparkDataFrame.columns filterNot columnsWithNulls.contains
+    val df = dataFrame.sparkDataFrame
+
+    val columnsWithMissings = columns.filter {
+      columnName =>
+        df.select(columnName)
+          .filter(
+            CommonQueries.isMissingInColumnPredicate(df, columnName, declaredAsMissingValues))
+          .count() > 0
+    }
+    val retainedColumns = df.columns filterNot columnsWithMissings.contains
     DataFrame.fromSparkDataFrame(
-      dataFrame.sparkDataFrame.select(retainedColumns.head, retainedColumns.tail: _*))
+      df.select(retainedColumns.head, retainedColumns.tail: _*))
   }
 
   private def replaceWithCustomValue(
       context: ExecutionContext,
       dataFrame: DataFrame,
+      declaredAsMissingValues: Seq[String],
       columns: Seq[String],
       customValue: String,
       indicator: Option[String]) = {
@@ -160,24 +214,24 @@ case class MissingValuesHandler() extends Transformer {
       throw new MultipleTypesReplacementException(columnTypes)
     }
 
-    MissingValuesHandlerUtils.replaceNulls(
+    MissingValuesHandlerUtils.replaceMissings(
       context,
       dataFrame,
+      declaredAsMissingValues,
       columns,
-      columnName => ReplaceWithCustomValueStrategy.convertReplacementValue(
-        customValue,
-        dataFrame.schema.get(columnName)))
+      columnName => TypeMapper.convertRawValue(dataFrame.schema.get(columnName), customValue))
   }
 
   private def replaceWithMode(
       context: ExecutionContext,
       dataFrame: DataFrame,
+      declaredAsMissingValues: Seq[String],
       columns: Seq[String],
       emptyColumnStrategy: EmptyColumnsStrategy,
       indicator: Option[String]) = {
 
     val columnModes = Map(columns.map(column =>
-      column -> calculateMode(dataFrame, column)): _*)
+      column -> calculateMode(dataFrame, column, declaredAsMissingValues)): _*)
 
     val nonEmptyColumnModes = Map[String, Any](columnModes
       .filterKeys(column => columnModes(column).isDefined)
@@ -185,7 +239,11 @@ case class MissingValuesHandler() extends Transformer {
 
     val allEmptyColumns = columnModes.keys.filter(column => columnModes(column).isEmpty)
 
-    var resultDF = MissingValuesHandlerUtils.replaceNulls(context, dataFrame, columns,
+    var resultDF = MissingValuesHandlerUtils.replaceMissings(
+      context,
+      dataFrame,
+      declaredAsMissingValues,
+      columns,
       columnName => nonEmptyColumnModes.getOrElse(columnName, null))
 
     if (emptyColumnStrategy == EmptyColumnsStrategy.RemoveEmptyColumns()) {
@@ -198,11 +256,20 @@ case class MissingValuesHandler() extends Transformer {
     resultDF
   }
 
-  private def missingValueIndicatorColumn(dataFrame: DataFrame, column: String, prefix: String) = {
-    dataFrame.sparkDataFrame(column).isNull.as(prefix + column).cast(BooleanType)
+  private def missingValueIndicatorColumn(
+      dataFrame: DataFrame,
+      declaredAsMissingValues: Seq[String],
+      column: String,
+      prefix: String) = {
+    CommonQueries.isMissingInColumnPredicate(
+        dataFrame.sparkDataFrame, column, declaredAsMissingValues)
+      .as(prefix + column).cast(BooleanType)
   }
 
-  private def calculateMode(dataFrame: DataFrame, column: String): Option[Any] = {
+  private def calculateMode(
+      dataFrame: DataFrame,
+      column: String,
+      declaredAsMissing: Seq[String]): Option[Any] = {
 
     import org.apache.spark.sql.functions.desc
 
@@ -212,7 +279,7 @@ case class MissingValuesHandler() extends Transformer {
 
     val resultArray = sparkDataFrame
       .select(sparkColumn)
-      .filter(sparkColumn.isNotNull)
+      .filter(!CommonQueries.isMissingInColumnPredicate(sparkDataFrame, column, declaredAsMissing))
       .groupBy(sparkColumn)
       .count()
       .orderBy(desc("count"))
@@ -335,13 +402,32 @@ object MissingValuesHandler {
   }
 }
 
+case class UserDefinedMissingValue() extends Params {
+
+  val missingValue = StringParam(
+    name = "missing value",
+    description =
+      """Value to be considered as a missing one.
+        |Provided value will be cast to all chosen column types if possible,
+        |so for example a value "-1" might be applied to all numeric and string columns."""
+        .stripMargin,
+    validator = new AcceptAllRegexValidator())
+
+  def getMissingValue: String = $(missingValue)
+  def setMissingValue(value: String): this.type = set(missingValue, value)
+  setDefault(missingValue, "")
+
+  val params = declareParams(missingValue)
+}
+
 private object MissingValuesHandlerUtils {
 
   import org.apache.spark.sql.functions.when
 
-  def replaceNulls(
+  def replaceMissings(
       context: ExecutionContext,
       dataFrame: DataFrame,
+      declaredAsMissingValues: Seq[String],
       chosenColumns: Seq[String],
       replaceFunction: String => Any): DataFrame = {
 
@@ -349,8 +435,10 @@ private object MissingValuesHandlerUtils {
 
     val resultSparkDF = df.select(
       df.columns.toSeq.map(columnName => {
+
         if (chosenColumns.contains(columnName)) {
-          when(df(columnName).isNull,
+          when(
+            CommonQueries.isMissingInColumnPredicate(df, columnName, declaredAsMissingValues),
             replaceFunction(columnName))
             .otherwise(df(columnName)).as(columnName)
         } else {
@@ -362,8 +450,60 @@ private object MissingValuesHandlerUtils {
   }
 }
 
-private object ReplaceWithCustomValueStrategy {
-  def convertReplacementValue(rawValue: String, field: StructField): Any = {
+private object CommonQueries {
+
+  def isMissingInRowPredicate(
+      df: sql.DataFrame,
+      columns: Seq[String],
+      declaredAsMissing: Seq[String]): sql.Column = {
+
+    val predicates = columns.map(
+      columnName => isMissingInColumnPredicate(df, columnName, declaredAsMissing))
+    predicates.reduce {
+      (pred1, pred2) => pred1 or pred2
+    }
+  }
+
+  def isMissingInColumnPredicate(
+      df: sql.DataFrame,
+      columnName: String,
+      declaredAsMissing: Seq[String]): sql.Column = {
+
+    val convertedMissingValues =
+      TypeMapper.convertRawValuesToColumnTypeIfPossible(
+        df.schema, columnName, declaredAsMissing)
+
+    val predicate = df(columnName)
+      .isNull
+      .or(df(columnName).isin(convertedMissingValues: _*))
+
+    df.schema(columnName).dataType match {
+      case _: DoubleType | FloatType => predicate.or(df(columnName).isNaN)
+      case _ => predicate
+    }
+  }
+}
+
+private object TypeMapper {
+
+  def convertRawValuesToColumnTypeIfPossible(
+      schema: StructType,
+      columnName: String,
+      rawValues: Seq[String]): Seq[Any] = {
+    val colIndex = schema.fieldIndex(columnName)
+    val colStructField = schema.fields(colIndex)
+    TypeMapper.convertRawValuesIfPossible(colStructField, rawValues)
+  }
+
+  def convertRawValuesIfPossible(field: StructField, rawValues: Seq[String]): Seq[Any] = {
+    rawValues.flatMap((rawValue: String) => Try(convertRawValue(field, rawValue)).toOption)
+  }
+
+  def convertRawValues(field: StructField, rawValues: Seq[String]): Seq[Any] = {
+    rawValues.map((rawValue: String) => convertRawValue(field, rawValue))
+  }
+
+  def convertRawValue(field: StructField, rawValue: String): Any = {
     try {
       field.dataType match {
         case _: ByteType => rawValue.toByte
@@ -380,7 +520,7 @@ private object ReplaceWithCustomValueStrategy {
       }
     } catch {
       case e: Exception =>
-        throw new WrongReplacementValueException(rawValue, field)
+        throw new ValueConversionException(rawValue, field)
     }
   }
 }
