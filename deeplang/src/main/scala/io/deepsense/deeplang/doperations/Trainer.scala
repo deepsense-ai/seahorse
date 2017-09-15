@@ -7,6 +7,7 @@ package io.deepsense.deeplang.doperations
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.{WithTrainParameters, Scorable, Trainable}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
 
 /**
  * Operation that receives Trainable and trains it on dataframe to get trained, Scorable model.
@@ -27,11 +28,11 @@ trait Trainer[T1 <: Trainable, T2 <: Scorable]
 
   override protected def _inferKnowledge(context: InferContext)(
       trainableKnowledge: DKnowledge[T1],
-      dataframeKnowledge: DKnowledge[DataFrame]): DKnowledge[T2] = {
-    DKnowledge(
-      for (trainable <- trainableKnowledge.types)
-      yield trainable.train.infer(context)(parametersForTrainable)(dataframeKnowledge)
-        .asInstanceOf[DKnowledge[T2]]
-    )
+      dataframeKnowledge: DKnowledge[DataFrame]): (DKnowledge[T2], InferenceWarnings) = {
+    val outputKnowledge = for {
+      trainable <- trainableKnowledge.types
+      (result, _) = trainable.train.infer(context)(parametersForTrainable)(dataframeKnowledge)
+    } yield result.asInstanceOf[DKnowledge[T2]]
+    (DKnowledge(outputKnowledge), InferenceWarnings.empty)
   }
 }

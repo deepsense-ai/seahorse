@@ -7,10 +7,8 @@ package io.deepsense.models.experiments
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
 
-import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.deeplang.DOperation
 import io.deepsense.graph.{Graph, Node}
-import io.deepsense.models.experiments.Experiment
 
 class ExperimentSpec
   extends WordSpec

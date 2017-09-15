@@ -9,6 +9,9 @@ import org.scalatest.FunSuite
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.DOperableMock
 
+import org.scalatest.mock.MockitoSugar
+
+import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
 
 object DClassesForDMethods {
   class S extends DOperableMock
@@ -16,7 +19,7 @@ object DClassesForDMethods {
   case class B(i: Int) extends S { def this() = this(0) }
 }
 
-class DMethodSuite extends FunSuite {
+class DMethodSuite extends FunSuite with MockitoSugar {
   test("It is possible to implement class having DMethod") {
     import DClassesForDMethods._
 
@@ -36,17 +39,22 @@ class DMethodSuite extends FunSuite {
     h.registerDOperable[B]()
 
     val context = new InferContext(h)
-    assert(c.f.infer(context)(2)(DKnowledge(new A())) == DKnowledge(new B()))
+    val (result, warnings) = c.f.infer(context)(2)(DKnowledge(new A()))
+    assert(result == DKnowledge(new B()))
+    assert(warnings == InferenceWarnings.empty)
   }
 
   test("It is possible to override inferring in DMethod") {
     import DClassesForDMethods._
 
+    val mockedWarnings = mock[InferenceWarnings]
+
     class C extends DOperableMock {
       val f: DMethod0To1[Int, S] = new DMethod0To1[Int, S] {
         override def apply(context: ExecutionContext)(parameters: Int)(): S = A(parameters)
-        override def infer(context: InferContext)(parameters: Int)(): DKnowledge[S] = {
-          DKnowledge(new A)
+        override def infer(context: InferContext)(parameters: Int)()
+            : (DKnowledge[S], InferenceWarnings) = {
+          (DKnowledge(new A), mockedWarnings)
         }
       }
     }
@@ -58,6 +66,8 @@ class DMethodSuite extends FunSuite {
     h.registerDOperable[B]()
 
     val context = new InferContext(h)
-    assert(c.f.infer(context)(2)() == DKnowledge(new A()))
+    val (result, warnings) = c.f.infer(context)(2)()
+    assert(result == DKnowledge(new A()))
+    assert(warnings == mockedWarnings)
   }
 }

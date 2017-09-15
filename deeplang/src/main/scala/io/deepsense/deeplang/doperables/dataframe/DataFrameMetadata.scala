@@ -68,12 +68,12 @@ sealed trait ColumnMetadata {
   val index: Option[Int]
 
   /**
-   * TODO
+   * Type of this column. None denotes unknown type.
    */
   def columnType: Option[ColumnType]
 
   /**
-   * Assumes that all information
+   * Assumes that this metadata contains full information.
    */
   private[dataframe] def toStructField: StructField
 }

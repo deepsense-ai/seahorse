@@ -2,11 +2,10 @@
  * Copyright (c) 2015, CodiLime Inc.
  */
 
-package io.deepsense.deeplang
+package io.deepsense.deeplang.inference
 
+import io.deepsense.deeplang.CommonContext
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
-import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
-import io.deepsense.entitystorage.EntityStorageClient
 
 /**
  * Holds information needed by DOperations and DMethods during knowledge inference.

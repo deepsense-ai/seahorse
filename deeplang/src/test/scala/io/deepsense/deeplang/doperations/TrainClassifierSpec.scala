@@ -8,9 +8,10 @@ import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatest.mock.MockitoSugar
 
-import io.deepsense.deeplang.{DKnowledge, DMethod1To1, ExecutionContext, InferContext, UnitSpec}
+import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
 import io.deepsense.deeplang.parameters.{MultipleColumnSelection, SingleColumnSelection}
 
 class TrainClassifierSpec extends UnitSpec with MockitoSugar {
@@ -60,12 +61,14 @@ class TrainClassifierSpec extends UnitSpec with MockitoSugar {
       val trainMethodMock2 = mock[DMethod1To1[Trainable.Parameters, DataFrame, Scorable]]
 
       when(trainableMock1.train).thenReturn(trainMethodMock1)
-      when(trainMethodMock1.infer(any())(any())(any())).thenReturn(scorableKnowledgeStub1)
+      when(trainMethodMock1.infer(any())(any())(any()))
+        .thenReturn((scorableKnowledgeStub1, InferenceWarnings.empty))
 
       when(trainableMock2.train).thenReturn(trainMethodMock2)
-      when(trainMethodMock2.infer(any())(any())(any())).thenReturn(scorableKnowledgeStub2)
+      when(trainMethodMock2.infer(any())(any())(any()))
+        .thenReturn((scorableKnowledgeStub2, InferenceWarnings.empty))
 
-      val result = classifier.inferKnowledge(inferContextStub)(
+      val (result, _) = classifier.inferKnowledge(inferContextStub)(
         Vector(DKnowledge(trainableMock1, trainableMock2), dataframeKnowledgeStub))
 
       result shouldBe Vector(DKnowledge(scorableStubs.toSet))

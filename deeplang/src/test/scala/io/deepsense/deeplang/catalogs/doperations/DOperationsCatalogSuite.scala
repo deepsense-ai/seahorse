@@ -13,6 +13,7 @@ import org.scalatest.{FunSuite, Matchers}
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperations.exceptions._
 import io.deepsense.deeplang.doperables.DOperableMock
+import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
 import io.deepsense.deeplang.parameters.ParametersSchema
 
 object DOperationCatalogTestResources {
@@ -46,7 +47,7 @@ object DOperationCatalogTestResources {
 
     def inferKnowledge(
         context: InferContext)(
-        l: Vector[DKnowledge[DOperable]]): Vector[DKnowledge[DOperable]] = ???
+        l: Vector[DKnowledge[DOperable]]): (Vector[DKnowledge[DOperable]], InferenceWarnings) = ???
 
     def execute(context: ExecutionContext)(l: Vector[DOperable]): Vector[DOperable] = ???
 
@@ -161,7 +162,7 @@ class DOperationsCatalogSuite extends FunSuite with Matchers with MockitoSugar {
   }
 
   test("Registering DOperation without parameterless constructor raises exception") {
-    intercept[NoParameterlessConstructorInDOperationException] {
+    a [NoParameterlessConstructorInDOperationException] shouldBe thrownBy {
       import DOperationCatalogTestResources._
       val catalog = DOperationsCatalog()
       catalog.registerDOperation[DOperationWithoutParameterlessConstructor](

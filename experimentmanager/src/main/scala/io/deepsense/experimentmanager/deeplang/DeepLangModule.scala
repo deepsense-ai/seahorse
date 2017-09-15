@@ -5,10 +5,9 @@
 package io.deepsense.experimentmanager.deeplang
 
 import com.google.inject.{AbstractModule, Provides, Scopes, Singleton}
-
-import io.deepsense.deeplang.InferContext
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
+import io.deepsense.deeplang.inference.InferContext
 
 /**
  * Provides InferContext and GraphReader. To do so,

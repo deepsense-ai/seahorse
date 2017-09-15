@@ -142,7 +142,7 @@ object Dependencies {
 
   val graph = Seq(
     nscalaTime
-  ) ++ Seq(scalatest).map(_ % Test)
+  ) ++ Seq(scalatest, mockitoCore).map(_ % Test)
 
   val graphexecutor = Seq(
     hadoopCommon,

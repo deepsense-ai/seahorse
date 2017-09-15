@@ -17,6 +17,7 @@ import org.apache.spark.sql.catalyst.expressions.GenericRow
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
 import io.deepsense.deeplang.parameters._
 import io.deepsense.reportlib.model.{ReportContent, Table}
 
@@ -198,16 +199,12 @@ case class CrossValidateRegressor()
   override protected def _inferKnowledge(context: InferContext)(
       trainableKnowledge: DKnowledge[Regressor with Trainable],
       dataframeKnowledge: DKnowledge[DataFrame]
-      ): (DKnowledge[Regressor with Scorable], DKnowledge[Report]) = {
-    (DKnowledge(
-      for (trainable <- trainableKnowledge.types)
-      yield trainable
-        .train
-        .infer(context)(parametersForTrainable)(dataframeKnowledge)
-        .asInstanceOf[DKnowledge[Regressor with Scorable]]),
-      DKnowledge(context
-        .dOperableCatalog
-        .concreteSubclassesInstances[Report]))
+      ): ((DKnowledge[Regressor with Scorable], DKnowledge[Report]), InferenceWarnings) = {
+    val scorableKnowledge = for {
+      trainable <- trainableKnowledge.types
+      (result, _) = trainable.train.infer(context)(parametersForTrainable)(dataframeKnowledge)
+    } yield result.asInstanceOf[DKnowledge[Regressor with Scorable]]
+    ((DKnowledge(scorableKnowledge), DKnowledge(Report())), InferenceWarnings.empty)
   }
 }
 

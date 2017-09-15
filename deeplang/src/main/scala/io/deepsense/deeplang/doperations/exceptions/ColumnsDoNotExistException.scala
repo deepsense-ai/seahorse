@@ -21,5 +21,4 @@ object ColumnsDoNotExistException {
       selections: Vector[ColumnSelection],
       dataFrame: DataFrame): ColumnsDoNotExistException =
     ColumnsDoNotExistException(selections, dataFrame.sparkDataFrame.schema)
-
 }

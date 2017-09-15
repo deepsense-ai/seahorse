@@ -13,6 +13,7 @@ import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
 import io.deepsense.deeplang.parameters.{MultipleColumnSelection, SingleColumnSelection}
 import io.deepsense.reportlib.model.ReportContent
 
@@ -87,17 +88,19 @@ class CrossValidateRegressorSpec extends UnitSpec with MockitoSugar {
       val trainMethodMock2 = mock[DMethod1To1[Trainable.Parameters, DataFrame, Scorable]]
 
       when(trainableMock1.train).thenReturn(trainMethodMock1)
-      when(trainMethodMock1.infer(any())(any())(any())).thenReturn(scorableKnowledgeStub1)
+      when(trainMethodMock1.infer(any())(any())(any()))
+        .thenReturn((scorableKnowledgeStub1, InferenceWarnings.empty))
 
       when(trainableMock2.train).thenReturn(trainMethodMock2)
-      when(trainMethodMock2.infer(any())(any())(any())).thenReturn(scorableKnowledgeStub2)
+      when(trainMethodMock2.infer(any())(any())(any()))
+        .thenReturn((scorableKnowledgeStub2, InferenceWarnings.empty))
 
-      val result = regressorWithoutParams.inferKnowledge(
+      val (result, _) = regressorWithoutParams.inferKnowledge(
         inferContextStub)(
-        Vector(DKnowledge(trainableMock1, trainableMock2), dataframeKnowledgeStub))
+            Vector(DKnowledge(trainableMock1, trainableMock2), dataframeKnowledgeStub))
 
       result.head shouldBe DKnowledge(scorableStubs.toSet)
-      result shouldBe Vector(DKnowledge(scorableStubs.toSet), DKnowledge(mockedReportSet))
+      result.size shouldBe 2
     }
   }
 }

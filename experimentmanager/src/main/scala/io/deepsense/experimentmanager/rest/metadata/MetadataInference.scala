@@ -6,7 +6,8 @@ package io.deepsense.experimentmanager.rest.metadata
 
 import io.deepsense.deeplang.DOperable.AbstractMetadata
 import io.deepsense.deeplang.doperables.dataframe.{DataFrameMetadataJsonProtocol, DataFrameMetadata}
-import io.deepsense.deeplang.{DOperable, DKnowledge, InferContext}
+import io.deepsense.deeplang.inference.InferContext
+import io.deepsense.deeplang.{DOperable, DKnowledge}
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.graph.Node
 import io.deepsense.models.experiments.Experiment

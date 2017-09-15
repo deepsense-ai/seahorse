@@ -15,8 +15,9 @@ import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
+import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
 import io.deepsense.deeplang.parameters.ParametersSchema
-import io.deepsense.deeplang.{DKnowledge, DOperable, DOperation, InferContext}
+import io.deepsense.deeplang.{DKnowledge, DOperable, DOperation}
 import io.deepsense.graph.{Edge, Endpoint, Graph, Node}
 import io.deepsense.graphjson.GraphJsonProtocol.GraphReader
 import io.deepsense.models.experiments.Experiment
@@ -132,8 +133,9 @@ class ExperimentJsonProtocolSpec
       Vector.fill(outArity)(implicitly[ru.TypeTag[DOperable]]))
     val knowledge = mock[DKnowledge[DOperable]]
     when(knowledge.types).thenReturn(Set[DOperable](mock[DOperable]))
+    when(knowledge.filterTypes(any())).thenReturn(knowledge)
     when(dOperation.inferKnowledge(anyObject())(anyObject())).thenReturn(
-      Vector.fill(outArity)(knowledge))
+      (Vector.fill(outArity)(knowledge), InferenceWarnings.empty))
     val parametersSchema = mock[ParametersSchema]
     when(dOperation.parameters).thenReturn(parametersSchema)
     dOperation

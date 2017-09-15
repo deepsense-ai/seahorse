@@ -11,6 +11,7 @@ import org.scalatest.mock.MockitoSugar
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.{Scorable, Trainable, UntrainedRidgeRegression}
+import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
 import io.deepsense.deeplang.parameters.{MultipleColumnSelection, SingleColumnSelection}
 
 class TrainRegressorSpec extends UnitSpec with MockitoSugar {
@@ -60,15 +61,18 @@ class TrainRegressorSpec extends UnitSpec with MockitoSugar {
       val trainMethodMock2 = mock[DMethod1To1[Trainable.Parameters, DataFrame, Scorable]]
 
       when(trainableMock1.train).thenReturn(trainMethodMock1)
-      when(trainMethodMock1.infer(any())(any())(any())).thenReturn(scorableKnowledgeStub1)
+      when(trainMethodMock1.infer(any())(any())(any())).thenReturn(
+        (scorableKnowledgeStub1, InferenceWarnings.empty))
 
       when(trainableMock2.train).thenReturn(trainMethodMock2)
-      when(trainMethodMock2.infer(any())(any())(any())).thenReturn(scorableKnowledgeStub2)
+      when(trainMethodMock2.infer(any())(any())(any())).thenReturn(
+        (scorableKnowledgeStub2, InferenceWarnings.empty))
 
-      val result = regressor.inferKnowledge(inferContextStub)(
+      val (result, warnings) = regressor.inferKnowledge(inferContextStub)(
         Vector(DKnowledge(trainableMock1, trainableMock2), dataframeKnowledgeStub))
 
       result shouldBe Vector(DKnowledge(scorableStubs.toSet))
+      warnings shouldBe InferenceWarnings.empty
     }
   }
 }

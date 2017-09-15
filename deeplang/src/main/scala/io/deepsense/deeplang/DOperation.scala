@@ -8,6 +8,7 @@ import scala.reflect.runtime.{universe => ru}
 
 import io.deepsense.commons.models
 import io.deepsense.commons.utils.Logging
+import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
 import io.deepsense.deeplang.parameters.ParametersSchema
 
 /**
@@ -31,8 +32,19 @@ abstract class DOperation extends Serializable with Logging {
 
   def execute(context: ExecutionContext)(l: Vector[DOperable]): Vector[DOperable]
 
-  def inferKnowledge(context: InferContext)
-                    (l: Vector[DKnowledge[DOperable]]): Vector[DKnowledge[DOperable]]
+  /**
+   * Infers knowledge for this operation.
+   * @param context Infer context to be used in inference.
+   * @param inputKnowledge Vector of knowledge objects to be put in input ports of this operation.
+   *                       This method assumes that size of this vector is equal to [[inArity]].
+   * @return A tuple consisting of:
+   *          - vector of knowledge object for each of operation's output port
+   *          - inference warnings for this operation
+   */
+  def inferKnowledge(
+      context: InferContext)(
+      inputKnowledge: Vector[DKnowledge[DOperable]])
+      : (Vector[DKnowledge[DOperable]], InferenceWarnings)
 }
 
 object DOperation {

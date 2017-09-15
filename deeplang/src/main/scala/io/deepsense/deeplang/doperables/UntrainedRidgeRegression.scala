@@ -8,7 +8,8 @@ import org.apache.spark.mllib.feature.{StandardScaler, StandardScalerModel}
 import org.apache.spark.mllib.regression.{LabeledPoint, RidgeRegressionWithSGD}
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.{DKnowledge, DMethod1To1, ExecutionContext, InferContext}
+import io.deepsense.deeplang._
+import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
 import io.deepsense.reportlib.model.ReportContent
 
 case class UntrainedRidgeRegression(
@@ -47,9 +48,8 @@ case class UntrainedRidgeRegression(
     override def infer(
         context: InferContext)(
         parameters: Trainable.Parameters)(
-        dataframeKnowledge: DKnowledge[DataFrame]): DKnowledge[Scorable] = {
-
-      DKnowledge(new TrainedRidgeRegression)
+        dataframeKnowledge: DKnowledge[DataFrame]): (DKnowledge[Scorable], InferenceWarnings) = {
+      (DKnowledge(new TrainedRidgeRegression), InferenceWarnings.empty)
     }
   }
 

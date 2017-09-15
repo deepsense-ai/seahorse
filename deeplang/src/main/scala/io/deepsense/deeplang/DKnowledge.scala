@@ -27,7 +27,11 @@ class DKnowledge[T <: DOperable](val types: Set[T]) {
     }
   }
 
+  lazy val size = types.size
+
   override def hashCode(): Int = types.hashCode()
+
+  override def toString: String = s"DKnowledge($types)"
 }
 
 object DKnowledge {

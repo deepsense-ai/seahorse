@@ -5,11 +5,12 @@
 package io.deepsense.deeplang.parameters
 
 import scala.collection.immutable.ListMap
+import scala.util.Try
 
 import spray.json._
 
 import io.deepsense.deeplang.parameters.ParameterConversions._
-import io.deepsense.deeplang.parameters.exceptions.NoSuchParameterException
+import io.deepsense.deeplang.parameters.exceptions.{ValidationException, NoSuchParameterException}
 
 /**
  * Schema for a given set of DOperation parameters
@@ -18,6 +19,7 @@ import io.deepsense.deeplang.parameters.exceptions.NoSuchParameterException
 class ParametersSchema protected (private val schemaMap: ListMap[String, Parameter] = ListMap.empty)
   extends Serializable {
 
+  @throws[ValidationException]
   def validate: Unit = schemaMap.values.foreach(_.validate)
 
   private def get[T <: Parameter](name: String)(implicit converter: ParameterConverter[T]): T = {

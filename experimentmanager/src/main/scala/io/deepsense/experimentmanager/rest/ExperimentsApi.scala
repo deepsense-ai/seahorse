@@ -4,6 +4,7 @@
 
 package io.deepsense.experimentmanager.rest
 
+import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.experimentmanager.rest.metadata.MetadataInference
 
 import scala.concurrent.ExecutionContext
@@ -21,7 +22,6 @@ import io.deepsense.commons.auth.usercontext.TokenTranslator
 import io.deepsense.commons.json.envelope.Envelope
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.rest.{RestApi, RestComponent}
-import io.deepsense.deeplang.InferContext
 import io.deepsense.experimentmanager.ExperimentManagerProvider
 import io.deepsense.experimentmanager.exceptions.{ExperimentNotFoundException, ExperimentRunningException}
 import io.deepsense.experimentmanager.rest.actions.Action
@@ -117,10 +117,11 @@ class ExperimentsApi @Inject() (
                     experimentManagerProvider
                       .forContext(userContext)
                       .get(experimentId)
-                      .map(_.map((experiment =>
+                      .map(_.map { experiment =>
                         Envelope(
                           MetadataInference.run(
-                            experiment, nodeId, portIndex, inferContext)))))
+                            experiment, nodeId, portIndex, inferContext))
+                      })
                   }
                 }
               }

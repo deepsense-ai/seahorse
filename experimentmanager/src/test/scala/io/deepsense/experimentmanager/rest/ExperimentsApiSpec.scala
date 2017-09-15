@@ -22,7 +22,8 @@ import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.json.envelope.Envelope
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
-import io.deepsense.deeplang.{ExecutionContext, DOperation0To1, InferContext}
+import io.deepsense.deeplang.inference.InferContext
+import io.deepsense.deeplang.{ExecutionContext, DOperation0To1}
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.experimentmanager.exceptions.ExperimentNotFoundException

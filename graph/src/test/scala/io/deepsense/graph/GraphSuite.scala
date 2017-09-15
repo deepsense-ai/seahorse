@@ -7,59 +7,7 @@ package io.deepsense.graph
 import org.scalatest.{FunSuite, Matchers}
 
 import io.deepsense.commons.serialization.Serialization
-import io.deepsense.deeplang._
-import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
-import io.deepsense.deeplang.doperables.Report
-import io.deepsense.deeplang.parameters.ParametersSchema
-
-object DClassesForDOperations {
-  trait A extends DOperable {
-    def report: Report = ???
-    def save(context: ExecutionContext)(path: String): Unit = ???
-  }
-  case class A1() extends A
-  case class A2() extends A
-}
-
-object DOperationTestClasses {
-  import DClassesForDOperations._
-
-  trait DOperationBaseFields extends DOperation {
-    // NOTE: id will be different for each instance
-    override val id: DOperation.Id = DOperation.Id.randomId
-
-    override val name: String = ""
-
-    override val parameters: ParametersSchema = ParametersSchema()
-  }
-
-  case class DOperation0To1Test() extends DOperation0To1[A1] with DOperationBaseFields {
-    override protected def _execute(context: ExecutionContext)(): A1 = ???
-  }
-
-  case class DOperation1To0Test() extends DOperation1To0[A1] with DOperationBaseFields {
-    override protected def _execute(context: ExecutionContext)(t0: A1): Unit = ???
-  }
-
-  case class DOperation1To1Test() extends DOperation1To1[A1, A] with DOperationBaseFields {
-    override protected def _execute(context: ExecutionContext)(t1: A1): A = ???
-  }
-
-  case class DOperation2To1Test() extends DOperation2To1[A1, A2, A] with DOperationBaseFields {
-    override protected def _execute(context: ExecutionContext)(t1: A1, t2: A2): A = ???
-  }
-
-  case class DOperation1To2Test() extends DOperation1To2[A, A1, A2] with DOperationBaseFields {
-    override protected def _execute(context: ExecutionContext)(in: A): (A1, A2) = ???
-  }
-
-  case class DOperation1To1Logging() extends DOperation1To1[A, A] with DOperationBaseFields {
-    logger.trace("Initializing logging to test the serialization")
-    override protected def _execute(context: ExecutionContext)(t0: A): A = ???
-
-    def trace(message: String): Unit = logger.trace(message)
-  }
-}
+import io.deepsense.graph.RandomNodeFactory.randomNode
 
 class GraphSuite extends FunSuite with Matchers with Serialization {
 
@@ -68,17 +16,17 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
   }
 
   test("Adding edge to an empty Graph should produce NoSuchElementException") {
-    intercept[NoSuchElementException] {
+    a [NoSuchElementException] shouldBe thrownBy {
       val edge = Edge(Endpoint(Node.Id.randomId, 0), Endpoint(Node.Id.randomId, 0))
       Graph(Set(), Set(edge))
     }
   }
 
   test("Graph with two nodes should have size 2") {
-    import DOperationTestClasses._
+    import io.deepsense.graph.DOperationTestClasses._
 
-    val node1 = Node(Node.Id.randomId, new DOperation1To1Test)
-    val node2 = Node(Node.Id.randomId, new DOperation1To1Test)
+    val node1 = randomNode(DOperationA1ToA())
+    val node2 = randomNode(DOperationA1ToA())
     val nodes = Set(node1, node2)
     val edges = Set(Edge(node1, 0, node2, 0))
     val graph = Graph(nodes, edges)
@@ -86,9 +34,9 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
   }
 
   test("Programmer can get/edit state of an execution graph nodes") {
-    import DOperationTestClasses._
-    val node = Node(Node.Id.randomId, new DOperation1To1Test)
-    val otherNode = Node(Node.Id.randomId, new DOperation0To1Test)
+    import io.deepsense.graph.DOperationTestClasses._
+    val node = randomNode(DOperationA1ToA())
+    val otherNode = randomNode(DOperationCreateA1())
     var graph = Graph(Set(node, otherNode))
 
     // node should be in draft
@@ -119,10 +67,10 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
   }
 
   test("Programmer can list all nodes in graph") {
-    import DOperationTestClasses._
+    import io.deepsense.graph.DOperationTestClasses._
 
-    val node1 = Node(Node.Id.randomId, new DOperation0To1Test)
-    val node2 = Node(Node.Id.randomId, new DOperation1To1Test)
+    val node1 = randomNode(DOperationCreateA1())
+    val node2 = randomNode(DOperationA1ToA())
 
     // Create a Graph instance and list of its nodes.
     val nodes = Set(node1, node2)
@@ -132,7 +80,7 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
     // Check equality of lists elements sets.
     assert(graph.nodes == nodes)
 
-    val newNode = Node(Node.Id.randomId, new DOperation1To0Test)
+    val newNode = randomNode(DOperationReceiveA1())
     graph = graph.copy(nodes = graph.nodes + newNode)
     assert(graph.nodes.size == graph.size)
     // Check lack of equality of lists elements sets after new node is added to graph.
@@ -140,11 +88,11 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
   }
 
   test("Programmer can list operations ready for execution") {
-    import DOperationTestClasses._
+    import io.deepsense.graph.DOperationTestClasses._
 
     // create a Graph Instance
-    val nodeReady = Node(Node.Id.randomId, new DOperation0To1Test)
-    val nodeNotReady = Node(Node.Id.randomId, new DOperation1To0Test)
+    val nodeReady = randomNode(DOperationCreateA1())
+    val nodeNotReady = randomNode(DOperationReceiveA1())
     val nodes = Set(nodeReady, nodeNotReady)
     val edges = Set(Edge(nodeReady, 0, nodeNotReady, 0))
     var graph = Graph(nodes, edges)
@@ -160,12 +108,12 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
   }
 
   test("Programmer can validate if graph doesn't contain a cycle") {
-    import DOperationTestClasses._
+    import io.deepsense.graph.DOperationTestClasses._
 
-    val node1 = Node(Node.Id.randomId, new DOperation1To1Test)
-    val node2 = Node(Node.Id.randomId, new DOperation2To1Test)
-    val node3 = Node(Node.Id.randomId, new DOperation1To1Test)
-    val node4 = Node(Node.Id.randomId, new DOperation1To1Test)
+    val node1 = randomNode(DOperationA1ToA())
+    val node2 = randomNode(DOperationA1A2ToA())
+    val node3 = randomNode(DOperationA1ToA())
+    val node4 = randomNode(DOperationA1ToA())
     val nodes = Set(node1, node2, node3, node4)
     val nonCyclicEdges = Set(
       Edge(node1, 0, node2, 0),
@@ -180,12 +128,12 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
   }
 
   test("Simple Graph can be sorted topologically") {
-    import DOperationTestClasses._
+    import io.deepsense.graph.DOperationTestClasses._
 
-    val node1 = Node(Node.Id.randomId, new DOperation1To1Test)
-    val node2 = Node(Node.Id.randomId, new DOperation1To1Test)
-    val node3 = Node(Node.Id.randomId, new DOperation1To1Test)
-    val node4 = Node(Node.Id.randomId, new DOperation1To1Test)
+    val node1 = randomNode(DOperationA1ToA())
+    val node2 = randomNode(DOperationA1ToA())
+    val node3 = randomNode(DOperationA1ToA())
+    val node4 = randomNode(DOperationA1ToA())
     val edges = Set(
       Edge(node1, 0, node2, 0),
       Edge(node2, 0, node3, 0),
@@ -197,12 +145,12 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
   }
 
   test("Simple Graph can calculate its direct and non-direct precedessors") {
-    import DOperationTestClasses._
+    import io.deepsense.graph.DOperationTestClasses._
 
-    val node1 = Node(Node.Id.randomId, new DOperation1To1Test)
-    val node2 = Node(Node.Id.randomId, new DOperation1To1Test)
-    val node3 = Node(Node.Id.randomId, new DOperation1To1Test)
-    val node4 = Node(Node.Id.randomId, new DOperation1To1Test)
+    val node1 = randomNode(DOperationA1ToA())
+    val node2 = randomNode(DOperationA1ToA())
+    val node3 = randomNode(DOperationA1ToA())
+    val node4 = randomNode(DOperationA1ToA())
     val edges = Set(
       Edge(node1, 0, node2, 0),
       Edge(node2, 0, node3, 0),
@@ -215,19 +163,19 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
   }
 
   test("Complicated Graph can be sorted topologically") {
-    import DOperationTestClasses._
+    import io.deepsense.graph.DOperationTestClasses._
 
     def checkIfInOrder(node1: Node, node2: Node, order: List[Node]): Unit = {
       assert(order.indexOf(node1) < order.indexOf(node2))
     }
 
-    val node1 = Node(Node.Id.randomId, new DOperation1To1Test)
-    val node2 = Node(Node.Id.randomId, new DOperation1To1Test)
-    val node3 = Node(Node.Id.randomId, new DOperation1To1Test)
-    val node4 = Node(Node.Id.randomId, new DOperation2To1Test)
-    val node5 = Node(Node.Id.randomId, new DOperation1To1Test)
-    val node6 = Node(Node.Id.randomId, new DOperation1To1Test)
-    val node7 = Node(Node.Id.randomId, new DOperation2To1Test)
+    val node1 = randomNode(DOperationA1ToA())
+    val node2 = randomNode(DOperationA1ToA())
+    val node3 = randomNode(DOperationA1ToA())
+    val node4 = randomNode(DOperationA1A2ToA())
+    val node5 = randomNode(DOperationA1ToA())
+    val node6 = randomNode(DOperationA1ToA())
+    val node7 = randomNode(DOperationA1A2ToA())
     val nodes = Set(node1, node2, node3, node4, node5, node6, node7)
     val edges = List(
       (node1, node2, 0, 0),
@@ -248,12 +196,12 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
   }
 
   test("Graph's nodes have correct predecessors and successors") {
-    import DOperationTestClasses._
+    import io.deepsense.graph.DOperationTestClasses._
 
-    val node1 = Node(Node.Id.randomId, new DOperation0To1Test)
-    val node2 = Node(Node.Id.randomId, new DOperation1To1Test)
-    val node3 = Node(Node.Id.randomId, new DOperation1To1Test)
-    val node4 = Node(Node.Id.randomId, new DOperation2To1Test)
+    val node1 = randomNode(DOperationCreateA1())
+    val node2 = randomNode(DOperationA1ToA())
+    val node3 = randomNode(DOperationA1ToA())
+    val node4 = randomNode(DOperationA1A2ToA())
     val nodes = Set(node1, node2, node3, node4)
     val edges = Set(
       Edge(node1, 0, node2, 0),
@@ -278,84 +226,15 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
     graph.successors(node4.id) should contain theSameElementsAs Vector(Set.empty)
   }
 
-  test("Graph can infer knowledge") {
-    import DClassesForDOperations._
-    import DOperationTestClasses._
-
-    val node1 = Node(Node.Id.randomId, new DOperation0To1Test)
-    val node2 = Node(Node.Id.randomId, new DOperation1To1Test)
-    val node3 = Node(Node.Id.randomId, new DOperation1To1Test)
-    val node4 = Node(Node.Id.randomId, new DOperation2To1Test)
-    val nodes = Set(node1, node2, node3, node4)
-    val edges = Set(
-      Edge(node1, 0, node2, 0),
-      Edge(node1, 0, node3, 0),
-      Edge(node2, 0, node4, 0),
-      Edge(node3, 0, node4, 1))
-    val graph = Graph(nodes, edges)
-
-    val hierarchy = new DOperableCatalog
-    hierarchy.registerDOperable[A1]()
-    hierarchy.registerDOperable[A2]()
-    val ctx = new InferContext(hierarchy)
-    val graphKnowledge = graph.inferKnowledge(ctx)
-
-    val knowledgeA1: Vector[DKnowledge[DOperable]] = Vector(new DKnowledge(new A1))
-    val knowledgeA12: Vector[DKnowledge[DOperable]] = Vector(new DKnowledge(new A1, new A2))
-
-    val graphKnowledgeExpected = Map(
-      node1.id -> knowledgeA1,
-      node2.id -> knowledgeA12,
-      node3.id -> knowledgeA12,
-      node4.id -> knowledgeA12)
-
-    graphKnowledge.knowledgeMap should contain theSameElementsAs graphKnowledgeExpected
-  }
-
-  test("Graph can infer knowledge up to given output port") {
-
-    import DClassesForDOperations._
-    import DOperationTestClasses._
-
-    val node1 = Node(Node.Id.randomId, new DOperation0To1Test)
-    val node2 = Node(Node.Id.randomId, new DOperation1To2Test)
-    val node3 = Node(Node.Id.randomId, new DOperation2To1Test)
-    val nodes = Set(node1, node2, node3)
-    val edges = Set(
-      Edge(node1, 0, node2, 0),
-      Edge(node2, 0, node3, 0),
-      Edge(node2, 1, node3, 1))
-    val graph = Graph(nodes, edges)
-
-    val hierarchy = new DOperableCatalog
-    hierarchy.registerDOperable[A1]()
-    hierarchy.registerDOperable[A2]()
-    val ctx = new InferContext(hierarchy)
-
-    val node1Knowledge = graph.inferKnowledge(node1.id, 0, ctx)
-    val node2Port0Knowledge = graph.inferKnowledge(node2.id, 0, ctx)
-    val node2Port1Knowledge = graph.inferKnowledge(node2.id, 1, ctx)
-    val node3Knowledge = graph.inferKnowledge(node3.id, 0, ctx)
-
-    val knowledgeA1 = DKnowledge(A1())
-    val knowledgeA2 = DKnowledge(A2())
-    val knowledgeA12 = DKnowledge(A1(), A2())
-
-    node1Knowledge shouldBe knowledgeA1
-    node2Port0Knowledge shouldBe knowledgeA1
-    node2Port1Knowledge shouldBe knowledgeA2
-    node3Knowledge shouldBe knowledgeA12
-  }
-
   test("Non-empty Graph should be serializable") {
-    import DOperationTestClasses._
-    val operationWithInitializedLogger = new DOperation1To1Logging
+    import io.deepsense.graph.DOperationTestClasses._
+    val operationWithInitializedLogger = new DOperationAToALogging
     val id = Node.Id.randomId
     val nodes = Seq(
-      Node(Node.Id.randomId, new DOperation0To1Test),
-      Node(Node.Id.randomId, new DOperation1To1Test),
+      randomNode(DOperationCreateA1()),
+      randomNode(DOperationA1ToA()),
       Node(id, operationWithInitializedLogger),
-      Node(Node.Id.randomId, new DOperation2To1Test)
+      randomNode(DOperationA1A2ToA())
     )
     val edges = Set(
       Edge(nodes(0), 0, nodes(1), 0),
@@ -366,7 +245,7 @@ class GraphSuite extends FunSuite with Matchers with Serialization {
     val graph = Graph(nodes.toSet, edges)
     val graphIn = serializeDeserialize(graph)
     graphIn shouldBe graph
-    graphIn.node(id).operation.asInstanceOf[DOperation1To1Logging]
+    graphIn.node(id).operation.asInstanceOf[DOperationAToALogging]
       .trace("Logging just to clarify that it works after deserialization!")
   }
 }

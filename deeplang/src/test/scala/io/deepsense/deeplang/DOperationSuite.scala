@@ -11,6 +11,7 @@ import org.scalatest.mock.MockitoSugar
 
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.DOperableMock
+import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
 import io.deepsense.deeplang.parameters.{NumericParameter, ParametersSchema, Validator}
 
 object DClassesForDOperations {
@@ -54,28 +55,33 @@ class DOperationSuite extends FunSuite with MockitoSugar {
     val secondPicker: DOperation = new PickOne
     secondPicker.parameters.getNumericParameter("param").value = Some(2)
 
-    val input = Vector(new A1, new A2)
-    assert(firstPicker.execute(new ExecutionContext)(input) == Vector(new A1))
-    assert(secondPicker.execute(new ExecutionContext)(input) == Vector(new A2))
+    val input = Vector(A1(), A2())
+    assert(firstPicker.execute(new ExecutionContext)(input) == Vector(A1()))
+    assert(secondPicker.execute(new ExecutionContext)(input) == Vector(A2()))
 
     val h = new DOperableCatalog
     h.registerDOperable[A1]()
     h.registerDOperable[A2]()
     val context = new InferContext(h)
 
-    val knowledge = Vector[DKnowledge[DOperable]](DKnowledge(new A1), DKnowledge(new A2))
-    assert(firstPicker.inferKnowledge(context)(knowledge) == Vector(DKnowledge(new A1, new A2)))
+    val knowledge = Vector[DKnowledge[DOperable]](DKnowledge(A1()), DKnowledge(A2()))
+    val (result, warnings) = firstPicker.inferKnowledge(context)(knowledge)
+    assert(result == Vector(DKnowledge(A1(), A2())))
+    assert(warnings == InferenceWarnings.empty)
   }
 
   test("It is possible to override knowledge inferring in DOperation") {
     import DClassesForDOperations._
 
+    val mockedWarnings = mock[InferenceWarnings]
+
     class GeneratorOfA extends DOperation0To1[A] {
       override val id: DOperation.Id = DOperation.Id.randomId
 
       override protected def _execute(context: ExecutionContext)(): A = ???
-      override protected def _inferKnowledge(context: InferContext)(): DKnowledge[A] = {
-        new DKnowledge(new A1, new A2)
+      override protected def _inferKnowledge(context: InferContext)()
+          : (DKnowledge[A], InferenceWarnings) = {
+        (DKnowledge(A1(), A2()), mockedWarnings)
       }
 
       override val name: String = ""
@@ -89,7 +95,9 @@ class DOperationSuite extends FunSuite with MockitoSugar {
     h.registerDOperable[A2]()
     val context = new InferContext(h)
 
-    assert(generator.inferKnowledge(context)(Vector()) == Vector(DKnowledge(new A1, new A2)))
+    val (results, warnings) = generator.inferKnowledge(context)(Vector())
+    assert(results == Vector(DKnowledge(A1(), A2())))
+    assert(warnings == mockedWarnings)
   }
 
   test("Getting types required in input port") {

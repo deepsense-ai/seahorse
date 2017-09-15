@@ -11,7 +11,7 @@ import spray.json._
 import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.commons.json.envelope.EnvelopeJsonFormat
 import io.deepsense.commons.json.{DateTimeJsonProtocol, ExceptionsJsonProtocol, IdJsonProtocol}
-import io.deepsense.deeplang.InferContext
+import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.experimentmanager.models.{Count, ExperimentsList}
 import io.deepsense.graph.Graph
 import io.deepsense.graphjson.GraphJsonProtocol.{GraphReader, GraphWriter}

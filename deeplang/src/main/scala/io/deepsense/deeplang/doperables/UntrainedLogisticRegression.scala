@@ -7,7 +7,8 @@ package io.deepsense.deeplang.doperables
 import org.apache.spark.mllib.classification.{LogisticRegressionModel, LogisticRegressionWithLBFGS}
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.{DKnowledge, DMethod1To1, ExecutionContext, InferContext}
+import io.deepsense.deeplang._
+import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
 import io.deepsense.reportlib.model.ReportContent
 
 case class UntrainedLogisticRegression(
@@ -37,11 +38,10 @@ case class UntrainedLogisticRegression(
     }
 
     override def infer(
-      context: InferContext)(
-      parameters: Trainable.Parameters)(
-      dataframeKnowledge: DKnowledge[DataFrame]): DKnowledge[Scorable] = {
-
-      DKnowledge(new TrainedLogisticRegression())
+        context: InferContext)(
+        parameters: Trainable.Parameters)(
+        dataframeKnowledge: DKnowledge[DataFrame]): (DKnowledge[Scorable], InferenceWarnings) = {
+      (DKnowledge(new TrainedLogisticRegression()), InferenceWarnings.empty)
     }
   }
 

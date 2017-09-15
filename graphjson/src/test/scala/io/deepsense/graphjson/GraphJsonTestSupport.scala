@@ -10,7 +10,7 @@ import org.scalatest.{Matchers, WordSpec}
 import spray.json.{DefaultJsonProtocol, JsObject}
 
 import io.deepsense.deeplang.DOperation
-import io.deepsense.deeplang.parameters.{BooleanParameter, ParametersSchema}
+import io.deepsense.deeplang.parameters.ParametersSchema
 import io.deepsense.graph.Endpoint
 
 trait GraphJsonTestSupport
