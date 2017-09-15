@@ -6,9 +6,13 @@ description: Min-Max Scaler
 usesMathJax: true
 includeOperationsMenu: true
 ---
-Rescales each feature individually to a common range [min, max] linearly using column summary statistics, which is also known as min-max normalization or rescaling.
+Rescales each feature individually to a common range [min, max] linearly using
+column summary statistics which is also known as Min-Max normalization or rescaling.
 
-This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.feature.MinMaxScaler">org.apache.spark.ml.feature.MinMaxScaler documentation</a>.
+This operation is ported from Spark ML. For more details, see:
+<a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.feature.MinMaxScaler">
+org.apache.spark.ml.feature.MinMaxScaler documentation
+</a>.
 
 **Since**: Seahorse 1.0.0
 
