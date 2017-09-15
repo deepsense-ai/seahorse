@@ -3,9 +3,7 @@
 resolvers ++= Seq(
   Classpaths.sbtPluginReleases,
   "sonatype-releases" at "https://oss.sonatype.org/content/repositories/releases/",
-   Resolver.url("Deepsense Ivy Releases", url(
-     "http://artifactory.deepsense.codilime.com:8081/artifactory/seahorse-io-ivy"
-   ))(Resolver.defaultIvyPatterns)
+  "sonatype-public" at "https://oss.sonatype.org/content/groups/public/"
 )
 
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.0.4")
@@ -23,7 +21,7 @@ addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.1")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-git" % "0.8.4")
 
-addSbtPlugin("io.deepsense" %% "scalatra-swagger-codegen" % "1.6")
+addSbtPlugin("ai.deepsense" %% "scalatra-swagger-codegen" % "1.7")
 
 addSbtPlugin("se.marcuslonnberg" % "sbt-docker" % "1.4.1")
 
