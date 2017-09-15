@@ -102,6 +102,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout,
   };
 
   that.clearWorkflow = function clearWorkflow() {
+    internal.renderMode = null;
     internal.reset();
   };
 

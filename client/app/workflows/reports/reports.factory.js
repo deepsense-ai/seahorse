@@ -8,9 +8,11 @@
 function ReportsFactory() {
   let reportsStorage = new Map();
 
-  let createReportEntities = (resultEntities) => {
+  let createReportEntities = (reportId, resultEntities) => {
     for (let reportEntityId in resultEntities) {
-      reportsStorage.set(reportEntityId, resultEntities[reportEntityId]);
+      let resultEntity = resultEntities[reportEntityId];
+      resultEntity.report.reportId = reportId;
+      reportsStorage.set(reportEntityId, resultEntity);
     }
   };
 

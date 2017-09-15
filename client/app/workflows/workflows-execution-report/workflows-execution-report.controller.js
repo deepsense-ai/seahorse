@@ -48,7 +48,7 @@ function WorkflowsReportController(
     WorkflowService.updateEdgesStates();
     GraphPanelRendererService.changeEdgesPaintStyles();
 
-    Report.createReportEntities(report.executionReport.resultEntities);
+    Report.createReportEntities(report.executionReport.id, report.executionReport.resultEntities);
   };
 
   $scope.$on(GraphNode.CLICK, (event, data) => {

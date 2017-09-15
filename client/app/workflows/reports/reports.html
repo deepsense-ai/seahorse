@@ -1,4 +1,5 @@
-<div class="report">
+<div class="c-report">
+  <button class="btn btn-info c-report__back-btn" ng-click="report.back()">Back</button>
   <div ng-if="::report.getTables()" ng-switch="::report.getReportName()">
     <report-dataframe
       ng-switch-when="DataFrame Report"
@@ -22,4 +23,5 @@
       data="::report.getTables()">
     </report-default>
   </div>
+  <button class="btn btn-info c-report__back-btn" ng-click="report.back()">Back</button>
 </div>
