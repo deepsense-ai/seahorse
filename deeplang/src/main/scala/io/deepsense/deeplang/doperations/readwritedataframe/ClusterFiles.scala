@@ -32,8 +32,8 @@ object ClusterFiles {
     val clusterPath = path.fullPath
     fileFormat match {
       case csv: InputFileFormatChoice.Csv => readCsv(clusterPath, csv)
-      case json: InputFileFormatChoice.Json => context.sqlContext.read.json(clusterPath)
-      case parquet: InputFileFormatChoice.Parquet => context.sqlContext.read.parquet(clusterPath)
+      case json: InputFileFormatChoice.Json => context.sparkSession.read.json(clusterPath)
+      case parquet: InputFileFormatChoice.Parquet => context.sparkSession.read.parquet(clusterPath)
     }
   }
 
@@ -60,7 +60,7 @@ object ClusterFiles {
 
   private def readCsv(clusterPath: String, csvChoice: InputFileFormatChoice.Csv)
                      (implicit context: ExecutionContext) =
-    context.sqlContext.read
+    context.sparkSession.read
       .format("com.databricks.spark.csv")
       .option("header", if (csvChoice.getCsvNamesIncluded) "true" else "false")
       .option("delimiter", csvChoice.determineColumnSeparator().toString)

@@ -85,7 +85,7 @@ object NumericToVectorUtils {
       // outputColumn: String,
       context: ExecutionContext): org.apache.spark.sql.DataFrame = {
     val inputColumnIdx = dataFrame.schema.get.fieldIndex(inputColumn)
-    val convertedRdd = dataFrame.sparkDataFrame.map { r =>
+    val convertedRdd = dataFrame.sparkDataFrame.rdd.map { r =>
       val value = r.get(inputColumnIdx)
       if (value != null) {
         Row.fromSeq(r.toSeq.updated(inputColumnIdx, Vectors.dense(value.asInstanceOf[Double])))
@@ -94,7 +94,7 @@ object NumericToVectorUtils {
       }
     }
     val convertedSchema = NumericToVectorUtils.convertSchema(dataFrame.schema.get, inputColumn)
-    val convertedDf = context.sqlContext.createDataFrame(convertedRdd, convertedSchema)
+    val convertedDf = context.sparkSession.createDataFrame(convertedRdd, convertedSchema)
     convertedDf
   }
 
@@ -128,6 +128,6 @@ object NumericToVectorUtils {
       } else {
         transformedInputColumnRdd
       }
-    context.sqlContext.createDataFrame(transformedRdd, expectedSchema)
+    context.sparkSession.createDataFrame(transformedRdd, expectedSchema)
   }
 }

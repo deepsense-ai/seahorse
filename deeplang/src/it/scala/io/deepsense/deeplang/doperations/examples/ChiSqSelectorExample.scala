@@ -39,6 +39,6 @@ class ChiSqSelectorExample extends AbstractOperationExample[ChiSqSelector] {
       (Vectors.dense(0.0, 1.0, 12.0, 0.0), 0.0),
       (Vectors.dense(1.0, 0.0, 15.0, 0.1), 0.0)
     )
-    Seq(DataFrame.fromSparkDataFrame(sqlContext.createDataFrame(data).toDF("features", "label")))
+    Seq(DataFrame.fromSparkDataFrame(sparkSession.createDataFrame(data).toDF("features", "label")))
   }
 }

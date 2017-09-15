@@ -38,6 +38,6 @@ class IDFExample extends AbstractOperationExample[IDF] {
       Vectors.dense(0.0, 1.0, 2.0, 3.0),
       Vectors.sparse(numOfFeatures, Array(1), Array(1.0)).toDense
     ).map(Tuple1(_))
-    Seq(DataFrame.fromSparkDataFrame(sqlContext.createDataFrame(data).toDF("features")))
+    Seq(DataFrame.fromSparkDataFrame(sparkSession.createDataFrame(data).toDF("features")))
   }
 }

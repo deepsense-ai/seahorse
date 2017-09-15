@@ -44,7 +44,7 @@ abstract class AbstractEvaluatorSmokeTest extends DeeplangIntegTestSupport {
       Row("aAa bBb cCc dDd eEe f", 1.0, Vectors.dense(2.1, 2.2, 2.3), 3.0),
       Row("das99213 99721 8i!#@!", 4.0, Vectors.dense(5.1, 5.2, 5.3), 6.0)
     )
-    val sparkDF = sqlContext.createDataFrame(sparkContext.parallelize(rowSeq), inputDataFrameSchema)
+    val sparkDF = sparkSession.createDataFrame(sparkContext.parallelize(rowSeq), inputDataFrameSchema)
     DataFrame.fromSparkDataFrame(sparkDF)
   }
 

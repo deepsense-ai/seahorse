@@ -19,7 +19,7 @@ package com.databricks.spark.csv
 
 import com.databricks.spark.csv.util.{ParserLibs, TypeCast}
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.SQLContext
+import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.sources._
 
 /**
@@ -48,7 +48,7 @@ case class SerializableConstantFunction[T <: Serializable](value: T)
 object DeepsenseDefaultSource {
 
   def createRelation(
-      sqlContext: SQLContext,
+      sparkSession: SparkSession,
       parameters: Map[String, String],
       baseRDD: RDD[String]): BaseRelation = {
     val delimiter = TypeCast.toChar(parameters.getOrElse("delimiter", ","))
@@ -154,7 +154,7 @@ object DeepsenseDefaultSource {
       inferSchemaFlag,
       codec,
       nullValue,
-      dateFormat)(sqlContext)
+      dateFormat)(sparkSession.sqlContext)
   }
 
 }

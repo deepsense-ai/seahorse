@@ -51,7 +51,7 @@ abstract class AbstractTransformerWrapperSmokeTest[+T <: Transformer]
       Row(Array("ala", "kot", "ala"), "aAa bBb cCc", 0, 0, 0.0, Vectors.dense(0.0, 0.0, 0.0)),
       Row(Array(null), "das99213 99721 8i!#@!", 1, 1, 1.0, Vectors.dense(1.0, 1.0, 1.0))
     )
-    val sparkDF = sqlContext.createDataFrame(sparkContext.parallelize(rowSeq), inputDataFrameSchema)
+    val sparkDF = sparkSession.createDataFrame(sparkContext.parallelize(rowSeq), inputDataFrameSchema)
     DataFrame.fromSparkDataFrame(sparkDF)
   }
 

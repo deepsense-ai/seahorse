@@ -103,7 +103,7 @@ case class ReadDataFrame()
   private def readFromJdbc
       (jdbcChoice: InputStorageTypeChoice.Jdbc)
       (implicit context: ExecutionContext): SparkDataFrame =
-    context.sqlContext
+    context.sparkSession
       .read.format("jdbc")
       .option("driver", jdbcChoice.getJdbcDriverClassName)
       .option("url", jdbcChoice.getJdbcUrl)

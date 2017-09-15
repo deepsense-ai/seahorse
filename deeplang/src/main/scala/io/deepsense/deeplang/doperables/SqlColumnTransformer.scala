@@ -16,9 +16,8 @@
 
 package io.deepsense.deeplang.doperables
 
-import org.apache.spark.sql.catalyst.SqlParser
+import org.apache.spark.sql.catalyst.parser.CatalystSqlParser
 import org.apache.spark.sql.types.StructType
-
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions._
@@ -99,7 +98,7 @@ case class SqlColumnTransformer() extends MultiColumnTransformer {
   private def validateFormula(schema: StructType) = {
     val formula = getFormula
     try {
-      val expression = SqlParser.parseExpression(formula)
+      val expression = CatalystSqlParser.parseExpression(formula)
       val columnNames = schema.map(_.name).toSet + getInputColumnAlias
       val referredColumnNames = expression.references.map(_.name).toSet
       if(!referredColumnNames.subsetOf(columnNames)) {

@@ -37,6 +37,6 @@ class NormalizeExample extends AbstractOperationExample[Normalize] {
       Vectors.sparse(3, Seq((1, 0.91), (2, 3.2))).toDense,
       Vectors.sparse(3, Seq((0, 5.7), (1, 0.72), (2, 2.7))).toDense,
       Vectors.sparse(3, Seq()).toDense).map(Tuple1(_))
-    Seq(DataFrame.fromSparkDataFrame(sqlContext.createDataFrame(data).toDF("features")))
+    Seq(DataFrame.fromSparkDataFrame(sparkSession.createDataFrame(data).toDF("features")))
   }
 }

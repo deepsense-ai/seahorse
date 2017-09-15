@@ -25,6 +25,6 @@ class DefaultMLReader[T] extends MLReader[T] {
 
   override def load(path: String): T = {
     val modelPath = Transformer.modelFilePath(path)
-    CustomPersistence.load(sqlContext.sparkContext, modelPath)
+    CustomPersistence.load(sparkSession.sparkContext, modelPath)
   }
 }

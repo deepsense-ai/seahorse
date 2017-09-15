@@ -132,7 +132,7 @@ class GridSearchIntegSpec extends DeeplangIntegTestSupport with DefaultJsonProto
         Vectors.dense(flatSize, districtFactor),
         (flatSize * districtFactor * priceForMeterSq).toLong)
     }
-    DataFrame.fromSparkDataFrame(sqlContext.createDataFrame(apartments))
+    DataFrame.fromSparkDataFrame(sparkSession.createDataFrame(apartments))
   }
 
   // Pure spark implementation which can be used to validate deeplang GridSearch results

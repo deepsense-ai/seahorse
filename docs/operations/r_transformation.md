@@ -28,7 +28,7 @@ transform <- function(dataframe) {
   c2 <- collect(d1)
   fun <- function(x){ return(-x) }
   d3 <- lapply(c2, fun)
-  d4 <- createDataFrame(sqlContext, as.data.frame(d3))
+  d4 <- createDataFrame(sparkSession, as.data.frame(d3))
   return(d4)
 }
 {% endhighlight %}

@@ -18,7 +18,7 @@ package io.deepsense.deeplang
 
 import java.io.File
 
-import org.apache.spark.sql.SQLContext
+import org.apache.spark.sql.SparkSession
 import org.apache.spark.{SparkContext, SparkConf}
 
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
@@ -44,9 +44,9 @@ object StandaloneSparkClusterForTests {
       .registerKryoClasses(Array())
 
     val sparkContext = new SparkContext(sparkConf)
-    val sqlContext = new SQLContext(sparkContext)
-
-    UserDefinedFunctions.registerFunctions(sqlContext.udf)
+    val sparkSession = SparkSession.builder().config(sparkConf).getOrCreate()
+    
+    UserDefinedFunctions.registerFunctions(sparkSession.udf)
 
     val dOperableCatalog = {
       val catalog = new DOperableCatalog
@@ -55,14 +55,14 @@ object StandaloneSparkClusterForTests {
     }
 
     val inferContext = InferContext(
-      DataFrameBuilder(sqlContext),
+      DataFrameBuilder(sparkSession),
       "testTenantId",
       dOperableCatalog,
       mock[InnerWorkflowParser])
 
     new MockedExecutionContext(
       sparkContext,
-      sqlContext,
+      sparkSession,
       inferContext,
       LocalFileSystemClient(),
       "testTenantId",

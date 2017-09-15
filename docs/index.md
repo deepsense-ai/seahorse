@@ -337,10 +337,10 @@ def transform(dataframe):
     def get_fce(js):
         return float(json.loads(js)['Cambridge']['FCE'])
 
-    sqlContext.registerFunction(
+    sparkSession.registerFunction(
       "get_fce", get_fce, FloatType())
-    sqlContext.registerDataFrameAsTable(dataframe, "df")
-    return sqlContext.sql(
+    sparkSession.registerDataFrameAsTable(dataframe, "df")
+    return sparkSession.sql(
       "SELECT Math, English, get_fce(Certificates) as FCE FROM df")
 {% endhighlight %}
 
@@ -380,18 +380,18 @@ sc.parallelize([1,2,3,4,5]).map(lambda x: x*x).collect()
 </tr>
 </table>
 
-##### Use the SQLContext
+##### Use the SparkSession
 {:.no_toc}
 
-SQLContext can be accessed as a global variable `sqlContext`.
+SparkSession can be accessed as a global variable `sparkSession`.
 
 <table>
 <tr>
 <td><b>In:</b></td>
 <td>
 {% highlight python %}
-sqlContext.registerDataFrameAsTable(dataframe(), "notebook_df")
-sqlContext.sql("SELECT FCE FROM notebook_df").toPandas().sample(5)
+sparkSession.registerDataFrameAsTable(dataframe(), "notebook_df")
+sparkSession.sql("SELECT FCE FROM notebook_df").toPandas().sample(5)
 {% endhighlight %}
 </td>
 </tr>

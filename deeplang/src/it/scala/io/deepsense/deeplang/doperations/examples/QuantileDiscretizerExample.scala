@@ -33,6 +33,6 @@ class QuantileDiscretizerExample extends AbstractOperationExample[QuantileDiscre
 
   override def inputDataFrames: Seq[DataFrame] = {
     val data = Array(1.0, 2.0, 3.0, 4.0, 5.0, 6.0).map(Tuple1(_))
-    Seq(DataFrame.fromSparkDataFrame(sqlContext.createDataFrame(data).toDF("features")))
+    Seq(DataFrame.fromSparkDataFrame(sparkSession.createDataFrame(data).toDF("features")))
   }
 }

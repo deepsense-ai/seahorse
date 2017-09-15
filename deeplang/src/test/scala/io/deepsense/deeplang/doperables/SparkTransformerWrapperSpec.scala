@@ -19,7 +19,7 @@ package io.deepsense.deeplang.doperables
 import org.apache.spark.ml
 import org.apache.spark.ml.param.{BooleanParam, DoubleParam, ParamMap}
 import org.apache.spark.sql.types.StructType
-import org.apache.spark.sql.{DataFrame => SparkDataFrame}
+import org.apache.spark.sql.{DataFrame => SparkDataFrame, Dataset}
 import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 
@@ -87,7 +87,7 @@ object SparkTransformerWrapperSpec extends MockitoSugar {
 
     val param = new DoubleParam("id", "name", "description")
 
-    override def transform(dataset: SparkDataFrame): SparkDataFrame = {
+    override def transform(dataset: Dataset[_]): SparkDataFrame = {
       require($(param) == paramValueToSet)
       outputDataFrame
     }

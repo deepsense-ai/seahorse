@@ -26,6 +26,6 @@ class SerializableSparkModelMLReader[M <: Model[M]] extends MLReader[Serializabl
 
   override def load(path: String): SerializableSparkModel[M] = {
     val modelPath = Transformer.modelFilePath(path)
-    new SerializableSparkModel(CustomPersistence.load[M](sqlContext.sparkContext, modelPath))
+    new SerializableSparkModel(CustomPersistence.load[M](sparkSession.sparkContext, modelPath))
   }
 }

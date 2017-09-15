@@ -34,6 +34,6 @@ class DCTExample extends AbstractOperationExample[DCT] {
       Vectors.dense(0.0, 1.0, -2.0, 3.0),
       Vectors.dense(-1.0, 2.0, 4.0, -7.0),
       Vectors.dense(14.0, -2.0, -5.0, 1.0)).map(Tuple1(_))
-    Seq(DataFrame.fromSparkDataFrame(sqlContext.createDataFrame(data).toDF("features")))
+    Seq(DataFrame.fromSparkDataFrame(sparkSession.createDataFrame(data).toDF("features")))
   }
 }

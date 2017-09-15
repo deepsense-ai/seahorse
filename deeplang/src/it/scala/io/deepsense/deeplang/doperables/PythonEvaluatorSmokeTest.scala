@@ -31,8 +31,8 @@ class PythonEvaluatorSmokeTest extends AbstractEvaluatorSmokeTest {
   override val evaluatorParams: Seq[ParamPair[_]] = Seq()
 
   override def setUpStubs(): Unit = {
-    val someMetricRdd = sqlContext.sparkContext.parallelize(Seq[Row](Row(1.0)))
-    val metricDF = sqlContext.createDataFrame(
+    val someMetricRdd = sparkSession.sparkContext.parallelize(Seq[Row](Row(1.0)))
+    val metricDF = sparkSession.createDataFrame(
       someMetricRdd, StructType(Seq(StructField("metric", DoubleType, nullable = false))))
     when(executionContext.dataFrameStorage.getOutputDataFrame(0)).thenReturn(Some(metricDF))
   }

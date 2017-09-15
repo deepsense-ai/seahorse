@@ -36,6 +36,6 @@ class PolynomialExpandExample extends AbstractOperationExample[PolynomialExpand]
       Vectors.dense(0.0, 0.0, 0.0),
       Vectors.dense(0.6, -1.1, -3.0),
       Vectors.sparse(3, Seq()).toDense).map(Tuple1(_))
-    Seq(DataFrame.fromSparkDataFrame(sqlContext.createDataFrame(data).toDF("input")))
+    Seq(DataFrame.fromSparkDataFrame(sparkSession.createDataFrame(data).toDF("input")))
   }
 }

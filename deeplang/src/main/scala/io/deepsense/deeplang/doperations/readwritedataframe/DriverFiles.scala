@@ -60,15 +60,15 @@ object DriverFiles {
     val fileLinesRdd = context.sparkContext.parallelize(lines)
 
     val relation = DeepsenseDefaultSource.createRelation(
-      context.sqlContext, params, fileLinesRdd
+      context.sparkSession, params, fileLinesRdd
     ).asInstanceOf[CsvRelation]
-    context.sqlContext.baseRelationToDataFrame(relation)
+    context.sparkSession.baseRelationToDataFrame(relation)
   }
 
   private def readJson(driverPath: String)(implicit context: ExecutionContext) = {
     val lines = Source.fromFile(driverPath).getLines().toStream
     val fileLinesRdd = context.sparkContext.parallelize(lines)
-    context.sqlContext.read.json(fileLinesRdd)
+    context.sparkSession.read.json(fileLinesRdd)
   }
 
   private def writeCsv
@@ -82,7 +82,7 @@ object DriverFiles {
   private def writeJson(driverPath: String, dataFrame: DataFrame)
                        (implicit context: ExecutionContext): Unit = {
     val rawJsonLines = dataFrame.sparkDataFrame.toJSON
-    writeRddToDriverFile(driverPath, rawJsonLines)
+    writeRddToDriverFile(driverPath, rawJsonLines.rdd)
   }
 
   private def csvParams(namesIncluded: Boolean, columnSeparator: ColumnSeparatorChoice) = {

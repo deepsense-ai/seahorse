@@ -38,8 +38,9 @@ class TransformerWrapper(
     new TransformerWrapper(executionContext, transformerCopy)
   }
 
-  override def transform(dataset: sql.DataFrame): sql.DataFrame = {
-    transformer._transform(executionContext, DataFrame.fromSparkDataFrame(dataset)).sparkDataFrame
+  override def transform(dataset: sql.Dataset[_]): sql.DataFrame = {
+    transformer._transform(executionContext, DataFrame.fromSparkDataFrame(dataset.toDF()))
+      .sparkDataFrame
   }
 
   override def transformSchema(schema: StructType): StructType = {

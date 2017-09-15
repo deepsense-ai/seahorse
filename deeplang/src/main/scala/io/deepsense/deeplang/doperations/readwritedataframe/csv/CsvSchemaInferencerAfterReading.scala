@@ -40,7 +40,7 @@ object CsvSchemaInferencerAfterReading {
     (sparkDataFrame: SparkDataFrame)
     (implicit context: ExecutionContext): SparkDataFrame = {
 
-    val rawStringData = sparkDataFrame.map {
+    val rawStringData = sparkDataFrame.rdd.map {
       row => Row.fromSeq(row.toSeq.map(Option(_).getOrElse("")))
     }
 
@@ -55,7 +55,7 @@ object CsvSchemaInferencerAfterReading {
         }
       })
 
-    context.sqlContext.createDataFrame(convertedData, schema)
+    context.sparkSession.createDataFrame(convertedData, schema)
   }
 
   private def inferTypes

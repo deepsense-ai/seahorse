@@ -36,6 +36,6 @@ class StandardScalerExample extends AbstractOperationExample[StandardScaler] {
       Vectors.dense(0.0, -5.1, 1.0),
       Vectors.dense(1.7, -0.6, 3.3)
     ).map(Tuple1(_))
-    Seq(DataFrame.fromSparkDataFrame(sqlContext.createDataFrame(data).toDF("features")))
+    Seq(DataFrame.fromSparkDataFrame(sparkSession.createDataFrame(data).toDF("features")))
   }
 }

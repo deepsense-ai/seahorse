@@ -19,16 +19,16 @@ package io.deepsense.deeplang.doperables.dataframe
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql
 import org.apache.spark.sql.types.StructType
-import org.apache.spark.sql.{Row, SQLContext}
+import org.apache.spark.sql.{Row, SparkSession}
 
 /**
  * DeepSense DataFrame builder.
- * @param sqlContext Spark sql context.
+ * @param sparkSession Spark sql context.
  */
-case class DataFrameBuilder(sqlContext: SQLContext) {
+case class DataFrameBuilder(sparkSession: SparkSession) {
 
   def buildDataFrame(schema: StructType, data: RDD[Row]): DataFrame = {
-    val dataFrame: sql.DataFrame = sqlContext.createDataFrame(data, schema)
+    val dataFrame: sql.DataFrame = sparkSession.createDataFrame(data, schema)
     DataFrame.fromSparkDataFrame(dataFrame)
   }
 }

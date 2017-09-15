@@ -81,7 +81,7 @@ class RenameColumnTransformer(
   private val originalColumnName: String,
   private val newColumnName: String) extends ml.Transformer with MLWritable with Params {
 
-  override def transform(dataset: sql.DataFrame): sql.DataFrame = {
+  override def transform(dataset: sql.Dataset[_]): sql.DataFrame = {
     // WARN: cannot use dataset.withColumnRenamed - it does not preserve metadata.
     val fieldsNames = dataset.schema.fieldNames
     val columns = fieldsNames.map { case name =>
@@ -127,7 +127,7 @@ object RenameColumnTransformer extends MLReadable[RenameColumnTransformer] {
 class FilterNotTransformer(
   private val columnsToOmit: Set[String]) extends ml.Transformer with MLWritable {
 
-  override def transform(dataset: sql.DataFrame): sql.DataFrame = {
+  override def transform(dataset: sql.Dataset[_]): sql.DataFrame = {
     val fieldsNames = dataset.schema.fieldNames.filterNot(columnsToOmit.contains)
     val columns = fieldsNames.map(dataset(_))
     val transformed = dataset.select(columns: _*)
@@ -166,7 +166,7 @@ class SetUpPredictionColumnTransformer(
   private val outSet =
     Set(predictedLabelsColumnName, predictionColumnName)
 
-  override def transform(dataset: sql.DataFrame): sql.DataFrame = {
+  override def transform(dataset: sql.Dataset[_]): sql.DataFrame = {
     val columnsNames = dataset.schema.fieldNames.filterNot(outSet.contains)
     val predictionColumnType = dataset.schema(predictionColumnName).dataType
     val cols = columnsNames.map(col) :+

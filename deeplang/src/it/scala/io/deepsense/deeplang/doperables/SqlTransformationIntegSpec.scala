@@ -105,7 +105,7 @@ class SqlTransformationIntegSpec extends DeeplangIntegTestSupport with Transform
 
   def assertTableUnregistered(): Unit = {
     val exception = intercept[NoSuchTableException] {
-      executionContext.sqlContext.table(dataFrameId)
+      executionContext.sparkSession.table(dataFrameId)
     }
   }
 
