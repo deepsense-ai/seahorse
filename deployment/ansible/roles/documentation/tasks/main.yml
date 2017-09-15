@@ -16,6 +16,9 @@
 - name: Install therubyracer
   gem: name=therubyracer state=latest
 
+- name: Remove old repo directory
+  file: path="{{repo_dir}}/{{repo_name}}" state=absent
+
 - name: Create repo directory
   file: path="{{repo_dir}}/{{repo_name}}" state=directory
 
@@ -30,7 +33,9 @@
         state=absent
 
 - name: Build documentation
-  command: ~/.gem/ruby/1.9.1/bin/jekyll build chdir="{{repo_dir}}/{{repo_name}}/docs"
+  environment:
+    PATH: "{{ ansible_env.PATH }}:~/.gem/ruby/1.9.1/bin"
+  command: ./build.sh chdir="{{repo_dir}}/{{repo_name}}/docs"
 
 - name: Assures docker dir exists
   file: path={{ds_documentation_download_dir}} state=directory
@@ -43,7 +48,7 @@
   template: src=Dockerfile.j2 dest="{{ds_documentation_download_dir}}/Dockerfile"
 
 - name: Copy documentation files
-  copy: src="{{repo_dir}}/{{repo_name}}/docs/_site/" dest="{{ds_documentation_download_dir}}/docs"
+  shell: cp -a "{{repo_dir}}/{{repo_name}}/docs/_site" "{{ds_documentation_download_dir}}/docs"
 
 - name: Build frontend docker image
   command: docker build -t {{ds_documentation_docker_image}} {{ds_documentation_download_dir}}
