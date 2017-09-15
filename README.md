@@ -14,7 +14,7 @@ Prerequisites:
 * docker-compose 1.9
 * sbt 0.13
 * python 2.7
-* npm 4.6
+* npm 4.6 (with npmrc)
 * jekyll 3.2
 
 Run
@@ -53,7 +53,7 @@ End-to-end integration tests:
 ```
 ## Mac OS
 
-In order for Seahorse work correctly, you need to increase memory for Docker engine to at least 6GB.
+In order for Seahorse to compile and run correctly, you need to increase memory for Docker engine to at least 6GB.
 
 ### Bash competition for Python scripts
 
