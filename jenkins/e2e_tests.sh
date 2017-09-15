@@ -4,6 +4,7 @@
 
 set -ex
 
+# `dirname $0` gives folder containing script
 cd `dirname $0`"/../"
 
 BACKEND_TAG=`git rev-parse HEAD`
@@ -30,7 +31,16 @@ cleanup # in case something was already running
 ## Start Seahorse dockers
 
 (cd deployment/docker-compose ; ./docker-compose $FRONTEND_TAG $BACKEND_TAG pull)
-(cd deployment/docker-compose ; ./docker-compose $FRONTEND_TAG $BACKEND_TAG up -d)
+# destroy dockercompose_default, so we can recreate it with proper id
+(cd deployment/docker-compose ; ./docker-compose $FRONTEND_TAG $BACKEND_TAG down)
+(
+ cd e2etestssdk
+ sbt clean assembly
+ cd ../deployment/docker-compose
+ mkdir -p jars
+ cp -r ../../e2etestssdk/target/scala-2.11/*.jar jars
+ ./docker-compose $FRONTEND_TAG $BACKEND_TAG up -d
+)
 
 ## Start Spark Standalone cluster dockers
 

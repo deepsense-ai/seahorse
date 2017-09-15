@@ -4,29 +4,39 @@
 
 package io.deepsense.workflowmanager
 
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
+
 import akka.actor.ActorSystem
-import com.google.inject.{Guice, Stage}
+import com.google.inject.{Guice, Injector, Stage}
+
 import io.deepsense.commons.rest.RestServer
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.CatalogRecorder
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
-
-import scala.concurrent.Await
-import scala.concurrent.duration.Duration
+import io.deepsense.deeplang.refl.CatalogScanner
 
 /**
  * This is the entry point of the Workflow Manager application.
  */
 object WorkflowManagerApp extends App with Logging {
-  val insecure: Boolean = args.headOption.map("insecure".equalsIgnoreCase).getOrElse(true)
+
+  val insecure: Boolean = args.headOption.forall("insecure".equalsIgnoreCase)
+
+  def injectAndInitCatalogs(injector: Injector): Unit = {
+    val dOperableCatalog = injector.getInstance(classOf[DOperableCatalog])
+    val dOperationsCatalog = injector.getInstance(classOf[DOperationsCatalog])
+    CatalogRecorder.registerDOperables(dOperableCatalog)
+    CatalogRecorder.registerDOperations(dOperationsCatalog)
+    CatalogScanner.scanAndRegister(dOperableCatalog, dOperationsCatalog)
+  }
 
   try {
     FlywayMigration.run()
 
     val injector = Guice.createInjector(Stage.PRODUCTION, new WorkflowManagerAppModule(insecure))
-    CatalogRecorder.registerDOperables(injector.getInstance(classOf[DOperableCatalog]))
-    CatalogRecorder.registerDOperations(injector.getInstance(classOf[DOperationsCatalog]))
+    injectAndInitCatalogs(injector)
     injector.getInstance(classOf[RestServer]).start()
     Await.result(injector.getInstance(classOf[ActorSystem]).whenTerminated, Duration.Inf)
   } catch {

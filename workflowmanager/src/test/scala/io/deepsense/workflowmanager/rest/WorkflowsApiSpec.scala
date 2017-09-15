@@ -52,7 +52,7 @@ class WorkflowsApiSpec
   import WorkflowsApiSpec.MockOperation
 
   val catalog = DOperationsCatalog()
-  catalog.registerDOperation[MockOperation](DOperationCategories.Transformation)
+  catalog.registerDOperation(DOperationCategories.Transformation, () => new MockOperation())
 
   val dOperableCatalog = new DOperableCatalog
   override val graphReader: GraphReader = new GraphReader(catalog)
@@ -742,8 +742,7 @@ object WorkflowsApiSpec {
     override val name: String = "mock operation"
     override val description: String = "mock operation desc"
     override val params = Array[Param[_]]()
-    override val since: Version = Version(0, 0, 0)
 
-    override protected def _execute(ctx: deeplang.ExecutionContext)(t0: DOperable): DOperable = ???
+    override protected def execute(t0: DOperable)(ctx: deeplang.ExecutionContext): DOperable = ???
   }
 }
