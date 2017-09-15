@@ -4,14 +4,14 @@
  * Owner: Witold Jedrzejewski
  */
 
-package io.deepsense.deeplang.dhierarchy
+package io.deepsense.deeplang.catalogs.doperations
 
 import scala.reflect.runtime.universe.TypeTag
 
 import org.scalatest.FunSuite
 
 import io.deepsense.deeplang._
-import io.deepsense.deeplang.dhierarchy.exceptions._
+import io.deepsense.deeplang.catalogs.doperations.exceptions._
 
 object DOperationCatalogTestResources {
   object CategoryTree {
@@ -60,7 +60,7 @@ object DOperationCatalogTestResources {
 class DOperationsCatalogSuite extends FunSuite {
 
   test("It is possible to create instance of registered DOperation") {
-    import io.deepsense.deeplang.dhierarchy.DOperationCatalogTestResources._
+    import io.deepsense.deeplang.catalogs.doperations.DOperationCatalogTestResources._
     val manager = DOperationsCatalog()
     val name = "name"
     manager.registerDOperation[DOperationA](name, CategoryTree.ML.Regression, "")
@@ -77,7 +77,7 @@ class DOperationsCatalogSuite extends FunSuite {
 
   test("Registering DOperation without parameter-less constructor raises exception") {
     intercept[NoParameterLessConstructorInDOperationException] {
-      import io.deepsense.deeplang.dhierarchy.DOperationCatalogTestResources._
+      import io.deepsense.deeplang.catalogs.doperations.DOperationCatalogTestResources._
       val manager = DOperationsCatalog()
       manager.registerDOperation[DOperationWithoutParameterLessConstructor](
         "name", CategoryTree.ML.Regression, "description")

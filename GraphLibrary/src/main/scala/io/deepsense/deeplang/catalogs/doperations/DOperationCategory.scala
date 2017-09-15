@@ -4,7 +4,7 @@
  * Owner: Michal Iwanowski
  */
 
-package io.deepsense.deeplang.dhierarchy
+package io.deepsense.deeplang.catalogs.doperations
 
 /**
  * Category of DOperations.
@@ -16,11 +16,11 @@ abstract class DOperationCategory(val name: String, val parent: Option[DOperatio
   def this(name: String, parent: DOperationCategory) = this(name, Some(parent))
 
   /** List of categories on path from this category to some top-level category. */
-  private[dhierarchy] def pathToRoot: List[DOperationCategory] = parent match {
+  private[doperations] def pathToRoot: List[DOperationCategory] = parent match {
     case Some(category) => this :: category.pathToRoot
     case None => List()
   }
 
   /** List of categories on path from some top-level category to this category. */
-  private[dhierarchy] def pathFromRoot: List[DOperationCategory] = pathToRoot.reverse
+  private[doperations] def pathFromRoot: List[DOperationCategory] = pathToRoot.reverse
 }

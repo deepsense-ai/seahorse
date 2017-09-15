@@ -6,6 +6,6 @@
 
 package io.deepsense.deeplang
 
-import io.deepsense.deeplang.dhierarchy.DHierarchy
+import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 
-class InferContext(val dHierarchy: DHierarchy)
+class InferContext(val dOperableCatalog: DOperableCatalog)

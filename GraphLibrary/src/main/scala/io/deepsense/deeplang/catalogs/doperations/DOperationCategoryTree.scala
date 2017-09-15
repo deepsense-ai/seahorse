@@ -4,7 +4,7 @@
  * Owner: Witold Jedrzejewski
  */
 
-package io.deepsense.deeplang.dhierarchy
+package io.deepsense.deeplang.catalogs.doperations
 
 import scala.collection.mutable
 

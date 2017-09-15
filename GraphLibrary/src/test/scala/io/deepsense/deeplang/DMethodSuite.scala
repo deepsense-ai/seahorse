@@ -8,7 +8,8 @@ package io.deepsense.deeplang
 
 import org.scalatest.FunSuite
 
-import io.deepsense.deeplang.dhierarchy.DHierarchy
+import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
+
 
 object DClassesForDMethods {
   class S extends DOperable
@@ -31,7 +32,7 @@ class DMethodSuite extends FunSuite {
     val c = new C
     assert(c.f(new ExecutionContext)(2)(A(3)) == B(5))
 
-    val h = new DHierarchy
+    val h = new DOperableCatalog
     h.registerDOperable[A]()
     h.registerDOperable[B]()
 
@@ -53,7 +54,7 @@ class DMethodSuite extends FunSuite {
 
     val c = new C
 
-    val h = new DHierarchy
+    val h = new DOperableCatalog
     h.registerDOperable[A]()
     h.registerDOperable[B]()
 

@@ -6,11 +6,9 @@
 
 package io.deepsense.deeplang.parameters.exceptions
 
+import io.deepsense.deeplang.exceptions.DeepLangException
+
 /**
  * Base class for all Parameters Validation exceptions.
- * TODO: Exceptions hierarchy for validation exceptions.
  */
-abstract class ValidationException(
-    val message: String,
-    val cause: Throwable = null)
-  extends Exception(message, cause)
+abstract class ValidationException(message: String) extends DeepLangException(message)

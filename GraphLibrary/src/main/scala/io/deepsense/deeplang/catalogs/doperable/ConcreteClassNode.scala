@@ -4,14 +4,13 @@
  * Owner: Witold Jedrzejewski
  */
 
-package io.deepsense.deeplang.dhierarchy
+package io.deepsense.deeplang.catalogs.doperable
 
 import java.lang.reflect.Constructor
+import io.deepsense.deeplang.catalogs.doperable.exceptions.NoParameterLessConstructorInClassException
+import io.deepsense.deeplang.{DOperable, TypeUtils}
 
-import io.deepsense.deeplang.{TypeUtils, DOperable}
-import io.deepsense.deeplang.dhierarchy.exceptions.NoParameterLessConstructorInClassException
-
-private[dhierarchy] class ConcreteClassNode(javaType: Class[_]) extends ClassNode(javaType) {
+private[doperable] class ConcreteClassNode(javaType: Class[_]) extends ClassNode(javaType) {
   val constructor: Constructor[_] = TypeUtils.constructorForClass(javaType) match {
     case Some(parameterLessConstructor) => parameterLessConstructor
     case None => throw NoParameterLessConstructorInClassException(this)
@@ -21,11 +20,11 @@ private[dhierarchy] class ConcreteClassNode(javaType: Class[_]) extends ClassNod
    * Creates instance of type represented by this.
    * Invokes first constructor and assumes that it takes no parameters.
    */
-  private[dhierarchy] def createInstance[T <: DOperable]: T = {
+  private[doperable] def createInstance[T <: DOperable]: T = {
     TypeUtils.createInstance[T](constructor)
   }
 
-  override private[dhierarchy] def subclassesInstances: Set[ConcreteClassNode] = {
+  override private[doperable] def subclassesInstances: Set[ConcreteClassNode] = {
     super.subclassesInstances + this
   }
 }

@@ -15,7 +15,7 @@ abstract class DMethod0To1[
            (): TO_0
 
   def infer(context: InferContext)(parameters: P)(): DKnowledge[TO_0] = {
-    DKnowledge(context.dHierarchy.concreteSubclassesInstances[TO_0])
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0])
   }
 }
 
@@ -27,8 +27,8 @@ abstract class DMethod0To2[
            (): (TO_0, TO_1)
 
   def infer(context: InferContext)(parameters: P)(): (DKnowledge[TO_0], DKnowledge[TO_1]) = {(
-    DKnowledge(context.dHierarchy.concreteSubclassesInstances[TO_0]),
-    DKnowledge(context.dHierarchy.concreteSubclassesInstances[TO_1]))
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0]),
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1]))
   }
 }
 
@@ -41,9 +41,9 @@ abstract class DMethod0To3[
            (): (TO_0, TO_1, TO_2)
 
   def infer(context: InferContext)(parameters: P)(): (DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]) = {(
-    DKnowledge(context.dHierarchy.concreteSubclassesInstances[TO_0]),
-    DKnowledge(context.dHierarchy.concreteSubclassesInstances[TO_1]),
-    DKnowledge(context.dHierarchy.concreteSubclassesInstances[TO_2]))
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0]),
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1]),
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_2]))
   }
 }
 
@@ -67,7 +67,7 @@ abstract class DMethod1To1[
 
   def infer(context: InferContext)(parameters: P)(
       k0: DKnowledge[TI_0]): DKnowledge[TO_0] = {
-    DKnowledge(context.dHierarchy.concreteSubclassesInstances[TO_0])
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0])
   }
 }
 
@@ -81,8 +81,8 @@ abstract class DMethod1To2[
 
   def infer(context: InferContext)(parameters: P)(
       k0: DKnowledge[TI_0]): (DKnowledge[TO_0], DKnowledge[TO_1]) = {(
-    DKnowledge(context.dHierarchy.concreteSubclassesInstances[TO_0]),
-    DKnowledge(context.dHierarchy.concreteSubclassesInstances[TO_1]))
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0]),
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1]))
   }
 }
 
@@ -97,9 +97,9 @@ abstract class DMethod1To3[
 
   def infer(context: InferContext)(parameters: P)(
       k0: DKnowledge[TI_0]): (DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]) = {(
-    DKnowledge(context.dHierarchy.concreteSubclassesInstances[TO_0]),
-    DKnowledge(context.dHierarchy.concreteSubclassesInstances[TO_1]),
-    DKnowledge(context.dHierarchy.concreteSubclassesInstances[TO_2]))
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0]),
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1]),
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_2]))
   }
 }
 
@@ -127,7 +127,7 @@ abstract class DMethod2To1[
   def infer(context: InferContext)(parameters: P)(
       k0: DKnowledge[TI_0],
       k1: DKnowledge[TI_1]): DKnowledge[TO_0] = {
-    DKnowledge(context.dHierarchy.concreteSubclassesInstances[TO_0])
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0])
   }
 }
 
@@ -143,8 +143,8 @@ abstract class DMethod2To2[
   def infer(context: InferContext)(parameters: P)(
       k0: DKnowledge[TI_0],
       k1: DKnowledge[TI_1]): (DKnowledge[TO_0], DKnowledge[TO_1]) = {(
-    DKnowledge(context.dHierarchy.concreteSubclassesInstances[TO_0]),
-    DKnowledge(context.dHierarchy.concreteSubclassesInstances[TO_1]))
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0]),
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1]))
   }
 }
 
@@ -161,9 +161,9 @@ abstract class DMethod2To3[
   def infer(context: InferContext)(parameters: P)(
       k0: DKnowledge[TI_0],
       k1: DKnowledge[TI_1]): (DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]) = {(
-    DKnowledge(context.dHierarchy.concreteSubclassesInstances[TO_0]),
-    DKnowledge(context.dHierarchy.concreteSubclassesInstances[TO_1]),
-    DKnowledge(context.dHierarchy.concreteSubclassesInstances[TO_2]))
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0]),
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1]),
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_2]))
   }
 }
 
@@ -195,7 +195,7 @@ abstract class DMethod3To1[
       k0: DKnowledge[TI_0],
       k1: DKnowledge[TI_1],
       k2: DKnowledge[TI_2]): DKnowledge[TO_0] = {
-    DKnowledge(context.dHierarchy.concreteSubclassesInstances[TO_0])
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0])
   }
 }
 
@@ -213,8 +213,8 @@ abstract class DMethod3To2[
       k0: DKnowledge[TI_0],
       k1: DKnowledge[TI_1],
       k2: DKnowledge[TI_2]): (DKnowledge[TO_0], DKnowledge[TO_1]) = {(
-    DKnowledge(context.dHierarchy.concreteSubclassesInstances[TO_0]),
-    DKnowledge(context.dHierarchy.concreteSubclassesInstances[TO_1]))
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0]),
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1]))
   }
 }
 
@@ -233,8 +233,8 @@ abstract class DMethod3To3[
       k0: DKnowledge[TI_0],
       k1: DKnowledge[TI_1],
       k2: DKnowledge[TI_2]): (DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]) = {(
-    DKnowledge(context.dHierarchy.concreteSubclassesInstances[TO_0]),
-    DKnowledge(context.dHierarchy.concreteSubclassesInstances[TO_1]),
-    DKnowledge(context.dHierarchy.concreteSubclassesInstances[TO_2]))
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0]),
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1]),
+    DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_2]))
   }
 }

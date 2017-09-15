@@ -67,7 +67,7 @@ class Graph {
       // TODO: find a way to delete this cast
       val inPortType = operation.inPortTypes(portIndex).asInstanceOf[ru.TypeTag[DOperable]]
       predecessors(portIndex) match {
-        case None => DKnowledge(context.dHierarchy.concreteSubclassesInstances(inPortType))
+        case None => DKnowledge(context.dOperableCatalog.concreteSubclassesInstances(inPortType))
         case Some(predecessor) =>
           val outPortIndex = predecessor.getSuccessorPort(this).get
           val predecessorKnowledge = graphKnowledge.getKnowledge(predecessor.id)(outPortIndex)

@@ -4,15 +4,14 @@
  * Owner: Witold Jedrzejewski
  */
 
-package io.deepsense.deeplang.dhierarchy
+package io.deepsense.deeplang.catalogs.doperations
 
 import java.lang.reflect.Constructor
 
 import scala.collection.mutable
 import scala.reflect.runtime.{universe => ru}
-
-import io.deepsense.deeplang.{TypeUtils, DOperation}
-import io.deepsense.deeplang.dhierarchy.exceptions._
+import io.deepsense.deeplang.catalogs.doperations.exceptions._
+import io.deepsense.deeplang.{DOperation, TypeUtils}
 
 case class DOperationsCatalog() {
   private val operationsTree = DOperationCategoryTree()

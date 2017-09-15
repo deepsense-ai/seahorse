@@ -9,9 +9,8 @@ package io.deepsense.graphlibrary
 import java.util.UUID
 
 import org.scalatest.{Matchers, FunSuite}
-
-import io.deepsense.deeplang.dhierarchy.DHierarchy
 import io.deepsense.deeplang._
+import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.graphlibrary.Node.State.Status
 
 object DClassesForDOperations {
@@ -196,7 +195,7 @@ class GraphSuite extends FunSuite with Matchers {
       (node3, node4, 0, 1))
     edges.foreach(n => graph.addEdge(n._1.id, n._2.id, n._3, n._4))
 
-    val hierarchy = new DHierarchy
+    val hierarchy = new DOperableCatalog
     hierarchy.registerDOperable[A1]()
     hierarchy.registerDOperable[A2]()
     val ctx = new InferContext(hierarchy)

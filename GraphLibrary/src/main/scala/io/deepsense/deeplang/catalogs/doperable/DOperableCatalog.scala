@@ -4,19 +4,18 @@
  * Owner: Witold Jedrzejewski
  */
 
-package io.deepsense.deeplang.dhierarchy
+package io.deepsense.deeplang.catalogs.doperable
 
 import scala.collection.mutable
 import scala.reflect.runtime.{universe => ru}
-
+import io.deepsense.deeplang.catalogs.doperable.exceptions.ParametrizedTypeException
 import io.deepsense.deeplang.{DOperable, TypeUtils}
-import io.deepsense.deeplang.dhierarchy.exceptions.ParametrizedTypeException
 
 /**
  * Allows to register and validate hierarchy of DClasses, DTraits and DOperations.
  * Exposes tools for advance reflecting and instances creation.
  */
-class DHierarchy {
+class DOperableCatalog {
   private val baseType = ru.typeOf[DOperable]
   /** All registered nodes. */
   private val nodes: mutable.Map[String, Node] = mutable.Map()
@@ -97,7 +96,7 @@ class DHierarchy {
   def concreteSubclassesInstances[T <: DOperable : ru.TypeTag]: Set[T] = {
     val typeNodes = nodesForType[T]
     val concreteClassNodes = typeNodes.map(_.subclassesInstances)
-    val intersect = DHierarchy.intersectSets[ConcreteClassNode](concreteClassNodes)
+    val intersect = DOperableCatalog.intersectSets[ConcreteClassNode](concreteClassNodes)
     intersect.map(_.createInstance[T])
   }
 
@@ -112,7 +111,7 @@ class DHierarchy {
   }
 }
 
-object DHierarchy {
+object DOperableCatalog {
   /** Intersection of collection of sets. */
   private def intersectSets[T](sets: Traversable[Set[T]]): Set[T] = {
     if (sets.size == 0) Set[T]()

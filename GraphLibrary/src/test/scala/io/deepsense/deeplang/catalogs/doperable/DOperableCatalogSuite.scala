@@ -4,14 +4,14 @@
  * Owner: Witold Jedrzejewski
  */
 
-package io.deepsense.deeplang.dhierarchy
+package io.deepsense.deeplang.catalogs.doperable
 
 import scala.reflect.runtime.{universe => ru}
 
 import org.scalatest.{FunSuite, Matchers}
 
 import io.deepsense.deeplang.DOperable
-import io.deepsense.deeplang.dhierarchy.exceptions._
+import io.deepsense.deeplang.catalogs.doperable.exceptions._
 
 object H {
   trait T1 extends DOperable
@@ -53,16 +53,16 @@ object TraitInheritance {
   trait S3 extends A1 with S1 with S2
 }
 
-class DHierarchySuite extends FunSuite with Matchers {
+class DOperableCatalogSuite extends FunSuite with Matchers {
 
   def testGettingSubclasses[T <: DOperable : ru.TypeTag](
-      h: DHierarchy, expected: DOperable*): Unit = {
+      h: DOperableCatalog, expected: DOperable*): Unit = {
     h.concreteSubclassesInstances[T] should contain theSameElementsAs expected
   }
 
   test("Getting concrete subclasses instances") {
 
-    val h = new DHierarchy
+    val h = new DOperableCatalog
     h.registerDOperable[H.B]()
     h.registerDOperable[H.C]()
 
@@ -85,14 +85,14 @@ class DHierarchySuite extends FunSuite with Matchers {
   }
 
   test("Getting concrete subclasses instances using ru.TypeTag") {
-    val h = new DHierarchy
+    val h = new DOperableCatalog
     h.registerDOperable[H.B]()
     val t = ru.typeTag[H.T]
     h.concreteSubclassesInstances(t) should contain theSameElementsAs List(new H.B)
   }
 
   test("Listing DTraits and DClasses") {
-    val h = new DHierarchy
+    val h = new DOperableCatalog
     h.registerDOperable[H.B]()
     h.registerDOperable[H.C]()
 
@@ -116,62 +116,62 @@ class DHierarchySuite extends FunSuite with Matchers {
 
   test("Registering class extending parametrized class should produce exception") {
     intercept[ParametrizedTypeException] {
-      import Parametrized._
-      val p = new DHierarchy
+      import io.deepsense.deeplang.catalogs.doperable.Parametrized._
+      val p = new DOperableCatalog
       p.registerDOperable[B]()
     }
   }
 
   test("Registering parametrized class should produce exception") {
     intercept[ParametrizedTypeException] {
-      import Parametrized._
-      val p = new DHierarchy
+      import io.deepsense.deeplang.catalogs.doperable.Parametrized._
+      val p = new DOperableCatalog
       p.registerDOperable[A[Int]]()
     }
   }
 
   test("Registering parametrized trait should produce exception") {
     intercept[ParametrizedTypeException] {
-      import Parametrized._
-      val p = new DHierarchy
+      import io.deepsense.deeplang.catalogs.doperable.Parametrized._
+      val p = new DOperableCatalog
       p.registerDOperable[T[Int]]()
     }
   }
 
   test("Registering concrete class with no parameter-less constructor should produce exception") {
     intercept[NoParameterLessConstructorInClassException] {
-      import Constructors._
-      val h = new DHierarchy
+      import io.deepsense.deeplang.catalogs.doperable.Constructors._
+      val h = new DOperableCatalog
       h.registerDOperable[NotParameterLess]()
     }
   }
 
   test("Registering class with constructor with default parameters should produce exception") {
     intercept[NoParameterLessConstructorInClassException] {
-      import Constructors._
-      val h = new DHierarchy
+      import io.deepsense.deeplang.catalogs.doperable.Constructors._
+      val h = new DOperableCatalog
       h.registerDOperable[WithDefault]()
     }
   }
 
   test("Registering class with auxiliary parameter-less constructor should succeed") {
-    import Constructors._
-    val h = new DHierarchy
+    import io.deepsense.deeplang.catalogs.doperable.Constructors._
+    val h = new DOperableCatalog
     h.registerDOperable[AuxiliaryParameterLess]()
   }
 
   test("Registering hierarchy with trait extending class should produce exception") {
     intercept[TraitInheritingFromClassException] {
-      import TraitInheritance._
-      val h = new DHierarchy
+      import io.deepsense.deeplang.catalogs.doperable.TraitInheritance._
+      val h = new DOperableCatalog
       h.registerDOperable[C2]()
     }
   }
 
   test("Registering trait extending class should produce exception") {
     intercept[TraitInheritingFromClassException] {
-      import TraitInheritance._
-      val h = new DHierarchy
+      import io.deepsense.deeplang.catalogs.doperable.TraitInheritance._
+      val h = new DOperableCatalog
       h.registerDOperable[S3]()
     }
   }

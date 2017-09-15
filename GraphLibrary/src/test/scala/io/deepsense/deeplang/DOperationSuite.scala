@@ -10,7 +10,7 @@ import scala.reflect.runtime.{universe => ru}
 
 import org.scalatest.FunSuite
 
-import io.deepsense.deeplang.dhierarchy.DHierarchy
+import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.parameters.ParametersSchema
 
 object DClassesForDOperations {
@@ -53,7 +53,7 @@ class DOperationSuite extends FunSuite {
     assert(firstPicker.execute(new ExecutionContext)(input) == Vector(new A1))
     assert(secondPicker.execute(new ExecutionContext)(input) == Vector(new A2))
 
-    val h = new DHierarchy
+    val h = new DOperableCatalog
     h.registerDOperable[A1]()
     h.registerDOperable[A2]()
     val context = new InferContext(h)
@@ -74,7 +74,7 @@ class DOperationSuite extends FunSuite {
 
     val generator: DOperation = new GeneratorOfA
 
-    val h = new DHierarchy
+    val h = new DOperableCatalog
     h.registerDOperable[A1]()
     h.registerDOperable[A2]()
     val context = new InferContext(h)

@@ -4,10 +4,10 @@
  * Owner: Witold Jedrzejewski
  */
 
-package io.deepsense.deeplang.dhierarchy.exceptions
+package io.deepsense.deeplang.catalogs.doperable.exceptions
 
 import scala.reflect.runtime.{universe => ru}
 
-class ParametrizedTypeException(val t: ru.Type)
-  extends DHierarchyException(
+case class ParametrizedTypeException(t: ru.Type)
+  extends DOperableCatalogException(
     s"Cannot register parametrized type in DHierarchy (Type $t is parametrized)")
