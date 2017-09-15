@@ -68,9 +68,9 @@ For scala docs details, see
 <tbody>
 
 <tr>
-<td><code>numTopFeatures</code></td>
+<td><code>num top features</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Number of features that selector will select, ordered by statistics value descending. If the number of features is < numTopFeatures, then this will select all features.</td>
+<td>Number of features that selector will select, ordered by statistics value descending. If the real number of features is lower, then this will select all features.</td>
 </tr>
 
 <tr>

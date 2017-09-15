@@ -37,9 +37,9 @@ class ChiSqSelectorEstimator
 
   val numTopFeatures = new IntParamWrapper[
     ml.param.Params { val numTopFeatures: ml.param.IntParam }](
-    name = "numTopFeatures",
+    name = "num top features",
     description = "Number of features that selector will select, ordered by statistics value " +
-      "descending. If the number of features is < numTopFeatures, then this will select all " +
+      "descending. If the real number of features is lower, then this will select all " +
       "features.",
     sparkParamGetter = _.numTopFeatures,
     validator = RangeValidator(begin = 1.0, end = Int.MaxValue, step = Some(1.0)))
