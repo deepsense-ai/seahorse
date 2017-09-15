@@ -18,6 +18,7 @@ import io.deepsense.commons.utils.Logging
 import io.deepsense.graph.Node
 import io.deepsense.models.workflows._
 import io.deepsense.workflowmanager.exceptions.WorkflowNotFoundException
+import io.deepsense.workflowmanager.model.WorkflowDescription
 import io.deepsense.workflowmanager.storage._
 
 /**
@@ -98,15 +99,20 @@ class WorkflowManagerImpl @Inject()(
     }
   }
 
-  def clone(id: Id): Future[Option[WorkflowWithVariables]] = {
+  def clone(
+      id: Id,
+      workflowDescription: WorkflowDescription): Future[Option[WorkflowWithVariables]] = {
     logger.debug("Clone workflow id: {}", id)
     authorizator.withRole(roleCreate) {
       userContext => {
         getWorkflowWithNotebook(id).flatMap {
           case Some(workflow) =>
             val gui = workflow.additionalData.fields("gui").asJsObject
-            val guiUpdated = JsObject(gui.fields.updated(
-              "name", JsString(s"Copy of ${gui.fields("name").toString}")))
+            val guiUpdated = JsObject(
+              gui.fields
+                .updated("name", JsString(workflowDescription.name))
+                .updated("description", JsString(workflowDescription.description))
+            )
             val updatedWorkflow = workflow.copy(additionalData = JsObject(
               workflow.additionalData.fields.updated("gui", guiUpdated)))
             create(updatedWorkflow).map(id => Some(withVariables(id, updatedWorkflow)))

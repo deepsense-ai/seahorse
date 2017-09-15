@@ -144,13 +144,13 @@
 
             }
           },
-          "label column": {
-            "type": "column",
-            "value": "quality"
-          },
           "prediction column": {
             "type": "column",
             "value": "prediction"
+          },
+          "label column": {
+            "type": "column",
+            "value": "quality"
           }
         },
         "number of folds": 2.0
@@ -314,59 +314,59 @@
   },
   "thirdPartyData": {
     "gui": {
+      "name": "EXAMPLE 5: Wine Properties",
+      "description": "Finding important features of wines that define wine quality as perceived by tasters",
       "predefColors": ["#00B1EB", "#1ab394", "#2f4050", "#f8ac59", "#ed5565", "#DD6D3F"],
       "nodes": {
         "dca5f49c-ffbb-47a5-2d41-4ba464ebb3c9": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5323,
-            "x": 5776
+            "x": 5776,
+            "y": 5323
           }
         },
         "033a5b01-6151-0fd7-b328-ef8b21034331": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5195,
-            "x": 5553
+            "x": 5553,
+            "y": 5195
           }
         },
         "c71b2c3f-73d9-296a-e76b-bd5e520e4a1d": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5321,
-            "x": 5993
+            "x": 5993,
+            "y": 5321
           }
         },
         "6ce029b7-1496-e7ee-c1ed-61a401d24f19": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5324,
-            "x": 5545
+            "x": 5545,
+            "y": 5324
           }
         },
         "412ff831-1cfc-a090-65d9-456aeb91f166": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5503,
-            "x": 5775
+            "x": 5775,
+            "y": 5503
           }
         },
         "de32421b-06bb-188a-4926-d914d2b7d05a": {
-          "color": "#00B1EB",
           "uiName": "",
+          "color": "#00B1EB",
           "coordinates": {
-            "y": 5491,
-            "x": 5509
+            "x": 5509,
+            "y": 5491
           }
         }
-      },
-      "name": "EXAMPLE 5: Wine Properties",
-      "description": "Finding important features of wines that define wine quality as perceived by tasters"
+      }
     },
     "notebooks": {
 
@@ -375,7 +375,7 @@
   "variables": {
 
   },
-  "id": "e552d2a1-48d6-4adc-bec6-fec6a0150c82",
+  "id": "309c3c4a-8610-4e34-b14e-759c2e271cdc",
   "metadata": {
     "type": "batch",
     "apiVersion": "1.1.0"

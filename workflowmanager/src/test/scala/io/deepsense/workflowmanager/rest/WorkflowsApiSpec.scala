@@ -486,10 +486,14 @@ class WorkflowsApiSpec
   }
 
   "POST /workflows/:id/clone" should {
+    val description = JsObject(
+      "name" -> JsString("Linear Regression"),
+      "description" -> JsString("Use case 100")
+    )
 
     "return NotFound" when {
       "workflow with specified id does not exist" in {
-        Post(s"/$apiPrefix/${Workflow.Id.randomId}/clone") ~>
+        Post(s"/$apiPrefix/${Workflow.Id.randomId}/clone", description) ~>
           addHeaders(
             RawHeader("X-Auth-Token", validAuthTokenTenantA)) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
@@ -500,7 +504,7 @@ class WorkflowsApiSpec
 
     "return Created" when {
       "workflow with specified id exists" in {
-        Post(s"/$apiPrefix/${workflowAId}/clone") ~>
+        Post(s"/$apiPrefix/${workflowAId}/clone", description) ~>
           addHeaders(
             RawHeader("X-Auth-Token", validAuthTokenTenantA)) ~> testRoute ~> check {
           status should be(StatusCodes.Created)

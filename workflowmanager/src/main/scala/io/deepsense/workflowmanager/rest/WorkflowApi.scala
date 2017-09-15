@@ -31,6 +31,7 @@ import io.deepsense.models.json.workflow.exceptions.WorkflowVersionException
 import io.deepsense.models.workflows._
 import io.deepsense.workflowmanager.WorkflowManagerProvider
 import io.deepsense.workflowmanager.exceptions._
+import io.deepsense.workflowmanager.model.{WorkflowDescriptionJsonProtocol, WorkflowDescription}
 
 /**
  * Exposes Workflow Manager through a REST API.
@@ -87,6 +88,10 @@ abstract class WorkflowApi @Inject() (
 
   private val versionedWorkflowWithResultsUnmarashaler: Unmarshaller[WorkflowWithResults] =
     sprayJsonUnmarshallerConverter[WorkflowWithResults](versionedWorkflowWithResultsReader)
+
+  private val workflowDescriptionUnmarashaler: Unmarshaller[WorkflowDescription] =
+    sprayJsonUnmarshallerConverter[WorkflowDescription](
+      WorkflowDescriptionJsonProtocol.workflowDescriptionJsonFormat)
 
   implicit private val envelopeWorkflowIdJsonFormat =
     new EnvelopeJsonFormat[Workflow.Id]("workflowId")
@@ -163,14 +168,16 @@ abstract class WorkflowApi @Inject() (
             path(JavaUUID / "clone") { workflowId =>
               post {
                 withUserContext { userContext =>
-                  val futureWorkflow =
-                    workflowManagerProvider.forContext(userContext).clone(workflowId)
-                  onSuccess(futureWorkflow) {
-                    case Some(workflowWithVariables) =>
-                      val envelopedWorkflowId = Envelope(workflowWithVariables.id)
-                      complete(StatusCodes.Created, envelopedWorkflowId)
-                    case None =>
-                      complete(StatusCodes.NotFound)
+                  implicit val unmarshaller = workflowDescriptionUnmarashaler
+                  entity(as[WorkflowDescription]) { workflowDescription =>
+                    onSuccess(workflowManagerProvider.forContext(userContext)
+                      .clone(workflowId, workflowDescription)) {
+                      case Some(workflowWithVariables) =>
+                        val envelopedWorkflowId = Envelope(workflowWithVariables.id)
+                        complete(StatusCodes.Created, envelopedWorkflowId)
+                      case None =>
+                        complete(StatusCodes.NotFound)
+                    }
                   }
                 }
               }
