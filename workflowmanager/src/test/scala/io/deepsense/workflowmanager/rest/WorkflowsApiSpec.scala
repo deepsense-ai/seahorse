@@ -14,6 +14,7 @@ import spray.http.StatusCodes
 import spray.json._
 import spray.routing.Route
 
+import io.deepsense.commons.auth.directives.AuthDirectives
 import io.deepsense.commons.auth.usercontext.{TokenTranslator, UserContext}
 import io.deepsense.commons.auth.{AuthorizatorProvider, UserContextAuthorizator}
 import io.deepsense.commons.models.Id
@@ -117,7 +118,7 @@ class WorkflowsApiSpec
       }
     })
 
-    new WorkflowApi(tokenTranslator, workflowManagerProvider,
+    new SecureWorkflowApi(tokenTranslator, workflowManagerProvider,
       apiPrefix, graphReader, inferContext).route
   }
 

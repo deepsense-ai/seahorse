@@ -10,6 +10,7 @@ import com.google.inject.multibindings.Multibinder
 import com.google.inject.name.Names.named
 
 import io.deepsense.commons.auth.AuthModule
+import io.deepsense.commons.auth.directives.InsecureAuthDirectives
 import io.deepsense.commons.rest.{RestComponent, VersionApi}
 import io.deepsense.models.json.workflow.GraphReaderModule
 import io.deepsense.workflowmanager.deeplang.DeepLangModule
@@ -31,8 +32,9 @@ class ApisModule(withMockedSecurity: Boolean) extends AbstractModule {
     install(new AuthModule(withMockedSecurity))
     install(new GraphReaderModule)
     install(new DeepLangModule)
-    bindApi.to(classOf[WorkflowApi])
-    bindApi.to(classOf[OperationsApi])
+
+    bindApi.to(classOf[InsecureWorkflowApi])
+    bindApi.to(classOf[InsecureOperationsApi])
     bindApi.to(classOf[VersionApi])
   }
 }

@@ -14,9 +14,10 @@ import spray.http.StatusCodes
 import spray.routing.{ExceptionHandler, PathMatchers, Route}
 import spray.util.LoggingContext
 
+import io.deepsense.commons.auth.directives.{InsecureAuthDirectives, AuthDirectives, AbstractAuthDirectives}
 import io.deepsense.commons.auth.usercontext.TokenTranslator
 import io.deepsense.commons.models.Id
-import io.deepsense.commons.rest.{RestApi, RestComponent}
+import io.deepsense.commons.rest.{RestApiAbstractAuth, RestApi, RestComponent}
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.graph.CyclicGraphException
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
@@ -28,19 +29,21 @@ import io.deepsense.workflowmanager.exceptions.{FileNotFoundException, WorkflowN
 /**
  * Exposes Workflow Manager through a REST API.
  */
-class WorkflowApi @Inject() (
+abstract class WorkflowApi @Inject() (
     val tokenTranslator: TokenTranslator,
     workflowManagerProvider: WorkflowManagerProvider,
     @Named("workflows.api.prefix") apiPrefix: String,
     override val graphReader: GraphReader,
     override val inferContext: InferContext)
     (implicit ec: ExecutionContext)
-  extends RestApi
+  extends RestApiAbstractAuth
   with RestComponent
   with WorkflowJsonProtocol
   with WorkflowWithKnowledgeJsonProtocol
   with WorkflowWithVariablesJsonProtocol
   with MetadataInferenceResultJsonProtocol {
+
+  self: AbstractAuthDirectives =>
 
   assert(StringUtils.isNoneBlank(apiPrefix))
   private val pathPrefixMatcher = PathMatchers.separateOnSlashes(apiPrefix)
@@ -135,3 +138,33 @@ class WorkflowApi @Inject() (
     }
   }
 }
+
+class SecureWorkflowApi @Inject() (
+  tokenTranslator: TokenTranslator,
+  workflowManagerProvider: WorkflowManagerProvider,
+  @Named("workflows.api.prefix") apiPrefix: String,
+  override val graphReader: GraphReader,
+  override val inferContext: InferContext)
+  (implicit ec: ExecutionContext)
+  extends WorkflowApi(
+    tokenTranslator,
+    workflowManagerProvider,
+    apiPrefix,
+    graphReader,
+    inferContext)
+  with AuthDirectives
+
+class InsecureWorkflowApi @Inject() (
+  tokenTranslator: TokenTranslator,
+  workflowManagerProvider: WorkflowManagerProvider,
+  @Named("workflows.api.prefix") apiPrefix: String,
+  override val graphReader: GraphReader,
+  override val inferContext: InferContext)
+  (implicit ec: ExecutionContext)
+  extends WorkflowApi(
+    tokenTranslator,
+    workflowManagerProvider,
+    apiPrefix,
+    graphReader,
+    inferContext)
+  with InsecureAuthDirectives

@@ -10,12 +10,13 @@ import spray.http.StatusCodes
 import spray.routing._
 import spray.util.LoggingContext
 
-import io.deepsense.commons.auth.directives.AuthDirectives
+import io.deepsense.commons.auth.directives.{AuthDirectives, AbstractAuthDirectives}
 import io.deepsense.commons.auth.exceptions.{NoRoleException, ResourceAccessDeniedException}
 import io.deepsense.commons.auth.usercontext.InvalidTokenException
 import io.deepsense.commons.utils.Logging
 
-trait RestApi extends Directives with AuthDirectives with Logging {
+trait RestApiAbstractAuth extends Directives with Logging {
+  suite: AbstractAuthDirectives =>
 
   def exceptionHandler(implicit log: LoggingContext): ExceptionHandler = {
     ExceptionHandler {
@@ -52,3 +53,5 @@ trait RestApi extends Directives with AuthDirectives with Logging {
     }
   }
 }
+
+trait RestApi extends RestApiAbstractAuth with AuthDirectives

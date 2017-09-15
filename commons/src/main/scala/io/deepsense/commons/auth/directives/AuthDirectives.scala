@@ -10,11 +10,15 @@ import shapeless._
 import spray.routing.Directive1
 import spray.routing.Directives._
 
-import io.deepsense.commons.auth.usercontext.{TokenTranslator, UserContext}
+import io.deepsense.commons.auth.usercontext._
 
-trait AuthDirectives {
+trait AbstractAuthDirectives {
   val TokenHeader = "X-Auth-Token"
 
+  def withUserContext: Directive1[Future[UserContext]]
+}
+
+trait AuthDirectives extends AbstractAuthDirectives {
   def tokenTranslator: TokenTranslator
 
   /**
@@ -26,5 +30,39 @@ trait AuthDirectives {
     headerValueByName(TokenHeader).hmap {
       case rawToken :: HNil => tokenTranslator.translate(rawToken)
     }
+  }
+}
+
+trait InsecureAuthDirectives extends AbstractAuthDirectives  {
+
+  def withUserContext: Directive1[Future[UserContext]] = {
+    val tenantId = "olympus"
+    val tenant: Tenant = Tenant(tenantId, tenantId, tenantId, Some(true))
+    val godsRoles = Seq(
+      "workflows:get",
+      "workflows:update",
+      "workflows:create",
+      "workflows:list",
+      "workflows:delete",
+      "workflows:launch",
+      "workflows:abort",
+      "entities:get",
+      "entities:create",
+      "entities:update",
+      "entities:delete",
+      "admin")
+    val context = Future.successful(
+      UserContextStruct(
+        Token("godmode", Some(tenant)),
+        tenant,
+        User(
+          id = "Zeus",
+          name = "Zeus",
+          email = None,
+          enabled = Some(true),
+          tenantId = Some(tenantId)),
+        godsRoles.map(Role(_)).toSet
+      ))
+    provide(context)
   }
 }

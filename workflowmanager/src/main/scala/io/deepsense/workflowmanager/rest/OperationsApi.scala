@@ -14,9 +14,10 @@ import spray.httpx.SprayJsonSupport
 import spray.routing.{PathMatchers, Route}
 
 import io.deepsense.commons.auth.AuthorizatorProvider
+import io.deepsense.commons.auth.directives.{AuthDirectives, AbstractAuthDirectives, InsecureAuthDirectives}
 import io.deepsense.commons.auth.usercontext.TokenTranslator
 import io.deepsense.commons.json.envelope.Envelope
-import io.deepsense.commons.rest.{RestApi, RestComponent}
+import io.deepsense.commons.rest.{RestApiAbstractAuth, RestApi, RestComponent}
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.models.json.workflow.DeepLangJsonProtocol
@@ -24,17 +25,19 @@ import io.deepsense.models.json.workflow.DeepLangJsonProtocol
 /**
  * Provides REST for operations.
  */
-class OperationsApi @Inject() (
+abstract class OperationsApi @Inject() (
     val tokenTranslator: TokenTranslator,
     dOperableCatalog: DOperableCatalog,
     dOperationsCatalog: DOperationsCatalog,
     authorizatorProvider: AuthorizatorProvider,
     @Named("operations.api.prefix") apiPrefix: String)
     (implicit ec: ExecutionContext)
-  extends RestApi
+  extends RestApiAbstractAuth
   with RestComponent
   with DeepLangJsonProtocol
   with SprayJsonSupport {
+
+  self: AbstractAuthDirectives =>
 
   require(StringUtils.isNotBlank(apiPrefix))
 
@@ -81,3 +84,33 @@ class OperationsApi @Inject() (
     }
   }
 }
+
+class SecureOperationsApi @Inject() (
+    tokenTranslator: TokenTranslator,
+    dOperableCatalog: DOperableCatalog,
+    dOperationsCatalog: DOperationsCatalog,
+    authorizatorProvider: AuthorizatorProvider,
+    @Named("operations.api.prefix") apiPrefix: String)
+    (implicit ec: ExecutionContext)
+  extends OperationsApi(
+    tokenTranslator,
+    dOperableCatalog,
+    dOperationsCatalog,
+    authorizatorProvider,
+    apiPrefix)
+  with AuthDirectives
+
+class InsecureOperationsApi @Inject() (
+  tokenTranslator: TokenTranslator,
+  dOperableCatalog: DOperableCatalog,
+  dOperationsCatalog: DOperationsCatalog,
+  authorizatorProvider: AuthorizatorProvider,
+  @Named("operations.api.prefix") apiPrefix: String)
+  (implicit ec: ExecutionContext)
+  extends OperationsApi(
+    tokenTranslator,
+    dOperableCatalog,
+    dOperationsCatalog,
+    authorizatorProvider,
+    apiPrefix)
+  with InsecureAuthDirectives
