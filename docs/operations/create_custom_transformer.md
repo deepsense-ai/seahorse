@@ -7,28 +7,28 @@ usesMathJax: true
 includeOperationsMenu: true
 ---
 
-`Create Custom Transformer` is an operation used to create a user-defined [Transformer](transformer.html) .
+A `Create Custom Transformer` is an operation used to create a user-defined [Transformer](transformer.html) .
 
-Custom transformer can be created by building an internal workflow from
+A Custom transformer can be created by building an internal workflow from
 [operations](../operations.html). The internal workflow must have two following nodes:
 
-* input node ("source") which provides an input `DataFrame`
+* input node ("source") which provides an input `DataFrame`,
 * output node ("sink") which receives the result of executing the transformation on the input
-`DataFrame`
+`DataFrame`.
 
-`Create Custom Transformer` operation enables the user to create the transformation by defining
-data flow between input and output nodes. For the internal workflow to be valid, the same
+The `Create Custom Transformer` operation enables the user to create a transformation by defining
+a data flow between the input and output nodes. For the internal workflow to be valid, the same
 requirements as for a regular [workflow](../deeplang_overview.html#workflows) must be met, i.e.:
 
-* it must not contain a cycle
-* parameters of all operations must be correct
-* each input port must have exactly one incoming connection
-* classes of entities passed between ports must meet requirements of these ports' type qualifiers
+* it must not contain a cycle,
+* parameters of all operations must be correct,
+* each input port must have exactly one incoming connection,
+* classes of entities passed between ports must meet requirements of these ports' type qualifiers.
 
-Additionally:
+In addition to that:
 
-* it should take the input `DataFrame` from the input node
-* it should output the transformed `DataFrame` to the output node
+* it should take the input `DataFrame` from the input node,
+* it should output the transformed `DataFrame` to the output node.
 
 The `Transformer` produced by the operation can be used as an input to e.g. [Transform](transform.html)
 operation. When the `Transform` operation is executed, its input `DataFrame` is passed to the input node
@@ -39,7 +39,7 @@ of the output node is returned as the output `DataFrame` of the `Transform` oper
 
 ## Input
 
-`Create Custom Transformer` does not take any input.
+The `Create Custom Transformer` does not take any input.
 
 ## Output
 
@@ -54,8 +54,8 @@ of the output node is returned as the output `DataFrame` of the `Transform` oper
 <tbody>
 <tr><td><code>0</code></td><td>
 <code><a href="../classes/transformer.html">Transformer</a></code></td>
-<td><code>Transformer</code> that allows to apply the operation on other <code>DataFrames</code>
-using <code><a href="transform.html">Transform</a></code></td>
+<td>The <code>Transformer</code> that allows to apply the operation on another <code>DataFrames</code>
+using a <code><a href="transform.html">Transform</a></code>.</td>
 </tr>
 </tbody>
 </table>
