@@ -5,7 +5,7 @@
       <th ng-repeat="columnName in table.columnNames">
         <div>
           <p class="break-mid-words">
-            <span class="has-distribution" ng-switch="::getDistributionType(columnName).subtype"
+            <span class="has-distribution" ng-switch="getDistributionType(columnName).subtype"
                   ng-click="controller.showDistribution(columnName)" >
               <i ng-switch-when="discrete"
                  popover-trigger="mouseenter"
@@ -18,7 +18,7 @@
                  class="fa fa-bar-chart-o">
               </i>
             </span>
-            <span>{{ ::columnName }}</span>
+            <span>{{ columnName }}</span>
           </p>
         </div>
         <div>
