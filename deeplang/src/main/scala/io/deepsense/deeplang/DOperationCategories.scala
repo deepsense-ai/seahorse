@@ -31,6 +31,8 @@ object DOperationCategories {
 
   object Filtering extends DOperationCategory("a6114fc2-3144-4828-b350-4232d0d32f91", "Filtering")
 
+  object UserDefined extends DOperationCategory("9a9c8c50-fcc6-44d5-90f1-967ef3295ded", "User defined")
+
   object Transformation
     extends DOperationCategory("3fcc6ce8-11df-433f-8db3-fa1dcc545ed8", "Transformation") {
 

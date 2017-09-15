@@ -50,6 +50,15 @@ abstract class DOperationsCatalog {
    */
   def registerDOperation[T <: DOperation : ru.TypeTag](
       category: DOperationCategory): Unit
+
+  /**
+    * Registers DOperation, which can be later viewed and created.
+    * DOperation has to have parameterless constructor.
+    *
+    * @param t runtime type of the operation
+    * @param category category to which this operation directly belongs
+    */
+  def registerDOperation(t: ru.Type, category: DOperationCategory): Unit
 }
 
 object DOperationsCatalog {
@@ -71,9 +80,7 @@ object DOperationsCatalog {
       }
     }
 
-    def registerDOperation[T <: DOperation : ru.TypeTag](
-        category: DOperationCategory): Unit = {
-      val operationType = ru.typeOf[T]
+    def registerDOperation(operationType: ru.Type, category: DOperationCategory): Unit = {
       val constructor = constructorForType(operationType)
       val operationInstance = DOperationsCatalog.createDOperation(constructor)
       operationInstance.validate()
@@ -96,6 +103,12 @@ object DOperationsCatalog {
       operations += id -> operationDescriptor
       categoryTree = categoryTree.addOperation(operationDescriptor, category)
       operationsConstructors(id) = constructor
+    }
+
+    def registerDOperation[T <: DOperation : ru.TypeTag](
+        category: DOperationCategory): Unit = {
+      val operationType = ru.typeOf[T]
+      registerDOperation(operationType, category)
     }
 
     def createDOperation(id: DOperation.Id): DOperation = operationsConstructors.get(id) match {

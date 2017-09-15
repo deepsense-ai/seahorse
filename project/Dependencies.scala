@@ -60,6 +60,7 @@ object Library {
   val nscalaTime = "com.github.nscala-time" %% "nscala-time" % Version.nsscalaTime
   val mockitoCore = "org.mockito" % "mockito-core" % Version.mockito
   val rabbitmq = "com.thenewmotion.akka" %% "akka-rabbitmq" % "2.2" excludeAkkaActor
+  val reflections = "org.reflections" % "reflections" % "0.9.10"
   val scalacheck = "org.scalacheck" %% "scalacheck" % Version.scalacheck
   val slf4j = "org.slf4j" % "slf4j-api" % "1.7.12"
   val slf4jLog4j = "org.slf4j" % "slf4j-log4j12" % "1.7.12"
@@ -130,7 +131,8 @@ object Dependencies {
     amazonS3,
     nscalaTime,
     scalaReflect,
-    apacheCommonsCsv
+    apacheCommonsCsv,
+    reflections
   ) ++ Seq(mockitoCore, scalacheck, scalatest, scoverage).map(_ % Test)
 
   val docgen = Spark.components

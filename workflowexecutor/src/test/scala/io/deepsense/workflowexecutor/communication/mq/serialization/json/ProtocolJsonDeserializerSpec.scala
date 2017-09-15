@@ -22,6 +22,8 @@ import org.scalatest.mock.MockitoSugar
 import spray.json._
 
 import io.deepsense.commons.StandardSpec
+import io.deepsense.deeplang.CatalogRecorder
+import io.deepsense.deeplang.catalogs.CatalogPair
 import io.deepsense.graph.DeeplangGraph
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.workflows.{Workflow, WorkflowMetadata, WorkflowType}
@@ -63,7 +65,8 @@ class ProtocolJsonDeserializerSpec
       readMessage shouldBe Abort(workflowId)
     }
     "deserialize UpdateWorkflow messages" in {
-      val graphReader = new GraphReader(Executor.createDOperationsCatalog())
+      val CatalogPair(_, dOperationsCatalog) = CatalogRecorder.createCatalogs()
+      val graphReader = new GraphReader(dOperationsCatalog)
       val protocolDeserializer = ProtocolJsonDeserializer(graphReader)
       val workflowId = Workflow.Id.randomId
 

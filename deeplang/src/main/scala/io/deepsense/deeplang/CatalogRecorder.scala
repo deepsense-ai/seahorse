@@ -16,6 +16,7 @@
 
 package io.deepsense.deeplang
 
+import io.deepsense.deeplang.catalogs.CatalogPair
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.deeplang.doperables._
@@ -30,6 +31,7 @@ import io.deepsense.deeplang.doperations.custom.{Sink, Source}
 import io.deepsense.deeplang.doperations.spark.wrappers.estimators._
 import io.deepsense.deeplang.doperations.spark.wrappers.evaluators._
 import io.deepsense.deeplang.doperations.spark.wrappers.transformers._
+import io.deepsense.deeplang.refl.CatalogScanner
 
 /**
  * Object used to register all desired DOperables and DOperations.
@@ -360,4 +362,26 @@ object CatalogRecorder {
       DOperationCategories.ML.ModelEvaluation)
 
   }
+
+  private def createDOperableCatalog(): DOperableCatalog = {
+    val catalog = new DOperableCatalog
+    CatalogRecorder.registerDOperables(catalog)
+    catalog
+  }
+
+  private def createDOperationsCatalog(): DOperationsCatalog = {
+    val catalog = DOperationsCatalog()
+    CatalogRecorder.registerDOperations(catalog)
+    catalog
+  }
+
+  def createCatalogs(): CatalogPair = {
+    val dOperableCatalog = createDOperableCatalog()
+    val dOperationsCatalog = createDOperationsCatalog()
+
+    CatalogScanner.scanAndRegister(dOperableCatalog, dOperationsCatalog)
+
+    CatalogPair(dOperableCatalog, dOperationsCatalog)
+  }
+
 }
