@@ -42,24 +42,24 @@ class RunningExperimentsActorSpec
   val launched = experiment.markRunning
   val mockClientFactory = mock[GraphExecutorClientFactory]
 
-  var actorRef: TestActorRef[RunningExperimentsActor] = _
+  var runningExperimentActorRef: TestActorRef[RunningExperimentsActor] = _
   var actor: RunningExperimentsActor = _
-  var probe: TestProbe = _
-  var graphExecutorClient: GraphExecutorClient = createMockGraphExecutorClient(updatedGraph)
+  var probe: TestProbe = TestProbe()
+  var graphExecutorClient: GraphExecutorClient = _
 
   before {
     graphExecutorClient = createMockGraphExecutorClient(updatedGraph)
-    actorRef = createTestedActor(3L, 15000L)
-    actor = actorRef.underlyingActor
+    runningExperimentActorRef = createTestedActor(3L, 15000L)
+    actor = runningExperimentActorRef.underlyingActor
     probe = TestProbe()
     when(mockClientFactory.create()).thenReturn(graphExecutorClient)
   }
 
-  def withLaunchedExperiments(experiments: Set[Experiment])(testCode: => Any): Unit ={
-    withLaunchedExperiments(actorRef,experiments) _
+  private def withLaunchedExperiments(experiments: Set[Experiment])(testCode: => Any): Unit = {
+    withLaunchedExperiments(runningExperimentActorRef, experiments)(testCode)
   }
 
-  def withLaunchedExperiments(
+  private def withLaunchedExperiments(
       ar: TestActorRef[RunningExperimentsActor],
       experiments: Set[Experiment])(testCode: => Any): Unit = {
     experiments.foreach(e => probe.send(ar, Launch(e)))
@@ -70,11 +70,11 @@ class RunningExperimentsActorSpec
   "RunningExperimentsActor" should {
     "launch experiment" when {
       "received Launch" in {
-        probe.send(actorRef, Launch(experiment))
+        probe.send(runningExperimentActorRef, Launch(experiment))
         probe.expectMsg(Launched(launched))
         eventually {
-          actor.experiments should contain key experiment.id
           verify(graphExecutorClient).sendExperiment(launched)
+          actor.experiments should contain key experiment.id
         }
       }
     }
@@ -85,15 +85,15 @@ class RunningExperimentsActorSpec
     }
     "answer with Status(Some(...))" when {
       "received GetStatus and the experiment was queued" in {
-        probe.send(actorRef, Launch(experiment))
+        probe.send(runningExperimentActorRef, Launch(experiment))
         probe.expectMsgAnyClassOf(classOf[Launched])
-        probe.send(actorRef, GetStatus(experiment.id))
+        probe.send(runningExperimentActorRef, GetStatus(experiment.id))
         probe.expectMsg(Status(Some(launched)))
       }
     }
     "answer with Status(None)" when {
       "received GetStatus but the experiment was not queued" in {
-        probe.send(actorRef, GetStatus(experiment.id))
+        probe.send(runningExperimentActorRef, GetStatus(experiment.id))
         probe.expectMsg(Status(None))
       }
     }
@@ -139,7 +139,7 @@ class RunningExperimentsActorSpec
     }
     "answer with empty map" when {
       "received ListExperiments with tenantId and tenant has no experiments" in {
-        probe.send(actorRef, ExperimentsByTenant(Some("tenantWithNoExperiments")))
+        probe.send(runningExperimentActorRef, ExperimentsByTenant(Some("tenantWithNoExperiments")))
         probe.expectMsgAnyClassOf(classOf[ExperimentsMap])
           .experimentsByTenantId shouldBe Map.empty
       }
@@ -160,7 +160,7 @@ class RunningExperimentsActorSpec
       val expectedExperiment = experimentWithNode.withGraph(updatedGraph)
       withLaunchedExperiments(Set(experimentWithNode)) {
         eventually (timeout(6.seconds), interval(1.second)) {
-          probe.send(actorRef, GetStatus(experimentWithNode.id))
+          probe.send(runningExperimentActorRef, GetStatus(experimentWithNode.id))
           val Status(Some(exp)) = probe.expectMsgType[Status]
           exp shouldBe expectedExperiment
         }

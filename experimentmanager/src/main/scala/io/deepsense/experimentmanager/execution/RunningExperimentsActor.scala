@@ -24,7 +24,7 @@ class RunningExperimentsActor @Inject() (
     @Named("runningexperiments.timeout") timeoutMillis: Long,
     @Named("runningexperiments.refresh.interval") refreshIntervalMillis: Long,
     @Named("runningexperiments.refresh.timeout") refreshTimeoutMillis: Long,
-    graphExecutorFactory: GraphExecutorClientFactory)
+    graphExecutorFactory: GraphExecutorClientFactory = DefaultGraphExecutorClientFactory())
   extends Actor with ActorLogging {
 
   val refreshInterval = refreshIntervalMillis.milliseconds
@@ -99,7 +99,7 @@ class RunningExperimentsActor @Inject() (
     log.info(s"RunningExperimentsActor starts aborting experiment: $id")
     experiments.get(id) match {
       case None => sender() ! Status(None)
-      case Some((experiment, client))  =>
+      case Some((experiment, client)) =>
         val aborted = experiment.markAborted
         experiments.put(aborted.id, (aborted, client))
         Future(client.terminateExecution()).onFailure {

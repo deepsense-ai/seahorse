@@ -98,8 +98,7 @@ class ExperimentManagerImplSpec extends StandardSpec with UnitTestSupport {
     "launch experiment and return it" when {
       "the experiment exists" in {
         val launchedExperiment = mock[Experiment]
-        when(storage.get(any()))
-          .thenReturn(Future.successful(Some(storedExperiment)))
+        when(storage.get(any())).thenReturn(Future.successful(Some(storedExperiment)))
 
         val eventualExperiment = experimentManager.launch(storedExperiment.id, Seq.empty)
         probe.expectMsg(Launch(storedExperiment))

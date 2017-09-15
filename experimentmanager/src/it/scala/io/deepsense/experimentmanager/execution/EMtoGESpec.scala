@@ -27,10 +27,8 @@ class EMtoGESpec
   with Eventually
   with IntegrationPatience {
 
-  val created = DateTimeConverter.now
-  val updated = created.plusHours(1)
   implicit var system: ActorSystem = _
-  var actorRef: TestActorRef[RunningExperimentsActor] = _
+  var runningExperimentsActorRef: TestActorRef[RunningExperimentsActor] = _
   var testProbe: TestProbe = _
 
   implicit val timeout: Timeout = 1.second
@@ -42,7 +40,7 @@ class EMtoGESpec
     "change status of experiment to COMPLETED after all nodes COMPLETED successfully" in {
       val experiment = createExperiment()
 
-      testProbe.send(actorRef, Launch(experiment))
+      testProbe.send(runningExperimentsActorRef, Launch(experiment))
       testProbe.expectMsgPF() {
         case Launched(exp) => exp.state == Experiment.State.running
       }
@@ -55,7 +53,7 @@ class EMtoGESpec
     "change status of experiment to FAILED after some nodes FAILED" in {
       val experiment = createExperimentWithFailingGraph()
 
-      testProbe.send(actorRef, Launch(experiment))
+      testProbe.send(runningExperimentsActorRef, Launch(experiment))
       testProbe.expectMsgPF() {
         case Launched(exp) => exp.state == Experiment.State.running
       }
@@ -67,7 +65,7 @@ class EMtoGESpec
   }
 
   def stateOfExperiment(experiment: Experiment): Experiment.State = {
-    testProbe.send(actorRef, GetStatus(experiment.id))
+    testProbe.send(runningExperimentsActorRef, GetStatus(experiment.id))
     val Status(Some(exp)) = testProbe.expectMsgType[Status]
     exp.state
   }
@@ -80,7 +78,7 @@ class EMtoGESpec
     }
 
     eventually {
-      testProbe.send(actorRef, GetStatus(experiment.id))
+      testProbe.send(runningExperimentsActorRef, GetStatus(experiment.id))
       val status = testProbe.expectMsgType[Status]
       graphCompleted(status) shouldBe true
     }
@@ -95,10 +93,7 @@ class EMtoGESpec
       Experiment.Id.randomId,
       SimpleGraphExecutionIntegSuiteEntities.entityTenantId,
       "name",
-      graph,
-      created,
-      updated,
-      "experiment description")
+      graph)
   }
 
   def createExperimentWithFailingGraph() = {
@@ -108,22 +103,18 @@ class EMtoGESpec
       Experiment.Id.randomId,
       "aTenantId",
       "name",
-      graph,
-      created,
-      updated,
-      "experiment description")
+      graph)
   }
 
   override def beforeAll(): Unit = {
     super.beforeAll()
     system = ActorSystem("test")
-    actorRef = TestActorRef(
+    runningExperimentsActorRef = TestActorRef(
       new RunningExperimentsActor(
         SimpleGraphExecutionIntegSuiteEntities.Name,
         3000,
         1000,
-        15000,
-        DefaultGraphExecutorClientFactory()))
+        15000))
     testProbe = TestProbe()
   }
 

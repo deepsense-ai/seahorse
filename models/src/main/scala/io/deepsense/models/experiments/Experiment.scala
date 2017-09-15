@@ -7,6 +7,7 @@ package io.deepsense.models.experiments
 import org.joda.time.DateTime
 
 import io.deepsense.commons.auth.Ownable
+import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.models
 import io.deepsense.graph.Graph
 import io.deepsense.models.experiments.Experiment.State
@@ -30,21 +31,19 @@ case class Experiment(
   with Serializable {
 
   /**
-   * Creates an updated version of the experiment using some input experiment.
-   * Rewrites to the new experiment all fields from the other experiment,
-   * but does not change id or tenant id.
+   * Creates a copy of the experiment with name, graph, updated, and
+   * description fields updated to reflect inputExperiment and updateDateTime
+   * input parameters' values.
+   *
    * @param inputExperiment The input experiment to update with.
    * @return Updated version of an experiment.
    */
   def updatedWith(inputExperiment: InputExperiment, updateDateTime: DateTime): Experiment = {
-    Experiment(
-      id,
-      tenantId,
-      inputExperiment.name,
-      inputExperiment.graph,
-      created,
-      updateDateTime,
-      inputExperiment.description)
+    copy(
+      name = inputExperiment.name,
+      graph = inputExperiment.graph,
+      updated = updateDateTime,
+      description = inputExperiment.description)
   }
 
   /**
@@ -71,6 +70,16 @@ case class Experiment(
 }
 
 object Experiment {
+
+  def apply(
+      id: Experiment.Id,
+      tenantId: String,
+      name: String,
+      graph: Graph) = {
+    val created = DateTimeConverter.now
+    new Experiment(id, tenantId, name, graph, created, created)
+  }
+
   type Id = models.Id
   val Id = models.Id
 
