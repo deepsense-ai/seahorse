@@ -9,14 +9,12 @@ import javax.inject.{Inject, Named}
 import scala.collection.mutable
 import scala.concurrent.Future
 import scala.concurrent.duration._
-import scala.util.Failure
 
 import akka.actor.{Actor, ActorLogging}
 import akka.pattern.{after, pipe}
 import akka.util.Timeout
 
 import io.deepsense.experimentmanager.execution.RunningExperimentsActor._
-import io.deepsense.graph.Graph
 import io.deepsense.graphexecutor.{Constants, GraphExecutorClient}
 import io.deepsense.models.experiments.Experiment
 import io.deepsense.models.experiments.Experiment.Id
@@ -81,11 +79,10 @@ class RunningExperimentsActor @Inject() (
       } else {
         throw new IllegalStateException("Spawning Failed for experiment: " + experiment)
       }
-    }.onComplete {
-      case Failure(ex) =>
-        log.error(ex, s"Launching experiment failed $experiment")
-        self ! ExperimentStatusUpdated(markExperimentAsFailed(resultExp.id, Option(ex.getMessage)))
-      case _ => ()
+    }.onFailure { case reason =>
+        log.error(reason, s"Launching experiment failed $experiment")
+        self ! ExperimentStatusUpdated(
+          markExperimentAsFailed(resultExp.id, Option(reason.getMessage)))
     }
   }
 
@@ -105,7 +102,9 @@ class RunningExperimentsActor @Inject() (
       case Some((experiment, client))  =>
         val aborted = experiment.markAborted
         experiments.put(aborted.id, (aborted, client))
-        Future(client.terminateExecution())
+        Future(client.terminateExecution()).onFailure {
+          case reason => log.error(reason, s"Could not terminate execution of experiment $id")
+        }
         sender() ! Status(Some(aborted))
     }
     log.info(s"RunningExperimentsActor finishes aborting experiment: $id")
@@ -146,6 +145,11 @@ class RunningExperimentsActor @Inject() (
       val shouldUpdate = updateTasks.get(experiment.id).map(_.isCompleted).getOrElse(true)
       if (shouldUpdate) {
         val state = Future { getExecutionState(experiment, client) }
+        state.onFailure { case reason =>
+          log.error(
+            reason,
+            "getExecutionState of experiment ${experiment.id} failed! (Is it already started?)")
+        }
         val stateWithTimeout = Future firstCompletedOf Seq(state,
           after(refreshTimeout, context.system.scheduler)(Future.failed {
             new TimeoutException(s"getExecutionState of ${experiment.id} has timed out!")
@@ -154,7 +158,6 @@ class RunningExperimentsActor @Inject() (
         stateWithTimeout.map(experiment => ExperimentStatusUpdated(experiment)).pipeTo(self)
       }
     }
-
 
   private object InternalMessages {
     sealed abstract class InternalMessage

@@ -22,6 +22,8 @@ class RunningExperimentsActorModule extends AbstractModule {
   @Singleton
   @Named("RunningExperimentsActor")
   def provideRunningExperimentsActorRef(system: ActorSystem): ActorRef = {
-    system.actorOf(GuiceAkkaExtension(system).props[RunningExperimentsActor])
+    system.actorOf(
+      GuiceAkkaExtension(system).props[RunningExperimentsActor],
+      "RunningExperimentsActor")
   }
 }
