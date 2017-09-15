@@ -1,7 +1,7 @@
 {
   "entity": {
     "report": {
-      "name": "EvaluateScoring report",
+      "name": "EvaluateRegression",
       "tables": {
         "EvaluateRegression": {
           "name": "EvaluateRegression",

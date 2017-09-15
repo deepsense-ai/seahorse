@@ -37,7 +37,7 @@ module.exports = function apiProxy(config) {
         doResponse = (data, status, contetType) => {
           responseWriteHead.call(response, status, {
             'Content-Type': contetType || 'application/json; charset=UTF-8',
-            'Content-Length': data.length || 0
+            'Content-Length': Buffer.byteLength(data, 'utf8')
           });
           responseWrite.call(response, data);
           responseEnd.call(response);

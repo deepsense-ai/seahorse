@@ -18,7 +18,7 @@ function ReportsConfig($stateProvider) {
           EntitiesAPIClient.getReport($stateParams.id).
             then((data) => {
               $rootScope.stateData.dataIsLoaded = true;
-              deferred.resolve(data.entity.report);
+              deferred.resolve(JSON.parse(data.entity.report));
             }).
             catch(() => {
               $rootScope.stateData.errorMessage = 'Could not load the report';

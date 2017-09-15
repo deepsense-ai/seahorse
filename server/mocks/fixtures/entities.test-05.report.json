@@ -1,7 +1,7 @@
 {
   "entity": {
     "report": {
-      "name": "Evaluate Classification",
+      "name": "evaluateClassification",
       "tables": {
         "summary": {
           "name": "summary",
