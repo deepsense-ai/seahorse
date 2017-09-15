@@ -7,6 +7,10 @@ html, body {
   min-height: 100%;
 }
 
+body {
+  background: white;
+}
+
 [ng\:cloak], [ng-cloak], .ng-cloak {
   display: none !important;
 }
@@ -16,42 +20,17 @@ html, body {
 
 /* common rules */
 .no-selection {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
-/* main navigation */
-.navbar-static-side {
-  .nav-header {
-    background: #1d3647;
-    padding: 20px 25px;
-
-    .logo {
-      height: 67px;
-    }
-  }
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .navbar-static-top h2 {
   float: left;
   margin-left: 20px;
-}
-
-#page-wrapper {
-  padding-bottom: 50px;
-  min-height: 1000px;
-
-  .wrapper-content {
-    padding: 10px 0 0 0;
-  }
-
-  #wrapper {
-    overflow: hidden;
-  }
 }
 
 textarea {
@@ -68,7 +47,12 @@ textarea {
   cursor: crosshair;
 }
 
+#wrapper {
+  height: 100%;
+}
+
 @import "./variables.less";
 @import "./../app/experiments/experiments.less";
 @import "./../app/reports/reports.less";
 @import "./../app/common/common.less";
+@import "./../app/home/home";

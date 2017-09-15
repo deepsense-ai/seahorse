@@ -31,7 +31,8 @@
       "html": "**/*.html",
       "fonts": "fonts/*",
       "images": "img/*",
-      "favicon": "favicon.ico"
+      "favicon": "favicon.ico",
+      "assets": "./**/assets/**/*"
     },
     "server": {
       "path": "./server/",

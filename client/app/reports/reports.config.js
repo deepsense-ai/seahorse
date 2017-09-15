@@ -6,7 +6,7 @@
 
 /* @ngInject */
 function ReportsConfig($stateProvider) {
-  $stateProvider.state('lab.report', {
+  $stateProvider.state('report', {
       url: '/report/:id',
       templateUrl: 'app/reports/reports.html',
       controller: 'Report',

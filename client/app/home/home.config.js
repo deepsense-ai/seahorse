@@ -6,7 +6,7 @@
 
 /* @ngInject */
 function HomeConfig($stateProvider) {
-  $stateProvider.state('lab.home', {
+  $stateProvider.state('home', {
       url: '/',
       templateUrl: 'app/home/home.html',
       controller: 'Home as home'

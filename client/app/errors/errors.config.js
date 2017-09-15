@@ -6,7 +6,7 @@
 /* @ngInject */
 function ErrorsConfig($stateProvider) {
   $stateProvider.
-    state('lab.errorState', {
+    state('errorState', {
       url: '/error',
       views: {
         'errorView@': {

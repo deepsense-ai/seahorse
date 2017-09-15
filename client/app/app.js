@@ -23,9 +23,7 @@ var lab = angular.module('ds.lab', [
   'deepsense.cycle-analyser',
   'toastr',
   require('./home/home.module.js').name,
-  require('./account/account.module.js').name,
   require('./experiments/experiments.module.js').name,
-  require('./datasets/datasets.module.js').name,
   require('./common/common.module.js').name,
   require('./reports/reports.module.js').name,
   require('./errors/errors.module.js').name

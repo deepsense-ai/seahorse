@@ -1,58 +1,22 @@
 <!doctype html>
 <html lang="en" ng-app="ds.lab" ng-strict-di>
 <head>
-  <meta charset="utf-8">
-  <title>DeepSense.io LAB</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <title>Seahorse</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
   <link rel="stylesheet" type="text/css" href="css/libs.css">
   <link rel="stylesheet" type="text/css" href="css/app.css">
 </head>
 <body>
-  <div id="wrapper">
-    <nav class="navbar-default navbar-static-side" role="navigation">
-      <div class="sidebar-collapse">
-        <ul class="nav" id="side-menu">
-          <li class="nav-header">
-            <div class="logo-image">
-              <a ui-sref="lab.home"><img src="img/logo.png" class="logo" alt="deepsense.io" title=""></a>
-            </div>
-            <div class="logo-element">ds</div>
-          </li>
+  <ui-view id="wrapper"
+           class="animated fadeIn"
+           ng-show="stateData.showView"
+           droppable
+           droppable-type="frame">
 
-          <li><a ui-sref="lab.experiments">
-            <i class="fa fa-cube"></i>
-            <span class="nav-label">Experiments</span>
-          </a></li>
-          <li><a ui-sref="lab.datasets">
-            <i class="fa fa-database"></i>
-            <span class="nav-label">Datasets</span>
-          </a></li>
-        </ul>
-      </div>
-    </nav>
+  </ui-view>
 
-    <div id="page-wrapper" class="gray-bg">
-      <div class="row border-bottom" ng-controller="NavigationController as navigationController">
-        <navigation-bar title="navigationController.getTitle()"></navigation-bar>
-      </div>
-
-      <div class="wrapper wrapper-content" ng-cloak>
-        <div ui-view="errorView"></div>
-
-        <deepsense-loading-spinner-lg ng-if="!stateData.dataIsLoaded"></deepsense-loading-spinner-lg>
-
-        <div ng-show="stateData.showView" class="animated fadeIn" ui-view
-             droppable
-             droppable-type="frame"></div>
-      </div>
-
-      <div class="footer">
-        <div class="pull-right">
-          Copyright <strong>CodiLime Inc.</strong> &copy; 2015
-        </div>
-      </div>
-    </div>
-  </div>
   <script type="text/javascript" src="js/libs.js"></script>
   <script type="text/javascript" src="js/app.js"></script>
   <script type="text/javascript" src="config.js"></script>
