@@ -1,0 +1,67 @@
+/**
+ * Copyright (c) 2015, CodiLime Inc.
+ *
+ */
+
+.operation-attributes-panel {
+  position: absolute;
+  width: 250px;
+  height: 500px;
+  background: rgba(255, 255, 255, 0.8);
+  right: 0;
+  top: 40px;
+  border-radius: 10px;
+  border: 1px solid #999;
+  overflow: hidden;
+  z-index: 9999;
+
+  button.close {
+    position: absolute;
+    top: 15px;
+    right: 10px;
+  }
+
+  .panel-footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+  }
+
+  & > .panel-heading,
+  & > .panel-footer {
+    padding: 15px;
+    background-color: rgba(240, 240, 240, 0.8);
+  }
+
+  & > .panel-heading {
+    font-size: 1.2em;
+    height: 53px;
+  }
+
+  & > .panel-footer {
+    font-size: 1.1em;
+  }
+
+  & > .panel-body {
+    overflow: auto;
+
+    .panel-heading,
+    .panel-body,
+    .panel-footer {
+      padding: 5px 10px;
+      font-size: 1.1em;
+    }
+
+    .panel {
+      background: rgba(255, 255, 255, 0.8);
+    }
+    .panel-heading,
+    .panel-footer {
+      background-color: rgba(240, 240, 240, 0.8);
+    }
+
+    .panel:last-child {
+      margin-bottom: 0px;
+    }
+  }
+}

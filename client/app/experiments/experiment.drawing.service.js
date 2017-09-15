@@ -76,10 +76,12 @@ function DrawingService() {
 
   that.renderPorts = function renderPorts() {
     var nodes = internal.experiment.getNodes();
-    for (var i = 0; i < nodes.length; i++) {
-      var node = internal.getNodeById(nodes[i].id);
-      that.addOutputPoint(node, nodes[i].output);
-      that.addInputPoint(node, nodes[i].input);
+    for (var nodeId in nodes) {
+      if (nodes.hasOwnProperty(nodeId)) {
+        var node = internal.getNodeById(nodeId);
+        that.addOutputPoint(node, nodes[nodeId].output);
+        that.addInputPoint(node, nodes[nodeId].input);
+      }
     }
   };
 

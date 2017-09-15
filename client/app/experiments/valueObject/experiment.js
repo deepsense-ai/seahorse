@@ -11,11 +11,16 @@ function Experiment() {
   var that = this;
 
   var internal = {};
-  internal.nodes = [];
+  internal.nodes = {};
   internal.edges = [];
 
   that.getNodes = function () {
     return internal.nodes;
+  };
+
+  that.getNodeById = function (nodeId) {
+    var nodes = that.getNodes();
+    return nodes[nodeId];
   };
 
   that.getEdges = function () {
@@ -32,9 +37,10 @@ function Experiment() {
         x: nodes[i].ui.x,
         y: nodes[i].ui.y,
         input: operation.ports.input,
-        output: operation.ports.output
+        output: operation.ports.output,
+        parameters: nodes[i].parameters
       });
-      internal.nodes.push(node);
+      internal.nodes[nodes[i].id] = node;
     }
   };
 

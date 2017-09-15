@@ -4,11 +4,12 @@
 'use strict';
 
 /* @ngInject */
-function ExperimentController($stateParams, $rootScope, Operations, DrawingService, ExperimentFactory, ExperimentAPIClient) {
+function ExperimentController($stateParams, $rootScope, Operations, DrawingService, ExperimentFactory, ExperimentAPIClient, UPDATE_CLICKED_NODE) {
 
   var that = this;
   var operations;
   var experiment;
+  var selectedNodeId;
 
   that.init = function () {
     Operations.getCatalog().then((data) => {
@@ -37,6 +38,26 @@ function ExperimentController($stateParams, $rootScope, Operations, DrawingServi
     return experiment;
   };
 
+  that.getSelectedNode = function getSelectedNode() {
+    var experiment = that.getExperiment();
+    if (experiment) {
+      return experiment.getNodeById(selectedNodeId);
+    }
+  };
+
+  that.showOperationAttributesPanel = { value: false };
+
+  $rootScope.$on(UPDATE_CLICKED_NODE, function(event, data) {
+    if (!that.showOperationAttributesPanel.value) {
+      that.showOperationAttributesPanel.value = true;
+    } else if (selectedNodeId && selectedNodeId === data.selectedNodeId) {
+      // another click at the same graph node closes up the right side panel
+      that.showOperationAttributesPanel.value = false;
+    }
+    selectedNodeId = data.selectedNodeId;
+    $rootScope.$apply();
+  });
+
   that.init();
   return that;
 }
@@ -45,4 +66,5 @@ exports.function = ExperimentController;
 
 exports.inject = function (module) {
   module.controller('ExperimentController', ExperimentController);
+  module.constant('UPDATE_CLICKED_NODE', 'update-clicked-node');
 };

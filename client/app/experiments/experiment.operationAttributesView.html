@@ -1,0 +1,16 @@
+<div class="panel panel-default operation-attributes-panel" ng-show="showOperationAttributesPanel.value">
+  <div class="panel-heading">
+    {{ node.name }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  </div>
+  <div class="panel-body">
+    <div class="panel panel-default" ng-repeat="(parameterName, parameterData) in node.parameters">
+      <div class="panel-heading">{{ parameterName }}</div>
+      <div class="panel-body">{{ parameterData.value }}</div>
+    </div>
+    <div class="lead" ng-if="!node.parameters">No parameters</div>
+  </div>
+  <div class="panel-footer">
+    {{ node.description }}
+  </div>
+</div>

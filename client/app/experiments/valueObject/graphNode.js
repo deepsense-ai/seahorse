@@ -18,6 +18,7 @@ function GraphNode(options) {
     that.output = internal.fetchPorts('output', options.output);
     that.x = options.x;
     that.y = options.y;
+    that.parameters = options.parameters;
   };
 
   internal.fetchPorts = function fetchPorts(type, ports) {
