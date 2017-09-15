@@ -229,8 +229,9 @@ trait SeahorseIntegrationTestDSL extends Matchers with Eventually with Logging {
       if (failedNodes.nonEmpty) {
         s"Failed nodes: ${failedNodes.toString()} for workflow $workflowId".failure
       } else {
+        // TODO Parse messages instead
         val completedNodeMessages = ctx.websocketMessages.filter { msg =>
-          msg.contains("executionStatus") && !msg.contains("FAILED")
+          msg.contains("executionStatus") && !msg.contains("FAILED") && msg.contains("COMPLETED")
         }
 
         logger.info(s"${completedNodeMessages.length} nodes completed." +
