@@ -14,9 +14,21 @@
  * limitations under the License.
  */
 
-name := "deepsense-seahorse-workflow-json"
+package io.deepsense.models.json.workflow
 
-libraryDependencies ++= Dependencies.workflowJson
+import spray.httpx.SprayJsonSupport
+import spray.json._
 
-// Fork to run all test and run tasks in JVM separated from sbt JVM
-fork := true
+import io.deepsense.models.metadata.MetadataInferenceResult
+
+trait MetadataInferenceResultJsonProtocol
+    extends DefaultJsonProtocol
+    with AbstractMetadataJsonProtocol
+    with InferenceWarningsJsonProtocol
+    with InferenceErrorJsonProtocol
+    with SprayJsonSupport {
+
+  implicit val metadataInferenceFormat = jsonFormat3(MetadataInferenceResult.apply)
+}
+
+object MetadataInferenceResultJsonProtocol extends MetadataInferenceResultJsonProtocol

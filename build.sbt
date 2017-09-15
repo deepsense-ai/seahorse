@@ -25,7 +25,7 @@ lazy val deeplang               = project dependsOn (
 lazy val `entitystorage-client` = project dependsOn `entitystorage-model`
 lazy val `entitystorage-model`  = project dependsOn commons
 lazy val graph                  = project dependsOn (commons, deeplang, reportlib)
-lazy val graphjson              = project dependsOn (commons, deeplang, graph, models)
+lazy val workflowjson           = project dependsOn (commons, deeplang, graph, models)
 lazy val models                 = project dependsOn (commons, graph)
 lazy val reportlib              = project
 lazy val workflowexecutor       = project
@@ -38,7 +38,7 @@ addCommandAlias("ds-it",
     ";entitystorage-client/it:test " +
     ";entitystorage-model/it:test " +
     ";graph/it:test " +
-    ";graphjson/it:test " +
+    ";workflowjson/it:test " +
     ";models/it:test " +
     ";reportlib/it:test " +
     ";workflowexecutor/it:test")

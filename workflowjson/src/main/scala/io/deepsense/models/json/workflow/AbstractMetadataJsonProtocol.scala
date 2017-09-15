@@ -14,9 +14,18 @@
  * limitations under the License.
  */
 
-name := "deepsense-seahorse-workflow-json"
+package io.deepsense.models.json.workflow
 
-libraryDependencies ++= Dependencies.workflowJson
+import spray.httpx.SprayJsonSupport
+import spray.json._
 
-// Fork to run all test and run tasks in JVM separated from sbt JVM
-fork := true
+import io.deepsense.deeplang.DOperable.AbstractMetadata
+
+trait AbstractMetadataJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
+  implicit object AbstractMetadataFormat extends RootJsonFormat[AbstractMetadata] {
+    override def write(am: AbstractMetadata): JsValue = am.serializeToJson
+    override def read(value: JsValue): AbstractMetadata = ???
+  }
+}
+
+object AbstractMetadataJsonProtocol extends AbstractMetadataJsonProtocol

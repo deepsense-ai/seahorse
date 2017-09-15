@@ -14,9 +14,18 @@
  * limitations under the License.
  */
 
-name := "deepsense-seahorse-workflow-json"
+package io.deepsense.models.json.graph
 
-libraryDependencies ++= Dependencies.workflowJson
+import spray.json._
 
-// Fork to run all test and run tasks in JVM separated from sbt JVM
-fork := true
+import io.deepsense.graph.{Edge, Endpoint}
+
+trait EdgeJsonProtocol extends DefaultJsonProtocol {
+
+  import NodeJsonProtocol._
+
+  implicit val EndpointFormat = jsonFormat2(Endpoint)
+  implicit val EdgeFormat = jsonFormat2(Edge.apply)
+}
+
+object EdgeJsonProtocol extends EdgeJsonProtocol

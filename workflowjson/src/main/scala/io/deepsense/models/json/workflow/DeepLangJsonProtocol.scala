@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-name := "deepsense-seahorse-workflow-json"
+package io.deepsense.models.json.workflow
 
-libraryDependencies ++= Dependencies.workflowJson
+trait DeepLangJsonProtocol
+  extends DOperationCategoryNodeJsonProtocol
+  with DOperationDescriptorJsonProtocol
+  with HierarchyDescriptorJsonProtocol
+  with DOperationEnvelopesJsonProtocol
 
-// Fork to run all test and run tasks in JVM separated from sbt JVM
-fork := true
+object DeepLangJsonProtocol extends DeepLangJsonProtocol

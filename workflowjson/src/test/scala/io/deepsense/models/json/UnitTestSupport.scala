@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-name := "deepsense-seahorse-workflow-json"
+package io.deepsense.models.json
 
-libraryDependencies ++= Dependencies.workflowJson
+import org.scalatest.mock.MockitoSugar
 
-// Fork to run all test and run tasks in JVM separated from sbt JVM
-fork := true
+trait UnitTestSupport extends MockitoSugar {
+  suite: StandardSpec =>
+}

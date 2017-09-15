@@ -92,7 +92,7 @@ object Dependencies {
 
   val graph = Seq(nscalaTime) ++ Seq(scalatest, mockitoCore).map(_ % Test)
 
-  val graphJson = Seq(
+  val workflowJson = Seq(
     nscalaTime,
     sprayJson
   ) ++ Seq(scalatest, mockitoCore).map(_ % Test)

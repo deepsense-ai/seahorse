@@ -14,9 +14,22 @@
  * limitations under the License.
  */
 
-name := "deepsense-seahorse-workflow-json"
+package io.deepsense.models.json.workflow
 
-libraryDependencies ++= Dependencies.workflowJson
+import com.google.inject.{AbstractModule, Provides, Singleton}
 
-// Fork to run all test and run tasks in JVM separated from sbt JVM
-fork := true
+import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
+import io.deepsense.models.json.graph.GraphJsonProtocol
+import GraphJsonProtocol.GraphReader
+
+class GraphReaderModule extends AbstractModule {
+  override def configure(): Unit = {
+    // Done by 'provides' methods.
+  }
+
+  @Singleton
+  @Provides
+  def provideGraphReader(dOperationsCatalog: DOperationsCatalog): GraphReader = {
+    new GraphReader(dOperationsCatalog)
+  }
+}

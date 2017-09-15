@@ -14,9 +14,23 @@
  * limitations under the License.
  */
 
-name := "deepsense-seahorse-workflow-json"
+package io.deepsense.models.json.graph
 
-libraryDependencies ++= Dependencies.workflowJson
+import spray.json._
 
-// Fork to run all test and run tasks in JVM separated from sbt JVM
-fork := true
+import io.deepsense.deeplang.{DKnowledge, DOperable}
+
+trait GraphKnowledgeJsonProtocol extends DefaultJsonProtocol {
+
+  implicit object DKnowledgeJsonFormat
+    extends JsonFormat[DKnowledge[DOperable]]
+    with DefaultJsonProtocol {
+
+    override def write(dKnowledge: DKnowledge[DOperable]): JsValue =
+      JsArray(dKnowledge.types.map(_.getClass.getName.toJson).toVector)
+
+    override def read(json: JsValue): DKnowledge[DOperable] = ???
+  }
+}
+
+object GraphKnowledgeJsonProtocol extends GraphKnowledgeJsonProtocol

@@ -14,9 +14,24 @@
  * limitations under the License.
  */
 
-name := "deepsense-seahorse-workflow-json"
+package io.deepsense.models.json.graph
 
-libraryDependencies ++= Dependencies.workflowJson
+import spray.json._
 
-// Fork to run all test and run tasks in JVM separated from sbt JVM
-fork := true
+import io.deepsense.commons.json.IdJsonProtocol
+import io.deepsense.graph.Node
+
+trait NodeJsonProtocol extends DefaultJsonProtocol with IdJsonProtocol {
+
+  import OperationJsonProtocol.DOperationWriter
+
+  implicit object NodeWriter extends JsonWriter[Node] {
+    override def write(node: Node): JsValue = JsObject(
+      Map(NodeJsonProtocol.Id -> node.id.toJson) ++
+        node.operation.toJson.asJsObject.fields)
+  }
+}
+
+object NodeJsonProtocol extends NodeJsonProtocol {
+  val Id = "id"
+}

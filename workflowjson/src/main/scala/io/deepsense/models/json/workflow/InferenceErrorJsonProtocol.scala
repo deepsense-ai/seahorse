@@ -14,9 +14,16 @@
  * limitations under the License.
  */
 
-name := "deepsense-seahorse-workflow-json"
+package io.deepsense.models.json.workflow
 
-libraryDependencies ++= Dependencies.workflowJson
+import spray.httpx.SprayJsonSupport
+import spray.json.{DefaultJsonProtocol, JsString, JsValue, JsonFormat}
 
-// Fork to run all test and run tasks in JVM separated from sbt JVM
-fork := true
+import io.deepsense.deeplang.exceptions.DeepLangException
+
+trait InferenceErrorJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
+  implicit object InferenceErrorMappingFormat extends JsonFormat[DeepLangException] {
+    override def write(exc: DeepLangException): JsValue = JsString(exc.message)
+    override def read(value: JsValue): DeepLangException = ???
+  }
+}

@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-name := "deepsense-seahorse-workflow-json"
+package io.deepsense.models.json
 
-libraryDependencies ++= Dependencies.workflowJson
+import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.{Matchers, WordSpec}
 
-// Fork to run all test and run tasks in JVM separated from sbt JVM
-fork := true
+class StandardSpec
+  extends WordSpec
+  with Matchers
+  with ScalaFutures
