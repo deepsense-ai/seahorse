@@ -19,17 +19,16 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 import org.apache.spark.ml.feature.{StandardScaler => SparkStandardScaler, StandardScalerModel => SparkStandardScalerModel}
 
 import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasInputColumn, HasOutputColumn, StandardScalerCommonParams}
+import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasInputColumn, HasOutputColumn}
 import io.deepsense.deeplang.doperables.{Report, SparkModelWrapper}
 import io.deepsense.deeplang.params.Param
 
 class StandardScalerModel
   extends SparkModelWrapper[SparkStandardScalerModel, SparkStandardScaler]
-  with StandardScalerCommonParams
   with HasInputColumn
   with HasOutputColumn {
 
   override def report(executionContext: ExecutionContext): Report = Report()
 
-  override val params: Array[Param[_]] = declareParams(withMean, withStd, inputColumn, outputColumn)
+  override val params: Array[Param[_]] = declareParams(inputColumn, outputColumn)
 }

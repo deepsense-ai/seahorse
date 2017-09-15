@@ -16,15 +16,15 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.models
 
-import org.apache.spark.ml.feature.{VectorIndexer => SparkVectorIndexer, VectorIndexerModel => SparkVectorIndexerModel}
+import org.apache.spark.ml.feature.{IDF => SparkIDF, IDFModel => SparkIDFModel}
 
 import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{HasInputColumn, HasOutputColumn}
+import io.deepsense.deeplang.doperables.spark.wrappers.params.common._
 import io.deepsense.deeplang.doperables.{Report, SparkModelWrapper}
 import io.deepsense.deeplang.params.Param
 
-class VectorIndexerModel
-  extends SparkModelWrapper[SparkVectorIndexerModel, SparkVectorIndexer]
+class IDFModel
+  extends SparkModelWrapper[SparkIDFModel, SparkIDF]
   with HasInputColumn
   with HasOutputColumn {
 

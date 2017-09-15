@@ -16,33 +16,29 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
-import org.apache.spark.ml.feature.{StandardScaler => SparkStandardScaler, StandardScalerModel => SparkStandardScalerModel}
+import org.apache.spark.ml.feature.{IDF => SparkIDF, IDFModel => SparkIDFModel}
 
 import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables.spark.wrappers.models.StandardScalerModel
+import io.deepsense.deeplang.doperables.spark.wrappers.models.IDFModel
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common._
 import io.deepsense.deeplang.doperables.{Report, SparkEstimatorWrapper}
 import io.deepsense.deeplang.params.Param
-import io.deepsense.deeplang.params.wrappers.spark.BooleanParamWrapper
+import io.deepsense.deeplang.params.validators.RangeValidator
+import io.deepsense.deeplang.params.wrappers.spark.IntParamWrapper
 
-class StandardScaler
-  extends SparkEstimatorWrapper[SparkStandardScalerModel, SparkStandardScaler, StandardScalerModel]
+class IDF
+  extends SparkEstimatorWrapper[SparkIDFModel, SparkIDF, IDFModel]
   with HasInputColumn
   with HasOutputColumn {
 
-  val withMean = new BooleanParamWrapper[SparkStandardScaler](
-    name = "with mean",
-    description = "Centers the data with mean before scaling",
-    sparkParamGetter = _.withMean)
-  setDefault(withMean, false)
-
-  val withStd = new BooleanParamWrapper[SparkStandardScaler](
-    name = "with std",
-    description = "Scales the data to unit standard deviation",
-    sparkParamGetter = _.withStd)
-  setDefault(withStd, true)
+  val minDocFreq = new IntParamWrapper[SparkIDF](
+    name = "min documents frequency",
+    description = "The minimum of documents in which a term should appear",
+    sparkParamGetter = _.minDocFreq,
+    validator = RangeValidator(begin = 0.0, end = Int.MaxValue, step = Some(1.0)))
+  setDefault(minDocFreq, 0.0)
 
   override def report(executionContext: ExecutionContext): Report = Report()
 
-  override val params: Array[Param[_]] = declareParams(withMean, withStd, inputColumn, outputColumn)
+  override val params: Array[Param[_]] = declareParams(minDocFreq, inputColumn, outputColumn)
 }

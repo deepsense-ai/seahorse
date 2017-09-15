@@ -23,12 +23,22 @@ import io.deepsense.deeplang.doperables.spark.wrappers.models.VectorIndexerModel
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common._
 import io.deepsense.deeplang.doperables.{Report, SparkEstimatorWrapper}
 import io.deepsense.deeplang.params.Param
+import io.deepsense.deeplang.params.validators.RangeValidator
+import io.deepsense.deeplang.params.wrappers.spark.IntParamWrapper
 
 class VectorIndexer
   extends SparkEstimatorWrapper[SparkVectorIndexerModel, SparkVectorIndexer, VectorIndexerModel]
-  with HasMaxCategoriesParam
   with HasInputColumn
   with HasOutputColumn {
+
+  val maxCategories = new IntParamWrapper[SparkVectorIndexer](
+    name = "max categories",
+    description = "Threshold for the number of values a categorical feature can take. " +
+      "If a feature is found to have > maxCategories values, then it is declared continuous. " +
+      "Must be >= 2",
+    sparkParamGetter = _.maxCategories,
+    validator = RangeValidator(begin = 2.0, end = Int.MaxValue, step = Some(1.0)))
+  setDefault(maxCategories, 20.0)
 
   override def report(executionContext: ExecutionContext): Report = Report()
 

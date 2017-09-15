@@ -47,14 +47,16 @@ object CatalogRecorder {
     catalog.registerDOperable[CustomTransformer]()
 
     // wrapped Spark ML estimators & models
+    catalog.registerDOperable[LogisticRegression]()
+    catalog.registerDOperable[LogisticRegressionModel]()
     catalog.registerDOperable[ALS]()
     catalog.registerDOperable[ALSModel]()
     catalog.registerDOperable[KMeans]()
     catalog.registerDOperable[KMeansModel]()
     catalog.registerDOperable[LinearRegression]()
     catalog.registerDOperable[LinearRegressionModel]()
-    catalog.registerDOperable[LogisticRegression]()
-    catalog.registerDOperable[LogisticRegressionModel]()
+    catalog.registerDOperable[RandomForestRegression]()
+    catalog.registerDOperable[RandomForestRegressionModel]()
     catalog.registerDOperable[PCA]()
     catalog.registerDOperable[PCAModel]()
     catalog.registerDOperable[StandardScaler]()
@@ -70,8 +72,8 @@ object CatalogRecorder {
     catalog.registerDOperable[Word2VecModel]()
     catalog.registerDOperable[CountVectorizer]()
     catalog.registerDOperable[CountVectorizerModel]()
-    catalog.registerDOperable[RandomForestRegression]()
-    catalog.registerDOperable[RandomForestRegressionModel]()
+    catalog.registerDOperable[IDF]()
+    catalog.registerDOperable[IDFModel]()
 
     // wrapped Spark transformers
     catalog.registerDOperable[Binarizer]()
@@ -177,6 +179,9 @@ object CatalogRecorder {
       DOperationCategories.ML)
 
     catalog.registerDOperation[CreateCountVectorizer](
+      DOperationCategories.ML)
+
+    catalog.registerDOperation[CreateIDF](
       DOperationCategories.ML)
 
     // operations generated from Spark transformers
