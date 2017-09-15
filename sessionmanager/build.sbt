@@ -52,7 +52,7 @@ preparePythonDeps <<= preparePythonDeps dependsOn downloadWeJar
 
 mappings in Universal += preparePythonDeps.value -> "we-deps.zip"
 
-dockerBaseImage := "docker-repo.deepsense.codilime.com/deepsense_io/deepsense-mesos-spark"
+dockerBaseImage := "docker-repo.deepsense.codilime.com/deepsense_io/deepsense-mesos-spark:2.0.0"
 
 dockerCommands ++= Seq(
   Cmd("USER", "root"),

@@ -22,6 +22,7 @@ echo "Copying executing kernel"
 unzip remote_notebook/notebook_executing_kernel.zip -d $WE_DEPS_CONTENT
 
 # Pyspark and Py4j from we-deps-consts
+# TODO: We should not include this files, but take Pyspark and Py4j from Spark installed on cluster
 echo "Copying files from we-deps-consts files"
 cp -R $SM_DIR/we-deps-consts/* $WE_DEPS_CONTENT
 

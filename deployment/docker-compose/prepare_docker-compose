@@ -5,7 +5,7 @@ TEMPLATE=$1
 TARGET=$2
 
 DOCKER_REPOSITORY="docker-repo.deepsense.codilime.com/deepsense_io"
-DOCKER_TAG="master-latest"
+DOCKER_TAG="dev_upgrade_to_spark_2.0.0-latest"
 
 EXPOSED_SM_PORT=60100
 EXPOSED_MQ_PORT=60101
