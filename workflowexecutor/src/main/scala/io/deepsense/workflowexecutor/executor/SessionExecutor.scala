@@ -25,6 +25,7 @@ import io.deepsense.deeplang.doperables.ReportLevel
 import io.deepsense.deeplang.doperables.ReportLevel._
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.workflowexecutor.communication.{MQCommunication, ProtocolDeserializer}
+import io.deepsense.workflowexecutor.pythongateway.PythonGateway
 import io.deepsense.workflowexecutor.rabbitmq._
 import io.deepsense.workflowexecutor.{ExecutionDispatcherActor, StatusLoggingActor}
 
@@ -71,6 +72,10 @@ case class SessionExecutor(
 
     val globalPublisher: MQPublisher = communicationFactory.createCommunicationChannel(
       exchange, seahorseSubscriber)
+
+    val gatewayConfig = PythonGateway.GatewayConfig()
+    val gateway = PythonGateway(gatewayConfig, sparkContext)
+    gateway.start()
 
     system.awaitTermination()
     cleanup(sparkContext)

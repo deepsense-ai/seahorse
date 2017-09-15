@@ -56,8 +56,8 @@ case class PythonGateway(
     val connectTimeout = 0
     val readTimeout = 0
 
-    // We're telling the server to listen on a randomly chosen free port
-    val port = 0
+    // FIXME tell the server to listen on a randomly chosen free port
+    val port = 25555
 
     new GatewayServer(
       entryPoint,

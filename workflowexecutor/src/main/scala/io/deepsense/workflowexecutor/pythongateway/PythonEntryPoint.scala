@@ -18,7 +18,7 @@ package io.deepsense.workflowexecutor.pythongateway
 
 import scala.concurrent.Promise
 
-import org.apache.spark.SparkContext
+import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.api.java.JavaSparkContext
 
 import io.deepsense.commons.utils.Logging
@@ -29,6 +29,8 @@ import io.deepsense.commons.utils.Logging
 class PythonEntryPoint(val sparkContext: SparkContext) extends Logging {
 
   def getSparkContext: JavaSparkContext = sparkContext
+
+  def getSparkConf: SparkConf = sparkContext.getConf
 
   private[pythongateway] val pythonPortPromise: Promise[Int] = Promise()
 

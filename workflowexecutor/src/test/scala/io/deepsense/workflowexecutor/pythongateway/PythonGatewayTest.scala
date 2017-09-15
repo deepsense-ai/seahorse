@@ -55,6 +55,8 @@ class PythonGatewayTest extends WordSpec with MockitoSugar with Matchers with Ti
 
       val connectionAttempt = attemptConnection(gateway.listeningPort)
       connectionAttempt shouldBe a [Success[_]]
+
+      gateway.stop()
     }
 
     "close listening port when stopped" in {
@@ -75,6 +77,8 @@ class PythonGatewayTest extends WordSpec with MockitoSugar with Matchers with Ti
       a[TimeoutException] should be thrownBy {
         gateway.gatewayServer.getCallbackClient.sendCommand("Hello!")
       }
+
+      gateway.stop()
     }
 
     "send a message on initialized callback client" in {
@@ -117,6 +121,8 @@ class PythonGatewayTest extends WordSpec with MockitoSugar with Matchers with Ti
       }
 
       serverResponse shouldBe response
+
+      gateway.stop()
     }
   }
 }
