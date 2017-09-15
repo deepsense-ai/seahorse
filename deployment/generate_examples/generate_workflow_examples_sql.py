@@ -10,16 +10,16 @@ EXAMPLES_NAMESPACE_UUID = uuid.UUID('dbfb66e9-a34e-455e-bd9c-157964f03674')
 USER_ID = '00000000-0000-0000-0000-000000000000'
 USER_NAME = 'seahorse'
 
-DELETE_WF = "DELETE FROM workflows WHERE owner_id = '{}';".format(USER_ID)
-SELECT_WF = "SELECT id FROM workflows WHERE owner_id = '{}'".format(USER_ID) # no semicolon!
-DELETE_NOTEBOOK = "DELETE FROM notebooks WHERE workflow_id in ({});".format(SELECT_WF)
+DELETE_WF = "DELETE FROM workflows WHERE \"owner_id\" = '{}';".format(USER_ID)
+SELECT_WF = "SELECT \"id\" FROM workflows WHERE \"owner_id\" = '{}'".format(USER_ID) # no semicolon!
+DELETE_NOTEBOOK = "DELETE FROM notebooks WHERE \"workflow_id\" in ({});".format(SELECT_WF)
 
 INSERT_WF_FORMAT = (
-    "INSERT INTO workflows (id, created, updated, deleted, owner_id, owner_name, workflow) "
+    "INSERT INTO workflows (\"id\", \"created\", \"updated\", \"deleted\", \"owner_id\", \"owner_name\", \"workflow\") "
     "VALUES ('{}', '{}', '{}', False, '{}', '{}', '{}');"
 )
 
-INSERT_NOTEBOOK_FORMAT = "INSERT INTO notebooks (workflow_id, node_id, notebook) VALUES ('{}', '{}', '{}');"
+INSERT_NOTEBOOK_FORMAT = "INSERT INTO notebooks (\"workflow_id\", \"node_id\", \"notebook\") VALUES ('{}', '{}', '{}');"
 
 def compact_json(content):
     return json.dumps(content, separators=(',', ':')).replace('\'', '\'\'')
