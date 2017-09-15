@@ -21,6 +21,7 @@ lazy val workflowmanager        = project dependsOn (seahorseDeeplang, seahorseG
   seahorseWorkflowJson, backendcommons, backendcommons % "test->test")
 lazy val sessionmanager         = project dependsOn (seahorseMqProtocol, backendcommons, backendcommons % "test->test")
 lazy val libraryservice         = project dependsOn (backendcommons, backendcommons % "test->test")
+lazy val datasourcemanager      = project dependsOn (backendcommons)
 
 lazy val seahorseWorkflowExecutorProjects = Seq(
     seahorseCommons,
@@ -36,7 +37,8 @@ lazy val seahorseBackendProjects = Seq(
     backendcommons,
     workflowmanager,
     sessionmanager,
-    libraryservice
+    libraryservice,
+    datasourcemanager
 )
 
 lazy val rootProjects: Seq[sbt.ProjectReference] =
@@ -65,8 +67,8 @@ addCommandAlias("ds-it",
 lazy val projectsForScalastyle = seahorseBackendProjects // :+ e2etests // TODO Make e2etest compliant with scalastyle
 lazy val scalastyleCmd = projectsForScalastyle.flatMap(p => Seq(
     s"${p.id}/scalastyle",
-    s"${p.id}/it:scalastyle"
-//    s"${p.id}/test:scalastyle" // TODO Make test code compliant with scalastyle
+    s"${p.id}/it:scalastyle",
+    s"${p.id}/test:scalastyle"
 )).mkString(";", " ;", "")
 addCommandAlias("scalastylebackend", scalastyleCmd) // override default scalastyle task
 

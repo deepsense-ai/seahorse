@@ -2,12 +2,9 @@
  * Copyright (c) 2015, CodiLime Inc.
  */
 
-import com.typesafe.sbt.SbtGit.git
+import com.typesafe.sbt.packager.universal.UniversalPlugin.autoImport.Universal
 import sbt.Keys._
 import sbt._
-import sbtrelease.ReleasePlugin.autoImport._
-import sbtrelease.ReleaseStateTransformations._
-import com.typesafe.sbt.packager.universal.UniversalPlugin.autoImport.Universal
 
 object CommonSettingsPlugin extends AutoPlugin {
   override def trigger = allRequirements
@@ -15,11 +12,11 @@ object CommonSettingsPlugin extends AutoPlugin {
   lazy val OurIT = config("it") extend Test
 
   override def globalSettings = Seq(
+    scalaVersion := "2.11.8"
   )
 
   override def projectSettings = Seq(
     organization := "io.deepsense",
-    scalaVersion := "2.11.8",
     scalacOptions := Seq(
       "-unchecked", "-deprecation", "-encoding", "utf8", "-feature",
       "-language:existentials", "-language:implicitConversions"

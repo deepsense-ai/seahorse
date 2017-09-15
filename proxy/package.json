@@ -1,0 +1,31 @@
+{
+  "name": "seahorse-proxy",
+  "author": "deepsense.io",
+  "license": "Apache-2.0",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "compression": "1.6.1",
+    "connect-timeout": "1.7.0",
+    "cookie-parser": "1.4.1",
+    "crypto": "0.0.3",
+    "debug": "2.2.0",
+    "express": "4.13.4",
+    "express-session": "1.13.0",
+    "lodash": "4.13.1",
+    "http-proxy": "1.13.2",
+    "http-proxy-agent": "1.0.0",
+    "https-proxy-agent": "1.0.0",
+    "morgan": "1.7.0",
+    "passport": "0.3.2",
+    "passport-cloudfoundry": "rajaraodv/passport-cloudfoundry",
+    "request": "2.69.0",
+    "require-dir": "0.3.0",
+    "throw": "1.1.0",
+    "serve-favicon": "2.3.0",
+    "underscore": "1.8.3"
+  },
+  "scripts": {
+    "start": "node app/server/server.js"
+  }
+}

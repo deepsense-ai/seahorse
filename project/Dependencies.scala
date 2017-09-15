@@ -6,6 +6,7 @@ object Version {
   val avro = "1.7.7"
   val guice = "3.0"
   val h2 = "1.4.191"
+  val json4s = "3.3.0"
   val jclouds = "1.9.0"
   val metricsScala = "3.5.4_a2.3"
   val mockito = "1.10.19"
@@ -20,6 +21,7 @@ object Version {
   val sprayJson = "1.3.1"
   val wiremock = "1.57"
   val flyway = "4.0"
+  val jetty = "9.3.8.v20160314"
 }
 
 object Library {
@@ -73,6 +75,7 @@ object Library {
   // to suppress "Nullable" warning, as per
   // http://stackoverflow.com/questions/13162671/missing-dependency-class-javax-annotation-nullable.
   val findBugs = "com.google.code.findbugs" % "jsr305" % "3.0.1"
+
 }
 
 object Dependencies {
@@ -80,7 +83,6 @@ object Dependencies {
   import Library._
 
   val resolvers = Seq(
-    "typesafe.com"           at "http://repo.typesafe.com/typesafe/repo/",
     "sonatype.org"           at "https://oss.sonatype.org/content/repositories/releases",
     "spray.io"               at "http://repo.spray.io",
     "The New Motion Public Repo" at "http://nexus.thenewmotion.com/content/groups/public/",
@@ -97,6 +99,29 @@ object Dependencies {
     val onlyInTests = provided ++ test
   }
 
+  val scalajs = "org.scalaj" %% "scalaj-http" % "2.3.0"
+
+  val json4s = Seq(
+    "org.json4s"              %% "json4s-jackson"                 % Version.json4s,
+    "org.json4s"              %% "json4s-native"                  % Version.json4s,
+    "org.json4s"              %% "json4s-ext"                     % Version.json4s
+  )
+
+  val scalatraAndJetty = Seq(
+    "org.scalatra"            %% "scalatra"                       % Version.scalatra,
+    "org.scalatra"            %% "scalatra-scalate"               % Version.scalatra,
+    "org.scalatra"            %% "scalatra-json"                  % Version.scalatra,
+    "org.scalatra"            %% "scalatra-swagger"               % Version.scalatra,
+    "org.scalatra"            %% "scalatra-swagger-ext"           % Version.scalatra,
+    "org.scalatra"            %% "scalatra-slf4j"                 % Version.scalatra,
+    "org.scalatra"            %% "scalatra-atmosphere"            % Version.scalatra,
+    "org.scalatra"            %% "scalatra-scalatest"             % Version.scalatra  % "test",
+
+    "org.eclipse.jetty"           % "jetty-server"            % Version.jetty     % "compile;test",
+    "org.eclipse.jetty"           % "jetty-webapp"            % Version.jetty     % "compile;test",
+    "org.eclipse.jetty.websocket" % "websocket-server"        % Version.jetty
+  )
+
   val commons = Seq(
     akkaActor,
     apacheCommons,
@@ -108,6 +133,7 @@ object Dependencies {
     jcloudsNova,
     metricsScala,
     nscalaTime,
+    slick,
     sprayCan,
     sprayJson,
     sprayRouting
@@ -148,6 +174,12 @@ object Dependencies {
     jettyWebapp,
     scalatraTest
   ) ++ Seq(scoverage).map(_ % s"$Test,it")
+
+  val datasourcemanager = scalatraAndJetty ++ json4s ++ Seq(
+    h2,
+    flyway,
+    scalajs
+  )
 
   val integrationtests = Seq(
     "com.typesafe.play" %% "play-ws" % "2.4.3",

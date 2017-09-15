@@ -7,6 +7,7 @@ package io.deepsense.libraryservice
 import com.typesafe.config.ConfigFactory
 
 object Config {
+
   private val config = ConfigFactory.load()
 
   object Server {

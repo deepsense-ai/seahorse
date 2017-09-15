@@ -6,21 +6,19 @@
 set -ex
 
 # Check if number of parameters is correct
-if [ $# != 2 ]; then
+if [ $# != 1 ]; then
   echo ">>> All required parameters must be provided."
-  echo "Usage: ./publish-local-docker.sh deepsense-notebooks SEAHORSE_BUILD_TAG"
+  echo "Usage: ./publish-local-docker.sh deepsense-notebooks"
+  echo "You can optionally set SEAHORSE_BUILD_TAG env variable to additionaly publish image tagged"
+  echo "with this value. It can be used to publish docker image with any arbitrary synthetic tag."
+  echo "It might be used to correlate few docker images build within a CI pipeline."
   exit 1
 fi
 
 PROJECT_NAME=$1
-SEAHORSE_BUILD_TAG=$2
+
 # Cannot use `local-image-latest` as grepped string, because SBT-built dockers won't have it in tag
 DOCKER_IMAGE=`docker images | grep $PROJECT_NAME | grep "latest" | head -1 | awk '{ print $3 }'`
-if [ ! -z $GIT_TAG ]; then
-  GIT_BRANCH="$GIT_TAG"
-else
-  GIT_BRANCH=`git symbolic-ref --short -q HEAD || echo ""` # it fails if not on branch
-fi
 
 echo "Docker image for tagging and publishing:"
 echo $DOCKER_IMAGE
@@ -34,16 +32,21 @@ fi
 DEEPSENSE_REGISTRY="docker-repo.deepsense.codilime.com"
 NAMESPACE="deepsense_io"
 
-GIT_SHA=`git rev-parse HEAD`
-
 # Tag docker image
 echo ">>> Tagging docker image and pushing docker to repository $DEEPSENSE_REGISTRY"
-docker tag $DOCKER_IMAGE $DEEPSENSE_REGISTRY/$NAMESPACE/$PROJECT_NAME:$SEAHORSE_BUILD_TAG
-docker push $DEEPSENSE_REGISTRY/$NAMESPACE/$PROJECT_NAME:$SEAHORSE_BUILD_TAG
 
+GIT_SHA=`git rev-parse HEAD`
 docker tag $DOCKER_IMAGE $DEEPSENSE_REGISTRY/$NAMESPACE/$PROJECT_NAME:$GIT_SHA
 docker push $DEEPSENSE_REGISTRY/$NAMESPACE/$PROJECT_NAME:$GIT_SHA
 
+if [ ! -z "$SEAHORSE_BUILD_TAG" ]; then
+  echo "SEAHORSE_BUILD_TAG is defined. Publishing with tag $SEAHORSE_BUILD_TAG"
+  docker tag $DOCKER_IMAGE $DEEPSENSE_REGISTRY/$NAMESPACE/$PROJECT_NAME:$SEAHORSE_BUILD_TAG
+  docker push $DEEPSENSE_REGISTRY/$NAMESPACE/$PROJECT_NAME:$SEAHORSE_BUILD_TAG
+fi
+
+# TODO Check with remote if it is actually LATEST commit for this branch.
+GIT_BRANCH=`git symbolic-ref --short -q HEAD || echo ""` # it fails if not on branch
 if [ ! -z "$GIT_BRANCH" ]; then
   docker tag $DOCKER_IMAGE $DEEPSENSE_REGISTRY/$NAMESPACE/$PROJECT_NAME:$GIT_BRANCH-latest
   docker push $DEEPSENSE_REGISTRY/$NAMESPACE/$PROJECT_NAME:$GIT_BRANCH-latest
