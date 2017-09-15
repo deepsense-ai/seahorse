@@ -61,8 +61,10 @@ function forwardRequest(req, res) {
 
   if(req.user && req.user.user_id) {
     req.headers['X-Seahorse-UserId'] = req.user.user_id;
+    req.headers['X-Seahorse-UserName'] = req.user.user_name;
   } else {
     req.removeHeader('X-Seahorse-UserId');
+    req.removeHeader('X-Seahorse-UserName');
   }
 
   req.headers['x-forwarded-host'] = req.headers['host'];
