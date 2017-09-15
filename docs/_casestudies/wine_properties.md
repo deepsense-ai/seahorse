@@ -10,37 +10,56 @@ description: Wine Properties
 
 **Dataset size**: 1,599 rows; 12 columns (11 numerical columns, 1 integer column).
 
-**Datasets description**: The dataset contains a description of a set of wines. Each wine is described by a set of 11 features based on physicochemical tests like density or pH. Additionally to that, each type of wine has a score that describes the wine’s quality. The score is based on sensory data (median of at least 3 evaluations made by wine experts). Each expert graded the wine quality between 0 (very bad) and 10 (excellent).
+**Datasets description**: The dataset contains a description of a set of wines.
+Each wine is described by a set of 11 features based on physicochemical tests like density or pH.
+Additionally to that, each type of wine has a score that describes the wine’s quality.
+The score is based on sensory data (median of at least 3 evaluations made by wine experts).
+Each expert graded the wine quality between 0 (very bad) and 10 (excellent).
 
-**Business purpose**: finding important features of wines that define wine quality as perceived by tasters.
+**Business purpose**: Finding important features of wines that define wine quality as perceived by tasters.
 
 **Data set credits**: Paulo Cortez, University of Minho, Guimarães, Portugal, <http://www3.dsi.uminho.pt/pcortez>
 A. Cerdeira, F. Almeida, T. Matos and J. Reis, Viticulture Commission of the Vinho Verde Region(CVRVV), Porto, Portugal 2009.
 Lichman, M. (2013).
 
 
-UCI Machine Learning Repository <http://archive.ics.uci.edu/ml>. Irvine, CA: University of California, School of Information and Computer Science.
+UCI Machine Learning Repository <http://archive.ics.uci.edu/ml>.
+Irvine, CA: University of California, School of Information and Computer Science.
 
 ## Step-by-step Workflow Creation
 
 ### Reading the Data
 
-The data is provided in the form of a 12-column, semicolon-separated CSV-like file. The first row consists of column names. To work with the dataset, it has to be loaded into Seahorse. This can be done by [Read DataFrame](../operations/read_dataframe.html) operation. Let’s place it on the canvas. To load the data, besides providing the correct path to the file, it is necessary to change the separator parameter to semicolon.
+The data is provided in the form of a 12-column, semicolon-separated CSV-like file.
+The first row consists of column names.
+To work with the dataset, it has to be loaded into Seahorse.
+This can be done by [Read DataFrame](../operations/read_dataframe.html) operation.
+Let’s place it on the canvas and create a new Data Source.
+To load the data, besides providing the correct path to the file,
+it is necessary to set the separator parameter to semicolon.
 
 <img class="bordered-image centered-image img-responsive spacer" src="../img/usecases/wine_properties/image_0.png">
 
-After setting Read DataFrame’s parameters to the correct values, the operation is ready to execute. When the execution ends, a report of the operation will be available. Let’s click on the output port to see it.
+After setting Read DataFrame’s parameters to the correct values, the operation is ready to execute.
+When the execution ends, a report of the operation will be available.
+Let’s click on the output port to see it.
 
 <img class="centered-image img-responsive spacer" src="../img/usecases/wine_properties/image_1.png">
 
-Now, we can explore the data a bit. The report included 20 sample rows.  As we can see, each wine is described by a set of 11 numerical features and an ordinal score based on sensory data (column **quality**) that describes wine’s quality.
+Now, we can explore the data a bit.
+The report included 20 sample rows.
+As we can see, each wine is described by a set of 11 numerical features
+and an ordinal score based on sensory data (column **quality**) that describes wine’s quality.
 
-Moreover, you can see distributions of values for each column. Click on a column’s header to see the distribution diagram, minimum value, maximum value, mean value and how many values are missing.
+Moreover, you can see distributions of values for each column.
+Click on an icon in column’s header to see
+the distribution diagram, minimum value, maximum value, mean value and how many values are missing.
 
 <img class="centered-image img-responsive spacer" src="../img/usecases/wine_properties/image_2.png">
 
 
-After some exploration we can see that no value is missing. Minimum values, mean values and maximum values summarizes the table below:
+After some exploration we can see that no value is missing.
+Minimum values, mean values and maximum values summarizes the table below:
 
 <table>
   <thead>
@@ -141,33 +160,81 @@ After some exploration we can see that no value is missing. Minimum values, mean
 
 ### The Objective
 
-Now, we will try to investigate which features of wine have significant impact on the quality. There are many different ways of achieving this. One of the possibilities is to fit a regression model to the data. For example, we could use a [Linear Regression](../operations/linear_regression.html) or a [Random Forest Regression](../operations/random_forest_regression.html). The first one exposes features weights that signify whether the feature has a positive or a negative impact (and how big the impact is) on the overall estimated value. Random Forest Regression exposes only importances of features, that help to determine whether the impact on the estimated value is high or low. Although, while it is not necessarily a rule, in many practical applications Random Forest Regression outperforms Linear Regression. Because of that we’ll choose Random Forest Regression.
+Now, we will try to investigate which features of wine have significant impact on the quality.
+There are many different ways of achieving this.
+One of the possibilities is to fit a regression model to the data.
+For example, we could use a [Linear Regression](../operations/linear_regression.html)
+or a [Random Forest Regression](../operations/random_forest_regression.html).
+The first one exposes features weights that signify
+whether the feature has a positive or a negative impact (and how big the impact is)
+on the overall estimated value.
+Random Forest Regression exposes only importances of features,
+that help to determine whether the impact on the estimated value is high or low.
+Although, while it is not necessarily a rule,
+in many practical applications Random Forest Regression outperforms Linear Regression.
+Because of that we’ll choose Random Forest Regression.
 
 ### Preparation and Feature Comparison Prerequisites
 
-Before we can train the Random Forest Regression to find out feature importance, we need to prepare the data. Some of Seahorse’s algorithms operate on columns that contain a vector of features (instead of a set of columns with one value each). The regression is one of them and before we use it, we need to combine 11 feature columns to one column that contains a vector of the features. We’ll do this using an [Assemble Vector](../operations/assemble_vector.html) operation.
+Before we can train the Random Forest Regression to find out feature importance,
+we need to prepare the data.
+Some of Seahorse’s algorithms operate on columns that contain a vector of features
+(instead of a set of columns with one value each).
+The regression is one of them and before we use it,
+we need to combine 11 feature columns to one column that contains a vector of the features.
+We’ll do this using an [Assemble Vector](../operations/assemble_vector.html) operation.
 
 Let’s put the Assemble Vector operation on the canvas and connect it as follows:
 
 <img class="centered-image img-responsive spacer" src="../img/usecases/wine_properties/image_3.png">
 
-The next step is to set parameters to the two operations. In the Assemble Vector operation we have to select the columns to be grouped and the output column’s name. We want to select wine features excluding quality, that is columns from 0 to 10. Let’s call the vectorized output column "features".
+The next step is to set parameters to the two operations.
+In the Assemble Vector operation we have
+to select the columns to be groupedand the output column’s name.
+We want to select wine features excluding quality, that is columns from 0 to 10.
+Let’s call the vectorized output column "features".
 
 <img class="bordered-image centered-image img-responsive spacer"  src="../img/usecases/wine_properties/image_4.png">
 
 ### Parameters of Training Process
 
-The Assemble Vector’s output [DataFrame](../classes/dataframe.html) has a format that the regression can work on - we are now ready to start playing with the regression. The regression allows to predict one column’s value basing on other columns’ values. In our case, you will want to create a Random Forest Regression model that predicts the quality of wine based on the value of **features** column. Then, we will take a look at the model to see how important each feature is.
+The Assemble Vector’s output [DataFrame](../classes/dataframe.html)
+has a format that the regression can work on - we are now ready to start playing with the regression.
+The regression allows to predict one column’s value basing on other columns’ values.
+In our case, you will want to create a Random Forest Regression model
+that predicts the quality of wine based on the value of **features** column.
+Then, we will take a look at the model to see how important each feature is.
 
-To create a model, we have to use [Fit](../operations/fit.html) operation. Random Forest Regression has many parameters that affect its behavior. It is not a trivial task to find the best values of parameters. Usually, it is done experimentally. Advanced knowledge about the Random Forest Regression algorithm is required. To overcome this issue, we’ll use a [Grid Search](../operations/grid_search.html) operation and let another algorithm find the best values for us. To use the Grid Search operation we define value sets for each parameter of a model. The Grid Search will fit as many models as there are combinations of the parameters. Later, it evaluates prediction correctness (using an [Evaluator](../classes/evaluator.html)) of all models. Finally, we end up with a report that summarizes Grid Search results and shows the best combination of parameters.
+To create a model, we have to use [Fit](../operations/fit.html) operation.
+Random Forest Regression has many parameters that affect its behavior.
+It is not a trivial task to find the best values of parameters. Usually, it is done experimentally.
+Advanced knowledge about the Random Forest Regression algorithm is required.
+To overcome this issue, we’ll use a [Grid Search](../operations/grid_search.html) operation
+and let another algorithm find the best values for us.
+To use the Grid Search operation we define value sets for each parameter of a model.
+The Grid Search will fit as many models as there are combinations of the parameters.
+Later, it evaluates prediction correctness
+(using an [Evaluator](../classes/evaluator.html)) of all models.
+Finally, we end up with
+a report that summarizes Grid Search results and shows the best combination of parameters.
 
-Place the Grid Search operation on the canvas. It has 3 inputs. To the first one, we’ll connect the first output port from the Assemble Vector operation, as we want to feed the Grid Search with the DataFrame that the Assemble Vector operation produces. To the second port we’ll connect the Random Forest Regression - let’s place it on the canvas. To the last port we need to connect an Evaluator - place a [Regression Evaluator](../operations/regression_evaluator.html) on the canvas and connect it with the Grid Search.
+Place the Grid Search operation on the canvas.
+It has 3 inputs.
+To the middle one, we’ll connect the first output port from the Assemble Vector operation,
+as we want to feed the Grid Search with the DataFrame that the Assemble Vector operation produces.
+To the left-hand port we’ll connect the Random Forest Regression - let’s place it on the canvas.
+To the right-hand port we need to connect an Evaluator - place
+a [Regression Evaluator](../operations/regression_evaluator.html) on the canvas
+and connect it with the Grid Search.
 
-A Regression Evaluator is capable of evaluating predictions made by a Regression. The evaluation is done using a certain metric. We’ll use RMSE (Root-Mean-Square Error), as it is the simplest to interpret.
+A Regression Evaluator is capable of evaluating predictions made by a Regression.
+The evaluation is done using a certain metric.
+We’ll use RMSE (Root-Mean-Square Error), as it is the simplest to interpret.
 
 <img class="centered-image img-responsive spacer"  src="../img/usecases/wine_properties/image_5.png">
 
-Grid Search operation’s parameters combine the parameters from its input Regressor and Evaluator. In the parameters panel, scroll down to the parameters of the input estimator and set their values to:
+Grid Search operation’s parameters combine the parameters from its input Regressor and Evaluator.
+In the parameters panel, set values of parameters of the input estimator to:
 
 * `max depth`: `10, 20, 30`,
 
@@ -187,24 +254,46 @@ Grid Search operation’s parameters combine the parameters from its input Regre
 </table>
 
 
-Using these value sets, we define 27 models (3 x 3 x 3) that need to be trained and then evaluated. The last thing we need to set in the Grid Search operation are the `features column` and the `label column`. The former specifies which column contains the predictors (i.e. the features on which our prediction will be based on). We’ll set this parameter to `features`. The latter specifies the column containing true values of our predicted variable, for training purposes. We’ll set this to `quality`.
+Using these value sets, we define 27 models (3 x 3 x 3) that need to be trained and then evaluated.
+The last thing we need to set in the Grid Search operation
+are the `features column` and the `label column`.
+The former specifies which column contains the predictors
+(i.e. the features on which our prediction will be based on).
+We’ll set this parameter to `features`.
+The latter specifies the column
+containing true values of our predicted variable, for training purposes.
+We’ll set this to `quality`.
 
-Finally, leave other parameters with the default values and execute the workflow. As we mentioned, 27 models have to be trained and evaluated (twice, because of cross-validation) so the execution can take a couple of minutes. Afterwards, we can read parameters that got the best score. They can be read from Grid Search’s report.
+Finally, leave other parameters with the default values and execute the workflow.
+As we mentioned, 27 models have to be trained and evaluated (twice, because of cross-validation)
+so the execution can take a couple of minutes.
+Afterwards, we can read parameters that got the best score.
+They can be read from Grid Search’s report.
 <img class="centered-image img-responsive spacer"  src="../img/usecases/wine_properties/image_6.png">
 
 In our case the best parameters found are:
 
-* `max depth`: `20`,
-
 * `max bins`: `40`,
+
+* `max depth`: `30`,
 
 * `num trees`: `100`.
 
-As we can see, none of the parameters (except number of trees) lays on the edge of the grid. We could increase number of trees because, generally for the Random Forest Regression, the more trees, the more accurate the results of regression. However, differences between 50 and 100 trees are rather small and further increase of the number of trees won’t have a significant impact on the quality. Moreover, computation time grows with the number of trees. We are going to use 100 trees in the Random Forest Regression as it’s a good compromise between accuracy and execution time.
+As we can see, none of the parameters (except number of trees) lays on the edge of the grid.
+We could increase number of trees because, generally for the Random Forest Regression,
+the more trees, the more accurate the results of regression.
+However, differences between 50 and 100 trees are rather small
+and further increase of the number of trees won’t have a significant impact on the quality.
+Moreover, computation time grows with the number of trees.
+We are going to use 100 trees in the Random Forest Regression
+as it’s a good compromise between accuracy and execution time.
 
 ### Training
 
-Since we now know the best parameter values, we can use the Fit operation to train a Random Forest Regression model. Edit Fit’s parameters according to the report generated by the Grid Search, i.e. copy the best parameter values to the Fit operation. Then, select `features` as the `features column` and `quality` as the `label column`. Finally, execute the Fit operation.
+Since we now know the best parameter values
+we can use the Fit operation to train a Random Forest Regression model.
+Edit Fit’s parameters according to the report generated by the Grid Search,
+i.e. copy the best parameter values to the Fit operation. Then, select `features` as the `features column` and `quality` as the `label column`. Finally, execute the Fit operation.
 
 <img class="centered-image img-responsive spacer"  src="../img/usecases/wine_properties/image_7.png">
 
@@ -268,6 +357,20 @@ Fit returns a trained model. In the model’s report we can inspect the feature 
 
 ## Conclusion
 
-We’ve researched how important each feature of wine is for estimating its perceived quality. It turned out, that the two most important features are alcohol and sulphates concentration.
+We’ve researched how important each feature of wine is for estimating its perceived quality.
+It turned out, that the two most important features are alcohol and sulphates concentration.
 
-The trained model can be used to predict quality of wine. Wine grades were ordinal numbers, but the model generates real numbers. To convert real numbers to an ordinal number, we could round the prediction to the nearest ordinal number. If the prediction differs from the estimated value by no more than 0.5, then the rounded prediction will be the same number as the estimated value (it will be a correct prediction). If the difference is bigger than 0.5, but not bigger than 1.5, then the rounded prediction will be inaccurate by 1. Model’s RMSE is about 0.61. It means that the model’s predictions differ from the real values by no more than 0.61, on average. Thus, rounded predictions most likely will be inaccurate by 1. Even though the model turned out to be slightly inaccurate, it can be used to indicate whether the wine is good or bad, though, not so precisely.
+The trained model can be used to predict quality of wine.
+Wine grades were ordinal numbers, but the model generates real numbers.
+To convert real numbers to an ordinal number,
+we could round the prediction to the nearest ordinal number.
+If the prediction differs from the estimated value by no more than 0.5,
+then the rounded prediction will be the same number as the estimated value
+(it will be a correct prediction).
+If the difference is bigger than 0.5, but not bigger than 1.5,
+then the rounded prediction will be inaccurate by 1.
+Model’s RMSE is about 0.61. It means that the model’s predictions differ
+from the real values by no more than 0.61, on average.
+Thus, rounded predictions most likely will be inaccurate by 1.
+Even though the model turned out to be slightly inaccurate,
+it can be used to indicate whether the wine is good or bad, though, not so precisely.
