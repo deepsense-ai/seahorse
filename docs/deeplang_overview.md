@@ -16,7 +16,8 @@ Deeplang workflow is a graph of connected operations,
 which are consuming and producing entities.
 
 ### <a name="entities"></a>Entities and Classes
-Entities are the most crucial part of Deeplang. They represent data that is being processed in a workflow.
+Entities are the most crucial part of Deeplang. They represent objects that are being passed between operations,
+e.g. [DataFrame](classes/dataframe.html), [Transformer](classes/transformer.html), [Estimator](classes/estimator.html), [Evaluator](classes/evaluator.html).
 
 Entities are immutable - they do not have state that could be changed. Any modifications are performed by creating new instances based on old ones.
 
@@ -30,22 +31,27 @@ $$n$$ input ports, $$m$$ output ports and configurable parameters. Ports are ind
   ![operations](./img/operations.png){: .centered-image .img-responsive}
 </div>
 
-One can think about an operation as a function that receives a tuple of entities and parameters' values, and returns a tuple of entities.
+You can think about an operation as a function that receives a tuple of entities and parameters' values, and returns a tuple of entities.
 
 $$Operation: (entity_0, entity_1, …, entity_{n-1}, parameters) \rightarrow (entity_0, entity_1, ... , entity_{m-1})$$
 
 #### Example
-`DataFrame` is an entity. It represents object that contains data grouped in columns (similarly to R or Spark dataframes).
+[DataFrame](classes/dataframe.html) is an entity. It represents an object that contains data grouped in columns (similarly to R or Spark dataframes).
 
-`ReadDataFrame` is an operation with no input ports and one output port. It is able to read data from an external source and form it into DataFrame that it will produce in output port.
+[ReadDataFrame](operations/read_dataframe.html) is an operation with no input ports and one output port. It is able to read data from an external source and form it into a `DataFrame` that it will produce in output port.
 
-`FilterColumns` is an operation with one input and one output port. It selects a subset of `DataFrame` columns and produces a new `DataFrame` which contains only selected columns.
+[FilterColumns](operations/filter_columns.html) is an operation with one input and two output ports.
+It selects a subset of `DataFrame` columns and produces a new `DataFrame` which contains only selected columns.
+It returns result `DataFrame` on output port 0 and `ColumnFilterer` `Transformer`
+that can be used to perform the same transformation on a different `DataFrame` on output port 1.
 
-`WriteDataFrame` is an operation with one input port and no output ports. It is used to export content of a `DataFrame` to external destination. Note that, as it has no output, WriteDataFrame is interesting only because of it’s side effects.
+[WriteDataFrame](operations/write_dataframe.html) is an operation with one input port and no output ports.
+It is used to export content of a `DataFrame` to external destination.
+Note that, as it has no output, `WriteDataFrame` is interesting only because of its side effects.
 
 ### Parameters
 
-Operation can have a set of named parameters. Parameters are modifying the behavior of the operation.
+An operation can have a set of named parameters. Parameters are modifying the behavior of the operation.
 
 #### Example
 In `ReadDataFrame`, parameters can be used to specify the source of data. In `FilterColumns`, parameters are used to specify the set of selected columns.
@@ -56,10 +62,10 @@ List of currently supported types of parameters can be found [here](parameter_ty
 Each port of an operation has associated type qualifier. A type qualifier of an input port informs what type of entity can be placed in this port. A type qualifier of an output port informs what is a guaranteed type of entity that will be produced in this port.
 
 #### Example 1
-The `Filter Columns` operation accepts only  DataFrames in its input port. Therefore, the type qualifier of its single input port is `DataFrame`. `Filter Columns` also produces DataFrames in its first output port. Therefore, the type qualifier of its first output port is `DataFrame`.
+The `FilterColumns` operation accepts only  `DataFrames` in its input port. Therefore, the type qualifier of its single input port is `DataFrame`. `FilterColumns` also produces `DataFrames` in its first output port. Therefore, the type qualifier of its first output port is `DataFrame`.
 
 #### Example 2
-The `Fit` operation serves to create machine learning model based on a training `DataFrame`. It has two input ports and one output port. The type qualifier of the first input port is: `Estimator`. This means that only entities extending `Estimator` class can be placed in this port. The type qualifier of the output port is `Transformer`. This means that each entity produced by this operation will extend `Transformer` class.
+The [Fit](operations/fit.html) operation serves to create machine learning model based on a training `DataFrame`. It has two input ports and one output port. The type qualifier of the first input port is: `Estimator`. This means that only entities extending `Estimator` class can be placed in this port. The type qualifier of the output port is `Transformer`. This means that each entity produced by this operation will extend `Transformer` class.
 
 $$Fit: (Estimator, DataFrame) \rightarrow Transformer$$
 
@@ -67,9 +73,9 @@ $$Fit: (Estimator, DataFrame) \rightarrow Transformer$$
 
 Operables are objects on which operations are performed.
 
-Deeplang operables include (among others) **DataFrames** and special-purpose entities: **Transformers**, **Estimators** and **Evaluators**.
+Deeplang operables include (among others) `DataFrames` and special-purpose entities: `Transformers`, `Estimators` and `Evaluators`.
 
-One can think about **Transformers**, **Estimators** and **Evaluators** as encapsulated operations that can be input to higher-order operations.
+One can think about `Transformers`, `Estimators` and `Evaluators` as encapsulated operations that can be input to higher-order operations.
 
 These categories are analogous to classes in [Spark ML API](http://spark.apache.org/docs/latest/ml-guide.html#main-concepts).
 Similarity of Deeplang and Spark class hierarchies allows to reuse logic already available in Spark libraries.
@@ -78,15 +84,15 @@ Similarity of Deeplang and Spark class hierarchies allows to reuse logic already
 
 $$Transformer: DataFrame \rightarrow DataFrame$$
 
-Transformer is an abstraction of direct data processing. It consumes a `DataFrame` and produces a `DataFrame`.
+`Transformer` is an abstraction of direct data processing. It consumes a `DataFrame` and produces a `DataFrame`.
 
-Transformers can be executed by **Transform** higher-order operation.
+`Transformers` can be executed by [Transform](operations/transform.html) higher-order operation.
 
 #### Example
 
-**Tokenize** is an operation that outputs transformed `DataFrame` on its left output port
-and a **StringTokenizer** `Transformer` on its right output port. Passing `Transformer`
-to **Transform** allows to perform **Tokenize** on another `DataFrame`.
+[Tokenize](operations/tokenize.html) is an operation that outputs transformed `DataFrame` on its left output port
+and a `StringTokenizer` `Transformer` on its right output port. Passing `Transformer`
+to `Transform` allows to perform `Tokenize` on another `DataFrame`.
 
 ![transformer example](./img/transformer_example.png){: .img-responsive}
 
@@ -94,15 +100,15 @@ to **Transform** allows to perform **Tokenize** on another `DataFrame`.
 
 $$Estimator: DataFrame \rightarrow Transformer$$
 
-Estimator is a generalization of machine learning algorithm. It consumes a `DataFrame` and produces a `Transformer`.
+`Estimator` is a generalization of machine learning algorithm. It consumes a `DataFrame` and produces a `Transformer`.
 
-Estimators can be executed by **Fit** generic operation.
+`Estimators` can be executed by `Fit` generic operation.
 
 #### Example
 
-**Logistic Regression** is an operation that outputs an untrained model, which is an `Estimator`.
-It is passed to **Fit** operation. We get a trained model as result of fitting.
-The trained model is a `Transformer` that can be used in **Transform** operation for scoring on new data.
+[Logistic Regression](operations/logistic_regression.html) is an operation that outputs an untrained model, which is an `Estimator`.
+It is passed to `Fit` operation. We get a trained model as result of fitting.
+The trained model is a `Transformer` that can be used in `Transform` operation for scoring on new data.
 
 ![estimator example](./img/estimator_example.png){: .img-responsive}
 
@@ -110,13 +116,13 @@ The trained model is a `Transformer` that can be used in **Transform** operation
 
 $$Evaluator: DataFrame \rightarrow MetricValue$$
 
-Evaluator is an abstraction of calculating `DataFrame` metrics. It consumes a `DataFrame` and produces a `MetricValue`.
+`Evaluator` is an abstraction of calculating `DataFrame` metrics. It consumes a `DataFrame` and produces a [MetricValue](classes/metric_value.html).
 
-Evaluators can be executed by **Evaluate** generic operation.
+`Evaluators` can be executed by `Evaluate` generic operation.
 
 #### Example
 
-**Regression Evaluator** is an operation that outputs an `Evaluator`. It is passed to **Evaluate** operation,
+[Regression Evaluator](operations/regression_evaluator.html) is an operation that outputs an `Evaluator`. It is passed to `Evaluate` operation,
 which calculates regression metrics on a previously scored `DataFrame`.
 
 ![estimator example](./img/evaluator_example.png){: .img-responsive}
@@ -124,7 +130,12 @@ which calculates regression metrics on a previously scored `DataFrame`.
 ### Workflows
 Deeplang workflow is a directed acyclic graph of connected operations. It represents what actions are to be performed on data.
 
-An entity produced by one operation can be placed as argument in a port of other operation. This can be represented as a connection between output port of the first operation and input port of the second one. A workflow is formed from a set of operations and connections between them. Note that from one output port there can be many connections to many different input ports - it means that entity produced by an operation will be placed as argument in many different operations. However, there can only be one connection incoming to an input port.
+An entity produced by one operation can be placed as argument in a port of other operation.
+This can be represented as a connection between output port of the first operation and input port of the second one.
+A workflow is formed from a set of operations and connections between them.
+Note that from one output port there can be many connections to many different input ports -
+it means that entity produced by an operation will be placed as an argument in many different operations.
+However, there can only be one connection incoming to an input port.
 
 In order to be executed, a workflow must be correct, i.e.:
 
@@ -141,4 +152,9 @@ Note that if two branches of workflow do not depend on each other, they can be e
   ![workflow](./img/deeplang_workflow.png){: .centered-image .img-responsive}
 </div>
 
-In the example, there is a simple workflow presented. It reads a `DataFrame` from some external source and then passes it to the `Split` operation. This operation splits `DataFrame` by rows, producing two new `DataFrame`s. One is immediately written at some destination. The other one is projected to the selected subset of its columns, and than written. Note, that writing of left `DataFrame` can be executed simultanously with projecting and writting of right `DataFrame`.
+In the example, there is a simple workflow presented.
+It reads a `DataFrame` from some external source and then passes it to the [Split](operations/split.html) operation.
+This operation splits `DataFrame` by rows, producing two new `DataFrames`.
+One is immediately written at some destination.
+The other one is projected to the selected subset of its columns, and than written.
+Note, that writing of left `DataFrame` can be executed simultaneously with projecting and writing of right `DataFrame`.
