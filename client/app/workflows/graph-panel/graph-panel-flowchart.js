@@ -5,7 +5,7 @@ import { GraphPanelRendererBase } from './../graph-panel/graph-panel-renderer/gr
 /* beautify preserve:end */
 
 /* @ngInject */
-function FlowChartBoxController($scope, $element, GraphPanelRendererService) {
+function FlowChartBoxController($rootScope, $scope, $element, $document, GraphPanelRendererService, Edge, GraphNode) {
   let nodeDimensions = {};
 
   this.getNodeDimensions = function getNodeDimensions() {
@@ -37,10 +37,21 @@ function FlowChartBoxController($scope, $element, GraphPanelRendererService) {
       $scope.$emit('FlowChartBox.ELEMENT_DROPPED', data);
     }
   });
+
+  // Those are global. It is assumed that there is only one flowchart in application.
+  // TODO Rework it so its local. Probably use jsPlumb.getInstance()
+  $document.on('mousedown', GraphPanelRendererService.disablePortHighlightings);
+  $rootScope.$on('FlowChartBox.ELEMENT_DROPPED', GraphPanelRendererService.disablePortHighlightings);
+  $rootScope.$on('Keyboard.KEY_PRESSED_DEL', GraphPanelRendererService.disablePortHighlightings);
+  $rootScope.$on(Edge.CREATE, GraphPanelRendererService.disablePortHighlightings);
+  $rootScope.$on(Edge.REMOVE, GraphPanelRendererService.disablePortHighlightings);
+  $rootScope.$on(GraphNode.MOUSEDOWN, GraphPanelRendererService.disablePortHighlightings);
+  jsPlumb.bind('connectionDragStop', GraphPanelRendererService.disablePortHighlightings);
+
 }
 
 /* @ngInject */
-function FlowChartBox($rootScope, GraphPanelRendererService) {
+function FlowChartBox(GraphPanelRendererService) {
   return {
     restrict: 'E',
     controller: FlowChartBoxController,
@@ -51,7 +62,6 @@ function FlowChartBox($rootScope, GraphPanelRendererService) {
       'selectedNode': '=',
       'workflow': '=',
       'nodes': '=',
-      'reportMode': '=',
       'isRunning': '=',
       'zoomId': '@'
     },
@@ -63,16 +73,12 @@ function FlowChartBox($rootScope, GraphPanelRendererService) {
         }
       });
 
-      function setRenderReportMode(isReportMode) {
-        GraphPanelRendererService.setRenderMode(
-          isReportMode ?
-          GraphPanelRendererBase.REPORT_RENDER_MODE :
-          GraphPanelRendererBase.EDITOR_RENDER_MODE);
-      }
-
-      scope.$watch('flowChartBoxCtrl.reportMode', function(newValue) {
+      scope.$watch('flowChartBoxCtrl.isRunning', function(newValue) {
         scope.$evalAsync(() => {
-          setRenderReportMode(newValue);
+          let newRenderMode = newValue ?
+            GraphPanelRendererBase.RUNNING_RENDER_MODE :
+            GraphPanelRendererBase.EDITOR_RENDER_MODE;
+          GraphPanelRendererService.setRenderMode(newRenderMode);
           GraphPanelRendererService.rerender(scope.flowChartBoxCtrl.workflow);
         });
       });

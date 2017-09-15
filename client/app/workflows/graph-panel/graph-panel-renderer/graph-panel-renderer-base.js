@@ -9,4 +9,4 @@ export class GraphPanelRendererBase {
 }
 
 GraphPanelRendererBase.EDITOR_RENDER_MODE = Symbol('editor_render_mode');
-GraphPanelRendererBase.REPORT_RENDER_MODE = Symbol('report_render_mode');
+GraphPanelRendererBase.RUNNING_RENDER_MODE = Symbol('running_render_mode');
