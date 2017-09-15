@@ -110,30 +110,6 @@ the Vagrantfile that will allow you to spin up Seahorse’s virtual machine.
 <a target="_blank" href="{{ site.SEAHORSE_EDITOR_ADDRESS }}">{{ site.SEAHORSE_EDITOR_ADDRESS }}</a>
 in your browser.
 
-### Upgrading to the Latest Version
-
-If you want to replace your Seahorse Standalone with the newest version you need to invoke
-the commands below. ***Please keep in mind that the current version of Seahorse will be
-completely erased, meaning that all workflows stored in Seahorse will be deleted, too.***
-
-The following commands need to be executed in the directory containing the `Vagrantfile` file.
-using.
-
-{% highlight bash %}
-# stop and delete current Seahorse containers
-vagrant destroy
-# remove current seahorse box
-vagrant box remove seahorse-vm
-# remove older Vagrantfile
-rm Vagrantfile
-# get the newest Vagrantfile (please check Downloads page)
-# wget is a simple command-line network downloader,
-# but you can also download Vagrant file using a web browser
-wget http://path.to.the.newest.vagrantfile
-# start the newest Seahorse
-vagrant up
-{% endhighlight %}
-
 ### Troubleshooting
 * If you cannot start Seahorse virtual machine, please check if virtualization is enabled in BIOS.
 * In case of unexpected errors during Seahorse usage, try rebooting Seahorse by running:
