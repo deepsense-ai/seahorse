@@ -6,12 +6,14 @@ import org.scalastyle.sbt._
 
 name := "deepsense-backend"
 
-lazy val seahorseCommons = ProjectRef(file("./seahorse-workflow-executor"), "commons")
-lazy val seahorseMqProtocol = ProjectRef(file("./seahorse-workflow-executor"), "workflowexecutormqprotocol")
-lazy val seahorseDeeplang = ProjectRef(file("./seahorse-workflow-executor"), "deeplang")
-lazy val seahorseGraph = ProjectRef(file("./seahorse-workflow-executor"), "graph")
-lazy val seahorseReportlib = ProjectRef(file("./seahorse-workflow-executor"), "reportlib")
-lazy val seahorseWorkflowJson = ProjectRef(file("./seahorse-workflow-executor"), "workflowjson")
+lazy val shWeRepoDir = file("./seahorse-workflow-executor")
+
+lazy val seahorseCommons = ProjectRef(shWeRepoDir, "commons")
+lazy val seahorseMqProtocol = ProjectRef(shWeRepoDir, "workflowexecutormqprotocol")
+lazy val seahorseDeeplang = ProjectRef(shWeRepoDir, "deeplang")
+lazy val seahorseGraph = ProjectRef(shWeRepoDir, "graph")
+lazy val seahorseReportlib = ProjectRef(shWeRepoDir, "reportlib")
+lazy val seahorseWorkflowJson = ProjectRef(shWeRepoDir, "workflowjson")
 
 lazy val backendcommons         = project dependsOn seahorseCommons
 lazy val workflowmanager        = project dependsOn (seahorseDeeplang, seahorseGraph, seahorseReportlib,
