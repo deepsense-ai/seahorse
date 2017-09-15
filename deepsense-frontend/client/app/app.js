@@ -27,6 +27,7 @@ if (browser.chrome && version >= 40) {
     require('./server-communication/server-communication.module.js').name
   ]);
   require('./app.config.js').inject(lab);
+  require('./version.factory.js').inject(lab);
   require('./app.run.js').inject(lab);
 } else {
   document.body.innerHTML =
