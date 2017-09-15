@@ -53,15 +53,6 @@ object CommonSettingsPlugin extends AutoPlugin {
       setNextVersion
     ),
     credentials += Credentials(Path.userHome / ".artifactory_credentials"),
-    git.formattedShaVersion := git.gitHeadCommit.value.map { sha =>
-      val postfix = if (isSnapshot.value) "-SNAPSHOT" else ""
-      git.formattedDateVersion.value + "-" + sha.substring(0, 7) + postfix
-    },
-    git.baseVersion <<= (version in ThisBuild),
-    git.uncommittedSignifier := None,
-    (version in Universal) := {
-      git.formattedShaVersion.value.getOrElse((version in Universal).value)
-    },
     publish <<= publish dependsOn (packageBin in Universal)
   )
 
