@@ -7,6 +7,14 @@
   .calculated-columns {
     border-top: 1px solid #e5e5e5;
     overflow-y: auto;
+
+    label.custom-checkbox {
+      direction: rtl;
+    }
+
+    input[type=checkbox] + span:before {
+      margin-left: 10px;
+    }
   }
 }
 
@@ -119,5 +127,7 @@
     max-height: 50vh;
   }
 }
+
+
 
 @import "./calculated-selected-columns/calculated-selected-columns.less";

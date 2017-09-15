@@ -62,8 +62,10 @@
 <article class="modal-body u-flex calculated-columns">
   <span ng-if="::parameter.dataFrameSchema">
     <div class="o-modal-selector__show-all-checkbox">
-      <span class="font-bold">Show all</span>
-      <input type="checkbox" ng-model="showAllColumns">
+      <label class="custom-checkbox rtl">
+        <input type="checkbox" ng-model="showAllColumns">
+        <span class="font-bold">Show all</span>
+      </label>
     </div>
     <strong>Selected column<span ng-if="::!selectorIsSingle()">s</span>:</strong>
     <calculated-selected-columns></calculated-selected-columns>
