@@ -554,7 +554,7 @@ exported model. Note that the `Export model` step from Example 1 must be finishe
      Note that in a real life scenario new data would be used.
 4. The data passed to the model must have the same schema as the data used in training.
    We need to recreate preprocessing from Example 1:
-   * Drag the `Assembly Vector` operation onto your canvas and set parameters as listed in Example 1.
+   * Drag the `Assemble Vector` operation onto your canvas and set parameters as listed in Example 1.
 
    Hint: if the data preprocessing is built of many operations it might be a
    good idea to encapsulate these operations inside a `Custom Transformer`
@@ -563,7 +563,7 @@ exported model. Note that the `Export model` step from Example 1 must be finishe
 5. Use the imported model with new data:
    * Drag the `Transform` operation onto your canvas.
    * Drag the `Read Transformer` output to the `Transform` operation input.
-   * Drag the `Assembly Vector` output to the `Transform` operation input.
+   * Drag the `Assemble Vector` output to the `Transform` operation input.
    * Click **RUN** to execute the workflow.
 
 To make sure that your imported model is working correctly you can view
