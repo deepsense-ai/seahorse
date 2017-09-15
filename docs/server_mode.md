@@ -59,6 +59,11 @@ Authorization service offers registration page to create a new account confirmed
 
 To enable the authorization service, the `docker-compose.yml` file should be modified as described below.
 
+Admin's password is 'admin' by default.
+It can be reset normally - on the login screen.
+Link for changing the password will be sent to the address provided in `docker-compose.yml`.
+
+
 <div class="flex-adaptable-row-container">
 <div class="flex-adaptable-column-container">
 <b>Default Configuration</b>
@@ -69,6 +74,7 @@ services:
     ...
     environment:
       ENABLE_AUTHORIZATION: 'false'
+
   ...
   proxy:
   ...
@@ -88,6 +94,7 @@ services:
     ...
     environment:
       ENABLE_AUTHORIZATION: 'true'
+      SEAHORSE_ADMIN_EMAIL: foo@bar.com
   ...
   proxy:
   ...
