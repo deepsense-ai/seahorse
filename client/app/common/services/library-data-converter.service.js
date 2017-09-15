@@ -2,7 +2,7 @@
 
 
 /* @ngInject */
-function LibraryDataConverter(config, LibraryApiService) {
+function LibraryDataConverter(LibraryApiService) {
   const service = this;
 
   service.decodeResponseData = decodeResponseData;
@@ -78,8 +78,7 @@ function LibraryDataConverter(config, LibraryApiService) {
       // TODO: remove uri property, use path instead
       uri: {
         get: function () {
-          // Dirty hack, but uri will be removed anyway
-          return `${config.libraryPrefix}${this.path}`.replace('///', '//');
+          return LibraryApiService.getResourceUri(this.path);
         }
       }
     });
