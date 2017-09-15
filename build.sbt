@@ -42,8 +42,13 @@ lazy val graphexecutor = project dependsOn (
   models)
 lazy val graphjson     = project dependsOn (commons, deeplang, graph)
 
+addCommandAlias("deployOnly",
+  ";graphexecutor/runMain io.deepsense.graphexecutor.deployment.DeployOnHdfs")
+addCommandAlias("deploy", ";graphexecutor/assembly ;deployOnly")
+
 addCommandAlias("ds-it",
-  ";commons/it:test " +
+  ";deploy " +
+    ";commons/it:test " +
     ";models/it:test " +
     ";deeplang/it:test " +
     ";entitystorage-model/it:test " +
@@ -55,7 +60,3 @@ addCommandAlias("ds-it",
     ";reportlib/it:test " +
     ";graphjson/it:test " +
     ";deploy-model-service/it:test")
-
-addCommandAlias("deployOnly",
-  ";graphexecutor/runMain io.deepsense.graphexecutor.deployment.DeployOnHdfs")
-addCommandAlias("deploy", ";graphexecutor/assembly ;deployOnly")

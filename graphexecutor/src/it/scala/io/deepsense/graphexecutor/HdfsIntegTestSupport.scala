@@ -13,7 +13,6 @@ import org.apache.hadoop.hdfs.DFSClient
 import org.scalatest._
 
 import io.deepsense.deeplang.DSHdfsClient
-import io.deepsense.graphexecutor.deployment.DeployOnHdfs
 
 /**
  * Adds features to aid integration testing using HDFS.
@@ -56,10 +55,6 @@ trait HdfsIntegTestSupport
     cli = Some(new DFSClient( new URI("hdfs://" + MasterHostname + ":" + HdfsNameNodePort), config))
     dsHdfsClient = Some(new DSHdfsClient(cli.get))
 
-    cli.get
-      .mkdirs(Constants.TestDir, new FsPermission(FsAction.ALL, FsAction.ALL, FsAction.ALL), true)
-    DeployOnHdfs.deployOnHdfs(dsHdfsClient.get)
-
     // Deploy test-specific files
     copyFilesToHdfs()
   }
@@ -81,6 +76,12 @@ trait HdfsIntegTestSupport
    * @param remoteTo remote file path to copy to
    */
   def copyFromLocal(localFrom: String, remoteTo: String): Unit = {
+    // Create directories for file on HDFS explicitly
+    cli.get.mkdirs(
+      remoteTo.substring(0, remoteTo.lastIndexOf("/")),
+      new FsPermission(FsAction.ALL, FsAction.ALL, FsAction.ALL),
+      true)
+    // Copy file to remote HDFS
     dsHdfsClient.get.copyLocalFile(localFrom, remoteTo)
   }
 }

@@ -24,9 +24,6 @@ assemblyMergeStrategy in assembly := {
 // Skip test while assembling uber-jar
 test in assembly := {}
 
-// Always perform assembly task before it:test
-test in IntegrationTest <<= (test in IntegrationTest) dependsOn assembly
-
 Seq(filterSettings: _*)
 CommonSettingsPlugin.setUpFiltersPlugin
 
