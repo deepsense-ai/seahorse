@@ -129,7 +129,6 @@ class WorkflowsEditorController {
     });
 
     this.$scope.$on('AttributePanel.UNSELECT_NODE', () => {
-      this.selectedPortObject = null;
       this.unselectNode();
       this.$scope.$digest();
     });
