@@ -31,16 +31,23 @@ DEEPSENSE_REGISTRY="docker-repo.deepsense.codilime.com/deepsense_io"
 
 docker-compose pull
 
+echo "Save docker images to files"
 DOCKER_IMAGES=("deepsense-sessionmanager" "deepsense-workflowmanager" "deepsense-notebooks" "deepsense-rabbitmq" "deepsense-h2" "deepsense-frontend" "deepsense-proxy")
 for DOCKER_IMAGE in "${DOCKER_IMAGES[@]}"
 do
   DOCKER_IMAGE_FULL=$DEEPSENSE_REGISTRY/$DOCKER_IMAGE:$SEAHORSE_BUILD_TAG
-  docker save $DOCKER_IMAGE_FULL --output $DOCKER_IMAGE.tar
+  echo "Save docker image to $DOCKER_IMAGE.tar"
+  rm -f $DOCKER_IMAGE.tar
+  docker save --output $DOCKER_IMAGE.tar $DOCKER_IMAGE_FULL
 done
 
 # Create Vagrant box
+echo "Destroy Vagrant machine (1)"
 vagrant destroy -f $VAGRANT_BOX_NAME
+echo "Create Vagrant machine"
 vagrant up $VAGRANT_BOX_NAME
+echo "Export Vagrant machine to file"
 rm -f $PUBLISH_DIR/$VAGRANT_BOX_NAME.box
 vagrant package --output $PUBLISH_DIR/$VAGRANT_BOX_NAME.box
+echo "Destroy Vagrant machine (2)"
 vagrant destroy -f $VAGRANT_BOX_NAME
