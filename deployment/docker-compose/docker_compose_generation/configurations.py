@@ -86,14 +86,15 @@ class Proxy(Service):
             Library,
             Notebooks,
             RabbitMQ,
-            Frontend
+            Frontend,
+            Authorization
         ]
 
     def environment(self):
         return Env(
             VCAP_SERVICES=json.dumps(self.vcap_services()),
             HOST='127.0.0.1',
-            ENABLE_AUTHORIZATION=self.enable_authorization,
+            ENABLE_AUTHORIZATION=self.services.Authorization.enable_authorization(),
             FORCE_HTTPS='false',
             PORT=33321) + \
                self.services.WorkflowManager.credentials().as_env()
@@ -430,12 +431,16 @@ class Authorization(Service):
 
     def environment(self):
         return Env(
-            ENABLE_AUTHORIZATION=self.enable_authorization,
+            ENABLE_AUTHORIZATION=self.enable_authorization(),
             JDBC_URL=self.services.Database.internal_jdbc_url(db="uaa"),
             SEAHORSE_ADMIN_EMAIL="seahorse-admin@deepsense.io")
 
     def port_mapping(self):
         return PortMappings().add(PortMappings.Mapping(8080, 60109))
+
+    @staticmethod
+    def enable_authorization():
+        return 'false'
 
 
 class DataSourceManager(Service):
@@ -526,6 +531,20 @@ class ServerModeProxy(Proxy):
     def environment(self):
         return super(ServerModeProxy, self).environment() + \
             Env(HOST='0.0.0.0')
+
+
+class EnabledAuthorization(Authorization):
+    @classmethod
+    def name(cls):
+        return 'authorization'
+
+    @classmethod
+    def image_name(cls):
+        return 'authorization'
+
+    @staticmethod
+    def enable_authorization():
+        return 'true'
 
 
 class Configuration(object):

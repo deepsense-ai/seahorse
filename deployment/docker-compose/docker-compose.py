@@ -58,6 +58,9 @@ def main():
     parser.add_argument('--server-mode',
                         help="If used, Seahorse will listen on 0.0.0.0. This option doesn't work on mac",
                         action='store_true')
+    parser.add_argument('--enable-authorization',
+                        help='If used, the authorization module will be turned on',
+                        action='store_true')
 
     args, extra_args = parser.parse_known_args()
 
@@ -70,6 +73,9 @@ def main():
 
     if args.server_mode:
         configuration.replace(ServerModeProxy)
+
+    if args.enable_authorization:
+        configuration.replace(EnabledAuthorization)
 
     docker_compose = dump_yaml_to_string(
         ConfigurationGeneration(configuration).generate(
