@@ -9,7 +9,7 @@ const request = require('request');
  * When user quota is changed also change numbers in Seahorse documentation
  * We need one account for admin, so user_quota = number_of_user + 1 (for admin)
  */
-const user_quota = 2;
+const user_quota = 31;
 
 module.exports = {
     forward: checkUserQuota,

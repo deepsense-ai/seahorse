@@ -7,7 +7,7 @@ function trialTimeLimitedMiddleware(req, res, next) {
   const createDateEnvFormat = 'YYYY-MM-DD';
   const seahorseCreationTime = moment(creationTimeString, createDateEnvFormat);
 
-  const trialPeriod = moment.duration(2, 'weeks');
+  const trialPeriod = moment.duration(8, 'weeks');
 
   const currentTime = moment();
   const expirationDateTime = seahorseCreationTime.add(trialPeriod);
