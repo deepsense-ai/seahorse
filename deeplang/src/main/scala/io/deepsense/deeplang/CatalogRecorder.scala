@@ -93,6 +93,8 @@ object CatalogRecorder {
     catalog.registerDOperable[GBTClassificationModel]()
     catalog.registerDOperable[RandomForestClassifier]()
     catalog.registerDOperable[RandomForestClassificationModel]()
+    catalog.registerDOperable[DecisionTreeClassifier]()
+    catalog.registerDOperable[DecisionTreeClassificationModel]()
     catalog.registerDOperable[MultilayerPerceptronClassifier]()
     catalog.registerDOperable[MultilayerPerceptronClassifierModel]()
     catalog.registerDOperable[QuantileDiscretizerEstimator]()
@@ -270,6 +272,9 @@ object CatalogRecorder {
       DOperationCategories.ML.Classification)
 
     catalog.registerDOperation[CreateRandomForestClassifier](
+      DOperationCategories.ML.Classification)
+
+    catalog.registerDOperation[CreateDecisionTreeClassifier](
       DOperationCategories.ML.Classification)
 
     catalog.registerDOperation[CreateLogisticRegression](

@@ -95,9 +95,12 @@ abstract class StringIndexingEstimatorWrapper
     }
 
     val sparkModelWrapper = TypeUtils.instanceOfType(modelWrapperTag)
-      .setModel(sparkModel).setParent(wrappedEstimator)
+      .setParent(wrappedEstimator.replicate(extractParamMap()))
+      .setModel(sparkModel)
+
     val stringIndexingModelWrapper = TypeUtils.instanceOfType(stringIndexingWrapperModelTag)
-      .setPipelinedModel(pipelineModel).setWrappedModel(sparkModelWrapper)
+      .setPipelinedModel(pipelineModel)
+      .setWrappedModel(sparkModelWrapper)
 
     stringIndexingModelWrapper
   }
@@ -105,7 +108,8 @@ abstract class StringIndexingEstimatorWrapper
   override private[deeplang] def _fit_infer(
      schemaOpt: Option[StructType]): SIWP = {
     validateSparkEstimatorParams(wrappedEstimator.sparkEstimator, schemaOpt)
-    val model = wrappedEstimator.createModelWrapperInstance().setParent(wrappedEstimator)
+    val model = wrappedEstimator.createModelWrapperInstance()
+      .setParent(wrappedEstimator.replicate(extractParamMap()))
     TypeUtils.instanceOfType(stringIndexingWrapperModelTag).setWrappedModel(model)
   }
 }
