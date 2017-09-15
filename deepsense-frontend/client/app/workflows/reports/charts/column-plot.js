@@ -1,6 +1,7 @@
 'use strict';
 
-function ColumnPlot() {
+/* @ngInject */
+function ColumnPlot($filter) {
 
   const maxChartHeight = 400;
   const labelLengthThreshold = 20;
@@ -61,6 +62,9 @@ function ColumnPlot() {
           if (scope.columnType === 'timestamp') {
             start = moment(new Date(start)).format('YYYY-MM-DD HH:mm:ss');
             end = moment(new Date(end)).format('YYYY-MM-DD HH:mm:ss');
+          } else {
+            start = $filter('precision')(start);
+            end = $filter('precision')(end);
           }
 
           const str = `${start} - ${end}`;

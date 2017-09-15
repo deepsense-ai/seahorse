@@ -1,6 +1,7 @@
 'use strict';
 
-function PiePlot() {
+/* @ngInject */
+function PiePlot($filter) {
   const directive = {
     restrict: 'E',
     templateUrl: 'app/workflows/reports/charts/plot.html',
@@ -20,6 +21,7 @@ function PiePlot() {
     const chart = nv.models.pieChart();
 
     const chartValues = _.map(data.counts, function (val, idx) {
+      val = $filter('precision')(val);
       return {
         x: data.buckets[idx],
         y: val
