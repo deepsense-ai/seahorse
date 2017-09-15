@@ -17,4 +17,6 @@ require('./BaseAPIClient.factory.js').inject(providers);
 require('./ExperimentAPIClient.factory.js').inject(providers);
 require('./OperationsAPIClient.factory.js').inject(providers);
 
+require('./Operations.factory.js').inject(providers);
+
 module.exports = providers;
