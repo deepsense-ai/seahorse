@@ -7,7 +7,7 @@
 'use strict';
 
 /*@ngInject*/
-function AttributeMultiplierType($compile, DeepsenseNodeParameters) {
+function AttributeMultiplierType($compile, $rootScope, DeepsenseNodeParameters) {
   return {
     restrict: 'E',
     templateUrl: 'attribute-types/attribute-multiplier/attribute-multiplier-type.html',
@@ -46,6 +46,10 @@ function AttributeMultiplierType($compile, DeepsenseNodeParameters) {
         removeItem(itemIndex) {
           if (window.confirm('Are you sure to remove the multiplier item?')) {
             this.parameter.parametersLists.splice(itemIndex, 1);
+
+            $rootScope.$applyAsync(() => {
+              $rootScope.$broadcast('AttributesPanel.UPDATED');
+            });
           }
         }
       });

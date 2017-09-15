@@ -1,7 +1,7 @@
 'use strict';
 
 /*@ngInject*/
-function OperationAttributes(AttributesPanelService) {
+function OperationAttributes($rootScope, AttributesPanelService) {
   return {
     restrict: 'E',
     scope: {
@@ -56,6 +56,12 @@ function OperationAttributes(AttributesPanelService) {
         $timeout(() => {
           $scope.$emit('AttributePanel.UNSELECT_NODE');
         }, 1000, false);
+      };
+
+      this.customNameSaved = function() {
+        $rootScope.$applyAsync(() => {
+          $rootScope.$broadcast('AttributesPanel.UPDATED');
+        });
       };
     },
     controllerAs: 'panel'

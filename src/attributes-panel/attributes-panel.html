@@ -6,7 +6,7 @@
           tooltip="{{!disabledMode && node.uiName ? 'Click to change name' : ''}}"
           tooltip-trigger="mouseenter"
           tooltip-append-to-body="true">
-        <span editable-text="node.uiName" ng-if="!disabledMode">{{node.uiName || 'Create custom name'}}</span>
+        <span editable-text="node.uiName" onaftersave="panel.customNameSaved()" ng-if="!disabledMode">{{node.uiName || 'Create custom name'}}</span>
         <span ng-if="disabledMode && node.uiName">{{::node.uiName}}</span>
       </h4>
       <a class="close-link" aria-label="Close" ng-click="panel.closePanel()">
