@@ -7,11 +7,11 @@ class RunningExecutorPopoverCtrl {
   }
 
   isPopoverVisible() {
-    this.WorkflowStatusBarService.userClosedRunningExecutorPopover();
+    this.WorkflowStatusBarService.isRunningExecutorPopoverVisible();
   }
 
   closePopover() {
-    this.WorkflowStatusBarService.closeStartingExecutorPopover();
+    this.WorkflowStatusBarService.closeRunningExecutorPopover();
   }
 
 }
