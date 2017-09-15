@@ -53,18 +53,10 @@ abstract class DOperation0To1[
   val inArity = 0
   val outArity = 1
 
-  override def inPortType(index: Int): ru.TypeTag[_] = {
-    index match {
-      case _ => throw new IllegalArgumentException("Wrong input port index")
-    }
-  }
+  override val inPortTypes: Vector[ru.TypeTag[_]] = Vector()
 
-  override def outPortType(index: Int): ru.TypeTag[_] = {
-    index match {
-      case 0 => ru.typeTag[TO_0]
-      case _ => throw new IllegalArgumentException("Wrong output port index")
-    }
-  }
+  override val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
+    ru.typeTag[TO_0])
 
   override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
     _execute()
@@ -89,19 +81,11 @@ abstract class DOperation0To2[
   val inArity = 0
   val outArity = 2
 
-  override def inPortType(index: Int): ru.TypeTag[_] = {
-    index match {
-      case _ => throw new IllegalArgumentException("Wrong input port index")
-    }
-  }
+  override val inPortTypes: Vector[ru.TypeTag[_]] = Vector()
 
-  override def outPortType(index: Int): ru.TypeTag[_] = {
-    index match {
-      case 0 => ru.typeTag[TO_0]
-      case 1 => ru.typeTag[TO_1]
-      case _ => throw new IllegalArgumentException("Wrong output port index")
-    }
-  }
+  override val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
+    ru.typeTag[TO_0],
+    ru.typeTag[TO_1])
 
   override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
     _execute()
@@ -128,20 +112,12 @@ abstract class DOperation0To3[
   val inArity = 0
   val outArity = 3
 
-  override def inPortType(index: Int): ru.TypeTag[_] = {
-    index match {
-      case _ => throw new IllegalArgumentException("Wrong input port index")
-    }
-  }
+  override val inPortTypes: Vector[ru.TypeTag[_]] = Vector()
 
-  override def outPortType(index: Int): ru.TypeTag[_] = {
-    index match {
-      case 0 => ru.typeTag[TO_0]
-      case 1 => ru.typeTag[TO_1]
-      case 2 => ru.typeTag[TO_2]
-      case _ => throw new IllegalArgumentException("Wrong output port index")
-    }
-  }
+  override val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
+    ru.typeTag[TO_0],
+    ru.typeTag[TO_1],
+    ru.typeTag[TO_2])
 
   override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
     _execute()
@@ -167,18 +143,10 @@ abstract class DOperation1To0[
   val inArity = 1
   val outArity = 0
 
-  override def inPortType(index: Int): ru.TypeTag[_] = {
-    index match {
-      case 0 => ru.typeTag[TI_0]
-      case _ => throw new IllegalArgumentException("Wrong input port index")
-    }
-  }
+  override val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
+    ru.typeTag[TI_0])
 
-  override def outPortType(index: Int): ru.TypeTag[_] = {
-    index match {
-      case _ => throw new IllegalArgumentException("Wrong output port index")
-    }
-  }
+  override val outPortTypes: Vector[ru.TypeTag[_]] = Vector()
 
   override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
     _execute(
@@ -208,19 +176,11 @@ abstract class DOperation1To1[
   val inArity = 1
   val outArity = 1
 
-  override def inPortType(index: Int): ru.TypeTag[_] = {
-    index match {
-      case 0 => ru.typeTag[TI_0]
-      case _ => throw new IllegalArgumentException("Wrong input port index")
-    }
-  }
+  override val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
+    ru.typeTag[TI_0])
 
-  override def outPortType(index: Int): ru.TypeTag[_] = {
-    index match {
-      case 0 => ru.typeTag[TO_0]
-      case _ => throw new IllegalArgumentException("Wrong output port index")
-    }
-  }
+  override val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
+    ru.typeTag[TO_0])
 
   override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
     _execute(
@@ -250,20 +210,12 @@ abstract class DOperation1To2[
   val inArity = 1
   val outArity = 2
 
-  override def inPortType(index: Int): ru.TypeTag[_] = {
-    index match {
-      case 0 => ru.typeTag[TI_0]
-      case _ => throw new IllegalArgumentException("Wrong input port index")
-    }
-  }
+  override val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
+    ru.typeTag[TI_0])
 
-  override def outPortType(index: Int): ru.TypeTag[_] = {
-    index match {
-      case 0 => ru.typeTag[TO_0]
-      case 1 => ru.typeTag[TO_1]
-      case _ => throw new IllegalArgumentException("Wrong output port index")
-    }
-  }
+  override val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
+    ru.typeTag[TO_0],
+    ru.typeTag[TO_1])
 
   override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
     _execute(
@@ -295,21 +247,13 @@ abstract class DOperation1To3[
   val inArity = 1
   val outArity = 3
 
-  override def inPortType(index: Int): ru.TypeTag[_] = {
-    index match {
-      case 0 => ru.typeTag[TI_0]
-      case _ => throw new IllegalArgumentException("Wrong input port index")
-    }
-  }
+  override val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
+    ru.typeTag[TI_0])
 
-  override def outPortType(index: Int): ru.TypeTag[_] = {
-    index match {
-      case 0 => ru.typeTag[TO_0]
-      case 1 => ru.typeTag[TO_1]
-      case 2 => ru.typeTag[TO_2]
-      case _ => throw new IllegalArgumentException("Wrong output port index")
-    }
-  }
+  override val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
+    ru.typeTag[TO_0],
+    ru.typeTag[TO_1],
+    ru.typeTag[TO_2])
 
   override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
     _execute(
@@ -340,19 +284,11 @@ abstract class DOperation2To0[
   val inArity = 2
   val outArity = 0
 
-  override def inPortType(index: Int): ru.TypeTag[_] = {
-    index match {
-      case 0 => ru.typeTag[TI_0]
-      case 1 => ru.typeTag[TI_1]
-      case _ => throw new IllegalArgumentException("Wrong input port index")
-    }
-  }
+  override val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
+    ru.typeTag[TI_0],
+    ru.typeTag[TI_1])
 
-  override def outPortType(index: Int): ru.TypeTag[_] = {
-    index match {
-      case _ => throw new IllegalArgumentException("Wrong output port index")
-    }
-  }
+  override val outPortTypes: Vector[ru.TypeTag[_]] = Vector()
 
   override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
     _execute(
@@ -387,20 +323,12 @@ abstract class DOperation2To1[
   val inArity = 2
   val outArity = 1
 
-  override def inPortType(index: Int): ru.TypeTag[_] = {
-    index match {
-      case 0 => ru.typeTag[TI_0]
-      case 1 => ru.typeTag[TI_1]
-      case _ => throw new IllegalArgumentException("Wrong input port index")
-    }
-  }
+  override val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
+    ru.typeTag[TI_0],
+    ru.typeTag[TI_1])
 
-  override def outPortType(index: Int): ru.TypeTag[_] = {
-    index match {
-      case 0 => ru.typeTag[TO_0]
-      case _ => throw new IllegalArgumentException("Wrong output port index")
-    }
-  }
+  override val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
+    ru.typeTag[TO_0])
 
   override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
     _execute(
@@ -435,21 +363,13 @@ abstract class DOperation2To2[
   val inArity = 2
   val outArity = 2
 
-  override def inPortType(index: Int): ru.TypeTag[_] = {
-    index match {
-      case 0 => ru.typeTag[TI_0]
-      case 1 => ru.typeTag[TI_1]
-      case _ => throw new IllegalArgumentException("Wrong input port index")
-    }
-  }
+  override val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
+    ru.typeTag[TI_0],
+    ru.typeTag[TI_1])
 
-  override def outPortType(index: Int): ru.TypeTag[_] = {
-    index match {
-      case 0 => ru.typeTag[TO_0]
-      case 1 => ru.typeTag[TO_1]
-      case _ => throw new IllegalArgumentException("Wrong output port index")
-    }
-  }
+  override val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
+    ru.typeTag[TO_0],
+    ru.typeTag[TO_1])
 
   override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
     _execute(
@@ -486,22 +406,14 @@ abstract class DOperation2To3[
   val inArity = 2
   val outArity = 3
 
-  override def inPortType(index: Int): ru.TypeTag[_] = {
-    index match {
-      case 0 => ru.typeTag[TI_0]
-      case 1 => ru.typeTag[TI_1]
-      case _ => throw new IllegalArgumentException("Wrong input port index")
-    }
-  }
+  override val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
+    ru.typeTag[TI_0],
+    ru.typeTag[TI_1])
 
-  override def outPortType(index: Int): ru.TypeTag[_] = {
-    index match {
-      case 0 => ru.typeTag[TO_0]
-      case 1 => ru.typeTag[TO_1]
-      case 2 => ru.typeTag[TO_2]
-      case _ => throw new IllegalArgumentException("Wrong output port index")
-    }
-  }
+  override val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
+    ru.typeTag[TO_0],
+    ru.typeTag[TO_1],
+    ru.typeTag[TO_2])
 
   override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
     _execute(
@@ -537,20 +449,12 @@ abstract class DOperation3To0[
   val inArity = 3
   val outArity = 0
 
-  override def inPortType(index: Int): ru.TypeTag[_] = {
-    index match {
-      case 0 => ru.typeTag[TI_0]
-      case 1 => ru.typeTag[TI_1]
-      case 2 => ru.typeTag[TI_2]
-      case _ => throw new IllegalArgumentException("Wrong input port index")
-    }
-  }
+  override val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
+    ru.typeTag[TI_0],
+    ru.typeTag[TI_1],
+    ru.typeTag[TI_2])
 
-  override def outPortType(index: Int): ru.TypeTag[_] = {
-    index match {
-      case _ => throw new IllegalArgumentException("Wrong output port index")
-    }
-  }
+  override val outPortTypes: Vector[ru.TypeTag[_]] = Vector()
 
   override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
     _execute(
@@ -590,21 +494,13 @@ abstract class DOperation3To1[
   val inArity = 3
   val outArity = 1
 
-  override def inPortType(index: Int): ru.TypeTag[_] = {
-    index match {
-      case 0 => ru.typeTag[TI_0]
-      case 1 => ru.typeTag[TI_1]
-      case 2 => ru.typeTag[TI_2]
-      case _ => throw new IllegalArgumentException("Wrong input port index")
-    }
-  }
+  override val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
+    ru.typeTag[TI_0],
+    ru.typeTag[TI_1],
+    ru.typeTag[TI_2])
 
-  override def outPortType(index: Int): ru.TypeTag[_] = {
-    index match {
-      case 0 => ru.typeTag[TO_0]
-      case _ => throw new IllegalArgumentException("Wrong output port index")
-    }
-  }
+  override val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
+    ru.typeTag[TO_0])
 
   override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
     _execute(
@@ -644,22 +540,14 @@ abstract class DOperation3To2[
   val inArity = 3
   val outArity = 2
 
-  override def inPortType(index: Int): ru.TypeTag[_] = {
-    index match {
-      case 0 => ru.typeTag[TI_0]
-      case 1 => ru.typeTag[TI_1]
-      case 2 => ru.typeTag[TI_2]
-      case _ => throw new IllegalArgumentException("Wrong input port index")
-    }
-  }
+  override val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
+    ru.typeTag[TI_0],
+    ru.typeTag[TI_1],
+    ru.typeTag[TI_2])
 
-  override def outPortType(index: Int): ru.TypeTag[_] = {
-    index match {
-      case 0 => ru.typeTag[TO_0]
-      case 1 => ru.typeTag[TO_1]
-      case _ => throw new IllegalArgumentException("Wrong output port index")
-    }
-  }
+  override val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
+    ru.typeTag[TO_0],
+    ru.typeTag[TO_1])
 
   override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
     _execute(
@@ -701,23 +589,15 @@ abstract class DOperation3To3[
   val inArity = 3
   val outArity = 3
 
-  override def inPortType(index: Int): ru.TypeTag[_] = {
-    index match {
-      case 0 => ru.typeTag[TI_0]
-      case 1 => ru.typeTag[TI_1]
-      case 2 => ru.typeTag[TI_2]
-      case _ => throw new IllegalArgumentException("Wrong input port index")
-    }
-  }
+  override val inPortTypes: Vector[ru.TypeTag[_]] = Vector(
+    ru.typeTag[TI_0],
+    ru.typeTag[TI_1],
+    ru.typeTag[TI_2])
 
-  override def outPortType(index: Int): ru.TypeTag[_] = {
-    index match {
-      case 0 => ru.typeTag[TO_0]
-      case 1 => ru.typeTag[TO_1]
-      case 2 => ru.typeTag[TO_2]
-      case _ => throw new IllegalArgumentException("Wrong output port index")
-    }
-  }
+  override val outPortTypes: Vector[ru.TypeTag[_]] = Vector(
+    ru.typeTag[TO_0],
+    ru.typeTag[TO_1],
+    ru.typeTag[TO_2])
 
   override def execute(arguments: Vector[DOperable]): Vector[DOperable] = {
     _execute(

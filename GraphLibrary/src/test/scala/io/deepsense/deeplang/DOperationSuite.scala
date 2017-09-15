@@ -81,31 +81,15 @@ class DOperationSuite extends FunSuite {
     assert(generator.inferKnowledge(context)(Vector()) == Vector(DKnowledge(new A1, new A2)))
   }
 
-  test("Getting type required in input port") {
+  test("Getting types required in input port") {
     import DOperationForPortTypes._
     val op = new SimpleOperation
-    assert(op.inPortType(0) == ru.typeTag[DClassesForDOperations.A1])
+    assert(op.inPortTypes == Vector(ru.typeTag[DClassesForDOperations.A1]))
   }
 
-  test("Getting type required in output port") {
+  test("Getting types required in output port") {
     import DOperationForPortTypes._
     val op = new SimpleOperation
-    assert(op.outPortType(0) == ru.typeTag[DClassesForDOperations.A2])
-  }
-
-  test("Requesting type of non-existing input port throws") {
-    intercept[IllegalArgumentException] {
-      import DOperationForPortTypes._
-      val op = new SimpleOperation
-      op.inPortType(-1)
-    }
-  }
-
-  test("Requesting type of non-existing output port throws") {
-    intercept[IllegalArgumentException] {
-      import DOperationForPortTypes._
-      val op = new SimpleOperation
-      op.outPortType(2)
-    }
+    assert(op.outPortTypes == Vector(ru.typeTag[DClassesForDOperations.A2]))
   }
 }
