@@ -6,6 +6,25 @@
 
 package io.deepsense.deeplang.parameters
 
+case class BooleanParameterHolder(
+    description: String,
+    default: Option[BooleanParameter],
+    required: Boolean)
+  extends ParameterHolder {
+  type HeldParameter = BooleanParameter
+
+  val parameterType = ParameterType.Boolean
+}
+
+object BooleanParameterHolder {
+  def apply(
+      description: String,
+      default: Boolean,
+      required: Boolean): BooleanParameterHolder = {
+    BooleanParameterHolder(description, Some(BooleanParameter(default)), required)
+  }
+}
+
 case class NumericParameterHolder(
     description: String,
     default: Option[NumericParameter],

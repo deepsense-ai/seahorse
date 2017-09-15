@@ -41,4 +41,10 @@ object ParameterConversions {
       case parameter: NumericParameter => parameter
     }
   }
+
+  implicit object ToBooleanParameter extends ParameterConverter[BooleanParameter] {
+    def convertPF = {
+      case parameter: BooleanParameter => parameter
+    }
+  }
 }

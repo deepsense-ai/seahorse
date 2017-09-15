@@ -23,6 +23,8 @@ class ParametersSchema protected (schemaMap: Map[String, ParameterHolder] = Map.
     }
   }
 
+  def getBooleanParameter(name: String): Option[BooleanParameter] = get[BooleanParameter](name)
+
   def getStringParameter(name: String): Option[StringParameter] = get[StringParameter](name)
 
   def getNumericParameter(name: String): Option[NumericParameter] = get[NumericParameter](name)
