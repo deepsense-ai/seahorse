@@ -40,7 +40,8 @@ class DKnowledge[T <: DOperable](val types: Set[T]) {
   }
 
   /**
-   * TODO document and test
+   * Returns first type from DKnowledge.
+   * Throws exception when there are None.
    */
   def single: T = {
     require(types.nonEmpty, "Expected at least one inferred type, but got 0")

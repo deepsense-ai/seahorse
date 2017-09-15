@@ -23,27 +23,39 @@ import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
 import io.deepsense.deeplang.params.{ParamMap, Params}
 import io.deepsense.deeplang.{DKnowledge, DMethod1To1, DOperable, ExecutionContext}
 
-/** TODO document and test */
+/**
+ * Able to transform a DataFrame into another DataFrame.
+ * Can have mutable parameters.
+ */
 abstract class Transformer extends DOperable with Params {
 
-  protected def _transform(df: DataFrame): DataFrame
+  /**
+   * Creates a transformed DataFrame based on input DataFrame.
+   */
+  private[doperables] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame
 
-  protected def _transformSchema(schema: StructType): StructType
+  /**
+   * Should be implemented in subclasses.
+   * For known schema of input DataFrame, infers schema of output DataFrame.
+   * If it is not able to do it for some reasons, it returns None.
+   */
+  private[doperables] def _transformSchema(schema: StructType): Option[StructType] = None
 
-  val transform: DMethod1To1[Unit, DataFrame, DataFrame] =
+  def transform: DMethod1To1[Unit, DataFrame, DataFrame] = {
     new DMethod1To1[Unit, DataFrame, DataFrame] {
       override def apply(ctx: ExecutionContext)(p: Unit)(df: DataFrame): DataFrame = {
-        _transform(df)
+        _transform(ctx, df)
       }
 
       override def infer(
-          ctx: InferContext)(
-          p: Unit)(
-          k: DKnowledge[DataFrame]): (DKnowledge[DataFrame], InferenceWarnings) = {
-        val df = DataFrame.forInference(k.single.schema.map(_transformSchema))
+        ctx: InferContext)(
+        p: Unit)(
+        k: DKnowledge[DataFrame]): (DKnowledge[DataFrame], InferenceWarnings) = {
+        val df = DataFrame.forInference(k.single.schema.flatMap(_transformSchema))
         (DKnowledge(df), InferenceWarnings.empty)
       }
     }
+  }
 
   override def replicate(extra: ParamMap): Transformer =
     super.replicate(extra).asInstanceOf[Transformer]
