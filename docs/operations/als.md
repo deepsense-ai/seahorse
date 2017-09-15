@@ -66,7 +66,7 @@ This operation does not take any input.
 
 <tr>
 <td><code>item column</code></td>
-<td><code><a href="../parameter_types.html#single_column_selector">SingleColumnSelector</a></code></td>
+<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
 <td>Column for item ids.</td>
 </tr>
 
@@ -108,7 +108,7 @@ This operation does not take any input.
 
 <tr>
 <td><code>rating column</code></td>
-<td><code><a href="../parameter_types.html#single_column_selector">SingleColumnSelector</a></code></td>
+<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
 <td>Column for ratings.</td>
 </tr>
 
@@ -126,7 +126,7 @@ This operation does not take any input.
 
 <tr>
 <td><code>user column</code></td>
-<td><code><a href="../parameter_types.html#single_column_selector">SingleColumnSelector</a></code></td>
+<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
 <td>Column for user ids.</td>
 </tr>
 

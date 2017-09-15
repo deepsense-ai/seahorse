@@ -90,13 +90,13 @@ def transform_value(value, column_name):
 
 <tr>
   <td><code>target type</code></td>
-  <td><code><a href="../parameter_types.html#single_choice">Choice</a></code></td>
+  <td><code><a href="../parameter_types.html#single-choice">Choice</a></code></td>
   <td>Target type of the conversion. Possible values are: <code>[String, Boolean, Timestamp, Double, Float, Long, Integer, Vector]</code>.</td>
 </tr>
 
 <tr>
   <td><code>operate on</code></td>
-  <td><code><a href="../parameter_types.html#input_output_column_selector">InputOutputColumnSelector</a></code></td>
+  <td><code><a href="../parameter_types.html#input-output-column-selector">InputOutputColumnSelector</a></code></td>
   <td>Input and output columns for the operation.</td>
 </tr>
 </tbody>

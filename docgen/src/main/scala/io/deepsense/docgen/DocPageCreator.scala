@@ -240,7 +240,7 @@ trait DocPageCreator {
   }
 
   private def paramTypeAnchor(paramType: String) = {
-    paramType.replaceAll("(.)([A-Z])", "$1_$2").toLowerCase
+    paramType.replaceAll("(.)([A-Z])", "$1-$2").toLowerCase
   }
 
   private def extraDescription(param: Param[_]): String = {

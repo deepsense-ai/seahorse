@@ -15,7 +15,7 @@ that lets users create advanced data processing and machine learning workflows.
 Deeplang workflow is a graph of connected operations,
 which are consuming and producing entities.
 
-### <a name="entities"></a>Entities and Classes
+### Entities and Classes
 Entities are the most crucial part of Deeplang. They represent objects that are being passed between operations,
 e.g. [DataFrame](classes/dataframe.html), [Transformer](classes/transformer.html), [Estimator](classes/estimator.html), [Evaluator](classes/evaluator.html).
 

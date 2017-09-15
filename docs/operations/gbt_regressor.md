@@ -48,25 +48,25 @@ This operation does not take any input.
 
 <tr>
 <td><code>features column</code></td>
-<td><code><a href="../parameter_types.html#single_column_selector">SingleColumnSelector</a></code></td>
+<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
 <td>Features column for model fitting.</td>
 </tr>
 
 <tr>
 <td><code>impurity</code></td>
-<td><code><a href="../parameter_types.html#single_choice">SingleChoice</a></code></td>
+<td><code><a href="../parameter_types.html#single-choice">SingleChoice</a></code></td>
 <td>Criterion used for information gain calculation. Possible values: <code>["variance"]</code></td>
 </tr>
 
 <tr>
 <td><code>label column</code></td>
-<td><code><a href="../parameter_types.html#single_column_selector">SingleColumnSelector</a></code></td>
+<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
 <td>Label column for model fitting.</td>
 </tr>
 
 <tr>
 <td><code>loss function</code></td>
-<td><code><a href="../parameter_types.html#single_choice">SingleChoice</a></code></td>
+<td><code><a href="../parameter_types.html#single-choice">SingleChoice</a></code></td>
 <td>Loss function which GBT tries to minimize. Possible values: <code>["squared", "absolute"]</code></td>
 </tr>
 

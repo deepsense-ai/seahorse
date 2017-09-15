@@ -73,7 +73,7 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 
 <tr>
 <td><code>input column</code></td>
-<td><code><a href="../parameter_types.html#single_column_selector">SingleColumnSelector</a></code></td>
+<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
 <td>Input column name.</td>
 </tr>
 

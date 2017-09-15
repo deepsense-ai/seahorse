@@ -29,7 +29,7 @@ In the the main page of Seahorse you can manage existing workflows and create ne
 You've been redirected to workflow editor page where you can interactively compound complex algorithms.
 
 In Seahorse, algorithms are represented as graphs of connected [operations](operations.html),
-which are consuming and producing [entities](deeplang_overview.html#entities).
+which are consuming and producing [entities](deeplang_overview.html#entities-and-classes).
 
 Let's start with a single one.
 

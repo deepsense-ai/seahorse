@@ -90,7 +90,7 @@ This operation does not take any input.
 
 <tr>
 <td><code>impurity</code></td>
-<td><code><a href="../parameter_types.html#single_choice">SingleChoice</a></code></td>
+<td><code><a href="../parameter_types.html#single-choice">SingleChoice</a></code></td>
 <td>Criterion used for information gain calculation. Possible values: <code>["variance"]</code></td>
 </tr>
 
@@ -114,13 +114,13 @@ This operation does not take any input.
 
 <tr>
 <td><code>feature subset strategy</code></td>
-<td><code><a href="../parameter_types.html#single_choice">SingleChoice</a></code></td>
+<td><code><a href="../parameter_types.html#single-choice">SingleChoice</a></code></td>
 <td>The number of features to consider for splits at each tree node. Possible values: <code>["auto", "onethird", "sqrt", "log2"]</code></td>
 </tr>
 
 <tr>
 <td><code>features column</code></td>
-<td><code><a href="../parameter_types.html#single_column_selector">SingleColumnSelector</a></code></td>
+<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
 <td>Features column for model fitting.</td>
 </tr>
 
@@ -132,7 +132,7 @@ This operation does not take any input.
 
 <tr>
 <td><code>label column</code></td>
-<td><code><a href="../parameter_types.html#single_column_selector">SingleColumnSelector</a></code></td>
+<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
 <td>Label column for model fitting.</td>
 </tr>
 

@@ -61,7 +61,7 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 
 <tr>
 <td><code>input columns</code></td>
-<td><code><a href="../parameter_types.html#multiple_column_selector">MultipleColumnSelector</a></code></td>
+<td><code><a href="../parameter_types.html#multiple-column-selector">MultipleColumnSelector</a></code></td>
 <td>Input columns.</td>
 </tr>
 

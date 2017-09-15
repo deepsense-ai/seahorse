@@ -76,7 +76,7 @@ timestamp.</td>
 <tbody>
 <tr>
 <td><code>timestamp column</code></td>
-<td><code><a href="../parameter_types.html#single_column_selector">SingleColumnSelector</a></code></td>
+<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
 <td>One of the DataFrame columns.
    If column selected by user has type different then Timestamp, <code>WrongColumnTypeException</code>
    will be thrown.
@@ -84,7 +84,7 @@ timestamp.</td>
 </tr>
 <tr>
 <td><code>parts</code></td>
-<td><code><a href="../parameter_types.html#multiple_choice">MultipleChoice</a></code></td>
+<td><code><a href="../parameter_types.html#multiple-choice">MultipleChoice</a></code></td>
 <td>Parts of timestamp to extract to separate columns.
    Possible values are: <code>[year, month, day, hour, minutes, seconds]</code>.</td>
 </tr>

@@ -34,14 +34,14 @@ Represents a simple choice - yes or no.
 
 **Example value:** true
 
-### <a name="single_column_selector"></a>Single Column Selector
+### Single Column Selector
 Serves to specify a single column of a [DataFrame](classes/dataframe.html). Column can be specified by its name or its index (starting from 0).
 
 **Example of use:** column to be treated as label in supervised learning algorithm
 
 **Example value:** name: "price"
 
-### <a name="multiple_column_selector"></a>Multiple Column Selector
+### Multiple Column Selector
 Serves to specify a subset of columns of a [DataFrame](classes/dataframe.html). Columns can be specified by their names, indices (starting from 0) or types. Therefore, one selector can contain multiple names, index ranges and column types selections. All columns that meet a condition from at least one input selection will be included in the final subset of columns.
 The multiple column selector exposes additional boolean flag: _excluding_, which - if selected, changes selecting logic: the final subset contains all columns that do _not_ the meet condition from any of the input selections.
 
@@ -49,7 +49,7 @@ The multiple column selector exposes additional boolean flag: _excluding_, which
 
 **Example value:** excluding: false, names: {"a", "b"}, ranges: {1-5, 10-14}, types: {`numeric`, `boolean`}
 
-### <a name="input_output_column_selector"></a>Input Output Column Selector
+### Input Output Column Selector
 Serves to specify input and output columns for an operation.
 
 There are two input column modes:
@@ -86,7 +86,7 @@ Parameters:
 
 Output DataFrame columns: `a`, `b`, `c`, `converted_a`, `converted_b`, `converted_c`
 
-### <a name="single_choice"></a>Single Choice
+### Single Choice
 A parameter of this type defines a set of options. Exactly one option must be selected. Additionally, each option can have internal parameters that should be filled if this particular option is selected.
 
 **Example of use:** a target type of conversion in operation converting types of columns of a [DataFrame](classes/dataframe.html)
@@ -94,8 +94,8 @@ A parameter of this type defines a set of options. Exactly one option must be se
 **Example of use:** In the `Read DataFrame` operation, the user should specify `data storage type` parameter. The parameter exposes three options: `FILE`, `JDBC`, `CASSANDRA`.
 If the user selects `FILE`, he additionally has to provide a value for the string parameter `source`.
 
-### <a name="multiple_choice"></a>Multiple Choice
-This parameter is similar to [single choice selector](#single_choice), but here the user is allowed to select multiple options at once. User does not have to select any option.
+### Multiple Choice
+This parameter is similar to [single choice selector](#single-choice), but here the user is allowed to select multiple options at once. User does not have to select any option.
 Like in a single choice selector, each option can have internal parameters that should be filled if this particular option is selected.
 
 **Example of use:** parts of DateTime on which the selected column is to be split in the `Decompose Datetime` operation.
@@ -127,7 +127,7 @@ This parameter holds a JSON object.
 {% endhighlight %}
 
 
-### <a name="parameters_sequence"></a>Parameters Sequence
+### Parameters Sequence
 This parameter can be used when the operation requires the user to specify the same group of parameters multiple times, possibly with different values. The parameters sequence defines an internal parameters schema. User can provide any number of sets of values for this schema.
 
 **Example of use:** Example of use: In the `Join` operation, the user has to specify what columns to use in join. More precisely, this operation can provide any number of pairs of columns, each consisting of one column from left `DataFrame` and one column from the right one.

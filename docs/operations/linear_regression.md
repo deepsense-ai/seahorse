@@ -84,13 +84,13 @@ This operation does not take any input.
 
 <tr>
 <td><code>features column</code></td>
-<td><code><a href="../parameter_types.html#single_column_selector">SingleColumnSelector</a></code></td>
+<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
 <td>Features column for model fitting.</td>
 </tr>
 
 <tr>
 <td><code>label column</code></td>
-<td><code><a href="../parameter_types.html#single_column_selector">SingleColumnSelector</a></code></td>
+<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
 <td>Label column for model fitting.</td>
 </tr>
 

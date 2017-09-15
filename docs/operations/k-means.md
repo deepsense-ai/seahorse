@@ -48,7 +48,7 @@ This operation does not take any input.
 
 <tr>
 <td><code>features column</code></td>
-<td><code><a href="../parameter_types.html#single_column_selector">SingleColumnSelector</a></code></td>
+<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
 <td>Features column for model fitting.</td>
 </tr>
 
@@ -84,7 +84,7 @@ This operation does not take any input.
 
 <tr>
 <td><code>init mode</code></td>
-<td><code><a href="../parameter_types.html#single_choice">SingleChoice</a></code></td>
+<td><code><a href="../parameter_types.html#single-choice">SingleChoice</a></code></td>
 <td>Param for the initialization algorithm. This can be either "random" to choose random points as initial cluster centers, or "k-means||" to use a parallel variant of k-means++. Possible values: <code>["random", "k-means||"]</code></td>
 </tr>
 

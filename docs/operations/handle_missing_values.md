@@ -72,7 +72,7 @@ to another [DataFrame](../classes/dataframe.html) with [Transform](transform.htm
 <tbody>
 <tr>
 <td><code id="columns">columns</code></td>
-<td><code><a href="../parameter_types.html#multiple_column_selector">MultipleColumnSelector</a></code></td>
+<td><code><a href="../parameter_types.html#multiple-column-selector">MultipleColumnSelector</a></code></td>
 <td>Columns to process.
 If one of the columns is selected more than once (eg. by name and by type)
 it will be included only once. When a column selected by name
@@ -80,7 +80,7 @@ or by index does not exist the operation will fail at runtime with <code>Columns
 </tr>
 <tr>
 <td><code id="strategy">strategy</code></td>
-<td><code><a href="../parameter_types.html#single_choice">Single Choice</a></code></td>
+<td><code><a href="../parameter_types.html#single-choice">Single Choice</a></code></td>
 <td>
   Strategy of handling missing values in data.<br />
   Possible values: <code>["remove row", "remove column", "replace with custom value", "replace with mode"]</code>
@@ -88,7 +88,7 @@ or by index does not exist the operation will fail at runtime with <code>Columns
 </tr>
 <tr>
 <td><code id="missing-value-indicator">missing value indicator</code></td>
-<td><code><a href="../parameter_types.html#single_choice">Single Choice</a></code></td>
+<td><code><a href="../parameter_types.html#single-choice">Single Choice</a></code></td>
 <td>
   When set to <code>"Yes"</code>, a missing value indicator is added for each column in the
   selected column range. Newly generated columns contain <code>true</code> if the value was
@@ -112,7 +112,7 @@ or by index does not exist the operation will fail at runtime with <code>Columns
 </tr>
 <tr>
 <td><code id="empty-column-strategy">empty column strategy</code></td>
-<td><code><a href="../parameter_types.html#single_choice">Single Choice</a></code></td>
+<td><code><a href="../parameter_types.html#single-choice">Single Choice</a></code></td>
 <td>
   Available only if <code><a href="#strategy">strategy</a></code> is set to <code>"replace with mode"</code>.
   It defines whether to remove or retain columns, which contain only empty values.

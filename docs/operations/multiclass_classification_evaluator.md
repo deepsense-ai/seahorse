@@ -48,19 +48,19 @@ This operation does not take any input.
 
 <tr>
 <td><code>metric</code></td>
-<td><code><a href="../parameter_types.html#single_choice">SingleChoice</a></code></td>
+<td><code><a href="../parameter_types.html#single-choice">SingleChoice</a></code></td>
 <td>Metric used in evaluation. Possible values: <code>["f1", "precision", "recall", "weightedPrecision", "weightedRecall"]</code></td>
 </tr>
 
 <tr>
 <td><code>prediction column</code></td>
-<td><code><a href="../parameter_types.html#single_column_selector">SingleColumnSelector</a></code></td>
+<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
 <td>Prediction column.</td>
 </tr>
 
 <tr>
 <td><code>label column</code></td>
-<td><code><a href="../parameter_types.html#single_column_selector">SingleColumnSelector</a></code></td>
+<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
 <td>Label column for model fitting.</td>
 </tr>
 
