@@ -7,8 +7,8 @@ usesMathJax: true
 includeOperationsMenu: true
 ---
 
-Evaluate is an operation used to calculate a metric value from given
-[DataFrame](../classes/dataframe.html).
+An `Evaluate` operation is used to calculate a metric value from a given
+[DataFrame](../classes/dataframe.html) and an [Evaluator](../classes/evaluator.html).
 
 **Usage example**:
 ![Evaluate example](../img/evaluator_example.png){: .img-responsive}
@@ -29,7 +29,12 @@ Evaluate is an operation used to calculate a metric value from given
 <tr>
 <td><code>0</code></td>
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>Input DataFrame.</td>
+<td>The input <code>DataFrame</code>.</td>
+</tr>
+<tr>
+<td><code>1</code></td>
+<td><code><a href="../classes/evaluator.html">Evaluator</a></code></td>
+<td>The <code>Evaluator</code> that represents the evaluation algorithm.</td>
 </tr>
 </tbody>
 </table>
@@ -48,7 +53,7 @@ Evaluate is an operation used to calculate a metric value from given
 <tr>
 <td><code>0</code></td>
 <td><code><a href="../classes/metric_value.html">MetricValue</a></code></td>
-<td>Metric value calculated for input DataFrame.</td>
+<td>The metric value calculated for the input <code>DataFrame</code>.</td>
 </tr>
 </tbody>
 </table>

@@ -7,8 +7,10 @@ usesMathJax: true
 includeOperationsMenu: true
 ---
 
-Transform is an operation used to transform a [DataFrame](../classes/dataframe.html)
+A `Transform` is an operation used to convert a [DataFrame](../classes/dataframe.html) into another
 using a [Transformer](../classes/transformer.html).
+For example, a trained model produced by a [Fit](../operations/fit.html)
+operation can be supplied to `Transform` with a [DataFrame](../classes/dataframe.html) to be converted.
 
 **Usage example**:
 ![Transform example](../img/transformer_example.png){: .img-responsive}
@@ -28,13 +30,13 @@ using a [Transformer](../classes/transformer.html).
 <tbody>
 <tr>
 <td><code>0</code></td>
-<td><code><a href="../classes/transformer.html">Transformer</a></code></td>
-<td>A Transformer to apply.</td>
+<td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
+<td>The <code>DataFrame</code> to transform.</td>
 </tr>
 <tr>
 <td><code>1</code></td>
-<td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>A DataFrame to transform.</td>
+<td><code><a href="../classes/transformer.html">Transformer</a></code></td>
+<td>The <code>Transformer</code> to applied on the input <code>DataFrame</code>.</td>
 </tr>
 </tbody>
 </table>
@@ -53,7 +55,7 @@ using a [Transformer](../classes/transformer.html).
 <tr>
 <td><code>0</code></td>
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>A DataFrame which is a result of the Transformer executed on the input DataFrame.</td>
+<td>The <code>DataFrame</code> which is a result of the <code>Transformer</code> applied on the input <code>DataFrame</code>.</td>
 </tr>
 </tbody>
 </table>

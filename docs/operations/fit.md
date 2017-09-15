@@ -7,7 +7,8 @@ usesMathJax: true
 includeOperationsMenu: true
 ---
 
-Fit is an operation used to fit an [Estimator](../classes/estimator.html) on a
+A `Fit` operation is used to fit an [Estimator](../classes/estimator.html)
+(such as a [Logistic Regression](../operations/logistic_regression.html)) on a
 [DataFrame](../classes/dataframe.html). It produces a [Transformer](../classes/transformer.html).
 
 **Usage example**:
@@ -29,12 +30,12 @@ Fit is an operation used to fit an [Estimator](../classes/estimator.html) on a
 <tr>
 <td><code>0</code></td>
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>A DataFrame to fit the Estimator on.</td>
+<td>The <code>DataFrame</code> to fit the <code>Estimator</code> on.</td>
 </tr>
 <tr>
 <td><code>1</code></td>
 <td><code><a href="../classes/estimator.html">Estimator</a></code></td>
-<td>An Estimator to fit.</td>
+<td>The <code>Estimator</code> to fit.</td>
 </tr>
 </tbody>
 </table>
@@ -53,7 +54,7 @@ Fit is an operation used to fit an [Estimator](../classes/estimator.html) on a
 <tr>
 <td><code>0</code></td>
 <td><code><a href="../classes/transformer.html">Transformer</a></code></td>
-<td>Result of fitting the Estimator on input DataFrame.</td>
+<td>The result of fitting the <code>Estimator</code> on the input <code>DataFrame</code>.</td>
 </tr>
 </tbody>
 </table>
