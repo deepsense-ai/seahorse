@@ -13,7 +13,7 @@
   <div class="c-workflows-status-bar__lower-section">
     <menu-item ng-repeat="item in getMenuItems(workflow)"
                label="{{item.label}}"
-               small-label="{{item.smallLabel}}"
+               for-owner-only="{{item.forOwnerOnly}}"
                icon="{{item.icon}}"
                call-function="item.callFunction()"
                href="{{item.href}}"

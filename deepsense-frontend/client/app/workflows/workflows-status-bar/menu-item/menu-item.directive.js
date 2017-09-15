@@ -8,7 +8,7 @@ function MenuItem() {
     replace: true,
     scope: {
       label: '@',
-      smallLabel: '@',
+      forOwnerOnly: '@',
       icon: '@',
       callFunction: '&',
       href: '@',

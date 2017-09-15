@@ -2,8 +2,13 @@
 
 /* @ngInject */
 class MenuItemController {
-  constructor() {
-    
+  constructor(WorkflowService, UserService) {
+    this.WorkflowService = WorkflowService;
+    this.UserService = UserService;
+  }
+
+  isOwner() {
+    return this.WorkflowService.getCurrentWorkflow().owner.id === this.UserService.getSeahorseUser().id;
   }
 
 }

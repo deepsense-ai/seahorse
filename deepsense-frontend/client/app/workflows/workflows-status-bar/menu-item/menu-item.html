@@ -14,7 +14,9 @@
 
     <div class="c-workflows-status-bar__text">
       <span class="c-workflows-status-bar__text-label">{{::miCtrl.label}}</span>
-      <span class="c-workflows-status-bar__text-small-label" ng-if="miCtrl.smallLabel">{{::miCtrl.smallLabel}}</span>
+      <span class="c-workflows-status-bar__text-small-label" ng-if="miCtrl.forOwnerOnly && !miCtrl.isOwner()">
+        Owner only
+      </span>
     </div>
     <span class="c-workflows-status-bar__popover-span"
           uib-popover="{{::miCtrl.label}}"

@@ -7,9 +7,7 @@ function WorkflowStatusBarService($rootScope, config, version, WorkflowService, 
 
   service.getMenuItems = getMenuItems;
 
-  // TODO Menu items should be immutable. Small label should not be dynamic and computed here.
   const isOwner = () => WorkflowService.getCurrentWorkflow().owner.id === UserService.getSeahorseUser().id;
-  const smallLabel = () => isOwner() ? null : 'Owner only';
 
   this.popovers = {
     startingPopoverVisible: true,
@@ -19,7 +17,7 @@ function WorkflowStatusBarService($rootScope, config, version, WorkflowService, 
   const menuItems = {
     clear: {
       label: 'Clear',
-      smallLabel: smallLabel(),
+      forOwnerOnly: true,
       icon: 'fa-trash-o',
       callFunction: () => $rootScope.$broadcast('StatusBar.CLEAR_CLICK')
     },
@@ -41,13 +39,13 @@ function WorkflowStatusBarService($rootScope, config, version, WorkflowService, 
     },
     run: {
       label: 'Run',
-      smallLabel: smallLabel(),
+      forOwnerOnly: true,
       icon: 'fa-play',
       callFunction: () => $rootScope.$broadcast('StatusBar.RUN')
     },
     startEditing: {
       label: 'Start editing',
-      smallLabel: smallLabel(),
+      forOwnerOnly: true,
       icon: 'fa fa-pencil',
       callFunction: () => $rootScope.$emit('StatusBar.START_EDITING'),
       additionalHtml: 'app/workflows/workflows-status-bar/additional-html/starting-popover.html'
