@@ -31,7 +31,8 @@ object FileScheme {
   case object File extends FileScheme("file")
   case object Library extends FileScheme("library")
 
-  val values = Seq(HTTP, HTTPS, FTP, HDFS, File)
+  // TODO Autoderive values. There is macro-library for extracting sealed case objects.
+  val values = Seq(HTTP, HTTPS, FTP, HDFS, File, Library)
 
   def fromPath(path: String): FileScheme = {
     val matchingFileSchema = values.find(schema => path.startsWith(schema.pathPrefix))
