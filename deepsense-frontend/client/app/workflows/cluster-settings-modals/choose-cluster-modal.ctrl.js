@@ -3,12 +3,13 @@
 const COOKIE_NAME = 'SEAHORSE_DELETE_PRESET_CONFIRMATION';
 
 /* @ngInject */
-function ChooseClusterModalCtrl($scope, $uibModalInstance, DeleteModalService, ClusterService, ClusterModalService,
+function ChooseClusterModalCtrl($scope, $uibModalInstance, DeleteModalService, ClusterModalService,
                                 PresetService, WorkflowService) {
   const vm = this;
 
   vm.presets = getPresetList();
   vm.isSnapshot = false;
+  vm.error = '';
 
   vm.openClusterSettingsModal = openClusterSettingsModal;
   vm.deletePresetById = deletePresetById;
@@ -22,6 +23,12 @@ function ChooseClusterModalCtrl($scope, $uibModalInstance, DeleteModalService, C
     vm.presets = presets;
   }, true);
 
+  PresetService.fetch().catch((error) => {
+    vm.presets = [];
+    vm.error = 'There was a problem with downloading presets';
+    $log.error('PresetsService fetch failed', error);
+  });
+
 
   function openClusterSettingsModal(type, preset) {
     ClusterModalService.openCurrentClusterModal(type, preset, vm.isSnapshot);
@@ -32,16 +39,13 @@ function ChooseClusterModalCtrl($scope, $uibModalInstance, DeleteModalService, C
   }
 
   function isPresetAssignedToWorkflow(presetId) {
-    const workflowId = WorkflowService.getCurrentWorkflow().id;
-    const currentPreset = ClusterService.getPresetByWorkflowId(workflowId);
+    const currentPreset = WorkflowService.getRootWorkflow().cluster;
     return presetId === currentPreset.id;
   }
 
   function selectCurrentPreset(presetId) {
-    const isExecutorBusy = WorkflowService.isExecutorForCurrentWorkflowRunning();
-    if (!isExecutorBusy) {
-      const workflowId = WorkflowService.getCurrentWorkflow().id;
-      ClusterService.bindPresetToWorkflow(workflowId, presetId);
+    if (!WorkflowService.isExecutorForCurrentWorkflowRunning()) {
+      WorkflowService.bindPresetToCurrentWorkflow(presetId);
     }
   }
 

@@ -7,7 +7,10 @@
       </span>
       <span class="viewer-mode" ng-if="controller.isViewerMode()"> (viewer mode)</span>
       <div class="cluster-settings">
-        <div ng-click="controller.openCurrentPresetModal(controller.currentPreset)" class="current-cluster">
+        <div class="current-cluster" ng-if="controller.currentPreset === undefined">
+          <deepsense-loading-spinner-sm></deepsense-loading-spinner-sm>
+        </div>
+        <div ng-if="controller.currentPreset" ng-click="controller.openCurrentPresetModal(controller.currentPreset)" class="current-cluster">
           <div ng-switch on="controller.currentPreset.clusterType" class="current-cluster__icon">
             <img ng-switch-when="local" src="/img/cluster-local.png"/>
             <img ng-switch-when="standalone" src="/img/cluster-spark-sm.png"/>

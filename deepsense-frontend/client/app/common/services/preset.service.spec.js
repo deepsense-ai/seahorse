@@ -2,10 +2,12 @@
 
 describe('PresetService', () => {
   let PresetService;
-  let StorageMock;
+  let WorkflowService;
+  let PresetsApiService;
+  let $rootScope;
 
   const DEFAULT_PRESET = {
-    'id': '1_local',
+    'id': 1,
     'name': 'default',
     'clusterType': 'local',
     'uri': '',
@@ -19,7 +21,7 @@ describe('PresetService', () => {
     'isDefault': true
   };
   const MOCK_PRESET = {
-    'id': '2_local',
+    'id': 2,
     'name': 'Default',
     'clusterType': 'mesos',
     'uri': 'http://www.path/to/standalone',
@@ -33,7 +35,7 @@ describe('PresetService', () => {
     'isDefault': false
   };
   const MOCK_PRESET_EDITABLE = {
-    'id': '2_local',
+    'id': 2,
     'name': 'Default',
     'clusterType': 'mesos',
     'uri': 'http://www.path/to/standalone',
@@ -47,7 +49,7 @@ describe('PresetService', () => {
     'isDefault': false
   };
   const MOCK_PRESET_EDITABLE_CHANGED = {
-    'id': '2_local',
+    'id': 2,
     'name': 'Default',
     'clusterType': 'mesos',
     'uri': 'http://www.path/to/standalone',
@@ -61,7 +63,7 @@ describe('PresetService', () => {
     'isDefault': false
   };
   const INVALID_MOCK_PRESET = {
-    'id': '2_local',
+    'id': 2,
     'name': 'Default',
     'clusterType': 'invalid-type',
     'uri': 'http://www.path/to/standalone',
@@ -74,22 +76,13 @@ describe('PresetService', () => {
     'isEditable': false,
     'isDefault': false
   };
-  const DEFAULT_STORE = {
-    '1_local' : DEFAULT_PRESET
-  };
   const MOCK_STORE = {
-    '1_local' : DEFAULT_PRESET,
-    '2_local' : MOCK_PRESET
-  };
-  const MOCK_LOCALSTORAGE = {
-    'presets': MOCK_STORE
+    1 : DEFAULT_PRESET,
+    2 : MOCK_PRESET
   };
   const MOCK_STORE_EDITABLE = {
-    '1_local' : DEFAULT_PRESET,
-    '2_local' : MOCK_PRESET_EDITABLE
-  };
-  const MOCK_LOCALSTORAGE_EDITABLE = {
-    'presets': MOCK_STORE_EDITABLE
+    1 : DEFAULT_PRESET,
+    2 : MOCK_PRESET_EDITABLE
   };
   const INVALID_NAME = 'invalid-name';
 
@@ -98,25 +91,31 @@ describe('PresetService', () => {
     require('./preset.service.js').inject(testModule);
     angular.mock.module('presetTest');
     angular.mock.module(($provide) => {
-      $provide.service('StorageService', function() {
+      $provide.factory('WorkflowService', function() {
+        return {
+          fetchCluster: function() {},
+          getRootWorkflow: function () {}
+        }
+      });
+      $provide.service('PresetsApiService', function($q) {
         let mockData = {};
-        this.set = function (root, key, value) {
-          if (!mockData[root]) {
-            mockData[root] = {};
-          }
-          mockData[root][key] = value;
+        this.get = function ( key) {
+          return mockData[key];
         };
-        this.get = function (root, key) {
-          const temp = mockData[root] || {};
-
-          return temp[key];
+        this.getAll = function () {
+          return $q.when(mockData);
         };
-        this.getRoot = function (root) {
-          return mockData[root] || {};
+        this.create = function (obj) {
+          mockData[obj.id] = obj;
+          return $q.when(true);
         };
-        this.remove = function (root, key) {
-          const temp = mockData[root] || {};
-          delete temp[key];
+        this.update = function (key, value) {
+          mockData[key] = value;
+          return $q.when(true);
+        };
+        this.remove = function (key) {
+          delete mockData[key];
+          return $q.when(true);
         };
         this.mock = function(newData) {
           mockData = JSON.parse(JSON.stringify(newData));
@@ -124,115 +123,59 @@ describe('PresetService', () => {
         this.clear = function () {
           mockData = {};
         };
+        this.mockData = function () {
+          return mockData;
+        }
       });
     });
-    angular.mock.inject((_PresetService_, _StorageService_) => {
+    angular.mock.inject((_PresetService_, _PresetsApiService_, _$rootScope_, _WorkflowService_ ) => {
       PresetService = _PresetService_;
-      StorageMock = _StorageService_;
+      PresetsApiService = _PresetsApiService_;
+      WorkflowService = _WorkflowService_;
+      $rootScope = _$rootScope_;
     });
-    StorageMock.clear();
+    PresetsApiService.clear();
   });
 
   describe ('getAll()', () => {
     it('should by default return only default preset', () => {
-      expect(PresetService.getAll()).toEqual(DEFAULT_STORE);
-    });
-
-
-    it('return proper presets', () => {
-      StorageMock.mock(MOCK_LOCALSTORAGE);
-
-      expect(PresetService.getAll()).toEqual(MOCK_STORE);
-    });
-  });
-
-  describe ('getPresetById()', () => {
-    it('should return preset if already in the store', () => {
-      expect(PresetService.getPresetById('1_local')).toEqual(DEFAULT_PRESET);
-    });
-
-    it('should return undefined if not in the store', () => {
-      expect(PresetService.getPresetById('2_local')).toBeUndefined();
+      expect(PresetService.getAll()).toBeUndefined();
     });
   });
 
   describe ('createPreset()', () => {
     it('should create preset if valid object is provided', () => {
       PresetService.createPreset(MOCK_PRESET);
-      expect(Object.keys(StorageMock.getRoot('presets')).length).toEqual(1);
-    });
-
-    it('shouldn\'t create preset if invalid object is provided', () => {
-      PresetService.createPreset(INVALID_MOCK_PRESET);
-      expect(Object.keys(StorageMock.getRoot('presets')).length).toEqual(0);
+      expect(Object.keys(PresetsApiService.mockData()).length).toEqual(1);
     });
   });
 
   describe ('deletePreset()', () => {
-    it('shouldn\'t delete default preset', () => {
-      StorageMock.mock(MOCK_LOCALSTORAGE);
-      expect(PresetService.deletePreset(DEFAULT_PRESET.id)).toEqual(false);
-      expect(Object.keys(StorageMock.getRoot('presets')).length).toEqual(2);
-    });
-
     it('should delete non-default, editable preset', () => {
-      StorageMock.mock(MOCK_LOCALSTORAGE_EDITABLE);
-      expect(PresetService.deletePreset(MOCK_PRESET_EDITABLE.id)).toEqual(true);
-      expect(Object.keys(StorageMock.getRoot('presets')).length).toEqual(1);
-    });
-
-    it('shouldn\'t delete non-editable, non-default preset', () => {
-      StorageMock.mock(MOCK_LOCALSTORAGE);
-      expect(PresetService.deletePreset(MOCK_PRESET.id)).toEqual(false);
-      expect(Object.keys(StorageMock.getRoot('presets')).length).toEqual(2);
+      PresetsApiService.mock(MOCK_STORE_EDITABLE);
+      PresetService.deletePreset(MOCK_PRESET_EDITABLE.id);
+      expect(Object.keys(PresetsApiService.mockData()).length).toEqual(1);
     });
   });
 
   describe ('updatePreset()', () => {
-    it('shouldn\'t update default preset', () => {
-      StorageMock.mock(MOCK_LOCALSTORAGE);
-      expect(PresetService.updatePreset(DEFAULT_PRESET)).toEqual(false);
-    });
-
     it('should update non-default, editable preset', () => {
-      StorageMock.mock(MOCK_LOCALSTORAGE_EDITABLE);
-      expect(PresetService.updatePreset(MOCK_PRESET_EDITABLE_CHANGED)).toEqual(true);
-      expect(StorageMock.get('presets', MOCK_PRESET_EDITABLE_CHANGED.id)).toEqual(MOCK_PRESET_EDITABLE_CHANGED);
-    });
-
-    it('shouldn\'t update when provided invalid preset', () => {
-      StorageMock.mock(MOCK_LOCALSTORAGE_EDITABLE);
-      expect(PresetService.updatePreset(INVALID_MOCK_PRESET)).toEqual(false);
-      expect(StorageMock.get('presets', INVALID_MOCK_PRESET.id)).toEqual(MOCK_PRESET_EDITABLE);
+      PresetsApiService.mock(MOCK_STORE_EDITABLE);
+      PresetService.updatePreset(MOCK_PRESET_EDITABLE_CHANGED);
+      expect(PresetsApiService.get(MOCK_PRESET_EDITABLE_CHANGED.id)).toEqual(MOCK_PRESET_EDITABLE_CHANGED);
     });
   });
 
   describe ('savePreset()', () => {
-    it('shouldn\'t update default preset', () => {
-      StorageMock.mock(MOCK_LOCALSTORAGE);
-      expect(PresetService.savePreset(DEFAULT_PRESET)).toEqual(false);
-    });
-
     it('should update non-default, editable preset', () => {
-      StorageMock.mock(MOCK_LOCALSTORAGE_EDITABLE);
-      expect(PresetService.savePreset(MOCK_PRESET_EDITABLE_CHANGED)).toEqual(true);
-      expect(StorageMock.get('presets', MOCK_PRESET_EDITABLE_CHANGED.id)).toEqual(MOCK_PRESET_EDITABLE_CHANGED);
-    });
-
-    it('shouldn\'t update when provided invalid preset', () => {
-      StorageMock.mock(MOCK_LOCALSTORAGE_EDITABLE);
-      expect(PresetService.savePreset(INVALID_MOCK_PRESET)).toEqual(false);
-      expect(StorageMock.get('presets', INVALID_MOCK_PRESET.id)).toEqual(MOCK_PRESET_EDITABLE);
+      PresetsApiService.mock(MOCK_STORE_EDITABLE);
+      PresetService.savePreset(MOCK_PRESET_EDITABLE_CHANGED);
+      expect(PresetsApiService.get(MOCK_PRESET_EDITABLE_CHANGED.id)).toEqual(MOCK_PRESET_EDITABLE_CHANGED);
     });
 
     it('should create preset if valid object is provided', () => {
       PresetService.savePreset(MOCK_PRESET);
-      expect(Object.keys(StorageMock.getRoot('presets')).length).toEqual(1);
-    });
-
-    it('shouldn\'t create preset if invalid object is provided', () => {
-      PresetService.savePreset(INVALID_MOCK_PRESET);
-      expect(Object.keys(StorageMock.getRoot('presets')).length).toEqual(0);
+      expect(Object.keys(PresetsApiService.mockData()).length).toEqual(1);
     });
   });
 
@@ -258,24 +201,18 @@ describe('PresetService', () => {
   });
 
   describe ('isNameUsed()', () => {
-    it('should return true if default name is provided', () => {
-      StorageMock.mock(MOCK_LOCALSTORAGE);
-      expect(PresetService.isNameUsed(DEFAULT_PRESET.name)).toEqual(true);
-    });
     it('should return true if existing name is provided', () => {
-      StorageMock.mock(MOCK_LOCALSTORAGE);
+      PresetsApiService.mock(MOCK_STORE);
+      PresetService.fetch();
+      $rootScope.$digest();
       expect(PresetService.isNameUsed(MOCK_PRESET.name)).toEqual(true);
     });
 
     it('should return false when non-existing name is provided', () => {
-      StorageMock.mock(MOCK_LOCALSTORAGE);
+      PresetsApiService.mock(MOCK_STORE);
+      PresetService.fetch();
+      $rootScope.$digest();
       expect(PresetService.isNameUsed(INVALID_NAME)).toEqual(false);
-    });
-  });
-
-  describe ('getDefaultPreset()', () => {
-    it('should return default preset', () => {
-      expect(PresetService.getDefaultPreset()).toEqual(DEFAULT_PRESET);
     });
   });
 });

@@ -5,9 +5,8 @@
     {
       "properties": {
         "id": {
-          "type": "string",
-          "invalidMessage": "Id is not a string with length of at least 1",
-          "minLength": 1
+          "type": "number",
+          "invalidMessage": "Id is not a Number",
         },
         "name": {
           "type": "string",
@@ -71,9 +70,8 @@
     },{
       "properties": {
         "id": {
-          "type": "string",
-          "invalidMessage": "Id is not a string with length of at least 1",
-          "minLength": 1
+          "type": "number",
+          "invalidMessage": "Id is not a Number",
         },
         "name": {
           "type": "string",

@@ -1,7 +1,7 @@
 'use strict';
 
 /* @ngInject */
-function WorkflowsApiClientFactory(BaseApiClient, ServerCommunication, config) {
+function WorkflowsApiClientFactory(BaseApiClient, ServerCommunication, config, $q) {
 
   const API_TYPE = 'batch';
   const PATH_WORKFLOWS = '/workflows';
@@ -79,6 +79,24 @@ function WorkflowsApiClientFactory(BaseApiClient, ServerCommunication, config) {
         this.METHOD_POST,
         `${this.API_URL}${PATH_WORKFLOWS}/${workflowId}/notebook/${sourceNodeId}/copy/${destinationNodeId}`
       );
+    }
+
+    getPresetByWorkflowId(workflowId) {
+      return this.makeRequest(
+        this.METHOD_GET,
+        `${this.API_URL}${PATH_WORKFLOWS}/${workflowId}/preset`
+      )
+    }
+
+    bindPresetToWorkflow(presetId, workflowId){
+      return this.makeRequest(
+        this.METHOD_POST,
+        `${this.API_URL}${PATH_WORKFLOWS}/${workflowId}/preset`,
+        {
+          'id' : workflowId,
+          'presetId' : presetId
+        }
+      )
     }
 
   }

@@ -1,9 +1,9 @@
 'use strict';
 
 /* @ngInject */
-function WorkflowService($rootScope, Workflow, OperationsHierarchyService, WorkflowsApiClient, Operations, ConfirmationModalService,
+function WorkflowService($rootScope, $log, Workflow, OperationsHierarchyService, WorkflowsApiClient, Operations, ConfirmationModalService,
   DefaultInnerWorkflowGenerator, debounce, nodeTypes, SessionManagerApi, SessionStatus, SessionManager, ServerCommunication,
-  ClusterService, UserService) {
+  UserService) {
 
   const INNER_WORKFLOW_PARAM_NAME = 'inner workflow';
 
@@ -20,7 +20,7 @@ function WorkflowService($rootScope, Workflow, OperationsHierarchyService, Workf
       // digest cycle. For one digest cycle state is invalid - public params list points non-existing node.
       this._saveWorkflow = debounce((newSerializedWorkflow, oldSerializedWorkflow) => {
         if(newSerializedWorkflow !== oldSerializedWorkflow) {
-          console.log('Saving workflow after change...', newSerializedWorkflow);
+          $log.log('Saving workflow after change...', newSerializedWorkflow);
           WorkflowsApiClient.updateWorkflow(newSerializedWorkflow);
         }
       }, 200);
@@ -52,8 +52,10 @@ function WorkflowService($rootScope, Workflow, OperationsHierarchyService, Workf
 
       $rootScope.$on('StatusBar.START_EDITING', () => {
         const workflow = this.getRootWorkflow();
-        const config = ClusterService.getPresetConfigObject(workflow.id);
-        SessionManagerApi.startSession(config);
+        SessionManagerApi.startSession({
+          workflowId: workflow.id,
+          cluster: workflow.cluster
+        });
       });
 
       $rootScope.$on('StatusBar.STOP_EDITING', (event, force = false) => {
@@ -77,10 +79,11 @@ function WorkflowService($rootScope, Workflow, OperationsHierarchyService, Workf
 
       this._watchForNewCustomTransformers(workflow, workflow);
       this._workflowsStack.push(workflow);
+      this.fetchCluster();
 
       const unregisterSynchronization = $rootScope.$on('ServerCommunication.MESSAGE.heartbeat', (event, data) => {
         if (data.workflowId === workflow.id) {
-          console.log('Received first hearbeat. Synchronizing with executor...');
+          $log.log('Received first hearbeat. Synchronizing with executor...');
           ServerCommunication.sendSynchronize();
           unregisterSynchronization();
         }
@@ -240,6 +243,28 @@ function WorkflowService($rootScope, Workflow, OperationsHierarchyService, Workf
     stopEditing() {
       const workflow = this.getRootWorkflow();
       SessionManagerApi.deleteSessionById(workflow.id);
+    }
+
+    bindPresetToCurrentWorkflow(presetId) {
+      const rootWorkflow = this.getRootWorkflow();
+      return WorkflowsApiClient.bindPresetToWorkflow(presetId, rootWorkflow.id)
+        .then(() => this.fetchCluster());
+    }
+
+    fetchCluster(workflow) {
+      workflow = workflow || this.getRootWorkflow();
+
+      if (workflow) {
+        return WorkflowsApiClient.getPresetByWorkflowId(workflow.id)
+          .then((result) => {
+            workflow.cluster = result;
+          })
+          .catch((error) => {
+            $log.error('Cluster information is not available for workflow!', error);
+          });
+      } else {
+        return false;
+      }
     }
   }
 

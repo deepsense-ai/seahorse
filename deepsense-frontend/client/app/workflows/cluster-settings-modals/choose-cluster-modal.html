@@ -27,6 +27,10 @@
       </div>
 
       <div class="cluster-presets__list">
+        <deepsense-loading-spinner-sm ng-if="controller.presets === undefined"></deepsense-loading-spinner-sm>
+        <div ng-if="controller.error" class="dataframe-info">
+          {{controller.error}}
+        </div>
         <div class="cluster-presets__preset" ng-repeat="preset in controller.presets track by preset.id">
           <div class="cluster-presets__preset-group"
                ng-class="{'current-preset': controller.isPresetAssignedToWorkflow(preset.id)}">

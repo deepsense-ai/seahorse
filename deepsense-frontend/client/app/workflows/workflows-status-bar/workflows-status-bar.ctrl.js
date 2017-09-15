@@ -1,7 +1,7 @@
 'use strict';
 
 /* @ngInject */
-function WorkflowStatusBarController($scope, UserService, ClusterModalService, ClusterService,
+function WorkflowStatusBarController($scope, UserService, ClusterModalService, PresetService,
                                      DataframeLibraryModalService, SessionStatus, SessionManager,
                                      WorkflowService, WorkflowStatusBarService, LibraryService) {
 
@@ -37,7 +37,7 @@ function WorkflowStatusBarController($scope, UserService, ClusterModalService, C
   function getCurrentPreset() {
     return WorkflowService.isExecutorForCurrentWorkflowRunning() ?
       SessionManager.clusterInfoForWorkflowId(vm.workflowId)
-      : ClusterService.getPresetByWorkflowId(vm.workflowId);
+      : WorkflowService.getRootWorkflow().cluster;
   }
 
   function formatPresetType(type) {
