@@ -36,15 +36,14 @@ const POSITION_MAP = {
 
 class AdapterService {
   /*@ngInject*/
-  constructor(WorkflowService, $rootScope) {
+  constructor(WorkflowService, $rootScope, DeepsenseCycleAnalyser) {
     this.WorkflowService = WorkflowService;
+    this.DeepsenseCycleAnalyser = DeepsenseCycleAnalyser;
     this.$rootScope = $rootScope;
   }
 
   initialize(container) {
-    jsPlumb.setContainer(container);
     this.container = container;
-    this.bindEvents();
   }
 
   bindEvents() {
@@ -68,8 +67,11 @@ class AdapterService {
       this.workflow.addEdge(edge);
       //TODO remove, as it shouldn't be here
       this.WorkflowService.updateEdgesStates();
-
       info.connection.setParameter('edgeId', edge.id);
+      if (this.DeepsenseCycleAnalyser.cycleExists(this.workflow)) {
+        this.workflow.removeEdge(edge);
+        jsPlumb.detach(info.connection);
+      }
     });
 
     jsPlumb.bind('connectionDetached', (info, originalEvent) => {
@@ -89,7 +91,7 @@ class AdapterService {
     });
 
     jsPlumb.bind('connectionDrag', (connection) => {
-      //TODO Add highlight
+      //TODO Add highlight 
     });
   }
 
@@ -103,7 +105,18 @@ class AdapterService {
     this.nodes = workflow.getNodes();
   }
 
+  reset() {
+    jsPlumb.setContainer(this.container);
+    jsPlumb.deleteEveryEndpoint();
+    jsPlumb.unbind('connection');
+    jsPlumb.unbind('connectionDetached');
+    jsPlumb.unbind('connectionMoved');
+    jsPlumb.unbind('connectionDrag');
+    this.bindEvents();
+  }
+
   render() {
+    this.reset();
     this.renderPorts(this.nodes);
     this.renderEdges(this.edges);
     jsPlumb.repaintEverything();
