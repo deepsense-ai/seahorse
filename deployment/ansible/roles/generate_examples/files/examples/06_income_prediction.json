@@ -25,16 +25,6 @@
         }
       }
     }, {
-      "id": "d509364d-9db2-7d6c-97ca-974d3ad88270",
-      "operation": {
-        "id": "6cba4400-d966-4a2a-8356-b37f37b4c73f",
-        "name": "Execute SQL Expression"
-      },
-      "parameters": {
-        "dataframe id": "ds",
-        "expression": "select IF (ds.prediction = 0 AND ds.`is-over` = 0, 'true_negative',\n       IF (ds.prediction = 1 AND ds.`is-over` = 1, 'true_positive', \n       IF (ds.prediction = 0 AND ds.`is-over` = 1, 'false_negative',\n       IF (ds.prediction = 1 AND ds.`is-over` = 0, 'false_positive', 'other')))) as correctness,\n       \n       ds.prediction = ds.`is-over` as prediction_correct\n       \n       from ds"
-      }
-    }, {
       "id": "c1212cd6-fd16-cfc9-83fe-644e91d4bcb0",
       "operation": {
         "id": "33af92e5-57f2-4586-b176-961eb72ce5b0",
@@ -211,6 +201,16 @@
         },
         "output column": "features"
       }
+    }, {
+      "id": "d509364d-9db2-7d6c-97ca-974d3ad88270",
+      "operation": {
+        "id": "6cba4400-d966-4a2a-8356-b37f37b4c73f",
+        "name": "SQL Transformation"
+      },
+      "parameters": {
+        "dataframe id": "ds",
+        "expression": "select IF (ds.prediction = 0 AND ds.`is-over` = 0, 'true_negative',\n       IF (ds.prediction = 1 AND ds.`is-over` = 1, 'true_positive', \n       IF (ds.prediction = 0 AND ds.`is-over` = 1, 'false_negative',\n       IF (ds.prediction = 1 AND ds.`is-over` = 0, 'false_positive', 'other')))) as correctness,\n       \n       ds.prediction = ds.`is-over` as prediction_correct\n       \n       from ds"
+      }
     }],
     "connections": [{
       "from": {
@@ -333,99 +333,99 @@
   },
   "thirdPartyData": {
     "gui": {
-      "name": "EXAMPLE 6: Income Prediction",
-      "description": "Predicting whether an individual earn more than 50$/yr based on various data",
       "predefColors": ["#00B1EB", "#1ab394", "#2f4050", "#f8ac59", "#ed5565", "#DD6D3F"],
       "nodes": {
         "65f08acd-ce21-be5d-72ab-3bd92cca8b43": {
-          "uiName": "",
           "color": "#00B1EB",
+          "uiName": "",
           "coordinates": {
-            "x": 5274,
-            "y": 5259
+            "y": 5259,
+            "x": 5274
           }
         },
         "7e0b5504-c265-3cc9-49d9-21f73673e0c2": {
-          "uiName": "",
           "color": "#00B1EB",
+          "uiName": "",
           "coordinates": {
-            "x": 5497,
-            "y": 5259
+            "y": 5259,
+            "x": 5497
           }
         },
         "108e19cb-9bc8-a708-204b-902e90a6b2fe": {
-          "uiName": "Metrics",
           "color": "#00B1EB",
+          "uiName": "Metrics",
           "coordinates": {
-            "x": 6118,
-            "y": 5807
+            "y": 5807,
+            "x": 6118
           }
         },
         "440de059-cef6-6f6c-a158-8277c585610a": {
-          "uiName": "",
           "color": "#00B1EB",
+          "uiName": "",
           "coordinates": {
-            "x": 5861,
-            "y": 5543
+            "y": 5543,
+            "x": 5861
           }
         },
         "d509364d-9db2-7d6c-97ca-974d3ad88270": {
-          "uiName": "Metrics",
           "color": "#00B1EB",
+          "uiName": "Metrics",
           "coordinates": {
-            "x": 5850,
-            "y": 5809
+            "y": 5809,
+            "x": 5850
           }
         },
         "dc403a98-f9e8-e1ce-9f44-4557c13308fd": {
-          "uiName": "",
           "color": "#00B1EB",
+          "uiName": "",
           "coordinates": {
-            "x": 5695,
-            "y": 5414
+            "y": 5414,
+            "x": 5695
           }
         },
         "21eab7ee-2598-e9ea-88e3-23e4e9a1730d": {
-          "uiName": "T = 0.3",
           "color": "#00B1EB",
+          "uiName": "T = 0.3",
           "coordinates": {
-            "x": 6111,
-            "y": 5687
+            "y": 5687,
+            "x": 6111
           }
         },
         "c1212cd6-fd16-cfc9-83fe-644e91d4bcb0": {
-          "uiName": "",
           "color": "#00B1EB",
+          "uiName": "",
           "coordinates": {
-            "x": 5715,
-            "y": 5259
+            "y": 5259,
+            "x": 5715
           }
         },
         "8add554c-94dc-35ff-1686-606fcfe4c67f": {
-          "uiName": "Default",
           "color": "#00B1EB",
+          "uiName": "Default",
           "coordinates": {
-            "x": 5941,
-            "y": 5688
+            "y": 5688,
+            "x": 5941
           }
         },
         "781acc08-fc7a-108d-f00c-71b59bd0f2a8": {
-          "uiName": "",
           "color": "#00B1EB",
+          "uiName": "",
           "coordinates": {
-            "x": 5939,
-            "y": 5257
+            "y": 5257,
+            "x": 5939
           }
         },
         "9c7f230b-3bc8-6994-e60a-b1573cab0444": {
-          "uiName": "",
           "color": "#00B1EB",
+          "uiName": "",
           "coordinates": {
-            "x": 5942,
-            "y": 5416
+            "y": 5416,
+            "x": 5942
           }
         }
-      }
+      },
+      "name": "EXAMPLE 6: Income Prediction",
+      "description": "Predicting whether an individual earn more than 50$/yr based on various data"
     },
     "notebooks": {
 
@@ -434,9 +434,9 @@
   "variables": {
 
   },
-  "id": "c020d18d-8bac-4f83-8e8f-e5d68cbfe016",
+  "id": "4a7d31b7-927b-4d99-b268-df3d8d0bf680",
   "metadata": {
     "type": "batch",
-    "apiVersion": "1.0.0"
+    "apiVersion": "1.1.0"
   }
 }
