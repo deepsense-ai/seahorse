@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit
 
 import scala.concurrent.duration.{Duration, FiniteDuration}
 import scala.concurrent.{Await, Future}
+import scala.language.postfixOps
 
 import akka.actor.{ActorRef, ActorSystem, Props}
 import com.rabbitmq.client.ConnectionFactory
@@ -29,7 +30,7 @@ import com.typesafe.config.ConfigFactory
 import org.apache.spark.SparkContext
 
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
-import io.deepsense.workflowexecutor.communication.message.global.Ready
+import io.deepsense.workflowexecutor.communication.message.global.{Heartbeat, Ready}
 import io.deepsense.workflowexecutor.communication.mq.MQCommunication
 import io.deepsense.workflowexecutor.communication.mq.serialization.json.{ProtocolJsonDeserializer, ProtocolJsonSerializer}
 import io.deepsense.workflowexecutor.executor.session.LivyKeepAliveActor
@@ -43,7 +44,7 @@ import io.deepsense.workflowexecutor.{ExecutionDispatcherActor, StatusLoggingAct
 case class SessionExecutor(
     messageQueueHost: String,
     pythonExecutorPath: String,
-    jobId: String)
+    sessionId: String)
   extends Executor {
 
   private val config = ConfigFactory.load
@@ -51,6 +52,8 @@ case class SessionExecutor(
     Duration(config.getInt("subscription-timeout"), TimeUnit.SECONDS)
   private val keepAliveInterval =
     FiniteDuration(config.getInt("keep-alive.interval"), TimeUnit.SECONDS)
+  private val heartbeatInterval =
+    FiniteDuration(config.getInt("heartbeat.interval"), TimeUnit.SECONDS)
   val graphReader = new GraphReader(createDOperationsCatalog())
 
   /**
@@ -96,7 +99,7 @@ case class SessionExecutor(
       MQCommunicationFactory(system, connection, messageSerializer, messageDeserializer)
 
     val seahorsePublisher = communicationFactory.createPublisher(
-      MQCommunication.Topic.seahorsePublicationTopic(jobId),
+      MQCommunication.Topic.seahorsePublicationTopic(sessionId),
       MQCommunication.Actor.Publisher.seahorse)
     val notebookPublisher = communicationFactory.createPublisher(
       MQCommunication.Topic.notebookPublicationTopic,
@@ -125,16 +128,16 @@ case class SessionExecutor(
       notebookSubscriberActor)
 
     val workflowsSubscriberActor = system.actorOf(
-      WorkflowTopicSubscriber.props(executionDispatcher, communicationFactory, jobId),
+      WorkflowTopicSubscriber.props(executionDispatcher, communicationFactory, sessionId),
       MQCommunication.Actor.Subscriber.workflows)
     val workflowsSubscriberReady = communicationFactory.registerSubscriber(
-      MQCommunication.Topic.allWorkflowsSubscriptionTopic(jobId),
+      MQCommunication.Topic.allWorkflowsSubscriptionTopic(sessionId),
       workflowsSubscriberActor)
 
-    sendReadyWhenSubscribed(
-      Seq(notebookSubscriberReady, workflowsSubscriberReady),
-      Seq(notebookPublisher, seahorsePublisher))
+    waitUntilSubscribersAreReady(Seq(notebookSubscriberReady, workflowsSubscriberReady))
 
+    sendReady(Seq(notebookPublisher, seahorsePublisher))
+    setupHeartbeat(system, seahorsePublisher)
     setupLivyKeepAliveLogging(system, keepAliveInterval)
 
     system.awaitTermination()
@@ -142,15 +145,26 @@ case class SessionExecutor(
     logger.debug("SessionExecutor ends")
   }
 
-  private def sendReadyWhenSubscribed(
-      subscribers: Seq[Future[Unit]],
-      publishers: Seq[ActorRef]): Unit = {
+  // Clients after receiving ready or heartbeat will assume
+  // that we are listening for their response
+  private def waitUntilSubscribersAreReady(subscribers: Seq[Future[Unit]]): Unit = {
     import scala.concurrent.ExecutionContext.Implicits.global
     val subscribed: Future[Seq[Unit]] = Future.sequence(subscribers)
     logger.info("Waiting for subscribers...")
     Await.result(subscribed, subscriptionTimeout)
-    publishers.foreach(_ ! Ready.seahorseIsReady)
   }
+
+  private def sendReady(publishers: Seq[ActorRef]): Unit =
+    publishers.foreach(_ ! Ready.seahorseIsReady)
+
+  private def setupHeartbeat(system: ActorSystem, seahorsePublisher: ActorRef): Unit = {
+    val heartbeat = Heartbeat(sessionId)
+    import scala.concurrent.ExecutionContext.Implicits.global
+    system.scheduler.schedule(Duration.Zero, heartbeatInterval, seahorsePublisher, heartbeat)
+  }
+
+  private def setupLivyKeepAliveLogging(system: ActorSystem, interval: FiniteDuration): Unit =
+    system.actorOf(LivyKeepAliveActor.props(interval), "KeepAliveActor")
 
   private def cleanup(
       sparkContext: SparkContext,
@@ -161,6 +175,4 @@ case class SessionExecutor(
     logger.debug("Spark terminated!")
   }
 
-  private def setupLivyKeepAliveLogging(system: ActorSystem, interval: FiniteDuration): Unit =
-    system.actorOf(LivyKeepAliveActor.props(interval), "KeepAliveActor")
 }

@@ -24,7 +24,7 @@ import io.deepsense.commons.utils.Logging
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.{ExecutionReportJsonProtocol, InferredStateJsonProtocol, WorkflowWithResultsJsonProtocol}
 import io.deepsense.models.workflows.{InferredState, WorkflowWithResults}
-import io.deepsense.workflowexecutor.communication.message.global.{ReadyJsonProtocol, Ready}
+import io.deepsense.workflowexecutor.communication.message.global.{HeartbeatJsonProtocol, Heartbeat, ReadyJsonProtocol, Ready}
 import io.deepsense.workflowexecutor.communication.message.notebook.{PythonGatewayAddress, PythonGatewayAddressJsonProtocol}
 import io.deepsense.workflowexecutor.communication.message.workflow._
 import io.deepsense.workflowexecutor.communication.mq.serialization.MessageMQSerializer
@@ -36,6 +36,7 @@ case class ProtocolJsonSerializer(graphReader: GraphReader)
   with WorkflowWithResultsJsonProtocol
   with InferredStateJsonProtocol
   with ReadyJsonProtocol
+  with HeartbeatJsonProtocol
   with Logging {
 
   import JsonSerialization._
@@ -53,6 +54,7 @@ case class ProtocolJsonSerializer(graphReader: GraphReader)
       case m: InferredState => toJsonMQMessage(OutMessages.inferredState, m.toJson)
       case m: PythonGatewayAddress => toJsonMQMessage(OutMessages.pythonGatewayAddress, m.toJson)
       case m: Ready => toJsonMQMessage(OutMessages.ready, m.toJson)
+      case m: Heartbeat => toJsonMQMessage(OutMessages.heartbeat, m.toJson)
     }
   }
 

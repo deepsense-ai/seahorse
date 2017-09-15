@@ -23,6 +23,9 @@ import io.deepsense.commons.json.{EnumerationSerializer, IdJsonProtocol}
 import io.deepsense.models.workflows.Workflow
 import io.deepsense.workflowexecutor.communication.message.global.ReadyMessageType.ReadyMessageType
 
+@deprecated(
+  message = "Ready is unnecessary after introducing Heartbeat message." +
+    " It probably will get removed", since = "2016-03-07")
 case class Ready(workflowId: Option[Workflow.Id], content: ReadyContent)
 
 object Ready {

@@ -29,6 +29,7 @@ import io.deepsense.workflowexecutor.communication.message.global.{ReadyMessageT
 import io.deepsense.workflowexecutor.communication.message.workflow.Init
 import io.deepsense.workflowexecutor.executor.{Executor, PythonExecutionCaretaker}
 
+
 class ExecutionDispatcherActor(
     sparkContext: SparkContext,
     sqlContext: SQLContext,

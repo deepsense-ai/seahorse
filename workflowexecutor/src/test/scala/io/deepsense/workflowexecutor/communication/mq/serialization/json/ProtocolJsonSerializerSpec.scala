@@ -30,7 +30,7 @@ import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.{ExecutionReportJsonProtocol, InferredStateJsonProtocol, WorkflowWithResultsJsonProtocol}
 import io.deepsense.models.workflows._
 import io.deepsense.reportlib.model.factory.ReportContentTestFactory
-import io.deepsense.workflowexecutor.communication.message.global.{Ready, ReadyContent, ReadyJsonProtocol, ReadyMessageType}
+import io.deepsense.workflowexecutor.communication.message.global._
 import io.deepsense.workflowexecutor.communication.message.notebook.{Address, PythonGatewayAddress, PythonGatewayAddressJsonProtocol}
 import io.deepsense.workflowexecutor.communication.message.workflow.ExecutionStatus
 
@@ -41,7 +41,8 @@ class ProtocolJsonSerializerSpec
   with PythonGatewayAddressJsonProtocol
   with WorkflowWithResultsJsonProtocol
   with InferredStateJsonProtocol
-  with ReadyJsonProtocol {
+  with ReadyJsonProtocol
+  with HeartbeatJsonProtocol {
 
   override val graphReader: GraphReader = mock[GraphReader]
 
@@ -92,6 +93,12 @@ class ProtocolJsonSerializerSpec
       val ready = Ready(Some(Workflow.Id.randomId), ReadyContent(ReadyMessageType.Info, "blah"))
       protocolJsonSerializer.serializeMessage(ready) shouldBe
       expectedSerializationResult("ready", ready.toJson)
+    }
+
+    "serialize Heartbeat" in {
+      val heartbeat = Heartbeat("SomeSession")
+      protocolJsonSerializer.serializeMessage(heartbeat) shouldBe
+        expectedSerializationResult("heartbeat", heartbeat.toJson)
     }
   }
 
