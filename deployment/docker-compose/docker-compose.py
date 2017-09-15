@@ -16,7 +16,12 @@ from api_version import read_api_version
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Interface for docker-compose.',
+    description = """
+    Interface for docker-compose.
+    This script's parameters should be followed by docker-compose parameter.
+    Example: docker-compose.py up -d
+    """
+    parser = argparse.ArgumentParser(description=description,
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument('-c', '--configuration', default='linux',
@@ -66,6 +71,8 @@ def main():
     if args.generate_only:
         with open(args.yaml_file, 'w') as f:
             f.write(docker_compose)
+    elif not extra_args:
+        parser.print_help()
     else:
         with tempfile.NamedTemporaryFile(dir='.') as temp:
             temp.write(docker_compose)

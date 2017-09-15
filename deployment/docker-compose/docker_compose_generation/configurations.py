@@ -10,6 +10,7 @@ class Directories(object):
         library = 'library'
 
     data = './data'
+    h2_data = './h2-data'
     jars = './jars'
     r_libs = './R_Libs'
     spark_application_logs = './spark_applications_logs'
@@ -250,6 +251,11 @@ class Database(Service):
 
     def port_mapping(self):
         return PortMappings().add(PortMappings.Mapping(1521, 60104))
+
+    def volumes(self):
+        return [
+            Directories.expose(Directories.h2_data, '/opt/h2-data', 'rw')
+        ]
 
     def internal_jdbc_url(self, db):
         return 'jdbc:h2:tcp://{}/{};DATABASE_TO_UPPER=false;DB_CLOSE_DELAY=-1'.format(self.internal_address(), db)
