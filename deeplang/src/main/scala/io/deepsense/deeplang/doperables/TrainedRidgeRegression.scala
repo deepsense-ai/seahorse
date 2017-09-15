@@ -23,7 +23,8 @@ case class TrainedRidgeRegression(
     targetColumn: Option[String],
     scaler: Option[StandardScalerModel])
   extends RidgeRegression
-  with Scorable {
+  with Scorable
+  with DOperableSaver {
 
   def this() = this(None, None, None, None)
 
@@ -50,8 +51,41 @@ case class TrainedRidgeRegression(
     s"Feature columns: ${featureColumns.get.mkString(", ")}\n" +
     s"Target column: ${targetColumn.get}\n" +
     s"Model: $model"))
+
+  override def save(context: ExecutionContext)(path: String): Unit = {
+    val params = TrainedRidgeRegressionDescriptor(
+      model.get.weights,
+      model.get.intercept,
+      featureColumns.get,
+      targetColumn.get,
+      scaler.get.std,
+      scaler.get.mean)
+    context.hdfsClient.saveObjectToFile(path, params)
+  }
 }
 
 object TrainedRidgeRegression {
   val labelColumnSuffix = "prediction"
+
+  def loadFromHdfs(context: ExecutionContext)(path: String): TrainedRidgeRegression = {
+    val params: TrainedRidgeRegressionDescriptor =
+      context.hdfsClient.readFileAsObject[TrainedRidgeRegressionDescriptor](path)
+    TrainedRidgeRegression(
+      Some(new RidgeRegressionModel(params.modelWeights, params.modelIntercept)),
+      Some(params.featureColumns),
+      Some(params.targetColumn),
+      Some(new StandardScalerModel(params.scaleStd, params.scalerMean, true, true))
+    )
+  }
+}
+
+case class TrainedRidgeRegressionDescriptor(
+  modelWeights: Vector,
+  modelIntercept: Double,
+  featureColumns: Seq[String],
+  targetColumn: String,
+  scaleStd: Vector,
+  scalerMean: Vector) extends Deployable {
+  override def deploy(destination: String): AnyRef = destination
+  // TODO: replace dummy implementation and write more meaningful test: ModelDeploymentIntegSpec
 }

@@ -30,7 +30,8 @@ case class DataFrame(optionalSparkDataFrame: Option[sql.DataFrame])
 
   def this() = this(None)
 
-  def save(path: String): Unit = sparkDataFrame.saveAsParquetFile(path)
+  override def save(context: ExecutionContext)(path: String): Unit =
+    sparkDataFrame.saveAsParquetFile(path)
 
   lazy val sparkDataFrame: sql.DataFrame = optionalSparkDataFrame.get
 
@@ -274,6 +275,11 @@ object DataFrame {
     val emptyRdd = context.sqlContext.sparkContext.parallelize(Seq[Row]())
     val emptySparkDataFrame = context.sqlContext.createDataFrame(emptyRdd, StructType(Seq.empty))
     context.dataFrameBuilder.buildDataFrame(emptySparkDataFrame)
+  }
+
+  def loadFromHdfs(context: ExecutionContext)(path: String): DataFrame = {
+    val dataFrame = context.sqlContext.parquetFile(path)
+    context.dataFrameBuilder.buildDataFrame(dataFrame)
   }
 
   val dataSampleTableName = "Data Sample"

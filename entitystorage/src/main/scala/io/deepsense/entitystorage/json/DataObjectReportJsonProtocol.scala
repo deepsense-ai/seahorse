@@ -16,7 +16,7 @@ trait DataObjectReportJsonProtocol extends DefaultJsonProtocol with SprayJsonSup
 
   implicit object DataObjectJsonFormat extends JsonFormat[DataObjectReport] {
 
-    override def write(report: DataObjectReport): JsValue = JsString(report.message)
+    override def write(report: DataObjectReport): JsValue = JsString(report.jsonReport)
 
     override def read(json: JsValue): DataObjectReport = json match {
       case JsString(value) => DataObjectReport(value)

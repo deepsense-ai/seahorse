@@ -17,4 +17,5 @@ class ExecutionContext {
   var dataFrameBuilder: DataFrameBuilder = _
   var entityStorageClient: EntityStorageClient = _
   var tenantId: String = _
+  var hdfsClient: DSHdfsClient = _
 }

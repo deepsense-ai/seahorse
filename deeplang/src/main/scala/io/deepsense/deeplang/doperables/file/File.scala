@@ -6,7 +6,7 @@ package io.deepsense.deeplang.doperables.file
 
 import org.apache.spark.rdd.RDD
 
-import io.deepsense.deeplang.DOperable
+import io.deepsense.deeplang.{ExecutionContext, DOperable}
 import io.deepsense.deeplang.doperables.Report
 import io.deepsense.reportlib.model.{ReportContent, Table}
 
@@ -28,6 +28,8 @@ case class File(
     val table = File.prepareReportTable(reportParams.get)
     Report(ReportContent("File details", Map("details" -> table)))
   }
+
+  override def save(executionContext: ExecutionContext)(path: String): Unit = ???
 }
 
 object File {

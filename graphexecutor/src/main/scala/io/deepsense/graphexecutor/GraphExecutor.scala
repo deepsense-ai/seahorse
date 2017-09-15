@@ -5,7 +5,7 @@
  */
 package io.deepsense.graphexecutor
 
-import java.net.{InetAddress, InetSocketAddress}
+import java.net.{InetAddress, InetSocketAddress, URI}
 import java.util.concurrent.Executors
 import java.util.{List, UUID}
 
@@ -18,6 +18,8 @@ import com.typesafe.scalalogging.LazyLogging
 import org.apache.avro.ipc.NettyServer
 import org.apache.avro.ipc.specific.SpecificResponder
 import org.apache.avro.specific.SpecificData
+import org.apache.hadoop.conf.Configuration
+import org.apache.hadoop.hdfs.DFSClient
 import org.apache.hadoop.yarn.api.records._
 import org.apache.hadoop.yarn.client.api.AMRMClient.ContainerRequest
 import org.apache.hadoop.yarn.client.api.async.AMRMClientAsync
@@ -28,7 +30,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 
 import io.deepsense.commons.config.ConfigModule
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
-import io.deepsense.deeplang.{DOperable, ExecutionContext}
+import io.deepsense.deeplang.{DOperable, DSHdfsClient, ExecutionContext}
 import io.deepsense.entitystorage.{EntityStorageClient, EntityStorageClientFactory}
 import io.deepsense.graph.{Graph, Status}
 import io.deepsense.graphexecutor.protocol.GraphExecutorAvroRpcProtocol
@@ -137,6 +139,8 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
       executionContext.sqlContext = new SQLContext(sparkContext)
       executionContext.dataFrameBuilder = DataFrameBuilder(executionContext.sqlContext)
       executionContext.entityStorageClient = entityStorageClient
+      executionContext.hdfsClient =
+        new DSHdfsClient(new DFSClient(new URI("/"), new Configuration()))
       graphGuard.synchronized {
         executionContext.tenantId = experiment.get.tenantId
       }

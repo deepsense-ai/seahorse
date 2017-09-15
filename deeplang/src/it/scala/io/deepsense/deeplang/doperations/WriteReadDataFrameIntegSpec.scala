@@ -27,7 +27,7 @@ class WriteReadDataFrameIntegSpec
   val testDir = "/tests/readWriteDataFrameTest"
 
   before {
-    hdfsClient.delete(testDir, true)
+    rawHdfsClient.delete(testDir, true)
   }
 
   "Write and Read DataFrame operations" should {

@@ -5,13 +5,14 @@
 
 package io.deepsense.deeplang.doperations
 
-import scala.concurrent.Await
+import spray.json._
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.{DOperableSaver, Report}
 import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, ParametersSchema, StringParameter}
 import io.deepsense.deeplang.{DOperation, DOperation1To0, ExecutionContext}
 import io.deepsense.entitystorage.UniqueFilenameUtil
-import io.deepsense.models.entities.{Entity, DataObjectReference, DataObjectReport, InputEntity}
+import io.deepsense.models.entities.{DataObjectReference, DataObjectReport, InputEntity}
 
 /**
  * Operation which is able to serialize DataFrame and write it.
@@ -30,26 +31,27 @@ class WriteDataFrame extends DOperation1To0[DataFrame] {
 
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): Unit = {
     val uniqueFilename: String = getUniqueFileName(context)
-    dataFrame.save(uniqueFilename)
-    saveDataFrameEntity(context, uniqueFilename)
+    DOperableSaver.saveDOperableWithEntityStorageRegistration(
+      context)(
+      dataFrame,
+      inputEntity(context, uniqueFilename, dataFrame.report))
   }
 
-  private def saveDataFrameEntity(context: ExecutionContext, uniqueFilename: String): Entity = {
+  private def inputEntity(
+      context: ExecutionContext,
+      uniqueFilename: String,
+      dataFrameReport: Report): InputEntity = {
     val name = parameters.getStringParameter(WriteDataFrame.nameParam).value.get
     val description = parameters.getStringParameter(WriteDataFrame.descriptionParam).value.get
-    import scala.concurrent.duration._
-    // TODO: duration from configuration (and possibly a little longer timeout)
-    implicit val timeout = 5.seconds
-    val entityF = context.entityStorageClient.createEntity(InputEntity(
+    import io.deepsense.reportlib.model.ReportJsonProtocol._
+    InputEntity(
       context.tenantId,
       name,
       description,
       "DataFrame",
       Some(DataObjectReference(uniqueFilename)),
-      Some(DataObjectReport("WriteDataFrame Report Mock")),
-      saved = true))
-    // TODO: be sure that this will fail if timeout expired
-    Await.result(entityF, timeout)
+      Some(DataObjectReport(dataFrameReport.content.toJson.prettyPrint)),
+      saved = true)
   }
 
   private def getUniqueFileName(context: ExecutionContext): String = {

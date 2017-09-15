@@ -74,7 +74,7 @@ class EntityDaoCassandraImpl @Inject() (
     // TODO Reimplement when Report gets implemented
     entity.report match {
       case Some(report) =>
-        update.and(set(EntityRowMapper.Report, report.message))
+        update.and(set(EntityRowMapper.Report, report.jsonReport))
       case None =>
         update
     }

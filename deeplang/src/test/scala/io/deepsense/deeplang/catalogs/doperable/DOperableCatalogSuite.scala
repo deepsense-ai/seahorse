@@ -10,7 +10,7 @@ import scala.reflect.runtime.{universe => ru}
 
 import org.scalatest.{FunSuite, Matchers}
 
-import io.deepsense.deeplang.DOperable
+import io.deepsense.deeplang.{ExecutionContext, DOperable}
 import io.deepsense.deeplang.catalogs.doperable.exceptions._
 import io.deepsense.deeplang.doperables.Report
 
@@ -23,10 +23,12 @@ object SampleInheritance {
   class B extends A with T {
     override def report: Report = ???
     override def equals(any: Any) = any.isInstanceOf[B]
+    override def save(context: ExecutionContext)(path: String): Unit = ???
   }
   class C extends A with T2 {
     override def report: Report = ???
     override def equals(any: Any) = any.isInstanceOf[C]
+    override def save(context: ExecutionContext)(path: String): Unit = ???
   }
 }
 
@@ -34,6 +36,7 @@ object Parametrized {
   trait T[T] extends DOperable
   abstract class A[T] extends DOperable {
     override def report: Report = ???
+    override def save(context: ExecutionContext)(path: String): Unit = ???
   }
   class B extends A[Int]
 }
@@ -41,19 +44,23 @@ object Parametrized {
 object Constructors {
   class NotParameterLess(val i: Int) extends DOperable {
     override def report: Report = ???
+    override def save(context: ExecutionContext)(path: String): Unit = ???
   }
   class AuxiliaryParameterless(val i: Int) extends DOperable {
     def this() = this(1)
     override def report: Report = ???
+    override def save(context: ExecutionContext)(path: String): Unit = ???
   }
   class WithDefault(val i: Int = 1) extends DOperable {
     override def report: Report = ???
+    override def save(context: ExecutionContext)(path: String): Unit = ???
   }
 }
 
 object TraitInheritance {
   class C1 extends DOperable {
     override def report: Report = ???
+    override def save(context: ExecutionContext)(path: String): Unit = ???
   }
   trait T1 extends C1
   trait T2 extends T1
@@ -63,6 +70,7 @@ object TraitInheritance {
   trait S2 extends DOperable
   class A1 extends DOperable {
     override def report: Report = ???
+    override def save(context: ExecutionContext)(path: String): Unit = ???
   }
   trait S3 extends A1 with S1 with S2
 }

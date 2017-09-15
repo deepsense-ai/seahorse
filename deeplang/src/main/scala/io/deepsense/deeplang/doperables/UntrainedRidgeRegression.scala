@@ -6,8 +6,8 @@
 
 package io.deepsense.deeplang.doperables
 
+import org.apache.spark.mllib.feature.{StandardScaler, StandardScalerModel}
 import org.apache.spark.mllib.regression.{LabeledPoint, RidgeRegressionWithSGD}
-import org.apache.spark.mllib.feature.{StandardScalerModel, StandardScaler}
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.{DKnowledge, DMethod1To1, ExecutionContext, InferContext}
@@ -37,8 +37,10 @@ case class UntrainedRidgeRegression(
       })
 
       val trainedModel = model.get.run(scaledLabeledPoints)
-      TrainedRidgeRegression(
+      val result = TrainedRidgeRegression(
         Some(trainedModel), Some(featureColumns), Some(labelColumn), Some(scaler))
+      saveScorable(context, result)
+      result
     }
 
     override def infer(
@@ -51,4 +53,7 @@ case class UntrainedRidgeRegression(
   }
 
   override def report: Report = Report(ReportContent("Report for UntrainedRidgeRegression"))
+
+  override def save(context: ExecutionContext)(path: String): Unit =
+    throw new UnsupportedOperationException
 }

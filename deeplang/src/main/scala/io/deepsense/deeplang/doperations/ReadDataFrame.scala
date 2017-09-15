@@ -6,8 +6,7 @@
 
 package io.deepsense.deeplang.doperations
 
-import scala.concurrent.Await
-
+import io.deepsense.deeplang.doperables.DOperableLoader
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, ParametersSchema, StringParameter}
 import io.deepsense.deeplang.{DOperation, DOperation0To1, ExecutionContext}
@@ -25,19 +24,11 @@ class ReadDataFrame extends DOperation0To1[DataFrame] {
 
   override protected def _execute(context: ExecutionContext)(): DataFrame = {
     val idParameter = parameters.getStringParameter(ReadDataFrame.idParam)
-
-    val sqlContext = context.sqlContext
-
-    import scala.concurrent.duration._
-    // TODO: duration from configuration (and possibly a little longer timeout)
-    implicit val timeout = 5.seconds
-    val entityF = context.entityStorageClient.getEntityData(context.tenantId, idParameter.value.get)
-    val entity = Await.result(entityF, timeout).get
-
-    val dataFrame = sqlContext.parquetFile(entity.data.get.url)
-
-    val builder = context.dataFrameBuilder
-    builder.buildDataFrame(dataFrame)
+    DOperableLoader.load(
+      context.entityStorageClient)(
+      DataFrame.loadFromHdfs(context))(
+      context.tenantId,
+      idParameter.value.get)
   }
 }
 

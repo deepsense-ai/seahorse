@@ -30,7 +30,7 @@ class ReadDataFrameIntegSpec
   val testDir = "/tests/ReadDataFrameTest"
 
   before {
-    hdfsClient.delete(testDir, true)
+    rawHdfsClient.delete(testDir, true)
   }
 
   "ReadDataFrame" should {

@@ -12,13 +12,11 @@ import org.scalatest.FunSuite
 import org.scalatest.mock.MockitoSugar
 
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
-import io.deepsense.deeplang.doperables.Report
+import io.deepsense.deeplang.doperables.DOperableMock
 import io.deepsense.deeplang.parameters.{NumericParameter, ParametersSchema, Validator}
 
 object DClassesForDOperations {
-  trait A extends DOperable {
-    override def report: Report = ???
-  }
+  trait A extends DOperableMock
   class A1 extends A {
     override def equals(any: Any) = any.isInstanceOf[A1]
   }

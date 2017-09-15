@@ -13,8 +13,8 @@ import org.scalatest.{FunSuite, Matchers}
 
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang._
+import io.deepsense.deeplang.doperables.DOperableMock
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.Report
 import io.deepsense.deeplang.parameters.ParametersSchema
 import io.deepsense.graph.{Edge, Endpoint, Graph, Node}
 
@@ -53,16 +53,12 @@ class GraphNodeExecutorSuite extends FunSuite with Matchers {
 
   // TODO: this classes could be replaced with real DOperations with the same arity
   object DClassesForDOperations {
-    trait A extends DOperable
+    trait A extends DOperableMock
     class A1 extends A {
       override def equals(any: Any) = any.isInstanceOf[A1]
-
-      def report: Report = ???
     }
     class A2 extends A {
       override def equals(any: Any) = any.isInstanceOf[A2]
-
-      def report: Report = ???
     }
   }
 

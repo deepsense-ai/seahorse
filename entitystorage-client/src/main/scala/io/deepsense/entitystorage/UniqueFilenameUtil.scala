@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger
  */
 object UniqueFilenameUtil {
   val DataFrameEntityCategory = "dataframe"
+  val ModelEntityCategory = "model"
 
   private val numberGenerator = new AtomicInteger(0)
 

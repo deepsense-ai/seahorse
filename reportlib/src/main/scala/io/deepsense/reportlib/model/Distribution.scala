@@ -83,7 +83,7 @@ case class Statistics(
 object Statistics {
   def apply(): Statistics = new Statistics(None, None, None, None, None, None, Seq())
 
-  def apply(median: String, min: String, max: String, mean: String): Statistics =
+  def apply(median: String, max: String, min: String, mean: String): Statistics =
     Statistics(Option(median), Option(max), Option(min), Option(mean), None, None, Seq())
 
   def apply(

@@ -14,6 +14,8 @@ import org.apache.hadoop.fs.permission.{FsAction, FsPermission}
 import org.apache.hadoop.hdfs.DFSClient
 import org.scalatest._
 
+import io.deepsense.deeplang.DSHdfsClient
+
 /**
  * Adds features to aid integration testing using HDFS.
  * NOTE: beforeAll method deploys current deepsense build on HDFS cluster.
@@ -33,6 +35,7 @@ trait HdfsIntegTestSupport
   private val config = new Configuration()
 
   var cli: Option[DFSClient] = None
+  var dsHdfsClient: Option[DSHdfsClient] = None
 
   override def beforeAll(): Unit = {
     // TODO: Configuration resource access should follow proper configuration access convention
@@ -42,6 +45,7 @@ trait HdfsIntegTestSupport
     cli = Some(new DFSClient(
       new URI("hdfs://" + Constants.MasterHostname + ":" + Constants.HdfsNameNodePort),
       config))
+    dsHdfsClient = Some(new DSHdfsClient(cli.get))
 
     cli.get.delete(s"/$uberJarFilename", true)
     cli.get.delete(s"/graphexecutor.conf", true)
@@ -70,23 +74,7 @@ trait HdfsIntegTestSupport
    * @param remoteTo remote file path to copy to
    */
   def copyFromLocal(localFrom: String, remoteTo: String): Unit = {
-    val localFromFile = new File(localFrom)
-    if (localFromFile.isDirectory) {
-      cli.get.mkdirs(remoteTo, null, true)
-      localFromFile.listFiles.foreach(f => copyFromLocal(f.getPath, remoteTo + "/" + f.getName))
-    } else {
-      val inputStream = new BufferedInputStream(new FileInputStream(localFrom))
-      try {
-        val fos = new BufferedOutputStream(cli.get.create(remoteTo, false))
-        try {
-          org.apache.commons.io.IOUtils.copy(inputStream, fos)
-        } finally {
-          fos.close()
-        }
-      } finally {
-        inputStream.close()
-      }
-    }
+    dsHdfsClient.get.copyLocalFile(localFrom, remoteTo)
   }
 
   /**

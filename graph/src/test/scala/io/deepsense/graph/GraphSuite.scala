@@ -22,9 +22,11 @@ object DClassesForDOperations {
   }
   class A1 extends A {
     override def equals(any: Any) = any.isInstanceOf[A1]
+    override def save(context: ExecutionContext)(path: String): Unit = ???
   }
   class A2 extends A {
     override def equals(any: Any) = any.isInstanceOf[A2]
+    override def save(context: ExecutionContext)(path: String): Unit = ???
   }
 }
 

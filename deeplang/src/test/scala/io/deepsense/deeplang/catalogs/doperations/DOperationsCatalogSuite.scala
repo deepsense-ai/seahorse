@@ -13,10 +13,9 @@ import scala.reflect.runtime.universe.{TypeTag, typeTag}
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{FunSuite, Matchers}
 
-import io.deepsense.commons.models
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperations.exceptions._
-import io.deepsense.deeplang.doperables.Report
+import io.deepsense.deeplang.doperables.DOperableMock
 import io.deepsense.deeplang.parameters.ParametersSchema
 
 object DOperationCatalogTestResources {
@@ -58,12 +57,8 @@ object DOperationCatalogTestResources {
     override val parameters = parametersSchema
   }
 
-  case class X() extends DOperable {
-    override def report: Report = ???
-  }
-  case class Y() extends DOperable {
-    override def report: Report = ???
-  }
+  case class X() extends DOperableMock
+  case class Y() extends DOperableMock
 
   val XTypeTag = typeTag[X]
   val YTypeTag = typeTag[Y]
@@ -177,8 +172,8 @@ class DOperationsCatalogSuite extends FunSuite with Matchers with MockitoSugar {
   }
 
   test("It is possible to view list of registered DOperations descriptors") {
-    import ViewingTestResources._
     import DOperationCatalogTestResources._
+    import ViewingTestResources._
 
     catalog.operations shouldBe Map(
       idA -> expectedA,

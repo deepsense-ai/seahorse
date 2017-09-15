@@ -16,6 +16,8 @@ import org.mockito.stubbing.Answer
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperations.exceptions.{ColumnDoesNotExistException, ColumnsDoNotExistException, WrongColumnTypeException}
 import io.deepsense.deeplang.parameters.{MultipleColumnSelection, NameColumnSelection, NameSingleColumnSelection}
+import io.deepsense.entitystorage.EntityStorageClientTestInMemoryImpl
+import io.deepsense.models.entities.Entity
 
 class UntrainedRidgeRegressionIntegSpec extends DeeplangIntegTestSupport {
 
@@ -71,6 +73,9 @@ class UntrainedRidgeRegressionIntegSpec extends DeeplangIntegTestSupport {
       castedResult.model shouldBe Some(mockTrainedModel)
       castedResult.featureColumns shouldBe Some(Seq("column1", "column0"))
       castedResult.targetColumn shouldBe Some("column3")
+
+      val entity = getInsertedEntity
+      executionContext.hdfsClient.fileExists(entity.data.get.url) shouldBe true
     }
 
     "throw an exception" when {
@@ -115,5 +120,12 @@ class UntrainedRidgeRegressionIntegSpec extends DeeplangIntegTestSupport {
         }
       }
     }
+  }
+
+  private def getInsertedEntity: Entity = {
+    val esClient =
+      executionContext.entityStorageClient.asInstanceOf[EntityStorageClientTestInMemoryImpl]
+    esClient.storage.size shouldBe 1
+    esClient.storage.head._2
   }
 }
