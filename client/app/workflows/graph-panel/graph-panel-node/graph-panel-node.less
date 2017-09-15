@@ -9,7 +9,7 @@
   cursor: pointer;
   font-weight: bold;
   background-color: #fff;
-  border: 1px solid @color-default;
+  border: 2px solid @color-default;
   border-radius: 5px;
   position: absolute;
   color: #333;
@@ -86,21 +86,27 @@
   color: #f8ac59;
 }
 
+.flowchart-node {
+  &--active {
+    border: 2px solid lighten(@color-active, 40%);
+    background-color: lighten(@color-active, 30%);
+
+    &:hover {
+      border-color: lighten(@color-active, 20%);
+    }
+  }
+}
+
 .selected-node,
 .selected-node:hover {
   border-width: 2px !important;
-  padding: 0 20px;
-  background-color: #9fc4e4;
+  padding: 1px 21px;
+  background-color: darken(@color-active, 10%);
+  border-color: @color-active;
+  color: white;
 }
 
 .selected-node:after,
 .selected-node:hover:after {
   right: 3px;
-}
-
-.flowchart-node {
-  &--active {
-    border: 1px solid @color-active;
-    background-color: lighten(@color-active, 30%);
-  }
 }

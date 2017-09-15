@@ -21,7 +21,7 @@ const endpointHoverStyle = {
 const inputStyle = {
   endpoint: 'Rectangle',
   paintStyle: {
-    fillStyle: '#1AB394'
+    fillStyle: '#00B1EB'
   },
   hoverPaintStyle: endpointHoverStyle,
   dropOptions: {
@@ -44,7 +44,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Deepse
   const outputStyle = {
     endpoint: 'Dot',
     paintStyle: {
-      fillStyle: '#1AB394',
+      fillStyle: '#00B1EB',
       radius: 10,
       lineWidth: 2
     },
