@@ -133,7 +133,7 @@ models for further reuse with `Write Transformer` operation.
 An exported model can also be shared with other users.
 
 1.  Drag the `Write Transformer` operation onto your canvas.
-2.  Set **OUTPUT PATH** parameter's value to `/tmp/model_example_1`.
+2.  Set **OUTPUT PATH** parameter's value to `/resources/data/model_example_1`.
 3.  Drag the `Fit` output to the `Write Transformer` operation.
 4.  Click **RUN** to execute the workflow again and write the transformer to the specified path.
 
@@ -458,7 +458,7 @@ exported model. Note that the `Export model` step from Example 1 must be finishe
 1. Create an empty workflow.
 2. Import the model:
    * Drag a `Read Transformer` operation onto your canvas.
-   * Set **SOURCE** parameter's value to `/tmp/model_example_1`.
+   * Set **SOURCE** parameter's value to `/resources/data/model_example_1`.
      This path refers to the model saved in the Example 1.
 3. Load the data to be run with the imported model:
    * Drag the `Read DataFrame` operation onto your canvas and set parameters as listed in Example 1.
