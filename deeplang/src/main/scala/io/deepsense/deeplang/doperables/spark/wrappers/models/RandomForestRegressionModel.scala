@@ -19,11 +19,11 @@ package io.deepsense.deeplang.doperables.spark.wrappers.models
 import org.apache.spark.ml.regression.{RandomForestRegressionModel => SparkRFRModel, RandomForestRegressor => SparkRFR}
 
 import io.deepsense.deeplang.ExecutionContext
+import io.deepsense.deeplang.doperables.SparkModelWrapper
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
-import io.deepsense.deeplang.doperables.serialization.{CustomPersistence, SerializableSparkModel}
+import io.deepsense.deeplang.doperables.serialization.SerializableSparkModel
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.PredictorParams
-import io.deepsense.deeplang.doperables.{SparkModelWrapper, Transformer}
 import io.deepsense.deeplang.params.Param
 
 class RandomForestRegressionModel
@@ -61,7 +61,6 @@ class RandomForestRegressionModel
   override protected def loadModel(
       ctx: ExecutionContext,
       path: String): SerializableSparkModel[SparkRFRModel] = {
-    val modelPath = Transformer.modelFilePath(path)
-    CustomPersistence.load[SerializableSparkModel[SparkRFRModel]](ctx.sparkContext, modelPath)
+    new SerializableSparkModel(SparkRFRModel.load(path))
   }
 }

@@ -62,7 +62,7 @@ object DriverFiles {
 
     val df = context.sparkSession.read
       .option("header", csvChoice.getCsvNamesIncluded)
-      // TODO: GZES: sep - separator
+      // TODO: SHR-388: sep - separator
       .csv(driverPath)
     df
   }
