@@ -39,6 +39,17 @@ case class Experiment(
       id, tenantId, inputExperiment.name, inputExperiment.graph, inputExperiment.description)
   }
 
+  /**
+   * Creates a copy of the experiment with a given graph
+   * and updates status of the experiment based upon the status of
+   * the nodes in the graph
+   *
+   * @param graph graph of the experiment
+   * @return a copy of the current experiment with the graph inside
+   */
+  def withGraph(graph: Graph): Experiment =
+    copy(graph = graph, state = Experiment.computeExperimentState(graph))
+
   def markAborted: Experiment = {
     val abortedNodes = graph.nodes.map(n => if (n.isFailed || n.isCompleted) n else n.markAborted)
     copy(graph = graph.copy(nodes = abortedNodes), state = State.aborted)
@@ -51,6 +62,25 @@ case class Experiment(
 
 object Experiment {
   type Id = models.Id
+
+  def computeExperimentState(graph: Graph): Experiment.State = {
+    import Experiment.State._
+    val nodes = graph.nodes
+    if (nodes.isEmpty) {
+      completed
+    } else if (nodes.forall(_.isDraft)) {
+      draft
+    } else if (nodes.forall(n => n.isDraft || n.isQueued || n.isRunning)) {
+      running
+    } else if (nodes.forall(n => n.isDraft || n.isCompleted)) {
+      completed
+    } else if (nodes.exists(_.isFailed)) {
+      val failedNodesCount = nodes.count(_.isFailed)
+      failed(s"$failedNodesCount")
+    } else {
+      aborted
+    }
+  }
 
   object Id {
     def randomId = models.Id.randomId

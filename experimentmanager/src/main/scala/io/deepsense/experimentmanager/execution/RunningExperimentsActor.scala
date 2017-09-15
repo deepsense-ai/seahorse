@@ -16,6 +16,7 @@ import akka.pattern.{after, pipe}
 import akka.util.Timeout
 
 import io.deepsense.experimentmanager.execution.RunningExperimentsActor._
+import io.deepsense.graph.Graph
 import io.deepsense.graphexecutor.{Constants, GraphExecutorClient}
 import io.deepsense.models.experiments.Experiment
 import io.deepsense.models.experiments.Experiment.Id
@@ -115,7 +116,7 @@ class RunningExperimentsActor @Inject() (
    * @param id id of an experiment
    */
   private def requestStatus(id: Id): Unit = {
-    log.info(s"RunningExperimentsActor starts getting status of an experiment: $id")
+    log.info(s"RunningExperimentsActor requesting status of an experiment: $id")
     val experiment = experiments.get(id).map(_._1)
     sender() ! Status(experiment)
   }
@@ -123,11 +124,13 @@ class RunningExperimentsActor @Inject() (
   private def getExecutionState(
       experiment: Experiment,
       graphExecutorClient: GraphExecutorClient): Experiment = {
-    experiment.copy(graph = graphExecutorClient.getExecutionState())
+    graphExecutorClient.getExecutionState()
+      .map(experiment.withGraph)
+      .getOrElse(experiment)
   }
 
   private def listExperiments(tenantId: Option[String]): Unit = {
-    log.info(s"RunningExperimentsActor starts listing experiments $tenantId")
+    log.info(s"RunningExperimentsActor listing experiments of tenantId: $tenantId")
     val experimentsByTenant = experiments.map(_._2._1)
       .groupBy(_.tenantId).mapValues(_.toSet)
     log.info(s"RunningExperimentsActor finishes listing experiments $tenantId")
@@ -138,7 +141,7 @@ class RunningExperimentsActor @Inject() (
     }
   }
 
-  private def refreshStatuses(): Unit = {
+  private def refreshStatuses(): Unit =
     experiments.values.foreach { case (experiment, client) =>
       val shouldUpdate = updateTasks.get(experiment.id).map(_.isCompleted).getOrElse(true)
       if (shouldUpdate) {
@@ -151,7 +154,7 @@ class RunningExperimentsActor @Inject() (
         stateWithTimeout.map(experiment => ExperimentStatusUpdated(experiment)).pipeTo(self)
       }
     }
-  }
+
 
   private object InternalMessages {
     sealed abstract class InternalMessage

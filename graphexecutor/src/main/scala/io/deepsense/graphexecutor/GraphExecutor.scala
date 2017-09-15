@@ -165,8 +165,7 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
       logger.debug("Loop until there are nodes in graph that are ready to or during execution")
       while (graphGuard.synchronized {
         // NOTE: Graph.readyNodes does not support optional inputs
-        graph.get.readyNodes.nonEmpty ||
-          graph.get.nodes.filter(n => n.state.status == Status.Running).nonEmpty
+        graph.get.readyNodes.nonEmpty || graph.get.nodes.exists(_.isRunning)
       }) {
         val g = graph.get
         logger.debug("Node statistics")
@@ -201,24 +200,7 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
           case e: InterruptedException => // ignored
         }
       }
-
-      logger.debug("Mark as aborted all nodes unable to execute")
-      graphGuard.synchronized {
-        if (graph.get.nodes.forall(_.isCompleted)) {
-          experiment = experiment.map(_.markCompleted)
-          logger.debug("Experiment completed")
-        } else {
-          if (graph.get.nodes.exists(_.isFailed)) {
-            experiment = experiment.map(_.markFailed("Not all nodes were executed"))
-            logger.error("Experiment failed partially")
-          } else {
-            experiment = experiment.map(_.markAborted)
-            logger.error("Experiment aborted")
-          }
-        }
-      }
     }
-
     cleanup(resourceManagerClient, rpcServer, entityStorageClientFactory)
   }
 

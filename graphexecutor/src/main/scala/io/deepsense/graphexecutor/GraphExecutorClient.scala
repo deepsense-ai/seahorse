@@ -1,7 +1,5 @@
 /**
  * Copyright (c) 2015, CodiLime, Inc.
- *
- * Owner: Grzegorz Chilkiewicz
  */
 package io.deepsense.graphexecutor
 
@@ -71,8 +69,8 @@ class GraphExecutorClient extends Closeable with LazyLogging {
    * @return Graph with current state of execution
    * @throws AvroRuntimeException on any critical problem (i.e. graph not sent yet)
    */
-  def getExecutionState(): Graph = {
-    val executionStateByteBuffer = rpcProxy.get.getExecutionState
+  def getExecutionState(): Option[Graph] = rpcProxy.map { proxy =>
+    val executionStateByteBuffer = proxy.getExecutionState
     val bufferIn = new ByteArrayInputStream(executionStateByteBuffer.array())
     val streamIn = new ObjectInputStream(bufferIn)
     val executionState = streamIn.readObject().asInstanceOf[Graph]
@@ -85,9 +83,7 @@ class GraphExecutorClient extends Closeable with LazyLogging {
    * @return true on success, false if graph has not been sent yet
    * @throws AvroRuntimeException on any critical problem (i.e. node executors pool shutdown fail)
    */
-  def terminateExecution(): Boolean = {
-    rpcProxy.get.terminateExecution()
-  }
+  def terminateExecution(): Boolean = rpcProxy.get.terminateExecution()
 
   /**
    * Checks if Graph Executor is in running state.
@@ -234,15 +230,14 @@ class GraphExecutorClient extends Closeable with LazyLogging {
    * Releases all resources associated with this object.
    */
   override def close(): Unit = {
-    if (rpcClient.nonEmpty) {
-      rpcClient.get.close()
-      rpcClient = None
-    }
+    rpcClient.foreach(_.close())
+    rpcClient = None
+
     rpcProxy = None
-    if (yarnClient.nonEmpty) {
-      yarnClient.get.stop()
-      yarnClient = None
-    }
+
+    yarnClient.foreach(_.stop())
+    yarnClient = None
+
     applicationId = None
   }
 }
@@ -252,7 +247,5 @@ object GraphExecutorClient {
   val ExecutorMemoryProperty = "spark.executor.memory"
   val DriverMemoryProperty = "spark.driver.memory"
 
-  def apply() = {
-    new GraphExecutorClient()
-  }
+  def apply() = new GraphExecutorClient()
 }

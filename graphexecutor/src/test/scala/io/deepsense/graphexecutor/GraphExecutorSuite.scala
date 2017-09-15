@@ -1,35 +1,45 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Grzegorz Chilkiewicz
  */
 package io.deepsense.graphexecutor
 
 import java.util.UUID
 
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest.{WordSpec, FunSuite, Matchers}
 
 import io.deepsense.commons.serialization.Serialization
 import io.deepsense.deeplang.doperations.{LoadDataFrame, SaveDataFrame}
+import io.deepsense.graph.Status._
 import io.deepsense.graph.{Edge, Endpoint, Graph, Node}
 import io.deepsense.models.entities.Entity
 
-class GraphExecutorSuite extends FunSuite with Matchers with Serialization {
+class GraphExecutorSuite
+  extends WordSpec
+  with Matchers
+  with Serialization {
 
-  test("Mocked graph with parameters should be serializable") {
-    val graph = createMockedGraph(Entity.Id.randomId.toString, "testing DF name")
-    val baos = serialize[Graph](graph)
-    val graphIn = deserialize[Graph](baos)
+  "Mocked graph with parameters" should {
+    "be serializable" in {
+      val graph = createMockedGraph(Entity.Id.randomId.toString, "testing DF name")
+      val baos = serialize[Graph](graph)
+      val graphIn = deserialize[Graph](baos)
 
-    val nodeA = graph.nodes.toList(0)
-    val nodeInA = graphIn.node(nodeA.id)
-    assert(nodeA.operation.parameters.getString(LoadDataFrame.idParam)
-      == nodeInA.operation.parameters.getString(LoadDataFrame.idParam))
+      val nodeA = graph.nodes.toList(0)
+      val nodeInA = graphIn.node(nodeA.id)
+      assert(nodeA.operation.parameters.getString(LoadDataFrame.idParam)
+        == nodeInA.operation.parameters.getString(LoadDataFrame.idParam))
 
-    val nodeB = graph.nodes.toList(1)
-    val nodeInB = graphIn.node(nodeB.id)
-    assert(nodeB.operation.parameters.getString(SaveDataFrame.nameParam)
-      == nodeInB.operation.parameters.getString(SaveDataFrame.nameParam))
+      val nodeB = graph.nodes.toList(1)
+      val nodeInB = graphIn.node(nodeB.id)
+      assert(nodeB.operation.parameters.getString(SaveDataFrame.nameParam)
+        == nodeInB.operation.parameters.getString(SaveDataFrame.nameParam))
+    }
+  }
+
+  "GraphExecutorClient" should {
+    "return no graph when asking for executionStatus before spawn" in {
+      GraphExecutorClient().getExecutionState() shouldBe None
+    }
   }
 
   /**

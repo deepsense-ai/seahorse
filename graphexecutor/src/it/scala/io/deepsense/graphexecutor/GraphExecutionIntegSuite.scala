@@ -38,7 +38,7 @@ abstract class GraphExecutionIntegSuite
       while (!graphExecutorClient.hasGraphExecutorEndedRunning()) {
         val graph = graphExecutorClient.getExecutionState()
         import io.deepsense.graph.Status._
-        forAll(graph.nodes) {
+        forAll(graph.get.nodes) {
           _.state.status should not(be(Aborted) or be(Failed))
         }
         // Sleeping to postpone next control loop iteration, delay arbitrarily chosen
@@ -48,7 +48,7 @@ abstract class GraphExecutionIntegSuite
       // time before closing RPC server, in order to allow to get executed graph state.
       graphExecutorClient shouldBe 'graphExecutorFinished
       val graph = graphExecutorClient.getExecutionState()
-      forAll(graph.nodes) {
+      forAll(graph.get.nodes) {
         _.state.status shouldBe Status.Completed
       }
     } finally {
