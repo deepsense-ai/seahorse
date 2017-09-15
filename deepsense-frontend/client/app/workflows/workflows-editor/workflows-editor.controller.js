@@ -97,7 +97,9 @@ class WorkflowsEditorController {
         let reportEntityId = this.selectedPortObject.node.state.results[this.selectedPortObject.portIdx];
         this.loadReportById(reportEntityId);
       }
-      if (!this.WorkflowService.isWorkflowRunning()) {
+      if (this.WorkflowService.isWorkflowRunning()) {
+        this._setRunningMode();
+      } else {
         this._setEditableMode();
       }
     });
@@ -106,7 +108,9 @@ class WorkflowsEditorController {
       this.updateAndRerenderEdges(data);
       if (data.states) {
         this.WorkflowService.onInferredState(data.states);
-        if (!this.WorkflowService.isWorkflowRunning()) {
+        if (this.WorkflowService.isWorkflowRunning()) {
+          this._setRunningMode();
+        } else {
           this._setEditableMode();
         }
       }
