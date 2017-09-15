@@ -1,0 +1,66 @@
+<div class="column-list-selector-item">
+  <div class="column-list-values">
+    <div ng-if="::selectorIsSingle()" class="selector-param-is-single">
+      <div ng-if="::!parameter.dataFrameSchema.fields" class="column-list-value">
+        <input focused autofocus ng-model="item.column.name" placeholder="Enter column name" type="text" class="form-control o-custom">
+      </div>
+      <div angucomplete-alt
+           ng-if="::parameter.dataFrameSchema.fields"
+           id="single-column-searcher"
+           placeholder="Search name..."
+           pause="100"
+           initial-value="item.column"
+           selected-object="addSelectedObject"
+           match-class="matched-text"
+           local-data="::parameter.dataFrameSchema.fields"
+           search-fields="name"
+           title-field="name"
+           minlength="0"
+           input-class="form-control o-custom"
+           match-class="highlight">
+      </div>
+    </div>
+    <div ng-if="::!selectorIsSingle()">
+      <form ng-if="::!parameter.dataFrameSchema.fields"
+            novalidate
+            ng-submit="addColumn()"
+            name="selectorForm">
+        <div class="u-flex u-flex--center-center m-b-sm">
+          <input
+            ng-model="item.name"
+            placeholder="Enter column name"
+            type="text"
+            class="form-control o-custom"
+            required>
+        </div>
+        <button class="btn btn-info btn-xs o-action-text"
+                ng-disabled="selectorForm.$invalid">
+          <i class="fa fa-plus"></i>
+          <span>Add name</span>
+        </button>
+      </form>
+      <div angucomplete-alt
+           ng-if="::parameter.dataFrameSchema.fields"
+           id="column-searcher"
+           placeholder="Search names..."
+           pause="100"
+           selected-object="addSelectedObject"
+           clear-selected="true"
+           match-class="matched-text"
+           local-data="::parameter.dataFrameSchema.fields"
+           search-fields="name"
+           title-field="name"
+           minlength="0"
+           input-class="form-control o-custom"
+           match-class="highlight">
+      </div>
+
+      <span class="badge o-tag-unit"
+            ng-class="isColumnValid(column) ? 'badge-info': 'badge-danger'"
+            ng-repeat="column in item.columns">
+        <span class="o-tag-unit__name">{{::column.name}}</span>
+        <a class="close o-tag-unit__close" ng-click="removeColumn($index)">&times;</a>
+      </span>
+    </div>
+  </div>
+</div>

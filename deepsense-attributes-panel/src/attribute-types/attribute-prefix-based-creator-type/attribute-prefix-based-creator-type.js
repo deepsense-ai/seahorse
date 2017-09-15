@@ -1,0 +1,19 @@
+/**
+ * Copyright (c) 2015, CodiLime Inc.
+ *
+ * Owner: Grzegorz Swatowski
+ */
+
+'use strict';
+
+/*@ngInject*/
+function AttributePrefixBasedCreatorType() {
+  return {
+    restrict: 'E',
+    templateUrl: 'attribute-types/attribute-prefix-based-creator-type/attribute-prefix-based-creator-type.html',
+    replace: true
+  };
+}
+
+angular.module('deepsense.attributes-panel').
+    directive('attributePrefixBasedCreatorType', AttributePrefixBasedCreatorType);

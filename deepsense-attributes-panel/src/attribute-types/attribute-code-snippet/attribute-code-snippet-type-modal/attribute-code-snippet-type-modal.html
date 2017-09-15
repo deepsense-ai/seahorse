@@ -1,0 +1,23 @@
+<div class="modal-header">
+    <h3 class="modal-title">Edit code</h3>
+</div>
+<div class="modal-body">
+    <div ui-ace="{
+      mode: acstmCtrl.codeSnippet.language,
+      advanced: {
+        fontSize: '16px'
+      }
+    }"
+         ng-model="acstmCtrl.codeSnippet.code"
+    >
+    </div>
+    <style>
+        .ace_editor {
+            height: 350px;
+        }
+    </style>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-warning" type="button" ng-click="acstmCtrl.cancel()">Cancel</button>
+    <button class="btn btn-primary" type="button" ng-click="acstmCtrl.ok()">OK</button>
+</div>

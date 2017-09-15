@@ -1,0 +1,13 @@
+<div ui-ace="{
+      mode: acstCtrl.language.toLowerCase(),
+      onBlur: acstCtrl.broadcastUpdate
+    }"
+     ng-model="acstCtrl.value"
+>
+</div>
+<style>
+    .ace_editor {
+        height: 200px;
+    }
+</style>
+<button class="btn btn-info attributes-list-btn-wide" style="margin-top: 2px;" ng-click="acstCtrl.editInWindow()">Edit in a window</button>

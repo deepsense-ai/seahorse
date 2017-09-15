@@ -1,0 +1,143 @@
+<aside class="ibox operation-attributes-panel animated fadeIn">
+  <header class="ibox-title ibox-title--main">
+    <section class="ibox-title flex-content--no-flex" ng-hide="disabledMode && !node.uiName">
+      <span color-picker></span>
+      <h4 class="ibox-title__name"
+          tooltip-placement="left"
+          uib-tooltip="{{!disabledMode && node.uiName ? 'Click to change name' : ''}}"
+          tooltip-trigger="mouseenter"
+          tooltip-append-to-body="true">
+        <span editable-text="node.uiName" onaftersave="controller.customNameSaved()" ng-if="!disabledMode">{{node.uiName || 'Create custom name'}}</span>
+        <span ng-if="disabledMode && node.uiName">{{::node.uiName}}</span>
+      </h4>
+    </section>
+    <section class="operation-attributes-panel__details" ng-class="{'u-top-border': disabledMode && !node.uiName}">
+      <p class="operation-attributes-panel__title m-b-xs" ng-class="{'m-t-n-xs': !disabledMode}">{{ node.name }}</p>
+
+      <p class="operation-attributes-panel__description"
+         title="{{ node.description }}">{{ node.description }}</p>
+      <a ng-href="{{controller.getDocsHost()}}/docs/latest/uuid/{{node.operationId}}.html" target="_blank"
+         class="o-read-more block m-t m-b">
+        <i class="fa fa-book"></i>
+        <span>Documentation</span>
+      </a>
+      <button class="operation-attributes-panel__open-button"
+              ng-if="controller.hasCodeEdit()" ng-click="controller.showNotebook()">
+        <i class="fa fa-file-text-o"></i>
+        <span>
+          Open notebook
+        </span>
+      </button>
+    </section>
+    <section class="operation-attributes-panel__details o-state" ng-if="node.state">
+      <header>
+        <p class="o-state__status label"
+           ng-class="{
+            'label-success': node.state.status === 'status_completed',
+            'label-danger': node.state.status === 'status_failed',
+            'label-warning': node.state.status === 'status_aborted'
+           }"
+           title="Status">
+          {{node.state.status.replace('status_', '')}}
+        </p>
+        <button ng-show="node.state.status === 'status_failed'"
+                ng-click="controller.showErrorMessage()"
+                class="btn btn-xs btn-info o-action-text fa fa-exclamation-triangle o-error-btn">
+          <span class="o-action-text__text-element">Click here to show errors</span>
+        </button>
+      </header>
+      <p class="o-state__time text-right navy-bg"
+         ng-show="node.state.started">
+        <span class="block">Execution start</span>
+        <i class="fa fa-clock-o"></i>
+        <time datetime="{{node.state.started}}"
+              class="text-right">
+          {{node.state.started | date:'medium'}}
+        </time>
+      </p>
+      <p class="o-state__time text-right lazur-bg"
+         ng-show="node.state.ended">
+        <span class="block">Execution end</span>
+        <i class="fa fa-clock-o"></i>
+        <time datetime="{{node.state.ended}}"
+              class="text-right">
+          {{node.state.ended | date:'medium'}}
+        </time>
+      </p>
+      <p class="o-state__time text-right gray-bg"
+         ng-show="node.state.ended">
+        <span class="block">Execution time</span>
+        <i class="fa fa-clock-o"></i>
+        <time-diff start="node.state.started"
+                   end="node.state.ended"></time-diff>
+      </p>
+    </section>
+  </header>
+  <aside class="c-attributes-tabs clearfix">
+    <ul class="nav nav-tabs c-attributes-tabs__container">
+      <li class="o-tab"
+          ng-class="{'active': selected === 'parameters'}"
+          ng-click="selected = 'parameters'">
+        <a href="">Parameters</a>
+      </li>
+      <li class="o-tab"
+          ng-class="{'active': selected === 'ports'}"
+          ng-click="selected = 'ports'">
+        <a href="">Ports</a>
+      </li>
+    </ul>
+  </aside>
+  <section class="ibox-content" custom-scroll-bar ng-switch="selected" style="padding-right: 10px;">
+    <section class="c-ports-info" ng-switch-when="ports">
+      <section ng-if="node.input.length > 0" class="ibox c-ports-info__container">
+        <div class="ibox-title">
+          <label>
+            <i class="fa fa-square text-info m-r-xs"></i>
+            Input types
+          </label>
+        </div>
+        <div ng-repeat="input in node.input" class="ibox-content c-ports-info__content">
+          <strong>{{$index}}:</strong>
+          <span class="c-ports-info__item" ng-repeat="typeQualifier in input.typeQualifier">
+            {{{true: '', false: ' +&nbsp;'}[$first]}}{{typeQualifier.substr(typeQualifier.lastIndexOf('.')+1,typeQualifier.length)}}
+          </span>
+        </div>
+      </section>
+      <section ng-if="node.originalOutput.length > 0" class="ibox c-ports-info__container">
+        <div class="ibox-title">
+          <label>
+            <i class="fa fa-circle text-info m-r-xs"></i>
+            Output types
+          </label>
+        </div>
+        <div ng-repeat="output in node.originalOutput" class="ibox-content c-ports-info__content">
+          <strong>{{$index}}:</strong>
+          <span class="c-ports-info__item" ng-repeat="typeQualifier in output.typeQualifier">
+            {{{true: '', false: ' +&nbsp;'}[$first]}}{{typeQualifier.substr(typeQualifier.lastIndexOf('.')+1,typeQualifier.length)}}
+          </span>
+        </div>
+      </section>
+      <section ng-if="node.output.length > 0" class="ibox c-ports-info__container c-ports-info__container--outcomes">
+        <div class="ibox-title">
+          <label>
+            <i class="fa fa-circle text-info m-r-xs"></i>
+            {{disabledMode ? 'Outcomes' : 'Possible outcomes' }}
+          </label>
+        </div>
+        <div ng-repeat="output in node.output" class="ibox-content c-ports-info__content">
+          <strong>{{$index}}:</strong>
+          <span class="c-ports-info__item" ng-repeat="typeQualifier in output.typeQualifier">
+            {{typeQualifier.substr(typeQualifier.lastIndexOf('.')+1,typeQualifier.length)}}{{{true: '', false: ', '}[$last]}}
+          </span>
+        </div>
+      </section>
+    </section>
+    <attributes-list
+      ng-if="node.parameters"
+      is-root-level-parameter = "'true'"
+      parameters-list="node.parameters"
+      ng-switch-when="parameters">
+    </attributes-list>
+    <deepsense-loading-spinner-sm class="text-center" ng-if="!node.parameters"></deepsense-loading-spinner-sm>
+  </section>
+</aside>

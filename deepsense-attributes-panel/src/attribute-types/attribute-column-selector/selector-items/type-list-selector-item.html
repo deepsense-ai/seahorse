@@ -1,0 +1,12 @@
+<div class="types-list-selector">
+  <a class="close-link close-link--types-list m-r-sm" aria-label="Close" ng-click="removeTypesList(item)">
+    <i class="fa fa-times"></i>
+  </a>
+  <div ng-repeat="(typeName, _) in ::item.types">
+    <label class="u-flex u-cursor-pointer types-list-selector__label">
+      <span class="u-flex__1">{{ typeName }}</span>
+      <input type="checkbox" ng-model="item.types[typeName]"
+        ui-switch="{color: '#1ab394', secondaryColor: '#E43B11', size: 'small'}">
+    </label>
+  </div>
+</div>
