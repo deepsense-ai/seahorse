@@ -4,14 +4,50 @@
 
 package io.deepsense.deeplang.doperables
 
-import io.deepsense.deeplang.doperables.Trainable.Parameters
+import org.apache.spark.mllib.classification.{LogisticRegressionModel, LogisticRegressionWithLBFGS}
+
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.{DMethod1To1, ExecutionContext}
+import io.deepsense.deeplang.{DKnowledge, DMethod1To1, ExecutionContext, InferContext}
+import io.deepsense.reportlib.model.ReportContent
 
-case class UntrainedLogisticRegression() extends LogisticRegression with Trainable {
-  override val train: DMethod1To1[Parameters, DataFrame, Scorable] = ???
+case class UntrainedLogisticRegression(
+    model: Option[LogisticRegressionWithLBFGS])
+  extends LogisticRegression
+  with Trainable {
 
-  override def report: Report = ???
+  def this() = this(None)
 
-  override def save(executionContext: ExecutionContext)(path: String): Unit = ???
+  override val train = new DMethod1To1[Trainable.Parameters, DataFrame, Scorable] {
+    override def apply(
+      context: ExecutionContext)(
+      parameters: Trainable.Parameters)(
+      dataFrame: DataFrame): Scorable = {
+
+      val featureColumns = dataFrame.getColumnNames(parameters.featureColumns)
+      val labelColumn = dataFrame.getColumnName(parameters.targetColumn)
+      val labeledPoints = dataFrame.toSparkLabeledPointRDD(featureColumns, labelColumn)
+      labeledPoints.cache()
+      val trainedModel: LogisticRegressionModel = model.get.run(labeledPoints)
+      val result = TrainedLogisticRegression(
+        Some(trainedModel),
+        Some(featureColumns),
+        Some(labelColumn))
+      saveScorable(context, result)
+      result
+    }
+
+    override def infer(
+      context: InferContext)(
+      parameters: Trainable.Parameters)(
+      dataframeKnowledge: DKnowledge[DataFrame]): DKnowledge[Scorable] = {
+
+      DKnowledge(new TrainedLogisticRegression())
+    }
+  }
+
+  override def report: Report = Report(ReportContent("Report for UntrainedLogisticRegression"))
+
+  override def save(context: ExecutionContext)(path: String): Unit =
+    throw new UnsupportedOperationException
+
 }
