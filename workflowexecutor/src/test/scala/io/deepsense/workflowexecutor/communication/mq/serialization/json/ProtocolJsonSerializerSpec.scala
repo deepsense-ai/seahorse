@@ -89,7 +89,8 @@ class ProtocolJsonSerializerSpec
     }
 
     "serialize Ready" in {
-      val ready = Ready(Some(Workflow.Id.randomId), ReadyContent(ReadyMessageType.Info, "blah"))
+      val ready =
+        Ready(Some(Workflow.Id.randomId), ReadyContent(ReadyMessageType.Info, "foobar"))
       protocolJsonSerializer.serializeMessage(ready) shouldBe
       expectedSerializationResult("ready", ready.toJson)
     }

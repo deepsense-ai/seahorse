@@ -16,8 +16,10 @@
 
 package io.deepsense.workflowexecutor.communication.message.global
 
+import java.util.UUID
+
 import spray.httpx.SprayJsonSupport
-import spray.json.{RootJsonFormat, DefaultJsonProtocol}
+import spray.json.{DefaultJsonProtocol, RootJsonFormat}
 
 import io.deepsense.commons.json.{EnumerationSerializer, IdJsonProtocol}
 import io.deepsense.models.workflows.Workflow
@@ -25,18 +27,39 @@ import io.deepsense.workflowexecutor.communication.message.global.ReadyMessageTy
 
 case class Ready(workflowId: Option[Workflow.Id], content: ReadyContent)
 
+object Ready {
+  def afterException(
+      exception: Throwable,
+      reasonId: UUID,
+      workflowId: Option[Workflow.Id] = None): Ready = {
+    Ready(workflowId, ReadyContent.error(exception, reasonId))
+  }
+
+  def onStart: Ready = Ready(None, ReadyContent(ReadyMessageType.Info, "Seahorse is ready"))
+}
+
 trait ReadyJsonProtocol extends IdJsonProtocol with ReadyContentJsonProtocol {
 
-  implicit val readyFormat = jsonFormat2(Ready)
+  implicit val readyFormat = jsonFormat2(Ready.apply)
 }
 
 trait ReadyContentJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
 
   implicit val readyMessageTypeFormat = EnumerationSerializer.jsonEnumFormat(ReadyMessageType)
-  implicit val readyContentFormat: RootJsonFormat[ReadyContent] = jsonFormat2(ReadyContent)
+  implicit val readyContentFormat: RootJsonFormat[ReadyContent] = jsonFormat2(ReadyContent.apply)
 }
 
 case class ReadyContent(msgType: ReadyMessageType, text: String)
+
+object ReadyContent {
+  def error(cause: Throwable, reasonId: UUID): ReadyContent = {
+    val message = Option(cause.getMessage) match {
+      case Some(m) => s"$m ($reasonId)"
+      case None => s"Error: $reasonId"
+    }
+    ReadyContent(ReadyMessageType.Error, message)
+  }
+}
 
 object ReadyMessageType extends Enumeration {
   type ReadyMessageType = Value

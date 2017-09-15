@@ -16,6 +16,8 @@
 
 package io.deepsense.workflowexecutor
 
+import java.util.UUID
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.language.postfixOps
 
@@ -28,7 +30,7 @@ import io.deepsense.deeplang.CommonExecutionContext
 import io.deepsense.models.workflows._
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.Init
 import io.deepsense.workflowexecutor.WorkflowManagerClientActorProtocol.GetWorkflow
-import io.deepsense.workflowexecutor.communication.message.global.{ReadyMessageType, ReadyContent, Ready}
+import io.deepsense.workflowexecutor.communication.message.global.{Ready, ReadyContent, ReadyMessageType}
 import io.deepsense.workflowexecutor.partialexecution.Execution
 
 /**
@@ -62,12 +64,12 @@ class SessionWorkflowExecutorActor(
 
   override def postRestart(reason: Throwable): Unit = {
     super.postRestart(reason)
+    val restartId = UUID.randomUUID()
     logger.warn(
-      s"SessionWorkflowExecutor actor for workflow: ${workflowId.toString} restarted.",
+      s"SessionWorkflowExecutor actor for workflow: ${workflowId.toString} restarted: $restartId",
       reason)
     logger.info("Sending Ready message to seahorse topic after restart.")
-    seahorseTopicPublisher !
-      Ready(Some(workflowId), ReadyContent(ReadyMessageType.Error, reason.getMessage))
+    seahorseTopicPublisher ! Ready.afterException(reason, restartId, Some(workflowId))
   }
 
   def waitingForWorkflow: Actor.Receive = {

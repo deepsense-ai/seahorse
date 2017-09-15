@@ -16,6 +16,8 @@
 
 package io.deepsense.workflowexecutor
 
+import java.util.UUID
+
 import akka.actor._
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.SQLContext
@@ -25,7 +27,7 @@ import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.models.workflows.Workflow
 import io.deepsense.models.workflows.Workflow.Id
-import io.deepsense.workflowexecutor.communication.message.global.{ReadyMessageType, ReadyContent, Ready}
+import io.deepsense.workflowexecutor.communication.message.global.{Ready, ReadyContent, ReadyMessageType}
 import io.deepsense.workflowexecutor.communication.message.workflow.Init
 import io.deepsense.workflowexecutor.executor.{Executor, PythonExecutionCaretaker}
 
@@ -62,9 +64,10 @@ class ExecutionDispatcherActor(
 
   override def postRestart(reason: Throwable): Unit = {
     super.postRestart(reason)
-    logger.warn("ExecutionDispatcherActor restarted.", reason)
+    val restartId = UUID.randomUUID()
+    logger.warn(s"ExecutionDispatcherActor restarted: $restartId", reason)
     logger.debug("Sending Ready message to seahorse topic.")
-    val ready: Ready = Ready(None, ReadyContent(ReadyMessageType.Error, reason.getMessage))
+    val ready: Ready = Ready.afterException(reason, restartId)
     seahorseTopicPublisher ! ready
     notebookTopicPublisher ! ready
   }
