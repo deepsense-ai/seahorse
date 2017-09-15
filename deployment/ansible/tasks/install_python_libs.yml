@@ -4,7 +4,7 @@
   apt: package=python-pip
 
 - name: Install Py4j
-  pip: name=py4j
+  pip: name=py4j version=0.9
 
 - name: Install numpy
   apt: package=python-numpy
