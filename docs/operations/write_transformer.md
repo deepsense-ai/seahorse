@@ -7,8 +7,9 @@ usesMathJax: true
 includeOperationsMenu: true
 ---
 
-A `Write Transformer` operation saves a [Transformer](../classes/transformer.html) to a file at the specified location.
+A `Write Transformer` operation saves a [Transformer](../classes/transformer.html) to a directory at the specified location.
 
+It supports writing data to local file system and HDFS.
 
 **Since**: Seahorse 1.1.0
 
@@ -59,7 +60,7 @@ The `Write Transformer` operation does not produce any output.
       <td>
         <code><a href="../parameter_types.html#string">String</a></code>
       </td>
-      <td>The path where the output file will be saved.
+      <td>The path where the output directory will be saved.
       </td>
     </tr>
   </tbody>

@@ -6,8 +6,9 @@ description: Read Transformer
 includeOperationsMenu: true
 ---
 
-Reads a [Transformer](../classes/transformer.html) from a file at the specified location.
+Reads a [Transformer](../classes/transformer.html) from a directory at the specified location.
 
+It supports reading data from local file system and HDFS.
 
 **Since**: Seahorse 1.1.0
 
@@ -59,7 +60,7 @@ The `Read Transformer` operation does not take any input.
       <td>
         <code><a href="../parameter_types.html#string">String</a></code>
       </td>
-      <td>A path to the input file.
+      <td>A path to the input directory.
       </td>
     </tr>
   </tbody>
