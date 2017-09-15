@@ -42,7 +42,9 @@ class SparkLauncherSessionSpawner @Inject()(
         .addAppArgs(args(workflowId, userId): _*)
         .setConf("spark.driver.extraClassPath", "__app__.jar")
         .setConf("spark.executorEnv.PYTHONPATH", config.weDepsFileName)
-        .setConf("spark.driver.extraJavaOptions", "-XX:MaxPermSize=1024m -XX:PermSize=256m")
+        .setConf("spark.driver.extraJavaOptions",
+          "-XX:MaxPermSize=1024m -XX:PermSize=256m -Dfile.encoding=UTF8")
+        .setConf("spark.yarn.appMasterEnv.PYSPARK_PYTHON", config.pythonBinary)
         .startApplication(listener)
 
       listener.executorStartedFuture
