@@ -19,7 +19,7 @@ package io.deepsense.workflowexecutor.executor
 import java.net.InetAddress
 import java.util.concurrent.TimeUnit
 
-import scala.concurrent.duration.Duration
+import scala.concurrent.duration.{Duration, FiniteDuration}
 import scala.concurrent.{Await, Future}
 
 import akka.actor.{ActorRef, ActorSystem, Props}
@@ -32,6 +32,7 @@ import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.workflowexecutor.communication.message.global.Ready
 import io.deepsense.workflowexecutor.communication.mq.MQCommunication
 import io.deepsense.workflowexecutor.communication.mq.serialization.json.{ProtocolJsonDeserializer, ProtocolJsonSerializer}
+import io.deepsense.workflowexecutor.executor.session.LivyKeepAliveActor
 import io.deepsense.workflowexecutor.rabbitmq._
 import io.deepsense.workflowexecutor.session.storage.DataFrameStorageImpl
 import io.deepsense.workflowexecutor.{ExecutionDispatcherActor, StatusLoggingActor, WorkflowManagerClientActor}
@@ -48,6 +49,8 @@ case class SessionExecutor(
   private val config = ConfigFactory.load
   private val subscriptionTimeout =
     Duration(config.getInt("subscription-timeout"), TimeUnit.SECONDS)
+  private val keepAliveInterval =
+    FiniteDuration(config.getInt("keep-alive.interval"), TimeUnit.SECONDS)
   val graphReader = new GraphReader(createDOperationsCatalog())
 
   /**
@@ -132,6 +135,8 @@ case class SessionExecutor(
       Seq(notebookSubscriberReady, workflowsSubscriberReady),
       Seq(notebookPublisher, seahorsePublisher))
 
+    setupLivyKeepAliveLogging(system, keepAliveInterval)
+
     system.awaitTermination()
     cleanup(sparkContext, pythonExecutionCaretaker)
     logger.debug("SessionExecutor ends")
@@ -155,4 +160,7 @@ case class SessionExecutor(
     sparkContext.stop()
     logger.debug("Spark terminated!")
   }
+
+  private def setupLivyKeepAliveLogging(system: ActorSystem, interval: FiniteDuration): Unit =
+    system.actorOf(LivyKeepAliveActor.props(interval), "KeepAliveActor")
 }
