@@ -63,6 +63,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Deepse
   let internal = {};
 
   internal.currentZoomRatio = 1.0;
+  internal.isDetachable = true;
 
   internal.getAllInternalElementsPosition = function getAllInternalElementsPosition () {
     let elementsToFit = jsPlumb.getContainer().children;
@@ -174,7 +175,8 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Deepse
           uuids: [
             outputPrefix + '-' + edge.startPortId + '-' + edge.startNodeId,
             inputPrefix + '-' + edge.endPortId + '-' + edge.endNodeId
-          ]
+          ],
+          detachable: internal.isDetachable
         });
         connection.setParameter('edgeId', edge.id);
       }
@@ -328,6 +330,14 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Deepse
     jsPlumb.bind('connectionDrag', () => {
       $rootScope.$broadcast(Edge.DRAG);
     });
+  };
+
+  that.disableAddingEdges = function disableAddingEdges () {
+    internal.isDetachable = false;
+  };
+
+  that.enableAddingEdges = function enableAddingEdges () {
+    internal.isDetachable = true;
   };
 
   that.rerender = function rerender() {

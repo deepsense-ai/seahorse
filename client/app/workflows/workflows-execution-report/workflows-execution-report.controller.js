@@ -39,6 +39,7 @@ function WorkflowsReportController(
 
     WorkflowService.updateEdgesStates();
     GraphPanelRendererService.changeEdgesPaintStyles();
+    GraphPanelRendererService.disableAddingEdges();
 
     Report.createReportEntities(report.executionReport.resultEntities);
   };

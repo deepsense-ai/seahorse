@@ -32,6 +32,7 @@ function WorkflowsEditorController(
     WorkflowService.createWorkflow(workflow, Operations.getData());
     GraphPanelRendererService.setWorkflow(WorkflowService.getWorkflow());
     GraphPanelRendererService.setZoom(1.0);
+    GraphPanelRendererService.enableAddingEdges();
 
     internal.updateAndRerenderEdges(workflow.knowledge);
   };
