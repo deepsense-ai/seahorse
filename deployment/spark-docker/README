@@ -15,3 +15,41 @@ The image contains Spark and python libraries required for running SX inside a d
 3. Publishing the image
 
    $ docker push quay.io/deepsense_io/deepsense-spark:2.0.0
+
+4. Verifying R libraries:
+To verify possibility of installation of popular machine learning R packages,
+run in R Notebook (in Local, default preset) and investigate for non-zero exit codes:
+
+# http://www.kdnuggets.com/2015/06/top-20-r-machine-learning-packages.html
+install.packages("e1071")
+install.packages("rpart")
+install.packages("igraph")
+install.packages("nnet")
+install.packages("randomForest")
+install.packages("caret")
+install.packages("kernlab")
+install.packages("glmnet")
+install.packages("ROCR")
+install.packages("gbm")
+install.packages("party")
+install.packages("arules")
+install.packages("tree")
+install.packages("klaR")
+install.packages("RWeka")
+install.packages("ipred")
+install.packages("lars")
+install.packages("earth")
+install.packages("CORElearn")
+install.packages("mboost")
+
+# http://www.kdnuggets.com/2015/04/top-10-r-packages-kaggle.html
+install.packages("gbm")
+install.packages("randomForest")
+install.packages("e1071")
+install.packages("glmnet")
+install.packages("tau")
+install.packages("Matrix")
+install.packages("SOAR")
+install.packages("foreach")
+install.packages("doMC")
+install.packages("data.table")
