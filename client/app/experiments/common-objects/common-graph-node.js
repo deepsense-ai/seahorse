@@ -6,22 +6,18 @@
 var Port = require('./common-port.js');
 
 function GraphNode(options) {
-  var that = this;
-
-  that.init = function init() {
-    that.name = options.name;
-    that.id = options.id;
-    that.operationId = options.operationId;
-    that.type = options.type;
-    that.description = options.description;
-    that.input = that.fetchPorts('input', options.input);
-    that.output = that.fetchPorts('output', options.output);
-    that.x = options.x;
-    that.y = options.y;
-    that.parameters = options.parameters;
-  };
-
-  that.init();
+  this.name = options.name;
+  this.id = options.id;
+  this.operationId = options.operationId;
+  this.version = options.version;
+  this.type = options.type;
+  this.type = options.type;
+  this.description = options.description;
+  this.input = this.fetchPorts('input', options.input);
+  this.output = this.fetchPorts('output', options.output);
+  this.x = options.x;
+  this.y = options.y;
+  this.parameters = options.parameters;
 }
 
 GraphNode.prototype.fetchPorts = function fetchPorts(type, ports) {
@@ -38,6 +34,29 @@ GraphNode.prototype.fetchPorts = function fetchPorts(type, ports) {
   return array;
 };
 
-GraphNode.CLICK = "GraphNode.CLICK";
+/**
+ * Serializes node data to transfer format.
+ *
+ * @return {object}
+ */
+GraphNode.prototype.serialize = function serialize() {
+  let data = {
+    'id': this.id,
+    'operation': {
+      'id': this.operationId,
+      'name': this.name,
+      'version': this.version
+    },
+    'parameters': this.parameters,
+    'ui': {
+      'x': this.x,
+      'y': this.y
+    }
+  };
+
+  return data;
+};
+
+GraphNode.CLICK = 'GraphNode.CLICK';
 
 module.exports = GraphNode;

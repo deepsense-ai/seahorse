@@ -3,7 +3,6 @@
  *
  * Owner: Piotr Zarówny
  */
-/*global inject*/
 'use strict';
 
 

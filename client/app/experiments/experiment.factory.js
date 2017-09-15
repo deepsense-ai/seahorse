@@ -11,6 +11,7 @@ function ExperimentFactory() {
 
   that.createExperiment = function createExperiment(data, operations) {
     var experiment = new Experiment();
+    experiment.setData(data.experiment);
     experiment.saveParametersSchema(operations);
     experiment.createNodes(data.experiment.graph.nodes, operations);
     experiment.createConnections(data.experiment.graph.edges);

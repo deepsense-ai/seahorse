@@ -39,14 +39,21 @@ function Experiment() {
     }
   };
 
+  that.setData = function setData(data) {
+    internal.id = data.id;
+    internal.name = data.name;
+    internal.description = data.description;
+  };
+
   that.createNodes = function createNodes(nodes, operations) {
     for (var i = 0; i < nodes.length; i++) {
       var operation = operations[nodes[i].operation.id];
       var node = new GraphNode({
         id: nodes[i].id,
-        operationId: operation.id,
-        description: operation.description,
         name: operation.name,
+        operationId: operation.id,
+        version: operation.version,
+        description: operation.description,
         x: nodes[i].ui.x,
         y: nodes[i].ui.y,
         input: operation.ports.input,
@@ -67,6 +74,33 @@ function Experiment() {
       });
       internal.edges.push(edge);
     }
+  };
+
+  /**
+   * Serializes full experiment data to transfer format.
+   *
+   * @return {object}
+   */
+  that.serialize = function serialize() {
+    let data = {
+      'id': internal.id,
+      'name': internal.name,
+      'description': internal.description,
+      'graph': {
+        'nodes': [],
+        'edges': []
+      }
+    };
+
+    for (let id in internal.nodes) {
+      data.graph.nodes.push(internal.nodes[id].serialize());
+    }
+
+    for (let i = 0, k = internal.edges.length; i < k; i++) {
+      data.graph.edges.push(internal.edges[i].serialize());
+    }
+
+    return data;
   };
 }
 

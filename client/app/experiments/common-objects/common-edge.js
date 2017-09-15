@@ -4,14 +4,30 @@
 'use strict';
 
 function Edge(options) {
-  var that = this;
-  that.init = function init() {
-    that.startNodeId = options.startNodeId;
-    that.endNodeId = options.endNodeId;
-    that.startPortId = options.startPortId;
-    that.endPortId = options.endPortId;
-  };
-  that.init();
+  this.startNodeId = options.startNodeId;
+  this.endNodeId = options.endNodeId;
+  this.startPortId = options.startPortId;
+  this.endPortId = options.endPortId;
 }
+
+/**
+ * Serializes edge data to transfer format.
+ *
+ * @return {object}
+ */
+Edge.prototype.serialize = function serialize() {
+  let data = {
+    'from': {
+      'node': this.startNodeId,
+      'portIndex': this.startPortId
+    },
+    'to': {
+      'node': this.endNodeId,
+      'portIndex': this.endPortId
+    }
+  };
+
+  return data;
+};
 
 module.exports = Edge;
