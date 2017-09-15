@@ -28,7 +28,7 @@ import io.deepsense.deeplang.parameters._
 
 case class CreateRandomForestRegression() extends DOperation0To1[UntrainedRandomForestRegression] {
 
-  override val name = "Random Forest Regression"
+  override val name = "Create Random Forest Regression"
 
   override val id: Id = "0496cdad-32b4-4231-aec4-4e7e312c9e4e"
 

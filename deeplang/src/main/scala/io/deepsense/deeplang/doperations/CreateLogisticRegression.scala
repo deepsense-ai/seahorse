@@ -30,7 +30,7 @@ case class CreateLogisticRegression() extends DOperation0To1[UntrainedLogisticRe
     ru.typeTag[UntrainedLogisticRegression]
 
   import CreateLogisticRegression._
-  override val name = "Logistic Regression"
+  override val name = "Create Logistic Regression"
 
   override val id: DOperation.Id = "ed20e602-ff91-11e4-a322-1697f925ec7b"
 

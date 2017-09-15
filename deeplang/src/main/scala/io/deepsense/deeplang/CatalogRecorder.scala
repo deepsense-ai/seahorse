@@ -22,7 +22,7 @@ import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.file.File
 import io.deepsense.deeplang.doperations._
-import io.deepsense.deeplang.doperations.transformations.MathematicalTransformation
+import io.deepsense.deeplang.doperables.transformations.MathematicalTransformation
 
 /**
  * Object used to register all desired DOperables and DOperations.
@@ -55,7 +55,7 @@ object CatalogRecorder {
       "Saves a DataFrame to a file"
     )
 
-    catalog.registerDOperation[MathematicalOperation](
+    catalog.registerDOperation[CreateMathematicalTransformation](
       DOperationCategories.Transformation,
       "Creates a Transformation that creates a new column based on a mathematical formula."
     )

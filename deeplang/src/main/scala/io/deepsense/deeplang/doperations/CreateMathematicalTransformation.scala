@@ -19,13 +19,13 @@ package io.deepsense.deeplang.doperations
 import scala.reflect.runtime.{universe => ru}
 
 import io.deepsense.deeplang.DOperation._
-import io.deepsense.deeplang.doperations.transformations.MathematicalTransformation
+import io.deepsense.deeplang.doperables.transformations.MathematicalTransformation
 import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, ParametersSchema, StringParameter}
 import io.deepsense.deeplang.{DOperation0To1, ExecutionContext}
 
-case class MathematicalOperation() extends DOperation0To1[MathematicalTransformation] {
+case class CreateMathematicalTransformation() extends DOperation0To1[MathematicalTransformation] {
 
-  override val name : String = "Mathematical Operation"
+  override val name : String = "Create Mathematical Transformation"
 
   override val id : Id = "ecb9bc36-5f7c-4a62-aa18-8db6e2d73251"
 
@@ -47,10 +47,10 @@ case class MathematicalOperation() extends DOperation0To1[MathematicalTransforma
     ru.typeTag[MathematicalTransformation]
 }
 
-object MathematicalOperation {
-  def apply(formula: String): MathematicalOperation = {
+object CreateMathematicalTransformation {
+  def apply(formula: String): CreateMathematicalTransformation = {
 
-    val operation = new MathematicalOperation
+    val operation = new CreateMathematicalTransformation
     operation.formulaParam.value = Some(formula)
     operation
   }

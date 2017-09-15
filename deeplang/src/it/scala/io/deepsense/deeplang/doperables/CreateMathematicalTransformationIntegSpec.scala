@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperations
+package io.deepsense.deeplang.doperables
 
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 
-import io.deepsense.deeplang.doperables.Transformation
-import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMetadata
-import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMapper
-import io.deepsense.deeplang.doperations.exceptions.DOperationExecutionException
-import io.deepsense.deeplang.{DOperable, DeeplangIntegTestSupport}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoricalMapper, CategoricalMetadata}
+import io.deepsense.deeplang.doperations.exceptions.DOperationExecutionException
+import io.deepsense.deeplang.doperations.{ApplyTransformation, CreateMathematicalTransformation}
+import io.deepsense.deeplang.{DOperable, DeeplangIntegTestSupport}
 
-class MathematicalOperationIntegSpec extends DeeplangIntegTestSupport {
+class CreateMathematicalTransformationIntegSpec extends DeeplangIntegTestSupport {
 
   val resultColumn = 3
   val delta = 0.01
@@ -36,7 +35,7 @@ class MathematicalOperationIntegSpec extends DeeplangIntegTestSupport {
   val column3 = "c3"
   val column3needsEscaping = "c.strange name!"
 
-  "MathematicalOperation" should {
+  "CreateMathematicalTransformation" should {
 
     "create Transformation that counts ABS properly" in {
       runTest(s"ABS($column1) as $column3", Seq(1.0, 1.1, 1.2, 1.3, null))
@@ -142,9 +141,11 @@ class MathematicalOperationIntegSpec extends DeeplangIntegTestSupport {
   }
 
   def prepareTransformation(formula: String): Transformation = {
-    val operation = new MathematicalOperation()
-    operation.formulaParam.value = Some(formula)
-    operation.execute(executionContext)(Vector.empty[DOperable]).head.asInstanceOf[Transformation]
+    val createMathematicalTransformation = new CreateMathematicalTransformation()
+    createMathematicalTransformation.formulaParam.value = Some(formula)
+    createMathematicalTransformation.execute(executionContext)(
+      Vector.empty[DOperable]
+    ).head.asInstanceOf[Transformation]
   }
 
   def validateSchema(schema: StructType) = {

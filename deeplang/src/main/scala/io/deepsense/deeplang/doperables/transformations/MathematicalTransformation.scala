@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperations.transformations
+package io.deepsense.deeplang.doperables.transformations
 
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.deeplang.doperables.{Report, Transformation}
-import io.deepsense.deeplang.doperations.exceptions.MathematicalOperationExecutionException
+import io.deepsense.deeplang.doperations.exceptions.MathematicalTransformationExecutionException
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.{DKnowledge, DMethod1To1, DOperable, ExecutionContext}
 import io.deepsense.reportlib.model.{ReportContent, Table}
@@ -34,7 +34,8 @@ case class MathematicalTransformation(formula: Option[String]) extends Transform
       val transformedSparkDataFrame = try {
         dataFrame.sparkDataFrame.selectExpr("*", formula.get)
       } catch {
-        case e: Exception => throw new MathematicalOperationExecutionException(formula.get, Some(e))
+        case e: Exception =>
+          throw new MathematicalTransformationExecutionException(formula.get, Some(e))
       }
       context.dataFrameBuilder.buildDataFrame(transformedSparkDataFrame)
     }

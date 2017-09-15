@@ -18,7 +18,7 @@ package io.deepsense.deeplang.doperables
 
 import org.mockito.Mockito._
 
-import io.deepsense.deeplang.doperations.transformations.MathematicalTransformation
+import io.deepsense.deeplang.doperables.transformations.MathematicalTransformation
 import io.deepsense.deeplang.{DKnowledge, UnitSpec}
 import io.deepsense.deeplang.doperables.dataframe.{DataFrameBuilder, CommonColumnMetadata, DataFrameMetadata}
 import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}

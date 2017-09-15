@@ -31,7 +31,7 @@ case class CreateRidgeRegression() extends DOperation0To1[UntrainedRidgeRegressi
   override lazy val tTagTO_0: ru.TypeTag[UntrainedRidgeRegression] =
     ru.typeTag[UntrainedRidgeRegression]
 
-  override val name = "Ridge Regression"
+  override val name = "Create Ridge Regression"
 
   override val id: Id = "0643f308-f2fa-11e4-b9b2-1697f925ec7b"
 
