@@ -37,13 +37,11 @@ object StandaloneSparkClusterForTests {
   private var hdfsAddress: String = _
   private var sparkMasterAddress: String = _
   private val runId = UUID.randomUUID().toString.substring(0, 8)
-  private val network = s"sbt-test-$runId"
 
   // This env is used within docker-compose.yml and allows multiple instances of the cluster
   // to run simultaneously
   private val clusterIdEnv = "CLUSTER_ID" -> runId
-  private val dockerComposeFile = "docker/spark-standalone-cluster.dc.yml"
-  private val dockerComposeCmd = Seq("docker-compose", "-f", dockerComposeFile)
+  private val clusterManagementScript = "docker/spark-standalone-cluster-manage.sh"
 
   private val anIpAddress: String = {
     import collection.JavaConverters._
@@ -56,17 +54,16 @@ object StandaloneSparkClusterForTests {
     }.next().get
   }
 
-  private def dockerInspect(container: String, format: String) =
-    Process(Seq("docker", "inspect", "--format", format, s"$container-$runId")).!!.stripLineEnd
-
   private def address(container: String, port: Int) = {
-    val localPort = "{{(index (index .NetworkSettings.Ports \"" + port + "/tcp\") 0).HostPort}}"
-    dockerInspect(container, s"$anIpAddress:$localPort")
+    def dockerInspect(container: String, format: String) =
+      Process(Seq("docker", "inspect", "--format", format, s"$container-$runId")).!!.stripLineEnd
+
+    val localPortFmt = "{{(index (index .NetworkSettings.Ports \"" + port + "/tcp\") 0).HostPort}}"
+    s"$anIpAddress:${dockerInspect(container, localPortFmt)}"
   }
+
   def startDockerizedCluster(): Unit = {
-    Process("docker/spark-standalone-cluster/build-cluster-node-docker.sh").!
-    Process(Seq("docker", "network", "create", "--subnet=10.255.2.1/24", network)).!
-    Process(dockerComposeCmd :+ "up" :+ "-d", None, clusterIdEnv).!
+    Process(Seq(clusterManagementScript, "up"), None, clusterIdEnv).!
 
     // We turn off the safe mode for hdfs - we don't need it for testing.
     // The loop is here because we don't have control over when the docker is ready
@@ -81,11 +78,8 @@ object StandaloneSparkClusterForTests {
     sparkMasterAddress = address("sparkMaster", 7077)
   }
 
-  def stopDockerizedCluster(): Unit = {
-    Process(dockerComposeCmd :+ "kill", None, clusterIdEnv).!
-    Process(dockerComposeCmd :+ "down", None, clusterIdEnv).!
-    Process(Seq("docker", "network", "rm", network)).!
-  }
+  def stopDockerizedCluster(): Unit =
+    Process(Seq(clusterManagementScript, "down"), None, clusterIdEnv).!
 
   def generateSomeHdfsTmpPath(): String =
     FileScheme.HDFS.pathPrefix + s"$hdfsAddress/root/tmp/seahorse_tests/" + UUID.randomUUID()
