@@ -77,6 +77,7 @@ class WorkflowNodeExecutorActorSpec
         eventually {
           verify(removedExecutedContext).dataFrameStorage
           verify(dataFrameStorage).removeNodeOutputDataFrames()
+          verify(dataFrameStorage).removeNodeInputDataFrames()
         }
       }
     }

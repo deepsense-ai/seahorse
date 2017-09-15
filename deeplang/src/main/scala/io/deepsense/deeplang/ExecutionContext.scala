@@ -106,6 +106,9 @@ case class ContextualDataFrameStorage(
   def removeNodeInputDataFrames(portNumber: Int): Unit =
     dataFrameStorage.removeNodeInputDataFrames(workflowId, nodeId, portNumber)
 
+  def removeNodeInputDataFrames() : Unit =
+    dataFrameStorage.removeNodeInputDataFrames(workflowId, nodeId)
+
   def getOutputDataFrame(portNumber: Int): Option[SparkDataFrame] =
     dataFrameStorage.getOutputDataFrame(workflowId, nodeId, portNumber)
 

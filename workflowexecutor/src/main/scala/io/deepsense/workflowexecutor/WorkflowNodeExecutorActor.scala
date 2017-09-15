@@ -69,7 +69,9 @@ class WorkflowNodeExecutorActor(
         self ! PoisonPill
       }
     case Delete() =>
-      executionContext.dataFrameStorage.removeNodeOutputDataFrames()
+      val storage = executionContext.dataFrameStorage
+      storage.removeNodeOutputDataFrames()
+      storage.removeNodeInputDataFrames()
   }
 
   def sendFailed(e: Exception): Unit = {

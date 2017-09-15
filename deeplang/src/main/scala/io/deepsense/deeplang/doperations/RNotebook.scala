@@ -30,5 +30,7 @@ case class RNotebook()
 
   override val since: Version = Version(1, 3, 0)
 
-  override protected def execute(dataFrame: DataFrame)(context: ExecutionContext): Unit = ()
+  override protected def execute(dataFrame: DataFrame)(context: ExecutionContext): Unit = {
+    context.dataFrameStorage.setInputDataFrame(0, dataFrame.sparkDataFrame)
+  }
 }
