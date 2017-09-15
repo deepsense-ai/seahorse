@@ -6,13 +6,15 @@
 
 package io.deepsense.experimentmanager.app.rest.json
 
+
 import org.scalatest._
+import org.scalatest.mock.MockitoSugar
 import spray.json._
 
 import io.deepsense.deeplang.catalogs.doperable.{ClassDescriptor, HierarchyDescriptor, TraitDescriptor}
 import io.deepsense.experimentmanager.app.rest.json.RestJsonProtocol._
 
-class RestJsonProtocolSpec extends FlatSpec {
+class RestJsonProtocolSpec extends FlatSpec with Matchers with MockitoSugar {
 
   "TraitDescriptor" should "be correctly serialized to json" in {
     val traitDescriptor: TraitDescriptor = TraitDescriptor("Sorted", List("Iterable", "Comparable"))

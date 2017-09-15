@@ -12,6 +12,7 @@ import spray.httpx.SprayJsonSupport
 import spray.json._
 
 import io.deepsense.deeplang.catalogs.doperable.{ClassDescriptor, TraitDescriptor, HierarchyDescriptor}
+import io.deepsense.deeplang.catalogs.doperations.{DOperationDescriptor, DOperationCategoryNode}
 import io.deepsense.experimentmanager.app.exceptions.ExceptionDetails
 import io.deepsense.experimentmanager.app.models.Graph.Node
 import io.deepsense.experimentmanager.app.models.{Experiment, Graph, Id, InputExperiment}
@@ -61,4 +62,6 @@ object RestJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport with N
       JsObject()
     }
   }
+
+
 }

@@ -40,4 +40,12 @@ private[deeplang] object TypeUtils {
   def createInstance[T](constructor: Constructor[_]) = {
     constructor.newInstance().asInstanceOf[T]
   }
+
+  /**
+   * Returns only last word after '.' given long type name.
+   * For example, for 'io.deepsense.package1.name' it returns 'name'.
+   */
+  def shortNameOfType(typeName: String): String = {
+    typeName.substring(typeName.lastIndexOf('.') + 1)
+  }
 }

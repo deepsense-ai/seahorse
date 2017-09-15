@@ -7,6 +7,7 @@
 package io.deepsense.deeplang.catalogs.doperations
 
 import java.lang.reflect.Constructor
+import java.util.UUID
 
 import scala.collection.mutable
 import scala.reflect.runtime.{universe => ru}
@@ -41,6 +42,7 @@ abstract class DOperationsCatalog {
    * @tparam T DOperation class to register
    */
   def registerDOperation[T <: DOperation : ru.TypeTag](
+      id: UUID,
       name: String,
       category: DOperationCategory,
       description: String): Unit
@@ -66,16 +68,18 @@ object DOperationsCatalog {
     }
 
     def registerDOperation[T <: DOperation : ru.TypeTag](
+        id: UUID,
         name: String,
         category: DOperationCategory,
         description: String): Unit = {
       val operationType = ru.typeOf[T]
       val constructor = constructorForType(operationType)
       val operationInstance = DOperationsCatalog.createDOperation(constructor)
+      val parameters = operationInstance.parameters
       val inPortTypes = operationInstance.inPortTypes.map(_.tpe)
       val outPortTypes = operationInstance.outPortTypes.map(_.tpe)
       val operationDescriptor = DOperationDescriptor(
-          name, description, category, inPortTypes, outPortTypes)
+          id, name, description, category, parameters, inPortTypes, outPortTypes)
 
       operations += operationDescriptor
       categoryTree = categoryTree.addOperation(operationDescriptor, category)
