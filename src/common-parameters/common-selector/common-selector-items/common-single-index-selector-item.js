@@ -28,4 +28,8 @@ SingleIndexSelectorItem.getType = () => { return {
   'verbose': 'Select by index'
 };};
 
+SingleIndexSelectorItem.prototype.containsField = function(field, index) {
+  return this.firstNum === index;
+};
+
 module.exports = SingleIndexSelectorItem;

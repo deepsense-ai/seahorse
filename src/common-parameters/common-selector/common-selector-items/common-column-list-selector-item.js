@@ -38,4 +38,8 @@ ColumnListSelectorItem.getType = () => {
   };
 };
 
+ColumnListSelectorItem.prototype.containsField = function(field) {
+  return this.columns.find((column) => field.name === column.name);
+};
+
 module.exports = ColumnListSelectorItem;

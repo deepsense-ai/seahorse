@@ -12,6 +12,10 @@ GenericSelectorItem.prototype.serialize = () => {
   throw 'serialize method not defined';
 };
 
+GenericSelectorItem.prototype.containsField = function(field, index, fieldsCount) {
+  throw 'containsField method not defined';
+};
+
 GenericSelectorItem.prototype.validate = () => true;
 
 module.exports = GenericSelectorItem;

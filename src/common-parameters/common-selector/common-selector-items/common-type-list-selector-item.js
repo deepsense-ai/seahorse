@@ -14,7 +14,6 @@ function TypeListSelectorItem(options) {
   this.types = {
     'numeric': false,
     'boolean': false,
-    'categorical': false,
     'string': false,
     'timestamp': false
   };
@@ -39,5 +38,9 @@ TypeListSelectorItem.getType = () => { return {
   'id': 'typeList',
   'verbose': 'Types list'
 };};
+
+TypeListSelectorItem.prototype.containsField = function(field) {
+  return this.types[field.deeplangType];
+};
 
 module.exports = TypeListSelectorItem;
