@@ -18,6 +18,7 @@ import spray.routing.Route
 
 import io.deepsense.commons.auth.usercontext.{TokenTranslator, UserContext}
 import io.deepsense.commons.auth.{Authorizator, AuthorizatorProvider, UserContextAuthorizator}
+import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.catalogs.doperable.{ClassDescriptor, DOperableCatalog, HierarchyDescriptor, TraitDescriptor}
 import io.deepsense.deeplang.catalogs.doperations.{DOperationCategory, DOperationCategoryNode, DOperationDescriptor, DOperationsCatalog}
 import io.deepsense.deeplang.parameters.ParametersSchema
@@ -46,13 +47,13 @@ class OperationsApiSpec
 
   val dOperationsCatalog = mock[DOperationsCatalog]
 
-  val existingOperationId = UUID.randomUUID()
+  val existingOperationId = DOperation.Id.randomId
   val mockCategory = mock[DOperationCategory]
   when(mockCategory.id) thenReturn UUID.randomUUID()
   when(mockCategory.name) thenReturn "some category name"
 
   val existingOperationDescriptor = DOperationDescriptor(
-    UUID.randomUUID(), "operation name", "operation description",
+    existingOperationId, "operation name", "operation description",
     mockCategory, ParametersSchema(), Nil, Nil)
 
   val operationsMapMock = Map(existingOperationId -> existingOperationDescriptor)

@@ -6,8 +6,6 @@
 
 package io.deepsense.graphjson
 
-import java.util.UUID
-
 import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
@@ -33,17 +31,16 @@ trait GraphJsonTestSupport
     edgeEndJs.fields("portIndex").convertTo[Int] == edgeEnd.portIndex
   }
 
-
-
   def mockOperation(
       inArity: Int,
       outArity: Int,
-      id: UUID,
+      id: DOperation.Id,
       name: String,
       version: String): DOperation = {
     val dOperation = mock[DOperation]
     when(dOperation.inArity).thenReturn(inArity)
     when(dOperation.outArity).thenReturn(outArity)
+    when(dOperation.id).thenReturn(id)
     when(dOperation.name).thenReturn(name)
     val mockParameters = mock[ParametersSchema]
     when(dOperation.parameters).thenReturn(mockParameters)

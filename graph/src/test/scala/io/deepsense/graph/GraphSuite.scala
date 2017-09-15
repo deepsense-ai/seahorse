@@ -28,32 +28,29 @@ object DClassesForDOperations {
 object DOperationTestClasses {
   import DClassesForDOperations._
 
-  class DOperation0To1Test extends DOperation0To1[A1] {
+  trait DOperationBaseFields extends DOperation {
+    // NOTE: id will be different for each instance
+    override val id: DOperation.Id = DOperation.Id.randomId
+
+    override val name: String = ""
+
+    override val parameters: ParametersSchema = ParametersSchema()
+  }
+
+  class DOperation0To1Test extends DOperation0To1[A1] with DOperationBaseFields {
     override protected def _execute(context: ExecutionContext)(): A1 = ???
-
-    override val name: String = ""
-    override val parameters: ParametersSchema = ParametersSchema()
   }
 
-  class DOperation1To0Test extends DOperation1To0[A1] {
+  class DOperation1To0Test extends DOperation1To0[A1] with DOperationBaseFields {
     override protected def _execute(context: ExecutionContext)(t0: A1): Unit = ???
-
-    override val name: String = ""
-    override val parameters: ParametersSchema = ParametersSchema()
   }
 
-  class DOperation1To1Test extends DOperation1To1[A1, A] {
+  class DOperation1To1Test extends DOperation1To1[A1, A] with DOperationBaseFields {
     override protected def _execute(context: ExecutionContext)(t1: A1): A = ???
-
-    override val name: String = ""
-    override val parameters: ParametersSchema = ParametersSchema()
   }
 
-  class DOperation2To1Test extends DOperation2To1[A1, A2, A] {
+  class DOperation2To1Test extends DOperation2To1[A1, A2, A] with DOperationBaseFields {
     override protected def _execute(context: ExecutionContext)(t1: A1, t2: A2): A = ???
-
-    override val name: String = ""
-    override val parameters: ParametersSchema = ParametersSchema()
   }
 }
 
@@ -72,6 +69,7 @@ class GraphSuite extends FunSuite with Matchers {
 
   test("Graph with two nodes should have size 2") {
     import DOperationTestClasses._
+
     val node1 = Node(UUID.randomUUID(), new DOperation1To1Test)
     val node2 = Node(UUID.randomUUID(), new DOperation1To1Test)
     val nodes = Set(node1, node2)

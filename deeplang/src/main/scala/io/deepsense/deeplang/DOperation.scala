@@ -8,6 +8,7 @@ package io.deepsense.deeplang
 
 import scala.reflect.runtime.{universe => ru}
 
+import io.deepsense.commons.models
 import io.deepsense.deeplang.parameters.ParametersSchema
 
 /**
@@ -18,6 +19,7 @@ import io.deepsense.deeplang.parameters.ParametersSchema
 abstract class DOperation extends Serializable {
   val inArity: Int
   val outArity: Int
+  val id: DOperation.Id
   val name: String
   val parameters: ParametersSchema
 
@@ -29,4 +31,12 @@ abstract class DOperation extends Serializable {
 
   def inferKnowledge(context: InferContext)
                     (l: Vector[DKnowledge[DOperable]]): Vector[DKnowledge[DOperable]]
+}
+
+object DOperation {
+  type Id = models.Id
+
+  object Id {
+    def randomId: Id = models.Id.randomId
+  }
 }

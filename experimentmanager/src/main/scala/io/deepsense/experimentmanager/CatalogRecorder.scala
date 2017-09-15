@@ -24,17 +24,14 @@ object CatalogRecorder {
 
   def registerDOperations(catalog: DOperationsCatalog) = {
     catalog.registerDOperation[ReadDataFrame](
-      UUID.randomUUID(),
       DOperationCategories.IO,
       "Reads DataFrame from HDFS")
 
     catalog.registerDOperation[WriteDataFrame](
-      UUID.randomUUID(),
       DOperationCategories.IO,
       "Writes DataFrame to HDFS")
 
     catalog.registerDOperation[TimestampDecomposer](
-      UUID.randomUUID(),
       DOperationCategories.Utils,
       "Decomposes selected columns from timestamp to numeric")
   }

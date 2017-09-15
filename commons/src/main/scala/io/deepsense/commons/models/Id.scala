@@ -22,4 +22,3 @@ object Id {
 
   def randomId: Id = fromUuid(UUID.randomUUID())
 }
-

@@ -28,6 +28,7 @@ object DOperationForPortTypes {
   import DClassesForDOperations._
   class SimpleOperation extends DOperation1To1[A1, A2] {
     override protected def _execute(context: ExecutionContext)(t0: A1): A2 = ???
+    override val id: DOperation.Id = DOperation.Id.randomId
     override val name: String = ""
     override val parameters: ParametersSchema = ParametersSchema()
   }
@@ -41,6 +42,8 @@ class DOperationSuite extends FunSuite with MockitoSugar {
     case class IntParam(i: Int) extends ParametersSchema
 
     class PickOne extends DOperation2To1[A1, A2, A] {
+      override val id: DOperation.Id = DOperation.Id.randomId
+
       override protected def _execute(context: ExecutionContext)(t1: A1, t2: A2): A = {
         val param = parameters.getDouble("param").get
         if (param % 2 == 1) t1 else t2
@@ -73,6 +76,8 @@ class DOperationSuite extends FunSuite with MockitoSugar {
     import DClassesForDOperations._
 
     class GeneratorOfA extends DOperation0To1[A] {
+      override val id: DOperation.Id = DOperation.Id.randomId
+
       override protected def _execute(context: ExecutionContext)(): A = ???
       override protected def _inferKnowledge(context: InferContext)(): DKnowledge[A] = {
         new DKnowledge(new A1, new A2)

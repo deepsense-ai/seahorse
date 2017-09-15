@@ -11,6 +11,7 @@ import java.util.UUID
 import org.mockito.Mockito._
 import spray.json._
 
+import io.deepsense.commons.models
 import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.graph.{Edge, Endpoint, Graph, Node}
@@ -21,13 +22,13 @@ class GraphReaderSpec extends GraphJsonTestSupport {
   val catalog = mock[DOperationsCatalog]
   implicit val graphReader = new GraphReader(catalog)
 
-  val operation1 = mockOperation(0, 1, UUID.randomUUID(), "DataSet1", "1.1.0")
-  val operation2 = mockOperation(1, 1, UUID.randomUUID(), "DoSomething", "1.2.0")
-  val operation3 = mockOperation(1, 0, UUID.randomUUID(), "SaveDataSet", "1.3.0")
+  val operation1 = mockOperation(0, 1, DOperation.Id.randomId, "DataSet1", "1.1.0")
+  val operation2 = mockOperation(1, 1, DOperation.Id.randomId, "DoSomething", "1.2.0")
+  val operation3 = mockOperation(1, 0, DOperation.Id.randomId, "SaveDataSet", "1.3.0")
 
-  when(catalog.createDOperation(operation1.name)).thenReturn(operation1)
-  when(catalog.createDOperation(operation2.name)).thenReturn(operation2)
-  when(catalog.createDOperation(operation3.name)).thenReturn(operation3)
+  when(catalog.createDOperation(operation1.id)).thenReturn(operation1)
+  when(catalog.createDOperation(operation2.id)).thenReturn(operation2)
+  when(catalog.createDOperation(operation3.id)).thenReturn(operation3)
 
   val node1Id = UUID.randomUUID()
   val node2Id = UUID.randomUUID()
@@ -41,21 +42,21 @@ class GraphReaderSpec extends GraphJsonTestSupport {
     JsObject(
       "id" -> node1Id.toString.toJson,
       "operation" -> JsObject(
-        "name" -> operation1.name.toJson
+        "id" -> operation1.id.toString.toJson
       ),
       "parameters" -> parameters1
     ),
     JsObject(
       "id" -> node2Id.toString.toJson,
       "operation" -> JsObject(
-        "name" -> operation2.name.toJson
+        "id" -> operation2.id.toString.toJson
       ),
       "parameters" -> parameters2
     ),
     JsObject(
       "id" -> node3Id.toString.toJson,
       "operation" -> JsObject(
-        "name" -> operation3.name.toJson
+        "id" -> operation3.id.toString.toJson
       ),
       "parameters" -> parameters3
     )

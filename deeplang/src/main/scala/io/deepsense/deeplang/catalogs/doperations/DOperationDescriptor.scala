@@ -6,18 +6,16 @@
 
 package io.deepsense.deeplang.catalogs.doperations
 
-import java.util.UUID
-
 import scala.reflect.runtime.universe.Type
 
 import io.deepsense.deeplang.parameters.ParametersSchema
-import io.deepsense.deeplang.TypeUtils
+import io.deepsense.deeplang.{DOperation, TypeUtils}
 
 /**
  * Represents a registered DOperation and stores its name and i/o port types.
  */
 case class DOperationDescriptor(
-    id: UUID,
+    id: DOperation.Id,
     name: String,
     description: String,
     category: DOperationCategory,

@@ -11,20 +11,24 @@ import java.util.UUID
 import org.mockito.Mockito._
 import spray.json._
 
+import io.deepsense.commons.json.IdJsonProtocol
+import io.deepsense.commons.models
 import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.parameters.ParametersSchema
 import io.deepsense.graph.Node
 
-class NodeJsonProtocolSpec extends GraphJsonTestSupport {
+class NodeJsonProtocolSpec extends GraphJsonTestSupport with IdJsonProtocol {
 
   import NodeJsonProtocol._
 
-  // TODO Test Entity
   "Node with Operation transformed to Json" should {
-    val expectedName = "expectedName"
+    val expectedOperationId = models.Id.randomId
+    val expectedOperationName = "expectedName"
     val dOperation = mock[DOperation]
     val parametersSchema = mock[ParametersSchema]
-    when(dOperation.name).thenReturn(expectedName)
+
+    when(dOperation.id).thenReturn(expectedOperationId)
+    when(dOperation.name).thenReturn(expectedOperationName)
     when(dOperation.parameters).thenReturn(parametersSchema)
 
     val node = mock[Node]
@@ -39,7 +43,8 @@ class NodeJsonProtocolSpec extends GraphJsonTestSupport {
 
     "have correct 'operation' field" in {
       val operationField = nodeJson.fields("operation").asJsObject
-      operationField.fields("name").convertTo[String] shouldBe expectedName
+      operationField.fields("name").convertTo[String] shouldBe expectedOperationName
+      operationField.fields("id").convertTo[DOperation.Id] shouldBe expectedOperationId
     }
 
     "have 'parameters' field created by internal .toJson method" in {

@@ -6,13 +6,14 @@
 
 package io.deepsense.deeplang.catalogs.doperations
 
-import scala.reflect.runtime.universe.{TypeTag, typeTag}
-
 import java.util.UUID
+
+import scala.reflect.runtime.universe.{TypeTag, typeTag}
 
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{FunSuite, Matchers}
 
+import io.deepsense.commons.models
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperations.exceptions._
 import io.deepsense.deeplang.parameters.ParametersSchema
@@ -62,30 +63,40 @@ object DOperationCatalogTestResources {
   val XTypeTag = typeTag[X]
   val YTypeTag = typeTag[Y]
 
+  val idA = DOperation.Id.randomId
+  val idB = DOperation.Id.randomId
+  val idC = DOperation.Id.randomId
+  val idD = DOperation.Id.randomId
+
   val nameA = "nameA"
   val nameB = "nameB"
   val nameC = "nameC"
   val nameD = "nameD"
 
   case class DOperationA() extends DOperationMock {
+    override val id = idA
     override val name = nameA
   }
 
   case class DOperationB() extends DOperationMock {
+    override val id = idB
     override val name = nameB
   }
 
   case class DOperationC() extends DOperationMock {
+    override val id = idC
     override val name = nameC
   }
 
   case class DOperationD() extends DOperationMock {
+    override val id = idD
     override val name = nameD
     override val inPortTypes: Vector[TypeTag[_]] = Vector(XTypeTag, YTypeTag)
     override val outPortTypes: Vector[TypeTag[_]] = Vector(XTypeTag)
   }
 
   case class DOperationWithoutParameterlessConstructor(x: Int) extends DOperationMock {
+    override val id = DOperation.Id.randomId
     override val name = "some name"
     override val inArity: Int = 2
     override val outArity: Int = 3
@@ -94,11 +105,6 @@ object DOperationCatalogTestResources {
 
 object ViewingTestResources extends MockitoSugar {
   import DOperationCatalogTestResources._
-
-  val idA = UUID.randomUUID()
-  val idB = UUID.randomUUID()
-  val idC = UUID.randomUUID()
-  val idD = UUID.randomUUID()
 
   val descriptionA = "descriptionA"
   val descriptionB = "descriptionB"
@@ -112,10 +118,10 @@ object ViewingTestResources extends MockitoSugar {
 
   val catalog = DOperationsCatalog()
 
-  catalog.registerDOperation[DOperationA](idA, categoryA, descriptionA)
-  catalog.registerDOperation[DOperationB](idB, categoryB, descriptionB)
-  catalog.registerDOperation[DOperationC](idC, categoryC, descriptionC)
-  catalog.registerDOperation[DOperationD](idD, categoryD, descriptionD)
+  catalog.registerDOperation[DOperationA](categoryA, descriptionA)
+  catalog.registerDOperation[DOperationB](categoryB, descriptionB)
+  catalog.registerDOperation[DOperationC](categoryC, descriptionC)
+  catalog.registerDOperation[DOperationD](categoryD, descriptionD)
 
   val expectedA = DOperationDescriptor(
     idA, nameA, descriptionA, categoryA, parametersSchema, Nil, Nil)
@@ -133,16 +139,18 @@ class DOperationsCatalogSuite extends FunSuite with Matchers with MockitoSugar {
   test("It is possible to create instance of registered DOperation") {
     import DOperationCatalogTestResources._
     val catalog = DOperationsCatalog()
-    catalog.registerDOperation[DOperationA](UUID.randomUUID(), CategoryTree.ML.Regression, "")
-    val instance = catalog.createDOperation(nameA)
+    catalog.registerDOperation[DOperationA](CategoryTree.ML.Regression, "")
+    val instance = catalog.createDOperation(idA)
     assert(instance == DOperationA())
   }
 
   test("Attempt of creating unregistered DOperation raises exception") {
-    intercept[DOperationNotFoundException] {
+    val nonExistingOperationId = DOperation.Id.randomId
+    val exception = intercept[DOperationNotFoundException] {
       val catalog = DOperationsCatalog()
-      catalog.createDOperation("unknown DOperation name")
+      catalog.createDOperation(nonExistingOperationId)
     }
+    exception.operationId shouldBe nonExistingOperationId
   }
 
   test("Registering DOperation without parameterless constructor raises exception") {
@@ -150,12 +158,14 @@ class DOperationsCatalogSuite extends FunSuite with Matchers with MockitoSugar {
       import DOperationCatalogTestResources._
       val catalog = DOperationsCatalog()
       catalog.registerDOperation[DOperationWithoutParameterlessConstructor](
-        UUID.randomUUID(), CategoryTree.ML.Regression, "description")
+        CategoryTree.ML.Regression, "description")
     }
   }
 
   test("It is possible to view list of registered DOperations descriptors") {
     import ViewingTestResources._
+    import DOperationCatalogTestResources._
+
     catalog.operations shouldBe Map(
       idA -> expectedA,
       idB -> expectedB,

@@ -13,7 +13,7 @@ import org.apache.spark.sql.{Column, ColumnName}
 import io.deepsense.deeplang.dataframe.{DataFrame, DataFrameUtils}
 import io.deepsense.deeplang.doperations.TimestampDecomposer.{timeUnits, timestampColumnParamKey, timestampParts, timestampPartsParamKey}
 import io.deepsense.deeplang.parameters._
-import io.deepsense.deeplang.{DOperation1To1, ExecutionContext}
+import io.deepsense.deeplang.{DOperation, DOperation1To1, ExecutionContext}
 
 /**
  * Operation that is able to take dataframe and split its timestamp column to many columns
@@ -32,6 +32,8 @@ class TimestampDecomposer extends DOperation1To1[DataFrame, DataFrame] {
     timestampPartsParamKey ->
       MultipleChoiceParameter("Parts of the date time to select", None, true, timeUnits)
   )
+
+  override val id: DOperation.Id = "42f2eb12-e28b-11e4-8a00-1681e6b88ec1"
 
   override val name: String = "Decompose Timestamp"
 

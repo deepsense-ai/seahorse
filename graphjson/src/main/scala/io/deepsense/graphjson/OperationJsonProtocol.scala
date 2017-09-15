@@ -8,20 +8,27 @@ package io.deepsense.graphjson
 
 import spray.json._
 
+import io.deepsense.commons.json.IdJsonProtocol
 import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 
-object OperationJsonProtocol {
+object OperationJsonProtocol extends IdJsonProtocol {
 
   val Operation = "operation"
   val Version = "version"
   val Name = "name"
+  val Id = "id"
   val Parameters = "parameters"
 
-  implicit object DOperationWriter extends JsonWriter[DOperation] with DefaultJsonProtocol {
+  implicit object DOperationWriter
+    extends JsonWriter[DOperation]
+    with DefaultJsonProtocol
+    with IdJsonProtocol {
+
     override def write(operation: DOperation): JsValue = {
       JsObject(
         Operation -> JsObject(
+          Id -> operation.id.toJson,
           Name -> operation.name.toJson),
         Parameters -> operation.parameters.valueToJson)
     }
@@ -34,7 +41,7 @@ object OperationJsonProtocol {
       case JsObject(fields) =>
         val operationJs = fields(Operation).asJsObject
         val operation = catalog
-          .createDOperation(operationJs.fields(Name).convertTo[String])
+          .createDOperation(operationJs.fields(Id).convertTo[DOperation.Id])
         operation.parameters.fillValuesWithJson(fields(Parameters))
         operation
       case x =>

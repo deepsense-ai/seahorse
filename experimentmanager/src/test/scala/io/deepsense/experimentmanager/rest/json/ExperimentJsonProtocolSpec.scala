@@ -18,7 +18,6 @@ import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.parameters.ParametersSchema
 import io.deepsense.deeplang.{DKnowledge, DOperable, DOperation, InferContext}
 import io.deepsense.experimentmanager.models.Experiment
-import io.deepsense.experimentmanager.rest.json.{ExperimentJsonProtocol, HierarchyDescriptorJsonProtocol}
 import io.deepsense.experimentmanager.{StandardSpec, UnitTestSupport}
 import io.deepsense.graph.{Edge, Endpoint, Graph, Node}
 import io.deepsense.graphjson.GraphJsonProtocol.GraphReader
@@ -40,10 +39,10 @@ class ExperimentJsonProtocolSpec
 
   override val graphReader: GraphReader = mock[GraphReader]
 
-  val operation1 = mockOperation(0, 1, UUID.randomUUID(), "name1", "version1")
-  val operation2 = mockOperation(1, 1, UUID.randomUUID(), "name2", "version2")
-  val operation3 = mockOperation(1, 1, UUID.randomUUID(), "name3", "version3")
-  val operation4 = mockOperation(2, 1, UUID.randomUUID(), "name4", "version4")
+  val operation1 = mockOperation(0, 1, DOperation.Id.randomId, "name1", "version1")
+  val operation2 = mockOperation(1, 1, DOperation.Id.randomId, "name2", "version2")
+  val operation3 = mockOperation(1, 1, DOperation.Id.randomId, "name3", "version3")
+  val operation4 = mockOperation(2, 1, DOperation.Id.randomId, "name4", "version4")
 
   val node1 = Node(UUID.randomUUID(), operation1)
   val node2 = Node(UUID.randomUUID(), operation2)
@@ -95,12 +94,14 @@ class ExperimentJsonProtocolSpec
   }
 
   def mockOperation(
-      inArity: Int,
-      outArity: Int,
-      id: UUID,
-      name: String,
-      version: String): DOperation = {
+    inArity: Int,
+    outArity: Int,
+    id: DOperation.Id,
+    name: String,
+    version: String): DOperation = {
     val dOperation = mock[DOperation]
+    when(dOperation.id).thenReturn(id)
+    when(dOperation.name).thenReturn(name)
     when(dOperation.inArity).thenReturn(inArity)
     when(dOperation.outArity).thenReturn(outArity)
     when(dOperation.inPortTypes).thenReturn(
@@ -111,7 +112,6 @@ class ExperimentJsonProtocolSpec
     when(knowledge.types).thenReturn(Set[DOperable](mock[DOperable]))
     when(dOperation.inferKnowledge(anyObject())(anyObject())).thenReturn(
       Vector.fill(outArity)(knowledge))
-    when(dOperation.name).thenReturn(name)
     val parametersSchema = mock[ParametersSchema]
     when(dOperation.parameters).thenReturn(parametersSchema)
     dOperation
