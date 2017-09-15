@@ -488,8 +488,7 @@ class ProxyBridgeNetwork(Proxy):
 
     def environment(self):
         return super(ProxyBridgeNetwork, self).environment() + \
-               Env(
-                   HOST='0.0.0.0')
+               Env(HOST='0.0.0.0')
 
     def service_address(self, service, name=None):
         return getattr(self.services, service.name()).internal_address(name).as_string()
@@ -513,6 +512,20 @@ def custom_frontend(frontend_address):
         internal_address = get_address
 
     return CustomFrontend
+
+
+class ServerModeProxy(Proxy):
+    @classmethod
+    def name(cls):
+        return 'proxy'
+
+    @classmethod
+    def image_name(cls):
+        return 'proxy'
+
+    def environment(self):
+        return super(ServerModeProxy, self).environment() + \
+            Env(HOST='0.0.0.0')
 
 
 class Configuration(object):

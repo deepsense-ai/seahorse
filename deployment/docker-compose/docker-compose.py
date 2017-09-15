@@ -55,6 +55,9 @@ def main():
     parser.add_argument('--generate-only',
                         help='If used, the script will only generate ',
                         action='store_true')
+    parser.add_argument('--server-mode',
+                        help="If used, Seahorse will listen on 0.0.0.0. This option doesn't work on mac",
+                        action='store_true')
 
     args, extra_args = parser.parse_known_args()
 
@@ -64,6 +67,9 @@ def main():
         frontend_address = args.custom_frontend.split(':')
         frontend_address = (frontend_address[0], int(frontend_address[1]))
         configuration.replace(custom_frontend(frontend_address))
+
+    if args.server_mode:
+        configuration.replace(ServerModeProxy)
 
     docker_compose = dump_yaml_to_string(
         ConfigurationGeneration(configuration).generate(
