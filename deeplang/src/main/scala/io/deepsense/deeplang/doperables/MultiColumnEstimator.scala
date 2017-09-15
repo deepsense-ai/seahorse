@@ -26,7 +26,7 @@ import io.deepsense.deeplang.doperables.multicolumn.{MultiColumnParams, HasSpeci
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.MultiColumnInPlaceChoices.{MultiColumnYesInPlace, MultiColumnNoInPlace}
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoice
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.{MultiColumnChoice, SingleColumnChoice}
-import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.NoInPlaceChoice
+import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.{YesInPlaceChoice, NoInPlaceChoice}
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.HasInputColumn
 import io.deepsense.deeplang.inference.InferenceWarnings
 import io.deepsense.deeplang.params.IOColumnsParam
@@ -53,6 +53,13 @@ abstract class MultiColumnEstimator extends Estimator with HasSpecificParams {
   def setSingleColumn(inputColumnName: String, outputColumnName: String): this.type = {
     val choice = SingleColumnChoice()
       .setInPlace(NoInPlaceChoice().setOutputColumn(outputColumnName))
+      .setInputColumn(NameSingleColumnSelection(inputColumnName))
+    set(singleOrMultiChoiceParam, choice)
+  }
+
+  def setSingleColumnInPlace(inputColumnName: String): this.type = {
+    val choice = SingleColumnChoice()
+      .setInPlace(YesInPlaceChoice())
       .setInputColumn(NameSingleColumnSelection(inputColumnName))
     set(singleOrMultiChoiceParam, choice)
   }

@@ -37,7 +37,7 @@ import io.deepsense.deeplang.params.wrappers.spark.ParamsWithSparkWrappers
  * It holds a sequence of SingleColumnModels.
  */
 abstract class MultiColumnModel[
-    MD <: ml.Model[MD],
+    MD <: ml.Model[MD] { val outputCol: ml.param.Param[String] },
     E <: ml.Estimator[MD] { val outputCol: ml.param.Param[String] },
     SCW <: SparkSingleColumnModelWrapper[MD, E]]
   extends SparkModelWrapper[MD, E]

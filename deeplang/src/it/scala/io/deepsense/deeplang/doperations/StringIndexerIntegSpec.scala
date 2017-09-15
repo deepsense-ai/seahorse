@@ -22,7 +22,7 @@ import io.deepsense.deeplang.doperables.{StringIndexerModel, SingleStringIndexer
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.MultiColumnInPlaceChoices.MultiColumnNoInPlace
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.{MultiColumnChoice, SingleColumnChoice}
-import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.NoInPlaceChoice
+import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.{YesInPlaceChoice, NoInPlaceChoice}
 import io.deepsense.deeplang.doperations.spark.wrappers.estimators.StringIndexer
 import io.deepsense.deeplang.inference.InferenceWarnings
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
@@ -293,6 +293,18 @@ object StringIndexerIntegSpec extends UnitSpec {
       outputColumn: Option[String]): StringIndexer = {
     val operation = new StringIndexer()
     val choice = singleColumnStringIndexerParams(inputColumn, outputColumn)
+    operation.estimator.set(operation.estimator.singleOrMultiChoiceParam -> choice)
+    operation.set(operation.estimator.extractParamMap())
+  }
+
+  def singleColumnStringIndexerInPlace(
+    inputColumn: Option[String]): StringIndexer = {
+    val operation = new StringIndexer()
+    val choice = SingleColumnChoice().setInPlace(YesInPlaceChoice())
+    inputColumn.foreach {
+      case ic =>
+        choice.setInputColumn(NameSingleColumnSelection(ic))
+    }
     operation.estimator.set(operation.estimator.singleOrMultiChoiceParam -> choice)
     operation.set(operation.estimator.extractParamMap())
   }

@@ -32,7 +32,7 @@ import io.deepsense.deeplang.params.wrappers.spark.ParamsWithSparkWrappers
 import io.deepsense.deeplang.{ExecutionContext, TypeUtils}
 
 abstract class SparkMultiColumnEstimatorWrapper[
-  MD <: ml.Model[MD],
+  MD <: ml.Model[MD]  { val outputCol: ml.param.Param[String] },
   E <: ml.Estimator[MD] { val outputCol: ml.param.Param[String] },
   MW <: SparkSingleColumnModelWrapper[MD, E],
   EW <: SparkSingleColumnEstimatorWrapper[MD, E, MW],
@@ -51,13 +51,12 @@ abstract class SparkMultiColumnEstimatorWrapper[
       df: DataFrame,
       single: SingleColumnChoice): MW = {
 
-    import sparkEstimatorWrapper._
-
     val estimator = sparkEstimatorWrapper.replicate()
-      .set(inputColumn -> single.getInputColumn)
+      .set(sparkEstimatorWrapper.inputColumn -> single.getInputColumn)
       .setSingleInPlaceParam(single.getInPlace)
 
-    estimator._fit(ctx, df).asInstanceOf[MW]
+    val mw = estimator._fit(ctx, df).asInstanceOf[MW]
+      mw.set(mw.inputColumn -> single.getInputColumn)
       .setSingleInPlaceParam(single.getInPlace)
   }
 

@@ -103,7 +103,7 @@ abstract class SparkModelWrapper[
 
     // model might not exist (if not fitted yet)
     val modelCopy = Option(model)
-      .map(m => m.copy(m.extractParamMap()))
+      .map(m => m.copy(m.extractParamMap()).setParent(parentEstimator.sparkEstimator))
       .getOrElse(null)
       .asInstanceOf[MD]
 
