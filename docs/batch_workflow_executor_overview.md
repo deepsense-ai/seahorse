@@ -48,7 +48,6 @@ For more detailed information about submitting Spark applications, visit:
       --master local[8] \
       --files workflow.json \
       workflowexecutor.jar \
-        --noninteractive-mode
         --workflow-filename workflow.json \
         --output-directory test-output \
         --python-executor-path workflowexecutor.jar
@@ -61,7 +60,6 @@ For more detailed information about submitting Spark applications, visit:
       --master spark://207.184.161.138:7077 \
       --files workflow.json \
       workflowexecutor.jar \
-        --noninteractive-mode
         --workflow-filename workflow.json \
         --output-directory test-output \
         --python-executor-path workflowexecutor.jar
@@ -75,13 +73,11 @@ For more detailed information about submitting Spark applications, visit:
       --master yarn-cluster \  # can also be `yarn-client` for client mode
       --files workflow.json \
       workflowexecutor.jar \
-        --noninteractive-mode
         --workflow-filename workflow.json \
         --output-directory test-output \
         --python-executor-path workflowexecutor.jar
 
 Option ``--python-executor-path`` is required (workflowexecutor.jar contains PyExecutor).
-Option ``--noninteractive-mode`` is necessary to start Workflow Executor in batch mode.
 Option ``--files workflow.json`` is necessary to distribute workflow file to Spark cluster.
 It is necessary to pass the same filename to ``--workflow-filename workflow.json`` option,
 in order to tell Seahorse Batch Workflow Executor under which name it should look for workflow file.
@@ -142,19 +138,14 @@ Detailed information about command line parameters can be obtained by executing 
 
 | Argument                                                        | Meaning |
 |:----------------------------------------------------------------|:--------|
-| ``--noninteractive-mode``                                       | Run in noninteractive mode (batch mode, single workflow execution) |
 | ``-w FILE``<BR/>``--workflow-filename FILE``                    | Workflow filename. If specified, workflow will be read from passed location. The file has to be accessible by the driver. |
-| ``-d ID``<BR/>``--download-workflow ID``                        | Download workflow. If specified, workflow with passed ID will be downloaded from Seahorse Editor. |
 | ``-o DIR``<BR/>``--output-directory DIR``                       | Output directory path. If specified, execution report will be saved to passed location. Directory will be created if it does not exist. |
-| ``-a ADDRESS``<BR/>``--api-address ADDRESS``                    | Address of Seahorse Editor API. If not specified, the default of ``https://editor.seahorse.deepsense.io`` will be used.  |
 | ``-e NAME=VALUE``<BR/>``--extra-var NAME=VALUE``                | Extra variable. Sets extra variable to specified value. Can be specified multiple times. |
 | ``-m HOST``<BR/>``--message-queue-host HOST``                   | Address of message queue host. |
 | ``-p PATH``<BR/>``--python-executor-path PATH``                 | Path to PyExecutor code (included in workflowexecutor.jar). |
 
-* **NOTE:** At least one of ``-w FILE`` or ``-d ID`` (or their long names) needs to be
-specified. If both parameters are present, workflow will be downloaded from
-Seahorse Editor.
-
+* **NOTE:** Parameter ``-w FILE`` (or its long name) needs to be specified.
+* **NOTE:** Both parameters ``-w FILE`` and ``-o DIR`` (or their long names) have to be specified.
 * **NOTE:** When using ``--extra-var`` option,
 if variable name or value contains special characters (e.g. space),
 it have to be surrounded by quotation marks.

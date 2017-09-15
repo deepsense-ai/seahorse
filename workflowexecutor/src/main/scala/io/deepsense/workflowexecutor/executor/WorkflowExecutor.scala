@@ -226,14 +226,7 @@ object WorkflowExecutor extends Logging {
   }
 
   private def loadWorkflow(params: ExecutionParams): Future[WorkflowWithVariables] = {
-    val content = params.workflowId match {
-      case Some(id) =>
-        val editorAddress = workflowManagerConfig.address(params.apiAddress)
-        downloadWorkflow(editorAddress, id)
-      case None =>
-        Future(Source.fromFile(params.workflowFilename.get).mkString)
-    }
-
+    val content = Future(Source.fromFile(params.workflowFilename.get).mkString)
     content.map(_.parseJson.convertTo[WorkflowWithVariables](versionedWorkflowWithVariablesReader))
   }
 

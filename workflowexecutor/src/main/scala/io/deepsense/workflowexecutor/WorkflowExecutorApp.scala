@@ -39,20 +39,15 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
       = new scopt.OptionParser[ExecutionParams](BuildInfo.name) {
     head(BuildInfo.toString)
 
-    note("Running modes:")
-    opt[Unit]("noninteractive-mode") action {
-      (_, c) => c.copy(noninteractiveMode = true)
-    } text "use noninteractive mode (execution of single workflow)"
+    // Hidden option: Running modes:
+    opt[Unit]("interactive-mode") hidden() action {
+      (_, c) => c.copy(interactiveMode = true)
+    } text "use interactive mode (used only in Seahorse Bundled Image)"
 
-    note("")
     note("Workflow input:")
     opt[String]('w', "workflow-filename") valueName "FILENAME" action {
       (x, c) => c.copy(workflowFilename = Some(x))
     } text "workflow filename"
-
-    opt[String]('d', "download-workflow") valueName "ID" action {
-      (x, c) => c.copy(workflowId = Some(x))
-    } text "download workflow; workflow with passed ID will be downloaded from Seahorse Editor"
 
     note("")
     note("Execution report output:")
@@ -64,27 +59,25 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
     note("")
     note("Miscellaneous:")
 
-    opt[String]('a', "api-address") valueName "ADDRESS" action {
-      (x, c) => c.copy(apiAddress = Some(x))
-    } text "address of Seahorse Editor API. e.g. https://editor.seahorse.deepsense.io"
-
     opt[(String, String)]('e', "extra-var") optional() unbounded() valueName "NAME=VALUE" action {
       (x, c) => c.copy(extraVars = c.extraVars.updated(x._1, x._2))
     } text "extra variable; can be specified multiple times; " +
       "name or value can be surrounded by quotation marks " +
       "if it contains special characters (e.g. space)"
 
-    opt[String]('m', "message-queue-host") valueName "HOST" action {
+    // Hidden option:
+    opt[String]('m', "message-queue-host") hidden() valueName "HOST" action {
       (x, c) => c.copy(messageQueueHost = Some(x))
     } text "message queue host"
 
-    opt[String]('p', "python-executor-path") valueName "PATH" action {
+    opt[String]('p', "python-executor-path") required() valueName "PATH" action {
       (x, c) => c.copy(pyExecutorPath = Some(x))
     } text "PyExecutor code (included in workflowexecutor.jar) path"
 
     help("help") text "print this help message and exit"
     version("version") text "print product version and exit"
     note("")
+
     note("Visit https://seahorse.deepsense.io for more details")
 
     checkConfig { config =>
@@ -93,18 +86,13 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
       type Requirements = Seq[(FailureCondition, ErrorMsg)]
 
       val interactiveRequirements: Requirements = Seq(
-        (config.messageQueueHost.isEmpty,
-          "--message-queue-host is required in interactive mode"))
+        (config.messageQueueHost.isEmpty, "--message-queue-host is required in interactive mode"))
 
       val nonInteractiveRequirements: Requirements = Seq(
-        (config.workflowFilename.isEmpty && config.workflowId.isEmpty,
-          "one of --workflow-filename or --download-workflow is required in noninteractive mode"),
+        (config.workflowFilename.isEmpty,
+          "--workflow-filename is required by Seahorse Batch Workflow Executor"),
         (config.outputDirectoryPath.isEmpty,
-          "--output-directory is required in noninteractive mode"))
-
-      val commonRequirements: Requirements = Seq(
-        (config.pyExecutorPath.isEmpty,
-          "--python-executor-path executor path is required"))
+          "--output-directory is required by Seahorse Batch Workflow Executor"))
 
       def check(requirements: Requirements) = {
         requirements.foldLeft(success) {
@@ -114,10 +102,10 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
         }
       }
 
-      if (config.noninteractiveMode) {
-        check(nonInteractiveRequirements ++ commonRequirements)
+      if (config.interactiveMode) {
+        check(interactiveRequirements)
       } else {
-        check(interactiveRequirements ++ commonRequirements)
+        check(nonInteractiveRequirements)
       }
     }
   }
@@ -134,14 +122,14 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
     }
     val params = cmdParams.get
 
-    if (params.noninteractiveMode) {
-      // Running in non-interactive mode
-      WorkflowExecutor.runInNoninteractiveMode(params)
-    } else {
+    if (params.interactiveMode) {
       // Interactive mode (SessionExecutor)
       logger.info("Starting SessionExecutor.")
       logger.debug("Starting SessionExecutor.")
       SessionExecutor(params.messageQueueHost.get, params.pyExecutorPath.get).execute()
+    } else {
+      // Running in non-interactive mode
+      WorkflowExecutor.runInNoninteractiveMode(params)
     }
   }
 
