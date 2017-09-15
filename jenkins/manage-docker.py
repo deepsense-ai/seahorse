@@ -19,6 +19,11 @@ def build_sbt_docker(project_name):
     return "sbt clean && sbt {}/docker:publishLocal".format(project_name)
 
 
+# This is a workaround for sessionmanager sbt building workflowexecutor using subprocess
+# It should be solved by sessionmanager sbt task calling sbt task from workflowexecutor subproject
+def build_sessionmanager():
+    return "sbt clean && cd seahorse-workflow-executor/ && sbt -DsparkVersion=2.0.0 workflowexecutor/assembly && cd .. && sbt sessionmanager/docker:publishLocal"
+
 image_confs = [
     DockerImageConfig("deepsense-proxy", build_simple_docker("proxy", "deepsense-proxy")),
     DockerImageConfig("deepsense-rabbitmq", build_simple_docker("deployment/rabbitmq", "deepsense-rabbitmq")),
@@ -26,7 +31,7 @@ image_confs = [
     DockerImageConfig("deepsense-spark", build_simple_docker("deployment/spark-docker", "deepsense-spark")),
     DockerImageConfig("deepsense-mesos-spark", "./jenkins/build_spark_docker_mesos.sh"),
     DockerImageConfig("deepsense-schedulingmanager", build_sbt_docker("schedulingmanager")),
-    DockerImageConfig("deepsense-sessionmanager", build_sbt_docker("sessionmanager")),
+    DockerImageConfig("deepsense-sessionmanager", build_sessionmanager()),
     DockerImageConfig("deepsense-workflowmanager", build_sbt_docker("workflowmanager")),
     DockerImageConfig("deepsense-datasourcemanager", build_sbt_docker("datasourcemanager")),
     DockerImageConfig("deepsense-libraryservice", build_sbt_docker("libraryservice")),

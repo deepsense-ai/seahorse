@@ -30,6 +30,7 @@ class SparkLauncherConfig @Inject()(
   @Named("session-executor.parameters.mail-server.password") val mailServerPassword: String,
   @Named("session-executor.parameters.mail-server.sender") val mailServerSender: String,
   @Named("session-executor.parameters.notebook-server.address") val notebookServerAddress: String,
+  @Named("session-executor.parameters.datasource-server.address") val datasourceManagerServerAddress: String,
   @Named("session-executor.parameters.temp-dir") val tempDir: String,
   @Named("session-executor.parameters.python-driver-binary") val pythonDriverBinary: String,
   @Named("session-executor.parameters.python-executor-binary") val pythonExecutorBinary: String

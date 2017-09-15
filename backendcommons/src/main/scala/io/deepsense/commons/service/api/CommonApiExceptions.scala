@@ -20,4 +20,14 @@ object CommonApiExceptions {
     errorCode = 404
   )
 
+  def forbidden = ApiException(
+    message = "Forbidden",
+    errorCode = 403
+  )
+
+  def fieldMustBeDefined(fieldName: String) = ApiException(
+    message = s"Field `$fieldName` missing or invalid",
+    errorCode = 422
+  )
+
 }

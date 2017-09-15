@@ -59,10 +59,11 @@ object Library {
   val scalatest = "org.scalatest" %% "scalatest" % Version.scalatest
   val scalatra = "org.scalatra" %% "scalatra" % Version.scalatra
   val scalatraTest = "org.scalatra" %% "scalatra-scalatest" % Version.scalatra % "test"
-  val scalaz = "org.scalaz" %% "scalaz-core" % "7.2.5"
+  val scalaz = "org.scalaz" %% "scalaz-core" % "7.2.8"
   val scoverage = "org.scoverage" %% "scalac-scoverage-runtime" % Version.scoverage
   val stampy = "asia.stampy" % "stampy-core" % "1.0-RELEASE"
   val slick = "com.typesafe.slick" %% "slick" % Version.slick
+  val slickless = "io.underscore" %% "slickless" % "0.3.0"
   val sparkCore = spark("core")
   val sparkMLLib = spark("mllib")
   val sparkLauncher = spark("launcher")
@@ -113,8 +114,6 @@ object Dependencies {
     "org.scalatra"            %% "scalatra"                       % Version.scalatra,
     "org.scalatra"            %% "scalatra-scalate"               % Version.scalatra,
     "org.scalatra"            %% "scalatra-json"                  % Version.scalatra,
-    "org.scalatra"            %% "scalatra-swagger"               % Version.scalatra,
-    "org.scalatra"            %% "scalatra-swagger-ext"           % Version.scalatra,
     "org.scalatra"            %% "scalatra-slf4j"                 % Version.scalatra,
     "org.scalatra"            %% "scalatra-atmosphere"            % Version.scalatra,
     "org.scalatra"            %% "scalatra-scalatest"             % Version.scalatra  % "test",
@@ -123,6 +122,10 @@ object Dependencies {
     "org.eclipse.jetty"           % "jetty-webapp"            % Version.jetty     % "compile;test",
     "org.eclipse.jetty.websocket" % "websocket-server"        % Version.jetty
   )
+
+  val shapeless = "com.chuusai" %% "shapeless" % "2.3.2"
+  val scalacheck = "org.scalacheck" %% "scalacheck" % "1.13.4" % Test
+  val scalacheckShapeless = "com.github.alexarchambault" %% "scalacheck-shapeless_1.13" % "1.1.3"
 
   val commons = Seq(
     akkaActor,
@@ -181,7 +184,12 @@ object Dependencies {
   val datasourcemanager = scalatraAndJetty ++ json4s ++ Seq(
     h2,
     flyway,
-    scalajs
+    scalajs,
+    scalaz,
+    shapeless,
+    scalacheckShapeless,
+    scalacheck,
+    slickless
   )
 
   val schedulingmanager = scalatraAndJetty ++ json4s ++ Seq(

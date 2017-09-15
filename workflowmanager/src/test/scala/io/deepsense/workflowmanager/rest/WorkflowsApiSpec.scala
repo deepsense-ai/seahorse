@@ -84,7 +84,7 @@ class WorkflowsApiSpec
 
   val noVersionWorkflowJson = JsObject(
     "foo" -> JsString("bar"),
-    "thirdPartyData" -> JsObject("notebooks" -> JsObject()))
+    "thirdPartyData" -> JsObject("notebooks" -> JsObject(), "datasources" -> JsArray()))
   val noVersionWorkflow = noVersionWorkflowJson.prettyPrint
   val noVersionWorkflowResult = noVersionWorkflow
 
@@ -111,7 +111,8 @@ class WorkflowsApiSpec
       "gui" -> JsObject(
         "name" -> JsString(name)
       ),
-      "notebooks" -> JsObject()
+      "notebooks" -> JsObject(),
+      "datasources" -> JsArray()
     )
     Workflow(metadata, graph, thirdPartyData)
   }
@@ -159,6 +160,7 @@ class WorkflowsApiSpec
   val apiPrefix: String = "v1/workflows"
   val reportsPrefix: String = "v1/reports"
 
+  val fakeDatasourcesServerAddress = "http://mockedHttpAddress/"
   val roleGet = "workflows:get"
   val roleUpdate = "workflows:update"
   val roleDelete = "workflows:delete"
@@ -190,7 +192,7 @@ class WorkflowsApiSpec
         val notebookStorage = mockNotebookStorage()
         new WorkflowManagerImpl(
           authorizatorProvider, workflowStorage, workflowStatesStorage,
-          notebookStorage, futureContext, roleGet, roleUpdate, roleDelete, roleCreate)
+          notebookStorage, futureContext, fakeDatasourcesServerAddress, roleGet, roleUpdate, roleDelete, roleCreate)
       }
     })
 

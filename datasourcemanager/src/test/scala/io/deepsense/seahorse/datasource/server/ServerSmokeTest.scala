@@ -4,6 +4,8 @@
 
 package io.deepsense.seahorse.datasource.server
 
+import java.util.UUID
+
 import scalaj.http._
 import org.scalatest.{Matchers, WordSpec}
 
@@ -19,7 +21,9 @@ class ServerSmokeTest extends WordSpec with Matchers {
     JettyMain.start(Array.empty)
 
     "serve datasources" in {
-      val response = Http("http://localhost:8080/datasourcemanager/v1/datasources").asString
+      val response = Http(
+        "http://localhost:8080/datasourcemanager/v1/datasources"
+      ).header("x-seahorse-userid", UUID.randomUUID().toString).asString
       logger.info(s"Datasources response: ${response.body}")
       response.isNotError shouldBe true
     }
@@ -29,11 +33,10 @@ class ServerSmokeTest extends WordSpec with Matchers {
       apiClient.setAdapterBuilder(
         apiClient.getAdapterBuilder().baseUrl("http://localhost:8080/datasourcemanager/v1/"))
       val client = apiClient.createService(classOf[DefaultApi])
-      val response = client.getDatasources().execute()
-      if (response.isSuccessful()) {
-        response.body() shouldBe empty
-      } else {
-        fail(response.errorBody().string())
+      val response = client.getDatasources(UUID.randomUUID().toString).execute()
+
+      withClue(response) {
+        response.isSuccessful shouldBe true
       }
     }
 

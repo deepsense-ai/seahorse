@@ -10,52 +10,89 @@ import io.deepsense.seahorse.datasource.DatasourceManagerConfig
 import io.deepsense.seahorse.datasource.db.{Database, EnumColumnMapper}
 import io.deepsense.seahorse.datasource.model.DatasourceType.{apply => _, _}
 import io.deepsense.seahorse.datasource.model.FileFormat._
-import io.deepsense.seahorse.datasource.model.FileScheme.{apply => _, _}
-import io.deepsense.seahorse.datasource.model.{DatasourceType, FileFormat, FileScheme}
+import io.deepsense.seahorse.datasource.model.{CsvSeparatorType, DatasourceType, FileFormat, Visibility}
 import io.deepsense.commons.service.db.CommonSlickFormats
+import io.deepsense.seahorse.datasource.model.CsvSeparatorType.{apply => _, _}
+import io.deepsense.seahorse.datasource.model.Visibility.{apply => _, _}
 
 object DatasourcesSchema {
 
   import Database.api._
   import CommonSlickFormats._
+  import shapeless.{ HList, ::, HNil, Generic }
+  import slickless._
 
   case class DatasourceDB(
     id: UUID,
+    ownerId: UUID,
+    ownerName: String,
     name: String,
+    creationDateTime: java.util.Date,
+    visibility: Visibility,
     downloadUri: Option[String],
     datasourceType: DatasourceType,
     jdbcUrl: Option[String],
     jdbcDriver: Option[String],
     jdbcTable: Option[String],
-    filePath: Option[String],
-    fileScheme: Option[FileScheme],
+    jdbcQuery: Option[String],
+    externalFileUrl: Option[String],
+    hdfsPath: Option[String],
+    libraryPath: Option[String],
     fileFormat: Option[FileFormat],
-    fileCsvSeparator: Option[String],
-    fileCsvIncludeHeader: Option[Boolean]
+    fileCsvIncludeHeader: Option[Boolean],
+    fileCsvConvert01ToBoolean: Option[Boolean],
+    fileCsvSeparatorType: Option[CsvSeparatorType],
+    fileCsvCustomSeparator: Option[String],
+    googleSpreadsheetId: Option[String],
+    googleServiceAccountCredentials: Option[String],
+    googleSpreadsheetIncludeHeader: Option[Boolean],
+    googleSpreadsheetConvert01ToBoolean: Option[Boolean]
   )
 
-  implicit val fileSchemeFormat = EnumColumnMapper(FileScheme)
   implicit val datasourceTypeFormat = EnumColumnMapper(DatasourceType)
   implicit val fileFormatFormat = EnumColumnMapper(FileFormat)
+  implicit val visibilityFormat = EnumColumnMapper(Visibility)
+  implicit val csvSeparatorType = EnumColumnMapper(CsvSeparatorType)
+
+  implicit val javaUtilDateMapper =
+    MappedColumnType.base[java.util.Date, java.sql.Timestamp] (
+      d => new java.sql.Timestamp(d.getTime),
+      d => new java.util.Date(d.getTime))
 
   final class DatasourceTable(tag: Tag)
       extends Table[DatasourceDB](tag, Some(DatasourceManagerConfig.database.schema), "datasource") {
     def id = column[UUID]("id", O.PrimaryKey)
+    def ownerId = column[UUID]("ownerId")
+    def ownerName = column[String]("ownerName")
     def name = column[String]("name")
+    def creationDateTime = column[java.util.Date]("creationDateTime")
+    def visibility = column[Visibility]("visibility")
     def downloadUri = column[Option[String]]("downloadUri")
     def datasourceType = column[DatasourceType]("datasourceType")
     def jdbcUrl = column[Option[String]]("jdbcUrl")
     def jdbcDriver = column[Option[String]]("jdbcDriver")
     def jdbcTable = column[Option[String]]("jdbcTable")
-    def filePath = column[Option[String]]("filePath")
-    def fileScheme = column[Option[FileScheme]]("fileScheme")
+    def jdbcQuery = column[Option[String]]("jdbcQuery")
+    def hdfsPath = column[Option[String]]("hdfsPath")
+    def libraryPath = column[Option[String]]("libraryPath")
+    def externalFileUrl = column[Option[String]]("externalFileUrl")
     def fileFormat = column[Option[FileFormat]]("fileFormat")
-    def fileCsvSeparator = column[Option[String]]("fileCsvSeparator")
     def fileCsvIncludeHeader = column[Option[Boolean]]("fileCsvIncludeHeader")
+    def fileCsvConvert01ToBoolean = column[Option[Boolean]]("fileCsvConvert01ToBoolean")
+    def fileCsvSeparatorType = column[Option[CsvSeparatorType]]("fileCsvSeparatorType")
+    def fileCsvCustomSeparator = column[Option[String]]("fileCsvSeparator")
+    def googleSpreadsheetId = column[Option[String]]("googleSpreadsheetId")
+    def googleServiceAccountCredentials = column[Option[String]]("googleServiceAccountCredentials")
+    def googleSpreadsheetIncludeHeader = column[Option[Boolean]]("googleSpreadsheetIncludeHeader")
+    def googleSpreadsheetConvert01ToBoolean = column[Option[Boolean]]("googleSpreadsheetConvert01ToBoolean")
 
-    def * = (id, name, downloadUri, datasourceType, jdbcUrl, jdbcDriver, jdbcTable, filePath, fileScheme,
-        fileFormat, fileCsvSeparator, fileCsvIncludeHeader
-      ) <> (DatasourceDB.tupled, DatasourceDB.unapply _)
+    def * = (id :: ownerId :: ownerName :: name :: creationDateTime :: visibility :: downloadUri ::
+      datasourceType :: jdbcUrl :: jdbcDriver :: jdbcTable :: jdbcQuery :: externalFileUrl ::
+      hdfsPath :: libraryPath :: fileFormat :: fileCsvIncludeHeader :: fileCsvConvert01ToBoolean ::
+      fileCsvSeparatorType :: fileCsvCustomSeparator :: googleSpreadsheetId :: googleServiceAccountCredentials ::
+      googleSpreadsheetIncludeHeader :: googleSpreadsheetConvert01ToBoolean :: HNil
+    ).mappedWith(Generic[DatasourceDB])
+
   }
 
   lazy val datasourcesTable = TableQuery[DatasourceTable]
@@ -65,6 +102,7 @@ object DatasourcesSchema {
 // https://github.com/sbt/sbt-native-packager/pull/319
 // TODO use sbt-docker with sbt-assembly and define mainClass in assembly as
 // it's solved in Neptune
+
 /*
 object PrintDDL extends App {
   import Database.api._
