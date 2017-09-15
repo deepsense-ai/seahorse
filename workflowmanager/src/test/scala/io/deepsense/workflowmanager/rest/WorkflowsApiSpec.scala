@@ -64,7 +64,7 @@ class WorkflowsApiSpec
   val workflowBId = Workflow.Id.randomId
   val workflowBWithSavedResults = WorkflowWithSavedResults(
     ExecutionReportWithId.Id.randomId,
-    newWorkflowWithResults(workflowBId, workflowB))
+    newWorkflowWithResults(workflowBId, workflowB)._1)
 
   val noVersionWorkflowId = Workflow.Id.randomId
   val obsoleteVersionWorkflowId = Workflow.Id.randomId
@@ -102,7 +102,9 @@ class WorkflowsApiSpec
     (workflow, knowledge)
   }
 
-  def newWorkflowWithResults(id: Workflow.Id, wf: Workflow): WorkflowWithResults = {
+  def newWorkflowWithResults(
+      id: Workflow.Id,
+      wf: Workflow): (WorkflowWithResults, GraphKnowledge) = {
     val executionReport = ExecutionReport(
       graphstate.Failed(FailureDescription(
         DeepSenseFailure.Id.randomId, FailureCode.NodeFailure, "title")),
@@ -114,7 +116,10 @@ class WorkflowsApiSpec
         FailureDescription(DeepSenseFailure.Id.randomId, FailureCode.NodeFailure, "title"))),
       EntitiesMap())
 
-    WorkflowWithResults(id, wf.metadata, wf.graph, wf.additionalData, executionReport)
+    val knowledge = wf.graph.inferKnowledge(inferContext)
+    val workflow =
+      WorkflowWithResults(id, wf.metadata, wf.graph, wf.additionalData, executionReport)
+    (workflow, knowledge)
   }
 
   def cyclicWorkflow: Workflow = {
@@ -632,19 +637,81 @@ class WorkflowsApiSpec
         Post(s"/$apiPrefix/upload", multipartData) ~>
           addHeaders(
             RawHeader("X-Auth-Token", validAuthTokenTenantA)) ~> testRoute ~> check {
-          status should be (StatusCodes.Created)
+          status should be(StatusCodes.Created)
 
           // Checking if WorkflowWithKnowledge response is correct
           // This should be done better, but JsonReader is not available for WorkflowWithKnowledge
           val savedWorkflow = responseAs[Workflow]
-          savedWorkflow should have (
-            'metadata (createdWorkflow.metadata),
-            'graph (createdWorkflow.graph),
-            'additionalData (createdWorkflow.additionalData))
+          savedWorkflow should have(
+            'metadata(createdWorkflow.metadata),
+            'graph(createdWorkflow.graph),
+            'additionalData(createdWorkflow.additionalData))
 
           val resultJs = response.entity.asString.parseJson.asJsObject
           resultJs.fields("knowledge") shouldBe knowledge.results.toJson
           resultJs.fields should contain key "id"
+        }
+        ()
+      }
+    }
+
+    "return created" when {
+      "workflow file with execution report is sent" in {
+        val (createdWorkflow, knowledge) = workflowAWithResults
+
+        val multipartData = MultipartFormData(Map(
+          "workflowFile" -> BodyPart(HttpEntity(
+            ContentType(MediaTypes.`application/json`),
+            workflowWithResultsFormat.write(createdWorkflow).toString())
+          )))
+
+        Post(s"/$apiPrefix/upload", multipartData) ~>
+          addHeaders(
+            RawHeader("X-Auth-Token", validAuthTokenTenantA)) ~> testRoute ~> check {
+          status should be (StatusCodes.Created)
+
+          val savedWorkflow = responseAs[Workflow]
+          savedWorkflow should have (
+            'metadata (createdWorkflow.metadata),
+            'graph (createdWorkflow.graph))
+
+          val resultJs = response.entity.asString.parseJson.asJsObject
+          // NOTE: workflowWithKnowledge is returned instead of workflowAWithResults
+          resultJs.fields("knowledge") shouldBe knowledge.results.toJson
+          resultJs.fields should contain key "id"
+        }
+        ()
+      }
+    }
+
+    "return BadRequest" when {
+      "workflow file with invalid execution report is sent" in {
+        val (createdWorkflow, knowledge) = workflowAWithResults
+
+        val json = workflowWithResultsFormat.write(createdWorkflow).toString().parseJson
+        val modifiedJs = JsObject(json.asJsObject.fields.map {
+          case (name: String, node: JsObject) =>
+            if ("executionReport" == name) {
+              ("executionReport", JsObject(Map("invalid execution report" -> JsObject())))
+            } else {
+              (name, node)
+            }
+          case js => js
+        })
+
+        val multipartData = MultipartFormData(Map(
+          "workflowFile" -> BodyPart(HttpEntity(
+            ContentType(MediaTypes.`application/json`),
+            modifiedJs.prettyPrint)
+          )))
+
+        Post(s"/$apiPrefix/upload", multipartData) ~>
+          addHeaders(
+            RawHeader("X-Auth-Token", validAuthTokenTenantA)) ~> testRoute ~> check {
+          status should be (StatusCodes.BadRequest)
+
+          val failureDescription = responseAs[FailureDescription]
+          failureDescription.code shouldBe FailureCode.UnexpectedError
         }
         ()
       }
@@ -686,8 +753,8 @@ class WorkflowsApiSpec
     "return BadRequest" when {
       "execution report contains wrong API version" in {
         val workflowWithWrongAPIVersion =
-          workflowAWithResults.copy(
-            metadata = workflowAWithResults.metadata.copy(apiVersion = "0.0.1"))
+          workflowAWithResults._1.copy(
+            metadata = workflowAWithResults._1.metadata.copy(apiVersion = "0.0.1"))
 
         val multipartData = MultipartFormData(Map(
           "workflowFile" -> BodyPart(HttpEntity(
@@ -711,7 +778,7 @@ class WorkflowsApiSpec
         val multipartData = MultipartFormData(Map(
           "workflowFile" -> BodyPart(HttpEntity(
             ContentType(MediaTypes.`application/json`),
-            workflowWithResultsFormat.write(workflowAWithResults).toString())
+            workflowWithResultsFormat.write(workflowAWithResults._1).toString())
           )))
 
         Post(s"/$apiPrefix/report/upload", multipartData) ~>
@@ -721,10 +788,10 @@ class WorkflowsApiSpec
 
           val returnedReport = responseAs[WorkflowWithResults]
           returnedReport should have (
-            'metadata (workflowAWithResults.metadata),
-            'graph (workflowAWithResults.graph),
-            'thirdPartyData (workflowAWithResults.thirdPartyData),
-            'executionReport (workflowAWithResults.executionReport))
+            'metadata (workflowAWithResults._1.metadata),
+            'graph (workflowAWithResults._1.graph),
+            'thirdPartyData (workflowAWithResults._1.thirdPartyData),
+            'executionReport (workflowAWithResults._1.executionReport))
         }
         ()
       }

@@ -16,6 +16,7 @@ import spray.http._
 import spray.httpx.marshalling.Marshaller
 import spray.httpx.unmarshalling.Unmarshaller
 import spray.json._
+import spray.routing
 import spray.routing.{ExceptionHandler, PathMatchers, Route}
 import spray.util.LoggingContext
 
@@ -77,6 +78,13 @@ abstract class WorkflowApi @Inject() (
       case multipartFormData =>
         val stringData = selectFormPart(multipartFormData, workflowFileMultipartId)
         versionedWorkflowReader.read(JsonParser(ParserInput(stringData)))
+    }
+
+  private val JsObjectUnmarshaller: Unmarshaller[JsObject] =
+    Unmarshaller.delegate[MultipartFormData, JsObject](`multipart/form-data`) {
+      case multipartFormData =>
+        val stringData = selectFormPart(multipartFormData, workflowFileMultipartId)
+        JsonParser(ParserInput(stringData)).asJsObject
     }
 
   private val versionedWorkflowUnmarashaler: Unmarshaller[Workflow] =
@@ -171,16 +179,48 @@ abstract class WorkflowApi @Inject() (
             } ~
             path("upload") {
               post {
-                withUserContext { userContext =>
-                  implicit val unmarshaller = WorkflowUploadUnmarshaller
-                  entity(as[Workflow]) { workflow =>
-                    onComplete(
-                      workflowManagerProvider
-                        .forContext(userContext)
-                        .create(workflow)) {
-                      case Success(workflowWithKnowledge) => complete(
-                        StatusCodes.Created, workflowWithKnowledge)
-                      case Failure(exception) => failWith(exception)
+                withUserContext {
+                  userContext => {
+                    implicit val unmarshaller = JsObjectUnmarshaller
+                    entity(as[JsObject]) { jsObject =>
+                      val containsExecutionReport = jsObject.getFields("executionReport").nonEmpty
+
+                      val workflowWithResultsEntity = if (containsExecutionReport) {
+                        implicit val unmarshaller = WorkflowWithResultsUploadUnmarshaller
+                        Some(entity(as[WorkflowWithResults]))
+                      } else {
+                        None
+                      }
+
+                      implicit val unmarshaller = WorkflowUploadUnmarshaller
+                      entity(as[Workflow]) { workflow =>
+                        onComplete(
+                          workflowManagerProvider.forContext(userContext).create(workflow)) {
+                          case Failure(exception) => failWith(exception)
+                          case Success(workflowWithKnowledge) =>
+                            if (containsExecutionReport) {
+                              workflowWithResultsEntity.get {
+                                workflowWithResults => {
+                                  onComplete(workflowManagerProvider
+                                    .forContext(userContext)
+                                    .saveWorkflowResults(workflowWithResults)) {
+                                    case Failure(exception) =>
+                                      logger.info("Uploaded workflow contained execution report, " +
+                                        "but execution report upload failed", exception)
+                                      failWith(exception)
+                                    case Success(_) =>
+                                      logger.info("Uploaded workflow contained execution report, " +
+                                        "and execution report upload succeed")
+                                      // Return workflowWithKnowledge instead of wotkflowWithResults
+                                      complete(StatusCodes.Created, workflowWithKnowledge)
+                                  }
+                                }
+                              }
+                            } else {
+                              complete(StatusCodes.Created, workflowWithKnowledge)
+                            }
+                        }
+                      }
                     }
                   }
                 }
