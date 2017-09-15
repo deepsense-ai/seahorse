@@ -74,7 +74,8 @@ function OperationAttributes($rootScope, AttributesPanelService, config) {
       this.isInnerWorkflow = () => $scope.isInnerWorkflow;
 
       this.getVisibility = (parameterName) => {
-        let publicParam = _.find($scope.publicParams, (pp) => pp.paramName === parameterName);
+        let publicParam =
+          _.find($scope.publicParams, (pp) => pp.paramName === parameterName && pp.nodeId === $scope.node.id);
         return publicParam ? 'public' : 'private';
       };
 
@@ -89,7 +90,8 @@ function OperationAttributes($rootScope, AttributesPanelService, config) {
             $scope.publicParams.push(publicParam);
             break;
           case 'private' :
-            $scope.publicParams = _.reject($scope.publicParams, (p) => p.paramName === parameterName);
+            $scope.publicParams =
+              _.reject($scope.publicParams, (pp) => pp.paramName === parameterName && pp.nodeId === $scope.node.id);
             break;
         }
       };
