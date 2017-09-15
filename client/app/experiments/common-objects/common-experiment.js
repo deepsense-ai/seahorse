@@ -24,6 +24,16 @@ function Experiment() {
   };
   that.STATUS_UNKNOWN = 'status_unknown';
 
+
+  /**
+   * Returns experiment id.
+   *
+   * @return {string}
+   */
+  that.getId = function getId() {
+    return internal.id;
+  };
+
   that.getNodes = function getNodes() {
     return internal.nodes;
   };

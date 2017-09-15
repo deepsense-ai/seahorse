@@ -103,6 +103,16 @@ describe('experiment', () => {
    expect(Experiment).toEqual(jasmine.any(Function));
   });
 
+  it('has getId method', () => {
+    let experiment = new Experiment();
+    experiment.setData({
+      'id': initId,
+      'name': initName,
+      'description': initDescription
+    });
+    expect(experiment.getId()).toBe(initId);
+  });
+
   it('can create nodes and edges', () => {
     let experiment = new Experiment();
     experiment.createNodes(initNodes, initOperations);

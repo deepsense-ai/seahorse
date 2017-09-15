@@ -176,9 +176,19 @@ function ExperimentController($stateParams, $rootScope, Operations, DrawingServi
     that.saveData();
   });
 
+
   $rootScope.$on('FlowChartBox.ELEMENT_DROPPED', ()=> that.log());
   $rootScope.$on('Keyboard.KEY_PRESSED', ()=> that.log());
   $rootScope.$on('Edge.REMOVE', ()=> that.log());
+
+  $rootScope.$on('Experiment.RUN', () => {
+   ExperimentAPIClient.runExperiment(internal.experiment.getId()).then((data) => {
+      internal.experiment.setStatus(data.experiment.state);
+    }, (error) => {
+      console.log(error);
+    });
+  });
+
 
   internal.init();
   return that;

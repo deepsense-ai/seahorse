@@ -12,6 +12,9 @@ function StatusBar() {
       'status': '='
     },
     link: function (scope, element, attrs) {
+      element[0].querySelector('.run-experiment-button').addEventListener('click', () => {
+        scope.$emit('Experiment.RUN', {});
+      });
     }
   };
 }

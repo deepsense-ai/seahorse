@@ -11,6 +11,9 @@ var url    = require('url');
 module.exports = function(req, res, next) {
   var uri = url.parse(req.url).pathname.replace(/\/$/, '');
 
+  // redirect experiment/:id/action response to experiment data
+  uri = uri.replace(/\/action$/, '');
+
   var p = '/fixtures/' + uri.replace(/\//g,'.').substr(1) + '.json';
   var filename = __dirname + p;
 
