@@ -3,9 +3,9 @@
  */
 'use strict';
 
-var Edge = require('./../../common-objects/common-edge.js');
+let Edge = require('./../../common-objects/common-edge.js');
 
-var connectorPaintStyleDefault = {
+let connectorPaintStyleDefault = {
   lineWidth: 2,
   outlineColor: 'white',
   outlineWidth: 2
@@ -16,22 +16,22 @@ var connectorPaintStyleDefault = {
  *
  * @type {object}
  */
-var connectorPaintStyles = {};
+let connectorPaintStyles = {};
 connectorPaintStyles[Edge.STATE_TYPE.ALWAYS] = _.defaults({}, connectorPaintStyleDefault, { strokeStyle: '#61B7CF' });
 connectorPaintStyles[Edge.STATE_TYPE.MAYBE] = _.defaults({}, connectorPaintStyleDefault, { strokeStyle: '#F8AC59' });
 connectorPaintStyles[Edge.STATE_TYPE.NEVER] = _.defaults({}, connectorPaintStyleDefault, { strokeStyle: '#ED5565' });
 connectorPaintStyles[Edge.STATE_TYPE.UNKNOWN] = _.defaults({}, connectorPaintStyleDefault, { strokeStyle: 'gray' });
 
-var connectorHoverStyle = {
+let connectorHoverStyle = {
   strokeStyle: '#216477'
 };
 
-var endpointHoverStyle = {
+let endpointHoverStyle = {
   fillStyle: '#216477',
   strokeStyle: '#216477'
 };
 
-var outputStyle = {
+let outputStyle = {
   endpoint: 'Dot',
   paintStyle: {
     fillStyle: '#1AB394',
@@ -46,7 +46,7 @@ var outputStyle = {
   maxConnections: -1
 };
 
-var inputStyle = {
+let inputStyle = {
   endpoint: 'Rectangle',
   paintStyle: {
     fillStyle: '#1AB394'
@@ -66,14 +66,15 @@ function GraphPanelRendererService($rootScope, $document) {
   const nodeIdPrefix = 'node-';
   const nodeIdPrefixLength = nodeIdPrefix.length;
 
-  var that = this;
-  var internal = {};
+  let that = this;
+  let internal = {};
+
+  internal.currentZoomRatio = 1.0;
 
   internal.getAllInternalElementsPosition = function getAllInternalElementsPosition () {
-    var elementsToFit = jsPlumb.getContainer().children;
-    var elementsToFitPositions = _.map(elementsToFit, function (el) {
-      var elementDimensions = el.getBoundingClientRect();
-
+    let elementsToFit = jsPlumb.getContainer().children;
+    let elementsToFitPositions = _.map(elementsToFit, (el) => {
+      let elementDimensions = el.getBoundingClientRect();
       return {
         top:    el.offsetTop,
         left:   el.offsetLeft,
@@ -86,22 +87,20 @@ function GraphPanelRendererService($rootScope, $document) {
   };
 
   that.getPseudoContainerPosition = function getPseudoContainerPosition () {
-    var elementsToFitPositions = internal.getAllInternalElementsPosition();
-
+    let elementsToFitPositions = internal.getAllInternalElementsPosition();
     return {
-      topmost: Math.min.apply(Math, _.map(elementsToFitPositions, (elPos) => elPos.top )),
-      leftmost: Math.min.apply(Math, _.map(elementsToFitPositions, (elPos) => elPos.left )),
-      rightmost: Math.max.apply(Math, _.map(elementsToFitPositions, (elPos) => elPos.right )),
-      bottommost: Math.max.apply(Math, _.map(elementsToFitPositions, (elPos) => elPos.bottom ))
+      topMost: Math.min.apply(Math, _.map(elementsToFitPositions, (elPos) => elPos.top )),
+      leftMost: Math.min.apply(Math, _.map(elementsToFitPositions, (elPos) => elPos.left )),
+      rightMost: Math.max.apply(Math, _.map(elementsToFitPositions, (elPos) => elPos.right )),
+      bottomMost: Math.max.apply(Math, _.map(elementsToFitPositions, (elPos) => elPos.bottom ))
     };
   };
 
   that.getPseudoContainerCenter = function getPseudoContainerCenter () {
-    var pseudoContainerPosition = that.getPseudoContainerPosition();
-
+    let pseudoContainerPosition = that.getPseudoContainerPosition();
     return {
-      y: pseudoContainerPosition.topmost  + ((pseudoContainerPosition.bottommost - pseudoContainerPosition.topmost) / 2),
-      x: pseudoContainerPosition.leftmost + ((pseudoContainerPosition.rightmost - pseudoContainerPosition.leftmost) / 2)
+      y: pseudoContainerPosition.topMost  + ((pseudoContainerPosition.bottomMost - pseudoContainerPosition.topMost) / 2),
+      x: pseudoContainerPosition.leftMost + ((pseudoContainerPosition.rightMost - pseudoContainerPosition.leftMost) / 2)
     };
   };
 
@@ -109,23 +108,24 @@ function GraphPanelRendererService($rootScope, $document) {
     return jsPlumb.getZoom();
   };
 
-  that.setZoom = function setZoom (zoom) {
+  that.setZoom = function setZoom (zoomRatio) {
     let instance = jsPlumb;
-
-    instance.setZoom(zoom);
+    internal.currentZoomRatio = zoomRatio;
+    instance.setZoom(zoomRatio);
     instance.repaintEverything();
   };
 
-  internal.reset = () => {
+  internal.reset = function reset() {
     jsPlumb.deleteEveryEndpoint();
     jsPlumb.unbind('connection');
     jsPlumb.unbind('connectionDetached');
     jsPlumb.unbind('connectionMoved');
     jsPlumb.unbind('connectionDrag');
-    jsPlumb.setZoom(1, true);
+    jsPlumb.setZoom(internal.currentZoomRatio, true);
   };
 
   that.init = function init() {
+    internal.reset();
     jsPlumb.setContainer($document[0].querySelector('.flowchart-paint-area'));
     jsPlumb.importDefaults({
       DragOptions: {
@@ -133,7 +133,6 @@ function GraphPanelRendererService($rootScope, $document) {
         zIndex: 2000
       }
     });
-
     that.bindEdgeEvent();
   };
 
@@ -155,15 +154,15 @@ function GraphPanelRendererService($rootScope, $document) {
   };
 
   that.removeNode = function removeNode(nodeId) {
-    var node = internal.getNodeById(nodeId);
+    let node = internal.getNodeById(nodeId);
     jsPlumb.remove(node);
   };
 
   that.renderPorts = function renderPorts() {
-    var nodes = internal.experiment.getNodes();
-    for (var nodeId in nodes) {
+    let nodes = internal.experiment.getNodes();
+    for (let nodeId in nodes) {
       if (nodes.hasOwnProperty(nodeId)) {
-        var node = internal.getNodeById(nodeId);
+        let node = internal.getNodeById(nodeId);
         that.addOutputPoint(node, nodes[nodeId].output, nodes[nodeId]);
         that.addInputPoint(node, nodes[nodeId].input);
       }
@@ -172,9 +171,9 @@ function GraphPanelRendererService($rootScope, $document) {
 
   that.renderEdges = function renderEdges() {
     jsPlumb.detachEveryConnection();
-    var edges = internal.experiment.getEdges();
-    var outputPrefix = 'output';
-    var inputPrefix = 'input';
+    let edges = internal.experiment.getEdges();
+    let outputPrefix = 'output';
+    let inputPrefix = 'input';
     for (let id in edges) {
       if (edges.hasOwnProperty(id)) {
         let edge = edges[id];
@@ -187,7 +186,6 @@ function GraphPanelRendererService($rootScope, $document) {
         connection.setParameter('edgeId', edge.id);
       }
     }
-
     that.changeEdgesPaintStyles();
   };
 
@@ -215,7 +213,7 @@ function GraphPanelRendererService($rootScope, $document) {
     $rootScope.$broadcast('OutputPort.LEFT_CLICK');
   };
 
-  internal.broadcastHoverEvent = (eventName, portElement, portObject) => {
+  internal.broadcastHoverEvent = function (eventName, portElement, portObject) {
     $rootScope.$broadcast(eventName, {
       portElement: portElement,
       portObject: portObject
@@ -223,7 +221,7 @@ function GraphPanelRendererService($rootScope, $document) {
   };
 
   that.addOutputPoint = function addOutputPoint(nodeElement, ports, nodeObj) {
-    var anchors = (ports.length === 1) ?
+    let anchors = (ports.length === 1) ?
       ['BottomCenter'] :
       ['BottomLeft', 'BottomCenter', 'BottomRight'];
 
@@ -254,7 +252,7 @@ function GraphPanelRendererService($rootScope, $document) {
   };
 
   that.addInputPoint = function addInputPoint(node, ports) {
-    var anchors = (ports.length === 1) ?
+    let anchors = (ports.length === 1) ?
       ['TopCenter'] :
       ['TopLeft', 'TopCenter', 'TopRight'];
 
@@ -302,7 +300,7 @@ function GraphPanelRendererService($rootScope, $document) {
     });
 
     jsPlumb.bind('connectionDetached', (info, originalEvent) => {
-      var edge = internal.experiment.getEdgeById(info.connection.getParameter('edgeId'));
+      let edge = internal.experiment.getEdgeById(info.connection.getParameter('edgeId'));
       if (edge && info.targetEndpoint.isTarget && info.sourceEndpoint.isSource && originalEvent) {
         $rootScope.$broadcast(Edge.REMOVE, {
           edge: edge
@@ -310,8 +308,8 @@ function GraphPanelRendererService($rootScope, $document) {
       }
     });
 
-    jsPlumb.bind('connectionMoved', function (info) {
-      var edge = internal.experiment.getEdgeById(info.connection.getParameter('edgeId'));
+    jsPlumb.bind('connectionMoved', (info) => {
+      let edge = internal.experiment.getEdgeById(info.connection.getParameter('edgeId'));
       if (edge) {
         $rootScope.$broadcast(Edge.REMOVE, {
           edge: edge
