@@ -189,7 +189,7 @@ function ExperimentController($timeout, $stateParams, $scope, PageService, Opera
   });
 
   $scope.$on('FlowChartBox.ELEMENT_DROPPED', function elementDropped(event, args) {
-    let operation = that.getOperationById(args.classId),
+    let operation = Operations.get(args.classId),
       boxPosition = args.target[0].getBoundingClientRect(),
       positionX = (args.dropEvent.pageX - boxPosition.left - window.scrollX) || 0,
       positionY = (args.dropEvent.pageY - boxPosition.top - window.scrollY) || 0,
