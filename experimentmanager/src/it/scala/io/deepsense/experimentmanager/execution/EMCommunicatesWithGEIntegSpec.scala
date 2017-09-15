@@ -17,7 +17,7 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{FlatSpec, Matchers}
 
-import io.deepsense.deeplang.doperations.ReadDataFrame
+import io.deepsense.deeplang.doperations.LoadDataFrame
 import io.deepsense.experimentmanager.execution.RunningExperimentsActor.{GetStatus, Launch, Status}
 import io.deepsense.graph.{Graph, Node}
 import io.deepsense.graphexecutor.{HdfsIntegTestSupport, SimpleGraphExecutionIntegSuiteEntities}
@@ -78,7 +78,7 @@ class EMCommunicatesWithGEIntegSpec
   }
 
   private val graph = Graph(
-    Set(Node(Node.Id.randomId, createReadDataFrameOperation)),
+    Set(Node(Node.Id.randomId, createLoadDataFrameOperation)),
     Set())
 
   private val experiment: Experiment = Experiment(
@@ -89,11 +89,11 @@ class EMCommunicatesWithGEIntegSpec
     "experiment description"
   )
 
-  private def createReadDataFrameOperation: ReadDataFrame = {
-    val readOp = new ReadDataFrame
-    readOp.parameters.getStringParameter(ReadDataFrame.idParam).value =
+  private def createLoadDataFrameOperation: LoadDataFrame = {
+    val loadOp = new LoadDataFrame
+    loadOp.parameters.getStringParameter(LoadDataFrame.idParam).value =
       Some(SimpleGraphExecutionIntegSuiteEntities.entityUuid)
-    readOp
+    loadOp
   }
 
 

@@ -19,7 +19,7 @@ import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.deeplang.{DOperable, DeeplangIntegTestSupport, ExecutionContext}
 import io.deepsense.models.entities.{DataObjectReference, DataObjectReport, Entity, InputEntity}
 
-class ReadDataFrameIntegSpec
+class LoadDataFrameIntegSpec
   extends DeeplangIntegTestSupport
   with BeforeAndAfter
   with LazyLogging
@@ -27,22 +27,22 @@ class ReadDataFrameIntegSpec
 
   val timestamp: Timestamp = new Timestamp(new DateTime(2007, 12, 2, 3, 10, 11).getMillis)
 
-  val testDir = "/tests/ReadDataFrameTest"
+  val testDir = "/tests/LoadDataFrameTest"
 
   before {
     rawHdfsClient.delete(testDir, true)
   }
 
-  "ReadDataFrame" should {
-    "read saved DataFrame" in {
+  "LoadDataFrame" should {
+    "load saved DataFrame" in {
       val context = executionContext
       val dataFrame: DataFrame = testDataFrame(context.dataFrameBuilder)
       dataFrame.sparkDataFrame.saveAsParquetFile(testDir)
       val entity = registerDataFrame(context)
 
-      val operation = createReadDataFrameOperation(entity.id.toString)
+      val operation = createLoadDataFrameOperation(entity.id.toString)
 
-      logger.info("Reading dataframe from entity id: {}", entity.id)
+      logger.info("Loading dataframe from entity id: {}", entity.id)
       val operationResult = operation.execute(context)(Vector.empty[DOperable])
       val operationDataFrame = operationResult.head.asInstanceOf[DataFrame]
       assertDataFramesEqual(dataFrame, operationDataFrame)

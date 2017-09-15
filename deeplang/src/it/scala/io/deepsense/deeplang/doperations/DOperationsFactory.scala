@@ -7,21 +7,21 @@ package io.deepsense.deeplang.doperations
 
 trait DOperationsFactory {
 
-  def createWriteDataFrameOperation(name: String, description: String): WriteDataFrame = {
-    val operation = new WriteDataFrame
-    val nameParameter = operation.parameters.getStringParameter(WriteDataFrame.nameParam)
+  def createSaveDataFrameOperation(name: String, description: String): SaveDataFrame = {
+    val operation = new SaveDataFrame
+    val nameParameter = operation.parameters.getStringParameter(SaveDataFrame.nameParam)
     nameParameter.value = Some(name)
     val descriptionParameter =
-      operation.parameters.getStringParameter(WriteDataFrame.descriptionParam)
+      operation.parameters.getStringParameter(SaveDataFrame.descriptionParam)
     descriptionParameter.value = Some(description)
     operation
   }
 
-  def createReadDataFrameOperation(entityId: String): ReadDataFrame = {
-    val readDataFrameOperation = new ReadDataFrame
-    val idParameter = readDataFrameOperation.parameters.getStringParameter(ReadDataFrame.idParam)
+  def createLoadDataFrameOperation(entityId: String): LoadDataFrame = {
+    val loadDataFrameOperation = new LoadDataFrame
+    val idParameter = loadDataFrameOperation.parameters.getStringParameter(LoadDataFrame.idParam)
     idParameter.value = Some(entityId)
-    readDataFrameOperation
+    loadDataFrameOperation
   }
 }
 

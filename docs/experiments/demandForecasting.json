@@ -30,7 +30,7 @@
         "id": "ffda04c1-21e6-4c42-89d9-6dea447d9ec8",
         "operation": {
           "id": "2aa22df2-e28b-11e4-8a00-1681e6b88ec1",
-          "name": "Read DataFrame",
+          "name": "Load DataFrame",
           "version": "0.1.0"
         },
         "parameters": {
@@ -142,7 +142,7 @@
         "id": "e7b792de-e390-4415-bdc9-60d5d874562c",
         "operation": {
           "id": "2aa22df2-e28b-11e4-8a00-1681e6b88ec1",
-          "name": "Read DataFrame",
+          "name": "Load DataFrame",
           "version": "0.1.0"
         },
         "parameters": {

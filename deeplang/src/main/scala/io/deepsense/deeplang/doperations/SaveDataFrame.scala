@@ -15,19 +15,19 @@ import io.deepsense.entitystorage.UniqueFilenameUtil
 import io.deepsense.models.entities.{DataObjectReference, DataObjectReport, InputEntity}
 
 /**
- * Operation which is able to serialize DataFrame and write it.
+ * Operation which is able to serialize DataFrame and save it.
  */
-class WriteDataFrame extends DOperation1To0[DataFrame] {
+class SaveDataFrame extends DOperation1To0[DataFrame] {
 
   override val parameters = ParametersSchema(
-    WriteDataFrame.nameParam -> StringParameter(
+    SaveDataFrame.nameParam -> StringParameter(
       "user friendly name", None, required = true, validator = new AcceptAllRegexValidator),
-    WriteDataFrame.descriptionParam -> StringParameter(
+    SaveDataFrame.descriptionParam -> StringParameter(
       "description for DataFrame", None, required = true, validator = new AcceptAllRegexValidator))
 
   override val id: DOperation.Id = "58025c36-e28b-11e4-8a00-1681e6b88ec1"
 
-  override val name: String = "Write DataFrame"
+  override val name: String = "Save DataFrame"
 
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): Unit = {
     val uniqueFilename: String = getUniqueFileName(context)
@@ -41,8 +41,8 @@ class WriteDataFrame extends DOperation1To0[DataFrame] {
       context: ExecutionContext,
       uniqueFilename: String,
       dataFrameReport: Report): InputEntity = {
-    val name = parameters.getStringParameter(WriteDataFrame.nameParam).value.get
-    val description = parameters.getStringParameter(WriteDataFrame.descriptionParam).value.get
+    val name = parameters.getStringParameter(SaveDataFrame.nameParam).value.get
+    val description = parameters.getStringParameter(SaveDataFrame.descriptionParam).value.get
     import io.deepsense.reportlib.model.ReportJsonProtocol._
     InputEntity(
       context.tenantId,
@@ -58,7 +58,7 @@ class WriteDataFrame extends DOperation1To0[DataFrame] {
     context.uniqueHdfsFileName(UniqueFilenameUtil.DataFrameEntityCategory)
 }
 
-object WriteDataFrame {
+object SaveDataFrame {
   val nameParam = "name"
   val descriptionParam = "description"
 }

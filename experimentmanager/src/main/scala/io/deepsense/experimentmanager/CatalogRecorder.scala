@@ -38,14 +38,14 @@ object CatalogRecorder {
       DOperationCategories.IO,
       "Reads file from HDFS")
 
-    catalog.registerDOperation[ReadDataFrame](
+    catalog.registerDOperation[LoadDataFrame](
       DOperationCategories.IO,
-      "Reads DataFrame from HDFS"
+      "Loads DataFrame from HDFS"
     )
 
-    catalog.registerDOperation[WriteDataFrame](
+    catalog.registerDOperation[SaveDataFrame](
       DOperationCategories.IO,
-      "Writes DataFrame to HDFS"
+      "Save DataFrame to HDFS"
     )
 
     catalog.registerDOperation[DataFrameSplitter](

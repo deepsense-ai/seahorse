@@ -12,18 +12,18 @@ import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, ParametersSche
 import io.deepsense.deeplang.{DOperation, DOperation0To1, ExecutionContext}
 
 /**
- * Operation which is able to read DataFrame and deserialize it.
+ * Operation which is able to load DataFrame and deserialize it.
  */
-class ReadDataFrame extends DOperation0To1[DataFrame] {
+class LoadDataFrame extends DOperation0To1[DataFrame] {
   override val id: DOperation.Id = "2aa22df2-e28b-11e4-8a00-1681e6b88ec1"
 
-  override val parameters = ParametersSchema(ReadDataFrame.idParam -> StringParameter(
+  override val parameters = ParametersSchema(LoadDataFrame.idParam -> StringParameter(
     "unique id of the Dataframe", None, required = true, validator = new AcceptAllRegexValidator))
 
-  override val name: String = "Read DataFrame"
+  override val name: String = "Load DataFrame"
 
   override protected def _execute(context: ExecutionContext)(): DataFrame = {
-    val idParameter = parameters.getStringParameter(ReadDataFrame.idParam)
+    val idParameter = parameters.getStringParameter(LoadDataFrame.idParam)
     DOperableLoader.load(
       context.entityStorageClient)(
       DataFrame.loadFromHdfs(context))(
@@ -32,6 +32,6 @@ class ReadDataFrame extends DOperation0To1[DataFrame] {
   }
 }
 
-object ReadDataFrame {
+object LoadDataFrame {
   val idParam = "id"
 }

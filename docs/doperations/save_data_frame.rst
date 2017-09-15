@@ -1,13 +1,13 @@
 .. Copyright (c) 2015, CodiLime, Inc.
 
-Write DataFrame
+Save DataFrame
 ===============
 
 ==========
 Descriptor
 ==========
 
-Writes DataFrame to the Deepsense.io storage.
+Saves DataFrame to the Deepsense.io storage.
 
 **Operation version:** 1
 
@@ -26,7 +26,7 @@ Input
      - Description
    * - 0
      - DataFrame
-     - DataFrame to write in the DeepSense.io storage.
+     - DataFrame to save in the DeepSense.io storage.
 
 ------
 Output
@@ -37,13 +37,13 @@ None
 ===========
 Description
 ===========
-Operation to write a DataFrame in the Deepsense.io storage.
-Written DataFrame can be later retrieved using :doc:`read_data_frame` operation.
+Operation to save a DataFrame in the Deepsense.io storage.
+Saved DataFrame can be later retrieved using :doc:`load_data_frame` operation.
 
 -----
 Input
 -----
-1. DataFrame to write.
+1. DataFrame to save.
 
 ------
 Output

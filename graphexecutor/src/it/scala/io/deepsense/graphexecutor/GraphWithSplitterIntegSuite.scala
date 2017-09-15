@@ -4,32 +4,32 @@
 
 package io.deepsense.graphexecutor
 
-import io.deepsense.deeplang.doperations.{DataFrameSplitter, ReadDataFrame, WriteDataFrame}
+import io.deepsense.deeplang.doperations.{DataFrameSplitter, LoadDataFrame, SaveDataFrame}
 import io.deepsense.graph.Edge
 
 class GraphWithSplitterIntegSuite extends GraphExecutionIntegSuite {
 
-  def experimentName = "(ReadDF, Split, 2xWriteDF)"
+  def experimentName = "(LoadDF, Split, 2xSaveDF)"
 
-  import io.deepsense.deeplang.doperations.ReadDataFrame._
-  val readOp = new ReadDataFrame
-  readOp.parameters.getStringParameter(idParam).value =
+  import io.deepsense.deeplang.doperations.LoadDataFrame._
+  val loadOp = new LoadDataFrame
+  loadOp.parameters.getStringParameter(idParam).value =
     Some(SimpleGraphExecutionIntegSuiteEntities.entityUuid)
 
   val splitOp = new DataFrameSplitter
   splitOp.parameters.getNumericParameter(splitOp.splitRatioParam).value = Some(0.2)
   splitOp.parameters.getNumericParameter(splitOp.seedParam).value = Some(1)
 
-  import io.deepsense.deeplang.doperations.WriteDataFrame._
-  val writeOpLeft = new WriteDataFrame
-  writeOpLeft.parameters.getStringParameter(nameParam).value = Some("left name")
-  writeOpLeft.parameters.getStringParameter(descriptionParam).value = Some("left description")
+  import io.deepsense.deeplang.doperations.SaveDataFrame._
+  val saveOpLeft = new SaveDataFrame
+  saveOpLeft.parameters.getStringParameter(nameParam).value = Some("left name")
+  saveOpLeft.parameters.getStringParameter(descriptionParam).value = Some("left description")
 
-  val writeOpRight = new WriteDataFrame
-  writeOpRight.parameters.getStringParameter(nameParam).value = Some("right name")
-  writeOpRight.parameters.getStringParameter(descriptionParam).value = Some("right description")
+  val saveOpRight = new SaveDataFrame
+  saveOpRight.parameters.getStringParameter(nameParam).value = Some("right name")
+  saveOpRight.parameters.getStringParameter(descriptionParam).value = Some("right description")
 
-  val nodes = Seq(node(readOp), node(splitOp), node(writeOpLeft), node(writeOpRight))
+  val nodes = Seq(node(loadOp), node(splitOp), node(saveOpLeft), node(saveOpRight))
 
   val edges = Seq(
     Edge(nodes(0), 0, nodes(1), 0),

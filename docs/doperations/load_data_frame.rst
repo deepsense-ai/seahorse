@@ -2,14 +2,14 @@
 
 .. DEVELOPERS ONLY ?
 
-Read DataFrame
+Load DataFrame
 ==============
 
 ==========
 Descriptor
 ==========
 
-Reads DataFrame previously written in DeepSense.io.
+Loads DataFrame previously written in DeepSense.io.
 
 **Operation version:** 1
 
@@ -33,14 +33,14 @@ Output
      - Description
    * - 0
      - DataFrame
-     - DataFrame read from DeepSense.io
+     - DataFrame load from DeepSense.io
 
 
 ===========
 Description
 ===========
 Operation to retrieve DataFrame previously written in DeepSense.io
-(using for example :doc:`write_data_frame`).
+(using for example :doc:`save_data_frame`).
 
 -----
 Input
@@ -51,7 +51,7 @@ None
 Output
 ------
 
-1. Read DataFrame
+1. Load DataFrame
 
 ------
 Params

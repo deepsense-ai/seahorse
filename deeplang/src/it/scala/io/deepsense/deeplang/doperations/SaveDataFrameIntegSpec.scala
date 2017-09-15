@@ -17,15 +17,15 @@ import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.deeplang.{DeeplangIntegTestSupport, DOperable}
 import io.deepsense.entitystorage.EntityStorageClientTestInMemoryImpl
 
-class WriteDataFrameIntegSpec
+class SaveDataFrameIntegSpec
   extends DeeplangIntegTestSupport
   with BeforeAndAfter
   with DOperationsFactory {
 
   val timestamp: Timestamp = new Timestamp(new DateTime(2007, 12, 2, 3, 10, 11).getMillis)
 
-  "WriteDataFrame" should {
-    "write created DataFrame" in {
+  "SaveDataFrame" should {
+    "save created DataFrame" in {
       val rows: Seq[Row] = Seq(
         Row("aaa", 1L, 1.2, timestamp),
         Row("bbb", 2L, 2.2, timestamp),
@@ -34,8 +34,8 @@ class WriteDataFrameIntegSpec
     }
   }
 
-  "WriteDataFrame" should {
-    "write created DataFrame with missing values" in {
+  "SaveDataFrame" should {
+    "save created DataFrame with missing values" in {
       val rowsSeq: Seq[Row] = Seq(
         Row("aaa", 1L, 1.2, null),
         Row("bbb", 2L, null, timestamp),
@@ -48,7 +48,7 @@ class WriteDataFrameIntegSpec
     val context = executionContext
     // NOTE: In this test suite, description should uniquely identify DataFrame
     val dataFrameDescription = rowsSeq.toString
-    val operation: WriteDataFrame = createWriteDataFrameOperation("testName", dataFrameDescription)
+    val operation: SaveDataFrame = createSaveDataFrameOperation("testName", dataFrameDescription)
     val dataFrameToSave: DataFrame = createDataFrameToSave(rowsSeq)
 
     operation.execute(context)(Vector[DOperable](dataFrameToSave))

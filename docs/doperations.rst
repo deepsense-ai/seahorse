@@ -9,8 +9,8 @@ Contents:
    :maxdepth: 2
 
    doperations/read_file
-   doperations/read_data_frame
-   doperations/write_data_frame
+   doperations/load_data_frame
+   doperations/save_data_frame
    doperations/file_to_dataframe
    doperations/timestamp_decomposer
    doperations/dataframe_splitter

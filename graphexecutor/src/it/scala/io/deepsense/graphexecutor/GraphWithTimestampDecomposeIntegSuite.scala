@@ -4,17 +4,17 @@
 
 package io.deepsense.graphexecutor
 
-import io.deepsense.deeplang.doperations.{ReadDataFrame, TimestampDecomposer, WriteDataFrame}
+import io.deepsense.deeplang.doperations.{LoadDataFrame, TimestampDecomposer, SaveDataFrame}
 import io.deepsense.deeplang.parameters.NameSingleColumnSelection
 import io.deepsense.graph._
 
 class GraphWithTimestampDecomposeIntegSuite extends GraphExecutionIntegSuite {
 
-  def experimentName = "(ReadDF, DecomposeTimestamp, WriteDF)"
+  def experimentName = "(LoadDF, DecomposeTimestamp, SaveDF)"
 
-  import io.deepsense.deeplang.doperations.ReadDataFrame._
-  val readOp = new ReadDataFrame
-  readOp.parameters.getStringParameter(idParam).value =
+  import io.deepsense.deeplang.doperations.LoadDataFrame._
+  val loadOp = new LoadDataFrame
+  loadOp.parameters.getStringParameter(idParam).value =
     Some(SimpleGraphExecutionIntegSuiteEntities.entityUuid)
 
   val timestampDecomposerOp = new TimestampDecomposer
@@ -23,12 +23,12 @@ class GraphWithTimestampDecomposeIntegSuite extends GraphExecutionIntegSuite {
   timestampDecomposerOp.parameters.getMultipleChoiceParameter("parts").value =
     Some(Seq("year", "month", "day", "hour", "minutes", "seconds"))
 
-  import io.deepsense.deeplang.doperations.WriteDataFrame._
-  val writeOp = new WriteDataFrame
-  writeOp.parameters.getStringParameter(nameParam).value = Some("left name")
-  writeOp.parameters.getStringParameter(descriptionParam).value = Some("left description")
+  import io.deepsense.deeplang.doperations.SaveDataFrame._
+  val saveOp = new SaveDataFrame
+  saveOp.parameters.getStringParameter(nameParam).value = Some("left name")
+  saveOp.parameters.getStringParameter(descriptionParam).value = Some("left description")
 
-  val nodes = Seq(node(readOp), node(timestampDecomposerOp), node(writeOp))
+  val nodes = Seq(node(loadOp), node(timestampDecomposerOp), node(saveOp))
 
   val edges = Seq(
     Edge(nodes(0), 0, nodes(1), 0),
