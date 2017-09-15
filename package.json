@@ -42,6 +42,7 @@
     "browserify": "^8.1.1",
     "browserify-ngannotate": "^0.7.1",
     "browserify-shim": "^3.8.2",
+    "deepsense-context-menu": "0.0.1",
     "deepsense-loading-spinner": "0.0.2",
     "gulp": "^3.8.10",
     "gulp-clean": "^0.3.1",
@@ -117,6 +118,7 @@
           "./node_modules/angular-ui-router/release/angular-ui-router.js",
           "./node_modules/angular-bootstrap/dist/ui-bootstrap.js",
           "./node_modules/angular-bootstrap/dist/ui-bootstrap-tpls.js",
+          "./node_modules/deepsense-context-menu/dist/context-menu.js",
           "./bower_components/jsPlumb/dist/js/dom.jsPlumb-1.7.4.js",
           "./bower_components/mousetrap/mousetrap.js",
           "./bower_components/lodash/lodash.js",
@@ -129,7 +131,8 @@
         "css": [
           "./node_modules/bootstrap/dist/css/bootstrap.css",
           "./client/css/*.css",
-          "./node_modules/deepsense-loading-spinner/dist/deepsense-loading-spinner.css"
+          "./node_modules/deepsense-loading-spinner/dist/deepsense-loading-spinner.css",
+          "./node_modules/deepsense-context-menu/dist/context-menu.css"
         ]
       },
       "prod": {
@@ -138,6 +141,7 @@
           "./node_modules/angular-ui-router/release/angular-ui-router.min.js",
           "./node_modules/angular-bootstrap/dist/ui-bootstrap.min.js",
           "./node_modules/angular-bootstrap/dist/ui-bootstrap-tpls.min.js",
+          "./node_modules/deepsense-context-menu/dist/context-menu.js",
           "./bower_components/jsPlumb/dist/js/dom.jsPlumb-1.7.4-min.js",
           "./bower_components/mousetrap/mousetrap.min.js",
           "./bower_components/lodash/lodash.min.js",
@@ -150,7 +154,8 @@
         "css": [
           "./node_modules/bootstrap/dist/css/bootstrap.min.css",
           "./client/css/*.css",
-          "./node_modules/deepsense-loading-spinner/dist/deepsense-loading-spinner.css"
+          "./node_modules/deepsense-loading-spinner/dist/deepsense-loading-spinner.css",
+          "./node_modules/deepsense-context-menu/dist/context-menu.css"
         ]
       }
     },

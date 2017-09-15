@@ -7,9 +7,6 @@
 'use strict';
 
 exports.inject = function (module) {
-  require('./context-menu/context-menu.js').inject(module);
-  require('./context-menu/context-menu-element.js').inject(module);
-
   require('./port-statuses-tooltip/port-statuses-tooltip.controller.js').inject(module);
 
   require('./status-bar/status-bar.js').inject(module);
