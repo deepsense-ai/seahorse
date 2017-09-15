@@ -26,6 +26,13 @@ trait WorkflowManager {
   def get(id: Id): Future[Option[WorkflowWithResults]]
 
   /**
+   * Returns basic info about the workflow with the specified Id.
+   * @param id An identifier of the workflow.
+   * @return A workflow with results with the specified Id.
+   */
+  def getInfo(id: Id): Future[Option[WorkflowInfo]]
+
+  /**
    * Returns a workflow with an empty variables section and specified Id.
    * @param id An identifier of the workflow.
    * @return A workflow with an empty variables section and specified Id.

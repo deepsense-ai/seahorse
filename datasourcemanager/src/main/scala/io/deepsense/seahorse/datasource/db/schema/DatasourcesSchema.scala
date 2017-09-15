@@ -4,21 +4,20 @@
 
 package io.deepsense.seahorse.datasource.db.schema
 
-import java.sql.JDBCType
 import java.util.UUID
 
-import slick.jdbc.{PositionedParameters, SetParameter}
-
-import io.deepsense.seahorse.datasource.Configs
+import io.deepsense.seahorse.datasource.DatasourceManagerConfig
 import io.deepsense.seahorse.datasource.db.{Database, EnumColumnMapper}
 import io.deepsense.seahorse.datasource.model.DatasourceType.{apply => _, _}
 import io.deepsense.seahorse.datasource.model.FileFormat._
 import io.deepsense.seahorse.datasource.model.FileScheme.{apply => _, _}
 import io.deepsense.seahorse.datasource.model.{DatasourceType, FileFormat, FileScheme}
+import io.deepsense.commons.service.db.CommonSlickFormats
 
 object DatasourcesSchema {
 
   import Database.api._
+  import CommonSlickFormats._
 
   case class DatasourceDB(
     id: UUID,
@@ -35,18 +34,12 @@ object DatasourcesSchema {
     fileCsvIncludeHeader: Option[Boolean]
   )
 
-  implicit val uuidFormat = new SetParameter[UUID] {
-    def apply(v: UUID, pp: PositionedParameters): Unit = {
-      pp.setObject(v, JDBCType.BINARY.getVendorTypeNumber)
-    }
-  }
-
   implicit val fileSchemeFormat = EnumColumnMapper(FileScheme)
   implicit val datasourceTypeFormat = EnumColumnMapper(DatasourceType)
   implicit val fileFormatFormat = EnumColumnMapper(FileFormat)
 
   final class DatasourceTable(tag: Tag)
-      extends Table[DatasourceDB](tag, Some(Configs.Database.schema), "datasource") {
+      extends Table[DatasourceDB](tag, Some(DatasourceManagerConfig.database.schema), "datasource") {
     def id = column[UUID]("id", O.PrimaryKey)
     def name = column[String]("name")
     def downloadUri = column[Option[String]]("downloadUri")

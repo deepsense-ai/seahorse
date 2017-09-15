@@ -6,13 +6,13 @@ package io.deepsense.sessionmanager.mq
 
 import java.util
 
-import scala.concurrent.{Future, Promise}
+import scala.concurrent.{ExecutionContext, Future, Promise}
 
 import akka.actor.{ActorRef, Props}
 import com.thenewmotion.akka.rabbitmq._
 
 import io.deepsense.workflowexecutor.communication.mq.MQCommunication
-import io.deepsense.workflowexecutor.rabbitmq.{MQCommunicationFactory, MQSubscriber}
+import io.deepsense.workflowexecutor.rabbitmq.{ChannelSetupResult, MQCommunicationFactory, MQSubscriber}
 import io.deepsense.workflowexecutor.rabbitmq.MQCommunicationFactory.NotifyingChannelActor
 
 object MQCommunicationFactoryEnrichments {
@@ -21,8 +21,8 @@ object MQCommunicationFactoryEnrichments {
 
     def registerBroadcastSubscriber(
         exchange: String,
-        subscriber: ActorRef): Future[Unit] = {
-      val channelConnected = Promise[Unit]()
+        subscriber: ActorRef): Future[ChannelSetupResult[Unit]] = {
+      val channelConnected = Promise[ChannelSetupResult[Unit]]()
       val subscriberName = MQCommunication.subscriberName(exchange)
       val actorProps: Props = NotifyingChannelActor
         .props(channelConnected, setupBroadcastSubscriber(exchange, subscriber))

@@ -4,7 +4,7 @@
 
 package io.deepsense.sessionmanager.service.actors
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration._
 
 import akka.actor.{ActorRef, ActorSystem, Props}
@@ -23,8 +23,9 @@ import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.sessionmanager.service._
 import io.deepsense.sessionmanager.service.actors.SessionServiceActor.{CreateRequest, GetRequest, KillRequest, ListRequest}
 import io.deepsense.sessionmanager.service.executor.SessionExecutorClients
-import io.deepsense.sessionmanager.service.sessionspawner.{SessionConfig, SessionSpawner}
+import io.deepsense.sessionmanager.service.sessionspawner.{ExecutorSession, SessionConfig, SessionSpawner}
 import io.deepsense.workflowexecutor.communication.message.global.Heartbeat
+import io.deepsense.workflowexecutor.rabbitmq.{ChannelSetupResult, MQCommunicationFactory}
 
 class SessionServiceActorSpec(_system: ActorSystem)
   extends TestKit(_system)
@@ -39,6 +40,8 @@ class SessionServiceActorSpec(_system: ActorSystem)
   import TestData._
 
   def this() = this(ActorSystem("SessionServiceActorSpec"))
+
+  implicit val ec: ExecutionContext = _system.dispatcher
 
   implicit val patience = PatienceConfig(timeout = 5.seconds)
 
@@ -98,9 +101,14 @@ class SessionServiceActorSpec(_system: ActorSystem)
   private def fixture[T](test: (TestParams) => T): T = {
     val sessionExecutorClients = mock[SessionExecutorClients]
     val sessionSpawner = mock[SessionSpawner]
+    val communicationFactory = mock[MQCommunicationFactory]
+    when(communicationFactory.registerSubscriber(anyString(), anyObject()))
+      .thenReturn(Future(ChannelSetupResult("", null)))
     val props = Props(new SessionServiceActor(
       sessionSpawner,
-      sessionExecutorClients))
+      sessionExecutorClients,
+      communicationFactory
+    ))
     val params = TestParams(
       system.actorOf(props),
       sessionSpawner,

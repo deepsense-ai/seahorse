@@ -25,13 +25,16 @@ image_confs = [
     DockerImageConfig("deepsense-h2", build_simple_docker("deployment/h2-docker", "deepsense-h2")),
     DockerImageConfig("deepsense-spark", build_simple_docker("deployment/spark-docker", "deepsense-spark")),
     DockerImageConfig("deepsense-mesos-spark", "./jenkins/build_spark_docker_mesos.sh"),
+    DockerImageConfig("deepsense-schedulingmanager", build_sbt_docker("schedulingmanager")),
     DockerImageConfig("deepsense-sessionmanager", build_sbt_docker("sessionmanager")),
     DockerImageConfig("deepsense-workflowmanager", build_sbt_docker("workflowmanager")),
     DockerImageConfig("deepsense-datasourcemanager", build_sbt_docker("datasourcemanager")),
     DockerImageConfig("deepsense-libraryservice", build_sbt_docker("libraryservice")),
     DockerImageConfig("deepsense-notebooks", build_simple_docker("remote_notebook", "deepsense-notebooks")),
     DockerImageConfig("deepsense-authorization",
-                      build_simple_docker("deployment/authorization-docker", "deepsense-authorization"))
+                      build_simple_docker("deployment/authorization-docker", "deepsense-authorization")),
+    DockerImageConfig("deepsense-mail",
+                      build_simple_docker("deployment/exim", "deepsense-mail"))
 ]
 
 image_conf_by_name = {conf.docker_image_name: conf for conf in image_confs}

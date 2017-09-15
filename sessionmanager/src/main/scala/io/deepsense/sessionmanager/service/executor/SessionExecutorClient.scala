@@ -6,9 +6,15 @@ package io.deepsense.sessionmanager.service.executor
 
 import akka.actor.ActorRef
 
-import io.deepsense.workflowexecutor.communication.message.global.PoisonPill
+import io.deepsense.models.workflows.Workflow
+import io.deepsense.workflowexecutor.communication.message.global.{Launch, PoisonPill}
 
-class SessionExecutorClient(private val publisher: ActorRef) {
+
+class SessionExecutorClient(val id: Workflow.Id, private val publisher: ActorRef) {
+  def launchWorkflow(): Unit = {
+    publisher ! Launch(id, Set())
+  }
+
   def sendPoisonPill(): Unit = {
     publisher ! PoisonPill()
   }

@@ -36,7 +36,7 @@ object WorkflowExamples {
 
   lazy val defaultSettings = inConfig(Compile) {
     Seq(
-      workflowExamplesSqlFile := resourceManaged.value / "db/migration/R__insert_examples.sql",
+      workflowExamplesSqlFile := resourceManaged.value / "db/migration/workflowmanager/R__insert_examples.sql",
       workflowExamplesDir := baseDirectory.value / "../deployment/generate_examples/examples",
       generateWorkflowExamplesSql := {
         generateWorkflowExamplesSqlImpl(workflowExamplesDir.value, workflowExamplesSqlFile.value)

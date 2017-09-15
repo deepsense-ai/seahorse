@@ -195,6 +195,20 @@ abstract class WorkflowApi @Inject() (
                   }
                 }
               } ~
+              path(JavaUUID / "info") { workflowId =>
+                get {
+                  withUserId { userContext =>
+                    onComplete(workflowManagerProvider.forContext(userContext).getInfo(workflowId)) {
+                      case Failure(exception) =>
+                        logger.info("Get Workflow info failed", exception)
+                        failWith(exception)
+                      case Success(workflow) =>
+                        logger.info("Get Workflow info")
+                        complete(workflow)
+                    }
+                  }
+                }
+              } ~
               path(JavaUUID / "download") { workflowId =>
                 get {
                   withUserId { userContext =>

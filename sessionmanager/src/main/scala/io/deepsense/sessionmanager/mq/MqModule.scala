@@ -6,7 +6,7 @@ package io.deepsense.sessionmanager.mq
 
 import java.util.concurrent.TimeoutException
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
 import akka.actor.{ActorRef, ActorSystem}
@@ -67,6 +67,7 @@ class MqModule extends AbstractModule with Logging {
       @Named("SessionService.Actor") sessionServiceActor: ActorRef,
       @Named("queue.heartbeat.subscription.timeout") timeout: Long): Future[Unit] = {
     import io.deepsense.sessionmanager.mq.MQCommunicationFactoryEnrichments._
+    implicit val ec: ExecutionContext = system.dispatcher
     val subscribed = communicationFactory
       .registerBroadcastSubscriber("seahorse_heartbeats_all", sessionServiceActor)
 
@@ -84,6 +85,6 @@ class MqModule extends AbstractModule with Logging {
         system.terminate()
     }
 
-    subscribedWithTimeout
+    subscribedWithTimeout.map(_.data)
   }
 }

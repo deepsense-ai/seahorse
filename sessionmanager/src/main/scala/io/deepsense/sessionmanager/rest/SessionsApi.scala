@@ -18,6 +18,7 @@ import io.deepsense.commons.models.Id
 import io.deepsense.commons.rest.{Cors, RestComponent}
 import io.deepsense.commons.utils.Logging
 import io.deepsense.sessionmanager.rest.requests.CreateSession
+import io.deepsense.sessionmanager.rest.responses.NodeStatusesResponse
 import io.deepsense.sessionmanager.service.sessionspawner.SessionConfig
 import io.deepsense.sessionmanager.service.{Session, SessionService}
 
@@ -48,34 +49,48 @@ class SessionsApi @Inject()(
           }
         } ~
         handleRejections(rejectionHandler) {
-          waitForHeartbeat {
-            pathPrefix(sessionsPathPrefixMatcher) {
-              path(JavaUUID) { sessionId =>
-                get {
-                  complete {
-                    val session = sessionService.getSession(sessionId)
-                    session.map(_.map(Envelope(_)))
-                  }
+          handleExceptions(exceptionHandler) {
+            waitForHeartbeat {
+              pathPrefix(sessionsPathPrefixMatcher) {
+                pathPrefix(JavaUUID) { sessionId =>
+                  pathPrefix("status") {
+                    pathEndOrSingleSlash {
+                      get {
+                        complete(sessionService.nodeStatusesQuery(sessionId))
+                      }}} ~
+                    pathEndOrSingleSlash {
+                      get {
+                        complete {
+                          val session = sessionService.getSession(sessionId)
+                          session.map(_.map(Envelope(_)))
+                        }
+                      } ~
+                        post {
+                          onSuccess(sessionService.launchSession(sessionId)) { _ =>
+                            complete(StatusCodes.OK)
+                          }
+                        } ~
+                        delete {
+                          onSuccess(sessionService.killSession(sessionId)) { _ =>
+                            complete(StatusCodes.OK)
+                          }
+                        }
+                    }
                 } ~
-                delete {
-                  onSuccess(sessionService.killSession(sessionId)) { _ =>
-                    complete(StatusCodes.OK)
+                  pathEndOrSingleSlash {
+                    post {
+                      entity(as[CreateSession]) { request =>
+                        val sessionConfig = SessionConfig(request.workflowId, userId)
+                        val clusterDetails = request.cluster
+                        val session = sessionService.createSession(sessionConfig, clusterDetails)
+                        val enveloped = session.map(Envelope(_))
+                        complete(enveloped)
+                      }
+                    } ~
+                      get {
+                        complete(sessionService.listSessions())
+                      }
                   }
-                }
-              } ~
-              pathEndOrSingleSlash {
-                post {
-                  entity(as[CreateSession]) { request =>
-                    val sessionConfig = SessionConfig(request.workflowId, userId)
-                    val clusterDetails = request.cluster
-                    val session = sessionService.createSession(sessionConfig, clusterDetails)
-                    val enveloped = session.map(Envelope(_))
-                    complete(enveloped)
-                  }
-                } ~
-                get {
-                  complete(sessionService.listSessions())
-                }
               }
             }
           }
@@ -96,6 +111,13 @@ class SessionsApi @Inject()(
       complete {
         logger.warn("Rejected a request because not yet subscribed to Heartbeats!")
         (StatusCodes.ServiceUnavailable, "Session Manager is starting!")
+      }
+  }
+
+  val exceptionHandler: ExceptionHandler = ExceptionHandler {
+    case t: IllegalArgumentException =>
+      complete {
+        (StatusCodes.BadRequest, t.getMessage)
       }
   }
 

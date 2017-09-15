@@ -11,8 +11,8 @@ import io.deepsense.seahorse.datasource.model._
 
 object DatasourceConverters {
 
-  def fromApi(id: UUID, datasource: Datasource): DatasourceDB = DatasourceDB(
-    id = id,
+  def fromApi(datasource: Datasource): DatasourceDB = DatasourceDB(
+    id = datasource.id,
     name = datasource.name,
     downloadUri = datasource.downloadUri,
     datasourceType = datasource.datasourceType,

@@ -15,7 +15,7 @@ import io.deepsense.commons.auth.usercontext._
 import io.deepsense.commons.models.Id
 
 trait AbstractAuthDirectives {
-  val TokenHeader = "X-Auth-Token"
+  val TokenHeader = AuthDirectives.TokenHeader
 
   def withUserContext: Directive1[Future[UserContext]]
 
@@ -41,8 +41,8 @@ trait AuthDirectives extends AbstractAuthDirectives {
 
 trait InsecureAuthDirectives extends AbstractAuthDirectives  {
 
-  val UserIdHeader = "X-Seahorse-UserId"
-  val UserNameHeader = "X-Seahorse-UserName"
+  val UserIdHeader = AuthDirectives.UserIdHeader
+  val UserNameHeader = AuthDirectives.UserNameHeader
 
   val tenantId = "olympus"
   val tenant: Tenant = Tenant(tenantId, tenantId, tenantId, Some(true))
@@ -100,4 +100,10 @@ trait InsecureAuthDirectives extends AbstractAuthDirectives  {
       case None => complete(StatusCodes.BadRequest)
     }
   }
+}
+
+object AuthDirectives {
+  val UserIdHeader = "X-Seahorse-UserId"
+  val UserNameHeader = "X-Seahorse-UserName"
+  val TokenHeader = "X-Auth-Token"
 }

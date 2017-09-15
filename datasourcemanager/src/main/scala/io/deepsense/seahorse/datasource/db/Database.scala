@@ -7,11 +7,11 @@ package io.deepsense.seahorse.datasource.db
 import slick.backend.DatabaseConfig
 import slick.driver.JdbcProfile
 
-import io.deepsense.seahorse.datasource.Configs
+import io.deepsense.seahorse.datasource.DatasourceManagerConfig
 
 object Database {
 
-  val dbConfig: DatabaseConfig[JdbcProfile] = DatabaseConfig.forConfig("databaseSlick", Configs.c)
+  val dbConfig: DatabaseConfig[JdbcProfile] = DatabaseConfig.forConfig("databaseSlick", DatasourceManagerConfig.config)
 
   val db = dbConfig.db
   val driver: JdbcProfile = dbConfig.driver

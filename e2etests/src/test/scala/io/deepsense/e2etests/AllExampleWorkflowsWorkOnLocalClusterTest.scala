@@ -4,11 +4,15 @@
 
 package io.deepsense.e2etests
 
-import org.scalatest.{FreeSpec, Matchers}
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{Await, Future}
+import scala.language.postfixOps
 
-import io.deepsense.e2etests.client.WorkflowManagerClient
-import io.deepsense.models.workflows.WorkflowInfo
+import org.scalatest._
+
+import io.deepsense.models.workflows.{Workflow, WorkflowInfo}
 import io.deepsense.workflowmanager.model.WorkflowDescription
+
 
 class AllExampleWorkflowsWorkOnLocalClusterTest extends FreeSpec with Matchers with SeahorseIntegrationTestDSL {
 
@@ -16,31 +20,52 @@ class AllExampleWorkflowsWorkOnLocalClusterTest extends FreeSpec with Matchers w
 
   "All example workflows should be correct - all nodes run and completed successfully on a local cluster" - {
     ensureSeahorseIsRunning()
-    val exampleWorkflows = getExampleWorkflows()
-    for (exampleWorkflow <- exampleWorkflows) s"Workflow '${exampleWorkflow.name}'" in {
-      val cloneDescription = WorkflowDescription(
-        name = s"CLONE - ${exampleWorkflow.name}",
-        description = exampleWorkflow.description
-      )
-      val clonedWorkflowId = WorkflowManagerClient.cloneWorkflow(exampleWorkflow.id, cloneDescription)
-      val clonedWorkflow = WorkflowManagerClient.getWorkflow(clonedWorkflowId)
+    val exampleWorkflowsFut = fetchExampleWorkflows()
+    Await.result(
+      exampleWorkflowsFut.map(exampleWorkflows =>
+        for {
+          exampleWorkflow <- exampleWorkflows
+        } {
+          s"Workflow '${exampleWorkflow.name}'" in {
+            Await.result(cloneAndRunWorkflow(exampleWorkflow), workflowTimeout)
+          }
+        }), httpTimeout)
+  }
 
-      withExecutor(clonedWorkflowId, TestClusters.local()) { implicit ctx =>
-        launch(clonedWorkflowId)
-        assertAllNodesCompletedSuccessfully(clonedWorkflow)
-      }
+  def cloneWorkflow(wflow: WorkflowInfo): Future[WorkflowInfo] = {
+    val cloneDescription = WorkflowDescription(
+      name = s"CLONE - ${wflow.name}",
+      description = wflow.description
+    )
+    val clonedWorkflowIdFut = wmclient.cloneWorkflow(wflow.id, cloneDescription)
 
-      WorkflowManagerClient.deleteWorkflow(clonedWorkflowId)
+    for {
+      id <- clonedWorkflowIdFut
+      wflows <- wmclient.fetchWorkflows()
+      wflow = wflows.find(_.id == id)
+    } yield {
+      wflow.get
     }
   }
 
-  def getExampleWorkflows(): Seq[WorkflowInfo] = {
-    val workflows = WorkflowManagerClient.getWorkflows()
-    val exampleWorkflows = workflows.filter(_.ownerName == "seahorse")
+  def cloneAndRunWorkflow(wflow: WorkflowInfo): Future[Unit] = {
+    cloneWorkflow(wflow).flatMap { clonedWorkflow =>
+      val clonedWorkflowId = clonedWorkflow.id
+      createSessionSynchronously(clonedWorkflowId)
+      smclient.launchSession(clonedWorkflowId)
+      assertAllNodesCompletedSuccessfully(wflow)
+      smclient.deleteSession(clonedWorkflowId)
+      wmclient.deleteWorkflow(clonedWorkflowId)
+    }
+  }
+
+  def fetchExampleWorkflows(): Future[Seq[WorkflowInfo]] = {
+    val workflowsFut = wmclient.fetchWorkflows()
+    val exampleWorkflows = workflowsFut.map(_.filter(_.ownerName == "seahorse"))
     // Order matters because of
     // - `Write Transformer` in Example 1
     // - `Read Transformer` in Example 4
-    exampleWorkflows.sortBy(_.name)
+    exampleWorkflows.map(_.sortBy(_.name))
   }
 
 }

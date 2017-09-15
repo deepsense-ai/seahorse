@@ -8,12 +8,15 @@ import scala.collection.mutable
 
 import com.google.inject.Inject
 
+import io.deepsense.commons.utils.Logging
 import io.deepsense.models.workflows.Workflow
 import io.deepsense.workflowexecutor.communication.mq.MQCommunication
 import io.deepsense.workflowexecutor.rabbitmq.MQCommunicationFactory
 
-class SessionExecutorClients @Inject() (private val communicationFactory: MQCommunicationFactory) {
+class SessionExecutorClients @Inject() (private val communicationFactory: MQCommunicationFactory) extends Logging {
   private val clients = mutable.Map[Workflow.Id, SessionExecutorClient]()
+
+  def launchWorkflow(id: Workflow.Id): Unit = get(id).launchWorkflow()
 
   def sendPoisonPill(id: Workflow.Id): Unit = get(id).sendPoisonPill()
 
@@ -28,9 +31,11 @@ class SessionExecutorClients @Inject() (private val communicationFactory: MQComm
   }
 
   private def create(id: Workflow.Id): SessionExecutorClient = {
+    val key = s"workflow.${id.toString}.sm.from"
+    logger.debug(s"Creating SessionExecutorClient for $key")
     val publisher = communicationFactory.createPublisher(
       s"workflow.${id.toString}.sm.from",
       MQCommunication.Actor.Publisher.workflow(id))
-    new SessionExecutorClient(publisher)
+    new SessionExecutorClient(id, publisher)
   }
 }

@@ -63,6 +63,17 @@ class WorkflowManagerImpl @Inject()(
     }
   }
 
+  def getInfo(id: Id): Future[Option[WorkflowInfo]] = {
+    logger.debug("Get workflow info: {}", id)
+    authorizator.withRole(roleGet) { userContext =>
+      workflowStorage.get(id).map { workflow =>
+        val result = workflow.map(w => workflowInfo(id, w))
+        logger.info(s"Workflow info for id: $id, $result")
+        result
+      }
+    }
+  }
+
   def download(id: Id): Future[Option[WorkflowWithVariables]] = {
     logger.debug("Download workflow id: {}", id)
     authorizator.withRole(roleGet) { userContext =>
@@ -148,14 +159,9 @@ class WorkflowManagerImpl @Inject()(
     logger.debug("List workflows")
     authorizator.withRole(roleGet) { userContext =>
       workflowStorage.getAll().map { workflows =>
-        val extractedThirdPartyData = workflows.mapValues {
-          case WorkflowFullInfo(objectWorkflow, created, updated, ownerId, ownerName) =>
-            (objectWorkflow.additionalData, created, updated, ownerId, ownerName)
-        }
-
-        extractedThirdPartyData.map {
-          case (workflowId, (thirdPartyData, created, updated, ownerId, ownerName)) =>
-            workflowInfo(workflowId, thirdPartyData, created, updated, ownerId, ownerName)
+        workflows.map {
+          case (workflowId, fullInfo) =>
+            workflowInfo(workflowId, fullInfo)
         }.toSeq
       }
     }
@@ -227,6 +233,16 @@ class WorkflowManagerImpl @Inject()(
       getOptionalString(gui, "name"), getOptionalString(gui, "description"),
       created, updated, ownerId, ownerName
     )
+  }
+
+  private def workflowInfo(id: Workflow.Id, fullInfo: WorkflowFullInfo): WorkflowInfo = {
+    workflowInfo(
+      workflowId = id,
+      thirdPartyData = fullInfo.workflow.additionalData,
+      created = fullInfo.created,
+      updated = fullInfo.updated,
+      ownerId = fullInfo.ownerId,
+      ownerName = fullInfo.ownerName)
   }
 
   private def withResults(

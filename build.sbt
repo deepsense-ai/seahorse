@@ -19,9 +19,11 @@ lazy val seahorseWorkflowExecutor = ProjectRef(shWeRepoDir, "workflowexecutor")
 lazy val backendcommons         = project dependsOn seahorseCommons
 lazy val workflowmanager        = project dependsOn (seahorseDeeplang, seahorseGraph, seahorseReportlib,
   seahorseWorkflowJson, backendcommons, backendcommons % "test->test")
-lazy val sessionmanager         = project dependsOn (seahorseMqProtocol, backendcommons, backendcommons % "test->test")
+lazy val sessionmanager         = project dependsOn (seahorseMqProtocol, backendcommons, backendcommons % "test->test",
+  seahorseWorkflowJson)
 lazy val libraryservice         = project dependsOn (backendcommons, backendcommons % "test->test")
 lazy val datasourcemanager      = project dependsOn (backendcommons)
+lazy val schedulingmanager      = project dependsOn (backendcommons, workflowmanager, sessionmanager)
 
 lazy val seahorseWorkflowExecutorProjects = Seq(
     seahorseCommons,
@@ -38,7 +40,8 @@ lazy val seahorseBackendProjects = Seq(
     workflowmanager,
     sessionmanager,
     libraryservice,
-    datasourcemanager
+    datasourcemanager,
+    schedulingmanager
 )
 
 lazy val rootProjects: Seq[sbt.ProjectReference] =
@@ -50,6 +53,9 @@ lazy val root = (project in file(".")).aggregate(rootProjects:_*)
 lazy val e2etests = project dependsOn (backendcommons, backendcommons % "test->test",
   sessionmanager, workflowmanager, seahorseWorkflowExecutor, seahorseMqProtocol, seahorseWorkflowJson
 )
+
+// Server smoke tests of for services opens up port 8080
+parallelExecution in ThisBuild := false
 
 
 // Sequentially perform integration tests after assembling and deploying GE with dependencies jar.

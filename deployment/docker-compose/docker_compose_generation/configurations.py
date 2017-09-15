@@ -69,6 +69,10 @@ class Service(object):
         return [d for d in self.depends_on() if d.network_mode != 'host']
 
 
+class Mail(Service):
+    def port_mapping(self):
+        return PortMappings().add(PortMappings.Mapping(25, 60111))
+
 class Proxy(Service):
 
     network_mode = 'host'
@@ -77,6 +81,7 @@ class Proxy(Service):
         return [
             WorkflowManager,
             SessionManager,
+            SchedulingManager,
             Library,
             Notebooks,
             RabbitMQ,
@@ -110,6 +115,7 @@ class Proxy(Service):
         return {
             "user-provided": [
                 service_desc('workflow-manager', WorkflowManager),
+                service_desc('scheduling-manager', SchedulingManager),
                 service_desc('library', Library),
                 service_desc('session-manager', SessionManager),
                 service_desc('jupyter', Notebooks),
@@ -135,6 +141,38 @@ class Proxy(Service):
             ]
         }
 
+class SchedulingManagerBase(Service):
+    def exposed_port(self):
+        return 60110
+
+    def depends_on(self):
+        return [
+            Database,
+            SessionManager,
+            WorkflowManager,
+            Mail,
+        ]
+
+    def environment(self):
+        return (Env(
+            PORT=self.exposed_port(),
+            SEAHORSE_EXTERNAL_URL="http://localhost:33321/") +
+                self.deps.WorkflowManager.credentials().as_env())
+
+    def port_mapping(self):
+        return PortMappings().add(PortMappings.Mapping(self.exposed_port(), self.exposed_port()))
+
+class SchedulingManager(SchedulingManagerBase):
+
+    network_mode = 'host'
+
+    def environment(self):
+        return super(SchedulingManager, self).environment() + \
+               Env(
+                   JDBC_URL=self.deps.Database.exposed_jdbc_url(db='schedulingmanager'),
+                   SM_URL='http://{}'.format(self.deps.SessionManager.exposed_address()),
+                   WM_URL='http://{}'.format(self.deps.WorkflowManager.exposed_address()),
+               )
 
 class SessionManager(Service):
 
@@ -350,6 +388,26 @@ class ProxyBridgeNetwork(Proxy):
         return getattr(self.deps, service.name()).internal_address(name).as_string()
 
 
+class SchedulingManagerBridgeNetwork(SchedulingManagerBase):
+    network_mode = None
+
+    @classmethod
+    def name(cls):
+        return 'schedulingmanager'
+
+    @classmethod
+    def image_name(cls):
+        return 'schedulingmanager'
+
+    def environment(self):
+        return super(SchedulingManagerBridgeNetwork, self).environment() + \
+               Env(
+                   HOST='0.0.0.0',
+                   JDBC_URL=self.deps.Database.internal_jdbc_url(db='schedulingmanager'),
+                   SM_URL='http://{}'.format(self.deps.SessionManager.internal_address()),
+                   WM_URL='http://{}'.format(self.deps.WorkflowManager.internal_address()),
+               )
+
 class SessionManagerBridgeNetwork(SessionManager):
 
     network_mode = None
@@ -370,7 +428,6 @@ class SessionManagerBridgeNetwork(SessionManager):
                    JDBC_URL=self.deps.Database.internal_jdbc_url(db='sessionmanager'),
                    SX_PARAM_WM_ADDRESS=self.deps.WorkflowManager.internal_address().as_string()) + \
                self.deps.RabbitMQ.internal_address().as_env('MQ_HOST', 'MQ_PORT')
-
 
 class Configuration(object):
     services = []
@@ -401,6 +458,8 @@ class LinuxConfiguration(Configuration):
 
     services = [
         SessionManager,
+        SchedulingManager,
+        Mail,
         Proxy,
         Frontend,
         Library,
@@ -421,6 +480,8 @@ class MacConfiguration(Configuration):
 
     services = [
         SessionManagerBridgeNetwork,
+        SchedulingManagerBridgeNetwork,
+        Mail,
         ProxyBridgeNetwork,
         Frontend,
         Library,

@@ -1,0 +1,197 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Seahorse Scheduling Manager API",
+    "description": "Seahorse Scheduling Manager API",
+    "version": "1.4.0"
+  },
+  "basePath": "/schedulingmanager/v1",
+  "schemes": [
+    "http"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/workflow/{workflowId}/schedules": {
+      "get": {
+        "description": "Returns list of schedules for a workflow.",
+        "operationId": "getSchedulesForWorkflow",
+        "parameters": [
+          {
+            "name": "workflowId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of schedules for a workflow.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/WorkflowSchedule"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workflow-schedules": {
+      "get": {
+        "description": "Returns list of all workflow schedules.",
+        "operationId": "getWorkflowSchedules",
+        "responses": {
+          "200": {
+            "description": "List of all workflow schedules.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/WorkflowSchedule"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/workflow-schedules/{scheduleId}": {
+      "get": {
+        "operationId": "getWorkflowSchedule",
+        "parameters": [
+          {
+            "name": "scheduleId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Inserted or updated workflow schedule",
+            "schema": {
+              "$ref": "#/definitions/WorkflowSchedule"
+            }
+          },
+          "404": {
+            "description": "Workflow schedule does not exist",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "Creates a new workflow schedule or overrides workflow schedule for given id.",
+        "operationId": "putWorkflowSchedule",
+        "parameters": [
+          {
+            "name": "scheduleId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "name": "workflowSchedule",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WorkflowSchedule"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Inserted or updated workflow schedule.",
+            "schema": {
+              "$ref": "#/definitions/WorkflowSchedule"
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteWorkflowSchedule",
+        "parameters": [
+          {
+            "name": "scheduleId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Workflow schedule deleted if existed."
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "WorkflowSchedule": {
+      "description": "Complete information needed to schedule a workflow.",
+      "type": "object",
+      "required": ["id", "schedule", "workflowId", "executionInfo"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "schedule": {
+          "$ref": "#/definitions/Schedule"
+        },
+        "workflowId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "executionInfo": {
+          "$ref": "#/definitions/WorkflowExecutionInfo"
+        }
+      }
+    },
+    "Schedule": {
+      "type": "object",
+      "required": ["cron"],
+      "properties": {
+        "cron": {
+          "type": "string",
+          "format": "cron"
+        }
+      }
+    },
+    "WorkflowExecutionInfo": {
+      "description": "Information about scheduled execution of a workflow.",
+      "type": "object",
+      "required": ["emailForReports", "presetId"],
+      "properties": {
+        "emailForReports": {
+          "description": "An email will be send to this address after execution.",
+          "type": "string",
+          "format": "email"
+        },
+        "presetId": {
+          "description": "Id of a preset which should be used to execute the workflow.",
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "Error": {
+      "type": "object",
+      "required": ["code", "message"],
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

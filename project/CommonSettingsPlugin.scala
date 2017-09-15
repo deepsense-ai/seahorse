@@ -11,6 +11,8 @@ object CommonSettingsPlugin extends AutoPlugin {
 
   lazy val OurIT = config("it") extend Test
 
+  lazy val globalResources = file("globalresources").getAbsoluteFile
+
   override def globalSettings = Seq(
     scalaVersion := "2.11.8"
   )
