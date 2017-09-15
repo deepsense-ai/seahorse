@@ -140,12 +140,12 @@ trait Params extends Serializable {
     set(getParam(param), value)
   }
 
-  protected final def set(paramPair: ParamPair[_]): this.type = {
+  protected[deeplang] final def set(paramPair: ParamPair[_]): this.type = {
     paramMap.put(paramPair)
     this
   }
 
-  protected final def set(paramPairs: ParamPair[_]*): this.type = {
+  protected[deeplang] final def set(paramPairs: ParamPair[_]*): this.type = {
     paramMap.put(paramPairs: _*)
     this
   }

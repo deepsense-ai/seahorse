@@ -38,7 +38,7 @@ class SqlExpression extends Transformer {
 
   override val params: Array[Param[_]] = declareParams(dataFrameId, expression)
 
-  override private[doperables] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
+  override private[deeplang] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
     logger.debug(s"SqlExpression(expression = '$getExpression'," +
       s" dataFrameId = '$getDataFrameId')")
     df.sparkDataFrame.registerTempTable(getDataFrameId)

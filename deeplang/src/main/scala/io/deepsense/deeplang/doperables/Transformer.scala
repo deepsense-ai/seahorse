@@ -33,14 +33,14 @@ abstract class Transformer extends DOperable with Params with Logging {
   /**
    * Creates a transformed DataFrame based on input DataFrame.
    */
-  private[doperables] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame
+  private[deeplang] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame
 
   /**
    * Should be implemented in subclasses.
    * For known schema of input DataFrame, infers schema of output DataFrame.
    * If it is not able to do it for some reasons, it returns None.
    */
-  private[doperables] def _transformSchema(schema: StructType): Option[StructType] = None
+  private[deeplang] def _transformSchema(schema: StructType): Option[StructType] = None
 
   def transform: DMethod1To1[Unit, DataFrame, DataFrame] = {
     new DMethod1To1[Unit, DataFrame, DataFrame] {
