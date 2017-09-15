@@ -88,6 +88,18 @@ trait WorkflowManager {
   def saveNotebook(workflowId: Workflow.Id, nodeId: Node.Id, notebook: String): Future[Unit]
 
   /**
+   * Copies notebook with from a sourceNodeId to a new notebook with destinationNodeId.
+   *
+   * @param workflowId Id of the workflow.
+   * @param sourceNodeId Id of the node with a source notebook.
+   * @param destinationNodeId Id of the node with a destination notebook.
+   */
+  def copyNotebook(
+      workflowId: Workflow.Id,
+      sourceNodeId: Node.Id,
+      destinationNodeId: Node.Id): Future[Unit]
+
+  /**
    * Updates nodes states.
    *
    * @param workflowId Id of the workflow.

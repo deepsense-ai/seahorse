@@ -227,6 +227,17 @@ abstract class WorkflowApi @Inject() (
                 }
               }
             } ~
+            path(JavaUUID / "notebook" / JavaUUID / "copy" / JavaUUID) {
+              (workflowId, nodeId, destinationNodeId) =>
+                post {
+                  withUserContext { userContext =>
+                    onSuccess(workflowManagerProvider.forContext(userContext)
+                      .copyNotebook(workflowId, nodeId, destinationNodeId)) { _ =>
+                      complete(StatusCodes.Created)
+                    }
+                  }
+                }
+            } ~
             pathEndOrSingleSlash {
               get {
                 withUserContext { userContext =>

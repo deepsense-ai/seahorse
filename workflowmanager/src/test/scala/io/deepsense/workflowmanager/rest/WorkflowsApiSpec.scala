@@ -200,20 +200,17 @@ class WorkflowsApiSpec
           addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
-        ()
       }
       "the user does not have the requested role (on NoRoleException)" in {
         Get(s"/$apiPrefix/${Workflow.Id.randomId}") ~>
           addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
-        ()
       }
       "no auth token was send (on MissingHeaderRejection)" in {
         Get(s"/$apiPrefix/${Workflow.Id.randomId}") ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
-        ()
       }
     }
     "return Not found" when {
@@ -222,7 +219,6 @@ class WorkflowsApiSpec
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
-        ()
       }
     }
     "return a workflow with results" when {
@@ -242,7 +238,6 @@ class WorkflowsApiSpec
           val thirdPartyData = returnedWorkflow.thirdPartyData
           thirdPartyData.fields.get("notebook") shouldBe None
         }
-        ()
       }
     }
     "return BadRequest" when {
@@ -253,7 +248,6 @@ class WorkflowsApiSpec
 
           assertFailureDescriptionHasVersionInfo(responseAs[FailureDescription])
         }
-        ()
       }
     }
   }
@@ -266,7 +260,6 @@ class WorkflowsApiSpec
 
         responseAs[JsArray].elements.size shouldBe 4
       }
-      ()
     }
   }
 
@@ -277,7 +270,6 @@ class WorkflowsApiSpec
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
-        ()
       }
     }
     "return Ok" when {
@@ -286,7 +278,6 @@ class WorkflowsApiSpec
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
         }
-        ()
       }
     }
     "return Unauthorized" when {
@@ -295,14 +286,12 @@ class WorkflowsApiSpec
           addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
-        ()
       }
       "the user does not have the requested role (on NoRoleException)" in {
         Delete(s"/$apiPrefix/${Workflow.Id.randomId}") ~>
           addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
-        ()
       }
       "no auth token was send (on MissingHeaderRejection)" in {
         Delete(s"/$apiPrefix/${Workflow.Id.randomId}") ~> testRoute ~> check {
@@ -319,20 +308,17 @@ class WorkflowsApiSpec
           addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
-        ()
       }
       "the user does not have the requested role (on NoRoleException)" in {
         Get(s"/$apiPrefix/${Workflow.Id.randomId}/download?format=json") ~>
           addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
-        ()
       }
       "no auth token was send (on MissingHeaderRejection)" in {
         Get(s"/$apiPrefix/${Workflow.Id.randomId}/download?format=json") ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
-        ()
       }
     }
     "return Not found" when {
@@ -341,7 +327,6 @@ class WorkflowsApiSpec
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
-        ()
       }
     }
     "return an workflow" when {
@@ -362,7 +347,6 @@ class WorkflowsApiSpec
             Variables()
           )
         }
-        ()
       }
       "auth token is correct, user has roles and version is current (without notebook)" in {
         Get(s"/$apiPrefix/$workflowWithoutNotebookId/download?format=json") ~>
@@ -381,7 +365,6 @@ class WorkflowsApiSpec
             Variables()
           )
         }
-        ()
       }
     }
   }
@@ -403,7 +386,6 @@ class WorkflowsApiSpec
           val resultJs = response.entity.asString.parseJson.asJsObject
           resultJs.fields should contain key "workflowId"
         }
-        ()
       }
     }
     "return BadRequest" when {
@@ -415,7 +397,6 @@ class WorkflowsApiSpec
 
           assertFailureDescriptionHasVersionInfo(responseAs[FailureDescription])
         }
-        ()
       }
     }
     "return Unauthorized" when {
@@ -424,20 +405,17 @@ class WorkflowsApiSpec
           addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
-        ()
       }
       "the user does not have the requested role (on NoRoleExeption)" in {
         Post(s"/$apiPrefix", workflowA) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
-        ()
       }
       "no auth token was send (on MissingHeaderRejection)" in {
         Post(s"/$apiPrefix", workflowA) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
-        ()
       }
     }
   }
@@ -461,7 +439,6 @@ class WorkflowsApiSpec
 
           assertFailureDescriptionHasVersionInfo(responseAs[FailureDescription])
         }
-        ()
       }
     }
 
@@ -483,7 +460,6 @@ class WorkflowsApiSpec
           val resultJs = response.entity.asString.parseJson.asJsObject
           resultJs.fields should contain key "workflowId"
         }
-        ()
       }
     }
   }
@@ -501,7 +477,6 @@ class WorkflowsApiSpec
             RawHeader("X-Auth-Token", validAuthTokenTenantA)) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
-        ()
       }
     }
 
@@ -517,7 +492,6 @@ class WorkflowsApiSpec
           val JsString(clonedWorkflowId) = resultJs.fields("workflowId")
           clonedWorkflowId should not equal workflowAId
         }
-        ()
       }
     }
   }
@@ -541,7 +515,6 @@ class WorkflowsApiSpec
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
         }
-        ()
       }
       "return BadRequest" when {
         "workflow's API version is not compatible with current build" in {
@@ -551,7 +524,6 @@ class WorkflowsApiSpec
 
             assertFailureDescriptionHasVersionInfo(responseAs[FailureDescription])
           }
-          ()
         }
       }
       "user updates his workflow with notebook" in {
@@ -559,7 +531,6 @@ class WorkflowsApiSpec
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
         }
-        ()
       }
     }
     "return NotFound" when {
@@ -569,7 +540,6 @@ class WorkflowsApiSpec
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
-        ()
       }
     }
     "return BadRequest" when {
@@ -582,7 +552,6 @@ class WorkflowsApiSpec
 
           assertFailureDescriptionHasVersionInfo(responseAs[FailureDescription])
         }
-        ()
       }
     }
     "return Unauthorized" when {
@@ -591,14 +560,12 @@ class WorkflowsApiSpec
           addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
-        ()
       }
       "the user does not have the requested role (on NoRoleExeption)" in {
         Put(s"/$apiPrefix/" + workflowAId, updatedWorkflowWithResults) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
-        ()
       }
       "no auth token was send (on MissingHeaderRejection)" in {
         Put(s"/$apiPrefix/" + workflowAId, updatedWorkflowWithResults) ~> testRoute ~> check {
@@ -618,7 +585,6 @@ class WorkflowsApiSpec
           val returnedNotebook = responseAs[String]
           returnedNotebook shouldBe notebookA.compactPrint
         }
-        ()
       }
     }
 
@@ -628,7 +594,6 @@ class WorkflowsApiSpec
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
-        ()
       }
     }
   }
@@ -640,7 +605,17 @@ class WorkflowsApiSpec
         addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
         status should be(StatusCodes.Created)
       }
-      ()
+    }
+  }
+
+  "POST /workflows/:workflowid/notebook/:sourcenodeid/copy/:destinationnodeid" should {
+    "copy notebook" in {
+      val notebook = "notebook content"
+      Post(s"/$apiPrefix/${Workflow.Id.randomId}/" +
+        s"notebook/${Node.Id.randomId}/copy/${Node.Id.randomId}", notebook) ~>
+        addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+        status should be(StatusCodes.Created)
+      }
     }
   }
 
@@ -652,21 +627,18 @@ class WorkflowsApiSpec
           addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
-        ()
       }
       "the user does not have the requested role (on NoRoleException)" in {
         Put(s"/$reportsPrefix/${Workflow.Id.randomId}", executionReport) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
-        ()
       }
       "no auth token was send (on MissingHeaderRejection)" in {
         Put(s"/$reportsPrefix/${Workflow.Id.randomId}", executionReport) ~>
           testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
-        ()
       }
     }
     "save execution report" when {
@@ -675,7 +647,6 @@ class WorkflowsApiSpec
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
         }
-        ()
       }
     }
   }

@@ -16,7 +16,9 @@ import io.deepsense.commons.auth.{Authorizator, AuthorizatorProvider}
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.utils.{Logging, Version}
 import io.deepsense.graph.Node
+import io.deepsense.graph.Node.Id
 import io.deepsense.models.json.workflow.exceptions.WorkflowVersionNotSupportedException
+import io.deepsense.models.workflows.Workflow.Id
 import io.deepsense.models.workflows._
 import io.deepsense.workflowmanager.exceptions.WorkflowNotFoundException
 import io.deepsense.workflowmanager.model.WorkflowDescription
@@ -170,6 +172,19 @@ class WorkflowManagerImpl @Inject()(
       notebook: String): Future[Unit] = {
     authorizator.withRole(roleUpdate) { _ =>
       notebookStorage.save(workflowId, nodeId, notebook)
+    }
+  }
+
+  override def copyNotebook(
+      workflowId: Id,
+      sourceNodeId: Id,
+      destinationNodeId: Id): Future[Unit] = {
+    authorizator.withRole(roleUpdate) { _ =>
+      notebookStorage.get(workflowId, sourceNodeId).map(notebookOpt =>
+        notebookOpt.foreach(
+          notebook => notebookStorage.save(workflowId, destinationNodeId, notebook)
+        )
+      )
     }
   }
 
