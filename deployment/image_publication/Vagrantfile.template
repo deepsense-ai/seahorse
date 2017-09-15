@@ -5,6 +5,8 @@ Vagrant.configure(2) do |config|
     seahorsevm.vm.box_url = ""
     seahorsevm.vm.hostname = "seahorse-vm"
     seahorsevm.vm.boot_timeout = 600
+    seahorsevm.vm.provision "shell", inline: "cd /home/vagrant && for f in *.tar; do docker load --input $f; done"
+    seahorsevm.vm.provision "shell", inline: "cd /home/vagrant && rm *.tar"
     seahorsevm.vm.provision "shell", inline: "cd /resources && docker-compose up -d 2>&1", run: "always"
   end
   config.vm.provider "virtualbox" do |vb|

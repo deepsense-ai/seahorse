@@ -32,3 +32,6 @@ service docker restart
 
 # Install docker-compose
 pip install docker-compose
+
+apt-get clean
+rm -rf /var/lib/apt/lists/*

@@ -19,5 +19,5 @@ DOCKER_IMAGES=(`cat /resources/docker-compose.yml | grep image: | cut -d":" -f 2
 for DOCKER_IMAGE in ${DOCKER_IMAGES[*]}
 do
   echo "Loading $DOCKER_IMAGE.tar"
-  docker load --input $DOCKER_IMAGE.tar
+  cp $DOCKER_IMAGE.tar /home/vagrant
 done
