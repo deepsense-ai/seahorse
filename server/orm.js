@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) 2015, CodiLime Inc.
+ */
+"use strict";
+
 var Waterline = require('waterline');
 var waterline = new Waterline();
 var disk = require('sails-disk');

@@ -1,10 +1,15 @@
+/**
+ * Copyright (c) 2015, CodiLime Inc.
+ */
+"use strict";
+
 var express = require('express');
 
 module.exports = function(waterline) {
   var router = express.Router();
 
   var wc = waterline.collections;
-  for (collection in wc) {
+  for (var collection in wc) {
     if (wc.hasOwnProperty(collection)) {
       var model = wc[collection];
       var response = function(res) {

@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) 2015, CodiLime Inc.
+ */
+"use strict";
+
 var http     = require('http');
 var Q        = require('q');
 var fs       = require('fs');
