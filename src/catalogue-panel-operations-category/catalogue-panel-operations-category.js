@@ -42,7 +42,7 @@ namespace.factory('RecursionHelper', ['$compile', function($compile){
 
 function OperationsCategory(RecursionHelper) {
   return {
-    templateUrl: "catalog-panel-operations-category/catalog-panel-operations-category.html",
+    templateUrl: "catalogue-panel-operations-category/catalogue-panel-operations-category.html",
     replace: "true",
     compile: function(element, scope) {
       // Use the compile function from the RecursionHelper,

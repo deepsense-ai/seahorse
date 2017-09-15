@@ -4,7 +4,7 @@
   "temp": ".tmp/",
   "test": "test/",
   "names": {
-    "js": "catalog-panel.js",
-    "css": "catalog-panel.css"
+    "js": "catalogue-panel.js",
+    "css": "catalogue-panel.css"
   }
 }

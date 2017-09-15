@@ -2,7 +2,7 @@ function OperationItemView() {
   return {
     restrict: 'E',
     replace: true,
-    templateUrl: 'catalog-panel-operation/catalog-panel-operation.html',
+    templateUrl: 'catalogue-panel-operation/catalogue-panel-operation.html',
     scope: {
       id:'@',
       name:'@',

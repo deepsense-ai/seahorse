@@ -4,7 +4,7 @@
  * Created by Oleksandr Tserkovnyi on 08.06.15.
  */
 
-angular.module('test', ['deepsense-catalog-panel'])
+angular.module('test', ['deepsense-catalogue-panel'])
 
 .controller('TestCtrl', ['$scope', function ($scope) {
   $scope.collection = [

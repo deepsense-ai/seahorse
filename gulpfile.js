@@ -21,6 +21,10 @@ gulp.task('clean', function () {
     return del([config.dist + '*', config.temp + '*'], {force: true});
 });
 
+gulp.task('clean-temp', function () {
+    return del([config.temp], {force: true});
+});
+
 gulp.task('html', function () {
     return gulp.src(config.src + '**/*.html')
         .pipe(templateCache({
@@ -62,7 +66,7 @@ gulp.task('serve', function () {
 });
 
 gulp.task('build', function () {
-    return runSequence('clean', ['es6', 'less', 'html'], 'concat');
+    return runSequence('clean', ['es6', 'less', 'html'], 'concat', 'clean-temp');
 });
 
 gulp.task('start', function () {

@@ -4,4 +4,4 @@
  * Created by Oleksandr Tserkovnyi on 10.06.15.
  */
 
-var namespace = angular.module('deepsense-catalog-panel', []);
+var namespace = angular.module('deepsense-catalogue-panel', []);

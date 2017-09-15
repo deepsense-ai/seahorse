@@ -4,7 +4,7 @@ function OperationCatalogue () {
       catalogCollection: '=',
       additionalDirectives: '='
     },
-    templateUrl: "catalog-panel/catalog-panel.html",
+    templateUrl: "catalogue-panel/catalogue-panel.html",
     replace: "true"
   };
 }

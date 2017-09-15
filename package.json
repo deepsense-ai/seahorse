@@ -1,7 +1,7 @@
 {
   "name": "deepsense-catalogue-panel",
-  "version": "0.0.2",
-  "main": "catalog-panel.js",
+  "version": "0.0.4",
+  "main": "catalogue-panel.js",
   "description": "Catalogue panel",
   "license": "ISC",
   "devDependencies": {
