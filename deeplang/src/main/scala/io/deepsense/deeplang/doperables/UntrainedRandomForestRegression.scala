@@ -45,7 +45,7 @@ case class UntrainedRandomForestRegression(
 
       val trainedModel = SparkRandomForest.trainRegressor(
         labeledPoints,
-        extractCategoricalFeatures(dataFrame),
+        extractCategoricalFeatures(dataFrame, featureColumns),
         modelParameters.numTrees,
         modelParameters.featureSubsetStrategy,
         modelParameters.impurity,

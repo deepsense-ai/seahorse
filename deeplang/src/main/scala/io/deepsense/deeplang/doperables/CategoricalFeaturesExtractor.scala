@@ -20,13 +20,30 @@ import io.deepsense.deeplang.doperables.dataframe.{CategoricalColumnMetadata, Da
 
 trait CategoricalFeaturesExtractor {
 
-  def extractCategoricalFeatures(dataframe: DataFrame): Map[Int, Int] = {
+  /**
+   * Extracts categorical features information from selected columns of a dataframe.
+   *
+   * @param dataframe DataFrame
+   * @param featureColumns columns to extract number of categories for
+   * @return map with key columnIndex and value numberOfCategories
+   *         for each non-empty categorical feature
+   */
+  def extractCategoricalFeatures(
+      dataframe: DataFrame, featureColumns: Seq[String]): Map[Int, Int] = {
+
+    val columnMapping = featureColumns.zipWithIndex.toMap
     dataframe.metadata.map { metadata =>
-      metadata.columns.values.map {
-        case CategoricalColumnMetadata(_, Some(index), Some(categories)) =>
-          index -> categories.values.length
-        case _ => null
-      }.filter(_ != null).toMap
+      metadata.columns.values.flatMap {
+        case CategoricalColumnMetadata(name, _, Some(categories)) =>
+          val categoriesCount = categories.values.length
+          // Exclude categorical features with no categories
+          if (featureColumns.contains(name) && categoriesCount > 0) {
+            Some(columnMapping(name) -> categoriesCount)
+          } else {
+            None
+          }
+        case _ => None
+      }.toMap
     }.getOrElse(Map.empty)
   }
 }

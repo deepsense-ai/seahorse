@@ -28,11 +28,11 @@ class CategoricalFeaturesExtractorSpec extends UnitSpec {
   "CategoricalFeaturesExtractor" should {
     "extract empty categorical mappings" when {
       "metadata is missing" in {
-        verifyResult(None, Map.empty)
+        verifyResult(None, Seq.empty, Map.empty)
       }
 
       "metadata is empty" in {
-        verifyResult(Some(DataFrameMetadata.empty), Map.empty)
+        verifyResult(Some(DataFrameMetadata.empty), Seq.empty, Map.empty)
       }
 
       "metadata has no categorical columns" in {
@@ -41,19 +41,19 @@ class CategoricalFeaturesExtractorSpec extends UnitSpec {
           CommonColumnMetadata("col1", Some(1), Some(ColumnType.numeric)),
           CommonColumnMetadata("col2", Some(2), Some(ColumnType.string)),
           CommonColumnMetadata("col3", Some(3), Some(ColumnType.timestamp))
-        ), Map.empty)
-      }
-
-      "categorical column has no index" in {
-        verifyResult(createMetadata(
-          CategoricalColumnMetadata("col0", None, Some(CategoriesMapping.empty))
-        ), Map.empty)
+        ), Seq("col0", "col1", "col2", "col3"), Map.empty)
       }
 
       "categorical column has no categories" in {
         verifyResult(createMetadata(
           CategoricalColumnMetadata("col0", Some(0), None)
-        ), Map.empty)
+        ), Seq("col0"), Map.empty)
+      }
+
+      "no categorical column is selected" in {
+        verifyResult(createMetadata(
+          CategoricalColumnMetadata("col0", Some(0), Some(CategoriesMapping(Seq("cat1", "cat2"))))
+        ), Seq.empty, Map.empty)
       }
     }
 
@@ -61,7 +61,7 @@ class CategoricalFeaturesExtractorSpec extends UnitSpec {
       "metadata has categorical column" in {
         verifyResult(createMetadata(
           CategoricalColumnMetadata("col0", Some(0), Some(CategoriesMapping(Seq("cat1", "cat2"))))
-        ), Map(0 -> 2))
+        ), Seq("col0"), Map(0 -> 2))
       }
 
       "metadata has multiple columns" in {
@@ -73,17 +73,35 @@ class CategoricalFeaturesExtractorSpec extends UnitSpec {
           CategoricalColumnMetadata("col4", Some(4), Some(CategoriesMapping(Seq.empty))),
           CategoricalColumnMetadata("no-index", None, Some(CategoriesMapping(Seq.empty))),
           CategoricalColumnMetadata("no-categories", Some(100), None)
-        ), Map(0 -> 2, 2 -> 1, 4 -> 0))
+        ),
+          Seq("col0", "col1", "col2", "col3", "col4", "no-index", "no-categories"),
+          Map(0 -> 2, 2 -> 1))
+      }
+
+      "only some features are selected" in {
+        verifyResult(createMetadata(
+          CategoricalColumnMetadata("col0", Some(0), Some(CategoriesMapping(Seq("cat1", "cat2")))),
+          CommonColumnMetadata("col1", Some(1), Some(ColumnType.boolean)),
+          CategoricalColumnMetadata("col2", Some(2), Some(CategoriesMapping(Seq("cat1")))),
+          CommonColumnMetadata("col3", Some(3), Some(ColumnType.numeric)),
+          CategoricalColumnMetadata("col4", Some(4), Some(CategoriesMapping(Seq.empty))),
+          CategoricalColumnMetadata("no-index", None, Some(CategoriesMapping(Seq.empty))),
+          CategoricalColumnMetadata("no-categories", Some(100), None)
+        ),
+          Seq("col2", "col0", "col4", "no-categories"),
+          Map(0 -> 1, 1 -> 2))
       }
     }
   }
 
   private def verifyResult(
-      metadata: Option[DataFrameMetadata], expectedResult: Map[Int, Int]): Unit = {
+      metadata: Option[DataFrameMetadata],
+      featureColumns: Seq[String],
+      expectedResult: Map[Int, Int]): Unit = {
     val extractor = new CategoricalFeaturesExtractor {}
     val dataframe = mock[DataFrame]
     Mockito.when(dataframe.metadata).thenReturn(metadata)
-    val extractedMappings = extractor.extractCategoricalFeatures(dataframe)
+    val extractedMappings = extractor.extractCategoricalFeatures(dataframe, featureColumns)
     extractedMappings should contain theSameElementsAs expectedResult
   }
 

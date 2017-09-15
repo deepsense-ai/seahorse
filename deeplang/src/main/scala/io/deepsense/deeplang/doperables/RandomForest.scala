@@ -16,4 +16,4 @@
 
 package io.deepsense.deeplang.doperables
 
-abstract class RandomForest extends LinearModel with SingleTargetRegressor
+abstract class RandomForest extends SupervisedModel with SingleTargetRegressor
