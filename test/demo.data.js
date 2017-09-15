@@ -100,6 +100,10 @@ angular.module('test').
                   }
                 }
               ]
+            },
+            {
+              "name": "choice3-no-schema",
+              "schema": null
             }
           ]
         },
@@ -267,6 +271,10 @@ angular.module('test').
                   "required": true
                 }
               ]
+            },
+            {
+              "name": "choice4",
+              "schema": null
             }
           ]
         }

@@ -1,6 +1,6 @@
 {
   "name": "deepsense-attributes-panel",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "main": "attributes-panel.js",
   "description": "Attributes panel",
   "license": "ISC",
