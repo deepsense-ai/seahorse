@@ -109,7 +109,7 @@ object Dependencies {
     sprayRouting
   ) ++ Seq(akkaTestkit, mockitoCore, scalatest, sprayTestkit).map(_ % Test)
 
-  val workflowmanager = Spark.onlyInTests ++ Seq(
+  val workflowmanager = Spark.components ++ Seq(
     akkaActor,
     apacheCommons,
     guice,
