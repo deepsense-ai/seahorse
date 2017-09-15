@@ -104,4 +104,4 @@ services:
     ports:
       - "1521:1521"
     volumes:
-      - ./h2-data:/opt/h2-data:rw
+      - "${DB_DIR}:/opt/h2-data:rw"
