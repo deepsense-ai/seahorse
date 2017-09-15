@@ -13,6 +13,7 @@ place.
 
 Supports conversions from all types to String type, Numeric type and Categorical type.
 When a non-string column is converted to Categorical it is first converted to String.
+Empty strings in columns converted to Categorical are converted to null values.
 Every null value stays a null value in the result DataFrame (despite the column type change).
 When a Timestamp column is converted to Numeric then each value is represented
 by the number of milliseconds since 1 January 1970.
