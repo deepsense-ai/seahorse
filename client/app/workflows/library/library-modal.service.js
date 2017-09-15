@@ -1,9 +1,9 @@
 'use strict';
 
-import tpl from './dataframe-library-modal.html';
+import tpl from './library-modal.html';
 
 /* @ngInject */
-function DataframeLibraryModalService($uibModal, LibraryService) {
+function LibraryModalService($uibModal, LibraryService) {
   const service = this;
 
   service.openLibraryModal = openLibraryModal;
@@ -13,7 +13,7 @@ function DataframeLibraryModalService($uibModal, LibraryService) {
       animation: false,
       templateUrl: tpl,
       size: 'lg',
-      controller: 'DataframeLibraryModalCtrl',
+      controller: 'LibraryModalCtrl',
       controllerAs: 'controller',
       backdrop: 'static',
       keyboard: true,
@@ -34,5 +34,5 @@ function DataframeLibraryModalService($uibModal, LibraryService) {
 }
 
 exports.inject = function (module) {
-  module.service('DataframeLibraryModalService', DataframeLibraryModalService);
+  module.service('LibraryModalService', LibraryModalService);
 };

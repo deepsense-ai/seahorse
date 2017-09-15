@@ -14,7 +14,7 @@ function LibraryConnector() {
       fileUri: '='
     },
     controllerAs: 'controller',
-    controller: function ($scope, DataframeLibraryModalService, LibraryService) {
+    controller: function ($scope, LibraryModalService, LibraryService) {
       const vm = this;
 
       vm.openLibrary = openLibrary;
@@ -25,7 +25,7 @@ function LibraryConnector() {
       });
 
       function openLibrary() {
-        DataframeLibraryModalService.openLibraryModal(CAN_SELECT_DATAFRAME)
+        LibraryModalService.openLibraryModal(CAN_SELECT_DATAFRAME)
           .then((result) => {
             if (result) {
               vm.fileUri = result.uri;

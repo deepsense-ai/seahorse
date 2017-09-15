@@ -3,7 +3,7 @@
 const COOKIE_NAME = 'DELETE_DATAFRAME_COOKIE';
 
 /* @ngInject */
-function DataframeLibraryModalCtrl($scope, $uibModalInstance, LibraryService, canChooseDataframe, DeleteModalService) {
+function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, canChooseDataframe, DeleteModalService) {
   const vm = this;
 
   vm.loading = true;
@@ -116,5 +116,5 @@ function DataframeLibraryModalCtrl($scope, $uibModalInstance, LibraryService, ca
 }
 
 exports.inject = function (module) {
-  module.controller('DataframeLibraryModalCtrl', DataframeLibraryModalCtrl);
+  module.controller('LibraryModalCtrl', LibraryModalCtrl);
 };

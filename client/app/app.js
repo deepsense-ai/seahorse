@@ -26,7 +26,8 @@ if (browserValidator.isBrowserSupported()) {
     require('./enums/enums.module.js').name,
     require('./common/common.module.js').name,
     require('./errors/errors.module.js').name,
-    require('./server-communication/server-communication.module.js').name
+    require('./server-communication/server-communication.module.js').name,
+    require('./workflows/library/library.module.js')
   ]);
   require('./app.config.js').inject(lab);
   require('./version.factory.js').inject(lab);
