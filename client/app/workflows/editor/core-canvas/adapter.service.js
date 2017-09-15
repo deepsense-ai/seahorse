@@ -37,6 +37,8 @@ class AdapterService {
     this.WorkflowService = WorkflowService;
     this.GraphStyleService = GraphStyleService;
     this.Report = Report;
+
+    this.selectedPortId = null;
   }
 
   initialize(container) {
@@ -201,15 +203,22 @@ class AdapterService {
 
       jsPlumbPort.bind('mouseover', (endpoint) => {
         this.onMouseOver(endpoint.canvas, port);
+        jsPlumbPort.addClass('port-active');
       });
 
       jsPlumbPort.bind('mouseout', () => {
         this.onMouseOut();
+        if (jsPlumbPort.id !== this.selectedPortId) {
+          jsPlumbPort.removeClass('port-active');
+        }
       });
 
       jsPlumbPort.bind('click', (reference) => {
         if (hasReport) {
+          this.selectedPortId = jsPlumbPort.id;
+          jsPlumbPort.addClass('port-active');
           this.onMouseClick({reference, port});
+          this.removeActivePortClasses();
         }
       });
 
@@ -224,6 +233,7 @@ class AdapterService {
         jsPlumbPort.addClass('has-report sa sa-chart');
       }
 
+      jsPlumbPort.addClass(portType);
       jsPlumbPort.setParameter('portIndex', port.index);
       jsPlumbPort.setParameter('nodeId', node.id);
     });
@@ -240,10 +250,12 @@ class AdapterService {
 
       jsPlumbPort.bind('mouseover', (endpoint) => {
         this.onMouseOver(endpoint.canvas, port);
+        jsPlumbPort.addClass('port-active');
       });
 
       jsPlumbPort.bind('mouseout', () => {
         this.onMouseOut();
+        jsPlumbPort.removeClass('port-active');
       });
 
       jsPlumbPort.setParameter('portIndex', port.index);
@@ -268,6 +280,22 @@ class AdapterService {
       connection.setParameter('edgeId', edge.id);
     }
   }
+
+  removeNodes(nodesIdsToRemove) {
+    nodesIdsToRemove.forEach((nodeId) => {
+      let node = this.GraphStyleService.getNodeElementById(nodeId);
+      jsPlumb.remove(node);
+    });
+  }
+
+  removeActivePortClasses() {
+    jsPlumb.selectEndpoints().each((endpoint) => {
+      if (endpoint.id !== this.selectedPortId) {
+        endpoint.removeClass('port-active');
+      }
+    });
+  }
+
 }
 
 export default AdapterService;

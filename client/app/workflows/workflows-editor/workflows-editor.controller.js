@@ -4,15 +4,15 @@ class WorkflowsEditorController {
 
   /* @ngInject */
   constructor(workflowWithResults, $scope, $state, $rootScope, WorkflowCloneService,
-              config, Report, MultiSelectionService, Operations, GraphPanelRendererService, WorkflowService,
-              MouseEvent, ConfirmationModalService, ExportModalService, GraphNodesService, NotificationService,
+              Report, MultiSelectionService, WorkflowService,
+              ConfirmationModalService, ExportModalService, GraphNodesService, NotificationService,
               ServerCommunication, CopyPasteService, BottomBarService, NodeCopyPasteVisitorService,
               EventsService, WorkflowsEditorService, AdapterService) {
 
     _.assign(this, {
       workflowWithResults, $scope, $state, $rootScope, WorkflowCloneService,
-      config, Report, MultiSelectionService, Operations, GraphPanelRendererService, WorkflowService,
-      MouseEvent, ConfirmationModalService, ExportModalService, GraphNodesService, NotificationService,
+      Report, MultiSelectionService, WorkflowService,
+      ConfirmationModalService, ExportModalService, GraphNodesService, NotificationService,
       ServerCommunication, CopyPasteService, BottomBarService, NodeCopyPasteVisitorService,
       EventsService, WorkflowsEditorService, AdapterService
     });
@@ -29,7 +29,6 @@ class WorkflowsEditorController {
 
     this.BottomBarData = BottomBarService.tabsState;
     this.selectedNode = null;
-    this.catalog = Operations.getCatalog();
     this._editableModeEventListeners = [];
     this.init(workflowWithResults);
   }
@@ -169,7 +168,6 @@ class WorkflowsEditorController {
       this.EventsService.on(this.EventsService.EVENTS.WORKFLOW_DELETE_SELECTED_ELEMENT, this._handleDelete.bind(this)),
 
       this.$scope.$on('$destroy', () => {
-        // this.GraphPanelRendererService.clearWorkflow();
         this.NotificationService.clearToasts();
         this._unbindEditorListeners();
       })
@@ -273,9 +271,8 @@ class WorkflowsEditorController {
     this.MultiSelectionService.clearSelection();
     this.unselectNode();
     this.selectedPortObject = null;
-    this.GraphPanelRendererService.removeNodes(nodeIdsToBeRemoved);
+    this.AdapterService.removeNodes(nodeIdsToBeRemoved);
   }
-
 }
 
 exports.inject = function (module) {

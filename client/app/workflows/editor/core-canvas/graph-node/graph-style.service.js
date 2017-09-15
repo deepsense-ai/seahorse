@@ -21,15 +21,23 @@ const DEFAULT_PAINT_STYLE = {
 
 const STYLES_MAP = {
   'estimator': {
+    stroke: 'transparent',
+    strokeWidth: 5,
     fill: SEAHORSE_SEA_GREEN
   },
   'transformer': {
+    stroke: 'transparent',
+    strokeWidth: 5,
     fill: SEAHORSE_MADISON
   },
   'evaluator': {
+    stroke: 'transparent',
+    strokeWidth: 5,
     fill: SEAHORSE_ALLPORTS
   },
   'default': {
+    stroke: 'transparent',
+    strokeWidth: 3,
     fill: SEAHORSE_BLUE
   }
 };

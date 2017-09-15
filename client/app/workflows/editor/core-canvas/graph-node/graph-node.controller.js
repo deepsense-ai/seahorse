@@ -77,7 +77,7 @@ class GraphNodeController {
 
   getNodeType() {
     const operationId = this.node.operationId;
-    if (operationId in Object.values(specialOperations.ACTIONS)) {
+    if (Object.values(specialOperations.ACTIONS).includes(operationId)) {
       return 'action';
     } else if (operationId === specialOperations.CUSTOM_TRANSFORMER.SINK
       || operationId === specialOperations.CUSTOM_TRANSFORMER.SOURCE) {

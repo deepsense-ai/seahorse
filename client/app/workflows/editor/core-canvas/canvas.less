@@ -41,9 +41,6 @@
     z-index: 2;
   }
 
-  .dataframe-output-port {
-    z-index: 100;
-  }
 
   .matching-port-default svg circle {
     animation: svg-fill-animation-default 1s linear infinite;
@@ -61,6 +58,10 @@
     animation: svg-fill-animation-estimator 1s linear infinite;
   }
 
+  .dataframe-output-port {
+    z-index: 100;
+  }
+
   .has-report {
     display: flex;
     justify-content: center;
@@ -69,9 +70,22 @@
     &:before {
       font-size: 14px;
       position: relative;
-      color: white;
+      color: @color-white;
       z-index: 1;
     }
+  }
+
+  .dataframe-output-port.has-report {
+   padding-bottom: 5px;
+  }
+
+  .port-active:not(.transformer) svg circle,
+  .port-active:not(.transformer) svg rect {
+    stroke: @seahorse-madison;
+  }
+
+  .port-active.transformer svg rect {
+    stroke: @seahorse-blue;
   }
 
   @keyframes svg-fill-animation-default {

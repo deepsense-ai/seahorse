@@ -77,7 +77,7 @@ class GraphNodesService {
     const createdNode = workflow.createNode(nodeParams);
     createdNode.parametersValues = angular.copy(node.parameters.serialize());
 
-    if (Object.values(this.specialOperations.NOTEBOOKS).includes(node.operationId)) {
+    if (Object.values(specialOperations.NOTEBOOKS).includes(node.operationId)) {
       this.WorkflowsApiClient.cloneNotebookNode(workflow.id, node.id, newNodeId).then(() => {
         return workflow.addNode(createdNode);
       }, () => {
@@ -101,7 +101,7 @@ class GraphNodesService {
   _mapOldIdsWithNewOnes(innerWorkflow) {
     let map = {};
     innerWorkflow.nodes.forEach((node) => {
-      if (node.operation.id === this.specialOperations.CUSTOM_TRANSFORMER.NODE) {
+      if (node.operation.id === specialOperations.CUSTOM_TRANSFORMER.NODE) {
         let mapFromNestedNode = this._mapOldIdsWithNewOnes(node.parameters['inner workflow'].workflow);
         map = angular.extend(map, mapFromNestedNode);
       }
@@ -137,8 +137,8 @@ class GraphNodesService {
   }
 
   isSinkOrSource(node) {
-    return node.operationId === this.specialOperations.CUSTOM_TRANSFORMER.SINK ||
-      node.operationId === this.specialOperations.CUSTOM_TRANSFORMER.SOURCE;
+    return node.operationId === specialOperations.CUSTOM_TRANSFORMER.SINK ||
+      node.operationId === specialOperations.CUSTOM_TRANSFORMER.SOURCE;
   }
 
 }
