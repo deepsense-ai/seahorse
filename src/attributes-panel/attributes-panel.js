@@ -18,7 +18,9 @@ function OperationAttributes($rootScope, AttributesPanelService, config) {
     restrict: 'E',
     scope: {
       node: '=',
-      workflow: '=',
+      isInnerWorkflow: '=',
+      publicParams: '=',
+      workflow: '=', // It's actually workflowId. TODO Rename it to workflowId
       disabledMode: '=',
       predefColors: '='
     },
@@ -26,13 +28,15 @@ function OperationAttributes($rootScope, AttributesPanelService, config) {
     replace: false,
     link: (scope, element) => {
       scope.selected = 'parameters';
+      scope.publicParams = scope.publicParams || [];
+
       scope.$watch('node', function () {
         let notebookOpId = 'e76ca616-0322-47a5-b390-70c9668265dd';
         scope.hasCodeEdit = scope.node.operationId === notebookOpId;
         scope.$applyAsync(setCorrectHeight.bind(null, element[0]));
       });
 
-      scope.$watch('disabledMode', function() {
+      scope.$watch('disabledMode', function () {
         if (scope.disabledMode) {
           AttributesPanelService.setDisabledMode();
           AttributesPanelService.disableElements(element[0]);
@@ -49,6 +53,28 @@ function OperationAttributes($rootScope, AttributesPanelService, config) {
       this.getDocsHost = () => config.docsHost;
 
       this.hasCodeEdit = () => $scope.hasCodeEdit;
+      this.isInnerWorkflow = () => $scope.isInnerWorkflow;
+
+      this.getVisibility = (parameterName) => {
+        let publicParam = _.find($scope.publicParams, (pp) => pp.paramName === parameterName);
+        return publicParam ? 'public' : 'private';
+      };
+
+      this.setVisibility = (parameterName, visibility) => {
+        switch (visibility) {
+          case 'public' :
+            let publicParam = {
+              nodeId: $scope.node.id,
+              paramName: parameterName,
+              publicName: parameterName
+            };
+            $scope.publicParams.push(publicParam);
+            break;
+          case 'private' :
+            $scope.publicParams = _.reject($scope.publicParams, (p) => p.paramName === parameterName);
+            break;
+        }
+      };
 
       this.showNotebook = () => {
         $scope.modal = $uibModal.open({

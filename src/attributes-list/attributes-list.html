@@ -11,7 +11,23 @@
       <label>
         {{ ::parameter.name }}
       </label>
-      <i class="attributes-list__icon--help fa fa-question-circle"
+      <span ng-if="::isInnerWorkflow() && ::isRootLevelParameter" ng-switch="getVisibility(parameter.name)">
+        <i class="attributes-list__icon fa fa-lock"
+           ng-switch-when="private"
+           ng-click="setVisibility(parameter.name, 'public')"
+           popover-placement="left"
+           uib-popover="This parameter is currently PRIVATE. Click to make it public"
+           popover-trigger="mouseenter"
+           popover-append-to-body="true"></i>
+        <i class="attributes-list__icon fa fa-unlock"
+           ng-switch-when="public"
+           ng-click="setVisibility(parameter.name, 'private')"
+           popover-placement="left"
+           uib-popover="This parameter is currently PUBLIC. Click to make it private"
+           popover-trigger="mouseenter"
+           popover-append-to-body="true"></i>
+      </span>
+      <i class="attributes-list__icon attributes-list__icon--help fa fa-question-circle"
          popover-placement="left"
          uib-popover="{{ ::parameter.schema.description }}"
          popover-trigger="mouseenter"

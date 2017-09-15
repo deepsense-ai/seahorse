@@ -1195,6 +1195,562 @@ angular.module('test').
       }
     };
 
+    let publicPrivateTest = {
+      node: {
+        description: 'Copy of simple sql db reader but inside inner workflow',
+        id: '935784be-af87-4a8d-bdca-b0c057432946',
+        name: 'Copy of Inner workflow params but inside inner workflow',
+        uiName: 'Sql Reader',
+        color: '#00B1EB',
+        operationId: 'e76ca616-0322-47a5-b390-70c9668265dd',
+        parameters: null,
+        state: {
+          "status": "status_completed",
+          "started": "2012-08-20T21:11:09Z",
+          "ended": "2012-08-20T21:12:09Z"
+        },
+        stateDetails: {
+          "progress": {
+            "current": 3,
+            "total": 23
+          }
+        },
+        input: [
+          {
+            portIndex: 0,
+            typeQualifier: ['io.deepsense.type1', 'io.seahorse.type2', 'io.deepsense.type3']
+          },
+          {
+            portIndex: 1,
+            typeQualifier: ['io.deepsense.type4', 'io.seahorse.type5']
+          }
+        ],
+        originalOutput: [
+          {
+            portIndex: 0,
+            typeQualifier: ['io.deepsense.type1', 'io.seahorse.type2', 'io.deepsense.type3']
+          },
+          {
+            portIndex: 1,
+            typeQualifier: ['io.deepsense.type4']
+          }
+        ],
+        output: [
+          {
+            portIndex: 0,
+            typeQualifier: ['io.deepsense.type1'],
+            result: {
+              params: {
+                schema: [
+                  {
+                    name: "inferred_string",
+                    type: "string",
+                    description: "inferred string description",
+                    default: "some default",
+                    required: true,
+                    validator: {
+                      type: "regex",
+                      configuration: {
+                        regex: ".*"
+                      }
+                    }
+                  },
+                  {
+                    name: "inferred_boolean",
+                    type: "boolean",
+                    description: "boolean attr test",
+                    default: true,
+                    required: true
+                  },
+                  {
+                    name: "inferred_numeric",
+                    type: "numeric",
+                    description: "numeric attr test",
+                    default: 123,
+                    required: true,
+                    isGriddable: true
+                  },
+                  {
+                    "name": "inferred_choice",
+                    "type": "choice",
+                    "description": "sample choice description",
+                    "default": "choice1",
+                    "required": true,
+                    "values": [
+                      {
+                        "name": "choice1",
+                        "schema": [
+                          {
+                            "name": "wrapped default",
+                            "type": "numeric",
+                            "description": "11 desc",
+                            "default": 42,
+                            "required": true,
+                            "isGriddable": true,
+                            "validator": {
+                              "type": "range",
+                              "configuration": {
+                                "begin": 40,
+                                "end": 50,
+                                "beginIncluded": true,
+                                "endIncluded": false,
+                                "step": 2
+                              }
+                            }
+                          },
+                          {
+                            "name": "overriden default",
+                            "type": "numeric",
+                            "description": "11 desc",
+                            "default": 42,
+                            "required": true,
+                            "isGriddable": true,
+                            "validator": {
+                              "type": "range",
+                              "configuration": {
+                                "begin": 40,
+                                "end": 50,
+                                "beginIncluded": true,
+                                "endIncluded": false,
+                                "step": 2
+                              }
+                            }
+                          },
+                          {
+                            "name": "name21",
+                            "type": "string",
+                            "description": "21 desc",
+                            "default": "word123",
+                            "required": true,
+                            "validator": {
+                              "type": "regex",
+                              "configuration": {
+                                "regex": "^word[\\d]+$"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "name": "choice4",
+                        "schema": null
+                      }
+                    ]
+                  }
+                ],
+                values: {
+                  "inferred_string": "inferred string value",
+                  "inferred_choice": {
+                    "choice1": {
+                      "overriden default": {
+                        "values": [{
+                          "type": "seq",
+                          "value": {
+                            "sequence": [42, 44, 46, 48]
+                          }
+                        }]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            portIndex: 1,
+            typeQualifier: ['io.deepsense.type1', 'io.seahorse.type2', 'io.seahorse.type3']
+          },
+          {
+            portIndex: 2,
+            typeQualifier: ['io.deepsense.type3'],
+            result: {
+              schema: {
+                fields: [
+                  {
+                    name: "x",
+                    dataType: "integer",
+                    deeplangType: "numeric"
+                  },
+                  {
+                    name: "y",
+                    dataType: "string",
+                    deeplangType: "string"
+                  },
+                  {
+                    name: "abc",
+                    dataType: "string",
+                    deeplangType: "string"
+                  },
+                  {
+                    name: "cde",
+                    dataType: "string",
+                    deeplangType: "string"
+                  },
+                  {
+                    name: "x1",
+                    dataType: "integer",
+                    deeplangType: "numeric"
+                  },
+                  {
+                    name: "y2",
+                    dataType: "string",
+                    deeplangType: "string"
+                  },
+                  {
+                    name: "abc3",
+                    dataType: "string",
+                    deeplangType: "string"
+                  },
+                  {
+                    name: "cde4",
+                    dataType: "string",
+                    deeplangType: "string"
+                  },
+                  {
+                    name: "x11",
+                    dataType: "integer",
+                    deeplangType: "numeric"
+                  },
+                  {
+                    name: "y22",
+                    dataType: "string",
+                    deeplangType: "string"
+                  },
+                  {
+                    name: "abc33",
+                    dataType: "string",
+                    deeplangType: "string"
+                  },
+                  {
+                    name: "cde44",
+                    dataType: "string",
+                    deeplangType: "string"
+                  },
+                  {
+                    name: "x111",
+                    dataType: "integer",
+                    deeplangType: "numeric"
+                  },
+                  {
+                    name: "y222",
+                    dataType: "string",
+                    deeplangType: "string"
+                  },
+                  {
+                    name: "abc333",
+                    dataType: "string",
+                    deeplangType: "string"
+                  },
+                  {
+                    name: "cde444",
+                    dataType: "string",
+                    deeplangType: "string"
+                  },
+                  {
+                    name: "x1111",
+                    dataType: "integer",
+                    deeplangType: "numeric"
+                  },
+                  {
+                    name: "y2222",
+                    dataType: "string",
+                    deeplangType: "string"
+                  },
+                  {
+                    name: "abc3333",
+                    dataType: "string",
+                    deeplangType: "string"
+                  },
+                  {
+                    name: "cde4444",
+                    dataType: "string",
+                    deeplangType: "string"
+                  },
+                  {
+                    name: "x5",
+                    dataType: "integer",
+                    deeplangType: "numeric"
+                  },
+                  {
+                    name: "y6",
+                    dataType: "string",
+                    deeplangType: "string"
+                  },
+                  {
+                    name: "abc7",
+                    dataType: "string",
+                    deeplangType: "string"
+                  },
+                  {
+                    name: "cde8",
+                    dataType: "string",
+                    deeplangType: "string"
+                  },
+                  {
+                    name: "xx",
+                    dataType: "integer",
+                    deeplangType: "numeric"
+                  },
+                  {
+                    name: "yy",
+                    dataType: "string",
+                    deeplangType: "string"
+                  },
+                  {
+                    name: "abcabc",
+                    dataType: "string",
+                    deeplangType: "string"
+                  },
+                  {
+                    name: "cdecde",
+                    dataType: "string",
+                    deeplangType: "string"
+                  },
+                  {
+                    name: "xx1",
+                    dataType: "integer",
+                    deeplangType: "numeric"
+                  },
+                  {
+                    name: "bool:yy2",
+                    dataType: "boolean",
+                    deeplangType: "boolean"
+                  },
+                  {
+                    name: "abcabc3",
+                    dataType: "string",
+                    deeplangType: "string"
+                  },
+                  {
+                    name: "certain timestamp col",
+                    dataType: "timestamp",
+                    deeplangType: "timestamp"
+                  },{
+                    name: "xx11",
+                    dataType: "integer",
+                    deeplangType: "numeric"
+                  },
+                  {
+                    name: "yy22",
+                    dataType: "string",
+                    deeplangType: "string"
+                  },
+                  {
+                    name: "abcabc33",
+                    dataType: "string",
+                    deeplangType: "string"
+                  },
+                  {
+                    name: "cdecde44",
+                    dataType: "timestamp",
+                    deeplangType: "timestamp"
+                  },
+                  {
+                    name: "xx5",
+                    dataType: "integer",
+                    deeplangType: "numeric"
+                  },
+                  {
+                    name: "yy6",
+                    dataType: "string",
+                    deeplangType: "string"
+                  },
+                  {
+                    name: "abcabc7-bool",
+                    dataType: "boolean",
+                    deeplangType: "boolean"
+                  },
+                  {
+                    name: "cdecde8",
+                    dataType: "string",
+                    deeplangType: "string"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      schema: [
+        {
+          "name": "connection_string",
+          "type": "string",
+          "description": "jdbc address mmmmmmmm mmmmmmmm mmmmmmmm mmmmmmmm mmmmmmmm mmmmmmmm mmmmmmmm mmmmmmmmmmmmm mmmmmmmmmmm mmmmmmmm",
+          "default": "jdbc:",
+          "required": true,
+          "validator": {
+            "type": "regex",
+            "configuration": {
+              "regex": "^jdbc:[a-z:/]*$"
+            }
+          }
+        },
+        {
+          "name": "boolean_attr_test",
+          "type": "boolean",
+          "description": "boolean attr test",
+          "default": true,
+          "required": true
+        },
+        {
+          "name": "sample-multiplier",
+          "type": "multiplier",
+          "description": "This is a multiplier parameter test teats as ttatasast" +
+          "asast tasat sat at .",
+          "required": true,
+          "values": [
+            {
+              "name": "http-field",
+              "type": "string",
+              "description": "sample1",
+              "default": "http://",
+              "required": true,
+              "validator": {
+                "type": "regex",
+                "configuration": {
+                  "regex": "^http://"
+                }
+              }
+            },
+            {
+              "name": "ftp-field",
+              "type": "string",
+              "description": "sample1",
+              "default": "ftp://",
+              "required": true,
+              "validator": {
+                "type": "regex",
+                "configuration": {
+                  "regex": "^ftp://"
+                }
+              }
+            },
+            {
+              "name": "some-cols",
+              "type": "selector",
+              "description": "sample desc",
+              "default": null,
+              "required": true,
+              "isSingle": true,
+              "portIndex": 1
+            }
+          ]
+        },
+        {
+          "name": "sample_multiple_choice",
+          "type": "multipleChoice",
+          "description": "sample multiple choice description",
+          "default": ["choice2-some-example-text"],
+          "required": true,
+          "values": [
+            {
+              "name": "choice1-long-text",
+              "schema": [
+                {
+                  "name": "name_001",
+                  "type": "numeric",
+                  "description": "sample sum field",
+                  "default": 101,
+                  "required": false,
+                  "validator": {
+                    "type": "range",
+                    "configuration": {
+                      "begin": 100,
+                      "end": 102,
+                      "beginIncluded": false,
+                      "endIncluded": true,
+                      "step": 1
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "name": "choice2-some-example-text",
+              "schema": [
+                {
+                  "name": "name_002",
+                  "type": "string",
+                  "description": "string param",
+                  "default": "2+2+2",
+                  "required": true,
+                  "validator": {
+                    "type": "regex",
+                    "configuration": {
+                      "regex": "^\\d+[+-]\\d+[+=]\\d+$"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "name": "choice3-no-schema",
+              "schema": null
+            }
+          ]
+        },
+        {
+          "name": "sample-multiplier-nonempty",
+          "type": "multiplier",
+          "description": "This is a multiplier parameter.",
+          "required": true,
+          "values": [
+            {
+              "name": "http-field",
+              "type": "string",
+              "description": "sample1",
+              "default": "http://",
+              "required": true,
+              "validator": {
+                "type": "regex",
+                "configuration": {
+                  "regex": "^http://"
+                }
+              }
+            },
+            {
+              "name": "ftp-field",
+              "type": "string",
+              "description": "sample1",
+              "default": "ftp://",
+              "required": true,
+              "validator": {
+                "type": "regex",
+                "configuration": {
+                  "regex": "^ftp://"
+                }
+              }
+            }
+          ]
+        }
+      ],
+      values: {
+        "connection_string": "jdbc:test/string/field",
+        "boolean_attr_test": false,
+        "sample-multiplier": [
+        ],
+        "sample_multiple_choice": {
+          "choice1-long-text": {
+            "name_001": 102
+          },
+          "choice2-some-example-text": {
+            "name_002": "2-2=0"
+          }
+        },
+        "sample-multiplier-nonempty": [
+          {
+            "http-field": "http://42.pl/",
+            "ftp-field": "ftp://42.pl/"
+          },
+          {
+            "http-field": "http://42.0.pl/",
+            "ftp-field": "ftp://42.0.pl/"
+          }
+        ]
+      },
+      isInnerWorkflow: true
+    };
+
     // Mocked node. It can return its id and incomingKnowledge.
     // In this mocked implementation, incomingKnowledge returns outputKnowledge
     // from sqlReader.node, from portIndex that is specified.
@@ -1203,17 +1759,25 @@ angular.module('test').
     };
 
     let testCases = [sqlReader, rowFilter, neuralNetwork, fileToDataframe, testDraft, dynamicParams, workflowParam,
-      gridsearchParams];
+      gridsearchParams, publicPrivateTest];
 
     _.forEach(testCases, tc => {
       tc.node.parameters = DeepsenseNodeParameters.factory.createParametersList(tc.values, tc.schema, mockNode);
+      tc.isInnerWorkflow = tc.isInnerWorkflow || false;
     });
 
     let nodes = _.map(testCases, tc => tc.node);
 
+    let hasDuplicates = (array) => (new Set(array)).size !== array.length;
+    let nodeIds = _.map(nodes, (n) => n.id);
+    if(hasDuplicates(nodeIds)) {
+      console.error('Provided nodes in test data have duplicated node ids. This might cause undefined behaviour');
+    }
+
     let workflow_id = "mock_workflow_id";
 
     return {
+      getTestCases: () => testCases,
       getNodes: () => nodes,
       getWorkflowId: () => workflow_id
     };

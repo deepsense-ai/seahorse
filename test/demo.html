@@ -37,9 +37,9 @@
         <button ng-click="togglePre('debug')">Toggle</button>
         <pre class="row well default-spacing" id="debug">{{ getNode().parameters.serialize() | json }}</pre>
     </div>
-
     <deepsense-operation-attributes
         node="getNode()"
+        is-inner-workflow = "getTestCase().isInnerWorkflow"
         workflow="getWorkflowId()"
         ng-if="getNode()"
         disabled-mode="false"

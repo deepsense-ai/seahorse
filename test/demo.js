@@ -4,12 +4,16 @@ module.constant('config', {});
 module.controller('TestCtrl', ['$scope', '$element', 'Model', function ($scope, $element, Model) {
   let nodes = Model.getNodes();
   let workflowId = Model.getWorkflowId();
+  let testCases = Model.getTestCases();
 
   _.assign($scope, {
-    currentNode: nodes[1].id,
+    currentNode: nodes[0].id,
     testData: nodes,
+    getTestCases: () => testCases,
     getNode: () => _.find(nodes, node => node.id === $scope.currentNode),
-    getWorkflowId: () => workflowId
+    getTestCase: () => _.find(testCases, tc => tc.node.id === $scope.currentNode),
+    getWorkflowId: () => workflowId,
+    isInnerWorkflow: () => isInnerWorkflow
   });
 
   $scope.togglePre = function togglePre (preID) {
