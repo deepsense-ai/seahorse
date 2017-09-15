@@ -9,7 +9,7 @@ function ErrorsConfig($stateProvider) {
   });
 
   $stateProvider.state('ConflictState', {
-    url: '/:type/error/version/:id',
+    url: '/:type/error/version/:id/',
     params: {
       id: undefined,
       type: undefined,

@@ -2,14 +2,20 @@
 
 /* @ngInject */
 function WorkflowsApiClientFactory(BaseApiClient, ServerCommunication, config) {
+
   const API_TYPE = 'batch';
   const PATH_WORKFLOWS = '/workflows';
   const PATH_REPORTS = '/reports';
 
   class WorkflowsApiClient extends BaseApiClient {
+
     constructor() {
       super();
       this.ServerCommunication = ServerCommunication;
+    }
+
+    getAllWorkflows() {
+      return this.makeRequest(this.METHOD_GET, `${this.API_URL}${PATH_WORKFLOWS}`);
     }
 
     getWorkflow(workflowId) {

@@ -1,7 +1,7 @@
 'use strict';
 
 /* @ngInject */
-function Home($rootScope, $uibModal, $state, PageService, config) {
+function Home($rootScope, $uibModal, $state, WorkflowService, PageService, config) {
 
   this.init = () => {
     PageService.setTitle('Home');
@@ -9,9 +9,19 @@ function Home($rootScope, $uibModal, $state, PageService, config) {
     $rootScope.stateData.dataIsLoaded = true;
   };
 
-  this.getVersion = () => config.editorVersion;
+  this.getVersion = () => {
+    return config.editorVersion;
+  };
 
-  this.displayCreateWorkflowPopup = function displayCreateWorkflowPopup(event) {
+  this.getAllWorkflows = () => {
+    return WorkflowService.getAllWorkflows();
+  };
+
+  this.getWorkflowUrl = (workflowId) => {
+    return '/#/workflows/' + workflowId + '/editor';
+  };
+
+  this.displayCreateWorkflowPopup = (event) => {
     event.preventDefault();
 
     let modal = $uibModal.open({
@@ -22,15 +32,14 @@ function Home($rootScope, $uibModal, $state, PageService, config) {
       keyboard: true
     });
 
-    modal.result.
-    then((workflowId) => {
+    modal.result.then((workflowId) => {
       $state.go('workflows.editor', {
         id: workflowId
       });
     });
   };
 
-  this.displayUploadWorkflowPopup = function displayUploadWorkflowPopup(event) {
+  this.displayUploadWorkflowPopup = (event) => {
     event.preventDefault();
 
     let modal = $uibModal.open({
@@ -41,15 +50,14 @@ function Home($rootScope, $uibModal, $state, PageService, config) {
       keyboard: true
     });
 
-    modal.result.
-    then((workflowId) => {
+    modal.result.then((workflowId) => {
       $state.go('workflows.editor', {
         'id': workflowId
       });
     });
   };
 
-  this.displayUploadExecutionWorkflowPopup = function displayUploadExecutionWorkflowPopup(event) {
+  this.displayUploadExecutionWorkflowPopup = (event) => {
     event.preventDefault();
 
     let modal = $uibModal.open({
@@ -60,8 +68,7 @@ function Home($rootScope, $uibModal, $state, PageService, config) {
       keyboard: true
     });
 
-    modal.result.
-    then((reportId) => {
+    modal.result.then((reportId) => {
       $state.go('workflows.report', {
         'reportId': reportId
       });

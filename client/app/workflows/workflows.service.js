@@ -1,9 +1,7 @@
 'use strict';
 
 /* @ngInject */
-function WorkflowService(Workflow, OperationsHierarchyService,
-  WorkflowsApiClient, Operations, UUIDGenerator,
-  $rootScope) {
+function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClient, Operations, UUIDGenerator) {
 
   let internal = {};
 
@@ -11,6 +9,13 @@ function WorkflowService(Workflow, OperationsHierarchyService,
 
     constructor() {
       internal.workflow = null;
+      this.init();
+    }
+
+    init() {
+      WorkflowsApiClient.getAllWorkflows().then((data) => {
+        internal.workflows = data;
+      });
     }
 
     createWorkflow(workflowData, operations) {
@@ -55,6 +60,10 @@ function WorkflowService(Workflow, OperationsHierarchyService,
       return !_.isNull(internal.workflow);
     }
 
+    getAllWorkflows() {
+      return internal.workflows;
+    }
+
     saveWorkflow() {
       return WorkflowsApiClient.updateWorkflow(internal.workflow.serialize());
     }
@@ -80,10 +89,7 @@ function WorkflowService(Workflow, OperationsHierarchyService,
         }
       );
       let createdNode = this.getWorkflow().createNode(nodeParams);
-
-      /* Copy params */
       this.cloneParamsFromNodeToNode(node, createdNode);
-
       return this.getWorkflow().addNode(createdNode);
     }
   }

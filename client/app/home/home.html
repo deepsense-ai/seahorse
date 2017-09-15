@@ -1,32 +1,41 @@
-<section class="c-homepage">
-  <div class="o-video-container">
-    <div class="o-video-container__c-version">version: {{::home.getVersion()}}</div>
-    <div class="o-video-container__filter"></div>
-    <div class="o-video-container__bg-image"></div>
-    <video autoplay loop class="o-video-container__video
-                                o-video-container__video--cover
-                                o-video-container__video--height">
-      <source src="app/home/assets/MP4/Working-Space.mp4" type="video/mp4"/>
-      Your browser does not support the video tag. I suggest you upgrade your browser.
-      <source src="app/home/assets/WEBM/Working-Space.webm" type="video/webm"/>
-      Your browser does not support the video tag. I suggest you upgrade your browser.
-    </video>
-    <div class="poster hidden">
-      <img src="app/home/assets/snapshots/Working-Space.jpg" alt="">
+<div class="panel panel-default col-md-offset-2 col-md-8">
+  <!-- Default panel contents -->
+  <div class="panel-heading text-center"><img src="../../img/seahorse-community-logo.png"></div>
+  <!-- List group -->
+  <div class="btn-group btn-group-justified" role="group">
+    <div class="btn-group" role="group">
+      <button type="button" class="btn btn-primary" ng-click="home.displayCreateWorkflowPopup($event)" >New Workflow</button>
+    </div>
+    <div class="btn-group" role="group" >
+      <button type="button" class="btn btn-info" ng-click="home.displayUploadWorkflowPopup($event)">Upload Workflow</button>
     </div>
   </div>
-  <nav class="c-main-menu">
-    <ul class="c-main-menu__wrapper">
-      <li class="c-main-menu__item">
-        <a class="c-main-menu__link" ng-click="home.displayCreateWorkflowPopup($event)">New Workflow</a>
-      </li>
-      <li class="c-main-menu__item c-main-menu__item--upload">
-        <a class="c-main-menu__link" ng-click="home.displayUploadWorkflowPopup($event)">Upload Workflow</a>
-      </li>
-      <li class="c-main-menu__item c-main-menu__item--upload">
-        <a class="c-main-menu__link" ng-click="home.displayUploadExecutionWorkflowPopup($event)">Upload Execution
-          Report</a>
-      </li>
-    </ul>
-  </nav>
-</section>
+  <div class="input-group col-md-12">
+    <input type="text" class="form-control" ng-model="home.filterString" placeholder="Search for...">
+  </div>
+  <table class="table text-center">
+    <tr class="header">
+      <td class="col-md-1">Index</td>
+      <td class="col-md-2">Name</td>
+      <td class="col-md-3">Description</td>
+      <td class="col-md-3">Updated</td>
+      <td class="col-md-3">Created</td>
+    </tr>
+    <tr ng-repeat="workflow in home.getAllWorkflows() | filter:home.filterString track by workflow.id">
+      <td>{{$index+1}}</td>
+      <td>
+        <a ng-href="{{home.getWorkflowUrl(workflow.id)}}">{{workflow.name}}</a>
+      </td>
+      <td>
+        <a ng-if="workflow.description" ng-href="{{home.getWorkflowUrl(workflow.id)}}">{{workflow.description | limitTo:30 }}</a>
+        <a ng-if="workflow.description.length == 0" ng-href="{{home.getWorkflowUrl(workflow.id)}}">-</a>
+      </td>
+      <td>
+        <a ng-href="{{home.getWorkflowUrl(workflow.id)}}">{{workflow.updated | date:"hh:mm:ss - dd/MM/yyyy"}}</a>
+      </td>
+      <td>
+        <a ng-href="{{home.getWorkflowUrl(workflow.id)}}">{{workflow.created | date:"hh:mm:ss - dd/MM/yyyy"}}</a>
+      </td>
+    </tr>
+  </table>
+</div>
