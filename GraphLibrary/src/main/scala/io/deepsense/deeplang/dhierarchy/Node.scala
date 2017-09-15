@@ -47,8 +47,9 @@ private[dhierarchy] abstract class Node {
 
   /** Returns set of all leaf-nodes that are descendants of this. */
   private[dhierarchy] def leafNodes: mutable.Set[Node] = {
-    if (subclasses.isEmpty && subtraits.isEmpty) mutable.Set(this) // this is leaf-class
-    else {
+    if (subclasses.isEmpty && subtraits.isEmpty) { // this is leaf-class
+      mutable.Set(this)
+    } else {
       val descendants = subclasses.values.map(_.leafNodes) ++ subtraits.values.map(_.leafNodes)
       sumSets[Node](descendants)
     }

@@ -12,7 +12,6 @@ import java.util.UUID
 import org.scalatest.FunSuite
 
 import io.deepsense.graphlibrary.Node.State.Status
-import io.deepsense.graphlibrary.{Operation, Graph}
 
 class GraphSuite extends FunSuite {
 

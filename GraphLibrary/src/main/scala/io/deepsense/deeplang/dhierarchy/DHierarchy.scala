@@ -9,7 +9,7 @@ package io.deepsense.deeplang.dhierarchy
 import scala.collection.mutable
 import scala.reflect.runtime.{universe => ru}
 
-import io.deepsense.deeplang.{DOperable, DOperation}
+import io.deepsense.deeplang.DOperable
 
 /**
  * Allows to register and validate hierarchy of DClasses, DTraits and DOperations.
@@ -39,8 +39,9 @@ class DHierarchy {
    * Value t and typeInfo should be describing the same type.
    */
   private def register(t: ru.Type, typeInfo: Class[_]): Option[Node] = {
-    if (!(t <:< baseType))
+    if (!(t <:< baseType)) {
       return None
+    }
 
     if (isParametrized(t)) {
       throw new RuntimeException // TODO: What is the exceptions convention here?
