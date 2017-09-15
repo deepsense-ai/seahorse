@@ -17,9 +17,8 @@
 package io.deepsense.models.json.workflow.examples
 
 import io.deepsense.deeplang.DOperation
-import io.deepsense.deeplang.doperations.ReadDataFrame.FileSource
 import io.deepsense.deeplang.doperations._
-import io.deepsense.deeplang.parameters.ColumnType
+import io.deepsense.deeplang.parameters._
 import io.deepsense.graph.{Edge, Node}
 
 object LocationAttractiveness extends WorkflowCreator {
@@ -30,7 +29,7 @@ object LocationAttractiveness extends WorkflowCreator {
   val readDataFrame: ReadDataFrame = ReadDataFrame(
     testFilePath,
     (ReadDataFrame.LineSeparator.UNIX, None),
-    FileSource.LOCAL,
+    StorageType.FILE,
     ",",
     true)
 
@@ -62,7 +61,7 @@ object LocationAttractiveness extends WorkflowCreator {
     WriteDataFrame.CSV,
     ",",
     true,
-    WriteDataFrame.FILE,
+    StorageType.FILE,
     resultFilePath)
 
   val convertBooleanToDouble: DOperation = {

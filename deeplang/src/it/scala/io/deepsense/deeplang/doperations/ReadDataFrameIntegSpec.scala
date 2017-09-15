@@ -26,10 +26,9 @@ import org.scalatest.BeforeAndAfter
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.doperables.Report
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperations.ReadDataFrame.FileSource
 import io.deepsense.deeplang.doperations.ReadDataFrame.LineSeparator.LineSeparator
 import io.deepsense.deeplang.doperations.exceptions.InvalidFileException
-import io.deepsense.deeplang.parameters.{IndexColumnSelection, MultipleColumnSelection, NameColumnSelection}
+import io.deepsense.deeplang.parameters.{StorageType, IndexColumnSelection, MultipleColumnSelection, NameColumnSelection}
 import io.deepsense.deeplang.{DOperable, DeeplangIntegTestSupport}
 
 class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfter {
@@ -227,9 +226,9 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
       csvNamesIncluded: Boolean,
       csvCategoricalColumns: Option[MultipleColumnSelection] = None) : DataFrame = {
     val operation = ReadDataFrame(
-      testsDir + "/" + fileName,
+      absoluteTestsDirPath + "/" + fileName,
       lineSeparator,
-      FileSource.LOCAL,
+      StorageType.FILE,
       csvColumnSeparator,
       csvNamesIncluded,
       csvCategoricalColumns)

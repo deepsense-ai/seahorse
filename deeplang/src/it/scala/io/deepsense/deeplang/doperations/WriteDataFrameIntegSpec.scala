@@ -28,16 +28,14 @@ import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoriesMapping, MappingMetadataConverter}
-import io.deepsense.deeplang.doperations.WriteDataFrame.{CSV, FILE}
-import io.deepsense.deeplang.parameters.ColumnType
+import io.deepsense.deeplang.doperations.WriteDataFrame.CSV
+import io.deepsense.deeplang.parameters.{StorageType, ColumnType}
 
 class WriteDataFrameIntegSpec
   extends DeeplangIntegTestSupport
   with BeforeAndAfter {
 
-  val testDataDir = testsDir + "/WriteDataFrameTest"
-
-  val absoluteTestDataPath = new java.io.File(testDataDir).getAbsoluteFile.toString
+  val absoluteWriteDataFrameTestPath =  absoluteTestsDirPath + "/WriteDataFrameTest"
 
   val timestamp = DateTimeConverter.now
 
@@ -82,22 +80,35 @@ class WriteDataFrameIntegSpec
 
   "WriteDataFrame" should {
     "write CSV file without header" in {
-      WriteDataFrame(CSV, ",", false, FILE, absoluteTestDataPath + "/without-header")
-        .execute(executionContext)(Vector(dataframe))
-
+      val wdf = WriteDataFrame(
+        CSV,
+        ",",
+        false,
+        StorageType.FILE,
+        absoluteWriteDataFrameTestPath + "/without-header")
+      wdf.execute(executionContext)(Vector(dataframe))
       verifySavedDataFrame("/without-header", rows, false)
     }
 
     "write CSV file with header" in {
-      WriteDataFrame(CSV, ",", true, FILE, absoluteTestDataPath + "/with-header")
-        .execute(executionContext)(Vector(dataframe))
+      val wdf = WriteDataFrame(
+        CSV,
+        ",",
+        true,
+        StorageType.FILE,
+        absoluteWriteDataFrameTestPath + "/with-header")
+      wdf.execute(executionContext)(Vector(dataframe))
       verifySavedDataFrame("/with-header", rows, true)
     }
 
     "write CSV file with custom separator" in {
-      WriteDataFrame(CSV, ";", false, FILE, absoluteTestDataPath + "/custom-separator")
-        .execute(executionContext)(Vector(dataframe))
-
+      val wdf = WriteDataFrame(
+        CSV,
+        ";",
+        false,
+        StorageType.FILE,
+        absoluteWriteDataFrameTestPath + "/custom-separator")
+      wdf.execute(executionContext)(Vector(dataframe))
       verifySavedDataFrame("/custom-separator", rows, false, ";")
     }
   }
@@ -107,10 +118,11 @@ class WriteDataFrameIntegSpec
 
     implicit def bool2int(b: Boolean) = if (b) 1 else 0
 
-    val parts = new File(absoluteTestDataPath + savedFile).listFiles
+    val parts = new File(absoluteWriteDataFrameTestPath + savedFile).listFiles
       .map(_.getName).filter(_.startsWith("part-")).sorted
-    val lines = parts.map(part => Source.fromFile(absoluteTestDataPath + savedFile + "/" + part)
-      .getLines()).flatMap(x => x.toArray[String])
+    val lines =
+      parts.map(part => Source.fromFile(absoluteWriteDataFrameTestPath + savedFile + "/" + part)
+        .getLines()).flatMap(x => x.toArray[String])
 
     if (withHeader) {
       lines(0) shouldBe schema.fieldNames

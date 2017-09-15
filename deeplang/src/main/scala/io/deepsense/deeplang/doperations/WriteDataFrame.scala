@@ -65,17 +65,19 @@ case class WriteDataFrame() extends DOperation1To0[DataFrame] {
     description = "Path",
     default = None,
     required = true,
-    validator = new AcceptAllRegexValidator
+    // Do not accept paths with protocol prefix
+    validator = StorageType.pathValidator
   )
 
   val outputFileParameter = ChoiceParameter(
     description = "Output file",
-    default = Some(FILE.name),
+    default = Some(StorageType.FILE.toString),
     required = true,
     options = ListMap(
-      FILE.name -> ParametersSchema("path" -> pathParameter),
-      HDFS.name -> ParametersSchema("path" -> pathParameter),
-      S3.name -> ParametersSchema("path" -> pathParameter)
+      StorageType.HDFS.toString -> ParametersSchema("path" -> pathParameter),
+      StorageType.S3.toString -> ParametersSchema("path" -> pathParameter),
+      StorageType.FILE.toString -> ParametersSchema("path" -> pathParameter),
+      StorageType.LOCAL.toString -> ParametersSchema("path" -> pathParameter)
     )
   )
 
@@ -99,7 +101,8 @@ case class WriteDataFrame() extends DOperation1To0[DataFrame] {
       csv
     }
 
-    result.saveAsTextFile(s"${outputFileParameter.value.get}://${pathParameter.value.get}")
+    result.saveAsTextFile(
+      StorageType.getPathWithProtocolPrefix(outputFileParameter.value.get, pathParameter.value.get))
   }
 
   private def contains(o: Option[String], value: String): Boolean = {
@@ -154,30 +157,18 @@ object WriteDataFrame {
 
   case object CSV extends FileType("CSV")
 
-  sealed abstract class StorageType(val name: String)
-
-  object StorageType {
-    def forName(n: String): StorageType = n.toLowerCase match {
-      case "file" => FILE
-      case "hdfs" => HDFS
-      case "s3" => S3
-      case _ => ???
-    }
-  }
-
-  case object FILE extends StorageType("file")
-  case object HDFS extends StorageType("hdfs")
-  case object S3 extends StorageType("s3")
-
   def apply(
-      fileType: FileType, columnSeparator: String, writeHeader: Boolean,
-      storageType: StorageType, path: String): WriteDataFrame = {
+      fileType: FileType,
+      columnSeparator: String,
+      writeHeader: Boolean,
+      storageType: StorageType.StorageType,
+      path: String): WriteDataFrame = {
 
     val writeDataFrame = WriteDataFrame()
     writeDataFrame.formatParameter.value = Some(fileType.name)
     writeDataFrame.columnSeparatorParameter.value = Some(columnSeparator)
     writeDataFrame.writeHeaderParameter.value = Some(writeHeader)
-    writeDataFrame.outputFileParameter.value = Some(storageType.name)
+    writeDataFrame.outputFileParameter.value = Some(storageType.toString)
     writeDataFrame.pathParameter.value = Some(path)
     writeDataFrame
   }

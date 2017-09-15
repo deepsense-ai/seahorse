@@ -35,6 +35,7 @@ import io.deepsense.models.entities.Entity
 trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
 
   val testsDir = "target/tests"
+  val absoluteTestsDirPath = new java.io.File(testsDir).getAbsoluteFile.toString
   var executionContext: ExecutionContext = _
 
   val sparkConf: SparkConf = DeeplangIntegTestSupport.sparkConf
