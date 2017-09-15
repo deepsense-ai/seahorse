@@ -15,8 +15,6 @@ function Droppable($rootScope) {
       element.on('dragstart',function (event) {
         event.dataTransfer.effectAllowed = 'move';
         event.dataTransfer.setData('classId', element[0].id);
-        event.dataTransfer.setData('clientX', element[0].getBoundingClientRect());
-        event.dataTransfer.setData('clientY', element[0].getBoundingClientRect());
       });
     }
   };

@@ -23,13 +23,11 @@ function DropTarget($rootScope) {
       });
 
       element.on('drop', function dragEnd(event) {
-        var box = element[0].getBoundingClientRect();
-        console.log(box);
-        $rootScope.$emit('FlowChartBox.ELEMENT_DROPPED', {
-          classId: event.dataTransfer.getData('classId'),
-          clientX: event.dataTransfer.getData('clientX'),
-          clientY: event.dataTransfer.getData('clientY')
-        });
+        var data = {};
+        data.dropEvent = event;
+        data.classId = event.dataTransfer.getData('classId');
+        data.target = element;
+        $rootScope.$emit('FlowChartBox.ELEMENT_DROPPED',data);
       });
     }
   };

@@ -4,7 +4,7 @@
 'use strict';
 
 /* @ngInject */
-function ExperimentController($stateParams, $rootScope, Operations, DrawingService, ExperimentFactory, ExperimentAPIClient) {
+function ExperimentController($scope,$stateParams, $rootScope, Operations, DrawingService, ExperimentFactory, ExperimentAPIClient) {
 
   var that = this;
   var internal = {};
@@ -91,9 +91,13 @@ function ExperimentController($stateParams, $rootScope, Operations, DrawingServi
   $rootScope.$on(Edge.CREATE, ()  => that.saveData());
   $rootScope.$on(Edge.REMOVE, ()  => that.saveData());
 
-  $rootScope.$on('FlowChartBox.ELEMENT_DROPPED', function elementDropped(event, data) {
-    var operation = that.getOperationById(data.classId);
-    var node = internal.experiment.createNode(new Date().getTime().toString(),operation, {});
+  $rootScope.$on('FlowChartBox.ELEMENT_DROPPED', function elementDropped(event, args) {
+    var operation = that.getOperationById(args.classId);
+    var moveX = args.dropEvent.x-args.target[0].getBoundingClientRect().left;
+    var moveY = args.dropEvent.y-args.target[0].getBoundingClientRect().top;
+    var offsetX = -100;
+    var offsetY = -50;
+    var node = internal.experiment.createNode(new Date().getTime().toString(),operation,{},moveX+offsetX,moveY+offsetY);
     internal.experiment.addNode(node);
     $rootScope.$apply();
     that.onRenderFinish();

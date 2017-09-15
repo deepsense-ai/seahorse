@@ -32,9 +32,9 @@ function Experiment() {
     internal.nodes[node.id] = node;
   };
 
-  that.createNode = function createNode(nodeID, operation, paramValues = {}, x = 0, y = 0) {
+  that.createNode = function createNode(nodeID, operation, paramValues, x, y) {
     let paramSchemas = operation.parameters || {};
-    let node = new GraphNode({
+    return new GraphNode({
       id: nodeID,
       name: operation.name,
       operationId: operation.id,
@@ -46,8 +46,6 @@ function Experiment() {
       x: x,
       y: y
     });
-
-    return node;
   };
 
   that.createNodes = function createNodes(nodes, operations) {
