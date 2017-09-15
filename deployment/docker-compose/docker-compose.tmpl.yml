@@ -54,6 +54,7 @@ services:
       - "WM_AUTH_PASS=8Ep9GqRr"
       - "PYTHON_DRIVER_BINARY=/opt/conda/bin/python"
       - "PYTHON_EXECUTOR_BINARY=python"
+      - "SPARK_APPLICATIONS_LOGS_DIR=/spark_applications_logs"
       - "SESSION_EXECUTOR_PATH=/opt/docker/we.jar"
       - "SESSION_EXECUTOR_DEPS_PATH=/opt/docker/we-deps.zip"
       - "TEMP_DIR=/tmp/seahorse/download"
@@ -61,6 +62,7 @@ services:
     volumes:
       - "./data:/resources/data"
       - "library:/library"
+      - "./spark_applications_logs:/spark_applications_logs:rw"
     depends_on:
       - rabbitmq
       - workflowmanager

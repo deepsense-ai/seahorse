@@ -10,15 +10,30 @@ import scala.collection._
 
 import org.apache.spark.launcher._
 
+import scalaz._
+import Scalaz._
+
 import io.deepsense.commons.utils.Logging
 
 object SparkAgumentParser extends Logging {
   import scala.collection.JavaConversions._
 
-  def parse(paramsString: String): Map[String, String] = {
+  def parse(paramsStringOpt: Option[String]): Validation[UnknownOption, Map[String, String]] = {
+    paramsStringOpt match {
+      case Some(paramsString) => parse(paramsString)
+      case None => Map.empty[String, String].success
+    }
+  }
+
+  def parse(paramsString: String): Validation[UnknownOption, Map[String, String]] = {
     val parser = new SparkAgumentParser()
-    parser.parseArgs(paramsString.split("\\s+").toList)
-    parser.arguments
+
+    try {
+      parser.parseArgs(paramsString.split("\\s+").toList)
+      parser.arguments.success
+    } catch {
+      case unknownOptions: UnknownOption => unknownOptions.failure
+    }
   }
 
   private class SparkAgumentParser extends PublicSparkSubmitOptionParser {
@@ -30,11 +45,15 @@ object SparkAgumentParser extends Logging {
       true
     }
     override def handleUnknown(opt: String): Boolean = {
-      throw new IllegalArgumentException(s"Uknown opt: $opt")
+      throw UnknownOption(opt)
     }
     override def handleExtraArgs(extra: util.List[String]): Unit = {
-      logger.warn(s"Handle extra args: ${extra.mkString(", ")}")
+      if (extra.nonEmpty) {
+        logger.warn(s"Handle extra args: ${extra.mkString(", ")}")
+      }
     }
   }
+
+  case class UnknownOption(opt: String) extends Exception(s"Uknown opt $opt")
 
 }

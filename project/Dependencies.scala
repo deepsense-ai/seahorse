@@ -58,7 +58,7 @@ object Library {
   val scalatest = "org.scalatest" %% "scalatest" % Version.scalatest
   val scalatra = "org.scalatra" %% "scalatra" % Version.scalatra
   val scalatraTest = "org.scalatra" %% "scalatra-scalatest" % Version.scalatra % "test"
-  val scalaz = "org.scalaz" %% "scalaz-core" % "7.2.4"
+  val scalaz = "org.scalaz" %% "scalaz-core" % "7.2.5"
   val scoverage = "org.scoverage" %% "scalac-scoverage-runtime" % Version.scoverage
   val seahorseCommons = seahorse("commons")
   val seahorseDeeplang = seahorse("deeplang")
@@ -146,6 +146,7 @@ object Dependencies {
     seahorseMqProtocol,
     slick,
     flyway,
+    scalaz,
     sprayCan,
     sprayClient,
     sprayJson,

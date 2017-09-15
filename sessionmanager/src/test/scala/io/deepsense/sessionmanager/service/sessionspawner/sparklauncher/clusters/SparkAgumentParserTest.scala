@@ -8,19 +8,19 @@ import org.scalatest.{Matchers, FunSuite}
 
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.spark.SparkAgumentParser
 
+import scalaz._
+import scalaz.Scalaz._
 
 class SparkAgumentParserTest extends FunSuite with Matchers {
 
   test("Parsing - positive cases") {
     positiveTestCases.foreach { testCase =>
-      SparkAgumentParser.parse(testCase.input) shouldEqual testCase.output
+      SparkAgumentParser.parse(testCase.input) shouldEqual testCase.output.success
     }
   }
   test("Parsing - negative cases") {
     invalidInputs.foreach { input =>
-      an [Exception] shouldBe thrownBy {
-        SparkAgumentParser.parse(input)
-      }
+      SparkAgumentParser.parse(input).isFailure shouldBe true
     }
   }
 

@@ -1,4 +1,5 @@
 data
 h2-data
+spark_applications_logs
 
 docker-compose.yml
