@@ -1,6 +1,7 @@
+*.sublime-*
 .DS_Store
-deepsense-frontend.sublime-workspace
+.tmp
+bower_components
 build
 node_modules
-bower_components
 npm-debug.log

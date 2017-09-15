@@ -1,9 +1,11 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
+ *
+ * Owner: Piotr Zarówny
  */
 'use strict';
 
-var mock   = require('../mock.js');
+var mock   = require('../mockAPI.js');
 var stream = require('stream');
 
 describe('Mock test', function() {
@@ -93,7 +95,7 @@ describe('Mock test', function() {
     waitsFor(function() { return flag; }, 5000);
 
     runs(function() {
-      expect(result).toEqual('/fixtures/there.is.no.such.file.json not found');
+      expect(result).toEqual('404 - missing (mock data)');
       expect(head).toEqual({
         status: 404,
         header: {'Content-Type':'text/plain'}

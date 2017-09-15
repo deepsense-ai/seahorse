@@ -32,7 +32,7 @@ var config = require('./package.json'),
     libs = config.files.libs,
     devMode = !!gutil.env.dev;
 
-var BROWSER_SYNC_RELOAD_DELAY = 1500;
+var BROWSER_SYNC_RELOAD_DELAY = 2000;
 
 
 gulp.task('clean', function () {
@@ -89,7 +89,8 @@ gulp.task('less', function () {
       title: 'less',
       showFiles: true
     }))
-    .pipe(gulp.dest(build.path + build.css));
+    .pipe(gulp.dest(build.path + build.css))
+    .pipe(browserSync.reload({stream: true}));
 });
 
 gulp.task('libs:css', function () {
@@ -158,7 +159,7 @@ gulp.task('start', function (callback) {
   runSequence('build', 'browser-sync', callback);
   if (devMode) {
     gulp.watch(client.path + client.html, ['html', browserSync.reload]);
-    gulp.watch(client.path + client.less, ['less', browserSync.reload]);
+    gulp.watch(client.path + client.less, ['less']);
     gulp.watch(client.path + client.js, ['jshint', 'browserify', browserSync.reload]);
   }
 });
@@ -167,7 +168,7 @@ gulp.task('watch', function (callback) {
   devMode = true;
   runSequence('browser-sync', callback);
   gulp.watch(client.path + client.html, ['html', browserSync.reload]);
-  gulp.watch(client.path + client.less, ['less', browserSync.reload]);
+  gulp.watch(client.path + client.less, ['less']);
   gulp.watch(client.path + client.js, ['jshint', 'browserify', browserSync.reload]);
 });
 

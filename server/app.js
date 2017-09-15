@@ -3,68 +3,28 @@
  *
  * Owner: Piotr Zarówny
  */
-/*global console*/
 'use strict';
 
-var http     = require('http');
-var Q        = require('q');
-var fs       = require('fs');
-var express  = require('express');
-var app      = express();
-var http     = require('http').Server(app);
-var bodyParser = require('body-parser');
+var express = require('express'),
+    app = express(),
+    http = require('http').Server(app),
+    config = require('./../package.json'),
+    apiConfig = require('./api/apiConfig'),
+    experimentHandler = require('./api/experimentHandler.js');
 
-var httpProxy = require('http-proxy');
-var proxies = [];
+require('./api/ormHandler.js')((orm) => {
+  apiConfig.localDB = orm;
 
-var settingsFile = 'settings.json';
+  // mock
+  require('./mockDB.js')(apiConfig);
+  app.use('/apimock/V1', require('./mockAPI.js'));
 
-var config = require('./../package.json');
+  // api proxy
+  apiConfig = experimentHandler(apiConfig);
+  app.use('/api', require(__dirname + '/api/apiProxy.js')(apiConfig));
 
-Q.nfcall(fs.readFile, __dirname + '/' + settingsFile, 'utf-8')
- .catch(function() {
-  console.log('Error reading settings file');
- })
- .done(function (text) {
-  var settings;
-  try {
-    settings = JSON.parse(text);
-  } catch(e) {
-    console.log(settingsFile + ': ' + e);
-    return;
-  }
+  // lab pages
+  app.use('/', express.static(__dirname + '/../build'));
 
-  if(settings.targets) {
-    settings.targets.forEach(function(options) {
-      var proxy = {
-        proxy: httpProxy.createProxyServer({}),
-        settings: options
-      };
-
-      var url = '/' + options.prefix;
-      app.use(url, function(req, res, next) {
-        req.url = req.url.replace(url, '');
-        proxy.proxy.web(req, res, proxy.settings);
-      });
-
-      proxy.proxy.on('error', function (err, req, res) {
-        res.writeHead(500, {
-          'Content-Type': 'text/plain'
-        });
-        res.end('500');
-      });
-
-      proxies.push(proxy);
-    });
-  }
-
-  require('./orm.js')(function(waterline) {
-      app.use(bodyParser.urlencoded({ extended: true }));
-      app.use(bodyParser.json());
-      app.use('/apimock/V1', require('./mock.js'));
-      app.use('/api', require(__dirname + '/api/apiProxy.js'));
-      app.use('/', express.static(__dirname + '/../build'));
-
-      http.listen(config.env.dev.port);
-  });
+  http.listen(config.env.dev.port);
 });
