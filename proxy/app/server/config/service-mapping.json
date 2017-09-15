@@ -14,9 +14,12 @@
 }, {
   "path": "/v1/sessions",
   "name": "session-manager"
-},{
+}, {
   "path": "/datasourcemanager/v1",
   "name": "datasource-manager"
+}, {
+  "path": "/schedulingmanager/v1",
+  "name": "scheduling-manager"
 }, {
   "path": "/jupyter",
   "name": "jupyter"
