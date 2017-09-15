@@ -23,6 +23,10 @@ Holds single numeric value. It can specify validation rules such as a range of a
 ### String
 Holds single string value. It can be restricted by a regular expression that has to be satisfied by the input value.
 
+Placeholder strings can be used inside String parameters, e.g. ``${username}`` or ``${database.host}``.
+The placeholders will be replaced by actual values based on
+[extra variables](workflowexecutor.html#command-line-parameters-details) passed as command-line arguments.
+
 **Example of use:** source parameter  in `ReadDataFrame` operation
 
 **Example value:** “file:///tmp/example.csv”
