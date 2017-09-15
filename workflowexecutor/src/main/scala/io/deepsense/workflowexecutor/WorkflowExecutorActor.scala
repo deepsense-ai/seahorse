@@ -63,6 +63,7 @@ class WorkflowExecutorActor(executionContext: ExecutionContext)
       val failureDescription = WorkflowExecutorActor.inferenceErrorsFailureDescription(knowledge)
       logger.error("Workflow is incorrect - cannot launch. Errors: {}", failureDescription)
       graph = graph.markFailed(failureDescription)
+      graph = graph.abortNodes
       endExecution()
     } else {
       graph = graph.markRunning

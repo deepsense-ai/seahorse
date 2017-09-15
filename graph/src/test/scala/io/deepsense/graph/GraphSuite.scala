@@ -16,14 +16,16 @@
 
 package io.deepsense.graph
 
+import org.scalatest.mock.MockitoSugar
 import org.scalatest.{FunSuite, Matchers}
 
+import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.commons.serialization.Serialization
 import io.deepsense.commons.utils.Logging
-import io.deepsense.deeplang.doperations.ApplyTransformation
+import io.deepsense.graph.DOperationTestClasses.DOperationCreateA1
 import io.deepsense.graph.RandomNodeFactory.randomNode
 
-class GraphSuite extends FunSuite with Matchers with Serialization with Logging {
+class GraphSuite extends FunSuite with Matchers with Serialization with Logging with MockitoSugar {
 
   test("An empty Graph should have size 0") {
     Graph().size shouldBe 0
@@ -263,5 +265,12 @@ class GraphSuite extends FunSuite with Matchers with Serialization with Logging 
     val operation = graphIn.node(id).operation.asInstanceOf[DOperationAToALogging]
     operation.trace("Logging just to clarify that it works after deserialization!")
     operation.tTagTI_0.tpe should not be (null)
+  }
+
+  test("UpdateState on failed Graph should do nothing") {
+    val runningNode = randomNode(DOperationCreateA1()).markRunning
+    val failedState = GraphState.failed(mock[FailureDescription])
+    val graph = Graph(Set(runningNode), Set.empty, state = failedState)
+    graph.updateState().state shouldBe failedState
   }
 }

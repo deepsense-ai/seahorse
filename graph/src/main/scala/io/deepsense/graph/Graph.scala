@@ -187,25 +187,32 @@ case class Graph(
 
   def runningNodes: Set[Node] = nodes.filter(_.isRunning)
 
+  /**
+   * If graph state is draft, it returns graph with updated state based on state of its nodes.
+   */
   def updateState(): Graph = {
     // TODO precise semantics of this method
     // TODO rewrite this method to be more effective (single counting)
     import io.deepsense.graph.GraphState._
-    copy(state = if (nodes.isEmpty) {
-      completed
-    } else if (nodes.forall(_.isDraft)) {
-      draft
-    } else if (nodes.forall(n => n.isDraft || n.isCompleted)) {
-      completed
-    } else if (nodes.forall(n => n.isDraft || n.isCompleted || n.isQueued || n.isRunning)) {
-      running
-    } else if (nodes.exists(_.isFailed)) {
-      val failureId = DeepSenseFailure.Id.randomId
-      failed(FailureDescription(
-        failureId, FailureCode.NodeFailure, GraphState.NodeFailureMessage
-      ))
+    if (state != GraphState.draft) {
+      this
     } else {
-      aborted
-    })
+      copy(state = if (nodes.isEmpty) {
+        completed
+      } else if (nodes.forall(_.isDraft)) {
+        draft
+      } else if (nodes.forall(n => n.isDraft || n.isCompleted)) {
+        completed
+      } else if (nodes.forall(n => n.isDraft || n.isCompleted || n.isQueued || n.isRunning)) {
+        running
+      } else if (nodes.exists(_.isFailed)) {
+        val failureId = DeepSenseFailure.Id.randomId
+        failed(FailureDescription(
+          failureId, FailureCode.NodeFailure, GraphState.NodeFailureMessage
+        ))
+      } else {
+        aborted
+      })
+    }
   }
 }

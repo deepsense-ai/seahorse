@@ -17,6 +17,7 @@
 package io.deepsense.workflowexecutor
 
 import scala.concurrent.{Promise, Future}
+import scala.util.Success
 
 import akka.actor.{ActorSystem, Actor, ActorRef, Props}
 import akka.testkit.{TestKit, TestActorRef, TestProbe}
@@ -32,7 +33,7 @@ import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.{DOperable, DOperation, ExecutionContext}
-import io.deepsense.graph.{GraphKnowledge, GraphState, Graph, Node}
+import io.deepsense.graph._
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.{Launch, GraphFinished}
 import io.deepsense.workflowexecutor.WorkflowExecutorActor._
 import io.deepsense.models.entities.Entity
@@ -188,19 +189,27 @@ class WorkflowExecutorActorSpec
         result shouldBe 'completed
       };()}
       "graph knowledge contains errors" in { new TestCase {
-        val finishedGraph = mock[Graph]
         val knowledgeWithErrors = mock[GraphKnowledge]
         when(knowledgeWithErrors.errors)
           .thenReturn(Map(Node.Id.randomId ->  Vector(mock[DeepLangException])))
         when(graph.inferKnowledge(any())) thenReturn knowledgeWithErrors
-        when(graph.markFailed(any())) thenReturn finishedGraph
-        when(finishedGraph.updateState()) thenReturn finishedGraph
-        when(finishedGraph.state) thenReturn GraphState.failed(mock[FailureDescription])
+        val failedState = GraphState.failed(mock[FailureDescription])
+        val failedGraph = mock[Graph]
+        val failedGraphWithAbortedNodes = mock[Graph]
+        when(graph.markFailed(any())) thenReturn failedGraph
+        when(failedGraph.state) thenReturn failedState
+        when(failedGraph.abortNodes) thenReturn failedGraphWithAbortedNodes
+        when(failedGraphWithAbortedNodes.state) thenReturn failedState
+        when(failedGraphWithAbortedNodes.updateState()) thenCallRealMethod()
 
         val result = launchGraph(shouldStartExecutors = false)
 
         verifySystemShutDown()
         result shouldBe 'completed
+        whenReady(result) {
+          case GraphFinished(resultGraph, _) =>
+            resultGraph shouldBe failedGraphWithAbortedNodes
+        }
       };()}
     }
   }
