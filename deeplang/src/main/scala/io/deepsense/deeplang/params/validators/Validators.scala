@@ -78,6 +78,76 @@ case class RangeValidator(
     import ValidatorsJsonProtocol.rangeValidatorFormat
     rangeValidatorFormat.write(this).asJsObject
   }
+
+  override def toHumanReadable(paramName: String): String = {
+    val beginConstraint = Begin()
+    val endConstraint = End()
+    val stepRepresentation = step match {
+      case Some(s) =>
+        val isInt = s == s.round
+        Some(if (isInt) s.round.toString else s.toString)
+      case None => None
+    }
+    val stepDescription = stepRepresentation match {
+      case Some("1") => s" and $paramName is an integer."
+      case Some(s) => s" and $paramName = $begin + k * $s, where k is an integer."
+      case None => "."
+    }
+
+    " Range constraints: " +
+        beginConstraint.create + paramName + endConstraint.create + stepDescription
+  }
+
+  abstract class Constraint(limit: Double) {
+    val limits: List[Double]
+
+    def buildConstraint(oneOfLimits: Boolean, limitRepresentation: String): Option[String]
+
+    lazy val isOneOfLimits = limits.contains(limit)
+    val mapsToInt = limit.round == limit
+    val limitRepresentation = if (mapsToInt) limit.round.toString else limit.toString
+
+    def create: String = buildConstraint(isOneOfLimits, limitRepresentation).getOrElse("")
+  }
+
+  case class Begin() extends Constraint(begin) {
+    val included = beginIncluded
+    override val limits = List(
+      Int.MinValue.toDouble,
+      Long.MinValue.toDouble,
+      Float.MinValue.toDouble,
+      Double.MinValue,
+      Double.NegativeInfinity
+    )
+    override def buildConstraint(oneOfLimits: Boolean, limitRepresentation: String)
+        : Option[String] = {
+      if (oneOfLimits) {
+        None
+      } else {
+        Some(limitRepresentation.concat(if (included) " <= " else " < "))
+      }
+    }
+  }
+
+  case class End() extends Constraint(end) {
+    val included = endIncluded
+    override val limits = List(
+      Int.MaxValue.toDouble,
+      Long.MaxValue.toDouble,
+      Float.MaxValue.toDouble,
+      Double.MaxValue,
+      Double.PositiveInfinity
+    )
+    override def buildConstraint(oneOfLimits: Boolean, limitRepresentation: String)
+        : Option[String] = {
+      if (oneOfLimits) {
+        None
+      } else {
+        Some((if (included) " <= " else " < ").concat(limitRepresentation))
+      }
+    }
+  }
+
 }
 
 object RangeValidator {

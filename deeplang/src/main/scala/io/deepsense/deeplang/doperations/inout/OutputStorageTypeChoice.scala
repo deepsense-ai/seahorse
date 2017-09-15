@@ -36,14 +36,14 @@ object OutputStorageTypeChoice {
 
     val outputFile = StringParam(
       name = "outputFile",
-      description = "Output file path")
+      description = "Output file path.")
 
     def getOutputFile: String = $(outputFile)
     def setOutputFile(value: String): this.type = set(outputFile, value)
 
     val fileFormat = ChoiceParam[OutputFileFormatChoice](
       name = "format",
-      description = "Format of the input file")
+      description = "Format of the input file.")
     setDefault(fileFormat, OutputFileFormatChoice.Csv())
 
     def getFileFormat: OutputFileFormatChoice = $(fileFormat)

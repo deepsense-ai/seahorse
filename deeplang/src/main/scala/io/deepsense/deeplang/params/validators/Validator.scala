@@ -35,5 +35,7 @@ trait Validator[ParameterType] extends Serializable {
       "configuration" -> configurationToJson)
   }
 
+  def toHumanReadable(paramName: String): String = ""
+
   protected def configurationToJson: JsObject
 }

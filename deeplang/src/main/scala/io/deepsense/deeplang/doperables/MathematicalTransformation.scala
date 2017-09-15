@@ -30,7 +30,7 @@ case class MathematicalTransformation() extends Transformer {
 
   val inputColumnAlias = StringParam(
     name = "input column alias",
-    description = "An identifier that can be used in SQL formula to refer the input column")
+    description = "An identifier that can be used in SQL formula to refer the input column.")
   setDefault(inputColumnAlias, "x")
 
   def getInputColumnAlias: String = $(inputColumnAlias)
@@ -38,14 +38,14 @@ case class MathematicalTransformation() extends Transformer {
 
   val formula = StringParam(
     name = "formula",
-    description = "SQL formula involving input column as \"x\"")
+    description = "SQL formula involving input column as \"x\".")
 
   def getFormula: String = $(formula)
   def setFormula(value: String): this.type = set(formula, value)
 
   val inputColumn = SingleColumnSelectorParam(
     name = "input column",
-    description = "Input column",
+    description = "Input column.",
     portIndex = 0)
 
   def getInputColumn: SingleColumnSelection = $(inputColumn)
@@ -53,7 +53,7 @@ case class MathematicalTransformation() extends Transformer {
 
   val outputColumnName = StringParam(
     name = "output column name",
-    description = "Name of column holding the result")
+    description = "Name of column holding the result.")
 
   def getOutputColumnName: String = $(outputColumnName)
   def setOutputColumnName(value: String): this.type = set(outputColumnName, value)

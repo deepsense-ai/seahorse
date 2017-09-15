@@ -28,7 +28,7 @@ trait HasStandardization extends Params {
   val standardization = new BooleanParamWrapper[
       ml.param.Params { val standardization: ml.param.BooleanParam }](
     name = "standardization",
-    description = "Whether to standardize the training features before fitting the model",
+    description = "Whether to standardize the training features before fitting the model.",
     sparkParamGetter = _.standardization)
   setDefault(standardization, true)
 }

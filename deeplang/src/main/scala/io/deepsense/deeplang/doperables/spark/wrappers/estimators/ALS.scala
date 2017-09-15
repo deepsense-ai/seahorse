@@ -38,54 +38,54 @@ class ALS
 
   val alpha = new DoubleParamWrapper[SparkALS](
     name = "alpha",
-    description = "Param for the alpha parameter in the implicit preference formulation (>= 0)",
+    description = "Param for the alpha parameter in the implicit preference formulation.",
     sparkParamGetter = _.alpha,
     validator = RangeValidator(0.0, Double.PositiveInfinity))
   setDefault(alpha, 1.0)
 
   val checkpointInterval = new IntParamWrapper[SparkALS](
     name = "checkpoint interval",
-    description = "Checkpoint interval (>= 1)",
+    description = "Checkpoint interval.",
     sparkParamGetter = _.checkpointInterval,
     validator = RangeValidator(begin = 1.0, end = Int.MaxValue, step = Some(1.0)))
   setDefault(checkpointInterval, 10.0)
 
   val implicitPrefs = new BooleanParamWrapper[SparkALS](
     name = "implicit prefs",
-    description = "Whether to use implicit preference",
+    description = "Whether to use implicit preference.",
     sparkParamGetter = _.implicitPrefs)
   setDefault(implicitPrefs, false)
 
   val nonnegative = new BooleanParamWrapper[SparkALS](
     name = "nonnegative",
-    description = "Whether to apply nonnegativity constraints",
+    description = "Whether to apply nonnegativity constraints.",
     sparkParamGetter = _.nonnegative)
   setDefault(nonnegative, false)
 
   val numItemBlocks = new IntParamWrapper[SparkALS](
     name = "num item blocks",
-    description = "Number of item blocks (>= 1)",
+    description = "Number of item blocks.",
     sparkParamGetter = _.numItemBlocks,
     validator = RangeValidator(begin = 1.0, end = Int.MaxValue, step = Some(1.0)))
   setDefault(numItemBlocks, 10.0)
 
   val numUserBlocks = new IntParamWrapper[SparkALS](
     name = "num user blocks",
-    description = "Number of user blocks (>= 1)",
+    description = "Number of user blocks.",
     sparkParamGetter = _.numUserBlocks,
     validator = RangeValidator(begin = 1.0, end = Int.MaxValue, step = Some(1.0)))
   setDefault(numUserBlocks, 10.0)
 
   val rank = new IntParamWrapper[SparkALS](
     name = "rank",
-    description = "Rank of the matrix factorization (>= 1)",
+    description = "Rank of the matrix factorization.",
     sparkParamGetter = _.rank,
     validator = RangeValidator(begin = 1.0, end = Int.MaxValue, step = Some(1.0)))
   setDefault(rank, 10.0)
 
   val ratingColumn = new SingleColumnSelectorParamWrapper[SparkALS](
     name = "rating column",
-    description = "Column for ratings",
+    description = "Column for ratings.",
     sparkParamGetter = _.ratingCol,
     portIndex = 0)
   setDefault(ratingColumn, NameSingleColumnSelection("rating"))

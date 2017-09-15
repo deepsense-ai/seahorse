@@ -55,13 +55,13 @@ class GBTClassifier()
 
   val impurity = new ChoiceParamWrapper[SparkGBTClassifier, Impurity](
     name = "impurity",
-    description = "Criterion used for information gain calculation",
+    description = "Criterion used for information gain calculation.",
     sparkParamGetter = _.impurity)
   setDefault(impurity, Gini())
 
   val lossType = new ChoiceParamWrapper[SparkGBTClassifier, LossType](
     name = "loss function",
-    description = "Loss function which GBT tries to minimize",
+    description = "Loss function which GBT tries to minimize.",
     sparkParamGetter = _.lossType)
   setDefault(lossType, Logistic())
 

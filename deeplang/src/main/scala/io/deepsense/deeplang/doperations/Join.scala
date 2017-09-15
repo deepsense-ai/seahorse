@@ -44,7 +44,7 @@ case class Join()
 
   val leftPrefix = PrefixBasedColumnCreatorParam(
     name = "left prefix",
-    description = "Prefix for columns of left DataFrame")
+    description = "Prefix for columns of left DataFrame.")
   setDefault(leftPrefix, "")
 
   def getLeftPrefix: String = $(leftPrefix)
@@ -52,7 +52,7 @@ case class Join()
 
   val rightPrefix = PrefixBasedColumnCreatorParam(
     name = "right prefix",
-    description = "Prefix for columns of right DataFrame")
+    description = "Prefix for columns of right DataFrame.")
   setDefault(rightPrefix, "")
 
   def getRightPrefix: String = $(rightPrefix)
@@ -60,7 +60,7 @@ case class Join()
 
   val joinColumns = ParamsSequence[ColumnPair](
     name = "join columns",
-    description = "Pairs of columns to join upon")
+    description = "Pairs of columns to join upon.")
 
   def getJoinColumns: Seq[ColumnPair] = $(joinColumns)
   def setJoinColumns(value: Seq[ColumnPair]): this.type = set(joinColumns, value)
@@ -290,7 +290,7 @@ object Join {
 
     val leftColumn = SingleColumnSelectorParam(
       name = "left column",
-      description = "Column from the left DataFrame",
+      description = "Column from the left DataFrame.",
       portIndex = 0)
 
     def getLeftColumn: SingleColumnSelection = $(leftColumn)
@@ -298,7 +298,7 @@ object Join {
 
     val rightColumn = SingleColumnSelectorParam(
       name = "right column",
-      description = "Column from the right DataFrame",
+      description = "Column from the right DataFrame.",
       portIndex = 1)
 
     def getRightColumn: SingleColumnSelection = $(rightColumn)

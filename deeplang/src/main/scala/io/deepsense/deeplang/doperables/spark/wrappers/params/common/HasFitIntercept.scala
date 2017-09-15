@@ -28,7 +28,7 @@ trait HasFitIntercept extends Params {
   val fitIntercept = new BooleanParamWrapper[
       ml.param.Params { val fitIntercept: ml.param.BooleanParam }](
     name = "fit intercept",
-    description = "Whether to fit an intercept term",
+    description = "Whether to fit an intercept term.",
     sparkParamGetter = _.fitIntercept)
   setDefault(fitIntercept, true)
 }

@@ -27,20 +27,20 @@ class RegexTokenizer extends SparkTransformerAsMultiColumnTransformer[SparkRegex
 
   val gaps = new BooleanParamWrapper[SparkRegexTokenizer](
     name = "gaps",
-    description = "Indicates whether regex splits on gaps (true) or matches tokens (false)",
+    description = "Indicates whether regex splits on gaps (true) or matches tokens (false).",
     sparkParamGetter = _.gaps)
   setDefault(gaps, true)
 
   val minTokenLength = new IntParamWrapper[SparkRegexTokenizer](
     name = "min token length",
-    description = "Minimum token length, >= 0",
+    description = "Minimum token length.",
     sparkParamGetter = _.minTokenLength,
     validator = RangeValidator.positiveIntegers)
   setDefault(minTokenLength, 1.0)
 
   val pattern = new StringParamWrapper[SparkRegexTokenizer](
     name = "pattern",
-    description = "Regex pattern used to match delimiters (gaps = true) or tokens (gaps = false)",
+    description = "Regex pattern used to match delimiters (gaps = true) or tokens (gaps = false).",
     sparkParamGetter = _.pattern)
   setDefault(pattern, "\\s+")
 

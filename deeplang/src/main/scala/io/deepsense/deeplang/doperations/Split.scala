@@ -40,7 +40,7 @@ case class Split()
 
   val splitRatio = NumericParam(
     name = "split ratio",
-    description = "Percentage of rows that should end up in the first output DataFrame",
+    description = "Percentage of rows that should end up in the first output DataFrame.",
     validator = RangeValidator(0.0, 1.0, beginIncluded = true, endIncluded = true))
   setDefault(splitRatio, 0.5)
 

@@ -28,7 +28,7 @@ trait HasInputColumn extends Params {
   val inputColumn = new SingleColumnSelectorParamWrapper[
       ml.param.Params { val inputCol: ml.param.Param[String] }](
     name = "input column",
-    description = "Input column name",
+    description = "Input column name.",
     sparkParamGetter = _.inputCol,
     portIndex = 0)
 }

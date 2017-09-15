@@ -31,7 +31,7 @@ class SqlExpression extends Transformer {
 
   val expression = StringParam(
     name = "expression",
-    description = "SQL Expression to be executed on the DataFrame")
+    description = "SQL Expression to be executed on the DataFrame.")
 
   def getExpression: String = $(expression)
   def setExpression(value: String): this.type = set(expression, value)

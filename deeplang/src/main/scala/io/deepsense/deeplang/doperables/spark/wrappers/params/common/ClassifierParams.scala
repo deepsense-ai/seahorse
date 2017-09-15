@@ -27,7 +27,7 @@ trait ClassifierParams extends PredictorParams {
     new SingleColumnCreatorParamWrapper[
         ml.param.Params { val rawPredictionCol: ml.param.Param[String] }](
       name = "raw prediction column",
-      description = "Raw prediction (confidence) column",
+      description = "Raw prediction (confidence) column.",
       sparkParamGetter = _.rawPredictionCol)
   setDefault(rawPredictionColumn, "rawPrediction")
 }

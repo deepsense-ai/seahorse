@@ -37,7 +37,7 @@ case class Fit() extends DOperation2To1[DataFrame, Estimator, Transformer] {
 
   val estimatorParams = new DynamicParam(
     name = "Parameters of input Estimator",
-    description = "These parameters are rendered dynamically, depending on type of Estimator",
+    description = "These parameters are rendered dynamically, depending on type of Estimator.",
     inputPort = 1)
   setDefault(estimatorParams -> JsNull)
 

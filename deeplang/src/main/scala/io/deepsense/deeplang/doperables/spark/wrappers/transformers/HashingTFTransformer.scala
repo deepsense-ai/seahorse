@@ -27,7 +27,7 @@ class HashingTFTransformer extends SparkTransformerAsMultiColumnTransformer[Hash
 
   val numFeatures = new IntParamWrapper[HashingTF](
     name = "numFeatures",
-    description = "Number of features. Should be > 0.",
+    description = "Number of features.",
     sparkParamGetter = _.numFeatures,
     validator = RangeValidator(1.0, Int.MaxValue, step = Some(1.0)))
   setDefault(numFeatures, (1 << 20).toDouble)

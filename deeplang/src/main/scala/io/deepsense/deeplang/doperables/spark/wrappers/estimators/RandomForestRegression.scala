@@ -37,7 +37,7 @@ class RandomForestRegression
 
   val maxDepth = new IntParamWrapper[SparkRFR](
     name = "max depth",
-    description = "Maximum depth of each tree in the forest (>= 0)",
+    description = "Maximum depth of each tree in the forest.",
     sparkParamGetter = _.maxDepth,
     validator = RangeValidator.positiveIntegers)
   setDefault(maxDepth, 5.0)
@@ -45,28 +45,28 @@ class RandomForestRegression
   val maxBins = new IntParamWrapper[SparkRFR](
     name = "max bins",
     description = "Maximum number of bins discretizing continuous features (>= 2 and >= number " +
-      "of categories for any categorical feature)",
+      "of categories for any categorical feature).",
     sparkParamGetter = _.maxBins,
     validator = RangeValidator(begin = 2.0, end = Int.MaxValue, step = Some(1.0)))
   setDefault(maxBins, 32.0)
 
   val minInstancesPerNode = new IntParamWrapper[SparkRFR](
     name = "min instances per node",
-    description = "Minimum number of instances each child must have after split (>= 1)",
+    description = "Minimum number of instances each child must have after split.",
     sparkParamGetter = _.minInstancesPerNode,
     validator = RangeValidator(begin = 1.0, end = Int.MaxValue, step = Some(1.0)))
   setDefault(minInstancesPerNode, 1.0)
 
   val minInfoGain = new DoubleParamWrapper[SparkRFR](
     name = "min info gain",
-    description = "Minimum information gain for a split to be considered at a tree node (>= 0)",
+    description = "Minimum information gain for a split to be considered at a tree node.",
     sparkParamGetter = _.minInfoGain,
     validator = RangeValidator(0.0, Double.PositiveInfinity))
   setDefault(minInfoGain, 0.0)
 
   val maxMemoryInMB = new IntParamWrapper[SparkRFR](
     name = "max memory",
-    description = "Maximum memory in MB allocated to histogram aggregation (>= 0)",
+    description = "Maximum memory in MB allocated to histogram aggregation.",
     sparkParamGetter = _.maxMemoryInMB,
     validator = RangeValidator.positiveIntegers)
   setDefault(maxMemoryInMB, 256.0)
@@ -79,35 +79,34 @@ class RandomForestRegression
 
   val checkpointInterval = new IntParamWrapper[SparkRFR](
     name = "checkpoint interval",
-    description = "Specifies how often to checkpoint the cached node IDs in intervals (>= 1)",
+    description = "Specifies how often to checkpoint the cached node IDs in intervals.",
     sparkParamGetter = _.checkpointInterval,
     validator = RangeValidator(begin = 1.0, end = Int.MaxValue, step = Some(1.0)))
   setDefault(checkpointInterval, 10.0)
 
   val impurity = new ChoiceParamWrapper[SparkRFR, Impurity.Criterion](
     name = "impurity",
-    description = "Criterion used for information gain calculation",
+    description = "Criterion used for information gain calculation.",
     sparkParamGetter = _.impurity)
   setDefault(impurity, Impurity.Variance())
 
   val subsamplingRate = new DoubleParamWrapper[SparkRFR](
     name = "subsampling rate",
-    description = "Fraction of the training data used for learning each decision tree, " +
-      "in range (0, 1]",
+    description = "Fraction of the training data used for learning each decision tree.",
     sparkParamGetter = _.subsamplingRate,
     validator = RangeValidator(begin = 0.0, end = 1.0, beginIncluded = false))
   setDefault(subsamplingRate, 1.0)
 
   val numTrees = new IntParamWrapper[SparkRFR](
     name = "num trees",
-    description = "Number of trees to train (>= 1)",
+    description = "Number of trees to train.",
     sparkParamGetter = _.numTrees,
     validator = RangeValidator(begin = 1.0, end = Int.MaxValue, step = Some(1.0)))
   setDefault(numTrees, 20.0)
 
   val featureSubsetStrategy = new ChoiceParamWrapper[SparkRFR, FeatureSubsetStrategy.Option](
     name = "feature subset strategy",
-    description = "The number of features to consider for splits at each tree node",
+    description = "The number of features to consider for splits at each tree node.",
     sparkParamGetter = _.featureSubsetStrategy)
   setDefault(featureSubsetStrategy, FeatureSubsetStrategy.Auto())
 

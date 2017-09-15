@@ -30,7 +30,7 @@ case class CustomTransformer() extends Transformer with DefaultCustomTransformer
 
   val innerWorkflow = JsonParam(
     name = "inner workflow",
-    description = "Inner workflow of the Transformer")
+    description = "Inner workflow of the Transformer.")
   setDefault(innerWorkflow, defaultWorkflow)
 
   def getInnerWorkflow: JsObject = $(innerWorkflow)

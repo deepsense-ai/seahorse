@@ -30,6 +30,8 @@ abstract class Param[T] {
 
   val description: String
 
+  val constraints: String = ""
+
   val parameterType: ParameterType
 
   def validate(value: T): Vector[DeepLangException] = Vector.empty
@@ -46,7 +48,7 @@ abstract class Param[T] {
     val basicFields = Map(
       "name" -> name.toJson,
       "type" -> parameterType.toString.toJson, // TODO json format for parameterType
-      "description" -> description.toJson,
+      "description" -> (description + constraints).toJson,
       "default" -> maybeDefault.map(default =>
         serializeDefault(default.asInstanceOf[T])).getOrElse(JsNull)
     )

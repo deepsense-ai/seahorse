@@ -28,7 +28,7 @@ class StopWordsRemover extends SparkTransformerAsMultiColumnTransformer[SparkSto
 
   val caseSensitive = new BooleanParamWrapper[SparkStopWordsRemover](
     name = "case sensitive",
-    description = "Whether to do a case sensitive comparison over the stop words",
+    description = "Whether to do a case sensitive comparison over the stop words.",
     sparkParamGetter = _.caseSensitive)
   setDefault(caseSensitive, false)
 

@@ -27,7 +27,7 @@ trait CsvParameters {
 
   val csvColumnSeparator = ChoiceParam[ColumnSeparatorChoice](
     name = "separator",
-    description = "Column separator")
+    description = "Column separator.")
   setDefault(csvColumnSeparator, ColumnSeparatorChoice.Comma())
 
   def getCsvColumnSeparator: ColumnSeparatorChoice = $(csvColumnSeparator)
@@ -96,7 +96,7 @@ object CsvParameters {
 
       val customColumnSeparator = StringParam(
         name = "custom separator",
-        description = "Custom column separator",
+        description = "Custom column separator.",
         validator = new SingleCharRegexValidator)
       setDefault(customColumnSeparator, ",")
 

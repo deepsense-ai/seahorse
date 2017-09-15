@@ -37,7 +37,7 @@ object SingleColumnParams {
     case class NoInPlaceChoice() extends SingleColumnInPlaceChoice {
       val outputColumnCreatorParam = SingleColumnCreatorParam(
         name = "output column",
-        description = "column to save results"
+        description = "Column to save results."
       )
       override val name: String = "create a new column"
       override val params: Array[Param[_]] = declareParams(outputColumnCreatorParam)

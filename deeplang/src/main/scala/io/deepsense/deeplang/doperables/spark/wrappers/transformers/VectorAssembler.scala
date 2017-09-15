@@ -27,13 +27,13 @@ class VectorAssembler extends SparkTransformerWrapper[SparkVectorAssembler] {
 
   val inputColumns = new ColumnSelectorParamWrapper[SparkVectorAssembler](
     name = "input columns",
-    description = "Input columns",
+    description = "Input columns.",
     sparkParamGetter = _.inputCols,
     portIndex = 0)
 
   val outputColumn = new SingleColumnCreatorParamWrapper[SparkVectorAssembler](
     name = "output column",
-    description = "Name of created output column",
+    description = "Name of created output column.",
     sparkParamGetter = _.outputCol)
 
   override def report(executionContext: ExecutionContext): Report = Report()

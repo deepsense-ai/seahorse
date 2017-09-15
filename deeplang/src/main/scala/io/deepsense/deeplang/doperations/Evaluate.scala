@@ -37,7 +37,7 @@ case class Evaluate() extends DOperation2To1[DataFrame, Evaluator, MetricValue] 
 
   val evaluatorParams = new DynamicParam(
     name = "Parameters of input Evaluator",
-    description = "These parameters are rendered dynamically, depending on type of Evaluator",
+    description = "These parameters are rendered dynamically, depending on type of Evaluator.",
     inputPort = 1)
   setDefault(evaluatorParams, JsNull)
 

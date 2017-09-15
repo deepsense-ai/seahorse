@@ -53,7 +53,7 @@ case class MissingValuesHandler() extends Transformer {
 
   val selectedColumns = ColumnSelectorParam(
     name = "columns",
-    description = "Columns containing missing values to handle",
+    description = "Columns containing missing values to handle.",
     portIndex = 0)
 
   def getSelectedColumns: MultipleColumnSelection = $(selectedColumns)
@@ -61,7 +61,7 @@ case class MissingValuesHandler() extends Transformer {
 
   val strategy = ChoiceParam[Strategy](
     name = "strategy",
-    description = "Strategy of handling missing values")
+    description = "Strategy of handling missing values.")
   setDefault(strategy, Strategy.RemoveRow())
 
   def getStrategy: Strategy = $(strategy)
@@ -69,7 +69,7 @@ case class MissingValuesHandler() extends Transformer {
 
   val missingValueIndicator = ChoiceParam[MissingValueIndicatorChoice](
     name = "missing value indicator",
-    description = "Generate missing value indicator column")
+    description = "Generate missing value indicator column.")
   setDefault(missingValueIndicator, MissingValueIndicatorChoice.No())
 
   def getMissingValueIndicator: MissingValueIndicatorChoice = $(missingValueIndicator)
@@ -253,7 +253,7 @@ object MissingValuesHandler {
       override val name: String = "replace with custom value"
       val customValue = StringParam(
         name = "value",
-        description = "Replacement for missing values")
+        description = "Replacement for missing values.")
 
       def getCustomValue: String = $(customValue)
       def setCustomValue(value: String): this.type = set(customValue, value)
@@ -267,7 +267,7 @@ object MissingValuesHandler {
 
       val emptyColumnStrategy = ChoiceParam[EmptyColumnsStrategy](
         name = "empty column strategy",
-        description = "Strategy of handling columns with missing all values")
+        description = "Strategy of handling columns with missing all values.")
       setDefault(emptyColumnStrategy, EmptyColumnsStrategy.RemoveEmptyColumns())
 
       def getEmptyColumnStrategy: EmptyColumnsStrategy = $(emptyColumnStrategy)
@@ -314,7 +314,7 @@ object MissingValuesHandler {
 
       val indicatorPrefix = PrefixBasedColumnCreatorParam(
         name = "indicator column prefix",
-        description = "Prefix for columns indicating presence of missing values"
+        description = "Prefix for columns indicating presence of missing values."
       )
       setDefault(indicatorPrefix, "")
 

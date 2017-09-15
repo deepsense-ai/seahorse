@@ -29,7 +29,7 @@ trait HasPredictionColumnCreatorParam extends Params {
     new SingleColumnCreatorParamWrapper[
       ml.param.Params { val predictionCol: ml.param.Param[String] }](
       name = "prediction column",
-      description = "Prediction column created during model scoring",
+      description = "Prediction column created during model scoring.",
       sparkParamGetter = _.predictionCol)
   setDefault(predictionColumn, "prediction")
 }

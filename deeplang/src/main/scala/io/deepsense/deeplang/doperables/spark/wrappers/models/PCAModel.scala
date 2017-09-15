@@ -34,7 +34,7 @@ class PCAModel
 
   val k = new IntParamWrapper[ml.param.Params { val k: ml.param.IntParam }](
     name = "k",
-    description = "Number of principal components",
+    description = "Number of principal components.",
     sparkParamGetter = _.k,
     validator = RangeValidator.positiveIntegers)
 

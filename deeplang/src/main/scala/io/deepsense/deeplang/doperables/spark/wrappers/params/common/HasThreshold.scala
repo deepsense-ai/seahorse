@@ -27,7 +27,7 @@ trait HasThreshold extends Params {
 
   val threshold = new DoubleParamWrapper[ml.param.Params { val threshold: ml.param.DoubleParam }](
     name = "threshold",
-    description = "Threshold in binary classification prediction, in range [0, 1]",
+    description = "Threshold in binary classification prediction.",
     sparkParamGetter = _.threshold,
     validator = RangeValidator(0.0, 1.0))
   setDefault(threshold, 0.5)

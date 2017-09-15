@@ -32,7 +32,7 @@ trait PredictorParams
     new SingleColumnSelectorParamWrapper[
         ml.param.Params { val featuresCol: ml.param.Param[String] }](
       name = "features column",
-      description = "Features column for model fitting",
+      description = "Features column for model fitting.",
       sparkParamGetter = _.featuresCol,
       portIndex = 0)
   setDefault(featuresColumn, NameSingleColumnSelection("features"))

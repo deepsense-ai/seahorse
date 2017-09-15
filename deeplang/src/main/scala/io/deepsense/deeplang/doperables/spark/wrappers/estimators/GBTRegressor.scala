@@ -41,14 +41,14 @@ class GBTRegressor
   val impurity = new ChoiceParamWrapper[
     ml.param.Params { val impurity: ml.param.Param[String] }, Impurity](
     name = "impurity",
-    description = "Criterion used for information gain calculation",
+    description = "Criterion used for information gain calculation.",
     sparkParamGetter = _.impurity)
   setDefault(impurity, Variance())
 
   val lossType = new ChoiceParamWrapper[
     ml.param.Params { val lossType: ml.param.Param[String] }, LossType](
     name = "loss function",
-    description = "Loss function which GBT tries to minimize",
+    description = "Loss function which GBT tries to minimize.",
     sparkParamGetter = _.lossType)
   setDefault(lossType, Squared())
 

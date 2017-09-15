@@ -37,7 +37,7 @@ class CountVectorizerEstimator
   val minDF = new DoubleParamWrapper[ml.param.Params { val minDF: ml.param.DoubleParam }](
     name = "min different documents",
     description = "Specifies the minimum number of different documents " +
-      "a term must appear in to be included in the vocabulary",
+      "a term must appear in to be included in the vocabulary.",
     sparkParamGetter = _.minDF,
     RangeValidator(0.0, Double.MaxValue))
   setDefault(minDF, 1.0)

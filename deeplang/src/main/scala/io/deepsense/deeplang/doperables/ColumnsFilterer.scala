@@ -27,7 +27,7 @@ class ColumnsFilterer extends Transformer {
 
   val selectedColumns = ColumnSelectorParam(
     name = "selected columns",
-    description = "Columns to be retained in the output DataFrame",
+    description = "Columns to be retained in the output DataFrame.",
     portIndex = 0)
 
   def getSelectedColumns: MultipleColumnSelection = $(selectedColumns)

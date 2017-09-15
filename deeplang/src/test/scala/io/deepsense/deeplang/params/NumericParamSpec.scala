@@ -32,7 +32,7 @@ class NumericParamSpec extends AbstractParamSpec[Double, NumericParam] {
     val json = JsObject(
       "type" -> JsString("numeric"),
       "name" -> JsString(param.name),
-      "description" -> JsString(param.description),
+      "description" -> JsString(param.description + param.constraints),
       "default" -> JsNull,
       "validator" -> JsObject(
         "type" ->  JsString("range"),

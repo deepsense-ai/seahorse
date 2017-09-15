@@ -33,7 +33,7 @@ class PCAEstimator
 
   val k = new IntParamWrapper[SparkPCA](
     name = "k",
-    description = "Number of principal components",
+    description = "Number of principal components.",
     sparkParamGetter = _.k,
     validator = RangeValidator(begin = 1.0, end = Int.MaxValue, step = Some(1.0)))
   setDefault(k, 1.0)

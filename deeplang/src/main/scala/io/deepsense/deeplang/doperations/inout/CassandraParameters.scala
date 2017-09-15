@@ -23,14 +23,14 @@ trait CassandraParameters {
 
   val cassandraKeyspace = StringParam(
     name = "keyspace",
-    description = "Keyspace")
+    description = "Keyspace.")
 
   def getCassandraKeyspace: String = $(cassandraKeyspace)
   def setCassandraKeyspace(value: String): this.type = set(cassandraKeyspace, value)
 
   val cassandraTable = StringParam(
     name = "table",
-    description = "Table")
+    description = "Table.")
 
   def getCassandraTable: String = $(cassandraTable)
   def setCassandraTable(value: String): this.type = set(cassandraTable, value)

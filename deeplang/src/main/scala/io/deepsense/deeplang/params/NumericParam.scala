@@ -28,4 +28,6 @@ case class NumericParam(
   with HasValidator[Double] {
 
   override val parameterType = ParameterType.Numeric
+  override val constraints = validator.toHumanReadable(name)
+
 }

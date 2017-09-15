@@ -41,7 +41,7 @@ class KMeans
 
   val k = new IntParamWrapper[SparkKMeans](
     "k",
-    "Number of clusters to create. Must be > 1.",
+    "Number of clusters to create.",
     _.k,
     validator = RangeValidator(begin = 2.0, end = Int.MaxValue, step = Some(1.0)))
   setDefault(k, 2.0)
@@ -49,7 +49,7 @@ class KMeans
   val initMode = new ChoiceParamWrapper[SparkKMeans, KMeansInitMode](
     "init mode",
     "Param for the initialization algorithm. This can be either \"random\" to choose random " +
-      "points as initial cluster centers, or \"k-means||\" to use a parallel variant of k-means++",
+      "points as initial cluster centers, or \"k-means||\" to use a parallel variant of k-means++.",
     _.initMode)
   setDefault(initMode, ParallelInitMode())
 

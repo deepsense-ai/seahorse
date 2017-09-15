@@ -34,13 +34,13 @@ class IsotonicRegression
   val isotonic = new BooleanParamWrapper[SparkIsotonicRegression](
     name = "isotonic",
     description = "Whether the output sequence should be isotonic/increasing (true) " +
-      "or antitonic/decreasing (false)",
+      "or antitonic/decreasing (false).",
     sparkParamGetter = _.isotonic)
   setDefault(isotonic, true)
 
   val weightColumn = new SingleColumnSelectorParamWrapper[SparkIsotonicRegression](
     name = "weight column",
-    description = "Weight column - if this is not set, we treat all instance weights as 1.0",
+    description = "Weight column - if this is not set, we treat all instance weights as 1.0.",
     sparkParamGetter = _.weightCol,
     portIndex = 0)
 

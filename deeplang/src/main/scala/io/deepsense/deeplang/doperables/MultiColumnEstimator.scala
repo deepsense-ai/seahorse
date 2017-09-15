@@ -46,7 +46,7 @@ import io.deepsense.deeplang.params.selections.{MultipleColumnSelection, NameCol
 abstract class MultiColumnEstimator extends Estimator with HasSpecificParams {
   val singleOrMultiChoiceParam = ChoiceParam[SingleOrMultiColumnChoice](
     name = "one or many",
-    description = "Transform one or many columns"
+    description = "Transform one or many columns."
   )
   override lazy val params = getSpecificParams :+ singleOrMultiChoiceParam
 

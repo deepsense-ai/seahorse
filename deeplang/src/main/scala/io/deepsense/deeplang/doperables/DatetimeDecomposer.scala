@@ -41,7 +41,7 @@ case class DatetimeDecomposer() extends Transformer {
 
   val timestampColumnParam = SingleColumnSelectorParam(
     name = "timestamp column",
-    description = "Timestamp column to decompose",
+    description = "Timestamp column to decompose.",
     portIndex = 0
   )
 
@@ -51,7 +51,7 @@ case class DatetimeDecomposer() extends Transformer {
 
   val timestampPartsParam = MultipleChoiceParam[TimestampPart](
     name = "parts",
-    description = "Parts of the date/time to retain"
+    description = "Parts of the date/time to retain."
   )
 
   def getTimestampParts: Set[TimestampPart] = $(timestampPartsParam)
@@ -60,7 +60,7 @@ case class DatetimeDecomposer() extends Transformer {
 
   val timestampPrefixParam = PrefixBasedColumnCreatorParam(
     name = "prefix",
-    description = "Common prefix for names of created columns"
+    description = "Common prefix for names of created columns."
   )
   setDefault(timestampPrefixParam, "")
 

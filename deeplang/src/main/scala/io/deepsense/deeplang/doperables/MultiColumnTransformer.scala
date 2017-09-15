@@ -46,7 +46,7 @@ abstract class MultiColumnTransformer
 
   val singleOrMultiChoiceParam = ChoiceParam[SingleOrMultiColumnChoice](
     name = "one or many",
-    description = "Transform one or many columns"
+    description = "Transform one or many columns."
   )
   setDefault(singleOrMultiChoiceParam, SingleColumnChoice())
 
