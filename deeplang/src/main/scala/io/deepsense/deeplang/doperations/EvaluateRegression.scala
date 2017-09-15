@@ -19,10 +19,10 @@ package io.deepsense.deeplang.doperations
 import org.apache.spark.rdd.RDD
 
 import io.deepsense.deeplang.DOperation.Id
-import io.deepsense.deeplang.doperables.{ColumnTypesPredicates, Evaluator, RegressionReporter, Report}
+import io.deepsense.deeplang.doperables.{ColumnTypesPredicates, SupervisedEvaluator, RegressionReporter, Report}
 import io.deepsense.deeplang.parameters.NameSingleColumnSelection
 
-case class EvaluateRegression() extends Evaluator {
+case class EvaluateRegression() extends SupervisedEvaluator {
 
   override val name: String = "Evaluate Regression"
 

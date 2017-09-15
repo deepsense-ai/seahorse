@@ -16,12 +16,67 @@
 
 package io.deepsense.deeplang.doperables
 
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.{DMethod1To1, DOperable}
+import org.apache.spark.mllib.linalg.Vector
+import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.Row
+import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
+
+import io.deepsense.commons.types.ColumnType
+import io.deepsense.deeplang.doperables.dataframe.{CommonColumnMetadata, DataFrame, DataFrameBuilder}
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
+import io.deepsense.deeplang.{DKnowledge, DMethod1To1, DOperable, ExecutionContext}
 
 trait Scorable extends DOperable {
+
+  val featureColumns: Seq[String]
+
+  def transformFeatures(v: RDD[Vector]): RDD[Vector]
+
+  def predict(features: RDD[Vector]): RDD[Double]
+
   /**
-   * String parameter contains target column's name.
+   * String parameter contains prediction column's name.
    */
-  def score: DMethod1To1[String, DataFrame, DataFrame]
+  val score = new DMethod1To1[String, DataFrame, DataFrame] {
+
+    override def apply(context: ExecutionContext)
+                      (predictionColumnName: String)
+                      (dataFrame: DataFrame): DataFrame = {
+
+      val transformedVectors = transformFeatures(
+        dataFrame.selectSparkVectorRDD(featureColumns, featurePredicate))
+      transformedVectors.cache()
+
+      val predictionsRDD: RDD[Double] = predict(transformedVectors)
+
+      transformedVectors.unpersist()
+
+      val outputSchema = StructType(dataFrame.sparkDataFrame.schema.fields :+
+        StructField(predictionColumnName, DoubleType))
+
+      val outputRDD = dataFrame.sparkDataFrame.rdd.zip(predictionsRDD).map({
+        case (row, prediction) => Row.fromSeq(row.toSeq :+ prediction)
+      })
+
+      context.dataFrameBuilder.buildDataFrame(outputSchema, outputRDD)
+    }
+
+    override def inferFull(context: InferContext)
+                          (predictionColumnName: String)
+                          (dataFrameKnowledge: DKnowledge[DataFrame])
+                          : (DKnowledge[DataFrame], InferenceWarnings) = {
+
+      // TODO when model metadata is introduced:
+      // add support for checking if dataframe has correct columns
+
+      val dataFrame = dataFrameKnowledge.types.head
+      val newColumn = CommonColumnMetadata(
+        predictionColumnName, index = None, columnType = Some(ColumnType.numeric))
+      val outputMetadata = dataFrame.inferredMetadata.get.appendColumn(newColumn)
+      val dKnowledge = DKnowledge(DataFrameBuilder.buildDataFrameForInference(outputMetadata))
+      (dKnowledge, InferenceWarnings.empty)
+    }
+  }
+
+  protected def featurePredicate: ColumnTypesPredicates.Predicate
 }

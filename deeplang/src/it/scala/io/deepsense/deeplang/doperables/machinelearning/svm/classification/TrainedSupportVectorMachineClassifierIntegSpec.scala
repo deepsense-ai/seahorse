@@ -22,10 +22,10 @@ import org.apache.spark.mllib.linalg.{Vector => SparkVector}
 
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType
+import io.deepsense.deeplang.PrebuiltTypedColumns.{TypedColumn, ExtendedColumnType}
 import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType.ExtendedColumnType
 import io.deepsense.deeplang.doperables.machinelearning.svm.SupportVectorMachineParameters
-import io.deepsense.deeplang.doperables.{PredictorModelBaseIntegSpec, Report, Scorable, ScorableBaseIntegSpec}
+import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.parameters.RegularizationType
 import io.deepsense.reportlib.model.{Table, ReportContent}
 
@@ -57,14 +57,14 @@ class TrainedSupportVectorMachineClassifierIntegSpec
       params,
       new SVMModel(Vectors.dense(2.3), 10.0),
       features,
-      targetColumnName)
+      predictionColumnName)
 
   override def createScorableInstanceWithModel(trainedModelMock: PredictorSparkModel): Scorable =
     TrainedSupportVectorMachineClassifier(
       params,
       trainedModelMock.asInstanceOf[SVMModel],
       mock[Seq[String]],
-      targetColumnName)
+      predictionColumnName)
 
   "TrainedSupportVectorMachineClassifier" should {
     "create a report" in {

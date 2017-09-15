@@ -23,7 +23,7 @@ import org.apache.spark.mllib.tree.configuration.Algo._
 import org.apache.spark.mllib.tree.configuration.{Algo, Strategy}
 import org.apache.spark.mllib.tree.model.{DecisionTreeModel, RandomForestModel}
 
-import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType
+import io.deepsense.deeplang.PrebuiltTypedColumns.{TypedColumn, ExtendedColumnType}
 import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType.ExtendedColumnType
 import io.deepsense.deeplang.doperables.machinelearning.randomforest.RandomForestParameters
 import io.deepsense.deeplang.doperables.machinelearning.randomforest.classification.TrainedRandomForestClassification
@@ -66,7 +66,7 @@ class TrainedRandomForestClassificationIntegSpec
       RandomForestParameters(1, "auto", "gini", 1, 1),
       model,
       features,
-      targetColumnName)
+      predictionColumnName)
   }
 
   override def createScorableInstanceWithModel(trainedModelMock: PredictorSparkModel): Scorable =
@@ -74,5 +74,5 @@ class TrainedRandomForestClassificationIntegSpec
       RandomForestParameters(1, "auto", "gini", 1, 1),
       trainedModelMock.asInstanceOf[RandomForestModel],
       mock[Seq[String]],
-      targetColumnName)
+      predictionColumnName)
 }

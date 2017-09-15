@@ -24,7 +24,7 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.parameters.{ParametersSchema, SingleColumnSelectorParameter}
 import io.deepsense.deeplang.{DOperation1To1, ExecutionContext}
 
-trait Evaluator extends DOperation1To1[DataFrame, Report] with EvaluatorParams {
+trait SupervisedEvaluator extends DOperation1To1[DataFrame, Report] with SupervisedEvaluatorParams {
 
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): Report = {
     logger.debug("Execution of " + this.getClass.getSimpleName + " starts")
@@ -55,7 +55,7 @@ trait Evaluator extends DOperation1To1[DataFrame, Report] with EvaluatorParams {
   override lazy val tTagTO_0: ru.TypeTag[Report] = ru.typeTag[Report]
 }
 
-trait EvaluatorParams {
+trait SupervisedEvaluatorParams {
   val targetColumnParameter = SingleColumnSelectorParameter(
     "Target Column",
     portIndex = 0)

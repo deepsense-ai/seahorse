@@ -24,7 +24,7 @@ import org.mockito.AdditionalAnswers._
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
 
-import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType
+import io.deepsense.deeplang.PrebuiltTypedColumns.{TypedColumn, ExtendedColumnType}
 import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType.ExtendedColumnType
 import io.deepsense.deeplang.doperables.machinelearning.LinearRegressionParameters
 import io.deepsense.deeplang.doperables.machinelearning.ridgeregression.TrainedRidgeRegression
@@ -51,7 +51,8 @@ class TrainedRidgeRegressionIntegSpec
     mock[RidgeRegressionPredictor]
   }
 
-  override def createScorableInstanceWithModel(trainedModelMock: PredictorSparkModel): Scorable =
+  override def createScorableInstanceWithModel(
+      trainedModelMock: PredictorSparkModel): Scorable =
     createScorableInstanceImpl(
       trainedModelMock.asInstanceOf[RidgeRegressionModel], mock[Seq[String]])
 
@@ -71,7 +72,7 @@ class TrainedRidgeRegressionIntegSpec
       LinearRegressionParameters(1, 1, 1),
       trainedModelMock,
       features,
-      targetColumnName,
+      predictionColumnName,
       scalerMock)
   }
 }

@@ -35,7 +35,7 @@ case class TrainedLassoRegression(
   extends LassoRegression
   with TrainedLinearRegression
   with Scorable
-  with VectorScoring {
+  with HasTargetColumn {
 
   def this() = this(null, null, null, null, null)
 

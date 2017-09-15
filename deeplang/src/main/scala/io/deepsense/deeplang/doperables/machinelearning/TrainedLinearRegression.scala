@@ -19,10 +19,10 @@ package io.deepsense.deeplang.doperables.machinelearning
 import org.apache.spark.mllib.regression.GeneralizedLinearModel
 
 import io.deepsense.commons.types.ColumnType
-import io.deepsense.deeplang.doperables.{DOperableReporter, LinearModel, Report, VectorScoring}
+import io.deepsense.deeplang.doperables._
 
 trait TrainedLinearRegression {
-  this: LinearModel with VectorScoring =>
+  this: LinearModel with Scorable with HasTargetColumn =>
 
   def generateTrainedRegressionReport(
       modelParameters: LinearRegressionParameters,
@@ -42,7 +42,7 @@ trait TrainedLinearRegression {
       )
       .withWeights(featureColumns, model.weights.toArray)
       .withIntercept(model.intercept)
-      .withVectorScoring(this)
+      .withSupervisedScorable(this)
       .report
   }
 }

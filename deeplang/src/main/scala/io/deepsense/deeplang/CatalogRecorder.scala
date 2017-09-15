@@ -194,6 +194,16 @@ object CatalogRecorder {
       "Creates an untrained SVM classification model"
     )
 
+    catalog.registerDOperation[TrainClustering](
+      DOperationCategories.ML.Clustering,
+      "Trains a clustering model and assigns data to clusters"
+    )
+
+    catalog.registerDOperation[AssignToClusters](
+      DOperationCategories.ML.Clustering,
+      "Assigns data to clusters using trained clustering model"
+    )
+
     catalog.registerDOperation[ApplyTransformation](
       DOperationCategories.Transformation,
       "Applies a Transformation to a DataFrame"

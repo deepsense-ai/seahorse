@@ -37,7 +37,9 @@ List of all supported classes and traits:
 
 * Traits
   * [Classifier](traits/classifier.html)
+  * [Clustering](traits/clustering.html)
   * [Regressor](traits/regressor.html)
   * [Scorable](traits/scorable.html)
   * [Trainable](traits/trainable.html)
   * [Transformation](traits/transformation.html)
+  * [UnsupervisedTrainable](traits/unsupervised_trainable.html)

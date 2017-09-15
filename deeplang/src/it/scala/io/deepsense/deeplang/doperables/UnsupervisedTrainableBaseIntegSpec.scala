@@ -16,25 +16,23 @@
 
 package io.deepsense.deeplang.doperables
 
-import io.deepsense.deeplang._
-import io.deepsense.deeplang.doperations.exceptions.{ColumnDoesNotExistException, ColumnsDoNotExistException, WrongColumnTypeException}
+import io.deepsense.deeplang.doperations.exceptions.{ColumnsDoNotExistException, WrongColumnTypeException}
 import io.deepsense.deeplang.parameters.{MultipleColumnSelection, NameColumnSelection, NameSingleColumnSelection}
+import io.deepsense.deeplang.{DeeplangIntegTestSupport, ExecutionContext, PrebuiltTypedColumns}
 
-abstract class TrainableBaseIntegSpec(val trainableName: String)
-  extends DeeplangIntegTestSupport with PrebuiltTypedColumns {
+abstract class UnsupervisedTrainableBaseIntegSpec(
+    trainableName: String)
+  extends DeeplangIntegTestSupport
+  with PrebuiltTypedColumns {
 
   import PrebuiltTypedColumns.ExtendedColumnType._
   import PrebuiltTypedColumns._
 
-  def createTrainableInstance: Trainable
+  def createTrainableInstance: UnsupervisedTrainable
 
-  def acceptedTargetTypes: Seq[ExtendedColumnType]
   def acceptedFeatureTypes: Seq[ExtendedColumnType]
-
-  def unacceptableTargetTypes: Seq[ExtendedColumnType]
   def unacceptableFeatureTypes: Seq[ExtendedColumnType]
 
-  override protected val targetColumns = buildColumns(targetName)
   override protected val featureColumns = buildColumns(featureName)
 
   trainableName should {
@@ -55,44 +53,16 @@ abstract class TrainableBaseIntegSpec(val trainableName: String)
         }
       }
 
-      ExtendedColumnType.values.filter(unacceptableTargetTypes.contains) foreach { columnType =>
-        s"target column is of unacceptable type $columnType" in {
-          val trainableParameters =
-            makeTrainableParameters(columnType, Set(nonBinaryValuedNumeric))
-
-          val dataFrame = makeDataFrame(columnType, nonBinaryValuedNumeric)
-
-          a[WrongColumnTypeException] shouldBe thrownBy {
-            createTrainableInstance.train(
-              mock[ExecutionContext])(trainableParameters)(dataFrame)
-          }
-        }
-      }
-
       "feature column does not exist" in {
-        val trainableParameters = TrainableParameters(
+        val trainableParameters = UnsupervisedTrainableParameters(
           MultipleColumnSelection(
             // Existing feature as an addition to the selection
             Vector(NameColumnSelection(Set("non-existent", featureName(nonBinaryValuedNumeric))))),
-          NameSingleColumnSelection(targetName(nonBinaryValuedNumeric)))
+          predictionName(nonBinaryValuedNumeric))
 
         val dataFrame = makeDataFrame(nonBinaryValuedNumeric, nonBinaryValuedNumeric)
 
         a[ColumnsDoNotExistException] shouldBe thrownBy {
-          createTrainableInstance.train(
-            mock[ExecutionContext])(trainableParameters)(dataFrame)
-        }
-      }
-
-      "target column does not exist" in {
-        val trainableParameters = TrainableParameters(
-          MultipleColumnSelection(
-            Vector(NameColumnSelection(Set(targetName(nonBinaryValuedNumeric))))),
-          NameSingleColumnSelection("non-existent"))
-
-        val dataFrame = makeDataFrame(nonBinaryValuedNumeric, nonBinaryValuedNumeric)
-
-        a[ColumnDoesNotExistException] shouldBe thrownBy {
           createTrainableInstance.train(
             mock[ExecutionContext])(trainableParameters)(dataFrame)
         }
@@ -102,7 +72,7 @@ abstract class TrainableBaseIntegSpec(val trainableName: String)
     "train a scorable model" when {
 
       ExtendedColumnType.values.filter(acceptedFeatureTypes.contains) foreach { columnType =>
-        s"feature column is of acceptable type $columnType and target is numeric" in {
+        s"feature column is of acceptable type $columnType and prediction is numeric" in {
           val trainableParameters =
             makeTrainableParameters(binaryValuedNumeric, Set(columnType))
 
@@ -111,43 +81,27 @@ abstract class TrainableBaseIntegSpec(val trainableName: String)
           val scorable = createTrainableInstance.train(
             mock[ExecutionContext])(trainableParameters)(dataFrame)
 
-          verifySupervisedScorable(scorable,
-            targetName(binaryValuedNumeric), Seq(featureName(columnType)))
-        }
-      }
-
-      ExtendedColumnType.values.filter(acceptedTargetTypes.contains) foreach { columnType =>
-        s"target column is of acceptable type $columnType and feature is numeric" in {
-          val trainableParameters =
-            makeTrainableParameters(columnType, Set(nonBinaryValuedNumeric))
-
-          val dataFrame = makeDataFrame(columnType, nonBinaryValuedNumeric)
-
-          val scorable = createTrainableInstance.train(
-            mock[ExecutionContext])(trainableParameters)(dataFrame)
-
-          verifySupervisedScorable(scorable,
-            targetName(columnType), Seq(featureName(nonBinaryValuedNumeric)))
+          verifyUnsupervisedScorable(scorable, Seq(featureName(columnType)))
         }
       }
     }
   }
 
   protected def makeTrainableParameters(
-      target: ExtendedColumnType, features: Set[ExtendedColumnType]): TrainableParameters = {
-    TrainableParameters(
+      prediction: ExtendedColumnType,
+      features: Set[ExtendedColumnType]): UnsupervisedTrainableParameters = {
+    UnsupervisedTrainableParameters(
       MultipleColumnSelection(
         Vector(NameColumnSelection(features.map(featureName)))),
-      NameSingleColumnSelection(targetName(target))
-    )
+      predictionName(prediction))
   }
 
-  def verifySupervisedScorable(
+  def verifyUnsupervisedScorable(
       scorable: Scorable,
-      target: String,
       features: Seq[String]): Unit = {
 
+    scorable.isInstanceOf[Scorable] shouldBe true
     scorable.featureColumns shouldBe features
-    scorable.asInstanceOf[HasTargetColumn].targetColumn shouldBe target
   }
+
 }

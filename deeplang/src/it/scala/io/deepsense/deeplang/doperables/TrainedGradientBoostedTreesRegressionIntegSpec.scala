@@ -24,7 +24,7 @@ import org.apache.spark.mllib.tree.configuration.{Algo, BoostingStrategy, Strate
 import org.apache.spark.mllib.tree.loss.SquaredError
 import org.apache.spark.mllib.tree.model.{DecisionTreeModel, GradientBoostedTreesModel}
 
-import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType
+import io.deepsense.deeplang.PrebuiltTypedColumns.{TypedColumn, ExtendedColumnType}
 import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType.ExtendedColumnType
 import io.deepsense.deeplang.doperables.machinelearning.gradientboostedtrees.GradientBoostedTreesParameters
 import io.deepsense.deeplang.doperables.machinelearning.gradientboostedtrees.regression.TrainedGradientBoostedTreesRegression
@@ -71,13 +71,14 @@ class TrainedGradientBoostedTreesRegressionIntegSpec
       GradientBoostedTreesParameters(1, "squared", "variance", 1, 1),
       model,
       features,
-      targetColumnName)
+      predictionColumnName)
   }
 
-  override def createScorableInstanceWithModel(trainedModelMock: PredictorSparkModel): Scorable =
+  override def createScorableInstanceWithModel(
+      trainedModelMock: PredictorSparkModel): Scorable =
     TrainedGradientBoostedTreesRegression(
       GradientBoostedTreesParameters(1, "squared", "variance", 1, 1),
       trainedModelMock.asInstanceOf[GradientBoostedTreesModel],
       mock[Seq[String]],
-      targetColumnName)
+      predictionColumnName)
 }

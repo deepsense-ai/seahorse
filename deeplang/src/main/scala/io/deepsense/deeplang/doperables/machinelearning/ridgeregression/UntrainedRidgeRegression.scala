@@ -23,7 +23,7 @@ import io.deepsense.deeplang.doperables.ColumnTypesPredicates.Predicate
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.machinelearning.{LinearRegressionParameters, UntrainedLinearRegression}
-import io.deepsense.deeplang.doperables.{ColumnTypesPredicates, Report, Scorable, Trainable}
+import io.deepsense.deeplang.doperables.{ColumnTypesPredicates, Report, Scorable}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 
 case class UntrainedRidgeRegression(

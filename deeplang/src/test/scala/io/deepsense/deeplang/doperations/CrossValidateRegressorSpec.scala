@@ -76,7 +76,7 @@ class CrossValidateRegressorSpec extends UnitSpec with MockitoSugar {
       val mockedReportSet = Set[Report]()
       when(dDOperableCatalogMock.concreteSubclassesInstances[Report]).thenReturn(mockedReportSet)
 
-      val scorableStubs = Vector(mock[Scorable], mock[Scorable], mock[Scorable])
+      val scorableStubs = Vector.fill(3)(mock[Scorable])
       val scorableKnowledgeStub1 = DKnowledge(Set(scorableStubs(0), scorableStubs(1)))
       val scorableKnowledgeStub2 = DKnowledge(Set(scorableStubs(1), scorableStubs(2)))
       val dataframeKnowledgeStub = mock[DKnowledge[DataFrame]]

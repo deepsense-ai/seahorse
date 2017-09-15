@@ -18,13 +18,13 @@ package io.deepsense.deeplang.doperations
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.{TrainableParameters, Scorable, Trainable}
+import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 
 /**
  * Operation that receives Trainable and trains it on dataframe to get trained, Scorable model.
  */
-trait Trainer[T1 <: Trainable, T2 <: Scorable]
+trait SupervisedTrainer[T1 <: Trainable, T2 <: Scorable]
   extends DOperation2To1[T1, DataFrame, T2]
   with TrainableParameters {
 

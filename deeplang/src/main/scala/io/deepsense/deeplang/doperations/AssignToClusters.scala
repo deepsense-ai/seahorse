@@ -20,19 +20,24 @@ import scala.reflect.runtime.{universe => ru}
 
 import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables._
+import io.deepsense.deeplang.doperables.{Clustering, Scorable}
 
-case class TrainClassifier()
-    extends SupervisedTrainer[Classifier with Trainable, Classifier with Scorable] {
-
-  override val id: DOperation.Id = "892cf942-fe24-11e4-a322-1697f925ec7b"
-  override val name = "Train Classifier"
+case class AssignToClusters() extends Scorer[Clustering with Scorable] {
+  override val id: DOperation.Id = "bce36c12-df3b-44d0-9a67-8ae213cc9d10"
+  override val name = "Assign to Clusters"
   @transient
-  override lazy val tTagTI_0: ru.TypeTag[Classifier with Trainable] =
-    ru.typeTag[Classifier with Trainable]
+  override lazy val tTagTI_0: ru.TypeTag[Clustering with Scorable] =
+    ru.typeTag[Clustering with Scorable]
   @transient
-  override lazy val tTagTO_0: ru.TypeTag[Classifier with Scorable] =
-    ru.typeTag[Classifier with Scorable]
+  override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
   @transient
   override lazy val tTagTI_1: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
+}
+
+object AssignToClusters {
+  def apply(predictionColumnName: String): AssignToClusters = {
+    val clustering = new AssignToClusters
+    clustering.predictionColumnParam.value = predictionColumnName
+    clustering
+  }
 }

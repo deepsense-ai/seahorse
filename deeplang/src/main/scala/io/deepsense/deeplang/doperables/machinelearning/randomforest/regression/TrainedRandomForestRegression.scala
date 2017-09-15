@@ -33,7 +33,7 @@ case class TrainedRandomForestRegression(
     targetColumn: String)
   extends RandomForestRegressor
   with Scorable
-  with VectorScoring
+  with HasTargetColumn
   with DOperableSaver {
 
   def this() = this(null, null, null, null)
@@ -59,7 +59,7 @@ case class TrainedRandomForestRegression(
         ("Max depth", ColumnType.numeric, modelParameters.maxDepth.toString),
         ("Max bins", ColumnType.numeric, modelParameters.maxBins.toString)
       )
-      .withVectorScoring(this)
+      .withSupervisedScorable(this)
       .report
   }
 

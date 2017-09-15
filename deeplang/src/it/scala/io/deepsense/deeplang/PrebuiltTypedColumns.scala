@@ -127,4 +127,6 @@ object PrebuiltTypedColumns {
   def featureName(feature: ExtendedColumnType): String = feature.toString + "_feature"
 
   def targetName(target: ExtendedColumnType): String = target.toString + "_target"
+
+  def predictionName(prediction: ExtendedColumnType): String = prediction.toString + "_prediction"
 }

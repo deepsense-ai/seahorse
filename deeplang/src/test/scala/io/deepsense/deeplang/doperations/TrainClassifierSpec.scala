@@ -56,7 +56,7 @@ class TrainClassifierSpec extends UnitSpec with MockitoSugar {
   it should {
     "infer results of its types" in {
       val inferContextStub = mock[InferContext]
-      val scorableStubs = Vector(mock[Scorable], mock[Scorable], mock[Scorable])
+      val scorableStubs = Vector.fill(3)(mock[Scorable])
       val scorableKnowledgeStub1 = DKnowledge(Set(scorableStubs(0), scorableStubs(1)))
       val scorableKnowledgeStub2 = DKnowledge(Set(scorableStubs(1), scorableStubs(2)))
       val dataframeKnowledgeStub = mock[DKnowledge[DataFrame]]

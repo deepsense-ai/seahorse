@@ -66,7 +66,7 @@ case class DOperableReporter(title: String, tables: List[Table] = List.empty) {
     DOperableReporter(title, tables :+ interceptTable)
   }
 
-  def withVectorScoring(operable: VectorScoring): DOperableReporter = {
+  def withSupervisedScorable(operable: Scorable with HasTargetColumn): DOperableReporter = {
     val featureColumnsTable = Table(
       "Feature columns",
       "",

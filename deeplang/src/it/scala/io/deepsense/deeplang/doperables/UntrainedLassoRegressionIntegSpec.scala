@@ -27,6 +27,7 @@ import io.deepsense.deeplang.doperables.machinelearning.lassoregression.{Trained
 
 class UntrainedLassoRegressionIntegSpec
   extends TrainableBaseIntegSpec("UntrainedLassoRegression") {
+
   override def acceptedFeatureTypes: Seq[ExtendedColumnType] = Seq(
     ExtendedColumnType.binaryValuedNumeric,
     ExtendedColumnType.nonBinaryValuedNumeric)

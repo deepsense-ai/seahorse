@@ -68,7 +68,7 @@ trait PredictorModelBaseIntegSpec extends DeeplangIntegTestSupport {
 
       // the tested call happens here
       val scorable = createScorableInstanceWithModel(trainedModelMock)
-      scorable.score(context)(targetColumnName)(dataFrame)
+      scorable.score(context)(predictionColumnName)(dataFrame)
 
       // now, we check what was called with what arguments
 
@@ -92,7 +92,7 @@ trait PredictorModelBaseIntegSpec extends DeeplangIntegTestSupport {
       outputData shouldBe expectedOutputData
 
       val expectedSchema = StructType(
-        Seq(StructField("feature", DoubleType), StructField(targetColumnName, DoubleType)))
+        Seq(StructField("feature", DoubleType), StructField(predictionColumnName, DoubleType)))
       buildInvocationSchema.getValue shouldBe expectedSchema
     }
   }
