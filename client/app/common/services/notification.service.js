@@ -20,7 +20,8 @@
  */
 
 class NotificationService {
-  constructor($rootScope, toastr) {
+  constructor($rootScope, $log, toastr) {
+    this.$log = $log;
 
     _.assign(this, {
       'toastr': toastr,
@@ -62,7 +63,7 @@ class NotificationService {
   }
 
   showError(data, error) {
-    this.error(data.title, error);
+    this.$log.error(data.title, error);
 
     let toast = this.toastr.error(data.message, data.title, {
       timeOut: 10000
@@ -133,8 +134,8 @@ class NotificationService {
 }
 
 /* @ngInject */
-let createNotificationService = function($rootScope, toastr) {
-  NotificationService.instance = new NotificationService($rootScope, toastr);
+let createNotificationService = function($rootScope, $log, toastr) {
+  NotificationService.instance = new NotificationService($rootScope, $log, toastr);
   return NotificationService.instance;
 };
 exports.function = NotificationService;
