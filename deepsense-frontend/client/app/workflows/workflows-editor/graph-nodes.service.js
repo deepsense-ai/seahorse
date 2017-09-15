@@ -2,8 +2,8 @@
 
 class GraphNodesService {
   /* @ngInject */
-  constructor($q, $rootScope, $timeout, DeepsenseNodeParameters, Operations, UUIDGenerator) {
-    _.assign(this, {$q, $rootScope, $timeout, DeepsenseNodeParameters, Operations, UUIDGenerator});
+  constructor($q, $rootScope, $timeout, DeepsenseNodeParameters, Operations, UUIDGenerator, nodeTypes) {
+    _.assign(this, {$q, $rootScope, $timeout, DeepsenseNodeParameters, Operations, UUIDGenerator, nodeTypes});
   }
 
   getNodeParameters(node) {
@@ -67,9 +67,43 @@ class GraphNodesService {
         'uiName': nodeClone.uiName ? nodeClone.uiName += ' copy' : ''
       }
     );
-    let createdNode = workflow.createNode(nodeParams);
-    createdNode.parametersValues = node.parameters.serialize();
+
+    const createdNode = workflow.createNode(nodeParams);
+    createdNode.parametersValues = angular.copy(node.parameters.serialize());
+    if (node.hasInnerWorkflow()) {
+      let innerWorkflow = createdNode.getInnerWorkflow();
+      const map = this._mapOldIdsWithNewOnes(innerWorkflow);
+      innerWorkflow = this._assignNewIds(map, innerWorkflow);
+      createdNode.setInnerWorkflow(innerWorkflow);
+    }
     return workflow.addNode(createdNode);
+  }
+
+  _mapOldIdsWithNewOnes(innerWorkflow) {
+    let map = {};
+    innerWorkflow.nodes.forEach((node) => {
+      if (node.operation.id === this.nodeTypes.CUSTOM_TRANSFORMER) {
+        let mapFromNestedNode = this._mapOldIdsWithNewOnes(node.parameters['inner workflow'].workflow);
+        map = angular.extend(map, mapFromNestedNode);
+      }
+      map[node.id] = this.UUIDGenerator.generateUUID();
+    });
+    return map;
+  }
+
+  _assignNewIds(map, innerWorkflow) {
+    let newInnerWorkflow = angular.copy(innerWorkflow);
+    newInnerWorkflow.connections.forEach((connection) => {
+      connection.from.nodeId = map[connection.from.nodeId];
+      connection.to.nodeId = map[connection.to.nodeId];
+    });
+    newInnerWorkflow.nodes.forEach((node) => {
+      if(_.has(node.parameters, 'inner workflow')) {
+        node.parameters['inner workflow'].workflow = this._assignNewIds(map, node.parameters['inner workflow'].workflow);
+      }
+      node.id = map[node.id];
+    });
+    return newInnerWorkflow;
   }
 
   _setEdgeConnectionFromClone(node, clones, cloningNodeIds) {
