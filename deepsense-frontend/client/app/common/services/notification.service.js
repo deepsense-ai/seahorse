@@ -12,11 +12,6 @@
  *    notificationType: 'info'
  * }
  *
- * 'Workflow.UPDATE.KNOWLEDGE': {
- *    message: 'The workflow has been <b>updated</b> successfully',
- *    title: 'Workflow event',
- *    notificationType: 'success'
- * }
  */
 
 class NotificationService {

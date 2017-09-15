@@ -127,12 +127,9 @@ class WorkflowsEditorController {
     });
 
     this.$scope.$on('ServerCommunication.MESSAGE.inferredState', (event, data) => {
-      if (this.WorkflowService.workflowIsSet()) {
-        this.$rootScope.$broadcast('Workflow.UPDATE.KNOWLEDGE', data);
-        this.updateAndRerenderEdges(data);
-      }
+      this.updateAndRerenderEdges(data);
       if (data.states) {
-        this.getWorkflow().updateState(data.states);
+        this.WorkflowService.getRootWorkflow().updateState(data.states);
       }
     });
 

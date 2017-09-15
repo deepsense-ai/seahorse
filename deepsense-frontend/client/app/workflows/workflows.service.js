@@ -144,10 +144,6 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
       this.getCurrentWorkflow().updateEdgesStates(OperationsHierarchyService);
     }
 
-    workflowIsSet() {
-      return !_.isNull(this.getRootWorkflow());
-    }
-
     getAllWorkflows() {
       return this._workflowsData;
     }
