@@ -13,7 +13,6 @@ class Directories(object):
     jars = './jars'
     r_libs = './R_Libs'
     spark_application_logs = './spark_applications_logs'
-    uaa = './uaa'
 
     @staticmethod
     def expose(external, internal, mount=None):
