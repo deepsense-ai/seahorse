@@ -13,7 +13,7 @@ function ReportCrossValidateRegressor() {
     templateUrl: 'app/reports/report-cross-validate-regressor/report-cross-validate-regressor.html',
     replace: 'true',
     controller: function() {
-      this.tableData = this.data.CrossValidateRegressor;
+      this.tableData = this.data['Cross-validate report table'];
     },
     controllerAs: 'reportCrossValidateRegressor',
     bindToController: true

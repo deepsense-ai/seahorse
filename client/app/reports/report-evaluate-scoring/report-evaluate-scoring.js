@@ -13,7 +13,7 @@ function ReportEvaluateScoring() {
     templateUrl: 'app/reports/report-evaluate-scoring/report-evaluate-scoring.html',
     replace: 'true',
     controller: function() {
-      this.tableData = this.data.EvaluateRegression;
+      this.tableData = this.data['Evaluate Regression Report'];
     },
     controllerAs: 'reportEvaluateScoring',
     bindToController: true
