@@ -24,7 +24,7 @@ import io.deepsense.commons.json.{DateTimeJsonProtocol, EnumerationSerializer, I
 import io.deepsense.graph.StatefulGraph
 import io.deepsense.models.json.graph.GraphJsonProtocol.{GraphReader, GraphWriter}
 import io.deepsense.models.json.graph.{GraphKnowledgeJsonProtocol, NodeJsonProtocol, NodeStateJsonProtocol}
-import io.deepsense.models.workflows.{ThirdPartyData, Workflow, WorkflowMetadata, WorkflowType}
+import io.deepsense.models.workflows._
 
 trait WorkflowJsonProtocol
   extends DefaultJsonProtocol
@@ -39,7 +39,8 @@ trait WorkflowJsonProtocol
   with AbstractMetadataJsonProtocol
   with MetadataInferenceResultJsonProtocol
   with InferenceErrorJsonProtocol
-  with InferenceWarningJsonProtocol {
+  with InferenceWarningJsonProtocol
+  with WorkflowInfoJsonProtocol {
 
   val graphReader: GraphReader
 
