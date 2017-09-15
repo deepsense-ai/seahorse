@@ -17,8 +17,9 @@
       <p class="operation-attributes-panel__description"
          title="{{ node.description }}">{{ node.description }}</p>
       <a ng-href="{{controller.getDocsHost()}}/docs/latest/uuid/{{node.operationId}}.html" target="_blank"
-         class="o-read-more block m-t-xs">
-        Read more
+         class="o-read-more block m-t m-b">
+        <i class="fa fa-book"></i>
+        <span>Documentation</span>
       </a>
       <button class="operation-attributes-panel__notebook-button"
               ng-if="controller.hasCodeEdit()" ng-click="controller.showNotebook()">
