@@ -82,6 +82,7 @@ class Proxy(Service):
         return [
             WorkflowManager,
             SessionManager,
+            DataSourceManager,
             SchedulingManager,
             Library,
             Notebooks,
@@ -117,6 +118,7 @@ class Proxy(Service):
             "user-provided": [
                 service_desc('workflow-manager', WorkflowManager),
                 service_desc('scheduling-manager', SchedulingManager),
+                service_desc('datasource-manager', DataSourceManager),
                 service_desc('library', Library),
                 service_desc('session-manager', SessionManager),
                 service_desc('jupyter', Notebooks),
