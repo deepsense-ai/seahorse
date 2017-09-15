@@ -1,6 +1,6 @@
 {
   "name": "deepsense-graph-model",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "main": "deepsense-graph-model.js",
   "description": "Graph model",
   "license": "ISC",

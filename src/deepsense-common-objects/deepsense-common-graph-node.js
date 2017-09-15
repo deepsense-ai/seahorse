@@ -66,7 +66,7 @@ angular.module('deepsense.graph-model').
       return data;
     };
 
-    GraphNode.prototype.setState = function setState(state) {
+    GraphNode.prototype.updateState = function setState(state) {
       if (!state) {
         this.state = null;
       } else {
