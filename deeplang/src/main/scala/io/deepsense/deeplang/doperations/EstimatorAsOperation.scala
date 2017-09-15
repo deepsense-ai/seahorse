@@ -23,7 +23,7 @@ import io.deepsense.deeplang.doperables.{Estimator, Transformer}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.{DKnowledge, DOperation1To2, ExecutionContext, TypeUtils}
 
-abstract class EstimatorAsOperation [T <: Estimator]
+abstract class EstimatorAsOperation[T <: Estimator]
     ()(implicit typeTag: TypeTag[T])
   extends DOperation1To2[DataFrame, DataFrame, Transformer] {
 

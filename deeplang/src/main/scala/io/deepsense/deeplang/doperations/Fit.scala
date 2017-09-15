@@ -24,10 +24,9 @@ import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.{Estimator, Transformer}
 import io.deepsense.deeplang.doperations.exceptions.TooManyPossibleTypesException
-import io.deepsense.deeplang.exceptions.DeepLangException
-import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.DynamicParam
-import io.deepsense.deeplang.{DOperable, DKnowledge, DOperation2To1, ExecutionContext}
+import io.deepsense.deeplang.{DKnowledge, DOperation2To1, ExecutionContext}
 
 case class Fit() extends DOperation2To1[Estimator, DataFrame, Transformer] {
 
