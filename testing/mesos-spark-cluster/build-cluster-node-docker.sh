@@ -26,6 +26,6 @@ fi
 SPARK_VERSION=$1
 HADOOP_VERSION=$2
 
-(cd cluster-node-docker/mesos-master; docker build --build-arg SPARK_VERSION=$SPARK_VERSION --build-arg HADOOP_VERSION=$HADOOP_VERSION -t deepsense_io/docker-mesos-master:local .)
-(cd cluster-node-docker/mesos-slave; docker build -t deepsense_io/docker-mesos-slave:local .)
-(cd cluster-node-docker/zookeeper; docker build -t deepsense_io/docker-zookeeper:local .)
+(cd cluster-node-docker/mesos-master; docker build --build-arg SPARK_VERSION=$SPARK_VERSION --build-arg HADOOP_VERSION=$HADOOP_VERSION -t seahorse/docker-mesos-master:local .)
+(cd cluster-node-docker/mesos-slave; docker build -t seahorse/docker-mesos-slave:local .)
+(cd cluster-node-docker/zookeeper; docker build -t seahorse/docker-zookeeper:local .)

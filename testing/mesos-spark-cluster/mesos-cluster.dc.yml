@@ -1,7 +1,7 @@
 version: '2'
 services:
   mesos-master:
-    image: deepsense_io/docker-mesos-master:local
+    image: seahorse/docker-mesos-master:local
     environment:
       - MESOS_HOSTNAME=mesos-master
       - MESOS_IP=10.254.0.2
@@ -17,7 +17,7 @@ services:
       mesos_net:
         ipv4_address: 10.254.0.2
   mesos-slave1:
-    image: deepsense_io/docker-mesos-slave:local
+    image: seahorse/docker-mesos-slave:local
     privileged: true
     environment:
       - MESOS_HOSTNAME=mesos-slave1
@@ -34,7 +34,7 @@ services:
       mesos_net:
         ipv4_address: 10.254.0.3
   mesos-slave2:
-    image: deepsense_io/docker-mesos-slave:local
+    image: seahorse/docker-mesos-slave:local
     privileged: true
     environment:
       - MESOS_HOSTNAME=mesos-slave2
@@ -51,7 +51,7 @@ services:
       mesos_net:
         ipv4_address: 10.254.0.4
   zookeeper:
-    image: deepsense_io/docker-zookeeper:local
+    image: seahorse/docker-zookeeper:local
     environment:
       - MYID=1
       - SERVERS=zookeeper

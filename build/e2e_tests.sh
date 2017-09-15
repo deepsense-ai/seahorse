@@ -64,10 +64,7 @@ RUN_ID="seahorse-e2e-tests"
 export CLUSTER_ID=$RUN_ID # needed by spark-standalone-cluster-manage.sh
 export NETWORK_NAME="sbt-test-$RUN_ID" # needed by spark-standalone-cluster-manage.sh
 
-export BACKEND_TAG=`git rev-parse HEAD`
-
-FRONTEND_TAG="${FRONTEND_TAG:-$SEAHORSE_BUILD_TAG}" # If FRONTEND_TAG not defined try to use SEAHORSE_BUILD_TAG
-FRONTEND_TAG="${FRONTEND_TAG:-master-latest}" # If it's still undefined fallback to master-latest
+export GIT_TAG=`git rev-parse HEAD`
 
 SPARK_STANDALONE_MANAGEMENT="./seahorse-workflow-executor/docker/spark-standalone-cluster-manage.sh"
 MESOS_SPARK_DOCKER_COMPOSE="testing/mesos-spark-cluster/mesos-cluster.dc.yml"
@@ -81,8 +78,8 @@ function cleanup {
   $SPARK_STANDALONE_MANAGEMENT down $SPARK_VERSION
   docker-compose -f $MESOS_SPARK_DOCKER_COMPOSE down
   docker-compose -f $YARN_SPARK_DOCKER_COMPOSE down
-  deployment/docker-compose/docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG -p $RUN_ID logs > docker-compose.log
-  deployment/docker-compose/docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG -p $RUN_ID down
+  deployment/docker-compose/docker-compose.py -f $GIT_TAG -b $GIT_TAG -p $RUN_ID logs > docker-compose.log
+  deployment/docker-compose/docker-compose.py -f $GIT_TAG -b $GIT_TAG -p $RUN_ID down
 }
 
 cleanup
@@ -92,7 +89,7 @@ fi
 
 trap cleanup EXIT
 
-./manage-docker.py -b --all
+./build/manage-docker.py -b --all
 
 ## Start Seahorse dockers
 (
@@ -107,20 +104,22 @@ trap cleanup EXIT
  mkdir -p jars
  cp -r ../../seahorse-sdk-example/target/scala-2.11/*.jar jars
 
- ./docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG --generate-only --yaml-file docker-compose.yml
- ./docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG -p $RUN_ID up -d
+ ./docker-compose.py -f $GIT_TAG -b $GIT_TAG --generate-only --yaml-file docker-compose.yml
+ ./docker-compose.py -f $GIT_TAG -b $GIT_TAG -p $RUN_ID up -d
 )
 
+### TODO Revive standalone tests
 ## Start Spark Standalone cluster dockers
-$SPARK_STANDALONE_MANAGEMENT up $SPARK_VERSION
+#$SPARK_STANDALONE_MANAGEMENT up $SPARK_VERSION
 
 ## Get and export Spark Standalone cluster IP
-INSPECT_FORMAT="{{(index (index .NetworkSettings.Networks \"$NETWORK_NAME\").IPAddress )}}"
-export SPARK_STANDALONE_MASTER_IP=$(docker inspect --format "$INSPECT_FORMAT" sparkMaster-$RUN_ID)
+#INSPECT_FORMAT="{{(index (index .NetworkSettings.Networks \"$NETWORK_NAME\").IPAddress )}}"
+#export SPARK_STANDALONE_MASTER_IP=$(docker inspect --format "$INSPECT_FORMAT" sparkMaster-$RUN_ID)
 
+### TODO Revive mesos tests
 ## Start Mesos Spark cluster dockers
-testing/mesos-spark-cluster/build-cluster-node-docker.sh $SPARK_VERSION $HADOOP_VERSION
-docker-compose -f $MESOS_SPARK_DOCKER_COMPOSE up -d
+#testing/mesos-spark-cluster/build-cluster-node-docker.sh $SPARK_VERSION $HADOOP_VERSION
+#docker-compose -f $MESOS_SPARK_DOCKER_COMPOSE up -d
 
 export MESOS_MASTER_IP=10.254.0.2
 
@@ -129,8 +128,9 @@ HADOOP_CONF_DIR="deployment/docker-compose/data/hadoop"
 mkdir -p $HADOOP_CONF_DIR
 cp testing/yarn-spark-cluster/cluster-node-docker/generic-hadoop-node/hadoop-conf/* $HADOOP_CONF_DIR
 
-testing/yarn-spark-cluster/build-cluster-node-docker.sh
-docker-compose -f $YARN_SPARK_DOCKER_COMPOSE up -d
+### TODO Revive yarn
+#testing/yarn-spark-cluster/build-cluster-node-docker.sh
+#docker-compose -f $YARN_SPARK_DOCKER_COMPOSE up -d
 
 export YARN_MASTER_IP=10.254.1.2
 

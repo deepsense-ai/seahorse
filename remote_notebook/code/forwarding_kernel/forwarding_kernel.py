@@ -100,16 +100,19 @@ class ForwardingKernel(IPythonKernel, Logging):
         # TODO fail if seahorse_notebook_path is not in right format
 
     def _init_rabbit_clients(self, rabbit_mq_address, rabbit_mq_credentials):
-        rabbit_client = RabbitMQClient(address=rabbit_mq_address,
-                                       credentials=rabbit_mq_credentials,
-                                       exchange=self.EXCHANGE)
+        rabbit_client_sender = RabbitMQClient(address=rabbit_mq_address,
+                                              credentials=rabbit_mq_credentials,
+                                              exchange=self.EXCHANGE)
+        rabbit_client_listener = RabbitMQClient(address=rabbit_mq_address,
+                                                credentials=rabbit_mq_credentials,
+                                                exchange=self.EXCHANGE)
         execution_sender = RabbitMQJsonSender(
-            rabbit_mq_client=rabbit_client,
+            rabbit_mq_client=rabbit_client_sender,
             topic=self.EXECUTION_PUBLISHING_TOPIC.format(kernel_id=self._kernel_id))
         management_sender = RabbitMQJsonSender(
-            rabbit_mq_client=rabbit_client,
+            rabbit_mq_client=rabbit_client_sender,
             topic=self.MANAGEMENT_PUBLICATION_TOPIC.format(session_id=self._session_id, kernel_id=self._kernel_id))
-        listener = RabbitMQJsonReceiver(rabbit_client)
+        listener = RabbitMQJsonReceiver(rabbit_client_listener)
         return execution_sender, management_sender, listener
 
     def _send_zmq_forward_to_rabbit(self, stream_name, message):

@@ -2,7 +2,7 @@ version: '2'
 services:
   sparkMaster:
     container_name: sparkMaster-${CLUSTER_ID}
-    image: deepsense_io/docker-spark-standalone-${SPARK_VERSION}:local
+    image: seahorse/docker-spark-standalone-${SPARK_VERSION}:local
     entrypoint: "/usr/bin/supervisord --configuration=/opt/conf/master.conf"
     links:
       - hdfs
@@ -12,7 +12,7 @@ services:
       - 7077
   sparkSlave1:
     container_name: sparkSlave1-${CLUSTER_ID}
-    image: deepsense_io/docker-spark-standalone-${SPARK_VERSION}:local
+    image: seahorse/docker-spark-standalone-${SPARK_VERSION}:local
     entrypoint: "/usr/bin/supervisord --configuration=/opt/conf/slave.conf"
     links:
       - sparkMaster
@@ -21,7 +21,7 @@ services:
       - sbt-test
   sparkSlave2:
     container_name: sparkSlave2-${CLUSTER_ID}
-    image: deepsense_io/docker-spark-standalone-${SPARK_VERSION}:local
+    image: seahorse/docker-spark-standalone-${SPARK_VERSION}:local
     entrypoint: "/usr/bin/supervisord --configuration=/opt/conf/slave.conf"
     links:
       - sparkMaster

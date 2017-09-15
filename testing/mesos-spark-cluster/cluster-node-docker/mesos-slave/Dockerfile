@@ -1,7 +1,7 @@
 # Copyright (c) 2016, CodiLime Inc.
 # NOTE: based on https://github.com/mesoscloud/mesos-master and https://github.com/mesoscloud/mesos-slave
 
-FROM deepsense_io/docker-mesos-master:local
+FROM seahorse/docker-mesos-master:local
 MAINTAINER DeepSense.io
 
 ENV MESOS_CONTAINERIZERS mesos
