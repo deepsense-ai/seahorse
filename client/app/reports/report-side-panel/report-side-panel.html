@@ -8,8 +8,8 @@
     </div>
     <div class="panel-body" ng-switch="!!(reportSidePanel.distObject && reportSidePanel.extendedSidePanel)">
       <div ng-switch-when="true" ng-switch="reportSidePanel.distObject.subtype">
-        <distribution-categorical-chart ng-switch-when="categorical"></distribution-categorical-chart>
-        <distribution-continuous-chart ng-switch-when="continuous"></distribution-continuous-chart>
+        <distribution-categorical-chart ng-switch-when="categorical" data="reportSidePanel.distObject"></distribution-categorical-chart>
+        <distribution-continuous-chart ng-switch-when="continuous" data="reportSidePanel.distObject"></distribution-continuous-chart>
       </div>
       <div ng-switch-when="false" class="select-column-text">
         <span class="fa fa-area-chart fa-4x"></span>

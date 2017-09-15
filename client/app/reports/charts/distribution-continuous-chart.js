@@ -11,9 +11,11 @@ function DistributionContinuousChart() {
     restrict: 'E',
     templateUrl: 'app/reports/charts/distribution-continuous-chart.html',
     replace: true,
-    scope: false,
-    controller: function($scope) {
-      _.assign($scope, {
+    scope: {
+      'data': '='
+    },
+    controller: function() {
+      _.assign(this, {
         chosenPlot: {
           value: null
         },
@@ -27,9 +29,10 @@ function DistributionContinuousChart() {
       });
 
       // default setting
-      $scope.chosenPlot.value = $scope.plots[0].type;
+      this.chosenPlot.value = this.plots[0].type;
     },
-    controllerAs: 'distributionContinuousChart'
+    controllerAs: 'distributionContinuousChart',
+    bindToController: true
   };
 }
 

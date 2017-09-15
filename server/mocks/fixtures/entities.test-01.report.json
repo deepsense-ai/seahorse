@@ -1,8 +1,8 @@
 {
   "name": "DataFrame report",
   "tables": {
-    "DataSample": {
-      "name": "DataSample",
+    "Data Sample": {
+      "name": "Data Sample",
       "description": "dataframe data sample",
       "columnNames": ["Name", "Age", "Music"],
       "blockType": "table",
@@ -33,7 +33,7 @@
     }
   },
   "distributions": {
-    "Music_Distribution": {
+    "Music": {
       "name": "Music_Distribution",
       "subtype": "categorical",
       "description": "distribution of categorical values",
@@ -41,7 +41,7 @@
       "buckets": ["ROCK", "POP", "CLASSIC", "INDIE", "RAP", "TECHNO", "METAL", "DISCO", "OPERA"],
       "counts": [4, 3, 2, 1, 4, 3, 2, 1, 1]
     },
-    "Age_Distribution": {
+    "Age": {
       "name": "Age_Distribution",
       "subtype": "continuous",
       "statistics": {

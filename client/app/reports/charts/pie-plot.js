@@ -11,20 +11,20 @@ function PiePlot() {
     restrict: 'E',
     templateUrl: 'app/reports/charts/plot.html',
     replace: true,
-    scope: false,
+    scope: {
+      'data': '='
+    },
     link: function (scope, element) {
-      let distObject = scope.reportSidePanel.distObject;
-
-      scope.$applyAsync(() => {
+      function displayChart (data) {
         $(element).highcharts({
           chart: {
             type: 'pie'
           },
           title: {
-            text: distObject.name
+            text: data.name
           },
           subtitle: {
-            text: distObject.description
+            text: data.description
           },
           plotOptions: {
             pie: {
@@ -43,11 +43,14 @@ function PiePlot() {
             pointFormat: 'The number of the such elements: <b>{point.y}</b>'
           },
           series: [{
-            name: 'Population',
             colorByPoint: true,
-            data: _.zip(distObject.buckets, distObject.counts)
+            data: _.zip(data.buckets, data.counts)
           }]
         });
+      }
+
+      scope.$applyAsync(() => {
+        scope.$watch('data', displayChart);
       });
     }
   };

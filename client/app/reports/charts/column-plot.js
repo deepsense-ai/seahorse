@@ -11,23 +11,23 @@ function ColumnPlot() {
     restrict: 'E',
     templateUrl: 'app/reports/charts/plot.html',
     replace: true,
-    scope: false,
+    scope: {
+      'data': '='
+    },
     link: function (scope, element) {
-      let distObject = scope.reportSidePanel.distObject;
-
-      scope.$applyAsync(() => {
+      function displayChart (data) {
         $(element).highcharts({
           chart: {
             type: 'column'
           },
           title: {
-            text: distObject.name
+            text: data.name
           },
           subtitle: {
-            text: distObject.description
+            text: data.description
           },
           xAxis: {
-            categories: distObject.buckets,
+            categories: data.buckets,
             labels: {
               rotation: -45,
               style: {
@@ -49,10 +49,13 @@ function ColumnPlot() {
             pointFormat: 'The value: <b>{point.y}</b>'
           },
           series: [{
-            name: 'Population',
-            data: distObject.counts
+            data: data.counts
           }]
         });
+      }
+
+      scope.$applyAsync(() => {
+        scope.$watch('data', displayChart);
       });
     }
   };

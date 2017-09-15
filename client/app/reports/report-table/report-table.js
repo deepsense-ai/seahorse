@@ -19,6 +19,16 @@ function ReportTable() {
       this.extendedMainPanel = true;
       $scope.$on(REPORT_EVENTS.SHRINK_SIDE_PANEL, () => { this.extendedMainPanel = true; });
       $scope.$on(REPORT_EVENTS.EXTEND_SIDE_PANEL, () => { this.extendedMainPanel = false; });
+
+      $scope.$watch('reportTable.data', (newValue) => {
+        if (!_.isUndefined(newValue)) {
+          _.assign(this, {
+            extendedMainPanel: true,
+            tableData: newValue['Data Sample'],
+            tableSizes: newValue['DataFrame Size']
+          });
+        }
+      });
     },
     controllerAs: 'reportTable',
     bindToController: true

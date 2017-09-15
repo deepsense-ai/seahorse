@@ -38,13 +38,13 @@ function Report(PageService, $scope, $stateParams, EntitiesAPIClient) {
     that.messageError = `The report with id equals to ${entityId} does not exist!`;
   });
 
-  that.getTable = function getTable() {
-    return internal.tables && internal.tables.DataSample;
+  that.getTables = function getTables() {
+    return internal.tables;
   };
 
   that.getDistributionObject = function getDistributionObject(colName) {
     if (internal.distributions) {
-      return internal.distributions[colName + '_Distribution'];
+      return internal.distributions[colName];
     }
   };
 

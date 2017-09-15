@@ -1,6 +1,6 @@
 <div class="report">
   <div ng-if="!report.messageError">
-    <report-table data="report.getTable()" distributions-types="report.getDistributionsTypes()"></report-table>
+    <report-table data="report.getTables()" distributions-types="report.getDistributionsTypes()"></report-table>
     <report-side-panel></report-side-panel>
   </div>
   <div ng-if="report.messageError" class="lead">

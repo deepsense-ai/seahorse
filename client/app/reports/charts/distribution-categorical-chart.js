@@ -11,7 +11,12 @@ function DistributionCategoricalChart() {
     restrict: 'E',
     templateUrl: 'app/reports/charts/distribution-categorical-chart.html',
     replace: true,
-    scope: false
+    scope: {
+      'data': '='
+    },
+    controller: () => {},
+    controllerAs: 'distributionCategoricalChart',
+    bindToController: true
   };
 }
 

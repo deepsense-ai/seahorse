@@ -11,20 +11,20 @@ function BoxPlot() {
     restrict: 'E',
     templateUrl: 'app/reports/charts/plot.html',
     replace: true,
-    scope: false,
+    scope: {
+      'data': '='
+    },
     link: function (scope, element) {
-      let distObject = scope.reportSidePanel.distObject;
-
-      scope.$applyAsync(() => {
+      function displayChart (data) {
         $(element).highcharts({
           chart: {
             type: 'boxplot'
           },
           title: {
-            text: distObject.name
+            text: data.name
           },
           subtitle: {
-            text: distObject.description
+            text: data.description
           },
           legend: {
             enabled: false
@@ -36,21 +36,37 @@ function BoxPlot() {
             title: null
           },
           series: [{
-            name: 'Age',
             data: [
               [
-                distObject.statistics.min,
-                distObject.statistics.firstQuartile,
-                distObject.statistics.median,
-                distObject.statistics.thirdQuartile,
-                distObject.statistics.max
+                parseFloat(data.statistics.min),
+                parseFloat(data.statistics.firstQuartile),
+                parseFloat(data.statistics.median),
+                parseFloat(data.statistics.thirdQuartile),
+                parseFloat(data.statistics.max)
               ]
             ],
             tooltip: {
               headerFormat: ''
             }
+          }, {
+            name: 'Outlier',
+            color: Highcharts.getOptions().colors[0],
+            type: 'scatter',
+            data: data.statistics.outliers.map((str) => [0, parseFloat(str)]),
+            marker: {
+              fillColor: 'white',
+              lineWidth: 1,
+              lineColor: Highcharts.getOptions().colors[0]
+            },
+            tooltip: {
+              pointFormat: 'Observation: {point.y}'
+            }
           }]
         });
+      }
+
+      scope.$applyAsync(() => {
+        scope.$watch('data', displayChart);
       });
     }
   };

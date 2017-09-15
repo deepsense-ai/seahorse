@@ -1,13 +1,13 @@
 <div class="distribution-chart">
   <div class="btn-group" data-toggle="buttons">
     <label class="btn btn-sm btn-white"
-           ng-repeat="plot in plots"
-           ng-class="{ 'active': chosenPlot.value === plot.type }"
-           ng-click="chosenPlot.value = plot.type">{{ plot.name }}</label>
+           ng-repeat="plot in distributionContinuousChart.plots"
+           ng-class="{ 'active': distributionContinuousChart.chosenPlot.value === plot.type }"
+           ng-click="distributionContinuousChart.chosenPlot.value = plot.type">{{ plot.name }}</label>
   </div>
 
-  <div ng-switch="chosenPlot.value">
-    <box-plot ng-switch-when="box"></box-plot>
-    <column-plot ng-switch-when="column"></column-plot>
+  <div ng-switch="distributionContinuousChart.chosenPlot.value">
+    <box-plot ng-switch-when="box" data="distributionContinuousChart.data"></box-plot>
+    <column-plot ng-switch-when="column" data="distributionContinuousChart.data"></column-plot>
   </div>
 </div>

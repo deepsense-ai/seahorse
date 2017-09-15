@@ -34,9 +34,10 @@ function TableController($scope, $element, TopWalkerService) {
     extendSidePanel: function showDetails() {
       let tableEl = $element[0];
       let index = tableEl.querySelector('td.info').cellIndex + 1;
+      let colName = tableEl.querySelector(`th:nth-child(${ index }) span.col-name`).innerHTML;
 
       $scope.$emit(REPORT_EVENTS.CHOSEN_COLUMN, {
-        colName: tableEl.querySelector(`th:nth-child(${ index }) span.col-name`).innerHTML
+        colName: colName
       });
     },
     selectColumn: function selectColumn(event) {
