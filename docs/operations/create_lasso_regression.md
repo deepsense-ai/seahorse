@@ -1,31 +1,31 @@
 ---
 layout: documentation
-displayTitle: Create Ridge Regression
-title: Create Ridge Regression
-description: Create Ridge Regression
+displayTitle: Create Lasso Regression
+title: Create Lasso Regression
+description: Create Lasso Regression
 usesMathJax: true
 includeOperationsMenu: true
 ---
 
 Creates
-[UntrainedRidgeRegression](../classes/untrained_ridge_regression.html)
-(i.e. uses L2 regularization). The output model is eligible for
+[UntrainedLassoRegression](../classes/untrained_lasso_regression.html)
+(i.e. uses L1 regularization). The output model is eligible for
 [training](train_regressor.html).
 
 Regression is performed using stochastic gradient descent
 minimizing mean squared error:
 
-$$ \frac{1}{2}(w^Tx-y)^2 + \lambda\cdot\frac{1}{2}||w||^2_2 $$
+$$ \frac{1}{2}(w^Tx-y)^2 + \lambda\cdot\frac{1}{2}||w||_1 $$
 
 where $$ x $$
 is vector of features, $$ y $$ is label, $$ w $$ is vector of weights of model
 and $$ \lambda $$ is regularization parameter.
 
-**Since**: Seahorse 0.4.0
+**Since**: Seahorse 0.5.0
 
 ## Input
 
-Create Ridge Regression does not take any input.
+Create Lasso Regression does not take any input.
 
 ## Output
 
@@ -43,7 +43,7 @@ Create Ridge Regression does not take any input.
         <code>0</code>
       </td>
       <td>
-        <code><a href="../classes/untrained_ridge_regression.html">Untrained Ridge Regression</a></code>
+        <code><a href="../classes/untrained_lasso_regression.html">Untrained Lasso Regression</a></code>
       </td>
       <td>An untrained model</td>
     </tr>

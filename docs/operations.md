@@ -35,6 +35,7 @@ List of all currently supported operations:
   * Regression
     * [Create Gradient Boosted Trees Regression](operations/create_gradient_boosted_trees_regression.html)
     * [Create Ridge Regression](operations/create_ridge_regression.html)
+    * [Create Lasso Regression](operations/create_lasso_regression.html)
     * [Create Random Forest Regression](operations/create_random_forest_regression.html)
     * [Train Regressor](operations/train_regressor.html)
     * [Score Regressor](operations/score_regressor.html)
