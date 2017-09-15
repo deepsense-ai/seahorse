@@ -38,19 +38,22 @@ class GraphNodeExecutor(
   import scala.concurrent.ExecutionContext.Implicits.global
 
   override def run(): Unit = {
+    val executionStart = System.currentTimeMillis()
     try {
+      logger.info(s"${node.id} Execution of node starts")
       graphExecutor.graphGuard.synchronized {
         require(node.isRunning)
       }
-      logger.info("Execution of node: {}", node.id)
-      // TODO: pass real vector of DOperable's, not "deceptive mock"
-      // (we are assuming that all DOperation's return at most one DOperable)
 
+      logger.info(s"${node.id} Collecting data for operation input ports")
       val collectedOutput = graphExecutor.graphGuard.synchronized {
         collectOutputs(graphExecutor.graph.get, graphExecutor.dOperableCache)
       }
+
+      logger.info(s"${node.id} Executing operation")
       val resultVector = executeOperation(collectedOutput)
 
+      logger.info(s"${node.id}) Registering data from operation output ports")
       graphExecutor.graphGuard.synchronized {
         graphExecutor.experiment = Some(graphExecutor.experiment.get.copy(graph =
           graphExecutor.graph.get.markAsCompleted(
@@ -63,6 +66,7 @@ class GraphNodeExecutor(
       }
     } catch {
       case e: Exception => {
+        logger.error(s"${node.id} Graph execution failed $e")
         // Exception thrown here, during handling exception could result in application deadlock
         // (node stays in status RUNNING forever, Graph Executor waiting for this status change)
         graphExecutor.graphGuard.synchronized {
@@ -79,10 +83,11 @@ class GraphNodeExecutor(
               .copy(graph = graphExecutor.graph.get.markAsFailed(node.id))
               .markFailed(errorMessage))
         }
-        logger.error("Graph execution failed", e)
       }
     } finally {
       // Exception thrown here could result in slightly delayed graph execution
+      val duration = (System.currentTimeMillis() - executionStart) / 1000.0
+      logger.info(s"${node.id} Execution of node ends (duration: $duration seconds)")
       graphExecutor.graphEventBinarySemaphore.release()
     }
   }
@@ -95,8 +100,8 @@ class GraphNodeExecutor(
    * @return Vector of DOperable's to pass to current node
    */
   def collectOutputs(
-                      graph: Graph,
-                      dOperableCache: mutable.Map[UUID, DOperable]): Vector[DOperable] = {
+      graph: Graph,
+      dOperableCache: mutable.Map[UUID, DOperable]): Vector[DOperable] = {
     var collectedOutputs = Vector.empty[DOperable]
     // Iterate through predecessors, constructing Vector of DOperable's
     // (predecessors are ordered by current node input port number connected with them)
@@ -112,12 +117,11 @@ class GraphNodeExecutor(
     collectedOutputs
   }
 
-  private def executeOperation(input: Vector[DOperable]): Vector[DOperable] = {
-    // TODO Replace with logging
-    logger.info("node.operation= {}", node.operation.name)
-    logger.info("vector#= {}", input.size.toString)
-    val resultVector = node.operation.execute(executionContext)(input)
-    logger.info("resultVector#= {}", resultVector.size.toString)
+  private def executeOperation(inputVector: Vector[DOperable]): Vector[DOperable] = {
+    logger.info(s"${node.id} node.operation.name = ${node.operation.name}")
+    logger.info(s"${node.id} inputVector.size = ${inputVector.size}")
+    val resultVector = node.operation.execute(executionContext)(inputVector)
+    logger.info(s"${node.id} resultVector.size = ${resultVector.size}")
     resultVector
   }
 
