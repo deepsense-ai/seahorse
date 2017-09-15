@@ -373,3 +373,12 @@ p.footer-text span {
   font-size: 16px;
   letter-spacing: 0.1px;
 }
+
+code {
+  color: black;
+  background: #f8f5f1;
+}
+
+a code {
+  color: inherit;
+}
