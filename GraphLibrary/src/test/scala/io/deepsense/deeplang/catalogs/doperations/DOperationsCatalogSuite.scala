@@ -74,7 +74,7 @@ object DOperationCatalogTestResources {
     override val outPortTypes: Vector[TypeTag[_]] = Vector(XTypeTag)
   }
 
-  case class DOperationWithoutParameterLessConstructor(x: Int) extends DOperationMock {
+  case class DOperationWithoutParameterlessConstructor(x: Int) extends DOperationMock {
     override val inArity: Int = 2
     override val outArity: Int = 3
   }
@@ -130,11 +130,11 @@ class DOperationsCatalogSuite extends FunSuite with Matchers {
     }
   }
 
-  test("Registering DOperation without parameter-less constructor raises exception") {
-    intercept[NoParameterLessConstructorInDOperationException] {
+  test("Registering DOperation without parameterless constructor raises exception") {
+    intercept[NoParameterlessConstructorInDOperationException] {
       import DOperationCatalogTestResources._
       val catalog = DOperationsCatalog()
-      catalog.registerDOperation[DOperationWithoutParameterLessConstructor](
+      catalog.registerDOperation[DOperationWithoutParameterlessConstructor](
         "name", CategoryTree.ML.Regression, "description")
     }
   }

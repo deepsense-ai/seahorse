@@ -35,7 +35,7 @@ object Parametrized {
 
 object Constructors {
   class NotParameterLess(val i: Int) extends DOperable
-  class AuxiliaryParameterLess(val i: Int) extends DOperable {
+  class AuxiliaryParameterless(val i: Int) extends DOperable {
     def this() = this(1)
   }
   class WithDefault(val i: Int = 1) extends DOperable
@@ -139,7 +139,7 @@ class DOperableCatalogSuite extends FunSuite with Matchers {
   }
 
   test("Registering concrete class with no parameter-less constructor should produce exception") {
-    intercept[NoParameterLessConstructorInClassException] {
+    intercept[NoParameterlessConstructorInClassException] {
       import io.deepsense.deeplang.catalogs.doperable.Constructors._
       val h = new DOperableCatalog
       h.registerDOperable[NotParameterLess]()
@@ -147,17 +147,17 @@ class DOperableCatalogSuite extends FunSuite with Matchers {
   }
 
   test("Registering class with constructor with default parameters should produce exception") {
-    intercept[NoParameterLessConstructorInClassException] {
+    intercept[NoParameterlessConstructorInClassException] {
       import io.deepsense.deeplang.catalogs.doperable.Constructors._
       val h = new DOperableCatalog
       h.registerDOperable[WithDefault]()
     }
   }
 
-  test("Registering class with auxiliary parameter-less constructor should succeed") {
+  test("Registering class with auxiliary parameterless constructor should succeed") {
     import io.deepsense.deeplang.catalogs.doperable.Constructors._
     val h = new DOperableCatalog
-    h.registerDOperable[AuxiliaryParameterLess]()
+    h.registerDOperable[AuxiliaryParameterless]()
   }
 
   test("Registering hierarchy with trait extending class should produce exception") {

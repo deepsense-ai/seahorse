@@ -7,13 +7,13 @@
 package io.deepsense.deeplang.catalogs.doperable
 
 import java.lang.reflect.Constructor
-import io.deepsense.deeplang.catalogs.doperable.exceptions.NoParameterLessConstructorInClassException
+import io.deepsense.deeplang.catalogs.doperable.exceptions.NoParameterlessConstructorInClassException
 import io.deepsense.deeplang.{DOperable, TypeUtils}
 
 private[doperable] class ConcreteClassNode(javaType: Class[_]) extends ClassNode(javaType) {
   val constructor: Constructor[_] = TypeUtils.constructorForClass(javaType) match {
     case Some(parameterLessConstructor) => parameterLessConstructor
-    case None => throw NoParameterLessConstructorInClassException(this)
+    case None => throw NoParameterlessConstructorInClassException(this)
   }
 
   /**

@@ -12,8 +12,7 @@ import scala.collection.mutable
 import scala.reflect.runtime.{universe => ru}
 
 import io.deepsense.deeplang.catalogs.doperations.exceptions._
-import io.deepsense.deeplang.DOperation
-import io.deepsense.deeplang.TypeUtils
+import io.deepsense.deeplang.{DOperation, TypeUtils}
 
 /**
  * Catalog of DOperations.
@@ -35,7 +34,7 @@ abstract class DOperationsCatalog {
 
   /**
    * Registers DOperation, which can be later viewed and created.
-   * DOperation has to have parameter-less constructor.
+   * DOperation has to have parameterless constructor.
    * @param name name for given operation
    * @param category category to which this operation directly belongs
    * @param description description of operation
@@ -62,7 +61,7 @@ object DOperationsCatalog {
     private def constructorForType(operationType: ru.Type) = {
       TypeUtils.constructorForType(operationType) match {
         case Some(x) => x
-        case None => throw NoParameterLessConstructorInDOperationException(operationType)
+        case None => throw NoParameterlessConstructorInDOperationException(operationType)
       }
     }
 
