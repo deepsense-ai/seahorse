@@ -17,6 +17,7 @@ object Version {
   val spray = "1.3.3"
   val sprayJson = "1.3.1"
   val seahorse = "1.1.0-SNAPSHOT"
+  val wiremock = "1.57"
 }
 
 object Library {
@@ -56,6 +57,7 @@ object Library {
   val sprayClient = spray("client")
   val sprayJson = "io.spray" %% "spray-json" % Version.sprayJson
   val h2 = "com.h2database" % "h2" % Version.h2
+  val wiremock = "com.github.tomakehurst" % "wiremock" % Version.wiremock
 }
 
 object Dependencies {
@@ -110,5 +112,5 @@ object Dependencies {
     sprayClient,
     sprayJson,
     sprayRouting
-  ) ++ Seq(akkaTestkit, mockitoCore, scalatest, scoverage, sprayTestkit).map(_ % s"$Test,it")
+  ) ++ Seq(akkaTestkit, mockitoCore, scalatest, scoverage, sprayTestkit, wiremock).map(_ % s"$Test,it")
 }
