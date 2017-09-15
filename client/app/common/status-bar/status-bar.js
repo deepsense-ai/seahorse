@@ -4,7 +4,7 @@
 'use strict';
 
 /* @ngInject */
-function WorkflowEditorStatusBar($rootScope) {
+function WorkflowEditorStatusBar($rootScope, additionalControls) {
   return {
     restrict: 'E',
     templateUrl: 'app/common/status-bar/status-bar.html',
@@ -13,19 +13,30 @@ function WorkflowEditorStatusBar($rootScope) {
     controllerAs: 'controller',
     controller: function () {
       _.assign(this, {
-        backToHome: () => {
+        backToHome () {
           $rootScope.$broadcast('StatusBar.HOME_CLICK');
         },
-        exportWorkflow: () => {
+        exportWorkflow () {
           $rootScope.$broadcast('StatusBar.EXPORT_CLICK');
         },
-        saveWorkflow: () => {
+        saveWorkflow () {
           $rootScope.$broadcast('StatusBar.SAVE_CLICK');
         },
-        clearWorkflow: () => {
+        clearWorkflow () {
           $rootScope.$broadcast('StatusBar.CLEAR_CLICK');
+        },
+        lastExecutedReport () {
+          $rootScope.$broadcast('StatusBar.LAST_EXECUTED_REPORT');
         }
       });
+
+      if (additionalControls) {
+        _.assign(this, {
+          run () {
+            $rootScope.$broadcast('StatusBar.RUN');
+          }
+        });
+      }
     }
   };
 }

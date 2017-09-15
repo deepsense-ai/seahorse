@@ -6,7 +6,8 @@ function WorkflowsEditorController(
   $scope, $state,
   GraphNode, Edge,
   PageService, Operations, GraphPanelRendererService, WorkflowService, UUIDGenerator, MouseEvent,
-  DeepsenseNodeParameters, ConfirmationModalService, ExportModalService
+  DeepsenseNodeParameters, ConfirmationModalService, ExportModalService,
+  RunModalFactory
 ) {
   let that = this;
   let internal = {};
@@ -156,6 +157,12 @@ function WorkflowsEditorController(
 
   $scope.$on('StatusBar.EXPORT_CLICK', () => {
     ExportModalService.showModal();
+  });
+
+  $scope.$on('StatusBar.RUN', () => {
+    RunModalFactory.showModal({
+      message: 'Something here!'
+    });
   });
 
   $scope.$watchCollection('workflow.getWorkflow().getNodesIds()', (newValue, oldValue) => {

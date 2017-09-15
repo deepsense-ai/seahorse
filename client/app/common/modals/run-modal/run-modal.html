@@ -1,0 +1,22 @@
+<div class="inmodal c-run-modal">
+  <div class="modal-header">
+    <h4 class="modal-title">This is RUN progress</h4>
+    <button type="button" class="close c-run-modal__close" aria-label="Close"
+            ng-click="controller.close()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>{{ ::controller.message }}</p>
+    <p  ng-if="controller.errorMessage"
+        class="text-danger">{{ ::controller.errorMessage }}</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary pull-left"
+            ng-click="controller.execute()"
+            button-wait
+            button-wait-status="controller.status">Execute</button>
+    <button type="button" class="btn btn-white"
+            ng-click="controller.close()">Cancel</button>
+  </div>
+</div>

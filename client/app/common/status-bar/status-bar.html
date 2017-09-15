@@ -1,4 +1,4 @@
-<div class="c-status-bar">
+<div class="c-status-bar c-status-bar--6-items">
   <a class="btn btn-primary btn-sm o-action-btn c-status-bar__item"
      ng-click="controller.backToHome()">
     <i class="fa fa-file-text fa-2x c-status-bar__icon"></i>
@@ -27,5 +27,20 @@
      ng-click="controller.exportWorkflow()">
     <i class="fa fa-angle-double-down fa-2x c-status-bar__icon"></i>
     <span class="c-status-bar__text">Export</span>
+  </a>
+
+  <a class="btn btn-danger btn-sm o-action-btn c-status-bar__item"
+     ng-show="controller.run"
+     ng-click="controller.run()">
+    <i class="fa fa-play fa-2x c-status-bar__icon"></i>
+    <span class="c-status-bar__text">Run</span>
+  </a>
+
+  <a class="btn btn-warning btn-sm o-action-btn c-status-bar__item"
+     ng-show="controller.lastExecutedReport"
+     ng-click="controller.lastExecutedReport()"
+     style="flex: 1.40;">
+    <i class="fa fa-backward fa-2x c-status-bar__icon"></i>
+    <span class="c-status-bar__text">Last execution report</span>
   </a>
 </div>
