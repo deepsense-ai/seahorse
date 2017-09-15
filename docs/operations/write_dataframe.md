@@ -8,8 +8,12 @@ includeOperationsMenu: true
 ---
 
 Write DataFrame saves a DataFrame on a file system.
+Supports writing files to local file system, Amazon S3 and HDFS.
+Output will be Hadoop-compatible partitioned file.
+
 It is possible to customize the file format (e.g. the values separator in CSV format)
 by setting appropriate parameters.
+
 
 ## Available file formats
 

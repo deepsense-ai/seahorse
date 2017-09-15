@@ -6,8 +6,9 @@ description: Read DataFrame
 includeOperationsMenu: true
 ---
 
-Reads a DataFrame from a file in specified format. Supports reading files from
-a local file system, Amazon S3 and from HDFS.
+Reads a DataFrame from a file in specified format.
+Supports reading files from local file system, Amazon S3 and HDFS.
+It also supports reading Hadoop-compatible partitioned files.
 
 
 ## Available file formats
