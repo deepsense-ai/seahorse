@@ -14,11 +14,14 @@ echo "This script assumes it is run from deepsense-backend directory"
 
 echo "Generating docker compose file with docker images tagged with $SEAHORSE_BUILD_TAG"
 
+ARTIFACT_NAME_TMPL="docker-compose-internal.yml.tmpl"
 ARTIFACT_NAME="docker-compose-internal.yml"
 
 DOCKER_COMPOSE_TMPL="deployment/docker-compose/docker-compose.tmpl.yml"
+rm -f $ARTIFACT_NAME_TMPL
 rm -f $ARTIFACT_NAME
-sed 's|\$DOCKER_REPOSITORY|'"$DEEPSENSE_REGISTRY"'|g ; s|\$DOCKER_TAG|'"$SEAHORSE_BUILD_TAG"'|g' $DOCKER_COMPOSE_TMPL >> $ARTIFACT_NAME
+sed 's|\$DOCKER_REPOSITORY|'"$DEEPSENSE_REGISTRY"'|g ; s|\$DOCKER_TAG|'"$SEAHORSE_BUILD_TAG"'|g' $DOCKER_COMPOSE_TMPL >> $ARTIFACT_NAME_TMPL
+deployment/docker-compose/prepare_docker-compose $ARTIFACT_NAME_TMPL $ARTIFACT_NAME
 
 echo 'Sending $ARTIFACT_NAME to snapshot artifactory'
 
