@@ -31,11 +31,6 @@ the scoring will be produced (model performance report).
 
 #### Create a New Workflow
 
-<p style="text-align:center; float:right" >
-    <img class="img-responsive" style="padding: 1em;" src="./img/examples_workflow1.png" />
-    <em>The Simple Regression Model</em>
-</p>
-
 1. Create an empty workflow:
    * Go to Seahorse main page and click **New workflow**.
    * Put <code>machinelearning1</code> in the **Name** section - setting a meaningful name will help
@@ -43,34 +38,40 @@ the scoring will be produced (model performance report).
    * Press the **Create** button.
    * Start editing the workflow.
 
-2. Set the source of your data:
-   * Drag a [Read DataFrame](operations/read_dataframe.html) operation to your canvas.
-   * Click on the `Read DataFrame` operation - the panel on the right now shows its parameters.
-   * Put <code style="word-break: break-all;">https://s3.amazonaws.com/workflowexecutor/examples/data/transactions.csv</code> in the `SOURCE`
-     parameter - once executed, the dataset will be downloaded from that location.
+1. Set the source of your data:
+   * Right-click on the canvas and select a [Read DataFrame](operations/read_dataframe.html) operation.
+   * Click on the created `Read DataFrame` operation - the panel on the right now shows its parameters.
+   * Select a data source from which you want to read the data. In this case, pick `transactions.csv`.
+     Once the operation gets executed, the dataset will be downloaded from a web address.
 
-3. Select features that will be used to train and evaluate model and create a vector column
+    <p style="text-align:center; float:right" >
+        <img class="img-responsive" style="padding: 1em;" src="./img/examples_workflow1.png" />
+        <em>The Simple Regression Model</em>
+    </p>
+
+1. Select features that will be used to train and evaluate model and create a vector column
    containing selected features' values:
-   * Drag [Assemble Vector](operations/assemble_vector.html) to your canvas.
+   * Drag an edge from the output port of the `Read DataFrame`.
+     Select an [Assemble Vector](operations/assemble_vector.html) operation.
    * In the **INPUT COLUMNS** section:
      * Click **Edit selection**, this will open the selection window for the `INPUT COLUMNS` parameter.
      * Select **Excluding** mode in the top-right corner - this will include all values
          except the ones selected in the features column.
      * Add <code>city</code> and <code>price</code> to the list - we have to exclude the <code>city</code>
        column, because it does not contain numeric values and <code>price</code>, because it contains
-       the actual results
+       the actual results.
    * Put <code>features</code> in the `OUTPUT COLUMN` parameter - the operation will add a column
      with this name to the dataset.
 
-4. Split the dataset into training and test sets:
-   * Drag [Split](operations/split.html) to your canvas.
+1. Split the dataset into training and test sets:
+   * Drag an edge from the middle port of the `Assemble Vector`. Select a [Split](operations/split.html) operation.
    * Put <code>0.7</code> in the `SPLIT RATIO` parameter - we will use 30% of the data for
      training and 70% for evaluation.
    * Put <code>0</code> in the `SEED` parameter - the split operation itself is not deterministic.
      You can put any value here - it will split the dataset differently, but in the same proportions.
 
-5. Use the linear regression algorithm:
-   * Drag [Linear Regression](operations/linear_regression.html) to your canvas.
+1. Use the linear regression algorithm:
+   * Right-click on the canvas and select [Linear Regression](operations/linear_regression.html) operation.
    * In the **FEATURES COLUMN** section:
      * Click **Edit selection**, this will open the selection window for the `FEATURES COLUMN` parameter.
      * Click at **Select by name** and put <code>features</code> in the text field - this will use
@@ -82,22 +83,22 @@ the scoring will be produced (model performance report).
      * Click at **Select by name** and put <code>price</code> in the text field - **price**
        column contains the actual values that we will evaluate our model against.
 
-6. Prepare operations for model fitting and transforming the dataset:
-   * Drag [Fit](operations/fit.html) to your canvas - this operation will be used to fit model to
-     the training set.
-   * Drag [Transform](operations/transform.html) to your canvas - it will transform the dataset
-     using the model fitted in the previous step.
+1. Drag an edge from the output port of the `Linear Regression` and select a [Fit](operations/fit.html) operation.
+   This operation will be used to fit model to the training set.
 
-7. Select evaluation method:
-   * Drag [Evaluate](operations/evaluate.html) to your canvas.
-   * Drag [Regression Evaluator](operations/regression_evaluator.html) to your canvas.
+1. Drag an edge from the output port of the `Fit` and select a [Transform](operations/transform.html) operation.
+   It will transform the dataset using the model fitted in the previous step.
+
+1. Select evaluation method:
+   * Right-click on the canvas and select a [Regression Evaluator](operations/regression_evaluator.html) operation.
      * This operation will create an evaluator for regression algorithms, we will use the default
        evaluation metric (RMSE).
      * Put <code>prediction</code> in the `PREDICTION COLUMN` parameter.
      * Put <code>price</code> in the `LABEL COLUMN` parameter.
      * The evaluator will measure the error between **price** and **prediction** columns.
-
-8. Connect operations as presented in the <em>The Simple Regression Model</em> picture.
+   * Drag an edge from the output port of the `Regression Evaluator` and select
+     an [Evaluate](operations/evaluate.html) operation.
+   * Connect the output port of the `Transform` with the input port of the `Evaluate`.
 
 <div style="clear:both" />
 
@@ -115,14 +116,9 @@ the scoring will be produced (model performance report).
 #### View the Reports
 {:.no_toc}
 
-Click on the report icon under the `Evaluate` node. Report panel with evaluation metrics
-will be shown at the bottom of the screen. These metrics are showing our model's performance.
-In the next example we will try to improve these metrics.
-
-<div class="centered-container" markdown="1">
-  ![Evaluate Regression Report](./img/examples_report1.png){: .centered-image .img-responsive}
-  *The Simple Regression Model's performance*
-</div>
+Click on the report icon under the `Evaluate` node. Report panel with evaluation metric
+will be shown at the bottom of the screen. This metric is showing our model's performance.
+In the next example we will try to improve it.
 
 #### Export the Model
 
@@ -132,10 +128,10 @@ Model training might take a lot of time. It is possible to export trained
 models for further reuse with `Write Transformer` operation.
 An exported model can also be shared with other users.
 
-1.  Drag the `Write Transformer` operation onto your canvas.
-2.  Set **OUTPUT PATH** parameter's value to `/resources/data/model_example_1`.
-3.  Drag the `Fit` output to the `Write Transformer` operation.
-4.  Click **RUN** to execute the workflow again and write the transformer to the specified path.
+1.  Right-click on the canvas and select a `Write Transformer` operation.
+1.  Set **OUTPUT PATH** parameter's value to `/resources/data/model_example_1`.
+1.  Drag the `Fit` output to the `Write Transformer` operation.
+1.  Click **RUN** to execute the workflow again. It will write the transformer to the specified path.
 
 ### Example 2 - Build a Better Model
 
@@ -155,7 +151,7 @@ executing linear regression algorithm on the data.
 
 <p style="text-align:center; float:right" >
     <img class="img-responsive" src="./img/examples_workflow2.png" />
-    <em>The Better Model</em>
+    <em>The Updated Workflow</em>
 </p>
 
 1. Open workflow from **Example 1**.
@@ -165,19 +161,22 @@ executing linear regression algorithm on the data.
      anywhere on the empty space of the canvas.
 
 3. Convert **city** feature to categorical:
-   * Add [String Indexer](operations/string_indexer.html) to the canvas.
+   * Drag an edge from the output port of the `Read DataFrame` and select
+     a [String Indexer](operations/string_indexer.html) operation.
      * This operation will create a new column, <code>city_index</code>, with numbers representing
        text values from the original column.
      * Select <code>one column</code> in `OPERATE ON` selector.
      * Select <code>city</code> in the `INPUT COLUMN`.
      * Select <code>append new column</code> in `OUTPUT` selector.
      * Put <code>city_index</code> in the `OUTPUT COLUMN`.
-   * Add [One Hot Encoder](operations/one_hot_encoder.html) to the canvas.
+   * Drag an edge from the output port of the `String Indexer` and select
+     an [One Hot Encoder](operations/one_hot_encoder.html) operation.
      * This operation will create separate columns for each value from the original column.
      * Select <code>one column</code> in `OPERATE ON` selector.
      * Select <code>city_index</code> in the `INPUT COLUMN`.
      * Select <code>append new column</code> in `OUTPUT` selector.
      * Put <code>city_encoded</code> in the `OUTPUT COLUMN`.
+   * Connect the output port of the `One Hot Encoder` with the input port of the `Assemble Vector`.
    * Modify existing `Assemble Vector` node and add <code>city_index</code> to excluded columns:
      * In the **INPUT COLUMNS** section click **Edit selection**.
      * Add <code>city_index</code> to the list - we only want to add <code>city_encoded</code>
@@ -185,11 +184,6 @@ executing linear regression algorithm on the data.
    * As a result of executing the operations above, our dataset will contain additional
      columns with values <code>0</code> or <code>1</code> for each possible value of the <code>city</code>
      column.
-
-4. Update connections between `Read DataFrame` and `Assemble Vector` nodes as shown in the
-   <em>The Better Model</em> picture.
-   This will execute the operations described in step 2 after reading the dataset and before
-   assembling the <code>features</code> column used for model fitting and evaluation.
 
 <div style="clear:both" />
 
@@ -205,24 +199,17 @@ executing linear regression algorithm on the data.
 Click on the report icon under the `Evaluate` node. As you can see the model performance is much
 better than in the previous example.
 
-<div class="centered-container" markdown="1">
-  ![Evaluate Regression Report](./img/examples_report2.png){: .centered-image .img-responsive}
-  *The Better Model's performance*
-</div>
-
-
 ### Example 3 - Analyze the Data Using a Python Notebook
 
 The goal of this exercise is to show how to use an embedded [Python Notebook](operations/python_notebook.html)
 to interactively analyze data.
 
-#### Create a New Workflow
-
-<p style="text-align:center; float:right" >
-    <img class="img-responsive" style="padding: 1em;" src="./img/examples_workflow3.png" />
+<p style="text-align: center;">
+    <img class="img-responsive centered-image" style="padding: 1em;" src="./img/examples_workflow3.png" />
     <em>Analyze the Data Using a Python Notebook</em>
 </p>
 
+#### Create a New Workflow
 
 * Create an empty workflow:
   * Go to Seahorse main page and click **New workflow**.
@@ -231,12 +218,12 @@ to interactively analyze data.
   * Start editing the workflow.
 
 * Set the source of your data:
-  * Drag [Read DataFrame](operations/read_dataframe.html) operation onto your canvas.
-  * Put <code style="word-break: break-all;">https://s3.amazonaws.com/workflowexecutor/examples/data/grades_2_0.csv</code>
-    in the `SOURCE` parameter - the dataset will be downloaded from this location.
+  * Right-click on canvas and select a [Read DataFrame](operations/read_dataframe.html) operation.
+  * In the `Read DataFrame` parameters, pick the `grades_2.0.csv` data source.
 
 * Process the dataset before opening the notebook:
-  * Drag [Python Transformation](operations/python_transformation.html) to your canvas.
+  * Drag an edge from the output port of the `Read DataFrame` and select
+    a [Python Transformation](operations/python_transformation.html) operation.
   * Put the following code in the `CODE` parameter, in order to extract the <code>FCE</code> value
     from <code>Certificates</code> column to a separate column:
 
@@ -255,11 +242,11 @@ def transform(dataframe):
       "SELECT Math, English, get_fce(Certificates) as FCE FROM df")
 {% endhighlight %}
 
-This snippet of code uses a user-defined SQL function that utilizes Python’s json library in order to parse our `Certificates` column.
+This snippet of code uses a user-defined SQL function that
+utilizes Python’s json library in order to parse our `Certificates` column.
 
-* Use a [Python Notebook](operations/python_notebook.html) to interactively analyze data:
-  * Drag a `Python Notebook` operation from the **Operation Catalogue** onto your canvas.
-  * Connect operations as presented in the <em>Analyze the Data Using a Python Notebook</em> picture.
+* Drag an edge from the middle output port of the `Python Transformation`
+  and select a [Python Notebook](operations/python_notebook.html).
 
 #### Execute and Edit the Python Notebook
 
@@ -457,24 +444,23 @@ exported model. Note that the `Export model` step from Example 1 must be finishe
 
 1. Create an empty workflow.
 2. Import the model:
-   * Drag a `Read Transformer` operation onto your canvas.
+   * Right-click on the canvas and select a `Read Transformer` operation.
    * Set **SOURCE** parameter's value to `/resources/data/model_example_1`.
      This path refers to the model saved in the Example 1.
 3. Load the data to be run with the imported model:
-   * Drag the `Read DataFrame` operation onto your canvas and set parameters as listed in Example 1.
+   * Create a `Read DataFrame` operation and set parameters as explained in Example 1.
      Note that in a real life scenario new data would be used.
 4. The data passed to the model must have the same schema as the data used in training.
    We need to recreate preprocessing from Example 1:
-   * Drag the `Assemble Vector` operation onto your canvas and set parameters as listed in Example 1.
+   * Create an `Assemble Vector` operation and set parameters as explained in Example 1.
 
    Hint: if the data preprocessing is built of many operations it might be a
-   good idea to encapsulate these operations inside a `Custom Transformer`
+   good idea to encapsulate these operations inside a [Custom Transformer](operations/custom_transformer.html)
    operation and export it as well. Importing and using this `Custom Transformer`
    allows user to reuse preprocessing logic.
 5. Use the imported model with new data:
-   * Drag the `Transform` operation onto your canvas.
-   * Drag the `Read Transformer` output to the `Transform` operation input.
-   * Drag the `Assemble Vector` output to the `Transform` operation input.
+   * Drag the edge from the output port of the `Read Transformer` and select a `Transform` operation.
+   * Connect the `Assemble Vector` output with the `Transform` operation input.
    * Click **RUN** to execute the workflow.
 
 To make sure that your imported model is working correctly you can view
