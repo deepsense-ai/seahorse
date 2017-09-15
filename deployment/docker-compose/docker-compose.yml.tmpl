@@ -3,11 +3,11 @@ services:
   workflowmanager:
     ports:
      - "9080:9080"
-    image: docker-registry.intra.codilime.com/tap/deepsense-workflowmanager
+    image: docker-registry.intra.codilime.com/tap/deepsense-workflowmanager:seahorse_on_tap-latest
   sessionmanager:
     ports:
      - "9082:9082"
-    image: docker-registry.intra.codilime.com/tap/deepsense-sessionmanager
+    image: docker-registry.intra.codilime.com/tap/deepsense-sessionmanager:seahorse_on_tap-latest
     environment:
       - LIVY_BASE_URL=http://livy.seahorse.gotapaas.eu
       - MQ_HOST=10.10.10.110
@@ -21,7 +21,7 @@ services:
     links:
       - rabbitmq
   frontend:
-    image: docker-registry.intra.codilime.com/tap/deepsense-frontend
+    image: docker-registry.intra.codilime.com/tap/deepsense-frontend:seahorse_on_tap-latest
     environment:
       - API_HOST=http://localhost
       - API_PORT=8080
@@ -38,13 +38,13 @@ services:
       - sessionmanager
       - notebooks
   rabbitmq:
-    image: docker-registry.intra.codilime.com/tap/deepsense-rabbitmq
+    image: docker-registry.intra.codilime.com/tap/deepsense-rabbitmq:seahorse_on_tap-latest
     ports:
      - "15674:15674"
      - "15672:15672"
      - "5672:5672"
   notebooks:
-    image: docker-registry.intra.codilime.com/tap/deepsense-notebooks
+    image: docker-registry.intra.codilime.com/tap/deepsense-notebooks:seahorse_on_tap-latest
     links:
       - workflowmanager
       - rabbitmq
@@ -57,7 +57,7 @@ services:
       - HEARTBEAT_INTERVAL=2.0
       - MISSED_HEARTBEAT_LIMIT=30
   proxy:
-    image: docker-registry.intra.codilime.com/tap/deepsense-proxy
+    image: docker-registry.intra.codilime.com/tap/deepsense-proxy:seahorse_on_tap-latest
     ports:
       - "8080:8080"
     environment:
