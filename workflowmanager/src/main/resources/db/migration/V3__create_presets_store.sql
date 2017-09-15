@@ -19,6 +19,6 @@ CREATE TABLE IF NOT EXISTS "PRESETS" (
 
 INSERT INTO PRESETS(name, clusterType, uri, userIP, hadoopUser, isEditable, isDefault, driverMemory, executorMemory,
 totalExecutorCores, executorCores, numExecutors, params)
-VALUES ('default', 'local', '', '', NULL, FALSE, TRUE, '1G', '2G', 2, 2, 2, '--num-executors 2 --verbose');
+VALUES ('default', 'local', 'local[*]', '', NULL, FALSE, TRUE, '1G', '2G', 2, 2, 2, '');
 
 
