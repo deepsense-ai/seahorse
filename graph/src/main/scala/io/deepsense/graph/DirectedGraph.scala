@@ -50,6 +50,36 @@ case class DirectedGraph(
 
   def size: Int = nodes.size
 
+  def subgraph(nodes: Set[Node.Id]): DirectedGraph = {
+    def collectNodesEdges(
+        previouslyCollectedNodes: Set[Node.Id],
+        previouslyCollectedEdges: Set[Edge],
+        toProcess: Set[Node.Id]): (Set[Node.Id], Set[Edge]) = {
+      val nodesPredecessors = predecessorsOf(toProcess)
+      val nextNodes = previouslyCollectedNodes ++ nodesPredecessors
+      val nextEdges = previouslyCollectedEdges ++ edgesOf(toProcess)
+
+      if (toProcess.isEmpty) {
+        (nextNodes, nextEdges)
+      } else {
+        collectNodesEdges(nextNodes, nextEdges, nodesPredecessors)
+      }
+    }
+
+    val (n, e) = collectNodesEdges(nodes, Set(), nodes)
+    DirectedGraph(n.map(node), e)
+  }
+
+  private def predecessorsOf(nodes: Set[Node.Id]): Set[Node.Id] = {
+    nodes.flatMap {
+      node => predecessors(node).flatten.map { _.nodeId }
+    }
+  }
+
+  private def edgesOf(nodes: Set[Node.Id]): Set[Edge] = nodes.flatMap(edgesTo)
+
+  private def edgesTo(node: Node.Id): Set[Edge] = edges.filter(edge => edge.to.nodeId == node)
+
   private def preparePredecessors: Map[Node.Id, IndexedSeq[Option[Endpoint]]] = {
     import scala.collection.mutable
     val mutablePredecessors: mutable.Map[Node.Id, mutable.IndexedSeq[Option[Endpoint]]] =

@@ -24,11 +24,13 @@ import io.deepsense.commons.utils.Logging
 import io.deepsense.graph.RandomNodeFactory._
 
 class DirectedGraphSpec
-    extends FunSuite
-    with Matchers
-    with Serialization
-    with Logging
-    with MockitoSugar {
+  extends FunSuite
+  with Matchers
+  with Serialization
+  with Logging
+  with MockitoSugar
+  with GraphTestSupport {
+
   test("An empty Graph should have size 0") {
     DirectedGraph().size shouldBe 0
   }
@@ -168,5 +170,26 @@ class DirectedGraphSpec
     graph.successors(node2.id) should contain theSameElementsAs Vector(Set(Endpoint(node4.id, 0)))
     graph.successors(node3.id) should contain theSameElementsAs Vector(Set(Endpoint(node4.id, 1)))
     graph.successors(node4.id) should contain theSameElementsAs Vector(Set.empty)
+  }
+
+  test("Graph allows to calculate a subgraph") {
+    DirectedGraph().subgraph(Set()) should have size 0
+
+    val bigGraph = DirectedGraph(nodeSet, edgeSet)
+    bigGraph.subgraph(nodeSet.map(_.id)) shouldBe bigGraph
+
+    bigGraph.subgraph(Set(idA)) shouldBe DirectedGraph(Set(nodeA), Set())
+
+    bigGraph.subgraph(Set(idA, idB)) shouldBe
+      DirectedGraph(Set(nodeA, nodeB), Set(edge1))
+
+    bigGraph.subgraph(Set(idD)) shouldBe
+      DirectedGraph(Set(nodeA, nodeB, nodeC, nodeD), Set(edge1, edge2, edge3))
+
+    bigGraph.subgraph(Set(idE, idC)) shouldBe
+      DirectedGraph(Set(nodeE, nodeC, nodeB, nodeA), Set(edge1, edge2, edge4, edge5))
+
+    bigGraph.subgraph(Set(idD, idB)) shouldBe
+      DirectedGraph(Set(nodeA, nodeB, nodeC, nodeD), Set(edge1, edge2, edge3))
   }
 }
