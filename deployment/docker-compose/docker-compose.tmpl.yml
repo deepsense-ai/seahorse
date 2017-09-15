@@ -1,7 +1,7 @@
 version: '2'
 services:
   proxy:
-    image: quay.io/deepsense_io/deepsense-proxy:master-latest
+    image: $DOCKER_REPOSITORY/deepsense-proxy:master-$DOCKER_TAG
     ports:
       - "8080:8080"
     environment:
@@ -23,7 +23,7 @@ services:
       - rabbitmq
       - frontend
   frontend:
-    image: quay.io/deepsense_io/deepsense-frontend:master-latest
+    image: $DOCKER_REPOSITORY/deepsense-frontend:master-$DOCKER_TAG
     environment:
       - "API_HOST=http://localhost"
       - "API_PORT=8080"
@@ -43,7 +43,7 @@ services:
       - sessionmanager
       - notebooks
   sessionmanager:
-    image: quay.io/deepsense_io/deepsense-sessionmanager:master-latest
+    image: $DOCKER_REPOSITORY/deepsense-sessionmanager:master-$DOCKER_TAG
     hostname: sessionmanager
     environment:
       - "MQ_HOST=rabbitmq"
@@ -70,7 +70,7 @@ services:
       - rabbitmq
       - workflowmanager
   notebooks:
-    image: quay.io/deepsense_io/deepsense-notebooks:master-latest
+    image: $DOCKER_REPOSITORY/deepsense-notebooks:master-$DOCKER_TAG
     environment:
       - "WM_URL=http://workflowmanager:9080"
       - "WM_AUTH_USER=oJkTZ8BV"
@@ -88,19 +88,19 @@ services:
       - rabbitmq
       - workflowmanager
   workflowmanager:
-    image: quay.io/deepsense_io/deepsense-workflowmanager:master-latest
+    image: $DOCKER_REPOSITORY/deepsense-workflowmanager:master-$DOCKER_TAG
     environment:
       - "WM_AUTH_USER=oJkTZ8BV"
       - "WM_AUTH_PASS=8Ep9GqRr"
     links:
       - database
   rabbitmq:
-    image: quay.io/deepsense_io/deepsense-rabbitmq:master-latest
+    image: $DOCKER_REPOSITORY/deepsense-rabbitmq:master-$DOCKER_TAG
     environment:
      - "RABBITMQ_USER=yNNp7VJS"
      - "RABBITMQ_PASS=1ElYfGNW"
   database:
-    image: quay.io/deepsense_io/deepsense-h2:master-latest
+    image: $DOCKER_REPOSITORY/deepsense-h2:master-$DOCKER_TAG
     ports:
       - "1521:1521"
     volumes:

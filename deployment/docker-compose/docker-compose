@@ -1,5 +1,11 @@
 #!/bin/bash
+# Copyright (c) 2016, CodiLime Inc.
+#
 
-# Wrapper for docker-compose to have same interface on all branches
+rm -f docker-compose.yml
+
+DOCKER_REPOSITORY="docker-repo.deepsense.codilime.com/deepsense_io"
+DOCKER_TAG="latest"
+sed 's|\$DOCKER_REPOSITORY|'"$DOCKER_REPOSITORY"'|g ; s|\$DOCKER_TAG|'"$DOCKER_TAG"'|g' docker-compose.tmpl.yml >> docker-compose.yml
 
 exec docker-compose "$@"
