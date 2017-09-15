@@ -20,7 +20,8 @@ const NEW_NODE_NODE = {
     portPosition: 'center',
     index: 0
   }],
-  output: []
+  output: [],
+  originalOutput: []
 };
 
 const NEW_NODE_EDGE = {
@@ -29,13 +30,14 @@ const NEW_NODE_EDGE = {
   endPortId: 0
 };
 
+import {GraphTypesStyle} from './graph-node/graph-types-styles.const.js';
+
 class AdapterService {
   /*@ngInject*/
-  constructor(WorkflowService, $rootScope, DeepsenseCycleAnalyser, GraphStyleService) {
-    this.WorkflowService = WorkflowService;
-    this.DeepsenseCycleAnalyser = DeepsenseCycleAnalyser;
-    this.$rootScope = $rootScope;
-    this.GraphStyleService = GraphStyleService;
+  constructor(WorkflowService, GraphStyleService) {
+    _.assign(this, {WorkflowService, GraphStyleService});
+
+    jsPlumb.registerEndpointTypes(GraphTypesStyle);
   }
 
   initialize(container) {
@@ -64,7 +66,8 @@ class AdapterService {
       //TODO remove, as it shouldn't be here
       this.WorkflowService.updateEdgesStates();
       jsPlumbEvent.connection.setParameter('edgeId', edge.id);
-      if (this.DeepsenseCycleAnalyser.cycleExists(this.workflow)) {
+
+      if (!this.WorkflowService.canAddNewConnection(edge)) {
         this.workflow.removeEdge(edge);
         jsPlumb.detach(jsPlumbEvent.connection);
       }
@@ -87,15 +90,22 @@ class AdapterService {
     });
 
     jsPlumb.bind('connectionDrag', (connection) => {
-      //console.warn(connection.endpoints[0]);
+      const originPort = connection.endpoints[0];
+      this.GraphStyleService.enablePortHighlighting(this.nodes, originPort);
+    });
+
+    jsPlumb.bind('connectionDragStop', () => {
+      this.GraphStyleService.disablePortHighlighting(this.nodes);
     });
 
     jsPlumb.bind('connectionAborted', (connection, originalEvent) => {
-      this.onConnectionAbort({newNodeData: {
-        x: (originalEvent.layerX - originalEvent.x) * -1,
-        y: (originalEvent.layerY - originalEvent.y + 60) * -1,
-        endpoint: connection.endpoints[0]
-      }});
+      this.onConnectionAbort({
+        newNodeData: {
+          x: (originalEvent.layerX - originalEvent.x) * -1,
+          y: (originalEvent.layerY - originalEvent.y + 60) * -1,
+          endpoint: connection.endpoints[0]
+        }
+      });
     });
   }
 
@@ -115,6 +125,14 @@ class AdapterService {
 
   handleConnectionAbort(fn) {
     this.onConnectionAbort = fn;
+  }
+
+  handleShowTooltip(fn) {
+    this.onMouseOver = fn;
+  }
+
+  handleHideTooltip(fn) {
+    this.onMouseOut = fn;
   }
 
   reset() {
@@ -139,7 +157,7 @@ class AdapterService {
     const nodes = JSON.parse(JSON.stringify(inputNodes));
     if (this.newNodeData && this.newNodeData.nodeId) {
       const node = Object.assign({}, NEW_NODE_NODE);
-      node.input[0].typeQualifier = this.newNodeData.typeQualifier;
+      node.input[0].typeQualifier = [...this.newNodeData.typeQualifier];
       nodes[node.id] = node;
     }
     return nodes;
@@ -160,7 +178,7 @@ class AdapterService {
     for (const nodeId of Object.keys(nodes)) {
       const element = this.container.querySelector(`#node-${nodeId}`);
       const node = nodes[nodeId];
-      this.renderOutputPorts(element, node.output, nodes[nodeId]);
+      this.renderOutputPorts(element, node.originalOutput, nodes[nodeId]);
       this.renderInputPorts(element, node.input, nodes[nodeId]);
     }
   }
@@ -172,6 +190,14 @@ class AdapterService {
       const jsPlumbPort = jsPlumb.addEndpoint(element, style, {
         anchor: POSITION_MAP.OUTPUT[port.portPosition],
         uuid: port.id
+      });
+
+      jsPlumbPort.bind('mouseover', (endpoint) => {
+        this.onMouseOver(endpoint.canvas, port);
+      });
+
+      jsPlumbPort.bind('mouseout', () => {
+        this.onMouseOut();
       });
 
       jsPlumbPort.setParameter('portIndex', port.index);
@@ -188,6 +214,14 @@ class AdapterService {
         uuid: port.id
       });
 
+      jsPlumbPort.bind('mouseover', (endpoint) => {
+        this.onMouseOver(endpoint.canvas, port);
+      });
+
+      jsPlumbPort.bind('mouseout', () => {
+        this.onMouseOut();
+      });
+
       jsPlumbPort.setParameter('portIndex', port.index);
     });
   };
@@ -199,7 +233,7 @@ class AdapterService {
 
     for (const id of Object.keys(edges)) {
       const edge = edges[id];
-      const detachable = (edge.id === NEW_NODE_EDGE.id) ? false: this.isEditable;
+      const detachable = (edge.id === NEW_NODE_EDGE.id) ? false : this.isEditable;
       const connection = jsPlumb.connect({
         uuids: [
           `${outputPrefix}-${edge.startPortId}-${edge.startNodeId}`,

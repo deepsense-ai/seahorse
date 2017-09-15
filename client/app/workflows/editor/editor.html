@@ -25,4 +25,15 @@
       jsplumb-draggable
     ></new-node>
   </core-canvas>
+
+  <port-status-tooltip
+    ng-if="$ctrl.isTooltipVisible"
+    ng-style="{
+      'top': $ctrl.tooltipY + 'px',
+      'left': $ctrl.tooltipX + 'px',
+      'position': 'absolute'
+    }"
+    port-object="$ctrl.portObject"
+  >
+  </port-status-tooltip>
 </div>

@@ -38,7 +38,9 @@ const outputAnchorByPosition = {
 
 /* @ngInject */
 function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report,
-  DeepsenseCycleAnalyser, NotificationService, ConnectionHinterService, GraphPanelStyler) {
+  DeepsenseCycleAnalyser, NotificationService, GraphPanelStyler) {
+
+  //TODO remove this service when all functionalities will be moved to canvas.adapter.service
 
   const connectorPaintStyles = {
     [Edge.STATE_TYPE.ALWAYS]: _.defaults({}, connectorPaintStyleDefault, {
@@ -65,8 +67,6 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
 
   const nodeIdPrefix = 'node-';
   const nodeIdPrefixLength = nodeIdPrefix.length;
-
-  jsPlumb.registerEndpointTypes(GraphPanelStyler.getTypes());
 
   let that = this;
   let internal = {
@@ -144,14 +144,6 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
     that.renderPorts(workflow, selectedPort);
     that.renderEdges(workflow);
     that.repaintEverything();
-
-    if (selectedPort) {
-      let previouslySelected = jsPlumb.getEndpoint(selectedPort);
-      // This might be null after opening inner workflow.
-      if (previouslySelected) {
-        previouslySelected.addType('selected');
-      }
-    }
   };
 
   that.renderPorts = function renderPorts(workflow, selectedPort) {
@@ -350,18 +342,6 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
         });
       }
     });
-
-    jsPlumb.bind('connectionDrag', (connection) => {
-      $rootScope.$broadcast(Edge.DRAG);
-
-      /* During detaching an edge, hints should be displayed as well */
-      if (internal.areEdgesDetachable() && _.isArray(connection.endpoints)) {
-        let port = connection.endpoints[0];
-        ConnectionHinterService.highlightMatchedAndDismatchedPorts(workflow, port);
-        ConnectionHinterService.highlightOperations(workflow, port);
-      }
-    });
-
   };
 
   that.setDisabledMode = (disabledMode) => {

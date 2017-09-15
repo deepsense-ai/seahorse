@@ -7,6 +7,10 @@ class CanvasController {
     this.AdapterService = AdapterService;
     this.$element = $element;
     this.$timeout = $timeout;
+
+    this.portElement = null;
+    this.portObject = null;
+    this.isTooltipVisible = null;
   }
 
   $postLink() {
@@ -15,6 +19,7 @@ class CanvasController {
 
     this.CanvasService.initialize(jsPlumbContainer, slidingWindow);
     this.AdapterService.handleConnectionAbort(this.onConnectionAbort);
+
     this.$timeout(() => {
       this.CanvasService.render();
       this.CanvasService.fit();
@@ -39,6 +44,7 @@ class CanvasController {
       this.CanvasService.render();
     }, 0);
   }
+
 }
 
 export default CanvasController;

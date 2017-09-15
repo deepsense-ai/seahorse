@@ -1,10 +1,10 @@
 <div class="flowchart-mask sliding-window"
-  tabindex="1"
-  ng-class="{'disabled': !$ctrl.isEditable}">
+     tabindex="1"
+     ng-class="{'disabled': !$ctrl.isEditable}">
   <div class="flowchart-paint-area"
-    multi-selection>
+       multi-selection>
     <div class="new-node-container"
-      ng-transclude=""></div>
+         ng-transclude=""></div>
     <graph-node
       class="graph-node-component"
       id="node-{{ node.id }}"

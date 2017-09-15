@@ -41,8 +41,6 @@ function FlowChartBoxController($scope, $element, $timeout, GraphPanelRendererSe
     }, 0);
   });
 
-  jsPlumb.bind('connectionDragStop', () => GraphPanelRendererService.disablePortHighlightings(this.workflow));
-
 }
 
 exports.inject = function (module) {

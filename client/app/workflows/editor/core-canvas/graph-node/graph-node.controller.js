@@ -1,27 +1,27 @@
 'use strict';
 
 const CSS_CLASSES_MAP = {
-  'status_completed': {
+  status_completed: {
     status: 'completed',
     icon: 'fa-check'
   },
-  'status_running': {
+  status_running: {
     status: 'running',
     icon: 'fa-cog fa-spin'
   },
-  'status_queued': {
+  status_queued: {
     status: 'queued',
     icon: 'fa-clock-o'
   },
-  'status_aborted': {
+  status_aborted: {
     status: 'aborted',
     icon: 'fa-exclamation'
   },
-  'status_failed': {
+  status_failed: {
     status: 'failed',
     icon: 'fa-ban'
   },
-  'error': {
+  error: {
     status: 'failed',
     icon: 'fa-exclamation'
   }
@@ -93,22 +93,25 @@ class GraphNodeController {
   }
 
   getCssClasses() {
-    if (this.node.state.status) {
+    if (this.node.state.status && this.node.state.status !== 'status_draft') {
       return CSS_CLASSES_MAP[this.node.state.status];
     } else if (this.node.knowledgeErrors.length > 0) {
-      return CSS_CLASSES_MAP['failed'];
+      return CSS_CLASSES_MAP.error;
     } else {
       return null;
     }
   }
 
   getBorderColor() {
-    if (this.node.input.length === 0 && this.node.output.length === 1) {
-      const typeQualifier = this.node.output[0].typeQualifier[0];
-      const type = this.GraphStyleService.getOutputTypeFromQualifier(typeQualifier);
-
-      return `border-${type}`;
+    let typeQualifier;
+    if (this.node.input && this.node.input.length === 1) {
+      typeQualifier = this.node.input[0].typeQualifier[0];
+    } else if (this.node.output && this.node.output.length === 1) {
+      typeQualifier = this.node.output[0].typeQualifier[0];
     }
+    const type = this.GraphStyleService.getOutputTypeFromQualifier(typeQualifier);
+
+    return `border-${type}`;
   }
 
 }

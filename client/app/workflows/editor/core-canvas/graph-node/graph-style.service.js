@@ -18,13 +18,13 @@ const DEFAULT_PAINT_STYLE = {
 };
 
 const STYLES_MAP = {
-  'estimator' : {
+  'estimator': {
     fillStyle: SEAHORSE_SEA_GREEN
   },
-  'transformer' : {
+  'transformer': {
     fillStyle: SEAHORSE_MADISON
   },
-  'evaluator' : {
+  'evaluator': {
     fillStyle: SEAHORSE_ALLPORTS
   },
   'default': {
@@ -34,12 +34,10 @@ const STYLES_MAP = {
 
 const CONNECTOR_STYLE_DEFAULT = {
   lineWidth: 2,
-  outlineWidth: 2,
-  strokeStyle: SEAHORSE_BLUE,
 };
 
 const CONNECTOR_HOVER_STYLE = {
-  outlineColor: 'white',
+  endpoint: 'Dot',
   strokeStyle: SEAHORSE_BLUE
 };
 
@@ -53,7 +51,8 @@ const OUTPUT_STYLE = {
   connectorStyle: CONNECTOR_STYLE_DEFAULT,
   connectorHoverStyle: CONNECTOR_HOVER_STYLE,
   maxConnections: -1,
-  paintStyle: DEFAULT_PAINT_STYLE
+  paintStyle: DEFAULT_PAINT_STYLE,
+  cssClass: 'cursor-pointer'
 };
 
 const INPUT_STYLE = {
@@ -64,9 +63,9 @@ const INPUT_STYLE = {
   },
   isTarget: true,
   maxConnections: 1,
-  paintStyle: DEFAULT_PAINT_STYLE
+  paintStyle: DEFAULT_PAINT_STYLE,
+  cssClass: 'cursor-pointer'
 };
-
 
 class GraphStyleService {
   constructor(OperationsHierarchyService) {
@@ -130,6 +129,46 @@ class GraphStyleService {
     } else {
       return 'default';
     }
+  }
+
+  enablePortHighlighting(nodes, sourceEndpoint) {
+    const sourceNodeId = sourceEndpoint.getParameter('nodeId');
+    const sourcePortIndex = sourceEndpoint.getParameter('portIndex');
+    const sourcePort = nodes[sourceNodeId].output[sourcePortIndex];
+
+    _.forEach(nodes, (node) => {
+      const nodeEl = this.getNodeElementById(node.id);
+      const endpointsInputs = jsPlumb.getEndpoints(nodeEl).filter(endpoint => endpoint.isTarget);
+
+      _.forEach(endpointsInputs, (endpoint) => {
+        const portIndex = endpoint.getParameter('portIndex');
+        const port = node.input[portIndex];
+
+        const typesMatch = sourcePort.typeQualifier
+          .map(typeQualifier => this.OperationsHierarchyService.IsDescendantOf(typeQualifier, port.typeQualifier))
+          .filter(typeQualifierMatch => typeQualifierMatch === true)
+          .length !== 0;
+
+        // types match && there cannot be any edge attached && attaching an edge to the same node is forbidden
+        if (typesMatch && endpoint.connections.length === 0 && port.nodeId !== sourceNodeId) {
+          endpoint.addType('matched');
+        }
+      });
+    });
+  }
+
+  disablePortHighlighting(nodes) {
+    _.forEach(nodes, (node) => {
+      let nodeEl = this.getNodeElementById(node.id);
+      let endpoints = jsPlumb.getEndpoints(nodeEl);
+      _.forEach(endpoints, (endpoint) => {
+        endpoint.removeType('matched');
+      });
+    });
+  }
+
+  getNodeElementById(id) {
+    return document.querySelector(`#node-${id}`);
   }
 
 }

@@ -3,11 +3,13 @@
 import _ from 'lodash';
 
 const ZOOM_STEP = 0.1;
+const MAIN_HEADER_HEIGHT = 90;
 
 class EditorController {
-  constructor(CanvasService, UUIDGenerator, Operations, OperationsHierarchyService, MouseEvent,  $element) {
+  constructor($rootScope, CanvasService, AdapterService, UUIDGenerator, Operations, OperationsHierarchyService, MouseEvent,  $element) {
     'ngInject';
     this.CanvasService = CanvasService;
+    this.AdapterService = AdapterService;
     this.UUIDGenerator = UUIDGenerator; //TODO remove when services are refactored
     this.Operations = Operations;       //TODO remove when services are refactored
     this.OperationsHierarchyService = OperationsHierarchyService;       //TODO remove when services are refactored
@@ -15,10 +17,17 @@ class EditorController {
     this.$element = $element;
 
     this.categories = Operations.getCatalog();
+
+    $rootScope.$on('Keyboard.KEY_PRESSED_DEL', () => {
+      this.hideTooltip();
+    });
   }
 
   $postLink() {
     this.bindEvents();
+
+    this.AdapterService.handleShowTooltip(this.showTooltip.bind(this));
+    this.AdapterService.handleHideTooltip(this.hideTooltip.bind(this));
   }
 
   $onDestroy() {
@@ -170,7 +179,82 @@ class EditorController {
 
   //TODO move to service that is aware of OperationsHierarchy Service and GraphNode
   getMatchingPortIndex(node, typeQualifier) {
-    return _.findIndex(node.input, (port) => this.OperationsHierarchyService.IsDescendantOf(typeQualifier, port.typeQualifier));
+    let portIndex = 0;
+    node.input.forEach((port, index) => {
+      if (this.OperationsHierarchyService.IsDescendantOf(typeQualifier, port.typeQualifier)) {
+        portIndex = index;
+      }
+    });
+    return portIndex;
+  }
+
+  //TODO move it to service which is aware of endpoints and nodes
+  getTypeQualifierForEndpoint(endpoint) {
+    const node = this.workflow.getNodeById(endpoint.getParameter('nodeId'));
+    const port = node.originalOutput[endpoint.getParameter('portIndex')];
+
+    return [...port.typeQualifier];
+  }
+
+  //TODO move it to service which is aware of endpoints and their params
+  getAvailableOperations(workflow, sourceEndpoint) {
+    const sourceNodeId = sourceEndpoint.getParameter('nodeId');
+    const sourceNode = workflow.getNodeById(sourceNodeId);
+    const sourcePortIndex = sourceEndpoint.getParameter('portIndex');
+    const sourcePort = sourceNode.output[sourcePortIndex];
+
+
+    const operations = this.Operations.getData();
+    const operationsMatch = [];
+    _.forEach(operations, (operation) => {
+      const inputMatches = _.reduce(operation.ports.input, (acc, input) => {
+        const typesMatch = _.every(_.map(
+          sourcePort.typeQualifier,
+          typeQualifier => this.OperationsHierarchyService.IsDescendantOf(typeQualifier, input.typeQualifier)
+        ));
+
+        acc.push(typesMatch);
+
+        return acc;
+      }, []);
+      operationsMatch[operation.id] = _.some(inputMatches);
+    });
+
+    return operationsMatch;
+  }
+
+  showTooltip(portEl, portObject) {
+    this.portElement = portEl;
+    this.portObject = portObject;
+    this.isTooltipVisible = true;
+
+    this.tooltipX = this.getPositionX();
+    this.tooltipY = this.getPositionY();
+  }
+
+  hideTooltip() {
+    this.portElement = null;
+    this.portObject = null;
+    this.isTooltipVisible = false;
+  }
+
+  getPositionX() {
+    return Math.round(
+      this.portElement.getBoundingClientRect()
+        .left +
+      this.portElement.getBoundingClientRect()
+        .width
+    );
+  }
+
+  getPositionY() {
+    const adjustment = (this.portObject.type === 'input') ? -5 : 5;
+
+    return Math.round(
+      this.portElement.getBoundingClientRect()
+        .top - MAIN_HEADER_HEIGHT
+      + adjustment
+    );
   }
 }
 

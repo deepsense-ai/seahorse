@@ -3,7 +3,7 @@
 /* @ngInject */
 function WorkflowService($rootScope, $log, Workflow, OperationsHierarchyService, WorkflowsApiClient, Operations,
                          ConfirmationModalService, DefaultInnerWorkflowGenerator, debounce, nodeTypes, SessionManagerApi,
-                         SessionStatus, SessionManager, ServerCommunication, UserService) {
+                         SessionStatus, SessionManager, ServerCommunication, UserService, DeepsenseCycleAnalyser) {
 
   const INNER_WORKFLOW_PARAM_NAME = 'inner workflow';
 
@@ -265,6 +265,27 @@ function WorkflowService($rootScope, $log, Workflow, OperationsHierarchyService,
       } else {
         return false;
       }
+    }
+
+    canAddNewConnection(connection) {
+      return !this.doesCycleExist() && this.isConnectionValid(connection);
+    }
+
+    doesCycleExist() {
+      const workflow = this.getCurrentWorkflow();
+      return DeepsenseCycleAnalyser.cycleExists(workflow); //TODO move component's function cycleExists here
+    }
+
+    isConnectionValid(connection) {
+      const workflow = this.getCurrentWorkflow();
+
+      const startNode = workflow.getNodeById(connection.startNodeId);
+      const startNodeTypeQualifier = startNode.output[connection.startPortId].typeQualifier[0];
+
+      const endNode = workflow.getNodeById(connection.endNodeId);
+      const endNodeTypeQualifier = endNode.input[connection.endPortId].typeQualifier[0];
+
+      return OperationsHierarchyService.IsDescendantOf(startNodeTypeQualifier, [endNodeTypeQualifier]);
     }
   }
 
