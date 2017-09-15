@@ -4,16 +4,6 @@
       <span class="c-workflows-status-bar__upper-section-workflow__title">{{workflow.name}}</span>
       <span ng-if="isViewerMode(workflow)">(viewer mode)</span>
     </div>
-    <div class="c-workflows-status-bar__upper-section-user">
-      <i class="fa fa-user"></i>
-      <span>{{::getCurrentUser().name}}</span>
-      <span ng-if="::isOwner(workflow)">(owner)</span>
-    </div>
-    <div class="c-workflows-status-bar__upper-section-logout">
-      <a href="/logout">
-        <span>Log out</span>
-      </a>
-    </div>
   </div>
   <div class="c-workflows-status-bar__lower-section">
     <menu-item ng-repeat="item in getMenuItems(workflow)"
