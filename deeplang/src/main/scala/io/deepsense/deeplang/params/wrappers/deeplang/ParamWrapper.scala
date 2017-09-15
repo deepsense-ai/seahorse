@@ -14,18 +14,22 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.params
+package io.deepsense.deeplang.params.wrappers.deeplang
 
-case class ParamPair[T](param: Param[T], values: Seq[T]) {
-  require(values.nonEmpty)
-  values.foreach(param.validate)
+import org.apache.spark.ml
 
-  lazy val value = values.head
-}
+import io.deepsense.deeplang.params.Param
 
-object ParamPair {
+class ParamWrapper[T](
+  parentId: String,
+  val param: Param[T])
+  extends ml.param.Param[T](
+    parentId,
+    param.name,
+    param.description,
+    (_: T) => true)
 
-  def apply[T](param: Param[T], value: T): ParamPair[T] = {
-    ParamPair(param, Seq(value))
-  }
+object ParamWrapper {
+
+  def isValid[T](param: Param[T], value: T): Boolean = param.validate(value).isEmpty
 }

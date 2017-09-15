@@ -56,12 +56,14 @@ class ParamsSequenceSpec
       "name" -> JsString(paramsSequence.name),
       "description" -> JsString(paramsSequence.description),
       "default" -> JsNull,
+      "isGriddable" -> JsFalse,
       "values" -> JsArray(
         JsObject(
           "type" -> JsString("string"),
           "name" -> JsString("string"),
           "description" -> JsString(""),
           "default" -> JsNull,
+          "isGriddable" -> JsFalse,
           "validator" -> JsObject(
             "type" -> JsString("regex"),
             "configuration" -> JsObject(
@@ -73,6 +75,7 @@ class ParamsSequenceSpec
           "type" -> JsString("boolean"),
           "name" -> JsString("bool"),
           "description" -> JsString(""),
+          "isGriddable" -> JsFalse,
           "default" -> JsNull
         )
       )

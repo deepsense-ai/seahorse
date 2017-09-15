@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.params
+package io.deepsense.deeplang.params.gridsearch
 
-case class ParamPair[T](param: Param[T], values: Seq[T]) {
-  require(values.nonEmpty)
-  values.foreach(param.validate)
+import io.deepsense.deeplang.params.{ParameterType, DynamicParam}
+import io.deepsense.deeplang.params.ParameterType._
 
-  lazy val value = values.head
-}
+class GridSearchParam(
+    override val name: String,
+    override val description: String,
+    override val inputPort: Int)
+  extends DynamicParam(name, description, inputPort) {
 
-object ParamPair {
-
-  def apply[T](param: Param[T], value: T): ParamPair[T] = {
-    ParamPair(param, Seq(value))
-  }
+  override val parameterType: ParameterType = ParameterType.GridSearch
 }

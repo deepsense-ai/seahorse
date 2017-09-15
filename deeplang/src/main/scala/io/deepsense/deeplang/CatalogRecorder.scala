@@ -221,6 +221,9 @@ object CatalogRecorder {
     catalog.registerDOperation[Word2Vec](
       DOperationCategories.Transformation.TextProcessing)
 
+    catalog.registerDOperation[GridSearch](
+      DOperationCategories.ML)
+
     catalog.registerDOperation[CreateLinearRegression](
       DOperationCategories.ML.Regression)
 

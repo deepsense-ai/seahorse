@@ -14,18 +14,21 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.params
+package io.deepsense.deeplang.params.multivalue
 
-case class ParamPair[T](param: Param[T], values: Seq[T]) {
-  require(values.nonEmpty)
-  values.foreach(param.validate)
+import spray.json._
 
-  lazy val value = values.head
+case class ValuesSequenceParam[T](sequence: List[T]) extends MultipleValuesParam[T] {
+  override def values(): List[T] = sequence
 }
 
-object ParamPair {
+object ValuesSequenceParam {
+  val paramType = "seq"
+}
 
-  def apply[T](param: Param[T], value: T): ParamPair[T] = {
-    ParamPair(param, Seq(value))
+object ValuesSequenceParamJsonProtocol extends DefaultJsonProtocol {
+
+  implicit def valuesSequenceParamFormat[A: JsonFormat]: RootJsonFormat[ValuesSequenceParam[A]] = {
+    jsonFormat1(ValuesSequenceParam.apply[A])
   }
 }

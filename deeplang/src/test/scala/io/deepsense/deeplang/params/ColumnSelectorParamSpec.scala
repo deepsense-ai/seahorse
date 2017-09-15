@@ -36,6 +36,7 @@ class ColumnSelectorParamSpec
       "description" -> JsString(param.description),
       "portIndex" -> JsNumber(param.portIndex),
       "isSingle" -> JsFalse,
+      "isGriddable" -> JsFalse,
       "default" -> JsNull
     )
     (param, expectedJson)

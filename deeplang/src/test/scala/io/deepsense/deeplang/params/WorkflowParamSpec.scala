@@ -30,6 +30,7 @@ class WorkflowParamSpec extends AbstractParamSpec[JsObject, WorkflowParam] {
       "type" -> JsString("workflow"),
       "name" -> JsString(param.name),
       "description" -> JsString(param.description),
+      "isGriddable" -> JsFalse,
       "default" -> JsNull
     )
     (param, expectedJson)

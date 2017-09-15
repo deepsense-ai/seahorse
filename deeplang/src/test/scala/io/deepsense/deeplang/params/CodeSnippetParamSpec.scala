@@ -31,6 +31,7 @@ class CodeSnippetParamSpec extends AbstractParamSpec[String, CodeSnippetParam] {
       "name" -> param.name.toJson,
       "description" -> param.description.toJson,
       "language" -> JsObject("name" -> "Python".toJson),
+      "isGriddable" -> JsFalse,
       "default" -> JsNull
     )
     (param, js)

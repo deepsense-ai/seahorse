@@ -50,4 +50,6 @@ abstract class SparkEvaluatorWrapper[E <: ml.evaluation.Evaluator]
   }
 
   def createEvaluatorInstance(): E = TypeUtils.instanceOfType(evaluatorTag)
+
+  override def isLargerBetter: Boolean = sparkEvaluator.isLargerBetter
 }

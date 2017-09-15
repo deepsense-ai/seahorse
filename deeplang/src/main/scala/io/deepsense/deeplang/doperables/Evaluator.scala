@@ -45,4 +45,6 @@ abstract class Evaluator extends DOperable with Params {
       }
     }
   }
+
+  def isLargerBetter: Boolean
 }

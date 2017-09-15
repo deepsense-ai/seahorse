@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.params
 
-import spray.json.{JsNull, JsObject, JsString, JsValue}
+import spray.json._
 
 class SingleColumnCreatorParamSpec extends AbstractParamSpec[String, SingleColumnCreatorParam] {
 
@@ -30,6 +30,7 @@ class SingleColumnCreatorParamSpec extends AbstractParamSpec[String, SingleColum
       "type" -> JsString("creator"),
       "name" -> JsString(param.name),
       "description" -> JsString(param.description),
+      "isGriddable" -> JsFalse,
       "default" -> JsNull
     )
     (param, expectedJson)

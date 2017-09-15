@@ -32,6 +32,7 @@ class DynamicParamSpec extends AbstractParamSpec[JsValue, DynamicParam] {
       "name" -> JsString(param.name),
       "description" -> JsString(param.description),
       "inputPort" -> JsNumber(param.inputPort),
+      "isGriddable" -> JsFalse,
       "default" -> JsNull)
     (param, json)
   }

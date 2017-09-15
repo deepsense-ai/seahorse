@@ -30,6 +30,7 @@ class BooleanParamSpec extends AbstractParamSpec[Boolean, BooleanParam] {
       "type" -> JsString("boolean"),
       "name" -> JsString(param.name),
       "description" -> JsString(param.description),
+      "isGriddable" -> JsFalse,
       "default" -> JsNull
     )
     (param, json)

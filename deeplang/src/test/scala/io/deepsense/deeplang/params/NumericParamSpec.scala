@@ -34,8 +34,9 @@ class NumericParamSpec extends AbstractParamSpec[Double, NumericParam] {
       "name" -> JsString(param.name),
       "description" -> JsString(param.description + param.constraints),
       "default" -> JsNull,
+      "isGriddable" -> JsTrue,
       "validator" -> JsObject(
-        "type" ->  JsString("range"),
+        "type" -> JsString("range"),
         "configuration" -> JsObject(
           "begin" -> JsNumber(1.0),
           "end" -> JsNumber(3.0),

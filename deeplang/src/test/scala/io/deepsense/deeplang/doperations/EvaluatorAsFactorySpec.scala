@@ -90,6 +90,8 @@ object EvaluatorAsFactorySpec {
       ???
     override def report(executionContext: ExecutionContext): Report =
       ???
+
+    override def isLargerBetter: Boolean = ???
   }
 
   class MockEvaluatorFactory extends EvaluatorAsFactory[MockEvaluator] {

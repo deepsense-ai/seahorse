@@ -40,6 +40,7 @@ class MultipleChoiceParamSpec
       "type" -> JsString("multipleChoice"),
       "name" -> JsString(multipleChoiceParam.name),
       "description" -> JsString(multipleChoiceParam.description),
+      "isGriddable" -> JsFalse,
       "default" -> JsNull,
       ChoiceFixtures.values)
     (multipleChoiceParam, multipleChoiceExpectedJson)

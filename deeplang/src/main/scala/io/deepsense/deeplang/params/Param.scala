@@ -38,6 +38,8 @@ abstract class Param[T] {
 
   def validateSubparams(value: T): Vector[DeepLangException] = Vector.empty
 
+  val isGriddable: Boolean = false
+
   /**
    * Describes json representation of this parameter.
    * @param maybeDefault Optional default value of parameter. Should be of type Option[T],
@@ -49,6 +51,7 @@ abstract class Param[T] {
       "name" -> name.toJson,
       "type" -> parameterType.toString.toJson, // TODO json format for parameterType
       "description" -> (description + constraints).toJson,
+      "isGriddable" -> isGriddable.toJson,
       "default" -> maybeDefault.map(default =>
         serializeDefault(default.asInstanceOf[T])).getOrElse(JsNull)
     )

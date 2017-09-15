@@ -127,5 +127,7 @@ object MockDOperablesFactory extends UnitSpec {
       ???
     private[deeplang] def _infer(k: DKnowledge[DataFrame]): MetricValue =
       ???
+
+    override def isLargerBetter: Boolean = ???
   }
 }

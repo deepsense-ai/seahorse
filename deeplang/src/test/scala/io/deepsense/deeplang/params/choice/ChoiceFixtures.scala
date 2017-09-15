@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.params.choice
 
-import spray.json.{JsNull, JsArray, JsObject, JsString}
+import spray.json._
 
 import io.deepsense.deeplang.params.{Param, BooleanParam}
 
@@ -86,6 +86,7 @@ object ChoiceFixtures {
           "type" -> JsString("boolean"),
           "name" -> JsString("bool"),
           "description" -> JsString("description"),
+          "isGriddable" -> JsFalse,
           "default" -> JsNull
         )
       )

@@ -14,18 +14,11 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.params
+package io.deepsense.deeplang.params.multivalue
 
-case class ParamPair[T](param: Param[T], values: Seq[T]) {
-  require(values.nonEmpty)
-  values.foreach(param.validate)
+case class CombinedMultipleValuesParam[T](
+    gridValues: Seq[MultipleValuesParam[T]])
+  extends MultipleValuesParam[T] {
 
-  lazy val value = values.head
-}
-
-object ParamPair {
-
-  def apply[T](param: Param[T], value: T): ParamPair[T] = {
-    ParamPair(param, Seq(value))
-  }
+  override val values: Seq[T] = gridValues.flatMap(_.values).distinct
 }

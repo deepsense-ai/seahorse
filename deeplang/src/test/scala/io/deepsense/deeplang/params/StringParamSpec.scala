@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.params
 
-import spray.json.{JsNull, JsObject, JsString, JsValue}
+import spray.json._
 
 import io.deepsense.deeplang.params.validators.AcceptAllRegexValidator
 
@@ -34,6 +34,7 @@ class StringParamSpec extends AbstractParamSpec[String, StringParam] {
       "name" -> JsString(param.name),
       "description" -> JsString(param.description),
       "default" -> JsNull,
+      "isGriddable" -> JsFalse,
       "validator" -> JsObject(
         "type" -> JsString("regex"),
         "configuration" -> JsObject(

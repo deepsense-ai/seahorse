@@ -18,5 +18,5 @@ package io.deepsense.reportlib.model
 
 object ReportType extends Enumeration {
   type ReportType = Value
-  val DataFrameFull, DataFrameSimplified, MetricValue, Empty = Value
+  val DataFrameFull, DataFrameSimplified, MetricValue, GridSearch, Empty = Value
 }

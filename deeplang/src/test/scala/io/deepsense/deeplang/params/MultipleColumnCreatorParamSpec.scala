@@ -33,6 +33,7 @@ class MultipleColumnCreatorParamSpec
       "type" -> JsString("multipleCreator"),
       "name" -> JsString(param.name),
       "description" -> JsString(param.description),
+      "isGriddable" -> JsFalse,
       "default" -> JsNull
     )
     (param, expectedJson)

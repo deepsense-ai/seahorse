@@ -24,13 +24,15 @@ import io.deepsense.commons.utils.CollectionExtensions._
 import io.deepsense.deeplang.doperables.descriptions.{HasInferenceResult, ParamsInferenceResult}
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.params.exceptions.ParamValueNotProvidedException
+import io.deepsense.deeplang.params.multivalue.MultipleValuesParam
+import io.deepsense.deeplang.params.wrappers.spark._
 
 /**
  * Everything that inherits this trait declares that it contains parameters.
  * Parameters are discovered by reflection.
  * This trait also provides method for managing values and default values of parameters.
  */
-trait Params extends Serializable with HasInferenceResult {
+trait Params extends Serializable with HasInferenceResult with DefaultJsonProtocol {
 
   def paramsToJson: JsValue = JsArray(params.map {
     case param =>
@@ -63,9 +65,14 @@ trait Params extends Serializable with HasInferenceResult {
       val pairs = for ((label, value) <- map) yield {
         (paramsByName.get(label), value) match {
           case (Some(parameter), JsNull) => None
-          case (Some(parameter), _) => Some(ParamPair(
-            parameter.asInstanceOf[Param[Any]],
-            parameter.valueFromJson(value)))
+          case (Some(parameter), _) =>
+            if (isMultiValueParam(parameter, value)) {
+              getMultiValueParam(value, parameter)
+            } else {
+              Some(ParamPair(
+                parameter.asInstanceOf[Param[Any]],
+                parameter.valueFromJson(value)))
+            }
           case (None, _) => throw unknownParamLabelException(jsValue, label)
         }
       }
@@ -92,6 +99,29 @@ trait Params extends Serializable with HasInferenceResult {
       pairs.flatten.toSeq
     case JsNull => Seq.empty
     case _ => throw objectExpectedException(jsValue)
+  }
+
+  private def getMultiValueParam(value: JsValue, parameter: Param[_]): Option[ParamPair[_]] = {
+    parameter match {
+      case _: IntParamWrapper[_] |
+           _: LongParamWrapper[_] |
+           _: FloatParamWrapper[_] |
+           _: DoubleParamWrapper[_] |
+           _: NumericParam =>
+        createMultiValueParam[Double](value, parameter)
+      case _ => None
+    }
+  }
+
+  private def isMultiValueParam(parameter: Param[_], value: JsValue): Boolean = {
+    parameter.isGriddable && MultipleValuesParam.isMultiValParam(value)
+  }
+
+  private def createMultiValueParam[T](
+      value: JsValue,
+      parameter: Param[_])(implicit format: JsonFormat[T]): Option[ParamPair[T]] = {
+    val multiValParam = MultipleValuesParam.fromJson[T](value)
+    Some(ParamPair(parameter.asInstanceOf[Param[T]], multiValParam.values))
   }
 
   /**
