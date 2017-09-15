@@ -236,7 +236,7 @@ class StatefulGraphSpec
         states,
         None)
       val nodeFailedStatus =
-        NodeStateWithResults(NodeState(nodeFailed, Some(EntitiesMap())), Map())
+        NodeStateWithResults(NodeState(nodeFailed, Some(EntitiesMap())), Map(), None)
       val description: Some[FailureDescription] = Some(mock[FailureDescription])
       val g2 = StatefulGraph(
         DeeplangGraph(Set(nodeB), Set()),
@@ -309,6 +309,6 @@ class StatefulGraphSpec
   }
 
   private def nodeState(status: NodeStatus): NodeStateWithResults = {
-    NodeStateWithResults(NodeState(status, Some(EntitiesMap())), Map())
+    NodeStateWithResults(NodeState(status, Some(EntitiesMap())), Map(), None)
   }
 }

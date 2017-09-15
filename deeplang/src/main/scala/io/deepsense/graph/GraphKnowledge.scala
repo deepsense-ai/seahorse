@@ -37,6 +37,8 @@ case class GraphKnowledge(
     GraphKnowledge(resultsMap + (id -> inferenceResult))
   }
 
+  def containsNodeKnowledge(id: Node.Id): Boolean = resultsMap.contains(id)
+
   def getResult(id: Node.Id): NodeInferenceResult = resultsMap(id)
 
   def getKnowledge(id: Node.Id): Vector[DKnowledge[DOperable]] = getResult(id).ports

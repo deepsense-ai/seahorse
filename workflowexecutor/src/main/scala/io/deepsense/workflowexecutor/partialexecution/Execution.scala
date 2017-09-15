@@ -154,7 +154,7 @@ case class IdleExecution(
     }.toMap
 
     if (newStructure.containsCycle) {
-      noMissingStates.mapValues(_.draft)
+      noMissingStates.mapValues(_.draft.clearKnowledge)
     } else {
       val wholeGraph = StatefulGraph(newStructure, noMissingStates, None)
 
@@ -170,9 +170,26 @@ case class IdleExecution(
 
       val nodesNeedingDrafting = newNodes ++ nodesToExecute ++ changedNodes
 
-      nodesNeedingDrafting.foldLeft(wholeGraph) {
-        case (g, id) => g.draft(id)
-      }.states
+      val transformGraph = draftNodes(nodesNeedingDrafting) _ andThen
+        clearNodesKnowledge(changedNodes)
+
+      transformGraph(wholeGraph).states
+    }
+  }
+
+  private def draftNodes(
+      nodesNeedingDrafting: Set[Node.Id])(
+      graph: StatefulGraph): StatefulGraph = {
+    nodesNeedingDrafting.foldLeft(graph) {
+      case (g, id) => g.draft(id)
+    }
+  }
+
+  private def clearNodesKnowledge(
+      nodesToClear: Set[Node.Id])(
+      graph: StatefulGraph): StatefulGraph = {
+    nodesToClear.foldLeft(graph) {
+      case (g, id) => g.clearKnowledge(id)
     }
   }
 

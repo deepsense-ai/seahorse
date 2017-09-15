@@ -68,19 +68,39 @@ class KnowledgeInferenceSpec
       }
     }
 
-    "infer knowledge up to given output port" in {
-      val graph = validGraph
-      setParametersValid(graph)
+    "infer only unprovided knowledge" when {
+      "given initial knowledge" in {
 
-      val node1Result = graph.inferKnowledge(idCreateA1, 0, typeInferenceCtx)
-      val node2Port0Result = graph.inferKnowledge(idAToA1A2, 0, typeInferenceCtx)
-      val node2Port1Result = graph.inferKnowledge(idAToA1A2, 1, typeInferenceCtx)
-      val node3Result = graph.inferKnowledge(idA1A2ToFirst, 0, typeInferenceCtx)
+        val initialKnowledge = Map(
+          nodeCreateA1.id -> NodeInferenceResult(Vector(knowledgeA1)),
+          nodeA1ToA.id -> NodeInferenceResult(Vector(knowledgeA1, knowledgeA2))
+        )
 
-      node1Result.knowledge shouldBe knowledgeA1
-      node2Port0Result.knowledge shouldBe knowledgeA1
-      node2Port1Result.knowledge shouldBe knowledgeA2
-      node3Result.knowledge shouldBe knowledgeA1
+        val knowledgeToInfer = Map(
+          nodeAToA1A2.id -> NodeInferenceResult(Vector(knowledgeA1)),
+          nodeA1A2ToFirst.id -> NodeInferenceResult(
+            Vector(knowledgeA1),
+            warnings = mock[InferenceWarnings])
+        )
+
+        val nodesWithKnowledge = List(nodeCreateA1, nodeA1ToA)
+        val nodesToInfer = List(nodeAToA1A2, nodeA1A2ToFirst)
+        val topologicallySorted = nodesWithKnowledge ++ nodesToInfer
+
+        when(topologicallySortedMock.topologicallySorted).thenReturn(Some(topologicallySorted))
+
+        nodesWithKnowledge.foreach((node: DeeplangNode) =>
+          nodeInferenceMockShouldThrowForNode(node))
+        nodesToInfer.foreach((node: DeeplangNode) =>
+          nodeInferenceMockShouldInferResultForNode(node, knowledgeToInfer(node.id)))
+
+        val expectedKnowledge = initialKnowledge ++ knowledgeToInfer
+        val graphKnowledge = graph.inferKnowledge(
+          mock[InferContext],
+          GraphKnowledge(initialKnowledge))
+
+        graphKnowledge.resultsMap should contain theSameElementsAs expectedKnowledge
+      }
     }
 
     "throw an exception" when {
@@ -107,6 +127,14 @@ class KnowledgeInferenceSpec
       any[InferContext],
       any[NodeInferenceResult])
     ).thenReturn(nodeCreateA1InferenceResult)
+  }
+
+  def nodeInferenceMockShouldThrowForNode(node: DeeplangNode): Unit = {
+    when(nodeInferenceMock.inferKnowledge(
+      isEqualTo(node),
+      any[InferContext],
+      any[NodeInferenceResult])
+    ).thenThrow(new RuntimeException("Inference should not be called for node " + node.id))
   }
 
   case class DirectedGraphWithSomeLogicMocked(

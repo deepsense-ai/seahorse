@@ -18,10 +18,14 @@ package io.deepsense.models.workflows
 
 import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.commons.models.Entity
-import io.deepsense.deeplang.DOperable
+import io.deepsense.deeplang.{DKnowledge, DOperable}
+import io.deepsense.graph.NodeInferenceResult
 import io.deepsense.reportlib.model.ReportContent
 
-case class NodeStateWithResults(nodeState: NodeState, dOperables: Map[Entity.Id, DOperable]) {
+case class NodeStateWithResults(
+    nodeState: NodeState,
+    dOperables: Map[Entity.Id, DOperable],
+    knowledge: Option[NodeInferenceResult]) {
 
   def abort: NodeStateWithResults = copy(nodeState = nodeState.abort)
   def enqueue: NodeStateWithResults = copy(nodeState = nodeState.enqueue)
@@ -29,6 +33,10 @@ case class NodeStateWithResults(nodeState: NodeState, dOperables: Map[Entity.Id,
   def fail(failureDescription: FailureDescription): NodeStateWithResults = {
     copy(nodeState = nodeState.fail(failureDescription))
   }
+  def withKnowledge(inferredKnowledge: NodeInferenceResult): NodeStateWithResults = {
+    copy(knowledge = Some(inferredKnowledge))
+  }
+  def clearKnowledge: NodeStateWithResults = copy(knowledge = None)
   def isCompleted: Boolean = nodeState.isCompleted
   def isQueued: Boolean = nodeState.isQueued
   def isRunning: Boolean = nodeState.isRunning
@@ -40,7 +48,7 @@ case class NodeStateWithResults(nodeState: NodeState, dOperables: Map[Entity.Id,
       reports: Map[Entity.Id, ReportContent],
       dOperables: Map[Entity.Id, DOperable]): NodeStateWithResults = {
     val results = EntitiesMap(dOperables, reports)
-    NodeStateWithResults(nodeState.finish(entitiesIds, results), dOperables)
+    NodeStateWithResults(nodeState.finish(entitiesIds, results), dOperables, knowledge)
   }
   def start: NodeStateWithResults = copy(nodeState = nodeState.start)
 }
@@ -48,5 +56,5 @@ case class NodeStateWithResults(nodeState: NodeState, dOperables: Map[Entity.Id,
 object NodeStateWithResults {
 
   def draft: NodeStateWithResults =
-    NodeStateWithResults(NodeState.draft, Map())
+    NodeStateWithResults(NodeState.draft, Map(), None)
 }

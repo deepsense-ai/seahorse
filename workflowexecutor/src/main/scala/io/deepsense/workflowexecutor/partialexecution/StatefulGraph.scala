@@ -134,7 +134,7 @@ case class StatefulGraph(
    * Graph checks if it is still correct in context of the inferred knowledge.
    */
   def inferAndApplyKnowledge(context: InferContext): StatefulGraph = {
-    Try(inferKnowledge(context)) match {
+    Try(inferKnowledge(context, memorizedKnowledge)) match {
       case Success(knowledge) =>
         handleInferredKnowledge(knowledge)
       case Failure(ex: CyclicGraphException) =>
@@ -144,6 +144,11 @@ case class StatefulGraph(
         fail(StatefulGraph.genericFailureDescription(ex))
     }
   }
+
+  private def memorizedKnowledge = GraphKnowledge(states.flatMap { case (nodeId, nodeState) =>
+    nodeState.knowledge.map(
+      knowledge => (nodeId, knowledge))
+  })
 
   def updateStates(changedGraph: StatefulGraph): StatefulGraph = {
     val updatedStates = states ++ changedGraph.states
@@ -164,6 +169,10 @@ case class StatefulGraph(
     copy(states = markChildrenDraft(states, nodeId))
   }
 
+  def clearKnowledge(nodeId: Node.Id): StatefulGraph = {
+    copy(states = clearChildrenKnowledge(states, nodeId))
+  }
+
   def enqueueDraft: StatefulGraph = {
     val enqueued = states.mapValues(state => if (state.isDraft) state.enqueue else state)
     copy(states = enqueued)
@@ -178,17 +187,31 @@ case class StatefulGraph(
     ExecutionReport(states.mapValues(_.nodeState), executionFailure)
 
   private def markChildrenDraft(
-    states: Map[Node.Id, NodeStateWithResults],
-    draftNodeId: Node.Id): Map[Node.Id, NodeStateWithResults] = {
-    val children: Set[Node.Id] = directedGraph.successorsOf(draftNodeId)
-    val previousState = states.get(draftNodeId)
+      states: Map[Node.Id, NodeStateWithResults],
+      draftNodeId: Node.Id): Map[Node.Id, NodeStateWithResults] = {
+    recursiveStateUpdate(states, draftNodeId, _.draft)
+  }
+
+  private def clearChildrenKnowledge(
+      states: Map[Node.Id, NodeStateWithResults],
+      nodeToClearId: Node.Id): Map[Node.Id, NodeStateWithResults] = {
+    recursiveStateUpdate(states, nodeToClearId, _.clearKnowledge)
+  }
+
+  private def recursiveStateUpdate(
+        states: Map[Node.Id, NodeStateWithResults],
+        nodeId: Node.Id,
+        updateNodeState: (NodeStateWithResults => NodeStateWithResults))
+      : Map[Node.Id, NodeStateWithResults] = {
+    val children: Set[Node.Id] = directedGraph.successorsOf(nodeId)
+    val previousState = states.get(nodeId)
     val draftedState =
-      previousState.map(s => states.updated(draftNodeId, s.draft)).getOrElse(states)
+      previousState.map(s => states.updated(nodeId, updateNodeState(s))).getOrElse(states)
     if (children.isEmpty) {
       draftedState
     } else {
       children.toSeq.foldLeft(draftedState){ (states, node) =>
-        markChildrenDraft(states, node)
+        recursiveStateUpdate(states, node, updateNodeState)
       }
     }
   }
@@ -207,7 +230,10 @@ case class StatefulGraph(
       val updatedStates = states.mapValues(_.abort)
       copy(states = updatedStates, executionFailure = Some(description))
     } else {
-      this
+      val updatedStates = states.map { case (nodeId, nodeState) =>
+        (nodeId, nodeState.withKnowledge(knowledge.getResult(nodeId)))
+      }
+      copy(states = updatedStates)
     }
   }
 
@@ -239,9 +265,9 @@ case class StatefulGraph(
         case Endpoint(predecessorId, portIndex) =>
           states(predecessorId) match {
             case NodeStateWithResults(
-                NodeState(nodestate.Completed(_, _, results), _), dOperables) =>
+                NodeState(nodestate.Completed(_, _, results), _), dOperables, _) =>
               dOperables(results(portIndex))
-            case NodeStateWithResults(NodeState(otherStatus, _), _) =>
+            case NodeStateWithResults(NodeState(otherStatus, _), _, _) =>
               throw new IllegalStateException(
                 s"Cannot collect inputs for node ${directedGraph.node(id)}" +
                 s" because one of its predecessors was in '$otherStatus' " +
@@ -292,7 +318,7 @@ case class StatefulGraph(
   private def abortUnfinished(
       unfinished: Map[Id, NodeStateWithResults]): Map[Id, NodeStateWithResults] = {
     unfinished.mapValues {
-      case nodeStateWithResults@NodeStateWithResults(state@NodeState(status, _), _) =>
+      case nodeStateWithResults@NodeStateWithResults(state@NodeState(status, _), _, _) =>
         val newStatus = status match {
         case r: Running => r.abort
         case q: Queued => q.abort
@@ -309,7 +335,12 @@ object StatefulGraph {
     nodes: Set[DeeplangNode] = Set(),
     edges: Set[Edge] = Set()): StatefulGraph = {
     val states = nodes.map(node =>
-      node.id -> NodeStateWithResults(NodeState(nodestate.Draft(), Some(EntitiesMap())), Map())
+      node.id -> NodeStateWithResults(
+        NodeState(
+          nodestate.Draft(),
+          Some(EntitiesMap())),
+          Map(),
+          None)
     ).toMap
     StatefulGraph(DeeplangGraph(nodes, edges), states, None)
   }

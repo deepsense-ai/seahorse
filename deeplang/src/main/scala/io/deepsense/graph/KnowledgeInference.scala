@@ -31,10 +31,14 @@ trait KnowledgeInference {
   /**
    * @return A graph knowledge with inferred results for every node.
    */
-  def inferKnowledge(context: InferContext): GraphKnowledge = {
+  def inferKnowledge(
+      context: InferContext,
+      initialKnowledge: GraphKnowledge = GraphKnowledge()): GraphKnowledge = {
+
     val sorted = topologicallySorted.getOrElse(throw CyclicGraphException())
     sorted
-      .foldLeft(GraphKnowledge())(
+      .filterNot(node => initialKnowledge.containsNodeKnowledge(node.id))
+      .foldLeft(initialKnowledge)(
         (knowledge, node) => {
           val inferenceResult = inferKnowledge(
             node,
@@ -47,24 +51,5 @@ trait KnowledgeInference {
           knowledge.addInference(node.id, inferenceResult)
         }
       )
-  }
-
-  /**
-   * @return A graph knowledge with knowledge inferred up to given node and port.
-   */
-  def inferKnowledge(
-      nodeId: Node.Id,
-      outPortIndex: Int,
-      context: InferContext): SinglePortKnowledgeInferenceResult = {
-    val subgraphNodes = allPredecessorsOf(nodeId) + node(nodeId)
-    val subgraphEdges = edges.filter(edge =>
-      subgraphNodes.contains(node(edge.from.nodeId)) &&
-        subgraphNodes.contains(node(edge.to.nodeId)))
-    val inferenceResult =
-      DeeplangGraph(subgraphNodes, subgraphEdges).inferKnowledge(context).getResult(nodeId)
-    SinglePortKnowledgeInferenceResult(
-      inferenceResult.ports(outPortIndex),
-      inferenceResult.warnings,
-      inferenceResult.errors)
   }
 }

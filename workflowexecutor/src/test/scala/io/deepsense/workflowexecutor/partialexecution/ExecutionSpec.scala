@@ -78,16 +78,16 @@ class ExecutionSpec
 
       inferred shouldBe IdleExecution(inferenceResult, nodes)
     }
-    "mark nodes as Draft when a predecessor changed " +
+    "mark nodes as Draft when predecessor changed" +
       "even if the nodes were excluded from execution" in {
         val statefulGraph = StatefulGraph(
           directedGraph,
           Map(
-            idA -> nodeCompletedState,
-            idB -> nodeState(nodeFailed),
-            idC -> nodeCompletedState,
-            idD -> nodeCompletedState,
-            idE -> nodeState(nodestate.Aborted())
+            idA -> nodeCompletedState.withKnowledge(mock[NodeInferenceResult]),
+            idB -> nodeState(nodeFailed).withKnowledge(mock[NodeInferenceResult]),
+            idC -> nodeCompletedState.withKnowledge(mock[NodeInferenceResult]),
+            idD -> nodeCompletedState.withKnowledge(mock[NodeInferenceResult]),
+            idE -> nodeState(nodestate.Aborted()).withKnowledge(mock[NodeInferenceResult])
           ),
           None
         )
@@ -100,10 +100,10 @@ class ExecutionSpec
           execution.updateStructure(statefulGraph.directedGraph, Set(idC))
 
         updated.states(idA) shouldBe execution.states(idA)
-        updated.states(idB) shouldBe NodeStateWithResults.draft
-        updated.states(idC) shouldBe NodeStateWithResults.draft
-        updated.states(idD) shouldBe NodeStateWithResults.draft
-        updated.states(idE) shouldBe NodeStateWithResults.draft
+        updated.states(idB) shouldBe execution.states(idB).draft
+        updated.states(idC) shouldBe execution.states(idC).draft
+        updated.states(idD) shouldBe execution.states(idD).draft
+        updated.states(idE) shouldBe execution.states(idE).draft
     }
     "enqueue all nodes" when {
       "all nodes where specified" in {
@@ -136,11 +136,11 @@ class ExecutionSpec
       val statefulGraph = StatefulGraph(
         DeeplangGraph(nodeSet, edgeSet),
         Map(
-          idA -> nodeCompletedState,
-          idB -> nodeCompletedState,
-          idC -> nodeCompletedState,
-          idD -> nodeCompletedState,
-          idE -> nodeCompletedState
+          idA -> nodeCompletedState.withKnowledge(mock[NodeInferenceResult]),
+          idB -> nodeCompletedState.withKnowledge(mock[NodeInferenceResult]),
+          idC -> nodeCompletedState.withKnowledge(mock[NodeInferenceResult]),
+          idD -> nodeCompletedState.withKnowledge(mock[NodeInferenceResult]),
+          idE -> nodeCompletedState.withKnowledge(mock[NodeInferenceResult])
         ),
         None
       )
@@ -154,9 +154,9 @@ class ExecutionSpec
 
       updated.states(idA) shouldBe execution.states(idA)
       updated.states(idB) shouldBe execution.states(idB)
-      updated.states(idC) shouldBe NodeStateWithResults.draft
-      updated.states(idD) shouldBe NodeStateWithResults.draft
-      updated.states(idE) shouldBe NodeStateWithResults.draft
+      updated.states(idC) shouldBe execution.states(idC).draft
+      updated.states(idD) shouldBe execution.states(idD).draft
+      updated.states(idE) shouldBe execution.states(idE).draft
     }
     "not execute operations that are already completed (if they are not selected)" +
       "finish execution if the selected subgraph finished" in {
@@ -297,14 +297,14 @@ class ExecutionSpec
       Set(edge1, edgeBtoC, edgeCtoD, edge4, edge5)
     )
 
-    val stateWD = nodeCompletedIdState(idD)
-    val stateWE = nodeCompletedIdState(idE)
+    val stateWD = nodeCompletedIdState(idD).withKnowledge(mock[NodeInferenceResult])
+    val stateWE = nodeCompletedIdState(idE).withKnowledge(mock[NodeInferenceResult])
     val statefulGraph = StatefulGraph(
       graph,
       Map(
-        idA -> nodeCompletedIdState(idA),
-        idB -> nodeCompletedIdState(idB),
-        idC -> nodeCompletedIdState(idC),
+        idA -> nodeCompletedIdState(idA).withKnowledge(mock[NodeInferenceResult]),
+        idB -> nodeCompletedIdState(idB).withKnowledge(mock[NodeInferenceResult]),
+        idC -> nodeCompletedIdState(idC).withKnowledge(mock[NodeInferenceResult]),
         idD -> stateWD,
         idE -> stateWE
       ),
@@ -318,14 +318,14 @@ class ExecutionSpec
     updatedExecution.states(idA) shouldBe statefulGraph.states(idA)
     updatedExecution.states(idB) shouldBe statefulGraph.states(idB)
     updatedExecution.states(changedC.id) shouldBe NodeStateWithResults.draft
-    updatedExecution.states(idD) shouldBe stateWD.draft
+    updatedExecution.states(idD) shouldBe stateWD.draft.clearKnowledge
     updatedExecution.states(idE) shouldBe stateWE.draft
 
     val queuedExecution = updatedExecution.enqueue
     queuedExecution.states(idA) shouldBe statefulGraph.states(idA)
     queuedExecution.states(idB) shouldBe statefulGraph.states(idB)
     queuedExecution.states(changedC.id) shouldBe NodeStateWithResults.draft
-    queuedExecution.states(idD) shouldBe stateWD.draft
+    queuedExecution.states(idD) shouldBe stateWD.draft.clearKnowledge
     queuedExecution.states(idE) shouldBe stateWE.draft.enqueue
   }
 
@@ -340,10 +340,11 @@ class ExecutionSpec
       NodeState(
         nodeCompleted.copy(results = Seq(entityId)),
         Some(EntitiesMap(dOperables, reports))),
-      dOperables)
+      dOperables,
+      None)
   }
 
   private def nodeState(status: NodeStatus): NodeStateWithResults = {
-    NodeStateWithResults(NodeState(status, Some(EntitiesMap())), Map())
+    NodeStateWithResults(NodeState(status, Some(EntitiesMap())), Map(), None)
   }
 }

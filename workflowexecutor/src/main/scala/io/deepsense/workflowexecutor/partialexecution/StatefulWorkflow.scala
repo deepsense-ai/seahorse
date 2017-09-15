@@ -109,7 +109,7 @@ class StatefulWorkflow(
   private def getChangedNodes(startingPointExecution: Execution): Map[Id, NodeState] = {
     execution.states.filterNot { case (id, stateWithResults) =>
       startingPointExecution.states.contains(id) &&
-        stateWithResults == startingPointExecution.states(id)
+        stateWithResults.clearKnowledge == startingPointExecution.states(id).clearKnowledge
     }.mapValues(_.nodeState)
   }
 }
@@ -123,7 +123,7 @@ object StatefulWorkflow extends Logging {
     val states = workflow.executionReport.states
     val noMissingStates = workflow.graph.nodes.map { case node =>
       states.get(node.id)
-        .map(state => node.id -> NodeStateWithResults(state.draft, Map()))
+        .map(state => node.id -> NodeStateWithResults(state.draft, Map(), None))
         .getOrElse(node.id -> NodeStateWithResults.draft)
     }.toMap
     val graph = StatefulGraph(workflow.graph, noMissingStates, workflow.executionReport.error)

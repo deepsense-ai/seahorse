@@ -161,7 +161,7 @@ class WorkflowExecutorActorSpec
           saveState.state.error.isDefined shouldBe true
         }
       }
-      "after relaunch handleonly changed nodes" in {
+      "after relaunch handle only changed nodes" in {
         val workflow = workflowInvalidInference(Workflow.Id.randomId)
         val (probe, wea, _, statusListeners, publisher, testWMClientProbe) =
           finishedStateFixture(workflow)
@@ -240,7 +240,8 @@ class WorkflowExecutorActorSpec
                 DeeplangGraph(Set(node1), Set()),
                 Map(node1.id -> NodeStateWithResults(
                   NodeState(nodestate.Running(DateTimeConverter.now), Some(EntitiesMap())),
-                  Map())),
+                  Map(),
+                  None)),
                 None),
               Set(node1.id)))
           when(statefulWorkflow.startReadyNodes()).thenReturn(Seq.empty)
@@ -331,7 +332,7 @@ class WorkflowExecutorActorSpec
   }
 
   private def nodeState(status: NodeStatus): NodeStateWithResults = {
-    NodeStateWithResults(NodeState(status, Some(EntitiesMap())), Map())
+    NodeStateWithResults(NodeState(status, Some(EntitiesMap())), Map(), None)
   }
 
   def createNodeCompletedMessage(nodeId: Id): (NodeCompleted, EntitiesMap) = {
@@ -637,7 +638,8 @@ class WorkflowExecutorActorSpec
       NodeState(
         nodestate.Completed(now.minusHours(1), now, Seq(entityId)),
         Some(EntitiesMap(dOperables, Map(entityId -> ReportContent("test"))))),
-      dOperables)
+      dOperables,
+    None)
   }
 
   def wmClientActor(
