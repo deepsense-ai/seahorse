@@ -17,12 +17,6 @@ class DatabaseModalController extends DatasourceModal {
 
     super($log, $uibModalInstance, datasourcesService, editedDatasource, mode);
 
-    this.drivers = [
-      'com.mysql.jdbc.driver',
-      'com.postgresql.jdbc.driver',
-      'com.oracle.jdbc.driver'
-    ];
-
     this.copyFromQueryInput = true;
     this.sqlInstruction = '';
 
@@ -45,10 +39,10 @@ class DatabaseModalController extends DatasourceModal {
         visibility: 'privateVisibility',
         datasourceType: 'jdbc',
         jdbcParams: {
-          driver: this.drivers[0],
+          driver: '',
           url: '',
-          query: '',
-          table: ''
+          query: null,
+          table: null
         }
       };
     }
@@ -78,11 +72,11 @@ class DatabaseModalController extends DatasourceModal {
 
   onQueryTypeChange() {
     if (this.type === 'table') {
-      this.datasourceParams.jdbcParams.query = '';
+      this.datasourceParams.jdbcParams.query = null;
       this.datasourceParams.jdbcParams.table = this.sqlInstruction;
     } else {
       this.datasourceParams.jdbcParams.query = this.sqlInstruction;
-      this.datasourceParams.jdbcParams.table = '';
+      this.datasourceParams.jdbcParams.table = null;
     }
   }
 }

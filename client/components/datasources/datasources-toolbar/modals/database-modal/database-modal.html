@@ -6,13 +6,27 @@
   <div class="datasources-modal__body">
     <div class="datasources-modal__body-row half-width">
       <label class="title">Driver</label>
-      <select
-        ng-disabled="$ctrl.previewMode"
-        ng-model="$ctrl.datasourceParams.jdbcParams.driver"
-        ng-options="driver for driver in $ctrl.drivers"
-        class="form-control"
-      >
-      </select>
+      <div class="icon-input">
+        <input
+          ng-disabled="$ctrl.previewMode"
+          ng-model="$ctrl.datasourceParams.jdbcParams.driver"
+          placeholder="e.g. com.mysql.jdbc.Driver"
+          class="form-control"
+          type="text"
+        />
+        <div
+          ng-if="!$ctrl.previewMode"
+          class="icon-input__status"
+        >
+          <div
+            ng-class="{
+              'sa-ok status-ok': $ctrl.datasourceParams.jdbcParams.driver,
+              'status-error': !$ctrl.datasourceParams.jdbcParams.driver
+            }"
+            class="sa icon"
+          ></div>
+        </div>
+      </div>
     </div>
 
     <div class="datasources-modal__body-row">
