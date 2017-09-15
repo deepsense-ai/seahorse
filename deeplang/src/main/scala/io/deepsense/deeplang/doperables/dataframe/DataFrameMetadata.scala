@@ -220,6 +220,10 @@ object DataFrameMetadata {
   def deserializeFromJson(jsValue: JsValue): DataFrameMetadata = {
     DOperable.AbstractMetadata.unwrap(jsValue).convertTo[DataFrameMetadata]
   }
+
+  def buildColumnsMap(columns: Seq[ColumnMetadata]): Map[String, ColumnMetadata] = {
+    columns.map(column => column.name -> column).toMap
+  }
 }
 
 /**

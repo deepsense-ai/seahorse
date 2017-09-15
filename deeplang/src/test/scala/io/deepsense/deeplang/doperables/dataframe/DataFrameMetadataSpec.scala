@@ -241,10 +241,6 @@ class DataFrameMetadataSpec extends UnitSpec {
     }
   }
 
-  def buildColumnsMap(columns: Seq[ColumnMetadata]): Map[String, ColumnMetadata] = {
-    columns.map(column => column.name -> column).toMap
-  }
-
   val mappings = List(
     CategoriesMapping(Seq("A", "B", "C")),
     CategoriesMapping(Seq("cat", "dog"))
@@ -295,7 +291,7 @@ class DataFrameMetadataSpec extends UnitSpec {
   val metadata = DataFrameMetadata(
     isExact = true,
     isColumnCountExact = true,
-    columns = buildColumnsMap(Seq(
+    columns = DataFrameMetadata.buildColumnsMap(Seq(
       numericColumn,
       categoricalColumn1,
       stringColumn,
@@ -306,7 +302,7 @@ class DataFrameMetadataSpec extends UnitSpec {
   val fuzzyMetadata = DataFrameMetadata(
     isExact = false,
     isColumnCountExact = false,
-    columns = buildColumnsMap(Seq(
+    columns = DataFrameMetadata.buildColumnsMap(Seq(
       categoricalColumn1,
       stringColumn,
       numericColumnWithUnknownIndex,
