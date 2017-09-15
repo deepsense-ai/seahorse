@@ -6,9 +6,9 @@ function UnsupportedConfig($stateProvider, $urlRouterProvider) {
     url: '/',
     template: `
       <div class='alert alert-danger' role='alert' style='font-size: 18px;'>
-        Sorry this browser is currently unsupported.
+        Sorry, this browser is currently unsupported.
         <br/>
-        Currently is supported only chrome :(
+        Please launch Chrome ver. 40 or newer.
       </div>
     `
   });
