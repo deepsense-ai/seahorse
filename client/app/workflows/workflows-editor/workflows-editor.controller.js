@@ -111,6 +111,7 @@ class WorkflowsEditorController extends WorkflowReports {
       this.unbindListeners();
       this.isReportMode = true;
       this.isRunning = true;
+      this.CopyPasteService.setEnabled(false);
       let nodesToExecute = this.MultiSelectionService.getSelectedNodes();
       this.ServerCommunication.sendLaunchToWorkflowExchange(nodesToExecute);
     });
@@ -122,11 +123,15 @@ class WorkflowsEditorController extends WorkflowReports {
 
     this.$scope.$on('ServerCommunication.EXECUTION_FINISHED', () => {
       this.restoreEditableMode();
+      this.isRunning = false;
+      this.CopyPasteService.setEnabled(true);
     });
 
     this.$scope.$on('StatusBar.ABORT', () => {
       this.ServerCommunication.sendAbortToWorkflowExchange();
       this.restoreEditableMode();
+      this.isRunning = false;
+      this.CopyPasteService.setEnabled(true);
     });
 
     this.$scope.$on('GraphNode.CLICK', (event, data) => {

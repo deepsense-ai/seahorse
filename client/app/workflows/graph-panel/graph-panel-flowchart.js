@@ -1,5 +1,9 @@
 'use strict';
 
+/* beautify preserve:start */
+import { GraphPanelRendererBase } from './../graph-panel/graph-panel-renderer/graph-panel-renderer-base.js';
+/* beautify preserve:end */
+
 /* @ngInject */
 function FlowChartBoxController($scope, $element, GraphPanelRendererService) {
   let nodeDimensions = {};
@@ -12,10 +16,6 @@ function FlowChartBoxController($scope, $element, GraphPanelRendererService) {
 
     return nodeDimensions;
   };
-
-  $scope.$on('StatusBar.RUN', () => this.isRunning = true);
-  $scope.$on('StatusBar.ABORT', () => this.isRunning = false);
-  $scope.$on('ServerCommunication.EXECUTION_FINISHED', () => this.isRunning = false);
 
   $scope.$on('ZOOM.ZOOM_PERFORMED', (_, data) => {
     GraphPanelRendererService.setZoom(data.zoomRatio);
@@ -61,14 +61,26 @@ function FlowChartBox($rootScope, GraphPanelRendererService) {
         }
       });
 
-      scope.$applyAsync(() => {
-        GraphPanelRendererService.rerender();
+      function setRenderReportMode(isReportMode) {
+        GraphPanelRendererService.setRenderMode(
+          isReportMode ?
+          GraphPanelRendererBase.REPORT_RENDER_MODE :
+          GraphPanelRendererBase.EDITOR_RENDER_MODE);
+      }
+
+      scope.$watch('flowChartBoxCtrl.reportMode', function(newValue) {
+        scope.$evalAsync(() => {
+          setRenderReportMode(newValue);
+          GraphPanelRendererService.rerender();
+        });
       });
 
       // Focus is not working properly on elements inside flowchart box.
       // It might be caused by some libraries taking over mouse event and calling preventDefault
       // This click handler manually sets focus on flowchard if anything inside it is clicked.
-      $('.flowchart-box').click(function(){ $('.flowchart-box').focus() });
+      $('.flowchart-box').click(function() {
+        $('.flowchart-box').focus();
+      });
 
     }
   };

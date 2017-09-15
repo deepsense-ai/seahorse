@@ -8,6 +8,7 @@ class CopyPasteService {
     this.$rootScope = $rootScope;
 
     this.copyPasteVisitors = [];
+    this.enabled = true;
 
     this.init();
   }
@@ -21,42 +22,52 @@ class CopyPasteService {
     this.$document.on('paste', this._paste.bind(this));
   }
 
+  setEnabled(enabled) {
+    this.enabled = enabled;
+  }
+
   _copy(event) {
-    this.$rootScope.$broadcast('CopyPaste.COPY', event);
 
-    this.copyPasteVisitors.forEach((copyPasteVisitor) => {
-      let dataType = 'application/seahorseObjects/' + copyPasteVisitor.getType();
+    if (this.enabled) {
+      this.$rootScope.$broadcast('CopyPaste.COPY', event);
 
-      if (copyPasteVisitor.isFocused()) {
-        if (copyPasteVisitor.isThereAnythingToCopy()) {
-          let data = copyPasteVisitor.getSerializedDataToCopy();
-          event.clipboardData.setData(dataType, data);
-        } else {
-          event.clipboardData.clearData(dataType);
+      this.copyPasteVisitors.forEach((copyPasteVisitor) => {
+        let dataType = 'application/seahorseObjects/' + copyPasteVisitor.getType();
+
+        if (copyPasteVisitor.isFocused()) {
+          if (copyPasteVisitor.isThereAnythingToCopy()) {
+            let data = copyPasteVisitor.getSerializedDataToCopy();
+            event.clipboardData.setData(dataType, data);
+          } else {
+            event.clipboardData.clearData(dataType);
+          }
+
+          // Needed, so clipboard data is not overriden by default handlers.
+          event.preventDefault();
         }
 
-        // Needed, so clipboard data is not overriden by default handlers.
-        event.preventDefault();
-      }
-
-    });
+      });
+    }
   }
 
   _paste(event) {
-    this.$rootScope.$broadcast('CopyPaste.PASTE', event);
 
-    this.copyPasteVisitors.forEach((copyPasteVisitor) => {
-      let isPasteTargetFocused = copyPasteVisitor.isFocused();
+    if (this.enabled) {
+      this.$rootScope.$broadcast('CopyPaste.PASTE', event);
 
-      let dataType = 'application/seahorseObjects/' + copyPasteVisitor.getType();
-      let isThereSomeData = event.clipboardData.getData(dataType);
+      this.copyPasteVisitors.forEach((copyPasteVisitor) => {
+        let isPasteTargetFocused = copyPasteVisitor.isFocused();
 
-      let shouldBePasted = isPasteTargetFocused && isThereSomeData;
-      if (shouldBePasted) {
-        let serializedData = event.clipboardData.getData(dataType);
-        copyPasteVisitor.pasteUsingSerializedData(serializedData);
-      }
-    });
+        let dataType = 'application/seahorseObjects/' + copyPasteVisitor.getType();
+        let isThereSomeData = event.clipboardData.getData(dataType);
+
+        let shouldBePasted = isPasteTargetFocused && isThereSomeData;
+        if (shouldBePasted) {
+          let serializedData = event.clipboardData.getData(dataType);
+          copyPasteVisitor.pasteUsingSerializedData(serializedData);
+        }
+      });
+    }
   }
 
 }

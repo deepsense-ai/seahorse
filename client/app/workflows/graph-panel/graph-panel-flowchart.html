@@ -1,6 +1,6 @@
 <div flowchart-box-undraggable tabindex="0" class="flowchart-box">
   <!--tabindex="0" makes flowchart focusable-->
-  <div ng-if="!flowChartBoxCtrl.reportMode" class="flowchart-mask">
+  <div class="flowchart-mask">
     <div class="flowchart-paint-area"
          multi-selection
          deepsense-interactive
@@ -24,21 +24,6 @@
       Running
     </deepsense-loading-spinner-processing>
   </div>
-  <!--<div ng-if="flowChartBoxCtrl.reportMode" class="flowchart-mask">
-    <div class="flowchart-paint-area"
-         deepsense-interactive
-         deepsense-interactive-autorun="true"
-         collection="flowChartBoxCtrl.nodes"
-         collection-item-dimensions="flowChartBoxCtrl.getNodeDimensions()"
-         zoom-id="{{::flowChartBoxCtrl.zoomId}}"
-         max-zoom-ratio="1.5">
-      <graph-node ng-class="{'selected-node': flowChartBoxCtrl.selectedNode.id === nodeId }"
-                  ng-repeat="(nodeId, node) in flowChartBoxCtrl.nodes"
-                  node="node">
-      </graph-node>
-    </div>
-    <context-menu-wrapper></context-menu-wrapper>
-  </div>-->
   <div ng-controller="PortStatusesTooltipController as portStatusesTooltipCtrl">
     <sticky-window
       ng-if="portStatusesTooltipCtrl.tooltipIsVisible"

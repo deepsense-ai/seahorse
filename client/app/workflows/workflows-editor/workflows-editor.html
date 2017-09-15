@@ -17,7 +17,7 @@
       ng-class="{'flowchart-box--is-running': workflow.isRunning}"
       nodes="workflow.getWorkflow().getNodes()"
       selected-node="workflow.getSelectedNode()"
-      report-mode="false"
+      report-mode="workflow.isRunning"
       zoom-id="{{::workflow.zoomId}}"></flow-chart-box>
 
     <deepsense-operation-attributes

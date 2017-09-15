@@ -200,7 +200,10 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
 
       GraphPanelStyler.styleOutputEndpointDefault(port, internal.renderMode, hasReport);
 
-      port.bind('click', (port, event) => {
+      // FIXME Quickfix to make reports browseable in read-only mode.
+      // There is a conflict between multiselection and output port click when isSource = false.
+      let eventForLeftClick = internal.renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE ? 'click' : 'mousedown';
+      port.bind(eventForLeftClick, (port, event) => {
         $rootScope.$broadcast('OutputPort.LEFT_CLICK', {
           reference: port,
           portObject: ports[i],
