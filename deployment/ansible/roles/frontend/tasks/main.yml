@@ -2,13 +2,14 @@
 
 ---
 
-- include: ../../../tasks/get_frontend_artifact_path.yml
-
 - name: Install nginx
   apt: package=nginx state=present
 
 - name: Assure directory exists
   file: path="{{frontend_dir}}" state=directory
+
+- name: Copy frontend package
+  copy: src={{download_dir}}/{{frontend_artifact_id}}.zip dest={{frontend_dir}}
 
 - name: Copy frontend config file
   copy: src="config.js" dest="{{frontend_dir}}/config.js"

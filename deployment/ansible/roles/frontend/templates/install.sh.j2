@@ -2,10 +2,11 @@
 
 # Copyright (c) 2015, CodiLime Inc.
 
+set -e
+
 cd {{frontend_dir}}
 
-wget {{ds_frontend_artifact_url}}
-unzip {{ds_frontend_package_name}}.zip
+unzip {{frontend_artifact_id}}.zip
 
 cp -r build/* /usr/share/nginx/html
 
@@ -15,4 +16,4 @@ export API_VERSION={{api_version}}
 
 eval "echo \"$(<config.js)\"" > /usr/share/nginx/html/config.js
 
-rm -Rf build {{ds_frontend_package_name}}.zip
+rm -Rf build config.js {{frontend_artifact_id}}.zip

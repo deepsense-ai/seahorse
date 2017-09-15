@@ -1,6 +1,6 @@
 # Copyright (c) 2015, CodiLime Inc.
 
-frontend_dir: "/home/ds_frontend/frontend"
+frontend_dir: "/tmp/frontend"
 ds_frontend_download_dir: "/tmp/docker-ansible/frontend"
 frontend_artifact_id: deepsense-frontend
 
