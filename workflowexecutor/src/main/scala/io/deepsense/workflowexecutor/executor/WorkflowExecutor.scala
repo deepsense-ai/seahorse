@@ -83,7 +83,6 @@ case class WorkflowExecutor(
       WorkflowExecutorActor.props(executionContext, None, Some(statusReceiverActor)),
       workflow.id.toString)
 
-    val startedTime = DateTimeConverter.now
     workflowExecutorActor ! Connect(workflow.id)
     workflowExecutorActor ! Launch(workflow.graph)
 
