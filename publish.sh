@@ -73,6 +73,10 @@ function add_build_info_file() {
   echo "GIT SHA: "$GIT_SHA >> $RESULT_FILE
 }
 
+function add_version_file() {
+  echo $FULL_VERSION > build/FULL_VERSION
+}
+
 function package() {
   echo "** Preparing zip package **"
   zip -r -q "${FULL_VERSION}.zip" build
@@ -130,6 +134,7 @@ calculate_is_snapshot_version
 calculate_full_version
 calculate_repository_url
 add_build_info_file
+add_version_file
 package
 publishVersion "${FULL_VERSION}.zip" "${FULL_VERSION}"
 publishLatest "${FULL_VERSION}.zip"
