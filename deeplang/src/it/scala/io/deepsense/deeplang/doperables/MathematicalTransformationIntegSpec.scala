@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperables.transformations
+package io.deepsense.deeplang.doperables
 
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 
+import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.DOperationExecutionException
-import io.deepsense.deeplang.{DOperable, DeeplangIntegTestSupport}
 
-class CreateMathematicalTransformationIntegSpec extends DeeplangIntegTestSupport {
+class MathematicalTransformationIntegSpec extends DeeplangIntegTestSupport {
 
-  /** TODO rewrite without categoricals
   val resultColumn = 3
   val delta = 0.01
   val column0 = "c0"
@@ -123,15 +122,6 @@ class CreateMathematicalTransformationIntegSpec extends DeeplangIntegTestSupport
       rowWithNaN.getDouble(resultColumn).isNaN shouldBe true
     }
 
-    "retain the categorical column type" in {
-      val dataFrame = applyFormulaToDataFrame(s"SIN($column1)", column3,
-        prepareDataFrameWithCategorical())
-      CategoricalMetadata(dataFrame).isCategorical(column0) shouldBe true
-      CategoricalMetadata(dataFrame).isCategorical(column1) shouldBe false
-      CategoricalMetadata(dataFrame).isCategorical(column2) shouldBe false
-      CategoricalMetadata(dataFrame).isCategorical(column3) shouldBe false
-    }
-
     "always create nullable columns" in {
       runTest(s"1.0", column3, Seq(1.0, 1.0, 1.0, 1.0, 1.0))
     }
@@ -149,19 +139,15 @@ class CreateMathematicalTransformationIntegSpec extends DeeplangIntegTestSupport
     applyTransformation(transformation, df)
   }
 
-  def applyTransformation(transformation: Transformation, df: DataFrame): DataFrame = {
-    new ApplyTransformation()
-      .execute(executionContext)(Vector(transformation, df))
-      .head.asInstanceOf[DataFrame]
+  def applyTransformation(transformation: MathematicalTransformation, df: DataFrame): DataFrame = {
+    transformation.transform.apply(executionContext)(())(df)
   }
 
-  def prepareTransformation(formula: String, columnName: String): Transformation = {
-    val createMathematicalTransformation = new CreateMathematicalTransformation()
-    createMathematicalTransformation.formulaParam.value = Some(formula)
-    createMathematicalTransformation.columnNameParam.value = Some(columnName)
-    createMathematicalTransformation.execute(executionContext)(
-      Vector.empty[DOperable]
-    ).head.asInstanceOf[Transformation]
+  def prepareTransformation(formula: String, columnName: String): MathematicalTransformation = {
+    val mathematicalTransformation = MathematicalTransformation()
+    mathematicalTransformation.setFormula(formula)
+    mathematicalTransformation.setColumnName(columnName)
+    mathematicalTransformation
   }
 
   def validateSchema(schema: StructType) = {
@@ -182,19 +168,13 @@ class CreateMathematicalTransformationIntegSpec extends DeeplangIntegTestSupport
   def validateColumn(
     rows: Array[Row], expectedValues: Seq[Any], column: Integer = resultColumn): Unit = {
     forAll(expectedValues.zipWithIndex) {
-      case (expectedVal, i) => {
+      case (expectedVal, i) =>
         val value = rows(i).get(column)
         value match {
           case d: Double => d should equal (expectedVal.asInstanceOf[Double] +- delta)
           case _ => expectedVal shouldBe value
         }
-      }
     }
-  }
-
-  def prepareDataFrameWithCategorical(): DataFrame = {
-    val df = prepareDataFrame()
-    CategoricalMapper(df, executionContext.dataFrameBuilder).categorized(column0)
   }
 
   def prepareDataFrame(): DataFrame = {
@@ -210,5 +190,4 @@ class CreateMathematicalTransformationIntegSpec extends DeeplangIntegTestSupport
       Row("eee", null, null))
     createDataFrame(manualRowsSeq, schema)
   }
-   */
 }
