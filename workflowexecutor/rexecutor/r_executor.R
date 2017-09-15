@@ -54,7 +54,7 @@ tryCatch({
     }
   } else { # spark 1.6.1
     if (class(transformedDF) != "DataFrame") {
-      transformedDF <- createDataFrame(data.frame(spark, transformedDF))
+      transformedDF <- createDataFrame(spark, data.frame(transformedDF))
     }
   }
 
