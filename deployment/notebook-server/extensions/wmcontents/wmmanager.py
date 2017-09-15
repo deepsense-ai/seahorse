@@ -5,9 +5,8 @@ from tornado import web
 from nbformat import reads, writes, from_dict
 from traitlets import Unicode
 from datetime import datetime
-from urllib import error
+import urllib2
 from .wmcheckpoints import WMCheckpoints
-import urllib
 import re
 
 NBFORMAT_VERSION = 4
@@ -91,14 +90,14 @@ class WMContentsManager(ContentsManager):
         notebook_url = self.get_wm_notebook_url(workflow_id)
 
         try:
-            response = urllib.request.urlopen(notebook_url, content_json.encode("utf-8"))
-            if response.code == 201:
+            response = urllib2.urlopen(notebook_url, content_json.encode("utf-8"))
+            if response.getcode() == 201:
                 return self.create_model(content_json if return_content else None, workflow_id)
             else:
                 raise web.HTTPError(response.status, response.msg)
         except web.HTTPError:
             raise
-        except error.HTTPError as e:
+        except urllib2.HTTPError as e:
             raise web.HTTPError(e.code, e.msg)
         except Exception as e:
             raise web.HTTPError(500, str(e))
@@ -110,15 +109,15 @@ class WMContentsManager(ContentsManager):
 
         try:
             notebook_url = self.get_wm_notebook_url(workflow_id)
-            response = urllib.request.urlopen(notebook_url)
-            if response.status == 200:
+            response = urllib2.urlopen(notebook_url)
+            if response.getcode() == 200:
                 content_json = response.read().decode("utf-8")
                 return self.create_model(content_json if content else None, workflow_id)
             else:
                 raise web.HTTPError(response.status, response.msg)
         except web.HTTPError:
             raise
-        except error.HTTPError as e:
+        except urllib2.HTTPError as e:
             if e.code == 404:
                 content_json = writes(from_dict(self.create_notebook()), NBFORMAT_VERSION)
                 return self.save_notebook(workflow_id, content_json, content)

@@ -17,7 +17,7 @@ def respond_with_gateway_location(ch, method, properties, body):
     message_body = {
         "messageType": "gatewayAddress",
         "messageBody": {
-            "hostname": "172.28.128.1",
+            "hostname": "localhost",
             "port": 25555
         }
     }
