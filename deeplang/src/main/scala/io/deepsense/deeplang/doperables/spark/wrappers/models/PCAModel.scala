@@ -31,13 +31,8 @@ import io.deepsense.deeplang.params.wrappers.spark.IntParamWrapper
 
 class PCAModel
   extends SparkSingleColumnModelWrapper[SparkPCAModel, SparkPCA] {
-  val k = new IntParamWrapper[ml.param.Params { val k: ml.param.IntParam }](
-    name = "k",
-    description = "Number of principal components.",
-    sparkParamGetter = _.k,
-    validator = RangeValidator.positiveIntegers)
 
-  override protected def getSpecificParams: Array[Param[_]] = Array(k)
+  override protected def getSpecificParams: Array[Param[_]] = Array()
 
   override def report: Report = {
     super.report
