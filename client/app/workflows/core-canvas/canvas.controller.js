@@ -1,8 +1,8 @@
 'use strict';
 
 class CanvasController {
-  /*@ngInject*/
   constructor(CanvasService, $element, $timeout) {
+    'ngInject';
     this.CanvasService = CanvasService;
     this.$element = $element;
     this.$timeout = $timeout;
