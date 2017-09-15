@@ -1,0 +1,6 @@
+city,beds,baths,sq_ft,price
+,2,1,820,449178
+CityC,,1,656,267975
+CityA,2,,636,348946
+CityA,2,1,736,NaN,
+CityC,2,-1,564,264867

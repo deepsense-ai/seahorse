@@ -1,0 +1,425 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Seahorse Datasource Manager API",
+    "description": "Seahorse Datasources API",
+    "version": "1.4.0"
+  },
+  "basePath": "/datasourcemanager/v1",
+  "schemes": [
+    "http"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/datasources": {
+      "get": {
+        "description": "Returns list of all datasources",
+        "operationId": "getDatasources",
+        "parameters": [
+          {
+            "$ref": "#/parameters/userIdParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of all datasources",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Datasource"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/datasources/{datasourceId}": {
+      "get": {
+        "operationId": "getDatasource",
+        "parameters": [
+          {
+            "$ref": "#/parameters/userIdParam"
+          },
+          {
+            "name": "datasourceId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Inserted or updated datasource",
+            "schema": {
+              "$ref": "#/definitions/Datasource"
+            }
+          },
+          "403": {
+            "description": "Datasource forbidden",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Datasource not exists",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "Creates a new datasource or overrides datasource for given id",
+        "operationId": "putDatasource",
+        "parameters": [
+          {
+            "$ref": "#/parameters/userIdParam"
+          },
+
+          {
+            "$ref": "#/parameters/userNameParam"
+          },
+          {
+            "name": "datasourceId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "name": "datasourceParams",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DatasourceParams"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Inserted or updated datasource",
+            "schema": {
+              "$ref": "#/definitions/Datasource"
+            }
+          },
+          "403": {
+            "description": "Datasource forbidden",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Invalid datasource object. For example jdbcParams not defined for datasourceType==JDBC",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteDatasource",
+        "parameters": [
+          {
+            "$ref": "#/parameters/userIdParam"
+          },
+          {
+            "name": "datasourceId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Datasource deleted successfully"
+          },
+          "403": {
+            "description": "Datasource forbidden",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Datasource not exists",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    }
+  },
+  "parameters": {
+    "userIdParam": {
+      "name": "x-seahorse-userid",
+      "description": "Seahorse user id. When used in frontend this parameter is set by proxy.",
+      "in": "header",
+      "required": true,
+      "type": "string",
+      "format": "uuid"
+    },
+    "userNameParam": {
+      "name": "x-seahorse-username",
+      "description": "Seahorse user name. When used in frontend this parameter is set by proxy.",
+      "in": "header",
+      "required": true,
+      "type": "string"
+    }
+  },
+  "definitions": {
+    "Datasource": {
+      "type": "object",
+      "required": ["id", "creationDateTime", "ownerId", "ownerName", "accessLevel", "params"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "creationDateTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ownerId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "ownerName": {
+          "type": "string"
+        },
+        "accessLevel": {
+          "$ref": "#/definitions/AccessLevel"
+        },
+        "params": {
+          "$ref": "#/definitions/DatasourceParams"
+        }
+      }
+    },
+    "DatasourceParams": {
+      "type": "object",
+      "required": ["name", "visibility", "datasourceType"],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "visibility": {
+          "$ref": "#/definitions/Visibility"
+        },
+        "downloadUri": {
+          "description": "Read only. Any updates to this field will be ignored.",
+          "type": "string"
+        },
+        "datasourceType": {
+          "$ref": "#/definitions/DatasourceType"
+        },
+        "externalFileParams": {
+          "$ref": "#/definitions/ExternalFileParams"
+        },
+        "libraryFileParams": {
+          "$ref": "#/definitions/LibraryFileParams"
+        },
+        "hdfsParams": {
+          "$ref": "#/definitions/HdfsParams"
+        },
+        "jdbcParams": {
+          "$ref": "#/definitions/JdbcParams"
+        },
+        "googleSpreadsheetParams": {
+          "$ref": "#/definitions/GoogleSpreadsheetParams"
+        }
+      }
+    },
+    "DatasourceType": {
+      "description": "Type of datasource. Relevant params object must be defined",
+      "type": "string",
+      "enum": [
+        "externalFile",
+        "libraryFile",
+        "hdfs",
+        "jdbc",
+        "googleSpreadsheet"
+      ]
+    },
+    "ExternalFileParams": {
+      "description": "Defined for External File datasource type",
+      "type": "object",
+      "required": [
+        "url",
+        "fileFormat"
+      ],
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "fileFormat": {
+          "$ref": "#/definitions/FileFormat"
+        },
+        "csvFileFormatParams": {
+          "$ref": "#/definitions/CsvFileFormatParams"
+        }
+      }
+    },
+    "LibraryFileParams": {
+      "description": "Defined for Library File datasource type",
+      "type": "object",
+      "required": [
+        "libraryPath",
+        "fileFormat"
+      ],
+      "properties": {
+        "libraryPath": {
+          "type": "string"
+        },
+        "fileFormat": {
+          "$ref": "#/definitions/FileFormat"
+        },
+        "csvFileFormatParams": {
+          "$ref": "#/definitions/CsvFileFormatParams"
+        }
+      }
+    },
+    "HdfsParams": {
+      "description": "Defined for HDFS datasource type",
+      "type": "object",
+      "required": [
+        "hdfsPath",
+        "fileFormat"
+      ],
+      "properties": {
+        "hdfsPath": {
+          "type": "string"
+        },
+        "fileFormat": {
+          "$ref": "#/definitions/FileFormat"
+        },
+        "csvFileFormatParams": {
+          "$ref": "#/definitions/CsvFileFormatParams"
+        }
+      }
+    },
+    "JdbcParams": {
+      "description": "Defined for JDBC datasource type. Either query or table must be defined.",
+      "type": "object",
+      "required": [
+        "url",
+        "driver"
+      ],
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "driver": {
+          "type": "string"
+        },
+        "query": {
+          "type": "string"
+        },
+        "table": {
+          "type": "string"
+        }
+      }
+    },
+    "GoogleSpreadsheetParams": {
+      "description": "Defined for Google Spreadsheet datasource type",
+      "type": "object",
+      "required": [
+        "googleSpreadsheetId",
+        "googleServiceAccountCredentials",
+        "includeHeader",
+        "convert01ToBoolean"
+      ],
+      "properties": {
+        "googleSpreadsheetId": {
+          "type": "string"
+        },
+        "googleServiceAccountCredentials": {
+          "type": "string",
+          "format": "json"
+        },
+        "includeHeader": {
+          "type": "boolean"
+        },
+        "convert01ToBoolean": {
+          "type": "boolean"
+        }
+      }
+    },
+    "AccessLevel": {
+      "type": "string",
+      "enum": [
+        "read",
+        "writeRead"
+      ]
+    },
+    "Visibility": {
+      "type": "string",
+      "enum": [
+        "publicVisibility",
+        "privateVisibility"
+      ]
+    },
+    "FileFormat": {
+      "type": "string",
+      "enum": [
+        "csv",
+        "json",
+        "parquet"
+      ]
+    },
+    "CsvFileFormatParams": {
+      "type": "object",
+      "description": "Defined for csv format type",
+      "required": [
+        "includeHeader",
+        "convert01ToBoolean",
+        "separatorType"
+      ],
+      "properties": {
+        "includeHeader": {
+          "type": "boolean"
+        },
+        "convert01ToBoolean": {
+          "type": "boolean"
+        },
+        "separatorType": {
+          "$ref": "#/definitions/CsvSeparatorType"
+        },
+        "customSeparator": {
+          "description": "Defined only if separatorType == custom",
+          "type": "string",
+          "maxLength": 1
+        }
+      }
+    },
+    "CsvSeparatorType": {
+      "type": "string",
+      "enum": [
+        "comma",
+        "semicolon",
+        "colon",
+        "space",
+        "tab",
+        "custom"
+      ]
+    },
+    "Error": {
+      "type": "object",
+      "required": [
+        "code",
+        "message"
+      ],
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

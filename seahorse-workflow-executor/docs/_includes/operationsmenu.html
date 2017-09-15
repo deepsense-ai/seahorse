@@ -1,0 +1,167 @@
+<script src="{{base}}/js/search.js"></script>
+<div class="col-md-12 sidemenu-container">
+  <ul class="sidemenu lvl-1">
+    <li>
+      <form class="text-center search-form">
+        <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+        <input id="search" type="search" name="search">
+      </form>
+    </li>
+    <li class="menu-group"><a><strong>Input/Output</strong></a>
+      <ul class="lvl-2">
+        <li><a href="{{base}}/operations/python_notebook.html">Python Notebook</a></li>
+        <li><a href="{{base}}/operations/r_notebook.html">R Notebook</a></li>
+        <li><a href="{{base}}/operations/read_dataframe.html">Read DataFrame</a></li>
+        <li><a href="{{base}}/operations/read_transformer.html">Read Transformer</a></li>
+        <li><a href="{{base}}/operations/write_dataframe.html">Write DataFrame</a></li>
+        <li><a href="{{base}}/operations/write_transformer.html">Write Transformer</a></li>
+      </ul>
+    </li>
+    <li class="menu-group"><a><strong>Action</strong></a>
+      <ul class="lvl-2">
+        <li><a href="{{base}}/operations/evaluate.html">Evaluate</a></li>
+        <li><a href="{{base}}/operations/fit.html">Fit</a></li>
+        <li><a href="{{base}}/operations/fit_plus_transform.html">Fit + Transform</a></li>
+        <li><a href="{{base}}/operations/transform.html">Transform</a></li>
+      </ul>
+    </li>
+    <li class="menu-group"><a><strong>Set Operation</strong></a>
+      <ul class="lvl-2">
+        <li><a href="{{base}}/operations/join.html">Join</a></li>
+        <li><a href="{{base}}/operations/split.html">Split</a></li>
+        <li><a href="{{base}}/operations/union.html">Union</a></li>
+        <li><a href="{{base}}/operations/sort.html">Sort</a></li>
+        <li><a href="{{base}}/operations/sql_combine.html">SQL Combine</a></li>
+      </ul>
+    </li>
+    <li class="menu-group"><a><strong>Filtering</strong></a>
+      <ul class="lvl-2">
+        <li><a href="{{base}}/operations/filter_columns.html">Filter Columns</a></li>
+        <li><a href="{{base}}/operations/filter_rows.html">Filter Rows</a></li>
+        <li><a href="{{base}}/operations/handle_missing_values.html">Handle Missing Values</a></li>
+        <li><a href="{{base}}/operations/projection.html">Projection</a></li>
+      </ul>
+    </li>
+    <li class="menu-group"><a><strong>Transformation</strong></a>
+      <ul class="lvl-2">
+        <li class="menu-group"><a>Custom</a>
+          <ul class="lvl-3">
+            <li><a href="{{base}}/operations/create_custom_transformer.html">Create Custom Transformer</a></li>
+            <li class="menu-group"><a>SQL</a>
+              <ul class="lvl-4">
+                <li><a href="{{base}}/operations/sql_column_transformation.html">SQL Column Transformation</a></li>
+                <li><a href="{{base}}/operations/sql_transformation.html">SQL Transformation</a></li>
+              </ul>
+            </li>
+            <li class="menu-group"><a>Python</a>
+              <ul class="lvl-4">
+                <li><a href="{{base}}/operations/python_column_transformation.html">Python Column Transformation</a></li>
+                <li><a href="{{base}}/operations/python_transformation.html">Python Transformation</a></li>
+              </ul>
+            </li>
+            <li class="menu-group"><a>R</a>
+              <ul class="lvl-4">
+                <li><a href="{{base}}/operations/r_column_transformation.html">R Column Transformation</a></li>
+                <li><a href="{{base}}/operations/r_transformation.html">R Transformation</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li class="menu-group"><a>Feature Conversion</a>
+          <ul class="lvl-3">
+            <li><a href="{{base}}/operations/assemble_vector.html">Assemble Vector</a></li>
+            <li><a href="{{base}}/operations/binarize.html">Binarize</a></li>
+            <li><a href="{{base}}/operations/compose_datetime.html">Compose Datetime</a></li>
+            <li><a href="{{base}}/operations/convert_type.html">Convert Type</a></li>
+            <li><a href="{{base}}/operations/dct.html">DCT</a></li>
+            <li><a href="{{base}}/operations/decompose_datetime.html">Decompose Datetime</a></li>
+            <li><a href="{{base}}/operations/get_from_vector.html">Get From Vector</a></li>
+            <li><a href="{{base}}/operations/normalize.html">Normalize</a></li>
+            <li><a href="{{base}}/operations/one_hot_encoder.html">One Hot Encoder</a></li>
+            <li><a href="{{base}}/operations/polynomial_expansion.html">Polynomial Expansion</a></li>
+            <li><a href="{{base}}/operations/quantile_discretizer.html">Quantile Discretizer</a></li>
+            <li><a href="{{base}}/operations/string_indexer.html">String Indexer</a></li>
+            <li><a href="{{base}}/operations/vector_indexer.html">Vector Indexer</a></li>
+          </ul>
+        </li>
+        <li class="menu-group"><a>Feature Scaling</a>
+          <ul class="lvl-3">
+            <li><a href="{{base}}/operations/min-max_scaler.html">Min-Max Scaler</a></li>
+            <li><a href="{{base}}/operations/standard_scaler.html">Standard Scaler</a></li>
+          </ul>
+        </li>
+        <li class="menu-group"><a>Text Processing</a>
+          <ul class="lvl-3">
+            <li><a href="{{base}}/operations/convert_to_n-grams.html">Convert to n-grams</a></li>
+            <li><a href="{{base}}/operations/count_vectorizer.html">Count Vectorizer</a></li>
+            <li><a href="{{base}}/operations/hashingtf.html">HashingTF</a></li>
+            <li><a href="{{base}}/operations/idf.html">IDF</a></li>
+            <li><a href="{{base}}/operations/remove_stop_words.html">Remove Stop Words</a></li>
+            <li><a href="{{base}}/operations/tokenize.html">Tokenize</a></li>
+            <li><a href="{{base}}/operations/tokenize_with_regex.html">Tokenize with Regex</a></li>
+            <li><a href="{{base}}/operations/word2vec.html">Word2Vec</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li class="menu-group"><a><strong>Machine Learning</strong></a>
+      <ul class="lvl-2">
+        <li class="menu-group"><a>Hyper Optimization</a>
+          <ul class="lvl-3">
+            <li><a href="{{base}}/operations/grid_search.html">Grid Search</a></li>
+          </ul>
+        </li>
+        <li class="menu-group"><a>Regression</a>
+          <ul class="lvl-3">
+            <li><a href="{{base}}/operations/aft_survival_regression.html">AFT Survival Regression</a></li>
+            <li><a href="{{base}}/operations/decision_tree_regression.html">Decision Tree Regression</a></li>
+            <li><a href="{{base}}/operations/gbt_regression.html">GBT Regression</a></li>
+            <li><a href="{{base}}/operations/isotonic_regression.html">Isotonic Regression</a></li>
+            <li><a href="{{base}}/operations/linear_regression.html">Linear Regression</a></li>
+            <li><a href="{{base}}/operations/random_forest_regression.html">Random Forest Regression</a></li>
+          </ul>
+        </li>
+        <li class="menu-group"><a>Classification</a>
+          <ul class="lvl-3">
+            <li><a href="{{base}}/operations/decision_tree_classifier.html">Decision Tree Classifier</a></li>
+            <li><a href="{{base}}/operations/gbt_classifier.html">GBT Classifier</a></li>
+            <li><a href="{{base}}/operations/logistic_regression.html">Logistic Regression</a></li>
+            <li><a href="{{base}}/operations/multilayer_perceptron_classifier.html">Multilayer Perceptron Classifier</a></li>
+            <li><a href="{{base}}/operations/naive_bayes.html">Naive Bayes</a></li>
+            <li><a href="{{base}}/operations/random_forest_classifier.html">Random Forest Classifier</a></li>
+          </ul>
+        </li>
+        <li class="menu-group"><a>Clustering</a>
+          <ul class="lvl-3">
+            <li><a href="{{base}}/operations/k-means.html">K-Means</a></li>
+            <li><a href="{{base}}/operations/lda.html">LDA</a></li>
+          </ul>
+        </li>
+        <li class="menu-group"><a>Feature Selection</a>
+          <ul class="lvl-3">
+            <li><a href="{{base}}/operations/chi-squared_selector.html">Chi-Squared Selector</a></li>
+          </ul>
+        </li>
+        <li class="menu-group"><a>Recommendation</a>
+          <ul class="lvl-3">
+            <li><a href="{{base}}/operations/als.html">ALS</a></li>
+          </ul>
+        </li>
+        <li class="menu-group"><a>Dimensionality Reduction</a>
+          <ul class="lvl-3">
+            <li><a href="{{base}}/operations/pca.html">PCA</a></li>
+          </ul>
+        </li>
+        <li class="menu-group"><a>Model Evaluation</a>
+          <ul class="lvl-3">
+            <li><a href="{{base}}/operations/python_evaluator.html">Python Evaluator</a></li>
+            <li><a href="{{base}}/operations/r_evaluator.html">R Evaluator</a></li>
+            <li><a href="{{base}}/operations/binary_classification_evaluator.html">Binary Classification Evaluator</a></li>
+            <li><a href="{{base}}/operations/multiclass_classification_evaluator.html">Multiclass Classification Evaluator</a></li>
+            <li><a href="{{base}}/operations/regression_evaluator.html">Regression Evaluator</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
