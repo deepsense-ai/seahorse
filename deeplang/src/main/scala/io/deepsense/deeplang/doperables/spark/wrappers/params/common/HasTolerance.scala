@@ -26,7 +26,7 @@ import io.deepsense.deeplang.params.wrappers.spark.DoubleParamWrapper
 
 trait HasTolerance extends Params {
 
-  val toleranceDefault: Double = 1E-6
+  lazy val toleranceDefault: Double = 1E-6
 
   val tolerance = new DoubleParamWrapper[ml.param.Params { val tol: ml.param.DoubleParam }](
     name = "tolerance",

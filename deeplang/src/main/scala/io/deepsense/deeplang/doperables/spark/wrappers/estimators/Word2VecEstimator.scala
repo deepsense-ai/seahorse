@@ -27,8 +27,8 @@ class Word2VecEstimator
   extends SparkSingleColumnEstimatorWrapper[SparkWord2VecModel, SparkWord2Vec, Word2VecModel]
   with Word2VecParams {
 
-  setDefault(stepSize, 0.025)
-  setDefault(maxIterations, 1.0)
+  override lazy val stepSizeDefault = 0.025
+  override lazy val maxIterationsDefault = 1.0
 
   override protected def getSpecificParams: Array[Param[_]] = Array(
     maxIterations,

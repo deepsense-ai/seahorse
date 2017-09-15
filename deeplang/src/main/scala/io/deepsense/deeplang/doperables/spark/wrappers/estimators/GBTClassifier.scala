@@ -40,9 +40,7 @@ class GBTClassifier()
 
   import GBTClassifier._
 
-  setDefault(maxIterations, 20.0)
-
-  setDefault(stepSize, 0.1)
+  override lazy val maxIterationsDefault = 20.0
 
   val estimator = TypeUtils.instanceOfType(typeTag[SparkGBTClassifier])
 

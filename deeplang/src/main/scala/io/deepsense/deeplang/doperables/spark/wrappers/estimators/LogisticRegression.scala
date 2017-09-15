@@ -38,7 +38,7 @@ class LogisticRegression
   with HasFitIntercept
   with HasStandardization {
 
-  setDefault(maxIterations, 100.0)
+  override lazy val maxIterationsDefault = 100.0
 
   override val params: Array[Param[_]] = declareParams(
     elasticNetParam,

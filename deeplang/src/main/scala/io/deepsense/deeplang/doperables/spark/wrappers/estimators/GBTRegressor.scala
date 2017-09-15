@@ -37,7 +37,7 @@ class GBTRegressor
 
   import GBTRegressor._
 
-  setDefault(maxIterations, 20.0)
+  override lazy val maxIterationsDefault = 20.0
 
   val impurity = new ChoiceParamWrapper[
     ml.param.Params { val impurity: ml.param.Param[String] }, Impurity](

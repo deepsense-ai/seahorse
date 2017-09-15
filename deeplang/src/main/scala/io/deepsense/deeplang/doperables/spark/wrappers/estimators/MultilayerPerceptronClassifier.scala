@@ -36,8 +36,8 @@ class MultilayerPerceptronClassifier
   with HasSeedParam
   with HasTolerance {
 
-  setDefault(maxIterations, 100.0)
-  setDefault(tolerance, 1E-4)
+  override lazy val maxIterationsDefault = 100.0
+  override lazy val toleranceDefault = 1E-4
 
   val layersParam = new IntArrayParamWrapper[SparkMultilayerPerceptronClassifier](
     name = "layers",

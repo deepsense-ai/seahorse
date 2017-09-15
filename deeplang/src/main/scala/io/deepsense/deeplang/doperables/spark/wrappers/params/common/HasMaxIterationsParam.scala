@@ -26,7 +26,7 @@ import io.deepsense.deeplang.params.wrappers.spark.IntParamWrapper
 
 trait HasMaxIterationsParam extends Params {
 
-  val maxIterationsDefault: Double = 10.0
+  lazy val maxIterationsDefault: Double = 10.0
 
   val maxIterations = new IntParamWrapper[ml.param.Params { val maxIter: ml.param.IntParam }](
     name = "max iterations",
