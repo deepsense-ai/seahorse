@@ -1,0 +1,1 @@
+libraryDependencies += "io.swagger" % "swagger-codegen" % "2.2.1"

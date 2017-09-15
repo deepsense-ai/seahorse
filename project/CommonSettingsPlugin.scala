@@ -56,6 +56,11 @@ object CommonSettingsPlugin extends AutoPlugin {
       "-source", Versions.java,
       "-target", Versions.java
     ),
+    // javacOptions are copied to javaDoc and -target is not a valid javaDoc flag.
+    javacOptions in doc := Seq(
+      "-source", Versions.java,
+      "-Xdoclint:none" // suppress errors for generated (and other, too) code
+    ),
     resolvers ++= Dependencies.resolvers,
     // Disable using the Scala version in output paths and artifacts
     crossPaths := true

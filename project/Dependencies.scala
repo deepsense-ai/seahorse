@@ -85,6 +85,15 @@ object Library {
     "com.google.guava", "guava") excludeJackson
   val jsonLenses = "net.virtual-void" %%  "json-lenses" % "0.6.1"
   val javaMail = "javax.mail" % "mail" % "1.4.7"
+  // Dependencies for swagger-client generated code
+  val retrofit = Seq(
+    "com.squareup.retrofit2" % "retrofit" % "2.0.2",
+    "com.squareup.retrofit2" % "converter-scalars" % "2.0.2",
+    "com.squareup.retrofit2" % "converter-gson" % "2.0.2"
+  )
+  val oauth2Client = "org.apache.oltu.oauth2" % "org.apache.oltu.oauth2.client" % "1.0.1"
+  val swaggerAnnotations = "io.swagger" % "swagger-annotations" % "1.5.8"
+  val jodaTime = "joda-time" % "joda-time" % "2.9.3"
 }
 
 object Dependencies {
@@ -141,6 +150,12 @@ object Dependencies {
   val sparkutils_2_0_0 = new Spark("2.0.0").onlyInTests
 
   val usedSpark = new Spark(Version.spark)
+
+  val api = retrofit ++ Seq(
+    oauth2Client,
+    swaggerAnnotations,
+    jodaTime
+  )
 
   val commons = usedSpark.onlyInTests ++ Seq(
     akkaActor,

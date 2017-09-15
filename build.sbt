@@ -30,6 +30,8 @@ lazy val rootProject = project.in(file("."))
   .aggregate(sparkUtils, commons, deeplang, docgen, graph, workflowjson, models,reportlib, workflowexecutormqprotocol,
     workflowexecutor)
 
+lazy val api                    = project
+
 lazy val commons                = project dependsOn sparkUtils settings settingsForPublished
 
 lazy val deeplang               = project dependsOn (
