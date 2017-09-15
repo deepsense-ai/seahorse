@@ -12,6 +12,10 @@ describe('MultiSelectionService', () => {
     });
   });
 
+  afterEach(() => {
+    MultiSelectionService.clearSelection();
+  });
+
   it('should return empty array is nothing is selected', () => {
     expect(MultiSelectionService.getSelectedNodes()).toEqual([]);
   });
@@ -22,7 +26,7 @@ describe('MultiSelectionService', () => {
     expect(MultiSelectionService.getSelectedNodes()).toContain(nodeId);
   });
 
-  it('should return return the same amount of elements that are added to selection if there are no duplicates', () => {
+  it('should return the same amount of elements that are added to selection if there are no duplicates', () => {
     const numberOfNodesAdded = 100;
     let nodes = [];
     for (let i = 0; i < numberOfNodesAdded; i++) {
