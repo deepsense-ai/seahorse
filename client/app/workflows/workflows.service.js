@@ -11,11 +11,12 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
 
     createWorkflow(workflowData, operations) {
       let workflow = new Workflow();
+      let thirdPartyData = workflowData.thirdPartyData || {};
 
       workflow.setData({
         'id': workflowData.id,
-        'name': workflowData.thirdPartyData.gui.name,
-        'description': workflowData.thirdPartyData.gui.description
+        'name': (thirdPartyData.gui || {}).name,
+        'description': (thirdPartyData.gui || {}).description
       });
       workflow.createNodes(workflowData.workflow.nodes, operations, workflowData.thirdPartyData);
       workflow.createEdges(workflowData.workflow.connections);
