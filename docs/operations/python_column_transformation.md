@@ -86,7 +86,7 @@ def transform_value(value, column_name):
 </thead>
 <tbody>
 <tr>
-  <td><code>code</code></td>
+  <td><code>column operation code</code></td>
   <td><code><a href="../parameter_types.html#code-snippet">Code Snippet</a></code></td>
   <td>The Python code to be executed. It has to contain Python function complying to signature presented in the operation's description.</td>
 </tr>

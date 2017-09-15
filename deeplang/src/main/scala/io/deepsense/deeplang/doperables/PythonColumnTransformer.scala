@@ -38,7 +38,7 @@ case class PythonColumnTransformer() extends MultiColumnTransformer {
   def setTargetType(value: TargetTypeChoice): this.type = set(targetType, value)
 
   val codeParameter = CodeSnippetParam(
-    name = "code",
+    name = "column operation code",
     description = "Column operation source code",
     language = CodeSnippetLanguage(CodeSnippetLanguage.python)
   )
