@@ -37,6 +37,10 @@ object Execution {
     val filteredNodes = nodes.filter(graphNodeIds.contains).toSet
     filteredNodes
   }
+
+  def defaultExecutionFactory(graph: StatefulGraph): Execution = {
+    Execution(graph)
+  }
 }
 
 sealed trait ExecutionLike {

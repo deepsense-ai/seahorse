@@ -368,7 +368,8 @@ class WorkflowExecutorActorSpec
       workflow: WorkflowWithResults): Unit = {
     val statefulWorkflow = StatefulWorkflow(
       wea.underlyingActor.executionContext,
-      workflow)
+      workflow,
+      Execution.defaultExecutionFactory)
     statefulWorkflow.launch(workflow.graph.nodes.map(_.id))
     wea.underlyingActor.statefulWorkflow = statefulWorkflow
     wea.underlyingActor.context.become(wea.underlyingActor.launched())
@@ -382,11 +383,10 @@ class WorkflowExecutorActorSpec
       workflow.id,
       workflow.metadata,
       workflow.thirdPartyData,
-      StatefulGraph(
+      Execution(StatefulGraph(
         workflow.graph,
         workflow.graph.nodes.map(_.id -> completedState()).toMap,
-        None
-      )
+        None))
     )
     wea.underlyingActor.statefulWorkflow = statefulWorkflow
     wea.underlyingActor.context.become(wea.underlyingActor.ready())

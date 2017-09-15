@@ -42,7 +42,8 @@ abstract class WorkflowExecutorActor(
     nodeExecutorFactory: GraphNodeExecutorFactory,
     workflowManagerClientActor: Option[ActorRef],
     publisher: Option[ActorSelection],
-    terminationListener: Option[ActorRef])
+    terminationListener: Option[ActorRef],
+    executionFactory: StatefulGraph => Execution)
   extends Actor
   with Logging
   with NodeStatusJsonProtocol {
@@ -78,7 +79,7 @@ abstract class WorkflowExecutorActor(
   }
 
   def initWithWorkflow(workflowWithResults: WorkflowWithResults): Unit = {
-    statefulWorkflow = StatefulWorkflow(executionContext, workflowWithResults)
+    statefulWorkflow = StatefulWorkflow(executionContext, workflowWithResults, executionFactory)
     context.become(ready())
     initWhenStateIsAvailable()
   }

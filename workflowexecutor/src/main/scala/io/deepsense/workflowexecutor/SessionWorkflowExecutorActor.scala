@@ -28,6 +28,7 @@ import io.deepsense.deeplang.CommonExecutionContext
 import io.deepsense.models.workflows._
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.Init
 import io.deepsense.workflowexecutor.WorkflowManagerClientActorProtocol.GetWorkflow
+import io.deepsense.workflowexecutor.partialexecution.Execution
 
 /**
  * Actor responsible for running workflow in an interactive way.
@@ -39,7 +40,12 @@ class SessionWorkflowExecutorActor(
     publisher: ActorSelection,
     wmTimeout: Int)
   extends WorkflowExecutorActor(
-    executionContext, nodeExecutorFactory, Some(workflowManagerClientActor), Some(publisher), None)
+    executionContext,
+    nodeExecutorFactory,
+    Some(workflowManagerClientActor),
+    Some(publisher),
+    None,
+    Execution.defaultExecutionFactory)
   with Logging {
 
   import scala.concurrent.duration._

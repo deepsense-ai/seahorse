@@ -21,6 +21,7 @@ import akka.actor._
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.CommonExecutionContext
 import io.deepsense.models.workflows.WorkflowWithResults
+import io.deepsense.workflowexecutor.partialexecution.Execution
 
 class BatchWorkflowExecutorActor(
     executionContext: CommonExecutionContext,
@@ -32,7 +33,8 @@ class BatchWorkflowExecutorActor(
     nodeExecutorFactory,
     None,
     None,
-    Some(terminationListener))
+    Some(terminationListener),
+    Execution.defaultExecutionFactory)
   with Actor
   with Logging {
 

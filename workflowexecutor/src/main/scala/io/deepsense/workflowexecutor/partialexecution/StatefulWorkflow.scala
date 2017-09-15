@@ -29,9 +29,9 @@ class StatefulWorkflow(
   val workflowId: Workflow.Id,
   val metadata: WorkflowMetadata,
   private val thirdPartyData: ThirdPartyData,
-  private val graph: StatefulGraph) extends Logging {
+  private val startingExecution: Execution) extends Logging {
 
-  private var execution: Execution = Execution(graph)
+  private var execution: Execution = startingExecution
   private var additionalData = thirdPartyData
 
   def launch(nodes: Set[Node.Id]): Unit = {
@@ -51,6 +51,8 @@ class StatefulWorkflow(
   }
 
   def currentExecution: Execution = execution
+
+  def currentAdditionalData: ThirdPartyData = additionalData
 
   def executionReport: ExecutionReport = execution.executionReport
 
@@ -87,9 +89,20 @@ class StatefulWorkflow(
     * When execution is running struct update will be ignored.
     */
   def updateStructure(workflow: Workflow): InferredState = {
-    execution = execution.updateStructure(workflow.graph)
+    execution = execution match {
+      case IdleExecution(_, _) => execution.updateStructure(workflow.graph)
+      case _ =>
+        logger.warn("Update of the graph during execution is impossible. " +
+          "Only `thirdPartyData` updated.")
+        execution
+    }
     additionalData = workflow.additionalData
     inferState()
+  }
+
+  def inferState(): InferredState = {
+    val knowledge = execution.inferKnowledge(executionContext.inferContext)
+    InferredState(workflowId, knowledge, executionReport)
   }
 
   private def getChangedNodes(startingPointExecution: Execution): Map[Id, NodeState] = {
@@ -98,18 +111,14 @@ class StatefulWorkflow(
         stateWithResults == startingPointExecution.states(id)
     }.mapValues(_.nodeState)
   }
-
-  def inferState(): InferredState = {
-    val knowledge = execution.inferKnowledge(executionContext.inferContext)
-    InferredState(workflowId, knowledge, executionReport)
-  }
 }
 
 object StatefulWorkflow extends Logging {
 
   def apply(
       executionContext: CommonExecutionContext,
-      workflow: WorkflowWithResults): StatefulWorkflow = {
+      workflow: WorkflowWithResults,
+      executionFactory: StatefulGraph => Execution): StatefulWorkflow = {
     val states = workflow.executionReport.states
     val noMissingStates = workflow.graph.nodes.map { case node =>
       states.get(node.id)
@@ -117,11 +126,12 @@ object StatefulWorkflow extends Logging {
         .getOrElse(node.id -> NodeStateWithResults.draft)
     }.toMap
     val graph = StatefulGraph(workflow.graph, noMissingStates, workflow.executionReport.error)
+    val execution = executionFactory.apply(graph)
     new StatefulWorkflow(
       executionContext,
       workflow.id,
       workflow.metadata,
       workflow.thirdPartyData,
-      graph)
+      execution)
   }
 }
