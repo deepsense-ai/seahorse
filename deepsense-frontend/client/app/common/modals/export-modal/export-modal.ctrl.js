@@ -1,25 +1,32 @@
 'use strict';
 
 /* @ngInject */
-function ExportModalController(config, version, $uibModalInstance, $stateParams, WorkflowsApiClient) {
-  _.assign(this, {
-    errorMessage: '',
-    warningMessage: '',
-    loading: false,
-    close: () => {
-      $uibModalInstance.dismiss();
-    },
-    getExecutorLink: () => 'https://s3.amazonaws.com/workflowexecutor/releases/' + config.apiVersion + '/workflowexecutor_2.10-' + config.apiVersion + '.jar',
-    getDocsHost: () => config.docsHost,
-    getDocsVersion: () => version.getDocsVersion(),
-    download: () => {
-      $('body')
-        .append(angular.element(`
-          <iframe style="display: none" src="${WorkflowsApiClient.getDownloadWorkflowMethodUrl($stateParams.id)}"></iframe>
-        `));
-      this.close();
-    }
-  });
+function ExportModalController($uibModalInstance, $stateParams, config, version, WorkflowsApiClient) {
+
+  const vm = this;
+
+  vm.downloadLink = WorkflowsApiClient.getDownloadWorkflowMethodUrl($stateParams.id);
+
+  vm.close = close;
+  vm.getExecutorLink = getExecutorLink;
+  vm.getDocsHost = getDocsHost;
+  vm.getDocsVersion = getDocsVersion;
+
+  function close() {
+    $uibModalInstance.dismiss();
+  }
+
+  function getExecutorLink() {
+    return `https://s3.amazonaws.com/workflowexecutor/releases/${config.apiVersion}/workflowexecutor_2.10-${config.apiVersion}.jar`;
+  }
+
+  function getDocsHost() {
+    return config.docsHost;
+  }
+
+  function getDocsVersion() {
+    return version.getDocsVersion();
+  }
 }
 
 exports.inject = function(module) {
