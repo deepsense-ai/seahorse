@@ -20,6 +20,7 @@ var lab = angular.module('ds.lab', [
   'deepsense.attributes-panel',
   'deepsense.navigation-panel',
   'deepsense.graph-model',
+  'deepsense.cycle-analyser',
   'toastr',
   require('./home/home.module.js').name,
   require('./account/account.module.js').name,

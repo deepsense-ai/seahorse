@@ -34,7 +34,7 @@ const inputStyle = {
 };
 
 /* @ngInject */
-function GraphPanelRendererService($rootScope, $document, Edge) {
+function GraphPanelRendererService($rootScope, $document, Edge, $timeout, DeepsenseCycleAnalyser, NotificationService) {
   const connectorPaintStyles = {
     [Edge.STATE_TYPE.ALWAYS]: _.defaults({}, connectorPaintStyleDefault, { strokeStyle: '#61B7CF' }),
     [Edge.STATE_TYPE.MAYBE]: _.defaults({}, connectorPaintStyleDefault, { strokeStyle: '#F8AC59' }),
@@ -293,6 +293,21 @@ function GraphPanelRendererService($rootScope, $document, Edge) {
       info.connection.setParameter('edgeId', edge.id);
 
       $rootScope.$broadcast(Edge.CREATE, {edge: edge});
+
+      if (DeepsenseCycleAnalyser.cycleExists(internal.experiment)) {
+        NotificationService.showError({
+          title: 'Error',
+          message: 'You cannot create a cycle in the graph!'
+        }, 'A cycle in the graph has been detected!');
+
+        $timeout(() => {
+          $rootScope.$broadcast(Edge.REMOVE, {
+            edge: internal.experiment.getEdgeById(info.connection.getParameter('edgeId'))
+          });
+
+          jsPlumb.detach(info.connection);
+        }, 0, false);
+      }
     });
 
     jsPlumb.bind('connectionDetached', (info, originalEvent) => {
