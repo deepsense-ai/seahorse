@@ -6,11 +6,11 @@ let version = browser.version.match(/\d+/)[0];
 const SUPPORTED_BROWSERS = {
   Firefox :{
     fullName: 'Mozilla Firefox',
-    minVersion: 42
+    minVersion: 48
   },
   Chrome :{
     fullName: 'Google Chrome',
-    minVersion: 40
+    minVersion: 50
   }
 };
 
