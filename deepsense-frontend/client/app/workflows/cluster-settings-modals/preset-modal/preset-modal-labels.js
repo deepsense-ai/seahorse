@@ -8,6 +8,13 @@ const common = {
     placeholder: '',
     type: 'text'
   },
+  driverMemory: {
+    name: 'Driver Memory',
+    instruction: 'Amount of memory to use for the driver process. This is equivalent to the --driver-memory option in ' +
+    'spark-submit.',
+    placeholder: 'e.g. 1g',
+    type: 'text'
+  },
   hadoopUser: {
     name: 'Hadoop User',
     instruction: 'Fill this option if you have HDFS on your spark cluster and you want to connect with it in your ' +
@@ -97,11 +104,12 @@ const local = {
 
 exports.inject = function (module) {
   module.constant('PresetModalLabels', {
-    yarn: _.assign(yarn, _.pick(common, ['userIP', 'hadoopUser', 'executorMemory', 'executorCores', 'numExecutors',
+    yarn: _.assign(yarn, _.pick(common, ['userIP', 'driverMemory', 'hadoopUser', 'executorMemory', 'executorCores',
+      'numExecutors', 'params'])),
+    mesos: _.assign(mesos, _.pick(common, ['userIP', 'driverMemory', 'hadoopUser', 'executorMemory', 'totalExecutorCores',
       'params'])),
-    mesos: _.assign(mesos, _.pick(common, ['userIP', 'hadoopUser', 'executorMemory', 'totalExecutorCores', 'params'])),
-    standalone: _.assign(standalone, _.pick(common, ['userIP', 'hadoopUser', 'executorMemory', 'totalExecutorCores',
-      'executorCores', 'params'])),
+    standalone: _.assign(standalone, _.pick(common, ['userIP', 'driverMemory', 'hadoopUser', 'executorMemory',
+      'totalExecutorCores', 'executorCores', 'params'])),
     local: _.assign(local, _.pick(common, ['executorMemory', 'totalExecutorCores', 'executorCores', 'numExecutors']))
   });
 };

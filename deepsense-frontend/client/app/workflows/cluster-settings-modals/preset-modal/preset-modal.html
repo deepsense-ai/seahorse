@@ -47,8 +47,8 @@
 
   <div class="modal-body preset-modal__body">
 
-    <div ng-repeat="field in ::['uri', 'userIP', 'hadoopUser', 'executorMemory', 'totalExecutorCores', 'executorCores',
-    'numExecutors'] track by $index">
+    <div ng-repeat="field in ::['uri', 'userIP', 'driverMemory', 'hadoopUser', 'executorMemory', 'totalExecutorCores',
+    'executorCores', 'numExecutors'] track by $index">
       <div class="row main-form-row" ng-if="::controller.labels[field]">
         <div class="col-md-4">
           <div class="label-main">
