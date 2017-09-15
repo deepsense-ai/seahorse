@@ -135,6 +135,20 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
       verify(workflowStorage).update(storedWorkflowId, storedWorkflow)
       ()
     }
+    "download workflow without datasource" in {
+      val res = workflowManager.download(storedWorkflowId, exportDatasources = false)
+      whenReady(res, timeout = PatienceConfiguration.Timeout(Span(2, Seconds))) { workflow =>
+        workflow.get.thirdPartyData.fields.contains("datasources") shouldBe false
+      }
+    }
+
+    "download workflow with datasource" in {
+      val res = workflowManager.download(storedWorkflowId, exportDatasources = true)
+      whenReady(res, timeout = PatienceConfiguration.Timeout(Span(2, Seconds))) { workflow =>
+        workflow.get.thirdPartyData.fields.contains("datasources") shouldBe true
+      }
+    }
+
     "clone workflow" in {
       reset(workflowStorage)
       when(workflowStorage.get(storedWorkflowId))

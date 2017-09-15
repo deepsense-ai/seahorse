@@ -35,9 +35,10 @@ trait WorkflowManager {
   /**
    * Returns a workflow with an empty variables section and specified Id.
    * @param id An identifier of the workflow.
+   * @param exportDatasources Indicates if datasources should be present in thirdpartydata.
    * @return A workflow with an empty variables section and specified Id.
    */
-  def download(id: Id): Future[Option[WorkflowWithVariables]]
+  def download(id: Id, exportDatasources: Boolean = true): Future[Option[WorkflowWithVariables]]
 
   /**
    * Updates an workflow.

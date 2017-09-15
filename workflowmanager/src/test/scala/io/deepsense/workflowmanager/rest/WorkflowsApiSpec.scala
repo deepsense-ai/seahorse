@@ -331,7 +331,7 @@ class WorkflowsApiSpec
   s"GET /workflows/:id/download" should {
     "return BadRequest" when {
       "no auth headers were sent (on MissingHeaderRejection)" in {
-        Get(s"/$apiPrefix/${Workflow.Id.randomId}/download?format=json") ~>
+        Get(s"/$apiPrefix/${Workflow.Id.randomId}/download?format=json&export-datasources=true") ~>
           addCredentials(credentials) ~> testRoute ~> check {
           status should be(StatusCodes.BadRequest)
         }
@@ -339,7 +339,7 @@ class WorkflowsApiSpec
     }
     "return Not found" when {
       "asked for non existing Workflow" in {
-        Get(s"/$apiPrefix/${Workflow.Id.randomId}/download?format=json") ~>
+        Get(s"/$apiPrefix/${Workflow.Id.randomId}/download?format=json&export-datasources=true") ~>
           addCredentials(credentials) ~>
           addHeaders(validHeadersIdOnly()) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
@@ -348,7 +348,7 @@ class WorkflowsApiSpec
     }
     "return an workflow" when {
       "auth token is correct, user has roles and version is current (with notebook)" in {
-        Get(s"/$apiPrefix/$workflowAId/download?format=json") ~>
+        Get(s"/$apiPrefix/$workflowAId/download?format=json&export-datasources=true") ~>
           addCredentials(credentials) ~>
           addHeaders(validHeadersIdOnly()) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
@@ -367,7 +367,7 @@ class WorkflowsApiSpec
         }
       }
       "auth token is correct, user has roles and version is current (without notebook)" in {
-        Get(s"/$apiPrefix/$workflowWithoutNotebookId/download?format=json") ~>
+        Get(s"/$apiPrefix/$workflowWithoutNotebookId/download?format=json&export-datasources=true") ~>
           addCredentials(credentials) ~>
           addHeaders(validHeadersIdOnly()) ~> testRoute ~> check {
           status should be(StatusCodes.OK)

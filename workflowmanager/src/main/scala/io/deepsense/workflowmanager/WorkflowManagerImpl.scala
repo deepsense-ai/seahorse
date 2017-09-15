@@ -83,10 +83,10 @@ class WorkflowManagerImpl @Inject()(
     }
   }
 
-  def download(id: Id): Future[Option[WorkflowWithVariables]] = {
+  def download(id: Id, exportDatasources: Boolean = true): Future[Option[WorkflowWithVariables]] = {
     logger.debug("Download workflow id: {}", id)
     authorizator.withRole(roleGet) { userContext =>
-      getWorkflowWithAdditionalData(id).map(_.map(withVariables(id, _)))
+      getWorkflowWithAdditionalData(id, exportDatasources).map(_.map(withVariables(id, _)))
     }
   }
 
@@ -284,11 +284,12 @@ class WorkflowManagerImpl @Inject()(
       id, workflow.metadata, workflow.graph, workflow.additionalData, Variables())
   }
 
-  private def getWorkflowWithAdditionalData(id: Workflow.Id): Future[Option[Workflow]] = {
-    workflowStorage.get(id).flatMap {
-      case Some(w) => objectWorkflowWithAdditionalData(id, w.workflow).map(w => Option(w))
-      case None => Future.successful(None)
-    }
+  private def getWorkflowWithAdditionalData(id: Workflow.Id, exportDatasources: Boolean = true):
+    Future[Option[Workflow]] = {
+      workflowStorage.get(id).flatMap {
+        case Some(w) => objectWorkflowWithAdditionalData(id, w.workflow, exportDatasources).map(w => Option(w))
+        case None => Future.successful(None)
+      }
   }
 
   private def addDatasourcesData(id: Workflow.Id, workflow: Workflow): Future[JsValue] = {
@@ -311,14 +312,21 @@ class WorkflowManagerImpl @Inject()(
     }
   }
 
-  private def objectWorkflowWithAdditionalData(id: Workflow.Id, workflow: Workflow): Future[Workflow] = {
+  private def objectWorkflowWithAdditionalData(
+      id: Workflow.Id,
+      workflow: Workflow,
+      exportDatasources: Boolean = true): Future[Workflow] = {
     for {
       notebookData <- addNotebooksData(id, workflow)
-      datasourceData <- addDatasourcesData(id, workflow)
+      datasourceData <- {if (exportDatasources) addDatasourcesData(id, workflow) else Future.successful(JsArray())}
     } yield {
       val additionalDataJson = workflow.additionalData
       val notebookJson = JsObject(additionalDataJson.fields.updated(Fields.Notebooks, notebookData))
-      val datasourceJson = JsObject(notebookJson.fields.updated(Fields.Datasources, datasourceData))
+      val datasourceJson = if (exportDatasources) {
+        JsObject(notebookJson.fields.updated(Fields.Datasources, datasourceData))
+      } else {
+        notebookJson
+      }
       Workflow(workflow.metadata, workflow.graph, datasourceJson)
     }
   }

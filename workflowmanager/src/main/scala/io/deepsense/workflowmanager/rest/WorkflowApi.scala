@@ -27,7 +27,7 @@ import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.commons.rest.ClusterDetailsJsonProtocol._
 import io.deepsense.commons.rest.{Cors, RestApiAbstractAuth, RestComponent}
 import io.deepsense.commons.utils.Version
-import io.deepsense.graph.CyclicGraphException
+import io.deepsense.graph.{CyclicGraphException, DeeplangGraph}
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow._
 import io.deepsense.models.json.workflow.exceptions.WorkflowVersionException
@@ -209,26 +209,24 @@ abstract class WorkflowApi @Inject() (
                   }
                 }
               } ~
-              path(JavaUUID / "download") { workflowId =>
+              pathPrefix(JavaUUID / "download") { workflowId =>
                 get {
-                  withUserId { userContext =>
+                  val exportDatasource = parameter(Symbol("export-datasources").as[Boolean])
+                  (withUserId & exportDatasource) { (userContext, exportDatasources) =>
                     val futureWorkflow =
-                      workflowManagerProvider.forContext(userContext).download(workflowId)
-                    onSuccess(futureWorkflow) { workflowWithVariables =>
-                      if (workflowWithVariables.isDefined) {
-                        val outputFileName = workflowFileName(workflowWithVariables.get)
+                      workflowManagerProvider.forContext(userContext).download(workflowId, exportDatasources)
+                    onSuccess(futureWorkflow) { w =>
+                      w.map(workflowWithVariables =>
                         respondWithMediaType(`application/json`) {
                           complete(
                             StatusCodes.OK,
                             Seq(
                               `Content-Disposition`(
                                 "attachment",
-                                Map("filename" -> outputFileName))),
-                            workflowWithVariables.get)
+                                Map("filename" -> workflowFileName(workflowWithVariables)))),
+                            workflowWithVariables)
                         }
-                      } else {
-                        complete(StatusCodes.NotFound)
-                      }
+                      ).getOrElse(complete(StatusCodes.NotFound))
                     }
                   }
                 }

@@ -74,7 +74,7 @@ class WorkflowManagerClient(
 
   def downloadWorkflow(workflowId: Workflow.Id)
     (implicit jsonFormat: RootJsonFormat[WorkflowWithVariables]): Future[Option[WorkflowWithVariables]] = {
-    fetchResponse[Option[WorkflowWithVariables]](Get(endpointPath(s"$workflowId/download")))
+    fetchResponse[Option[WorkflowWithVariables]](Get(endpointPath(s"$workflowId/download?export-datasources=true")))
   }
 
   def uploadWorkflow(workflow: String): Future[Workflow.Id] = {
