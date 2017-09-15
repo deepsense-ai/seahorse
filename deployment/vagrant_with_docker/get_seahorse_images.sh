@@ -13,7 +13,6 @@ cd $SYNCED_FOLDER
 
 mkdir -p $RELEASE_SYNCED_FOLDER
 cp docker-compose.yml /resources
-cd /resources
 
 # Pull Seahorse docker-images
 DOCKER_IMAGES=("deepsense-sessionmanager" "deepsense-workflowmanager" "deepsense-notebooks" "deepsense-rabbitmq" "deepsense-h2" "deepsense-frontend" "deepsense-proxy")
