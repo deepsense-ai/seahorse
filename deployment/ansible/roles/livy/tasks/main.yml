@@ -16,23 +16,6 @@
 - name: Create livy link
   file: src="{{livy_directory_name}}" dest="{{livy_install_dir}}/{{livy_artifactid}}" state=link
 
-- { include: ../../supervisedprogram/tasks/main.yaml,
-    program: {
-      name: 'LivyServer',
-      command: '{{install_dir}}/{{livy_artifactid}}/bin/livy-server',
-      directory: "{{install_dir}}",
-      environment: 'SPARK_HOME="{{spark_install_dir}}/spark",PYTHONPATH="{{spark_install_dir}}/spark/python:{{spark_install_dir}}/spark/python/build:$PYTHONPATH"',
-      autostart: true,
-      autorestart: true,
-      startretries: 3,
-      stdout_logfile: "{{install_dir}}/{{livy_artifactid}}/std.out",
-      stdout_logfile_maxbytes: 0,
-      stderr_logfile: "{{install_dir}}/{{livy_artifactid}}/std.err",
-      stderr_logfile_maxbytes: 0,
-      user: ubuntu,
-    }
-  }
-
 - name: Force supervisor restart
   command: /bin/true
   notify: restart supervisor

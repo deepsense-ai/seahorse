@@ -1,7 +1,7 @@
 # Copyright (c) 2015, CodiLime Inc.
 
 wm_artifact_id: deepsense-workflowmanager
-wm_version: 0.2.0-SNAPSHOT
+wm_version: 1.0.0
 wm_build_version: latest
 
 sm_artifact_id: deepsense-sessionmanager
@@ -11,8 +11,7 @@ frontend_artifact_id: deepsense-frontend
 frontend_version: latest
 
 workflowexecutor_artifact_id: deepsense-workflowexecutor
-workflowexecutor_version: latest
-workflowexecutor_build_version: 1.0.0-SNAPSHOT
+workflowexecutor_build_version: latest
 
 extra_jars: "{{install_dir}}/extra-jars"
 mysql_connector_jar_path: "ext-third-party/mysql-connector-java/mysql-connector-java/5.1.38/mysql-connector-java-5.1.38-bin.jar"

@@ -11,7 +11,6 @@
 - name: Download H2 package
   hosts: localhost
   vars_files:
-    - vars/env.yml
     - vars/deployment.yml
     - vars/artifacts.yml
     - vars/h2.yml
@@ -23,7 +22,6 @@
   user: ubuntu
   sudo: yes
   vars_files:
-    - vars/env.yml
     - vars/deployment.yml
     - vars/h2.yml
   roles:

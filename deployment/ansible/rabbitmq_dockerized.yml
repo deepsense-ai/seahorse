@@ -4,8 +4,7 @@
 - name: Builds rabbitmq docker images
   hosts: localhost
   vars_files:
-    - vars/env.yml
-    - vars/rabbitmq.yml
+    - vars/docker.yml
   vars:
     docker_dir: "/tmp/docker-ansible"
   roles:
@@ -14,8 +13,7 @@
 - name: Exports rabbitmq docker image
   hosts: localhost
   vars_files:
-    - vars/env.yml
-    - vars/rabbitmq.yml
+    - vars/docker.yml
   tasks:
     - include: tasks/save_docker_image.yml docker_image={{rabbitmq_docker_image}} download_dir="{{rabbitmq_download_dir}}"
 
@@ -24,8 +22,7 @@
   user: ubuntu
   sudo: yes
   vars_files:
-    - vars/env.yml
-    - vars/rabbitmq.yml
+    - vars/docker.yml
   tasks:
     - name: Assures docker dir exists
       file: path={{rabbitmq_download_dir}} state=directory
@@ -36,8 +33,7 @@
   user: ubuntu
   sudo: yes
   vars_files:
-    - vars/env.yml
-    - vars/rabbitmq.yml
+    - vars/docker.yml
   tasks:
     - include: tasks/load_docker_image.yml docker_image={{rabbitmq_docker_image}} docker_dir={{rabbitmq_download_dir}}
 
@@ -46,8 +42,7 @@
   user: ubuntu
   sudo: yes
   vars_files:
-    - vars/env.yml
-    - vars/rabbitmq.yml
+    - vars/docker.yml
   tasks:
     - name: Register running Docker containers
       register: docker_containers

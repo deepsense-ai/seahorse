@@ -1,59 +1,81 @@
-## How to use vagrant playbook (uses artifactory module)
+## Overview
 
-The `artifactory_example.yml` playbook demonstrates how to use [ansible](https://github.com/DanielRedOak/ansible-mod-artifactory) module that's in `library` directory and hence it's
-automatically added by Ansible and visible to playbooks.
+Directory for Seahorse deployment scripts. Contains deployment code for all Seahorse components.
+The scripts are written using [Ansible](http://docs.ansible.com/ansible/index.html).
 
-Start sbt pointing at the proper Artifactory instance:
+## Creating Deployment Scripts
 
-    sbt -Dartifactory.url=http://192.168.59.104/artifactory/
+For each component deployment, define a role, main playbook for this role and optionally a file
+containing variable definitions. For example, to install nginx HTTP server:
+* create `nginx` directory in `roles` and define all necessary tasks etc.;
+* create `nginx.yml` playbook in main directory (include the `nginx` role inside);
+* create `nginx.yml` file in `vars` containing default variables (if necessary).
 
-Or use `sbt` alone so the Artifactory instance is http://10.10.1.77:8081/artifactory/. Use `show artifactoryUrl` to see
-what Artifactory instance you use while in sbt shell.
+When creating composite playbooks, which contain deployment of multiple components, use defined
+roles and combine them using include statements.
 
-Publish EntityStorage to Artifactory using `entitystorage/universal:publish` in sbt:
+## Executing Deployment Scripts
 
-    [deepsense-backend]> entitystorage/universal:publish
-    ...
-    [info] 	published deepsense-entitystorage to http://192.168.59.104/artifactory/deepsense-backend-snapshot/io/deepsense/deepsense-entitystorage/0.2.0-SNAPSHOT-20150713T123943-38dcf3f-SNAPSHOT/deepsense-entitystorage-0.2.0-SNAPSHOT-20150713T123943-38dcf3f-SNAPSHOT.zip
-    [success] Total time: 76 s, completed Jul 13, 2015 2:41:02 PM
+In order to execute a playbook, define all necessary hosts in inventory file and pass required extra
+variables:
 
-Mind the version of EntityStorage, e.g. `0.2.0-SNAPSHOT-20150713T123943-38dcf3f-SNAPSHOT` above. You will use it to run the `artifactory_example.yml` Ansible playbook as `version` variable.
+    $ ansible-playbook -i hosts -u ubuntu playbook.yml -vv --extra-vars="name=value"
 
-Once EntityStorage is published to Artifactory you can execute Ansible playbook.
 
-Execute the following command to deploy EntityStorage version 0.2.0-SNAPSHOT-20150713T113653-38dcf3f-SNAPSHOT that's
-available in Artifactory under http://192.168.59.104:80/artifactory:
+This will execute playbook defined in "playbook.yml" on hosts defined in "hosts" file with some
+extra variables set.
 
-    ansible-playbook -i hosts vagrant.yaml -u vagrant \
-      --extra-vars "version=0.2.0-SNAPSHOT-20150713T123943-38dcf3f-SNAPSHOT artifactory_host=192.168.59.104 artifactory_port=80"
+## Directory Structure
 
-You should see something along these lines:
+Directory layout for deployment scripts looks as follows:
 
-    ➜  ansible git:(DS-880-ansible-gerrit-2196) ✗ ansible-playbook -i hosts vagrant.yaml -u vagrant --extra-vars "version=0.2.0-SNAPSHOT-20150713T123943-38dcf3f-SNAPSHOT artifactory_host=192.168.59.104 artifactory_port=80"
+```
+ansible
+│   README.md                  # this file
+|
+│   hosts                      # main inventory file
+│
+│   playbook1.yml              # playbooks
+│   playbook2.yml
+│   ...
+│
+├───library
+│   │   module1.py             # custom modules
+│   │   module2.py
+│   └   ...
+│
+├───roles
+│   ├───role1                  # hierarchy for role definition
+│   │   ├───defaults
+│   │   │   └   main.yml       # default role variables
+│   │   ├───files
+│   │   │   │   file1.conf     # file resources
+│   │   │   └   ...
+│   │   ├───meta
+│   │   │   └   main.yml       # role dependencies
+│   │   ├───tasks
+│   │   │   └   main.yml       # main role tasks
+│   │   └───templates
+│   │       │   templ.conf.j2  # template resources
+│   │       └   ...
+│   │
+│   ├───role2
+│   └   ...
+│
+├───tasks
+│   │   task1.yml              # common tasks
+│   │   task2.yml
+│   └   ...
+│
+└───vars
+    │   vars1.yml              # variable definitions
+    │   vars2.yml
+    └   ...
+```
 
-    PLAY [Setups machines and components of DeepSense.io] *************************
-
-    GATHERING FACTS ***************************************************************
-    ok: [ds-dev-env-master]
-
-    TASK: [Remove installation directory] *****************************************
-    changed: [ds-dev-env-master]
-
-    TASK: [Create installation directory] *****************************************
-    changed: [ds-dev-env-master]
-
-    TASK: [Download zip package] **************************************************
-    changed: [ds-dev-env-master]
-
-    TASK: [Extract zip package] ***************************************************
-    changed: [ds-dev-env-master]
-
-    TASK: [Symlink home directory] ************************************************
-    changed: [ds-dev-env-master]
-
-    PLAY RECAP ********************************************************************
-    ds-dev-env-master          : ok=6    changed=5    unreachable=0    failed=0
+For detailed information see:
+[Ansible Best Practices](http://docs.ansible.com/ansible/playbooks_best_practices.html).
 
 ## Copyright
 
-Copyright (c) 2015, CodiLime Inc.
+Copyright (c) 2016, CodiLime Inc.

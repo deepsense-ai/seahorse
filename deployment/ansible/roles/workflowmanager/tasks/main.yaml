@@ -1,7 +1,8 @@
 # Copyright (c) 2015, CodiLime Inc.
 
 ---
-- include: ../../../tasks/deploy_package.yml
+- name: Deploy Workflow Manager package
+  include: ../../../tasks/deploy_package.yml
   vars:
     artifactid: "{{wm_artifact_id}}"
     version: "{{wm_version}}"
@@ -9,23 +10,6 @@
 
 - name: Create config file
   template: src=application.conf.j2 dest="{{install_dir}}/application.conf"
-  notify: restart supervisor
-
-- { include: ../../supervisedprogram/tasks/main.yaml,
-    program: {
-      name: 'WorkflowManager',
-      command: '{{install_dir}}/deepsense-workflowmanager/bin/deepsense-workflowmanager -Dconfig.file={{install_dir}}/application.conf -DlogFile=/home/ubuntu/log/deepsense/wm/deepsense-workflowmanager',
-      directory: "{{install_dir}}",
-      autostart: true,
-      autorestart: true,
-      startretries: 3,
-      stdout_logfile: "{{install_dir}}/std.out",
-      stdout_logfile_maxbytes: 0,
-      stderr_logfile: "{{install_dir}}/std.err",
-      stderr_logfile_maxbytes: 0,
-      user: ubuntu,
-    }
-  }
 
 - name: Force supervisor restart
   command: /bin/true

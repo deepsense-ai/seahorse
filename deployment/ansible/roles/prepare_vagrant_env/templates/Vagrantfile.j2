@@ -14,8 +14,6 @@ Vagrant.configure(2) do |config|
         wm_version: "{{vagrant_wm_version}}",
         sm_build_version: "{{vagrant_sm_build_version}}",
         sm_version: "{{vagrant_sm_version}}",
-        notebook_public_address: "http://172.28.120.100:8888",
-        queue_public_address: "http://172.28.128.100:15674/",
         ds_frontend_package_name: "{{vagrant_ds_frontend_package_name}}",
         ds_frontend_docs_address: "{{vagrant_docs_address}}",
         api_version: "{{vagrant_api_version}}",
@@ -35,6 +33,7 @@ Vagrant.configure(2) do |config|
       ansible.verbose = "vv"
       ansible.groups = {
         "master" => ["seahorse-vm"],
+        "proxy" => ["seahorse-vm"],
         "frontend" => ["seahorse-vm"],
         "rabbitmq" => ["seahorse-vm"],
         "java_hosts" => ["seahorse-vm"],

@@ -1,5 +1,0 @@
-# Copyright (c) 2015, CodiLime Inc.
-
-node_package_path: "https://nodejs.org/dist/v0.12.7/node-v0.12.7-linux-x64.tar.gz"
-node_package_name: "node-v0.12.7-linux-x64"
-node_package_version: "0.12.7"

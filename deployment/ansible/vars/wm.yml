@@ -1,8 +1,3 @@
 # Copyright (c) 2015, CodiLime Inc.
 
-docker_dir: "/tmp/docker-ansible"
-docker_dir_prefix: "/tmp/docker-ansible"
-ds_wm_docker_image: "ds_workflowmanager"
-ds_wm_download_dir: "{{docker_dir_prefix}}/{{ds_wm_docker_image}}"
-install_dir: "{{ds_wm_download_dir}}{{wm_install_dir}}"
-wm_auth_service_password: "{{wm_service_password}}"
+startup_timeout: 5000

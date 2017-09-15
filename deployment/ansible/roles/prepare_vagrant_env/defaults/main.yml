@@ -1,8 +1,8 @@
 # Copyright (c) 2015, CodiLime Inc.
 
-vagrant_wm_build_version: "1.0.0-SNAPSHOT-2015-12-30_11-13-45-c458506"
+vagrant_wm_build_version: "deepsense-workflowmanager-latest"
 vagrant_wm_version: "1.0.0-SNAPSHOT"
-vagrant_ds_frontend_package_name: "1.0.0-SNAPSHOT-2015-12-29_12-55-32-18c7459"
+vagrant_ds_frontend_package_name: "frontend-latest"
 vagrant_api_version: "1.0.0"
-vagrant_workflowexecutor_build_version: "1.0.0-SNAPSHOT-2015-12-29_14-10-14-fe3ed2d"
+vagrant_workflowexecutor_build_version: "latest"
 vagrant_docs_address: "https://seahorse.deepsense.io"

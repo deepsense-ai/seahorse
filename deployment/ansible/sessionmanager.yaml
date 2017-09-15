@@ -4,7 +4,6 @@
 - name: Download SessionManager package
   hosts: localhost
   vars_files:
-    - vars/env.yml
     - vars/deployment.yml
     - vars/artifacts.yml
     - vars/supervisor.yml
@@ -20,8 +19,6 @@
   vars_files:
     - vars/deployment.yml
     - vars/artifacts.yml
-    - vars/env.yml
-    - vars/main.yml
     - vars/docker.yml
     - vars/supervisor.yml
   roles:

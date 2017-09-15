@@ -1,10 +1,39 @@
-# Copyright (c) 2015, CodiLime Inc.
+# Copyright (c) 2016, CodiLime Inc.
 
-keystone_docker_dir: "/tmp/docker-ansible/keystone"
-wm_service_password: fahda0joek3aeBah
+docker_dir: "/tmp/docker-ansible"
+docker_ip: "{{ansible_docker0.ipv4.address}}"
 
-hadoop_docker_dir: "/tmp/docker-ansible/hadoop"
+ds_documentation_docker_image: "ds_documentation"
+ds_documentation_download_dir: "{{docker_dir}}/{{ds_documentation_docker_image}}"
 
-hadoop_data_dir: "/data/hadoop"
-cassandra_data_dir: "/data/cassandra"
-keystone_data_dir: "/data/keystone"
+ds_frontend_docker_image: "ds_frontend"
+ds_frontend_download_dir: "{{docker_dir}}/{{ds_frontend_docker_image}}"
+ds_frontend_artifact_url: "http://10.10.1.77:8081/artifactory/deepsense-frontend-snapshot/io/deepsense/deepsense-frontend/{{ds_frontend_package_name}}/{{ds_frontend_package_name}}.zip"
+
+ds_haproxy_docker_image: "ds_haproxy"
+ds_haproxy_download_dir: "{{docker_dir}}/{{ds_haproxy_docker_image}}"
+
+rabbitmq_docker_image: "rabbitmq"
+rabbitmq_download_dir: "{{docker_dir}}/{{rabbitmq_docker_image}}"
+
+ds_wm_docker_image: "ds_workflowmanager"
+ds_wm_download_dir: "{{docker_dir}}/{{ds_wm_docker_image}}"
+
+local_ip: "127.0.0.1"
+
+ds_documentation_ip: "{{docker_ip}}"
+ds_documentation_port: 8001
+ds_documentation_public_address: "https://seahorse.deepsense.io"
+ds_documentation_repo_url: "ssh://Jenkins@gerrit.codilime.com:29418"
+
+ds_editor_ip: "{{local_ip}}"
+ds_editor_port: 8002
+ds_wm_ip: "{{local_ip}}"
+ds_wm_port: 9081
+ds_wm_public_address: "https://editor.seahorse.deepsense.io"
+ds_wm_public_port: 9080
+
+haproxy_listen_ip: "0.0.0.0"
+notebook_public_address: "http://localhost:8888"
+queue_public_address: "http://localhost:15674/"
+rabbitmq_server_ip: "{{local_ip}}"

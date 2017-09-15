@@ -3,6 +3,7 @@
 ---
 sessionmanager_ip: "0.0.0.0"
 sessionmanager_port: 9082
+sessionmanager_startup_timeout: 5000
 
 sessionmanager_api_prefix: "v1/sessions"
 sessionmanager_service_timeout: 5000

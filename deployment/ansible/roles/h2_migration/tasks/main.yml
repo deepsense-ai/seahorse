@@ -5,7 +5,7 @@
   file: path="{{sql_dir}}/{{module}}" state=absent
 
 - name: Copy SQL files
-  copy: src="{{module}}" dest="{{sql_dir}}/{{module}}" force=true directory_mode
+  copy: src="{{module}}" dest="{{sql_dir}}/{{module}}" force=true
 
 - name: Copy h2 jar
   copy: src="{{download_dir}}/{{h2_filename}}" dest="{{sql_dir}}/{{module}}"

@@ -98,6 +98,24 @@ class WorkflowManagerImpl @Inject()(
     }
   }
 
+  def clone(id: Id): Future[Option[WorkflowWithVariables]] = {
+    logger.debug("Clone workflow id: {}", id)
+    authorizator.withRole(roleCreate) {
+      userContext => {
+        getWorkflowWithNotebook(id).flatMap {
+          case Some(workflow) =>
+            val gui = workflow.additionalData.fields("gui").asJsObject
+            val guiUpdated = JsObject(gui.fields.updated(
+              "name", JsString(s"Copy of ${gui.fields("name").toString}")))
+            val updatedWorkflow = workflow.copy(additionalData = JsObject(
+              workflow.additionalData.fields.updated("gui", guiUpdated)))
+            create(updatedWorkflow).map(id => Some(withVariables(id, updatedWorkflow)))
+          case None => Future.successful(None)
+        }
+      }
+    }
+  }
+
   def list(): Future[Seq[WorkflowInfo]] = {
     logger.debug("List workflows")
     authorizator.withRole(roleGet) { userContext =>

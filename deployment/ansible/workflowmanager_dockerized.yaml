@@ -4,7 +4,6 @@
 - name: Download WorkflowManager package
   hosts: localhost
   vars_files:
-    - vars/env.yml
     - vars/deployment.yml
     - vars/artifacts.yml
   tasks:
@@ -16,7 +15,6 @@
   vars_files:
     - vars/deployment.yml
     - vars/artifacts.yml
-    - vars/env.yml
     - vars/docker.yml
     - vars/wm.yml
   roles:
@@ -25,7 +23,7 @@
 - name: Exports WorkflowManager docker image
   hosts: localhost
   vars_files:
-    - vars/env.yml
+    - vars/docker.yml
     - vars/wm.yml
   tasks:
     - include: tasks/save_docker_image.yml docker_image={{ds_wm_docker_image}} download_dir="{{ds_wm_download_dir}}"
@@ -35,7 +33,7 @@
   user: ubuntu
   sudo: yes
   vars_files:
-    - vars/env.yml
+    - vars/docker.yml
     - vars/wm.yml
   tasks:
     - name: Assures docker dir exists
@@ -47,7 +45,7 @@
   user: ubuntu
   sudo: yes
   vars_files:
-    - vars/env.yml
+    - vars/docker.yml
     - vars/wm.yml
   tasks:
     - include: tasks/load_docker_image.yml docker_image={{ds_wm_docker_image}} docker_dir={{ds_wm_download_dir}}
@@ -57,7 +55,7 @@
   user: ubuntu
   sudo: yes
   vars_files:
-    - vars/env.yml
+    - vars/docker.yml
     - vars/wm.yml
   tasks:
     - name: Register running Docker containers

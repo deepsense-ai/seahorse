@@ -4,7 +4,6 @@
 - name: Download WorkflowManager package
   hosts: localhost
   vars_files:
-    - vars/env.yml
     - vars/deployment.yml
     - vars/artifacts.yml
     - vars/supervisor.yml
@@ -20,13 +19,10 @@
   vars_files:
     - vars/deployment.yml
     - vars/artifacts.yml
-    - vars/env.yml
-    - vars/main.yml
-    - vars/docker.yml
     - vars/supervisor.yml
+    - vars/wm.yml
   roles:
     - supervisor
     - { role: workflowmanager,
-        install_dir: "{{wm_install_dir}}",
-        wm_auth_service_password: "{{wm_service_password}}"
+        install_dir: "{{wm_install_dir}}"
       }

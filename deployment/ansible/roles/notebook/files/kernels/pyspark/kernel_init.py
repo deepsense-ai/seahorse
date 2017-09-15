@@ -9,7 +9,7 @@ from ready_handler import ReadyHandler
 import urllib2
 
 def restart_kernel():
-    urllib2.urlopen("http://{}:{}/api/kernels/{}/restart".format(
+    urllib2.urlopen("http://{}:{}/jupyter/api/kernels/{}/restart".format(
         notebook_server_address, notebook_server_port, kernel_id), "")
 
 ready_handler = ReadyHandler([mq_address, mq_port])

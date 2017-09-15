@@ -4,8 +4,5 @@
 - name: Installs rabbitmq
   hosts: rabbitmq
   sudo: yes
-  vars_files:
-    - vars/env.yml
-    - vars/rabbitmq.yml
   roles:
     - rabbitmq
