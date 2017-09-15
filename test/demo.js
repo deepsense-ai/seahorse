@@ -190,8 +190,19 @@ angular.module('test', ['deepsense-catalogue-panel'])
 .directive('droppable', function () {
   return {
     link: function (scope, element) {
-      console.log('Called!', element);
       element[0].style.color = 'red';
     }
   };
+})
+
+.run(function ($timeout) {
+    $timeout(function () {
+      jQuery(".operations-tree").mCustomScrollbar(
+        {
+          axis: 'y',
+          theme:"dark",
+          scrollInertia: 300
+        }
+      );
+    });
 });
