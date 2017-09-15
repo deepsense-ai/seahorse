@@ -33,3 +33,15 @@ lazy val graphexecutor = project dependsOn (
   graph,
   models)
 lazy val graphjson     = project dependsOn (commons, deeplang, graph)
+
+addCommandAlias("ds-it",
+  ";commons/it:test " +
+    ";models/it:test " +
+    ";deeplang/it:test " +
+    ";entitystorage-model/it:test " +
+    ";entitystorage/it:test " +
+    ";entitystorage-client/it:test " +
+    ";experimentmanager/it:test " +
+    ";graph/it:test " +
+    ";graphexecutor/it:test " +
+    ";graphjson/it:test")
