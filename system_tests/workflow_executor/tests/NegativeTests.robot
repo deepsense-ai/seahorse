@@ -52,18 +52,18 @@ Empty Column Selector
     Check Error    ${dir}errorPattern.json
     Clean Output Directory
 
-#Column Name Duplication
-#    [Timeout]    1m
-#    ${dir} =    Set Variable    resources/negativeTests/columnNameDuplication/
-#    Remove Hdfs Path    /system_tests/columnNameDuplication
-#    Upload to Hdfs    /system_tests/columnNameDuplication/input.csv    ${dir}input.csv
-#    Remove Directory    columnNameDuplicationOutput    recursive=True
-#    Create Output Directory    columnNameDuplicationOutput
-#    Run Workflow    ${dir}workflow.json
-#    Check Execution Status    FAILED
-#    Check Error    ${dir}errorPattern.json
-#    Clean Output Directory
-#    Remove Hdfs Path    /system_tests/columnNameDuplication
+Column Name Duplication
+    [Timeout]    1m
+    ${dir} =    Set Variable    resources/negativeTests/columnNameDuplication/
+    Remove Hdfs Path    /system_tests/columnNameDuplication
+    Upload to Hdfs    /system_tests/columnNameDuplication/input.csv    ${dir}input.csv
+    Remove Directory    columnNameDuplicationOutput    recursive=True
+    Create Output Directory    columnNameDuplicationOutput
+    Run Workflow    ${dir}workflow.json
+    Check Execution Status    FAILED
+    Check Error    ${dir}errorPattern.json
+    Clean Output Directory
+    Remove Hdfs Path    /system_tests/columnNameDuplication
 
 Trivial Cycle
     [Timeout]    20s
