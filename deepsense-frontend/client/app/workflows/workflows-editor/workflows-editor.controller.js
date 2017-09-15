@@ -205,7 +205,7 @@ class WorkflowsEditorController {
         let selectedNodeIds = this.MultiSelectionService.getSelectedNodeIds();
         let sinkOrSourceNodeIds = _.filter(selectedNodeIds, (nodeId) => {
           let node = this.getWorkflow().getNodeById(nodeId);
-          return this._isSinkOrSource(node);
+          return this.GraphNodesService.isSinkOrSource(node);
         });
         if (sinkOrSourceNodeIds.length > 0) {
           let msg = 'Cannot delete source nor sink nodes';
@@ -330,12 +330,6 @@ class WorkflowsEditorController {
     const workflow = this.WorkflowService.getCurrentWorkflow();
     let isOwner = workflow.owner.id === this.UserService.getSeahorseUser().id;
     return workflow.workflowStatus === 'editor' && workflow.sessionStatus === this.SessionStatus.RUNNING && isOwner;
-  }
-
-  _isSinkOrSource(node) {
-    let sourceId = 'f94b04d7-ec34-42f7-8100-93fe235c89f8';
-    let sinkId = 'e652238f-7415-4da6-95c6-ee33808561b2';
-    return node.operationId === sourceId || node.operationId === sinkId;
   }
 
 }
