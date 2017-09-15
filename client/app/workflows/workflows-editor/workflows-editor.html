@@ -1,7 +1,12 @@
 <div class="c-workflow-container">
   <section class="c-workflow-container__content" resizable-listener="height">
 
-    <div class="datasources-component-wrapper"
+    <div
+      ng-class="{'active': workflow.isDatasourcesOpened}"
+      class="datasources-component__mask"
+    ></div>
+
+    <div class="datasources-component__wrapper"
          ng-class="{'active': workflow.isDatasourcesOpened}"
     >
       <div ng-click="workflow.closeDatasources()"

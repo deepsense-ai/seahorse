@@ -16,6 +16,8 @@
 @import "./graph-panel/multi-selection/multi-selection.less";
 @import "library/library.less";
 
+@datasources-index: 1000;
+
 .o-color-picker--inline {
   display: inline-block;
   margin: 0;
@@ -70,29 +72,50 @@
     width: 100%;
   }
 
-  .datasources-component-wrapper {
-    position: absolute;
-    left: -1010px;
-    top: 0;
-    background-color: @color-white;
-    height: ~"calc(100vh - 25px)";
-    min-width: 706px;
-    max-width: 1004px;
-    z-index: 1000;
-    transition: all 1s ease;
-
-    &.active {
+  .datasources-component {
+    &__mask {
+      position: fixed;
       left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      background-color: #000000;
+      opacity: 0;
+      pointer-events: none;
+      z-index: @datasources-index - 1;
+      transition: opacity 1s ease;
+
+      &.active {
+        opacity: 0.5;
+        pointer-events: auto;
+      }
     }
 
-    .cross {
+    &__wrapper {
       position: absolute;
-      top: 10px;
-      right: 20px;
-      cursor: pointer;
-      font-size: 36px;
-      font-family: "Seahorse Symbol";
+      left: -1010px;
+      top: 0;
+      background-color: @color-white;
+      height: 100vh;
+      min-width: 706px;
+      max-width: 1004px;
+      z-index: @datasources-index;
+      transition: left 1s ease;
+
+      &.active {
+        left: 0;
+      }
+
+      .cross {
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        cursor: pointer;
+        font-size: 36px;
+        font-family: "Seahorse Symbol";
+      }
     }
+
   }
 }
 
