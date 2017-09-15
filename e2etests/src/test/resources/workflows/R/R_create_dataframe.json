@@ -1,0 +1,73 @@
+{
+  "workflow": {
+    "nodes": [{
+      "id": "470369ce-9fca-5c17-0639-6b31ca599481",
+      "operation": {
+        "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
+        "name": "Read DataFrame"
+      },
+      "parameters": {
+        "data storage type": {
+          "FILE": {
+            "source": "https://s3.amazonaws.com/workflowexecutor/examples/data/transactions.csv"
+          }
+        }
+      }
+    }, {
+      "id": "55fd7826-492a-5cd7-abda-766b4015a3dc",
+      "operation": {
+        "id": "b578ad31-3a5b-4b94-a8d1-4c319fac6add",
+        "name": "R Transformation"
+      },
+      "parameters": {
+        "code": "transform <- function(dataframe) {\n    df2 <- createDataFrame(as.data.frame(2))\n    return(df2)\n}\n    "
+      }
+    }],
+    "connections": [{
+      "from": {
+        "nodeId": "470369ce-9fca-5c17-0639-6b31ca599481",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "55fd7826-492a-5cd7-abda-766b4015a3dc",
+        "portIndex": 0
+      }
+    }]
+  },
+  "thirdPartyData": {
+    "gui": {
+      "name": "R_create_dataframe",
+      "description": "R Transformation, createDataFrame",
+      "predefColors": ["#00B1EB", "#1ab394", "#2f4050", "#f8ac59", "#ed5565", "#DD6D3F"],
+      "nodes": {
+        "470369ce-9fca-5c17-0639-6b31ca599481": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5425,
+            "y": 5076
+          }
+        },
+        "55fd7826-492a-5cd7-abda-766b4015a3dc": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5427,
+            "y": 5177
+          }
+        }
+      }
+    },
+    "notebooks": {
+
+    }
+  },
+  "variables": {
+
+  },
+  "id": "f15747ff-f235-4004-b5ec-bfcbbdff04bf",
+  "metadata": {
+    "type": "batch",
+    "apiVersion": "1.3.1"
+  }
+}
