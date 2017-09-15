@@ -6,19 +6,11 @@
 
 package io.deepsense.deeplang.catalogs.doperable
 
+/**
+ * Describes hierarchy of traits and classes.
+ * @param traits descriptors of all registered traits
+ * @param classes descriptors of all registered classes
+ */
 case class HierarchyDescriptor(
     traits: Iterable[TypeDescriptor],
     classes: Iterable[TypeDescriptor])
-
-trait TypeDescriptor
-
-case class ClassDescriptor(
-    name: String,
-    parent: Option[String],
-    traits: List[String])
-  extends TypeDescriptor
-
-case class TraitDescriptor(
-    name: String,
-    parents: List[String])
-  extends TypeDescriptor

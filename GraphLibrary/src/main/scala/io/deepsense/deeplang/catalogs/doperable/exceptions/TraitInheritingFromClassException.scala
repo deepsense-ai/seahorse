@@ -6,10 +6,10 @@
 
 package io.deepsense.deeplang.catalogs.doperable.exceptions
 
-import io.deepsense.deeplang.catalogs.doperable.{Node, TraitNode}
+import io.deepsense.deeplang.catalogs.doperable.{TypeNode, TraitNode}
 
 case class TraitInheritingFromClassException(
     traitNode: TraitNode,
-    classNode: Node)
+    classNode: TypeNode)
   extends DOperableCatalogException(
     s"DTrait cannot inherit from DClass in DHierarchy, ($traitNode inherits from $classNode)")

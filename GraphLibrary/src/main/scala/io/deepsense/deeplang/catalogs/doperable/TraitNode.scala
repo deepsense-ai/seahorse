@@ -12,11 +12,11 @@ import io.deepsense.deeplang.TypeUtils
 import io.deepsense.deeplang.catalogs.doperable.exceptions.TraitInheritingFromClassException
 
 /**
- * Represents Trait in DHierarchy graph.
+ * Node that represents trait in hierarchy stored in DOperableCatalog.
  */
-private[doperable] class TraitNode(protected override val javaType: Class[_]) extends Node {
+private[doperable] class TraitNode(protected override val javaType: Class[_]) extends TypeNode {
 
-  private[doperable] override def addParent(node: Node): Unit = {
+  private[doperable] override def setParent(node: TypeNode): Unit = {
     throw new TraitInheritingFromClassException(this, node)
   }
 
@@ -30,8 +30,6 @@ private[doperable] class TraitNode(protected override val javaType: Class[_]) ex
   private[doperable] override def descriptor: TypeDescriptor = {
     TraitDescriptor(displayName, supertraits.values.map(_.displayName).toList)
   }
-
-  override def toString = s"DTrait($fullName)"
 }
 
 private[doperable] object TraitNode {
