@@ -1,12 +1,14 @@
 'use strict';
 
 /* @ngInject */
-function Keyboard($rootScope) {
+function Keyboard($rootScope, $uibModalStack) {
   return {
     restrict: 'A',
     link: function(scope, element, attrs) {
       Mousetrap.bind(['del', 'backspace'], () => {
-        $rootScope.$broadcast('Keyboard.KEY_PRESSED_DEL');
+        if (_.isUndefined($uibModalStack.getTop())) {
+          $rootScope.$broadcast('Keyboard.KEY_PRESSED_DEL');
+        }
         return false;
       });
 
