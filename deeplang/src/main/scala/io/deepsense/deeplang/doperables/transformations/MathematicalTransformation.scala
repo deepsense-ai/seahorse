@@ -75,7 +75,7 @@ case class MathematicalTransformation(
   override def report(executionContext: ExecutionContext): Report = {
     val table = Table("Mathematical Formula", "",
       Some(List("Formula", "Column name")),
-      Some(List(ColumnType.string, ColumnType.string)), None,
+      List(ColumnType.string, ColumnType.string), None,
       List(List(Some(formula)), List(Some(columnName))))
     Report(ReportContent(
       "Report for MathematicalTransformation", List(table)))

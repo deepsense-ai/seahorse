@@ -66,7 +66,7 @@ case class TrainedRidgeRegression(
       name = "Model weights",
       description = "",
       columnNames = Some(List("Column", "Weight")),
-      columnTypes = Some(List(ColumnType.string, ColumnType.numeric)),
+      columnTypes = List(ColumnType.string, ColumnType.numeric),
       rowNames = None,
       values = rows)
 
@@ -74,7 +74,7 @@ case class TrainedRidgeRegression(
       name = "Target column",
       description = "",
       columnNames = None,
-      columnTypes = Some(List(ColumnType.string)),
+      columnTypes = List(ColumnType.string),
       rowNames = None,
       values = List(List(Some(targetColumn))))
 
@@ -82,7 +82,7 @@ case class TrainedRidgeRegression(
       name = "Intercept",
       description = "",
       columnNames = None,
-      columnTypes = Some(List(ColumnType.numeric)),
+      columnTypes = List(ColumnType.numeric),
       rowNames = None,
       values = List(List(Some(model.intercept.toString))))
 

@@ -33,28 +33,28 @@ class TableJsonSpec extends WordSpec with Matchers with TableTestFactory with Re
       val columnTypes: List[ColumnType] = List(ColumnType.string, ColumnType.categorical)
       val values: List[List[Option[String]]] = List(List(Some("11"), None), List(None, Some("34")))
       "columnsNames specified" in {
-        val json = testTableWithLabels(Some(columnNames), Some(columnTypes), None, values).toJson
-        json shouldBe jsonTable(Some(columnNames), Some(columnTypes), None, values)
+        val json = testTableWithLabels(Some(columnNames), columnTypes, None, values).toJson
+        json shouldBe jsonTable(Some(columnNames), columnTypes, None, values)
       }
       "rowsNames specified" in {
-        val json = testTableWithLabels(None, None, Some(rowNames), values).toJson
-        json shouldBe jsonTable(None, None, Some(rowNames), values)
+        val json = testTableWithLabels(None, columnTypes, Some(rowNames), values).toJson
+        json shouldBe jsonTable(None, columnTypes, Some(rowNames), values)
       }
       "rowsNames, columnNames and columTypes specified" in {
         val json = testTableWithLabels(
-          Some(columnNames),Some(columnTypes), Some(rowNames), values).toJson
-        json shouldBe jsonTable(Some(columnNames),Some(columnTypes), Some(rowNames), values)
+          Some(columnNames),columnTypes, Some(rowNames), values).toJson
+        json shouldBe jsonTable(Some(columnNames),columnTypes , Some(rowNames), values)
       }
       "is empty" in {
         val json = testEmptyTable.toJson
-        json shouldBe jsonTable(None, None, None, List())
+        json shouldBe jsonTable(None, List(), None, List())
       }
     }
     "deserialize" when {
       "filled table" in {
         val columnNames: Some[List[String]] = Some(List("A", "B"))
         val rowNames: Some[List[String]] = Some(List("1", "2"))
-        val columnTypes: Some[List[ColumnType]] = Some(List(ColumnType.string, ColumnType.numeric))
+        val columnTypes: List[ColumnType] = List(ColumnType.string, ColumnType.numeric)
         val values: List[List[Option[String]]] =
           List(List(Some("a"), Some("1")), List(Some("b"), Some("2")))
         val json = jsonTable(columnNames, columnTypes, rowNames, values)
@@ -62,26 +62,22 @@ class TableJsonSpec extends WordSpec with Matchers with TableTestFactory with Re
           columnNames, columnTypes, rowNames, values)
       }
       "empty table" in {
-        val json = jsonTable(None, None, None, List())
-        json.convertTo[Table] shouldBe testTableWithLabels(None, None, None,List())
+        val json = jsonTable(None, List(), None, List())
+        json.convertTo[Table] shouldBe testTableWithLabels(None, List(), None,List())
       }
     }
   }
 
   private def jsonTable(
     columnsNames: Option[List[String]],
-    columnTypes: Option[List[ColumnType]],
+    columnTypes: List[ColumnType],
     rowsNames: Option[List[String]],
     values: List[List[Option[String]]]): JsObject = JsObject(Map[String, JsValue](
     "name" -> JsString(TableTestFactory.tableName),
     "blockType" -> JsString("table"),
     "description" -> JsString(TableTestFactory.tableDescription),
     "columnNames" -> toJsValue(columnsNames),
-    "columnTypes" -> toJsValue(
-      columnTypes match {
-        case Some(list) => Some(columnTypes.get.map(_.toString))
-        case None => None
-      }),
+    "columnTypes" -> toJsValue(Some(columnTypes.map(_.toString))),
     "rowNames" -> toJsValue(rowsNames),
     "values" ->
       JsArray(

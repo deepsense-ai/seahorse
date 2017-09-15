@@ -41,11 +41,10 @@ object ClassificationReporter extends Reporter with Logging {
         List(
           "Threshold",
           "Accuracy")),
-      Some(
-        List(
-          ColumnType.numeric,
-          ColumnType.numeric
-        )),
+      List(
+        ColumnType.numeric,
+        ColumnType.numeric
+      ),
       None,
       reportTableValues(accuracyByThreshold(dataFrameSize, metrics, predictionsAndLabels))
     )
@@ -58,11 +57,11 @@ object ClassificationReporter extends Reporter with Logging {
         List(
           "Threshold",
           "F-Measure")),
-      Some(
-        List(
-          ColumnType.numeric,
-          ColumnType.numeric
-        )),
+
+      List(
+        ColumnType.numeric,
+        ColumnType.numeric
+      ),
       None,
       reportTableValues(metrics.fMeasureByThreshold().collect())
     )
@@ -75,11 +74,10 @@ object ClassificationReporter extends Reporter with Logging {
         List(
           "False positive rate",
           "True positive rate")),
-      Some(
-        List(
-          ColumnType.numeric,
-          ColumnType.numeric
-        )),
+      List(
+        ColumnType.numeric,
+        ColumnType.numeric
+      ),
       None,
       reportTableValues(metrics.roc().collect())
     )
@@ -89,7 +87,7 @@ object ClassificationReporter extends Reporter with Logging {
       "summary",
       SummaryDescription,
       Some(SummaryColumnNames),
-      Some(SummaryColumnTypes),
+      SummaryColumnTypes,
       None,
       List(
         List(
@@ -153,7 +151,7 @@ object ClassificationReporter extends Reporter with Logging {
       CvSummaryTableName,
       CvSummaryDescription,
       Some(CvSummaryColumnNames),
-      Some(CvSummaryColumnTypes),
+      CvSummaryColumnTypes,
       Some(rowNames),
       rows)
 

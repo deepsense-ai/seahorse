@@ -58,7 +58,7 @@ case class TrainedRandomForestClassification(
       "Trained Random Forest Classification",
       model.toString,
       Some(List("Feature columns", "Target column")),
-      Some(List(ColumnType.string, ColumnType.string)),
+      List(ColumnType.string, ColumnType.string),
       None,
       rows)
 

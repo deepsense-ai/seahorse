@@ -51,7 +51,7 @@ object File {
   def prepareReportTable(reportParams: Map[String, String]): Table = {
     // reportParams is a map so order of the parameters is not guaranteed in the final report
     val (keys, values) = reportParams.unzip
-    Table("File details", "", None, Some(List(ColumnType.string)), Some(keys.toList),
+    Table("File details", "", None, List(ColumnType.string), Some(keys.toList),
       values.map(s => List(Option(s))).toList)
   }
 }

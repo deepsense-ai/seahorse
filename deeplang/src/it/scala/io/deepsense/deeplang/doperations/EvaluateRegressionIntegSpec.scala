@@ -126,15 +126,7 @@ class EvaluateRegressionIntegSpec extends DeeplangIntegTestSupport {
             "Mean Squared Error",
             "r2",
             "Root Mean Squared Error")),
-        Some(
-          List(
-            ColumnType.numeric,
-            ColumnType.numeric,
-            ColumnType.numeric,
-            ColumnType.numeric,
-            ColumnType.numeric,
-            ColumnType.numeric
-          )),
+        List.fill(6)(ColumnType.numeric),
         None,
         values
     )

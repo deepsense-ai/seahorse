@@ -80,7 +80,7 @@ trait DataFrameReportGenerator {
       s"${DataFrameReportGenerator.dataSampleTableName}. " +
         s"First $columnsNumber columns and ${rows.length} randomly chosen rows",
       Some(columnsNames),
-      Some(columnTypes),
+      columnTypes,
       None,
       values)
   }
@@ -91,7 +91,7 @@ trait DataFrameReportGenerator {
       s"${DataFrameReportGenerator.dataFrameSizeTableName}. " +
         s"Number of columns and number of rows in the DataFrame.",
       Some(List("Number of columns", "Number of rows")),
-      Some(List(ColumnType.numeric, ColumnType.numeric)),
+      List(ColumnType.numeric, ColumnType.numeric),
       None,
       List(List(Some(schema.fieldNames.length.toString), Some(dataFrameSize.toString))))
 

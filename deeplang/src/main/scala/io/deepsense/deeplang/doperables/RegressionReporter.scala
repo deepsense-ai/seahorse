@@ -39,7 +39,7 @@ object RegressionReporter extends Reporter with Logging {
       ReportName,
       ReportDescription,
       Some(ReportColumnNames),
-      Some(ReportColumnTypes),
+      ReportColumnTypes,
       None,
       rows)
     Report(ReportContent(ReportName, List(table)))
@@ -86,7 +86,7 @@ object RegressionReporter extends Reporter with Logging {
       CvReportTableName,
       CvReportDescription,
       Some(CvReportColumnNames),
-      Some(CvReportColumnTypes),
+      CvReportColumnTypes,
       Some(rowNames),
       rowsWithAverage)
 

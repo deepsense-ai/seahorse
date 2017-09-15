@@ -102,7 +102,7 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
       val tables: Map[String, Table] = report.content.tables
       val dataSampleTable = tables.get(DataFrameReportGenerator.dataSampleTableName).get
 
-      dataSampleTable.columnTypes.get shouldBe List(
+      dataSampleTable.columnTypes shouldBe List(
         ColumnType.string,
         ColumnType.boolean,
         ColumnType.numeric,

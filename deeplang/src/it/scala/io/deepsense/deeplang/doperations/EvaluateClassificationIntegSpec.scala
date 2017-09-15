@@ -122,11 +122,10 @@ class EvaluateClassificationIntegSpec extends DeeplangIntegTestSupport {
         List(
           "Threshold",
           "Accuracy")),
-      Some(
-        List(
-          ColumnType.numeric,
-          ColumnType.numeric
-        )),
+      List(
+        ColumnType.numeric,
+        ColumnType.numeric
+      ),
       None,
       List(
         List(Some("0.99"), Some("1")),
@@ -140,11 +139,10 @@ class EvaluateClassificationIntegSpec extends DeeplangIntegTestSupport {
         List(
           "Threshold",
           "F-Measure")),
-      Some(
-        List(
-          ColumnType.numeric,
-          ColumnType.numeric
-        )),
+      List(
+        ColumnType.numeric,
+        ColumnType.numeric
+      ),
       None,
       List(
         List(Some("0.99"), Some("1")),
@@ -158,11 +156,10 @@ class EvaluateClassificationIntegSpec extends DeeplangIntegTestSupport {
         List(
           "False positive rate",
           "True positive rate")),
-      Some(
-        List(
-          ColumnType.numeric,
-          ColumnType.numeric
-        )),
+      List(
+        ColumnType.numeric,
+        ColumnType.numeric
+      ),
       None,
       List(
         List(Some("0"), Some("0")),
@@ -179,12 +176,11 @@ class EvaluateClassificationIntegSpec extends DeeplangIntegTestSupport {
           "DataFrame Size",
           "AUC",
           "Logarithmic Loss")),
-      Some(
-        List(
-          ColumnType.numeric,
-          ColumnType.numeric,
-          ColumnType.numeric
-        )),
+      List(
+        ColumnType.numeric,
+        ColumnType.numeric,
+        ColumnType.numeric
+      ),
       None,
       List(
         List(Some("24"), Some("1"), Some("0.01005")))

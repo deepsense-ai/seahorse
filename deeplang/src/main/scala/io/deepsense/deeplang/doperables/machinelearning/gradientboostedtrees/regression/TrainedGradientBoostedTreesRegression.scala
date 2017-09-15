@@ -71,7 +71,7 @@ case class TrainedGradientBoostedTreesRegression(
         "Impurity",
         "Max depth",
         "Max bins")),
-      Some(List(
+      List(
         ColumnType.string,
         ColumnType.string,
         ColumnType.numeric,
@@ -79,7 +79,7 @@ case class TrainedGradientBoostedTreesRegression(
         ColumnType.numeric,
         ColumnType.numeric,
         ColumnType.numeric
-      )),
+      ),
       None,
       firstRow :: otherRows)
 

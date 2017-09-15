@@ -128,7 +128,7 @@ case class UntrainedGradientBoostedTreesRegression(
       "Parameters",
       "",
       Some(parametersList),
-      Some(parametersTypes),
+      parametersTypes,
       None,
       rows)
 

@@ -23,7 +23,7 @@ trait TableTestFactory {
 
   def testTableWithLabels(
       columnNames: Option[List[String]],
-      columnTypes: Option[List[ColumnType]],
+      columnTypes: List[ColumnType],
       rowNames: Option[List[String]],
       values: List[List[Option[String]]]): Table =
     Table(
@@ -35,7 +35,7 @@ trait TableTestFactory {
       values)
 
   def testEmptyTable: Table =
-    Table(TableTestFactory.tableName, TableTestFactory.tableDescription, None, None, None, List())
+    Table(TableTestFactory.tableName, TableTestFactory.tableDescription, None, List(), None, List())
 }
 
 object TableTestFactory extends TableTestFactory {

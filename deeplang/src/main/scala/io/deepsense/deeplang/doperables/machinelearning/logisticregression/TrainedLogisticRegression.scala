@@ -63,7 +63,7 @@ case class TrainedLogisticRegression(
     val table = Table(
       "Trained Logistic Regression", "",
       Some(List("Feature columns", "Target column")),
-      Some(List(ColumnType.string, ColumnType.string)),
+      List(ColumnType.string, ColumnType.string),
       None, rows)
 
     Report(ReportContent("Report for TrainedLogisticRegression", List(table)))
