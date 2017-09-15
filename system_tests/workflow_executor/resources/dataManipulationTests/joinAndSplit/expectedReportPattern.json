@@ -4,7 +4,7 @@
       "c21973ce-4bea-ba68-9d92-d4045d11dda2": {
         "status": "COMPLETED", 
         "results": [
-          "9553058d-5b6d-4024-a2a4-3d026a812a64"
+          "5616f37f-904b-4c31-a28c-7439f0e29d2c"
         ], 
         "error": null
       }, 
@@ -21,28 +21,28 @@
       "31f196ac-d3a5-3859-c678-27105f7a6d2b": {
         "status": "COMPLETED", 
         "results": [
-          "76989553-0314-49d7-ad73-d3c6078a7ca5"
+          "2eb121d1-f68e-4cb8-9ce3-a4ca0f3a5b61"
         ], 
         "error": null
       }, 
       "94d963d6-92e7-64b9-05e8-15661774d1bb": {
         "status": "COMPLETED", 
         "results": [
-          "12a51e04-f9d5-4086-ad20-aa3e8c085277", 
-          "296a4928-18c8-41db-868a-184392b81484"
+          "1ac794e7-ba80-4c79-b884-f823e3a76772", 
+          "1c952408-d729-4972-b830-172c6ff9a00c"
         ], 
         "error": null
       }, 
       "01ccc706-2912-c87d-5f02-9604a7db2b5f": {
         "status": "COMPLETED", 
         "results": [
-          "6733065c-d153-47e1-a7a8-b301f9ba410a"
+          "7cd822bd-6c3f-4564-8a19-10a5b126376f"
         ], 
         "error": null
       }
     }, 
     "resultEntities": {
-      "12a51e04-f9d5-4086-ad20-aa3e8c085277": {
+      "1ac794e7-ba80-4c79-b884-f823e3a76772": {
         "report": {
           "tables": [
             {
@@ -60,12 +60,6 @@
               ], 
               "rowNames": null, 
               "values": [
-                [
-                  "Bob", 
-                  "Dylan", 
-                  "1", 
-                  "15410"
-                ], 
                 [
                   "Bobert", 
                   "Tard", 
@@ -118,7 +112,7 @@
               "values": [
                 [
                   "4", 
-                  "7"
+                  "6"
                 ]
               ], 
               "name": "DataFrame Size"
@@ -128,7 +122,7 @@
             "salary": {
               "subtype": "continuous", 
               "statistics": {
-                "max": "15410", 
+                "max": "12880", 
                 "mean": "NaN", 
                 "min": "850"
               }, 
@@ -149,7 +143,7 @@
               "subtype": "continuous", 
               "statistics": {
                 "max": "3", 
-                "mean": "1.142857", 
+                "mean": "1.166667", 
                 "min": "0"
               }, 
               "name": "marriage_status", 
@@ -159,7 +153,7 @@
           "reportType": "DataFrameFull"
         }
       }, 
-      "76989553-0314-49d7-ad73-d3c6078a7ca5": {
+      "2eb121d1-f68e-4cb8-9ce3-a4ca0f3a5b61": {
         "report": {
           "tables": [
             {
@@ -246,8 +240,8 @@
           }, 
           "reportType": "DataFrameFull"
         }
-      }, 
-      "296a4928-18c8-41db-868a-184392b81484": {
+      },
+      "1c952408-d729-4972-b830-172c6ff9a00c": {
         "report": {
           "tables": [
             {
@@ -270,6 +264,12 @@
                   "Innkeeper", 
                   "0", 
                   null
+                ], 
+                [
+                  "Bob", 
+                  "Dylan", 
+                  "1", 
+                  "15410"
                 ], 
                 [
                   "Charlotte", 
@@ -299,7 +299,7 @@
               "values": [
                 [
                   "4", 
-                  "3"
+                  "4"
                 ]
               ], 
               "name": "DataFrame Size"
@@ -309,7 +309,7 @@
             "salary": {
               "subtype": "continuous", 
               "statistics": {
-                "max": "9820", 
+                "max": "15410", 
                 "mean": "NaN", 
                 "min": "6690"
               }, 
@@ -330,7 +330,7 @@
               "subtype": "continuous", 
               "statistics": {
                 "max": "1", 
-                "mean": "0.333333", 
+                "mean": "0.5", 
                 "min": "0"
               }, 
               "name": "marriage_status", 
@@ -340,7 +340,7 @@
           "reportType": "DataFrameFull"
         }
       }, 
-      "9553058d-5b6d-4024-a2a4-3d026a812a64": {
+      "5616f37f-904b-4c31-a28c-7439f0e29d2c": {
         "report": {
           "tables": [
             {
@@ -453,7 +453,7 @@
           "reportType": "DataFrameFull"
         }
       }, 
-      "6733065c-d153-47e1-a7a8-b301f9ba410a": {
+      "7cd822bd-6c3f-4564-8a19-10a5b126376f": {
         "report": {
           "tables": [
             {
@@ -587,7 +587,7 @@
           }, 
           "reportType": "DataFrameFull"
         }
-      }
+      } 
     }, 
     "error": null
   }
