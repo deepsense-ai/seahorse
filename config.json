@@ -118,7 +118,7 @@
           "./node_modules/ng-file-upload/dist/ng-file-upload-shim.min.js",
           "./node_modules/icheck/icheck.min.js",
           "./node_modules/angular-xeditable/xeditable.min.js",
-          "./node_modules/moment/moment.min.js"
+          "./node_modules/moment/min/moment.min.js"
         ],
         "css": [
           "./node_modules/bootstrap/dist/css/bootstrap.min.css",

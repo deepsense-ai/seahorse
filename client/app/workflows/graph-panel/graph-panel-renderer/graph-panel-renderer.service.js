@@ -299,8 +299,17 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
       }
     });
 
-    jsPlumb.bind('connectionDrag', () => {
+    jsPlumb.bind('connectionDrag', (connection) => {
       $rootScope.$broadcast(Edge.DRAG);
+
+      /* During detaching an edge, hints should be displayed as well */
+      if (internal.renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE &&
+        _.isArray(connection.endpoints)
+      ) {
+        let port = connection.endpoints[0];
+        ConnectionHinterService.showHints(port, internal.renderMode);
+        ConnectionHinterService.highlightOperations(port);
+      }
     });
   };
 
