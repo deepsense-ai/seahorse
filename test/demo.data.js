@@ -32,35 +32,40 @@ angular.module('test').
       }
     ];
 
-    var parameters = [
-      {
-        "parameters": {
-          "connection_string": {
-            "type": "string",
-            "description": "jdbc address",
-            "default": "jdbc:",
-            "required": true,
-            "validator": {
-              "type": "regex",
-              "configuration": {
-                "regex": "^jdbc:[a-z:/]*$"
-              }
+    var parameterSchemas = [
+      [
+        {
+          "name": "connection_string",
+          "type": "string",
+          "description": "jdbc address",
+          "default": "jdbc:",
+          "required": true,
+          "validator": {
+            "type": "regex",
+            "configuration": {
+              "regex": "^jdbc:[a-z:/]*$"
             }
-          },
-          "boolean_attr_test": {
-            "type": "boolean",
-            "description": "boolean attr test",
-            "default": true,
-            "required": true
-          },
-          "sample_multiple_choice": {
-            "type": "multipleChoice",
-            "description": "sample multiple choice description",
-            "default": ["choice2-some-example-text"],
-            "required": true,
-            "values": {
-              "choice1-long-text": {
-                "name_001": {
+          }
+        },
+        {
+          "name": "boolean_attr_test",
+          "type": "boolean",
+          "description": "boolean attr test",
+          "default": true,
+          "required": true
+        },
+        {
+          "name": "sample_multiple_choice",
+          "type": "multipleChoice",
+          "description": "sample multiple choice description",
+          "default": ["choice2-some-example-text"],
+          "required": true,
+          "values": [
+            {
+              "name": "choice1-long-text",
+              "schema": [
+                {
+                  "name": "name_001",
                   "type": "numeric",
                   "description": "sample sum field",
                   "default": 101,
@@ -71,14 +76,18 @@ angular.module('test').
                       "begin": 100,
                       "end": 102,
                       "beginIncluded": false,
-                      "endIncluded": false,
+                      "endIncluded": true,
                       "step": 1
                     }
                   }
                 }
-              },
-              "choice2-some-example-text": {
-                "name_002": {
+              ]
+            },
+            {
+              "name": "choice2-some-example-text",
+              "schema": [
+                {
+                  "name": "name_002",
                   "type": "string",
                   "description": "string param",
                   "default": "2+2+2",
@@ -90,103 +99,112 @@ angular.module('test').
                     }
                   }
                 }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "sample-multiplier",
+          "type": "multiplier",
+          "description": "This is a multiplier parameter.",
+          "required": true,
+          "values": [
+            {
+              "name": "http-field",
+              "type": "string",
+              "description": "sample1",
+              "default": "http://",
+              "required": true,
+              "validator": {
+                "type": "regex",
+                "configuration": {
+                  "regex": "^http://"
+                }
+              }
+            },
+            {
+              "name": "ftp-field",
+              "type": "string",
+              "description": "sample1",
+              "default": "ftp://",
+              "required": true,
+              "validator": {
+                "type": "regex",
+                "configuration": {
+                  "regex": "^ftp://"
+                }
               }
             }
-          },
-          "sample-multiplier": {
-            "type": "multiplier",
-            "description": "This is a multiplier parameter.",
-            "required": true,
-            "values": {
-              "http-field": {
-                "type": "string",
-                "description": "sample1",
-                "default": "http://",
-                "required": true,
-                "validator": {
-                  "type": "regex",
-                  "configuration": {
-                    "regex": "^http://"
-                  }
-                }
-              },
-              "ftp-field": {
-                "type": "string",
-                "description": "sample1",
-                "default": "ftp://",
-                "required": true,
-                "validator": {
-                  "type": "regex",
-                  "configuration": {
-                    "regex": "^ftp://"
-                  }
-                }
-              }
+          ]
+        }
+      ],
+      [
+        {
+          "name": "sample-selectors",
+          "type": "selector",
+          "description": "sample desc",
+          "port": 1,
+          "default": null,
+          "required": true,
+          "isSingle": false
+        },
+        {
+          "name": "sample-single-index-selector",
+          "type": "selector",
+          "description": "sample desc",
+          "port": 1,
+          "default": null,
+          "required": true,
+          "isSingle": true
+        },
+        {
+          "name": "sample-single-column-selector",
+          "type": "selector",
+          "description": "sample desc",
+          "port": 1,
+          "default": null,
+          "required": true,
+          "isSingle": true
+        },
+        {
+          "name": "condition_threshold",
+          "type": "numeric",
+          "description": "condition threshold",
+          "default": 6,
+          "required": true,
+          "validator": {
+            "type": "range",
+            "configuration": {
+              "begin": 10.1,
+              "end": 12.3,
+              "beginIncluded": true,
+              "endIncluded": true,
+              "step": 1.1
             }
           }
         }
-      },
-      {
-        "parameters": {
-          "sample-selectors": {
-            "type": "selector",
-            "description": "sample desc",
-            "port": 1,
-            "default": null,
-            "required": true,
-            "isSingle": false
-          },
-          "sample-single-index-selector": {
-            "type": "selector",
-            "description": "sample desc",
-            "port": 1,
-            "default": null,
-            "required": true,
-            "isSingle": true
-          },
-          "sample-single-column-selector": {
-            "type": "selector",
-            "description": "sample desc",
-            "port": 1,
-            "default": null,
-            "required": true,
-            "isSingle": true
-          },
-          "condition_threshold": {
-            "type": "numeric",
-            "description": "condition threshold",
-            "default": 6,
-            "required": true,
-            "validator": {
-              "type": "range",
-              "configuration": {
-                "begin": 10.1,
-                "end": 12.3,
-                "beginIncluded": true,
-                "endIncluded": true,
-                "step": 1.1
-              }
-            }
-          }
-        }
-      },
-      {
-        "parameters": {
-          "sample_snippet": {
-            "type": "snippet",
-            "description": "This is a snippet parameter.",
-            "language": "R",
-            "default": "m <- 1000",
-            "required": true
-          },
-          "sample_choice": {
-            "type": "choice",
-            "description": "sample choice description",
-            "default": "choice1",
-            "required": true,
-            "values": {
-              "choice1": {
-                "name11": {
+      ],
+      [
+        {
+          "name": "sample_snippet",
+          "type": "snippet",
+          "description": "This is a snippet parameter.",
+          "language": "R",
+          "default": "m <- 1000",
+          "required": true
+        },
+        {
+          "name": "sample_choice",
+          "type": "choice",
+          "description": "sample choice description",
+          "default": "choice1",
+          "required": true,
+          "values": [
+            {
+              "name": "choice1",
+              "schema": [
+                {
+                  "name": "name11",
                   "type": "numeric",
                   "description": "11 desc",
                   "default": 42,
@@ -202,7 +220,8 @@ angular.module('test').
                     }
                   }
                 },
-                "name21": {
+                {
+                  "name": "name21",
                   "type": "string",
                   "description": "21 desc",
                   "default": "word123",
@@ -214,39 +233,122 @@ angular.module('test').
                     }
                   }
                 }
-              },
-              "choice2": {
-                "name12": {
+              ]
+            },
+            {
+              "name": "choice2",
+              "schema": [
+                {
+                  "name": "name12",
                   "type": "boolean",
                   "description": "12 desc",
                   "default": true,
                   "required": false
                 },
-                "name22": {
+                {
+                  "name": "name22",
                   "type": "snippet",
                   "description": "22 desc",
                   "language": "R",
                   "default": "exit 42;",
                   "required": true
                 }
-              },
-              "choice3": {
-                "name31": {
+              ]
+            },
+            {
+              "name": "choice3",
+              "schema": [
+                {
+                  "name": "name31",
                   "type": "snippet",
                   "description": "31 desc",
                   "language": "R",
                   "default": "let codilime <- 42;",
                   "required": true
                 }
-              }
+              ]
             }
+          ]
+        }
+      ]
+    ];
+
+    var parameterValues = [
+      {
+        "connection_string": "jdbc:test/string/field",
+        "boolean_attr_test": false,
+        "sample_multiple_choice": {
+          "choice1-long-text": {
+            "name_001": 102
+          },
+          "choice2-some-example-text": {
+            "name_002": "2-2=0"
+          },
+          "sample-multiplier": [
+            {
+              "ftp-field": "ftp://www.test.tete/",
+              "http-field": "http://test.te/"
+            },
+            {
+              "ftp-field": "ftp://www.test210.tete/",
+              "http-field": "http://test_2222.test/"
+            }
+          ]
+        },
+        "sample-multiplier": [
+          {
+            "http-field": "http://42.pl/",
+            "ftp-field": "ftp://42.pl/"
+          },
+          {
+            "http-field": "http://42.0.pl/",
+            "ftp-field": "ftp://42.0.pl/"
+          }
+        ]
+      },
+      {
+        "sample-selectors": [
+          {
+            "type": "columnList",
+            "values": ["column1", "column2", "...", "column42"]
+          },
+          {
+            "type": "indexList",
+            "values": [0, 42]
+          },
+          {
+            "type": "typeList",
+            "values": ["numeric", "time interval", "categorical"]
+          }
+        ],
+        "sample-single-column-selector": {
+          "type": "column",
+          "value": "kozik"
+        },
+        "sample-single-index-selector": {
+          "type": "index",
+          "value": 42
+        }
+      },
+      {
+        "sample_snippet": "K <- 42;",
+        "sample_choice": {
+          "choice1": {
+            "name21": "word42"
+          },
+          "choice2": {
+            "name12": false,
+            "name22": "exit 42 * 2 - 42;"
+          },
+          "choice3": {
+            "name31": "let codilime <- 42 * 3 - 42 * 2;"
           }
         }
       }
     ];
 
     for (var i = 0; i < nodes.length; ++i) {
-      nodes[i].parameters = DeepsenseNodeParameters.factory.createParametersList({}, parameters[i].parameters);
+      nodes[i].parameters = DeepsenseNodeParameters.factory.createParametersList(parameterValues[i], parameterSchemas[i]);
     }
 
     return {
