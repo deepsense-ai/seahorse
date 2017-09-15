@@ -7,31 +7,27 @@
   >
     <div class="name">{{category.name}}</div>
     <div class="icon"> > </div>
-
     <div class="categories-list__categories-wrapper"
-         ng-if="$ctrl.showItems[$index] && category.catalog.length > 0"
-         ng-class="{
-          'left-orientation': !$ctrl.childrenPlacement[$index].catalog.right,
-          'right-orientation': $ctrl.childrenPlacement[$index].catalog.right,
-         }"
-         ng-style="{'top': $ctrl.childrenPlacement[$index].catalog.topShift}"
+      ng-if="$ctrl.showItems[$index] && category.catalog.length > 0"
+      ng-class="{
+        'left-orientation': !$ctrl.childrenPlacement[$index].catalog.right,
+        'right-orientation': $ctrl.childrenPlacement[$index].catalog.right,
+      }"
+      ng-style="{'top': $ctrl.childrenPlacement[$index].catalog.topShift}"
     >
-
       <categories-list
         categories="category.catalog"
-        select-operation="$ctrl.selectOperation"
         select-operation="$ctrl.selectOperation({operationId: operationId})"
       >
       </categories-list>
     </div>
-
     <div class="categories-list__operations-wrapper"
-         ng-if="$ctrl.showItems[$index] && category.items.length > 0"
-         ng-class="{
-          'left-orientation': !$ctrl.childrenPlacement[$index].operations.right,
-          'right-orientation': $ctrl.childrenPlacement[$index].operations.right,
-         }"
-         ng-style="{'top': $ctrl.childrenPlacement[$index].operations.topShift}"
+      ng-if="$ctrl.showItems[$index] && category.items.length > 0"
+      ng-class="{
+        'left-orientation': !$ctrl.childrenPlacement[$index].operations.right,
+        'right-orientation': $ctrl.childrenPlacement[$index].operations.right,
+      }"
+      ng-style="{'top': $ctrl.childrenPlacement[$index].operations.topShift}"
     >
       <category-operations-list
         operations="category.items"
@@ -39,6 +35,5 @@
       >
       </category-operations-list>
     </div>
-
   </div>
 </div>

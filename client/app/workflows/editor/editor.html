@@ -14,11 +14,11 @@
     workflow="$ctrl.workflow"
     on-connection-abort="$ctrl.onConnectionAbort(newNodeData)">
     <new-node class="flowchart-box__new-node"
-      id="node-new-node"
       ng-style="{
         left: $ctrl.newNodeData.x + 'px',
         top: $ctrl.newNodeData.y + 'px'
       }"
+      ng-if="$ctrl.newNodeData"
       on-select="$ctrl.onSelect(operationId)"
       jsplumb-draggable
     ></new-node>
