@@ -36,7 +36,7 @@ sc = SparkContext(
 
 sqlContext = SQLContext(sc)
 
-spark = SparkSession.builder.getOrCreate()
+spark = SparkSession(sc, gateway.entry_point.getNewSparkSession())
 
 def dataframe():
     # workflow_id, node_id and port_number are set in the kernel
