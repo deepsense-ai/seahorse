@@ -137,8 +137,8 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
     for (let nodeId in nodes) {
       if (nodes.hasOwnProperty(nodeId)) {
         let node = internal.getNodeById(nodeId);
-        that.addOutputPoint(node, nodes[nodeId].output, nodes[nodeId]);
-        that.addInputPoint(node, nodes[nodeId].input);
+        that._addOutputPoint(workflow, node, nodes[nodeId].output, nodes[nodeId]);
+        that._addInputPoint(node, nodes[nodeId].input);
       }
     }
   };
@@ -179,7 +179,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
     }
   };
 
-  that.addOutputPoint = function addOutputPoint(nodeElement, ports, nodeObj) {
+  that._addOutputPoint = function _addOutputPoint(workflow, nodeElement, ports, nodeObj) {
     let anchors = (ports.length === 1) ? ['BottomCenter'] : ['BottomLeft', 'BottomCenter', 'BottomRight'];
 
     for (let i = 0; i < ports.length; i++) {
@@ -220,7 +220,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
 
       port.canvas.addEventListener('mousedown', (event) => {
         if (internal.renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE) {
-          ConnectionHinterService.highlightOperations(port);
+          ConnectionHinterService.highlightOperations(workflow, port);
           event.stopPropagation();
         }
       });
@@ -235,7 +235,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
     }
   };
 
-  that.addInputPoint = function addInputPoint(node, ports) {
+  that._addInputPoint = function _addInputPoint(node, ports) {
     let anchors = (ports.length === 1) ? ['TopCenter'] : ['TopLeft', 'TopCenter', 'TopRight'];
 
     for (let i = 0; i < ports.length; i++) {
