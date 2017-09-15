@@ -16,17 +16,25 @@
 
 package io.deepsense.workflowexecutor.rabbitmq
 
-import akka.actor.Actor
+import akka.actor.{Props, Actor}
 
 import io.deepsense.commons.utils.Logging
-import io.deepsense.workflowexecutor.communication.mq.MQCommunication
 
-class PublisherActor(publisher: MQPublisher) extends Actor with Logging {
+class PublisherActor(topic: String, publisher: MQPublisher) extends Actor with Logging {
 
   override def receive: Receive = {
     case message: Any =>
-      logger.info(s"PublisherActor recv message ${message.getClass.getSimpleName} " +
-        s"from '${sender().path.name}'")
-      publisher.publish(MQCommunication.Topic.editor, message)
+      logger.info(
+        "PublisherActor for topic: {} receives message {} from '{}'",
+        topic,
+        message.getClass.getSimpleName,
+        sender().path.name)
+      publisher.publish(topic, message)
+  }
+}
+
+object PublisherActor {
+  def props(topic: String, publisher: MQPublisher): Props = {
+    PublisherActor.props(topic, publisher)
   }
 }

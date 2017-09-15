@@ -16,23 +16,17 @@
 
 package io.deepsense.workflowexecutor.rabbitmq
 
-import java.util.concurrent.TimeUnit
-
 import akka.actor.{Actor, ActorPath, ActorRef, Props}
-import akka.util.Timeout
 
 import io.deepsense.commons.utils.Logging
 import io.deepsense.models.workflows.Workflow
 import io.deepsense.workflowexecutor.communication.message.global._
 import io.deepsense.workflowexecutor.communication.mq.MQCommunication
 
-case class SeahorseChannelSubscriber(
+case class SeahorseTopicSubscriber(
   executionDispatcher: ActorRef,
-  communicationFactory: MQCommunicationFactory,
-  publisher: MQPublisher,
-  pythonGatewayListeningPort: () => Option[Int]) extends Actor with Logging {
+  communicationFactory: MQCommunicationFactory) extends Actor with Logging {
 
-  implicit val timeout: Timeout = Timeout(3, TimeUnit.SECONDS)
   var publishers: Map[Workflow.Id, ActorRef] = Map()
 
   override def receive(): Actor.Receive = {
@@ -40,34 +34,23 @@ case class SeahorseChannelSubscriber(
       val workflowIdString = workflowId.toString
       if (!publishers.contains(workflowId)) {
         val subscriberActor = context.actorOf(
-          Props(WorkflowChannelSubscriber(workflowId, executionDispatcher)), workflowIdString)
-        val publisher: MQPublisher =
-          communicationFactory.createCommunicationChannel(workflowIdString, subscriberActor)
-        val internalPublisher =
-          context.actorOf(Props(new PublisherActor(publisher)), s"publishers_$workflowId")
-        publishers += (workflowId -> internalPublisher)
+          Props(WorkflowTopicSubscriber(workflowId, executionDispatcher.path)),
+          MQCommunication.Actor.Subscriber.workflow(workflowId))
+        val publisher: ActorRef = communicationFactory.createCommunicationChannel(
+          workflowIdString,
+          subscriberActor,
+          MQCommunication.Actor.Publisher.workflow(workflowId))
+        publishers += (workflowId -> publisher)
       }
       val publisherPath: ActorPath = publishers(workflowId).path
       executionDispatcher ! WorkflowConnect(c, publisherPath)
-
-    case get: GetPythonGatewayAddress =>
-      pythonGatewayListeningPort() foreach { port =>
-        publisher.publish(
-          MQCommunication.Topic.kernel,
-          PythonGatewayAddress(List(Address("localhost", port))))
-      }
   }
 }
 
 case class WorkflowConnect(connect: Connect, publisherPath: ActorPath)
 
-object SeahorseChannelSubscriber {
-  def props(
-      executionDispatcher: ActorRef,
-      communicationFactory: MQCommunicationFactory,
-      publisher: MQPublisher,
-      pythonGatewayListeningPort: () => Option[Int]): Props = {
-    Props(new SeahorseChannelSubscriber(
-      executionDispatcher, communicationFactory, publisher, pythonGatewayListeningPort))
+object SeahorseTopicSubscriber {
+  def props(executionDispatcher: ActorRef, communicationFactory: MQCommunicationFactory): Props = {
+    Props(new SeahorseTopicSubscriber(executionDispatcher, communicationFactory))
   }
 }

@@ -16,7 +16,7 @@
 
 package io.deepsense.workflowexecutor.executor
 
-import akka.actor.{ActorRef, ActorSystem, Props}
+import akka.actor.{ActorSystem, Props}
 import com.rabbitmq.client.ConnectionFactory
 import com.thenewmotion.akka.rabbitmq.ConnectionActor
 import com.typesafe.config.ConfigFactory
@@ -87,17 +87,23 @@ case class SessionExecutor(
     val communicationFactory =
       MQCommunicationFactory(system, connection, messageSerializer, messageDeserializer)
 
-    def createSeahorseSubscriber(publisher: MQPublisher): ActorRef =
-      system.actorOf(
-        SeahorseChannelSubscriber.props(
-          executionDispatcher,
-          communicationFactory,
-          publisher,
-          pythonExecutionCaretaker.gatewayListeningPort _),
-        "communication")
-
+    val seahorseSubscriberActor = system.actorOf(
+      SeahorseTopicSubscriber.props(executionDispatcher, communicationFactory),
+      MQCommunication.Actor.Subscriber.seahorse)
     communicationFactory.createCommunicationChannel(
-      MQCommunication.Exchange.seahorse, createSeahorseSubscriber _)
+      MQCommunication.Topic.seahorse,
+      seahorseSubscriberActor,
+      MQCommunication.Actor.Publisher.seahorse)
+
+    val kernelSubscriberActor = system.actorOf(
+      NotebookKernelTopicSubscriber.props(
+        MQCommunication.Actor.Publisher.kernel,
+        pythonExecutionCaretaker.gatewayListeningPort _),
+      MQCommunication.Actor.Subscriber.kernel)
+    communicationFactory.createCommunicationChannel(
+      MQCommunication.Topic.kernel,
+      kernelSubscriberActor,
+      MQCommunication.Actor.Publisher.kernel)
 
     system.awaitTermination()
     cleanup(sparkContext, pythonExecutionCaretaker)

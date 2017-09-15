@@ -22,8 +22,9 @@ import akka.actor.{ActorRef, ActorSystem}
 import com.rabbitmq.client.AMQP.BasicProperties
 import com.rabbitmq.client.{Channel, DefaultConsumer, Envelope}
 import com.thenewmotion.akka.rabbitmq.{ChannelActor, CreateChannel, RichConnectionActor}
+
 import io.deepsense.workflowexecutor.communication.mq.MQCommunication
-import io.deepsense.workflowexecutor.communication.mq.serialization.{MessageMQSerializer, MessageMQDeserializer}
+import io.deepsense.workflowexecutor.communication.mq.serialization.{MessageMQDeserializer, MessageMQSerializer}
 
 case class MQCommunicationFactory(
   system: ActorSystem,
@@ -31,37 +32,40 @@ case class MQCommunicationFactory(
   mqMessageSerializer: MessageMQSerializer,
   mqMessageDeserializer: MessageMQDeserializer) {
 
-  val exchangeType = "direct"
+  val exchangeType = "topic"
 
-  def createCommunicationChannel(name: String, subscriber: ActorRef): MQPublisher = {
-    createSubscriber(name, SubscriberActor(subscriber, mqMessageDeserializer))
-    createPublisher(name)
+  def createCommunicationChannel(
+      topic: String,
+      subscriber: ActorRef,
+      publisherActorName: String): ActorRef = {
+    createSubscriber(topic, SubscriberActor(subscriber, mqMessageDeserializer))
+    val publisher = createPublisher(topic)
+    system.actorOf(
+      PublisherActor.props(topic, publisher),
+      publisherActorName)
+
   }
 
-  def createCommunicationChannel(name: String, subscriber: MQPublisher => ActorRef): Unit = {
-    val publisher = createPublisher(name)
-    createSubscriber(name, SubscriberActor(subscriber(publisher), mqMessageDeserializer))
-  }
-
-  private def createSubscriber(exchangeName: String, subscriber: SubscriberActor): Unit = {
-    val subscriberName = s"${exchangeName}_subscriber"
+  private def createSubscriber(topic: String, subscriber: SubscriberActor): Unit = {
+    val subscriberName = MQCommunication.subscriberName(topic)
     connection ! CreateChannel(
-      ChannelActor.props(setupSubscriber(exchangeName, subscriber)),
+      ChannelActor.props(setupSubscriber(topic, subscriber)),
       Some(subscriberName))
   }
 
   private def setupSubscriber(
-    exchangeName: String,
+    topic: String,
     subscriberActor: SubscriberActor)(
     channel: Channel, self: ActorRef): Unit = {
+    val queueName: String = MQCommunication.queueName(topic)
     val queue = channel.queueDeclare(
-      s"${exchangeName}_${MQCommunication.Topic.executor}",
+      queueName,
       false,
       false,
       true,
       new util.HashMap[String, AnyRef]()).getQueue
-    declareExchange(exchangeName, channel)
-    channel.queueBind(queue, exchangeName, MQCommunication.Topic.executor)
+    declareExchange(channel)
+    channel.queueBind(queue, MQCommunication.Exchange.seahorse, topic)
     val basicSubscriber = MQSubscriber(subscriberActor)
     val consumer = new DefaultConsumer(channel) {
       override def handleDelivery(
@@ -74,17 +78,17 @@ case class MQCommunicationFactory(
     channel.basicConsume(queue, true, consumer)
   }
 
-  private def createPublisher(exchangeName: String): MQPublisher = {
-    val publisherName = s"${exchangeName}_publisher"
-  val channelActor: ActorRef =
-    connection.createChannel(ChannelActor.props(setupPublisher(exchangeName)), Some(publisherName))
-    MQPublisher(exchangeName, mqMessageSerializer, channelActor)
+  private def createPublisher(topic: String): MQPublisher = {
+    val publisherName = MQCommunication.publisherName(topic)
+    val channelActor: ActorRef =
+      connection.createChannel(ChannelActor.props(setupPublisher()), Some(publisherName))
+    MQPublisher(topic, mqMessageSerializer, channelActor)
   }
 
-  private def setupPublisher(exchangeName: String)(channel: Channel, self: ActorRef): Unit =
-    declareExchange(exchangeName, channel)
+  private def setupPublisher()(channel: Channel, self: ActorRef): Unit =
+    declareExchange(channel)
 
-  private def declareExchange(exchangeName: String, channel: Channel) = {
-    channel.exchangeDeclare(exchangeName, exchangeType)
+  private def declareExchange(channel: Channel) = {
+    channel.exchangeDeclare(MQCommunication.Exchange.seahorse, exchangeType)
   }
 }

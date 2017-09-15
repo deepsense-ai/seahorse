@@ -16,16 +16,39 @@
 
 package io.deepsense.workflowexecutor.communication.mq
 
+import io.deepsense.models.workflows.Workflow
+
 object MQCommunication {
   val mqActorSystemName = "rabbitmq"
+
+  def subscriberName(topic: String): String = s"${topic}_subscriber"
+  def publisherName(topic: String): String = s"${topic}_publisher"
+  def queueName(topic: String): String = s"${topic}_to_executor"
+
+  object Actor {
+
+    object Publisher {
+      val seahorse = prefixedName("seahorse")
+      val kernel = prefixedName("kernel")
+      def workflow(id: Workflow.Id): String = prefixedName(id.toString)
+      private[this] def prefixedName = name("publisher") _
+    }
+
+    object Subscriber {
+      val seahorse = prefixedName("seahorse")
+      val kernel = prefixedName("kernel")
+      def workflow(id: Workflow.Id): String = prefixedName(id.toString)
+      private[this] def prefixedName = name("subscriber") _
+    }
+    private[this] def name(prefix: String)(suffix: String): String = s"${prefix}_$suffix"
+  }
 
   object Exchange {
     val seahorse = "seahorse"
   }
 
   object Topic {
-    val editor = "to_editor"
-    val executor = "to_executor"
-    val kernel = "to_kernel"
+    val kernel = "kernel"
+    val seahorse = "seahorse"
   }
 }

@@ -30,7 +30,6 @@ import akka.actor.ActorSystem
 import com.typesafe.config.ConfigFactory
 import spray.json._
 
-import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.models.{Entity, Id}
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.CustomOperationExecutor.Result
@@ -44,7 +43,6 @@ import io.deepsense.workflowexecutor.communication.message.global.Connect
 import io.deepsense.workflowexecutor.communication.message.workflow.ExecutionStatus
 import io.deepsense.workflowexecutor.exception.{UnexpectedHttpResponseException, WorkflowExecutionException}
 import io.deepsense.workflowexecutor.session.storage.DataFrameStorageImpl
-import io.deepsense.workflowexecutor.{ExecutionParams, WorkflowDownloadClient, WorkflowExecutorActor}
 import io.deepsense.workflowexecutor._
 
 /**
