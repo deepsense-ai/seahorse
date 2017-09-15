@@ -97,7 +97,10 @@ class WorkflowNodeExecutorActor(
 
   def collectReports(results: Map[Entity.Id, DOperable]): Map[Entity.Id, ReportContent] = {
     logger.debug(s"Collecting reports for ${node.id}")
-    results.mapValues(_.report(executionContext).content)
+    results.map {
+      case (id, dOperable) =>
+        (id, dOperable.report(executionContext).content)
+    }
   }
 
   def executeOperation(): Vector[DOperable] = {
