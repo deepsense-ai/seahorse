@@ -16,7 +16,6 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.models
 
-import org.apache.spark.ml
 import org.apache.spark.ml.feature.{Bucketizer => SparkQuantileDiscretizerModel, QuantileDiscretizer => SparkQuantileDiscretizer}
 
 import io.deepsense.deeplang.ExecutionContext
@@ -25,26 +24,22 @@ import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSumma
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
 import io.deepsense.deeplang.doperables.serialization.SerializableSparkModel
 import io.deepsense.deeplang.params.Param
-import io.deepsense.deeplang.params.wrappers.spark.DoubleArrayParamWrapper
 
 class QuantileDiscretizerModel
   extends SparkSingleColumnModelWrapper[SparkQuantileDiscretizerModel, SparkQuantileDiscretizer] {
 
-  val splits = new DoubleArrayParamWrapper[
-      ml.param.Params { val splits: ml.param.DoubleArrayParam }](
-    name = "splits",
-    description = "Split points for mapping continuous features into buckets.",
-    sparkParamGetter = _.splits)
-  setDefault(splits, Array(Double.NegativeInfinity, 0, Double.PositiveInfinity))
-
-  override protected def getSpecificParams: Array[Param[_]] = Array(splits)
+  /*
+   * Parameter `splits` is not wrapped because it violates a design assumption, that every parameter
+   * of a model is also a parameter of a corresponding estimator.
+   */
+  override protected def getSpecificParams: Array[Param[_]] = Array()
 
   override def report: Report = {
     val summary =
       List(
         SparkSummaryEntry(
           name = "splits",
-          value = sparkModel.splits,
+          value = sparkModel.getSplits,
           description = "Split points for mapping continuous features into buckets."))
 
     super.report
