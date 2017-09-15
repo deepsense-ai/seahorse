@@ -78,6 +78,9 @@ class CodeExecutor(object):
                                                      node_id,
                                                      CodeExecutor.OUTPUT_PORT_NUMBER,
                                                      output_data_frame._jdf)
+        else:
+            raise Exception('Operation returned {} instead of a DataFrame.'.format(output_data_frame))
+
     # noinspection PyPep8Naming
     def isValid(self, custom_operation_code):
         def is_transform_function(field):
