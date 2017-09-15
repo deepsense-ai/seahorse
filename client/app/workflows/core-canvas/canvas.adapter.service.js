@@ -35,25 +35,70 @@ const POSITION_MAP = {
 };
 
 class AdapterService {
-  constructor() {
-    this.container = undefined;
+  /*@ngInject*/
+  constructor(WorkflowService) {
+    this.WorkflowService = WorkflowService;
   }
 
   initialize(container) {
     this.container = container;
     jsPlumb.setContainer(container);
+    this.bindEvents();
+  }
+
+  bindEvents() {
+    jsPlumb.bind('connection', (info, originalEvent) => {
+      if (!originalEvent) {
+        return;
+      }
+
+      const data = {
+        'from': {
+          'nodeId': info.sourceId.slice('node-'.length),
+          'portIndex': info.sourceEndpoint.getParameter('portIndex')
+        },
+        'to': {
+          'nodeId': info.targetId.slice('node-'.length),
+          'portIndex': info.targetEndpoint.getParameter('portIndex')
+        }
+      };
+      const edge = this.workflow.createEdge(data);
+      this.workflow.addEdge(edge);
+      //TODO remove, as it shouldn't be here
+      this.WorkflowService.updateEdgesStates();
+
+      info.connection.setParameter('edgeId', edge.id);
+    });
+
+    jsPlumb.bind('connectionDetached', (info, originalEvent) => {
+      if (this.workflow) {
+        const edge = this.workflow.getEdgeById(info.connection.getParameter('edgeId'));
+        if (edge && info.targetEndpoint.isTarget && info.sourceEndpoint.isSource && originalEvent) {
+          this.workflow.removeEdge(edge);
+        }
+      }
+    });
+
+    jsPlumb.bind('connectionMoved', (info) => {
+      const edge = this.workflow.getEdgeById(info.connection.getParameter('edgeId'));
+      if (edge) {
+        this.workflow.removeEdge(edge);
+      }
+    });
+
+    jsPlumb.bind('connectionDrag', (connection) => {
+      //TODO Add highlight
+    });
   }
 
   setZoom(zoom) {
     jsPlumb.setZoom(zoom);
   }
 
-  setItems(items) {
-    this.items = items;
-  }
-
-  setEdges(edges) {
-    this.edges = edges;
+  setWorkflow(workflow) {
+    this.workflow = workflow;
+    this.edges = workflow.getEdges();
+    this.items = workflow.getNodes();
   }
 
   render() {
@@ -62,19 +107,18 @@ class AdapterService {
     jsPlumb.repaintEverything();
   }
 
-  renderPorts(ports) {
-    for (const nodeId in ports) {
-      if (ports.hasOwnProperty(nodeId)) {
+  renderPorts(nodes) {
+    for (const nodeId in nodes) {
+      if (nodes.hasOwnProperty(nodeId)) {
         const nodeElement = this.container.querySelector(`#node-${nodeId}`);
-        const nodeObject = ports[nodeId];
-        this.addOutputPoints(nodeElement, nodeObject.output, ports[nodeId]);
-        this.addInputPoints(nodeElement, nodeObject.input);
+        const nodeObject = nodes[nodeId];
+        this.renderOutputPorts(nodeElement, nodeObject.output, nodes[nodeId]);
+        this.renderInputPorts(nodeElement, nodeObject.input);
       }
     }
   }
 
-  //TODO rename
-  addOutputPoints (nodeElement, ports, nodeObj) {
+  renderOutputPorts (nodeElement, ports, nodeObj) {
     ports.forEach((port) => {
       const jsPlumbPort = jsPlumb.addEndpoint(nodeElement, OUTPUT_STYLE, {
         anchor: POSITION_MAP.OUTPUT[port.portPosition],
@@ -86,8 +130,7 @@ class AdapterService {
     });
   };
 
-  //TODO rename
-  addInputPoints(node, ports) {
+  renderInputPorts(node, ports) {
     ports.forEach((port) => {
       const jsPlumbPort = jsPlumb.addEndpoint(node, INPUT_STYLE, {
         anchor: POSITION_MAP.INPUT[port.portPosition],
@@ -109,8 +152,8 @@ class AdapterService {
         const edge = edges[id];
         const connection = jsPlumb.connect({
           uuids: [
-            outputPrefix + '-' + edge.startPortId + '-' + edge.startNodeId,
-            inputPrefix + '-' + edge.endPortId + '-' + edge.endNodeId
+            `${outputPrefix}-${edge.startPortId}-${edge.startNodeId}`,
+            `${inputPrefix}-${edge.endPortId}-${edge.endNodeId}`
           ],
           detachable: true
         });

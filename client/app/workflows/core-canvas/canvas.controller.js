@@ -43,8 +43,7 @@ class CanvasController {
     });
 
     this.CanvasService.initialize(jsPlumbContainer, slidingWindow);
-    this.CanvasService.setCollection(this.workflow.getNodes());
-    this.CanvasService.setEdges(this.workflow.getEdges());
+    this.CanvasService.setWorkflow(this.workflow);
 
     //this must be done in the next digest cycle because of ng-repeat are not available
     this.$timeout(()=>{
