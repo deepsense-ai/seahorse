@@ -1,5 +1,6 @@
 'use strict';
 
+/* jshint ignore:start */
 var _ues = {
   host: 'deepsense.userecho.com',
   forum: '45446',
@@ -27,21 +28,38 @@ var _ues = {
   };
   s.parentNode.insertBefore(_ue, s);
 })();
+/* jshint ignore:end */
 
 (function cache() {
   var FEEDBACK_WINDOW_TIMEOUT = 240000;
+  var ON_BLUR = false;
   var timeout;
   var closeTimeout;
-  var hasCookie = function () {
-    "use strict";
 
-    return document.cookie.indexOf('feedback-closed=1') > 0;
+  var getCurrentDate = function getCurrentDate () {
+    return moment().year(moment().year() + 1).toDate().toUTCString();
+  };
+  var hasBeenShowed = function hasBeenShowed () {
+    return localStorage.getItem('feedback-showed');
+  };
+  var hasBeenClosed = function hasBeenClosed () {
+    return localStorage.getItem('feedback-closed');
+  };
+  var setClosed = function setClosed() {
+    clearTimeout(closeTimeout);
+
+    localStorage.setItem('feedback-closed', getCurrentDate());
+  };
+  var setShowed = function setShowed () {
+    localStorage.setItem('feedback-showed', getCurrentDate());
   };
   var showFeedbackWindow = function showFeedbackWindow() {
-    if (!hasCookie()) {
+    if (!hasBeenClosed() && !hasBeenShowed()) {
       UE.Popin.show();
 
-      listenToClose().done(setCookie);
+      listenToClose().done(setClosed);
+
+      setShowed();
     }
   };
   var listenToClose = function listenToClose() {
@@ -57,12 +75,6 @@ var _ues = {
 
     return def.promise();
   };
-  var setCookie = function setCookie() {
-    clearTimeout(closeTimeout);
-
-    document.cookie = 'feedback-closed=1;expires=' +
-      moment().year(moment().year() + 1).toDate().toUTCString();
-  };
   var blurListener = function blurListener() {
     clearTimeout(timeout);
 
@@ -71,5 +83,7 @@ var _ues = {
 
   timeout = setTimeout(showFeedbackWindow, FEEDBACK_WINDOW_TIMEOUT);
 
-  window.addEventListener('blur', blurListener);
+  if (ON_BLUR) {
+    window.addEventListener('blur', blurListener);
+  }
 })();

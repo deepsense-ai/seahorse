@@ -22,7 +22,9 @@
     "_": true,
     "$": true,
     "Highcharts": true,
-    "moment": true
+    "moment": true,
+    "ga": true,
+    "UE": true
   },
   "globalstrict": false,
   "jasmine": true,
