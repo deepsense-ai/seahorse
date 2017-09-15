@@ -1,0 +1,7 @@
+<div>
+  <select id="attr-{{ ::paramName }}" class="form-control"
+          ng-model="choices[paramName]"
+          ng-options="paramName as paramName for (paramName, paramObject) in ::paramSchemas[paramName].values"></select>
+
+  <div id="attr-view-children-{{ ::paramName }}" class="nested-attributes-view"></div>
+</div>

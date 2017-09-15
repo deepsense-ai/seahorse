@@ -42,7 +42,13 @@
           },
           "note": "Other note",
           "parameters": {
-            "sample_snippet": "R <- 42"
+            "sample_snippet": "R <- 42",
+            "sample_choice": {
+              "choice2": {
+                "name12": true,
+                "name22": "K <- 42"
+              }
+            }
           }
         }
       ],
@@ -84,6 +90,7 @@
           "progress": {
             "current": 312,
             "total": 542124
+
           }
         },
         "edc02822-b8ee-4225-b070-f892a87dbf11": {

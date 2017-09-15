@@ -4,17 +4,10 @@
     <button type="button" class="close" data-dismiss="alert" aria-label="Close" ng-click="closePanel()"><span aria-hidden="true">&times;</span></button>
   </div>
   <div class="panel-body">
-    <div class="panel panel-default" ng-repeat="(parameterName, parameterValue) in experiment.getSelectedNode().parameters">
-      <div class="panel-heading"><label for="attr-{{ ::parameterName }}">{{ ::parameterName }}</label></div>
-      <div class="panel-body">
-        <attributes-value-view
-          param-name="parameterName"
-          param-schemas="experiment.getParametersSchemaById(experiment.getSelectedNode().operationId)"
-          param-values="experiment.getSelectedNode().parameters">
-        </attributes-value-view>
-      </div>
-    </div>
-    <div class="lead" ng-if="!experiment.getSelectedNode().parameters">No parameters</div>
+    <attributes-list
+      param-schemas="experiment.getParametersSchemaById(experiment.getSelectedNode().operationId)"
+      param-values="experiment.getSelectedNode().parameters"
+    ></attributes-list>
   </div>
   <div class="panel-footer">
     {{ experiment.getSelectedNode().description }}

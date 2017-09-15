@@ -20,6 +20,8 @@ require('./experiment-editor/graph-panel/graph-panel-renderer.js').inject(experi
 require('./experiment-editor/catalog-panel/catalog-panel.js').inject(experiments);
 require('./experiment-editor/catalog-panel/catalog-panel-operation.js').inject(experiments);
 require('./experiment-editor/attributes-panel/attributes-panel.js').inject(experiments);
-require('./experiment-editor/attributes-panel/attributes-value-view.js').inject(experiments);
+require('./experiment-editor/attributes-panel/attributes-list.js').inject(experiments);
+require('./experiment-editor/attributes-panel/attribute-value.js').inject(experiments);
+require('./experiment-editor/attributes-panel/attribute-choice-type.js').inject(experiments);
 
 module.exports = experiments;

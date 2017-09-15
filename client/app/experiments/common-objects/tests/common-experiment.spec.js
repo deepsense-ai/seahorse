@@ -22,9 +22,7 @@ describe('experiment', () => {
             'x': 100,
             'y': 200
           },
-          'parameters': {
-            'param': 1
-          }
+          'parameters': {}
         },
         {
           'id': '102',
@@ -37,9 +35,7 @@ describe('experiment', () => {
             'x': 200,
             'y': 300
           },
-          'parameters': {
-            'column_name': 'other'
-          }
+          'parameters': {}
         }
       ],
       initOperations = {
@@ -58,7 +54,8 @@ describe('experiment', () => {
                 'portIndex': 0
               }
             ]
-          }
+          },
+          'parameters': {}
         },
         'o2': {
           'id': 'o2',
@@ -75,7 +72,8 @@ describe('experiment', () => {
                 'portIndex': 0
               }
             ]
-          }
+          },
+          'parameters': {}
         }
       },
       initConnections = [
@@ -107,7 +105,7 @@ describe('experiment', () => {
   });
 
 
-  it('should have serialaze method', () => {
+  it('should have serialize method', () => {
    let experiment = new Experiment();
     experiment.setData({
       'id': initId,

@@ -18,10 +18,11 @@ function OperationAttributesView() {
       };
 
       scope.$watch('node', function() {
-        var container = element[0],
+        let container = element[0],
             header = container.querySelector('.panel-heading'),
             body = container.querySelector('.panel-body'),
             footer = container.querySelector('.panel-footer');
+
         scope.$applyAsync(() => {
           angular.element(body).css('height', (container.offsetHeight - header.offsetHeight - footer.offsetHeight - 2) + 'px');
         });

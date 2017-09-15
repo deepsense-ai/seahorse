@@ -63,9 +63,42 @@ function Experiment() {
     internal.description = data.description;
   };
 
+  internal.assignParamDefaults = function(result, paramValues, paramSchemas) {
+    for (let paramName in paramSchemas) {
+      if (paramName in paramValues) {
+        switch (paramSchemas[paramName].type) {
+          case 'choice':
+            let choice = Object.keys(paramValues[paramName])[0];
+            result[paramName] = {};
+            result[paramName][choice] = internal.assignParamDefaults({}, paramValues[paramName][choice], paramSchemas[paramName].values[choice]);
+            break;
+          default:
+            result[paramName] = paramValues[paramName];
+            break;
+        }
+      } else {
+        switch (paramSchemas[paramName].type) {
+          case 'choice':
+            result[paramName] = {};
+            let defaultChoice = paramSchemas[paramName].default;
+            result[paramName][defaultChoice] = internal.assignParamDefaults({}, {}, paramSchemas[paramName].values[defaultChoice]);
+            break;
+          default:
+            result[paramName] = paramSchemas[paramName].default;
+            break;
+        }
+      }
+    }
+
+    return result;
+  };
+
   that.createNodes = function createNodes(nodes, operations) {
     for (var i = 0; i < nodes.length; i++) {
-      var operation = operations[nodes[i].operation.id];
+      var operation = operations[nodes[i].operation.id],
+        paramValues = nodes[i].parameters || {},
+        paramSchemas = operations[nodes[i].operation.id].parameters || {};
+
       var node = new GraphNode({
         id: nodes[i].id,
         name: operation.name,
@@ -76,8 +109,9 @@ function Experiment() {
         y: nodes[i].ui.y,
         input: operation.ports.input,
         output: operation.ports.output,
-        parameters: nodes[i].parameters
+        parameters: internal.assignParamDefaults({}, paramValues, paramSchemas)
       });
+
       internal.nodes[nodes[i].id] = node;
     }
   };

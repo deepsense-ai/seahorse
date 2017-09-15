@@ -6,22 +6,21 @@
 
 'use strict';
 
-function AttributesValueView() {
+function AttributesList() {
   return {
     restrict: 'E',
-    templateUrl: 'app/experiments/experiment-editor/attributes-panel/attributes-value-view.html',
+    templateUrl: 'app/experiments/experiment-editor/attributes-panel/attributes-list.html',
     replace: true,
     scope: {
-      'paramName': '=',
       'paramSchemas': '=',
       'paramValues': '='
     },
     link: function (scope, element, attrs) {
-
+      scope.noParamValues = (Object.keys(scope.paramSchemas).length === 0);
     }
   };
 }
 
 exports.inject = function (module) {
-  module.directive('attributesValueView', AttributesValueView);
+  module.directive('attributesList', AttributesList);
 };
