@@ -13,13 +13,13 @@ import io.deepsense.deeplang.parameters.exceptions._
 
 class ParametersValidationSuite extends FunSuite {
 
-  /** Holder that always throws ValidationException, regardless of held value. */
-  case class MockParameterHolder(
+  /** Parameter that always throws ValidationException, regardless of held value. */
+  case class MockParameter(
       description: String,
       default: Option[Nothing],
       required: Boolean)
-    extends ParameterHolder {
-    type HeldParameter = Null
+    extends Parameter {
+    type HeldValue = Null
     val parameterType = null
 
     def value = Some(null)
@@ -32,22 +32,22 @@ class ParametersValidationSuite extends FunSuite {
   }
 
   test("Validation of valid parameters is possible") {
-    val holder1 = NumericParameterHolder("example1", None, true, RangeValidator(3, 4))
-    val holder2 = StringParameterHolder("example2", Some("default"), true, RegexValidator("abc".r))
+    val param1 = NumericParameter("example1", None, true, RangeValidator(3, 4))
+    val param2 = StringParameter("example2", Some("default"), true, RegexValidator("abc".r))
 
-    holder1.value = Some(3.5)
-    holder2.value = Some("abc")
+    param1.value = Some(3.5)
+    param2.value = Some("abc")
 
-    val parametersSchema = ParametersSchema("x" -> holder1, "y" -> holder2)
+    val parametersSchema = ParametersSchema("x" -> param1, "y" -> param2)
     parametersSchema.validate
   }
 
   test("Validation of invalid parameter using range validator should throw an exception") {
     val exception = intercept[OutOfRangeException] {
-      val holder = NumericParameterHolder("description", None, true, RangeValidator(3, 4))
-      holder.value = Some(4.1)
+      val param = NumericParameter("description", None, true, RangeValidator(3, 4))
+      param.value = Some(4.1)
 
-      val parametersSchema = ParametersSchema("x" -> holder)
+      val parametersSchema = ParametersSchema("x" -> param)
       parametersSchema.validate
     }
     assert(exception == OutOfRangeException(4.1, 3, 4))
@@ -56,10 +56,10 @@ class ParametersValidationSuite extends FunSuite {
   test("Validation of invalid parameter using range with step should throw an exception") {
     val exception = intercept[OutOfRangeWithStepException] {
       val validator = RangeValidator(3, 5.4, step = Some(1.2))
-      val holder = NumericParameterHolder("description", None, true, validator)
-      holder.value = Some(4.1)
+      val param = NumericParameter("description", None, true, validator)
+      param.value = Some(4.1)
 
-      val parametersSchema = ParametersSchema("x" -> holder)
+      val parametersSchema = ParametersSchema("x" -> param)
       parametersSchema.validate
     }
     assert(exception == OutOfRangeWithStepException(4.1, 3, 5.4, 1.2))
@@ -85,8 +85,8 @@ class ParametersValidationSuite extends FunSuite {
 
   test("Missing required parameter should throw an exception") {
     val exception = intercept[ParameterRequiredException] {
-      val holder = StringParameterHolder("description", None, true, RegexValidator("a".r))
-      val parametersSchema = ParametersSchema("x" -> holder)
+      val param = StringParameter("description", None, true, RegexValidator("a".r))
+      val parametersSchema = ParametersSchema("x" -> param)
       parametersSchema.validate
     }
     assert(exception == ParameterRequiredException(ParameterType.String))
@@ -96,31 +96,19 @@ class ParametersValidationSuite extends FunSuite {
     val regex = "a".r
     val exception = intercept[MatchException] {
       val validator = RegexValidator(regex)
-      val holder = StringParameterHolder("description", None, true, validator)
-      holder.value = Some("abc")
+      val param = StringParameter("description", None, true, validator)
+      param.value = Some("abc")
 
-      val parametersSchema = ParametersSchema("x" -> holder)
+      val parametersSchema = ParametersSchema("x" -> param)
       parametersSchema.validate
     }
     assert(exception == MatchException("abc", regex))
   }
 
-  test("Validation of choice parameter with invalid parameter should throw an exception") {
-    intercept[ValidationException] {
-      val holder = MockParameterHolder("example", None, true)
-      val choiceSchema = ParametersSchema("x" -> holder)
-      val possibleChoices = Map("onlyChoice" -> choiceSchema)
-
-      val choice = ChoiceParameterHolder("choice", None, true, possibleChoices)
-      choice.fill("onlyChoice", _ => { })
-      choice.validate
-    }
-  }
-
   test("Choosing nonexistent choice in single choice parameter should throw an exception") {
     intercept[IllegalChoiceException] {
       val possibleChoices = Map.empty[String, ParametersSchema]
-      val choice = ChoiceParameterHolder("choice", None, true, possibleChoices)
+      val choice = ChoiceParameter("choice", None, true, possibleChoices)
       choice.fill("nonexistent", x => { })
     }
   }
@@ -128,28 +116,40 @@ class ParametersValidationSuite extends FunSuite {
   test("Choosing nonexistent choice in multiple choice parameter should throw an exception") {
     intercept[IllegalChoiceException] {
       val possibleChoices = Map.empty[String, ParametersSchema]
-      val choice = MultipleChoiceParameterHolder("choice", None, true, possibleChoices)
+      val choice = MultipleChoiceParameter("choice", None, true, possibleChoices)
       choice.fill(Map("nonexistent" -> (x => { })))
+    }
+  }
+
+  test("Validation of choice parameter with invalid value should throw an exception") {
+    intercept[ValidationException] {
+      val param = MockParameter("example", None, true)
+      val choiceSchema = ParametersSchema("x" -> param)
+      val possibleChoices = Map("onlyChoice" -> choiceSchema)
+
+      val choice = ChoiceParameter("choice", None, true, possibleChoices)
+      choice.fill("onlyChoice", _ => { })
+      choice.validate
     }
   }
 
   test("Validation of multipleChoice parameter with invalid parameter should throw an exception") {
     intercept[ValidationException] {
-      val holder = MockParameterHolder("example", None, true)
-      val choiceSchema = ParametersSchema("x" -> holder)
+      val param = MockParameter("example", None, true)
+      val choiceSchema = ParametersSchema("x" -> param)
       val possibleChoices = Map("onlyChoice" -> choiceSchema)
 
-      val multipleChoices = MultipleChoiceParameterHolder("choice", None, true, possibleChoices)
+      val multipleChoices = MultipleChoiceParameter("choice", None, true, possibleChoices)
       multipleChoices.fill(Map("onlyChoice" -> (x => { })))
       multipleChoices.validate
     }
   }
 
-  test("Validation of multiplicator parameter with invalid parameter should throw an exception") {
+  test("Validation of multiplier parameter with invalid parameter should throw an exception") {
     intercept[ValidationException] {
-      val holder = MockParameterHolder("example", None, true)
-      val schema = ParametersSchema("x" -> holder)
-      val multiplicator = MultiplicatorParameterHolder("description", None, true, schema)
+      val param = MockParameter("example", None, true)
+      val schema = ParametersSchema("x" -> param)
+      val multiplicator = MultiplierParameter("description", None, true, schema)
 
       multiplicator.fill(List(x => { }, x => { }))
       multiplicator.validate

@@ -11,7 +11,7 @@ import io.deepsense.deeplang.parameters.exceptions.IllegalChoiceException
 /**
  * Represents ParameterHolder with possible choices.
  */
-trait HasChoice extends ParameterHolder {
+trait HasChoice extends Parameter {
   val options: Map[String, ParametersSchema]
 
   /**
@@ -19,8 +19,8 @@ trait HasChoice extends ParameterHolder {
    * Assumes that option labels are set correctly.
    * @param chosen chosen values to validate
    */
-  protected def validateChoices(chosen: Traversable[ChoiceParameter]) = {
-    for (ChoiceParameter(label, value) <- chosen) {
+  protected def validateChoices(chosen: Traversable[Selection]) = {
+    for (Selection(label, value) <- chosen) {
       options(label).validate
     }
   }
@@ -34,12 +34,12 @@ trait HasChoice extends ParameterHolder {
    * @return collection of ChoiceParameters obtained during filling process
    */
   protected def fillChosen(
-      fillers: Map[String, ParametersSchema => Unit]): Traversable[ChoiceParameter] = {
+      fillers: Map[String, ParametersSchema => Unit]): Traversable[Selection] = {
     for ((label, filler) <- fillers) yield {
       options.get(label) match {
         case Some(selectedOption) =>
           filler(selectedOption)
-          ChoiceParameter(label, selectedOption)
+          Selection(label, selectedOption)
         case None => throw IllegalChoiceException(label)
       }
     }

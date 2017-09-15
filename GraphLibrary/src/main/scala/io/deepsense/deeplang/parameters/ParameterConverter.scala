@@ -11,17 +11,15 @@ import scala.reflect.runtime.{universe => ru}
 import io.deepsense.deeplang.parameters.exceptions.TypeConversionException
 
 /** Parameters converter used for implicit conversions */
-abstract class ParameterConverter[T : ru.TypeTag] {
+abstract class ParameterConverter[T <: Parameter : ru.TypeTag] {
   /** Returns a function converting a parameter into `T`. */
   def convertPF: PartialFunction[Any, T]
 
   /** Converts and object or throws TypeConversionException if the object can't be converted. */
-  def convert(parameter: Option[Any]): Option[T] = {
-    parameter match {
-      case Some(p) => Some(convertPF.applyOrElse(p, (_: Any) =>
-        throw TypeConversionException(p, ru.typeOf[T].typeSymbol.fullName)))
-      case None => None
-    }
+  def convert(p: Any): T = {
+    convertPF.applyOrElse(p, (_: Any) =>
+      throw TypeConversionException(p, ru.typeOf[T].typeSymbol.fullName)
+    )
   }
 }
 
@@ -30,53 +28,57 @@ abstract class ParameterConverter[T : ru.TypeTag] {
  * These conversions are used to get some specific parameter.
  */
 object ParameterConversions {
-  implicit object ToString extends ParameterConverter[String] {
+  implicit object ToStringParameter extends ParameterConverter[StringParameter] {
     def convertPF = {
-      case parameter: String => parameter
+      case p: StringParameter => p
     }
   }
 
-  implicit object ToDouble extends ParameterConverter[Double] {
+  implicit object ToNumericParameter extends ParameterConverter[NumericParameter] {
     def convertPF = {
-      case parameter: Double => parameter
+      case p: NumericParameter => p
     }
   }
 
-  implicit object ToBoolean extends ParameterConverter[Boolean] {
+  implicit object ToBooleanParameter extends ParameterConverter[BooleanParameter] {
     def convertPF = {
-      case parameter: Boolean => parameter
+      case p: BooleanParameter => p
     }
   }
 
   implicit object ToChoiceParameter extends ParameterConverter[ChoiceParameter] {
     def convertPF = {
-      case parameter: ChoiceParameter => parameter
+      case p: ChoiceParameter => p
     }
   }
 
-  implicit object ToMultipleChoiceParameter extends ParameterConverter[MultipleChoiceParameter] {
+  implicit object ToMultipleChoiceParameter
+    extends ParameterConverter[MultipleChoiceParameter] {
+
     def convertPF = {
-      case parameter: MultipleChoiceParameter => parameter
+      case p: MultipleChoiceParameter => p
     }
   }
 
-  implicit object ToMultiplicatorParameter extends ParameterConverter[MultiplicatorParameter] {
+  implicit object ToMultiplicatedParameter
+    extends ParameterConverter[MultiplierParameter] {
+
     def convertPF = {
-      case parameter: MultiplicatorParameter => parameter
+      case p: MultiplierParameter => p
     }
   }
 
-  implicit object ToSingleColumnSelection
-    extends ParameterConverter[SingleColumnSelection] {
+  implicit object ToSingleColumnSelectorParameter
+    extends ParameterConverter[SingleColumnSelectorParameter] {
     def convertPF = {
-      case parameter: SingleColumnSelection => parameter
+      case p: SingleColumnSelectorParameter => p
     }
   }
 
-  implicit object ToColumnSelection
-      extends ParameterConverter[MultipleColumnSelection] {
+  implicit object ToColumnSelectionParameter
+      extends ParameterConverter[ColumnSelectorParameter] {
     def convertPF = {
-      case parameter: MultipleColumnSelection => parameter
+      case p: ColumnSelectorParameter => p
     }
   }
 }

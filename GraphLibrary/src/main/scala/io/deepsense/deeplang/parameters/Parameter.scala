@@ -12,30 +12,30 @@ import io.deepsense.deeplang.parameters.exceptions.ParameterRequiredException
 /**
  * Holds parameter value.
  *
- * ParameterHolders are used to fill parameter
+ * Parameters are used to fill parameter
  * schemas with their values and validate them.
  */
-abstract class ParameterHolder {
-  type HeldParameter <: Any
+abstract class Parameter {
+  type HeldValue <: Any
 
   val parameterType: ParameterType
 
   val description: String
 
   /** Default value of the parameter. Can be None if not provided. */
-  val default: Option[HeldParameter]
+  val default: Option[HeldValue]
 
   /** Flag specifying if parameter is required. */
   val required: Boolean
 
-  /** Value of the held parameter. */
-  def value: Option[HeldParameter]
+  /** Value of parameter. */
+  def value: Option[HeldValue]
 
   /**
-   * Returns another holder which has all fields equal to this holder's fields
+   * Returns another parameter which has all fields equal to this parameter's fields
    * except for held value.
    */
-  private[parameters] def replicate: ParameterHolder
+  private[parameters] def replicate: Parameter
 
   /**
    * Validates held value.
@@ -55,5 +55,5 @@ abstract class ParameterHolder {
    * This validation is not performed if value is set to None.
    * This function does nothing by default.
    */
-  protected def validateDefined(parameter: HeldParameter): Unit = { }
+  protected def validateDefined(definedValue: HeldValue): Unit = { }
 }

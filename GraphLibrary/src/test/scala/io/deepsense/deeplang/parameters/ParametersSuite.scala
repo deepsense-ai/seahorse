@@ -12,131 +12,117 @@ import io.deepsense.deeplang.parameters.exceptions.TypeConversionException
 
 class ParametersSuite extends FunSuite with Matchers {
 
-  def fillBooleanHolderInSchema(key: String, schema: ParametersSchema, value: Boolean): Unit = {
-    schema(key) match {
-      case booleanHolder: BooleanParameterHolder => booleanHolder.value = Some(value)
-      case _ => throw new IllegalStateException()
-    }
-  }
-
-  def fillNumericHolderInSchema(key: String, schema: ParametersSchema, value: Double): Unit = {
-    schema(key) match {
-      case numericHolder: NumericParameterHolder => numericHolder.value = Some(value)
-      case _ => throw new IllegalStateException()
-    }
-  }
-
   test("Getting Boolean Parameter") {
-    val holder = BooleanParameterHolder("example", Some(true), true)
-    holder.value = Some(true)
-    val parametersSchema = ParametersSchema("x" -> holder)
+    val param = BooleanParameter("example", Some(true), true)
+    param.value = Some(true)
+    val parametersSchema = ParametersSchema("x" -> param)
     assert(parametersSchema.getBoolean("x").get == true)
   }
 
   test("Getting Numeric Parameter") {
-    val holder = NumericParameterHolder("example", Some(3.1), true, RangeValidator(3, 4))
-    holder.value = Some(3.2)
-    val parametersSchema = ParametersSchema("x" -> holder)
+    val param = NumericParameter("example", Some(3.1), true, RangeValidator(3, 4))
+    param.value = Some(3.2)
+    val parametersSchema = ParametersSchema("x" -> param)
     assert(parametersSchema.getDouble("x").get == 3.2)
   }
 
   test("Getting String Parameter") {
-    val holder = StringParameterHolder("example", Some("default"), true, RegexValidator("a".r))
-    holder.value = Some("abc")
-    val parametersSchema = ParametersSchema("x" -> holder)
+    val param = StringParameter("example", Some("default"), true, RegexValidator("a".r))
+    param.value = Some("abc")
+    val parametersSchema = ParametersSchema("x" -> param)
     assert(parametersSchema.getString("x").get == "abc")
   }
 
   test("Getting Choice Parameters") {
-    val holderNumeric = NumericParameterHolder("description1", None, true, RangeValidator(3, 4))
-    val holderBoolean = BooleanParameterHolder("description2", None, true)
+    val paramNumeric = NumericParameter("description1", None, true, RangeValidator(3, 4))
+    val paramBoolean = BooleanParameter("description2", None, true)
 
-    val choiceSchema = ParametersSchema("x" -> holderNumeric, "y" -> holderBoolean)
+    val choiceSchema = ParametersSchema("x" -> paramNumeric, "y" -> paramBoolean)
     val possibleChoices = Map("onlyChoice" -> choiceSchema)
 
-    val choice = ChoiceParameterHolder("description", None, true, possibleChoices)
+    val choice = ChoiceParameter("description", None, true, possibleChoices)
     choice.fill("onlyChoice", schema => {
-      fillNumericHolderInSchema("x", schema, 3.5)
-      fillBooleanHolderInSchema("y", schema, true)
+      schema.getNumericParameter("x").value = Some(3.5)
+      schema.getBooleanParameter("y").value = Some(true)
     })
 
     val parametersSchema = ParametersSchema("choice" -> choice)
     parametersSchema.getChoice("choice").get match {
-      case ChoiceParameter("onlyChoice", chosen) =>
+      case Selection("onlyChoice", chosen) =>
         assert(chosen.getDouble("x").get == 3.5)
         assert(chosen.getBoolean("y").get == true)
     }
   }
 
   test("Getting MultipleChoice Parameters") {
-    val holderNumeric = NumericParameterHolder("description1", None, true, RangeValidator(3, 4))
-    val holderBoolean = BooleanParameterHolder("description2", None, true)
+    val paramNumeric = NumericParameter("description1", None, true, RangeValidator(3, 4))
+    val paramBoolean = BooleanParameter("description2", None, true)
 
-    val choiceSchema = ParametersSchema("x" -> holderNumeric, "y" -> holderBoolean)
+    val choiceSchema = ParametersSchema("x" -> paramNumeric, "y" -> paramBoolean)
     val possibleChoices = Map("onlyChoice" -> choiceSchema)
 
-    val multipleChoice = MultipleChoiceParameterHolder("description", None, true, possibleChoices)
+    val multipleChoice = MultipleChoiceParameter("description", None, true, possibleChoices)
     multipleChoice.fill(Map("onlyChoice" -> (schema => {
-      fillNumericHolderInSchema("x", schema, 3.5)
-      fillBooleanHolderInSchema("y", schema, true)
+      schema.getNumericParameter("x").value = Some(3.5)
+      schema.getBooleanParameter("y").value = Some(true)
     })))
 
     val parametersSchema = ParametersSchema("multipleChoice" -> multipleChoice)
     parametersSchema.getMultipleChoice("multipleChoice").get match {
-      case MultipleChoiceParameter(chosen) =>
-        val expected = Traversable(ChoiceParameter("onlyChoice", choiceSchema))
+      case MultipleSelection(chosen) =>
+        val expected = Traversable(Selection("onlyChoice", choiceSchema))
         assert(chosen == expected)
         assert(choiceSchema.getDouble("x").get == 3.5)
         assert(choiceSchema.getBoolean("y").get == true)
     }
   }
 
-  test("Getting Parameters from Multiplicator") {
-    val holder = BooleanParameterHolder("example", None, true)
-    val schema = ParametersSchema("x" -> holder)
-    val multiplicator = MultiplicatorParameterHolder("description", None, true, schema)
+  test("Getting Parameters from Multiplier") {
+    val param = BooleanParameter("example", None, true)
+    val schema = ParametersSchema("x" -> param)
+    val multiplicator = MultiplierParameter("description", None, true, schema)
 
-    val booleanParameter1 = false
-    val booleanParameter2 = true
+    val booleanParameter1 = Some(false)
+    val booleanParameter2 = Some(true)
 
     multiplicator.fill(List(
-      schema => fillBooleanHolderInSchema("x", schema, booleanParameter1),
-      schema => fillBooleanHolderInSchema("x", schema, booleanParameter2)))
+      schema => schema.getBooleanParameter("x").value = booleanParameter1,
+      schema => schema.getBooleanParameter("x").value = booleanParameter2))
 
     val parametersSchema = ParametersSchema("key" -> multiplicator)
-    parametersSchema.getMultiplicator("key").get match {
-      case MultiplicatorParameter(schema1 :: schema2 :: Nil) =>
-        assert(schema1.getBoolean("x").get == booleanParameter1)
-        assert(schema2.getBoolean("x").get == booleanParameter2)
+    parametersSchema.getMultiplicated("key").get match {
+      case Multiplied(schema1 :: schema2 :: Nil) =>
+        assert(schema1.getBoolean("x") == booleanParameter1)
+        assert(schema2.getBoolean("x") == booleanParameter2)
     }
   }
 
   test("Getting single columns selector parameter") {
-    val holder = SingleColumnSelectorParameterHolder("description", true)
-    val schema = ParametersSchema("x" -> holder)
+    val param = SingleColumnSelectorParameter("description", true)
+    val schema = ParametersSchema("x" -> param)
     val parameter = IndexSingleColumnSelection(1)
-    holder.value = Some(parameter)
+    param.value = Some(parameter)
     assert(schema.getSingleColumnSelection("x").get == parameter)
   }
 
   test("Getting multiple columns selector parameter") {
-    val holder = MultipleColumnSelectorParameterHolder("description", true)
-    val schema = ParametersSchema("x" -> holder)
+    val param = ColumnSelectorParameter("description", true)
+    val schema = ParametersSchema("x" -> param)
     val values = IndexColumnSelection(List(1, 3))
     val parameter = MultipleColumnSelection(List(values))
-    holder.value = Some(parameter)
+    param.value = Some(parameter)
     assert(schema.getColumnSelection("x").get == parameter)
   }
 
   test("Getting wrong type of parameter should throw an exception") {
     val parameter = Some("abc")
-    val expectedTargetTypeName = "scala.Double"
+    val expectedTargetTypeName = "io.deepsense.deeplang.parameters.NumericParameter"
+    val param = StringParameter("description", None, true, RegexValidator("a".r))
     val exception = intercept[TypeConversionException] {
-      val holder = StringParameterHolder("description", None, true, RegexValidator("a".r))
-      holder.value = parameter
-      val parametersSchema = ParametersSchema("x" -> holder)
+      param.value = parameter
+      val parametersSchema = ParametersSchema("x" -> param)
       parametersSchema.getDouble("x")
     }
-    assert(exception == TypeConversionException(parameter.get, expectedTargetTypeName))
+    assert(exception == TypeConversionException(param, expectedTargetTypeName))
   }
 }
