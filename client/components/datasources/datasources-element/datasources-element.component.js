@@ -38,7 +38,7 @@ const DatasourcesElementComponent = {
     }
 
     selectDatasource(datasource) {
-      if (this.isSelectable()) {
+      if (this.isSelectable(datasource)) {
         this.onSelect({datasource});
       }
     }

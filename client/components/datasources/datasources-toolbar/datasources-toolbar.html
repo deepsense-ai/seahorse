@@ -2,7 +2,7 @@
   <div class="title">
     New data source from
   </div>
-  <div
+  <button
     ng-click="$ctrl.openModal('libraryFile')"
     class="btn btn-modal"
   >
@@ -14,8 +14,8 @@
       ng-if="$ctrl.uploadingInProgress"
       class="gradient"
     ></span>
-  </div>
-  <div
+  </button>
+  <button
     ng-click="$ctrl.openModal('jdbc')"
     class="btn btn-modal"
   >
@@ -23,8 +23,8 @@
     <span class="btn-modal__title">
       Database
     </span>
-  </div>
-  <div
+  </button>
+  <button
     ng-disabled="$ctrl.context === $ctrl.datasourceContext.WRITE_DATASOURCE"
     ng-click="$ctrl.openModal('externalFile')"
     class="btn btn-modal"
@@ -33,8 +33,8 @@
     <span class="btn-modal__title">
       External file
     </span>
-  </div>
-  <div
+  </button>
+  <button
     ng-click="$ctrl.openModal('hdfs')"
     class="btn btn-modal"
   >
@@ -42,8 +42,8 @@
     <span class="btn-modal__title">
       HDFS
     </span>
-  </div>
-  <div
+  </button>
+  <button
     ng-click="$ctrl.openModal('googleSpreadsheet')"
     class="btn btn-modal"
   >
@@ -51,5 +51,5 @@
     <span class="btn-modal__title">
       Google Spreadsheet
     </span>
-  </div>
+  </button>
 </div>
