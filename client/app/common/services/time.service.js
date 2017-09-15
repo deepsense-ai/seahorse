@@ -1,5 +1,7 @@
 'use strict';
 
+import moment from 'moment';
+
 function TimeService() {
   this.getVerboseDateDiff = (date) => {
     let nowM = moment();

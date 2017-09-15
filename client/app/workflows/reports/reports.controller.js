@@ -1,5 +1,6 @@
 'use strict';
 
+import moment from 'moment';
 import tpl from './report-chart-panel.html';
 
 var EVENTS = {

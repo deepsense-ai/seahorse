@@ -1,5 +1,7 @@
 'use strict';
 
+import moment from 'moment';
+
 /* @ngInject */
 class ExecutorErrorCtrl {
   constructor($rootScope, WorkflowService, SessionManagerApi) {
