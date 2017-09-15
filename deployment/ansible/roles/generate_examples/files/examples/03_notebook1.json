@@ -9,7 +9,7 @@
       "parameters": {
         "data storage type": {
           "FILE": {
-            "source": "https://s3.amazonaws.com/workflowexecutor/examples/data/grades.csv",
+            "source": "https://s3.amazonaws.com/workflowexecutor/examples/data/grades_2_0.csv",
             "format": {
               "CSV": {
                 "separator": {
