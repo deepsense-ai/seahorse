@@ -40,7 +40,7 @@ abstract class Parameter extends DefaultJsonProtocol {
    * Validates held value.
    * If value is set to None and required, exception is thrown.
    */
-  final def validate: Unit = value match {
+  def validate: Unit = value match {
     case Some(definedValue) => validateDefined(definedValue)
     case None => if (required) {
       throw ParameterRequiredException(parameterType)
@@ -73,7 +73,7 @@ abstract class Parameter extends DefaultJsonProtocol {
    * Json representation of value held by this parameter.
    * If it is not provided, it returns JsNull.
    */
-  final def valueToJson: JsValue = value match {
+  def valueToJson: JsValue = value match {
     case Some(definedValue) => definedValueToJson(definedValue)
     case None => JsNull
   }

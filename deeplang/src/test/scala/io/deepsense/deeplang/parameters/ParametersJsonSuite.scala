@@ -1,57 +1,32 @@
 package io.deepsense.deeplang.parameters
 
+import org.mockito.Mockito._
 import org.scalatest.FunSuite
+import org.scalatest.mock.MockitoSugar
 import spray.json._
 
-import io.deepsense.deeplang.parameters.ValidatorType.ValidatorType
-
-class ParametersJsonSuite extends FunSuite {
-
-  case class MockParameter() extends Parameter {
-    type HeldValue = Integer
-
-    val parameterType = ParameterType.Numeric
-
-    override val description = "Mock description"
-
-    override val required = false
-
-    var value: Option[Integer] = None
-
-    def replicate = MockParameter()
-
-    protected def definedValueToJson(definedValue: HeldValue) = JsNumber(5)
-  }
-
-  case class MockDoubleValidator() extends Validator[Double] {
-    def validate(parameter: Double): Unit = ???  // not used in this suite
-    protected def configurationToJson: JsObject = ???  // not used in this suite
-    override val validatorType: ValidatorType = ValidatorType.Range  // not used in this suite
-  }
-
-  case class MockStringValidator() extends Validator[String] {
-    def validate(parameter: String): Unit = ???  // not used in this suite
-    protected def configurationToJson: JsObject = ???  // not used in this suite
-    override val validatorType: ValidatorType = ValidatorType.Range  // not used in this suite
-  }
+class ParametersJsonSuite extends FunSuite with MockitoSugar {
 
   test("ParametersSchema can provide its json representation") {
-    val mockParameter = MockParameter()
-    val schema = ParametersSchema("x" -> mockParameter)
-    val expectedJson = JsObject("x" -> mockParameter.toJson)
+    val mockParameter1 = mock[Parameter]
+    when(mockParameter1.toJson) thenReturn JsObject("mockKey1" -> JsString("mockValue1"))
+    val mockParameter2 = mock[Parameter]
+    when(mockParameter2.toJson) thenReturn JsObject("mockKey2" -> JsString("mockValue2"))
+    val schema = ParametersSchema("x" -> mockParameter1, "y" -> mockParameter2)
+    val expectedJson = JsObject("x" -> mockParameter1.toJson, "y" -> mockParameter2.toJson)
     assert(schema.toJson == expectedJson)
   }
 
   test("ParametersSchema can provide json representation of its values") {
-    val notFilledMockParameter = MockParameter()
+    val mockParameter1 = mock[Parameter]
+    when(mockParameter1.valueToJson) thenReturn JsObject("mockKey1" -> JsString("mockValue1"))
+    val mockParameter2 = mock[Parameter]
+    when(mockParameter2.valueToJson) thenReturn JsObject("mockKey2" -> JsString("mockValue2"))
 
-    val filledMockParameter = MockParameter()
-    filledMockParameter.value = Some(3)
-
-    val schema = ParametersSchema("x" -> notFilledMockParameter, "y" -> filledMockParameter)
+    val schema = ParametersSchema("x" -> mockParameter1, "y" -> mockParameter2)
     val expectedJson = JsObject(
-      "x" -> notFilledMockParameter.valueToJson,
-      "y" -> filledMockParameter.valueToJson)
+      "x" -> mockParameter1.valueToJson,
+      "y" -> mockParameter2.valueToJson)
     assert(schema.valueToJson == expectedJson)
   }
 
@@ -61,7 +36,9 @@ class ParametersJsonSuite extends FunSuite {
   }
 
   test("Json representation of not set parameter value is null") {
-    val notFilledMockParameter = MockParameter()
+    val notFilledMockParameter = mock[Parameter]
+    when(notFilledMockParameter.valueToJson) thenCallRealMethod()
+    when(notFilledMockParameter.value) thenReturn None
     assert(notFilledMockParameter.valueToJson == JsNull)
   }
 
@@ -114,7 +91,8 @@ class ParametersJsonSuite extends FunSuite {
   }
 
   test("Numeric parameter can provide json representation of it's value") {
-    val numericParameter = NumericParameter("", None, required = false, MockDoubleValidator())
+    val mockValidator = mock[Validator[Double]]
+    val numericParameter = NumericParameter("", None, required = false, mockValidator)
     val value = 3.14
     numericParameter.value = Some(value)
     assert(numericParameter.valueToJson == JsNumber(value))
@@ -144,7 +122,8 @@ class ParametersJsonSuite extends FunSuite {
   }
 
   test("String parameter can provide json representation of it's value") {
-    val stringParameter = StringParameter("", None, required = false, MockStringValidator())
+    val mockValidator = mock[Validator[String]]
+    val stringParameter = StringParameter("", None, required = false, mockValidator)
     val value = "abc"
     stringParameter.value = Some(value)
     assert(stringParameter.valueToJson == JsString(value))
@@ -154,7 +133,8 @@ class ParametersJsonSuite extends FunSuite {
     val description = "example choice parameter description"
     val default = "filledChoice"
     val required = true
-    val mockParameter = MockParameter()
+    val mockParameter = mock[Parameter]
+    when(mockParameter.toJson) thenReturn JsObject("mockKey" -> JsString("mockValue"))
     val filledSchema = ParametersSchema("x" -> mockParameter)
     val possibleChoices = Map("filledChoice" -> filledSchema, "emptyChoice" -> ParametersSchema())
     val choiceParameter = ChoiceParameter(description, Some(default), required, possibleChoices)
@@ -174,9 +154,8 @@ class ParametersJsonSuite extends FunSuite {
   }
 
   test("Choice parameter can provide json representation of it's value") {
-    val mockParameter = MockParameter()
-    mockParameter.value = Some(10)
-    val filledSchema = ParametersSchema("x" -> mockParameter)
+    val filledSchema = mock[ParametersSchema]
+    when(filledSchema.valueToJson) thenReturn JsObject("x" -> JsString("y"))
     val possibleChoices = Map("filledChoice" -> filledSchema, "emptyChoice" -> ParametersSchema())
     val choiceParameter = ChoiceParameter("", None, required = false, possibleChoices)
     choiceParameter.fill("filledChoice", { schema => () })
@@ -189,7 +168,8 @@ class ParametersJsonSuite extends FunSuite {
     val description = "example multiple choice parameter description"
     val default = Vector("filledChoice", "emptyChoice")
     val required = true
-    val mockParameter = MockParameter()
+    val mockParameter = mock[Parameter]
+    when(mockParameter.toJson) thenReturn JsObject("mockKey" -> JsString("mockValue"))
     val filledSchema = ParametersSchema("x" -> mockParameter)
     val possibleChoices = Map("filledChoice" -> filledSchema, "emptyChoice" -> ParametersSchema())
     val multipleChoiceParameter = MultipleChoiceParameter(
@@ -210,9 +190,8 @@ class ParametersJsonSuite extends FunSuite {
   }
 
   test("Multiple choice parameter can provide json representation of it's value") {
-    val mockParameter = MockParameter()
-    mockParameter.value = Some(10)
-    val filledSchema = ParametersSchema("x" -> mockParameter)
+    val filledSchema = mock[ParametersSchema]
+    when(filledSchema.valueToJson) thenReturn JsObject("x" -> JsString("y"))
     val possibleChoices = Map("filledChoice" -> filledSchema, "emptyChoice" -> ParametersSchema())
     val multipleChoiceParameter = MultipleChoiceParameter(
       "", None, required = false, possibleChoices)
@@ -229,8 +208,8 @@ class ParametersJsonSuite extends FunSuite {
   test("Multiplier parameter can provide its json representation") {
     val description = "example multiplier parameter description"
     val required = false
-    val mockParameter = MockParameter()
-    val innerSchema = ParametersSchema("x" -> mockParameter)
+    val innerSchema = mock[ParametersSchema]
+    when(innerSchema.toJson) thenReturn JsObject("x" -> JsString("y"))
     val multiplierParameter = MultiplierParameter(
       description, required, innerSchema)
 
@@ -238,15 +217,17 @@ class ParametersJsonSuite extends FunSuite {
       "type" -> JsString("multiplier"),
       "description" -> JsString(description),
       "required" -> JsBoolean(required),
-      "values" -> JsObject("x" -> mockParameter.toJson)
+      "values" -> innerSchema.toJson
     )
 
     assert(multiplierParameter.toJson == expectedJson)
   }
 
   test("Multiplier parameter can provide json representation of it's value") {
-    val mockParameter = MockParameter()
-    val innerSchema = ParametersSchema("x" -> mockParameter)
+    val innerSchema = mock[ParametersSchema]
+    when(innerSchema.valueToJson) thenReturn JsObject("x" -> JsString("y"))
+    when(innerSchema.replicate) thenReturn innerSchema
+
     val multiplierParameter = MultiplierParameter("", required = false, innerSchema)
     multiplierParameter.fill(List({schema => ()}))
 

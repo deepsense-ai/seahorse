@@ -6,16 +6,17 @@
 
 package io.deepsense.deeplang.parameters
 
-import spray.json.{JsValue, JsObject}
+import spray.json.{JsObject, JsValue}
 
 import io.deepsense.deeplang.parameters.ParameterConversions._
-import io.deepsense.deeplang.parameters.exceptions.NoSuchParameterException
+import io.deepsense.deeplang.parameters.exceptions.{ValidationException, NoSuchParameterException}
 
 /**
  * Schema for a given set of DOperation parameters
  * Holds Parameters that are passed to DOperation.
  */
 class ParametersSchema protected (schemaMap: Map[String, Parameter] = Map.empty) {
+
   def validate: Unit = schemaMap.values.foreach(_.validate)
 
   private def get[T <: Parameter](name: String)(implicit converter: ParameterConverter[T]): T = {
@@ -35,7 +36,7 @@ class ParametersSchema protected (schemaMap: Map[String, Parameter] = Map.empty)
   }
 
   /**
-   * Tells if this schema does not contain any parameters.
+   * Tells if the schema does not contain any parameters.
    */
   def isEmpty: Boolean = schemaMap.isEmpty
 
