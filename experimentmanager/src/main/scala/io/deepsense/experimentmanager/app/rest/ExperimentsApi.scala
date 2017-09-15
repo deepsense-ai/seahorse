@@ -26,7 +26,7 @@ import io.deepsense.experimentmanager.rest.RestComponent
 /**
  * Exposes Experiment Manager through a REST API.
  */
-class RestApi @Inject() (
+class ExperimentsApi @Inject() (
     val tokenTranslator: TokenTranslator,
     experimentManagerProvider: ExperimentManagerProvider,
     @Named("experiments.api.prefix") apiPrefix: String)

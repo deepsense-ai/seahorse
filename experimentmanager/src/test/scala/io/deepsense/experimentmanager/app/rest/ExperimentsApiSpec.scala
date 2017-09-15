@@ -28,7 +28,7 @@ import io.deepsense.experimentmanager.auth.exceptions.{NoRoleException, Resource
 import io.deepsense.experimentmanager.auth.usercontext.{Role, TokenTranslator, UserContext}
 import io.deepsense.experimentmanager.{StandardSpec, UnitTestSupport}
 
-class RestApiSpec extends StandardSpec with UnitTestSupport with ApiSpecSupport {
+class ExperimentsApiSpec extends StandardSpec with UnitTestSupport with ApiSpecSupport {
 
   case class LaunchActionWrapper(launch: LaunchAction)
   case class AbortActionWrapper(abort: AbortAction)
@@ -85,7 +85,7 @@ class RestApiSpec extends StandardSpec with UnitTestSupport with ApiSpecSupport 
           }
         })
 
-        new RestApi(tokenTranslator, experimentManagerProvider, apiPrefix).route
+        new ExperimentsApi(tokenTranslator, experimentManagerProvider, apiPrefix).route
   }
 
 

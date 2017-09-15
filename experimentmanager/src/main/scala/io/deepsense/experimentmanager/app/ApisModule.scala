@@ -10,7 +10,7 @@ import com.google.inject.AbstractModule
 import com.google.inject.binder.LinkedBindingBuilder
 import com.google.inject.multibindings.Multibinder
 
-import io.deepsense.experimentmanager.app.rest.{OperationsApi, RestApi}
+import io.deepsense.experimentmanager.app.rest.{OperationsApi, ExperimentsApi}
 import io.deepsense.experimentmanager.auth.AuthModule
 import io.deepsense.experimentmanager.rest.RestComponent
 
@@ -26,7 +26,7 @@ class ApisModule extends AbstractModule {
 
   override def configure(): Unit = {
     install(new AuthModule)
-    bindApi.to(classOf[RestApi])
+    bindApi.to(classOf[ExperimentsApi])
     bindApi.to(classOf[OperationsApi])
   }
 }

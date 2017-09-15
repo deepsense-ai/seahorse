@@ -12,7 +12,6 @@ import spray.httpx.SprayJsonSupport
 import spray.json._
 
 import io.deepsense.deeplang.catalogs.doperable.{ClassDescriptor, TraitDescriptor, HierarchyDescriptor}
-import io.deepsense.deeplang.catalogs.doperations.{DOperationDescriptor, DOperationCategoryNode}
 import io.deepsense.experimentmanager.app.exceptions.ExceptionDetails
 import io.deepsense.experimentmanager.app.models.Graph.Node
 import io.deepsense.experimentmanager.app.models.{Experiment, Graph, Id, InputExperiment}
@@ -22,7 +21,11 @@ import io.deepsense.experimentmanager.app.rest.actions.{AbortAction, Action, Lau
 /**
  * Defines how models are serialized to JSON and deserialized from it.
  */
-object RestJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport with NullOptions {
+object RestJsonProtocol
+  extends DefaultJsonProtocol
+  with DOperationCategoryNodeJsonProtocol
+  with SprayJsonSupport
+  with NullOptions {
 
   implicit object IdFormat extends RootJsonFormat[Id] {
     override def write(obj: Id) = JsString(obj.value.toString)
@@ -62,6 +65,5 @@ object RestJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport with N
       JsObject()
     }
   }
-
 
 }

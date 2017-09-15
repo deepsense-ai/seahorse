@@ -28,7 +28,7 @@ class KeystoneTokenTranslator @Inject()(
    * @return Future containing user's context. Returns a failed Future especially when
    *         could not retrieve the token from Keystone or the token is not linked
    *         to any tenant [[NoTenantSpecifiedException]] (the user is authenticated
-   *         but without any tenant context.
+   *         but without any tenant context).
    */
   override def translate(token: String): Future[UserContext] = {
     val tokenKeystoneFuture = tokenFromKeystone(token)

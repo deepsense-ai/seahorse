@@ -24,7 +24,7 @@ import io.deepsense.experimentmanager.IntegTestSupport
 import io.deepsense.experimentmanager.app.models.Experiment
 import io.deepsense.experimentmanager.app.storage.ExperimentStorage
 
-class RestApiIntegSpec extends RestApiSpec with IntegTestSupport with BeforeAndAfter {
+class ExperimentsApiIntegSpec extends ExperimentsApiSpec with IntegTestSupport with BeforeAndAfter {
 
   var experimentA: Experiment = null
   var experimentB: Experiment = null

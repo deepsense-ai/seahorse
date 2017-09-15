@@ -6,22 +6,28 @@
 
 package io.deepsense.experimentmanager.app.rest.json
 
+import spray.httpx.SprayJsonSupport
 import spray.json.{DefaultJsonProtocol, JsObject, JsValue, JsonFormat}
 import spray.json._
 
 import io.deepsense.deeplang.catalogs.doperations.DOperationCategoryNode
 
-object DOperationCategoryNodeJsonProtocol extends DefaultJsonProtocol {
+trait DOperationCategoryNodeJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
 
-  implicit object DOperationCategoryNodeFormat extends JsonFormat[DOperationCategoryNode] {
+  implicit object DOperationCategoryNodeFormat extends RootJsonFormat[DOperationCategoryNode] {
     private implicit val operationFormat = DOperationDescriptorJsonProtocol.ShortFormat
 
     override def write(obj: DOperationCategoryNode): JsValue = {
-      JsObject(
-        "id" -> obj.category.get.id.toString.toJson,
-        "name" -> obj.category.get.name.toJson,
+      val fields = Map(
         "items" -> obj.operations.toJson,
         "catalog" -> obj.successors.values.toJson)
+      val allFields = obj.category match {
+        case Some(value) => fields ++ Map(
+          "id" -> obj.category.get.id.toString.toJson,
+          "name" -> obj.category.get.name.toJson)
+        case None => fields
+      }
+      JsObject(allFields)
     }
 
     override def read(json: JsValue): DOperationCategoryNode = {
@@ -29,3 +35,5 @@ object DOperationCategoryNodeJsonProtocol extends DefaultJsonProtocol {
     }
   }
 }
+
+object DOperationCategoryNodeJsonProtocol extends DOperationCategoryNodeJsonProtocol

@@ -14,6 +14,8 @@ import org.apache.commons.lang3.StringUtils
 import spray.routing.PathMatchers
 
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
+import io.deepsense.deeplang.catalogs.doperations.{DOperationCategoryNode, DOperationsCatalog}
+import io.deepsense.experimentmanager.app.rest.json.DOperationDescriptorJsonProtocol
 import io.deepsense.experimentmanager.app.rest.json.RestJsonProtocol._
 import io.deepsense.experimentmanager.auth.AuthorizatorProvider
 import io.deepsense.experimentmanager.auth.usercontext.TokenTranslator
@@ -25,8 +27,8 @@ import io.deepsense.experimentmanager.rest.RestComponent
 class OperationsApi @Inject() (
     val tokenTranslator: TokenTranslator,
     dOperableCatalog: DOperableCatalog,
+    dOperationsCatalog: DOperationsCatalog,
     authorizatorProvider: AuthorizatorProvider,
-    @Named("roles.operations.hierarchy") hierarchyRole: String,
     @Named("operations.api.prefix") apiPrefix: String)
     (implicit ec: ExecutionContext)
   extends RestService
@@ -43,9 +45,22 @@ class OperationsApi @Inject() (
           path("hierarchy") {
             get {
               withUserContext { userContext =>
-                complete(authorizatorProvider.forContext(userContext).withRole(hierarchyRole) { _ =>
-                  Future.successful(dOperableCatalog.descriptor)
-                })
+                complete(Future.successful(dOperableCatalog.descriptor))
+              }
+            }
+          } ~
+          path("catalog") {
+            get {
+              withUserContext { userContext =>
+                complete(Future.successful(dOperationsCatalog.categoryTree))
+              }
+            }
+          } ~
+          pathEnd {
+            get {
+              implicit val operationsFormat = DOperationDescriptorJsonProtocol.BaseFormat
+              withUserContext { userContext =>
+                complete(Future.successful(dOperationsCatalog.operations))
               }
             }
           }

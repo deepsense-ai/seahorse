@@ -9,9 +9,12 @@ package io.deepsense.experimentmanager.app.rest
 import scala.concurrent._
 
 import spray.http.StatusCodes
+import spray.json.JsValue
 import spray.routing.Route
 
 import io.deepsense.deeplang.catalogs.doperable.{HierarchyDescriptor, DOperableCatalog}
+import io.deepsense.deeplang.catalogs.doperations.{DOperationCategoryNode, DOperationDescriptor, DOperationsCatalog}
+import io.deepsense.experimentmanager.app.rest.json.DOperationDescriptorJsonProtocol
 import io.deepsense.experimentmanager.app.rest.json.RestJsonProtocol._
 import io.deepsense.experimentmanager.auth.usercontext.{TokenTranslator, UserContext}
 import io.deepsense.experimentmanager.auth.{Authorizator, AuthorizatorProvider, UserContextAuthorizator}
@@ -19,23 +22,21 @@ import io.deepsense.experimentmanager.{CatalogRecorder, StandardSpec, UnitTestSu
 
 class OperationsApiSpec extends StandardSpec with UnitTestSupport with ApiSpecSupport {
 
-  val correctRole = "correctRole"
   val correctTenant: String = "A"
-  val tenantWithoutRoles: String = "B"
 
   override val authTokens: Map[String, Set[String]] = Map(
-    correctTenant -> Set(correctRole),
-    tenantWithoutRoles -> Set()
+    correctTenant -> Set()
   )
 
   override def createRestComponent(tokenTranslator: TokenTranslator): Route  = {
-    val catalog: DOperableCatalog = new DOperableCatalog()
-    CatalogRecorder.registerDOperable(catalog)
+    val dOperableCatalog = new DOperableCatalog()
+    val dOperationsCatalog = DOperationsCatalog()
+    CatalogRecorder.registerDOperables(dOperableCatalog)
     new OperationsApi(
       tokenTranslator,
-      catalog,
+      dOperableCatalog,
+      dOperationsCatalog,
       new TestAuthorizationProvider(),
-      correctRole,
       apiPrefix).route
   }
 
@@ -50,22 +51,6 @@ class OperationsApiSpec extends StandardSpec with UnitTestSupport with ApiSpecSu
           responseAs[HierarchyDescriptor]
         }
       }
-    }
-
-    "return Unauthorized" when {
-      "invalid auth token was send (when InvalidTokenException occures)" in {
-        Get(s"/$apiPrefix/hierarchy") ~>
-          addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
-          status should be(StatusCodes.Unauthorized)
-        }
-      }
-
-      "the user does not have the requested role (on NoRoleExeption)" in {
-        Get(s"/$apiPrefix/hierarchy") ~>
-          addHeader("X-Auth-Token", tenantWithoutRoles) ~> testRoute ~> check {
-          status should be(StatusCodes.Unauthorized)
-        }
-      }
 
       "no auth token was send (on MissingHeaderRejection)" in {
         Get(s"/$apiPrefix/hierarchy") ~> testRoute ~> check {
@@ -75,8 +60,46 @@ class OperationsApiSpec extends StandardSpec with UnitTestSupport with ApiSpecSu
     }
   }
 
+  "GET /operations" should {
+    "return dOperations list" when {
+      "valid auth token was send" in {
+        Get(s"/$apiPrefix") ~>
+          addHeader("X-Auth-Token", correctTenant) ~> testRoute ~> check {
+          status should be(StatusCodes.OK)
+          implicit val expectedDescriptorsFormat = DOperationDescriptorJsonProtocol.BaseFormat
+          responseAs[Seq[DOperationDescriptor]]
+        }
+      }
+
+      "no auth token was send (on MissingHeaderRejection)" in {
+        Get(s"/$apiPrefix") ~> testRoute ~> check {
+          status should be(StatusCodes.Unauthorized)
+        }
+      }
+    }
+  }
+
+  "GET /operations/catalog" should {
+    "return dOperations catalog" when {
+      "valid auth token was send" in {
+        Get(s"/$apiPrefix/catalog") ~>
+          addHeader("X-Auth-Token", correctTenant) ~> testRoute ~> check {
+          status should be(StatusCodes.OK)
+          responseAs[Map[String, JsValue]]
+        }
+      }
+
+      "no auth token was send (on MissingHeaderRejection)" in {
+        Get(s"/$apiPrefix/catalog") ~> testRoute ~> check {
+          status should be(StatusCodes.Unauthorized)
+        }
+      }
+    }
+  }
+
   private class TestAuthorizationProvider extends AuthorizatorProvider {
-    override def forContext(userContext: Future[UserContext]): Authorizator
-        = new UserContextAuthorizator(userContext)
+    override def forContext(userContext: Future[UserContext]): Authorizator = {
+      new UserContextAuthorizator(userContext)
+    }
   }
 }

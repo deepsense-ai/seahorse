@@ -19,7 +19,6 @@ import io.deepsense.experimentmanager.app.rest.json.DOperationCategoryNodeJsonPr
 class DOperationCategoryNodeJsonProtocolSpec extends FlatSpec with Matchers with MockitoSugar {
 
   "DOperationCategoryNode" should "be correctly serialized to json" in {
-    val category = new DOperationCategory(UUID.randomUUID(), "mock name", None) {}
     val childCategory = new DOperationCategory(UUID.randomUUID(), "mock child name", None) {}
     val childNode = DOperationCategoryNode(Some(childCategory))
 
@@ -28,13 +27,11 @@ class DOperationCategoryNodeJsonProtocolSpec extends FlatSpec with Matchers with
     when(operationDescriptor.name) thenReturn "mock operation descriptor name"
 
     val node = DOperationCategoryNode(
-      Some(category),
+      None,
       successors = Map(childCategory -> childNode),
       operations = Set(operationDescriptor))
 
     val expectedJson = JsObject(
-      "id" -> JsString(category.id.toString),
-      "name" -> JsString(category.name),
       "catalog" -> JsArray(
         JsObject(
           "id" -> JsString(childCategory.id.toString),
