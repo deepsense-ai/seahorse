@@ -33,48 +33,58 @@ class SessionsApi @Inject()(
   with Logging {
 
   private val sessionsPathPrefixMatcher = PathMatchers.separateOnSlashes(sessionsApiPrefix)
+  private val SeahorseUserIdHeaderName = "X-Seahorse-UserId".toLowerCase
 
   implicit val envelopedSessionFormat = new EnvelopeJsonFormat[Session]("session")
   implicit val envelopedSessionIdFormat = new EnvelopeJsonFormat[Id]("sessionId")
 
   override def route: Route = {
     cors {
-      path("") {
-        get {
-          complete("Session Manager")
-        }
-      } ~
-      handleRejections(rejectionHandler) {
-        waitForHeartbeat {
-          pathPrefix(sessionsPathPrefixMatcher) {
-            path(JavaUUID) { sessionId =>
-              get {
-                complete {
-                  val session = sessionService.getSession(sessionId)
-                  session.map(_.map(Envelope(_)))
+      withUserId { userId =>  // We expect header with userId for all requests
+        path("") {
+          get {
+            complete("Session Manager")
+          }
+        } ~
+        handleRejections(rejectionHandler) {
+          waitForHeartbeat {
+            pathPrefix(sessionsPathPrefixMatcher) {
+              path(JavaUUID) { sessionId =>
+                get {
+                  complete {
+                    val session = sessionService.getSession(sessionId)
+                    session.map(_.map(Envelope(_)))
+                  }
+                } ~
+                delete {
+                  onSuccess(sessionService.killSession(sessionId)) { _ =>
+                    complete(StatusCodes.OK)
+                  }
                 }
               } ~
-              delete {
-                onSuccess(sessionService.killSession(sessionId)) { _ =>
-                  complete(StatusCodes.OK)
+              pathEndOrSingleSlash {
+                post {
+                  entity(as[CreateSession]) { request =>
+                    val session = sessionService.createSession(request.workflowId, userId)
+                    val enveloped = session.map(Envelope(_))
+                    complete(enveloped)
+                  }
+                } ~
+                get {
+                  complete(sessionService.listSessions())
                 }
-              }
-            } ~
-            pathEndOrSingleSlash {
-              post {
-                entity(as[CreateSession]) { request =>
-                  val session = sessionService.createSession(request.workflowId)
-                  val enveloped = session.map(Envelope(_))
-                  complete(enveloped)
-                }
-              } ~
-              get {
-                complete(sessionService.listSessions())
               }
             }
           }
         }
       }
+    }
+  }
+
+  private def withUserId: Directive1[String] = {
+    optionalHeaderValueByName(SeahorseUserIdHeaderName).flatMap {
+      case Some(value) => provide(value)
+      case None => complete(StatusCodes.BadRequest)
     }
   }
 
@@ -84,7 +94,7 @@ class SessionsApi @Inject()(
         logger.warn("Rejected a request because not yet subscribed to Heartbeats!")
         (StatusCodes.ServiceUnavailable, "Session Manager is starting!")
       }
-  }.orElse(RejectionHandler.Default)
+  }
 
   private def waitForHeartbeat: Directive0 = {
     extract(_ => heartbeatSubscribed.isCompleted)

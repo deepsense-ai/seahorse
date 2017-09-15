@@ -21,7 +21,7 @@ import io.deepsense.models.json.workflow.WorkflowVersionUtil
 import io.deepsense.models.workflows.Workflow
 import io.deepsense.models.workflows.Workflow.Id
 import io.deepsense.workflowmanager.rest.CurrentBuild
-import io.deepsense.workflowmanager.storage.{WorkflowStorage, WorkflowWithDates}
+import io.deepsense.workflowmanager.storage.{WorkflowStorage, WorkflowFullInfo}
 
 case class WorkflowDaoImpl @Inject()(
     @Named("workflowmanager") db: JdbcDriver#API#Database,
@@ -34,10 +34,15 @@ case class WorkflowDaoImpl @Inject()(
 
   import driver.api._
 
-  override def get(id: Id): Future[Option[Workflow]] = {
+  override def get(id: Id): Future[Option[WorkflowFullInfo]] = {
     db.run(workflows.filter(w => w.id === id.value && w.deleted === false).result).map {
       case Seq() => None
-      case Seq((_, workflow, _, _, _)) => Some(workflow.parseJson.convertTo[Workflow])
+      case Seq((_, workflow, _, created, updated, ownerId, ownerName)) =>
+        Some(WorkflowFullInfo(
+          workflow.parseJson.convertTo[Workflow],
+          DateTimeConverter.fromMillis(created), DateTimeConverter.fromMillis(updated),
+          ownerId, ownerName
+        ))
     }
   }
 
@@ -52,17 +57,24 @@ case class WorkflowDaoImpl @Inject()(
     db.run(query.update(true)).map(_ => ())
   }
 
-  override def create(id: Id, workflow: Workflow): Future[Unit] = {
+  override def create(
+      id: Id,
+      workflow: Workflow,
+      ownerId: String,
+      ownerName: String): Future[Unit] = {
     db.run(workflows += ((id.value, workflow.toJson.compactPrint, false,
-      DateTimeConverter.now.getMillis, DateTimeConverter.now.getMillis))).map(_ => ())
+      DateTimeConverter.now.getMillis, DateTimeConverter.now.getMillis,
+      ownerId, ownerName))).map(_ => ())
   }
 
-  override def getAll(): Future[Map[Id, WorkflowWithDates]] = {
+  override def getAll(): Future[Map[Id, WorkflowFullInfo]] = {
     db.run(workflows.filter(_.deleted === false).result).map(_.map {
-      case (id, workflow, _, created, updated) => Id.fromUuid(id) -> WorkflowWithDates(
-        workflow.parseJson.convertTo[Workflow],
-        DateTimeConverter.fromMillis(created), DateTimeConverter.fromMillis(updated)
-      )
+      case (id, workflow, _, created, updated, ownerId, ownerName) =>
+        Id.fromUuid(id) -> WorkflowFullInfo(
+          workflow.parseJson.convertTo[Workflow],
+          DateTimeConverter.fromMillis(created), DateTimeConverter.fromMillis(updated),
+          ownerId, ownerName
+        )
     }.toMap)
   }
 
@@ -73,18 +85,22 @@ case class WorkflowDaoImpl @Inject()(
   val Deleted = "deleted"
   val Created = "created"
   val Updated = "updated"
+  val OwnerId = "owner_id"
+  val OwnerName = "owner_name"
 
   private class Workflows(tag: Tag)
-      extends Table[(UUID, String, Boolean, Long, Long)](tag, "WORKFLOWS") {
+      extends Table[(UUID, String, Boolean, Long, Long, String, String)](tag, "WORKFLOWS") {
 
     def id: Rep[UUID] = column[UUID](WorkflowId, O.PrimaryKey)
     def workflow: Rep[String] = column[String](Workflow)
     def deleted: Rep[Boolean] = column[Boolean](Deleted)
     def created: Rep[Long] = column[Long](Created)
     def updated: Rep[Long] = column[Long](Updated)
+    def ownerId: Rep[String] = column[String](OwnerId)
+    def ownerName: Rep[String] = column[String](OwnerName)
 
-    def * : ProvenShape[(UUID, String, Boolean, Long, Long)] =
-      (id, workflow, deleted, created, updated)
+    def * : ProvenShape[(UUID, String, Boolean, Long, Long, String, String)] =
+      (id, workflow, deleted, created, updated, ownerId, ownerName)
   }
 
   private val workflows = TableQuery[Workflows]

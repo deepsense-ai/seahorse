@@ -6,11 +6,12 @@ package io.deepsense.workflowmanager
 
 import scala.concurrent.Future
 
+import org.joda.time.DateTime
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import spray.json.{JsObject, JsString}
 
-import io.deepsense.commons.auth.usercontext.{Role, UserContext}
+import io.deepsense.commons.auth.usercontext.{Role, User, UserContext}
 import io.deepsense.commons.auth.{AuthorizatorProvider, UserContextAuthorizator}
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.graph.DeeplangGraph.DeeplangNode
@@ -18,14 +19,23 @@ import io.deepsense.graph._
 import io.deepsense.models.workflows._
 import io.deepsense.workflowmanager.model.WorkflowDescription
 import io.deepsense.workflowmanager.rest.CurrentBuild
-import io.deepsense.workflowmanager.storage.{NotebookStorage, WorkflowStateStorage, WorkflowStorage}
+import io.deepsense.workflowmanager.storage._
 
 class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
   val tenantId = "tenantId"
   val roleForAll = "aRole"
+  val ownerId = "ownerId"
+  val ownerName = "ownerName"
+
   val userContext = mock[UserContext]
   when(userContext.tenantId).thenReturn(tenantId)
   when(userContext.roles).thenReturn(Set(Role(roleForAll)))
+  when(userContext.user).thenReturn(User(
+    id = ownerId,
+    name = ownerName,
+    email = None,
+    enabled = Some(true),
+    tenantId = None))
   val userContextFuture: Future[UserContext] = Future.successful(userContext)
 
   val authorizator = new UserContextAuthorizator(userContextFuture)
@@ -49,16 +59,22 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
     metadata,
     graph,
     thirdPartyData,
-    ExecutionReport(Map[io.deepsense.graph.Node.Id, NodeState]()))
+    ExecutionReport(Map[io.deepsense.graph.Node.Id, NodeState]()),
+    WorkflowInfo.forId(storedWorkflowId))
   val workflowStorage: WorkflowStorage = mock[WorkflowStorage]
   val workflowStateStorage = mock[WorkflowStateStorage]
   val notebookStorage = mock[NotebookStorage]
+  val workflowId = Workflow.Id.randomId
   val workflowWithResults = WorkflowWithResults(
-    Workflow.Id.randomId,
+    workflowId,
     mock[WorkflowMetadata],
     mock[DeeplangGraph],
     mock[JsObject],
-    ExecutionReport(Map[io.deepsense.graph.Node.Id, NodeState]()))
+    ExecutionReport(Map[io.deepsense.graph.Node.Id, NodeState]()),
+    WorkflowInfo.forId(workflowId))
+
+  val storedWorkflowFullInfo = WorkflowFullInfo(
+    storedWorkflow, DateTime.now, DateTime.now, ownerId, ownerName)
 
   val workflowManager = new WorkflowManagerImpl(
     authorizatorProvider,
@@ -89,21 +105,24 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
       reset(workflowStorage)
       reset(workflowStateStorage)
       when(workflowStorage.get(storedWorkflowId))
-        .thenReturn(Future.successful(Some(storedWorkflow)))
+        .thenReturn(Future.successful(Some(storedWorkflowFullInfo)))
       when(workflowStateStorage.get(storedWorkflowId))
         .thenReturn(Future.successful(Map[Node.Id, NodeState]()))
       when(notebookStorage.getAll(storedWorkflowId))
         .thenReturn(Future.successful(Map[Node.Id, String]()))
 
       val eventualWorkflow = workflowManager.get(storedWorkflowId)
-      whenReady(eventualWorkflow) { _.get shouldEqual storedWorkflowWithResults }
+      whenReady(eventualWorkflow) { w =>
+        val withIgnoredInfo = w.get.copy(workflowInfo = storedWorkflowWithResults.workflowInfo)
+        withIgnoredInfo shouldEqual storedWorkflowWithResults
+      }
     }
     "delete workflow from the storage" is pending
     "save workflow in storage" is pending
     "update workflow in storage" in {
       reset(workflowStorage)
       when(workflowStorage.get(storedWorkflowId))
-        .thenReturn(Future.successful(Some(storedWorkflow)))
+        .thenReturn(Future.successful(Some(storedWorkflowFullInfo)))
       when(workflowStorage.update(storedWorkflowId, storedWorkflow))
         .thenReturn(Future.successful(()))
 
@@ -115,10 +134,10 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
     "clone workflow" in {
       reset(workflowStorage)
       when(workflowStorage.get(storedWorkflowId))
-        .thenReturn(Future.successful(Some(storedWorkflow)))
+        .thenReturn(Future.successful(Some(storedWorkflowFullInfo)))
       when(notebookStorage.getAll(any()))
         .thenReturn(Future.successful(Map[Node.Id, String]()))
-      when(workflowStorage.create(any(), any()))
+      when(workflowStorage.create(any(), any(), any(), any()))
         .thenReturn(Future.successful(()))
       val workflowDescription = WorkflowDescription("Brand new name", "Brand new desc")
 
@@ -140,7 +159,7 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
       reset(workflowStorage)
       reset(workflowStateStorage)
       when(workflowStorage.get(storedWorkflowId))
-        .thenReturn(Future.successful(Some(storedWorkflow)))
+        .thenReturn(Future.successful(Some(storedWorkflowFullInfo)))
       when(workflowStorage.update(storedWorkflowId, storedWorkflow))
         .thenReturn(Future.successful(()))
       when(

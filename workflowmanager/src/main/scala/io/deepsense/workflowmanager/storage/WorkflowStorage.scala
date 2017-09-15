@@ -21,14 +21,16 @@ trait WorkflowStorage {
    * @param id Id of the workflow.
    * @return Workflow with the id as an object, or None if the workflow does not exist.
    */
-  def get(id: Id): Future[Option[Workflow]]
+  def get(id: Id): Future[Option[WorkflowFullInfo]]
 
   /**
    * Creates a workflow.
    * @param id Id of the workflow.
    * @param workflow Workflow to be created.
+   * @param ownerId Id of the owner.
+   * @param ownerName Name of the owner.
    */
-  def create(id: Id, workflow: Workflow): Future[Unit]
+  def create(id: Id, workflow: Workflow, ownerId: String, ownerName: String): Future[Unit]
 
   /**
    * Updates a workflow.
@@ -42,7 +44,7 @@ trait WorkflowStorage {
    * API version it is returned as an object otherwise as a string.
    * @return Stored workflows as objects or Strings.
    */
-  def getAll(): Future[Map[Workflow.Id, WorkflowWithDates]]
+  def getAll(): Future[Map[Workflow.Id, WorkflowFullInfo]]
 
   /**
    * Removes an workflow with the specified id.
@@ -54,7 +56,9 @@ trait WorkflowStorage {
   def delete(id: Id): Future[Unit]
 }
 
-case class WorkflowWithDates(
+case class WorkflowFullInfo(
     workflow: Workflow,
     created: DateTime,
-    updated: DateTime)
+    updated: DateTime,
+    ownerId: String,
+    ownerName: String)

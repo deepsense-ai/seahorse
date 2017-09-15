@@ -7,12 +7,13 @@ from traitlets import Unicode
 from datetime import datetime
 from .wmcheckpoints import WMCheckpoints
 import re
+import base64
 
 try:
-    from urllib.request import urlopen
+    from urllib.request import urlopen, Request
     from urllib.error import HTTPError
 except ImportError:
-    from urllib2 import urlopen
+    from urllib2 import urlopen, Request
     from urllib2 import HTTPError
 
 NBFORMAT_VERSION = 4
@@ -55,6 +56,20 @@ class WMContentsManager(ContentsManager):
         help="Workflow Manager URL",
     )
 
+    workflow_manager_user = Unicode(
+        default_value="",
+        allow_none=False,
+        config=True,
+        help="Workflow Manager auth user",
+    )
+
+    workflow_manager_pass = Unicode(
+        default_value="",
+        allow_none=False,
+        config=True,
+        help="Workflow Manager auth pass",
+    )
+
     kernel_name = Unicode(
         default_value="pyspark",
         allow_none=False,
@@ -82,6 +97,17 @@ class WMContentsManager(ContentsManager):
     def _get_wm_notebook_url(self, path):
         return "{}/v1/workflows/{}/notebook/{}".format(
                 self.workflow_manager_url, path.workflow_id, path.node_id)
+
+    def _create_request(self, url):
+        req = Request(url)
+        username = self.workflow_manager_user
+        password = self.workflow_manager_pass
+        credentials = '%s:%s' % (username, password)
+        base64string = base64.encodestring(bytes(credentials, "utf-8")).decode("utf-8").replace('\n', '')
+        req.add_header("Authorization", "Basic %s" % base64string)
+        req.add_header("X-Seahorse-UserId", "notebook")
+        req.add_header("X-Seahorse-UserName", "notebook")
+        return req
 
     def create_model(self, content_json, path):
         return {
@@ -116,7 +142,7 @@ class WMContentsManager(ContentsManager):
 
     def _save_notebook(self, path, content_json, return_content=False):
         try:
-            response = urlopen(self._get_wm_notebook_url(path), content_json.encode("utf-8"))
+            response = urlopen(self._create_request(self._get_wm_notebook_url(path)), content_json.encode("utf-8"))
             if response.getcode() == 201:
                 return self.create_model(content_json if return_content else None, path)
             else:
@@ -136,7 +162,7 @@ class WMContentsManager(ContentsManager):
             raise web.HTTPError(400, e.message)
 
         try:
-            response = urlopen(self._get_wm_notebook_url(path))
+            response = urlopen(self._create_request(self._get_wm_notebook_url(path)))
             if response.getcode() == 200:
                 content_json = response.read().decode("utf-8")
                 return self.create_model(content_json if content else None, path)

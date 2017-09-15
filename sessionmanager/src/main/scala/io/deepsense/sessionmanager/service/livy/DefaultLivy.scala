@@ -31,10 +31,10 @@ class DefaultLivy @Inject() (
 
   private val credentials = BasicHttpCredentials("codilime", "Seahorse123")
 
-  override def createSession(workflowId: Id): Future[Batch] = {
+  override def createSession(workflowId: Id, userId: String): Future[Batch] = {
     createSessionPipeline(Post(
       batchesUrl,
-      requestBuilder.createSession(workflowId)))
+      requestBuilder.createSession(workflowId, userId)))
   }
 
   private def createSessionPipeline: (HttpRequest) => Future[Batch] =

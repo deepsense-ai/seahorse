@@ -69,14 +69,14 @@ class WorkflowDaoImplIntegSpec
       val modifiedWorkflow2 = workflow2.copy(additionalData = JsObject())
       whenReady(workflowsDao.update(workflow2Id, modifiedWorkflow2)) { _ =>
         whenReady(workflowsDao.get(workflow2Id)) { workflow =>
-          workflow.get shouldBe modifiedWorkflow2
+          workflow.get.workflow shouldBe modifiedWorkflow2
         }
       }
     }
 
     "find workflow by id" in withStoredWorkflows(storedWorkflows) {
       whenReady(workflowsDao.get(workflow1Id)) { workflow =>
-        workflow shouldBe Some(workflow1)
+        workflow.get.workflow shouldBe workflow1
       }
     }
 
@@ -95,7 +95,7 @@ class WorkflowDaoImplIntegSpec
     Await.ready(workflowsDao.create(), operationDuration)
 
     val s = Future.sequence(storedWorkflows.map {
-      case (id, workflow) => workflowsDao.create(id, workflow)
+      case (id, workflow) => workflowsDao.create(id, workflow, "ownerid", "ownername")
     })
     Await.ready(s, operationDuration)
 

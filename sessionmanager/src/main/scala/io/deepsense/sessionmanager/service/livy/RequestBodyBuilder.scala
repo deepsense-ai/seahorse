@@ -8,5 +8,5 @@ import io.deepsense.commons.models.Id
 import io.deepsense.sessionmanager.service.livy.requests.Create
 
 trait RequestBodyBuilder {
-  def createSession(workflowId: Id): Create
+  def createSession(workflowId: Id, userId: String): Create
 }

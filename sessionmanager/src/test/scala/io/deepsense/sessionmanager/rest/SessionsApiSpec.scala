@@ -8,7 +8,7 @@ import scala.concurrent.{Future, Promise}
 
 import org.mockito.Matchers._
 import org.mockito.Mockito._
-import spray.http.StatusCodes
+import spray.http.{HttpRequest, StatusCodes}
 import spray.httpx.SprayJsonSupport
 import spray.json._
 import spray.routing.Route
@@ -42,6 +42,8 @@ class SessionsApiSpec
   implicit val envelopedSessionFormat = new EnvelopeJsonFormat[Session]("session")
   implicit val envelopedSessionIdFormat = new EnvelopeJsonFormat[Id]("sessionId")
 
+  val userId: String = Id.randomId.toString
+
   "GET /sessions" should {
     "list all sessions" in {
       val workflowId1 = Id.randomId
@@ -60,7 +62,7 @@ class SessionsApiSpec
       when(service.listSessions())
         .thenReturn(Future.successful(ListSessionsResponse(sessions)))
 
-      Get(s"/$apiPrefix") ~> testRoute(service) ~> check {
+      Get(s"/$apiPrefix").withUserId(userId) ~> testRoute(service) ~> check {
         status shouldBe StatusCodes.OK
         responseAs[ListSessionsResponse]
           sessions.map(s => (s.workflowId, s.status)) should contain theSameElementsAs
@@ -70,9 +72,14 @@ class SessionsApiSpec
             (workflowId3, status3))
       }
     }
+    "return 400 Bad Request when X-Seahorse-UserId is not present" in {
+      Get(s"/$apiPrefix") ~> testRoute(mock[SessionService]) ~> check {
+        status shouldBe StatusCodes.BadRequest
+      }
+    }
     "return ServiceUnavailable" when {
       "not yet subscribed to Heartbeats" in {
-        Get(s"/$apiPrefix") ~>
+        Get(s"/$apiPrefix").withUserId(userId) ~>
           testRoute(mock[SessionService], notReadyFuture) ~> check {
           status shouldBe StatusCodes.ServiceUnavailable
         }
@@ -84,12 +91,13 @@ class SessionsApiSpec
     "return session" when {
       "session exists" in {
         val workflowId: Id = Id.randomId
+
         val sessionStatus: Status.Value = Status.Error
         val s = Session(workflowId, sessionStatus)
         val service = mock[SessionService]
         when(service.getSession(workflowId)).thenReturn(Future.successful(Some(s)))
 
-        Get(s"/$apiPrefix/$workflowId") ~> testRoute(service) ~> check {
+        Get(s"/$apiPrefix/$workflowId").withUserId(userId) ~> testRoute(service) ~> check {
           status shouldBe StatusCodes.OK
           val returnedSession = responseAs[Envelope[Session]].content
           returnedSession.workflowId shouldBe workflowId
@@ -102,17 +110,22 @@ class SessionsApiSpec
         val service = mock[SessionService]
         when(service.getSession(any())).thenReturn(Future.successful(None))
 
-        Get(s"/$apiPrefix/${Id.randomId}") ~> testRoute(service) ~> check {
+        Get(s"/$apiPrefix/${Id.randomId}").withUserId(userId) ~> testRoute(service) ~> check {
           status shouldBe StatusCodes.NotFound
         }
       }
     }
     "return ServiceUnavailable" when {
       "not yet subscribed to Heartbeats" in {
-        Get(s"/$apiPrefix/${Id.randomId}") ~>
+        Get(s"/$apiPrefix/${Id.randomId}").withUserId(userId) ~>
           testRoute(mock[SessionService], notReadyFuture) ~> check {
           status shouldBe StatusCodes.ServiceUnavailable
         }
+      }
+    }
+    "return 400 Bad Request when X-Seahorse-UserId is not present" in {
+      Get(s"/$apiPrefix/${Id.randomId}") ~> testRoute(mock[SessionService]) ~> check {
+        status shouldBe StatusCodes.BadRequest
       }
     }
   }
@@ -122,9 +135,11 @@ class SessionsApiSpec
       val workflowId: Id = Id.randomId
       val s = workflowId
       val service = mock[SessionService]
-      when(service.createSession(workflowId)).thenReturn(Future.successful(s))
+      when(service.createSession(workflowId, userId)).thenReturn(Future.successful(s))
 
-      Post(s"/$apiPrefix", CreateSession(workflowId)) ~> testRoute(service) ~> check {
+      Post(s"/$apiPrefix", CreateSession(workflowId))
+        .withUserId(userId) ~> testRoute(service) ~> check {
+
         status shouldBe StatusCodes.OK
         val returnedSessionId = responseAs[Envelope[Id]].content
         returnedSessionId shouldBe workflowId
@@ -132,9 +147,18 @@ class SessionsApiSpec
     }
     "return ServiceUnavailable" when {
       "not yet subscribed to Heartbeats" in {
-        Post(s"/$apiPrefix", CreateSession(Id.randomId)) ~>
+        Post(s"/$apiPrefix", CreateSession(Id.randomId))
+          .withUserId(userId) ~>
           testRoute(mock[SessionService], notReadyFuture) ~> check {
           status shouldBe StatusCodes.ServiceUnavailable
+        }
+      }
+    }
+    "return 400 Bad Request" when {
+      "X-Seahorse-UserId is not present" in {
+        Post(s"/$apiPrefix", CreateSession(Id.randomId)) ~>
+          testRoute(mock[SessionService]) ~> check {
+          status shouldBe StatusCodes.BadRequest
         }
       }
     }
@@ -146,18 +170,23 @@ class SessionsApiSpec
       val service = mock[SessionService]
       when(service.killSession(workflowId)).thenReturn(Future.successful(()))
 
-      Delete(s"/$apiPrefix/$workflowId") ~> testRoute(service) ~> check {
+      Delete(s"/$apiPrefix/$workflowId").withUserId(userId)  ~> testRoute(service) ~> check {
         status shouldBe StatusCodes.OK
         verify(service, times(1)).killSession(workflowId)
       }
     }
     "return ServiceUnavailable" when {
       "not yet subscribed to Heartbeats" in {
-        Delete(s"/$apiPrefix/${Id.randomId}")~>
+        Delete(s"/$apiPrefix/${Id.randomId}").withUserId(userId) ~>
           testRoute(mock[SessionService], notReadyFuture) ~> check {
           status shouldBe StatusCodes.ServiceUnavailable
         }
       }
     }
+  }
+
+  private implicit class RichHttpRequest(httpRequest: HttpRequest) {
+    def withUserId(userId: String): HttpRequest =
+      addHeader("X-Seahorse-UserId", userId)(httpRequest)
   }
 }

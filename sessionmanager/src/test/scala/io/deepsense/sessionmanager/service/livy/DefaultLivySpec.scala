@@ -57,8 +57,9 @@ class DefaultLivySpec
     "creating a session" should {
       "return the created session" in {
         val workflowId: Id = Id.randomId
+        val userId: String = Id.randomId.toString
         val unimportantCreate = Create("", "", Seq.empty, Seq.empty, Map.empty)
-        when(requestBuilder.createSession(workflowId)).thenReturn(unimportantCreate)
+        when(requestBuilder.createSession(workflowId, userId)).thenReturn(unimportantCreate)
         val returnedId = 123
         stubFor(post(urlEqualTo(s"/batches"))
           .willReturn(aResponse()
@@ -66,13 +67,14 @@ class DefaultLivySpec
             .withHeader("Content-Type", "application/json; charset=UTF-8")
             .withBody(sessionJson(returnedId, BatchState.Running).compactPrint)))
 
-        whenReady(createTestLivy.createSession(workflowId))(_.id shouldBe returnedId)
+        whenReady(createTestLivy.createSession(workflowId, userId))(_.id shouldBe returnedId)
       }
       "call an appropriate url" in {
         val workflowId: Id = Id.randomId
+        val userId: String = Id.randomId.toString
         val (stringRequest, objectRequest) = createSessionRequest(workflowId)
-        when(requestBuilder.createSession(workflowId)).thenReturn(objectRequest)
-        createTestLivy.createSession(workflowId)
+        when(requestBuilder.createSession(workflowId, userId)).thenReturn(objectRequest)
+        createTestLivy.createSession(workflowId, userId)
         verify(postRequestedFor(urlEqualTo("/batches"))
           .withHeader("Content-Type", equalTo("application/json; charset=UTF-8"))
           .withRequestBody(equalToJson(stringRequest)))

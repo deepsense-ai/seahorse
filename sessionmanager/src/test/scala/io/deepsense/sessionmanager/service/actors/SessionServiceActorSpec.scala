@@ -2,7 +2,7 @@
  * Copyright (c) 2016, CodiLime Inc.
  */
 
-package io.deepsense.sessionmanager.service
+package io.deepsense.sessionmanager.service.actors
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -20,11 +20,11 @@ import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
 import io.deepsense.commons.models.Id
 import io.deepsense.sessionmanager.service.EventStore.{Event, InvalidWorkflowId, SessionExists}
-import io.deepsense.sessionmanager.service.actors.SessionServiceActor
 import io.deepsense.sessionmanager.service.actors.SessionServiceActor.{CreateRequest, GetRequest, KillRequest, ListRequest}
 import io.deepsense.sessionmanager.service.executor.SessionExecutorClients
 import io.deepsense.sessionmanager.service.livy.Livy
 import io.deepsense.sessionmanager.service.livy.responses.Batch
+import io.deepsense.sessionmanager.service.{EventStore, Session, Status, StatusInferencer}
 import io.deepsense.workflowexecutor.communication.message.global.Heartbeat
 
 class SessionServiceActorSpec(_system: ActorSystem)
@@ -115,7 +115,7 @@ class SessionServiceActorSpec(_system: ActorSystem)
           .thenReturn(Future.successful(Left(SessionExists())))
         "return it's Id" in
           fixture(eventStore) { p =>
-            whenReady(sendCreateRequest(p, existingSessionId)) {
+            whenReady(sendCreateRequest(p, existingSessionId, Id.randomId.toString)) {
               _ shouldBe existingSessionId
             }
           }
@@ -129,20 +129,21 @@ class SessionServiceActorSpec(_system: ActorSystem)
 
         def livy: Livy = {
           val m = mock[Livy]
-          when(m.createSession(notExistingSessionId))
+          when(m.createSession(matchers.eq(notExistingSessionId), any()))
             .thenReturn(Future.successful(mock[Batch]))
           m
         }
 
         "use Livy to create a session" in fixture(eventStore, livy) { p =>
-          sendCreateRequest(p, notExistingSessionId)
+          val userId = Id.randomId.toString
+          sendCreateRequest(p, notExistingSessionId, userId)
           eventually {
-            verify(p.livy, times(1)).createSession(notExistingSessionId)
+            verify(p.livy, times(1)).createSession(notExistingSessionId, userId)
           }
         }
 
         "put 'Created' event to EventStore" in fixture(eventStore, livy) { p =>
-          sendCreateRequest(p, notExistingSessionId)
+          sendCreateRequest(p, notExistingSessionId, Id.randomId.toString)
           eventually {
             verify(p.eventStore, times(1)).started(notExistingSessionId)
           }
@@ -204,8 +205,8 @@ class SessionServiceActorSpec(_system: ActorSystem)
       .mapTo[Option[Session]]
   }
 
-  private def sendCreateRequest(p: TestParams, workflowId: Id): Future[Id] =
-    (p.sessionServiceActor ? CreateRequest(workflowId)).mapTo[Id]
+  private def sendCreateRequest(p: TestParams, workflowId: Id, userId: String): Future[Id] =
+    (p.sessionServiceActor ? CreateRequest(workflowId, userId)).mapTo[Id]
 
   private def fixture[T](eventStore: EventStore)(test: (TestParams) => T): T =
     fixture(eventStore, mock[StatusInferencer], mock[Livy])(test)
