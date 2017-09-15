@@ -11,7 +11,7 @@
   roles:
     - frontend
 
-- name: Exports frontend-proxy docker image
+- name: Exports frontend docker image
   hosts: localhost
   vars_files:
     - vars/env.yml

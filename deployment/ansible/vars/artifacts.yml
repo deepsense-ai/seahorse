@@ -6,5 +6,3 @@ wm_build_version: latest
 
 frontend_artifact_id: deepsense-frontend
 frontend_version: latest
-frontend_proxy_artifact_id: deepsense-frontend-proxy
-frontend_proxy_version: latest
