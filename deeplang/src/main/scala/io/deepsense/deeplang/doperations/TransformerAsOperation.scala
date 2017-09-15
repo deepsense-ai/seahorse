@@ -35,8 +35,7 @@ abstract class TransformerAsOperation[T <: Transformer]
   setDefault(transformer.extractParamMap().toSeq: _*)
 
   override protected def _execute(context: ExecutionContext)(t0: DataFrame): (DataFrame, T) = {
-    val paramsPairs = this.extractParamMap().toSeq
-    transformer.set(paramsPairs: _*)
+    transformer.set(extractParamMap())
     (transformer.transform(context)(())(t0), transformer)
   }
 
@@ -45,8 +44,7 @@ abstract class TransformerAsOperation[T <: Transformer]
       dfKnowledge: DKnowledge[DataFrame])
     : ((DKnowledge[DataFrame], DKnowledge[T]), InferenceWarnings) = {
 
-    val paramsPairs = this.extractParamMap().toSeq
-    transformer.set(paramsPairs: _*)
+    transformer.set(extractParamMap())
     val (outputDfKnowledge, warnings) = transformer.transform.infer(ctx)(())(dfKnowledge)
     ((outputDfKnowledge, DKnowledge(transformer)), warnings)
   }

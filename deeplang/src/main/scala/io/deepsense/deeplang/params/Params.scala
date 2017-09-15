@@ -150,6 +150,11 @@ trait Params extends Serializable {
     this
   }
 
+  protected[deeplang] final def set(paramMap: ParamMap): this.type = {
+    set(paramMap.toSeq: _*)
+    this
+  }
+
   protected final def clear(param: Param[_]): this.type = {
     paramMap.remove(param)
     this

@@ -31,13 +31,13 @@ abstract class Estimator extends DOperable with Params {
   /**
    * Creates a Transformer based on a DataFrame.
    */
-  private[doperables] def _fit(df: DataFrame): Transformer
+  private[deeplang] def _fit(df: DataFrame): Transformer
 
   /**
    * Creates an instance of Transformer for inference.
    * @param schema the schema for inference, or None if it's unknown.
    */
-  private[doperables] def _fit_infer(schema: Option[StructType]): Transformer
+  private[deeplang] def _fit_infer(schema: Option[StructType]): Transformer
 
   def fit: DMethod1To1[Unit, DataFrame, Transformer] = {
     new DMethod1To1[Unit, DataFrame, Transformer] {

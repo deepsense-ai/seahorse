@@ -19,6 +19,7 @@ name := "seahorse"
 lazy val commons                = project
 lazy val deeplang               = project dependsOn (
   commons,
+  commons % "test->test",
   `entitystorage-client`,
   `entitystorage-model`,
   reportlib)

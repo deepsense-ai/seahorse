@@ -19,7 +19,6 @@ package io.deepsense.deeplang.doperations
 import scala.reflect.runtime.universe.TypeTag
 
 import org.apache.spark.sql.types.StructType
-import org.scalatest.mock.MockitoSugar
 
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
