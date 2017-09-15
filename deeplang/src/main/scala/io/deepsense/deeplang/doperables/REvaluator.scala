@@ -57,7 +57,7 @@ class REvaluator extends CustomCodeEvaluator {
        |       result, "' cannot be converted to float.")
        |    }
        |
-       |    result.df <- createDataFrame(sparkSession, as.data.frame(numeric.result))
+       |    result.df <- createDataFrame(as.data.frame(numeric.result))
        |    return(result.df)
        |}
       """.stripMargin

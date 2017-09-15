@@ -63,7 +63,7 @@ case class PythonEvaluator() extends CustomCodeEvaluator {
        |        raise Exception("Invalid result type of `evaluate` function. " +
        |                        "Type " + str(type(result)) +
        |                        " cannot be cast to float.")
-       |    result_df = sparkSession.createDataFrame([[float_result]])
+       |    result_df = spark.createDataFrame([[float_result]])
        |    return result_df
       """.stripMargin
   }
