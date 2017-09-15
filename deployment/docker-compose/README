@@ -1,7 +1,10 @@
-Docker-compose allows to run Seahorse and locally using Docker. Because local Seahorse uses Intel's YARN cluster it is necessary to set up two tunnels using ssh.
+Docker-compose allows to run Seahorse and locally using Docker. Because local Seahorse uses Intel's
+YARN cluster it is necessary to set up two tunnels using ssh.
 
-$ start_dockers.sh
+$ ./start_dockers.sh
 
-The script will set up tunnels using random ports. Then, generate docker-compose.yml from a template using the chosen ports. Finally, it will run docker-compose up. When docker-compose end, then the script will kill the tunnels that were set up previously.
+The script will set up tunnels using random ports. Then, generate docker-compose.yml from a template
+using the chosen ports. Finally, it will run docker-compose up. When docker-compose end, then the
+script will kill the tunnels that were set up previously.
 
-Seahorse will start at http://localhost
+Seahorse will start at http://localhost:8080
