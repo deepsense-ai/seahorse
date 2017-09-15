@@ -76,9 +76,12 @@
 
   &__title {
     text-transform: uppercase;
+    padding: 5px;
 
     &.editable-empty {
       text-transform: none;
+      color: #9B9B9B;
+      font-weight: normal;
     }
   }
 
@@ -94,6 +97,11 @@
     border-bottom: 1px dashed gray;
     margin: 0;
     cursor: text;
+    padding: 5px;
+
+    &::-webkit-input-placeholder {
+      font-style: italic;
+    }
 
     &:hover {
       border: 1px solid @color-active;

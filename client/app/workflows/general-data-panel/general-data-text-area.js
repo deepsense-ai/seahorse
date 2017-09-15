@@ -19,7 +19,7 @@ function AutoTextArea(WorkflowService) {
         WorkflowService.saveWorkflow();
       };
     },
-    template: '<textarea class="o-panel__description form-control" placeholder="Enter description" ng-model="value" ng-blur="saveWorkflow()"></textarea>'
+    template: '<textarea class="o-panel__description form-control" placeholder="Enter description" ng-model="value" ng-blur="saveWorkflow()" rows="1"></textarea>'
   };
 }
 
