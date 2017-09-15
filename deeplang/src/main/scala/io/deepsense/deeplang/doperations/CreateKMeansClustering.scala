@@ -28,7 +28,8 @@ import io.deepsense.deeplang.{DOperation0To1, _}
 
 case class CreateKMeansClustering()
     extends DOperation0To1[UntrainedKMeansClustering]
-    with KMeansParams {
+    with KMeansParams
+    with OldOperation {
 
   override val name = "Create k-means Clustering"
 

@@ -24,7 +24,8 @@ import io.deepsense.deeplang.{DOperation2To2, _}
 
 trait UnsupervisedTrainer[T1 <: UnsupervisedTrainable, T2 <: Scorable]
   extends DOperation2To2[T1, DataFrame, T2, DataFrame]
-  with UnsupervisedTrainableParameters {
+  with UnsupervisedTrainableParameters
+  with OldOperation {
 
   override val parameters = trainParameters
 

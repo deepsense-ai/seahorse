@@ -22,6 +22,7 @@ import org.scalatest.{Matchers, WordSpec}
 import spray.json.{DefaultJsonProtocol, JsObject}
 
 import io.deepsense.deeplang.DOperation
+import io.deepsense.deeplang.doperations.OldOperation
 import io.deepsense.deeplang.parameters.ParametersSchema
 import io.deepsense.graph.Endpoint
 
@@ -47,7 +48,11 @@ trait GraphJsonTestSupport
       id: DOperation.Id,
       name: String,
       parameters: ParametersSchema = mock[ParametersSchema]): DOperation = {
-    val dOperation = mock[DOperation]
+
+    // Mockito can't handle mock[DOperation with OldOperation]
+    abstract class OldOperationMock extends DOperation with OldOperation
+
+    val dOperation = mock[OldOperationMock]
     when(dOperation.inArity).thenReturn(inArity)
     when(dOperation.outArity).thenReturn(outArity)
     when(dOperation.id).thenReturn(id)

@@ -21,10 +21,12 @@ import scala.reflect.runtime.universe.{TypeTag, typeTag}
 
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{FunSuite, Matchers}
+import spray.json.JsObject
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperations.exceptions._
 import io.deepsense.deeplang.doperables.DOperableMock
+import io.deepsense.deeplang.doperations.OldOperation
 import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
 import io.deepsense.deeplang.parameters.ParametersSchema
 
@@ -52,7 +54,7 @@ object DOperationCatalogTestResources {
 
   val parametersSchema = ParametersSchema()
 
-  abstract class DOperationMock extends DOperation {
+  abstract class DOperationMock extends DOperation with OldOperation {
     def inPortTypes: Vector[TypeTag[_]] = Vector()
 
     def outPortTypes: Vector[TypeTag[_]] = Vector()
@@ -140,13 +142,13 @@ object ViewingTestResources extends MockitoSugar {
   catalog.registerDOperation[DOperationD](categoryD, descriptionD)
 
   val expectedA = DOperationDescriptor(
-    idA, nameA, descriptionA, categoryA, parametersSchema, Nil, Nil)
+    idA, nameA, descriptionA, categoryA, parametersSchema.paramsToJson, Nil, Nil)
   val expectedB = DOperationDescriptor(
-    idB, nameB, descriptionB, categoryB, parametersSchema, Nil, Nil)
+    idB, nameB, descriptionB, categoryB, parametersSchema.paramsToJson, Nil, Nil)
   val expectedC = DOperationDescriptor(
-    idC, nameC, descriptionC, categoryC, parametersSchema, Nil, Nil)
+    idC, nameC, descriptionC, categoryC, parametersSchema.paramsToJson, Nil, Nil)
   val expectedD = DOperationDescriptor(
-    idD, nameD, descriptionD, categoryD, parametersSchema,
+    idD, nameD, descriptionD, categoryD, parametersSchema.paramsToJson,
     List(XTypeTag.tpe, YTypeTag.tpe), List(XTypeTag.tpe))
 }
 

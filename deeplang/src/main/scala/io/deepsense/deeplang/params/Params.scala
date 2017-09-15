@@ -27,7 +27,7 @@ import io.deepsense.deeplang.exceptions.DeepLangException
  * Parameters are discovered by reflection.
  * This trait also provides method for managing values and default values of parameters.
  */
-trait Params extends Serializable {
+trait Params extends Serializable with ParameterJsonContainer {
 
   /**
    * Json describing parameters schema in this class.
@@ -96,7 +96,7 @@ trait Params extends Serializable {
   private lazy val paramsByName: Map[String, Param[_]] =
     params.map { case param => param.name -> param }.toMap
 
-  def validateParams(): Vector[DeepLangException] = {
+  def validateParams: Vector[DeepLangException] = {
     params.filter(isDefined).flatMap { param =>
       param.asInstanceOf[Param[Any]].validate($(param))
     }.toVector

@@ -22,7 +22,7 @@ import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.{ColumnTypesPredicates, SupervisedEvaluator, RegressionReporter, Report}
 import io.deepsense.deeplang.parameters.NameSingleColumnSelection
 
-case class EvaluateRegression() extends SupervisedEvaluator {
+case class EvaluateRegression() extends SupervisedEvaluator with OldOperation {
 
   override val name: String = "Evaluate Regression"
 

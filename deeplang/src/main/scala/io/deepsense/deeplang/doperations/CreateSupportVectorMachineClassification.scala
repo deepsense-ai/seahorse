@@ -26,7 +26,8 @@ import io.deepsense.deeplang.{DOperation0To1, ExecutionContext}
 
 case class CreateSupportVectorMachineClassification()
   extends DOperation0To1[UntrainedSupportVectorMachineClassifier]
-  with SupportVectorMachineInterfaceParameters {
+  with SupportVectorMachineInterfaceParameters
+  with OldOperation {
 
   override protected def _execute(
       context: ExecutionContext)(): UntrainedSupportVectorMachineClassifier = {

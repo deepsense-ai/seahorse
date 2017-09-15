@@ -25,7 +25,8 @@ import io.deepsense.deeplang.doperables.machinelearning.randomforest.classificat
 case class CreateRandomForestClassification()
     extends { override val impurityOptions = Seq("gini", "entropy") }
     with DOperation0To1[UntrainedRandomForestClassification]
-    with RandomForestParams {
+    with RandomForestParams
+    with OldOperation {
 
   override val name = "Create Random Forest Classification"
 

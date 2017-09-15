@@ -27,7 +27,8 @@ import io.deepsense.deeplang.doperables.machinelearning.ridgeregression.Untraine
 
 case class CreateRidgeRegression()
     extends AbstractCreateLinearRegression
-      [UntrainedRidgeRegression, RidgeRegressionWithSGD, RidgeRegressionModel] {
+      [UntrainedRidgeRegression, RidgeRegressionWithSGD, RidgeRegressionModel]
+    with OldOperation {
 
   @transient
   override lazy val tTagTO_0: ru.TypeTag[UntrainedRidgeRegression] =

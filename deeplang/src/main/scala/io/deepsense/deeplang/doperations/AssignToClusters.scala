@@ -22,7 +22,7 @@ import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.{Clustering, Scorable}
 
-case class AssignToClusters() extends Scorer[Clustering with Scorable] {
+case class AssignToClusters() extends Scorer[Clustering with Scorable] with OldOperation {
   override val id: DOperation.Id = "bce36c12-df3b-44d0-9a67-8ae213cc9d10"
   override val name = "Assign to Clusters"
   @transient

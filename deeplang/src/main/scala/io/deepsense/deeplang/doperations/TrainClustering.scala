@@ -25,7 +25,8 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 case class TrainClustering()
   extends UnsupervisedTrainer
     [Clustering with UnsupervisedTrainable, Clustering with Scorable]
-  with UnsupervisedTrainableParameters {
+  with UnsupervisedTrainableParameters
+  with OldOperation {
 
   override val id: DOperation.Id = "754944c9-4c6b-4c70-8a93-ef0baa940c01"
   override val name = "Train Clustering"

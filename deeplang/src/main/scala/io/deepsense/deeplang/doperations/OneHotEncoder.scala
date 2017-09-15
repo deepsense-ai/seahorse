@@ -26,7 +26,9 @@ import io.deepsense.deeplang.doperations.exceptions.WrongColumnTypeException
 import io.deepsense.deeplang.parameters.{BooleanParameter, ColumnSelectorParameter, ParametersSchema, _}
 import io.deepsense.deeplang.{DOperation1To1, ExecutionContext}
 
-case class OneHotEncoder() extends DOperation1To1[DataFrame, DataFrame] {
+case class OneHotEncoder()
+    extends DOperation1To1[DataFrame, DataFrame]
+    with OldOperation {
 
   override val name: String = "One Hot Encoder"
   override val id: Id = "b1b6eefe-f7b7-11e4-a322-1697f925ec7b"

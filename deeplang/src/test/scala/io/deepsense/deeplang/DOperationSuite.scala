@@ -24,6 +24,7 @@ import org.scalatest.mock.MockitoSugar
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.DOperableMock
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
+import io.deepsense.deeplang.doperations.OldOperation
 import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
 import io.deepsense.deeplang.parameters.{NumericParameter, ParametersSchema, Validator}
 import scala.reflect.runtime.{universe => ru}
@@ -39,7 +40,7 @@ object DClassesForDOperations {
 
 object DOperationForPortTypes {
   import DClassesForDOperations._
-  class SimpleOperation extends DOperation1To1[A1, A2] {
+  class SimpleOperation extends DOperation1To1[A1, A2] with OldOperation {
     override protected def _execute(context: ExecutionContext)(t0: A1): A2 = ???
     override val id: DOperation.Id = DOperation.Id.randomId
     override val name: String = ""
@@ -56,7 +57,7 @@ class DOperationSuite extends FunSuite with DeeplangTestSupport {
 
     case class IntParam(i: Int) extends ParametersSchema
 
-    class PickOne extends DOperation2To1[A1, A2, A] {
+    class PickOne extends DOperation2To1[A1, A2, A] with OldOperation {
       override val id: DOperation.Id = DOperation.Id.randomId
 
       override protected def _execute(context: ExecutionContext)(t1: A1, t2: A2): A = {
@@ -72,9 +73,9 @@ class DOperationSuite extends FunSuite with DeeplangTestSupport {
       override lazy val tTagTI_1: ru.TypeTag[A2] = ru.typeTag[A2]
     }
 
-    val firstPicker: DOperation = new PickOne
+    val firstPicker: DOperation with OldOperation = new PickOne
     firstPicker.parameters.getNumericParameter("param").value = 1
-    val secondPicker: DOperation = new PickOne
+    val secondPicker: DOperation with OldOperation = new PickOne
     secondPicker.parameters.getNumericParameter("param").value = 2
 
     val input = Vector(A1(), A2())
@@ -97,7 +98,7 @@ class DOperationSuite extends FunSuite with DeeplangTestSupport {
 
     val mockedWarnings = mock[InferenceWarnings]
 
-    class GeneratorOfA extends DOperation0To1[A] {
+    class GeneratorOfA extends DOperation0To1[A] with OldOperation {
       override val id: DOperation.Id = DOperation.Id.randomId
 
       override protected def _execute(context: ExecutionContext)(): A = ???

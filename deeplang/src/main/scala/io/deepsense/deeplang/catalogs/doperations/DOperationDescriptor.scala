@@ -18,7 +18,10 @@ package io.deepsense.deeplang.catalogs.doperations
 
 import scala.reflect.runtime.universe.Type
 
+import spray.json.JsValue
+
 import io.deepsense.deeplang.parameters.ParametersSchema
+import io.deepsense.deeplang.params.ParameterJsonContainer
 import io.deepsense.deeplang.{DOperation, TypeUtils}
 
 /**
@@ -29,7 +32,7 @@ case class DOperationDescriptor(
     name: String,
     description: String,
     category: DOperationCategory,
-    parameters: ParametersSchema,
+    parametersJsonDescription: JsValue,
     inPorts: Seq[Type],
     outPorts: Seq[Type]) {
 

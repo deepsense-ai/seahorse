@@ -23,17 +23,19 @@ import spray.json._
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.parameters.ParameterConversions._
 import io.deepsense.deeplang.parameters.exceptions.NoSuchParameterException
+import io.deepsense.deeplang.params.ParameterJsonContainer
 
 /**
  * Schema for a given set of DOperation parameters
  * Holds Parameters that are passed to DOperation.
  */
 class ParametersSchema protected (private val schemaMap: ListMap[String, Parameter] = ListMap.empty)
-  extends Serializable {
+  extends Serializable
+  with ParameterJsonContainer {
 
   // TODO: Parameter name should be taken from parameter, not from schema.
   // TODO: When it's there, this method should be simplified to schema.values.foreach(_.validate)
-  def validate: Vector[DeepLangException] = schemaMap.flatMap {
+  def validateParams: Vector[DeepLangException] = schemaMap.flatMap {
     case (name: String, parameter: Parameter) => parameter.validate(name)
   }.toVector
 
@@ -74,27 +76,30 @@ class ParametersSchema protected (private val schemaMap: ListMap[String, Paramet
   /**
    * Json representation describing parameters of this schema.
    */
-  def toJson: JsValue = JsArray(schemaMap.map { case (name, parameter) =>
+  def paramsToJson: JsValue = JsArray(schemaMap.map { case (name, parameter) =>
     JsObject(parameter.jsDescription + ("name" -> JsString(name)))
   }.toVector)
 
   /**
    * Json representation of values held by this schema's parameters.
    */
-  def valueToJson: JsValue = JsObject(schemaMap.mapValues(_.valueToJson))
+  def paramValuesToJson: JsValue = JsObject(schemaMap.mapValues(_.valueToJson))
 
-  def fillValuesWithJson(jsValue: JsValue): Unit = jsValue match {
-    case JsObject(map) =>
-      for ((label, value) <- map) {
-        schemaMap.get(label) match {
-          case Some(parameter) => parameter.fillValueWithJson(value)
-          case None => throw new DeserializationException(s"Cannot fill parameters schema with " +
-            s"$jsValue: unknown parameter label $label.")
+  def setParamsFromJson(jsValue: JsValue): this.type = {
+    jsValue match {
+      case JsObject(map) =>
+        for ((label, value) <- map) {
+          schemaMap.get(label) match {
+            case Some(parameter) => parameter.fillValueWithJson(value)
+            case None => throw new DeserializationException(s"Cannot fill parameters schema with " +
+              s"$jsValue: unknown parameter label $label.")
+          }
         }
-      }
-    case JsNull => // JsNull is treated as empty object
-    case _ => throw new DeserializationException(s"Cannot fill parameters schema with $jsValue:" +
-      s"object expected.")
+      case JsNull => // JsNull is treated as empty object
+      case _ => throw new DeserializationException(s"Cannot fill parameters schema with $jsValue:" +
+        s"object expected.")
+    }
+    this
   }
 
   def getBooleanParameter(name: String): BooleanParameter = get[BooleanParameter](name)

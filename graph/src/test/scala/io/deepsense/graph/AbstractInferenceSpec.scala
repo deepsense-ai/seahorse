@@ -23,6 +23,7 @@ import org.scalatest.{Matchers, WordSpec}
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
+import io.deepsense.deeplang.doperations.OldOperation
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarning, InferenceWarnings}
 import io.deepsense.deeplang.parameters.ParametersSchema
@@ -54,16 +55,20 @@ class AbstractInferenceSpec
    *  - throw inference errors
    * By default it infers A1 on its output port.
    */
-  case class DOperationA1A2ToFirst() extends DOperation2To1[A1, A2, A] with DOperationBaseFields {
+  case class DOperationA1A2ToFirst()
+      extends DOperation2To1[A1, A2, A]
+      with DOperationBaseFields
+      with OldOperation {
     import DOperationA1A2ToFirst._
 
     override val parameters = mock[ParametersSchema]
 
     override protected def _execute(context: ExecutionContext)(t1: A1, t2: A2): A = ???
 
-    def setParamsValid(): Unit = doReturn(Vector.empty).when(parameters).validate
+    def setParamsValid(): Unit = doReturn(Vector.empty).when(parameters).validateParams
 
-    def setParamsInvalid(): Unit = doReturn(Vector(parameterInvalidError)).when(parameters).validate
+    def setParamsInvalid(): Unit =
+      doReturn(Vector(parameterInvalidError)).when(parameters).validateParams
 
     private var inferenceShouldThrow = false
 

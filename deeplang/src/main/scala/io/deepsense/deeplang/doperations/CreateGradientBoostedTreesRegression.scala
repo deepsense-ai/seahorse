@@ -28,7 +28,8 @@ case class CreateGradientBoostedTreesRegression()
       override val lossOptions = Seq("squared", "absolute")
     }
     with DOperation0To1[UntrainedGradientBoostedTreesRegression]
-    with GradientBoostedTreesParams {
+    with GradientBoostedTreesParams
+    with OldOperation {
 
   override val name = "Create Gradient Boosted Trees Regression"
 

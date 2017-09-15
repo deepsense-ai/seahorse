@@ -23,7 +23,10 @@ import io.deepsense.deeplang.doperables.machinelearning.logisticregression.{Logi
 import io.deepsense.deeplang.parameters.{NumericParameter, ParametersSchema, RangeValidator}
 import io.deepsense.deeplang.{DOperation, DOperation0To1, ExecutionContext}
 
-case class CreateLogisticRegression() extends DOperation0To1[UntrainedLogisticRegression] {
+case class CreateLogisticRegression()
+    extends DOperation0To1[UntrainedLogisticRegression]
+    with OldOperation {
+
   @transient
   override lazy val tTagTO_0: ru.TypeTag[UntrainedLogisticRegression] =
     ru.typeTag[UntrainedLogisticRegression]

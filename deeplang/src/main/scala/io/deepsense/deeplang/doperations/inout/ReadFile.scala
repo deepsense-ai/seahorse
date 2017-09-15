@@ -27,6 +27,7 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat
 
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.doperables.file.File
+import io.deepsense.deeplang.doperations.OldOperation
 import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, ChoiceParameter, ParametersSchema, StringParameter}
 import io.deepsense.deeplang.{DOperation, DOperation0To1, ExecutionContext, FileInfo}
 
@@ -35,7 +36,7 @@ import io.deepsense.deeplang.{DOperation, DOperation0To1, ExecutionContext, File
  * Current version only supports CSV
  */
 
-case class ReadFile() extends DOperation0To1[File] {
+case class ReadFile() extends DOperation0To1[File] with OldOperation {
 
   override val id: DOperation.Id = "748975b2-38f0-40b4-8550-3faf4840b7c5"
 

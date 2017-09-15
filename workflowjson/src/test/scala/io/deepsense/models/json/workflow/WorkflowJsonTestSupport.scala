@@ -91,8 +91,6 @@ trait WorkflowJsonTestSupport
     when(knowledge.filterTypes(any())).thenReturn(knowledge)
     when(dOperation.inferKnowledge(anyObject())(anyObject())).thenReturn(
       (Vector.fill(outArity)(knowledge), InferenceWarnings.empty))
-    val parametersSchema = new ParametersSchema() {}
-    when(dOperation.parameters).thenReturn(parametersSchema)
     dOperation
   }
 

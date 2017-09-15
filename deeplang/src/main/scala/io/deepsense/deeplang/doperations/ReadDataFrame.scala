@@ -39,7 +39,8 @@ case class ReadDataFrame()
     extends DOperation0To1[DataFrame]
     with ReadDataFrameParameters
     with CategoricalExtraction
-    with CsvReader {
+    with CsvReader
+    with OldOperation {
 
   override val id: Id = "c48dd54c-6aef-42df-ad7a-42fc59a09f0e"
   override val name = "Read DataFrame"

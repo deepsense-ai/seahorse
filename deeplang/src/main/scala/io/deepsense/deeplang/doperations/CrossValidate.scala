@@ -38,7 +38,8 @@ abstract class CrossValidate[T <: Evaluable]()
     Trainable with T, DataFrame,
     Scorable with T, Report]
   with CrossValidateParams
-  with TrainableParameters {
+  with TrainableParameters
+  with OldOperation {
 
   def reportName: String
 

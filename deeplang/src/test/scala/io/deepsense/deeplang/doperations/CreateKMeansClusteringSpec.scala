@@ -39,7 +39,7 @@ class CreateKMeansClusteringSpec extends UnitSpec {
     "serialize its parameters to json" in {
       val createKMeansClustering =
         CreateKMeansClustering(2, 100, KMeans.RANDOM, Some(1), 123, 1, 1e-4)
-      createKMeansClustering.parameters.toJson
+      createKMeansClustering.parameters.paramsToJson
       ()
     }
   }

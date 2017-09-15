@@ -20,6 +20,7 @@ import scala.reflect.runtime.{universe => ru}
 
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameMetadata}
 import io.deepsense.deeplang.doperables.{DOperableSaver, Report}
+import io.deepsense.deeplang.doperations.OldOperation
 import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, ParametersSchema, StringParameter}
 import io.deepsense.deeplang.{DOperation, DOperation1To0, ExecutionContext}
 import io.deepsense.entitystorage.UniqueFilenameUtil
@@ -28,7 +29,7 @@ import io.deepsense.models.entities.{CreateEntityRequest, DataObjectReference}
 /**
  * Operation which is able to serialize DataFrame and save it.
  */
-case class SaveDataFrame() extends DOperation1To0[DataFrame] {
+case class SaveDataFrame() extends DOperation1To0[DataFrame] with OldOperation {
 
   override val parameters = ParametersSchema(
     SaveDataFrame.nameParam -> StringParameter(

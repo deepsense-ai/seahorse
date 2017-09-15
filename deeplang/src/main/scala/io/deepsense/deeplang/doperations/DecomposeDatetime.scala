@@ -38,7 +38,7 @@ import io.deepsense.deeplang.{DOperation, DOperation1To1, ExecutionContext}
  * If a column with that name already exists {original_timestamp_column_name}_$part_N will be used,
  * where N is first not used Int value starting from 1.
  */
-case class DecomposeDatetime() extends DOperation1To1[DataFrame, DataFrame] {
+case class DecomposeDatetime() extends DOperation1To1[DataFrame, DataFrame] with OldOperation {
   @transient
   override lazy val tTagTI_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
   @transient

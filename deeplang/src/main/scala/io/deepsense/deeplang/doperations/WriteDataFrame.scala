@@ -43,7 +43,8 @@ case class WriteDataFrame()
   extends DOperation1To0[DataFrame]
   with CsvParameters
   with JdbcParameters
-  with CassandraParameters {
+  with CassandraParameters
+  with OldOperation {
 
   override val id: Id = "9e460036-95cc-42c5-ba64-5bc767a40e4e"
 

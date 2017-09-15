@@ -25,12 +25,14 @@ import spray.json._
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.DOperableLoader
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder, DataFrameMetadata}
+import io.deepsense.deeplang.doperations.OldOperation
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, ParametersSchema, StringParameter}
 /**
  * Operation which is able to load DataFrame and deserialize it.
  */
-case class LoadDataFrame() extends DOperation0To1[DataFrame] {
+case class LoadDataFrame() extends DOperation0To1[DataFrame] with OldOperation {
+
   override val id: DOperation.Id = "2aa22df2-e28b-11e4-8a00-1681e6b88ec1"
 
   val idParameter = StringParameter(

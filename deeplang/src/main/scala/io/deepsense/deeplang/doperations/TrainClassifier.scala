@@ -23,7 +23,8 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables._
 
 case class TrainClassifier()
-    extends SupervisedTrainer[Classifier with Trainable, Classifier with Scorable] {
+    extends SupervisedTrainer[Classifier with Trainable, Classifier with Scorable]
+    with OldOperation {
 
   override val id: DOperation.Id = "892cf942-fe24-11e4-a322-1697f925ec7b"
   override val name = "Train Classifier"

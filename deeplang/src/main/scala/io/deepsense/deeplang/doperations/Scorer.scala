@@ -22,7 +22,7 @@ import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.parameters.{ParametersSchema, SingleColumnCreatorParameter}
 import io.deepsense.deeplang.{DKnowledge, DOperation2To1, ExecutionContext}
 
-trait Scorer[T <: Scorable] extends DOperation2To1[T, DataFrame, DataFrame] {
+trait Scorer[T <: Scorable] extends DOperation2To1[T, DataFrame, DataFrame] with OldOperation {
 
   val predictionColumnParam = SingleColumnCreatorParameter(
     "Column name for predictions",

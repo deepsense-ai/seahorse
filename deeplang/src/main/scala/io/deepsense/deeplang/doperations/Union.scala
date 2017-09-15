@@ -30,7 +30,8 @@ import io.deepsense.deeplang.parameters.ParametersSchema
 import io.deepsense.deeplang.{DOperation2To1, ExecutionContext}
 
 
-case class Union() extends DOperation2To1[DataFrame, DataFrame, DataFrame] {
+case class Union() extends DOperation2To1[DataFrame, DataFrame, DataFrame] with OldOperation {
+
   override val id: Id = "90fed07b-d0a9-49fd-ae23-dd7000a1d8ad"
   override val name: String = "Union"
   override val parameters: ParametersSchema = ParametersSchema()

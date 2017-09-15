@@ -26,7 +26,8 @@ import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
  */
 trait SupervisedTrainer[T1 <: Trainable, T2 <: Scorable]
   extends DOperation2To1[T1, DataFrame, T2]
-  with TrainableParameters {
+  with TrainableParameters
+  with OldOperation {
 
   override val parameters = trainParameters
 

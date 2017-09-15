@@ -33,7 +33,7 @@ trait NodeInferenceImpl extends NodeInference {
       inputInferenceForNode: NodeInferenceResult): NodeInferenceResult = {
 
     val NodeInferenceResult(inKnowledge, warnings, errors) = inputInferenceForNode
-    val parametersValidationErrors = node.operation.parameters.validate
+    val parametersValidationErrors = node.operation.validateParams
     if (context.fullInference && !parametersValidationErrors.isEmpty) {
       createDefaultKnowledge(
         context,

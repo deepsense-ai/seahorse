@@ -112,9 +112,10 @@ class GraphReaderSpec extends GraphJsonTestSupport {
   "GraphReader" should {
     "create Graph from JSON and fill parameters with values from Json" in {
       graphsSimilar(exampleJson.convertTo[StatefulGraph], expectedGraph) shouldBe true
-      verify(operation1.parameters).fillValuesWithJson(parameters1)
-      verify(operation2.parameters).fillValuesWithJson(parameters2)
-      verify(operation3.parameters).fillValuesWithJson(parameters3)
+      verify(operation1).setParamsFromJson(parameters1)
+      verify(operation2).setParamsFromJson(parameters2)
+      verify(operation3).setParamsFromJson(parameters3)
+      ()
     }
   }
 

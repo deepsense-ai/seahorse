@@ -25,7 +25,8 @@ import io.deepsense.deeplang.doperables.machinelearning.randomforest.regression.
 case class CreateRandomForestRegression()
     extends { override val impurityOptions = Seq("variance") }
     with DOperation0To1[UntrainedRandomForestRegression]
-    with RandomForestParams {
+    with RandomForestParams
+    with OldOperation {
 
   override val name = "Create Random Forest Regression"
 

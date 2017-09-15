@@ -33,7 +33,7 @@ import io.deepsense.deeplang.inference.{ConversionMayNotBePossibleWarning, Infer
 import ColumnType.ColumnType
 import io.deepsense.deeplang.parameters._
 
-case class ConvertType() extends DOperation1To1[DataFrame, DataFrame] {
+case class ConvertType() extends DOperation1To1[DataFrame, DataFrame] with OldOperation {
 
   override val name: String = "Convert Type"
   override val id: Id = "f8b3c5d0-febe-11e4-b939-0800200c9a66"

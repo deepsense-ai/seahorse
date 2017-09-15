@@ -23,7 +23,9 @@ import io.deepsense.deeplang.doperables.transformations.MathematicalTransformati
 import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, ParametersSchema, StringParameter}
 import io.deepsense.deeplang.{DOperation0To1, ExecutionContext}
 
-case class CreateMathematicalTransformation() extends DOperation0To1[MathematicalTransformation] {
+case class CreateMathematicalTransformation()
+    extends DOperation0To1[MathematicalTransformation]
+    with OldOperation {
 
   override val name : String = "Create Mathematical Transformation"
 

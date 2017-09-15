@@ -36,7 +36,8 @@ import io.deepsense.deeplang.{DKnowledge, DOperation1To1, ExecutionContext}
 
 case class MissingValuesHandler()
   extends DOperation1To1[DataFrame, DataFrame]
-  with MissingValuesHandlerParams {
+  with MissingValuesHandlerParams
+  with OldOperation {
 
   override val name: String = "Missing Values Handler"
   override val id: Id = "e1120fbc-375b-4967-9c23-357ab768272f"

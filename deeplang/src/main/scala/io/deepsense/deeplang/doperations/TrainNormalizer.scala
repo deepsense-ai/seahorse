@@ -25,7 +25,10 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{DOperation, DOperation1To2, ExecutionContext}
 
-case class TrainNormalizer() extends DOperation1To2[DataFrame, DataFrame, Normalizer] {
+case class TrainNormalizer()
+    extends DOperation1To2[DataFrame, DataFrame, Normalizer]
+    with OldOperation {
+
   override val id: DOperation.Id = "9ae1a3f8-a70b-44bf-b162-e3b16dc6fded"
   override val name = "Train Normalizer"
 

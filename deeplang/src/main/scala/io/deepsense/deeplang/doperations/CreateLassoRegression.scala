@@ -26,7 +26,8 @@ import io.deepsense.deeplang.doperables.machinelearning.LinearRegressionParamete
 import io.deepsense.deeplang.doperables.machinelearning.lassoregression.UntrainedLassoRegression
 
 case class CreateLassoRegression()
-  extends AbstractCreateLinearRegression[UntrainedLassoRegression, LassoWithSGD, LassoModel] {
+  extends AbstractCreateLinearRegression[UntrainedLassoRegression, LassoWithSGD, LassoModel]
+  with OldOperation {
 
   @transient
   override lazy val tTagTO_0: ru.TypeTag[UntrainedLassoRegression] =

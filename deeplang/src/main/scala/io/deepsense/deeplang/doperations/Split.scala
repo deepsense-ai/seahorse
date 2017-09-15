@@ -26,7 +26,7 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.parameters.{NumericParameter, ParametersSchema, RangeValidator}
 
-case class Split() extends DOperation1To2[DataFrame, DataFrame, DataFrame] {
+case class Split() extends DOperation1To2[DataFrame, DataFrame, DataFrame] with OldOperation {
   override val name: String = "Split"
   override val id: DOperation.Id = "d273c42f-b840-4402-ba6b-18282cc68de3"
 

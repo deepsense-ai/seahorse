@@ -23,7 +23,7 @@ import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.deeplang.parameters.{AcceptAllRegexValidator, ParametersSchema, StringParameter}
 import io.deepsense.deeplang.{DOperation1To1, ExecutionContext}
 
-case class SqlExpression() extends DOperation1To1[DataFrame, DataFrame] {
+case class SqlExpression() extends DOperation1To1[DataFrame, DataFrame] with OldOperation {
   @transient
   override lazy val tTagTO_0 = ru.typeTag[DataFrame]
   @transient

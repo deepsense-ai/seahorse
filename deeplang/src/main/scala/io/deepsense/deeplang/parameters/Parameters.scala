@@ -265,7 +265,7 @@ case class ParametersSequence(
   override protected def validateDefined(
       definedValue: Vector[ParametersSchema]): Vector[DeepLangException] = {
     definedValue.foldLeft(Vector.empty[DeepLangException])(
-      (allErrors, currentErrors ) => allErrors ++ currentErrors.validate)
+      (allErrors, currentErrors ) => allErrors ++ currentErrors.validateParams)
   }
 
   private[parameters] def replicate: Parameter = copy()
@@ -274,10 +274,10 @@ case class ParametersSequence(
     _value.foreach(_.foreach(_.substitutePlaceholders(variables)))
 
   override def jsDescription: Map[String, JsValue] =
-    super.jsDescription + ("values" -> predefinedSchema.toJson)
+    super.jsDescription + ("values" -> predefinedSchema.paramsToJson)
 
   override protected def definedValueToJson(definedValue: Vector[ParametersSchema]): JsValue = {
-    val fields = for (schema <- definedValue) yield schema.valueToJson
+    val fields = for (schema <- definedValue) yield schema.paramValuesToJson
     JsArray(fields: _*)
   }
 
@@ -290,7 +290,7 @@ case class ParametersSequence(
       case JsArray(vector) =>
         for (innerJsValue <- vector) yield {
           val replicatedSchema = predefinedSchema.replicate
-          replicatedSchema.fillValuesWithJson(innerJsValue)
+          replicatedSchema.setParamsFromJson(innerJsValue)
           replicatedSchema
         }
       case _ => throw new DeserializationException(s"Cannot fill parameters sequence" +

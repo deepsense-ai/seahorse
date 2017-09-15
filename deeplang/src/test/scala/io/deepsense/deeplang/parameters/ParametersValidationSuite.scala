@@ -34,7 +34,7 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
     param2.value = "abc"
 
     val parametersSchema = ParametersSchema("x" -> param1, "y" -> param2)
-    assert(parametersSchema.validate.isEmpty)
+    assert(parametersSchema.validateParams.isEmpty)
   }
 
   test("Validation of invalid parameter using range validator should return an exception") {
@@ -90,7 +90,7 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
   test("Validating empty parameter without default value should return an exception") {
     val param = StringParameter("description", None, RegexValidator("a".r))
     val parametersSchema = ParametersSchema("x" -> param)
-    parametersSchema.validate
+    parametersSchema.validateParams
     assertValidationReturnedException(parametersSchema, ParameterRequiredException("x"))
   }
 
@@ -98,7 +98,7 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
     val default = "someDefault"
     val param = StringParameter("description", Some(default), new AcceptAllRegexValidator)
     val parametersSchema = ParametersSchema("x" -> param)
-    assert(parametersSchema.validate.isEmpty)
+    assert(parametersSchema.validateParams.isEmpty)
     assert(param.value == default)
   }
 
@@ -118,29 +118,29 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
     val choice = ChoiceParameter("choice", None, possibleChoices)
     choice.value = "onlyChoice"
     choice.validate("choice")
-    verify(mockSchema).validate
+    verify(mockSchema).validateParams
   }
 
   test("Validation of multipleChoice parameter should validate chosen schemas") {
     val mockSchema1 = mock[ParametersSchema]
-    when(mockSchema1.validate).thenReturn(Vector())
+    when(mockSchema1.validateParams).thenReturn(Vector())
     val mockSchema2 = mock[ParametersSchema]
-    when(mockSchema2.validate).thenReturn(Vector())
+    when(mockSchema2.validateParams).thenReturn(Vector())
     val possibleChoices = ListMap("firstChoice" -> mockSchema1, "secondChoice" -> mockSchema2)
     val multipleChoices = MultipleChoiceParameter("choice", None, possibleChoices)
     multipleChoices.value = Some(Traversable("firstChoice", "secondChoice"))
     multipleChoices.validate("choice")
-    verify(mockSchema1).validate
-    verify(mockSchema2).validate
+    verify(mockSchema1).validateParams
+    verify(mockSchema2).validateParams
   }
 
   test("Validation of parameters sequence should validate inner schemas") {
     val mockSchema = mock[ParametersSchema]
-    when(mockSchema.validate).thenReturn(Vector())
+    when(mockSchema.validateParams).thenReturn(Vector())
     val multiplicator = ParametersSequence("description", mockSchema)
     multiplicator.value = Vector(mockSchema, mockSchema)
     multiplicator.validate("someParamName")
-    verify(mockSchema, times(2)).validate
+    verify(mockSchema, times(2)).validateParams
   }
 
   test("Validation of MultipleColumnSelection should validate inner selectors") {
@@ -176,7 +176,7 @@ class ParametersValidationSuite extends FunSuite with MockitoSugar {
   def assertValidationReturnedException(
       validable: ParametersSchema,
       exceptions: ValidationException*): Unit = {
-    val validationExceptions = validable.validate
+    val validationExceptions = validable.validateParams
     assert(validationExceptions.size == exceptions.size)
     exceptions.foreach(
       e => assert( validationExceptions.contains(e))

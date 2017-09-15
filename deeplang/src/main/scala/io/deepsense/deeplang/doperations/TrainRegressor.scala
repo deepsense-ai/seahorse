@@ -24,7 +24,8 @@ import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.parameters.{ColumnSelectorParameter, MultipleColumnSelection, NameColumnSelection, NameSingleColumnSelection}
 
 case class TrainRegressor()
-    extends SupervisedTrainer[Regressor with Trainable, Regressor with Scorable] {
+    extends SupervisedTrainer[Regressor with Trainable, Regressor with Scorable]
+    with OldOperation {
 
   override val id: DOperation.Id = "c526714c-e7fb-11e4-b02c-1681e6b88ec1"
   override val name = "Train Regressor"

@@ -71,7 +71,7 @@ class ParamsSpec extends UnitSpec {
     "validate its params" in {
       val p = WithParams()
       p.set1(4)
-      p.validateParams() should contain theSameElementsAs Seq(p.param1.validate(4)).flatten
+      p.validateParams should contain theSameElementsAs Seq(p.param1.validate(4)).flatten
     }
     "describe its params as json ordered asc by index" in {
       val p = WithParams()

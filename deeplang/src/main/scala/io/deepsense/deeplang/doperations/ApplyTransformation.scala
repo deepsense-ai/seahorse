@@ -25,7 +25,10 @@ import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.parameters.ParametersSchema
 import io.deepsense.deeplang.{DKnowledge, DOperation2To1, ExecutionContext}
 
-case class ApplyTransformation() extends DOperation2To1[Transformation, DataFrame, DataFrame] {
+case class ApplyTransformation()
+    extends DOperation2To1[Transformation, DataFrame, DataFrame]
+    with OldOperation {
+
   override val parameters: ParametersSchema = ParametersSchema()
   override val name: String = "Apply Transformation"
   override val id: Id = "f6e1f59b-d04d-44e2-ae35-2fcada44d23f"
