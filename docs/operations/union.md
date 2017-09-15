@@ -7,7 +7,7 @@ usesMathJax: true
 includeOperationsMenu: true
 ---
 
-Sums two input [DataFrames](../classes/dataframe.html) together into one `DataFrame`.
+Sums two input [DataFrames](../classes/dataframe.html) together into a single `DataFrame`.
 This means that each row from each of the input `DataFrames` will end up in the resulting `DataFrame`.
 
 There will be no deduplication effort, meaning that if there are two identical rows in the input

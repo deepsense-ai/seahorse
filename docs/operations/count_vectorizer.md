@@ -33,7 +33,7 @@ For scala docs details, see
 </tr>
 </thead>
 <tbody>
-    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>The input DataFrame.</td></tr>
+    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>The input <code>DataFrame</code>.</td></tr>
 </tbody>
 </table>
 
@@ -50,7 +50,7 @@ For scala docs details, see
 </tr>
 </thead>
 <tbody>
-    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>The output <code>DataFrame</code>.</td></tr><tr><td><code>1</code></td><td><code><a href="../classes/transformer.html">Transformer</a></code></td><td>A <code>Transformer</code> that allows to apply the operation on other<code>DataFrames</code> using a <a href="transform.html">Transform</a>.</td></tr>
+    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>The output <code>DataFrame</code>.</td></tr><tr><td><code>1</code></td><td><code><a href="../classes/transformer.html">Transformer</a></code></td><td>A <code>Transformer</code> that allows to apply the operation on other <code>DataFrames</code> using a <a href="transform.html">Transform</a>.</td></tr>
 </tbody>
 </table>
 
@@ -96,10 +96,10 @@ For scala docs details, see
 <td><code>min term frequency</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
 <td>A filter to ignore rare words in a document. For each document, terms with
-frequency/count less than the given threshold are ignored. If this is an integer >= 1,
+a frequency/count less than the given threshold are ignored. If this is an integer >= 1,
 then this specifies a count (of times the term must appear in the document); if this is
-a double in [0,1), then this specifies a fraction (out of the document's token count).
-Note that the parameter is only used in transform of CountVectorizerModel and does not
+a double in [0,1), then it specifies a fraction (out of the document's token count).
+Note that the parameter is only used in transform of CountVectorizer model and does not
 affect fitting.</td>
 </tr>
 

@@ -106,7 +106,6 @@ trait DocPageCreator {
   }
 
   private def sinceSeahorseVersion(operation: DOperation): String = {
-    val version = BuildInfo.version.replace("-SNAPSHOT", "")
     s"**Since**: Seahorse ${operation.since.humanReadable}"
   }
 
@@ -115,12 +114,12 @@ trait DocPageCreator {
       case (t: TransformerAsOperation[_]) =>
         inputOutputTable(Seq(
           ("<code><a href=\"../classes/dataframe.html\">DataFrame</a></code>",
-            "The input DataFrame.")
+            "The input <code>DataFrame</code>.")
         ))
       case (es: EstimatorAsOperation[_, _]) =>
         inputOutputTable(Seq(
           ("<code><a href=\"../classes/dataframe.html\">DataFrame</a></code>",
-            "The input DataFrame.")
+            "The input <code>DataFrame</code>.")
         ))
       case (e: EstimatorAsFactory[_]) =>
         "This operation does not take any input."
@@ -137,8 +136,8 @@ trait DocPageCreator {
           ("<code><a href=\"../classes/dataframe.html\">DataFrame</a></code>",
             "The output <code>DataFrame</code>."),
           ("<code><a href=\"../classes/transformer.html\">Transformer</a></code>",
-            "A <code>Transformer</code> that allows to apply the operation on other " +
-              "<code>DataFrames</code> using a <a href=\"transform.html\">Transform</a>.")
+            "A <code>Transformer</code> that allows to apply the operation on other" +
+              " <code>DataFrames</code> using a <a href=\"transform.html\">Transform</a>.")
         ))
       case (eso: EstimatorAsOperation[_, _]) =>
         inputOutputTable(Seq(
@@ -146,7 +145,7 @@ trait DocPageCreator {
             "The output <code>DataFrame</code>."),
           ("<code><a href=\"../classes/transformer.html\">Transformer</a></code>",
             "A <code>Transformer</code> that allows to apply the operation on other" +
-              "<code>DataFrames</code> using a <a href=\"transform.html\">Transform</a>.")
+              " <code>DataFrames</code> using a <a href=\"transform.html\">Transform</a>.")
         ))
       case (e: EstimatorAsFactory[_]) =>
         inputOutputTable(Seq(

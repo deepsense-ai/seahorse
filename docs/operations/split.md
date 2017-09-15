@@ -7,8 +7,8 @@ usesMathJax: true
 includeOperationsMenu: true
 ---
 
-Splits [DataFrame](../classes/dataframe.html) into two separate `DataFrames`.
-Each row from the input `DataFrame` will always be in one of the result `DataFrames`, but never in both.
+Splits a [DataFrame](../classes/dataframe.html) into two separate `DataFrames`. Each row from the
+input `DataFrame` will always end up in one of the result `DataFrames`, but never in both.
 
 The `Split` operation does not preserve row order.
 
@@ -28,7 +28,7 @@ The `Split` operation does not preserve row order.
 <tr>
 <td><code>0</code></td>
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>The <code>DataFrame</code> to split</td>
+<td>The <code>DataFrame</code> to split.</td>
 </tr>
 </tbody>
 </table>
@@ -47,12 +47,12 @@ The `Split` operation does not preserve row order.
 <tr>
 <td><code>0</code></td>
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>The first part of the input <code>DataFrame</code></td>
+<td>The first part of the input <code>DataFrame</code>.</td>
 </tr>
 <tr>
 <td><code>1</code></td>
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>The second part of the input <code>DataFrame</code></td>
+<td>The second part of the input <code>DataFrame</code>.</td>
 </tr>
 </tbody>
 </table>
@@ -72,18 +72,19 @@ The `Split` operation does not preserve row order.
 <td><code id="ratio">ratio</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
 <td>
-  A number between 0 and 1 describing how much of the input <code>DataFrame</code> will end up in the first part
-  of the split. Example: ratio = 0.3 means that the first output <code>DataFrame</code> will contain 30% of
-  the rows of the input <code>DataFrame</code>, and the second output <code>DataFrame</code> will
-  contain 70% of the rows of the input <code>DataFrame</code>.
+  A number between 0 and 1 describing how much of the input <code>DataFrame</code> will end up in
+  the first part of the split. Example: <code>ratio = 0.3</code> means that the first output
+  <code>DataFrame</code> will contain 30% of the rows of the input <code>DataFrame</code>, and the
+  second output <code>DataFrame</code> will contain 70% of the rows of the input
+  <code>DataFrame</code>.
 </td>
 </tr>
 <tr>
 <td><code id="seed">seed</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
 <td>
-  An integer between -1073741824 and 1073741823 that is used as a seed for the random number generator.
-  A fixed value of this parameter allows to produce repeatable results.
+  An integer between -1073741824 and 1073741823 that is used as a seed for the random number
+  generator. A fixed value of this parameter allows to produce repeatable results.
 </td>
 </tr>
 </tbody>

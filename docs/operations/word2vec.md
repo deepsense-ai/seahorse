@@ -6,7 +6,7 @@ description: Word2Vec
 usesMathJax: true
 includeOperationsMenu: true
 ---
-Transforms array of words into vector of numeric codes for the purpose of further
+Transforms vectors of words into vectors of numeric codes for the purpose of further
 processing by NLP or machine learning algorithms.
 
 This operation is ported from Spark ML.
@@ -33,7 +33,7 @@ For scala docs details, see
 </tr>
 </thead>
 <tbody>
-    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>The input DataFrame.</td></tr>
+    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>The input <code>DataFrame</code>.</td></tr>
 </tbody>
 </table>
 
@@ -50,7 +50,7 @@ For scala docs details, see
 </tr>
 </thead>
 <tbody>
-    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>The output <code>DataFrame</code>.</td></tr><tr><td><code>1</code></td><td><code><a href="../classes/transformer.html">Transformer</a></code></td><td>A <code>Transformer</code> that allows to apply the operation on other<code>DataFrames</code> using a <a href="transform.html">Transform</a>.</td></tr>
+    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>The output <code>DataFrame</code>.</td></tr><tr><td><code>1</code></td><td><code><a href="../classes/transformer.html">Transformer</a></code></td><td>A <code>Transformer</code> that allows to apply the operation on other <code>DataFrames</code> using a <a href="transform.html">Transform</a>.</td></tr>
 </tbody>
 </table>
 

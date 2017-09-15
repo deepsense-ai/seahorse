@@ -56,8 +56,8 @@ to another `DataFrame` with a [Transform](transform.html) operation.
 <tr>
 <td><code>1</code></td><td>
 <code><a href="../classes/transformer.html">Transformer</a></code></td>
-<td><code>Transformer</code> that allows to apply the operation on another <code>DataFrames</code> using
-<a href="transform.html">Transform</a>.</td>
+<td>A <code>Transformer</code> that allows to apply the operation to another <code>DataFrames</code>
+using a <a href="transform.html">Transform</a>.</td>
 </tr>
 </tbody>
 </table>
