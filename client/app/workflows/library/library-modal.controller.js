@@ -54,7 +54,10 @@ function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, LibraryModa
   }
 
   function showNewDirectoryInput() {
-    LibraryModalService.showNewDirectoryInput();
+    const isUploadingFilesPopoverOpen = LibraryModalService.getUploadingFilesPopoverStatus();
+    if (!isUploadingFilesPopoverOpen) {
+      LibraryModalService.showNewDirectoryInput();
+    }
   }
 
   function handleResults(result) {

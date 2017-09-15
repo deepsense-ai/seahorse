@@ -1,11 +1,12 @@
 @import "../../../../../css/variables";
+@import "../../../../../app/mixins";
 
 .file-element {
   width: 100%;
   display: flex;
   height: 36px;
   align-items: center;
-  border-bottom: 1px solid #C6C6C6;
+  border-bottom: 1px solid @grey;
   position: relative;
 
   &.last-elem {
@@ -25,7 +26,7 @@
   }
 
   &.directory {
-    background-color: #f2f2f2;
+    background-color: @light-grey;
 
     .name {
       color: @seahorse-light-blue;
@@ -71,22 +72,53 @@
     }
   }
 
-  .name {
+  .name-section {
+    display: flex;
+    align-items: center;
     font-weight: 600;
     flex: 1;
+
+    .name {
+      display: block;
+      max-width: 450px;
+      padding-left: 5px;
+      .text-elipsis();
+    }
 
     .upload-info {
       font-style: italic;
       color: grey;
       font-weight: 500;
       padding-left: 10px;
+
+      .parent {
+        &:hover {
+          cursor: pointer;
+          text-decoration: underline;
+        }
+      }
     }
 
-    .new-dir {
-      padding: 0 5px;
+    .new-directory {
+      &__input {
+        color: black;
+        padding-left: 5px;
+      }
 
-      &.cancel {
+      &__ok {
+        color: @seahorse-blue;
+        padding: 0 10px;
+        &:hover {
+          cursor: pointer;
+        }
+      }
+
+      &__cancel {
         color: grey;
+        &:hover {
+          font-weight: 900;
+          cursor: pointer;
+        }
       }
     }
   }
@@ -95,6 +127,12 @@
     display: flex;
     align-items: center;
     padding-right: 10px;
+
+    &.disabled {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
     a {
       color: inherit;
       text-decoration: none;

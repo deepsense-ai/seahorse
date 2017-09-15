@@ -7,7 +7,8 @@ const FileListComponent = {
   bindings: {
     items: '<',
     parents: '<',
-    onSelect: '<'
+    onSelect: '<',
+    mode: '<'
   },
   templateUrl: tpl
 };

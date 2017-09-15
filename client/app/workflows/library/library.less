@@ -3,7 +3,6 @@
 @border-grey: #CFCFCF;
 @dragzone-border: #868686;
 @light-grey: #F2F2F2;
-@grey: #C6C6C6;
 @dark-grey: #999999;
 @border-blue: #166089;
 
@@ -37,6 +36,7 @@
     }
 
     .files-list {
+      width: 100%;
       flex: 1;
 
       .file-list-wrapper {
@@ -46,8 +46,6 @@
     }
 
     .btn-grey {
-      display: flex;
-      align-items: center;
       height: 35px;
       margin: 0 5px;
       border: 1px solid @grey;
@@ -74,6 +72,8 @@
 
         &__label {
           padding-bottom: 5px;
+          position: relative;
+          top: -5px;
         }
       }
     }

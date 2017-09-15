@@ -14,26 +14,30 @@
     </div>
   </div>
 
-  <div class="name"
+  <div class="name-section"
        ng-click="$ctrl.onSelect($ctrl.item)"
   >
-    <span>
+    <div class="name" title={{$ctrl.item.name}}>
       {{$ctrl.item.name}}
-    </span>
-    <span class="upload-info" ng-if="$ctrl.item.status !== 'error'">
+    </div>
+    <span class="upload-info" ng-if="$ctrl.item.progress && $ctrl.item.status !== 'error'">
       <span ng-repeat="parent in $ctrl.parents">
-        <span ng-click="$ctrl.goToUri(parent.uri)">{{parent.name}}</span>
+        <span class="parent" ng-click="$ctrl.goToUri(parent.uri)">{{parent.name}}</span>
         <span ng-if="!$last">/</span>
       </span>
     </span>
-    <span class="upload-info" ng-if="$ctrl.item.status === 'error'">
+    <span class="upload-info" ng-if="$ctrl.item.progress && $ctrl.item.status === 'error'">
       (upload failed)
     </span>
   </div>
 
-  <div class="actions">
+  <div class="actions"
+       ng-class="{'disabled': $ctrl.item.progress > 0 && $ctrl.item.progress < 100}"
+  >
     <span class="sa sa-directory" title="Open directory"
-          ng-if="$ctrl.item.progress" ng-click="$ctrl.goToUri($ctrl.item.parent.uri)">
+          ng-click="$ctrl.goToUri($ctrl.item.parent.uri)"
+          ng-if="$ctrl.item.progress"
+    >
     </span>
     <a ng-href={{$ctrl.item.downloadUrl}} download>
       <span class="sa sa-download"></span>

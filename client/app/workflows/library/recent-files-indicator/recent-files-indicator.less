@@ -12,7 +12,7 @@
       height: 10px;
       width: 52px;
       position: absolute;
-      left: 0;
+      left: 5px;
       right: 0;
       animation: gradient-moving 0.9s infinite;
     }
@@ -39,7 +39,7 @@
     font-family: seahorse-symbol;
     color: @seahorse-light-blue;
     position: relative;
-    top: 2px;
+    top: -2px;
   }
 
   .files-number {
@@ -56,13 +56,17 @@
 
   .files-popover {
     position: absolute;
-    min-height: 250px;
-    max-height: 600px;
+    height: 350px;
     width: 950px;
     top: 55px;
     right: -50px;
     z-index: 1000;
-    box-shadow: 0 0 10px 1px @seahorse-light-blue;
+    border: 1px solid @seahorse-blue;
+    box-shadow: 0 0 10px 0 rgba(0,0,0,0.75);
+
+    @media(max-width: 992px) {
+      width: 650px;
+    }
   }
 
   .files-popover .popover-arrow {
@@ -70,9 +74,9 @@
     height: 0;
     border-left: 25px solid transparent;
     border-right: 25px solid transparent;
-    border-bottom: 25px solid #F2F2F2;
+    border-bottom: 25px solid @light-grey;
     position: absolute;
-    right: 52px;
+    right: 55px;
     top: -25px;
     z-index: 1000;
   }
@@ -84,12 +88,12 @@
     border-right: 26px solid transparent;
     border-bottom: 26px solid @seahorse-light-blue;
     position: absolute;
-    right: 51px;
+    right: 54px;
     top: -26px;
   }
 
   .inner {
-    background-color: #F2F2F2;
+    background-color: @light-grey;
     height: 100%;
     width: 100%;
 

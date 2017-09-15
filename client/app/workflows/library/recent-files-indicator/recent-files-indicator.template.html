@@ -4,7 +4,7 @@
        ng-click="$ctrl.openRecentFilesTable()"
        ng-class="{'indicator-disabled': $ctrl.allFiles.length === 0}">
     <div class="gradient" ng-if="$ctrl.uploadingFiles.length > 0"></div>
-    <span class="files-counter-icon">w</span>
+    <span class="sa sa-file files-counter-icon"></span>
     <span class="files-number">{{$ctrl.allFiles.length}}</span>
   </div>
 
@@ -16,7 +16,10 @@
       <div class="title">Recent uploads</div>
 
       <div class="files-wrapper" custom-scroll-bar="">
-        <file-list items="$ctrl.allFiles">
+        <file-list
+          mode="'uploading-files'"
+          items="$ctrl.allFiles"
+        >
         </file-list>
       </div>
     </div>

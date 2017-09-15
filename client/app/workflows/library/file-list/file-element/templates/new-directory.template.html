@@ -3,19 +3,21 @@
     <div class="icon sa sa-directory"></div>
   </div>
 
-  <div class="name">
+  <div class="name-section">
     <input
-      autofocus
+      class="new-directory__input"
       ng-init="$ctrl.newDirectoryName = ''"
       ng-model="$ctrl.newDirectoryName"
+      maxlength="30"
+      autofocus
     />
     <span
-      class="new-dir"
+      class="new-directory__ok"
       ng-click="$ctrl.saveNewDir()">
       Ok
     </span>
     <span
-      class="new-dir cancel"
+      class="new-directory__cancel"
       ng-click="$ctrl.cancelAddingNewDir()">
       Cancel
     </span>

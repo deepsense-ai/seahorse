@@ -1,9 +1,7 @@
 @import "../../../../css/variables";
 
-@darker-gray: #8e9297;
-
 .breadcrumbs {
-  background-color: @darker-gray;
+  background-color: @color-darker-gray;
   color: #fff;
   height: 26px;
   line-height: 26px;
@@ -17,7 +15,7 @@
   }
 
   .parent-wrapper:nth-last-child(2) {
-    background-color: @darker-gray;
+    background-color: @color-darker-gray;
   }
 
   .element {
@@ -44,20 +42,20 @@
   .triangle-left {
     width: 0;
     height: 0;
-    border-top: 17px solid transparent;
-    border-bottom: 17px solid transparent;
-    border-left: 12px solid white;
+    border-top: 13px solid transparent;
+    border-bottom: 13px solid transparent;
+    border-left: 10px solid @color-white;
   }
 
   .inner-triangle {
     position: relative;
     top: -15px;
-    left: -12px;
+    left: -13px;
     width: 0;
     height: 0;
     border-top: 15px solid transparent;
     border-bottom: 15px solid transparent;
-    border-left: 10px solid @seahorse-blue;
+    border-left: 11px solid @seahorse-blue;
   }
 
   .parent-elem {

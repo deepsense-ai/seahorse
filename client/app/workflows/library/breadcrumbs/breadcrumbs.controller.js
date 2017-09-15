@@ -1,6 +1,6 @@
 require('./breadcrumbs.less');
 
-const MAX_PARENT_NO_VISIBLE = 3;
+const MAX_PARENT_NUMBER_VISIBLE = 4;
 
 class BreadcrumbsController {
   /* @ngInject */
@@ -17,8 +17,8 @@ class BreadcrumbsController {
   }
 
   shortenParentsArray(parents) {
-    if (parents.length > MAX_PARENT_NO_VISIBLE) {
-      const firstParentNotVisible = parents[parents.length - MAX_PARENT_NO_VISIBLE];
+    if (parents.length > MAX_PARENT_NUMBER_VISIBLE) {
+      const firstParentNotVisible = parents[parents.length - MAX_PARENT_NUMBER_VISIBLE];
       this.parents = [
         parents[0],
         {
@@ -26,7 +26,7 @@ class BreadcrumbsController {
           uri: firstParentNotVisible.uri,
           title: firstParentNotVisible.name
         },
-        ...parents.slice(parents.length - (MAX_PARENT_NO_VISIBLE - 1), parents.length)
+        ...parents.slice(parents.length - (MAX_PARENT_NUMBER_VISIBLE - 1), parents.length)
       ];
     } else {
       this.parents = [...parents];
