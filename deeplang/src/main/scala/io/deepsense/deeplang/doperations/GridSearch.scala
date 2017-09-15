@@ -38,7 +38,7 @@ import io.deepsense.reportlib.model.{ReportContent, ReportType, Table}
 
 case class GridSearch() extends DOperation3To1[DataFrame, Estimator, Evaluator, Report] {
 
-  override val name: String = "GridSearch"
+  override val name: String = "Grid Search"
   override val id: Id = "9163f706-eaaf-46f6-a5b0-4114d92032b7"
   override val description: String = "Grid Search"
 
