@@ -96,6 +96,6 @@ services:
      - "RABBITMQ_USER=yNNp7VJS"
      - "RABBITMQ_PASS=1ElYfGNW"
   database:
-    image: $DOCKER_REPOSITORY/deepsense-h2:master-latest
+    image: $DOCKER_REPOSITORY/deepsense-h2:$DOCKER_TAG
     volumes:
       - "./h2-data:/opt/h2-data:rw"
