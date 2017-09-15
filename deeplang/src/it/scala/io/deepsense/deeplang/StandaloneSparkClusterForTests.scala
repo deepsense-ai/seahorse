@@ -34,18 +34,18 @@ object StandaloneSparkClusterForTests {
     System.setProperty("HADOOP_USER_NAME", "hdfs")
 
     val sparkConf: SparkConf = new SparkConf()
-      .setMaster("spark://10.10.1.199:7077")
+      .setMaster("spark://10.10.1.121:7077")
       .setAppName("TestApp")
       .setJars(Seq(
-        "./deeplang/target/scala-2.10/" +
-          "deepsense-seahorse-deeplang-assembly-1.2.0-DESKTOP-SNAPSHOT.jar"
+        "./deeplang/target/scala-2.11/" +
+          "deepsense-seahorse-deeplang-assembly-1.2.0-DESKTOP-NEWSPARK-SNAPSHOT.jar"
       ))
       .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
       .registerKryoClasses(Array())
 
     val sparkContext = new SparkContext(sparkConf)
     val sparkSession = SparkSession.builder().config(sparkConf).getOrCreate()
-    
+
     UserDefinedFunctions.registerFunctions(sparkSession.udf)
 
     val dOperableCatalog = {

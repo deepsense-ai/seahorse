@@ -24,8 +24,11 @@ import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.inout.OutputFileFormatChoice.Csv
 import io.deepsense.deeplang.doperations.inout.{InputFileFormatChoice, OutputFileFormatChoice}
+import io.deepsense.deeplang.doperations.readwritedataframe.csv.CsvOptions
 
 object ClusterFiles {
+
+  import CsvOptions._
 
   def read(path: FilePath, fileFormat: InputFileFormatChoice)
           (implicit context: ExecutionContext): SparkDataFrame = {
@@ -43,12 +46,10 @@ object ClusterFiles {
     val writer = fileFormat match {
       case (csvChoice: Csv) =>
         val namesIncluded = csvChoice.getCsvNamesIncluded
-        val columnSeparator = csvChoice.determineColumnSeparator().toString
         dataFrame
           .sparkDataFrame
           .write.format("com.databricks.spark.csv")
-          .option("header", if (namesIncluded) "true" else "false")
-          .option("delimiter", columnSeparator)
+          .setCsvOptions(namesIncluded, csvChoice.getCsvColumnSeparator())
       case OutputFileFormatChoice.Parquet() =>
         // TODO: DS-1480 Writing DF in parquet format when column names contain forbidden chars
         dataFrame.sparkDataFrame.write.format("parquet")
@@ -62,8 +63,7 @@ object ClusterFiles {
                      (implicit context: ExecutionContext) =
     context.sparkSession.read
       .format("com.databricks.spark.csv")
-      .option("header", if (csvChoice.getCsvNamesIncluded) "true" else "false")
-      .option("delimiter", csvChoice.determineColumnSeparator().toString)
+      .setCsvOptions(csvChoice.getCsvNamesIncluded, csvChoice.getCsvColumnSeparator())
       .load(clusterPath)
 
 }

@@ -43,6 +43,7 @@ object FileScheme {
 
 case class FilePath(fileScheme: FileScheme, pathWithoutScheme: String) {
   def fullPath: String = fileScheme.pathPrefix + pathWithoutScheme
+  def verifyScheme(assertedFileScheme: FileScheme): Unit = assert(fileScheme == assertedFileScheme)
 }
 
 object FilePath {

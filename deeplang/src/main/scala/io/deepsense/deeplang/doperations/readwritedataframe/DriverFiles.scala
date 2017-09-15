@@ -21,18 +21,15 @@ import java.io.PrintWriter
 import scala.io.Source
 import scala.reflect.runtime.{universe => ru}
 
-import org.apache.spark.sql.execution.datasources.csv.CSVRelation
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.sources.BaseRelation
+import org.apache.spark.sql.execution.datasources.csv.{DataframeToDriverCsvFileWriter, RawCsvRDDToDataframe}
 import org.apache.spark.sql.{DataFrame => SparkDataFrame}
 
 import io.deepsense.commons.resources.ManagedResource
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperations.inout.CsvParameters.ColumnSeparatorChoice
-import io.deepsense.deeplang.doperations.inout.{CsvParameters, InputFileFormatChoice, OutputFileFormatChoice}
-import io.deepsense.deeplang.doperations.spark.DataframeToRawCsvRDD
-import io.deepsense.deeplang.exceptions.DeepLangException
+import io.deepsense.deeplang.doperations.inout.{InputFileFormatChoice, OutputFileFormatChoice}
+import io.deepsense.deeplang.doperations.readwritedataframe.csv.CsvOptions
 
 object DriverFiles {
 
@@ -45,10 +42,10 @@ object DriverFiles {
 
   def write(dataFrame: DataFrame, path: FilePath, fileFormat: OutputFileFormatChoice)
            (implicit context: ExecutionContext): Unit = {
-    val driverPath = path.pathWithoutScheme
+    path.verifyScheme(FileScheme.File)
     fileFormat match {
-      case csv: OutputFileFormatChoice.Csv => writeCsv(driverPath, csv, dataFrame)
-      case json: OutputFileFormatChoice.Json => writeJson(driverPath, dataFrame)
+      case csv: OutputFileFormatChoice.Csv => writeCsv(path, csv, dataFrame)
+      case json: OutputFileFormatChoice.Json => writeJson(path, dataFrame)
       case parquet: OutputFileFormatChoice.Parquet => throw ParquetNotSupported
     }
   }
@@ -56,15 +53,11 @@ object DriverFiles {
   private def readCsv
       (driverPath: String, csvChoice: InputFileFormatChoice.Csv)
       (implicit context: ExecutionContext): SparkDataFrame = {
-    val params = csvParams(csvChoice.getCsvNamesIncluded, csvChoice.getCsvColumnSeparator())
+    val params = CsvOptions.map(csvChoice.getCsvNamesIncluded, csvChoice.getCsvColumnSeparator())
     val lines = Source.fromFile(driverPath).getLines().toStream
     val fileLinesRdd = context.sparkContext.parallelize(lines)
 
-    val df = context.sparkSession.read
-      .option("header", csvChoice.getCsvNamesIncluded)
-      // TODO: SHR-388: sep - separator
-      .csv(driverPath)
-    df
+    RawCsvRDDToDataframe.parse(fileLinesRdd, context.sparkSession, params)
   }
 
   private def readJson(driverPath: String)(implicit context: ExecutionContext) = {
@@ -74,25 +67,24 @@ object DriverFiles {
   }
 
   private def writeCsv
-      (driverPath: String, csvChoice: OutputFileFormatChoice.Csv, dataFrame: DataFrame)
+      (path: FilePath, csvChoice: OutputFileFormatChoice.Csv, dataFrame: DataFrame)
       (implicit context: ExecutionContext): Unit = {
-    val params = csvParams(csvChoice.getCsvNamesIncluded, csvChoice.getCsvColumnSeparator())
-    val rawCsvLines = DataframeToRawCsvRDD(dataFrame.sparkDataFrame, params)
-    writeRddToDriverFile(driverPath, rawCsvLines)
+    val params = CsvOptions.map(csvChoice.getCsvNamesIncluded, csvChoice.getCsvColumnSeparator())
+
+    val data = dataFrame.sparkDataFrame.rdd.collect()
+
+    DataframeToDriverCsvFileWriter.write(
+      data,
+      params,
+      dataFrame.schema.get,
+      path
+    )
   }
 
-  private def writeJson(driverPath: String, dataFrame: DataFrame)
+  private def writeJson(path: FilePath, dataFrame: DataFrame)
                        (implicit context: ExecutionContext): Unit = {
     val rawJsonLines = dataFrame.sparkDataFrame.toJSON
-    writeRddToDriverFile(driverPath, rawJsonLines.rdd)
-  }
-
-  private def csvParams(namesIncluded: Boolean, columnSeparator: ColumnSeparatorChoice) = {
-    val headerFlag = if (namesIncluded) "true" else "false"
-    Map(
-      "header" -> headerFlag,
-      "delimiter" -> CsvParameters.determineColumnSeparatorOf(columnSeparator).toString
-    )
+    writeRddToDriverFile(path.pathWithoutScheme, rawJsonLines.rdd)
   }
 
   private def writeRddToDriverFile(driverPath: String, lines: RDD[String]): Unit = {
