@@ -1,7 +1,6 @@
 [{
   "path": "/v1/workflows",
   "name": "workflow-manager",
-  "proxyTimeout": 5000,
   "auth": "basic"
 }, {
   "path": "/v1/presets",
