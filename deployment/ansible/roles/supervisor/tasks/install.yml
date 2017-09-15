@@ -1,16 +1,16 @@
 # Copyright (c) 2015, CodiLime Inc.
 
 ---
-- name: Upnack elementtree
+- name: Unpack elementtree
   unarchive: copy=yes dest=/tmp src={{download_dir}}/{{elementtree_filename}}
 
-- name: Upnack meld3
+- name: Unpack meld3
   unarchive: copy=yes dest=/tmp src={{download_dir}}/{{meld3_filename}}
 
-- name: Upnack setuptools
+- name: Unpack setuptools
   unarchive: copy=yes dest=/tmp src={{download_dir}}/{{setuptools_filename}}
 
-- name: Upnack supervisor
+- name: Unpack supervisor
   unarchive: copy=yes dest=/tmp src={{download_dir}}/{{supervisor_filename}}
 
 

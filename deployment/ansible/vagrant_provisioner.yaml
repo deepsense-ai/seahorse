@@ -27,6 +27,7 @@
 - include: install_spark.yml
 - include: workflowexecutor.yaml
 - include: notebook.yml
+- include: livy.yml
 
 - hosts: seahorse-vm
   gather_facts: false

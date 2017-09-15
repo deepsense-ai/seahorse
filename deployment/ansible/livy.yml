@@ -1,0 +1,43 @@
+# Copyright (c) 2016, CodiLime Inc.
+
+---
+- name: Download Livy package
+  hosts: localhost
+  vars_files:
+    - vars/env.yml
+    - vars/deployment.yml
+    - vars/artifacts.yml
+    - vars/supervisor.yml
+    - vars/livy.yml
+  tasks:
+    - name: Create download directory
+      include: tasks/create_download_dir.yml
+    - name: Download supervisor
+      include: tasks/download_supervisor.yml
+    - name: Download package from artifactory
+      artifactory:
+        base_url: "{{artifactory_base_url}}"
+        repository: "ext-third-party"
+        groupid: "{{livy_groupid}}"
+        artifactid: "{{livy_artifactid}}"
+        version: "{{livy_version}}"
+        path: "{{download_dir}}/"
+        filename: "{{livy_filename}}"
+
+- name: Set up Livy server
+  hosts: master
+  user: ubuntu
+  sudo: yes
+  vars_files:
+    - vars/deployment.yml
+    - vars/artifacts.yml
+    - vars/env.yml
+    - vars/main.yml
+    - vars/supervisor.yml
+    - vars/livy.yml
+    - vars/install_spark.yml
+  roles:
+    - supervisor
+    - { role: livy,
+        install_dir: "{{livy_install_dir}}"
+      }
