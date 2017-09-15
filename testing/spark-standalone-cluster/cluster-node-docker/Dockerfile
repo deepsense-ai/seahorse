@@ -13,6 +13,18 @@ RUN apt-get install -y \
   supervisor \
   mc
 
+# Install R packages
+# gfortran liblapack-dev liblapack3 libopenblas-base libopenblas-dev are needed for machine learning R libraries
+RUN apt-get update && \
+   apt-get install -y build-essential openjdk-8-jre wget curl bzip2 openssh-server openssh-client libsm6 \
+   r-base && \
+   apt-get install -y gfortran liblapack-dev liblapack3 libopenblas-base libopenblas-dev && \
+   apt-get clean && \
+   apt-get autoremove && \
+   rm -rf /var/lib/apt/lists/*
+
+##
+
 WORKDIR /opt/
 
 COPY setup_scripts/ /opt/setup_scripts/

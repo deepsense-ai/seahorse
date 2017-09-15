@@ -20,7 +20,7 @@
         "name": "Read Transformer"
       },
       "parameters": {
-        "source": "/tmp/model_example_1"
+        "source": "/resources/data/model_example_1"
       }
     }, {
       "id": "3a6a9fd2-f3a3-c8ef-c585-1fc542931dea",
