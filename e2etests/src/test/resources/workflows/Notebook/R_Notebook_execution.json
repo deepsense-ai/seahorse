@@ -1,0 +1,108 @@
+{
+  "workflow": {
+    "nodes": [{
+      "id": "79136692-200b-e2f2-b8cc-6e17cab9cfc7",
+      "operation": {
+        "id": "1a3b32f0-f56d-4c44-a396-29d2dfd43423",
+        "name": "Read Datasource"
+      },
+      "parameters": {
+        "datasourceId": "10659556-d079-9709-b41b-89e81e938ebd"
+      }
+    }, {
+      "id": "d57dd841-f2ed-e47d-9524-a723361a6359",
+      "operation": {
+        "id": "89198bfd-6c86-40de-8238-68f7e0a0b50e",
+        "name": "R Notebook"
+      },
+      "parameters": {
+        "execute notebook": {
+          "": {
+
+          }
+        }
+      }
+    }],
+    "connections": [{
+      "from": {
+        "nodeId": "79136692-200b-e2f2-b8cc-6e17cab9cfc7",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "d57dd841-f2ed-e47d-9524-a723361a6359",
+        "portIndex": 0
+      }
+    }]
+  },
+  "thirdPartyData": {
+    "gui": {
+      "name": "R Notebook test",
+      "description": "Test of R Notebook execution",
+      "nodes": {
+        "79136692-200b-e2f2-b8cc-6e17cab9cfc7": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 4445,
+            "y": 4872
+          }
+        },
+        "d57dd841-f2ed-e47d-9524-a723361a6359": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 4447,
+            "y": 5001
+          }
+        }
+      }
+    },
+    "notebooks": {
+      "d57dd841-f2ed-e47d-9524-a723361a6359": {
+        "cells": [{
+          "source": ["df <- dataframe()"],
+          "execution_count": null,
+          "outputs": [],
+          "cell_type": "code",
+          "metadata": {
+            "collapsed": true
+          }
+        }, {
+          "source": ["collect(agg(df, avgbaths = mean(df$baths)))"],
+          "execution_count": null,
+          "outputs": [],
+          "cell_type": "code",
+          "metadata": {
+            "collapsed": false
+          }
+        }],
+        "metadata": {
+          "kernelspec": {
+            "display_name": "SparkR",
+            "language": "R",
+            "name": "forwarding_kernel_r"
+          },
+          "language_info": {
+            "mimetype": "text/x-r-source",
+            "name": "R",
+            "pygments_lexer": "r",
+            "codemirror_mode": "r",
+            "version": "3.3.1",
+            "file_extension": ".r"
+          }
+        },
+        "nbformat": 4,
+        "nbformat_minor": 0
+      }
+    },
+    "datasources": []
+  },
+  "variables": {
+
+  },
+  "id": "826550c2-5ad9-4fff-9951-abbaabf83c88",
+  "metadata": {
+    "type": "batch",
+    "apiVersion": "1.4.0"
+  }
+}
