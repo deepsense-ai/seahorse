@@ -1,0 +1,108 @@
+@import "../css/variables.less";
+
+.checkbox-wrapper,
+.radio-wrapper {
+  label.format-form-label {
+    background-color: @light-grey;
+    padding: 5px;
+    border: 1px solid @grey;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    height: 34px;
+    font-weight: 600;
+    cursor: pointer;
+    line-height: 1em;
+    margin-bottom: 0;
+    transition: background ease-in 0.2s;
+
+    .radio-title {
+      display: flex;
+      align-items: center;
+      padding: 0 5px;
+      white-space: nowrap;
+
+      input {
+        color: @color-grey;
+        padding-left: 5px;
+        margin-left: 5px;
+      }
+    }
+
+    &.active {
+      background-color: @seahorse-light-blue;
+      color: @color-white;
+      border: 1px solid @color-grey;
+
+      .radio-title input {
+        color: black;
+      }
+    }
+
+    &.disabled {
+      background-color: #eee;
+      cursor: not-allowed;
+      color: #555;
+      font-weight: 500;
+      border: 1px solid #ccc;
+    }
+
+    input[type=checkbox],
+    input[type=radio] {
+      display: none;
+    }
+
+    input[type=checkbox] + span:before {
+      .input-basic-styles();
+      border-radius: 2px;
+      width: 1em;
+      height: 1em;
+      margin: 0 5px;
+      padding: 1px 0 0 1px;
+    }
+
+    input[type=radio] + span:before {
+      .input-basic-styles();
+      border-radius: 50%;
+      margin-right: 5px;
+      width: 1.2em;
+      height: 1.2em;
+    }
+
+    input[type=checkbox]:checked + span:before {
+      content: "\0056";
+      color: #fff;
+      background: @seahorse-blue;
+    }
+
+    input[type=radio]:checked + span:before {
+      width: 1.2em;
+      height: 1.2em;
+      background-color: @color-white;
+      border: 4px solid @seahorse-blue;
+    }
+
+    input[type=checkbox]:disabled + span:before {
+      border: 1px solid #EEE;
+      font-weight: 600;
+    }
+
+    &:not(.disabled):hover {
+      input[type=radio] + span:before {
+        background-color: @seahorse-light-blue;
+      }
+
+      input[type=radio]:checked + span:before {
+        background-color: @color-white;
+      }
+    }
+  }
+}
+
+.input-basic-styles {
+  font-family: "Seahorse Symbol";
+  content: "\0057";
+  display: inline-block;
+  background-color: @color-grey;
+  transition: background ease-in 0.2s;
+}

@@ -1,31 +1,47 @@
+@import "../../../../css/variables.less";
+
 .export-modal {
+  &__header {
+    padding: 20px;
+    font-weight: bold;
+    font-size: 24px;
+  }
+
   &__body {
+    padding: 15px;
+
+    .export-label {
+      width: 320px;
+      margin: 10px 0;
+    }
+
+    .export-additional-info {
+      margin-bottom: 15px;
+      font-style: italic;
+    }
+  }
+
+  &__footer {
+    padding: 15px;
     display: flex;
-    flex-direction: column;
-    padding: 15px 60px;
+    justify-content: flex-end;
 
-    .include-datasources {
-      margin-top: 15px;
-      text-align: left;
-
-      .label-wrapper {
-        span {
-          line-height: 1.5em;
-
-          &:last-child {
-            display: block;
-            padding-left: 22px;
-          }
-        }
-      }
+    .btn {
+      font-weight: 600;
+      padding: 0 30px;
+      height: 34px;
     }
 
-    input[type=checkbox] + span:before {
-      margin-right: 5px;
+    .btn-blue {
+      margin: 0 10px;
+      color: @color-white;
+      background-color: @seahorse-blue;
     }
 
-    div {
-      margin: 5px 0;
+    .btn-white {
+      color: @color-darker-gray;
+      background-color: @color-white;
+      border: 1px solid #C6C6C6;
     }
   }
 }

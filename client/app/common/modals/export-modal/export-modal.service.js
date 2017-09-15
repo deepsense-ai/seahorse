@@ -10,9 +10,11 @@ class ExportModalService {
 
   showModal() {
     let modal = this.$uibModal.open({
+      windowClass: 'seahorse-modal-wrapper',
       animation: true,
       templateUrl: tpl,
-      controller: 'ExportModalController as controller',
+      controller: 'ExportModalController',
+      controllerAs: '$ctrl',
       backdrop: 'static',
       keyboard: true
     });
