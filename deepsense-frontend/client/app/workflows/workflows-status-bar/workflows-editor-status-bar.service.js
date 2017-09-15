@@ -7,15 +7,14 @@ function WorkflowStatusBarService($rootScope, config, version, WorkflowService, 
 
   service.getMenuItems = getMenuItems;
 
-  const currentWorkflow = WorkflowService.getCurrentWorkflow();
-  const userId = UserService.getSeahorseUser().id;
-  const isOwner = currentWorkflow.owner.id === userId;
-  const smallLabel = isOwner ? null : 'Owner only';
+  // TODO Menu items should be immutable. Small label should not be dynamic and computed here.
+  const isOwner = () => WorkflowService.getCurrentWorkflow().owner.id === UserService.getSeahorseUser().id;
+  const smallLabel = () => isOwner() ? null : 'Owner only';
 
   const menuItems = {
     clear: {
       label: 'Clear',
-      smallLabel: smallLabel,
+      smallLabel: smallLabel(),
       icon: 'fa-trash-o',
       callFunction: () => $rootScope.$broadcast('StatusBar.CLEAR_CLICK')
     },
@@ -37,13 +36,13 @@ function WorkflowStatusBarService($rootScope, config, version, WorkflowService, 
     },
     run: {
       label: 'Run',
-      smallLabel: smallLabel,
+      smallLabel: smallLabel(),
       icon: 'fa-play',
       callFunction: () => $rootScope.$broadcast('StatusBar.RUN')
     },
     startEditing: {
       label: 'Start editing',
-      smallLabel: smallLabel,
+      smallLabel: smallLabel(),
       icon: 'fa fa-pencil',
       callFunction: () => $rootScope.$emit('StatusBar.START_EDITING')
     },
@@ -115,7 +114,7 @@ function WorkflowStatusBarService($rootScope, config, version, WorkflowService, 
           case 'editor':
             switch (workflow.sessionStatus) {
               case SessionStatus.NOT_RUNNING:
-                return isOwner ?
+                return isOwner() ?
                   'editorWithoutExecutorForOwner'
                   : 'editorWithoutExecutor';
                 return 'editorWithoutExecutor';

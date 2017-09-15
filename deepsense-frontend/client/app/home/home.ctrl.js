@@ -54,7 +54,7 @@ function Home($rootScope, $uibModal, $state, $q, WorkflowService, PageService, C
   };
 
   this.isWorkflowOwnedByCurrentUser = (workflow) => {
-    return UserService.getSeahorseUser().id == workflow.ownerId;
+    return UserService.getSeahorseUser().id === workflow.ownerId;
   };
 
   this.isWorkflowLoading = () => {

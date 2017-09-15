@@ -31,13 +31,10 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
       workflow.workflowStatus = 'editor';
       workflow.sessionStatus = workflowData.sessionStatus;
 
-      // TODO Comply to API and remove this mock
-      // workflow.owner = workflowData.owner;
       workflow.owner = {
-        id: '32215f1c-077b-446a-b922-5069a442dc64',
-        name: 'lol@deepsense.io'
+        id: workflowData.workflowInfo.ownerId,
+        name: workflowData.workflowInfo.ownerName
       };
-      workflow.owner = UserService.getSeahorseUser();
 
       let nodes = _.values(workflow.getNodes());
       nodes.filter((n) => n.operationId === nodeTypes.CUSTOM_TRANSFORMER)
