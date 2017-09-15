@@ -27,3 +27,7 @@ trait Authorizator {
    */
   def withRole[T](role: String)(onSuccess: (UserContext) => Future[T]): Future[T]
 }
+
+trait AuthorizatorProvider {
+  def forContext(userContext: Future[UserContext]): Authorizator
+}

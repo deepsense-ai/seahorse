@@ -6,16 +6,18 @@
 
 package io.deepsense.deeplang.dataframe
 
-import java.util.UUID
-
 import org.apache.spark.sql
 
 import io.deepsense.deeplang.DOperable
 
 /**
- * @param id             DataFrame id.
- * @param sparkDataFrame spark representation of data. Client of this class has to assure that
+ * @param optionalSparkDataFrame spark representation of data. Client of this class has to assure that
  *                       sparkDataFrame data fulfills its internal schema.
  */
-class DataFrame private[dataframe] (val id: UUID, val sparkDataFrame: sql.DataFrame)
-  extends DOperable
+class DataFrame(optionalSparkDataFrame: Option[sql.DataFrame] = None) extends DOperable {
+
+  def this() = this(None)
+
+  def sparkDataFrame: sql.DataFrame = optionalSparkDataFrame.get
+
+}

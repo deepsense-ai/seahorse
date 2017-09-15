@@ -15,6 +15,7 @@ import org.mockito.Mockito._
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 import spray.http.StatusCodes
+import spray.routing.Route
 
 import io.deepsense.experimentmanager.app.exceptions.ExperimentNotFoundException
 import io.deepsense.experimentmanager.app.models.Experiment.Status
@@ -24,10 +25,10 @@ import io.deepsense.experimentmanager.app.rest.actions.{AbortAction, LaunchActio
 import io.deepsense.experimentmanager.app.rest.json.RestJsonProtocol._
 import io.deepsense.experimentmanager.app.{ExperimentManager, ExperimentManagerProvider}
 import io.deepsense.experimentmanager.auth.exceptions.{NoRoleException, ResourceAccessDeniedException}
-import io.deepsense.experimentmanager.auth.usercontext.{CannotGetUserException, TokenTranslator, UserContext}
+import io.deepsense.experimentmanager.auth.usercontext.{Role, TokenTranslator, UserContext}
 import io.deepsense.experimentmanager.{StandardSpec, UnitTestSupport}
 
-class RestApiSpec extends StandardSpec with UnitTestSupport {
+class RestApiSpec extends StandardSpec with UnitTestSupport with ApiSpecSupport {
 
   case class LaunchActionWrapper(launch: LaunchAction)
   case class AbortActionWrapper(abort: AbortAction)
@@ -39,8 +40,8 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
    */
   def inputExperiment: InputExperiment = InputExperiment("test name", "test description", Graph())
 
-  def tenantAId: String = "A"
-  def tenantBId: String = "B"
+  val tenantAId: String = "A"
+  val tenantBId: String = "B"
 
   /**
    * A valid Auth Token of a user of tenant A. This user has to have roles
@@ -66,36 +67,27 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
     tenantBId,
     "Experiment of Tenant B")
 
-  def apiPrefix: String = "v1/experiments"
+  val apiPrefix: String = "v1/experiments"
 
-  protected def testRoute = {
-    val tokenTranslator = mock[TokenTranslator]
-    when(tokenTranslator.translate(any(classOf[String])))
-      .thenAnswer(new Answer[Future[UserContext]]{
-      override def answer(invocation: InvocationOnMock): Future[UserContext] = {
-        val tokenFromRequest = invocation.getArgumentAt(0, classOf[String])
-        if (tokenFromRequest == validAuthTokenTenantA
-          || tokenFromRequest == validAuthTokenTenantB ) {
-          val uc = mock[UserContext]
-          when(uc.tenantId).thenReturn(tokenFromRequest)
-          Future.successful(uc)
-        } else {
-          Future.failed(new CannotGetUserException(tokenFromRequest))
-        }
-      }
-    })
+  override val authTokens: Map[String, Set[String]] = Map(
+    tenantAId -> Set("experiments:get", "experiments:update", "experiments:delete",
+      "experiments:launch", "experiments:abort", "experiments:create", "experiments:list"),
+    tenantBId -> Set()
+  )
 
-    val experimentManagerProvider = mock[ExperimentManagerProvider]
-    when(experimentManagerProvider.forContext(any(classOf[Future[UserContext]])))
-      .thenAnswer(new Answer[ExperimentManager]{
-      override def answer(invocation: InvocationOnMock): ExperimentManager = {
-        val futureContext = invocation.getArgumentAt(0, classOf[Future[UserContext]])
-        new MockExperimentManager(futureContext)
-      }
-    })
+  override def createRestComponent(tokenTranslator: TokenTranslator): Route = {
+        val experimentManagerProvider = mock[ExperimentManagerProvider]
+        when(experimentManagerProvider.forContext(any(classOf[Future[UserContext]])))
+          .thenAnswer(new Answer[ExperimentManager]{
+          override def answer(invocation: InvocationOnMock): ExperimentManager = {
+            val futureContext = invocation.getArgumentAt(0, classOf[Future[UserContext]])
+            new MockExperimentManager(futureContext)
+          }
+        })
 
-    new RestApi(tokenTranslator, experimentManagerProvider, apiPrefix).route
+        new RestApi(tokenTranslator, experimentManagerProvider, apiPrefix).route
   }
+
 
   // TODO Test errors in Json
   "GET /experiments" should {
@@ -103,7 +95,7 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
     "return a list of experiments" when {
       "valid auth token was send" in {
         Get(s"/$apiPrefix") ~>
-          addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+        addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
           responseAs[List[Experiment]]
         }
@@ -445,9 +437,11 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
     var storedExperiments: List[Experiment] = List(experimentOfTenantA, experimentOfTenantB)
 
     override def get(id: Experiment.Id): Future[Option[Experiment]] = {
+      val wantedRole = "experiments:get"
       userContext.flatMap(uc => {
-        if (uc.tenantId == validAuthTokenTenantB) throw new NoRoleException(uc, "experiments:get")
-        if (uc.tenantId == validAuthTokenTenantA) {
+        if (!uc.roles.contains(Role(wantedRole))) {
+          throw new NoRoleException(uc, wantedRole)
+        } else {
           val experiment = storedExperiments.find(_.id == id)
           Future(experiment match {
             case Some(exp) if exp.tenantId == uc.tenantId => Some(exp)
@@ -455,18 +449,16 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
               throw new ResourceAccessDeniedException(uc, exp)
             case None => None
           })
-        } else {
-          Future.failed(new IllegalStateException("This should never happen in this mock"))
         }
       })
     }
 
     override def update(experiment: Experiment): Future[Experiment] = {
+      val wantedRole = "experiments:update"
       userContext.flatMap(uc => {
-        if (uc.tenantId == validAuthTokenTenantB) {
-          throw new NoRoleException(uc, "experiments:update")
-        }
-        if (uc.tenantId == validAuthTokenTenantA) {
+        if (!uc.roles.contains(Role(wantedRole))) {
+          throw new NoRoleException(uc, wantedRole)
+        } else {
           val oldExperiment = storedExperiments.find(_.id == experiment.id)
           Future(oldExperiment match {
             case Some(oe) if oe.tenantId == uc.tenantId => Experiment(
@@ -479,18 +471,16 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
               throw new ResourceAccessDeniedException(uc, oe)
             case None => throw new ExperimentNotFoundException(experiment.id)
           })
-        } else {
-          Future.failed(new IllegalStateException("This should never happen in this mock"))
         }
       })
     }
 
     override def delete(id: Experiment.Id): Future[Boolean] = {
+      val wantedRole = "experiments:delete"
       userContext.flatMap(uc => {
-        if (uc.tenantId == validAuthTokenTenantB) {
-          throw new NoRoleException(uc, "experiments:delete")
-        }
-        if (uc.tenantId == validAuthTokenTenantA) {
+        if (!uc.roles.contains(Role(wantedRole))) {
+          throw new NoRoleException(uc, wantedRole)
+        } else {
           val experiment = storedExperiments.find(_.id == id)
           Future(experiment match {
             case Some(exp) if exp.tenantId == uc.tenantId =>
@@ -500,18 +490,16 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
               throw new ResourceAccessDeniedException(uc, exp)
             case None => false
           })
-        } else {
-          Future.failed(new IllegalStateException("This should never happen in this mock"))
         }
       })
     }
 
     override def launch(id: Experiment.Id, targetNodes: List[Node.Id]): Future[Experiment] = {
+      val wantedRole = "experiments:launch"
       userContext.flatMap(uc => {
-        if (uc.tenantId == validAuthTokenTenantB) {
-          throw new NoRoleException(uc, "experiments:launch")
-        }
-        if (uc.tenantId == validAuthTokenTenantA) {
+        if (!uc.roles.contains(Role(wantedRole))) {
+          throw new NoRoleException(uc, wantedRole)
+        } else {
           val experiment = storedExperiments.find(_.id == id)
           Future(experiment match {
             case Some(exp) if exp.tenantId == uc.tenantId => exp
@@ -519,18 +507,16 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
               throw new ResourceAccessDeniedException(uc, exp)
             case None => throw new ExperimentNotFoundException(id)
           })
-        } else {
-          Future.failed(new IllegalStateException("This should never happen in this mock"))
         }
       })
     }
 
     override def abort(id: Experiment.Id, nodes: List[Node.Id]): Future[Experiment] = {
+      val wantedRole = "experiments:abort"
       userContext.flatMap(uc => {
-        if (uc.tenantId == validAuthTokenTenantB) {
+        if (!uc.roles.contains(Role(wantedRole))) {
           throw new NoRoleException(uc, "experiments:abort")
-        }
-        if (uc.tenantId == validAuthTokenTenantA) {
+        } else {
           val experiment = storedExperiments.find(_.id == id)
           Future(experiment match {
             case Some(exp) if exp.tenantId == uc.tenantId => exp
@@ -538,18 +524,16 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
               throw new ResourceAccessDeniedException(uc, exp)
             case None => throw new ExperimentNotFoundException(id)
           })
-        } else {
-          Future.failed(new IllegalStateException("This should never happen in this mock"))
         }
       })
     }
 
     override def create(inputExperiment: InputExperiment): Future[Experiment] = {
+      val wantedRole = "experiments:create"
       userContext.flatMap(uc => {
-        if (uc.tenantId == validAuthTokenTenantB) {
-          throw new NoRoleException(uc, "experiments:create")
-        }
-        if (uc.tenantId == validAuthTokenTenantA) {
+        if (!uc.roles.contains(Role(wantedRole))) {
+          throw new NoRoleException(uc, wantedRole)
+        } else {
           val experiment = Experiment(
             UUID.randomUUID(),
             uc.tenantId,
@@ -557,8 +541,6 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
             inputExperiment.description,
             inputExperiment.graph)
           Future.successful(experiment)
-        } else {
-          Future.failed(new IllegalStateException("This should never happen in this mock"))
         }
       })
     }
@@ -567,12 +549,12 @@ class RestApiSpec extends StandardSpec with UnitTestSupport {
         limit: Option[Int],
         page: Option[Int],
         status: Option[Status.Value]): Future[Seq[Experiment]] = {
+      val wantedRole = "experiments:list"
       userContext.flatMap(uc => {
-        if (uc.tenantId == validAuthTokenTenantB) throw new NoRoleException(uc, "experiments:list")
-        if (uc.tenantId == validAuthTokenTenantA) {
-          Future.successful(storedExperiments.filter(_.tenantId == uc.tenantId).toSeq)
+        if (!uc.roles.contains(Role(wantedRole))) {
+          throw new NoRoleException(uc, wantedRole)
         } else {
-          Future.failed(new IllegalStateException("This should never happen in this mock"))
+          Future.successful(storedExperiments.filter(_.tenantId == uc.tenantId).toSeq)
         }
       })
     }

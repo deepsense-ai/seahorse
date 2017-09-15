@@ -12,7 +12,7 @@ import scala.util.{Failure, Success}
 import com.google.inject.Inject
 import com.google.inject.name.Named
 import spray.http.StatusCodes
-import spray.routing.{Directives, ExceptionHandler, MissingHeaderRejection, PathMatchers, RejectionHandler, ValidationRejection}
+import spray.routing.{ExceptionHandler, PathMatchers}
 import spray.util.LoggingContext
 
 import io.deepsense.experimentmanager.app.ExperimentManagerProvider
@@ -20,9 +20,7 @@ import io.deepsense.experimentmanager.app.exceptions.ExperimentNotFoundException
 import io.deepsense.experimentmanager.app.models.{Experiment, Id, InputExperiment}
 import io.deepsense.experimentmanager.app.rest.actions.Action
 import io.deepsense.experimentmanager.app.rest.json.RestJsonProtocol._
-import io.deepsense.experimentmanager.auth.directives.AuthDirectives
-import io.deepsense.experimentmanager.auth.exceptions.{NoRoleException, ResourceAccessDeniedException}
-import io.deepsense.experimentmanager.auth.usercontext.{InvalidTokenException, TokenTranslator}
+import io.deepsense.experimentmanager.auth.usercontext.TokenTranslator
 import io.deepsense.experimentmanager.rest.RestComponent
 
 /**
@@ -33,7 +31,7 @@ class RestApi @Inject() (
     experimentManagerProvider: ExperimentManagerProvider,
     @Named("experiments.api.prefix") apiPrefix: String)
     (implicit ec: ExecutionContext)
-  extends Directives with RestComponent with AuthDirectives {
+  extends RestService with RestComponent {
 
   assert(apiPrefix != null)
   private val pathPrefixMatcher = PathMatchers.separateOnSlashes(apiPrefix)
@@ -41,11 +39,6 @@ class RestApi @Inject() (
   def route = {
     handleRejections(rejectionHandler) {
       handleExceptions(exceptionHandler) {
-        path("") {
-          get {
-            complete("Experiment Manager")
-          }
-        } ~
         pathPrefix(pathPrefixMatcher) {
           path(JavaUUID) { idParameter =>
             val experimentId = Id(idParameter)
@@ -136,26 +129,10 @@ class RestApi @Inject() (
     }
   }
 
-  private def exceptionHandler(implicit log: LoggingContext): ExceptionHandler = {
-    ExceptionHandler {
-      case e: ExperimentNotFoundException =>
-        complete(StatusCodes.NotFound, RestException.fromException(e))
-      case e: NoRoleException =>
-        complete(StatusCodes.Unauthorized)
-      case e: ResourceAccessDeniedException =>
-        complete(StatusCodes.NotFound)
-      case e: InvalidTokenException =>
-        // Works as a wildcard for all ITEs. Can be expanded for logging
-        complete(StatusCodes.Unauthorized)
-    }
-  }
-
-  private val rejectionHandler: RejectionHandler = {
-    RejectionHandler {
-      case MissingHeaderRejection(param) :: _ if param == TokenHeader =>
-        complete(StatusCodes.Unauthorized, s"Request is missing required header '$param'")
-      case ValidationRejection(message, cause) :: _ =>
-        complete(StatusCodes.BadRequest)
+  override def exceptionHandler(implicit log: LoggingContext): ExceptionHandler = {
+    super.exceptionHandler(log) orElse ExceptionHandler {
+        case e: ExperimentNotFoundException =>
+          complete(StatusCodes.NotFound, RestException.fromException(e))
     }
   }
 }
