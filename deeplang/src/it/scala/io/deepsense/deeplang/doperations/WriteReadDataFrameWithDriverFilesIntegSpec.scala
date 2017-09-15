@@ -62,10 +62,10 @@ class WriteReadDataFrameWithDriverFilesIntegSpec
       val wdf =
         new WriteDataFrame()
           .setStorageType(
-            OutputStorageTypeChoice.File()
+            new OutputStorageTypeChoice.File()
               .setOutputFile(absoluteTestsDirPath.fullPath + "/test_files")
               .setFileFormat(
-                OutputFileFormatChoice.Csv()
+                new OutputFileFormatChoice.Csv()
                   .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Tab())
                   .setNamesIncluded(true)))
       wdf.execute(executionContext)(Vector(dataFrame))
@@ -108,9 +108,9 @@ class WriteReadDataFrameWithDriverFilesIntegSpec
 
       val wdf =
         new WriteDataFrame()
-          .setStorageType(OutputStorageTypeChoice.File()
+          .setStorageType(new OutputStorageTypeChoice.File()
             .setOutputFile(absoluteTestsDirPath.fullPath + "json")
-            .setFileFormat(OutputFileFormatChoice.Json()))
+            .setFileFormat(new OutputFileFormatChoice.Json()))
 
       wdf.execute(executionContext)(Vector(dataFrame))
 

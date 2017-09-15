@@ -16,8 +16,6 @@
 
 package io.deepsense.deeplang.doperations
 
-import scala.reflect.runtime.universe.TypeTag
-
 import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.SqlTransformer

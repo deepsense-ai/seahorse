@@ -570,15 +570,15 @@ class WorkflowExecutorActorSpec
   val inputFile = new InputStorageTypeChoice.File()
     .setFileFormat(new InputFileFormatChoice.Json())
     .setSourceFile(someFilePath)
-  val outputFile = OutputStorageTypeChoice.File()
-    .setFileFormat(OutputFileFormatChoice.Json())
+  val outputFile = new OutputStorageTypeChoice.File()
+    .setFileFormat(new OutputFileFormatChoice.Json())
     .setOutputFile(someFilePath)
   val node1 = Node(
     Node.Id.randomId,
     ReadDataFrame().setStorageType(inputFile))
   val node2 = Node(
     Node.Id.randomId,
-    WriteDataFrame().setStorageType(outputFile))
+    new WriteDataFrame().setStorageType(outputFile))
   val invalidNode = Node(Node.Id.randomId, new WriteDataFrame())
 
   private def someFilePath: String = {

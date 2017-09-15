@@ -130,7 +130,7 @@ class InputOutputSpec extends
                    (dataframe: DataFrame): Unit = {
     val write = new WriteDataFrame()
       .setStorageType(
-        OutputStorageTypeChoice.File()
+        new OutputStorageTypeChoice.File()
           .setOutputFile(path)
           .setFileFormat(fileFormat)
       )

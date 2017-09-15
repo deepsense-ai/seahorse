@@ -30,7 +30,7 @@ sealed trait OutputStorageTypeChoice extends Choice {
 
 object OutputStorageTypeChoice {
 
-  case class File() extends OutputStorageTypeChoice {
+  class File() extends OutputStorageTypeChoice {
 
     override val name: String = StorageType.FILE.toString
 
@@ -44,7 +44,7 @@ object OutputStorageTypeChoice {
     val fileFormat = ChoiceParam[OutputFileFormatChoice](
       name = "format",
       description = "Format of the output file.")
-    setDefault(fileFormat, OutputFileFormatChoice.Csv())
+    setDefault(fileFormat, new OutputFileFormatChoice.Csv())
 
     def getFileFormat(): OutputFileFormatChoice = $(fileFormat)
     def setFileFormat(value: OutputFileFormatChoice): this.type = set(fileFormat, value)
@@ -52,7 +52,7 @@ object OutputStorageTypeChoice {
     override val params = declareParams(outputFile, fileFormat)
   }
 
-  case class Jdbc()
+  class Jdbc()
     extends OutputStorageTypeChoice
     with JdbcParameters {
 

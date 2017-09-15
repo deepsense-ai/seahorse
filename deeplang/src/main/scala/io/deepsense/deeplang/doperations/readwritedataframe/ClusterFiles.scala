@@ -50,10 +50,10 @@ object ClusterFiles {
           .sparkDataFrame
           .write.format("com.databricks.spark.csv")
           .setCsvOptions(namesIncluded, csvChoice.getCsvColumnSeparator())
-      case OutputFileFormatChoice.Parquet() =>
+      case _: OutputFileFormatChoice.Parquet =>
         // TODO: DS-1480 Writing DF in parquet format when column names contain forbidden chars
         dataFrame.sparkDataFrame.write.format("parquet")
-      case OutputFileFormatChoice.Json() =>
+      case _: OutputFileFormatChoice.Json =>
         dataFrame.sparkDataFrame.write.format("json")
     }
     writer.mode(SaveMode.Overwrite).save(clusterPath)

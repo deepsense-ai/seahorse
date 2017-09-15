@@ -41,7 +41,7 @@ import io.deepsense.deeplang.params.choice.ChoiceParam
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperations.readwritedataframe.validators.{FilePathHasValidFileScheme, ParquetSupportedOnClusterOnly}
 
-case class WriteDataFrame()
+class WriteDataFrame()
   extends DOperation1To0[DataFrame]
   with Params {
 
@@ -59,7 +59,7 @@ case class WriteDataFrame()
   def setStorageType(value: OutputStorageTypeChoice): this.type = set(storageType, value)
 
   val params = declareParams(storageType)
-  setDefault(storageType, OutputStorageTypeChoice.File())
+  setDefault(storageType, new OutputStorageTypeChoice.File())
 
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): Unit = {
     import OutputStorageTypeChoice._

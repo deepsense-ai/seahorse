@@ -29,17 +29,17 @@ sealed trait OutputFileFormatChoice extends Choice {
 }
 
 object OutputFileFormatChoice {
-  case class Csv()
+  class Csv()
       extends OutputFileFormatChoice
       with CsvParameters {
     override val name: String = FileFormat.CSV.toString
     override val params = declareParams(csvColumnSeparator, namesIncluded)
   }
-  case class Parquet() extends OutputFileFormatChoice {
+  class Parquet() extends OutputFileFormatChoice {
     override val name: String = FileFormat.PARQUET.toString
     override val params = declareParams()
   }
-  case class Json() extends OutputFileFormatChoice {
+  class Json() extends OutputFileFormatChoice {
     override val name: String = FileFormat.JSON.toString
     override val params = declareParams()
   }
@@ -50,10 +50,10 @@ object OutputFromInputFileFormat {
   def apply(inputFileFormatChoice: InputFileFormatChoice): OutputFileFormatChoice =
     inputFileFormatChoice match {
       case csv: InputFileFormatChoice.Csv =>
-        val output = OutputFileFormatChoice.Csv()
+        val output = new OutputFileFormatChoice.Csv()
         csv.copyValues(output)
-      case json: InputFileFormatChoice.Json => OutputFileFormatChoice.Json()
-      case parquet: InputFileFormatChoice.Parquet => OutputFileFormatChoice.Parquet()
+      case json: InputFileFormatChoice.Json => new OutputFileFormatChoice.Json()
+      case parquet: InputFileFormatChoice.Parquet => new OutputFileFormatChoice.Parquet()
       case unsupported => throw new IllegalStateException(
         s"Unsupported input file format $inputFileFormatChoice"
       )
