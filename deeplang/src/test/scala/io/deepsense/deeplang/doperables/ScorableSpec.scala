@@ -18,9 +18,9 @@ package io.deepsense.deeplang.doperables
 
 import org.mockito.Mockito._
 
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.doperables.dataframe.{DataFrameBuilder, CommonColumnMetadata, DataFrame, DataFrameMetadata}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
-import io.deepsense.deeplang.parameters.ColumnType
 import io.deepsense.deeplang.{DKnowledge, UnitSpec}
 
 abstract class ScorableSpec[T <: Scorable] extends UnitSpec {

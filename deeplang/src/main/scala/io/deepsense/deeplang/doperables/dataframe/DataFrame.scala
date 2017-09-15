@@ -23,10 +23,11 @@ import org.apache.spark.sql
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.{StructField, StructType}
 
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
 import io.deepsense.deeplang.doperables.{ColumnTypesPredicates, Report}
 import io.deepsense.deeplang.doperations.exceptions.WrongColumnTypeException
-import io.deepsense.deeplang.parameters.ColumnType.ColumnType
+import ColumnType.ColumnType
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
 
 /**

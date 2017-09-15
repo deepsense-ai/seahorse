@@ -18,6 +18,8 @@ package io.deepsense.reportlib.model
 
 import spray.json._
 
+import io.deepsense.commons.types.ColumnType
+
 trait ReportJsonProtocol extends DefaultJsonProtocol with ProductFormatsInstances with NullOptions {
   implicit val statisticsFormat = jsonFormat7(
     Statistics.apply(
@@ -80,7 +82,17 @@ trait ReportJsonProtocol extends DefaultJsonProtocol with ProductFormatsInstance
       }
     }
   }
-  implicit val tableFormat = jsonFormat6(Table.apply)
+  implicit val columntTypeFormat = new RootJsonFormat[ColumnType.ColumnType] {
+    override def write(obj: ColumnType.ColumnType): JsValue = {
+      JsString(obj.toString)
+    }
+
+    override def read(json: JsValue): ColumnType.ColumnType = json match {
+      case JsString(str) => ColumnType.withName(str)
+      case _ => throw new DeserializationException("Enum string expected")
+    }
+  }
+  implicit val tableFormat = jsonFormat7(Table.apply)
   implicit val reportFormat = jsonFormat3(ReportContent.apply)
 }
 

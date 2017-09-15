@@ -18,6 +18,7 @@ package io.deepsense.deeplang.doperables.dataframe
 
 import org.apache.spark.sql.types._
 
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.UnitSpec
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoriesMapping, MappingMetadataConverter}
 import io.deepsense.deeplang.doperations.exceptions.{ColumnDoesNotExistException, ColumnsDoNotExistException}

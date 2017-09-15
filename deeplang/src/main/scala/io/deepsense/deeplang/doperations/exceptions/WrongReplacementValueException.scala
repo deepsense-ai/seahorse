@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.doperations.exceptions
 
-import io.deepsense.deeplang.parameters.ColumnType.ColumnType
+import io.deepsense.commons.types.ColumnType.ColumnType
 
 case class WrongReplacementValueException(value: String, colName: String, colType: ColumnType)
   extends DOperationExecutionException(

@@ -45,36 +45,35 @@ trait DataFrameTestFactory {
   val testSchema: StructType = StructType(Array(
     StructField(DataFrameTestFactory.stringColumnName, StringType),
     StructField(DataFrameTestFactory.booleanColumnName, BooleanType),
-    StructField(DataFrameTestFactory.longColumnName, LongType),
     StructField(DataFrameTestFactory.doubleColumnName, DoubleType),
     StructField(DataFrameTestFactory.timestampColumnName, TimestampType),
     StructField(DataFrameTestFactory.categoricalColumnName, StringType)
   ))
 
   def testRDD(sparkContext: SparkContext): RDD[Row] = sparkContext.parallelize(Seq(
-    Row("Name1", false, 14L, 1.67, timestamp(1970, 1, 20, 0, 43), "summer"),
-    Row("Name2", false, 1L, 1.95, timestamp(1990, 2, 11, 0, 43), "summer"),
-    Row("Name3", false, 100L, 1.87, timestamp(1999, 7, 2, 0, 43), "winter"),
-    Row("Name4", false, 432L, 1.7, timestamp(1954, 12, 18, 0, 43), "spring"),
-    Row("Name5", false, 43L, 2.07, timestamp(1987, 4, 27, 0, 43), null),
-    Row(null, true, 10000000L, 1.307, timestamp(2010, 1, 7, 0, 0), "autumn"),
-    Row("Name7", null, 20000L, 2.132, timestamp(2000, 4, 27, 0, 43), "summer"),
-    Row("Name8", true, null, 1.777, timestamp(1996, 10, 24, 0, 43), "summer"),
-    Row("Name9", true, 1234L, null, timestamp(1999, 1, 6, 0, 0), "spring"),
-    Row("Name10", true, 98798797L, 1.99, null, "summer")
+    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), "summer"),
+    Row("Name2", false, 1.95, timestamp(1990, 2, 11, 0, 43), "summer"),
+    Row("Name3", false, 1.87, timestamp(1999, 7, 2, 0, 43), "winter"),
+    Row("Name4", false, 1.7, timestamp(1954, 12, 18, 0, 43), "spring"),
+    Row("Name5", false, 2.07, timestamp(1987, 4, 27, 0, 43), null),
+    Row(null, true, 1.307, timestamp(2010, 1, 7, 0, 0), "autumn"),
+    Row("Name7", null, 2.132, timestamp(2000, 4, 27, 0, 43), "summer"),
+    Row("Name8", true, 1.777, timestamp(1996, 10, 24, 0, 43), "summer"),
+    Row("Name9", true, null, timestamp(1999, 1, 6, 0, 0), "spring"),
+    Row("Name10", true, 1.99, null, "summer")
   ))
 
   def sameValueRDD(sparkContext: SparkContext): RDD[Row] = sparkContext.parallelize(Seq(
-    Row("Name1", false, 14L, 1.67, timestamp(1970, 1, 20, 0, 43), "summer"),
-    Row("Name1", false, 14L, 1.67, timestamp(1970, 1, 20, 0, 43), "summer"),
-    Row("Name1", false, 14L, 1.67, timestamp(1970, 1, 20, 0, 43), "summer"),
-    Row("Name1", false, 14L, 1.67, timestamp(1970, 1, 20, 0, 43), "summer"),
-    Row("Name1", false, 14L, 1.67, timestamp(1970, 1, 20, 0, 43), "summer"),
-    Row("Name1", false, 14L, 1.67, timestamp(1970, 1, 20, 0, 43), "summer"),
-    Row("Name1", false, 14L, 1.67, timestamp(1970, 1, 20, 0, 43), "summer"),
-    Row("Name1", false, 14L, 1.67, timestamp(1970, 1, 20, 0, 43), "summer"),
-    Row("Name1", false, 14L, 1.67, timestamp(1970, 1, 20, 0, 43), "summer"),
-    Row("Name1", false, 14L, 1.67, timestamp(1970, 1, 20, 0, 43), "summer")
+    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), "summer"),
+    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), "summer"),
+    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), "summer"),
+    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), "summer"),
+    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), "summer"),
+    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), "summer"),
+    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), "summer"),
+    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), "summer"),
+    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), "summer"),
+    Row("Name1", false, 1.67, timestamp(1970, 1, 20, 0, 43), "summer")
   ))
 
   private def timestamp(
@@ -89,7 +88,6 @@ trait DataFrameTestFactory {
 object DataFrameTestFactory extends DataFrameTestFactory {
   val stringColumnName = "Name"
   val booleanColumnName = "BusinessAccount"
-  val longColumnName = "GrossBalance"
   val doubleColumnName = "Whatever"
   val timestampColumnName = "AccountCreationDate"
   val categoricalColumnName = "Season"

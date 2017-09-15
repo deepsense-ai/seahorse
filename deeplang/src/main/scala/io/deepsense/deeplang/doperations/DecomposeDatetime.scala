@@ -23,6 +23,7 @@ import org.apache.spark.sql
 import org.apache.spark.sql.Column
 import org.apache.spark.sql.types.DoubleType
 
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.DecomposeDatetime.{timeUnits, timestampParts}
 import io.deepsense.deeplang.parameters._

@@ -18,13 +18,12 @@ package io.deepsense.deeplang.doperations
 
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.{DoubleType, StringType, StructField, StructType}
-import org.scalatest.Ignore
 
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.DeeplangIntegTestSupport
-import io.deepsense.deeplang.doperables.{Evaluator, Report}
+import io.deepsense.deeplang.doperables.Report
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.{ColumnDoesNotExistException, WrongColumnTypeException}
-import io.deepsense.deeplang.parameters.NameSingleColumnSelection
 import io.deepsense.reportlib.model.Table
 
 class EvaluateRegressionIntegSpec extends DeeplangIntegTestSupport {
@@ -127,6 +126,15 @@ class EvaluateRegressionIntegSpec extends DeeplangIntegTestSupport {
             "Mean Squared Error",
             "r2",
             "Root Mean Squared Error")),
+        Some(
+          List(
+            ColumnType.numeric,
+            ColumnType.numeric,
+            ColumnType.numeric,
+            ColumnType.numeric,
+            ColumnType.numeric,
+            ColumnType.numeric
+          )),
         None,
         values
     )

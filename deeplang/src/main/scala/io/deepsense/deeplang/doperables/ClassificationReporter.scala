@@ -19,6 +19,7 @@ package io.deepsense.deeplang.doperables
 import org.apache.spark.mllib.evaluation.BinaryClassificationMetrics
 import org.apache.spark.rdd.RDD
 
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.commons.utils.{DoubleUtils, Logging}
 import io.deepsense.reportlib.model.{ReportContent, Table}
 
@@ -40,6 +41,11 @@ object ClassificationReporter extends Reporter with Logging {
         List(
           "Threshold",
           "Accuracy")),
+      Some(
+        List(
+          ColumnType.numeric,
+          ColumnType.numeric
+        )),
       None,
       reportTableValues(accuracyByThreshold(dataFrameSize, metrics, predictionsAndLabels))
     )
@@ -52,6 +58,11 @@ object ClassificationReporter extends Reporter with Logging {
         List(
           "Threshold",
           "F-Measure")),
+      Some(
+        List(
+          ColumnType.numeric,
+          ColumnType.numeric
+        )),
       None,
       reportTableValues(metrics.fMeasureByThreshold().collect())
     )
@@ -64,6 +75,11 @@ object ClassificationReporter extends Reporter with Logging {
         List(
           "False positive rate",
           "True positive rate")),
+      Some(
+        List(
+          ColumnType.numeric,
+          ColumnType.numeric
+        )),
       None,
       reportTableValues(metrics.roc().collect())
     )
@@ -73,6 +89,7 @@ object ClassificationReporter extends Reporter with Logging {
       "summary",
       SummaryDescription,
       Some(SummaryColumnNames),
+      Some(SummaryColumnTypes),
       None,
       List(
         List(
@@ -88,7 +105,6 @@ object ClassificationReporter extends Reporter with Logging {
       List(summaryTable, accuracyTable, fMeasureByThresholdTable, rocTable)))
 
     import spray.json._
-
     import io.deepsense.reportlib.model.ReportJsonProtocol._
     logger.debug("EvaluateClassification report = " + report.content.toJson.prettyPrint)
     report
@@ -137,6 +153,7 @@ object ClassificationReporter extends Reporter with Logging {
       CvSummaryTableName,
       CvSummaryDescription,
       Some(CvSummaryColumnNames),
+      Some(CvSummaryColumnTypes),
       Some(rowNames),
       rows)
 
@@ -210,12 +227,21 @@ object ClassificationReporter extends Reporter with Logging {
     "AUC",
     "Logarithmic Loss"
   )
+  val SummaryMetricsColumnTypes = List(
+    ColumnType.numeric,
+    ColumnType.numeric
+  )
 
   val CvSummaryMetricsColumnNames = SummaryMetricsColumnNames ++ List("Accuracy")
+  val CvSummaryMetricsColumnTypes = SummaryMetricsColumnTypes ++
+    List(ColumnType.numeric)
 
   val SummaryColumnNames = List("DataFrame Size") ++ SummaryMetricsColumnNames
+  val SummaryColumnTypes = List(ColumnType.numeric) ++ SummaryMetricsColumnTypes
   val CvSummaryColumnNames =
     List("Fold Number", "Training Set Size", "Test Set Size") ++ CvSummaryMetricsColumnNames
+  val CvSummaryColumnTypes = List(ColumnType.numeric, ColumnType.numeric, ColumnType.numeric
+    ) ++ CvSummaryMetricsColumnTypes
 
   val CvSummaryTableName = "Cross-validate Classification Report"
 }

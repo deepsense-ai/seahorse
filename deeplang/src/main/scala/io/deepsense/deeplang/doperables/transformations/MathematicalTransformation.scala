@@ -16,13 +16,15 @@
 
 package io.deepsense.deeplang.doperables.transformations
 
+import org.apache.spark.sql.types.StructType
+
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.deeplang.doperables.{Report, Transformation}
 import io.deepsense.deeplang.doperations.exceptions.{DuplicatedColumnsException, MathematicalTransformationExecutionException}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.{DKnowledge, DMethod1To1, DOperable, ExecutionContext}
 import io.deepsense.reportlib.model.{ReportContent, Table}
-import org.apache.spark.sql.types.StructType
 
 case class MathematicalTransformation(
     formula: String, columnName: String) extends Transformation {
@@ -72,7 +74,9 @@ case class MathematicalTransformation(
 
   override def report(executionContext: ExecutionContext): Report = {
     val table = Table("Mathematical Formula", "",
-      Some(List("Formula", "Column name")), None, List(List(Some(formula)), List(Some(columnName))))
+      Some(List("Formula", "Column name")),
+      Some(List(ColumnType.string, ColumnType.string)), None,
+      List(List(Some(formula)), List(Some(columnName))))
     Report(ReportContent(
       "Report for MathematicalTransformation", List(table)))
   }

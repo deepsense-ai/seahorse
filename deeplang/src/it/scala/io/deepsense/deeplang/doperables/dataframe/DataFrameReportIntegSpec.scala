@@ -24,9 +24,10 @@ import org.apache.spark.sql.types.{Metadata => SparkMetadata, _}
 import org.joda.time.DateTime
 
 import io.deepsense.commons.datetime.DateTimeConverter
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.DeeplangIntegTestSupport
-import io.deepsense.deeplang.doperables.{ReportLevel, Report}
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoriesMapping, MappingMetadataConverter}
+import io.deepsense.deeplang.doperables.{Report, ReportLevel}
 import io.deepsense.reportlib.model.{CategoricalDistribution, ContinuousDistribution, Statistics, Table}
 
 
@@ -94,6 +95,20 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
         dataSampleTable.values shouldBe List(List(Some(DateTimeConverter.toString(now))))
       }
     }
+    "generate report with correct column types" in {
+      val dataFrame = testDataFrame(executionContext.dataFrameBuilder, sparkContext)
+
+      val report = dataFrame.report(executionContext)
+      val tables: Map[String, Table] = report.content.tables
+      val dataSampleTable = tables.get(DataFrameReportGenerator.dataSampleTableName).get
+
+      dataSampleTable.columnTypes.get shouldBe List(
+        ColumnType.string,
+        ColumnType.boolean,
+        ColumnType.numeric,
+        ColumnType.timestamp,
+        ColumnType.categorical)
+    }
     "generate report with correct column Distribution" in {
       val dataFrame = testDataFrame(executionContext.dataFrameBuilder, sparkContext)
 
@@ -112,13 +127,6 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
         1L,
         Seq("autumn", "spring", "summer", "winter"),
         Seq(1, 2, 5, 1))
-      testContinuousDistribution(
-        report,
-        DataFrameTestFactory.longColumnName,
-        1L,
-        longTypeBuckets,
-        Seq(7, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
-        Statistics("432", "98798797", "1", "12091180.111111", "28.5", "5010000", Seq("98798797")))
       testContinuousDistribution(
         report,
         DataFrameTestFactory.doubleColumnName,
@@ -160,13 +168,6 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
         0L,
         Seq("summer"),
         Seq(10))
-      testContinuousDistribution(
-        report,
-        DataFrameTestFactory.longColumnName,
-        0L,
-        Seq("14"),
-        Seq(10),
-        Statistics("14", "14", "14", "14", "14", "14", Seq()))
       testContinuousDistribution(
         report,
         DataFrameTestFactory.doubleColumnName,

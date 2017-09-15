@@ -21,12 +21,13 @@ import org.apache.spark.mllib.tree.impurity.{Impurity, Variance}
 import org.apache.spark.mllib.tree.loss.{AbsoluteError, Loss, SquaredError}
 import org.apache.spark.mllib.tree.{GradientBoostedTrees => SparkGradientBoostedTrees}
 
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.machinelearning.gradientboostedtrees.GradientBoostedTreesParameters
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.{DKnowledge, DMethod1To1, DOperable, ExecutionContext}
-import io.deepsense.reportlib.model.{Table, ReportContent}
+import io.deepsense.reportlib.model.{ReportContent, Table}
 
 case class UntrainedGradientBoostedTreesRegression(
     modelParameters: GradientBoostedTreesParameters)
@@ -106,6 +107,13 @@ case class UntrainedGradientBoostedTreesRegression(
       "Max depth",
       "Max bins")
 
+    val parametersTypes = List(
+      ColumnType.numeric,
+      ColumnType.numeric,
+      ColumnType.numeric,
+      ColumnType.numeric,
+      ColumnType.numeric)
+
     val rows = List(
       List(
         Some(modelParameters.numIterations.toString),
@@ -120,6 +128,7 @@ case class UntrainedGradientBoostedTreesRegression(
       "Parameters",
       "",
       Some(parametersList),
+      Some(parametersTypes),
       None,
       rows)
 

@@ -20,9 +20,10 @@ import scala.annotation.tailrec
 
 import org.apache.spark.sql.types.StructType
 
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
 import io.deepsense.deeplang.doperations.exceptions.{ColumnDoesNotExistException, ColumnsDoNotExistException}
-import io.deepsense.deeplang.parameters.ColumnType.ColumnType
+import ColumnType.ColumnType
 import io.deepsense.deeplang.parameters._
 
 trait DataFrameColumnsGetter {

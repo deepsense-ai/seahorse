@@ -19,7 +19,8 @@ package io.deepsense.deeplang.parameters
 import spray.json.DefaultJsonProtocol._
 import spray.json._
 
-import io.deepsense.deeplang.parameters.ColumnType._
+import io.deepsense.commons.types.ColumnType
+import ColumnType._
 import io.deepsense.deeplang.parameters.exceptions.IllegalIndexRangeColumnSelectionException
 
 /**

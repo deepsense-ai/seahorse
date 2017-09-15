@@ -21,11 +21,12 @@ import scala.reflect.runtime.{universe => ru}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.{Metadata, StructField, StructType}
 
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoricalMetadata, MappingMetadataConverter}
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameMetadata}
 import io.deepsense.deeplang.doperations.exceptions.SchemaMismatchException
-import io.deepsense.deeplang.parameters.ColumnType.ColumnType
+import ColumnType.ColumnType
 import io.deepsense.deeplang.parameters.ParametersSchema
 import io.deepsense.deeplang.{DOperation2To1, ExecutionContext}
 

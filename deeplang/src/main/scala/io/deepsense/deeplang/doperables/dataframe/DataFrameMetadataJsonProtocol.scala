@@ -20,8 +20,8 @@ import spray.httpx.SprayJsonSupport
 import spray.json._
 
 import io.deepsense.commons.json.EnumerationSerializer
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoriesMapping
-import io.deepsense.deeplang.parameters.ColumnType
 
 trait CategoriesMappingJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
   implicit object CategoriesMappingFormat extends JsonFormat[CategoriesMapping] {

@@ -23,11 +23,11 @@ import org.apache.spark.sql.UserDefinedFunction
 import org.apache.spark.sql.functions._
 
 import io.deepsense.commons.datetime.DateTimeConverter
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.commons.utils.DoubleUtils
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoriesMapping
 import io.deepsense.deeplang.doperations.exceptions.TypeConversionException
-import io.deepsense.deeplang.parameters.ColumnType
-import io.deepsense.deeplang.parameters.ColumnType._
+import ColumnType._
 
 object Conversions {
 

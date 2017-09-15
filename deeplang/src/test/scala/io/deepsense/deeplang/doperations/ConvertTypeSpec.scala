@@ -18,11 +18,11 @@ package io.deepsense.deeplang.doperations
 
 import org.apache.spark.sql.types._
 
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.{MappingMetadataConverter, CategoriesMapping}
 import io.deepsense.deeplang.doperables.dataframe._
 import io.deepsense.deeplang.inference.{MultipleColumnsMayNotExistWarning, ConversionMayNotBePossibleWarning, InferContext}
-import io.deepsense.deeplang.parameters.ColumnType
 import io.deepsense.deeplang.{DKnowledge, UnitSpec}
 
 class ConvertTypeSpec extends UnitSpec {

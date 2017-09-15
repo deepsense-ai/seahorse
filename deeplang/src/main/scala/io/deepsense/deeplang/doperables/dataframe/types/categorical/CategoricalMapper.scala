@@ -22,11 +22,11 @@ import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types.{IntegerType, StringType, StructType}
 import org.joda.time.DateTime
 
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.doperables.dataframe.types.{SparkConversions, Conversions}
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMapper.CategoricalMappingsMap
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.MappingMetadataConverter._
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder, DataFrameColumnsGetter}
-import io.deepsense.deeplang.parameters.ColumnType
 
 case class CategoricalMapper(dataFrame: DataFrame, dataFrameBuilder: DataFrameBuilder) {
   private val sparkDataFrame = dataFrame.sparkDataFrame

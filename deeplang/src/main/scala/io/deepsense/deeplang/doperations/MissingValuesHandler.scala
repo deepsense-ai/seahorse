@@ -23,13 +23,14 @@ import scala.reflect.runtime.{universe => ru}
 
 import org.apache.spark.sql.types._
 
+import io.deepsense.commons.types.ColumnType
+import io.deepsense.commons.types.ColumnType.ColumnType
 import io.deepsense.deeplang.DOperation._
 import io.deepsense.deeplang.doperables.dataframe.{CategoricalColumnMetadata, ColumnMetadata, DataFrame}
 import io.deepsense.deeplang.doperations.MissingValuesHandler.{EmptyColumnsMode, Strategy}
 import io.deepsense.deeplang.doperations.exceptions.{MultipleTypesReplacementException, WrongReplacementValueException}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.parameters.ChoiceParameter.BinaryChoice
-import io.deepsense.deeplang.parameters.ColumnType.ColumnType
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{DKnowledge, DOperation1To1, ExecutionContext}
 

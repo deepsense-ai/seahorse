@@ -23,13 +23,14 @@ import scala.reflect.runtime.{universe => ru}
 import org.apache.spark.sql.types.DataType
 import org.apache.spark.sql.{Column, UserDefinedFunction}
 
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe._
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoricalMapper, CategoricalMetadata}
 import io.deepsense.deeplang.doperables.dataframe.types.{Conversions, SparkConversions}
 import io.deepsense.deeplang.inference.{ConversionMayNotBePossibleWarning, InferContext, InferenceWarning, InferenceWarnings}
-import io.deepsense.deeplang.parameters.ColumnType.ColumnType
+import ColumnType.ColumnType
 import io.deepsense.deeplang.parameters._
 
 case class ConvertType() extends DOperation1To1[DataFrame, DataFrame] {

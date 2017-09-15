@@ -23,6 +23,7 @@ import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.mllib.regression.GeneralizedLinearModel
 import org.apache.spark.rdd.RDD
 
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.{DOperable, ExecutionContext, Model}
@@ -60,7 +61,10 @@ case class TrainedLogisticRegression(
       .map{ case (a, b) => List(a, b) }
 
     val table = Table(
-      "Trained Logistic Regression", "", Some(List("Feature columns", "Target column")), None, rows)
+      "Trained Logistic Regression", "",
+      Some(List("Feature columns", "Target column")),
+      Some(List(ColumnType.string, ColumnType.string)),
+      None, rows)
 
     Report(ReportContent("Report for TrainedLogisticRegression", List(table)))
   }

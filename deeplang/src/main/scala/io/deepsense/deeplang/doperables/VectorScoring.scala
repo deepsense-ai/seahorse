@@ -21,9 +21,9 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
 
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.doperables.dataframe.{CommonColumnMetadata, DataFrame, DataFrameBuilder}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
-import io.deepsense.deeplang.parameters.ColumnType
 import io.deepsense.deeplang.{DKnowledge, DMethod1To1, ExecutionContext}
 
 trait VectorScoring {

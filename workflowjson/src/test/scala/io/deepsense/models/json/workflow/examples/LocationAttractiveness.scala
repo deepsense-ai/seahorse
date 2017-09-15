@@ -16,6 +16,7 @@
 
 package io.deepsense.models.json.workflow.examples
 
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.doperations.CsvParameters.ColumnSeparator
 import io.deepsense.deeplang.doperations._

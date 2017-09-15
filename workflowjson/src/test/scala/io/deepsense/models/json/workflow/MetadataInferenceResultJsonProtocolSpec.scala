@@ -18,10 +18,10 @@ package io.deepsense.models.json.workflow
 
 import spray.json._
 
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.doperables.dataframe.{CommonColumnMetadata, DataFrameMetadata}
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.inference.{InferenceWarning, InferenceWarnings}
-import io.deepsense.deeplang.parameters.ColumnType
 import io.deepsense.models.json.{StandardSpec, UnitTestSupport}
 import io.deepsense.models.metadata.MetadataInferenceResult
 

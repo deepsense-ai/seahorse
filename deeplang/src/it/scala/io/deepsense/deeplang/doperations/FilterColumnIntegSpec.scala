@@ -24,10 +24,11 @@ import org.joda.time.DateTime
 import org.scalatest.Matchers
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException
-import io.deepsense.deeplang.parameters.ColumnType.ColumnType
+import ColumnType.ColumnType
 import io.deepsense.deeplang.parameters._
 
 class FilterColumnsIntegSpec

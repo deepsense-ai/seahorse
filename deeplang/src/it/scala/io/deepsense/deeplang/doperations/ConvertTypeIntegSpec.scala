@@ -23,10 +23,11 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.joda.time.{DateTime, DateTimeZone}
 
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoriesMapping, MappingMetadataConverter}
-import io.deepsense.deeplang.parameters.ColumnType._
+import ColumnType._
 import io.deepsense.deeplang.parameters._
 
 class ConvertTypeIntegSpec extends DeeplangIntegTestSupport {

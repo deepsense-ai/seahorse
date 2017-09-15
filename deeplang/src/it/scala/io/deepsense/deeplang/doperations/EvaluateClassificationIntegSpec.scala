@@ -19,6 +19,7 @@ package io.deepsense.deeplang.doperations
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.Report
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
@@ -121,6 +122,11 @@ class EvaluateClassificationIntegSpec extends DeeplangIntegTestSupport {
         List(
           "Threshold",
           "Accuracy")),
+      Some(
+        List(
+          ColumnType.numeric,
+          ColumnType.numeric
+        )),
       None,
       List(
         List(Some("0.99"), Some("1")),
@@ -134,6 +140,11 @@ class EvaluateClassificationIntegSpec extends DeeplangIntegTestSupport {
         List(
           "Threshold",
           "F-Measure")),
+      Some(
+        List(
+          ColumnType.numeric,
+          ColumnType.numeric
+        )),
       None,
       List(
         List(Some("0.99"), Some("1")),
@@ -147,6 +158,11 @@ class EvaluateClassificationIntegSpec extends DeeplangIntegTestSupport {
         List(
           "False positive rate",
           "True positive rate")),
+      Some(
+        List(
+          ColumnType.numeric,
+          ColumnType.numeric
+        )),
       None,
       List(
         List(Some("0"), Some("0")),
@@ -163,6 +179,12 @@ class EvaluateClassificationIntegSpec extends DeeplangIntegTestSupport {
           "DataFrame Size",
           "AUC",
           "Logarithmic Loss")),
+      Some(
+        List(
+          ColumnType.numeric,
+          ColumnType.numeric,
+          ColumnType.numeric
+        )),
       None,
       List(
         List(Some("24"), Some("1"), Some("0.01005")))

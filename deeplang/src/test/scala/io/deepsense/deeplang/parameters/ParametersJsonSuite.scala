@@ -23,6 +23,8 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatest.{FunSuite, Matchers}
 import spray.json._
 
+import io.deepsense.commons.types.ColumnType
+
 class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
 
   test("ParametersSchema can provide its json representation") {

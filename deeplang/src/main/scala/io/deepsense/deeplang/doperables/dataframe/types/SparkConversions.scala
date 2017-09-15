@@ -17,9 +17,8 @@
 package io.deepsense.deeplang.doperables.dataframe.types
 
 import org.apache.spark.sql
-
-import io.deepsense.deeplang.parameters.ColumnType
-import io.deepsense.deeplang.parameters.ColumnType._
+import io.deepsense.commons.types.ColumnType
+import ColumnType._
 
 object SparkConversions {
 

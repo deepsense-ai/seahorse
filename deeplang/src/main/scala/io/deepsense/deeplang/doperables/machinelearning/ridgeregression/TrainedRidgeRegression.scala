@@ -23,6 +23,7 @@ import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.mllib.regression.{GeneralizedLinearModel, RidgeRegressionModel}
 import org.apache.spark.rdd.RDD
 
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.{DOperable, ExecutionContext, Model}
@@ -65,6 +66,7 @@ case class TrainedRidgeRegression(
       name = "Model weights",
       description = "",
       columnNames = Some(List("Column", "Weight")),
+      columnTypes = Some(List(ColumnType.string, ColumnType.numeric)),
       rowNames = None,
       values = rows)
 
@@ -72,6 +74,7 @@ case class TrainedRidgeRegression(
       name = "Target column",
       description = "",
       columnNames = None,
+      columnTypes = Some(List(ColumnType.string)),
       rowNames = None,
       values = List(List(Some(targetColumn))))
 
@@ -79,6 +82,7 @@ case class TrainedRidgeRegression(
       name = "Intercept",
       description = "",
       columnNames = None,
+      columnTypes = Some(List(ColumnType.numeric)),
       rowNames = None,
       values = List(List(Some(model.intercept.toString))))
 

@@ -16,10 +16,13 @@
 
 package io.deepsense.reportlib.model
 
+import io.deepsense.commons.types.ColumnType.ColumnType
+
 case class Table(
   name: String,
   description: String,
   columnNames: Option[List[String]],
+  columnTypes: Option[List[ColumnType]],
   rowNames: Option[List[String]],
   values: List[List[Option[String]]],
   blockType: String = Table.tableType) {

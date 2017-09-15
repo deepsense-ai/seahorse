@@ -18,10 +18,10 @@ package io.deepsense.deeplang.doperables
 
 import org.mockito.Mockito
 
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.UnitSpec
 import io.deepsense.deeplang.doperables.dataframe._
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoriesMapping
-import io.deepsense.deeplang.parameters.ColumnType
 
 class CategoricalFeaturesExtractorSpec extends UnitSpec {
 

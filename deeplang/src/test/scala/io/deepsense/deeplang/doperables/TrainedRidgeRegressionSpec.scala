@@ -16,13 +16,14 @@
 
 package io.deepsense.deeplang.doperables
 
-import org.apache.spark.mllib.regression.RidgeRegressionModel
 import org.apache.spark.mllib.linalg
+import org.apache.spark.mllib.regression.RidgeRegressionModel
 
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.machinelearning.ridgeregression.TrainedRidgeRegression
-import io.deepsense.reportlib.model.{Table, ReportContent}
+import io.deepsense.reportlib.model.{ReportContent, Table}
 
 class TrainedRidgeRegressionSpec extends ScorableSpec[TrainedRidgeRegression]{
   def scorableName: String = "TrainedRidgeRegression"
@@ -45,19 +46,29 @@ class TrainedRidgeRegressionSpec extends ScorableSpec[TrainedRidgeRegression]{
         "Report for TrainedRidgeRegression",
         tables = Map(
           "Model weights" -> Table(
-            "Model weights", "", Some(List("Column", "Weight")), None,
+            "Model weights", "",
+            Some(List("Column", "Weight")),
+            Some(List(ColumnType.string, ColumnType.numeric)),
+            None,
             values = List(
               List(Some(featureColumns(0)), Some(weights(0).toString)),
               List(Some(featureColumns(1)), Some(weights(1).toString)),
               List(Some(featureColumns(2)), Some(weights(2).toString))
-
             )
           ),
           "Target column" -> Table(
-            "Target column", "", None, None, List(List(Some(targetColumn)))
+            "Target column", "",
+            None,
+            Some(List(ColumnType.string)),
+            None,
+            List(List(Some(targetColumn)))
           ),
           "Intercept" -> Table(
-            "Intercept", "", None, None, List(List(Some(intercept.toString)))
+            "Intercept", "",
+            None,
+            Some(List(ColumnType.numeric)),
+            None,
+            List(List(Some(intercept.toString)))
           )
         )
       ))

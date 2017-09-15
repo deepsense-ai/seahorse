@@ -26,12 +26,13 @@ import org.apache.spark.sql.types._
 import org.apache.spark.sql.{ColumnName, Row}
 
 import io.deepsense.commons.datetime.DateTimeConverter
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.commons.utils.DoubleUtils
 import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables.ReportLevel
 import io.deepsense.deeplang.doperables.ReportLevel.ReportLevel
-import io.deepsense.deeplang.doperables.{ReportLevel, Report}
+import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMetadata
+import io.deepsense.deeplang.doperables.{Report, ReportLevel}
 import io.deepsense.reportlib.model
 import io.deepsense.reportlib.model._
 
@@ -71,11 +72,15 @@ trait DataFrameReportGenerator {
     val rows: Array[Row] = sparkDataFrame.take(DataFrameReportGenerator.maxRowsNumberInReport)
     val values: List[List[Option[String]]] = rows.map(row =>
       (0 until columnsNumber).map(cell2String(row, _, categoricalMetadata)).toList).toList
+    val columnTypes: List[ColumnType.ColumnType] = sparkDataFrame.schema.map(
+      field => SparkConversions.sparkColumnTypeToColumnType(field.dataType)
+    ).toList
     Table(
       DataFrameReportGenerator.dataSampleTableName,
       s"${DataFrameReportGenerator.dataSampleTableName}. " +
         s"First $columnsNumber columns and ${rows.length} randomly chosen rows",
       Some(columnsNames),
+      Some(columnTypes),
       None,
       values)
   }
@@ -86,6 +91,7 @@ trait DataFrameReportGenerator {
       s"${DataFrameReportGenerator.dataFrameSizeTableName}. " +
         s"Number of columns and number of rows in the DataFrame.",
       Some(List("Number of columns", "Number of rows")),
+      Some(List(ColumnType.numeric, ColumnType.numeric)),
       None,
       List(List(Some(schema.fieldNames.length.toString), Some(dataFrameSize.toString))))
 

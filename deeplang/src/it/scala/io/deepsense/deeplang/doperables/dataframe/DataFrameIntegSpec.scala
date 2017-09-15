@@ -18,6 +18,7 @@ package io.deepsense.deeplang.doperables.dataframe
 
 import org.apache.spark.sql.types._
 
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException
 import io.deepsense.deeplang.parameters._

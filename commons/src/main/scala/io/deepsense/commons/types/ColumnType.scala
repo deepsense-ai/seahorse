@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.parameters
+package io.deepsense.commons.types
 
 /**
  * Types of data that column in dataframe can have.

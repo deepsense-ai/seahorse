@@ -20,9 +20,9 @@ import org.scalatest._
 import org.scalatest.mock.MockitoSugar
 import spray.json._
 
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.DOperable.AbstractMetadata
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoriesMapping
-import io.deepsense.deeplang.parameters.ColumnType
 
 class DataFrameMetadataJsonProtocolSpec extends FlatSpec with Matchers with MockitoSugar {
 

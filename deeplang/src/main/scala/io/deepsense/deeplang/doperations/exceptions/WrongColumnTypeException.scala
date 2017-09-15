@@ -16,7 +16,8 @@
 
 package io.deepsense.deeplang.doperations.exceptions
 
-import io.deepsense.deeplang.parameters.ColumnType.ColumnType
+import io.deepsense.commons.types.ColumnType
+import ColumnType.ColumnType
 
 case class WrongColumnTypeException(override val message: String)
   extends DOperationExecutionException(message, None)

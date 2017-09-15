@@ -16,8 +16,9 @@
 
 package io.deepsense.deeplang.inference
 
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.doperables.dataframe.{ColumnMetadata, DataFrameMetadata}
-import io.deepsense.deeplang.parameters.ColumnType.ColumnType
+import ColumnType.ColumnType
 import io.deepsense.deeplang.parameters.{SingleColumnSelection, ColumnSelection}
 
 /**

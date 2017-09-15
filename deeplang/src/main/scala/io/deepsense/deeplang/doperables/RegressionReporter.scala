@@ -19,6 +19,7 @@ package io.deepsense.deeplang.doperables
 import org.apache.spark.mllib.evaluation.RegressionMetrics
 import org.apache.spark.rdd.RDD
 
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.commons.utils.{DoubleUtils, Logging}
 import io.deepsense.reportlib.model.{ReportContent, Table}
 
@@ -34,7 +35,13 @@ object RegressionReporter extends Reporter with Logging {
           .map(Some.apply)
       )
 
-    val table = Table(ReportName, ReportDescription, Some(ReportColumnNames), None, rows)
+    val table = Table(
+      ReportName,
+      ReportDescription,
+      Some(ReportColumnNames),
+      Some(ReportColumnTypes),
+      None,
+      rows)
     Report(ReportContent(ReportName, List(table)))
   }
 
@@ -79,6 +86,7 @@ object RegressionReporter extends Reporter with Logging {
       CvReportTableName,
       CvReportDescription,
       Some(CvReportColumnNames),
+      Some(CvReportColumnTypes),
       Some(rowNames),
       rowsWithAverage)
 
@@ -115,10 +123,20 @@ object RegressionReporter extends Reporter with Logging {
     "r2",
     "Root Mean Squared Error"
   )
+  val MetricsColumnTypes = List(
+    ColumnType.numeric,
+    ColumnType.numeric,
+    ColumnType.numeric,
+    ColumnType.numeric,
+    ColumnType.numeric
+  )
 
   val ReportColumnNames = List("DataFrame Size") ++ MetricsColumnNames
+  val ReportColumnTypes = List(ColumnType.numeric) ++ MetricsColumnTypes
   val CvReportColumnNames =
     List("Fold Number", "Training Set Size", "Test Set Size") ++ MetricsColumnNames
+  val CvReportColumnTypes = List(
+    ColumnType.numeric, ColumnType.numeric, ColumnType.numeric) ++ MetricsColumnTypes
 
   val CvReportTableName = "Cross-validate Regression Report"
 

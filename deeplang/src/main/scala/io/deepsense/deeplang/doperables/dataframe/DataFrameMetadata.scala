@@ -19,6 +19,7 @@ package io.deepsense.deeplang.doperables.dataframe
 import org.apache.spark.sql.types.{StructField, StructType}
 import spray.json._
 
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrameMetadataJsonProtocol._
 import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
@@ -26,7 +27,7 @@ import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoriesM
 import io.deepsense.deeplang.doperations.exceptions.{ColumnDoesNotExistException, ColumnsDoNotExistException}
 import io.deepsense.deeplang.inference.exceptions.NameNotUniqueException
 import io.deepsense.deeplang.inference.{InferenceWarning, InferenceWarnings, MultipleColumnsMayNotExistWarning, SingleColumnMayNotExistWarning}
-import io.deepsense.deeplang.parameters.ColumnType.ColumnType
+import ColumnType.ColumnType
 import io.deepsense.deeplang.parameters._
 
 /**
