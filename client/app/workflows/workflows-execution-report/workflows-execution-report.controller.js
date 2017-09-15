@@ -1,5 +1,7 @@
 'use strict';
 
+import { GraphPanelRendererBase } from './../graph-panel/graph-panel-renderer/graph-panel-renderer-base.js';
+
 /* @ngInject */
 function WorkflowsReportController(
   $state, $scope, report, ConfirmationModalService, Report,
@@ -15,33 +17,29 @@ function WorkflowsReportController(
 
   _.assign(that, {
     getWorkflow: WorkflowService.getWorkflow,
-    getSelectedNode: () => internal.selectedNode
+    getSelectedNode: () => internal.selectedNode,
+    get GUIData () {
+      return report.thirdPartyData.gui;
+    },
+    get reportData () {
+      return report.executionReport;
+    }
   });
 
   internal.init = function init() {
-    const DEFAULT_WORKFLOW_NAME = 'Draft workflow';
-    let getTitle = () => {
-      try {
-        return report.thirdPartyData.gui.name || DEFAULT_WORKFLOW_NAME;
-      } catch (e) {
-        return DEFAULT_WORKFLOW_NAME;
-      }
-    };
-
-    PageService.setTitle(`Workflow execution report: ${getTitle()}`);
+    PageService.setTitle('Workflow execution report');
 
     let workflow = WorkflowService.createWorkflow(report, Operations.getData());
     workflow.updateState(report.executionReport);
     workflow.setPortTypesFromReport(report.executionReport.resultEntities);
 
-    GraphPanelRendererService.setWorkflow(workflow);
+    GraphPanelRendererService.setRenderMode(GraphPanelRendererBase.REPORT_RENDER_MODE);
     GraphPanelRendererService.setZoom(1.0);
 
     WorkflowService.updateEdgesStates();
     GraphPanelRendererService.changeEdgesPaintStyles();
-    GraphPanelRendererService.disableAddingEdges();
 
-    Report.createReportEntities(report.executionReport.resultEntities);
+    Report.createReportEntities(report.executionReport.id, report.executionReport.resultEntities);
   };
 
   $scope.$on(GraphNode.CLICK, (event, data) => {
@@ -74,6 +72,15 @@ function WorkflowsReportController(
       then(() => {
         $state.go('home');
       });
+  });
+
+  $scope.$on('OutputPort.LEFT_CLICK', (event, data) => {
+    let node = WorkflowService.getWorkflow().getNodeById(data.portObject.nodeId);
+    $scope.$applyAsync(() => {
+      $state.go('workflows.reportEntity', {
+        reportEntityId: node.getResult(data.reference.getParameter('portIndex'))
+      });
+    });
   });
 
   $scope.$on('$destroy', () => {

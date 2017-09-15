@@ -21,10 +21,10 @@ function NewWorkflowModalController($modalInstance, WorkflowsApiClient) {
         then((response) => {
           $modalInstance.close(response.id);
         }).
-        catch((reason = {data: 'Server is not responding'}) => {
-          reason = reason.data;
+        catch(({ data } = {}) => {
+          let { message } = data;
           this.loading = false;
-          this.errorMessage = reason.data;
+          this.errorMessage = message || 'Server error';
         });
     }
   });

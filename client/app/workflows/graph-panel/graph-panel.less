@@ -22,12 +22,12 @@ path,
   margin: 0;
   height: 100%;
   position: relative;
-  flex: 1;
+  flex: 5.5;
 
   &:after {
     content: "";
     background: url("../img/seahorse-small.png") center center no-repeat;
-    opacity: 0.5;
+    opacity: 0.2;
     top: 0;
     left: 0;
     bottom: 0;
@@ -67,9 +67,16 @@ path,
   }
 }
 
+.flowchart-mask {
+  box-shadow:
+    inset 0 11px 8px -10px #CCC,
+    inset 0 -11px 8px -10px #CCC;
+}
+
 .deepsense-interactive-panel {
   height: 100%;
 }
 
 @import "graph-panel-node/graph-panel-node.less";
 @import "multi-selection/multi-selection.less";
+@import "./graph-panel-renderer/graph-panel-renderer.less";

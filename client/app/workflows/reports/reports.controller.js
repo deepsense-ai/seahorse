@@ -1,7 +1,3 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- */
-
 'use strict';
 
 var EVENTS = {
@@ -10,7 +6,7 @@ var EVENTS = {
 };
 
 /* @ngInject */
-function ReportCtrl(report, $scope, $modal, PageService) {
+function ReportCtrl(report, $scope, $state, $modal, PageService) {
   PageService.setTitle(`Report: ${report.name}`);
 
   let that = this;
@@ -19,6 +15,7 @@ function ReportCtrl(report, $scope, $modal, PageService) {
   internal.name = report.name;
   internal.tables = report.tables;
   internal.distributions = report.distributions || {};
+  internal.reportId = report.reportId;
   internal.distributionsTypes = _.reduce(
     internal.distributions,
     function (acc, distObj, name) {
@@ -30,6 +27,12 @@ function ReportCtrl(report, $scope, $modal, PageService) {
     },
     {}
   );
+
+  that.back = () => {
+    $state.go('workflows.report', {
+      'reportId': internal.reportId
+    });
+  };
 
   that.getTables = function getTables() {
     return internal.tables;

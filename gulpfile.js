@@ -1,8 +1,3 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Piotr Zarówny
- */
 'use strict';
 
 var gulp = require('gulp');
@@ -25,6 +20,8 @@ var minifyCSS = require('gulp-minify-css');
 var jshint = require('gulp-jshint');
 var exit = require('gulp-exit');
 var templateCache = require('gulp-angular-templatecache');
+var htmlreplace = require('gulp-html-replace');
+var exec = require('child_process').exec;
 
 require('jshint-stylish');
 
@@ -35,26 +32,27 @@ var build = config.files.build;
 var libs = config.files.libs;
 var devMode = !!gutil.env.dev;
 var CIMode = !!gutil.env.ci;
+var hash = 'hash-commit';
 
 client.path = __dirname + '/' + client.path;
 
 var BROWSER_SYNC_RELOAD_DELAY = 2000;
 
-gulp.task('clean', function() {
+gulp.task('clean', function () {
   return gulp.src([build.path], {read: false})
     .pipe(clean({force: true}));
 });
 
 gulp.task('server', function (callback) {
   var called = false,
-      config = {
-        execMap: {
-          'js': 'node --harmony'
-        },
-        script: server.path + server.app,
-        verbose: true,
-        watch: [ server.path ]
-      };
+    config = {
+      execMap: {
+        'js': 'node --harmony'
+      },
+      script: server.path + server.app,
+      verbose: true,
+      watch: [server.path]
+    };
 
   return nodemon(config).
     on('start', function () {
@@ -95,8 +93,28 @@ gulp.task('html:partials', function () {
       module: PARTIALS_MODULE_NAME,
       filename: build.bundle.partials,
       standalone: true
-    })).
-    pipe(gulp.dest(build.path + build.js));
+    }))
+    .pipe(gulp.dest(build.path + build.js));
+});
+
+gulp.task('version', function (callback) {
+  exec('git rev-parse HEAD', function (error, stdout, sterr) {
+    hash = stdout;
+    callback(error);
+  });
+});
+
+gulp.task('replace', function () {
+  return gulp.src(build.path + '/index.html')
+    .pipe(htmlreplace({
+      'version': '<!-- git-hash: ' + hash.replace('\n', '') + ' -->'
+    }))
+    .pipe(gulp.dest(build.path));
+});
+
+gulp.task('copy:images', function () {
+  return gulp.src([client.path + client.icheckImages]).
+    pipe(gulp.dest(build.path + build.css));
 });
 
 gulp.task('favicon', function () {
@@ -132,7 +150,7 @@ gulp.task('less', function () {
 });
 
 gulp.task('libs:css', function () {
-  return gulp.src(libs[devMode ? 'dev': 'prod'].css)
+  return gulp.src(libs[devMode ? 'dev' : 'prod'].css)
     .pipe(concat(build.bundle.css))
     .pipe(size({
       title: 'libs:css',
@@ -142,7 +160,7 @@ gulp.task('libs:css', function () {
 });
 
 gulp.task('libs:js', function () {
-  return gulp.src(libs[devMode ? 'dev': 'prod'].js)
+  return gulp.src(libs[devMode ? 'dev' : 'prod'].js)
     .pipe(concat(build.bundle.js))
     .pipe(size({
       title: 'libs:js',
@@ -153,10 +171,10 @@ gulp.task('libs:js', function () {
 
 gulp.task('jshint', function () {
   return gulp.src([
-      server.path + server.js,
-      './gulpfile.js',
-      client.path + client.js
-    ])
+    server.path + server.js,
+    './gulpfile.js',
+    client.path + client.js
+  ])
     .pipe(jshint())
     .pipe(jshint.reporter('jshint-stylish'))
     .pipe(CIMode ? jshint.reporter('fail') : gutil.noop())
@@ -165,14 +183,14 @@ gulp.task('jshint', function () {
 
 gulp.task('browserify', function () {
   return browserify({
-      entries: [client.path + client.app],
-      debug: devMode
-    })
+    entries: [client.path + client.app],
+    debug: devMode
+  })
     .transform(babelifygul)
     .transform(browserifyAnnotate, {
-        add: true,
-        // jshint -W106
-        single_quotes: true
+      add: true,
+      // jshint -W106
+      single_quotes: true
     })
     .transform(browserifyShim)
     .bundle()
@@ -190,11 +208,10 @@ gulp.task('build', function (callback) {
   runSequence(
     'clean',
     [
-      'fonts', 'images', 'html:index', 'html:partials', 'config', 'favicon', 'assets', 'less',
+      'fonts', 'images', 'html:index', 'html:partials', 'copy:images', 'config', 'favicon', 'assets', 'less',
       'libs:css', 'libs:js', 'jshint', 'browserify'
     ],
-    callback
-  );
+    'version', 'replace', callback);
 });
 
 gulp.task('start', function (callback) {

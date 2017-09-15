@@ -1,16 +1,19 @@
 <section class="c-homepage">
+  <div class="c-report-bug"><a href="mailto:bugs@deepsense.io">Found a bug?<br/>Email us: bugs@deepsense.io</a></div>
   <div class="o-video-container">
+    <div class="o-video-container__c-version">version: {{::home.getVersion()}}</div>
     <div class="o-video-container__filter"></div>
     <div class="o-video-container__bg-image"></div>
     <video autoplay loop class="o-video-container--fill-width">
-      <source src="app/home/assets/MP4/Working-Space.mp4" type="video/mp4" />Your browser does not support the video tag. I suggest you upgrade your browser.
-      <source src="app/home/assets/WEBM/Working-Space.webm" type="video/webm" />Your browser does not support the video tag. I suggest you upgrade your browser.
+      <source src="app/home/assets/MP4/Working-Space.mp4" type="video/mp4"/>
+      Your browser does not support the video tag. I suggest you upgrade your browser.
+      <source src="app/home/assets/WEBM/Working-Space.webm" type="video/webm"/>
+      Your browser does not support the video tag. I suggest you upgrade your browser.
     </video>
     <div class="poster hidden">
       <img src="app/home/assets/snapshots/Working-Space.jpg" alt="">
     </div>
   </div>
-
   <nav class="c-main-menu">
     <ul class="c-main-menu__wrapper">
       <li class="c-main-menu__item">

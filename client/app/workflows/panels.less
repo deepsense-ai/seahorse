@@ -1,0 +1,161 @@
+// Common things for all panels on both workflow views
+// Variables
+@panelMainWidth: 250px;
+
+// Mixins
+@import "./mixins.less";
+
+.panelsMinWidth() {
+  min-width: @panelMainWidth;
+}
+
+.panelsMaxWidth() {
+  max-width: @panelMainWidth;
+}
+
+.spaceBetween(@side: right, @size: 10px) {
+  border-@{side}: @size solid transparent;
+}
+
+// Rules
+.operations-tree {
+  .spaceBetween(right, 3px);
+
+  width: @panelMainWidth;
+  padding: 0 1px 0 0;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.75);
+
+  ul .operations-category-item {
+    border-radius: 0;
+  }
+
+  &.mCS_no_scrollbar {
+    .spaceBetween();
+  }
+}
+
+.operation-attributes-panel {
+  .panelsMinWidth();
+  .spaceBetween(left);
+
+  position: static;
+  flex: 1;
+  border-right: 0;
+  border-bottom: 0;
+  border-top: 0;
+}
+
+.o-general-data-panel {
+  &:extend(.operation-attributes-panel);
+}
+
+.o-panel {
+  height: 100%;
+  margin-bottom: 0;
+
+  &__title {
+    height: auto;
+    font-weight: bold;
+    text-transform: uppercase;
+    width: 100%;
+    border: 1px solid white;
+
+    &:hover {
+      border: 1px solid black;
+      cursor: pointer;
+    }
+  }
+
+  &__content {
+    padding: 14px 15px 7px 15px;
+  }
+
+  &__description {
+    width: 100%;
+    max-height: 21ex;
+    overflow: hidden;
+    border: 1px solid white;
+
+    &:hover {
+      border: 1px solid black;
+      cursor: pointer;
+    }
+
+    // new method of clipping by line numbers
+    @supports (display: -webkit-box) {
+      & {
+        display: -webkit-box;
+        -webkit-line-clamp: 8;
+        -webkit-box-orient: vertical;
+        max-height: none;
+      }
+    }
+  }
+
+  &--width {
+    .panelsMaxWidth();
+  }
+
+  &--absolute {
+    .dynamicHeight();
+
+    position: absolute;
+    z-index: 1;
+    right: 0;
+    border-color: white;
+  }
+
+  &--dynamic-top {
+    .dynamicTop();
+  }
+
+  &--scroll-right {
+    &[custom-scroll-bar] {
+      .spaceBetween(right, 3px);
+
+      &.mCS_no_scrollbar {
+        .spaceBetween(right, 0);
+      }
+    }
+
+    [custom-scroll-bar] {
+      .spaceBetween(right, 3px);
+
+      &.mCS_no_scrollbar {
+        .spaceBetween(right, 0);
+      }
+    }
+  }
+}
+
+.o-error-btn {
+  &--full-width {
+    width: 100%;
+  }
+}
+
+// ScrollBar namespace
+.mCS-deepsense {
+  &.mCSB_scrollTools {
+    width: 5px;
+  }
+
+  &.mCSB_inside {
+    > .mCSB_container {
+      margin-right: 8px;
+
+      &.mCS_no_scrollbar_y.mCS_y_hidden {
+        margin-right: 0;
+      }
+    }
+
+    .mCSB_dragger .mCSB_dragger_bar {
+      background-color: rgba(0,0,0,0.25);
+    }
+
+    .mCSB_draggerRail {
+      background-color: white;
+    }
+  }
+}

@@ -1,17 +1,24 @@
-<div class="workflow-container">
+<div class="c-workflow-container">
   <flow-chart-box
     nodes="workflow.getWorkflow().getNodes()"
     selected-node="workflow.getSelectedNode()"
-    report-mode="true"
-    title="Read only"></flow-chart-box>
+    report-mode="true"></flow-chart-box>
 
   <deepsense-operation-attributes
     node="workflow.getSelectedNode()"
     ng-if="workflow.getSelectedNode()"
-    disabled-mode="true">
+    disabled-mode="true"
+    class="animated fadeInRight o-panel o-panel--scroll-right
+      o-panel--absolute o-panel--dynamic-top">
   </deepsense-operation-attributes>
 
-  <aside class="o-read-only text-warning">
-    <p>This is read only view</p>
+  <aside class="o-read-only">
+    <p>This view is read-only</p>
   </aside>
+
+  <general-data-panel
+    name="workflow.getWorkflow().name"
+    description="workflow.getWorkflow().description"
+    ng-if="!workflow.getSelectedNode()">
+  </general-data-panel>
 </div>

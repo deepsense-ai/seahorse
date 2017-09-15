@@ -1,14 +1,14 @@
 'use strict';
 
+import { GraphPanelRendererBase } from './../graph-panel/graph-panel-renderer/graph-panel-renderer-base.js';
+
 /* @ngInject */
-function WorkflowsEditorController(
-  workflow,
-  $scope, $state, $stateParams,
-  GraphNode, Edge,
-  PageService, Operations, GraphPanelRendererService, WorkflowService, UUIDGenerator, MouseEvent,
-  DeepsenseNodeParameters, ConfirmationModalService, ExportModalService,
-  RunModalFactory
-) {
+function WorkflowsEditorController(workflow,
+                                   $scope, $state, $stateParams,
+                                   GraphNode, Edge,
+                                   PageService, Operations, GraphPanelRendererService, WorkflowService, UUIDGenerator, MouseEvent,
+                                   DeepsenseNodeParameters, ConfirmationModalService, ExportModalService,
+                                   RunModalFactory) {
   let that = this;
   let internal = {};
 
@@ -18,23 +18,11 @@ function WorkflowsEditorController(
   });
 
   internal.init = function init() {
-    const DEFAULT_WORKFLOW_NAME = 'Draft workflow';
-    let getTitle = () => {
-      try {
-        return workflow.thirdPartyData.gui.name || DEFAULT_WORKFLOW_NAME;
-      } catch (e) {
-        return DEFAULT_WORKFLOW_NAME;
-      }
-    };
-
-    PageService.setTitle('Workflow: ' + getTitle());
-
+    PageService.setTitle('Workflow editor');
     WorkflowService.createWorkflow(workflow, Operations.getData());
-    GraphPanelRendererService.setWorkflow(WorkflowService.getWorkflow());
+    GraphPanelRendererService.setRenderMode(GraphPanelRendererBase.EDITOR_RENDER_MODE);
     GraphPanelRendererService.setZoom(1.0);
-    GraphPanelRendererService.enableAddingEdges();
-
-    internal.updateAndRerenderEdges(workflow.knowledge);
+    internal.updateAndRerenderEdges(workflow);
   };
 
   internal.rerenderEdges = function rerenderEdges() {
@@ -43,8 +31,10 @@ function WorkflowsEditorController(
   };
 
   internal.updateAndRerenderEdges = function updateAndRerenderEdges(data) {
-    WorkflowService.updateTypeKnowledge(data);
-    internal.rerenderEdges();
+    if (data && data.knowledge) {
+      WorkflowService.updateTypeKnowledge(data.knowledge);
+      internal.rerenderEdges();
+    }
   };
 
   that.getWorkflow = WorkflowService.getWorkflow;
@@ -53,18 +43,13 @@ function WorkflowsEditorController(
     return internal.selectedNode;
   };
 
-  that.saveWorkflow = function saveWorkflow() {
-    WorkflowService.saveWorkflow().
-      then((data) => {
-        if (!_.isUndefined(data)) {
-          internal.updateAndRerenderEdges(data.knowledge);
-        }
-      });
-  };
-
   that.unselectNode = function unselectNode() {
     internal.selectedNode = null;
   };
+
+  $scope.$on('Workflow.SAVE.SUCCESS', (event, data) => {
+    internal.updateAndRerenderEdges(data);
+  });
 
   $scope.$on(GraphNode.CLICK, (event, data) => {
     let node = data.selectedNode;
@@ -86,12 +71,10 @@ function WorkflowsEditorController(
 
   $scope.$on(Edge.CREATE, (data, args)  => {
     WorkflowService.getWorkflow().addEdge(args.edge);
-    that.saveWorkflow();
   });
 
   $scope.$on(Edge.REMOVE, (data, args)  => {
     WorkflowService.getWorkflow().removeEdge(args.edge);
-    that.saveWorkflow();
   });
 
   $scope.$on('Keyboard.KEY_PRESSED_DEL', () => {
@@ -100,7 +83,7 @@ function WorkflowsEditorController(
       GraphPanelRendererService.removeNode(internal.selectedNode.id);
       that.unselectNode();
       $scope.$digest();
-      that.saveWorkflow();
+      WorkflowService.saveWorkflow();
     }
   });
 
@@ -114,14 +97,14 @@ function WorkflowsEditorController(
     let elementOffsetX = 100;
     let elementOffsetY = 30;
     let node = WorkflowService.getWorkflow().createNode({
-        'id': UUIDGenerator.generateUUID(),
-        'operation': operation,
-        'x': positionX > elementOffsetX ? positionX - elementOffsetX : 0,
-        'y': positionY > elementOffsetY ? positionY - elementOffsetY : 0
-      });
+      'id': UUIDGenerator.generateUUID(),
+      'operation': operation,
+      'x': positionX > elementOffsetX ? positionX - elementOffsetX : 0,
+      'y': positionY > elementOffsetY ? positionY - elementOffsetY : 0
+    });
 
     WorkflowService.getWorkflow().addNode(node);
-    that.saveWorkflow();
+    WorkflowService.saveWorkflow();
   });
 
   $scope.$on('AttributePanel.UNSELECT_NODE', () => {
@@ -134,26 +117,28 @@ function WorkflowsEditorController(
     GraphPanelRendererService.clearWorkflow();
   });
 
-  $scope.$on('StatusBar.SAVE_CLICK', that.saveWorkflow);
+  $scope.$on('StatusBar.SAVE_CLICK', () => {
+    WorkflowService.saveWorkflow();
+  });
 
   $scope.$on('StatusBar.HOME_CLICK', () => {
     ConfirmationModalService.showModal({
       message: 'The operation redirects to the home page. Make sure you saved the current state of the workflow.'
     }).
-      then(() => {
-        $state.go('home');
-      });
+    then(() => {
+      $state.go('home');
+    });
   });
 
   $scope.$on('StatusBar.CLEAR_CLICK', () => {
     ConfirmationModalService.showModal({
       message: 'The operation clears the whole workflow graph and it cannot be undone afterwards.'
     }).
-      then(() => {
-        WorkflowService.clearGraph();
-        GraphPanelRendererService.rerender();
-        that.saveWorkflow();
-      });
+    then(() => {
+      WorkflowService.clearGraph();
+      GraphPanelRendererService.rerender();
+      WorkflowService.saveWorkflow();
+    });
   });
 
   $scope.$on('StatusBar.EXPORT_CLICK', () => {
@@ -162,7 +147,7 @@ function WorkflowsEditorController(
 
   $scope.$on('StatusBar.RUN', () => {
     RunModalFactory.showModal({
-      message: 'Something here!'
+      message: `Discovery Peak Apache Spark cluster`
     });
   });
 
@@ -171,11 +156,11 @@ function WorkflowsEditorController(
       message: `The operation redirects to the view that displays the latest report for this workflow.
       The workflow had to be executed at least once. Make sure you saved the current state of the workflow.`
     }).
-      then(() => {
-        $state.go('workflows.latest_report', {
-          'id': $stateParams.id
-        });
+    then(() => {
+      $state.go('workflows.latest_report', {
+        'id': $stateParams.id
       });
+    });
   });
 
   $scope.$watchCollection('workflow.getWorkflow().getNodesIds()', (newValue, oldValue) => {
@@ -198,8 +183,6 @@ function WorkflowsEditorController(
 
   return that;
 }
-
-exports.function = WorkflowsEditorController;
 
 exports.inject = function (module) {
   module.controller('WorkflowsEditorController', WorkflowsEditorController);

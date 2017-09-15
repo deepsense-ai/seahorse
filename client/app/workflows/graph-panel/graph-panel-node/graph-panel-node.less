@@ -3,13 +3,15 @@
  *
  */
 
+@highlighted-graph-node-color: #5BA0DD;
+
 .flowchart-node {
   text-align: center;
   z-index: 24;
   cursor: pointer;
   font-weight: bold;
   background-color: #fff;
-  border: 1px solid @color-default;
+  border: 2px solid darken(@highlighted-graph-node-color, 20%);
   border-radius: 5px;
   position: absolute;
   color: #333;
@@ -20,6 +22,7 @@
   overflow: hidden;
   line-height: 50px;
   transition: background-color 200ms;
+  box-shadow: inset 0 0 8px @highlighted-graph-node-color;
 }
 
 .flowchart-node .fa {
@@ -86,21 +89,29 @@
   color: #f8ac59;
 }
 
+.flowchart-node {
+  &--active {
+    border: 2px solid lighten(@color-active, 40%);
+    background-color: lighten(@color-active, 30%);
+
+    &:hover {
+      border-color: lighten(@color-active, 20%);
+    }
+  }
+}
+
 .selected-node,
 .selected-node:hover {
   border-width: 2px !important;
-  padding: 0 20px;
-  background-color: #9fc4e4;
+  padding: 1px 21px;
+  background-color: @highlighted-graph-node-color;
+  border-color: @color-active;
+  color: white;
+  transition: background-color 400ms;
+  box-shadow: inset 0 0 8px darken(@highlighted-graph-node-color, 20%);
 }
 
 .selected-node:after,
 .selected-node:hover:after {
   right: 3px;
-}
-
-.flowchart-node {
-  &--active {
-    border: 1px solid @color-active;
-    background-color: lighten(@color-active, 30%);
-  }
 }

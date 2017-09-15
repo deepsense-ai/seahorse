@@ -1,16 +1,16 @@
 'use strict';
 
 /* @ngInject */
-function ButtonWait($timeout) {
+function Dots($timeout) {
   return {
     scope: {
-      buttonWaitStatus: '='
+      dynamicDotsStatus: '='
     },
     link: (scope, element) => {
       let dots = null;
 
       let processDots = function processDots () {
-        const LENGTH  = 7;
+        const LENGTH  = 19;
         const SPEED   = 450;
 
         if (dots) {
@@ -24,7 +24,7 @@ function ButtonWait($timeout) {
           case 'loading':
             if (!dots) {
               dots = angular.element(element)
-                .after('<span class="o-dots pull-left">...</span>').next();
+                .after('<span class="o-dots">.......</span>').next();
               processDots();
               element.attr('disabled', 'disabled');
             }
@@ -36,7 +36,7 @@ function ButtonWait($timeout) {
         }
       };
 
-      scope.$watch('buttonWaitStatus', (newValue, oldValue) => {
+      scope.$watch('dynamicDotsStatus', (newValue, oldValue) => {
         if (newValue !== oldValue) {
           process(newValue);
         }
@@ -44,8 +44,7 @@ function ButtonWait($timeout) {
     }
   };
 }
-exports.function = ButtonWait;
 
 exports.inject = function (module) {
-  module.directive('buttonWait', ButtonWait);
+  module.directive('dynamicDots', Dots);
 };

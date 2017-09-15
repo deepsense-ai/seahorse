@@ -1,0 +1,47 @@
+<aside class="ibox o-general-data-panel o-panel o-panel--scroll-right
+    animated fadeInRight">
+  <header class="ibox-title">
+    <input type="text" size="30" class="o-panel__title text-success no-margins"
+           ng-model="controller.name" ng-blur="controller.saveWorkflow()"/>
+  </header>
+  <section class="ibox-content o-panel__content" custom-scroll-bar calculate-available-view-height>
+    <header>
+      <auto-text-area value="controller.description"/>
+    </header>
+    <section ng-if="controller.status">
+      <header>
+        <p class="o-state__status label font-bold"
+           ng-class="::{
+            'label-success': controller.status === 'COMPLETED',
+            'label-danger': controller.status === 'FAILED',
+            'label-warning': controller.status === 'ABORTED'
+           }"
+           title="Status">
+          {{::controller.status}}
+        </p>
+        <button ng-show="::controller.status === 'FAILED'"
+                ng-click="controller.showErrorMessage()"
+                class="btn btn-xs btn-success action-text fa fa-exclamation-triangle
+                  o-error-btn o-error-btn--full-width">
+          <span class="action-text__text-element">Click here to show errors</span>
+        </button>
+      </header>
+      <p class="o-state__time text-right text-uppercase font-bold navy-bg">
+        <span class="block">Last execution started</span>
+        <i class="fa fa-clock-o"></i>
+        <time datetime="{{::controller.started}}"
+              class="text-right">
+          {{::controller.started | date:'medium'}}
+        </time>
+      </p>
+      <p class="o-state__time text-right text-uppercase font-bold lazur-bg">
+        <span class="block">Last execution ended</span>
+        <i class="fa fa-clock-o"></i>
+        <time datetime="{{::controller.ended}}"
+              class="text-right">
+          {{::controller.ended | date:'medium'}}
+        </time>
+      </p>
+    </section>
+  </section>
+</aside>

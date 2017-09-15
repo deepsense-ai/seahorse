@@ -1,3 +1,4 @@
+@import "./mixins.less";
 @import "./workflows-editor/workflows-editor.less";
 @import "./workflows-execution-report/workflows-execution-report.less";
 @import "./common-behaviours/common-stick-onscroll.less";
@@ -5,9 +6,12 @@
 @import "./graph-panel/graph-panel.less";
 @import "./workflows-status-bar/workflows-status-bar.less";
 @import "./reports/reports.less";
+@import "./general-data-panel/general-data-panel.less";
+@import "./panels.less";
 
 .c-dynamic-part {
-  height: calc(~'100% - 85px');
+  .dynamicHeight();
+
   display: block;
   margin-top: 10px;
 }
@@ -23,7 +27,7 @@
   }
 }
 
-.workflow-container {
+.c-workflow-container {
   display: flex;
   height: 100%;
   clear: both;

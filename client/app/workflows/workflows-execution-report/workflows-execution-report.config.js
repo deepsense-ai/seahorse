@@ -17,18 +17,17 @@ function WorkflowsConfig($stateProvider) {
       url: '/:id/latest_report',
       'views': views,
       resolve: {
-        report: /* @ngInject */($q, $rootScope, $stateParams, WorkflowsApiClient,
-                                Operations, OperationsHierarchyService) =>
+        report: /* @ngInject */($q, $state, $rootScope, $stateParams, WorkflowsApiClient) =>
         {
           let workflowId = $stateParams.id;
           let deferred = $q.defer();
 
-          Operations.load().
-            then(OperationsHierarchyService.load).
-            then(() => WorkflowsApiClient.getLatestReport(workflowId)).
+          WorkflowsApiClient.getLatestReport(workflowId).
             then((data) => {
               $rootScope.stateData.dataIsLoaded = true;
-              deferred.resolve(data);
+              $state.go('workflows.report', {
+                  reportId: data.executionReport.id
+              });
             }).
             catch(() => {
               $rootScope.stateData.errorMessage = `Could not load the latest report of the workflow with id ${workflowId}`;

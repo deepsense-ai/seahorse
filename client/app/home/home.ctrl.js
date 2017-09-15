@@ -1,18 +1,20 @@
 'use strict';
 
 /* @ngInject */
-function Home($rootScope, $modal, $state, PageService) {
-  PageService.setTitle('Home');
+function Home($rootScope, $modal, $state, PageService, config) {
 
-  // Index page should change itself
-  this.$state = $state;
+  this.init = () => {
+    PageService.setTitle('Home');
+    this.$state = $state;
+    $rootScope.stateData.dataIsLoaded = true;
+  };
 
-  $rootScope.stateData.dataIsLoaded = true;
+  this.getVersion = () => config.editorVersion;
 
   this.displayCreateWorkflowPopup = function displayCreateWorkflowPopup(event) {
     event.preventDefault();
 
-    let modal =  $modal.open({
+    let modal = $modal.open({
       animation: true,
       templateUrl: 'app/common/modals/new-workflow-modal/new-workflow-modal.html',
       controller: 'NewWorkflowModalController as controller',
@@ -65,6 +67,8 @@ function Home($rootScope, $modal, $state, PageService) {
         });
       });
   };
+
+  this.init();
 }
 
 exports.function = Home;

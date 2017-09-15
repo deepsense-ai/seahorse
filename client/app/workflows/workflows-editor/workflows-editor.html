@@ -1,7 +1,8 @@
-<div class="workflow-container">
+<div class="c-workflow-container">
   <operation-catalogue
     catalog-collection="::workflow.catalog"
-    custom-scroll-bar>
+    custom-scroll-bar
+    class="animated fadeInLeft">
   </operation-catalogue>
 
   <flow-chart-box
@@ -12,6 +13,13 @@
   <deepsense-operation-attributes
     node="workflow.getSelectedNode()"
     ng-if="workflow.getSelectedNode()"
-    disabled-mode="false">
+    disabled-mode="false"
+    class="o-panel o-panel--scroll-right animated fadeInRight">
   </deepsense-operation-attributes>
+
+  <general-data-panel
+    name="workflow.getWorkflow().name"
+    description="workflow.getWorkflow().description"
+    ng-if="!workflow.getSelectedNode()">
+  </general-data-panel>
 </div>

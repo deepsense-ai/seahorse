@@ -31,10 +31,10 @@ function UploadWorkflowModalController($modalInstance, Upload, WorkflowsApiClien
           this.status = STATUS_SUCCESS;
           $modalInstance.close(response.data.id);
         }).
-        catch((error = {}) => {
-          error.data = error.data || 'Server is not responding';
+        catch(({ data } = {}) => {
+          let { message } = data;
           this.status = STATUS_FAILURE;
-          this.errorMessage = error.data;
+          this.errorMessage = message || 'Server error';
         });
     },
     ok: function () {
