@@ -1,0 +1,15 @@
+{
+  "entity": {
+    "id": "3424-265756",
+    "category": "Dataframe",
+    "name": "Data",
+    "saved": true,
+    "dclass": "DDataframe",
+    "description:" "This is also a data frame",
+    "created": "2015-01-20T20:07:00Z",
+    "updated": "2015-01-20T21:07:30Z"
+    "data": {
+      "url": "hdfs://10.0.0.1/PH1zVeiZBGDy"
+    }
+  }
+}

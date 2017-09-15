@@ -1,0 +1,15 @@
+{
+  "entity": {
+    "id": "5866-134737",
+    "category": "Model",
+    "name": "A Model",
+    "saved": true,
+    "dclass": "DModel",
+    "description:" "A model this is",
+    "created": "2015-01-20T20:08:00Z",
+    "updated": "2015-01-20T21:08:30Z"
+    "data": {
+      url: "hdfs://10.0.0.1/UhszwwMCRlAJ"
+    }
+  }
+}

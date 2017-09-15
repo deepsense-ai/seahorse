@@ -1,0 +1,13 @@
+{
+  "entity": {
+    "id": "3424-234234",
+    "category": "Model",
+    "name": "Name",
+    "description": "My description",
+    "saved": true,
+    "dclass": "...",
+    "created": "2012-08-20T21:11:09Z",
+    "updated": "2012-08-20T21:11:09Z",
+    "report": {}
+  }
+}

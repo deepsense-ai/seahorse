@@ -1,0 +1,15 @@
+{
+  "entity": {
+    "id": "3588-676521",
+    "category": "File",
+    "name": "A File",
+    "saved": true,
+    "dclass": "DFile",
+    "description:" "Oh, a file!",
+    "created": "2015-01-20T20:10:00Z",
+    "updated": "2015-01-20T21:10:30Z"
+    "data": {
+      "url": "hdfs://10.0.0.1/vF6Xzg5Uy8Bd"
+    }
+  }
+}
