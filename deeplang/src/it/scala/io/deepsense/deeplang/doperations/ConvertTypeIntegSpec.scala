@@ -24,10 +24,10 @@ import org.apache.spark.sql.types._
 import org.joda.time.{DateTime, DateTimeZone}
 
 import io.deepsense.commons.types.ColumnType
+import io.deepsense.commons.types.ColumnType._
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoriesMapping, MappingMetadataConverter}
-import ColumnType._
 import io.deepsense.deeplang.parameters._
 
 class ConvertTypeIntegSpec extends DeeplangIntegTestSupport {
@@ -138,6 +138,25 @@ class ConvertTypeIntegSpec extends DeeplangIntegTestSupport {
           val converted =
             useConvertType(Set(numStrId, nonNumStrId), Set.empty, Set.empty, targetType)
           val expected = toCategorical(Set(numStrId, nonNumStrId))
+          assertDataFramesEqual(converted, expected)
+        }
+        "convert empty strings to nulls" in {
+          val baseDataFrame = createDataFrame(
+            Seq(Row("cat1"), Row("cat2"), Row("")),
+            StructType(Seq(StructField("cat", StringType))))
+
+          val converted = useConvertType(
+            names = Set("cat"),
+            targetType = ColumnType.categorical,
+            dataFrame = baseDataFrame)
+
+          val categoricalMetadata =
+            MappingMetadataConverter.mappingToMetadata(CategoriesMapping(Seq("cat1", "cat2")))
+          val expected = createDataFrame(
+            Seq(Row(0), Row(1), Row(null)),
+            StructType(Seq(StructField("cat", IntegerType, metadata = categoricalMetadata))))
+
+          converted.sparkDataFrame.schema.fields(0).metadata shouldBe categoricalMetadata
           assertDataFramesEqual(converted, expected)
         }
       }
@@ -328,10 +347,11 @@ class ConvertTypeIntegSpec extends DeeplangIntegTestSupport {
   }
 
   private def useConvertType(
-      ids: Set[Int],
-      names: Set[String],
-      types: Set[ColumnType],
-      targetType: ColumnType): DataFrame = {
+      ids: Set[Int] = Set(),
+      names: Set[String] = Set(),
+      types: Set[ColumnType] = Set(),
+      targetType: ColumnType,
+      dataFrame: DataFrame = inputDataFrame): DataFrame = {
     val operation = new ConvertType
     operation
       .parameters
@@ -344,6 +364,7 @@ class ConvertTypeIntegSpec extends DeeplangIntegTestSupport {
       .parameters
       .getChoiceParameter(ConvertType.TargetType).value = Some(targetType.toString)
 
-    executeOperation(operation, inputDataFrame)
+    executeOperation(operation, dataFrame)
   }
+
 }

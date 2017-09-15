@@ -43,6 +43,11 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
     Row("a2", "b2", "c2"),
     Row("a3", "b3", "c3"))
 
+  val csvContentWithEmptyStrings = Seq(
+    Row("", "b1", "c1"),
+    Row("a2", "", "c2"),
+    Row("a3", "b3", ""))
+
   val threeStringsSchema =
     schemaWithDefaultColumnNames(Seq(StringType, StringType, StringType))
 
@@ -50,6 +55,13 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
     Row("CAT1", 1.1),
     Row("CAT2", 3.5),
     Row("CAT1", 5.7)
+  )
+
+  val nullableCategoricalColumnsContent = Seq(
+    Row("CAT1", null),
+    Row(null, 3.5),
+    Row("CAT2", null),
+    Row(null, 6.3)
   )
 
   "ReadDataFrame" should {
@@ -64,6 +76,19 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
       assertDataFramesEqual(
         dataFrame,
         expectedDataFrame(csvContent, threeStringsSchema))
+    }
+
+    "read simple csv file containing empty strings" in {
+      val dataFrame = readDataFrame(
+        fileName = "sample_with_empty_strings.csv",
+        lineSeparator = lineSep(ReadDataFrame.LineSeparator.UNIX),
+        csvColumnSeparator = columnSep(ColumnSeparator.COMMA),
+        csvNamesIncluded = false,
+        csvConvertToBoolean = true)
+
+      assertDataFramesEqual(
+        dataFrame,
+        expectedDataFrame(csvContentWithEmptyStrings, threeStringsSchema))
     }
 
     "read csv with lines separated by Windows CR+LF" in {
@@ -291,6 +316,30 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
             Seq("unnamed_2", "unnamed_0", "unnamed_1", "column_D"),
             Seq(StringType, StringType, StringType, StringType)
           ))
+      )
+    }
+
+    "handle categorical column with empty values" in {
+      val dataFrame = readDataFrame(
+        fileName = "with_nullable_categorical_columns.csv",
+        lineSeparator = lineSep(ReadDataFrame.LineSeparator.UNIX),
+        csvColumnSeparator = columnSep(ColumnSeparator.COMMA),
+        csvNamesIncluded = true,
+        csvConvertToBoolean = true,
+        csvCategoricalColumns = Some(MultipleColumnSelection(
+          Vector(NameColumnSelection(Set("col1", "col2")))
+        ))
+      )
+
+      assertDataFramesEqual(
+        dataFrame,
+        expectedDataFrame(
+          nullableCategoricalColumnsContent,
+          schemaOf(
+            Seq("col1", "col2"),
+            Seq(StringType, DoubleType)
+          ),
+          Seq("col1", "col2"))
       )
     }
   }

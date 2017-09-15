@@ -377,12 +377,17 @@ object ReadDataFrame {
       willBeCategorical: Boolean): Any = {
     val trimmedCell = cell.trim
 
-    if (targetType == types.StringType || willBeCategorical) {
+    if (willBeCategorical) {
+      /*
+       * TODO be careful while merging DS-1692 Change CSV reading logic
+       * if-else is responsible for converting empty categorical strings to nulls
+       */
+      val cellWithRemovedQuotes = removeQuotes(trimmedCell)
+      if (cellWithRemovedQuotes.isEmpty) null else cellWithRemovedQuotes
+    } else if (targetType == types.StringType) {
       removeQuotes(trimmedCell)
-
     } else if (trimmedCell.isEmpty) {
       null
-
     } else {
       targetType match {
         case types.BooleanType => trimmedCell.toDouble == 1
