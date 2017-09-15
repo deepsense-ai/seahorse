@@ -16,13 +16,19 @@
 
 package io.deepsense.commons.exception.json
 
-import io.deepsense.commons.exception.{FailureCode, DeepSenseFailure, FailureDescription}
-import io.deepsense.commons.json.{EnumerationSerializer, UUIDJsonProtocol}
-
+import spray.httpx.SprayJsonSupport
 import spray.json._
 
-trait FailureDescriptionJsonProtocol extends DefaultJsonProtocol with UUIDJsonProtocol {
+import io.deepsense.commons.exception.{FailureCode, FailureDescription}
+import io.deepsense.commons.json.{EnumerationSerializer, IdJsonProtocol}
+
+trait FailureDescriptionJsonProtocol
+    extends DefaultJsonProtocol
+    with IdJsonProtocol
+    with SprayJsonSupport {
+
   implicit val failureCodeFormat = EnumerationSerializer.jsonEnumFormat(FailureCode)
-  implicit val failureIdFormat = jsonFormat1(DeepSenseFailure.Id.apply)
   implicit val failureDescriptionFormat = jsonFormat5(FailureDescription.apply)
 }
+
+object FailureDescriptionJsonProtocol extends FailureDescriptionJsonProtocol

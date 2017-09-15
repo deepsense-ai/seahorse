@@ -19,12 +19,12 @@ package io.deepsense.commons.exception
 import spray.json._
 
 import io.deepsense.commons.StandardSpec
-import io.deepsense.commons.json.ExceptionsJsonProtocol
+import io.deepsense.commons.exception.json.FailureDescriptionJsonProtocol
 import io.deepsense.commons.serialization.Serialization
 
 class FailureDescriptionSerializationSpec
   extends StandardSpec
-  with ExceptionsJsonProtocol
+  with FailureDescriptionJsonProtocol
   with Serialization {
 
   val id = DeepSenseFailure.Id.randomId
@@ -43,7 +43,7 @@ class FailureDescriptionSerializationSpec
 
   val failureDescriptionJson: JsObject = JsObject(
     "id" -> JsString(id.toString),
-    "code" -> JsNumber(failureDescription.code.id),
+    "code" -> JsString(failureDescription.code.toString),
     "title" -> JsString(failureDescription.title),
     "message" -> JsString(failureDescription.message.get),
     "details" -> JsObject(

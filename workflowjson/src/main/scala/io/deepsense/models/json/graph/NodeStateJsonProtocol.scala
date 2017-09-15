@@ -18,13 +18,13 @@ package io.deepsense.models.json.graph
 
 import spray.json._
 
+import io.deepsense.commons.exception.json.FailureDescriptionJsonProtocol
 import io.deepsense.commons.json.DateTimeJsonProtocol._
-import io.deepsense.commons.json.ExceptionsJsonProtocol
 import io.deepsense.graph.{Progress, State}
 
 trait NodeStateJsonProtocol
   extends DefaultJsonProtocol
-  with ExceptionsJsonProtocol
+  with FailureDescriptionJsonProtocol
   with NullOptions {
   implicit val progressFormat = jsonFormat2(Progress.apply)
 
