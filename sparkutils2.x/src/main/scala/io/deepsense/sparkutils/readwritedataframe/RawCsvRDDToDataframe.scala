@@ -22,7 +22,6 @@ import org.apache.spark.sql.execution.LogicalRDD
 import org.apache.spark.sql.types.{StructType, _}
 
 import io.deepsense.sparkutils.SparkSQLSession
-
 /**
   * Heavily based on org.apache.spark.sql.execution.datasources.csv.CSVFileFormat
   */
@@ -33,10 +32,9 @@ object RawCsvRDDToDataframe {
       sparkSQLSession: SparkSQLSession,
       options: Map[String, String]): DataFrame = {
     val csvOptions = new CSVOptions(options)
-    val lineCsvReader = new LineCsvReader(csvOptions)
+    val csvReader = SparkCsvReader.create(csvOptions)
     val firstLine = findFirstLine(csvOptions, rdd)
-    val firstRow = lineCsvReader.parseLine(firstLine)
-
+    val firstRow = csvReader.parseLine(firstLine)
     val header = if (csvOptions.headerFlag) {
       firstRow.zipWithIndex.map { case (value, index) =>
         if (value == null || value.isEmpty || value == csvOptions.nullValue) s"_c$index" else value
@@ -45,7 +43,7 @@ object RawCsvRDDToDataframe {
       firstRow.zipWithIndex.map { case (value, index) => s"_c$index" }
     }
 
-    val parsedRdd = tokenRdd(rdd, csvOptions, header)
+    val parsedRdd = tokenRdd(rdd, header, csvOptions)
 
     // TODO Migrate to Spark's schema inferencer eventually
     // val schema = CSVInferSchema.infer(parsedRdd, header, csvOptions)
@@ -72,11 +70,11 @@ object RawCsvRDDToDataframe {
 
   private def tokenRdd(
       rdd: RDD[String],
-      options: CSVOptions,
-      header: Array[String]): RDD[Array[String]] = {
+      header: Array[String],
+      options: CSVOptions): RDD[Array[String]] = {
     // Make sure firstLine is materialized before sending to executors
     val firstLine = if (options.headerFlag) findFirstLine(options, rdd) else null
-    CSVRelation.univocityTokenizer(rdd, header, firstLine, options)
+    SparkCsvReader.univocityTokenizer(rdd, header, firstLine, options)
   }
 
   private def findFirstLine(options: CSVOptions, rdd: RDD[String]): String = {

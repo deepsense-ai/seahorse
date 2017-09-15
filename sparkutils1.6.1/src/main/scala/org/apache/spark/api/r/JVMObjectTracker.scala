@@ -43,7 +43,7 @@ private[r] object JVMObjectTracker {
   private[this] val objCounter = new AtomicInteger(0)
 
   def getObject(id: String): Object = {
-    logger.info(s"Get object at  $id")
+    logger.info(s"Get object at $id")
     objMap(id)
   }
 

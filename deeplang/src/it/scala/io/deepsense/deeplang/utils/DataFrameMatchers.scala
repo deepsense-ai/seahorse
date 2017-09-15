@@ -30,7 +30,9 @@ trait DataFrameMatchers extends Matchers {
       checkNullability: Boolean = true): Unit = {
     // Checks only semantic identity, not objects location in memory
     assertSchemaEqual(
-      actualDf.sparkDataFrame.schema, expectedDf.sparkDataFrame.schema, checkNullability)
+      actualDf.sparkDataFrame.schema,
+      expectedDf.sparkDataFrame.schema,
+      checkNullability)
     val collectedRows1: Array[Row] = actualDf.sparkDataFrame.collect()
     val collectedRows2: Array[Row] = expectedDf.sparkDataFrame.collect()
     if (checkRowOrder) {

@@ -34,3 +34,6 @@ private_*/
 # Jekyll
 docs/_site
 docs/operations/examples/*.md
+
+# Spark
+metastore_db/

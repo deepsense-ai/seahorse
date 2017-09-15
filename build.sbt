@@ -23,12 +23,30 @@ lazy val settingsForNotPublished = CommonSettingsPlugin.assemblySettings ++
 
 lazy val sparkVersion = Version.spark
 
-lazy val sparkUtilsModuleDirectory = sparkVersion match {
-  case "1.6.1" => s"sparkutils$sparkVersion"
-  case "2.0.0" | "2.0.1" | "2.0.2" => "sparkutils2.0.x"
-}
-lazy val sparkUtils = project in file (sparkUtilsModuleDirectory) settings settingsForPublished
+// helperSparkUtils is introduced because sparkUtils needs to depend on other project, which also
+// depends on sparkVersion. It is top-level, since sbt only registers top-level values;
+// if we did it inside sparkUtils initialization, it would result in error.
+lazy val ignoredProject = project in file("empty")
 
+lazy val helperSparkUtils = sparkVersion match {
+  case "1.6.1" =>
+    ignoredProject
+  case "2.0.0" | "2.0.1" | "2.0.2" =>
+    val sparkUtils2_0_x = project in file("sparkutils2.0.x") settings settingsForPublished
+    sparkUtils2_0_x
+  case "2.1.0" =>
+    val sparkUtils2_1_0 = project in file("sparkutils2.1.0") settings settingsForPublished
+    sparkUtils2_1_0
+}
+
+lazy val sparkUtils = sparkVersion match {
+  case "1.6.1" =>
+    val sparkUtils = project in file (s"sparkutils1.6.1") settings settingsForPublished
+    sparkUtils
+  case "2.0.0" | "2.0.1" | "2.0.2" | "2.1.0" =>
+    val sparkUtils = project in file(s"sparkutils2.x") dependsOn helperSparkUtils settings settingsForPublished
+    sparkUtils
+}
 lazy val rootProject = project.in(file("."))
   .settings(name := "seahorse")
   .settings(PublishSettings.disablePublishing)

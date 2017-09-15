@@ -112,7 +112,7 @@ class StringIndexerEstimatorIntegSpec
 
       val (outputKnowledge, _) = t.transform.infer(mock[InferContext])(())(inputKnowledge)
       val inferredSchema = outputKnowledge.single.schema.get
-      assertSchemaEqual(inferredSchema, outputDataFrame.schema.get)
+      assertSchemaEqual(inferredSchema, outputDataFrame.schema.get, checkNullability = false)
     }
     "infer knowledge in multi-column mode" in {
       val si = new StringIndexerEstimator()
@@ -126,7 +126,7 @@ class StringIndexerEstimatorIntegSpec
 
       val (outputKnowledge, _) = inf.transform.infer(mock[InferContext])(())(inputKnowledge)
       val inferredSchema = outputKnowledge.single.schema.get
-      assertSchemaEqual(inferredSchema, multiOutputDataFrame.schema.get)
+      assertSchemaEqual(inferredSchema, multiOutputDataFrame.schema.get, checkNullability = false)
     }
   }
 

@@ -53,7 +53,10 @@ class MultiColumnTransformerIntegSpec extends DeeplangIntegTestSupport {
         "infer schema for columns with unique name (with prefix)" in {
           val (k, _) = t.transform
             .infer(mock[InferContext])(())(DKnowledge(DataFrame.forInference(inputSchema.get)))
-          k.single shouldBe DataFrame.forInference(expectedTransformedMulti.schema.get)
+          assertSchemaEqual(
+            k.single.schema.get,
+            expectedTransformedMulti.schema.get,
+            checkNullability = false)
         }
       }
       "in-place mode was selected" should {
@@ -61,13 +64,15 @@ class MultiColumnTransformerIntegSpec extends DeeplangIntegTestSupport {
         t.setMultipleColumns(columns = Seq("x", "y"), inPlace = None)
         "replace columns" in {
           val transformedInPlace = t.transform(executionContext)(())(inputData)
-          transformedInPlace.schema shouldBe expectedMultiInPlace.schema
           assertDataFramesEqual(transformedInPlace, expectedMultiInPlace)
         }
         "replace columns schema" in {
           val (k, _) = t.transform
             .infer(mock[InferContext])(())(DKnowledge(DataFrame.forInference(inputSchema.get)))
-          k.single shouldBe DataFrame.forInference(expectedMultiInPlace.schema.get)
+          assertSchemaEqual(
+            k.single.schema.get,
+            expectedMultiInPlace.schema.get,
+            checkNullability = false)
         }
       }
     }
@@ -83,7 +88,10 @@ class MultiColumnTransformerIntegSpec extends DeeplangIntegTestSupport {
         "infer schema for columns with unique name (with prefix)" in {
           val (k, _) = t.transform
             .infer(mock[InferContext])(())(DKnowledge(DataFrame.forInference(inputSchema.get)))
-          k.single shouldBe DataFrame.forInference(expectedTransformedY.schema.get)
+          assertSchemaEqual(
+            k.single.schema.get,
+            expectedTransformedY.schema.get,
+            checkNullability = false)
         }
       }
       "in-place mode was selected" when {
@@ -97,7 +105,10 @@ class MultiColumnTransformerIntegSpec extends DeeplangIntegTestSupport {
         "replace columns schema" in {
           val (k, _) = t.transform
             .infer(mock[InferContext])(())(DKnowledge(DataFrame.forInference(inputSchema.get)))
-          k.single shouldBe DataFrame.forInference(expectedTransformedYInPlace.schema.get)
+          assertSchemaEqual(
+            k.single.schema.get,
+            expectedTransformedYInPlace.schema.get,
+            checkNullability = false)
         }
       }
     }

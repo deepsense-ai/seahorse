@@ -62,7 +62,7 @@ class WriteReadDataFrameWithDriverFilesIntegSpec
               .setOutputFile(absoluteTestsDirPath.fullPath + "/test_files")
               .setFileFormat(
                 new OutputFileFormatChoice.Csv()
-                  .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Tab())
+                  .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Comma())
                   .setNamesIncluded(true)))
       wdf.executeUntyped(Vector(dataFrame))(executionContext)
 
@@ -72,7 +72,7 @@ class WriteReadDataFrameWithDriverFilesIntegSpec
             new InputStorageTypeChoice.File()
               .setSourceFile(absoluteTestsDirPath.fullPath + "/test_files")
               .setFileFormat(new InputFileFormatChoice.Csv()
-                .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Tab())
+                .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Comma())
                 .setNamesIncluded(true)
                 .setShouldConvertToBoolean(true)))
       val loadedDataFrame = rdf.executeUntyped(Vector())(executionContext).head.asInstanceOf[DataFrame]
