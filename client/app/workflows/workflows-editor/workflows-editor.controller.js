@@ -12,8 +12,11 @@ class WorkflowsEditorController {
     GraphNode, Edge,
     PageService, Operations, GraphPanelRendererService, WorkflowService, UUIDGenerator, MouseEvent,
     DeepsenseNodeParameters, ConfirmationModalService, ExportModalService,
-    LastExecutionReportService, NotificationService, ServerCommunication) {
-    this.ServerCommunication = ServerCommunication;
+    RunModalFactory, LastExecutionReportService, NotificationService,
+    ServerCommunication) {
+
+    //ServerCommunication.send();
+
     this.PageService = PageService;
     this.WorkflowService = WorkflowService;
     this.DeepsenseNodeParameters = DeepsenseNodeParameters;
@@ -45,6 +48,7 @@ class WorkflowsEditorController {
     this.LastExecutionReportService.setTimeout();
     this.updateAndRerenderEdges(this.workflow);
     this.initListeners();
+    this.ServerCommunication.init();
   }
 
   initListeners() {
