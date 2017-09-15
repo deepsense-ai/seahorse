@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2015, CodiLime Inc.
+ *
+ * Owner: Grzegorz Swatowski
+ */
+
 'use strict';
 
 /*@ngInject*/

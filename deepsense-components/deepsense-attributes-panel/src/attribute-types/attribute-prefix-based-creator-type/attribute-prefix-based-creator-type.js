@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2015, CodiLime Inc.
+ *
+ * Owner: Grzegorz Swatowski
+ */
+
 'use strict';
 
 /*@ngInject*/
@@ -8,13 +14,9 @@ function AttributePrefixBasedCreatorType(StringParamTypeService) {
     replace: true,
     link: function (scope) {
       StringParamTypeService.setupStringValueBuffer(scope);
-
-      if (!scope.parameter.value) {
-        scope.valueBuffer = scope.parameter.schema.default;
-      }
     }
   };
 }
 
-angular.module('deepsense.attributes-panel')
-  .directive('attributePrefixBasedCreatorType', AttributePrefixBasedCreatorType);
+angular.module('deepsense.attributes-panel').
+    directive('attributePrefixBasedCreatorType', AttributePrefixBasedCreatorType);
