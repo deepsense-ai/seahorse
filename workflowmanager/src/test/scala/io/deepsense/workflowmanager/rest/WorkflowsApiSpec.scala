@@ -25,11 +25,11 @@ import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDes
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.deeplang
 import io.deepsense.deeplang.DOperation.Id
-import io.deepsense.deeplang.params.Param
-import io.deepsense.deeplang.{DOperation, DOperable, DOperation1To1, DOperationCategories}
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
-import io.deepsense.deeplang.doperations.{ReadDataFrame, FilterColumns}
+import io.deepsense.deeplang.doperations.FilterColumns
+import io.deepsense.deeplang.params.Param
+import io.deepsense.deeplang.{DOperable, DOperation1To1, DOperationCategories}
 import io.deepsense.graph._
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow._
@@ -94,7 +94,7 @@ class WorkflowsApiSpec
   val obsoleteVersionWorkflowResult = obsoleteVersionWorkflow
   val incorrectVersionFormatWorkflowResult = incorrectVersionFormatWorkflow
 
-  val notebookA = "{ \"notebook A content\": {} }"
+  val notebookA = JsObject("notebook A content" -> JsObject())
   val notebookB = "{ \"notebook B content\": {} }"
   val obsoleteNotebook = "{ \"obsolete notebook content\": {} }"
 
@@ -105,12 +105,12 @@ class WorkflowsApiSpec
     val node2 = Node(Node.Id.randomId, MockOperation())
     val graph = DeeplangGraph(Set(node1, node2), Set(Edge(node1, 0, node2, 0)))
     val metadata = WorkflowMetadata(WorkflowType.Batch, apiVersion = apiVersion)
-    val thirdPartyData = ThirdPartyData(JsObject(
+    val thirdPartyData = JsObject(
       "gui" -> JsObject(
         "name" -> JsString(name)
       ),
       "notebooks" -> JsObject()
-    ).toString)
+    )
     Workflow(metadata, graph, thirdPartyData)
   }
 
@@ -134,7 +134,7 @@ class WorkflowsApiSpec
       Set(node1, node2), Set(Edge(node1, 0, node2, 0), Edge(node2, 0, node1, 0)))
     val metadata = WorkflowMetadata(
       WorkflowType.Batch, apiVersion = BuildInfo.version)
-    val thirdPartyData = ThirdPartyData("{}")
+    val thirdPartyData = JsObject()
     val workflow = Workflow(metadata, graph, thirdPartyData)
     workflow
   }
@@ -245,7 +245,7 @@ class WorkflowsApiSpec
             'thirdPartyData(workflowA.additionalData),
             'executionReport(workflowAWithResults.executionReport)
           )
-          val thirdPartyData = returnedWorkflow.thirdPartyData.data.parseJson.asJsObject
+          val thirdPartyData = returnedWorkflow.thirdPartyData
           thirdPartyData.fields.get("notebook") shouldBe None
         }
         ()
@@ -488,7 +488,7 @@ class WorkflowsApiSpec
     val updatedWorkflowWithResults = workflowWithResults.copy(
       metadata = workflowWithResults.metadata.copy(apiVersion = BuildInfo.version))
     val updatedWorkflowWithResultsWithNotebook = workflowWithResults.copy(
-      thirdPartyData = ThirdPartyData(notebookA))
+      thirdPartyData = notebookA)
 
     "process authorization before reading PUT content" in {
       val invalidContent = JsObject()
@@ -566,7 +566,7 @@ class WorkflowsApiSpec
           status should be(StatusCodes.OK)
 
           val returnedNotebook = responseAs[String]
-          returnedNotebook shouldBe notebookA
+          returnedNotebook shouldBe notebookA.compactPrint
         }
         ()
       }
@@ -653,20 +653,18 @@ class WorkflowsApiSpec
 
   def mockNotebookStorage(): NotebookStorage = {
     val storage = new TestNotebookStorage
-    storage.save(workflowAId, nodeAId, notebookA)
+    storage.save(workflowAId, nodeAId, notebookA.compactPrint)
     storage.save(workflowBId, nodeBId, notebookB)
     storage
   }
 
   private def thirdPartyDataWithNotebook(
-      additionalData: ThirdPartyData,
+      additionalData: JsObject,
       nodeId: Node.Id,
-      notebook: String) = {
-    val thirdPartyDataJson = additionalData.data.parseJson.asJsObject
-    val notebooks = JsObject(nodeId.toString -> notebook.parseJson)
-    ThirdPartyData(
-      JsObject(
-        thirdPartyDataJson.fields.updated("notebooks", notebooks)).toString)
+      notebook: JsObject) = {
+    val thirdPartyDataJson = additionalData
+    val notebooks = JsObject(nodeId.toString -> notebook)
+    JsObject(thirdPartyDataJson.fields.updated("notebooks", notebooks))
   }
 
   class TestNotebookStorage extends NotebookStorage {

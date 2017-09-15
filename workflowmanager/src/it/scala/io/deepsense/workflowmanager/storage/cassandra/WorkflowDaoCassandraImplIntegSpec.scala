@@ -11,6 +11,7 @@ import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{BeforeAndAfter, Matchers}
+import spray.json.JsObject
 
 import io.deepsense.commons.StandardSpec
 import io.deepsense.commons.cassandra.CassandraTestSupport
@@ -71,7 +72,7 @@ class WorkflowDaoCassandraImplIntegSpec
     }
 
     "update workflow" in withStoredWorkflows(storedWorkflows) {
-      val modifiedWorkflow2 = workflow2.copy(additionalData = ThirdPartyData("[]"))
+      val modifiedWorkflow2 = workflow2.copy(additionalData = JsObject())
       whenReady(workflowsDao.update(workflow2Id, modifiedWorkflow2)) { _ =>
         whenReady(workflowsDao.get(workflow2Id)) { workflow =>
           workflow.get shouldBe modifiedWorkflow2
@@ -111,7 +112,7 @@ class WorkflowDaoCassandraImplIntegSpec
     val metadata = WorkflowMetadata(
       apiVersion = CurrentBuild.version.humanReadable,
       workflowType = WorkflowType.Batch)
-    val thirdPartyData = ThirdPartyData("{}")
+    val thirdPartyData = JsObject()
     (Workflow.Id.randomId, Workflow(metadata, graph, thirdPartyData))
   }
 

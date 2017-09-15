@@ -8,13 +8,13 @@ import scala.concurrent.Future
 
 import org.mockito.Matchers._
 import org.mockito.Mockito._
-import org.mockito.{ArgumentCaptor, Mockito}
+import spray.json.JsObject
 
 import io.deepsense.commons.auth.usercontext.{Role, UserContext}
 import io.deepsense.commons.auth.{AuthorizatorProvider, UserContextAuthorizator}
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
-import io.deepsense.graph._
 import io.deepsense.graph.DeeplangGraph.DeeplangNode
+import io.deepsense.graph._
 import io.deepsense.models.workflows._
 import io.deepsense.workflowmanager.storage.{NotebookStorage, WorkflowStateStorage, WorkflowStorage}
 
@@ -33,7 +33,7 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
   val graph = mock[DeeplangGraph]
   when(graph.nodes).thenReturn(Set[DeeplangNode]())
   val metadata = mock[WorkflowMetadata]
-  val thirdPartyData = mock[ThirdPartyData]
+  val thirdPartyData = mock[JsObject]
   val storedWorkflow = Workflow(metadata, graph, thirdPartyData)
   val storedWorkflowId = Workflow.Id.randomId
   val storedNodeId = Node.Id.randomId
@@ -50,7 +50,7 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
     Workflow.Id.randomId,
     mock[WorkflowMetadata],
     mock[DeeplangGraph],
-    mock[ThirdPartyData],
+    mock[JsObject],
     ExecutionReport(Map[io.deepsense.graph.Node.Id, NodeState]()))
 
   val workflowManager = new WorkflowManagerImpl(

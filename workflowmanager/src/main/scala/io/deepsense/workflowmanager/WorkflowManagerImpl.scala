@@ -108,7 +108,7 @@ class WorkflowManagerImpl @Inject()(
 
         val extractedThirdPartyData = workflows.mapValues {
           case WorkflowWithDates(objectWorkflow, created, updated) =>
-            (objectWorkflow.additionalData.data.parseJson.asJsObject, created, updated)
+            (objectWorkflow.additionalData, created, updated)
         }
 
         extractedThirdPartyData.map {
@@ -190,7 +190,7 @@ class WorkflowManagerImpl @Inject()(
   private def objectWorkflowWithNotebooks(id: Workflow.Id, workflow: Workflow)
       : Future[Option[Workflow]] = {
     notebookStorage.getAll(id).map { notebooks =>
-      val additionalDataJson = workflow.additionalData.data.parseJson.asJsObject
+      val additionalDataJson = workflow.additionalData
       val enrichedAdditionalDataJson = JsObject(
         additionalDataJson.fields.updated("notebooks",
           JsObject(notebooks.map {
@@ -199,21 +199,20 @@ class WorkflowManagerImpl @Inject()(
       Some(Workflow(
         workflow.metadata,
         workflow.graph,
-        ThirdPartyData(enrichedAdditionalDataJson.toString)))
+        enrichedAdditionalDataJson))
     }
   }
 
   private def extractNotebooks(workflow: Workflow): Map[Node.Id, String] =
-    workflow.additionalData.data.parseJson.asJsObject.fields.get("notebooks").map {
+    workflow.additionalData.fields.get("notebooks").map {
       _.asJsObject.fields.map {
           case (nodeId, notebook) => (Node.Id.fromString(nodeId), notebook.toString)
         }
     }.getOrElse(Map.empty)
 
   private def workflowWithRemovedNotebooks(workflow: Workflow): Workflow = {
-    val thirdPartyDataJson = workflow.additionalData.data.parseJson.asJsObject
-    val prunedThirdPartyData = ThirdPartyData(
-      JsObject(thirdPartyDataJson.fields - "notebooks").toString)
+    val thirdPartyDataJson = workflow.additionalData
+    val prunedThirdPartyData = JsObject(thirdPartyDataJson.fields - "notebooks")
     Workflow(workflow.metadata, workflow.graph, prunedThirdPartyData)
   }
 }

@@ -46,7 +46,7 @@ class WorkflowRowMapperSpec
     val workflow = Workflow(
       WorkflowMetadata(WorkflowType.Batch, version.humanReadable),
       DeeplangGraph(),
-      ThirdPartyData("{}"))
+      JsObject())
     val stringWorkflow = workflow.toJson.compactPrint
     val rowWorkflow = mock[Row]
     when(rowWorkflow.getString(WorkflowRowMapper.Workflow)).thenReturn(stringWorkflow)

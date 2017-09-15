@@ -278,9 +278,9 @@ abstract class WorkflowApi @Inject() (
       .mkString
 
   private def workflowFileName(workflow: WorkflowWithVariables): String = {
-    val thirdPartyData = workflow.thirdPartyData.data.parseJson
+    val thirdPartyData = workflow.thirdPartyData
     // TODO DS-1486 Add "name" and "description" fields to Workflow
-    Try(thirdPartyData.asJsObject
+    Try(thirdPartyData
       .fields("gui").asJsObject
       .fields("name").asInstanceOf[JsString].value) match {
       case Success(name) => name.replaceAll("[^ a-zA-Z0-9.-]", "_") + ".json"
