@@ -15,11 +15,11 @@ description: Deepsense documentation homepage
 ## Overview
 
 The main purpose of the workflow files is to store information about
-a [workflow](deeplang_overview.html#workflows) design and results
+a [workflow's](deeplang_overview.html#workflows) design and results
 of its execution. Workflow files use JSON format.
 
 Manual modifications to the workflow file are not necessary - workflow can be created
-using Seahorse graphical interface and exported to a JSON file. Working with workflow files is only
+using Seahorse's graphical interface and exported to a JSON file. Working with workflow files is only
 necessary when using [Batch Workflow Executor](./batch_workflow_executor_overview.html).
 In that case, the results of workflow execution are stored on disk. The result file contains
 detailed reports for each entity produced by executed operations, which may be useful for
@@ -78,7 +78,8 @@ List of nodes with associated [operations](operations.html).
 
 #### Connections
 
-Connections represent flow of data. Data from one operation output port can be connected to another operation input port.
+Connections between the operations represent the flow of data. Data from one operation's output port
+can be connected to another operation's input port.
 
 | Property | Subproperty | Description |
 | --- | --- | --- |
@@ -150,13 +151,13 @@ Connections represent flow of data. Data from one operation output port can be c
 
 ### Execution Report
 
-Execution report contains information about [workflow](deeplang_overview.html#workflows)
+Execution report contains information about [workflow's](deeplang_overview.html#workflows)
 execution on the cluster: status information, errors, entity reports.
 This section is optional.
 
 | Property | Description |
 | --- | --- |
-| ``error`` | Error message - present only if the workflow execution failed. |
+| ``error`` | Error message - present only if the workflow's execution failed. |
 | ``nodes`` | Described in following [Nodes](#nodes-1) subsection. |
 | ``resultEntities`` | Described in following [Result entities](#result-entities) subsection. |
 
@@ -175,7 +176,7 @@ Subsection *nodes* contains information about [operation](operations.html) execu
 #### Result Entities
 
 Subsection *resultEntities* contains information about entities created as a result of
-[workflow](deeplang_overview.html#workflows) execution, such as data frames and models.
+[workflow's](deeplang_overview.html#workflows) execution, such as `DataFrames` and models.
 
 | Property | Description |
 | --- | --- |
@@ -229,7 +230,8 @@ Subsection *resultEntities* contains information about entities created as a res
 ### Third Party Data
 
 Third party data can contain any valid JSON. It is neither read nor interpreted
-by the [Seahorse Batch Workflow Executor](batch_workflow_executor_overview.html).
+by the [Seahorse Batch Workflow Executor](batch_workflow_executor_overview.html),
+but used by other applications including Seahorse Editor.
 
 ##### Example
 {:.no_toc}
