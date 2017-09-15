@@ -29,7 +29,7 @@ and Windows
 is distributed in the form of a Vagrant image.
 
 1. Install **Vagrant (required)**. You can find the Vagrant installation guide at [vagrantup.com](https://www.vagrantup.com/docs/installation/).
-2. Download `Vagrantfile` from the [get Seahorse page](http://deepsense.io/get-seahorse/).
+2. Download `Vagrantfile` from the [get Seahorse page](https://get-seahorse.deepsense.ai/).
 3. Go to the catalog with `Vagrantfile` and run `vagrant up` from the command line.
 4. Go to <a target="_blank" href="{{ site.SEAHORSE_EDITOR_ADDRESS }}">{{ site.SEAHORSE_EDITOR_ADDRESS }}</a> and start using Seahorse!
 
@@ -43,7 +43,7 @@ is distributed in the form of docker images.
 
 1. Install **Docker (required)** and **docker-compose (required)**. You can find the Docker installation guide at [docs.docker.com/engine](https://docs.docker.com/engine/installation/)
   and the docker-compose installation guide at [docs.docker.com/compose](https://docs.docker.com/compose/install/).
-2. Download `docker-compose.yml` from the [get Seahorse page](http://deepsense.io/get-seahorse/).
+2. Download `docker-compose.yml` from the [get Seahorse page](https://get-seahorse.deepsense.ai/).
 3. Go to the catalog with `docker-compose.yml` file and run `docker-compose up` from the command line.
 4. Go to <a target="_blank" href="{{ site.SEAHORSE_EDITOR_ADDRESS }}">{{ site.SEAHORSE_EDITOR_ADDRESS }}</a> and start using Seahorse!
 
@@ -87,7 +87,7 @@ Then we will apply a simple transformation to the data.
 * Run the operation by clicking the
   <img class="img-responsive" style="display: inline-block; width:auto; height:15px;" src="./img/getting_started/run.png" />
   button from the top menu.
-* Click <img class="img-responsive" style="display: inline-block; width:auto; height:15px;" src="./img/getting_started/report_icon.png" /> 
+* Click <img class="img-responsive" style="display: inline-block; width:auto; height:15px;" src="./img/getting_started/report_icon.png" />
   on the operation node to preview Dataframe.
 
 

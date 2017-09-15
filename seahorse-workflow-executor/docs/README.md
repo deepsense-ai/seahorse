@@ -1,6 +1,6 @@
 ## Installing Dependencies
 
-* sudo apt-get install ruby2.0 ruby2.0-dev
+* sudo apt-get install ruby-full
 * sudo gem install jekyll
 * sudo gem install pygments.rb
 * Install nodejs v0.12+ from http://nodejs.org

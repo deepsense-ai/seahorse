@@ -37,7 +37,7 @@ the Spark cluster.
 {% highlight YAML %}
  ...
  # Uncomment this line if you want this VM to connect directly to your network.
- # Visit http://seahorse.deepsense.io for details.
+ # Visit http://seahorse.deepsense.ai for details.
  config.vm.network "public_network", use_dhcp_assigned_default_route: true
  ...
 {% endhighlight %}

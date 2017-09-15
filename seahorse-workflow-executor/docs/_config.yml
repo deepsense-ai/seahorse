@@ -21,26 +21,12 @@ collections:
   reference:
     output: true
 
-versions:
-  - 1.4
-  - 1.3
-  - 1.2
-  - 1.1
-  - 1.0
-
-SEAHORSE_LATEST_VERSION: 1.4
-
-WORKFLOW_EXECUTOR_VERSION: 0.4
-DEEPSENSE_VERSION_SHORT: 0.4
-
 WORKFLOW_EXECUTOR_SCALA_VERSION: 2.11.8
 WORKFLOW_EXECUTOR_HADOOP_VERSION: 2.7.0
 WORKFLOW_EXECUTOR_SPARK_VERSION: 2.0.2
 
-WORKFLOW_EXECUTOR_GITHUB_URL: https://github.com/deepsense-io/seahorse-workflow-executor
-WORKFLOW_EXECUTOR_GITHUB_REPO_NAME: seahorse-workflow-executor
+WORKFLOW_EXECUTOR_GITHUB_URL: https://github.com/deepsense-ai/seahorse
 
-# The following 2 config values are duplicated in ds-workflow_executor/docs
 SEAHORSE_EDITOR_ADDRESS: http://localhost:33321
 SEAHORSE_EDITOR_PORT: 33321
 

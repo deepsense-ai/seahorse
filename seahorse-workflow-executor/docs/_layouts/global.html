@@ -28,19 +28,7 @@
       <div class="container head-of-page">
         <div class="navbar-header">
           <div class="navbar-brand">
-            <a href="{{base}}"><img src="{{base}}/img/seahorse_logo.png" alt="deepsense.io Seahorse"></a>
-            <label class="select-version">
-              <select onchange="location = this.value; this.selectedIndex = {{ site.versions | indexof: site.SEAHORSE_LATEST_VERSION }};">
-                {% for version in site.versions %}
-                  <option value="/{{version}}"
-                          {% if version == site.SEAHORSE_LATEST_VERSION %}
-                          selected
-                          {% endif %}>
-                    {{version}}
-                  </option>
-                {% endfor %}
-              </select>
-            </label>
+            <a href="{{base}}"><img src="{{base}}/img/seahorse_logo.png" alt="deepsense.ai Seahorse"></a>
           </div>
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
             <span class="sr-only">Toggle navigation</span>
@@ -84,7 +72,7 @@
                 <li class="{% if page.title == 'Migration Guide' %}active{% endif %}"><a href="{{base}}/reference/migration_guide.html">Migration Guide</a></li>
               </ul>
             </li>
-            <li><a href="http://deepsense.io/about-us/contact/#contact-form">Contact Us</a></li>
+            <li><a href="http://deepsense.ai/about-us/contact/#contact-form">Contact Us</a></li>
           </ul>
         </div>
       </div>
@@ -112,10 +100,10 @@
   </div>
 
   <footer class="col-sm-12">
-    <p class="text-center footer-text">Seahorse by <a href="http://deepsense.io/" target="_blank"><span>deep</span>sense<span>.io</span></a> | 2016 |
-          <a target="_blank" href="https://twitter.com/deepsense_io/"><img src="{{base}}/img/twitter.png" height="35px"></a>
-          <a target="_blank" href="https://github.com/deepsense-io/seahorse-workflow-executor"><img src="{{base}}/img/octocat.png" height="25px"></a>
-          <a target="_blank" href="http://feedback.seahorse.deepsense.io/"><img src="{{base}}/img/userecho.png" height="25px"></a>
+    <p class="text-center footer-text">Seahorse by <a href="http://deepsense.ai/" target="_blank"><span>deep</span>sense<span>.ai</span></a> | 2017 |
+          <a target="_blank" href="https://twitter.com/deepsense_ai/"><img src="{{base}}/img/twitter.png" height="35px"></a>
+          <a target="_blank" href="https://github.com/deepsense-ai/seahorse"><img src="{{base}}/img/octocat.png" height="25px"></a>
+          <a target="_blank" href="http://feedback.seahorse.deepsense.ai/"><img src="{{base}}/img/userecho.png" height="25px"></a>
     </p>
   </footer>
 </body>

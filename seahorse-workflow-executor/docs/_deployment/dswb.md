@@ -58,6 +58,6 @@ To find out more on what is possible in Seahorse, see the [Getting Started guide
 
 Above limitations refer only to Seahorse on Data Scientist Workbench.
 To learn more about scaling up and using Seahorse in production,
-please <a target="_blank" href="http://deepsense.io/about-us/contact/#contact-form">contact us for details</a>.
+please <a target="_blank" href="http://deepsense.ai/about-us/contact/#contact-form">contact us for details</a>.
 
 {% include contact_box.html %}

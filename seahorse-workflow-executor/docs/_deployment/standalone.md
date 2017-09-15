@@ -33,6 +33,11 @@ If you want to install Seahorse on
 <img src="../img/os_icons/windows.png" alt="Windows" height="18" width="18"> Windows
 you should use [Seahorse as a Vagrant Image](#seahorse-standalone-as-a-vagrant-image).
 
+You can also build Seahorse Standalone from source code. Follow instructions at
+<a target="_blank" target="https://github.com/deepsense-ai/seahorse/">
+Seahorse github repo
+</a>.
+
 ## Dockerized Seahorse Standalone
 
 **Works on:** <img src="../img/os_icons/linux.png" alt="Linux" height="18" width="18"> Linux
@@ -55,7 +60,7 @@ or <a target="_blank" href="https://www.mozilla.org/firefox/">Mozilla Firefox</a
 
 **Running Seahorse**
 
-1. <a target="_blank" href="https://deepsense.io/get-seahorse/">Download</a>
+1. <a target="_blank" href="https://get-seahorse.deepsense.ai/">Download</a>
 the `docker-compose.yml` file, which serves as a config for Docker Compose (this may take a
 few minutes).
 2. Run `docker-compose up` in the directory containing the downloaded file.
@@ -70,7 +75,7 @@ few minutes).
         docker-compose up
 
 * Bug reports and all other feedback can be sent using the
-  <a target="_blank" href="http://feedback.seahorse.deepsense.io">Feedback</a>
+  <a target="_blank" href="http://feedback.seahorse.deepsense.ai">Feedback</a>
   option in the Seahorse Editor in the upper-left corner.
 
 ### Conflicting Ports
@@ -104,7 +109,7 @@ or <a target="_blank" href="https://www.mozilla.org/firefox/">Mozilla Firefox</a
 
 **Running Seahorse**
 
-1. <a target="_blank" href="https://deepsense.io/get-seahorse/">Download</a>
+1. <a target="_blank" href="https://get-seahorse.deepsense.ai/">Download</a>
 the Vagrantfile that will allow you to spin up Seahorse’s virtual machine.
 2. Run `vagrant up` in the directory containing `Vagrantfile`. This may take a few minutes.
 3. When Seahorse Standalone is ready, go to
@@ -118,7 +123,7 @@ in your browser.
         vagrant reload
 
 * Bug reports and all other feedback can be sent using the
-  <a target="_blank" href="http://feedback.seahorse.deepsense.io">Feedback</a>
+  <a target="_blank" href="http://feedback.seahorse.deepsense.ai">Feedback</a>
   option in the Seahorse Editor in the upper-left corner.
 
 
@@ -170,6 +175,6 @@ For ready-to-use Seahorse in cloud deployment, you can try Seahorse
 on [Data Scientist Workbench](dswb.html) or [Trusted Analytics Platform](tap.html).
 
 To learn more about scaling up and using Seahorse in production,
-please <a target="_blank" href="http://deepsense.io/about-us/contact/#contact-form">contact us for details</a>.
+please <a target="_blank" href="http://deepsense.ai/about-us/contact/#contact-form">contact us for details</a>.
 
 {% include contact_box.html %}

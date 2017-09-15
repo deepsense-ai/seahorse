@@ -49,7 +49,7 @@ It's recommended to run a single session at a time.
 This guarantees that multiple sessions don't compete for limited resources.
 
 To learn more about scaling up and using Seahorse in production,
-please <a target="_blank" href="http://deepsense.io/about-us/contact/#contact-form">contact us for details</a>.
+please <a target="_blank" href="http://deepsense.ai/about-us/contact/#contact-form">contact us for details</a>.
 
 ## Changelog
 

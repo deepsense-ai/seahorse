@@ -597,29 +597,6 @@ a code {
   margin-left: auto;
 }
 
-/* select version */
-
-.select-version {
-  position: relative;
-  display: inline-block;
-  font-size: 11px;
-  line-height: 16px;
-}
-
-.select-version::after {
-  content: " ";
-  top: calc(50% - 3px);
-  right: 5px;
-  position: absolute;
-  pointer-events: none;
-  display: none;
-  width: 0;
-  height: 0;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 7px solid #fff;
-}
-
 select {
   border: 1px solid #ccc;
   background-color: #01bbf2;

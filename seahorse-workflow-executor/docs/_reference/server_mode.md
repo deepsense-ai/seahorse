@@ -53,7 +53,7 @@ docker-compose up -d
 
 This will start containers with Seahorse in the background.
 
-Seahorse provides multi-user capability, useful in server mode. Multi-user allows creating workflows protected from modifications by other users. Seahorse Standalone limits the number of users to one. Seahorse Enterprise allows more than one user.
+Seahorse provides multi-user capability, useful in server mode. Multi-user allows creating workflows protected from modifications by other users.
 
 Authorization service offers registration page to create a new account confirmed by sending an activation email. You have to log on to an account before using Seahorse.
 
@@ -106,7 +106,7 @@ services:
 </div>
 </div>
 
-To learn more about using Seahorse in production and such features as security, additional authorization methods (LDAP, Google, etc.), more users per instance and custom deployment requirements,
-please <a target="_blank" href="http://deepsense.io/about-us/contact/#contact-form">contact us for details</a>.
+To learn more about using Seahorse in production and such features as security, additional authorization methods (LDAP, Google, etc.) or custom deployment requirements,
+please <a target="_blank" href="http://deepsense.ai/about-us/contact/#contact-form">contact us for details</a>.
 
 {% include contact_box.html %}
