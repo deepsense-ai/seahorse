@@ -5,7 +5,8 @@ import { GraphPanelRendererBase } from './../graph-panel/graph-panel-renderer/gr
 /* beautify preserve:end */
 
 /* @ngInject */
-function FlowChartBoxController($rootScope, $scope, $element, $document, GraphPanelRendererService, Edge, GraphNode) {
+function FlowChartBoxController($rootScope, $scope, $element, $document, GraphPanelRendererService, Edge, GraphNode,
+  WorkflowService) {
   let nodeDimensions = {};
 
   this.getNodeDimensions = function getNodeDimensions() {
@@ -15,6 +16,10 @@ function FlowChartBoxController($rootScope, $scope, $element, $document, GraphPa
     nodeDimensions.height = $node.outerHeight(true);
 
     return nodeDimensions;
+  };
+
+  this.isRootWorkflow = function isTopLevelWorkflow() {
+    return WorkflowService.getRootWorkflow() === this.workflow;
   };
 
   $scope.$on('ZOOM.ZOOM_PERFORMED', (_, data) => {
@@ -39,7 +44,6 @@ function FlowChartBoxController($rootScope, $scope, $element, $document, GraphPa
   });
 
   // Those are global. It is assumed that there is only one flowchart in application.
-  // TODO Rework it so its local. Probably use jsPlumb.getInstance()
   $document.on('mousedown', () => GraphPanelRendererService.disablePortHighlightings(this.workflow));
   $rootScope.$on('FlowChartBox.ELEMENT_DROPPED', () => GraphPanelRendererService.disablePortHighlightings(this.workflow));
   $rootScope.$on('Keyboard.KEY_PRESSED_DEL', () => GraphPanelRendererService.disablePortHighlightings(this.workflow));
@@ -85,7 +89,7 @@ function FlowChartBox(GraphPanelRendererService) {
 
       // Focus is not working properly on elements inside flowchart box.
       // It might be caused by some libraries taking over mouse event and calling preventDefault
-      // This click handler manually sets focus on flowchard if anything inside it is clicked.
+      // This click handler manually sets focus on flowchart if anything inside it is clicked.
       $('.flowchart-box').click(function() {
         $('.flowchart-box').focus();
       });

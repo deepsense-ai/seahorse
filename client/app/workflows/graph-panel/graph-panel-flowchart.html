@@ -34,5 +34,7 @@
       </span>
     </sticky-window>
   </div>
-  <deepsense-interaction-toolbar zoom-id="{{::flowChartBoxCtrl.zoomId}}" autorun="true"></deepsense-interaction-toolbar>
+  <deepsense-interaction-toolbar close-inner-workflow-btn-visible="!flowChartBoxCtrl.isRootWorkflow()"
+                                 zoom-id="{{::flowChartBoxCtrl.zoomId}}" autorun="true"></deepsense-interaction-toolbar>
+
 </div>

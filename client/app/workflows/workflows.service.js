@@ -1,42 +1,82 @@
 'use strict';
 
 /* @ngInject */
-function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClient, Operations, $rootScope) {
+function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClient, Operations, $rootScope,
+  DefaultInnerWorkflowGenerator) {
 
-  let internal = {};
+  // TODO Disable clean/export/run in inner workflows
+  // TODO Prevent deleting Sink and Source
+
+  const CUSTOM_TRANSFORMER_ID = '65240399-2987-41bd-ba7e-2944d60a3404';
+  const INNER_WORKFLOW_PARAM_NAME = 'inner workflow';
 
   class WorkflowServiceClass {
 
     constructor() {
-      // TODO Internal state to be removed
-      internal.mainWorkflow = null;
-      internal.workflowById = {};
+      this._workflowsStack = [];
+      this._innerWorkflowByNodeId = {};
       this.init();
     }
 
     init() {
       WorkflowsApiClient.getAllWorkflows().then((data) => {
-        internal.workflowsData = data;
+        this._workflowsData = data;
+      });
+
+      $rootScope.$on('AttributesPanel.OPEN_INNER_WORKFLOW', (event, {
+        nodeId
+      }) => {
+        let workflow = this._innerWorkflowByNodeId[nodeId];
+        this._workflowsStack.push(workflow);
+      });
+
+      $rootScope.$on('INTERACTION-PANEL.CLOSE-INNER-WORKFLOW', () => {
+        this._workflowsStack.pop();
       });
     }
 
-    getWorkflowById(workflowId) {
-      return internal.workflowById[workflowId];
-    }
-
-    initMainWorkflow(workflowData) {
+    initRootWorkflow(workflowData) {
       let workflow = this._createWorkflowFromWorkflowData(workflowData);
 
-      internal.mainWorkflow = workflow;
-      internal.workflowById[workflow.id] = workflow;
+      let nodes = _.values(workflow.getNodes());
+      nodes.filter((n) => n.operationId === CUSTOM_TRANSFORMER_ID)
+        .forEach((node) => this.initInnerWorkflow(node));
 
-      // TODO Traverse over workflow and add all inner workflows to map.
-
-      $rootScope.$watch(() => internal.mainWorkflow.serialize(), () => {
-        this._saveWorkflow()
+      $rootScope.$watch(() => workflow.serialize(), (newSerializedWorkflow) => {
+        WorkflowsApiClient.updateWorkflow(newSerializedWorkflow);
       }, true);
 
-      return workflow;
+      this._watchForNewCustomTransformers(workflow);
+
+      this._workflowsStack.push(workflow);
+    }
+
+    initInnerWorkflow(node) {
+      let innerWorkflowData = node.parametersValues[INNER_WORKFLOW_PARAM_NAME];
+      let innerWorkflow = this._createWorkflowFromWorkflowData(innerWorkflowData);
+      this._innerWorkflowByNodeId[node.id] = innerWorkflow;
+
+      let nestedCustomTransformerNodes = _.filter(_.values(innerWorkflow.getNodes()), (n) => n.operationId === CUSTOM_TRANSFORMER_ID);
+      _.forEach(nestedCustomTransformerNodes, (node) => this.initInnerWorkflow(node));
+
+      $rootScope.$watch(() => innerWorkflow.serialize(), (newVal) => {
+        node.parametersValues = node.parametersValues || {};
+        node.parametersValues[INNER_WORKFLOW_PARAM_NAME] = newVal;
+      }, true);
+
+      this._watchForNewCustomTransformers(innerWorkflow);
+    }
+
+    _watchForNewCustomTransformers(workflow) {
+      $rootScope.$watchCollection(() => workflow.getNodes(), (newNodes, oldNodes) => {
+        let addedNodeIds = _.difference(_.keys(newNodes), _.keys(oldNodes));
+        let addedNodes = _.map(addedNodeIds, nodeId => newNodes[nodeId]);
+        let addedCustomWorkflowNodes = _.filter(addedNodes, (n) => n.operationId === CUSTOM_TRANSFORMER_ID);
+        _.forEach(addedCustomWorkflowNodes, (addedNode) => {
+          addedNode.parametersValues[INNER_WORKFLOW_PARAM_NAME] = DefaultInnerWorkflowGenerator.create();
+          this.initInnerWorkflow(addedNode);
+        });
+      });
     }
 
     _createWorkflowFromWorkflowData(workflowData) {
@@ -54,7 +94,7 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
     }
 
     isWorkflowRunning() {
-      let statuses = _.chain(internal.mainWorkflow.getNodes())
+      let statuses = _.chain(this.getCurrentWorkflow().getNodes())
         .map((node) => {
           return node.state;
         })
@@ -69,55 +109,44 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
       return idx !== -1;
     }
 
-    getMainWorkflow() {
-      return internal.mainWorkflow;
-    }
-
-    getPredefColors() {
-      return internal.mainWorkflow.predefColors;
+    getCurrentWorkflow() {
+      return _.last(this._workflowsStack);
     }
 
     clearGraph() {
-      internal.mainWorkflow.clearGraph();
-    }
-
-    clearWorkflow() {
-      internal.mainWorkflow = null;
+      this.getCurrentWorkflow().clearGraph();
     }
 
     updateTypeKnowledge(knowledge) {
-      internal.mainWorkflow.updateTypeKnowledge(knowledge);
+      this.getRootWorkflow().updateTypeKnowledge(knowledge);
     }
 
     updateEdgesStates() {
-      internal.mainWorkflow.updateEdgesStates(OperationsHierarchyService);
+      this.getCurrentWorkflow().updateEdgesStates(OperationsHierarchyService);
     }
 
     workflowIsSet() {
-      return !_.isNull(internal.mainWorkflow);
+      return !_.isNull(this.getRootWorkflow());
     }
 
     getAllWorkflows() {
-      return internal.workflowsData;
+      return this._workflowsData;
     }
 
-    _saveWorkflow() {
-      return WorkflowsApiClient.updateWorkflow(internal.mainWorkflow.serialize());
+    getRootWorkflow() {
+      return this._workflowsStack[0];
     }
 
     removeWorkflowFromList(workflowId) {
-      let foundWorkflow = internal.workflowsData.find((workflow) => workflow.id === workflowId);
-      let workflowIndex = internal.workflowsData.indexOf(foundWorkflow);
+      let foundWorkflow = this._workflowsData.find((workflow) => workflow.id === workflowId);
+      let workflowIndex = this._workflowsData.indexOf(foundWorkflow);
       if (workflowIndex >= 0) {
-        internal.workflowsData.splice(workflowIndex, 1);
+        this._workflowsData.splice(workflowIndex, 1);
       }
     }
 
     deleteWorkflow(workflowId) {
       WorkflowsApiClient.deleteWorkflow(workflowId).then(() => {
-        if (internal.mainWorkflow && internal.mainWorkflow.id === workflowId) {
-          internal.mainWorkflow = null;
-        }
         this.removeWorkflowFromList(workflowId);
       });
     }

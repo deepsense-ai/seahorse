@@ -8,7 +8,7 @@ function WorkflowStatusBarController($stateParams, WorkflowService,
 
   _.assign(this, {
     getReportName() {
-        let name = WorkflowService.getMainWorkflow()
+        let name = WorkflowService.getCurrentWorkflow()
           .name;
         return name.toLowerCase()
           .split(' ')

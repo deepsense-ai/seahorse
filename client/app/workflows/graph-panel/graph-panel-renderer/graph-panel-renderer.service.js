@@ -27,7 +27,7 @@ import { GraphPanelStyler} from './graph-panel-styler.js';
 
 /* @ngInject */
 function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report,
-  DeepsenseCycleAnalyser, NotificationService, ConnectionHinterService, WorkflowService) {
+  DeepsenseCycleAnalyser, NotificationService, ConnectionHinterService) {
   const connectorPaintStyles = {
     [Edge.STATE_TYPE.ALWAYS]: _.defaults({}, connectorPaintStyleDefault, {
       strokeStyle: '#61B7CF'
@@ -213,7 +213,6 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
           reference: port,
           portObject: ports[i],
           event: event,
-          workflowId: workflow.id
         });
 
         event.stopPropagation();
