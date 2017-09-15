@@ -34,7 +34,7 @@ case class PythonEvaluator() extends CustomCodeEvaluator {
       |    # Example Root-Mean-Square Error implementation
       |    n = dataframe.count()
       |    row_to_sq_error = lambda row: (row['label'] - row['prediction'])**2
-      |    sum_sq_error = dataframe.map(row_to_sq_error).reduce(add)
+      |    sum_sq_error = dataframe.rdd.map(row_to_sq_error).reduce(add)
       |    rmse = sqrt(sum_sq_error / n)
       |    return rmse""".stripMargin
   )

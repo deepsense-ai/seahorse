@@ -56,7 +56,7 @@ case class PythonColumnTransformer() extends CustomCodeColumnTransformer {
       |    schema = StructType(dataframe.schema.fields + [new_field])
       |    def _transform_row(row):
       |        return row + (transform_value(row['$inputColumn'], '$inputColumn'),)
-      |    return sparkSession.createDataFrame(dataframe.map(_transform_row), schema)
+      |    return sparkSession.createDataFrame(dataframe.rdd.map(_transform_row), schema)
     """.stripMargin
   }
 
