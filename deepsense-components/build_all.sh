@@ -5,6 +5,7 @@
 
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
+start=`date +%s`
 
 find . -maxdepth 1 -type d \( ! -name . \) -exec bash -c \
     "cd '{}' \
@@ -12,4 +13,8 @@ find . -maxdepth 1 -type d \( ! -name . \) -exec bash -c \
     && gulp clean \
     && gulp" \;
 
-echo -e "\n\n${YELLOW}Build finished${NC}\n\n"
+end=`date +%s`
+runtime=$((end-start))
+
+echo -e "\n\n${YELLOW}Build finished in ${runtime} seconds${NC}\n\n"
+trap times EXIT

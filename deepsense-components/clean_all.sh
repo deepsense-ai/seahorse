@@ -7,9 +7,13 @@
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
+start=`date +%s`
 find . -maxdepth 1 -type d \( ! -name . \) -exec bash -c \
     "cd '{}' \
     && echo -e \"\n\n${YELLOW}cleaning component {}${NC}\" \
     && rm -rf build node_modules bower_components" \;
 
-echo -e "\n\n${YELLOW}Clean finished${NC}\n\n"
+end=`date +%s`
+runtime=$((end-start))
+echo -e "\n\n${YELLOW}Clean finished in ${runtime} seconds ${NC}\n\n"
+trap times EXIT

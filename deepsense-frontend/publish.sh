@@ -168,3 +168,4 @@ fi
 clean
 
 set +e
+trap times EXIT
