@@ -20,6 +20,8 @@ collections:
     output: true
   reference:
     output: true
+  licenses:
+    output: true
 
 WORKFLOW_EXECUTOR_SCALA_VERSION: 2.11.8
 WORKFLOW_EXECUTOR_HADOOP_VERSION: 2.7.0
