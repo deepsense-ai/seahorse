@@ -124,6 +124,8 @@ case class WriteDataFrame()
     path.fileScheme match {
       case Library =>
         val filePath = FilePathFromLibraryPath(path)
+        val FilePath(_, libraryPath) = filePath
+        new java.io.File(libraryPath).getParentFile.mkdirs()
         writeUsingProvidedFileScheme(fileChoice, dataFrame, filePath)
       case FileScheme.File => DriverFiles.write(dataFrame, path, fileChoice.getFileFormat())
       case HDFS => ClusterFiles.write(dataFrame, path, fileChoice.getFileFormat())
