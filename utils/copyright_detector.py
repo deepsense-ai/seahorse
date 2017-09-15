@@ -1,3 +1,17 @@
+# Copyright 2017, deepsense.ai
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 from collections import namedtuple
 import os.path
 import itertools
@@ -271,8 +285,14 @@ def find_scala_files_under_dir(dir):
 def find_js_files_under_dir(dir):
     return find_files(lambda filename: filename.endswith(".js"))(dir)
 
+
 def find_sh_files_under_dir(dir):
     return find_files(lambda filename: filename.endswith(".sh"))(dir)
+
+
+def find_py_files_under_dir(dir):
+    return find_files(
+            lambda filename: filename.endswith(".py") and 'we-deps-consts' not in filename)(dir)
 
 
 def replace_copyright_in_js_files_under_dir_with(
@@ -296,6 +316,7 @@ def replace_copyright_in_scala_files_under_dir_with(
             replacement_fun,
             default_year)
 
+
 # The function below doesn't work flawlessly
 #   - its results need to be reviewed manually
 def replace_copyright_in_sh_files_under_dir_with(
@@ -303,6 +324,17 @@ def replace_copyright_in_sh_files_under_dir_with(
         replacement_fun,
         default_year=None):
     for filename in find_sh_files_under_dir(dir):
+        replace_copyright_in_file_with(
+            filename,
+            replacement_fun,
+            default_year)
+
+
+def replace_copyright_in_py_files_under_dir_with(
+        dir,
+        replacement_fun,
+        default_year=None):
+    for filename in find_py_files_under_dir(dir):
         replace_copyright_in_file_with(
             filename,
             replacement_fun,
