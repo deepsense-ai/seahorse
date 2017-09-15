@@ -28,7 +28,11 @@ class ConnectionHinterService extends GraphPanelRendererBase {
     const highlightInputPort = (endpoint, node) => {
       const portIndex = endpoint.getParameter('portIndex');
       const port = node.input[portIndex];
-      const typesMatch = this.OperationsHierarchyService.IsDescendantOf(sourcePort.typeQualifier, port.typeQualifier);
+
+      const typesMatch = _.every(_.map(
+        sourcePort.typeQualifier,
+        typeQualifier => this.OperationsHierarchyService.IsDescendantOf(typeQualifier, port.typeQualifier)
+      ));
 
       if (typesMatch && // types match
         endpoint.connections.length === 0 && // there cannot be any edge attached
@@ -90,7 +94,13 @@ class ConnectionHinterService extends GraphPanelRendererBase {
     let operationsMatch = {};
     _.forEach(operations, (operation) => {
       const inputMatches = _.reduce(operation.ports.input, (acc, input) => {
-        acc.push(this.OperationsHierarchyService.IsDescendantOf(sourcePort.typeQualifier, input.typeQualifier));
+        const typesMatch = _.every(_.map(
+          sourcePort.typeQualifier,
+          typeQualifier => this.OperationsHierarchyService.IsDescendantOf(typeQualifier, input.typeQualifier)
+        ));
+
+        acc.push(typesMatch);
+
         return acc;
       }, []);
 
