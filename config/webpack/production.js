@@ -15,7 +15,8 @@ module.exports = function(_path) {
         root: _path,
         verbose: true,
         dry: false
-      })
+      }),
+      new webpack.optimize.UglifyJsPlugin()
     ]
   };
 };

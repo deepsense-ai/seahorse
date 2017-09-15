@@ -1,5 +1,7 @@
 'use strict';
 
+const webpackCfg = require('./webpack/testing.js');
+
 module.exports = function (config) {
   const params = {
     basePath: '..',
@@ -11,7 +13,7 @@ module.exports = function (config) {
       './client/app/**/*.spec.js'
     ],
 
-    autoWatch: true,
+    autoWatch: false,
 
     singleRun: true,
 
@@ -37,35 +39,7 @@ module.exports = function (config) {
       suite: 'unit'
     },
 
-    webpack: {
-      module: {
-        loaders: [
-          {
-            test: /.json$/,
-            loaders: [
-              'json'
-            ]
-          },
-          {
-            test: /\.js$/,
-            exclude: /node_modules/,
-            loaders: [
-              'ng-annotate',
-              'babel-loader'
-            ]
-          },
-          {
-            test: /.html$/,
-            loaders: [
-              'html'
-            ]
-          },
-        ]
-      },
-      plugins: [],
-      debug: true,
-      devtool: 'cheap-source-map'
-    }
+    webpack: webpackCfg
   };
 
   config.set(params);

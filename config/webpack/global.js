@@ -147,11 +147,5 @@ module.exports = function (_path) {
     ]
   };
 
-  if (NODE_ENV !== 'development') {
-    webpackConfig.plugins = webpackConfig.plugins.concat([
-      new webpack.optimize.UglifyJsPlugin()
-    ]);
-  }
-
   return webpackConfig;
 };
