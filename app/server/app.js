@@ -13,10 +13,10 @@ var express = require('express'),
 var app = express();
 
 var auth = undefined;
-if (config.get('DISABLE_OAUTH') === "true") {
-  auth = require('./auth/stub');
-} else {
+if (config.get('ENABLE_AUTHORIZATION') === "true") {
   auth = require('./auth/auth');
+} else {
+  auth = require('./auth/stub');
 }
 
 app.use(logger('dev'));
