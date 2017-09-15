@@ -9,16 +9,16 @@ includeOperationsMenu: true
 
 Write DataFrame saves a DataFrame to specified data storage type.
 
-Supports writing files (CSV, JSON or PARQUET) to local file system, Amazon S3 and HDFS.
-Output will be Hadoop-compatible partitioned file.
+Supports writing files (CSV, JSON or PARQUET) to the local file system, Amazon S3 and HDFS.
+The output will be a Hadoop-compatible partitioned file.
 It is possible to customize the file format (e.g. the values separator in CSV format)
 by setting appropriate parameters.
 
-It also supports writing data to JDBC compatible databases and Cassandra. <BR/>
-For more detailed information on using JDBC driver, visit
-[Custom JDBC drivers](../workflowexecutor.html#custom-jdbc-drivers) section. <BR/>
-For more detailed information on using Cassandra, visit
-[Cassandra configuration](../workflowexecutor.html#cassandra-configuration) section.
+It also supports writing data to JDBC compatible databases.
+For more detailed information on using JDBC drivers in the Batch Workflow Executor, visit
+[Custom JDBC drivers](../batch_workflow_executor_overview.html#custom-jdbc-drivers) section.
+If you are using the Bundled Image please read about
+[JDBC drivers included in the Bundled Image](../bundled_image_overview.html#bundled-jdbc-drivers).
 
 
 ## Available File Formats
@@ -92,7 +92,7 @@ Write DataFrame operation does not produce any output.
         <code><a href="../parameter_types.html#single_choice">Single Choice</a></code>
       </td>
       <td>The input data storage type. Possible values are:
-        <code>FILE</code>, <code>JDBC</code>, <code>CASSANDRA</code>.
+        <code>FILE</code>, <code>JDBC</code>.
       </td>
     </tr>
 
@@ -169,8 +169,6 @@ Write DataFrame operation does not produce any output.
       </td>
       <td>Valid only if <code>data storage type = JDBC</code>.
         JDBC connection URL.
-        Sensitive data (e.g. user, password) could be replaced on the fly during workflow execution,
-        see: <a href="../parameter_types.html#string">String parameter documentation</a> for more details.
       </td>
     </tr>
     <tr>
@@ -191,21 +189,9 @@ Write DataFrame operation does not produce any output.
       <td>
         <code><a href="../parameter_types.html#string">String</a></code>
       </td>
-      <td>Valid only if <code>data storage type = JDBC</code> or <code>data storage type = CASSANDRA</code>.
-        JDBC/Cassandra table name.
-        In case of JDBC, table with appropriate schema will be created; if table already exists, exception will be thrown.
-        In case of Cassandra, table must already exist, match dataframe schema and be empty.
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <code id="keyspace">keyspace</code>
-      </td>
-      <td>
-        <code><a href="../parameter_types.html#string">String</a></code>
-      </td>
-      <td>Valid only if <code>data storage type = CASSANDRA</code>.
-        Cassandra keyspace.
+      <td>Valid only if <code>data storage type = JDBC</code>.
+        JDBC table's name.
+        A table with an appropriate schema will be created; if the table already exists, an exception will be thrown.
       </td>
     </tr>
   </tbody>

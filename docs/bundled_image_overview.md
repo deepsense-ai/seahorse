@@ -21,6 +21,12 @@ Seahorse bundled image is a virtual machine containing all necessary components 
 
 <img class="img-responsive" src="./img/bundled_image_overview.png" />
 
+### Bundled JDBC drivers
+Seahorse supports databases compliant with JDBC. The Bundled Image includes JDBC drivers for:
+
+*   MySQL, version 5.1.38
+*   PostgresSQL, version 9.4.1207
+
 ## Run Seahorse Bundled Image
 
 ### Requirements

@@ -15,12 +15,11 @@ Additionally, HTTP/HTTPS and FTP URLs are supported. E.g. specifying
 ``https://seahorse.deepsense.io/_static/transactions.csv`` as ``source`` parameter will download
 the example file from HTTP server.
 
-It also supports writing data to JDBC compatible databases and Cassandra. <BR/>
-For more detailed information on using JDBC driver, visit
-[Custom JDBC drivers](../workflowexecutor.html#custom-jdbc-drivers) section. <BR/>
-For more detailed information on using Cassandra, visit
-[Cassandra configuration](../workflowexecutor.html#cassandra-configuration) section.
-
+It also supports reading data from JDBC compatible databases.
+For more detailed information on using JDBC drivers in the Batch Workflow Executor, visit
+[Custom JDBC drivers](../batch_workflow_executor_overview.html#custom-jdbc-drivers) section.
+If you are using the Bundled Image please read about
+[JDBC drivers included in the Bundled Image](../bundled_image_overview.html#bundled-jdbc-drivers).
 
 ## Available File Formats
 
@@ -121,7 +120,7 @@ Read DataFrame does not take any input.
         <code><a href="../parameter_types.html#single_choice">Single Choice</a></code>
       </td>
       <td>The input data storage type. Possible values are:
-        <code>FILE</code>, <code>JDBC</code>, <code>CASSANDRA</code>.
+        <code>FILE</code>, <code>JDBC</code>.
       </td>
     </tr>
     <tr>
@@ -209,8 +208,6 @@ Read DataFrame does not take any input.
       </td>
       <td>Valid only if <code>data storage type = JDBC</code>.
         JDBC connection URL.
-        Sensitive data (e.g. user, password) could be replaced on the fly during workflow execution,
-        see: <a href="../parameter_types.html#string">String parameter documentation</a> for more details.
       </td>
     </tr>
     <tr>
@@ -231,21 +228,9 @@ Read DataFrame does not take any input.
       <td>
         <code><a href="../parameter_types.html#string">String</a></code>
       </td>
-      <td>Valid only if <code>data storage type = JDBC</code> or <code>data storage type = CASSANDRA</code>.
-        JDBC/Cassandra table name.
+      <td>Valid only if <code>data storage type = JDBC</code>.
+        JDBC table's name.
       </td>
     </tr>
-    <tr>
-      <td>
-        <code id="keyspace">keyspace</code>
-      </td>
-      <td>
-        <code><a href="../parameter_types.html#string">String</a></code>
-      </td>
-      <td>Valid only if <code>data storage type = CASSANDRA</code>.
-        Cassandra keyspace.
-      </td>
-    </tr>
-
   </tbody>
 </table>

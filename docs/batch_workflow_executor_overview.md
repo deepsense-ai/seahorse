@@ -111,35 +111,17 @@ To allow usage of SQL databases for
 [Read DataFrame](operations/read_dataframe.html)
 and
 [Write DataFrame](operations/write_dataframe.html),
-proper JDBC driver has to be accessible during workflow execution.
+a proper JDBC driver has to be accessible during workflow execution.
 This requirement can be satisfied by:
 
 * adding JDBC jar library to cluster deployment,
 
-* specifying JDBC jar during spark-submit command.
+* adding JDBC jar to the driver's classpath during spark-submit command.
 
 To specify JDBC jar during execution, use spark-submit option
-``--jars path/to/jdbc-driver.jar``
-with path to proper version of JDBC driver jar.
-For more information on
-``--jars`` option, please visit
-<a target="_blank" href="http://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/submitting-applications.html#advanced-dependency-management">Apache Spark documentation</a>.
-
-
-## Cassandra Configuration
-
-To allow usage of Cassandra database as data source in I/O operations the following configuration
-parameters need to be defined either in Spark configuration or passed to ``spark-submit``
-using ``--conf`` option:
-
-* ``spark.cassandra.connection.host``
-* ``spark.cassandra.connection.port``
-* ``spark.cassandra.auth.username``
-* ``spark.cassandra.auth.password``
-
+``--driver-class-path``. I.e. ``--driver-class-path "path/to/jdbc-driver1.jar:path/to/jdbc-driver2.jar:workflowexecutor.jar"``.
 For more information, please visit
-<a target="_blank" href="http://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/submitting-applications.html#launching-applications-with-spark-submit">Apache Spark documentation</a>.
-
+<a target="_blank" href="http://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/configuration.html#runtime-environment">Apache Spark documentation</a>.
 
 ## Seahorse Batch Workflow Executor Command Line Parameters
 
