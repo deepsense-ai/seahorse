@@ -23,7 +23,7 @@ trait JdbcParameters {
 
   val jdbcUrl = StringParam(
     name = "url",
-    description = "JDBC URL.")
+    description = "JDBC connection URL.")
   setDefault(jdbcUrl,
     "jdbc:mysql://HOST:PORT/DATABASE?user=${DB_USER}&password=${DB_PASSWORD}")
 

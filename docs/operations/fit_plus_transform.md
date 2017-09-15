@@ -7,9 +7,11 @@ usesMathJax: true
 includeOperationsMenu: true
 ---
 
-A `Fit + Transform` combines a [Fit](../operations/fit.html) and [Transform](../operations/transform.html) operations.
-It is an operation used to fit an [Estimator](../classes/estimator.html) on a
-[DataFrame](../classes/dataframe.html). It produces a [Transformer](../classes/transformer.html) and a transformed `DataFrame`.
+The `Fit + Transform` operation is a combination of [Fit](../operations/fit.html) and
+[Transform](../operations/transform.html).
+It is used to fit an [Estimator](../classes/estimator.html) on a
+[DataFrame](../classes/dataframe.html). It produces a [Transformer](../classes/transformer.html)
+and a transformed `DataFrame`.
 
 **Since**: Seahorse 1.0.0
 

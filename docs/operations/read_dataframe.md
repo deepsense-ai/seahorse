@@ -8,14 +8,14 @@ includeOperationsMenu: true
 
 Reads a `DataFrame` from a specified data storage.
 
-It supports reading files (CSV, JSON or PARQUET) from local file system, Amazon S3 and HDFS
-(it supports reading Hadoop-compatible partitioned files).
+It supports reading files (in CSV, JSON or PARQUET formats) both from local file system and
+HDFS (it supports reading Hadoop-compatible partitioned files).
 
 In addition, HTTP/HTTPS and FTP URLs are supported. E.g. specifying
 ``https://seahorse.deepsense.io/_static/transactions.csv`` as the ``source`` parameter will result
 in downloading the example file from HTTP server.
 
-It also supports reading data from JDBC compatible databases.
+It also supports reading data from JDBC-compatible databases.
 For more detailed information on using JDBC drivers in the Batch Workflow Executor, visit
 [Custom JDBC drivers](../batch_workflow_executor_overview.html#custom-jdbc-drivers) section.
 If you are using Seahorse Desktop please read about
@@ -27,27 +27,27 @@ If you are using Seahorse Desktop please read about
 <a target="_blank" href="https://en.wikipedia.org/wiki/Comma-separated_values">Comma-separated values</a>
 
 In this mode, the operation infers column types.
-When a column contains values of different types, the narrowest possible type will be chosen,
+When a column contains values of multiple types, the narrowest possible type will be chosen,
 so that all the values can be represented in that type.
 Empty cells are treated as ``null``, unless column type is inferred as a ``String`` - in this
 case, they are treated as empty strings.
 
 If the `convert to boolean` mode is enabled, the columns that contain only zeros, ones or empty values will be
-inferred as a `Boolean`.
+inferred as `Boolean`.
 In particular, a column consisting of empty cells will be inferred as ``Boolean`` with ``null`` values only.
 
 The operation assumes that each row in the file has the same number of fields.
-In other case, behavior of operation is undefined.
+When this condition is not met, the behavior of the operation is undefined.
 
 If the file defines column names, they will be used in the output `DataFrame`.
-If a name is missing (or it is empty) for some column then the column will
+If a name is empty for some column, the column will
 be named ``unnamed_X`` (where ``X`` is the smallest non-negative number so that
 column names are unique). If names are not included in the input file
-or are all empty then the columns will be named ``unnamed_X`` where ``X`` are
+or are all empty, the columns will be named ``unnamed_X`` where ``X`` are
 consecutive integers beginning from 0.
 
-Escaping of a separator can be achieved by double quotes sign.
-For example, assuming a comma as separator, following line
+Escaping of a column separator can be achieved with double quotes sign.
+For example, assuming a comma as separator, the following line
 
 <code>1,abc,"a,b,c","""x""",, z ," z&nbsp;&nbsp;"</code>
 
@@ -55,14 +55,16 @@ will be parsed as:
 
 ``1.0``  ``abc``  ``a,b,c``  ``"x"`` <code>&nbsp;</code> ``_z_``  ``_z__``
 
-where ``_`` denotes a space and the fifth value is an empty string.
+where ``_`` denotes a space and the fifth value is an empty string. Note, that ``"""x"""`` is being
+parsed as ``"x"``, since ``""`` inside an already quoted value translates to ``"``. In other words,
+escaping a ``"`` sign inside a quoted value is done by prefixing it with another ``"``.
 
 ### `PARQUET`
 <a target="_blank" href="http://spark.apache.org/docs/1.6.0/sql-programming-guide.html#parquet-files">Parquet Files</a>
 
 ### `JSON`
 <a target="_blank" href="https://en.wikipedia.org/wiki/JSON">JSON</a>
-file format does not preserve column order.
+file format does not preserve the order of columns.
 
 `Timestamp` columns are converted to `String` columns
 (values of that columns are converted to its string representations by Apache Spark).

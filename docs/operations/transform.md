@@ -7,13 +7,13 @@ usesMathJax: true
 includeOperationsMenu: true
 ---
 
-A `Transform` is an operation used to convert a [DataFrame](../classes/dataframe.html) into another
-using a [Transformer](../classes/transformer.html).
-For example, a trained model produced by a [Fit](../operations/fit.html)
-operation can be supplied to `Transform` with a [DataFrame](../classes/dataframe.html) to be converted.
+The `Transform` operation is used to convert one [DataFrame](../classes/dataframe.html) into another
+using a [Transformer](../classes/transformer.html). For example, a trained model produced by a
+[Fit](../operations/fit.html) operation can be supplied to `Transform` with a
+[DataFrame](../classes/dataframe.html) to be converted.
 
 **Usage example**:
-![Transform example](../img/transformer_example.png){: .img-responsive}
+![Transform example](../img/transformer_example.png){: .img-responsive .spacer .centered-image }
 
 **Since**: Seahorse 1.0.0
 
