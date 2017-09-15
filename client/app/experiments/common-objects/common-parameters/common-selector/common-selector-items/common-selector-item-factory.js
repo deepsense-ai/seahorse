@@ -26,9 +26,15 @@ let SelectorItemFactory = {
       return null;
     } else {
       let Constructor = selectorItemConstructors[value.type];
-      return Constructor ?
-        new Constructor({'item': value}) :
-        null;
+      if (_.isUndefined(Constructor)) {
+        return null;
+      } else {
+        if (!_.isUndefined(value.values) && value.values.length === 0) {
+          return null;
+        } else {
+          return new Constructor({'item': value});
+        }
+      }
     }
   },
   getAllItemsTypes() {
