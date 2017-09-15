@@ -21,7 +21,7 @@
       name: 'LivyServer',
       command: '{{install_dir}}/{{livy_artifactid}}/bin/livy-server',
       directory: "{{install_dir}}",
-      environment: 'SPARK_HOME="{{spark_install_dir}}/spark"',
+      environment: 'SPARK_HOME="{{spark_install_dir}}/spark",PYTHONPATH="{{spark_install_dir}}/spark/python:{{spark_install_dir}}/spark/python/build:$PYTHONPATH"',
       autostart: true,
       autorestart: true,
       startretries: 3,
