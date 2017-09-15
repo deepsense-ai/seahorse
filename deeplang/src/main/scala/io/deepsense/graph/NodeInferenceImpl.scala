@@ -43,7 +43,7 @@ trait NodeInferenceImpl extends NodeInference {
         warnings,
         (errors ++ parametersValidationErrors ++ additionalErrors).distinct)
 
-    if (context.fullInference && parametersValidationErrors.nonEmpty) {
+    if (parametersValidationErrors.nonEmpty) {
       defaultInferenceResult()
     } else {
       try {

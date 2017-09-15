@@ -23,13 +23,9 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 /**
  * Holds information needed by DOperations and DMethods during knowledge inference.
  * @param dOperableCatalog object responsible for registering and validating the type hierarchy
- * @param fullInference false -> infer types and schema, true -> currently not used.
- *                      We leave fullInference flag in code for performance-costly inference
- *                      computations that can be added in future.
  */
 case class InferContext(
     dataFrameBuilder: DataFrameBuilder,
     tenantId: String, // TODO REMOVE
     dOperableCatalog: DOperableCatalog,
-    innerWorkflowParser: InnerWorkflowParser,
-    fullInference: Boolean = true)
+    innerWorkflowParser: InnerWorkflowParser)

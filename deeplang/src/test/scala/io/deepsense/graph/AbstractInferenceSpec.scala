@@ -43,8 +43,7 @@ class AbstractInferenceSpec
   val knowledgeA2: DKnowledge[DOperable] = DKnowledge(A2())
   val knowledgeA12: DKnowledge[DOperable] = DKnowledge(A1(), A2())
 
-  val typeInferenceCtx: InferContext = createInferContext(hierarchy, fullInference = false)
-  val fullInferenceCtx: InferContext = typeInferenceCtx.copy(fullInference = true)
+    val inferenceCtx: InferContext = createInferContext(hierarchy)
 
   /**
    * This operation can be set to:
@@ -77,7 +76,7 @@ class AbstractInferenceSpec
       multiException = true
     }
 
-    override protected def _inferTypeKnowledge(
+    override protected def _inferKnowledge(
       context: InferContext)(
       k0: DKnowledge[A1],
       k1: DKnowledge[A2]): (DKnowledge[A], InferenceWarnings) = {
