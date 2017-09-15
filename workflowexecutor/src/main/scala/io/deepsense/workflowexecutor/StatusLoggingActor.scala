@@ -23,6 +23,6 @@ import io.deepsense.workflowexecutor.communication.ExecutionStatus
 
 class StatusLoggingActor extends Actor with Logging {
   override def receive: Receive = {
-    case x: ExecutionStatus => logger.info(s"Did an imaginary save of: $x")
+    case x: ExecutionStatus => logger.info(s"Did an imaginary save of ExecutionStatus")
   }
 }

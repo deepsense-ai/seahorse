@@ -154,7 +154,8 @@ class WorkflowExecutorActor(
   }
 
   def sendExecutionStatus(executionStatus: ExecutionStatus): Unit = {
-    logger.debug(s"Status for '$workflowId': $executionStatus")
+    logger.debug(s"Status for '$workflowId': Error: ${executionStatus.executionFailure}, " +
+      s"States of nodes: ${executionStatus.nodes.mkString("\n")}")
     publisher.foreach(_ ! executionStatus)
   }
 

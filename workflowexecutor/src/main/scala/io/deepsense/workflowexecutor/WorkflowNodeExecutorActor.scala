@@ -69,7 +69,7 @@ class WorkflowNodeExecutorActor(
 
   def sendCompleted(nodeExecutionResults: NodeExecutionResults): Unit = {
     val nodeCompleted = NodeCompleted(node.id, nodeExecutionResults)
-    logger.debug(s"Node completed: $nodeExecutionResults")
+    logger.debug(s"Node completed: ${nodeExecutionResults.doperables}")
     sender ! nodeCompleted
   }
 

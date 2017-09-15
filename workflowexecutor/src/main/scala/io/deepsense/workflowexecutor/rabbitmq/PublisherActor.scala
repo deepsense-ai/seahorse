@@ -27,7 +27,7 @@ class PublisherActor(publisher: MQPublisher) extends Actor with Logging {
     case publishMessage: PublishMessage =>
       publisher.publish(publishMessage.topic, publishMessage.messageMQ)
     case executionStatus: ExecutionStatus =>
-      logger.info(s"PublisherActor recv status: $executionStatus")
+      logger.info(s"PublisherActor recv status from '${sender().path.name}'")
       publisher.publish(MQCommunication.editorTopic, executionStatus)
   }
 }
