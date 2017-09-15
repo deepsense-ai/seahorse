@@ -41,7 +41,10 @@ class PCAModel
 
   override def report: Report = {
     super.report
-      .withAdditionalTable(CommonTablesGenerators.denseMatrix(sparkModel.pc))
+      .withAdditionalTable(CommonTablesGenerators.denseMatrix(
+        name = "A Principal Components Matrix",
+        description = "Each column is one principal component.",
+        matrix = sparkModel.pc))
   }
 
   override protected def loadModel(

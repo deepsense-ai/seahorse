@@ -108,7 +108,10 @@ object CommonTablesGenerators {
       values = ReportUtils.shortenLongTableValues(values))
   }
 
-  def denseMatrix(matrix: DenseMatrix): Table = {
+  def denseMatrix(
+      name: String,
+      description: String,
+      matrix: DenseMatrix): Table = {
     val (numRows, numCols) = (matrix.numRows, matrix.numCols)
     val values =
       (for (r <- Range(0, numRows)) yield
@@ -118,9 +121,9 @@ object CommonTablesGenerators {
         }).toList).toList
 
     Table(
-      name = "Dense Matrix",
-      description = "Dense Matrix",
-      columnNames = None,
+      name = name,
+      description = description,
+      columnNames = Some(List.fill(numCols)("")),
       columnTypes = List.fill(numCols)(ColumnType.numeric),
       rowNames = None,
       values = ReportUtils.shortenLongTableValues(values))
