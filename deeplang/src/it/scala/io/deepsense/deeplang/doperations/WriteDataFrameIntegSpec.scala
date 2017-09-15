@@ -16,6 +16,10 @@
 
 package io.deepsense.deeplang.doperations
 
+import java.io.File
+
+import scala.io.Source
+
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.{StructField, StructType}
 import org.scalatest.BeforeAndAfter
@@ -103,8 +107,10 @@ class WriteDataFrameIntegSpec
 
     implicit def bool2int(b: Boolean) = if (b) 1 else 0
 
-    val saved = sparkContext.textFile(absoluteTestDataPath + savedFile + "/part-*")
-    val lines = saved.collect()
+    val parts = new File(absoluteTestDataPath + savedFile).listFiles
+      .map(_.getName).filter(_.startsWith("part-")).sorted
+    val lines = parts.map(part => Source.fromFile(absoluteTestDataPath + savedFile + "/" + part)
+      .getLines()).flatMap(x => x.toArray[String])
 
     if (withHeader) {
       lines(0) shouldBe schema.fieldNames

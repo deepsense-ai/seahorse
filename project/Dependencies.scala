@@ -19,6 +19,7 @@ import sbt._
 object Version {
   val akka          = "2.3.4-spark"
   val spark         = "1.4.0"
+  val hadoop        = "2.6.0"
   val apacheCommons = "3.3.+"
   val sprayJson     = "1.3.1"
   val mockito       = "1.10.19"
@@ -34,6 +35,7 @@ object Library {
   val akka    = (name: String) => "org.spark-project.akka"    %% s"akka-$name"               % Version.akka
   val spark   = (name: String) => "org.apache.spark"          %% s"spark-$name"              % Version.spark
   val spray   = (name: String) => "io.spray"                  %% s"spray-$name"              % Version.spray
+  val hadoop  = (name: String) => "org.apache.hadoop"          % s"hadoop-$name"             % Version.hadoop
 
   val akkaActor          = akka("actor")
   val akkaTestkit        = akka("testkit")
@@ -54,6 +56,8 @@ object Library {
   val sparkCore          = spark("core")
   val sparkMLLib         = spark("mllib")
   val sparkSql           = spark("sql")
+  val hadoopClient       = hadoop("client")
+  val hadoopCommon       = hadoop("common")
 }
 
 object Dependencies {
@@ -83,7 +87,9 @@ object Dependencies {
     scalaReflect,
     sparkSql,
     sparkMLLib,
-    sparkCore
+    sparkCore,
+    hadoopClient,
+    hadoopCommon
   ) ++ Seq(scalatest, mockitoCore, scalacheck, scoverage).map(_ % Test)
 
   val entitystorageClient = Seq(

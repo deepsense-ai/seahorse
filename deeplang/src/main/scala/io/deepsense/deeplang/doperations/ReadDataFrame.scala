@@ -51,12 +51,16 @@ case class ReadDataFrame() extends DOperation0To1[DataFrame] with ReadDataFrameP
   override protected def _execute(context: ExecutionContext)(): DataFrame = {
     FileSource.withName(sourceParameter.value.get) match {
       case FileSource.HDFS => readFromHdfs(context)
+      case FileSource.S3 => readFromS3(context)
       case FileSource.LOCAL => readFromLocal(context)
     }
   }
 
   private def readFromHdfs(context: ExecutionContext): DataFrame =
     readFile(prependProtocol(pathParameter.value.get, "hdfs://"), context)
+
+  private def readFromS3(context: ExecutionContext): DataFrame =
+    readFile(prependProtocol(pathParameter.value.get, "s3://"), context)
 
   private def readFromLocal(context: ExecutionContext): DataFrame =
     readFile(stripProtocol(pathParameter.value.get, "file://"), context)
@@ -205,6 +209,8 @@ trait ReadDataFrameParameters {
       FileSource.LOCAL.toString -> ParametersSchema(
         "path" -> pathParameter),
       FileSource.HDFS.toString -> ParametersSchema(
+        "path" -> pathParameter),
+      FileSource.S3.toString -> ParametersSchema(
         "path" -> pathParameter)))
 
   val customLineSeparatorParameter = StringParameter(
@@ -235,6 +241,7 @@ object ReadDataFrame {
     type FileSource = Value
     val LOCAL = Value("local")
     val HDFS = Value("hdfs")
+    val S3 = Value("s3")
   }
 
   object LineSeparator extends Enumeration {
