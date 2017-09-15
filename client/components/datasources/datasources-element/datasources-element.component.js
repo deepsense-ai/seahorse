@@ -3,6 +3,7 @@
 import templateUrl from './datasources-element.html';
 import './datasources-element.less';
 
+import {datasourceContext} from 'APP/enums/datasources-context.js';
 const COOKIE_NAME = 'DELETE_DATASOURCE_COOKIE';
 
 const DatasourcesElementComponent = {
@@ -31,7 +32,7 @@ const DatasourcesElementComponent = {
         googleSpreadsheet: 'sa-google-spreadsheet'
       };
 
-      this.context = this.context || 'read-only';
+      this.context = this.context || datasourceContext.BROWSE_DATASOURCE;
     }
 
     editDatasource(datasource) {
@@ -46,7 +47,7 @@ const DatasourcesElementComponent = {
     }
 
     isSelectable() {
-      return this.context !== 'read-only';
+      return this.context !== datasourceContext.BROWSE_DATASOURCE;
     }
 
     isOwner() {

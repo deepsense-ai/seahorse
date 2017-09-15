@@ -3,7 +3,7 @@
 import {sessionStatus} from 'APP/enums/session-status.js';
 
 /* @ngInject */
-function WorkflowStatusBarController($scope, UserService, ClusterModalService, DatasourcesPanelService, LibraryModalService,
+function WorkflowStatusBarController($scope, UserService, ClusterModalService, DatasourcesPanelService,
                                      SessionManager, WorkflowService, WorkflowStatusBarService, LibraryService, PredefinedUser) {
 
   const vm = this;
@@ -25,7 +25,6 @@ function WorkflowStatusBarController($scope, UserService, ClusterModalService, D
   vm.isOwner = isOwner;
   vm.isViewerMode = isViewerMode;
   vm.openDatasources = openDatasources;
-  vm.openLibrary = openLibrary;
   vm.predefinedUserId = PredefinedUser.id;
 
   $scope.$watch(getCurrentPreset, (newValue, oldValue) => {
@@ -82,11 +81,6 @@ function WorkflowStatusBarController($scope, UserService, ClusterModalService, D
   function openDatasources() {
     DatasourcesPanelService.openDatasources();
   }
-
-  function openLibrary() {
-    LibraryModalService.openLibraryModal();
-  }
-
 }
 
 exports.inject = function (module) {

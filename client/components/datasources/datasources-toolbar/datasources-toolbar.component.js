@@ -2,6 +2,8 @@
 
 import DatasourcesToolbarTemplate from './datasources-toolbar.html';
 
+import {datasourceContext} from 'APP/enums/datasources-context.js';
+
 // Assets
 import './datasources-toolbar.less';
 import './modals/datasources-modals.less';
@@ -13,11 +15,15 @@ import './modals/hdfs-modal/hdfs-modal.less';
 import './modals/library-modal/library-modal.less';
 
 const DatasourcesToolbarComponent = {
-  bindings: {},
+  bindings: {
+    context: '<'
+  },
   templateUrl: DatasourcesToolbarTemplate,
   controller: class DatasourcesToolbarController {
     constructor(DatasourcesModalsService) {
       'ngInject';
+
+      this.datasourceContext = datasourceContext;
 
       _.assign(this, {DatasourcesModalsService});
     }
