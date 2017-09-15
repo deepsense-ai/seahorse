@@ -35,7 +35,7 @@ import io.deepsense.deeplang.{CustomOperationDataFrameStorage, ReadOnlyDataFrame
 import io.deepsense.workflowexecutor.pythongateway.PythonGateway.GatewayConfig
 
 
-class PythonGatewayTest extends WordSpec with MockitoSugar with Matchers with Timeouts {
+class PythonGatewaySpec extends WordSpec with MockitoSugar with Matchers with Timeouts {
 
   val gatewayConfig = {
     GatewayConfig(FiniteDuration(500, duration.MILLISECONDS))

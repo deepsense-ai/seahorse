@@ -22,24 +22,25 @@ import akka.actor.{ActorRef, ActorSystem}
 import com.rabbitmq.client.AMQP.BasicProperties
 import com.rabbitmq.client.{Channel, DefaultConsumer, Envelope}
 import com.thenewmotion.akka.rabbitmq.{ChannelActor, CreateChannel, RichConnectionActor}
-
-import io.deepsense.workflowexecutor.communication.{MQCommunication, MQMessageDeserializer}
+import io.deepsense.workflowexecutor.communication.mq.MQCommunication
+import io.deepsense.workflowexecutor.communication.mq.serialization.{MessageMQSerializer, MessageMQDeserializer}
 
 case class MQCommunicationFactory(
   system: ActorSystem,
   connection: ActorRef,
-  mQMessageDeserializer: MQMessageDeserializer) {
+  mqMessageSerializer: MessageMQSerializer,
+  mqMessageDeserializer: MessageMQDeserializer) {
 
   val exchangeType = "direct"
 
   def createCommunicationChannel(name: String, subscriber: ActorRef): MQPublisher = {
-    createSubscriber(name, SubscriberActor(subscriber, mQMessageDeserializer))
+    createSubscriber(name, SubscriberActor(subscriber, mqMessageDeserializer))
     createPublisher(name)
   }
 
   def createCommunicationChannel(name: String, subscriber: MQPublisher => ActorRef): Unit = {
     val publisher = createPublisher(name)
-    createSubscriber(name, SubscriberActor(subscriber(publisher), mQMessageDeserializer))
+    createSubscriber(name, SubscriberActor(subscriber(publisher), mqMessageDeserializer))
   }
 
   private def createSubscriber(exchangeName: String, subscriber: SubscriberActor): Unit = {
@@ -54,13 +55,13 @@ case class MQCommunicationFactory(
     subscriberActor: SubscriberActor)(
     channel: Channel, self: ActorRef): Unit = {
     val queue = channel.queueDeclare(
-      s"${exchangeName}_to_executor",
+      s"${exchangeName}_${MQCommunication.Topic.executor}",
       false,
       false,
       true,
       new util.HashMap[String, AnyRef]()).getQueue
     declareExchange(exchangeName, channel)
-    channel.queueBind(queue, exchangeName, "to_executor")
+    channel.queueBind(queue, exchangeName, MQCommunication.Topic.executor)
     val basicSubscriber = MQSubscriber(subscriberActor)
     val consumer = new DefaultConsumer(channel) {
       override def handleDelivery(
@@ -77,7 +78,7 @@ case class MQCommunicationFactory(
     val publisherName = s"${exchangeName}_publisher"
   val channelActor: ActorRef =
     connection.createChannel(ChannelActor.props(setupPublisher(exchangeName)), Some(publisherName))
-    MQPublisher(exchangeName, channelActor)
+    MQPublisher(exchangeName, mqMessageSerializer, channelActor)
   }
 
   private def setupPublisher(exchangeName: String)(channel: Channel, self: ActorRef): Unit =

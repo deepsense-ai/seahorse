@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-package io.deepsense.workflowexecutor.rabbitmq
+package io.deepsense.workflowexecutor.communication.message.global
 
-import akka.actor.ActorRef
+import spray.json._
 
-import io.deepsense.workflowexecutor.communication.mq.serialization.MessageMQDeserializer
+case class PythonGatewayAddress(addresses: List[Address])
 
-case class SubscriberActor(subscriber: ActorRef, mqMessageDeserializer: MessageMQDeserializer) {
+case class Address(hostname: String, port: Int)
 
-  def processMessage(messageData: Array[Byte]): Unit = {
-    val message: Any = mqMessageDeserializer.deserializeMessage(messageData)
-    subscriber ! message
-  }
+trait AddressJsonProtocol extends DefaultJsonProtocol {
+  implicit val addressFormat = jsonFormat2(Address)
 }
+
+trait PythonGatewayAddressJsonProtocol extends DefaultJsonProtocol with AddressJsonProtocol {
+  implicit val pythonGatewayAddressFormat = jsonFormat1(PythonGatewayAddress)
+}
+
+object PythonGatewayAddressJsonProtocol extends PythonGatewayAddressJsonProtocol

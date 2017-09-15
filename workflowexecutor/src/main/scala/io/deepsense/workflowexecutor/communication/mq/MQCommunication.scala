@@ -14,22 +14,18 @@
  * limitations under the License.
  */
 
-package io.deepsense.workflowexecutor.communication
+package io.deepsense.workflowexecutor.communication.mq
 
-import spray.json.{RootJsonFormat, DefaultJsonProtocol}
+object MQCommunication {
+  val mqActorSystemName = "rabbitmq"
 
-import io.deepsense.commons.json.IdJsonProtocol
-import io.deepsense.models.workflows.Workflow
+  object Exchange {
+    val seahorse = "seahorse"
+  }
 
-case class InitMQ(workflowId: Workflow.Id) extends ReadMessageMQ
-
-object InitMQ {
-  val messageType: String = "init"
+  object Topic {
+    val editor = "to_editor"
+    val executor = "to_executor"
+    val kernel = "to_kernel"
+  }
 }
-
-trait InitMQJsonProtocol extends DefaultJsonProtocol with IdJsonProtocol {
-  implicit val statusRequestFormat: RootJsonFormat[InitMQ] =
-    jsonFormat1(InitMQ.apply)
-}
-
-object InitMQJsonProtocol extends InitMQJsonProtocol

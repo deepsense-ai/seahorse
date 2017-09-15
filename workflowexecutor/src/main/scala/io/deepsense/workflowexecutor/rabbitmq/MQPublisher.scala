@@ -16,25 +16,28 @@
 
 package io.deepsense.workflowexecutor.rabbitmq
 
-import java.nio.charset.Charset
-
 import akka.actor.ActorRef
 import com.rabbitmq.client.Channel
 import com.thenewmotion.akka.rabbitmq.ChannelMessage
 
 import io.deepsense.commons.utils.Logging
-import io.deepsense.workflowexecutor.communication.WriteMessageMQ
+import io.deepsense.workflowexecutor.communication.mq.serialization.MessageMQSerializer
 
 /**
   * Class used to publish data to exchange under given topic.
   * @param exchange name of the Exchange
+  * @param messageSerializer implementation of MessageMQSerializer that is able to serialize
+  *                          all messages published using this publisher
   * @param publisherActor created by rabbitmq
   */
-case class MQPublisher(exchange: String, publisherActor: ActorRef)
+case class MQPublisher(
+    exchange: String,
+    messageSerializer: MessageMQSerializer,
+    publisherActor: ActorRef)
   extends Logging {
 
-  def publish(topic: String, message: WriteMessageMQ): Unit = {
-    val data: Array[Byte] = message.toJsonObject.compactPrint.getBytes(Charset.forName("UTF-8"))
+  def publish(topic: String, message: Any): Unit = {
+    val data: Array[Byte] = messageSerializer.serializeMessage(message)
     publisherActor  ! ChannelMessage(publish(topic, data), dropIfNoChannel = false)
   }
 

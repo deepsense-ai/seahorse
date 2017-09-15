@@ -18,12 +18,13 @@ package io.deepsense.workflowexecutor.rabbitmq
 
 import java.util.concurrent.TimeUnit
 
-import akka.actor.{ActorPath, Actor, ActorRef, Props}
+import akka.actor.{Actor, ActorPath, ActorRef, Props}
 import akka.util.Timeout
 
 import io.deepsense.commons.utils.Logging
 import io.deepsense.models.workflows.Workflow
-import io.deepsense.workflowexecutor.communication._
+import io.deepsense.workflowexecutor.communication.message.global._
+import io.deepsense.workflowexecutor.communication.mq.MQCommunication
 import io.deepsense.workflowexecutor.pythongateway.PythonGateway
 
 case class SeahorseChannelSubscriber(
@@ -36,7 +37,7 @@ case class SeahorseChannelSubscriber(
   var publishers: Map[Workflow.Id, ActorRef] = Map()
 
   override def receive(): Actor.Receive = {
-    case c @ ConnectMQ(workflowId) =>
+    case c @ Connect(workflowId) =>
       val workflowIdString = workflowId.toString
       if (!publishers.contains(workflowId)) {
         val subscriberActor =
@@ -50,16 +51,16 @@ case class SeahorseChannelSubscriber(
       val publisherPath: ActorPath = publishers(workflowId).path
       executionDispatcher ! WorkflowConnect(c, publisherPath)
 
-    case get: GetPythonGatewayAddressMQ =>
+    case get: GetPythonGatewayAddress =>
       pythonGateway.listeningPort foreach { port =>
         publisher.publish(
-          MQCommunication.kernelTopic,
-          PythonGatewayAddress(List(SingleAddress("localhost", port))))
+          MQCommunication.Topic.kernel,
+          PythonGatewayAddress(List(Address("localhost", port))))
       }
   }
 }
 
-case class WorkflowConnect(connect: ConnectMQ, publisherPath: ActorPath)
+case class WorkflowConnect(connect: Connect, publisherPath: ActorPath)
 
 object SeahorseChannelSubscriber {
   def props(

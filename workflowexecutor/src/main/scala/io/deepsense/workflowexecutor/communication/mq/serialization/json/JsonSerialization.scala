@@ -14,26 +14,24 @@
  * limitations under the License.
  */
 
-package io.deepsense.workflowexecutor.communication
+package io.deepsense.workflowexecutor.communication.mq.serialization.json
 
-import spray.json.{JsObject, JsValue}
+object JsonSerialization {
 
-
-trait MessageMQ
-
-object MessageMQ {
   val messageTypeKey = "messageType"
   val messageBodyKey = "messageBody"
-}
 
-trait ReadMessageMQ extends MessageMQ
+  object InMessageType {
+    val connect = "connect"
+    val getPythonGatewayAddress = "getPythonGatewayAddress"
+    val abort = "abort"
+    val init = "init"
+    val launch = "launch"
+  }
 
-trait WriteMessageMQ extends MessageMQ {
-  def toJsonObject: JsObject = JsObject(
-    MessageMQ.messageTypeKey -> jsMessageType,
-    MessageMQ.messageBodyKey -> jsMessageBody
-  )
-
-  protected def jsMessageType: JsValue
-  protected def jsMessageBody: JsValue
+  object OutMessages {
+    val pythonGatewayAddress = "pythonGatewayAddress"
+    val executionStatus = "executionStatus"
+    val workflowWithResults = "workflowWithResults"
+  }
 }

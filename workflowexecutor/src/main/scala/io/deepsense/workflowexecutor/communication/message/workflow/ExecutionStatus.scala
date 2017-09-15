@@ -14,11 +14,21 @@
  * limitations under the License.
  */
 
-package io.deepsense.workflowexecutor.communication
+package io.deepsense.workflowexecutor.communication.message.workflow
 
-object MQCommunication {
-  val mqActorSystemName = "rabbitmq"
-  val seahorseExchange = "seahorse"
-  val editorTopic = "to_editor"
-  val kernelTopic = "to_kernel"
+import io.deepsense.commons.exception.FailureDescription
+import io.deepsense.graph.Node
+import io.deepsense.graph.nodestate.NodeStatus
+import io.deepsense.models.workflows.{EntitiesMap, ExecutionReport}
+
+case class ExecutionStatus(executionReport: ExecutionReport)
+
+object ExecutionStatus {
+
+  def apply(
+      nodes: Map[Node.Id, NodeStatus],
+      resultEntities: EntitiesMap,
+      error: Option[FailureDescription] = None): ExecutionStatus = {
+    ExecutionStatus(ExecutionReport(nodes, resultEntities, error))
+  }
 }

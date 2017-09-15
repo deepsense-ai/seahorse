@@ -14,21 +14,9 @@
  * limitations under the License.
  */
 
-package io.deepsense.workflowexecutor.communication
+package io.deepsense.workflowexecutor.communication.mq.serialization
 
-import spray.json._
+trait MessageMQDeserializer {
 
-import io.deepsense.commons.json.IdJsonProtocol
-import io.deepsense.models.workflows.Workflow
-
-case class ConnectMQ(workflowId: Workflow.Id) extends ReadMessageMQ
-
-object ConnectMQ {
-  val messageType: String = "connect"
+  def  deserializeMessage(data: Array[Byte]): Any
 }
-
-trait ConnectMQJsonProtocol extends DefaultJsonProtocol with IdJsonProtocol {
-  implicit val connectFormat: RootJsonFormat[ConnectMQ] = jsonFormat1(ConnectMQ.apply)
-}
-
-object ConnectMQJsonProtocol extends ConnectMQJsonProtocol

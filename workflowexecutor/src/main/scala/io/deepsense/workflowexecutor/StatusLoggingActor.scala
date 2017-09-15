@@ -19,10 +19,10 @@ package io.deepsense.workflowexecutor
 import akka.actor.Actor
 
 import io.deepsense.commons.utils.Logging
-import io.deepsense.workflowexecutor.communication.ExecutionStatusMQ
+import io.deepsense.workflowexecutor.communication.message.workflow.ExecutionStatus
 
 class StatusLoggingActor extends Actor with Logging {
   override def receive: Receive = {
-    case x: ExecutionStatusMQ => logger.info(s"Did an imaginary save of ExecutionStatus")
+    case x: ExecutionStatus => logger.info(s"Did an imaginary save of ExecutionStatus")
   }
 }

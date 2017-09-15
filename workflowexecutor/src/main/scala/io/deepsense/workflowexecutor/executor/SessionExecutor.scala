@@ -24,7 +24,8 @@ import org.apache.spark.SparkContext
 import io.deepsense.deeplang.doperables.ReportLevel
 import io.deepsense.deeplang.doperables.ReportLevel._
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
-import io.deepsense.workflowexecutor.communication.{MQCommunication, ProtocolDeserializer}
+import io.deepsense.workflowexecutor.communication.mq.MQCommunication
+import io.deepsense.workflowexecutor.communication.mq.serialization.json.{ProtocolJsonSerializer, ProtocolJsonDeserializer}
 import io.deepsense.workflowexecutor.pythongateway.PythonGateway
 import io.deepsense.workflowexecutor.rabbitmq._
 import io.deepsense.workflowexecutor.session.storage.DataFrameStorageImpl
@@ -72,8 +73,10 @@ case class SessionExecutor(
       ConnectionActor.props(factory),
       MQCommunication.mqActorSystemName)
 
-    val messageDeserializer = ProtocolDeserializer(graphReader)
-    val communicationFactory = MQCommunicationFactory(system, connection, messageDeserializer)
+    val messageDeserializer = ProtocolJsonDeserializer(graphReader)
+    val messageSerializer = ProtocolJsonSerializer(graphReader)
+    val communicationFactory =
+      MQCommunicationFactory(system, connection, messageSerializer, messageDeserializer)
 
     def createSeahorseSubscriber(publisher: MQPublisher): ActorRef =
       system.actorOf(
@@ -82,7 +85,7 @@ case class SessionExecutor(
         "communication")
 
     communicationFactory.createCommunicationChannel(
-      MQCommunication.seahorseExchange, createSeahorseSubscriber _)
+      MQCommunication.Exchange.seahorse, createSeahorseSubscriber _)
 
     system.awaitTermination()
     cleanup(sparkContext, pythonGateway)

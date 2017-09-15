@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package io.deepsense.workflowexecutor.rabbitmq
+package io.deepsense.workflowexecutor.communication.message.workflow
 
-import akka.actor.ActorRef
+import spray.json.{DefaultJsonProtocol, RootJsonFormat}
 
-import io.deepsense.workflowexecutor.communication.mq.serialization.MessageMQDeserializer
+import io.deepsense.commons.json.IdJsonProtocol
+import io.deepsense.models.workflows.Workflow
 
-case class SubscriberActor(subscriber: ActorRef, mqMessageDeserializer: MessageMQDeserializer) {
+case class Init(workflowId: Workflow.Id)
 
-  def processMessage(messageData: Array[Byte]): Unit = {
-    val message: Any = mqMessageDeserializer.deserializeMessage(messageData)
-    subscriber ! message
-  }
+trait InitJsonProtocol extends DefaultJsonProtocol with IdJsonProtocol {
+  implicit val statusRequestFormat: RootJsonFormat[Init] =
+    jsonFormat1(Init.apply)
 }
+
+object InitJsonProtocol extends InitJsonProtocol

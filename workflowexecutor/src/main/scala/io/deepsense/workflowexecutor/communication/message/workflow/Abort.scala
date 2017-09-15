@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.deepsense.workflowexecutor.communication
+package io.deepsense.workflowexecutor.communication.message.workflow
 
 import spray.json.RootJsonFormat
 
@@ -22,15 +22,11 @@ import io.deepsense.commons.utils.Logging
 import io.deepsense.models.json.workflow.WorkflowJsonProtocol
 import io.deepsense.models.workflows.Workflow
 
-case class AbortMQ(workflowId: Workflow.Id) extends ReadMessageMQ
+case class Abort(workflowId: Workflow.Id)
 
-object AbortMQ {
-  val messageType: String = "abort"
-}
-
-trait AbortMQJsonProtocol
+trait AbortJsonProtocol
   extends Logging {
   self: WorkflowJsonProtocol =>
 
-  implicit val abortFormat: RootJsonFormat[AbortMQ] = jsonFormat1(AbortMQ.apply)
+  implicit val abortFormat: RootJsonFormat[Abort] = jsonFormat1(Abort.apply)
 }

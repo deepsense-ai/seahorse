@@ -40,7 +40,7 @@ import io.deepsense.models.workflows.{EntitiesMap, Workflow}
 import io.deepsense.reportlib.model.ReportContent
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages._
 import io.deepsense.workflowexecutor.WorkflowNodeExecutorActor.Messages.Start
-import io.deepsense.workflowexecutor.communication.{ExecutionStatusMQ, InitMQ}
+import io.deepsense.workflowexecutor.communication.message.workflow.{ExecutionStatus, Init}
 import io.deepsense.workflowexecutor.partialexecution.{AbortedExecution, Execution, IdleExecution, RunningExecution}
 
 class WorkflowExecutorActorSpec
@@ -67,7 +67,7 @@ class WorkflowExecutorActorSpec
             Some(statusListener.ref),
             Some(system.actorSelection(publisher.ref.path))),
             Id.randomId.toString)
-          probe.send(wea, InitMQ(Workflow.Id.randomId))
+          probe.send(wea, Init(Workflow.Id.randomId))
           verifyStatusSent(Seq(publisher))
         }
       }
@@ -76,10 +76,10 @@ class WorkflowExecutorActorSpec
           val ids: IndexedSeq[Id] = IndexedSeq(Node.Id.randomId, Node.Id.randomId, Node.Id.randomId)
           val (_, execution) = simpleRunningExecution(ids, Some(ids.head))
           val (probe, wea, _, _, statusListeners, _) = launchedStateFixture(execution)
-          probe.send(wea, InitMQ(Workflow.Id.randomId))
+          probe.send(wea, Init(Workflow.Id.randomId))
           eventually {
             statusListeners.foreach { receiver =>
-              val status = receiver.expectMsgClass(classOf[ExecutionStatusMQ])
+              val status = receiver.expectMsgClass(classOf[ExecutionStatus])
               status.executionReport.error shouldBe None
               status.executionReport.nodesStatuses shouldBe execution.statuses
               status.executionReport.resultEntities shouldBe EntitiesMap()
@@ -112,7 +112,7 @@ class WorkflowExecutorActorSpec
 
         eventually {
           statusListeners.foreach { receiver =>
-            val status = receiver.expectMsgClass(classOf[ExecutionStatusMQ])
+            val status = receiver.expectMsgClass(classOf[ExecutionStatus])
             status.executionReport.error shouldBe None
             status.executionReport.nodesStatuses shouldBe abortedStatuses
             status.executionReport.resultEntities shouldBe EntitiesMap()
@@ -136,7 +136,7 @@ class WorkflowExecutorActorSpec
         val (graph, _) = simpleExecution(nodesIds, None)
         probe.send(wea, Launch(graph, nodesIds))
         eventually {
-          val status = publisher.expectMsgClass(classOf[ExecutionStatusMQ])
+          val status = publisher.expectMsgClass(classOf[ExecutionStatus])
           status.executionReport.error shouldBe None
           status.executionReport.nodesStatuses.size shouldBe 3
           nodesIds.foreach(status.executionReport.nodesStatuses(_) shouldBe a[Queued.type])
@@ -245,7 +245,7 @@ class WorkflowExecutorActorSpec
 
         sendLaunch(TestProbe(), wea)
         eventually {
-          val executionStatus = testProbe.expectMsgType[ExecutionStatusMQ]
+          val executionStatus = testProbe.expectMsgType[ExecutionStatus]
           executionStatus.executionReport.nodesStatuses should contain theSameElementsAs
             expectedStatuses
         }
@@ -330,7 +330,7 @@ class WorkflowExecutorActorSpec
           probe.send(wea, nodeCompletedMessage)
           eventually {
             statusListeners.foreach { receiver =>
-              val status = receiver.expectMsgClass(classOf[ExecutionStatusMQ])
+              val status = receiver.expectMsgClass(classOf[ExecutionStatus])
               status.executionReport.error shouldBe None
               status.executionReport.nodesStatuses.size shouldBe 2
               status.executionReport.nodesStatuses(nodesIds.head) shouldBe a[Completed]
@@ -360,7 +360,7 @@ class WorkflowExecutorActorSpec
         probe.send(wea, nodeCompletedMessage)
         eventually {
           (statusListeners :+ endStateSubscriber).foreach { receiver =>
-            val status = receiver.expectMsgClass(classOf[ExecutionStatusMQ])
+            val status = receiver.expectMsgClass(classOf[ExecutionStatus])
             status.executionReport.error shouldBe None
             status.executionReport.nodesStatuses.size shouldBe 1
             status.executionReport.nodesStatuses(nodesIds.head) shouldBe a[Completed]
@@ -406,7 +406,7 @@ class WorkflowExecutorActorSpec
         probe.send(wea, nodeFailedMsg)
         eventually {
           statusListeners.foreach { receiver =>
-            val status = receiver.expectMsgClass(classOf[ExecutionStatusMQ])
+            val status = receiver.expectMsgClass(classOf[ExecutionStatus])
             status.executionReport.error shouldBe None
             status.executionReport.nodesStatuses.size shouldBe 2
             status.executionReport.nodesStatuses(nodesIds.head) shouldBe a[nodestate.Failed]
@@ -426,7 +426,7 @@ class WorkflowExecutorActorSpec
         verifyStatus(statusListeners){ _.executionReport.error.isDefined shouldBe true }
         verifyStatus(Seq(endStateSubscriber)){ _.executionReport.error.isDefined shouldBe true }
 
-        probe.send(wea, InitMQ(Workflow.Id.randomId)) // Id doesn't matter
+        probe.send(wea, Init(Workflow.Id.randomId)) // Id doesn't matter
         eventually {
           verifyStatus(statusListeners){ _.executionReport.error.isDefined shouldBe true }
         }
@@ -461,10 +461,10 @@ class WorkflowExecutorActorSpec
     verifyStatus(receivers)(_ => ())
   }
 
-  def verifyStatus(receivers: Seq[TestProbe])(f: (ExecutionStatusMQ) => Unit): Unit = {
+  def verifyStatus(receivers: Seq[TestProbe])(f: (ExecutionStatus) => Unit): Unit = {
     eventually {
       receivers.foreach { receiver =>
-        f(receiver.expectMsgClass(classOf[ExecutionStatusMQ]))
+        f(receiver.expectMsgClass(classOf[ExecutionStatus]))
       }
     }
   }

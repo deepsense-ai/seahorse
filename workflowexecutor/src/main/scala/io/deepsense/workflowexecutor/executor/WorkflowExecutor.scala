@@ -41,7 +41,8 @@ import io.deepsense.models.json.workflow.exceptions._
 import io.deepsense.models.workflows.{ExecutionReport, WorkflowWithResults, WorkflowWithVariables}
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.Launch
 import io.deepsense.workflowexecutor.WorkflowExecutorApp._
-import io.deepsense.workflowexecutor.communication.{ConnectMQ, ExecutionStatusMQ}
+import io.deepsense.workflowexecutor.communication.message.global.Connect
+import io.deepsense.workflowexecutor.communication.message.workflow.ExecutionStatus
 import io.deepsense.workflowexecutor.exception.{UnexpectedHttpResponseException, WorkflowExecutionException}
 import io.deepsense.workflowexecutor.session.storage.DataFrameStorageImpl
 import io.deepsense.workflowexecutor.{ExecutionParams, ReportUploadClient, WorkflowDownloadClient, WorkflowExecutorActor}
@@ -65,7 +66,7 @@ case class WorkflowExecutor(
       CustomOperationExecutorStub())
 
     val actorSystem = ActorSystem(actorSystemName)
-    val finishedExecutionStatus: Promise[ExecutionStatusMQ] = Promise()
+    val finishedExecutionStatus: Promise[ExecutionStatus] = Promise()
     val statusReceiverActor =
       actorSystem.actorOf(TerminationListenerActor.props(finishedExecutionStatus))
     val workflowExecutorActor = actorSystem.actorOf(
@@ -73,7 +74,7 @@ case class WorkflowExecutor(
       workflow.id.toString)
 
     val startedTime = DateTimeConverter.now
-    workflowExecutorActor ! ConnectMQ(workflow.id)
+    workflowExecutorActor ! Connect(workflow.id)
     workflowExecutorActor ! Launch(workflow.graph)
 
     logger.debug("Awaiting execution end...")
@@ -83,7 +84,7 @@ case class WorkflowExecutor(
       case Failure(exception) => // WEA failed with an exception
         logger.error("WorkflowExecutorActor failed: ", exception)
         throw exception
-      case Success(ExecutionStatusMQ(executionReport)) =>
+      case Success(ExecutionStatus(executionReport)) =>
         logger.debug(s"WorkflowExecutorActor finished successfully: ${workflow.graph}")
         Try(executionReport)
     }

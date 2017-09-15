@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.deepsense.workflowexecutor.communication
+package io.deepsense.workflowexecutor.communication.mq.serialization.json
 
 import java.nio.charset.StandardCharsets
 
@@ -27,18 +27,20 @@ import io.deepsense.commons.StandardSpec
 import io.deepsense.graph.DirectedGraph
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.workflows.Workflow
+import io.deepsense.workflowexecutor.communication.message.global.Connect
+import io.deepsense.workflowexecutor.communication.message.workflow.{Abort, Init, Launch}
 
-class ProtocolDeserializerSpec
+class ProtocolJsonDeserializerSpec
   extends StandardSpec
   with MockitoSugar {
 
-  "ProtocolDeserializer" should {
+  "ProtocolJsonDeserializer" should {
     "deserialize Launch messages" in {
       val graphReader = mock[GraphReader]
       val graph = mock[DirectedGraph]("expectedGraph")
       when(graphReader.read(any())).thenReturn(graph)
       val graphJs = JsObject("graphJs" -> JsString(""))
-      val protocolDeserializer = ProtocolDeserializer(graphReader)
+      val protocolDeserializer = ProtocolJsonDeserializer(graphReader)
 
       val workflowId = Workflow.Id.randomId
       val nodesToExecute = Vector(Workflow.Id.randomId, Workflow.Id.randomId, Workflow.Id.randomId)
@@ -53,17 +55,17 @@ class ProtocolDeserializerSpec
         )
       )
 
-      val readMessage: ReadMessageMQ = serializeAndRead(protocolDeserializer, rawMessage)
+      val readMessage: Any = serializeAndRead(protocolDeserializer, rawMessage)
 
       verify(graphReader).read(graphJs)
 
-      readMessage shouldBe LaunchMQ(
+      readMessage shouldBe Launch(
         workflowId,
         graph,
         nodesToExecute)
     }
     "deserialize Abort messages" in {
-      val protocolDeserializer = ProtocolDeserializer(mock[GraphReader])
+      val protocolDeserializer = ProtocolJsonDeserializer(mock[GraphReader])
       val workflowId = Workflow.Id.randomId
 
       val rawMessage = JsObject(
@@ -73,11 +75,11 @@ class ProtocolDeserializerSpec
         )
       )
 
-      val readMessage: ReadMessageMQ = serializeAndRead(protocolDeserializer, rawMessage)
-      readMessage shouldBe AbortMQ(workflowId)
+      val readMessage: Any = serializeAndRead(protocolDeserializer, rawMessage)
+      readMessage shouldBe Abort(workflowId)
     }
     "deserialize Connect messages" in {
-      val protocolDeserializer = ProtocolDeserializer(mock[GraphReader])
+      val protocolDeserializer = ProtocolJsonDeserializer(mock[GraphReader])
       val workflowId = Workflow.Id.randomId
 
       val rawMessage = JsObject(
@@ -87,11 +89,11 @@ class ProtocolDeserializerSpec
         )
       )
 
-      val readMessage: ReadMessageMQ = serializeAndRead(protocolDeserializer, rawMessage)
-      readMessage shouldBe ConnectMQ(workflowId)
+      val readMessage: Any = serializeAndRead(protocolDeserializer, rawMessage)
+      readMessage shouldBe Connect(workflowId)
     }
     "deserialize Init messages" in {
-      val protocolDeserializer = ProtocolDeserializer(mock[GraphReader])
+      val protocolDeserializer = ProtocolJsonDeserializer(mock[GraphReader])
       val workflowId = Workflow.Id.randomId
 
       val rawMessage = JsObject(
@@ -101,14 +103,14 @@ class ProtocolDeserializerSpec
         )
       )
 
-      val readMessage: ReadMessageMQ = serializeAndRead(protocolDeserializer, rawMessage)
-      readMessage shouldBe InitMQ(workflowId)
+      val readMessage: Any = serializeAndRead(protocolDeserializer, rawMessage)
+      readMessage shouldBe Init(workflowId)
     }
   }
 
   def serializeAndRead(
-      protocolDeserializer: ProtocolDeserializer,
-      rawMessage: JsObject): ReadMessageMQ = {
+      protocolDeserializer: ProtocolJsonDeserializer,
+      rawMessage: JsObject): Any = {
     val bytes = rawMessage.compactPrint.getBytes(StandardCharsets.UTF_8)
     protocolDeserializer.deserializeMessage(bytes)
   }

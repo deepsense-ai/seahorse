@@ -29,7 +29,7 @@ import io.deepsense.graph.nodestate.{Completed, NodeStatus}
 import io.deepsense.models.entities.Entity
 import io.deepsense.models.workflows.EntitiesMap
 import io.deepsense.reportlib.model.ReportContent
-import io.deepsense.workflowexecutor.communication.{ExecutionStatusMQ, InitMQ}
+import io.deepsense.workflowexecutor.communication.message.workflow.{ExecutionStatus, Init}
 import io.deepsense.workflowexecutor.partialexecution.{AbortedExecution, Execution, IdleExecution, RunningExecution}
 
 /**
@@ -59,7 +59,7 @@ class WorkflowExecutorActor(
         execution)
     case NodeFailed(id, failureDescription) =>
       nodeFailed(id, failureDescription, execution)
-    case InitMQ(_) =>
+    case Init(_) =>
       sendExecutionStatus(executionToStatus(execution))
     case l: Launch =>
       logger.info("It is illegal to Launch a graph when the execution is in progress.")
@@ -101,7 +101,7 @@ class WorkflowExecutorActor(
       val nodeSet = nodes.toSet
       val updatedStructure = finishedExecution.updateStructure(graph, nodeSet)
       launch(finishedExecution, updatedStructure, nodes)
-    case InitMQ(_) =>
+    case Init(_) =>
       sendExecutionStatus(executionToStatus(finishedExecution))
   }
 
@@ -110,8 +110,8 @@ class WorkflowExecutorActor(
       val execution = executionFactory.create(graph, nodes)
       // Received Launch for the first time. Use an empty execution as the previous state.
       launch(Execution.empty, execution, nodes)
-    case InitMQ(_) =>
-      sendExecutionStatus(ExecutionStatusMQ(Map.empty, EntitiesMap()))
+    case Init(_) =>
+      sendExecutionStatus(ExecutionStatus(Map.empty, EntitiesMap()))
   }
 
   def launch(
@@ -147,17 +147,17 @@ class WorkflowExecutorActor(
         aborted
     }
 
-    val executionStatus: ExecutionStatusMQ =
+    val executionStatus: ExecutionStatus =
       calculateExecutionStatus(previous, updated)
     sendExecutionStatus(executionStatus)
   }
 
   private def calculateExecutionStatus(
       originalExecution: Execution,
-      updatedExecution: Execution): ExecutionStatusMQ = {
+      updatedExecution: Execution): ExecutionStatus = {
     val updatedStatuses: Map[Id, NodeStatus] = getChangedNodes(originalExecution, updatedExecution)
     val entitiesMap: EntitiesMap = createEntitiesMap(updatedStatuses.values.toSeq)
-    ExecutionStatusMQ(updatedStatuses, entitiesMap, updatedExecution.error)
+    ExecutionStatus(updatedStatuses, entitiesMap, updatedExecution.error)
   }
 
   private def getChangedNodes(
@@ -178,14 +178,14 @@ class WorkflowExecutorActor(
     EntitiesMap(dOperables, reportsContents)
   }
 
-  def sendExecutionStatus(executionStatus: ExecutionStatusMQ): Unit = {
+  def sendExecutionStatus(executionStatus: ExecutionStatus): Unit = {
     logger.debug(s"Status for '$workflowId': Error: ${executionStatus.executionReport.error}, " +
       s"States of nodes: ${executionStatus.executionReport.nodesStatuses.mkString("\n")}")
     publisher.foreach(_ ! executionStatus)
   }
 
-  def executionToStatus(execution: Execution): ExecutionStatusMQ = {
-    ExecutionStatusMQ(
+  def executionToStatus(execution: Execution): ExecutionStatus = {
+    ExecutionStatus(
       execution.statuses,
       EntitiesMap(dOperableCache.toMap, reports.toMap), execution.error)
   }

@@ -14,20 +14,9 @@
  * limitations under the License.
  */
 
-package io.deepsense.workflowexecutor.communication
+package io.deepsense.workflowexecutor.communication.mq.serialization
 
-import java.nio.charset.Charset
+trait MessageMQSerializer {
 
-import spray.json._
-
-
-trait MQMessageDeserializer {
-
-  def  deserializeMessage(data: Array[Byte]): ReadMessageMQ = {
-    val json = new String(data, Charset.forName("UTF-8")).parseJson
-    val jsObject = json.asJsObject
-    deserializeJson(jsObject)
-  }
-
-  protected def deserializeJson(jsObject: JsObject): ReadMessageMQ
+  def serializeMessage(message: Any): Array[Byte]
 }
