@@ -45,8 +45,7 @@
           <span>Documentation</span>
         </a>
       </div>
-      <button
-        ng-if="controller.hasCodeEdit() && !disabledMode"
+      <div
         class="operation-attributes-panel__open-button"
         ng-click="controller.showNotebook()"
       >
@@ -54,7 +53,7 @@
         <span>
           Open notebook
         </span>
-      </button>
+      </div>
     </section>
     <section class="operation-attributes-panel__details o-state" ng-if="node.state">
       <header>
