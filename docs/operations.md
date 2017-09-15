@@ -49,6 +49,7 @@ List of all currently supported operations:
     * [Convert Type](operations/convert_type.html)
     * [DCT](operations/dct.html)
     * [Decompose Datetime](operations/decompose_datetime.html)
+    * [Get From Vector](operations/get_from_vector.html)
     * [Normalize](operations/normalize.html)
     * [One Hot Encoder](operations/one_hot_encoder.html)
     * [Polynomial Expansion](operations/polynomial_expansion.html)

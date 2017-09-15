@@ -51,6 +51,7 @@ object CatalogRecorder {
     catalog.registerDOperable[PythonColumnTransformer]()
     catalog.registerDOperable[TypeConverter]()
     catalog.registerDOperable[CustomTransformer]()
+    catalog.registerDOperable[GetFromVectorTransformer]()
 
     // wrapped Spark ML estimators & models
     catalog.registerDOperable[LogisticRegression]()
@@ -212,6 +213,9 @@ object CatalogRecorder {
       DOperationCategories.Transformation.FeatureConversion)
 
     catalog.registerDOperation[DecomposeDatetime](
+      DOperationCategories.Transformation.FeatureConversion)
+
+    catalog.registerDOperation[GetFromVector](
       DOperationCategories.Transformation.FeatureConversion)
 
     catalog.registerDOperation[Normalize](
