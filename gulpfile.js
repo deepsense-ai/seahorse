@@ -182,7 +182,7 @@ gulp.task('start', function (callback) {
     gulp.watch(client.path + client.images, ['images', browserSync.reload]);
     gulp.watch(client.path + client.lessSources, ['less']);
     gulp.watch(
-      [client.path + client.js, '!' + config.files.tests.client],
+      [client.path + client.js, '|', '!' + __dirname + '/' + config.files.tests.client],
       ['jshint', 'browserify', browserSync.reload]
     );
   }
@@ -194,7 +194,7 @@ gulp.task('watch', function (callback) {
   gulp.watch(client.path + client.html, ['html', browserSync.reload]);
   gulp.watch(client.path + client.lessSources, ['less']);
   gulp.watch(
-    [client.path + client.js, '!' + config.files.tests.client],
+    [client.path + client.js, '|', '!' + __dirname + '/' + config.files.tests.client],
     ['jshint', 'browserify', browserSync.reload]
   );
 });
