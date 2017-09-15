@@ -26,9 +26,6 @@ class CanvasService {
     };
 
     this.scale = 1;
-
-    //TODO remove
-    this.moveStep = 50;
   }
 
   initialize(jsPlumbContainer, slidingWindow) {
@@ -96,6 +93,10 @@ class CanvasService {
   setWorkflow(workflow) {
     this.nodes = workflow.getNodes();
     this.AdapterService.setWorkflow(workflow);
+  }
+
+  setEditable(isEditable) {
+    this.AdapterService.isEditable = isEditable;
   }
 
   render() {

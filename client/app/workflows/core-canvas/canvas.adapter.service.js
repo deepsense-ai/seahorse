@@ -36,13 +36,14 @@ const POSITION_MAP = {
 
 class AdapterService {
   /*@ngInject*/
-  constructor(WorkflowService) {
+  constructor(WorkflowService, $rootScope) {
     this.WorkflowService = WorkflowService;
+    this.$rootScope = $rootScope;
   }
 
   initialize(container) {
-    this.container = container;
     jsPlumb.setContainer(container);
+    this.container = container;
     this.bindEvents();
   }
 
@@ -54,13 +55,13 @@ class AdapterService {
       }
 
       const data = {
-        'from': {
-          'nodeId': info.sourceId.slice('node-'.length),
-          'portIndex': info.sourceEndpoint.getParameter('portIndex')
+        from: {
+          nodeId: info.sourceId.slice('node-'.length),
+          portIndex: info.sourceEndpoint.getParameter('portIndex')
         },
-        'to': {
-          'nodeId': info.targetId.slice('node-'.length),
-          'portIndex': info.targetEndpoint.getParameter('portIndex')
+        to: {
+          nodeId: info.targetId.slice('node-'.length),
+          portIndex: info.targetEndpoint.getParameter('portIndex')
         }
       };
       const edge = this.workflow.createEdge(data);
@@ -121,7 +122,13 @@ class AdapterService {
 
   renderOutputPorts (nodeElement, ports, nodeObj) {
     ports.forEach((port) => {
-      const jsPlumbPort = jsPlumb.addEndpoint(nodeElement, OUTPUT_STYLE, {
+      const style = Object.create(OUTPUT_STYLE);
+
+      if (!this.isEditable) {
+        style.isSource = false;
+      }
+
+      const jsPlumbPort = jsPlumb.addEndpoint(nodeElement, style, {
         anchor: POSITION_MAP.OUTPUT[port.portPosition],
         uuid: port.id
       });
@@ -156,7 +163,7 @@ class AdapterService {
             `${outputPrefix}-${edge.startPortId}-${edge.startNodeId}`,
             `${inputPrefix}-${edge.endPortId}-${edge.endNodeId}`
           ],
-          detachable: true
+          detachable: this.isEditable
         });
         connection.setParameter('edgeId', edge.id);
       }

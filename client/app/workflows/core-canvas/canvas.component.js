@@ -6,6 +6,7 @@ import less from './canvas.less';
 
 const CanvasComponent = {
   bindings: {
+    'isEditable' : '<',
     'workflow': '<'
   },
   controller: CanvasController,
