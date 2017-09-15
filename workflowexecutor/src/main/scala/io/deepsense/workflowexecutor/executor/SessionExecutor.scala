@@ -37,6 +37,7 @@ import io.deepsense.workflowexecutor.communication.mq.MQCommunication
 import io.deepsense.workflowexecutor.communication.mq.serialization.json.{ProtocolJsonDeserializer, ProtocolJsonSerializer}
 import io.deepsense.workflowexecutor.executor.session.LivyKeepAliveActor
 import io.deepsense.workflowexecutor.notebooks.KernelManagerCaretaker
+import io.deepsense.workflowexecutor.pyspark.PythonPathGenerator
 import io.deepsense.workflowexecutor.rabbitmq._
 import io.deepsense.workflowexecutor.session.storage.DataFrameStorageImpl
 import io.deepsense.workflowexecutor.{SessionWorkflowExecutorActorProvider, WorkflowManagerClientActor}
@@ -49,7 +50,7 @@ case class SessionExecutor(
     messageQueuePort: Int,
     pythonExecutorPath: String,
     sessionId: String,
-    pySparkPath: String,
+    pythonPathGenerator: PythonPathGenerator,
     wmAddress: String)
   extends Executor {
 
@@ -79,7 +80,7 @@ case class SessionExecutor(
 
     val pythonExecutionCaretaker = new PythonExecutionCaretaker(
       pythonExecutorPath,
-      pySparkPath,
+      pythonPathGenerator,
       sparkContext,
       sqlContext,
       dataFrameStorage,
@@ -126,6 +127,7 @@ case class SessionExecutor(
 
     val kernelManagerCaretaker = new KernelManagerCaretaker(
       system,
+      pythonPathGenerator,
       communicationFactory,
       messageQueueHost,
       messageQueuePort,

@@ -20,7 +20,6 @@ import java.net.InetAddress
 import java.util.concurrent.atomic.AtomicReference
 
 import scala.annotation.tailrec
-import scala.collection.JavaConverters._
 import scala.sys.process._
 
 import com.typesafe.config.ConfigFactory
@@ -30,6 +29,7 @@ import org.apache.spark.sql.SQLContext
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.{CustomOperationExecutor, DataFrameStorage, PythonCodeExecutor}
 import io.deepsense.workflowexecutor.Unzip
+import io.deepsense.workflowexecutor.pyspark.PythonPathGenerator
 import io.deepsense.workflowexecutor.pythongateway.PythonGateway
 import io.deepsense.workflowexecutor.pythongateway.PythonGateway.GatewayConfig
 
@@ -45,7 +45,7 @@ import io.deepsense.workflowexecutor.pythongateway.PythonGateway.GatewayConfig
  */
 class PythonExecutionCaretaker(
   pythonExecutorPath: String,
-  pySparkPath: String,
+  pythonPathGenerator: PythonPathGenerator,
   val sparkContext: SparkContext,
   val sqlContext: SQLContext,
   val dataFrameStorage: DataFrameStorage,
@@ -53,7 +53,7 @@ class PythonExecutionCaretaker(
 
   val config = ConfigFactory.load.getConfig("pythoncaretaker")
   val pythonExecutable = config.getString("python-binary")
-  val additionalPythonPath = config.getStringList("pyspark-python-path").asScala
+
 
   def waitForPythonExecutor(): Unit = {
     pythonGateway.codeExecutor
@@ -113,16 +113,8 @@ class PythonExecutionCaretaker(
     logger.info(s"Starting a new PyExecutor process: $command")
 
     val pyLogger = ProcessLogger(fout = logger.error, ferr = logger.error)
-    val pythonPathKey = "PYTHONPATH"
-    val pythonPath = Option(System.getenv().get(pythonPathKey))
-
-    val additionalPaths = additionalPythonPath.map(p => s"$pySparkPath/$p")
-
-    val modifiedPythonPath =
-      (pySparkPath +: (additionalPaths ++ pythonPath)).mkString(":")
-
     val processBuilder: ProcessBuilder =
-      Process(command, None, pythonPathKey -> modifiedPythonPath)
+      Process(command, None, pythonPathGenerator.env())
     processBuilder.run(pyLogger)
   }
 

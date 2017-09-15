@@ -43,6 +43,7 @@ import io.deepsense.workflowexecutor.communication.message.workflow.ExecutionSta
 import io.deepsense.workflowexecutor.exception.{UnexpectedHttpResponseException, WorkflowExecutionException}
 import io.deepsense.workflowexecutor.session.storage.DataFrameStorageImpl
 import io.deepsense.workflowexecutor._
+import io.deepsense.workflowexecutor.pyspark.PythonPathGenerator
 
 /**
  * WorkflowExecutor creates an execution context and then executes a workflow on Spark.
@@ -50,7 +51,7 @@ import io.deepsense.workflowexecutor._
 case class WorkflowExecutor(
     workflow: WorkflowWithVariables,
     pythonExecutorPath: String,
-    pysparkPath: String)
+    pythonPathGenerator: PythonPathGenerator)
   extends Executor {
 
   val dOperableCache = mutable.Map[Entity.Id, DOperable]()
@@ -74,7 +75,7 @@ case class WorkflowExecutor(
 
     val pythonExecutionCaretaker = new PythonExecutionCaretaker(
       pythonExecutorPath,
-      pysparkPath,
+      pythonPathGenerator,
       sparkContext,
       sqlContext,
       dataFrameStorage,
@@ -141,11 +142,13 @@ object WorkflowExecutor extends Logging {
 
   private val outputFile = "result.json"
 
-  def runInNoninteractiveMode(params: ExecutionParams, pysparkPath: String): Unit = {
+  def runInNoninteractiveMode(
+      params: ExecutionParams,
+      pythonPathGenerator: PythonPathGenerator): Unit = {
     val workflow = loadWorkflow(params)
 
     val executionReport = workflow.map(w => {
-      executeWorkflow(w, params.pyExecutorPath.get, pysparkPath)
+      executeWorkflow(w, params.pyExecutorPath.get, pythonPathGenerator)
     })
     val workflowWithResultsFuture = workflow.flatMap(w =>
       executionReport
@@ -227,12 +230,12 @@ object WorkflowExecutor extends Logging {
   private def executeWorkflow(
       workflow: WorkflowWithVariables,
       pythonExecutorPath: String,
-      pysparkPath: String): Try[ExecutionReport] = {
+      pythonPathGenerator: PythonPathGenerator): Try[ExecutionReport] = {
 
     // Run executor
     logger.info("Executing the workflow.")
     logger.debug("Executing the workflow: " +  workflow)
-    WorkflowExecutor(workflow, pythonExecutorPath, pysparkPath).execute()
+    WorkflowExecutor(workflow, pythonExecutorPath, pythonPathGenerator).execute()
   }
 
   private def loadWorkflow(params: ExecutionParams): Future[WorkflowWithVariables] = {

@@ -30,10 +30,12 @@ import io.deepsense.models.workflows.Workflow
 import io.deepsense.workflowexecutor.Unzip
 import io.deepsense.workflowexecutor.communication.message.notebook.KernelManagerReady
 import io.deepsense.workflowexecutor.communication.mq.MQCommunication
+import io.deepsense.workflowexecutor.pyspark.PythonPathGenerator
 import io.deepsense.workflowexecutor.rabbitmq.MQCommunicationFactory
 
 class KernelManagerCaretaker(
   private val actorSystem: ActorSystem,
+  private val pythonPathGenerator: PythonPathGenerator,
   private val communicationFactory: MQCommunicationFactory,
   private val mqHost: String,
   private val mqPort: Int,
@@ -102,6 +104,7 @@ class KernelManagerCaretaker(
 
     val command = s"$kernelManagerPath" +
       s" --working-dir $workingDir" +
+      s" --additional-python-path ${pythonPathGenerator.pythonPath()}" +
       s" --mq-host $mqHost" +
       s" --mq-port $mqPort" +
       s" --workflow-id $workflowId" +

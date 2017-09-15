@@ -26,6 +26,7 @@ import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow._
 import io.deepsense.workflowexecutor.executor.{SessionExecutor, WorkflowExecutor}
+import io.deepsense.workflowexecutor.pyspark.PythonPathGenerator
 
 /**
  * WorkflowExecutor
@@ -147,6 +148,7 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
     val pySparkPath = new pyspark.Loader(params.pySparkPath).load
     pySparkPath match {
       case Some(path) =>
+        val pythonPathGenerator = new PythonPathGenerator(path)
         if (params.interactiveMode) {
           // Interactive mode (SessionExecutor)
           SessionExecutor(
@@ -154,18 +156,16 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
             params.messageQueuePort.get,
             params.pyExecutorPath.get,
             params.jobId.get,
-            path,
+            pythonPathGenerator,
             params.wmAddress.get
           ).execute()
         } else {
           // Running in non-interactive mode
-          WorkflowExecutor.runInNoninteractiveMode(params, path)
+          WorkflowExecutor.runInNoninteractiveMode(params, pythonPathGenerator)
         }
       case None =>
         logger.error("Could not found PySpark!")
     }
-
-
   }
 
   def configureLogging(): Unit = {
