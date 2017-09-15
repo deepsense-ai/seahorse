@@ -172,14 +172,14 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
         report,
         DataFrameTestFactory.doubleColumnName,
         0L,
-        Seq("1.67"),
+        Seq("1.67", "1.67"),
         Seq(10),
         Statistics("1.67", "1.67", "1.67", "1.67", "1.67", "1.67", Seq()))
       testContinuousDistribution(
         report,
         DataFrameTestFactory.timestampColumnName,
         0L,
-        Seq("1970-01-20T00:43:00.000Z"),
+        Seq("1970-01-20T00:43:00.000Z", "1970-01-20T00:43:00.000Z"),
         Seq(10),
         Statistics(
           "1970-01-20T00:43:00.000Z",
@@ -231,7 +231,7 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
 
   val doubleTypeBuckets: Array[String] = Array("1.307", "1.34825", "1.3895", "1.43075", "1.472",
     "1.51325", "1.5545", "1.59575", "1.637", "1.67825", "1.7195", "1.76075", "1.802", "1.84325",
-    "1.8845", "1.92575", "1.967", "2.00825", "2.0495", "2.09075")
+    "1.8845", "1.92575", "1.967", "2.00825", "2.0495", "2.09075", "2.132")
 
   val timestampTypeBuckets: Array[String] = Array("1954-12-18T00:43:00.000Z",
     "1957-09-18T11:28:51.000Z", "1960-06-19T22:14:42.000Z", "1963-03-22T09:00:33.000Z",
@@ -240,7 +240,7 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
     "1982-06-28T12:21:30.000Z", "1985-03-29T23:07:21.000Z", "1987-12-30T09:53:12.000Z",
     "1990-09-30T20:39:03.000Z", "1993-07-02T07:24:54.000Z", "1996-04-02T18:10:45.000Z",
     "1999-01-03T04:56:36.000Z", "2001-10-04T15:42:27.000Z", "2004-07-06T02:28:18.000Z",
-    "2007-04-07T13:14:09.000Z")
+    "2007-04-07T13:14:09.000Z", "2010-01-07T00:00:00.000Z")
 
   private def testEmptyDistribution(
       report: Report,

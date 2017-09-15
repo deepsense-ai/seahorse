@@ -220,7 +220,7 @@ trait DataFrameReportGenerator {
       categoricalMetadata: CategoricalMetadata): (Seq[String], Seq[Long]) = {
     val steps: Int = numberOfSteps(min, max, structField.dataType)
     val buckets: Array[Double] = customRange(min, max, steps)
-    (buckets2Labels(buckets.toList.take(buckets.length - 1), structField, categoricalMetadata),
+    (buckets2Labels(buckets.toList, structField, categoricalMetadata),
       rdd.histogram(buckets))
   }
 

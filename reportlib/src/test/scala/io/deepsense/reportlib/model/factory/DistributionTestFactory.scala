@@ -56,6 +56,7 @@ object DistributionTestFactory extends DistributionTestFactory {
   val distributionMissingValues: Long = 0L
   val categoricalDistributionBuckets: List[String] =
     List("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
-  val continuousDistributionBuckets: List[String] = List("2", "2.5", "3", "3.5", "4", "4.5", "5")
+  val continuousDistributionBuckets: List[String] = List(
+    "2", "2.5", "3", "3.5", "4", "4.5", "5", "5.5")
   val distributionCounts: List[Long] = List(0, 1000, 1, 17, 9786976976L, 0, 1)
 }

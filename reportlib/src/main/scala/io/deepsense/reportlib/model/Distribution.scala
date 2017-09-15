@@ -74,8 +74,12 @@ case class ContinuousDistribution(
     counts) with ReportJsonProtocol {
   require(subtype == ContinuousDistribution.subtype)
   require(blockType == DistributionJsonProtocol.typeName)
-  require(buckets.size == counts.size, "buckets size does not match count size. " +
-    s"Buckets size is: ${buckets.size}, counts size is: ${counts.size}")
+  require(buckets.size != 1, "Buckets size cannot be 1")
+  require((buckets.isEmpty && counts.isEmpty)
+    || (!buckets.isEmpty && (buckets.size == counts.size + 1)),
+    "Either buckets and counts should be empty or " +
+      "buckets size should be equal to count size + 1. " +
+      s"Buckets size is: ${buckets.size}, counts size is: ${counts.size}")
 }
 
 object ContinuousDistribution {
