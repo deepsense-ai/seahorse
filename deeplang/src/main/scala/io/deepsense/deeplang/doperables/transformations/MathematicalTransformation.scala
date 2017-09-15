@@ -76,7 +76,7 @@ case class MathematicalTransformation(
     val table = Table("Mathematical Formula", "",
       Some(List("Formula", "Column name")),
       List(ColumnType.string, ColumnType.string), None,
-      List(List(Some(formula)), List(Some(columnName))))
+      List(List(Some(formula), Some(columnName))))
     Report(ReportContent(
       "Report for MathematicalTransformation", List(table)))
   }

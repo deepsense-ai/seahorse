@@ -19,10 +19,11 @@ package io.deepsense.deeplang.doperables
 import org.mockito.Mockito._
 
 import io.deepsense.commons.types.ColumnType
+import io.deepsense.deeplang.doperables.dataframe.{CommonColumnMetadata, DataFrameBuilder, DataFrameMetadata}
 import io.deepsense.deeplang.doperables.transformations.MathematicalTransformation
-import io.deepsense.deeplang.{DKnowledge, UnitSpec}
-import io.deepsense.deeplang.doperables.dataframe.{DataFrameBuilder, CommonColumnMetadata, DataFrameMetadata}
-import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
+import io.deepsense.deeplang.{DKnowledge, ExecutionContext, UnitSpec}
+import io.deepsense.reportlib.model.{ReportContent, Table}
 
 class MathematicalTransformationSpec extends UnitSpec {
 
@@ -58,6 +59,24 @@ class MathematicalTransformationSpec extends UnitSpec {
       outputKnowledge shouldBe expectedOutputDKnowledge
       warnings shouldBe InferenceWarnings.empty
     }
+    "generate report" in {
+      val executionContext = mock[ExecutionContext]
+      val formula = "(2*x)+1"
+      val columName = "target column name"
+      val transformation = new MathematicalTransformation(formula, columName)
+      transformation.report(executionContext) shouldBe Report(ReportContent(
+        "Report for MathematicalTransformation",
+        tables = Map(
+          "Mathematical Formula" -> Table(
+            "Mathematical Formula",
+            "",
+            Some(List("Formula", "Column name")),
+            List(ColumnType.string, ColumnType.string),
+            None,
+            List(List(Some(formula), Some(columName)))
+          )
+        )
+      ))
+    }
   }
-
 }
