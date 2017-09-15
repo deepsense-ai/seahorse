@@ -16,6 +16,7 @@ object TestClusters extends Logging {
   def allAvailableClusters: Seq[ClusterDetails] = {
     val standalone = standaloneClusterPresetOpt()
     val mesos = mesosClusterPresetOpt()
+    val yarn = yarnClusterPresetOpt()
 
     if(standalone.isEmpty) {
       logger.warn(
@@ -31,8 +32,16 @@ object TestClusters extends Logging {
         """.stripMargin
       )
     }
+    if(yarn.isEmpty) {
+      logger.warn(
+        """YARN master ip is not provided.
+          |To run tests against YARN cluster set YARN_MASTER_IP env variable
+        """.stripMargin
+      )
+    }
 
     Seq(
+      yarn,
       mesos,
       standalone,
       Some(local)
@@ -75,4 +84,18 @@ object TestClusters extends Logging {
   private def mesosClusterMasterIpOpt() = sys.env.get(mesosStandaloneEnv)
   private val mesosStandaloneEnv = "MESOS_MASTER_IP"
 
+
+  private def yarnClusterPresetOpt() = for {
+    yarnClusterMasterIp <- yarnClusterMasterIpOpt()
+  } yield ClusterDetails(
+    name = "some-yarn" + UUID.randomUUID(),
+    id = None,
+    clusterType = ClusterType.yarn,
+    hadoopUser = Some("hdfs"),
+    uri = "/resources/data/hadoop",
+    userIP = HostAddressResolver.getHostAddress()
+  )
+
+  private def yarnClusterMasterIpOpt() = sys.env.get(yarnEnv)
+  private val yarnEnv = "YARN_MASTER_IP"
 }

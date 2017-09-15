@@ -74,7 +74,7 @@ trait SeahorseIntegrationTestDSL
   implicit val timeout: Timeout = httpTimeout
 
   implicit val patience = PatienceConfig(
-    timeout = Span(60, Seconds),
+    timeout = Span(120, Seconds),
     interval = Span(10, Seconds)
   )
 

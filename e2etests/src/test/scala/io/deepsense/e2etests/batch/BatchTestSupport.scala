@@ -42,7 +42,7 @@ trait BatchTestSupport
       outputDirectory: File): String = {
 
     val envSettings = getEnvSettings(cluster)
-    val specialFlags = getSpecialFlags(cluster)
+    val specialFlags = getSpecialFlags(cluster, additionalJars)
     val masterString = getMasterUri(cluster)
     val additionalClusterOptions: Seq[String] = cluster.executorMemory.toSeq.flatMap {
       memory => Seq("--executor-memory", memory)
@@ -52,15 +52,30 @@ trait BatchTestSupport
       case(k, v) => s"export $k=$v"
     }.toSeq.mkString(" && ")
 
+    val files = {
+      Seq(workflowPath.toString) ++ {
+        if (cluster.clusterType == ClusterType.yarn) {
+          // In YARN --jars only will only affect classpath - it won't cause jars to be uploaded.
+          // To actually deliver jar file onto cluster you need to additionally include it with --files
+          additionalJars.map(_.toString)
+        } else {
+          Seq.empty
+        }
+      }
+    }.asCsvForShellCommand
+
     val submitCommandFlat = (
       Seq(
         sparkSubmitPath,
         "--driver-class-path", weJarPath,
         "--class", "io.deepsense.workflowexecutor.WorkflowExecutorApp",
         "--master", masterString,
-        "--files", workflowPath) ++ additionalClusterOptions ++ Seq(
+        "--files", files
+      )
+      ++ additionalClusterOptions
+      ++ Seq(
         if (additionalJars.nonEmpty) {
-          "--jars " + additionalJars.map(_.toString).mkString("\"", ",", "\"")
+          "--jars " + additionalJars.asCsvForShellCommand
         } else {
           /*
              We cannot pass a --jars <empty string> option because it would later get translated into a real path,
@@ -72,16 +87,21 @@ trait BatchTestSupport
            */
           ""
         }
-      ).filterNot(_.toString.isEmpty) ++
-        specialFlags ++
-        Seq(
+      ).filterNot(_.toString.isEmpty)
+      ++ specialFlags
+      ++ Seq(
           weJarPath,
           "--workflow-filename", workflowPath,
           "--output-directory", outputDirectory,
           "--custom-code-executors-path", weJarPath
         )
       ).mkString(" ")
-    exportsCommandFlat + " && " + submitCommandFlat
+
+    if (exportsCommandFlat == "") {
+      submitCommandFlat
+    } else {
+      exportsCommandFlat + " && " + submitCommandFlat
+    }
   }
 
   def assertSuccessfulExecution(resultFile: File): Unit = {
@@ -108,30 +128,27 @@ trait BatchTestSupport
   }
 
   // assuming SPARK_HOME is set
-  private def getEnvSettings(cluster: ClusterDetails): Map[String, String] = {
-    val commonSettings = Map(
-      "PYTHONPATH" -> "$SPARK_HOME/python:$PYTHONPATH"
-    )
-    cluster.clusterType match {
-      case ClusterType.local => commonSettings
-      case ClusterType.standalone => commonSettings
-      case ClusterType.mesos => commonSettings +
-        ("LIBPROCESS_ADVERTISE_IP" -> cluster.userIP, "LIBPROCESS_IP" -> cluster.userIP)
-      case ClusterType.yarn => commonSettings + ("HADOOP_CONF_DIR" -> cluster.uri)
-    }
+  private def getEnvSettings(cluster: ClusterDetails): Map[String, String] = cluster.clusterType match {
+    case ClusterType.local => Map()
+    case ClusterType.standalone => Map()
+    case ClusterType.mesos => Map("LIBPROCESS_ADVERTISE_IP" -> cluster.userIP, "LIBPROCESS_IP" -> cluster.userIP)
+    case ClusterType.yarn => Map("HADOOP_CONF_DIR" -> cluster.uri, "HADOOP_USER_NAME" -> "hdfs")
   }
 
-  private def getSpecialFlags(cluster: ClusterDetails): Seq[String] = {
+  private def getSpecialFlags(cluster: ClusterDetails, additionalJars: Seq[URL]): Seq[String] = {
     cluster.clusterType match {
       case ClusterType.local => Seq()
       case ClusterType.standalone => Seq()
-      case ClusterType.mesos =>
-        Seq("--deploy-mode", "client",
-          "--supervise",
-          "--conf",
-          mesosSparkExecutorConf
-        )
-      case ClusterType.yarn => Seq("--deploy-mode", "client")
+      case ClusterType.mesos => Seq(
+        "--deploy-mode", "client",
+        "--supervise",
+        "--conf",
+        mesosSparkExecutorConf
+      )
+      case ClusterType.yarn => Seq(
+        "--deploy-mode", "client",
+        "--conf", "spark.yarn.dist.archives=$SPARK_HOME/R/lib/sparkr.zip#sparkr"
+      )
     }
   }
 
@@ -141,6 +158,10 @@ trait BatchTestSupport
       case ClusterType.yarn => "yarn"
       case _ => cluster.uri
     }
+  }
+
+  private implicit class SeqOpts[T](val seq: Seq[T]) {
+    def asCsvForShellCommand = seq.mkString("\"", ",", "\"")
   }
 
 }
