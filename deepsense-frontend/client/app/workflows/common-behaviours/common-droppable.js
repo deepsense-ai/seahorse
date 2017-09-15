@@ -21,11 +21,11 @@ function Droppable($log, DragAndDrop) {
       element.on('drop', drop);
       element.on('dragover', (event) => {
         event.dataTransfer.effectAllowed = 'copy';
+        event.dataTransfer.dropEffect = 'copy';
         event.preventDefault();
         return false;
       });
       element.on('dragenter', event => {
-        event.dataTransfer.dropEffect = 'copy';
         event.preventDefault();
         return false;
       });

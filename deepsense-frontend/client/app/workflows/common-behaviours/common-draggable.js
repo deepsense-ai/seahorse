@@ -54,7 +54,6 @@ function Draggable($rootScope, $log, DragAndDrop) {
 
       function dragend(event) {
         if (isTargetCorrect(event.target)) {
-          event.dataTransfer.setData('draggableType', attrs.draggableType);
 
           $rootScope.$broadcast('Drag.END', event, element);
 

@@ -1,10 +1,9 @@
 'use strict';
 
 let angular = require('angular');
-let browser = require('bowser');
-let version = parseInt(browser.version.substring(0, 2), 10);
+let browserValidator = require('./browser.validator.js');
 
-if (browser.chrome && version >= 40) {
+if (browserValidator.isBrowserSupported()) {
   let lab = angular.module('ds.lab', [
     'ui.router',
     'ui.bootstrap',
@@ -33,8 +32,6 @@ if (browser.chrome && version >= 40) {
   require('./UserService.js').inject(lab);
   require('./app.run.js').inject(lab);
 } else {
-  document.body.innerHTML =
-    '<div class="alert alert-danger no-support-message" role="alert">' +
-    'We\'re sorry, Seahorse doesn\'t support your browser yet.<br/>' +
-    'We\'re working on it, please use Google Chrome 40.0+ in the meantime.</div>';
+  document.body.innerHTML = browserValidator.getErrorMessageHTML();
+  angular.module('ds.lab', []); //so config is not throwing exceptions that ds.lab is not available
 }
