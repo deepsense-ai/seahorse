@@ -1,0 +1,7 @@
+- set_fact: wm_artifact_path="deepsense-backend-release/io/deepsense/deepsense-workflowmanager/{{wm_build_version}}/deepsense-workflowmanager-{{wm_build_version}}.zip"
+
+- set_fact: wm_artifact_path="deepsense-backend-snapshot/io/deepsense/deepsense-workflowmanager/{{wm_build_version}}/{{wm_build_version}}.zip"
+  when: wm_build_version | search('.*latest')
+
+- set_fact: wm_artifact_path="deepsense-backend-snapshot/io/deepsense/deepsense-workflowmanager/{{wm_build_version|regex_replace('^(.+)-SNAPSHOT-.*$','\\1-SNAPSHOT')}}/{{wm_build_version}}/deepsense-workflowmanager-{{wm_build_version}}.zip"
+  when: wm_build_version | search("SNAPSHOT")

@@ -53,7 +53,7 @@
 
     - name: Remove previous container
       command: docker rm -f {{ds_documentation_docker_image}}
-      when: docker_containers.stdout.find(' {{ds_documentation_docker_image}} ') != -1
+      when: docker_containers.stdout.find('{{ds_documentation_docker_image}}') != -1
 
     - name: Run frontend container
       docker:

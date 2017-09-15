@@ -1,0 +1,32 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+---
+- name: Create install directory
+  file: path="{{install_dir}}" state=directory mode=0755 owner=ubuntu
+
+- name: Extract zip package
+  unarchive: src="{{download_dir}}/{{pyexecutor_artifact_id}}.zip" dest="{{install_dir}}"
+
+- name: Copy WorkflowExecutor jar file
+  copy: src={{download_dir}}/{{workflowexecutor_artifact_id}}.jar dest={{install_dir}}
+
+- { include: ../../supervisedprogram/tasks/main.yaml,
+    program: {
+      name: 'WorkflowExecutor',
+      environment: 'SPARK_HOME="{{spark_install_dir}}/spark", PYTHONPATH="{{spark_install_dir}}/spark/python:{{spark_install_dir}}/spark/python/build:$PYTHONPATH"',
+      command: '{{spark_install_dir}}/spark/bin/spark-submit --class io.deepsense.workflowexecutor.WorkflowExecutorApp --master local[8] --driver-class-path {{workflowexecutor_artifact_id}}.jar {{workflowexecutor_artifact_id}}.jar -m localhost -p python/pyexecutor/pyexecutor.py',
+      directory: "{{install_dir}}",
+      autostart: true,
+      autorestart: true,
+      startretries: 3,
+      stdout_logfile: "{{install_dir}}/std.out",
+      stdout_logfile_maxbytes: 0,
+      stderr_logfile: "{{install_dir}}/std.err",
+      stderr_logfile_maxbytes: 0,
+      user: ubuntu,
+    }
+  }
+
+- name: Force supervisor restart
+  command: /bin/true
+  notify: restart supervisor

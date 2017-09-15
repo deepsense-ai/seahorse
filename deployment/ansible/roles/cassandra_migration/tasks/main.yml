@@ -12,5 +12,5 @@
   register: cql_files
 
 - name: Execute all cql files
-  command: "docker run -v {{cql_dir}}/{{module}}:{{cql_dir}}/{{module}} -it --link cassandra:cassandra --rm cassandra cqlsh cassandra -f {{item}}"
+  command: "docker run -v {{cql_dir}}/{{module}}:{{cql_dir}}/{{module}} -it --link cassandra:cassandra --rm cassandra:{{cassandra_image_version|default('latest')}} cqlsh cassandra -f {{item}}"
   with_items: "{{cql_files.stdout_lines}}"

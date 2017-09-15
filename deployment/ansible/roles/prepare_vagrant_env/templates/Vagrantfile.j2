@@ -1,0 +1,55 @@
+Vagrant.configure(2) do |config|
+  config.vm.define "deepsense-vm" do |deepsensevm|
+    deepsensevm.vm.box = "ubuntu/trusty64"
+    deepsensevm.vm.hostname = "{{vagrant_box_name}}"
+    deepsensevm.vm.boot_timeout = 600
+    #editor:
+    deepsensevm.vm.network "forwarded_port", guest: 8000, host: 8000, host_ip: "127.0.0.1"
+    #WM:
+    deepsensevm.vm.network "forwarded_port", guest: 9080, host: 9080, host_ip: "127.0.0.1"
+    #Spark Master UI:
+    deepsensevm.vm.network "forwarded_port", guest: 8080, host: 8080, host_ip: "127.0.0.1"
+    #RabbitMQ Web-STOMP:
+    deepsensevm.vm.network "forwarded_port", guest: 15674, host: 15674, host_ip: "127.0.0.1"
+    #RabbitMQ STOMP:
+    deepsensevm.vm.network "forwarded_port", guest: 61613, host: 61613, host_ip: "127.0.0.1"
+    #RabbitMQ Management:
+    deepsensevm.vm.network "forwarded_port", guest: 15672, host: 15672, host_ip: "127.0.0.1"
+    #Notebook server:
+    deepsensevm.vm.network "forwarded_port", guest: 8888, host: 8888, host_ip: "127.0.0.1"
+    deepsensevm.vm.provision "ansible" do |ansible|
+      ansible.playbook = "../vagrant_provisioner.yaml"
+      ansible.sudo = true
+      ansible.extra_vars = {
+        ansible_ssh_user: 'vagrant',
+        wm_build_version: "{{vagrant_wm_build_version}}",
+        wm_version: "{{vagrant_wm_version}}",
+        ds_wm_public_address: "http://127.0.0.1",
+        ds_wm_public_port: 9080,
+        notebook_public_address: "http://127.0.0.1:8888",
+        queue_public_address: "http://127.0.0.1:15674/",
+        ds_frontend_package_name: "{{vagrant_ds_frontend_package_name}}",
+        api_version: "{{vagrant_api_version}}",
+        ds_editor_ip: "0.0.0.0",
+        ds_editor_port: 8000,
+        ds_wm_ip: "0.0.0.0",
+        ds_wm_port: 9080,
+        rabbitmq_server_ip: "0.0.0.0",
+        workflowexecutor_build_version: "{{vagrant_workflowexecutor_build_version}}",
+        pyexecutor_build_version: "{{vagrant_pyexecutor_build_version}}",
+      }
+      ansible.verbose = "vv"
+      ansible.groups = {
+        "master" => ["deepsense-vm"],
+        "frontend" => ["deepsense-vm"],
+        "cassandra" => ["deepsense-vm"],
+        "java_hosts" => ["deepsense-vm"],
+      }
+    end
+  end
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = "4096"
+    vb.cpus = 4
+    vb.name = "deepsense-vm"
+  end
+end

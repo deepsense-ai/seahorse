@@ -3,7 +3,7 @@
 - name: Run Cassandra container
   docker:
     name: cassandra
-    image: cassandra
+    image: cassandra:{{cassandra_image_version}}
     state: started
     restart_policy: always
     volumes:

@@ -3,8 +3,8 @@
 - name: "Pull \"{{docker_image}}\" Docker image"
   docker:
     name: "{{docker_image}}"
-    image: "{{docker_image}}"
+    image: "{{docker_image}}:{{image_version|default('latest')}}"
     state: present
 
 - name: "Export \"{{docker_image}}\" Docker container"
-  shell: "docker export {{docker_image}} | gzip -c > {{download_dir}}/{{docker_image}}-docker.tgz"
+  shell: "docker save {{docker_image}} | gzip -c > {{download_dir}}/{{docker_image}}-docker.tgz"

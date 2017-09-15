@@ -1,0 +1,33 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+---
+- name: Download WorkflowExecutor packages
+  hosts: localhost
+  vars_files:
+    - vars/env.yml
+    - vars/deployment.yml
+    - vars/artifacts.yml
+    - vars/supervisor.yml
+  tasks:
+    - include: tasks/create_download_dir.yml
+    - include: tasks/artifactory_get.yml artifact_path={{workflowexecutor_artifact_path}} artifactid={{workflowexecutor_artifact_id}} artifacttype=jar
+    - include: tasks/artifactory_get.yml artifact_path={{pyexecutor_artifact_path}} artifactid={{pyexecutor_artifact_id}}
+    - include: tasks/download_supervisor.yml
+
+- name: Set up WorkflowExecutor application
+  hosts: master
+  user: ubuntu
+  sudo: yes
+  vars_files:
+    - vars/deployment.yml
+    - vars/artifacts.yml
+    - vars/env.yml
+    - vars/main.yml
+    - vars/docker.yml
+    - vars/supervisor.yml
+    - vars/install_spark.yml
+  roles:
+    - supervisor
+    - { role: workflowexecutor,
+        install_dir: "{{workflowexecutor_install_dir}}",
+      }

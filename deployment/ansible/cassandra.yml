@@ -7,7 +7,7 @@
     - vars/artifacts.yml
   tasks:
     - include: tasks/create_download_dir.yml
-    - include: tasks/export_docker_container.yml docker_image=cassandra
+    - include: tasks/export_docker_container.yml docker_image=cassandra image_version=2.2
 
 - name: Copies Cassandra image
   hosts: cassandra

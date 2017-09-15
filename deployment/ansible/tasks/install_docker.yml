@@ -1,0 +1,19 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+- name: "Install docker repository key"
+  apt_key: keyserver=hkp://p80.pool.sks-keyservers.net:80 id=58118E89F3A912897C070ADBF76221572C52609D
+
+- name: "Install docker repository"
+  apt_repository: repo='deb https://apt.dockerproject.org/repo ubuntu-trusty main'
+
+- name: "Install docker"
+  apt: package=docker-engine
+
+- name: "Start docker daemon"
+  service: name=docker state=started
+
+- name: "Install pip"
+  apt: package=python-pip
+
+- name: "Install docker-py"
+  pip: name=docker-py version=1.2.3

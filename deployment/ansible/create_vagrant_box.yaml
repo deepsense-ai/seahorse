@@ -1,0 +1,22 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+---
+- name: Create Vagrant environment
+  hosts: localhost
+  vars_files:
+    - vars/env.yml
+  roles:
+    - prepare_vagrant_env
+
+- name: Create Vagrant box file
+  hosts: localhost
+  vars_files:
+    - vars/env.yml
+  tasks:
+    - name: Remove old VM
+      shell: vagrant destroy -f {{vagrant_box_name}} &>destroy.log chdir=vagrant executable=/bin/bash
+    - name: Create and provision VM
+      shell: vagrant up {{vagrant_box_name}} &>install.log chdir=vagrant executable=/bin/bash
+    - name: Export provisioned VM to image file
+      shell: vagrant package --output deepsense-vm.box &>package.log chdir=vagrant executable=/bin/bash
+

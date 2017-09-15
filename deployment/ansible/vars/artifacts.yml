@@ -6,3 +6,11 @@ wm_build_version: latest
 
 frontend_artifact_id: deepsense-frontend
 frontend_version: latest
+
+workflowexecutor_artifact_id: deepsense-workflowexecutor
+workflowexecutor_version: latest
+workflowexecutor_build_version: 1.0.0-SNAPSHOT
+
+pyexecutor_artifact_id: deepsense-pyexecutor
+pyexecutor_version: latest
+pyexecutor_build_version: "{{workflowexecutor_build_version}}"

@@ -1,0 +1,37 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+- name: Unpack spark package
+  unarchive: src=/tmp/{{spark_package_filename}} dest={{spark_install_dir}} creates={{spark_dir}}
+
+- name: Create spark logs dir
+  file: path=/vagrant/spark/logs state=directory owner={{spark_user}}
+
+- name: Create spark work dir
+  file: path=/vagrant/spark/work state=directory owner={{spark_user}}
+
+- name: Remove logs dir
+  file: path={{spark_dir}}/logs state=absent force=yes
+
+- name: Remove work dir
+  file: path={{spark_dir}}/work state=absent force=yes
+
+- name: Create link to logs dir
+  file: src=/vagrant/spark/logs dest={{spark_dir}}/logs state=link
+
+- name: Create link to work dir
+  file: src=/vagrant/spark/work dest={{spark_dir}}/work state=link
+
+- name: Create spark link
+  file: src={{spark_dir}} dest={{spark_install_dir}}/spark state=link
+
+- name: Create prepare_spark_dirs.sh.j2 file
+  template: src=prepare_spark_dirs.sh.j2 dest={{spark_install_dir}}/prepare_spark_dirs.sh mode=755
+
+- name: Add prepare_spark_dirs.sh.j2 to rc.local file
+  lineinfile: dest=/etc/rc.local insertbefore="exit 0" line="{{spark_install_dir}}/prepare_spark_dirs.sh"
+
+- name: Create spark-env.sh file
+  template: src=spark-env.sh.j2 dest={{spark_dir}}/conf/spark-env.sh mode=755
+
+- name: Run prepare_spark_dirs.sh file
+  shell: "{{spark_install_dir}}/prepare_spark_dirs.sh"

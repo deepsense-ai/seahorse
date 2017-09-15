@@ -1,0 +1,37 @@
+
+- hosts: deepsense-vm
+  gather_facts: false
+  tasks:
+    - include: tasks/install_docker.yml
+    - include: tasks/install_openjdk.yml
+    - shell: usermod -a -G vagrant ubuntu
+
+- include: cassandra.yml
+
+- hosts: localhost
+  gather_facts: false
+  vars_files:
+    - vars/deployment.yml
+  tasks:
+    - include: tasks/get_frontend_artifact_path.yml
+    - include: tasks/get_wm_artifact_path.yml
+    - include: tasks/get_workflowexecutor_artifact_path.yml
+    - pause: seconds=30 prompt="Waiting for Cassandra server start-up..."
+
+- include: cassandra_migration.yml
+- include: workflowmanager.yaml
+- include: frontend.yml
+- include: rabbitmq.yml
+- include: install_spark.yml
+- include: workflowexecutor.yaml
+- include: notebook.yml
+
+- hosts: deepsense-vm
+  gather_facts: false
+  vars_files:
+    - vars/deployment.yml
+    - vars/notebook.yml
+  tasks:
+    - template: src=vagrant/image_cleanup.sh.j2 dest=/root/image_cleanup.sh mode=755
+    - shell: /root/image_cleanup.sh
+    - file: path=/root/image_cleanup.sh state=absent

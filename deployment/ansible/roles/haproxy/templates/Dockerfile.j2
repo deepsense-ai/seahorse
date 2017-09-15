@@ -3,7 +3,10 @@
 FROM haproxy
 
 COPY haproxy.cfg /usr/local/etc/haproxy/haproxy.cfg
+RUN cp /usr/share/zoneinfo/Europe/Warsaw /etc/localtime
+{% if production_env %}
 COPY deepsense.io.pem usr/local/etc/haproxy/deepsense.io.pem
 COPY editor.seahorse.deepsense.io.pem usr/local/etc/haproxy/editor.seahorse.deepsense.io.pem
-RUN cp /usr/share/zoneinfo/Europe/Warsaw /etc/localtime
-EXPOSE 80 443 8000 {{ds_wm_public_port}}
+EXPOSE 443 8000
+{% endif %}
+EXPOSE 80

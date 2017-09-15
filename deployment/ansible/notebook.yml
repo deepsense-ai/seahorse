@@ -1,0 +1,45 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+---
+- name: Download miniconda installer and supervisor
+  hosts: localhost
+  vars_files:
+    - vars/notebook.yml
+    - vars/env.yml
+    - vars/deployment.yml
+    - vars/artifacts.yml
+    - vars/supervisor.yml
+  tasks:
+    - include: tasks/create_download_dir.yml
+    - include: tasks/download_supervisor.yml
+    - get_url: url={{miniconda_url}} dest={{download_dir}}/{{miniconda_filename}}
+
+- name: Copy miniconda installer
+  hosts: frontend
+  vars_files:
+    - vars/notebook.yml
+    - vars/deployment.yml
+  tasks:
+    - copy: src={{download_dir}}/{{miniconda_filename}} dest=/tmp/{{miniconda_filename}} mode=755
+
+- name: Install notebook
+  hosts: frontend
+  user: ubuntu
+  sudo: yes
+  vars_files:
+    - vars/env.yml
+    - vars/notebook.yml
+    - vars/deployment.yml
+    - vars/install_spark.yml
+    - vars/supervisor.yml
+  roles:
+    - supervisor
+    - notebook
+
+- name: Remove miniconda installer
+  hosts: frontend
+  vars_files:
+    - vars/notebook.yml
+    - vars/deployment.yml
+  tasks:
+    - file: path=/tmp/{{miniconda_filename}} state=absent

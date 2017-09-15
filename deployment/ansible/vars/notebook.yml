@@ -1,0 +1,6 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+miniconda_url: https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh
+miniconda_filename: Miniconda-latest-Linux-x86_64.sh
+conda_dir: /opt/conda
+jupyter_workdir: /deepsense/jupyter

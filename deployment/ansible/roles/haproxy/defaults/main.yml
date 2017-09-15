@@ -16,3 +16,4 @@ static_ip_block_period_in_seconds: 60
 wm_allowed_http_req_rate_per_second_per_ip: 50
 wm_ip_block_period_in_seconds: 60
 syslog_server_ip: "{{docker_ip}}"
+production_env: true

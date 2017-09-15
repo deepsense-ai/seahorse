@@ -66,7 +66,7 @@
 
     - name: Remove previous container
       command: docker rm -f {{ds_wm_docker_image}}
-      when: docker_containers.stdout.find(' {{ds_wm_docker_image}} ') != -1
+      when: docker_containers.stdout.find('{{ds_wm_docker_image}}') != -1
 
     - name: Run WorkflowManager container
       docker:

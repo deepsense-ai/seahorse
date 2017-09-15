@@ -1,0 +1,20 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+---
+- name: Download spark package
+  hosts: localhost
+  vars_files:
+    - vars/env.yml
+    - vars/install_spark.yml
+  tasks:
+    - get_url: url=http://d3kbcqa49mib13.cloudfront.net/{{spark_package_filename}} dest=/tmp/{{spark_package_filename}}
+
+- name: Install Spark
+  hosts: frontend
+  user: ubuntu
+  sudo: yes
+  vars_files:
+    - vars/env.yml
+    - vars/install_spark.yml
+  roles:
+    - install_spark

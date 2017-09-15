@@ -54,8 +54,8 @@
       command: docker ps -a
 
     - name: Remove previous container
-      command: docker rm -f ds-frontend
-      when: docker_containers.stdout.find(' ds-frontend ') != -1
+      command: docker rm -f {{ds_frontend_docker_image}}
+      when: docker_containers.stdout.find("{{ds_frontend_docker_image}}") != -1
 
     - name: Run frontend container
       docker:
@@ -70,3 +70,5 @@
           PUBLIC_WM_PORT: "{{ds_wm_public_port}}"
           PUBLIC_DOCS_ADDRESS: "{{ds_documentation_public_address}}"
           API_VERSION: "{{api_version}}"
+          NOTEBOOK_ADDRESS: "{{notebook_public_address}}"
+          QUEUE_ADDRESS: "{{queue_public_address}}"
