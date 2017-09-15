@@ -2,135 +2,20 @@
   "executionReport": {
     "nodes": {
       "c9a629a2-6716-5ae8-9c0c-6e2afcfa2dba": {
-        "status": "FAILED", 
-        "results": null, 
-        "error": {
-          "code": "NodeFailure"
-        }
+        "status": "ABORTED", 
+        "results": [], 
+        "error": null
       }, 
       "b2367b9d-3c7d-4db8-c5b4-40b99be2d8ea": {
-        "status": "COMPLETED", 
-        "results": [
-          "2bce43a2-6135-45f5-a890-6ba797ecb0a8"
-        ], 
+        "status": "ABORTED", 
+        "results": [], 
         "error": null
       }
     }, 
-    "resultEntities": {
-      "2bce43a2-6135-45f5-a890-6ba797ecb0a8": {
-        "report": {
-          "tables": [
-            {
-              "columnNames": [
-                "col_a", 
-                "col_b", 
-                "col_c"
-              ], 
-              "columnTypes": [
-                "string", 
-                "numeric", 
-                "string"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "red", 
-                  "-2.5", 
-                  "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
-                ], 
-                [
-                  "blue", 
-                  "-2.25", 
-                  "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
-                ], 
-                [
-                  "red", 
-                  "-2", 
-                  "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
-                ], 
-                [
-                  "blue", 
-                  "-1.75", 
-                  "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
-                ], 
-                [
-                  "red", 
-                  "-1.5", 
-                  "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
-                ], 
-                [
-                  "blue", 
-                  "-1.25", 
-                  "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
-                ], 
-                [
-                  "red", 
-                  "-1", 
-                  "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
-                ], 
-                [
-                  "blue", 
-                  "-0.75", 
-                  "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
-                ], 
-                [
-                  "red", 
-                  "-0.5", 
-                  "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
-                ], 
-                [
-                  "blue", 
-                  "-0.25", 
-                  "za\u017c\u00f3\u0142\u0107 g\u0119\u015bl\u0105 ja\u017a\u0144"
-                ]
-              ], 
-              "name": "Data Sample"
-            }, 
-            {
-              "columnNames": [
-                "Number of columns", 
-                "Number of rows"
-              ], 
-              "columnTypes": [
-                "numeric", 
-                "numeric"
-              ], 
-              "rowNames": null, 
-              "values": [
-                [
-                  "3", 
-                  "50"
-                ]
-              ], 
-              "name": "DataFrame Size"
-            }
-          ], 
-          "distributions": {
-            "col_b": {
-              "subtype": "continuous", 
-              "statistics": {
-                "max": "9.75", 
-                "mean": "3.625", 
-                "min": "-2.5"
-              }, 
-              "name": "col_b", 
-              "missingValues": 0
-            }, 
-            "col_c": {
-              "subtype": "discrete", 
-              "name": "col_c", 
-              "missingValues": 0
-            }, 
-            "col_a": {
-              "subtype": "discrete", 
-              "name": "col_a", 
-              "missingValues": 0
-            }
-          }, 
-          "reportType": "DataFrameFull"
-        }
-      }
-    }, 
-    "error": null
+    "resultEntities": {}, 
+    "error": {
+      "code": "IncorrectWorkflow", 
+      "title": "Incorrect workflow"
+    }
   }
 }
