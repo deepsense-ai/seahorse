@@ -1,6 +1,6 @@
 entryPointId <- "0"
 
-.libPaths(c(file.path("/opt/spark-1.6.1/R/lib/"), .libPaths()))
+.libPaths(c(file.path("/opt/spark-2.0.0/R/lib/"), .libPaths()))
 library(SparkR)
 
 SparkR:::connectBackend(r_backend_host, r_backend_port)

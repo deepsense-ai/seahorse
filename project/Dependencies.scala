@@ -15,10 +15,10 @@ object Version {
   val scalatra = "2.4.0"
   val scoverage = "1.0.4"
   val slick = "3.1.1"
-  val spark = "1.6.1"
+  val spark = "2.0.0"
   val spray = "1.3.3"
   val sprayJson = "1.3.1"
-  val seahorse = "1.2.0-DESKTOP-SNAPSHOT"
+  val seahorse = "1.2.0-DESKTOP-SNAPSHOT-NEWSPARK"
   val wiremock = "1.57"
   val flyway = "4.0"
 }
@@ -102,7 +102,8 @@ object Dependencies {
     val components = Seq(
       sparkCore,
       sparkMLLib)
-    val provided = components.map(_ % Provided)
+    // val provided = components.map(_ % Provided)
+    val provided = components
     val test = components.map(_ % s"$Test,it")
     val onlyInTests = provided ++ test
   }

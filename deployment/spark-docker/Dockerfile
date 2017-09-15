@@ -18,7 +18,7 @@ RUN ssh-keygen -q -N "" -t rsa -f /root/.ssh/id_rsa
 RUN cp /root/.ssh/id_rsa.pub /root/.ssh/authorized_keys
 
 # Install Spark
-ENV SPARK_VERSION 1.6.1
+ENV SPARK_VERSION 2.0.0
 ENV SPARK_PACKAGE spark-$SPARK_VERSION-bin-hadoop2.6
 ENV SPARK_HOME /opt/spark-$SPARK_VERSION
 ENV PATH $PATH:$SPARK_HOME/bin
@@ -28,7 +28,7 @@ RUN wget -q -O - \
   | tar x -C /tmp/ \
   && mv /tmp/$SPARK_PACKAGE $SPARK_HOME \
   && rm -rf $SPARK_HOME/examples $SPARK_HOME/ec2 \
-  && rm -rf $SPARK_HOME/lib/spark-examples-1.6.1-hadoop2.6.0.jar
+  && rm -rf $SPARK_HOME/lib/spark-examples-2.0.0-hadoop2.6.0.jar
 
 # Install conda
 RUN wget -q -O /tmp/Miniconda2-latest-Linux-x86_64.sh \

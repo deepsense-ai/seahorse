@@ -1,6 +1,6 @@
 # Copyright (c) 2016, CodiLime Inc.
 
-FROM quay.io/deepsense_io/deepsense-spark:1.6.1
+FROM quay.io/deepsense_io/deepsense-spark:2.0.0
 
 ENV MESOS_VERSION 1.0.0
 ENV MESOS_ARTIFACT_FILENAME mesos-${MESOS_VERSION}.tar.gz
