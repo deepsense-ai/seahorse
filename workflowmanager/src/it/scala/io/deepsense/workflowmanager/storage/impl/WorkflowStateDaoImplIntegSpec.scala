@@ -34,34 +34,34 @@ class WorkflowStateDaoImplIntegSpec
 
   private def aDate: DateTime = DateTimeConverter.now
 
-  val draftNoReports = (Node.Id.randomId, NodeState(nodestate.Draft(), None))
-  val draftWithReports =
+  private val draftNoReports = (Node.Id.randomId, NodeState(nodestate.Draft(), None))
+  private val draftWithReports =
     (Node.Id.randomId, NodeState(nodestate.Draft(), Some(EntitiesMap())))
-  val completedNoReports = (Node.Id.randomId, NodeState(
+  private val completedNoReports = (Node.Id.randomId, NodeState(
       nodestate.Completed(aDate, aDate, Seq()), None))
-  val completedWithReports = (Node.Id.randomId, NodeState(
+  private val completedWithReports = (Node.Id.randomId, NodeState(
     nodestate.Completed(aDate, aDate, Seq()), Some(EntitiesMap())))
 
   val workflowState1@(workflowId1, state1) = createState(draftNoReports, completedNoReports)
   val workflowState2@(workflowId2, state2) = createState(completedNoReports, draftWithReports)
   val workflowState3@(workflowId3, state3) = createState(completedWithReports, draftWithReports)
 
-  val expectedState1 = draftStates(state1)
-  val expectedState2 = draftStates(state2)
+  private val expectedState1 = draftStates(state1)
 
   private def createState(
       nodes: (Node.Id, NodeState)*): (Workflow.Id, Map[Node.Id, NodeState]) =
     (Workflow.Id.randomId, nodes.toMap)
 
-  private def draftStates(states: Map[Workflow.Id, NodeState]): Map[Workflow.Id, NodeState] = {
+  private def draftStates(states: Map[Node.Id, NodeState]): Map[Node.Id, NodeState] = {
     states.map {
-      case (workflowId, nodeState) =>
-        (workflowId, nodeState.draft)
+      case (nodeId, nodeState) =>
+        (nodeId, nodeState.draft)
     }
   }
 
   "WorkflowStateDao" should {
     "retrieve stored state" in withStored(workflowState1, workflowState2) {
+      logger.debug(s"Getting state of workflow $workflowId1")
       whenReady(workflowStateDao.get(workflowId1)) { state =>
         state shouldBe expectedState1
       }
@@ -115,17 +115,18 @@ class WorkflowStateDaoImplIntegSpec
       storedStates: (Workflow.Id, Map[Node.Id, NodeState])*)(
       testCode: => Any): Unit = {
 
-    Await.ready(workflowStateDao.create(), operationDuration)
+    Await.ready(workflowStateDao.create().map(_ => logger.debug(s"DAO created")), operationDuration)
 
     val s = Future.sequence(storedStates.map {
       case (id, state) => workflowStateDao.save(id, state)
+        .map(_ => logger.debug(s"Saved: workflowId: $id, state: $state"))
     })
-    Await.ready(s, operationDuration)
+    Await.ready(s.map(_ => logger.debug(s"States saved, executing code.")), operationDuration)
 
     try {
       testCode
     } finally {
-      Await.ready(workflowStateDao.drop(), operationDuration)
+      Await.ready(workflowStateDao.drop().map(_ => logger.debug(s"DAO dropped")), operationDuration)
     }
   }
 }
