@@ -255,7 +255,7 @@ class KnowledgeInferenceSpec
       if (inferenceShouldThrow) {
         throw inferenceError
       }
-      (DKnowledge(A1()), InferenceWarnings(warning))
+      (k0, InferenceWarnings(warning))
     }
 
     override lazy val tTagTI_0: ru.TypeTag[A1] = ru.typeTag[A1]

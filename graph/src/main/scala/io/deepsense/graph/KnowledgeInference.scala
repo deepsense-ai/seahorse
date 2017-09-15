@@ -118,31 +118,38 @@ trait KnowledgeInference {
       case Some(predecessor) =>
         val outPortIndex = getSuccessorPort(predecessor.nodeId, Endpoint(node.id, portIndex)).get
         val predecessorKnowledge = graphKnowledge.getKnowledge(predecessor.nodeId)(outPortIndex)
-        inputKnowledgeAndAccordanceForInputPort(predecessorKnowledge, portIndex, inPortType)
+        inputKnowledgeAndAccordanceForInputPort(
+          context,
+          predecessorKnowledge,
+          portIndex,
+          inPortType)
     }
   }
 
   /**
    * @return Input knowledge to be provided for the given input port
    *         and type accordance for edge incoming to this port.
+   *         If some (but not all) types matches input port type accordance, only matching types are
+   *         placed in that port.
+   *         If no types matches port, default knowledge is placed in this port.
    * @param predecessorKnowledge Inferred knowledge incoming to port.
    * @param portIndex Index of input port.
    * @param inPortType Type of input port.
    */
   private def inputKnowledgeAndAccordanceForInputPort(
+      context: InferContext,
       predecessorKnowledge: DKnowledge[DOperable],
       portIndex: Int,
       inPortType: ru.TypeTag[DOperable]): (DKnowledge[DOperable], TypesAccordance) = {
     val filteredTypes = predecessorKnowledge.filterTypes(inPortType.tpe)
     val filteredSize = filteredTypes.size
-    val accordance = if (filteredSize == predecessorKnowledge.size) {
-      TypesAccordance.All()
+    if (filteredSize == predecessorKnowledge.size) {
+      (filteredTypes, TypesAccordance.All())
     } else if (filteredSize == 0) {
-      TypesAccordance.None(portIndex)
+      (defaultKnowledge(context, inPortType), TypesAccordance.None(portIndex))
     } else {
-      TypesAccordance.Some(portIndex)
+      (filteredTypes, TypesAccordance.Some(portIndex))
     }
-    (filteredTypes, accordance)
   }
 
   /**
