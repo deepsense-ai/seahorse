@@ -120,7 +120,7 @@ trait SeahorseIntegrationTestDSL
 
   protected def runAndCleanupWorkflow(workflow: WorkflowInfo, cluster: ClusterDetails): Future[Unit] = {
     for {
-      _ <- launchWorkflow(TestClusters.local(), workflow)
+      _ <- launchWorkflow(cluster, workflow)
       validation = assertAllNodesCompletedSuccessfully(workflow)
       _ <- cleanSession(workflow)
     } yield {
