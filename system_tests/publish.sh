@@ -72,5 +72,7 @@ function publish() {
    "$ARTIFACTORY_URL/$1"
 }
 
-publish "system_tests-$SYSTEM_TESTS_TARGET-$ARTIFACT_VERSION.zip"
-publish "system_tests-$SYSTEM_TESTS_TARGET-latest.zip"
+WE_VERSION=`cat ../version.sbt | cut -d'=' -f 2 | xargs`
+
+publish "system_tests-$SYSTEM_TESTS_TARGET-$WE_VERSION-$ARTIFACT_VERSION.zip"
+publish "system_tests-$SYSTEM_TESTS_TARGET-$WE_VERSION-latest.zip"
