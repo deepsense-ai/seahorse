@@ -15,5 +15,5 @@ object Boot extends App {
   val service = system.actorOf(Props[DeployModelServiceActor], "deployModelService")
   import scala.concurrent.duration._
   implicit val timeout = Timeout(5.seconds)
-  IO(Http) ? Http.Bind(service, interface = "localhost", port = 8082)
+  IO(Http) ? Http.Bind(service, interface = "0.0.0.0", port = 8082)
 }
