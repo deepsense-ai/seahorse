@@ -29,7 +29,7 @@ Output
      - Data Type
      - Description
    * - 0
-     - Trainable
+     - UntrainedRidgeRegression
      - Untrained model
 
 

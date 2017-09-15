@@ -63,4 +63,5 @@ Params
    ``WrongColumnTypeException`` will be thrown. If selected column does not exist,
    ``ColumnDoesNotExistException`` will be thrown.
 
-.. TODO what are requirements for values in target column? What if they are not met?
+While training, it expects all values in target column to be either 0 or 1.
+.. TODO What if this requirement is not met?

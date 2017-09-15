@@ -21,6 +21,7 @@ Contents:
    doperations/score_regressor
    doperations/evaluate_regression
    doperations/cross_validate_regressor
+   doperations/logistic_regression
    doperations/train_classifier
    doperations/score_classifier
    doperations/one_hot_encoder

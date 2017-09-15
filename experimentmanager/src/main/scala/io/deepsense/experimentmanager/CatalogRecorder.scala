@@ -85,12 +85,12 @@ object CatalogRecorder {
 
     catalog.registerDOperation[TrainRegressor](
       DOperationCategories.ML.Regression,
-      "Trains linear regression model"
+      "Trains regression model"
     )
 
     catalog.registerDOperation[ScoreRegressor](
       DOperationCategories.ML.Regression,
-      "Scores trained linear regression model"
+      "Scores trained regression model"
     )
 
     catalog.registerDOperation[CrossValidateRegressor](
@@ -99,8 +99,18 @@ object CatalogRecorder {
     )
 
     catalog.registerDOperation[EvaluateRegression](
-      DOperationCategories.ML,
-      "Evaluate Regression"
+      DOperationCategories.ML.Regression,
+      "Evaluate regression model"
+    )
+
+    catalog.registerDOperation[CreateLogisticRegression](
+      DOperationCategories.ML.Classification,
+      "Creates untrained logistic regression model"
+    )
+
+    catalog.registerDOperation[TrainClassifier](
+      DOperationCategories.ML.Classification,
+      "Trained classification model"
     )
 
     catalog.registerDOperation[ScoreClassifier](
