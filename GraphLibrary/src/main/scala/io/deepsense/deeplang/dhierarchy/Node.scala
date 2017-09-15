@@ -7,7 +7,6 @@
 package io.deepsense.deeplang.dhierarchy
 
 import scala.collection.mutable
-import scala.reflect.runtime.{universe => ru}
 
 /**
  * Node that represents type in DHierarchy graph.
@@ -40,12 +39,12 @@ private[dhierarchy] abstract class Node {
 
   private[dhierarchy] def info: TypeInfo
 
-  private def sumSets[T](sets: Iterable[mutable.Set[T]]): mutable.Set[T] = {
-    sets.foldLeft(mutable.Set[T]())((x, y) => x ++ y)
+  private def sumSets[T](sets: Iterable[Set[T]]): Set[T] = {
+    sets.foldLeft(Set[T]())((x, y) => x ++ y)
   }
 
   /** Returns set of all concrete nodes that are descendants of this. */
-  private[dhierarchy] def subclassesInstances: mutable.Set[ConcreteClassNode] = {
+  private[dhierarchy] def subclassesInstances: Set[ConcreteClassNode] = {
     val descendants = subclasses.values.map(_.subclassesInstances) ++
         subtraits.values.map(_.subclassesInstances)
     sumSets[ConcreteClassNode](descendants)

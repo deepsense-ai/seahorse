@@ -69,7 +69,7 @@ class DHierarchy {
   }
 
   /** Returns nodes that correspond given type signature T. */
-  private def nodesForType[T: ru.TypeTag]: Traversable[Node] = {
+  private def nodesForType[T <: DOperable : ru.TypeTag]: Traversable[Node] = {
     val allBases: List[ru.Symbol] = ru.typeOf[T].baseClasses
 
     // 'allBases' contains symbols of all (direct and indirect) superclasses of T,
@@ -92,11 +92,11 @@ class DHierarchy {
   }
 
   /** Returns instances of all concrete classes that fulfil type signature T. */
-  def concreteSubclassesInstances[T: ru.TypeTag]: mutable.Set[DOperable] = {
+  def concreteSubclassesInstances[T <: DOperable : ru.TypeTag]: Set[T] = {
     val typeNodes = nodesForType[T]
     val concreteClassNodes = typeNodes.map(_.subclassesInstances)
     val intersect = DHierarchy.intersectSets[ConcreteClassNode](concreteClassNodes)
-    intersect.map(_.createInstance())
+    intersect.map(_.createInstance[T])
   }
 
   def registerDOperable[C <: DOperable : ru.TypeTag](): Unit = {
@@ -119,11 +119,11 @@ object DHierarchy {
 
   private def symbolToType(s: ru.Symbol): ru.Type = s.asClass.toType
 
-  private def isParametrized(t: ru.Type): Boolean = !t.typeSymbol.asClass.typeParams.isEmpty
+  private def isParametrized(t: ru.Type): Boolean = t.typeSymbol.asClass.typeParams.nonEmpty
 
   /** Intersection of collection of sets. */
-  private def intersectSets[T](sets: Traversable[mutable.Set[T]]): mutable.Set[T] = {
-    if (sets.size == 0) mutable.Set[T]()
+  private def intersectSets[T](sets: Traversable[Set[T]]): Set[T] = {
+    if (sets.size == 0) Set[T]()
     else sets.foldLeft(sets.head)((x, y) => x & y)
   }
 

@@ -8,8 +8,6 @@ package io.deepsense.deeplang.dhierarchy
 
 import java.lang.reflect.Constructor
 
-import scala.collection.mutable
-
 import io.deepsense.deeplang.DOperable
 import io.deepsense.deeplang.dhierarchy.exceptions.NoParameterLessConstructorException
 
@@ -28,11 +26,11 @@ private[dhierarchy] class ConcreteClassNode(javaType: Class[_]) extends ClassNod
    * Creates instance of type represented by this.
    * Invokes first constructor and assumes that it takes no parameters.
    */
-  private[dhierarchy] def createInstance(): DOperable = {
-    constructor.newInstance().asInstanceOf[DOperable]
+  private[dhierarchy] def createInstance[T <: DOperable]: T = {
+    constructor.newInstance().asInstanceOf[T]
   }
 
-  override private[dhierarchy] def subclassesInstances: mutable.Set[ConcreteClassNode] = {
+  override private[dhierarchy] def subclassesInstances: Set[ConcreteClassNode] = {
     super.subclassesInstances + this
   }
 }

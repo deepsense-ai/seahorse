@@ -44,9 +44,9 @@ object Constructors {
 
 class DHierarchySuite extends FunSuite with Matchers {
 
-  def testGettingSubclasses[SomeT : ru.TypeTag](h: DHierarchy, expected: DOperable*): Unit = {
-    val result: mutable.Set[DOperable] = h.concreteSubclassesInstances[SomeT]
-    result should contain theSameElementsAs expected
+  def testGettingSubclasses[T <: DOperable : ru.TypeTag](
+      h: DHierarchy, expected: DOperable*): Unit = {
+    h.concreteSubclassesInstances[T] should contain theSameElementsAs expected
   }
 
   test("Getting concrete subclasses instances") {
@@ -58,8 +58,8 @@ class DHierarchySuite extends FunSuite with Matchers {
     val b = new H.B
     val c = new H.C
 
-    def check[SomeT : ru.TypeTag](expected: DOperable*) = {
-      testGettingSubclasses[SomeT](h, expected:_*)
+    def check[T <: DOperable : ru.TypeTag](expected: DOperable*) = {
+      testGettingSubclasses[T](h, expected:_*)
     }
 
     check[H.T with H.T1](b)
