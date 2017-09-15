@@ -78,6 +78,8 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
 
   val dOperableCache = mutable.Map[UUID, DOperable]()
 
+  val nodeTiming = mutable.ListMap[String, Double]()
+
   val entityStorageClient = createEntityStorageClient(entityStorageClientFactory, geConfig)
 
   /** graphGuard is used to prevent concurrent graph field modifications/inconsistent reads */
@@ -200,8 +202,14 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
           case e: InterruptedException => // ignored
         }
       }
+      logNodeTimings()
     }
     cleanup(resourceManagerClient, rpcServer, entityStorageClientFactory)
+  }
+
+  private def logNodeTimings(): Unit = {
+    logger.info("Nodes timings: ")
+    nodeTiming.foreach { case(node, time) => logger.info(s"${node}: ${time}s") }
   }
 
   private def getHdfsAddressFromConfig(geConfig: Config): String = {

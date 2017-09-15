@@ -12,6 +12,7 @@ object Version {
   val jclouds       = "1.9.0"
   val jsr305        = "3.0.0"
   val logback       = "1.1.2"
+  val metricsScala  = "3.5.1_a2.3"
   val mockito       = "1.10.19"
   val nsscalaTime   = "1.8.0"
   val scala         = "2.11.6"
@@ -53,6 +54,7 @@ object Library {
   val jcloudsNova        = jclouds("nova")
   val logbackClassic     = logback("classic")
   val logbackCore        = logback("core")
+  val metricsScala       = "nl.grons"                    %% "metrics-scala"       % Version.metricsScala
   val mockitoCore        = "org.mockito"                  % "mockito-core"        % Version.mockito
   val nscalaTime         = "com.github.nscala-time"      %% "nscala-time"         % Version.nsscalaTime
   val scalacheck         = "org.scalacheck"              %% "scalacheck"          % Version.scalacheck
@@ -114,6 +116,7 @@ object Dependencies {
     sprayRouting,
     guice,
     guiceMultibindings,
+    metricsScala,
     nscalaTime
   ) ++ Seq(sprayTestkit, akkaTestkit, mockitoCore, scalatest, cassandraUnit).map(_ % Test)
 

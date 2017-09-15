@@ -13,6 +13,7 @@ import scala.concurrent.{Await, duration}
 
 import com.typesafe.scalalogging.LazyLogging
 
+import io.deepsense.commons.metrics.Instrumented
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
 import io.deepsense.entitystorage.EntityStorageClient
 import io.deepsense.graph.{Graph, Node}
@@ -25,36 +26,44 @@ import io.deepsense.models.entities.{DataObjectReference, InputEntity}
  * and finally notifies GraphExecutor of finished execution.
  *
  * NOTE: This class probably will have to be thoroughly modified when first DOperation is prepared.
- * TODO: Currently it is impossible to debug GE without println
  */
 class GraphNodeExecutor(
     executionContext: ExecutionContext,
     graphExecutor: GraphExecutor,
     node: Node,
     entityStorageClient: EntityStorageClient)
-  extends Runnable with LazyLogging {
+  extends Runnable with LazyLogging with Instrumented {
 
   implicit val entityStorageResponseDelay = new FiniteDuration(5L, duration.SECONDS)
   import scala.concurrent.ExecutionContext.Implicits.global
 
+  private val createEntityTimer = metrics.timer("createEntity")
+  private val calculateReportTimer = metrics.timer("calculateReport")
+  private val executeOperationTimer = metrics.timer("executeOperation")
+  private val nodeDescription = s"'${node.operation.name}-${node.id}'"
+
   override def run(): Unit = {
     val executionStart = System.currentTimeMillis()
     try {
-      logger.info(s"${node.id} Execution of node starts")
+      logger.info("Execution of node starts: {}", nodeDescription)
       graphExecutor.graphGuard.synchronized {
+        logger.debug("In graphGuard synchronized for {}", nodeDescription)
         require(node.isRunning)
       }
 
-      logger.info(s"${node.id} Collecting data for operation input ports")
+      logger.debug("Collecting data for operation input ports for {}", nodeDescription)
       val collectedOutput = graphExecutor.graphGuard.synchronized {
         collectOutputs(graphExecutor.graph.get, graphExecutor.dOperableCache)
       }
+      logger.debug("Data for input ports collected for {}", nodeDescription)
 
-      logger.info(s"${node.id} Executing operation")
+      logger.debug("Executing operation {}", nodeDescription)
       val resultVector = executeOperation(collectedOutput)
+      logger.debug("Operation executed (without reports) for {}", nodeDescription)
 
-      logger.info(s"${node.id}) Registering data from operation output ports")
+      logger.debug("Registering data from operation output ports for {}", nodeDescription)
       graphExecutor.graphGuard.synchronized {
+        logger.debug("In graphExecutor.graphGuard.synchronized section for {}", nodeDescription)
         graphExecutor.experiment = Some(graphExecutor.experiment.get.copy(graph =
           graphExecutor.graph.get.markAsCompleted(
             node.id,
@@ -63,6 +72,7 @@ class GraphNodeExecutor(
               graphExecutor.dOperableCache.put(uuid, dOperable)
               uuid
             }).toList)))
+        logger.debug("Data registered for {}", nodeDescription)
       }
     } catch {
       case e: Exception => {
@@ -87,7 +97,9 @@ class GraphNodeExecutor(
     } finally {
       // Exception thrown here could result in slightly delayed graph execution
       val duration = (System.currentTimeMillis() - executionStart) / 1000.0
-      logger.info(s"${node.id} Execution of node ends (duration: $duration seconds)")
+      logger.info("{} Execution of node ends (duration: {} seconds)",
+        nodeDescription, duration.toString)
+      graphExecutor.nodeTiming.put(nodeDescription, duration)
       graphExecutor.graphEventBinarySemaphore.release()
     }
   }
@@ -118,27 +130,38 @@ class GraphNodeExecutor(
   }
 
   private def executeOperation(inputVector: Vector[DOperable]): Vector[DOperable] = {
-    logger.info(s"${node.id} node.operation.name = ${node.operation.name}")
-    logger.info(s"${node.id} inputVector.size = ${inputVector.size}")
-    val resultVector = node.operation.execute(executionContext)(inputVector)
-    logger.info(s"${node.id} resultVector.size = ${resultVector.size}")
+    logger.debug("{} inputVector.size = {}", nodeDescription, inputVector.size.toString)
+    val resultVector = executeOperationTimer.time {
+      node.operation.execute(executionContext)(inputVector)
+    }
+    logger.debug("{} resultVector.size = {}", nodeDescription, resultVector.size.toString)
     resultVector
   }
 
   private def storeAndRegister(dOperable: DOperable): UUID = {
+    logger.debug("storeAndRegister started for {}", nodeDescription)
+
     val experiment = graphExecutor.experiment.get
     val inputEntity = InputEntity(
-      experiment.tenantId,
-      "temporary Entity",
-      "temporary Entity",
-      "?",
-      dOperable.url.map(DataObjectReference),
-      Some(dOperable.report.toDataObjectReport),
+      tenantId = experiment.tenantId,
+      name = dOperable.getClass.toString,
+      description = s"Output from Operation: ${nodeDescription}",
+      dClass = dOperable.getClass.toString,
+      data = dOperable.url.map(DataObjectReference),
+      report = Some(calculateReportTimer.time {
+        dOperable.report.toDataObjectReport
+      }),
       saved = false
     )
 
-    Await.result(
-      entityStorageClient.createEntity(inputEntity).map(_.id),
-      entityStorageResponseDelay).value
+    logger.debug("createEntity started for {}", nodeDescription)
+    val result = createEntityTimer.time {
+      Await.result(
+        entityStorageClient.createEntity(inputEntity).map(_.id),
+        entityStorageResponseDelay).value
+    }
+    logger.debug("createEntity finished for {}", nodeDescription)
+    logger.debug("storeAndRegister finished for {}", nodeDescription)
+    result
   }
 }
