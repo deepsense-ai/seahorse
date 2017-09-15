@@ -26,7 +26,7 @@ If one or more column can not be converted,
 the operation will fail at runtime with TypeConversionException.
 
 This operation also returns a [Transformer](../classes/transformer.html) that can be later applied
-to another DataFrame with Transform operation.
+to another [DataFrame](../classes/dataframe.html) with [Transform](transform.html) operation.
 
 **Since**: Seahorse 0.4.0
 
