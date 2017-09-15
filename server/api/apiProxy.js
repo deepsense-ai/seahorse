@@ -14,7 +14,6 @@ module.exports = function apiProxy(config) {
         target: config.url
       });
 
-
   /**
    * Handles proxy errors.
    */

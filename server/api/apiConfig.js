@@ -20,6 +20,8 @@ module.exports = {
     'experiments': {
     },
     'operations': {
+    },
+    'models': {
     }
   }
 };
