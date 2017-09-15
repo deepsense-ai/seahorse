@@ -38,3 +38,7 @@ Execution Error
 Success
     Run Workflow Local
     Check Report
+
+Success Automatic Conversion To DataFrame
+    Run Workflow Local
+    Check Report

@@ -1,0 +1,240 @@
+{
+  "workflow": {
+    "nodes": [{
+      "id": "806d1a75-7f9b-3de1-3fc9-6f644684835d",
+      "operation": {
+        "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
+        "name": "Read DataFrame"
+      },
+      "parameters": {
+        "data storage type": {
+          "FILE": {
+            "source": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/resources/customPythonOperationTests/success/input.csv",
+            "format": {
+              "CSV": {
+                "separator": {
+                  ",": {
+
+                  }
+                },
+                "names included": true,
+                "convert to boolean": false
+              }
+            }
+          }
+        }
+      }
+    }, {
+      "id": "270ca4f8-3bda-bd84-22e8-5d15a299722f",
+      "operation": {
+        "id": "a721fe2a-5d7f-44b3-a1e7-aade16252ead",
+        "name": "Python Transformation"
+      },
+      "parameters": {
+        "code": "from pyspark.sql.types import Row\ndef transform(dataframe):\n    return \"string value to be converted\""
+      }
+    }, {
+      "id": "7fdd76a3-d318-56f4-a0fe-552f1c0514f0",
+      "operation": {
+        "id": "a721fe2a-5d7f-44b3-a1e7-aade16252ead",
+        "name": "Python Transformation"
+      },
+      "parameters": {
+        "code": "from pyspark.sql.types import Row\ndef transform(dataframe):\n    return (\"tuple first element\", \"tuple second element\")"
+      }
+    }, {
+      "id": "3ba36ab2-31f7-eb23-e999-947432a193a8",
+      "operation": {
+        "id": "a721fe2a-5d7f-44b3-a1e7-aade16252ead",
+        "name": "Python Transformation"
+      },
+      "parameters": {
+        "code": "from pyspark.sql.types import Row\ndef transform(dataframe):\n    return ([1.0, \"tuple of tuples/lists first row\"], (2.0, \"tuple of tuples/lists  second row\"))"
+      }
+    }, {
+      "id": "a8fcde86-9caa-e71e-a4e5-a88d50ff92ad",
+      "operation": {
+        "id": "a721fe2a-5d7f-44b3-a1e7-aade16252ead",
+        "name": "Python Transformation"
+      },
+      "parameters": {
+        "code": "from pyspark.sql.types import Row\ndef transform(dataframe):\n    return sqlContext.createDataFrame(dataframe.map(lambda row: Row(row.numbers, row.numbers*2))).toPandas()"
+      }
+    }, {
+      "id": "5b5ac5ee-99d6-5e83-a1ef-8e25cf0eadd8",
+      "operation": {
+        "id": "a721fe2a-5d7f-44b3-a1e7-aade16252ead",
+        "name": "Python Transformation"
+      },
+      "parameters": {
+        "code": "from pyspark.sql.types import Row\ndef transform(dataframe):\n    return 123.56"
+      }
+    }, {
+      "id": "a80b6bed-5c11-52ff-7ce6-a5a986fa88ff",
+      "operation": {
+        "id": "a721fe2a-5d7f-44b3-a1e7-aade16252ead",
+        "name": "Python Transformation"
+      },
+      "parameters": {
+        "code": "from pyspark.sql.types import Row\ndef transform(dataframe):\n    return [\"list first element\", \"list second element\"]"
+      }
+    }, {
+      "id": "0401d7c7-b1c9-5c66-dba4-563dc63a938d",
+      "operation": {
+        "id": "a721fe2a-5d7f-44b3-a1e7-aade16252ead",
+        "name": "Python Transformation"
+      },
+      "parameters": {
+        "code": "from pyspark.sql.types import Row\ndef transform(dataframe):\n    return [[1.0, \"list of tuples/lists first row\"], (2.0, \"list of tuples/lists  second row\")]"
+      }
+    }],
+    "connections": [{
+      "from": {
+        "nodeId": "806d1a75-7f9b-3de1-3fc9-6f644684835d",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "7fdd76a3-d318-56f4-a0fe-552f1c0514f0",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "806d1a75-7f9b-3de1-3fc9-6f644684835d",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "3ba36ab2-31f7-eb23-e999-947432a193a8",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "806d1a75-7f9b-3de1-3fc9-6f644684835d",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "a8fcde86-9caa-e71e-a4e5-a88d50ff92ad",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "806d1a75-7f9b-3de1-3fc9-6f644684835d",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "5b5ac5ee-99d6-5e83-a1ef-8e25cf0eadd8",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "806d1a75-7f9b-3de1-3fc9-6f644684835d",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "270ca4f8-3bda-bd84-22e8-5d15a299722f",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "806d1a75-7f9b-3de1-3fc9-6f644684835d",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "a80b6bed-5c11-52ff-7ce6-a5a986fa88ff",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "806d1a75-7f9b-3de1-3fc9-6f644684835d",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "0401d7c7-b1c9-5c66-dba4-563dc63a938d",
+        "portIndex": 0
+      }
+    }]
+  },
+  "thirdPartyData": {
+    "gui": {
+      "name": "CustomPythonOperationSuccessAutomaticConversionToDataframe",
+      "description": "",
+      "predefColors": ["#00B1EB", "#1ab394", "#2f4050", "#f8ac59", "#ed5565", "#DD6D3F"],
+      "nodes": {
+        "a80b6bed-5c11-52ff-7ce6-a5a986fa88ff": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5551,
+            "y": 5481
+          }
+        },
+        "a8fcde86-9caa-e71e-a4e5-a88d50ff92ad": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5029,
+            "y": 5234
+          }
+        },
+        "0401d7c7-b1c9-5c66-dba4-563dc63a938d": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5669,
+            "y": 5371
+          }
+        },
+        "3ba36ab2-31f7-eb23-e999-947432a193a8": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5730,
+            "y": 5237
+          }
+        },
+        "270ca4f8-3bda-bd84-22e8-5d15a299722f": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5054,
+            "y": 5489
+          }
+        },
+        "7fdd76a3-d318-56f4-a0fe-552f1c0514f0": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5304,
+            "y": 5526
+          }
+        },
+        "5b5ac5ee-99d6-5e83-a1ef-8e25cf0eadd8": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 4984,
+            "y": 5372
+          }
+        },
+        "806d1a75-7f9b-3de1-3fc9-6f644684835d": {
+          "uiName": "",
+          "color": "#00B1EB",
+          "coordinates": {
+            "x": 5349,
+            "y": 5151
+          }
+        }
+      }
+    },
+    "notebooks": {
+
+    }
+  },
+  "variables": {
+
+  },
+  "id": "771bd012-9b80-47e9-9ec2-5a068408c196",
+  "metadata": {
+    "type": "batch",
+    "apiVersion": "1.2.0"
+  }
+}
