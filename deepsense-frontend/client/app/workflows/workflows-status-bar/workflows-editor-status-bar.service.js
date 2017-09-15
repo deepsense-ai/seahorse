@@ -61,7 +61,8 @@ function WorkflowStatusBarService($rootScope, config, version, WorkflowService, 
       label: 'Executor error',
       icon: 'fa-ban',
       color: '#BF2828',
-      additionalClass: 'disabled'
+      additionalClass: 'disabled',
+      additionalHtmlForOwner: 'app/workflows/workflows-status-bar/additional-html/executor-error.html'
     },
     stopEditing: {
       label: 'Stop editing',
@@ -106,7 +107,7 @@ function WorkflowStatusBarService($rootScope, config, version, WorkflowService, 
     editorExecutorRunning: [menuItems.export, menuItems.clone, menuItems.stopEditing, menuItems.clear, menuItems.run, menuItems.documentation],
     editorExecutorCreating: [menuItems.export, menuItems.clone, menuItems.startingEditing, menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
     editorExecutorNotRunning: [menuItems.export, menuItems.clone, menuItems.startEditing, menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
-    editorExecutorError: [menuItems.disabledClear, menuItems.export, menuItems.documentation, menuItems.executorError, menuItems.disabledRun],
+    editorExecutorError: [menuItems.export, menuItems.clone, menuItems.executorError, menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
     editorReadOnlyForNotOwner: [menuItems.export, menuItems.clone, menuItems.disabledStartEditing, menuItems.disabledClear, menuItems.disabledRun, menuItems.documentation],
     running: [menuItems.disabledExport, menuItems.disabledClone, menuItems.disabledClear, menuItems.abort, menuItems.documentation],
     aborting: [menuItems.disabledExport, menuItems.disabledClone, menuItems.disabledClear, menuItems.aborting, menuItems.documentation],
@@ -122,7 +123,7 @@ function WorkflowStatusBarService($rootScope, config, version, WorkflowService, 
     // TODO Refactor this code.
     switch (workflow.workflowType) {
       case 'root':
-        if(!isOwner()) {
+        if (!isOwner()) {
           return 'editorReadOnlyForNotOwner'
         }
         switch (workflow.workflowStatus) {

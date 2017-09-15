@@ -1,0 +1,15 @@
+<div class="info-popup" ng-controller="ExecutorErrorCtrl as controller" ng-show="controller.isPopoverVisible()">
+  <div class="info-popup__content">
+    <div>
+      <span>
+        Something went wrong, try again later. If the problem persists,
+        please contact administrators providing them id of this workflow ({{controller.workflow.id}}) and current time ({{controller.currentTime}}).
+      </span>
+    </div>
+    <div class="info-popup__content-button" ng-click="controller.runExecutorAgain()">
+      <span>
+        Restart
+      </span>
+    </div>
+  </div>
+</div>
