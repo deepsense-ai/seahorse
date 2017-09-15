@@ -26,9 +26,9 @@ private[graphlibrary] object Color extends Enumeration {
 
 /**
  * Execution Graph of the experiment.
- * It can be serialized for the purpose of sending it over the network.
  * Nodes of this graph contain operations and state.
  * State of each node can be changed during the execution.
+ * This class is not thread safe.
  */
 class Graph {
   private[graphlibrary] case class GraphNode(id: Node.Id, operation: DOperation) extends Node {
