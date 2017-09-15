@@ -20,7 +20,8 @@ import io.deepsense.commons.models.Id
 import io.deepsense.commons.rest.{RestApi, RestComponent}
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.experimentmanager.ExperimentManagerProvider
-import io.deepsense.experimentmanager.exceptions.{ExperimentNotFoundException, ExperimentRunningException}
+import io.deepsense.experimentmanager.conversion.FileConverter
+import io.deepsense.experimentmanager.exceptions.{ExperimentNotFoundException, ExperimentRunningException, FileNotFoundException}
 import io.deepsense.experimentmanager.rest.actions.Action
 import io.deepsense.experimentmanager.rest.json.{ExperimentJsonProtocol, MetadataInferenceResultJsonProtocol}
 import io.deepsense.experimentmanager.rest.json.{AbstractMetadataJsonProtocol, ExperimentJsonProtocol}
@@ -35,6 +36,7 @@ import io.deepsense.models.experiments.{Experiment, InputExperiment}
 class ExperimentsApi @Inject() (
     val tokenTranslator: TokenTranslator,
     experimentManagerProvider: ExperimentManagerProvider,
+    fileConverter: FileConverter,
     @Named("experiments.api.prefix") apiPrefix: String,
     override val graphReader: GraphReader,
     override val inferContext: InferContext)
@@ -125,6 +127,19 @@ class ExperimentsApi @Inject() (
               }
             }
           } ~
+          path("convert" / JavaUUID) { idParameter =>
+            val entityId = Id(idParameter)
+            post {
+              withUserContext { userContext =>
+                onComplete(fileConverter.convert(entityId, userContext,
+                  experimentManagerProvider.forContext(userContext))) {
+                  case Success(experiment) => complete(
+                    StatusCodes.Created, Envelope(experiment))
+                  case Failure(exception) => failWith(exception)
+                }
+              }
+            }
+          } ~
           pathEndOrSingleSlash {
             post {
               withUserContext { userContext =>
@@ -164,6 +179,8 @@ class ExperimentsApi @Inject() (
           complete(StatusCodes.Conflict, e.failureDescription)
         case e: CyclicGraphException =>
           complete(StatusCodes.BadRequest, e.failureDescription)
+        case e: FileNotFoundException =>
+          complete(StatusCodes.NotFound, e.failureDescription)
     }
   }
 }

@@ -4,19 +4,11 @@
 
 package io.deepsense.experimentmanager.rest
 
-import com.google.inject.util.Modules
-import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
-import  io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
-import io.deepsense.deeplang.parameters.ParametersSchema
-import io.deepsense.deeplang._
-import io.deepsense.deeplang.doperables.{Transformation, Report}
-import io.deepsense.deeplang.doperations.MathematicalOperation
-import io.deepsense.graphjson.GraphJsonProtocol.GraphReader
-
 import scala.concurrent.Await
 
 import com.google.common.base.Function
 import com.google.inject._
+import com.google.inject.util.Modules
 import org.jclouds.ContextBuilder
 import org.jclouds.compute.ComputeServiceContext
 import org.jclouds.domain.Credentials
@@ -25,10 +17,14 @@ import org.scalatest.BeforeAndAfter
 import spray.routing.Route
 
 import io.deepsense.commons.cassandra.CassandraTestSupport
-import io.deepsense.experimentmanager.storage.cassandra.ExperimentDaoCassandraImpl
-import io.deepsense.experimentmanager.{DOperationCategories, ExperimentsTableCreator, ExperimentManagerIntegTestSupport}
+import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
+import io.deepsense.deeplang.doperables.Transformation
+import io.deepsense.deeplang.doperations.MathematicalOperation
+import io.deepsense.experimentmanager.conversion.FileConverter
 import io.deepsense.experimentmanager.storage.ExperimentStorage
-import io.deepsense.graph.{Node, Graph}
+import io.deepsense.experimentmanager.{DOperationCategories, ExperimentManagerIntegTestSupport, ExperimentsTableCreator}
+import io.deepsense.graph.{Graph, Node}
+import io.deepsense.graphjson.GraphJsonProtocol.GraphReader
 import io.deepsense.models.experiments.Experiment
 
 class ExperimentsApiIntegSpec
@@ -80,6 +76,9 @@ class ExperimentsApiIntegSpec
       @Singleton
       @Provides
       def provideGraphReader(dOperationsCatalog: DOperationsCatalog): GraphReader = graphReader
+
+      @Provides
+      def provideFileConverter: FileConverter = mock[FileConverter]
     })
 
   before {

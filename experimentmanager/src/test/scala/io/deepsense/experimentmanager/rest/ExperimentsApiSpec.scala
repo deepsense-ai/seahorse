@@ -26,6 +26,7 @@ import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.deeplang.{ExecutionContext, DOperation0To1}
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
+import io.deepsense.experimentmanager.conversion.FileConverter
 import io.deepsense.experimentmanager.exceptions.ExperimentNotFoundException
 import io.deepsense.experimentmanager.models.{Count, ExperimentsList}
 import io.deepsense.experimentmanager.rest.actions.{AbortAction, LaunchAction}
@@ -135,6 +136,7 @@ class ExperimentsApiSpec
 
   override def createRestComponent(tokenTranslator: TokenTranslator): Route = {
     val experimentManagerProvider = mock[ExperimentManagerProvider]
+    val fileConverter = mock[FileConverter]
     when(experimentManagerProvider.forContext(any(classOf[Future[UserContext]])))
       .thenAnswer(new Answer[ExperimentManager]{
       override def answer(invocation: InvocationOnMock): ExperimentManager = {
@@ -143,8 +145,8 @@ class ExperimentsApiSpec
       }
     })
 
-    new ExperimentsApi(
-      tokenTranslator, experimentManagerProvider, apiPrefix, graphReader, inferContext).route
+    new ExperimentsApi(tokenTranslator, experimentManagerProvider, fileConverter,
+      apiPrefix, graphReader, inferContext).route
   }
 
   // TODO Test errors in Json
