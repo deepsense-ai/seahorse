@@ -1,0 +1,223 @@
+@import "../../../css/variables";
+
+@border-grey: #CFCFCF;
+@dragzone-border: #868686;
+@light-grey: #F2F2F2;
+@dark-grey: #999999;
+@border-blue: #166089;
+
+.dataframe-library-modal {
+  &__header {
+    display: flex;
+    font-weight: bold;
+    font-size: 24px;
+
+    .title {
+      width: 250px;
+    }
+
+    .input {
+      flex: 1;
+
+      .clear-search {
+        position: absolute;
+        right: 25px;
+        top: 20px;
+        font-size: 16px;
+        font-family: "Seahorse Symbol";
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+
+    input.search-field:focus {
+      border: 1px solid @border-grey;
+    }
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+
+    .content-wrapper {
+      min-height: 50vh;
+      display: flex;
+      border-bottom: 1px solid @grey;
+    }
+
+    .files-list {
+      width: 100%;
+      flex: 1;
+
+      .file-list-wrapper {
+        margin: 0 10px;
+        height: 45vh;
+      }
+    }
+
+    .btn-grey {
+      height: 35px;
+      margin: 0 5px;
+      border: 1px solid @grey;
+      background-color: @light-grey;
+
+      span {
+        padding-left: 3px;
+      }
+    }
+
+    .dataframe-form {
+      padding: 15px;
+      display: flex;
+      align-items: center;
+
+      .add-folder {
+        &__icon {
+          color: @seahorse-blue;
+          font-size: 28px;
+          position: relative;
+          right: 2px;
+          bottom: 4px;
+        }
+
+        &__label {
+          padding-bottom: 5px;
+          position: relative;
+          top: -5px;
+        }
+      }
+    }
+
+    .dataframe-info {
+      color: #BF2828;
+      font-size: 15px;
+      text-align: center;
+      margin: 20px;
+    }
+
+    .dataframe-list {
+      min-height: 40px;
+      max-height: 45vh;
+      width: 95%;
+      margin: 0 auto;
+    }
+
+    .list-wrapper {
+      width: 97%;
+    }
+
+    .uploaded-list-wrapper {
+      margin-top: 5px;
+      margin-bottom: 15px;
+    }
+
+    .dataframe {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 40px;
+      color: @seahorse-light-blue;
+
+      &:not(:last-child) {
+        border-bottom: 1px solid @grey;
+      }
+
+      .dataframe-name {
+        margin-left: 5px;
+        font-size: 15px;
+        font-weight: bold;
+      }
+
+      .directory {
+        color: @seahorse-light-blue;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+
+      .dataframe-uploaded {
+        font-weight: bold;
+        padding-left: 5px;
+        color: black;
+        font-size: 13px;
+      }
+
+      .selectable-dataframe {
+        color: @seahorse-light-blue;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+
+    .folder {
+      font-size: 18px;
+      font-weight: bold;
+      line-height: 40px;
+      padding-top: 10px;
+      width: 100%;
+
+      .dataframe {
+        padding-left: 20px;
+
+        &:last-child {
+          border-bottom: 1px solid @border-grey;
+        }
+      }
+    }
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 15px;
+
+    button {
+      width: 80px;
+      height: 40px;
+    }
+  }
+}
+
+.read-mode,
+.write-mode {
+  .name {
+    color: @seahorse-light-blue;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+
+.write-mode {
+  .dataframe-library-modal__footer {
+    background-color: @seahorse-light-blue;
+    padding: 20px;
+
+    .file-input {
+      flex: 1;
+      border: solid 1px @border-blue;
+      padding: 10px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .btn {
+      margin-left: 20px;
+      width: 76px;
+      height: 40px;
+    }
+
+    .btn-blue {
+      color: #FFF;
+      font-weight: bold;
+      border: solid 1px @border-blue;
+      background-color: @seahorse-blue;
+    }
+  }
+}

@@ -1,0 +1,21 @@
+<div>
+    <h4> PUBLIC PARAMS </h4>
+    <div class="attributes-list">
+        <div class="parameter-item" ng-repeat="publicParam in publicParams">
+            <div ng-class="{'has-error': isDuplicate(publicParam)}" style="text-transform: uppercase;">
+                <b>{{getNodeName(publicParam)}} </b> &gt; <b>{{publicParam.paramName}}</b>
+                <i ng-if="isDuplicate(publicParam)"
+                   class="fa status-icon fa-exclamation-circle error-icon"
+                   popover-placement="left"
+                   popover-trigger="mouseenter"
+                   popover-append-to-body="true"
+                   uib-popover="Public names must be unique."
+                   style="color: red;"></i>
+                <input type="string" ng-model="publicParam.publicName" class="form-control"
+                       ng-value="publicParam.publicName">
+            </div>
+        </div>
+    </div>
+</div>
+
+

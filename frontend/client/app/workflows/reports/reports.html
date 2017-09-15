@@ -1,0 +1,32 @@
+<div class="c-report">
+  <div ng-if="!controller.currentReport" class="no-report">
+    <div class="no-report-title">
+      <i class="fa fa-file-text-o"></i>
+      <span>No report selected!</span>
+    </div>
+    <div class="no-report-description">
+      <span>To see a report, run the workflow and click on a node's output port.</span>
+    </div>
+  </div>
+
+  <div ng-if="controller.currentReport">
+    <div class="report-header">
+      <h2> {{controller.getReport().name}} </h2>
+    </div>
+    <div ng-switch="controller.getReport().reportType">
+      <report-dataframe-full
+        ng-switch-when="DataFrameFull"
+        report="controller.getReport()"
+      >
+      </report-dataframe-full>
+      <report-default
+        ng-switch-default
+        report="controller.getReport()">
+      </report-default>
+    </div>
+  </div>
+  <button class="c-report__close close u-flex u-flex--center-center"
+          ng-click="controller.close()">
+    <i class="c-report__close-icon fa fa-close"></i>
+  </button>
+</div>

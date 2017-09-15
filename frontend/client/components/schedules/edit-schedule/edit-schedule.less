@@ -1,0 +1,71 @@
+@import "../../../css/variables";
+
+.edit-schedule {
+  & .schedule__actions {
+    position: initial;
+    margin-top: 12px;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+
+  &__btn {
+    margin-left: 8px;
+    padding: 0 10px;
+    height: 25px;
+    line-height: 23px;
+    font-weight: bold;
+    font-size: 12px;
+  }
+}
+
+.schedule-attribute {
+  & &__input {
+    height: 26px;
+    margin: 0;
+    padding: 0 5px;
+    font-size: inherit;
+    border: 1px solid #e5e6e7;
+    border-radius: 1px;
+    transition: box-shadow .3s, border .3s;
+
+    &:hover {
+      border: 1px solid @color-active;
+    }
+
+    &:focus {
+      outline: none;
+      border: 1px solid @color-active;
+      box-shadow: 0 0 1px 0 @color-active;
+    }
+
+    &--invalid {
+      border-color: @seahorse-error-red;
+    }
+  }
+}
+
+
+.edit-schedule .schedule-cron {
+  .schedule-attribute__value {
+    line-height: 24px;
+
+    .jqCron-selector-title {
+      margin: 0 0.1em;
+      padding: 2px 6px;
+      border-radius: 1px;
+      border: 1px solid @color-light-grey;
+      background-color: #FFFFFF;
+      transition: box-shadow .3s, border .3s;
+
+      &:hover {
+        border: 1px solid @color-active;
+      }
+    }
+
+    .jqCron-selector-list {
+      max-height: 100px;
+      overflow-y: scroll;
+    }
+  }
+}

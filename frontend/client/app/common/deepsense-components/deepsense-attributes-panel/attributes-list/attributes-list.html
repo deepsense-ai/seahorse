@@ -1,0 +1,69 @@
+<div id="attributes-list-{{ :: $id }}" class="attributes-list">
+  <div class="ibox parameter-item" ng-repeat="parameter in parametersList.parameters">
+    <div class="ibox-title" label-to-first-unlabeled>
+      <i class="fa fa-table"
+         ng-if="::parameter.schema.isGrid"
+         style="margin-right: 5px"
+         popover-placement="left"
+         uib-popover="This parameter is dedicated for Grid Search. It accepts multiple values separated by commas."
+         popover-trigger="mouseenter"
+         popover-append-to-body="true"></i>
+      <label>
+        {{ ::parameter.name }}
+      </label>
+      <span
+        ng-if="::(isInnerWorkflow() && isRootLevelParameter && !isDynamic(parameter))"
+        ng-switch="getVisibility(parameter.name)">
+        <i
+          class="attributes-list__icon fa fa-lock toggleable-icon"
+          ng-switch-when="private"
+          ng-click="setVisibility(parameter.name, 'public')"
+          popover-placement="left"
+          uib-popover="This parameter is currently PRIVATE. Click to make it public"
+          popover-trigger="mouseenter"
+          popover-append-to-body="true"
+        ></i>
+        <i
+          class="attributes-list__icon fa fa-unlock toggleable-icon"
+          ng-switch-when="public"
+          ng-click="setVisibility(parameter.name, 'private')"
+          popover-placement="left"
+          uib-popover="This parameter is currently PUBLIC. Click to make it private"
+          popover-trigger="mouseenter"
+          popover-append-to-body="true"
+        ></i>
+      </span>
+      <i
+        ng-if="parameter.schema.description"
+        class="attributes-list__icon attributes-list__icon--help fa fa-question-circle"
+        uib-popover="{{ ::parameter.schema.description }}"
+        popover-placement="left"
+        popover-trigger="mouseenter"
+        popover-append-to-body="true"></i>
+    </div>
+    <div class="ibox-content">
+      <div class="attributes-value-view" ng-switch="::parameter.schema.type">
+        <attribute-boolean-type ng-switch-when="boolean"></attribute-boolean-type>
+        <attribute-single-choice-type ng-switch-when="choice"></attribute-single-choice-type>
+        <attribute-multiple-choice-type ng-switch-when="multipleChoice"></attribute-multiple-choice-type>
+        <attribute-numeric-type ng-switch-when="numeric"></attribute-numeric-type>
+        <attribute-code-snippet-type ng-switch-when="codeSnippet" value="parameter.value"
+                                     language="parameter.schema.language.name"></attribute-code-snippet-type>
+        <attribute-workflow-type ng-switch-when="workflow" parameter-name="parameter.name"></attribute-workflow-type>
+        <attribute-string-type ng-switch-when="string"></attribute-string-type>
+        <attribute-creator-type ng-switch-when="creator"></attribute-creator-type>
+        <attribute-prefix-based-creator-type ng-switch-when="prefixBasedCreator"></attribute-prefix-based-creator-type>
+        <attribute-selector-type ng-switch-when="selector"></attribute-selector-type>
+        <attribute-multiplier-type ng-switch-when="multiplier"></attribute-multiplier-type>
+        <attribute-dynamic-param-type ng-switch-when="dynamic"></attribute-dynamic-param-type>
+        <attribute-gridsearch-param-type ng-switch-when="gridSearch"></attribute-gridsearch-param-type>
+        <attribute-multiple-numeric-type ng-switch-when="multipleNumeric"></attribute-multiple-numeric-type>
+        <attribute-load-from-library ng-switch-when="loadFromLibrary"></attribute-load-from-library>
+        <attribute-save-to-library ng-switch-when="saveToLibrary"></attribute-save-to-library>
+        <attribute-datasource ng-switch-when="datasourceIdForRead"></attribute-datasource>
+        <attribute-datasource ng-switch-when="datasourceIdForWrite"></attribute-datasource>
+      </div>
+    </div>
+  </div>
+  <div class="lead no-parameters" ng-if="noParamValues()">No parameters</div>
+</div>

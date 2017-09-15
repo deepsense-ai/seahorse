@@ -1,0 +1,89 @@
+@import "report-dataframe-full/report-dataframe-full.less";
+@import "report-default/report-default.less";
+@import "report-table/report-table.less";
+@import "charts/charts.less";
+.c-report {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  left: 0;
+  box-shadow: -20px -2px 10px grey;
+  background: white;
+
+  [class^="report"][ng-switch-when] > .panel,
+  [class^="report"][ng-switch-default] > .panel {
+    border: 0;
+    border-radius: 0;
+  }
+
+  .report-header {
+    margin-left: 30px;
+    margin-top: 30px;
+  }
+
+  .panel {
+    margin-bottom: 5px;
+  }
+
+  &__close {
+    top: 5px;
+    position: absolute;
+    right: 10px;
+    opacity: 1;
+
+    &-icon {
+      font-size: 22px;
+      opacity: 0.2;
+    }
+
+    &-text {
+      color: #676a6c;
+      margin-right: 10px;
+    }
+  }
+}
+
+.report-chart-panel {
+  .modal-header {
+    position: relative;
+
+    button.close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+    }
+  }
+
+  .modal-body {
+    select {
+      margin-bottom: 15px;
+      width: 250px;
+      float: left;
+      margin-left: 15px;
+    }
+
+    dl {
+      float: right;
+      margin-right: 20px;
+    }
+  }
+}
+
+.no-report {
+  margin-top: 70px;
+  margin-left: 100px;
+
+  &-title {
+    font-size: 28px;
+  }
+
+  > i {
+    font-size: 30px;
+  }
+
+  &-description {
+    font-size: 24px;
+    margin-top: 15px;
+    margin-left: 10px;
+  }
+}

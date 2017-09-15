@@ -1,0 +1,81 @@
+@import "../../../../css/variables.less";
+
+.canvas {
+  path {
+    cursor: default;
+  }
+
+  &.disabled {
+    filter: grayscale(100%);
+  }
+
+  &.sliding-window {
+    height: 100%;
+    transform-origin: left top 0;
+  }
+
+  .new-node-container {
+    width: inherit;
+    height: inherit;
+  }
+
+  .flowchart-paint-area {
+    position: absolute;
+    width: 10000px;
+    height: 10000px;
+    z-index: 1;
+  }
+
+  .graph-node-component {
+    position: absolute;
+    z-index: 100;
+  }
+
+  .jtk-endpoint {
+    cursor: pointer;
+    z-index: 2;
+  }
+
+  .jtk-dragging {
+    z-index: 1;
+  }
+
+  .matching-port svg circle,
+  .matching-port:not(.transformer) svg rect,
+  .port-active svg circle,
+  .port-active:not(.transformer) svg rect {
+    stroke: #000;
+  }
+
+  .matching-port.transformer svg rect,
+  .port-active.transformer svg rect,
+  .port-active.readonly svg circle {
+    stroke: @seahorse-blue;
+  }
+
+  .output.dataframe, .output.readonly {
+    z-index: 100;
+  }
+
+  .has-report {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+
+    &:before {
+      font-size: 14px;
+      position: relative;
+      color: @color-white;
+      z-index: 1;
+    }
+
+    &.readonly, &.dataframe {
+      padding-bottom: 5px;
+    }
+  }
+  // to avoid new node creation when clicking on report icon
+  rect, circle, svg {
+    pointer-events: none;
+  }
+}
+

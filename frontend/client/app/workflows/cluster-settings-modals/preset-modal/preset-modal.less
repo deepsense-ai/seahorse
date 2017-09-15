@@ -1,0 +1,116 @@
+@import "../../../../css/variables";
+
+@border-grey: #cfcfcf;
+@code-color-grey: #666;
+@button-cancel: #f2f2f2;
+
+.preset-modal {
+  textarea.cluster-input:focus,
+  input.cluster-input:focus {
+    border: 1px solid @seahorse-light-blue;
+  }
+
+  ::-webkit-input-placeholder,
+  ::-moz-placeholder {
+    font-style: italic;
+  }
+
+  .title-input {
+    height: 45px;
+    font-weight: bold;
+    font-size: 18px;
+  }
+
+  .error,
+  input.error {
+    border: 1px solid @seahorse-error-red;
+  }
+
+  .form-row {
+    margin: 10px 0;
+  }
+
+  code {
+    color: @code-color-grey;
+    background-color: @color-light-grey;
+  }
+
+  &__header {
+    background-color: @color-light-grey;
+
+    .editing-blocked {
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+
+    .title {
+      height: 45px;
+      display: flex;
+      align-items: center;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .change-cluster-btn-section {
+      margin: 10px 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .error-highlight {
+      font-size: 16px;
+      font-weight: bold;
+      color: @seahorse-light-blue;
+    }
+  }
+
+  &__body {
+    .instructions {
+      line-height: 18px;
+      padding-top: 5px;
+      padding-bottom: 15px;
+      animation-duration: .2s;
+    }
+
+    .input-validation-error {
+      font-weight: bold;
+      margin: 5px 0;
+      color: @seahorse-light-blue;
+      font-size: 14px;
+    }
+
+    .main-form-row {
+      margin: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .label-main {
+      font-size: 18px;
+      font-weight: bold;
+    }
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: center;
+    background-color: @color-light-grey;
+  }
+
+  .cluster-btn {
+    min-width: 100px;
+    padding: 4px 20px;
+    font-weight: bold;
+    border-color: @border-grey;
+
+    &__light {
+      background-color: @button-cancel;
+    }
+
+    &__blue {
+      background-color: @seahorse-light-blue;
+      color: @color-white;
+    }
+  }
+
+}

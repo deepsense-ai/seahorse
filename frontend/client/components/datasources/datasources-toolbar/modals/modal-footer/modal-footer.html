@@ -1,0 +1,61 @@
+<div class="datasources-modal__footer" ng-form="modalFooterForm">
+  <div class="datasources-modal__footer-input">
+    <label class="title">Name</label>
+    <div class="icon-input">
+      <input
+        ng-disabled="$ctrl.previewMode"
+        ng-model="$ctrl.datasourceParams.name"
+        ng-focus="$ctrl.stopCopyingFromUserField()"
+        name="datasourceName"
+        placeholder="Name"
+        class="form-control"
+        type="text"
+      />
+      <div
+        ng-if="!$ctrl.previewMode"
+        class="icon-input__status"
+      >
+        <div
+          ng-class="{
+            'sa-ok status-ok': !$ctrl.doesNameExists() && $ctrl.datasourceParams.name !== '' &&
+              (modalFooterForm.datasourceName.$dirty || $ctrl.originalDatasource),
+            'sa-cross status-error': modalFooterForm.datasourceName.$dirty &&
+              ($ctrl.doesNameExists() || $ctrl.datasourceParams.name === '')
+          }"
+          class="sa icon"
+        ></div>
+      </div>
+    </div>
+    <label
+      ng-if="$ctrl.doesNameExists()"
+      class="name-exists"
+    >
+      Datasource with this name already exists. Choose another name.
+    </label>
+  </div>
+  <button
+    ng-if="!$ctrl.previewMode"
+    ng-disabled="!$ctrl.canAddNewDatasource"
+    ng-click="$ctrl.ok()"
+    class="btn btn-blue"
+    type="button"
+  >
+    Ok
+  </button>
+  <button
+    ng-if="!$ctrl.previewMode"
+    ng-click="$ctrl.cancel()"
+    class="btn btn-white"
+    type="button"
+  >
+    Cancel
+  </button>
+  <button
+    ng-if="$ctrl.previewMode"
+    ng-click="$ctrl.cancel()"
+    class="btn btn-blue"
+    type="button"
+  >
+    Close
+  </button>
+</div>

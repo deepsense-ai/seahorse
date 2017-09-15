@@ -1,0 +1,71 @@
+@import "../../../../../../css/variables";
+@import "../../../../../../app/mixins";
+
+.attribute-datasource {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 34px;
+  color: @seahorse-blue;
+
+  .disable-mask {
+    color: @color-darker-gray;
+    pointer-events: none;
+  }
+
+  .datasource-wrapper {
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    width: 100%;
+
+    &.error-wrapper {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    &__error-info {
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    &__select {
+      display: flex;
+      align-items: center;
+      margin-top: 3px;
+
+      .error-icon {
+        padding-right: 5px;
+        font-size: 20px;
+        color: #ff6700
+      }
+
+      .select-label {
+        &:hover {
+          cursor: pointer;
+          text-decoration: underline;
+        }
+      }
+    }
+
+    &__icon {
+      padding: 0 3px;
+      cursor: pointer;
+      font-size: 26px;
+
+      &:not(:first-child) {
+        font-size: 28px;
+      }
+    }
+
+    &__name {
+      flex: 1;
+      padding-right: 3px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      width: 160px;
+      .text-elipsis();
+    }
+  }
+}

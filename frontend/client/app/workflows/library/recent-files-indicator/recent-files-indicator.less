@@ -1,0 +1,123 @@
+@import "../../../../css/variables";
+
+.recent-files-indicator {
+  margin: 0 10px;
+  position: relative;
+
+  .btn-counter {
+    max-height: 35px;
+
+    .gradient {
+      background: linear-gradient(to bottom, #b5dcee 0%, #2ab9e5 0%, #bee1ef 100%);
+      height: 10px;
+      width: 52px;
+      position: absolute;
+      left: 5px;
+      right: 0;
+      animation: gradient-moving 0.9s infinite;
+    }
+
+    @keyframes gradient-moving {
+      0% {
+        bottom: -3px;
+      }
+      100% {
+        bottom: 25px;
+        opacity: 0.2;
+      }
+    }
+  }
+
+  .indicator-disabled {
+    opacity: 0.6;
+    position: relative;
+    pointer-events: none;
+  }
+
+  .files-counter-icon {
+    font-size: 30px;
+    font-family: "Seahorse Symbol";
+    color: @seahorse-light-blue;
+    position: relative;
+    top: -2px;
+  }
+
+  .files-number {
+    color: #fff;
+    position: absolute;
+    left: 0;
+    right: 0;
+    font-weight: 600;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    top: 9px;
+  }
+
+  .files-popover {
+    position: absolute;
+    height: 350px;
+    width: 950px;
+    top: 55px;
+    right: -50px;
+    z-index: 1000;
+    border: 1px solid @seahorse-blue;
+    box-shadow: 0 0 10px 0 rgba(0,0,0,0.75);
+
+    @media(max-width: 992px) {
+      width: 650px;
+    }
+  }
+
+  .files-popover .popover-arrow {
+    width: 0;
+    height: 0;
+    border-left: 25px solid transparent;
+    border-right: 25px solid transparent;
+    border-bottom: 25px solid @light-grey;
+    position: absolute;
+    right: 55px;
+    top: -25px;
+    z-index: 1000;
+  }
+
+  .popover-outer-arrow {
+    width: 0;
+    height: 0;
+    border-left: 26px solid transparent;
+    border-right: 26px solid transparent;
+    border-bottom: 26px solid @seahorse-light-blue;
+    position: absolute;
+    right: 54px;
+    top: -26px;
+  }
+
+  .inner {
+    background-color: @light-grey;
+    height: 100%;
+    width: 100%;
+
+    .cross {
+      position: absolute;
+      right: 15px;
+      font-size: 26px;
+      font-family: "Seahorse Symbol";
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+    .title {
+      padding-top: 15px;
+      padding-left: 15px;
+      font-weight: 600;
+      font-size: 24px;
+    }
+
+    .files-wrapper {
+      height: 200px;
+      margin: 15px 5px;
+    }
+  }
+}

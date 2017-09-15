@@ -1,0 +1,32 @@
+@import "../../../css/variables";
+
+.editor {
+  width: 100%;
+  background: #eaf4f7;
+  overflow: hidden;
+  margin: 0;
+  height: 100%;
+  position: relative;
+  flex: 1;
+  outline: none;
+
+  .create-node-invitation-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  &.active-drag-target {
+    border: 3px dashed @color-action;
+  }
+
+  &--is-running {
+    flex-basis: 50%;
+  }
+
+  ._jsPlumb_connector {
+    z-index: 4;
+  }
+}

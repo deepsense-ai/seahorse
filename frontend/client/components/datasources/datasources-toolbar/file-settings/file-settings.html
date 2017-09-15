@@ -1,0 +1,203 @@
+<div class="file-settings">
+  <div class="file-settings__row-wrapper">
+    <div class="title-row">Format</div>
+    <div class="inputs-row vertical-align-bottom">
+      <div class="col">
+        <select
+          ng-model="$ctrl.fileFormat"
+          ng-options="format as (format | uppercase) for format in $ctrl.formats"
+          ng-change="$ctrl.updateFileSettings()"
+          ng-disabled="$ctrl.disabledMode"
+          class="form-control"
+        ></select>
+      </div>
+      <div
+        ng-if="$ctrl.fileFormat === 'csv'"
+        class="checkboxes-wrapper"
+      >
+        <div class="col checkbox-wrapper">
+          <label
+            class="format-form-label"
+            ng-class="{
+              'active': $ctrl.csvFileFormatParams.includeHeader,
+              'disabled': $ctrl.disabledMode
+            }"
+          >
+            <input
+              ng-disabled="$ctrl.disabledMode"
+              ng-change="$ctrl.updateFileSettings()"
+              ng-model="$ctrl.csvFileFormatParams.includeHeader"
+              type="checkbox"
+            />
+            <span>
+              First row includes column names
+            </span>
+          </label>
+        </div>
+        <div class="col checkbox-wrapper">
+          <label
+            ng-class="{
+              'active': $ctrl.csvFileFormatParams.convert01ToBoolean,
+              'disabled': $ctrl.disabledMode
+            }"
+            class="format-form-label"
+          >
+            <input
+              ng-disabled="$ctrl.disabledMode"
+              ng-change="$ctrl.updateFileSettings()"
+              ng-model="$ctrl.csvFileFormatParams.convert01ToBoolean"
+              type="checkbox"
+            />
+            <span>
+              Convert 0 and 1 to boolean
+            </span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    ng-if="$ctrl.fileFormat === 'csv'"
+    class="file-settings__row-wrapper"
+  >
+    <div class="title-row">Separator</div>
+    <div class="inputs-row space-between">
+      <div class="radio-wrapper">
+        <label
+          class="format-form-label"
+          ng-class="{
+            'active': $ctrl.csvFileFormatParams.separatorType === 'comma',
+            'disabled': $ctrl.disabledMode
+          }"
+        >
+          <input
+            ng-disabled="$ctrl.disabledMode"
+            ng-change="$ctrl.updateFileSettings()"
+            ng-model="$ctrl.csvFileFormatParams.separatorType"
+            type="radio"
+            value="comma"
+          />
+          <span class="radio-title">, (comma)</span>
+        </label>
+      </div>
+      <div class="radio-wrapper">
+        <label
+          class="format-form-label"
+          ng-class="{
+            'active': $ctrl.csvFileFormatParams.separatorType === 'semicolon',
+            'disabled': $ctrl.disabledMode
+          }"
+        >
+          <input
+            ng-disabled="$ctrl.disabledMode"
+            ng-change="$ctrl.updateFileSettings()"
+            ng-model="$ctrl.csvFileFormatParams.separatorType"
+            type="radio"
+            value="semicolon"
+          />
+          <span class="radio-title">; (semicolon)</span>
+        </label>
+      </div>
+      <div class="radio-wrapper">
+        <label
+          class="format-form-label"
+          ng-class="{
+            'active': $ctrl.csvFileFormatParams.separatorType === 'colon',
+            'disabled': $ctrl.disabledMode
+          }"
+        >
+          <input
+            ng-disabled="$ctrl.disabledMode"
+            ng-change="$ctrl.updateFileSettings()"
+            ng-model="$ctrl.csvFileFormatParams.separatorType"
+            type="radio"
+            value="colon"
+          />
+          <span class="radio-title">: (colon)</span>
+        </label>
+      </div>
+      <div class="radio-wrapper">
+        <label
+          class="format-form-label"
+          ng-class="{
+            'active': $ctrl.csvFileFormatParams.separatorType === 'space',
+            'disabled': $ctrl.disabledMode
+          }"
+        >
+          <input
+            ng-disabled="$ctrl.disabledMode"
+            ng-change="$ctrl.updateFileSettings()"
+            ng-model="$ctrl.csvFileFormatParams.separatorType"
+            type="radio"
+            value="space"
+          />
+          <span class="radio-title">space</span>
+        </label>
+      </div>
+      <div class="radio-wrapper">
+        <label
+          class="format-form-label"
+          ng-class="{
+            'active': $ctrl.csvFileFormatParams.separatorType === 'tab',
+            'disabled': $ctrl.disabledMode
+          }"
+        >
+          <input
+            ng-disabled="$ctrl.disabledMode"
+            ng-change="$ctrl.updateFileSettings()"
+            ng-model="$ctrl.csvFileFormatParams.separatorType"
+            type="radio"
+            value="tab"
+          />
+          <span class="radio-title">tab</span>
+        </label>
+      </div>
+      <div class="radio-wrapper">
+        <label
+          class="format-form-label"
+           ng-class="{
+             'active': $ctrl.csvFileFormatParams.separatorType === 'custom',
+             'disabled': $ctrl.disabledMode
+           }"
+        >
+          <input
+            ng-disabled="$ctrl.disabledMode"
+            ng-change="$ctrl.updateFileSettings()"
+            ng-model="$ctrl.csvFileFormatParams.separatorType"
+            type="radio"
+            value="custom"
+          />
+          <span class="radio-title">
+            <div class="icon-input">
+              <input
+                ng-disabled="$ctrl.disabledMode"
+                ng-change="$ctrl.updateFileSettings()"
+                ng-model="$ctrl.csvFileFormatParams.customSeparator"
+                ng-focus="$ctrl.onCustomSeparatorInputFocus()"
+                maxlength="1"
+                placeholder="custom"
+                id="custom-separator"
+                type="text"
+              />
+              <div
+                ng-if="!$ctrl.disabledMode && $ctrl.csvFileFormatParams.separatorType === 'custom'"
+                class="icon-input__status"
+              >
+                <div
+                  ng-class="{
+                    'sa-ok status-ok':  $ctrl.csvFileFormatParams.separatorType === 'custom' &&
+                                        $ctrl.fileSettings.csvFileFormatParams.customSeparator,
+                    'sa-cross status-error': $ctrl.csvFileFormatParams.separatorType === 'custom' &&
+                                             !$ctrl.fileSettings.csvFileFormatParams.customSeparator
+                  }"
+                  class="sa icon"
+                ></div>
+              </div>
+            </div>
+          </span>
+        </label>
+      </div>
+    </div>
+  </div>
+</div>

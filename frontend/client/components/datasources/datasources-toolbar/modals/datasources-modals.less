@@ -1,0 +1,85 @@
+@import "../../../../css/variables";
+
+@exclamation-mark: "\0021";
+
+.datasources-modal {
+  &__header {
+    padding: 20px;
+
+    .modal-title {
+      font-weight: bold;
+      font-size: 24px;
+    }
+  }
+
+  &__body {
+    padding: 0 20px;
+
+    &-row {
+      margin: 20px 0;
+
+      .title {
+        font-size: 16px;
+        font-weight: normal;
+      }
+
+      .radio-row, .checkbox-row {
+        display: flex;
+
+        .radio-wrapper:not(:first-child),
+        .checkbox-wrapper:not(:first-child) {
+          margin: 0 10px;
+        }
+      }
+
+
+      .query-row {
+        margin-top: 5px;
+      }
+
+      .public-param-row {
+        display: flex;
+        align-items: center;
+
+        &__label {
+          margin-left: 10px;
+          font-style: italic;
+        }
+      }
+    }
+  }
+
+  .icon-input {
+    display: flex;
+    position: relative;
+
+    input.form-control {
+      border-radius: 0;
+    }
+
+    &__status {
+      position: absolute;
+      right: 1px;
+      top: 1px;
+      height: ~'calc(100% - 2px)';
+      width: 32px;
+      background-color: @light-grey;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6em;
+
+      .status-ok {
+        color: @color-action;
+      }
+
+      .status-error {
+        color: @seahorse-error-red;
+
+        &:before {
+          content: @exclamation-mark;
+        }
+      }
+    }
+  }
+}

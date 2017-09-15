@@ -1,0 +1,78 @@
+<div class="c-workflow-container">
+  <section class="c-workflow-container__content" resizable-listener="height">
+
+    <div
+      ng-class="{'active': workflow.isDatasourcesOpened}"
+      class="datasources-component__mask"
+    ></div>
+
+    <div class="datasources-component__wrapper"
+         ng-class="{'active': workflow.isDatasourcesOpened}"
+    >
+      <div ng-click="workflow.closeDatasources()"
+           class="cross"
+      >X</div>
+
+      <datasources-panel></datasources-panel>
+    </div>
+
+    <editor
+      class="c-workflow-container__editor"
+      is-editable="workflow.isEditable()"
+      workflow="workflow.getWorkflow()"
+      selectedNode="workflow.getSelectedNode()"
+    ></editor>
+
+    <deepsense-operation-attributes
+      ng-if="workflow.getSelectedNode()"
+      workflow-id="workflow.WorkflowService.getCurrentWorkflow().id"
+      public-params="workflow.WorkflowService.getCurrentWorkflow().publicParams"
+      is-inner-workflow="workflow.WorkflowService.getCurrentWorkflow().workflowType === 'inner'"
+      node="workflow.getSelectedNode()"
+      disabled-mode="!workflow.isEditable()"
+      class="o-panel o-panel--scroll-right animated fadeInRight right-panel-resizable"
+      custom-scroll-bar
+      resizable
+      resizable-panel-name="rightPanel"
+      resizable-position="left"
+    >
+    </deepsense-operation-attributes>
+
+    <general-data-panel
+      ng-if="!workflow.getSelectedNode()"
+      workflow="workflow.getWorkflow()"
+      name="workflow.getWorkflow().name"
+      class="right-panel-resizable"
+      description="workflow.getWorkflow().description"
+      public-params="workflow.WorkflowService.getCurrentWorkflow().publicParams"
+      disabled-mode="!workflow.isEditable()"
+      resizable
+      resizable-panel-name="rightPanel"
+      resizable-position="left"
+      resizable-add-shift="-10">
+    </general-data-panel>
+  </section>
+
+  <section
+    class="c-bottom-tabs"
+    resizable
+    resizable-panel-name="bottomTab"
+    resizable-via-listener=".c-workflow-container__content"
+    resizable-invisible="true"
+    resizable-position="top"
+    resizable-min-start="25"
+    ng-show="workflow.BottomBarData.reportTab"
+  >
+
+    <report
+      style="overflow-y: scroll;"
+      report="workflow.report"
+      ng-if="workflow.BottomBarData.reportTab"
+    >
+    </report>
+
+  </section>
+
+  <bottom-bar></bottom-bar>
+
+</div>

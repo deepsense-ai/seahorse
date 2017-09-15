@@ -1,0 +1,140 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "oneOf": [
+    {
+      "properties": {
+        "id": {
+          "type": "number",
+          "invalidMessage": "Id is not a Number"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "invalidMessage": "Invalid name (not a string)",
+          "requiredMessage": "Name is required"
+        },
+        "clusterType": {
+          "type": "string",
+          "enum": [
+            "yarn"
+          ],
+          "invalidMessage": "clusterType is not set to any of yarn|standalone|mesos|local",
+          "requiredMessage": "clusterType is required"
+        },
+        "uri": {
+          "type": "string",
+          "invalidMessage": "Uri is not a valid uri",
+          "requiredMessage": "Uri is required"
+        },
+        "userIP": {
+          "type": "string",
+          "invalidMessage": "User IP is not a valid IP",
+          "requiredMessage": "User IP is required"
+        },
+        "hadoopUser": {
+          "type": "string",
+          "invalidMessage": "Hadoop User is not a valid user",
+          "requiredMessage": "Hadoop User is required"
+        },
+        "isEditable": {
+          "type": "boolean",
+          "default": true,
+          "invalidMessage": "isEditable is not a boolean"
+        },
+        "isDefault": {
+          "type": "boolean",
+          "default": false,
+          "invalidMessage": "isDefault is not a boolean"
+        },
+        "executorMemory": {
+          "type": "string",
+          "invalidMessage": "executorMemory is not a valid string"
+        },
+        "executorCores": {
+          "type": "integer",
+          "minimum": 1,
+          "invalidMessage": "executorCores is not a valid integer"
+        },
+        "totalExecutorCores": {
+          "type": "integer",
+          "minimum": 1,
+          "invalidMessage": "totalExecutorCores is not a valid integer > 0"
+        },
+        "params": {
+          "type": "string",
+          "invalidMessage": "params are not string"
+        }
+      },
+      "required": ["name", "clusterType", "uri", "userIP", "hadoopUser"]
+    },{
+      "properties": {
+        "id": {
+          "type": "number",
+          "invalidMessage": "Id is not a Number"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "invalidMessage": "Invalid name (not a string)",
+          "requiredMessage": "Name is required"
+        },
+        "clusterType": {
+          "type": "string",
+          "enum": [
+            "mesos",
+            "standalone",
+            "local"
+          ],
+          "invalidMessage": "clusterType is not set to any of yarn|standalone|mesos|local",
+          "requiredMessage": "clusterType is required"
+        },
+        "uri": {
+          "type": "string",
+          "invalidMessage": "Uri is not a valid uri",
+          "requiredMessage": "Uri is required"
+        },
+        "userIP": {
+          "type": "string",
+          "invalidMessage": "User IP is not a valid IP",
+          "requiredMessage": "User IP is required"
+        },
+        "hadoopUser": {
+          "type": "string",
+          "invalidMessage": "Hadoop User is not a valid user",
+          "requiredMessage": "Hadoop User is is required"
+        },
+        "isEditable": {
+          "type": "boolean",
+          "default": true,
+          "invalidMessage": "isEditable is not a boolean"
+        },
+        "isDefault": {
+          "type": "boolean",
+          "default": false,
+          "invalidMessage": "isDefault is not a boolean"
+        },
+        "executorMemory": {
+          "type": "string",
+          "invalidMessage": "executorMemory is not a valid string"
+        },
+        "executorCores": {
+          "type": "integer",
+          "minimum": 1,
+          "invalidMessage": "executorCores is not a valid integer"
+        },
+        "totalExecutorCores": {
+          "type": "integer",
+          "minimum": 1,
+          "invalidMessage": "totalExecutorCores is not a valid integer > 0"
+        },
+        "params": {
+          "type": "string",
+          "invalidMessage": "params are not string"
+        }
+      },
+      "required": ["name", "clusterType", "uri", "userIP"]
+    }
+
+  ]
+}

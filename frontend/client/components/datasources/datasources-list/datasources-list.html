@@ -1,0 +1,76 @@
+<div class="datasources-list">
+  <div class="datasources-list__header">
+    <div class="datasources-list__type">
+      <span
+        class="datasources-list__descending-icon sa-sort-desc sa"
+        ng-class="{'datasources-list__descending-icon--active': $ctrl.filterType == 'params.datasourceType' && $ctrl.filterOrder == false}"
+        ng-click="$ctrl.sort('params.datasourceType', false)"
+      ></span>
+      <span
+        class="datasources-list__descending-icon sa-sort-asc sa"
+        ng-class="{'datasources-list__descending-icon--active': $ctrl.filterType == 'params.datasourceType' && $ctrl.filterOrder == true}"
+        ng-click="$ctrl.sort('params.datasourceType', true)"
+      ></span>
+    </div>
+    <div class="datasources-list__name">
+      <span class="datasources-list__text">Name</span>
+      <span
+        class="datasources-list__descending-icon sa-sort-desc sa"
+        ng-class="{'datasources-list__descending-icon--active': $ctrl.filterType == 'params.name' && $ctrl.filterOrder == false}"
+        ng-click="$ctrl.sort('params.name', false)"
+      ></span>
+      <span
+        class="datasources-list__descending-icon sa-sort-asc sa"
+        ng-class="{'datasources-list__descending-icon--active': $ctrl.filterType == 'params.name' && $ctrl.filterOrder == true}"
+        ng-click="$ctrl.sort('params.name', true)"
+      ></span>
+    </div>
+    <div class="datasources-list__created">
+      <span class="datasources-list__text">Created</span>
+      <span
+        class="datasources-list__descending-icon sa-sort-desc sa"
+        ng-class="{'datasources-list__descending-icon--active': $ctrl.filterType == 'creationDateTime' && $ctrl.filterOrder == false}"
+        ng-click="$ctrl.sort('creationDateTime', false)"
+      ></span>
+      <span
+        class="datasources-list__descending-icon sa-sort-asc sa"
+        ng-class="{'datasources-list__descending-icon--active': $ctrl.filterType == 'creationDateTime' && $ctrl.filterOrder == true}"
+        ng-click="$ctrl.sort('creationDateTime', true)"
+      ></span>
+    </div>
+    <div class="datasources-list__owner">
+      <span class="datasources-list__text">Owner</span>
+      <span
+        class="datasources-list__descending-icon sa-sort-desc sa"
+        ng-class="{'datasources-list__descending-icon--active': $ctrl.filterType == 'ownerName' && $ctrl.filterOrder == false}"
+        ng-click="$ctrl.sort('ownerName', false)"
+      ></span>
+      <span
+        class="datasources-list__descending-icon sa-sort-asc sa"
+        ng-class="{'datasources-list__descending-icon--active': $ctrl.filterType == 'ownerName' && $ctrl.filterOrder == true}"
+        ng-click="$ctrl.sort('ownerName', true)"
+      ></span>
+    </div>
+    <div class="datasources-list__access">
+      <span class="datasources-list__text">Access</span>
+      <span
+        class="datasources-list__descending-icon sa-sort-desc sa"
+        ng-class="{'datasources-list__descending-icon--active': $ctrl.filterType == 'params.visibility' && $ctrl.filterOrder == false}"
+        ng-click="$ctrl.sort('params.visibility', false)"
+      ></span>
+      <span
+        class="datasources-list__descending-icon sa-sort-asc sa"
+        ng-class="{'datasources-list__descending-icon--active': $ctrl.filterType == 'params.visibility' && $ctrl.filterOrder == true}"
+        ng-click="$ctrl.sort('params.visibility', true)"
+      ></span>
+    </div>
+  </div>
+  <div class="datasources-list__list-wrapper">
+    <datasources-element
+      ng-repeat="datasource in $ctrl.datasources | orderBy:$ctrl.filterType:$ctrl.filterOrder"
+      datasource="datasource"
+      context="$ctrl.context"
+      on-select="$ctrl.onSelect({datasource: datasource})"
+    ></datasources-element>
+  </div>
+</div>

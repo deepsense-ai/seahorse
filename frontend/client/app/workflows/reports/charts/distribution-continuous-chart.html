@@ -1,0 +1,11 @@
+<div class="distribution-chart">
+  <div ng-switch="distributionContinuousChart.chosenPlot.value">
+    <box-plot ng-switch-when="box"
+              data="distributionContinuousChart.data">
+    </box-plot>
+    <column-plot ng-switch-when="column"
+                 data="distributionContinuousChart.data"
+                 column-type="distributionContinuousChart.columnType">
+    </column-plot>
+  </div>
+</div>

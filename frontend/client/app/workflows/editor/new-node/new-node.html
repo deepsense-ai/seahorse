@@ -1,0 +1,15 @@
+<div class="new-node__input-container">
+  <input
+    class="new-node__input"
+    ng-model="$ctrl.operationSearchQuery"
+    focused="500"
+  />
+</div>
+<operation-catalogue
+  class="new-node__catalogue"
+  query="$ctrl.operationSearchQuery"
+  select-operation="$ctrl.onSelect({operationId: operationId})"
+  containment="$ctrl.containment"
+  categories="$ctrl.categories"
+>
+</operation-catalogue>

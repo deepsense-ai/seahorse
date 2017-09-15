@@ -1,0 +1,14 @@
+<div class="info-popup" ng-controller="StartingPopoverCtrl as controller" ng-show="!controller.isPopoverClosed()">
+  <div class="info-popup__content">
+    <div>
+      <span>
+        You are now in <b>viewer mode</b>. Click the button above to enable editing.
+      </span>
+    </div>
+    <div class="info-popup__content-button" ng-click="controller.closePopover()">
+    <span>
+      Ok, got it.
+    </span>
+    </div>
+  </div>
+</div>

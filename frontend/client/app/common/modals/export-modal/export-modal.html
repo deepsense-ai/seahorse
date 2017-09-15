@@ -1,0 +1,38 @@
+<div class="export-modal">
+  <div class="export-modal__header">
+    <div class="modal-title">Export workflow</div>
+  </div>
+
+  <div class="export-modal__body">
+    <div class="checkbox-wrapper export-label">
+      <label class="format-form-label"
+             ng-class="{'active': $ctrl.includeDatasources}"
+      >
+        <input
+          ng-model="$ctrl.includeDatasources"
+          type="checkbox"
+        />
+        <span>Export with definitions of the datasources.</span>
+      </label>
+    </div>
+    <div class="export-additional-info">
+      (Note that those definitions may contain sensitive information, e.g. database credentials).
+    </div>
+  </div>
+  <div class="export-modal__footer">
+    <button
+      ng-click="$ctrl.download()"
+      class="btn btn-blue no-selection"
+      type="button"
+    >
+      Export Workflow
+    </button>
+    <button
+      ng-click="$ctrl.close()"
+      class="btn btn-white"
+      type="button"
+    >
+      Cancel
+    </button>
+  </div>
+</div>

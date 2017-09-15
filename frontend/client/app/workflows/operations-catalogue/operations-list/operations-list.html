@@ -1,0 +1,44 @@
+<div
+  class="operations-list"
+  ng-class="{
+    'operations-list--smaller': $ctrl.currentLevel > 2,
+    'operations-list--hide': $ctrl.currentLevel + 1 < $ctrl.visibleLevel
+  }"
+>
+  <div
+    class="operations-list__wrapper"
+    ng-class="{'operations-list__wrapper--hide': $ctrl.currentLevel + 1 < $ctrl.visibleLevel}"
+  >
+    <div
+      ng-repeat="category in $ctrl.items track by category.id"
+      ng-mouseover="$ctrl.showItem($event, $index)"
+      ng-click="$ctrl.select(category)"
+      title="{{category.description}}"
+      class="operations-list__item"
+      ng-class="{
+        'operations-list__item--category': category.type === 'category',
+        'operations-list__item--item': category.type === 'item',
+        'operations-list__item--active': $ctrl.activeCategoryIndex === $index
+      }"
+    >
+      <div
+        class="operations-list__name"
+      >
+        {{category.name}}
+      </div>
+    </div>
+  </div>
+  <div
+    ng-if="$ctrl.selectedItems"
+    ng-style="$ctrl.getNextLevelStyle()"
+    class="operations-list__next-level"
+  >
+    <operations-list
+      containment="$ctrl.containment"
+      direction="$ctrl.direction"
+      items="$ctrl.selectedItems"
+      level="$ctrl.currentLevel"
+      select-operation="$ctrl.selectOperation({operationId: operationId})"
+    ></operations-list>
+  </div>
+</div>

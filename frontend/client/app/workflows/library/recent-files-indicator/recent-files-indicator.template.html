@@ -1,0 +1,31 @@
+<div class="recent-files-indicator">
+
+  <div title="Recent uploads">
+    <div class="btn-counter btn btn-grey"
+         ng-click="$ctrl.toggleOpenRecentFiles()"
+         ng-class="{'indicator-disabled': $ctrl.allFiles.length === 0}">
+      <div class="gradient" ng-if="$ctrl.uploadingFiles.length > 0"></div>
+      <span class="sa sa-file files-counter-icon"></span>
+      <span class="files-number">{{$ctrl.allFiles.length}}</span>
+    </div>
+  </div>
+
+  <div class="files-popover" ng-if="$ctrl.recentFilesListOpen">
+    <div class="popover-arrow"></div>
+    <div class="popover-outer-arrow"></div>
+    <div class="inner">
+      <div class="cross" ng-click="$ctrl.toggleOpenRecentFiles()">X</div>
+      <div class="title">Recent uploads</div>
+
+      <div class="files-wrapper" custom-scroll-bar="">
+        <file-list
+          mode="'uploading-files'"
+          items="$ctrl.allFiles"
+          on-select="$ctrl.onSelect"
+        >
+        </file-list>
+      </div>
+    </div>
+  </div>
+
+</div>

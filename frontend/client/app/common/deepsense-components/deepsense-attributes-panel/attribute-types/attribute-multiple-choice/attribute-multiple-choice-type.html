@@ -1,0 +1,12 @@
+<div class="multiple-choice-panel">
+  <div ng-repeat="(choiceName, parametersList) in ::parameter.possibleChoicesList" class="ibox choice-item">
+    <label>
+      <input type="checkbox"
+             ng-model="choices[choiceName]"
+             ui-switch="{color: '#1ab394', secondaryColor: '#E43B11', size: 'small', className: 'switchery switchery-in-label'}"
+      >
+      <span>{{ choiceName }}</span>
+    </label>
+    <div id="attr-list-{{ ::name }}-{{ ::choiceName }}" class="nested-attributes-view"></div>
+  </div>
+</div>

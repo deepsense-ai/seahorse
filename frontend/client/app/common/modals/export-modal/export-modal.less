@@ -1,0 +1,47 @@
+@import "../../../../css/variables.less";
+
+.export-modal {
+  &__header {
+    padding: 20px;
+    font-weight: bold;
+    font-size: 24px;
+  }
+
+  &__body {
+    padding: 15px;
+
+    .export-label {
+      width: 320px;
+      margin: 10px 0;
+    }
+
+    .export-additional-info {
+      margin-bottom: 15px;
+      font-style: italic;
+    }
+  }
+
+  &__footer {
+    padding: 15px;
+    display: flex;
+    justify-content: flex-end;
+
+    .btn {
+      font-weight: 600;
+      padding: 0 30px;
+      height: 34px;
+    }
+
+    .btn-blue {
+      margin: 0 10px;
+      color: @color-white;
+      background-color: @seahorse-blue;
+    }
+
+    .btn-white {
+      color: @color-darker-gray;
+      background-color: @color-white;
+      border: 1px solid #C6C6C6;
+    }
+  }
+}

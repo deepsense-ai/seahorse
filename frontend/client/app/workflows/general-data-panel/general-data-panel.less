@@ -1,0 +1,86 @@
+@import "../../../css/variables";
+
+.o-general-data-panel {
+  &__scrollable-wrapper {
+    height: inherit;
+    overflow-y: scroll;
+  }
+
+  &:extend(.operation-attributes-panel);
+
+  width: auto;
+  margin-left: 0;
+  background: white;
+  overflow: visible;
+  position: relative;
+
+  &__content {
+    padding: @general-panel-padding;
+  }
+
+  &__ibox-title {
+    &--editor-mode {
+      padding: @general-panel-padding;
+      min-height: 100px;
+      border-top: 1px solid #ddd;
+    }
+
+    &--report-mode {
+      padding: @general-panel-padding;
+      min-height: 48px;
+    }
+  }
+
+  &__header {
+    margin-bottom: 3px;
+    padding-bottom: 0;
+    font-size: 18px;
+  }
+
+  &__cluster {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  &__label {
+    overflow-wrap: break-word;
+    word-break: break-word;
+    margin-left: 4px;
+    margin-bottom: 0;
+    padding: 8px;
+  }
+
+  &__editable-info {
+    margin-left: 5px;
+    margin-top: 1px;
+  }
+
+  &__editable-text:hover {
+    cursor: pointer;
+    padding: 7px;
+    border: 1px solid #337ab7;
+  }
+
+  &__editable-input {
+    margin: 0 auto;
+    width: 97%;
+    padding: 5px;
+    border: 1px solid #337ab7;
+    transition: box-shadow .3s, border .3s;
+  }
+
+  &__editable-input:focus {
+    outline: none;
+    border: solid 1px #337ab7;
+    box-shadow: 0 0 2px 1px #337ab7;
+  }
+
+  &__btn {
+    font-weight: bold;
+    font-size: 11px;
+    min-width: 55px;
+    padding: 3px;
+    margin: 5px 3px;
+  }
+
+}

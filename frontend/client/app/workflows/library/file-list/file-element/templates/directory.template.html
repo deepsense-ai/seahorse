@@ -1,0 +1,26 @@
+<div class="file-element directory" ng-class="{'last-elem': $ctrl.isLast}">
+  <div class="icon-wrapper">
+    <div class="icon sa sa-directory"></div>
+  </div>
+
+  <div class="name-section"
+       ng-click="$ctrl.goToUri($ctrl.item.uri)"
+  >
+    <div class="name" title="{{$ctrl.item.name}}">
+      {{$ctrl.item.name}}
+    </div>
+    <div class="upload-info" ng-if="$ctrl.isFiltered">
+      <div class="parent" ng-repeat="parent in $ctrl.parents">
+        <div ng-if="$first">in</div>
+        <div class="parent-name" ng-click="$ctrl.goToUri(parent.uri)" title={{parent.title}}>
+          {{parent.name}}
+        </div>
+        <div ng-if="!$last">/</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <span class="sa sa-delete" ng-click="$ctrl.deleteDirectory($ctrl.item)"></span>
+  </div>
+</div>

@@ -1,0 +1,79 @@
+@import "../../../css/variables";
+
+.datasources-toolbar {
+  width: 100%;
+  margin-top: 20px;
+  background-color: @seahorse-light-blue;
+  color: @color-white;
+  min-height: 40px;
+  font-weight: bold;
+  font-size: 16px;
+  padding: 5px 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+
+  .title {
+    margin-left: 50px;
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+  }
+
+  .btn-modal {
+    padding: 0 10px;
+    height: 32px;
+    margin: 3px;
+    background-color: @color-white;
+    color: #000;
+    transition: background ease-in 0.2s;
+    box-shadow: none;
+
+    &__icon {
+      font-size: 30px;
+      color: @seahorse-blue;
+      padding-right: 3px;
+      vertical-align: middle;
+    }
+
+    &__title {
+      vertical-align: middle;
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    &:hover {
+      background-color: #D7FBFF;
+    }
+
+    &:active {
+      outline: none;
+    }
+
+    &:last-child {
+      margin-right: 50px;
+    }
+
+    .gradient {
+      background: linear-gradient(to bottom, #b5dcee 0%, #2ab9e5 0%, #bee1ef 100%);
+      animation: gradient-moving 0.8s infinite;
+      height: 12px;
+      width: 94px;
+      position: absolute;
+      left: -2px;
+      bottom: 0;
+    }
+
+    @keyframes gradient-moving {
+      0% {
+        bottom: -3px;
+      }
+      100% {
+        bottom: 25px;
+        opacity: 0.2;
+      }
+    }
+  }
+}

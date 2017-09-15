@@ -1,0 +1,57 @@
+<div class="datasources-modal">
+  <div class="datasources-modal__header">
+    <div class="modal-title">Library</div>
+  </div>
+
+  <div class="datasources-modal__body">
+    <div class="datasources-modal__body-row">
+      <label class="title">Source</label>
+      <div class="library-source">
+        <input
+          ng-model="$ctrl.datasourceParams.libraryFileParams.libraryPath"
+          class="form-control"
+          type="text"
+          placeholder="library/your-file.csv"
+          disabled
+        />
+        <div
+          ng-click="$ctrl.openLibrary()"
+          class="btn library-source__browse-btn"
+        >
+          <i class="sa sa-library icon"></i>
+          <span>Browse</span>
+        </div>
+      </div>
+    </div>
+
+    <file-settings
+      disabled-mode="$ctrl.previewMode"
+      file-settings="$ctrl.datasourceParams.libraryFileParams"
+      on-change="$ctrl.onFileSettingsChange(fileSettings)"
+    ></file-settings>
+
+    <div class="datasources-modal__body-row">
+      <div class="public-param-row">
+        <div class="checkbox-wrapper">
+          <label class="format-form-label"
+                 ng-class="{'active': $ctrl.datasourceParams.visibility === 'publicVisibility'}"
+          >
+            <input
+              ng-disabled="$ctrl.previewMode"
+              ng-model="$ctrl.datasourceParams.visibility"
+              ng-true-value="'publicVisibility'"
+              ng-false-value="'privateVisibility'"
+              type="checkbox"
+            />
+            <span>Public</span>
+          </label>
+        </div>
+        <div class="public-param-row__label">
+          (Public data sources are accessible by all users of this instance of Seahorse)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div ng-include="$ctrl.footerTpl"></div>
+</div>

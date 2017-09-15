@@ -1,0 +1,35 @@
+<li class="operations-category">
+    <span class="operations-category-item"
+          ng-click="category.collapsed = ! category.collapsed">
+      <span class="btn btn-info btn-xs pull-left">
+        <i class="fa fa-caret-{{ category.collapsed ? 'right' : 'down' }}"></i>
+      </span>
+      <span class="text">{{::category.name}}</span>
+    </span>
+  <ul ng-hide="category.collapsed">
+    <operations-category
+      ng-repeat="category in ::category.catalog"
+      is-running="isRunning"
+      filtered-data="filteredData"
+      is-running="isRunning"
+      category="::category"
+      is-running="isRunning"
+      search="search"
+    >
+    </operations-category>
+    <operation-item ng-repeat="item in ::category.items"
+                    ng-mouseover="ocCtrl.selectContentForPopover(item)"
+                    is-running="isRunning"
+                    id="{{::item.id}}"
+                    icon="{{::item.icon}}"
+                    name="{{::item.name}}"
+                    popover-trigger="mouseenter"
+                    popover-placement="right"
+                    popover-append-to-body="true"
+                    uib-popover-template="::ocCtrl.templateUrl"
+    >
+    </operation-item>
+
+  </ul>
+</li>
+

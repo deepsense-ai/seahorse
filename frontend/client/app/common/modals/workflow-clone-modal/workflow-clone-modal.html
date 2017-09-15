@@ -1,0 +1,26 @@
+<div class="inmodal">
+  <div class="modal-header">
+    <h4 class="modal-title">Clone workflow - {{controller.originalWorkflow.name}}</h4>
+  </div>
+  <div class="modal-body" ng-form="cloneForm">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="form-group">
+          <label>Workflow clone name</label>
+          <input type="text" class="form-control" ng-model="controller.workflowCopy.name"
+                 placeholder="Name for a new workflow" autofocus required>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea type="text" class="form-control" ng-model="controller.workflowCopy.description"
+                    placeholder="Workflow clone description">
+          </textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-white" ng-click="controller.dismiss()">Close</button>
+    <button type="button" ng-disabled="cloneForm.$invalid" class="btn btn-primary" ng-click="controller.save()">Clone workflow</button>
+  </div>
+</div>

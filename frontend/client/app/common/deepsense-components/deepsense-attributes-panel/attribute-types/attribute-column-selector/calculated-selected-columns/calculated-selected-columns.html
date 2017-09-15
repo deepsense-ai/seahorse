@@ -1,0 +1,21 @@
+<section class="calculated-selected-columns-panel">
+  <span ng-if="showAllColumns"
+        ng-repeat="column in allColumns()">
+    <span class="badge o-tag-unit o-tag-unit__name"
+          ng-class="isSelected(column) ? 'badge-info' : 'badge-default'">
+      {{::column.name}}
+    </span>
+  </span>
+  <span ng-if="!showAllColumns"
+        ng-repeat="column in (showedItems = calculatedColumns())">
+    <span class="badge o-tag-unit o-tag-unit__name badge-info"
+          ng-if="isSelected(column)">
+      {{::column.name}}
+    </span>
+    <span class="badge o-tag-unit o-tag-unit__name badge-default"
+          ng-if="isPlaceholder(column)">
+      ...
+    </span>
+  </span>
+  <span ng-if="!showAllColumns" ng-hide="showedItems.length">None</span>
+</section>

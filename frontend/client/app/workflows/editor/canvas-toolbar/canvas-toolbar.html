@@ -1,0 +1,31 @@
+<div class="canvas-toolbar">
+  <div class="canvas-toolbar__drag-handle"></div>
+  <div
+    ng-click="$ctrl.onNewNode({$event: $event})"
+    class="canvas-toolbar__item node active drag-node"
+    draggable-type="exact"
+    draggable-exact-type="graphNode"
+    draggable="true"
+    ng-if="$ctrl.isEditable"
+    title="Add new operations"
+  ></div>
+  <div
+    class="canvas-toolbar__item node"
+    ng-if="!$ctrl.isEditable"
+  ></div>
+  <div
+    ng-click="$ctrl.onZoomIn({$event: $event})"
+    class="canvas-toolbar__item zoomin active"
+    title="Zoom in"
+  ></div>
+  <div
+    ng-click="$ctrl.onZoomOut({$event: $event})"
+    class="canvas-toolbar__item zoomout active"
+    title="Zoom out"
+  ></div>
+  <div
+    ng-click="$ctrl.onFit({$event: $event})"
+    class="canvas-toolbar__item fit active"
+    title="Fit to editor"
+  ></div>
+</div>

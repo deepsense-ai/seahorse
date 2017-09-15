@@ -1,0 +1,57 @@
+<div class="file-element"
+     ng-class="{
+       'last-elem': $ctrl.isLast,
+       'upload-error': $ctrl.item.status === 'error'
+     }">
+
+  <div class="icon-wrapper">
+    <div class="icon sa sa-file"></div>
+    <div class="extension"
+         ng-class="{[$ctrl.extension]: $ctrl.canShowExtension}"
+         ng-if="$ctrl.canShowExtension"
+    >
+      {{$ctrl.extension}}
+    </div>
+  </div>
+
+  <div class="name-section"
+       ng-click="$ctrl.onSelect($ctrl.item)"
+  >
+    <div class="name" title={{$ctrl.item.name}}>
+      {{$ctrl.item.name}}
+    </div>
+    <div class="upload-info" ng-if="$ctrl.item.progress && $ctrl.item.status !== 'error' || $ctrl.isFiltered">
+      <div class="parent" ng-repeat="parent in $ctrl.parents">
+        <div ng-if="$first">in</div>
+        <div class="parent-name" ng-click="$ctrl.goToUri(parent.uri)" title={{parent.title}}>
+          {{parent.name}}
+        </div>
+        <div ng-if="!$last">/</div>
+      </div>
+    </div>
+    <div class="upload-info" ng-if="$ctrl.item.progress && $ctrl.item.status === 'error'">
+      (upload failed)
+    </div>
+  </div>
+
+  <div class="actions"
+       ng-class="{'disabled': $ctrl.item.progress > 0 && $ctrl.item.progress < 100}"
+  >
+    <span class="sa sa-directory" title="Open directory"
+          ng-click="$ctrl.goToUri($ctrl.item.parent.uri)"
+          ng-if="$ctrl.item.progress"
+    >
+    </span>
+    <a ng-href={{$ctrl.item.downloadUrl}} download>
+      <span class="sa sa-download"></span>
+    </a>
+    <span class="sa sa-delete" ng-click="$ctrl.deleteFile($ctrl.item)"></span>
+  </div>
+
+  <div
+    class="file-element-progress-upload"
+    ng-if="$ctrl.item.progress > 0 && $ctrl.item.progress < 100"
+    ng-style="{'width': $ctrl.item.progress + '%'}"
+  >
+  </div>
+</div>

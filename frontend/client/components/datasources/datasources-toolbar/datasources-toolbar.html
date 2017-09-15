@@ -1,0 +1,60 @@
+<div class="datasources-toolbar">
+  <div class="title">
+    New data source from
+  </div>
+
+  <button
+    ng-click="$ctrl.addDatasource('libraryFile')"
+    class="btn btn-modal"
+  >
+    <span class="btn-modal__icon sa sa-library"></span>
+    <span class="btn-modal__title">
+      Library
+    </span>
+    <span
+      ng-if="$ctrl.uploadingInProgress"
+      class="gradient"
+    ></span>
+  </button>
+
+  <button
+    ng-click="$ctrl.addDatasource('jdbc')"
+    class="btn btn-modal"
+  >
+    <span class="btn-modal__icon sa sa-database"></span>
+    <span class="btn-modal__title">
+      Database
+    </span>
+  </button>
+
+  <button
+    ng-disabled="$ctrl.context === $ctrl.datasourceContext.WRITE_DATASOURCE"
+    ng-click="$ctrl.addDatasource('externalFile')"
+    class="btn btn-modal"
+  >
+    <span class="btn-modal__icon sa sa-external-file"></span>
+    <span class="btn-modal__title">
+      External file
+    </span>
+  </button>
+
+  <button
+    ng-click="$ctrl.addDatasource('hdfs')"
+    class="btn btn-modal"
+  >
+    <span class="btn-modal__icon sa sa-hdfs"></span>
+    <span class="btn-modal__title">
+      HDFS
+    </span>
+  </button>
+
+  <button
+    ng-click="$ctrl.addDatasource('googleSpreadsheet')"
+    class="btn btn-modal"
+  >
+    <span class="btn-modal__icon sa sa-google-spreadsheet"></span>
+    <span class="btn-modal__title">
+      Google Spreadsheet
+    </span>
+  </button>
+</div>

@@ -1,0 +1,68 @@
+<div class="cluster-modal">
+  <div class="modal-header cluster-modal__header">Presets</div>
+
+  <div class="modal-body cluster-modal__body">
+    <div class="section-title">
+      Create new preset
+    </div>
+
+    <div class="cluster-selection">
+      <div class="cluster-selection-box" ng-click="controller.openClusterSettingsModal('standalone')">
+        <div class="cluster-selection-box__image"><img src="~ASSETS/images/cluster-spark.png"/></div>
+        <div class="cluster-selection-box__title">Standalone</div>
+      </div>
+      <div class="cluster-selection-box" ng-click="controller.openClusterSettingsModal('mesos')">
+        <div class="cluster-selection-box__image"><img src="~ASSETS/images/cluster-mesos.png"/></div>
+        <div class="cluster-selection-box__title">Mesos</div>
+      </div>
+      <div class="cluster-selection-box" ng-click="controller.openClusterSettingsModal('yarn')">
+        <div class="cluster-selection-box__image"><img src="~ASSETS/images/cluster-yarn.png"/></div>
+        <div class="cluster-selection-box__title">YARN</div>
+      </div>
+    </div>
+
+    <div class="cluster-presets">
+      <div class="section-title">
+        Presets
+      </div>
+
+      <div class="cluster-presets__list">
+        <deepsense-loading-spinner-sm ng-if="controller.presets === undefined"></deepsense-loading-spinner-sm>
+        <div ng-if="controller.error" class="dataframe-info">
+          {{controller.error}}
+        </div>
+        <div class="cluster-presets__preset" ng-repeat="preset in controller.presets track by preset.id">
+          <div class="cluster-presets__preset-group"
+               ng-class="{'current-preset': controller.isPresetAssignedToWorkflow(preset.id)}">
+            <div class="cluster-presets__preset-icon" ng-click="controller.selectCurrentPreset(preset.id)"
+                 ng-switch on="preset.clusterType">
+              <img ng-switch-when="local" src="~ASSETS/images/cluster-local-sm.png"/>
+              <img ng-switch-when="standalone" src="~ASSETS/images/cluster-spark-sm.png"/>
+              <img ng-switch-when="mesos" src="~ASSETS/images/cluster-mesos-sm.png"/>
+              <img ng-switch-when="yarn" src="~ASSETS/images/cluster-yarn-sm.png"/>
+            </div>
+            <div class="cluster-presets__preset-type" ng-click="controller.selectCurrentPreset(preset.id)">
+              {{controller.formatPresetType(preset.clusterType)}}
+            </div>
+            <div class="cluster-presets__preset-name" ng-click="controller.selectCurrentPreset(preset.id)">
+              {{preset.name}}
+            </div>
+            <div ng-click="controller.openClusterSettingsModal(preset.clusterType, preset)"
+                 class="cluster-presets__preset-edit" ng-if="preset.isEditable">
+              edit
+            </div>
+          </div>
+          <div class="cluster-presets__preset-delete"
+               ng-click="controller.deletePresetById(preset)"
+               ng-if="preset.isEditable && !preset.isDefault">
+            <i class="fa fa-trash-o"></i>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class="modal-footer cluster-modal__footer">
+    <button type="button" class="btn btn-white" ng-click="controller.close()">Close</button>
+  </div>
+</div>

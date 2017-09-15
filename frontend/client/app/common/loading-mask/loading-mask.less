@@ -1,0 +1,33 @@
+.disconnected-mask {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100000;
+  background-color: rgba(255, 255, 255, 0.75);
+}
+
+.disconnected-mask > div {
+  height: 35px;
+}
+
+.reconnecting-bar {
+  width:100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.reconnecting-sign {
+  text-shadow: 0px 0px 6px rgba(255,255,255,0.7);
+  font-size: 18px;
+  color: black
+}
+
+.dots {
+  position: absolute;
+  margin-top: 8px;
+  font-size: 18px;
+  color: black;
+}

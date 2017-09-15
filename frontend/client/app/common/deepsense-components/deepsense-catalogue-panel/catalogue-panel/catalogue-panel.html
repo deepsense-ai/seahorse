@@ -1,0 +1,26 @@
+<div class="catalog-wrapper">
+  <div class="search-div-wrapper">
+    <div class="search-div">
+      <input type="text" class="form-control search-input"
+             placeholder="Search operations..." ng-model="cpCtrl.search" />
+    </div>
+    <div ng-if="cpCtrl.search">
+      <span class="icon-remove" ng-click="cpCtrl.clearSearch()">
+          <i class="fa fa-remove"></i>
+      </span>
+    </div>
+  </div>
+  <div class="operations-tree no-selection"
+       custom-scroll-bar>
+    <ul class="root">
+      <operations-category
+        is-running="isRunning"
+        ng-repeat="category in filteredData"
+        category="category"
+        search="cpCtrl.search"
+      >
+      </operations-category>
+    </ul>
+  </div>
+
+</div>

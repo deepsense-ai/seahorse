@@ -1,0 +1,59 @@
+<div class="schedule">
+  <div
+    ng-if="!$ctrl.editing"
+    class="schedule__actions"
+  >
+    <span class="schedule-action fa fa-pencil" ng-click="$ctrl.editSchedule()" title="Edit schedule"></span>
+    <span class="schedule-action sa sa-delete" ng-click="$ctrl.deleteSchedule()" title="Delete schedule"></span>
+  </div>
+
+  <div
+    ng-if="!$ctrl.editing"
+    class="schedule__preview"
+  >
+    <div class="schedule-attribute schedule-cluster-preset">
+      <div class="schedule-attribute__label">Cluster preset:</div>
+      <div
+        ng-if="!$ctrl.error.presetId.required"
+        class="schedule-attribute__value"
+        title="{{$ctrl.model.executionInfo.presetName}}"
+      >
+        {{$ctrl.model.executionInfo.presetName}}
+      </div>
+      <div
+        ng-if="$ctrl.error.presetId.required"
+        class="schedule-attribute__value schedule-attribute__value--invalid schedule-attribute__value--clickable"
+        ng-click="$ctrl.editSchedule()"
+      >Select execution cluster</div>
+    </div>
+
+    <div class="schedule-attribute schedule-cron">
+      <span class="schedule-attribute__label">Run workflow</span>
+      <span class="schedule-attribute__value" jq-cron="$ctrl.jqCronSettings" ng-model="$ctrl.model.schedule.cron"></span>
+    </div>
+
+    <div class="schedule-attribute schedule-email">
+      <div class="schedule-attribute__label">Reports send to:</div>
+      <div
+        class="schedule-attribute__value"
+        title="{{$ctrl.model.executionInfo.emailForReports}}"
+      >
+        {{$ctrl.model.executionInfo.emailForReports}}
+      </div>
+      <div class="schedule-attribute__errors">
+        <p
+          ng-if="$ctrl.error.emailForReports.required || $ctrl.error.emailForReports.email"
+          class="schedule-attribute-error"
+        >Valid email address is required</p>
+      </div>
+    </div>
+  </div>
+
+  <edit-schedule
+    ng-if="$ctrl.editing"
+    cluster-presets="$ctrl.clusterPresets"
+    initial-data="$ctrl.model"
+    on-accept="$ctrl.updateSchedule($event);"
+    on-cancel="$ctrl.cancelEdit();"
+  ></edit-schedule>
+</div>

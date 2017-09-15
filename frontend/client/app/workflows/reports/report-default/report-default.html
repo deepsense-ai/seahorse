@@ -1,0 +1,10 @@
+<div class="report-default">
+  <div class="panel panel-default" ng-repeat="table in report.tables">
+    <div class="report-table-header clearfix">
+      <div class="col-md-4 col-xs-6">
+        <h2>{{ table.name }}</h2>
+      </div>
+    </div>
+    <report-table table="table" datatypesVisible="false"></report-table>
+  </div>
+</div>

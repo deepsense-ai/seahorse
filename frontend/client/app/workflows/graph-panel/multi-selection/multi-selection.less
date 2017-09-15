@@ -1,0 +1,14 @@
+.selection-element {
+  @border-width: 1px;
+
+  position: absolute;
+  border: @border-width solid @highlighted-graph-node-color;
+  background: fade(@color-active, 25%);
+  z-index: 1000;
+  margin: -@border-width 0 0 -@border-width;
+  pointer-events: none;
+}
+
+.has-cursor-crosshair {
+  cursor: crosshair;
+}

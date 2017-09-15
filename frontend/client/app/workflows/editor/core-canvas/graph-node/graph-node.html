@@ -1,0 +1,26 @@
+<div
+  class="graph-node {{::$ctrl.nodeType}} {{::$ctrl.getBorderCssClass()}}"
+  title={{::$ctrl.node.description}}
+>
+  <div class="graph-node__content">
+    <div class="operation-name">
+      <span
+        ng-if="::$ctrl.nodeType === 'action'"
+        class="action-icon sa {{::$ctrl.actionIcon}}"
+      ></span>
+      <span>{{ ::$ctrl.node.name }}</span>
+    </div>
+    <div
+      ng-if="$ctrl.node.uiName"
+      class="custom-name"
+    >
+      {{ $ctrl.node.uiName }}
+    </div>
+  </div>
+
+  <status-icon
+    ng-if="$ctrl.isOwner()"
+    node="$ctrl.node"
+    class="graph-node__status-icon"
+  ></status-icon>
+</div>

@@ -1,0 +1,83 @@
+@import "./custom-scrollbar/common-custom-scrollbar.less";
+@import "./loading-mask/loading-mask.less";
+@import "./modals/modals.less";
+@import "./resizable/resizable.less";
+@import "./services/notification.service.less";
+@import "../../css/variables.less";
+
+label.custom-checkbox {
+  font-weight: normal;
+  cursor: pointer;
+  line-height: 1em;
+
+  input[type=checkbox] {
+    display: none;
+  }
+
+  input[type=checkbox] + span:before {
+    font-family: "Seahorse Symbol";
+    content: "\0057";
+    display: inline-block;
+    background: #ffffff;
+    background: linear-gradient(to bottom, #ffffff 0%,#dedede 100%);
+    border: 1px solid @seahorse-light-blue;
+    border-radius: 2px;
+    transition: background ease-in 0.2s;
+    text-align: center;
+    width: 1em;
+    height: 1em;
+  }
+
+  input[type=checkbox]:checked + span:before {
+    content: "\0056";
+    color: #fff;
+    background: @seahorse-blue;
+  }
+
+  input[type=checkbox]:disabled + span:before {
+    color: #000;
+    background: #EEE;
+    border: 1px solid #EEE;
+  }
+}
+
+@-moz-document url-prefix() {
+  body select.form-control {
+    padding-right: 25px;
+    background-image: url("~ASSETS/images/arrow-down.svg");
+    background-repeat: no-repeat;
+    background-position: calc(~"100% - 7px") 50%;
+    -moz-appearance: none;
+
+    &:-moz-focusring {
+      color: transparent;
+      text-shadow: 0 0 0 @deepsense-black;
+    }
+  }
+
+  body input[type="number"].form-control {
+    -moz-appearance: textfield;
+
+    &:hover,
+    &:focus {
+      -moz-appearance: number-input;
+    }
+  }
+}
+
+.badge {
+  background-color: #d1dade;
+  color: #5e5e5e;
+  font-size: 11px;
+  font-weight: 600;
+  padding-bottom: 4px;
+  padding-left: 6px;
+  padding-right: 6px;
+  text-shadow: none;
+  cursor: default;
+
+  &-info {
+    background-color: @seahorse-blue;
+    color: #FFFFFF;
+  }
+}

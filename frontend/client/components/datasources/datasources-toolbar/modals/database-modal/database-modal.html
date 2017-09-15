@@ -1,0 +1,129 @@
+<div class="datasources-modal" ng-form="databaseForm">
+  <div class="datasources-modal__header">
+    <div class="modal-title">Select from Database</div>
+  </div>
+
+  <div class="datasources-modal__body">
+    <div class="datasources-modal__body-row half-width">
+      <label class="title">Driver</label>
+      <div class="icon-input">
+        <input
+          ng-disabled="$ctrl.previewMode"
+          ng-model="$ctrl.datasourceParams.jdbcParams.driver"
+          name="driver"
+          placeholder="e.g. com.mysql.jdbc.Driver"
+          class="form-control"
+          type="text"
+        />
+        <div
+          ng-if="!$ctrl.previewMode"
+          class="icon-input__status"
+        >
+          <div
+            ng-class="{
+              'sa-ok status-ok': $ctrl.datasourceParams.jdbcParams.driver && (databaseForm.driver.$dirty || $ctrl.originalDatasource),
+              'status-error': !$ctrl.datasourceParams.jdbcParams.driver && (databaseForm.driver.$dirty || $ctrl.originalDatasource)
+            }"
+            class="sa icon"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="datasources-modal__body-row">
+      <label class="title">JDBC connection string</label>
+      <div class="icon-input">
+        <input
+          ng-disabled="$ctrl.previewMode"
+          ng-model="$ctrl.datasourceParams.jdbcParams.url"
+          name="url"
+          placeholder="Connection string"
+          class="form-control"
+          type="text"
+        />
+        <div
+          ng-if="!$ctrl.previewMode"
+          class="icon-input__status"
+        >
+          <div
+            ng-class="{
+              'sa-ok status-ok': $ctrl.datasourceParams.jdbcParams.url && (databaseForm.url.$dirty || $ctrl.originalDatasource),
+              'status-error': !$ctrl.datasourceParams.jdbcParams.url && (databaseForm.url.$dirty || $ctrl.originalDatasource)
+            }"
+            class="sa icon"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="datasources-modal__body-row">
+      <div class="radio-row">
+        <div class="radio-wrapper">
+          <label
+            ng-class="{'active': $ctrl.type === 'table'}"
+            class="format-form-label"
+          >
+            <input
+              ng-disabled="$ctrl.previewMode"
+              ng-model="$ctrl.type"
+              ng-change="$ctrl.onQueryTypeChange()"
+              type="radio"
+              value="table"
+            />
+            <span class="radio-title">Table name</span>
+          </label>
+        </div>
+        <div class="radio-wrapper">
+          <label
+            ng-class="{'active': $ctrl.type === 'query'}"
+            class="format-form-label"
+          >
+            <input
+              ng-disabled="$ctrl.previewMode"
+              ng-model="$ctrl.type"
+              ng-change="$ctrl.onQueryTypeChange()"
+              type="radio"
+              value="query"
+            />
+            <span class="radio-title">Custom SQL query</span>
+          </label>
+        </div>
+      </div>
+      <div class="query-row">
+        <input
+          ng-disabled="$ctrl.previewMode"
+          ng-model="$ctrl.sqlInstruction"
+          ng-change="$ctrl.onQueryTypeChange()"
+          placeholder="{{($ctrl.type === 'table') ? 'Table name' : 'Custom query'}}"
+          class="form-control"
+          type="text"
+        />
+      </div>
+    </div>
+
+    <div class="datasources-modal__body-row">
+      <div class="public-param-row">
+        <div class="checkbox-wrapper">
+          <label
+            ng-class="{'active': $ctrl.datasourceParams.visibility === 'publicVisibility'}"
+            class="format-form-label"
+          >
+            <input
+              ng-disabled="$ctrl.previewMode"
+              ng-model="$ctrl.datasourceParams.visibility"
+              ng-true-value="'publicVisibility'"
+              ng-false-value="'privateVisibility'"
+              type="checkbox"
+            />
+            <span>Public</span>
+          </label>
+        </div>
+        <div class="public-param-row__label">
+          (Public data sources are accessible by all users of this instance of Seahorse)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div ng-include="$ctrl.footerTpl"></div>
+</div>

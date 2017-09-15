@@ -1,0 +1,121 @@
+@import "./lib.less";
+
+html, body {
+  height: 100%;
+  min-height: 100%;
+}
+
+body {
+  background: white;
+  overflow: hidden;
+}
+
+[ng\:cloak], [ng-cloak], .ng-cloak {
+  display: none !important;
+}
+
+/* ui.bootstrap reset */
+.nav, .pagination, .carousel, .panel-title a {
+  cursor: pointer;
+}
+
+/* common rules */
+.no-selection {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* main navigation */
+.navbar-static-side {
+  .nav-header {
+    background: #1d3647;
+    padding: 20px 25px;
+
+    .logo {
+      height: 67px;
+    }
+  }
+}
+
+.navbar-static-top h2 {
+  float: left;
+  margin-left: 20px;
+}
+
+textarea {
+  resize: vertical;
+}
+
+/* Rewrite toastr.css class property */
+.toast {
+  opacity: .9 !important;
+}
+
+/* Common modifications */
+.is-invisible {
+  opacity: 0;
+}
+
+.is-hidden {
+  display: none;
+}
+
+.has-absolute-cover {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+}
+
+.has-cursor-pointer {
+  cursor: pointer;
+}
+
+.u-full-height {
+  height: 100%;
+}
+
+#wrapper {
+  height: 100%;
+  display: block;
+}
+
+.text-left--important {
+  text-align: left !important;
+}
+
+/* Feedback */
+.ue-tab-container {
+  top: 14px !important;
+  right: 0 !important;
+  width: 240px;
+}
+
+.ue-button {
+  width: 100%;
+  text-align: center;
+  border: 1px solid #fff !important;
+}
+
+.no-support-message {
+  font-size: 18px;
+  padding-left: 30px;
+}
+
+@import "../app/common/deepsense-components/deepsense-attributes-panel/deepsense-attributes-panel.less";
+@import "../app/common/deepsense-components/deepsense-catalogue-panel/deepsense-catalogue-panel.less";
+@import "../app/common/deepsense-components/deepsense-loading-spinner/loading-spinner.less";
+
+@import "./variables.less";
+@import "../app/workflows/workflows.less";
+@import "../app/workflows/navigation-bar/navigation-bar.less";
+@import "../app/workflows/workflows-editor/bottom-bar/bottom-bar.less";
+@import "../app/common/common.less";
+@import "../app/home/home.less";
+@import "../app/errors/error.less";

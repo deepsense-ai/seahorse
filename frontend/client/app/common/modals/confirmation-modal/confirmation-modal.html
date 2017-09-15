@@ -1,0 +1,14 @@
+<div class="inmodal">
+  <form ng-submit="controller.ok()">
+    <div class="modal-header">
+      <h4 class="modal-title">Are you sure to proceed?</h4>
+    </div>
+    <div class="modal-body">
+      {{ ::controller.message }}
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-white" ng-click="controller.close()">Cancel</button>
+      <button type="button" class="btn btn-info" ng-click="controller.ok()" focused>OK</button>
+    </div>
+  </form>
+</div>

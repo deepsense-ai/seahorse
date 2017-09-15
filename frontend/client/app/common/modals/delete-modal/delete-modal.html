@@ -1,0 +1,15 @@
+<div class="inmodal delete-confirmation-modal">
+  <div class="modal-header">
+    <h4 class="modal-title">Deletion cannot be undone</h4>
+  </div>
+  <div class="modal-body">
+    <label class="custom-checkbox">
+      <input type="checkbox" ng-model="controller.doNotShowAgain" name="delete_confirmation">
+      <span>Do not show this message again</span>
+    </label>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-white" ng-click="controller.close()">Cancel</button>
+    <button type="submit" class="btn btn-info" ng-click="controller.ok()">OK</button>
+  </div>
+</div>

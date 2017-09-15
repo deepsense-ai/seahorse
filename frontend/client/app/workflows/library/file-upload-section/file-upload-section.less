@@ -1,0 +1,33 @@
+@import "../../../../css/variables";
+
+@border-grey: #CFCFCF;
+@dragzone-border: #868686;
+@light-grey: #F2F2F2;
+
+.file-upload-section {
+  display: flex;
+
+  .drop-area {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    background-color: @light-grey;
+    color: @dragzone-border;
+    font-size: 16px;
+    height: 35px;
+    border: 1px dashed @dragzone-border;
+    letter-spacing: 0.3px;
+
+    &:hover {
+      border: 2px dashed @light-grey;
+      cursor: pointer;
+    }
+
+    &.drag-over {
+      background-color: @color-white;
+      color: @dragzone-border;
+    }
+  }
+
+}

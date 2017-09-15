@@ -1,0 +1,21 @@
+<div class="file-list">
+  <file-element
+    ng-if="$ctrl.parent"
+    item="$ctrl.parent"
+    is-last="false">
+  </file-element>
+
+  <file-element
+    ng-if="$ctrl.newDir && $ctrl.mode === 'editable'"
+    item="$ctrl.newDirItem"
+  >
+  </file-element>
+
+  <file-element
+    ng-repeat="item in $ctrl.items | orderBy:['kind', 'name']"
+    item="item"
+    is-last="$last"
+    on-select="$ctrl.onSelect"
+  >
+  </file-element>
+</div>

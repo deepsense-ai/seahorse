@@ -1,0 +1,115 @@
+<div class="datasources-modal" ng-form="datasourceForm">
+  <div class="datasources-modal__header">
+    <div class="modal-title">Google Spreadsheet</div>
+  </div>
+
+  <div class="datasources-modal__body">
+    <div class="datasources-modal__body-row">
+      <label class="title">Google Spreadsheet ID / URL to Google Spreadsheet</label>
+      <div class="icon-input">
+        <input
+          ng-disabled="$ctrl.previewMode"
+          ng-model="$ctrl.datasourceParams.googleSpreadsheetParams.googleSpreadsheetId"
+          name="googleSpreadsheetId"
+          type="text"
+          class="form-control"
+          placeholder="Google spreadsheet ID"
+        />
+        <div
+          ng-if="!$ctrl.previewMode"
+          class="icon-input__status"
+        >
+          <div
+            ng-class="{
+              'sa-ok status-ok': $ctrl.isGoogleSpreadsheetIdValid() && (datasourceForm.googleSpreadsheetId.$dirty || $ctrl.originalDatasource),
+              'status-error': !$ctrl.isGoogleSpreadsheetIdValid() && (datasourceForm.googleSpreadsheetId.$dirty || $ctrl.originalDatasource)
+            }"
+            class="sa icon"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="datasources-modal__body-row">
+      <label class="title">Google service account credentials JSON</label>
+      <div class="icon-input">
+        <input
+          ng-disabled="$ctrl.previewMode"
+          ng-model="$ctrl.datasourceParams.googleSpreadsheetParams.googleServiceAccountCredentials"
+          ng-change="$ctrl.isGoogleCrendetialsValid()"
+          name="googleServiceAccountCredentials"
+          type="text"
+          class="form-control"
+          placeholder="JSON credentials"
+        />
+
+        <div
+          ng-if="!$ctrl.previewMode"
+          class="icon-input__status"
+        >
+          <div
+            ng-class="{
+              'sa-ok status-ok': $ctrl.areCredentialsValid && (datasourceForm.googleServiceAccountCredentials.$dirty || $ctrl.originalDatasource),
+              'status-error': !$ctrl.areCredentialsValid && (datasourceForm.googleServiceAccountCredentials.$dirty || $ctrl.originalDatasource)
+            }"
+            class="sa icon"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="datasources-modal__body-row">
+      <div class="checkbox-row">
+        <div class="checkbox-wrapper">
+          <label class="format-form-label"
+                 ng-class="{'active': $ctrl.datasourceParams.googleSpreadsheetParams.includeHeader}">
+            <input type="checkbox"
+                   ng-model="$ctrl.datasourceParams.googleSpreadsheetParams.includeHeader"/>
+            <span>First row includes column names</span>
+          </label>
+        </div>
+        <div class="checkbox-wrapper">
+          <label
+            class="format-form-label"
+            ng-class="{'active': $ctrl.datasourceParams.googleSpreadsheetParams.convert01ToBoolean}"
+          >
+            <input
+              ng-disabled="$ctrl.previewMode"
+              ng-model="$ctrl.datasourceParams.googleSpreadsheetParams.convert01ToBoolean"
+              type="checkbox"
+            />
+            <span>Convert 0 and 1 to boolean</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="datasources-modal__body-row">
+      <div class="public-param-row">
+        <div class="checkbox-wrapper">
+          <label
+            ng-class="{
+              'active': $ctrl.datasourceParams.visibility === 'publicVisibility',
+              'disabled': $ctrl.previewMode
+            }"
+            class="format-form-label"
+          >
+            <input
+              ng-disabled="$ctrl.previewMode"
+              ng-model="$ctrl.datasourceParams.visibility"
+              ng-true-value="'publicVisibility'"
+              ng-false-value="'privateVisibility'"
+              type="checkbox"
+            />
+            <span>Public</span>
+          </label>
+        </div>
+        <div class="public-param-row__label">
+          (Public data sources are accessible by all users of this instance of Seahorse)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div ng-include="$ctrl.footerTpl"></div>
+</div>

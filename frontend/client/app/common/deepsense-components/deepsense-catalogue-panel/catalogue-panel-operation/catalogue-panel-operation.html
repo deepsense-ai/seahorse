@@ -1,0 +1,14 @@
+<li class="operations-item"
+    ng-class="{ highlight: highlight, running: isRunning }"
+    draggable="{{!isRunning}}"
+    draggable-type="exact"
+    draggable-exact-type="graphNode"
+>
+  <span class="operations-item-body" id="operation-{{::id}}">
+    <span class="operations-item-body__icon-panel pull-left">
+      <span class="operations-item-body__icon fa {{::icon}}" ng-repeat="icon in ::getIcons()"></span>
+    </span>
+    <span class="operations-item-body__name">{{::name}}</span>
+    <span class="fa fa-bars pull-right"></span>
+  </span>
+</li>

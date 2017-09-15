@@ -1,0 +1,13 @@
+<div class="selection-items fadeInUp animated" ng-if="vm.hasElements()">
+  <div class="selection-title">SELECTION:</div>
+  <div class="button-wrapper">
+    <a class="status-bar-item" ng-class="{'menu-item-disabled':!vm.canDelete()}" ng-click="vm.delete()">
+      <div class="c-workflows-status-bar__text">
+        <span class="c-workflows-status-bar__text-label ng-binding">Delete</span>
+        <span class="c-workflows-status-bar__text-small-label" ng-if="!vm.isOwner()">
+          Owner only
+        </span>
+      </div>
+    </a>
+  </div>
+</div>

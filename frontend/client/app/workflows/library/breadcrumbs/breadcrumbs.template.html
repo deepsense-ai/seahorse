@@ -1,0 +1,21 @@
+<div class="breadcrumbs">
+  <div class="element parent-wrapper" ng-repeat="parent in $ctrl.parents">
+    <div class="parent-elem text"
+         ng-click="$ctrl.goToParent(parent.uri)"
+         title={{parent.title}}
+    >
+      {{parent.name}}
+    </div>
+    <div class="triangle-left">
+      <div class="inner-triangle"></div>
+    </div>
+  </div>
+  <div class="element current-wrapper" title={{$ctrl.currentFolder}}>
+    <div class="text">
+      {{$ctrl.currentFolder}}
+    </div>
+    <div class="triangle-left">
+      <div class="inner-triangle"></div>
+    </div>
+  </div>
+</div>

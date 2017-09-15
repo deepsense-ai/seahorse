@@ -1,0 +1,83 @@
+<aside class="ibox o-general-data-panel o-panel o-panel--scroll-right animated fadeInRight">
+  <div class="o-general-data-panel__scrollable-wrapper">
+    <header class="o-general-data-panel__ibox-title--editor-mode">
+      <p class="o-general-data-panel__header">Workflow name:</p>
+      <div ng-if="$ctrl.disabledMode">
+        <p class="o-general-data-panel__label">
+          {{$ctrl.name || 'No name'}}
+        </p>
+      </div>
+      <div ng-if="!$ctrl.disabledMode">
+        <div ng-if="!$ctrl.editableInputs.name">
+          <p class="o-general-data-panel__label o-general-data-panel__editable-text"
+             ng-click="$ctrl.enableEdition('name')"
+             uib-tooltip="{{$ctrl.name ? 'Edit workflow name' : ''}}"
+             tooltip-placement="left"
+             tooltip-append-to-body="true">
+            {{$ctrl.name || 'Enter workflow name'}}
+          </p>
+        </div>
+        <div ng-if="$ctrl.editableInputs.name">
+          <input class="form-control o-general-data-panel__editable-input"
+                 ng-model="$ctrl.buffer.name"
+                 ng-blur="$ctrl.hideInput('name')"
+                 ng-keydown="$ctrl.saveNewValue($event, 'name')"
+                 focus-element="$ctrl.editableInputs.name"
+          />
+          <span class="o-general-data-panel__editable-info">
+            Press esc to <a href="" ng-click="$ctrl.hideInput('name')">Cancel</a>
+          </span>
+        </div>
+      </div>
+    </header>
+
+    <section class="ibox-content o-general-data-panel__content" custom-scroll-bar>
+      <header>
+        <p class="o-general-data-panel__header">Description:</p>
+        <div ng-if="$ctrl.disabledMode">
+          <p class="o-general-data-panel__label">
+            {{$ctrl.description || 'No description'}}
+          </p>
+        </div>
+        <div ng-if="!$ctrl.disabledMode">
+          <div ng-if="!$ctrl.editableInputs.description">
+            <p class="o-general-data-panel__label o-general-data-panel__editable-text"
+               ng-click="$ctrl.enableEdition('description')"
+               uib-tooltip="{{$ctrl.name ? 'Edit description' : ''}}"
+               tooltip-placement="left"
+               tooltip-append-to-body="true">
+              {{$ctrl.description || 'Enter description'}}
+            </p>
+          </div>
+          <div ng-if="$ctrl.editableInputs.description">
+            <input class="form-control o-general-data-panel__editable-input"
+                   ng-model="$ctrl.buffer.description"
+                   ng-blur="$ctrl.hideInput('description')"
+                   ng-keydown="$ctrl.saveNewValue($event, 'description')"
+                   focus-element="$ctrl.editableInputs.description"
+            />
+            <span class="o-general-data-panel__editable-info">
+              Press esc to <a href="" ng-click="$ctrl.hideInput('description')">Cancel</a>
+            </span>
+          </div>
+        </div>
+      </header>
+    </section>
+
+    <section class="ibox-content o-general-data-panel__content">
+      <header>
+        <p class="o-general-data-panel__header">Schedules:</p>
+        <workflow-schedules
+          workflow="$ctrl.workflow"
+        ></workflow-schedules>
+      </header>
+    </section>
+
+    <section ng-if="$ctrl.publicParams.length > 0">
+      <public-params-list
+        workflow="$ctrl.workflow"
+        public-params="$ctrl.publicParams"
+      ></public-params-list>
+    </section>
+  </div>
+</aside>

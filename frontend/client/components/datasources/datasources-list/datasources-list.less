@@ -1,0 +1,63 @@
+@import "../../../css/variables";
+
+.datasources-list {
+  min-width: 686px;
+  max-width: 974px;
+  margin: 20px 10px 10px 10px;
+
+  &__header {
+    display: flex;
+    font-size: 18px;
+    font-weight: 600;
+    color: @seahorse-blue;
+    border-bottom: 1px solid #CCC;
+    padding-bottom: 5px;
+  }
+
+  &__type {
+    width: 36px;
+  }
+
+  &__name {
+    flex: 1;
+  }
+
+  &__created {
+    width: 130px;
+  }
+
+  &__owner {
+    width: 120px;
+  }
+
+  &__access {
+    width: 120px;
+  }
+
+  &__list-wrapper {
+    height: ~"calc(100vh - 250px)";
+    overflow: auto;
+  }
+
+  &__ascending-icon {
+    width: 10px;
+    display: inline-block;
+    color: #CCC;
+    cursor: pointer;
+
+    &--active {
+      color: @seahorse-blue;
+    }
+  }
+
+  &__descending-icon {
+    width: 10px;
+    display: inline-block;
+    color: #CCC;
+    cursor: pointer;
+
+    &--active {
+      color: @seahorse-blue;
+    }
+  }
+}

@@ -1,0 +1,7 @@
+<div class="port-status-tooltip">
+  <div class="port-status-tooltip__body">
+    <span ng-repeat="type in $ctrl.getTypes()">
+      <span>{{ ::type }}</span><span ng-if="::!$last">,</span>
+    </span>
+  </div>
+</div>

@@ -1,0 +1,266 @@
+@import './variables.less';
+
+.c-ports-info {
+  &__content {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__container {
+    padding: 5px !important;
+
+    &--outcomes {
+      background: #F6F6F6;
+    }
+
+    &:nth-child(1) {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.c-color-picker {
+  position: absolute;
+  width: 355px;
+  min-height: 200px;
+  background-color: rgba(255, 255, 255, 0.75);
+  border: 1px solid lightgray;
+  padding: @main-space;
+  border-radius: 5px;
+
+  &__head {
+    margin: 0 0 @main-space 0;
+  }
+
+  &__input {
+    width: 50px;
+    height: 50px;
+  }
+
+  &__save-indicator {
+    color: lightgreen;
+  }
+}
+
+.o-state {
+  &__status {
+    float: none !important;
+    margin: @main-space / 2 0 @main-space / 2 !important;
+    display: block;
+    font-size: 12px;
+    height: auto;
+    line-height: 1;
+    padding: 10px 0;
+  }
+
+  &__time {
+    margin: @main-space / 2 0;
+    display: block;
+    padding: 2px 5px;
+    border-radius: .25em;
+  }
+}
+
+.o-action-text {
+  width: 100%;
+  font-weight: 600;
+
+  &__text-element {
+    margin-left: 10px;
+  }
+}
+
+.o-error {
+  &__message {
+    text-transform: none;
+  }
+}
+
+.o-error-btn {
+  margin: -10px 0 0 0;
+  border-radius: 0 0 .25em .25em;
+}
+
+.o-custom {
+  &[type="text"],
+  &[type="number"] {
+    border-top: 0;
+    border-right: 0;
+    border-left: 0;
+    padding: 0;
+  }
+}
+
+.o-read-more {
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 14px;
+}
+
+.o-read-more > i {
+  font-size: 18px;
+  margin-right: 2px;
+}
+
+.o-modal {
+  &--error {
+    .modal-content {
+      padding: 10px;
+    }
+  }
+
+  &--notebook {
+    .modal-dialog {
+      height: calc(~"100% - 60px");
+      width: 1000px;
+    }
+    .modal-content {
+      padding: 10px;
+      height: 100%;
+    }
+  }
+}
+
+.o-tag-unit {
+  margin: 5px 2.5px 2.5px 0;
+  white-space: normal;
+  word-break: break-all;
+
+  &__name {
+    margin: 0 5px 0 0;
+    line-height: 1.2em;
+  }
+
+  &__close {
+    font-size: 1.4em;
+  }
+}
+
+.o-color-picker {
+  min-width: @main-space * 2;
+  height: @main-space * 2;
+  display: block;
+  margin: @main-space / 2 @main-space 0 0;
+  align-self: flex-start;
+
+  &:hover {
+    outline: 1px solid lightblue;
+  }
+}
+
+.u-flex {
+  display: flex;
+
+  &--baseline {
+    align-items: baseline;
+  }
+
+  &--center-center {
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__1 {
+    flex: 1;
+  }
+
+  &__25 {
+    flex-basis: 25%;
+  }
+
+  &__wrap {
+    flex-wrap: wrap;
+  }
+
+  &__align-self {
+    align-self: center;
+  }
+
+  &__align-self--end {
+    align-self: flex-end;
+  }
+}
+
+.u-fill-parent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+.u-as-h3 {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.u-space {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.u-cursor-pointer {
+  cursor: pointer;
+}
+
+.u-inline-block {
+  display: inline-block;
+
+  &--spaced {
+    margin: 0 0 0 3px;
+  }
+}
+
+.u-normal-words {
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+.u-top-border {
+  border-top: 4px solid #e7eaec;
+  padding-top: 10px;
+}
+
+// libs
+
+[editable-text] {
+  border-bottom: 1px dashed gray;
+  line-height: 1.5em;
+  word-wrap: break-word;
+}
+
+.editable-hide {
+  display: none;
+
+  ~ a {
+    display: none;
+  }
+}
+
+.editable-empty {
+  font-style: italic;
+  text-transform: none;
+}
+
+.form-control.editable-input {
+  &:extend(.o-custom all);
+
+  box-shadow: none;
+  width: 49%;
+}
+
+.editable-controls .btn {
+  margin: 0 @main-space;
+
+  // btn-sm
+  padding: 5px 10px;
+  font-size: 12px;
+  line-height: 1.5;
+
+  &:last-child {
+    margin: 0;
+    background: @danger;
+  }
+}

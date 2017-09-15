@@ -1,0 +1,26 @@
+<div class="inmodal c-upload-execution-report-modal">
+  <div class="modal-header">
+    <h4 class="modal-title">Upload Workflow</h4>
+  </div>
+  <div class="modal-body center-block">
+    <div class="row">
+      <deepsense-loading-spinner-sm ng-if="controller.status === 'loading'"></deepsense-loading-spinner-sm>
+      <button type="button" class="center-block btn btn-info c-upload-report-modal__upload-button"
+              ng-if="controller.status === 'preparing' || controller.status === 'failure'" ngf-select
+              ngf-change="controller.upload($file)" focused>Choose a file
+      </button>
+      <div class="text-center c-upload-report-modal__upload-progress" ng-if="controller.status === 'loading'">
+        {{controller.progress + ' %' }}
+      </div>
+      <img class="center-block c-upload-report-modal__img" ng-if="controller.status === 'success'"
+           src="~ASSETS/images/success.png"/>
+
+      <div class="text-danger error-message" ng-if="controller.status === 'failure'">
+        {{ controller.errorMessage }}
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-white" ng-click="controller.close()">Close</button>
+  </div>
+</div>

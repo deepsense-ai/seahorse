@@ -1,0 +1,15 @@
+<div class="file-element directory"
+     ng-class="{'last-elem': $ctrl.isLast}">
+
+  <div class="icon-wrapper">
+    <div class="icon sa sa-directory-parent"></div>
+  </div>
+
+  <div class="name-section"
+       ng-click="$ctrl.goToUri($ctrl.item.uri)"
+  >
+    <div class="name">
+      {{$ctrl.item.name}}
+    </div>
+  </div>
+</div>

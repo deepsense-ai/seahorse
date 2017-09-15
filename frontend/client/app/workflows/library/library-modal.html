@@ -1,0 +1,73 @@
+<div class="dataframe-library-modal"
+     ng-class="{'read-mode' : controller.mode === 'read-file',
+                'write-mode': controller.mode === 'write-to-file'}"
+>
+  <div class="modal-header dataframe-library-modal__header">
+    <div class="title">{{controller.title}}</div>
+    <div class="input">
+      <input class="form-control search-field"
+             ng-model="controller.filterString"
+             placeholder="Search in {{controller.currentDirName}}"
+      />
+      <span class="clear-search"
+            ng-click="controller.clearSearchInput()"
+            ng-if="controller.filterString">
+        X
+      </span>
+    </div>
+  </div>
+
+  <breadcrumbs
+    all-parents="controller.parents"
+    current-folder="controller.currentDirName"
+  ></breadcrumbs>
+
+  <div class="dataframe-library-modal__body">
+    <div class="content-wrapper">
+      <div class="files-list">
+        <div class="dataframe-form">
+          <button class="btn btn-grey add-folder" ng-click="controller.showNewDirectoryInput()">
+            <i class="sa sa-directory add-folder__icon"></i>
+            <span class="add-folder__label">New</span>
+          </button>
+          <file-upload-section style="flex: 1;"></file-upload-section>
+          <recent-files-indicator
+            on-select="controller.onSelect"
+          ></recent-files-indicator>
+        </div>
+
+        <deepsense-loading-spinner-sm ng-if="controller.loading"></deepsense-loading-spinner-sm>
+
+        <div class="file-list-wrapper" custom-scroll-bar>
+          <file-list
+            items="controller.items"
+            parents="controller.parents"
+            on-select="controller.onSelect"
+          ></file-list>
+        </div>
+
+        <div ng-if="controller.message" class="dataframe-info">
+          {{controller.message}}
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="dataframe-library-modal__footer">
+    <input
+      ng-if="controller.mode === 'write-to-file'"
+      ng-model="controller.selectedItem"
+      class="file-input"
+      type="text"
+      placeholder="Name your file"
+    >
+    <button
+      ng-if="controller.mode === 'write-to-file'"
+      ng-click="controller.ok()"
+      ng-disabled="!controller.selectedItem"
+      type="button"
+      class="btn btn-blue" >Ok</button>
+    <button type="button" class="btn btn-white" ng-click="controller.close()">Close</button>
+  </div>
+</div>

@@ -1,0 +1,182 @@
+@import "../../../../../css/variables";
+@import "../../../../../app/mixins";
+
+.file-element {
+  width: 100%;
+  display: flex;
+  height: 36px;
+  align-items: center;
+  border-bottom: 1px solid @grey;
+  position: relative;
+
+  &.last-elem {
+    border: 0;
+  }
+
+  &.upload-error {
+    background-color: #e5dbdb;
+
+    .name, .directory {
+      color: black;
+    }
+
+    .actions {
+      display: none;
+    }
+  }
+
+  &.directory {
+    background-color: @light-grey;
+
+    .name {
+      color: @seahorse-light-blue;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
+
+  .icon-wrapper {
+    width: 36px;
+
+    .icon {
+      padding-left: 5px;
+      padding-top: 3px;
+      font-size: 35px;
+      font-family: "Seahorse Symbol";
+      color: @seahorse-light-blue;
+
+      &.sa-directory, &.sa-directory-parent {
+        padding-bottom: 5px;
+      }
+    }
+
+    .extension {
+      position: absolute;
+      color: white;
+      font-weight: 600;
+      text-transform: uppercase;
+
+      &.csv {
+        font-size: 11px;
+        top: 12px;
+        left: 8px;
+      }
+
+      &.json {
+        font-size: 9px;
+        top: 13px;
+        left: 8px;
+      }
+    }
+  }
+
+  .name-section {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    flex: 1;
+
+    .name {
+      display: block;
+      max-width: 450px;
+      padding-left: 5px;
+      .text-elipsis();
+    }
+
+    .upload-info {
+      font-style: italic;
+      color: grey;
+      font-weight: 500;
+      padding-left: 10px;
+      display: flex;
+      max-width: 330px;
+
+      .parent {
+        display: flex;
+
+        &-name {
+          padding: 0 2px;
+          max-width: 145px;
+          .text-elipsis();
+
+          &:hover {
+            cursor: pointer;
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+
+    .new-directory {
+      &__input {
+        color: black;
+        padding-left: 5px;
+      }
+
+      &__ok {
+        color: @seahorse-blue;
+        padding: 0 10px;
+        &:hover {
+          cursor: pointer;
+        }
+
+        &.disabled {
+          color: grey;
+          pointer-events: none;
+        }
+      }
+
+      &__cancel {
+        color: grey;
+        &:hover {
+          cursor: pointer;
+        }
+      }
+
+      &__exists {
+        color: @seahorse-error-red;
+        font-weight: bold;
+        padding-left: 10px;
+      }
+    }
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    padding-right: 10px;
+
+    &.disabled {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+    span.sa {
+      font-size: 26px;
+      margin: 0 4px;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
+
+  &-progress-upload {
+    background: linear-gradient(to right, rgba(179, 220, 237, 1) 0%, rgba(41, 184, 229, 1) 100%, rgba(188, 224, 238, 1) 100%);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    opacity: 0.3;
+    height: 100%;
+  }
+}
+
+
+

@@ -1,0 +1,50 @@
+@import "../../../../css/variables";
+
+.button-wrapper {
+  display: flex;
+  position: relative;
+}
+
+.info-popup {
+  position: absolute;
+  top: 45px;
+  bottom: 0;
+  left: 5px;
+  right: -20px;
+  background-color: white;
+  z-index: 1000;
+  border-radius: 2px;
+  color: black;
+
+  &__content {
+    box-shadow: 0 10px 25px 5px rgba(13, 61, 61, 0.4);
+    background-color: white;
+    width: 100%;
+    white-space: normal;
+    text-align: left;
+    margin: 0 auto;
+    padding: 20px;
+    text-transform: none;
+    font-size: 15px;
+    font-weight: normal;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+
+    &-button {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 6px 15px;
+      border: 1px solid lightgrey;
+      border-radius: 4px;
+      align-self: flex-end;
+    }
+
+    &-button:hover {
+      cursor: pointer;
+    }
+  }
+}
+

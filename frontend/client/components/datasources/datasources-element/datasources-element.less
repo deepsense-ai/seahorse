@@ -1,0 +1,99 @@
+@import "../../../css/variables";
+@import "../../../app/mixins";
+@icon-size: 30px;
+
+.datasources-element {
+  font-size: 13px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #CCC;
+
+  &__name-wrapper {
+    min-width: 36px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    color: @seahorse-blue;
+    font-weight: 600;
+    transition: background-color .2s ease-in;
+
+    &:hover {
+      cursor: pointer;
+      background-color: #D7FBFF;
+    }
+
+    &--disabled {
+      color: #333;
+
+      &:hover {
+        cursor: default;
+        background-color: inherit;
+      }
+    }
+  }
+
+  &__type {
+    width: 36px;
+    font-size: @icon-size;
+    text-align: center;
+  }
+
+  &__name {
+    min-width: 200px;
+    max-width: 488px;
+    flex: 1;
+    .text-elipsis();
+  }
+
+  &__created {
+    width: 130px;
+  }
+
+  &__owner {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 10px;
+    width: 120px;
+
+    &--current {
+      font-weight: 600;
+    }
+  }
+
+  &__owner-icon {
+    font-size: 18px;
+  }
+
+  &__access {
+    width: 120px;
+  }
+
+  &__icon-wrapper {
+    width: 80px;
+    display: flex;
+    color: @seahorse-blue;
+
+    &--disabled {
+      pointer-events: none;
+      color: @color-grey;
+    }
+  }
+
+  &__edit {
+    cursor: pointer;
+    font-size: @icon-size;
+    margin-left: 15px;
+    width: 30px;
+    text-align: center;
+  }
+
+  &__delete {
+    cursor: pointer;
+    font-size: @icon-size;
+    margin-right: 15px;
+    width: 30px;
+    text-align: center;
+  }
+}

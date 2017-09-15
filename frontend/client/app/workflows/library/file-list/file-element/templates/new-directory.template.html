@@ -1,0 +1,33 @@
+<div class="file-element directory" ng-class="{'last-elem': false}">
+  <div class="icon-wrapper">
+    <div class="icon sa sa-directory"></div>
+  </div>
+
+  <div class="name-section">
+    <input
+      class="new-directory__input"
+      ng-init="$ctrl.newDirectoryName = ''"
+      ng-model="$ctrl.newDirectoryName"
+      ng-keydown="$ctrl.onKeyDownHandler($event)"
+      maxlength="30"
+      autofocus
+      focused
+    />
+    <span
+      class="new-directory__ok"
+      ng-class="{'disabled': $ctrl.newDirectoryName === '' || $ctrl.isDirectoryNameUsed()}"
+      ng-click="$ctrl.saveNewDir()">
+      Ok
+    </span>
+    <span
+      class="new-directory__cancel"
+      ng-click="$ctrl.cancelAddingNewDir()">
+      Cancel
+    </span>
+    <span
+      class="new-directory__exists"
+      ng-if="$ctrl.isDirectoryNameUsed()">
+      Directory with this name already exists
+    </span>
+  </div>
+</div>

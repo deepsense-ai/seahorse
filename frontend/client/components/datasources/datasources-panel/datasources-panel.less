@@ -1,0 +1,42 @@
+@import "../../../css/variables";
+
+.datasources-panel {
+  border-top: 1px solid @seahorse-grey;
+  border-right: 1px solid @seahorse-grey;
+  border-bottom: 1px solid @seahorse-grey;
+  box-shadow: 3px 0 15px 1px rgba(0,0,0,0.75);
+  height: 100%;
+  width: 100%;
+
+  &__header {
+    margin-top: 20px;
+    font-size: 24px;
+    font-weight: bold;
+
+    .title {
+      padding-left: 50px;
+    }
+  }
+
+  &__buttons {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    background-color: @seahorse-light-blue;
+    color: @color-white;
+    min-height: 40px;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 5px 0;
+  }
+
+  .panel-datasource-modal {
+    &.modal {
+      margin-top: 10%;
+    }
+
+    .modal-dialog {
+      width: 800px;
+    }
+  }
+}

@@ -1,0 +1,29 @@
+<div
+  class="canvas sliding-window"
+  tabindex="1"
+  ng-class="{'disabled': !$ctrl.isEditable && $ctrl.workflow.sessionStatus !== 'running'}"
+>
+  <div
+    class="flowchart-paint-area"
+    multi-selection
+  >
+    <div
+      class="new-node-container"
+      ng-transclude=""
+    ></div>
+
+    <graph-node
+      ng-repeat="(nodeId, node) in $ctrl.workflow.getNodes()"
+      id="node-{{ node.id }}"
+      class="graph-node-component"
+      ng-style="{
+        'left': node.x + 'px',
+        'top': node.y + 'px',
+        'border-color': node.color
+      }"
+      jsplumb-draggable
+      keyboard
+      node="node"
+    ></graph-node>
+  </div>
+</div>

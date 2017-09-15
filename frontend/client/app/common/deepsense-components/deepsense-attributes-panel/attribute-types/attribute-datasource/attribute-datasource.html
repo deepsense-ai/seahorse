@@ -1,0 +1,59 @@
+<div class="attribute-datasource">
+  <div
+    ng-if="isDataSourceEmpty()"
+    ng-class="{'disable-mask': disabledMode}"
+    class="datasource-wrapper error-wrapper"
+  >
+    <div
+      ng-if="error"
+      class="datasource-wrapper__error-info"
+    >
+      {{error}}
+    </div>
+    <div class="datasource-wrapper__select">
+      <span class="error-icon fa fa-exclamation-circle"></span>
+      <span
+        ng-click="openDataSourcePanel()"
+        class="select-label"
+      >
+        Select data source
+      </span>
+    </div>
+  </div>
+  <div
+    ng-if="!isDataSourceEmpty()"
+    class="datasource-wrapper"
+  >
+    <div
+      ng-class="{'disable-mask': disabledMode}"
+      class="datasource-wrapper__icon sa {{typeIcon[datasource.params.datasourceType]}}"
+    ></div>
+    <div
+      ng-class="{'disable-mask': disabledMode}"
+      ng-click="openDataSourcePanel()"
+      class="datasource-wrapper__name"
+      title={{datasource.params.name}}
+    >
+      {{datasource.params.name}}
+    </div>
+    <div
+      ng-click="clearDatasource()"
+      ng-class="{'disable-mask': disabledMode}"
+      class="datasource-wrapper__icon sa sa-cross"
+      title="Clear datasource"
+    ></div>
+    <div
+      ng-if="isOwner()"
+      ng-click="editDatasource()"
+      ng-class="{'disable-mask': disabledMode}"
+      class="datasource-wrapper__icon sa sa-edit"
+      title="Edit datasource"
+    ></div>
+    <div
+      ng-if="!isOwner()"
+      ng-click="viewDatasource()"
+      class="datasource-wrapper__icon sa sa-view"
+      title="View datasource"
+    ></div>
+  </div>
+</div>

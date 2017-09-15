@@ -1,0 +1,59 @@
+<div class="index-list-selector-item u-flex u-flex--center-center m-b-sm">
+  <input ng-if="selectorIsSingle()"
+         type="number"
+         focused
+         autofocus
+         placeholder="Index"
+         class="form-control o-custom index-list-selector-item__input single-selector"
+         min="0"
+         min-value
+         ng-attr-max="{{maxIndex}}"
+         max-value
+         ng-model="item.firstNum">
+
+  <form ng-if="!selectorIsSingle()"
+        style="flex: 1"
+        novalidate
+        ng-submit="addIndex(index)"
+        name="indexForm">
+    <div class="u-flex u-flex--center-center m-b-sm range-selector">
+      <input type="number"
+             focused
+             autofocus
+             placeholder="From"
+             class="form-control o-custom index-list-selector-item__input"
+             min="0"
+             min-value
+             ng-attr-max="{{index.secondNum ? index.secondNum : maxIndex}}"
+             ng-attr-max-value
+             ng-model="index.firstNum"
+             required>
+      <input type="number"
+             placeholder="To"
+             class="form-control o-custom index-list-selector-item__input"
+             min="0"
+             min-value
+             ng-attr-max="{{maxIndex}}"
+             ng-attr-max-value
+             ng-model="index.secondNum"
+             required>
+    </div>
+
+    <button class="btn btn-info btn-xs o-action-text"
+            ng-disabled="indexForm.$invalid">
+      <i class="fa fa-plus"></i>
+      <span>Add index</span>
+    </button>
+
+    <div>
+    <span class="badge badge-default o-tag-unit"
+          ng-class="isRangeValid(range) ? 'badge-default' : 'badge-danger'"
+          ng-repeat="range in getItemsThisType('indexRange') | filter:hasValues">
+      <span>{{::range.firstNum}}</span>
+      <span> - </span>
+      <span class="o-tag-unit__name">{{::range.secondNum}}</span>
+      <a class="close o-tag-unit__close" ng-click="removeIndex(range)">&times;</a>
+    </span>
+    </div>
+  </form>
+</div>

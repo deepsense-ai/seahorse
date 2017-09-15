@@ -1,0 +1,33 @@
+@import "../../../../css/variables";
+
+@grey: #333;
+
+new-node {
+  position: absolute;
+  z-index: 1100;
+}
+
+.new-node {
+  &__input-container {
+    padding: 10px;
+    cursor: pointer;
+    background-color: @color-white;
+    border: 2px solid @seahorse-blue;
+    border-radius: 5px;
+    color: @grey;
+    position: relative;
+    z-index: 2;
+    width: 200px;
+    height: 55px;
+  }
+
+  &__input {
+    width: 180px;
+    height: 35px;
+    border: none;
+    outline: none;
+    font-size: 13px;
+    text-align: center;
+    font-weight: 600;
+  }
+}

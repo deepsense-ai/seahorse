@@ -1,0 +1,162 @@
+// Common things for all panels on both workflow views
+// Variables
+@panel-main-width: 250px;
+@panel-logo-width: 270px;
+@general-panel-padding: 14px 15px 7px 5px;
+
+// Mixins
+@import "../mixins.less";
+
+.panelsMinWidth() {
+  min-width: @panel-main-width;
+}
+
+.panelsMaxWidth() {
+  max-width: @panel-main-width;
+}
+
+.spaceBetween(@side: right, @size: 10px) {
+  border-@{side}: @size solid transparent;
+}
+
+// Rules
+.operations-tree {
+  width: @panel-main-width;
+  overflow: hidden;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.75);
+
+  ul .operations-category-item {
+    border-radius: 0;
+  }
+
+  &.mCS_no_scrollbar {
+    .spaceBetween();
+  }
+
+  .mCSB_inside {
+    > .mCSB_container {
+      margin-right: 10px;
+    }
+  }
+}
+
+.operation-attributes-panel {
+  .spaceBetween(left);
+
+  width: 100%;
+  position: static;
+  border-right: 0;
+  border-bottom: 0;
+  border-top: 0;
+  background: white;
+}
+
+.o-panel {
+  height: 100%;
+  margin-bottom: 0;
+
+  &__title {
+    text-transform: uppercase;
+    padding: 5px 5px 0 5px;
+
+    &.editable-empty {
+      text-transform: none;
+      color: #9B9B9B;
+      font-weight: normal;
+    }
+  }
+
+  &__content {
+    padding: 14px 15px 7px 15px;
+  }
+
+  &__description {
+    width: 100%;
+    max-height: 22ex;
+    overflow: hidden;
+    border: 1px solid transparent;
+    border-bottom: 1px dashed gray;
+    margin: 0;
+    cursor: text;
+    padding: 5px;
+
+    &::-webkit-input-placeholder {
+      font-style: italic;
+    }
+
+    &:hover {
+      border: 1px solid @color-active;
+    }
+
+    &--read-only {
+      border: 0;
+
+      &:hover {
+        border: 0;
+      }
+
+      // new method of clipping by line numbers
+      @supports (display: -webkit-box) {
+        & {
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          max-height: none;
+        }
+      }
+    }
+  }
+
+  &--width {
+    .panelsMaxWidth();
+  }
+
+  &--absolute {
+    .height-with-nav-offset();
+
+    position: absolute;
+    z-index: 1;
+    border-color: white;
+  }
+
+  &--dynamic-top {
+    .top-with-nav-offset();
+  }
+
+  &--scroll-right {
+    &[custom-scroll-bar] {
+      .spaceBetween(right, 3px);
+
+      &.mCS_no_scrollbar {
+        .spaceBetween(right, 0);
+      }
+    }
+
+    [custom-scroll-bar] {
+      .spaceBetween(right, 3px);
+
+      &.mCS_no_scrollbar {
+        .spaceBetween(right, 0);
+      }
+    }
+  }
+}
+
+.o-error-btn {
+  &--full-width {
+    width: 100%;
+  }
+}
+
+
+.right-panel-resizable {
+  .panelsMinWidth();
+}
+
+deepsense-operation-attributes {
+  .mCSB_container {
+    // Used for correct height calculation of resizable directive
+    min-height: 100%;
+  }
+}

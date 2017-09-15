@@ -1,0 +1,368 @@
+@import "../common/variables.less";
+
+.popover {
+  z-index: 10000;
+}
+
+.operation-attributes-panel {
+  position: absolute;
+  width: 250px;
+  margin: 0;
+  background: rgba(255, 255, 255, 0.8);
+  right: 3px;
+  top: 0;
+  overflow: hidden;
+  border: 2px solid white;
+  color: inherit;
+
+  textarea {
+    max-width: 100%;
+  }
+
+  button.close {
+    position: static;
+  }
+
+  .flex-content {
+    display: flex;
+    align-items: center;
+
+    > *:first-child {
+      flex: 1;
+    }
+
+    &--spaced-first {
+      > *:first-child {
+        margin-right: @main-space;
+      }
+    }
+  }
+
+  .flex-content {
+    &--no-flex {
+      > *:first-child {
+        flex: initial;
+      }
+    }
+  }
+
+  &__details {
+    padding: 0 @main-space / 2;
+
+    .label-completed {
+      background-color: @color-action;
+      color: @color-white;
+    }
+
+    .label-failed {
+      background-color: @color-error;
+      color: @color-white;
+    }
+
+    .label-draft {
+      background-color: @color-draft;
+      color: #5e5e5e;
+    }
+
+    .label-queued {
+      background-color: @color-warn;
+      color: @color-white;
+    }
+
+    .label-running {
+      background-color: @color-active;
+      color: @color-white;
+    }
+  }
+
+  &__open-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 15px;
+    margin: 25px 0;
+    background-color: rgb(28, 132, 198);
+    border-radius: 3px;
+    border: 1px solid rgb(28, 132, 198);
+    color: @color-white;
+    text-transform: initial;
+
+    i {
+      font-size: 16px;
+      padding-right: 5px;
+    }
+  }
+
+  &__description {
+    margin: 0 0 @main-space / 2;
+    text-transform: initial;
+    font-weight: normal;
+    max-height: 8ex;
+    overflow: hidden;
+
+    // new method of clipping by line numbers
+    @supports (display: -webkit-box) {
+      & {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        max-height: none;
+      }
+    }
+  }
+
+  &__documentation {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  // internal iboxes
+  .ibox {
+    margin-bottom: @main-space;
+    padding: 0;
+
+    &:first-child {
+      .ibox-title {
+        border: 0;
+      }
+    }
+
+    .ibox-title {
+      height: auto;
+      padding: 0;
+      background: transparent;
+
+      > * {
+        padding: @main-space 0;
+      }
+    }
+
+    .ibox-content {
+      border: 0;
+      padding: 0;
+      background: transparent;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .ibox-title {
+    &:extend(.operation-attributes-panel .flex-content all);
+
+    @border-top: 4px;
+
+    height: auto;
+    padding: @heading-padding @main-space / 2;
+    text-transform: uppercase;
+    font-weight: bold;
+
+    &--main {
+      display: block;
+      height: auto;
+      padding: 0;
+      border: 0;
+    }
+
+    &--multiplier {
+      @padding: @main-space / 2 0;
+      padding: @padding;
+      display: inline-block;
+
+      + * {
+        padding: @padding;
+      }
+    }
+
+    &__name {
+      margin: 0;
+      max-height: 8ex;
+      overflow: hidden;
+
+      // new method of clipping by line numbers
+      @supports (display: -webkit-box) {
+        & {
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          max-height: none;
+        }
+      }
+    }
+
+    .popover {
+      width: 205px !important;
+      padding: 0;
+    }
+  }
+
+  .ibox-content {
+    padding: @main-space 0;
+    background-color: rgba(255,255,255,.75);
+  }
+
+  .ibox-footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 15px;
+    background-color: rgba(240, 240, 240, 0.8);
+    height: @height;
+  }
+
+  // internal level 2
+  .nested-attributes-view {
+    padding: 0 0 0 @main-space;
+    border-left: 2px solid #e7eaec;
+    margin: @main-space / 2 0 0;
+
+    .ibox-title {
+      border: 0;
+
+      > * {
+        padding-top: 0;
+      }
+    }
+
+    > *:first-child > .parameter-item:first-child {
+      margin-top: @main-space;
+    }
+
+    .no-parameters {
+      display: none;
+    }
+
+    &--multiplier {
+      margin: 0 0 @main-space / 2 0;
+    }
+  }
+
+  .form-control {
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    padding-left: @main-space / 2;
+    padding-right: @main-space / 2;
+  }
+
+  label {
+    margin-bottom: 0;
+    font-weight: normal;
+    cursor: pointer;
+    width: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  .switchery-in-label {
+    margin-right: @main-space / 2;
+  }
+
+  .spaced-around {
+    margin: @main-space 0;
+  }
+
+  .no-parameters {
+    text-align: center;
+  }
+
+  .invalid-param-value, .invalid-param-value:focus {
+    border: 1px solid red;
+  }
+
+  .types-list-selector {
+    margin: -@main-space 0 0;
+
+    .switchery {
+      margin-right: @main-space;
+    }
+  }
+
+  .action-button-wrapper {
+    margin: @main-space 0;
+
+    &--spaced {
+      margin: -(@main-space / 2) 0 @main-space 0;
+    }
+
+    &--no-bottom-margin {
+      margin-bottom: 0;
+    }
+  }
+
+  .o-exclusion {
+    display: flex;
+    border-top: 1px solid #a9a9a9;
+    padding: 10px 0 10px 40px;
+
+    &__text {
+      flex: 1;
+      margin: 0 5px 0 0;
+    }
+  }
+
+  .node-edition-section {
+    &__editable-text {
+      align-self: flex-start;
+      padding: 8px;
+    }
+
+    &__editable-text:hover {
+      cursor: pointer;
+      padding: 7px;
+      border: 1px solid #337ab7;
+    }
+
+    &__editable-info {
+      font-weight: 400;
+      font-size: 13px;
+      text-transform: none;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .form-inline .form-control {
+      max-width: 49%;
+
+      &.single-selector {
+        max-width: 100%;
+        width: 100%;
+      }
+    }
+  }
+
+  &__disabled {
+    label.custom-checkbox {
+      &:hover {
+        cursor: not-allowed;
+      }
+    }
+
+    .save-to-library .link,
+    .library-connector {
+      pointer-events: none;
+      color: #676A6C;
+      &:hover {
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+.o-error-trace {
+  white-space: pre-wrap;
+  /* override default bootstrap styles */
+  word-break: normal !important;
+  word-wrap: normal !important;
+}
+
+.o-error-full-trace {
+  height: 40vh;
+}
+
+@import "../attributes-list/attributes-list.less";
+@import "./tabs.less";

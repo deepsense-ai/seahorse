@@ -1,0 +1,41 @@
+@import "../../../css/variables";
+
+@workflow-spacing: 15px;
+@add-new-height: 25px;
+@base-margin: 8px;
+@base-left-margin: 12px;
+
+
+.workflow-schedules {
+  position: relative;
+
+  &__add-new {
+    position: absolute;
+    margin: 0;
+    padding: 0 10px;
+    right: 0;
+    top: -(@workflow-spacing + @add-new-height);
+    height: @add-new-height;
+    line-height: (@add-new-height - 2px); // border is 1px
+    font-size: 12px;
+
+    &.btn-info {
+      background-color: @seahorse-blue;
+    }
+
+    &.btn-gray {
+      background-color: #666;
+      color: #fff;
+    }
+  }
+
+  &__item {
+    background-color: #f2f2f2;
+    margin: @workflow-spacing 0 0;
+    padding: @base-margin @base-margin @base-margin @base-left-margin;
+  }
+
+  &__status-message {
+    margin: @workflow-spacing @base-margin @base-margin @base-left-margin;
+  }
+}

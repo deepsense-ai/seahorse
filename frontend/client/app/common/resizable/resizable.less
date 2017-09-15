@@ -1,0 +1,48 @@
+.o-resizable {
+  @width: 100%;
+  @height: 6px;
+
+  position: absolute;
+  width: @width;
+  border-top: 2px solid gray;
+  border-bottom: 2px solid gray;
+  opacity: 0.1;
+  height: @height;
+  -webkit-transition: opacity 0.25s ease-in;
+  -moz-transition: opacity 0.25s ease-in;
+  -ms-transition: opacity 0.25s ease-in;
+  -o-transition: opacity 0.25s ease-in;
+  transition: opacity 0.25s ease-in;
+  z-index: 1050;
+
+  &:hover {
+    opacity: 0.5;
+  }
+
+  &--left,
+  &--right {
+    left: 0;
+    width: 6px;
+    height: 100%;
+    border-left: 2px solid;
+    top: 0;
+    border-bottom: 0;
+    border-right: 2px solid;
+    border-top: 0;
+    cursor: col-resize;
+  }
+
+  &--right {
+    left: auto;
+    right: -(@width / 2 - @height / 2);
+  }
+
+  &--top {
+    top: 0;
+    cursor: row-resize;
+  }
+
+  &--invisible {
+    border-color: transparent;
+  }
+}

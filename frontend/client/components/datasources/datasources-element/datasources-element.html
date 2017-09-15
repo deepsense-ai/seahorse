@@ -1,0 +1,51 @@
+<div class="datasources-element">
+  <div
+    class="datasources-element__name-wrapper"
+    ng-class="{'datasources-element__name-wrapper--disabled': !$ctrl.isSelectable()}"
+    ng-click="$ctrl.selectDatasource()"
+  >
+    <div
+      class="datasources-element__type sa {{::$ctrl.datasourceIcon}}"
+    ></div>
+    <div
+      class="datasources-element__name"
+      title="{{$ctrl.datasource.params.name}}"
+    >
+      {{$ctrl.datasource.params.name}}
+    </div>
+  </div>
+
+  <div class="datasources-element__icon-wrapper">
+    <div
+      ng-click="$ctrl.openDatasource()"
+      class="datasources-element__edit sa {{::$ctrl.openActionIcon}}"
+      title="{{::$ctrl.openActionTitle}}"
+    ></div>
+
+    <div
+      ng-click="$ctrl.deleteDatasource()"
+      ng-class="{'datasources-element__icon-wrapper--disabled': !$ctrl.isOwner()}"
+      class="datasources-element__delete sa sa-delete"
+      title="Delete"
+    ></div>
+  </div>
+
+  <div class="datasources-element__created">
+    {{$ctrl.datasource.creationDateTime | date:"dd/MM/yyyy - HH:mm"}}
+  </div>
+
+  <div
+    class="datasources-element__owner"
+    ng-class="{'datasources-element__owner--current' : $ctrl.isOwner}"
+    title="{{ $ctrl.ownerName }}"
+  >
+    {{::$ctrl.ownerName }}
+    <span
+      ng-if="$ctrl.isOwner()"
+      class="datasources-element__owner-icon sa sa-user">
+    </span>
+  </div>
+  <div class="datasources-element__access">
+    {{$ctrl.visibilityLabel[$ctrl.datasource.params.visibility]}}
+  </div>
+</div>

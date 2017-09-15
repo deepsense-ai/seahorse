@@ -1,0 +1,162 @@
+@import "../../../css/variables";
+
+.cluster-modal {
+  &__header {
+    display: flex;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 24px;
+  }
+
+  &__body {
+    width: 75%;
+    margin: 0 auto;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: center;
+  }
+
+  .section-title {
+    margin: 15px 0;
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .cluster-selection {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+
+    &-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-around;
+
+      padding: 5px;
+      width: 30%;
+      height: 125px;
+      border-radius: 5px;
+      background-color: @color-light-grey;
+
+      &:hover {
+        cursor: pointer;
+        box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.75);
+      }
+
+      &__image {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100px;
+        height: 100px;
+      }
+
+      &__title {
+        text-align: center;
+        width: 60%;
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+    }
+  }
+
+  .cluster-presets {
+    margin-bottom: 35px;
+
+    &__title {
+      margin: 15px 0;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    &__list {
+      width: 110%;
+      height: 30vh;
+      overflow-x: auto;
+      padding: 4px;
+
+      .current-preset {
+        box-shadow: 0 0 2px 2px rgba(1, 177, 236, 0.75)
+      }
+    }
+
+    &__preset {
+      display: flex;
+      align-items: center;
+
+      &-delete {
+        background-color: white;
+        font-size: 22px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        margin-left: 8px;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+
+      &-icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 60px;
+      }
+
+      &-type {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        font-weight: bold;
+        color: #0197c8;
+        width: 140px;
+      }
+
+      &-name {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        font-weight: bold;
+        flex: 1;
+      }
+
+      &-edit {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-left: 1px solid #d3d3d3;
+        width: 80px;
+        height: 100%;
+
+        &:hover {
+          background-color: #4d4d4d;
+          color: white;
+          border-top-right-radius: 5px;
+          border-bottom-right-radius: 5px;
+        }
+      }
+    }
+
+    &__preset-group {
+      height: 36px;
+      width: 640px;
+      margin: 7px 0;
+      font-size: 16px;
+      background-color: @color-light-grey;
+      display: flex;
+      align-items: center;
+      border-radius: 5px;
+
+      &:hover {
+        cursor: pointer;
+        box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.55);
+      }
+    }
+  }
+
+}

@@ -1,0 +1,125 @@
+@import "../../../css/variables";
+@import "../../../app/mixins";
+
+@base-margin: 8px;
+@schedule-action-size: 25px;
+
+
+.schedule {
+  position: relative;
+
+  &__actions {
+    position: absolute;
+    top: -@base-margin;
+    right: -@base-margin;
+    display: flex;
+  }
+
+  &__preview {}
+
+  &__attributes {}
+}
+
+
+.schedule-action {
+  width: @schedule-action-size;
+  height: @schedule-action-size;
+  line-height: @schedule-action-size;
+  text-align: center;
+  cursor: pointer;
+  font-size: 16px;
+  color: #ffffff;
+  background-color: @seahorse-blue;
+
+  &:hover {
+    background-color: @seahorse-light-blue;
+  }
+
+  // because of the styles applied to .sa class
+  &.sa {
+    font-size: 22px;
+  }
+}
+
+
+.schedule-attribute {
+  border-bottom: 2px solid #fff;
+  padding: @base-margin 0;
+
+  &:first-child {
+    padding-top: 0;
+  }
+
+  &:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+
+  &__label {}
+
+  &__value {
+    font-weight: bold;
+
+    &--invalid {
+      color: @seahorse-error-red;
+    }
+
+    &--clickable {
+      cursor: pointer;
+    }
+  }
+}
+
+
+.schedule-attribute-error {
+  color: @seahorse-error-red;
+  font-size: 11px;
+  font-weight: 600;
+  margin: 4px 0 2px;
+}
+
+
+.schedule-cluster-preset {
+  .schedule__preview & {
+    .schedule-attribute__value {
+      .text-elipsis();
+    }
+  }
+}
+
+
+.schedule-cron {
+  .schedule-attribute__value {
+    font-weight: normal;
+
+    .jqCron-text {
+      text-transform: lowercase;
+    }
+  }
+
+  .schedule__preview & {
+    .jqCron-container.disable * {
+      color: inherit;
+
+      & .jqCron-selector-title {
+        // font-style: italic;
+        font-weight: 600;
+        margin: 0;
+        padding: 0;
+        border: none;
+        background: transparent !important;
+        cursor: text;
+      }
+    }
+  }
+}
+
+
+.schedule-email {
+  .schedule__preview & {
+    .schedule-attribute__value {
+      .text-elipsis();
+    }
+  }
+}

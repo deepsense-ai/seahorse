@@ -1,0 +1,11 @@
+<div class="save-to-library">
+  <div class="link" ng-click="openLibrary(parameter.value)">
+    <i class="fa fa-list icon"></i>
+    <span>Place in library</span>
+  </div>
+  <input type="text" class="form-control"
+         ng-class="{ 'invalid-param-value': !parameter.validate() }"
+         ng-model="parameter.value"
+         placeholder="{{ parameter.defaultValue }}"
+  />
+</div>

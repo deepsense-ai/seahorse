@@ -1,0 +1,31 @@
+<div
+  class="graph-node {{::$ctrl.nodeType}} {{::$ctrl.getBorderColor()}}"
+  ng-class="{'selected-node': $ctrl.isSelected}"
+  title={{::$ctrl.node.description}}
+>
+  <div class="graph-node__content">
+    <div class="operation-name">
+      {{ ::$ctrl.node.name }}
+    </div>
+    <div
+      ng-if="$ctrl.node.uiName"
+      class="custom-name"
+    >
+      {{ $ctrl.node.uiName }}
+    </div>
+    <div
+      class="datasource-name"
+      ng-class="{'datasource-name--disabled': !$ctrl.isEditable()}"
+    >
+      <span ng-click="$ctrl.openDatasourcePanel()">
+        {{ $ctrl.getDatasourceName() }}
+      </span>
+    </div>
+  </div>
+
+  <status-icon
+    ng-if="$ctrl.isOwner()"
+    node="$ctrl.node"
+    class="graph-node__status-icon"
+  ></status-icon>
+</div>

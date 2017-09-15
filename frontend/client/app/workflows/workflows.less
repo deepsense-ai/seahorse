@@ -1,0 +1,138 @@
+@import "../../css/variables";
+@import "../mixins.less";
+@import "./workflows-editor/workflows-editor.less";
+@import "../common/custom-scrollbar/common-custom-scrollbar.less";
+@import "./common-behaviours/common-stick-onscroll.less";
+@import "./common-behaviours/draggable.less";
+@import "./workflows-status-bar/selection-items/selection-items.less";
+@import "../common/modals/delete-modal/delete-modal.less";
+@import "./workflows-status-bar/workflows-status-bar.less";
+@import "./workflows-status-bar/menu-item/menu-item.less";
+@import "./reports/reports.less";
+@import "./panels.less";
+@import "./general-data-panel/general-data-panel.less";
+@import "./cluster-settings-modals/choose-cluster-modal.less";
+@import "./cluster-settings-modals/preset-modal/preset-modal.less";
+@import "./graph-panel/multi-selection/multi-selection.less";
+@import "library/library.less";
+
+@datasources-index: 1000;
+
+.o-color-picker--inline {
+  display: inline-block;
+  margin: 0;
+  width: 10px;
+  height: 10px;
+  min-width: 0;
+}
+
+.c-dynamic-part {
+  .height-with-nav-offset();
+
+  display: block;
+
+  @media(max-width: @media-break) {
+    .height-with-nav-offset(@navigation-bar-height-expanded - @navigation-bar-height);
+  }
+}
+
+.c-main-header {
+  height: @navigation-bar-height;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  width: 100%;
+
+  &__nav-bar {
+    height: 100%;
+    width: 100%;
+    max-width: ~"calc(100vw - 270px)";
+    margin-left: 10px;
+  }
+
+  @media(max-width: @media-break) {
+    height: @navigation-bar-height-expanded;
+  }
+}
+
+.c-workflow-container {
+  display: flex;
+  height: 100%;
+  clear: both;
+  overflow: hidden;
+  flex-direction: column;
+
+  &__content {
+    display: flex;
+    height: ~"calc(100% - 25px)";
+  }
+
+  &__editor {
+    flex: 1;
+    width: 100%;
+  }
+
+  .datasources-component {
+    &__mask {
+      position: fixed;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      background-color: #000000;
+      opacity: 0;
+      pointer-events: none;
+      z-index: @datasources-index - 1;
+      transition: opacity 1s ease;
+
+      &.active {
+        opacity: 0.5;
+        pointer-events: auto;
+      }
+    }
+
+    &__wrapper {
+      position: absolute;
+      left: -1010px;
+      top: 0;
+      background-color: @color-white;
+      height: 100vh;
+      min-width: 706px;
+      max-width: 1004px;
+      z-index: @datasources-index;
+      transition: left 1s ease;
+
+      &.active {
+        left: 0;
+      }
+
+      .cross {
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        cursor: pointer;
+        font-size: 36px;
+        font-family: "Seahorse Symbol";
+      }
+    }
+
+  }
+}
+
+.c-navigation-bar {
+  margin-top: 10px;
+  width: @panel-logo-width;
+  min-width: @panel-logo-width;
+}
+
+textarea.editable-has-buttons.editable-input {
+  width: 100%;
+  margin: 0 0 10px;
+  min-height: 12ex;
+
+  + .editable-buttons {
+    button:first-child {
+      margin-left: 0;
+    }
+  }
+}

@@ -1,0 +1,41 @@
+@import "../../../../css/variables.less";
+
+.bottom-bar {
+  position:fixed;
+  bottom: 0;
+  background: rgba(239, 239, 239, 1);
+  border-top: 1px solid lightgray;
+  height: 25px;
+  width: 100%;
+  padding-left: 25px;
+  overflow: hidden;
+
+  .deepsense-logo {
+    float: right;
+    margin-right: 10px;
+    line-height: 25px;
+    font-size: 12px;
+    color: @deepsense-black;
+
+    .blue {
+      color: @seahorse-light-blue;
+    }
+  }
+}
+
+.bottom-button {
+  padding: 2px 5px;
+  display: inline-block;
+  cursor: pointer;
+  font-size: 14px;
+
+  &:hover {
+    background: rgba(128, 128, 128, 0.7);
+  }
+
+  &.active {
+    background: rgba(128, 128, 128, 0.7);
+    color: white;
+    font-weight: bold;
+  }
+}

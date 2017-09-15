@@ -1,0 +1,48 @@
+<div class="editor">
+  <canvas-toolbar
+    is-editable="$ctrl.isEditable"
+    on-zoom-in="$ctrl.zoomIn($event)"
+    on-zoom-out="$ctrl.zoomOut($event)"
+    on-fit="$ctrl.fit($event)"
+    on-fullscreen="$ctrl.fullScreen($event)"
+    on-new-node="$ctrl.newNode($event)"
+  ></canvas-toolbar>
+
+  <create-node-invitation
+    ng-if="$ctrl.canShowInvitationToCreate"
+    class="create-node-invitation-wrapper"
+  >
+  </create-node-invitation>
+
+  <core-canvas
+    is-editable="$ctrl.isEditable"
+    new-node-data="$ctrl.newNodeData"
+    selectedNode="$ctrl.selectedNode"
+    workflow="$ctrl.workflow"
+    on-connection-abort="$ctrl.onConnectionAbort(newNodeData)"
+  >
+    <new-node
+      ng-if="$ctrl.newNodeData"
+      ng-style="{
+        left: $ctrl.newNodeData.x + 'px',
+        top: $ctrl.newNodeData.y + 'px'
+      }"
+      class="flowchart-box__new-node new-node"
+      id="node-new-node"
+      categories="$ctrl.categories"
+      containment="$ctrl.containment"
+      on-select="$ctrl.onSelect(operationId)"
+      on-display-rect-change="$ctrl.onDisplayRectChange(rect)"
+      jsplumb-draggable
+    ></new-node>
+  </core-canvas>
+
+  <port-status-tooltip
+    ng-if="$ctrl.isTooltipVisible"
+    ng-style="{
+      'top': $ctrl.tooltipY + 'px',
+      'left': $ctrl.tooltipX + 'px'
+    }"
+    port-object="$ctrl.portObject"
+  ></port-status-tooltip>
+</div>

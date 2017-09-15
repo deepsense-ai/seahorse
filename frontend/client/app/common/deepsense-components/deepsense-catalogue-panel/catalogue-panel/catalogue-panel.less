@@ -1,0 +1,135 @@
+.catalog-wrapper {
+  position: relative;
+  width: 255px;
+  height: 100%;
+}
+
+.operations-tree {
+  width: 260px;
+  box-sizing: border-box;
+  padding-bottom: 50px;
+
+  ul {
+    list-style-type: none;
+    margin-bottom: 0;
+    padding-left: 15px;
+
+    &.root {
+      padding-left: 0;
+    }
+
+    .operations-category {
+      margin-bottom: 5px;
+    }
+
+    .operations-category-item {
+      display: block;
+      font-weight: bold;
+      text-transform: uppercase;
+      cursor: pointer;
+      margin-bottom: 5px;
+
+      background: #efefef none repeat scroll 0 0;
+      border: 1px solid #E7EAEC;
+      padding: 5px;
+      border-radius: 3px;
+
+      & > .btn {
+        width: 20px;
+        height: 20px;
+        text-align: center;
+      }
+
+      & > span.text {
+        display: inline-block;
+        margin-left: 10px;
+        margin-top: 2px;
+        max-width: 180px;
+      }
+    }
+
+    .operations-item {
+      list-style-type: none;
+      cursor: pointer;
+
+      border: 1px solid #E7EAEC;
+      padding: 10px;
+      border-radius: 3px;
+      background-color: #fff;
+
+      &.running {
+        background-color: lightgray;
+      }
+
+      & > .fa {
+        margin-top: 3px;
+      }
+
+      & + .operations-item {
+        margin-top: 5px;
+      }
+
+      &.highlight {
+        border: 1px dashed #1ab394;
+        background-color: rgba(26, 179, 148, 0.2);
+      }
+
+      &:hover {
+        box-shadow: 0 0 1px #337ab7 inset;
+        color: #337ab7;
+      }
+
+      .operations-item-body {
+        pointer-events: none;
+        display: flex;
+        font-size: 12px;
+        align-items: center;
+
+        &:active {
+          background: #fff;
+        }
+
+        &__name {
+          flex: 1;
+          margin: 0 10px;
+        }
+      }
+    }
+  }
+}
+
+.search-input {
+  padding: 7px;
+  width: 95%;
+  margin: 10px;
+  border-radius: 5px;
+  padding: 5px;
+  border: solid 1px #dcdcdc;
+  transition: box-shadow 0.3s, border 0.3s;
+}
+
+.search-input:focus {
+  outline: none;
+  border: solid 1px #707070;
+  box-shadow: 0 0 5px 1px #969696;
+}
+
+.icon-remove {
+  margin-left: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.search-div {
+  width: 100%;
+}
+
+.search-div-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+  width: 250px;
+  background: white;
+}

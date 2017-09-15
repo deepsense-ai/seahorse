@@ -1,0 +1,101 @@
+@import "../../../../../css/variables.less";
+@import "../../../../mixins.less";
+
+.graph-node {
+  z-index: 24;
+  cursor: pointer;
+  background-color: #fff;
+  border: 2px solid @seahorse-blue;
+  border-radius: 5px;
+  color: #333;
+  transition: background-color 200ms;
+
+  &--active > div > div {
+    background-color: lighten(@color-active, 30%);
+  }
+
+  &.border-estimator {
+    border: 2px solid @color-estimator;
+  }
+
+  &.border-transformer {
+    border: 2px solid @color-transformer;
+  }
+
+  &.border-evaluator {
+    border: 2px solid @color-evaluator;
+  }
+
+  &.border-default {
+    border: 2px solid @seahorse-blue;
+  }
+
+  &.border-unknown {
+    border: 2px solid @seahorse-orange;
+    color: @seahorse-orange;
+  }
+
+  &.unknown,
+  &.standard {
+    width: 200px;
+    height: 55px;
+  }
+
+  &.action {
+    width: 170px;
+    height: 55px;
+  }
+
+  &.source-or-sink {
+    width: 65px;
+    height: 65px;
+  }
+
+  &__content {
+    padding: 6px 10px 8px;
+    height: 100%;
+    user-select: none;
+    font-weight: 600;
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    .centered {
+      justify-content: center;
+    }
+
+    .operation-name,
+    .custom-name {
+      line-height: 12px;
+    }
+
+    .operation-name {
+      font-weight: 600;
+      width: 100%;
+      text-align: center;
+      max-width: 200px;
+      .text-elipsis();
+
+      .action-icon {
+        font-size: 14px;
+        line-height: 22px;
+      }
+    }
+
+    .custom-name {
+      font-style: italic;
+      text-align: center;
+      width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  &__status-icon {
+    position: absolute;
+    right: -10px;
+    top: 32%;
+  }
+}

@@ -1,0 +1,38 @@
+<div class="workflow-schedules">
+
+  <button
+    class="btn o-general-data-panel__btn workflow-schedules__add-new"
+    ng-class="($ctrl.addingSchedule ? 'btn-gray' : 'btn-info')"
+    ng-click="$ctrl.toggleAddingSchedule()"
+  >
+    Add schedule
+  </button>
+
+  <div
+    ng-if="$ctrl.addingSchedule"
+    class="workflow-schedules__item"
+  >
+    <edit-schedule
+      cluster-presets="$ctrl.presets"
+      initial-data="$ctrl.newScheduleStub"
+      on-accept="$ctrl.addSchedule($event);"
+      on-cancel="$ctrl.cancelAddingSchedule();"
+    ></edit-schedule>
+  </div>
+
+  <div
+    ng-repeat="schedule in $ctrl.schedules | reverse"
+    class="workflow-schedules__item"
+  >
+    <schedule
+      cluster-presets="$ctrl.presets"
+      initial-data="schedule"
+      on-delete="$ctrl.getSchedules();"
+      on-update="$ctrl.updateSchedule($event);"
+    ></schedule>
+  </div>
+
+  <div class="workflow-schedules__status-message" ng-if="!$ctrl.schedules.length && !$ctrl.addingSchedule">
+    Schedules allow you to run workflow automatically.
+  </div>
+</div>

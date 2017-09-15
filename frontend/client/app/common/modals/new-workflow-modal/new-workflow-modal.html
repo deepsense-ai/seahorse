@@ -1,0 +1,35 @@
+<div class="inmodal c-new-workflow-modal">
+  <form ng-submit="controller.ok()">
+    <div class="modal-header">
+      <h4 class="modal-title">New workflow</h4>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <deepsense-loading-spinner-sm ng-if="controller.loading"></deepsense-loading-spinner-sm>
+        <div class="form-horizontal" ng-if="!controller.loading">
+          <div class="form-group clearfix">
+            <label class="control-label col-sm-2" for="workflow-name">Name:</label>
+
+            <div class="col-sm-10">
+              <input ng-model="controller.name"
+                     type="text" autofocus class="form-control" id="workflow-name" placeholder="Draft workflow">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="workflow-description">Description:</label>
+
+            <div class="col-sm-10">
+            <textarea ng-model="controller.description"
+                      class="form-control" id="workflow-description"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="pull-right text-danger" ng-if="controller.errorMessage">{{ controller.errorMessage }}</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-white" ng-click="controller.close()">Close</button>
+      <button type="submit" class="btn btn-info">Create</button>
+    </div>
+  </form>
+</div>

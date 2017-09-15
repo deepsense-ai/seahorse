@@ -1,0 +1,137 @@
+@active-color: #19aa8d;
+
+.selection-modal {
+  .modal-body {
+    padding: 5px 15px;
+  }
+  .calculated-columns {
+    border-top: 1px solid #e5e5e5;
+    overflow-y: auto;
+
+    label.custom-checkbox {
+      direction: rtl;
+    }
+
+    input[type=checkbox] + span:before {
+      margin-left: 10px;
+    }
+  }
+}
+
+.modal-lg {
+  .o-modal-selector {
+    &__main-panel {
+      min-height: 25vh;
+    }
+  }
+}
+
+.types-list-selector {
+  &__label {
+    &:hover {
+      &:before {
+        content: '>';
+        position: absolute;
+        margin: 1px 0 0 -9px;
+        display: block;
+        color: @active-color;
+      }
+    }
+  }
+}
+
+.index-list-selector-item {
+  &__input + &__input {
+    margin-left: 20px;
+  }
+}
+
+.o-modal-selector {
+
+  &__main-panel {
+    min-height: 20vh;
+  }
+
+  &__show-all-checkbox {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+  }
+
+  &__item {
+    border-right: 1px solid #e5e5e5;
+    position: relative;
+
+    &:last-child {
+      border-right: 0;
+    }
+
+    &:first-child .o-modal-selector__list {
+      padding-left: 0;
+    }
+
+    &:last-child .o-modal-selector__list {
+      padding-right: 0;
+    }
+
+    .column-names-list {
+      overflow-y: auto;
+      max-height: 20vh;
+    }
+  }
+
+  &__list {
+    padding: 0 10px 20px;
+
+    &--empty {
+      &:hover {
+        color: @active-color;
+        background: rgba(0,0,0,0.05);
+      }
+    }
+
+    &--index {
+      padding-bottom: 0;
+    }
+  }
+}
+
+.close-link {
+  &--types-list {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+}
+
+#column-searcher {
+  .matched-text {
+    font-weight: bold;
+  }
+
+  &_dropdown {
+    overflow: auto;
+    max-height: 50vh;
+  }
+}
+
+// TODO dry
+
+#single-column-searcher {
+  .matched-text {
+    font-weight: bold;
+  }
+
+  &_dropdown {
+    overflow: auto;
+    max-height: 50vh;
+  }
+}
+
+.range-selector input{
+  display: inline-block;
+  max-width: 130px;
+}
+
+
+@import "./calculated-selected-columns/calculated-selected-columns.less";
