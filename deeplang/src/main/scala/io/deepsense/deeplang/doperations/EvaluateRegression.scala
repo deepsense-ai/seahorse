@@ -56,8 +56,8 @@ case class EvaluateRegression() extends Evaluator {
 object EvaluateRegression {
   def apply(
       targetColumnName: String,
-      predictionColumnName: String): EvaluateClassification = {
-    val operation = new EvaluateClassification
+      predictionColumnName: String): EvaluateRegression = {
+    val operation = new EvaluateRegression
     val targetColumnParam =
       operation.parameters.getSingleColumnSelectorParameter(Evaluator.targetColumnParamKey)
     targetColumnParam.value = Some(NameSingleColumnSelection(targetColumnName))
