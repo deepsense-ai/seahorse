@@ -1,7 +1,7 @@
 .. Copyright (c) 2015, CodiLime, Inc.
 
-Score regressor
-===============
+Score classifier
+================
 
 ==========
 Descriptor
@@ -24,7 +24,7 @@ Input
      - Data Type
      - Description
    * - 0
-     - Scorable with Regressor
+     - Scorable with Classifier
      - Predictive model
    * - 1
      - DataFrame
@@ -49,12 +49,12 @@ Output
 ===========
 Description
 ===========
-Operation used to score DataFrame using previously trained regressor.
-It assumes that input DataFrame contains columns that were used to train model, and that they have
-numeric type.
+An operation used to score a DataFrame using a previously trained classifier.
+It assumes that the input DataFrame contains columns that were used to train the model,
+and that they have a numeric type.
 If not, ``ColumnsDoNotExistException`` or ``WrongColumnTypeException`` are thrown respectively.
-Result column will have name of target column from training DataFrame,
+The result column will have a name of the target column from the training DataFrame,
 with ``'_prediction'`` appended.
-If this name is occupied, ``'_1'`` will be appended to it
+If the name is occupied, ``'_1'`` will be appended to it
 (or ``'_2'``, ``'_3'`` etc. so that uniqueness of column names is preserved).
-Result column will be appended to scored DataFrame.
+The result column will be appended to the scored DataFrame.

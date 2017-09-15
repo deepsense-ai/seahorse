@@ -103,6 +103,11 @@ object CatalogRecorder {
       "Evaluate Regression"
     )
 
+    catalog.registerDOperation[ScoreClassifier](
+      DOperationCategories.ML.Classification,
+      "Scores trained classification model"
+    )
+
     catalog.registerDOperation[ApplyTransformation](
       DOperationCategories.Utils,
       "Apply Transformation"
