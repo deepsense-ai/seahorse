@@ -25,15 +25,15 @@ function Droppable($log, DragAndDrop) {
       }
 
       element.on('drop', drop);
-      element.on('dragover', dragOver);
-      element.on('dragenter', dragOver);
+      element.on('dragover', dragPreventDefault);
+      element.on('dragstart', dragPreventDefault);
 
       function drop(event) {
         if (
           event.dataTransfer.getData('droppable') === 'true' &&
           event.dataTransfer.getData('draggableType') === attrs.droppableType
         ) {
-          $log.info('Drop was on', element[0]);
+          $log.debug('Drop was on', element[0]);
 
           /* prevent bubbling */
           event.stopImmediatePropagation();
@@ -42,7 +42,7 @@ function Droppable($log, DragAndDrop) {
         }
       }
 
-      function dragOver(event) {
+      function dragPreventDefault(event) {
         /* prevent default behaviour */
         event.preventDefault();
         /* allow drop */

@@ -28,7 +28,7 @@ function Draggable($rootScope, $log, DragAndDrop) {
       }
 
       function dragstart (event) {
-        $log.info('Drag started on', element[0]);
+        $log.debug('Drag started on', element[0]);
 
         /* filter to cascaded draggable elements */
         if (doNotListen) {
@@ -37,7 +37,7 @@ function Draggable($rootScope, $log, DragAndDrop) {
         }
 
         if (isTargetCorrect(event.target)) {
-          $log.info('Drag target is %s', 'correct');
+          $log.debug('Drag target is %s', 'correct');
 
           event.dataTransfer.setData('elementId', element[0].id);
           event.dataTransfer.setData('droppable', true);
