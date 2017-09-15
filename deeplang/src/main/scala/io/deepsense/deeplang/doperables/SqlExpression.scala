@@ -16,6 +16,9 @@
 
 package io.deepsense.deeplang.doperables
 
+import org.apache.spark.sql
+import org.apache.spark.sql.SQLContext
+
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.params.{CodeSnippetLanguage, CodeSnippetParam, Param, StringParam}
@@ -23,8 +26,8 @@ import io.deepsense.deeplang.params.{CodeSnippetLanguage, CodeSnippetParam, Para
 class SqlExpression extends Transformer {
   val dataFrameId = StringParam(
     name = "dataframe id",
-    description = "An identifier that can be used in the SQL expression to refer to the input " +
-      "DataFrame. The value has to be unique in the workflow.")
+    description = "An identifier that can be used in " +
+      "the SQL expression to refer to the input DataFrame.")
 
   def getDataFrameId: String = $(dataFrameId)
   def setDataFrameId(value: String): this.type = set(dataFrameId, value)
@@ -43,14 +46,21 @@ class SqlExpression extends Transformer {
   override private[deeplang] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
     logger.debug(s"SqlExpression(expression = '$getExpression'," +
       s" dataFrameId = '$getDataFrameId')")
-    df.sparkDataFrame.registerTempTable(getDataFrameId)
+
+    val localSqlContext = ctx.sqlContext.newSession()
+    val localDataFrame = moveToSqlContext(df.sparkDataFrame, localSqlContext)
+
+    localDataFrame.registerTempTable(getDataFrameId)
     try {
       logger.debug(s"Table '$dataFrameId' registered. Executing the expression")
-      val sqlResult = ctx.sqlContext.sql(getExpression)
+      val sqlResult = moveToSqlContext(localSqlContext.sql(getExpression), ctx.sqlContext)
       DataFrame.fromSparkDataFrame(sqlResult)
     } finally {
       logger.debug("Unregistering the temporary table" + getDataFrameId)
-      ctx.sqlContext.dropTempTable(getDataFrameId)
+      localSqlContext.dropTempTable(getDataFrameId)
     }
   }
+
+  private def moveToSqlContext(df: sql.DataFrame, destinationCtx: SQLContext): sql.DataFrame =
+    destinationCtx.createDataFrame(df.rdd, df.schema)
 }

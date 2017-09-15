@@ -73,7 +73,7 @@ to another [DataFrame](../classes/dataframe.html) with [Transform](transform.htm
 <tr>
 <td><code>dataframe id</code></td>
 <td><code><a href="../parameter_types.html#string">String</a></code></td>
-<td>An identifier that can be used in the SQL expression to refer to the input DataFrame. The value has to be unique in the workflow.</td>
+<td>An identifier that can be used in the SQL expression to refer to the input DataFrame.</td>
 </tr>
 <tr>
 <td><code>expression</code></td>
