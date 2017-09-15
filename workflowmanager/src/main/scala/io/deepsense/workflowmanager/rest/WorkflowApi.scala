@@ -22,7 +22,7 @@ import spray.util.LoggingContext
 import io.deepsense.commons.auth.directives._
 import io.deepsense.commons.auth.usercontext.TokenTranslator
 import io.deepsense.commons.json.envelope.{EnvelopeJsonFormat, Envelope}
-import io.deepsense.commons.rest.{RestApiAbstractAuth, RestComponent}
+import io.deepsense.commons.rest.{Cors, RestApiAbstractAuth, RestComponent}
 import io.deepsense.commons.utils.Version
 import io.deepsense.graph.CyclicGraphException
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader

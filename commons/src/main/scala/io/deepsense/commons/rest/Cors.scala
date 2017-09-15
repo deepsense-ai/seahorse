@@ -1,18 +1,16 @@
 /**
- * Copyright (c) 2015, CodiLime Inc.
+ * Copyright (c) 2016, CodiLime Inc.
  */
 
-package io.deepsense.workflowmanager.rest
+package io.deepsense.commons.rest
 
 import spray.http.HttpHeaders._
 import spray.http.HttpMethods._
 import spray.http.{AllOrigins, HttpMethod, HttpMethods, HttpResponse}
-import spray.routing.{Directive0, MethodRejection, Rejected}
-
-import io.deepsense.commons.rest.RestApiAbstractAuth
+import spray.routing.{Directives, Directive0, MethodRejection, Rejected}
 
 trait Cors {
-  this: RestApiAbstractAuth =>
+  this: Directives =>
 
   private val allowOriginHeader = `Access-Control-Allow-Origin`(AllOrigins)
   private val optionsCorsHeaders = List(
