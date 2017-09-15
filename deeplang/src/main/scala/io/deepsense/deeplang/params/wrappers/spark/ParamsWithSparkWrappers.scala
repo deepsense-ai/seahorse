@@ -26,6 +26,12 @@ trait ParamsWithSparkWrappers extends Params {
     case wrapper: SparkParamWrapper[_, _, _] => wrapper +: wrapper.nestedWrappers
   }.flatten
 
+  protected def validateSparkEstimatorParams(
+      sparkEntity: ml.param.Params,
+      maybeSchema: Option[StructType]): Unit = {
+    maybeSchema.foreach(schema => sparkParamMap(sparkEntity, schema))
+  }
+
   /**
     * This method extracts Spark parameters from SparkParamWrappers that are:
     * - declared directly in class which mixes this trait in
@@ -52,4 +58,5 @@ trait ParamsWithSparkWrappers extends Params {
 
     directParamMap ++ paramsNestedInParamValues
   }
+
 }

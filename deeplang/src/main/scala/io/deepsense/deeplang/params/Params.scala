@@ -151,7 +151,7 @@ trait Params extends Serializable with HasInferenceResult with DefaultJsonProtoc
     this
   }
 
-  val params: Array[Param[_]]
+  def params: Array[Param[_]]
 
   /**
    * Allows to declare parameters order conveniently and makes sure
@@ -304,7 +304,9 @@ trait Params extends Serializable with HasInferenceResult with DefaultJsonProtoc
     other.getClass == this.getClass && other.paramValuesToJson == this.paramValuesToJson
   }
 
-  protected def copyValues[T <: Params](to: T, extra: ParamMap = ParamMap.empty): T = {
+  // TODO Mutability leakage - it's possible to mutate object `to` internals from outside.
+  // there should be protected copyFrom from instead (not `to`).
+  def copyValues[T <: Params](to: T, extra: ParamMap = ParamMap.empty): T = {
     val map = paramMap ++ extra
     params.foreach { param =>
       if (map.contains(param) && to.hasParam(param.name)) {
@@ -324,15 +326,12 @@ trait Params extends Serializable with HasInferenceResult with DefaultJsonProtoc
   private def objectExpectedException(jsValue: JsValue): DeserializationException =
     new DeserializationException(s"Cannot fill parameters schema with $jsValue object expected.")
 
-  private def unknownParamLabelException(
-      jsValue: JsValue,
-      label: String): DeserializationException = {
-    new DeserializationException(
-      s"Cannot fill parameters schema with $jsValue: unknown parameter label $label.")
-  }
-
-
   private val paramMap: ParamMap = ParamMap.empty
 
   private val defaultParamMap: ParamMap = ParamMap.empty
+
+  protected def setDefaultsFrom(params: Params): Unit = {
+    this.defaultParamMap ++= params.defaultParamMap
+  }
+
 }

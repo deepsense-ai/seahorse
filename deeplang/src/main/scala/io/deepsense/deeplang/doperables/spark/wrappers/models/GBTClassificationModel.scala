@@ -14,50 +14,41 @@
  * limitations under the License.
  */
 
-
 package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.PipelineModel
-import org.apache.spark.ml.classification.{GBTClassificationModel => SparkGBTClassificationModel}
+import org.apache.spark.ml.classification.{GBTClassificationModel => SparkGBTClassificationModel, GBTClassifier => SparkGBTClassifier}
 import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
 
 import io.deepsense.commons.utils.Logging
-import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables.Transformer
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.SparkModelWrapper
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common.PredictorParams
-import io.deepsense.deeplang.params.{Param, ParamMap}
-import io.deepsense.deeplang.utils.SparkCustomTransformerWrapper
+import io.deepsense.deeplang.doperables.stringindexingwrapper.StringIndexingWrapperModel
+import io.deepsense.deeplang.params.{ParamMap, Param}
 
-class GBTClassificationModel(transformer: SparkCustomTransformerWrapper)
-  extends Transformer
-  with PredictorParams with Logging {
+class GBTClassificationModel(
+    pipelineModel: PipelineModel,
+    vanilaModel: VanillaGBTClassificationModel)
+  extends StringIndexingWrapperModel(pipelineModel, vanilaModel) {
 
-  def this() = this(null)
+  def this() = this(null, new VanillaGBTClassificationModel())
+}
 
-  override private[deeplang] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
-    transformer._transform(ctx, df)
-  }
+class VanillaGBTClassificationModel()
+  extends SparkModelWrapper[SparkGBTClassificationModel, SparkGBTClassifier]
+    with PredictorParams with Logging {
 
   override private[deeplang] def _transformSchema(schema: StructType): Option[StructType] = {
     val predictionColumnName = $(predictionColumn)
     Some(StructType(schema.fields :+ StructField(predictionColumnName, DoubleType)))
   }
 
-  override def replicate(extra: ParamMap): GBTClassificationModel.this.type = {
-    val transformerCopy = Option(transformer).map(_.replicate(extra)).orNull
-    val that = new GBTClassificationModel(transformerCopy).asInstanceOf[this.type]
-    copyValues(that, extra)
-  }
-
   override val params: Array[Param[_]] =
     declareParams(featuresColumn, predictionColumn)
 
   override def report: Report = {
-    val model = transformer.transformer.asInstanceOf[PipelineModel].stages
-      .collect{ case model: SparkGBTClassificationModel => model}.head
     val summary =
       List(
         SparkSummaryEntry(

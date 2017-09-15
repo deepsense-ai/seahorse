@@ -32,7 +32,7 @@ class GBTClassifierSmokeTest
 
   private val labelColumnName = "myRating"
 
-  import estimator._
+  import estimator.vanillaGBTClassifier._
 
   override val estimatorParams: Seq[ParamPair[_]] = Seq(
     featuresColumn -> NameSingleColumnSelection("myFeatures"),
