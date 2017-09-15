@@ -35,8 +35,7 @@ case class MQCommunicationFactory(
 
   def registerSubscriber(topic: String, subscriber: ActorRef): Unit = {
     val subscriberName = MQCommunication.subscriberName(topic)
-    connection ! CreateChannel(
-      ChannelActor.props(setupSubscriber(topic, subscriber)),
+    connection.createChannel(ChannelActor.props(setupSubscriber(topic, subscriber)),
       Some(subscriberName))
   }
 
