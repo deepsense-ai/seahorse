@@ -45,7 +45,7 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
         Row(null, null))
 
       val df = createDataFrame(values, StructType(List(
-        StructField("value1", DoubleType, nullable = true),
+        StructField("value-1", DoubleType, nullable = true),
         StructField("value2", DoubleType, nullable = true)
       )))
 
@@ -69,9 +69,9 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
           Row(4.0, 4.0, false),
           Row(5.0, 5.0, false)),
         StructType(List(
-          StructField("value1", DoubleType, nullable = true),
+          StructField("value-1", DoubleType, nullable = true),
           StructField("value2", DoubleType, nullable = true),
-          StructField("prefix_value1", BooleanType, nullable = false)
+          StructField("prefix_value-1", BooleanType, nullable = false)
         ))
       )
 
@@ -88,7 +88,7 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
       )
 
       val df = createDataFrame(values, StructType(List(
-        StructField("value1", DoubleType, nullable = true),
+        StructField("value-1", DoubleType, nullable = true),
         StructField("value2", DoubleType, nullable = true),
         StructField("value3", StringType, nullable = true),
         StructField("value4", StringType, nullable = true)
@@ -113,9 +113,9 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
           Row(4.0, null, false, false, true),
           Row(5.0, null, false, false, false)),
         StructType(List(
-          StructField("value1", DoubleType, nullable = true),
+          StructField("value-1", DoubleType, nullable = true),
           StructField("value4", StringType, nullable = true),
-          StructField("prefix_value1", BooleanType, nullable = false),
+          StructField("prefix_value-1", BooleanType, nullable = false),
           StructField("prefix_value2", BooleanType, nullable = false),
           StructField("prefix_value3", BooleanType, nullable = false)))
       )
@@ -132,7 +132,7 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
       )
 
       val df = createDataFrame(values, StructType(List(
-        StructField("value1", ByteType, nullable = true),
+        StructField("value-1", ByteType, nullable = true),
         StructField("value2", DecimalType(5, 3), nullable = true),
         StructField("value3", DoubleType, nullable = true),
         StructField("value4", FloatType, nullable = true),
@@ -164,7 +164,7 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
           Row(4.toByte, BigDecimal("4.0"), 4.0, 4.0f, 4, 4L, 4.toShort, null,
             false, false, false, false, false, false, false)),
         StructType(List(
-          StructField("value1", ByteType, nullable = true),
+          StructField("value-1", ByteType, nullable = true),
           StructField("value2", DecimalType(5, 3), nullable = true),
           StructField("value3", DoubleType, nullable = true),
           StructField("value4", FloatType, nullable = true),
@@ -172,7 +172,7 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
           StructField("value6", LongType, nullable = true),
           StructField("value7", ShortType, nullable = true),
           StructField("value8", StringType, nullable = true),
-          StructField("prefix_value1", BooleanType, nullable = false),
+          StructField("prefix_value-1", BooleanType, nullable = false),
           StructField("prefix_value2", BooleanType, nullable = false),
           StructField("prefix_value3", BooleanType, nullable = false),
           StructField("prefix_value4", BooleanType, nullable = false),
@@ -193,7 +193,7 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
       )
 
       val df = createDataFrame(values, StructType(List(
-        StructField("value1", StringType, nullable = true),
+        StructField("value-1", StringType, nullable = true),
         StructField("value2", StringType, nullable = true)
       )))
 
@@ -215,7 +215,7 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
           Row("ddd", null)
         ),
         StructType(List(
-          StructField("value1", StringType, nullable = true),
+          StructField("value-1", StringType, nullable = true),
           StructField("value2", StringType, nullable = true)
         ))
       )
@@ -232,7 +232,7 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
       )
 
       val df = createDataFrame(values, StructType(List(
-        StructField("value1", BooleanType, nullable = true),
+        StructField("value-1", BooleanType, nullable = true),
         StructField("value2", StringType, nullable = true)
       )))
 
@@ -254,7 +254,7 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
           Row(false, null)
         ),
         StructType(List(
-          StructField("value1", BooleanType, nullable = true),
+          StructField("value-1", BooleanType, nullable = true),
           StructField("value2", StringType, nullable = true))
         )
       )
@@ -279,7 +279,7 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
       )
 
       val df = createDataFrame(values, StructType(List(
-        StructField("value1", TimestampType, nullable = true),
+        StructField("value-1", TimestampType, nullable = true),
         StructField("value2", StringType, nullable = true)
       )))
 
@@ -301,7 +301,7 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
           Row(t4, null)
         ),
         StructType(List(
-          StructField("value1", TimestampType, nullable = true),
+          StructField("value-1", TimestampType, nullable = true),
           StructField("value2", StringType, nullable = true)
         ))
       )
@@ -318,7 +318,7 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
       )
 
       val df = createDataFrame(values, StructType(List(
-        StructField("value1", DoubleType, nullable = true),
+        StructField("value-1", DoubleType, nullable = true),
         StructField("value2", StringType, nullable = true),
         StructField("value3", StringType, nullable = true)
       )))
@@ -344,7 +344,7 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
       )
 
       val df = createDataFrame(values, StructType(List(
-        StructField("value1", DoubleType, nullable = true),
+        StructField("value-1", DoubleType, nullable = true),
         StructField("value2", StringType, nullable = true)
       )))
 
@@ -370,7 +370,7 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
       )
 
       val df = createDataFrame(values, StructType(List(
-        StructField("value1", DoubleType, nullable = true),
+        StructField("value-1", DoubleType, nullable = true),
         StructField("value2", StringType, nullable = true),
         StructField("value3", StringType, nullable = true)
       )))
@@ -400,10 +400,10 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
           Row(100.0, "bbb", null, false, false, true)
         ),
         StructType(List(
-          StructField("value1", DoubleType, nullable = true),
+          StructField("value-1", DoubleType, nullable = true),
           StructField("value2", StringType, nullable = true),
           StructField("value3", StringType, nullable = true),
-          StructField("prefix_value1", BooleanType, nullable = false),
+          StructField("prefix_value-1", BooleanType, nullable = false),
           StructField("prefix_value2", BooleanType, nullable = false),
           StructField("prefix_value3", BooleanType, nullable = false)
         ))
@@ -422,7 +422,7 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
       )
 
       val rawDf = createDataFrame(values, StructType(List(
-        StructField("value1", DoubleType, nullable = true),
+        StructField("value-1", DoubleType, nullable = true),
         StructField("value2", DoubleType, nullable = true),
         StructField("value3", StringType, nullable = true),
         StructField("value4", StringType, nullable = true)
@@ -451,7 +451,7 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
         ),
         StructType(List(
           StructField(
-            "value1", DoubleType, nullable = true),
+            "value-1", DoubleType, nullable = true),
           StructField(
             "value2", DoubleType, nullable = true),
           StructField(
@@ -461,12 +461,13 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
 
       assertDataFramesEqual(resultDf, expectedDf)
     }
+
   }
 
   "with REPLACE_WITH_CUSTOM_VALUE strategy and no MissingValuesIndicator, " +
     "transformSchema should return unmodified schema" in {
     val schema = StructType(List(
-      StructField("value1", DoubleType, nullable = true),
+      StructField("value-1", DoubleType, nullable = true),
       StructField("value2", StringType, nullable = true),
       StructField("value3", StringType, nullable = true)
     ))
@@ -486,7 +487,7 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
   "with REMOVE_ROWS strategy and MissingValuesIndicator set, " +
     "transformSchema should return modified schema" in {
     val schema = StructType(List(
-      StructField("value1", DoubleType, nullable = true),
+      StructField("value-1", DoubleType, nullable = true),
       StructField("value2", DoubleType, nullable = true)
     ))
 
@@ -501,9 +502,9 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
           .setIndicatorPrefix("prefix_"))
 
     val expectedSchema = StructType(List(
-      StructField("value1", DoubleType, nullable = true),
+      StructField("value-1", DoubleType, nullable = true),
       StructField("value2", DoubleType, nullable = true),
-      StructField("prefix_value1", BooleanType, nullable = false)
+      StructField("prefix_value-1", BooleanType, nullable = false)
     ))
 
     transformation._transformSchema(schema) shouldBe Some(expectedSchema)
@@ -511,7 +512,7 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
 
   "with REMOVE_COLUMN strategy transformSchema should return None" in {
     val schema = StructType(List(
-      StructField("value1", DoubleType, nullable = true),
+      StructField("value-1", DoubleType, nullable = true),
       StructField("value2", StringType, nullable = true),
       StructField("value3", StringType, nullable = true)
     ))

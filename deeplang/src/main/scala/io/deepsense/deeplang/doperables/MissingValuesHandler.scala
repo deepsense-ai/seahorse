@@ -139,7 +139,7 @@ case class MissingValuesHandler() extends Transformer {
       indicator: Option[String]) = {
 
     val columnsWithNulls = columns.filter(column =>
-      dataFrame.sparkDataFrame.select(column).filter(column + " is null").count() > 0)
+      dataFrame.sparkDataFrame.select(column).filter(s"`$column` is null").count() > 0)
     val retainedColumns = dataFrame.sparkDataFrame.columns filterNot columnsWithNulls.contains
     DataFrame.fromSparkDataFrame(
       dataFrame.sparkDataFrame.select(retainedColumns.head, retainedColumns.tail: _*))
@@ -206,10 +206,14 @@ case class MissingValuesHandler() extends Transformer {
 
     import org.apache.spark.sql.functions.desc
 
-    val resultArray = dataFrame.sparkDataFrame
-      .select(column)
-      .filter(column + " is not null")
-      .groupBy(column)
+    val sparkDataFrame = dataFrame.sparkDataFrame
+
+    val sparkColumn = sparkDataFrame(column)
+
+    val resultArray = sparkDataFrame
+      .select(sparkColumn)
+      .filter(sparkColumn.isNotNull)
+      .groupBy(sparkColumn)
       .count()
       .orderBy(desc("count"))
       .limit(1)
