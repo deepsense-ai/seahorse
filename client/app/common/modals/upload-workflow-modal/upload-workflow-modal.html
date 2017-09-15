@@ -1,20 +1,22 @@
-<div class="inmodal">
+<div class="inmodal c-upload-execution-report-modal">
   <div class="modal-header">
     <h4 class="modal-title">Upload Workflow</h4>
   </div>
   <div class="modal-body center-block">
-    <deepsense-loading-spinner-sm ng-if="controller.status === 'loading'"></deepsense-loading-spinner-sm>
-    <button type="button" class="center-block btn btn-info c-upload-report-modal__upload-button"
-            ng-if="controller.status === 'preparing' || controller.status === 'failure'" ngf-select
-            ngf-change="controller.upload($file)">Choose a file
-    </button>
-    <div class="text-center c-upload-report-modal__upload-progress" ng-if="controller.status === 'loading'">
-      {{controller.progress + ' %' }}
-    </div>
-    <img class="center-block c-upload-report-modal__img" ng-if="controller.status === 'success'" src="/img/success.png"/>
+    <div class="row">
+      <deepsense-loading-spinner-sm ng-if="controller.status === 'loading'"></deepsense-loading-spinner-sm>
+      <button type="button" class="center-block btn btn-info c-upload-report-modal__upload-button"
+              ng-if="controller.status === 'preparing' || controller.status === 'failure'" ngf-select
+              ngf-change="controller.upload($file)">Choose a file
+      </button>
+      <div class="text-center c-upload-report-modal__upload-progress" ng-if="controller.status === 'loading'">
+        {{controller.progress + ' %' }}
+      </div>
+      <img class="center-block c-upload-report-modal__img" ng-if="controller.status === 'success'" src="/img/success.png"/>
 
-    <div class="text-center text-danger" ng-if="controller.status === 'failure'">
-      <span class="c-upload-report-modal__upload-error-message">{{ controller.errorMessage }}</span>
+      <div class="text-center text-danger pull-right" ng-if="controller.status === 'failure'">
+        {{ controller.errorMessage }}
+      </div>
     </div>
   </div>
   <div class="modal-footer">

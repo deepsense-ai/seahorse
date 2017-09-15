@@ -26,7 +26,7 @@ function Droppable($log, DragAndDrop) {
 
       element.on('drop', drop);
       element.on('dragover', dragPreventDefault);
-      element.on('dragstart', dragPreventDefault);
+      element.on('dragenter', dragPreventDefault);
 
       function drop(event) {
         if (

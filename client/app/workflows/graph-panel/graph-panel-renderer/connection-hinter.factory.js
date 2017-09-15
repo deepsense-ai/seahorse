@@ -48,6 +48,8 @@ class ConnectionHinterService extends GraphPanelRendererBase {
         highlightInputPorts(endpoint, node);
       });
     });
+
+    GraphPanelStyler.styleSelectedOutputEndpoint(sourceEndpoint);
   }
 
   /*

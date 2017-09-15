@@ -25,7 +25,7 @@ import { GraphPanelStyler } from './graph-panel-styler.js';
 
 /* @ngInject */
 function GraphPanelRendererService($rootScope, $document, Edge, $timeout,
-                                   DeepsenseCycleAnalyser, NotificationService, ConnectionHinterService, WorkflowService)
+                                   DeepsenseCycleAnalyser, NotificationService, ConnectionHinterService, WorkflowService, GraphNode)
 {
   const connectorPaintStyles = {
     [Edge.STATE_TYPE.ALWAYS]: _.defaults({}, connectorPaintStyleDefault, { strokeStyle: '#61B7CF' }),
@@ -178,12 +178,21 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout,
 
       GraphPanelStyler.styleOutputEndpointDefault(port, internal.renderMode);
 
-      port.bind('click', () => {
+      port.bind('click', (port, event) => {
         $rootScope.$broadcast('OutputPort.LEFT_CLICK', {
           reference: port,
           portObject: ports[i],
           event: event
         });
+
+        event.stopPropagation();
+      });
+
+      port.canvas.addEventListener('mousedown', (event) => {
+        ConnectionHinterService.showHints(port, internal.renderMode);
+        ConnectionHinterService.highlightOperations(port);
+
+        event.stopPropagation();
       });
 
       port.bind('mouseover', (endpoint) => {
@@ -284,20 +293,6 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout,
       }
     });
 
-    jsPlumb.bind('connectionDrag', (connection) => {
-      for (let endpoint of connection.getAttachedElements()) {
-        if (endpoint.isSource) {
-          ConnectionHinterService.showHints(endpoint, internal.renderMode);
-          ConnectionHinterService.highlightOperations(endpoint);
-        }
-      }
-    });
-
-    jsPlumb.bind('connectionDragStop', () => {
-      ConnectionHinterService.setDefaultPortColors(internal.renderMode);
-      ConnectionHinterService.disableHighlightingOoperations();
-    });
-
     jsPlumb.bind('connectionDrag', () => {
       $rootScope.$broadcast(Edge.DRAG);
     });
@@ -319,6 +314,25 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout,
     that.renderEdges();
     that.repaintEverything();
   };
+
+  that.bindDisablePortHighlightingsEvents = function bindDisablePortHighlightingsEvents() {
+    const disablePortHighlightings = () => {
+      $timeout(() => {
+        ConnectionHinterService.setDefaultPortColors(internal.renderMode);
+        ConnectionHinterService.disableHighlightingOoperations();
+      }, 0, false);
+    };
+
+    $document.on('mousedown', disablePortHighlightings);
+    $rootScope.$on('FlowChartBox.ELEMENT_DROPPED', disablePortHighlightings);
+    $rootScope.$on('Keyboard.KEY_PRESSED_DEL', disablePortHighlightings);
+    $rootScope.$on(Edge.CREATE, disablePortHighlightings);
+    $rootScope.$on(Edge.REMOVE, disablePortHighlightings);
+    $rootScope.$on(GraphNode.MOUSEDOWN, disablePortHighlightings);
+    jsPlumb.bind('connectionDragStop', disablePortHighlightings);
+  };
+
+  that.bindDisablePortHighlightingsEvents();
 
   return that;
 }

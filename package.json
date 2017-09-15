@@ -29,7 +29,7 @@
     "animate.css": "^3.2.5",
     "bootstrap": "^3.3.4",
     "deepsense-attributes-panel": "0.0.24",
-    "deepsense-catalogue-panel": "0.0.7",
+    "deepsense-catalogue-panel": "0.0.8",
     "deepsense-context-menu": "0.0.1",
     "deepsense-cycle-analyser": "0.0.1",
     "deepsense-graph-model": "0.0.16",
@@ -44,7 +44,7 @@
     "ng-switchery": "^1.0.1"
   },
   "devDependencies": {
-    "babelify": "^6.2.0",
+    "babelify": "^6.3.0",
     "bower": "^1.5.2",
     "browser-sync": "^2.7.12",
     "browserify": "^10.2.4",

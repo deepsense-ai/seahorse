@@ -15,6 +15,12 @@ export class GraphPanelStyler {
     endpoint.setHoverPaintStyle(GraphPanelStyler.getOutputEndpointDefaultHoverPaintStyle(renderMode));
   }
 
+  static styleSelectedOutputEndpoint(endpoint) {
+    endpoint.setPaintStyle({
+      fillStyle: '#216477'
+    });
+  }
+
   static styleInputEndpointTypeMatch(endpoint) {
     endpoint.setPaintStyle({
       fillStyle: '#1ab394'
