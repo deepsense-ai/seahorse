@@ -19,7 +19,7 @@ package io.deepsense.models.json.workflow
 import spray.json._
 
 import io.deepsense.graph.NodeInferenceResult
-import io.deepsense.models.json.graph.GraphKnowledgeJsonProtocol
+import io.deepsense.models.json.graph.DKnowledgeJsonProtocol
 import io.deepsense.models.workflows.InferredState
 
 /**
@@ -27,7 +27,7 @@ import io.deepsense.models.workflows.InferredState
  */
 trait InferredStateJsonProtocol
   extends WorkflowJsonProtocol
-  with GraphKnowledgeJsonProtocol
+  with DKnowledgeJsonProtocol
   with ExecutionReportJsonProtocol
   with InferenceWarningsJsonProtocol {
 

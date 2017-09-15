@@ -23,7 +23,7 @@ import io.deepsense.commons.exception.json.FailureDescriptionJsonProtocol
 import io.deepsense.commons.json.{DateTimeJsonProtocol, EnumerationSerializer, IdJsonProtocol}
 import io.deepsense.graph.DirectedGraph
 import io.deepsense.models.json.graph.GraphJsonProtocol.{GraphReader, GraphWriter}
-import io.deepsense.models.json.graph.{GraphKnowledgeJsonProtocol, NodeJsonProtocol, NodeStatusJsonProtocol}
+import io.deepsense.models.json.graph.{DKnowledgeJsonProtocol, NodeJsonProtocol, NodeStatusJsonProtocol}
 import io.deepsense.models.workflows._
 
 trait WorkflowJsonProtocol
@@ -31,7 +31,7 @@ trait WorkflowJsonProtocol
   with SprayJsonSupport
   with NodeJsonProtocol
   with NodeStatusJsonProtocol
-  with GraphKnowledgeJsonProtocol
+  with DKnowledgeJsonProtocol
   with ActionsJsonProtocol
   with IdJsonProtocol
   with FailureDescriptionJsonProtocol

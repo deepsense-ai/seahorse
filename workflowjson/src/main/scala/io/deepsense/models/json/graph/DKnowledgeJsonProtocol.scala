@@ -18,19 +18,44 @@ package io.deepsense.models.json.graph
 
 import spray.json._
 
+import io.deepsense.deeplang.params.Params
 import io.deepsense.deeplang.{DKnowledge, DOperable}
 
-trait GraphKnowledgeJsonProtocol extends DefaultJsonProtocol {
+trait DKnowledgeJsonProtocol extends DefaultJsonProtocol {
 
   implicit object DKnowledgeJsonFormat
     extends JsonFormat[DKnowledge[DOperable]]
     with DefaultJsonProtocol {
 
-    override def write(dKnowledge: DKnowledge[DOperable]): JsValue =
+    override def write(dKnowledge: DKnowledge[DOperable]): JsValue = {
+      val types = typeArray(dKnowledge)
+      val params = inferredParams(dKnowledge)
+
+      JsObject(
+        "types" -> types,
+        "params" -> params.getOrElse(JsNull)
+      )
+    }
+
+    def inferredParams(dKnowledge: DKnowledge[DOperable]): Option[JsObject] = {
+      if (dKnowledge.size == 1) {
+        dKnowledge.single match {
+          case dOperable: DOperable with Params =>
+            val schema = dOperable.paramsToJson
+            val values = dOperable.paramValuesToJson
+            Some(JsObject("schema" -> schema, "values" -> values))
+          case _ => None
+        }
+      } else {
+        None
+      }
+    }
+
+    def typeArray(dKnowledge: DKnowledge[DOperable]): JsArray =
       JsArray(dKnowledge.types.map(_.getClass.getName.toJson).toVector)
 
     override def read(json: JsValue): DKnowledge[DOperable] = ???
   }
 }
 
-object GraphKnowledgeJsonProtocol extends GraphKnowledgeJsonProtocol
+object DKnowledgeJsonProtocol extends DKnowledgeJsonProtocol
