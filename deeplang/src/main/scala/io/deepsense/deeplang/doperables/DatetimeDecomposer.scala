@@ -68,7 +68,7 @@ case class DatetimeDecomposer() extends Transformer {
   def setTimestampPrefix(timestampPrefix: String): this.type =
     set(timestampPrefixParam, timestampPrefix)
 
-  override val params = declareParams(
+  override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(
     timestampColumnParam, timestampPartsParam, timestampPrefixParam)
 
   override def _transform(context: ExecutionContext, dataFrame: DataFrame): DataFrame = {
@@ -132,32 +132,32 @@ object DatetimeDecomposer {
   object TimestampPart {
     case class Year() extends TimestampPart {
       override val name: String = "year"
-      override val params: Array[Param[_]] = declareParams()
+      override val params: Array[Param[_]] = Array()
     }
 
     case class Month() extends TimestampPart {
       override val name: String = "month"
-      override val params: Array[Param[_]] = declareParams()
+      override val params: Array[Param[_]] = Array()
     }
 
     case class Day() extends TimestampPart {
       override val name: String = "day"
-      override val params: Array[Param[_]] = declareParams()
+      override val params: Array[Param[_]] = Array()
     }
 
     case class Hour() extends TimestampPart {
       override val name: String = "hour"
-      override val params: Array[Param[_]] = declareParams()
+      override val params: Array[Param[_]] = Array()
     }
 
     case class Minutes() extends TimestampPart {
       override val name: String = "minutes"
-      override val params: Array[Param[_]] = declareParams()
+      override val params: Array[Param[_]] = Array()
     }
 
     case class Seconds() extends TimestampPart {
       override val name: String = "seconds"
-      override val params: Array[Param[_]] = declareParams()
+      override val params: Array[Param[_]] = Array()
     }
   }
 

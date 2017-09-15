@@ -86,7 +86,7 @@ class ALS
     portIndex = 0)
   setDefault(ratingColumn, NameSingleColumnSelection("rating"))
 
-  override val params: Array[Param[_]] = declareParams(
+  override val params: Array[Param[_]] = Array(
     alpha,
     checkpointInterval,
     implicitPrefs,

@@ -16,14 +16,14 @@
 
 package io.deepsense.deeplang.doperables
 
-import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
-import io.deepsense.deeplang.params._
-import io.deepsense.deeplang.params.selections.{IndexSingleColumnSelection, NameSingleColumnSelection, SingleColumnSelection}
 import org.apache.spark.sql.Column
 import org.apache.spark.sql.functions.col
 import org.apache.spark.sql.types.StructType
 
+import io.deepsense.deeplang.ExecutionContext
+import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
+import io.deepsense.deeplang.params._
+import io.deepsense.deeplang.params.selections.{IndexSingleColumnSelection, NameSingleColumnSelection, SingleColumnSelection}
 
 /**
   * Sorts the input [[io.deepsense.deeplang.doperables.dataframe.DataFrame Dataframe]]
@@ -46,12 +46,20 @@ class SortTransformer extends Transformer {
         SortColumnParam.columnParamToColumnExpression(_, df)): _*))
   }
 
-  override def params: Array[Param[_]] = declareParams(columns)
+  override def params: Array[Param[_]] = Array(columns)
 
   override private[deeplang] def _transformSchema(schema: StructType): Option[StructType] = {
+    // Check that all columns selected for sorting exist
+    getSelectedSortColumnNames(schema, _.getColumn)
     Some(schema)
   }
 
+  private def getSelectedSortColumnNames(
+      schema: StructType,
+      selector: SortColumnParam => SingleColumnSelection): Seq[String] = {
+    getColumns.map(columnPair =>
+      DataFrameColumnsGetter.getColumnName(schema, selector(columnPair)))
+  }
 }
 
 class SortColumnParam extends Params {
@@ -76,7 +84,7 @@ class SortColumnParam extends Params {
   def getColumn: SingleColumnSelection = $(column)
   def setColumn(col: SingleColumnSelection): this.type = set(column, col)
 
-  override def params: Array[Param[_]] = declareParams(column, descending)
+  override def params: Array[Param[_]] = Array(column, descending)
 
 }
 

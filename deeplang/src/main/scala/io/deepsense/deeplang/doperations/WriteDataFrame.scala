@@ -58,7 +58,7 @@ case class WriteDataFrame()
   def getStorageType(): OutputStorageTypeChoice = $(storageType)
   def setStorageType(value: OutputStorageTypeChoice): this.type = set(storageType, value)
 
-  val params = declareParams(storageType)
+  val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(storageType)
   setDefault(storageType, OutputStorageTypeChoice.File())
 
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): Unit = {

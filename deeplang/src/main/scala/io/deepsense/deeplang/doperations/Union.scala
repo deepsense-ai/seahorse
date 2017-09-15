@@ -38,7 +38,7 @@ case class Union()
 
   override val since: Version = Version(0, 4, 0)
 
-  val params = declareParams()
+  val params: Array[io.deepsense.deeplang.params.Param[_]] = Array()
 
   override protected def _execute(
       context: ExecutionContext)(first: DataFrame, second: DataFrame): DataFrame = {

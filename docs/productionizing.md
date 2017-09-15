@@ -61,7 +61,7 @@ export SPARK_HOME=/opt/spark
 {% endhighlight %}
 Now set the `PYTHONPATH` variable (it depends on `SPARK_HOME`):
 {% highlight bash %}
-export PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.9-src.zip:$PYTHONPATH
+export PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.1-src.zip:$PYTHONPATH
 {% endhighlight %}
 
 

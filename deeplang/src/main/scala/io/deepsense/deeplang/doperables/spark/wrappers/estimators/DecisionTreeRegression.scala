@@ -33,7 +33,7 @@ class DecisionTreeRegression
   with HasRegressionImpurityParam
   with HasLabelColumnParam {
 
-  override val params: Array[Param[_]] = declareParams(
+  override val params: Array[Param[_]] = Array(
     maxDepth,
     maxBins,
     minInstancesPerNode,

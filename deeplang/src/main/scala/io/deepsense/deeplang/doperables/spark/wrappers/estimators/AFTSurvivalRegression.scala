@@ -52,7 +52,7 @@ class AFTSurvivalRegression
       portIndex = 0)
   setDefault(censorColumn, NameSingleColumnSelection("censor"))
 
-  override val params: Array[Param[_]] = declareParams(
+  override val params: Array[Param[_]] = Array(
     fitIntercept,
     maxIterations,
     tolerance,

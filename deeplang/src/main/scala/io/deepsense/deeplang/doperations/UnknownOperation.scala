@@ -42,7 +42,7 @@ class UnknownOperation extends DOperation {
 
   override val since: Version = Version(1, 4, 0)
 
-  override val params = declareParams()
+  override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array()
 
   override def execute(context: ExecutionContext)(
     arguments: Vector[DOperable]): Vector[DOperable] = {

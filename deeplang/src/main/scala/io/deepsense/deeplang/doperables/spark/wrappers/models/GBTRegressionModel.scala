@@ -29,7 +29,7 @@ import io.deepsense.deeplang.params.Param
 class GBTRegressionModel extends SparkModelWrapper[SparkGBTRegressionModel, SparkGBTRegressor]
   with PredictorParams {
 
-  override val params: Array[Param[_]] = declareParams(featuresColumn, predictionColumn)
+  override val params: Array[Param[_]] = Array(featuresColumn, predictionColumn)
 
   override def report: Report = {
     val summary =

@@ -24,14 +24,14 @@ case class ClassWithParams() extends Params {
   val string = StringParam("string", "")
   val bool = BooleanParam("bool", "")
 
-  val params = declareParams(string, bool)
+  val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(string, bool)
 
   def setBool(b: Boolean): this.type = set(bool, b)
   def setString(s: String): this.type = set(string, s)
 }
 
 case class ParamsWithoutNoArgConstructor(x: String) extends Params {
-  val params = declareParams()
+  val params: Array[io.deepsense.deeplang.params.Param[_]] = Array()
 }
 
 class ParamsSequenceSpec

@@ -56,7 +56,7 @@ case class CreateCustomTransformer() extends TransformerAsFactory[CustomTransfor
   def getInnerWorkflow: JsObject = $(innerWorkflow)
   def setInnerWorkflow(workflow: JsObject): this.type = set(innerWorkflow, workflow)
 
-  override val params: Array[Param[_]] = declareParams(innerWorkflow)
+  override val params: Array[Param[_]] = Array(innerWorkflow)
 
   override protected def _execute(context: ExecutionContext)(): CustomTransformer =
     customTransformer(context.innerWorkflowExecutor)

@@ -90,7 +90,7 @@ object EstimatorModelWrapperFixtures {
     extends SparkModelWrapper[SimpleSparkModel, SimpleSparkEstimator]
     with HasPredictionColumn {
 
-    override val params: Array[Param[_]] = declareParams(predictionColumn)
+    override val params: Array[Param[_]] = Array(predictionColumn)
     override def report: Report = ???
 
     override protected def loadModel(
@@ -102,7 +102,7 @@ object EstimatorModelWrapperFixtures {
     extends SparkEstimatorWrapper[SimpleSparkModel, SimpleSparkEstimator, SimpleSparkModelWrapper]
     with HasPredictionColumn {
 
-    override val params: Array[Param[_]] = declareParams(predictionColumn)
+    override val params: Array[Param[_]] = Array(predictionColumn)
     override def report: Report = ???
   }
 }

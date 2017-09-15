@@ -56,7 +56,7 @@ class VanillaRandomForestClassifier
     with ProbabilisticClassifierParams
     with HasClassificationImpurityParam {
 
-  override val params: Array[Param[_]] = declareParams(
+  override val params: Array[Param[_]] = Array(
     maxDepth,
     maxBins,
     minInstancesPerNode,

@@ -61,11 +61,11 @@ object OptionalWeightColumnChoice {
     def setWeightColumn(value: SingleColumnSelection): this.type = set(weightColumn -> value)
 
     override val name = "yes"
-    override val params = declareParams(weightColumn)
+    override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(weightColumn)
   }
 
   case class WeightColumnNoOption() extends WeightColumnOption {
     override val name = "no"
-    override val params = declareParams()
+    override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array()
   }
 }

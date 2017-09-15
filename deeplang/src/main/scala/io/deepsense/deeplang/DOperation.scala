@@ -40,6 +40,8 @@ abstract class DOperation extends Operation
   val id: DOperation.Id
   val name: String
   val description: String
+  // TODO This will change when user operations will be added.
+  val hasDocumentation: Boolean = true
 
   def inPortTypes: Vector[ru.TypeTag[_]]
 

@@ -49,7 +49,7 @@ object InputStorageTypeChoice {
     def getFileFormat(): InputFileFormatChoice = $(fileFormat)
     def setFileFormat(value: InputFileFormatChoice): this.type = set(fileFormat, value)
 
-    override val params = declareParams(sourceFile, fileFormat)
+    override val params: Array[io.deepsense.deeplang.params.Param[_]] = Array(sourceFile, fileFormat)
   }
 
   case class Jdbc()
@@ -58,6 +58,6 @@ object InputStorageTypeChoice {
 
     override val name: String = StorageType.JDBC.toString
     override val params: Array[Param[_]] =
-      declareParams(jdbcUrl, jdbcDriverClassName, jdbcTableName)
+      Array(jdbcUrl, jdbcDriverClassName, jdbcTableName)
   }
 }
