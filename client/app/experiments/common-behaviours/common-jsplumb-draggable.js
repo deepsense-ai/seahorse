@@ -6,10 +6,8 @@
 
 'use strict';
 
-var GraphNode = require('../common-objects/common-graph-node.js');
-
 /* @ngInject */
-function DraggableDirective() {
+function DraggableDirective(GraphNode) {
   return {
     restrict: 'A',
     link: function (scope, element, attrs) {

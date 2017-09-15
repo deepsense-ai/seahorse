@@ -59,6 +59,8 @@
           "./node_modules/deepsense-node-parameters/dist/deepsense-node-parameters.js",
           "./node_modules/deepsense-attributes-panel/dist/deepsense-attributes-panel.js",
           "./node_modules/deepsense-navigation-panel/dist/deepsense-navigation-panel.js",
+          "./node_modules/deepsense-graph-model/dist/deepsense-graph-model.js",
+          "./node_modules/deepsense-cycle-analyser/dist/deepsense-cycle-analyser.js",
           "./node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.js",
           "./node_modules/angular-toastr/dist/angular-toastr.tpls.min.js"
         ],
@@ -96,6 +98,8 @@
           "./node_modules/deepsense-node-parameters/dist/deepsense-node-parameters.js",
           "./node_modules/deepsense-attributes-panel/dist/deepsense-attributes-panel.js",
           "./node_modules/deepsense-navigation-panel/dist/deepsense-navigation-panel.js",
+          "./node_modules/deepsense-graph-model/dist/deepsense-graph-model.js",
+          "./node_modules/deepsense-cycle-analyser/dist/deepsense-cycle-analyser.js",
           "./node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.js",
           "./node_modules/angular-toastr/dist/angular-toastr.tpls.min.js"
         ],

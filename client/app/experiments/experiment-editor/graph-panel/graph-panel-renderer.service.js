@@ -3,50 +3,22 @@
  */
 'use strict';
 
-let Edge = require('./../../common-objects/common-edge.js');
-
-let connectorPaintStyleDefault = {
+const connectorPaintStyleDefault = {
   lineWidth: 2,
   outlineColor: 'white',
   outlineWidth: 2
 };
 
-/**
- * Maps edge's state to its style object
- *
- * @type {object}
- */
-let connectorPaintStyles = {};
-connectorPaintStyles[Edge.STATE_TYPE.ALWAYS] = _.defaults({}, connectorPaintStyleDefault, { strokeStyle: '#61B7CF' });
-connectorPaintStyles[Edge.STATE_TYPE.MAYBE] = _.defaults({}, connectorPaintStyleDefault, { strokeStyle: '#F8AC59' });
-connectorPaintStyles[Edge.STATE_TYPE.NEVER] = _.defaults({}, connectorPaintStyleDefault, { strokeStyle: '#ED5565' });
-connectorPaintStyles[Edge.STATE_TYPE.UNKNOWN] = _.defaults({}, connectorPaintStyleDefault, { strokeStyle: 'gray' });
-
-let connectorHoverStyle = {
+const connectorHoverStyle = {
   strokeStyle: '#216477'
 };
 
-let endpointHoverStyle = {
+const endpointHoverStyle = {
   fillStyle: '#216477',
   strokeStyle: '#216477'
 };
 
-let outputStyle = {
-  endpoint: 'Dot',
-  paintStyle: {
-    fillStyle: '#1AB394',
-    radius: 10,
-    lineWidth: 2
-  },
-  isSource: true,
-  connector: ['Bezier', { curviness: 75 }],
-  connectorStyle: connectorPaintStyles[Edge.STATE_TYPE.UNKNOWN],
-  hoverPaintStyle: endpointHoverStyle,
-  connectorHoverStyle: connectorHoverStyle,
-  maxConnections: -1
-};
-
-let inputStyle = {
+const inputStyle = {
   endpoint: 'Rectangle',
   paintStyle: {
     fillStyle: '#1AB394'
@@ -61,7 +33,28 @@ let inputStyle = {
 };
 
 /* @ngInject */
-function GraphPanelRendererService($rootScope, $document) {
+function GraphPanelRendererService($rootScope, $document, Edge, $timeout, DeepsenseCycleAnalyser, NotificationService) {
+  const connectorPaintStyles = {
+    [Edge.STATE_TYPE.ALWAYS]: _.defaults({}, connectorPaintStyleDefault, { strokeStyle: '#61B7CF' }),
+    [Edge.STATE_TYPE.MAYBE]: _.defaults({}, connectorPaintStyleDefault, { strokeStyle: '#F8AC59' }),
+    [Edge.STATE_TYPE.NEVER]: _.defaults({}, connectorPaintStyleDefault, { strokeStyle: '#ED5565' }),
+    [Edge.STATE_TYPE.UNKNOWN]: _.defaults({}, connectorPaintStyleDefault, { strokeStyle: 'gray' })
+  };
+
+  const outputStyle = {
+    endpoint: 'Dot',
+    paintStyle: {
+      fillStyle: '#1AB394',
+      radius: 10,
+      lineWidth: 2
+    },
+    isSource: true,
+    connector: ['Bezier', { curviness: 75 }],
+    connectorStyle: connectorPaintStyles[Edge.STATE_TYPE.UNKNOWN],
+    hoverPaintStyle: endpointHoverStyle,
+    connectorHoverStyle: connectorHoverStyle,
+    maxConnections: -1
+  };
 
   const nodeIdPrefix = 'node-';
   const nodeIdPrefixLength = nodeIdPrefix.length;
@@ -297,6 +290,21 @@ function GraphPanelRendererService($rootScope, $document) {
       info.connection.setParameter('edgeId', edge.id);
 
       $rootScope.$broadcast(Edge.CREATE, {edge: edge});
+
+      if (DeepsenseCycleAnalyser.cycleExists(internal.experiment)) {
+        NotificationService.showError({
+          title: 'Error',
+          message: 'You cannot create a cycle in the graph!'
+        }, 'A cycle in the graph has been detected!');
+
+        $timeout(() => {
+          $rootScope.$broadcast(Edge.REMOVE, {
+            edge: internal.experiment.getEdgeById(info.connection.getParameter('edgeId'))
+          });
+
+          jsPlumb.detach(info.connection);
+        }, 0, false);
+      }
     });
 
     jsPlumb.bind('connectionDetached', (info, originalEvent) => {
