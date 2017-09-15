@@ -27,10 +27,11 @@ function OperationAttributes($rootScope, AttributesPanelService, config) {
     link: (scope, element) => {
       scope.selected = 'parameters';
       scope.$watch('node', function () {
+        scope.hasCodeEdit = scope.node.operationId === 'e76ca616-0322-47a5-b390-70c9668265dd';
         scope.$applyAsync(setCorrectHeight.bind(null, element[0]));
       });
 
-      scope.$watch('disabledMode', function () {
+      scope.$watch('disabledMode', function() {
         if (scope.disabledMode) {
           AttributesPanelService.setDisabledMode();
           AttributesPanelService.disableElements(element[0]);
@@ -43,8 +44,8 @@ function OperationAttributes($rootScope, AttributesPanelService, config) {
     },
 
     controller: function ($scope, $sce, $element, $timeout, $uibModal) {
-
       this.getNotebookUrl = () => $sce.trustAsResourceUrl(config.notebookHost + '/notebooks/' + $scope.workflow + "/" + $scope.node.id);
+      this.hasCodeEdit = () => $scope.hasCodeEdit;
       this.getDocsHost = () => config.docsHost;
       this.showNotebook = () => {
         $scope.modal = $uibModal.open({
