@@ -46,7 +46,7 @@ case class Graph(nodes: Set[Node] = Set(), edges: Set[Edge] = Set()) {
    */
   def node(id: Node.Id): Node = nodeById(id.value)
 
-  def markAsInDraft(id: Node.Id): Graph = withChangedNode(id, _.markInDraft)
+  def markAsDraft(id: Node.Id): Graph = withChangedNode(id, _.markDraft)
 
   def markAsQueued(id: Node.Id): Graph = withChangedNode(id, _.markQueued)
 

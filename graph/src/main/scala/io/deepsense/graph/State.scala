@@ -50,11 +50,11 @@ case class State private[graph](
  * Allows creating states of execution nodes using factory methods.
  */
 object State {
-  private[graph] def inDraft: State = State(Status.InDraft)
+  def draft: State = State(Status.Draft)
 
-  private[graph] def queued: State = State(Status.Queued)
+  def queued: State = State(Status.Queued)
 
-  private[graph] def running(progress: Progress): State = {
+  def running(progress: Progress): State = {
     val started = DateTimeConverter.now // TODO: is this the way we want to compute the time?
     State(status = Status.Running, started = Some(started), progress = Some(progress))
   }

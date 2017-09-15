@@ -52,7 +52,7 @@ class NodeJsonStateProtocolSpec extends GraphJsonTestSupport {
       val stateJson = state.toJson(NodeStateJsonProtocol.NodeStateWriter).asJsObject
       stateJson.fields.keys.size shouldBe 5
       stateJson.fields.keys should contain("status")
-      stateJson.fields("status").convertTo[String] shouldBe "Completed"
+      stateJson.fields("status").convertTo[String] shouldBe status.toString.toUpperCase
       stateJson.fields("started") shouldBe JsNull
       stateJson.fields("ended") shouldBe JsNull
       stateJson.fields("progress") shouldBe JsNull

@@ -87,7 +87,7 @@ class GraphSuite extends FunSuite with Matchers {
     var graph = Graph(Set(node))
 
     // node should be in draft
-    assert(node.isInDraft)
+    assert(node.isDraft)
 
     // queued
     graph = graph.markAsQueued(node.id)

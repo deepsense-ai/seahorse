@@ -13,9 +13,9 @@ import io.deepsense.deeplang.DOperation
 case class Node(
   id: Node.Id,
   operation: DOperation,
-  state: State = State.inDraft) {
+  state: State = State.draft) {
 
-  def markInDraft: Node = copy(state = State.inDraft)
+  def markDraft: Node = copy(state = State.draft)
   def markQueued: Node = copy(state = State.queued)
   def markFailed: Node = copy(state = state.failed)
   def markAborted: Node = copy(state = state.aborted)
@@ -24,7 +24,7 @@ case class Node(
   def markCompleted(results: List[UUID]): Node = copy(state = state.completed(results))
   // TODO: just a default value. Change it when DOperation will support it.
 
-  def isInDraft: Boolean = state.status == Status.InDraft
+  def isDraft: Boolean = state.status == Status.Draft
   def isQueued: Boolean = state.status == Status.Queued
   def isFailed: Boolean = state.status == Status.Failed
   def isAborted: Boolean = state.status == Status.Aborted

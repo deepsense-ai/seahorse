@@ -63,7 +63,7 @@ class EMCommunicatesWithGEIntegSpec
 
   def graphCompleted(status: Status): Boolean = {
     val inProgressStatuses = Set(
-      io.deepsense.graph.Status.InDraft,
+      io.deepsense.graph.Status.Draft,
       io.deepsense.graph.Status.Queued,
       io.deepsense.graph.Status.Running)
 
