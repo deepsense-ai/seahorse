@@ -3,18 +3,18 @@
 const path = require('path');
 const webpack = require('webpack');
 const autoprefixer = require('autoprefixer-core');
-const HtmlWebpackPlugin = require("html-webpack-plugin");
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const GitRevisionPlugin = require('git-revision-webpack-plugin');
 
-const NODE_ENV = process.env.NODE_ENV || "production";
+const NODE_ENV = process.env.NODE_ENV || 'production';
 
 module.exports = function (_path) {
   const webpackConfig = {
     entry: {
-      libs: _path + '/client/app/libs.js', //TODO: remove
+      libs: _path + '/client/app/libs.js', // TODO: remove
       app: _path + '/client/app/app.js',
       fe: _path + '/client/app/app.fe.js',
-      ga: _path + '/client/app/app.ga.js',
+      ga: _path + '/client/app/app.ga.js'
     },
 
     output: {
@@ -38,10 +38,9 @@ module.exports = function (_path) {
     },
 
     module: {
-      preLoaders: [ {
-        test: /\.js$/, loader: "eslint-loader", exclude: /node_modules/
-      }
-      ],
+      preLoaders: [{
+        test: /\.js$/, loader: 'eslint-loader', exclude: /node_modules/
+      }],
       noParse: [],
       loaders: [
       {
@@ -64,14 +63,14 @@ module.exports = function (_path) {
         loader: 'url-loader?limit=8192'
       }, {
         test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: "url-loader?limit=10000&mimetype=application/font-woff"
+        loader: 'url-loader?limit=10000&mimetype=application/font-woff'
       }, {
         test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: "url-loader"
+        loader: 'url-loader'
       }, {
         test: /\.js$/,
         exclude: [
-          path.resolve(_path, "node_modules")
+          path.resolve(_path, 'node_modules')
         ],
         loaders: [
           'ng-annotate-loader'
@@ -80,25 +79,25 @@ module.exports = function (_path) {
         test: /\.js$/,
         loader: 'babel-loader',
         exclude: [
-          path.resolve(_path, "node_modules")
+          path.resolve(_path, 'node_modules')
         ],
         query: {
           cacheDirectory: true,
           plugins: [
-            "transform-runtime",
-            "add-module-exports"
+            'transform-runtime',
+            'add-module-exports'
           ]
         }
       }, {
-        test: require.resolve("angular"),
+        test: require.resolve('angular'),
         loaders: [
-          "expose?angular"
+          'expose?angular'
         ]
       }, {
-        test: require.resolve("jquery"),
+        test: require.resolve('jquery'),
         loaders: [
-          "expose?$",
-          "expose?jQuery"
+          'expose?$',
+          'expose?jQuery'
         ]
       }
 
@@ -115,7 +114,7 @@ module.exports = function (_path) {
     postcss: [autoprefixer({browsers: ['last 5 versions']})],
 
     plugins: [
-      //new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en|hu/),
+      // new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en|hu/),
       new webpack.ProvidePlugin({
         $: 'jquery',
         jQuery: 'jquery'

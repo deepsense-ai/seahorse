@@ -1,4 +1,5 @@
 'use strict';
+
 const webpack = require('webpack');
 
 module.exports = function(_path) {

@@ -25,7 +25,7 @@ module.exports = Object.assign(config, {
         loaders: [
           'html'
         ]
-      },
+      }
     ]
   },
   plugins: [],
