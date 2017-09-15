@@ -2,6 +2,9 @@
 
 import BaseDatasourceModalController from '../base-datasource-modal-controller.js';
 
+const HDFS_REGEX = /(hdfs):\/\/([\w\-_]+)+([\w\-\\.,@?^=%&amp;:/~\\+#]*[\w\-\\@?^=%&amp;/~\\+#])?/;
+const HDFS_PREFIX = 'hdfs://';
+
 class HdfsModalController extends BaseDatasourceModalController {
   constructor($scope, $log, $uibModalInstance, datasourcesService, editedDatasource) {
     'ngInject';
@@ -11,6 +14,8 @@ class HdfsModalController extends BaseDatasourceModalController {
     if (editedDatasource) {
       this.originalDatasource = editedDatasource;
       this.datasourceParams = editedDatasource.params;
+      this.hdfsPathBuffer = this.datasourceParams.hdfsParams.hdfsPath.toLowerCase().replace(HDFS_PREFIX, '');
+      this.validateHdfsPath();
     } else {
       this.datasourceParams = {
         name: '',
@@ -20,9 +25,9 @@ class HdfsModalController extends BaseDatasourceModalController {
           hdfsPath: '',
           fileFormat: 'csv',
           csvFileFormatParams: {
-            includeHeader: false,
+            includeHeader: true,
             convert01ToBoolean: false,
-            separatorType: '',
+            separatorType: 'comma',
             customSeparator: ''
           }
         }
@@ -42,6 +47,21 @@ class HdfsModalController extends BaseDatasourceModalController {
     const isNameEmpty = this.datasourceParams.name === '';
 
     return !super.doesNameExists() && isSeparatorValid && isSourceValid && !isNameEmpty;
+  }
+
+  onChangeHandler() {
+    this.hideHdfsPrefix();
+    this.validateHdfsPath();
+  }
+
+  hideHdfsPrefix() {
+    this.hdfsPathBuffer = this.hdfsPathBuffer.toLowerCase().replace(HDFS_PREFIX, '');
+    this.datasourceParams.hdfsParams.hdfsPath = `${HDFS_PREFIX}${this.hdfsPathBuffer}`;
+  }
+
+  validateHdfsPath() {
+    this.isHdfsPathValid = this.datasourceParams.hdfsParams.hdfsPath !== '' &&
+      this.datasourceParams.hdfsParams.hdfsPath.match(HDFS_REGEX);
   }
 
   onFileSettingsChange(data) {

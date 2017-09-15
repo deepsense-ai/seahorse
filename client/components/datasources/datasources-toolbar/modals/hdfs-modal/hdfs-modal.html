@@ -6,14 +6,27 @@
   <div class="datasources-modal__body">
     <div class="datasources-modal__body-row">
       <label class="title">HDFS path</label>
-      <div class="hdfs-input">
-        <div class="hdfs-input__prefix">hdfs://</div>
+      <div class="icon-input">
+        <div class="hdfs-prefix">hdfs://</div>
         <input
-          ng-model="$ctrl.datasourceParams.hdfsParams.hdfsPath"
+          ng-model="$ctrl.hdfsPathBuffer"
+          ng-change="$ctrl.onChangeHandler()"
           placeholder="HDFS Path"
           class="form-control"
           type="text"
         />
+        <div class="icon-input__status">
+          <div
+            ng-if="$ctrl.isHdfsPathValid"
+            class="sa sa-ok icon-input__status--ok"
+          >
+          </div>
+          <div
+            ng-if="!$ctrl.isHdfsPathValid"
+            class="sa sa-cross icon-input__status--error"
+          >
+          </div>
+        </div>
       </div>
     </div>
 
