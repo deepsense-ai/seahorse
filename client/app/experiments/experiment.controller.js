@@ -7,7 +7,8 @@
 function ExperimentController(
   experiment,
   $http, $modal, $timeout, $scope,
-  PageService, Operations, GraphPanelRendererService, ExperimentService, ExperimentApiClient, UUIDGenerator, MouseEvent
+  PageService, Operations, GraphPanelRendererService, ExperimentService, ExperimentApiClient, UUIDGenerator, MouseEvent,
+  DeepsenseNodeParameters
 ) {
   const RUN_STATE_CHECK_INTERVAL = 2000;
 
@@ -149,7 +150,7 @@ function ExperimentController(
     } else {
       Operations.getWithParams(node.operationId).then((operationData) => {
         $scope.$applyAsync(() => {
-          node.setParameters(operationData.parameters);
+          node.setParameters(operationData.parameters, DeepsenseNodeParameters);
         });
       }, (error) => {
         console.error('operation fetch error', error);
@@ -229,6 +230,11 @@ function ExperimentController(
     }, (error) => {
       console.log('experiment abort error', error);
     });
+  });
+
+  $scope.$on('AttributePanel.UNSELECT_NODE', () => {
+    that.unselectNode();
+    $scope.$digest();
   });
 
   $scope.$on('$destroy', () => {

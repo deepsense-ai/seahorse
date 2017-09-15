@@ -6,7 +6,6 @@
 
 describe('graphNode', () => {
   var GraphNode = require('../common-graph-node.js');
-  var ParameterFactory = require('./../common-parameter-factory.js');
 
   var initId = '111-111-111',
       initOperationId = '55-55-55',
@@ -24,7 +23,7 @@ describe('graphNode', () => {
         'y': initY,
         'input': [],
         'output': [],
-        'parameters': ParameterFactory.createParametersList({}, {})
+        'parameters': {}
       },
       serializedData = {
         'id': initId,
@@ -40,6 +39,14 @@ describe('graphNode', () => {
         'parameters': {}
       };
 
+  beforeEach(() => {
+    angular.module('test', ['deepsense.node-parameters']);
+
+    angular.mock.module('test');
+    angular.mock.inject((DeepsenseNodeParameters) => {
+      initData.parameters = DeepsenseNodeParameters.factory.createParametersList({}, {});
+    });
+  });
 
   it('should be defined', () => {
     expect(GraphNode).toBeDefined();

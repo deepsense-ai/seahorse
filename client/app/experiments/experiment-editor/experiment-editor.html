@@ -2,5 +2,7 @@
 <div class="experiment-container animated fadeIn">
   <operation-catalogue catalog-collection="::experiment.getCatalog()"></operation-catalogue>
   <flow-chart-box></flow-chart-box>
-  <operation-attributes-view ng-if="experiment.getSelectedNode()"></operation-attributes-view>
+  <deepsense-operation-attributes
+    node="experiment.getSelectedNode()"
+    ng-if="experiment.getSelectedNode()"></deepsense-operation-attributes>
 </div>

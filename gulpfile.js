@@ -24,7 +24,6 @@ var less = require('gulp-less');
 var minifyCSS = require('gulp-minify-css');
 var jshint = require('gulp-jshint');
 var exit = require('gulp-exit');
-var shell = require('gulp-shell');
 
 require('jshint-stylish');
 
@@ -159,15 +158,8 @@ gulp.task('browserify', function () {
     .pipe(gulp.dest(build.path));
 });
 
-gulp.task('kill-all-node-instances',
-  shell.task(['killall -9 node'], {
-    ignoreErrors: true
-  })
-);
-
 gulp.task('build', function (callback) {
   runSequence(
-    'kill-all-node-instances',
     'clean',
     ['fonts', 'images', 'html', 'less', 'libs:css', 'libs:js', 'jshint', 'browserify'],
     'server',

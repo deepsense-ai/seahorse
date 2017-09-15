@@ -53,14 +53,17 @@
           "./bower_components/highcharts-release/highcharts-more.js",
           "./bower_components/ng-debounce/angular-debounce.js",
           "./node_modules/deepsense-loading-spinner/dist/deepsense-loading-spinner.js",
-          "./node_modules/deepsense-catalogue-panel/dist/catalogue-panel.js"
+          "./node_modules/deepsense-catalogue-panel/dist/catalogue-panel.js",
+          "./node_modules/deepsense-node-parameters/dist/deepsense-node-parameters.js",
+          "./node_modules/deepsense-attributes-panel/dist/deepsense-attributes-panel.js"
         ],
         "css": [
           "./node_modules/bootstrap/dist/css/bootstrap.css",
           "./client/css/*.css",
           "./node_modules/deepsense-loading-spinner/dist/deepsense-loading-spinner.css",
           "./node_modules/deepsense-catalogue-panel/dist/catalogue-panel.css",
-          "./node_modules/deepsense-context-menu/dist/context-menu.css"
+          "./node_modules/deepsense-context-menu/dist/context-menu.css",
+          "./node_modules/deepsense-attributes-panel/dist/deepsense-attributes-panel.css"
         ]
       },
       "prod": {
@@ -78,14 +81,17 @@
           "./bower_components/highcharts-release/highcharts-more.js",
           "./bower_components/ng-debounce/angular-debounce.js",
           "./node_modules/deepsense-loading-spinner/dist/deepsense-loading-spinner.js",
-          "./node_modules/deepsense-catalogue-panel/dist/catalogue-panel.js"
+          "./node_modules/deepsense-catalogue-panel/dist/catalogue-panel.js",
+          "./node_modules/deepsense-node-parameters/dist/deepsense-node-parameters.js",
+          "./node_modules/deepsense-attributes-panel/dist/deepsense-attributes-panel.js"
         ],
         "css": [
           "./node_modules/bootstrap/dist/css/bootstrap.min.css",
           "./client/css/*.css",
           "./node_modules/deepsense-loading-spinner/dist/deepsense-loading-spinner.css",
           "./node_modules/deepsense-catalogue-panel/dist/catalogue-panel.css",
-          "./node_modules/deepsense-context-menu/dist/context-menu.css"
+          "./node_modules/deepsense-context-menu/dist/context-menu.css",
+          "./node_modules/deepsense-attributes-panel/dist/deepsense-attributes-panel.css"
         ]
       }
     },

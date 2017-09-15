@@ -4,7 +4,6 @@
 'use strict';
 
 var Port = require('./common-port.js');
-var ParameterFactory = require('./common-parameter-factory.js');
 
 function GraphNode(options) {
   this.name = options.name;
@@ -113,9 +112,9 @@ GraphNode.prototype.getResult = function getResult(portIndex) {
  *
  * @param {object} parametersSchema
  */
-GraphNode.prototype.setParameters = function setParameters(parametersSchema) {
+GraphNode.prototype.setParameters = function setParameters(parametersSchema, DeepsenseNodeParameters) {
   if (this.parametersValues) {
-    this.parameters = ParameterFactory.createParametersList(this.parametersValues, parametersSchema);
+    this.parameters = DeepsenseNodeParameters.factory.createParametersList(this.parametersValues, parametersSchema);
     this.parametersValues = null;
   }
 };
