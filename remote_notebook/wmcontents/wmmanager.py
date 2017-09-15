@@ -118,7 +118,7 @@ class WMContentsManager(ContentsManager):
         except web.HTTPError:
             raise
         except HTTPError as e:
-            raise web.HTTPError(e.code, e.msg)
+            raise web.HTTPError(e.code, e.reason)
         except Exception as e:
             raise web.HTTPError(500, str(e))
 
@@ -127,7 +127,7 @@ class WMContentsManager(ContentsManager):
         try:
             seahorse_notebook_path = SeahorseNotebookPath.deserialize(path)
         except SeahorseNotebookPath.DeserializationFailed as e:
-            raise web.HTTPError(400, e.message)
+            raise web.HTTPError(400, str(e))
 
         try:
             response = urlopen(self._create_request(self._get_wm_notebook_url(seahorse_notebook_path)))
@@ -144,7 +144,7 @@ class WMContentsManager(ContentsManager):
                     self._create_notebook(seahorse_notebook_path)), NBFORMAT_VERSION)
                 return self._save_notebook(seahorse_notebook_path, content_json, content)
             else:
-                raise web.HTTPError(e.code, e.msg)
+                raise web.HTTPError(e.code, e.reason)
         except Exception as e:
             raise web.HTTPError(500, str(e))
 
@@ -153,7 +153,7 @@ class WMContentsManager(ContentsManager):
         try:
             seahorse_notebook_path = SeahorseNotebookPath.deserialize(path)
         except SeahorseNotebookPath.DeserializationFailed as e:
-            raise web.HTTPError(400, e.message)
+            raise web.HTTPError(400, str(e))
 
         if model['type'] != "notebook":
             model['message'] = "Cannot save object of type: {}".format(model['type'])
