@@ -140,6 +140,6 @@ class ServerCommunication {
   }
 }
 
-exports.inject = function(module) {
+exports.inject = function (module) {
   module.service('ServerCommunication', ServerCommunication);
 };

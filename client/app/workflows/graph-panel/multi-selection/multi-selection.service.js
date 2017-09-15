@@ -1,31 +1,35 @@
 'use strict';
 
-let internal = {};
-internal.selectedNodes = [];
-
+let selectedNodes = [];
 class MultiSelectionService {
+
   /* @ngInject */
   constructor() {}
 
   addNodesToSelection(nodes) {
-    internal.selectedNodes = _.union(internal.selectedNodes, nodes);
+    selectedNodes = _.union(selectedNodes, nodes);
+  }
+
+  isAlreadyAddedToSelection(node) {
+    return this.getSelectedNodes().indexOf(node.id) > -1;
   }
 
   clearSelection() {
-    internal.selectedNodes = [];
+    selectedNodes = [];
   }
 
   removeNodesFromSelection(nodes) {
-    internal.selectedNodes = _.difference(internal.selectedNodes, nodes);
+    selectedNodes = _.difference(selectedNodes, nodes);
   }
 
   setSelectedNodes(nodes) {
-    internal.selectedNodes = nodes;
+    selectedNodes = nodes;
   }
 
   getSelectedNodes() {
-    return internal.selectedNodes;
+    return selectedNodes;
   }
+
 }
 
 exports.inject = function(module) {

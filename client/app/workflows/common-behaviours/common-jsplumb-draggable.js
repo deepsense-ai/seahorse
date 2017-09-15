@@ -1,7 +1,7 @@
 'use strict';
 
 /* @ngInject */
-function DraggableDirective(GraphNode) {
+function DraggableDirective($rootScope, GraphNode) {
   return {
     restrict: 'A',
     link: function(scope, element, attrs) {
@@ -14,7 +14,7 @@ function DraggableDirective(GraphNode) {
         containment: 'parent',
         stop: () => {
           reInitThisNodePosition();
-          scope.$emit(GraphNode.MOVE);
+          $rootScope.$broadcast(GraphNode.MOVE);
         }
       });
 

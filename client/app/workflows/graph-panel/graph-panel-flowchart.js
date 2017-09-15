@@ -39,7 +39,7 @@ function FlowChartBoxController($scope, $element, GraphPanelRendererService) {
 }
 
 /* @ngInject */
-function FlowChartBox(GraphPanelRendererService) {
+function FlowChartBox($rootScope, GraphPanelRendererService) {
   return {
     restrict: 'E',
     controller: FlowChartBoxController,
