@@ -96,10 +96,18 @@ object IndexRangeColumnSelection {
 
   def fromJson(jsValue: JsValue): IndexRangeColumnSelection = {
     val bounds = jsValue.convertTo[List[Int]]
-    if (bounds.isEmpty) IndexRangeColumnSelection(None, None)
-    else if (bounds.size == 1) IndexRangeColumnSelection(Some(bounds.head), Some(bounds.head))
-    else if (bounds.size == 2) IndexRangeColumnSelection(Some(bounds.head), Some(bounds(1)))
-    else throw new IllegalArgumentException(s"Invalid input for IndexRangeColumnSelection: $bounds")
+    if (bounds.isEmpty) {
+      IndexRangeColumnSelection(None, None)
+    }
+    else if (bounds.size == 1) {
+      IndexRangeColumnSelection(Some(bounds.head), Some(bounds.head))
+    }
+    else if (bounds.size == 2) {
+      IndexRangeColumnSelection(Some(bounds.head), Some(bounds(1)))
+    }
+    else {
+      throw new IllegalArgumentException(s"Invalid input for IndexRangeColumnSelection: $bounds")
+    }
   }
 }
 
