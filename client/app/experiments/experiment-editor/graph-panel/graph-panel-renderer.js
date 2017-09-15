@@ -50,7 +50,6 @@ var inputStyle = {
   isTarget: true
 };
 
-
 /* @ngInject */
 function DrawingService($rootScope) {
 
@@ -76,6 +75,11 @@ function DrawingService($rootScope) {
 
   that.renderExperiment = function renderExperiment(experiment) {
     internal.experiment = experiment;
+  };
+
+  that.removeNode = function removeNode(nodeId) {
+    var node = internal.getNodeById(nodeId);
+    jsPlumb.remove(node);
   };
 
   that.renderPorts = function renderPorts() {
@@ -104,7 +108,6 @@ function DrawingService($rootScope) {
           });
       connection.setParameter('edgeId', edge.id);
     }
-
   };
 
   that.addOutputPoint = function addOutputPoint(node, ports) {

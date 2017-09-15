@@ -7,7 +7,7 @@
 'use strict';
 
 /* @ngInject */
-function Droppable($rootScope) {
+function Droppable() {
   return {
     restrict: 'A',
     link: function (scope, element, attrs) {

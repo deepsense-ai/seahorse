@@ -32,6 +32,14 @@ function Experiment() {
     internal.nodes[node.id] = node;
   };
 
+  that.removeNode = function removeNode(nodeId) {
+    if (nodeId in internal.nodes) {
+      delete internal.nodes[nodeId];
+      return true;
+    }
+    return false;
+  };
+
   that.createNode = function createNode(nodeID, operation, paramValues, x, y) {
     let paramSchemas = operation.parameters || {};
     return new GraphNode({
@@ -75,6 +83,7 @@ function Experiment() {
    *
    * @return {boolean}
    */
+
   that.removeEdge = function removeEdge(edgeId) {
     if (edgeId in internal.edges) {
       delete internal.edges[edgeId];

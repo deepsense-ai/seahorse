@@ -114,7 +114,8 @@
           "./node_modules/angular/angular.js",
           "./node_modules/angular-ui-router/release/angular-ui-router.js",
           "./node_modules/angular-bootstrap/dist/ui-bootstrap.js",
-          "./bower_components/jsPlumb/dist/js/dom.jsPlumb-1.7.4.js"
+          "./bower_components/jsPlumb/dist/js/dom.jsPlumb-1.7.4.js",
+          "./bower_components/mousetrap/mousetrap.js"
         ],
         "css": [
           "./node_modules/bootstrap/dist/css/bootstrap.css",
@@ -126,7 +127,8 @@
           "./node_modules/angular/angular.min.js",
           "./node_modules/angular-ui-router/release/angular-ui-router.min.js",
           "./node_modules/angular-bootstrap/dist/ui-bootstrap.min.js",
-          "./bower_components/jsPlumb/dist/js/dom.jsPlumb-1.7.4-min.js"
+          "./bower_components/jsPlumb/dist/js/dom.jsPlumb-1.7.4-min.js",
+          "./bower_components/mousetrap/mousetrap.js.min"
         ],
         "css": [
           "./node_modules/bootstrap/dist/css/bootstrap.min.css",

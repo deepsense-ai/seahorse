@@ -40,9 +40,10 @@ function ExperimentController($scope,$stateParams, $rootScope, Operations, Drawi
   };
 
   that.onRenderFinish = function onRenderFinish() {
-    console.log('Nodes rendering finished');
+    //console.log('Nodes rendering finished');
     DrawingService.renderPorts();
     DrawingService.renderConnections();
+    jsPlumb.repaintEverything();
   };
 
   that.getCatalog = function getCatalog() {
@@ -91,6 +92,14 @@ function ExperimentController($scope,$stateParams, $rootScope, Operations, Drawi
   $rootScope.$on(Edge.CREATE, ()  => that.saveData());
   $rootScope.$on(Edge.REMOVE, ()  => that.saveData());
 
+  $rootScope.$on('Keyboard.KEY_PRESSED', (event,data) => {
+    DrawingService.removeNode(internal.selectedNode.id);
+    console.log(internal.experiment.removeNode(internal.selectedNode.id));
+    $rootScope.$apply();
+    that.onRenderFinish();
+    jsPlumb.repaintEverything();
+  });
+
   $rootScope.$on('FlowChartBox.ELEMENT_DROPPED', function elementDropped(event, args) {
     var operation = that.getOperationById(args.classId);
     var moveX = args.dropEvent.x-args.target[0].getBoundingClientRect().left;
@@ -101,7 +110,8 @@ function ExperimentController($scope,$stateParams, $rootScope, Operations, Drawi
     internal.experiment.addNode(node);
     $rootScope.$apply();
     that.onRenderFinish();
-    that.saveData();
+    jsPlumb.repaintEverything();
+    //that.saveData();
   });
 
   internal.init();

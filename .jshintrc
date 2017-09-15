@@ -11,7 +11,8 @@
   "globals": {
     "angular": true,
     "jsPlumb": true,
-    "console": true
+    "console": true,
+    "Mousetrap": true
   },
   "globalstrict": false,
   "jasmine": true,
