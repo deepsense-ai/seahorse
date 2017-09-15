@@ -21,7 +21,7 @@
       zoom-id="{{::workflow.zoomId}}"></flow-chart-box>
 
     <deepsense-operation-attributes
-      workflow="workflow.WorkflowService.getMainWorkflow().id"
+      workflow="workflow.WorkflowService.getCurrentWorkflow().id"
       node="workflow.getSelectedNode()"
       ng-if="workflow.getSelectedNode()"
       disabled-mode="workflow.isReportMode"

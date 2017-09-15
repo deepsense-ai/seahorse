@@ -19,7 +19,7 @@
       <td ng-repeat="value in row track by $index">
         <span ng-switch="value === null">
           <i ng-switch-when="true" class="null-value">(null)</i>
-          <i ng-switch-default>{{value}}</i>
+          <span ng-switch-default>{{value}}</span>
         </span>
       </td>
     </tr>
