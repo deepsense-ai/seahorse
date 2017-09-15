@@ -33,11 +33,12 @@ To work with the dataset, it has to be loaded into Seahorse. This can be done by
 Let’s place it on the canvas using drag-and-drop from the operations palette.
 To load the data, we need to provide the correct path to the file.
 
-Just click at the Read DataFrame operation on the canvas. Now, in panel on the right you will see its parameters.
-The Read DataFrame needs to have its parameters modified:
+Just click on the Read DataFrame operation on the canvas. Now, in panel on the right click "Select data source".
+Create "External file" data source and fill its "Source" parameter:
 
 **SOURCE**: <a target="_blank" href="https://s3.amazonaws.com/workflowexecutor/examples/data/credit_defaults.csv">https://s3.amazonaws.com/workflowexecutor/examples/data/credit_defaults.csv</a>
 
+Name it, e.g. "Credit card data", click "Ok" and select your newly created data source.
 Having loaded the data, we proceed to its initial exploration.
 To this end, let’s use the [R Notebook](../operations/r_notebook.html) block from Seahorse’s operations palette.
 
@@ -107,7 +108,7 @@ the driver node’s RAM. Here, we only retrieved two columns and there are merel
 we would order the computations to be performed by Spark. Finally, observe that we explicitly called the `table()` function from R’s base package
 via `base::table()`. This is necessary since the R native function is [masked once SparkR is loaded](https://spark.apache.org/docs/1.6.0/sparkr.html#r-function-name-conflicts).
 
-Let’s proceed to the analysis of the confusion matrix. For example, its bottom left entry denotes that in 359 cases the model
+Let’s proceed to the analysis of the confusion matrix. For example, its bottom left entry denotes that in 377 cases the model
 falsely predicted default while in fact there wasn’t one. Based on this matrix we may compute so-called precision and recall statistics.
 Precision is the fraction of correct predictions (true positives) out of all predicted defaults by our model. Recall is defined as
 the fraction of correctly predicted defaults divided by the total number of defaults in data. In our application, precision and recall
