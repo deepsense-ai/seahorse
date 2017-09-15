@@ -83,13 +83,13 @@ object Dependencies {
   )
 
   object Spark {
-    private val sparkComponents = Seq(
+    val components = Seq(
       sparkMLLib,
       sparkSql,
       sparkCore,
       sparkCSV)
-    val provided = sparkComponents.map(_ % Provided)
-    val test = sparkComponents.map(_ % s"$Test,it")
+    val provided = components.map(_ % Provided)
+    val test = components.map(_ % s"$Test,it")
     val onlyInTests = provided ++ test
   }
 
@@ -123,7 +123,7 @@ object Dependencies {
     sparkCSV
   ) ++ Seq(scalatest, mockitoCore, scalacheck, scoverage).map(_ % Test)
 
-  val docgen = Seq()
+  val docgen = Spark.components
 
   val graph = Seq(nscalaTime) ++ Seq(scalatest, mockitoCore).map(_ % Test)
 
