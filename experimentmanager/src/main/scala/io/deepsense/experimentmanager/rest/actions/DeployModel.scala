@@ -13,13 +13,18 @@ import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.{DOperableLoader, Deployable, DeployableLoader}
 import io.deepsense.deploymodelservice.DeployModelJsonProtocol._
 import io.deepsense.deploymodelservice.{CreateResult, Model}
+import io.deepsense.entitystorage.EntityStorageClient
 
 
 class DeployModel {
 
-  def deploy(id: UUID, uc: UserContext, ec: ExecutionContext): Future[CreateResult] = {
+  def deploy(
+      id: UUID,
+      uc: UserContext,
+      ec: ExecutionContext,
+      entityStorageClient: EntityStorageClient): Future[CreateResult] = {
     val retrieved: Deployable = DOperableLoader.load(
-      ec.entityStorageClient)(
+      entityStorageClient)(
         DeployableLoader.loadFromHdfs(ec.hdfsClient))(
         uc.tenantId, id)
     val toService = (model: Model) => {

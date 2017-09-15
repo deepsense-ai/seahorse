@@ -11,6 +11,7 @@ import com.typesafe.config.ConfigFactory
 import org.apache.commons.lang3.StringUtils
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.hdfs.DFSClient
+import spray.http.StatusCodes
 import spray.routing.PathMatchers
 
 import io.deepsense.commons.auth.AuthorizatorProvider
@@ -35,23 +36,27 @@ class ModelsApi @Inject()(
   require(StringUtils.isNotBlank(apiPrefix))
   private val pathPrefixMatcher = PathMatchers.separateOnSlashes(apiPrefix)
 
+  val config = ConfigFactory.load("application.conf")
+  val entityStorageHostname = config.getString("entityStorage.hostname")
+  val entityStoragePort = config.getInt("entityStorage.port")
+  val hdfsHostname = config.getString("hdfs.hostname")
+  val hdfsPort = config.getString("hdfs.port")
+
   val deeplangContext: deeplang.ExecutionContext = {
-    val config = ConfigFactory.load("application.conf")
-    val entityStorageHostname = config.getString("entityStorage.hostname")
-    val entityStoragePort = config.getInt("entityStorage.port")
-    val hdfsHostname = config.getString("hdfs.hostname")
-    val hdfsPort = config.getString("hdfs.port")
     val ctx = new DExecutionContext
     ctx.hdfsClient = new DSHdfsClient(
       new DFSClient(new URI(s"hdfs://$hdfsHostname:$hdfsPort"), new Configuration()))
-    val esFactory = EntityStorageClientFactoryImpl()
-    ctx.entityStorageClient = Try(
-      esFactory.create(
-        "root-actor-system",
-        entityStorageHostname,
-        entityStoragePort,
-        "EntitiesApiActor", 10)).getOrElse(null)
     ctx
+  }
+
+  val esFactory = EntityStorageClientFactoryImpl()
+
+  def entityStorageClient() = {
+    esFactory.create(
+      "root-actor-system",
+      entityStorageHostname,
+      entityStoragePort,
+      "EntitiesApiActor", 10)
   }
 
   override def route = {
@@ -65,9 +70,13 @@ class ModelsApi @Inject()(
                   case Success(uc: UserContext) =>
                     import scala.concurrent.duration._
                     implicit val timeout = 15.seconds
-                    onComplete(deployModel.deploy(id, uc, deeplangContext)) {
-                      case Success(r) => complete(r)
-                      case Failure(e) => failWith(e)
+                    Try(entityStorageClient()) match {
+                      case Failure(exception) => complete(StatusCodes.ServiceUnavailable)
+                      case Success(client) =>
+                        onComplete(deployModel.deploy(id, uc, deeplangContext, client)) {
+                          case Success(r) => complete(r)
+                          case Failure(e) => failWith(e)
+                        }
                     }
                   case Failure(e) => failWith(e)
                 }
