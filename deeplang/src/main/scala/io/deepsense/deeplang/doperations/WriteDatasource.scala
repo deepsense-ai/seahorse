@@ -27,7 +27,7 @@ import io.deepsense.deeplang.documentation.OperationDocumentation
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.WriteDatasource.WriteDatasourceParameters
 import io.deepsense.deeplang.doperations.inout.OutputStorageTypeChoice
-import io.deepsense.deeplang.doperations.readwritedatasource.DatasourceConverters
+import io.deepsense.deeplang.doperations.readwritedatasource.FromDatasourceConverters
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.datasource.DatasourceIdForWriteParam
@@ -90,11 +90,11 @@ class WriteDatasource()
           .setNamesIncluded(googleSheetParams.getIncludeHeader)
           .setShouldConvertToBoolean(googleSheetParams.getConvert01ToBoolean)
       case DatasourceType.HDFS =>
-        DatasourceConverters.OutputFileStorageType.get(datasource.getParams.getHdfsParams)
+        FromDatasourceConverters.OutputFileStorageType.get(datasource.getParams.getHdfsParams)
           .setShouldOverwrite(getShouldOverwrite())
       case DatasourceType.EXTERNALFILE => throw new DeepLangException("Cannot write to external file")
       case DatasourceType.LIBRARYFILE =>
-        DatasourceConverters.OutputFileStorageType.get(datasource.getParams.getLibraryFileParams)
+        FromDatasourceConverters.OutputFileStorageType.get(datasource.getParams.getLibraryFileParams)
           .setShouldOverwrite(getShouldOverwrite())
     }
 

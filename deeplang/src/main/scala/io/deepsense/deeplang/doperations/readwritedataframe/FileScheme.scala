@@ -54,6 +54,8 @@ object FilePath {
     val pathWithoutSchema = fullPath.substring(schema.pathPrefix.length)
     FilePath(schema, pathWithoutSchema)
   }
+
+  def unapply(fullPath: String): Option[(FileScheme, String)] = unapply(FilePath(fullPath))
 }
 
 case class UnknownFileSchemaForPath(path: String) extends DeepLangException({

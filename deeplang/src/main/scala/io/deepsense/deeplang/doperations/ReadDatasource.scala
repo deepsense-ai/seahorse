@@ -27,7 +27,7 @@ import io.deepsense.deeplang.documentation.OperationDocumentation
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.ReadDatasource.ReadDataSourceParameters
 import io.deepsense.deeplang.doperations.inout.InputStorageTypeChoice
-import io.deepsense.deeplang.doperations.readwritedatasource.DatasourceConverters
+import io.deepsense.deeplang.doperations.readwritedatasource.FromDatasourceConverters
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.Param
@@ -92,11 +92,11 @@ class ReadDatasource()
           .setNamesIncluded(googleSheetParams.getIncludeHeader)
           .setShouldConvertToBoolean(googleSheetParams.getConvert01ToBoolean)
       case DatasourceType.HDFS =>
-        DatasourceConverters.InputFileStorageType.get(datasource.getParams.getHdfsParams)
+        FromDatasourceConverters.InputFileStorageType.get(datasource.getParams.getHdfsParams)
       case DatasourceType.EXTERNALFILE =>
-        DatasourceConverters.InputFileStorageType.get(datasource.getParams.getExternalFileParams)
+        FromDatasourceConverters.InputFileStorageType.get(datasource.getParams.getExternalFileParams)
       case DatasourceType.LIBRARYFILE =>
-        DatasourceConverters.InputFileStorageType.get(datasource.getParams.getLibraryFileParams)
+        FromDatasourceConverters.InputFileStorageType.get(datasource.getParams.getLibraryFileParams)
     }
 
     new ReadDataFrame().setStorageType(storageType)
