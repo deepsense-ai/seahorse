@@ -25,10 +25,11 @@ import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.params.ParameterType._
 import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
 import io.deepsense.deeplang.params.exceptions.ParamValueNotProvidedException
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 
 class ParamsSpec extends UnitSpec {
   import ParamsSpec._
-
+  val graphReader = mock[GraphReader]
   "Class with Params" should {
 
     "return array of its params ordered asc by index" in {
@@ -62,14 +63,14 @@ class ParamsSpec extends UnitSpec {
         p.setParamsFromJson(JsObject(
           p.param1.name -> 5.toJson,
           p.param2.name -> 6.toJson
-        ))
+        ), graphReader)
         p.get1 shouldBe 5
         p.get2 shouldBe 6
       }
       "json is null" in {
         val p = WithParams()
         p.set1(4)
-        p.setParamsFromJson(JsNull)
+        p.setParamsFromJson(JsNull, graphReader)
         p.get1 shouldBe 4
       }
       "value of some param is JsNull" in {
@@ -78,7 +79,7 @@ class ParamsSpec extends UnitSpec {
         p.setParamsFromJson(JsObject(
           p.param1.name -> JsNull,
           p.param2.name -> 6.toJson
-        ))
+        ), graphReader)
         p.get1 shouldBe defaultForParam1
         p.get2 shouldBe 6
       }
@@ -87,7 +88,7 @@ class ParamsSpec extends UnitSpec {
         p.set2(17)
         p.setParamsFromJson(JsObject(
           p.param2.name -> JsNull
-        ))
+        ), graphReader)
         p.is2Defined shouldBe false
       }
       "ignoreNulls is set" in {
@@ -96,7 +97,7 @@ class ParamsSpec extends UnitSpec {
         p.setParamsFromJson(JsObject(
           p.param1.name -> JsNull,
           p.param2.name -> 6.toJson
-        ), ignoreNulls = true)
+        ), graphReader, ignoreNulls = true)
         p.get1 shouldBe 4
         p.get2 shouldBe 6
       }
@@ -106,7 +107,7 @@ class ParamsSpec extends UnitSpec {
         val p = WithParams()
         p.setParamsFromJson(JsObject(
           "unknownName" -> 5.toJson,
-          p.param2.name -> 6.toJson))
+          p.param2.name -> 6.toJson), graphReader)
         p.get1 shouldBe defaultForParam1
       }
     }
@@ -246,7 +247,7 @@ object ParamsSpec extends UnitSpec {
     override val parameterType: ParameterType = mock[ParameterType]
 
     override def valueToJson(value: Int): JsValue = value.toJson
-    override def valueFromJson(jsValue: JsValue): Int = jsValue.convertTo[Int]
+    override def valueFromJson(jsValue: JsValue, graphReader: GraphReader): Int = jsValue.convertTo[Int]
 
     override def validate(value: Int): Vector[DeepLangException] = Vector(MockException(name))
 

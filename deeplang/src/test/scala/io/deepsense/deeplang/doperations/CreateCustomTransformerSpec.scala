@@ -16,8 +16,6 @@
 
 package io.deepsense.deeplang.doperations
 
-import org.mockito.Matchers._
-import org.mockito.Mockito._
 import spray.json.JsObject
 
 import io.deepsense.deeplang._
@@ -28,20 +26,27 @@ import io.deepsense.deeplang.params.ParameterType
 import io.deepsense.deeplang.params.custom.{InnerWorkflow, PublicParam}
 import io.deepsense.deeplang.params.selections.{MultipleColumnSelection, NameColumnSelection}
 import io.deepsense.graph.{DeeplangGraph, Edge, Node}
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 
 class CreateCustomTransformerSpec extends UnitSpec {
 
   val node1Id = Node.Id.randomId
   val node2Id = Node.Id.randomId
 
-  "CreateCustomTransformer" should {
-
-    "create CustomTransformer with public params" in {
-      val operation = CreateCustomTransformer()
-      val executionContext = createExecutionContext(createInnerWorkflow(
+  object MockCreateCustomTransformer extends CreateCustomTransformer {
+    def createWithParam: CreateCustomTransformer = {
+      set(innerWorkflow, createInnerWorkflow(
         PublicParam(node1Id, "target type", "public param 1"),
         PublicParam(node2Id, "target type", "public param 2")
       ))
+    }
+  }
+
+  "CreateCustomTransformer" should {
+    "create CustomTransformer with public params" in {
+
+      val operation = MockCreateCustomTransformer.createWithParam
+      val executionContext = mock[ExecutionContext]
 
       val results = operation.executeUntyped(Vector.empty)(executionContext)
       results.length shouldBe 1
@@ -59,7 +64,7 @@ class CreateCustomTransformerSpec extends UnitSpec {
 
     "create CustomTransformer without public params" in {
       val operation = CreateCustomTransformer()
-      val executionContext = createExecutionContext(createInnerWorkflow())
+      val executionContext = mock[ExecutionContext]
 
       val results = operation.executeUntyped(Vector.empty)(executionContext)
       results.size shouldBe 1
@@ -70,11 +75,8 @@ class CreateCustomTransformerSpec extends UnitSpec {
     }
 
     "infer parameters of CustomTransformer from input inner workflow" in {
-      val operation = CreateCustomTransformer()
-      val inferContext = createInferContext(createInnerWorkflow(
-        PublicParam(node1Id, "target type", "public param 1"),
-        PublicParam(node2Id, "target type", "public param 2")
-      ))
+      val operation = MockCreateCustomTransformer.createWithParam
+      val inferContext = mock[InferContext]
 
       val results = operation.inferKnowledgeUntyped(Vector.empty)(inferContext)._1.map(_.single)
       results.length shouldBe 1
@@ -91,27 +93,8 @@ class CreateCustomTransformerSpec extends UnitSpec {
     }
   }
 
-  private def createExecutionContext(innerWorkflow: InnerWorkflow): ExecutionContext = {
-    val innerWorkflowExecutor = mock[InnerWorkflowExecutor]
-    when(innerWorkflowExecutor.parse(any()))
-      .thenReturn(innerWorkflow)
-
-    val executionContext = mock[ExecutionContext]
-    when(executionContext.innerWorkflowExecutor).thenReturn(innerWorkflowExecutor)
-    executionContext
-  }
-
-  private def createInferContext(innerWorkflow: InnerWorkflow): InferContext = {
-    val innerWorkflowExecutor = mock[InnerWorkflowExecutor]
-    when(innerWorkflowExecutor.parse(any()))
-      .thenReturn(innerWorkflow)
-
-    val inferContext = mock[InferContext]
-    when(inferContext.innerWorkflowParser).thenReturn(innerWorkflowExecutor)
-    inferContext
-  }
-
   private def createInnerWorkflow(publicParams: PublicParam*): InnerWorkflow = {
+    val graphReader = mock[GraphReader]
     val sourceNodeId = "2603a7b5-aaa9-40ad-9598-23f234ec5c32"
     val sinkNodeId = "d7798d5e-b1c6-4027-873e-a6d653957418"
 
@@ -123,7 +106,7 @@ class CreateCustomTransformerSpec extends UnitSpec {
         .setTargetType(TargetTypeChoices.StringTargetTypeChoice())
         .setSelectedColumns(MultipleColumnSelection(Vector(NameColumnSelection(Set("column1")))))
         .paramValuesToJson
-      new ConvertType().setParamsFromJson(params)
+      new ConvertType().setParamsFromJson(params, graphReader)
     }
 
     val node2Operation = {
@@ -131,7 +114,7 @@ class CreateCustomTransformerSpec extends UnitSpec {
         .setTargetType(TargetTypeChoices.StringTargetTypeChoice())
         .setSelectedColumns(MultipleColumnSelection(Vector(NameColumnSelection(Set("column1")))))
         .paramValuesToJson
-      new ConvertType().setParamsFromJson(params)
+      new ConvertType().setParamsFromJson(params, graphReader)
     }
 
     val node1 = Node(node1Id, node1Operation)

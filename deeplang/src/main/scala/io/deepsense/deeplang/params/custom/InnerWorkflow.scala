@@ -16,12 +16,14 @@
 
 package io.deepsense.deeplang.params.custom
 
+import java.util.UUID
+
 import spray.json.JsObject
 
 import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.doperations.custom.{Sink, Source}
 import io.deepsense.graph.DeeplangGraph.DeeplangNode
-import io.deepsense.graph.{Node, DeeplangGraph}
+import io.deepsense.graph.{DeeplangGraph, Node}
 
 case class InnerWorkflow(
    graph: DeeplangGraph,
@@ -37,7 +39,8 @@ case class InnerWorkflow(
   private def findNodeOfType(operationId: DOperation.Id): Option[DeeplangNode] = {
     graph.nodes.find(_.value.id == operationId)
   }
-
+  def getDatasourcesIds: Set[UUID] =
+    graph.getDatasourcesIds
 }
 
 object InnerWorkflow {

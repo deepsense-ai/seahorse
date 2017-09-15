@@ -21,6 +21,7 @@ import spray.json._
 
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.params.validators.{ComplexArrayValidator, Validator}
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 
 case class MultipleNumericParam(
     override val name: String,
@@ -30,7 +31,7 @@ case class MultipleNumericParam(
 
   override val parameterType = ParameterType.MultipleNumeric
 
-  def valueToJson(value: Array[Double]): JsValue = {
+  override def valueToJson(value: Array[Double]): JsValue = {
     JsObject(
       "values" -> JsArray(
         JsObject(
@@ -43,7 +44,7 @@ case class MultipleNumericParam(
     )
   }
 
-  override def valueFromJson(jsValue: JsValue): Array[Double] = jsValue match {
+  override def valueFromJson(jsValue: JsValue, graphReader: GraphReader): Array[Double] = jsValue match {
     case JsObject(map) =>
       map("values")
         .asInstanceOf[JsArray].elements(0)

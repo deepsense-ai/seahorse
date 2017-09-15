@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2017, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,14 @@
 
 package io.deepsense.models.json.workflow
 
-import spray.json._
+import spray.json.{JsValue, JsonFormat}
 
 import io.deepsense.graph.DeeplangGraph
-import io.deepsense.models.json.graph.GraphJsonProtocol.{GraphReader, GraphWriter}
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphWriter
 
-trait GraphJsonProtocol {
-
-  protected def graphReader: GraphReader
-
+trait WriteGraphJsonProtocol {
   implicit def graphFormat: JsonFormat[DeeplangGraph] = new JsonFormat[DeeplangGraph] {
-    override def read(json: JsValue): DeeplangGraph = json.convertTo[DeeplangGraph](graphReader)
+    override def read(json: JsValue): DeeplangGraph = ???
     override def write(obj: DeeplangGraph): JsValue = obj.toJson(GraphWriter)
   }
 }

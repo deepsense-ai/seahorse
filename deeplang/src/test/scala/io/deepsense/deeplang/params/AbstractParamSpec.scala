@@ -20,6 +20,8 @@ import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
 import spray.json.{JsObject, JsValue}
 
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
+
 abstract class AbstractParamSpec[T, U <: Param[T]]
   extends WordSpec
   with Matchers
@@ -32,6 +34,8 @@ abstract class AbstractParamSpec[T, U <: Param[T]]
   def valueFixture: (T, JsValue)  // value + its json description
 
   val defaultValue: T = valueFixture._1
+
+  def graphReader: GraphReader = mock[GraphReader]
 
   def serializeDefaultValue(default: T): JsValue = paramFixture._1.valueToJson(default)
 
@@ -63,7 +67,7 @@ abstract class AbstractParamSpec[T, U <: Param[T]]
     "deserialize value from JSON" in {
       val param = paramFixture._1
       val (expectedValue, valueJson) = valueFixture
-      val extractedValue = param.valueFromJson(valueJson)
+      val extractedValue = param.valueFromJson(valueJson, graphReader)
       extractedValue shouldBe expectedValue
     }
   }

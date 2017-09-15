@@ -34,11 +34,11 @@ object GraphJsonProtocol {
   val Edges = "connections"
   val NodeId = "id"
 
-  class GraphReader(catalog: DOperationsCatalog)
+  class GraphReader(val catalog: DOperationsCatalog)
     extends JsonReader[DeeplangGraph]
     with DefaultJsonProtocol {
 
-    private val dOperationReader = new DOperationReader(catalog)
+    private val dOperationReader = new DOperationReader(this)
 
     override def read(json: JsValue): DeeplangGraph = json match {
       case JsObject(fields) => read(fields)
@@ -54,15 +54,7 @@ object GraphJsonProtocol {
           throw new DeserializationException(s"Node is missing a string field '$NodeId'", e)
         }
         val operation = try {
-          val operation = nodeJs.convertTo[DOperation](dOperationReader)
-          operation match {
-            case customTransformer: CreateCustomTransformer =>
-              // convert workflow JSON to graph and then back to JSON to handle unknown operations
-              val JsObject(fields) = customTransformer.getInnerWorkflow
-              val reparsedGraph = read(fields(Workflow)).toJson(GraphWriter)
-              customTransformer.setInnerWorkflow(JsObject(fields.updated(Workflow, reparsedGraph)))
-            case _ => operation
-          }
+          nodeJs.convertTo[DOperation](dOperationReader)
         } catch {
           case e: DeserializationException =>
             new UnknownOperation

@@ -18,8 +18,10 @@ package io.deepsense.deeplang.inference
 
 import io.deepsense.commons.rest.client.datasources.DatasourceClient
 import io.deepsense.deeplang.InnerWorkflowParser
+import io.deepsense.deeplang.catalogs.CatalogPair
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 
 /**
  * Holds information needed by DOperations and DMethods during knowledge inference.
@@ -27,6 +29,10 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
  */
 case class InferContext(
     dataFrameBuilder: DataFrameBuilder,
-    dOperableCatalog: DOperableCatalog,
-    innerWorkflowParser: InnerWorkflowParser,
-    datasourceClient: DatasourceClient)
+    catalogPair: CatalogPair,
+    datasourceClient: DatasourceClient) {
+  def dOperableCatalog = catalogPair.dOperableCatalog
+  def dOperationCatalog = catalogPair.dOperationsCatalog
+
+  def graphReader = new GraphReader(dOperationCatalog)
+}

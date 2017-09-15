@@ -18,15 +18,14 @@ package io.deepsense.workflowexecutor
 
 import io.deepsense.deeplang.catalogs.CatalogPair
 import io.deepsense.deeplang.doperations.custom.{Sink, Source}
-import io.deepsense.deeplang.doperations.{CreateCustomTransformer, DefaultCustomTransformerWorkflow}
+import io.deepsense.deeplang.doperations.CreateCustomTransformer
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.deeplang.inference.exceptions.NoInputEdgesException
 import io.deepsense.deeplang.params.custom.InnerWorkflow
-import io.deepsense.deeplang.{CatalogRecorder, DOperation, InnerWorkflowExecutor, MockedInferContext}
+import io.deepsense.deeplang.{CatalogRecorder, DOperation, MockedInferContext}
 import io.deepsense.graph.{AbstractInferenceSpec, DeeplangGraph, GraphKnowledge, Node}
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.InnerWorkflowJsonProtocol
-import io.deepsense.workflowexecutor.executor.InnerWorkflowExecutorImpl
 
 class KnowledgeInferenceSpec
   extends AbstractInferenceSpec
@@ -40,7 +39,8 @@ class KnowledgeInferenceSpec
         val createCustomTransformer = operationCatalog.createDOperation(
           CreateCustomTransformer.id
         ).asInstanceOf[CreateCustomTransformer]
-        createCustomTransformer.setInnerWorkflow(DefaultCustomTransformerWorkflow.defaultWorkflow)
+
+        createCustomTransformer.setInnerWorkflow(CreateCustomTransformer.default)
         DeeplangGraph(Set(createCustomTransformer.toNode()))
       }
 
@@ -67,7 +67,7 @@ class KnowledgeInferenceSpec
             val graph = DeeplangGraph(Set(source, sinkExpectedToHaveErrors), Set.empty)
             InnerWorkflow(graph, JsObject(), List.empty)
           }
-          createCustomTransformer.setInnerWorkflow(innerWorkflow.toJson.asJsObject)
+          createCustomTransformer.setInnerWorkflow(innerWorkflow)
           DeeplangGraph(Set(createCustomTransformer.toNode()), Set.empty)
         }
 
@@ -87,8 +87,7 @@ class KnowledgeInferenceSpec
   }
 
   private lazy val inferContext: InferContext = {
-    val executor = new InnerWorkflowExecutorImpl(graphReader)
-    MockedInferContext(dOperableCatalog = dOperableCatalog, innerWorkflowParser = executor)
+    MockedInferContext(dOperableCatalog = dOperableCatalog)
   }
   override protected lazy val graphReader = new GraphReader(operationCatalog)
   private lazy val CatalogPair(dOperableCatalog, operationCatalog) =

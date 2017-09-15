@@ -27,8 +27,9 @@ import io.deepsense.deeplang.exceptions.{DeepLangException, DeepLangMultiExcepti
 import io.deepsense.deeplang.params.exceptions.ParamValueNotProvidedException
 import io.deepsense.deeplang.params.multivalue.MultipleValuesParam
 import io.deepsense.deeplang.params.wrappers.spark._
+import scala.reflect.runtime.{universe => ru}
 
-import scala.reflect.runtime.{ universe => ru }
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 
 /**
  * Everything that inherits this trait declares that it contains parameters.
@@ -61,7 +62,7 @@ trait Params extends Serializable with HasInferenceResult with DefaultJsonProtoc
    * JsNull is treated as empty object.
    * JsNull as value of parameter is ignored.
    */
-  def paramPairsFromJson(jsValue: JsValue): Seq[ParamPair[_]] = jsValue match {
+  def paramPairsFromJson(jsValue: JsValue, graphReader: GraphReader): Seq[ParamPair[_]] = jsValue match {
     case JsObject(map) =>
       val pairs = for ((label, value) <- map) yield {
         (paramsByName.get(label), value) match {
@@ -72,7 +73,7 @@ trait Params extends Serializable with HasInferenceResult with DefaultJsonProtoc
             } else {
               Some(ParamPair(
                 parameter.asInstanceOf[Param[Any]],
-                parameter.valueFromJson(value)))
+                parameter.valueFromJson(value, graphReader)))
             }
           case (None, _) => {
             // Currently frontend might occasionally send invalid params
@@ -145,8 +146,8 @@ trait Params extends Serializable with HasInferenceResult with DefaultJsonProtoc
    * When ignoreNulls = false, JsNull as a value of a parameter unsets param's value.
    * When ignoreNulls = true, parameters with JsNull values are ignored.
    */
-  def setParamsFromJson(jsValue: JsValue, ignoreNulls: Boolean = false): this.type = {
-    set(paramPairsFromJson(jsValue): _*)
+  def setParamsFromJson(jsValue: JsValue, graphReader: GraphReader, ignoreNulls: Boolean = false): this.type = {
+    set(paramPairsFromJson(jsValue, graphReader): _*)
     if (!ignoreNulls) {
       noValueParamsFromJson(jsValue).foreach(clear)
     }

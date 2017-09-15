@@ -20,7 +20,8 @@ import spray.json.{DefaultJsonProtocol, JsObject, JsString, JsValue}
 
 import io.deepsense.deeplang.catalogs.doperable.exceptions.NoParameterlessConstructorInClassException
 import io.deepsense.deeplang.params.Params
-import io.deepsense.deeplang.{ExecutionContext, TypeUtils}
+import io.deepsense.deeplang.{CatalogRecorder, ExecutionContext, TypeUtils}
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 
 trait ParamsSerialization {
 
@@ -32,7 +33,7 @@ trait ParamsSerialization {
   }
 
   def loadAndSetParams(ctx: ExecutionContext, path: String): this.type = {
-    setParams(loadParams(ctx, path))
+    setParams(loadParams(ctx, path), ctx.inferContext.graphReader)
   }
 
   protected def saveMetadata(ctx: ExecutionContext, path: String) = {
@@ -52,8 +53,8 @@ trait ParamsSerialization {
     JsonObjectPersistence.loadJsonFromFile(ctx, ParamsSerialization.paramsFilePath(path))
   }
 
-  private def setParams(paramsJson: JsValue): this.type = {
-    this.set(paramPairsFromJson(paramsJson): _*)
+  private def setParams(paramsJson: JsValue, graphReader: GraphReader): this.type = {
+    this.set(paramPairsFromJson(paramsJson, graphReader): _*)
   }
 }
 

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package io.deepsense.models.json.workflow
 
 import scala.util.{Failure, Success, Try}
@@ -22,9 +21,8 @@ import scala.util.{Failure, Success, Try}
 import spray.json._
 
 import io.deepsense.commons.utils.{Logging, Version}
-import io.deepsense.models.json.workflow.exceptions._
-import io.deepsense.models.workflows._
-
+import io.deepsense.models.json.workflow.exceptions.{WorkflowVersionException, WorkflowVersionFormatException, WorkflowVersionNotFoundException, WorkflowVersionNotSupportedException}
+import io.deepsense.models.workflows.{Workflow, WorkflowWithResults, WorkflowWithVariables}
 
 trait WorkflowVersionUtil
   extends WorkflowWithResultsJsonProtocol

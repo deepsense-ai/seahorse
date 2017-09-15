@@ -34,7 +34,7 @@ class TransformSpec extends UnitSpec with DeeplangTestSupport {
       val transformer = new MockTransformer
 
       def testTransform(op: Transform, expectedDataFrame: DataFrame): Unit = {
-        val Vector(outputDataFrame) = op.executeUntyped(Vector(transformer, createDataFrame()))(mock[ExecutionContext])
+        val Vector(outputDataFrame) = op.executeUntyped(Vector(transformer, createDataFrame()))(createExecutionContext)
         outputDataFrame shouldBe expectedDataFrame
       }
 
@@ -52,7 +52,7 @@ class TransformSpec extends UnitSpec with DeeplangTestSupport {
 
       val paramsForTransformer = JsObject(transformer.paramA.name -> JsNumber(2))
       val op = Transform().setTransformerParams(paramsForTransformer)
-      op.executeUntyped(Vector(transformer, mock[DataFrame]))(mock[ExecutionContext])
+      op.executeUntyped(Vector(transformer, mock[DataFrame]))(createExecutionContext)
 
       transformer should have (theSameParamsAs (originalTransformer))
     }

@@ -27,13 +27,13 @@ class WriteDatasourceSpec extends UnitSpec {
       "datasource param is defined" in {
         val someDatasourceId = UUID.randomUUID()
         val wds = WriteDatasource().setDatasourceId(someDatasourceId)
-        wds.getDatasourcesId shouldBe Set(someDatasourceId)
+        wds.getDatasourcesIds shouldBe Set(someDatasourceId)
       }
     }
     "return empty set" when {
       "datasource param is not defined" in {
         val wds = ReadDatasource()
-        wds.getDatasourcesId shouldBe empty
+        wds.getDatasourcesIds shouldBe empty
       }
     }
   }

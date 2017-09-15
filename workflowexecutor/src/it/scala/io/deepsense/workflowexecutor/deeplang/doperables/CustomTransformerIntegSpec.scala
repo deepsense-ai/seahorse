@@ -26,6 +26,7 @@ import io.deepsense.deeplang.doperables.spark.wrappers.transformers.TransformerS
 import io.deepsense.deeplang.doperables.spark.wrappers.transformers.TransformerSerialization._
 import io.deepsense.deeplang.utils.CustomTransformerFactory
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
+import io.deepsense.models.json.workflow.InnerWorkflowJsonReader
 import io.deepsense.workflowexecutor.executor.InnerWorkflowExecutorImpl
 
 class CustomTransformerIntegSpec
@@ -61,9 +62,8 @@ class CustomTransformerIntegSpec
       val innerWorkflowExecutor = new InnerWorkflowExecutorImpl(graphReader)
       val context = executionContext.copy(innerWorkflowExecutor = innerWorkflowExecutor)
 
-      val customTransformer = CustomTransformerFactory.createCustomTransformer(
-        innerWorkflowExecutor,
-        innerWorkflowJson)
+      val innerWorkflow = InnerWorkflowJsonReader.toInner(innerWorkflowJson, graphReader)
+      val customTransformer = CustomTransformerFactory.createCustomTransformer(innerWorkflow)
       val dataFrame = createDataFrame(data.map(Row.fromSeq), schema)
 
       customTransformer.applyTransformationAndSerialization(tempDir, dataFrame)(context)

@@ -22,9 +22,9 @@ import spray.httpx.SprayJsonSupport
 import spray.json._
 
 import io.deepsense.commons.json.{EnumerationSerializer, IdJsonProtocol}
-import io.deepsense.deeplang.{DPortPosition, TypeUtils}
 import io.deepsense.deeplang.DPortPosition._
 import io.deepsense.deeplang.catalogs.doperations.DOperationDescriptor
+import io.deepsense.deeplang.{DPortPosition, TypeUtils}
 
 /**
  * Exposes various json formats of DOperationDescription.

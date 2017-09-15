@@ -49,7 +49,7 @@ class InnerWorkflowExecutorSpec
   val sourceNode = Node(sourceNodeId, Source())
   val sinkNode = Node(sinkNodeId, Sink())
 
-  val innerNodeOperation = {
+  def innerNodeOperation = {
     val inPlace = NoInPlaceChoice()
       .setOutputColumn("output")
     val single = SingleColumnChoice()
@@ -59,10 +59,10 @@ class InnerWorkflowExecutorSpec
       .setFormula("2*x")
       .setSingleOrMultiChoice(single)
       .paramValuesToJson
-    new SqlColumnTransformation().setParamsFromJson(params)
+    new SqlColumnTransformation().setParamsFromJson(params, graphReader)
   }
 
-  val failingOperation = {
+  def failingOperation = {
     val inPlace = NoInPlaceChoice()
       .setOutputColumn("output")
     val single = SingleColumnChoice()
@@ -72,7 +72,7 @@ class InnerWorkflowExecutorSpec
       .setFormula("2*x")
       .setSingleOrMultiChoice(single)
       .paramValuesToJson
-    SqlColumnTransformation().setParamsFromJson(params)
+    SqlColumnTransformation().setParamsFromJson(params, graphReader)
   }
 
   val innerNode = Node(innerNodeId, innerNodeOperation)

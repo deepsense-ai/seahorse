@@ -16,6 +16,8 @@
 
 package io.deepsense.graph
 
+import java.util.UUID
+
 import io.deepsense.deeplang.DOperation
 import io.deepsense.graph.DeeplangGraph.DeeplangNode
 
@@ -28,6 +30,9 @@ case class DeeplangGraph(
 
   override def subgraph(nodes: Set[DeeplangNode], edges: Set[Edge]): DeeplangGraph =
     DeeplangGraph(nodes, edges)
+
+  def getDatasourcesIds: Set[UUID] =
+    nodes.foldLeft(Set.empty[UUID])((acc, el) => acc ++ el.value.getDatasourcesIds)
 }
 
 object DeeplangGraph {

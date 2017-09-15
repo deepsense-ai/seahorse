@@ -30,6 +30,7 @@ import io.deepsense.deeplang.doperations.layout.SmallBlockLayout2To2
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.{DynamicParam, Param}
 import io.deepsense.deeplang.{DKnowledge, DOperation2To2, ExecutionContext}
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 
 class FitPlusTransform
   extends DOperation2To2[Estimator[Transformer], DataFrame, DataFrame, Transformer]
@@ -60,7 +61,7 @@ class FitPlusTransform
       estimator: Estimator[Transformer],
       dataFrame: DataFrame)(
       context: ExecutionContext): (DataFrame, Transformer) = {
-    val estimatorToRun = estimatorWithParams(estimator)
+    val estimatorToRun = estimatorWithParams(estimator, context.inferContext.graphReader)
     val transformer: Transformer = estimatorToRun.fit(context)(())(dataFrame)
     val transformed: DataFrame = transformer.transform(context)(())(dataFrame)
     (transformed, transformer)
@@ -82,9 +83,11 @@ class FitPlusTransform
     ((transformedDataFrameKnowledge, transformerKnowledge), warningsSum)
   }
 
-  private def estimatorWithParams(estimator: Estimator[Transformer]): Estimator[Transformer] = {
+  private def estimatorWithParams(
+      estimator: Estimator[Transformer],
+      graphReader: GraphReader): Estimator[Transformer] = {
     val estimatorWithParams = estimator.replicate()
-      .setParamsFromJson($(estimatorParams), ignoreNulls = true)
+        .setParamsFromJson($(estimatorParams), graphReader, ignoreNulls = true)
     validateDynamicParams(estimatorWithParams)
     estimatorWithParams
   }
@@ -105,7 +108,7 @@ class FitPlusTransform
       inputDataFrameKnowledge: DKnowledge[DataFrame])
       : (DKnowledge[Transformer], InferenceWarnings) = {
     throwIfToManyTypes(estimatorKnowledge)
-    val estimator = estimatorWithParams(estimatorKnowledge.single)
+    val estimator = estimatorWithParams(estimatorKnowledge.single, context.graphReader)
     val (transformerKnowledge, transformerWarnings) =
       estimator.fit.infer(context)(())(inputDataFrameKnowledge)
     (transformerKnowledge, transformerWarnings)

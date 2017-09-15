@@ -17,12 +17,12 @@
 package io.deepsense.models.json.workflow
 
 import spray.httpx.SprayJsonSupport
-import spray.json._
+import spray.json.DefaultJsonProtocol
 
 import io.deepsense.commons.exception.json.FailureDescriptionJsonProtocol
 import io.deepsense.commons.json.{DateTimeJsonProtocol, EnumerationSerializer, IdJsonProtocol}
 import io.deepsense.models.json.graph.{DKnowledgeJsonProtocol, NodeJsonProtocol, NodeStatusJsonProtocol}
-import io.deepsense.models.workflows._
+import io.deepsense.models.workflows.{Workflow, WorkflowMetadata, WorkflowType}
 
 trait WorkflowJsonProtocol
   extends DefaultJsonProtocol

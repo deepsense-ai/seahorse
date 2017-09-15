@@ -52,7 +52,7 @@ class ReadDatasource()
 
   override def params: Array[Param[_]] = Array(datasourceId)
 
-  override def getDatasourcesId: Set[UUID] = get(datasourceId).toSet
+  override def getDatasourcesIds: Set[UUID] = get(datasourceId).toSet
 
   def setDatasourceId(value: UUID): this.type = set(datasourceId, value)
   def setDatasourceId(value: String): this.type = setDatasourceId(UUID.fromString(value))

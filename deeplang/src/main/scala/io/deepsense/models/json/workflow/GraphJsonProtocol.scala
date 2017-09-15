@@ -16,15 +16,17 @@
 
 package io.deepsense.models.json.workflow
 
-import io.deepsense.models.json.graph.NodeStatusJsonProtocol
-import io.deepsense.models.workflows._
+import spray.json.{JsValue, JsonFormat}
 
-trait WorkflowWithResultsJsonProtocol
-  extends WorkflowJsonProtocol
-  with NodeStatusJsonProtocol
-  with ExecutionReportJsonProtocol {
+import io.deepsense.graph.DeeplangGraph
+import io.deepsense.models.json.graph.GraphJsonProtocol.{GraphReader, GraphWriter}
 
-  implicit val workflowWithResultsFormat =
-    jsonFormat(WorkflowWithResults,
-      "id", "metadata", "workflow", "thirdPartyData", "executionReport", "workflowInfo")
+trait GraphJsonProtocol {
+
+  protected def graphReader: GraphReader
+
+  implicit def graphFormat: JsonFormat[DeeplangGraph] = new JsonFormat[DeeplangGraph] {
+    override def read(json: JsValue): DeeplangGraph = json.convertTo[DeeplangGraph](graphReader)
+    override def write(obj: DeeplangGraph): JsValue = obj.toJson(GraphWriter)
+  }
 }

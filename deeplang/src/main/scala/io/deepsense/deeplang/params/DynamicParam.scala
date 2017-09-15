@@ -20,6 +20,7 @@ import spray.json.DefaultJsonProtocol._
 import spray.json._
 
 import io.deepsense.deeplang.params.ParameterType.ParameterType
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 
 /**
  * This parameter type is used to forward parameters from the DOperation to its input DOperables.
@@ -40,7 +41,7 @@ class DynamicParam(
 
   override def valueToJson(value: JsValue): JsValue = value
 
-  override def valueFromJson(jsValue: JsValue): JsValue = {
+  override def valueFromJson(jsValue: JsValue, graphReader: GraphReader): JsValue = {
     // It makes no sense to store JsNull values in DynamicParameter's value.
     // No value has the same meaning as a JsNull.
     // Storing JsNulls makes comparing DynamicParameters' values hard.

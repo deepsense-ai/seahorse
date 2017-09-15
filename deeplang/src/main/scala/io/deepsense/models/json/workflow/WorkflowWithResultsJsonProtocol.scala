@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.params
+package io.deepsense.models.json.workflow
 
-import spray.json._
+import io.deepsense.models.json.graph.NodeStatusJsonProtocol
+import io.deepsense.models.workflows.WorkflowWithResults
 
-import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
+trait WorkflowWithResultsJsonProtocol
+  extends WorkflowJsonProtocol
+  with NodeStatusJsonProtocol
+  with ExecutionReportJsonProtocol {
 
-abstract class ParamWithJsFormat[T: JsonFormat] extends Param[T] {
-  override def valueToJson(value: T): JsValue = value.toJson
-  override def valueFromJson(jsValue: JsValue, graphReader: GraphReader): T = jsValue.convertTo[T]
+  implicit val workflowWithResultsFormat =
+    jsonFormat(WorkflowWithResults,
+      "id", "metadata", "workflow", "thirdPartyData", "executionReport", "workflowInfo")
 }

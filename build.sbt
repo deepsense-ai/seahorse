@@ -32,7 +32,7 @@ lazy val sparkUtils = project in file (sparkUtilsModuleDirectory) settings setti
 lazy val rootProject = project.in(file("."))
   .settings(name := "seahorse")
   .settings(PublishSettings.disablePublishing)
-  .aggregate(api, sparkUtils, commons, deeplang, docgen, graph, workflowjson, models,reportlib, workflowexecutormqprotocol,
+  .aggregate(api, sparkUtils, commons, deeplang, docgen, graph, workflowjson, reportlib, workflowexecutormqprotocol,
     workflowexecutor)
 
 lazy val api                    = project settings settingsForPublished
@@ -51,13 +51,12 @@ lazy val docgen                 = project dependsOn (
 lazy val graph                  = project dependsOn (
   commons,
   commons % "test->test") settings settingsForPublished
-lazy val workflowjson           = project dependsOn (commons, deeplang, graph, models) settings settingsForNotPublished
-lazy val models                 = project dependsOn (commons, deeplang, graph) settings settingsForNotPublished
+lazy val workflowjson           = project dependsOn (commons, deeplang, graph) settings settingsForNotPublished
 lazy val reportlib              = project dependsOn commons settings settingsForPublished
 lazy val workflowexecutormqprotocol = project dependsOn (
   commons,
   commons % "test->test",
-  models,
+  deeplang,
   reportlib % "test->test",
   workflowjson) settings settingsForNotPublished
 
@@ -70,7 +69,6 @@ lazy val workflowexecutor       = project dependsOn (
   deeplang,
   deeplang % "test->test",
   deeplang % "test->it",
-  models,
   workflowjson,
   workflowjson % "test -> test",
   sdk,
@@ -83,7 +81,6 @@ addCommandAlias("ds-it",
     ";deeplang/it:test " +
     ";graph/it:test " +
     ";workflowjson/it:test " +
-    ";models/it:test " +
     ";reportlib/it:test " +
     ";workflowexecutor/it:test" +
     ";workflowexecutormqprotocol/it:test")

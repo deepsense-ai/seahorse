@@ -29,6 +29,7 @@ import io.deepsense.deeplang.doperations.layout.SmallBlockLayout2To1
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.DynamicParam
 import io.deepsense.deeplang.{DKnowledge, DOperation2To1, ExecutionContext}
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 
 case class Transform()
   extends DOperation2To1[Transformer, DataFrame, DataFrame]
@@ -61,7 +62,7 @@ case class Transform()
       transformer: Transformer,
       dataFrame: DataFrame)(
       context: ExecutionContext): DataFrame = {
-    transformerWithParams(transformer).transform(context)(())(dataFrame)
+    transformerWithParams(transformer, context.inferContext.graphReader).transform(context)(())(dataFrame)
   }
 
   override protected def inferKnowledge(
@@ -73,13 +74,13 @@ case class Transform()
       (DKnowledge(DataFrame.forInference()), InferenceWarnings.empty)
     } else {
       val transformer = transformerKnowledge.single
-      transformerWithParams(transformer).transform.infer(context)(())(dataFrameKnowledge)
+      transformerWithParams(transformer, context.graphReader).transform.infer(context)(())(dataFrameKnowledge)
     }
   }
 
-  private def transformerWithParams(transformer: Transformer): Transformer = {
+  private def transformerWithParams(transformer: Transformer, graphReader: GraphReader): Transformer = {
     val transformerWithParams = transformer.replicate()
-      .setParamsFromJson(getTransformerParams, ignoreNulls = true)
+      .setParamsFromJson(getTransformerParams, graphReader, ignoreNulls = true)
     validateDynamicParams(transformerWithParams)
     transformerWithParams
   }

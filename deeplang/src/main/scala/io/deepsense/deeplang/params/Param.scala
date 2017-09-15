@@ -23,6 +23,7 @@ import spray.json._
 
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.params.ParameterType._
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 
 abstract class Param[T] {
 
@@ -68,7 +69,8 @@ abstract class Param[T] {
     * Describes default serialization of default values.
     * @param default Default value of parameter
     */
-  protected def serializeDefault(default: T): JsValue = valueToJson(default)
+  protected def serializeDefault(default: T): JsValue =
+    valueToJson(default)
 
   /**
    * Subclasses should overwrite this method if they want to
@@ -83,14 +85,13 @@ abstract class Param[T] {
   override def toString: String = s"Param($parameterType, $name)"
 
   def valueToJson(value: T): JsValue
-
   /**
    * Helper method for Params, which don't know T.
    */
-  private[params] def anyValueToJson(value: Any): JsValue = valueToJson(value.asInstanceOf[T])
+  private[params] def anyValueToJson(value: Any): JsValue =
+    valueToJson(value.asInstanceOf[T])
 
-  def valueFromJson(jsValue: JsValue): T
-
+  def valueFromJson(jsValue: JsValue, graphReader: GraphReader): T
 
   def canEqual(other: Any): Boolean = other.isInstanceOf[Param[T]]
 

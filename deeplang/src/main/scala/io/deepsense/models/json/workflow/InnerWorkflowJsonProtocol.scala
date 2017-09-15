@@ -17,10 +17,11 @@
 package io.deepsense.models.json.workflow
 
 import spray.httpx.SprayJsonSupport
-import spray.json._
+import spray.json.{DefaultJsonProtocol, JsValue}
 
 import io.deepsense.commons.json.{DateTimeJsonProtocol, IdJsonProtocol}
-import io.deepsense.deeplang.params.custom.{PublicParam, InnerWorkflow}
+import io.deepsense.deeplang.params.custom.{InnerWorkflow, PublicParam}
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.graph.{DKnowledgeJsonProtocol, NodeJsonProtocol, NodeStatusJsonProtocol}
 
 trait InnerWorkflowJsonProtocol
@@ -39,4 +40,36 @@ trait InnerWorkflowJsonProtocol
   implicit val innerWorkflowFormat = jsonFormat(
     InnerWorkflow.apply, "workflow", "thirdPartyData", "publicParams")
 
+}
+
+
+trait WriteInnerWorkflowJsonProtocol
+    extends DefaultJsonProtocol
+    with SprayJsonSupport
+    with NodeJsonProtocol
+    with NodeStatusJsonProtocol
+    with DKnowledgeJsonProtocol
+    with IdJsonProtocol
+    with DateTimeJsonProtocol
+    with WriteGraphJsonProtocol {
+
+  implicit val publicParamFormat = jsonFormat(
+    PublicParam.apply, "nodeId", "paramName", "publicName")
+
+  implicit val innerWorkflowFormat = jsonFormat(
+    InnerWorkflow.apply, "workflow", "thirdPartyData", "publicParams")
+
+}
+
+class InnerWorkflowJsonReader(override val graphReader: GraphReader) extends InnerWorkflowJsonProtocol {
+  def toInner(jsValue: JsValue) = {
+    jsValue.convertTo[InnerWorkflow]
+  }
+}
+
+object InnerWorkflowJsonReader {
+  def toInner(jsValue: JsValue, graphReader: GraphReader) = {
+    val innerWorkflowJsonReader = new InnerWorkflowJsonReader(graphReader)
+    innerWorkflowJsonReader.toInner(jsValue)
+  }
 }

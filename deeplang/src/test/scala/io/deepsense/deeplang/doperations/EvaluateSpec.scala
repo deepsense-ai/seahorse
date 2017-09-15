@@ -35,7 +35,7 @@ class EvaluateSpec extends UnitSpec with DeeplangTestSupport {
       val evaluator = new MockEvaluator
 
       def testEvaluate(op: Evaluate, expected: MetricValue): Unit = {
-        val Vector(outputDataFrame) = op.executeUntyped(Vector(evaluator, mock[DataFrame]))(mock[ExecutionContext])
+        val Vector(outputDataFrame) = op.executeUntyped(Vector(evaluator, mock[DataFrame]))(createExecutionContext)
         outputDataFrame shouldBe expected
       }
 
@@ -53,7 +53,7 @@ class EvaluateSpec extends UnitSpec with DeeplangTestSupport {
 
       val paramsForEvaluator = JsObject(evaluator.paramA.name -> JsNumber(2))
       val op = Evaluate().setEvaluatorParams(paramsForEvaluator)
-      op.executeUntyped(Vector(evaluator, mock[DataFrame]))(mock[ExecutionContext])
+      op.executeUntyped(Vector(evaluator, mock[DataFrame]))(createExecutionContext)
 
       evaluator should have (theSameParamsAs (originalEvaluator))
     }

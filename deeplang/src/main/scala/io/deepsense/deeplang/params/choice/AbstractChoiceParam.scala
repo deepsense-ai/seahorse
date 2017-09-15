@@ -23,6 +23,7 @@ import spray.json._
 import io.deepsense.deeplang.TypeUtils
 import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.exceptions.NoArgumentConstructorRequiredException
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 
 /**
  * @tparam T Type of choice items available to be chosen.
@@ -31,17 +32,17 @@ import io.deepsense.deeplang.params.exceptions.NoArgumentConstructorRequiredExce
 abstract class AbstractChoiceParam[T <: Choice, U](implicit tag: TypeTag[T]) extends Param[U] {
 
   override def extraJsFields: Map[String, JsValue] = Map(
-    "values" -> JsArray(choiceInstances.map(_.toJson): _*)
+    "values" -> JsArray(choiceInstances.map(_.toJson)_: _*)
   )
 
-  override def valueFromJson(jsValue: JsValue): U = jsValue match {
+  override def valueFromJson(jsValue: JsValue, graphReader: GraphReader): U = jsValue match {
     case JsObject(map) =>
-      valueFromJsMap(map)
+      valueFromJsMap(map, graphReader)
     case _ => throw new DeserializationException(s"Cannot fill choice parameter with $jsValue:" +
       s" object expected.")
   }
 
-  protected def valueFromJsMap(jsMap: Map[String, JsValue]): U
+  protected def valueFromJsMap(jsMap: Map[String, JsValue], graphReader: GraphReader): U
 
   val choiceInstances: Seq[T] = {
     val directSubclasses = tag.tpe.typeSymbol.asClass.knownDirectSubclasses
@@ -67,13 +68,14 @@ abstract class AbstractChoiceParam[T <: Choice, U](implicit tag: TypeTag[T]) ext
     case choice => choice.name -> choice
   }.toMap
 
-  protected def choiceFromJson(chosenLabel: String, jsValue: JsValue): T = {
+  protected def choiceFromJson(chosenLabel: String, jsValue: JsValue, graphReader: GraphReader): T = {
     choiceInstancesByName.get(chosenLabel) match {
-      case Some(choice) => choice.setParamsFromJson(jsValue)
+      case Some(choice) => choice.setParamsFromJson(jsValue, graphReader)
       case None => throw new DeserializationException(s"Invalid choice $chosenLabel in " +
         s" choice parameter. Available choices: ${choiceInstancesByName.keys.mkString(",")}.")
     }
   }
 
-  protected def choiceToJson(value: T): JsObject = JsObject(value.name -> value.paramValuesToJson)
+  protected def choiceToJson(value: T): JsObject =
+    JsObject(value.name -> value.paramValuesToJson)
 }

@@ -16,6 +16,8 @@
 
 package io.deepsense.deeplang.doperables
 
+import java.util.UUID
+
 import org.apache.spark.sql.types.StructType
 import spray.json.JsObject
 
@@ -44,6 +46,8 @@ case class CustomTransformer(
       defaultValue.foreach(defaultValue => defaultParamMap.put(ParamPair(paramAny, defaultValue)))
       setValue.foreach(setValue => paramMap.put(ParamPair(paramAny, setValue)))
   }
+
+  def getDatasourcesId: Set[UUID] = innerWorkflow.getDatasourcesIds
 
   override private[deeplang] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
     ctx.innerWorkflowExecutor.execute(CommonExecutionContext(ctx), workflowWithParams(), df)
@@ -100,9 +104,9 @@ case class CustomTransformer(
       path: String): CustomTransformer.this.type = {
     val innerWorkflowPath: String = CustomTransformer.innerWorkflowPath(path)
     val innerWorkflowJson = JsonObjectPersistence.loadJsonFromFile(ctx, innerWorkflowPath)
+    val innerWorkflow = ctx.innerWorkflowExecutor.parse(innerWorkflowJson.asJsObject)
     CustomTransformerFactory.createCustomTransformer(
-      ctx.innerWorkflowExecutor,
-      innerWorkflowJson.asJsObject).asInstanceOf[this.type]
+      innerWorkflow).asInstanceOf[this.type]
   }
 }
 

@@ -18,8 +18,6 @@ package io.deepsense.models.json.graph
 
 import spray.json._
 
-import io.deepsense.deeplang.doperables.descriptions.InferenceResult
-import io.deepsense.deeplang.params.Params
 import io.deepsense.deeplang.{DKnowledge, DOperable}
 
 trait DKnowledgeJsonProtocol extends DefaultJsonProtocol {

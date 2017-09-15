@@ -20,8 +20,9 @@ import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.params.ParameterType
 import spray.json.DefaultJsonProtocol._
 import spray.json._
-
 import scala.reflect.runtime.universe._
+
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 
 case class MultipleChoiceParam[T <: Choice](
     override val name: String,
@@ -38,9 +39,9 @@ case class MultipleChoiceParam[T <: Choice](
     value.foldLeft(JsObject())(
       (acc: JsObject, choice: T) => JsObject(acc.fields ++ choiceToJson(choice).fields))
 
-  protected override def valueFromJsMap(jsMap: Map[String, JsValue]): Set[T] = {
+  protected override def valueFromJsMap(jsMap: Map[String, JsValue], graphReader: GraphReader): Set[T] = {
     jsMap.toList.map {
-      case (label, innerJsValue) => choiceFromJson(label, innerJsValue)
+      case (label, innerJsValue) => choiceFromJson(label, innerJsValue, graphReader)
     }.toSet
   }
 
