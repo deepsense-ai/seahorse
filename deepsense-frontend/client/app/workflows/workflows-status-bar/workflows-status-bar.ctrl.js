@@ -3,7 +3,7 @@
 /* @ngInject */
 function WorkflowStatusBarController($scope, WorkflowStatusBarService) {
 
-  $scope.getMenuItems = (workflowType, workflowStatus) => WorkflowStatusBarService.getMenuItems(workflowType, workflowStatus);
+  $scope.getMenuItems = (workflow) => WorkflowStatusBarService.getMenuItems(workflow);
 
 }
 

@@ -16,8 +16,6 @@ function SessionManagerApi($http, config) {
     return $http.get(URL).then(function processResult(result) {
       console.log('SessionManagerApi downloadSessions result', result);
       return result.data.sessions;
-    }, function handleError(error) {
-      console.log('error', error);
     });
   }
 
@@ -25,24 +23,18 @@ function SessionManagerApi($http, config) {
     return $http.get(`${URL}/${sessionId}`).then(function processResult(result) {
       console.log('SessionManagerApi downloadSessionById result', result);
       return result.data;
-    }, function handleError(error) {
-      console.log('error', error);
     });
   }
 
   function deleteSessionById(sessionId) {
     return $http.delete(`${URL}/${sessionId}`).then(function processResult(result) {
       return result;
-    }, function handleError(error) {
-      console.log('error', error);
     });
   }
 
   function startSession(workflowId) {
     return $http.post(URL, {workflowId: workflowId}).then(function processResult(result) {
       return result;
-    }, function handleError(error) {
-      console.log('error', error);
     });
   }
 

@@ -5,7 +5,7 @@
     <operation-catalogue
       ng-style="{'display' : workflow.SideBarData.operationCatalogue ? 'block' : 'none'}"
       catalog-collection="::workflow.catalog"
-      is-running="workflow.WorkflowService.getCurrentWorkflow().workflowStatus !== 'editor'"
+      is-running="!workflow.isEditable()"
       custom-scroll-bar
       >
     </operation-catalogue>
@@ -14,6 +14,7 @@
       workflow="workflow.getWorkflow()"
       selected-node="workflow.getSelectedNode()"
       is-running="workflow.WorkflowService.getCurrentWorkflow().workflowStatus !== 'editor'"
+      disabled-mode="!workflow.isEditable()"
       zoom-id="{{::workflow.zoomId}}"></flow-chart-box>
 
     <deepsense-operation-attributes
@@ -22,7 +23,7 @@
       is-inner-workflow="workflow.WorkflowService.getCurrentWorkflow().workflowType === 'inner'"
       node="workflow.getSelectedNode()"
       ng-if="workflow.getSelectedNode()"
-      disabled-mode="workflow.WorkflowService.getCurrentWorkflow().workflowStatus !== 'editor'"
+      disabled-mode="!workflow.isEditable()"
       predef-colors="workflow.getPredefColors()"
       class="o-panel o-panel--scroll-right animated fadeInRight"
       custom-scroll-bar

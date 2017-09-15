@@ -13,7 +13,8 @@ function MenuItem() {
       href: '@',
       target: '@',
       color: '@',
-      additionalClass: '@'
+      additionalClass: '@',
+      additionalIconClass: '@'
     },
     controller: 'MenuItemController as miCtrl',
     bindToController: true

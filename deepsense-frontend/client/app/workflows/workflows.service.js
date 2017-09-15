@@ -2,10 +2,7 @@
 
 /* @ngInject */
 function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiClient, Operations, $rootScope,
-  DefaultInnerWorkflowGenerator, debounce) {
-
-  // TODO Disable clean/export/run in inner workflows
-  // TODO Prevent deleting Sink and Source
+  DefaultInnerWorkflowGenerator, debounce, SessionManagerApi, SessionStatus) {
 
   const CUSTOM_TRANSFORMER_ID = '65240399-2987-41bd-ba7e-2944d60a3404';
   const INNER_WORKFLOW_PARAM_NAME = 'inner workflow';
@@ -13,7 +10,6 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
   class WorkflowServiceClass {
 
     constructor() {
-      this._isLoading = true;
       this._workflowsStack = [];
       this._innerWorkflowByNodeId = {};
       // We want to save workflow after all intermediate changes are resolved. Intermediate state might be invalid.
@@ -28,28 +24,12 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
       }, 200);
     }
 
-    init() {
-      this.downloadWorkflows();
-    }
-
-    downloadWorkflows() {
-      var deferred = $q.defer();
-      WorkflowsApiClient.getAllWorkflows().then((data) => {
-        this._workflowsData = data;
-        this._isLoading = false;
-        return deferred.resolve(data);
-      }, (failure) => {
-        this._isLoading = false;
-        return deferred.reject(failure);
-      });
-      return deferred.promise;
-    }
-
     initRootWorkflow(workflowData) {
       this._workflowsStack = [];
       let workflow = this._deserializeWorkflow(workflowData);
       workflow.workflowType = 'root';
       workflow.workflowStatus = 'editor';
+      workflow.sessionStatus = workflowData.sessionStatus;
 
       let nodes = _.values(workflow.getNodes());
       nodes.filter((n) => n.operationId === CUSTOM_TRANSFORMER_ID)
@@ -58,6 +38,30 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
       $rootScope.$watch(() => workflow.serialize(), this._saveWorkflow, true);
       this._watchForNewCustomTransformers(workflow);
       this._workflowsStack.push(workflow);
+
+      $rootScope.$on('StatusBar.START_EXECUTOR', () => {
+        const workflow = this.getRootWorkflow();
+        workflow.sessionStatus = SessionStatus.STARTING;
+        SessionManagerApi.startSession(workflow.id).then(() => {
+          workflow.sessionStatus = SessionStatus.RUNNING;
+        });
+      });
+
+      $rootScope.$on('StatusBar.STOP_EXECUTOR', () => {
+        const workflow = this.getRootWorkflow();
+        SessionManagerApi.deleteSessionById(workflow.id).then(() => {
+          workflow.sessionStatus = SessionStatus.NOT_RUNNING;
+        });
+      });
+
+      $rootScope.$on('ServerCommunication.MESSAGE.heartbeat', () => {
+        const workflow = this.getRootWorkflow();
+        if(workflow.sessionStatus !== 'running_and_ready') {
+          console.log('WorkflowService', 'Received first heartbeat. Executor is running and ready');
+          workflow.sessionStatus = SessionStatus.RUNNING_AND_READY;
+        }
+      });
+
     }
 
     // TODO Add enums for workflowType, workflowStatus
@@ -66,6 +70,8 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
       let innerWorkflow = this._deserializeInnerWorkflow(innerWorkflowData);
       innerWorkflow.workflowType = 'inner';
       innerWorkflow.workflowStatus = 'editor';
+      innerWorkflow.sessionStatus = SessionStatus.NOT_RUNNING;
+
       innerWorkflow.publicParams = innerWorkflow.publicParams || [];
       this._innerWorkflowByNodeId[node.id] = innerWorkflow;
 
@@ -94,7 +100,7 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
       });
     }
 
-    _getAllWorkflows() {
+    _getRootWorkflowsWithInnerWorkflows() {
       const innerWorkflows = _.values(this._innerWorkflowByNodeId);
       return [this.getRootWorkflow()].concat(innerWorkflows);
     }
@@ -141,16 +147,12 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
       return idx !== -1;
     }
 
-    isWorkflowLoading () {
-      return this._isLoading;
-    }
-
     getCurrentWorkflow() {
       return _.last(this._workflowsStack);
     }
 
     onInferredState(states) {
-      this._getAllWorkflows().forEach(w => w.updateState(states));
+      this._getRootWorkflowsWithInnerWorkflows().forEach(w => w.updateState(states));
     }
 
     clearGraph() {
@@ -158,19 +160,19 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
     }
 
     updateTypeKnowledge(knowledge) {
-      this._getAllWorkflows().forEach(w => w.updateTypeKnowledge(knowledge));
+      this._getRootWorkflowsWithInnerWorkflows().forEach(w => w.updateTypeKnowledge(knowledge));
     }
 
     updateEdgesStates() {
       this.getCurrentWorkflow().updateEdgesStates(OperationsHierarchyService);
     }
 
-    getAllWorkflows() {
-      return this._workflowsData;
-    }
-
     getRootWorkflow() {
       return this._workflowsStack[0];
+    }
+
+    getAllWorkflows() {
+      return this._workflowsData;
     }
 
     removeWorkflowFromList(workflowId) {
@@ -187,7 +189,45 @@ function WorkflowService($q, Workflow, OperationsHierarchyService, WorkflowsApiC
       });
     }
 
+    downloadWorkflow(workflowId) {
+      return $q.all([
+        WorkflowsApiClient.getWorkflow(workflowId),
+        SessionManagerApi.downloadSessions()
+      ]).then(([workflow, sessions]) => {
+        this._assignStatusToWorkflow(workflow, sessions);
+        return workflow;
+      });
+    }
+
+    downloadWorkflows() {
+      return $q.all([
+        WorkflowsApiClient.getAllWorkflows(),
+        SessionManagerApi.downloadSessions()
+      ]).then(([workflows, sessions]) => {
+        this._assignStatusesToWorkflows(workflows, sessions);
+        this._workflowsData = workflows; // TODO There should be no state here. Get rid of it
+        return workflows;
+      });
+    }
+
+    _assignStatusesToWorkflows(workflows, sessions) {
+      _.forEach(workflows, (workflow) => {
+        this._assignStatusToWorkflow(workflow, sessions);
+      });
+    }
+
+    _assignStatusToWorkflow(workflow, sessions) {
+      const sessionByWorkflowId = _.object(_.map(sessions, s => [s.workflowId, s]));
+      const session = sessionByWorkflowId[workflow.id];
+      if(session && session.status === 'error') {
+        console.error('Session status is `error` for ', session);
+        throw 'Session must not be `error`';
+      }
+      workflow.sessionStatus = _.isUndefined(session) ? SessionStatus.NOT_RUNNING : SessionStatus.RUNNING;
+    }
   }
+
+
 
   return new WorkflowServiceClass();
 }

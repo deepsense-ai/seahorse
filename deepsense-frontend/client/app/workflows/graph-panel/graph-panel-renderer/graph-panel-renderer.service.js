@@ -75,10 +75,10 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
   let that = this;
   let internal = {
     currentZoomRatio: 1.0,
-    renderMode: null,
+    disabledMode: false,
 
-    edgesAreDetachable() {
-      return internal.renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE;
+    areEdgesDetachable() {
+      return !internal.disabledMode;
     },
 
     reset() {
@@ -128,7 +128,6 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
   };
 
   that.clearWorkflow = function clearWorkflow() {
-    internal.renderMode = null;
     internal.reset();
   };
 
@@ -137,6 +136,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
     jsPlumb.remove(node);
   };
 
+  // TODO That could be removed. Just call rerender.
   that.removeNodes = (nodes) => {
     _.each(nodes, (node) => {
       that.removeNode(node);
@@ -183,7 +183,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
             outputPrefix + '-' + edge.startPortId + '-' + edge.startNodeId,
             inputPrefix + '-' + edge.endPortId + '-' + edge.endNodeId
           ],
-          detachable: internal.edgesAreDetachable()
+          detachable: internal.areEdgesDetachable()
         });
         connection.setParameter('edgeId', edge.id);
       }
@@ -224,7 +224,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
       });
     }
 
-    if (internal.renderMode === GraphPanelRendererBase.RUNNING_RENDER_MODE) {
+    if (internal.disabledMode) {
       outputStyle.isSource = false;
     }
 
@@ -244,7 +244,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
 
     // FIXME Quickfix to make reports browseable in read-only mode.
     // There is a conflict between multiselection and output port click when isSource = false.
-    let eventForLeftClick = internal.renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE ? 'click' : 'mousedown';
+    const eventForLeftClick = !internal.disabledMode ? 'click' : 'mousedown';
     jsPlumbPort.bind(eventForLeftClick, (clickedPort, event) => {
       if (hasReport) {
         $rootScope.$broadcast('OutputPort.LEFT_CLICK', {
@@ -355,8 +355,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
       $rootScope.$broadcast(Edge.DRAG);
 
       /* During detaching an edge, hints should be displayed as well */
-      if (internal.renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE &&
-        _.isArray(connection.endpoints)
+      if (internal.areEdgesDetachable() && _.isArray(connection.endpoints)
       ) {
         let port = connection.endpoints[0];
         ConnectionHinterService.highlightMatchedAndDismatchedPorts(workflow, port);
@@ -366,19 +365,16 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
 
   };
 
-  that.setRenderMode = function setRenderMode(renderMode) {
-    if (renderMode !== GraphPanelRendererBase.EDITOR_RENDER_MODE &&
-      renderMode !== GraphPanelRendererBase.RUNNING_RENDER_MODE) {
-      throw `render mode should be either 'editor' or 'report'`;
-    }
-
-    internal.renderMode = renderMode;
+  that.setDisabledMode = (disabledMode) => {
+    internal.disabledMode = disabledMode;
   };
 
   that.disablePortHighlightings = function disablePortHighlightings(workflow) {
     ConnectionHinterService.disablePortHighlighting(workflow);
     ConnectionHinterService.disableOperationsHighlighting();
   };
+
+  that.internal = internal;
 
   return that;
 }

@@ -17,26 +17,17 @@ function Home($rootScope, $uibModal, $state, $q, config, WorkflowService, PageSe
   };
 
   this.loadWorkflowsAndStatuses = () => {
-    $q.all([
-      WorkflowService.downloadWorkflows(),
-      SessionManagerApi.downloadSessions()
-    ]).then(([workflows, sessions]) => {
+    this._isLoadingWorkflows = true;
+    WorkflowService.downloadWorkflows().then((workflows) => {
+      this._isLoadingWorkflows = false;
       this.workflows = workflows;
       if (this.workflows && this.workflows.length === 0) {
         this.setWarning('fa-ban', 'No workflows found!');
         return;
       }
-      this._assignStatusesToWorkflows(workflows, sessions);
       this.canShowWorkflows = true;
     }, () => {
       this.setWarning('fa-exclamation-circle', 'Could not connect to the database. Try to reload the page.');
-    });
-  };
-
-  this._assignStatusesToWorkflows = (workflows, sessions) => {
-    let workflowById = _.object(_.map(workflows, (w) => [w.id, w]));
-    sessions.forEach((session) => {
-      workflowById[session.workflowId].sessionStatus = session.status;
     });
   };
 
@@ -60,7 +51,7 @@ function Home($rootScope, $uibModal, $state, $q, config, WorkflowService, PageSe
   };
 
   this.isWorkflowLoading = () => {
-    return WorkflowService.isWorkflowLoading();
+    return this._isLoadingWorkflows;
   };
 
   this.getClass = (columnName) => {
@@ -79,11 +70,7 @@ function Home($rootScope, $uibModal, $state, $q, config, WorkflowService, PageSe
   };
 
   this.goToWorkflowEditor = (workflowId) => {
-     SessionManagerApi.startSession(workflowId).then(() => {
-       $state.go('workflows.editor', {id: workflowId});
-     }, (error) => {
-       console.log('error', error);
-     });
+    $state.go('workflows.editor', {id: workflowId});
   };
 
   this.deleteWorkflow = function(workflow) {

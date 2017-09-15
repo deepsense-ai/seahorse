@@ -1,5 +1,14 @@
 'use strict';
 
+const _messages = [
+  'executionStatus',
+  'inferredState',
+  'ready',
+  'terminated',
+  'workflowWithResults',
+  'heartbeat'
+];
+
 class ServerCommunication {
   /* @ngInject */
   constructor($log, $q, $timeout, $rootScope, config) {
@@ -27,14 +36,7 @@ class ServerCommunication {
   }
 
   static isMessageKnown(msgType) {
-    let messages = [
-      'executionStatus',
-      'inferredState',
-      'ready',
-      'terminated',
-      'workflowWithResults'
-    ];
-    return messages.indexOf(msgType) !== -1;
+    return _messages.indexOf(msgType) !== -1;
   }
 
   messageHandler(uri, message) {
@@ -45,21 +47,6 @@ class ServerCommunication {
     if (!ServerCommunication.isMessageKnown(parsedBody.messageType)) {
       this.$log.error('ServerCommunication messageHandler. Unknown message type "' + parsedBody.messageType + '"');
       return;
-    }
-
-    // When opening workflow two things happen:
-    // 1) calling session manager to create executor (we don't know if it already exist or will be created)
-    // 2) calling `init` to get workflow data
-    //
-    // BUT: when there were no executor already in step 1, message in step 2 will most likely not get to the
-    // executor, because it didn't have enough time to subscribe to the topic after getting created.
-    //
-    // That's why we have this code over here. In a case when executor is just created we need to send `init` only
-    // after receiving 'ready' message - only that way we are sure it will be reached.
-    //
-    // We cannot remove step 2 though, because we don't have prior knowledge if executor already existed.
-    if (parsedBody.messageType === 'ready') {
-      this.sendInitToWorkflowExchange();
     }
 
     this.$rootScope.$broadcast(
@@ -172,7 +159,7 @@ class ServerCommunication {
 
   init(workflowId) {
     console.log('ServerCommunication init', 'Server communication initialized with workflow id ' + workflowId);
-    this.workflowId = workflowId;
+    this.workflowId = workflowId; // TODO There should be no state here. Get rid of state in this service.
     this.connectToWebSocket();
   }
 }

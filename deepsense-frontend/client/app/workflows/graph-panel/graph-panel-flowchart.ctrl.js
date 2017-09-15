@@ -1,9 +1,5 @@
 'use strict';
 
-/* beautify preserve:start */
-import { GraphPanelRendererBase } from './../graph-panel/graph-panel-renderer/graph-panel-renderer-base.js';
-/* beautify preserve:end */
-
 /* @ngInject */
 function FlowChartBoxController($scope, $element, $timeout, GraphPanelRendererService) {
   let nodeDimensions = {};
@@ -38,12 +34,9 @@ function FlowChartBoxController($scope, $element, $timeout, GraphPanelRendererSe
     }
   });
 
-  $scope.$watch('isRunning', function(newValue) {
+  $scope.$watch(() => this.disabledMode, function(newValue) {
     $timeout(() => {
-      let newRenderMode = newValue ?
-        GraphPanelRendererBase.RUNNING_RENDER_MODE :
-        GraphPanelRendererBase.EDITOR_RENDER_MODE;
-      GraphPanelRendererService.setRenderMode(newRenderMode);
+      GraphPanelRendererService.setDisabledMode(newValue);
       GraphPanelRendererService.rerender($scope.flowChartBoxCtrl.workflow);
     }, 0);
   });

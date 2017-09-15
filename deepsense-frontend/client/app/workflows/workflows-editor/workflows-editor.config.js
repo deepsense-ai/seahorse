@@ -2,32 +2,26 @@
 
 /* @ngInject */
 function WorkflowsConfig($stateProvider) {
+
   $stateProvider.state('workflows.editor', {
     url: '/:id/editor',
     templateUrl: 'app/workflows/workflows-editor/workflows-editor.html',
     controller: 'WorkflowsEditorController as workflow',
     resolve: {
-      workflowWithResults: /* @ngInject */ ($q, $state, $rootScope, $stateParams,
-        $timeout, WorkflowsApiClient, Operations, OperationsHierarchyService,
-        ErrorService, ServerCommunication, SessionManagerApi) => {
-        let workflowWithResultsDeferred = $q.defer();
+      workflowWithResults: /* @ngInject */ ($q, $rootScope, $stateParams,
+        WorkflowService, Operations, OperationsHierarchyService, ServerCommunication) => {
         ServerCommunication.init($stateParams.id);
-
-        $rootScope.$on('ServerCommunication.MESSAGE.workflowWithResults', (event, data) => {
-          workflowWithResultsDeferred.resolve(data);
-        });
-
         return $q.all([
-          workflowWithResultsDeferred.promise,
-          Operations.load().then(OperationsHierarchyService.load),
-          SessionManagerApi.startSession($stateParams.id)
-        ]).then(([workflows, ..._]) => {
+          WorkflowService.downloadWorkflow($stateParams.id),
+          Operations.load().then(OperationsHierarchyService.load)
+        ]).then(([workflow, ..._]) => {
           $rootScope.stateData.dataIsLoaded = true;
-          return workflows;
+          return workflow;
         });
       }
     }
   });
+
 }
 
 exports.function = WorkflowsConfig;

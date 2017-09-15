@@ -21,6 +21,7 @@ if (browser.chrome && version >= 40) {
     'toastr',
     require('./home/home.module.js').name,
     require('./workflows/workflows.module.js').name,
+    require('./enums/enums.module.js').name,
     require('./common/common.module.js').name,
     require('./errors/errors.module.js').name,
     require('./server-communication/server-communication.module.js').name

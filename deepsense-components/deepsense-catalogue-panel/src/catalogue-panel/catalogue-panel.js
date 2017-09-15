@@ -2,6 +2,9 @@ function OperationCatalogue () {
   return {
     scope: {
       catalogCollection: '=',
+      // TODO RENAME
+      // OperationCatalogue should not even know what 'running' concept mean.
+      // On this abstraction level it should be called 'disabledMode' (like in attribute panel) or something.
       isRunning: '='
     },
     templateUrl: 'catalogue-panel/catalogue-panel.html',

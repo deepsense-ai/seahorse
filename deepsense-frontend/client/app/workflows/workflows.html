@@ -3,8 +3,7 @@
     <navigation-bar class="c-navigation-bar"></navigation-bar>
     <div class="c-main-header__nav-bar" ng-switch="controller.getWorkflowType()">
       <workflow-editor-status-bar
-              workflow-type = "controller.getCurrentWorkflow().workflowType"
-              workflow-status = "controller.getCurrentWorkflow().workflowStatus"
+              workflow = "controller.getCurrentWorkflow()"
               ng-if="stateData.dataIsLoaded">
       </workflow-editor-status-bar>
     </div>

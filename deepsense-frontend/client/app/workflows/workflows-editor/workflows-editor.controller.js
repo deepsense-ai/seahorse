@@ -1,16 +1,12 @@
 'use strict';
 
-/* beautify preserve:start */
-import { GraphPanelRendererBase } from './../graph-panel/graph-panel-renderer/graph-panel-renderer-base.js';
-/* beautify preserve:end */
-
 class WorkflowsEditorController {
 
   /* @ngInject */
   constructor(workflowWithResults, $scope, $state, $q, $rootScope, $log, $timeout,
-    GraphNode, Edge, config, Report, MultiSelectionService, PageService, Operations, GraphPanelRendererService,
-    WorkflowService, MouseEvent, ConfirmationModalService, ExportModalService, GraphNodesService, NotificationService,
-    ServerCommunication, CopyPasteService, SideBarService, BottomBarService, NodeCopyPasteVisitorService) {
+              GraphNode, Edge, config, Report, MultiSelectionService, PageService, Operations, GraphPanelRendererService,
+              WorkflowService, MouseEvent, ConfirmationModalService, ExportModalService, GraphNodesService, NotificationService,
+              ServerCommunication, CopyPasteService, SideBarService, BottomBarService, NodeCopyPasteVisitorService, SessionStatus) {
 
     WorkflowService.initRootWorkflow(workflowWithResults);
 
@@ -18,7 +14,7 @@ class WorkflowsEditorController {
       $scope, $state, $q, $rootScope, $log, $timeout,
       GraphNode, Edge, config, Report, MultiSelectionService, PageService, Operations, GraphPanelRendererService,
       WorkflowService, MouseEvent, ConfirmationModalService, ExportModalService, GraphNodesService, NotificationService,
-      ServerCommunication, CopyPasteService, SideBarService, BottomBarService, NodeCopyPasteVisitorService
+      ServerCommunication, CopyPasteService, SideBarService, BottomBarService, NodeCopyPasteVisitorService, SessionStatus
     });
 
     this.BottomBarData = BottomBarService.tabsState;
@@ -27,11 +23,12 @@ class WorkflowsEditorController {
     this.catalog = Operations.getCatalog();
     this._editableModeEventListeners = [];
     this.zoomId = 'flowchart-box';
+    this.SessionStatus = SessionStatus;
     this.init(workflowWithResults);
   }
 
   _loadReports(data) {
-    let report = data.resultEntities;
+    const report = data.resultEntities;
     if (!_.isEmpty(report)) {
       this.WorkflowService.getCurrentWorkflow().setPortTypesFromReport(report);
       this.Report.createReportEntities(report.id, report);
@@ -67,7 +64,6 @@ class WorkflowsEditorController {
 
   init(workflowWithResults) {
     this.PageService.setTitle('Workflow editor');
-    this.GraphPanelRendererService.setRenderMode(GraphPanelRendererBase.EDITOR_RENDER_MODE);
     this.GraphPanelRendererService.setZoom(1.0);
     this.WorkflowService.getCurrentWorkflow().updateState(workflowWithResults.executionReport);
     this.initListeners();
@@ -84,11 +80,6 @@ class WorkflowsEditorController {
       // workflowId being null means that entire Session Executor has been restarted
       if (!ready.workflowId || ready.workflowId === this.WorkflowService.getRootWorkflow().id) {
         this.ServerCommunication.reconnect();
-        this.NotificationService.showWithParams({
-          notificationType: ready.content.msgType,
-          message: ready.content.text
-        });
-
         this._setEditableMode();
       }
     });
@@ -204,6 +195,11 @@ class WorkflowsEditorController {
       }),
 
       this.$scope.$on('Keyboard.KEY_PRESSED_DEL', () => {
+        if(!this.isEditable()) {
+          console.log('WorkflowsEditorController', 'Cannot remove nodes if not editable');
+          return;
+        }
+
         let selectedNodeIds = this.MultiSelectionService.getSelectedNodeIds();
         let sinkOrSourceNodeIds = _.filter(selectedNodeIds, (nodeId) => {
           let node = this.getWorkflow().getNodeById(nodeId);
@@ -328,6 +324,11 @@ class WorkflowsEditorController {
       this.MultiSelectionService.removeNodeIdsFromSelection([this.selectedNode.id]);
       this.selectedNode = null;
     }
+  }
+
+  isEditable() {
+    const workflow = this.WorkflowService.getCurrentWorkflow();
+    return workflow.workflowStatus === 'editor' && workflow.sessionStatus === this.SessionStatus.RUNNING_AND_READY;
   }
 
   _isSinkOrSource(node) {

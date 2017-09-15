@@ -13,6 +13,7 @@ function FlowChartBox() {
       'workflow': '=',
       'nodes': '=',
       'isRunning': '=',
+      'disabledMode': '=',
       'zoomId': '@'
     },
     templateUrl: 'app/workflows/graph-panel/graph-panel-flowchart.html',

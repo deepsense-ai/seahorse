@@ -1,5 +1,5 @@
 <div class="c-workflows-status-bar">
-  <menu-item ng-repeat="item in getMenuItems(workflowType, workflowStatus)"
+  <menu-item ng-repeat="item in getMenuItems(workflow)"
              label="{{item.label}}"
              icon="{{item.icon}}"
              call-function="item.callFunction()"
@@ -7,6 +7,7 @@
              target="{{item.target}}"
              color="{{item.color}}"
              additional-class="{{item.additionalClass}}"
+             additional-icon-class="{{item.additionalIconClass}}"
   >
   </menu-item>
 </div>
