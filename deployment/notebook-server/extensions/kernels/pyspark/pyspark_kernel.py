@@ -5,6 +5,7 @@ import time
 from ipykernel.ipkernel import IPythonKernel
 from ipykernel.kernelapp import IPKernelApp
 from traitlets import Type
+from gateway_resolver import GatewayResolver
 
 import json
 import os
@@ -21,7 +22,8 @@ class PySparkKernel(IPythonKernel):
 
         kernel_id = extract_kernel_id(sys.argv[2])
         (workflow_id, node_id) = get_notebook_id(kernel_id)
-        gateway_resolver = GatewayResolver(workflow_id)
+        gateway_resolver = GatewayResolver([os.environ['RABBIT_MQ_ADDRESS'],
+                                            int(os.environ['RABBIT_MQ_PORT'])])
 
         self._insert_gateway_address(
             gateway_resolver.get_gateway_address())

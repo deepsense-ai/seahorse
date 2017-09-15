@@ -15,7 +15,7 @@
   "PYSPARK_SUBMIT_ARGS": "--master local[*] pyspark-shell",
   "NOTEBOOK_SERVER_ADDRESS": "localhost",
   "NOTEBOOK_SERVER_PORT": "8888",
-  "RABBIT_MQ_ADDRESS": "172.28.128.1",
+  "RABBIT_MQ_ADDRESS": "localhost",
   "RABBIT_MQ_PORT": "5672"
  }
 }
