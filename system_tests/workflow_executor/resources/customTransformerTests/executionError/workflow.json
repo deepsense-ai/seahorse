@@ -20,7 +20,7 @@
         },
         "to": {
           "nodeId": "f4b2685b-8e80-4887-8683-1ec1edd009d2",
-          "portIndex": 1
+          "portIndex": 0
         }
       },
       {
@@ -30,7 +30,7 @@
         },
         "to": {
           "nodeId": "f4b2685b-8e80-4887-8683-1ec1edd009d2",
-          "portIndex": 0
+          "portIndex": 1
         }
       }
     ],
