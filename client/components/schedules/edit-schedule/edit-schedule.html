@@ -1,0 +1,57 @@
+<div class="schedule edit-schedule">
+  <div class="schedule__attributes">
+    <div class="schedule-attribute schedule-cluster-preset">
+      <div class="schedule-attribute__label">Select cluster preset</div>
+      <div class="schedule-attribute__errors">
+        <p
+          ng-if="$ctrl.error.presetId.required"
+          class="schedule-attribute-error"
+        >Cluster preset is required</p>
+      </div>
+      <select
+        class="form-control schedule-attribute__input"
+        ng-class="{'schedule-attribute__input--invalid': $ctrl.error.presetId.required}"
+
+        ng-model="$ctrl.model.executionInfo.presetId"
+        ng-options="preset.id as preset.name for preset in $ctrl.clusterPresets"
+      >
+        <option value="">-- choose preset --</option>
+      </select>
+    </div>
+
+    <div class="schedule-attribute schedule-cron">
+      <span class="schedule-attribute__label">Run workflow</span>
+      <span class="schedule-attribute__value" jq-cron="$ctrl.jqCronSettings" ng-model="$ctrl.model.schedule.cron"></span>
+    </div>
+
+    <div class="schedule-attribute schedule-email">
+      <div class="schedule-attribute__label">Send email reports to:</div>
+      <div class="schedule-attribute__errors">
+        <p
+          ng-if="$ctrl.error.emailForReports.required || $ctrl.error.emailForReports.email"
+          class="schedule-attribute-error"
+        >Valid email address is required</p>
+      </div>
+      <input
+        class="form-control schedule-attribute__input"
+        ng-class="{'schedule-attribute__input--invalid': ($ctrl.error.emailForReports.required || $ctrl.error.emailForReports.email)}"
+        ng-model="$ctrl.model.executionInfo.emailForReports"
+      />
+    </div>
+  </div>
+  <div class="schedule__actions">
+    <button
+      class="btn btn-primary edit-schedule__btn"
+      ng-disabled="!$ctrl.valid"
+      ng-click="$ctrl.updateSchedule();"
+    >
+      Ok
+    </button>
+    <button
+      class="btn btn-default edit-schedule__btn"
+      ng-click="$ctrl.cancelEdit();"
+    >
+      Cancel
+    </button>
+  </div>
+</div>

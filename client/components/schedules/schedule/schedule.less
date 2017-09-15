@@ -1,132 +1,112 @@
 @import "../../../css/variables";
 
 @base-margin: 8px;
-@half-base-margin: (@base-margin / 2);
-@invalid-schedule-border-width: 2px;
+@schedule-action-size: 25px;
 
 
 .schedule {
-  padding-left: (@base-margin * 1.5);
-  display: flex;
-  justify-content: space-between;
-
-  &--invalid {
-    border-left: @invalid-schedule-border-width solid red;
-    padding-left: (@base-margin * 1.5 - @invalid-schedule-border-width);
-  }
-
-  &__attributes {}
+  position: relative;
 
   &__actions {
+    position: absolute;
+    top: -@base-margin;
+    right: -@base-margin;
     display: flex;
-    justify-content: space-between;
+  }
+
+  &__preview {}
+
+  &__attributes {}
+}
+
+
+.schedule-action {
+  width: @schedule-action-size;
+  height: @schedule-action-size;
+  line-height: @schedule-action-size;
+  text-align: center;
+  cursor: pointer;
+  font-size: 16px;
+  color: #ffffff;
+  background-color: @seahorse-blue;
+
+  &:hover {
+    background-color: @seahorse-light-blue;
+  }
+
+  // because of the styles applied to .sa class
+  &.sa {
+    font-size: 22px;
   }
 }
 
 
 .schedule-attribute {
-  margin: 0 0 0.5em;
-  line-height: 1.7;
+  border-bottom: 2px solid #fff;
+  padding: @base-margin 0;
 
-  &__content {}
+  &:first-child {
+    padding-top: 0;
+  }
 
-  &__errors {}
+  &:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
 
   &__label {}
 
   &__value {
-    &--editable {
-      margin: 0 4px;
-      padding: 1px 8px;
-      overflow-wrap: break-word;
-      word-break: break-word;
+    font-weight: bold;
 
-      &:hover {
-        cursor: pointer;
-        padding: 0 7px;
-        border: 1px solid @color-active;
-      }
-    }
-  }
-
-  & &__input {
-    display: inline-block;
-    width: auto;
-    height: auto;
-    margin: 0 4px;
-    padding: 0 7px;
-    font-size: inherit;
-    border: 1px solid #e5e6e7;
-    transition: box-shadow .3s, border .3s;
-
-    &:hover {
-      border: 1px solid @color-active;
+    &--invalid {
+      color: @seahorse-error-red;
     }
 
-    &:focus {
-      outline: none;
-      border: 1px solid @color-active;
-      box-shadow: 0 0 2px 1px @color-active;
+    &--clickable {
+      cursor: pointer;
     }
   }
 }
+
 
 .schedule-attribute-error {
-  color: @color-error;
-  font-size: 90%;
-}
-
-.schedule-action {
-  cursor: pointer;
-  margin-right: @half-base-margin;
-
-  &:last-child {
-    margin-right: 0;
-  }
-
-  // because of the styles applied to .sa class
-  &.sa {
-    font-size: 26px;
-  }
-}
-
-
-.schedule-cron {
-  .schedule-attribute__value {
-    text-transform: lowercase;
-
-    .jqCron-selector-title {
-      margin: 0 0.1em;
-      padding: 0 0.3em;
-      border-radius: 1px;
-      border: 1px solid @color-light-grey;
-      background-color: #FFFFFF;
-      transition: box-shadow .3s, border .3s;
-
-      &:hover {
-        border: 1px solid @color-active;
-      }
-    }
-  }
+  color: @seahorse-error-red;
+  font-size: 11px;
+  font-weight: 600;
+  margin: 4px 0 2px;
 }
 
 
 .schedule-cluster-preset {}
 
 
-.schedule-email {
-  .schedule-attribute__content {
-    display: flex;
-    align-items: flex-start;
-  }
-
+.schedule-cron {
   .schedule-attribute__value {
-    flex-grow: 1;
-    line-height: 1.5;
+    font-weight: normal;
+
+    .jqCron-text {
+      text-transform: lowercase;
+    }
   }
 
-  .schedule-attribute__input {
-    flex-grow: 1;
-    line-height: 1.5;
+  .schedule__preview & {
+    .jqCron-container.disable * {
+      color: inherit;
+
+      & .jqCron-selector-title {
+        // font-style: italic;
+        font-weight: 600;
+        margin: 0;
+        padding: 0;
+        border: none;
+        background: transparent !important;
+        cursor: text;
+      }
+    }
   }
 }
+
+
+.schedule-email {}

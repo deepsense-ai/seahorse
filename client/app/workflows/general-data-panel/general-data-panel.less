@@ -1,6 +1,11 @@
 @import "../../../css/variables";
 
 .o-general-data-panel {
+  &__scrollable-wrapper {
+    height: inherit;
+    overflow-y: scroll;
+  }
+
   &:extend(.operation-attributes-panel);
 
   width: auto;

@@ -1,12 +1,16 @@
 'use strict';
 
+// Libs
 let angular = require('angular');
 let browserValidator = require('./browser.validator.js');
 
+// Resources
+import '../css/app.less';
+
+// App
 import { CommonModule } from 'COMMON/common.module';
 import { ComponentModule } from 'COMPONENTS/components.module';
 
-import '../css/app.less';
 
 if (browserValidator.isBrowserSupported()) {
   let lab = angular.module('ds.lab', [

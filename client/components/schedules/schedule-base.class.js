@@ -32,15 +32,11 @@ export class ScheduleBaseClass {
       (newValue, oldValue) => {
         if (!angular.equals(newValue, oldValue)) {
           this.validate();
-          this.update();
         }
       },
       true
     );
   }
-
-
-  update() {}
 
 
   validate() {

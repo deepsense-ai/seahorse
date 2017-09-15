@@ -2,6 +2,7 @@
 
 // Libs
 import angular from 'angular';
+import _ from 'lodash';
 
 // Assets
 import './schedule.less';
@@ -16,39 +17,41 @@ export const ScheduleComponent = {
 
   bindings: {
     clusterPresets: '<',
+    initialData: '<',
     onDelete: '&',
-    onUpdate: '&',
-    scheduleData: '<'
+    onUpdate: '&'
   },
 
-  controller: class Schedule extends ScheduleBaseClass {
-    constructor($scope, WorkflowSchedulesService, EventEmitter) {
+  controller: class ScheduleController extends ScheduleBaseClass {
+    constructor($scope, WorkflowSchedulesService, EventEmitter, $log) {
       'ngInject';
 
       super($scope);
 
-      this.workflowSchedules = WorkflowSchedulesService;
       this.EventEmitter = EventEmitter;
+      this.workflowSchedules = WorkflowSchedulesService;
+      this.$log = $log;
 
-      this.jqCronSettings = {};
-      this.editing = {};
+      this.jqCronSettings = {
+        disable: true
+      };
+      this.editing = false;
     }
 
 
     $onChanges(changed) {
-      if (changed.scheduleData) {
-        this.model = angular.copy(this.scheduleData);
-        this.validate();
+      if (changed.initialData) {
+        this.updateModel(this.initialData);
+        this.updatePreviewModel();
       }
       if (changed.clusterPresets) {
-        this.validate();
+        this.updatePreviewModel();
       }
     }
 
 
-    cancelEditEmailForReports() {
-      this.editing.emailForReports = false;
-      this.model.executionInfo.emailForReports = this.scheduleData.executionInfo.emailForReports;
+    cancelEdit() {
+      this.editing = false;
     }
 
 
@@ -61,30 +64,40 @@ export const ScheduleComponent = {
     }
 
 
-    finishEditEmailForReports() {
-      this.editing.emailForReports = false;
+    editSchedule() {
+      this.editing = true;
     }
 
 
-    startEditEmailForReports() {
-      this.editing.emailForReports = true;
-    }
-
-
-    update() {
-      if (!this.valid) {
-        return;
-      }
+    updateSchedule({ schedule }) {
+      this.$log.info('ScheduleController.updateSchedule()', schedule);
 
       this.workflowSchedules
-        .updateSchedule(this.model)
-        .then((schedule) => {
+        .updateSchedule(schedule)
+        .then((updatedSchedule) => {
+          this.updateModel(updatedSchedule);
+          this.updatePreviewModel();
+          this.editing = false;
           this.onUpdate(
             this.EventEmitter({
-              schedule: schedule
+              schedule: updatedSchedule
             })
           );
+        }, () => {
+          this.cancelEdit();
         });
+    }
+
+
+    updateModel(data) {
+      this.model = angular.copy(data);
+    }
+
+
+    updatePreviewModel() {
+      let preset = _.find(this.clusterPresets, {id: this.model.executionInfo.presetId}) || {name: ''};
+
+      this.model.executionInfo.presetName = preset.name;
     }
   }
 };

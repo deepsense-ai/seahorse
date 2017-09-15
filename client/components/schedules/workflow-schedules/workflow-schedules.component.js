@@ -36,37 +36,37 @@ export const WorkflowSchedulesComponent = {
     }
 
 
-    finishAddingSchedule() {
-      this.$log.info('WorkflowSchedules.finishAddingSchedule()');
-
-      this.stopAddingSchedule();
-      this.getSchedules();
-    }
-
-
-    getSchedules() {
-      this.$log.info('WorkflowSchedules.getSchedules()');
-
+    addSchedule({ schedule }) {
       this.workflowSchedules
-        .fetchSchedules(this.workflow.id)
-        .then((schedules) => {
-          this.schedules = schedules;
-          this.$log.info('got ->', this.schedules);
+        .updateSchedule(schedule)
+        .then(() => {
+          this.getSchedules();
+        })
+        .then(() => {
+          this.addingSchedule = false;
         });
     }
 
 
-    startAddingSchedule() {
-      this.$log.info('WorkflowSchedules.startAddingSchedule()');
-
-      this.addingSchedule = true;
+    cancelAddingSchedule() {
+      this.addingSchedule = false;
     }
 
 
-    stopAddingSchedule() {
-      this.$log.info('WorkflowSchedules.stopAddingSchedule()');
+    getSchedules() {
+      this.workflowSchedules
+        .fetchSchedules(this.workflow.id)
+        .then((schedules) => {
+          this.schedules = schedules;
+        });
+    }
 
-      this.addingSchedule = false;
+
+    toggleAddingSchedule() {
+      if (!this.addingSchedule) {
+        this.newScheduleStub = this.workflowSchedules.generateScheduleStub(this.workflow.id);
+      }
+      this.addingSchedule = !this.addingSchedule;
     }
 
 
@@ -75,7 +75,7 @@ export const WorkflowSchedulesComponent = {
 
       // The data is up to date, the order is different
       // (updated schedule is the last element of the collection now)
-      // Do we need to fetch all schedules / update this shedule?
+      // Do we need to fetch all schedules / update this schedule?
     }
   }
 };
