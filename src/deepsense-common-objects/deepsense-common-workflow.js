@@ -1,7 +1,3 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- */
-
 'use strict';
 
 angular.module('deepsense.graph-model').
@@ -23,6 +19,11 @@ angular.module('deepsense.graph-model').
 
       that.getId = function getId() {
         return internal.id;
+      };
+
+      that.clearGraph = function clearGraph() {
+        internal.nodes = {};
+        internal.edges = {};
       };
 
       that.getNodes = function getNodes() {
@@ -252,8 +253,6 @@ angular.module('deepsense.graph-model').
           } else {
             edge.state = edge.STATE_TYPE.MAYBE;
           }
-
-          //console.log(`(${startNode.name}, ${outputTypes}) -> (${endNode.name}, ${inputTypes})  ${edge.state}`);
         });
       };
     }

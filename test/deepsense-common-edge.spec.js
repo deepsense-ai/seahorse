@@ -4,7 +4,7 @@
 
 'use strict';
 
-describe('edge', () => {
+describe('Edge', () => {
   let Edge;
   let startNodeId = '11';
   let endNodeId = '2-3';
@@ -42,13 +42,11 @@ describe('edge', () => {
   it('should have generated id', () => {
     let edge = new Edge(initData);
     let id = startNodeId + '#' + startPortId + '_' + endNodeId + '#' + endPortId;
-
     expect(edge.id).toEqual(id);
   });
 
-  it('should have serialaze method', () => {
+  it('should have serialize method', () => {
     let edge = new Edge(initData);
-
     expect(edge.serialize).toEqual(jasmine.any(Function));
     expect(edge.serialize()).toEqual(serializedData);
   });

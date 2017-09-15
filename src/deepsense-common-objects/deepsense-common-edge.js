@@ -1,11 +1,8 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- */
-
 'use strict';
 
 angular.module('deepsense.graph-model').
   factory('Edge', function() {
+
     function Edge(options) {
       this.startNodeId = options.startNodeId;
       this.endNodeId = options.endNodeId;
@@ -15,18 +12,10 @@ angular.module('deepsense.graph-model').
       this.state = this.STATE_TYPE.UNKNOWN;
     }
 
-    /**
-     * Generates edge id.
-     */
     Edge.prototype.generateId = function generateId() {
       return this.startNodeId + '#' + this.startPortId + '_' + this.endNodeId + '#' + this.endPortId;
     };
 
-    /**
-     * Serializes edge data to transfer format.
-     *
-     * @return {object}
-     */
     Edge.prototype.serialize = function serialize() {
       return {
         'from': {
@@ -48,7 +37,6 @@ angular.module('deepsense.graph-model').
     };
 
     Edge.prototype.STATE_TYPE = Edge.STATE_TYPE;
-
     Edge.CREATE = 'Edge.CREATE';
     Edge.REMOVE = 'Edge.REMOVE';
     Edge.DRAG = 'Edge.DRAG';

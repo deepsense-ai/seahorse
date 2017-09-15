@@ -1,11 +1,8 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- */
-
 'use strict';
 
 angular.module('deepsense.graph-model').
   factory('GraphNode', /*@ngInject*/function(Port) {
+
     function GraphNode(options) {
       this.name = options.name;
       this.id = options.id;
@@ -55,11 +52,6 @@ angular.module('deepsense.graph-model').
       return array;
     };
 
-    /**
-     * Serializes node data to transfer format.
-     *
-     * @return {object}
-     */
     GraphNode.prototype.serialize = function serialize() {
       let data = {
         'id': this.id,
@@ -78,11 +70,6 @@ angular.module('deepsense.graph-model').
       return data;
     };
 
-    /**
-     * Sets graph node launch status.
-     *
-     * @param {object} state
-     */
     GraphNode.prototype.setStatus = function setStatus(state) {
       if (state && state.status && Object.keys(this.STATUS).indexOf(state.status) > -1) {
         this.status = this.STATUS[state.status];
@@ -91,31 +78,15 @@ angular.module('deepsense.graph-model').
       }
     };
 
-    /**
-     * Updates graph node state.
-     *
-     * @param {object} state
-     */
     GraphNode.prototype.updateState = function updateState(state) {
       this.results = state.results || [];
       this.setStatus(state);
     };
 
-    /**
-     * Returns nodes result.
-     *
-     * @return {number} portIndex
-     */
     GraphNode.prototype.getResult = function getResult(portIndex) {
       return this.results[portIndex];
     };
 
-    /**
-     * Sets parameters object using internal parameters values and provided schema.
-     *
-     * @param {object} parametersSchema
-     * @param {object} DeepsenseNodeParameters
-     */
     GraphNode.prototype.setParameters = function setParameters(parametersSchema, DeepsenseNodeParameters) {
       if (this.parametersValues) {
         this.parameters = DeepsenseNodeParameters.factory.createParametersList(this.parametersValues, parametersSchema);
@@ -123,11 +94,6 @@ angular.module('deepsense.graph-model').
       }
     };
 
-    /**
-     * Checks if node has full parameters object.
-     *
-     * @return {boolean}
-     */
     GraphNode.prototype.hasParameters = function hasParameters() {
       return !this.parametersValues && this.parameters;
     };

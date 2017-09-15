@@ -32,7 +32,6 @@ describe('port', () => {
   it('should have generated id', () => {
     let port = new Port(initData);
     let id = initType + '-' + initPortIndex + '-' + initNodeId;
-
     expect(port.id).toEqual(id);
   });
 });
