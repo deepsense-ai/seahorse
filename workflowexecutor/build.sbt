@@ -28,6 +28,8 @@ assemblyMergeStrategy in assembly := {
   case PathList("META-INF", "ECLIPSEF.RSA")              => MergeStrategy.discard
   case _ => MergeStrategy.first
 }
+// Skip test while assembling uber-jar
+test in assembly := {}
 
 enablePlugins(BuildInfoPlugin)
 
