@@ -28,7 +28,7 @@ object CommonSettingsPlugin extends AutoPlugin {
         // Show full stacktraces (F), Put results in target/test-reports
         Tests.Argument(TestFrameworks.ScalaTest, "-oF", "-u", "target/test-reports")
       ),
-      javaOptions := Seq("-Denv=integtest", "-Dconfig.trace=loads"),
+      javaOptions := Seq("-Denv=integtest", "-Dconfig.trace=loads", s"-DlogFile=${name.value}"),
       fork := true,
       unmanagedClasspath += baseDirectory.value / "conf"
     )
@@ -47,7 +47,7 @@ object CommonSettingsPlugin extends AutoPlugin {
       )
     ),
       fork := true,
-      javaOptions := Seq("-Denv=test"),
+      javaOptions := Seq("-Denv=test", s"-DlogFile=${name.value}"),
       unmanagedClasspath += baseDirectory.value / "conf"
     )
   }
