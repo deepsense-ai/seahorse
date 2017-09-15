@@ -1,46 +1,107 @@
 'use strict';
 
+const common = {
+  userIP: {
+    name: 'User IP',
+    instruction: 'IP address of the machine Seahorse is running on. This IP has to be visible from every node of ' +
+    'your cluster.',
+    placeholder: '',
+    type: 'text'
+  },
+  hadoopUser: {
+    name: 'Hadoop User',
+    instruction: 'Fill this option if you have HDFS on your spark cluster and you want to connect with it in your ' +
+    'workflows. This will set HADOOP_USER_NAME environment variable in spark driver.',
+    placeholder: 'e.g. hdfs',
+    type: 'text'
+  },
+  executorMemory: {
+    name: 'Executor Memory',
+    instruction: 'Amount of memory for each executor (e.g. 1000M, 2G). The default is 1G. This is equivalent to ' +
+    'the --executor-memory option in spark-submit.',
+    placeholder: 'e.g. 2G',
+    type: 'text'
+  },
+  totalExecutorCores: {
+    name: 'Total Executor Cores',
+    instruction: 'Total number of cores for all executors. This is equivalent to the --total-executor-cores option' +
+    ' in spark-submit. ',
+    placeholder: 'e.g. 4',
+    type: 'number'
+  },
+  executorCores: {
+    name: 'Executor Cores',
+    instruction: 'Number of cores per executor. This is equivalent to the --executor-cores option in spark-submit.',
+    placeholder: 'e.g. 1',
+    type: 'number'
+  },
+  numExecutors: {
+    name: 'Number of Executors',
+    instruction: 'Number of executors to launch. The default is 2. This is equivalent to the --num-executors ' +
+    'option in spark-submit. ',
+    placeholder: 'e.g. 1',
+    type: 'number'
+  },
+  params : {
+    name: 'Custom settings',
+    instruction: '<div>Here you can specify any additional options to spark-submit. Note that Seahorse runs spark' +
+    ' applications in client mode, so not all options will make sense. Also, Seahorse needs to override some ' +
+    'settings in order to be fully functional.</div>' +
+    '<div>Parameters specified here will override parameters specified in fields above. Each parameter should be ' +
+    'defined in separate line.</div>',
+    placeholder: 'e.g.\n--conf spark.broadcast.compress=true\n--executor-memory 1G',
+    type: 'textarea'
+  }
+};
+
+const yarn = {
+  main: 'YARN',
+  uri: {
+    name: 'Hadoop Configuration Directory',
+    instruction: '<div>In order to run Spark on Yarn you need to provide a directory configuration for your ' +
+    'YARN cluster. This directory should contain several xml files (for example: <i>hdfs-site.xml</i>). ' +
+    'Please copy the configuration directory to <code>your-seahorse-startup-directory/data/</code> and and point ' +
+    'to it in the above field.</div>' +
+    '<div> For example, after copying a <code>MyYARN</code> configuration directory to ' +
+    '<code>your-seahorse-startup-directory/data/</code>, this field should be filled with ' +
+    '<code>/resources/data/MyYARN</code>.</div>',
+    placeholder: 'e.g. /resources/data/MyYARN',
+    type: 'text'
+  },
+};
+
+const mesos = {
+  main: 'Mesos',
+  uri: {
+    name: 'Master URL',
+    instruction: 'The master URL for the cluster.',
+    placeholder: 'e.g. mesos://host:port',
+    type: 'text'
+  }
+};
+
+const standalone = {
+  main: 'Stand-alone',
+  uri: {
+    name: 'Master URL',
+    instruction: 'The master URL for the cluster.',
+    placeholder: 'e.g. spark://host:port',
+    type: 'text'
+  }
+};
+
+const local = {
+  main: 'Local'
+};
+
+
 exports.inject = function (module) {
   module.constant('PresetModalLabels', {
-    yarn: {
-      main: 'YARN',
-      uri: 'Hadoop Configuration Directory',
-      userIP: 'User IP',
-      hadoopUser: 'Hadoop User',
-      instruction: '<div><b>In order to run Spark on Yarn</b> you need to provide a directory configuration for your ' +
-      'YARN cluster - Hadoop Configuration Directory. This directory should contain several' +
-      'xml files (for example: hdfs-site.xml).</div>' +
-      '<div>Please copy the configuration directory to <code>your-seahorse-startup-directory/data/</code> and point' +
-      'to it in the <i>Hadoop Configuration Directory</i> Hadoop Configuration Directory field. For example,' +
-      ' after copying a <code>MyYARN</code> configuration directory to <code>your-seahorse-startup-directory/data/</code>, ' +
-      '<i>Hadoop Configuration Directory</i> Hadoop Configuration Directory field should be filled with' +
-      '<code>your-seahorse-startup-directory/data/MyYARN</code>.</div>',
-      executorMemory: 'Executor memory',
-      totalExecutorCores: 'Total executor cores',
-      numExecutors: 'Number of executors'
-    },
-    mesos: {
-      main: 'Mesos',
-      uri: 'Spark Master Uri',
-      userIP: 'User IP',
-      hadoopUser: 'Hadoop User',
-      executorMemory: 'Executor memory',
-      totalExecutorCores: 'Total executor cores'
-    },
-    standalone: {
-      main: 'Stand-alone',
-      uri: 'Spark Master Uri',
-      userIP: 'User IP',
-      hadoopUser: 'Hadoop User',
-      executorMemory: 'Executor memory',
-      totalExecutorCores: 'Total executor cores',
-      executorCores: 'Executor cores'
-    },
-    local: {
-      main: 'Default - local',
-      executorMemory: 'Executor memory',
-      totalExecutorCores: 'Total executor cores',
-      executorCores: 'Executor cores'
-    }
+    yarn: _.assign(yarn, _.pick(common, ['userIP', 'hadoopUser', 'executorMemory', 'executorCores', 'numExecutors',
+      'params'])),
+    mesos: _.assign(mesos, _.pick(common, ['userIP', 'hadoopUser', 'executorMemory', 'totalExecutorCores', 'params'])),
+    standalone: _.assign(standalone, _.pick(common, ['userIP', 'hadoopUser', 'executorMemory', 'totalExecutorCores',
+      'executorCores', 'params'])),
+    local: _.assign(local, _.pick(common, ['executorMemory', 'totalExecutorCores', 'executorCores', 'numExecutors']))
   });
 };

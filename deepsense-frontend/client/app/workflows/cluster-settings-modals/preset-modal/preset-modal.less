@@ -7,7 +7,7 @@
 .preset-modal {
   textarea.cluster-input:focus,
   input.cluster-input:focus {
-    border: 1px solid @border-grey;
+    border: 1px solid @seahorse-light-blue;
   }
 
   ::-webkit-input-placeholder,
@@ -22,13 +22,17 @@
   }
 
   .error,
-  input.error,
-  input.error:focus {
-    border: 1px solid @seahorse-light-blue;
+  input.error {
+    border: 1px solid @seahorse-error-red;
   }
 
   .form-row {
     margin: 10px 0;
+  }
+
+  code {
+    color: @code-color-grey;
+    background-color: @color-light-grey;
   }
 
   &__header {
@@ -65,30 +69,18 @@
       line-height: 18px;
       padding-top: 5px;
       padding-bottom: 15px;
-
-      .instructions-text {
-        font-size: 14px;
-
-        code {
-          color: @code-color-grey;
-        }
-
-        div {
-          margin: 10px 0;
-        }
-      }
+      animation-duration: .2s;
     }
 
     .input-validation-error {
       font-weight: bold;
-      margin-top: 5px;
+      margin: 5px 0;
       color: @seahorse-light-blue;
       font-size: 14px;
     }
 
     .main-form-row {
-      min-height: 45px;
-      margin: 15px 0;
+      margin: 0;
       display: flex;
       align-items: center;
     }
@@ -96,11 +88,6 @@
     .label-main {
       font-size: 18px;
       font-weight: bold;
-    }
-
-    .label-additional {
-      font-size: 13px;
-      font-weight: normal;
     }
   }
 

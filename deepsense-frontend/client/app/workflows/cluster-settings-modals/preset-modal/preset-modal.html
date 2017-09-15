@@ -2,13 +2,13 @@
 
   <div class="modal-header preset-modal__header">
     <div class="row form-row" ng-if="!controller.isEditingEnabled() && !controller.preset.isDefault">
-      <div class="col-md-7 editing-blocked">
+      <div class="col-md-12 editing-blocked">
         <b>Editing is blocked.</b>
         <span>In order to edit this preset, please stop editing your workflow first. </span>
       </div>
     </div>
     <div class="row form-row" ng-if="controller.preset.isDefault">
-      <div class="col-md-7 editing-blocked">
+      <div class="col-md-12 editing-blocked">
         <b>This preset is default.</b>
         <span>You cannot edit preset which is set as default. </span>
       </div>
@@ -23,9 +23,10 @@
                  placeholder="Settings name (required)"
                  ng-model="controller.preset.name"
                  ng-disabled="!controller.isEditingEnabled()"
-                 ng-class="{'error': controller.nameInNameInputUsed() || controller.nameInputInvalid()}"
+                 ng-class="{'error': controller.nameInNameInputUsed() || controller.errors['name']}"
                  name="presetName"
                  maxlength="30"
+                 ng-focus="controller.focused = 'name'"
                  required
           />
         </div>
@@ -34,8 +35,8 @@
             <div class="error-highlight" ng-if="controller.isPresetNameUsed()">
               Name already exists, choose another one
             </div>
-            <div class="error-highlight" ng-if="controller.isNameInputInvalid()">
-              Settings name is required
+            <div class="error-highlight" ng-if="controller.errors['name']">
+              {{controller.errors['name']}}
             </div>
           </div>
         </div>
@@ -45,131 +46,53 @@
 
 
   <div class="modal-body preset-modal__body">
-    <div class="row form-row" ng-if="controller.labels.instruction">
-      <div class="col-md-12">
-        <div class="label-main">How to provide configuration directory?</div>
-      </div>
-    </div>
-    <div class="row form-row instructions" ng-if="controller.labels.instruction">
-      <div class="col-md-12">
-        <div class="instructions-text" ng-bind-html="controller.labels.instruction"></div>
-      </div>
-    </div>
 
-    <div class="row main-form-row" ng-if="controller.labels.uri">
-      <div class="col-md-4">
-        <div class="label-main">{{controller.labels.uri}}</div>
-      </div>
-      <div class="col-md-8">
-        <input class="form-control cluster-input"
-               placeholder="http://path/to/mesos/cluster (required)"
-               ng-model="controller.preset.uri"
-               ng-disabled="!controller.isEditingEnabled() || controller.preset.isDefault"
-               ng-class="{'highlight': controller.uriInputInvalid()}"
-               name="uri"
-               required
-        />
-        <div class="input-validation-error" >
-          <span ng-if="controller.uriInputInvalid()">This field is required.</span>
-          <span ng-if="controller.errors.uri">{{controller.errors.uri}}</span>
+    <div ng-repeat="field in ::['uri', 'userIP', 'hadoopUser', 'executorMemory', 'totalExecutorCores', 'executorCores',
+    'numExecutors'] track by $index">
+      <div class="row main-form-row" ng-if="::controller.labels[field]">
+        <div class="col-md-4">
+          <div class="label-main">
+            {{::controller.labels[field].name}}
+          </div>
+        </div>
+        <div class="col-md-8">
+          <input class="form-control cluster-input {{field}}-input"
+                 placeholder="{{::controller.labels[field].placeholder}}"
+                 ng-model="controller.preset[field]"
+                 ng-disabled="!controller.isEditingEnabled() || controller.preset.isDefault"
+                 ng-class="{'error': controller.errors[field]}"
+                 ng-focus="controller.focused = field"
+                 name="{{::field}}"
+                 type="{{::controller.labels[field].type}}"
+          />
+          <div class="input-validation-error" >
+            <span ng-if="controller.errors[field]">{{controller.errors[field]}}</span>
+          </div>
         </div>
       </div>
-    </div>
-
-    <div class="row main-form-row" ng-if="controller.labels.userIP">
-      <div class="col-md-4">
-        <div class="label-main">{{controller.labels.userIP}}</div>
-      </div>
-      <div class="col-md-5">
-        <input class="form-control cluster-input"
-               placeholder="e.g. localhost"
-               ng-model="controller.preset.userIP"
-               ng-disabled="!controller.isEditingEnabled()"
-        />
+      <div class="row form-row instructions animated fadeIn" ng-show="controller.focused === field">
+        <div class="col-md-12" ng-bind-html="controller.labels[field].instruction"></div>
       </div>
     </div>
-
-    <div class="row main-form-row" ng-if="controller.labels.hadoopUser">
-      <div class="col-md-4">
-        <div class="label-main">{{controller.labels.hadoopUser}}</div>
-      </div>
-      <div class="col-md-5">
-        <input class="form-control cluster-input"
-               placeholder="e.g. Hadoop User"
-               ng-model="controller.preset.hadoopUser"
-               ng-disabled="!controller.isEditingEnabled()"
-        />
-      </div>
-    </div>
-
-    <div class="row form-row" ng-if="controller.labels.executorMemory">
-      <div class="col-md-4">
-        <div class="label-main">{{controller.labels.executorMemory}}</div>
-      </div>
-      <div class="col-md-5">
-        <input class="form-control cluster-input"
-               placeholder="e.g. 3"
-               ng-model="controller.preset.executorMemory"
-               ng-disabled="!controller.isEditingEnabled()"
-        />
-      </div>
-    </div>
-
-    <div class="row main-form-row" ng-if="controller.labels.totalExecutorCores">
-      <div class="col-md-4">
-        <div class="label-main">{{controller.labels.totalExecutorCores}}</div>
-      </div>
-      <div class="col-md-5">
-        <input class="form-control cluster-input"
-               placeholder="e.g. 2"
-               ng-model="controller.preset.totalExecutorCores"
-               ng-disabled="!controller.isEditingEnabled()"
-               type="number" min="0"
-        />
-      </div>
-    </div>
-
-    <div class="row main-form-row" ng-if="controller.labels.executorCores">
-      <div class="col-md-4">
-        <div class="label-main">{{controller.labels.executorCores}}</div>
-      </div>
-      <div class="col-md-5">
-        <input class="form-control cluster-input"
-               placeholder="e.g. 2"
-               ng-model="controller.preset.executorCores"
-               ng-disabled="!controller.isEditingEnabled()"
-               type="number" min="0"
-        />
-      </div>
-    </div>
-
-    <div class="row main-form-row" ng-if="controller.labels.numExecutors">
-      <div class="col-md-4">
-        <div class="label-main">{{controller.labels.numExecutors}}</div>
-      </div>
-      <div class="col-md-5">
-        <input class="form-control cluster-input"
-               placeholder="e.g 2"
-               ng-model="controller.preset.numExecutors"
-               ng-disabled="!controller.isEditingEnabled()"
-               type="number" min="0"
-        />
-      </div>
-    </div>
-
 
     <hr/>
     <div class="row form-row">
       <div class="col-md-12">
-        <div class="label-main">Custom settings</div>
+        <div class="label-main">
+          {{controller.labels.params.name}}
+        </div>
       </div>
+    </div>
+    <div class="row form-row instructions" ng-show="controller.focused === 'params'">
+      <div class="col-md-12" ng-bind-html="controller.labels.params.instruction"></div>
     </div>
     <div class="row form-row">
       <div class="col-md-12 cluster-textarea">
         <textarea class="form-control cluster-input" rows="6"
                   ng-disabled="!controller.isEditingEnabled()"
                   ng-model="controller.preset.params"
-                  placeholder="-- key value"
+                  placeholder="{{::controller.labels.params.placeholder}}"
+                  ng-focus="controller.focused = 'params'"
         ></textarea>
       </div>
     </div>
@@ -184,7 +107,7 @@
     <button type="button" class="btn cluster-btn cluster-btn__blue"
             ng-click="controller.ok()"
             ng-if="controller.isEditingEnabled()"
-            ng-disabled="controller.presetForm.$invalid || controller.preset.isDefault">
+            ng-disabled="controller.preset.isDefault">
       Save
     </button>
   </div>
