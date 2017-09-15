@@ -45,20 +45,21 @@ class WMContentsManager(ContentsManager):
     def _checkpoints_class_default(self):
         return WMCheckpoints
 
-    def get_workflow_id(self, path):
-        m = re.match(".*([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\.ipynb[\?.*]?", path)
+    def get_notebook_id(self, path):
+        uuid_pattern = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+        m = re.match(".*({})\/({})[\?.*]?".format(uuid_pattern, uuid_pattern), path)
         if m is None:
             return None
-        return m.group(1)
+        return (m.group(1), m.group(2))
 
-    def get_wm_notebook_url(self, workflow_id):
-        url_format = "{}/v1/workflows/{}/notebook"
-        return url_format.format(self.workflow_manager_url, workflow_id)
+    def get_wm_notebook_url(self, workflow_id, node_id):
+        url_format = "{}/v1/workflows/{}/notebook/{}"
+        return url_format.format(self.workflow_manager_url, workflow_id, node_id)
 
-    def create_model(self, content_json, workflow_id):
+    def create_model(self, content_json, workflow_id, node_id):
         return {
-            "name": workflow_id,
-            "path": workflow_id + ".ipynb",
+            "name": "Seahorse Editor Notebook",
+            "path": workflow_id + "/" + node_id,
             "type": "notebook",
             "writable": True,
             "last_modified": DUMMY_CREATED_DATE,
@@ -86,13 +87,13 @@ class WMContentsManager(ContentsManager):
             "nbformat_minor": 0
         }
 
-    def save_notebook(self, workflow_id, content_json, return_content=False):
-        notebook_url = self.get_wm_notebook_url(workflow_id)
+    def save_notebook(self, workflow_id, node_id, content_json, return_content=False):
+        notebook_url = self.get_wm_notebook_url(workflow_id, node_id)
 
         try:
             response = urllib2.urlopen(notebook_url, content_json.encode("utf-8"))
             if response.getcode() == 201:
-                return self.create_model(content_json if return_content else None, workflow_id)
+                return self.create_model(content_json if return_content else None, workflow_id, node_id)
             else:
                 raise web.HTTPError(response.status, response.msg)
         except web.HTTPError:
@@ -103,16 +104,17 @@ class WMContentsManager(ContentsManager):
             raise web.HTTPError(500, str(e))
 
     def get(self, path, content=True, type=None, format=None):
-        workflow_id = self.get_workflow_id(path)
-        if workflow_id is None:
+        notebook_id = self.get_notebook_id(path)
+        if notebook_id is None:
             raise web.HTTPError(400, "Invalid path")
+        (workflow_id, node_id) = notebook_id
 
         try:
-            notebook_url = self.get_wm_notebook_url(workflow_id)
+            notebook_url = self.get_wm_notebook_url(workflow_id, node_id)
             response = urllib2.urlopen(notebook_url)
             if response.getcode() == 200:
                 content_json = response.read().decode("utf-8")
-                return self.create_model(content_json if content else None, workflow_id)
+                return self.create_model(content_json if content else None, workflow_id, node_id)
             else:
                 raise web.HTTPError(response.status, response.msg)
         except web.HTTPError:
@@ -120,23 +122,24 @@ class WMContentsManager(ContentsManager):
         except urllib2.HTTPError as e:
             if e.code == 404:
                 content_json = writes(from_dict(self.create_notebook()), NBFORMAT_VERSION)
-                return self.save_notebook(workflow_id, content_json, content)
+                return self.save_notebook(workflow_id, node_id, content_json, content)
             else:
                 raise web.HTTPError(e.code, e.msg)
         except Exception as e:
             raise web.HTTPError(500, str(e))
 
     def save(self, model, path):
-        workflow_id = self.get_workflow_id(path)
-        if workflow_id is None:
+        notebook_id = self.get_notebook_id(path)
+        if notebook_id is None:
             raise web.HTTPError(400, "Invalid path")
+        (workflow_id, node_id) = notebook_id
 
         if model['type'] != "notebook":
             model['message'] = "Cannot save object of type: {}".format(model['type'])
             return model
 
         content_json = writes(from_dict(model['content']), NBFORMAT_VERSION)
-        return self.save_notebook(workflow_id, content_json, False)
+        return self.save_notebook(workflow_id, node_id, content_json, False)
 
     def delete_file(self, path):
         raise web.HTTPError(400, "Unsupported: delete_file {}".format(path))

@@ -14,9 +14,10 @@ object NotebookTableCreator {
   private def createTableCommand(table: String): String = {
     s"create table if not exists $table (" +
       s"""
-         id uuid,
+         workflow_id uuid,
+         node_id uuid,
          notebook text,
-         primary key (id)
+         primary key (workflow_id, node_id)
       );
       """
   }

@@ -16,6 +16,8 @@ import io.deepsense.commons.StandardSpec
 import io.deepsense.commons.cassandra.CassandraTestSupport
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.utils.Logging
+import io.deepsense.graph.Node
+import io.deepsense.models.workflows.Workflow
 
 class NotebookDaoCassandraImplIntegSpec
   extends StandardSpec
@@ -28,11 +30,12 @@ class NotebookDaoCassandraImplIntegSpec
 
   var notebooksDao: NotebookDaoCassandraImpl = _
 
-  val n1@(notebook1Id, notebook1) = createNotebook()
-  val n2@(notebook2Id, notebook2) = createNotebook()
-  val n3@(notebook3Id, notebook3) = createNotebook()
+  val n1@(notebook1Id, node1Id, notebook1) = createNotebook()
+  val n2@(notebook2Id, node2Id, notebook2) = createNotebook()
+  val n3@(notebook3Id, node3Id, notebook3) = createNotebook()
+  val n4 = (notebook1Id, node2Id, notebook2)
 
-  val storedNotebooks = Set(n1, n2)
+  val storedNotebooks = Set(n1, n2, n4)
 
   def cassandraTableName: String = "notebooks"
   def cassandraKeySpaceName: String = "workflowmanager"
@@ -45,20 +48,28 @@ class NotebookDaoCassandraImplIntegSpec
   "NotebooksDao" should {
 
     "find notebook by id" in withStoredNotebooks(storedNotebooks) {
-      whenReady(notebooksDao.get(notebook1Id)) { notebook =>
+      whenReady(notebooksDao.get(notebook1Id, node1Id)) { notebook =>
         notebook shouldBe Some(notebook1)
       }
     }
 
+    "get all notebooks for workflow" in withStoredNotebooks(storedNotebooks) {
+      whenReady(notebooksDao.getAll(notebook1Id)) { notebooks =>
+        notebooks.size shouldBe 2
+        notebooks.get(node1Id) shouldBe Some(notebook1)
+        notebooks.get(node2Id) shouldBe Some(notebook2)
+      }
+    }
+
     "return None if notebook does not exist" in withStoredNotebooks(storedNotebooks) {
-      whenReady(notebooksDao.get(notebook3Id)) { notebook =>
+      whenReady(notebooksDao.get(notebook3Id, node3Id)) { notebook =>
         notebook shouldBe None
       }
     }
 
     "create notebook" in withStoredNotebooks(storedNotebooks) {
-      whenReady(notebooksDao.save(notebook3Id, notebook3)) { _ =>
-        whenReady(notebooksDao.get(notebook3Id)) { notebook =>
+      whenReady(notebooksDao.save(notebook3Id, node3Id, notebook3)) { _ =>
+        whenReady(notebooksDao.get(notebook3Id, node3Id)) { notebook =>
           notebook shouldBe Some(notebook3)
         }
       }
@@ -66,8 +77,8 @@ class NotebookDaoCassandraImplIntegSpec
 
     "update notebook" in withStoredNotebooks(storedNotebooks) {
       val modifiedNotebook2 = "modified"
-      whenReady(notebooksDao.save(notebook2Id, modifiedNotebook2)) { _ =>
-        whenReady(notebooksDao.get(notebook2Id)) { notebook =>
+      whenReady(notebooksDao.save(notebook2Id, node2Id, modifiedNotebook2)) { _ =>
+        whenReady(notebooksDao.get(notebook2Id, node2Id)) { notebook =>
           notebook shouldBe Some(modifiedNotebook2)
         }
       }
@@ -75,9 +86,9 @@ class NotebookDaoCassandraImplIntegSpec
   }
 
   private def withStoredNotebooks(
-      storedNotebooks: Set[(Id, String)])(testCode: => Any): Unit = {
+      storedNotebooks: Set[(Workflow.Id, Node.Id, String)])(testCode: => Any): Unit = {
     val s = Future.sequence(storedNotebooks.map {
-      case (id, notebook) => notebooksDao.save(id, notebook)
+      case (workflowId, nodeId, notebook) => notebooksDao.save(workflowId, nodeId, notebook)
     })
     Await.ready(s, operationDuration)
     try {
@@ -87,7 +98,7 @@ class NotebookDaoCassandraImplIntegSpec
     }
   }
 
-  def createNotebook(): (Id, String) = {
-    (Id.randomId, RandomStringUtils.randomAlphanumeric(16))
+  def createNotebook(): (Workflow.Id, Node.Id, String) = {
+    (Workflow.Id.randomId, Node.Id.randomId, RandomStringUtils.randomAlphanumeric(16))
   }
 }

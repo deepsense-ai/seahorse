@@ -249,12 +249,12 @@ abstract class WorkflowApi @Inject() (
                 }
               }
             } ~
-            path(JavaUUID / "notebook") { workflowId =>
+            path(JavaUUID / "notebook" / JavaUUID) { (workflowId, nodeId) =>
               get {
                 withUserContext { userContext =>
                   complete {
                     workflowManagerProvider.forContext(userContext)
-                      .getNotebook(workflowId)
+                      .getNotebook(workflowId, nodeId)
                   }
                 }
               } ~
@@ -262,7 +262,7 @@ abstract class WorkflowApi @Inject() (
                 withUserContext { userContext =>
                   entity(as[String]) { notebook =>
                     onComplete(workflowManagerProvider.forContext(userContext)
-                      .saveNotebook(workflowId, notebook)) {
+                      .saveNotebook(workflowId, nodeId, notebook)) {
                       case Success(_) => complete(StatusCodes.Created)
                       case Failure(exception) => failWith(exception)
                     }

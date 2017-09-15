@@ -9,6 +9,7 @@ import scala.concurrent.Future
 import org.joda.time.DateTime
 
 import io.deepsense.commons.models.Id
+import io.deepsense.graph.Node
 import io.deepsense.models.workflows._
 
 /**
@@ -92,15 +93,17 @@ trait WorkflowManager {
    * Returns a notebook for workflow with the specified id.
    *
    * @param workflowId Id of the workflow.
-   * @return Notebook with the id as an object or None if the notebook does not exist.
+   * @param nodeId Id of the node.
+   * @return Notebook or None if the notebook does not exist.
    */
-  def getNotebook(workflowId: Workflow.Id): Future[Option[String]]
+  def getNotebook(workflowId: Workflow.Id, nodeId: Node.Id): Future[Option[String]]
 
   /**
    * Saves a notebook for workflow with the specified id.
    *
    * @param workflowId Id of the workflow.
+   * @param nodeId Id of the node.
    * @param notebook Notebook to be saved.
    */
-  def saveNotebook(workflowId: Workflow.Id, notebook: String): Future[Unit]
+  def saveNotebook(workflowId: Workflow.Id, nodeId: Node.Id, notebook: String): Future[Unit]
 }

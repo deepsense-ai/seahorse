@@ -59,9 +59,11 @@ class WorkflowsApiSpec
   val workflowAName = "Very nice workflow&*workflow"
   val (workflowA, knowledgeA) = newWorkflowAndKnowledge()
   val workflowAId = Workflow.Id.randomId
+  val nodeAId = Node.Id.randomId
   val workflowAWithResults = newWorkflowWithResults(workflowAId, workflowA)
   val (workflowB, knowledgeB) = newWorkflowAndKnowledge()
   val workflowBId = Workflow.Id.randomId
+  val nodeBId = Node.Id.randomId
   val workflowBWithSavedResults = WorkflowWithSavedResults(
     ExecutionReportWithId.Id.randomId,
     newWorkflowWithResults(workflowBId, workflowB)._1)
@@ -79,16 +81,16 @@ class WorkflowsApiSpec
 
   val noVersionWorkflowJson = JsObject(
     "foo" -> JsString("bar"),
-    "thirdPartyData" -> JsObject())
+    "thirdPartyData" -> JsObject("notebooks" -> JsObject()))
   val obsoleteVersionWorkflowJson =
     JsObject(
       "metadata" -> JsObject("apiVersion" -> JsString("0.0.0")),
-      "thirdPartyData" -> JsObject())
+      "thirdPartyData" -> JsObject("notebooks" -> JsObject()))
   val obsoleteVersionWorkflowWithNotebookJson = obsoleteVersionWorkflowJson.copy()
   val incorrectVersionFormatWorkflowJson =
     JsObject(
       "metadata" -> JsObject("apiVersion" -> JsString("foobar")),
-      "thirdPartyData" -> JsObject())
+      "thirdPartyData" -> JsObject("notebooks" -> JsObject()))
 
   val noVersionWorkflow = noVersionWorkflowJson.prettyPrint
   val obsoleteVersionWorkflow = obsoleteVersionWorkflowJson.prettyPrint
@@ -111,7 +113,8 @@ class WorkflowsApiSpec
     val thirdPartyData = ThirdPartyData(JsObject(
       "gui" -> JsObject(
         "name" -> JsString(name)
-      )
+      ),
+      "notebooks" -> JsObject()
     ).toString)
     val knowledge = graph.inferKnowledge(inferContext)
     val workflow = Workflow(metadata, graph, thirdPartyData)
@@ -415,7 +418,7 @@ class WorkflowsApiSpec
             workflowAId,
             workflowA.metadata,
             workflowA.graph,
-            thirdPartyDataWithNotebook(workflowA.additionalData, notebookA),
+            thirdPartyDataWithNotebook(workflowA.additionalData, nodeAId, notebookA),
             Variables()
           )
         }
@@ -489,7 +492,7 @@ class WorkflowsApiSpec
               Map("filename" -> "workflow.json")))
 
           val expectedJson = jsonWithNotebook(
-            obsoleteVersionWorkflowWithNotebookJson, obsoleteNotebook)
+            obsoleteVersionWorkflowWithNotebookJson, nodeAId, obsoleteNotebook)
           responseAs[JsObject] shouldBe expectedJson
         }
         ()
@@ -1066,10 +1069,10 @@ class WorkflowsApiSpec
     }
   }
 
-  "GET /workflows/:id/notebook" should {
+  "GET /workflows/:workflowid/notebook/:nodeid" should {
     "return notebook" when {
       "notebook exists" in {
-        Get(s"/$apiPrefix/$workflowAId/notebook") ~>
+        Get(s"/$apiPrefix/$workflowAId/notebook/$nodeAId") ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
 
@@ -1082,7 +1085,7 @@ class WorkflowsApiSpec
 
     "return Not found" when {
       "notebook does not exists" in {
-        Get(s"/$apiPrefix/${Id.randomId}/notebook") ~>
+        Get(s"/$apiPrefix/${Workflow.Id.randomId}/notebook/${Node.Id.randomId}") ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
@@ -1091,10 +1094,10 @@ class WorkflowsApiSpec
     }
   }
 
-  "POST /workflows/:id/notebook" should {
+  "POST /workflows/:workflowid/notebook/:nodeid" should {
     "create notebook" in {
       val notebook = "notebook content"
-      Post(s"/$apiPrefix/${Id.randomId}/notebook", notebook) ~>
+      Post(s"/$apiPrefix/${Workflow.Id.randomId}/notebook/${Node.Id.randomId}", notebook) ~>
         addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
         status should be(StatusCodes.Created)
       }
@@ -1133,23 +1136,31 @@ class WorkflowsApiSpec
 
   def mockNotebookStorage(): NotebookStorage = {
     val storage = new TestNotebookStorage
-    storage.save(workflowAId, notebookA)
-    storage.save(workflowBId, notebookB)
-    storage.save(obsoleteVersionWorkflowWithNotebookId, obsoleteNotebook)
+    storage.save(workflowAId, nodeAId, notebookA)
+    storage.save(workflowBId, nodeBId, notebookB)
+    storage.save(obsoleteVersionWorkflowWithNotebookId, nodeAId, obsoleteNotebook)
     storage
   }
 
-  private def thirdPartyDataWithNotebook(additionalData: ThirdPartyData, notebook: String) = {
+  private def thirdPartyDataWithNotebook(
+      additionalData: ThirdPartyData,
+      nodeId: Node.Id,
+      notebook: String) = {
     val thirdPartyDataJson = additionalData.data.parseJson.asJsObject
+    val notebooks = JsObject(nodeId.toString -> notebook.parseJson)
     ThirdPartyData(
       JsObject(
-        thirdPartyDataJson.fields.updated("notebook", notebook.parseJson)).toString)
+        thirdPartyDataJson.fields.updated("notebooks", notebooks)).toString)
   }
 
-  private def jsonWithNotebook(workflowJson: JsValue, notebook: String) = {
+  private def jsonWithNotebook(
+      workflowJson: JsValue,
+      nodeId: Node.Id,
+      notebook: String) = {
     val thirdPartyData = workflowJson.asJsObject.fields("thirdPartyData")
+    val notebooks = JsObject(nodeId.toString -> notebook.parseJson)
     val thirdPartyDataWithNotebook = JsObject(
-      thirdPartyData.asJsObject.fields.updated("notebook", notebook.parseJson))
+      thirdPartyData.asJsObject.fields.updated("notebooks", notebooks))
     JsObject(workflowJson.asJsObject.fields.updated("thirdPartyData", thirdPartyDataWithNotebook))
   }
 
@@ -1211,14 +1222,20 @@ class WorkflowsApiSpec
 
   class TestNotebookStorage extends NotebookStorage {
 
-    val notebooks: TrieMap[Id, String] = TrieMap()
+    val notebooks: TrieMap[(Workflow.Id, Node.Id), String] = TrieMap()
 
-    override def get(id: Id): Future[Option[String]] = {
-      Future.successful(notebooks.get(id))
+    override def get(workflowId: Workflow.Id, nodeId: Node.Id): Future[Option[String]] = {
+      Future.successful(notebooks.get((workflowId, nodeId)))
     }
 
-    override def save(id: Id, notebook: String): Future[Unit] = {
-      Future.successful(notebooks.put(id, notebook))
+    override def save(workflowId: Workflow.Id, nodeId: Node.Id, notebook: String): Future[Unit] = {
+      Future.successful(notebooks.put((workflowId, nodeId), notebook))
+    }
+
+    override def getAll(workflowId: Workflow.Id): Future[Map[Node.Id, String]] = {
+      Future.successful(notebooks.collect {
+        case ((w, nodeId), notebook) if workflowId == w => (nodeId -> notebook)
+      }.toMap)
     }
   }
 }

@@ -15,7 +15,7 @@ import io.deepsense.commons.auth.{AuthorizatorProvider, UserContextAuthorizator}
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.deeplang.inference.InferContext
-import io.deepsense.graph.{GraphKnowledge, StatefulGraph, graphstate}
+import io.deepsense.graph.{Node, GraphKnowledge, StatefulGraph, graphstate}
 import io.deepsense.models.workflows._
 import io.deepsense.workflowmanager.storage.{NotebookStorage, WorkflowResultsStorage, WorkflowStorage}
 
@@ -39,6 +39,7 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
   val thirdPartyData = mock[ThirdPartyData]
   val storedWorkflow = Workflow(metadata, graph, thirdPartyData)
   val storedWorkflowId = Workflow.Id.randomId
+  val storedNodeId = Node.Id.randomId
   val storedWorkflowWithKnowledge = WorkflowWithKnowledge(
     storedWorkflowId, metadata, graph, thirdPartyData, knowledge)
   val workflowStorage: WorkflowStorage = mock[WorkflowStorage]
@@ -78,7 +79,7 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
         when(workflowStorage.get(any()))
           .thenReturn(Future.successful(None))
 
-        when(notebookStorage.get(any()))
+        when(notebookStorage.get(any(), any()))
           .thenReturn(Future.successful(None))
 
         val eventualWorkflow = workflowManager.get(Workflow.Id.randomId)
@@ -88,8 +89,8 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
     "return workflow from the storage" in {
       when(workflowStorage.get(storedWorkflowId))
         .thenReturn(Future.successful(Some(Right(storedWorkflow))))
-      when(notebookStorage.get(storedWorkflowId))
-        .thenReturn(Future.successful(None))
+      when(notebookStorage.getAll(storedWorkflowId))
+        .thenReturn(Future.successful(Map[Node.Id, String]()))
 
       val eventualWorkflow = workflowManager.get(storedWorkflowId)
       whenReady(eventualWorkflow) { _.get shouldEqual Right(storedWorkflowWithKnowledge) }

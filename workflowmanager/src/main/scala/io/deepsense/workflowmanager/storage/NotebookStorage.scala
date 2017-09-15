@@ -7,22 +7,34 @@ package io.deepsense.workflowmanager.storage
 import scala.concurrent.Future
 
 import io.deepsense.commons.models.Id
+import io.deepsense.graph.Node
+import io.deepsense.models.workflows.Workflow
 
 trait NotebookStorage {
 
   /**
-   * Returns a notebook with the specified id.
+   * Returns a notebook with the specified workflow and node id.
    *
-   * @param id Id of the notebook.
-   * @return Notebook with the id as an object or None if the notebook does not exist.
+   * @param workflowId Id of the workflow.
+   * @param nodeId Id of the node.
+   * @return Notebook or None if the notebook does not exist.
    */
-  def get(id: Id): Future[Option[String]]
+  def get(workflowId: Workflow.Id, nodeId: Node.Id): Future[Option[String]]
 
   /**
    * Saves a notebook.
    *
-   * @param id Id of the notebook.
+   * @param workflowId Id of the notebook.
+   * @param nodeId Id of the node.
    * @param notebook Notebook to be saved.
    */
-  def save(id: Id, notebook: String): Future[Unit]
+  def save(workflowId: Workflow.Id, nodeId: Node.Id, notebook: String): Future[Unit]
+
+  /**
+   * Returns all notebooks for workflow with specified id.
+   *
+   * @param workflowId Id of the workflow
+   * @return Notebooks for specified workflow.
+   */
+  def getAll(workflowId: Workflow.Id): Future[Map[Node.Id, String]]
 }

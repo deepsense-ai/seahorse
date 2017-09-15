@@ -17,7 +17,7 @@ import io.deepsense.commons.auth.{Authorizator, AuthorizatorProvider}
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.inference.InferContext
-import io.deepsense.graph.CyclicGraphException
+import io.deepsense.graph.{CyclicGraphException, Node}
 import io.deepsense.models.workflows._
 import io.deepsense.workflowmanager.exceptions.WorkflowNotFoundException
 import io.deepsense.workflowmanager.storage.{NotebookStorage, WorkflowResultsStorage, WorkflowStorage}
@@ -65,14 +65,8 @@ class WorkflowManagerImpl @Inject()(
     whenGraphAcyclic(workflow) {
       authorizator.withRole(roleUpdate) { userContext =>
         workflowStorage.get(workflowId).flatMap {
-          case Some(_) => {
-            val notebook = extractNotebookJson(workflow)
-            val workflowWithoutNotebook = workflowWithRemovedNotebook(workflow)
-            workflowStorage.save(workflowId, workflowWithoutNotebook).map(_ => {
-              notebook.map(notebookJson => notebookStorage.save(workflowId, notebookJson.toString))
-              withKnowledge(workflowId, workflow)
-            })
-          }
+          case Some(_) =>
+            workflowStorage.save(workflowId, workflow).map(_ => withKnowledge(workflowId, workflow))
           case None => throw new WorkflowNotFoundException(workflowId)
         }
       }
@@ -85,7 +79,14 @@ class WorkflowManagerImpl @Inject()(
       authorizator.withRole(roleCreate) {
         userContext => {
           val workflowId = Workflow.Id.randomId
-          workflowStorage.save(workflowId, workflow).map(_ => withKnowledge(workflowId, workflow))
+          val notebooks = extractNotebooks(workflow)
+          val workflowWithoutNotebook = workflowWithRemovedNotebooks(workflow)
+          workflowStorage.save(workflowId, workflowWithoutNotebook).flatMap(_ =>
+            Future.sequence(notebooks.map {
+              case (nodeId, notebookJson) =>
+                notebookStorage.save(workflowId, nodeId, notebookJson.toString)
+            }).map(_ => withKnowledge(workflowId, workflow))
+          )
         }
       }
     }
@@ -136,15 +137,18 @@ class WorkflowManagerImpl @Inject()(
     }
   }
 
-  override def getNotebook(workflowId: Workflow.Id): Future[Option[String]] = {
+  override def getNotebook(workflowId: Workflow.Id, nodeId: Node.Id): Future[Option[String]] = {
     authorizator.withRole(roleGet) { _ =>
-      notebookStorage.get(workflowId)
+      notebookStorage.get(workflowId, nodeId)
     }
   }
 
-  override def saveNotebook(workflowId: Workflow.Id, notebook: String): Future[Unit] = {
+  override def saveNotebook(
+      workflowId: Workflow.Id,
+      nodeId: Node.Id,
+      notebook: String): Future[Unit] = {
     authorizator.withRole(roleUpdate) { _ =>
-      notebookStorage.save(workflowId, notebook)
+      notebookStorage.save(workflowId, nodeId, notebook)
     }
   }
 
@@ -159,61 +163,57 @@ class WorkflowManagerImpl @Inject()(
   }
 
   private def getWorkflowWithNotebook(id: Workflow.Id): Future[Option[Either[String, Workflow]]] = {
-    workflowStorage.get(id).flatMap { maybeResult =>
-      maybeResult match {
-        case Some(workflowStorageResult) => workflowStorageResult.fold(
-          stringWorkflow => stringWorkflowWithNotebook(id, stringWorkflow),
-          objectWorkflow => objectWorkflowWithNotebook(id, objectWorkflow))
-        case None => Future.successful(None)
-      }
+    workflowStorage.get(id).flatMap {
+      case Some(workflowStorageResult) => workflowStorageResult.fold(
+        stringWorkflow => stringWorkflowWithNotebooks(id, stringWorkflow),
+        objectWorkflow => objectWorkflowWithNotebooks(id, objectWorkflow))
+      case None => Future.successful(None)
     }
   }
 
-  private def stringWorkflowWithNotebook(
+  private def stringWorkflowWithNotebooks(
       id: Workflow.Id, stringWorkflow: String): Future[Option[Either[String, Workflow]]] = {
-    notebookStorage.get(id).map {
-      _ match {
-        case Some(notebook) => {
-          val notebookJson = notebook.parseJson
-          val workflowJson = stringWorkflow.parseJson.asJsObject
-          val thirdPartyData = workflowJson.fields("thirdPartyData").asJsObject
-          val thirdPartyDataWithNotebook = JsObject(
-            thirdPartyData.fields.updated("notebook", notebookJson))
-          val workflowWithNotebook = JsObject(
-            workflowJson.fields.updated("thirdPartyData", thirdPartyDataWithNotebook))
-          Some(Left(workflowWithNotebook.toString))
-        }
-        case None => Some(Left(stringWorkflow))
-      }
+    notebookStorage.getAll(id).map { notebooks =>
+      val workflowJson = stringWorkflow.parseJson.asJsObject
+      val thirdPartyData = workflowJson.fields("thirdPartyData").asJsObject
+      val thirdPartyDataWithNotebooks = JsObject(
+        thirdPartyData.fields.updated("notebooks",
+          JsObject(notebooks.map {
+            case (nodeId, notebook) => (nodeId.toString, notebook.parseJson)
+          })))
+      val workflowWithNotebooks = JsObject(
+        workflowJson.fields.updated("thirdPartyData", thirdPartyDataWithNotebooks))
+      Some(Left(workflowWithNotebooks.toString))
     }
   }
 
-  private def objectWorkflowWithNotebook(id: Workflow.Id, workflow: Workflow)
+  private def objectWorkflowWithNotebooks(id: Workflow.Id, workflow: Workflow)
       : Future[Option[Either[String, Workflow]]] = {
-    notebookStorage.get(id).map {
-      _ match {
-        case Some(notebook) => {
-          val notebookJson = notebook.parseJson
-          val additionalDataJson = workflow.additionalData.data.parseJson.asJsObject
-          val enrichedAdditionalDataJson = JsObject(
-            additionalDataJson.fields.updated("notebook", notebookJson))
-          Some(Right(Workflow(
-            workflow.metadata,
-            workflow.graph,
-            ThirdPartyData(enrichedAdditionalDataJson.toString))))
-        }
-        case None => Some(Right(workflow))
-      }
+    notebookStorage.getAll(id).map { notebooks =>
+      val additionalDataJson = workflow.additionalData.data.parseJson.asJsObject
+      val enrichedAdditionalDataJson = JsObject(
+        additionalDataJson.fields.updated("notebooks",
+          JsObject(notebooks.map {
+            case (nodeId, notebook) => (nodeId.toString, notebook.parseJson)
+          })))
+      Some(Right(Workflow(
+        workflow.metadata,
+        workflow.graph,
+        ThirdPartyData(enrichedAdditionalDataJson.toString))))
     }
   }
 
-  private def extractNotebookJson(workflow: Workflow): Option[JsValue] =
-    workflow.additionalData.data.parseJson.asJsObject.fields.get("notebook")
+  private def extractNotebooks(workflow: Workflow): Map[Node.Id, String] =
+    workflow.additionalData.data.parseJson.asJsObject.fields.get("notebooks").map {
+      _.asJsObject.fields.map {
+          case (nodeId, notebook) => (Node.Id.fromString(nodeId), notebook.toString)
+        }
+    }.getOrElse(Map.empty)
 
-  private def workflowWithRemovedNotebook(workflow: Workflow): Workflow = {
+  private def workflowWithRemovedNotebooks(workflow: Workflow): Workflow = {
     val thirdPartyDataJson = workflow.additionalData.data.parseJson.asJsObject
     val prunedThirdPartyData = ThirdPartyData(
-      JsObject((thirdPartyDataJson.fields - "notebook")).toString)
+      JsObject(thirdPartyDataJson.fields - "notebooks").toString)
     Workflow(workflow.metadata, workflow.graph, prunedThirdPartyData)
   }
 

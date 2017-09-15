@@ -19,6 +19,7 @@ create table if not exists workflowresults (
    primary key (id));
 
 create table if not exists notebooks (
-   id uuid,
+   workflow_id uuid,
+   node_id uuid,
    notebook text,
-   primary key (id));
+   primary key (workflow_id, node_id));
