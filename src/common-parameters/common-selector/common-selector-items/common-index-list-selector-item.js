@@ -19,15 +19,18 @@ IndexListSelectorItem.prototype.constructor = GenericSelectorItem;
 
 IndexListSelectorItem.prototype.serialize = function serialize() {
   let isDefined = (v) => !_.isUndefined(v) && !_.isNull(v);
+  let values = [];
+
+  if (isDefined(this.firstNum)) {
+    values.push(this.firstNum);
+    if (isDefined(this.secondNum)) {
+      values.push(this.secondNum);
+    }
+  }
 
   return {
     'type': 'indexRange',
-    'values': isDefined(this.firstNum) && isDefined(this.secondNum) ?
-      [
-        this.firstNum,
-        this.secondNum
-      ] :
-      []
+    'values': values
   };
 };
 
@@ -37,7 +40,7 @@ IndexListSelectorItem.prototype.validate = function () {
 
 IndexListSelectorItem.getType = () => { return {
   'id': 'indexRange',
-  'verbose': 'Indexes list'
+  'verbose': 'Index range'
 };};
 
 module.exports = IndexListSelectorItem;
