@@ -85,8 +85,10 @@ class GraphExecutorActorSpec
       }
     }
 
-    val geaRef = TestActorRef[GraphExecutorActor with TestGraphNodeExecutorFactory with TestShutdowner](Props(
-      new GraphExecutorActor(executionContext, gecPath) with TestGraphNodeExecutorFactory with TestShutdowner))
+    val geaRef =
+      TestActorRef[GraphExecutorActor with TestGraphNodeExecutorFactory with TestShutdowner](Props(
+          new GraphExecutorActor(executionContext, gecPath)
+            with TestGraphNodeExecutorFactory with TestShutdowner))
     val gea = geaRef.underlyingActor
 
     def verifySystemShutDown(): Unit = {

@@ -48,7 +48,7 @@ class EMtoGESpec extends ExperimentExecutionSupport {
         experimentById(experiment.id) shouldBe 'Failed
         val failureDescription: FailureDescription = state.error.get
         failureDescription.code shouldBe NodeFailure
-        failureDescription.title shouldBe Experiment.nodeFailureMessage
+        failureDescription.title shouldBe Experiment.NodeFailureMessage
         failureDescription.message shouldBe None
         failureDescription.details shouldBe Map()
       }

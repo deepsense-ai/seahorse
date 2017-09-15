@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015, CodiLime, Inc.
+ * Copyright (c) 2015, CodiLime Inc.
  */
 
 package io.deepsense.graphexecutor
@@ -119,7 +119,7 @@ class GraphExecutorActor(
 }
 
 object GraphExecutorActor {
-  def props(ec: ExecutionContext, statusReceiverActorPath: String) =
+  def props(ec: ExecutionContext, statusReceiverActorPath: String): Props =
     Props(new GraphExecutorActor(ec, statusReceiverActorPath)
       with ProductionGraphNodeExecutorFactory
       with ProductionSystemShutdowner)

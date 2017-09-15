@@ -33,7 +33,9 @@ object Utils {
    */
   def getConfiguredLocalResource(resourcePath: Path)
                         (implicit conf: Configuration): LocalResource = {
+    // scalastyle:off println
     println(s"Configuration: $conf")
+    // scalastyle:on println
     val resource = Records.newRecord(classOf[LocalResource])
     val jarPath = FileSystem.get(conf).makeQualified(resourcePath)
     val jarStat = FileSystem.get(conf).getFileStatus(jarPath)

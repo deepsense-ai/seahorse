@@ -22,10 +22,12 @@ case class GetAllByTenantId(tenantId: String) extends RunningExperimentsActorMes
 
 case class Update(experiment: Experiment) extends RunningExperimentsActorMessage
 
-case class ExperimentsMap(experimentsByTenantId: Map[String, Set[Experiment]]) extends RunningExperimentsActorMessage
+case class ExperimentsMap(experimentsByTenantId: Map[String, Set[Experiment]])
+  extends RunningExperimentsActorMessage
 
 case class Delete(experimentId: Id) extends RunningExperimentsActorMessage
 
 case class Completed(experiment: Experiment) extends RunningExperimentsActorMessage
 
-case class NodeCompleted(experiment: Experiment, nodeId: Node.Id) extends RunningExperimentsActorMessage
+case class NodeCompleted(experiment: Experiment, nodeId: Node.Id)
+  extends RunningExperimentsActorMessage

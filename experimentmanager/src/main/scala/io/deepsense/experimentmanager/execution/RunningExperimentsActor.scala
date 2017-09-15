@@ -92,7 +92,8 @@ class RunningExperimentsActor @Inject()(
         experiments.put(aborted.id, ExperimentWithClient(aborted, client))
         Success(aborted)
       case Some(ExperimentWithClient(experiment, client)) =>
-        val error = s"Could not terminate experiment $id in state: ${experiment.state.status} (not Running)"
+        val error =
+          s"Could not terminate experiment $id in state: ${experiment.state.status} (not Running)"
         log.error(error)
         Failure(new ExperimentNotRunningException(id))
     }
@@ -124,7 +125,7 @@ trait ProductionGraphExecutorClientFactory extends GraphExecutorClientFactory {
   val entityStorageLabel: String
   val spawner: ClusterSpawner
 
-  def createGraphExecutorClient() = new GraphExecutorClientActor(
+  def createGraphExecutorClient(): Actor = new GraphExecutorClientActor(
     entityStorageLabel = entityStorageLabel, spawner = spawner)
 
 }

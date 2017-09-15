@@ -131,7 +131,8 @@ case class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
     cleanup(resourceManagerClient, entityStorageClientFactory, actorSystem)
   }
 
-  def registerApplicationMaster(resourceManagerClient: AMRMClientAsyncImpl[ContainerRequest], port: Int): Unit = {
+  def registerApplicationMaster(
+    resourceManagerClient: AMRMClientAsyncImpl[ContainerRequest], port: Int): Unit = {
     // Application Master registration
     val appMasterHostname = InetAddress.getLocalHost.getHostName
     val appMasterPort = port

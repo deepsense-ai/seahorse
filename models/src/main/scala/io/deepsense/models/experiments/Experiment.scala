@@ -83,7 +83,7 @@ case class Experiment(
     val experimentFailureDetails = FailureDescription(
       errorId,
       NodeFailure,
-      Experiment.nodeFailureMessage)
+      Experiment.NodeFailureMessage)
     copy(graph = this.graph.markAsFailed(nodeId, nodeFailureDetails))
       .markFailed(experimentFailureDetails)
   }
@@ -108,7 +108,7 @@ case class Experiment(
       running
     } else if (nodes.exists(_.isFailed)) {
       val failureId = DeepSenseFailure.Id.randomId
-      failed(FailureDescription(failureId, FailureCode.NodeFailure, Experiment.nodeFailureMessage))
+      failed(FailureDescription(failureId, FailureCode.NodeFailure, Experiment.NodeFailureMessage))
     } else {
       aborted
     })
@@ -129,7 +129,7 @@ object Experiment {
   type Id = models.Id
   val Id = models.Id
 
-  def nodeFailureMessage = "One or more nodes failed in the experiment"
+  val NodeFailureMessage = "One or more nodes failed in the experiment"
 
   object Status extends Enumeration {
     type Status = Value
