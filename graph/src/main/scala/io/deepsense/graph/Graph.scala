@@ -61,9 +61,14 @@ case class Graph(nodes: Set[Node] = Set(), edges: Set[Edge] = Set()) {
 
   def markAsAborted(id: Node.Id): Graph = withChangedNode(id, _.markAborted)
 
-  def reportProgress(id: Node.Id, current: Int): Graph = {
+  def reportProgress(id: Node.Id, current: Int): Graph =
     withChangedNode(id, _.withProgress(current))
-  }
+
+  def enqueueNodes: Graph =
+    copy(nodes = nodes.map(_.markQueued))
+
+  def abortNodes: Graph =
+    copy(nodes = nodes.map(_.markAborted))
 
   def containsCycle: Boolean = topologicalSort.isSorted
 

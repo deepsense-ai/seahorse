@@ -4,13 +4,12 @@ import scala.collection.mutable
 
 import akka.actor.{Actor, ActorLogging}
 
-import io.deepsense.commons.models.Id
 import io.deepsense.experimentmanager.execution.RunningExperimentsActor._
 import io.deepsense.experimentmanager.models.Experiment
 import io.deepsense.graphexecutor.GraphExecutorClient
 
 class RunningExperimentsActor extends Actor with ActorLogging {
-  val runningExperiments = mutable.Map[Id, GraphExecutorClient]()
+  val runningExperiments = mutable.Map[Experiment.Id, GraphExecutorClient]()
 
   override def receive: Receive = {
     case Launch(experiment) => launch(experiment)
@@ -26,11 +25,11 @@ class RunningExperimentsActor extends Actor with ActorLogging {
     sender() ! Status(Some(experiment))
   }
 
-  private def abort(id: Id): Unit = {
+  private def abort(id: Experiment.Id): Unit = {
     sender() ! Status(None)
   }
 
-  private def getStatus(id: Id): Unit = {
+  private def getStatus(id: Experiment.Id): Unit = {
     sender() ! Status(None)
   }
 
@@ -44,8 +43,8 @@ class RunningExperimentsActor extends Actor with ActorLogging {
 
 object RunningExperimentsActor {
   case class Launch(experiment: Experiment)
-  case class Abort(experimentId: Id)
-  case class GetStatus(experimentId: Id)
+  case class Abort(experimentId: Experiment.Id)
+  case class GetStatus(experimentId: Experiment.Id)
   case class ListExperiments(tenantId: Option[String])
   case class Status(experiment: Option[Experiment])
   case class Experiments(experimentsByTenantId: Map[String, Set[Experiment]])
