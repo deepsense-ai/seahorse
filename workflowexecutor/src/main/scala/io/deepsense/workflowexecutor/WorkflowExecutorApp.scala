@@ -85,17 +85,13 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
       (x, c) => c.copy(wmAddress = Some(x))
     } text "workflow Manager address"
 
-    opt[String]('p', "python-executor-path") required() valueName "PATH" action {
+    opt[String]('d', "deps-zip") hidden() valueName "FILE" action {
+      (x, c) => c.copy(depsZip = Some(x))
+    } text "dependencies zip file"
+
+    opt[String]('p', "python-executor-path") optional() valueName "PATH" action {
       (x, c) => c.copy(pyExecutorPath = Some(x))
     } text "PyExecutor code (included in workflowexecutor.jar) path"
-
-    opt[String]("kernel-manager-archive") required() valueName "ZIP ARCHIVE" action {
-      (x, c) => c.copy(kmArchive = Some(x))
-    } text "ZIP with KernelManager"
-
-    opt[String]('z', "pyspark-zip-path") valueName "PYSPARKPATH" action {
-      (x, c) => c.copy(pySparkPath = Some(x))
-    } text "Path to zip archive with pyspark"
 
     help("help") text "print this help message and exit"
     version("version") text "print product version and exit"
@@ -113,7 +109,7 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
         (config.messageQueuePort.isEmpty, "--message-queue-port is required in interactive mode"),
         (config.jobId.isEmpty, "--job-id is required in interactive mode"),
         (config.wmAddress.isEmpty, "--wm-address is required in interactive mode"),
-        (config.kmArchive.isEmpty, "--kernel-manager-archive is required in interactive mode")
+        (config.depsZip.isEmpty, "--deps-zip is required in interactive mode")
       )
 
       val nonInteractiveRequirements: Requirements = Seq(
@@ -150,27 +146,22 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
     }
     val params = cmdParams.get
 
-    val pySparkPath = new pyspark.Loader(params.pySparkPath).load
-    pySparkPath match {
-      case Some(path) =>
-        val pythonPathGenerator = new PythonPathGenerator(path)
-        if (params.interactiveMode) {
-          // Interactive mode (SessionExecutor)
-          SessionExecutor(
-            params.messageQueueHost.get,
-            params.messageQueuePort.get,
-            params.pyExecutorPath.get,
-            params.jobId.get,
-            pythonPathGenerator,
-            params.wmAddress.get,
-            params.kmArchive.get
-          ).execute()
-        } else {
-          // Running in non-interactive mode
-          WorkflowExecutor.runInNoninteractiveMode(params, pythonPathGenerator)
-        }
-      case None =>
-        logger.error("Could not found PySpark!")
+    if (params.interactiveMode) {
+      // Interactive mode (SessionExecutor)
+      SessionExecutor(
+        params.messageQueueHost.get,
+        params.messageQueuePort.get,
+        params.jobId.get,
+        params.wmAddress.get,
+        params.depsZip.get
+      ).execute()
+    } else {
+      // Running in non-interactive mode
+      val pythonPathGenerator = new pyspark.Loader(None).load
+        .map(new PythonPathGenerator(_))
+        .getOrElse(throw new RuntimeException("Could not find PySpark!"))
+
+      WorkflowExecutor.runInNoninteractiveMode(params, pythonPathGenerator)
     }
   }
 

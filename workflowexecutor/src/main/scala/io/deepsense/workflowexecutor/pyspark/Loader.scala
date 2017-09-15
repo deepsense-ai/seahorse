@@ -19,15 +19,14 @@ package io.deepsense.workflowexecutor.pyspark
 import scala.reflect.io.Path
 
 import io.deepsense.commons.utils.Logging
-import io.deepsense.workflowexecutor.Unzip
 
 class Loader(
-  private val localArchivePath: Option[String] = None
+  private val localPath: Option[String] = None
 ) extends Logging {
 
   def load: Option[String] = {
-    localArchivePath match {
-      case Some(x) => Some(pysparkFromLocalArchive(x))
+    localPath match {
+      case Some(x) => Some(x)
       case None =>
         Option(System.getenv("SPARK_HOME")).map(pysparkPath)
     }
@@ -36,12 +35,6 @@ class Loader(
   private def pysparkPath(sparkHome: String): String = {
     val path = Path(sparkHome)./("python").toAbsolute.toString()
     logger.info("Found PySpark at: {}", path)
-    path
-  }
-
-  private def pysparkFromLocalArchive(hdfsPath: String): String = {
-    val path = Unzip.unzipAll("pyspark-1.6.zip")
-    logger.info("Unzipped pyspark from a local archive: {}", path)
     path
   }
 }

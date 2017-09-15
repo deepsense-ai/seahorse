@@ -40,7 +40,7 @@ import io.deepsense.workflowexecutor.notebooks.KernelManagerCaretaker
 import io.deepsense.workflowexecutor.pyspark.PythonPathGenerator
 import io.deepsense.workflowexecutor.rabbitmq._
 import io.deepsense.workflowexecutor.session.storage.DataFrameStorageImpl
-import io.deepsense.workflowexecutor.{SessionWorkflowExecutorActorProvider, WorkflowManagerClientActor}
+import io.deepsense.workflowexecutor._
 
 /**
  * SessionExecutor waits for user instructions in an infinite loop.
@@ -48,11 +48,9 @@ import io.deepsense.workflowexecutor.{SessionWorkflowExecutorActorProvider, Work
 case class SessionExecutor(
     messageQueueHost: String,
     messageQueuePort: Int,
-    pythonExecutorPath: String,
     sessionId: String,
-    pythonPathGenerator: PythonPathGenerator,
     wmAddress: String,
-    kernelManagerArchive: String)
+    depsZip: String)
   extends Executor {
 
   private val workflowId = Workflow.Id.fromString(sessionId)
@@ -79,8 +77,14 @@ case class SessionExecutor(
     val hostAddress: InetAddress = HostAddressResolver.findHostAddress()
     logger.info("Host address: {}", hostAddress.getHostAddress)
 
+    val tempPath = Unzip.unzipAll(depsZip)
+
+    val pythonPathGenerator = new pyspark.Loader(Some(tempPath)).load
+      .map(new PythonPathGenerator(_))
+      .getOrElse(throw new RuntimeException("Could not find PySpark!"))
+
     val pythonExecutionCaretaker = new PythonExecutionCaretaker(
-      pythonExecutorPath,
+      s"$tempPath/pyexecutor/pyexecutor.py",
       pythonPathGenerator,
       sparkContext,
       sqlContext,
@@ -130,7 +134,7 @@ case class SessionExecutor(
       system,
       pythonPathGenerator,
       communicationFactory,
-      kernelManagerArchive,
+      tempPath,
       hostAddress.getHostAddress,
       pythonExecutionCaretaker.gatewayListeningPort.get,
       messageQueueHost,

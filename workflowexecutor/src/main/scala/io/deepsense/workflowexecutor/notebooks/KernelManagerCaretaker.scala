@@ -27,7 +27,6 @@ import com.typesafe.config.ConfigFactory
 
 import io.deepsense.commons.utils.Logging
 import io.deepsense.models.workflows.Workflow
-import io.deepsense.workflowexecutor.Unzip
 import io.deepsense.workflowexecutor.communication.message.notebook.KernelManagerReady
 import io.deepsense.workflowexecutor.communication.mq.MQCommunication
 import io.deepsense.workflowexecutor.pyspark.PythonPathGenerator
@@ -37,7 +36,7 @@ class KernelManagerCaretaker(
   private val actorSystem: ActorSystem,
   private val pythonPathGenerator: PythonPathGenerator,
   private val communicationFactory: MQCommunicationFactory,
-  private val archive: String,
+  private val kernelManagerPath: String,
   private val gatewayHost: String,
   private val gatewayPort: Int,
   private val mqHost: String,
@@ -57,9 +56,8 @@ class KernelManagerCaretaker(
       destroyPythonProcess()
     }
 
-    val tempPath = extractKernelManager()
-    val extractedKernelManagerPath = s"$tempPath/$startupScript"
-    val process = runKernelManager(extractedKernelManagerPath, tempPath)
+    val extractedKernelManagerPath = s"$kernelManagerPath/$startupScript"
+    val process = runKernelManager(extractedKernelManagerPath, kernelManagerPath)
     val exited = Future(process.exitValue()).map { code =>
       startPromise.failure(
         new RuntimeException(s"Kernel Manager finished prematurely (with exit code $code)!"))
@@ -90,11 +88,6 @@ class KernelManagerCaretaker(
       case t: TimeoutException =>
         throw new RuntimeException(s"Kernel Manager did not start after $startupTimeout")
     }
-  }
-
-  private def extractKernelManager(): String = {
-    logger.info("Extracting Kernel Manager...")
-    Unzip.unzipAll(archive)
   }
 
   private def runKernelManager(kernelManagerPath: String, workingDir: String): Process = {
