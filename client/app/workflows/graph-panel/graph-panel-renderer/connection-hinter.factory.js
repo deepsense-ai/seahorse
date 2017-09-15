@@ -25,8 +25,7 @@ class ConnectionHinterService extends GraphPanelRendererBase {
     const sourcePortIndex = sourceEndpoint.getParameter('portIndex');
     const sourcePort = sourceNode.output[sourcePortIndex];
 
-    const getInputPorts = (endpoints) => _.filter(endpoints, (endpoint) => endpoint.isTarget);
-    const highlightInputPorts = (endpoint, node) => {
+    const highlightInputPort = (endpoint, node) => {
       const portIndex = endpoint.getParameter('portIndex');
       const port = node.input[portIndex];
       const typesMatch = this.OperationsHierarchyService.IsDescendantOf(sourcePort.typeQualifier, port.typeQualifier);
@@ -44,8 +43,14 @@ class ConnectionHinterService extends GraphPanelRendererBase {
     _.forEach(nodes, (node) => {
       const nodeEl = this.getNodeById(node.id);
       const endpoints = jsPlumb.getEndpoints(nodeEl);
-      _.forEach(getInputPorts(endpoints), (endpoint) => {
-        highlightInputPorts(endpoint, node);
+
+      _.forEach(endpoints, (endpoint) => {
+        if (endpoint.isTarget) { // is an input port
+          highlightInputPort(endpoint, node);
+        }
+        if (endpoint.isSource) { // is an output port
+          GraphPanelStyler.styleOutputEndpointDefault(endpoint, renderMode);
+        }
       });
     });
 
