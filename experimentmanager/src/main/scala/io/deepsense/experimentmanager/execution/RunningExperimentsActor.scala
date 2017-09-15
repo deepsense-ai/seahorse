@@ -13,6 +13,7 @@ import scala.util.{Failure, Success, Try}
 import akka.actor._
 import akka.util.Timeout
 
+import io.deepsense.commons.akka.RemoteAddressExtension
 import io.deepsense.models.experiments.Experiment
 import io.deepsense.models.experiments.Experiment.Id
 import io.deepsense.models.messages.{Update, _}
@@ -20,8 +21,7 @@ import io.deepsense.models.messages.{Update, _}
 class RunningExperimentsActor @Inject()(
     @Named("entitystorage.label") entitystorageLabel: String,
     @Named("runningexperiments.timeout") timeoutMillis: Long,
-    @Named("runningexperiments.remote-actor-path") remoteActorPath: String,
-    gecMaker: (ActorRefFactory, String, String, String) => ActorRef)
+    gecMaker: (ActorRefFactory, String, String) => ActorRef)
   extends Actor with ActorLogging {
 
   val experiments = mutable.Map[Experiment.Id, (Experiment, ActorRef)]()
@@ -34,7 +34,7 @@ class RunningExperimentsActor @Inject()(
     case Abort(eid) => sender ! abort(eid)
     case GetAllByTenantId(tenantId) => getAllByTenantId(tenantId)
     case Delete(experimentId) => delete(experimentId)
-    case Update(Some(exp)) => update(exp)
+    case Update(exp) => update(exp)
   }
 
   def update(experiment: Experiment): Unit = {
@@ -52,7 +52,7 @@ class RunningExperimentsActor @Inject()(
       Failure(new IllegalStateException(reason))
     } else {
       log.info("Launch accepted. Experiment is not running: {}", experiment.state.status)
-      val gec = gecMaker(context, entitystorageLabel, remoteActorPath, experiment.id.toString)
+      val gec = gecMaker(context, entitystorageLabel, experiment.id.toString)
       log.info("Created GEC actor: {}", gec)
       experiments.put(experiment.id, (experiment, gec))
       gec ! Launch(experiment)

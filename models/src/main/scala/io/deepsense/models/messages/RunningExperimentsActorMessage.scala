@@ -20,7 +20,7 @@ case class Get(experimentId: Id) extends RunningExperimentsActorMessage
 
 case class GetAllByTenantId(tenantId: Option[String]) extends RunningExperimentsActorMessage
 
-case class Update(experiment: Option[Experiment]) extends RunningExperimentsActorMessage
+case class Update(experiment: Experiment) extends RunningExperimentsActorMessage
 
 case class ExperimentsMap(experimentsByTenantId: Map[String, Set[Experiment]]) extends RunningExperimentsActorMessage
 

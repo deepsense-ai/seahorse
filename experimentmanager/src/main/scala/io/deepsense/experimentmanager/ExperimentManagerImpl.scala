@@ -173,7 +173,6 @@ class ExperimentManagerImpl @Inject()(
   private def runningExperiment(id: Id): Future[Option[Experiment]] = {
     runningExperimentsActor
       .ask(Get(id))
-      .mapTo[Update]
-      .map(_.experiment)
+      .mapTo[Option[Experiment]]
   }
 }

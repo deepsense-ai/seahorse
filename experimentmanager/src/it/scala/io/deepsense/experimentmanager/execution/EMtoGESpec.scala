@@ -19,6 +19,7 @@ import io.deepsense.commons.exception.FailureCode.NodeFailure
 import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.deeplang.doperations.LoadDataFrame
 import io.deepsense.graph.{Graph, Node}
+import io.deepsense.graphexecutor.clusterspawner.DefaultClusterSpawner
 import io.deepsense.graphexecutor.{GraphExecutorClientActor, HdfsIntegTestSupport, SimpleGraphExecutionIntegSuiteEntities}
 import io.deepsense.models.experiments.Experiment
 import io.deepsense.models.messages.{Abort, Get, Launch}
@@ -166,19 +167,19 @@ class EMtoGESpec
         ).asJava
       )
     )
-    val rePath = s"akka.tcp://$actorSystemName@$host:$port/user/$actorName"
     testProbe = TestProbe()
-    val gecMaker: (ActorRefFactory, String, String, String) => ActorRef = {
-      (f, entitystorageLabel, parentRemoteActorPath, experimentId) =>
+    val gecMaker: (ActorRefFactory, String, String) => ActorRef = {
+      (f, entitystorageLabel, experimentId) =>
         f.actorOf(
-          Props(new GraphExecutorClientActor(entitystorageLabel, parentRemoteActorPath)),
+          Props(new GraphExecutorClientActor(
+            entitystorageLabel,
+            DefaultClusterSpawner)),
           experimentId)
     }
     runningExperimentsActorRef = TestActorRef(
       Props(classOf[RunningExperimentsActor],
         SimpleGraphExecutionIntegSuiteEntities.Name,
         3000L,
-        rePath,
         gecMaker),
       actorName)
   }

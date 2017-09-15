@@ -70,14 +70,13 @@ class RunningExperimentsActorSpec
 
   private def withExperiment(experiment: Experiment)(testCode: TestCode): Unit = {
     val probe = TestProbe()
-    val gecMaker: (ActorRefFactory, String, String, String) => ActorRef = {
-      (f, entitystorageLabel, parentRemoteActorPath, experimentId) =>
+    val gecMaker: (ActorRefFactory, String, String) => ActorRef = {
+      (f, entitystorageLabel, experimentId) =>
         probe.ref
     }
     val rea = TestActorRef[RunningExperimentsActor](Props(new RunningExperimentsActor(
       SimpleGraphExecutionIntegSuiteEntities.Name,
       3000L,
-      "whatever",
       gecMaker)))
     val actor = rea.underlyingActor
     testCode(rea, probe, actor, experiment)
@@ -158,7 +157,7 @@ class RunningExperimentsActorSpec
           probe.expectMsgType[Success[_]]
 
           val completed = exp.markCompleted
-          probe.send(actorRef, Update(Some(completed)))
+          probe.send(actorRef, Update(completed))
           actor.experiments(exp.id)._1 shouldBe completed
 
           probe.send(actorRef, Abort(exp.id))

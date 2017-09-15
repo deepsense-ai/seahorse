@@ -64,7 +64,7 @@ class GraphExecutorActor(ec: ExecutionContext, gecActorPath: String)
   def nodeRunning(id: Id): Unit = {
     logger.info(">>> {}", NodeRunning(id))
     experiment = experiment.copy(graph = experiment.graph.markAsRunning(id))
-    gec ! Update(Some(experiment))
+    gec ! Update(experiment)
     logger.info("<<< Update(experimentId={}) / status={}", experiment.id, experiment.state.status)
   }
 
@@ -73,7 +73,7 @@ class GraphExecutorActor(ec: ExecutionContext, gecActorPath: String)
     experiment = experiment.copy(
       graph = experiment.graph.markAsCompleted(nodeId, results.keys.toList))
     dOperableCache = dOperableCache ++ results
-    gec ! Update(Some(experiment))
+    gec ! Update(experiment)
     logger.debug(s"<<< NodeCompleted(experimentId=${experiment.id}, nodeId=$nodeId)")
     if (experiment.graph.readyNodes.nonEmpty) {
       logger.debug("Launching READY nodes")
@@ -86,7 +86,7 @@ class GraphExecutorActor(ec: ExecutionContext, gecActorPath: String)
       } else {
         // FIXME Use become to mark the state of experiment and never change
         experiment = if (experiment.isFailed) experiment else experiment.markCompleted
-        gec ! Update(Some(experiment))
+        gec ! Update(experiment)
         logger.debug("<<< Update(experimentId={}) / status={}", experiment.id, experiment.state.status)
         logger.debug("Shutting down the actor system")
         context.system.shutdown()
@@ -99,7 +99,7 @@ class GraphExecutorActor(ec: ExecutionContext, gecActorPath: String)
     logger.debug(">>> {}", Failed(nodeId, reason))
 
     experiment = experiment.markNodeFailed(nodeId, reason)
-    gec ! Update(Some(experiment))
+    gec ! Update(experiment)
     logger.debug("<<< Update(experimentId={}) for nodeId={}", experiment.id, nodeId)
     if (experiment.graph.readyNodes.nonEmpty) {
       logger.debug("Launching READY nodes")
@@ -110,7 +110,7 @@ class GraphExecutorActor(ec: ExecutionContext, gecActorPath: String)
         logger.info(s"No nodes to run, but there are still $nodesRunningCount running")
         logger.info(s"Awaiting $nodesRunningCount RUNNINGs reporting Completed")
       } else {
-        gec ! Update(Some(experiment))
+        gec ! Update(experiment)
         logger.debug("<<< Update(experimentId={}) / status={}", experiment.id, experiment.state.status)
         logger.debug("Shutting down the actor system")
         context.system.shutdown()
@@ -122,7 +122,7 @@ class GraphExecutorActor(ec: ExecutionContext, gecActorPath: String)
     logger.debug(">>> {}", Abort(eid))
     experiment = experiment.markAborted
     context.children.foreach(_ ! PoisonPill)
-    gec ! Update(Some(experiment))
+    gec ! Update(experiment)
     logger.debug("<<< {}", Abort(eid))
   }
 

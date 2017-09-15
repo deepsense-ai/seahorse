@@ -9,7 +9,7 @@ import java.util.{List => JList}
 
 import scala.collection.mutable
 
-import akka.actor.{Extension, ExtendedActorSystem, ActorSystem}
+import akka.actor.ActorSystem
 import com.google.inject.name.Names
 import com.google.inject.{Guice, Key}
 import com.typesafe.config.{Config, ConfigFactory}
