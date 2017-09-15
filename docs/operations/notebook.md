@@ -6,8 +6,9 @@ description: Notebook
 includeOperationsMenu: true
 ---
 
-A `Notebook` is a special type of operation. It gives a user a capability to quickly explore the data.
-In the `Notebook` the user can write the code using Apache Spark Python API.
+A `Notebook` is a special type of operation.
+It gives Spark shell capabilities in a web browser, so the user can quickly explore the data.
+In the `Notebook`, the user can write the code using Apache Spark Python API and accessing objects available in Spark context.
 Blocks of Python code can be executed and the results are immediately returned to the `Notebook`.
 
 To use the `Notebook` the user has to drag and drop the `Notebook` operation onto the canvas
@@ -19,7 +20,7 @@ parameters panel.
 
 The variables and functions available in the `Notebooks`' global scope:
 
-* <code>dataframe()</code> - a function that returns the input DataFrame for this `Notebook`.
+* <code>dataframe()</code> - a function that returns the input `DataFrame` for this `Notebook`.
 Everytime the input `Dataframe` changes, the `dataframe()` returns the updated `DataFrame`.
 
 * <code>sc</code> - Spark Context
