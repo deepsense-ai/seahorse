@@ -24,6 +24,6 @@ class CreateRandomForestRegression extends EstimatorAsFactory[RandomForestRegres
 
   override val id: Id = "2ec65504-bbe2-4ba2-a9b4-192e2f45ff16"
   override val name: String = "Random Forest Regression"
-  override val description: String = "Random forest regression (RFR), learning " +
+  override val description: String = "Random forest regression (RFR) is a learning " +
     "algorithm for regression. It supports both continuous and categorical features."
 }

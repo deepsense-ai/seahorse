@@ -28,7 +28,7 @@ This operation does not take any input.
 </tr>
 </thead>
 <tbody>
-    <tr><td><code>0</code></td><td><code><a href="../classes/estimator.html">Estimator</a></code></td><td>Estimator that can be used in <a href="fit.html">Fit</a> operation</td></tr>
+    <tr><td><code>0</code></td><td><code><a href="../classes/estimator.html">Estimator</a></code></td><td>An Estimator that can be used in <a href="fit.html">Fit</a> operation.</td></tr>
 </tbody>
 </table>
 
@@ -49,13 +49,13 @@ This operation does not take any input.
 <tr>
 <td><code>alpha</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Param for the alpha parameter in the implicit preference formulation.</td>
+<td>The alpha parameter in the implicit preference formulation.</td>
 </tr>
 
 <tr>
 <td><code>checkpoint interval</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Checkpoint interval.</td>
+<td>The checkpoint interval.</td>
 </tr>
 
 <tr>
@@ -67,13 +67,13 @@ This operation does not take any input.
 <tr>
 <td><code>item column</code></td>
 <td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
-<td>Column for item ids.</td>
+<td>The column for item ids.</td>
 </tr>
 
 <tr>
 <td><code>max iterations</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Maximum number of iterations.</td>
+<td>The maximum number of iterations.</td>
 </tr>
 
 <tr>
@@ -85,49 +85,49 @@ This operation does not take any input.
 <tr>
 <td><code>num item blocks</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Number of item blocks.</td>
+<td>The number of item blocks.</td>
 </tr>
 
 <tr>
 <td><code>num user blocks</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Number of user blocks.</td>
+<td>The number of user blocks.</td>
 </tr>
 
 <tr>
 <td><code>prediction column</code></td>
 <td><code><a href="../parameter_types.html#string">String</a></code></td>
-<td>Prediction column created during model scoring.</td>
+<td>The prediction column created during model scoring.</td>
 </tr>
 
 <tr>
 <td><code>rank</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Rank of the matrix factorization.</td>
+<td>The rank of the matrix factorization.</td>
 </tr>
 
 <tr>
 <td><code>rating column</code></td>
 <td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
-<td>Column for ratings.</td>
+<td>The column for ratings.</td>
 </tr>
 
 <tr>
 <td><code>regularization param</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Regularization parameter.</td>
+<td>The regularization parameter.</td>
 </tr>
 
 <tr>
 <td><code>seed</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Random seed.</td>
+<td>The random seed.</td>
 </tr>
 
 <tr>
 <td><code>user column</code></td>
 <td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
-<td>Column for user ids.</td>
+<td>The column for user ids.</td>
 </tr>
 
 </tbody>

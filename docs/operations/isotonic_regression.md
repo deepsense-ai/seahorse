@@ -28,7 +28,7 @@ This operation does not take any input.
 </tr>
 </thead>
 <tbody>
-    <tr><td><code>0</code></td><td><code><a href="../classes/estimator.html">Estimator</a></code></td><td>Estimator that can be used in <a href="fit.html">Fit</a> operation</td></tr>
+    <tr><td><code>0</code></td><td><code><a href="../classes/estimator.html">Estimator</a></code></td><td>An Estimator that can be used in <a href="fit.html">Fit</a> operation.</td></tr>
 </tbody>
 </table>
 
@@ -49,13 +49,13 @@ This operation does not take any input.
 <tr>
 <td><code>feature index</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Index of the feature if features column is a vector column, no effect otherwise.</td>
+<td>The index of the feature if features column is a vector column, no effect otherwise.</td>
 </tr>
 
 <tr>
 <td><code>features column</code></td>
 <td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
-<td>Features column for model fitting.</td>
+<td>The features column for model fitting.</td>
 </tr>
 
 <tr>
@@ -67,13 +67,13 @@ This operation does not take any input.
 <tr>
 <td><code>label column</code></td>
 <td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
-<td>Label column for model fitting.</td>
+<td>The label column for model fitting.</td>
 </tr>
 
 <tr>
 <td><code>prediction column</code></td>
 <td><code><a href="../parameter_types.html#string">String</a></code></td>
-<td>Prediction column created during model scoring.</td>
+<td>The prediction column created during model scoring.</td>
 </tr>
 
 <tr>

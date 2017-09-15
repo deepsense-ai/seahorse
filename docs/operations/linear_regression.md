@@ -28,7 +28,7 @@ This operation does not take any input.
 </tr>
 </thead>
 <tbody>
-    <tr><td><code>0</code></td><td><code><a href="../classes/estimator.html">Estimator</a></code></td><td>Estimator that can be used in <a href="fit.html">Fit</a> operation</td></tr>
+    <tr><td><code>0</code></td><td><code><a href="../classes/estimator.html">Estimator</a></code></td><td>An Estimator that can be used in <a href="fit.html">Fit</a> operation.</td></tr>
 </tbody>
 </table>
 
@@ -61,13 +61,13 @@ This operation does not take any input.
 <tr>
 <td><code>max iterations</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Maximum number of iterations.</td>
+<td>The maximum number of iterations.</td>
 </tr>
 
 <tr>
 <td><code>regularization param</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Regularization parameter.</td>
+<td>The regularization parameter.</td>
 </tr>
 
 <tr>
@@ -85,19 +85,19 @@ This operation does not take any input.
 <tr>
 <td><code>features column</code></td>
 <td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
-<td>Features column for model fitting.</td>
+<td>The features column for model fitting.</td>
 </tr>
 
 <tr>
 <td><code>label column</code></td>
 <td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
-<td>Label column for model fitting.</td>
+<td>The label column for model fitting.</td>
 </tr>
 
 <tr>
 <td><code>prediction column</code></td>
 <td><code><a href="../parameter_types.html#string">String</a></code></td>
-<td>Prediction column created during model scoring.</td>
+<td>The prediction column created during model scoring.</td>
 </tr>
 
 </tbody>

@@ -43,7 +43,7 @@ class CountVectorizerEstimator
 
   val vocabSize = new IntParamWrapper[ml.param.Params { val vocabSize: ml.param.IntParam }](
     name = "max vocabulary size",
-    description = "Max size of the vocabulary.",
+    description = "The maximum size of the vocabulary.",
     sparkParamGetter = _.vocabSize,
     RangeValidator(0.0, Int.MaxValue, beginIncluded = false, step = Some(1.0)))
   setDefault(vocabSize, (1 << 18).toDouble)

@@ -27,7 +27,7 @@ class HashingTF extends TransformerAsOperation[HashingTFTransformer] {
   override val id: Id = "4266c9c0-6863-44ca-967b-62927ca34434"
   override val name: String = "HashingTF"
   override val description: String =
-    "Maps a sequence of terms to their term frequencies using the hashing trick"
+    "Maps a sequence of terms to term frequencies using the hashing trick"
 
   override lazy val tTagTO_1: TypeTag[HashingTFTransformer] = typeTag
 }

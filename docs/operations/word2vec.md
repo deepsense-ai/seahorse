@@ -6,11 +6,9 @@ description: Word2Vec
 usesMathJax: true
 includeOperationsMenu: true
 ---
-Transforms a word into a code for further natural language processing or machine learning process.
+Transforms a word into a code for further processing.
 
-This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.feature.Word2Vec">org.apache.spark.ml.feature.Word2Vec documentation</a>
-
-A comprehensive introduction is available at <a target="_blank" href="http://spark.apache.org/docs/1.6.0/mllib-feature-extraction.html#word2vec">MLlib Word2VVec Guide</a>.
+This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.feature.Word2Vec">org.apache.spark.ml.feature.Word2Vec documentation</a>.
 
 **Since**: Seahorse 1.0.0
 
@@ -26,7 +24,7 @@ A comprehensive introduction is available at <a target="_blank" href="http://spa
 </tr>
 </thead>
 <tbody>
-    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>Input DataFrame</td></tr>
+    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>The input DataFrame.</td></tr>
 </tbody>
 </table>
 
@@ -43,7 +41,7 @@ A comprehensive introduction is available at <a target="_blank" href="http://spa
 </tr>
 </thead>
 <tbody>
-    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>Output DataFrame</td></tr><tr><td><code>1</code></td><td><code><a href="../classes/transformer.html">Transformer</a></code></td><td>Transformer that allows to apply the operation on other DataFrames using <a href="transform.html">Transform</a></td></tr>
+    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>The output DataFrame.</td></tr><tr><td><code>1</code></td><td><code><a href="../classes/transformer.html">Transformer</a></code></td><td>A Transformer that allows to apply the operation on other DataFrames using <a href="transform.html">Transform</a>.</td></tr>
 </tbody>
 </table>
 
@@ -64,31 +62,31 @@ A comprehensive introduction is available at <a target="_blank" href="http://spa
 <tr>
 <td><code>input column</code></td>
 <td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
-<td>Input column name.</td>
+<td>The input column name.</td>
 </tr>
 
 <tr>
 <td><code>output column</code></td>
 <td><code><a href="../parameter_types.html#string">String</a></code></td>
-<td>Output column name.</td>
+<td>The output column name.</td>
 </tr>
 
 <tr>
 <td><code>max iterations</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Maximum number of iterations.</td>
+<td>The maximum number of iterations.</td>
 </tr>
 
 <tr>
 <td><code>step size</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Step size to be used for each iteration of optimization.</td>
+<td>The step size to be used for each iteration of optimization.</td>
 </tr>
 
 <tr>
 <td><code>seed</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Random seed.</td>
+<td>The random seed.</td>
 </tr>
 
 <tr>
@@ -100,13 +98,13 @@ A comprehensive introduction is available at <a target="_blank" href="http://spa
 <tr>
 <td><code>num partitions</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Number of partitions for sentences of words.</td>
+<td>The number of partitions for sentences of words.</td>
 </tr>
 
 <tr>
 <td><code>min count</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>The minimum number of times a token must appear to be included in the model's vocabulary.</td>
+<td>The minimum number of occurences of a token to be included in the model's vocabulary.</td>
 </tr>
 
 </tbody>

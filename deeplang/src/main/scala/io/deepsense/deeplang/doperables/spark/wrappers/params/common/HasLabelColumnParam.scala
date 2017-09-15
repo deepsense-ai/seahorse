@@ -30,7 +30,7 @@ trait HasLabelColumnParam extends Params {
     new SingleColumnSelectorParamWrapper[
         ml.param.Params { val labelCol: ml.param.Param[String] }](
       name = "label column",
-      description = "Label column for model fitting.",
+      description = "The label column for model fitting.",
       sparkParamGetter = _.labelCol,
       portIndex = 0)
   setDefault(labelColumn, NameSingleColumnSelection("label"))

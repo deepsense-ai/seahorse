@@ -30,7 +30,7 @@ trait HasPredictionColumnSelectorParam extends Params {
     new SingleColumnSelectorParamWrapper[
         ml.param.Params { val predictionCol: ml.param.Param[String] }](
       name = "prediction column",
-      description = "Prediction column.",
+      description = "The prediction column.",
       sparkParamGetter = _.predictionCol,
       portIndex = 0)
   setDefault(predictionColumn, NameSingleColumnSelection("prediction"))

@@ -25,7 +25,7 @@ class CreateGBTClassifier extends EstimatorAsFactory[GBTClassifier] {
   override val id: Id = "98275271-9817-4add-85d7-e6eade3e5b81"
   override val name: String = "GBT Classifier"
   override val description: String =
-    "Gradient-Boosted Trees (GBTs) learning algorithm for classification." +
+    "Gradient-Boosted Trees (GBTs) is a learning algorithm for classification." +
       " It supports binary labels, as well as both continuous and categorical features." +
       " Note: Multiclass labels are not currently supported."
 }

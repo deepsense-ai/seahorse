@@ -33,7 +33,7 @@ class RegressionEvaluator
 
   val metricName = new ChoiceParamWrapper[SparkRegressionEvaluator, Metric](
     name = "metric",
-    description = "Metric used in evaluation.",
+    description = "The metric used in evaluation.",
     sparkParamGetter = _.metricName)
   setDefault(metricName, Rmse())
 

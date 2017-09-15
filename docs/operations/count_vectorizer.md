@@ -24,7 +24,7 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 </tr>
 </thead>
 <tbody>
-    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>Input DataFrame</td></tr>
+    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>The input DataFrame.</td></tr>
 </tbody>
 </table>
 
@@ -41,7 +41,7 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 </tr>
 </thead>
 <tbody>
-    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>Output DataFrame</td></tr><tr><td><code>1</code></td><td><code><a href="../classes/transformer.html">Transformer</a></code></td><td>Transformer that allows to apply the operation on other DataFrames using <a href="transform.html">Transform</a></td></tr>
+    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>The output DataFrame.</td></tr><tr><td><code>1</code></td><td><code><a href="../classes/transformer.html">Transformer</a></code></td><td>A Transformer that allows to apply the operation on other DataFrames using <a href="transform.html">Transform</a>.</td></tr>
 </tbody>
 </table>
 
@@ -62,13 +62,13 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 <tr>
 <td><code>input column</code></td>
 <td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
-<td>Input column name.</td>
+<td>The input column name.</td>
 </tr>
 
 <tr>
 <td><code>output column</code></td>
 <td><code><a href="../parameter_types.html#string">String</a></code></td>
-<td>Output column name.</td>
+<td>The output column name.</td>
 </tr>
 
 <tr>
@@ -80,13 +80,18 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 <tr>
 <td><code>min term frequency</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Filter to ignore rare words in a document. For each document, terms with frequency/count less than the given threshold are ignored. If this is an integer >= 1, then this specifies a count (of times the term must appear in the document); if this is a double in [0,1), then this specifies a fraction (out of the document's token count). Note that the parameter is only used in transform of CountVectorizerModel and does not affect fitting.</td>
+<td>A filter to ignore rare words in a document. For each document, terms with
+frequency/count less than the given threshold are ignored. If this is an integer >= 1,
+then this specifies a count (of times the term must appear in the document); if this is
+a double in [0,1), then this specifies a fraction (out of the document's token count).
+Note that the parameter is only used in transform of CountVectorizerModel and does not
+affect fitting.</td>
 </tr>
 
 <tr>
 <td><code>max vocabulary size</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Max size of the vocabulary.</td>
+<td>The maximum size of the vocabulary.</td>
 </tr>
 
 </tbody>

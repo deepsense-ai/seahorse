@@ -34,7 +34,7 @@ trait GBTParams extends Params
 
   val maxBins = new IntParamWrapper[ml.param.Params { val maxBins: ml.param.IntParam }](
     name = "max bins",
-    description = "Maximum number of bins used for discretizing continuous features " +
+    description = "The maximum number of bins used for discretizing continuous features " +
       "and for choosing how to split on features at each node. " +
       "More bins give higher granularity. " +
       "Must be >= 2 and >= number of categories in any categorical feature.",
@@ -44,7 +44,7 @@ trait GBTParams extends Params
 
   val maxDepth = new IntParamWrapper[ml.param.Params { val maxDepth: ml.param.IntParam }](
     name = "max depth",
-    description = "Maximum depth of the tree. " +
+    description = "The maximum depth of the tree. " +
       "E.g., depth 0 means 1 leaf node; depth 1 means 1 internal node + 2 leaf nodes.",
     sparkParamGetter = _.maxDepth,
     RangeValidator(0, 30, step = Some(1.0)))
@@ -53,7 +53,7 @@ trait GBTParams extends Params
   val minInfoGain =
     new DoubleParamWrapper[ml.param.Params { val minInfoGain: ml.param.DoubleParam }](
       name = "min information gain",
-      description = "Minimum information gain for a split to be considered at a tree node.",
+      description = "The minimum information gain for a split to be considered at a tree node.",
       sparkParamGetter = _.minInfoGain,
       RangeValidator(0.0, Double.MaxValue))
   setDefault(minInfoGain, 0.0)
@@ -61,9 +61,9 @@ trait GBTParams extends Params
   val minInstancesPerNode =
     new IntParamWrapper[ml.param.Params { val minInstancesPerNode: ml.param.IntParam }](
       name = "min instances per node",
-      description = "Minimum number of instances each child must have after split. " +
-        "If a split causes the left or right child to have fewer than minInstancesPerNode, " +
-        "the split will be discarded as invalid.",
+      description = "The minimum number of instances each child must have after split. " +
+        "If a split causes the left or right child to have fewer instances than the parameter's " +
+        "value, the split will be discarded as invalid.",
       sparkParamGetter = _.minInstancesPerNode,
       RangeValidator(1.0, Int.MaxValue, step = Some(1.0)))
   setDefault(minInstancesPerNode, 1.0)
@@ -72,7 +72,7 @@ trait GBTParams extends Params
     new DoubleParamWrapper[ml.param.Params { val subsamplingRate: ml.param.DoubleParam }](
       name = "subsampling rate",
       description =
-        "Fraction of the training data used for learning each decision tree.",
+        "The fraction of the training data used for learning each decision tree.",
       sparkParamGetter = _.subsamplingRate,
       RangeValidator(0.0, 1.0, beginIncluded = false))
   setDefault(subsamplingRate, 1.0)

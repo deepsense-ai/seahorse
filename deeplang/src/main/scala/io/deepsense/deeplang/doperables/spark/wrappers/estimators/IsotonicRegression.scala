@@ -66,7 +66,7 @@ object IsotonicRegression {
   case class WeightColumnYesOption() extends WeightColumnOption {
     val weightColumn = new SingleColumnSelectorParamWrapper[SparkIsotonicRegression](
       name = "weight column",
-      description = "Weight column for isotonic regression.",
+      description = "The weight column for isotonic regression.",
       sparkParamGetter = _.weightCol,
       portIndex = 0)
 

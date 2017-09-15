@@ -24,7 +24,7 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 </tr>
 </thead>
 <tbody>
-    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>Input DataFrame</td></tr>
+    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>The input DataFrame.</td></tr>
 </tbody>
 </table>
 
@@ -41,7 +41,7 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 </tr>
 </thead>
 <tbody>
-    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>Output DataFrame</td></tr><tr><td><code>1</code></td><td><code><a href="../classes/transformer.html">Transformer</a></code></td><td>Transformer that allows to apply the operation on other DataFrames using <a href="transform.html">Transform</a></td></tr>
+    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>The output DataFrame.</td></tr><tr><td><code>1</code></td><td><code><a href="../classes/transformer.html">Transformer</a></code></td><td>A Transformer that allows to apply the operation on other DataFrames using <a href="transform.html">Transform</a>.</td></tr>
 </tbody>
 </table>
 
@@ -74,13 +74,13 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 <tr>
 <td><code>input column</code></td>
 <td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
-<td>Input column name.</td>
+<td>The input column name.</td>
 </tr>
 
 <tr>
 <td><code>output column</code></td>
 <td><code><a href="../parameter_types.html#string">String</a></code></td>
-<td>Output column name.</td>
+<td>The output column name.</td>
 </tr>
 
 </tbody>

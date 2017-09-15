@@ -104,11 +104,13 @@ trait DocPageCreator {
     val inputTable = operation match {
       case (t: TransformerAsOperation[_]) =>
         inputOutputTable(Seq(
-          ("<code><a href=\"../classes/dataframe.html\">DataFrame</a></code>", "Input DataFrame")
+          ("<code><a href=\"../classes/dataframe.html\">DataFrame</a></code>",
+            "The input DataFrame.")
         ))
       case (es: EstimatorAsOperation[_]) =>
         inputOutputTable(Seq(
-          ("<code><a href=\"../classes/dataframe.html\">DataFrame</a></code>", "Input DataFrame")
+          ("<code><a href=\"../classes/dataframe.html\">DataFrame</a></code>",
+            "The input DataFrame.")
         ))
       case (e: EstimatorAsFactory[_]) =>
         "This operation does not take any input."
@@ -123,28 +125,28 @@ trait DocPageCreator {
       case (t: TransformerAsOperation[_]) =>
         inputOutputTable(Seq(
           ("<code><a href=\"../classes/dataframe.html\">DataFrame</a></code>",
-            "Output DataFrame"),
+            "The output DataFrame."),
           ("<code><a href=\"../classes/transformer.html\">Transformer</a></code>",
-            "Transformer that allows to apply the operation on other DataFrames using " +
-            "<a href=\"transform.html\">Transform</a>")
+            "A Transformer that allows to apply the operation on other DataFrames using " +
+            "<a href=\"transform.html\">Transform</a>.")
         ))
       case (eso: EstimatorAsOperation[_]) =>
         inputOutputTable(Seq(
           ("<code><a href=\"../classes/dataframe.html\">DataFrame</a></code>",
-            "Output DataFrame"),
+            "The output DataFrame."),
           ("<code><a href=\"../classes/transformer.html\">Transformer</a></code>",
-            "Transformer that allows to apply the operation on other DataFrames using " +
-              "<a href=\"transform.html\">Transform</a>")
+            "A Transformer that allows to apply the operation on other DataFrames using " +
+              "<a href=\"transform.html\">Transform</a>.")
         ))
       case (e: EstimatorAsFactory[_]) =>
         inputOutputTable(Seq(
           ("<code><a href=\"../classes/estimator.html\">Estimator</a></code>",
-            "Estimator that can be used in <a href=\"fit.html\">Fit</a> operation")
+            "An Estimator that can be used in <a href=\"fit.html\">Fit</a> operation.")
         ))
       case (ev: EvaluatorAsFactory[_]) =>
         inputOutputTable(Seq(
           ("<code><a href=\"../classes/evaluator.html\">Evaluator</a></code>",
-            "Evaluator that can be used in <a href=\"evaluate.html\">Evaluate</a> operation")
+            "An Evaluator that can be used in <a href=\"evaluate.html\">Evaluate</a> operation.")
         ))
     }
     "## Output\n\n" + outputTable

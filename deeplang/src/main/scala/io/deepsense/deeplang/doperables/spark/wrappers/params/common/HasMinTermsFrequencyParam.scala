@@ -29,14 +29,13 @@ trait HasMinTermsFrequencyParam
 
   val minTF = new DoubleParamWrapper[ml.param.Params { val minTF: ml.param.DoubleParam }](
     name = "min term frequency",
-    description = "Filter to ignore rare words in a document. " +
-      "For each document, terms with frequency/count less than the given threshold are ignored. " +
-      "If this is an integer >= 1, " +
-      "then this specifies a count (of times the term must appear in the document); " +
-      "if this is a double in [0,1), " +
-      "then this specifies a fraction (out of the document's token count). " +
-      "Note that the parameter is only used in transform of CountVectorizerModel and " +
-      "does not affect fitting.",
+    description =
+      """A filter to ignore rare words in a document. For each document, terms with
+        |frequency/count less than the given threshold are ignored. If this is an integer >= 1,
+        |then this specifies a count (of times the term must appear in the document); if this is
+        |a double in [0,1), then this specifies a fraction (out of the document's token count).
+        |Note that the parameter is only used in transform of CountVectorizerModel and does not
+        |affect fitting.""".stripMargin,
     sparkParamGetter = _.minTF,
     RangeValidator(0.0, Double.MaxValue))
   setDefault(minTF, 1.0)

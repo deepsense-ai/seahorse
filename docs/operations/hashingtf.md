@@ -6,7 +6,7 @@ description: HashingTF
 usesMathJax: true
 includeOperationsMenu: true
 ---
-Maps a sequence of terms to their term frequencies using the hashing trick.
+Maps a sequence of terms to term frequencies using the hashing trick.
 
 This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.feature.HashingTF">org.apache.spark.ml.feature.HashingTF documentation</a>.
 
@@ -24,7 +24,7 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 </tr>
 </thead>
 <tbody>
-    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>Input DataFrame</td></tr>
+    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>The input DataFrame.</td></tr>
 </tbody>
 </table>
 
@@ -41,7 +41,7 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 </tr>
 </thead>
 <tbody>
-    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>Output DataFrame</td></tr><tr><td><code>1</code></td><td><code><a href="../classes/transformer.html">Transformer</a></code></td><td>Transformer that allows to apply the operation on other DataFrames using <a href="transform.html">Transform</a></td></tr>
+    <tr><td><code>0</code></td><td><code><a href="../classes/dataframe.html">DataFrame</a></code></td><td>The output DataFrame.</td></tr><tr><td><code>1</code></td><td><code><a href="../classes/transformer.html">Transformer</a></code></td><td>A Transformer that allows to apply the operation on other DataFrames using <a href="transform.html">Transform</a>.</td></tr>
 </tbody>
 </table>
 
@@ -62,13 +62,13 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 <tr>
 <td><code>numFeatures</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Number of features.</td>
+<td>The number of features.</td>
 </tr>
 
 <tr>
 <td><code>operate on</code></td>
 <td><code><a href="../parameter_types.html#input-output-column-selector">InputOutputColumnSelector</a></code></td>
-<td>Input and output columns for the operation.</td>
+<td>The input and output columns for the operation.</td>
 </tr>
 
 </tbody>

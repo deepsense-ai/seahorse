@@ -41,7 +41,7 @@ in twenty five models being cross validated.
 In the following case, Grid Search is used to determine the best parameters
 for training a Random Forest Regression model.
 
-`number of folds` has to be at least `2`, but higher values yield models that generalize better.
+`number of folds` has to be at least `2`, but higher values make model evaluation more accurate.
 
 In the _PARAMETERS OF INPUT ESTIMATOR_ section of Grid Search's parameters, we specify the parameter values.
 

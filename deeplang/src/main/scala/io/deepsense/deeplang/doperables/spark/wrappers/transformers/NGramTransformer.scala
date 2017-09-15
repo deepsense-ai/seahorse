@@ -27,7 +27,7 @@ class NGramTransformer extends SparkTransformerAsMultiColumnTransformer[NGram] {
 
   val n = new IntParamWrapper[NGram](
     name = "n",
-    description = "Minimum n-gram length.",
+    description = "The minimum n-gram length.",
     sparkParamGetter = _.n,
     validator = RangeValidator(begin = 1.0, end = Int.MaxValue, step = Some(1.0)))
   setDefault(n, 2.0)

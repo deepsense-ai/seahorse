@@ -36,29 +36,29 @@ class RandomForestRegression
 
   val maxDepth = new IntParamWrapper[SparkRFR](
     name = "max depth",
-    description = "Maximum depth of each tree in the forest.",
+    description = "The maximum depth of each tree in the forest.",
     sparkParamGetter = _.maxDepth,
     RangeValidator(0, 30, step = Some(1.0)))
   setDefault(maxDepth, 5.0)
 
   val maxBins = new IntParamWrapper[SparkRFR](
     name = "max bins",
-    description = "Maximum number of bins discretizing continuous features (>= 2 and >= number " +
-      "of categories for any categorical feature).",
+    description = "The maximum number of bins discretizing continuous features (>= 2 and >= " +
+      "number of categories for any categorical feature).",
     sparkParamGetter = _.maxBins,
     validator = RangeValidator(begin = 2.0, end = Int.MaxValue, step = Some(1.0)))
   setDefault(maxBins, 32.0)
 
   val minInstancesPerNode = new IntParamWrapper[SparkRFR](
     name = "min instances per node",
-    description = "Minimum number of instances each child must have after split.",
+    description = "The minimum number of instances each child must have after split.",
     sparkParamGetter = _.minInstancesPerNode,
     validator = RangeValidator(begin = 1.0, end = Int.MaxValue, step = Some(1.0)))
   setDefault(minInstancesPerNode, 1.0)
 
   val minInfoGain = new DoubleParamWrapper[SparkRFR](
     name = "min info gain",
-    description = "Minimum information gain for a split to be considered at a tree node.",
+    description = "The minimum information gain for a split to be considered at a tree node.",
     sparkParamGetter = _.minInfoGain,
     validator = RangeValidator(0.0, Double.PositiveInfinity))
   setDefault(minInfoGain, 0.0)
@@ -72,7 +72,7 @@ class RandomForestRegression
 
   val cacheNodeIds = new BooleanParamWrapper[SparkRFR](
     name = "cache node ids",
-    description = "Caching nodes IDs. Can speed up training of deeper trees.",
+    description = "The caching nodes IDs. Can speed up training of deeper trees.",
     sparkParamGetter = _.cacheNodeIds)
   setDefault(cacheNodeIds, false)
 
@@ -85,20 +85,20 @@ class RandomForestRegression
 
   val impurity = new ChoiceParamWrapper[SparkRFR, Impurity.Criterion](
     name = "impurity",
-    description = "Criterion used for information gain calculation.",
+    description = "The criterion used for information gain calculation.",
     sparkParamGetter = _.impurity)
   setDefault(impurity, Impurity.Variance())
 
   val subsamplingRate = new DoubleParamWrapper[SparkRFR](
     name = "subsampling rate",
-    description = "Fraction of the training data used for learning each decision tree.",
+    description = "The fraction of the training data used for learning each decision tree.",
     sparkParamGetter = _.subsamplingRate,
     validator = RangeValidator(begin = 0.0, end = 1.0, beginIncluded = false))
   setDefault(subsamplingRate, 1.0)
 
   val numTrees = new IntParamWrapper[SparkRFR](
     name = "num trees",
-    description = "Number of trees to train.",
+    description = "The number of trees to train.",
     sparkParamGetter = _.numTrees,
     validator = RangeValidator(begin = 1.0, end = Int.MaxValue, step = Some(1.0)))
   setDefault(numTrees, 20.0)

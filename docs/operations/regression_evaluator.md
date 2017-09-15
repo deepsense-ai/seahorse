@@ -28,7 +28,7 @@ This operation does not take any input.
 </tr>
 </thead>
 <tbody>
-    <tr><td><code>0</code></td><td><code><a href="../classes/evaluator.html">Evaluator</a></code></td><td>Evaluator that can be used in <a href="evaluate.html">Evaluate</a> operation</td></tr>
+    <tr><td><code>0</code></td><td><code><a href="../classes/evaluator.html">Evaluator</a></code></td><td>An Evaluator that can be used in <a href="evaluate.html">Evaluate</a> operation.</td></tr>
 </tbody>
 </table>
 
@@ -49,19 +49,19 @@ This operation does not take any input.
 <tr>
 <td><code>metric</code></td>
 <td><code><a href="../parameter_types.html#single-choice">SingleChoice</a></code></td>
-<td>Metric used in evaluation. Possible values: <code>["mse", "rmse", "r2", "mae"]</code></td>
+<td>The metric used in evaluation. Possible values: <code>["mse", "rmse", "r2", "mae"]</code></td>
 </tr>
 
 <tr>
 <td><code>prediction column</code></td>
 <td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
-<td>Prediction column.</td>
+<td>The prediction column.</td>
 </tr>
 
 <tr>
 <td><code>label column</code></td>
 <td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
-<td>Label column for model fitting.</td>
+<td>The label column for model fitting.</td>
 </tr>
 
 </tbody>

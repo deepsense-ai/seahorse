@@ -6,7 +6,7 @@ description: Random Forest Regression
 usesMathJax: true
 includeOperationsMenu: true
 ---
-Random forest regression (RFR), learning algorithm for regression. It supports both continuous and categorical features.
+Random forest regression (RFR) is a learning algorithm for regression. It supports both continuous and categorical features.
 
 This operation is ported from Spark ML. For more details, see: <a target="_blank" href="http://spark.apache.org/docs/1.6.0/api/scala/index.html#org.apache.spark.ml.regression.RandomForestRegressor">org.apache.spark.ml.regression.RandomForestRegressor documentation</a>.
 
@@ -28,7 +28,7 @@ This operation does not take any input.
 </tr>
 </thead>
 <tbody>
-    <tr><td><code>0</code></td><td><code><a href="../classes/estimator.html">Estimator</a></code></td><td>Estimator that can be used in <a href="fit.html">Fit</a> operation</td></tr>
+    <tr><td><code>0</code></td><td><code><a href="../classes/estimator.html">Estimator</a></code></td><td>An Estimator that can be used in <a href="fit.html">Fit</a> operation.</td></tr>
 </tbody>
 </table>
 
@@ -49,25 +49,25 @@ This operation does not take any input.
 <tr>
 <td><code>max depth</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Maximum depth of each tree in the forest.</td>
+<td>The maximum depth of each tree in the forest.</td>
 </tr>
 
 <tr>
 <td><code>max bins</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Maximum number of bins discretizing continuous features (>= 2 and >= number of categories for any categorical feature).</td>
+<td>The maximum number of bins discretizing continuous features (>= 2 and >= number of categories for any categorical feature).</td>
 </tr>
 
 <tr>
 <td><code>min instances per node</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Minimum number of instances each child must have after split.</td>
+<td>The minimum number of instances each child must have after split.</td>
 </tr>
 
 <tr>
 <td><code>min info gain</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Minimum information gain for a split to be considered at a tree node.</td>
+<td>The minimum information gain for a split to be considered at a tree node.</td>
 </tr>
 
 <tr>
@@ -79,7 +79,7 @@ This operation does not take any input.
 <tr>
 <td><code>cache node ids</code></td>
 <td><code><a href="../parameter_types.html#boolean">Boolean</a></code></td>
-<td>Caching nodes IDs. Can speed up training of deeper trees.</td>
+<td>The caching nodes IDs. Can speed up training of deeper trees.</td>
 </tr>
 
 <tr>
@@ -91,25 +91,25 @@ This operation does not take any input.
 <tr>
 <td><code>impurity</code></td>
 <td><code><a href="../parameter_types.html#single-choice">SingleChoice</a></code></td>
-<td>Criterion used for information gain calculation. Possible values: <code>["variance"]</code></td>
+<td>The criterion used for information gain calculation. Possible values: <code>["variance"]</code></td>
 </tr>
 
 <tr>
 <td><code>subsampling rate</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Fraction of the training data used for learning each decision tree.</td>
+<td>The fraction of the training data used for learning each decision tree.</td>
 </tr>
 
 <tr>
 <td><code>seed</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Random seed.</td>
+<td>The random seed.</td>
 </tr>
 
 <tr>
 <td><code>num trees</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Number of trees to train.</td>
+<td>The number of trees to train.</td>
 </tr>
 
 <tr>
@@ -121,19 +121,19 @@ This operation does not take any input.
 <tr>
 <td><code>features column</code></td>
 <td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
-<td>Features column for model fitting.</td>
+<td>The features column for model fitting.</td>
 </tr>
 
 <tr>
 <td><code>prediction column</code></td>
 <td><code><a href="../parameter_types.html#string">String</a></code></td>
-<td>Prediction column created during model scoring.</td>
+<td>The prediction column created during model scoring.</td>
 </tr>
 
 <tr>
 <td><code>label column</code></td>
 <td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
-<td>Label column for model fitting.</td>
+<td>The label column for model fitting.</td>
 </tr>
 
 </tbody>
