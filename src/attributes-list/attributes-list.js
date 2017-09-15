@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Grzegorz Swatowski
- */
-
 'use strict';
 
 /*@ngInject*/
@@ -13,7 +7,7 @@ function AttributesList(AttributesPanelService) {
     templateUrl: 'attributes-list/attributes-list.html',
     replace: true,
     scope: {
-      'parametersList': '='
+      parametersList: '='
     },
     link: function (scope, element) {
       scope.noParamValues = () => (Object.keys(scope.parametersList.parameters).length === 0);

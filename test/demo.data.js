@@ -45,11 +45,44 @@ angular.module('test').
         output: [
           {
             portIndex: 0,
-            typeQualifier: ['io.deepsense.type1', 'io.seahorse.type2', 'io.deepsense.type3']
+            typeQualifier: ['io.deepsense.type1'],
+            result: {
+              params: {
+                schema: [
+                  {
+                    name: "inferred_string",
+                    type: "string",
+                    description: "inferred string description",
+                    default: "some default",
+                    required: true,
+                    validator: {
+                      type: "regex",
+                      configuration: {
+                        regex: ".*"
+                      }
+                    }
+                  },
+                  {
+                    name: "inferred_boolean",
+                    type: "boolean",
+                    description: "boolean attr test",
+                    default: true,
+                    required: true
+                  }
+                ],
+                values: {
+                  "inferred_string": "inferred string value"
+                }
+              }
+            }
           },
           {
             portIndex: 1,
-            typeQualifier: ['io.deepsense.type4', 'io.seahorse.type5']
+            typeQualifier: ['io.deepsense.type1', 'io.seahorse.type2']
+          },
+          {
+            portIndex: 2,
+            typeQualifier: ['io.deepsense.type3', 'io.seahorse.type4', 'io.deepsense.type5']
           }
         ]
       },
@@ -222,7 +255,7 @@ angular.module('test').
       {
         description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur et harum neque nostrum qui similique soluta veritatis. Doloribus eligendi explicabo illo iure nostrum quas ratione soluta veritatis vero voluptatem? Rem.',
         id: 'a61a311f-ffc0-71b8-736c-3fb1e3cf8e77',
-        name: 'Test draft',
+        name: 'Test of dynamic params',
         uiName: '',
         color: '#00B1EB',
         operationId: '11111-111111-33333',
@@ -609,6 +642,22 @@ angular.module('test').
           "default": null,
           "required": true,
           "isSingle": true
+        },
+        {
+          name: "dynamic-param-test",
+          type: "dynamic",
+          description: "this tests dynamic param when params are inferred",
+          inputPort: 0,
+          default: null,
+          required: true
+        },
+        {
+          name: "dynamic-param-test-1",
+          type: "dynamic",
+          description: "this tests dynamic param when params are NOT inferred",
+          inputPort: 1,
+          default: null,
+          required: true
         }
       ]
     ];
@@ -700,8 +749,15 @@ angular.module('test').
       }
     ];
 
-    for (var i = 0; i < nodes.length; ++i) {
-      nodes[i].parameters = DeepsenseNodeParameters.factory.createParametersList(parameterValues[i], parameterSchemas[i]);
+    // Mocked node. It can return its id and incomingKnowledge.
+    // In this mocked implementation, incomingKnowledge returns outputKnowledge
+    // from nodes[0], from portIndex that is specified.
+    let mockNode = {
+      getIncomingKnowledge: portIndex => nodes[0].output[portIndex]
+    };
+
+    for (let i = 0; i < nodes.length; ++i) {
+      nodes[i].parameters = DeepsenseNodeParameters.factory.createParametersList(parameterValues[i], parameterSchemas[i], mockNode);
     }
 
     let workflow_id = "mock_workflow_id";
