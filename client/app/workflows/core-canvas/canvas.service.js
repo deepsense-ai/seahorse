@@ -17,8 +17,9 @@ const ZOOM_STEP = 0.1;
 
 class CanvasService {
   /*@ngInject*/
-  constructor(AdapterService, $rootScope) {
+  constructor(AdapterService, $rootScope, MouseEvent) {
     this.AdapterService = AdapterService;
+    this.MouseEvent = MouseEvent;
     this.$rootScope = $rootScope;
 
     this.slidingWindowSize = {
@@ -75,7 +76,7 @@ class CanvasService {
 
     // Drag handling
     const moveHandler = (event) => {
-      if (event.ctrlKey) {
+      if (this.MouseEvent.isModKeyDown(event)) {
         this.moveWindow(event.originalEvent.movementX, event.originalEvent.movementY);
       } else {
         this.$slidingWindow.off('mousemove', moveHandler);
@@ -83,7 +84,7 @@ class CanvasService {
     };
 
     this.$slidingWindow.bind('mousedown', () => {
-      if (event.ctrlKey) {
+      if (this.MouseEvent.isModKeyDown(event)) {
         this.$slidingWindow.bind('mousemove', moveHandler);
       }
     });
