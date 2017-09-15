@@ -8,6 +8,7 @@ describe('NotificationService', function() {
 
   beforeEach(function() {
     var testModule = angular.module('test', ['ui.router', 'ui.bootstrap', 'toastr']);
+    testModule.constant('config', {});
 
     if (typeof Function.prototype.bind !== 'function') {
       Function.prototype.bind = function() {
