@@ -15,6 +15,7 @@ mkdir $WE_DEPS_CONTENT
 echo "Copying pyexecutor from workflowexecutor jar"
 
 (cd $WE_DEPS_CONTENT; jar xf ../../downloads/we.jar pyexecutor)
+(cd $WE_DEPS_CONTENT; jar xf ../../downloads/we.jar r_executor.R)
 
 echo "Copying executing kernel"
 (cd remote_notebook; ./pack_executing_kernel.sh)

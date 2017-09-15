@@ -53,6 +53,8 @@ dockerBaseImage := "quay.io/deepsense_io/deepsense-spark:1.6.1"
 dockerExposedPorts := Seq(9082)
 dockerCommands ++= Seq(
   Cmd("USER", "root"),
+  ExecCmd("RUN", "apt-get", "update"),
+  ExecCmd("RUN", "apt-get", "install", "-y", "r-base"),
   ExecCmd("ENTRYPOINT", "/opt/startup.sh"),
   ExecCmd("CMD", "bin/deepsense-sessionmanager")
 )
