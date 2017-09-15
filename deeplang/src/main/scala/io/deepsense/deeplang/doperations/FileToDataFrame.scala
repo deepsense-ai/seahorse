@@ -66,7 +66,7 @@ class FileToDataFrame extends DOperation1To1[File, DataFrame] {
     val firstLine = lines.first()
     val columnsNo = firstLine.length
     val (columnNames, dataLines) = if (namesIncluded) {
-      (firstLine.toSeq, removeFirstLine(lines).cache())
+      (safeColumnNames(firstLine), removeFirstLine(lines).cache())
     } else {
       (generateColumnNames(columnsNo), lines)
     }
@@ -98,6 +98,11 @@ class FileToDataFrame extends DOperation1To1[File, DataFrame] {
       if (categoricalColumnIndices.contains(index)) column.copy(dataType = StringType) else column
     })
     context.dataFrameBuilder.buildDataFrame(convertedSchema, convertedData, categoricalColumnNames)
+  }
+
+  private def safeColumnNames(firstLine: Seq[String]): Seq[String] = {
+    firstLine.map(_.replace(".", "_"))
+    // TODO: remove replace when spark upgraded to 1.4. DS-635
   }
 
   /**

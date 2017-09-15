@@ -18,6 +18,8 @@ class MathematicalOperation extends DOperation0To1[Transformation] {
 
   override val id : Id = "ecb9bc36-5f7c-4a62-aa18-8db6e2d73251"
 
+  // TODO: DS-635 This operation will fail if user provide column name with '.'
+
   override protected def _execute(context: ExecutionContext)(): Transformation = {
     val formula = parameters.getString(MathematicalOperation.formulaParam).get
     new MathematicalTransformation(formula)
