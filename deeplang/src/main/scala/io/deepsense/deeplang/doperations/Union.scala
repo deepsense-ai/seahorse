@@ -17,18 +17,19 @@
 package io.deepsense.deeplang.doperations
 
 import scala.reflect.runtime.{universe => ru}
-
 import org.apache.spark.sql.types.StructType
-
 import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.SchemaMismatchException
-import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
+import io.deepsense.deeplang.inference.InferenceWarnings
 import io.deepsense.deeplang.params.Params
-import io.deepsense.deeplang.{DKnowledge, DOperation2To1, ExecutionContext}
+import io.deepsense.deeplang.{DOperation2To1, DataFrame2To1Operation, ExecutionContext}
 
-case class Union() extends DOperation2To1[DataFrame, DataFrame, DataFrame] with Params {
+case class Union()
+    extends DOperation2To1[DataFrame, DataFrame, DataFrame]
+    with DataFrame2To1Operation
+    with Params {
 
   override val id: Id = "90fed07b-d0a9-49fd-ae23-dd7000a1d8ad"
   override val name: String = "Union"
@@ -42,36 +43,23 @@ case class Union() extends DOperation2To1[DataFrame, DataFrame, DataFrame] with 
   override protected def _execute(
       context: ExecutionContext)(first: DataFrame, second: DataFrame): DataFrame = {
 
-    checkSchemaMismatch(first.schema.get, second.schema.get)
+    inferSchema(first.schema.get, second.schema.get)
 
     context.dataFrameBuilder.buildDataFrame(
       first.schema.get,
       first.sparkDataFrame.union(second.sparkDataFrame).rdd)
   }
 
-  override protected def _inferKnowledge
-      (context: InferContext)
-      (df1Knowledge: DKnowledge[DataFrame],
-        df2Knowledge: DKnowledge[DataFrame]): (DKnowledge[DataFrame], InferenceWarnings) = {
-
-    val df1Schema = df1Knowledge.single.schema
-    val df2Schema = df2Knowledge.single.schema
-
-    if (df1Schema.isDefined && df2Schema.isDefined) {
-      checkSchemaMismatch(df1Schema.get, df2Schema.get)
-      (df1Knowledge, InferenceWarnings())
-    } else {
-      (DKnowledge(DataFrame.forInference()), InferenceWarnings())
-    }
-  }
-
-  private def checkSchemaMismatch(first: StructType, second: StructType): Unit = {
-    if (first.treeString != second.treeString) {
+  protected override def inferSchema(
+      leftSchema: StructType,
+      rightSchema: StructType): (StructType, InferenceWarnings) = {
+    if (leftSchema.treeString != rightSchema.treeString) {
       throw new SchemaMismatchException(
         "SchemaMismatch. Expected schema " +
-          s"${first.treeString}" +
-          s" differs from ${second.treeString}")
+          s"${leftSchema.treeString}" +
+          s" differs from ${rightSchema.treeString}")
     }
+    (leftSchema, InferenceWarnings.empty)
   }
 
   @transient

@@ -16,8 +16,10 @@
 
 package io.deepsense.deeplang.doperations
 
-import io.deepsense.deeplang.DeeplangIntegTestSupport
+import io.deepsense.deeplang.{DKnowledge, DeeplangIntegTestSupport}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings, SqlInferenceWarning}
+import io.deepsense.deeplang.params.exceptions.ParamsEqualException
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 
@@ -67,7 +69,7 @@ class SqlCombineSpec extends DeeplangIntegTestSupport {
       val expression =
         s"""SELECT l.$firstLeftColumn AS first_letter,
             |r.$secondRightColumn AS second_letter
-            |FROM left l INNER JOIN right r ON l.$secondLeftColumn = r.$firstRightColumn
+            |FROM $leftName l INNER JOIN $rightName r ON l.$secondLeftColumn = r.$firstRightColumn
          """.stripMargin
       val result = executeSqlCombine(expression, leftName, leftDf, rightName, rightDf)
       val expectedData = Seq(
@@ -81,6 +83,40 @@ class SqlCombineSpec extends DeeplangIntegTestSupport {
       val expected = createDataFrame(expectedData, expectedSchema)
       assertDataFramesEqual(result, expected)
     }
+    "fail validations if DataFrame names are the same" in {
+      val expression = "SELECT * FROM x"
+      val combine = new SqlCombine()
+        .setLeftTableName("x")
+        .setRightTableName("x")
+        .setSqlCombineExpression(expression)
+      combine.validateParams should
+        contain (ParamsEqualException("left dataframe id", "right dataframe id", "x"))
+    }
+    "infer schema" in {
+      val expression =
+        s"""SELECT $leftName.$secondLeftColumn*$rightName.$firstRightColumn x,
+           |$rightName.$secondRightColumn
+           |FROM $leftName, $rightName
+         """.stripMargin
+      val (result, warnings) = inferSqlCombineSchema(expression, leftName, leftSchema,
+        rightName, rightSchema)
+
+      val expectedSchema = StructType(Seq(
+        StructField("x", DoubleType),
+        StructField(secondRightColumn, StringType)
+      ))
+      warnings shouldBe empty
+      result shouldEqual expectedSchema
+    }
+    "fail schema inference for invalid expression" in {
+      val expression =
+        s"""SELEC $leftName.$firstLeftColumn FROM $leftName"""
+      val (_, warnings) = inferSqlCombineSchema(expression, leftName, leftSchema,
+        rightName, rightSchema)
+
+      warnings.warnings should
+        contain (SqlInferenceWarning(expression, "Invalid Spark SQL expression."))
+    }
   }
 
   private def executeSqlCombine(expresssion: String,
@@ -92,5 +128,22 @@ class SqlCombineSpec extends DeeplangIntegTestSupport {
       .setSqlCombineExpression(expresssion)
 
     executeOperation(combine, leftData, rightData)
+  }
+
+  private def inferSqlCombineSchema(
+      expression: String,
+      leftName: String, leftSchema: StructType,
+      rightName: String, rightSchema: StructType): (StructType, InferenceWarnings) = {
+    val combine = new SqlCombine()
+      .setLeftTableName(leftName)
+      .setRightTableName(rightName)
+      .setSqlCombineExpression(expression)
+    val (knowledge, warnings) = combine.inferKnowledge(mock[InferContext])(Vector(
+      DKnowledge(DataFrame.forInference(leftSchema)),
+      DKnowledge(DataFrame.forInference(rightSchema))
+    ))
+
+    val dataFrameKnowledge = knowledge.head.single.asInstanceOf[DataFrame]
+    (dataFrameKnowledge.schema.get, warnings)
   }
 }

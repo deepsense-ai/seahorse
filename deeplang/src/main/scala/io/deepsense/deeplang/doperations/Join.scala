@@ -17,25 +17,24 @@
 package io.deepsense.deeplang.doperations
 
 import scala.reflect.runtime.{universe => ru}
-
 import org.apache.spark.sql
 import org.apache.spark.sql.Column
 import org.apache.spark.sql.types.StructType
-
 import io.deepsense.commons.types.SparkConversions
 import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
 import io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException
-import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
+import io.deepsense.deeplang.inference.InferenceWarnings
 import io.deepsense.deeplang.params._
 import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
 import io.deepsense.deeplang.params.selections.{NameColumnSelection, SingleColumnSelection}
-import io.deepsense.deeplang.{DKnowledge, DOperation2To1, ExecutionContext}
+import io.deepsense.deeplang.{DOperation2To1, DataFrame2To1Operation, ExecutionContext}
 
 case class Join()
     extends DOperation2To1[DataFrame, DataFrame, DataFrame]
-    with Params {
+      with DataFrame2To1Operation
+      with Params {
 
   import Join._
 
@@ -127,25 +126,9 @@ case class Join()
     DataFrame.fromSparkDataFrame(noDuplicatesSparkDF)
   }
 
-  override protected def _inferKnowledge(context: InferContext)
-      (leftDataFrameKnowledge: DKnowledge[DataFrame],
-        rightDataFrameKnowledge: DKnowledge[DataFrame])
-  : (DKnowledge[DataFrame], InferenceWarnings) = {
-
-    val leftSchema = leftDataFrameKnowledge.single.schema
-    val rightSchema = rightDataFrameKnowledge.single.schema
-
-    if (leftSchema.isDefined && rightSchema.isDefined) {
-      val outputSchema = inferSchema(leftSchema.get, rightSchema.get)
-      (DKnowledge(DataFrame.forInference(outputSchema)), InferenceWarnings.empty)
-    } else {
-      (DKnowledge(DataFrame.forInference()), InferenceWarnings.empty)
-    }
-  }
-
-  private def inferSchema(
+  override protected def inferSchema(
       leftSchema: StructType,
-      rightSchema: StructType): StructType = {
+      rightSchema: StructType): (StructType, InferenceWarnings) = {
 
     validateSchemas(leftSchema, rightSchema)
     val columnNames = RenamedColumnNames(leftSchema.fieldNames, rightSchema.fieldNames)
@@ -164,7 +147,7 @@ case class Join()
     val columns = prefixedLeftSchema ++
       prefixedRightSchema.filter(col => !renamedRightJoinColumnNames.contains(col.name))
 
-    StructType(columns)
+    (StructType(columns), InferenceWarnings.empty)
   }
 
 

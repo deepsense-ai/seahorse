@@ -16,11 +16,14 @@
 
 package io.deepsense.deeplang.doperables
 
-import org.apache.spark.sql
-import org.apache.spark.sql.SparkSession
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperations.exceptions.SqlExpressionException
+import io.deepsense.deeplang.inference.{SqlInferenceWarning, SqlSchemaInferrer}
 import io.deepsense.deeplang.params.{CodeSnippetLanguage, CodeSnippetParam, Param, StringParam}
+import org.apache.spark.sql
+import org.apache.spark.sql.types.StructType
+import org.apache.spark.sql.SparkSession
 
 class SqlTransformer extends Transformer {
 
@@ -58,6 +61,18 @@ class SqlTransformer extends Transformer {
       logger.debug("Unregistering the temporary table" + getDataFrameId)
       localSparkSession.catalog.dropTempView(getDataFrameId)
     }
+  }
+
+  override private[deeplang] def _transformSchema(schema: StructType): Option[StructType] = {
+    val (resultSchema, warnings) =
+      new SqlSchemaInferrer().inferSchema(getExpression, (getDataFrameId, schema))
+    // We throw/log as there is no way to pass warnings further at this point.
+    warnings.warnings.foreach {
+      case SqlInferenceWarning(sqlExpression, warningText) =>
+        throw SqlExpressionException(sqlExpression, warningText)
+      case other => logger.warn(s"Inference warning not reported: ${other.message}")
+    }
+    Some(resultSchema)
   }
 
   private def moveToSparkSession(df: sql.DataFrame, destinationCtx: SparkSession): sql.DataFrame =

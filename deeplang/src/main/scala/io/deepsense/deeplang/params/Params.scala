@@ -180,14 +180,17 @@ trait Params extends Serializable with HasInferenceResult with DefaultJsonProtoc
   private lazy val paramsByName: Map[String, Param[_]] =
     params.map { case param => param.name -> param }.toMap
 
+  protected def customValidateParams: Vector[DeepLangException] = Vector.empty
+
   /**
    * Validates params' values by:
    * 1. testing whether the params have values set (or default values),
    * 2. testing whether the values meet the constraints,
    * 3. testing subparameters' values (eg. for ChoiceParameters).
+   * 4. testing custom validations, possibly spanning over multiple params.
    */
   def validateParams: Vector[DeepLangException] = {
-    params.flatMap { param =>
+    val singleParameterErrors = params.flatMap { param =>
       if (isDefined(param)) {
         val paramValue: Any = $(param)
         val anyTypeParam: Param[Any] = param.asInstanceOf[Param[Any]]
@@ -197,6 +200,8 @@ trait Params extends Serializable with HasInferenceResult with DefaultJsonProtoc
         Vector(new ParamValueNotProvidedException(param.name))
       }
     }.toVector
+    val customValidationErrors = customValidateParams
+    singleParameterErrors ++ customValidationErrors
   }
 
   /**

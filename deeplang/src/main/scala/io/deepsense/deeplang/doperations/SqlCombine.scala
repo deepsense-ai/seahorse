@@ -17,17 +17,22 @@
 package io.deepsense.deeplang.doperations
 
 import scala.reflect.runtime.{universe => ru}
-
 import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
-import io.deepsense.deeplang.{DOperation2To1, ExecutionContext}
+import io.deepsense.deeplang.{DOperation2To1, DataFrame2To1Operation, ExecutionContext}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.exceptions.DeepLangException
+import io.deepsense.deeplang.inference.{InferenceWarnings, SqlSchemaInferrer}
+import io.deepsense.deeplang.params.exceptions.ParamsEqualException
 import io.deepsense.deeplang.params.{CodeSnippetLanguage, CodeSnippetParam, Param, StringParam}
 import org.apache.spark.sql
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.types.StructType
 
 
-final class SqlCombine extends DOperation2To1[DataFrame, DataFrame, DataFrame] {
+final class SqlCombine
+  extends DOperation2To1[DataFrame, DataFrame, DataFrame]
+  with DataFrame2To1Operation {
 
   override val id: Id = "8f254d75-276f-48b7-872d-e4a18b6a86c6"
   override val name: String = "SQL Combine"
@@ -63,7 +68,6 @@ final class SqlCombine extends DOperation2To1[DataFrame, DataFrame, DataFrame] {
     logger.debug(s"SqlCombine(expression = '$getSqlCombineExpression', " +
       s"leftTableName = '$getLeftTableName', " +
       s"rightTableName = '$getRightTableName')")
-
     val localSparkSession = ctx.sparkSession.newSession()
     val leftDf = moveToSparkSession(left.sparkDataFrame, localSparkSession)
     val rightDf = moveToSparkSession(right.sparkDataFrame, localSparkSession)
@@ -76,6 +80,25 @@ final class SqlCombine extends DOperation2To1[DataFrame, DataFrame, DataFrame] {
       ctx.sparkSession)
     DataFrame.fromSparkDataFrame(sqlResult)
   }
+
+  override protected def inferSchema(leftSchema: StructType, rightSchema: StructType)
+  : (StructType, InferenceWarnings) = {
+    new SqlSchemaInferrer().inferSchema(getSqlCombineExpression,
+      (getLeftTableName, leftSchema),
+      (getRightTableName, rightSchema))
+  }
+
+  override protected def customValidateParams: Vector[DeepLangException] = {
+    if (getLeftTableName == getRightTableName) {
+      ParamsEqualException(
+        firstParamName = "left dataframe id",
+        secondParamName = "right dataframe id",
+        value = getLeftTableName).toVector
+    } else {
+      Vector.empty
+    }
+  }
+
   private def moveToSparkSession(df: sql.DataFrame, destinationCtx: SparkSession): sql.DataFrame =
     destinationCtx.createDataFrame(df.rdd, df.schema)
 
