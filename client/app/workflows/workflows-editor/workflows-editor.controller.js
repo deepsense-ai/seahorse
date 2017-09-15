@@ -180,7 +180,7 @@ class WorkflowsEditorController extends WorkflowReports {
           y: positionY > elementOffsetY ? positionY - elementOffsetY : 0
         });
 
-        this.GraphNodesService.getNodeParameters.then(() => this.WorkflowService.saveWorkflow());
+        this.GraphNodesService.getNodeParameters(node).then(() => this.WorkflowService.saveWorkflow());
       }),
 
       this.$scope.$on('AttributesPanel.UPDATED', () => {
