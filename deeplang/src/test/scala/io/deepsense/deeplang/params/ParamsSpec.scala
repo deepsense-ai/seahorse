@@ -16,13 +16,13 @@
 
 package io.deepsense.deeplang.params
 
-import spray.json._
 import spray.json.DefaultJsonProtocol._
+import spray.json._
 
 import io.deepsense.deeplang.UnitSpec
 import io.deepsense.deeplang.doperations.inout.InputStorageTypeChoice.File
 import io.deepsense.deeplang.exceptions.DeepLangException
-import ParameterType._
+import io.deepsense.deeplang.params.ParameterType._
 import io.deepsense.deeplang.params.exceptions.ParamValueNotProvidedException
 
 class ParamsSpec extends UnitSpec {
@@ -37,7 +37,8 @@ class ParamsSpec extends UnitSpec {
     "validate its params" in {
       val p = WithParams()
       p.set1(4)
-      p.validateParams should contain theSameElementsAs Seq(p.param1.validate(4)).flatten
+      p.validateParams should contain theSameElementsAs
+        new ParamValueNotProvidedException(nameOfParam2) +: p.param1.validate(4)
     }
     "describe its params as json ordered as in declareParams()" in {
       val p = WithParams()
@@ -257,10 +258,11 @@ object ParamsSpec extends UnitSpec {
   }
 
   val defaultForParam1 = 1
+  val nameOfParam2 = "name of param2"
 
   // This class also shows how Params trait is to be used
   case class WithParams() extends Params {
-    val param2 = MockParam("name of param2")
+    val param2 = MockParam(nameOfParam2)
     val param1 = MockParam("name of param1")
 
     val params = declareParams(param2, param1)

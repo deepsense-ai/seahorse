@@ -38,6 +38,12 @@ class ChoiceParamSpec extends AbstractChoiceParamSpec[ChoiceABC, ChoiceParam[Cho
       val expected = Seq("A", "B", "C").map(JsString(_))
       choices.map(serializeDefaultValue) should contain theSameElementsAs expected
     }
+    "validate choice subparams" in {
+      val param = paramFixture._1
+      val value = OptionA()
+      value.validateParams should not be empty
+      param.validateSubparams(value) shouldBe value.validateParams
+    }
   }
 
   override def paramFixture: (ChoiceParam[ChoiceABC], JsValue) = {

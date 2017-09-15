@@ -16,7 +16,6 @@
 
 package io.deepsense.graph
 
-import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.graph.DeeplangGraph.DeeplangNode
 

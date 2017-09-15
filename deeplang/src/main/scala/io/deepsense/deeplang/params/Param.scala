@@ -34,6 +34,8 @@ abstract class Param[T] {
 
   def validate(value: T): Vector[DeepLangException] = Vector.empty
 
+  def validateSubparams(value: T): Vector[DeepLangException] = Vector.empty
+
   /**
    * Describes json representation of this parameter.
    * @param maybeDefault Optional default value of parameter. Should be of type Option[T],

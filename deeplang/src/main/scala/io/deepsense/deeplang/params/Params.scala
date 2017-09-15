@@ -113,9 +113,22 @@ trait Params extends Serializable with HasInferenceResult {
   private lazy val paramsByName: Map[String, Param[_]] =
     params.map { case param => param.name -> param }.toMap
 
+  /**
+   * Validates params' values by:
+   * 1. testing whether the params have values set (or default values),
+   * 2. testing whether the values meet the constraints,
+   * 3. testing subparameters' values (eg. for ChoiceParameters).
+   */
   def validateParams: Vector[DeepLangException] = {
-    params.filter(isDefined).flatMap { param =>
-      param.asInstanceOf[Param[Any]].validate($(param))
+    params.flatMap { param =>
+      if (isDefined(param)) {
+        val paramValue: Any = $(param)
+        val anyTypeParam: Param[Any] = param.asInstanceOf[Param[Any]]
+        anyTypeParam.validate(paramValue) ++
+          anyTypeParam.validateSubparams(paramValue)
+      } else {
+        Vector(new ParamValueNotProvidedException(param.name))
+      }
     }.toVector
   }
 

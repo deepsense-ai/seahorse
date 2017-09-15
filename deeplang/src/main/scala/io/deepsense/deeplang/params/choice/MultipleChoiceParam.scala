@@ -16,6 +16,7 @@
 
 package io.deepsense.deeplang.params.choice
 
+import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.params.ParameterType
 import spray.json.DefaultJsonProtocol._
 import spray.json._
@@ -41,5 +42,9 @@ case class MultipleChoiceParam[T <: Choice](
     jsMap.toList.map {
       case (label, innerJsValue) => choiceFromJson(label, innerJsValue)
     }.toSet
+  }
+
+  override def validateSubparams(value: Set[T]): Vector[DeepLangException] = {
+    value.toVector.flatMap { _.validateParams }
   }
 }

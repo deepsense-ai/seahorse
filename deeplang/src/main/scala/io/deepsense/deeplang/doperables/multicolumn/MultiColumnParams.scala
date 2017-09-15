@@ -17,9 +17,9 @@
 package io.deepsense.deeplang.doperables.multicolumn
 
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleColumnInPlaceChoice
+import io.deepsense.deeplang.params._
 import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
 import io.deepsense.deeplang.params.selections.{MultipleColumnSelection, SingleColumnSelection}
-import io.deepsense.deeplang.params._
 
 object MultiColumnParams {
 

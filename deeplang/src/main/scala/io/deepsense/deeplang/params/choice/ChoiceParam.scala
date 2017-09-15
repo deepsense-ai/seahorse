@@ -16,10 +16,12 @@
 
 package io.deepsense.deeplang.params.choice
 
-import io.deepsense.deeplang.params.ParameterType
+import scala.reflect.runtime.universe._
+
 import spray.json._
 
-import scala.reflect.runtime.universe._
+import io.deepsense.deeplang.exceptions.DeepLangException
+import io.deepsense.deeplang.params.ParameterType
 
 class ChoiceParam[T <: Choice](
     val name: String,
@@ -40,6 +42,10 @@ class ChoiceParam[T <: Choice](
     }
     val (label, innerJsValue) = jsMap.iterator.next()
     choiceFromJson(label, innerJsValue)
+  }
+
+  override def validateSubparams(value: T): Vector[DeepLangException] = {
+    value.validateParams
   }
 }
 

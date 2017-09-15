@@ -17,4 +17,4 @@
 package io.deepsense.deeplang.params.exceptions
 
 case class ParamValueNotProvidedException(name: String)
-  extends ValidationException(s"No value for parameter $name")
+  extends ValidationException(s"No value for parameter '$name'")
