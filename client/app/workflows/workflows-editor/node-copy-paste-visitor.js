@@ -33,14 +33,15 @@ class NodeCopyPasteVisitor {
 
   pasteUsingSerializedData(serializedData) {
     let nodeIds = serializedData.split(',');
-    let nodes = nodeIds.map(this.WorkflowService.getWorkflow().getNodeById);
+    let workflow = this.WorkflowService.getWorkflow();
+    let nodes = nodeIds.map(workflow.getNodeById);
 
     let nodeParametersPromises = _.map(nodes, node => {
       return this.GraphNodesService.getNodeParameters(node);
     });
 
     this.$q.all(nodeParametersPromises).then(
-      nodes => this.GraphNodesService.cloneNodes(nodes)
+      nodes => this.GraphNodesService.cloneNodes(workflow, nodes)
     ).then((clonedNodes) => {
       // mark clones as selected after they are created
       this.$rootScope.$applyAsync(() => {
