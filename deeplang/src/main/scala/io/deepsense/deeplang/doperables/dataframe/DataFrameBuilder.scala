@@ -37,12 +37,4 @@ case class DataFrameBuilder(sqlContext: SQLContext) {
   }
 }
 
-object DataFrameBuilder {
-  /**
-   * @return DataFrame object that can be used _only_ for inference,
-   *         i.e. it contains only schema of this DataFrame.
-   */
-  def buildDataFrameForInference(schema: StructType): DataFrame = DataFrame(null, Some(schema))
-
-  def buildDataFrameForInference(): DataFrame = DataFrame(null, None)
-}
+object DataFrameBuilder

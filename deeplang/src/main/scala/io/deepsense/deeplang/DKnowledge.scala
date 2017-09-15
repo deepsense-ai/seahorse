@@ -39,6 +39,14 @@ class DKnowledge[T <: DOperable](val types: Set[T]) {
     }
   }
 
+  /**
+   * TODO document and test
+   */
+  def single: T = {
+    require(types.nonEmpty, "Expected at least one inferred type, but got 0")
+    types.iterator.next()
+  }
+
   lazy val size = types.size
 
   override def hashCode(): Int = types.hashCode()

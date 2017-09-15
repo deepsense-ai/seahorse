@@ -63,6 +63,18 @@ case class DataFrame private[dataframe] (
 object DataFrame {
 
   /**
+   * @return DataFrame object that can be used _only_ for inference,
+   *         i.e. it contains only schema of this DataFrame.
+   */
+  def forInference(schema: StructType): DataFrame = forInference(Some(schema))
+
+  /**
+   * @return DataFrame object that can be used _only_ for inference,
+   *         i.e. it contains only schema of this DataFrame.
+   */
+  def forInference(schema: Option[StructType] = None): DataFrame = DataFrame(null, schema)
+
+  /**
    * Throws [[WrongColumnTypeException]]
    * if some columns of schema have type different than one of expected.
    */
