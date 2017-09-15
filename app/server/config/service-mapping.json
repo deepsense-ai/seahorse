@@ -1,0 +1,19 @@
+[{
+  "path": "/v1/workflows",
+  "name": "workflow-manager"
+}, {
+  "path": "/v1/operations",
+  "name": "workflow-manager"
+}, {
+  "path": "/v1/sessions",
+  "name": "session-manager"
+}, {
+  "path": "/jupyter",
+  "name": "jupyter"
+}, {
+  "path": "/stomp",
+  "name": "rabbitmq"
+}, {
+  "path": "/",
+  "name": "frontend"
+}]

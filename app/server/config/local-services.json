@@ -1,0 +1,7 @@
+{
+  "workflow-manager": "http://172.28.128.100:9080",
+  "session-manager": "http://172.28.128.100:9081",
+  "jupyter": "http://172.28.128.100:8888",
+  "rabbitmq": "http://172.28.128.100:15674",
+  "frontend": "http://172.28.128.100:8000"
+}
