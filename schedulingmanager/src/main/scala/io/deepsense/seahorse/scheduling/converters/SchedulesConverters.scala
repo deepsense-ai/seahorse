@@ -15,7 +15,8 @@ object SchedulesConverters {
     id = schedule.id,
     cron = schedule.schedule.cron,
     workflowId = schedule.workflowId,
-    emailForReports = schedule.executionInfo.emailForReports
+    emailForReports = schedule.executionInfo.emailForReports,
+    presetId = schedule.executionInfo.presetId
   )
 
   def fromDb(schedule: WorkflowScheduleDB) = WorkflowSchedule(
@@ -25,7 +26,8 @@ object SchedulesConverters {
     ),
     workflowId = schedule.workflowId,
     executionInfo = WorkflowExecutionInfo(
-      emailForReports = schedule.emailForReports
+      emailForReports = schedule.emailForReports,
+      presetId = schedule.presetId
     )
   )
 

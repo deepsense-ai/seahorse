@@ -166,12 +166,17 @@
     "WorkflowExecutionInfo": {
       "description": "Information about scheduled execution of a workflow.",
       "type": "object",
-      "required": ["emailForReports"],
+      "required": ["emailForReports", "presetId"],
       "properties": {
         "emailForReports": {
           "description": "An email will be send to this address after execution.",
           "type": "string",
           "format": "email"
+        },
+        "presetId": {
+          "description": "Id of a preset which should be used to execute the workflow.",
+          "type": "integer",
+          "format": "int64"
         }
       }
     },

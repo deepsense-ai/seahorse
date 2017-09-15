@@ -22,7 +22,8 @@ object WorkflowScheduleSchema {
     id: UUID,
     cron: String,
     workflowId: UUID,
-    emailForReports: String
+    emailForReports: String,
+    presetId: Long
   )
 
   final class WorkflowScheduleTable(tag: Tag)
@@ -31,8 +32,9 @@ object WorkflowScheduleSchema {
     def cron = column[String]("cron")
     def workflowId = column[UUID]("workflow_id")
     def emailForReports = column[String]("email_for_reports")
+    def presetId = column[Long]("preset_id")
 
-    def * = (id, cron, workflowId, emailForReports) <> (WorkflowScheduleDB.tupled, WorkflowScheduleDB.unapply)
+    def * = (id, cron, workflowId, emailForReports, presetId) <> (WorkflowScheduleDB.tupled, WorkflowScheduleDB.unapply)
   }
 
   lazy val workflowScheduleTable = TableQuery[WorkflowScheduleTable]
@@ -42,7 +44,7 @@ object WorkflowScheduleSchema {
 // https://github.com/sbt/sbt-native-packager/pull/319
 // TODO use sbt-docker with sbt-assembly and define mainClass in assembly as
 // it's solved in Neptune
-/*
+
 object PrintDDL extends App {
   import Database.api._
   import WorkflowScheduleSchema._
@@ -50,4 +52,4 @@ object PrintDDL extends App {
   println(workflowScheduleTable.schema.createStatements.mkString("\n"))
   // scalastyle:on println
 }
-*/
+

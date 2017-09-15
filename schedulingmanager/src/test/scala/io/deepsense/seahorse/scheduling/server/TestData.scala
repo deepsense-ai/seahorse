@@ -14,7 +14,7 @@ object TestData {
     UUID.randomUUID(),
     schedule = Schedule("* * * * *"),
     workflowId = workflowId,
-    executionInfo = WorkflowExecutionInfo("some_email@test.test")
+    executionInfo = WorkflowExecutionInfo("some_email@test.test", 2)
   )
 
 }

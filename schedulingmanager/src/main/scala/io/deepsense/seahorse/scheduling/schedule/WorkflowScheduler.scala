@@ -28,14 +28,16 @@ abstract class WorkflowJob extends Job {
     val jobInfo = context.getJobDetail.getJobDataMap
     val workflowId = jobInfo.getString(WorkflowJob.workflowIdKey)
     val email = jobInfo.getString(WorkflowJob.emailKey)
-    logger.debug(s"Starting scheduled execution of workflow $workflowId for $email.")
-    Await.result(runWorkflow(workflowId, email), Duration.Inf)
+    val presetId = jobInfo.getLong(WorkflowJob.presetIdKey)
+    logger.debug(s"Starting scheduled execution of workflow $workflowId for $email and preset $presetId.")
+    Await.result(runWorkflow(workflowId, email, presetId), Duration.Inf)
   }
 
-  def runWorkflow(workflowId: String, sendReportToEmail: String): Future[Unit]
+  def runWorkflow(workflowId: String, sendReportToEmail: String, presetId: Long): Future[Unit]
 }
 
 object WorkflowJob {
+  val presetIdKey = "presetId"
   val workflowIdKey = "workflowId"
   val emailKey = "email"
 }
@@ -77,6 +79,7 @@ class WorkflowScheduler[JobType <: Job : ClassTag](properties: Properties) {
       .withIdentity(jobKey(workflowSchedule))
       .usingJobData(WorkflowJob.workflowIdKey, workflowSchedule.workflowId.toString)
       .usingJobData(WorkflowJob.emailKey, workflowSchedule.executionInfo.emailForReports)
+      .usingJobData(WorkflowJob.presetIdKey, long2Long(workflowSchedule.executionInfo.presetId))
       .build()
     val trigger = TriggerBuilder
       .newTrigger()
