@@ -27,7 +27,7 @@ Execute the following commands:
 
 Assembled jar can be found under path:
 
-``workflowexecutor/target/scala-2.10/workflowexecutor.jar``
+``workflowexecutor/target/scala-2.11/workflowexecutor.jar``
 
 ## How to Run Workflow Executor
 
