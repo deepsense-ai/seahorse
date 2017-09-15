@@ -47,31 +47,33 @@ class SessionServiceActorSpec(_system: ActorSystem)
 
   implicit val timeout: Timeout = 5.seconds
 
-  val existingSessionId = Id.randomId
-  val notExistingSessionId = Id.randomId
+  // TODO: Currently sessionId == workflowId
+  val existingSessionId, existingWorkflowId = Id.randomId
+  // TODO: Currently sessionId == workflowId
+  val notExistingSessionId, notExistingWorkflowId = Id.randomId
 
   "SessionServiceActor" when {
     "received a Heartbeat" when {
       "the session exists" should {
         val eventStore = mock[EventStore]
-        when(eventStore.heartbeat(existingSessionId)).thenReturn(Future.successful(Right(())))
+        when(eventStore.heartbeat(existingWorkflowId)).thenReturn(Future.successful(Right(())))
 
         "forward the event to EventStore" in fixture(eventStore) { p =>
-          p.sessionServiceActor ! Heartbeat(existingSessionId.toString)
+          p.sessionServiceActor ! Heartbeat(existingWorkflowId.toString)
           eventually {
-            verify(p.eventStore, times(1)).heartbeat(existingSessionId)
+            verify(p.eventStore, times(1)).heartbeat(existingWorkflowId)
           }
         }
       }
       "the session does not exist" should {
         val eventStore = mock[EventStore]
-        when(eventStore.heartbeat(notExistingSessionId))
+        when(eventStore.heartbeat(notExistingWorkflowId))
           .thenReturn(Future.successful(Left(InvalidWorkflowId())))
 
         "send a PoisonPill to sender" in fixture(eventStore) { p =>
-          p.sessionServiceActor ! Heartbeat(notExistingSessionId.toString)
+          p.sessionServiceActor ! Heartbeat(notExistingWorkflowId.toString)
           eventually {
-            verify(p.sessionExecutorClients, times(1)).sendPoisonPill(notExistingSessionId)
+            verify(p.sessionExecutorClients, times(1)).sendPoisonPill(notExistingWorkflowId)
           }
         }
       }

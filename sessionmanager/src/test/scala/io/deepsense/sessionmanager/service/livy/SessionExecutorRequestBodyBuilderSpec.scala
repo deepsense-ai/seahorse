@@ -52,7 +52,7 @@ class SessionExecutorRequestBodyBuilderSpec extends StandardSpec with UnitTestSu
           "-m", queueHost,
           "--message-queue-port", queuePort.toString,
           "--wm-address", wmAddress,
-          "-j", workflowId.toString(),
+          "--workflow-id", workflowId.toString(),
           "-d", depsFile,
           "--wm-username", wmUsername,
           "--wm-password", wmPassword,

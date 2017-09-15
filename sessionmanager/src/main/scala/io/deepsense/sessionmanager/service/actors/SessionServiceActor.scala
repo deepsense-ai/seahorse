@@ -50,7 +50,7 @@ class SessionServiceActor @Inject()(
 
   private def handleHeartbeat(heartbeat: Heartbeat): Unit = {
     logger.trace(s"Received Heartbeat $heartbeat")
-    val workflowId: Id = heartbeat.sessionId
+    val workflowId: Id = heartbeat.workflowId
     eventStore.heartbeat(workflowId).foreach {
       case Left(_) =>
         // Invalid WorkflowId
