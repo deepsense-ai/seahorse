@@ -368,7 +368,7 @@ angular
             for (let i = 0; i < reportIds.length; ++i) {
               let reportId = reportIds[i];
               let resultEntity = resultEntities[reportId];
-              if (resultEntity) {
+              if (resultEntity && _.isObject(node.output[i])) {
                 node.output[i].typeQualifier = [resultEntity.className];
               }
             }
