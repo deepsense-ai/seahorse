@@ -80,4 +80,7 @@ class VanillaRandomForestClassificationModel
       ctx.sparkContext,
       modelPath)
   }
+
+  override protected def transformerName: String =
+    classOf[RandomForestClassificationModel].getSimpleName
 }

@@ -75,4 +75,6 @@ class VanillaGBTClassificationModel()
       ctx.sparkContext,
       modelPath)
   }
+
+  override protected def transformerName: String = classOf[GBTClassificationModel].getSimpleName
 }

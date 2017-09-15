@@ -76,6 +76,8 @@ class VanillaGBTClassifier()
     labelColumn,
     featuresColumn,
     predictionColumn)
+
+  override protected def estimatorName: String = classOf[GBTClassifier].getSimpleName
 }
 
 object GBTClassifier {

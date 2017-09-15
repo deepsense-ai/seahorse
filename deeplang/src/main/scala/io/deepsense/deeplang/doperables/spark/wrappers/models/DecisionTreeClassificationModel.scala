@@ -54,4 +54,7 @@ class VanillaDecisionTreeClassificationModel
       ctx.sparkContext,
       modelPath)
   }
+
+  override protected def transformerName: String =
+    classOf[DecisionTreeClassificationModel].getSimpleName
 }

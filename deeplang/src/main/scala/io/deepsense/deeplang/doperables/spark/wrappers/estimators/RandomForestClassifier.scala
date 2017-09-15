@@ -76,4 +76,6 @@ class VanillaRandomForestClassifier
     predictionColumn
     // TODO Thresholds param
   )
+
+  override protected def estimatorName: String = classOf[RandomForestClassifier].getSimpleName
 }

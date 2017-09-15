@@ -63,7 +63,9 @@ abstract class Estimator[+T <: Transformer]
 
   override def report: Report =
     super.report
-      .withReportName(s"${this.getClass.getSimpleName} Report")
+      .withReportName(s"$estimatorName Report")
       .withReportType(ReportType.Estimator)
       .withAdditionalTable(CommonTablesGenerators.params(extractParamMap()))
+
+  protected def estimatorName: String = this.getClass.getSimpleName
 }

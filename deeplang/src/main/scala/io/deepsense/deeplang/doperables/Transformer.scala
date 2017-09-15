@@ -77,9 +77,11 @@ abstract class Transformer
 
   override def report: Report =
     super.report
-      .withReportName(s"${this.getClass.getSimpleName} Report")
+      .withReportName(s"$transformerName Report")
       .withReportType(ReportType.Model)
       .withAdditionalTable(CommonTablesGenerators.params(extractParamMap()))
+
+  protected def transformerName: String = this.getClass.getSimpleName
 
   def save(ctx: ExecutionContext, path: String): Unit = {
     saveObjectWithParams(ctx, path)
