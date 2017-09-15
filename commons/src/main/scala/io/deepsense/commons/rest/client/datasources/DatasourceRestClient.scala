@@ -21,15 +21,21 @@ import java.util.UUID
 
 import io.deepsense.api.datasourcemanager.ApiClient
 import io.deepsense.api.datasourcemanager.client.DefaultApi
-import io.deepsense.api.datasourcemanager.model.Datasource
+import io.deepsense.api.datasourcemanager.model.{Datasource, DatasourceParams}
+import io.deepsense.commons.utils.Logging
 
-class DatasourceRestClient(datasourceServerAddress: URL, userId: String) extends DatasourceClient {
+class DatasourceRestClient(
+    datasourceServerAddress: URL,
+    userId: String)
+  extends DatasourceClient
+  with Logging {
+
   val apiClient = new ApiClient()
+  apiClient.setAdapterBuilder(
+    apiClient.getAdapterBuilder().baseUrl(datasourceServerAddress.toString))
 
   def getDatasource(uuid: UUID): Option[Datasource] = {
-    apiClient.setAdapterBuilder(
-      apiClient.getAdapterBuilder().baseUrl(datasourceServerAddress.toString))
-    val client = apiClient.createService(classOf[DefaultApi])
+    val client = apiClient.createService(classOf[DefaultApi])  // TODO can this be extracted?
     val response = client.getDatasource(userId, uuid.toString).execute()
     if (response.isSuccessful()) {
       Some(response.body)
@@ -37,10 +43,24 @@ class DatasourceRestClient(datasourceServerAddress: URL, userId: String) extends
       None
     }
   }
+
+  def addDatasource(userName: String, datasourceParams: DatasourceParams): Unit = {
+    val client = apiClient.createService(classOf[DefaultApi])
+    val newUUID = UUID.randomUUID().toString
+    val response = client.putDatasource(userId, userName, newUUID, datasourceParams).execute()
+    if (response.isSuccessful()) {
+      logger.info("Added datasource; {}", response.body())
+    } else {
+      logger.error("There was a problem with adding datasource; {}", response.body())
+    }
+  }
 }
 
-class DatasourceRestClientFactory(datasourceServerAddress: URL, userId: String) extends DatasourceClientFactory {
-  override def createClient: DatasourceClient = {
+class DatasourceRestClientFactory(
+    datasourceServerAddress: URL,
+    userId: String) extends DatasourceClientFactory {
+
+  override def createClient: DatasourceRestClient = {
     new DatasourceRestClient(datasourceServerAddress, userId)
   }
 }
