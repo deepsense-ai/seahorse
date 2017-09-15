@@ -10,7 +10,7 @@ import io.deepsense.deeplang.parameters.{SingleColumnSelection, ColumnSelection}
 /**
  * Represents possibility that some exception will be thrown upon execution.
  */
-abstract class InferenceWarning(message: String)
+abstract class InferenceWarning(val message: String)
 
 
 case class MultipleColumnsMayNotExistWarning(

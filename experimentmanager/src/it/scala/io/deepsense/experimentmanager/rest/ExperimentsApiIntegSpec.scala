@@ -103,7 +103,7 @@ class ExperimentsApiIntegSpec
       Experiment.Id.randomId,
       tenantAId,
       "Experiment of Tenant A with node",
-      Graph(Set(Node(nodeUUID, catalog.createDOperation(catalog.operations.keys.head))), Set())
+      Graph(Set(Node(nodeUUID, prepareMathematicalOperation())), Set())
     )
 
     experimentB = Experiment(
@@ -146,5 +146,11 @@ class ExperimentsApiIntegSpec
     auth(
       new Credentials.Builder[Credentials]()
         .identity(identity).credential(password).build())
+  }
+
+  private def prepareMathematicalOperation(): DOperation = {
+    val operation = MathematicalOperation()
+    operation.parameters.getStringParameter(MathematicalOperation.formulaParam).value = Some("2")
+    operation
   }
 }

@@ -22,7 +22,8 @@ import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.experimentmanager.ExperimentManagerProvider
 import io.deepsense.experimentmanager.exceptions.{ExperimentNotFoundException, ExperimentRunningException}
 import io.deepsense.experimentmanager.rest.actions.Action
-import io.deepsense.experimentmanager.rest.json.{AbstractMetadataJsonProtocol, ExperimentJsonProtocol, MetadataSeqEnvelopeJsonProtocol}
+import io.deepsense.experimentmanager.rest.json.{ExperimentJsonProtocol, MetadataInferenceResultJsonProtocol}
+import io.deepsense.experimentmanager.rest.json.{AbstractMetadataJsonProtocol, ExperimentJsonProtocol}
 import io.deepsense.experimentmanager.rest.metadata.MetadataInference
 import io.deepsense.graph.CyclicGraphException
 import io.deepsense.graphjson.GraphJsonProtocol.GraphReader
@@ -41,8 +42,7 @@ class ExperimentsApi @Inject() (
   extends RestApi
   with RestComponent
   with ExperimentJsonProtocol
-  with AbstractMetadataJsonProtocol
-  with MetadataSeqEnvelopeJsonProtocol {
+  with MetadataInferenceResultJsonProtocol {
 
   assert(StringUtils.isNoneBlank(apiPrefix))
   private val pathPrefixMatcher = PathMatchers.separateOnSlashes(apiPrefix)
@@ -117,9 +117,8 @@ class ExperimentsApi @Inject() (
                       .forContext(userContext)
                       .get(experimentId)
                       .map(_.map { experiment =>
-                        Envelope(
-                          MetadataInference.run(
-                            experiment, nodeId, portIndex, inferContext))
+                        MetadataInference.run(
+                          experiment, nodeId, portIndex, inferContext)
                       })
                   }
                 }

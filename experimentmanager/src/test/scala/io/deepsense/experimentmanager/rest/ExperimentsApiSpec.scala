@@ -511,7 +511,9 @@ class ExperimentsApiSpec
           status should be(StatusCodes.OK)
 
           val expectedJson = JsObject(
-            "metadata" -> JsArray()
+            "metadata" -> JsArray(),
+            "warnings" -> JsArray(),
+            "errors" -> JsArray()
           )
           responseAs[JsObject] shouldBe expectedJson
         }

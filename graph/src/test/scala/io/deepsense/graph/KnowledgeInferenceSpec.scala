@@ -202,15 +202,15 @@ class KnowledgeInferenceSpec
       val graph = validGraph
       setParamsValid(graph)
 
-      val node1Knowledge = graph.inferKnowledge(idCreateA1, 0, ctx)
-      val node2Port0Knowledge = graph.inferKnowledge(idAToA1A2, 0, ctx)
-      val node2Port1Knowledge = graph.inferKnowledge(idAToA1A2, 1, ctx)
-      val node3Knowledge = graph.inferKnowledge(idA1A2ToFirst, 0, ctx)
+      val node1Result = graph.inferKnowledge(idCreateA1, 0, ctx)
+      val node2Port0Result = graph.inferKnowledge(idAToA1A2, 0, ctx)
+      val node2Port1Result = graph.inferKnowledge(idAToA1A2, 1, ctx)
+      val node3Result = graph.inferKnowledge(idA1A2ToFirst, 0, ctx)
 
-      node1Knowledge shouldBe knowledgeA1
-      node2Port0Knowledge shouldBe knowledgeA1
-      node2Port1Knowledge shouldBe knowledgeA2
-      node3Knowledge shouldBe knowledgeA1
+      node1Result.knowledge shouldBe knowledgeA1
+      node2Port0Result.knowledge shouldBe knowledgeA1
+      node2Port1Result.knowledge shouldBe knowledgeA2
+      node3Result.knowledge shouldBe knowledgeA1
     }
   }
 

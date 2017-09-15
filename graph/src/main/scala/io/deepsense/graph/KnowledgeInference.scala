@@ -4,12 +4,19 @@
 
 package io.deepsense.graph
 
+import io.deepsense.graph.GraphKnowledge.InferenceErrors
+
 import scala.reflect.runtime.{universe => ru}
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.exceptions.DeepLangException
-import io.deepsense.deeplang.inference.InferContext
+import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
 import io.deepsense.graph.TypesAccordance.TypesAccordance
+
+case class SinglePortKnowledgeInferenceResult(
+  knowledge: DKnowledge[DOperable],
+  warnings: InferenceWarnings,
+  errors: InferenceErrors)
 
 trait KnowledgeInference {
   self: Graph =>
@@ -29,12 +36,17 @@ trait KnowledgeInference {
   def inferKnowledge(
       nodeId: Node.Id,
       outPortIndex: Int,
-      context: InferContext): DKnowledge[DOperable] = {
+      context: InferContext): SinglePortKnowledgeInferenceResult = {
     val subgraphNodes = allPredecessorsOf(nodeId) + nodeById(nodeId)
     val subgraphEdges = edges.filter(edge =>
       subgraphNodes.contains(nodeById(edge.from.nodeId)) &&
         subgraphNodes.contains(nodeById(edge.to.nodeId)))
-    Graph(subgraphNodes, subgraphEdges).inferKnowledge(context).getKnowledge(nodeId)(outPortIndex)
+    val inferenceResult =
+      Graph(subgraphNodes, subgraphEdges).inferKnowledge(context).getResult(nodeId)
+    SinglePortKnowledgeInferenceResult(
+      inferenceResult.knowledge(outPortIndex),
+      inferenceResult.warnings,
+      inferenceResult.errors)
   }
 
   /**
@@ -114,7 +126,7 @@ trait KnowledgeInference {
     val accordance = if (filteredSize == predecessorKnowledge.size) {
       TypesAccordance.All()
     } else if (filteredSize == 0) {
-     TypesAccordance.None(portIndex)
+      TypesAccordance.None(portIndex)
     } else {
       TypesAccordance.Some(portIndex)
     }

@@ -4,6 +4,8 @@
 
 package io.deepsense.experimentmanager.rest.json
 
+import io.deepsense.deeplang.doperables.Report
+
 import scala.reflect.runtime.{universe => ru}
 
 import org.joda.time.DateTime
@@ -29,7 +31,7 @@ class ExperimentJsonProtocolSpec
   with ExperimentJsonProtocol
   with HierarchyDescriptorJsonProtocol {
 
-  val operable = mock[DOperable]
+  val operable = mockOperable()
 
   val dOperableCatalog = mock[DOperableCatalog]
   when(dOperableCatalog.concreteSubclassesInstances(
@@ -106,11 +108,17 @@ class ExperimentJsonProtocolSpec
         nodeStatuses.fields(node.id.value.toString) shouldBe node.state.toJson
       })
 
-      val typeKnowledge = experimentJson.fields("typeKnowledge").asJsObject
-      val graphKnowledge = graph.inferKnowledge(null) // Null is OK because of mocked Operations.
-      typeKnowledge.fields.foreach(keyValue => {
+      val knowledge = experimentJson.fields("knowledge").asJsObject
+      val graphKnowledge = graph.inferKnowledge(inferContext) // Null is OK because of mocked Operations.
+      knowledge.fields.foreach(keyValue => {
         val (nodeId, knowledgeJson) = keyValue
-        knowledgeJson shouldBe graphKnowledge.getKnowledge(Node.Id.fromString(nodeId)).toJson
+        val knowledgeJsonJsObject = knowledgeJson.asJsObject
+        val expectedTypeKnowledge = graphKnowledge.getKnowledge(Node.Id.fromString(nodeId)).toJson
+
+        knowledgeJsonJsObject.fields("typeKnowledge") shouldBe expectedTypeKnowledge
+        knowledgeJsonJsObject.fields("metadata").getClass shouldBe JsArray().getClass
+        knowledgeJsonJsObject.fields("warnings") shouldBe JsArray()
+        knowledgeJsonJsObject.fields("errors") shouldBe JsArray()
       })
     }
   }
@@ -131,13 +139,20 @@ class ExperimentJsonProtocolSpec
       Vector.fill(inArity)(implicitly[ru.TypeTag[DOperable]]))
     when(dOperation.outPortTypes).thenReturn(
       Vector.fill(outArity)(implicitly[ru.TypeTag[DOperable]]))
+    val operableMock = mockOperable()
     val knowledge = mock[DKnowledge[DOperable]]
-    when(knowledge.types).thenReturn(Set[DOperable](mock[DOperable]))
+    when(knowledge.types).thenReturn(Set[DOperable](operableMock))
     when(knowledge.filterTypes(any())).thenReturn(knowledge)
     when(dOperation.inferKnowledge(anyObject())(anyObject())).thenReturn(
       (Vector.fill(outArity)(knowledge), InferenceWarnings.empty))
     val parametersSchema = mock[ParametersSchema]
     when(dOperation.parameters).thenReturn(parametersSchema)
     dOperation
+  }
+
+  def mockOperable(): DOperable = {
+    val dOperable = mock[DOperable]
+    when(dOperable.inferredMetadata).thenReturn(None)
+    dOperable
   }
 }
