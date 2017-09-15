@@ -33,7 +33,7 @@ function Home($rootScope, $uibModal, $state, WorkflowService, PageService, Confi
   this.getClass = (columnName) => {
     if (this.sort.column === columnName) {
       let icon = 'glyphicon glyphicon-chevron';
-      return this.sort.descending ? icon + '-up' : icon + '-down';
+      return this.sort.descending ? icon + '-down' : icon + '-up';
     }
   };
 

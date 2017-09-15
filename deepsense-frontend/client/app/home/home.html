@@ -25,7 +25,9 @@
   <div ng-if="home.getAllWorkflows() && !home.isWorkflowLoading()">
     <table class="table table-striped text-center table-workflows">
       <tr class="header text-uppercase">
-        <td class="col-md-1 color-gray"><b>Index</b></td>
+        <td class="col-md-1 color-gray">
+          <b>No.</b>
+        </td>
         <td class="col-md-2 color-gray sortable"
             ng-click="home.sortBy('name')">
           <b>Name</b>
@@ -56,13 +58,18 @@
           <b>Actions</b>
         </td>
       </tr>
-      <tr
-        ng-repeat="workflow in home.getAllWorkflows() | orderBy : home.sort.column : home.sort.descending | filter:home.filterString track by workflow.id">
-        <td>{{$index+1}}</td>
-        <td>
+      <tr ng-repeat="workflow in home.getAllWorkflows() |
+                     orderBy : home.sort.column : home.sort.descending |
+                     filter: { name: home.filterString } track by workflow.id">
+        <td class="vertical-align">
+          <a ng-href="{{home.getWorkflowUrl(workflow.id)}}">
+            {{$index+1}}
+          </a>
+        </td>
+        <td class="vertical-align">
           <a ng-href="{{home.getWorkflowUrl(workflow.id)}}">{{workflow.name}}</a>
         </td>
-        <td>
+        <td class="vertical-align">
           <a ng-if="workflow.description"
              uib-popover="{{workflow.description}}"
              popover-trigger="{{ home.getTriggerEventBasedOnDescriptionLength(workflow.description) }}"
@@ -75,17 +82,17 @@
             -
           </a>
         </td>
-        <td>
+        <td class="vertical-align">
           <a ng-href="{{home.getWorkflowUrl(workflow.id)}}">
             {{workflow.updated | date:"dd/MM/yyyy - hh:mm a"}}
           </a>
         </td>
-        <td>
+        <td class="vertical-align">
           <a ng-href="{{home.getWorkflowUrl(workflow.id)}}">
             {{workflow.created | date:"dd/MM/yyyy - hh:mm a"}}
           </a>
         </td>
-        <td>
+        <td class="vertical-align">
           <a popover-trigger="mouseenter"
              popover-placement="left"
              uib-popover="Delete workflow"
