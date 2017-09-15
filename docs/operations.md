@@ -44,6 +44,7 @@ List of all currently supported operations:
       * [Python Column Transformation](operations/python_column_transformation.html)
       * [Python Transformation](operations/python_transformation.html)
     * R
+      * [R Column Transformation](operations/r_column_transformation.html)
       * [R Transformation](operations/r_transformation.html)
   * Feature Conversion
     * [Assemble Vector](operations/assemble_vector.html)

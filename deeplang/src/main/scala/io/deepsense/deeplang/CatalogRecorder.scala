@@ -51,6 +51,7 @@ object CatalogRecorder {
     catalog.registerDOperable[PythonTransformer]()
     catalog.registerDOperable[PythonColumnTransformer]()
     catalog.registerDOperable[RTransformer]()
+    catalog.registerDOperable[RColumnTransformer]()
     catalog.registerDOperable[TypeConverter]()
     catalog.registerDOperable[CustomTransformer]()
     catalog.registerDOperable[GetFromVectorTransformer]()
@@ -202,6 +203,9 @@ object CatalogRecorder {
 
     catalog.registerDOperation[PythonTransformation](
       DOperationCategories.Transformation.Custom.Python)
+
+    catalog.registerDOperation[RColumnTransformation](
+      DOperationCategories.Transformation.Custom.R)
 
     catalog.registerDOperation[RTransformation](
       DOperationCategories.Transformation.Custom.R)

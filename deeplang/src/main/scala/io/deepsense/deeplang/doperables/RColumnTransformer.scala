@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2016, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,20 +18,24 @@ package io.deepsense.deeplang.doperables
 
 import java.util.UUID
 
-import io.deepsense.deeplang.OperationExecutionDispatcher._
-import org.apache.spark.sql.types._
-import io.deepsense.deeplang._
+import io.deepsense.deeplang.ExecutionContext
+import io.deepsense.deeplang.OperationExecutionDispatcher.Result
 import io.deepsense.deeplang.params.{CodeSnippetLanguage, CodeSnippetParam, Param}
+import org.apache.spark.sql.types.DataType
 
 
-case class PythonColumnTransformer() extends CustomCodeColumnTransformer {
+class RColumnTransformer() extends CustomCodeColumnTransformer {
 
   override val codeParameter = CodeSnippetParam(
     name = "column operation code",
     description = "Column operation source code",
-    language = CodeSnippetLanguage(CodeSnippetLanguage.python)
+    language = CodeSnippetLanguage(CodeSnippetLanguage.r)
   )
-  setDefault(codeParameter -> "def transform_value(value, column_name):\n    return value")
+  setDefault(codeParameter ->
+    """transform.column <- function(column, column.name) {
+      |  return(column)
+      |}""".stripMargin
+  )
 
   override def getSpecificParams: Array[Param[_]] =
     Array(codeParameter, targetType)
@@ -42,27 +46,21 @@ case class PythonColumnTransformer() extends CustomCodeColumnTransformer {
       outputColumn: String,
       targetType: DataType): String = {
     val newFieldName = UUID.randomUUID().toString.replace("-", "")
-    val newFieldJson =
-      s"""{"name": "$newFieldName", "type":${targetType.json}, "nullable":true, "metadata":null}"""
 
     s"""
-      |$userCode
-      |
-      |from pyspark.sql.types import *
-      |import json
-      |
-      |def transform(dataframe):
-      |    new_field = StructField.fromJson(json.loads(\"\"\"$newFieldJson\"\"\"))
-      |    schema = StructType(dataframe.schema.fields + [new_field])
-      |    def _transform_row(row):
-      |        return row + (transform_value(row['$inputColumn'], '$inputColumn'),)
-      |    return sqlContext.createDataFrame(dataframe.map(_transform_row), schema)
+       |$userCode
+       |
+       |transform <- function(dataframe) {
+       |  new.column <- cast(transform.column(dataframe$$$inputColumn, '$inputColumn'),
+       |    '${targetType.simpleString}')
+       |  return(withColumn(dataframe, '$newFieldName', new.column))
+       |}
     """.stripMargin
   }
 
   override def runCode(context: ExecutionContext, code: String): Result =
-    context.customCodeExecutor.runPython(code)
+    context.customCodeExecutor.runR(code)
 
   override def isValid(context: ExecutionContext, code: String): Boolean =
-    context.customCodeExecutor.isPythonValid(code)
+    context.customCodeExecutor.isRValid(code)
 }
