@@ -11,7 +11,7 @@ import java.util.UUID
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.deeplang.dataframe.DataFrame
-import io.deepsense.deeplang.doperations.{TimestampDecomposer, WriteDataFrame, ReadDataFrame}
+import io.deepsense.deeplang.doperations.{ReadDataFrame, TimestampDecomposer, WriteDataFrame}
 
 /**
  * Object used to register all desired DOperables and DOperations.

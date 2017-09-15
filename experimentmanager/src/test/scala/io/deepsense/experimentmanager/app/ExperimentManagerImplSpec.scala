@@ -17,13 +17,14 @@ import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalactic.Equality
 
-import io.deepsense.experimentmanager.app.exceptions.ExperimentNotFoundException
-import io.deepsense.experimentmanager.app.execution.RunningExperimentsActor._
-import io.deepsense.experimentmanager.app.models.{Experiment, Id}
-import io.deepsense.experimentmanager.app.storage.ExperimentStorage
-import io.deepsense.experimentmanager.auth.usercontext.{Role, UserContext}
-import io.deepsense.experimentmanager.auth.{AuthorizatorProvider, UserContextAuthorizator}
-import io.deepsense.experimentmanager.{StandardSpec, UnitTestSupport}
+import io.deepsense.commons.auth.{AuthorizatorProvider, UserContextAuthorizator}
+import io.deepsense.commons.auth.usercontext.{Role, UserContext}
+import io.deepsense.commons.models.Id
+import io.deepsense.experimentmanager.exceptions.ExperimentNotFoundException
+import io.deepsense.experimentmanager.execution.RunningExperimentsActor._
+import io.deepsense.experimentmanager.models.Experiment
+import io.deepsense.experimentmanager.storage.ExperimentStorage
+import io.deepsense.experimentmanager.{ExperimentManagerImpl, StandardSpec, UnitTestSupport}
 
 class ExperimentManagerImplSpec extends StandardSpec with UnitTestSupport {
   val tenantId = "tenantId"

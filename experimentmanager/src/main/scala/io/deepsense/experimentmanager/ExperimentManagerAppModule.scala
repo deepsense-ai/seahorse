@@ -6,14 +6,12 @@
 
 package io.deepsense.experimentmanager
 
-import com.google.inject.{Scopes, AbstractModule}
+import com.google.inject.AbstractModule
 
-import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
-import io.deepsense.experimentmanager.akka.AkkaModule
-import io.deepsense.experimentmanager.app.{ApisModule, ServicesModule}
-import io.deepsense.experimentmanager.config.ConfigModule
-import io.deepsense.experimentmanager.jclouds.{KeystoneApiModule, TokenApiModule}
-import io.deepsense.experimentmanager.rest.RestModule
+import io.deepsense.commons.akka.AkkaModule
+import io.deepsense.commons.config.ConfigModule
+import io.deepsense.commons.jclouds.{KeystoneApiModule, TokenApiModule}
+import io.deepsense.commons.rest.RestModule
 
 /**
  * The main module for Experiment Manager. Installs all needed modules to run

@@ -10,7 +10,7 @@ import com.google.inject.Guice
 import org.scalatest.FlatSpec
 
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
-import io.deepsense.experimentmanager.app.rest.OperationsApi
+import io.deepsense.experimentmanager.rest.OperationsApi
 
 class ExperimentManagerContextIntegSpec extends FlatSpec {
 

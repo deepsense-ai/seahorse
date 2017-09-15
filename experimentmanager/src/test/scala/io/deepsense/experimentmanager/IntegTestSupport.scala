@@ -8,14 +8,15 @@ package io.deepsense.experimentmanager
 
 import scala.collection.JavaConversions.asScalaSet
 import scala.concurrent.duration._
+import scala.reflect.{ClassTag, classTag}
 
-import _root_.akka.actor.ActorRefFactory
+import akka.actor.ActorRefFactory
 import com.google.inject.{AbstractModule, Guice, Provides}
 import com.typesafe.config.Config
 import org.scalatest.concurrent.IntegrationPatience
 
-import io.deepsense.experimentmanager.rest.{RestComponent, RestService}
-import scala.reflect._
+import io.deepsense.commons.rest.{RestComponent, RestService}
+
 
 /**
  * Extends StandardSpec with features to aid integration testing including:
@@ -44,7 +45,7 @@ trait IntegTestSupport extends IntegrationPatience {
     /**
      * Provides the test entry point for the application router.
      * The actual application creates the router using the actor
-     * [[io.deepsense.experimentmanager.rest.RestServiceActor]]
+     * [[io.deepsense.commons.rest.RestServiceActor]]
      */
     @Provides
     def provideApiRouter(apiSet: java.util.Set[RestComponent], arf: ActorRefFactory): RestService = {

@@ -65,6 +65,16 @@ object Dependencies {
 
   ) ++ Seq(scalatest, mockitoCore).map(_ % "test")
 
+  val commons = Seq(
+    akkaActor,
+    jclouds,
+    sprayCan,
+    sprayJson,
+    sprayRouting,
+    guice,
+    guiceMultibindings
+  )  ++ Seq(sprayTestkit, akkaTestkit, mockitoCore, scalatest).map(_ % "test")
+
   val deeplang = Seq(
     nscalaTime,
     scalaReflect,
