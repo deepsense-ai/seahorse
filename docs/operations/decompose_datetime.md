@@ -7,13 +7,14 @@ usesMathJax: true
 includeOperationsMenu: true
 ---
 
-Extracts parts of a timestamp from a specified timestamp column to newly created columns.
-For example, for the timestamp column: ``'Birthdate'`` when extracting year part, a new
-column will be created with a name ``year`` and Numeric type.
-If the value for parameter ``prefix`` is provided, it will be prepended to
+Extracts parts of a timestamp from a specified timestamp column to new columns.
+For example: given the timestamp column ``'Birthdate'`` when extracting year part, a new
+column named ``year`` of type `Numeric` will be created.
+
+If the value for parameter ``prefix`` is provided it will be prepended to
 generated columns' names, according to the pattern: ``prefix + timestampPartName``.
 
-Returns also a [Transformer](../classes/transformer.html) that can be later applied
+Also returns a [Transformer](../classes/transformer.html) that can be later applied
 to another [DataFrame](../classes/dataframe.html) with [Transform](transform.html) operation.
 
 **Since**: Seahorse 0.4.0
@@ -32,7 +33,7 @@ to another [DataFrame](../classes/dataframe.html) with [Transform](transform.htm
 <tr>
 <td><code>0</code></td>
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>DataFrame with timestamp column to decompose.</td>
+<td>The <code>DataFrame</code> with the <code>timestamp</code> column to decompose.</td>
 </tr>
 </tbody>
 </table>
@@ -51,13 +52,13 @@ to another [DataFrame](../classes/dataframe.html) with [Transform](transform.htm
 <tr>
 <td><code>0</code></td>
 <td><code><a href="../classes/dataframe.html">DataFrame</a></code></td>
-<td>DataFrame containing new columns with parts of timestamp extracted from the original
-timestamp.</td>
+<td>The <code>DataFrame</code> with new columns with parts of timestamp extracted from the original
+<code>timestamp</code> column.</td>
 </tr>
 <tr>
 <td><code>1</code></td><td>
 <code><a href="../classes/transformer.html">Transformer</a></code></td>
-<td>Transformer that allows to apply the operation on other DataFrames using
+<td>The <code>transformer</code> that allows to apply the operation on another DataFrame using
 <a href="transform.html">Transform</a>.</td>
 </tr>
 </tbody>
@@ -77,23 +78,23 @@ timestamp.</td>
 <tr>
 <td><code>timestamp column</code></td>
 <td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
-<td>One of the DataFrame columns.
-   If column selected by user has type different then Timestamp, <code>WrongColumnTypeException</code>
+<td>One of the <code>DataFrame</code> columns.
+   If the column selected by the user has a type other than <code>Timestamp</code>, <code>WrongColumnTypeException</code>
    will be thrown.
-   If selected column does not exist, <code>ColumnDoesNotExistException</code> will be thrown.</td>
+   If a selected column does not exist, the <code>ColumnDoesNotExistException</code> will be thrown.</td>
 </tr>
 <tr>
 <td><code>parts</code></td>
 <td><code><a href="../parameter_types.html#multiple-choice">MultipleChoice</a></code></td>
-<td>Parts of timestamp to extract to separate columns.
+<td>Parts of <code>timestamp</code> to extract to new columns.
    Possible values are: <code>[year, month, day, hour, minutes, seconds]</code>.</td>
 </tr>
 <tr>
 <td><code>prefix</code></td>
 <td><code><a href="../parameter_types.html#string">String</a></code></td>
-<td>Optional prefix for created columns.
-   If provided, names of generated columns match pattern: <code>prefix + timestampPartName</code>,
-   otherwise names will match pattern: <code>timestampPartName</code>.</td>
+<td>An optional prefix for the created columns.
+   If provided, names of the generated columns will match the <code>prefix + timestampPartName</code> pattern,
+   otherwise names will match a <code>timestampPartName</code> pattern.</td>
 </tr>
 </tbody>
 </table>
