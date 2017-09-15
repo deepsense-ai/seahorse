@@ -10,18 +10,22 @@ function WorkflowEditorStatusBar($rootScope) {
     templateUrl: 'app/common/status-bar/status-bar.html',
     replace: true,
     scope: {},
-    link: function (scope) {
-      scope.exportWorkflow = function exportWorkflow () {
-        $rootScope.$broadcast('Workflow.EXPORT');
-      };
-
-      scope.saveWorkflow = function saveWorkflow () {
-        $rootScope.$broadcast('StatusBar.SAVE_CLICK');
-      };
-
-      scope.clearWorkflow = function clearWorkflow () {
-        $rootScope.$broadcast('StatusBar.CLEAR_CLICK');
-      };
+    controllerAs: 'controller',
+    controller: function () {
+      _.assign(this, {
+        backToHome: () => {
+          $rootScope.$broadcast('StatusBar.HOME_CLICK');
+        },
+        exportWorkflow: () => {
+          $rootScope.$broadcast('StatusBar.EXPORT');
+        },
+        saveWorkflow: () => {
+          $rootScope.$broadcast('StatusBar.SAVE_CLICK');
+        },
+        clearWorkflow: () => {
+          $rootScope.$broadcast('StatusBar.CLEAR_CLICK');
+        }
+      });
     }
   };
 }

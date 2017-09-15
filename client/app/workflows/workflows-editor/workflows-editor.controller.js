@@ -6,10 +6,10 @@
 /* @ngInject */
 function WorkflowsController(
   workflow,
-  $scope, $timeout,
+  $scope, $timeout, $state,
   GraphNode, Edge,
   PageService, Operations, GraphPanelRendererService, WorkflowService, UUIDGenerator, MouseEvent,
-  DeepsenseNodeParameters
+  DeepsenseNodeParameters, ConfirmationModalService
 ) {
   let that = this;
   let internal = {};
@@ -82,12 +82,6 @@ function WorkflowsController(
     }
   });
 
-  $scope.$on('StatusBar.CLEAR_CLICK',() => {
-    WorkflowService.clearGraph();
-    GraphPanelRendererService.rerender();
-    that.saveWorkflow();
-  });
-
   $scope.$on(Edge.CREATE, (data, args)  => {
     WorkflowService.getWorkflow().addEdge(args.edge);
     that.saveWorkflow();
@@ -139,6 +133,26 @@ function WorkflowsController(
   });
 
   $scope.$on('StatusBar.SAVE_CLICK', that.saveWorkflow);
+
+  $scope.$on('StatusBar.HOME_CLICK', () => {
+    ConfirmationModalService.showModal({
+      message: 'The operation redirects to the home page. Make sure you saved the current state of the workflow.'
+    }).
+      then(() => {
+        $state.go('home');
+      });
+  });
+
+  $scope.$on('StatusBar.CLEAR_CLICK', () => {
+    ConfirmationModalService.showModal({
+      message: 'The operation clears the whole workflow graph and it cannot be undone afterwards.'
+    }).
+      then(() => {
+        WorkflowService.clearGraph();
+        GraphPanelRendererService.rerender();
+        that.saveWorkflow();
+      });
+  });
 
   $scope.$watchCollection('workflow.getWorkflow().getNodesIds()', (newValue, oldValue) => {
     if (newValue !== oldValue) {
