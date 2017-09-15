@@ -121,7 +121,8 @@
           "./bower_components/lodash/lodash.js",
           "./bower_components/jquery/dist/jquery.min.js",
           "./bower_components/highcharts-release/highcharts.js",
-          "./bower_components/highcharts-release/highcharts-more.js"
+          "./bower_components/highcharts-release/highcharts-more.js",
+          "./bower_components/ng-debounce/angular-debounce.js"
         ],
         "css": [
           "./node_modules/bootstrap/dist/css/bootstrap.css",
@@ -139,7 +140,8 @@
           "./bower_components/lodash/lodash.min.js",
           "./bower_components/jquery/dist/jquery.min.js",
           "./bower_components/highcharts-release/highcharts.js",
-          "./bower_components/highcharts-release/highcharts-more.js"
+          "./bower_components/highcharts-release/highcharts-more.js",
+          "./bower_components/ng-debounce/angular-debounce.js"
         ],
         "css": [
           "./node_modules/bootstrap/dist/css/bootstrap.min.css",

@@ -13,6 +13,7 @@ var angular = require('angular');
 var lab = angular.module('ds.lab', [
   'ui.router',
   'ui.bootstrap',
+  'debounce',
   require('./providers/providers.module.js').name,
   require('./home/home.module.js').name,
   require('./account/account.module.js').name,

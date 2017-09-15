@@ -19,6 +19,7 @@ require('./common-behaviours/common-droppable.js').inject(experiments);
 require('./common-behaviours/common-drop-target.js').inject(experiments);
 require('./common-behaviours/common-render-finish.js').inject(experiments);
 require('./common-behaviours/common-keyboard.js').inject(experiments);
+require('./common-behaviours/common-stick-onscroll.js').inject(experiments);
 require('./experiment-editor/context-menu/context-menu.js').inject(experiments);
 require('./experiment-editor/context-menu/context-menu-element.js').inject(experiments);
 require('./experiment-editor/port-statuses-tooltip/port-statuses-tooltip.controller.js').inject(experiments);

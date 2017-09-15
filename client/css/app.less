@@ -2,6 +2,11 @@
  * Copyright (c) 2015, CodiLime Inc.
  */
 
+html, body {
+  height: 100%;
+  min-height: 100%;
+}
+
 [ng\:cloak], [ng-cloak], .ng-cloak {
   display: none !important;
 }
@@ -20,13 +25,15 @@
 }
 
 /* main navigation */
-.navbar-static-side .nav-header {
-  background: #1d3647;
-  padding: 20px 25px;
-}
+.navbar-static-side {
+  .nav-header {
+    background: #1d3647;
+    padding: 20px 25px;
 
-.navbar-static-side .nav-header .logo {
-  height: 67px;
+    .logo {
+      height: 67px;
+    }
+  }
 }
 
 .navbar-static-top h2 {
@@ -34,6 +41,19 @@
   margin-left: 20px;
 }
 
-@import "../app/experiments/experiment-editor/experiment-editor.less";
-@import "../app/reports/reports.less";
-@import "../app/common/common.less";
+#page-wrapper {
+  padding-bottom: 50px;
+  min-height: 1100px;
+
+  .wrapper-content {
+    padding: 15px 0 0 0;
+  }
+
+  #wrapper {
+    overflow: hidden;
+  }
+}
+
+@import "./../app/experiments/experiments.less";
+@import "./../app/reports/reports.less";
+@import "./../app/common/common.less";
