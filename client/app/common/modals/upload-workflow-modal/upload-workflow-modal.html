@@ -15,7 +15,7 @@
       <img class="center-block c-upload-report-modal__img" ng-if="controller.status === 'success'"
            src="~ASSETS/images/success.png"/>
 
-      <div class="text-center text-danger pull-right" ng-if="controller.status === 'failure'">
+      <div class="text-danger error-message" ng-if="controller.status === 'failure'">
         {{ controller.errorMessage }}
       </div>
     </div>
