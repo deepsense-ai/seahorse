@@ -22,9 +22,8 @@ class KeystoneApiModule extends ScalaModule {
   def provideKeystoneApi(
     @Named("auth-service.endpoint") endpoint: String,
     @Named("auth-service.identity") identity: String,
-    @Named("auth-service.password") password: String,
-    @Named("auth-service.provider") provider: String): KeystoneApi = {
-    ContextBuilder.newBuilder(provider)
+    @Named("auth-service.password") password: String): KeystoneApi = {
+    ContextBuilder.newBuilder("openstack-keystone")
       .endpoint(endpoint)
       .credentials(identity, password)
       .buildApi(classOf[KeystoneApi])
