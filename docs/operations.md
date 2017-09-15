@@ -29,6 +29,7 @@ List of all currently supported operations:
   * [Union](operations/union.html)
 * Filtering
   * [Filter Columns](operations/filter_columns.html)
+  * [Filter Rows](operations/filter_rows.html)
   * [Handle Missing Values](operations/handle_missing_values.html)
 * Transformation
   * [Create Custom Transformer](operations/create_custom_transformer.html)

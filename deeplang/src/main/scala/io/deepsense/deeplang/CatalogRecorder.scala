@@ -40,6 +40,7 @@ object CatalogRecorder {
     catalog.registerDOperable[Report]()
     catalog.registerDOperable[MetricValue]()
     catalog.registerDOperable[ColumnsFilterer]()
+    catalog.registerDOperable[RowsFilterer]()
     catalog.registerDOperable[DatetimeDecomposer]()
     catalog.registerDOperable[MathematicalTransformation]()
     catalog.registerDOperable[MissingValuesHandler]()
@@ -143,6 +144,9 @@ object CatalogRecorder {
       DOperationCategories.SetOperation)
 
     catalog.registerDOperation[FilterColumns](
+      DOperationCategories.Filtering)
+
+    catalog.registerDOperation[FilterRows](
       DOperationCategories.Filtering)
 
     catalog.registerDOperation[HandleMissingValues](
