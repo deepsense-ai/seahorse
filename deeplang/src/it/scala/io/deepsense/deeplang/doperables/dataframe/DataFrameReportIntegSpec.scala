@@ -8,12 +8,13 @@ import java.sql.Timestamp
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
-import org.apache.spark.sql.types.{StringType, StructField, StructType, TimestampType}
+import org.apache.spark.sql.types._
 import org.joda.time.DateTime
 
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.Report
+import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoriesMapping, MappingMetadataConverter}
 import io.deepsense.reportlib.model.{CategoricalDistribution, ContinuousDistribution, Statistics, Table}
 
 
@@ -170,6 +171,39 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
           "1970-01-20T00:43:00.000Z",
           Seq())
       )
+    }
+    "generate correct report" when {
+      "DataFrame is empty" in {
+        val categories = Seq("red", "blue", "green")
+        val mapping = CategoriesMapping(categories)
+        val metadata = MappingMetadataConverter.mappingToMetadata(mapping, Metadata.empty)
+        val schema = StructType(Seq(
+          StructField("string", StringType),
+          StructField("numeric", DoubleType),
+          StructField("categorical", IntegerType, metadata = metadata),
+          StructField("ordinal", LongType),
+          StructField("timestamp", TimestampType),
+          StructField("boolean", BooleanType)))
+        val emptyDataFrame = executionContext.dataFrameBuilder.buildDataFrame(
+            schema,
+            sparkContext.parallelize(Seq()))
+
+        val report = emptyDataFrame.report
+
+        val tables = report.content.tables
+        val dataSampleTable = tables.get(DataFrameReportGenerator.dataSampleTableName).get
+        dataSampleTable.columnNames shouldBe
+          Some(List("string", "numeric", "categorical", "ordinal", "timestamp", "boolean"))
+        dataSampleTable.rowNames shouldBe None
+        dataSampleTable.values shouldBe List.empty
+        testDataFrameSizeTable(tables, 6, 0)
+        testCategoricalDistribution(report, "string", 0L, Seq.empty, Seq.empty)
+        testContinuousDistribution(report, "numeric", 0L, Seq.empty, Seq.empty, Statistics())
+        testCategoricalDistribution(report, "categorical", 0L, categories, Seq(0, 0, 0))
+        testContinuousDistribution(report, "ordinal", 0L, Seq.empty, Seq.empty, Statistics())
+        testContinuousDistribution(report, "timestamp", 0L, Seq.empty, Seq.empty, Statistics())
+        testCategoricalDistribution(report, "boolean", 0L, Seq("false", "true"), Seq(0, 0))
+      }
     }
   }
 

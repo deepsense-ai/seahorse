@@ -9,6 +9,7 @@ import java.sql.Timestamp
 import org.apache.spark.mllib.linalg.{Vector, Vectors}
 import org.apache.spark.mllib.stat.{MultivariateStatisticalSummary, Statistics}
 import org.apache.spark.rdd.RDD
+import org.apache.spark.sql
 import org.apache.spark.sql.types._
 import org.apache.spark.sql.{ColumnName, Row}
 
@@ -28,12 +29,15 @@ import io.deepsense.deeplang.doperables.dataframe.StatType._
 trait DataFrameReportGenerator {
 
   def report(sparkDataFrame: org.apache.spark.sql.DataFrame): Report = {
+    val dataFrameEmpty: Boolean = sparkDataFrame.rdd.isEmpty()
+    safeDataFrameCache(sparkDataFrame)
     val columnsSubset: List[String] =
       sparkDataFrame.columns.toList.take(DataFrameReportGenerator.maxColumnsNumberInReport)
     val limitedDataFrame = sparkDataFrame.select(columnsSubset.map(new ColumnName(_)):_*)
     val categoricalMetadata = CategoricalMetadata(sparkDataFrame)
 
-    val (distributions, dataFrameSize) = columnsDistributions(limitedDataFrame, categoricalMetadata)
+    val (distributions, dataFrameSize) =
+      columnsDistributions(limitedDataFrame, dataFrameEmpty, categoricalMetadata)
     val sampleTable = dataSampleTable(limitedDataFrame, categoricalMetadata)
     val sizeTable = dataFrameSizeTable(sparkDataFrame.schema, dataFrameSize)
     Report(ReportContent(
@@ -56,8 +60,7 @@ trait DataFrameReportGenerator {
         s"First $columnsNumber columns and ${rows.length} randomly chosen rows",
       Some(columnsNames),
       None,
-      values
-    )
+      values)
   }
 
   private def dataFrameSizeTable(schema: StructType, dataFrameSize: Long): Table =
@@ -67,8 +70,7 @@ trait DataFrameReportGenerator {
         s"Number of columns and number of rows in the DataFrame.",
       Some(List("Number of columns", "Number of rows")),
       None,
-      List(List(Some(schema.fieldNames.length.toString), Some(dataFrameSize.toString)))
-    )
+      List(List(Some(schema.fieldNames.length.toString), Some(dataFrameSize.toString))))
 
   /**
    * Assumption that DataFrame is already projected to the interesting subset of columns
@@ -76,47 +78,52 @@ trait DataFrameReportGenerator {
    */
   private def columnsDistributions(
       sparkDataFrame: org.apache.spark.sql.DataFrame,
+      dataFrameEmpty: Boolean,
       categoricalMetadata: CategoricalMetadata): (Map[String, Distribution], Long) = {
-    val basicStats: MultivariateStatisticalSummary =
-      Statistics.colStats(sparkDataFrame.rdd.map(row2DoubleVector(categoricalMetadata)))
+    safeDataFrameCache(sparkDataFrame)
+    val basicStats: Option[MultivariateStatisticalSummary] =
+      if (dataFrameEmpty) {
+        None
+      } else {
+        Some(Statistics.colStats(sparkDataFrame.rdd.map(row2DoubleVector(categoricalMetadata))))
+      }
+    val dataFrameSize: Long = basicStats.map(_.count).getOrElse(0L)
     val distributions = sparkDataFrame.schema.zipWithIndex.map(p => {
       val rdd: RDD[Double] =
         columnAsDoubleRDDWithoutMissingValues(sparkDataFrame, categoricalMetadata, p._2)
-      val rddSize = rdd.count()
-      val missingValues: Long = basicStats.count - rddSize
+      rdd.cache()
       distributionType(p._1, categoricalMetadata) match {
         case Continuous => continuousDistribution(
           p._1,
           rdd,
-          basicStats.min(p._2),
-          basicStats.max(p._2),
-          rddSize,
-          missingValues,
+          basicStats.map(_.min(p._2)),
+          basicStats.map(_.max(p._2)),
+          dataFrameSize,
           categoricalMetadata)
-        case Categorical => categoricalDistribution(p._1, rdd, missingValues, categoricalMetadata)
+        case Categorical => categoricalDistribution(dataFrameSize, p._1, rdd, categoricalMetadata)
       }
     })
-    (distributions.map(d => d.name -> d).toMap, basicStats.count)
+    (distributions.map(d => d.name -> d).toMap, dataFrameSize)
   }
 
   private def columnAsDoubleRDDWithoutMissingValues(
       sparkDataFrame: org.apache.spark.sql.DataFrame,
       categoricalMetadata: CategoricalMetadata,
-      columnIndex: Int): RDD[Double] = {
+      columnIndex: Int): RDD[Double] =
     sparkDataFrame.rdd.map(cell2Double(categoricalMetadata)(_, columnIndex)).filter(!_.isNaN)
-  }
 
   private def categoricalDistribution(
+      dataFrameSize: Long,
       structField: StructField,
       rdd: RDD[Double],
-      missingValues: Long,
       categoricalMetadata: CategoricalMetadata): CategoricalDistribution = {
     val (labels, buckets) = bucketsForCategoricalColumn(structField, categoricalMetadata)
     val counts: Array[Long] = if (buckets.size > 1) rdd.histogram(buckets.toArray) else Array()
+    val rddSize: Long = if (counts.nonEmpty) counts.fold(0L)(_ + _) else rdd.count()
     CategoricalDistribution(
       structField.name,
       s"Categorical distribution for ${structField.name} column",
-      missingValues,
+      dataFrameSize - rddSize,
       labels,
       counts)
   }
@@ -124,26 +131,32 @@ trait DataFrameReportGenerator {
   private def continuousDistribution(
       structField: StructField,
       rdd: RDD[Double],
-      min: Double,
-      max: Double,
-      rddSize: Long,
-      missingValues: Long,
+      min: Option[Double],
+      max: Option[Double],
+      dataFrameSize: Long,
       categoricalMetadata: CategoricalMetadata): ContinuousDistribution = {
-    val (buckets, counts) = histogram(rdd, min, max, structField, categoricalMetadata)
-    val quartiles = calculateQuartiles(rdd, rddSize, structField, categoricalMetadata)
+    val (buckets, counts) =
+      if (min.isEmpty || max.isEmpty) {
+        (Seq(), Seq())
+      } else {
+        histogram(rdd, min.get, max.get, structField, categoricalMetadata)
+      }
+    val rddSize: Long = counts.fold(0L)(_ + _)
+    val quartiles = calculateQuartiles(rddSize, rdd, structField, categoricalMetadata)
     val d2L = double2Label(categoricalMetadata)(structField)_
+    val mean = if (min.isEmpty || max.isEmpty) None else Some(rdd.mean())
     val stats = model.Statistics(
       quartiles.median,
-      Some(d2L(max)),
-      Some(d2L(min)),
-      Some(d2L(rdd.mean())),
+      max.map(d2L),
+      min.map(d2L),
+      mean.map(d2L),
       quartiles.first,
       quartiles.third,
       quartiles.outliers)
     ContinuousDistribution(
       structField.name,
       s"Continuous distribution for ${structField.name} column",
-      missingValues,
+      dataFrameSize - rddSize,
       buckets,
       counts,
       stats)
@@ -159,7 +172,8 @@ trait DataFrameReportGenerator {
         val mapping = categoricalMetadata.mapping(structField.name)
         val sortedIds: IndexedSeq[Int] = mapping.ids.sortWith(_ < _).toIndexedSeq
         (sortedIds.map(mapping.idToValue),
-          sortedIds.map(_.toDouble) ++ IndexedSeq(sortedIds.last.toDouble + 0.1))
+          sortedIds.map(_.toDouble) ++ sortedIds.lastOption.map(_.toDouble + 0.1)
+            .map(IndexedSeq(_)).getOrElse(IndexedSeq.empty))
       case StringType => (IndexedSeq(), IndexedSeq())
     }
 
@@ -185,19 +199,20 @@ trait DataFrameReportGenerator {
     }
 
   private def calculateQuartiles(
+      rddSize: Long,
       rdd: RDD[Double],
-      size: Long,
       structField: StructField,
       categoricalMetadata: CategoricalMetadata): Quartiles =
-    if (size > 0) {
+    if (rddSize > 0) {
       val sortedRdd = rdd.sortBy(identity).zipWithIndex().map {
         case (v, idx) => (idx, v)
       }
-      val d2L = double2Label(categoricalMetadata)(structField)_
-      val secondQuartile: Option[String] = Some(d2L(median(sortedRdd, 0, size)))
-      if (size >= 3) {
-        val firstQuartile: Double = median(sortedRdd, 0, size / 2)
-        val thirdQuartile: Double = median(sortedRdd, size / 2 + size % 2, size)
+      sortedRdd.cache()
+      val d2L = double2Label(categoricalMetadata)(structField) _
+      val secondQuartile: Option[String] = Some(d2L(median(sortedRdd, 0, rddSize)))
+      if (rddSize >= 3) {
+        val firstQuartile: Double = median(sortedRdd, 0, rddSize / 2)
+        val thirdQuartile: Double = median(sortedRdd, rddSize / 2 + rddSize % 2, rddSize)
         val outliers: Array[Double] = findOutliers(rdd, firstQuartile, thirdQuartile)
         Quartiles(
           Some(d2L(firstQuartile)),
@@ -237,9 +252,8 @@ trait DataFrameReportGenerator {
     (Range.Int(0, steps, 1).map(s => min + (s * span) / steps) :+ max).toArray
   }
 
-  private def row2DoubleVector(categoricalMetadata: CategoricalMetadata)(row: Row): Vector = {
+  private def row2DoubleVector(categoricalMetadata: CategoricalMetadata)(row: Row): Vector =
     Vectors.dense((0 until row.size).map(cell2Double(categoricalMetadata)(row, _)).toArray)
-  }
 
   private def cell2Double(categoricalMetadata: CategoricalMetadata)(row: Row, index: Int): Double =
     if (row.isNullAt(index)) {
@@ -306,6 +320,12 @@ trait DataFrameReportGenerator {
           Some(categoricalMetadata.mapping(index).idToValue(row.getInt(index)))
         case _ => Some(row(index).toString)
       }
+    }
+  }
+
+  private def safeDataFrameCache(sparkDataFrame: sql.DataFrame): Unit = {
+    if (!sparkDataFrame.schema.isEmpty) {
+      sparkDataFrame.cache()
     }
   }
 }

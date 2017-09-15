@@ -35,7 +35,12 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
   var rawHdfsClient: DFSClient = _
 
   override def beforeAll(): Unit = {
-    sparkConf = new SparkConf().setMaster("local[4]").setAppName("TestApp")
+    sparkConf =
+      new SparkConf()
+        .setMaster("local[4]")
+        .setAppName("TestApp")
+        .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
+        .registerKryoClasses(Array())
     sparkContext = new SparkContext(sparkConf)
     sqlContext = new SQLContext(sparkContext)
     UserDefinedFunctions.registerFunctions(sqlContext.udf)
