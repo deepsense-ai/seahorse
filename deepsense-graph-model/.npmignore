@@ -1,0 +1,7 @@
+!.gitkeep
+node_modules/
+bower_components/
+.tmp
+.idea
+npm-debug.log
+*.log
