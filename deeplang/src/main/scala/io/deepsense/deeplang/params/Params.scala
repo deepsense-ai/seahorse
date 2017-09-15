@@ -21,6 +21,7 @@ import java.lang.reflect.Modifier
 import spray.json._
 
 import io.deepsense.commons.utils.CollectionExtensions._
+import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.doperables.descriptions.{HasInferenceResult, ParamsInferenceResult}
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.params.exceptions.ParamValueNotProvidedException
@@ -32,7 +33,7 @@ import io.deepsense.deeplang.params.wrappers.spark._
  * Parameters are discovered by reflection.
  * This trait also provides method for managing values and default values of parameters.
  */
-trait Params extends Serializable with HasInferenceResult with DefaultJsonProtocol {
+trait Params extends Serializable with HasInferenceResult with DefaultJsonProtocol with Logging {
 
   def paramsToJson: JsValue = JsArray(params.map {
     case param =>
@@ -56,7 +57,7 @@ trait Params extends Serializable with HasInferenceResult with DefaultJsonProtoc
 
   /**
    * Sequence of paramPairs for this class, parsed from Json.
-   * If a name of a parameter is unknown, an exception will be thrown.
+   * If a name of a parameter is unknown, it's ignored
    * JsNull is treated as empty object.
    * JsNull as value of parameter is ignored.
    */
@@ -73,7 +74,13 @@ trait Params extends Serializable with HasInferenceResult with DefaultJsonProtoc
                 parameter.asInstanceOf[Param[Any]],
                 parameter.valueFromJson(value)))
             }
-          case (None, _) => throw unknownParamLabelException(jsValue, label)
+          case (None, _) => {
+            // Currently frontend might ocassionaly send invalid params
+            // (like removing public param from custom transformer or DS-2671)
+            // In that case we are doing nothing.
+            logger.info(s"Field $label is not defined in schema. Ignoring...")
+            None
+          }
         }
       }
       pairs.flatten.toSeq
