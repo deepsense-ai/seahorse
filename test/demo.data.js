@@ -15,7 +15,11 @@ angular.module('test').
         name: 'Sql Reader',
         operationId: '342342-123123-434234-234234',
         parameters: null,
-        status: 'status_running',
+        state: {
+          "status": "status_completed",
+          "started": "2012-08-20T21:11:09Z",
+          "ended": "2012-08-20T21:12:09Z"
+        },
         stateDetails: {
           "progress": {
             "current": 3,
@@ -29,10 +33,10 @@ angular.module('test').
         name: 'Row Filter',
         operationId: '342342-123123-434234-12334',
         parameters: null,
-        status: "status_completed",
-        stateDetails: {
-          "started": "2012-08-20T21:11:09Z",
-          "ended": "2012-08-20T21:12:09Z"
+        state: {
+          "status": "status_completed",
+          "started": "2013-09-10T22:11:09Z",
+          "ended": "2013-09-20T21:22:09Z"
         }
       },
       {
@@ -41,11 +45,7 @@ angular.module('test').
         name: 'Neural Network',
         operationId: '11111-111111-44444',
         parameters: null,
-        status: "status_aborted",
-        stateDetails: {
-          "started": "2012-08-20T21:11:09Z",
-          "ended": "2012-08-20T21:11:09Z"
-        }
+        state: null
       },
       {
         description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur et harum neque nostrum qui similique soluta veritatis. Doloribus eligendi explicabo illo iure nostrum quas ratione soluta veritatis vero voluptatem? Rem.',
@@ -53,14 +53,10 @@ angular.module('test').
         name: 'File To DataFrame',
         operationId: '11111-111111-33333',
         parameters: null,
-        status: "status_failed",
-        stateDetails: {
+        state: {
+          "status": "status_aborted",
           "started": "2012-08-20T21:11:09Z",
-          "ended": "2012-08-20T21:21:23Z",
-          "progress": {
-            "current": 3,
-            "total": 23
-          },
+          "ended": "2012-08-20T21:12:09Z",
           "error": {
             "id": "b23dd1a8-8c41-434a-a465-ebcd9d3ef114",
             "code": 42,
@@ -76,7 +72,18 @@ angular.module('test').
         name: 'Test draft',
         operationId: '11111-111111-33333',
         parameters: null,
-        status: "status_draft",
+        state: {
+          "status": "status_failed",
+          "started": "2012-08-20T21:11:09Z",
+          "ended": "2012-08-20T21:12:09Z",
+          "error": {
+            "id": "b23dd1a8-8c41-434a-a465-ebcd9d3ef114",
+            "code": 42,
+            "title": "Question unknown",
+            "message": "Something that describes the problem more precisely",
+            "details": null
+          }
+        },
         stateDetails: null
       },
       {
@@ -85,7 +92,18 @@ angular.module('test').
         name: 'Test draft',
         operationId: '11111-111111-33333',
         parameters: null,
-        status: "status_queued",
+        state: {
+          "status": "status_failed",
+          "started": "2012-08-20T21:11:09Z",
+          "ended": "2012-08-20T21:12:09Z",
+          "error": {
+            "id": "b23dd1a8-8c41-434a-a465-ebcd9d3ef114",
+            "code": 42,
+            "title": "Question unknown",
+            "message": "Something that describes the problem more precisely",
+            "details": null
+          }
+        },
         stateDetails: null
       }
     ];

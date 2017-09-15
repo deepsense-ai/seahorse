@@ -10,34 +10,25 @@
       <p class="operation-attributes-panel__description"
          title="{{ node.description }}">{{ node.description }}</p>
     </section>
-    <section class="operation-attributes-panel__details">
-      <div class="operation-attributes-panel__state progress progress-striped active"
-           ng-show="node.status === 'status_running'"
-           title="Currently is running">
-        <div style="width: 100%" aria-valuemax="100" aria-valuemin="0"
-             aria-valuenow="100" role="progressbar"
-             class="progress-bar progress-bar-primary">
-          {{::node.status.replace('status_', '')}}
-        </div>
-      </div>
-      <p class="operation-attributes-panel__state label"
-         ng-class="{
-          'label-info': node.status === 'status_queued',
-          'label-success': node.status === 'status_completed',
-          'label-danger': node.status === 'status_failed',
-          'label-warning': node.status === 'status_aborted'
-         }"
-         ng-hide="node.status === 'status_running'"
-         title="Status">
-        {{node.status.replace('status_', '')}}
-      </p>
+    <section class="operation-attributes-panel__details" ng-if="node.state">
+      <header>
+        <p class="operation-attributes-panel__state label"
+           ng-class="{
+            'label-success': node.state.status === 'status_completed',
+            'label-danger': node.state.status === 'status_failed',
+            'label-warning': node.state.status === 'status_aborted'
+           }"
+           title="Status">
+          {{node.state.status.replace('status_', '')}}
+        </p>
+      </header>
       <p class="operation-attributes-panel__time text-right"
-         ng-show="node.stateDetails.ended">
+         ng-show="node.state.ended">
         <span class="block">Last executed</span>
         <i class="fa fa-clock-o"></i>
-        <time datetime="{{node.stateDetails.ended}}"
+        <time datetime="{{node.state.ended}}"
               class="text-right">
-          {{node.stateDetails.ended | date:'medium'}}
+          {{node.state.ended | date:'medium'}}
         </time>
       </p>
     </section>
