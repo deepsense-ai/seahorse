@@ -23,16 +23,19 @@ resolvers ++= Seq(
 libraryDependencies ++= {
   val akkaV = "2.3.7"
   val sprayV = "1.3.2"
+  val scalaTestV = "2.2.+"
   Seq(
-    "net.codingwell" %% "scala-guice" % "4.0.0-beta5",
-    "io.spray"            %%  "spray-can"     % sprayV,
-    "io.spray"            %%  "spray-routing" % sprayV,
-    "io.spray"            %%  "spray-json"    % "1.3.1",
-    "io.spray"            %%  "spray-testkit" % sprayV  % "test",
-    "com.typesafe.akka"   %%  "akka-actor"    % akkaV,
-    "com.typesafe.akka"   %%  "akka-testkit"  % akkaV   % "test",
-    "org.specs2"          %%  "specs2-core"   % "2.3.7" % "test"
+    "net.codingwell"      %% "scala-guice"   % "4.0.0-beta5",
+    "io.spray"            %% "spray-can"     % sprayV,
+    "io.spray"            %% "spray-routing" % sprayV,
+    "io.spray"            %% "spray-json"    % "1.3.1",
+    "io.spray"            %% "spray-testkit" % sprayV     % "test",
+    "com.typesafe.akka"   %% "akka-actor"    % akkaV,
+    "com.typesafe.akka"   %% "akka-testkit"  % akkaV      % "test",
+    "org.specs2"          %% "specs2-core"   % "2.3.7"    % "test",
+    "org.mockito"         %  "mockito-core"  % "1.10.19"  % "test",
+    "org.scalatest"       %% "scalatest"     % scalaTestV % "test"
   )
 }
 
-Revolver.settings
+Revolver.settings: Seq[sbt.Def.Setting[_]]
