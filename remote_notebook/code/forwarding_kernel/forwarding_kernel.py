@@ -15,12 +15,14 @@ from traitlets import Type
 
 from rabbit_mq_client import RabbitMQClient, RabbitMQJsonSender, RabbitMQJsonReceiver
 from ready_handler import ReadyHandler
+from heartbeat_handler import HeartbeatHandler
 from socket_forwarder import SocketForwarder, ToZmqSocketForwarder
 from notebook_server_client import NotebookServerClient
 from utils import debug
 
-
 RABBIT_MQ_ADDRESS = None
+HEARTBEAT_INTERVAL = None
+MISSED_HEARTBEAT_LIMIT = None
 
 
 class ForwardingKernel(IPythonKernel):
@@ -59,8 +61,14 @@ class ForwardingKernel(IPythonKernel):
         self._socket_forwarders = self._init_socket_forwarders()
 
         mq_address, mq_port = RABBIT_MQ_ADDRESS
-        self._ready_handler = ReadyHandler([mq_address, mq_port])
+        self._ready_handler = ReadyHandler([mq_address, mq_port], self._session_id)
         self._ready_handler.handle_ready(nb_client.restart_kernel)
+
+        self._heartbeat_handler = HeartbeatHandler([mq_address, mq_port],
+                                                   HEARTBEAT_INTERVAL,
+                                                   MISSED_HEARTBEAT_LIMIT,
+                                                   self._session_id)
+        self._heartbeat_handler.handle_heartbeat(lambda: nb_client.stop_kernel())
 
     def _init_rabbit_clients(self, rabbit_mq_address):
         rabbit_client = RabbitMQClient(address=rabbit_mq_address, exchange=self.EXCHANGE)
@@ -78,10 +86,10 @@ class ForwardingKernel(IPythonKernel):
             self._exit('Malformed message')
 
         self._rabbit_execution_sender_client.send({
-                    'type': 'zmq_socket_forward',
-                    'stream': stream_name,
-                    'body': [base64.b64encode(s) for s in message]
-                })
+            'type': 'zmq_socket_forward',
+            'stream': stream_name,
+            'body': [base64.b64encode(s) for s in message]
+        })
 
     def _handle_execution_message_from_rabbit(self, message):
         known_message_types = ['zmq_socket_forward']
@@ -101,6 +109,7 @@ class ForwardingKernel(IPythonKernel):
         def make_sender(stream_name):
             def sender(message):
                 self._send_zmq_forward_to_rabbit(stream_name, message)
+
             return sender
 
         for socket in ['shell', 'control', 'stdin', 'iopub']:
@@ -166,8 +175,11 @@ class ForwardingKernelApp(IPKernelApp):
         self.init_signal()
         self.kernel = ForwardingKernel(parent=self)
 
+
 if __name__ == '__main__':
     RABBIT_MQ_ADDRESS = (os.environ['MQ_HOST'], int(os.environ['MQ_PORT']))
+    MISSED_HEARTBEAT_LIMIT = int(os.environ['MISSED_HEARTBEAT_LIMIT'])
+    HEARTBEAT_INTERVAL = float(os.environ['HEARTBEAT_INTERVAL'])
 
     app = ForwardingKernelApp.instance()
     app.initialize()

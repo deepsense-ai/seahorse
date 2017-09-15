@@ -49,5 +49,7 @@ services:
       - WM_URL=http://workflowmanager:9080
       - MQ_HOST=rabbitmq
       - MQ_PORT=5672
+      - HEARTBEAT_INTERVAL=2.0
+      - MISSED_HEARTBEAT_LIMIT=30
     depends_on:
       - rabbitmq

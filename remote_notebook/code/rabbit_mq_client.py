@@ -13,9 +13,10 @@ from utils import debug
 class RabbitMQClient(object):
     _channel_impl = None
 
-    def __init__(self, address, exchange):
+    def __init__(self, address, exchange, exchange_type='topic'):
         self._address = address
         self._exchange = exchange
+        self._exchange_type = exchange_type
 
         self._reset_consumer_thread(start=False)
 
@@ -37,9 +38,20 @@ class RabbitMQClient(object):
         if not self._consumer_thread.is_alive():
             self._reset_consumer_thread(start=True)
 
+    def consume(self, inactivity_timeout, handler, timeout_handler):
+        queue_name = self._channel.queue_declare(exclusive=True).method.queue
+        self._channel.queue_bind(exchange=self._exchange,
+                                 queue=queue_name)
+        for message in self._channel.consume(queue=queue_name,
+                                             inactivity_timeout=inactivity_timeout):
+            if message is not None:
+                handler(self._channel, message)
+            else:
+                timeout_handler()
+
     def _declare_exchange(self):
         self._channel.exchange_declare(exchange=self._exchange,
-                                       exchange_type='topic')
+                                       exchange_type=self._exchange_type)
 
     def _reset_consumer_thread(self, start):
         self._consumer_thread = Thread(target=self._channel.start_consuming)
