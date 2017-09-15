@@ -42,12 +42,15 @@ function networkRm {
 ACTION=$1
 SPARK_VERSION=$2
 export SPARK_VERSION=${SPARK_VERSION}
-if [ "$SPARK_VERSION" == "2.1.0" ] || [ "$SPARK_VERSION" == "2.0.0" ] || [ "$SPARK_VERSION" == "2.0.2" ]; then
+if [ "$SPARK_VERSION" == "2.0.0" ] || [ "$SPARK_VERSION" == "2.0.1" ] || [ "$SPARK_VERSION" == "2.0.2" ]; then
   export HADOOP_VERSION="2.7"
   export HADOOP_VERSION_FULL="2.7.1"
-else
+elif [ "$SPARK_VERSION" == "1.6.1" ]; then
   export HADOOP_VERSION="2.6"
   export HADOOP_VERSION_FULL="2.6.0"
+else
+  echo 'Unhandled Spark version ${$SPARK_VERSION}'
+  exit 1
 fi
 
 case $ACTION in

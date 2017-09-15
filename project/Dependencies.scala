@@ -110,7 +110,7 @@ object Dependencies {
 
   val sparkCSV: Seq[ModuleID] = Version.spark match {
     case "1.6.1" => Seq("com.databricks" %% "spark-csv" % "1.4.0")
-    case "2.0.0" => Seq()
+    case "2.0.0" | "2.0.1" | "2.0.2" => Seq()
   }
 
   class Spark(version: String) {
@@ -145,9 +145,7 @@ object Dependencies {
     )
   }
 
-  val sparkutils_1_6_1 = new Spark("1.6.1").onlyInTests ++ Seq(akkaActor)
-
-  val sparkutils_2_0_0 = new Spark("2.0.0").onlyInTests ++ Seq(akkaActor)
+  def sparkutils(sparkVersion: String) = new Spark(sparkVersion).onlyInTests ++ Seq(akkaActor)
 
   val usedSpark = new Spark(Version.spark)
 

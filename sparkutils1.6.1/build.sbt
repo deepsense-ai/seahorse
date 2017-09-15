@@ -16,4 +16,4 @@
 
 name := "deepsense-seahorse-sparkutils1.6.1"
 
-libraryDependencies ++= Dependencies.sparkutils_1_6_1
+libraryDependencies ++= Dependencies.sparkutils("1.6.1")

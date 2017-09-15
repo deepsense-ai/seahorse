@@ -29,11 +29,11 @@ object CommonSettingsPlugin extends AutoPlugin {
   lazy val artifactoryUrl = settingKey[String]("Artifactory URL to deploy packages to")
 
   object Versions {
-    val spark = System.getProperty("sparkVersion", "2.0.0")
-    val (scala, java, hadoop, akka) = if (spark == "2.0.0") {
-      ("2.11.8", "1.8", "2.7.1", "2.4.9")
-    } else {
-      ("2.10.5", "1.7", "2.6.0", "2.3.11")
+    val spark = System.getProperty("sparkVersion", "2.0.2")
+
+    val (scala, java, hadoop, akka) = spark match {
+      case "2.0.0" | "2.0.1" | "2.0.2" => ("2.11.8", "1.8", "2.7.1", "2.4.9")
+      case other => ("2.10.5", "1.7", "2.6.0", "2.3.11")
     }
   }
 
