@@ -39,6 +39,11 @@ private [clusters] object YarnSparkLauncher {
       .setConf("spark.driver.extraClassPath", config.weJarPath)
       .setConf("spark.executorEnv.PYTHONPATH", config.weDepsFileName)
       .setConf("spark.yarn.appMasterEnv.PYSPARK_PYTHON", config.pythonDriverBinary)
+      .mergeConfOption("spark.yarn.dist.archives", sparkRArchivePath(config.sparkHome), args.toMap)
+
+
+  private def sparkRArchivePath(sparkHome: String, linkName: String = "#sparkr") =
+    sparkHome + "/R/lib/sparkr.zip" + linkName
 
   private def env(
       config: SparkLauncherConfig,

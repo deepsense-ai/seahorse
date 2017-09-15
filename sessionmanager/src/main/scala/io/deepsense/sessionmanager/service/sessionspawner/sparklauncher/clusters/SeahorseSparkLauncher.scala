@@ -4,6 +4,7 @@
 
 package io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.clusters
 
+import scala.collection._
 import scalaz.Scalaz._
 import scalaz._
 
@@ -52,6 +53,27 @@ object SeahorseSparkLauncher {
         case Some(value) => self.setConf(key, value)
         case None => self
       }
+    }
+
+    def mergeConfOption(key: String,
+                        value: String,
+                        args: Map[String, String],
+                        delimiter: String = ","): SparkLauncher = {
+
+      val selectedConfOption = args.filter {
+        case(k, v) => (("--conf" == k) && (v != null))
+      }.values.collect {
+        case v if v.split("=", 2)(0) == key => v.split("=", 2)(1)
+      }
+
+      selectedConfOption match {
+        case Nil => self.setConf(key, value)
+        case head::rest => selectedConfOption.foldLeft(self) {
+          case (akk, head) =>
+            akk.setConf(key, s"$head$delimiter$value")
+        }
+      }
+
     }
 
     def setSparkArgs(args: Map[String, String]): SparkLauncher =
