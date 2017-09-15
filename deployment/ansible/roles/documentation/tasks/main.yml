@@ -35,7 +35,7 @@
 - name: Build documentation
   environment:
     PATH: "{{ ansible_env.PATH }}:~/.gem/ruby/1.9.1/bin"
-  command: ./build.sh chdir="{{repo_dir}}/{{repo_name}}/docs"
+  command: ./build.sh {{docs_build_extra_params}} chdir="{{repo_dir}}/{{repo_name}}/docs"
 
 - name: Assures docker dir exists
   file: path={{ds_documentation_download_dir}} state=directory
