@@ -9,7 +9,7 @@ import internal from './workflows-editor.internal.js';
 class WorkflowsEditorController extends WorkflowReports {
 
   /* @ngInject */
-  constructor(workflow, config, Report, MultiSelectionService,
+  constructor(workflowWithResults, config, Report, MultiSelectionService,
     $scope, $state, $stateParams, $q, $rootScope,
     GraphNode, Edge,
     PageService, Operations, GraphPanelRendererService, WorkflowService, UUIDGenerator, MouseEvent,
@@ -25,7 +25,8 @@ class WorkflowsEditorController extends WorkflowReports {
     this.DeepsenseNodeParameters = DeepsenseNodeParameters;
     this.Edge = Edge;
     this.config = config;
-    this.workflow = workflow;
+    // workflowWithResults is Array of resolved data from promises
+    this.workflow = workflowWithResults[0];
     this.MultiSelectionService = MultiSelectionService;
     this.$scope = $scope;
     this.$rootScope = $rootScope;
@@ -79,17 +80,14 @@ class WorkflowsEditorController extends WorkflowReports {
     this.updateAndRerenderEdges(this.workflow);
     this.initListeners();
     this.ServerCommunication.init(this.workflow.id);
+    internal.loadReports.call(this, this.workflow);
   }
 
   initListeners() {
     this.$scope.$on('ServerCommunication.MESSAGE.executionStatus', (event, data) => {
       this.WorkflowService.getWorkflow().updateState(data);
 
-      if (!jQuery.isEmptyObject(data.resultEntities)) {
-        super.init(data.resultEntities);
-        super.initListeners(data.resultEntities);
-        this.GraphPanelRendererService.rerender();
-      }
+      internal.loadReports.call(this, data);
     });
 
     this.$scope.$on('ServerCommunication.MESSAGE.knowledge', (event, data) => {

@@ -18,6 +18,12 @@ function ErrorsConfig($stateProvider) {
     templateUrl: 'app/errors/error-version.html',
     controller: 'ErrorController as controller'
   });
+
+  $stateProvider.state('RequestTimeout', {
+    url: '/error/request-timeout',
+    templateUrl: 'app/errors/error-request-timeout.html',
+    controller: 'ErrorController as controller'
+  });
 }
 
 exports.function = ErrorsConfig;

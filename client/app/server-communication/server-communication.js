@@ -50,8 +50,14 @@ class ServerCommunication {
       error
     );
 
-    if (angular.isString(error) && error.indexOf('Lost connection') > -1) {
+    if (angular.isString(error) && error.indexOf('Lost connection') > -1 && !this.stopReconnecting) {
       this.reconnect();
+    }
+
+    if (this.stopReconnecting) {
+      this.$timeout(() => {
+        delete this.stopReconnecting;
+      }, this.config.socketReconnectionInterval, false);
     }
   }
 
