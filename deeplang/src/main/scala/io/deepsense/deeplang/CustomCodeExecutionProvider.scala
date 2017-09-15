@@ -16,7 +16,6 @@
 
 package io.deepsense.deeplang
 
-trait PythonExecutionProvider {
-  def pythonCodeExecutor: PythonCodeExecutor
-  def customOperationExecutor: CustomOperationExecutor
-}
+case class CustomCodeExecutionProvider(
+    pythonCodeExecutor: CustomCodeExecutor,
+    operationExecutionDispatcher: OperationExecutionDispatcher)

@@ -35,4 +35,5 @@ object CodeSnippetLanguage extends Enumeration {
   type CodeSnippetLanguage = Value
   val python = Value("python")
   val sql = Value("sql")
+  val r = Value("r")
 }

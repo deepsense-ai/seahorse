@@ -61,12 +61,12 @@ case class PythonEvaluator()
 
     val composedCode = getComposedCode(userCode)
 
-    if (!ctx.pythonCodeExecutor.isValid(composedCode)) {
+    if (!ctx.customCodeExecutor.isPythonValid(composedCode)) {
       throw CustomOperationExecutionException("Code validation failed")
     }
 
     ctx.dataFrameStorage.withInputDataFrame(InputPortNumber, df.sparkDataFrame) {
-      ctx.pythonCodeExecutor.run(composedCode) match {
+      ctx.customCodeExecutor.runPython(composedCode) match {
         case Left(error) =>
           throw CustomOperationExecutionException(s"Execution exception:\n\n$error")
 

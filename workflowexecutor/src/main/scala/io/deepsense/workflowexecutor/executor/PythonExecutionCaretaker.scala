@@ -26,11 +26,12 @@ import org.apache.spark.SparkContext
 import org.apache.spark.sql.SQLContext
 
 import io.deepsense.commons.utils.Logging
-import io.deepsense.deeplang.{CustomOperationExecutor, DataFrameStorage, PythonCodeExecutor}
+import io.deepsense.deeplang.{CustomCodeExecutor, DataFrameStorage}
 import io.deepsense.workflowexecutor.Unzip
+import io.deepsense.workflowexecutor.customcode.CustomCodeEntryPoint
 import io.deepsense.workflowexecutor.pyspark.PythonPathGenerator
-import io.deepsense.workflowexecutor.pythongateway.PythonGateway
 import io.deepsense.workflowexecutor.pythongateway.PythonGateway.GatewayConfig
+import io.deepsense.workflowexecutor.pythongateway.PythonGateway
 
 
 /**
@@ -43,17 +44,17 @@ import io.deepsense.workflowexecutor.pythongateway.PythonGateway.GatewayConfig
  * Another of its functions is to provide a facade for everything Python/UDF-related.
  */
 class PythonExecutionCaretaker(
-  pythonExecutorPath: String,
-  pythonPathGenerator: PythonPathGenerator,
-  pythonBinary: String,
-  val sparkContext: SparkContext,
-  val sqlContext: SQLContext,
-  val dataFrameStorage: DataFrameStorage,
-  val hostAddress: InetAddress) extends Logging {
+                                pythonExecutorPath: String,
+                                pythonPathGenerator: PythonPathGenerator,
+                                pythonBinary: String,
+                                val sparkContext: SparkContext,
+                                val sqlContext: SQLContext,
+                                val dataFrameStorage: DataFrameStorage,
+                                val customCodeEntryPoint: CustomCodeEntryPoint,
+                                val hostAddress: InetAddress) extends Logging {
 
   def waitForPythonExecutor(): Unit = {
     pythonGateway.codeExecutor
-    pythonGateway.customOperationExecutor
   }
 
   def start(): Unit = {
@@ -80,14 +81,17 @@ class PythonExecutionCaretaker(
     pyExecutorMonitorThread.join()
   }
 
-  def pythonCodeExecutor: PythonCodeExecutor = pythonGateway.codeExecutor
-
-  def customOperationExecutor: CustomOperationExecutor = pythonGateway.customOperationExecutor
+  def pythonCodeExecutor: CustomCodeExecutor = pythonGateway.codeExecutor
 
   def gatewayListeningPort: Option[Int] = pythonGateway.listeningPort
 
-  private val pythonGateway =
-    PythonGateway(GatewayConfig(), sparkContext, sqlContext, dataFrameStorage, hostAddress)
+  private val pythonGateway = PythonGateway(
+    GatewayConfig(),
+    sparkContext,
+    sqlContext,
+    dataFrameStorage,
+    customCodeEntryPoint,
+    hostAddress)
 
   private val pyExecutorProcess = new AtomicReference[Option[Process]](None)
 

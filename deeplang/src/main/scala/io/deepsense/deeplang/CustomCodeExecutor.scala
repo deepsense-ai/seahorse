@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang
 
-trait PythonCodeExecutor {
+trait CustomCodeExecutor {
 
   /**
    * Validates custom operation's source code.

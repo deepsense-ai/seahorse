@@ -22,7 +22,7 @@ import org.apache.spark.SparkContext
 import org.apache.spark.sql.{SQLContext, DataFrame => SparkDataFrame}
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.utils.Logging
-import io.deepsense.deeplang.CustomOperationExecutor.Result
+import io.deepsense.deeplang.OperationExecutionDispatcher.Result
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.inference.InferContext
 
@@ -35,7 +35,7 @@ case class CommonExecutionContext(
     tenantId: String,
     innerWorkflowExecutor: InnerWorkflowExecutor,
     dataFrameStorage: DataFrameStorage,
-    pythonExecutionProvider: PythonExecutionProvider) extends Logging {
+    customCodeExecutionProvider: CustomCodeExecutionProvider) extends Logging {
 
   def createExecutionContext(workflowId: Id, nodeId: Id): ExecutionContext =
     ExecutionContext(
@@ -47,11 +47,7 @@ case class CommonExecutionContext(
       tenantId,
       innerWorkflowExecutor,
       ContextualDataFrameStorage(dataFrameStorage, workflowId, nodeId),
-      ContextualPythonCodeExecutor(
-        pythonExecutionProvider.pythonCodeExecutor,
-        pythonExecutionProvider.customOperationExecutor,
-        workflowId,
-        nodeId))
+      ContextualCustomCodeExecutor(customCodeExecutionProvider, workflowId, nodeId))
 }
 
 object CommonExecutionContext {
@@ -66,17 +62,7 @@ object CommonExecutionContext {
       context.tenantId,
       context.innerWorkflowExecutor,
       context.dataFrameStorage.dataFrameStorage,
-      ContextualPythonExecutorWrapper(context.pythonCodeExecutor))
-}
-
-case class ContextualPythonExecutorWrapper(contextualExecutor: ContextualPythonCodeExecutor)
-  extends PythonExecutionProvider {
-
-  override def customOperationExecutor: CustomOperationExecutor =
-    contextualExecutor.customOperationExecutor
-
-  override def pythonCodeExecutor: PythonCodeExecutor =
-    contextualExecutor.pythonCodeExecutor
+      context.customCodeExecutor.customCodeExecutionProvider)
 }
 
 /** Holds information needed by DOperations and DMethods during execution. */
@@ -89,7 +75,7 @@ case class ExecutionContext(
     tenantId: String,
     innerWorkflowExecutor: InnerWorkflowExecutor,
     dataFrameStorage: ContextualDataFrameStorage,
-    pythonCodeExecutor: ContextualPythonCodeExecutor) extends Logging {
+    customCodeExecutor: ContextualCustomCodeExecutor) extends Logging {
 
   def dataFrameBuilder: DataFrameBuilder = inferContext.dataFrameBuilder
 }
@@ -125,18 +111,20 @@ case class ContextualDataFrameStorage(
   }
 }
 
-case class ContextualPythonCodeExecutor(
-    pythonCodeExecutor: PythonCodeExecutor,
-    customOperationExecutor: CustomOperationExecutor,
+case class ContextualCustomCodeExecutor(
+    customCodeExecutionProvider: CustomCodeExecutionProvider,
     workflowId: Id,
     nodeId: Id) extends Logging {
 
-  def isValid(code: String): Boolean = pythonCodeExecutor.isValid(code)
+  def isPythonValid: (String) => Boolean = customCodeExecutionProvider.pythonCodeExecutor.isValid
 
-  def run(code: String): Result = {
-    val result = customOperationExecutor.execute(workflowId, nodeId)
-    pythonCodeExecutor.run(workflowId.toString, nodeId.toString, code)
-    logger.debug("Waiting for python operation to finish")
+  def runPython: (String) => Result = run(_, customCodeExecutionProvider.pythonCodeExecutor)
+
+  private def run(code: String, executor: CustomCodeExecutor): Result = {
+    val result =
+      customCodeExecutionProvider.operationExecutionDispatcher.executionStarted(workflowId, nodeId)
+    executor.run(workflowId.toString, nodeId.toString, code)
+    logger.debug("Waiting for user's custom operation to finish")
     Await.result(result, Duration.Inf)
   }
 }

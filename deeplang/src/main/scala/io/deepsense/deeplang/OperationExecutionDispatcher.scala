@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-package io.deepsense.workflowexecutor.pythongateway
+package io.deepsense.deeplang
 
 import scala.collection.concurrent.TrieMap
 import scala.concurrent.{Future, Promise}
 
 import io.deepsense.commons.models.Id
-import io.deepsense.deeplang.CustomOperationExecutor
-import io.deepsense.deeplang.CustomOperationExecutor.Result
-import io.deepsense.graph.Node
-import io.deepsense.models.workflows.Workflow
 
 class OperationExecutionDispatcher {
 
@@ -42,13 +38,10 @@ class OperationExecutionDispatcher {
     require(promise.isDefined)
     promise.get.success(result)
   }
-
-  val customOperationExecutor: CustomOperationExecutor = new CustomOperationExecutor {
-    override def execute(workflowId: Id, nodeId: Id): Future[Result] =
-      executionStarted(workflowId, nodeId)
-  }
 }
 
 object OperationExecutionDispatcher {
-  type OperationId = (Workflow.Id, Node.Id)
+  type OperationId = (Id, Id)
+  type Error = String
+  type Result = Either[Error, Unit]
 }

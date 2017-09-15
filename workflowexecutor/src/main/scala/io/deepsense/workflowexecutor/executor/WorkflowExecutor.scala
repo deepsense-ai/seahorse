@@ -32,13 +32,14 @@ import spray.json._
 
 import io.deepsense.commons.models.Entity
 import io.deepsense.commons.utils.Logging
-import io.deepsense.deeplang._
+import io.deepsense.deeplang.{OperationExecutionDispatcher, _}
 import io.deepsense.graph.CyclicGraphException
 import io.deepsense.models.json.workflow.exceptions._
 import io.deepsense.models.workflows.{ExecutionReport, WorkflowInfo, WorkflowWithResults, WorkflowWithVariables}
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.Launch
 import io.deepsense.workflowexecutor.WorkflowExecutorApp._
 import io.deepsense.workflowexecutor._
+import io.deepsense.workflowexecutor.customcode.CustomCodeEntryPoint
 import io.deepsense.workflowexecutor.exception.{UnexpectedHttpResponseException, WorkflowExecutionException}
 import io.deepsense.workflowexecutor.pyspark.PythonPathGenerator
 import io.deepsense.workflowexecutor.session.storage.DataFrameStorageImpl
@@ -75,6 +76,14 @@ case class WorkflowExecutor(
     val pythonBinary = ConfigFactory.load
         .getString("pythoncaretaker.python-binary-default")
 
+    val operationExecutionDispatcher = new OperationExecutionDispatcher
+
+    val customCodeEntryPoint = new CustomCodeEntryPoint(
+      sparkContext,
+      sqlContext,
+      dataFrameStorage,
+      operationExecutionDispatcher)
+
     val pythonExecutionCaretaker = new PythonExecutionCaretaker(
       pythonExecutorPath,
       pythonPathGenerator,
@@ -82,13 +91,17 @@ case class WorkflowExecutor(
       sparkContext,
       sqlContext,
       dataFrameStorage,
+      customCodeEntryPoint,
       hostAddress)
-
     pythonExecutionCaretaker.start()
+
+    val customCodeExecutionProvider = CustomCodeExecutionProvider(
+      pythonExecutionCaretaker.pythonCodeExecutor,
+      operationExecutionDispatcher)
 
     val executionContext = createExecutionContext(
       dataFrameStorage,
-      pythonExecutionCaretaker,
+      customCodeExecutionProvider,
       sparkContext,
       sqlContext,
       tempPath)

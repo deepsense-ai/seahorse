@@ -30,14 +30,18 @@ class ContextualPythonCodeExecutorSpec extends UnitSpec with BeforeAndAfter {
 
   val code = "some code"
 
-  val pythonCodeExecutor = mock[PythonCodeExecutor]
-  val customOperationExecutor = mock[CustomOperationExecutor]
+  val pythonCodeExecutor = mock[CustomCodeExecutor]
+  val operationExecutionDispatcher = mock[OperationExecutionDispatcher]
+  val customCodeExecutionProvider = mock[CustomCodeExecutionProvider]
 
-  var executor: ContextualPythonCodeExecutor = _
+  var executor: ContextualCustomCodeExecutor = _
 
   before {
-   executor = new ContextualPythonCodeExecutor(
-     pythonCodeExecutor, customOperationExecutor, workflowId, nodeId)
+    executor = new ContextualCustomCodeExecutor(customCodeExecutionProvider, workflowId, nodeId)
+    when(customCodeExecutionProvider.pythonCodeExecutor)
+      .thenReturn(pythonCodeExecutor)
+    when(customCodeExecutionProvider.operationExecutionDispatcher)
+      .thenReturn(operationExecutionDispatcher)
   }
 
   "ContextualPythonCodeExecutor" should {
@@ -45,15 +49,15 @@ class ContextualPythonCodeExecutorSpec extends UnitSpec with BeforeAndAfter {
     "validate code" in {
       when(pythonCodeExecutor.isValid(code)).thenReturn(true)
 
-      executor.isValid(code) shouldBe true
+      executor.isPythonValid(code) shouldBe true
     }
 
     "execute code" in {
-      when(customOperationExecutor.execute(workflowId, nodeId))
+      when(operationExecutionDispatcher.executionStarted(workflowId, nodeId))
         .thenReturn(Future.successful(Right()))
       doNothing().when(pythonCodeExecutor).run(workflowId.toString, nodeId.toString, code)
 
-      executor.run(code)
+      executor.runPython(code)
     }
   }
 }

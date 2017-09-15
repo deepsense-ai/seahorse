@@ -23,7 +23,6 @@ import org.apache.spark.sql.types._
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe._
 import io.deepsense.deeplang.doperations.exceptions.CustomOperationExecutionException
-import io.deepsense.deeplang.CustomOperationExecutor._
 import io.deepsense.deeplang.params.choice.ChoiceParam
 import io.deepsense.deeplang.params.{CodeSnippetLanguage, CodeSnippetParam, Param}
 
@@ -78,7 +77,7 @@ case class PythonColumnTransformer() extends MultiColumnTransformer {
       outputColumn: String,
       context: ExecutionContext,
       dataFrame: DataFrame): DataFrame = {
-    context.pythonCodeExecutor.run(code) match {
+    context.customCodeExecutor.runPython(code) match {
       case Left(error) =>
         throw CustomOperationExecutionException(s"Execution exception:\n\n$error")
 
@@ -105,7 +104,7 @@ case class PythonColumnTransformer() extends MultiColumnTransformer {
       $(codeParameter), inputColumn, outputColumn, getTargetType.columnType)
     logger.debug(s"Python code to be validated and executed:\n$code")
 
-    if (!context.pythonCodeExecutor.isValid(code)) {
+    if (!context.customCodeExecutor.isPythonValid(code)) {
       throw CustomOperationExecutionException("Code validation failed")
     }
 

@@ -29,7 +29,7 @@ import org.scalatest.mock.MockitoSugar._
 
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
-import io.deepsense.deeplang.CustomOperationExecutor.Result
+import io.deepsense.deeplang.OperationExecutionDispatcher.Result
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.deeplang.inference.InferContext
@@ -77,7 +77,7 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
       "testTenantId",
       mock[InnerWorkflowExecutor],
       mock[DataFrameStorage],
-      mock[PythonExecutionProvider])
+      mock[CustomCodeExecutionProvider])
   }
 
   protected def prepareExecutionContext(): ExecutionContext = {
@@ -173,7 +173,7 @@ private class MockedCommonExecutionContext(
     override val tenantId: String,
     override val innerWorkflowExecutor: InnerWorkflowExecutor,
     override val dataFrameStorage: DataFrameStorage,
-    override val pythonExecutionProvider: PythonExecutionProvider)
+    override val customCodeExecutionProvider: CustomCodeExecutionProvider)
   extends CommonExecutionContext(
     sparkContext,
     sqlContext,
@@ -183,7 +183,7 @@ private class MockedCommonExecutionContext(
     tenantId,
     innerWorkflowExecutor,
     dataFrameStorage,
-    pythonExecutionProvider) {
+    customCodeExecutionProvider) {
 
   override def createExecutionContext(workflowId: Id, nodeId: Id): ExecutionContext =
     new MockedExecutionContext(sparkContext,
@@ -204,7 +204,7 @@ private class MockedExecutionContext(
     override val tenantId: String,
     override val innerWorkflowExecutor: InnerWorkflowExecutor,
     override val dataFrameStorage: ContextualDataFrameStorage,
-    override val pythonCodeExecutor: ContextualPythonCodeExecutor)
+    override val customCodeExecutor: ContextualCustomCodeExecutor)
   extends ExecutionContext(
     sparkContext,
     sqlContext,
@@ -214,20 +214,24 @@ private class MockedExecutionContext(
     tenantId,
     innerWorkflowExecutor,
     dataFrameStorage,
-    pythonCodeExecutor)
+    customCodeExecutor)
 
-private class MockedCodeExecutor extends PythonCodeExecutor {
+private class MockedCodeExecutor extends CustomCodeExecutor {
 
   override def isValid(code: String): Boolean = true
 
   override def run(workflowId: String, nodeId: String, code: String): Unit = ()
 }
 
+private class MockedCustomCodeExecutionProvider
+  extends CustomCodeExecutionProvider(new MockedCodeExecutor, new MockedCustomOperationExecutor)
+
 private class MockedContextualCodeExecutor
-  extends ContextualPythonCodeExecutor(
-    new MockedCodeExecutor, new MockedCustomOperationExecutor, Id.randomId, Id.randomId)
+  extends ContextualCustomCodeExecutor(
+    new MockedCustomCodeExecutionProvider, Id.randomId, Id.randomId)
 
 private class MockedCustomOperationExecutor
-  extends CustomOperationExecutor {
-  override def execute(workflowId: Id, nodeId: Id): Future[Result] = Future.successful(Right(()))
+  extends OperationExecutionDispatcher {
+  override def executionStarted(workflowId: Id, nodeId: Id): Future[Result] =
+    Future.successful(Right(()))
 }

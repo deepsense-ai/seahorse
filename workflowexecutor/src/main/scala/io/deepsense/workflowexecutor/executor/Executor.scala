@@ -36,7 +36,7 @@ trait Executor extends Logging {
 
   def createExecutionContext(
       dataFrameStorage: DataFrameStorage,
-      pythonExecutionCaretaker: PythonExecutionCaretaker,
+      customCodeExecutionProvider: CustomCodeExecutionProvider,
       sparkContext: SparkContext,
       sqlContext: SQLContext,
       tempPath: String,
@@ -64,13 +64,7 @@ trait Executor extends Logging {
       tenantId,
       innerWorkflowExecutor,
       dataFrameStorage,
-      new PythonExecutionProvider {
-        override def pythonCodeExecutor: PythonCodeExecutor =
-          pythonExecutionCaretaker.pythonCodeExecutor
-
-        override def customOperationExecutor: CustomOperationExecutor =
-          pythonExecutionCaretaker.customOperationExecutor
-      })
+      customCodeExecutionProvider)
   }
 
   def createSparkContext(): SparkContext = {

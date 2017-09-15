@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.deepsense.workflowexecutor.pythongateway
+package io.deepsense.workflowexecutor.customcode
 
 import java.util.concurrent.TimeoutException
 import java.util.concurrent.atomic.AtomicReference
@@ -24,45 +24,41 @@ import scala.concurrent.duration._
 import scala.concurrent.{Await, Promise}
 
 import org.apache.spark.api.java.JavaSparkContext
-import org.apache.spark.sql.{SQLContext, DataFrame}
+import org.apache.spark.sql.{DataFrame, SQLContext}
 import org.apache.spark.{SparkConf, SparkContext}
 
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang._
-import io.deepsense.workflowexecutor.pythongateway.PythonEntryPoint.PythonEntryPointConfig
 
 /**
-  * An entry point to our application designed to be accessible by Python process.
+  * An entry point to our application designed to be accessible by custom code processes.
   */
-class PythonEntryPoint(
-    val pythonEntryPointConfig: PythonEntryPointConfig,
+class CustomCodeEntryPoint(
     val sparkContext: SparkContext,
     val sqlContext: SQLContext,
     val dataFrameStorage: DataFrameStorage,
     val operationExecutionDispatcher: OperationExecutionDispatcher)
   extends Logging {
-
-  import io.deepsense.workflowexecutor.pythongateway.PythonEntryPoint._
-
+  import io.deepsense.workflowexecutor.customcode.CustomCodeEntryPoint._
   def getSparkContext: JavaSparkContext = sparkContext
 
   def getSqlContext: SQLContext = sqlContext
 
   def getSparkConf: SparkConf = sparkContext.getConf
 
-  private val codeExecutor: AtomicReference[Promise[PythonCodeExecutor]] =
+  private val codeExecutor: AtomicReference[Promise[CustomCodeExecutor]] =
     new AtomicReference(Promise())
 
   private val pythonPort: AtomicReference[Promise[Int]] =
     new AtomicReference(Promise())
 
-  def getCodeExecutor: PythonCodeExecutor =
-    getFromPromise(codeExecutor.get, pythonEntryPointConfig.pyExecutorSetupTimeout)
+  def getCodeExecutor(timeout: Duration): CustomCodeExecutor =
+    getFromPromise(codeExecutor.get, timeout)
 
-  def getPythonPort: Int =
-    getFromPromise(pythonPort.get, pythonEntryPointConfig.pyExecutorSetupTimeout)
+  def getPythonPort(timeout: Duration): Int =
+    getFromPromise(pythonPort.get, timeout)
 
-  def registerCodeExecutor(newCodeExecutor: PythonCodeExecutor): Unit =
+  def registerCodeExecutor(newCodeExecutor: CustomCodeExecutor): Unit =
     replacePromise(codeExecutor, newCodeExecutor)
 
   def registerCallbackServerPort(newPort: Int): Unit =
@@ -85,7 +81,7 @@ class PythonEntryPoint(
     operationExecutionDispatcher.executionEnded(workflowId, nodeId, Left(error))
 }
 
-object PythonEntryPoint {
+object CustomCodeEntryPoint {
   private case class PromiseReplacedException() extends Exception
 
   @tailrec
@@ -110,6 +106,6 @@ object PythonEntryPoint {
     }
   }
 
-  case class PythonEntryPointConfig(
+  case class CustomCodeEntryPointConfig(
     pyExecutorSetupTimeout: Duration = 5.seconds)
 }

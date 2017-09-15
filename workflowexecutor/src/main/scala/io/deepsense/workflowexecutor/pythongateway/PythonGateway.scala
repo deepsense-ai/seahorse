@@ -28,36 +28,27 @@ import py4j._
 
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang._
-import io.deepsense.workflowexecutor.pythongateway.PythonEntryPoint.PythonEntryPointConfig
+import io.deepsense.workflowexecutor.customcode.CustomCodeEntryPoint
 import io.deepsense.workflowexecutor.pythongateway.PythonGateway.GatewayConfig
 
 case class PythonGateway(
-    gatewayConfig: GatewayConfig,
-    sparkContext: SparkContext,
-    sqlContext: SQLContext,
-    dataFrameStorage: DataFrameStorage,
-    hostAddress: InetAddress) extends Logging {
+                          gatewayConfig: GatewayConfig,
+                          sparkContext: SparkContext,
+                          sqlContext: SQLContext,
+                          dataFrameStorage: DataFrameStorage,
+                          pythonEntryPoint: CustomCodeEntryPoint,
+                          hostAddress: InetAddress) extends Logging {
   import PythonGateway._
 
-  private val operationExecutionDispatcher = new OperationExecutionDispatcher
-
-  private[pythongateway] val entryPoint = new PythonEntryPoint(
-    PythonEntryPointConfig(gatewayConfig.pyExecutorSetupTimeout),
-    sparkContext,
-    sqlContext,
-    dataFrameStorage,
-    operationExecutionDispatcher)
-
   private val gatewayStateListener = new GatewayEventListener
-  private[pythongateway] val gatewayServer = createGatewayServer(entryPoint, gatewayStateListener)
+  private[pythongateway] val gatewayServer =
+    createGatewayServer(pythonEntryPoint, gatewayStateListener)
 
   def start(): Unit = gatewayServer.start()
   def stop(): Unit = gatewayServer.shutdown()
 
-  def codeExecutor: PythonCodeExecutor = entryPoint.getCodeExecutor
-
-  def customOperationExecutor: CustomOperationExecutor =
-    operationExecutionDispatcher.customOperationExecutor
+  def codeExecutor: CustomCodeExecutor =
+    pythonEntryPoint.getCodeExecutor(gatewayConfig.pyExecutorSetupTimeout)
 
   def listeningPort: Option[Int] =
     (gatewayServer.getListeningPort, gatewayStateListener.running) match {
@@ -66,10 +57,11 @@ case class PythonGateway(
       case (p, true) => Some(p)
     }
 
-  private def createGatewayServer(
-      entryPoint: PythonEntryPoint, listener: GatewayEventListener): GatewayServer = {
+  private def createGatewayServer(entryPoint: CustomCodeEntryPoint,
+                                  listener: GatewayEventListener): GatewayServer = {
 
-    val callbackClient = new LazyCallbackClient(entryPoint.getPythonPort _, hostAddress)
+    val callbackClient = new LazyCallbackClient(
+      () => entryPoint.getPythonPort(gatewayConfig.pyExecutorSetupTimeout), hostAddress)
 
     // It is quite important that these values are 0,
     // which translates to infinite timeout.

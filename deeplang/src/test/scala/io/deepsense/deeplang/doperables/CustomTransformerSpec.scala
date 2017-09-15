@@ -189,6 +189,6 @@ class CustomTransformerSpec extends UnitSpec {
       "",
       innerWorkflowExecutor,
       mock[ContextualDataFrameStorage],
-      mock[ContextualPythonCodeExecutor]
+      mock[ContextualCustomCodeExecutor]
     )
 }

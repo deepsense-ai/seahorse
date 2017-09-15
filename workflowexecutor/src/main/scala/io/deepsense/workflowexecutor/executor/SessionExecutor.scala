@@ -31,13 +31,16 @@ import org.apache.spark.SparkContext
 import org.apache.spark.sql.SQLContext
 
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
+import io.deepsense.deeplang.{CustomCodeExecutionProvider, OperationExecutionDispatcher}
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.workflows.Workflow
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.Init
 import io.deepsense.workflowexecutor._
 import io.deepsense.workflowexecutor.communication.mq.MQCommunication
 import io.deepsense.workflowexecutor.communication.mq.json.Global.{GlobalMQDeserializer, GlobalMQSerializer}
+import io.deepsense.workflowexecutor.{WorkflowManagerClientActor, _}
 import io.deepsense.workflowexecutor.communication.mq.serialization.json.{ProtocolJsonDeserializer, ProtocolJsonSerializer}
+import io.deepsense.workflowexecutor.customcode.CustomCodeEntryPoint
 import io.deepsense.workflowexecutor.executor.session.LivyKeepAliveActor
 import io.deepsense.workflowexecutor.notebooks.KernelManagerCaretaker
 import io.deepsense.workflowexecutor.pyspark.PythonPathGenerator
@@ -98,6 +101,11 @@ case class SessionExecutor(
       pythonBinaryPath.getOrElse(pythonBinaryDefault)
     }
 
+    val operationExecutionDispatcher = new OperationExecutionDispatcher
+
+    val customCodeEntryPoint = new CustomCodeEntryPoint(sparkContext,
+      sqlContext, dataFrameStorage, operationExecutionDispatcher)
+
     val pythonExecutionCaretaker = new PythonExecutionCaretaker(
       s"$tempPath/pyexecutor/pyexecutor.py",
       pythonPathGenerator,
@@ -105,8 +113,13 @@ case class SessionExecutor(
       sparkContext,
       sqlContext,
       dataFrameStorage,
+      customCodeEntryPoint,
       hostAddress)
     pythonExecutionCaretaker.start()
+
+    val customCodeExecutionProvider = CustomCodeExecutionProvider(
+      pythonExecutionCaretaker.pythonCodeExecutor,
+      operationExecutionDispatcher)
 
     implicit val system = ActorSystem()
     setupLivyKeepAliveLogging(system, keepAliveInterval)
@@ -127,7 +140,7 @@ case class SessionExecutor(
       sqlContext,
       dOperableCatalog,
       dataFrameStorage,
-      pythonExecutionCaretaker,
+      customCodeExecutionProvider,
       system,
       workflowManagerClientActor,
       communicationFactory)
@@ -171,7 +184,7 @@ case class SessionExecutor(
       sqlContext: SQLContext,
       dOperableCatalog: DOperableCatalog,
       dataFrameStorage: DataFrameStorageImpl,
-      pythonExecutionCaretaker: PythonExecutionCaretaker,
+      customCodeExecutionProvider: CustomCodeExecutionProvider,
       system: ActorSystem,
       workflowManagerClientActor: ActorRef,
       communicationFactory: MQCommunicationFactory): ActorRef = {
@@ -210,7 +223,7 @@ case class SessionExecutor(
 
     val executionContext = createExecutionContext(
       dataFrameStorage,
-      pythonExecutionCaretaker,
+      customCodeExecutionProvider,
       sparkContext,
       sqlContext,
       tempPath,

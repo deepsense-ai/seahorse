@@ -16,7 +16,6 @@
 
 package io.deepsense.deeplang.doperables
 
-import io.deepsense.deeplang.CustomOperationExecutor._
 
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
@@ -38,14 +37,12 @@ class PythonTransformer extends Transformer {
   override private[deeplang] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
     val code = $(codeParameter)
 
-    if (!ctx.pythonCodeExecutor.isValid(code)) {
+    if (!ctx.customCodeExecutor.isPythonValid(code)) {
       throw CustomOperationExecutionException("Code validation failed")
     }
 
-
-
     ctx.dataFrameStorage.withInputDataFrame(InputPortNumber, df.sparkDataFrame) {
-      ctx.pythonCodeExecutor.run(code) match {
+      ctx.customCodeExecutor.runPython(code) match {
         case Left(error) =>
           throw CustomOperationExecutionException(s"Execution exception:\n\n$error")
 

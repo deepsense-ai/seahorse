@@ -18,7 +18,6 @@ package io.deepsense.workflowexecutor.pythongateway
 
 import java.io.PrintStream
 import java.net.{InetAddress, ServerSocket, Socket}
-import java.util.concurrent.TimeoutException
 
 import scala.concurrent.duration
 import scala.concurrent.duration.FiniteDuration
@@ -27,12 +26,16 @@ import scala.util.{Success, Try}
 
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.SQLContext
+import org.mockito.Matchers.any
+import org.mockito.Mockito.when
+import org.scalatest.concurrent.Eventually._
 import org.scalatest.concurrent.Timeouts
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.time.SpanSugar._
 import org.scalatest.{Matchers, WordSpec}
 
 import io.deepsense.deeplang.DataFrameStorage
+import io.deepsense.workflowexecutor.customcode.CustomCodeEntryPoint
 import io.deepsense.workflowexecutor.pythongateway.PythonGateway.GatewayConfig
 
 
@@ -51,12 +54,14 @@ class PythonGatewaySpec extends WordSpec with MockitoSugar with Matchers with Ti
 
   "Gateway" should {
     val localhost = InetAddress.getByName("127.0.0.1")
+
     "set up a listening port" in {
       val gateway = PythonGateway(
         gatewayConfig,
         mock[SparkContext],
         mock[SQLContext],
         mock[DataFrameStorage],
+        mock[CustomCodeEntryPoint],
         localhost)
       gateway.start()
 
@@ -72,11 +77,13 @@ class PythonGatewaySpec extends WordSpec with MockitoSugar with Matchers with Ti
         mock[SparkContext],
         mock[SQLContext],
         mock[DataFrameStorage],
+        mock[CustomCodeEntryPoint],
         localhost)
       gateway.start()
       gateway.stop()
-      Thread.sleep(1000)
-      gateway.listeningPort shouldBe None
+      eventually (timeout(5.seconds), interval(400.millis)) {
+        gateway.listeningPort shouldBe None
+      }
     }
 
     "return None when not started and asked for its listening port" in {
@@ -85,34 +92,24 @@ class PythonGatewaySpec extends WordSpec with MockitoSugar with Matchers with Ti
         mock[SparkContext],
         mock[SQLContext],
         mock[DataFrameStorage],
+        mock[CustomCodeEntryPoint],
         localhost)
 
       gateway.listeningPort shouldBe None
     }
 
-    "throw on uninitialized callback client" in {
-      val gateway = PythonGateway(
-        gatewayConfig,
-        mock[SparkContext],
-        mock[SQLContext],
-        mock[DataFrameStorage],
-        localhost)
-      gateway.start()
-
-      a[TimeoutException] should be thrownBy {
-        gateway.gatewayServer.getCallbackClient.sendCommand("Hello!")
-      }
-
-      gateway.stop()
-    }
-
     "send a message on initialized callback client" in {
+
+      val customCodeEntryPoint = mock[CustomCodeEntryPoint]
       val gateway = PythonGateway(
         gatewayConfig,
         mock[SparkContext],
         mock[SQLContext],
         mock[DataFrameStorage],
+        customCodeEntryPoint,
         localhost)
+
+
       gateway.start()
 
       val command = "Hello!"
@@ -137,7 +134,7 @@ class PythonGatewaySpec extends WordSpec with MockitoSugar with Matchers with Ti
       callbackServer.setDaemon(true)
       callbackServer.start()
 
-      gateway.entryPoint.registerCallbackServerPort(callbackServerSocket.getLocalPort)
+      when(customCodeEntryPoint.getPythonPort(any())).thenReturn(callbackServerSocket.getLocalPort)
 
       // This is run inside a separate thread, because failAfter doesn't seem to work otherwise
       var serverResponse: String = ""

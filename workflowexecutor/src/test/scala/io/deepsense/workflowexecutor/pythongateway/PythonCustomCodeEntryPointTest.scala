@@ -22,45 +22,45 @@ import scala.concurrent.duration._
 
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.SQLContext
-import org.scalatest.{Matchers, WordSpec}
 import org.scalatest.mock.MockitoSugar
+import org.scalatest.{Matchers, WordSpec}
 
-import io.deepsense.deeplang.{PythonCodeExecutor, DataFrameStorage}
-import io.deepsense.workflowexecutor.pythongateway.PythonEntryPoint.PythonEntryPointConfig
+import io.deepsense.deeplang.{CustomCodeExecutor, DataFrameStorage, OperationExecutionDispatcher}
+import io.deepsense.workflowexecutor.customcode.CustomCodeEntryPoint
 
-class PythonEntryPointTest extends WordSpec with MockitoSugar with Matchers {
+class PythonCustomCodeEntryPointTest extends WordSpec with MockitoSugar with Matchers {
 
   "PythonEntryPoint" should {
     "throw on uninitialized code executor" in {
-      val entryPoint = createEntryPoint()
+      val entryPoint = createEntryPoint
       a[TimeoutException] shouldBe thrownBy {
-        entryPoint.getCodeExecutor
+        entryPoint.getCodeExecutor(100.millis)
       }
     }
 
     "throw on uninitialized callback server port" in {
-      val entryPoint = createEntryPoint()
+      val entryPoint = createEntryPoint
       a[TimeoutException] shouldBe thrownBy {
-        entryPoint.getPythonPort
+        entryPoint.getPythonPort(100.millis)
       }
     }
 
     "return initialized code executor" in {
-      val entryPoint = createEntryPoint()
-      val mockExecutor = mock[PythonCodeExecutor]
+      val entryPoint = createEntryPoint
+      val mockExecutor = mock[CustomCodeExecutor]
       entryPoint.registerCodeExecutor(mockExecutor)
-      entryPoint.getCodeExecutor shouldBe mockExecutor
+      entryPoint.getCodeExecutor(100.millis) shouldBe mockExecutor
     }
 
     "return initialized callback server port" in {
-      val entryPoint = createEntryPoint()
+      val entryPoint = createEntryPoint
       entryPoint.registerCallbackServerPort(4412)
-      entryPoint.getPythonPort shouldBe 4412
+      entryPoint.getPythonPort(100.millis) shouldBe 4412
     }
 
     "return code executor initialized while waiting on it" in {
-      val entryPoint = createEntryPoint(2.seconds)
-      val mockExecutor = mock[PythonCodeExecutor]
+      val entryPoint = createEntryPoint
+      val mockExecutor = mock[CustomCodeExecutor]
 
       new Thread(new Runnable {
         override def run(): Unit = {
@@ -69,13 +69,12 @@ class PythonEntryPointTest extends WordSpec with MockitoSugar with Matchers {
         }
       }).start()
 
-      entryPoint.getCodeExecutor shouldBe mockExecutor
+      entryPoint.getCodeExecutor(2.seconds) shouldBe mockExecutor
     }
   }
 
-  private def createEntryPoint(timeout: Duration = 100.millis): PythonEntryPoint =
-    new PythonEntryPoint(
-      PythonEntryPointConfig(timeout),
+  private def createEntryPoint: CustomCodeEntryPoint =
+    new CustomCodeEntryPoint(
       mock[SparkContext],
       mock[SQLContext],
       mock[DataFrameStorage],

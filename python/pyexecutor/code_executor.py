@@ -120,4 +120,4 @@ class CodeExecutor(object):
 
     # noinspection PyClassHasNoInit
     class Java:
-        implements = ['io.deepsense.deeplang.PythonCodeExecutor']
+        implements = ['io.deepsense.deeplang.CustomCodeExecutor']
