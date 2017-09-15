@@ -44,9 +44,7 @@ function WorkflowService($rootScope, $log, Workflow, OperationsHierarchyService,
         name: workflowData.workflowInfo.ownerName
       };
 
-      let nodes = _.values(workflow.getNodes());
-      nodes.filter((n) => n.operationId === specialOperations.CUSTOM_TRANSFORMER.NODE)
-        .forEach((node) => this.initInnerWorkflow(node, workflow));
+      this._initializeAllInnerWorkflows(workflow, workflow);
 
       $rootScope.$watch(() => workflow.serialize(), this._saveWorkflow, true);
       $rootScope.$watch(() => SessionManager.statusForWorkflowId(workflow.id), (newStatus) => {
@@ -115,6 +113,13 @@ function WorkflowService($rootScope, $log, Workflow, OperationsHierarchyService,
       }, true);
 
       this._watchForNewCustomTransformers(innerWorkflow, rootWorkflow);
+      this._initializeAllInnerWorkflows(innerWorkflow, rootWorkflow);
+    }
+
+    _initializeAllInnerWorkflows(workflow, rootWorkflow) {
+      const nodes = _.values(workflow.getNodes());
+      nodes.filter((n) => n.operationId === specialOperations.CUSTOM_TRANSFORMER.NODE)
+        .forEach((node) => this.initInnerWorkflow(node, rootWorkflow));
     }
 
     _watchForNewCustomTransformers(workflow, rootWorkflow) {

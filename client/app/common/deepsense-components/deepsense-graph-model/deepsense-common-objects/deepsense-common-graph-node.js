@@ -117,8 +117,16 @@ angular
       return this.parametersValues['inner workflow'].workflow;
     };
 
+    GraphNode.prototype.getInnerThirdPartyData = function getInnerThirdPartyData() {
+      return this.parametersValues['inner workflow'].thirdPartyData;
+    };
+
     GraphNode.prototype.setInnerWorkflow = function setInnerWorkflow(innerWorkflow) {
       this.parametersValues['inner workflow'].workflow = innerWorkflow;
+    };
+
+    GraphNode.prototype.setInnerThirdPartyData = function setInnerThirdPartyData(innerThirdPartyData) {
+      this.parametersValues['inner workflow'].thirdPartyData = innerThirdPartyData;
     };
 
     GraphNode.prototype.getFancyKnowledgeErrors = function getFancyKnowledgeErrors() {

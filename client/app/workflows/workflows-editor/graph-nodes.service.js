@@ -90,10 +90,13 @@ class GraphNodesService {
     }
 
     if (node.hasInnerWorkflow()) {
-      let innerWorkflow = createdNode.getInnerWorkflow();
-      const map = this._mapOldIdsWithNewOnes(innerWorkflow);
-      innerWorkflow = this._assignNewIds(map, innerWorkflow);
-      createdNode.setInnerWorkflow(innerWorkflow);
+      const oldInnerWorkflow = createdNode.getInnerWorkflow();
+      const oldInnerThirdPartyData = createdNode.getInnerThirdPartyData();
+      const map = this._mapOldIdsWithNewOnes(oldInnerWorkflow);
+      const newInnerThirdPartyData = this._assingNewIdsThirdPartyData(map, oldInnerThirdPartyData);
+      const newInnerWorkflow = this._assignNewIds(map, oldInnerWorkflow);
+      createdNode.setInnerWorkflow(newInnerWorkflow);
+      createdNode.setInnerThirdPartyData(newInnerThirdPartyData);
     }
 
     return workflow.addNode(createdNode);
@@ -118,12 +121,24 @@ class GraphNodesService {
       connection.to.nodeId = map[connection.to.nodeId];
     });
     newInnerWorkflow.nodes.forEach((node) => {
-      if (_.has(node.parameters, 'inner workflow')) {
-        node.parameters['inner workflow'].workflow = this._assignNewIds(map, node.parameters['inner workflow'].workflow);
+      const nestedInnerWorkflow = node.parameters['inner workflow'];
+      if (nestedInnerWorkflow) {
+        nestedInnerWorkflow.workflow = this._assignNewIds(map, nestedInnerWorkflow.workflow);
+        nestedInnerWorkflow.thirdPartyData = this._assingNewIdsThirdPartyData(map, nestedInnerWorkflow.thirdPartyData);
+
       }
       node.id = map[node.id];
     });
     return newInnerWorkflow;
+  }
+
+  _assingNewIdsThirdPartyData(map, thirdPartyData) {
+    let thirdPartyDataCopy = angular.copy(thirdPartyData);
+    Object.keys(thirdPartyDataCopy.gui.nodes).forEach((oldId) => {
+      thirdPartyDataCopy.gui.nodes[map[oldId]] = thirdPartyDataCopy.gui.nodes[oldId];
+      delete thirdPartyDataCopy.gui.nodes[oldId];
+    });
+    return thirdPartyDataCopy;
   }
 
   _setEdgeConnectionFromClone(node, clones, cloningNodeIds) {
