@@ -27,7 +27,7 @@ import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.MultiColum
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.MultiColumnChoice
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.{NoInPlaceChoice, YesInPlaceChoice}
 import io.deepsense.deeplang.inference.exceptions.SelectedIncorrectColumnsNumber
-import io.deepsense.deeplang.params.{ParamMap, Param}
+import io.deepsense.deeplang.params.{ParamPair, ParamMap, Param}
 import io.deepsense.deeplang.params.selections.MultipleColumnSelection
 import io.deepsense.deeplang.params.wrappers.spark.ParamsWithSparkWrappers
 
@@ -46,7 +46,7 @@ abstract class MultiColumnModel[
 
   var models: Seq[SCW] = _
 
-  private val multiColumnChoice = MultiColumnChoice()
+  val multiColumnChoice = MultiColumnChoice()
 
   override lazy val params: Array[Param[_]] =
     getSpecificParams :+

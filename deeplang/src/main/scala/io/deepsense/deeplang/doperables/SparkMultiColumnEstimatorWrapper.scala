@@ -125,8 +125,19 @@ abstract class SparkMultiColumnEstimatorWrapper[
         .setModels(models)
         .setInputColumns(multi.getMultiInputColumnSelection)
         .setInPlace(multi.getMultiInPlaceChoice)
-    }.getOrElse(createMultiColumnModel()
-      .setModels(Seq.empty))
+    }.getOrElse {
+      val model = createMultiColumnModel()
+        .setModels(Seq.empty)
+
+      val inputColumnsParamValue = multi.getOrDefaultOption(multi.inputColumnsParam)
+      val inPlaceParamValue = multi.getOrDefaultOption(multi.multiInPlaceChoiceParam)
+
+      inputColumnsParamValue.map(v => model.set(model.multiColumnChoice.inputColumnsParam -> v))
+      inPlaceParamValue.map(v => model.set(model.multiColumnChoice.multiInPlaceChoiceParam -> v))
+
+      model
+    }
+
   }
 
   def createEstimatorWrapperInstance(): EW = TypeUtils.instanceOfType(estimatorWrapperTag)
