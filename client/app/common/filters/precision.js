@@ -1,6 +1,6 @@
 'use strict';
 
-function removeTrailingZeros (str) {
+function removeTrailingZeros(str) {
   // if no decimal or scientific notation used, return unchanged
   if (!_.includes(str, '.') || _.includes(str, 'e') || _.includes(str, 'E')) {
     return str;
@@ -8,7 +8,7 @@ function removeTrailingZeros (str) {
   //  remove trailing zeros
   str = str.replace(/0+$/, '');
   // if number ends with decimal, remove it too
-  if (str.charAt(str.length-1) === '.') {
+  if (str.charAt(str.length - 1) === '.') {
     str = str.slice(0, -1);
   }
   return str;

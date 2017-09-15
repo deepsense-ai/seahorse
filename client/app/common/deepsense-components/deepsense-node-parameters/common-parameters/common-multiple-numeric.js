@@ -67,7 +67,7 @@ MultipleNumericParameter.prototype.validateRawValue = function (rawValue) {
 };
 
 MultipleNumericParameter.prototype.validateValue = function (value) {
-    let values = value == null ? null : value.values[0].value.sequence;
+    let values = (value === null || value === undefined) ? null : value.values[0].value.sequence;
     return this.validator.validate(values);
 };
 

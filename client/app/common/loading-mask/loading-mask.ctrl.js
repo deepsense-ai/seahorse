@@ -22,7 +22,7 @@ function LoadingMaskCtrl($scope, $timeout) {
     $timeout.cancel(lmCtrl.timer);
   });
 
-  function processDots () {
+  function processDots() {
     runningDots = true;
     lmCtrl.dots = lmCtrl.dots.length >= 3 ? '.' : lmCtrl.dots + '.';
     timer = $timeout(processDots, 450);

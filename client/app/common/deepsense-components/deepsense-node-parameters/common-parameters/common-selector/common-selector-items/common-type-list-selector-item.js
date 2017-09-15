@@ -37,7 +37,7 @@ TypeListSelectorItem.prototype.serialize = function () {
 TypeListSelectorItem.getType = () => { return {
   'id': 'typeList',
   'verbose': 'Types list'
-};};
+}; };
 
 TypeListSelectorItem.prototype.containsField = function(field) {
   return this.types[field.deeplangType];

@@ -91,7 +91,9 @@ function DataframeLibraryModalCtrl($scope, $uibModalInstance, LibraryService, ca
   }
 
   function handleResults(result) {
-    if (!result) return;
+    if (!result) {
+      return;
+    }
 
     vm.directories = getSortedItemsByType(result.items, 'directory');
     vm.files = getSortedItemsByType(result.items, 'file');

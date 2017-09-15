@@ -23,11 +23,14 @@ function Home($rootScope, $uibModal, $state, WorkflowService, ConfirmationModalS
 
     this.downloadWorkflows();
 
-    SessionManager.checkSessionManagerState().then(() => {
-      this.sessionManagerState = 'WORKING';
-    }).catch(() => {
-      this.sessionManagerState = 'NOT_WORKING';
-    });
+    SessionManager
+      .checkSessionManagerState()
+      .then(() => {
+        this.sessionManagerState = 'WORKING';
+      })
+      .catch(() => {
+        this.sessionManagerState = 'NOT_WORKING';
+      });
 
     $rootScope.$watch(() => {
       return {
@@ -42,12 +45,15 @@ function Home($rootScope, $uibModal, $state, WorkflowService, ConfirmationModalS
   };
 
   this.downloadWorkflows = () => {
-    WorkflowService.downloadWorkflows().then((workflows) => {
-      this.workflows = workflows;
-      this.loadingWorkflowsState = 'LOADED';
-    }).catch(() => {
-      this.loadingWorkflowsState = 'ERROR';
-    });
+    WorkflowService
+      .downloadWorkflows()
+      .then((workflows) => {
+        this.workflows = workflows;
+        this.loadingWorkflowsState = 'LOADED';
+      })
+      .catch(() => {
+        this.loadingWorkflowsState = 'ERROR';
+      });
   };
 
   this.search = (workflow) => {
@@ -55,11 +61,11 @@ function Home($rootScope, $uibModal, $state, WorkflowService, ConfirmationModalS
     let updated = moment(workflow.updated).format('DD/MM/YYYY - hh:mm a');
 
     return !this.filterString ||
-      (workflow.name.toLowerCase().includes(this.filterString.toLowerCase())) ||
-      (workflow.description.toLowerCase().includes(this.filterString.toLowerCase())) ||
-      (created.toString().includes(this.filterString.toLowerCase())) ||
-      (updated.toString().includes(this.filterString.toLowerCase())) ||
-      (workflow.ownerName.toLowerCase().includes(this.filterString.toLowerCase()));
+      workflow.name.toLowerCase().includes(this.filterString.toLowerCase()) ||
+      workflow.description.toLowerCase().includes(this.filterString.toLowerCase()) ||
+      created.toString().includes(this.filterString.toLowerCase()) ||
+      updated.toString().includes(this.filterString.toLowerCase()) ||
+      workflow.ownerName.toLowerCase().includes(this.filterString.toLowerCase());
   };
 
   this.reloadPage = () => {

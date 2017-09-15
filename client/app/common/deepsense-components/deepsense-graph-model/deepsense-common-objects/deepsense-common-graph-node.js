@@ -1,7 +1,8 @@
 'use strict';
 
-angular.module('deepsense.graph-model').
-  factory('GraphNode', /*@ngInject*/function(Port) {
+angular
+  .module('deepsense.graph-model')
+  .factory('GraphNode', /* @ngInject */function(Port) {
 
     function GraphNode(options) {
       this.id = options.id;
@@ -32,12 +33,12 @@ angular.module('deepsense.graph-model').
     }
 
     GraphNode.prototype.STATUS = {
-      'DRAFT':     'status_draft',
-      'QUEUED':    'status_queued',
-      'RUNNING':   'status_running',
+      'DRAFT': 'status_draft',
+      'QUEUED': 'status_queued',
+      'RUNNING': 'status_running',
       'COMPLETED': 'status_completed',
-      'FAILED':    'status_failed',
-      'ABORTED':   'status_aborted'
+      'FAILED': 'status_failed',
+      'ABORTED': 'status_aborted'
     };
 
     GraphNode.prototype.STATUS_DEFAULT = GraphNode.prototype.STATUS.DRAFT;
@@ -121,14 +122,14 @@ angular.module('deepsense.graph-model').
     };
 
     GraphNode.prototype.getFancyKnowledgeErrors = function getFancyKnowledgeErrors() {
-      return this.knowledgeErrors.
-        map((error, ix) => `<strong>#${ix + 1}</strong>: ${error}`).
-        join('<br/>');
+      return this.knowledgeErrors
+        .map((error, ix) => `<strong>#${ix + 1}</strong>: ${error}`)
+        .join('<br/>');
     };
 
     GraphNode.prototype.getIncomingEdge = function getIncomingEdge(portIndex) {
       let edges = _.values(this.edges);
-      return _.find(edges, edge => (edge.endNodeId === this.id && edge.endPortId === portIndex));
+      return _.find(edges, (edge) => (edge.endNodeId === this.id && edge.endPortId === portIndex));
     };
 
     /**

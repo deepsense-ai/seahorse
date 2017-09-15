@@ -8,15 +8,13 @@ module.exports = function promiseIsResolved($httpBackend, url, expectedResponse,
   expectRequest();
 
   functionReturningPromise()
-    .
-  then((data) => {
+    .then((data) => {
       success = true;
       responseData = data;
     })
-    .
-  catch(() => {
-    error = true;
-  });
+    .catch(() => {
+      error = true;
+    });
 
   $httpBackend.flush();
 

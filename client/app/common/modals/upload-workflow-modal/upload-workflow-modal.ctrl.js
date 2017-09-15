@@ -25,7 +25,7 @@ function UploadWorkflowModalController($uibModalInstance, Upload, WorkflowsApiCl
         })
         .progress((evt) => {
           this.status = STATUS_LOADING;
-          this.progress = parseInt(100.0 * evt.loaded / evt.total);
+          this.progress = parseInt(100.0 * evt.loaded / evt.total, 10);
         })
         .then((response) => {
           this.status = STATUS_SUCCESS;

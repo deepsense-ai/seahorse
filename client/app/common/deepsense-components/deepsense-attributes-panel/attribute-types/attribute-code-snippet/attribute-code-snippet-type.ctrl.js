@@ -4,7 +4,7 @@ require('./attribute-code-snippet-type-modal/attribute-code-snippet-type-modal.c
 
 import tpl from './attribute-code-snippet-type-modal/attribute-code-snippet-type-modal.html';
 
-/*@ngInject*/
+/* @ngInject */
 function AttributeCodeSnippetTypeCtrl($uibModal) {
 
   var that = this;
@@ -36,7 +36,6 @@ function AttributeCodeSnippetTypeCtrl($uibModal) {
 
 }
 
-angular.module('deepsense.attributes-panel').
-  controller('AttributeCodeSnippetTypeCtrl', AttributeCodeSnippetTypeCtrl);
-
-
+angular
+  .module('deepsense.attributes-panel')
+  .controller('AttributeCodeSnippetTypeCtrl', AttributeCodeSnippetTypeCtrl);

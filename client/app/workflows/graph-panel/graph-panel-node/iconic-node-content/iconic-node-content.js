@@ -2,7 +2,7 @@
 
 import tpl from './iconic-node-content.html';
 
-/*@ngInject*/
+/* @ngInject */
 function IconicNodeContent() {
   return {
     restrict: 'E',

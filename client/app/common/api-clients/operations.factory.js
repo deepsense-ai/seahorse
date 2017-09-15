@@ -1,7 +1,7 @@
 'use strict';
 
 /* @ngInject */
-function OperationsFactory(OperationsApiClient, $q) {
+function OperationsFactory(OperationsApiClient, $q, $log) {
   const CATEGORY_ICONS = {
     '5a39e324-15f4-464c-83a5-2d7fba2858aa': 'fa-exchange', // Input/Output
     '3fcc6ce8-11df-433f-8db3-fa1dcc545ed8': 'fa-bolt', // Transformation
@@ -21,8 +21,8 @@ function OperationsFactory(OperationsApiClient, $q) {
     '1cb153f1-3731-4046-a29b-5ad64fde093f': 'fa-gears fa-bolt', // Fit + Transform
     'a88eaf35-9061-4714-b042-ddd2049ce917': 'fa-tachometer', // Evaluate
     '9163f706-eaaf-46f6-a5b0-4114d92032b7': 'fa-table', // Grid Search
-    'e76ca616-0322-47a5-b390-70c9668265dd': 'sa-python', //Python Notebook
-    '89198bfd-6c86-40de-8238-68f7e0a0b50e': 'sa-r' //R Notebook
+    'e76ca616-0322-47a5-b390-70c9668265dd': 'sa-python', // Python Notebook
+    '89198bfd-6c86-40de-8238-68f7e0a0b50e': 'sa-r' // R Notebook
   };
 
   const DEFAULT_ICON = 'fa-square';
@@ -32,12 +32,12 @@ function OperationsFactory(OperationsApiClient, $q) {
 
   const HIDDEN_OPERATION_IDS_ARRAY = [SINK_OPERATION_ID, SOURCE_OPERATION_ID];
 
-  var service = {},
-    isLoaded = false;
+  var service = {};
+  var isLoaded = false;
 
-  var operationsData = {},
-    catalogData = {},
-    categoryMap = {};
+  var operationsData = {};
+  var catalogData = {};
+  var categoryMap = {};
 
   var createCategoryMap = function createCategoryMap(catalog, parentId) {
     for (let i = catalog.length - 1; i >= 0; i--) {
@@ -121,7 +121,7 @@ function OperationsFactory(OperationsApiClient, $q) {
         }
         return operationsData[id];
       }, (error) => {
-        console.error('error', error);
+        $log.error('error', error);
       });
   };
 
@@ -169,17 +169,15 @@ function OperationsFactory(OperationsApiClient, $q) {
     }
 
     return loadData()
-      .
-    then(loadCatalog)
-      .
-    then(() => {
-      isLoaded = true;
-    });
+      .then(loadCatalog)
+      .then(() => {
+        isLoaded = true;
+      });
   };
 
   service.getData = function getData(id) {
     if (!isLoaded) {
-      console.error('Operations not loaded!');
+      $log.error('Operations not loaded!');
       return null;
     }
     return operationsData;
@@ -187,7 +185,7 @@ function OperationsFactory(OperationsApiClient, $q) {
 
   service.get = function get(id) {
     if (!isLoaded) {
-      console.error('Operations not loaded!');
+      $log.error('Operations not loaded!');
       return null;
     }
     return operationsData[id] || null;
@@ -195,7 +193,7 @@ function OperationsFactory(OperationsApiClient, $q) {
 
   service.getWithParams = function getWithParams(id) {
     if (!isLoaded) {
-      console.error('Operations not loaded!');
+      $log.error('Operations not loaded!');
     }
     let operation = operationsData[id] || null;
     if (!isLoaded || (operation && operation.parameters)) {
@@ -213,7 +211,7 @@ function OperationsFactory(OperationsApiClient, $q) {
 
   service.getCatalog = function getCatalog(id) {
     if (!isLoaded) {
-      console.error('Operations not loaded!');
+      $log.error('Operations not loaded!');
       return null;
     }
     return catalogData;
@@ -221,7 +219,7 @@ function OperationsFactory(OperationsApiClient, $q) {
 
   service.getCategory = function getCategory(id) {
     if (!isLoaded) {
-      console.error('Operations not loaded!');
+      $log.error('Operations not loaded!');
       return null;
     }
     return categoryMap[id] || null;

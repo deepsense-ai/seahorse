@@ -9,7 +9,7 @@ function LibraryDataConverter(config, LibraryApiService) {
       get: function () {
         return `${config.libraryPrefix}${this.path}`;
       }
-    },
+    }
   });
 
 
@@ -31,7 +31,7 @@ function LibraryDataConverter(config, LibraryApiService) {
     if (directory.root) {
       library.getRootDirectory = function () {
         return this.get(directory.uri);
-      }
+      };
     }
 
     library.set(directory.uri, directory);

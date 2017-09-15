@@ -1,7 +1,7 @@
 import tpl from './color-picker.html';
 
 class ColorPicker {
-  constructor () {
+  constructor() {
     this.restrict = 'A';
     this.templateUrl = tpl;
     this.replace = true;
@@ -9,7 +9,7 @@ class ColorPicker {
     this.controllerAs = 'colorPicker';
   }
 
-  static directiveFactory () {
+  static directiveFactory() {
     ColorPicker.instance = new ColorPicker();
     return ColorPicker.instance;
   }
@@ -17,7 +17,7 @@ class ColorPicker {
 
 class ColorPickerController {
   /* @ngInject */
-  constructor ($scope, $element, $compile, $document) {
+  constructor($scope, $element, $compile, $document) {
     this.$scope = $scope;
     this.$element = $element;
     this.$compile = $compile;
@@ -68,7 +68,7 @@ class ColorPickerController {
     $document.on('click', this.checkAndClose.bind(this));
   }
 
-  open (event) {
+  open(event) {
     if (!this.picker) {
       this.picker = this.$compile(this.template)(this.$scope);
 
@@ -83,7 +83,7 @@ class ColorPickerController {
     }
   }
 
-  close () {
+  close() {
     if (this.picker) {
       this.saveChosenColor();
       this.picker.remove();
@@ -91,7 +91,7 @@ class ColorPickerController {
     }
   }
 
-  checkAndClose (event) {
+  checkAndClose(event) {
     if (
       this.opened &&
       !event.target.closest('[data-close="false"]')
@@ -101,13 +101,13 @@ class ColorPickerController {
     }
   }
 
-  saveChosenColor () {
+  saveChosenColor() {
     if (this.$scope.predefColors.indexOf(this.$scope.node.color) === -1) {
       this.$scope.predefColors.push(this.$scope.node.color);
     }
   }
 
-  removeColor (index) {
+  removeColor(index) {
     this.$scope.predefColors.splice(index, 1);
   }
 }

@@ -1,9 +1,9 @@
 'use strict';
 
 let DEPS = new WeakMap();
-let template = _.template(`<aside class="o-resizable o-resizable--\
-<%= position %> no-selection <% if (invisible) { %> o-resizable--invisible\
-<% } %>"></aside>`);
+let template = _.template('<aside class="o-resizable o-resizable--' +
+  '<%= position %> no-selection <% if (invisible) { %> o-resizable--invisible' +
+  '<% } %>"></aside>');
 
 class Resizable {
   constructor() {
@@ -43,6 +43,7 @@ class Resizable {
           element[0].style.height = `${amount}px`;
           triggerEvent(amount);
           break;
+        // no default
       }
     }
 
@@ -68,7 +69,9 @@ class Resizable {
             triggerEvent(25);
           }
         } catch (e) {
+          /* eslint-disable no-console */
           console.log(e);
+          /* eslint-enable no-console */
         }
       }
     }
@@ -105,8 +108,8 @@ class Resizable {
       deps.$document.on('mouseup', (e) => {
         startPoint.x = e.clientX;
         startPoint.y = e.clientY;
-        width = parseInt(element[0].style.width);
-        height = parseInt(element[0].style.height);
+        width = parseInt(element[0].style.width, 10);
+        height = parseInt(element[0].style.height, 10);
         renderDimensions();
         deps.$document.off('mousemove', move);
         body.removeClass('no-selection');
@@ -117,7 +120,7 @@ class Resizable {
         deps.$rootScope.$applyAsync(() => {
           if (data.name === 'height' && $(element[0]).is(data.selector)) {
             element[0].style[data.name] = data.amount;
-            height = parseInt(element[0].style.height);
+            height = parseInt(element[0].style.height, 10);
           }
         });
       });

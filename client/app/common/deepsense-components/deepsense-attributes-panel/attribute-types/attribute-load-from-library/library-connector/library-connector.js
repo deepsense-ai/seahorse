@@ -4,7 +4,7 @@ import tpl from './library-connector.html';
 
 const CAN_SELECT_DATAFRAME = true;
 
-/*@ngInject*/
+/* @ngInject */
 function LibraryConnector() {
   return {
     restrict: 'E',

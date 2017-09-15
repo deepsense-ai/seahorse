@@ -10,7 +10,7 @@ import tpl from './deepsense-interaction-toolbar.html';
 
 const DEFAULT_ID = 'unsetID';
 
-/*@ngInject*/
+/* @ngInject */
 function DeepsenseInteractionToolbar($rootScope) {
   return {
     restrict: 'E',
@@ -52,5 +52,6 @@ function DeepsenseInteractionToolbar($rootScope) {
   };
 }
 
-angular.module('deepsense.navigation-panel').
-directive('deepsenseInteractionToolbar', DeepsenseInteractionToolbar);
+angular
+  .module('deepsense.navigation-panel')
+  .directive('deepsenseInteractionToolbar', DeepsenseInteractionToolbar);

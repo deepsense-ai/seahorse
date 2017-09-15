@@ -1,7 +1,7 @@
 'use strict';
 
 /* @ngInject */
-function SessionManagerApi($http, config) {
+function SessionManagerApi($http, config, $log) {
 
   const service = this;
 
@@ -16,14 +16,14 @@ function SessionManagerApi($http, config) {
 
   function downloadSessions(config) {
     return $http.get(URL, config).then(function processResult(result) {
-      console.log('SessionManagerApi downloadSessions result', result);
+      $log.log('SessionManagerApi downloadSessions result', result);
       return result.data.sessions;
     });
   }
 
   function downloadSessionByWorkflowId(workflowId) {
     return $http.get(`${URL}/${workflowId}`).then(function processResult(result) {
-      console.log('SessionManagerApi downloadSessionById result', result);
+      $log.log('SessionManagerApi downloadSessionById result', result);
       return result.data;
     });
   }

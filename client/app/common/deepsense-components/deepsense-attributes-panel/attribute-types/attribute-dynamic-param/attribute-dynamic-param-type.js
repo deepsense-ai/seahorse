@@ -3,7 +3,7 @@
 require('./attribute-dynamic-param-type.service.js');
 import tpl from './attribute-dynamic-param-type.html';
 
-/*@ngInject*/
+/* @ngInject */
 function AttributeDynamicParamType($compile, DynamicParamTypeService) {
 
   return {
@@ -36,5 +36,6 @@ function AttributeDynamicParamType($compile, DynamicParamTypeService) {
   };
 }
 
-angular.module('deepsense.attributes-panel').
-    directive('attributeDynamicParamType', AttributeDynamicParamType);
+angular
+  .module('deepsense.attributes-panel')
+  .directive('attributeDynamicParamType', AttributeDynamicParamType);

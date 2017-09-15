@@ -6,8 +6,8 @@
 
 'use strict';
 
-/*@ngInject*/
-function LabelToFirstUnlabeled ($timeout) {
+/* @ngInject */
+function LabelToFirstUnlabeled($timeout) {
   return {
     restrict: 'A',
     link: (scope, element) => {
@@ -33,5 +33,6 @@ function LabelToFirstUnlabeled ($timeout) {
   };
 }
 
-angular.module('deepsense.attributes-panel').
-  directive('labelToFirstUnlabeled', LabelToFirstUnlabeled);
+angular
+  .module('deepsense.attributes-panel')
+  .directive('labelToFirstUnlabeled', LabelToFirstUnlabeled);

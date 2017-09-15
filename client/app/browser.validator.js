@@ -4,19 +4,19 @@ let browser = require('bowser');
 let version = browser.version.match(/\d+/)[0];
 
 const SUPPORTED_BROWSERS = {
-  Firefox :{
+  Firefox: {
     fullName: 'Mozilla Firefox',
     minVersion: 48
   },
-  Chrome :{
+  Chrome: {
     fullName: 'Google Chrome',
     minVersion: 51
   }
 };
 
 function isBrowserSupported() {
-  return (SUPPORTED_BROWSERS[browser.name] &&
-  SUPPORTED_BROWSERS[browser.name].minVersion <= version);
+  return SUPPORTED_BROWSERS[browser.name] &&
+    SUPPORTED_BROWSERS[browser.name].minVersion <= version;
 }
 
 function getErrorMessageHTML() {

@@ -4,7 +4,7 @@ require('./attributes-panel.service.js');
 
 import tpl from './attributes-panel.html';
 
-/*@ngInject*/
+/* @ngInject */
 function OperationAttributes($rootScope, AttributesPanelService, config, version, nodeTypes) {
   function setCorrectHeight(container) {
     let heightOfOthers = _.reduce(jQuery(
@@ -92,7 +92,7 @@ function OperationAttributes($rootScope, AttributesPanelService, config, version
 
       this.setVisibility = (parameterName, visibility) => {
         switch (visibility) {
-          case 'public' :
+          case 'public': {
             let publicParam = {
               nodeId: $scope.node.id,
               paramName: parameterName,
@@ -100,10 +100,12 @@ function OperationAttributes($rootScope, AttributesPanelService, config, version
             };
             $scope.publicParams.push(publicParam);
             break;
+          }
           case 'private' :
             $scope.publicParams =
               _.reject($scope.publicParams, (pp) => pp.paramName === parameterName && pp.nodeId === $scope.node.id);
             break;
+          // no default
         }
       };
 
@@ -113,7 +115,7 @@ function OperationAttributes($rootScope, AttributesPanelService, config, version
           template: `<iframe style="height: calc(100% - 60px); width:100%" frameborder="0" ng-src="{{::controller.getNotebookUrl()}}"></iframe>
                      <button type="button" class="btn btn-default pull-right" ng-click="modal.close()">Close</button>`,
           windowClass: 'o-modal--notebook',
-          backdrop : 'static'
+          backdrop: 'static'
         });
       };
 

@@ -317,7 +317,7 @@ class WorkflowsEditorController {
 
   _handleDelete() {
     if (!this.WorkflowService.isWorkflowEditable()) {
-      console.log('WorkflowsEditorController', 'Cannot remove nodes if not editable');
+      this.$log.log('WorkflowsEditorController', 'Cannot remove nodes if not editable');
       return;
     }
 

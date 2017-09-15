@@ -2,7 +2,7 @@
 
 import tpl from './node-status-icon.html';
 
-/*@ngInject*/
+/* @ngInject */
 function NodeStatusIcon() {
 
   function getDefaultClass(node) {

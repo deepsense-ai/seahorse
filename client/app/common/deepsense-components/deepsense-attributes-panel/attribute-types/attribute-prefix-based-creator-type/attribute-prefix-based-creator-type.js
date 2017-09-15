@@ -8,7 +8,7 @@
 
 import tpl from './attribute-prefix-based-creator-type.html';
 
-/*@ngInject*/
+/* @ngInject */
 function AttributePrefixBasedCreatorType(StringParamTypeService) {
   return {
     restrict: 'E',
@@ -20,5 +20,6 @@ function AttributePrefixBasedCreatorType(StringParamTypeService) {
   };
 }
 
-angular.module('deepsense.attributes-panel').
-    directive('attributePrefixBasedCreatorType', AttributePrefixBasedCreatorType);
+angular
+  .module('deepsense.attributes-panel')
+  .directive('attributePrefixBasedCreatorType', AttributePrefixBasedCreatorType);

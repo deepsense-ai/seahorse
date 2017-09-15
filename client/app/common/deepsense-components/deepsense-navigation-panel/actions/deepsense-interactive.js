@@ -120,7 +120,7 @@
       };
 
       this.adjustCorners();
-      //disable animation when performing strict zoom to fix Firefox issue with fit calculations
+      // disable animation when performing strict zoom to fix Firefox issue with fit calculations
       this.updateTransformStyle(!isStrict);
     }
 
@@ -158,7 +158,7 @@
       this.$document.off('mouseup', mouseUpHandler);
     }
 
-    fit (collection, collectionItemDimensions) {
+    fit(collection, collectionItemDimensions) {
       /**
        * Get data phase
        */
@@ -250,7 +250,7 @@
       let relativeX = visibleFrameCenter.x - psRectCenter.x;
       let relativeY = visibleFrameCenter.y - psRectCenter.y;
 
-      //True added to disable animation when performing strict zoom to fix Firefox issue with fit calculations
+      // True added to disable animation when performing strict zoom to fix Firefox issue with fit calculations
       this.movePanel({
         top: relativeY,
         left: relativeX
@@ -278,7 +278,7 @@
       }, 200, false);
     }
 
-    initToCenter () {
+    initToCenter() {
       this.movePanel({
         left: -(this.$interactiveElement.width() / 2),
         top: -(this.$interactiveElement.height() / 2)
@@ -286,7 +286,7 @@
     }
   }
 
-  /*@ngInject*/
+  /* @ngInject */
   function DeepsenseInteractive($document, $rootScope, $timeout, debounce) {
     return {
       restrict: 'A',
@@ -388,6 +388,7 @@
     };
   }
 
-  angular.module('deepsense.navigation-panel').
-    directive('deepsenseInteractive', DeepsenseInteractive);
+  angular
+    .module('deepsense.navigation-panel')
+    .directive('deepsenseInteractive', DeepsenseInteractive);
 })();

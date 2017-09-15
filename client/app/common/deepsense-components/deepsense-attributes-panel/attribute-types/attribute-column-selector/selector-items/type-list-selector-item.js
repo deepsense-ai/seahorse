@@ -2,7 +2,7 @@
 
 import tpl from './type-list-selector-item.html';
 
-/*@ngInject*/
+/* @ngInject */
 function TypeListSelectorItem() {
   return {
     restrict: 'E',
@@ -16,5 +16,6 @@ function TypeListSelectorItem() {
   };
 }
 
-angular.module('deepsense.attributes-panel').
-    directive('typeListSelectorItem', TypeListSelectorItem);
+angular
+  .module('deepsense.attributes-panel')
+  .directive('typeListSelectorItem', TypeListSelectorItem);

@@ -2,7 +2,7 @@
 
 import tpl from './attribute-multiple-numeric-type.html';
 
-/*@ngInject*/
+/* @ngInject */
 function AttributeMultipleNumericType() {
     return {
         restrict: 'E',
@@ -22,5 +22,6 @@ function AttributeMultipleNumericType() {
     };
 }
 
-angular.module('deepsense.attributes-panel').
-directive('attributeMultipleNumericType', AttributeMultipleNumericType);
+angular
+  .module('deepsense.attributes-panel')
+  .directive('attributeMultipleNumericType', AttributeMultipleNumericType);

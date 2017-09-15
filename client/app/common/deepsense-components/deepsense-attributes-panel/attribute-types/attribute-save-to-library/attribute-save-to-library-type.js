@@ -3,7 +3,7 @@
 import tpl from './attribute-save-to-library-type.html';
 
 
-/*@ngInject*/
+/* @ngInject */
 function AttributeSaveToLibrary(config) {
   return {
     restrict: 'E',

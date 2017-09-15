@@ -3,7 +3,7 @@
 require('./attribute-code-snippet-type.ctrl.js');
 import tpl from './attribute-code-snippet-type.html';
 
-/*@ngInject*/
+/* @ngInject */
 function AttributeCodeSnippetType() {
   return {
     restrict: 'E',
@@ -19,6 +19,7 @@ function AttributeCodeSnippetType() {
   };
 }
 
-angular.module('deepsense.attributes-panel').
-    directive('attributeCodeSnippetType', AttributeCodeSnippetType);
+angular
+  .module('deepsense.attributes-panel')
+  .directive('attributeCodeSnippetType', AttributeCodeSnippetType);
 

@@ -7,7 +7,7 @@ require('./selector-items/selector-items.js');
 import selectorTypeTpl from './attribute-selector-type.html';
 import selectorTypeModalTpl from './attribute-selector-type-modal.html';
 
-/*@ngInject*/
+/* @ngInject */
 function AttributeSelectorType($timeout, $uibModal, $rootScope) {
   return {
     restrict: 'E',
@@ -21,7 +21,7 @@ function AttributeSelectorType($timeout, $uibModal, $rootScope) {
           selectorItemFactory.getAllItemsTypes().singleSelectorItems :
           selectorItemFactory.getAllItemsTypes().multipleSelectorItems;
 
-      let clearEmptyParameters = function clearEmptyParameters () {
+      let clearEmptyParameters = function clearEmptyParameters() {
         _.forEachRight(scope.parameter.items, (parameter, index) => {
           if (scope.isEmptyParameter(parameter)) {
             scope.removeItem(index);
@@ -42,8 +42,8 @@ function AttributeSelectorType($timeout, $uibModal, $rootScope) {
             windowClass: 'selection-modal'
           });
 
-          this.modal.result.
-            finally(() => {
+          this.modal.result
+            .finally(() => {
               clearEmptyParameters();
 
               let currParameter = JSON.stringify(scope.parameter.serialize());
@@ -52,7 +52,7 @@ function AttributeSelectorType($timeout, $uibModal, $rootScope) {
               }
             });
         },
-        isEmptyParameter (parameter) {
+        isEmptyParameter(parameter) {
           switch (parameter.type.id) {
             case 'indexRange':
               return _.isUndefined(parameter.firstNum) || _.isUndefined(parameter.secondNum);
@@ -60,6 +60,7 @@ function AttributeSelectorType($timeout, $uibModal, $rootScope) {
               return parameter.columns.length === 0;
             case 'typeList':
               return !_.some(_.values(parameter.types));
+            // no default
           }
         },
         isItemIdInList(id) {
@@ -90,7 +91,7 @@ function AttributeSelectorType($timeout, $uibModal, $rootScope) {
         removeItem(itemIndex) {
           this.parameter.items.splice(itemIndex, 1);
         },
-        switchItem (item) {
+        switchItem(item) {
           scope.parameter.items.splice(0, 1);
           this.addItem(item.id);
         },
@@ -111,5 +112,6 @@ function AttributeSelectorType($timeout, $uibModal, $rootScope) {
   };
 }
 
-angular.module('deepsense.attributes-panel').
-    directive('attributeSelectorType', AttributeSelectorType);
+angular
+  .module('deepsense.attributes-panel')
+  .directive('attributeSelectorType', AttributeSelectorType);

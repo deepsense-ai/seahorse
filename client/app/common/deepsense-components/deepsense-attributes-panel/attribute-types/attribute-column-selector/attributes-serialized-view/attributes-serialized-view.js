@@ -2,7 +2,7 @@
 
 import tpl from './attributes-serialized-view.html';
 
-/*@ngInject*/
+/* @ngInject */
 function AttributesSerializedView() {
   return {
     restrict: 'E',
@@ -53,5 +53,6 @@ function AttributesSerializedView() {
   };
 }
 
-angular.module('deepsense.attributes-panel').
-  directive('attributesSerializedView', AttributesSerializedView);
+angular
+  .module('deepsense.attributes-panel')
+  .directive('attributesSerializedView', AttributesSerializedView);

@@ -1,4 +1,5 @@
 'use strict';
+
 const CHECKING_SESSION_MANAGER_STATE_TIMEOUT = 10000;
 /* @ngInject */
 function SessionManager($interval, config, SessionManagerApi, SessionStatus) {
@@ -23,8 +24,8 @@ function SessionManager($interval, config, SessionManagerApi, SessionStatus) {
   };
 
   function pollSessionManager() {
-    SessionManagerApi.downloadSessions().
-      then((result) => {
+    SessionManagerApi.downloadSessions()
+      .then((result) => {
         service.sessions = result;
       });
   }

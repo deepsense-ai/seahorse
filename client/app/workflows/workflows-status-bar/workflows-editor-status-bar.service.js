@@ -131,6 +131,7 @@ function WorkflowStatusBarService($rootScope, WorkflowService, SessionStatus, Us
         } else {
           throw 'Cannot run inner workflow';
         }
+      // no default
     }
   }
 

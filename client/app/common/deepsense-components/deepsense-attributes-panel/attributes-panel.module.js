@@ -8,7 +8,9 @@ const attributesPanel = angular.module('deepsense.attributes-panel', [
   'NgSwitchery',
   'ui.ace',
   'angucomplete-alt'
-]).run((editableOptions) => editableOptions.theme = 'bs3');
+]).run((editableOptions) => {
+  editableOptions.theme = 'bs3';
+});
 
 require('./attribute-types/attribute-types.js');
 require('./attributes-list/attributes-list.js');

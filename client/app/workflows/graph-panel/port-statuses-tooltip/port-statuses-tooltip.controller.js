@@ -30,7 +30,7 @@ function PortStatusesTooltipController($rootScope, $scope, $element) {
   that.getTypes = () => {
     let outputTypes = _.map(that.portObject.typeQualifier, (typeQualifier) => _.last(typeQualifier.split('.')));
     if (outputTypes.length > 3) {
-      outputTypes = outputTypes.slice(0,3);
+      outputTypes = outputTypes.slice(0, 3);
       outputTypes.push('...');
     }
     return outputTypes;

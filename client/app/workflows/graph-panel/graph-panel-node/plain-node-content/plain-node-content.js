@@ -2,7 +2,7 @@
 
 import tpl from './plain-node-content.html';
 
-/*@ngInject*/
+/* @ngInject */
 function PlainNodeContent() {
   return {
     restrict: 'E',

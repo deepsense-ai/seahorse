@@ -2,11 +2,12 @@
 
 class GraphNodesService {
   /* @ngInject */
-  constructor($q, $rootScope, $timeout, DeepsenseNodeParameters, Operations, UUIDGenerator, nodeTypes, WorkflowsApiClient) {
+  constructor($q, $rootScope, $timeout, $log, DeepsenseNodeParameters, Operations, UUIDGenerator, nodeTypes, WorkflowsApiClient) {
     _.assign(this, {
       $q,
       $rootScope,
       $timeout,
+      $log,
       DeepsenseNodeParameters,
       Operations,
       UUIDGenerator,
@@ -33,7 +34,7 @@ class GraphNodesService {
             deferred.resolve(node, 'async');
           });
         }, (error) => {
-          console.error('operation fetch error', error);
+          this.$log.error('operation fetch error', error);
           deferred.reject(error);
         });
     }

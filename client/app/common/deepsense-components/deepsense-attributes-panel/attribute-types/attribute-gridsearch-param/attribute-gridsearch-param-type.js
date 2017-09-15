@@ -2,7 +2,7 @@
 
 import tpl from './attribute-gridsearch-param-type.html';
 
-/*@ngInject*/
+/* @ngInject */
 function AttributeGridSearchParamType($compile, DynamicParamTypeService) {
 
   return {
@@ -35,5 +35,6 @@ function AttributeGridSearchParamType($compile, DynamicParamTypeService) {
   };
 }
 
-angular.module('deepsense.attributes-panel').
-directive('attributeGridsearchParamType', AttributeGridSearchParamType);
+angular
+  .module('deepsense.attributes-panel')
+  .directive('attributeGridsearchParamType', AttributeGridSearchParamType);

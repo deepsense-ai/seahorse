@@ -3,12 +3,12 @@
 let GenericParameter = require('./common-generic-parameter.js');
 
 function GridSearchParameter({name, value, schema}, node, paramsFactory) {
-    this.name = name;
-    this.initValue(value, schema);
-    this.schema = schema;
-    this.paramsFactory = paramsFactory;
+  this.name = name;
+  this.initValue(value, schema);
+  this.schema = schema;
+  this.paramsFactory = paramsFactory;
 
-    this.setInternalParams(node);
+  this.setInternalParams(node);
 }
 
 GridSearchParameter.prototype = new GenericParameter();

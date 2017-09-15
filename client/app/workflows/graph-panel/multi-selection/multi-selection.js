@@ -145,7 +145,7 @@ class MultiSelection {
 
       that.viewFix = internal.debounce(50, () => {
         let oldRepaintValue = $selectionElement[0].style.left;
-        let newRepaintValue = parseInt($selectionElement[0].style.left) - 1;
+        let newRepaintValue = parseInt($selectionElement[0].style.left, 10) - 1;
 
         // force to repaint
         $selectionElement[0].style.left =
@@ -276,7 +276,7 @@ class MultiSelection {
         element.on('mousedown', that.clearNodes);
 
         scope.$on('MultiSelection.ADD', (e, nodeIds) => {
-          that.addToSelection(nodeIds);;
+          that.addToSelection(nodeIds);
         });
 
         scope.$on('MultiSelection.CLEAR_ALL', (event) => {

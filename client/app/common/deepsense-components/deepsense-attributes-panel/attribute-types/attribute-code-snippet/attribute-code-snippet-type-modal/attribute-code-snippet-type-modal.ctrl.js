@@ -1,6 +1,6 @@
 'use strict';
 
-/*@ngInject*/
+/* @ngInject */
 function AttributeCodeSnippetTypeModalCtrl($uibModalInstance, codeSnippet) {
   var that = this;
 
@@ -16,6 +16,7 @@ function AttributeCodeSnippetTypeModalCtrl($uibModalInstance, codeSnippet) {
 
 }
 
-angular.module('deepsense.attributes-panel').
-controller('AttributeCodeSnippetTypeModalCtrl', AttributeCodeSnippetTypeModalCtrl);
+angular
+  .module('deepsense.attributes-panel')
+  .controller('AttributeCodeSnippetTypeModalCtrl', AttributeCodeSnippetTypeModalCtrl);
 

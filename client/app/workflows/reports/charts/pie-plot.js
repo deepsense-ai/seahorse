@@ -1,3 +1,5 @@
+/* globals d3, nv */
+
 'use strict';
 
 import tpl from './plot.html';

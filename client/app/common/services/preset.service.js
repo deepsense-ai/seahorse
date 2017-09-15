@@ -1,4 +1,5 @@
 'use strict';
+
 const SCHEMA = require('./preset.schema.json');
 const jsonSchema = require('jsen');
 
@@ -9,7 +10,7 @@ function PresetService(PresetsApiService, WorkflowService) {
 
   vm.fetch = fetch;
   vm.getAll = getAll;
-  vm.createPreset =  createPreset;
+  vm.createPreset = createPreset;
   vm.deletePreset = deletePreset;
   vm.updatePreset = updatePreset;
   vm.savePreset = savePreset;
@@ -26,7 +27,10 @@ function PresetService(PresetsApiService, WorkflowService) {
    */
   function fetch() {
     return PresetsApiService.getAll()
-      .then((result) => presets = result)
+      .then((result) => {
+        presets = result;
+        return result;
+      })
       .then(() => WorkflowService.fetchCluster(WorkflowService.getRootWorkflow()));
   }
 
@@ -70,7 +74,7 @@ function PresetService(PresetsApiService, WorkflowService) {
    * @return {Promise}
    */
   function savePreset(presetCandidate) {
-    return (presetCandidate.id) ? updatePreset(presetCandidate) : createPreset(presetCandidate);
+    return presetCandidate.id ? updatePreset(presetCandidate) : createPreset(presetCandidate);
   }
 
   /**

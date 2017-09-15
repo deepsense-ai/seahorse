@@ -3,12 +3,13 @@
  *
  * Created by Oleksandr Tserkovnyi on 24.06.15.
  */
+
 'use strict';
 
 import tpl from './loading-spinner-processing.tpl.html';
 
 class LoadingSpinnerProcessing {
-  constructor ($timeout) {
+  constructor($timeout) {
     this.restrict = 'E';
     this.replace = true;
     this.transclude = true;
@@ -17,10 +18,10 @@ class LoadingSpinnerProcessing {
       bg: '@'
     };
     this.link = function (scope) {
-      const LENGTH  = 3;
-      const SPEED   = 450;
+      const LENGTH = 3;
+      const SPEED = 450;
 
-      function processDots () {
+      function processDots() {
         scope.dots = scope.dots.length >= LENGTH ? '.' : scope.dots + '.';
         $timeout(processDots, SPEED);
       }

@@ -54,7 +54,7 @@ function GraphPanelStyler() {
           hoverPaintStyle: {
             fillStyle: HOVER_COLOR
           },
-          cssClass: 'position-endpoint-icon fa fa-bar-chart',
+          cssClass: 'position-endpoint-icon fa fa-bar-chart'
         },
         'outputNoReport': {
           paintStyle: {

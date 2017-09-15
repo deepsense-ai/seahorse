@@ -3,7 +3,7 @@
 let angular = require('angular');
 let browserValidator = require('./browser.validator.js');
 
-import "../css/app.less";
+import '../css/app.less';
 
 if (browserValidator.isBrowserSupported()) {
   let lab = angular.module('ds.lab', [
@@ -34,7 +34,6 @@ if (browserValidator.isBrowserSupported()) {
   require('./app.run.js').inject(lab);
 } else {
   document.body.innerHTML = browserValidator.getErrorMessageHTML();
-  angular.module('ds.lab', []); //so config is not throwing exceptions that ds.lab is not available
+  angular.module('ds.lab', []); // so config is not throwing exceptions that ds.lab is not available
 }
-
 

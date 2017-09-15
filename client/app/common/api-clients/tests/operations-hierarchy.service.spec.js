@@ -131,14 +131,12 @@ describe('OperationsHierarchy', () => {
         OperationsApiClient.changeResponseStatus(true);
 
         OperationsHierarchyService.load()
-          .
-        then(() => {
+          .then(() => {
             success = true;
           })
-          .
-        catch(() => {
-          error = true;
-        });
+          .catch(() => {
+            error = true;
+          });
         $rootScope.$apply();
 
         expect(success)
@@ -157,14 +155,12 @@ describe('OperationsHierarchy', () => {
         OperationsApiClient.changeResponseStatus(false);
 
         OperationsHierarchyService.load()
-          .
-        then(() => {
+          .then(() => {
             success = true;
           })
-          .
-        catch(() => {
-          error = true;
-        });
+          .catch(() => {
+            error = true;
+          });
         $rootScope.$apply();
 
         expect(success)
@@ -188,14 +184,12 @@ describe('OperationsHierarchy', () => {
           .and.callThrough();
 
         OperationsHierarchyService.load()
-          .
-        then(() => {
+          .then(() => {
             success = true;
           })
-          .
-        catch(() => {
-          error = true;
-        });
+          .catch(() => {
+            error = true;
+          });
 
         $rootScope.$apply();
 
@@ -213,14 +207,12 @@ describe('OperationsHierarchy', () => {
         error = false;
 
         OperationsHierarchyService.load()
-          .
-        then(() => {
+          .then(() => {
             success = true;
           })
-          .
-        catch(() => {
-          error = true;
-        });
+          .catch(() => {
+            error = true;
+          });
 
         $rootScope.$apply();
 

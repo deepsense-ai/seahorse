@@ -38,10 +38,12 @@ IndexListSelectorItem.prototype.validate = function () {
   return this.firstNum <= this.secondNum;
 };
 
-IndexListSelectorItem.getType = () => { return {
-  'id': 'indexRange',
-  'verbose': 'Index range'
-};};
+IndexListSelectorItem.getType = () => {
+  return {
+    'id': 'indexRange',
+    'verbose': 'Index range'
+  };
+};
 
 IndexListSelectorItem.prototype.containsField = function(field, index, fieldsCount) {
   return this.secondNum < fieldsCount && index >= this.firstNum && index <= this.secondNum;

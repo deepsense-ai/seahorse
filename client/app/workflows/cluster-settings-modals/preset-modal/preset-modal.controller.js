@@ -28,7 +28,7 @@ function PresetModalCtrl($uibModalInstance, $log, PresetService, PresetModalLabe
     vm.preset.clusterType = type;
     const preset = vm.preset;
     if (!PresetService.isValid(preset)) {
-      console.error(preset, PresetService.getErrors());
+      $log.error(preset, PresetService.getErrors());
       vm.errors = formatErrors(PresetService.getErrors(), type);
     } else {
       vm.isSaving = true;

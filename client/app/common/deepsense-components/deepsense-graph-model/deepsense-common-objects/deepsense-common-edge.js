@@ -1,7 +1,8 @@
 'use strict';
 
-angular.module('deepsense.graph-model').
-  factory('Edge', function() {
+angular
+  .module('deepsense.graph-model')
+  .factory('Edge', function() {
     class Edge {
       constructor(options) {
         this.startNodeId = options.startNodeId;

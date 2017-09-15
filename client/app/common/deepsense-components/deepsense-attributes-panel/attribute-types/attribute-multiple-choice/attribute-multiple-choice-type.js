@@ -8,7 +8,7 @@
 
 import tpl from './attribute-multiple-choice-type.html';
 
-/*@ngInject*/
+/* @ngInject */
 function AttributeMultipleChoiceType($compile) {
   return {
     restrict: 'E',
@@ -65,5 +65,6 @@ function AttributeMultipleChoiceType($compile) {
   };
 }
 
-angular.module('deepsense.attributes-panel').
-    directive('attributeMultipleChoiceType', AttributeMultipleChoiceType);
+angular
+  .module('deepsense.attributes-panel')
+  .directive('attributeMultipleChoiceType', AttributeMultipleChoiceType);

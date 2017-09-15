@@ -2,7 +2,7 @@
 
 import tpl from './attribute-workflow-type.html';
 
-/*@ngInject*/
+/* @ngInject */
 function AttributeWorkflowType() {
   return {
     restrict: 'E',
@@ -21,5 +21,6 @@ function AttributeWorkflowType() {
   };
 }
 
-angular.module('deepsense.attributes-panel').
-    directive('attributeWorkflowType', AttributeWorkflowType);
+angular
+  .module('deepsense.attributes-panel')
+  .directive('attributeWorkflowType', AttributeWorkflowType);

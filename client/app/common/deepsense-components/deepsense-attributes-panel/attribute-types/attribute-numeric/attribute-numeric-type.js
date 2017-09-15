@@ -8,7 +8,7 @@
 
 import tpl from './attribute-numeric-type.html';
 
-/*@ngInject*/
+/* @ngInject */
 function AttributeNumericType() {
   return {
     restrict: 'E',
@@ -44,5 +44,6 @@ function AttributeNumericType() {
   };
 }
 
-angular.module('deepsense.attributes-panel').
-    directive('attributeNumericType', AttributeNumericType);
+angular
+  .module('deepsense.attributes-panel')
+  .directive('attributeNumericType', AttributeNumericType);

@@ -17,7 +17,7 @@ function MouseEvent() {
 
   that.getWindowScroll = function getWindowScroll(event) {
     var supportPageOffset = window.pageXOffset !== undefined;
-    var isCSS1Compat = ((document.compatMode || '') === 'CSS1Compat');
+    var isCSS1Compat = (document.compatMode || '') === 'CSS1Compat';
 
     return {
       x: supportPageOffset ? window.pageXOffset : isCSS1Compat ? document.documentElement.scrollLeft : document.body.scrollLeft,

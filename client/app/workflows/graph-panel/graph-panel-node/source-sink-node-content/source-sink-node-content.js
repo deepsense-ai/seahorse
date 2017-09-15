@@ -2,7 +2,7 @@
 
 import tpl from './source-sink-node-content.html';
 
-/*@ngInject*/
+/* @ngInject */
 function SourceSinkNodeContent() {
   return {
     restrict: 'E',

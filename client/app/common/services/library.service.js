@@ -159,7 +159,7 @@ function LibraryService($q, $log, LibraryDataConverterService, LibraryApiService
     const progressHandler = function (progress) {
       uploadingFile.progress = progress;
       if (progress === 100) {
-        uploadingFile.status =  STATUS_COMPLETE;
+        uploadingFile.status = STATUS_COMPLETE;
       } else {
         uploadingFile.status = STATUS_UPLOADING;
       }

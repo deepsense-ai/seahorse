@@ -2,7 +2,7 @@
 
 import tpl from './graph-panel-node.html';
 
-/*@ngInject*/
+/* @ngInject */
 function GraphNodeView($rootScope, GraphNode, specialOperations, nodeTypes) {
   let sourceId = nodeTypes.CUSTOM_TRANSFORMER_SOURCE;
   let sinkId = nodeTypes.CUSTOM_TRANSFORMER_SINK;

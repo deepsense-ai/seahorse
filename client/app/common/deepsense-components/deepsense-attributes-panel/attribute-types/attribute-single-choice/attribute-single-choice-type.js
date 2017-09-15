@@ -2,7 +2,7 @@
 
 import tpl from './attribute-single-choice-type.html';
 
-/*@ngInject*/
+/* @ngInject */
 function AttributeSingleChoiceType($compile) {
   return {
     restrict: 'E',
@@ -12,7 +12,7 @@ function AttributeSingleChoiceType($compile) {
     link: function (scope, element) {
       let internal = {};
 
-      internal.initChoice = function initChoice () {
+      internal.initChoice = function initChoice() {
         scope.choice = null;
         for (let choiceName in scope.parameter.choices) {
           if (scope.parameter.choices[choiceName]) {
@@ -30,7 +30,7 @@ function AttributeSingleChoiceType($compile) {
         }
       };
 
-      internal.renderParametersList = function renderParametersList () {
+      internal.renderParametersList = function renderParametersList() {
         let template = `<attributes-list
           ng-repeat="(choiceName, parametersList) in ::parameter.possibleChoicesList"
           ng-if="choice === choiceName"
@@ -66,5 +66,6 @@ function AttributeSingleChoiceType($compile) {
   };
 }
 
-angular.module('deepsense.attributes-panel').
-    directive('attributeSingleChoiceType', AttributeSingleChoiceType);
+angular
+  .module('deepsense.attributes-panel')
+  .directive('attributeSingleChoiceType', AttributeSingleChoiceType);

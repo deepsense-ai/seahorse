@@ -1,6 +1,6 @@
+/* eslint-disable */
 'use strict';
 
-/* jshint ignore:start */
 window._ues = {
   host: 'deepsense.userecho.com',
   forum: '45446',
@@ -21,7 +21,7 @@ window._ues = {
   var _ue = document.createElement('script');
   _ue.type = 'text/javascript';
   _ue.async = true;
-  _ue.src = ('https:' === document.location.protocol ? 'https://' : 'http://') + 'cdn.userecho.com/js/widget-1.4.gz.js';
+  _ue.src = (document.location.protocol === 'https:' ? 'https://' : 'http://') + 'cdn.userecho.com/js/widget-1.4.gz.js';
   var s = document.getElementsByTagName('script')[0];
   _ue.onload = function () {
     UE.Popin.preload();
@@ -31,7 +31,5 @@ window._ues = {
       oldClose.apply(this, arguments);
     };
   };
-  -s.parentNode.insertBefore(_ue, s);
+  s.parentNode.insertBefore(_ue, s);
 })();
-
-/* jshint ignore:end */

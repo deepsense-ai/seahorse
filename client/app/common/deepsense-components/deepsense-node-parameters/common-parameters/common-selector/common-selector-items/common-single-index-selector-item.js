@@ -26,7 +26,7 @@ SingleIndexSelectorItem.prototype.serialize = function serialize() {
 SingleIndexSelectorItem.getType = () => { return {
   'id': 'index',
   'verbose': 'Select by index'
-};};
+}; };
 
 SingleIndexSelectorItem.prototype.containsField = function(field, index) {
   return this.firstNum === index;
