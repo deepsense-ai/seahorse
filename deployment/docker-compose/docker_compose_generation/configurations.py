@@ -191,6 +191,9 @@ class SessionManager(Service):
             SM_HOST='127.0.0.1',
             SM_PORT=self.port_mapping().get().exposed,
             JDBC_URL=self.deps.Database.exposed_jdbc_url(db='sessionmanager'),
+            MAIL_SERVER_HOST=self.deps.Mail.exposed_address().host,
+            MAIL_SERVER_PORT=self.deps.Mail.exposed_address().port,
+            NOTEBOOK_SERVER_ADDRESS='http://{}'.format(self.deps.Notebooks.exposed_address().as_string()),
             SX_PARAM_SESSION_EXECUTOR_PATH='/opt/docker/we.jar',
             SX_PARAM_SESSION_EXECUTOR_DEPS_PATH='/opt/docker/we-deps.zip',
             SX_PARAM_PYTHON_EXECUTOR_BINARY='python',
@@ -426,6 +429,9 @@ class SessionManagerBridgeNetwork(SessionManager):
                    SM_HOST='0.0.0.0',
                    SM_PORT=self.port_mapping().get().internal,
                    JDBC_URL=self.deps.Database.internal_jdbc_url(db='sessionmanager'),
+                   MAIL_SERVER_HOST=self.deps.Mail.internal_address().host,
+                   MAIL_SERVER_PORT=self.deps.Mail.internal_address().port,
+                   NOTEBOOK_SERVER_ADDRESS='http://{}'.format(self.deps.Notebooks.internal_address().as_string()),
                    SX_PARAM_WM_ADDRESS=self.deps.WorkflowManager.internal_address().as_string()) + \
                self.deps.RabbitMQ.internal_address().as_env('MQ_HOST', 'MQ_PORT')
 

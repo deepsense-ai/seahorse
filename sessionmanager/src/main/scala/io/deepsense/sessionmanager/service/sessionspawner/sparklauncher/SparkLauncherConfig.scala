@@ -5,7 +5,7 @@
 package io.deepsense.sessionmanager.service.sessionspawner.sparklauncher
 
 import java.io.File
-import java.net.URI
+import java.net.{URI, URL}
 
 import com.google.inject.Inject
 import com.google.inject.name.Named
@@ -24,6 +24,12 @@ class SparkLauncherConfig @Inject()(
   @Named("session-executor.parameters.workflow-manager.address") val wmAddress: String,
   @Named("session-executor.parameters.workflow-manager.username") val wmUsername: String,
   @Named("session-executor.parameters.workflow-manager.password") val wmPassword: String,
+  @Named("session-executor.parameters.mail-server.smtp.host") val mailServerHost: String,
+  @Named("session-executor.parameters.mail-server.smtp.port") val mailServerPort: Int,
+  @Named("session-executor.parameters.mail-server.user") val mailServerUser: String,
+  @Named("session-executor.parameters.mail-server.password") val mailServerPassword: String,
+  @Named("session-executor.parameters.mail-server.sender") val mailServerSender: String,
+  @Named("session-executor.parameters.notebook-server.address") val notebookServerAddress: String,
   @Named("session-executor.parameters.temp-dir") val tempDir: String,
   @Named("session-executor.parameters.python-driver-binary") val pythonDriverBinary: String,
   @Named("session-executor.parameters.python-executor-binary") val pythonExecutorBinary: String
