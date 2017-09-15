@@ -33,5 +33,8 @@
 - name: Create spark-env.sh file
   template: src=spark-env.sh.j2 dest={{spark_dir}}/conf/spark-env.sh mode=755
 
+- name: Create spark-defaults.conf file
+  template: src=spark-defaults.conf.j2 dest={{spark_dir}}/conf/spark-defaults.conf mode=644
+
 - name: Run prepare_spark_dirs.sh file
   shell: "{{spark_install_dir}}/prepare_spark_dirs.sh"
