@@ -34,7 +34,7 @@ var endpointHoverStyle = {
 var outputStyle = {
   endpoint: 'Dot',
   paintStyle: {
-    fillStyle: '#7AB02C',
+    fillStyle: '#1AB394',
     radius: 10,
     lineWidth: 2
   },
@@ -49,7 +49,7 @@ var outputStyle = {
 var inputStyle = {
   endpoint: 'Rectangle',
   paintStyle: {
-    fillStyle: '#7AB02C'
+    fillStyle: '#1AB394'
   },
   hoverPaintStyle: endpointHoverStyle,
   dropOptions: {
