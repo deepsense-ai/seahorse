@@ -37,8 +37,8 @@ case class Join()
 
   import Join._
 
-  override val name = "Join"
   override val id: Id = "06374446-3138-4cf7-9682-f884990f3a60"
+  override val name = "Join"
   override val description: String =
     "Joins two DataFrames to a DataFrame"
 

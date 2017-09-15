@@ -40,8 +40,8 @@ case class ReadDataFrame()
     with CsvReader
     with Params {
 
-  override val name: String = "Read DataFrame"
   override val id: Id = "c48dd54c-6aef-42df-ad7a-42fc59a09f0e"
+  override val name: String = "Read DataFrame"
   override val description: String =
     "Reads a DataFrame from a file or database"
 

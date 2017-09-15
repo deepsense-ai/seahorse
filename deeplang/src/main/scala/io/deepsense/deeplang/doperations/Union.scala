@@ -27,7 +27,6 @@ import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.Params
 import io.deepsense.deeplang.{DKnowledge, DOperation2To1, ExecutionContext}
 
-
 case class Union() extends DOperation2To1[DataFrame, DataFrame, DataFrame] with Params {
 
   override val id: Id = "90fed07b-d0a9-49fd-ae23-dd7000a1d8ad"

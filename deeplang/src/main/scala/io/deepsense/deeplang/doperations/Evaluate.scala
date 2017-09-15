@@ -30,8 +30,8 @@ import io.deepsense.deeplang.{DKnowledge, DOperation2To1, ExecutionContext}
 
 case class Evaluate() extends DOperation2To1[DataFrame, Evaluator, MetricValue] {
 
-  override val name: String = "Evaluate"
   override val id: Id = "a88eaf35-9061-4714-b042-ddd2049ce917"
+  override val name: String = "Evaluate"
   override val description: String =
     "Evaluates a DataFrame using an Evaluator"
 

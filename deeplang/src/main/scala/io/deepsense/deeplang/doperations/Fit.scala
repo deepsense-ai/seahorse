@@ -30,8 +30,8 @@ import io.deepsense.deeplang.{DKnowledge, DOperation2To1, ExecutionContext}
 
 case class Fit() extends DOperation2To1[DataFrame, Estimator, Transformer] {
 
-  override val name: String = "Fit"
   override val id: Id = "0c2ff818-977b-11e5-8994-feff819cdc9f"
+  override val name: String = "Fit"
   override val description: String =
     "Fits an Estimator on a DataFrame"
 

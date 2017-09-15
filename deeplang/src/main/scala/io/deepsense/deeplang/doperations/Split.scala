@@ -33,8 +33,8 @@ case class Split()
   with Params
   with HasSeedParam {
 
-  override val name: String = "Split"
   override val id: DOperation.Id = "d273c42f-b840-4402-ba6b-18282cc68de3"
+  override val name: String = "Split"
   override val description: String =
     "Splits a DataFrame into two DataFrames"
 

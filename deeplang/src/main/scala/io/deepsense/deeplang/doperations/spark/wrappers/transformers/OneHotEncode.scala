@@ -25,8 +25,8 @@ import io.deepsense.deeplang.doperations.TransformerAsOperation
 class OneHotEncode extends TransformerAsOperation[OneHotEncoder] {
 
   override val id: Id = "33af92e5-57f2-4586-b176-961eb72ce5b0"
-  override val name: String = "One Hot Encode"
-  override val description: String = "One Hot Encode maps a column of category indices to " +
+  override val name: String = "One Hot Encoder"
+  override val description: String = "Maps a column of category indices to " +
     "a column of binary vectors"
 
   override lazy val tTagTO_1: TypeTag[OneHotEncoder] = typeTag

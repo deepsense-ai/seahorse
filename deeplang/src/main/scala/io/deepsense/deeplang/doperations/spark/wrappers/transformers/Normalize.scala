@@ -26,7 +26,7 @@ class Normalize extends TransformerAsOperation[Normalizer] {
 
   override val id: Id = "20f3d9ef-9b04-49c6-8acd-7ddafdedcb39"
   override val name: String = "Normalize"
-  override val description: String = "Normalize vector columns using given p-norm"
+  override val description: String = "Normalizes vector columns using given p-norm"
 
   override lazy val tTagTO_1: TypeTag[Normalizer] = typeTag
 }

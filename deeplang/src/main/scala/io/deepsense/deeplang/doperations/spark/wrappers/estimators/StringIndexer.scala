@@ -21,9 +21,10 @@ import io.deepsense.deeplang.doperables.StringIndexerEstimator
 import io.deepsense.deeplang.doperations.{EstimatorAsOperation, MultiColumnEstimatorParamsForwarder}
 
 class StringIndexer
-    extends EstimatorAsOperation[StringIndexerEstimator]
-    with MultiColumnEstimatorParamsForwarder[StringIndexerEstimator] {
+  extends EstimatorAsOperation[StringIndexerEstimator]
+  with MultiColumnEstimatorParamsForwarder[StringIndexerEstimator] {
+
   override val id: Id = "c9df7000-9ea0-41c0-b66c-3062fd57851b"
-  override val description: String = "Maps a string column of labels to a column of label indices."
   override val name: String = "String Indexer"
+  override val description: String = "Maps a string column of labels to a column of label indices"
 }

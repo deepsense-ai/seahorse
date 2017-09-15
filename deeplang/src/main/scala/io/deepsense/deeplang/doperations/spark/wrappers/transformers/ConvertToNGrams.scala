@@ -25,7 +25,7 @@ import io.deepsense.deeplang.doperations.TransformerAsOperation
 class ConvertToNGrams extends TransformerAsOperation[NGramTransformer] {
 
   override val id: Id = "06a73bfe-4e1a-4cde-ae6c-ad5a31f72496"
-  override val name: String = "Convert to n-grams"
+  override val name: String = "Convert To n-grams"
   override val description: String = "Converts arrays of strings to arrays of n-grams. " +
     "Null values in the input arrays are ignored. " +
     "Each n-gram is represented by a space-separated string of words."

@@ -23,8 +23,8 @@ import io.deepsense.deeplang.doperables.MissingValuesHandler
 
 class HandleMissingValues extends TransformerAsOperation[MissingValuesHandler] {
 
-  override val name: String = "Handle Missing Values"
   override val id: Id = "d5f4e717-429f-4a28-a0d3-eebba036363a"
+  override val name: String = "Handle Missing Values"
   override val description: String =
     "Handles missing values in a DataFrame"
 

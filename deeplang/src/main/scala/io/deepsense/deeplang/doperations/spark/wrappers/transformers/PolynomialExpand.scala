@@ -25,7 +25,7 @@ import io.deepsense.deeplang.doperations.TransformerAsOperation
 class PolynomialExpand extends TransformerAsOperation[PolynomialExpander] {
 
   override val id: Id = "4a741088-3180-4373-940d-741b2f1620de"
-  override val name: String = "Polynomial Expand"
+  override val name: String = "Polynomial Expansion"
   override val description: String = "Applies polynomial expansion to vector columns"
 
   override lazy val tTagTO_1: TypeTag[PolynomialExpander] = typeTag

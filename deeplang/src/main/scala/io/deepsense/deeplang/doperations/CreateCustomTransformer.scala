@@ -22,6 +22,6 @@ import io.deepsense.deeplang.doperables.CustomTransformer
 case class CreateCustomTransformer() extends TransformerAsFactory[CustomTransformer] {
 
   override val id: Id = "65240399-2987-41bd-ba7e-2944d60a3404"
-  override val name: String = "Create custom transformer"
-  override val description: String = "Create custom transformer"
+  override val name: String = "Create Custom Transformer"
+  override val description: String = "Creates custom transformer"
 }

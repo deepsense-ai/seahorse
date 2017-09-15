@@ -30,8 +30,8 @@ import io.deepsense.deeplang.{DKnowledge, DOperation2To1, ExecutionContext}
 
 case class Transform() extends DOperation2To1[DataFrame, Transformer, DataFrame] {
 
-  override val name: String = "Transform"
   override val id: Id = "643d8706-24db-4674-b5b4-10b5129251fc"
+  override val name: String = "Transform"
   override val description: String =
     "Transforms a DataFrame using a Transformer"
 
