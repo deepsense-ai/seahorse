@@ -30,6 +30,8 @@ Run
 This will build all the needed docker images and create a `docker-compose.yml` file.
 You can now run it using `docker-compose up`. Seahorse will start at [http://localhost:33321](http://localhost:33321).
 
+A good place to start using Seahorse is the [basic examples](http://seahorse.deepsense.ai/basic_examples.html) section of the documentation.
+
 ## Development
 
 Note that in order to contribute to Seahorse you have to sign the
@@ -57,11 +59,10 @@ End-to-end integration tests:
 ```console
 ./build/e2e_tests.sh -a
 ```
-## Mac OS
 
-In order for Seahorse to compile and run correctly, you need to increase memory for Docker engine to at least 6GB.
+In order for Seahorse to compile and run correctly on Mac OS, you need to increase memory for Docker engine to at least 6GB.
 
-### Bash competition for Python scripts
+### Bash completion for Python scripts
 
 Some of our Python scripts used by devs support bash autocompletion using argcomplete.
 
@@ -91,3 +92,7 @@ Now it will compile and test against the local Seahorse repository:
 cd seahorse-sdk-example
 sbt test
 ```
+
+## Enterprise options and support
+
+Seahorse was originally created at [deepsense.ai](http://deepsense.ai). Technical support and customization options are available upon [contact](mailto:contact@deepsense.ai).
