@@ -35,7 +35,7 @@ class GBTRegressionModel extends SparkModelWrapper[SparkGBTRegressionModel, Spar
         SparkSummaryEntry(
           name = "number of features",
           value = model.numFeatures,
-          description = "Number of features."))
+          description = "Number of features the model was trained on."))
 
     super.report
       .withReportName(s"${this.getClass.getSimpleName} with ${model.numTrees} trees")

@@ -43,14 +43,14 @@ class LogisticRegressionModel
       SparkSummaryEntry(
         name = "coefficients",
         value = model.coefficients,
-        description = "Model coefficients.")
+        description = "Weights computed for every feature.")
 
     val summary = if (model.hasSummary) {
       List(
         SparkSummaryEntry(
           name = "objective history",
           value = model.summary.objectiveHistory,
-          description = "objective function (scaled loss + regularization) at each iteration."),
+          description = "Objective function (scaled loss + regularization) at each iteration."),
         SparkSummaryEntry(
           name = "total iterations",
           value = model.summary.totalIterations,

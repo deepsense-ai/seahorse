@@ -37,11 +37,11 @@ class StandardScalerModel
         SparkSummaryEntry(
           name = "std",
           value = model.std,
-          description = "Standard deviation of the StandardScalerModel"),
+          description = "Vector of standard deviations of the model."),
         SparkSummaryEntry(
           name = "mean",
           value = model.mean,
-          description = "Mean of the StandardScalerModel"))
+          description = "Vector of means of the model."))
 
 
     super.report

@@ -38,11 +38,11 @@ class RandomForestRegressionModel
         SparkSummaryEntry(
           name = "number of features",
           value = model.numFeatures,
-          description = "Number of features."),
+          description = "Number of features the model was trained on."),
         SparkSummaryEntry(
           name = "feature importances",
           value = model.featureImportances,
-          description = "Importances of features."
+          description = "Estimate of the importance of each feature."
         ))
 
     super.report

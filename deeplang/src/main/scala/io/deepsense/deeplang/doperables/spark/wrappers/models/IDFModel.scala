@@ -37,7 +37,7 @@ class IDFModel
         SparkSummaryEntry(
           name = "IDF vector",
           value = model.idf,
-          description = "The IDF vector."))
+          description = "The inverse document frequency vector."))
 
     super.report
       .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))

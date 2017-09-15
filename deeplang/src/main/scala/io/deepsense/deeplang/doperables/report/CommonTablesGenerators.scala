@@ -43,7 +43,7 @@ object CommonTablesGenerators {
     Table(
       name = "Parameters",
       description = "Parameters",
-      columnNames = Some(List("Parameter", "Value", "Description")),
+      columnNames = Some(List("parameter", "value", "description")),
       columnTypes = List(ColumnType.string, ColumnType.string, ColumnType.string),
       rowNames = None,
       values = ReportUtils.shortenLongTableValues(values))
@@ -55,9 +55,9 @@ object CommonTablesGenerators {
         List(Some(entry.name), Some(entry.value), Some(entry.description)))
 
     Table(
-      name = "Model summary",
-      description = "Model summary",
-      columnNames = Some(List("Result", "Value", "Description")),
+      name = "Model Summary",
+      description = "Model summary.",
+      columnNames = Some(List("result", "value", "description")),
       columnTypes = List(ColumnType.string, ColumnType.string, ColumnType.string),
       rowNames = None,
       values = ReportUtils.shortenLongTableValues(values))
@@ -79,7 +79,7 @@ object CommonTablesGenerators {
     Table(
       name = "Decision Trees",
       description = "Decision trees.",
-      columnNames = Some(List("Tree Index", "Weight", "Depth", "Nodes")),
+      columnNames = Some(List("tree index", "weight", "depth", "nodes")),
       columnTypes =
         List(ColumnType.numeric, ColumnType.numeric, ColumnType.numeric, ColumnType.numeric),
       rowNames = None,
@@ -91,11 +91,11 @@ object CommonTablesGenerators {
       tuple => List(Some(tuple._1.toString), Some(tuple._2.toString())))
 
     Table(
-      name = "Category maps",
+      name = "Category Maps",
       description = "Feature value index. Keys are categorical feature indices (column indices). " +
         "Values are maps from original features values to 0-based category indices. " +
         "If a feature is not in this map, it is treated as continuous.",
-      columnNames = Some(List("Index", "Map")),
+      columnNames = Some(List("index", "map")),
       columnTypes = List(ColumnType.numeric, ColumnType.string),
       rowNames = None,
       values = ReportUtils.shortenLongTableValues(values))

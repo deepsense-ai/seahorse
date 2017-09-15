@@ -42,7 +42,7 @@ class MinMaxScalerModel
         SparkSummaryEntry(
           name = "original max",
           value = model.originalMax,
-          description = "Maximum value for each original column during fitting"))
+          description = "Maximum value for each original column during fitting."))
 
     super.report
       .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))

@@ -32,7 +32,7 @@ class KMeansModel extends SparkModelWrapper[SparkKMeansModel, SparkKMeans] {
         SparkSummaryEntry(
           name = "cluster centers",
           value = model.clusterCenters,
-          description = "Cluster centers."))
+          description = "Positions of cluster centers."))
 
     super.report
       .withAdditionalTable(CommonTablesGenerators.modelSummary(summary))
