@@ -18,7 +18,7 @@ package io.deepsense.deeplang.doperables.transformations
 
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.deeplang.doperables.{Report, Transformation}
-import io.deepsense.deeplang.doperations.exceptions.MathematicalTransformationExecutionException
+import io.deepsense.deeplang.doperations.exceptions.{DuplicatedColumnsException, MathematicalTransformationExecutionException}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.{DKnowledge, DMethod1To1, DOperable, ExecutionContext}
 import io.deepsense.reportlib.model.{ReportContent, Table}
@@ -37,6 +37,13 @@ case class MathematicalTransformation(formula: Option[String]) extends Transform
         case e: Exception =>
           throw new MathematicalTransformationExecutionException(formula.get, Some(e))
       }
+
+      val columns = transformedSparkDataFrame.columns
+      if (columns.distinct.size != columns.size) {
+        throw new MathematicalTransformationExecutionException(formula.get,
+          Some(DuplicatedColumnsException()))
+      }
+
       context.dataFrameBuilder.buildDataFrame(transformedSparkDataFrame)
     }
 

@@ -117,7 +117,8 @@ class WorkflowExecutorActorSpec
       shutdownerProbe.expectMsgType[String] shouldBe shutdownMessage
     }
 
-    def launchGraph(shouldStartExecutors: Boolean = true): Future[GraphFinished] = {
+    def launchGraph(shouldStartExecutors: Boolean = true,
+        generateReports: Boolean = false): Future[GraphFinished] = {
       val nodes = List(mockNode(), mockNode())
       val nodeExecutors = Seq(TestProbe(), TestProbe())
       val running = graph.markRunning
@@ -128,7 +129,7 @@ class WorkflowExecutorActorSpec
       wea.expectedDOperableCache = Map.empty
 
       val resultPromise: Promise[GraphFinished] = Promise()
-      weaRef ! Launch(graph, false, resultPromise)
+      weaRef ! Launch(graph, generateReports, resultPromise)
 
       if (shouldStartExecutors) {
         wea.nodeExecutors(0).expectMsg(WorkflowNodeExecutorActor.Messages.Start())
@@ -167,9 +168,9 @@ class WorkflowExecutorActorSpec
 
   "WorkflowExecutorActor" should {
     "start GraphNodeExecutorActor for each ready node and send Start to it" when {
-      "it receives Launch" in new TestCase {
+      "it receives Launch" in { new TestCase {
         launchGraph()
-      }
+      };()}
     }
     "close actor system and returns a result" when {
       "it receives NodeFinished and there are no nodes left for execution" in { new TestCase {
@@ -250,6 +251,25 @@ class WorkflowExecutorActorSpec
           case GraphFinished(resultGraph, _) =>
             resultGraph shouldBe failedGraphWithAbortedNodes
         }
+      };()}
+      "it receives NodeFinished and report generation fails" in { new TestCase {
+        val result = launchGraph(generateReports = true)
+        val finishedNode = mockFinishedNode()
+        val finishedGraph = mock[Graph]
+        val runningGraph = mock[Graph]
+        val dOperable = mock[DOperable]
+        when(runningGraph.withChangedNode(any())) thenReturn runningGraph
+        when(runningGraph.updateState()) thenReturn finishedGraph
+        when(runningGraph.readyNodes) thenReturn List.empty
+        when(runningGraph.runningNodes) thenReturn Set.empty[Node]
+        when(finishedGraph.state) thenReturn mock[GraphState]
+        when(dOperable.report) thenThrow classOf[Exception]
+
+        wea.graph = runningGraph
+        weaRef ! WorkflowExecutorActor.Messages.NodeFinished(
+          finishedNode, Map(Node.Id.randomId -> dOperable))
+        verifySystemShutDown()
+        result shouldBe 'completed
       };()}
     }
   }

@@ -96,7 +96,10 @@ class WorkflowExecutorActor(executionContext: ExecutionContext)
     graph = graph.withChangedNode(node)
 
     if (generateReports) {
-      collectReports(results)
+      Try(collectReports(results)).recover { case e =>
+        node.markFailed(e)
+        graph = graph.withChangedNode(node)
+      }
     }
 
     dOperableCache = dOperableCache ++ results
