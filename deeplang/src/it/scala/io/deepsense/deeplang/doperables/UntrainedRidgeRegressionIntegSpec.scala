@@ -14,15 +14,13 @@ import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 import org.scalatest.BeforeAndAfter
 
-import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperations.exceptions.{ColumnDoesNotExistException, ColumnsDoNotExistException, WrongColumnTypeException}
 import io.deepsense.deeplang.parameters.{MultipleColumnSelection, NameColumnSelection, NameSingleColumnSelection}
-import io.deepsense.entitystorage.EntityStorageClientTestInMemoryImpl
-import io.deepsense.models.entities.Entity
+import io.deepsense.deeplang.{DeeplangIntegTestSupport, ExecutionContext}
 
 class UntrainedRidgeRegressionIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfter {
 
-  var testDir: Option[String] = None
+  val testDir: String = "/tests/UntrainedRidgeRegressionIntegSpec"
 
   "UntrainedRidgeRegression" should {
 
@@ -43,6 +41,10 @@ class UntrainedRidgeRegressionIntegSpec extends DeeplangIntegTestSupport with Be
     val mockUntrainedModel = mock[RidgeRegressionWithSGD]
 
     "create model trained on given dataframe" in {
+      val hdfsClient = executionContext.hdfsClient
+      val mockContext: ExecutionContext = mock[ExecutionContext]
+      when(mockContext.hdfsClient).thenReturn(hdfsClient)
+      when(mockContext.uniqueHdfsFileName(isA(classOf[String]))).thenReturn(testDir)
 
       val mockTrainedModel = mock[RidgeRegressionModel]
 
@@ -71,15 +73,13 @@ class UntrainedRidgeRegressionIntegSpec extends DeeplangIntegTestSupport with Be
           Vector(NameColumnSelection(Set("column0", "column1")))),
         targetColumn = NameSingleColumnSelection("column3"))
 
-      val result = regression.train(executionContext)(parameters)(inputDataFrame)
+      val result = regression.train(mockContext)(parameters)(inputDataFrame)
       val castedResult = result.asInstanceOf[TrainedRidgeRegression]
       castedResult.model shouldBe Some(mockTrainedModel)
       castedResult.featureColumns shouldBe Some(Seq("column1", "column0"))
       castedResult.targetColumn shouldBe Some("column3")
 
-      val entity = getInsertedEntity
-      testDir = Some(entity.data.get.url)
-      executionContext.hdfsClient.fileExists(entity.data.get.url) shouldBe true
+      hdfsClient.fileExists(testDir) shouldBe true
     }
 
     "throw an exception" when {
@@ -126,14 +126,11 @@ class UntrainedRidgeRegressionIntegSpec extends DeeplangIntegTestSupport with Be
     }
   }
 
-  after{
-    testDir.foreach(rawHdfsClient.delete(_, true))
+  after {
+    rawHdfsClient.delete(testDir, true)
   }
 
-  private def getInsertedEntity: Entity = {
-    val esClient =
-      executionContext.entityStorageClient.asInstanceOf[EntityStorageClientTestInMemoryImpl]
-    esClient.storage.size shouldBe 1
-    esClient.storage.head._2
+  before {
+    rawHdfsClient.delete(testDir, true)
   }
 }

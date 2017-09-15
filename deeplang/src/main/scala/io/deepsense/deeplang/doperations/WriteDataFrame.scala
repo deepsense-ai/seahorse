@@ -54,11 +54,8 @@ class WriteDataFrame extends DOperation1To0[DataFrame] {
       saved = true)
   }
 
-  private def getUniqueFileName(context: ExecutionContext): String = {
-    UniqueFilenameUtil.getUniqueHdfsFilename(
-      context.tenantId,
-      UniqueFilenameUtil.DataFrameEntityCategory)
-  }
+  private def getUniqueFileName(context: ExecutionContext): String =
+    context.uniqueHdfsFileName(UniqueFilenameUtil.DataFrameEntityCategory)
 }
 
 object WriteDataFrame {

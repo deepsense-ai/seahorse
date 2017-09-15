@@ -16,8 +16,7 @@ import com.typesafe.scalalogging.LazyLogging
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
 import io.deepsense.entitystorage.EntityStorageClient
 import io.deepsense.graph.{Graph, Node}
-import io.deepsense.models.entities.{DataObjectReport, InputEntity}
-import io.deepsense.models.experiments.Experiment
+import io.deepsense.models.entities.{DataObjectReference, InputEntity}
 
 /**
  * GraphNodeExecutor is responsible for execution of single node.
@@ -129,7 +128,7 @@ class GraphNodeExecutor(
       "temporary Entity",
       "temporary Entity",
       "?",
-      None,
+      dOperable.url.map(DataObjectReference),
       Some(dOperable.report.toDataObjectReport),
       saved = false
     )

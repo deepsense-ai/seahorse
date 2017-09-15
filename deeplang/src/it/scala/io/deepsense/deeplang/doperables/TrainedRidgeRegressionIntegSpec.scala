@@ -16,9 +16,9 @@ import org.mockito.Mockito.when
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 
-import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.{ColumnsDoNotExistException, WrongColumnTypeException}
+import io.deepsense.deeplang.{DSHdfsClient, DeeplangIntegTestSupport, ExecutionContext}
 
 class TrainedRidgeRegressionIntegSpec extends DeeplangIntegTestSupport {
 
@@ -32,9 +32,7 @@ class TrainedRidgeRegressionIntegSpec extends DeeplangIntegTestSupport {
 
       assertDataFramesEqual(scoredDataFrame, expectedDataFrame)
     }
-  }
 
-  it should {
     "produce dataframe with column with '_prediction_2' suffix" when {
       "'_prediction' and '_prediction_1' are occupied" in {
         val (scoredDataFrame, expectedDataFrame) = createScoredAndExpectedDataFrames(
@@ -47,9 +45,7 @@ class TrainedRidgeRegressionIntegSpec extends DeeplangIntegTestSupport {
         assertDataFramesEqual(scoredDataFrame, expectedDataFrame)
       }
     }
-  }
 
-  it should {
     "throw an exception" when {
       "expected feature columns were not found in DataFrame" in {
         intercept[ColumnsDoNotExistException] {
@@ -60,6 +56,7 @@ class TrainedRidgeRegressionIntegSpec extends DeeplangIntegTestSupport {
             expectedPredictionColumnSuffix = "_prediction_2")
         }
       }
+
       "feature columns were not Double" in {
         intercept[WrongColumnTypeException] {
           createScoredAndExpectedDataFrames(
@@ -68,6 +65,22 @@ class TrainedRidgeRegressionIntegSpec extends DeeplangIntegTestSupport {
             targetColumnName = "some_target",
             expectedPredictionColumnSuffix = "_prediction_2")
         }
+      }
+    }
+
+    val path = "blah"
+    "return url" when {
+      "save was executed" in {
+        val regression = createMockTrainedRidgeRegression(Seq(), "whatever", Seq())
+        regression.save(mockExecutionContext)(path)
+        regression.url shouldBe Some(path)
+      }
+    }
+
+    "not return url" when {
+      "save was not executed" in {
+        val regression = createMockTrainedRidgeRegression(Seq(), "whatever", Seq())
+        regression.url shouldBe None
       }
     }
   }
@@ -82,15 +95,30 @@ class TrainedRidgeRegressionIntegSpec extends DeeplangIntegTestSupport {
       Row(1.5, 2.5, "a", 3.5),
       Row(1.6, 2.6, "b", 3.6),
       Row(1.7, 2.7, "c", 3.7))
-
     val inputSchema: StructType = StructType(List(
       StructField(inputColumnNames(0), DoubleType),
       StructField(inputColumnNames(1), DoubleType),
       StructField(inputColumnNames(2), StringType),
       StructField(inputColumnNames(3), DoubleType)))
-
     val inputDataframe = createDataFrame(inputRowsSeq, inputSchema)
+    val resultDoubles = Seq(4.5, 4.6, 4.7)
 
+    val expectedPredictionColumnName = targetColumnName + expectedPredictionColumnSuffix
+    val expectedOutputDataFrame = createExpectedOutputDataFrame(
+    inputSchema, inputRowsSeq, resultDoubles, expectedPredictionColumnName)
+
+    val regression: TrainedRidgeRegression =
+      createMockTrainedRidgeRegression(featureColumnNames, targetColumnName, resultDoubles)
+
+    val resultDataframe = regression.score(executionContext)(())(inputDataframe)
+
+    (resultDataframe, expectedOutputDataFrame)
+  }
+
+  private def createMockTrainedRidgeRegression(
+      featureColumnNames: Seq[String],
+      targetColumnName: String,
+      resultDoubles: Seq[Double]): TrainedRidgeRegression = {
     val inputVectors = Seq(
       Vectors.dense(1.5, 3.5),
       Vectors.dense(1.6, 3.6),
@@ -101,26 +129,14 @@ class TrainedRidgeRegressionIntegSpec extends DeeplangIntegTestSupport {
       Vectors.dense(0.0, 0.4),
       Vectors.dense(0.1, -0.2))
 
-    val resultDoubles = Seq(4.5, 4.6, 4.7)
+    val mockScaler = createScalerMock(expectedInput = inputVectors, output = scaledVectors)
+    val mockModel = createRegressionModelMock(expectedInput = scaledVectors, output = resultDoubles)
 
-    val mockScaler = createScalerMock(
-        expectedInput = inputVectors, output = scaledVectors)
-    val mockModel = createRegressionModelMock(
-      expectedInput = scaledVectors, output = resultDoubles)
-
-    val expectedPredictionColumnName = targetColumnName + expectedPredictionColumnSuffix
-    val expectedOutputDataFrame = createExpectedOutputDataFrame(
-      inputSchema, inputRowsSeq, resultDoubles, expectedPredictionColumnName)
-
-    val regression = TrainedRidgeRegression(
+    TrainedRidgeRegression(
       model = Some(mockModel),
       featureColumns = Some(featureColumnNames),
       targetColumn = Some(targetColumnName),
       scaler = Some(mockScaler))
-
-    val resultDataframe = regression.score(executionContext)(())(inputDataframe)
-
-    (resultDataframe, expectedOutputDataFrame)
   }
 
   private def createRegressionModelMock(
@@ -168,4 +184,10 @@ class TrainedRidgeRegressionIntegSpec extends DeeplangIntegTestSupport {
     createDataFrame(expectedOutputRowsSeq, expectedOutputSchema)
   }
 
+  private def mockExecutionContext: ExecutionContext = {
+    val executionContext = mock[ExecutionContext]
+    val hdfsClient = mock[DSHdfsClient]
+    when(executionContext.hdfsClient).thenReturn(hdfsClient)
+    executionContext
+  }
 }

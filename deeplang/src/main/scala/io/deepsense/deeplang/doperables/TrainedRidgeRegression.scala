@@ -31,6 +31,10 @@ case class TrainedRidgeRegression(
 
   def this() = this(None, None, None, None)
 
+  private var physicalPath: Option[String] = None
+
+  override def url: Option[String] = physicalPath
+
   override val score = new DMethod1To1[Unit, DataFrame, DataFrame] {
 
     override def apply(context: ExecutionContext)(p: Unit)(dataframe: DataFrame): DataFrame = {
@@ -64,6 +68,7 @@ case class TrainedRidgeRegression(
       scaler.get.std,
       scaler.get.mean)
     context.hdfsClient.saveObjectToFile(path, params)
+    this.physicalPath = Some(path)
   }
 }
 

@@ -14,4 +14,5 @@ import io.deepsense.deeplang.doperables.Report
 trait DOperable {
   def report: Report
   def save(executionContext: ExecutionContext)(path: String): Unit
+  def url: Option[String] = None
 }

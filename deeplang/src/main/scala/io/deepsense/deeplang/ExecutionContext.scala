@@ -10,7 +10,7 @@ import org.apache.spark.SparkContext
 import org.apache.spark.sql.SQLContext
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
-import io.deepsense.entitystorage.EntityStorageClient
+import io.deepsense.entitystorage.{EntityStorageClient, UniqueFilenameUtil}
 
 /** Holds information needed by DOperations and DMethods during execution. */
 class ExecutionContext {
@@ -20,4 +20,6 @@ class ExecutionContext {
   var entityStorageClient: EntityStorageClient = _
   var tenantId: String = _
   var hdfsClient: DSHdfsClient = _
+  def uniqueHdfsFileName(entityCategory: String) =
+    UniqueFilenameUtil.getUniqueHdfsFilename(tenantId, entityCategory)
 }
