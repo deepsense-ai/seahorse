@@ -4,16 +4,14 @@
 - name: Builds documentation docker image
   hosts: localhost
   vars_files:
-    - vars/env.yml
-    - vars/documentation.yml
+    - vars/docker.yml
   roles:
     - documentation
 
 - name: Exports documentation docker image
   hosts: localhost
   vars_files:
-    - vars/env.yml
-    - vars/documentation.yml
+    - vars/docker.yml
   tasks:
     - include: tasks/save_docker_image.yml docker_image={{ds_documentation_docker_image}} download_dir="{{ds_documentation_download_dir}}"
 
@@ -22,8 +20,7 @@
   user: ubuntu
   sudo: yes
   vars_files:
-    - vars/env.yml
-    - vars/documentation.yml
+    - vars/docker.yml
   tasks:
     - name: Assures docker dir exists
       file: path={{ds_documentation_download_dir}} state=directory
@@ -34,8 +31,7 @@
   user: ubuntu
   sudo: yes
   vars_files:
-    - vars/env.yml
-    - vars/documentation.yml
+    - vars/docker.yml
   tasks:
     - include: tasks/load_docker_image.yml docker_image={{ds_documentation_docker_image}} docker_dir={{ds_documentation_download_dir}}
 
@@ -44,8 +40,7 @@
   user: ubuntu
   sudo: yes
   vars_files:
-    - vars/env.yml
-    - vars/documentation.yml
+    - vars/docker.yml
   tasks:
     - name: Register running Docker containers
       register: docker_containers

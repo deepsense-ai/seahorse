@@ -4,7 +4,6 @@
 - name: Download WorkflowExecutor packages
   hosts: localhost
   vars_files:
-    - vars/env.yml
     - vars/deployment.yml
     - vars/artifacts.yml
     - vars/supervisor.yml
@@ -22,11 +21,8 @@
   vars_files:
     - vars/deployment.yml
     - vars/artifacts.yml
-    - vars/env.yml
-    - vars/main.yml
-    - vars/docker.yml
     - vars/supervisor.yml
-    - vars/install_spark.yml
+    - vars/spark.yml
   roles:
     - supervisor
     - { role: workflowexecutor,

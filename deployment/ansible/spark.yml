@@ -4,8 +4,7 @@
 - name: Download spark package
   hosts: localhost
   vars_files:
-    - vars/env.yml
-    - vars/install_spark.yml
+    - vars/spark.yml
   tasks:
     - get_url: url=http://d3kbcqa49mib13.cloudfront.net/{{spark_package_filename}} dest=/tmp/{{spark_package_filename}}
 
@@ -14,7 +13,6 @@
   user: ubuntu
   sudo: yes
   vars_files:
-    - vars/env.yml
-    - vars/install_spark.yml
+    - vars/spark.yml
   roles:
-    - install_spark
+    - spark

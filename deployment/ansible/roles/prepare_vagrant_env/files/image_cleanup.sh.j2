@@ -5,7 +5,6 @@ rm -fR /tmp/docker-ansible /tmp/supervisor* /tmp/elementtree* /tmp/meld3* /tmp/s
 {{conda_dir}}/bin/conda clean --index-cache
 
 apt-get -y purge juju-core puppet-common chef-zero
-apt-get -y purge linux-headers-3.13.0-54 linux-headers-3.13.0-54-generic linux-image-3.13.0-54 linux-image-3.13.0-54-generic
 
 apt-get -y autoremove
 apt-get -y clean

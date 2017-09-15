@@ -4,7 +4,6 @@
 - name: Download Frontend package
   hosts: localhost
   vars_files:
-    - vars/env.yml
     - vars/deployment.yml
     - vars/artifacts.yml
   tasks:
@@ -15,8 +14,8 @@
   hosts: frontend
   sudo: yes
   vars_files:
-    - vars/env.yml
     - vars/deployment.yml
     - vars/frontend.yml
+    - vars/artifacts.yml
   roles:
     - frontend

@@ -1,12 +1,8 @@
 # Copyright (c) 2015, CodiLime Inc.
 
 frontend_dir: "/tmp/frontend"
-ds_frontend_download_dir: "/tmp/docker-ansible/frontend"
-frontend_artifact_id: deepsense-frontend
 
-ds_frontend_package_name: "0.2.0-frontend-2015-07-23_18-02-46-209ed4f-SNAPSHOT"
-ds_frontend_artifact_url: "http://10.10.1.77:8081/artifactory/deepsense-frontend-snapshot/io/deepsense/deepsense-frontend/{{ds_frontend_package_name}}/{{ds_frontend_package_name}}.zip"
-ds_frontend_docker_image: "ds_frontend"
+ds_frontend_package_name: "frontend-latest"
 ds_frontend_docs_address: "https://seahorse.deepsense.io"
-api_version: "0.4.0"
-editor_version: "0.4.0-SNAPSHOT"
+api_version: "1.0.0"
+editor_version: "1.0.0"

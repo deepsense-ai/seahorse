@@ -1,37 +1,16 @@
 # Copyright (c) 2015, CodiLime Inc.
 
 [master]
-ds-system-test-env-master
+ds-dev-env-master
 
-[slaves]
-ds-depl-env-slave1
-
-[hadoop-cluster:children]
-master
-slaves
-
-[spark-cluster:children]
-master
-slaves
-
-[supervisorexample]
-ds-depl-env-master
+[java_hosts]
+ds-dev-env-master
 
 [vagrant]
-ds-dev-env-master
+seahorse-vm
 
 [frontend]
 ds-frontend
-
-[ds]
-ds-depl-env-master
-ds-depl-env-slave1
-
-[keystone]
-ds-frontend
-
-[cassandra]
-ds-system-test-env-master
 
 [rabbitmq]
 ds-frontend

@@ -65,7 +65,7 @@ def extract_kernel_id(connection_file_name):
 
 def _extract_dataframe_source(kernel_id):
     notebook_server_location = os.environ['NOTEBOOK_SERVER_ADDRESS'] + ":" + os.environ['NOTEBOOK_SERVER_PORT']
-    response = urllib2.urlopen("http://" + notebook_server_location + "/api/sessions").read()
+    response = urllib2.urlopen("http://" + notebook_server_location + "/jupyter/api/sessions").read()
     sessions = json.loads(response)
     for session in sessions:
         if session['kernel']['id'] == kernel_id:

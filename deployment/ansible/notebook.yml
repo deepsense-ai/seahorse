@@ -5,7 +5,6 @@
   hosts: localhost
   vars_files:
     - vars/notebook.yml
-    - vars/env.yml
     - vars/deployment.yml
     - vars/artifacts.yml
     - vars/supervisor.yml
@@ -27,10 +26,9 @@
   user: ubuntu
   sudo: yes
   vars_files:
-    - vars/env.yml
     - vars/notebook.yml
     - vars/deployment.yml
-    - vars/install_spark.yml
+    - vars/spark.yml
     - vars/supervisor.yml
   roles:
     - supervisor

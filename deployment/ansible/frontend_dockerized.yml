@@ -4,7 +4,7 @@
 - name: Builds frontend docker images
   hosts: localhost
   vars_files:
-    - vars/env.yml
+    - vars/docker.yml
     - vars/frontend.yml
   vars:
     docker_dir: "/tmp/docker-ansible"
@@ -14,7 +14,7 @@
 - name: Exports frontend docker image
   hosts: localhost
   vars_files:
-    - vars/env.yml
+    - vars/docker.yml
     - vars/frontend.yml
   tasks:
     - include: tasks/save_docker_image.yml docker_image={{ds_frontend_docker_image}} download_dir="{{ds_frontend_download_dir}}"
@@ -24,7 +24,7 @@
   user: ubuntu
   sudo: yes
   vars_files:
-    - vars/env.yml
+    - vars/docker.yml
     - vars/frontend.yml
   tasks:
     - name: Assures docker dir exists
@@ -36,7 +36,7 @@
   user: ubuntu
   sudo: yes
   vars_files:
-    - vars/env.yml
+    - vars/docker.yml
     - vars/frontend.yml
   tasks:
     - include: tasks/load_docker_image.yml docker_image={{ds_frontend_docker_image}} docker_dir={{ds_frontend_download_dir}}
@@ -46,7 +46,7 @@
   user: ubuntu
   sudo: yes
   vars_files:
-    - vars/env.yml
+    - vars/docker.yml
     - vars/frontend.yml
   tasks:
     - name: Register running Docker containers

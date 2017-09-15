@@ -4,10 +4,6 @@
 ds_wm_ip: "{{ansible_docker0.ipv4.address}}"
 ds_wm_port: 9081
 
-wm_auth_service_identity: "service:workflow-manager"
-wm_auth_service_password: "fahda0joek3aeBah"
-auth_service_timeout_connection: 1000
-
 roles_workflows_get: "workflows:get"
 roles_workflows_update: "workflows:update"
 roles_workflows_create: "workflows:create"
@@ -22,14 +18,3 @@ models_api_prefix: "v1/models"
 reports_api_prefix: "v1/reports"
 
 workflows_timeout: 3000
-
-cassandra_host: "{{ansible_docker0.ipv4.address}}"
-cassandra_port: 9042
-cassandra_reconnect_delay: 5000
-cassandra_user: cassandra
-cassandra_pass: cassandra
-workflows_cassandra_table: workflows
-workflowresults_cassandra_table: workflowresults
-notebooks_cassandra_table: notebooks
-workflowstate_cassandra_table: workflow_state
-wm_cassandra_keyspace: workflowmanager

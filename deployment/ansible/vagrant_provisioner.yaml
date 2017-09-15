@@ -24,7 +24,7 @@
 - include: workflowmanager.yaml
 - include: frontend.yml
 - include: rabbitmq.yml
-- include: install_spark.yml
+- include: spark.yml
 - include: workflowexecutor.yaml
 - include: notebook.yml
 - include: proxy.yml

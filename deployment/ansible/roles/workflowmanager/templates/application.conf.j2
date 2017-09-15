@@ -4,16 +4,6 @@ server {
   startup.timeout = {{startup_timeout}}
 }
 
-auth-service {
-  endpoint = "{{auth_service_endpoint}}"
-  identity = "{{wm_auth_service_identity}}"
-  password = "{{wm_auth_service_password}}"
-  timeout {
-    connection = {{auth_service_timeout_connection}}
-    socket = {{auth_service_timeout_socket}}
-  }
-}
-
 roles {
   workflows {
     get = "{{roles_workflows_get}}"
@@ -36,4 +26,14 @@ h2 {
   driver = org.h2.Driver
   connectionPool = disabled
   keepAliveConnection = true
+}
+
+auth-service {
+  endpoint = "http://127.0.0.1:1234"
+  identity = "unused"
+  password = "unused"
+  timeout {
+    connection = 0
+    socket = 0
+  }
 }
