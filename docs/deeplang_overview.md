@@ -11,7 +11,7 @@ description: Seahorse documentation homepage
 
 Deeplang is a
 <a target="_blank" href="https://en.wikipedia.org/wiki/Visual_programming_language">visual programming language</a>
-that lets users create data processing and machine learning workflows, from simple to advanced.
+that lets users create data processing and machine learning workflows, from simple to advanced ones.
 Deeplang workflow is a graph of connected operations, which are consuming and producing entities.
 
 ### Entities and Classes
@@ -26,11 +26,11 @@ Each entity has a certain _class_ - this concept is similar to class in object-o
 languages.
 
 ### Operations
-Operations are base building blocks for workflows. They serve mainly to produce new entities.
-Each operation has $$n$$ input ports, $$m$$ output ports and configurable parameters. Ports are
-indexed from $$0$$. In order to be executed, an operation needs one entity to be placed in each of
-its input ports. Additionally, all required parameters have to be filled. When an operation is
-executed, it produces one entity for each of its output ports. It also can have some side effects
+Operations are base building blocks for workflows. Their purpose is to produce new entities.
+Each operation has $$n$$ input ports, $$m$$ output ports and a set of configurable parameters.
+Ports are indexed from $$0$$. In order to be executed, an operation needs one entity to be placed in
+each of its input ports. In addition, all required parameters have to be filled. When an operation
+is executed, it produces one entity for each of its output ports. It also can perform side effects
 (like logging or writing data to databases and filesystems), but it never modifies its input
 entities (as they are immutable).
 
@@ -39,7 +39,7 @@ entities (as they are immutable).
 </div>
 
 You can think about an operation as a function that receives a tuple of entities and parameters'
-values, and returns a tuple of entities.
+values and returns a tuple of entities.
 
 $$Operation: (entity_0, entity_1, …, entity_{n-1}, parameters) \rightarrow (entity_0, entity_1, ... , entity_{m-1})$$
 
@@ -48,8 +48,8 @@ $$Operation: (entity_0, entity_1, …, entity_{n-1}, parameters) \rightarrow (en
 in columns (similarly to R or Spark dataframes).
 
 [Read DataFrame](operations/read_dataframe.html) is an operation with no input ports and one output
-port. It is able to read data from an external source and form it into a DataFrame that it will
-produce in an output port.
+port. It is able to read data from an external source and form it into a DataFrame. The DataFrame is
+produced in an output port.
 
 [Filter Columns](operations/filter_columns.html) is an operation with one input and two output ports.
 It selects a subset of `DataFrame` columns and produces a new `DataFrame` which contains only
@@ -58,8 +58,8 @@ that can be used to perform the same transformation on a different `DataFrame` o
 
 [Write DataFrame](operations/write_dataframe.html) is an operation with one input port and no output
 ports. It is used to export content of a `DataFrame` to an external destination. Note that, as it
-has no output, Write DataFrame is interesting only because of it’s side effects (the data is being
-written to the destination).
+has no output, Write DataFrame is interesting only because of it’s side effects (the data that's
+being written to the destination).
 
 ### Parameters
 An operation can have a set of named parameters. Parameters are modifying the behavior of the
@@ -69,8 +69,8 @@ operation. The list of parameter types can be found [here](parameter_types.html)
 Higher-order operations, such as: [Fit](operations/fit.html), [Transform](operations/transform.html),
 [Fit+Transform](operations/fit_plus_transform.html), [Evaluate](operations/evaluate.html),
 [Grid Search](operations/grid_search.html) have dynamic parameters, which are dependent on nodes
-connected to the operation's input ports. Dynamic parameters enable to override input operations'
-parameters.
+connected to the operation's input ports. Dynamic parameters allow user to override input
+operations' parameters.
 
 #### Example 1 (simple parameters)
 [Read DataFrame](operations/read_dataframe.html) has parameters: `data storage type`, `source`,
@@ -163,7 +163,7 @@ produces a [MetricValue](classes/metric_value.html).
 #### Example
 
 [Regression Evaluator](operations/regression_evaluator.html) is an operation that outputs
-an `Evaluator`. It is passed to `Evaluate` operation, which calculates regression metrics on
+an `Evaluator`. It is passed to `Evaluate` operation which calculates regression metrics on
 a previously scored `DataFrame`.
 
 ![estimator example](./img/evaluator_example.png){: .img-responsive}
