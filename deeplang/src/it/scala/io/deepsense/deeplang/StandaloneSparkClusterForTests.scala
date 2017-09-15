@@ -102,6 +102,10 @@ object StandaloneSparkClusterForTests {
       .set("spark.executor.memory", "512m")
 
     val sparkContext = new SparkContext(sparkConf)
+    // After Spark writes all parquet file parts, it reads footers of all of them, merges and writes a "summary".
+    // Since this is performed from the driver, it needs to be able to connect to the data node.
+    // In our (dockerized) setup it isn't and this is why we turn this option off. It's off in Spark 2.0 by default.
+    sparkContext.hadoopConfiguration.set("parquet.enable.summary-metadata", "false")
     val sparkSQLSession = new SparkSQLSession(sparkContext)
 
     UserDefinedFunctions.registerFunctions(sparkSQLSession.udfRegistration)
