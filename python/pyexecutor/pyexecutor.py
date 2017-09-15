@@ -20,7 +20,7 @@ class PyExecutor(object):
             gateway_address=self.gateway_resolver.get_gateway_address())
 
         # noinspection PyProtectedMember
-        callback_server_port = gateway._callback_server.port
+        callback_server_port = gateway._callback_server.server_socket.getsockname()[1]
         gateway.entry_point.reportCallbackServerPort(callback_server_port)
 
         spark_context, sql_context = self._initialize_spark_contexts(gateway)
