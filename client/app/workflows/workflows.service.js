@@ -167,7 +167,7 @@ function WorkflowService($rootScope, $log, Workflow, OperationsHierarchyService,
       const workflow = this.getCurrentWorkflow();
       return workflow.workflowStatus === 'editor' &&
         workflow.sessionStatus === sessionStatus.RUNNING &&
-        workflow.owner.id === UserService.getSeahorseUser().id;
+        this.isCurrentUserOwnerOfCurrentWorkflow();
     }
 
     isWorkflowRunning() {
@@ -288,6 +288,12 @@ function WorkflowService($rootScope, $log, Workflow, OperationsHierarchyService,
 
       return OperationsHierarchyService.IsDescendantOf(startNodeTypeQualifier, [endNodeTypeQualifier]);
     }
+
+    isCurrentUserOwnerOfCurrentWorkflow() {
+      const workflow = this.getCurrentWorkflow();
+      return workflow.owner.id === UserService.getSeahorseUser().id;
+    }
+
   }
 
   return new WorkflowServiceClass();

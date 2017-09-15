@@ -9,7 +9,7 @@
   color: #333;
   transition: background-color 200ms;
 
-  &--active > div {
+  &--active > div > div {
     background-color: lighten(@color-active, 30%);
   }
 
@@ -55,84 +55,44 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    padding: 0 10px;
+    padding: 8px 10px;
     height: 100%;
-    text-align: left;
     user-select: none;
+    font-weight: 600;
+    font-size: 11px;
 
+    .centered {
+      justify-content: center;
+    }
+
+    .operation-name,
     .custom-name {
-      text-align: center;
+      line-height: 12px;
+    }
+
+    .operation-name {
       font-weight: 600;
       width: 100%;
+      text-align: center;
 
       .action-icon {
         font-size: 14px;
       }
     }
 
-    .user-name {
+    .custom-name {
       font-style: italic;
-      font-size: 12px;
+      text-align: center;
+      width: 100%;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      text-align: center;
-      width: 100%;
     }
   }
 
-  .status {
+  &__status-icon {
     position: absolute;
     right: -10px;
     top: 32%;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    &__icon {
-      text-align: center;
-      font-size: 14px;
-      line-height: 22px;
-      color: white;
-      width: 22px;
-      height: 22px;
-    }
-
-    &.completed {
-      background-color: @color-action;
-    }
-
-    &.running {
-      background-color: @color-active;
-    }
-
-    &.queued {
-      background-color: @color-warn;
-    }
-
-    &.aborted,
-    &.failed {
-      background-color: @color-error;
-    }
-
-    &.unknown {
-      background-color: @seahorse-orange;
-    }
   }
-}
-
-.selected-node,
-.selected-node:hover {
-  background-color: @highlighted-graph-node-color;
-  border-color: @color-active;
-  color: white;
-  transition: background-color 400ms;
-}
-
-.popover {
-  word-wrap: break-word;
-  max-width: 500px !important;
 }
