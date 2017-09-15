@@ -71,7 +71,10 @@ class EditorController {
     this.$canvas.bind('drop', (event) => {
       const originalEvent = event.originalEvent;
       if (originalEvent.dataTransfer.getData('draggableExactType') === 'graphNode') {
-        this.startWizard(originalEvent.offsetX, originalEvent.offsetY);
+        const positionX = event.clientX;
+        const positionY = event.clientY - this.$element[0].getBoundingClientRect().top;
+        const [x, y] = this.CanvasService.translateScreenToCanvasPosition(positionX, positionY);
+        this.startWizard(x, y);
       }
     });
 
