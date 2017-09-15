@@ -75,11 +75,6 @@ to another `DataFrame` with a [Transform](transform.html) operation.
 </thead>
 <tbody>
   <tr>
-    <td><code>input column</code></td>
-    <td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
-    <td>The input column that can be accessed with <code>input column alias</code>.</td>
-  </tr>
-  <tr>
     <td><code>input column alias</code></td>
     <td><code><a href="../parameter_types.html#string">String</a></code></td>
     <td>The identifier that can be used in the <code>Spark SQL</code> formula
@@ -91,9 +86,9 @@ to another `DataFrame` with a [Transform](transform.html) operation.
     <td>The <code>Spark SQL</code> formula (as used in <code>SELECT</code> statement).</td>
   </tr>
   <tr>
-    <td><code>output column name</code></td>
-    <td><code><a href="../parameter_types.html#string">String</a></code></td>
-    <td>The name of the newly created column holding the result.</td>
+    <td><code>operate on</code></td>
+    <td><code><a href="../parameter_types.html#input-output-column-selector">InputOutputColumnSelector</a></code></td>
+    <td>The input and output columns for the operation.</td>
   </tr>
 </tbody>
 </table>

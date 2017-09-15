@@ -11,7 +11,8 @@ A `Write Transformer` operation saves a [Transformer](../classes/transformer.htm
 
 It supports writing `Transformers` to the local file system and HDFS.
 
-**NOTE:** Only crucial attributes of the `Transformer` are written. Attributes that are not used during `Transformer` execution might be lost after model write/read flow.
+**NOTE:** Only crucial attributes of the `Transformer` are written.
+Attributes that are not used during `Transformer` execution might be lost after `Transformer` write&read flow.
 
 **Since**: Seahorse 1.1.0
 

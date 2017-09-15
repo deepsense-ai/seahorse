@@ -6,7 +6,7 @@ description: Decision Tree Regression
 usesMathJax: true
 includeOperationsMenu: true
 ---
-Creates a decision tree regression. It supports both continuous and categorical features.
+Creates a decision tree regression model. It supports both continuous and categorical features.
 
 This operation is ported from Spark ML.
 

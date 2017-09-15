@@ -1,8 +1,8 @@
 ---
 layout: documentation
-displayTitle: Custom Python Column Operation
-title: Custom Python Column Operation
-description: Custom Python Column Operation
+displayTitle: Python Column Transformation
+title: Python Column Transformation
+description: Python Column Transformation
 usesMathJax: true
 includeOperationsMenu: true
 ---
