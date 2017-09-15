@@ -52,11 +52,10 @@ case object DefaultClusterSpawner extends ClusterSpawner with LazyLogging {
     val app = yarnClient.createApplication()
     val amContainer = Records.newRecord(classOf[ContainerLaunchContext])
 
-    val geCfg = ConfigFactory.load()
     val command = "/opt/spark/bin/spark-submit --class io.deepsense.graphexecutor.GraphExecutor" +
-      " --master spark://" + geCfg.getString(HdfsHostnameProperty) + ":7077" +
-      " --executor-memory " + geCfg.getString(ExecutorMemoryProperty) +
-      " --driver-memory " + geCfg.getString(DriverMemoryProperty) +
+      " --master spark://" + config.getString(HdfsHostnameProperty) + ":7077" +
+      " --executor-memory " + config.getString(ExecutorMemoryProperty) +
+      " --driver-memory " + config.getString(DriverMemoryProperty) +
       " --driver-class-path \"$CLASSPATH\" " +
       " --jars ./graphexecutor-deps.jar " +
       s" ./graphexecutor.jar $experimentId $graphExecutionStatusesActorPath $esFactoryName" +
@@ -65,16 +64,16 @@ case object DefaultClusterSpawner extends ClusterSpawner with LazyLogging {
     amContainer.setCommands(List(command).asJava)
 
     val geConf = Utils.getConfiguredLocalResource(
-      new Path(geCfg.getString("deployment.etc.applicationconf.location")))
+      new Path(config.getString("deployment.etc.applicationconf.location")))
     val log4jXml = Utils.getConfiguredLocalResource(
-      new Path(geCfg.getString("deployment.etc.log4j.location")))
+      new Path(config.getString("deployment.etc.log4j.location")))
     val geJar = Utils.getConfiguredLocalResource(
-      new Path(geCfg.getString("deployment.lib.main.location")))
+      new Path(config.getString("deployment.lib.main.location")))
     val geDepsJar = Utils.getConfiguredLocalResource(
-      new Path(geCfg.getString("deployment.lib.deps.location")))
+      new Path(config.getString("deployment.lib.deps.location")))
     amContainer.setLocalResources(Map(
-      geCfg.getString("deployment.etc.applicationconf.name") -> geConf,
-      geCfg.getString("deployment.etc.log4j.name") -> log4jXml,
+      config.getString("deployment.etc.applicationconf.name") -> geConf,
+      config.getString("deployment.etc.log4j.name") -> log4jXml,
       "graphexecutor.jar" -> geJar,
       "graphexecutor-deps.jar" -> geDepsJar
     ).asJava)
