@@ -23,7 +23,8 @@ import io.deepsense.workflowexecutor.communication.message.notebook.{Address, Ge
 
 case class NotebookKernelTopicSubscriber(
     publisherActorName: String,
-    pythonGatewayListeningPort: () => Option[Int])
+    pythonGatewayListeningPort: () => Option[Int],
+    localAddress: String)
   extends Actor
   with Logging {
 
@@ -31,7 +32,7 @@ case class NotebookKernelTopicSubscriber(
     case get: GetPythonGatewayAddress =>
       logger.debug("Received GetPythonGatewayAddress")
       pythonGatewayListeningPort() foreach { port =>
-        publisherActor(publisherActorName) ! PythonGatewayAddress(List(Address("localhost", port)))
+        publisherActor(publisherActorName) ! PythonGatewayAddress(List(Address(localAddress, port)))
       }
   }
 
@@ -43,7 +44,11 @@ case class NotebookKernelTopicSubscriber(
 object NotebookKernelTopicSubscriber {
   def props(
       publisherActorName: String,
-      pythonGatewayListeningPort: () => Option[Int]): Props = {
-    Props(new NotebookKernelTopicSubscriber(publisherActorName, pythonGatewayListeningPort))
+      pythonGatewayListeningPort: () => Option[Int],
+      localAddress: String): Props = {
+    Props(new NotebookKernelTopicSubscriber(
+      publisherActorName,
+      pythonGatewayListeningPort,
+      localAddress))
   }
 }

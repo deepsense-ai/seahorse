@@ -17,7 +17,7 @@
 package io.deepsense.workflowexecutor.pythongateway
 
 import java.io.PrintStream
-import java.net.{ServerSocket, Socket}
+import java.net.{InetAddress, ServerSocket, Socket}
 import java.util.concurrent.TimeoutException
 
 import scala.concurrent.duration
@@ -50,12 +50,14 @@ class PythonGatewaySpec extends WordSpec with MockitoSugar with Matchers with Ti
     }
 
   "Gateway" should {
+    val localhost = InetAddress.getByName("127.0.0.1")
     "set up a listening port" in {
       val gateway = PythonGateway(
         gatewayConfig,
         mock[SparkContext],
         mock[SQLContext],
-        mock[DataFrameStorage])
+        mock[DataFrameStorage],
+        localhost)
       gateway.start()
 
       val connectionAttempt = attemptConnection(gateway.listeningPort)
@@ -69,7 +71,8 @@ class PythonGatewaySpec extends WordSpec with MockitoSugar with Matchers with Ti
         gatewayConfig,
         mock[SparkContext],
         mock[SQLContext],
-        mock[DataFrameStorage])
+        mock[DataFrameStorage],
+        localhost)
       gateway.start()
       gateway.stop()
       Thread.sleep(1000)
@@ -81,7 +84,8 @@ class PythonGatewaySpec extends WordSpec with MockitoSugar with Matchers with Ti
         gatewayConfig,
         mock[SparkContext],
         mock[SQLContext],
-        mock[DataFrameStorage])
+        mock[DataFrameStorage],
+        localhost)
 
       gateway.listeningPort shouldBe None
     }
@@ -91,7 +95,8 @@ class PythonGatewaySpec extends WordSpec with MockitoSugar with Matchers with Ti
         gatewayConfig,
         mock[SparkContext],
         mock[SQLContext],
-        mock[DataFrameStorage])
+        mock[DataFrameStorage],
+        localhost)
       gateway.start()
 
       a[TimeoutException] should be thrownBy {
@@ -106,7 +111,8 @@ class PythonGatewaySpec extends WordSpec with MockitoSugar with Matchers with Ti
         gatewayConfig,
         mock[SparkContext],
         mock[SQLContext],
-        mock[DataFrameStorage])
+        mock[DataFrameStorage],
+        localhost)
       gateway.start()
 
       val command = "Hello!"

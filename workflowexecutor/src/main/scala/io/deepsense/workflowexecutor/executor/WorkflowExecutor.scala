@@ -68,8 +68,15 @@ case class WorkflowExecutor(
     val sparkContext = createSparkContext()
     val sqlContext = createSqlContext(sparkContext)
 
-    val pythonExecutionCaretaker =
-      new PythonExecutionCaretaker(pythonExecutorPath, sparkContext, sqlContext, dataFrameStorage)
+    val hostAddress: InetAddress = HostAddressResolver.findHostAddress()
+    logger.info("HOST ADDRESS: {}", hostAddress.getHostAddress)
+
+    val pythonExecutionCaretaker = new PythonExecutionCaretaker(
+      pythonExecutorPath,
+      sparkContext,
+      sqlContext,
+      dataFrameStorage,
+      hostAddress)
 
     pythonExecutionCaretaker.start()
 

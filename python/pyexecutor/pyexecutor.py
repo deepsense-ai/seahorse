@@ -2,7 +2,7 @@
 import argparse
 import time
 
-from py4j.java_gateway import JavaGateway, GatewayClient, java_import
+from py4j.java_gateway import JavaGateway, GatewayClient, CallbackServerParameters, java_import
 from py4j.protocol import Py4JError
 
 from code_executor import CodeExecutor
@@ -58,10 +58,13 @@ class PyExecutor(object):
     @staticmethod
     def _initialize_gateway(gateway_address):
         (host, port) = gateway_address
+
+        callback_params = CallbackServerParameters(address=host, port=0)
+
         gateway = JavaGateway(GatewayClient(address=host, port=port),
-                              python_proxy_port=0,
                               start_callback_server=True,
-                              auto_convert=True)
+                              auto_convert=True,
+                              callback_server_parameters = callback_params)
         try:
             java_import(gateway.jvm, "org.apache.spark.SparkEnv")
             java_import(gateway.jvm, "org.apache.spark.SparkConf")

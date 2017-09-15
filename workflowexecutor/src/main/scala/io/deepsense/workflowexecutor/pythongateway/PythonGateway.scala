@@ -16,6 +16,7 @@
 
 package io.deepsense.workflowexecutor.pythongateway
 
+import java.net.InetAddress
 import java.util.concurrent.atomic.AtomicReference
 
 import scala.annotation.tailrec
@@ -34,7 +35,8 @@ case class PythonGateway(
     gatewayConfig: GatewayConfig,
     sparkContext: SparkContext,
     sqlContext: SQLContext,
-    dataFrameStorage: DataFrameStorage) extends Logging {
+    dataFrameStorage: DataFrameStorage,
+    hostAddress: InetAddress) extends Logging {
   import PythonGateway._
 
   private val operationExecutionDispatcher = new OperationExecutionDispatcher
@@ -67,7 +69,7 @@ case class PythonGateway(
   private def createGatewayServer(
       entryPoint: PythonEntryPoint, listener: GatewayEventListener): GatewayServer = {
 
-    val callbackClient = new LazyCallbackClient(entryPoint.getPythonPort _)
+    val callbackClient = new LazyCallbackClient(entryPoint.getPythonPort _, hostAddress)
 
     // It is quite important that these values are 0,
     // which translates to infinite timeout.
@@ -82,7 +84,8 @@ case class PythonGateway(
       connectTimeout,
       readTimeout,
       null, // no custom commands
-      callbackClient)
+      callbackClient,
+      hostAddress)
 
     gateway.addListener(listener)
 
@@ -101,9 +104,11 @@ object PythonGateway {
    * at the time of Gateway instantiation and are prepared
    * for restarting the callback server.
    */
-  class LazyCallbackClient(val getCallbackPort: () => Int) extends CallbackClient(0) {
+  class LazyCallbackClient(
+      val getCallbackPort: () => Int,
+      val host: InetAddress) extends CallbackClient(0, host) {
 
-    private val clientRef = new AtomicReference(new CallbackClient(0))
+    private val clientRef = new AtomicReference(new CallbackClient(0, host))
 
     override def sendCommand(command: String): String = {
       @tailrec
@@ -114,7 +119,7 @@ object PythonGateway {
         if (currentClient.getPort == port) {
           currentClient
         } else {
-          val newClient = new CallbackClient(port)
+          val newClient = new CallbackClient(port, host)
           if (clientRef.compareAndSet(currentClient, newClient)) {
             currentClient.shutdown()
             newClient

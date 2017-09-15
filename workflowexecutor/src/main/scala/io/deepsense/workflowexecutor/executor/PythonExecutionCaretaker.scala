@@ -17,6 +17,7 @@
 package io.deepsense.workflowexecutor.executor
 
 import java.io._
+import java.net.InetAddress
 import java.util.concurrent.atomic.AtomicReference
 import java.util.zip.ZipInputStream
 
@@ -46,7 +47,8 @@ class PythonExecutionCaretaker(
   pythonExecutorPath: String,
   val sparkContext: SparkContext,
   val sqlContext: SQLContext,
-  val dataFrameStorage: DataFrameStorage) extends Logging {
+  val dataFrameStorage: DataFrameStorage,
+  val hostAddress: InetAddress) extends Logging {
 
   import PythonExecutionCaretaker._
 
@@ -86,7 +88,7 @@ class PythonExecutionCaretaker(
   def gatewayListeningPort: Option[Int] = pythonGateway.listeningPort
 
   private val pythonGateway =
-    PythonGateway(GatewayConfig(), sparkContext, sqlContext, dataFrameStorage)
+    PythonGateway(GatewayConfig(), sparkContext, sqlContext, dataFrameStorage, hostAddress)
 
   private val pyExecutorProcess = new AtomicReference[Option[Process]](None)
 
@@ -145,8 +147,8 @@ class PythonExecutionCaretaker(
 
   private def runPyExecutor(gatewayPort: Int, pythonExecutable: String): Process = {
     logger.info(s"Initializing PyExecutor from: $pythonExecutorPath")
-    val command =
-      s"$PythonExecutable $pythonExecutable --gateway-address localhost:$gatewayPort"
+    val command = s"$PythonExecutable $pythonExecutable " +
+      s"--gateway-address ${hostAddress.getHostAddress}:$gatewayPort"
     logger.info(s"Starting a new PyExecutor process: $command")
 
     val pyLogger = ProcessLogger(fout = logger.debug, ferr = logger.error)

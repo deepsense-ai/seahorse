@@ -16,6 +16,8 @@
 
 package io.deepsense.workflowexecutor.executor
 
+import java.net.InetAddress
+
 import akka.actor.{ActorSystem, Props}
 import com.rabbitmq.client.ConnectionFactory
 import com.thenewmotion.akka.rabbitmq.ConnectionActor
@@ -51,8 +53,15 @@ case class SessionExecutor(
     val dOperableCatalog = createDOperableCatalog()
     val dataFrameStorage = new DataFrameStorageImpl
 
-    val pythonExecutionCaretaker =
-      new PythonExecutionCaretaker(pythonExecutorPath, sparkContext, sqlContext, dataFrameStorage)
+    val hostAddress: InetAddress = HostAddressResolver.findHostAddress()
+    logger.info("HOST ADDRESS: {}", hostAddress.getHostAddress)
+
+    val pythonExecutionCaretaker = new PythonExecutionCaretaker(
+      pythonExecutorPath,
+      sparkContext,
+      sqlContext,
+      dataFrameStorage,
+      hostAddress)
     pythonExecutionCaretaker.start()
 
     implicit val system = ActorSystem()
@@ -98,7 +107,8 @@ case class SessionExecutor(
     val notebookSubscriberActor = system.actorOf(
       NotebookKernelTopicSubscriber.props(
         "user/" + MQCommunication.Actor.Publisher.notebook,
-        pythonExecutionCaretaker.gatewayListeningPort _),
+        pythonExecutionCaretaker.gatewayListeningPort _,
+        hostAddress.getHostAddress),
       MQCommunication.Actor.Subscriber.notebook)
     communicationFactory.registerSubscriber(
       MQCommunication.Topic.notebookSubscriptionTopic,
