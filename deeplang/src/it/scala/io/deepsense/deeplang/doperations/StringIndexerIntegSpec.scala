@@ -94,7 +94,7 @@ class StringIndexerIntegSpec extends DeeplangIntegTestSupport {
         "in multi column mode" should {
           "infer StringIndexerModel with parameters" in {
             val in = "c1"
-            val out = "out"
+            val out = "out_"
             val indexer = multiColumnStringIndexer(Some(in), Some(out))
             val knowledge =
               indexer.inferKnowledge(executionContext.inferContext)(knownSchemaKnowledgeVector)
@@ -173,7 +173,7 @@ class StringIndexerIntegSpec extends DeeplangIntegTestSupport {
         "in multi column mode" should {
           "infer StringIndexerModel with parameters" in {
             val in = "c1"
-            val out = "out"
+            val out = "out_"
             val indexer = multiColumnStringIndexer(Some(in), Some(out))
             val knowledge =
               indexer.inferKnowledge(executionContext.inferContext)(unknownSchemaKnowledgeVector)
