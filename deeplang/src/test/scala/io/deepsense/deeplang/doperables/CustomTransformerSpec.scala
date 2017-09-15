@@ -21,6 +21,8 @@ import org.apache.spark.sql.SQLContext
 import org.apache.spark.sql.types._
 import org.mockito.Matchers._
 import org.mockito.Mockito.when
+import org.mockito.invocation.InvocationOnMock
+import org.mockito.stubbing.Answer
 import spray.json.JsObject
 
 import io.deepsense.deeplang._
@@ -29,7 +31,7 @@ import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.deeplang.doperations.ConvertType
 import io.deepsense.deeplang.doperations.custom.{Sink, Source}
 import io.deepsense.deeplang.inference.InferContext
-import io.deepsense.deeplang.params.custom.InnerWorkflow
+import io.deepsense.deeplang.params.custom.{PublicParam, InnerWorkflow}
 import io.deepsense.deeplang.params.selections.{MultipleColumnSelection, NameColumnSelection}
 import io.deepsense.graph.{DeeplangGraph, Edge, Node}
 
@@ -42,39 +44,35 @@ class CustomTransformerSpec extends UnitSpec {
   val sourceNode = Node(sourceNodeId, Source())
   val sinkNode = Node(sinkNodeId, Sink())
 
-  val innerNodeOperation = {
+  private def createInnerNodeOperation(targetType: TargetTypeChoice) = {
     val params = TypeConverter()
-      .setTargetType(TargetTypeChoices.StringTargetTypeChoice())
+      .setTargetType(targetType)
       .setSelectedColumns(MultipleColumnSelection(Vector(NameColumnSelection(Set("column1")))))
       .paramValuesToJson
     new ConvertType().setParamsFromJson(params)
   }
 
-  val innerNode = Node(innerNodeId, innerNodeOperation)
+  private def createInnerNode(targetType: TargetTypeChoice) =
+    Node(innerNodeId, createInnerNodeOperation(targetType))
 
-  val simpleGraph = DeeplangGraph(
-    Set(sourceNode, sinkNode, innerNode),
-    Set(Edge(sourceNode, 0, innerNode, 0), Edge(innerNode, 0, sinkNode, 0)))
+  def simpleGraph(
+      targetType: TargetTypeChoice = TargetTypeChoices.StringTargetTypeChoice()): DeeplangGraph = {
+    val innerNode = createInnerNode(targetType)
+    DeeplangGraph(
+      Set(sourceNode, sinkNode, innerNode),
+      Set(Edge(sourceNode, 0, innerNode, 0), Edge(innerNode, 0, sinkNode, 0)))
+  }
 
   "CustomTransfromer" should {
 
     "execute inner workflow" in {
-      val workflow = InnerWorkflow(simpleGraph, JsObject())
+      val workflow = InnerWorkflow(simpleGraph(), JsObject())
       val outputDataFrame = mock[DataFrame]
 
       val innerWorkflowExecutor = mock[InnerWorkflowExecutor]
       when(innerWorkflowExecutor.execute(any(), same(workflow), any())).thenReturn(outputDataFrame)
 
-      val context = ExecutionContext(
-        mock[SparkContext],
-        mock[SQLContext],
-        mock[InferContext],
-        mock[FileSystemClient],
-        "",
-        innerWorkflowExecutor,
-        mock[ContextualDataFrameStorage],
-        mock[ContextualPythonCodeExecutor]
-      )
+      val context = mockExecutionContext(innerWorkflowExecutor)
 
       val transformer = new CustomTransformer(workflow, Array.empty)
 
@@ -91,7 +89,7 @@ class CustomTransformerSpec extends UnitSpec {
         catalog,
         innerWorkflowParser)
 
-      val transformer = new CustomTransformer(InnerWorkflow(simpleGraph, JsObject()), Array.empty)
+      val transformer = new CustomTransformer(InnerWorkflow(simpleGraph(), JsObject()), Array.empty)
 
       val schema = StructType(Seq(
         StructField("column1", DoubleType),
@@ -105,5 +103,82 @@ class CustomTransformerSpec extends UnitSpec {
 
       transformer._transformSchema(schema, inferContext) shouldBe Some(expectedSchema)
     }
+
+    "set public params" when {
+      "executing inner workflow" in {
+        val innerParam = TypeConverter().targetType
+        val publicParam = TypeConverter().targetType.replicate("public name")
+        val customTargetType = TargetTypeChoices.LongTargetTypeChoice()
+
+        val workflow = InnerWorkflow(simpleGraph(), JsObject(),
+          List(PublicParam(innerNodeId, "target type", "public name")))
+
+        val outputDataFrame = mock[DataFrame]
+
+        val innerWorkflowExecutor = mock[InnerWorkflowExecutor]
+        when(innerWorkflowExecutor.execute(any(), any(), any()))
+          .thenAnswer(new Answer[DataFrame] {
+            override def answer(invocation: InvocationOnMock): DataFrame = {
+              val workflow = invocation.getArguments.apply(1).asInstanceOf[InnerWorkflow]
+              val innerOp = workflow.graph.nodes.find(_.id.toString == innerNodeId).get.value
+                .asInstanceOf[ConvertType]
+
+              innerOp.get(innerParam) shouldBe Some(customTargetType)
+
+              outputDataFrame
+            }
+          })
+
+        val context = mockExecutionContext(innerWorkflowExecutor)
+
+        val transformer = new CustomTransformer(workflow, Array(publicParam))
+        transformer.set(publicParam -> customTargetType)
+
+        transformer._transform(context, mock[DataFrame]) shouldBe outputDataFrame
+      }
+
+      "inferring schema" in {
+        val innerWorkflowParser = mock[InnerWorkflowParser]
+        val catalog = new DOperableCatalog()
+        CatalogRecorder.registerDOperables(catalog)
+        val inferContext = InferContext(
+          mock[DataFrameBuilder],
+          "",
+          catalog,
+          innerWorkflowParser)
+
+        val publicParam = TypeConverter().targetType.replicate("public name")
+
+        val transformer = new CustomTransformer(InnerWorkflow(simpleGraph(), JsObject(),
+          List(PublicParam(innerNodeId, "target type", "public name"))), Array(publicParam))
+
+        transformer.set(publicParam -> TargetTypeChoices.LongTargetTypeChoice())
+
+        val schema = StructType(Seq(
+          StructField("column1", DoubleType),
+          StructField("column2", DoubleType)
+        ))
+
+        val expectedSchema = StructType(Seq(
+          StructField("column1", LongType),
+          StructField("column2", DoubleType)
+        ))
+
+        transformer._transformSchema(schema, inferContext) shouldBe Some(expectedSchema)
+      }
+    }
   }
+
+  private def mockExecutionContext(
+      innerWorkflowExecutor: InnerWorkflowExecutor): ExecutionContext =
+    ExecutionContext(
+      mock[SparkContext],
+      mock[SQLContext],
+      mock[InferContext],
+      mock[FileSystemClient],
+      "",
+      innerWorkflowExecutor,
+      mock[ContextualDataFrameStorage],
+      mock[ContextualPythonCodeExecutor]
+    )
 }
