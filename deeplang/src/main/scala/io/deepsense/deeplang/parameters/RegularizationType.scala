@@ -18,7 +18,7 @@ package io.deepsense.deeplang.parameters
 
 object RegularizationType extends Enumeration {
   type RegularizationType = Value
-  val NONE = Value("no regularization")
+  val NONE = Value("None")
   val L1 = Value("L1")
   val L2 = Value("L2")
 }

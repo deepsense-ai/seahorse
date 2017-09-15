@@ -65,7 +65,6 @@ trait SupportVectorMachineInterfaceParameters {
   val parameters = ParametersSchema(
     "number of iterations" -> numberOfIterations,
     "regularization" -> regularizationTypeParameter,
-    "regularization" -> regularizationTypeParameter,
     "mini-batch fraction" -> miniBatchFractionParameter)
 
   def modelParameters: SupportVectorMachineParameters = {

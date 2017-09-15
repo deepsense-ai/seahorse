@@ -43,6 +43,7 @@ List of all currently supported operations:
   * Classification
     * [Create Logistic Regression](operations/create_logistic_regression.html)
     * [Create Random Forest Classification](operations/create_random_forest_classification.html)
+    * [Create Support Vector Machine Classification](operations/create_support_vector_machine_classification.md)
     * [Train Classifier](operations/train_classifier.html)
     * [Score Classifier](operations/score_classifier.html)
     * [Cross-validate Classifier](operations/cross_validate_classifier.html)

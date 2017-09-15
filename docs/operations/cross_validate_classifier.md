@@ -20,7 +20,7 @@ Report contains the following metrics for each fold:
 More details about cross-validation can be found
 <a target="_blank" href="https://en.wikipedia.org/wiki/Cross-validation_%28statistics%29">here</a>.
 
-**Since**: Seahorse 0.4.0
+**Since**: Seahorse 0.5.0
 
 ## Input
 

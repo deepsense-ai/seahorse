@@ -17,7 +17,7 @@ tree will help correct for previous mistakes.
 
 The output model is eligible for [training](train_regressor.html).
 
-**Since**: Seahorse 0.4.0
+**Since**: Seahorse 0.5.0
 
 ## Input
 

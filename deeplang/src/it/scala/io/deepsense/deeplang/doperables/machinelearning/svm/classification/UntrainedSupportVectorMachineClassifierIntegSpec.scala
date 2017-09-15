@@ -87,7 +87,7 @@ class UntrainedSupportVectorMachineClassifierIntegSpec
             List(ColumnType.string, ColumnType.numeric, ColumnType.numeric, ColumnType.numeric),
             None,
             List(
-              List(Some("no regularization"), Some("0.1"), Some("10"), Some("1"))
+              List(Some("None"), Some("0.1"), Some("10"), Some("1"))
             )
           )
         )
