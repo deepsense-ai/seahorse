@@ -149,7 +149,7 @@ class OperationsApiSpec
       }
     }
     "return Not found" when {
-      "asked for non existing Experiment" in {
+      "asked for non existing Workflow" in {
         Get(s"/$apiPrefix/${Workflow.Id.randomId}") ~>
           addHeader("X-Auth-Token", correctTenant) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)

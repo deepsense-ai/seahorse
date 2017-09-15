@@ -12,7 +12,7 @@ import io.deepsense.commons.jclouds.{KeystoneApiModule, TokenApiModule}
 import io.deepsense.commons.rest.RestModule
 
 /**
- * The main module for Experiment Manager. Installs all needed modules to run
+ * The main module for Workflow Manager. Installs all needed modules to run
  * the application.
  */
 class WorkflowManagerAppModule(withMockedSecurity: Boolean) extends AbstractModule {

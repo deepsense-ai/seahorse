@@ -12,7 +12,7 @@ import io.deepsense.models.workflows.Workflow
 import io.deepsense.models.workflows.Workflow._
 
 /**
- * Thread-safe, in-memory ExperimentStorage.
+ * Thread-safe, in-memory WorkflowStorage.
  */
 class InMemoryWorkflowStorage extends WorkflowStorage {
   private val workflows: TrieMap[models.Id, Workflow] = TrieMap()

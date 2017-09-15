@@ -13,7 +13,7 @@ import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 
 /**
- * This is the entry point of the Experiment Manager application.
+ * This is the entry point of the Workflow Manager application.
  */
 object WorkflowManagerApp extends App {
   val insecure: Boolean = args.headOption.map("insecure".equalsIgnoreCase(_)).getOrElse(true)

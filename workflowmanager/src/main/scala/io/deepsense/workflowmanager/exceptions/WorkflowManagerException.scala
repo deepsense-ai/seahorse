@@ -8,7 +8,7 @@ import io.deepsense.commons.exception.DeepSenseException
 import io.deepsense.commons.exception.FailureCode.FailureCode
 
 /**
- * Base exception for all exceptions Experiment Manager
+ * Base exception for all exceptions Workflow Manager
  */
 abstract class WorkflowManagerException(
     code: FailureCode,
