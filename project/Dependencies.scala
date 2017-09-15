@@ -49,6 +49,10 @@ object Dependencies {
     sprayJson
   ) ++ Seq(mockitoCore, scalatest).map(_ % Test)
 
+  val reportlib = Seq(
+    sprayJson
+  ) ++ Seq(scalatest, mockitoCore).map(_ % Test)
+
   val workflowexecutor = Seq(
   ) ++ Seq(sparkCore).map(_ % Provided)
 }

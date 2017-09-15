@@ -2,5 +2,6 @@
 
 name := "ds-seahorse"
 
-lazy val workflowexecutor       = project
 lazy val commons                = project
+lazy val reportlib              = project
+lazy val workflowexecutor       = project
