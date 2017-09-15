@@ -56,10 +56,10 @@ abstract class Notebook()
     context.notebooksClient.map(_.as.dispatcher).foreach { implicit ec =>
       for {
         _ <- getShouldExecute
-        generatedNotebookFutOpt = context.notebooksClient.map(_.generateAndFetchPdf(notebookType))
+        generatedNotebookFutOpt = context.notebooksClient.map(_.generateAndPollNbData(notebookType))
         streamFut <- generatedNotebookFutOpt.map(_.map(new ByteArrayInputStream(_)))
       } {
-        logger.info(s"Generating pdf")
+        logger.info(s"Generating notebook data")
 
         streamFut.onFailure {
           case t =>
@@ -73,9 +73,9 @@ abstract class Notebook()
           stream <- streamFut
         } yield {
           sendMail("Notebook execution result",
-            "Hi, please find the attached pdf with notebook execution result.",
+            "Hi, please find the attached file with notebook execution result.",
             context,
-            Some((stream, Some("application/pdf")))
+            Some((stream, Some(Notebook.notebookDataMimeType)))
           )
 
         }, Duration.Inf)
@@ -96,7 +96,7 @@ abstract class Notebook()
       msg = sender.createPlainMessage(subject, body, Seq(email))
       msgWithAttachment = attachment.map {
         case (stream, contentTypeOpt) =>
-          sender.attachAttachment(msg, stream, "notebook.pdf", contentTypeOpt)
+          sender.attachAttachment(msg, stream, Notebook.notebookDataFilename, contentTypeOpt)
       }.getOrElse(msg)
     } {
       sender.sendEmail(msgWithAttachment).foreach(throw _)
@@ -109,6 +109,9 @@ abstract class Notebook()
 
 
 object Notebook {
+  val notebookDataMimeType = "text/html"
+  val notebookDataFilename = "notebook.html"
+
   sealed trait SendEmailChoice extends Choice {
     override val name = ""
 

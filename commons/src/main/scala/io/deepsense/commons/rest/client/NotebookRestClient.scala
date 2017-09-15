@@ -55,41 +55,44 @@ class NotebookRestClient(
 )(implicit override val as: ActorSystem)
   extends Logging with RestClient with SprayJsonSupport {
 
-  def apiUrl: java.net.URL = notebooksServerAddress
+  def apiUrl: java.net.URL = new URL(notebooksServerAddress, "/jupyter/")
   def credentials: Option[spray.http.HttpCredentials] = None
   def userId: Option[java.util.UUID] = None
   def userName: Option[String] = None
 
   implicit val timeout: Timeout = 10.minutes
 
-  private val postPath = endpointPath("jupyter/HeadlessNotebook")
-  private val getPath = endpointPath(f"jupyter/HeadlessNotebook/$workflowId%s_$nodeId%s.pdf")
+  private val filenameExtension = "html"
 
-  private val poller: ActorRef = as.actorOf(Props(new GetPdfActor(this, pollInterval, retryCountLimit)))
+  private val postPath = endpointPath("HeadlessNotebook")
+  private val getPath = endpointPath(f"HeadlessNotebook/$workflowId%s_$nodeId%s.$filenameExtension")
 
-  def fetchPdf(): Future[Array[Byte]] = fetchHttpResponse(Get(getPath)).flatMap { resp =>
+  private val poller: ActorRef = as.actorOf(Props(new NotebookDataPollActor(this, pollInterval, retryCountLimit)))
+
+  def fetchNotebookData(): Future[Array[Byte]] = fetchHttpResponse(Get(getPath)).flatMap { resp =>
     resp.status match {
       case StatusCodes.NotFound =>
-        Future.failed(new FileNotFoundException(s"pdf for workflow s$workflowId and node s$nodeId not found"))
+        Future.failed(new FileNotFoundException(s"File containing output data for workflow " +
+          s"s$workflowId and node s$nodeId not found"))
       case StatusCodes.OK =>
         Future.successful(resp.entity.data.toByteArray)
       case statusCode =>
         Future.failed(NotebookHttpException(statusCode.intValue, s"Notebook server responded with $statusCode " +
-          s"when asked for pdf for workflow $workflowId and node $nodeId"))
+          s"when asked for file for workflow $workflowId and node $nodeId"))
     }
   }
 
-  def pollPdf(): Future[Array[Byte]] = {
-    (poller ? GetPdfActor.GetPdf(workflowId, nodeId)).mapTo[Array[Byte]]
+  def pollForNotebookData(): Future[Array[Byte]] = {
+    (poller ? NotebookDataPollActor.GetData(workflowId, nodeId)).mapTo[Array[Byte]]
   }
 
-  def generatePdf(language: String): Future[HttpResponse] = {
+  def generateNotebookData(language: String): Future[HttpResponse] = {
     val req = NotebookClientRequest(workflowId, nodeId, language)
     fetchHttpResponse(Post(postPath, req))
   }
 
-  def generateAndFetchPdf(language: String): Future[Array[Byte]] = {
-    generatePdf(language).flatMap(_ => pollPdf())
+  def generateAndPollNbData(language: String): Future[Array[Byte]] = {
+    generateNotebookData(language).flatMap(_ => pollForNotebookData())
   }
 
   def toFactory: NotebooksClientFactory =

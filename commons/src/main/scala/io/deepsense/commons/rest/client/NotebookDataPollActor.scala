@@ -28,26 +28,26 @@ import io.deepsense.commons.models.Id
 
 case class RetryLimitReachedExcepion(msg: String, lastError: Throwable) extends Exception(msg)
 
-class GetPdfActor(val notebookRestClient: NotebookRestClient,
+class NotebookDataPollActor(val notebookRestClient: NotebookRestClient,
     pollInterval: FiniteDuration,
     retryCountLimit: Int
 ) extends Actor {
   implicit val ec: ExecutionContext = context.system.dispatcher
 
   override def receive: Receive = {
-    case GetPdfActor.GetPdf(workflowId, nodeId) =>
-      handleGetPdf(workflowId, nodeId, sender, 0)
-    case GetPdfActor.GetPdfRetry(workflowId, nodeId, initialSender, retryCount) =>
-      handleGetPdf(workflowId, nodeId, initialSender, retryCount)
+    case NotebookDataPollActor.GetData(workflowId, nodeId) =>
+      handleGetData(workflowId, nodeId, sender, 0)
+    case NotebookDataPollActor.GetDataRetry(workflowId, nodeId, initialSender, retryCount) =>
+      handleGetData(workflowId, nodeId, initialSender, retryCount)
   }
 
-  def handleGetPdf(workflowId: Id, nodeId: Id, sender: ActorRef, retryCount: Int): Unit = {
-    notebookRestClient.fetchPdf().onComplete {
-      case Success(pdf) => sender ! pdf
+  def handleGetData(workflowId: Id, nodeId: Id, sender: ActorRef, retryCount: Int): Unit = {
+    notebookRestClient.fetchNotebookData().onComplete {
+      case Success(data) => sender ! data
       case Failure(_ : FileNotFoundException) if retryCount <= retryCountLimit =>
         context.system.scheduler.scheduleOnce(pollInterval,
           self,
-          GetPdfActor.GetPdfRetry(workflowId, nodeId, sender, retryCount + 1))
+          NotebookDataPollActor.GetDataRetry(workflowId, nodeId, sender, retryCount + 1))
       case Failure(f) if retryCount > retryCountLimit =>
         sender ! Status.Failure(
           RetryLimitReachedExcepion(s"Retry limit of $retryCountLimit reached, last error was $f", f))
@@ -56,9 +56,9 @@ class GetPdfActor(val notebookRestClient: NotebookRestClient,
   }
 }
 
-object GetPdfActor {
+object NotebookDataPollActor {
   sealed trait Message
 
-  case class GetPdf(workflowId: Id, nodeId: Id) extends Message
-  case class GetPdfRetry(workflowId: Id, nodeId: Id, initialSender: ActorRef, retryCount: Int) extends Message
+  case class GetData(workflowId: Id, nodeId: Id) extends Message
+  case class GetDataRetry(workflowId: Id, nodeId: Id, initialSender: ActorRef, retryCount: Int) extends Message
 }
