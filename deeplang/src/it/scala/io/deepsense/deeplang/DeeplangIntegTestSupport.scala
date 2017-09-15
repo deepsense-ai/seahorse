@@ -29,6 +29,7 @@ import org.scalatest.mockito.MockitoSugar._
 
 import io.deepsense.commons.mail.EmailSender
 import io.deepsense.commons.models.Id
+import io.deepsense.commons.rest.client.datasources.{DatasourceClient, DatasourceClientFactory}
 import io.deepsense.commons.rest.client.{NotebookRestClient, NotebooksClientFactory}
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
 import io.deepsense.deeplang.OperationExecutionDispatcher.Result
@@ -86,6 +87,7 @@ private class MockedCommonExecutionContext(
     override val dataFrameStorage: DataFrameStorage,
     override val notebooksClientFactory: Option[NotebooksClientFactory],
     override val emailSender: Option[EmailSender],
+    override val dataSourceClientFactory: DatasourceClientFactory,
     override val customCodeExecutionProvider: CustomCodeExecutionProvider)
   extends CommonExecutionContext(
     sparkContext,
@@ -99,6 +101,7 @@ private class MockedCommonExecutionContext(
     dataFrameStorage,
     notebooksClientFactory,
     emailSender,
+    dataSourceClientFactory,
     customCodeExecutionProvider) {
 
   override def createExecutionContext(workflowId: Id, nodeId: Id): ExecutionContext =
@@ -112,6 +115,7 @@ private class MockedCommonExecutionContext(
       mock[ContextualDataFrameStorage],
       notebooksClientFactory.map(_.createNotebookForNode(workflowId, nodeId)),
       emailSender,
+      dataSourceClientFactory.createClient,
       new MockedContextualCodeExecutor)
 }
 
@@ -127,6 +131,7 @@ private class MockedExecutionContext(
     override val dataFrameStorage: ContextualDataFrameStorage,
     override val notebooksClient: Option[NotebookRestClient],
     override val emailSender: Option[EmailSender],
+    override val dataSourceClient: DatasourceClient,
     override val customCodeExecutor: ContextualCustomCodeExecutor)
   extends ExecutionContext(
     sparkContext,
@@ -140,6 +145,7 @@ private class MockedExecutionContext(
     dataFrameStorage,
     notebooksClient,
     emailSender,
+    dataSourceClient,
     customCodeExecutor)
 
 private class MockedCodeExecutor extends CustomCodeExecutor {

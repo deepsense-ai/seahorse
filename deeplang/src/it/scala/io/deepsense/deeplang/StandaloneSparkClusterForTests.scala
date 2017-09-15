@@ -25,6 +25,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 import org.scalatest.concurrent.Eventually._
 import org.scalatest.time.SpanSugar._
 
+import io.deepsense.commons.rest.client.datasources.DatasourceClient
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.doperations.readwritedataframe.FileScheme
@@ -128,6 +129,7 @@ object StandaloneSparkClusterForTests {
       mock[ContextualDataFrameStorage],
       None,
       None,
+      mock[DatasourceClient],
       new MockedContextualCodeExecutor)
   }
 

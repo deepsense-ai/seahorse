@@ -35,6 +35,7 @@ case class ExecutionParams(
     wmPassword: Option[String] = None,
     mailParams: MailParams = MailParams(),
     notebookServerAddress: Option[URL] = None,
+    datasourceServerAddress: Option[URL] = None,
     depsZip: Option[String] = None,
     userId: Option[String] = None,
     tempPath: Option[String] = None)

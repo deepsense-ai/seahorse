@@ -18,11 +18,10 @@ package io.deepsense.deeplang.doperations
 
 import java.io._
 import java.net.UnknownHostException
+import java.util.UUID
 
 import scala.reflect.runtime.{universe => ru}
-
 import org.apache.spark.sql.{DataFrame => SparkDataFrame}
-
 import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.documentation.OperationDocumentation
@@ -54,6 +53,9 @@ case class ReadDataFrame()
   val params: Array[Param[_]] = Array(storageType)
   setDefault(storageType, new InputStorageTypeChoice.File())
 
+  override def getDataSourcesId: Set[UUID] = {
+    Set.empty[UUID]
+  }
   override protected def execute()(context: ExecutionContext): DataFrame = {
     implicit val ec = context
 

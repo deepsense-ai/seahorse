@@ -16,16 +16,25 @@
 
 package io.deepsense.deeplang
 
+import java.util.UUID
+
 import org.apache.spark.{SparkConf, SparkContext}
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.mockito.MockitoSugar._
 
+import io.deepsense.api.datasourcemanager.model.Datasource
+import io.deepsense.commons.rest.client.datasources.{DatasourceClient, DatasourceClientFactory}
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.sparkutils.SparkSQLSession
 
-trait LocalExecutionContext { self: BeforeAndAfterAll =>
+class DatasourceMock extends DatasourceClientFactory with DatasourceClient{
+  override def createClient: DatasourceClient = new DatasourceMock
+  override def toFactory: DatasourceClientFactory = new DatasourceMock
+  override def getDatasource(uuid: UUID): Option[Datasource] = None
+}
 
+trait LocalExecutionContext { self: BeforeAndAfterAll =>
   var commonExecutionContext: CommonExecutionContext = _
   implicit var executionContext: ExecutionContext = _
 
@@ -58,6 +67,7 @@ trait LocalExecutionContext { self: BeforeAndAfterAll =>
       mock[DataFrameStorage],
       None,
       None,
+      new DatasourceMock,
       mock[CustomCodeExecutionProvider])
   }
 
@@ -79,6 +89,7 @@ trait LocalExecutionContext { self: BeforeAndAfterAll =>
       mock[ContextualDataFrameStorage],
       None,
       None,
+      new DatasourceMock,
       new MockedContextualCodeExecutor)
   }
 

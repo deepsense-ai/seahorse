@@ -18,6 +18,8 @@ package io.deepsense.deeplang
 
 import scala.reflect.runtime.{universe => ru}
 
+import java.util.UUID
+
 import io.deepsense.commons.models
 import io.deepsense.commons.utils.{CollectionExtensions, Logging}
 import io.deepsense.deeplang.DPortPosition.DPortPosition
@@ -50,6 +52,8 @@ abstract class DOperation extends Operation
   def outPortTypes: Vector[ru.TypeTag[_]]
 
   def outPortsLayout: Vector[DPortPosition] = defaultPortLayout(outPortTypes, GravitateRight)
+
+  def getDataSourcesId: Set[UUID] = Set[UUID]()
 
   private def defaultPortLayout(portTypes: Vector[ru.TypeTag[_]], gravity: Gravity): Vector[DPortPosition] = {
     import DPortPosition._

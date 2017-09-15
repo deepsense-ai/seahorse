@@ -24,6 +24,7 @@ import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 import spray.json.JsObject
 
+import io.deepsense.commons.rest.client.datasources.DatasourceClient
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.InnerWorkflowTestFactory._
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
@@ -189,6 +190,7 @@ class CustomTransformerSpec extends UnitSpec {
       mock[ContextualDataFrameStorage],
       None,
       None,
+      mock[DatasourceClient],
       mock[ContextualCustomCodeExecutor]
     )
 }

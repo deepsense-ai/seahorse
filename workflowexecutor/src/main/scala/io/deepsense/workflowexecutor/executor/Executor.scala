@@ -21,6 +21,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 import io.deepsense.commons.BuildInfo
 import io.deepsense.commons.mail.EmailSender
 import io.deepsense.commons.rest.client.NotebooksClientFactory
+import io.deepsense.commons.rest.client.datasources.DatasourceClientFactory
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
 import io.deepsense.commons.utils.{Logging, Version}
 import io.deepsense.deeplang._
@@ -42,6 +43,7 @@ trait Executor extends Logging {
       executionMode: ExecutionMode,
       notebooksClientFactory: Option[NotebooksClientFactory],
       emailSender: Option[EmailSender],
+      dataSourceClientFactory: DatasourceClientFactory,
       customCodeExecutionProvider: CustomCodeExecutionProvider,
       sparkContext: SparkContext,
       sparkSQLSession: SparkSQLSession,
@@ -73,6 +75,7 @@ trait Executor extends Logging {
       dataFrameStorage,
       notebooksClientFactory,
       emailSender,
+      dataSourceClientFactory,
       customCodeExecutionProvider)
   }
 

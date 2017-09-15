@@ -137,6 +137,10 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
       (x, c) => c.copy(notebookServerAddress = Some(new URL(x)))
     }
 
+    opt[String]("datasource-server-address") hidden() valueName "URL" action {
+      (x, c) => c.copy(datasourceServerAddress = Some(new URL(x)))
+    }
+
     opt[String]('x', "custom-code-executors-path") optional() valueName "PATH" action {
       (x, c) => c.copy(customCodeExecutorsPath = Some(x))
     } text "Custom code executors (included in workflowexecutor.jar) path"
@@ -185,7 +189,9 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
         (config.mailParams.mailServerSender.isEmpty,
           "--mail-server-sender is required in interactive mode"),
         (config.notebookServerAddress.isEmpty,
-          "--notebook-server-address is required in interactive mode")
+          "--notebook-server-address is required in interactive mode"),
+        (config.datasourceServerAddress.isEmpty,
+          "--datasource-server-address is required in interactive mode")
       )
 
       val nonInteractiveRequirements: Requirements = Seq(
@@ -241,6 +247,7 @@ object WorkflowExecutorApp extends Logging with WorkflowVersionUtil {
         mailServerPassword = params.mailParams.mailServerPassword.get,
         mailServerSender = params.mailParams.mailServerSender.get,
         notebookServerAddress = params.notebookServerAddress.get,
+        datasourceServerAddress = params.datasourceServerAddress.get,
         depsZip = params.depsZip.get,
         workflowOwnerId = params.userId.get,
         tempPath = params.tempPath.get,
