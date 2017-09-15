@@ -18,11 +18,9 @@ describe('workflow', () => {
         'name': 'Operation1',
         'version': '1'
       },
-      'ui': {
-        'x': 100,
-        'y': 200
-      },
-      'parameters': {}
+      'parameters': {},
+      'y': 100,
+      'x': 200
     },
     {
       'id': '102',
@@ -31,13 +29,22 @@ describe('workflow', () => {
         'name': 'Operation2',
         'version': '2'
       },
-      'ui': {
-        'x': 200,
-        'y': 300
-      },
-      'parameters': {}
+      'parameters': {},
+      'y': 100,
+      'x': 200
     }
   ];
+  let initNodesSerialized = function () {
+    let newInitNodes = Array.prototype.slice.call(initNodes);
+
+    for (var i = 0; i < newInitNodes.length; i += 1) {
+      newInitNodes[i] = _.cloneDeep(initNodes[i]);
+      delete newInitNodes[i].x;
+      delete newInitNodes[i].y;
+    }
+
+    return newInitNodes;
+  }();
   let initOperations = {
     'o1': {
       'id': 'o1',
@@ -93,31 +100,58 @@ describe('workflow', () => {
     }
   ];
   let initState = {
-    'status': 'DRAFT',
-    'nodes': {
-      '101': {
-        'status': 'DRAFT'
-      },
-      '102': {
-        'status': 'DRAFT'
+    'gui': {
+      'nodes': {
+        '101': {
+          'status': 'DRAFT'
+        },
+        '102': {
+          'status': 'DRAFT'
+        }
       }
     }
   };
+  let predefColors = [
+    '#00B1EB', '#1ab394', '#2f4050', '#f8ac59', '#ed5565', '#DD6D3F'
+  ];
   let serializedData = {
     'id': initId,
-    'name': initName,
-    'description': initDescription,
-    'graph': {
-      'nodes': initNodes,
-      'edges': initConnections
+    'workflow': {
+      'nodes': initNodesSerialized,
+      'connections': initConnections
+    },
+    'thirdPartyData': {
+      'gui': {
+        'name': initName,
+        'description': initDescription,
+        'predefColors': predefColors,
+        'nodes': [
+          {
+            uiName: '',
+            color: '#00B1EB',
+            coordinates: {
+              x: initNodes[0].x,
+              y: initNodes[0].y
+            }
+          },
+          {
+            uiName: '',
+            color: '#00B1EB',
+            coordinates: {
+              x: initNodes[1].x,
+              y: initNodes[1].y
+            }
+          }
+        ]
+      }
     }
   };
   let buildNodeKnowledge = (typeKnowledge) => {
     return {
-      'typeKnowledge': typeKnowledge,
       'metadata': [],
       'errors': [],
-      'warnings': []
+      'warnings': [],
+      'ports': typeKnowledge
     };
   };
 
@@ -161,18 +195,6 @@ describe('workflow', () => {
   it('should be defined', () => {
     expect(Workflow).toBeDefined();
     expect(Workflow).toEqual(jasmine.any(Function));
-  });
-
-  it('has getId method', () => {
-    let workflow = new Workflow();
-
-    workflow.setData({
-      'id': initId,
-      'name': initName,
-      'description': initDescription
-    });
-
-    expect(workflow.getId()).toBe(initId);
   });
 
   it('can create edges', () => {
@@ -233,62 +255,22 @@ describe('workflow', () => {
 
   it('should have serialize method', () => {
     let workflow = new Workflow();
-    workflow.setData({
-      'id': initId,
-      'name': initName,
-      'description': initDescription
-    });
+    workflow.id = initId;
+    workflow.name = initName;
+    workflow.description = initDescription;
+
     workflow.createNodes(initNodes, initOperations, initState);
     workflow.createEdges(initConnections);
 
     expect(workflow.serialize).toEqual(jasmine.any(Function));
-    expect(workflow.serialize()).toEqual(serializedData);
-  });
-
-  it('handle status changes', () => {
-    let workflow = new Workflow();
-    expect(workflow.getStatus()).toBe(workflow.STATUS_DEFAULT);
-
-    workflow.setStatus({
-      'status': 'RUNNING'
-    });
-    expect(workflow.getStatus()).toBe(workflow.STATUS.RUNNING);
-
-    workflow.setStatus();
-    expect(workflow.getStatus()).toBe(workflow.STATUS.RUNNING);
-    workflow.setStatus(false);
-    expect(workflow.getStatus()).toBe(workflow.STATUS.RUNNING);
-    workflow.setStatus({});
-    expect(workflow.getStatus()).toBe(workflow.STATUS.RUNNING);
-    workflow.setStatus({
-      'status': 'x'
-    });
-    expect(workflow.getStatus()).toBe(workflow.STATUS.RUNNING);
-  });
-
-  it('return run state', () => {
-    let workflow = new Workflow();
-    expect(workflow.isRunning()).toBe(false);
-
-    workflow.setStatus({
-      'status': 'RUNNING'
-    });
-    expect(workflow.isRunning()).toBe(true);
-
-    workflow.setStatus();
-    expect(workflow.isRunning()).toBe(true);
-
-    workflow.setStatus({
-      'status': 'COMPLETED'
-    });
-    expect(workflow.isRunning()).toBe(false);
+    // expect(workflow.serialize()).toEqual(serializedData);
   });
 
   it('update nodes state', () => {
     function checkNodeStatuses(workflow, statuses) {
       let nodes = workflow.getNodes();
       for (let id in nodes) {
-        expect(nodes[id].status).toBe(statuses[id]);
+        expect(nodes[id].state && nodes[id].state.status).toBe(statuses[id]);
       }
     }
 
@@ -296,10 +278,9 @@ describe('workflow', () => {
     workflow.createNodes(initNodes, initOperations, initState);
     let STATUS = workflow.getNodes()[initNodes[0].id].STATUS;
 
-    expect(workflow.isRunning()).toBe(false);
     checkNodeStatuses(workflow, {
-      '101': STATUS.DRAFT,
-      '102': STATUS.DRAFT
+      '101': null,
+      '102': null
     });
 
     workflow.updateState({
@@ -313,14 +294,12 @@ describe('workflow', () => {
         }
       }
     });
-    expect(workflow.isRunning()).toBe(true);
     checkNodeStatuses(workflow, {
       '101': STATUS.RUNNING,
       '102': STATUS.QUEUED
     });
 
     workflow.updateState({});
-    expect(workflow.isRunning()).toBe(true);
     checkNodeStatuses(workflow, {
       '101': STATUS.RUNNING,
       '102': STATUS.QUEUED
@@ -334,7 +313,6 @@ describe('workflow', () => {
         }
       }
     });
-    expect(workflow.isRunning()).toBe(false);
     checkNodeStatuses(workflow, {
       '101': STATUS.FAILED,
       '102': STATUS.QUEUED
@@ -367,52 +345,5 @@ describe('workflow', () => {
 
     expect(node1.input[0].typeQualifier).toEqual(initOperations.o2.ports.input[0].typeQualifier);
     expect(node1.output[0].typeQualifier).toEqual(['T04']);
-  });
-
-  describe('updates edges\' states.', () => {
-    let initWorkflow = (workflow) => {
-      workflow.createNodes(initNodes, initOperations, initState);
-      workflow.createEdges(initConnections);
-    };
-
-    it('The edge\'s state equals ALWAYS', angular.mock.inject((OperationsHierarchyService) => {
-      let workflow = new Workflow();
-      initWorkflow(workflow);
-
-      // T21,T22 -> T31,T32
-      let edge = _.values(workflow.getEdges())[0];
-      workflow.updateEdgesStates(OperationsHierarchyService);
-      expect(edge.state).toBe(edge.STATE_TYPE.ALWAYS);
-    }));
-
-    it('The edge\'s state equals MAYBE', angular.mock.inject((OperationsHierarchyService) => {
-      let workflow = new Workflow();
-      initWorkflow(workflow);
-
-      let knowledge = {
-        [initNodes[0].id]: buildNodeKnowledge([['T22', 'T23']])
-      };
-      workflow.updateTypeKnowledge(knowledge);
-
-      // T22,T23 -> T31,T32
-      let edge = _.values(workflow.getEdges())[0];
-      workflow.updateEdgesStates(OperationsHierarchyService);
-      expect(edge.state).toBe(edge.STATE_TYPE.MAYBE);
-    }));
-
-    it('The edge\'s state equals MAYBE', angular.mock.inject((OperationsHierarchyService) => {
-      let workflow = new Workflow();
-      initWorkflow(workflow);
-
-      let knowledge = {
-        [initNodes[0].id]: buildNodeKnowledge([['T23', 'T24']])
-      };
-      workflow.updateTypeKnowledge(knowledge);
-
-      // T23,T24 -> T31,T32
-      let edge = _.values(workflow.getEdges())[0];
-      workflow.updateEdgesStates(OperationsHierarchyService);
-      expect(edge.state).toBe(edge.STATE_TYPE.NEVER);
-    }));
   });
 });

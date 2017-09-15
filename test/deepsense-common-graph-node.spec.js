@@ -11,16 +11,12 @@ describe('graphNode', () => {
   let initOperationId = '55-55-55';
   let initName = 'Sample operation';
   let initVersion = '1.1';
-  let initX = 100;
-  let initY = 200;
   let initData = {
     'id': initId,
     'operationId': initOperationId,
     'name': initName,
     'version': initVersion,
     'description': 'Aaaaa Bbbbb Cccc...',
-    'x': initX,
-    'y': initY,
     'input': [],
     'output': [],
     'parametersValues': {}
@@ -31,10 +27,6 @@ describe('graphNode', () => {
       'id': initOperationId,
       'name': initName,
       'version': initVersion
-    },
-    'ui': {
-      'x': initX,
-      'y': initY
     },
     'parameters': {}
   };
@@ -69,32 +61,31 @@ describe('graphNode', () => {
 
   it('handle status changes', () => {
     let graphNode = new GraphNode(initData);
-    expect(graphNode.status).toBe(graphNode.STATUS_DEFAULT);
+    expect(graphNode.state).toBe(null);
 
-    graphNode.setStatus({
+    graphNode.updateState({
       'status': 'QUEUED'
     });
-    expect(graphNode.status).toBe(graphNode.STATUS.QUEUED);
+    expect(graphNode.state.status).toBe(graphNode.STATUS.QUEUED);
 
-    graphNode.setStatus();
-    expect(graphNode.status).toBe(graphNode.STATUS.QUEUED);
+    graphNode.updateState();
+    expect(graphNode.state).toBe(null);
 
-    graphNode.setStatus(false);
-    expect(graphNode.status).toBe(graphNode.STATUS.QUEUED);
+    graphNode.updateState(false);
+    expect(graphNode.state).toBe(null);
 
-    graphNode.setStatus({});
-    expect(graphNode.status).toBe(graphNode.STATUS.QUEUED);
+    graphNode.updateState({});
+    expect(graphNode.state.status).toBe(graphNode.STATUS.DRAFT);
 
-    graphNode.setStatus({
+    graphNode.updateState({
       'status': 'x'
     });
-    expect(graphNode.status).toBe(graphNode.STATUS.QUEUED);
+    expect(graphNode.state.status).toBe(graphNode.STATUS.DRAFT);
   });
 
   it('handle state changes', () => {
     let graphNode = new GraphNode(initData);
-    expect(graphNode.status).toBe(graphNode.STATUS_DEFAULT);
-    expect(graphNode.results).toEqual([]);
+    expect(graphNode.state).toBe(null);
 
     let results = ['result-1', 'result-2'];
     graphNode.updateState({
@@ -102,8 +93,8 @@ describe('graphNode', () => {
       'results': results
     });
 
-    expect(graphNode.status).toBe(graphNode.STATUS.COMPLETED);
-    expect(graphNode.results).toEqual(results);
+    expect(graphNode.state.status).toBe(graphNode.STATUS.COMPLETED);
+    expect(graphNode.state.results).toEqual(results);
 
     expect(graphNode.getResult(0)).toEqual(results[0]);
     expect(graphNode.getResult(1)).toEqual(results[1]);

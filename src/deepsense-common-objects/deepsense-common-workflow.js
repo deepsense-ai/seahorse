@@ -153,6 +153,8 @@ factory('Workflow', /*@ngInject*/function (GraphNode, Edge) {
         throw new Error('Node ' + node.id + ' already exists');
       }
       internal.nodes[node.id] = node;
+
+      return node;
     };
 
     that.addEdge = function addEdge(edge) {
@@ -170,6 +172,33 @@ factory('Workflow', /*@ngInject*/function (GraphNode, Edge) {
       internal.edges[edge.id] = edge;
       that.getNodeById(edge.startNodeId).edges[edge.id] = edge;
       that.getNodeById(edge.endNodeId).edges[edge.id] = edge;
+    };
+
+    that.cloneEdges = function cloneEdges (fromNode, toNode) {
+      that.createEdges(
+        _.chain(fromNode.edges)
+          .filter(edge => edge.startNodeId !== fromNode.id)
+          .map(edge => {
+            let startNodeId = edge.startNodeId;
+
+            if (edge.__connectFromClone) {
+              startNodeId = edge.__connectFromClone;
+              delete edge.__connectFromClone;
+            }
+
+            return {
+              from: {
+                nodeId: startNodeId,
+                portIndex: edge.startPortId
+              },
+              to: {
+                nodeId: toNode.id,
+                portIndex: edge.endPortId
+              }
+            };
+          })
+          .value()
+      );
     };
 
     that.removeEdge = function removeEdge(edge) {
