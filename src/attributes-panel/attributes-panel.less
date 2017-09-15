@@ -1,5 +1,4 @@
 @import "../common/variables.less";
-@import (reference) "../common/reusables.less";
 
 .popover {
   z-index: 10000;
@@ -261,72 +260,6 @@
         max-width: 100%;
         width: 100%;
       }
-    }
-  }
-
-  [editable-text] {
-    border-bottom: 1px dashed gray;
-    line-height: 1.5em;
-    word-wrap: break-word;
-  }
-
-  .editable-hide {
-    display: none;
-
-    ~ a {
-      display: none;
-    }
-  }
-
-  .editable-empty {
-    font-style: italic;
-    text-transform: none;
-  }
-
-  .editable-input {
-    &:extend(.o-custom all);
-
-    box-shadow: none;
-  }
-
-  .editable-controls .btn {
-    margin: 0 @main-space;
-
-    // btn-sm
-    padding: 5px 10px;
-    font-size: 12px;
-    line-height: 1.5;
-
-    &:last-child {
-      margin: 0;
-      background: @danger;
-    }
-  }
-}
-
-.o-modal {
-  &--error {
-    .modal-content {
-      padding: 10px;
-    }
-  }
-}
-
-.c-ports-info {
-  &__content {
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  &__container {
-    padding: 5px !important;
-
-    &--outcomes {
-      background: #F6F6F6;
-    }
-
-    &:nth-child(1) {
-      margin-bottom: 0;
     }
   }
 }

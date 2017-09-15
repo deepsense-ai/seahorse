@@ -1,5 +1,24 @@
 @import "./variables";
 
+.c-ports-info {
+  &__content {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__container {
+    padding: 5px !important;
+
+    &--outcomes {
+      background: #F6F6F6;
+    }
+
+    &:nth-child(1) {
+      margin-bottom: 0;
+    }
+  }
+}
+
 .o-state {
   &__status {
     float: none !important;
@@ -51,6 +70,16 @@
 .o-read-more {
   text-transform: lowercase;
   font-size: 10px;
+}
+
+
+
+.o-modal {
+  &--error {
+    .modal-content {
+      padding: 10px;
+    }
+  }
 }
 
 .u-flex {
@@ -119,4 +148,46 @@
 .u-normal-words {
   white-space: normal;
   word-wrap: break-word;
+}
+
+// libs
+
+[editable-text] {
+  border-bottom: 1px dashed gray;
+  line-height: 1.5em;
+  word-wrap: break-word;
+}
+
+.editable-hide {
+  display: none;
+
+  ~ a {
+    display: none;
+  }
+}
+
+.editable-empty {
+  font-style: italic;
+  text-transform: none;
+}
+
+.form-control.editable-input {
+  &:extend(.o-custom all);
+
+  box-shadow: none;
+  width: 49%;
+}
+
+.editable-controls .btn {
+  margin: 0 @main-space;
+
+  // btn-sm
+  padding: 5px 10px;
+  font-size: 12px;
+  line-height: 1.5;
+
+  &:last-child {
+    margin: 0;
+    background: @danger;
+  }
 }
