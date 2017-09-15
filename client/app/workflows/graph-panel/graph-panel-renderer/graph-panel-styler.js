@@ -54,12 +54,6 @@ export class GraphPanelStyler {
     };
   }
 
-  static getInputEndpointDefaultCssClass(renderMode) {
-    return renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE ?
-      'input-endpoint-default-style-editor-mode' :
-      'input-endpoint-default-style-report-mode fa fa-bar-chart';
-  }
-
   static getInputEndpointDefaultHoverPaintStyle(renderMode) {
     return renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE ? {
       fillStyle: '#216477',
@@ -70,12 +64,6 @@ export class GraphPanelStyler {
       width: 20,
       height: 20
     };
-  }
-
-  static getInputEndpointDefaultHoverCssClass(renderMode) {
-    return renderMode === GraphPanelRendererBase.EDITOR_RENDER_MODE ?
-      'input-endpoint-default-hover-style-editor-mode' :
-      'input-endpoint-default-hover-style-report-mode';
   }
 
   static getOutputEndpointDefaultPaintStyle(renderMode, hasReport) {
