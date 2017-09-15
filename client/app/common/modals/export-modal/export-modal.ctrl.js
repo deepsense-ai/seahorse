@@ -9,13 +9,8 @@ function ExportModalController($modalInstance, $stateParams, WorkflowsApiClient)
       $modalInstance.dismiss();
     },
     download: () => {
-      this.loading = true;
-
-      let $el = $('#download-iframe');
-      $el.load(() => {
-        console.log('kozik');
-      });
-      $el.attr('src', WorkflowsApiClient.downloadWorkflow($stateParams.id));
+      let $el = angular.element(`<iframe style="display: none" src="${WorkflowsApiClient.getDownloadWorkflowUrl($stateParams.id)}"></iframe>`);
+      $('body').append($el);
     }
   });
 }
