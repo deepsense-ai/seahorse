@@ -160,7 +160,7 @@ class WorkflowRowMapperSpec
         ThirdPartyData("{}"),
         ExecutionReportWithId(
           Id.randomId,
-          ExecutionReport(graphstate.Completed, started, ended, Map(), EntitiesMap())))
+          ExecutionReport(started, ended, Map(), EntitiesMap())))
 
     val stringWorkflow = workflowWithSavedResults.toJson.compactPrint
     val rowWorkflow = mock[Row]

@@ -9,6 +9,8 @@ create table if not exists workflows(
   results text,
   results_upload_time timestamp,
   deleted boolean,
+  created timestamp,
+  updated timestamp,
   primary key (id));
 
 create index if not exists deleted_workflows ON workflows(deleted);

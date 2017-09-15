@@ -11,7 +11,6 @@ import scala.concurrent.Future
 import org.joda.time.DateTime
 
 import io.deepsense.commons.datetime.DateTimeConverter
-import io.deepsense.commons.models
 import io.deepsense.models.workflows.Workflow._
 import io.deepsense.models.workflows.{Workflow, WorkflowWithSavedResults}
 
@@ -19,9 +18,18 @@ import io.deepsense.models.workflows.{Workflow, WorkflowWithSavedResults}
  * Thread-safe, in-memory WorkflowStorage.
  */
 class InMemoryWorkflowStorage extends WorkflowStorage {
-  private val workflows: TrieMap[models.Id, Entry] = TrieMap()
+  private val workflows: TrieMap[Workflow.Id, Entry] = TrieMap()
+  private val now = DateTime.now()
 
-  override def save(id: Workflow.Id, workflow: Workflow): Future[Unit] = {
+  override def create(id: Workflow.Id, workflow: Workflow): Future[Unit] = {
+    save(id, workflow)
+  }
+
+  override def update(id: Workflow.Id, workflow: Workflow): Future[Unit] = {
+    save(id, workflow)
+  }
+
+  private def save(id: Workflow.Id, workflow: Workflow): Future[Unit] = {
     def withNewWorkflow(old: Option[Entry]): Entry =
       Entry(workflow, old.flatMap(_.results), old.flatMap(_.resultsUploadTime))
 
@@ -37,6 +45,11 @@ class InMemoryWorkflowStorage extends WorkflowStorage {
 
   override def get(id: Workflow.Id): Future[Option[Either[String, Workflow]]] = {
     Future.successful(workflows.get(id).map(_.workflow).map(Right(_)))
+  }
+
+  override def getAll(): Future[Map[Workflow.Id, WorkflowWithDates]] = {
+    Future.successful(workflows.mapValues(e =>
+      WorkflowWithDates(Right(e.workflow), now, now)).toMap)
   }
 
   override def delete(id: Workflow.Id): Future[Unit] = {

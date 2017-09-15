@@ -86,14 +86,14 @@ class WorkflowResultsDaoCassandraImplIntegSpec
     val thirdPartyData = ThirdPartyData("{}")
     val executionReport: ExecutionReportWithId = ExecutionReportWithId(
       resultId,
-      graphstate.Failed(FailureDescription(DeepSenseFailure.Id.randomId, FailureCode.NodeFailure, "title")),
       DateTimeConverter.now,
       DateTimeConverter.now,
       Map(Node.Id.randomId -> nodestate.Failed(
         DateTimeConverter.now,
         DateTimeConverter.now,
         FailureDescription(DeepSenseFailure.Id.randomId, FailureCode.NodeFailure, "title"))),
-      EntitiesMap())
+      EntitiesMap(),
+      Some(FailureDescription(DeepSenseFailure.Id.randomId, FailureCode.NodeFailure, "title")))
     WorkflowWithSavedResults(
       Workflow.Id.randomId,
       metadata,

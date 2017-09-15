@@ -79,7 +79,7 @@ class WorkflowDaoCassandraImplIntegSpec
 
     "update workflow" in withStoredWorkflows(storedWorkflows) {
       val modifiedWorkflow2 = workflow2.copy(additionalData = ThirdPartyData("[]"))
-      whenReady(workflowsDao.save(workflow2Id, modifiedWorkflow2)) { _ =>
+      whenReady(workflowsDao.update(workflow2Id, modifiedWorkflow2)) { _ =>
         whenReady(workflowsDao.get(workflow2Id)) { workflow =>
           workflow.get.right.get shouldBe modifiedWorkflow2
         }
@@ -89,6 +89,14 @@ class WorkflowDaoCassandraImplIntegSpec
     "find workflow by id" in withStoredWorkflows(storedWorkflows) {
       whenReady(workflowsDao.get(workflow1Id)) { workflow =>
         workflow shouldBe Some(Right(workflow1))
+      }
+    }
+
+    "get all workflows" in withStoredWorkflows(storedWorkflows) {
+      whenReady(workflowsDao.getAll()) { workflows =>
+        workflows.size shouldBe 2
+        workflows(workflow1Id).workflow shouldBe Right(workflow1)
+        workflows(workflow2Id).workflow shouldBe Right(workflow2)
       }
     }
 
@@ -178,7 +186,6 @@ class WorkflowDaoCassandraImplIntegSpec
         workflow.additionalData,
         ExecutionReportWithId(
           resultId,
-          graphstate.Completed,
           DateTimeConverter.now,
           DateTimeConverter.now,
           Map[Node.Id, nodestate.NodeState](),
@@ -188,7 +195,7 @@ class WorkflowDaoCassandraImplIntegSpec
   private def withStoredWorkflows(
       storedWorkflows: Set[(Workflow.Id, Workflow)])(testCode: => Any): Unit = {
     val s = Future.sequence(storedWorkflows.map {
-      case (id, workflow) => workflowsDao.save(id, workflow)
+      case (id, workflow) => workflowsDao.create(id, workflow)
     })
     Await.ready(s, operationDuration)
     try {

@@ -51,7 +51,6 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
     mock[StatefulGraph],
     mock[ThirdPartyData],
     ExecutionReport(
-      graphstate.Aborted,
       DateTimeConverter.now,
       DateTimeConverter.now,
       Map[io.deepsense.graph.Node.Id, io.deepsense.graph.nodestate.NodeState](),

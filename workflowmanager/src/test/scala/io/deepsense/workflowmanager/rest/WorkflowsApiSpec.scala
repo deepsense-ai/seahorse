@@ -125,15 +125,15 @@ class WorkflowsApiSpec
       id: Workflow.Id,
       wf: Workflow): (WorkflowWithResults, GraphKnowledge) = {
     val executionReport = ExecutionReport(
-      graphstate.Failed(FailureDescription(
-        DeepSenseFailure.Id.randomId, FailureCode.NodeFailure, "title")),
       DateTimeConverter.now,
       DateTimeConverter.now,
       Map(Node.Id.randomId -> nodestate.Failed(
         DateTimeConverter.now,
         DateTimeConverter.now,
         FailureDescription(DeepSenseFailure.Id.randomId, FailureCode.NodeFailure, "title"))),
-      EntitiesMap())
+      EntitiesMap(),
+      Some(FailureDescription(
+        DeepSenseFailure.Id.randomId, FailureCode.NodeFailure, "title")))
 
     val knowledge = wf.graph.inferKnowledge(inferContext)
     val workflow =
@@ -273,6 +273,18 @@ class WorkflowsApiSpec
         }
         ()
       }
+    }
+  }
+
+  "GET /workflows" should {
+    "list all stored workflows" in {
+      Get(s"/$apiPrefix") ~>
+        addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
+        status should be(StatusCodes.OK)
+
+        responseAs[JsArray].elements.size shouldBe 7
+      }
+      ()
     }
   }
 
@@ -1122,9 +1134,9 @@ class WorkflowsApiSpec
 
   def mockStorage(): WorkflowStorage = {
     val storage = new TestWorkflowStorage()
-    storage.save(workflowAId, workflowA)
-    storage.save(workflowBId, workflowB)
-    storage.save(workflowWithoutNotebookId, workflowWithoutNotebook)
+    storage.create(workflowAId, workflowA)
+    storage.create(workflowBId, workflowB)
+    storage.create(workflowWithoutNotebookId, workflowWithoutNotebook)
     storage.saveExecutionResults(workflowBWithSavedResults)
 
     storage.saveString(noVersionWorkflowId, noVersionWorkflow)
@@ -1197,6 +1209,12 @@ class WorkflowsApiSpec
       }
     }
 
+    override def getAll(): Future[Map[Workflow.Id, WorkflowWithDates]] = {
+      storage.getAll().map(workflows =>
+        workflows ++ stringStorage.mapValues(
+          s => WorkflowWithDates(Left(s), DateTime.now, DateTime.now)).toMap)
+    }
+
     override def getLatestExecutionResults(
         workflowId: Id): Future[Option[Either[String, WorkflowWithSavedResults]]] = {
       storage.getLatestExecutionResults(workflowId).map { _.orElse {
@@ -1213,7 +1231,9 @@ class WorkflowsApiSpec
     override def getResultsUploadTime(workflowId: Id): Future[Option[time.DateTime]] =
       storage.getResultsUploadTime(workflowId)
 
-    override def save(id: Id, workflow: Workflow): Future[Unit] = storage.save(id, workflow)
+    override def create(id: Id, workflow: Workflow): Future[Unit] = storage.create(id, workflow)
+
+    override def update(id: Id, workflow: Workflow): Future[Unit] = storage.update(id, workflow)
 
     def saveString(id: Id, stringWorkflow: String): Future[Unit] = {
       Future.successful(stringStorage.put(id, stringWorkflow))

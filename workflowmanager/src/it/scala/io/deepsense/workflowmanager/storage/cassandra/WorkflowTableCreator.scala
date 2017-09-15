@@ -20,6 +20,8 @@ object WorkflowTableCreator {
          results text,
          results_upload_time timestamp,
          deleted boolean,
+         created timestamp,
+         updated timestamp,
          primary key (id)
       );
       """

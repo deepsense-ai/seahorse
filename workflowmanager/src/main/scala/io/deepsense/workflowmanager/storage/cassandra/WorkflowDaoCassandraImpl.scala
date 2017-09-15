@@ -16,7 +16,7 @@ import org.joda.time.DateTime
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.models.Id
 import io.deepsense.models.workflows.{Workflow, WorkflowWithSavedResults}
-import io.deepsense.workflowmanager.storage.WorkflowStorage
+import io.deepsense.workflowmanager.storage.{WorkflowWithDates, WorkflowStorage}
 
 class WorkflowDaoCassandraImpl @Inject() (
     @Named("cassandra.workflowmanager.workflow.table") table: String,
@@ -34,8 +34,21 @@ class WorkflowDaoCassandraImpl @Inject() (
     Future(session.execute(deleteQuery(id)))
   }
 
-  override def save(id: Workflow.Id, workflow: Workflow): Future[Unit] = {
-    Future(session.execute(saveWorkflowQuery(id, workflow)))
+  override def create(id: Workflow.Id, workflow: Workflow): Future[Unit] = {
+    Future(session.execute(createWorkflowQuery(id, workflow)))
+  }
+
+  override def update(id: Workflow.Id, workflow: Workflow): Future[Unit] = {
+    Future(session.execute(updateWorkflowQuery(id, workflow)))
+  }
+
+  override def getAll(): Future[Map[Workflow.Id, WorkflowWithDates]] = {
+    import scala.collection.JavaConversions._
+    Future(session.execute(getAllWorkflowsQuery()))
+      .map(_.all().map(row =>
+        Workflow.Id.fromUuid(row.getUUID(WorkflowRowMapper.Id))
+          -> workflowRowMapper.toWorkflowWithDates(row)
+    ).toMap)
   }
 
   override def getLatestExecutionResults(
@@ -58,6 +71,16 @@ class WorkflowDaoCassandraImpl @Inject() (
     getQuery(id, Seq(WorkflowRowMapper.Id, WorkflowRowMapper.Workflow))
   }
 
+  private def getAllWorkflowsQuery(): Select.Where = {
+    QueryBuilder.select(
+      WorkflowRowMapper.Id,
+      WorkflowRowMapper.Workflow,
+      WorkflowRowMapper.Created,
+      WorkflowRowMapper.Updated)
+      .from(table)
+      .where(QueryBuilder.eq(WorkflowRowMapper.Deleted, false))
+  }
+
   private def getResultsQuery(id: Workflow.Id): Select = {
     getQuery(id, Seq(WorkflowRowMapper.Id, WorkflowRowMapper.Results))
   }
@@ -72,9 +95,19 @@ class WorkflowDaoCassandraImpl @Inject() (
       .limit(1)
   }
 
-  private def saveWorkflowQuery(id: Workflow.Id, workflow: Workflow): Update.Where = {
+  private def createWorkflowQuery(id: Workflow.Id, workflow: Workflow): Update.Where = {
     updateQuery(id, Seq(
-      (WorkflowRowMapper.Workflow, workflowRowMapper.workflowToCell(workflow))))
+      (WorkflowRowMapper.Workflow, workflowRowMapper.workflowToCell(workflow)),
+      (WorkflowRowMapper.Created, DateTimeConverter.now.getMillis),
+      (WorkflowRowMapper.Updated, DateTimeConverter.now.getMillis)
+    ))
+  }
+
+  private def updateWorkflowQuery(id: Workflow.Id, workflow: Workflow): Update.Where = {
+    updateQuery(id, Seq(
+      (WorkflowRowMapper.Workflow, workflowRowMapper.workflowToCell(workflow)),
+      (WorkflowRowMapper.Updated, DateTimeConverter.now.getMillis)
+    ))
   }
 
   private def saveResultsQuery(

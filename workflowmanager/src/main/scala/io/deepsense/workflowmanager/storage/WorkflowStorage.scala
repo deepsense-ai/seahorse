@@ -25,10 +25,25 @@ trait WorkflowStorage {
   def get(id: Id): Future[Option[Either[String, Workflow]]]
 
   /**
-   * Saves a workflow.
-   * @param workflow Workflow to be saved.
+   * Creates a workflow.
+   * @param id Id of the workflow.
+   * @param workflow Workflow to be created.
    */
-  def save(id: Id, workflow: Workflow): Future[Unit]
+  def create(id: Id, workflow: Workflow): Future[Unit]
+
+  /**
+   * Updates a workflow.
+   * @param id Id of the workflow.
+   * @param workflow Workflow to be updated.
+   */
+  def update(id: Id, workflow: Workflow): Future[Unit]
+
+  /**
+   * Returns all stored workflows. If the workflow is compatible with the current
+   * API version it is returned as an object otherwise as a string.
+   * @return Stored workflows as objects or Strings.
+   */
+  def getAll(): Future[Map[Workflow.Id, WorkflowWithDates]]
 
   /**
    * Returns latest execution results for given workflow id. If the workflow is compatible with the
@@ -60,3 +75,8 @@ trait WorkflowStorage {
    */
   def delete(id: Id): Future[Unit]
 }
+
+case class WorkflowWithDates(
+  workflow: Either[String, Workflow],
+  created: DateTime,
+  updated: DateTime)

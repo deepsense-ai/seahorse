@@ -20,7 +20,7 @@ import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.graph.{CyclicGraphException, Node}
 import io.deepsense.models.workflows._
 import io.deepsense.workflowmanager.exceptions.WorkflowNotFoundException
-import io.deepsense.workflowmanager.storage.{NotebookStorage, WorkflowResultsStorage, WorkflowStorage}
+import io.deepsense.workflowmanager.storage.{WorkflowWithDates, NotebookStorage, WorkflowResultsStorage, WorkflowStorage}
 
 /**
  * Implementation of Workflow Manager.
@@ -66,7 +66,8 @@ class WorkflowManagerImpl @Inject()(
       authorizator.withRole(roleUpdate) { userContext =>
         workflowStorage.get(workflowId).flatMap {
           case Some(_) =>
-            workflowStorage.save(workflowId, workflow).map(_ => withKnowledge(workflowId, workflow))
+            workflowStorage.update(workflowId, workflow)
+              .map(_ => withKnowledge(workflowId, workflow))
           case None => throw new WorkflowNotFoundException(workflowId)
         }
       }
@@ -81,7 +82,7 @@ class WorkflowManagerImpl @Inject()(
           val workflowId = Workflow.Id.randomId
           val notebooks = extractNotebooks(workflow)
           val workflowWithoutNotebook = workflowWithRemovedNotebooks(workflow)
-          workflowStorage.save(workflowId, workflowWithoutNotebook).flatMap(_ =>
+          workflowStorage.create(workflowId, workflowWithoutNotebook).flatMap(_ =>
             Future.sequence(notebooks.map {
               case (nodeId, notebookJson) =>
                 notebookStorage.save(workflowId, nodeId, notebookJson.toString)
@@ -99,6 +100,34 @@ class WorkflowManagerImpl @Inject()(
         case Some(workflow) =>
           workflowStorage.delete(id).map(_ => true)
         case None => Future.successful(false)
+      }
+    }
+  }
+
+  def list(): Future[Seq[WorkflowInfo]] = {
+    logger.debug("List workflows")
+    authorizator.withRole(roleGet) { userContext =>
+      workflowStorage.getAll().map { workflows =>
+        def getOptionalString(jsObject: JsObject, field: String) = {
+          jsObject.fields.get(field).map(_.asInstanceOf[JsString].value).getOrElse("")
+        }
+
+        val extractedThirdPartyData = workflows.mapValues {
+          case WorkflowWithDates(Left(stringWorkflow), created, updated) =>
+            val workflowJson = stringWorkflow.parseJson.asJsObject
+            (workflowJson.fields("thirdPartyData").asJsObject, created, updated)
+          case WorkflowWithDates(Right(objectWorkflow), created, updated) =>
+            (objectWorkflow.additionalData.data.parseJson.asJsObject, created, updated)
+        }
+
+        extractedThirdPartyData.map {
+          case (workflowId, (thirdPartyData, created, updated)) =>
+            val gui = thirdPartyData.fields.get("gui").map(_.asJsObject).getOrElse(JsObject())
+            WorkflowInfo(workflowId,
+              getOptionalString(gui, "name"), getOptionalString(gui, "description"),
+              created, updated
+            )
+        }.toSeq
       }
     }
   }

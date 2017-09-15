@@ -15,6 +15,7 @@ import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.{WorkflowVersionUtil, WorkflowWithSavedResultsJsonProtocol}
 import io.deepsense.models.workflows.{Workflow, WorkflowWithSavedResults}
 import io.deepsense.workflowmanager.rest.CurrentBuild
+import io.deepsense.workflowmanager.storage.{WorkflowWithDates, WorkflowStorage}
 
 case class WorkflowRowMapper @Inject() (
     override val graphReader: GraphReader)
@@ -33,9 +34,15 @@ case class WorkflowRowMapper @Inject() (
     }
   }
 
-  def toResultsUploadTime(row: Row): Option[DateTime] =
-    Option(row.getDate(WorkflowRowMapper.ResultsUploadTime))
-      .map(s => DateTimeConverter.fromMillis(s.getTime))
+  def toWorkflowWithDates(row: Row): WorkflowWithDates = {
+    WorkflowWithDates(toWorkflow(row),
+      getDate(row, WorkflowRowMapper.Created).get,
+      getDate(row, WorkflowRowMapper.Updated).get)
+  }
+
+  def toResultsUploadTime(row: Row): Option[DateTime] = {
+    getDate(row, WorkflowRowMapper.ResultsUploadTime)
+  }
 
   def workflowToCell(workflow: Workflow): String = workflow.toJson.compactPrint
 
@@ -43,6 +50,10 @@ case class WorkflowRowMapper @Inject() (
 
   def resultsUploadTimeToCell(resultsUploadTime: DateTime): Long =
     resultsUploadTime.getMillis
+
+  private def getDate(row: Row, column: String): Option[DateTime] = {
+    Option(row.getDate(column)).map(s => DateTimeConverter.fromMillis(s.getTime))
+  }
 
   override def currentVersion: Version = CurrentBuild.version
 }
@@ -53,4 +64,6 @@ object WorkflowRowMapper {
   val Results = "results"
   val ResultsUploadTime = "results_upload_time"
   val Deleted = "deleted"
+  val Created = "created"
+  val Updated = "updated"
 }

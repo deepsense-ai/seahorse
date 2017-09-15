@@ -57,6 +57,12 @@ trait WorkflowManager {
   def delete(id: Id): Future[Boolean]
 
   /**
+   * Lists stored workflows.
+   * @return List of basic information about stored workflows.
+   */
+  def list(): Future[Seq[WorkflowInfo]]
+
+  /**
    * Saves workflow results
    * @param workflowWithResults workflow results to save
    * @return saved workflow results

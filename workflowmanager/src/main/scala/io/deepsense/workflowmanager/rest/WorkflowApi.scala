@@ -271,6 +271,14 @@ abstract class WorkflowApi @Inject() (
               }
             } ~
             pathEndOrSingleSlash {
+              get {
+                withUserContext { userContext =>
+                  onComplete(workflowManagerProvider.forContext(userContext).list()) {
+                    case Success(workflows) => complete(StatusCodes.OK, workflows)
+                    case Failure(exception) => failWith(exception)
+                  }
+                }
+              } ~
               post {
                 withUserContext { userContext =>
                   implicit val format = versionedWorkflowUnmarashaler
