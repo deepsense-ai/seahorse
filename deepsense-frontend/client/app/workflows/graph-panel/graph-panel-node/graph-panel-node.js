@@ -11,13 +11,6 @@ function GraphNodeView($rootScope, GraphNode) {
     'e76ca616-0322-47a5-b390-70c9668265dd': {
       icons: ['fa fa-book']
     },
-    // Custom Transformer
-    '65240399-2987-41bd-ba7e-2944d60a3404': {
-      icons: [
-        'fa fa-cubes',
-        'fa fa-bolt'
-      ]
-    },
     // Evaluate
     'a88eaf35-9061-4714-b042-ddd2049ce917': {
       icons: ['fa fa-tachometer']
