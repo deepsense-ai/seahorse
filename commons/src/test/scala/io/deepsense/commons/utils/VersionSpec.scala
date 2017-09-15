@@ -25,7 +25,7 @@ class VersionSpec extends StandardSpec with UnitTestSupport {
 
   "Version" should {
     "be comparable with other version" in {
-      val v = Version(1, 2, 3)
+      val v = Version(1, 2, 3, "")
       v should be (compatibleWith(v))
 
       val versionPatchLower = v.copy(fix = v.fix - 1)
@@ -45,20 +45,21 @@ class VersionSpec extends StandardSpec with UnitTestSupport {
     }
 
     "be parse strings" in {
-      Version("1.2.3") shouldBe Version(1, 2, 3)
-      Version("1.2.3.4") shouldBe Version(1, 2, 3)
-      Version("1.2.3.a") shouldBe Version(1, 2, 3)
-      Version("1.2.3-x") shouldBe Version(1, 2, 3)
+      Version("1.2.3") shouldBe Version(1, 2, 3, "")
+      Version("1.2.3.4") shouldBe Version(1, 2, 3, ".4")
+      Version("1.2.3.a") shouldBe Version(1, 2, 3, ".a")
+      Version("1.2.3-x") shouldBe Version(1, 2, 3, "-x")
+      Version("1.2.3-numberhere:1") shouldBe Version(1, 2, 3, "-numberhere:1")
 
-      an[VersionException] shouldBe thrownBy (Version("1"))
-      an[VersionException] shouldBe thrownBy (Version("1."))
-      an[VersionException] shouldBe thrownBy (Version("1.2"))
-      an[VersionException] shouldBe thrownBy (Version("1.2."))
-      an[VersionException] shouldBe thrownBy (Version("1.2.x"))
-      an[VersionException] shouldBe thrownBy (Version("1x.2.3"))
-      an[VersionException] shouldBe thrownBy (Version("1.2x.3"))
-      an[VersionException] shouldBe thrownBy (Version("1x.2x.3"))
-      an[VersionException] shouldBe thrownBy (Version("foo"))
+      a [VersionException] shouldBe thrownBy (Version("1"))
+      a [VersionException] shouldBe thrownBy (Version("1."))
+      a [VersionException] shouldBe thrownBy (Version("1.2"))
+      a [VersionException] shouldBe thrownBy (Version("1.2."))
+      a [VersionException] shouldBe thrownBy (Version("1.2.x"))
+      a [VersionException] shouldBe thrownBy (Version("1x.2.3"))
+      a [VersionException] shouldBe thrownBy (Version("1.2x.3"))
+      a [VersionException] shouldBe thrownBy (Version("1x.2x.3"))
+      a [VersionException] shouldBe thrownBy (Version("foo"))
     }
   }
 

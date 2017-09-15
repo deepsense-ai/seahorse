@@ -18,9 +18,9 @@ package io.deepsense.commons.utils
 
 import scala.util.{Failure, Success, Try}
 
-case class Version(major: Int, minor: Int, fix: Int) {
+case class Version(major: Int, minor: Int, fix: Int, rest: String) {
   def humanReadable: String = {
-    Seq(major, minor, fix).mkString(Version.separator.toString)
+    Seq(major, minor, fix).mkString(Version.separator.toString) + rest
   }
 
   /**
@@ -33,22 +33,28 @@ case class Version(major: Int, minor: Int, fix: Int) {
 object Version {
   val separator = '.'
 
+  def apply(major: Int, minor: Int, fix: Int): Version = {
+    Version(major, minor, fix, "")
+  }
+
   def apply(versionString: String): Version = {
-    val expectedParts = 3
-    val split =
-      versionString.replaceAll("[^\\d.]", "").split(separator).toSeq
-      .filter(_.nonEmpty).map(_.toInt)
+    // <number>.<number>.<number><optional_rest>
+    val splitRegex = """([0-9]+)\.([0-9]+)\.([0-9]+)([^0-9].*)?""".r
 
     Try {
-      assert(split.size >= expectedParts,
-        s"Version must have at least $expectedParts dot-separated parts (had ${split.size}).")
-      val version = Version(split.head, split(1), split(2))
-      assert(versionString.startsWith(version.humanReadable),
-        s"Version must start with X.Y.Z, where X, Y and Z are non negative integers!")
-      version
+      versionString match {
+        case splitRegex(maj, min, fix, rest) => Version(maj.toInt, min.toInt, fix.toInt, Option(rest).getOrElse(""))
+        case _ => throw new IllegalArgumentException(
+          s"Version must conform to regex given by string ${splitRegex.toString()}")
+      }
     } match {
-      case Failure(exception) => throw new VersionException(versionString, Some(exception))
-      case Success(value) => value
+      case Success(version) => version
+      case Failure(nfe: NumberFormatException) =>
+        throw VersionException(versionString, Some(
+            new IllegalArgumentException("Version must start with X.Y.Z, " +
+              "where X, Y and Z are non negative integers!",
+              nfe)))
+      case Failure(e) => throw VersionException(versionString, Some(e))
     }
   }
 }
