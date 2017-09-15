@@ -23,7 +23,8 @@ RUN mkdir -p /opt/WEB-INF/lib/ && \
         -O /opt/WEB-INF/lib/h2-${H2_VERSION}.jar && \
     cd /opt/ && zip -r /tomcat/webapps/ROOT.war WEB-INF/ && \
     rm -Rf /opt/WEB-INF && \
-    mv /tomcat/webapps/ROOT.war /tomcat/webapps/authorization.war
+    mv /tomcat/webapps/ROOT.war /tomcat/webapps/authorization.war && \
+    rm -Rf /uaa/uaa.yml
 
 # New run.sh starts postfix MTA
 ADD docker-dummy-authorization.sh /opt/

@@ -8,6 +8,7 @@ var express = require('express'),
     compression = require('compression'),
     timeout = require('connect-timeout'),
     reverseProxy = require('./reverse-proxy'),
+    authorizationQuota = require('./authorization-quota/authorization-quota');
     config = require('./config/config');
 
 var app = express();
@@ -34,6 +35,11 @@ auth.init(app);
 
 app.use(userCookieHandler);
 
+app.all("/authorization/create_account*",
+  authorizationQuota.forward,
+  reverseProxy.forward
+);
+
 app.all("/authorization/**",
   reverseProxy.forward
 );
@@ -41,7 +47,7 @@ app.all("/authorization/**",
 app.use(express.static('app/server/html'));
 
 app.all("/wait.html");
-
+app.all("/quota.html");
 
 
 app.get('/',
