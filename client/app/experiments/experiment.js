@@ -3,6 +3,8 @@
  */
 'use strict';
 
+var dagDemo = require('./dag-demo.js');
+
 /* @ngInject */
 function Experiment($stateParams) {
   var tempExperimentsData = {
@@ -18,6 +20,8 @@ function Experiment($stateParams) {
 
   this.experimentLabel = 'experiment:';
   this.data = tempExperimentsData[$stateParams.id];
+
+  dagDemo();
 }
 exports.function = Experiment;
 

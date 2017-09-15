@@ -10,11 +10,13 @@
     "type": "git",
     "url": "https://github.com/codilime/deepsense-frontend.git"
   },
-  "main": "./client/app/app.js",
+  "main": "./gulpfile.js",
   "scripts": {
+    "postinstall": "bower install",
     "prestart": "npm install",
     "start": "gulp start",
-    "dev": "gulp dev",
+    "predev": "npm install",
+    "dev": "gulp start --dev",
     "server": "node server/app.js"
   },
   "dependencies": {
@@ -28,31 +30,31 @@
   },
   "devDependencies": {
     "6to5ify": "^3.1.2",
-    "angular": "^1.3.9",
+    "angular": "^1.3.11",
     "angular-bootstrap": "^0.12.0",
     "angular-ui-router": "^0.2.13",
     "bootstrap": "^3.3.2",
-    "browser-sync": "^1.9.0",
+    "bower": "^1.3.12",
+    "browser-sync": "^1.9.1",
     "browserify": "^8.1.1",
     "browserify-ngannotate": "^0.6.0",
     "browserify-shim": "^3.8.2",
     "del": "^1.1.1",
     "gulp": "^3.8.10",
+    "gulp-concat": "^2.4.3",
     "gulp-jshint": "^1.9.0",
     "gulp-less": "^2.0.1",
+    "gulp-minify-css": "^0.4.3",
+    "gulp-size": "^1.2.0",
+    "gulp-uglify": "^1.1.0",
     "gulp-util": "^3.0.2",
     "jasmine": "^2.1.1",
     "jshint-stylish": "^1.0.0",
     "karma": "^0.12.31",
     "run-sequence": "^1.0.2",
+    "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.0.0",
     "http-server": "latest"
-  },
-  "browser": {
-    "angular": "./node_modules/angular/angular.min.js",
-    "angular-ui-router": "./node_modules/angular-ui-router/release/angular-ui-router.js",
-    "angular-ui-bootstrap": "./node_modules/angular-bootstrap/dist/ui-bootstrap-tpls.js",
-    "bootstrap": "./node_modules/bootstrap/dist/css/bootstrap.css"
   },
   "browserify": {
     "transform": [
@@ -60,19 +62,37 @@
     ]
   },
   "browserify-shim": {
-    "angular": "angular"
+    "angular": "global:angular",
+    "jsPlumb": "global:jsPlumb"
   },
   "files": {
     "build": {
       "path": "./build/",
-      "js": "js/app.js",
-      "css": "css"
+      "js": "js/",
+      "css": "css/",
+      "bundle": {
+        "app": "app.js",
+        "js": "libs.js",
+        "css": "libs.css"
+      }
     },
     "client": {
       "path": "./client/",
+      "app": "app/app.js",
       "js": "app/**/*.js",
-      "less": "**/*.less",
+      "less": "css/**/*.less",
       "html": "**/*.html"
+    },
+    "libs": {
+      "js": [
+        "./node_modules/angular/angular.min.js",
+        "./node_modules/angular-ui-router/release/angular-ui-router.min.js",
+        "./node_modules/angular-bootstrap/dist/ui-bootstrap.min.js",
+        "./bower_components/jsPlumb/dist/js/dom.jsPlumb-1.7.2-min.js"
+      ],
+      "css": [
+        "./node_modules/bootstrap/dist/css/bootstrap.min.css"
+      ]
     }
   }
 }

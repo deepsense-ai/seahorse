@@ -1,0 +1,19 @@
+{
+  "name": "DeepSense.io",
+  "version": "0.1.0",
+  "private": true,
+  "description": "DeepSense.io LAB application",
+  "author": "CodiLime, Inc.",
+  "license": "ISC",
+  "homepage": "http://deepsense.io/",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jsPlumb": "~1.7.2"
+  }
+}
