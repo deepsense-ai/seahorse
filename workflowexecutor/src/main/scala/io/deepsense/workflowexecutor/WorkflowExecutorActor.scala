@@ -257,6 +257,7 @@ class GraphNodeExecutorFactoryImpl extends GraphNodeExecutorFactory {
       node: Node,
       input: Vector[DOperable]): ActorRef = {
     val props = Props(new WorkflowNodeExecutorActor(executionContext, node, input))
+      .withDispatcher("node-executor-dispatcher")
     context.actorOf(props, s"node-executor-${node.id.value.toString}")
   }
 }
