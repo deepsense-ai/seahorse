@@ -44,10 +44,21 @@ object Execution {
   }
 }
 
-sealed trait ExecutionLike {
+sealed abstract class Execution(val graph: StatefulGraph, running: Boolean) {
+  final def node(id: Node.Id): DeeplangNode = graph.node(id)
+
+  def isRunning: Boolean = running
+
+  def executionReport: ExecutionReport = {
+    ExecutionReport(graph.states.mapValues(_.nodeState), graph.executionFailure)
+  }
+
+  def inferKnowledge(context: InferContext): GraphKnowledge = {
+    graph.inferKnowledge(context, graph.memorizedKnowledge)
+  }
+
   type NodeStates = Map[Node.Id, NodeStateWithResults]
 
-  def node(id: Node.Id): DeeplangNode
   def nodeStarted(id: Node.Id): Execution
   def nodeFailed(id: Node.Id, cause: Exception): Execution
   def nodeFinished(
@@ -59,26 +70,10 @@ sealed trait ExecutionLike {
   def readyNodes: Seq[ReadyNode]
   def error: Option[FailureDescription]
   def states: NodeStates
-  def isRunning: Boolean
   def inferAndApplyKnowledge(inferContext: InferContext): Execution
   def updateStructure(directedGraph: DeeplangGraph, nodes: Set[Node.Id] = Set.empty): Execution
   def abort: Execution
-  def executionReport: ExecutionReport
-  def inferKnowledge(context: InferContext): GraphKnowledge
-}
 
-sealed abstract class Execution(val graph: StatefulGraph, running: Boolean) extends ExecutionLike {
-  override def node(id: Node.Id): DeeplangNode = graph.node(id)
-
-  override def isRunning: Boolean = running
-
-  override def executionReport: ExecutionReport = {
-    ExecutionReport(graph.states.mapValues(_.nodeState), graph.executionFailure)
-  }
-
-  override def inferKnowledge(context: InferContext): GraphKnowledge = {
-    graph.inferKnowledge(context, graph.memorizedKnowledge)
-  }
 }
 
 case class IdleExecution(
