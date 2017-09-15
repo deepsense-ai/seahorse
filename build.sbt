@@ -51,4 +51,4 @@ addCommandAlias("ds-it",
     ";graphexecutor/it:test " +
     ";reportlib/it:test " +
     ";graphjson/it:test " +
-    ";model-deploying/it:test")
+    ";deploy-model-service/it:test")
