@@ -7,7 +7,7 @@ class RunningExecutorPopoverCtrl {
   }
 
   isPopoverVisible() {
-    this.WorkflowStatusBarService.isRunningExecutorPopoverVisible();
+    return this.WorkflowStatusBarService.isRunningExecutorPopoverVisible();
   }
 
   closePopover() {

@@ -117,6 +117,7 @@
           <a ng-if="workflow.sessionStatus === 'running' || workflow.sessionStatus === 'error'">
             <i ng-click="home.deleteSession(workflow.id)"
                ng-if="home.isWorkflowOwnedByCurrentUser(workflow)"
+               popover-placement="left"
                uib-popover="Stop session"
                popover-trigger="mouseenter"
                popover-append-to-body="true"
@@ -130,6 +131,7 @@
             <span class="fa fa-files-o"></span>
           </a>
           <a popover-trigger="mouseenter"
+             popover-placement="left"
              uib-popover="Delete workflow"
              ng-click="home.deleteWorkflow(workflow)">
             <span class="fa fa-times"></span>

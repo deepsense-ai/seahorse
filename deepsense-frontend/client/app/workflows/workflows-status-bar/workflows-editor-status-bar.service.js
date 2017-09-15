@@ -57,7 +57,7 @@ function WorkflowStatusBarService($rootScope, config, version, WorkflowService, 
       icon: 'fa-cog',
       additionalClass: 'menu-item-disabled',
       additionalIconClass: 'fa-spin',
-      additionalHtml: 'app/workflows/workflows-status-bar/additional-html/starting-executor-popover.html'
+      additionalHtml: 'app/workflows/workflows-status-bar/additional-html/running-executor-popover.html'
     },
     stopEditing: {
       label: 'Stop editing',
