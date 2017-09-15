@@ -163,9 +163,7 @@ abstract class WorkflowApi @Inject() (
             path(JavaUUID / "clone") { workflowId =>
               post {
                 withUserContext { userContext =>
-                  val futureWorkflow =
-                    workflowManagerProvider.forContext(userContext).clone(workflowId)
-                  onSuccess(futureWorkflow) {
+                  onSuccess(workflowManagerProvider.forContext(userContext).clone(workflowId)) {
                     case Some(workflowWithVariables) =>
                       val envelopedWorkflowId = Envelope(workflowWithVariables.id)
                       complete(StatusCodes.Created, envelopedWorkflowId)
