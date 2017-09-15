@@ -16,3 +16,4 @@
   with_items:
     - rabbitmq.config
     - enabled_plugins
+    - definitions.json
