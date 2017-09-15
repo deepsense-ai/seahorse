@@ -23,7 +23,7 @@ describe('graphNode', () => {
         'y': initY,
         'input': [],
         'output': [],
-        'parameters': []
+        'parametersValues': {}
       },
       serializedData = {
         'id': initId,
@@ -36,15 +36,16 @@ describe('graphNode', () => {
           'x': initX,
           'y': initY
         },
-        'parameters': []
-      };
+        'parameters': {}
+      },
+      DeepsenseNodeParameters;
 
   beforeEach(() => {
     angular.module('test', ['deepsense.node-parameters']);
 
     angular.mock.module('test');
-    angular.mock.inject((DeepsenseNodeParameters) => {
-      initData.parameters = DeepsenseNodeParameters.factory.createParametersList([], []);
+    angular.mock.inject((_DeepsenseNodeParameters_) => {
+      DeepsenseNodeParameters = _DeepsenseNodeParameters_;
     });
   });
 
@@ -57,6 +58,13 @@ describe('graphNode', () => {
   it('should have serialize method', () => {
     let graphNode = new GraphNode(initData);
     expect(graphNode.serialize).toEqual(jasmine.any(Function));
+    expect(graphNode.serialize()).toEqual(serializedData);
+  });
+
+  it('should be able to set parameters', () => {
+    let graphNode = new GraphNode(initData);
+    expect(graphNode.serialize()).toEqual(serializedData);
+    graphNode.setParameters({}, DeepsenseNodeParameters);
     expect(graphNode.serialize()).toEqual(serializedData);
   });
 

@@ -111,6 +111,7 @@ GraphNode.prototype.getResult = function getResult(portIndex) {
  * Sets parameters object using internal parameters values and provided schema.
  *
  * @param {object} parametersSchema
+ * @param {object} DeepsenseNodeParameters
  */
 GraphNode.prototype.setParameters = function setParameters(parametersSchema, DeepsenseNodeParameters) {
   if (this.parametersValues) {
