@@ -41,9 +41,9 @@ class WorkflowStateDaoCassandraImplIntegSpec
 
   private def aDate: DateTime = DateTimeConverter.now
 
-  val draftNoReports = (Node.Id.randomId, NodeState(nodestate.Draft, None))
+  val draftNoReports = (Node.Id.randomId, NodeState(nodestate.Draft(), None))
   val draftWithReports =
-    (Node.Id.randomId, NodeState(nodestate.Draft, Some(EntitiesMap())))
+    (Node.Id.randomId, NodeState(nodestate.Draft(), Some(EntitiesMap())))
   val completedNoReports = (Node.Id.randomId, NodeState(
       nodestate.Completed(aDate, aDate, Seq()), None))
   val completedWithReports = (Node.Id.randomId, NodeState(
@@ -81,7 +81,7 @@ class WorkflowStateDaoCassandraImplIntegSpec
     "update state" in withStored(workflowState1) {
       val nodeId = draftNoReports._1
       assert(state1.contains(nodeId))
-      val newState = NodeState(nodestate.Draft, Some(EntitiesMap()))
+      val newState = NodeState(nodestate.Draft(), Some(EntitiesMap()))
 
       whenReady(workflowStateDao.save(workflowId1, Map(nodeId -> newState))) { _ =>
         whenReady(workflowStateDao.get(workflowId1)) { state =>

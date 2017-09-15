@@ -9,7 +9,6 @@ import scala.concurrent.{ExecutionContext, Future}
 import com.google.inject.Inject
 import com.google.inject.assistedinject.Assisted
 import com.google.inject.name.Named
-import org.joda.time.DateTime
 import spray.json._
 
 import io.deepsense.commons.auth.usercontext.UserContext
@@ -45,8 +44,13 @@ class WorkflowManagerImpl @Inject()(
     logger.debug("Get workflow id: {}", id)
     authorizator.withRole(roleGet) { userContext =>
       workflowStorage.get(id).flatMap{
-        case Some(workflow) => withResults(id, workflow).map(Some(_))
-        case None => Future.successful(None)
+        case Some(workflow) =>
+          val result = withResults(id, workflow).map(Some(_))
+          logger.info(s"Workflow with id: $id, $result")
+          result
+        case None =>
+          logger.info(s"Workflow with id: $id, not found")
+          Future.successful(None)
       }
     }
   }
