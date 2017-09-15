@@ -49,4 +49,8 @@ class SessionManagerClient(val sessionManagerUrl: URL,
   def deleteSession(workflowId: Workflow.Id): Future[HttpResponse] = {
     fetchHttpResponse(Delete(endpointPath(workflowId.toString)))
   }
+
+  def launchSession(workflowId: Workflow.Id): Future[HttpResponse] = {
+    fetchHttpResponse(Post(endpointPath(workflowId.toString)))
+  }
 }

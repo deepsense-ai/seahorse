@@ -7,6 +7,7 @@ package io.deepsense.sessionmanager.service.actors
 import scala.collection.mutable
 import scala.concurrent.duration._
 import scala.language.postfixOps
+import scala.util.{Failure, Success, Try}
 
 import akka.actor.Actor
 import com.google.inject.Inject
@@ -41,8 +42,17 @@ class SessionServiceActor @Inject()(
       case GetRequest(id) => sender() ! handleGet(id)
       case KillRequest(id) => sender() ! handleKill(id)
       case ListRequest() => sender() ! handleList()
+      case LaunchRequest(id) => sender() ! handleLaunch(id)
       case CreateRequest(sessionConfig, clusterConfig) =>
         sender() ! handleCreate(sessionConfig, clusterConfig)
+    }
+  }
+
+  private def handleLaunch(id: Id): Try[Unit] = {
+    if (sessionStateByWorkflowId.contains(id)) {
+      Success(sessionExecutorClients.launchWorkflow(id))
+    } else {
+      Failure(new IllegalArgumentException(s"Session for the given id not found: $id"))
     }
   }
 
@@ -106,5 +116,6 @@ object SessionServiceActor {
     sessionConfig: SessionConfig,
     clusterConfig: ClusterDetails
   ) extends Request
+  case class LaunchRequest(id: Id) extends Request
 
 }

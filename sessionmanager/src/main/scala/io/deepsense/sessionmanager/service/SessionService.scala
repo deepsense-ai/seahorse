@@ -7,6 +7,7 @@ package io.deepsense.sessionmanager.service
 import java.util.concurrent.TimeUnit
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success, Try}
 
 import akka.actor.ActorRef
 import akka.pattern.ask
@@ -50,5 +51,10 @@ class SessionService @Inject() (
   def killSession(workflowId: Id): Future[Unit] = {
     logger.info(s"Killing session '$workflowId'")
     (serviceActor ? SessionServiceActor.KillRequest(workflowId)).mapTo[Unit]
+  }
+
+  def launchSession(workflowId: Id): Future[Unit] = {
+    logger.info(s"Launching nodes in session '$workflowId'")
+    (serviceActor ? SessionServiceActor.LaunchRequest(workflowId)).mapTo[Try[Unit]].flatMap(Future.fromTry)
   }
 }
