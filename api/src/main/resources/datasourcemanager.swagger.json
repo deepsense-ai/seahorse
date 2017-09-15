@@ -162,11 +162,15 @@
   "definitions": {
     "Datasource": {
       "type": "object",
-      "required": ["id", "ownerId", "accessLevel", "params"],
+      "required": ["id", "creationDateTime", "ownerId", "accessLevel", "params"],
       "properties": {
         "id": {
           "type": "string",
           "format": "uuid"
+        },
+        "creationDateTime": {
+          "type": "string",
+          "format": "date-time"
         },
         "ownerId": {
           "type": "string",

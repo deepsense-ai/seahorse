@@ -31,8 +31,7 @@ lazy val swaggerPackages = settingKey[Seq[(String, String)]](
     " Swagger location is relative to api/ project.")
 
 swaggerPackages := Seq(
-  ("io.deepsense.api.datasourcemanager",
-    "src/main/resources/io/deepsense/datasourcemanager/swagger.json"))
+  ("io.deepsense.api.datasourcemanager", "src/main/resources/datasourcemanager.swagger.json"))
 
 javaSourceManaged := target.value / "java" / "srcManaged"
 
