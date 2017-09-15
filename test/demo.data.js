@@ -491,6 +491,15 @@ angular.module('test').
           }
         },
         stateDetails: null
+      },
+      {
+        name: 'Workflow param',
+        description: 'Test of workflow param',
+        id: '52a4a9fe-8d8e-4dcc-81f7-d1d34352b969',
+        color: '#00B1EB',
+        operationId: '11111-111111-55555',
+        parameters: null,
+        state: null
       }
     ];
 
@@ -891,6 +900,15 @@ angular.module('test').
           default: null,
           required: true
         }
+      ],
+      [
+        {
+          "name": "Sample workflow",
+          "type": "workflow",
+          "description": "This is workflow parameter",
+          "default": "asd",
+          "required": true
+        }
       ]
     ];
 
@@ -987,7 +1005,8 @@ angular.module('test').
           "type": "index",
           "value": 1
         }
-      }
+      },
+      {"Sample workflow": {}}
     ];
 
     // Mocked node. It can return its id and incomingKnowledge.

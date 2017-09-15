@@ -16,6 +16,10 @@ module.controller('TestCtrl', ['$scope', '$element', 'Model', function ($scope, 
     $('#' + preID).toggle();
   };
 
+  $scope.$on('AttributesPanel.OPEN_INNER_WORKFLOW', function(e, data) {
+    console.log('Received OPEN_INNER_WORKFLOW event', data);
+  });
+
   $scope.$on('AttributePanel.UNSELECT_NODE', function () {
     $scope.currentNode = null;
 

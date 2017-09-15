@@ -47,7 +47,7 @@ EVENTS
 
 - AttributesPanel.UPDATED | `$broadcast()` | No args | The event is broadcasted if any parameter has changed its value
 
-- AttributesPanel.OPEN_INNER_WORKFLOW | `$broadcast()` | {'workflowId': '<uuid>', 'nodeId': '<uuid>'} | The event is broadcasted after an "Open inner workflow" button is clicked.
+- AttributesPanel.OPEN_INNER_WORKFLOW | `$broadcast()` | {'workflowId': '<uuid>', 'nodeId': '<uuid>', 'parameterName': '<string>'} | The event is broadcasted after an "Open inner workflow" button is clicked.
 
 ### Additional directives are exported
 

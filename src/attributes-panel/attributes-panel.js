@@ -29,8 +29,6 @@ function OperationAttributes($rootScope, AttributesPanelService, config) {
       scope.$watch('node', function () {
         let notebookOpId = 'e76ca616-0322-47a5-b390-70c9668265dd';
         scope.hasCodeEdit = scope.node.operationId === notebookOpId;
-        let createCustomTransformerOpId = '65240399-2987-41bd-ba7e-2944d60a3404';
-        scope.hasInnerWorkflow = scope.node.operationId === createCustomTransformerOpId;
         scope.$applyAsync(setCorrectHeight.bind(null, element[0]));
       });
 
@@ -51,7 +49,6 @@ function OperationAttributes($rootScope, AttributesPanelService, config) {
       this.getDocsHost = () => config.docsHost;
 
       this.hasCodeEdit = () => $scope.hasCodeEdit;
-      this.hasInnerWorkflow = () => $scope.hasInnerWorkflow;
 
       this.showNotebook = () => {
         $scope.modal = $uibModal.open({
@@ -62,12 +59,13 @@ function OperationAttributes($rootScope, AttributesPanelService, config) {
         });
       };
 
-      this.showInnerWorkflow = () => {
+      $scope.$on('AttributesPanel.INTERNAL.CLICKED_EDIT_WORKFLOW', (event, data) => {
         $rootScope.$broadcast('AttributesPanel.OPEN_INNER_WORKFLOW', {
           'workflowId': $scope.workflow,
-          'nodeId': $scope.node.id
+          'nodeId': $scope.node.id,
+          'parameterName': data.parameterName
         });
-      };
+      });
 
       this.showErrorMessage = function showErrorMessage() {
         $scope.modal = $uibModal.open({
