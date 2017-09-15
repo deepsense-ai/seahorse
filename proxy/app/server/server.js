@@ -18,6 +18,8 @@ var reverseProxy = require('./reverse-proxy')
 var port = normalizePort(process.env.PORT || '8080');
 app.set('port', port);
 
+var host = process.env.HOST || "0.0.0.0";
+
 /**
  * Create HTTP server.
  */
@@ -28,7 +30,7 @@ var server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
+server.listen(port, host);
 server.on('error', onError);
 server.on('listening', onListening);
 server.on('upgrade', reverseProxy.forwardWebSocket);
