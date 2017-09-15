@@ -28,3 +28,5 @@ trait LinearRegressionParams extends Params
   with HasTolerance
   with HasFitIntercept
   with HasStandardization
+  with HasOptionalWeightColumnParam
+  with HasSolverParam

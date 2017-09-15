@@ -16,7 +16,7 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
-import io.deepsense.deeplang.doperables.spark.wrappers.estimators.IsotonicRegression.WeightColumnNoOption
+import io.deepsense.deeplang.doperables.spark.wrappers.params.common.OptionalWeightColumnChoice
 import io.deepsense.deeplang.params.ParamPair
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
@@ -35,7 +35,7 @@ class IsotonicRegressionWithoutWeightsSmokeTest
     isotonic -> true,
     labelColumn -> NameSingleColumnSelection("myLabel"),
     predictionColumn -> "isotonicPrediction",
-    useCustomWeights -> WeightColumnNoOption())
+    optionalWeightColumn -> OptionalWeightColumnChoice.WeightColumnNoOption())
 
   className should {
     "pass no weight column value to wrapped model" in {

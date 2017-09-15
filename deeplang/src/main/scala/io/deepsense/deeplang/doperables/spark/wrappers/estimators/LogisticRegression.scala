@@ -36,7 +36,8 @@ class LogisticRegression
   with HasMaxIterationsParam
   with HasTolerance
   with HasFitIntercept
-  with HasStandardization {
+  with HasStandardization
+  with HasOptionalWeightColumnParam {
 
   override lazy val maxIterationsDefault = 100.0
 
@@ -52,6 +53,6 @@ class LogisticRegression
     probabilityColumn,
     rawPredictionColumn,
     predictionColumn,
-    threshold)
-
+    threshold,
+    optionalWeightColumn)
 }

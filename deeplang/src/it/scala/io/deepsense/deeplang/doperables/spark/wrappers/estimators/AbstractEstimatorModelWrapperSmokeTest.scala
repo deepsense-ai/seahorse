@@ -36,10 +36,12 @@ abstract class AbstractEstimatorModelWrapperSmokeTest extends DeeplangIntegTestS
 
   val dataFrame: DataFrame = {
     val rowSeq = Seq(
-      TestDataFrameRow(0.0, Vectors.dense(1.0, 2.0, 3.0), 0, 0, 0.2,
+      TestDataFrameRow(0.0, 0.5, Vectors.dense(1.0, 2.0, 3.0), 0, 0, 0.2,
         Seq("a", "a", "a", "b", "b", "c").toArray),
-      TestDataFrameRow(1.0, Vectors.dense(4.0, 5.0, 6.0), 1, 1, 0.4,
-        Seq("a", "b", "c", "d", "d", "d").toArray)
+      TestDataFrameRow(1.0, 2.0, Vectors.dense(4.0, 5.0, 6.0), 1, 1, 0.4,
+        Seq("a", "b", "c", "d", "d", "d").toArray),
+      TestDataFrameRow(1.0, 0.0, Vectors.dense(16.0, 11.0, 9.0), 2, 3, 0.4,
+        Seq("a", "c", "d", "f", "f", "g").toArray)
     )
     val sparkDF = sqlContext.createDataFrame(rowSeq)
     DataFrame.fromSparkDataFrame(sparkDF)
@@ -76,6 +78,7 @@ abstract class AbstractEstimatorModelWrapperSmokeTest extends DeeplangIntegTestS
 object AbstractEstimatorModelWrapperSmokeTest {
   case class TestDataFrameRow(
     myLabel: Double,
+    myWeight: Double,
     myFeatures: mllib.linalg.Vector,
     myItemId: Int,
     myUserId: Int,

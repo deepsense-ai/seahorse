@@ -39,5 +39,7 @@ class LinearRegression
     standardization,
     featuresColumn,
     labelColumn,
-    predictionColumn)
+    predictionColumn,
+    optionalWeightColumn,
+    solver)
 }

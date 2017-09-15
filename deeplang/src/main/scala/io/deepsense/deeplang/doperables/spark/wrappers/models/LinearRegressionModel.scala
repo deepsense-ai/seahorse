@@ -21,7 +21,7 @@ import org.apache.spark.ml.regression.{LinearRegression => SparkLinearRegression
 import io.deepsense.deeplang.doperables.SparkModelWrapper
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
-import io.deepsense.deeplang.doperables.spark.wrappers.params.LinearRegressionParams
+import io.deepsense.deeplang.doperables.spark.wrappers.params.common.PredictorParams
 import io.deepsense.deeplang.params.Param
 
 
@@ -29,17 +29,10 @@ class LinearRegressionModel
   extends SparkModelWrapper[
     SparkLinearRegressionModel,
     SparkLinearRegression]
-  with LinearRegressionParams {
+  with PredictorParams {
 
   override val params: Array[Param[_]] = declareParams(
-    elasticNetParam,
-    fitIntercept,
-    maxIterations,
-    regularizationParam,
-    tolerance,
-    standardization,
     featuresColumn,
-    labelColumn,
     predictionColumn)
 
   override def report: Report = {

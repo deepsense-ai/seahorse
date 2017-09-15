@@ -16,6 +16,7 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
+import io.deepsense.deeplang.doperables.spark.wrappers.params.common.{SolverChoice, OptionalWeightColumnChoice}
 import io.deepsense.deeplang.params.ParamPair
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
@@ -28,6 +29,9 @@ class LinearRegressionSmokeTest
 
   import estimator._
 
+  val weightColumnChoice = OptionalWeightColumnChoice.WeightColumnYesOption()
+    .setWeightColumn(NameSingleColumnSelection("myWeight"))
+
   override val estimatorParams: Seq[ParamPair[_]] = Seq(
     elasticNetParam -> 0.8,
     fitIntercept -> true,
@@ -37,6 +41,8 @@ class LinearRegressionSmokeTest
     standardization -> true,
     featuresColumn -> NameSingleColumnSelection("myFeatures"),
     labelColumn -> NameSingleColumnSelection("myLabel"),
-    predictionColumn -> "pred"
+    predictionColumn -> "pred",
+    optionalWeightColumn -> weightColumnChoice,
+    solver -> SolverChoice.Auto()
   )
 }

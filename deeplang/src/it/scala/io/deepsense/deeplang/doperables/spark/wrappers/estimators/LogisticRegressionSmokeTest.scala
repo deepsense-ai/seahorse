@@ -16,6 +16,7 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
+import io.deepsense.deeplang.doperables.spark.wrappers.params.common.OptionalWeightColumnChoice
 import io.deepsense.deeplang.params.ParamPair
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
 
@@ -27,6 +28,9 @@ class LogisticRegressionSmokeTest
   override val estimator = new LogisticRegression()
 
   import estimator._
+
+  val weightColumnChoice = OptionalWeightColumnChoice.WeightColumnYesOption()
+    .setWeightColumn(NameSingleColumnSelection("myWeight"))
 
   override val estimatorParams: Seq[ParamPair[_]] = Seq(
     elasticNetParam -> 0.8,
@@ -40,6 +44,7 @@ class LogisticRegressionSmokeTest
     probabilityColumn -> "prob",
     rawPredictionColumn -> "rawPred",
     predictionColumn -> "pred",
-    threshold -> 0.3
+    threshold -> 0.3,
+    optionalWeightColumn -> weightColumnChoice
   )
 }
