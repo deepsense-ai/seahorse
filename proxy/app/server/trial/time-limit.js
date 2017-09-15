@@ -20,10 +20,12 @@ function trialTimeLimitedMiddleware(req, res, next) {
     throw 'User must be defined in time-limit middleware';
   }
 
+  const isCurrentUserAdmin = req.user.email == 'seahorse-admin@deepsense.io';
+
   res.set('current-date-time', currentTime.format(outputTimeFormat));
   res.set('trial-expiration-date-time', expirationDateTime.format(outputTimeFormat));
+  res.set('is-current-user-admin', isCurrentUserAdmin);
   if (isTrialExpired) {
-    const isCurrentUserAdmin = req.user.email == 'seahorse-admin@deepsense.io';
     if (!isCurrentUserAdmin) {
       res.redirect('/trial-expired.html');
       res.end();
