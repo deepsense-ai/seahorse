@@ -376,7 +376,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
   that.internal = internal;
 
   return that;
-};
+}
 
 exports.inject = function(module) {
   module.service('GraphPanelRendererService', GraphPanelRendererService);

@@ -42,14 +42,8 @@ module.exports = function (_path) {
       }
       ],
       noParse: [],
-      loaders: [{
-        //TODO: jsPlumb issue: https://github.com/sporritt/jsPlumb/issues/314
-        test: require.resolve('jsplumb'),
-        loaders: [
-          'imports?this=>window',
-          'script'
-        ]
-      },{
+      loaders: [
+      {
         test: /\.json$/,
         loader: 'json-loader'
       }, {
