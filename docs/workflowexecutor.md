@@ -45,7 +45,7 @@ Assembled jar can be found under path:
 
 
 
-## How to run Workflow Executor
+## How to run Workflow Executor in noninteractive mode
 
 Workflow Executor can be submitted to Spark cluster as any other Spark application.
 Example spark-submit commands can be found in following subsections.
@@ -60,6 +60,7 @@ For more detailed information about submitting Spark applications, visit:
       --master local[8] \
       --files workflow.json \
       workflowexecutor.jar \
+        --noninteractive-mode
         --workflow-filename workflow.json \
         --output-directory test-output \
         --report-level medium
@@ -71,6 +72,7 @@ For more detailed information about submitting Spark applications, visit:
       --master spark://207.184.161.138:7077 \
       --files workflow.json \
       workflowexecutor.jar \
+        --noninteractive-mode
         --workflow-filename workflow.json \
         --output-directory test-output \
         --report-level medium
@@ -83,6 +85,7 @@ For more detailed information about submitting Spark applications, visit:
       --master yarn-cluster \  # can also be `yarn-client` for client mode
       --files workflow.json \
       workflowexecutor.jar \
+        --noninteractive-mode
         --workflow-filename workflow.json \
         --output-directory test-output \
         --report-level medium
@@ -146,6 +149,7 @@ Detailed information about command line parameters can be obtained by executing 
 
 | Argument                                                        | Meaning |
 |:----------------------------------------------------------------|:--------|
+| ``--noninteractive-mode``                                       | Run in noninteractive mode (single workflow execution) |
 | ``-w FILE``<BR/>``--workflow-filename FILE``                    | Workflow filename. If specified, workflow will be read from passed location. The file has to be accessible by the driver. |
 | ``-d ID``<BR/>``--download-workflow ID``                        | Download workflow. If specified, workflow with passed ID will be downloaded from Seahorse Editor. |
 | ``-o DIR``<BR/>``--output-directory DIR``                       | Output directory path. If specified, execution report will be saved to passed location. Directory will be created if it does not exist. |
