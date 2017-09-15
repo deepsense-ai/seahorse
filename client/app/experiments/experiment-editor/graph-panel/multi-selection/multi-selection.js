@@ -219,6 +219,11 @@ function MultiSelection(MouseEvent, ExperimentService,
         $rootScope.$broadcast('MultipleSelection.STOP_DRAG');
       });
 
+      scope.$on('$destroy', () => {
+        $document.off('mouseup', endPainting);
+        $document.off('mousemove', paint);
+      });
+
       init();
     }
   };
