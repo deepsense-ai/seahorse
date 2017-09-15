@@ -1,0 +1,227 @@
+/**
+ * Copyright (c) 2015, CodiLime, Inc.
+ *
+ * Owner: Grzegorz Chilkiewicz
+ */
+package io.deepsense.graphexecutor
+
+import java.io._
+import java.nio.ByteBuffer
+import java.util.Collections
+
+import scala.collection.JavaConverters._
+
+import org.apache.avro.AvroRuntimeException
+import org.apache.avro.ipc.NettyTransceiver
+import org.apache.avro.ipc.specific.SpecificRequestor
+import org.apache.hadoop.fs.Path
+import org.apache.hadoop.net.NetUtils
+import org.apache.hadoop.yarn.api.records._
+import org.apache.hadoop.yarn.client.api.YarnClient
+import org.apache.hadoop.yarn.conf.YarnConfiguration
+import org.apache.hadoop.yarn.util.Records
+
+import io.deepsense.graph.Graph
+import io.deepsense.graphexecutor.protocol.GraphExecutorAvroRpcProtocol
+import io.deepsense.graphexecutor.util.Utils
+
+/**
+ * Starts Graph Executor on remote YARN cluster,
+ * allows to send Graph for execution to Graph Execution.
+ * NOTE: Only one graph launch per object is allowed.
+ */
+class GraphExecutorClient extends Closeable {
+  var yarnClient: Option[YarnClient] = None
+
+  var applicationId: Option[ApplicationId] = None
+
+  var rpcClient: Option[NettyTransceiver] = None
+
+  var rpcProxy: Option[GraphExecutorAvroRpcProtocol] = None
+
+  /**
+   * Sends graph of experiment designated to immediate execution by Graph Executor.
+   * NOTE: Call method {@link #init(timeout:Int)} before using RPC
+   * @param graph Graph to send
+   * @return true on success, false if graph has been received by Graph Executor earlier
+   *         (return of false means that this is probably second method call)
+   * @throws AvroRuntimeException on any critical problem (i.e. graph deserialization fail)
+   */
+  def sendGraph(graph: Graph): Boolean = {
+    val bytesOut = new ByteArrayOutputStream()
+    val oos = new ObjectOutputStream(bytesOut)
+    oos.writeObject(graph)
+    oos.flush()
+    oos.close()
+    val graphByteBuffer = ByteBuffer.wrap(bytesOut.toByteArray)
+    rpcProxy.get.sendGraph(graphByteBuffer)
+  }
+
+  /**
+   * Returns current state of experiment execution.
+   * @return Graph with current state of execution
+   * @throws AvroRuntimeException on any critical problem (i.e. graph not sent yet)
+   */
+  def getExecutionState(): Graph = {
+    val executionStateByteBuffer = rpcProxy.get.getExecutionState
+    val bufferIn = new ByteArrayInputStream(executionStateByteBuffer.array())
+    val streamIn = new ObjectInputStream(bufferIn)
+    val executionState = streamIn.readObject().asInstanceOf[Graph]
+    executionState
+  }
+
+  /**
+   * Aborts execution of graph.
+   * Dequeues queued nodes, tries to stop currently processing threads.
+   * @return true on success, false if graph has not been sent yet
+   * @throws AvroRuntimeException on any critical problem (i.e. node executors pool shutdown fail)
+   */
+  def terminateExecution(): Boolean = {
+    rpcProxy.get.terminateExecution()
+  }
+
+  /**
+   * Checks if Graph Executor is in running state.
+   * @return true if Graph Executor is in running state and false otherwise
+   */
+  def isGraphExecutorRunning(): Boolean = {
+    // TODO: Application report cache could save some time and cluster resources
+    val applicationReport = yarnClient.get.getApplicationReport(applicationId.get)
+    applicationReport.getYarnApplicationState == YarnApplicationState.RUNNING
+  }
+
+  /**
+   * Checks if Graph Executor has finished its running.
+   * @return true if Graph Executor is in end state and false otherwise
+   */
+  def hasGraphExecutorEndedRunning(): Boolean = {
+    // TODO: Application report cache could save some time and cluster resources
+    val applicationReport = yarnClient.get.getApplicationReport(applicationId.get)
+    val endYarnAppStates = List(
+      YarnApplicationState.FINISHED,
+      YarnApplicationState.FAILED,
+      YarnApplicationState.KILLED)
+    endYarnAppStates.contains(applicationReport.getYarnApplicationState)
+  }
+
+  /**
+   * Waits for Graph Executor start of running, then prepares RPC client for future use.
+   * If Graph Executor has not ended running, this method can be called several times,
+   * until it returns true.
+   * @param timeout timeout in milliseconds
+   * @return true on success and false on fail (possibly timeout exceed)
+   * @throws Exception if RPC client has been successfully prepared before
+   */
+  def init(timeout: Int): Boolean = {
+    var startOfWaitingForGraphExecutor = System.currentTimeMillis
+    while (!isGraphExecutorRunning() && !hasGraphExecutorEndedRunning()
+      && System.currentTimeMillis - startOfWaitingForGraphExecutor < timeout) {
+      val remainingTimeout = timeout - (System.currentTimeMillis - startOfWaitingForGraphExecutor)
+      try {
+        Thread.sleep(math.min(Constants.EMGraphExecutorClientInitInterval, remainingTimeout))
+      } catch {
+        case e: InterruptedException => {
+          // Silently proceed to next loop iteration
+        }
+      }
+    }
+    if (isGraphExecutorRunning() && !hasGraphExecutorEndedRunning()) {
+      // Require will throw exception if
+      require(rpcClient.isEmpty && rpcProxy.isEmpty)
+      val applicationReport = yarnClient.get.getApplicationReport(applicationId.get)
+      val graphExecutorRpcHost = applicationReport.getHost
+      val graphExecutorRpcPort = applicationReport.getRpcPort
+
+      val rpcSocket = NetUtils.createSocketAddr(graphExecutorRpcHost, graphExecutorRpcPort)
+      rpcClient = Some(new NettyTransceiver(rpcSocket))
+      rpcProxy = Some(SpecificRequestor.getClient(
+        classOf[GraphExecutorAvroRpcProtocol],
+        rpcClient.get))
+      true
+    } else {
+      false
+    }
+  }
+
+  /**
+   * Submits Graph Executor on remote YARN cluster.
+   * Graph Executor starts with few seconds delay after this method call due to cluster overhead,
+   * or even longer delay if cluster is short of resources.
+   */
+  def start(): Unit = {
+    implicit val conf = new YarnConfiguration()
+    // TODO: Configuration resource access should follow proper configuration access convention
+    // or should be changed to simple configuration string access following proper convention
+    conf.addResource("conf/hadoop/core-site.xml")
+    // TODO: Configuration resource access should follow proper configuration access convention
+    // or should be changed to simple configuration string access following proper convention
+    conf.addResource("conf/hadoop/yarn-site.xml")
+
+    yarnClient = Some(YarnClient.createYarnClient())
+    yarnClient.get.init(conf)
+    yarnClient.get.start()
+
+    val app = yarnClient.get.createApplication()
+    val amContainer = Records.newRecord(classOf[ContainerLaunchContext])
+
+    amContainer.setCommands(List(
+      // TODO: Move spark-master string to configuration file
+      "/opt/spark/bin/spark-submit --class io.deepsense.graphexecutor.GraphExecutor " +
+        " --master spark://ds-dev-env-master:7077  --executor-memory 512m " +
+        " /vagrant/graphexecutor-assembly-0.1.0.jar " +
+        Utils.logRedirection
+    ).asJava)
+
+    import Constants.GraphExecutorLibraryLocation
+    val appMasterJar = Utils.getConfiguredLocalResource(new Path(GraphExecutorLibraryLocation))
+    amContainer.setLocalResources(Collections.singletonMap("graphexecutor.jar", appMasterJar))
+
+    // Setup env to get all yarn and hadoop classes in classpath
+    val env = Utils.getConfiguredEnvironmentVariables
+    amContainer.setEnvironment(env.asJava)
+
+    val resource = Records.newRecord(classOf[Resource])
+    // Allocated memory couldn't be less than 1GB
+    resource.setMemory(1024)
+    resource.setVirtualCores(1)
+
+    val appContext = app.getApplicationSubmissionContext
+    // TODO: Configuration string access should follow proper configuration access convention
+    appContext.setApplicationName("Deepsense GraphExecutor")
+    appContext.setAMContainerSpec(amContainer)
+    appContext.setResource(resource)
+    // TODO: move queue string to config file
+    appContext.setQueue("default")
+    // TODO: Configuration value access should follow proper configuration access convention
+    // This value probably should equal to 1
+    appContext.setMaxAppAttempts(1)
+
+    // Submit the application
+    yarnClient.get.submitApplication(appContext)
+    applicationId = Some(appContext.getApplicationId)
+  }
+
+  /**
+   * Releases all resources associated with this object.
+   */
+  override def close(): Unit = {
+    if (rpcClient.nonEmpty) {
+      rpcClient.get.close()
+      rpcClient = None
+    }
+    rpcProxy = None
+    if (yarnClient.nonEmpty) {
+      yarnClient.get.stop()
+      yarnClient = None
+    }
+    applicationId = None
+  }
+}
+
+object GraphExecutorClient {
+  def apply() = {
+    val ret = new GraphExecutorClient()
+    ret.start()
+    ret
+  }
+}

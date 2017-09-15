@@ -10,3 +10,4 @@ scalaVersion := "2.11.6"
 lazy val deeplang          = project
 lazy val experimentmanager = project
 lazy val graph             = project dependsOn deeplang
+lazy val graphexecutor     = project dependsOn graph

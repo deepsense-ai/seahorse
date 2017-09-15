@@ -40,7 +40,8 @@ abstract class DMethod0To3[
   def apply(context: ExecutionContext)(parameters: P)
            (): (TO_0, TO_1, TO_2)
 
-  def infer(context: InferContext)(parameters: P)(): (DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]) = {(
+  def infer(context: InferContext)(parameters: P)():
+      (DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]) = {(
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0]),
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1]),
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_2]))

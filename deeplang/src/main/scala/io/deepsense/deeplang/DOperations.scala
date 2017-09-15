@@ -133,7 +133,8 @@ abstract class DOperation0To3[
 
   protected def _execute(context: ExecutionContext)(): (TO_0, TO_1, TO_2)
 
-  protected def _inferKnowledge(context: InferContext)(): (DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]) = {(
+  protected def _inferKnowledge(context: InferContext)():
+      (DKnowledge[TO_0], DKnowledge[TO_1], DKnowledge[TO_2]) = {(
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_0]),
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_1]),
     DKnowledge(context.dOperableCatalog.concreteSubclassesInstances[TO_2]))
