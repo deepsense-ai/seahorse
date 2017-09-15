@@ -76,9 +76,8 @@ class ConnectionHinterService extends GraphPanelRendererBase {
   /*
    * Remove any port highlighting.
    */
-  setDefaultPortColors(renderMode) {
-    const nodes = this.WorkflowService.getWorkflow()
-      .getNodes();
+  setDefaultPortColors(workflow, renderMode) {
+    const nodes = workflow.getNodes();
 
     _.forEach(nodes, (node) => {
       const nodeEl = this.getNodeById(node.id);
@@ -127,7 +126,7 @@ class ConnectionHinterService extends GraphPanelRendererBase {
     this.$rootScope.$broadcast('ConnectionHinter.HIGHLIGHT_OPERATIONS', operationsMatch);
   }
 
-  disableHighlightingOoperations() {
+  broadcastDisableHighlightings() {
     this.$rootScope.$broadcast('ConnectionHinter.DISABLE_HIGHLIGHTINGS');
   }
 }

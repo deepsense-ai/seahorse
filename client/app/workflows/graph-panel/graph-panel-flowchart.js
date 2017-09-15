@@ -40,13 +40,13 @@ function FlowChartBoxController($rootScope, $scope, $element, $document, GraphPa
 
   // Those are global. It is assumed that there is only one flowchart in application.
   // TODO Rework it so its local. Probably use jsPlumb.getInstance()
-  $document.on('mousedown', GraphPanelRendererService.disablePortHighlightings);
-  $rootScope.$on('FlowChartBox.ELEMENT_DROPPED', GraphPanelRendererService.disablePortHighlightings);
-  $rootScope.$on('Keyboard.KEY_PRESSED_DEL', GraphPanelRendererService.disablePortHighlightings);
-  $rootScope.$on(Edge.CREATE, GraphPanelRendererService.disablePortHighlightings);
-  $rootScope.$on(Edge.REMOVE, GraphPanelRendererService.disablePortHighlightings);
-  $rootScope.$on(GraphNode.MOUSEDOWN, GraphPanelRendererService.disablePortHighlightings);
-  jsPlumb.bind('connectionDragStop', GraphPanelRendererService.disablePortHighlightings);
+  $document.on('mousedown', () => GraphPanelRendererService.disablePortHighlightings(this.workflow));
+  $rootScope.$on('FlowChartBox.ELEMENT_DROPPED', () => GraphPanelRendererService.disablePortHighlightings(this.workflow));
+  $rootScope.$on('Keyboard.KEY_PRESSED_DEL', () => GraphPanelRendererService.disablePortHighlightings(this.workflow));
+  $rootScope.$on(Edge.CREATE, () => GraphPanelRendererService.disablePortHighlightings(this.workflow));
+  $rootScope.$on(Edge.REMOVE, () => GraphPanelRendererService.disablePortHighlightings(this.workflow));
+  $rootScope.$on(GraphNode.MOUSEDOWN, () => GraphPanelRendererService.disablePortHighlightings(this.workflow));
+  jsPlumb.bind('connectionDragStop', () => GraphPanelRendererService.disablePortHighlightings(this.workflow));
 
 }
 
