@@ -21,6 +21,6 @@ import io.deepsense.graph.{Graph, GraphKnowledge}
 case class WorkflowWithKnowledge(
     id: Workflow.Id,
     metadata: WorkflowMetadata,
-    workflow: Graph,
+    graph: Graph,
     thirdPartyData: ThirdPartyData,
     knowledge: GraphKnowledge)

@@ -21,7 +21,7 @@ import io.deepsense.graph.Graph
 
 case class Workflow(
     metadata: WorkflowMetadata,
-    workflow: Graph,
+    graph: Graph,
     additionalData: ThirdPartyData)
 
 object Workflow {
