@@ -15,7 +15,6 @@ enablePlugins(JavaAppPackaging, GitVersioning, DeepsenseUniversalSettingsPlugin)
 // Docker related configuration
 
 dockerBaseImage := "anapsix/alpine-java:jre8"
-dockerExposedPorts := Seq(9080)
 dockerUpdateLatest := true
 version in Docker := SbtGit.GitKeys.gitHeadCommit.value.get
 

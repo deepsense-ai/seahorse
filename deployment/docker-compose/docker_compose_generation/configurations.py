@@ -235,6 +235,8 @@ class WorkflowManager(Service):
 
     def environment(self):
         return Env(
+            WM_HOST='127.0.0.1',
+            WM_PORT=self.port_mapping().get().exposed,
             JDBC_URL=self.services.Database.exposed_jdbc_url(db='workflowmanager'),
             DATASOURCE_SERVER_ADDRESS=self.services.DatasourceManager.exposed_datasource_url()) + \
                self.credentials().as_env()
@@ -266,6 +268,8 @@ class WorkflowManagerBridgeNetwork(WorkflowManager):
 
     def environment(self):
         return Env(
+            WM_HOST='0.0.0.0',
+            WM_PORT=self.port_mapping().get().internal,
             JDBC_URL=self.services.Database.internal_jdbc_url(db='workflowmanager'),
             DATASOURCE_SERVER_ADDRESS=self.services.DatasourceManager.internal_datasource_url()) + \
                self.credentials().as_env()
