@@ -1,10 +1,11 @@
 'use strict';
 
-var angular = require('angular');
-var browser = require('detect-browser');
-var unsupported = require('./unsupported.js');
+let angular = require('angular');
+let browser = require('detect-browser');
+let unsupported = require('./unsupported.js');
+let version = parseInt(browser.version.substring(0, 2));
 
-if (browser.name === 'chrome') {
+if (browser.name === 'chrome' &&  version >= 40) {
   let lab = angular.module('ds.lab', [
     'ui.router',
     'ui.bootstrap',
@@ -20,18 +21,13 @@ if (browser.name === 'chrome') {
     'deepsense.cycle-analyser',
     'ngFileUpload',
     'toastr',
-    require('./home/home.module.js')
-    .name,
-    require('./workflows/workflows.module.js')
-    .name,
-    require('./common/common.module.js')
-    .name,
-    require('./errors/errors.module.js')
-    .name
+    require('./home/home.module.js').name,
+    require('./workflows/workflows.module.js').name,
+    require('./common/common.module.js').name,
+    require('./errors/errors.module.js').name
   ]);
 
   lab.constant('additionalControls', false);
-
   require('./app.config.js').inject(lab);
   require('./app.run.js').inject(lab);
 } else {
