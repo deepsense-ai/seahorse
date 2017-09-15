@@ -10,8 +10,6 @@ import NodeCopyPasteVisitor from './node-copy-paste-visitor.js';
 
 class WorkflowsEditorController extends WorkflowReports {
 
-  // TODO Wywalic selectedNode. Niech wszystko operuje na multi select. Logika typu length == 1
-
   // TODO Try to use this instead of long constructors with boilerplate?
   // http://stackoverflow.com/questions/27529518/automatically-set-arguments-as-instance-properties-in-es6
 
@@ -20,7 +18,7 @@ class WorkflowsEditorController extends WorkflowReports {
     $scope, $state, $stateParams, $q, $rootScope, $log,
     GraphNode, Edge,
     PageService, Operations, GraphPanelRendererService, WorkflowService, UUIDGenerator, MouseEvent,
-    DeepsenseNodeParameters, ConfirmationModalService, ExportModalService,
+    ConfirmationModalService, ExportModalService, GraphNodesService,
     NotificationService, ServerCommunication, CopyPasteService, SideBarService, WorkflowStatusBarService) {
 
     super($scope, $rootScope, Report, PageService, Operations, GraphPanelRendererService,
@@ -29,7 +27,6 @@ class WorkflowsEditorController extends WorkflowReports {
     this.ServerCommunication = ServerCommunication;
     this.PageService = PageService;
     this.WorkflowService = WorkflowService;
-    this.DeepsenseNodeParameters = DeepsenseNodeParameters;
     this.Edge = Edge;
     this.config = config;
     this.MultiSelectionService = MultiSelectionService;
@@ -55,8 +52,10 @@ class WorkflowsEditorController extends WorkflowReports {
     this.CopyPasteService = CopyPasteService;
     this.data = SideBarService.data;
     this.WorkflowStatusBarService = WorkflowStatusBarService;
+    this.GraphNodesService = GraphNodesService;
 
-    this.nodeCopyPasteVisitor = new NodeCopyPasteVisitor(MultiSelectionService, $q, $scope, WorkflowService, this);
+    this.nodeCopyPasteVisitor = new NodeCopyPasteVisitor(MultiSelectionService, $q,
+      $scope, WorkflowService, this, GraphNodesService);
 
     this.init(workflowWithResults[0]);
   }
@@ -133,7 +132,7 @@ class WorkflowsEditorController extends WorkflowReports {
     this.$scope.$on('GraphNode.CLICK', (event, data) => {
       if (!data.originalEvent.ctrlKey) {
         this.selectedNode = data.selectedNode;
-        this.getNodeParameters(this.selectedNode).then((node, mode) => {
+        this.GraphNodesService.getNodeParameters(this.selectedNode).then((node, mode) => {
           if (mode === 'sync') {
             this.$scope.$digest();
           }
@@ -144,55 +143,6 @@ class WorkflowsEditorController extends WorkflowReports {
     });
 
     this.initUnbindableListeners();
-  }
-
-  getNodeParameters(node) {
-    let deferred = this.$q.defer();
-
-    if (node.hasParameters()) {
-      node.refreshParameters(this.DeepsenseNodeParameters);
-      this.$scope.$apply();
-      deferred.resolve(node, 'sync');
-    } else {
-      this.Operations.getWithParams(node.operationId)
-        .then(operationData => {
-          this.$scope.$applyAsync(() => {
-            node.setParameters(operationData.parameters, this.DeepsenseNodeParameters);
-            deferred.resolve(node, 'async');
-          });
-        }, (error) => {
-          console.error('operation fetch error', error);
-          deferred.reject(error);
-        });
-    }
-    return deferred.promise;
-  }
-
-  cloneNodes(nodes) {
-    let cloningNodeIds = nodes.map(node => node.id);
-    let clones = [];
-
-    // create new nodes
-    _.forEach(nodes, node => clones.push(this.WorkflowService.cloneNode(node)));
-
-    // clone connections with saving hierarchy
-    _.forEach(nodes, (node, index) => {
-      internal.setEdgeConnectionFromClone(
-        node, clones, cloningNodeIds
-      );
-      this.WorkflowService.getWorkflow().cloneEdges(node, clones[index]);
-    });
-
-    // mark clones as selected after they are created
-    this.$scope.$applyAsync(() => {
-      let nodesId = clones.map(node => node.id);
-      this.unselectNode();
-      this.MultiSelectionService.clearSelection();
-      this.MultiSelectionService.addNodesToSelection(nodesId);
-      this.$rootScope.$broadcast('MultiSelection.ADD', nodesId);
-    });
-
-    this.WorkflowService.saveWorkflow();
   }
 
   initUnbindableListeners() {
@@ -225,7 +175,7 @@ class WorkflowsEditorController extends WorkflowReports {
           y: positionY > elementOffsetY ? positionY - elementOffsetY : 0
         });
 
-        this.getNodeParameters(node).then(() => this.WorkflowService.saveWorkflow());
+        this.GraphNodesService.getNodeParameters.then(() => this.WorkflowService.saveWorkflow());
       }),
 
       this.$scope.$on('AttributesPanel.UPDATED', () => {
@@ -303,7 +253,7 @@ class WorkflowsEditorController extends WorkflowReports {
   updateAndRerenderEdges(data) {
     this.WorkflowService.updateTypeKnowledge(data.knowledge);
     if (this.selectedNode) {
-      this.getNodeParameters(this.selectedNode).then((node, mode) => {
+      this.GraphNodesService.getNodeParameters(this.selectedNode).then((node, mode) => {
         if (mode === 'sync') {
           this.$scope.$digest();
         }

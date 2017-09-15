@@ -2,12 +2,15 @@
 
 class NodeCopyPasteVisitor {
 
-  constructor(MultiSelectionService, $q, $rootScope, WorkflowService, WorkflowsEditorController) {
+  // TODO Use ng-inject and remake it into service.
+  // First untangle controller (WorkflowService) dependencies (split into services)
+  constructor(MultiSelectionService, $q, $rootScope, WorkflowService, WorkflowsEditorController, GraphNodesService) {
     this.MultiSelectionService = MultiSelectionService;
     this.$q = $q;
-    this.$scope = $rootScope;
+    this.$rootScope = $rootScope;
     this.WorkflowService = WorkflowService;
     this.WorkflowsEditorController = WorkflowsEditorController;
+    this.GraphNodesService = GraphNodesService;
   }
 
   getType() {
@@ -33,15 +36,25 @@ class NodeCopyPasteVisitor {
     let nodes = nodeIds.map(this.WorkflowService.getWorkflow().getNodeById);
 
     let nodeParametersPromises = _.map(nodes, node => {
-      return this.WorkflowsEditorController.getNodeParameters(node);
+      return this.GraphNodesService.getNodeParameters(node);
     });
 
     this.$q.all(nodeParametersPromises).then(
-      nodes => this.WorkflowsEditorController.cloneNodes(nodes)
-    ).then(
-      () => this.$scope.$broadcast('INTERACTION-PANEL.FIT', {
-        zoomId: this.WorkflowsEditorController.zoomId
-      })
+      nodes => this.GraphNodesService.cloneNodes(nodes)
+    ).then((clonedNodes) => {
+        // mark clones as selected after they are created
+        this.$rootScope.$applyAsync(() => {
+          let nodesId = clonedNodes.map(node => node.id);
+          this.WorkflowsEditorController.unselectNode();
+          this.MultiSelectionService.clearSelection();
+          this.MultiSelectionService.addNodesToSelection(nodesId);
+          this.$rootScope.$broadcast('MultiSelection.ADD', nodesId);
+        });
+
+        this.$rootScope.$broadcast('INTERACTION-PANEL.FIT', {
+          zoomId: this.WorkflowsEditorController.zoomId
+        })
+      }
     );
   }
 
