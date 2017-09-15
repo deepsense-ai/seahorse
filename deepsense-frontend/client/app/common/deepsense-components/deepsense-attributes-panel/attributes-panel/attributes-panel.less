@@ -298,6 +298,22 @@
       }
     }
   }
+
+  &__disabled {
+    label.custom-checkbox {
+      &:hover {
+        cursor: not-allowed;
+      }
+    }
+
+    .library-connector {
+      pointer-events: none;
+      color: #676A6C;
+      &:hover {
+        cursor: not-allowed;
+      }
+    }
+  }
 }
 
 .o-error-trace {

@@ -44,6 +44,12 @@ label.custom-checkbox {
     color: #fff;
     background: @seahorse-blue;
   }
+
+  input[type=checkbox]:disabled + span:before {
+    content: "\0057";
+    color: #fff;
+    background: #EEE;
+  }
 }
 
 @-moz-document url-prefix() {
