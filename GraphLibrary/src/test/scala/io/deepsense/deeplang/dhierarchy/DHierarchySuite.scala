@@ -28,6 +28,7 @@ object H {
 }
 
 object Parametrized {
+  trait T[T] extends DOperable
   class A[T] extends DOperable
   class B extends A[Int]
 }
@@ -98,6 +99,14 @@ class DHierarchySuite extends FunSuite with Matchers {
       import Parametrized._
       val p = new DHierarchy
       p.registerDOperable[A[Int]]()
+    }
+  }
+
+  test("Registering parametrized trait should produce exception") {
+    intercept[RuntimeException] {
+      import Parametrized._
+      val p = new DHierarchy
+      p.registerDOperable[T[Int]]()
     }
   }
 }
