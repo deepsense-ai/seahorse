@@ -97,9 +97,8 @@ case class ChoiceParameterHolder(
 
   def value: Option[ChoiceParameter] = _value
 
-  override def validate: Unit = {
-    super.validate
-    validateChoices(Traversable(value.get))
+  override def validateDefined(definedValue: ChoiceParameter): Unit = {
+    validateChoices(Traversable(definedValue))
   }
 
   /**
@@ -138,9 +137,8 @@ case class MultipleChoiceParameterHolder(
 
   def value: Option[MultipleChoiceParameter] = _value
 
-  override def validate: Unit = {
-    super.validate
-    validateChoices(value.get.values)
+  override def validateDefined(definedValue: MultipleChoiceParameter): Unit = {
+    validateChoices(definedValue.values)
   }
 
   /**
@@ -174,9 +172,8 @@ case class MultiplicatorParameterHolder(
   def value: Option[MultiplicatorParameter] = _value
 
   /** Validates each filled schema. */
-  override def validate: Unit = {
-    super.validate
-    value.get.value.foreach(_.validate)
+  override def validateDefined(definedValue: MultiplicatorParameter): Unit = {
+    definedValue.value.foreach(_.validate)
   }
 
   /**

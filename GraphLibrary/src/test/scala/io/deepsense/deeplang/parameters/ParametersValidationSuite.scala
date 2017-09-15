@@ -19,14 +19,14 @@ class ParametersValidationSuite extends FunSuite {
       default: Option[Nothing],
       required: Boolean)
     extends ParameterHolder {
-    type HeldParameter = Nothing
+    type HeldParameter = Null
     val parameterType = null
 
-    def value = null
+    def value = Some(null)
 
     def replicate = copy()
 
-    override def validate: Unit = {
+    override def validateDefined(any: Null): Unit = {
       throw new ValidationException("Mock exception") {}
     }
   }

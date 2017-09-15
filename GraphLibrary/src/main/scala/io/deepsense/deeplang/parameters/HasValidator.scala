@@ -12,8 +12,7 @@ package io.deepsense.deeplang.parameters
 trait HasValidator extends ParameterHolder {
   val validator: Validator[HeldParameter]
 
-  override def validate = {
-    super.validate
-    validator.validate(value.get)
+  override def validateDefined(definedValue: HeldParameter) = {
+    validator.validate(definedValue)
   }
 }

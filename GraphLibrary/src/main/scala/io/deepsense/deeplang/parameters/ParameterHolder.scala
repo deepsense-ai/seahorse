@@ -32,9 +32,23 @@ abstract class ParameterHolder {
    */
   private[parameters] def replicate: ParameterHolder
 
-  def validate: Unit = {
-    if (!value.isDefined && required) {
-      throw ParameterRequiredException(parameterType)
+  /**
+   * Validates held value.
+   * If value is set to None and required, exception is thrown.
+   */
+  final def validate: Unit = {
+    value match {
+      case Some(definedValue) => validateDefined(definedValue)
+      case None => if (required) {
+        throw ParameterRequiredException(parameterType)
+      }
     }
   }
+
+  /**
+   * Place for additional validation in subclasses.
+   * This validation is not performed if value is set to None.
+   * This function does nothing by default.
+   */
+  protected def validateDefined(parameter: HeldParameter): Unit = { }
 }
