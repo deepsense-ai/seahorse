@@ -54,7 +54,8 @@ class SessionExecutorRequestBodyBuilderSpec extends StandardSpec with UnitTestSu
           depsPath
         ),
         Map(
-          "spark.driver.extraClassPath" -> "__app__.jar"
+          "spark.driver.extraClassPath" -> "__app__.jar",
+          "spark.executorEnv.PYTHONPATH" -> depsFile
         )
       )
 

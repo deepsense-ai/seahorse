@@ -14,8 +14,8 @@ services:
       - MQ_PORT=$GENERATED_MQ_PORT
       - WM_HOST=10.10.10.110
       - WM_PORT=$GENERATED_WM_PORT
-      - SESSION_EXECUTOR_PATH=hdfs://nameservice1/tmp/we_notebooks.jar
-      - SESSION_EXECUTOR_DEPS_PATH=hdfs://nameservice1/tmp/we-deps.zip
+      - SESSION_EXECUTOR_PATH=hdfs://nameservice1/tmp/we-dev.jar
+      - SESSION_EXECUTOR_DEPS_PATH=hdfs://nameservice1/tmp/we-deps-dev.zip
   frontend:
     image: docker-registry.intra.codilime.com/tap/deepsense-frontend
     environment:

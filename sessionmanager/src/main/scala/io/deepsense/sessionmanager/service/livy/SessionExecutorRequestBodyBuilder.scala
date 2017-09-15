@@ -66,7 +66,10 @@ class SessionExecutorRequestBodyBuilder @Inject() (
         "-d", getFileName(depsZipPath)
       ),
       files = Seq(depsZipPath),
-      conf = Map("spark.driver.extraClassPath" -> "__app__.jar")
+      conf = Map(
+        "spark.driver.extraClassPath" -> "__app__.jar",
+        "spark.executorEnv.PYTHONPATH" -> getFileName(depsZipPath)
+      )
     )
   }
 
