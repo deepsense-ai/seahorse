@@ -117,7 +117,7 @@
       ]
     },
     "state": {
-      "status": "RUNNING",
+      "status": "ABORTED",
       "error": null,
       "nodes": {
         "88f560a9-97e3-4fa2-93ce-edad4cab7ea9": {
@@ -126,7 +126,7 @@
           "ended": "2015-01-20T21:12:09Z"
         },
         "210ce781-0a9f-477d-99a7-5be31f7bfc02": {
-          "status": "RUNNING",
+          "status": "FAILED",
           "started": "2015-01-20T21:12:09Z",
           "progress": {
             "current": 312,
@@ -135,7 +135,7 @@
           }
         },
         "edc02822-b8ee-4225-b070-f892a87dbf11": {
-          "status": "QUEUED"
+          "status": "ABORTED"
         }
       }
     },

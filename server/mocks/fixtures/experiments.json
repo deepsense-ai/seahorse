@@ -8,7 +8,7 @@
       "name" : "My experiment",
       "created" : "2015-01-20T21:11:09Z",
       "updated" : "2015-01-20T22:11:09Z",
-      "status" : "COMPLETED",
+      "status" : "ABORTED",
       "description" : "IS A SIMPLE LINEAR REGRESSION ABLE TO KNOCK SPOTS OFF SVM AND RANDOM FOREST?"
     },
     {
