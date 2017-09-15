@@ -25,5 +25,6 @@ require('./experiment-editor/graph-panel/graph-panel-renderer.js').inject(experi
 require('./experiment-editor/catalog-panel/catalog-panel.js').inject(experiments);
 require('./experiment-editor/catalog-panel/catalog-panel-operation.js').inject(experiments);
 require('./experiment-editor/attributes-panel/attributes-panel.module.js').inject(experiments);
+require('./utils/uuid-generator.js').inject(experiments);
 
 module.exports = experiments;

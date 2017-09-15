@@ -5,7 +5,7 @@
 
 /* @ngInject */
 
-function ExperimentController($http, $modal, $timeout, $stateParams, $scope, PageService, Operations, DrawingService, ExperimentFactory, ExperimentAPIClient) {
+function ExperimentController($http, $modal, $timeout, $stateParams, $scope, PageService, Operations, DrawingService, ExperimentFactory, ExperimentAPIClient, UUIDGenerator) {
   const RUN_STATE_CHECK_INTERVAL = 2000;
 
   var that = this;
@@ -62,7 +62,6 @@ function ExperimentController($http, $modal, $timeout, $stateParams, $scope, Pag
     that.checkExperimentState();
   };
 
-
   /**
    * Handles experiment state change.
    *
@@ -92,31 +91,6 @@ function ExperimentController($http, $modal, $timeout, $stateParams, $scope, Pag
     if (internal.experiment.isRunning()) {
       internal.runStateTimeout = $timeout(that.loadExperimentState, RUN_STATE_CHECK_INTERVAL, false);
     }
-  };
-
-
-  /**
-   * Generates uuid part.
-   *
-   * @return {string}
-   */
-  var generateUUIDPart = function generateUUIDPart() {
-    return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-  };
-
-  /**
-   * Generates uuid.
-   *
-   * @return {string}
-   */
-  that.generateUUID = function generateGUID() {
-    return (
-    generateUUIDPart() + generateUUIDPart() + '-' +
-    generateUUIDPart() + '-' +
-    generateUUIDPart() + '-' +
-    generateUUIDPart() + '-' +
-    generateUUIDPart() + generateUUIDPart() + generateUUIDPart()
-    );
   };
 
   that.getCatalog = function getCatalog() {
@@ -209,7 +183,7 @@ function ExperimentController($http, $modal, $timeout, $stateParams, $scope, Pag
       offsetX = 100,
       offsetY = 30,
       node = internal.experiment.createNode({
-        'id': that.generateUUID(),
+        'id': UUIDGenerator.generateUUID(),
         'operation': operation,
         'x': positionX > offsetX ? positionX - offsetX : 0,
         'y': positionY > offsetY ? positionY - offsetY : 0
