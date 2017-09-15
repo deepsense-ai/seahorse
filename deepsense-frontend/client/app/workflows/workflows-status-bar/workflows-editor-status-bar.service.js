@@ -11,6 +11,11 @@ function WorkflowStatusBarService($rootScope, config, version, WorkflowService, 
   const isOwner = () => WorkflowService.getCurrentWorkflow().owner.id === UserService.getSeahorseUser().id;
   const smallLabel = () => isOwner() ? null : 'Owner only';
 
+  this.popovers = {
+    startingPopoverVisible: true,
+    runningExecutorPopoverVisible: true
+  };
+
   const menuItems = {
     clear: {
       label: 'Clear',
@@ -44,13 +49,15 @@ function WorkflowStatusBarService($rootScope, config, version, WorkflowService, 
       label: 'Start editing',
       smallLabel: smallLabel(),
       icon: 'fa fa-pencil',
-      callFunction: () => $rootScope.$emit('StatusBar.START_EDITING')
+      callFunction: () => $rootScope.$emit('StatusBar.START_EDITING'),
+      additionalHtml: 'app/workflows/workflows-status-bar/additional-html/starting-popover.html'
     },
     startingEditing: {
       label: 'Starting...',
       icon: 'fa-cog',
       additionalClass: 'menu-item-disabled',
-      additionalIconClass: 'fa-spin'
+      additionalIconClass: 'fa-spin',
+      additionalHtml: 'app/workflows/workflows-status-bar/additional-html/starting-executor-popover.html'
     },
     stopEditing: {
       label: 'Stop editing',
@@ -76,7 +83,7 @@ function WorkflowStatusBarService($rootScope, config, version, WorkflowService, 
     }
   };
 
-  menuItems.disabledClone= angular.copy(menuItems.clone);
+  menuItems.disabledClone = angular.copy(menuItems.clone);
   menuItems.disabledClone.additionalClass = 'menu-item-disabled';
 
   menuItems.disabledStartEditing = angular.copy(menuItems.startEditing);
@@ -140,6 +147,22 @@ function WorkflowStatusBarService($rootScope, config, version, WorkflowService, 
         }
     }
   }
+
+  service.isStartingPopoverVisible = () => {
+    return this.popovers.startingPopoverVisible;
+  };
+
+  service.isRunningExecutorPopoverVisible = () => {
+    return this.popovers.runningExecutorPopoverVisible;
+  };
+  
+  service.closeStartingPopover = () => {
+    this.popovers.startingPopoverVisible = false;
+  };
+
+  service.closeRunningExecutorPopover = () =>  {
+    this.popovers.runningExecutorPopoverVisible = false;
+  };
 
   return service;
 }

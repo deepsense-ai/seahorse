@@ -3,8 +3,9 @@
 /* @ngInject */
 class MenuItemController {
   constructor() {
-
+    
   }
+
 }
 
 exports.inject = function(module) {
