@@ -13,6 +13,7 @@ import com.google.inject.Inject
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.utils.Logging
 import io.deepsense.sessionmanager.service.SessionServiceActor._
+import io.deepsense.sessionmanager.service.executor.{SessionExecutorClient, SessionExecutorClients}
 import io.deepsense.sessionmanager.service.livy.Livy
 import io.deepsense.sessionmanager.service.livy.responses.Batch
 import io.deepsense.sessionmanager.storage.SessionStorage._
@@ -20,7 +21,8 @@ import io.deepsense.sessionmanager.storage._
 
 class SessionServiceActor @Inject()(
   private val livyClient: Livy,
-  private val sessionStorage: SessionStorage
+  private val sessionStorage: SessionStorage,
+  private val sessionExecutorClients: SessionExecutorClients
 ) extends Actor with Logging {
 
   import scala.concurrent.ExecutionContext.Implicits.global
@@ -84,11 +86,11 @@ class SessionServiceActor @Inject()(
     sessionStorage.get(id).flatMap {
       case None =>
         Future.successful(())
-      case Some(SessionRow(_, Some(batchId), version)) =>
-        livyClient.killSession(batchId).flatMap {
-          _ => sessionStorage.delete(id, version).map {
-            _ => ()
-          }
+      case Some(SessionRow(workflowId, Some(batchId), version)) =>
+        Future {
+          sessionExecutorClients.get(workflowId).sendPoisonPill()
+          livyClient.killSession(batchId)
+          sessionStorage.delete(id, version)
         }
       case Some(SessionRow(_, None, version)) =>
         logger.error(s"Kill request for session in creating state! No Livy session will be killed.")

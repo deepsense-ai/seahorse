@@ -1,13 +1,13 @@
 import sbt._
 
 object Version {
-  val akka = "2.3.4-spark"
+  val akka = "2.3.11"
   val apacheCommons = "3.3.2"
   val avro = "1.7.7"
   val guice = "3.0"
   val h2 = "1.4.191"
   val jclouds = "1.9.0"
-  val metricsScala = "3.5.1_a2.3"
+  val metricsScala = "3.5.4_a2.3"
   val mockito = "1.10.19"
   val nsscalaTime = "1.8.0"
   val scala = "2.11.6"
@@ -17,20 +17,24 @@ object Version {
   val spark = "1.6.1"
   val spray = "1.3.3"
   val sprayJson = "1.3.1"
-  val seahorse = "1.2.0-SNAPSHOT"
+  val seahorse = "1.2.0-TAP-SNAPSHOT"
   val wiremock = "1.57"
 }
 
 object Library {
 
-  val akka = (name: String) => "org.spark-project.akka" %% s"akka-$name" % Version.akka
+  implicit class RichModuleID(m: ModuleID) {
+    def excludeAkkaActor: ModuleID = m excludeAll ExclusionRule("com.typesafe.akka")
+  }
+
+  val akka = (name: String) => "com.typesafe.akka" %% s"akka-$name" % Version.akka
   val jclouds = (name: String) => "org.apache.jclouds.api" % s"openstack-$name" % Version.jclouds
   val seahorse = (name: String) => "io.deepsense" %% s"deepsense-seahorse-$name" %
     Version.seahorse exclude("com.datastax.cassandra", "cassandra-driver-core") exclude(
     "com.datastax.spark", "spark-cassandra-connector") exclude(
     "org.cassandraunit", "cassandra-unit")
   val spark = (name: String) => "org.apache.spark" %% s"spark-$name" % Version.spark
-  val spray = (name: String) => "io.spray" %% s"spray-$name" % Version.spray
+  val spray = (name: String) => "io.spray" %% s"spray-$name" % Version.spray excludeAkkaActor
 
   val akkaActor = akka("actor")
   val akkaTestkit = akka("testkit")
@@ -40,9 +44,10 @@ object Library {
   val jcloudsKeystone = jclouds("keystone")
   val jcloudsCompute = "org.apache.jclouds" % "jclouds-compute" % Version.jclouds
   val jcloudsNova = jclouds("nova")
-  val metricsScala = "nl.grons" %% "metrics-scala" % Version.metricsScala
+  val metricsScala = "nl.grons" %% "metrics-scala" % Version.metricsScala excludeAkkaActor
   val mockitoCore = "org.mockito" % "mockito-core" % Version.mockito
   val nscalaTime = "com.github.nscala-time" %% "nscala-time" % Version.nsscalaTime
+  val rabbitmq = "com.thenewmotion.akka" %% "akka-rabbitmq" % "2.2" excludeAkkaActor
   val scalaReflect = "org.scala-lang" % "scala-reflect" % Version.scala
   val scalatest = "org.scalatest" %% "scalatest" % Version.scalatest
   val scoverage = "org.scoverage" %% "scalac-scoverage-runtime" % Version.scoverage
@@ -52,6 +57,7 @@ object Library {
   val seahorseGraph = seahorse("graph")
   val seahorseWorkflowJson = seahorse("workflow-json")
   val seahorseReportlib = seahorse("reportlib")
+  val seahorseMqProtocol = seahorse("workflowexecutor-mq-protocol") excludeAkkaActor
   val slick = "com.typesafe.slick" %% "slick" % Version.slick
   val sparkCore = spark("core")
   val sparkMLLib = spark("mllib")
@@ -122,6 +128,7 @@ object Dependencies {
   val sessionmanager = Seq(
     akkaActor,
     h2,
+    seahorseMqProtocol,
     slick,
     sprayCan,
     sprayClient,

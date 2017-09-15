@@ -19,6 +19,7 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
 import io.deepsense.commons.models.Id
+import io.deepsense.sessionmanager.service.executor.{SessionExecutorClient, SessionExecutorClients}
 import io.deepsense.sessionmanager.service.livy.Livy
 import io.deepsense.sessionmanager.service.livy.responses.{Batch, BatchList, BatchState}
 import io.deepsense.sessionmanager.storage.SessionStorage.SessionRow
@@ -209,7 +210,12 @@ class SessionServiceActorSpec(_system: ActorSystem) extends TestKit(_system) wit
     livy: Livy,
     sessionStorage: SessionStorage = new InMemorySessionStorage)
       (test: (ActorRef) => T): T = {
-    val props = Props(new SessionServiceActor(livy, sessionStorage))
+
+    val clientsMock = mock[SessionExecutorClients]
+    val clientMock = mock[SessionExecutorClient]
+    when(clientsMock.get(mockito.any())).thenReturn(clientMock)
+
+    val props = Props(new SessionServiceActor(livy, sessionStorage, clientsMock))
     test(system.actorOf(props))
   }
 

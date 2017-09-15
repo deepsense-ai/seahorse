@@ -16,6 +16,10 @@ services:
       - WM_PORT=$GENERATED_WM_PORT
       - SESSION_EXECUTOR_PATH=hdfs://nameservice1/tmp/we-dev.jar
       - SESSION_EXECUTOR_DEPS_PATH=hdfs://nameservice1/tmp/we-deps-dev.zip
+      - SM_MQ_HOST=rabbitmq
+      - SM_MQ_PORT=5672
+    links:
+      - rabbitmq
   frontend:
     image: docker-registry.intra.codilime.com/tap/deepsense-frontend
     environment:
@@ -43,6 +47,7 @@ services:
     image: docker-registry.intra.codilime.com/tap/deepsense-notebooks
     links:
       - workflowmanager
+      - rabbitmq
     ports:
       - "9999:8888"
     environment:
@@ -51,8 +56,6 @@ services:
       - MQ_PORT=5672
       - HEARTBEAT_INTERVAL=2.0
       - MISSED_HEARTBEAT_LIMIT=30
-    depends_on:
-      - rabbitmq
   proxy:
     image: docker-registry.intra.codilime.com/tap/deepsense-proxy
     ports:

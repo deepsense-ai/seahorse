@@ -3,6 +3,7 @@
 name := "deepsense-sessionmanager"
 
 libraryDependencies ++= Dependencies.sessionmanager
+resolvers ++= Dependencies.resolvers
 
 Revolver.settings
 
