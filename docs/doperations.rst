@@ -8,6 +8,7 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   doperations/read_file
    doperations/read_data_frame
    doperations/write_data_frame
    doperations/timestamp_decomposer
