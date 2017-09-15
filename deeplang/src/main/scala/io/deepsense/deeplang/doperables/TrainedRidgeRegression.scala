@@ -11,10 +11,9 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 
 class TrainedRidgeRegression extends RidgeRegression with Scorable {
 
-  override val score: DMethod1To1[None.type, DataFrame, DataFrame] =
-    new DMethod1To1[None.type, DataFrame, DataFrame] {
+  override val score = new DMethod1To1[None.type, DataFrame, DataFrame] {
 
-    override def apply(context: ExecutionContext)(p: None.type)(t0: DataFrame): DataFrame = {
+    override def apply(context: ExecutionContext)(p: None.type)(dataframe: DataFrame): DataFrame = {
       new DataFrame  // TODO implement
     }
   }
