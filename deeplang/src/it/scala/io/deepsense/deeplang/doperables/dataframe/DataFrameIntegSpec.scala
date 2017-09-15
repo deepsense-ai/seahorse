@@ -31,8 +31,7 @@ class DataFrameIntegSpec extends DeeplangIntegTestSupport {
       StructField("b", StringType),
       StructField("a", DoubleType),
       StructField("x", TimestampType),
-      StructField("z", BooleanType),
-      StructField("m", IntegerType)
+      StructField("z", BooleanType)
     ))
 
     def dataFrame: DataFrame = createDataFrame(Seq.empty, schema)
@@ -76,17 +75,13 @@ class DataFrameIntegSpec extends DeeplangIntegTestSupport {
         selectSingleType(ColumnType.timestamp) shouldBe Seq("x")
       }
 
-      "categorical type is selected" in {
-        selectSingleType(ColumnType.categorical) shouldBe Seq("m")
-      }
-
       "excluding selector is used" in {
         val selection = MultipleColumnSelection(Vector(
           NameColumnSelection(Set("a")),
           IndexColumnSelection(Set(1, 3)),
           TypeColumnSelection(Set(ColumnType.string, ColumnType.timestamp))
         ), true)
-        dataFrame.getColumnNames(selection) shouldBe Seq("c", "z", "m")
+        dataFrame.getColumnNames(selection) shouldBe Seq("c", "z")
       }
     }
 

@@ -27,7 +27,7 @@ import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.Report
-import io.deepsense.reportlib.model.{CategoricalDistribution, ContinuousDistribution, Statistics, Table}
+import io.deepsense.reportlib.model.{DiscreteDistribution, ContinuousDistribution, Statistics, Table}
 
 /** TODO rewrite
 class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTestFactory {

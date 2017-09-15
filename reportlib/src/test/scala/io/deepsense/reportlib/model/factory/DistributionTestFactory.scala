@@ -16,15 +16,15 @@
 
 package io.deepsense.reportlib.model.factory
 
-import io.deepsense.reportlib.model.{ContinuousDistribution, Statistics, CategoricalDistribution}
+import io.deepsense.reportlib.model.{DiscreteDistribution, ContinuousDistribution, Statistics}
 
 trait DistributionTestFactory {
 
-  def testCategoricalDistribution: CategoricalDistribution =
+  def testCategoricalDistribution: DiscreteDistribution =
     testCategoricalDistribution(DistributionTestFactory.distributionName)
 
-  def testCategoricalDistribution(name: String): CategoricalDistribution =
-    CategoricalDistribution(
+  def testCategoricalDistribution(name: String): DiscreteDistribution =
+    DiscreteDistribution(
       name,
       DistributionTestFactory.distributionDescription,
       DistributionTestFactory.distributionMissingValues,

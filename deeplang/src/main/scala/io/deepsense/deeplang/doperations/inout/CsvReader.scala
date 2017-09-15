@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-/** TODO remove categoricals
-
 package io.deepsense.deeplang.doperations.inout
 
 import org.apache.commons.lang3.StringUtils
@@ -26,10 +24,9 @@ import org.apache.spark.sql.{DataFrame => SparkDataFrame, Row, types}
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperations.ReadDataFrame.ReadDataFrameParameters
-import io.deepsense.deeplang.doperations.{ReadDataFrame, CategoricalExtraction}
 
 trait CsvReader {
-  self: ReadDataFrameParameters with CategoricalExtraction =>
+  self: ReadDataFrameParameters =>
 
   import CsvReader._
 
@@ -45,13 +42,11 @@ trait CsvReader {
     val inferredTypes = inferTypes(csvChoice)(rawStringData)
     val columnNames = determineColumnNames(csvChoice)(sparkDataFrame.schema)
     val schema = buildSchema(columnNames, inferredTypes)
-    val categoricals = getCategoricalColumns(schema, csvChoice.getCategoricalColumns)
 
     val convertedData = rawStringData.map(row =>
       Row.fromSeq {
         row.toSeq.zipWithIndex.zip(inferredTypes).map {
-          case ((cell: String, index), inferredType) =>
-            convertCell(cell, inferredType, isCategorical = categoricals.contains(index))
+          case ((cell: String, index), inferredType) => convertCell(cell, inferredType)
         }
       })
 
@@ -146,21 +141,13 @@ object CsvReader {
     }.get
   }
 
-  private def convertCell(cell: String, cellType: types.DataType, isCategorical: Boolean): Any = {
+  private def convertCell(cell: String, cellType: types.DataType): Any = {
     val trimmedCell = cell.trim
 
-    if (isCategorical) {
-      // For categoricals, even if their underlying value is string,
-      // empty cell is the only way to pass a null value.
-      // In other words, we don't want categoricals of value "".
-      if (cell.isEmpty) { null } else { cell }
-
-    } else if (cellType == types.StringType) {
+    if (cellType == types.StringType) {
       cell
-
     } else if (trimmedCell.isEmpty) {
       null
-
     } else {
       cellType match {
         case types.BooleanType => trimmedCell.toDouble == 1
@@ -189,4 +176,3 @@ object CsvReader {
         canBeTimestamp = canBeTimestamp && other.canBeTimestamp)
   }
 }
-*/

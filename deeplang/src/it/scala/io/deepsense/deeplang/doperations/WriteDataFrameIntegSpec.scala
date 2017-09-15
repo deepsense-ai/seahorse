@@ -21,20 +21,21 @@ import java.sql.Timestamp
 
 import scala.io.Source
 
-import org.apache.spark.sql.Row
-import org.apache.spark.sql.types.{StructField, StructType}
+import org.apache.spark.sql._
+import org.apache.spark.sql.types._
 import org.scalatest.BeforeAndAfter
 
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
+import io.deepsense.deeplang.doperations.exceptions.UnsupportedColumnTypeException
 import io.deepsense.deeplang.doperations.inout.{CsvParameters, OutputFileFormatChoice, OutputStorageTypeChoice}
+
 class WriteDataFrameIntegSpec
   extends DeeplangIntegTestSupport
   with BeforeAndAfter {
 
-  /** TODO no categoricals
   val absoluteWriteDataFrameTestPath = absoluteTestsDirPath + "/WriteDataFrameTest"
 
   val dateTime = DateTimeConverter.now
@@ -43,22 +44,18 @@ class WriteDataFrameIntegSpec
   val schema: StructType = StructType(Seq(
     StructField("boolean",
       SparkConversions.columnTypeToSparkColumnType(ColumnType.boolean)),
-    StructField("categorical",
-      SparkConversions.columnTypeToSparkColumnType(ColumnType.categorical),
-      metadata = MappingMetadataConverter.mappingToMetadata(CategoriesMapping(Seq("A", "B", "C")))),
     StructField("numeric",
       SparkConversions.columnTypeToSparkColumnType(ColumnType.numeric)),
     StructField("string",
       SparkConversions.columnTypeToSparkColumnType(ColumnType.string)),
     StructField("timestamp",
-      SparkConversions.columnTypeToSparkColumnType(ColumnType.timestamp))
-  ))
+      SparkConversions.columnTypeToSparkColumnType(ColumnType.timestamp))))
 
   val rows = Seq(
-    Row(true, 0, 0.45, "3.14", timestamp),
-    Row(false, 1, null, "\"testing...\"", null),
-    Row(false, 2, 3.14159, "Hello, world!", timestamp),
-    Row(null, null, null, null, null)
+    Row(true, 0.45, "3.14", timestamp),
+    Row(false, null, "\"testing...\"", null),
+    Row(false, 3.14159, "Hello, world!", timestamp),
+    Row(null, null, null, null)
   )
 
   val quoteChar = "\""
@@ -80,10 +77,10 @@ class WriteDataFrameIntegSpec
 
   def rowsAsCsv(sep: String): Seq[String] = {
     val rows = Seq(
-      Seq("1", "A", "0.45", "3.14", DateTimeConverter.toString(dateTime)),
-      Seq("0", "B", "", "\"testing...\"", ""),
-      Seq("0", "C", "3.14159", "Hello, world!", DateTimeConverter.toString(dateTime)),
-      Seq("", "", "", "", "")
+      Seq("1", "0.45", "3.14", DateTimeConverter.toString(dateTime)),
+      Seq("0", "", "\"testing...\"", ""),
+      Seq("0", "3.14159", "Hello, world!", DateTimeConverter.toString(dateTime)),
+      Seq("", "", "", "")
     ).map { row => row.map(quote(_, sep)).mkString(sep) }
 
     // this is something that Spark-CSV writer does.
@@ -98,6 +95,16 @@ class WriteDataFrameIntegSpec
   }
 
   val dataframe = createDataFrame(rows, schema)
+
+  val arrayDataFrameRows = Seq(
+    Row(Seq(1.0, 2.0, 3.0)),
+    Row(Seq(4.0, 5.0, 6.0)),
+    Row(Seq(7.0, 8.0, 9.0)))
+
+  val arrayDataFrameSchema = StructType(Seq(
+    StructField("v", ArrayType(DoubleType, false), false)))
+
+  val arrayDataFrame = createDataFrame(arrayDataFrameRows, arrayDataFrameSchema)
 
   before {
     fileSystemClient.delete(testsDir)
@@ -199,6 +206,41 @@ class WriteDataFrameIntegSpec
       wdf.execute(executionContext)(Vector(dataframe))
       verifySavedDataFrame("/custom-separator", rows, withHeader = false, "X")
     }
+
+    "write ArrayType to Parquet" in {
+      val wdf =
+        new WriteDataFrame()
+          .setStorageType(
+            OutputStorageTypeChoice.File()
+              .setOutputFile(absoluteWriteDataFrameTestPath + "/parquet-array")
+              .setFileFormat(OutputFileFormatChoice.Parquet()))
+      wdf.execute(executionContext)(Vector(arrayDataFrame))
+    }
+
+    "write ArrayType to Json" in {
+      val wdf =
+        new WriteDataFrame()
+          .setStorageType(
+            OutputStorageTypeChoice.File()
+              .setOutputFile(absoluteWriteDataFrameTestPath + "/json-array")
+              .setFileFormat(OutputFileFormatChoice.Json()))
+      wdf.execute(executionContext)(Vector(arrayDataFrame))
+    }
+
+    "throw an exception when writing ArrayType to CSV" in {
+      val wdf =
+        new WriteDataFrame()
+          .setStorageType(
+            OutputStorageTypeChoice.File()
+              .setOutputFile(absoluteWriteDataFrameTestPath + "/csv-array")
+              .setFileFormat(
+                OutputFileFormatChoice.Csv()
+                  .setCsvColumnSeparator(
+                    CsvParameters.ColumnSeparatorChoice.Comma())
+                  .setCsvNamesIncluded(false)))
+      an [UnsupportedColumnTypeException] shouldBe thrownBy(
+        wdf.execute(executionContext)(Vector(arrayDataFrame)))
+    }
   }
 
   private def verifySavedDataFrame(
@@ -236,5 +278,4 @@ class WriteDataFrameIntegSpec
       lines(idx) shouldBe rowsAsCsv(separator)(idx)
     }
   }
-   */
 }

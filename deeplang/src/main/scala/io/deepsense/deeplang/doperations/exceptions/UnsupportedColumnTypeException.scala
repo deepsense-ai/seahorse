@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package io.deepsense.commons.types
+package io.deepsense.deeplang.doperations.exceptions
 
-/**
- * Types of data that column in dataframe can have.
- */
-object ColumnType extends Enumeration {
-  type ColumnType = Value
-  val numeric = Value("numeric")
-  val boolean = Value("boolean")
-  val string = Value("string")
-  val timestamp = Value("timestamp")
+import org.apache.spark.sql.types.DataType
+
+import io.deepsense.commons.types.ColumnType.ColumnType
+
+case class UnsupportedColumnTypeException(override val message: String)
+  extends DOperationExecutionException(message, None)
+
+object UnsupportedColumnTypeException {
+  def apply(
+      columnName: String,
+      actualType: DataType): UnsupportedColumnTypeException =
+    UnsupportedColumnTypeException(
+      s"Column '$columnName' has unsupported type '${actualType.toString}'")
 }

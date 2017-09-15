@@ -20,7 +20,6 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
 import spray.json._
 
-import io.deepsense.reportlib.model.ContinuousDistribution
 import io.deepsense.reportlib.model.factory.DistributionTestFactory
 
 class DistributionJsonSpec
@@ -30,11 +29,11 @@ class DistributionJsonSpec
   with Matchers
   with ReportJsonProtocol {
 
-  "CategoricalDistribution" should {
+  "DiscreteDistribution" should {
     val jsonCategoricalDistribution: JsObject = JsObject(
       "name" -> JsString(DistributionTestFactory.distributionName),
       "blockType" -> JsString("distribution"),
-      "subtype" -> JsString("categorical"),
+      "subtype" -> JsString("discrete"),
       "description" -> JsString(DistributionTestFactory.distributionDescription),
       "missingValues" -> JsNumber(0),
       "buckets" ->

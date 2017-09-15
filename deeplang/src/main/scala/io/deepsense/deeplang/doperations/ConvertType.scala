@@ -80,7 +80,6 @@ case class ConvertType()
       dataFrame: DataFrame,
       columns: Seq[String],
       targetType: ColumnType): Map[String, UserDefinedFunction] = {
-    require(targetType != ColumnType.categorical)
     val columnDataTypes = columns
       .map(n => n -> dataFrame.sparkDataFrame.schema.apply(n).dataType)
       .toMap
@@ -109,12 +108,10 @@ case class ConvertType()
     oldToNew
   }
 
-  val safeConvertsTo = Seq(ColumnType.string, ColumnType.categorical)
+  val safeConvertsTo = Seq(ColumnType.string)
   val safeConvertsMap = Map(
     ColumnType.numeric -> (safeConvertsTo),
     ColumnType.boolean -> (safeConvertsTo ++ Seq(ColumnType.numeric)),
-    ColumnType.categorical -> Seq(ColumnType.string),
-    ColumnType.string -> Seq(ColumnType.categorical),
     ColumnType.timestamp -> (safeConvertsTo ++ Seq(ColumnType.numeric))
   )
 

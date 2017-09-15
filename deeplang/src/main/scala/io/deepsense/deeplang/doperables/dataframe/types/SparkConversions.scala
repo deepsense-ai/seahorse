@@ -27,8 +27,7 @@ object SparkConversions {
     ColumnType.numeric -> sql.types.DoubleType,
     ColumnType.string -> sql.types.StringType,
     ColumnType.boolean -> sql.types.BooleanType,
-    ColumnType.timestamp -> sql.types.TimestampType,
-    ColumnType.categorical -> sql.types.IntegerType
+    ColumnType.timestamp -> sql.types.TimestampType
   )
 
   private val columnTypeToSparkColumnTypeMap: Map[sql.types.DataType, ColumnType] =

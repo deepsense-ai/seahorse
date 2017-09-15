@@ -55,21 +55,19 @@ object InputStorageTypeChoice {
 
   case class Jdbc()
     extends InputStorageTypeChoice
-    with JdbcParameters
-    with HasCategoricalColumnsParam {
+    with JdbcParameters {
 
     override val name: String = StorageType.JDBC.toString
     override val params: Array[Param[_]] =
-      declareParams(jdbcUrl, jdbcDriverClassName, jdbcTableName, categoricalColumns)
+      declareParams(jdbcUrl, jdbcDriverClassName, jdbcTableName)
   }
 
   case class Cassandra()
     extends InputStorageTypeChoice
-    with CassandraParameters
-    with HasCategoricalColumnsParam {
+    with CassandraParameters {
 
     override val name: String = StorageType.CASSANDRA.toString
     override val params: Array[Param[_]] =
-      declareParams(cassandraKeyspace, cassandraTable, categoricalColumns)
+      declareParams(cassandraKeyspace, cassandraTable)
   }
 }

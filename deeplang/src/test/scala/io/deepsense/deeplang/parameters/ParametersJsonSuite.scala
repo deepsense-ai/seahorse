@@ -555,7 +555,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
       NameColumnSelection(Set("abc", "def")),
       IndexColumnSelection(Set(1, 4, 7)),
       IndexRangeColumnSelection(Some(5), Some(6)),
-      TypeColumnSelection(Set(ColumnType.categorical))
+      TypeColumnSelection(Set(ColumnType.string))
     ), false)
 
     val expectedJson = JsObject(
@@ -573,7 +573,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
         ),
         JsObject(
           "type" -> JsString("typeList"),
-          "values" -> JsArray(JsString("categorical"))
+          "values" -> JsArray(JsString("string"))
         )
       ),
       "excluding" -> JsBoolean(false)
@@ -599,7 +599,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
         ),
         JsObject(
           "type" -> JsString("typeList"),
-          "values" -> JsArray(JsString("categorical"))
+          "values" -> JsArray(JsString("string"))
         )
       ),
       "excluding" -> JsBoolean(false)
@@ -609,7 +609,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
       NameColumnSelection(Set("abc", "def")),
       IndexColumnSelection(Set(1, 4, 7)),
       IndexRangeColumnSelection(Some(5), Some(6)),
-      TypeColumnSelection(Set(ColumnType.categorical))
+      TypeColumnSelection(Set(ColumnType.string))
     ), false)
     assert(columnSelectorParameter.value == expectedValue)
   }
@@ -631,7 +631,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
         ),
         JsObject(
           "type" -> JsString("typeList"),
-          "values" -> JsArray(JsString("categorical"))
+          "values" -> JsArray(JsString("string"))
         )
       ),
       "excluding" -> JsBoolean(true)
@@ -641,7 +641,7 @@ class ParametersJsonSuite extends FunSuite with Matchers with MockitoSugar {
       NameColumnSelection(Set("abc", "def")),
       IndexColumnSelection(Set(1, 4, 7)),
       IndexRangeColumnSelection(Some(5), Some(6)),
-      TypeColumnSelection(Set(ColumnType.categorical))
+      TypeColumnSelection(Set(ColumnType.string))
     ), true)
     assert(columnSelectorParameter.value == expectedValue)
   }

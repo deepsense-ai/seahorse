@@ -243,57 +243,6 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
       assertDataFramesEqual(resultDf, expectedDf)
     }
 
-    "replace integers while using REPLACE_WITH_CUSTOM_VALUE strategy" in {
-      val values = Seq(
-        Row(3, 2, null),
-        Row(3, null, null),
-        Row(1, 1, null),
-        Row(null, 2, null)
-      )
-
-      val rawDf = createDataFrame(values, StructType(List(
-        StructField("value1", IntegerType, nullable = true),
-        StructField("value2", IntegerType, nullable = true),
-        StructField("value3", IntegerType, nullable = true)
-      )))
-
-      val df = rawDf
-
-      val columnSelection =
-        MultipleColumnSelection(Vector(IndexRangeColumnSelection(Some(0), Some(1))))
-      val resultDf = executeTransformer(
-        new MissingValuesHandler()
-          .setSelectedColumns(columnSelection)
-          .setStrategy(
-            MissingValuesHandler.Strategy.ReplaceWithCustomValue()
-              .setCustomValue("1")),
-        df)
-
-      val expectedDf = createDataFrame(
-        Seq(
-          Row(3, 2, null),
-          Row(3, 1, null),
-          Row(1, 1, null),
-          Row(1, 2, null)
-        ),
-        StructType(List(
-          StructField(
-            "value1",
-            IntegerType,
-            nullable = true),
-          StructField(
-            "value2",
-            IntegerType,
-            nullable = true),
-          StructField(
-            "value3",
-            IntegerType,
-            nullable = true)))
-      )
-
-      assertDataFramesEqual(resultDf, expectedDf)
-    }
-
     "replace timestamps while using REPLACE_WITH_CUSTOM_VALUE strategy" in {
 
       val base = new DateTime(2015, 3, 30, 15, 25)
@@ -342,7 +291,7 @@ class MissingValuesHandlerIntegSpec extends DeeplangIntegTestSupport
     }
 
     // TODO: After fixing DS-2134
-    // Tests for replacements of other numeric types: Byte, Decimal, Float, Long, Short
+    // Tests for replacements of other numeric types: Byte, Decimal, Int, Float, Long, Short
 
     "throw an exception with different types using REPLACE_WITH_CUSTOM_VALUE strategy" in {
       val values = Seq(

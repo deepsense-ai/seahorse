@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-/** TODO without categoricals
 package io.deepsense.deeplang.doperations
 
 import java.io.IOException
@@ -28,7 +27,6 @@ import org.apache.spark.sql.{DataFrame => SparkDataFrame}
 
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameColumnsGetter}
-import io.deepsense.deeplang.doperations.CategoricalExtraction.Categoricals
 import io.deepsense.deeplang.doperations.ReadDataFrame._
 import io.deepsense.deeplang.doperations.exceptions.DeepSenseIOException
 import io.deepsense.deeplang.doperations.inout._
@@ -40,7 +38,6 @@ import io.deepsense.deeplang.{DOperation0To1, ExecutionContext, FileSystemClient
 case class ReadDataFrame()
     extends DOperation0To1[DataFrame]
     with ReadDataFrameParameters
-    with CategoricalExtraction
     with CsvReader
     with Params {
 
@@ -53,11 +50,11 @@ case class ReadDataFrame()
   override protected def _execute(context: ExecutionContext)(): DataFrame = {
     implicit val ec = context
 
-    val read = getStorageType match {
+    val read: (ExecutionContext => DataFrame) = getStorageType match {
       case (jdbcChoice: InputStorageTypeChoice.Jdbc) =>
-        readFromJdbc(jdbcChoice) _ andThen addCategoricalsToSchema(jdbcChoice)
+        readFromJdbc(jdbcChoice) _ andThen DataFrame.fromSparkDataFrame
       case (cassandraChoice: InputStorageTypeChoice.Cassandra) =>
-        readFromCassandra(cassandraChoice) _ andThen addCategoricalsToSchema(cassandraChoice)
+        readFromCassandra(cassandraChoice) _ andThen DataFrame.fromSparkDataFrame
       case (fileChoice: InputStorageTypeChoice.File) =>
         prepareFilePath(fileChoice) _ andThen readFromFile(fileChoice.getFileFormat)
     }
@@ -95,16 +92,16 @@ case class ReadDataFrame()
   private def readFromFile
       (fileFormat: InputFileFormatChoice)
       (path: String)
-      (implicit context: ExecutionContext) = {
-    val readPipeline = fileFormat match {
+      (implicit context: ExecutionContext): DataFrame = {
+    val readPipeline: (ExecutionContext => DataFrame) = fileFormat match {
       case (parquetSource: InputFileFormatChoice.Parquet) =>
-        readFromParquetFile(path) _ andThen context.dataFrameBuilder.buildDataFrame
+        readFromParquetFile(path) _ andThen DataFrame.fromSparkDataFrame
       case (jsonChoice: InputFileFormatChoice.Json) =>
-        readFromJsonFile(path) _ andThen addCategoricalsToSchema(jsonChoice)
+        readFromJsonFile(path) _ andThen DataFrame.fromSparkDataFrame
       case (csvChoice: InputFileFormatChoice.Csv) =>
         readFromCsvFile(path)(csvChoice) _ andThen
           inferAndConvert(csvChoice) andThen
-          addCategoricalsToSchema(csvChoice)
+          DataFrame.fromSparkDataFrame
     }
     readPipeline(context)
   }
@@ -128,7 +125,7 @@ case class ReadDataFrame()
 
   private def prepareFilePath
     (fileChoice: InputStorageTypeChoice.File)
-    (context: ExecutionContext) = {
+    (context: ExecutionContext): String = {
 
     val path = fileChoice.getSourceFile
     if (isUrlSource(path)) {
@@ -158,57 +155,8 @@ case class ReadDataFrame()
     fileName
   }
 
-  private def addCategoricalsToSchema(
-      choiceWithCategoricalParameter: HasCategoricalColumnsParam)(
-      sparkDataFrame: SparkDataFrame)(
-      implicit context: ExecutionContext): DataFrame = {
-
-    val categoricals = getCategoricalColumns(
-      sparkDataFrame.schema,
-      choiceWithCategoricalParameter.getCategoricalColumns)
-
-    val schemaWithCategoricals = StructType(
-      sparkDataFrame.schema.zipWithIndex.map { case (column, index) =>
-        if (categoricals.contains(index)) {
-          column.copy(dataType = StringType)
-        } else {
-          column
-        }
-      })
-
-    context.dataFrameBuilder
-      .buildDataFrame(schemaWithCategoricals, sparkDataFrame.rdd, categoricals.names)
-  }
-
   @transient
   override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
-}
-
-trait CategoricalExtraction {
-
-  /**
-    * Returns indices and names of columns selected to be categorized
-    * wrapped in a convenient case class.
-    */
-  protected def getCategoricalColumns(
-      schema: StructType,
-      categoricalColumnsSelection: MultipleColumnSelection): Categoricals = {
-    val columnNames: Seq[String] = schema.fields.map(_.name)
-    val categoricalColumnNames =
-      DataFrameColumnsGetter.getColumnNames(schema, categoricalColumnsSelection)
-    val categoricalColumnNamesSet = categoricalColumnNames.toSet
-    val categoricalColumnIndices = (for {
-      (name, index) <- columnNames.zipWithIndex if categoricalColumnNamesSet.contains(name)
-    } yield index).toSet
-
-    Categoricals(categoricalColumnIndices, categoricalColumnNames)
-  }
-}
-
-object CategoricalExtraction {
-  case class Categoricals(indices: Set[Int], names: Seq[String]) {
-    def contains(idx: Int): Boolean = indices.contains(idx)
-  }
 }
 
 object ReadDataFrame {
@@ -225,4 +173,3 @@ object ReadDataFrame {
     def setStorageType(value: InputStorageTypeChoice): this.type = set(storageType, value)
   }
 }
-*/

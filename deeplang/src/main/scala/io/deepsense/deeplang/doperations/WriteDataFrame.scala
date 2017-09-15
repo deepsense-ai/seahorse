@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-/** TODO without categoricals
 package io.deepsense.deeplang.doperations
 
 import java.io.IOException
@@ -30,8 +29,7 @@ import org.apache.spark.sql.types._
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMapper
-import io.deepsense.deeplang.doperations.exceptions.{DeepSenseIOException, WriteFileException}
+import io.deepsense.deeplang.doperations.exceptions.{UnsupportedColumnTypeException, WrongColumnTypeException, DeepSenseIOException, WriteFileException}
 import io.deepsense.deeplang.doperations.inout._
 import io.deepsense.deeplang.params.{Param, Params}
 import io.deepsense.deeplang.params.choice.ChoiceParam
@@ -83,10 +81,7 @@ case class WriteDataFrame()
     val jdbcUrl = jdbcChoice.getJdbcUrl
     val jdbcTableName = jdbcChoice.getJdbcTableName
 
-    CategoricalMapper(dataFrame, context.dataFrameBuilder)
-      .uncategorized(dataFrame)
-      .sparkDataFrame
-      .write.jdbc(jdbcUrl, jdbcTableName, properties)
+    dataFrame.sparkDataFrame.write.jdbc(jdbcUrl, jdbcTableName, properties)
   }
 
   private def writeToCassandra(
@@ -97,9 +92,8 @@ case class WriteDataFrame()
     val cassandraKeyspace = cassandraChoice.getCassandraKeyspace
     val cassandraTable = cassandraChoice.getCassandraTable
 
-    CategoricalMapper(dataFrame, context.dataFrameBuilder)
-      .uncategorized(dataFrame)
-      .sparkDataFrame
+
+    dataFrame.sparkDataFrame
       .write.format("org.apache.spark.sql.cassandra")
       .option("keyspace", cassandraKeyspace)
       .option("table", cassandraTable)
@@ -117,6 +111,7 @@ case class WriteDataFrame()
     try {
       fileChoice.getFileFormat match {
         case (csvChoice: OutputFileFormatChoice.Csv) =>
+          requireNoComplexTypes(dataFrame)
           val namesIncluded = csvChoice.getCsvNamesIncluded
           val columnSeparator = csvChoice.determineColumnSeparator().toString
           prepareDataFrameForCsv(context, dataFrame)
@@ -131,10 +126,7 @@ case class WriteDataFrame()
           dataFrame.sparkDataFrame.write.parquet(path)
 
         case OutputFileFormatChoice.Json() =>
-          CategoricalMapper(dataFrame, context.dataFrameBuilder)
-            .uncategorized(dataFrame)
-            .sparkDataFrame
-            .write.json(path)
+          dataFrame.sparkDataFrame.write.json(path)
       }
     } catch {
       case e: SparkException =>
@@ -143,8 +135,21 @@ case class WriteDataFrame()
     }
   }
 
+  private def requireNoComplexTypes(dataFrame: DataFrame): Unit = {
+    dataFrame.sparkDataFrame.schema.fields.map(structField =>
+        (structField.dataType, structField.name)
+    ).foreach {
+      case (dataType, name) => dataType match {
+        case _: ArrayType | _: MapType | _: StructType =>
+          throw UnsupportedColumnTypeException(name, dataType)
+        case _ => ()
+      }
+    }
+
+  }
+
   private def prepareDataFrameForCsv(context: ExecutionContext, dataFrame: DataFrame): DataFrame = {
-    val originalSchema = dataFrame.sparkDataFrame.schema
+    val schema = dataFrame.sparkDataFrame.schema
 
     def stringifySelectedTypes(schema: StructType): StructType = {
       StructType(
@@ -156,13 +161,9 @@ case class WriteDataFrame()
       )
     }
 
-    val uncategorized =
-      CategoricalMapper(dataFrame, context.dataFrameBuilder)
-        .uncategorized(dataFrame)
-
     context.dataFrameBuilder.buildDataFrame(
-      stringifySelectedTypes(uncategorized.sparkDataFrame.schema),
-      uncategorized.sparkDataFrame.map(WriteDataFrame.stringifySelectedCells(originalSchema)))
+      stringifySelectedTypes(schema),
+      dataFrame.sparkDataFrame.map(WriteDataFrame.stringifySelectedCells(schema)))
   }
 
   @transient
@@ -185,4 +186,3 @@ object WriteDataFrame {
       })
   }
 }
-*/

@@ -33,7 +33,6 @@ object InputFileFormatChoice {
   case class Csv()
       extends InputFileFormatChoice
       with CsvParameters
-      with HasCategoricalColumnsParam
       with HasShouldConvertToBooleanParam {
 
     override val name: String = FileFormat.CSV.toString
@@ -41,18 +40,14 @@ object InputFileFormatChoice {
       declareParams(
         csvColumnSeparator,
         csvNamesIncluded,
-        categoricalColumns,
         shouldConvertToBoolean)
   }
   case class Parquet() extends InputFileFormatChoice {
     override val name: String = FileFormat.PARQUET.toString
     override val params = declareParams()
   }
-  case class Json()
-      extends InputFileFormatChoice
-      with HasCategoricalColumnsParam {
-
+  case class Json() extends InputFileFormatChoice {
     override val name: String = FileFormat.JSON.toString
-    override val params = declareParams(categoricalColumns)
+    override val params = declareParams()
   }
 }

@@ -29,7 +29,6 @@ import io.deepsense.deeplang.{DOperable, DeeplangIntegTestSupport}
 
 class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfter {
 
-  /** TODO remove categoricals
   before {
     fileSystemClient.delete(testsDir)
     new java.io.File(testsDir + "/id").getParentFile.mkdirs()
@@ -48,19 +47,6 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
 
   val threeStringsSchema =
     schemaWithDefaultColumnNames(Seq(StringType, StringType, StringType))
-
-  val categoricalColumnsContent = Seq(
-    Row("CAT1", 1.1),
-    Row("CAT2", 3.5),
-    Row("CAT1", 5.7)
-  )
-
-  val nullableCategoricalColumnsContent = Seq(
-    Row("CAT1", null),
-    Row(null, 3.5),
-    Row("CAT2", null),
-    Row(null, 6.3)
-  )
 
   "ReadDataFrame" should {
     "read simple csv file with strings" in {
@@ -204,83 +190,13 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
       )
       dataFrame.report(executionContext) shouldBe an[Report]
     }
-
-    "read categorical columns provided by index" in {
-      val dataFrame = readDataFrame(
-        fileName = "with_categorical_columns.csv",
-        csvColumnSeparator = CsvParameters.ColumnSeparatorChoice.Comma(),
-        csvNamesIncluded = true,
-        csvConvertToBoolean = true,
-        csvCategoricalColumns = Some(MultipleColumnSelection(
-          Vector(IndexColumnSelection(Set(0, 1)))
-        ))
-      )
-
-      assertDataFramesEqual(
-        dataFrame,
-        expectedDataFrame(
-          categoricalColumnsContent,
-          schemaOf(
-            Seq("col1", "col2"),
-            Seq(StringType, DoubleType)
-          ),
-          Seq("col1", "col2"))
-      )
-    }
-
-    "read categorical columns provided by name" in {
-      val dataFrame = readDataFrame(
-        fileName = "with_categorical_columns.csv",
-        csvColumnSeparator = CsvParameters.ColumnSeparatorChoice.Comma(),
-        csvNamesIncluded = true,
-        csvConvertToBoolean = true,
-        csvCategoricalColumns = Some(MultipleColumnSelection(
-          Vector(NameColumnSelection(Set("col1", "col2")))
-        ))
-      )
-
-      assertDataFramesEqual(
-        dataFrame,
-        expectedDataFrame(
-          categoricalColumnsContent,
-          schemaOf(
-            Seq("col1", "col2"),
-            Seq(StringType, DoubleType)
-          ),
-          Seq("col1", "col2"))
-      )
-    }
-
-    "handle categorical column with empty values" in {
-      val dataFrame = readDataFrame(
-        fileName = "with_nullable_categorical_columns.csv",
-        csvColumnSeparator = CsvParameters.ColumnSeparatorChoice.Comma(),
-        csvNamesIncluded = true,
-        csvConvertToBoolean = true,
-        csvCategoricalColumns = Some(MultipleColumnSelection(
-          Vector(NameColumnSelection(Set("col1", "col2")))
-        ))
-      )
-
-      assertDataFramesEqual(
-        dataFrame,
-        expectedDataFrame(
-          nullableCategoricalColumnsContent,
-          schemaOf(
-            Seq("col1", "col2"),
-            Seq(StringType, DoubleType)
-          ),
-          Seq("col1", "col2"))
-      )
-    }
   }
 
   def readDataFrame(
       fileName: String,
       csvColumnSeparator: CsvParameters.ColumnSeparatorChoice,
       csvNamesIncluded: Boolean,
-      csvConvertToBoolean: Boolean,
-      csvCategoricalColumns: Option[MultipleColumnSelection] = None) : DataFrame = {
+      csvConvertToBoolean: Boolean) : DataFrame = {
     val operation =
       new ReadDataFrame()
         .setStorageType(
@@ -290,9 +206,7 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
               InputFileFormatChoice.Csv()
                 .setCsvColumnSeparator(csvColumnSeparator)
                 .setCsvNamesIncluded(csvNamesIncluded)
-                .setShouldConvertToBoolean(csvConvertToBoolean)
-                .setCategoricalColumns(
-                  csvCategoricalColumns.getOrElse(MultipleColumnSelection.emptySelection))))
+                .setShouldConvertToBoolean(csvConvertToBoolean)))
     operation
       .execute(executionContext)(Vector.empty[DOperable])
       .head
@@ -302,12 +216,6 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
   def expectedDataFrame(rows: Seq[Row], schema: StructType) : DataFrame =
     createDataFrame(rows, schema)
 
-  def expectedDataFrame(
-      rows: Seq[Row],
-      schema: StructType,
-      categoricalColumns: Seq[String]) : DataFrame =
-    createDataFrame(rows, schema, categoricalColumns)
-
   def generatedColumnNames(n: Int): Seq[String] = for (i <- 0 until n) yield s"unnamed_$i"
 
   def schemaOf(columns: Seq[String], types: Seq[DataType]): StructType = StructType(
@@ -315,5 +223,4 @@ class ReadDataFrameIntegSpec extends DeeplangIntegTestSupport with BeforeAndAfte
 
   def schemaWithDefaultColumnNames(types: Seq[DataType]): StructType =
     schemaOf(generatedColumnNames(types.length), types)
-   */
 }

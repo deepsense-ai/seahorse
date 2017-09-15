@@ -31,7 +31,7 @@ trait ReportJsonProtocol extends DefaultJsonProtocol with ProductFormatsInstance
       _: Option[String],
       _: Seq[String]))
   implicit val categoricalDistributionFormat = jsonFormat(
-    CategoricalDistribution.apply,
+    DiscreteDistribution.apply,
     DistributionJsonProtocol.nameKey,
     DistributionJsonProtocol.descriptionKey,
     DistributionJsonProtocol.missingValuesKey,
@@ -57,7 +57,7 @@ trait ReportJsonProtocol extends DefaultJsonProtocol with ProductFormatsInstance
       Some(JsString(DistributionJsonProtocol.typeName)))
       val subtype: String = fields.get(DistributionJsonProtocol.subtypeKey).get.convertTo[String]
       subtype match {
-        case CategoricalDistribution.subtype => json.convertTo[CategoricalDistribution]
+        case DiscreteDistribution.subtype => json.convertTo[DiscreteDistribution]
         case ContinuousDistribution.subtype => json.convertTo[ContinuousDistribution]
       }
     }
@@ -75,7 +75,7 @@ trait ReportJsonProtocol extends DefaultJsonProtocol with ProductFormatsInstance
           DistributionJsonProtocol.countsKey -> d.counts.toJson,
           DistributionJsonProtocol.statisticsKey -> d.statistics.toJson
         ))
-        case d: CategoricalDistribution => JsObject(basicFields ++ Map(
+        case d: DiscreteDistribution => JsObject(basicFields ++ Map(
           DistributionJsonProtocol.countsKey -> d.counts.toJson,
           DistributionJsonProtocol.bucketsKey -> d.buckets.toJson
         ))
