@@ -4,8 +4,9 @@
 'use strict';
 
 /* @ngInject */
-function Account() {
+function Account($rootScope) {
   this.label = 'Account info / settings page';
+  $rootScope.headerTitle = 'My account';
 }
 exports.function = Account;
 

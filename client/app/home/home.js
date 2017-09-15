@@ -4,9 +4,10 @@
 'use strict';
 
 /* @ngInject */
-function Home() {
-  let message = 'Hello!';
+function Home($rootScope) {
+  let message = 'Hello! DeepSense.io engine at Your service!';
   this.welcomeMessage = message;
+  $rootScope.headerTitle = 'Home';
 }
 exports.function = Home;
 

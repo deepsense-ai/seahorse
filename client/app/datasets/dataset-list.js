@@ -4,8 +4,9 @@
 'use strict';
 
 /* @ngInject */
-function DatasetList() {
+function DatasetList($rootScope) {
   this.setsLabel = 'You do not have any datasets!';
+  $rootScope.headerTitle = 'Datasets';
 }
 exports.function = DatasetList;
 

@@ -5,12 +5,19 @@
 /* ui.bootstrap reset */
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
 
-
-@mainBgColor: #fff;
-
-
-body {
-  background: @mainBgColor;
+.navbar-static-side .nav-header {
+  background: #1d3647;
+  padding: 20px 25px;
 }
+
+.navbar-static-side .nav-header .logo {
+  height: 67px;
+}
+
+.navbar-static-top h2 {
+  float: left;
+  margin-left: 20px;
+}
+
 
 @import "dag-demo.less";

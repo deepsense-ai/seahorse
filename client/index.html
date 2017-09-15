@@ -7,55 +7,61 @@
   <link rel="stylesheet" type="text/css" href="css/libs.css">
   <link rel="stylesheet" type="text/css" href="css/app.css">
 </head>
-<body class="container-fluid">
+<body>
   <div id="wrapper">
 
     <nav class="navbar-default navbar-static-side" role="navigation">
-        <div class="sidebar-collapse">
-            <ul class="nav" id="side-menu">
-                <li><a ui-sref="lab.experiments">experiments</a></li>
-                <li><a ui-sref="lab.datasets">datasets</a></li>
-                <li><a ui-sref="lab.account">account</a></li>
-                <li><a ui-sref="lab.home">home</a></li>
-            </ul>
+      <div class="sidebar-collapse">
+        <ul class="nav" id="side-menu">
+          <li class="nav-header">
+            <div class="logo-image">
+              <a ui-sref="lab.home"><img src="img/logo.png" class="logo" alt="deepsense.io" title=""></a>
+            </div>
+            <div class="logo-element">ds</div>
+          </li>
 
-        </div>
+          <li><a ui-sref="lab.experiments">
+            <i class="fa fa-cube"></i>
+            <span class="nav-label">Experiments</span>
+          </a></li>
+          <li><a ui-sref="lab.datasets">
+            <i class="fa fa-database"></i>
+            <span class="nav-label">Datasets</span>
+          </a></li>
+        </ul>
+      </div>
     </nav>
 
     <div id="page-wrapper" class="gray-bg">
-        <div class="row border-bottom">
-            <nav class="navbar navbar-static-top white-bg" role="navigation" style="margin-bottom: 0">
-                <div class="navbar-header">
-                    <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
-                    <form role="search" class="navbar-form-custom" method="post" action="search_results.html">
-                        <div class="form-group">
-                            <input type="text" placeholder="Search for something..." class="form-control" name="top-search" id="top-search">
-                        </div>
-                    </form>
-                </div>
-                <ul class="nav navbar-top-links navbar-right">
-                    <li>
-                        <a href="#">
-                            <i class="fa fa-sign-out"></i> Log out
-                        </a>
-                    </li>
-                </ul>
+      <div class="row border-bottom">
+        <nav class="navbar navbar-static-top white-bg" role="navigation" style="margin-bottom: 0">
+          <h2>{{ headerTitle }}</h2>
+          <ul class="nav navbar-top-links navbar-right">
+            <li>
+              <a ui-sref="lab.account">
+                <i class="fa fa-user"></i>
+                <span class="nav-label">My account</span>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <i class="fa fa-sign-out"></i>
+                <span class="nav-label">Log out</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
 
-            </nav>
-        </div>
-        <div class="wrapper wrapper-content animated fadeInRight" ui-view>
-        </div>
-        <div class="footer">
-            <div class="pull-right">
-                10GB of <strong>250GB</strong> Free.
-            </div>
-            <div>
-                <strong>Copyright</strong> Example Company &copy; 2014-2015
-            </div>
-        </div>
+      <div class="wrapper wrapper-content animated fadeInRight" ui-view></div>
 
+      <div class="footer">
+        <div class="pull-right">
+          Copyright <strong>CodiLime Inc.</strong> &copy; 2015
+        </div>
+      </div>
     </div>
-</div>
+  </div>
   <script type="text/javascript" src="js/libs.js"></script>
   <script type="text/javascript" src="js/app.js"></script>
 </body>

@@ -4,7 +4,7 @@
 'use strict';
 
 /* @ngInject */
-function ExperimentList() {
+function ExperimentList($rootScope) {
   var tempExperimentsData = {
     'a01': {
       'id': 'a01',
@@ -16,8 +16,8 @@ function ExperimentList() {
     }
   };
 
-  this.myExperiments = 'My experiments:';
   this.experiments = tempExperimentsData;
+  $rootScope.headerTitle = 'My experiments';
 }
 exports.function = ExperimentList;
 

@@ -22,7 +22,7 @@ describe('Home test', function() {
     });
 
     it('should say hello', function() {
-      expect(ctrl.welcomeMessage).toBe('Hello!');
+      expect(ctrl.welcomeMessage).toBe('Hello! DeepSense.io engine at Your service!');
     });
   });
 });

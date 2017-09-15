@@ -6,7 +6,7 @@
 var dagDemo = require('./dag-demo.js');
 
 /* @ngInject */
-function Experiment($stateParams) {
+function Experiment($stateParams, $rootScope) {
   var tempExperimentsData = {
     'a01': {
       'id': 'a01',
@@ -18,8 +18,7 @@ function Experiment($stateParams) {
     }
   };
 
-  this.experimentLabel = 'experiment:';
-  this.data = tempExperimentsData[$stateParams.id];
+  $rootScope.headerTitle = 'Experiment: ' + tempExperimentsData[$stateParams.id].name;
 
   dagDemo();
 }

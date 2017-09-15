@@ -81,6 +81,7 @@
       "js": "js/",
       "css": "css/",
       "fonts": "fonts/",
+      "images": "img/",
       "bundle": {
         "app": "app.js",
         "js": "libs.js",
@@ -93,7 +94,8 @@
       "js": "app/**/*.js",
       "less": "css/**/*.less",
       "html": "**/*.html",
-      "fonts": "fonts/*"
+      "fonts": "fonts/*",
+      "images": "img/*"
     },
     "server": {
       "path": "./server/",
