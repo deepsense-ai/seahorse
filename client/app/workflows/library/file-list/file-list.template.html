@@ -1,0 +1,17 @@
+<div class="file-list">
+  <deepsense-loading-spinner-sm ng-if="$ctrl.loading"></deepsense-loading-spinner-sm>
+
+  <file-element
+    ng-if="$ctrl.parent"
+    item="$ctrl.parent"
+    is-last="false">
+  </file-element>
+
+  <file-element
+    ng-repeat="item in $ctrl.items"
+    item="item"
+    is-last="$last">
+  </file-element>
+
+
+</div>

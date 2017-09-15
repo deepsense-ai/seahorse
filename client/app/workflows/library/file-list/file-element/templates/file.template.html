@@ -1,0 +1,21 @@
+<div class="file-element"
+     ng-class="{'last-elem': $ctrl.isLast}">
+
+  <div class="file-element-icon">
+    <div>w</div>
+  </div>
+
+  <div class="file-element-name"
+       ng-class="{'selectable': $ctrl.canChooseDataframe}"
+       ng-click="$ctrl.selectDataFrame($ctrl.item)"
+  >
+    {{$ctrl.item.name}}
+  </div>
+
+  <div class="file-element-actions">
+    <a ng-href={{$ctrl.item.downloadUrl}} download>
+      <span class="sa sa-download"></span>
+    </a>
+    <span class="sa sa-delete" ng-click="$ctrl.deleteFile($ctrl.item)"></span>
+  </div>
+</div>

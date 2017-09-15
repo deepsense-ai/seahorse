@@ -95,23 +95,9 @@ function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, canChooseDa
       return;
     }
 
-    vm.directories = getSortedItemsByType(result.items, 'directory');
-    vm.files = getSortedItemsByType(result.items, 'file');
-
+    vm.items = result.items;
     vm.parents = result.parents;
     vm.currentDirName = result.name;
-
-    if (vm.files && vm.files.length === 0) {
-      vm.message = 'There are no files in this directory.';
-    } else {
-      vm.message = '';
-    }
-  }
-
-  function getSortedItemsByType(allItems, type) {
-    return _.sortBy(allItems.filter((item) => {
-      return item.kind === type;
-    }), 'name');
   }
 }
 

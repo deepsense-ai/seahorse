@@ -1,0 +1,13 @@
+<div class="file-element directory"
+     ng-class="{'last-elem': $ctrl.isLast}">
+
+  <div class="file-element-icon">
+    <div>u</div>
+  </div>
+
+  <div class="file-element-name"
+       ng-click="$ctrl.goToUri($ctrl.item)"
+  >
+    {{$ctrl.item.name}}
+  </div>
+</div>

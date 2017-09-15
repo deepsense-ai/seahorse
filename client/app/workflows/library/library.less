@@ -19,7 +19,7 @@
     .input {
       flex: 1;
     }
-    
+
     input.search-field:focus {
       border: 1px solid @border-grey;
     }
@@ -33,41 +33,6 @@
       min-height: 50vh;
       display: flex;
       border-bottom: 1px solid @grey;
-    }
-
-    .directories-list {
-      font-weight: 600;
-      font-size: 14px;
-      width: 250px;
-      background-color: @color-light-grey;
-
-      &__parents {
-        padding: 10px 15px;
-        background-color: @seahorse-blue;
-        color: #ffffff;
-
-        .parent {
-          &:last-of-type {
-            font-weight: bold;
-
-            &:hover {
-              cursor: default;
-            }
-          }
-        }
-      }
-
-      &__directories {
-        padding: 10px 15px;
-        color: @seahorse-blue;
-      }
-
-      .entry {
-        margin: 3px 0;
-        &:hover {
-          cursor: pointer;
-        }
-      }
     }
 
     .files-list {
@@ -155,22 +120,14 @@
     }
 
     .dataframe-list {
-      width: 100%;
       min-height: 40px;
       max-height: 45vh;
-      margin: 10px 0;
-      border-top: 1px solid @grey;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      width: 95%;
+      margin: 0 auto;
     }
 
     .list-wrapper {
-      position: relative;
-      max-height: 450px;
       width: 97%;
-      margin: 0 auto;
-      overflow: auto;
     }
 
     .uploaded-list-wrapper {
@@ -183,6 +140,7 @@
       justify-content: space-between;
       align-items: center;
       height: 40px;
+      color: @seahorse-light-blue;
 
       &:not(:last-child) {
         border-bottom: 1px solid @grey;
@@ -216,26 +174,8 @@
           cursor: pointer;
         }
       }
-
-      .actions {
-        display: flex;
-        align-items: center;
-        padding-right: 10px;
-        a {
-          color: inherit;
-          text-decoration: none;
-        }
-      }
-
-      span.sa {
-        font-size: 24px;
-        margin: 0 4px;
-
-        &:hover {
-          cursor: pointer;
-        }
-      }
     }
+
     .folder {
       font-size: 18px;
       font-weight: bold;

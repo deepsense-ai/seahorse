@@ -1,0 +1,15 @@
+<div class="file-element directory" ng-class="{'last-elem': $ctrl.isLast}">
+  <div class="file-element-icon">
+    <div>v</div>
+  </div>
+
+  <div class="file-element-name"
+       ng-click="$ctrl.goToUri($ctrl.item)"
+  >
+    {{$ctrl.item.name}}
+  </div>
+
+  <div class="file-element-actions">
+    <span class="sa sa-delete" ng-click="$ctrl.deleteFile($ctrl.item)"></span>
+  </div>
+</div>
