@@ -15,9 +15,7 @@ import io.deepsense.experimentmanager.app.models.Graph.Node
 /**
  * Launch experiment action.
  */
-case class LaunchAction(
-    targetNodes: Option[List[Node.Id]],
-    forceReevaluate: Option[List[Node.Id]])
+case class LaunchAction(targetNodes: Option[List[Node.Id]])
   extends Action {
   override def run(id: Experiment.Id, experimentManager: ExperimentManager): Future[Experiment] = {
     experimentManager.launch(id, targetNodes.getOrElse(List()))

@@ -32,11 +32,11 @@ class ExperimentManagerImpl @Inject()(implicit executionContext: ExecutionContex
     experiments.find(_.id == id)
   }
 
-  override def delete(id: Id): Unit = {
+  override def delete(id: Id): Future[Unit] = future {
     experiments.find(_.id == id).map(experiments.remove)
   }
 
-  override def list(
+  override def experiments(
      limit: Option[Int],
      page: Option[Int],
      status: Option[Status.Value]): Future[IndexedSeq[Experiment]] = future {
