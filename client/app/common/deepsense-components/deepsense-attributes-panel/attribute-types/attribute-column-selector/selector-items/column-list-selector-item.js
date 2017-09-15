@@ -33,6 +33,9 @@ function ColumnListSelectorItem($timeout) {
           }, false);
         },
         addSelectedObject(object) {
+          if (!object) {
+            return;
+          }
           scope.item.addColumn(object.originalObject.name);
         },
         removeColumn(columnIndex) {

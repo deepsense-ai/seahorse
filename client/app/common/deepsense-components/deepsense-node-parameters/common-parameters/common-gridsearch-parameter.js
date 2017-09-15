@@ -43,11 +43,13 @@ GridSearchParameter.prototype.setInternalParams = function (node) {
         // If at any point we wish to present information which values were overwritten,
         // here is the place to get this information.
         let gridParamsValues = _.assign({}, this.value, this.serialize());
+        const isDynamic = true;
 
         this.internalParams = this.paramsFactory.createParametersList(
             gridParamsValues,
             gridParamsSchema,
-            node
+            node,
+            isDynamic
         );
     }
 };
