@@ -26,7 +26,7 @@ import org.scalatest.BeforeAndAfter
 
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.deeplang.{DeeplangIntegTestSupport, DOperable}
-import io.deepsense.entitystorage.EntityStorageClientTestInMemoryImpl
+import io.deepsense.entitystorage.EntityStorageClientInMemoryImpl
 
 class SaveDataFrameIntegSpec
   extends DeeplangIntegTestSupport
@@ -67,7 +67,7 @@ class SaveDataFrameIntegSpec
     val filteredEntities =
       context
         .entityStorageClient
-        .asInstanceOf[EntityStorageClientTestInMemoryImpl]
+        .asInstanceOf[EntityStorageClientInMemoryImpl]
         .getAllEntities
         .filter(e => e.info.description == dataFrameDescription)
     filteredEntities.length shouldBe 1

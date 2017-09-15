@@ -39,7 +39,7 @@ class WorkflowWithResultsJsonProtocolSpec extends WorkflowJsonTestSupport
     }
   }
 
-  def workflowWithResultsFixture = {
+  def workflowWithResultsFixture: (WorkflowWithResults, JsObject) = {
     val (executionReport, executionReportJson) = executionReportFixture
 
     val workflow = WorkflowWithResults(
@@ -62,7 +62,7 @@ class WorkflowWithResultsJsonProtocolSpec extends WorkflowJsonTestSupport
     (workflow, workflowJson)
   }
 
-  def executionReportFixture = {
+  def executionReportFixture: (ExecutionReport, JsObject) = {
 
     val startTimestamp = "2015-05-12T21:11:09.000Z"
     val finishTimestamp = "2015-05-12T21:12:50.000Z"

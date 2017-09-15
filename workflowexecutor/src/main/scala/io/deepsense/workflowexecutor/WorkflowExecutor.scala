@@ -16,102 +16,109 @@
 
 package io.deepsense.workflowexecutor
 
-import scala.math.random
+import scala.collection.mutable
+import scala.concurrent.Promise
+import scala.util.{Failure, Success, Try}
 
-import buildinfo.BuildInfo
-import org.apache.spark._
-import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{SaveMode, Row, SQLContext}
-import org.apache.spark.sql.types._
+import akka.actor.ActorSystem
+import org.apache.spark.sql.SQLContext
+import org.apache.spark.{SparkConf, SparkContext}
 
+import io.deepsense.commons.spark.sql.UserDefinedFunctions
+import io.deepsense.commons.utils.Logging
+import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
+import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
+import io.deepsense.deeplang.{CatalogRecorder, DOperable, ExecutionContext}
+import io.deepsense.models.entities.Entity
+import io.deepsense.models.workflows.{EntitiesMap, ExecutionReport, WorkflowWithVariables}
+import io.deepsense.reportlib.model.ReportContent
+import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.{Launch, GraphFinished}
 
-case class Config(
-  workflowFilename: String = null,
-  outputDirectoryPath: String = null,
-  executionReport: Boolean = false)
-
-// scalastyle:off println
 /**
- * WorkflowExecutor
- * workflow file name has to be passed via command-line parameter
- * TODO: replace TODOs with proper logging
+ * WorkflowExecutor creates an execution context and then executes a workflow on Spark.
  */
-object WorkflowExecutor {
+case class WorkflowExecutor(
+    workflow: WorkflowWithVariables,
+    generateReports: Boolean)
+  extends Logging {
 
-  var workflowFilename: String = _
-  var outputDirectoryPath: String = _
-  var executionReport: Boolean = _
+  val dOperableCache = mutable.Map[Entity.Id, DOperable]()
+  private val actorSystemName = "WorkflowExecutor"
 
-  def main(args: Array[String]): Unit = {
-    println("Starting WorkflowExecutor")
-    val parser = new scopt.OptionParser[Config](BuildInfo.name) {
-      head(BuildInfo.toString)
-      opt[Unit]('r', "execution-report") action {
-        (_, c) => c.copy(executionReport = true)
-      } text "compute ExecutionReport (very time consuming option)"
-      opt[String]('w', "workflow-filename") required() valueName "<file-name>" action {
-        (x, c) => c.copy(workflowFilename = x)
-      } text "workflow filename"
-      opt[String]('o', "output-directory") required() valueName "<dir-path>" action {
-        (x, c) => c.copy(outputDirectoryPath = x)
-      } text
-        "output directory path; directory will be created if it does not exists; " +
-        "execution fails if any file is to be overwritten"
-      help("help") text "print this help message"
-      version("version") text "print product version and exit"
-      note("See http://deepsense.io for more details")
-    }
-    parser.parse(args, Config()) map {
-      config =>
-        println("Parameter execution-report: " + config.executionReport)
-        println("Parameter output-directory: " + config.outputDirectoryPath)
-        println("Parameter workflow-filename: " + config.workflowFilename)
-        executionReport = config.executionReport
-        outputDirectoryPath = config.outputDirectoryPath
-        workflowFilename = config.workflowFilename
-    } getOrElse {
-      // Command-line arguments are bad, usage message will have been displayed
-      System.exit(-1)
+  def execute(): Try[ExecutionReport] = {
+    val executionContext = createExecutionContext()
+
+    val actorSystem = ActorSystem(actorSystemName)
+    val workflowExecutorActor = actorSystem.actorOf(WorkflowExecutorActor.props(executionContext))
+
+    val resultPromise: Promise[GraphFinished] = Promise()
+    workflowExecutorActor ! Launch(workflow.graph, generateReports, resultPromise)
+
+    logger.info("Awaiting execution end...")
+    actorSystem.awaitTermination()
+
+    val report = resultPromise.future.value.get match {
+      case Failure(exception) => // WEA failed with an exception
+        logger.error("WEA failed: ", exception)
+        throw exception
+      case Success(GraphFinished(graph, results, reports)) =>
+        logger.info(s"WEA finished successfully: ${workflow.graph}")
+        Try(ExecutionReport(
+          graph.state.status,
+          graph.state.error,
+          graph.nodeById.mapValues(_.state),
+          toEntitiesMap(results, reports)
+        ))
     }
 
+    cleanup(actorSystem, executionContext)
+    report
+  }
 
+  private def createExecutionContext(): ExecutionContext = {
+    val dOperableCatalog = new DOperableCatalog
+    CatalogRecorder.registerDOperables(dOperableCatalog)
+    val executionContext = new ExecutionContext(dOperableCatalog)
 
-    // PoC: Print file content
-    val lines = scala.io.Source.fromFile(workflowFilename).mkString
-    println("FILE " + workflowFilename + " CONTENT: " + lines)
+    executionContext.sparkContext = createSparkContext()
+    executionContext.sqlContext = createSqlContext(executionContext.sparkContext)
+    executionContext.dataFrameBuilder = DataFrameBuilder(executionContext.sqlContext)
+    executionContext.fsClient = null // Not used
+    executionContext.entityStorageClient = null // Not used
+    executionContext
+  }
 
+  private def createSparkContext(): SparkContext = {
+    val sparkConf = new SparkConf()
+    sparkConf.setAppName("Seahorse Workflow Executor")
+      .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
+      .registerKryoClasses(Array())
 
+    new SparkContext(sparkConf)
+  }
 
-    // PoC: Execute some Spark operations
-    val conf = new SparkConf().setAppName("Spark Pi")
-    val sc = new SparkContext(conf)
-    val slices = 2
-    val n = math.min(1000L * slices, Int.MaxValue).toInt // avoid overflow
-    val count = sc.parallelize(1 until n, slices).map { i =>
-        val x = random * 2 - 1
-        val y = random * 2 - 1
-        if (x*x + y*y < 1) 1 else 0
-      }.reduce(_ + _)
-    println("DeepSense.io computed PI constant is roughly " + 4.0 * count / n)
+  private def createSqlContext(sparkContext: SparkContext): SQLContext = {
+    val sqlContext = new SQLContext(sparkContext)
+    UserDefinedFunctions.registerFunctions(sqlContext.udf)
+    sqlContext
+  }
 
+  private def toEntitiesMap(
+      results: WorkflowExecutorActor.Results,
+      reports: Map[Entity.Id, ReportContent]): EntitiesMap = {
+    EntitiesMap(results.map { case (id, entity) =>
+      val entry = EntitiesMap.Entry(
+        entity.getClass.getSimpleName,
+        reports.get(id))
+      (id, entry)
+    })
+  }
 
-
-    // PoC: Writing something to output directory
-    // tested:
-    //   -o hdfs:///a/b/c/   (write on HDFS tied with cluster)
-    //   -o file:///a/b/c/
-    //      on mode cluster: write on ApplicationMaster machine / Spark standalone cluster master,
-    //      on mode client: write on client machine (submitter's machine)
-    val sqlContext = new SQLContext(sc)
-    val rdd: RDD[Row] = sc.parallelize((1 until n).map( x => Row.fromTuple( (x, "i co?") )))
-    val schema = StructType(Seq(StructField("num", IntegerType), StructField("text", StringType)))
-    val df = sqlContext.createDataFrame(rdd, schema)
-    // NOTE: Writing via DataFrameWriter automatically creates parent directory (and its parents...)
-    df.write.format("parquet").mode(SaveMode.ErrorIfExists).save(outputDirectoryPath + "/something")
-    // df.save(outputDirectoryPath)
-
-    sc.stop()
-    println("Ending WorkflowExecutor")
+  private def cleanup(actorSystem: ActorSystem, executionContext: ExecutionContext): Unit = {
+    logger.debug("Cleaning up...")
+    actorSystem.shutdown()
+    logger.debug("Akka terminated!")
+    executionContext.sparkContext.stop()
+    logger.debug("Spark terminated!")
   }
 }
-// scalastyle:on println

@@ -34,7 +34,7 @@ class WorkflowWithKnowledgeJsonProtocolSpec extends WorkflowJsonTestSupport
     }
   }
 
-  def workflowWithKnowledgeFixture = {
+  def workflowWithKnowledgeFixture: (WorkflowWithKnowledge, JsObject) = {
     val workflowId = Workflow.Id.randomId
     val (graphKnowledge, graphKnowledgeJson) = graphKnowledgeFixture
 
@@ -61,7 +61,7 @@ class WorkflowWithKnowledgeJsonProtocolSpec extends WorkflowJsonTestSupport
     (workflow, workflowJson)
   }
 
-  def graphKnowledgeFixture = {
+  def graphKnowledgeFixture: (GraphKnowledge, JsObject) = {
     val graphKnowledge = GraphKnowledge().addInference(
       node1.id,
       NodeInferenceResult(

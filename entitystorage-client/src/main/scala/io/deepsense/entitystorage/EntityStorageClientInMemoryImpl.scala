@@ -26,7 +26,11 @@ import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.models.entities.Entity.Id
 import io.deepsense.models.entities.{CreateEntityRequest, Entity, EntityWithData}
 
-case class EntityStorageClientTestInMemoryImpl(
+/**
+ * Thread-safe implementation of EntityStrorageClient that DOES NOT connect to the service.
+ * The client mimics the API but stores everything locally in the memory.
+ */
+case class EntityStorageClientInMemoryImpl(
     initState: Map[(String, Entity.Id), Entity] = Map())
   extends EntityStorageClient {
 

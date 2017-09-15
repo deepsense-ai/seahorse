@@ -53,7 +53,12 @@ trait WorkflowWithResultsJsonProtocol extends WorkflowJsonProtocol {
     }
   }
 
-  implicit val entitiesMapFormat = jsonFormat0(EntitiesMap.apply)
+  // TODO Implement proper write and read methods.
+  implicit val entitiesMapFormat = new JsonFormat[EntitiesMap] {
+    override def write(obj: EntitiesMap): JsValue = JsObject()
+
+    override def read(json: JsValue): EntitiesMap = EntitiesMap()
+  }
 
   implicit val executionReportFormat = jsonFormat4(ExecutionReport)
 

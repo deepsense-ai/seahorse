@@ -16,4 +16,15 @@
 
 package io.deepsense.models.workflows
 
-case class EntitiesMap()
+import io.deepsense.models.entities.Entity
+import io.deepsense.reportlib.model.ReportContent
+
+/**
+ * Wraps a map of entities created during workflow execution.
+ * It maps an entity id into a pair of its class name and report.
+ */
+case class EntitiesMap(entities: Map[Entity.Id, EntitiesMap.Entry] = Map())
+
+object EntitiesMap {
+  case class Entry(className: String, report: Option[ReportContent] = None)
+}

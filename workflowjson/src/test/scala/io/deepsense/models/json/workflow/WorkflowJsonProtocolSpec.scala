@@ -36,7 +36,7 @@ class WorkflowJsonProtocolSpec extends WorkflowJsonTestSupport {
   }
 }
 
-  def workflowFixture = {
+  def workflowFixture: (Workflow, JsObject) = {
     val workflow = Workflow(
       WorkflowMetadata(WorkflowType.Batch, "0.4.0"),
       graph,

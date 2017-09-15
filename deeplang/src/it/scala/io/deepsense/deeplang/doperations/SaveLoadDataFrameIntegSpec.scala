@@ -25,14 +25,8 @@ import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
 import io.deepsense.deeplang.doperables.dataframe.{DataFrameMetadata, DataFrame}
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.inference.InferContext
-import io.deepsense.entitystorage.EntityStorageClientTestInMemoryImpl
+import io.deepsense.entitystorage.EntityStorageClientInMemoryImpl
 
-/**
- * This test requirements:
- * - deepsense dev environment
- * - /tests directory with read,write privileges to Your user on HDFS
- * - /etc/hosts entry: 172.28.128.100 ds-dev-env-master
- */
 class SaveLoadDataFrameIntegSpec
   extends DeeplangIntegTestSupport
   with BeforeAndAfter {
@@ -97,7 +91,7 @@ class SaveLoadDataFrameIntegSpec
     saveDataFrameOperation.execute(context)(Vector[DOperable](dataFrame))
 
     val entities =
-      context.entityStorageClient.asInstanceOf[EntityStorageClientTestInMemoryImpl].getAllEntities
+      context.entityStorageClient.asInstanceOf[EntityStorageClientInMemoryImpl].getAllEntities
     assert(entities.length == 1, "For this test one entity should be created.")
     entities.head.info.entityId.toString
   }

@@ -28,8 +28,11 @@ lazy val graph                  = project dependsOn (commons, deeplang, reportli
 lazy val workflowjson           = project dependsOn (commons, deeplang, graph, models)
 lazy val models                 = project dependsOn (commons, graph)
 lazy val reportlib              = project
-lazy val workflowexecutor       = project
-
+lazy val workflowexecutor       = project dependsOn (
+  commons % "test->test",
+  deeplang,
+  graph,
+  models)
 
 // Sequentially perform integration tests
 addCommandAlias("ds-it",

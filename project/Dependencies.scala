@@ -31,7 +31,7 @@ object Version {
 }
 
 object Library {
-  val akka      = (name: String) => "org.spark-project.akka"  %% s"akka-$name"               % Version.akka
+  val akka    = (name: String) => "org.spark-project.akka"    %% s"akka-$name"               % Version.akka
   val spark   = (name: String) => "org.apache.spark"          %% s"spark-$name"              % Version.spark
   val spray   = (name: String) => "io.spray"                  %% s"spray-$name"              % Version.spray
 
@@ -105,5 +105,5 @@ object Dependencies {
 
   val workflowexecutor = Seq(
     scopt
-  ) ++ Seq(sparkCore, sparkSql).map(_ % Provided)
+  ) ++ Seq(sparkCore, sparkSql).map(_ % Provided) ++ Seq(akkaTestkit, mockitoCore, scalatest).map(_ % s"$Test,it")
 }

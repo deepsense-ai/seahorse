@@ -26,7 +26,7 @@ import org.scalatest.BeforeAndAfterAll
 
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
-import io.deepsense.entitystorage.EntityStorageClientTestInMemoryImpl
+import io.deepsense.entitystorage.EntityStorageClientInMemoryImpl
 import io.deepsense.models.entities.Entity
 
 /**
@@ -59,9 +59,9 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
 
   protected def prepareEntityStorageClient(): Unit = {
     executionContext.entityStorageClient =
-      EntityStorageClientTestInMemoryImpl(entityStorageInitState)
+      EntityStorageClientInMemoryImpl(entityStorageInitState)
   }
-  
+
   protected def assertDataFramesEqual(
       actualDf: DataFrame,
       expectedDf: DataFrame,
