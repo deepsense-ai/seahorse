@@ -26,7 +26,7 @@ import io.deepsense.deeplang.doperables.multicolumn.MultiColumnTransformerParams
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnTransformerParams.MultiColumnInPlaceChoices.{MultiColumnNoInPlace, MultiColumnYesInPlace}
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnTransformerParams.SingleOrMultiColumnChoices.{MultiColumnChoice, SingleColumnChoice}
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnTransformerParams.SingleTransformInPlaceChoices.{NoInPlaceChoice, YesInPlaceChoice}
-import io.deepsense.deeplang.inference.exceptions.{TransformSchemaException, SparkTransformSchemaException}
+import io.deepsense.deeplang.inference.exceptions.TransformSchemaException
 import io.deepsense.deeplang.params._
 import io.deepsense.deeplang.params.choice.ChoiceParam
 import io.deepsense.deeplang.params.selections.MultipleColumnSelection
@@ -51,7 +51,7 @@ abstract class MultiColumnTransformer extends Transformer {
     description = "Transform one or many columns"
   )
 
-  override lazy val params = getSpecificParams :+ singleOrMultiChoiceParam
+  override lazy val params = declareParams(getSpecificParams :+ singleOrMultiChoiceParam: _*)
 
   def setSingleOrMultiChoice(value: SingleOrMultiColumnChoice): this.type =
     set(singleOrMultiChoiceParam, value)

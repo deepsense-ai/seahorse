@@ -16,12 +16,14 @@
 
 package io.deepsense.deeplang.doperables.spark.wrappers.transformers
 
+import org.apache.spark.mllib.linalg.{VectorUDT, Vectors}
+import org.apache.spark.sql.Row
+import org.apache.spark.sql.types._
+
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.Transformer
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.params.ParamPair
-import org.apache.spark.sql.Row
-import org.apache.spark.sql.types.{IntegerType, StringType, StructField, StructType}
 
 abstract class AbstractTransformerWrapperSmokeTest extends DeeplangIntegTestSupport {
 
@@ -34,13 +36,14 @@ abstract class AbstractTransformerWrapperSmokeTest extends DeeplangIntegTestSupp
   val inputDataFrameSchema = StructType(Seq(
     StructField("s", StringType),
     StructField("i", IntegerType),
-    StructField("i2", IntegerType)
+    StructField("i2", IntegerType),
+    StructField("v", new VectorUDT)
   ))
 
   val inputDataFrame: DataFrame = {
     val rowSeq = Seq(
-      Row("aAa bBb cCc", 0, 0),
-      Row("das99213 99721 8i!#@!", 1, 1)
+      Row("aAa bBb cCc", 0, 0, Vectors.dense(0.0, 0.0, 0.0)),
+      Row("das99213 99721 8i!#@!", 1, 1, Vectors.dense(1.0, 1.0, 1.0))
     )
     val sparkDF = sqlContext.createDataFrame(sparkContext.parallelize(rowSeq), inputDataFrameSchema)
     DataFrame.fromSparkDataFrame(sparkDF)
