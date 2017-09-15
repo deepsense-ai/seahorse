@@ -13,4 +13,8 @@
 
 - name: Execute all cql files
   command: "cqlsh -f {{item}}"
+  register: cqlsh_result
+  until: cqlsh_result.rc == 0
+  retries: 12
+  delay: 10
   with_items: "{{cql_files.stdout_lines}}"
