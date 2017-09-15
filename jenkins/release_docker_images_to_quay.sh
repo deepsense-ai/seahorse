@@ -16,7 +16,7 @@ echo "This script assumes it is run from deepsense-backend directory"
 echo "Release SEAHORSE_BUILD_TAG $SEAHORSE_BUILD_TAG"
 
 DOCKER_IMAGES=(`cat deployment/docker-compose/docker-compose.tmpl.yml | grep image: | cut -d":" -f 2 | rev | cut -d"/" -f 1 | rev | tr " " "\n"`)
-for DOCKER_IMAGE in "${DOCKER_IMAGES[*]}"
+for DOCKER_IMAGE in ${DOCKER_IMAGES[*]}
 do
   echo "************* Releasing docker image for project $DOCKER_IMAGE"
 
