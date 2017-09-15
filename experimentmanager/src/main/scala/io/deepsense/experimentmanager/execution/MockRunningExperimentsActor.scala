@@ -83,8 +83,13 @@ class MockRunningExperimentsActor @Inject()(
         .filter(n => !n.isRunning && !graph.readyNodes.contains(n)) ++
         statedNodes ++ progressedNodes
       val updatedExperiment = experiment.copy(graph = graph.copy(nodes = mergedNodes))
-      experiments += id -> updatedExperiment
+      if (updatedExperiment.graph.nodes.forall(_.isCompleted)) {
+        experiments += id -> updatedExperiment.markCompleted
+      } else {
+        experiments += id -> updatedExperiment
+      }
     }
+
   }
 
   private def progress(node: Node): Node = {

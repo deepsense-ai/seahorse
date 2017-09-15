@@ -14,5 +14,6 @@ class ExperimentRunningException(experimentId: Id)
   extends ExperimentManagerException(
     UUID.randomUUID(),
     ErrorCodes.ExperimentRunning,
-    s"Experiment is running and can not be updated",
-    s"Experiment with id $experimentId is running and can not be updated", None, None)
+    "Experiment is running and can not be updated",
+    s"Experiment with id $experimentId is running and can not be updated. " +
+      "Wait for the completion or abort the experiment.", None, None)

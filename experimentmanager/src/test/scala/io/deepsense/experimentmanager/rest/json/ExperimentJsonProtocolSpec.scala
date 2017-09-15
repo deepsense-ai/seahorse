@@ -21,6 +21,7 @@ import io.deepsense.deeplang.{DKnowledge, DOperable, DOperation, InferContext}
 import io.deepsense.graph.{Edge, Endpoint, Graph, Node}
 import io.deepsense.graphjson.GraphJsonProtocol.GraphReader
 import io.deepsense.models.experiments.Experiment
+import io.deepsense.models.experiments.Experiment.{State, Status}
 
 class ExperimentJsonProtocolSpec
   extends StandardSpec
@@ -61,7 +62,13 @@ class ExperimentJsonProtocolSpec
   val tenantId = "tenantId"
   val name = "testName"
   val description = "testDescription"
-  val experiment = Experiment(id, tenantId, name, graph, description)
+  val experiment = Experiment(
+    id,
+    tenantId,
+    name,
+    graph,
+    description,
+    State.failed("This is a description of an error"))
 
   "Experiment" should {
     "be properly transformed to Json" in {
@@ -76,9 +83,11 @@ class ExperimentJsonProtocolSpec
       // DateTime.parse(experimentJson.fields("updated").convertTo[String]) shouldBe name
 
       val state = experimentJson.fields("state").asJsObject
-      // TODO Status
-      // state.fields("status") shouldBe experiment.status
-      // TODO Error field
+      val status = state.fields("status").asInstanceOf[JsString].value
+      status shouldBe experiment.state.status.toString
+      val error = state.fields("error").asInstanceOf[JsString].value
+      error shouldBe experiment.state.error.get
+
       val nodeStatuses = state.fields("nodes").asJsObject
       graph.nodes.foreach(node => {
         nodeStatuses.fields(node.id.value.toString) shouldBe node.state.toJson

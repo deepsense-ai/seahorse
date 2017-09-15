@@ -40,7 +40,7 @@ class RunningExperimentsActorSpec
 
   val updatedGraph = Graph()
   val graphExecutorClient = createMockGraphExecutorClient(updatedGraph)
-  val launched = experiment.copy(graph = experiment.graph.enqueueNodes)
+  val launched = experiment.markRunning
   val mockClientFactory = mock[GraphExecutorClientFactory]
   when(mockClientFactory.create()).thenReturn(graphExecutorClient)
 
@@ -67,7 +67,7 @@ class RunningExperimentsActorSpec
         probe.expectMsg(Status(Some(launched)))
         eventually {
           actor.experiments should contain key experiment.id
-          verify(graphExecutorClient).sendExperiment(experiment)
+          verify(graphExecutorClient).sendExperiment(launched)
         }
       }
     }
@@ -88,7 +88,7 @@ class RunningExperimentsActorSpec
     "abort experiment" when {
       "received Abort" in {
         withLaunchedExperiments(Set(experiment)) {
-          val abortedExperiment = experiment.copy(graph = experiment.graph.abortNodes)
+          val abortedExperiment = experiment.markAborted
           probe.send(actorRef, Abort(experiment.id))
           probe.expectMsg(Status(Some(abortedExperiment)))
           probe.send(actorRef, GetStatus(experiment.id))
@@ -100,13 +100,13 @@ class RunningExperimentsActorSpec
       }
     }
     "list experiments" when {
-      val experiment1 = experiment.copy(id = UUID.randomUUID(), description = "1")
-      val experiment2 = experiment.copy(id = UUID.randomUUID(), description = "2")
-      val experiment3 = experiment.copy(id = UUID.randomUUID(), description = "3")
+      val experiment1 = experiment.copy(id = UUID.randomUUID(), description = "1").markRunning
+      val experiment2 = experiment.copy(id = UUID.randomUUID(), description = "2").markRunning
+      val experiment3 = experiment.copy(id = UUID.randomUUID(), description = "3").markRunning
       val experiment4 = experiment.copy(
         id = UUID.randomUUID(),
         tenantId = experiment.tenantId + "other",
-        description = "4")
+        description = "4").markRunning
       val experiments = Set(experiment1, experiment2, experiment3, experiment4)
       val expectedExperimentsOfTenant1 =
         Map(experiment1.tenantId -> Set(experiment1, experiment2, experiment3))
@@ -152,7 +152,7 @@ class RunningExperimentsActorSpec
         "A",
         "Experiment",
         Graph(Set(mockNode)))
-      val expectedExperiment = experimentWithNode.copy(graph = updatedGraph)
+      val expectedExperiment = experimentWithNode.markRunning.copy(graph = updatedGraph)
       withLaunchedExperiments(Set(experimentWithNode)) {
         eventually (timeout(6.seconds), interval(1.second)) {
           probe.send(actorRef, GetStatus(experimentWithNode.id))

@@ -45,6 +45,8 @@ trait ExperimentJsonProtocol
     val Description = "description"
     val Graph = "graph"
     val State = "state"
+    val Status = "status"
+    val Error = "error"
     val Nodes = "nodes"
     val TypeKnowledge = "typeKnowledge"
 
@@ -69,12 +71,12 @@ trait ExperimentJsonProtocol
         Description -> experiment.description.toJson,
         Graph -> experiment.graph.toJson(graphFormat),
         State -> JsObject(
-          // TODO "status" -> ...
+          Status -> JsString(experiment.state.status.toString),
+          Error -> experiment.state.error.map(JsString(_)).getOrElse(JsNull),
           Nodes -> JsObject(
             experiment.graph.nodes.map(node => {
               node.id.value.toString -> node.state.toJson
-            }).toMap
-          )
+            }).toMap)
         ),
         TypeKnowledge -> JsObject(
           experiment.graph.nodes.map(node => {

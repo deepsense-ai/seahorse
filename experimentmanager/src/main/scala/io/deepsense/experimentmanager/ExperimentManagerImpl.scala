@@ -52,13 +52,12 @@ class ExperimentManagerImpl @Inject()(
   def get(id: Id): Future[Option[Experiment]] = {
     authorizator.withRole(roleGet) { userContext =>
       val experiment = storage.get(id).flatMap {
-        case Some(storedExperiment) => {
+        case Some(storedExperiment) =>
           val ownedExperiment = storedExperiment.assureOwnedBy(userContext)
           runningExperiment(id).map {
             case running: Some[Experiment] => running
             case None => Some(ownedExperiment)
           }
-        }
         case None => Future.successful(None)
       }
       experiment
@@ -71,9 +70,11 @@ class ExperimentManagerImpl @Inject()(
       oldExperimentOption.flatMap {
         case Some(oldExperiment) =>
           runningExperiment(experiment.id).flatMap {
-            case Some(runningExperiment) /* if runningExperiment.status == InDraft */ =>
-              throw new ExperimentRunningException(experiment.id)
+            case Some(runningExperiment)
+              if runningExperiment.state.status == Experiment.Status.Running =>
+                throw new ExperimentRunningException(experiment.id)
             case _ =>
+              runningExperimentsActor ! DeleteExperiment(experiment)
               val updatedExperiment = oldExperiment
                 .assureOwnedBy(userContext)
                 .updatedWith(experiment)

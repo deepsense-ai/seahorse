@@ -9,6 +9,8 @@ package io.deepsense.models.experiments
 import io.deepsense.commons.auth.Ownable
 import io.deepsense.commons.models
 import io.deepsense.graph.Graph
+import io.deepsense.models.experiments.Experiment.State
+import io.deepsense.models.experiments.Experiment.Status.Status
 
 /**
  * Experiment model.
@@ -19,7 +21,8 @@ case class Experiment(
     tenantId: String,
     name: String,
     graph: Graph,
-    description: String = "")
+    description: String = "",
+    state: State = State.draft)
   extends BaseExperiment(name, description, graph)
   with Ownable
   with Serializable {
@@ -34,6 +37,15 @@ case class Experiment(
   def updatedWith(other: Experiment): Experiment = {
     Experiment(id, tenantId, other.name, other.graph, other.description)
   }
+
+  def markAborted: Experiment = {
+    val abortedNodes = graph.nodes.map(n => if (n.isFailed || n.isCompleted) n else n.markAborted)
+    copy(graph = graph.copy(nodes = abortedNodes), state = State.aborted)
+  }
+
+  def markRunning: Experiment = copy(graph = graph.enqueueNodes, state = State.running)
+  def markCompleted: Experiment = copy(state = State.completed)
+  def markFailed(message: String): Experiment = copy(state = State.failed(message))
 }
 
 object Experiment {
@@ -45,12 +57,26 @@ object Experiment {
 
   object Status extends Enumeration {
     type Status = Value
-    val InDraft = Value(0, "indraft")
-    val Running = Value(1, "running")
-    val Completed = Value(2, "completed")
-    val Failed = Value(3, "failed")
-    val Aborted = Value(4, "aborted")
+    val Draft = Value(0, "DRAFT")
+    val Running = Value(1, "RUNNING")
+    val Completed = Value(2, "COMPLETED")
+    val Failed = Value(3, "FAILED")
+    val Aborted = Value(4, "ABORTED")
   }
 
-  case class State(status: Experiment.Status.Value /* , error: Optional[Error] */)
+  case class State(status: Status, error: Option[String]) {
+    def draft = State.draft
+    def running = State.running
+    def completed = State.completed
+    def failed(message: String) = State.failed(message)
+    def aborted = State.aborted
+  }
+
+  object State {
+    val draft = State(Status.Draft, None)
+    val running = State(Status.Running, None)
+    val completed = State(Status.Completed, None)
+    def failed(message: String) = State(Status.Failed, Some(message))
+    val aborted = State(Status.Aborted, None)
+  }
 }

@@ -49,8 +49,8 @@ class RunningExperimentsActor @Inject() (
   }
 
   private def statusUpdated(experiment: Experiment): Unit = {
-    val oldStatus = experiments(experiment.id)
-    experiments.put(experiment.id, (experiment, oldStatus._2))
+    val oldStatus = experiments.get(experiment.id)
+    oldStatus.foreach(s => experiments.put(experiment.id, (experiment, s._2)))
   }
 
   private def processProtocol(message: Message): Unit = message match {
@@ -58,6 +58,7 @@ class RunningExperimentsActor @Inject() (
     case Abort(experimentId) => abort(experimentId)
     case GetStatus(experimentId) => requestStatus(experimentId)
     case ListExperiments(tenantId) => listExperiments(tenantId)
+    case DeleteExperiment(experiment) => delete(experiment)
     case e: Experiments => unhandled(e)
     case s: Status => unhandled(s)
   }
@@ -65,12 +66,7 @@ class RunningExperimentsActor @Inject() (
   private def launch(experiment: Experiment): Unit = {
     log.info(s"RunningExperimentsActor starts launching experiment: $experiment")
     val gec = graphExecutorFactory.create()
-    val resultExp = Experiment(
-      experiment.id,
-      experiment.tenantId,
-      experiment.name,
-      experiment.graph.copy(nodes = experiment.graph.nodes.map(_.markQueued)),
-      experiment.description)
+    val resultExp = experiment.markRunning
     experiments.put(resultExp.id, (resultExp, gec))
     sender() ! Status(Some(resultExp))
     Future({
@@ -80,12 +76,20 @@ class RunningExperimentsActor @Inject() (
     })
   }
 
+  private def delete(experiment: Experiment): Unit = {
+    experiments.get(experiment.id).foreach { case (toDelete, _) =>
+      if (toDelete.state.status != Experiment.Status.Running) {
+        experiments.remove(toDelete.id)
+      }
+    }
+  }
+
   private def abort(id: Id): Unit = {
     log.info(s"RunningExperimentsActor starts aborting experiment: $id")
     experiments.get(id) match {
       case None => sender() ! Status(None)
       case Some((experiment, client))  =>
-        val aborted = experiment.copy(graph = experiment.graph.abortNodes)
+        val aborted = experiment.markAborted
         experiments.put(aborted.id, (aborted, client))
         Future(client.terminateExecution())
         sender() ! Status(Some(aborted))
@@ -144,4 +148,5 @@ object RunningExperimentsActor {
   case class ListExperiments(tenantId: Option[String]) extends Message
   case class Status(experiment: Option[Experiment]) extends Message
   case class Experiments(experimentsByTenantId: Map[String, Set[Experiment]]) extends Message
+  case class DeleteExperiment(experiment: Experiment) extends Message
 }

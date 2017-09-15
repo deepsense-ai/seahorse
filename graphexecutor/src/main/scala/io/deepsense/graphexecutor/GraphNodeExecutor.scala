@@ -17,6 +17,7 @@ import io.deepsense.deeplang.{DOperable, ExecutionContext}
 import io.deepsense.entitystorage.EntityStorageClient
 import io.deepsense.graph.{Graph, Node}
 import io.deepsense.models.entities.{DataObjectReport, InputEntity}
+import io.deepsense.models.experiments.Experiment
 
 /**
  * GraphNodeExecutor is responsible for execution of single node.
@@ -70,11 +71,17 @@ class GraphNodeExecutor(
           // TODO: Exception should be relayed to graph
           // TODO: To decision: exception in single node should result in abortion of:
           // (current) only descendant nodes of failed node? / only queued nodes? / all other nodes?
+
+          // TODO Include ERROR in Node's status instead of Experiment's status
+          val errorMessage = graphExecutor.experiment.get.state.error
+            .map(previous => s"$previous, \n${node.id}:  ${e.toString}")
+            .getOrElse(e.toString)
           graphExecutor.experiment =
             Some(graphExecutor.experiment.get
-              .copy(graph = graphExecutor.graph.get.markAsFailed(node.id)))
+              .copy(graph = graphExecutor.graph.get.markAsFailed(node.id))
+              .markFailed(errorMessage))
         }
-        logger.error("Graph execution failes", e)
+        logger.error("Graph execution failed", e)
       }
     } finally {
       // Exception thrown here could result in slightly delayed graph execution

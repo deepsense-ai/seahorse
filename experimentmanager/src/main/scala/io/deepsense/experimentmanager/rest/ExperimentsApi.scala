@@ -22,7 +22,7 @@ import io.deepsense.commons.models.Id
 import io.deepsense.commons.rest.{RestApi, RestComponent}
 import io.deepsense.deeplang.InferContext
 import io.deepsense.experimentmanager.ExperimentManagerProvider
-import io.deepsense.experimentmanager.exceptions.ExperimentNotFoundException
+import io.deepsense.experimentmanager.exceptions.{ExperimentRunningException, ExperimentNotFoundException}
 import io.deepsense.experimentmanager.rest.actions.Action
 import io.deepsense.experimentmanager.rest.json.ExperimentJsonProtocol
 import io.deepsense.graphjson.GraphJsonProtocol.GraphReader
@@ -145,6 +145,8 @@ class ExperimentsApi @Inject() (
     super.exceptionHandler(log) orElse ExceptionHandler {
         case e: ExperimentNotFoundException =>
           complete(StatusCodes.NotFound, FailureDescription.fromException(e))
+        case e: ExperimentRunningException =>
+          complete(StatusCodes.Conflict, FailureDescription.fromException(e))
     }
   }
 }
