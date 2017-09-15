@@ -37,4 +37,6 @@ GraphNode.prototype.fetchPorts = function fetchPorts(type, ports) {
   return array;
 };
 
+GraphNode.CLICK = "GraphNode.CLICK";
+
 module.exports = GraphNode;

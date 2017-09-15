@@ -6,7 +6,9 @@
 
 'use strict';
 
-function GraphNode(UPDATE_CLICKED_NODE) {
+var GraphNode = require('../../common-objects/common-graph-node.js');
+
+function GraphNodeView() {
   return {
     restrict: 'E',
     scope: {
@@ -16,7 +18,7 @@ function GraphNode(UPDATE_CLICKED_NODE) {
     templateUrl: 'app/experiments/experiment-editor/graph-panel/graph-panel-node.html',
     link: function (scope, element, attrs) {
       element.on('click', function () {
-        scope.$emit(UPDATE_CLICKED_NODE, {
+        scope.$emit(GraphNode.CLICK, {
           selectedNode: scope.node
         });
       });
@@ -25,5 +27,5 @@ function GraphNode(UPDATE_CLICKED_NODE) {
 }
 
 exports.inject = function (module) {
-  module.directive('graphNode', GraphNode);
+  module.directive('graphNode', GraphNodeView);
 };

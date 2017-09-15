@@ -4,10 +4,12 @@
 'use strict';
 
 /* @ngInject */
-function ExperimentController($stateParams, $rootScope, Operations, DrawingService, ExperimentFactory, ExperimentAPIClient, UPDATE_CLICKED_NODE) {
+function ExperimentController($stateParams, $rootScope, Operations, DrawingService, ExperimentFactory, ExperimentAPIClient) {
 
   var that = this;
   var internal = {};
+
+  var GraphNode = require('./common-objects/common-graph-node.js');
 
   internal.operations = null;
   internal.experiment = null;
@@ -48,7 +50,7 @@ function ExperimentController($stateParams, $rootScope, Operations, DrawingServi
     internal.selectedNode = null;
   };
 
-  $rootScope.$on(UPDATE_CLICKED_NODE, function(event, data) {
+  $rootScope.$on(GraphNode.CLICK, function(event, data) {
     internal.selectedNode = data.selectedNode;
     $rootScope.$apply();
   });
@@ -61,5 +63,4 @@ exports.function = ExperimentController;
 
 exports.inject = function (module) {
   module.controller('ExperimentController', ExperimentController);
-  module.constant('UPDATE_CLICKED_NODE', 'update-clicked-node');
 };
