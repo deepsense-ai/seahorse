@@ -19,7 +19,8 @@ services:
       - PYEXECUTOR_JAR=we_notebooks2.jar
       - PYSPARK_DIR=hdfs://nameservice1/tmp
       - PYSPARK_ZIP=pyspark-1.6.zip
-      - KERNEL_MANAGER_ZIP=hdfs://nameservice1/tmp/notebook_executing_kernel.zip
+      - KERNEL_MANAGER_ZIP=notebook_executing_kernel.zip
+      - KERNEL_MANAGER_DIR=hdfs://nameservice1/tmp
       - KERNEL_MANAGER_PIKA_ZIP=hdfs://nameservice1/tmp/pika-0.10.0.tar.gz
   frontend:
     image: docker-registry.intra.codilime.com/tap/deepsense-frontend

@@ -25,6 +25,7 @@ class SessionExecutorRequestBodyBuilderSpec extends StandardSpec with UnitTestSu
       val wmHost = "wmhost"
       val wmPort = "9080"
       val wmAddress = s"$wmScheme://$wmHost:$wmPort"
+      val kmDir = "kmdir"
       val kmZip = "km.zip"
       val pikaZip = "pika.zip"
 
@@ -42,6 +43,7 @@ class SessionExecutorRequestBodyBuilderSpec extends StandardSpec with UnitTestSu
         wmHost,
         wmPort,
         false,
+        kmDir,
         kmZip,
         pikaZip
       )
@@ -58,12 +60,13 @@ class SessionExecutorRequestBodyBuilderSpec extends StandardSpec with UnitTestSu
           "--wm-address", wmAddress,
           "-p", pyExecutorJar,
           "-z", pySparkZip,
-          "-j", workflowId.toString()
+          "-j", workflowId.toString(),
+          "--kernel-manager-archive", kmZip
         ),
         Seq(
           s"$pyExecutorDir/$pyExecutorJar",
           s"$pySparkDir/$pySparkZip",
-          kmZip,
+          s"$kmDir/$kmZip",
           pikaZip
         ),
         Map(
