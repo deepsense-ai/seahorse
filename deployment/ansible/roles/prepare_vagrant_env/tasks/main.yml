@@ -1,8 +1,5 @@
 # Copyright (c) 2015, CodiLime Inc.
 
-- name: Remove old vagrant directory
-  file: path=vagrant state=absent
-
 - name: Create vagrant directory
   file: path=vagrant state=directory
 
@@ -11,3 +8,6 @@
 
 - name: Copy image_cleanup.sh.j2 template file
   copy: src=image_cleanup.sh.j2 dest=vagrant/image_cleanup.sh.j2
+
+- name: Remove old box file
+  file: path=vagrant/deepsense-vm.box state=absent
