@@ -3,7 +3,7 @@
 const COOKIE_NAME = 'DELETE_DATAFRAME_COOKIE';
 
 /* @ngInject */
-function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, LibraryModalService, mode, DeleteModalService, $log) {
+function LibraryModalCtrl($scope, $uibModalInstance, LibraryService, LibraryModalService, mode, DeleteModalService) {
   const vm = this;
 
   vm.loading = true;
