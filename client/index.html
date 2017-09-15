@@ -19,7 +19,7 @@
   <deepsense-loading-spinner-lg ng-cloak ng-if="!stateData.dataIsLoaded"></deepsense-loading-spinner-lg>
   <ui-view id="wrapper"
            class="animated fadeIn"
-           ng-class="{'c-home': $state.includes('home')}"
+           ng-class="{'c-home': home.$state.includes('home')}"
            ng-show="stateData.showView"
            droppable
            droppable-type="frame"></ui-view>

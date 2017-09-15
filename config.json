@@ -63,7 +63,9 @@
           "./node_modules/deepsense-graph-model/dist/deepsense-graph-model.js",
           "./node_modules/deepsense-cycle-analyser/dist/deepsense-cycle-analyser.js",
           "./node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.js",
-          "./node_modules/angular-toastr/dist/angular-toastr.tpls.min.js"
+          "./node_modules/angular-toastr/dist/angular-toastr.tpls.min.js",
+          "./node_modules/ng-file-upload/dist/ng-file-upload.js",
+          "./node_modules/ng-file-upload/dist/ng-file-upload-shim.js"
         ],
         "css": [
           "./node_modules/bootstrap/dist/css/bootstrap.css",
@@ -103,7 +105,9 @@
           "./node_modules/deepsense-graph-model/dist/deepsense-graph-model.js",
           "./node_modules/deepsense-cycle-analyser/dist/deepsense-cycle-analyser.js",
           "./node_modules/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.js",
-          "./node_modules/angular-toastr/dist/angular-toastr.tpls.min.js"
+          "./node_modules/angular-toastr/dist/angular-toastr.tpls.min.js",
+          "./node_modules/ng-file-upload/dist/ng-file-upload.min.js",
+          "./node_modules/ng-file-upload/dist/ng-file-upload-shim.min.js"
         ],
         "css": [
           "./node_modules/bootstrap/dist/css/bootstrap.min.css",

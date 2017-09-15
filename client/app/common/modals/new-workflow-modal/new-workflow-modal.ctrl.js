@@ -11,7 +11,6 @@ function NewWorkflowModalController($modalInstance, WorkflowsApiClient) {
     },
     ok: () => {
       const DEFAULT_NAME = 'Draft workflow';
-
       this.loading = true;
 
       WorkflowsApiClient.
@@ -22,9 +21,10 @@ function NewWorkflowModalController($modalInstance, WorkflowsApiClient) {
         then((response) => {
           $modalInstance.close(response.id);
         }).
-        catch((reason) => {
+        catch((reason = {data: 'Server is not responding'}) => {
+          reason = reason.data;
           this.loading = false;
-          this.errorMessage = reason;
+          this.errorMessage = reason.data;
         });
     }
   });

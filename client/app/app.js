@@ -1,15 +1,7 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Piotr Zarówny
- */
 'use strict';
 
 var angular = require('angular');
 
-/**
- * DesspSense.io LAB main module.
- */
 var lab = angular.module('ds.lab', [
   'ui.router',
   'ui.bootstrap',
@@ -21,6 +13,7 @@ var lab = angular.module('ds.lab', [
   'deepsense.navigation-panel',
   'deepsense.graph-model',
   'deepsense.cycle-analyser',
+  'ngFileUpload',
   'toastr',
   require('./home/home.module.js').name,
   require('./workflows/workflows.module.js').name,

@@ -1,0 +1,12 @@
+<div class="inmodal">
+  <div class="modal-header">
+    <h4 class="modal-title">Upload Workflow</h4>
+  </div>
+  <div class="modal-body">
+    <deepsense-loading-spinner-sm ng-if="newWorkflowModalController.loading"></deepsense-loading-spinner-sm>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-white" ng-click="controller.close()">Close</button>
+    <button type="button" class="btn btn-primary" ng-click="controller.ok()">Create</button>
+  </div>
+</div>

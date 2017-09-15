@@ -4,22 +4,23 @@
 'use strict';
 
 /* @ngInject */
-function Home($rootScope, $modal, $scope, $state, PageService) {
+function Home($rootScope, $modal, $state, PageService) {
   PageService.setTitle('Home');
 
   // Index page should change itself
-  $scope.$state = $state;
+  this.$state = $state;
 
   $rootScope.stateData.dataIsLoaded = true;
 
-  $scope.displayPopup = function displayPopup(event) {
+  this.displayCreateWorkflowPopup = function displayCreateWorkflowPopup(event) {
     event.preventDefault();
+
     let modal =  $modal.open({
       animation: true,
       templateUrl: 'app/common/modals/new-workflow-modal/new-workflow-modal.html',
-      controller: 'NewWorkflowModalController as newWorkflowModalController',
+      controller: 'NewWorkflowModalController as controller',
       backdrop: 'static',
-      keyboard: false
+      keyboard: true
     });
 
     modal.result.
@@ -30,13 +31,31 @@ function Home($rootScope, $modal, $scope, $state, PageService) {
       });
   };
 
-  $scope.uploadWorkflow = function uploadWorkflow (event) {
+  this.displayUploadWorkflowPopup = function displayUploadWorkflowPopup(event) {
     event.preventDefault();
+
+    $modal.open({
+      animation: true,
+      templateUrl: 'app/common/modals/upload-workflow-modal/upload-workflow-modal.html',
+      controller: 'UploadWorkflowModalController as controller',
+      backdrop: 'static',
+      keyboard: true
+    });
   };
 
-  $scope.uploadExecutionReport = function uploadExecutionReport (event) {
+
+  this.displayUploadExecutionWorkflowPopup = function displayUploadExecutionWorkflowPopup(event) {
     event.preventDefault();
+
+    $modal.open({
+      animation: false,
+      templateUrl: 'app/common/modals/upload-execution-report-modal/upload-execution-report-modal.html',
+      controller: 'UploadWorkflowExecutionReportModalController as controller',
+      backdrop: 'static',
+      keyboard: true
+    });
   };
+
 }
 
 exports.function = Home;
