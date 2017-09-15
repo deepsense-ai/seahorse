@@ -21,14 +21,11 @@ app.use(timeoutHandler);
 app.use(compression());
 app.disable('x-powered-by');
 
-app.use(function (req, res, next) {
-  if (req.headers['x-forwarded-proto'] !== 'https' && !req.headers.host.startsWith("localhost:")) {
-    return res.redirect(301, 'https://' + req.headers.host + '/');
-  }
-  next();
-});
+app.use(httpsRedirectHandler);
 
 auth.init(app);
+
+app.use(userCookieHandler);
 
 app.get('/',
   auth.login,
@@ -41,6 +38,25 @@ app.all('/**',
 );
 
 app.use(timeoutHandler);
+
+function httpsRedirectHandler(req, res, next) {
+  if (req.headers['x-forwarded-proto'] !== 'https' && !req.headers.host.startsWith("localhost:")) {
+    return res.redirect(301, 'https://' + req.headers.host + req.url);
+  }
+  next();
+}
+
+function userCookieHandler(req, res, next) {
+  if (req.user) {
+    res.cookie('seahorse_user', JSON.stringify({
+      'id': req.user.user_id,
+      'name': req.user.user_name
+    }));
+  } else {
+    res.clearCookie('seahorse_user');
+  }
+  next();
+}
 
 function timeoutHandler(err, req, res, next){
   if (req.timedout) {
