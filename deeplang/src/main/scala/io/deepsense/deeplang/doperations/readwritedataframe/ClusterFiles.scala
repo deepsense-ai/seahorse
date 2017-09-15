@@ -45,7 +45,7 @@ object ClusterFiles {
     val clusterPath = path.fullPath
     val writer = fileFormat match {
       case (csvChoice: Csv) =>
-        val namesIncluded = csvChoice.getCsvNamesIncluded
+        val namesIncluded = csvChoice.getNamesIncluded
         dataFrame
           .sparkDataFrame
           .write.format("com.databricks.spark.csv")
@@ -63,7 +63,7 @@ object ClusterFiles {
                      (implicit context: ExecutionContext) =
     context.sparkSession.read
       .format("com.databricks.spark.csv")
-      .setCsvOptions(csvChoice.getCsvNamesIncluded, csvChoice.getCsvColumnSeparator())
+      .setCsvOptions(csvChoice.getNamesIncluded, csvChoice.getCsvColumnSeparator())
       .load(clusterPath)
 
 }

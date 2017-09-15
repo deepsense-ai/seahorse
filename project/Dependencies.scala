@@ -21,6 +21,7 @@ object Version {
   val amazonS3 = "1.10.16"
   val apacheCommons = "3.3.+"
   val guava = "16.0"
+  val googleApi = "1.22.0"
   val hadoop = "2.7.0"
   val mockito = "1.10.19"
   val nsscalaTime = "1.8.0"
@@ -37,8 +38,9 @@ object Version {
 object Library {
 
   implicit class RichModuleID(m: ModuleID) {
-    def excludeAkkaActor: ModuleID = m excludeAll ExclusionRule("com.typesafe.akka")
-    def excludeScalatest: ModuleID = m excludeAll ExclusionRule("org.scalatest")
+    def excludeAkkaActor = m excludeAll ExclusionRule("com.typesafe.akka")
+    def excludeScalatest = m excludeAll ExclusionRule("org.scalatest")
+    def excludeJackson = m excludeAll ExclusionRule("com.fasterxml.jackson.core")
   }
 
   val akka = (name: String) => "com.typesafe.akka" %% s"akka-$name" % Version.akka
@@ -49,7 +51,7 @@ object Library {
   val akkaActor = akka("actor")
   val akkaTestkit = akka("testkit")
   val amazonS3 = "com.amazonaws" % "aws-java-sdk-s3" %
-    Version.amazonS3 exclude("com.fasterxml.jackson.core", "jackson-databind")
+    Version.amazonS3 excludeJackson
   val apacheCommonsLang3 = "org.apache.commons" % "commons-lang3" % Version.apacheCommons
   val apacheCommonsCsv = "org.apache.commons" % "commons-csv" % "1.1" // Also used by spark-csv
   val guava = "com.google.guava" % "guava" % Version.guava
@@ -74,9 +76,8 @@ object Library {
   val sparkCore = spark("core")
   val sparkMLLib = spark("mllib")
   val sparkSql = spark("sql")
-  val wireMock = "com.github.tomakehurst" % "wiremock" % Version.wireMock exclude(
-    "com.fasterxml.jackson.core", "jackson-databind") exclude (
-    "com.google.guava", "guava")
+  val wireMock = "com.github.tomakehurst" % "wiremock" % Version.wireMock exclude (
+    "com.google.guava", "guava") excludeJackson
   val jsonLenses = "net.virtual-void" %%  "json-lenses" % "0.6.1"
 }
 
@@ -114,6 +115,14 @@ object Dependencies {
     val onlyInTests = provided ++ test
   }
 
+  object GoogleServicesApi {
+    val components = Seq(
+      "com.google.api-client" % "google-api-client" % Version.googleApi excludeJackson,
+      "com.google.api-client" % "google-api-client-gson" % "1.22.0" excludeJackson,
+      "com.google.apis" % "google-api-services-drive" % s"v3-rev51-${Version.googleApi}" excludeJackson
+    )
+  }
+
   val commons = Spark.onlyInTests ++ Seq(
     apacheCommonsLang3,
     log4JExtras,
@@ -125,7 +134,7 @@ object Dependencies {
     sprayJson
   ) ++ Seq(mockitoCore, scalatest, scoverage).map(_ % Test)
 
-  val deeplang = Spark.onlyInTests ++ Hadoop.onlyInTests ++ Seq(
+  val deeplang = Spark.onlyInTests ++ Hadoop.onlyInTests ++ GoogleServicesApi.components ++ Seq(
     apacheCommonsLang3,
     amazonS3,
     nscalaTime,

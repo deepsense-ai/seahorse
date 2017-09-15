@@ -18,15 +18,10 @@ package io.deepsense.deeplang.doperations
 
 import java.io._
 import java.net.UnknownHostException
-import java.nio.file.{Files, Paths}
-import java.util.UUID
 
 import scala.reflect.runtime.{universe => ru}
 
-import org.apache.hadoop.conf.Configuration
-import org.apache.hadoop.fs.{FileSystem, Path}
-import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
-import org.apache.spark.sql.{Row, DataFrame => SparkDataFrame}
+import org.apache.spark.sql.{DataFrame => SparkDataFrame}
 
 import io.deepsense.commons.utils.Version
 import io.deepsense.deeplang.DOperation.Id
@@ -34,9 +29,11 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.ReadDataFrame.ReadDataFrameParameters
 import io.deepsense.deeplang.doperations.exceptions.{DeepSenseIOException, DeepSenseUnknownHostException}
 import io.deepsense.deeplang.doperations.inout.InputFileFormatChoice.Csv
+import io.deepsense.deeplang.doperations.inout.InputStorageTypeChoice.{File, GoogleSheet}
 import io.deepsense.deeplang.doperations.inout._
 import io.deepsense.deeplang.doperations.readwritedataframe._
 import io.deepsense.deeplang.doperations.readwritedataframe.csv.CsvSchemaInferencerAfterReading
+import io.deepsense.deeplang.doperations.readwritedataframe.google.GoogleSheetClient
 import io.deepsense.deeplang.doperations.readwritedataframe.validators.{FilePathHasValidFileScheme, ParquetSupportedOnClusterOnly}
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.params.Params
@@ -56,7 +53,7 @@ case class ReadDataFrame()
   override val since: Version = Version(0, 4, 0)
 
   val params = declareParams(storageType)
-  setDefault(storageType, InputStorageTypeChoice.File())
+  setDefault(storageType, new InputStorageTypeChoice.File())
 
   override protected def _execute(context: ExecutionContext)(): DataFrame = {
     implicit val ec = context
@@ -64,6 +61,9 @@ case class ReadDataFrame()
     try {
       val dataframe = getStorageType() match {
         case jdbcChoice: InputStorageTypeChoice.Jdbc => readFromJdbc(jdbcChoice)
+        case googleSheet: InputStorageTypeChoice.GoogleSheet =>
+          val googleSheetAsFileChoice = reduceGoogleSheetToDriverFile(googleSheet)
+          readFromFile(googleSheetAsFileChoice)
         case fileChoice: InputStorageTypeChoice.File => readFromFile(fileChoice)
       }
       DataFrame.fromSparkDataFrame(dataframe)
@@ -71,6 +71,17 @@ case class ReadDataFrame()
       case e: UnknownHostException => throw DeepSenseUnknownHostException(e)
       case e: IOException => throw DeepSenseIOException(e)
     }
+  }
+
+  private def reduceGoogleSheetToDriverFile(googleSheet: GoogleSheet): File = {
+    val file = GoogleSheetClient.downloadGoogleSheetAsCsv(googleSheet.getGoogleSheetId())
+    new InputStorageTypeChoice.File()
+      .setSourceFile(file.fullPath)
+      .setFileFormat(new InputFileFormatChoice.Csv()
+        .setCsvColumnSeparator(GoogleSheetClient.googleCsvColumnSeparator)
+        .setNamesIncluded(googleSheet.getNamesIncluded)
+        .setShouldConvertToBoolean(googleSheet.getShouldConvertToBoolean)
+      )
   }
 
   override protected def _inferKnowledge(context: InferContext)():
@@ -137,12 +148,12 @@ object ReadDataFrame {
       csvConvertToBoolean: Boolean) : ReadDataFrame = {
     new ReadDataFrame()
       .setStorageType(
-        InputStorageTypeChoice.File()
+        new InputStorageTypeChoice.File()
           .setSourceFile(fileName)
           .setFileFormat(
-            InputFileFormatChoice.Csv()
+            new InputFileFormatChoice.Csv()
               .setCsvColumnSeparator(csvColumnSeparator)
-              .setCsvNamesIncluded(csvNamesIncluded)
+              .setNamesIncluded(csvNamesIncluded)
               .setShouldConvertToBoolean(csvConvertToBoolean)))
   }
 }

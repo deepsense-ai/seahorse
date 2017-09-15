@@ -186,9 +186,9 @@ class ReadDataFrameWithDriverFilesIntegSpec
     "throw exception at inference time when using parquet with local driver files" in {
       val rdf = ReadDataFrame()
         .setStorageType(
-          InputStorageTypeChoice.File()
+          new InputStorageTypeChoice.File()
             .setSourceFile(FileScheme.File.pathPrefix + "/some_path/some_file.parquet")
-            .setFileFormat(InputFileFormatChoice.Parquet()))
+            .setFileFormat(new InputFileFormatChoice.Parquet()))
 
       an [ParquetNotSupported.type] shouldBe thrownBy {
         rdf.inferKnowledge(
@@ -200,9 +200,9 @@ class ReadDataFrameWithDriverFilesIntegSpec
     "throw exception at inference time when using invalid file scheme" in {
       val rdf = ReadDataFrame()
         .setStorageType(
-          InputStorageTypeChoice.File()
+          new InputStorageTypeChoice.File()
             .setSourceFile("invalidscheme://some_path/some_file.json")
-            .setFileFormat(InputFileFormatChoice.Json()))
+            .setFileFormat(new InputFileFormatChoice.Json()))
 
       an [UnknownFileSchemaForPath] shouldBe thrownBy {
         rdf.inferKnowledge(

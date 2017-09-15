@@ -567,8 +567,8 @@ class WorkflowExecutorActorSpec
     TestActorRef(new TestWMClientActor(workflows))
   }
 
-  val inputFile = InputStorageTypeChoice.File()
-    .setFileFormat(InputFileFormatChoice.Json())
+  val inputFile = new InputStorageTypeChoice.File()
+    .setFileFormat(new InputFileFormatChoice.Json())
     .setSourceFile(someFilePath)
   val outputFile = OutputStorageTypeChoice.File()
     .setFileFormat(OutputFileFormatChoice.Json())

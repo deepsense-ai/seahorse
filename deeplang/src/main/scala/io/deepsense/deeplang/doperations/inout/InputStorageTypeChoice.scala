@@ -25,12 +25,14 @@ sealed trait InputStorageTypeChoice extends Choice {
 
   override val choiceOrder: List[Class[_ <: InputStorageTypeChoice]] = List(
     classOf[File],
-    classOf[Jdbc])
+    classOf[Jdbc],
+    classOf[GoogleSheet]
+  )
 }
 
 object InputStorageTypeChoice {
 
-  case class File() extends InputStorageTypeChoice {
+  class File extends InputStorageTypeChoice {
 
     override val name: String = StorageType.FILE.toString
 
@@ -44,20 +46,34 @@ object InputStorageTypeChoice {
     val fileFormat = ChoiceParam[InputFileFormatChoice](
       name = "format",
       description = "Format of the input file.")
-    setDefault(fileFormat, InputFileFormatChoice.Csv())
+    setDefault(fileFormat, new InputFileFormatChoice.Csv())
 
     def getFileFormat(): InputFileFormatChoice = $(fileFormat)
     def setFileFormat(value: InputFileFormatChoice): this.type = set(fileFormat, value)
 
-    override val params = declareParams(sourceFile, fileFormat)
+    override def params = declareParams(sourceFile, fileFormat)
   }
 
-  case class Jdbc()
-    extends InputStorageTypeChoice
-    with JdbcParameters {
+  class Jdbc extends InputStorageTypeChoice with JdbcParameters {
 
     override val name: String = StorageType.JDBC.toString
-    override val params: Array[Param[_]] =
+    override def params: Array[Param[_]] =
       declareParams(jdbcUrl, jdbcDriverClassName, jdbcTableName)
   }
+
+  class GoogleSheet extends InputStorageTypeChoice with NamesIncludedParam with HasShouldConvertToBooleanParam {
+
+    override val name: String = "Google Sheet"
+    override lazy val params = declareParams(googleSheetId, namesIncluded, shouldConvertToBoolean)
+
+    val googleSheetId = StringParam(
+      name = "Google Sheet Id",
+      description = "Id of google sheet")
+    setDefault(googleSheetId, "")
+
+    def getGoogleSheetId(): String = $(googleSheetId)
+    def setGoogleSheetId(value: String): this.type = set(googleSheetId, value)
+
+  }
+
 }

@@ -67,17 +67,17 @@ class WriteReadDataFrameWithDriverFilesIntegSpec
               .setFileFormat(
                 OutputFileFormatChoice.Csv()
                   .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Tab())
-                  .setCsvNamesIncluded(true)))
+                  .setNamesIncluded(true)))
       wdf.execute(executionContext)(Vector(dataFrame))
 
       val rdf =
         new ReadDataFrame()
           .setStorageType(
-            InputStorageTypeChoice.File()
+            new InputStorageTypeChoice.File()
               .setSourceFile(absoluteTestsDirPath.fullPath + "/test_files")
-              .setFileFormat(InputFileFormatChoice.Csv()
+              .setFileFormat(new InputFileFormatChoice.Csv()
                 .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Tab())
-                .setCsvNamesIncluded(true)
+                .setNamesIncluded(true)
                 .setShouldConvertToBoolean(true)))
       val loadedDataFrame = rdf.execute(executionContext)(Vector()).head.asInstanceOf[DataFrame]
 
@@ -116,9 +116,9 @@ class WriteReadDataFrameWithDriverFilesIntegSpec
 
       val rdf =
         new ReadDataFrame()
-          .setStorageType(InputStorageTypeChoice.File()
+          .setStorageType(new InputStorageTypeChoice.File()
             .setSourceFile(absoluteTestsDirPath.fullPath + "json")
-            .setFileFormat(InputFileFormatChoice.Json()))
+            .setFileFormat(new InputFileFormatChoice.Json()))
       val loadedDataFrame = rdf.execute(executionContext)(Vector()).head.asInstanceOf[DataFrame]
 
       assertDataFramesEqual(loadedDataFrame, convertedDataFrame, checkRowOrder = false)

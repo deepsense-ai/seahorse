@@ -80,7 +80,7 @@ object CsvSchemaInferencerAfterReading {
 
     val sanitizedNames = schema map { field =>
       // TODO: remove replace when spark upgraded to 1.4. DS-635
-      if (csvChoice.getCsvNamesIncluded) {
+      if (csvChoice.getNamesIncluded) {
         field.name.trim.replace(".", "_")
       } else {
         ""

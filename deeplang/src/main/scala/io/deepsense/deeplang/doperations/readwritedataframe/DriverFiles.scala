@@ -53,7 +53,7 @@ object DriverFiles {
   private def readCsv
       (driverPath: String, csvChoice: InputFileFormatChoice.Csv)
       (implicit context: ExecutionContext): SparkDataFrame = {
-    val params = CsvOptions.map(csvChoice.getCsvNamesIncluded, csvChoice.getCsvColumnSeparator())
+    val params = CsvOptions.map(csvChoice.getNamesIncluded, csvChoice.getCsvColumnSeparator())
     val lines = Source.fromFile(driverPath).getLines().toStream
     val fileLinesRdd = context.sparkContext.parallelize(lines)
 
@@ -69,7 +69,7 @@ object DriverFiles {
   private def writeCsv
       (path: FilePath, csvChoice: OutputFileFormatChoice.Csv, dataFrame: DataFrame)
       (implicit context: ExecutionContext): Unit = {
-    val params = CsvOptions.map(csvChoice.getCsvNamesIncluded, csvChoice.getCsvColumnSeparator())
+    val params = CsvOptions.map(csvChoice.getNamesIncluded, csvChoice.getCsvColumnSeparator())
 
     val data = dataFrame.sparkDataFrame.rdd.collect()
 

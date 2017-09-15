@@ -100,7 +100,7 @@ class WriteDataFrameWithDriverFilesIntegSpec
               .setFileFormat(
                 OutputFileFormatChoice.Csv()
                   .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Comma())
-                  .setCsvNamesIncluded(false)))
+                  .setNamesIncluded(false)))
       wdf.execute(executionContext)(Vector(dataframe))
       verifySavedDataFrame("without-header", rows, withHeader = false, ",")
     }
@@ -114,7 +114,7 @@ class WriteDataFrameWithDriverFilesIntegSpec
               .setFileFormat(
                 OutputFileFormatChoice.Csv()
                   .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Comma())
-                  .setCsvNamesIncluded(true)))
+                  .setNamesIncluded(true)))
       wdf.execute(executionContext)(Vector(dataframe))
       verifySavedDataFrame("with-header", rows, withHeader = true, ",")
     }
@@ -128,7 +128,7 @@ class WriteDataFrameWithDriverFilesIntegSpec
               .setFileFormat(
                 OutputFileFormatChoice.Csv()
                   .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Semicolon())
-                  .setCsvNamesIncluded(false)))
+                  .setNamesIncluded(false)))
       wdf.execute(executionContext)(Vector(dataframe))
       verifySavedDataFrame("semicolon-separator", rows, withHeader = false, ";")
     }
@@ -142,7 +142,7 @@ class WriteDataFrameWithDriverFilesIntegSpec
               .setFileFormat(
                 OutputFileFormatChoice.Csv()
                   .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Colon())
-                  .setCsvNamesIncluded(false)))
+                  .setNamesIncluded(false)))
       wdf.execute(executionContext)(Vector(dataframe))
       verifySavedDataFrame("colon-separator", rows, withHeader = false, ":")
     }
@@ -180,7 +180,7 @@ class WriteDataFrameWithDriverFilesIntegSpec
                   .setCsvColumnSeparator(
                     CsvParameters.ColumnSeparatorChoice.Custom()
                       .setCustomColumnSeparator("X"))
-                  .setCsvNamesIncluded(false)))
+                  .setNamesIncluded(false)))
       wdf.execute(executionContext)(Vector(dataframe))
       verifySavedDataFrame("custom-separator", rows, withHeader = false, "X")
     }
@@ -205,7 +205,7 @@ class WriteDataFrameWithDriverFilesIntegSpec
                 OutputFileFormatChoice.Csv()
                   .setCsvColumnSeparator(
                     CsvParameters.ColumnSeparatorChoice.Comma())
-                  .setCsvNamesIncluded(false)))
+                  .setNamesIncluded(false)))
       an [UnsupportedColumnTypeException] shouldBe thrownBy {
         wdf.execute(executionContext)(Vector(arrayDataFrame))
       }
@@ -247,7 +247,7 @@ class WriteDataFrameWithDriverFilesIntegSpec
               .setFileFormat(
                 OutputFileFormatChoice.Csv()
                   .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Comma())
-                  .setCsvNamesIncluded(false)))
+                  .setNamesIncluded(false)))
       wdf.execute(executionContext)(Vector(dataframe))
 
       val wdf1 =
@@ -258,7 +258,7 @@ class WriteDataFrameWithDriverFilesIntegSpec
               .setFileFormat(
                 OutputFileFormatChoice.Csv()
                   .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Comma())
-                  .setCsvNamesIncluded(true)))
+                  .setNamesIncluded(true)))
       wdf1.execute(executionContext)(Vector(dataframe))
       verifySavedDataFrame(outputName, rows, withHeader = true, ",")
     }

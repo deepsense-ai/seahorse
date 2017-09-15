@@ -33,7 +33,7 @@ object OutputFileFormatChoice {
       extends OutputFileFormatChoice
       with CsvParameters {
     override val name: String = FileFormat.CSV.toString
-    override val params = declareParams(csvColumnSeparator, csvNamesIncluded)
+    override val params = declareParams(csvColumnSeparator, namesIncluded)
   }
   case class Parquet() extends OutputFileFormatChoice {
     override val name: String = FileFormat.PARQUET.toString

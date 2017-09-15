@@ -25,7 +25,7 @@ sealed trait InputFileFormatChoice extends Choice {
 }
 
 object InputFileFormatChoice {
-  case class Csv()
+  class Csv()
       extends InputFileFormatChoice
       with CsvParameters
       with HasShouldConvertToBooleanParam {
@@ -34,14 +34,14 @@ object InputFileFormatChoice {
     override val params: Array[Param[_]] =
       declareParams(
         csvColumnSeparator,
-        csvNamesIncluded,
+        namesIncluded,
         shouldConvertToBoolean)
   }
-  case class Parquet() extends InputFileFormatChoice {
+  class Parquet() extends InputFileFormatChoice {
     override val name: String = FileFormat.PARQUET.toString
     override val params = declareParams()
   }
-  case class Json() extends InputFileFormatChoice {
+  class Json() extends InputFileFormatChoice {
     override val name: String = FileFormat.JSON.toString
     override val params = declareParams()
   }
