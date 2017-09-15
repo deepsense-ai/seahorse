@@ -82,14 +82,14 @@ city, number of bedrooms, number of bathrooms, size of the apartment (in square 
 
 Let's calculate the average apartment price for each city:
 
-* From the **Operation Catalogue**, drag a [Execute SQL Expression](operations/execute_sql_expression.html)
+* From the **Operation Catalogue**, drag a [SQL Transformation](operations/sql_transformation.html)
 operation onto your canvas.
-* Drag the `Read DataFrame` output to the `Execute SQL Expression` input to make a connection.
-* Fill the `Execute SQL Expression` operation's parameters:
+* Drag the `Read DataFrame` output to the `SQL Transformation` input to make a connection.
+* Fill the `SQL Transformation` operation's parameters:
   * Set **DATAFRAME ID** to `transactions`. In SQL expression you will refer to the DataFrame by this name.
   * Set **EXPRESSION** to `SELECT city, AVG(price) as avg_price FROM transactions GROUP BY city`
 * Click **RUN** to execute this workflow and you will see two completed nodes.
-* To view results by clicking on the first output port of the `Execute SQL Expression`.
+* To view results by clicking on the first output port of the `SQL Transformation`.
 
 <img class="img-responsive" style="margin: 0 auto; width:60%; height:auto" src="./img/quickstart/report.png" />
 
@@ -300,7 +300,7 @@ to interactively analyze data.
     in the **SOURCE** parameter - the dataset will be downloaded from this location
 
 * Process the dataset before opening the notebook
-  * Drag [Custom Python Operation](operations/custom_python_operation.html) to your canvas
+  * Drag [Python Transformation](operations/python_transformation.html) to your canvas
   * Put the following code in the **CODE** parameter, in order to extract the <code>FCE</code> value
     from <code>Certificates</code> column to a separate column:
 

@@ -14,7 +14,7 @@ This operation is ported from Spark ML.
 
 
 For a comprehensive introduction, see
-<a target="_blank" href="https://spark.apache.org/docs/1.6.0/ml-classification-regression.html#decision-trees">Spark documentation</a>.
+<a target="_blank" href="https://spark.apache.org/docs/1.6.0/ml-classification-regression.html#decision-tree-classifier">Spark documentation</a>.
 
 
 For scala docs details, see
@@ -65,7 +65,7 @@ This operation does not take any input.
 <tr>
 <td><code>max bins</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Max number of bins for discretizing continuous features. Must be >=2 and >= number of categories for any categorical feature.</td>
+<td>The maximum number of bins used for discretizing continuous features and for choosing how to split on features at each node. More bins give higher granularity. Must be >= 2 and >= number of categories in any categorical feature.</td>
 </tr>
 
 <tr>
@@ -75,13 +75,13 @@ This operation does not take any input.
 </tr>
 
 <tr>
-<td><code>subsampling rate</code></td>
+<td><code>min information gain</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>Minimum information gain for a split to be considered at a tree node.</td>
+<td>The minimum information gain for a split to be considered at a tree node.</td>
 </tr>
 
 <tr>
-<td><code>max memory in mb</code></td>
+<td><code>max memory</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
 <td>Maximum memory in MB allocated to histogram aggregation.</td>
 </tr>
@@ -89,7 +89,7 @@ This operation does not take any input.
 <tr>
 <td><code>cache node ids</code></td>
 <td><code><a href="../parameter_types.html#boolean">Boolean</a></code></td>
-<td>If false, the algorithm will pass trees to executors to match instances with nodes. If true, the algorithm will cache node IDs for each instance. Caching can speed up training of deeper trees.</td>
+<td>The caching nodes IDs. Can speed up training of deeper trees.</td>
 </tr>
 
 <tr>
@@ -108,19 +108,19 @@ every 10 iterations.</td>
 <tr>
 <td><code>impurity</code></td>
 <td><code><a href="../parameter_types.html#single-choice">SingleChoice</a></code></td>
-<td>Criterion used for information gain calculation. Possible values: <code>["entropy", "gini"]</code></td>
-</tr>
-
-<tr>
-<td><code>features column</code></td>
-<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
-<td>The features column for model fitting.</td>
+<td>The criterion used for information gain calculation. Possible values: <code>["entropy", "gini"]</code></td>
 </tr>
 
 <tr>
 <td><code>label column</code></td>
 <td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
 <td>The label column for model fitting.</td>
+</tr>
+
+<tr>
+<td><code>features column</code></td>
+<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
+<td>The features column for model fitting.</td>
 </tr>
 
 <tr>

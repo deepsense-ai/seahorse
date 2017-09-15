@@ -91,15 +91,23 @@ This operation does not take any input.
 </tr>
 
 <tr>
-<td><code>features column</code></td>
-<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
-<td>The features column for model fitting.</td>
+<td><code>use custom weights</code></td>
+<td><code><a href="../parameter_types.html#single-choice">SingleChoice</a></code></td>
+<td>Whether to over-/under-sample training instances according to the given weights in
+the `weight column`. If the `weight column` is not specified,
+all instances are treated equally with a weight 1.0. Possible values: <code>["no", "yes"]</code></td>
 </tr>
 
 <tr>
 <td><code>label column</code></td>
 <td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
 <td>The label column for model fitting.</td>
+</tr>
+
+<tr>
+<td><code>features column</code></td>
+<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
+<td>The features column for model fitting.</td>
 </tr>
 
 <tr>
@@ -124,14 +132,6 @@ This operation does not take any input.
 <td><code>threshold</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
 <td>The threshold in binary classification prediction.</td>
-</tr>
-
-<tr>
-<td><code>use custom weights</code></td>
-<td><code><a href="../parameter_types.html#single-choice">SingleChoice</a></code></td>
-<td>Whether to over-/under-sample training instances according to the given weights in
-the `weight column`. If the `weight column` is not specified,
-all instances are treated equally with a weight 1.0. Possible values: <code>["no", "yes"]</code></td>
 </tr>
 
 </tbody>

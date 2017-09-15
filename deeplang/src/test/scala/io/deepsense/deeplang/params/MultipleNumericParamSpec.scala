@@ -18,7 +18,7 @@ package io.deepsense.deeplang.params
 
 import spray.json._
 
-import io.deepsense.deeplang.params.validators.RangeValidator
+import io.deepsense.deeplang.params.validators.{ArrayLengthValidator, ComplexArrayValidator, RangeValidator}
 
 class MultipleNumericParamSpec extends AbstractParamSpec[Array[Double], MultipleNumericParam] {
 
@@ -27,14 +27,20 @@ class MultipleNumericParamSpec extends AbstractParamSpec[Array[Double], Multiple
   className should {
     "validate its values" when {
       val (param, _) = paramFixture
-      "value set is empty" in {
-        param.validate(Array()) shouldBe empty
+      "empty value set is too short" in {
+        param.validate(Array()) should have size 1
       }
       "values are correct" in {
         param.validate(Array(1.0, 2.0, 2.5)) shouldBe empty
       }
-      "values are incorrect" in {
+      "two values are incorrect" in {
         param.validate(Array(1.0, 100.0, 200.0)) should have size 2
+      }
+      "array is too long" in {
+        param.validate(Array(1.0, 1.0, 1.0, 1.0, 1.0, 1.0)) should have size 1
+      }
+      "array is too long and all six values are incorrect" in {
+        param.validate(Array(4.0, 5.0, 6.0, 7.5, 100.0, -2.0)) should have size 7
       }
     }
   }
@@ -43,11 +49,14 @@ class MultipleNumericParamSpec extends AbstractParamSpec[Array[Double], Multiple
     val param = MultipleNumericParam(
       name = "Multiple numeric parameter",
       description = "Multiple numeric parameter description",
-      validator = RangeValidator(1.0, 3.0, true, false))
+      validator = ComplexArrayValidator(
+        rangeValidator = RangeValidator(1.0, 3.0, beginIncluded = true, endIncluded = false),
+        lengthValidator = ArrayLengthValidator(min = 2, max = 4)))
     val json = JsObject(
       "type" -> JsString("multipleNumeric"),
       "name" -> JsString(param.name),
-      "description" -> JsString(param.description + param.constraints),
+      "description" -> JsString(
+        param.description + param.constraints),
       "default" -> JsNull,
       "isGriddable" -> JsFalse,
       "validator" -> JsObject(

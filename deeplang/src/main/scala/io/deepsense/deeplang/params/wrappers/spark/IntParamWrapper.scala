@@ -20,7 +20,7 @@ import org.apache.spark.ml
 import org.apache.spark.sql.types.StructType
 
 import io.deepsense.deeplang.params.NumericParam
-import io.deepsense.deeplang.params.validators.{RangeValidator, Validator}
+import io.deepsense.deeplang.params.validators.{ComplexArrayValidator, RangeValidator, Validator}
 
 class IntParamWrapper[P <: ml.param.Params](
     override val name: String,

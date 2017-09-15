@@ -22,7 +22,7 @@ import io.deepsense.deeplang.doperables.SparkEstimatorWrapper
 import io.deepsense.deeplang.doperables.spark.wrappers.models.MultilayerPerceptronClassifierModel
 import io.deepsense.deeplang.doperables.spark.wrappers.params.common._
 import io.deepsense.deeplang.params.Param
-import io.deepsense.deeplang.params.validators.RangeValidator
+import io.deepsense.deeplang.params.validators.{ArrayLengthValidator, ComplexArrayValidator, RangeValidator}
 import io.deepsense.deeplang.params.wrappers.spark.IntArrayParamWrapper
 
 class MultilayerPerceptronClassifier
@@ -48,7 +48,11 @@ class MultilayerPerceptronClassifier
         |equal to the length of the feature vector. The output layer size has to be equal to the
         |total number of labels.""".stripMargin,
     sparkParamGetter = _.layers,
-    validator = RangeValidator.positiveIntegers)
+    validator = ComplexArrayValidator(
+      RangeValidator.positiveIntegers,
+      ArrayLengthValidator.withAtLeast(2)
+    )
+  )
   setDefault(layersParam, Array(1.0, 1.0))
 
   override val params: Array[Param[_]] = declareParams(

@@ -61,6 +61,17 @@ class DatetimeDecomposerIntegSpec extends DeeplangIntegTestSupport with Transfor
       )
       shouldDecomposeTimestamp(schema, data, expectedData, timestampColumnName + "_")
     }
+
+    "decompose timestamp values to the same zone" in {
+      val dataFrame = createDataFrame(
+        Seq(Row(new Timestamp(t1.getMillis))),
+        StructType(List(StructField(timestampColumnName, TimestampType)))
+      )
+      val transformedDataFrame = appendHour(dataFrame)
+      val List(timestamp, hour) =
+        transformedDataFrame.report.content.tables.head.values.head.map(_.get)
+      timestamp.substring(11, 13) shouldBe hour
+    }
   }
 
   it should {
@@ -189,10 +200,10 @@ class DatetimeDecomposerIntegSpec extends DeeplangIntegTestSupport with Transfor
     val resultDataFrame: DataFrame = decomposeDatetime(operation, dataFrame)
 
     val expectedSchema: StructType = resultSchema(schema, prefix)
-    assert(expectedSchema == resultDataFrame.sparkDataFrame.schema)
-    assert(expectedData.size == resultDataFrame.sparkDataFrame.count())
+    expectedSchema shouldBe resultDataFrame.sparkDataFrame.schema
+    expectedData.size shouldBe resultDataFrame.sparkDataFrame.count()
     val zipped = expectedData zip resultDataFrame.sparkDataFrame.rdd.collect()
-    assert(zipped.forall(p => p._1 == p._2))
+    zipped.forall { case (p1, p2) => p1 == p2 } shouldBe true
   }
 
   private def shouldTransformSchema(
@@ -202,7 +213,7 @@ class DatetimeDecomposerIntegSpec extends DeeplangIntegTestSupport with Transfor
     val transformedSchema = operation._transformSchema(schema)
 
     val expectedSchema: StructType = resultSchema(schema, prefix)
-    assert(expectedSchema == transformedSchema.get)
+    expectedSchema shouldBe transformedSchema.get
   }
 
   private def createDecomposedTimestampRow(schema: StructType, id: Int, t: DateTime): Row = {
@@ -242,6 +253,13 @@ class DatetimeDecomposerIntegSpec extends DeeplangIntegTestSupport with Transfor
       .setTimestampColumn(NameSingleColumnSelection(timestampColumnName))
       .setTimestampParts(partsFromStrings("year", "month", "day", "hour", "minutes", "seconds"))
       .setTimestampPrefix(prefixParam)
+  }
+
+  private def appendHour(dataFrame: DataFrame): DataFrame = {
+    new DatetimeDecomposer()
+      .setTimestampColumn(NameSingleColumnSelection(timestampColumnName))
+      .setTimestampParts(partsFromStrings("hour"))
+      ._transform(executionContext, dataFrame)
   }
 
   private def partsFromStrings(names: String*): Set[DatetimeDecomposer.TimestampPart] = {

@@ -74,12 +74,6 @@ every 10 iterations.</td>
 </tr>
 
 <tr>
-<td><code>item column</code></td>
-<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
-<td>The column for item ids.</td>
-</tr>
-
-<tr>
 <td><code>max iterations</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
 <td>The maximum number of iterations.</td>
@@ -104,12 +98,6 @@ every 10 iterations.</td>
 </tr>
 
 <tr>
-<td><code>prediction column</code></td>
-<td><code><a href="../parameter_types.html#string">String</a></code></td>
-<td>The prediction column created during model scoring.</td>
-</tr>
-
-<tr>
 <td><code>rank</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
 <td>The rank of the matrix factorization.</td>
@@ -131,6 +119,18 @@ every 10 iterations.</td>
 <td><code>seed</code></td>
 <td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
 <td>The random seed.</td>
+</tr>
+
+<tr>
+<td><code>item column</code></td>
+<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
+<td>The column for item ids.</td>
+</tr>
+
+<tr>
+<td><code>prediction column</code></td>
+<td><code><a href="../parameter_types.html#string">String</a></code></td>
+<td>The prediction column created during model scoring.</td>
 </tr>
 
 <tr>

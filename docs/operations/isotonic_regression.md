@@ -55,22 +55,24 @@ This operation does not take any input.
 <tbody>
 
 <tr>
-<td><code>feature index</code></td>
-<td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
-<td>The index of the feature if features column is a vector column, no effect otherwise.</td>
-</tr>
-
-<tr>
-<td><code>features column</code></td>
-<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
-<td>The features column for model fitting.</td>
-</tr>
-
-<tr>
 <td><code>isotonic</code></td>
 <td><code><a href="../parameter_types.html#boolean">Boolean</a></code></td>
 <td>Whether the output sequence should be isotonic/increasing (true)
 or antitonic/decreasing (false).</td>
+</tr>
+
+<tr>
+<td><code>use custom weights</code></td>
+<td><code><a href="../parameter_types.html#single-choice">SingleChoice</a></code></td>
+<td>Whether to over-/under-sample training instances according to the given weights in
+the `weight column`. If the `weight column` is not specified,
+all instances are treated equally with a weight 1.0. Possible values: <code>["no", "yes"]</code></td>
+</tr>
+
+<tr>
+<td><code>feature index</code></td>
+<td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
+<td>The index of the feature if features column is a vector column, no effect otherwise.</td>
 </tr>
 
 <tr>
@@ -80,17 +82,15 @@ or antitonic/decreasing (false).</td>
 </tr>
 
 <tr>
-<td><code>prediction column</code></td>
-<td><code><a href="../parameter_types.html#string">String</a></code></td>
-<td>The prediction column created during model scoring.</td>
+<td><code>features column</code></td>
+<td><code><a href="../parameter_types.html#single-column-selector">SingleColumnSelector</a></code></td>
+<td>The features column for model fitting.</td>
 </tr>
 
 <tr>
-<td><code>use custom weights</code></td>
-<td><code><a href="../parameter_types.html#single-choice">SingleChoice</a></code></td>
-<td>Whether to over-/under-sample training instances according to the given weights in
-the `weight column`. If the `weight column` is not specified,
-all instances are treated equally with a weight 1.0. Possible values: <code>["no", "yes"]</code></td>
+<td><code>prediction column</code></td>
+<td><code><a href="../parameter_types.html#string">String</a></code></td>
+<td>The prediction column created during model scoring.</td>
 </tr>
 
 </tbody>
