@@ -143,6 +143,30 @@ function Experiment() {
     return that.status || that.STATUS_DEFAULT;
   };
 
+  /**
+   * Updates experiment state.
+   *
+   * @param {object} state
+   */
+  that.updateState = function updateState(state) {
+    for (let id in state.nodes) {
+      let node = internal.nodes[id];
+      if (node) {
+        node.setStatus(state.nodes[id]);
+      }
+    }
+    that.setStatus(state);
+  };
+
+  /**
+   * Checks if experiment is in run state.
+   *
+   * @return {boolean}
+   */
+  that.isRunning = function isRunning() {
+    return that.getStatus() === that.STATUS.RUNNING;
+  };
+
   that.getParametersSchemaById = function getParametersSchemaById(id) {
     return internal.experiment.getParametersSchema()[id];
   };

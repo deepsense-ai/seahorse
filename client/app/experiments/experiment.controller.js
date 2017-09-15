@@ -5,7 +5,11 @@
 
 /* @ngInject */
 
-function ExperimentController($stateParams, $rootScope, Operations, DrawingService, ExperimentFactory, ExperimentAPIClient) {
+function ExperimentController(
+  $timeout, $stateParams, $rootScope,
+  Operations, DrawingService, ExperimentFactory, ExperimentAPIClient
+) {
+  const RUN_STATE_CHECK_INTERVAL = 2000;
 
   var that = this;
   var internal = {};
@@ -55,7 +59,40 @@ function ExperimentController($stateParams, $rootScope, Operations, DrawingServi
     DrawingService.renderPorts();
     DrawingService.renderEdges();
     DrawingService.repaintEverything();
+    that.checkExperimentState();
   };
+
+
+  /**
+   * Handles experiment state change.
+   *
+   * @param {object} data
+   */
+  that.handleExperimentStateChange = function handleExperimentStateChange(data) {
+    internal.experiment.updateState(data.experiment.state);
+    that.checkExperimentState();
+  };
+
+  /**
+   * Loads experiment state data.
+   */
+  that.loadExperiemntState = function loadExperiemntState() {
+    ExperimentAPIClient.getData(internal.experiment.getId()).then(that.handleExperimentStateChange,
+      (error) => {
+        console.error('experiment fetch state error', error);
+      }
+    );
+  };
+
+  /**
+   * Triggers experiment state check.
+   */
+  that.checkExperimentState = function checkExperimentState() {
+    if (internal.experiment.isRunning()) {
+      $timeout(that.loadExperiemntState, RUN_STATE_CHECK_INTERVAL);
+    }
+  };
+
 
   /**
    * Generates uuid part.
@@ -183,9 +220,9 @@ function ExperimentController($stateParams, $rootScope, Operations, DrawingServi
 
   $rootScope.$on('Experiment.RUN', () => {
    ExperimentAPIClient.runExperiment(internal.experiment.getId()).then((data) => {
-      internal.experiment.setStatus(data.experiment.state);
+      that.handleExperimentStateChange(data);
     }, (error) => {
-      console.log(error);
+      console.log('experiment launch error', error);
     });
   });
 

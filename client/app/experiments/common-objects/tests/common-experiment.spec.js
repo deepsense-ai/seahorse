@@ -89,7 +89,15 @@ describe('experiment', () => {
         }
       ],
       initState = {
-        'nodes': {}
+        'status': 'INDRAFT',
+        'nodes': {
+          '101': {
+            'status': 'INDRAFT'
+          },
+          '102': {
+            'status': 'INDRAFT'
+          }
+        }
       },
       serializedData = {
         'id': initId,
@@ -197,6 +205,81 @@ describe('experiment', () => {
       'status': 'x'
     });
     expect(experiment.getStatus()).toBe(experiment.STATUS.RUNNING);
+  });
+
+  it('return run state', () => {
+    let experiment = new Experiment();
+    expect(experiment.isRunning()).toBe(false);
+
+    experiment.setStatus({
+      'status': 'RUNNING'
+    });
+    expect(experiment.isRunning()).toBe(true);
+
+    experiment.setStatus();
+    expect(experiment.isRunning()).toBe(true);
+
+    experiment.setStatus({
+      'status': 'COMPLETED'
+    });
+    expect(experiment.isRunning()).toBe(false);
+  });
+
+  it('update nodes state', () => {
+    function checkNodeStatuses(experiment, statuses) {
+      let nodes = experiment.getNodes();
+      for (let id in nodes) {
+        expect(nodes[id].status).toBe(statuses[id]);
+      }
+    }
+
+    let experiment = new Experiment();
+    experiment.createNodes(initNodes, initOperations, initState);
+    let STATUS = experiment.getNodes()[initNodes[0].id].STATUS;
+
+    expect(experiment.isRunning()).toBe(false);
+    checkNodeStatuses(experiment, {
+      '101': STATUS.INDRAFT,
+      '102': STATUS.INDRAFT,
+    });
+
+    experiment.updateState({
+      'status': 'RUNNING',
+      'nodes': {
+        '101': {
+          'status': 'RUNNING'
+        },
+        '102': {
+          'status': 'QUEUED'
+        }
+      }
+    });
+    expect(experiment.isRunning()).toBe(true);
+    checkNodeStatuses(experiment, {
+      '101': STATUS.RUNNING,
+      '102': STATUS.QUEUED,
+    });
+
+    experiment.updateState({});
+    expect(experiment.isRunning()).toBe(true);
+    checkNodeStatuses(experiment, {
+      '101': STATUS.RUNNING,
+      '102': STATUS.QUEUED,
+    });
+
+    experiment.updateState({
+      'status': 'FAILED',
+      'nodes': {
+        '101': {
+          'status': 'FAILED'
+        }
+      }
+    });
+    expect(experiment.isRunning()).toBe(false);
+    checkNodeStatuses(experiment, {
+      '101': STATUS.FAILED,
+      '102': STATUS.QUEUED,
+    });
   });
 
 });
