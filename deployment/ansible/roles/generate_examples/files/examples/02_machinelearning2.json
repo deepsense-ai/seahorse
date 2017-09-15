@@ -180,7 +180,7 @@
         "input columns": {
           "selections": [{
             "type": "columnList",
-            "values": ["city", "price"]
+            "values": ["city", "city_index", "price"]
           }],
           "excluding": true
         },
