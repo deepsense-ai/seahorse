@@ -119,7 +119,7 @@ class DataFrameReportIntegSpec extends DeeplangIntegTestSupport with DataFrameTe
           "1954-12-18T00:43:00.000Z",
           "1989-10-15T21:53:26.666Z",
           "1978-09-08T00:43:00.000Z",
-          "1999-11-29T00:43:00.000Z" ,
+          "1999-11-29T00:43:00.000Z",
           Seq())
       )
     }

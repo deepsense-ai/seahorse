@@ -32,7 +32,10 @@ trait DistributionTestFactory {
       testStatistics)
 
   val testStatistics: Statistics =
-    Statistics("5.4", "2", "1.5", "12.1", "17.1", "1.3", List("0.1", "0.2", "23.3", "23.5", "27.1"))
+    Statistics("5.4", "43", "1.5", "12.1", "1", "1.23", List("0.1", "0.2", "23.3", "23.5", "27.1"))
+
+  val testStatisticsWithEmptyValues: Statistics =
+    Statistics(Some("5.4"), Some("43"), Some("1.5"), Some("12.1"), None, None, List())
 }
 
 object DistributionTestFactory extends DistributionTestFactory {

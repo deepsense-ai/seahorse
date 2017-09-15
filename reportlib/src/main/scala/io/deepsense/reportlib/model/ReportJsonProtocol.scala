@@ -7,8 +7,15 @@ package io.deepsense.reportlib.model
 import spray.json._
 
 trait ReportJsonProtocol extends DefaultJsonProtocol with ProductFormatsInstances with NullOptions {
-
-  implicit val statisticsFormat = jsonFormat7(Statistics)
+  implicit val statisticsFormat = jsonFormat7(
+    Statistics.apply(
+      _: Option[String],
+      _: Option[String],
+      _: Option[String],
+      _: Option[String],
+      _: Option[String],
+      _: Option[String],
+      _: Seq[String]))
   implicit val categoricalDistributionFormat = jsonFormat(
     CategoricalDistribution.apply,
     DistributionJsonProtocol.nameKey,

@@ -136,9 +136,9 @@ trait DataFrameReportGenerator {
     val d2L = double2Label(categoricalMetadata)(structField)_
     val stats = model.Statistics(
       quartiles.median,
-      d2L(max),
-      d2L(min),
-      d2L(rdd.mean()),
+      Some(d2L(max)),
+      Some(d2L(min)),
+      Some(d2L(rdd.mean())),
       quartiles.first,
       quartiles.third,
       quartiles.outliers)
@@ -196,21 +196,21 @@ trait DataFrameReportGenerator {
         case (v, idx) => (idx, v)
       }
       val d2L = double2Label(categoricalMetadata)(structField)_
-      val secondQuartile: String = d2L(median(sortedRdd, 0, size))
-      if (size >= 4) {
+      val secondQuartile: Option[String] = Some(d2L(median(sortedRdd, 0, size)))
+      if (size >= 3) {
         val firstQuartile: Double = median(sortedRdd, 0, size / 2)
         val thirdQuartile: Double = median(sortedRdd, size / 2 + size % 2, size)
         val outliers: Array[Double] = findOutliers(rdd, firstQuartile, thirdQuartile)
         Quartiles(
-          d2L(firstQuartile),
+          Some(d2L(firstQuartile)),
           secondQuartile,
-          d2L(thirdQuartile),
+          Some(d2L(thirdQuartile)),
           outliers.map(d2L))
       } else {
-        Quartiles(null, secondQuartile, null, Seq())
+        Quartiles(None, secondQuartile, None, Seq())
       }
     } else {
-      Quartiles(null, null, null, Seq())
+      Quartiles(None, None, None, Seq())
     }
 
   private def findOutliers(
@@ -329,4 +329,8 @@ object DataFrameReportGenerator extends DataFrameReportGenerator {
   val doubleTolerance = 0.000001
 }
 
-private case class Quartiles(first: String, median: String, third: String, outliers: Seq[String])
+private case class Quartiles(
+  first: Option[String],
+  median: Option[String],
+  third: Option[String],
+  outliers: Seq[String])
