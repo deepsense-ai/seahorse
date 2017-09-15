@@ -6,7 +6,6 @@ var request = require('request'),
     url = require('url'),
     util = require('util'),
 
-    localServices = require('./config/local-services'),
     serviceMapping = require('./config/service-mapping'),
     config = require('./config/config'),
     httpException = require('./utils/http-exception'),
@@ -14,7 +13,7 @@ var request = require('request'),
 
 var basicAuthCredentials = new Buffer(
       config.get('WM_AUTH_USER') + ':' + config.get('WM_AUTH_PASS')
-    ).toString('base64')
+    ).toString('base64');
 
 var httpProxy = require('http-proxy');
 var proxy = httpProxy.createProxyServer({ ws : true });
@@ -23,15 +22,11 @@ proxy.on('error', function(err, req) {
 });
 
 function getHost(service, path) {
-  var host = null;
-
   if(!service) {
-    host = localServices[service.name];
-    console.info('Using default url for service %s: %s', service.name, host);
-    return host;
+    throw 'Service must be defined';
   }
 
-  var userProvidedService = config.getUserProvidedSerice(service.name);
+  const userProvidedService = config.getUserProvidedSerice(service.name);
   return userProvidedService.host;
 }
 
@@ -59,7 +54,7 @@ function getTargetHost(req, res) {
 }
 
 function forwardRequest(req, res) {
-  var service = getServiceName(req.url)
+  var service = getServiceName(req.url);
   if (service.auth === 'basic') {
     req.headers['Authorization'] = 'basic ' + basicAuthCredentials;
   }
