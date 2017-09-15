@@ -48,6 +48,7 @@ see the <a href="./deployment/enterprise.html">Enterprise</a> page.
 
 #### What is New
 
+* Seahorse has been upgraded to Spark 2.0.0
 * Seahorse can connect to external clusters (YARN, Mesos, Standalone) along a local one.
 * R support
 * Added library
@@ -144,4 +145,3 @@ which cannot be supplied to a [Transform](/1.0/operations/transform.html) operat
 still can be used to transform a [DataFrame](/1.0/classes/dataframe.html).
 * `Execute Mathematical Transformation` fails if executed on a `DataFrame` containing columns
 with certain chars (e.g. spaces) in their names.
-
