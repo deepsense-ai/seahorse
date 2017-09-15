@@ -6,12 +6,38 @@
 
 package io.deepsense.graphlibrary
 
-import java.io.{ObjectInputStream, ByteArrayInputStream, ObjectOutputStream, ByteArrayOutputStream}
 import java.util.UUID
 
 import org.scalatest.FunSuite
 
+import io.deepsense.deeplang.{DOperable, DOperation0To1, DOperation1To0, DOperation1To1}
 import io.deepsense.graphlibrary.Node.State.Status
+
+object DClassesForDOperations {
+  trait A extends DOperable
+  class A1 extends A {
+    override def equals(any: Any) = any.isInstanceOf[A1]
+  }
+  class A2 extends A {
+    override def equals(any: Any) = any.isInstanceOf[A2]
+  }
+}
+
+object DOperationTestClasses {
+  import DClassesForDOperations._
+
+  class DOperation0To1Test extends DOperation0To1[A1] {
+    override protected def _execute(): A1 = ???
+  }
+
+  class DOperation1To0Test extends DOperation1To0[A1] {
+    override protected def _execute(t0: A1): Unit = ???
+  }
+
+  class DOperation1To1Test extends DOperation1To1[A1, A] {
+    override protected def _execute(t1: A1): A = ???
+  }
+}
 
 class GraphSuite extends FunSuite {
 
@@ -27,36 +53,21 @@ class GraphSuite extends FunSuite {
   }
 
   test("Graph with two nodes should have size 2") {
+    import DOperationTestClasses._
+
     val graph = new Graph
-    val node1 = graph.addNode(UUID.randomUUID(), new Operation(UUID.randomUUID(), 1, 1))
-    val node2 = graph.addNode(UUID.randomUUID(), new Operation(UUID.randomUUID(), 1, 1))
+    val node1 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    val node2 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
     graph.addEdge(node1.id, node2.id, 0, 0)
 
     assert(graph.size == 2)
   }
 
-  test("Non-empty Graph should be serializable") {
-    // create a Graph instance
-    val graph = new Graph
-    graph.addNode(UUID.randomUUID(), new Operation(UUID.randomUUID(), 1, 1))
-
-    // write the instance out to a buffer
-    val bufferOut = new ByteArrayOutputStream
-    val streamOut = new ObjectOutputStream(bufferOut)
-    streamOut.writeObject(graph)
-    streamOut.close
-
-    // read the object back in
-    val bufferIn = new ByteArrayInputStream(bufferOut.toByteArray)
-    val streamIn = new ObjectInputStream(bufferIn)
-    val graphIn = streamIn.readObject().asInstanceOf[Graph]
-
-    assert(graphIn == graph)
-  }
-
   test("Programmer can get/edit state of an execution graph nodes") {
+    import DOperationTestClasses._
+
     val graph = new Graph
-    val node = graph.addNode(UUID.randomUUID(), new Operation(UUID.randomUUID(), 1, 1))
+    val node = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
 
     // node should be in draft
     assert(node.state.status == Status.INDRAFT)
@@ -80,10 +91,12 @@ class GraphSuite extends FunSuite {
   }
 
   test("Programmer can list operations ready for execution") {
+    import DOperationTestClasses._
+
     // create a Graph Instance
     val graph = new Graph
-    val nodeReady = graph.addNode(UUID.randomUUID(), new Operation(UUID.randomUUID(), 0, 1))
-    val nodeNotReady = graph.addNode(UUID.randomUUID(), new Operation(UUID.randomUUID(), 1, 0))
+    val nodeReady = graph.addNode(UUID.randomUUID(), new DOperation0To1Test)
+    val nodeNotReady = graph.addNode(UUID.randomUUID(), new DOperation1To0Test)
     graph.addEdge(nodeReady.id, nodeNotReady.id, 0, 0)
 
     // queue all Nodes for execution
@@ -98,11 +111,13 @@ class GraphSuite extends FunSuite {
   }
 
   test("Programmer can validate if graph doesn't contain a cycle") {
+    import DOperationTestClasses._
+
     val graph = new Graph
-    val node1 = graph.addNode(UUID.randomUUID(), new Operation(UUID.randomUUID(), 1, 1))
-    val node2 = graph.addNode(UUID.randomUUID(), new Operation(UUID.randomUUID(), 1, 1))
-    val node3 = graph.addNode(UUID.randomUUID(), new Operation(UUID.randomUUID(), 1, 1))
-    val node4 = graph.addNode(UUID.randomUUID(), new Operation(UUID.randomUUID(), 1, 1))
+    val node1 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    val node2 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    val node3 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
+    val node4 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
     graph.addEdge(node1.id, node2.id, 0, 0)
     graph.addEdge(node2.id, node3.id, 0, 0)
     graph.addEdge(node3.id, node4.id, 0, 0)

@@ -8,6 +8,7 @@ package io.deepsense.graphlibrary
 
 import scala.collection.mutable.{Set, Map}
 
+import io.deepsense.deeplang.DOperation
 import io.deepsense.graphlibrary.Node.State
 import io.deepsense.graphlibrary.Node.State.{Progress, Status}
 
@@ -29,13 +30,12 @@ private[graphlibrary] object Color extends Enumeration {
  * Nodes of this graph contain operations and state.
  * State of each node can be changed during the execution.
  */
-@SerialVersionUID(100L)
-class Graph extends Serializable {
-  private case class GraphNode(id: Node.Id, operation: Operation) extends Node {
+class Graph {
+  private case class GraphNode(id: Node.Id, operation: DOperation) extends Node {
     var color: Color.Color = Color.WHITE
     var state: State = State.inDraft
-    val predecessors: Array[GraphNode] = new Array(operation.degIn)
-    val successors: Array[Set[GraphNode]] = Array.fill(operation.degOut) { Set() }
+    val predecessors: Array[GraphNode] = new Array(operation.inArity)
+    val successors: Array[Set[GraphNode]] = Array.fill(operation.outArity) { Set() }
 
     def addPredecessor(index: Int, node: GraphNode): Unit = predecessors(index) = node
 
@@ -52,7 +52,7 @@ class Graph extends Serializable {
 
   private val nodes: Map[Node.Id, GraphNode] = Map()
 
-  def addNode(id: Node.Id, operation: Operation): Node = {
+  def addNode(id: Node.Id, operation: DOperation): Node = {
     val node = GraphNode(id, operation)
     nodes(id) = node
     node
@@ -81,7 +81,8 @@ class Graph extends Serializable {
 
   def markAsRunning(id: Node.Id): Unit = {
     val node = nodes(id)
-    node.state = State.running(Progress(0, node.operation.total))
+    val total = 10 // TODO: just a default value. Change it when DOperation will support it.
+    node.state = State.running(Progress(0, total))
   }
 
   def markAsCompleted(id: Node.Id, results: List[Node.Id]): Unit = {
@@ -101,7 +102,8 @@ class Graph extends Serializable {
 
   def reportProgress(id: Node.Id, current: Int): Unit = {
     val node = nodes(id)
-    node.state = node.state.withProgress(Progress(current, node.operation.total))
+    val total = 10 // TODO: just a default value. Change it when DOperation will support it.
+    node.state = node.state.withProgress(Progress(current, total))
   }
 
   def containsCycle: Boolean = {

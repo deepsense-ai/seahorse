@@ -10,6 +10,7 @@ import java.util.UUID
 
 import org.joda.time.DateTime
 
+import io.deepsense.deeplang.DOperation
 import io.deepsense.graphlibrary.Node.State
 import io.deepsense.graphlibrary.Node.State.{Progress, Status}
 
@@ -19,7 +20,7 @@ import io.deepsense.graphlibrary.Node.State.{Progress, Status}
 abstract class Node {
   def id: Node.Id
   def state: State
-  def operation: Operation
+  def operation: DOperation
 }
 
 object Node {
