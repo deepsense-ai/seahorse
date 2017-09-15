@@ -103,7 +103,7 @@ class GraphReaderSpec extends GraphJsonTestSupport {
 
   val exampleJson = JsObject(
     "nodes" -> nodesArray,
-    "edges" -> edgesArray
+    "connections" -> edgesArray
   )
 
   val expectedGraph = Graph(

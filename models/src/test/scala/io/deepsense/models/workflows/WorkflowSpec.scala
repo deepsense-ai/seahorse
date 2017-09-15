@@ -20,24 +20,24 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
 
 import io.deepsense.deeplang.DOperation
-import io.deepsense.graph.{Graph, Node}
+import io.deepsense.graph.{GraphState, Graph, Node}
 
 class WorkflowSpec
   extends WordSpec
   with Matchers
   with MockitoSugar {
 
-  "Workflow.computeWorkflowState" should {
+  "Graph.updateState" should {
     "return Completed on empty graph" in {
-      val workflow = newWorkflow(Set.empty)
-      workflow.updateState().state shouldBe Workflow.State.completed
+      val graph = Graph(nodes = Set.empty)
+      graph.updateState().state shouldBe GraphState.completed
     }
     "return Running on graph with at least one running node" is pending
     "return Draft if all nodes are in draft" in {
-      val workflow = newWorkflow(Set(
+      val graph = Graph(nodes = Set(
         newNode().markDraft,
         newNode().markDraft))
-      workflow.updateState().state shouldBe Workflow.State.draft
+      graph.updateState().state shouldBe GraphState.draft
     }
     "return appropriate status for graph" is pending
   }
@@ -50,12 +50,5 @@ class WorkflowSpec
     val op = mock[DOperation]
     Node(Node.Id.randomId, op)
   }
-
-  private def newWorkflow(nodes: Set[Node]): Workflow = Workflow(
-    id = Workflow.Id.randomId,
-    name = "some name",
-    tenantId = "some tenant",
-    graph = Graph(nodes)
-  )
 
 }

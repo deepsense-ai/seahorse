@@ -10,7 +10,7 @@ import io.deepsense.deeplang.doperables.dataframe.{CommonColumnMetadata, DataFra
 import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.inference.{InferenceWarning, InferenceWarnings}
 import io.deepsense.deeplang.parameters.ColumnType
-import io.deepsense.models.json.{UnitTestSupport, StandardSpec}
+import io.deepsense.models.json.{StandardSpec, UnitTestSupport}
 import io.deepsense.models.metadata.MetadataInferenceResult
 
 class MetadataInferenceResultJsonProtocolSpec

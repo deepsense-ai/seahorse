@@ -6,13 +6,9 @@ package io.deepsense.models.json.workflow
 
 import scala.reflect.runtime.{universe => ru}
 
-import org.joda.time.DateTime
 import org.mockito.Matchers._
 import org.mockito.Mockito._
-import spray.json._
 
-import io.deepsense.commons.datetime.DateTimeConverter
-import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.parameters.ParametersSchema
@@ -20,8 +16,6 @@ import io.deepsense.deeplang.{DKnowledge, DOperable, DOperation}
 import io.deepsense.graph.{Edge, Endpoint, Graph, Node}
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.{StandardSpec, UnitTestSupport}
-import io.deepsense.models.workflows.Workflow
-import io.deepsense.models.workflows.Workflow.State
 
 class WorkflowJsonProtocolSpec
   extends StandardSpec
@@ -58,69 +52,7 @@ class WorkflowJsonProtocolSpec
   val edges = preEdges.map(n => Edge(Endpoint(n._1.id, n._3), Endpoint(n._2.id, n._4)))
   val graph = Graph(nodes, edges)
 
-  val experimentId = Workflow.Id.randomId
-  val tenantId = "tenantId"
-  val name = "testName"
-  val description = "testDescription"
-  val created = new DateTime(2015, 6, 5, 11, 25, DateTimeConverter.zone)
-  val updated = new DateTime(2015, 6, 5, 12, 54, DateTimeConverter.zone)
-  val experiment = Workflow(
-    experimentId,
-    tenantId,
-    name,
-    graph,
-    created,
-    updated,
-    description,
-    State.failed(FailureDescription(
-      DeepSenseFailure.Id.randomId,
-      FailureCode.UnexpectedError,
-      "Error title",
-      Some("This is a description of an error"))))
-
-  "Experiment" should {
-    "be properly transformed to Json" in {
-      val experimentJson = experiment.toJson.asJsObject
-      val graphJson = graph.toJson
-      experimentJson.fields("name").convertTo[String] shouldBe name
-      experimentJson.fields("description").convertTo[String] shouldBe description
-      experimentJson.fields("graph") shouldBe graphJson
-
-      DateTime.parse(experimentJson.fields("created").convertTo[String]) shouldBe created
-      DateTime.parse(experimentJson.fields("updated").convertTo[String]) shouldBe updated
-
-      val state = experimentJson.fields("state").asJsObject
-      val status = state.fields("status").asInstanceOf[JsString].value
-      status shouldBe experiment.state.status.toString
-      val experimentError: FailureDescription = experiment.state.error.get
-      state.fields("error") shouldBe JsObject(
-        "id" -> JsString(experimentError.id.toString),
-        "code" -> JsNumber(experimentError.code.id),
-        "title" -> JsString(experimentError.title),
-        "message" -> JsString(experimentError.message.get),
-        "details" -> JsObject()
-      )
-
-      val nodeStatuses = state.fields("nodes").asJsObject
-      graph.nodes.foreach(node => {
-        nodeStatuses.fields(node.id.value.toString) shouldBe node.state.toJson
-      })
-
-      val knowledge = experimentJson.fields("knowledge").asJsObject
-      val graphKnowledge = graph.inferKnowledge(inferContext)
-      // Null is OK because of mocked Operations.
-      knowledge.fields.foreach(keyValue => {
-        val (nodeId, knowledgeJson) = keyValue
-        val knowledgeJsonJsObject = knowledgeJson.asJsObject
-        val expectedTypeKnowledge = graphKnowledge.getKnowledge(Node.Id.fromString(nodeId)).toJson
-
-        knowledgeJsonJsObject.fields("typeKnowledge") shouldBe expectedTypeKnowledge
-        knowledgeJsonJsObject.fields("metadata").getClass shouldBe JsArray().getClass
-        knowledgeJsonJsObject.fields("warnings") shouldBe JsArray()
-        knowledgeJsonJsObject.fields("errors") shouldBe JsArray()
-      })
-    }
-  }
+  // TODO add tests
 
   def mockOperation(
     inArity: Int,

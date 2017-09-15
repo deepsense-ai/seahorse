@@ -16,11 +16,19 @@
 
 package io.deepsense.graph
 
-import io.deepsense.commons.exception.FailureDescription
+import io.deepsense.commons.exception.FailureCode._
+import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
+import io.deepsense.commons.utils.Logging
 import io.deepsense.graph.Node.Id
 import io.deepsense.models.entities.Entity
 
-case class Graph(nodes: Set[Node] = Set(), edges: Set[Edge] = Set()) extends KnowledgeInference {
+case class Graph(
+    nodes: Set[Node] = Set(),
+    edges: Set[Edge] = Set(),
+    state: GraphState = GraphState.draft)
+  extends KnowledgeInference
+  with Logging {
+
   /** Maps ids of nodes to nodes. */
   val nodeById: Map[Id, Node] = nodes.map(node => node.id -> node).toMap
 
@@ -139,6 +147,65 @@ case class Graph(nodes: Set[Node] = Set(), edges: Set[Edge] = Set()) extends Kno
   private def predecessorsCompleted(node: Node): Boolean = {
     predecessors(node.id).forall(edgeEnd => {
       edgeEnd.isDefined && nodeById(edgeEnd.get.nodeId.value).isCompleted
+    })
+  }
+
+  def markAborted: Graph = {
+    val abortedNodes = nodes.map(n => if (n.isFailed || n.isCompleted) n else n.markAborted)
+    copy(nodes = abortedNodes, state = GraphState.aborted)
+  }
+
+  def markRunning: Graph = enqueueNodes.copy(state = GraphState.running)
+  def markCompleted: Graph = copy(state = GraphState.completed)
+  def markFailed(details: FailureDescription): Graph =
+    copy(state = state.failed(details))
+
+  def isRunning: Boolean = state.status == Status.Running
+  def isFailed: Boolean = state.status == Status.Failed
+  def isAborted: Boolean = state.status == Status.Aborted
+  def isDraft: Boolean = state.status == Status.Draft
+  def isCompleted: Boolean = state.status == Status.Completed
+
+  def markNodeFailed(nodeId: Node.Id, reason: Throwable): Graph = {
+    val errorId = DeepSenseFailure.Id.randomId
+    val failureTitle = s"Node: $nodeId failed. Error Id: $errorId"
+    logger.error(failureTitle, reason)
+    // TODO: To decision: exception in single node should result in abortion of:
+    // (current) only descendant nodes of failed node? / only queued nodes? / all other nodes?
+    val nodeFailureDetails = FailureDescription(
+      errorId,
+      UnexpectedError,
+      failureTitle,
+      Some(reason.toString),
+      FailureDescription.stacktraceDetails(reason.getStackTrace))
+    val graphFailureDetails = FailureDescription(
+      errorId,
+      NodeFailure,
+      GraphState.NodeFailureMessage)
+    markAsFailed(nodeId, nodeFailureDetails).markFailed(graphFailureDetails)
+  }
+
+  def runningNodes: Set[Node] = nodes.filter(_.isRunning)
+
+  def updateState(): Graph = {
+    // TODO precise semantics of this method
+    // TODO rewrite this method to be more effective (single counting)
+    import io.deepsense.graph.GraphState._
+    copy(state = if (nodes.isEmpty) {
+      completed
+    } else if (nodes.forall(_.isDraft)) {
+      draft
+    } else if (nodes.forall(n => n.isDraft || n.isCompleted)) {
+      completed
+    } else if (nodes.forall(n => n.isDraft || n.isCompleted || n.isQueued || n.isRunning)) {
+      running
+    } else if (nodes.exists(_.isFailed)) {
+      val failureId = DeepSenseFailure.Id.randomId
+      failed(FailureDescription(
+        failureId, FailureCode.NodeFailure, GraphState.NodeFailureMessage
+      ))
+    } else {
+      aborted
     })
   }
 }

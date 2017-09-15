@@ -20,8 +20,7 @@ import io.deepsense.deeplang.DOperable
 import io.deepsense.deeplang.DOperable.AbstractMetadata
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.graph.GraphKnowledge.InferenceErrors
-import io.deepsense.graph.Node
-import io.deepsense.models.workflows.Workflow
+import io.deepsense.graph.{Graph, Node}
 
 case class MetadataInferenceResult(
   metadata: Seq[Option[AbstractMetadata]],
@@ -30,13 +29,13 @@ case class MetadataInferenceResult(
 
 object MetadataInference {
   def run(
-      workflow: Workflow,
+      graph: Graph,
       nodeId: Node.Id,
       portIndex: Int,
       baseContext: InferContext): MetadataInferenceResult = {
 
     val inferContext = InferContext(baseContext, true)
-    val singlePortInferenceResult = workflow.graph.inferKnowledge(nodeId, portIndex, inferContext)
+    val singlePortInferenceResult = graph.inferKnowledge(nodeId, portIndex, inferContext)
 
     MetadataInferenceResult(
       singlePortInferenceResult.knowledge.types.toList.map(

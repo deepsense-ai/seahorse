@@ -74,11 +74,11 @@ class GraphWriterSpec extends GraphJsonTestSupport {
     }
     "have 'edges' field" which {
       "is a JsArray" in {
-        assert(graphJson.fields.contains("edges"))
-        assert(graphJson.fields("edges").isInstanceOf[JsArray])
+        assert(graphJson.fields.contains("connections"))
+        assert(graphJson.fields("connections").isInstanceOf[JsArray])
       }
-      "consists of all graph's edges" in {
-        val edgesArray = graphJson.fields("edges").asInstanceOf[JsArray]
+      "consists of all graph's connections" in {
+        val edgesArray = graphJson.fields("connections").asInstanceOf[JsArray]
         assert(graph.edges.forall( edge => {
           edgesArray.elements.count {
             case edgeObject: JsObject =>

@@ -29,7 +29,7 @@ object GraphJsonProtocol {
   import NodeJsonProtocol._
 
   val Nodes = "nodes"
-  val Edges = "edges"
+  val Edges = "connections"  // TODO rename in code: https://codilime.atlassian.net/browse/DS-1192
   val NodeId = "id"
 
   class GraphReader(catalog: DOperationsCatalog)
