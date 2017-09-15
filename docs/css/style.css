@@ -326,3 +326,8 @@ p.footer-text span {
   margin-top: -70px;
   padding-top: 70px;
 }
+
+.float-left {
+  float: left;
+  margin: 20px;
+}
