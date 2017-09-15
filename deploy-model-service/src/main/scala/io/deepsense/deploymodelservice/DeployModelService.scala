@@ -7,10 +7,10 @@ package io.deepsense.deploymodelservice
 import scala.collection.mutable
 
 import akka.actor.{Actor, ActorContext}
-import buildinfo.BuildInfo
 import spray.http.HttpHeaders
 import spray.routing._
 
+import io.deepsense.commons.buildinfo.BuildInfo
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.Model
 import io.deepsense.deploymodelservice.DeployModelJsonProtocol._

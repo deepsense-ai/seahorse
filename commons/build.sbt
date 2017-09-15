@@ -48,6 +48,35 @@ def unitFilter(name: String) = name.endsWith("Spec") && !integFilter(name)
 
 enablePlugins(BuildInfoPlugin)
 
-buildInfoKeys += BuildInfoKey.action("gitCommitId") {
-  Process("git rev-parse HEAD").lines.head
+buildInfoPackage := "io.deepsense.commons.buildinfo"
+
+buildInfoKeys ++= {
+  val slices = 3
+  val versionSeparator = '.'
+  lazy val versionSplit: Seq[Int] = {
+    val split = version.value.replaceAll("[^\\d.]", "").split(versionSeparator).toSeq
+      .filter(_.nonEmpty).map(_.toInt)
+    assert(split.size == slices, assertionMessage)
+    val apiVersion = split.take(slices).mkString(versionSeparator.toString)
+    assert(version.value.startsWith(apiVersion), assertionMessage)
+    split
+  }
+
+  lazy val assertionMessage = s"Version is set to '${version.value}' but should be in a format" +
+    " X.Y.Z, where X and Y are non negative integers!"
+
+  Seq(
+    BuildInfoKey.action("gitCommitId") {
+      Process("git rev-parse HEAD").lines.head
+    },
+    BuildInfoKey.action("apiVersionMajor") {
+      versionSplit.head
+    },
+    BuildInfoKey.action("apiVersionMinor") {
+      versionSplit(1)
+    },
+    BuildInfoKey.action("apiVersionPatch") {
+      versionSplit(2)
+    }
+  )
 }

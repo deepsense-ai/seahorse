@@ -20,7 +20,7 @@ import io.deepsense.deeplang.parameters.{BooleanParameter, ParametersSchema}
 import io.deepsense.graph._
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.workflows._
-import io.deepsense.workflowmanager.rest.Version
+import io.deepsense.workflowmanager.rest.CurrentBuild
 
 class WorkflowResultsDaoCassandraImplIntegSpec
   extends StandardSpec
@@ -81,7 +81,7 @@ class WorkflowResultsDaoCassandraImplIntegSpec
       resultId: ExecutionReportWithId.Id,
       graph: Graph): WorkflowWithSavedResults = {
     val metadata = WorkflowMetadata(
-      apiVersion = Version.currentVersion.humanReadable,
+      apiVersion = CurrentBuild.version.humanReadable,
       workflowType = WorkflowType.Batch)
     val thirdPartyData = ThirdPartyData("{}")
     val executionReport: ExecutionReportWithId = ExecutionReportWithId(

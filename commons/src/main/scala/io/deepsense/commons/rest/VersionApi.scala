@@ -4,12 +4,12 @@
 
 package io.deepsense.commons.rest
 
-import buildinfo.BuildInfo
 import com.google.inject.Inject
 import com.google.inject.name.Named
 import spray.routing.Route
 
 import io.deepsense.commons.auth.usercontext.TokenTranslator
+import io.deepsense.commons.buildinfo.BuildInfo
 
 class VersionApi @Inject() (
     @Named("componentName") val componentName: String,

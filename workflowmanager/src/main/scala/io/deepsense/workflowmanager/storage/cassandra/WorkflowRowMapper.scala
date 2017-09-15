@@ -11,13 +11,11 @@ import com.google.inject.Inject
 import com.google.inject.name.Named
 import spray.json._
 
-import io.deepsense.commons.utils.Logging
+import io.deepsense.commons.utils.{Version, Logging}
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
-import io.deepsense.models.json.workflow.WorkflowWithSavedResultsJsonProtocol
+import io.deepsense.models.json.workflow.{WorkflowVersionUtil, WorkflowWithSavedResultsJsonProtocol}
 import io.deepsense.models.workflows.{Workflow, WorkflowWithSavedResults}
-import io.deepsense.workflowmanager.exceptions.WorkflowVersionNotSupportedException
-import io.deepsense.workflowmanager.rest.Version
-import io.deepsense.workflowmanager.util.WorkflowVersionUtil
+import io.deepsense.workflowmanager.rest.CurrentBuild
 
 case class WorkflowRowMapper @Inject() (
     override val graphReader: GraphReader)
@@ -39,6 +37,8 @@ case class WorkflowRowMapper @Inject() (
   def workflowToCell(workflow: Workflow): String = workflow.toJson.compactPrint
 
   def resultsToCell(results: WorkflowWithSavedResults): String = results.toJson.compactPrint
+
+  override def currentVersion: Version = CurrentBuild.version
 }
 
 object WorkflowRowMapper {

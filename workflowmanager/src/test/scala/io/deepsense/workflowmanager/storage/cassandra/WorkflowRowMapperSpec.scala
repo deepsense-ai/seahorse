@@ -11,12 +11,13 @@ import spray.json._
 
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.models.Id
+import io.deepsense.commons.utils.Version
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.graph.{Graph, Status}
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.{WorkflowJsonProtocol, WorkflowWithSavedResultsJsonProtocol}
 import io.deepsense.models.workflows._
-import io.deepsense.workflowmanager.rest.Version
+import io.deepsense.workflowmanager.rest.CurrentBuild
 
 class WorkflowRowMapperSpec
   extends StandardSpec
@@ -26,7 +27,7 @@ class WorkflowRowMapperSpec
 
   override val graphReader: GraphReader = mock[GraphReader]
   when(graphReader.read(any())).thenReturn(Graph())
-  val currentVersion = Version.currentVersion
+  val currentVersion = CurrentBuild.version
   val otherVersion = Version(3, 2, 1)
 
   "WorkflowRowMaper.toWorkflow" should {

@@ -22,7 +22,7 @@ import io.deepsense.deeplang.parameters.{BooleanParameter, ParametersSchema}
 import io.deepsense.graph.{Edge, Endpoint, Graph, Node, State}
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.workflows._
-import io.deepsense.workflowmanager.rest.Version
+import io.deepsense.workflowmanager.rest.CurrentBuild
 
 
 class WorkflowDaoCassandraImplIntegSpec
@@ -163,7 +163,7 @@ class WorkflowDaoCassandraImplIntegSpec
 
   def createWorkflow(graph: Graph): (Workflow.Id, Workflow) = {
     val metadata = WorkflowMetadata(
-      apiVersion = Version.currentVersion.humanReadable,
+      apiVersion = CurrentBuild.version.humanReadable,
       workflowType = WorkflowType.Batch)
     val thirdPartyData = ThirdPartyData("{}")
     (Workflow.Id.randomId, Workflow(metadata, graph, thirdPartyData))

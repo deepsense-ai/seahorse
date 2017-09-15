@@ -22,13 +22,14 @@ import io.deepsense.commons.auth.directives._
 import io.deepsense.commons.auth.usercontext.TokenTranslator
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.rest.{RestApiAbstractAuth, RestComponent}
+import io.deepsense.commons.utils.Version
 import io.deepsense.graph.CyclicGraphException
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow._
+import io.deepsense.models.json.workflow.exceptions.WorkflowVersionException
 import io.deepsense.models.workflows._
 import io.deepsense.workflowmanager.WorkflowManagerProvider
 import io.deepsense.workflowmanager.exceptions._
-import io.deepsense.workflowmanager.util.WorkflowVersionUtil
 
 /**
  * Exposes Workflow Manager through a REST API.
@@ -52,6 +53,8 @@ abstract class WorkflowApi @Inject() (
   with WorkflowVersionUtil {
 
   self: AbstractAuthDirectives =>
+
+  override def currentVersion: Version = CurrentBuild.version
 
   assert(StringUtils.isNoneBlank(workflowsApiPrefix))
   private val workflowsPathPrefixMatcher = PathMatchers.separateOnSlashes(workflowsApiPrefix)
@@ -270,7 +273,7 @@ abstract class WorkflowApi @Inject() (
           complete(StatusCodes.NotFound, e.failureDescription)
         case e: CyclicGraphException =>
           complete(StatusCodes.BadRequest, e.failureDescription)
-        case e: WorkflowVersionNotSupportedException =>
+        case e: WorkflowVersionException =>
           complete(StatusCodes.BadRequest, e.failureDescription)
     } orElse super.exceptionHandler(log)
   }
