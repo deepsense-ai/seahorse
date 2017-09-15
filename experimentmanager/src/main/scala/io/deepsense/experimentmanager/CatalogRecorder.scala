@@ -6,12 +6,10 @@
 
 package io.deepsense.experimentmanager
 
-import java.util.UUID
-
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.deeplang.dataframe.DataFrame
-import io.deepsense.deeplang.doperations.{ReadDataFrame, TimestampDecomposer, WriteDataFrame}
+import io.deepsense.deeplang.doperations._
 
 /**
  * Object used to register all desired DOperables and DOperations.
@@ -34,6 +32,10 @@ object CatalogRecorder {
     catalog.registerDOperation[TimestampDecomposer](
       DOperationCategories.Utils,
       "Decomposes selected columns from timestamp to numeric")
+
+    catalog.registerDOperation[DataFrameSpliter](
+      DOperationCategories.Utils,
+      "Splits DataFrame into two DataFrames")
   }
 
 }

@@ -15,6 +15,7 @@ object Version {
   val mockito       = "1.10.19"
   val nsscalaTime   = "1.8.0"
   val scala         = "2.11.6"
+  val scalacheck    = "1.12.2"
   val scalatest     = "3.0.0-SNAP4"
   val spark         = "1.3.0"
   val spray         = "1.3.3"
@@ -54,6 +55,7 @@ object Library {
   val logbackCore        = logback("core")
   val mockitoCore        = "org.mockito"                  % "mockito-core"        % Version.mockito
   val nscalaTime         = "com.github.nscala-time"      %% "nscala-time"         % Version.nsscalaTime
+  val scalacheck         = "org.scalacheck"              %% "scalacheck"          % Version.scalacheck
   val scalaLogging       = "com.typesafe.scala-logging"  %% "scala-logging"       % "3.1.0"
   val scalaReflect       = "org.scala-lang"               % "scala-reflect"       % Version.scala
   val scalatest          = "org.scalatest"               %% "scalatest"           % Version.scalatest
@@ -103,7 +105,7 @@ object Dependencies {
     sparkSql,
     sparkCore,
     sprayJson
-  ) ++ Seq(scalatest, mockitoCore).map(_ % Test)
+  ) ++ Seq(scalatest, mockitoCore, scalacheck).map(_ % Test)
 
   val experimentmanager = Seq(
     guice,
