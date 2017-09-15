@@ -11,3 +11,5 @@ assemblyMergeStrategy in assembly := {
   case PathList("META-INF", "MANIFEST.MF")               => MergeStrategy.discard
   case _ => MergeStrategy.first
 }
+
+assemblyJarName in assembly := "workflowexecutor.jar"
