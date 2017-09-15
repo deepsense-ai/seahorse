@@ -36,8 +36,7 @@ object TargetTypeChoices {
     DoubleTargetTypeChoice(),
     FloatTargetTypeChoice(),
     LongTargetTypeChoice(),
-    IntegerTargetTypeChoice(),
-    VectorUDTTargetTypeChoice()).map(_.getClass)
+    IntegerTargetTypeChoice()).map(_.getClass)
 
   case class StringTargetTypeChoice() extends TargetTypeChoice(StringType)
   case class DoubleTargetTypeChoice() extends TargetTypeChoice(DoubleType)
@@ -46,5 +45,4 @@ object TargetTypeChoices {
   case class IntegerTargetTypeChoice() extends TargetTypeChoice(IntegerType)
   case class FloatTargetTypeChoice() extends TargetTypeChoice(FloatType)
   case class LongTargetTypeChoice() extends TargetTypeChoice(LongType)
-  case class VectorUDTTargetTypeChoice() extends TargetTypeChoice(new VectorUDT())
 }
