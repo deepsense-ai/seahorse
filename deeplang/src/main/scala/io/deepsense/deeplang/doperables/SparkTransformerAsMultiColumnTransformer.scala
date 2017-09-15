@@ -16,8 +16,8 @@
 
 package io.deepsense.deeplang.doperables
 
-import scala.reflect.runtime.universe._
 import scala.language.reflectiveCalls
+import scala.reflect.runtime.universe._
 
 import org.apache.spark.ml.{Transformer => SparkTransformer}
 import org.apache.spark.sql.types.StructType
@@ -25,6 +25,7 @@ import org.apache.spark.sql.types.StructType
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.inference.exceptions.SparkTransformSchemaException
 import io.deepsense.deeplang.params.Param
+import io.deepsense.deeplang.params.wrappers.spark.ParamsWithSparkWrappers
 import io.deepsense.deeplang.{ExecutionContext, TypeUtils}
 
 /**
@@ -38,7 +39,8 @@ abstract class SparkTransformerAsMultiColumnTransformer[T <: SparkTransformer {
     def setInputCol(value: String): T
     def setOutputCol(value: String): T
   }](implicit tag: TypeTag[T])
-  extends MultiColumnTransformer {
+  extends MultiColumnTransformer
+  with ParamsWithSparkWrappers {
 
   lazy val sparkTransformer: T = TypeUtils.instanceOfType(tag)
 
@@ -49,7 +51,7 @@ abstract class SparkTransformerAsMultiColumnTransformer[T <: SparkTransformer {
       outputColumn: String,
       context: ExecutionContext,
       dataFrame: DataFrame): DataFrame = {
-    val transformer = transformerCopy()
+    val transformer = sparkTransformerWithParams(dataFrame.sparkDataFrame.schema)
     transformer.setInputCol(inputColumn)
     transformer.setOutputCol(outputColumn)
     DataFrame.fromSparkDataFrame(transformer.transform(dataFrame.sparkDataFrame))
@@ -59,7 +61,7 @@ abstract class SparkTransformerAsMultiColumnTransformer[T <: SparkTransformer {
       inputColumn: String,
       outputColumn: String,
       schema: StructType): Option[StructType] = {
-    val transformer = transformerCopy()
+    val transformer = sparkTransformerWithParams(schema)
     transformer.setInputCol(inputColumn)
     transformer.setOutputCol(outputColumn)
     try {
@@ -70,7 +72,6 @@ abstract class SparkTransformerAsMultiColumnTransformer[T <: SparkTransformer {
     }
   }
 
-  def transformerCopy(): T = {
-    sparkTransformer.copy(sparkTransformer.extractParamMap()).asInstanceOf[T]
-  }
+  private def sparkTransformerWithParams(schema: StructType) =
+    sparkTransformer.copy(sparkParamMap(sparkTransformer, schema)).asInstanceOf[T]
 }
