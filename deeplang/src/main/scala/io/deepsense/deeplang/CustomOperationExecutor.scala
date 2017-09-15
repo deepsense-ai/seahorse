@@ -21,6 +21,7 @@ import scala.concurrent.Future
 import io.deepsense.commons.models.Id
 
 trait CustomOperationExecutor {
+  import io.deepsense.deeplang.CustomOperationExecutor.Result
 
   /**
    * Executes custom operation. The result future will be completed when operation execution ends.
@@ -28,5 +29,10 @@ trait CustomOperationExecutor {
    * @param nodeId Id of the node.
    * @return Future, which will be completed when operation execution ends.
    */
-  def execute(workflowId: Id, nodeId: Id): Future[Unit]
+  def execute(workflowId: Id, nodeId: Id): Future[Result]
+}
+
+object CustomOperationExecutor {
+  type Error = String
+  type Result = Either[Error, Unit]
 }

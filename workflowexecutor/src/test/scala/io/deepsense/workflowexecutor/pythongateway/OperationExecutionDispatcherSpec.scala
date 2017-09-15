@@ -40,12 +40,21 @@ class OperationExecutionDispatcherSpec
 
     "execute operation and finish" when {
 
-      "notified with proper workflow and node id" in {
+      "notified of success with proper workflow and node id" in {
         val future = dispatcher.executionStarted(workflowId, nodeId)
         future.isCompleted shouldBe false
 
-        dispatcher.executionEnded(workflowId, nodeId)
+        dispatcher.executionEnded(workflowId, nodeId, Right())
         future.isCompleted shouldBe true
+      }
+
+      "notified of failure with proper workflow and node id" in {
+        val future = dispatcher.executionStarted(workflowId, nodeId)
+        future.isCompleted shouldBe false
+
+        dispatcher.executionEnded(workflowId, nodeId, Left("A stacktrace"))
+        future.isCompleted shouldBe true
+        future.value.get.get shouldBe Left("A stacktrace")
       }
     }
 
@@ -64,7 +73,7 @@ class OperationExecutionDispatcherSpec
         future.isCompleted shouldBe false
 
         an[IllegalArgumentException] shouldBe thrownBy {
-          dispatcher.executionEnded(Id.randomId, nodeId)
+          dispatcher.executionEnded(Id.randomId, nodeId, Right())
         }
       }
 
@@ -73,7 +82,7 @@ class OperationExecutionDispatcherSpec
         future.isCompleted shouldBe false
 
         an[IllegalArgumentException] shouldBe thrownBy {
-          dispatcher.executionEnded(workflowId, Id.randomId)
+          dispatcher.executionEnded(workflowId, Id.randomId, Right())
         }
       }
     }

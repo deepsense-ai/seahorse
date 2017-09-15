@@ -46,13 +46,18 @@ case class CustomPythonOperation()
     }
 
     context.dataFrameStorage.setInputDataFrame(dataFrame.sparkDataFrame)
-    context.pythonCodeExecutor.run(code)
+    context.pythonCodeExecutor.run(code) match {
+      case Left(error) =>
+        throw CustomOperationExecutionException(s"Execution exception:\n\n$error")
 
-    val sparkDataFrame = context.dataFrameStorage.getOutputDataFrame().getOrElse {
-      throw CustomOperationExecutionException("Cannot get result")
+      case Right(_) =>
+        val sparkDataFrame = context.dataFrameStorage.getOutputDataFrame().getOrElse {
+          throw CustomOperationExecutionException(
+            "Operation finished successfully, but did not produce a DataFrame.")
+        }
+
+        context.dataFrameBuilder.buildDataFrame(sparkDataFrame)
     }
-
-    context.dataFrameBuilder.buildDataFrame(sparkDataFrame)
   }
 
   @transient

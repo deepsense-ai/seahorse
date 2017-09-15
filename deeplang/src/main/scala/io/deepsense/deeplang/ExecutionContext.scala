@@ -26,6 +26,7 @@ import org.apache.spark.sql.{DataFrame => SparkDataFrame, SQLContext}
 
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.utils.Logging
+import io.deepsense.deeplang.CustomOperationExecutor.Result
 import io.deepsense.deeplang.doperables.ReportLevel.ReportLevel
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.deeplang.inference.InferContext
@@ -101,10 +102,10 @@ case class ContextualPythonCodeExecutor(
 
   def validate(code: String): Boolean = pythonCodeExecutor.validate(code)
 
-  def run(code: String): Unit = {
-    val execution = customOperationExecutor.execute(workflowId, nodeId)
+  def run(code: String): Result = {
+    val result = customOperationExecutor.execute(workflowId, nodeId)
     pythonCodeExecutor.run(workflowId.toString, nodeId.toString, code)
     logger.debug("Waiting for python operation to finish")
-    Await.result(execution, Duration.Inf)
+    Await.result(result, Duration.Inf)
   }
 }

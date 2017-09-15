@@ -33,6 +33,7 @@ import spray.json._
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.utils.Logging
+import io.deepsense.deeplang.CustomOperationExecutor.Result
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.ReportLevel.ReportLevel
 import io.deepsense.models.entities.Entity
@@ -344,5 +345,5 @@ private case class PythonCodeExecutorStub() extends PythonCodeExecutor {
 }
 
 private case class CustomOperationExecutorStub() extends CustomOperationExecutor {
-  override def execute(workflowId: Id, nodeId: Id): Future[Unit] = Future.successful(())
+  override def execute(workflowId: Id, nodeId: Id): Future[Result] = Future.successful(Right())
 }

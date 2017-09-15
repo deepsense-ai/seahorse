@@ -3,6 +3,7 @@
 import ast
 
 from threading import Thread
+import traceback
 
 from pyspark.sql.dataframe import DataFrame
 
@@ -33,10 +34,13 @@ class CodeExecutor(object):
         executor_thread.start()
 
     def _supervised_execution(self, workflow_id, node_id, custom_operation_code):
+        # noinspection PyBroadException
         try:
             self._run_custom_code(workflow_id, node_id, custom_operation_code)
-        finally:
-            self.entry_point.executionFinished(workflow_id, node_id)
+            self.entry_point.executionCompleted(workflow_id, node_id)
+        except Exception as e:
+            stacktrace = traceback.format_exc(e)
+            self.entry_point.executionFailed(workflow_id, node_id, stacktrace)
 
     def _run_custom_code(self, workflow_id, node_id, custom_operation_code):
         """
@@ -54,20 +58,14 @@ class CodeExecutor(object):
             jdf=self.entry_point.retrieveInputDataFrame(workflow_id, node_id),
             sql_ctx=self.sql_context)
 
-        # noinspection PyBroadException
-        try:
-            context = {
-                'sc': self.spark_context,
-                'sqlContext': self.sql_context
-            }
+        context = {
+            'sc': self.spark_context,
+            'sqlContext': self.sql_context
+        }
 
-            exec custom_operation_code in context
+        exec custom_operation_code in context
 
-            output_data_frame = context[self.TRANSFORM_FUNCTION_NAME](input_data_frame)
-
-        except Exception as e:
-            print 'Exception when running user-defined code: {}'.format(e)
-            return
+        output_data_frame = context[self.TRANSFORM_FUNCTION_NAME](input_data_frame)
 
         if isinstance(output_data_frame, DataFrame):
             # noinspection PyProtectedMember

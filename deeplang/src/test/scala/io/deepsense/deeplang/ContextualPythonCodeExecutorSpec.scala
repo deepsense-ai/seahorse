@@ -52,7 +52,7 @@ class ContextualPythonCodeExecutorSpec
 
     "execute code" in {
       when(customOperationExecutor.execute(workflowId, nodeId))
-        .thenReturn(Future.successful(()))
+        .thenReturn(Future.successful(Right()))
       doNothing().when(pythonCodeExecutor).run(workflowId.toString, nodeId.toString, code)
 
       executor.run(code)

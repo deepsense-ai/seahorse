@@ -67,6 +67,9 @@ class PythonEntryPoint(
     customOperationDataFrameStorage.setOutputDataFrame(workflowId, nodeId, outputDataFrame)
   }
 
-  def executionFinished(workflowId: String, nodeId: String): Unit =
-    operationExecutionDispatcher.executionEnded(workflowId, nodeId)
+  def executionCompleted(workflowId: String, nodeId: String): Unit =
+    operationExecutionDispatcher.executionEnded(workflowId, nodeId, Right())
+
+  def executionFailed(workflowId: String, nodeId: String, error: String): Unit =
+    operationExecutionDispatcher.executionEnded(workflowId, nodeId, Left(error))
 }

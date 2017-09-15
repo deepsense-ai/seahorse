@@ -28,6 +28,7 @@ import org.scalatest.BeforeAndAfterAll
 
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
+import io.deepsense.deeplang.CustomOperationExecutor.Result
 import io.deepsense.deeplang.DataFrameStorage.DataFrameName
 import io.deepsense.deeplang.doperables.ReportLevel
 import io.deepsense.deeplang.doperables.ReportLevel._
@@ -244,5 +245,5 @@ private class MockedContextualCodeExecutor
 
 private class MockedCustomOperationExecutor
   extends CustomOperationExecutor {
-  override def execute(workflowId: Id, nodeId: Id): Future[Unit] = ???
+  override def execute(workflowId: Id, nodeId: Id): Future[Result] = ???
 }
