@@ -6,6 +6,8 @@
 
 package io.deepsense.deeplang.parameters
 
+import spray.json.{JsObject, JsValue}
+
 import io.deepsense.deeplang.parameters.ParameterConversions._
 import io.deepsense.deeplang.parameters.exceptions.NoSuchParameterException
 
@@ -13,7 +15,7 @@ import io.deepsense.deeplang.parameters.exceptions.NoSuchParameterException
  * Schema for a given set of DOperation parameters
  * Holds Parameters that are passed to DOperation.
  */
-class ParametersSchema protected (schemaMap: Map[String, Parameter] = Map.empty) {
+class ParametersSchema protected (val schemaMap: Map[String, Parameter] = Map.empty) {
   def validate: Unit = schemaMap.values.foreach(_.validate)
 
   private def get[T <: Parameter](name: String)(implicit converter: ParameterConverter[T]): T = {
@@ -79,6 +81,12 @@ class ParametersSchema protected (schemaMap: Map[String, Parameter] = Map.empty)
   def getColumnSelection(name: String): Option[MultipleColumnSelection] = {
     getColumnSelectorParameter(name).value
   }
+
+  // TODO Implemented as a different task
+  def fillValueWithJson(any: Any): Unit = {}
+
+  // TODO Implemented as a different task
+  def valueToJson: JsValue = JsObject()
 }
 
 object ParametersSchema {

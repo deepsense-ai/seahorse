@@ -20,8 +20,9 @@ libraryDependencies ++= Seq(
   "org.scalatest"          %% "scalatest"     % "2.2.4" % "test",
   "com.github.nscala-time" %% "nscala-time"   % "1.8.0",
   "org.scala-lang"         %  "scala-reflect" % scalaVersion.value,
-  "org.apache.spark"       %% "spark-sql"     % properties("spark.version"),
-  "org.apache.spark"       %% "spark-core"    % properties("spark.version")
+  "org.apache.spark"       %% "spark-sql"     % "1.3.0",
+  "org.apache.spark"       %% "spark-core"    % "1.3.0",
+  "io.spray"               %% "spray-json"    % "1.3.1"
 )
 
 // Fork to run all test and run tasks in JVM separated from sbt JVM

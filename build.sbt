@@ -11,3 +11,4 @@ lazy val deeplang          = project
 lazy val experimentmanager = project
 lazy val graph             = project dependsOn deeplang
 lazy val graphexecutor     = project dependsOn graph
+lazy val graphjson         = project dependsOn (graph, deeplang)
