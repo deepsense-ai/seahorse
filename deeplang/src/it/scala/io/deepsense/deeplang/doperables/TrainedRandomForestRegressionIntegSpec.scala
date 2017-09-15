@@ -30,7 +30,7 @@ import io.deepsense.deeplang.doperables.machinelearning.randomforest.regression.
 
 class TrainedRandomForestRegressionIntegSpec
   extends ScorableBaseIntegSpec("TrainedRandomForestRegression")
-  with PredictorModelBaseIntegSpec {
+  with SupervisedPredictorModelBaseIntegSpec {
 
   override def acceptedFeatureTypes: Seq[ExtendedColumnType] = Seq(
     ExtendedColumnType.binaryValuedNumeric,

@@ -44,11 +44,10 @@ abstract class UnsupervisedTrainableBaseIntegSpec(
             makeTrainableParameters(binaryValuedNumeric, Set(columnType))
 
           // Accepted feature as an addition to the DF
-          val dataFrame = makeDataFrame(binaryValuedNumeric, columnType, acceptedFeatureTypes.head)
+          val dataFrame = makeDataFrameOfFeatures(columnType, acceptedFeatureTypes.head)
 
           a[WrongColumnTypeException] shouldBe thrownBy {
-            createTrainableInstance.train(
-              mock[ExecutionContext])(trainableParameters)(dataFrame)
+            createTrainableInstance.train(mock[ExecutionContext])(trainableParameters)(dataFrame)
           }
         }
       }
@@ -60,11 +59,10 @@ abstract class UnsupervisedTrainableBaseIntegSpec(
             Vector(NameColumnSelection(Set("non-existent", featureName(nonBinaryValuedNumeric))))),
           predictionName(nonBinaryValuedNumeric))
 
-        val dataFrame = makeDataFrame(nonBinaryValuedNumeric, nonBinaryValuedNumeric)
+        val dataFrame = makeDataFrameOfFeatures(nonBinaryValuedNumeric)
 
         a[ColumnsDoNotExistException] shouldBe thrownBy {
-          createTrainableInstance.train(
-            mock[ExecutionContext])(trainableParameters)(dataFrame)
+          createTrainableInstance.train(mock[ExecutionContext])(trainableParameters)(dataFrame)
         }
       }
     }
@@ -76,10 +74,10 @@ abstract class UnsupervisedTrainableBaseIntegSpec(
           val trainableParameters =
             makeTrainableParameters(binaryValuedNumeric, Set(columnType))
 
-          val dataFrame = makeDataFrame(binaryValuedNumeric, columnType)
+          val dataFrame = makeDataFrameOfFeatures(columnType)
 
-          val scorable = createTrainableInstance.train(
-            mock[ExecutionContext])(trainableParameters)(dataFrame)
+          val scorable =
+            createTrainableInstance.train(mock[ExecutionContext])(trainableParameters)(dataFrame)
 
           verifyUnsupervisedScorable(scorable, Seq(featureName(columnType)))
         }

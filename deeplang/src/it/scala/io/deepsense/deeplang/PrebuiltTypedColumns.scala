@@ -29,7 +29,7 @@ trait PrebuiltTypedColumns {
   import PrebuiltTypedColumns.ExtendedColumnType._
   import PrebuiltTypedColumns.TypedColumn
 
-  protected val targetColumns: Map[ExtendedColumnType, TypedColumn]
+  protected val targetColumns: Option[Map[ExtendedColumnType, TypedColumn]] = None
   protected val featureColumns: Map[ExtendedColumnType, TypedColumn]
 
   protected def buildColumns(
@@ -70,7 +70,10 @@ trait PrebuiltTypedColumns {
   protected def makeRows(target: ExtendedColumnType, features: ExtendedColumnType*): Seq[Row] = {
     val featureColumnsValues =
       featureColumns.filterKeys(features.contains(_)).values.map(_.values).toSeq
-    val targetColumnValues = targetColumns(target).values
+    val targetColumnValues = targetColumns match {
+      case Some(targetColumnsMap) => targetColumnsMap(target).values
+      case None => Seq()
+    }
 
     makeRowsOfColumnsValues(featureColumnsValues :+ targetColumnValues)
   }
@@ -96,7 +99,10 @@ trait PrebuiltTypedColumns {
 
   protected def makeSchema(
       target: ExtendedColumnType, features: ExtendedColumnType*): StructType = {
-    val targetFields = Seq(target) map { targetColumns(_).structField }
+    val targetFields = targetColumns match {
+      case Some(targetColumnsMap) => Seq(target) map { targetColumnsMap(_).structField }
+      case None => Seq()
+    }
     val featureFields = features map { featureColumns(_).structField }
     StructType(featureFields ++ targetFields)
   }

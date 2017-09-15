@@ -26,7 +26,7 @@ import io.deepsense.deeplang.doperables.machinelearning.logisticregression.{Logi
 
 class TrainedLogisticRegressionIntegSpec
   extends ScorableBaseIntegSpec("TrainedLogisticRegression")
-  with PredictorModelBaseIntegSpec {
+  with SupervisedPredictorModelBaseIntegSpec {
 
   override def acceptedFeatureTypes: Seq[ExtendedColumnType] = Seq(
     ExtendedColumnType.binaryValuedNumeric,

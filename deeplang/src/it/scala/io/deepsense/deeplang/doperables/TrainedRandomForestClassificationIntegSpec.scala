@@ -23,14 +23,14 @@ import org.apache.spark.mllib.tree.configuration.Algo._
 import org.apache.spark.mllib.tree.configuration.{Algo, Strategy}
 import org.apache.spark.mllib.tree.model.{DecisionTreeModel, RandomForestModel}
 
-import io.deepsense.deeplang.PrebuiltTypedColumns.{TypedColumn, ExtendedColumnType}
+import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType
 import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType.ExtendedColumnType
 import io.deepsense.deeplang.doperables.machinelearning.randomforest.RandomForestParameters
 import io.deepsense.deeplang.doperables.machinelearning.randomforest.classification.TrainedRandomForestClassification
 
 class TrainedRandomForestClassificationIntegSpec
   extends ScorableBaseIntegSpec("TrainedRandomForestClassification")
-  with PredictorModelBaseIntegSpec {
+  with SupervisedPredictorModelBaseIntegSpec {
 
   override def acceptedFeatureTypes: Seq[ExtendedColumnType] = Seq(
     ExtendedColumnType.binaryValuedNumeric,

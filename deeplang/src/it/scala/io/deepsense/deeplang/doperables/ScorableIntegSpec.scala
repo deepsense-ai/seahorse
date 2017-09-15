@@ -33,7 +33,6 @@ class ScorableIntegSpec extends DeeplangIntegTestSupport with PrebuiltTypedColum
   import PrebuiltTypedColumns.ExtendedColumnType._
   import PrebuiltTypedColumns._
 
-  override val targetColumns = null
   override protected val featureColumns = buildColumns(featureName)
 
   val predictionColumnName: String = "prediction column"

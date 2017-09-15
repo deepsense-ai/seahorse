@@ -31,7 +31,7 @@ import io.deepsense.reportlib.model.{Table, ReportContent}
 
 class TrainedSupportVectorMachineClassifierIntegSpec
   extends ScorableBaseIntegSpec("TrainedSupportVectorMachineClassifier")
-  with PredictorModelBaseIntegSpec {
+  with SupervisedPredictorModelBaseIntegSpec {
 
   private val params = SupportVectorMachineParameters(RegularizationType.L1, 3, 0.1, 0.2)
 

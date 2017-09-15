@@ -36,7 +36,6 @@ abstract class ScorableBaseIntegSpec(
   def unacceptableFeatureTypes: Seq[ExtendedColumnType]
 
   override protected val featureColumns = buildColumns(featureName)
-  override val targetColumns = null
 
   val predictionColumnName: String = "prediction column"
 

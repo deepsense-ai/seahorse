@@ -16,6 +16,7 @@
 
 package io.deepsense.deeplang.doperables
 
+import org.apache.spark.mllib.clustering.KMeansModel
 import org.apache.spark.mllib.linalg.Vector
 
 import io.deepsense.commons.types.ColumnType
@@ -84,6 +85,18 @@ case class DOperableReporter(title: String, tables: List[Table] = List.empty) {
       Seq(operable.targetColumn).map(column => List(Some(column))).toList)
 
     DOperableReporter(title, tables :+ featureColumnsTable :+ targetColumnTable)
+  }
+
+  def withUnsupervisedScorable(operable: Scorable): DOperableReporter = {
+    val featureColumnsTable = Table(
+      "Feature columns",
+      "",
+      Some(List("Feature columns")),
+      List(ColumnType.string),
+      None,
+      operable.featureColumns.map(column => List(Some(column))).toList)
+
+    DOperableReporter(title, tables :+ featureColumnsTable)
   }
 
   def withCustomTable(

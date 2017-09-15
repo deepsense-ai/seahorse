@@ -31,7 +31,7 @@ import io.deepsense.deeplang.doperables.machinelearning.ridgeregression.TrainedR
 
 class TrainedRidgeRegressionIntegSpec
   extends ScorableBaseIntegSpec("TrainedRidgeRegression")
-  with PredictorModelBaseIntegSpec {
+  with SupervisedPredictorModelBaseIntegSpec {
 
   override def acceptedFeatureTypes: Seq[ExtendedColumnType] = Seq(
     ExtendedColumnType.binaryValuedNumeric,

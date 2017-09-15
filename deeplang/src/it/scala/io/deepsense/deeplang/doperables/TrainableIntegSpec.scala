@@ -35,7 +35,7 @@ import io.deepsense.deeplang.parameters.{MultipleColumnSelection, NameColumnSele
 
 class TrainableIntegSpec extends DeeplangIntegTestSupport with PrebuiltTypedColumns {
 
-  override protected val targetColumns = buildColumns(targetName)
+  override protected val targetColumns = Some(buildColumns(targetName))
   override protected val featureColumns = buildColumns(featureName)
 
   "Trainable" should {
@@ -47,7 +47,7 @@ class TrainableIntegSpec extends DeeplangIntegTestSupport with PrebuiltTypedColu
 
       val dataFrame = makeDataFrame(nonBinaryValuedNumeric, nonBinaryValuedNumeric)
 
-      val targetColumnValues = targetColumns(nonBinaryValuedNumeric).values
+      val targetColumnValues = targetColumns.get(nonBinaryValuedNumeric).values
       val featureColumnValues = featureColumns(nonBinaryValuedNumeric).values
       val expectedLabeledPoints = targetColumnValues zip featureColumnValues map {
         case (target: Double, feature: Double) => LabeledPoint(target, Vectors.dense(feature))

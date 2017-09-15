@@ -34,7 +34,7 @@ abstract class TrainableBaseIntegSpec(val trainableName: String)
   def unacceptableTargetTypes: Seq[ExtendedColumnType]
   def unacceptableFeatureTypes: Seq[ExtendedColumnType]
 
-  override protected val targetColumns = buildColumns(targetName)
+  override protected val targetColumns = Some(buildColumns(targetName))
   override protected val featureColumns = buildColumns(featureName)
 
   trainableName should {

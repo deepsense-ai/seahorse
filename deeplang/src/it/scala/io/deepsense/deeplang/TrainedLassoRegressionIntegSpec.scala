@@ -32,7 +32,7 @@ import io.deepsense.deeplang.doperables._
 
 class TrainedLassoRegressionIntegSpec
   extends ScorableBaseIntegSpec("TrainedLassoRegression")
-  with PredictorModelBaseIntegSpec {
+  with SupervisedPredictorModelBaseIntegSpec {
 
   override def acceptedFeatureTypes: Seq[ExtendedColumnType] = Seq(
     ExtendedColumnType.binaryValuedNumeric,

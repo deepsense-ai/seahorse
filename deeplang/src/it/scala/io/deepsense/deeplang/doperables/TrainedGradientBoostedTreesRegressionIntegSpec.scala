@@ -31,7 +31,7 @@ import io.deepsense.deeplang.doperables.machinelearning.gradientboostedtrees.reg
 
 class TrainedGradientBoostedTreesRegressionIntegSpec
   extends ScorableBaseIntegSpec("TrainedGradientBoostedTreesRegression")
-  with PredictorModelBaseIntegSpec {
+  with SupervisedPredictorModelBaseIntegSpec {
 
   override def acceptedFeatureTypes: Seq[ExtendedColumnType] = Seq(
     ExtendedColumnType.binaryValuedNumeric,
