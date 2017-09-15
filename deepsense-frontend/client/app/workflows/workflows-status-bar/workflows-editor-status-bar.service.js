@@ -56,16 +56,18 @@ class WorkflowStatusBarService {
   _getView(workflowType, isRunning) {
     switch (workflowType) {
       case 'root':
+        let view;
         if (isRunning) {
-          return 'running'
+          view = 'running';
         } else {
-          return 'edit'
+          view = 'edit';
         }
+        return view;
       case 'inner':
         if (isRunning) {
-          throw "Cannot run inner workflow"
+          throw 'Cannot run inner workflow';
         } else {
-          return 'editInnerWorkflow'
+          return 'editInnerWorkflow';
         }
     }
   }
