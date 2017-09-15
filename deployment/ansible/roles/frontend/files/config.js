@@ -1,6 +1,7 @@
 angular.module('ds.lab').constant('config', {
   'apiHost': '${PROXY_HOST}',
   'apiPort': '${PROXY_PORT}',
-  'apiVersion': '0.9.0',
+  'apiVersion': '${API_VERSION}',
+  'editorVersion': '${EDITOR_VERSION}',
   'urlApiVersion': 'v1'
 });

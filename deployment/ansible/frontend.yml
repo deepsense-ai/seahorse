@@ -65,3 +65,5 @@
         env:
           PROXY_HOST: "{{proxy_host}}"
           PROXY_PORT: "{{proxy_port}}"
+          API_VERSION: "{{api_version}}"
+          EDITOR_VERSION: "{{ds_frontend_package_name}}"
