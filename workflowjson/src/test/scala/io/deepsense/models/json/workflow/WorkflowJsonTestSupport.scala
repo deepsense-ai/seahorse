@@ -46,9 +46,6 @@ trait WorkflowJsonTestSupport
   when(dOperableCatalog.concreteSubclassesInstances(
     any(classOf[ru.TypeTag[DOperable]]))).thenReturn(Set(operable))
 
-  override val inferContext: InferContext = mock[InferContext]
-  when(inferContext.dOperableCatalog).thenReturn(dOperableCatalog)
-
   override val graphReader: GraphReader = new GraphReader(catalog)
 
   val operation1 = mockOperation(0, 1, DOperation.Id.randomId, "name1", "version1")

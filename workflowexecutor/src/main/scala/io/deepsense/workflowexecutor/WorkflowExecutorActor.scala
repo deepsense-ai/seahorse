@@ -24,12 +24,13 @@ import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
 import io.deepsense.graph.{Graph, Node}
 import io.deepsense.models.entities.Entity
+import io.deepsense.models.workflows.EntitiesMap
 import io.deepsense.reportlib.model.ReportContent
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Results
 
 /**
  * WorkflowExecutorActor coordinates execution of a workflow by distributing work to
- * WokrflowNodeExecutorActors and collecting results.
+ * WorkflowNodeExecutorActors and collecting results.
  */
 class WorkflowExecutorActor(executionContext: ExecutionContext)
   extends Actor with Logging {
@@ -108,7 +109,7 @@ class WorkflowExecutorActor(executionContext: ExecutionContext)
   def endExecution(): Unit = {
     graph = graph.updateState()
     logger.debug("End execution, status={}", graph.state.status)
-    result.success(GraphFinished(graph, dOperableCache, reports))
+    result.success(GraphFinished(graph, entitiesMap(dOperableCache, reports)))
     logger.debug("Shutting down the actor system")
     context.become(ignoreAllMessages)
     shutdownSystem
@@ -121,6 +122,17 @@ class WorkflowExecutorActor(executionContext: ExecutionContext)
   def collectReports(results: Results): Unit = {
     val reports = results.mapValues(_.report.content)
     this.reports = this.reports ++ reports
+  }
+
+  def entitiesMap(
+      results: WorkflowExecutorActor.Results,
+      reports: Map[Entity.Id, ReportContent]): EntitiesMap = {
+    EntitiesMap(results.map { case (id, entity) =>
+      val entry = EntitiesMap.Entry(
+        entity.getClass.getSimpleName,
+        reports.get(id))
+      (id, entry)
+    })
   }
 }
 
@@ -141,11 +153,7 @@ object WorkflowExecutorActor {
       extends Message
     case class NodeStarted(nodeId: Node.Id) extends Message
     case class NodeFinished(node: Node, results: Results) extends Message
-    case class GraphFinished(
-        graph: Graph,
-        results: Results,
-        reports: Map[Entity.Id, ReportContent])
-      extends Message
+    case class GraphFinished(graph: Graph, entitiesMap: EntitiesMap) extends Message
   }
 }
 

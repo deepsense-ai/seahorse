@@ -16,9 +16,7 @@
 
 package io.deepsense.models.json.workflow
 
-import io.deepsense.graph.Graph
-import io.deepsense.models.workflows.{WorkflowMetadata, ThirdPartyData, Variables, WorkflowWithVariables}
-import spray.json._
+import io.deepsense.models.workflows.{Variables, WorkflowWithVariables}
 
 trait WorkflowWithVariablesJsonProtocol extends WorkflowJsonProtocol {
 

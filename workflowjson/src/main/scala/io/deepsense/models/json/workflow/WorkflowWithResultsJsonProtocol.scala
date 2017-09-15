@@ -16,14 +16,16 @@
 
 package io.deepsense.models.json.workflow
 
+import org.joda.time.DateTime
+import spray.json._
+
 import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.commons.json.EnumerationSerializer
 import io.deepsense.graph.Status.Status
-import io.deepsense.graph.{Graph, State, Status}
+import io.deepsense.graph.{State, Status}
 import io.deepsense.models.entities.Entity
 import io.deepsense.models.workflows._
-import org.joda.time.DateTime
-import spray.json._
+import io.deepsense.reportlib.model.ReportJsonProtocol
 
 trait WorkflowWithResultsJsonProtocol extends WorkflowJsonProtocol {
 
@@ -53,11 +55,24 @@ trait WorkflowWithResultsJsonProtocol extends WorkflowJsonProtocol {
     }
   }
 
-  // TODO Implement proper write and read methods.
-  implicit val entitiesMapFormat = new JsonFormat[EntitiesMap] {
-    override def write(obj: EntitiesMap): JsValue = JsObject()
+  import ReportJsonProtocol._
 
-    override def read(json: JsValue): EntitiesMap = EntitiesMap()
+  implicit val entitiesMapEntryFormat = jsonFormat2(EntitiesMap.Entry)
+
+  implicit val entitiesMapFormat = new JsonFormat[EntitiesMap] {
+    override def write(obj: EntitiesMap): JsValue = {
+      obj.entities.toJson
+    }
+
+    override def read(json: JsValue): EntitiesMap = {
+      val jsObject = json.asJsObject
+      val entities = jsObject.fields.map { case (key, value) =>
+        val id = Entity.Id.fromString(key)
+        val entry = value.convertTo[EntitiesMap.Entry]
+        (id, entry)
+      }
+      EntitiesMap(entities)
+    }
   }
 
   implicit val executionReportFormat = jsonFormat4(ExecutionReport)

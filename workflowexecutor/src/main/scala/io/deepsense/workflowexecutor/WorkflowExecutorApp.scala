@@ -16,20 +16,21 @@
 
 package io.deepsense.workflowexecutor
 
-import scala.util.{Failure, Success}
+
+import java.io.{File, FileWriter, PrintWriter}
+
+import scala.io.Source
+import scala.util.{Try, Failure, Success}
 
 import buildinfo.BuildInfo
-import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.Row
-import org.apache.spark.sql.types.{StringType, StructField, StructType}
 import scopt.OptionParser
+import spray.json._
 
 import io.deepsense.commons.utils.Logging
-import io.deepsense.deeplang.DOperation._
-import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
-import io.deepsense.deeplang.parameters.ParametersSchema
-import io.deepsense.deeplang.{DOperation0To1, ExecutionContext}
-import io.deepsense.graph.{Graph, Node}
+import io.deepsense.deeplang.CatalogRecorder
+import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
+import io.deepsense.models.json.workflow.{WorkflowWithResultsJsonProtocol, WorkflowWithVariablesJsonProtocol}
 import io.deepsense.models.workflows._
 
 
@@ -37,8 +38,13 @@ import io.deepsense.models.workflows._
  * WorkflowExecutor
  * workflow file name has to be passed via command-line parameter
  */
-object WorkflowExecutorApp extends Logging {
+object WorkflowExecutorApp
+  extends Logging
+  with WorkflowWithVariablesJsonProtocol
+  with WorkflowWithResultsJsonProtocol {
 
+  override val graphReader = new GraphReader(dOperationsCatalog())
+  private val outputFile = "result.json"
   private val parser: OptionParser[ExecutionParams]
       = new scopt.OptionParser[ExecutionParams](BuildInfo.name) {
     head(BuildInfo.toString)
@@ -65,65 +71,64 @@ object WorkflowExecutorApp extends Logging {
     cmdParams match {
       case None => System.exit(-1)
       case Some(params) =>
-        // Read graph
         val workflowWithVariables = loadWorkflow(params.workflowFilename)
-
-        // Run executor
-        logger.info("Executing graph!")
-        logger.debug("Workflow", workflowWithVariables)
-        val executionReport = WorkflowExecutor(workflowWithVariables, params.generateReport)
-          .execute()
-
-        executionReport match {
-          case Failure(exception) => logger.error("Execution failed:", exception)
-          case Success(value) =>
-            val result = WorkflowWithResults(
-              workflowWithVariables.id,
-              workflowWithVariables.metadata,
-              workflowWithVariables.graph,
-              workflowWithVariables.thirdPartyData,
-              value
-            )
-
-            saveResults(params.outputDirectoryPath, result)
-
-            logger.info(s"result: $result")
-        }
+        val executionReport = executeWorkflow(workflowWithVariables, params.generateReport)
+        handleExecutionReport(params.outputDirectoryPath, executionReport, workflowWithVariables)
     }
   }
 
-  // TODO Reimplement: implement loading workflows from a file
-  private def loadWorkflow(filename: String): WorkflowWithVariables = {
-    val tmpGraph: Graph = Graph(Set(Node(Node.Id.randomId, Noop())))
-    WorkflowWithVariables(
-      Workflow.Id.randomId,
-      WorkflowMetadata(WorkflowType.Batch, "1"),
-      tmpGraph,
-      ThirdPartyData("some data"),
-      Variables()
-    )
+  private def executeWorkflow(
+      workflow: WorkflowWithVariables,
+      generateReport: Boolean): Try[ExecutionReport] = {
+    // Run executor
+    logger.info("Executing graph!")
+    logger.debug("Workflow", workflow)
+    WorkflowExecutor(workflow, generateReport).execute()
   }
 
-  private def saveResults(outputDir: String, result: WorkflowWithResults): Unit = {
-    // TODO Implement
+  private def loadWorkflow(filename: String): WorkflowWithVariables =
+    Source.fromFile(filename)
+      .mkString
+      .parseJson
+      .convertTo[WorkflowWithVariables]
+
+  private def handleExecutionReport(
+      outputDirectoryPath: String,
+      executionReport: Try[ExecutionReport],
+      workflow: WorkflowWithVariables): Unit = {
+
+    executionReport match {
+      case Failure(exception) => logger.error("Execution failed:", exception)
+      case Success(value) =>
+        val result = WorkflowWithResults(
+          workflow.id,
+          workflow.metadata,
+          workflow.graph,
+          workflow.thirdPartyData,
+          value
+        )
+
+        saveWorkflowWithResults(outputDirectoryPath, result)
+    }
+  }
+
+  private def saveWorkflowWithResults(outputDir: String, result: WorkflowWithResults): Unit = {
+    val resultsFile = new File(outputDir, outputFile)
+    logger.info(s"Writing result to: ${resultsFile.getPath}")
+    val writer = new PrintWriter(new FileWriter(resultsFile, false))
+    writer.write(result.toJson.prettyPrint)
+    writer.flush()
+    writer.close()
+  }
+
+  private def dOperationsCatalog(): DOperationsCatalog = {
+    val catalog = DOperationsCatalog()
+    CatalogRecorder.registerDOperations(catalog)
+    catalog
   }
 
   private case class ExecutionParams(
     workflowFilename: String = "",
     outputDirectoryPath: String = "",
     generateReport: Boolean = false)
-}
-
-// FIXME Delete!
-case class Noop() extends DOperation0To1[DataFrame] {
-  override protected def _execute(context: ExecutionContext)(): DataFrame = {
-    val schema = new StructType(Array(StructField("test", StringType)))
-    val data: RDD[Row] = context.sparkContext.parallelize(List(Row("testvalue")))
-    logger.info("NOP NOP NOP NOP NOP NOP NOP NOP NOP")
-    DataFrameBuilder(context.sqlContext).buildDataFrame(schema, data)
-  }
-
-  override val parameters: ParametersSchema = ParametersSchema()
-  override val name: String = "Noop operation"
-  override val id: Id = "271d491c-7018-4133-880d-20d9f4f90051"
 }

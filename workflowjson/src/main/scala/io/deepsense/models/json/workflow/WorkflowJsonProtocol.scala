@@ -22,7 +22,6 @@ import spray.json._
 
 import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.commons.json.{EnumerationSerializer, DateTimeJsonProtocol, ExceptionsJsonProtocol, IdJsonProtocol}
-import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.graph.Graph
 import io.deepsense.models.json.graph.GraphJsonProtocol.{GraphReader, GraphWriter}
 import io.deepsense.models.json.graph.{GraphKnowledgeJsonProtocol, NodeJsonProtocol, NodeStateJsonProtocol}
@@ -43,7 +42,6 @@ trait WorkflowJsonProtocol
   with InferenceWarningJsonProtocol {
 
   val graphReader: GraphReader
-  val inferContext: InferContext
 
   implicit val graphFormat: JsonFormat[Graph] = new JsonFormat[Graph] {
     override def read(json: JsValue): Graph = json.convertTo[Graph](graphReader)

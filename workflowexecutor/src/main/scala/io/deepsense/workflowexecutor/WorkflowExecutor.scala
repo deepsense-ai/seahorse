@@ -30,9 +30,8 @@ import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.{CatalogRecorder, DOperable, ExecutionContext}
 import io.deepsense.models.entities.Entity
-import io.deepsense.models.workflows.{EntitiesMap, ExecutionReport, WorkflowWithVariables}
-import io.deepsense.reportlib.model.ReportContent
-import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.{Launch, GraphFinished}
+import io.deepsense.models.workflows.{ExecutionReport, WorkflowWithVariables}
+import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.{GraphFinished, Launch}
 
 /**
  * WorkflowExecutor creates an execution context and then executes a workflow on Spark.
@@ -61,13 +60,13 @@ case class WorkflowExecutor(
       case Failure(exception) => // WEA failed with an exception
         logger.error("WEA failed: ", exception)
         throw exception
-      case Success(GraphFinished(graph, results, reports)) =>
+      case Success(GraphFinished(graph, entitiesMap)) =>
         logger.info(s"WEA finished successfully: ${workflow.graph}")
         Try(ExecutionReport(
           graph.state.status,
           graph.state.error,
           graph.nodeById.mapValues(_.state),
-          toEntitiesMap(results, reports)
+          entitiesMap
         ))
     }
 
@@ -101,17 +100,6 @@ case class WorkflowExecutor(
     val sqlContext = new SQLContext(sparkContext)
     UserDefinedFunctions.registerFunctions(sqlContext.udf)
     sqlContext
-  }
-
-  private def toEntitiesMap(
-      results: WorkflowExecutorActor.Results,
-      reports: Map[Entity.Id, ReportContent]): EntitiesMap = {
-    EntitiesMap(results.map { case (id, entity) =>
-      val entry = EntitiesMap.Entry(
-        entity.getClass.getSimpleName,
-        reports.get(id))
-      (id, entry)
-    })
   }
 
   private def cleanup(actorSystem: ActorSystem, executionContext: ExecutionContext): Unit = {
