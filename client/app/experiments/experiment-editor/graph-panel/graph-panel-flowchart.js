@@ -30,7 +30,7 @@ function FlowChartBox() {
 
 /* @ngInject */
 function FlowChartBoxController($scope, $element, $window,
-                                ExperimentService, ReportOptionsService, GraphPanelRendererService) {
+                                ExperimentService, ReportOptionsService, GraphPanelRendererService, DeployModelService) {
   var that = this;
   var internal = {};
 
@@ -113,6 +113,10 @@ function FlowChartBoxController($scope, $element, $window,
 
   $scope.$on('ZOOM.ZOOM_PERFORMED', (event, data) => {
     GraphPanelRendererService.setZoom(data.zoomRatio);
+  });
+
+  $scope.$on('Model.DEPLOY', (event, data) => {
+    DeployModelService.showModal(data);
   });
 
   $scope.$on('$destroy', () => {

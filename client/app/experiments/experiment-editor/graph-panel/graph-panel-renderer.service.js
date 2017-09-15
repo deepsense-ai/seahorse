@@ -112,7 +112,7 @@ function GraphPanelRendererService($rootScope, $document) {
   that.setZoom = function setZoom (zoom) {
     let instance = jsPlumb;
 
-    instance.setZoom(zoom, true);
+    instance.setZoom(zoom);
     instance.repaintEverything();
   };
 

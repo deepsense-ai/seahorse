@@ -1,4 +1,4 @@
-/**controller
+/**
  * Copyright (c) 2015, CodiLime Inc.
  *
  * Created by: Grzegorz Swatowski
@@ -15,6 +15,8 @@ exports.inject = function (module) {
   require('./graph-panel-renderer.service.js').inject(module);
 
   require('./graph-panel-freeze.service.js').inject(module);
+
+  require('./deploy-model/deploy-model.service.js').inject(module);
 
   require('./multi-selection/multi-selection.js').inject(module);
 };
