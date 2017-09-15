@@ -75,7 +75,7 @@ function FlowChartBoxController($scope, $element, $window) {
   };
 
   that.getPositionY = function getPositionY() {
-    return $element[0].getBoundingClientRect().top;
+    return $element[0].offsetTop;
   };
 
   that.getPositionX = function getPositionX() {
