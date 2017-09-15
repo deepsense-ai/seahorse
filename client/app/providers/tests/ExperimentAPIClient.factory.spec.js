@@ -314,7 +314,7 @@ describe('ExperimentAPIClient', () => {
     });
 
     it('which return promise', () => {
-      $httpBackend.expectPOST(url, {'lunch': {}});
+      $httpBackend.expectPOST(url, {'launch': {}});
 
       let promise = ExperimentAPIClient.runExperiment(id);
       expect(promise).toEqual(jasmine.any(Object));
@@ -329,7 +329,7 @@ describe('ExperimentAPIClient', () => {
           error   = false,
           responseData;
 
-      $httpBackend.expectPOST(url, {'lunch': {}});
+      $httpBackend.expectPOST(url, {'launch': {}});
 
       let promise = ExperimentAPIClient.runExperiment(id);
       promise.then((data) => {
@@ -350,7 +350,7 @@ describe('ExperimentAPIClient', () => {
       let success = false,
           error   = false;
 
-      $httpBackend.expectPOST(url, {'lunch': {}});
+      $httpBackend.expectPOST(url, {'launch': {}});
 
       let promise = ExperimentAPIClient.runExperiment(id);
       promise.then(() => {
@@ -367,7 +367,7 @@ describe('ExperimentAPIClient', () => {
     });
 
     it('which handles targetNodes params', () => {
-      $httpBackend.expectPOST(url, {'lunch': {'targetNodes': nodes}});
+      $httpBackend.expectPOST(url, {'launch': {'targetNodes': nodes}});
 
       let promise = ExperimentAPIClient.runExperiment(id, {'targetNodes': nodes});
       expect(promise).toEqual(jasmine.any(Object));

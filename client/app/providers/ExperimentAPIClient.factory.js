@@ -62,10 +62,10 @@ function ExperimentAPIClientFactory(BaseAPIClient) {
    */
   ExperimentAPIClient.prototype.runExperiment = function(id, params) {
     let data = {
-      'lunch': {}
+      'launch': {}
     };
     if (params && params.targetNodes) {
-      data.lunch.targetNodes = params.targetNodes;
+      data.launch.targetNodes = params.targetNodes;
     }
 
     return this.makeRequest(
