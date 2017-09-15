@@ -4,7 +4,7 @@
 
 package io.deepsense.graphexecutor
 
-import io.deepsense.deeplang.doperations.{LoadDataFrame, TimestampDecomposer, SaveDataFrame}
+import io.deepsense.deeplang.doperations.{LoadDataFrame, DecomposeDatetime, SaveDataFrame}
 import io.deepsense.deeplang.parameters.NameSingleColumnSelection
 import io.deepsense.graph._
 
@@ -24,7 +24,7 @@ class GraphWithTimestampDecomposeIntegSuite extends GraphExecutionIntegSuite {
   loadOp.parameters.getStringParameter(idParam).value =
     Some(SimpleGraphExecutionIntegSuiteEntities.entityUuid)
 
-  val timestampDecomposerOp = new TimestampDecomposer
+  val timestampDecomposerOp = DecomposeDatetime()
   timestampDecomposerOp.parameters.getSingleColumnSelectorParameter("timestampColumn").value =
     Some(NameSingleColumnSelection("column4"))
   timestampDecomposerOp.parameters.getMultipleChoiceParameter("parts").value =

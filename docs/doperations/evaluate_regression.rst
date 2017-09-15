@@ -1,7 +1,7 @@
 .. Copyright (c) 2015, CodiLime, Inc.
 
 Evaluate Regression
-====================
+===================
 
 ==========
 Descriptor

@@ -11,7 +11,7 @@ Contents:
    doperations/apply_transformation
    doperations/convert_type
    doperations/cross_validate_regressor
-   doperations/dataframe_splitter
+   doperations/decompose_datetime
    doperations/evaluate_classification
    doperations/evaluate_regression
    doperations/file_to_dataframe
@@ -26,6 +26,6 @@ Contents:
    doperations/save_data_frame
    doperations/score_classifier
    doperations/score_regressor
-   doperations/timestamp_decomposer
+   doperations/split
    doperations/train_classifier
    doperations/train_regressor

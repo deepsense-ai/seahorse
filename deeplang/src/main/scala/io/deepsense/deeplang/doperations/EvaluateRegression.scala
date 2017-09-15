@@ -26,7 +26,7 @@ case class EvaluateRegression() extends Evaluator {
       predictionsAndLabels: RDD[(Double, Double)]): Report = {
     val dataFrameSize = dataFrame.sparkDataFrame.count()
     val metrics = new RegressionMetrics(predictionsAndLabels)
-    val evaluateRegressionName: String = "EvaluateRegression"
+    val evaluateRegressionName: String = "Evaluate Regression Report"
     val table = Table(
       evaluateRegressionName,
       "Evaluate regression metrics",

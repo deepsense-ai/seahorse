@@ -1,6 +1,6 @@
 .. Copyright (c) 2015, CodiLime, Inc.
 
-One-hot encoder
+One Hot Encoder
 ===============
 
 ==========

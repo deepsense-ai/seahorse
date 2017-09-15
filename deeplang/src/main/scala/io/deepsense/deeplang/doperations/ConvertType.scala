@@ -4,7 +4,6 @@
 
 package io.deepsense.deeplang.doperations
 
-import org.apache.spark.sql
 import org.apache.spark.sql.{Column, UserDefinedFunction}
 
 import io.deepsense.deeplang.DOperation.Id
@@ -80,7 +79,7 @@ class ConvertType extends DOperation1To1[DataFrame, DataFrame] {
   private def findColumnNameMapping(columnsToConvert: Iterable[String], dataFrame: DataFrame) = {
     val pairs = columnsToConvert.map(old => (old, dataFrame.uniqueColumnName(old, "convert_type")))
     val oldToNew = pairs.toMap
-    (oldToNew)
+    oldToNew
   }
 
   private def convert(
@@ -88,11 +87,10 @@ class ConvertType extends DOperation1To1[DataFrame, DataFrame] {
       converters: Map[String, UserDefinedFunction],
       columnsOldToNew: Map[String, String]) = {
     val convertedColumns: Seq[Column] = converters.toSeq.map {
-      case (columnName: String, converter: UserDefinedFunction) => {
+      case (columnName: String, converter: UserDefinedFunction) =>
         val column = converter(dataFrame.sparkDataFrame(columnName))
         val alias = columnsOldToNew(columnName)
         column.as(alias)
-      }
     }
     val dfWithConvertedColumns =
       dataFrame.sparkDataFrame.select(new Column("*") +: convertedColumns: _*)

@@ -62,7 +62,7 @@ class CrossValidateRegressorSpec extends UnitSpec with MockitoSugar {
 
       val result = regressor.execute(executionContextStub)(Vector(trainableMock, dataframeStub))
 
-      result shouldBe Vector(scorableStub, Report(ReportContent(regressor.name)))
+      result shouldBe Vector(scorableStub, Report(ReportContent(CrossValidateRegressor.reportName)))
     }
 
     "infer results of it's types" in {

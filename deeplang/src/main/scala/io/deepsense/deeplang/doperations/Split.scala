@@ -12,11 +12,11 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.parameters.{NumericParameter, ParametersSchema, RangeValidator}
 import io.deepsense.deeplang.{DOperation, DOperation1To2, ExecutionContext}
 
-class DataFrameSplitter extends DOperation1To2[DataFrame, DataFrame, DataFrame] {
-  override val name: String = "Split DataFrame"
+class Split extends DOperation1To2[DataFrame, DataFrame, DataFrame] {
+  override val name: String = "Split"
   override val id: DOperation.Id = "d273c42f-b840-4402-ba6b-18282cc68de3"
 
-  import DataFrameSplitter._
+  import Split._
   override protected def _execute(context: ExecutionContext)
                                  (df: DataFrame): (DataFrame, DataFrame) = {
     val range: Double = parameters.getNumericParameter(SplitRatioParam).value.get
@@ -49,12 +49,12 @@ class DataFrameSplitter extends DOperation1To2[DataFrame, DataFrame, DataFrame] 
   )
 }
 
-object DataFrameSplitter {
+object Split {
   val SplitRatioParam = "split ratio"
   val SeedParam = "seed"
 
-  def apply(splitRatio: Double, seed: Long): DataFrameSplitter = {
-    val splitter = new DataFrameSplitter
+  def apply(splitRatio: Double, seed: Long): Split = {
+    val splitter = new Split
     splitter.parameters.getNumericParameter(SplitRatioParam).value = Some(splitRatio)
     splitter.parameters.getNumericParameter(SeedParam).value = Some(seed)
     splitter

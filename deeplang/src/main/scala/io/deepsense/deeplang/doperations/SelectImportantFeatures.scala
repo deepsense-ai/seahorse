@@ -13,7 +13,7 @@ import io.deepsense.deeplang.{DOperation1To1, ExecutionContext}
  * Mock.
  */
 case class SelectImportantFeatures() extends DOperation1To1[DataFrame, DataFrame] {
-  override val name: String = "Select important features"
+  override val name: String = "Select Important Features"
   override val id: Id = "c25e034e-ffac-11e4-a322-1697f925ec7b"
 
   import io.deepsense.deeplang.doperations.SelectImportantFeatures._

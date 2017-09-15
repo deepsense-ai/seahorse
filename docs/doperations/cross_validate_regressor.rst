@@ -1,6 +1,6 @@
 .. Copyright (c) 2015, CodiLime, Inc.
 
-Cross-validate regressor
+Cross-validate Regressor
 ========================
 
 ==========
@@ -94,15 +94,15 @@ Report content example
 
 {
 
-  "name": "CrossValidateRegressor",
+  "name": "Cross-validate Regressor Report",
 
   "tables": {
 
-    "CrossValidateRegressor": {
+    "Cross-validate report table": {
 
-      "name": "CrossValidateRegressor",
+      "name": "Cross-validate report table",
 
-      "description": "Cross-validate report table",
+      "description": "",
 
       "columnNames": ["foldNumber", "trainSetSize", "testSetSize",
 

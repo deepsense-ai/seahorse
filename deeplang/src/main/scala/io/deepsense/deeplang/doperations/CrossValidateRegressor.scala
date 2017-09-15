@@ -43,7 +43,7 @@ class CrossValidateRegressor
 
   override val id: DOperation.Id = "95ca5225-b8e0-45c7-8ecd-a2c9d4d6861f"
 
-  override val name: String = "CrossValidateRegressor"
+  override val name: String = "Cross-validate Regressor"
 
   override protected def _execute(context: ExecutionContext)
                                  (trainable: Regressor with Trainable,
@@ -84,7 +84,7 @@ class CrossValidateRegressor
       if (effectiveNumberOfFolds > 0) {
         generateCrossValidationReport(context, trainable, shuffledDataFrame, effectiveNumberOfFolds)
       } else {
-        new Report(ReportContent(this.name))
+        new Report(ReportContent(CrossValidateRegressor.reportName))
       }
 
     logger.info("Train regressor on all data available")
@@ -156,12 +156,12 @@ class CrossValidateRegressor
 
     // Prepare Cross-validation Regression report
     val table = Table(
-      this.name,
-      "Cross-validate report table",
+      CrossValidateRegressor.reportTableName,
+      "",
       Some(CrossValidateRegressor.reportColumnNames),
       Some(foldMetrics.map(m => m.foldNumber).toList),
       foldMetrics.map(m => m.toRowList).toList)
-    new Report(ReportContent(this.name, tables = Map(table.name -> table)))
+    new Report(ReportContent(CrossValidateRegressor.reportName, tables = Map(table.name -> table)))
   }
 
   def averageRegressionMetricsRow(others: List[RegressionMetricsRow]): RegressionMetricsRow = {
@@ -200,6 +200,9 @@ object CrossValidateRegressor {
   val shuffleParamKey = "shuffle"
   val shuffleYes = "YES"
   val shuffleNo = "NO"
+
+  val reportName = "Cross-validate Regressor Report"
+  val reportTableName = "Cross-validate report table"
 
   val numOfFoldsParamKey = "numOfFolds"
   val seedParamKey = "seed"

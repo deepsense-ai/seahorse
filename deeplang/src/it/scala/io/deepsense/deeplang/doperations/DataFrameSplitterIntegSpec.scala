@@ -60,11 +60,11 @@ class DataFrameSplitterIntegSpec
     (df1, df2)
   }
 
-  private def operation(range: Double, seed: Double): DataFrameSplitter = {
-    val operation = new DataFrameSplitter
-    val valueParam = operation.parameters.getNumericParameter(DataFrameSplitter.SplitRatioParam)
+  private def operation(range: Double, seed: Double): Split = {
+    val operation = new Split
+    val valueParam = operation.parameters.getNumericParameter(Split.SplitRatioParam)
     valueParam.value = Some(range)
-    val seedParam = operation.parameters.getNumericParameter(DataFrameSplitter.SeedParam)
+    val seedParam = operation.parameters.getNumericParameter(Split.SeedParam)
     seedParam.value = Some(seed)
     operation
   }

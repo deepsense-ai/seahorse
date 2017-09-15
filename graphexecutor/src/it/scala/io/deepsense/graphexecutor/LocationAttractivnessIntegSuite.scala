@@ -75,7 +75,7 @@ class LocationAttractivnessIntegSuite extends GraphExecutionIntegSuite {
     ConvertType(ColumnType.numeric, names = booleanColumns)
   }
 
-  val split: DataFrameSplitter = DataFrameSplitter(splitRatio = 0.7, seed = 1)
+  val split: Split = Split(splitRatio = 0.7, seed = 1)
   val createRidgeRegression: DOperation =
     CreateRidgeRegression(regularization = 0.5, iterationsNumber = 1)
 

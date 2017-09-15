@@ -4,7 +4,7 @@
 
 package io.deepsense.graphexecutor
 
-import io.deepsense.deeplang.doperations.{DataFrameSplitter, LoadDataFrame, SaveDataFrame}
+import io.deepsense.deeplang.doperations.{Split, LoadDataFrame, SaveDataFrame}
 import io.deepsense.graph.Edge
 
 class GraphWithSplitterIntegSuite extends GraphExecutionIntegSuite {
@@ -23,7 +23,7 @@ class GraphWithSplitterIntegSuite extends GraphExecutionIntegSuite {
   loadOp.parameters.getStringParameter(idParam).value =
     Some(SimpleGraphExecutionIntegSuiteEntities.entityUuid)
 
-  val splitOp = DataFrameSplitter(0.2, 1)
+  val splitOp = Split(0.2, 1)
 
   import io.deepsense.deeplang.doperations.SaveDataFrame._
   val saveOpLeft = new SaveDataFrame

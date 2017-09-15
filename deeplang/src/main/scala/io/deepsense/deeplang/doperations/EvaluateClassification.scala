@@ -140,7 +140,7 @@ object EvaluateClassification {
 
   private val MetricsNumBins = 10
 
-  val ReportName = "evaluateClassification"
+  val ReportName = "Evaluate Classification Report"
 
   def apply(
       targetColumnName: String,

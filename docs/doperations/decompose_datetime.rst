@@ -1,7 +1,7 @@
 .. Copyright (c) 2015, CodiLime, Inc.
 
-Decompose Timestamp
-===================
+Decompose Datetime
+==================
 
 ==========
 Descriptor

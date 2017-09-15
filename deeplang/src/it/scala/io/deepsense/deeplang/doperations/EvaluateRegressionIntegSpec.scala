@@ -100,7 +100,7 @@ class EvaluateRegressionIntegSpec extends DeeplangIntegTestSupport {
   private def assertEvaluateRegressionReport(
       report: Report,
       values: List[List[Some[String]]]): Registration = {
-    val tableName: String = "EvaluateRegression"
+    val tableName: String = "Evaluate Regression Report"
     report.content.distributions shouldBe empty
     report.content.tables.size shouldBe 1
     report.content.tables(tableName) shouldBe

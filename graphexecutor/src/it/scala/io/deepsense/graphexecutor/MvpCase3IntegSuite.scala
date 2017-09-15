@@ -62,7 +62,7 @@ class MvpCase3IntegSuite extends GraphExecutionIntegSuite {
     )),
     Node(oneHotDId, oneHotEncoder),
     Node(projectId, projectColumns),
-    Node(splitId, DataFrameSplitter(0.7, 123456789)),
+    Node(splitId, Split(0.7, 123456789)),
     Node(untraindedRRId, CreateRidgeRegression(0.0000001, RegressorTrainingIterations)),
     Node(convertTypeBeforeSplitId, ConvertType(ColumnType.numeric, Set(), (1 to 76).toSet)),
     Node(crossValidateRId, crossValidateRegressor),
@@ -95,8 +95,8 @@ class MvpCase3IntegSuite extends GraphExecutionIntegSuite {
   }
 
   // TODO: Use apply
-  private def timestampDecomposer: TimestampDecomposer = {
-    val operation = new TimestampDecomposer
+  private def timestampDecomposer: DecomposeDatetime = {
+    val operation = new DecomposeDatetime
     val columnParam = operation.parameters.getSingleColumnSelectorParameter("timestampColumn")
     columnParam.value = Some(NameSingleColumnSelection("datetime"))
     val timeUnitsParam = operation.parameters.getMultipleChoiceParameter("parts")

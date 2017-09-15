@@ -9,7 +9,7 @@ import org.apache.spark.sql.Column
 import org.apache.spark.sql.types.DoubleType
 
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperations.TimestampDecomposer.{timeUnits, timestampColumnParamKey, timestampParts, timestampPartsParamKey}
+import io.deepsense.deeplang.doperations.DecomposeDatetime.{timeUnits, timestampColumnParamKey, timestampParts, timestampPartsParamKey}
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{DOperation, DOperation1To1, ExecutionContext}
 
@@ -22,7 +22,7 @@ import io.deepsense.deeplang.{DOperation, DOperation1To1, ExecutionContext}
  * If a column with that name already exists {original_timestamp_column_name}_$part_N will be used,
  * where N is first not used Int value starting from 1.
  */
-class TimestampDecomposer extends DOperation1To1[DataFrame, DataFrame] {
+case class DecomposeDatetime() extends DOperation1To1[DataFrame, DataFrame] {
 
   override val parameters = ParametersSchema(
     timestampColumnParamKey ->
@@ -33,7 +33,7 @@ class TimestampDecomposer extends DOperation1To1[DataFrame, DataFrame] {
 
   override val id: DOperation.Id = "42f2eb12-e28b-11e4-8a00-1681e6b88ec1"
 
-  override val name: String = "Decompose Timestamp"
+  override val name: String = "Decompose Datetime"
 
   override protected def _execute(context: ExecutionContext)(dataFrame: DataFrame): DataFrame = {
     val decomposedColumnName: String =
@@ -60,7 +60,7 @@ class TimestampDecomposer extends DOperation1To1[DataFrame, DataFrame] {
   private[this] def timestampUnitColumn(
       sparkDataFrame: sql.DataFrame,
       columnName: String,
-      timestampPart: TimestampDecomposer.TimestampPart,
+      timestampPart: DecomposeDatetime.TimestampPart,
       level: Int): Column = {
 
     val newColumnName = DataFrame.createColumnName(columnName, timestampPart.name, level)
@@ -69,7 +69,7 @@ class TimestampDecomposer extends DOperation1To1[DataFrame, DataFrame] {
   }
 }
 
-object TimestampDecomposer {
+object DecomposeDatetime {
 
   private case class TimestampPart(name: String, start: Int, length: Int)
 

@@ -88,7 +88,7 @@ Report content example
 .. code-block:: json
 
    {
-     "name": "Evaluate Classification",
+     "name": "Evaluate Classification Report",
      "tables": {
        "summary": {
          "name": "summary",

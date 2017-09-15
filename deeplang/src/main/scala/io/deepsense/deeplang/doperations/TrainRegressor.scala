@@ -12,7 +12,7 @@ import io.deepsense.deeplang.parameters.{MultipleColumnSelection, NameColumnSele
 
 case class TrainRegressor() extends Trainer[Regressor with Trainable, Regressor with Scorable] {
   override val id: DOperation.Id = "c526714c-e7fb-11e4-b02c-1681e6b88ec1"
-  override val name = "Train regressor"
+  override val name = "Train Regressor"
 }
 
 object TrainRegressor {

@@ -1,6 +1,6 @@
 .. Copyright (c) 2015, CodiLime, Inc.
 
-Train classifier
+Train Classifier
 ================
 
 ==========

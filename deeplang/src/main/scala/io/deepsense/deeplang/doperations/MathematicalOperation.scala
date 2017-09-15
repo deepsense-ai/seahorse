@@ -14,7 +14,7 @@ import io.deepsense.deeplang.parameters.ParametersSchema
 
 class MathematicalOperation extends DOperation0To1[Transformation] {
 
-  override val name : String = "Mathematical operation"
+  override val name : String = "Mathematical Operation"
 
   override val id : Id = "ecb9bc36-5f7c-4a62-aa18-8db6e2d73251"
 

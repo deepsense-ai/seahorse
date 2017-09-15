@@ -55,7 +55,7 @@ object CatalogRecorder {
       "Saves a DataFrame to HDFS"
     )
 
-    catalog.registerDOperation[DataFrameSplitter](
+    catalog.registerDOperation[Split](
       DOperationCategories.DataManipulation,
       "Splits a DataFrame into two DataFrames"
     )
@@ -75,7 +75,7 @@ object CatalogRecorder {
       "Projects selected columns of a DataFrame"
     )
 
-    catalog.registerDOperation[TimestampDecomposer](
+    catalog.registerDOperation[DecomposeDatetime](
       DOperationCategories.DataManipulation,
       "Extracts Numeric fields (year, month, etc.) from a Timestamp"
     )

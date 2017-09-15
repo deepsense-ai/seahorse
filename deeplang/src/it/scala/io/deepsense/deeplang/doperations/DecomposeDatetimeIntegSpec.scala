@@ -17,7 +17,7 @@ import io.deepsense.deeplang.doperations.exceptions.{WrongColumnTypeException, C
 import io.deepsense.deeplang.parameters.{IndexSingleColumnSelection, NameSingleColumnSelection, SingleColumnSelection}
 import io.deepsense.deeplang.{DOperable, DOperation, DeeplangIntegTestSupport, ExecutionContext}
 
-class TimestampDecomposerIntegSpec extends DeeplangIntegTestSupport {
+class DecomposeDatetimeIntegSpec extends DeeplangIntegTestSupport {
 
   private[this] val timestampColumnName = "timestampColumn"
   private[this] val t1 = new DateTime(2015, 3, 30, 15, 25)
@@ -136,7 +136,7 @@ class TimestampDecomposerIntegSpec extends DeeplangIntegTestSupport {
       expectedData: Seq[Row],
       expectedColumnsLevel: Int): Unit = {
     val context = executionContext
-    val operation: TimestampDecomposer = operationWithParamsSet
+    val operation: DecomposeDatetime = operationWithParamsSet
     val dataFrame = context.dataFrameBuilder.buildDataFrame(schema, data)
 
     val resultDataFrame: DataFrame = executeOperation(context, operation)(dataFrame)
@@ -188,8 +188,8 @@ class TimestampDecomposerIntegSpec extends DeeplangIntegTestSupport {
 
   private def timestampDecomposer(
       columnSelection: SingleColumnSelection,
-      selectedParts: Seq[String]): TimestampDecomposer = {
-    val operation = new TimestampDecomposer
+      selectedParts: Seq[String]): DecomposeDatetime = {
+    val operation = new DecomposeDatetime
     val columnParam = operation.parameters.getSingleColumnSelectorParameter("timestampColumn")
     columnParam.value = Some(columnSelection)
     val timeUnitsParam = operation.parameters.getMultipleChoiceParameter("parts")
@@ -197,7 +197,7 @@ class TimestampDecomposerIntegSpec extends DeeplangIntegTestSupport {
     operation
   }
 
-  private def operationWithParamsSet: TimestampDecomposer = {
+  private def operationWithParamsSet: DecomposeDatetime = {
     timestampDecomposer(
       NameSingleColumnSelection(timestampColumnName),
       Seq("year", "month", "day", "hour", "minutes", "seconds"))

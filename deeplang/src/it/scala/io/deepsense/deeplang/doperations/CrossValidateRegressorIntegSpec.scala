@@ -121,7 +121,7 @@ class CrossValidateRegressorIntegSpec
     logger.debug("Cross-validation report=" + content.toJson.prettyPrint)
 
     if (effectiveNumberOfFolds > 0) {
-      val table = content.tables.get(regressor.name).get
+      val table = content.tables.get(CrossValidateRegressor.reportTableName).get
 
       // Check number of rows in report (one for every fold + one for summary)
       table.rowNames.get.length shouldBe (effectiveNumberOfFolds + 1)
