@@ -36,6 +36,17 @@ function ExperimentAPIClientFactory(BaseAPIClient) {
     return this.makeRequest(this.METHOD_GET, this.API_PATH + PATH_EXPERIMENTS + id);
   };
 
+  /**
+   * Saves experiment data.
+   *
+   * @param {object} data
+   *
+   * @return {Promise}
+   */
+  ExperimentAPIClient.prototype.saveData = function(data) {
+    return this.makeRequest(this.METHOD_PUT, this.API_PATH + PATH_EXPERIMENTS + data.id);
+  };
+
   return new ExperimentAPIClient();
 }
 

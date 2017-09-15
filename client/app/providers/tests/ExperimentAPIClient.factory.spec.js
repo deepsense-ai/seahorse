@@ -17,7 +17,7 @@ describe('ExperimentAPIClient', () => {
     require('../ExperimentAPIClient.factory.js').inject(module);
 
     angular.mock.module('test');
-    inject((_ExperimentAPIClient_) => {
+    angular.mock.inject((_ExperimentAPIClient_) => {
       ExperimentAPIClient = _ExperimentAPIClient_;
     });
   });
@@ -37,7 +37,7 @@ describe('ExperimentAPIClient', () => {
         response = {'test': true};
 
     beforeEach(() => {
-      inject(($injector) => {
+      angular.mock.inject(($injector) => {
         $httpBackend = $injector.get('$httpBackend');
         mockRequest = $httpBackend
           .when('GET', url)
@@ -120,7 +120,7 @@ describe('ExperimentAPIClient', () => {
         response = {'test': true};
 
     beforeEach(() => {
-      inject(($injector) => {
+      angular.mock.inject(($injector) => {
         $httpBackend = $injector.get('$httpBackend');
         mockRequest = $httpBackend
           .when('GET', url)
@@ -178,6 +178,94 @@ describe('ExperimentAPIClient', () => {
       $httpBackend.expectGET(url);
 
       let promise = ExperimentAPIClient.getData(id);
+      promise.then(() => {
+        success = true;
+      }).catch(() => {
+        error = true;
+      });
+
+      mockRequest.respond(500, 'Server Error');
+      $httpBackend.flush();
+
+      expect(success).toBe(false);
+      expect(error).toBe(true);
+    });
+
+  });
+
+
+  describe('should have saveData method', () => {
+    var $httpBackend,
+        mockRequest;
+
+    var id = 'experiemnt-id',
+        url = '/api/experiments/' + id,
+        data = {
+          'id': id,
+          'data': {
+            'test': true
+          }
+        };
+
+    beforeEach(() => {
+      angular.mock.inject(($injector) => {
+        $httpBackend = $injector.get('$httpBackend');
+        mockRequest = $httpBackend
+          .when('PUT', url)
+          .respond(data);
+        });
+    });
+
+    afterEach(function() {
+      $httpBackend.verifyNoOutstandingExpectation();
+      $httpBackend.verifyNoOutstandingRequest();
+    });
+
+
+    it('which is valid function', () => {
+      expect(ExperimentAPIClient.saveData).toEqual(jasmine.any(Function));
+    });
+
+    it('which return promise', () => {
+      $httpBackend.expectPUT(url);
+
+      let promise = ExperimentAPIClient.saveData(data);
+      expect(promise).toEqual(jasmine.any(Object));
+      expect(promise.then).toEqual(jasmine.any(Function));
+      expect(promise.catch).toEqual(jasmine.any(Function));
+
+      $httpBackend.flush();
+    });
+
+    it('which return promise & resolve it on request success', () => {
+      let success = false,
+          error   = false,
+          responseData;
+
+      $httpBackend.expectPUT(url);
+
+      let promise = ExperimentAPIClient.saveData(data);
+      promise.then((data) => {
+        success = true;
+        responseData = data;
+      }).catch(() => {
+        error = true;
+      });
+
+      $httpBackend.flush();
+
+      expect(success).toBe(true);
+      expect(error).toBe(false);
+      expect(responseData).toEqual(data);
+    });
+
+    it('which return promise & rejects it on request error', () => {
+      let success = false,
+          error   = false;
+
+      $httpBackend.expectPUT(url);
+
+      let promise = ExperimentAPIClient.saveData(data);
       promise.then(() => {
         success = true;
       }).catch(() => {
