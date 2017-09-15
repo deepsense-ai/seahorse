@@ -43,7 +43,8 @@ set -ex
 cd `dirname $0`"/../"
 
 # set cluster id and network name for standalone docker setup
-export CLUSTER_ID="E2E_CLUSTER_ID"
+export RUN_ID=`cat /dev/urandom | base64 | tr -dc 'a-zA-Z0-9' | head -c 10`
+export CLUSTER_ID=$RUN_ID
 export NETWORK_NAME="sbt-test-$CLUSTER_ID"
 
 export BACKEND_TAG=`git rev-parse HEAD`
@@ -60,14 +61,10 @@ SPARK_VERSION="2.0.0"
 
 ## Make sure that when job is aborted/killed all dockers will be turned off
 function cleanup {
-    $SPARK_STANDALONE_MANAGEMENT down $SPARK_VERSION
-    docker-compose -f $MESOS_SPARK_DOCKER_COMPOSE down
-    # docker-compose.py down only works when called from its dir
-    (
-      cd deployment/docker-compose
-      ./docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG logs > docker-compose.log
-      ./docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG down
-    )
+  $SPARK_STANDALONE_MANAGEMENT down $SPARK_VERSION
+  docker-compose -f $MESOS_SPARK_DOCKER_COMPOSE down
+  deployment/docker-compose/docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG -p $RUN_ID logs > docker-compose.log
+  deployment/docker-compose/docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG -p $RUN_ID down
 }
 trap cleanup EXIT
 
@@ -75,9 +72,9 @@ cleanup # in case something was already running
 
 ## Start Seahorse dockers
 
-deployment/docker-compose/docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG pull
+deployment/docker-compose/docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG -p $RUN_ID pull
 # destroy dockercompose_default, so we can recreate it with proper id
-deployment/docker-compose/docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG down
+deployment/docker-compose/docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG -p $RUN_ID down
 (
  cp jenkins/resources/a_e2etests_dev_override_build.sbt seahorse-sdk-example/a_e2etests_dev_override_build.sbt
  cd seahorse-sdk-example
@@ -86,7 +83,7 @@ deployment/docker-compose/docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG dow
  mkdir -p jars
  cp -r ../../seahorse-sdk-example/target/scala-2.11/*.jar jars
  ./docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG --generate-only --yaml-file docker-compose.yml
- ./docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG up -d
+ ./docker-compose.py -f $FRONTEND_TAG -b $BACKEND_TAG -p $RUN_ID up -d
 )
 
 ## Start Spark Standalone cluster dockers
