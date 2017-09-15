@@ -44,6 +44,10 @@ object DOperationCategories {
       object Python
         extends DOperationCategory(
           "b68164ef-253c-4e70-9b18-0316453ea61d", "Python", Custom)
+
+      object R
+        extends DOperationCategory(
+          "172d1df7-18cc-4263-8e79-9fc61b48a899", "R", Custom)
     }
 
     object FeatureConversion extends DOperationCategory(

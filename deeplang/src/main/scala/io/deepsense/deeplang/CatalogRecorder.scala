@@ -201,6 +201,9 @@ object CatalogRecorder {
     catalog.registerDOperation[PythonTransformation](
       DOperationCategories.Transformation.Custom.Python)
 
+    catalog.registerDOperation[RTransformation](
+      DOperationCategories.Transformation.Custom.R)
+
     catalog.registerDOperation[AssembleVector](
       DOperationCategories.Transformation.FeatureConversion)
 
