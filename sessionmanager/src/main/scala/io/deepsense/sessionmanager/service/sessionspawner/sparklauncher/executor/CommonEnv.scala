@@ -13,7 +13,8 @@ object CommonEnv {
             clusterConfig: ClusterDetails): Map[String, String] = Map(
     "HADOOP_USER_NAME" -> clusterConfig.hadoopUser.getOrElse("root"),
     "PYSPARK_DRIVER_PYTHON" -> config.pythonDriverBinary,
-    "PYSPARK_PYTHON" -> config.pythonExecutorBinary
+    "PYSPARK_PYTHON" -> config.pythonExecutorBinary,
+    "SPARK_LOCAL_IP" -> clusterConfig.userIP
   )
 
 }

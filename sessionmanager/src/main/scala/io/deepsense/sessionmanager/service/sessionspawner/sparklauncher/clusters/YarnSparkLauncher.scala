@@ -42,8 +42,7 @@ private [clusters] object YarnSparkLauncher {
       config: SparkLauncherConfig,
       clusterConfig: ClusterDetails) = CommonEnv(config, clusterConfig) ++ Map(
     "HADOOP_CONF_DIR" -> clusterConfig.uri,
-    "SPARK_YARN_MODE" -> "true",
-    "SPARK_LOCAL_IP" -> clusterConfig.userIP
+    "SPARK_YARN_MODE" -> "true"
   )
 
 }
