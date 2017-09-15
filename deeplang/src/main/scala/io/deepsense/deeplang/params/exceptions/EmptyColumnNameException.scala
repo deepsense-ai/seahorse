@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2016, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,9 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.params
+package io.deepsense.deeplang.params.exceptions
 
-import spray.json.DefaultJsonProtocol.StringJsonFormat
+import scala.util.matching.Regex
 
-import io.deepsense.deeplang.params.validators.{ColumnRegexValidator, Validator}
-
-case class SingleColumnCreatorParam(
-    name: String,
-    description: String)
-  extends ParamWithJsFormat[String]
-  with HasValidator[String] {
-
-  val validator: Validator[String] = new ColumnRegexValidator()
-
-  val parameterType = ParameterType.SingleColumnCreator
-
-  override def replicate(name: String): SingleColumnCreatorParam = copy(name = name)
-}
+case class EmptyColumnNameException()
+  extends ValidationException("Column name cannot be empty.")

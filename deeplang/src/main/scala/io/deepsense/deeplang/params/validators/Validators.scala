@@ -21,7 +21,8 @@ import scala.util.matching.Regex
 import spray.json.JsObject
 
 import io.deepsense.deeplang.exceptions.DeepLangException
-import io.deepsense.deeplang.params.exceptions.{OutOfRangeWithStepException, OutOfRangeException, MatchException}
+import io.deepsense.deeplang.params.exceptions.{EmptyColumnNameException,
+OutOfRangeWithStepException, OutOfRangeException, MatchException}
 
 /**
  * Validates if NumericParameter value is within range bounds.
@@ -216,3 +217,28 @@ class AcceptAllRegexValidator() extends RegexValidator(".*".r)
  * Validator which accepts a single character.
  */
 class SingleCharRegexValidator() extends RegexValidator(".".r)
+
+/**
+ * Validator which accepts a proper column name.
+ */
+class ColumnRegexValidator() extends RegexValidator(ColumnRegexValidator.regex.r) {
+  override def validate(name: String, parameter: String): Vector[DeepLangException] = {
+    if (parameter.nonEmpty) {
+      if (parameter matches regex.toString) {
+        Vector.empty
+      } else {
+        Vector(MatchException(parameter, regex))
+      }
+    } else {
+      Vector(EmptyColumnNameException())
+    }
+  }
+}
+
+object ColumnRegexValidator {
+  /**
+   * Cannot be empty and without backticks.
+   * Column with a bactick character fails in some operations (e.g. Convert Type).
+   */
+  val regex = "[^`]+"
+}
