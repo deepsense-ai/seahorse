@@ -28,6 +28,7 @@ Library    ../lib/WorkflowExecutorClient.py
 
 *** Test Cases ***
 Read Write Oracle
+    [Tags]    InvalidTest
     ${dir} =    Set Variable    resources/oracleTests/readWriteOracle/
     Run Keyword And Ignore Error    Execute Sql String    DROP TABLE read_write_in
     Run Keyword And Ignore Error    Execute Sql String    DROP TABLE read_write_out
