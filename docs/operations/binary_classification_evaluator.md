@@ -8,6 +8,37 @@ includeOperationsMenu: true
 ---
 Creates a binary classification evaluator.
 
+## Available Metrics
+
+### `Area under ROC`
+Receiver operating characteristic (ROC), or ROC curve, is a graphical plot that illustrates
+the performance of a binary classifier system as its discrimination threshold is varied.
+For more details, view
+<a target="_blank" href="https://en.wikipedia.org/wiki/Receiver_operating_characteristic">Wikipedia article</a>.
+
+### `Area under PR`
+Typically, Precision and Recall are inversely related,
+but when a balance between these two metrics needs to be achieved,
+the area under precision-recall curve could be used.
+For more details, view
+<a target="_blank" href="https://en.wikipedia.org/wiki/Precision_and_recall">Wikipedia article</a>.
+
+### `Precision`
+Precision (also called positive predictive value) is the fraction of retrieved instances that are relevant.
+For more details, view
+<a target="_blank" href="https://en.wikipedia.org/wiki/Precision_and_recall">Wikipedia article</a>.
+
+### `Recall`
+Recall (also known as sensitivity) is the fraction of relevant instances that are retrieved.
+For more details, view
+<a target="_blank" href="https://en.wikipedia.org/wiki/Precision_and_recall">Wikipedia article</a>.
+
+### `F1 Score`
+F1 score (also F-score or F-measure) is a measure of a test's accuracy.
+It considers both precision and recall of the test to compute the score.
+For more details, view
+<a target="_blank" href="https://en.wikipedia.org/wiki/F1_score">Wikipedia article</a>.
+
 
 **Since**: Seahorse 1.0.0
 
