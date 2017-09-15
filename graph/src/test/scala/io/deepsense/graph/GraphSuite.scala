@@ -13,6 +13,7 @@ import org.scalatest.{FunSuite, Matchers}
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
+import io.deepsense.deeplang.parameters.ParametersSchema
 import io.deepsense.graph.Node.State.Status
 
 object DClassesForDOperations {
@@ -30,18 +31,22 @@ object DOperationTestClasses {
 
   class DOperation0To1Test extends DOperation0To1[A1] {
     override protected def _execute(context: ExecutionContext)(): A1 = ???
+    override val parameters: ParametersSchema = ParametersSchema()
   }
 
   class DOperation1To0Test extends DOperation1To0[A1] {
     override protected def _execute(context: ExecutionContext)(t0: A1): Unit = ???
+    override val parameters: ParametersSchema = ParametersSchema()
   }
 
   class DOperation1To1Test extends DOperation1To1[A1, A] {
     override protected def _execute(context: ExecutionContext)(t1: A1): A = ???
+    override val parameters: ParametersSchema = ParametersSchema()
   }
 
   class DOperation2To1Test extends DOperation2To1[A1, A2, A] {
     override protected def _execute(context: ExecutionContext)(t1: A1, t2: A2): A = ???
+    override val parameters: ParametersSchema = ParametersSchema()
   }
 }
 

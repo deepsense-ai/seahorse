@@ -18,7 +18,7 @@ import io.deepsense.deeplang.parameters.ParametersSchema
 abstract class DOperation extends Serializable {
   val inArity: Int
   val outArity: Int
-  var parameters: ParametersSchema = _
+  val parameters: ParametersSchema
 
   def inPortTypes: Vector[ru.TypeTag[_]]
 

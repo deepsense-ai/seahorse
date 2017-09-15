@@ -15,7 +15,8 @@ import io.deepsense.deeplang.parameters.exceptions.NoSuchParameterException
  * Schema for a given set of DOperation parameters
  * Holds Parameters that are passed to DOperation.
  */
-class ParametersSchema protected (schemaMap: Map[String, Parameter] = Map.empty) {
+class ParametersSchema protected (schemaMap: Map[String, Parameter] = Map.empty)
+  extends Serializable {
 
   def validate: Unit = schemaMap.values.foreach(_.validate)
 

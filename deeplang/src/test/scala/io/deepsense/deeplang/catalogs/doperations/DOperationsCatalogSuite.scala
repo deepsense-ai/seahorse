@@ -12,6 +12,7 @@ import org.scalatest.{FunSuite, Matchers}
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperations.exceptions._
+import io.deepsense.deeplang.parameters.ParametersSchema
 
 object DOperationCatalogTestResources {
   object CategoryTree {
@@ -55,16 +56,19 @@ object DOperationCatalogTestResources {
   case class DOperationA() extends DOperationMock {
     override val inArity: Int = 2
     override val outArity: Int = 3
+    override val parameters: ParametersSchema = ParametersSchema()
   }
 
   case class DOperationB() extends DOperationMock {
     override val inArity: Int = 1
     override val outArity: Int = 2
+    override val parameters: ParametersSchema = ParametersSchema()
   }
 
   case class DOperationC() extends DOperationMock {
     override val inArity: Int = 0
     override val outArity: Int = 1
+    override val parameters: ParametersSchema = ParametersSchema()
   }
 
   case class DOperationD() extends DOperationMock {
@@ -72,11 +76,13 @@ object DOperationCatalogTestResources {
     override val outArity: Int = 1
     override val inPortTypes: Vector[TypeTag[_]] = Vector(XTypeTag, YTypeTag)
     override val outPortTypes: Vector[TypeTag[_]] = Vector(XTypeTag)
+    override val parameters: ParametersSchema = ParametersSchema()
   }
 
   case class DOperationWithoutParameterlessConstructor(x: Int) extends DOperationMock {
     override val inArity: Int = 2
     override val outArity: Int = 3
+    override val parameters: ParametersSchema = ParametersSchema()
   }
 }
 
