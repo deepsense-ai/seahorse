@@ -11,7 +11,7 @@
   apt: package=build-essential state=latest
 
 - name: Install jekyll
-  gem: name=jekyll state=latest
+  gem: name=jekyll version=2.5.3
 
 - name: Install therubyracer
   gem: name=therubyracer state=latest
