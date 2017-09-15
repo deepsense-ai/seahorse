@@ -31,7 +31,7 @@ services:
       - MQ_USER=guest
       - MQ_PASS=guest
       - SOCKETS_ADDRESS=http://localhost:15674/
-      - NOTEBOOKS_HOST=http://localhost:8890/jupyter
+      - NOTEBOOKS_HOST=http://localhost:9999/jupyter
     ports:
       - "80:80"
     depends_on:
@@ -42,3 +42,15 @@ services:
      - "15674:15674"
      - "15672:15672"
      - "5672:5672"
+  notebooks:
+    image: docker-registry.intra.codilime.com/tap/deepsense-notebooks
+    links:
+      - workflowmanager
+    ports:
+      - "9999:8888"
+    environment:
+      - WM_URL=http://workflowmanager:9080
+      - MQ_HOST=rabbitmq
+      - MQ_PORT=5672
+    depends_on:
+      - rabbitmq

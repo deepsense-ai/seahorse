@@ -11,7 +11,6 @@ from traitlets import Type
 
 from rabbit_mq_client import RabbitMQClient, RabbitMQJsonSender, RabbitMQJsonReceiver
 from socket_forwarder import SocketForwarder
-from notebook_server_client import NotebookServerClient
 from utils import debug
 
 
@@ -50,12 +49,10 @@ class ExecutingKernel(IPythonKernel):
 
     def _init_kernel(self):
         mq_host, mq_port = self._rabbit_mq_address
-        nb_host, nb_port = self._notebook_server_address
         gateway_host, gateway_port = self._gateway_address
         kernel_init_file = os.path.join(os.getcwd(), "executing_kernel/kernel_init.py")
 
-        nb_client = NotebookServerClient(nb_host, nb_port, self._kernel_id)
-        workflow_id, node_id, port_number = nb_client.extract_dataframe_source()
+        workflow_id, node_id, port_number = self._dataframe_source
 
         self._execute_code('kernel_id = "{}"'.format(self._kernel_id))
         self._execute_code('workflow_id = "{}"'.format(workflow_id))
@@ -69,8 +66,6 @@ class ExecutingKernel(IPythonKernel):
         self._execute_code('gateway_port = {}'.format(gateway_port))
         self._execute_code('mq_address = "{}"'.format(mq_host))
         self._execute_code('mq_port = {}'.format(mq_port))
-        self._execute_code('notebook_server_address = "{}"'.format(nb_host))
-        self._execute_code('notebook_server_port = {}'.format(nb_port))
         self._execute_code(open(kernel_init_file, "r").read())
 
     def _send_zmq_forward_to_rabbit(self, stream_name, message):
@@ -113,6 +108,20 @@ class ExecutingKernel(IPythonKernel):
         return argv[argv.index(arg_name) + 1]
 
     @property
+    def _dataframe_source(self):
+        def value_or_none(f):
+            try:
+                return f()
+            except ValueError:
+                return None
+
+        workflow_id = self._extract_argument(self.parent.argv, '--workflow-id')
+        node_id = value_or_none(lambda: self._extract_argument(self.parent.argv, '--node-id'))
+        port_number = value_or_none(lambda: int(self._extract_argument(self.parent.argv, '--port-number')))
+
+        return workflow_id, node_id, port_number
+
+    @property
     def _kernel_id(self):
         return self._extract_argument(self.parent.argv, '--kernel-id')
 
@@ -130,12 +139,6 @@ class ExecutingKernel(IPythonKernel):
     def _rabbit_mq_address(self):
         host = self._extract_argument(self.parent.argv, '--mq-host')
         port = self._extract_argument(self.parent.argv, '--mq-port')
-        return host, int(port)
-
-    @property
-    def _notebook_server_address(self):
-        host = self._extract_argument(self.parent.argv, '--nb-host')
-        port = self._extract_argument(self.parent.argv, '--nb-port')
         return host, int(port)
 
     def _init_rabbit_clients(self):

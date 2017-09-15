@@ -10,16 +10,20 @@ class NotebookServerClient(object):
         self._nb_host = nb_host
         self._nb_port = nb_port
         self._kernel_id = kernel_id
+        self._notebook_server_location = "{}:{}".format(self._nb_host, self._nb_port)
 
     def extract_dataframe_source(self):
-        notebook_server_location = "{}:{}".format(self._nb_host, self._nb_port)
-        response = urlopen("http://" + notebook_server_location + "/jupyter/api/sessions").read()
+        response = urlopen("http://" + self._notebook_server_location + "/jupyter/api/sessions").read()
         sessions = json.loads(response)
         for session in sessions:
             if session['kernel']['id'] == self._kernel_id:
                 return self._extract_dataframe_source_from_path(session['notebook']['path'])
 
         raise Exception('Workflow matching kernel ID ' + self._kernel_id + 'was not found.')
+
+    def restart_kernel(self):
+        # 'data' specified to make it a POST request
+        urlopen("http://{}/jupyter/api/kernels/{}/restart".format(self._notebook_server_location, self._kernel_id), "")
 
     @staticmethod
     def _extract_dataframe_source_from_path(notebook_id):

@@ -1,4 +1,4 @@
-FROM jupyter/minimal-notebook
+FROM jupyter/minimal-notebook:2d878db5cbff
 
 USER root
 

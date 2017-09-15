@@ -14,9 +14,11 @@ from ipykernel.kernelapp import IPKernelApp
 from traitlets import Type
 
 from rabbit_mq_client import RabbitMQClient, RabbitMQJsonSender, RabbitMQJsonReceiver
+from ready_handler import ReadyHandler
 from socket_forwarder import SocketForwarder, ToZmqSocketForwarder
 from notebook_server_client import NotebookServerClient
 from utils import debug
+
 
 RABBIT_MQ_ADDRESS = None
 
@@ -47,7 +49,7 @@ class ForwardingKernel(IPythonKernel):
         self.parent = parent
 
         nb_client = NotebookServerClient("localhost", 8888, self._kernel_id)
-        self._session_id, _, _ = nb_client.extract_dataframe_source()
+        self._session_id, self._node_id, self._port_number = nb_client.extract_dataframe_source()
 
         es, ms, rl = self._init_rabbit_clients(RABBIT_MQ_ADDRESS)
         self._rabbit_execution_sender_client = es
@@ -55,6 +57,10 @@ class ForwardingKernel(IPythonKernel):
         self._rabbit_listener = rl
 
         self._socket_forwarders = self._init_socket_forwarders()
+
+        mq_address, mq_port = RABBIT_MQ_ADDRESS
+        self._ready_handler = ReadyHandler([mq_address, mq_port])
+        self._ready_handler.handle_ready(nb_client.restart_kernel)
 
     def _init_rabbit_clients(self, rabbit_mq_address):
         rabbit_client = RabbitMQClient(address=rabbit_mq_address, exchange=self.EXCHANGE)
@@ -110,7 +116,9 @@ class ForwardingKernel(IPythonKernel):
         self._rabbit_management_sender_client.send({
             'type': 'start_kernel',
             'kernel_id': self._kernel_id,
-            'signature_key': self._signature_key
+            'signature_key': self._signature_key,
+            'node_id': self._node_id,
+            'port_number': self._port_number
         })
 
         self._rabbit_listener.subscribe(topic=self.EXECUTION_SUBSCRIPTION_TOPIC.format(kernel_id=self._kernel_id),

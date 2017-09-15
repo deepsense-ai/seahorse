@@ -6,15 +6,7 @@ from pyspark.sql import SQLContext
 from pyspark.sql import DataFrame
 from py4j.java_gateway import JavaGateway, GatewayClient, java_import
 from py4j.protocol import Py4JJavaError
-from ready_handler import ReadyHandler
 import urllib2
-
-def restart_kernel():
-    urllib2.urlopen("http://{}:{}/jupyter/api/kernels/{}/restart".format(
-        notebook_server_address, notebook_server_port, kernel_id), "")
-
-ready_handler = ReadyHandler([mq_address, mq_port])
-ready_handler.handle_ready(restart_kernel)
 
 # gateway_address and gateway_port are set in the kernel
 gateway = JavaGateway(

@@ -74,33 +74,44 @@ class ExecutingKernelManager(object):
             return
 
         if message['type'] == 'start_kernel':
+            node_id = message['node_id'] if 'node_id' in message else None
+            port_number = message['port_number'] if 'port_number' in message else None
             self.start_kernel(kernel_id=message['kernel_id'],
-                              signature_key=message['signature_key'])
+                              signature_key=message['signature_key'],
+                              node_id=node_id,
+                              port_number=port_number)
 
         elif message['type'] == 'shutdown_kernel':
             self.shutdown_kernel(kernel_id=message['kernel_id'])
 
-    def start_kernel(self, kernel_id, signature_key):
+    def start_kernel(self, kernel_id, signature_key, node_id, port_number):
         debug('ExecutingKernelManager::start_kernel: kernel_id {}, signature key {}'.format(kernel_id, signature_key))
 
         if kernel_id in self._multi_kernel_manager.list_kernel_ids():
             debug('ExecutingKernelManager::start_kernel: kernel_id {}. Shutting down before restart.'.format(kernel_id))
             self._multi_kernel_manager.shutdown_kernel(kernel_id, now=True)
 
+        extra_arguments = ['--',
+                           '--signature-key', signature_key,
+                           '--kernel-id', kernel_id,
+                           '--gateway-host', self._gateway_address[0],
+                           '--gateway-port', str(self._gateway_address[1]),
+                           '--mq-host', self._rabbit_mq_address[0],
+                           '--mq-port', str(self._rabbit_mq_address[1]),
+                           '--workflow-id', self._workflow_id
+                           ]
+
+        if node_id is not None:
+            extra_arguments.extend(['--node-id', node_id])
+
+        if port_number is not None:
+            extra_arguments.extend(['--port-number', str(port_number)])
+
+        debug('ExecutingKernelManager::start_kernel: extra_arguments = {}'.format(extra_arguments))
+
         self._multi_kernel_manager.start_kernel(kernel_name=self.EXECUTING_KERNEL_NAME,
                                                 kernel_id=kernel_id,
-                                                extra_arguments=[
-                                                    '--',
-                                                    '--signature-key', signature_key,
-                                                    '--kernel-id', kernel_id,
-                                                    '--gateway-host', self._gateway_address[0],
-                                                    '--gateway-port', str(self._gateway_address[1]),
-                                                    '--mq-host', self._rabbit_mq_address[0],
-                                                    '--mq-port', str(self._rabbit_mq_address[1]),
-                                                    # FIXME hack, but will work on TAP
-                                                    '--nb-host', self._rabbit_mq_address[0],
-                                                    '--nb-port', "8888"
-                                                ])
+                                                extra_arguments=extra_arguments)
 
     def shutdown_kernel(self, kernel_id):
         debug('ExecutingKernelManager::shutdown_kernel: kernel_id {}'.format(kernel_id))
