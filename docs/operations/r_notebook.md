@@ -72,3 +72,57 @@ plot(1:length(ratio), ratio, xlab="index", ylab="ratio")
 ## Output
 
 The `R Notebook` operation does not produce any output.
+
+## Parameters
+
+<table class="table">
+  <thead>
+    <tr>
+      <th style="width:20%">Name</th>
+      <th style="width:25%">Type</th>
+      <th style="width:55%">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <code>execute notebook</code>
+      </td>
+      <td>
+        <code><a href="../parameter_types.html#boolean">Boolean</a></code>
+      </td>
+      <td>
+        If <code>true</code> then notebook code will be run on notebook
+        node execution. In batch mode notebook will never be executed,
+        no matter what parameter value will be.
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <code>send e-mail report</code>
+      </td>
+      <td>
+        <code><a href="../parameter_types.html#boolean">Boolean</a></code>
+      </td>
+      <td>Appears only if <code>execute notebook = true</code>.
+        If <code>true</code> then notebook result will be sent via e-mail.
+        Field with e-mail address must be filled.
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <code>e-mail address</code>
+      </td>
+      <td>
+        <code><a href="../parameter_types.html#string">String</a></code>
+      </td>
+      <td> Appears only if <code>send e-mail report = true</code>.
+      E-mail address where html with notebook execution result
+      should be sent to.
+      </td>
+    </tr>
+
+  </tbody>
+</table>
