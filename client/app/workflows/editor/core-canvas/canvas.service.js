@@ -37,17 +37,10 @@ class CanvasService {
     this.$slidingWindow = $(slidingWindow);
     this.AdapterService.initialize(jsPlumbContainer);
     this.$rootScope.$watch(() => this.getWindowSize(), (newValue, oldValue) => {
-      const heightDelta = newValue.height - oldValue.height;
-      const widthDelta = newValue.width - oldValue.width;
-      let ratio;
-      if (widthDelta && Math.abs(heightDelta) > Math.abs(widthDelta)) {
-        ratio = widthDelta / newValue.width * this.scale;
-      } else {
-        ratio = heightDelta / newValue.height * this.scale;
+      if (newValue !== oldValue) {
+        this.fit();
+        this.slidingWindowSize = this.getWindowSize();
       }
-      this.centerZoom(ratio);
-      this.moveWindow(widthDelta / 2, heightDelta / 2);
-      this.slidingWindowSize = this.getWindowSize();
     }, true); // deep
 
     this.setZoom(1);
