@@ -60,8 +60,6 @@ addCommandAlias("ds-it",
     ";workflowexecutor/it:test" +
     ";workflowexecutormqprotocol/it:test")
 
-addCommandAlias("sPublish", "aetherDeploy")
-addCommandAlias("sPublishLocal", "aetherInstall")
 addCommandAlias("generateExamples", "deeplang/it:testOnly io.deepsense.deeplang.doperations.examples.*")
 
 // scalastyle:on

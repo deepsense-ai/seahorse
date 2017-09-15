@@ -30,9 +30,6 @@ addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.13.0")
 // Plugin provides build info to use in code
 addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.4.0")
 
-// Plugins allows publish snapshots in a maven manner
-addSbtPlugin("no.arktekk.sbt" % "aether-deploy" % "0.15")
-
 addSbtPlugin("com.typesafe.sbt" % "sbt-license-report" % "1.2.0")
 
 logLevel := Level.Warn

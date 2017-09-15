@@ -52,11 +52,7 @@ object CommonSettingsPlugin extends AutoPlugin {
     test <<= test in Test
   ) ++ Seq(
     publishTo := {
-      val url = artifactoryUrl.value
-      if (isSnapshot.value)
-        Some("snapshots" at url + "deepsense-seahorse-snapshot")
-      else
-        Some("releases" at url + "deepsense-seahorse-release")
+      Some(Resolver.file("ds-workflow-executor-ivy-repo",  new File( "./target/ds-workflow-executor-ivy-repo" )))
     },
     credentials += Credentials(Path.userHome / ".artifactory_credentials")
   )
