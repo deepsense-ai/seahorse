@@ -6,10 +6,36 @@ title: Seahorse Overview
 description: Seahorse Overview
 ---
 
-### Introduction
+**Table of Contents**
 
-Seahorse is a data analytics platform that defines a new way to create
-<a target="_blank" href="https://spark.apache.org/">Apache Spark</a> applications.
+* Table of Contents
+{:toc}
+
+#### Introduction
+
+Seahorse is a powerful visual editor allowing you to create
+<a target="_blank" href="https://spark.apache.org/">Apache Spark</a> applications
+in a fast, simple and interactive way. Creating Apache Spark applications
+with Seahorse is as easy as drag and dropping operations. All while
+connected to any cluster (YARN, Mesos, Spark Standalone) or to a bundled local Spark.
+
+<div class="centered-container spacer" markdown="1">
+  <img src="img/seahorse_editor.png"
+    class="centered-image img-responsive spacer" style="width:90%"/>
+  *Seahorse's interface*
+</div>
+
+#### A Glimpse of Seahorse's Features
+
+* Create Apache Spark application in a visual way using web-based editor.
+* Connect to any cluster (YARN, Mesos, Spark Standalone) out of a box or use bundled local Spark.
+* Use Seahorse Library to easily work with local files and the cluster.
+* Use Spark's machine learning algorithms.
+* Define custom operations with Python or R.
+* Explore data with Jupyter notebook using Python or R from within Seahorse.
+* Export workflow and run it as batch Apache Spark application using our Seahorse Batch Workflow Executor.
+
+#### About the Product
 
 Using Seahorse, you can solve complex problems in the areas of machine learning and ETL (Extract,
 Transform and Load) without knowing Spark's internals. It provides tools to tackle real world
@@ -23,7 +49,8 @@ What’s important, while promoting a code-free working style, Seahorse does not
 predefined set of actions. Whenever the user encounters a necessity to include a non-standard action
 in their application - something that is not covered by Seahorse's palette of operations - they are
 free to write their own transformations in
-<a target="_blank" href="https://www.python.org/">Python</a>.
+<a target="_blank" href="https://www.python.org/">Python</a>
+and <a target="_blank" href="https://www.r-project.org/">R</a>.
 
 Seahorse offers a web-based interface that presents a Spark application as a graph of operations -
 a workflow. A typical Seahorse session consists of three alternating phases: adding operations
@@ -31,38 +58,14 @@ to the workflow, executing the part of it that's already been created and explor
 of the execution. This establishes an interactive process during which the user is able to track
 what happens at each step.
 
-<div class="centered-container" markdown="1">
-  ![Seahorse Overview](img/seahorse_overview.png){: .centered-image .img-responsive}
-</div>
-
 Finally, after the workflow has been constructed, it can be exported and deployed as a typical Spark
 application on production clusters.
 
-### A Glimpse of Seahorse's Features
+#### Learn More
 
-Here's a quick look at Seahorse's main view: the palette of operations and the workflow. The user
-builds an application by dragging operations onto the canvas and defining connections between them.
-Each operation is configurable via its parameters.
-
-<div class="centered-container spacer" markdown="1">
-  <img src="img/seahorse_editor.png"
-    class="centered-image img-responsive spacer" style="width:90%"/>
-  *Seahorse's interface*
-</div>
-
-Having the newest version of Spark as its backend, Seahorse offers dozens of machine learning
-algorithms and data transformations. On top of that, the user is able to define their own
-transformations either visually or by embedding arbitrary code in the workflow.
-
-Besides delivering a wide selection of operations, Seahorse’s primary focus is to keep the user
-in touch with the data they’re operating on. This ambition is what drove the design of the interface
-and functionality. In particular, whenever an operation outputs a data set, the user can either
-examine its sample or explore it in more depth using a fully functional
-<a target="_blank" href="https://jupyter.org/">Jupyter notebook</a>.
-
-Constructing a workflow is the first of two steps in the process of developing an application.
-The second is deploying the application into a production environment. Seahorse makes this
-effortless: once an application is complete, it can be exported and run on user's cluster.
+* [Getting Started](./getting_started.html)
+* [Seahorse Operations List](./operations.html)
+* [Example Use Case - Text Message Spam Detection](./casestudies/text_message_spam_detection.html)
 
 <div class="contact-block">
 	<div class="contact-info">
