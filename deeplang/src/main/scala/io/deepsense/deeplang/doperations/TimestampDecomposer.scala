@@ -10,7 +10,7 @@ import org.apache.spark.sql
 import org.apache.spark.sql.types.{IntegerType, StructType}
 import org.apache.spark.sql.{Column, ColumnName}
 
-import io.deepsense.deeplang.dataframe.{DataFrame, DataFrameUtils}
+import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameUtils}
 import io.deepsense.deeplang.doperations.TimestampDecomposer.{timeUnits, timestampColumnParamKey, timestampParts, timestampPartsParamKey}
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{DOperation, DOperation1To1, ExecutionContext}

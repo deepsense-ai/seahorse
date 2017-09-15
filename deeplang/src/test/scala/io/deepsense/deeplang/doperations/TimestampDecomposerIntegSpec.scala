@@ -14,7 +14,7 @@ import org.apache.spark.sql.catalyst.expressions.GenericRowWithSchema
 import org.apache.spark.sql.types._
 import org.joda.time.DateTime
 
-import io.deepsense.deeplang.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.parameters.NameSingleColumnSelection
 import io.deepsense.deeplang.{DOperable, DOperation, ExecutionContext, SparkIntegTestSupport}
 

@@ -15,7 +15,7 @@ import org.apache.spark.sql.types._
 import org.joda.time.DateTime
 import org.scalatest.BeforeAndAfter
 
-import io.deepsense.deeplang.dataframe.{DataFrame, DataFrameBuilder}
+import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.deeplang.{DOperable, SparkIntegTestSupport}
 
 class ReadDataFrameIntegSpec extends SparkIntegTestSupport with BeforeAndAfter with LazyLogging {

@@ -1,4 +1,4 @@
-package io.deepsense.deeplang.dataframe
+package io.deepsense.deeplang.doperables.dataframe
 
 object DataFrameUtils {
 

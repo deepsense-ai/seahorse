@@ -14,7 +14,7 @@ import org.apache.spark.sql.{Row, SQLContext}
 import org.apache.spark.{SparkConf, SparkContext}
 import org.scalatest.BeforeAndAfterAll
 
-import io.deepsense.deeplang.dataframe.{DataFrame, DataFrameBuilder}
+import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 
 /**
  * Adds features to aid integration testing using spark

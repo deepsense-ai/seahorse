@@ -22,7 +22,7 @@ import org.apache.hadoop.yarn.conf.YarnConfiguration
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.{SparkConf, SparkContext}
 
-import io.deepsense.deeplang.dataframe.DataFrameBuilder
+import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
 import io.deepsense.graph.{Graph, Status}
 import io.deepsense.graphexecutor.protocol.GraphExecutorAvroRpcProtocol

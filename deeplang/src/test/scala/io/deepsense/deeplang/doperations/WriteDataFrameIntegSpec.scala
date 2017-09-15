@@ -14,7 +14,7 @@ import org.apache.spark.sql.types._
 import org.joda.time.DateTime
 import org.scalatest.BeforeAndAfter
 
-import io.deepsense.deeplang.dataframe.DataFrameBuilder
+import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.{DOperable, SparkIntegTestSupport}
 
 class WriteDataFrameIntegSpec extends SparkIntegTestSupport with BeforeAndAfter {

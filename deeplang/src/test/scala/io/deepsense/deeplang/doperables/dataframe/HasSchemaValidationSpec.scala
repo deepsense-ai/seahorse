@@ -4,7 +4,7 @@
  * Owner: Rafal Hryciuk
  */
 
-package io.deepsense.deeplang.dataframe
+package io.deepsense.deeplang.doperables.dataframe
 
 import io.deepsense.deeplang.UnitSpec
 import org.apache.spark.sql.types._

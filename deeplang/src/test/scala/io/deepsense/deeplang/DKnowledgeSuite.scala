@@ -8,7 +8,7 @@ package io.deepsense.deeplang
 
 import scala.reflect.runtime.{universe => ru}
 
-import org.scalatest.FunSuite
+import org.scalatest.{FunSuite, Matchers}
 
 object ClassesForDKnowledge {
   trait A extends DOperable
@@ -19,7 +19,7 @@ object ClassesForDKnowledge {
   case class B2(i: Int) extends B
 }
 
-class DKnowledgeSuite extends FunSuite {
+class DKnowledgeSuite extends FunSuite with Matchers {
 
   test("DKnowledge[DOperable] with same content are equal") {
     case class A(i: Int) extends DOperable
@@ -27,7 +27,7 @@ class DKnowledgeSuite extends FunSuite {
 
     val knowledge1 = DKnowledge(A(1), B(2), A(3))
     val knowledge2 = DKnowledge(A(1), A(3), B(2), A(1))
-    assert(knowledge1 == knowledge2)
+    knowledge1 shouldBe knowledge2
   }
 
   test("DKnowledge[_] objects with same content are equal") {
@@ -41,7 +41,8 @@ class DKnowledgeSuite extends FunSuite {
 
     val knowledge1: DKnowledge[A] = DKnowledge(new A)
     val knowledge2: DKnowledge[B] = DKnowledge(new B)
-    assert(knowledge1 == knowledge2)
+
+    knowledge1 shouldBe knowledge2
   }
 
   test("DKnowledge with different content are not equal") {
@@ -49,12 +50,31 @@ class DKnowledgeSuite extends FunSuite {
 
     val knowledge1 = DKnowledge(A(1))
     val knowledge2 = DKnowledge(A(2))
-    assert(knowledge1 != knowledge2)
+    knowledge1 shouldNot be (knowledge2)
   }
 
   test("DKnowledge can intersect internal knowledge with external types") {
     import ClassesForDKnowledge._
-    val knowledge = DKnowledge(A1(1), new A2(2), new B1(1), new B2(2))
-    assert(knowledge.filterTypes(ru.typeOf[A]) == DKnowledge(new A1(1), new A2(2)))
+    val knowledge = DKnowledge(A1(1), A2(2), B1(1), B2(2))
+    knowledge.filterTypes(ru.typeOf[A]) shouldBe DKnowledge(A1(1), A2(2))
+  }
+
+  test("Sum of two DKnowledges is sum of their types") {
+    import ClassesForDKnowledge._
+    val knowledge1 = DKnowledge[A](A1(1), A2(2))
+    val knowledge2 = DKnowledge[B](B1(1), B2(2))
+    val expectedKnowledgeSum = DKnowledge[DOperable](A1(1), A2(2), B1(1), B2(2))
+    val actualKnowledgeSum = knowledge1 ++ knowledge2
+
+    actualKnowledgeSum shouldBe expectedKnowledgeSum
+    assert(actualKnowledgeSum.isInstanceOf[DKnowledge[DOperable]])
+  }
+
+  test("DKnowledge can be constructed of traversable of DKnowledges") {
+    import ClassesForDKnowledge._
+    val knowledge1 = DKnowledge[A](A1(1))
+    val knowledge2 = DKnowledge[A](A2(2))
+    val knowledgeSum = DKnowledge(A1(1), A2(2))
+    DKnowledge(Traversable(knowledge1, knowledge2)) shouldBe knowledgeSum
   }
 }
