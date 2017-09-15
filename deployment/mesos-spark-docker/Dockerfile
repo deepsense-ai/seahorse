@@ -26,6 +26,8 @@ RUN wget http://archive.apache.org/dist/mesos/${MESOS_VERSION}/${MESOS_ARTIFACT_
   && cd build \
   && ../configure \
   && make -j 6 \
-  && make install
+  && make install \
+  && cd ../.. \
+  && rm -rf mesos-${MESOS_VERSION} ${MESOS_ARTIFACT_FILENAME}
 
 RUN ln -s /usr/local/lib/libmesos-1.0.0.so /usr/lib/libmesos.so
