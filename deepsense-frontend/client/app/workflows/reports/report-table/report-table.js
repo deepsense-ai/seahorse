@@ -12,13 +12,23 @@ function ReportTable() {
       'distributions': '=',
       'datatypesVisible': '=?'
     },
-    controller: function($scope, $rootScope) {
+    controller: function($scope, $rootScope, $filter) {
+      let columnTypes = [];
+
       $scope.reportWidth = window.innerWidth / 2;
-      $scope.maxLength = $scope.reportWidth / $scope.table.columnNames.length;
+      const maxLength = $scope.reportWidth / $scope.table.columnNames.length;
+      const map = {};
+
+      $scope.table.columnNames.forEach((name) => {
+        const indexOfColumn = $scope.table.columnNames.indexOf(name);
+        const columnType = $scope.table.columnTypes[indexOfColumn];
+        map[name] = columnType;
+        columnTypes[indexOfColumn] = columnType;
+      });
 
       $scope.getColumnType = (columnName) => {
         // Not using zip to avoid object allocation every digest cycle.
-        let indexOfColumn = $scope.table.columnNames.indexOf(columnName);
+        const indexOfColumn = $scope.table.columnNames.indexOf(columnName);
         return $scope.table.columnTypes[indexOfColumn];
       };
 
@@ -28,15 +38,24 @@ function ReportTable() {
 
       $scope.isLongEnoughToBeCutOff = (value) => {
         if (value) {
-          return value.length > $scope.maxLength;
+          return value.length > maxLength;
         }
         return false;
+      };
+
+      $scope.shortenValues = (value, index) => {
+        if (columnTypes[index] === 'numeric') {
+          return $filter('precision')(value);
+        }
+        return $filter('cut')(value, true, maxLength, ' ...');
       };
 
       this.showDistribution = (columnName) => {
         if ($scope.getDistributionType(columnName)) {
           $rootScope.$broadcast(REPORT_EVENTS.SELECT_COLUMN, {
-            colName: columnName
+            colName: columnName,
+            colType: $scope.getColumnType(columnName),
+            colTypesMap: map
           });
         }
       };

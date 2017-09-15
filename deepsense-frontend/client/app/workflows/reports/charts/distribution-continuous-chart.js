@@ -6,7 +6,8 @@ function DistributionContinuousChart() {
     templateUrl: 'app/workflows/reports/charts/distribution-continuous-chart.html',
     replace: true,
     scope: {
-      'data': '='
+      data: '=',
+      columnType: '='
     },
     controller: function() {
       _.assign(this, {

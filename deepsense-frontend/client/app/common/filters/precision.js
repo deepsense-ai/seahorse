@@ -2,7 +2,7 @@
 
 function removeTrailingZeros (str) {
   // if no decimal or scientific notation used, return unchanged
-  if (!_.includes(str, '.') || _.includes(str, 'e')) {
+  if (!_.includes(str, '.') || _.includes(str, 'e') || _.includes(str, 'E')) {
     return str;
   }
   //  remove trailing zeros

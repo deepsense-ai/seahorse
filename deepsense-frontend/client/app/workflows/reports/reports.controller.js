@@ -6,7 +6,7 @@ var EVENTS = {
 };
 
 /* @ngInject */
-function ReportCtrl($scope, $rootScope, $timeout, $uibModal, BottomBarService) {
+function ReportCtrl($scope, $uibModal, BottomBarService) {
   let that = this;
   let internal = {};
   let obj = {};
@@ -69,25 +69,38 @@ function ReportCtrl($scope, $rootScope, $timeout, $uibModal, BottomBarService) {
 
   $scope.$on(EVENTS.SELECT_COLUMN, function(event, data) {
     let distObject = that.getDistributionObject(data.colName);
+    let colType = data.colType;
+    let colTypesMap = data.colTypesMap;
 
     if (!_.isUndefined(distObject)) {
       $uibModal.open({
         size: 'lg',
         templateUrl: 'app/workflows/reports/report-chart-panel.html',
         /* @ngInject */
-        controller: function($scope, $uibModalInstance) {
+        controller: function($scope, $uibModalInstance, $filter) {
           _.assign(this, {
             close: () => {
               $uibModalInstance.close();
             },
+            colType: colType,
             distObject: distObject,
             columnNames: _.keys(that.currentReport.distributions),
-            selectedColumn: distObject.name
+            selectedColumn: distObject.name,
+            shortenValues: (value) => {
+              if (this.colType === 'numeric') {
+                return $filter('precision')(value);
+              } else if (this.colType === 'timestamp') {
+                return moment(new Date(value)).format('YYYY-MM-DD HH:mm:ss')
+              }
+              return value;
+            }
           });
 
           $scope.$watch('graphModal.selectedColumn', (newValue, oldValue) => {
             if (newValue !== oldValue) {
               this.distObject = that.getDistributionObject(newValue);
+              this.colType = colTypesMap[newValue];
+
             }
           });
         },
