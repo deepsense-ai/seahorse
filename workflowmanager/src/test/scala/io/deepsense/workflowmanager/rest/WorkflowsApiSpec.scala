@@ -485,6 +485,36 @@ class WorkflowsApiSpec
     }
   }
 
+  "POST /workflows/:id/clone" should {
+
+    "return NotFound" when {
+      "workflow with specified id does not exist" in {
+        Post(s"/$apiPrefix/${Workflow.Id.randomId}/clone") ~>
+          addHeaders(
+            RawHeader("X-Auth-Token", validAuthTokenTenantA)) ~> testRoute ~> check {
+          status should be(StatusCodes.NotFound)
+        }
+        ()
+      }
+    }
+
+    "return Created" when {
+      "workflow with specified id exists" in {
+        Post(s"/$apiPrefix/${workflowAId}/clone") ~>
+          addHeaders(
+            RawHeader("X-Auth-Token", validAuthTokenTenantA)) ~> testRoute ~> check {
+          status should be(StatusCodes.Created)
+
+          val resultJs = response.entity.asString.parseJson.asJsObject
+          resultJs.fields should contain key "workflowId"
+          val JsString(clonedWorkflowId) = resultJs.fields("workflowId")
+          clonedWorkflowId should not equal workflowAId
+        }
+        ()
+      }
+    }
+  }
+
   s"PUT /workflows/:id" should {
     val workflowWithResults = newWorkflowWithResults(workflowAId, newWorkflow())
     val updatedWorkflowWithResults = workflowWithResults.copy(

@@ -160,6 +160,21 @@ abstract class WorkflowApi @Inject() (
                 }
               }
             } ~
+            path(JavaUUID / "clone") { workflowId =>
+              post {
+                withUserContext { userContext =>
+                  val futureWorkflow =
+                    workflowManagerProvider.forContext(userContext).clone(workflowId)
+                  onSuccess(futureWorkflow) {
+                    case Some(workflowWithVariables) =>
+                      val envelopedWorkflowId = Envelope(workflowWithVariables.id)
+                      complete(StatusCodes.Created, envelopedWorkflowId)
+                    case None =>
+                      complete(StatusCodes.NotFound)
+                  }
+                }
+              }
+            } ~
             path("upload") {
               post {
                 withUserContext {

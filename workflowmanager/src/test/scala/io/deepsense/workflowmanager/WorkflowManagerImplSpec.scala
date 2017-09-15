@@ -8,7 +8,7 @@ import scala.concurrent.Future
 
 import org.mockito.Matchers._
 import org.mockito.Mockito._
-import spray.json.JsObject
+import spray.json.{JsString, JsObject}
 
 import io.deepsense.commons.auth.usercontext.{Role, UserContext}
 import io.deepsense.commons.auth.{AuthorizatorProvider, UserContextAuthorizator}
@@ -33,7 +33,10 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
   val graph = mock[DeeplangGraph]
   when(graph.nodes).thenReturn(Set[DeeplangNode]())
   val metadata = mock[WorkflowMetadata]
-  val thirdPartyData = mock[JsObject]
+  val name = "test name"
+  val thirdPartyData = JsObject(
+    "gui" -> JsObject("name" -> JsString(name)),
+    "notebooks" -> JsObject())
   val storedWorkflow = Workflow(metadata, graph, thirdPartyData)
   val storedWorkflowId = Workflow.Id.randomId
   val storedNodeId = Node.Id.randomId
@@ -104,6 +107,26 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
       whenReady(res) { _ => () }
       verify(workflowStorage).update(storedWorkflowId, storedWorkflow)
       ()
+    }
+    "clone workflow" in {
+      reset(workflowStorage)
+      when(workflowStorage.get(storedWorkflowId))
+        .thenReturn(Future.successful(Some(storedWorkflow)))
+      when(notebookStorage.getAll(any()))
+        .thenReturn(Future.successful(Map[Node.Id, String]()))
+      when(workflowStorage.create(any(), any()))
+        .thenReturn(Future.successful(()))
+
+      val res = workflowManager.clone(storedWorkflowId)
+      whenReady(res) { workflow =>
+        workflow shouldBe 'defined
+        workflow.get.id should not be storedWorkflowId
+        workflow.get.metadata shouldBe storedWorkflow.metadata
+        workflow.get.graph shouldBe storedWorkflow.graph
+
+        val workflowName = workflow.get.thirdPartyData.fields("gui").asJsObject.fields("name")
+        workflowName shouldBe JsString("Copy of \"" + name + "\"")
+      }
     }
     "update StructAndStates in storages" in {
       reset(workflowStorage)

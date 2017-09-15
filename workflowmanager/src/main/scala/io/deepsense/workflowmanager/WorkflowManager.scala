@@ -55,6 +55,13 @@ trait WorkflowManager {
   def delete(id: Id): Future[Boolean]
 
   /**
+    * Clones a workflow by Id.
+    * @param id An identifier of the workflow to clone.
+    * @return Cloned workflow or None, if workflow with specified id does not exist.
+    */
+  def clone(id: Id): Future[Option[WorkflowWithVariables]]
+
+  /**
    * Lists stored workflows.
    * @return List of basic information about stored workflows.
    */
