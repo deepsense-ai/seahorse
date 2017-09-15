@@ -19,31 +19,38 @@
         "condition": "Gender = 'F'"
       }
     }, {
-      "id": "61cf8afa-2587-4d07-8d55-fc1bbc7b4435",
+      "id": "fb7669fa-be95-3997-7a19-689a0a2c9e18",
       "operation": {
-        "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
-        "name": "Read DataFrame"
+        "id": "643d8706-24db-4674-b5b4-10b5129251fc",
+        "name": "Transform"
       },
       "parameters": {
-        "data storage type": {
-          "FILE": {
-            "source": "https://s3.amazonaws.com/workflowexecutor/examples/data/StateNamesSmall.csv",
-            "format": {
-              "CSV": {
-                "separator": {
-                  ",": {
-
-                  }
-                },
-                "names included": true,
-                "convert to boolean": false
-              }
-            }
-          }
+        "Parameters of input Transformer": {
+          "expression": "select Name, sum(Count) as Count from df group by Name order by Count desc"
         }
       }
     }, {
-      "id": "fb7669fa-be95-3997-7a19-689a0a2c9e18",
+      "id": "c71d2374-6a9f-374a-6985-b92eab9904b0",
+      "operation": {
+        "id": "643d8706-24db-4674-b5b4-10b5129251fc",
+        "name": "Transform"
+      },
+      "parameters": {
+        "Parameters of input Transformer": {
+
+        }
+      }
+    }, {
+      "id": "f28b42af-3b1e-27a5-abfc-21fe5b3dc062",
+      "operation": {
+        "id": "6cba4400-d966-4a2a-8356-b37f37b4c73f",
+        "name": "SQL Transformation"
+      },
+      "parameters": {
+        "expression": "select * from df where Year >= 1980"
+      }
+    }, {
+      "id": "6fedc6bd-bace-2f31-fd3b-0a5a31204766",
       "operation": {
         "id": "643d8706-24db-4674-b5b4-10b5129251fc",
         "name": "Transform"
@@ -63,44 +70,6 @@
         "inner workflow": {
           "workflow": {
             "nodes": [{
-              "id": "2603a7b5-aaa9-40ad-9598-23f234ec5c32",
-              "operation": {
-                "id": "f94b04d7-ec34-42f7-8100-93fe235c89f8",
-                "name": "Source"
-              },
-              "parameters": {
-
-              }
-            }, {
-              "id": "d7798d5e-b1c6-4027-873e-a6d653957418",
-              "operation": {
-                "id": "e652238f-7415-4da6-95c6-ee33808561b2",
-                "name": "Sink"
-              },
-              "parameters": {
-
-              }
-            }, {
-              "id": "9fca2bcd-4c0c-7867-db2d-5fac09028dfc",
-              "operation": {
-                "id": "6cba4400-d966-4a2a-8356-b37f37b4c73f",
-                "name": "SQL Transformation"
-              },
-              "parameters": {
-                "dataframe id": null,
-                "expression": "select df.Name, df.State, sum(df.Count) as AllTimeCount from df group by df.State, df.Name"
-              }
-            }, {
-              "id": "50a86f17-ff49-c057-1266-298c78d3a281",
-              "operation": {
-                "id": "6cba4400-d966-4a2a-8356-b37f37b4c73f",
-                "name": "SQL Transformation"
-              },
-              "parameters": {
-                "dataframe id": null,
-                "expression": "select State, max(AllTimeCount) as MaxCount from df group by State"
-              }
-            }, {
               "id": "49efbd91-9772-a4be-301c-c6f112013ec0",
               "operation": {
                 "id": "06374446-3138-4cf7-9682-f884990f3a60",
@@ -134,8 +103,71 @@
                   }
                 }]
               }
+            }, {
+              "id": "d7798d5e-b1c6-4027-873e-a6d653957418",
+              "operation": {
+                "id": "e652238f-7415-4da6-95c6-ee33808561b2",
+                "name": "Sink"
+              },
+              "parameters": {
+
+              }
+            }, {
+              "id": "2603a7b5-aaa9-40ad-9598-23f234ec5c32",
+              "operation": {
+                "id": "f94b04d7-ec34-42f7-8100-93fe235c89f8",
+                "name": "Source"
+              },
+              "parameters": {
+
+              }
+            }, {
+              "id": "50a86f17-ff49-c057-1266-298c78d3a281",
+              "operation": {
+                "id": "6cba4400-d966-4a2a-8356-b37f37b4c73f",
+                "name": "SQL Transformation"
+              },
+              "parameters": {
+                "expression": "select State, max(AllTimeCount) as MaxCount from df group by State"
+              }
+            }, {
+              "id": "9fca2bcd-4c0c-7867-db2d-5fac09028dfc",
+              "operation": {
+                "id": "6cba4400-d966-4a2a-8356-b37f37b4c73f",
+                "name": "SQL Transformation"
+              },
+              "parameters": {
+                "expression": "select df.Name, df.State, sum(df.Count) as AllTimeCount from df group by df.State, df.Name"
+              }
             }],
             "connections": [{
+              "from": {
+                "nodeId": "49efbd91-9772-a4be-301c-c6f112013ec0",
+                "portIndex": 0
+              },
+              "to": {
+                "nodeId": "d7798d5e-b1c6-4027-873e-a6d653957418",
+                "portIndex": 0
+              }
+            }, {
+              "from": {
+                "nodeId": "9fca2bcd-4c0c-7867-db2d-5fac09028dfc",
+                "portIndex": 0
+              },
+              "to": {
+                "nodeId": "50a86f17-ff49-c057-1266-298c78d3a281",
+                "portIndex": 0
+              }
+            }, {
+              "from": {
+                "nodeId": "50a86f17-ff49-c057-1266-298c78d3a281",
+                "portIndex": 0
+              },
+              "to": {
+                "nodeId": "49efbd91-9772-a4be-301c-c6f112013ec0",
+                "portIndex": 0
+              }
+            }, {
               "from": {
                 "nodeId": "2603a7b5-aaa9-40ad-9598-23f234ec5c32",
                 "portIndex": 0
@@ -150,35 +182,8 @@
                 "portIndex": 0
               },
               "to": {
-                "nodeId": "50a86f17-ff49-c057-1266-298c78d3a281",
-                "portIndex": 0
-              }
-            }, {
-              "from": {
-                "nodeId": "50a86f17-ff49-c057-1266-298c78d3a281",
-                "portIndex": 0
-              },
-              "to": {
-                "nodeId": "49efbd91-9772-a4be-301c-c6f112013ec0",
-                "portIndex": 0
-              }
-            }, {
-              "from": {
-                "nodeId": "9fca2bcd-4c0c-7867-db2d-5fac09028dfc",
-                "portIndex": 0
-              },
-              "to": {
                 "nodeId": "49efbd91-9772-a4be-301c-c6f112013ec0",
                 "portIndex": 1
-              }
-            }, {
-              "from": {
-                "nodeId": "49efbd91-9772-a4be-301c-c6f112013ec0",
-                "portIndex": 0
-              },
-              "to": {
-                "nodeId": "d7798d5e-b1c6-4027-873e-a6d653957418",
-                "portIndex": 0
               }
             }]
           },
@@ -238,46 +243,6 @@
         }
       }
     }, {
-      "id": "c71d2374-6a9f-374a-6985-b92eab9904b0",
-      "operation": {
-        "id": "643d8706-24db-4674-b5b4-10b5129251fc",
-        "name": "Transform"
-      },
-      "parameters": {
-        "Parameters of input Transformer": {
-
-        }
-      }
-    }, {
-      "id": "f28b42af-3b1e-27a5-abfc-21fe5b3dc062",
-      "operation": {
-        "id": "6cba4400-d966-4a2a-8356-b37f37b4c73f",
-        "name": "SQL Transformation"
-      },
-      "parameters": {
-        "expression": "select * from df where Year >= 1980"
-      }
-    }, {
-      "id": "b85cde7a-cff2-172c-3bb4-575302802238",
-      "operation": {
-        "id": "e76ca616-0322-47a5-b390-70c9668265dd",
-        "name": "Notebook"
-      },
-      "parameters": {
-
-      }
-    }, {
-      "id": "6fedc6bd-bace-2f31-fd3b-0a5a31204766",
-      "operation": {
-        "id": "643d8706-24db-4674-b5b4-10b5129251fc",
-        "name": "Transform"
-      },
-      "parameters": {
-        "Parameters of input Transformer": {
-          "expression": "select Name, sum(Count) as Count from df group by Name order by Count desc"
-        }
-      }
-    }, {
       "id": "a399a235-af63-ecc5-9c82-f82deac9b0a0",
       "operation": {
         "id": "6cba4400-d966-4a2a-8356-b37f37b4c73f",
@@ -298,6 +263,30 @@
         }
       }
     }, {
+      "id": "61cf8afa-2587-4d07-8d55-fc1bbc7b4435",
+      "operation": {
+        "id": "c48dd54c-6aef-42df-ad7a-42fc59a09f0e",
+        "name": "Read DataFrame"
+      },
+      "parameters": {
+        "data storage type": {
+          "FILE": {
+            "source": "https://s3.amazonaws.com/workflowexecutor/examples/data/StateNamesSmall.csv",
+            "format": {
+              "CSV": {
+                "separator": {
+                  ",": {
+
+                  }
+                },
+                "names included": true,
+                "convert to boolean": false
+              }
+            }
+          }
+        }
+      }
+    }, {
       "id": "46ea2d54-e8d1-1f7d-0427-b03e2a310926",
       "operation": {
         "id": "6cba4400-d966-4a2a-8356-b37f37b4c73f",
@@ -305,6 +294,15 @@
       },
       "parameters": {
         "expression": "select Name, sum(Count) as Count from df group by Name order by Count desc"
+      }
+    }, {
+      "id": "b85cde7a-cff2-172c-3bb4-575302802238",
+      "operation": {
+        "id": "e76ca616-0322-47a5-b390-70c9668265dd",
+        "name": "Python Notebook"
+      },
+      "parameters": {
+
       }
     }, {
       "id": "cd381c22-863f-f0cf-0f13-b997990c4c9b",
@@ -320,15 +318,6 @@
     }],
     "connections": [{
       "from": {
-        "nodeId": "15bbd2ba-284f-6eb9-fd62-cdc9f3414a22",
-        "portIndex": 0
-      },
-      "to": {
-        "nodeId": "884e2624-b293-7adf-c557-3ffd3a3253e9",
-        "portIndex": 1
-      }
-    }, {
-      "from": {
         "nodeId": "a612a352-1887-d28c-7883-8832383a8196",
         "portIndex": 0
       },
@@ -338,20 +327,20 @@
       }
     }, {
       "from": {
+        "nodeId": "a399a235-af63-ecc5-9c82-f82deac9b0a0",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "cd381c22-863f-f0cf-0f13-b997990c4c9b",
+        "portIndex": 1
+      }
+    }, {
+      "from": {
         "nodeId": "a612a352-1887-d28c-7883-8832383a8196",
         "portIndex": 0
       },
       "to": {
         "nodeId": "a399a235-af63-ecc5-9c82-f82deac9b0a0",
-        "portIndex": 0
-      }
-    }, {
-      "from": {
-        "nodeId": "f28b42af-3b1e-27a5-abfc-21fe5b3dc062",
-        "portIndex": 0
-      },
-      "to": {
-        "nodeId": "fb7669fa-be95-3997-7a19-689a0a2c9e18",
         "portIndex": 0
       }
     }, {
@@ -374,16 +363,7 @@
       }
     }, {
       "from": {
-        "nodeId": "a399a235-af63-ecc5-9c82-f82deac9b0a0",
-        "portIndex": 0
-      },
-      "to": {
-        "nodeId": "6fedc6bd-bace-2f31-fd3b-0a5a31204766",
-        "portIndex": 0
-      }
-    }, {
-      "from": {
-        "nodeId": "a612a352-1887-d28c-7883-8832383a8196",
+        "nodeId": "15bbd2ba-284f-6eb9-fd62-cdc9f3414a22",
         "portIndex": 0
       },
       "to": {
@@ -392,11 +372,56 @@
       }
     }, {
       "from": {
+        "nodeId": "46ea2d54-e8d1-1f7d-0427-b03e2a310926",
+        "portIndex": 1
+      },
+      "to": {
+        "nodeId": "6fedc6bd-bace-2f31-fd3b-0a5a31204766",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "15bbd2ba-284f-6eb9-fd62-cdc9f3414a22",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "c71d2374-6a9f-374a-6985-b92eab9904b0",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "a399a235-af63-ecc5-9c82-f82deac9b0a0",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "6fedc6bd-bace-2f31-fd3b-0a5a31204766",
+        "portIndex": 1
+      }
+    }, {
+      "from": {
         "nodeId": "15bbd2ba-284f-6eb9-fd62-cdc9f3414a22",
         "portIndex": 0
       },
       "to": {
         "nodeId": "cd381c22-863f-f0cf-0f13-b997990c4c9b",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "a612a352-1887-d28c-7883-8832383a8196",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "46ea2d54-e8d1-1f7d-0427-b03e2a310926",
+        "portIndex": 0
+      }
+    }, {
+      "from": {
+        "nodeId": "f28b42af-3b1e-27a5-abfc-21fe5b3dc062",
+        "portIndex": 0
+      },
+      "to": {
+        "nodeId": "c71d2374-6a9f-374a-6985-b92eab9904b0",
         "portIndex": 1
       }
     }, {
@@ -406,42 +431,6 @@
       },
       "to": {
         "nodeId": "fb7669fa-be95-3997-7a19-689a0a2c9e18",
-        "portIndex": 1
-      }
-    }, {
-      "from": {
-        "nodeId": "15bbd2ba-284f-6eb9-fd62-cdc9f3414a22",
-        "portIndex": 0
-      },
-      "to": {
-        "nodeId": "c71d2374-6a9f-374a-6985-b92eab9904b0",
-        "portIndex": 1
-      }
-    }, {
-      "from": {
-        "nodeId": "a399a235-af63-ecc5-9c82-f82deac9b0a0",
-        "portIndex": 0
-      },
-      "to": {
-        "nodeId": "cd381c22-863f-f0cf-0f13-b997990c4c9b",
-        "portIndex": 0
-      }
-    }, {
-      "from": {
-        "nodeId": "46ea2d54-e8d1-1f7d-0427-b03e2a310926",
-        "portIndex": 1
-      },
-      "to": {
-        "nodeId": "6fedc6bd-bace-2f31-fd3b-0a5a31204766",
-        "portIndex": 1
-      }
-    }, {
-      "from": {
-        "nodeId": "f28b42af-3b1e-27a5-abfc-21fe5b3dc062",
-        "portIndex": 0
-      },
-      "to": {
-        "nodeId": "c71d2374-6a9f-374a-6985-b92eab9904b0",
         "portIndex": 0
       }
     }, {
@@ -450,8 +439,17 @@
         "portIndex": 0
       },
       "to": {
-        "nodeId": "46ea2d54-e8d1-1f7d-0427-b03e2a310926",
+        "nodeId": "884e2624-b293-7adf-c557-3ffd3a3253e9",
+        "portIndex": 1
+      }
+    }, {
+      "from": {
+        "nodeId": "f28b42af-3b1e-27a5-abfc-21fe5b3dc062",
         "portIndex": 0
+      },
+      "to": {
+        "nodeId": "fb7669fa-be95-3997-7a19-689a0a2c9e18",
+        "portIndex": 1
       }
     }, {
       "from": {
@@ -474,80 +472,80 @@
           "uiName": "girls",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 5976,
-            "y": 4787
+            "x": 6063,
+            "y": 4699
           }
         },
         "c71d2374-6a9f-374a-6985-b92eab9904b0": {
           "uiName": "mod state most popular",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 6735,
-            "y": 5372
+            "x": 6221,
+            "y": 5460
           }
         },
         "f28b42af-3b1e-27a5-abfc-21fe5b3dc062": {
           "uiName": "modern",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 6534,
-            "y": 5193
+            "x": 6373,
+            "y": 4961
           }
         },
         "b85cde7a-cff2-172c-3bb4-575302802238": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 5376,
-            "y": 5201
+            "x": 5654,
+            "y": 5460
           }
         },
         "fb7669fa-be95-3997-7a19-689a0a2c9e18": {
           "uiName": "mod us most popular",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 6470,
-            "y": 5370
+            "x": 6374,
+            "y": 5462
           }
         },
         "61cf8afa-2587-4d07-8d55-fc1bbc7b4435": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 5971,
-            "y": 4668
+            "x": 6386,
+            "y": 4655
           }
         },
         "46ea2d54-e8d1-1f7d-0427-b03e2a310926": {
           "uiName": "popular names",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 5799,
-            "y": 5009
+            "x": 5861,
+            "y": 4959
           }
         },
         "6fedc6bd-bace-2f31-fd3b-0a5a31204766": {
           "uiName": "trad us most popular",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 5865,
-            "y": 5373
+            "x": 6068,
+            "y": 5461
           }
         },
         "884e2624-b293-7adf-c557-3ffd3a3253e9": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 6671,
-            "y": 4946
+            "x": 5745,
+            "y": 4776
           }
         },
         "15bbd2ba-284f-6eb9-fd62-cdc9f3414a22": {
           "uiName": "state most popular names",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 6513,
-            "y": 4749
+            "x": 5450,
+            "y": 4618
           }
         },
         "8671cdd3-c7a6-e5f4-5a8e-79106f6553e6": {
@@ -562,16 +560,16 @@
           "uiName": "traditional",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 6001,
-            "y": 5189
+            "x": 6115,
+            "y": 4960
           }
         },
         "cd381c22-863f-f0cf-0f13-b997990c4c9b": {
           "uiName": "trad state most popular",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 6181,
-            "y": 5373
+            "x": 5916,
+            "y": 5460
           }
         }
       }
@@ -623,7 +621,7 @@
   "variables": {
 
   },
-  "id": "8e05037c-df03-4155-8f79-5ccffa027381",
+  "id": "f3f39b0e-2fb0-42ab-add1-02c592e0798f",
   "metadata": {
     "type": "batch",
     "apiVersion": "1.3.0"

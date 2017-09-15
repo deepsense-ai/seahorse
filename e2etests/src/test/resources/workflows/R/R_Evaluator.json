@@ -17,7 +17,7 @@
       },
       "parameters": {
         "Parameters of input Evaluator": {
-          "R evaluator code": "evaluate <- function(dataframe){\n    n <- nrow(dataframe)\n    sq.error.column <- (dataframe$beds - dataframe$baths) ^ 2\n    sq.error.sum.column <- sum(sq.error.column)\n    sq.error.sum <- as.data.frame(agg(dataframe, sq.error.sum.column))\n    rmse <- sqrt(sq.error.sum / n)\n    return(rmse)\n}"
+
         }
       }
     }, {
@@ -47,7 +47,7 @@
     }],
     "connections": [{
       "from": {
-        "nodeId": "546839ea-b602-e02a-d780-a05fa8d785b5",
+        "nodeId": "79136692-200b-e2f2-b8cc-6e17cab9cfc7",
         "portIndex": 0
       },
       "to": {
@@ -56,7 +56,7 @@
       }
     }, {
       "from": {
-        "nodeId": "79136692-200b-e2f2-b8cc-6e17cab9cfc7",
+        "nodeId": "546839ea-b602-e02a-d780-a05fa8d785b5",
         "portIndex": 0
       },
       "to": {
@@ -75,24 +75,24 @@
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 5486,
-            "y": 5485
+            "x": 5112,
+            "y": 5487
           }
         },
         "e19cb77e-8a35-1341-31f4-34244d36ff8c": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 5354,
-            "y": 5641
+            "x": 5369,
+            "y": 5650
           }
         },
         "79136692-200b-e2f2-b8cc-6e17cab9cfc7": {
           "uiName": "",
           "color": "#00B1EB",
           "coordinates": {
-            "x": 5181,
-            "y": 5476
+            "x": 5507,
+            "y": 5486
           }
         }
       }
@@ -104,7 +104,7 @@
   "variables": {
 
   },
-  "id": "a1a4403f-4775-436e-be3c-49480814aa07",
+  "id": "0c95fb97-54a3-4458-b3a2-967d72174d2c",
   "metadata": {
     "type": "batch",
     "apiVersion": "1.3.0"
