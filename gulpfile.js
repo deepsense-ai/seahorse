@@ -76,6 +76,11 @@ gulp.task('browser-sync', function () {
   });
 });
 
+gulp.task('config', function () {
+  return gulp.src([client.path + 'config.js'])
+    .pipe(gulp.dest(build.path));
+});
+
 gulp.task('html', function () {
   return gulp.src([client.path + client.html])
     .pipe(gulp.dest(build.path));
@@ -166,14 +171,13 @@ gulp.task('browserify', function () {
 gulp.task('build', function (callback) {
   runSequence(
     'clean',
-    ['fonts', 'images', 'html', 'favicon', 'less', 'libs:css', 'libs:js', 'jshint', 'browserify'],
-    'server',
+    ['fonts', 'images', 'html', 'config', 'favicon', 'less', 'libs:css', 'libs:js', 'jshint', 'browserify'],
     callback
   );
 });
 
 gulp.task('start', function (callback) {
-  runSequence('build', 'browser-sync', callback);
+  runSequence('build', 'server', 'browser-sync', callback);
   if (devMode) {
     gulp.watch(client.path + client.html, ['html', browserSync.reload]);
     gulp.watch(client.path + client.images, ['images', browserSync.reload]);

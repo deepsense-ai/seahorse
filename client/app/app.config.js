@@ -4,8 +4,6 @@
 
 'use strict';
 
-let config = require('./../../config.json');
-
 /* @ngInject */
 function AppConfig($stateProvider, $urlRouterProvider) {
   // TODO: enable html5mode
@@ -22,9 +20,4 @@ exports.function = AppConfig;
 
 exports.inject = function (module) {
   module.config(AppConfig);
-
-  module.constant('config', {
-    'apiHost': config.env.proxy.host,
-    'apiPort': config.env.proxy.port
-  });
 };
