@@ -21,6 +21,7 @@ import com.google.inject.name.Named
 
 import io.deepsense.commons.models.{ClusterDetails, Id}
 import io.deepsense.commons.utils.Logging
+import io.deepsense.sparkutils.ScalaUtils
 import io.deepsense.sessionmanager.rest.responses.NodeStatusesResponse
 import io.deepsense.sessionmanager.service.SessionService.FutureOpt
 import io.deepsense.sessionmanager.service.actors.SessionServiceActor
@@ -69,7 +70,7 @@ class SessionService @Inject() (
         logger.info(s"Launching nodes in session '$workflowId'")
         (serviceActor ? SessionServiceActor.LaunchRequest(workflowId))
           .mapTo[Try[Unit]]
-          .flatMap(Future.fromTry)
+          .flatMap(ScalaUtils.futureFromTry)
       }
 
   def nodeStatusesQuery(callerId: String, workflowId: Id): FutureOpt[NodeStatusesResponse] =
@@ -78,7 +79,7 @@ class SessionService @Inject() (
         logger.info(s"Asking for node statuses for session $workflowId")
         (serviceActor ? SessionServiceActor.NodeStatusesRequest(workflowId))
           .mapTo[Try[NodeStatusesResponse]]
-          .flatMap(Future.fromTry)
+          .flatMap(ScalaUtils.futureFromTry)
       }
 
   private def isAuthorized(callerId: String, ownerId: String): Boolean =

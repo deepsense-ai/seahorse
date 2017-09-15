@@ -24,7 +24,17 @@ lazy val sessionmanager         = project dependsOn (seahorseMqProtocol, backend
   seahorseWorkflowJson, seahorseApi)
 lazy val libraryservice         = project dependsOn (backendcommons, backendcommons % "test->test")
 lazy val datasourcemanager      = project dependsOn (backendcommons, seahorseApi)
-lazy val schedulingmanager      = project dependsOn (backendcommons, workflowmanager, sessionmanager)
+lazy val schedulingmanager      = project dependsOn (backendcommons, workflowmanager, sessionmanager) settings (
+  // javax.servlet from org.eclipse.jetty.orbit needs to be excluded from schedulingmanager's
+  // dependencies because it is in conflict (same package) with javax.servlet-api, which is used
+  // by Jetty used by schedulingmanager.
+  projectDependencies := {
+    Seq(
+      (projectID in backendcommons).value.exclude("org.eclipse.jetty.orbit", "javax.servlet"),
+      (projectID in workflowmanager).value.exclude("org.eclipse.jetty.orbit", "javax.servlet"),
+      (projectID in sessionmanager).value.exclude("org.eclipse.jetty.orbit", "javax.servlet")
+    )
+  })
 
 lazy val seahorseWorkflowExecutorProjects = Seq(
     seahorseCommons,

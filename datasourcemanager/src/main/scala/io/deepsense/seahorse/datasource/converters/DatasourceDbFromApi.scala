@@ -12,7 +12,7 @@ import scalaz._
 import scalaz.syntax.validation._
 
 import io.deepsense.commons.service.api.CommonApiExceptions.ApiException
-import io.deepsense.seahorse.datasource.db.schema.DatasourcesSchema.DatasourceDB
+import io.deepsense.seahorse.datasource.db.schema.DatasourcesSchema._
 import io.deepsense.seahorse.datasource.model.CsvSeparatorType.CsvSeparatorType
 import io.deepsense.seahorse.datasource.model.FileFormat.FileFormat
 import io.deepsense.seahorse.datasource.model._
@@ -25,30 +25,38 @@ object DatasourceDbFromApi {
       datasourceId: UUID,
       dsParams: DatasourceParams): Validation[ApiException, DatasourceDB] = {
     val datasourceDb = DatasourceDB(
-      id = datasourceId,
-      ownerId = userId,
-      ownerName = userName,
-      name = dsParams.name,
-      creationDateTime = new java.util.Date(),
-      visibility = dsParams.visibility,
-      downloadUri = dsParams.downloadUri,
-      datasourceType = dsParams.datasourceType,
-      jdbcUrl = toBeOptionallyFilledLater,
-      jdbcDriver = toBeOptionallyFilledLater,
-      jdbcTable = toBeOptionallyFilledLater,
-      jdbcQuery = toBeOptionallyFilledLater,
-      externalFileUrl = toBeOptionallyFilledLater,
-      libraryPath = toBeOptionallyFilledLater,
-      hdfsPath = toBeOptionallyFilledLater,
-      fileFormat = toBeOptionallyFilledLater,
-      fileCsvIncludeHeader = toBeOptionallyFilledLater,
-      fileCsvConvert01ToBoolean = toBeOptionallyFilledLater,
-      fileCsvSeparatorType = toBeOptionallyFilledLater,
-      fileCsvCustomSeparator = toBeOptionallyFilledLater,
-      googleSpreadsheetId = toBeOptionallyFilledLater,
-      googleServiceAccountCredentials = toBeOptionallyFilledLater,
-      googleSpreadsheetIncludeHeader = toBeOptionallyFilledLater,
-      googleSpreadsheetConvert01ToBoolean = toBeOptionallyFilledLater
+      generalParameters = DatasourceDBGeneralParameters(
+        id = datasourceId,
+        ownerId = userId,
+        ownerName = userName,
+        name = dsParams.name,
+        creationDateTime = new java.util.Date(),
+        visibility = dsParams.visibility,
+        downloadUri = dsParams.downloadUri,
+        datasourceType = dsParams.datasourceType
+      ),
+      jdbcParameters = DatasourceDBJdbcParameters(
+        jdbcUrl = toBeOptionallyFilledLater,
+        jdbcDriver = toBeOptionallyFilledLater,
+        jdbcTable = toBeOptionallyFilledLater,
+        jdbcQuery = toBeOptionallyFilledLater
+      ),
+      fileParameters = DatasourceDBFileParameters(
+        externalFileUrl = toBeOptionallyFilledLater,
+        libraryPath = toBeOptionallyFilledLater,
+        hdfsPath = toBeOptionallyFilledLater,
+        fileFormat = toBeOptionallyFilledLater,
+        fileCsvIncludeHeader = toBeOptionallyFilledLater,
+        fileCsvConvert01ToBoolean = toBeOptionallyFilledLater,
+        fileCsvSeparatorType = toBeOptionallyFilledLater,
+        fileCsvCustomSeparator = toBeOptionallyFilledLater
+      ),
+      googleParameters = DatasourceDBGoogleParameters(
+        googleSpreadsheetId = toBeOptionallyFilledLater,
+        googleServiceAccountCredentials = toBeOptionallyFilledLater,
+        googleSpreadsheetIncludeHeader = toBeOptionallyFilledLater,
+        googleSpreadsheetConvert01ToBoolean = toBeOptionallyFilledLater
+      )
     )
     withForDatasourceTypeSpecificParams(datasourceDb, dsParams)
   }
@@ -61,39 +69,39 @@ object DatasourceDbFromApi {
     case DatasourceType.jdbc =>
       for {
         jdbcParams <- validateDefined("jdbcParams", ds.jdbcParams)
-      } yield datasourceDb.copy(
+      } yield datasourceDb.copy(jdbcParameters = DatasourceDBJdbcParameters(
         jdbcUrl = Some(jdbcParams.url),
         jdbcDriver = Some(jdbcParams.driver),
         jdbcTable = jdbcParams.table,
         jdbcQuery = jdbcParams.query
-      )
+      ))
     case DatasourceType.googleSpreadsheet =>
       for {
         googleSpreadsheetParams <- validateDefined("googleSpreadsheetParams", ds.googleSpreadsheetParams)
-      } yield datasourceDb.copy(
+      } yield datasourceDb.copy(googleParameters = DatasourceDBGoogleParameters(
         googleSpreadsheetId = Some(googleSpreadsheetParams.googleSpreadsheetId),
         googleServiceAccountCredentials = Some(googleSpreadsheetParams.googleServiceAccountCredentials),
         googleSpreadsheetIncludeHeader = Some(googleSpreadsheetParams.includeHeader),
         googleSpreadsheetConvert01ToBoolean = Some(googleSpreadsheetParams.convert01ToBoolean)
-      )
+      ))
     case DatasourceType.hdfs => for {
       hdfsParams <- validateDefined("hdfsParams", ds.hdfsParams)
       withCommonParams <- withCommonFileParams(datasourceDb, hdfsParams)
-    } yield withCommonParams.copy(
+    } yield withCommonParams.copy(fileParameters = withCommonParams.fileParameters.copy(
       hdfsPath = Some(hdfsParams.hdfsPath)
-    )
+    ))
     case DatasourceType.externalFile => for {
       externalFileParams <- validateDefined("externalFileParams", ds.externalFileParams)
       withCommonParams <- withCommonFileParams(datasourceDb, externalFileParams)
-    } yield withCommonParams.copy(
+    } yield withCommonParams.copy(fileParameters = withCommonParams.fileParameters.copy(
       externalFileUrl = Some(externalFileParams.url)
-    )
+    ))
     case DatasourceType.libraryFile => for {
       libraryFile <- validateDefined("libraryFileParams", ds.libraryFileParams)
       withFile <- withCommonFileParams(datasourceDb, libraryFile)
-    } yield withFile.copy(
+    } yield withFile.copy(fileParameters = withFile.fileParameters.copy(
       libraryPath = Some(libraryFile.libraryPath)
-    )
+    ))
   }
 
   private def withCommonFileParams[T <: {
@@ -104,16 +112,18 @@ object DatasourceDbFromApi {
       for {
         csvFileFormatParams <- validateDefined("csvFileFormatParams", apiFileParams.csvFileFormatParams)
         csvFileCustomSeparator <- validateCustomSeparator(csvFileFormatParams)
-      } yield datasource.copy(
+      } yield datasource.copy(fileParameters = datasource.fileParameters.copy(
         fileCsvIncludeHeader = Some(csvFileFormatParams.includeHeader),
         fileCsvConvert01ToBoolean = Some(csvFileFormatParams.convert01ToBoolean),
         fileCsvSeparatorType = Some(csvFileFormatParams.separatorType),
         fileCsvCustomSeparator = csvFileCustomSeparator
-      )
+      ))
     } else {
       datasource.success
     }
-  }.map(_.copy(fileFormat = Some(apiFileParams.fileFormat)))
+  }.map(result => result.copy(fileParameters = result.fileParameters.copy(
+    fileFormat = Some(apiFileParams.fileFormat)
+  )))
 
   private def validateCustomSeparator(csvFileFormatParams: CsvFileFormatParams) =
     if (csvFileFormatParams.separatorType == CsvSeparatorType.custom) {

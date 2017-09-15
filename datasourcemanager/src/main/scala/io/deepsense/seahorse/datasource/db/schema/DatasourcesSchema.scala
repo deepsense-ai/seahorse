@@ -19,10 +19,14 @@ object DatasourcesSchema {
 
   import Database.api._
   import CommonSlickFormats._
-  import shapeless.{ HList, ::, HNil, Generic }
-  import slickless._
 
   case class DatasourceDB(
+    generalParameters: DatasourceDBGeneralParameters,
+    jdbcParameters: DatasourceDBJdbcParameters,
+    fileParameters: DatasourceDBFileParameters,
+    googleParameters: DatasourceDBGoogleParameters)
+
+  case class DatasourceDBGeneralParameters(
     id: UUID,
     ownerId: UUID,
     ownerName: String,
@@ -30,24 +34,30 @@ object DatasourcesSchema {
     creationDateTime: java.util.Date,
     visibility: Visibility,
     downloadUri: Option[String],
-    datasourceType: DatasourceType,
-    jdbcUrl: Option[String],
-    jdbcDriver: Option[String],
-    jdbcTable: Option[String],
-    jdbcQuery: Option[String],
-    externalFileUrl: Option[String],
-    hdfsPath: Option[String],
-    libraryPath: Option[String],
-    fileFormat: Option[FileFormat],
-    fileCsvIncludeHeader: Option[Boolean],
-    fileCsvConvert01ToBoolean: Option[Boolean],
-    fileCsvSeparatorType: Option[CsvSeparatorType],
-    fileCsvCustomSeparator: Option[String],
-    googleSpreadsheetId: Option[String],
-    googleServiceAccountCredentials: Option[String],
-    googleSpreadsheetIncludeHeader: Option[Boolean],
-    googleSpreadsheetConvert01ToBoolean: Option[Boolean]
-  )
+    datasourceType: DatasourceType)
+
+  case class DatasourceDBGoogleParameters(
+      googleSpreadsheetId: Option[String],
+      googleServiceAccountCredentials: Option[String],
+      googleSpreadsheetIncludeHeader: Option[Boolean],
+      googleSpreadsheetConvert01ToBoolean: Option[Boolean])
+
+  case class DatasourceDBJdbcParameters(
+      jdbcUrl: Option[String],
+      jdbcDriver: Option[String],
+      jdbcTable: Option[String],
+      jdbcQuery: Option[String])
+
+  case class DatasourceDBFileParameters(
+      externalFileUrl: Option[String],
+      hdfsPath: Option[String],
+      libraryPath: Option[String],
+      fileFormat: Option[FileFormat],
+      fileCsvIncludeHeader: Option[Boolean],
+      fileCsvConvert01ToBoolean: Option[Boolean],
+      fileCsvSeparatorType: Option[CsvSeparatorType],
+      fileCsvCustomSeparator: Option[String])
+
 
   implicit val datasourceTypeFormat = EnumColumnMapper(DatasourceType)
   implicit val fileFormatFormat = EnumColumnMapper(FileFormat)
@@ -86,12 +96,34 @@ object DatasourcesSchema {
     def googleSpreadsheetIncludeHeader = column[Option[Boolean]]("googleSpreadsheetIncludeHeader")
     def googleSpreadsheetConvert01ToBoolean = column[Option[Boolean]]("googleSpreadsheetConvert01ToBoolean")
 
-    def * = (id :: ownerId :: ownerName :: name :: creationDateTime :: visibility :: downloadUri ::
-      datasourceType :: jdbcUrl :: jdbcDriver :: jdbcTable :: jdbcQuery :: externalFileUrl ::
-      hdfsPath :: libraryPath :: fileFormat :: fileCsvIncludeHeader :: fileCsvConvert01ToBoolean ::
-      fileCsvSeparatorType :: fileCsvCustomSeparator :: googleSpreadsheetId :: googleServiceAccountCredentials ::
-      googleSpreadsheetIncludeHeader :: googleSpreadsheetConvert01ToBoolean :: HNil
-    ).mappedWith(Generic[DatasourceDB])
+    def * = (
+      (id, ownerId, ownerName, name, creationDateTime, visibility, downloadUri, datasourceType),
+      (jdbcUrl, jdbcDriver, jdbcTable, jdbcQuery),
+      (externalFileUrl, hdfsPath, libraryPath, fileFormat, fileCsvIncludeHeader,
+        fileCsvConvert01ToBoolean, fileCsvSeparatorType, fileCsvCustomSeparator),
+      (googleSpreadsheetId, googleServiceAccountCredentials,
+        googleSpreadsheetIncludeHeader, googleSpreadsheetConvert01ToBoolean)
+    ) <> ({ x: ((UUID, UUID, String, String, java.util.Date, Visibility, Option[String], DatasourceType),
+                (Option[String], Option[String], Option[String], Option[String]),
+                (Option[String], Option[String], Option[String], Option[FileFormat], Option[Boolean],
+                  Option[Boolean], Option[CsvSeparatorType], Option[String]),
+                (Option[String], Option[String], Option[Boolean], Option[Boolean])) =>
+       x match {
+         case (generalParameters, jdbcParameters, fileParameters, googleParameters) =>
+      DatasourceDB(
+        DatasourceDBGeneralParameters.tupled(generalParameters),
+        DatasourceDBJdbcParameters.tupled(jdbcParameters),
+        DatasourceDBFileParameters.tupled(fileParameters),
+        DatasourceDBGoogleParameters.tupled(googleParameters))
+    }}, { x: DatasourceDB => x match {
+      case DatasourceDB(generalParameteres, jdbcParameters, fileParameters, googleParameters) =>
+        for {
+          general <- DatasourceDBGeneralParameters.unapply(generalParameteres)
+          jdbc <- DatasourceDBJdbcParameters.unapply(jdbcParameters)
+          file <- DatasourceDBFileParameters.unapply(fileParameters)
+          google <- DatasourceDBGoogleParameters.unapply(googleParameters)
+        } yield (general, jdbc, file, google)
+    }})
 
   }
 

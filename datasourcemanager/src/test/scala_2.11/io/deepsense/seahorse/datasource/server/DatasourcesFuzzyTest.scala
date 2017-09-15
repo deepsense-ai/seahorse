@@ -19,6 +19,10 @@ import io.deepsense.seahorse.datasource.converters.DatasourceApiFromDb
 import io.deepsense.seahorse.datasource.model.DatasourceType.{apply => _}
 import io.deepsense.seahorse.datasource.model._
 
+/**
+ * This test is for Scala 2.11 only
+ * since Arbitrary instances aren't generated in 2.10 for case classes.
+ */
 class DatasourcesFuzzyTest extends Properties("DatasourcesApi") {
 
   ///////////////////////////////////////////////////

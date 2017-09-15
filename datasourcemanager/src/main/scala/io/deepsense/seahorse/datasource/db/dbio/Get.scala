@@ -38,8 +38,8 @@ object Get {
   private def checkIfForbidden(ds: DatasourceDB, callingUserId: UUID) =
     if (
       privilegedUsers.contains(callingUserId) ||
-        ds.visibility == Visibility.publicVisibility ||
-        ds.ownerId == callingUserId) {
+        ds.generalParameters.visibility == Visibility.publicVisibility ||
+        ds.generalParameters.ownerId == callingUserId) {
       DBIO.successful(())
     } else {
       DBIO.failed(CommonApiExceptions.forbidden)

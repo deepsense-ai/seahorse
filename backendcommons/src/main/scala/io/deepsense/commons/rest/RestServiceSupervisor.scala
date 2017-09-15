@@ -7,6 +7,7 @@ package io.deepsense.commons.rest
 import akka.actor.{Actor, ActorInitializationException, Props}
 
 import io.deepsense.commons.utils.Logging
+import io.deepsense.sparkutils.AkkaUtils
 
 /**
  * An actor with a specific supervising strategy. It shutdowns the actor system when
@@ -31,7 +32,7 @@ class RestServiceSupervisor extends Actor with Logging {
     OneForOneStrategy() {
       case exception: ActorInitializationException =>
         logger.error("An ActorInitializationException occurred! Terminating!", exception)
-        context.system.terminate()
+        AkkaUtils.terminate(context.system)
         Stop
     }
 }

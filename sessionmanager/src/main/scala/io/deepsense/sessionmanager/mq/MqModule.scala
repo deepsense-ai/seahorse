@@ -17,6 +17,7 @@ import scala.util.control.NonFatal
 
 import io.deepsense.commons.utils.Logging
 import io.deepsense.sessionmanager.service.executor.SessionExecutorClients
+import io.deepsense.sparkutils.AkkaUtils
 import io.deepsense.workflowexecutor.communication.mq.MQCommunication
 import io.deepsense.workflowexecutor.communication.mq.json.Global.{GlobalMQDeserializer, GlobalMQSerializer}
 import io.deepsense.workflowexecutor.rabbitmq.MQCommunicationFactory
@@ -80,7 +81,7 @@ class MqModule extends AbstractModule with Logging {
       case NonFatal(e) =>
         logger.error(s"Haven't subscribed to Heartbeats after '$timeout' millis." +
           " Shutting down!")
-        system.terminate()
+        AkkaUtils.terminate(system)
     }
 
     subscribedWithTimeout.map(_.data)

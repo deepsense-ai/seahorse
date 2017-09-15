@@ -15,6 +15,7 @@ import com.google.inject.{Guice, Key, Stage}
 
 import io.deepsense.commons.rest.RestServer
 import io.deepsense.commons.utils.Logging
+import io.deepsense.sparkutils.AkkaUtils
 import io.deepsense.workflowmanager.migration.Migration1_3To1_4
 import io.deepsense.workflowmanager.storage.WorkflowStorage
 
@@ -50,7 +51,7 @@ object WorkflowManagerApp extends App with Logging {
     Await.ready(migrationFut, Duration.Inf)
 
     injector.getInstance(classOf[RestServer]).start()
-    Await.result(actorSystem.whenTerminated, Duration.Inf)
+    AkkaUtils.awaitTermination(actorSystem)
   } catch {
     case e: Exception =>
       logger.error("Application context creation failed", e)

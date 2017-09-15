@@ -8,6 +8,7 @@ import akka.actor.ActorSystem
 import com.google.inject.{Guice, Stage}
 import io.deepsense.commons.rest.RestServer
 import io.deepsense.commons.utils.Logging
+import io.deepsense.sparkutils.AkkaUtils
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
@@ -21,7 +22,7 @@ object SessionManagerApp extends App with Logging {
 
     val injector = Guice.createInjector(Stage.PRODUCTION, new SessionManagerAppModule)
     injector.getInstance(classOf[RestServer]).start()
-    Await.result(injector.getInstance(classOf[ActorSystem]).whenTerminated, Duration.Inf)
+    AkkaUtils.awaitTermination(injector.getInstance(classOf[ActorSystem]))
   } catch {
     case e: Exception =>
       logger.error("Application context creation failed", e)

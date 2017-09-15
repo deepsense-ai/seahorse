@@ -67,7 +67,6 @@ object Library {
   val scoverage = "org.scoverage" %% "scalac-scoverage-runtime" % Version.scoverage
   val stampy = "asia.stampy" % "stampy-core" % "1.0-RELEASE"
   val slick = "com.typesafe.slick" %% "slick" % Version.slick
-  val slickless = "io.underscore" %% "slickless" % "0.3.0"
   val sparkCore = spark("core") excludeAll ExclusionRule("com.chuusai", "shapeless_2.11", "2.0.0")
   val sparkMLLib = spark("mllib") excludeAll ExclusionRule("com.chuusai", "shapeless_2.11", "2.0.0")
   val sparkLauncher = spark("launcher") excludeAll ExclusionRule("com.chuusai", "shapeless_2.11", "2.0.0")
@@ -193,8 +192,7 @@ object Dependencies {
     scalaz,
     shapeless,
     scalacheckShapeless,
-    scalacheck,
-    slickless
+    scalacheck
   )
 
   val schedulingmanager = scalatraAndJetty ++ json4s ++ Seq(

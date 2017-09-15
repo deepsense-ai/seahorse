@@ -26,20 +26,20 @@ object DatasourceApiFromDb {
       hdfsParams <- validateHdfsParams(datasource)
       googleSpreadsheetParams <- validateGoogleSpreadsheetParams(datasource)
     } yield Datasource(
-      id = datasource.id,
-      creationDateTime = datasource.creationDateTime,
-      accessLevel = if (currentUserId == datasource.ownerId) {
+      id = datasource.generalParameters.id,
+      creationDateTime = datasource.generalParameters.creationDateTime,
+      accessLevel = if (currentUserId == datasource.generalParameters.ownerId) {
         AccessLevel.writeRead
       } else {
         AccessLevel.read
       },
-      ownerId = datasource.ownerId,
-      ownerName = datasource.ownerName,
+      ownerId = datasource.generalParameters.ownerId,
+      ownerName = datasource.generalParameters.ownerName,
       params = DatasourceParams(
-        name = datasource.name,
-        downloadUri = datasource.downloadUri,
-        datasourceType = datasource.datasourceType,
-        visibility = datasource.visibility,
+        name = datasource.generalParameters.name,
+        downloadUri = datasource.generalParameters.downloadUri,
+        datasourceType = datasource.generalParameters.datasourceType,
+        visibility = datasource.generalParameters.visibility,
         jdbcParams = jdbcParams,
         externalFileParams = externalFileParams,
         hdfsParams = hdfsParams,
@@ -50,21 +50,25 @@ object DatasourceApiFromDb {
   }
 
   private def validateJdbcParams(datasource: DatasourceDB) = {
-    if (datasource.datasourceType == DatasourceType.jdbc) {
+    if (datasource.generalParameters.datasourceType == DatasourceType.jdbc) {
       for {
-        url <- validateDefined("jdbcUrl", datasource.jdbcUrl)
-        driver <- validateDefined("jdbcDriver", datasource.jdbcDriver)
-      } yield Some(JdbcParams(url, driver, datasource.jdbcQuery, datasource.jdbcTable))
+        url <- validateDefined("jdbcUrl", datasource.jdbcParameters.jdbcUrl)
+        driver <- validateDefined("jdbcDriver", datasource.jdbcParameters.jdbcDriver)
+      } yield Some(JdbcParams(
+        url,
+        driver,
+        datasource.jdbcParameters.jdbcQuery,
+        datasource.jdbcParameters.jdbcTable))
     } else {
       None.success
     }
   }
 
   private def validateExternalFileParams(datasource: DatasourceDB) = {
-    if (datasource.datasourceType == DatasourceType.externalFile) {
+    if (datasource.generalParameters.datasourceType == DatasourceType.externalFile) {
       for {
-        url <- validateDefined("externalFileUrl", datasource.externalFileUrl)
-        fileFormat <- validateDefined("fileFormat", datasource.fileFormat)
+        url <- validateDefined("externalFileUrl", datasource.fileParameters.externalFileUrl)
+        fileFormat <- validateDefined("fileFormat", datasource.fileParameters.fileFormat)
         csvFileFormatParams <- validateCsvFileFormatParams(datasource, fileFormat)
       } yield Some(ExternalFileParams(url, fileFormat, csvFileFormatParams))
     } else {
@@ -73,10 +77,10 @@ object DatasourceApiFromDb {
   }
 
   private def validateLibraryFileParams(datasource: DatasourceDB) = {
-    if (datasource.datasourceType == DatasourceType.libraryFile) {
+    if (datasource.generalParameters.datasourceType == DatasourceType.libraryFile) {
       for {
-        url <- validateDefined("libraryPath", datasource.libraryPath)
-        fileFormat <- validateDefined("fileFormat", datasource.fileFormat)
+        url <- validateDefined("libraryPath", datasource.fileParameters.libraryPath)
+        fileFormat <- validateDefined("fileFormat", datasource.fileParameters.fileFormat)
         csvFileFormatParams <- validateCsvFileFormatParams(datasource, fileFormat)
       } yield Some(LibraryFileParams(url, fileFormat, csvFileFormatParams))
     } else {
@@ -87,22 +91,28 @@ object DatasourceApiFromDb {
   private def validateCsvFileFormatParams(datasource: DatasourceDB, fileFormat: FileFormat) = {
     if (fileFormat == FileFormat.csv) {
       for {
-        fileCsvIncludeHeader <- validateDefined("fileCsvIncludeHeader", datasource.fileCsvIncludeHeader)
-        fileCsvConvert01ToBoolean <- validateDefined("fileCsvConvert01ToBoolean", datasource.fileCsvConvert01ToBoolean)
-        fileCsvSeparatorType <- validateDefined("fileCsvSeparatorType", datasource.fileCsvSeparatorType)
+        fileCsvIncludeHeader <- validateDefined("fileCsvIncludeHeader", datasource.fileParameters.fileCsvIncludeHeader)
+        fileCsvConvert01ToBoolean <- validateDefined(
+          "fileCsvConvert01ToBoolean",
+          datasource.fileParameters.fileCsvConvert01ToBoolean)
+        fileCsvSeparatorType <- validateDefined(
+          "fileCsvSeparatorType",
+          datasource.fileParameters.fileCsvSeparatorType)
       } yield Some(CsvFileFormatParams(
-        fileCsvIncludeHeader, fileCsvConvert01ToBoolean, fileCsvSeparatorType, datasource.fileCsvCustomSeparator
-      ))
+        fileCsvIncludeHeader,
+        fileCsvConvert01ToBoolean,
+        fileCsvSeparatorType,
+        datasource.fileParameters.fileCsvCustomSeparator))
     } else {
       None.success
     }
   }
 
   private def validateHdfsParams(datasource: DatasourceDB) = {
-    if (datasource.datasourceType == DatasourceType.hdfs) {
+    if (datasource.generalParameters.datasourceType == DatasourceType.hdfs) {
       for {
-        path <- validateDefined("hdfsPath", datasource.hdfsPath)
-        fileFormat <- validateDefined("fileFormat", datasource.fileFormat)
+        path <- validateDefined("hdfsPath", datasource.fileParameters.hdfsPath)
+        fileFormat <- validateDefined("fileFormat", datasource.fileParameters.fileFormat)
         csvFileFormatParams <- validateCsvFileFormatParams(datasource, fileFormat)
       } yield Some(HdfsParams(path, fileFormat, csvFileFormatParams))
     } else {
@@ -111,15 +121,15 @@ object DatasourceApiFromDb {
   }
 
   private def validateGoogleSpreadsheetParams(datasource: DatasourceDB) = {
-    if (datasource.datasourceType == DatasourceType.googleSpreadsheet) {
+    if (datasource.generalParameters.datasourceType == DatasourceType.googleSpreadsheet) {
       for {
-        googleSpreadsheetId <- validateDefined("googleSpreadsheetId", datasource.googleSpreadsheetId)
+        googleSpreadsheetId <- validateDefined("googleSpreadsheetId", datasource.googleParameters.googleSpreadsheetId)
         googleServiceAccountCredentials <- validateDefined("googleServiceAccountCredentials",
-          datasource.googleServiceAccountCredentials
+          datasource.googleParameters.googleServiceAccountCredentials
         )
-        includeHeader <- validateDefined("includeHeader", datasource.googleSpreadsheetIncludeHeader)
+        includeHeader <- validateDefined("includeHeader", datasource.googleParameters.googleSpreadsheetIncludeHeader)
         convert01ToBoolean <- validateDefined("convert01ToBoolean",
-          datasource.googleSpreadsheetConvert01ToBoolean
+          datasource.googleParameters.googleSpreadsheetConvert01ToBoolean
         )
       } yield Some(GoogleSpreadsheetParams(googleSpreadsheetId, googleServiceAccountCredentials,
         includeHeader, convert01ToBoolean
