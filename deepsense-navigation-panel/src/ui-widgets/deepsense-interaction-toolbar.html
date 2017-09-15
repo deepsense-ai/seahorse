@@ -1,0 +1,27 @@
+<section class="deepsense-interaction-toolbar">
+  <div class="well">
+    <button class="btn btn-info" ng-click="handleZoomOutBtnClick()" title="Zoom out">
+      <i class="fa fa-search-minus"></i>
+    </button>
+    <button class="btn btn-info" ng-click="handleZoomInBtnClick()" title="Zoom in">
+      <i class="fa fa-search-plus"></i>
+    </button>
+  </div>
+  <div class="well">
+    <button class="btn btn-info" ng-click="handleMoveBtnClick()"
+            ng-class="{ 'active': activeMoveBtn }"
+            title="Move">
+      <i class="fa fa-arrows"></i>
+    </button>
+    <button class="btn btn-info" ng-click="handleFitBtnClick()"
+            title="Fit all nodes to the visible area">
+      <i class="fa fa-arrows-alt"></i>
+    </button>
+  </div>
+  <div class="well" ng-if='closeInnerWorkflowBtnVisible'>
+    <button class="btn btn-info" ng-click="handleCloseInnerWorkflowBtn()"
+            title="Close inner workflow">
+      Close inner workflow
+    </button>
+  </div>
+</section>

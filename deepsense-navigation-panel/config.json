@@ -1,0 +1,10 @@
+{
+  "dist": "dist/",
+  "src": "src/",
+  "temp": ".tmp/",
+  "names": {
+    "js": "deepsense-navigation-panel.js",
+    "css": "deepsense-navigation-panel.css",
+    "partialsModule": "deepsense.navigation-panel.partials"
+  }
+}

@@ -1,0 +1,37 @@
+/**
+ * Copyright (c) 2015, CodiLime Inc.
+ *
+ * Created by: Grzegorz Swatowski
+ */
+
+.deepsense-interactive-element {
+  transform-origin: 0 0;
+  transition: transform 0.1s;
+  transition-timing-function: ease-in-out;
+  transform: translate(0, 0) scale(1);
+}
+
+.deepsense-interactive-panel {
+  overflow: hidden;
+}
+
+.deepsense-interaction-toolbar {
+  display: inline-block;
+
+  > .well {
+    display: inline-block;
+    margin-bottom: 0;
+    padding: 5px;
+    z-index: 1000;
+  }
+}
+
+.deepsense-moveable {
+  cursor: -webkit-grab;
+  cursor: -moz-grab;
+}
+
+.deepsense-moving {
+  cursor: -webkit-grabbing;
+  cursor: -moz-grabbing;
+}
