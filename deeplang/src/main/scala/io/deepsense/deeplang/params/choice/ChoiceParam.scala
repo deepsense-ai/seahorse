@@ -47,6 +47,9 @@ class ChoiceParam[T <: Choice](
   override def validateSubparams(value: T): Vector[DeepLangException] = {
     value.validateParams
   }
+
+  override def replicate(name: String): ChoiceParam[T] =
+    new ChoiceParam[T](name, description)
 }
 
 object ChoiceParam {

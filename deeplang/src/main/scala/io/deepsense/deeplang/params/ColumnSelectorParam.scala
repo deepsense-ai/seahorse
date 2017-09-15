@@ -27,4 +27,6 @@ case class ColumnSelectorParam(
 
   override val parameterType = ParameterType.ColumnSelector
   override val isSingle = false
+
+  override def replicate(name: String): ColumnSelectorParam = copy(name = name)
 }

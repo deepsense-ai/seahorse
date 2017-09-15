@@ -28,4 +28,6 @@ case class StringParam(
   with HasValidator[String] {
 
   override val parameterType = ParameterType.String
+
+  override def replicate(name: String): StringParam = copy(name = name)
 }

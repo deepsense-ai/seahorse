@@ -27,4 +27,8 @@ class DoubleParamWrapper[P <: ml.param.Params](
     val sparkParamGetter: P => ml.param.DoubleParam,
     override val validator: Validator[Double] = RangeValidator(Double.MinValue, Double.MaxValue))
   extends NumericParam(name, description, validator)
-  with ForwardSparkParamWrapper[P, Double]
+  with ForwardSparkParamWrapper[P, Double] {
+
+  override def replicate(name: String): DoubleParamWrapper[P] =
+    new DoubleParamWrapper[P](name, description, sparkParamGetter, validator)
+}

@@ -25,4 +25,8 @@ class BooleanParamWrapper[P <: ml.param.Params](
     override val description: String,
     val sparkParamGetter: P => ml.param.Param[Boolean])
   extends BooleanParam(name, description)
-  with ForwardSparkParamWrapper[P, Boolean]
+  with ForwardSparkParamWrapper[P, Boolean] {
+
+  override def replicate(name: String): BooleanParamWrapper[P] =
+    new BooleanParamWrapper[P](name, description, sparkParamGetter)
+}

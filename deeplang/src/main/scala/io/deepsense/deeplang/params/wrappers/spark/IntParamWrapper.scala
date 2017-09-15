@@ -32,4 +32,7 @@ class IntParamWrapper[P <: ml.param.Params](
   with SparkParamWrapper[P, Int, Double] {
 
   override def convert(value: Double)(schema: StructType): Int = value.toInt
+
+  override def replicate(name: String): IntParamWrapper[P] =
+    new IntParamWrapper[P](name, description, sparkParamGetter, validator)
 }

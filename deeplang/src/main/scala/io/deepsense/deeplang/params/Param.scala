@@ -41,6 +41,14 @@ abstract class Param[T] {
   val isGriddable: Boolean = false
 
   /**
+    * Used to extract public parameters in custom transformer.
+    *
+    * @param name name of replicated parameter
+    * @return replicated parameter
+    */
+  def replicate(name: String): Param[T]
+
+  /**
    * Describes json representation of this parameter.
    * @param maybeDefault Optional default value of parameter. Should be of type Option[T],
    *                     but we need to receive Any because Params have to use this method

@@ -16,12 +16,96 @@
 
 package io.deepsense.deeplang.doperations
 
-import io.deepsense.deeplang.DOperation.Id
-import io.deepsense.deeplang.doperables.CustomTransformer
+import scala.reflect.runtime.universe.TypeTag
 
-case class CreateCustomTransformer() extends TransformerAsFactory[CustomTransformer] {
+import spray.json._
+
+import io.deepsense.deeplang.DOperation.Id
+import io.deepsense.deeplang.doperations.custom.{Sink, Source}
+import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
+import io.deepsense.deeplang.params.custom.PublicParam
+import io.deepsense.deeplang.params.{WorkflowParam, Param}
+import io.deepsense.deeplang._
+import io.deepsense.deeplang.doperables.CustomTransformer
+import io.deepsense.graph.Node
+
+case class CreateCustomTransformer() extends DOperation0To1[CustomTransformer] {
+
+  import DefaultCustomTransformerWorkflow._
 
   override val id: Id = "65240399-2987-41bd-ba7e-2944d60a3404"
   override val name: String = "Create Custom Transformer"
   override val description: String = "Creates custom transformer"
+
+  val innerWorkflow = WorkflowParam(
+    name = "inner workflow",
+    description = "Inner workflow of the Transformer.")
+  setDefault(innerWorkflow, defaultWorkflow)
+
+  def getInnerWorkflow: JsObject = $(innerWorkflow)
+  def setInnerWorkflow(workflow: JsObject): this.type = set(innerWorkflow, workflow)
+
+  override val params: Array[Param[_]] = declareParams(innerWorkflow)
+
+  override lazy val tTagTO_0: TypeTag[CustomTransformer] = typeTag
+
+  override protected def _execute(context: ExecutionContext)(): CustomTransformer =
+    customTransformer(context.innerWorkflowExecutor)
+
+  override def inferKnowledge(
+      context: InferContext)(
+      knowledge: Vector[DKnowledge[DOperable]])
+        : (Vector[DKnowledge[DOperable]], InferenceWarnings) = {
+
+    val transformer = customTransformer(context.innerWorkflowParser)
+    (Vector(DKnowledge[DOperable](transformer)), InferenceWarnings.empty)
+  }
+
+  private def customTransformer(innerWorkflowParser: InnerWorkflowParser): CustomTransformer = {
+    val workflow = innerWorkflowParser.parse($(innerWorkflow))
+    val selectedParams = workflow.publicParams.flatMap {
+      case PublicParam(nodeId, paramName, publicName) =>
+        workflow.graph.nodes.find(_.id == nodeId)
+          .flatMap(node => node.value.params.find(_.name == paramName))
+          .map(_.replicate(publicName))
+    }.toArray
+
+    CustomTransformer(workflow, selectedParams)
+  }
+}
+
+object DefaultCustomTransformerWorkflow {
+
+  private def node(operation: DOperation, nodeId: Node.Id): JsObject =
+    JsObject(
+      "id" -> JsString(nodeId.toString),
+      "operation" -> JsObject(
+        "id" -> JsString(operation.id.toString),
+        "name" -> JsString(operation.name)
+      ),
+      "parameters" -> JsObject()
+    )
+
+  private def connection(from: Node.Id, to: Node.Id): JsObject =
+    JsObject(
+      "from" -> JsObject(
+        "nodeId" -> JsString(from.toString),
+        "portIndex" -> JsNumber(0)
+      ),
+      "to" -> JsObject(
+        "nodeId" -> JsString(to.toString),
+        "portIndex" -> JsNumber(0)
+      )
+    )
+
+  private val sourceNodeId: Node.Id = "2603a7b5-aaa9-40ad-9598-23f234ec5c32"
+  private val sinkNodeId: Node.Id = "d7798d5e-b1c6-4027-873e-a6d653957418"
+
+  val defaultWorkflow = JsObject(
+    "workflow" -> JsObject(
+      "nodes" -> JsArray(node(Source(), sourceNodeId), node(Sink(), sinkNodeId)),
+      "connections" -> JsArray(connection(sourceNodeId, sinkNodeId)),
+      "thirdPartyData" -> JsString("{}")
+    )
+  )
 }

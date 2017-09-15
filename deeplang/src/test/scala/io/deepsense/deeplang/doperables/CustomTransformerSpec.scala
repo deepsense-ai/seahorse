@@ -63,7 +63,6 @@ class CustomTransformerSpec extends UnitSpec {
       val outputDataFrame = mock[DataFrame]
 
       val innerWorkflowExecutor = mock[InnerWorkflowExecutor]
-      when(innerWorkflowExecutor.parse(any())).thenReturn(workflow)
       when(innerWorkflowExecutor.execute(any(), same(workflow), any())).thenReturn(outputDataFrame)
 
       val context = ExecutionContext(
@@ -77,7 +76,7 @@ class CustomTransformerSpec extends UnitSpec {
         mock[ContextualPythonCodeExecutor]
       )
 
-      val transformer = CustomTransformer()
+      val transformer = new CustomTransformer(workflow, Array.empty)
 
       transformer._transform(context, mock[DataFrame]) shouldBe outputDataFrame
     }
@@ -92,10 +91,7 @@ class CustomTransformerSpec extends UnitSpec {
         catalog,
         innerWorkflowParser)
 
-      when(innerWorkflowParser.parse(any())).thenReturn(
-        InnerWorkflow(simpleGraph, JsObject()))
-
-      val transformer = CustomTransformer()
+      val transformer = new CustomTransformer(InnerWorkflow(simpleGraph, JsObject()), Array.empty)
 
       val schema = StructType(Seq(
         StructField("column1", DoubleType),

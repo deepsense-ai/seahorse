@@ -56,4 +56,6 @@ case class ParamsSequence[T <: Params](
   override def extraJsFields: Map[String, JsValue] = Map(
     "values" -> innerParamsInstance.paramsToJson
   )
+
+  override def replicate(name: String): ParamsSequence[T] = copy(name = name)
 }

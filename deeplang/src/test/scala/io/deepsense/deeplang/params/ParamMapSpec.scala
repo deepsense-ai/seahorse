@@ -31,6 +31,8 @@ class ParamMapSpec extends UnitSpec {
 
     override def valueToJson(value: T): JsValue = ???
     override def valueFromJson(jsValue: JsValue): T = ???
+
+    override def replicate(name: String): MockParam[T] = new MockParam[T]
   }
 
   val intParam = new MockParam[Int]

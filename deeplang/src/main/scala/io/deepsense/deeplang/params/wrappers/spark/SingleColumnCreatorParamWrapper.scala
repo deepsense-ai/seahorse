@@ -25,4 +25,8 @@ class SingleColumnCreatorParamWrapper[P <: ml.param.Params](
     override val description: String,
     val sparkParamGetter: P => ml.param.Param[String])
   extends SingleColumnCreatorParam(name, description)
-  with ForwardSparkParamWrapper[P, String]
+  with ForwardSparkParamWrapper[P, String] {
+
+  override def replicate(name: String): SingleColumnCreatorParamWrapper[P] =
+    new SingleColumnCreatorParamWrapper[P](name, description, sparkParamGetter)
+}

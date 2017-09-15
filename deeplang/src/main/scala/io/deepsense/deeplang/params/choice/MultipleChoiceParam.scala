@@ -47,4 +47,6 @@ case class MultipleChoiceParam[T <: Choice](
   override def validateSubparams(value: Set[T]): Vector[DeepLangException] = {
     value.toVector.flatMap { _.validateParams }
   }
+
+  override def replicate(name: String): MultipleChoiceParam[T] = copy(name = name)
 }

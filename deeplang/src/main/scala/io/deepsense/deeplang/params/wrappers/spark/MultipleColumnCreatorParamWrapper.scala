@@ -25,4 +25,8 @@ class MultipleColumnCreatorParamWrapper[P <: ml.param.Params](
     override val description: String,
     val sparkParamGetter: P => ml.param.StringArrayParam)
   extends MultipleColumnCreatorParam(name, description)
-  with ForwardSparkParamWrapper[P, Array[String]]
+  with ForwardSparkParamWrapper[P, Array[String]] {
+
+  override def replicate(name: String): MultipleColumnCreatorParamWrapper[P] =
+    new MultipleColumnCreatorParamWrapper[P](name, description, sparkParamGetter)
+}

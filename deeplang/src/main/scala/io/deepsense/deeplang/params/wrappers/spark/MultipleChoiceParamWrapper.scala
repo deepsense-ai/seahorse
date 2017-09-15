@@ -31,4 +31,7 @@ class MultipleChoiceParamWrapper[P <: ml.param.Params, T <: Choice : TypeTag](
   with SparkParamWrapper[P, Array[String], Set[T]] {
 
   override def convert(value: Set[T])(schema: StructType): Array[String] = value.map(_.name).toArray
+
+  override def replicate(name: String): MultipleChoiceParamWrapper[P, T] =
+    new MultipleChoiceParamWrapper[P, T](name, description, sparkParamGetter)
 }

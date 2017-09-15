@@ -25,4 +25,8 @@ class PrefixBasedColumnCreatorParamWrapper[P <: ml.param.Params](
     override val description: String,
     val sparkParamGetter: P => ml.param.Param[String])
   extends PrefixBasedColumnCreatorParam(name, description)
-  with ForwardSparkParamWrapper[P, String]
+  with ForwardSparkParamWrapper[P, String] {
+
+  override def replicate(name: String): PrefixBasedColumnCreatorParamWrapper[P] =
+    new PrefixBasedColumnCreatorParamWrapper[P](name, description, sparkParamGetter)
+}

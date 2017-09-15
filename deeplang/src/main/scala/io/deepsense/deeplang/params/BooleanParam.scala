@@ -24,4 +24,6 @@ case class BooleanParam(
   extends ParamWithJsFormat[Boolean] {
 
   override val parameterType = ParameterType.Boolean
+
+  override def replicate(name: String): BooleanParam = copy(name = name)
 }

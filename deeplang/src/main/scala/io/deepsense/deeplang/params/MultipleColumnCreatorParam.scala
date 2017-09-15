@@ -24,4 +24,6 @@ case class MultipleColumnCreatorParam(
   extends ParamWithJsFormat[Array[String]] {
 
   val parameterType = ParameterType.MultipleColumnCreator
+
+  override def replicate(name: String): MultipleColumnCreatorParam = copy(name = name)
 }

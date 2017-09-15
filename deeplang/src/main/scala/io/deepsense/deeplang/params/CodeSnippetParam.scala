@@ -30,4 +30,6 @@ case class CodeSnippetParam(
   override val parameterType: ParameterType = ParameterType.CodeSnippet
 
   override protected def extraJsFields: Map[String, JsValue] = Map("language" -> language.toJson)
+
+  override def replicate(name: String): CodeSnippetParam = copy(name = name)
 }

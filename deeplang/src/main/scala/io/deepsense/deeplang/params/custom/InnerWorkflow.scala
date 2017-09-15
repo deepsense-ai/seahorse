@@ -40,4 +40,10 @@ case class InnerWorkflow(
 
 }
 
+object InnerWorkflow {
+  val empty = InnerWorkflow(
+    DeeplangGraph(Set(Node(Node.Id.randomId, Source()), Node(Node.Id.randomId, Sink()))),
+    JsObject())
+}
+
 case class PublicParam(nodeId: Node.Id, paramName: String, publicName: String)

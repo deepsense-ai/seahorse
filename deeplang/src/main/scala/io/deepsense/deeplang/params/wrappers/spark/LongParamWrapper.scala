@@ -33,4 +33,7 @@ class LongParamWrapper[P <: ml.param.Params](
   with SparkParamWrapper[P, Long, Double] {
 
   override def convert(value: Double)(schema: StructType): Long = value.toLong
+
+  override def replicate(name: String): LongParamWrapper[P] =
+    new LongParamWrapper[P](name, description, sparkParamGetter, validator)
 }

@@ -31,4 +31,7 @@ class FloatParamWrapper[P <: ml.param.Params](
   with SparkParamWrapper[P, Float, Double] {
 
   override def convert(value: Double)(schema: StructType): Float = value.toFloat
+
+  override def replicate(name: String): FloatParamWrapper[P] =
+    new FloatParamWrapper[P](name, description, sparkParamGetter, validator)
 }

@@ -26,4 +26,7 @@ class GridSearchParam(
   extends DynamicParam(name, description, inputPort) {
 
   override val parameterType: ParameterType = ParameterType.GridSearch
+
+  override def replicate(name: String): GridSearchParam =
+    new GridSearchParam(name, description, inputPort)
 }

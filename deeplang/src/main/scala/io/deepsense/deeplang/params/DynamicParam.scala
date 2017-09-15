@@ -41,4 +41,7 @@ class DynamicParam(
   override def valueToJson(value: JsValue): JsValue = value
 
   override def valueFromJson(jsValue: JsValue): JsValue = jsValue
+
+  override def replicate(name: String): DynamicParam =
+    new DynamicParam(name, description, inputPort)
 }

@@ -17,78 +17,33 @@
 package io.deepsense.deeplang.doperables
 
 import org.apache.spark.sql.types.StructType
-import spray.json._
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperations.custom.{Sink, Source}
 import io.deepsense.deeplang.inference.InferContext
-import io.deepsense.deeplang.params.{Param, WorkflowParam}
-import io.deepsense.graph.{GraphKnowledge, Node, NodeInferenceResult}
+import io.deepsense.deeplang.params.Param
+import io.deepsense.deeplang.params.custom.InnerWorkflow
+import io.deepsense.graph._
 
-case class CustomTransformer() extends Transformer with DefaultCustomTransformerWorkflow {
+case class CustomTransformer(
+    innerWorkflow: InnerWorkflow,
+    override val params: Array[Param[_]])
+  extends Transformer {
 
-  val innerWorkflow = WorkflowParam(
-    name = "inner workflow",
-    description = "Inner workflow of the Transformer.")
-  setDefault(innerWorkflow, defaultWorkflow)
-
-  def getInnerWorkflow: JsObject = $(innerWorkflow)
-  def setInnerWorkflow(workflow: JsObject): this.type = set(innerWorkflow, workflow)
-
-  override val params: Array[Param[_]] = declareParams(innerWorkflow)
+  def this() = this(InnerWorkflow.empty, Array.empty)
 
   override private[deeplang] def _transform(ctx: ExecutionContext, df: DataFrame): DataFrame = {
-    val workflow = ctx.innerWorkflowExecutor.parse(getInnerWorkflow)
-    ctx.innerWorkflowExecutor.execute(CommonExecutionContext(ctx), workflow, df)
+    ctx.innerWorkflowExecutor.execute(CommonExecutionContext(ctx), innerWorkflow, df)
   }
 
   override private[deeplang] def _transformSchema(
       schema: StructType, inferCtx: InferContext): Option[StructType] = {
-    val workflow = inferCtx.innerWorkflowParser.parse(getInnerWorkflow)
     val initialKnowledge = GraphKnowledge(Map(
-      workflow.source.id -> NodeInferenceResult(Vector(DKnowledge(DataFrame.forInference(schema))))
+      innerWorkflow.source.id -> NodeInferenceResult(
+        Vector(DKnowledge(DataFrame.forInference(schema))))
     ))
 
-    workflow.graph.inferKnowledge(inferCtx, initialKnowledge)
-      .getKnowledge(workflow.sink.id)(0).asInstanceOf[DKnowledge[DataFrame]].single.schema
+    innerWorkflow.graph.inferKnowledge(inferCtx, initialKnowledge)
+      .getKnowledge(innerWorkflow.sink.id)(0).asInstanceOf[DKnowledge[DataFrame]].single.schema
   }
-}
-
-trait DefaultCustomTransformerWorkflow {
-
-  private def node(operation: DOperation, nodeId: Node.Id): JsObject =
-    JsObject(
-      "id" -> JsString(nodeId.toString),
-      "operation" -> JsObject(
-        "id" -> JsString(operation.id.toString),
-        "name" -> JsString(operation.name)
-      ),
-      "parameters" -> JsObject()
-    )
-
-  private def connection(from: Node.Id, to: Node.Id): JsObject =
-    JsObject(
-      "from" -> JsObject(
-        "nodeId" -> JsString(from.toString),
-        "portIndex" -> JsNumber(0)
-      ),
-      "to" -> JsObject(
-        "nodeId" -> JsString(to.toString),
-        "portIndex" -> JsNumber(0)
-      )
-    )
-
-  private val sourceNodeId: Node.Id = "2603a7b5-aaa9-40ad-9598-23f234ec5c32"
-  private val sinkNodeId: Node.Id = "d7798d5e-b1c6-4027-873e-a6d653957418"
-
-  val defaultWorkflow = JsObject(
-    "workflow" -> JsObject(
-      "nodes" -> JsArray(node(Source(), sourceNodeId), node(Sink(), sinkNodeId)),
-      "connections" -> JsArray(connection(sourceNodeId, sinkNodeId)),
-      "thirdPartyData" -> JsString("{}"),
-      "source" -> JsString(sourceNodeId.toString),
-      "sink" -> JsString(sinkNodeId.toString)
-    )
-  )
 }

@@ -27,4 +27,8 @@ class StringParamWrapper[P <: ml.param.Params](
     val sparkParamGetter: P => ml.param.Param[String],
     override val validator: Validator[String] = new AcceptAllRegexValidator)
   extends StringParam(name, description, validator)
-  with ForwardSparkParamWrapper[P, String]
+  with ForwardSparkParamWrapper[P, String] {
+
+  override def replicate(name: String): StringParamWrapper[P] =
+    new StringParamWrapper[P](name, description, sparkParamGetter, validator)
+}

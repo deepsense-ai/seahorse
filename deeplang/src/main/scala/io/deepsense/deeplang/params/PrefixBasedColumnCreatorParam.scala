@@ -24,4 +24,6 @@ case class PrefixBasedColumnCreatorParam(
   extends ParamWithJsFormat[String] {
 
   val parameterType = ParameterType.PrefixBasedColumnCreator
+
+  override def replicate(name: String): PrefixBasedColumnCreatorParam = copy(name = name)
 }

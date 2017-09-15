@@ -255,6 +255,8 @@ object ParamsSpec extends UnitSpec {
     override def valueFromJson(jsValue: JsValue): Int = jsValue.convertTo[Int]
 
     override def validate(value: Int): Vector[DeepLangException] = Vector(MockException(name))
+
+    override def replicate(name: String): MockParam = copy(name = name)
   }
 
   val defaultForParam1 = 1

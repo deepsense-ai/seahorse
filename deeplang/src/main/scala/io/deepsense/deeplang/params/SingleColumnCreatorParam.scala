@@ -24,4 +24,6 @@ case class SingleColumnCreatorParam(
   extends ParamWithJsFormat[String] {
 
   val parameterType = ParameterType.SingleColumnCreator
+
+  override def replicate(name: String): SingleColumnCreatorParam = copy(name = name)
 }

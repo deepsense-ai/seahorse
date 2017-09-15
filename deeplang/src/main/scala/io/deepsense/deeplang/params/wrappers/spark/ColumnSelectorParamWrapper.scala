@@ -34,4 +34,7 @@ class ColumnSelectorParamWrapper[P <: ml.param.Params](
 
   override def convert(value: MultipleColumnSelection)(schema: StructType): Array[String] =
     DataFrameColumnsGetter.getColumnNames(schema, value).toArray
+
+  override def replicate(name: String): ColumnSelectorParamWrapper[P] =
+    new ColumnSelectorParamWrapper[P](name, description, sparkParamGetter, portIndex)
 }

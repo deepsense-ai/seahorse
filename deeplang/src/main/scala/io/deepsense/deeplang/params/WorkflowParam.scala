@@ -35,4 +35,6 @@ case class WorkflowParam(
     super.validate(value)
     // TODO: validate if json is a valid workflow representation.
   }
+
+  override def replicate(name: String): WorkflowParam = copy(name = name)
 }

@@ -28,4 +28,6 @@ case class SingleColumnSelectorParam(
 
   override val parameterType = ParameterType.ColumnSelector
   override val isSingle = true
+
+  override def replicate(name: String): SingleColumnSelectorParam = copy(name = name)
 }

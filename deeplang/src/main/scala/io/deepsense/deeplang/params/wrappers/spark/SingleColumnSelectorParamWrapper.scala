@@ -33,4 +33,7 @@ class SingleColumnSelectorParamWrapper[P <: ml.param.Params](
 
   override def convert(value: SingleColumnSelection)(schema: StructType): String =
     DataFrameColumnsGetter.getColumnName(schema, value)
+
+  override def replicate(name: String): SingleColumnSelectorParamWrapper[P] =
+    new SingleColumnSelectorParamWrapper[P](name, description, sparkParamGetter, portIndex)
 }
