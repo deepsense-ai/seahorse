@@ -32,7 +32,7 @@ object RestJsonProtocol extends DefaultJsonProtocol with SprayJsonSupport {
   }
 
   implicit val graphFormat = jsonFormat0(Graph.apply)
-  implicit val experimentFormat = jsonFormat4(Experiment.apply)
+  implicit val experimentFormat = jsonFormat5(Experiment.apply)
   implicit val inputExperimentFormat = jsonFormat3(InputExperiment.apply)
   implicit val nodeFormat = jsonFormat1(Node.apply)
   implicit val launchActionFormat = jsonFormat1(LaunchAction.apply)
