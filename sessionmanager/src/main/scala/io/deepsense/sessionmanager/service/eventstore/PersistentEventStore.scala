@@ -8,19 +8,21 @@ import java.sql.{SQLException, Timestamp}
 import java.util.UUID
 
 import scala.concurrent.{ExecutionContext, Future}
+
 import com.google.inject.Inject
 import com.google.inject.name.Named
 import org.joda.time.{DateTime, DateTimeZone}
 import slick.driver.JdbcDriver
 import slick.lifted.ProvenShape
+import spray.json._
+
 import io.deepsense.commons.datetime.DateTimeConverter
-import io.deepsense.commons.models.Id
+import io.deepsense.commons.models.{ClusterDetails, Id}
+import io.deepsense.commons.rest.ClusterDetailsJsonProtocol._
 import io.deepsense.commons.utils.Logging
-import io.deepsense.sessionmanager.rest.requests.ClusterDetails
 import io.deepsense.sessionmanager.service.EventStore
 import io.deepsense.sessionmanager.service.EventStore._
-import io.deepsense.sessionmanager.rest.ClusterDetailsJsonProtocol._
-import spray.json._
+
 
 class PersistentEventStore @Inject() (
   @Named("EventStore") db: JdbcDriver#API#Database,

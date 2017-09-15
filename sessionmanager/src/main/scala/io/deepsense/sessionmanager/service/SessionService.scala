@@ -15,8 +15,8 @@ import com.google.inject.Inject
 import com.google.inject.name.Named
 
 import io.deepsense.commons.models.Id
+import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.commons.utils.Logging
-import io.deepsense.sessionmanager.rest.requests.ClusterDetails
 import io.deepsense.sessionmanager.rest.responses.ListSessionsResponse
 import io.deepsense.sessionmanager.service.actors.SessionServiceActor
 import io.deepsense.sessionmanager.service.sessionspawner.SessionConfig

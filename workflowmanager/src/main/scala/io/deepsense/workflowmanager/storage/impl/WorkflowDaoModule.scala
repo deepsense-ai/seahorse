@@ -6,8 +6,8 @@ package io.deepsense.workflowmanager.storage.impl
 
 import com.google.inject.name.Names
 import com.google.inject.{PrivateModule, Scopes}
-import slick.driver.{JdbcDriver, H2Driver}
 import slick.driver.H2Driver.api.Database
+import slick.driver.{H2Driver, JdbcDriver}
 
 import io.deepsense.workflowmanager.storage.{NotebookStorage, WorkflowStateStorage, WorkflowStorage}
 
@@ -34,5 +34,9 @@ class WorkflowDaoModule extends PrivateModule {
       .to(classOf[WorkflowStateDaoImpl])
       .in(Scopes.SINGLETON)
     expose(classOf[WorkflowStateStorage])
+
+    bind(classOf[PresetsDao])
+      .in(Scopes.SINGLETON)
+    expose(classOf[PresetsDao])
   }
 }

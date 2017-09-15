@@ -4,15 +4,17 @@
 
 package io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.clusters
 
+import scalaz.Validation
+
 import org.apache.spark.launcher.SparkLauncher
-import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.clusters.SeahorseSparkLauncher.RichSparkLauncher
-import io.deepsense.sessionmanager.rest.requests.ClusterDetails
+
+import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.sessionmanager.service.sessionspawner.SessionConfig
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.SparkLauncherConfig
+import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.clusters.SeahorseSparkLauncher.RichSparkLauncher
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.executor.{CommonEnv, SessionExecutorArgs}
+import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.spark.SparkAgumentParser
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.spark.SparkAgumentParser.UnknownOption
-
-import scalaz.Validation
 
 private [clusters] object YarnSparkLauncher {
   import scala.collection.JavaConversions._
@@ -21,7 +23,7 @@ private [clusters] object YarnSparkLauncher {
       sessionConfig: SessionConfig,
       config: SparkLauncherConfig,
       clusterConfig: ClusterDetails): Validation[UnknownOption, SparkLauncher] = for {
-    args <- clusterConfig.parsedParams
+    args <- SparkAgumentParser.parseAsMap(clusterConfig.params)
   } yield new SparkLauncher(env(config, clusterConfig))
       .setSparkArgs(args.toMap)
       .setVerbose(true)

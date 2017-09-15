@@ -5,7 +5,7 @@
 package io.deepsense.sessionmanager.service
 
 import io.deepsense.commons.models.Id
-import io.deepsense.sessionmanager.rest.requests.ClusterDetails
+import io.deepsense.commons.models.ClusterDetails
 
 case class Session(workflowId: Id, status: Status.Value, cluster: ClusterDetails)
 

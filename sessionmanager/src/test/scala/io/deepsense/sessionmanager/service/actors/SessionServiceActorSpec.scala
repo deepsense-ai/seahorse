@@ -19,7 +19,7 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
 import io.deepsense.commons.models.Id
-import io.deepsense.sessionmanager.rest.requests.ClusterDetails
+import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.sessionmanager.service.EventStore.{Event, InvalidWorkflowId, SessionExists}
 import io.deepsense.sessionmanager.service._
 import io.deepsense.sessionmanager.service.actors.SessionServiceActor.{CreateRequest, GetRequest, KillRequest, ListRequest}

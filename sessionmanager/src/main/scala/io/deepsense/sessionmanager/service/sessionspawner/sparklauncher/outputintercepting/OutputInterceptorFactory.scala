@@ -13,7 +13,7 @@ import com.google.inject.Inject
 import com.google.inject.name.Named
 import org.apache.spark.launcher.SparkLauncher
 
-import io.deepsense.sessionmanager.rest.requests.ClusterDetails
+import io.deepsense.commons.models.ClusterDetails
 
 /**
   * Spark launcher is hardcoded to redirect child process output to parents

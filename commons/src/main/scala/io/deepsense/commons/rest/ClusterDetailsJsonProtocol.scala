@@ -2,13 +2,13 @@
  * Copyright (c) 2016, CodiLime Inc.
  */
 
-package io.deepsense.sessionmanager.rest
+package io.deepsense.commons.rest
 
 import spray.httpx.SprayJsonSupport
 import spray.json._
 
 import io.deepsense.commons.json.IdJsonProtocol
-import io.deepsense.sessionmanager.rest.requests.ClusterDetails
+import io.deepsense.commons.models.ClusterDetails
 
 trait ClusterDetailsJsonProtocol
   extends DefaultJsonProtocol

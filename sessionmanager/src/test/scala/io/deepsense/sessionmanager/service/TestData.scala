@@ -6,7 +6,7 @@ package io.deepsense.sessionmanager.service
 
 import java.util.UUID
 
-import io.deepsense.sessionmanager.rest.requests.ClusterDetails
+import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.sessionmanager.service.sessionspawner.SessionConfig
 
 object TestData {
@@ -19,7 +19,7 @@ object TestData {
 
   lazy val someClusterDetails = ClusterDetails(
     clusterType = "mesos",
-    id = "some-id",
+    id = Some(1),
     name = "some-name",
     uri = "localhost",
     userIP = "127.0.0.1"

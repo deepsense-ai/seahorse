@@ -10,19 +10,21 @@ import scala.util.{Failure, Success, Try}
 import com.google.inject.Inject
 import com.google.inject.name.Named
 import org.apache.commons.lang3.StringUtils
-import spray.http.HttpHeaders.`Content-Disposition`
+import spray.http.HttpHeaders.{RawHeader, `Content-Disposition`}
 import spray.http.MediaTypes._
 import spray.http._
 import spray.httpx.marshalling.Marshaller
 import spray.httpx.unmarshalling.Unmarshaller
 import spray.json._
-import spray.routing.authentication.{BasicAuth, UserPass}
 import spray.routing._
+import spray.routing.authentication.{BasicAuth, UserPass}
 import spray.util.LoggingContext
 
 import io.deepsense.commons.auth.directives._
 import io.deepsense.commons.auth.usercontext.TokenTranslator
 import io.deepsense.commons.json.envelope.{Envelope, EnvelopeJsonFormat}
+import io.deepsense.commons.models.ClusterDetails
+import io.deepsense.commons.rest.ClusterDetailsJsonProtocol._
 import io.deepsense.commons.rest.{Cors, RestApiAbstractAuth, RestComponent}
 import io.deepsense.commons.utils.Version
 import io.deepsense.graph.CyclicGraphException
@@ -30,9 +32,10 @@ import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow._
 import io.deepsense.models.json.workflow.exceptions.WorkflowVersionException
 import io.deepsense.models.workflows._
-import io.deepsense.workflowmanager.WorkflowManagerProvider
 import io.deepsense.workflowmanager.exceptions._
 import io.deepsense.workflowmanager.model.{WorkflowDescription, WorkflowDescriptionJsonProtocol}
+import io.deepsense.workflowmanager.{PresetService, WorkflowManagerProvider}
+
 
 /**
  * Exposes Workflow Manager through a REST API.
@@ -44,6 +47,7 @@ abstract class WorkflowApi @Inject() (
     @Named("reports.api.prefix") reportsApiPrefix: String,
     @Named("auth.user") authUser: String,
     @Named("auth.pass") authPass: String,
+    private val presetService: PresetService,
     override val graphReader: GraphReader)
     (implicit ec: ExecutionContext)
   extends RestApiAbstractAuth
@@ -99,6 +103,11 @@ abstract class WorkflowApi @Inject() (
   implicit private val envelopeWorkflowIdJsonFormat =
     new EnvelopeJsonFormat[Workflow.Id]("workflowId")
 
+  private val presetPathPrefixMatcher = PathMatchers.separateOnSlashes("v1/presets")
+
+  def respondWithPresetId(presetId: Long) =
+    respondWithHeader(RawHeader("Location", presetId.toString))
+
   def route: Route = {
     cors {
       handleRejections(rejectionHandler) {
@@ -107,6 +116,42 @@ abstract class WorkflowApi @Inject() (
             path("") {
               get {
                 complete("Workflow Manager")
+              }
+            } ~
+            pathPrefix(presetPathPrefixMatcher) {
+              path(LongNumber) { presetId =>
+                get {
+                  complete(presetService.getPreset(presetId))
+                } ~
+                delete {
+                  complete {
+                    presetService.removePreset(presetId)
+                    StatusCodes.OK
+                  }
+                } ~
+                post {
+                  entity(as[ClusterDetails]) { request =>
+                    val preset = presetService.updatePreset(presetId, request)
+                    onSuccess(preset) {
+                      case _ => complete(StatusCodes.OK)
+                    }
+                  }
+                }
+              } ~
+              pathEndOrSingleSlash {
+                get {
+                  complete(presetService.listPresets())
+                } ~
+                post {
+                  entity(as[ClusterDetails]) { request =>
+                    val preset = presetService.createPreset(request)
+                    onSuccess(preset) {
+                      case newPresetId => respondWithPresetId(newPresetId) {
+                        complete(StatusCodes.Created)
+                      }
+                    }
+                  }
+                }
               }
             } ~
             pathPrefix(workflowsPathPrefixMatcher) {
@@ -352,6 +397,7 @@ class SecureWorkflowApi @Inject() (
   @Named("reports.api.prefix") reportsApiPrefix: String,
   @Named("auth.user") authUser: String,
   @Named("auth.pass") authPass: String,
+  private val presetService: PresetService,
   override val graphReader: GraphReader)
   (implicit ec: ExecutionContext)
   extends WorkflowApi(
@@ -361,6 +407,7 @@ class SecureWorkflowApi @Inject() (
     reportsApiPrefix,
     authUser,
     authPass,
+    presetService,
     graphReader)
   with AuthDirectives
 
@@ -371,6 +418,7 @@ class InsecureWorkflowApi @Inject() (
   @Named("reports.api.prefix") reportsApiPrefix: String,
   @Named("auth.user") authUser: String,
   @Named("auth.pass") authPass: String,
+  private val presetService: PresetService,
   override val graphReader: GraphReader)
   (implicit ec: ExecutionContext)
   extends WorkflowApi(
@@ -380,5 +428,6 @@ class InsecureWorkflowApi @Inject() (
     reportsApiPrefix,
     authUser,
     authPass,
+    presetService,
     graphReader)
   with InsecureAuthDirectives

@@ -13,7 +13,7 @@ import org.joda.time.DateTime
 
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.utils.Logging
-import io.deepsense.sessionmanager.rest.requests.ClusterDetails
+import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.sessionmanager.service.EventStore.Event
 import io.deepsense.sessionmanager.service.actors.SessionServiceActor._
 import io.deepsense.sessionmanager.service.executor.SessionExecutorClients

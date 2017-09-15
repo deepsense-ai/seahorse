@@ -8,7 +8,8 @@ import spray.httpx.SprayJsonSupport
 import spray.json._
 
 import io.deepsense.commons.json.IdJsonProtocol
-import io.deepsense.sessionmanager.rest.ClusterDetailsJsonProtocol._
+import io.deepsense.commons.rest.ClusterDetailsJsonProtocol
+import io.deepsense.commons.rest.ClusterDetailsJsonProtocol._
 import io.deepsense.sessionmanager.rest.requests.CreateSession
 import io.deepsense.sessionmanager.rest.responses.ListSessionsResponse
 import io.deepsense.sessionmanager.service.{Session, Status}

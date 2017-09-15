@@ -5,9 +5,10 @@
 package io.deepsense.sessionmanager.service
 
 import scala.concurrent.Future
+
 import org.joda.time.DateTime
-import io.deepsense.commons.models.Id
-import io.deepsense.sessionmanager.rest.requests.ClusterDetails
+
+import io.deepsense.commons.models.{ClusterDetails, Id}
 import io.deepsense.sessionmanager.service.EventStore._
 
 trait EventStore {

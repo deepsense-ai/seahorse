@@ -5,8 +5,7 @@
 package io.deepsense.sessionmanager.service.sessionspawner
 
 import scala.concurrent.Future
-import io.deepsense.commons.models.Id
-import io.deepsense.sessionmanager.rest.requests.ClusterDetails
+import io.deepsense.commons.models.ClusterDetails
 
 trait SessionSpawner {
   def createSession(sessionConfig: SessionConfig, clusterConfig: ClusterDetails): Future[Unit]

@@ -8,7 +8,7 @@ import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
-import io.deepsense.sessionmanager.rest.requests.ClusterDetails
+import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.sessionmanager.service.{TestData, EventStore}
 import io.deepsense.sessionmanager.service.EventStore._
 

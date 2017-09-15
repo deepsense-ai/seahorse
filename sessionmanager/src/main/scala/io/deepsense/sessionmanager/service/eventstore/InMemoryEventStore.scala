@@ -6,9 +6,10 @@ package io.deepsense.sessionmanager.service.eventstore
 
 import scala.collection.mutable
 import scala.concurrent.Future
+
 import org.joda.time.{DateTime, DateTimeZone}
-import io.deepsense.commons.models.Id
-import io.deepsense.sessionmanager.rest.requests.ClusterDetails
+
+import io.deepsense.commons.models.{ClusterDetails, Id}
 import io.deepsense.sessionmanager.service.EventStore
 import io.deepsense.sessionmanager.service.EventStore.{HeartbeatReceived, InvalidWorkflowId, Started, _}
 

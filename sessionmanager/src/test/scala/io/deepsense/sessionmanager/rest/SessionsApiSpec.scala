@@ -15,9 +15,9 @@ import spray.routing.Route
 
 import io.deepsense.commons.json.IdJsonProtocol
 import io.deepsense.commons.json.envelope.{Envelope, EnvelopeJsonFormat}
-import io.deepsense.commons.models.Id
+import io.deepsense.commons.models.{ClusterDetails, Id}
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
-import io.deepsense.sessionmanager.rest.requests.{ClusterDetails, CreateSession}
+import io.deepsense.sessionmanager.rest.requests.CreateSession
 import io.deepsense.sessionmanager.rest.responses.ListSessionsResponse
 import io.deepsense.sessionmanager.service._
 import io.deepsense.sessionmanager.service.sessionspawner.SessionConfig
@@ -33,7 +33,7 @@ class SessionsApiSpec
 
   val apiPrefix: String = "sessions"
   val cluster = ClusterDetails(
-    name = "name", id = "id", clusterType = "yarn", uri = "localhost", userIP = "127.0.0.1"
+    name = "name", id = Some(1), clusterType = "yarn", uri = "localhost", userIP = "127.0.0.1"
   )
 
   def testRoute(

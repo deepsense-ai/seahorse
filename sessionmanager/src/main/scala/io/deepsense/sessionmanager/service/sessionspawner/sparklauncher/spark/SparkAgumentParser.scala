@@ -53,6 +53,10 @@ object SparkAgumentParser extends Logging {
     }
   }
 
+  def parseAsMap(paramsOption: Option[String]): Validation[UnknownOption, Map[String, String]] = {
+    parse(paramsOption).map(_.toMap)
+  }
+
   private class SparkAgumentParser extends PublicSparkSubmitOptionParser {
 
     val arguments = mutable.Map.empty[String, String]

@@ -4,15 +4,14 @@
 
 package io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.clusters
 
-import scalaz._
 import scalaz.Scalaz._
+import scalaz._
 
 import org.apache.spark.launcher.SparkLauncher
 
-import io.deepsense.sessionmanager.rest.requests.ClusterDetails
+import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.sessionmanager.service.sessionspawner._
-
-import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.{SparkLauncherError, UnexpectedException, SparkLauncherConfig}
+import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.{SparkLauncherConfig, SparkLauncherError, UnexpectedException}
 
 object SeahorseSparkLauncher {
 

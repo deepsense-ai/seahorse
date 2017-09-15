@@ -10,7 +10,7 @@ import scalaz._
 import com.google.inject.Inject
 
 import io.deepsense.commons.utils.Logging
-import io.deepsense.sessionmanager.rest.requests.ClusterDetails
+import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.clusters.SeahorseSparkLauncher
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.outputintercepting.OutputInterceptorFactory
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.spark.PromiseSparkAppHandle

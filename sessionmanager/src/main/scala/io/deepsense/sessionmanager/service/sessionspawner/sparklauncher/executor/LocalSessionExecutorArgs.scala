@@ -4,7 +4,7 @@
 
 package io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.executor
 
-import io.deepsense.sessionmanager.rest.requests.ClusterDetails
+import io.deepsense.commons.models.ClusterDetails
 import io.deepsense.sessionmanager.service.sessionspawner.SessionConfig
 import io.deepsense.sessionmanager.service.sessionspawner.sparklauncher.SparkLauncherConfig
 
