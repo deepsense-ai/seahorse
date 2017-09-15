@@ -131,7 +131,7 @@ class CrossValidateRegressor
         val observations =
           testDataFrame
             .sparkDataFrame
-            .select(testDataFrame.getColumnName(parametersForTrainable.targetColumn))
+            .select(testDataFrame.getColumnName(parametersForTrainable.targetColumn.get))
             .rdd
             .map(r => r.get(0).asInstanceOf[Double])
         // NOTE: testSparkDataFrame/testDataFrame will not be used further

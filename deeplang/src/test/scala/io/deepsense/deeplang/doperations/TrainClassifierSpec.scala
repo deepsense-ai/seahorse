@@ -18,15 +18,13 @@ class TrainClassifierSpec extends UnitSpec with MockitoSugar {
   val classifier = TrainClassifier()
 
   val trainableParametersStub = Trainable.Parameters(
-    mock[MultipleColumnSelection], mock[SingleColumnSelection])
+    Some(mock[MultipleColumnSelection]), Some(mock[SingleColumnSelection]))
 
   classifier.parameters.
-    getSingleColumnSelectorParameter("target column").value =
-    Some(trainableParametersStub.targetColumn)
+    getSingleColumnSelectorParameter("target column").value = trainableParametersStub.targetColumn
 
   classifier.parameters.
-    getColumnSelectorParameter("feature columns").value =
-    Some(trainableParametersStub.featureColumns)
+    getColumnSelectorParameter("feature columns").value = trainableParametersStub.featureColumns
 
   "TrainClassifier with parameters set" should {
     "train untrained model on dataframe" in {

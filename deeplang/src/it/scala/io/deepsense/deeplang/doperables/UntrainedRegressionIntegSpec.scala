@@ -77,9 +77,9 @@ abstract class UntrainedRegressionIntegSpec[T <: GeneralizedLinearModel]
 
       val regression = constructUntrainedModel
       val parameters = Trainable.Parameters(
-        featureColumns = MultipleColumnSelection(
-          Vector(NameColumnSelection(Set("column0", "column1")))),
-        targetColumn = NameSingleColumnSelection("column3"))
+        featureColumns = Some(MultipleColumnSelection(
+          Vector(NameColumnSelection(Set("column0", "column1"))))),
+        targetColumn = Some(NameSingleColumnSelection("column3")))
 
       val result = regression.train(mockContext)(parameters)(inputDataFrame)
       validateResult(mockTrainedModel, result)
@@ -92,9 +92,9 @@ abstract class UntrainedRegressionIntegSpec[T <: GeneralizedLinearModel]
         intercept[ColumnDoesNotExistException] {
           val regression = constructUntrainedModel
           val parameters = Trainable.Parameters(
-            featureColumns = MultipleColumnSelection(
-              Vector(NameColumnSelection(Set("column0", "column1")))),
-            targetColumn = NameSingleColumnSelection("not exists"))
+            featureColumns = Some(MultipleColumnSelection(
+              Vector(NameColumnSelection(Set("column0", "column1"))))),
+            targetColumn = Some(NameSingleColumnSelection("not exists")))
           regression.train(executionContext)(parameters)(inputDataFrame)
         }
       }
@@ -102,9 +102,9 @@ abstract class UntrainedRegressionIntegSpec[T <: GeneralizedLinearModel]
         intercept[ColumnsDoNotExistException] {
           val regression = constructUntrainedModel
           val parameters = Trainable.Parameters(
-            featureColumns = MultipleColumnSelection(
-              Vector(NameColumnSelection(Set("not exists", "column1")))),
-            targetColumn = NameSingleColumnSelection("column3"))
+            featureColumns = Some(MultipleColumnSelection(
+              Vector(NameColumnSelection(Set("not exists", "column1"))))),
+            targetColumn = Some(NameSingleColumnSelection("column3")))
           regression.train(executionContext)(parameters)(inputDataFrame)
         }
       }
@@ -112,9 +112,9 @@ abstract class UntrainedRegressionIntegSpec[T <: GeneralizedLinearModel]
         intercept[WrongColumnTypeException] {
           val regression = constructUntrainedModel
           val parameters = Trainable.Parameters(
-            featureColumns = MultipleColumnSelection(
-              Vector(NameColumnSelection(Set("column2", "column1")))),
-            targetColumn = NameSingleColumnSelection("column3"))
+            featureColumns = Some(MultipleColumnSelection(
+              Vector(NameColumnSelection(Set("column2", "column1"))))),
+            targetColumn = Some(NameSingleColumnSelection("column3")))
           regression.train(executionContext)(parameters)(inputDataFrame)
         }
       }
@@ -122,9 +122,9 @@ abstract class UntrainedRegressionIntegSpec[T <: GeneralizedLinearModel]
         intercept[WrongColumnTypeException] {
           val regression = constructUntrainedModel
           val parameters = Trainable.Parameters(
-            featureColumns = MultipleColumnSelection(
-              Vector(NameColumnSelection(Set("column0", "column1")))),
-            targetColumn = NameSingleColumnSelection("column2"))
+            featureColumns = Some(MultipleColumnSelection(
+              Vector(NameColumnSelection(Set("column0", "column1"))))),
+            targetColumn = Some(NameSingleColumnSelection("column2")))
           regression.train(executionContext)(parameters)(inputDataFrame)
         }
       }

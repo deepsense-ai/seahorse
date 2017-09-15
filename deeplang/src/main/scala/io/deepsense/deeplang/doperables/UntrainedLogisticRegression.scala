@@ -23,8 +23,8 @@ case class UntrainedLogisticRegression(
         parameters: Trainable.Parameters)(
         dataFrame: DataFrame): Scorable = {
 
-      val featureColumns = dataFrame.getColumnNames(parameters.featureColumns)
-      val labelColumn = dataFrame.getColumnName(parameters.targetColumn)
+      val featureColumns = dataFrame.getColumnNames(parameters.featureColumns.get)
+      val labelColumn = dataFrame.getColumnName(parameters.targetColumn.get)
       val labeledPoints = dataFrame.toSparkLabeledPointRDD(featureColumns, labelColumn)
       labeledPoints.cache()
       val trainedModel: LogisticRegressionModel = model.get.run(labeledPoints)

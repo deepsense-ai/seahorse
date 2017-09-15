@@ -20,17 +20,15 @@ object TrainRegressor {
     val regressor = TrainRegressor()
 
     val trainableParametersStub = Trainable.Parameters(
-      MultipleColumnSelection(Vector(NameColumnSelection(featureColumns))),
-      NameSingleColumnSelection(targetColumn)
+      Some(MultipleColumnSelection(Vector(NameColumnSelection(featureColumns)))),
+      Some(NameSingleColumnSelection(targetColumn))
     )
 
     regressor.parameters.
-      getSingleColumnSelectorParameter("target column").value =
-      Some(trainableParametersStub.targetColumn)
+      getSingleColumnSelectorParameter("target column").value = trainableParametersStub.targetColumn
 
     regressor.parameters.
-      getColumnSelectorParameter("feature columns").value =
-      Some(trainableParametersStub.featureColumns)
+      getColumnSelectorParameter("feature columns").value = trainableParametersStub.featureColumns
 
     regressor
   }

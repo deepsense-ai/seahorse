@@ -25,8 +25,8 @@ case class UntrainedRidgeRegression(
         parameters: Trainable.Parameters)(
         dataframe: DataFrame): Scorable = {
 
-      val featureColumns = dataframe.getColumnNames(parameters.featureColumns)
-      val labelColumn = dataframe.getColumnName(parameters.targetColumn)
+      val featureColumns = dataframe.getColumnNames(parameters.featureColumns.get)
+      val labelColumn = dataframe.getColumnName(parameters.targetColumn.get)
 
       val labeledPoints = dataframe.toSparkLabeledPointRDD(featureColumns, labelColumn)
 

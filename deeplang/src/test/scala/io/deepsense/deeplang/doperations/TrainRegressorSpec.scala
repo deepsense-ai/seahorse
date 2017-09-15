@@ -12,7 +12,7 @@ import org.scalatest.mock.MockitoSugar
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.{UntrainedRidgeRegression, Regressor, Scorable, Trainable}
+import io.deepsense.deeplang.doperables.{Scorable, Trainable, UntrainedRidgeRegression}
 import io.deepsense.deeplang.parameters.{MultipleColumnSelection, SingleColumnSelection}
 
 class TrainRegressorSpec extends UnitSpec with MockitoSugar {
@@ -20,15 +20,13 @@ class TrainRegressorSpec extends UnitSpec with MockitoSugar {
   val regressor = TrainRegressor()
 
   val trainableParametersStub = Trainable.Parameters(
-    mock[MultipleColumnSelection], mock[SingleColumnSelection])
+    Some(mock[MultipleColumnSelection]), Some(mock[SingleColumnSelection]))
 
   regressor.parameters.
-    getSingleColumnSelectorParameter("target column").value =
-      Some(trainableParametersStub.targetColumn)
+    getSingleColumnSelectorParameter("target column").value = trainableParametersStub.targetColumn
 
   regressor.parameters.
-    getColumnSelectorParameter("feature columns").value =
-    Some(trainableParametersStub.featureColumns)
+    getColumnSelectorParameter("feature columns").value = trainableParametersStub.featureColumns
 
   "TrainRegressor with parameters set" should {
     "train untrained model on dataframe" in {

@@ -10,8 +10,8 @@ import org.scalatest.mock.MockitoSugar
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables._
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.parameters.{MultipleColumnSelection, SingleColumnSelection}
 import io.deepsense.reportlib.model.ReportContent
 
@@ -36,15 +36,13 @@ class CrossValidateRegressorSpec extends UnitSpec with MockitoSugar {
     .value = Some(0.0)
 
   val trainableParametersStub = Trainable.Parameters(
-    mock[MultipleColumnSelection], mock[SingleColumnSelection])
+    Some(mock[MultipleColumnSelection]), Some(mock[SingleColumnSelection]))
 
   regressor.parameters.
-    getSingleColumnSelectorParameter("target column").value =
-      Some(trainableParametersStub.targetColumn)
+    getSingleColumnSelectorParameter("target column").value = trainableParametersStub.targetColumn
 
   regressor.parameters.
-    getColumnSelectorParameter("feature columns").value =
-    Some(trainableParametersStub.featureColumns)
+    getColumnSelectorParameter("feature columns").value = trainableParametersStub.featureColumns
 
   "CrossValidateRegressor with parameters set" should {
     "train untrained model on DataFrame" in {
@@ -68,6 +66,7 @@ class CrossValidateRegressorSpec extends UnitSpec with MockitoSugar {
     }
 
     "infer results of it's types" in {
+      val regressorWithoutParams = new CrossValidateRegressor
       val inferContextStub = mock[InferContext]
       val dDOperableCatalogMock = mock[DOperableCatalog]
       when(inferContextStub.dOperableCatalog).thenReturn(dDOperableCatalogMock)
@@ -92,7 +91,7 @@ class CrossValidateRegressorSpec extends UnitSpec with MockitoSugar {
       when(trainableMock2.train).thenReturn(trainMethodMock2)
       when(trainMethodMock2.infer(any())(any())(any())).thenReturn(scorableKnowledgeStub2)
 
-      val result = regressor.inferKnowledge(
+      val result = regressorWithoutParams.inferKnowledge(
         inferContextStub)(
         Vector(DKnowledge(trainableMock1, trainableMock2), dataframeKnowledgeStub))
 

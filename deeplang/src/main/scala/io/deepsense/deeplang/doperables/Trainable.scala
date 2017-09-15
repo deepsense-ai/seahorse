@@ -22,6 +22,6 @@ trait Trainable extends DOperable {
 
 object Trainable {
   case class Parameters(
-    featureColumns: MultipleColumnSelection,
-    targetColumn: SingleColumnSelection)
+    featureColumns: Option[MultipleColumnSelection] = None,
+    targetColumn: Option[SingleColumnSelection] = None)
 }

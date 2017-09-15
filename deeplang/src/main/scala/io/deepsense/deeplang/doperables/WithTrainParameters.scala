@@ -17,6 +17,6 @@ trait WithTrainParameters {
       "Column against which the regression will be performed", required = true))
 
   protected def parametersForTrainable: Trainable.Parameters = Trainable.Parameters(
-    trainParameters.getColumnSelection(featureColumnsField).get,
-    trainParameters.getSingleColumnSelection(targetColumnField).get)
+    trainParameters.getColumnSelection(featureColumnsField),
+    trainParameters.getSingleColumnSelection(targetColumnField))
 }
