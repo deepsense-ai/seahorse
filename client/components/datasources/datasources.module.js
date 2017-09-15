@@ -13,7 +13,6 @@ import DatasourcesPanelService from './datasources-panel/datasources-panel.servi
 import DatasourcesModalsService from './datasources-toolbar/modals/datasources-modals.service.js';
 
 // Modals controllers
-import BaseDatasourceModalController from './datasources-toolbar/modals/base-datasource-modal-controller.js';
 import DatabaseModalController from './datasources-toolbar/modals/database-modal/database-modal.controller.js';
 import ExternalFileModalController from './datasources-toolbar/modals/external-file-modal/external-file-modal.controller.js';
 import GoogleSpreadsheetModalController from './datasources-toolbar/modals/google-spreadsheet-modal/google-spreadsheet-modal.controller.js';
@@ -29,7 +28,6 @@ export const datasourcesModule = angular
   .component('fileSettings', FileSettingsComponent)
   .service('DatasourcesPanelService', DatasourcesPanelService)
   .service('DatasourcesModalsService', DatasourcesModalsService)
-  .controller('BaseDatasourceModalController', BaseDatasourceModalController)
   .controller('DatabaseModalController', DatabaseModalController)
   .controller('ExternalFileModalController', ExternalFileModalController)
   .controller('GoogleSpreadsheetModalController', GoogleSpreadsheetModalController)

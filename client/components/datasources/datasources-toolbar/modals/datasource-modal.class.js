@@ -2,7 +2,7 @@
 
 import footerTpl from './modal-footer/modal-footer.html';
 
-class BaseDatasourceModalController {
+class DatasourceModal {
   constructor($log, $uibModalInstance, datasourcesService, editedDatasource) {
     'ngInject';
 
@@ -64,4 +64,4 @@ class BaseDatasourceModalController {
 
 }
 
-export default BaseDatasourceModalController;
+export default DatasourceModal;

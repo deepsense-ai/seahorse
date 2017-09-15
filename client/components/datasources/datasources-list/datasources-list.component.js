@@ -13,6 +13,8 @@ const DatasourcesListComponent = {
   controller: class DatasourcesListController {
     constructor() {
       'ngInject';
+
+      this.sort('creationDateTime', true);
     }
 
     sort(type, order) {

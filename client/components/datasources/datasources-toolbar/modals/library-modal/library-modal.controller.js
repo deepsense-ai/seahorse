@@ -1,8 +1,8 @@
 'use strict';
 
-import BaseDatasourceModalController from '../base-datasource-modal-controller.js';
+import DatasourceModal from '../datasource-modal.class.js';
 
-class LibraryModalController extends BaseDatasourceModalController {
+class LibraryModalController extends DatasourceModal {
   constructor($scope, $log, $uibModalInstance, LibraryModalService,
               datasourcesService, DatasourcesPanelService, editedDatasource) {
     'ngInject';

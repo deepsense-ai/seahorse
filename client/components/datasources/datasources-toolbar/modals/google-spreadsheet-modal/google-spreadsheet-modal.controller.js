@@ -1,11 +1,11 @@
 'use strict';
 
-import BaseDatasourceModalController from '../base-datasource-modal-controller.js';
+import DatasourceModal from '../datasource-modal.class.js';
 
 const GOOGLE_SPREADSHEET_REGEX = /[a-zA-Z0-9-_]+/;
 const FULL_SPREADSHEET_URI_REGEX = /\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/;
 
-class GoogleSpreadsheetModalController extends BaseDatasourceModalController {
+class GoogleSpreadsheetModalController extends DatasourceModal {
   constructor($scope, $log, $uibModalInstance, datasourcesService, editedDatasource) {
     'ngInject';
 
@@ -57,6 +57,7 @@ class GoogleSpreadsheetModalController extends BaseDatasourceModalController {
       JSON.parse(this.datasourceParams.googleSpreadsheetParams.googleServiceAccountCredentials);
     } catch(e) {
       this.areCredentialsValid = false;
+      return;
     }
     this.areCredentialsValid = true;
   }

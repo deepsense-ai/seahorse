@@ -1,11 +1,11 @@
 'use strict';
 
-import BaseDatasourceModalController from '../base-datasource-modal-controller.js';
+import DatasourceModal from '../datasource-modal.class.js';
 
 const HDFS_REGEX = /(hdfs):\/\/([\w\-_]+)+([\w\-\\.,@?^=%&amp;:/~\\+#]*[\w\-\\@?^=%&amp;/~\\+#])?/;
 const HDFS_PREFIX = 'hdfs://';
 
-class HdfsModalController extends BaseDatasourceModalController {
+class HdfsModalController extends DatasourceModal {
   constructor($scope, $log, $uibModalInstance, datasourcesService, editedDatasource) {
     'ngInject';
 
