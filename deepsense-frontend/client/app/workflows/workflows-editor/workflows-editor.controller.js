@@ -9,7 +9,7 @@ import NodeCopyPasteVisitor from './node-copy-paste-visitor.js';
 class WorkflowsEditorController {
 
   /* @ngInject */
-  constructor(workflowWithResults, $scope, $state, $q, $rootScope, $log,
+  constructor(workflowWithResults, $scope, $state, $q, $rootScope, $log, $timeout,
     GraphNode, Edge, config, Report, MultiSelectionService, PageService, Operations, GraphPanelRendererService,
     WorkflowService, MouseEvent, ConfirmationModalService, ExportModalService, GraphNodesService, NotificationService,
     ServerCommunication, CopyPasteService, SideBarService, BottomBarService, WorkflowStatusBarService) {
@@ -17,7 +17,7 @@ class WorkflowsEditorController {
     WorkflowService.initRootWorkflow(workflowWithResults);
 
     _.assign(this, {
-      $scope, $state, $q, $rootScope, $log,
+      $scope, $state, $q, $rootScope, $log, $timeout,
       GraphNode, Edge, config, Report, MultiSelectionService, PageService, Operations, GraphPanelRendererService,
       WorkflowService, MouseEvent, ConfirmationModalService, ExportModalService, GraphNodesService, NotificationService,
       ServerCommunication, CopyPasteService, SideBarService, BottomBarService, WorkflowStatusBarService
@@ -93,9 +93,17 @@ class WorkflowsEditorController {
       this.ServerCommunication.reconnect();
     });
 
-    // So attributes panel does not show attributes from previous workflow node.
     this.$scope.$watch(() => this.getWorkflow(), () => {
+      // So attributes panel does not show attributes from previous workflow node.
       this.unselectNode();
+
+      // HACK. Further down in digest cycle there are changes in stuff that navigation service relies on (probably node-related)
+      // Timeout allows us to broadcast fit event after other components.
+      this.$timeout(() => {
+        this.$rootScope.$broadcast('INTERACTION-PANEL.FIT', {
+          zoomId: this.zoomId
+        });
+      }, 10)
     });
 
     this.$scope.$on('ServerCommunication.MESSAGE.executionStatus', (event, data) => {
