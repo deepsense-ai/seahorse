@@ -508,8 +508,10 @@ angular.module('test').
                   "name": "name31",
                   "type": "codeSnippet",
                   "description": "31 desc",
-                  "language": "R",
-                  "default": "let codilime <- 42;",
+                  "language": {
+                    "name": "Python"
+                  },
+                  "default": "def operation_main(data_frame_1):\n  return out_data_frame_1",
                   "required": true
                 }
               ]
