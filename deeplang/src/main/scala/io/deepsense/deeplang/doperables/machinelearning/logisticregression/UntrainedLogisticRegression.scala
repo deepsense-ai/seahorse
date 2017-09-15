@@ -63,7 +63,7 @@ case class UntrainedLogisticRegression(
         ("Tolerance", ColumnType.numeric,
           DoubleUtils.double2String(modelParameters.tolerance))
       )
-      .report()
+      .report
   }
 
   override def save(context: ExecutionContext)(path: String): Unit =

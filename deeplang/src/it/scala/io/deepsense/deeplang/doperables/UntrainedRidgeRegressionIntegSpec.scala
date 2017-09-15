@@ -19,43 +19,58 @@ package io.deepsense.deeplang.doperables
 import org.apache.spark.mllib.regression.{GeneralizedLinearAlgorithm, RidgeRegressionModel, RidgeRegressionWithSGD}
 import org.scalactic.EqualityPolicy.Spread
 
+import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType
+import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType.ExtendedColumnType
+import io.deepsense.deeplang.doperables.machinelearning.ridgeregression.{TrainedRidgeRegression, UntrainedRidgeRegression}
 import io.deepsense.deeplang.doperables.machinelearning.LinearRegressionParameters
 import io.deepsense.deeplang.doperables.machinelearning.ridgeregression.{TrainedRidgeRegression, UntrainedRidgeRegression}
 
-class UntrainedRidgeRegressionIntegSpec extends UntrainedRegressionIntegSpec[RidgeRegressionModel] {
 
-  val testDataDir: String = testsDir + "/UntrainedRidgeRegressionIntegSpec"
+class UntrainedRidgeRegressionIntegSpec
+  extends TrainableBaseIntegSpec("UntrainedRidgeRegression")
+  with GeneralizedLinearModelTrainableBaseIntegSpec[RidgeRegressionModel] {
 
-  override def regressionName: String = "UntrainedRidgeRegression"
+  override def acceptedFeatureTypes: Seq[ExtendedColumnType] = Seq(
+    ExtendedColumnType.binaryValuedNumeric,
+    ExtendedColumnType.nonBinaryValuedNumeric)
 
-  override def modelType: Class[RidgeRegressionModel] = classOf[RidgeRegressionModel]
+  override def unacceptableFeatureTypes: Seq[ExtendedColumnType] = Seq(
+    ExtendedColumnType.categorical1,
+    ExtendedColumnType.categorical2,
+    ExtendedColumnType.categoricalMany,
+    ExtendedColumnType.boolean,
+    ExtendedColumnType.string,
+    ExtendedColumnType.timestamp)
 
-  override def constructUntrainedModel(
-      untrainedModelMock: GeneralizedLinearAlgorithm[RidgeRegressionModel]): Trainable =
+  override def acceptedTargetTypes: Seq[ExtendedColumnType] = Seq(
+    ExtendedColumnType.binaryValuedNumeric,
+    ExtendedColumnType.nonBinaryValuedNumeric)
+
+  override def unacceptableTargetTypes: Seq[ExtendedColumnType] = Seq(
+    ExtendedColumnType.categorical1,
+    ExtendedColumnType.categorical2,
+    ExtendedColumnType.categoricalMany,
+    ExtendedColumnType.boolean,
+    ExtendedColumnType.string,
+    ExtendedColumnType.timestamp)
+
+  override def createTrainableInstanceWithModel(
+    untrainedModel: GeneralizedLinearAlgorithm[RidgeRegressionModel]): Trainable =
     UntrainedRidgeRegression(
-      () => untrainedModelMock.asInstanceOf[RidgeRegressionWithSGD],
+      () => untrainedModel.asInstanceOf[RidgeRegressionWithSGD],
       mock[LinearRegressionParameters])
 
   override def mockUntrainedModel(): GeneralizedLinearAlgorithm[RidgeRegressionModel] =
     mock[RidgeRegressionWithSGD]
 
-  override val featuresValues: Seq[Spread[Double]] = Seq(
-    Spread(0.0, 0.0),
-    -0.755 +- 0.01,
-    Spread(0.0, 0.0),
-    -0.377 +- 0.01,
-    Spread(0.0, 0.0),
-    1.133 +- 0.01
-  )
+  // This needs overriding, because in RR features are scaled before
+  // being passed to Spark model for training.
+  override val expectedFeaturesInvocation: Seq[Spread[Double]] =
+    Seq(-1.16 +- 0.01, -0.38 +- 0.01, 0.38 +- 0.01, 1.16 +- 0.01)
 
-  override def validateResult(
-      mockTrainedModel: RidgeRegressionModel,
-      result: Scorable,
-      targetColumnName: String): Registration = {
-
-    val castedResult = result.asInstanceOf[TrainedRidgeRegression]
-    castedResult.model shouldBe mockTrainedModel
-    castedResult.featureColumns shouldBe Seq("column1", "column0")
-    castedResult.targetColumn shouldBe targetColumnName
+  override def createTrainableInstance: Trainable = {
+    val model = new RidgeRegressionWithSGD()
+    model.optimizer.setNumIterations(1)
+    UntrainedRidgeRegression(() => model, LinearRegressionParameters(1, 1, 1))
   }
 }

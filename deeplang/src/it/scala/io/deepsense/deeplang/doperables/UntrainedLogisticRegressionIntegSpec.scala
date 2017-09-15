@@ -18,22 +18,16 @@ package io.deepsense.deeplang.doperables
 
 import org.apache.spark.mllib.classification.{LogisticRegressionModel, LogisticRegressionWithLBFGS}
 import org.apache.spark.mllib.regression.GeneralizedLinearAlgorithm
-import org.scalactic.EqualityPolicy.Spread
 
+import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType
+import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType.ExtendedColumnType
 import io.deepsense.deeplang.doperables.machinelearning.logisticregression.{LogisticRegressionParameters, TrainedLogisticRegression, UntrainedLogisticRegression}
-import io.deepsense.deeplang.doperations.exceptions.WrongColumnTypeException
-import io.deepsense.deeplang.parameters.{MultipleColumnSelection, NameColumnSelection, NameSingleColumnSelection}
 
 class UntrainedLogisticRegressionIntegSpec
-  extends UntrainedRegressionIntegSpec[LogisticRegressionModel] {
+  extends TrainableBaseIntegSpec("UntrainedLogisticRegression")
+  with GeneralizedLinearModelTrainableBaseIntegSpec[LogisticRegressionModel] {
 
-  val testDataDir: String = testsDir + "/UntrainedLogisticRegressionIntegSpec"
-
-  override def regressionName: String = "UntrainedLogisticRegression"
-
-  override def modelType: Class[LogisticRegressionModel] = classOf[LogisticRegressionModel]
-
-  override def constructUntrainedModel(
+  override def createTrainableInstanceWithModel(
       untrainedModelMock: GeneralizedLinearAlgorithm[LogisticRegressionModel]): Trainable =
     UntrainedLogisticRegression(
       mock[LogisticRegressionParameters],
@@ -42,66 +36,34 @@ class UntrainedLogisticRegressionIntegSpec
   override def mockUntrainedModel(): GeneralizedLinearAlgorithm[LogisticRegressionModel] =
     mock[LogisticRegressionWithLBFGS]
 
-  override val featuresValues: Seq[Spread[Double]] = Seq(
-    Spread(-2.0, 0.0),
-    Spread(1000.0, 0.0),
-    Spread(-2.0, 0.0),
-    Spread(2000.0, 0.0),
-    Spread(-2.0, 0.0),
-    Spread(6000.0, 0.0))
+ override def acceptedFeatureTypes: Seq[ExtendedColumnType] = Seq(
+    ExtendedColumnType.binaryValuedNumeric,
+    ExtendedColumnType.nonBinaryValuedNumeric)
 
-  override def validateResult(
-      mockTrainedModel: LogisticRegressionModel,
-      result: Scorable,
-      targetColumnName: String): Registration = {
-    val castResult = result.asInstanceOf[TrainedLogisticRegression]
-    castResult.model shouldBe mockTrainedModel
-    castResult.featureColumns shouldBe Seq("column1", "column0")
-    castResult.targetColumn shouldBe targetColumnName
-  }
+  override def unacceptableFeatureTypes: Seq[ExtendedColumnType] = Seq(
+    ExtendedColumnType.categorical1,
+    ExtendedColumnType.categorical2,
+    ExtendedColumnType.categoricalMany,
+    ExtendedColumnType.boolean,
+    ExtendedColumnType.string,
+    ExtendedColumnType.timestamp)
 
-  regressionName should {
+  override def acceptedTargetTypes: Seq[ExtendedColumnType] = Seq(
+    ExtendedColumnType.binaryValuedNumeric,
+    ExtendedColumnType.boolean,
+    ExtendedColumnType.categorical1,
+    ExtendedColumnType.categorical2)
 
-    "train a model with 2-level categorical as target" in
-      withMockedModel(Seq(0.0, 1.0, 0.0)) {
-        (untrainedModel, trainedModel, context) =>
-          val dataFrame = createDataFrame(inputRows, inputSchema, Seq("column5"))
+  override def unacceptableTargetTypes: Seq[ExtendedColumnType] = Seq(
+    // this is omitted because it's a runtime problem, not schema problem
+    //ExtendedColumnType.nonBinaryValuedNumeric
+    ExtendedColumnType.string,
+    ExtendedColumnType.timestamp,
+    ExtendedColumnType.categoricalMany)
 
-          val parameters = TrainableParameters(
-            featureColumns = MultipleColumnSelection(
-              Vector(NameColumnSelection(Set("column1", "column0")))),
-            targetColumn = NameSingleColumnSelection("column5"))
-
-          val result = untrainedModel.train(context)(parameters)(dataFrame)
-          validateResult(trainedModel, result, "column5")
-      }
-
-    "train a model with boolean as target" in
-      withMockedModel(Seq(1.0, 1.0, 0.0)) {
-        (untrainedModel, trainedModel, context) =>
-          val dataFrame = createDataFrame(inputRows, inputSchema)
-
-          val parameters = TrainableParameters(
-            featureColumns = MultipleColumnSelection(
-              Vector(NameColumnSelection(Set("column1", "column0")))),
-            targetColumn = NameSingleColumnSelection("column4"))
-
-          val result = untrainedModel.train(context)(parameters)(dataFrame)
-          validateResult(trainedModel, result, "column4")
-      }
-
-    "throw when target column is 3-level categorical" in {
-      val dataFrame = createDataFrame(inputRows, inputSchema, Seq("column2"))
-
-      a[WrongColumnTypeException] shouldBe thrownBy {
-        val regression = constructUntrainedModel(mockUntrainedModel())
-        val parameters = TrainableParameters(
-          featureColumns = MultipleColumnSelection(
-            Vector(NameColumnSelection(Set("column1", "column0")))),
-          targetColumn = NameSingleColumnSelection("column2"))
-        regression.train(executionContext)(parameters)(dataFrame)
-      }
-    }
-
+  override def createTrainableInstance: Trainable = {
+    val model = new LogisticRegressionWithLBFGS()
+    model.optimizer.setNumIterations(1)
+    UntrainedLogisticRegression(LogisticRegressionParameters(1, 1, 1), () => model)
   }
 }

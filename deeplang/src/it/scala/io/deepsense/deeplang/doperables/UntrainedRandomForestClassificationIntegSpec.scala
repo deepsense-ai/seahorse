@@ -16,153 +16,39 @@
 
 package io.deepsense.deeplang.doperables
 
-import org.apache.spark.sql.Row
-import org.apache.spark.sql.types._
-import org.scalactic.EqualityPolicy.Spread
-import org.scalatest.BeforeAndAfter
-
-import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoriesMapping, MappingMetadataConverter}
-import io.deepsense.deeplang.doperables.machinelearning.randomforest.classification.{UntrainedRandomForestClassification, TrainedRandomForestClassification}
+import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType
+import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType.ExtendedColumnType
 import io.deepsense.deeplang.doperables.machinelearning.randomforest.RandomForestParameters
-import io.deepsense.deeplang.doperations.exceptions.{ColumnDoesNotExistException, ColumnsDoNotExistException, WrongColumnTypeException}
-import io.deepsense.deeplang.parameters.{MultipleColumnSelection, NameColumnSelection, NameSingleColumnSelection}
-import io.deepsense.deeplang.{DeeplangIntegTestSupport, ExecutionContext}
+import io.deepsense.deeplang.doperables.machinelearning.randomforest.classification.{TrainedRandomForestClassification, UntrainedRandomForestClassification}
 
 class UntrainedRandomForestClassificationIntegSpec
-    extends DeeplangIntegTestSupport
-    with BeforeAndAfter{
+  extends TrainableBaseIntegSpec("UntrainedRandomForestClassification") {
 
-  def constructUntrainedModel: Trainable =
-    UntrainedRandomForestClassification(mockUntrainedModel.asInstanceOf[RandomForestParameters])
+  override def acceptedFeatureTypes: Seq[ExtendedColumnType] = Seq(
+    ExtendedColumnType.binaryValuedNumeric,
+    ExtendedColumnType.nonBinaryValuedNumeric,
+    ExtendedColumnType.categorical2,
+    ExtendedColumnType.categoricalMany)
 
-  val mockUntrainedModel: RandomForestParameters =
-    RandomForestParameters(1, "auto", "gini", 4, 100)
+  override def unacceptableFeatureTypes: Seq[ExtendedColumnType] = Seq(
+    ExtendedColumnType.categorical1,
+    ExtendedColumnType.boolean,
+    ExtendedColumnType.string,
+    ExtendedColumnType.timestamp)
 
-  val featuresValues: Seq[Spread[Double]] = Seq(
-    Spread(0.0, 0.0), -0.755 +- 0.01,
-    Spread(0.0, 0.0), -0.377 +- 0.01,
-    Spread(0.0, 0.0), 1.133 +- 0.01
-  )
+  override def acceptedTargetTypes: Seq[ExtendedColumnType] = Seq(
+    ExtendedColumnType.binaryValuedNumeric,
+    ExtendedColumnType.boolean,
+    ExtendedColumnType.categorical1,
+    ExtendedColumnType.categorical2)
 
-  def validateResult(result: Scorable): Registration = {
-    val castedResult = result.asInstanceOf[TrainedRandomForestClassification]
-    castedResult.featureColumns shouldBe Seq("column1", "column4", "column0")
-    castedResult.targetColumn shouldBe "column3"
-  }
+  override def unacceptableTargetTypes: Seq[ExtendedColumnType] = Seq(
+    // this is omitted because it's a runtime problem, not schema problem
+    //ExtendedColumnType.nonBinaryValuedNumeric
+    ExtendedColumnType.string,
+    ExtendedColumnType.timestamp,
+    ExtendedColumnType.categoricalMany)
 
-  "UntrainedRandomForestClassification" should {
-
-    val inputRows: Seq[Row] = Seq(
-      Row(-2.0, "x", 0.0, 0, true, 1000.0),
-      Row(-2.0, "y", 0.0, 1, true, 2000.0),
-      Row(-2.0, "z", 1.0, 2, false, 6000.0))
-
-    val inputSchema: StructType = StructType(Seq(
-      StructField("column1", DoubleType),
-      StructField("column2", StringType),
-      StructField("column3", DoubleType),
-      StructField("column4", IntegerType,
-        metadata = MappingMetadataConverter.mappingToMetadata(CategoriesMapping(Seq("A", "B", "C")))
-      ),
-      StructField("column5", BooleanType),
-      StructField("column0", DoubleType)
-    ))
-
-    lazy val inputDataFrame = createDataFrame(inputRows, inputSchema)
-
-    "train a model" when {
-      "target is a column of doubles" in {
-        val mockContext: ExecutionContext = mock[ExecutionContext]
-        val classification = constructUntrainedModel
-        val parameters = TrainableParameters(
-          featureColumns = MultipleColumnSelection(
-            Vector(NameColumnSelection(Set("column0", "column1", "column4")))),
-          targetColumn = NameSingleColumnSelection("column3"))
-
-        val result = classification.train(mockContext)(parameters)(inputDataFrame)
-        validateResult(result)
-      }
-
-      "target column is a 2-level categorical" in {
-        val dataFrame = createDataFrame(inputRows, inputSchema, Seq("column3"))
-        val regression = constructUntrainedModel
-        val parameters = TrainableParameters(
-          featureColumns = MultipleColumnSelection(
-            Vector(NameColumnSelection(Set("column1", "column0")))),
-          targetColumn = NameSingleColumnSelection("column3"))
-
-        val trained = regression.train(executionContext)(parameters)(dataFrame)
-          .asInstanceOf[TrainedRandomForestClassification]
-        trained.targetColumn shouldBe "column3"
-      }
-
-      "target column is a boolean" in {
-        val dataFrame = createDataFrame(inputRows, inputSchema)
-        val regression = constructUntrainedModel
-        val parameters = TrainableParameters(
-          featureColumns = MultipleColumnSelection(
-            Vector(NameColumnSelection(Set("column1", "column0")))),
-          targetColumn = NameSingleColumnSelection("column5"))
-        val trained = regression.train(executionContext)(parameters)(dataFrame)
-          .asInstanceOf[TrainedRandomForestClassification]
-        trained.targetColumn shouldBe "column5"
-      }
-    }
-
-    "throw an exception" when {
-      "non-existing column was selected as target" in {
-        a[ColumnDoesNotExistException] shouldBe thrownBy {
-          val classification = constructUntrainedModel
-          val parameters = TrainableParameters(
-            featureColumns = MultipleColumnSelection(
-              Vector(NameColumnSelection(Set("column0", "column1")))),
-            targetColumn = NameSingleColumnSelection("not exists"))
-          classification.train(executionContext)(parameters)(inputDataFrame)
-        }
-      }
-      "non-existing columns were selected as features" in {
-        a[ColumnsDoNotExistException] shouldBe thrownBy {
-          val classification = constructUntrainedModel
-          val parameters = TrainableParameters(
-            featureColumns = MultipleColumnSelection(
-              Vector(NameColumnSelection(Set("not exists", "column1")))),
-            targetColumn = NameSingleColumnSelection("column3"))
-          classification.train(executionContext)(parameters)(inputDataFrame)
-        }
-      }
-      "some selected features were neither numeric nor categorical" in {
-        a[WrongColumnTypeException] shouldBe thrownBy {
-          val classification = constructUntrainedModel
-          val parameters = TrainableParameters(
-            featureColumns = MultipleColumnSelection(
-              Vector(NameColumnSelection(Set("column2", "column1")))),
-            targetColumn = NameSingleColumnSelection("column3"))
-          classification.train(executionContext)(parameters)(inputDataFrame)
-        }
-      }
-      "selected target was not numerical" in {
-        a[WrongColumnTypeException] shouldBe thrownBy {
-          val classification = constructUntrainedModel
-          val parameters = TrainableParameters(
-            featureColumns = MultipleColumnSelection(
-              Vector(NameColumnSelection(Set("column0", "column1")))),
-            targetColumn = NameSingleColumnSelection("column2"))
-          classification.train(executionContext)(parameters)(inputDataFrame)
-        }
-      }
-      "target column is 3-level categorical" in {
-        val dataFrame = createDataFrame(inputRows, inputSchema, Seq("column2"))
-
-        a[WrongColumnTypeException] shouldBe thrownBy {
-          val regression = constructUntrainedModel
-          val parameters = TrainableParameters(
-            featureColumns = MultipleColumnSelection(
-              Vector(NameColumnSelection(Set("column1", "column0")))),
-            targetColumn = NameSingleColumnSelection("column2"))
-          regression.train(executionContext)(parameters)(dataFrame)
-        }
-      }
-    }
-
-  }
+  override def createTrainableInstance: Trainable =
+    UntrainedRandomForestClassification(RandomForestParameters(1, "auto", "entropy", 4, 100))
 }

@@ -18,19 +18,15 @@ package io.deepsense.deeplang.doperables.machinelearning.svm.classification
 
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.ExecutionContext
+import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType
+import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType.ExtendedColumnType
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.machinelearning.svm.SupportVectorMachineParameters
 import io.deepsense.deeplang.parameters.RegularizationType
-import io.deepsense.reportlib.model.{Table, ReportContent}
+import io.deepsense.reportlib.model.{ReportContent, Table}
 
 class UntrainedSupportVectorMachineClassifierIntegSpec
-  extends { override val trainableName: String = "UntrainedSupportVectorMachineClassifier" }
-  with TrainableBaseIntegSpec {
-
-  import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType
-  import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType.ExtendedColumnType
-
-  override type ConcreteTrainable = UntrainedSupportVectorMachineClassifier
+  extends TrainableBaseIntegSpec("UntrainedSupportVectorMachineClassifier") {
 
   override def acceptedFeatureTypes: Seq[ExtendedColumnType] = Seq(
     ExtendedColumnType.binaryValuedNumeric,
@@ -60,14 +56,6 @@ class UntrainedSupportVectorMachineClassifierIntegSpec
   override def createTrainableInstance: Trainable =
     UntrainedSupportVectorMachineClassifier(
       SupportVectorMachineParameters(RegularizationType.NONE, 10, 0.1, 1.0))
-
-  override def verifyScorable(scorable: Scorable, target: String, features: Seq[String]): Unit = {
-    scorable.isInstanceOf[TrainedSupportVectorMachineClassifier] shouldBe true
-
-    val trainedSVM = scorable.asInstanceOf[TrainedSupportVectorMachineClassifier]
-    trainedSVM.featureColumns shouldBe features
-    trainedSVM.targetColumn shouldBe target
-  }
 
   "UntrainedSupportVectorMachineClassifier" should {
     "create a report" in {

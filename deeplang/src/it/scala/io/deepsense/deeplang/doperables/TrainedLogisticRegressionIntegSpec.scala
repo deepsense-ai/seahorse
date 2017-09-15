@@ -17,50 +17,53 @@
 package io.deepsense.deeplang.doperables
 
 import org.apache.spark.mllib.classification.LogisticRegressionModel
-import org.apache.spark.mllib.linalg.{Vector => SparkVector}
-import org.apache.spark.mllib.regression.GeneralizedLinearModel
-import org.apache.spark.sql.Row
-import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
-import org.mockito.Mockito.{times, verify, when}
+import org.apache.spark.mllib.linalg.Vectors
+import org.mockito.Mockito._
 
+import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType
+import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType.ExtendedColumnType
 import io.deepsense.deeplang.doperables.machinelearning.logisticregression.{LogisticRegressionParameters, TrainedLogisticRegression}
 
 class TrainedLogisticRegressionIntegSpec
-  extends TrainedRegressionIntegSpec[LogisticRegressionModel] {
+  extends ScorableBaseIntegSpec("TrainedLogisticRegression")
+  with PredictorModelBaseIntegSpec {
 
-  override def regressionName: String = "TrainedLogisticRegression"
+  override def acceptedFeatureTypes: Seq[ExtendedColumnType] = Seq(
+    ExtendedColumnType.binaryValuedNumeric,
+    ExtendedColumnType.nonBinaryValuedNumeric)
 
-  override val inputVectorsTransformer: (Seq[SparkVector]) => Seq[SparkVector] = identity
+  override def unacceptableFeatureTypes: Seq[ExtendedColumnType] = Seq(
+    ExtendedColumnType.categorical1,
+    ExtendedColumnType.categorical2,
+    ExtendedColumnType.categoricalMany,
+    ExtendedColumnType.boolean,
+    ExtendedColumnType.string,
+    ExtendedColumnType.timestamp)
 
-  override val regressionConstructor: (GeneralizedLinearModel, Seq[String], String) => Scorable =
-    (model, features, target) => {
-      val modelParameters = mock[LogisticRegressionParameters]
-      val castedModel = model.asInstanceOf[LogisticRegressionModel]
-      when(castedModel.clearThreshold()).thenReturn(castedModel)
-      TrainedLogisticRegression(modelParameters, castedModel, features, target)
-    }
+  override def mockTrainedModel(): PredictorSparkModel = {
+    class LogisticRegressionPredictor
+      extends LogisticRegressionModel(Vectors.dense(1), 1) with PredictorSparkModel {}
+    mock[LogisticRegressionPredictor]
+  }
 
-  override val modelType: Class[LogisticRegressionModel] = classOf[LogisticRegressionModel]
+  override def createScorableInstanceWithModel(
+      trainedModelMock: PredictorSparkModel): Scorable = {
 
-  regressionName should {
-    "clear Threshold on model" in {
-      val modelParameters = mock[LogisticRegressionParameters]
-      val model = mock[LogisticRegressionModel]
-      when(model.clearThreshold()).thenReturn(model)
+    val model = trainedModelMock.asInstanceOf[LogisticRegressionModel]
+    doReturn(model).when(model).clearThreshold()
 
-      val logisticRegression =
-        TrainedLogisticRegression(modelParameters, model, Seq("f1", "f2"), "t")
-      val df = createDataFrame(
-        Seq(Row(1.0, 2.0, 3.0)),
-        StructType(Seq(
-          StructField("f1", DoubleType),
-          StructField("f2", DoubleType),
-          StructField("f3", DoubleType))))
+    TrainedLogisticRegression(
+      LogisticRegressionParameters(1, 1, 1),
+      model,
+      mock[Seq[String]],
+      targetColumnName)
+  }
 
-      logisticRegression.score(executionContext)("prediction")(df)
-
-      verify(model, times(1)).clearThreshold()
-      ()
-    }
+  override def createScorableInstance(features: String*): Scorable = {
+    TrainedLogisticRegression(
+      LogisticRegressionParameters(1, 1, 1),
+      new LogisticRegressionModel(Vectors.dense(1), 1),
+      features,
+      targetColumnName)
   }
 }

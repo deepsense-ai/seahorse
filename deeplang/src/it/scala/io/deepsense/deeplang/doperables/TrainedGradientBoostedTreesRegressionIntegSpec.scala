@@ -16,44 +16,68 @@
 
 package io.deepsense.deeplang.doperables
 
-import org.apache.spark.mllib.linalg.{Vector => SparkVector}
-import org.apache.spark.mllib.tree.model.GradientBoostedTreesModel
-import org.apache.spark.rdd.RDD
-import org.mockito.Matchers._
-import org.mockito.Mockito._
+import org.apache.spark.mllib.linalg.Vectors
+import org.apache.spark.mllib.regression.LabeledPoint
+import org.apache.spark.mllib.tree.GradientBoostedTrees
+import org.apache.spark.mllib.tree.configuration.Algo.Algo
+import org.apache.spark.mllib.tree.configuration.{Algo, BoostingStrategy, Strategy}
+import org.apache.spark.mllib.tree.loss.SquaredError
+import org.apache.spark.mllib.tree.model.{DecisionTreeModel, GradientBoostedTreesModel}
 
+import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType
+import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType.ExtendedColumnType
 import io.deepsense.deeplang.doperables.machinelearning.gradientboostedtrees.GradientBoostedTreesParameters
 import io.deepsense.deeplang.doperables.machinelearning.gradientboostedtrees.regression.TrainedGradientBoostedTreesRegression
 
+class TrainedGradientBoostedTreesRegressionIntegSpec
+  extends ScorableBaseIntegSpec("TrainedGradientBoostedTreesRegression")
+  with PredictorModelBaseIntegSpec {
 
-class TrainedGradientBoostedTreesRegressionIntegSpec extends TrainedTreeRegressionIntegSpec {
+  override def acceptedFeatureTypes: Seq[ExtendedColumnType] = Seq(
+    ExtendedColumnType.binaryValuedNumeric,
+    ExtendedColumnType.nonBinaryValuedNumeric,
+    ExtendedColumnType.categorical2,
+    ExtendedColumnType.categoricalMany)
 
-  override def trainedRegressionName: String = "TrainedGradientBoostedTreesRegression"
+  override def unacceptableFeatureTypes: Seq[ExtendedColumnType] = Seq(
+    ExtendedColumnType.categorical1,
+    ExtendedColumnType.boolean,
+    ExtendedColumnType.string,
+    ExtendedColumnType.timestamp)
 
-  override def createMockTrainedRegression(
-    featureColumnNames: Seq[String],
-    targetColumnName: String,
-    resultDoubles: Seq[Double]): Scorable = {
+  override def mockTrainedModel(): PredictorSparkModel = {
+    class GradientBoostedTreesRegressionPredictor
+      extends GradientBoostedTreesModel(
+        mock[Algo], mock[Array[DecisionTreeModel]], mock[Array[Double]])
+      with PredictorSparkModel {}
 
-    val mockModelParameters = mock[GradientBoostedTreesParameters]
+    mock[GradientBoostedTreesRegressionPredictor]
+  }
 
-    val mockModel = createRegressionModelMock(
-      expectedInput = inputVectors,
-      output = resultDoubles)
+  override def createScorableInstance(features: String*): Scorable = {
+    // This is a shameless shortcut: creating a dummy model from scratch
+    // is not as simple as it looks. Training it is actually easier.
+    val labeledPoints = sparkContext.parallelize(Seq(
+      LabeledPoint(1.0, Vectors.dense(1)),
+      LabeledPoint(2.0, Vectors.dense(2))))
+
+    val model = GradientBoostedTrees.train(
+      labeledPoints, BoostingStrategy(
+        Strategy.defaultStrategy(Algo.Regression.toString),
+        SquaredError,
+        numIterations = 1))
 
     TrainedGradientBoostedTreesRegression(
-      mockModelParameters, mockModel, featureColumnNames, targetColumnName)
+      GradientBoostedTreesParameters(1, "squared", "variance", 1, 1),
+      model,
+      features,
+      targetColumnName)
   }
 
-  private def createRegressionModelMock(
-    expectedInput: Seq[SparkVector],
-    output: Seq[Double]): GradientBoostedTreesModel = {
-
-    val mockModel = mock[GradientBoostedTreesModel]
-
-    when(mockModel.predict(any[RDD[SparkVector]]())).thenAnswer(
-      constructRegressionModelMockAnswer(expectedInput, output))
-
-    mockModel
-  }
+  override def createScorableInstanceWithModel(trainedModelMock: PredictorSparkModel): Scorable =
+    TrainedGradientBoostedTreesRegression(
+      GradientBoostedTreesParameters(1, "squared", "variance", 1, 1),
+      trainedModelMock.asInstanceOf[GradientBoostedTreesModel],
+      mock[Seq[String]],
+      targetColumnName)
 }

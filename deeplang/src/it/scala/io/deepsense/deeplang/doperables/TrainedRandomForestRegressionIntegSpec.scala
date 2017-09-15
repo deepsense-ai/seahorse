@@ -16,42 +16,61 @@
 
 package io.deepsense.deeplang.doperables
 
-import org.apache.spark.mllib.linalg.{Vector => SparkVector}
-import org.apache.spark.mllib.tree.model.RandomForestModel
-import org.apache.spark.rdd.RDD
-import org.mockito.Matchers._
-import org.mockito.Mockito._
+import org.apache.spark.mllib.linalg.Vectors
+import org.apache.spark.mllib.regression.LabeledPoint
+import org.apache.spark.mllib.tree.RandomForest
+import org.apache.spark.mllib.tree.configuration.Algo.Algo
+import org.apache.spark.mllib.tree.configuration.{Algo, Strategy}
+import org.apache.spark.mllib.tree.model.{DecisionTreeModel, RandomForestModel}
 
+import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType
+import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType.ExtendedColumnType
 import io.deepsense.deeplang.doperables.machinelearning.randomforest.RandomForestParameters
 import io.deepsense.deeplang.doperables.machinelearning.randomforest.regression.TrainedRandomForestRegression
 
-class TrainedRandomForestRegressionIntegSpec extends TrainedTreeRegressionIntegSpec {
+class TrainedRandomForestRegressionIntegSpec
+  extends ScorableBaseIntegSpec("TrainedRandomForestRegression")
+  with PredictorModelBaseIntegSpec {
 
-  override def trainedRegressionName: String = "TrainedRandomForestRegression"
+  override def acceptedFeatureTypes: Seq[ExtendedColumnType] = Seq(
+    ExtendedColumnType.binaryValuedNumeric,
+    ExtendedColumnType.nonBinaryValuedNumeric,
+    ExtendedColumnType.categorical2,
+    ExtendedColumnType.categoricalMany)
 
-  override def createMockTrainedRegression(
-    featureColumnNames: Seq[String],
-    targetColumnName: String,
-    resultDoubles: Seq[Double]): Scorable = {
+  override def unacceptableFeatureTypes: Seq[ExtendedColumnType] = Seq(
+    ExtendedColumnType.categorical1,
+    ExtendedColumnType.boolean,
+    ExtendedColumnType.string,
+    ExtendedColumnType.timestamp)
 
-    val mockParameters = mock[RandomForestParameters]
+  override def mockTrainedModel(): PredictorSparkModel = {
+    class RandomForestRegressionPredictor
+      extends RandomForestModel(mock[Algo], mock[Array[DecisionTreeModel]])
+      with PredictorSparkModel {}
 
-    val mockModel = createRegressionModelMock(
-      expectedInput = inputVectors,
-      output = resultDoubles)
-
-    TrainedRandomForestRegression(mockParameters, mockModel, featureColumnNames, targetColumnName)
+    mock[RandomForestRegressionPredictor]
   }
 
-  private def createRegressionModelMock(
-    expectedInput: Seq[SparkVector],
-    output: Seq[Double]): RandomForestModel = {
+  override def createScorableInstance(features: String*): Scorable = {
+    // This is a shameless shortcut: creating a dummy model from scratch
+    // is not as simple as it looks. Training it is actually easier.
+    val labeledPoints = sparkContext.parallelize(Seq(
+      LabeledPoint(1.0, Vectors.dense(1)),
+      LabeledPoint(2.0, Vectors.dense(2))))
 
-    val mockModel = mock[RandomForestModel]
+    val model = RandomForest.trainRegressor(
+      labeledPoints, Strategy.defaultStrategy(Algo.Regression.toString), 1, "auto", 1)
 
-    when(mockModel.predict(any[RDD[SparkVector]]())).thenAnswer(
-      constructRegressionModelMockAnswer(expectedInput, output))
-
-    mockModel
+    TrainedRandomForestRegression(
+      RandomForestParameters(1, "auto", "variance", 1, 1), model, features, targetColumnName)
   }
+
+  override def createScorableInstanceWithModel(trainedModelMock: PredictorSparkModel): Scorable =
+    TrainedRandomForestRegression(
+      RandomForestParameters(1, "auto", "variance", 1, 1),
+      trainedModelMock.asInstanceOf[RandomForestModel],
+      mock[Seq[String]],
+      targetColumnName)
+
 }

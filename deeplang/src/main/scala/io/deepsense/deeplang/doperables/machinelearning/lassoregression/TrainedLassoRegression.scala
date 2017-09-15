@@ -41,17 +41,13 @@ case class TrainedLassoRegression(
 
   def toInferrable: DOperable = new TrainedLassoRegression()
 
-  private var physicalPath: Option[String] = None
-
-  override def url: Option[String] = physicalPath
-
-  def preparedModel: GeneralizedLinearModel = model
+  override def url: Option[String] = None
 
   override protected def featurePredicate: Predicate = ColumnTypesPredicates.isNumeric
 
   override def transformFeatures(v: RDD[Vector]): RDD[Vector] = scaler.transform(v)
 
-  override def predict(features: RDD[Vector]): RDD[Double] = preparedModel.predict(features)
+  override def predict(features: RDD[Vector]): RDD[Double] = model.predict(features)
 
   override def report(executionContext: ExecutionContext): Report = {
     generateTrainedRegressionReport(modelParameters, model, featureColumns, targetColumn)

@@ -22,10 +22,10 @@ import org.apache.spark.mllib.optimization.{L1Updater, SimpleUpdater, SquaredL2U
 import io.deepsense.commons.types.ColumnType
 import io.deepsense.commons.utils.DoubleUtils
 import io.deepsense.deeplang.doperables.ColumnTypesPredicates.Predicate
+import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.machinelearning.svm.SupportVectorMachineParameters
-import io.deepsense.deeplang.doperables._
-import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
+import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.parameters.RegularizationType
 import io.deepsense.deeplang.{DKnowledge, DOperable, ExecutionContext}
 

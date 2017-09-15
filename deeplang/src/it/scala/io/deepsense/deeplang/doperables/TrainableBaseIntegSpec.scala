@@ -20,14 +20,11 @@ import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperations.exceptions.{ColumnDoesNotExistException, ColumnsDoNotExistException, WrongColumnTypeException}
 import io.deepsense.deeplang.parameters.{MultipleColumnSelection, NameColumnSelection, NameSingleColumnSelection}
 
-abstract class TrainableBaseIntegSpec extends DeeplangIntegTestSupport with PrebuiltTypedColumns {
+abstract class TrainableBaseIntegSpec(val trainableName: String)
+  extends DeeplangIntegTestSupport with PrebuiltTypedColumns {
 
   import PrebuiltTypedColumns.ExtendedColumnType._
   import PrebuiltTypedColumns._
-
-  val trainableName: String
-
-  type ConcreteTrainable <: Trainable
 
   def createTrainableInstance: Trainable
 
@@ -36,8 +33,6 @@ abstract class TrainableBaseIntegSpec extends DeeplangIntegTestSupport with Preb
 
   def unacceptableTargetTypes: Seq[ExtendedColumnType]
   def unacceptableFeatureTypes: Seq[ExtendedColumnType]
-
-  def verifyScorable(scorable: Scorable, target: String, features: Seq[String]): Unit
 
   override protected val targetColumns = buildColumns(targetName)
   override protected val featureColumns = buildColumns(featureName)
@@ -145,5 +140,15 @@ abstract class TrainableBaseIntegSpec extends DeeplangIntegTestSupport with Preb
         Vector(NameColumnSelection(features.map(featureName)))),
       NameSingleColumnSelection(targetName(target))
     )
+  }
+
+  // Theoretically, not every Scorable has VectorScoring trait, but for now, that's the case.
+  // If it changes, this might need little work.
+  def verifyScorable(scorable: Scorable, target: String, features: Seq[String]): Unit = {
+    scorable.isInstanceOf[VectorScoring] shouldBe true
+
+    val trained = scorable.asInstanceOf[VectorScoring]
+    trained.featureColumns shouldBe features
+    trained.targetColumn shouldBe target
   }
 }

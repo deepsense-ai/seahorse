@@ -19,43 +19,41 @@ package io.deepsense.deeplang.doperables
 import org.apache.spark.mllib.regression.{GeneralizedLinearAlgorithm, LassoModel, LassoWithSGD}
 import org.scalactic.EqualityPolicy.Spread
 
+import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType
+import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType.ExtendedColumnType
+import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType.ExtendedColumnType
 import io.deepsense.deeplang.doperables.machinelearning.LinearRegressionParameters
 import io.deepsense.deeplang.doperables.machinelearning.lassoregression.{TrainedLassoRegression, UntrainedLassoRegression}
 
-class UntrainedLassoRegressionIntegSpec extends UntrainedRegressionIntegSpec[LassoModel] {
+class UntrainedLassoRegressionIntegSpec
+  extends TrainableBaseIntegSpec("UntrainedLassoRegression") {
+  override def acceptedFeatureTypes: Seq[ExtendedColumnType] = Seq(
+    ExtendedColumnType.binaryValuedNumeric,
+    ExtendedColumnType.nonBinaryValuedNumeric)
 
-  val testDataDir: String = testsDir + "/UntrainedLassoRegressionIntegSpec"
+  override def unacceptableFeatureTypes: Seq[ExtendedColumnType] = Seq(
+    ExtendedColumnType.categorical1,
+    ExtendedColumnType.categorical2,
+    ExtendedColumnType.categoricalMany,
+    ExtendedColumnType.boolean,
+    ExtendedColumnType.string,
+    ExtendedColumnType.timestamp)
 
-  override def regressionName: String = "UntrainedLassoRegression"
+  override def acceptedTargetTypes: Seq[ExtendedColumnType] = Seq(
+    ExtendedColumnType.binaryValuedNumeric,
+    ExtendedColumnType.nonBinaryValuedNumeric)
 
-  override def modelType: Class[LassoModel] = classOf[LassoModel]
+  override def unacceptableTargetTypes: Seq[ExtendedColumnType] = Seq(
+    ExtendedColumnType.categorical1,
+    ExtendedColumnType.categorical2,
+    ExtendedColumnType.categoricalMany,
+    ExtendedColumnType.boolean,
+    ExtendedColumnType.string,
+    ExtendedColumnType.timestamp)
 
-  override def constructUntrainedModel(
-      untrainedModelMock: GeneralizedLinearAlgorithm[LassoModel]): Trainable =
-    UntrainedLassoRegression(
-      () => untrainedModelMock.asInstanceOf[LassoWithSGD],
-      mock[LinearRegressionParameters])
-
-  override def mockUntrainedModel(): GeneralizedLinearAlgorithm[LassoModel] =
-    mock[LassoWithSGD]
-
-  override val featuresValues: Seq[Spread[Double]] = Seq(
-    Spread(0.0, 0.0),
-    -0.755 +- 0.01,
-    Spread(0.0, 0.0),
-    -0.377 +- 0.01,
-    Spread(0.0, 0.0),
-    1.133 +- 0.01
-  )
-
-  override def validateResult(
-      mockTrainedModel: LassoModel,
-      result: Scorable,
-      targetColumnName: String): Registration = {
-
-    val castedResult = result.asInstanceOf[TrainedLassoRegression]
-    castedResult.model shouldBe mockTrainedModel
-    castedResult.featureColumns shouldBe Seq("column1", "column0")
-    castedResult.targetColumn shouldBe targetColumnName
+  override def createTrainableInstance: Trainable = {
+    val model = new LassoWithSGD()
+    model.optimizer.setNumIterations(1)
+    UntrainedLassoRegression(() => model, LinearRegressionParameters(1, 1, 1))
   }
 }

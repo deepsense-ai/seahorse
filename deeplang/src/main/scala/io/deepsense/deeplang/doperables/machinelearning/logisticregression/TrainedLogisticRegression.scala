@@ -20,7 +20,6 @@ import scala.concurrent.Future
 
 import org.apache.spark.mllib.classification.LogisticRegressionModel
 import org.apache.spark.mllib.linalg.Vector
-import org.apache.spark.mllib.regression.GeneralizedLinearModel
 import org.apache.spark.rdd.RDD
 
 import io.deepsense.commons.types.ColumnType
@@ -44,13 +43,14 @@ case class TrainedLogisticRegression(
 
   private var physicalPath: Option[String] = None
 
-  def preparedModel: GeneralizedLinearModel = model.clearThreshold()
-
   override def featurePredicate: Predicate = ColumnTypesPredicates.isNumeric
 
   override def transformFeatures(v: RDD[Vector]): RDD[Vector] = v
 
-  override def predict(features: RDD[Vector]): RDD[Double] = preparedModel.predict(features)
+  override def predict(features: RDD[Vector]): RDD[Double] =
+    model
+      .clearThreshold()
+      .predict(features)
 
   override def url: Option[String] = physicalPath
 
@@ -68,7 +68,7 @@ case class TrainedLogisticRegression(
       .withWeights(featureColumns, model.weights.toArray)
       .withIntercept(model.intercept)
       .withVectorScoring(this)
-      .report()
+      .report
   }
 
   override def save(context: ExecutionContext)(path: String): Unit = {

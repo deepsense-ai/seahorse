@@ -16,24 +16,62 @@
 
 package io.deepsense.deeplang
 
-import org.apache.spark.mllib.regression.{GeneralizedLinearModel, LassoModel}
+import org.apache.spark.mllib.feature.StandardScalerModel
+import org.apache.spark.mllib.linalg.{Vector => SparkVector, Vectors}
+import org.apache.spark.mllib.regression.LassoModel
+import org.apache.spark.rdd.RDD
+import org.mockito.AdditionalAnswers._
+import org.mockito.Matchers._
+import org.mockito.Mockito._
 
+import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType
+import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType.ExtendedColumnType
 import io.deepsense.deeplang.doperables.machinelearning.LinearRegressionParameters
 import io.deepsense.deeplang.doperables.machinelearning.lassoregression.TrainedLassoRegression
-import io.deepsense.deeplang.doperables.{BaseTrainedLinearRegressionIntegSpec, Scorable}
+import io.deepsense.deeplang.doperables.{PredictorModelBaseIntegSpec, Scorable, ScorableBaseIntegSpec}
 
 class TrainedLassoRegressionIntegSpec
-  extends BaseTrainedLinearRegressionIntegSpec[LassoModel] {
+  extends ScorableBaseIntegSpec("TrainedLassoRegression")
+  with PredictorModelBaseIntegSpec {
 
-  override def regressionName: String = "TrainedLassoRegression"
+  override def acceptedFeatureTypes: Seq[ExtendedColumnType] = Seq(
+    ExtendedColumnType.binaryValuedNumeric,
+    ExtendedColumnType.nonBinaryValuedNumeric)
 
-  override val modelType: Class[LassoModel] = classOf[LassoModel]
+  override def unacceptableFeatureTypes: Seq[ExtendedColumnType] = Seq(
+    ExtendedColumnType.categorical1,
+    ExtendedColumnType.categorical2,
+    ExtendedColumnType.categoricalMany,
+    ExtendedColumnType.boolean,
+    ExtendedColumnType.string,
+    ExtendedColumnType.timestamp)
 
-  override val regressionConstructor: (GeneralizedLinearModel, Seq[String], String) => Scorable =
-    (model, featureColumns, targetColumn) => TrainedLassoRegression(
-      mock[LinearRegressionParameters],
-      model.asInstanceOf[LassoModel],
-      featureColumns,
-      targetColumn,
-      createScalerMock())
+  override def mockTrainedModel(): PredictorSparkModel = {
+    class LassoPredictor extends LassoModel(mock[SparkVector], 1) with PredictorSparkModel {}
+    mock[LassoPredictor]
+  }
+
+  override def createScorableInstanceWithModel(trainedModelMock: PredictorSparkModel): Scorable =
+    createScorableInstanceImpl(trainedModelMock.asInstanceOf[LassoModel], mock[Seq[String]])
+
+  override def createScorableInstance(features: String*): Scorable =
+    createScorableInstanceImpl(
+      new LassoModel(Vectors.dense(features.map(_ => 1.0).toArray), 1), features)
+
+  private def createScorableInstanceImpl(
+      trainedModelMock: LassoModel, features: Seq[String]): Scorable = {
+
+    val scalerMock = mock[StandardScalerModel]
+
+    doAnswer(returnsFirstArg())
+      .when(scalerMock)
+      .transform(any[RDD[SparkVector]])
+
+    TrainedLassoRegression(
+      LinearRegressionParameters(1, 1, 1),
+      trainedModelMock,
+      features,
+      targetColumnName,
+      scalerMock)
+  }
 }

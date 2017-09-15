@@ -16,22 +16,38 @@
 
 package io.deepsense.deeplang.doperables
 
-import io.deepsense.deeplang.doperables.machinelearning.randomforest.regression.{UntrainedRandomForestRegression, TrainedRandomForestRegression}
+import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType
+import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType.ExtendedColumnType
 import io.deepsense.deeplang.doperables.machinelearning.randomforest.RandomForestParameters
+import io.deepsense.deeplang.doperables.machinelearning.randomforest.regression.{TrainedRandomForestRegression, UntrainedRandomForestRegression}
 
-class UntrainedRandomForestRegressionIntegSpec extends UntrainedTreeRegressionIntegSpec {
+class UntrainedRandomForestRegressionIntegSpec
+  extends TrainableBaseIntegSpec("UntrainedRandomForestRegression") {
 
-  override def constructUntrainedModel: Trainable =
-    UntrainedRandomForestRegression(mockUntrainedModel.asInstanceOf[RandomForestParameters])
+  override def acceptedFeatureTypes: Seq[ExtendedColumnType] = Seq(
+    ExtendedColumnType.binaryValuedNumeric,
+    ExtendedColumnType.nonBinaryValuedNumeric,
+    ExtendedColumnType.categorical2,
+    ExtendedColumnType.categoricalMany)
 
-  private val mockUntrainedModel: RandomForestParameters =
-    RandomForestParameters(1, "auto", "variance", 4, 100)
+  override def unacceptableFeatureTypes: Seq[ExtendedColumnType] = Seq(
+    ExtendedColumnType.categorical1,
+    ExtendedColumnType.boolean,
+    ExtendedColumnType.string,
+    ExtendedColumnType.timestamp)
 
-  override def validateResult(result: Scorable): Registration = {
-    val castedResult = result.asInstanceOf[TrainedRandomForestRegression]
-    castedResult.featureColumns shouldBe Seq("column1", "column0", "column4")
-    castedResult.targetColumn shouldBe "column3"
-  }
+  override def acceptedTargetTypes: Seq[ExtendedColumnType] = Seq(
+    ExtendedColumnType.binaryValuedNumeric,
+    ExtendedColumnType.nonBinaryValuedNumeric)
 
-  override def untrainedRegressionName: String = "UntrainedRandomForestRegression"
+  override def unacceptableTargetTypes: Seq[ExtendedColumnType] = Seq(
+    ExtendedColumnType.categorical1,
+    ExtendedColumnType.categorical2,
+    ExtendedColumnType.categoricalMany,
+    ExtendedColumnType.boolean,
+    ExtendedColumnType.string,
+    ExtendedColumnType.timestamp)
+
+  override def createTrainableInstance: Trainable =
+    UntrainedRandomForestRegression(RandomForestParameters(1, "auto", "variance", 4, 100))
 }

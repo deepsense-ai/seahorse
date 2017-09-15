@@ -16,23 +16,39 @@
 
 package io.deepsense.deeplang.doperables
 
-import io.deepsense.deeplang.doperables.machinelearning.gradientboostedtrees.regression.{UntrainedGradientBoostedTreesRegression, TrainedGradientBoostedTreesRegression}
+import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType
+import io.deepsense.deeplang.PrebuiltTypedColumns.ExtendedColumnType.ExtendedColumnType
 import io.deepsense.deeplang.doperables.machinelearning.gradientboostedtrees.GradientBoostedTreesParameters
+import io.deepsense.deeplang.doperables.machinelearning.gradientboostedtrees.regression.{TrainedGradientBoostedTreesRegression, UntrainedGradientBoostedTreesRegression}
 
-class UntrainedGradientBoostedTreesRegressionIntegSpec extends UntrainedTreeRegressionIntegSpec {
+class UntrainedGradientBoostedTreesRegressionIntegSpec
+  extends TrainableBaseIntegSpec("UntrainedGradientBoostedTreesRegression") {
 
-  override def constructUntrainedModel: Trainable =
+  override def acceptedFeatureTypes: Seq[ExtendedColumnType] = Seq(
+    ExtendedColumnType.binaryValuedNumeric,
+    ExtendedColumnType.nonBinaryValuedNumeric,
+    ExtendedColumnType.categorical2,
+    ExtendedColumnType.categoricalMany)
+
+  override def unacceptableFeatureTypes: Seq[ExtendedColumnType] = Seq(
+    ExtendedColumnType.categorical1,
+    ExtendedColumnType.boolean,
+    ExtendedColumnType.string,
+    ExtendedColumnType.timestamp)
+
+  override def acceptedTargetTypes: Seq[ExtendedColumnType] = Seq(
+    ExtendedColumnType.binaryValuedNumeric,
+    ExtendedColumnType.nonBinaryValuedNumeric)
+
+  override def unacceptableTargetTypes: Seq[ExtendedColumnType] = Seq(
+    ExtendedColumnType.categorical1,
+    ExtendedColumnType.categorical2,
+    ExtendedColumnType.categoricalMany,
+    ExtendedColumnType.boolean,
+    ExtendedColumnType.string,
+    ExtendedColumnType.timestamp)
+
+  override def createTrainableInstance: Trainable =
     UntrainedGradientBoostedTreesRegression(
-      mockUntrainedModel.asInstanceOf[GradientBoostedTreesParameters])
-
-  private val mockUntrainedModel: GradientBoostedTreesParameters =
-    GradientBoostedTreesParameters(1, "squared", "variance", 4, 100)
-
-  override def validateResult(result: Scorable): Registration = {
-    val castedResult = result.asInstanceOf[TrainedGradientBoostedTreesRegression]
-    castedResult.featureColumns shouldBe Seq("column1", "column0", "column4")
-    castedResult.targetColumn shouldBe "column3"
-  }
-
-  override def untrainedRegressionName: String = "UntrainedGradientBoostedTreesRegression"
+      GradientBoostedTreesParameters(1, "squared", "variance", 4, 100))
 }

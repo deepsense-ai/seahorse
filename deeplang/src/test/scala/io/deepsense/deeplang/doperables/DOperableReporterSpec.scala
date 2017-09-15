@@ -35,7 +35,7 @@ class DOperableReporterSpec extends UnitSpec {
       "no parameters are passed" in {
 
         val report = DOperableReporter(reportName)
-          .report()
+          .report
 
         report.content should not be null
         report.content.name shouldBe reportName
@@ -55,7 +55,7 @@ class DOperableReporterSpec extends UnitSpec {
             description,
             parameters: _*
           )
-          .report()
+          .report
 
         verifyNotEmptyReportWasGenerated(report)
 
@@ -74,7 +74,7 @@ class DOperableReporterSpec extends UnitSpec {
 
         val report = DOperableReporter(reportName)
           .withVectorScoring(operable)
-          .report()
+          .report
 
         verifyNotEmptyReportWasGenerated(report)
 
@@ -134,7 +134,7 @@ class DOperableReporterSpec extends UnitSpec {
             description,
             parameters: _*
           )
-          .report()
+          .report
 
         verifyNotEmptyReportWasGenerated(report)
         val table = report.content.tables("name")

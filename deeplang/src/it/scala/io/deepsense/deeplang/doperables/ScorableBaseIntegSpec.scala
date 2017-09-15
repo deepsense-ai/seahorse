@@ -22,12 +22,11 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.exceptions.{ColumnsDoNotExistException, WrongColumnTypeException}
 import io.deepsense.deeplang.{DeeplangIntegTestSupport, ExecutionContext, PrebuiltTypedColumns}
 
-abstract class ScorableBaseIntegSpec extends DeeplangIntegTestSupport with PrebuiltTypedColumns {
+abstract class ScorableBaseIntegSpec(val scorableName: String)
+  extends DeeplangIntegTestSupport with PrebuiltTypedColumns {
 
   import PrebuiltTypedColumns.ExtendedColumnType._
   import PrebuiltTypedColumns._
-
-  val scorableName: String
 
   def createScorableInstance(features: String*): Scorable
   def acceptedFeatureTypes: Seq[ExtendedColumnType]

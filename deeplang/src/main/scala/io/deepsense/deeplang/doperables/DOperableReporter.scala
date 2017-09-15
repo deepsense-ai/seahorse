@@ -108,6 +108,6 @@ case class DOperableReporter(title: String, tables: List[Table] = List.empty) {
     DOperableReporter(title, tables :+ table)
   }
 
-  def report(): Report = Report(ReportContent(title, tables))
+  def report: Report = Report(ReportContent(title, tables))
 
 }
