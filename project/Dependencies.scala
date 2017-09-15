@@ -21,17 +21,19 @@ object Version {
   val spark         = "1.4.0"
   val spray         = "1.3.3"
   val sprayJson     = "1.3.1"
+  val seahorse      = "0.1.2-SNAPSHOT"
 }
 
 object Library {
 
-  val akka    = (name: String) => "org.spark-project.akka"  %% s"akka-$name"      % Version.akka
-  val avro    = (name: String) => "org.apache.avro"         % s"avro$name"        % Version.avro
-  val hadoop  = (name: String) => "org.apache.hadoop"       % s"hadoop-$name"     % Version.hadoop exclude("org.slf4j", "slf4j-log4j12")
-  val jclouds = (name: String) => "org.apache.jclouds.api"  % s"openstack-$name"  % Version.jclouds
-  val logback = (name: String) => "ch.qos.logback"          % s"logback-$name"    % Version.logback
-  val spark   = (name: String) => "org.apache.spark"       %% s"spark-$name"      % Version.spark exclude("org.slf4j", "slf4j-log4j12")
-  val spray   = (name: String) => "io.spray"               %% s"spray-$name"      % Version.spray
+  val akka      = (name: String) => "org.spark-project.akka"  %% s"akka-$name"              % Version.akka
+  val avro      = (name: String) => "org.apache.avro"         % s"avro$name"                % Version.avro
+  val hadoop    = (name: String) => "org.apache.hadoop"       % s"hadoop-$name"             % Version.hadoop exclude("org.slf4j", "slf4j-log4j12")
+  val jclouds   = (name: String) => "org.apache.jclouds.api"  % s"openstack-$name"          % Version.jclouds
+  val logback   = (name: String) => "ch.qos.logback"          % s"logback-$name"            % Version.logback
+  val seahorse  = (name: String) => "io.deepsense"            % s"deepsense-seahorse-$name" % Version.seahorse
+  val spark     = (name: String) => "org.apache.spark"       %% s"spark-$name"              % Version.spark exclude("org.slf4j", "slf4j-log4j12")
+  val spray     = (name: String) => "io.spray"               %% s"spray-$name"              % Version.spray
 
   val akkaActor          = akka("actor")
   val akkaTestkit        = akka("testkit")
@@ -61,6 +63,7 @@ object Library {
   val scalaLogging       = "com.typesafe.scala-logging"  %% "scala-logging"       % "3.1.0"
   val scalaReflect       = "org.scala-lang"               % "scala-reflect"       % Version.scala
   val scalatest          = "org.scalatest"               %% "scalatest"           % Version.scalatest
+  val seahorseReportlib  = seahorse("reportlib")
   val sparkSql           = spark("sql")
   val sparkCore          = spark("core")
   val sparkMLLib         = spark("mllib")
@@ -76,9 +79,10 @@ object Dependencies {
   import Library._
 
   val resolvers = Seq(
-    "typesafe.com" at "http://repo.typesafe.com/typesafe/repo/",
-    "sonatype.org" at "https://oss.sonatype.org/content/repositories/releases",
-    "spray.io"     at "http://repo.spray.io"
+    "typesafe.com"           at "http://repo.typesafe.com/typesafe/repo/",
+    "sonatype.org"           at "https://oss.sonatype.org/content/repositories/releases",
+    "spray.io"               at "http://repo.spray.io",
+    "seahorse.deepsense.io"  at "http://10.10.1.77:8081/artifactory/simple/deepsense-seahorse-snapshot"
   )
 
   val deploymodelservice = Seq(
@@ -95,10 +99,6 @@ object Dependencies {
   val entitystorageClient = Seq(
     akkaActor
   ) ++ Seq(scalatest, mockitoCore, akkaTestkit).map(_ % Test)
-
-  val reportlib = Seq(
-    sprayJson
-  ) ++ Seq(scalatest, mockitoCore).map(_ % Test)
 
   val commons = Seq(
     akkaActor,
@@ -124,24 +124,27 @@ object Dependencies {
     nscalaTime,
     sprayClient,
     scalaReflect,
+    seahorseReportlib,
     sparkSql,
     sparkMLLib,
     sparkCore
   ) ++ Seq(scalatest, mockitoCore, scalacheck).map(_ % Test)
 
   val experimentmanager = Seq(
+    akkaActor,
+    apacheCommons,
     guice,
     guiceMultibindings,
+    seahorseReportlib,
     sprayCan,
     sprayClient,
-    sprayRouting,
     sprayJson,
-    akkaActor,
-    apacheCommons
+    sprayRouting
   ) ++ Seq(sprayTestkit, akkaTestkit, mockitoCore, scalatest).map(_ % s"$Test,it")
 
   val graph = Seq(
-    nscalaTime
+    nscalaTime,
+    seahorseReportlib
   ) ++ Seq(scalatest, mockitoCore).map(_ % Test)
 
   val graphexecutor = Seq(

@@ -3,7 +3,6 @@
 name := "deepsense-backend"
 
 lazy val commons                = project
-lazy val reportlib              = project
 lazy val `deploy-model-service` = project dependsOn (
   commons,
   commons % "test->test")
@@ -12,8 +11,7 @@ lazy val deeplang               = project dependsOn (
   commons,
   `deploy-model-service`,
   `entitystorage-model`,
-  `entitystorage-client`,
-  reportlib)
+  `entitystorage-client`)
 lazy val `entitystorage-model`  = project dependsOn commons
 lazy val entitystorage          = project dependsOn (
   commons,
@@ -72,6 +70,5 @@ addCommandAlias("ds-it",
     ";experimentmanager/it:test " +
     ";graph/it:test " +
     ";graphexecutor/it:test " +
-    ";reportlib/it:test " +
     ";graphjson/it:test " +
     ";deploy-model-service/it:test")
