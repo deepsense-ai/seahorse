@@ -6,18 +6,22 @@
 
 package io.deepsense.deeplang.parameters
 
-import java.io.{ObjectInputStream, ByteArrayInputStream, ObjectOutputStream, ByteArrayOutputStream}
-
 import org.scalatest.mock.MockitoSugar
-import org.scalatest.{Matchers, FunSuite}
+import org.scalatest.{FunSuite, Matchers}
 
-class ParametersSerializationSuite extends FunSuite with Matchers with MockitoSugar {
+import io.deepsense.commons.serialization.Serialization
+
+class ParametersSerializationSuite
+  extends FunSuite
+  with Matchers
+  with MockitoSugar
+  with Serialization {
 
   test("ParametersSchema and its content should be serializable") {
     val param = BooleanParameter("", None, required = false)
     val schema = ParametersSchema("x" -> param)
     param.value = Some(false)
-    val result = serializeAndDeserialize(schema)
+    val result = serializeDeserialize(schema)
     result shouldBe schema
     result.getBoolean("x") shouldBe param.value
   }
@@ -48,7 +52,7 @@ class ParametersSerializationSuite extends FunSuite with Matchers with MockitoSu
     val regexValidator = RegexValidator("xxx".r)
     val param = StringParameter("", None, required = false, validator = regexValidator)
     param.value = Some("xyz")
-    val result = serializeAndDeserialize(param)
+    val result = serializeDeserialize(param)
 
     // Here we perform checking of RegexValidator contents equality manually,
     // because unfortunately "a".r != "a".r
@@ -94,20 +98,8 @@ class ParametersSerializationSuite extends FunSuite with Matchers with MockitoSu
     testParameterSerialization(param)
   }
 
-  private[this] def serializeAndDeserialize[T](objectToSerialize: T): T = {
-    val bytesOut = new ByteArrayOutputStream()
-    val oos = new ObjectOutputStream(bytesOut)
-    oos.writeObject(objectToSerialize)
-    oos.flush()
-    oos.close()
-
-    val bufferIn = new ByteArrayInputStream(bytesOut.toByteArray)
-    val streamIn = new ObjectInputStream(bufferIn)
-    streamIn.readObject().asInstanceOf[T]
-  }
-
   private[this] def testParameterSerialization(param: Parameter): Unit = {
-    val result = serializeAndDeserialize(param)
+    val result = serializeDeserialize(param)
     result shouldBe param
     result.value shouldBe param.value
   }

@@ -6,11 +6,12 @@
 
 package io.deepsense.graph
 
-import java.io.{ByteArrayInputStream, ByteArrayOutputStream, ObjectInputStream, ObjectOutputStream}
 import java.util.UUID
 
+import com.typesafe.scalalogging.LazyLogging
 import org.scalatest.{FunSuite, Matchers}
 
+import io.deepsense.commons.serialization.Serialization
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.Report
@@ -57,9 +58,17 @@ object DOperationTestClasses {
   class DOperation2To1Test extends DOperation2To1[A1, A2, A] with DOperationBaseFields {
     override protected def _execute(context: ExecutionContext)(t1: A1, t2: A2): A = ???
   }
+
+  class DOperation1To1Logging
+    extends DOperation1To1[A, A]
+    with DOperationBaseFields
+    with LazyLogging {
+
+    override protected def _execute(context: ExecutionContext)(t0: A): A = ???
+  }
 }
 
-class GraphSuite extends FunSuite with Matchers {
+class GraphSuite extends FunSuite with Matchers with Serialization {
 
   test("An empty Graph should have size 0") {
     Graph().size shouldBe 0
@@ -299,17 +308,7 @@ class GraphSuite extends FunSuite with Matchers {
       (node3, node4, 0, 1))
     val edgesSet = edges.map(n => Edge(Endpoint(n._1.id, n._3), Endpoint(n._2.id, n._4))).toSet
     val graph = new Graph(Set(node1, node2, node3, node4), edgesSet)
-
-    val bytesOut = new ByteArrayOutputStream()
-    val oos = new ObjectOutputStream(bytesOut)
-    oos.writeObject(graph)
-    oos.flush()
-    oos.close()
-
-    val bufferIn = new ByteArrayInputStream(bytesOut.toByteArray)
-    val streamIn = new ObjectInputStream(bufferIn)
-    val graphIn = streamIn.readObject().asInstanceOf[Graph]
-
+    val graphIn = serializeDeserialize(graph)
     assert(graphIn.size == graph.size)
     // Verify that both graphs have the same nodes ids set
     assert(graphIn.nodes.map(n => n.id) == graph.nodes.map(n => n.id))

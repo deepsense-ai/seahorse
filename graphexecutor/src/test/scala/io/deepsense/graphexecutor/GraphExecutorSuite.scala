@@ -5,21 +5,21 @@
  */
 package io.deepsense.graphexecutor
 
-import java.io.{ByteArrayInputStream, ByteArrayOutputStream, ObjectInputStream, ObjectOutputStream}
 import java.util.UUID
 
 import org.scalatest.{FunSuite, Matchers}
 
+import io.deepsense.commons.serialization.Serialization
 import io.deepsense.deeplang.doperations.{ReadDataFrame, WriteDataFrame}
 import io.deepsense.graph.{Edge, Endpoint, Graph, Node}
 import io.deepsense.models.entities.Entity
 
-class GraphExecutorSuite extends FunSuite with Matchers {
+class GraphExecutorSuite extends FunSuite with Matchers with Serialization {
 
   test("Mocked graph with parameters should be serializable") {
     val graph = createMockedGraph(Entity.Id.randomId.toString, "testing DF name")
-    val baos = serializeGraph(graph)
-    val graphIn = deserializeGraph(baos)
+    val baos = serialize[Graph](graph)
+    val graphIn = deserialize[Graph](baos)
 
     val nodeA = graph.nodes.toList(0)
     val nodeInA = graphIn.node(nodeA.id)
@@ -30,21 +30,6 @@ class GraphExecutorSuite extends FunSuite with Matchers {
     val nodeInB = graphIn.node(nodeB.id)
     assert(nodeB.operation.parameters.getString(WriteDataFrame.nameParam)
       == nodeInB.operation.parameters.getString(WriteDataFrame.nameParam))
-  }
-
-  private def serializeGraph(graph: Graph): ByteArrayOutputStream = {
-    val bytesOut = new ByteArrayOutputStream()
-    val oos = new ObjectOutputStream(bytesOut)
-    oos.writeObject(graph)
-    oos.flush()
-    oos.close()
-    bytesOut
-  }
-
-  private def deserializeGraph(baos: ByteArrayOutputStream): Graph = {
-    val bufferIn = new ByteArrayInputStream(baos.toByteArray)
-    val streamIn = new ObjectInputStream(bufferIn)
-    streamIn.readObject().asInstanceOf[Graph]
   }
 
   /**
