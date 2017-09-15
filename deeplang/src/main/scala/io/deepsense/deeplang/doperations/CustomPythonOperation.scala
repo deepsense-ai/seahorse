@@ -33,10 +33,10 @@ case class CustomPythonOperation()
 
   val codeParameter = CodeSnippetParam(
     name = "code",
-    description = "Operation source code",
+    description = "Operation source code.",
     language = CodeSnippetLanguage(CodeSnippetLanguage.Python)
   )
-  setDefault(codeParameter -> "def transform(dataframe):\n  return dataframe")
+  setDefault(codeParameter -> "def transform(dataframe):\n    return dataframe")
 
   override val params = declareParams(codeParameter)
 

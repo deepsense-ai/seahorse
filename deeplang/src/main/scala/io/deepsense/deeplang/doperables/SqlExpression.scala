@@ -18,7 +18,7 @@ package io.deepsense.deeplang.doperables
 
 import io.deepsense.deeplang.ExecutionContext
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.params.{Param, StringParam}
+import io.deepsense.deeplang.params.{CodeSnippetLanguage, CodeSnippetParam, Param, StringParam}
 
 class SqlExpression extends Transformer {
   val dataFrameId = StringParam(
@@ -29,9 +29,11 @@ class SqlExpression extends Transformer {
   def getDataFrameId: String = $(dataFrameId)
   def setDataFrameId(value: String): this.type = set(dataFrameId, value)
 
-  val expression = StringParam(
+  val expression = CodeSnippetParam(
     name = "expression",
-    description = "SQL Expression to be executed on the DataFrame.")
+    description = "SQL Expression to be executed on the DataFrame.",
+    language = CodeSnippetLanguage(CodeSnippetLanguage.SparkSql)
+  )
 
   def getExpression: String = $(expression)
   def setExpression(value: String): this.type = set(expression, value)

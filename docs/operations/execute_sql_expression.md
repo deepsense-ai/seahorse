@@ -77,7 +77,7 @@ to another [DataFrame](../classes/dataframe.html) with [Transform](transform.htm
 </tr>
 <tr>
 <td><code>expression</code></td>
-<td><code><a href="../parameter_types.html#string">String</a></code></td>
+<td><code><a href="../parameter_types.html#code-snippet">Code Snippet</a></code></td>
 <td>The SQL expression to be executed. The expression must be a valid Spark SQL expression.</td>
 </tr>
 </tbody>
