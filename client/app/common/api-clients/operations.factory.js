@@ -227,18 +227,17 @@ function OperationsFactory(OperationsApiClient, $q) {
     return categoryMap[id] || null;
   };
 
-  service.getCatalogByMap = function (catalog, map) {
-    const copy = catalog.map((el) => {
-      const element = Object.assign({}, el);
-      element.catalog = service.getCatalogByMap(element.catalog, map);
-      element.items = element.items.filter((item) => {
-        return map[item.id];
+  service.filterCatalog = function (catalog, filter) {
+    if (!isLoaded) {
+      console.error('Operations not loaded!');
+      return null;
+    }
+    return catalog.map((catalog) => {
+      return Object.assign({}, catalog, {
+        catalog: service.filterCatalog(catalog.catalog, filter),
+        items: catalog.items.filter(filter)
       });
-      return element;
-    }).filter((element) => {
-      return element.items.length || element.catalog.length;
-    });
-    return copy;
+    }).filter((catalog) => catalog.items.length || catalog.catalog.length);
   };
 
   return service;

@@ -18,7 +18,6 @@ const NEW_NODE_NODE = {
   input: [{
     id: 'input-0-new-node',
     portPosition: 'center',
-    typeQualifier: ['dataframe'],
     index: 0
   }],
   output: []
@@ -138,7 +137,7 @@ class AdapterService {
 
   getNodesToRender(inputNodes) {
     const nodes = JSON.parse(JSON.stringify(inputNodes));
-    if (this.newNodeData && this.newNodeData.endpoint) {
+    if (this.newNodeData && this.newNodeData.nodeId) {
       const node = Object.assign({}, NEW_NODE_NODE);
       node.input[0].typeQualifier = this.newNodeData.typeQualifier;
       nodes[node.id] = node;
@@ -148,7 +147,7 @@ class AdapterService {
 
   getEdgesToRender(inputEdges) {
     const edges = JSON.parse(JSON.stringify(inputEdges));
-    if (this.newNodeData && this.newNodeData.endpoint) {
+    if (this.newNodeData && this.newNodeData.nodeId) {
       const edge = Object.assign({}, NEW_NODE_EDGE);
       edge.startNodeId = this.newNodeData.nodeId;
       edge.startPortId = this.newNodeData.portIndex;

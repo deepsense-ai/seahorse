@@ -109,15 +109,9 @@ class EditorController {
 
   startWizard(x, y, endpoint = null) {
     if (this.isEditable) {
-      if (endpoint) {
-        const map = this.getAvailableOperations(this.workflow, endpoint);
-        this.categories = this.Operations.getCatalogByMap(this.Operations.getCatalog(), map);
-      }
-
       const newNodeData = {
         x: x,
         y: y,
-        endpoint: endpoint,
         nodeId: null,
         portIndex: null,
         typeQualifier: null
@@ -128,7 +122,10 @@ class EditorController {
       if (endpoint) {
         newNodeData.nodeId = endpoint.getParameter('nodeId');
         newNodeData.portIndex = endpoint.getParameter('portIndex');
-        newNodeData.typeQualifier = this.getTypeQualifierForEndpoint(endpoint)
+        newNodeData.typeQualifier = this.workflow.getNodeById(newNodeData.nodeId).output[newNodeData.portIndex].typeQualifier;
+        this.categories = this.Operations.filterCatalog(this.Operations.getCatalog(), this.getFilterForCatalog(newNodeData.typeQualifier));
+      } else {
+        this.categories = this.Operations.getCatalog();
       }
 
       this.newNodeData = newNodeData;
@@ -146,7 +143,7 @@ class EditorController {
     };
     const node = this.workflow.createNode(params);
     this.workflow.addNode(node);
-    if (this.newNodeData.endpoint) {
+    if (this.newNodeData.nodeId) {
       const newEdge = this.workflow.createEdge({
         from: {
           nodeId: this.newNodeData.nodeId,
@@ -162,50 +159,18 @@ class EditorController {
     this.newNodeData = null;
   }
 
-  //TODO move to service like all methods below
+  //TODO move to service that is aware of OperationsHierarchy Service and Operation and GraphNode??
+  getFilterForCatalog(inputQualifier) {
+    return (item) => {
+      return this.Operations.get(item.id).ports.input.filter((port) =>
+        this.OperationsHierarchyService.IsDescendantOf(inputQualifier, port.typeQualifier)
+      ).length;
+    };
+  }
+
+  //TODO move to service that is aware of OperationsHierarchy Service and GraphNode
   getMatchingPortIndex(node, typeQualifier) {
-    let portIndex = 0;
-    node.input.forEach((port, index) => {
-      if (this.OperationsHierarchyService.IsDescendantOf(typeQualifier, port.typeQualifier)) {
-        portIndex = index;
-      }
-    });
-    return portIndex;
-  }
-
-  //TODO move it to service which is aware of endpoints and nodes
-  getTypeQualifierForEndpoint(endpoint) {
-    const node = this.workflow.getNodeById(endpoint.getParameter('nodeId'));
-    const port = node.output[endpoint.getParameter('portIndex')];
-
-    return port.typeQualifier;
-  }
-
-  //TODO move it to service which is aware of endpoints and their params
-  getAvailableOperations(workflow, sourceEndpoint) {
-    const sourceNodeId = sourceEndpoint.getParameter('nodeId');
-    const sourceNode = workflow.getNodeById(sourceNodeId);
-    const sourcePortIndex = sourceEndpoint.getParameter('portIndex');
-    const sourcePort = sourceNode.output[sourcePortIndex];
-
-
-    const operations = this.Operations.getData();
-    const operationsMatch = [];
-    _.forEach(operations, (operation) => {
-      const inputMatches = _.reduce(operation.ports.input, (acc, input) => {
-        const typesMatch = _.every(_.map(
-          sourcePort.typeQualifier,
-          typeQualifier => this.OperationsHierarchyService.IsDescendantOf(typeQualifier, input.typeQualifier)
-        ));
-
-        acc.push(typesMatch);
-
-        return acc;
-      }, []);
-      operationsMatch[operation.id] = _.some(inputMatches);
-    });
-
-    return operationsMatch;
+    return _.findIndex(node.input, (port) => this.OperationsHierarchyService.IsDescendantOf(typeQualifier, port.typeQualifier));
   }
 }
 
