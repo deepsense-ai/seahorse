@@ -1,0 +1,28 @@
+@import "../../common/status-bar/status-bar.less";
+
+.workflow-container {
+  display: flex;
+  height: 100%;
+  clear: both;
+
+  ::selection {
+    background: none;
+  }
+}
+
+.operation-attributes-panel {
+  top: 75px;
+  right: 2px;
+  height: calc(~'100% - 75px');
+
+  ::selection {
+    background: #89CEFA;
+  }
+}
+
+.c-main-header {
+  height: 75px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}

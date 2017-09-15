@@ -1,10 +1,7 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- */
 'use strict';
 
 /* @ngInject */
-function WorkflowsController(
+function WorkflowsEditorController(
   workflow,
   $scope, $state,
   GraphNode, Edge,
@@ -182,8 +179,8 @@ function WorkflowsController(
   return that;
 }
 
-exports.function = WorkflowsController;
+exports.function = WorkflowsEditorController;
 
 exports.inject = function (module) {
-  module.controller('WorkflowsController', WorkflowsController);
+  module.controller('WorkflowsEditorController', WorkflowsEditorController);
 };
