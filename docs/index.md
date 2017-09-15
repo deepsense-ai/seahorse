@@ -40,11 +40,11 @@ To create a new workflow:
 * Press the **Create** button.
 
 You have been redirected to workflow editor where you can create your application in a visual way.
-If you are using Seahorse Desktop, you can start editing the workflow right away. Otherwise,
-click the **START EDITING** button in the top panel to start editing the workflow.
+
+Click the **START EDITING** button in the top panel to start editing the workflow.
 
 <p style="text-align:center;">
-    <img class="centered-image img-responsive" src="./img/empty_workflow.png">
+    <img class="centered-image img-responsive" src="./img/quickstart/empty_workflow.png">
     <em>Empty canvas of Seahorse workflow editor</em>
 </p>
 
