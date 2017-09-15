@@ -209,8 +209,9 @@ trait Params extends Serializable with HasInferenceResult {
    * class and their parameters have the same values set.
    * @return True, if 'this' and 'other' are the same.
    */
-  def sameAs(other: Params): Boolean =
-    other.getClass == this.getClass && other.extractParamMap() == this.extractParamMap()
+  def sameAs(other: Params): Boolean = {
+    other.getClass == this.getClass && other.paramValuesToJson == this.paramValuesToJson
+  }
 
   protected def copyValues[T <: Params](to: T, extra: ParamMap = ParamMap.empty): T = {
     val map = extractParamMap(extra)

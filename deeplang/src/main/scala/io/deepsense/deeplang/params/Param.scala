@@ -16,6 +16,8 @@
 
 package io.deepsense.deeplang.params
 
+import java.util.Objects
+
 import spray.json.DefaultJsonProtocol._
 import spray.json._
 
@@ -73,4 +75,20 @@ abstract class Param[T] {
   private[params] def anyValueToJson(value: Any): JsValue = valueToJson(value.asInstanceOf[T])
 
   def valueFromJson(jsValue: JsValue): T
+
+
+  def canEqual(other: Any): Boolean = other.isInstanceOf[Param[T]]
+
+  override def equals(other: Any): Boolean = other match {
+    case that: Param[T] =>
+      (that canEqual this) &&
+        name == that.name &&
+        description == that.description &&
+        parameterType == that.parameterType
+    case _ => false
+  }
+
+  override def hashCode(): Int = {
+    Objects.hash(name, description, parameterType)
+  }
 }

@@ -20,6 +20,7 @@ import spray.json._
 import spray.json.DefaultJsonProtocol._
 
 import io.deepsense.deeplang.UnitSpec
+import io.deepsense.deeplang.doperations.inout.InputStorageTypeChoice.File
 import io.deepsense.deeplang.exceptions.DeepLangException
 import ParameterType._
 import io.deepsense.deeplang.params.exceptions.ParamValueNotProvidedException
@@ -204,14 +205,16 @@ class ParamsSpec extends UnitSpec {
         withParamsA.sameAs(withParamsB) shouldBe false
       }
       "parameters have different values" in {
-        val withParamsA1 = new WithParamsA
-        val withParamsA2 = new WithParamsB
-        withParamsA1.set1(valueOne)
-        withParamsA1.sameAs(withParamsA2) shouldBe false
+        val file1 = File()
+        val file2 = File()
+        file1.setSourceFile("path")
 
-        withParamsA2.set1(valueOne)
-        withParamsA2.set2(valueTwo)
-        withParamsA1.sameAs(withParamsA2) shouldBe false
+        file1.sameAs(file2) shouldBe false
+
+        file1.setSourceFile("path1")
+        file2.setSourceFile("path2")
+
+        file1.sameAs(file2) shouldBe false
       }
     }
   }
