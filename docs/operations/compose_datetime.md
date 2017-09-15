@@ -90,10 +90,9 @@ to another [DataFrame](../classes/dataframe.html) with a [Transform](transform.h
 </tbody>
 </table>
 
-
 [comment]: # (Example can't be generated:)
-
 [comment]: # (MultipleChoice can't be handled by ParametersHtmlFormatter)
+
 ## Example
 
 ### Parameters
