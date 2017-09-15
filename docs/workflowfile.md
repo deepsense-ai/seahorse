@@ -1,6 +1,6 @@
 ---
 layout: documentation
-displayTitle: Workflow File
+displayTitle: Workflow File Format
 docTab: workflowfile
 title: Workflow File
 includeTechnicalOverviewMenu: true
