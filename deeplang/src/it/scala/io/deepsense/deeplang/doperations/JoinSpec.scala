@@ -26,7 +26,6 @@ import io.deepsense.deeplang.parameters._
 
 class JoinSpec extends DeeplangIntegTestSupport {
 
-  /* TODO don't test categoricals
   val leftTablePrefix = Some("leftTable_")
   val rightTablePrefix = Some("rightTable_")
 
@@ -116,14 +115,6 @@ class JoinSpec extends DeeplangIntegTestSupport {
       }
       "some column values are null" in {
         val (ldf, rdf, expected, joinColumns) = nullFixture()
-
-        val join = joinWithMultipleColumnSelection(joinColumns, Set.empty)
-        val joinDF = executeOperation(join, ldf, rdf)
-
-        assertDataFramesEqual(joinDF, expected, checkRowOrder = false)
-      }
-      "using categorical column" in {
-        val (ldf, rdf, expected, joinColumns) = categoricalFixture()
 
         val join = joinWithMultipleColumnSelection(joinColumns, Set.empty)
         val joinDF = executeOperation(join, ldf, rdf)
@@ -660,68 +651,6 @@ class JoinSpec extends DeeplangIntegTestSupport {
     (ldf, rdf, edf, joinColumns)
   }
 
-  def categoricalFixture(): (DataFrame, DataFrame, DataFrame, Set[String]) = {
-    val column1 = "categorical"
-    val joinColumns = Set(column1)
-
-    // Left dataframe
-    val colsL = Vector(column1, "age")
-    val schemaL = StructType(Seq(
-      StructField(colsL(0), StringType),
-      StructField(colsL(1), DoubleType)
-    ))
-    val rowsL = Seq(
-      ("pies", 3.0),
-      ("kot", 5.0),
-      ("krowa", 7.0),
-      ("pies", 1.0)
-    ).map(Row.fromTuple)
-    val ldf = createDataFrame(rowsL, schemaL)
-    val ldfCategorized =
-      CategoricalMapper(ldf, executionContext.dataFrameBuilder).categorized(column1)
-
-    val lcm = CategoricalMetadata(ldfCategorized)
-    val lMapping = lcm.mapping(column1)
-
-    // Right dataframe
-    val colsR = Vector(column1, "owner")
-    val schemaR = StructType(Seq(
-      StructField(colsL(0), StringType),
-      StructField(colsR(1), StringType)
-    ))
-    val rowsR = Seq(
-      ("kot", "Wojtek"),
-      ("wiewiorka", "Jacek"),
-      ("pies", "Rafal")
-    ).map(Row.fromTuple)
-    val rdf = createDataFrame(rowsR, schemaR)
-    val rdfCategorized =
-      CategoricalMapper(rdf, executionContext.dataFrameBuilder).categorized(column1)
-
-    val rcm = CategoricalMetadata(rdfCategorized)
-    val rMapping = rcm.mapping(column1)
-
-    val merged = lMapping.mergeWith(rMapping)
-    val finalMapping = merged.finalMapping
-
-    // join dataframe
-    val joinRows = Seq(
-      (finalMapping.valueToId("pies"), 3.0, "Rafal"),
-      (finalMapping.valueToId("kot"), 5.0, "Wojtek"),
-      (finalMapping.valueToId("krowa"), 7.0, null),
-      (finalMapping.valueToId("pies"), 1.0, "Rafal")
-    ).map(Row.fromTuple)
-    val joinSchema = StructType(
-      appendPrefix(
-        Seq(StructField(colsL(0), IntegerType)) ++ schemaL.fields.tail, leftTablePrefix) ++
-      appendPrefix(
-        schemaR.fields.filterNot(_.name == column1), rightTablePrefix)
-    )
-    val edf = createDataFrame(joinRows, joinSchema)
-
-    (ldfCategorized, rdfCategorized, edf, joinColumns)
-  }
-
   def nullValuesInLeftDataFrameFixture(): (DataFrame, DataFrame, DataFrame, Set[String]) = {
     val column1 = "nulls"
     val joinColumns = Set(column1)
@@ -735,11 +664,6 @@ class JoinSpec extends DeeplangIntegTestSupport {
       null
     ).map(Seq(_)).map(Row.fromSeq)
     val ldf = createDataFrame(rowsL, schemaL)
-    val ldfCategorized =
-      CategoricalMapper(ldf, executionContext.dataFrameBuilder).categorized(column1)
-
-    val lcm = CategoricalMetadata(ldfCategorized)
-    val lMapping = lcm.mapping(0)
 
     // Right dataframe
     val colsR = Vector(column1, "owner")
@@ -753,14 +677,6 @@ class JoinSpec extends DeeplangIntegTestSupport {
       ("pies", "Rafal")
     ).map(Row.fromTuple)
     val rdf = createDataFrame(rowsR, schemaR)
-    val rdfCategorized =
-      CategoricalMapper(rdf, executionContext.dataFrameBuilder).categorized(column1)
-
-    val rcm = CategoricalMetadata(rdfCategorized)
-    val rMapping = rcm.mapping(column1)
-
-    val merged = lMapping.mergeWith(rMapping)
-    val finalMapping = merged.finalMapping
 
     // join dataframe
     val joinRows = Seq(
@@ -768,13 +684,13 @@ class JoinSpec extends DeeplangIntegTestSupport {
     ).map(Row.fromTuple)
     val joinSchema = StructType(
       appendPrefix(
-        Seq(StructField(colsL(0), IntegerType)) ++ schemaL.fields.tail, leftTablePrefix) ++
+        Seq(StructField(colsL(0), StringType)) ++ schemaL.fields.tail, leftTablePrefix) ++
       appendPrefix(
         schemaR.fields.filterNot(_.name == column1), rightTablePrefix)
     )
     val edf = createDataFrame(joinRows, joinSchema)
 
-    (ldfCategorized, rdfCategorized, edf, joinColumns)
+    (ldf, rdf, edf, joinColumns)
   }
 
   private def sameColumnNamesFixture(): (DataFrame, DataFrame, DataFrame, Set[String]) = {
@@ -868,5 +784,4 @@ class JoinSpec extends DeeplangIntegTestSupport {
   private def appendPrefix(schema: Seq[StructField], prefix: Option[String]) = {
     schema.map(field => field.copy(name = prefix.getOrElse("") + field.name))
   }
-*/
 }

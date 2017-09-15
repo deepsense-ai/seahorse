@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-/* TODO without categoricals */
 package io.deepsense.deeplang.doperations
 
 import scala.collection.mutable
@@ -22,14 +21,16 @@ import scala.reflect.runtime.{universe => ru}
 
 import org.apache.spark.sql
 import org.apache.spark.sql.Column
+import org.apache.spark.sql.types.StructType
 
 import io.deepsense.deeplang.DOperation.Id
-import io.deepsense.deeplang.doperables.dataframe.DataFrame
+import io.deepsense.deeplang.doperables.dataframe.{DataFrameColumnsGetter, DataFrame}
 import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
 import io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException
+import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.params._
-import io.deepsense.deeplang.{DOperation2To1, ExecutionContext}
+import io.deepsense.deeplang.{DKnowledge, DOperation2To1, ExecutionContext}
 
 case class Join()
     extends DOperation2To1[DataFrame, DataFrame, DataFrame]
@@ -87,11 +88,11 @@ case class Join()
     }
 
     logger.debug("Validate types of columns used to join two DataFrames")
-    leftJoinColumnNames.zip(rightJoinColumnNames).foreach { case (leftCol, rightCol) => {
+    leftJoinColumnNames.zip(rightJoinColumnNames).foreach { case (leftCol, rightCol) =>
       DataFrame.assertExpectedColumnType(
         lsdf.schema.apply(leftCol),
         SparkConversions.sparkColumnTypeToColumnType(rsdf.schema.apply(rightCol).dataType))
-    }}
+    }
 
     logger.debug("Append prefixes to columns from left table")
     val (newLsdf, renamedLeftColumns) = appendPrefixes(lsdf, getLeftPrefix)
@@ -113,32 +114,9 @@ case class Join()
     val prefixedLeftJoinColumnNames = leftJoinColumnNames.map(renamedLeftColumns(_))
     val prefixedRightJoinColumnNames = rightJoinColumnNames.map(renamedRightColumns(_))
 
-    /*
-    TODO remove
-    logger.debug("Change CategoricalMapping in right DataFrame to allow join with left DataFrame")
-    val lcm = CategoricalMetadata(lsdf)
-    val rcm = CategoricalMetadata(rsdf)
-    prefixedLeftJoinColumnNames.zipWithIndex.foreach { case (col, index) =>
-      if (lcm.isCategorical(col)) {
-        val rightJoinColumnName = prefixedRightJoinColumnNames(index)
-        val lMapping = lcm.mapping(col)
-        val rMapping = rcm.mapping(rightJoinColumnName)
-        val merged = lMapping.mergeWith(rMapping)
-        val otherToFinal = merged.otherToFinal
-        val columnIndex = rsdf.columns.indexOf(rightJoinColumnName)
-        val rddWithFinalMapping = rsdf.map { r =>
-          val id = r.getInt(columnIndex)
-          val mappedId = otherToFinal.mapId(id)
-          Row.fromSeq(r.toSeq.updated(columnIndex, mappedId))
-        }
-        rsdf = context.sqlContext.createDataFrame(rddWithFinalMapping, rsdf.schema)
-      }
-    }
-    */
-
     logger.debug("Prepare joining condition")
 
-    val zippedJoinColumns = (leftJoinColumnNames.zip(rightJoinColumnNames).toList: @unchecked)
+    val zippedJoinColumns = leftJoinColumnNames.zip(rightJoinColumnNames).toList
 
     def prepareCondition(leftColumn: String, rightColumn: String): Column = {
       columnEqualityCondition(
@@ -169,8 +147,6 @@ case class Join()
     assert(columns.nonEmpty)
     val duplicateColumnsRemoved = joinedDataFrame.select(columns.head, columns.tail: _*)
 
-    // NOTE: We perform only LEFT OUTER JOIN, thus we do not need to change CategoricalMetadata
-    // in resultDataFrame (CategoricalMetadata for left DataFrame, already there is sufficient)
     val resultDataFrame = DataFrame.fromSparkDataFrame(duplicateColumnsRemoved)
     logger.debug("Execution of " + this.getClass.getSimpleName + " ends")
     resultDataFrame
