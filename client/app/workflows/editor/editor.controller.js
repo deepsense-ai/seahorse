@@ -5,7 +5,7 @@ const ZOOM_STEP = 0.05;
 const TRANSITION_TIME = 0.5;
 
 class EditorController {
-  constructor($rootScope, $scope, CanvasService, AdapterService, UUIDGenerator, Operations, OperationsHierarchyService, MouseEvent, $element) {
+  constructor($rootScope, $scope, $element, CanvasService, AdapterService, UUIDGenerator, Operations, OperationsHierarchyService, MouseEvent) {
     'ngInject';
 
     this.CanvasService = CanvasService;
@@ -45,24 +45,24 @@ class EditorController {
     this.$canvas = $(this.$element[0].querySelector('core-canvas'));
     this.$toolbar = $(this.$element[0].querySelector('canvas-toolbar'));
     //Wheel handling
-    this.$canvas.bind('wheel', (e) => {
-      const cursorX = e.originalEvent.clientX - this.$element[0].getBoundingClientRect().left;
-      const cursorY = e.originalEvent.clientY - this.$element[0].getBoundingClientRect().top;
-      const zoomDelta = e.originalEvent.deltaY / 1000;
+    this.$canvas.bind('wheel', ($event) => {
+      const cursorX = $event.originalEvent.clientX - this.$element[0].getBoundingClientRect().left;
+      const cursorY = $event.originalEvent.clientY - this.$element[0].getBoundingClientRect().top;
+      const zoomDelta = $event.originalEvent.deltaY / 1000;
       this.CanvasService.zoomToPosition(zoomDelta, cursorX, cursorY);
     });
 
     // Drag handling in JSPlumb
-    const moveHandler = (event) => {
-      if (this.MouseEvent.isModKeyDown(event)) {
-        this.CanvasService.moveWindow(event.originalEvent.movementX, event.originalEvent.movementY);
+    const moveHandler = ($event) => {
+      if (this.MouseEvent.isModKeyDown($event)) {
+        this.CanvasService.moveWindow($event.originalEvent.movementX, $event.originalEvent.movementY);
       } else {
         this.$canvas.off('mousemove', moveHandler);
       }
     };
 
-    this.$canvas.bind('mousedown', (event) => {
-      if (this.MouseEvent.isModKeyDown(event)) {
+    this.$canvas.bind('mousedown', ($event) => {
+      if (this.MouseEvent.isModKeyDown($event)) {
         this.$canvas.bind('mousemove', moveHandler);
       }
     });
@@ -72,13 +72,10 @@ class EditorController {
     });
 
     // Drag and Drop from toolbar handling
-    this.$canvas.bind('drop', (event) => {
-      const originalEvent = event.originalEvent;
+    this.$canvas.bind('drop', ($event) => {
+      const originalEvent = $event.originalEvent;
       if (originalEvent.dataTransfer.getData('draggableExactType') === 'graphNode') {
-        const positionX = event.clientX;
-        const positionY = event.clientY - this.$element[0].getBoundingClientRect().top;
-        const [x, y] = this.CanvasService.translateScreenToCanvasPosition(positionX, positionY);
-        this.startWizard(x, y);
+        this.startWizardFromEvent($event);
       }
     });
 
@@ -88,13 +85,12 @@ class EditorController {
       }
     });
 
-    this.$toolbar.bind('mousedown', (event) => {
-      event.stopPropagation();
+    this.$toolbar.bind('mousedown', ($event) => {
+      $event.stopPropagation();
     });
 
-    this.$canvas.bind('contextmenu', (event) => {
-      const originalEvent = event.originalEvent;
-      this.startWizard(originalEvent.offsetX, originalEvent.offsetY);
+    this.$canvas.bind('contextmenu', ($event) => {
+      this.startWizardFromEvent($event);
       return false;
     });
 
@@ -133,6 +129,13 @@ class EditorController {
     const portPositionY = newNodeData.y - this.$element[0].getBoundingClientRect().top;
     const [x, y] = this.CanvasService.translateScreenToCanvasPosition(portPositionX, portPositionY);
     this.startWizard(x, y, newNodeData.endpoint);
+  }
+
+  startWizardFromEvent($event) {
+    const positionX = $event.clientX;
+    const positionY = $event.clientY - this.$element[0].getBoundingClientRect().top;
+    const [x, y] = this.CanvasService.translateScreenToCanvasPosition(positionX, positionY);
+    this.startWizard(x, y);
   }
 
   startWizard(x, y, endpoint = null) {
