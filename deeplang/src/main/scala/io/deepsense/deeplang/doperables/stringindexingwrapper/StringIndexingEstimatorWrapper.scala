@@ -59,7 +59,7 @@ abstract class StringIndexingEstimatorWrapper
   final override def report: Report = wrappedEstimator.report
 
   final def sparkClassCanonicalName: String =
-    wrappedEstimator.serializableEstimator.getClass.getCanonicalName
+    wrappedEstimator.serializableEstimator.sparkEstimator.getClass.getCanonicalName
 
   private def setWrappedEstimator(
     wrappedEstimator: SparkEstimatorWrapper[M, E, MW]
