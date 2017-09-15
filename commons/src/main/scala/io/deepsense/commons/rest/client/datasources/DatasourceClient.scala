@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2016, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-package io.deepsense.commons.json
+package io.deepsense.commons.rest.client.datasources
 
 import java.util.UUID
 
-import spray.json._
+import io.deepsense.api.datasourcemanager.model.Datasource
 
-import io.deepsense.commons.models.Id
-
-trait IdJsonProtocol extends UUIDJsonProtocol {
-
-  implicit object IdFormat extends RootJsonFormat[Id] {
-    override def write(obj: Id): JsValue = obj.value.toJson
-    override def read(json: JsValue): Id = json.convertTo[UUID]
-  }
+trait DatasourceClient {
+  def getDatasource(uuid: UUID): Option[Datasource]
 }
 
-object IdJsonProtocol extends IdJsonProtocol
+trait DatasourceClientFactory {
+  def createClient: DatasourceClient
+}
+
+object DatasourceTypes {
+  type DatasourceId = String
+  type DatasourceMap = Map[DatasourceId, Datasource]
+  type DatasourceList = List[Datasource]
+}

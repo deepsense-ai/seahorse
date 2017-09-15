@@ -27,12 +27,12 @@ lazy val sparkUtils = project in file (s"sparkutils$sparkVersion") settings sett
 lazy val rootProject = project.in(file("."))
   .settings(name := "seahorse")
   .settings(PublishSettings.disablePublishing)
-  .aggregate(sparkUtils, commons, deeplang, docgen, graph, workflowjson, models,reportlib, workflowexecutormqprotocol,
+  .aggregate(api, sparkUtils, commons, deeplang, docgen, graph, workflowjson, models,reportlib, workflowexecutormqprotocol,
     workflowexecutor)
 
 lazy val api                    = project
 
-lazy val commons                = project dependsOn sparkUtils settings settingsForPublished
+lazy val commons                = project dependsOn (api, sparkUtils) settings settingsForPublished
 
 lazy val deeplang               = project dependsOn (
   commons,

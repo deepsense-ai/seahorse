@@ -18,6 +18,7 @@ package io.deepsense.deeplang.doperations
 
 import java.io._
 import java.net.UnknownHostException
+import java.util.UUID
 
 import scala.reflect.runtime.{universe => ru}
 
@@ -38,6 +39,7 @@ import io.deepsense.deeplang.params.choice.ChoiceParam
 import io.deepsense.deeplang.params.{Param, Params}
 import io.deepsense.deeplang.{DKnowledge, DOperation0To1, ExecutionContext}
 
+// TODO Remake this case class into class
 case class ReadDataFrame()
     extends DOperation0To1[DataFrame]
     with ReadDataFrameParameters
@@ -54,7 +56,10 @@ case class ReadDataFrame()
   val params: Array[Param[_]] = Array(storageType)
   setDefault(storageType, new InputStorageTypeChoice.File())
 
-  override protected def execute()(context: ExecutionContext): DataFrame = {
+  override def getDatasourcesId: Set[UUID] = {
+    Set.empty[UUID]
+  }
+  override def execute()(context: ExecutionContext): DataFrame = {
     implicit val ec = context
 
     try {
@@ -72,7 +77,7 @@ case class ReadDataFrame()
     }
   }
 
-  override protected def inferKnowledge()(context: InferContext):
+  override def inferKnowledge()(context: InferContext):
       (DKnowledge[DataFrame], InferenceWarnings) = {
     FilePathHasValidFileScheme.validate(this)
     ParquetSupportedOnClusterOnly.validate(this)

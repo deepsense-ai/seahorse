@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, deepsense.io
+ * Copyright 2016, deepsense.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package io.deepsense.commons.json
+package io.deepsense.deeplang.params.datasource
 
 import java.util.UUID
 
-import spray.json._
+import io.deepsense.commons.json.UUIDJsonProtocol._
+import io.deepsense.deeplang.params.ParameterType.ParameterType
+import io.deepsense.deeplang.params.{ParamWithJsFormat, ParameterType}
 
-import io.deepsense.commons.models.Id
+case class DatasourceIdForReadParam(
+    name: String,
+    description: String)
+  extends ParamWithJsFormat[UUID] {
 
-trait IdJsonProtocol extends UUIDJsonProtocol {
+  override def replicate(name: String): DatasourceIdForReadParam = copy(name = name)
 
-  implicit object IdFormat extends RootJsonFormat[Id] {
-    override def write(obj: Id): JsValue = obj.value.toJson
-    override def read(json: JsValue): Id = json.convertTo[UUID]
-  }
+  override val parameterType: ParameterType = ParameterType.DatasourceIdForRead
 }
-
-object IdJsonProtocol extends IdJsonProtocol

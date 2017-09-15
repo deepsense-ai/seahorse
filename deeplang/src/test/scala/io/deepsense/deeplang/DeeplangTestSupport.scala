@@ -22,18 +22,13 @@ import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
-import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
+import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.inference.InferContext
 
 trait DeeplangTestSupport extends MockitoSugar {
 
   protected def createInferContext(
-      dOperableCatalog: DOperableCatalog): InferContext =
-    InferContext(
-      mock[DataFrameBuilder],
-      "testTenantId",
-      dOperableCatalog,
-      mock[InnerWorkflowParser])
+      dOperableCatalog: DOperableCatalog): InferContext = MockedInferContext(dOperableCatalog)
 
   protected def createSchema(fields: Array[String] = Array[String]()): StructType = {
     val schemaMock = mock[StructType]

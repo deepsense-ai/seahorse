@@ -1,0 +1,57 @@
+/**
+ * Copyright 2015, deepsense.io
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.deepsense.commons.json.envelope
+
+import org.scalatest.mockito.MockitoSugar
+import org.scalatest.{Matchers, WordSpec}
+
+import io.deepsense.api.datasourcemanager.model.{Datasource, DatasourceType, DatasourceParams}
+import io.deepsense.commons.json.DatasourceListJsonProtocol
+
+class DatasourceListJsonProtocolSpec
+  extends WordSpec
+  with MockitoSugar
+  with Matchers {
+
+  val uuid = "123e4567-e89b-12d3-a456-426655440000"
+  val externalFile = DatasourceType.EXTERNALFILE
+
+  val dsList = List(getTestDatasource)
+
+  def getTestDatasource: Datasource = {
+    val ds = new Datasource
+    ds.setId(uuid)
+    val params = new DatasourceParams
+    params.setDatasourceType(externalFile)
+    ds.setParams(params)
+    ds
+  }
+
+  "DatasourceJsonProtocolSpec" should {
+    "serialize and deserialize single datasource" in {
+      val datasourcesJson = DatasourceListJsonProtocol.toString(dsList)
+      val datasources = DatasourceListJsonProtocol.fromString(datasourcesJson.toString)
+      datasources should contain theSameElementsAs dsList
+    }
+
+    "serialize no datasource" in {
+      val datasourcesJson = DatasourceListJsonProtocol.toString(List.empty[Datasource])
+      datasourcesJson shouldBe "[]"
+    }
+
+  }
+}

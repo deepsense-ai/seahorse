@@ -21,6 +21,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 import io.deepsense.commons.BuildInfo
 import io.deepsense.commons.mail.EmailSender
 import io.deepsense.commons.rest.client.NotebooksClientFactory
+import io.deepsense.commons.rest.client.datasources.DatasourceClientFactory
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
 import io.deepsense.commons.utils.{Logging, Version}
 import io.deepsense.deeplang._
@@ -33,7 +34,6 @@ import io.deepsense.sparkutils.SparkSQLSession
 
 trait Executor extends Logging {
 
-
   def currentVersion: Version =
     Version(BuildInfo.apiVersionMajor, BuildInfo.apiVersionMinor, BuildInfo.apiVersionPatch)
 
@@ -42,24 +42,25 @@ trait Executor extends Logging {
       executionMode: ExecutionMode,
       notebooksClientFactory: Option[NotebooksClientFactory],
       emailSender: Option[EmailSender],
+      datasourceClientFactory: DatasourceClientFactory,
       customCodeExecutionProvider: CustomCodeExecutionProvider,
       sparkContext: SparkContext,
       sparkSQLSession: SparkSQLSession,
       tempPath: String,
+      libraryPath: String,
       dOperableCatalog: Option[DOperableCatalog] = None): CommonExecutionContext = {
 
     val CatalogPair(operableCatalog, operationsCatalog) = CatalogRecorder.catalogs
-
-    val tenantId = ""
 
     val innerWorkflowExecutor = new InnerWorkflowExecutorImpl(
       new GraphReader(operationsCatalog))
 
     val inferContext = InferContext(
       DataFrameBuilder(sparkSQLSession),
-      tenantId,
       operableCatalog,
-      innerWorkflowExecutor)
+      innerWorkflowExecutor,
+      datasourceClientFactory.createClient
+    )
 
     CommonExecutionContext(
       sparkContext,
@@ -68,7 +69,7 @@ trait Executor extends Logging {
       executionMode,
       FileSystemClientStub(), // temporarily mocked
       tempPath,
-      tenantId,
+      libraryPath,
       innerWorkflowExecutor,
       dataFrameStorage,
       notebooksClientFactory,

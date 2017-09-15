@@ -25,29 +25,18 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.apache.spark.{SparkConf, SparkContext}
 import org.scalatest.BeforeAndAfterAll
-import org.scalatest.mockito.MockitoSugar._
 
-import io.deepsense.commons.mail.EmailSender
 import io.deepsense.commons.models.Id
-import io.deepsense.commons.rest.client.{NotebookRestClient, NotebooksClientFactory}
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
 import io.deepsense.deeplang.OperationExecutionDispatcher.Result
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.deeplang.utils.DataFrameMatchers
 import io.deepsense.sparkutils.SparkSQLSession
-
 
 /**
  * Adds features to facilitate integration testing using Spark
  */
 trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll with LocalExecutionContext {
-
-  protected def createDataFrame(rows: Seq[Row], schema: StructType): DataFrame = {
-    val rdd: RDD[Row] = sparkContext.parallelize(rows)
-    val sparkDataFrame = sparkSQLSession.createDataFrame(rdd, schema)
-    DataFrame.fromSparkDataFrame(sparkDataFrame)
-  }
 
   def executeOperation(op: DOperation, dfs: DataFrame*): DataFrame =
     op.executeUntyped(dfs.toVector)(executionContext).head.asInstanceOf[DataFrame]
@@ -64,83 +53,8 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll with Loca
 }
 
 object DeeplangIntegTestSupport extends UnitSpec with DataFrameMatchers {
-  val sparkConf: SparkConf = new SparkConf()
-    .setMaster("local[4]")
-    .setAppName("TestApp")
-    .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
-    .registerKryoClasses(Array())
-  val sparkContext: SparkContext = new SparkContext(sparkConf)
-  val sparkSQLSession: SparkSQLSession = new SparkSQLSession(sparkContext)
 
-  UserDefinedFunctions.registerFunctions(sparkSQLSession.udfRegistration)
 }
-
-private class MockedCommonExecutionContext(
-    override val sparkContext: SparkContext,
-    override val sparkSQLSession: SparkSQLSession,
-    override val inferContext: InferContext,
-    override val executionMode: ExecutionMode,
-    override val fsClient: FileSystemClient,
-    override val tenantId: String,
-    override val innerWorkflowExecutor: InnerWorkflowExecutor,
-    override val dataFrameStorage: DataFrameStorage,
-    override val notebooksClientFactory: Option[NotebooksClientFactory],
-    override val emailSender: Option[EmailSender],
-    override val customCodeExecutionProvider: CustomCodeExecutionProvider)
-  extends CommonExecutionContext(
-    sparkContext,
-    sparkSQLSession,
-    inferContext,
-    executionMode,
-    fsClient,
-    "/tmp",
-    tenantId,
-    innerWorkflowExecutor,
-    dataFrameStorage,
-    notebooksClientFactory,
-    emailSender,
-    customCodeExecutionProvider) {
-
-  override def createExecutionContext(workflowId: Id, nodeId: Id): ExecutionContext =
-    new MockedExecutionContext(sparkContext,
-      sparkSQLSession,
-      inferContext,
-      executionMode,
-      fsClient,
-      tenantId,
-      innerWorkflowExecutor,
-      mock[ContextualDataFrameStorage],
-      notebooksClientFactory.map(_.createNotebookForNode(workflowId, nodeId)),
-      emailSender,
-      new MockedContextualCodeExecutor)
-}
-
-// TODO Unnecessary intermediate object. Remove.
-private class MockedExecutionContext(
-    override val sparkContext: SparkContext,
-    override val sparkSQLSession: SparkSQLSession,
-    override val inferContext: InferContext,
-    override val executionMode: ExecutionMode,
-    override val fsClient: FileSystemClient,
-    override val tenantId: String,
-    override val innerWorkflowExecutor: InnerWorkflowExecutor,
-    override val dataFrameStorage: ContextualDataFrameStorage,
-    override val notebooksClient: Option[NotebookRestClient],
-    override val emailSender: Option[EmailSender],
-    override val customCodeExecutor: ContextualCustomCodeExecutor)
-  extends ExecutionContext(
-    sparkContext,
-    sparkSQLSession,
-    inferContext,
-    executionMode,
-    fsClient,
-    "/tmp",
-    tenantId,
-    innerWorkflowExecutor,
-    dataFrameStorage,
-    notebooksClient,
-    emailSender,
-    customCodeExecutor)
 
 private class MockedCodeExecutor extends CustomCodeExecutor {
 
@@ -149,13 +63,13 @@ private class MockedCodeExecutor extends CustomCodeExecutor {
   override def run(workflowId: String, nodeId: String, code: String): Unit = ()
 }
 
+class MockedContextualCodeExecutor
+  extends ContextualCustomCodeExecutor(
+    new MockedCustomCodeExecutionProvider, Id.randomId, Id.randomId)
+
 private class MockedCustomCodeExecutionProvider
   extends CustomCodeExecutionProvider(
     new MockedCodeExecutor, new MockedCodeExecutor, new MockedCustomOperationExecutor)
-
-private class MockedContextualCodeExecutor
-  extends ContextualCustomCodeExecutor(
-    new MockedCustomCodeExecutionProvider, Id.randomId, Id.randomId)
 
 private class MockedCustomOperationExecutor
   extends OperationExecutionDispatcher {

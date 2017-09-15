@@ -18,6 +18,7 @@ package io.deepsense.workflowexecutor.executor
 
 import java.io._
 import java.net.InetAddress
+import javax.sql.rowset.spi.SyncProvider
 
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -30,7 +31,11 @@ import akka.actor.ActorSystem
 import com.typesafe.config.ConfigFactory
 import spray.json._
 
+import io.deepsense.api.datasourcemanager.model.Datasource
+import io.deepsense.commons.json.DatasourceListJsonProtocol
+import io.deepsense.commons.models.Id
 import io.deepsense.commons.models.Entity
+import io.deepsense.commons.rest.client.datasources.DatasourceInMemoryClientFactory
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.{OperationExecutionDispatcher, _}
 import io.deepsense.graph.CyclicGraphException
@@ -104,15 +109,22 @@ case class WorkflowExecutor(
       rExecutionCaretaker.rCodeExecutor,
       operationExecutionDispatcher)
 
+    val libraryPath = "/library"
+
+    val datasources =
+      DatasourceListJsonProtocol.fromString(workflow.thirdPartyData.getFields("datasources").toString)
     val executionContext = createExecutionContext(
       dataFrameStorage = dataFrameStorage,
       executionMode = ExecutionMode.Batch,
       notebooksClientFactory = None,
       emailSender = None,
+      datasourceClientFactory = new DatasourceInMemoryClientFactory(datasources),
       customCodeExecutionProvider = customCodeExecutionProvider,
       sparkContext = sparkContext,
       sparkSQLSession = sparkSQLSession,
-      tempPath = tempPath)
+      tempPath = tempPath,
+      libraryPath = libraryPath
+    )
 
     val actorSystem = ActorSystem(actorSystemName)
     val finishedExecutionStatus: Promise[ExecutionReport] = Promise()

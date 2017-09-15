@@ -24,8 +24,8 @@ import org.apache.spark.sql.{DataFrame => SparkDataFrame}
 
 import io.deepsense.commons.mail.EmailSender
 import io.deepsense.commons.models.Id
-import io.deepsense.commons.utils.Logging
 import io.deepsense.commons.rest.client.{NotebookRestClient, NotebooksClientFactory}
+import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.OperationExecutionDispatcher.Result
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.inference.InferContext
@@ -38,7 +38,7 @@ case class CommonExecutionContext(
     executionMode: ExecutionMode,
     fsClient: FileSystemClient,
     tempPath: String,
-    tenantId: String,
+    libraryPath: String,
     innerWorkflowExecutor: InnerWorkflowExecutor,
     dataFrameStorage: DataFrameStorage,
     notebooksClientFactory: Option[NotebooksClientFactory],
@@ -53,7 +53,7 @@ case class CommonExecutionContext(
       executionMode,
       fsClient,
       tempPath,
-      tenantId,
+      libraryPath,
       innerWorkflowExecutor,
       ContextualDataFrameStorage(dataFrameStorage, workflowId, nodeId),
       notebooksClientFactory.map(_.createNotebookForNode(workflowId, nodeId)),
@@ -71,7 +71,7 @@ object CommonExecutionContext {
       context.executionMode,
       context.fsClient,
       context.tempPath,
-      context.tenantId,
+      context.libraryPath,
       context.innerWorkflowExecutor,
       context.dataFrameStorage.dataFrameStorage,
       context.notebooksClient.map(_.toFactory),
@@ -87,7 +87,7 @@ case class ExecutionContext(
     executionMode: ExecutionMode,
     fsClient: FileSystemClient,
     tempPath: String,
-    tenantId: String,
+    libraryPath: String,
     innerWorkflowExecutor: InnerWorkflowExecutor,
     dataFrameStorage: ContextualDataFrameStorage,
     notebooksClient: Option[NotebookRestClient],
@@ -119,7 +119,6 @@ case class ContextualDataFrameStorage(
 
   def removeNodeOutputDataFrames(): Unit =
     dataFrameStorage.removeNodeOutputDataFrames(workflowId, nodeId)
-
 
   def withInputDataFrame[T](portNumber: Int, dataFrame: SparkDataFrame)(block: => T) : T = {
     setInputDataFrame(portNumber, dataFrame)

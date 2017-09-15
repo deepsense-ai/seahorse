@@ -30,8 +30,9 @@ import com.typesafe.config.ConfigFactory
 import org.apache.spark.SparkContext
 
 import io.deepsense.commons.mail.{EmailSender, EmailSenderAuthorizationConfig, EmailSenderConfig}
-import io.deepsense.commons.rest.client.NotebooksClientFactory
 import io.deepsense.deeplang._
+import io.deepsense.commons.rest.client.NotebooksClientFactory
+import io.deepsense.commons.rest.client.datasources.DatasourceRestClientFactory
 import io.deepsense.deeplang.catalogs.CatalogPair
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
@@ -67,6 +68,7 @@ case class SessionExecutor(
     mailServerPassword: String,
     mailServerSender: String,
     notebookServerAddress: URL,
+    datasourceServerAddress: URL,
     depsZip: String,
     workflowOwnerId: String,
     tempPath: String,
@@ -249,15 +251,20 @@ case class SessionExecutor(
     }
     val notebooksClientFactory = new NotebooksClientFactory(notebookServerAddress, 1 second, 3600)(system)
 
+    // TODO There might be need to have it passed to we.jar as argument eventually
+    val libraryPath = "/library"
+
     val executionContext = createExecutionContext(
       dataFrameStorage = dataFrameStorage,
       executionMode = ExecutionMode.Interactive,
       notebooksClientFactory = Some(notebooksClientFactory),
       emailSender = Some(emailSender),
+      datasourceClientFactory = new DatasourceRestClientFactory(datasourceServerAddress, workflowOwnerId),
       customCodeExecutionProvider = customCodeExecutionProvider,
       sparkContext = sparkContext,
       sparkSQLSession = sparkSQLSession,
       tempPath = tempPath,
+      libraryPath = libraryPath,
       dOperableCatalog = Some(dOperableCatalog))
 
     val readyBroadcaster = communicationFactory.createBroadcaster(

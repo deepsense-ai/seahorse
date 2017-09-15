@@ -59,7 +59,7 @@ class WriteDataFrame()
   val params: Array[Param[_]] = Array(storageType)
   setDefault(storageType, new OutputStorageTypeChoice.File())
 
-  override protected def execute(dataFrame: DataFrame)(context: ExecutionContext): Unit = {
+  override def execute(dataFrame: DataFrame)(context: ExecutionContext): Unit = {
     import OutputStorageTypeChoice._
     try {
       getStorageType() match {
@@ -90,7 +90,7 @@ class WriteDataFrame()
     dataFrame.sparkDataFrame.write.mode(saveMode).jdbc(jdbcUrl, jdbcTableName, properties)
   }
 
-  override protected def inferKnowledge(k0: DKnowledge[DataFrame])(context: InferContext): (Unit, InferenceWarnings) = {
+  override def inferKnowledge(k0: DKnowledge[DataFrame])(context: InferContext): (Unit, InferenceWarnings) = {
     FilePathHasValidFileScheme.validate(this)
     ParquetSupportedOnClusterOnly.validate(this)
     super.inferKnowledge(k0)(context)

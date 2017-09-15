@@ -22,7 +22,7 @@ import io.deepsense.deeplang.doperations.{CreateCustomTransformer, DefaultCustom
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.deeplang.inference.exceptions.NoInputEdgesException
 import io.deepsense.deeplang.params.custom.InnerWorkflow
-import io.deepsense.deeplang.{CatalogRecorder, DOperation, InnerWorkflowExecutor}
+import io.deepsense.deeplang.{CatalogRecorder, DOperation, InnerWorkflowExecutor, MockedInferContext}
 import io.deepsense.graph.{AbstractInferenceSpec, DeeplangGraph, GraphKnowledge, Node}
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.InnerWorkflowJsonProtocol
@@ -87,8 +87,8 @@ class KnowledgeInferenceSpec
   }
 
   private lazy val inferContext: InferContext = {
-    val executor: InnerWorkflowExecutor = new InnerWorkflowExecutorImpl(graphReader)
-    InferContext(null, null, dOperableCatalog, executor)
+    val executor = new InnerWorkflowExecutorImpl(graphReader)
+    MockedInferContext(dOperableCatalog = dOperableCatalog, innerWorkflowParser = executor)
   }
   override protected lazy val graphReader = new GraphReader(operationCatalog)
   private lazy val CatalogPair(dOperableCatalog, operationCatalog) = CatalogRecorder.catalogs

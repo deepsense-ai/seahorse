@@ -32,12 +32,11 @@ import spray.json.JsObject
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.models.Entity
 import io.deepsense.commons.utils.Logging
+import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.inout._
 import io.deepsense.deeplang.doperations.readwritedataframe.{FilePath, FileScheme}
 import io.deepsense.deeplang.doperations.{ReadDataFrame, WriteDataFrame}
-import io.deepsense.deeplang.inference.InferContext
-import io.deepsense.deeplang.{CatalogRecorder, CommonExecutionContext, DOperable, ExecutionContext}
 import io.deepsense.graph.DeeplangGraph.DeeplangNode
 import io.deepsense.graph.Node.Id
 import io.deepsense.graph._
@@ -494,9 +493,7 @@ class WorkflowExecutorActorSpec
         wmClientActor(Map[Workflow.Id, WorkflowWithResults](workflow.id -> workflow))
       }
     val commonExecutionContext = mock[CommonExecutionContext]
-    val dOperableCatalog = CatalogRecorder.catalogs.dOperableCatalog
-    val inferContext =
-      InferContext(null, null, dOperableCatalog, null)
+    val inferContext = MockedInferContext()
     when(commonExecutionContext.inferContext).thenReturn(inferContext)
     val wea: TestActorRef[WorkflowExecutorActor] = TestActorRef(
       new SessionWorkflowExecutorActor(

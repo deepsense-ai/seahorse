@@ -16,6 +16,7 @@
 
 package io.deepsense.deeplang.inference
 
+import io.deepsense.commons.rest.client.datasources.DatasourceClient
 import io.deepsense.deeplang.InnerWorkflowParser
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
@@ -26,6 +27,6 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
  */
 case class InferContext(
     dataFrameBuilder: DataFrameBuilder,
-    tenantId: String, // TODO REMOVE
     dOperableCatalog: DOperableCatalog,
-    innerWorkflowParser: InnerWorkflowParser)
+    innerWorkflowParser: InnerWorkflowParser,
+    datasourceClient: DatasourceClient)

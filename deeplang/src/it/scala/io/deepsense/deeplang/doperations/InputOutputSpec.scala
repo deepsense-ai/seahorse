@@ -102,19 +102,6 @@ class InputOutputSpec extends
   private def generateSomeDriverTmpPath(): String =
     absoluteTestsDirPath.fullPath + "tmp-" + UUID.randomUUID() + ".data"
 
-  private def testFile(fileFormat: InputFileFormatChoice, fileScheme: FileScheme): String = {
-    val format = fileFormat.getClass.getSimpleName.toLowerCase()
-    val fileName = s"some_$format.$format"
-    val path = fileScheme match {
-      case FileScheme.HTTPS => "https://s3.amazonaws.com/workflowexecutor/test_data/"
-      case FileScheme.File => absoluteTestsDirPath.fullPath
-      case other => throw new IllegalStateException(s"$other not supported")
-    }
-    val fullPath = path + fileName
-    logger.info(s"File path: $path")
-    fullPath
-  }
-
   private def read(
       path: String,
       fileFormat: InputFileFormatChoice): DataFrame = {

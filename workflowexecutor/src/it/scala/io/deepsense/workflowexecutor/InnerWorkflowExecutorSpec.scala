@@ -29,7 +29,7 @@ import io.deepsense.deeplang.doperations.custom.{Sink, Source}
 import io.deepsense.deeplang.doperations.spark.wrappers.evaluators.CreateRegressionEvaluator
 import io.deepsense.deeplang.params.custom.InnerWorkflow
 import io.deepsense.deeplang.params.selections.NameSingleColumnSelection
-import io.deepsense.deeplang.{CatalogRecorder, DeeplangIntegTestSupport, InnerWorkflowExecutor}
+import io.deepsense.deeplang.{CatalogRecorder, DeeplangIntegTestSupport, InnerWorkflowExecutor, _}
 import io.deepsense.graph.{DeeplangGraph, Edge, Node}
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.InnerWorkflowJsonProtocol
@@ -40,6 +40,7 @@ class InnerWorkflowExecutorSpec
   with InnerWorkflowJsonProtocol {
 
   import DeeplangIntegTestSupport._
+  import LocalExecutionContext._
 
   val sourceNodeId = "2603a7b5-aaa9-40ad-9598-23f234ec5c32"
   val sinkNodeId = "d7798d5e-b1c6-4027-873e-a6d653957418"

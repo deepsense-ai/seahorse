@@ -16,13 +16,13 @@
 
 package io.deepsense.deeplang.doperations.readwritedataframe
 
+import io.deepsense.deeplang.ExecutionContext
+
 object FilePathFromLibraryPath {
 
-  def apply(path: FilePath): FilePath = {
+  def apply(path: FilePath)(implicit ctx: ExecutionContext): FilePath = {
     require(path.fileScheme == FileScheme.Library)
-    // TODO There might be need to have it passed to we.jar as argument eventually
-    val filePathForLibrary = "/library/"
-    val libraryPath = filePathForLibrary + path.pathWithoutScheme
+    val libraryPath = ctx.libraryPath + "/" + path.pathWithoutScheme
     FilePath(FileScheme.File, libraryPath)
   }
 
