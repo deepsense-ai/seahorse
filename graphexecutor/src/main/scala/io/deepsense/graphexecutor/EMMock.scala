@@ -28,11 +28,11 @@ package io.deepsense.graphexecutor
 
 import java.util.UUID
 
-import io.deepsense.graph.Graph
+import io.deepsense.graph.{Edge, Endpoint, Graph, Node}
 import io.deepsense.graphexecutor.DOperationTestClasses.{DOperation0To1Test, DOperation1To1Test, DOperation2To1Test}
 
 object EMMock {
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
     val graphExecutorClient = GraphExecutorClient()
     graphExecutorClient.init(Constants.EMWaitForGraphExecutorClientInitDelay)
 
@@ -54,17 +54,17 @@ object EMMock {
    * @return Mocked graph
    */
   private def createMockedGraph: Graph = {
-    val graph = new Graph
-    val node1 = graph.addNode(UUID.randomUUID(), new DOperation0To1Test)
-    val node2 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
-    val node3 = graph.addNode(UUID.randomUUID(), new DOperation1To1Test)
-    val node4 = graph.addNode(UUID.randomUUID(), new DOperation2To1Test)
-    val edges = List(
+    val node1 = Node(UUID.randomUUID(), new DOperation0To1Test)
+    val node2 = Node(UUID.randomUUID(), new DOperation1To1Test)
+    val node3 = Node(UUID.randomUUID(), new DOperation1To1Test)
+    val node4 = Node(UUID.randomUUID(), new DOperation2To1Test)
+    val nodes = Set(node1, node2, node3, node4)
+    val edgesList = List(
       (node1, node2, 0, 0),
       (node1, node3, 0, 0),
       (node2, node4, 0, 0),
       (node3, node4, 0, 1))
-    edges.foreach(n => graph.addEdge(n._1.id, n._2.id, n._3, n._4))
-    graph
+    val edges = edgesList.map(n => Edge(Endpoint(n._1.id,  n._3), Endpoint(n._2.id, n._4))).toSet
+    Graph(nodes, edges)
   }
 }

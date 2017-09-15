@@ -8,7 +8,7 @@ package io.deepsense.graphexecutor
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream, ObjectOutputStream}
 import java.nio.ByteBuffer
 
-import io.deepsense.graph.{Graph, Node}
+import io.deepsense.graph.{Status, Graph, Node}
 import io.deepsense.graphexecutor.protocol.GraphExecutorAvroRpcProtocol
 import io.deepsense.graphexecutor.util.ObjectInputStreamWithCustomClassLoader
 
@@ -96,10 +96,9 @@ class GraphExecutorAvroRpcImpl(graphExecutor: GraphExecutor) extends GraphExecut
     graphExecutor.graphGuard.synchronized {
       graphExecutor.graph match {
         case Some(graph) =>
-          graph
-            .nodesList
-            .filter(n => n.state.status == Node.State.Status.QUEUED)
-            .foreach(n => graph.markAsAborted(n.id))
+          val abortedNodes = graph.nodes
+            .map(node => if (node.isQueued) node.markAborted else node)
+          graphExecutor.graph = Some(Graph(abortedNodes, graph.edges))
           graphExecutor.executorsPool.shutdownNow()
           graphExecutor.graphEventBinarySemaphore.release()
           true

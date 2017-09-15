@@ -8,7 +8,7 @@ package io.deepsense.graphexecutor
 import java.util.UUID
 
 import io.deepsense.deeplang.ExecutionContext
-import io.deepsense.graph.Node
+import io.deepsense.graph.{Status, Node}
 
 /**
  * GraphNodeExecutor is responsible for execution of single node.
@@ -27,7 +27,7 @@ class GraphNodeExecutor(
   override def run(): Unit = {
     try {
       graphExecutor.graphGuard.synchronized {
-        require(node.state.status == Node.State.Status.RUNNING)
+        require(node.isRunning)
       }
       // TODO: Perform real execution of node
       println("Execution of node: " + node.id + " time: " + System.currentTimeMillis)

@@ -15,7 +15,9 @@ import io.deepsense.deeplang.{DKnowledge, DOperable}
 case class GraphKnowledge(
     private[graph] val knowledgeMap: Map[Node.Id, Vector[DKnowledge[DOperable]]]) {
 
-  def addKnowledge(id: Node.Id, knowledge: Vector[DKnowledge[DOperable]]): GraphKnowledge = {
+  def addKnowledge(
+      id: Node.Id,
+      knowledge: Vector[DKnowledge[DOperable]]): GraphKnowledge = {
     GraphKnowledge(knowledgeMap + (id -> knowledge))
   }
 
@@ -23,5 +25,6 @@ case class GraphKnowledge(
 }
 
 object GraphKnowledge {
-  def apply(): GraphKnowledge = GraphKnowledge(Map[Node.Id, Vector[DKnowledge[DOperable]]]())
+  def apply(): GraphKnowledge =
+    GraphKnowledge(Map[Node.Id, Vector[DKnowledge[DOperable]]]())
 }

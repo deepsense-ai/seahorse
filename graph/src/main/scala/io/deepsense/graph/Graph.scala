@@ -1,201 +1,157 @@
 /**
  * Copyright (c) 2015, CodiLime Inc.
  *
- * Owner: Radoslaw Kotowski
+ * Owner: Wojciech Jurczyk
  */
 
 package io.deepsense.graph
 
 import java.util.UUID
 
-import scala.collection.mutable.{Map, Set}
 import scala.reflect.runtime.{universe => ru}
 
-import io.deepsense.deeplang.{DKnowledge, DOperable, DOperation, InferContext}
-import io.deepsense.graph.Node.State
-import io.deepsense.graph.Node.State.{Progress, Status}
+import io.deepsense.deeplang.{DKnowledge, DOperable, InferContext}
+import io.deepsense.graph.Node.Id
 
-/**
- * Colours of node.
- *
- * Used for cycle checking. This object should be inner object
- * of Graph. However it makes serialization of Graph impossible.
- * This is why a decision was made to move it outside of Graph.
- */
-private[graph] object Color extends Enumeration {
-  type Color = Value
-  val WHITE, GREY, BLACK = Value
-}
-
-/**
- * Execution Graph of the experiment.
- * Nodes of this graph contain operations and state.
- * State of each node can be changed during the execution.
- * This class is not thread safe.
- */
-@SerialVersionUID(1L)
-class Graph extends Serializable {
-  private[graph] case class GraphNode(id: Node.Id, operation: DOperation) extends Node {
-    var color: Color.Color = Color.WHITE
-    var state: State = State.inDraft
-    val predecessors: Array[Option[GraphNode]] = Array.fill(operation.inArity) { None }
-    val successors: Array[Set[GraphNode]] = Array.fill(operation.outArity) { Set() }
-
-    def addPredecessor(index: Int, node: GraphNode): Unit = {
-      require(predecessors(index) == None)
-      predecessors(index) = Some(node)
-    }
-
-    def addSuccessor(index: Int, node: GraphNode): Unit = successors(index) += node
-
-    /** Returns port index which contains the given successor. */
-    def getSuccessorPort(node: GraphNode): Option[Int] = {
-      val successorIndex = successors.indexWhere(_.contains(node))
-      if (successorIndex != -1) Some(successorIndex) else None
-    }
-
-    /** Returns graph knowledge with knowledge inferred for the given node. */
-    def inferKnowledge(context: InferContext, graphKnowledge: GraphKnowledge): GraphKnowledge = {
-      val knowledge = for (portIndex <- 0 until predecessors.size)
-        yield inputKnowledgeForInputPort(context, graphKnowledge, portIndex)
-      val inferredKnowledge = operation.inferKnowledge(context)(knowledge.toVector)
-      graphKnowledge.addKnowledge(this.id, inferredKnowledge)
-    }
-
-    /** Returns suitable input knowledge for the given input port index. */
-    private def inputKnowledgeForInputPort(
-        context: InferContext,
-        graphKnowledge: GraphKnowledge,
-        portIndex: Int): DKnowledge[DOperable] = {
-      // TODO: find a way to delete this cast
-      val inPortType = operation.inPortTypes(portIndex).asInstanceOf[ru.TypeTag[DOperable]]
-      predecessors(portIndex) match {
-        case None => DKnowledge(context.dOperableCatalog.concreteSubclassesInstances(inPortType))
-        case Some(predecessor) =>
-          val outPortIndex = predecessor.getSuccessorPort(this).get
-          val predecessorKnowledge = graphKnowledge.getKnowledge(predecessor.id)(outPortIndex)
-          predecessorKnowledge.filterTypes(inPortType.tpe)
-          // here it is possible to decide what color graph edge should have
-      }
-    }
-
-    def markWhite(): Unit = color = Color.WHITE
-
-    def markGrey(): Unit = color = Color.GREY
-
-    def markBlack(): Unit = color = Color.BLACK
-
-    def resetState(): Unit = markWhite()
-
-    override def toString: String = id.toString
-  }
-
-  private val nodes: Map[Node.Id, GraphNode] = Map()
-
-  def addNode(id: Node.Id, operation: DOperation): Node = {
-    val node = GraphNode(id, operation)
-    nodes(id) = node
-    node
-  }
+case class Graph(nodes: Set[Node] = Set(), edges: Set[Edge] = Set()) {
+  /** Maps ids of nodes to nodes. */
+  val nodeById: Map[Id, Node] = nodes.map(node => node.id -> node).toMap
 
   /**
-   * Provides access to all graph nodes.
-   * @return List of graph nodes
+   * Successors of the nodes (represented as an edge end).
+   * For each node, the sequence of sets represents nodes connected to the node. Each n-th set
+   * in the sequence represents nodes connected to the n-th port.
+   * If n-th output ports is not used then the sequence contains an empty set on n-th position.
    */
-  def nodesList : List[Node] = {
-    nodes.values.toList
-  }
+  val successors: Map[Id, IndexedSeq[Set[Endpoint]]] = prepareSuccessors
 
-  def addEdge(nodeFrom: Node.Id, nodeTo: Node.Id, portFrom: Int, portTo: Int): Unit = {
-    nodes(nodeFrom).addSuccessor(portFrom, nodes(nodeTo))
-    nodes(nodeTo).addPredecessor(portTo, nodes(nodeFrom))
-  }
+  /**
+   * Predecessors of the nodes (represented as an edge end).
+   * For each node, the sequence represents nodes connected to the input ports of the node.
+   * If n-th port is not used then the sequence contains None on n-th position.
+   */
+  val predecessors: Map[Node.Id, IndexedSeq[Option[Endpoint]]] = preparePredecessors
+  private lazy val topologicalSort = new TopologicalSort(this)
 
   def readyNodes: List[Node] = {
-    val queuedNodes = nodes.values.filter(_.state.status == Status.QUEUED)
-    queuedNodes.filter(_.predecessors.forall(
-      (p: Option[Node]) => p.isDefined && p.get.state.status == Status.COMPLETED)).toList
+    nodes.filter(_.state.status == Status.Queued)
+      .filter(predecessorsCompleted)
+      .toList
   }
-
-  def getNode(id: Node.Id): Node = nodes(id)
-
-  def markAsInDraft(id: Node.Id): Unit = {
-    nodes(id).state = State.inDraft
-  }
-
-  def markAsQueued(id: Node.Id): Unit = {
-    nodes(id).state = State.queued
-  }
-
-  def markAsRunning(id: Node.Id): Unit = {
-    val node = nodes(id)
-    val total = 10 // TODO: just a default value. Change it when DOperation will support it.
-    node.state = State.running(Progress(0, total))
-  }
-
-  def markAsCompleted(id: Node.Id, results: List[UUID]): Unit = {
-    val node = nodes(id)
-    node.state = node.state.completed(results)
-  }
-
-  def markAsFailed(id: Node.Id): Unit = {
-    val node = nodes(id)
-    node.state = node.state.failed
-  }
-
-  def markAsAborted(id: Node.Id): Unit = {
-    val node = nodes(id)
-    node.state = node.state.aborted
-  }
-
-  def reportProgress(id: Node.Id, current: Int): Unit = {
-    val node = nodes(id)
-    val total = 10 // TODO: just a default value. Change it when DOperation will support it.
-    node.state = node.state.withProgress(Progress(current, total))
-  }
-
-  def containsCycle: Boolean = !topologicallySorted.isDefined
 
   /**
-   * Returns a list of topologically sorted nodes.
-   * Returns None if any node reachable from the start node lays on cycle.
+   * Returns a node with the specified Id or throws a
+   *  `NoSuchElementException` when there is no such a node.
+   * @param id Id of the node to return
+   * @return A node with the specified Id.
    */
-  private[graph] def topologicallySorted: Option[List[GraphNode]] = {
-    var sorted: Option[List[GraphNode]] = Some(List.empty)
-    nodes.values.foreach(n => sorted = topologicalSort(n, sorted))
-    resetState()
-    sorted
+  def node(id: Node.Id): Node = nodeById(id.value)
+
+  def markAsInDraft(id: Node.Id): Graph = withChangedNode(id, _.markInDraft)
+
+  def markAsQueued(id: Node.Id): Graph = withChangedNode(id, _.markQueued)
+
+  def markAsRunning(id: Node.Id): Graph = withChangedNode(id, _.markRunning)
+
+  def markAsCompleted(id: Node.Id, results: List[UUID]): Graph = {
+    withChangedNode(id, _.markCompleted(results))
   }
 
-  /** Sorts nodes topologically. */
-  private def topologicalSort(
-      node: GraphNode,
-      sortedSoFar: Option[List[GraphNode]]): Option[List[GraphNode]] = {
-    node.color match {
-      case Color.BLACK => sortedSoFar
-      case Color.GREY => None
-      case Color.WHITE => {
-        node.markGrey()
-        var l = sortedSoFar
-        node.successors.foreach(_.foreach(s => l = topologicalSort(s, l)))
-        node.markBlack()
-        l.map(node::_)
-      }
-    }
+  def markAsFailed(id: Node.Id): Graph = withChangedNode(id, _.markFailed)
+
+  def markAsAborted(id: Node.Id): Graph = withChangedNode(id, _.markAborted)
+
+  def reportProgress(id: Node.Id, current: Int): Graph = {
+    withChangedNode(id, _.withProgress(current))
   }
 
-  private def resetState(): Unit = nodes.values.foreach(_.resetState())
+  def containsCycle: Boolean = topologicalSort.isSorted
+
+  def size: Int = nodes.size
+
+  /** Returns topologically sorted nodes if the Graph does not contain cycles. */
+  def topologicallySorted: Option[List[Node]] = topologicalSort.sortedNodes
+
+  /** Returns graph knowledge with knowledge inferred for the given node. */
+  def inferKnowledge(
+      node: Node,
+      context: InferContext,
+      graphKnowledge: GraphKnowledge): GraphKnowledge = {
+    val knowledge = for (portIndex <- 0 until predecessors(node.id).size)
+      yield inputKnowledgeForInputPort(node, context, graphKnowledge, portIndex)
+    val inferredKnowledge = node.operation.inferKnowledge(context)(knowledge.toVector)
+    graphKnowledge.addKnowledge(node.id, inferredKnowledge)
+  }
+
+  /** Returns port index which contains the given successor. */
+  def getSuccessorPort(of: Node.Id, successor: Node): Option[Int] = {
+    val successorIndex = successors(of).indexWhere(_.exists(_.nodeId == successor.id))
+    if (successorIndex != -1) Some(successorIndex) else None
+  }
 
   /** Returns a graph knowledge with inferred knowledge for every node. */
   def inferKnowledge(context: InferContext): GraphKnowledge = {
     val sorted = topologicallySorted.get
-    sorted.foldLeft(GraphKnowledge())((knowledge, node) => node.inferKnowledge(context, knowledge))
+    sorted
+      .foldLeft(GraphKnowledge())((knowledge, node) => inferKnowledge(node, context, knowledge))
   }
 
-  def size: Int = nodes.size
+  /** Returns suitable input knowledge for the given input port index. */
+  def inputKnowledgeForInputPort(
+      node: Node,
+      context: InferContext,
+      graphKnowledge: GraphKnowledge,
+      portIndex: Int): DKnowledge[DOperable] = {
+    // TODO: find a way to delete this cast
+    val inPortType = node.operation.inPortTypes(portIndex).asInstanceOf[ru.TypeTag[DOperable]]
+    predecessors(node.id)(portIndex) match {
+      case None => DKnowledge(context
+        .dOperableCatalog
+        .concreteSubclassesInstances(inPortType))
+      case Some(predecessor) =>
+        val outPortIndex = getSuccessorPort(predecessor.nodeId, node).get
+        val predecessorKnowledge = graphKnowledge.getKnowledge(predecessor.nodeId)(outPortIndex)
+        predecessorKnowledge.filterTypes(inPortType.tpe)
+    }
+  }
 
-  override def hashCode(): Int = {
-    val state = Seq(nodes)
-    state.map(_.hashCode()).foldLeft(0)((a, b) => 31 * a + b)
+  private def prepareSuccessors: Map[Id, IndexedSeq[Set[Endpoint]]] = {
+    import scala.collection.mutable
+    val mutableSuccessors: mutable.Map[Node.Id, IndexedSeq[mutable.Set[Endpoint]]] =
+      mutable.Map()
+
+    nodes.foreach(node => {
+      mutableSuccessors += node.id -> Vector.fill(node.operation.outArity)(mutable.Set())
+    })
+    edges.foreach(edge => {
+      mutableSuccessors(edge.from.nodeId)(edge.from.portIndex) += edge.to
+    })
+    mutableSuccessors.mapValues(_.map(_.toSet)).toMap
+  }
+
+  private def preparePredecessors: Map[Node.Id, IndexedSeq[Option[Endpoint]]] = {
+    import scala.collection.mutable
+    val mutablePredecessors: mutable.Map[Node.Id, mutable.IndexedSeq[Option[Endpoint]]] =
+      mutable.Map()
+
+    nodes.foreach(node => {
+      mutablePredecessors +=
+        node.id -> mutable.IndexedSeq.fill(node.operation.inArity)(None)
+    })
+    edges.foreach(edge => {
+      mutablePredecessors(edge.to.nodeId)(edge.to.portIndex) = Some(edge.from)
+    })
+    mutablePredecessors.mapValues(_.toIndexedSeq).toMap
+  }
+
+  private def withChangedNode(id: Node.Id, f: Node => Node): Graph = {
+    val changedNodes = nodes.map(node => if (node.id == id) f(node) else node)
+    copy(nodes = changedNodes)
+  }
+
+  private def predecessorsCompleted(node: Node): Boolean = {
+    predecessors(node.id).forall(edgeEnd => {
+      edgeEnd.isDefined && nodeById(edgeEnd.get.nodeId.value).isCompleted
+    })
   }
 }
