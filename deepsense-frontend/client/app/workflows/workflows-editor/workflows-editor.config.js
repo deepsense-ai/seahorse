@@ -9,7 +9,7 @@ function WorkflowsConfig($stateProvider) {
     resolve: {
       workflowWithResults: /* @ngInject */ ($q, $state, $rootScope, $stateParams,
         $timeout, WorkflowsApiClient, Operations, OperationsHierarchyService,
-        ErrorService, ServerCommunication) => {
+        ErrorService, ServerCommunication, SessionManagerApi) => {
         let workflowWithResultsDeferred = $q.defer();
         ServerCommunication.init($stateParams.id);
 
@@ -19,8 +19,9 @@ function WorkflowsConfig($stateProvider) {
 
         return $q.all([
           workflowWithResultsDeferred.promise,
-          Operations.load().then(OperationsHierarchyService.load)
-        ]).then(([workflows, _]) => {
+          Operations.load().then(OperationsHierarchyService.load),
+          SessionManagerApi.startSession($stateParams.id)
+        ]).then(([workflows, ..._]) => {
           $rootScope.stateData.dataIsLoaded = true;
           return workflows;
         });
