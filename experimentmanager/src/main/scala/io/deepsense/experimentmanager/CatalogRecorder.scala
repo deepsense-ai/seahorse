@@ -60,5 +60,10 @@ object CatalogRecorder {
     catalog.registerDOperation[OneHotEncoder](
       DOperationCategories.Utils,
       "One-hot encodes categorical columns")
+
+    catalog.registerDOperation[FileToDataFrame](
+      DOperationCategories.IO,
+      "Converts a file to a DataFrame"
+    )
   }
 }
