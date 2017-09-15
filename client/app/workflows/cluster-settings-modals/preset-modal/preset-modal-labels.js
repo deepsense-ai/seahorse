@@ -99,16 +99,14 @@ const standalone = {
 
 const local = {
   main: 'Local',
-  uri: {
-    name: 'Master URL',
-    instruction: '',
-    placeholder: '',
-    type: 'text'
-  },
   params : {
-    name: '',
-    instruction: '',
-    placeholder: '',
+    name: 'Custom settings',
+    instruction: '<div>Here you can specify any additional options to spark-submit. Note that Seahorse runs spark' +
+    ' applications in client mode, so not all options will make sense. Also, Seahorse needs to override some ' +
+    'settings in order to be fully functional.</div>' +
+    '<div>Parameters specified here will override parameters specified in fields above. Each parameter should be ' +
+    'defined in separate line.</div>',
+    placeholder: 'e.g.\n--conf spark.broadcast.compress=true\n--driver-memory 1G',
     type: 'textarea'
   }
 };
@@ -122,6 +120,6 @@ exports.inject = function (module) {
       'params'])),
     standalone: _.assign(standalone, _.pick(common, ['userIP', 'driverMemory', 'hadoopUser', 'executorMemory',
       'totalExecutorCores', 'executorCores', 'params'])),
-    local
+    local: _.assign(local, _.pick(common, ['driverMemory']))
   });
 };

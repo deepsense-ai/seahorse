@@ -26,8 +26,9 @@ function PresetModalCtrl($uibModalInstance, $log, PresetService, PresetModalLabe
 
   function ok() {
     vm.preset.clusterType = type;
-    const preset = trimEmptyInputs(vm.preset);
+    const preset = vm.preset;
     if (!PresetService.isValid(preset)) {
+      console.error(preset, PresetService.getErrors());
       vm.errors = formatErrors(PresetService.getErrors(), type);
     } else {
       vm.isSaving = true;
@@ -64,12 +65,6 @@ function PresetModalCtrl($uibModalInstance, $log, PresetService, PresetModalLabe
       }
     });
     return errorObject;
-  }
-
-  function trimEmptyInputs(obj) {
-    return _.pick(obj, (value) => {
-      return value !== null && value !== '';
-    });
   }
 
 }

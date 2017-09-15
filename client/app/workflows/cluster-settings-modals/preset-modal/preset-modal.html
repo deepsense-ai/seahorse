@@ -1,16 +1,10 @@
 <div class="preset-modal" ng-form="controller.presetForm">
 
   <div class="modal-header preset-modal__header">
-    <div class="row form-row" ng-if="!controller.isEditingEnabled() && !controller.isSaving && !controller.preset.isDefault">
+    <div class="row form-row" ng-if="!controller.isEditingEnabled() && !controller.isSaving">
       <div class="col-md-12 editing-blocked">
         <b>Editing is blocked.</b>
         <span>In order to edit this preset, please stop editing your workflow first. </span>
-      </div>
-    </div>
-    <div class="row form-row" ng-if="controller.preset.isDefault">
-      <div class="col-md-12 editing-blocked">
-        <b>This is a default preset.</b>
-        <span>You cannot edit it.</span>
       </div>
     </div>
     <div class="row form-row">
@@ -22,7 +16,7 @@
           <input class="form-control cluster-input title-input"
                  placeholder="Settings name (required)"
                  ng-model="controller.preset.name"
-                 ng-disabled="!controller.isEditingEnabled()"
+                 ng-disabled="!controller.isEditingEnabled() || controller.preset.isDefault"
                  ng-class="{'error': controller.nameInNameInputUsed() || controller.errors['name']}"
                  name="presetName"
                  maxlength="30"
@@ -59,7 +53,7 @@
           <input class="form-control cluster-input {{field}}-input"
                  placeholder="{{::controller.labels[field].placeholder}}"
                  ng-model="controller.preset[field]"
-                 ng-disabled="!controller.isEditingEnabled() || controller.preset.isDefault"
+                 ng-disabled="!controller.isEditingEnabled()"
                  ng-class="{'error': controller.errors[field]}"
                  ng-focus="controller.focused = field"
                  name="{{::field}}"
@@ -107,8 +101,7 @@
     </button>
     <button type="button" class="btn cluster-btn cluster-btn__blue"
             ng-click="controller.ok()"
-            ng-if="controller.isEditingEnabled()"
-            ng-disabled="controller.preset.isDefault">
+            ng-disabled="!controller.isEditingEnabled()">
       {{(controller.isSaving) ? 'Saving' : 'Save'}}
     </button>
   </div>
