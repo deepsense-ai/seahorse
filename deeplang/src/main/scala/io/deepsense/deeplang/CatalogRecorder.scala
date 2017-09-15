@@ -57,12 +57,17 @@ object CatalogRecorder {
 
     catalog.registerDOperation[CreateMathematicalTransformation](
       DOperationCategories.Transformation,
-      "Creates a Transformation that creates a new column based on a mathematical formula."
+      "Creates a Transformation that creates a new column based on a mathematical formula"
     )
 
     catalog.registerDOperation[Split](
       DOperationCategories.DataManipulation,
       "Splits a DataFrame into two DataFrames"
+    )
+
+    catalog.registerDOperation[Union](
+      DOperationCategories.DataManipulation,
+      "Creates a new DataFrame containing all rows from both input DataFrames"
     )
 
     catalog.registerDOperation[Join](
