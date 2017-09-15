@@ -34,7 +34,7 @@ object StandaloneSparkClusterForTests {
     System.setProperty("HADOOP_USER_NAME", "hdfs")
 
     val sparkConf: SparkConf = new SparkConf()
-      .setMaster("spark://10.10.1.121:7077")
+      .setMaster("spark://10.10.1.199:7077")
       .setAppName("TestApp")
       .setJars(Seq(
         "./deeplang/target/scala-2.11/" +
