@@ -36,7 +36,8 @@ gulp.task('clean', function () {
 gulp.task('browser-sync', function () {
   return browserSync({
     server: {
-      baseDir: build.path
+      baseDir: build.path,
+      port: config.dev.server.port
     },
     open: !devMode
   });
@@ -80,7 +81,11 @@ gulp.task('libs:js', function () {
 });
 
 gulp.task('jshint', function () {
-  return gulp.src([client.path + client.js, './gulpfile.js'])
+  return gulp.src([
+      client.path + client.js,
+      './gulpfile.js',
+      './protractor.conf.js'
+    ])
     .pipe(jshint())
     .pipe(jshint.reporter('jshint-stylish'))
     .pipe(jshint.reporter('fail'));

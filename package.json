@@ -51,6 +51,7 @@
     "jasmine": "^2.1.1",
     "jshint-stylish": "^1.0.0",
     "karma": "^0.12.31",
+    "protractor": "^1.6.1",
     "run-sequence": "^1.0.2",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.0.0",
@@ -93,6 +94,14 @@
       "css": [
         "./node_modules/bootstrap/dist/css/bootstrap.min.css"
       ]
+    },
+    "tests": {
+      "e2e": "./e2e-tests/**/*.spec.js"
+    }
+  },
+  "dev": {
+    "server": {
+      "port": 3000
     }
   }
 }
