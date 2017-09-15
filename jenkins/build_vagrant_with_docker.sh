@@ -25,8 +25,8 @@ rm -f docker-compose.yml
 wget $COMPOSE_FILE
 
 # Create Vagrant box
-vagrant destroy -f $VAGRANT_BOX_NAME &>destroy.log
-vagrant up $VAGRANT_BOX_NAME &>install.log
+vagrant destroy -f $VAGRANT_BOX_NAME
+vagrant up $VAGRANT_BOX_NAME
 rm -f $PUBLISH_DIR/$VAGRANT_BOX_NAME.box
-vagrant package --output $PUBLISH_DIR/$VAGRANT_BOX_NAME.box &>package.log
-vagrant destroy -f $VAGRANT_BOX_NAME &>destroy.log
+vagrant package --output $PUBLISH_DIR/$VAGRANT_BOX_NAME.box
+vagrant destroy -f $VAGRANT_BOX_NAME
