@@ -4,6 +4,12 @@
 
 from wmcontents import WMContentsManager
 
+c.NotebookApp.tornado_settings = {
+    'headers': {
+        'Content-Security-Policy': "frame-ancestors 'self' *"
+    }
+}
+
 c.NotebookApp.contents_manager_class = WMContentsManager
 c.WMContentsManager.workflow_manager_url = "http://172.28.128.1:9080"
 c.WMContentsManager.kernel_name = "pyspark"
