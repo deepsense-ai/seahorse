@@ -49,6 +49,7 @@ function FlowChartBox($rootScope, GraphPanelRendererService) {
     replace: true,
     scope: {
       'selectedNode': '=',
+      'workflow': '=',
       'nodes': '=',
       'reportMode': '=',
       'isRunning': '=',
@@ -72,7 +73,7 @@ function FlowChartBox($rootScope, GraphPanelRendererService) {
       scope.$watch('flowChartBoxCtrl.reportMode', function(newValue) {
         scope.$evalAsync(() => {
           setRenderReportMode(newValue);
-          GraphPanelRendererService.rerender();
+          GraphPanelRendererService.rerender(scope.flowChartBoxCtrl.workflow);
         });
       });
 

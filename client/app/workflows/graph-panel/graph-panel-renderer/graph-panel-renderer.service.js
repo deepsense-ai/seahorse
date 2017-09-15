@@ -84,7 +84,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
     }
   };
 
-  that.init = function init() {
+  that.init = function init(workflow) {
     internal.reset();
     jsPlumb.setContainer($document[0].querySelector('.flowchart-paint-area'));
     jsPlumb.importDefaults({
@@ -93,7 +93,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
         zIndex: 2000
       }
     });
-    that.bindEdgeEvent();
+    that._bindEdgeEvent(workflow);
   };
 
   that.getZoomRatio = () => jsPlumb.getZoom();
@@ -125,8 +125,15 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
     });
   };
 
-  that.renderPorts = function renderPorts() {
-    let nodes = WorkflowService.getWorkflow().getNodes();
+  that.rerender = function rerender(workflow) {
+    that.init(workflow);
+    that.renderPorts(workflow);
+    that.renderEdges(workflow);
+    that.repaintEverything();
+  };
+
+  that.renderPorts = function renderPorts(workflow) {
+    let nodes = workflow.getNodes();
     for (let nodeId in nodes) {
       if (nodes.hasOwnProperty(nodeId)) {
         let node = internal.getNodeById(nodeId);
@@ -136,10 +143,9 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
     }
   };
 
-  that.renderEdges = function renderEdges() {
+  that.renderEdges = function renderEdges(workflow) {
     jsPlumb.detachEveryConnection();
-    let edges = WorkflowService.getWorkflow()
-      .getEdges();
+    let edges = workflow.getEdges();
     let outputPrefix = 'output';
     let inputPrefix = 'input';
     for (let id in edges) {
@@ -155,13 +161,12 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
         connection.setParameter('edgeId', edge.id);
       }
     }
-    that.changeEdgesPaintStyles();
+    that.changeEdgesPaintStyles(workflow);
   };
 
-  that.changeEdgesPaintStyles = function changeEdgesStates() {
+  that.changeEdgesPaintStyles = function changeEdgesPaintStyles(workflow) {
     let connections = jsPlumb.getConnections();
-    let edges = WorkflowService.getWorkflow()
-      .getEdges();
+    let edges = workflow.getEdges();
     for (let id in edges) {
       if (edges.hasOwnProperty(id)) {
         let edge = edges[id];
@@ -257,7 +262,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
     }
   };
 
-  that.bindEdgeEvent = function bindEdgeEvents() {
+  that._bindEdgeEvent = function _bindEdgeEvent(workflow) {
     jsPlumb.bind('connection', (info, originalEvent) => {
       if (!originalEvent) {
         return;
@@ -273,8 +278,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
           'portIndex': info.targetEndpoint.getParameter('portIndex')
         }
       };
-      let edge = WorkflowService.getWorkflow()
-        .createEdge(data);
+      let edge = workflow.createEdge(data);
 
       info.connection.setParameter('edgeId', edge.id);
 
@@ -282,7 +286,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
         edge: edge
       });
 
-      if (DeepsenseCycleAnalyser.cycleExists(WorkflowService.getWorkflow())) {
+      if (DeepsenseCycleAnalyser.cycleExists(workflow)) {
         NotificationService.showError({
           title: 'Error',
           message: 'You cannot create a cycle in the graph!'
@@ -290,8 +294,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
 
         $timeout(() => {
           $rootScope.$broadcast(Edge.REMOVE, {
-            edge: WorkflowService.getWorkflow()
-              .getEdgeById(info.connection.getParameter('edgeId'))
+            edge: workflow.getEdgeById(info.connection.getParameter('edgeId'))
           });
 
           jsPlumb.detach(info.connection);
@@ -302,7 +305,6 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
     });
 
     jsPlumb.bind('connectionDetached', (info, originalEvent) => {
-      let workflow = WorkflowService.getWorkflow();
       if (workflow) {
         let edge = workflow.getEdgeById(info.connection.getParameter('edgeId'));
         if (edge && info.targetEndpoint.isTarget && info.sourceEndpoint.isSource && originalEvent) {
@@ -315,8 +317,7 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
     });
 
     jsPlumb.bind('connectionMoved', (info) => {
-      let edge = WorkflowService.getWorkflow()
-        .getEdgeById(info.connection.getParameter('edgeId'));
+      let edge = workflow.getEdgeById(info.connection.getParameter('edgeId'));
       if (edge) {
         $rootScope.$broadcast(Edge.REMOVE, {
           edge: edge
@@ -346,13 +347,6 @@ function GraphPanelRendererService($rootScope, $document, Edge, $timeout, Report
     }
 
     internal.renderMode = renderMode;
-  };
-
-  that.rerender = function rerender() {
-    that.init();
-    that.renderPorts();
-    that.renderEdges();
-    that.repaintEverything();
   };
 
   that.bindDisablePortHighlightingsEvents = function bindDisablePortHighlightingsEvents() {
