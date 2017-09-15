@@ -1,6 +1,13 @@
 <div class="panel panel-default no-border">
+
   <!-- Default panel contents -->
   <div class="panel-heading text-center logo">
+
+    <div class="logged-user">
+      <i class="fa fa-user"></i>
+      <span>{{::home.getCurrentUser().name}}</span>
+    </div>
+
     <img src="../../img/seahorse-main.png">
     <p class="api-version">v{{home.getVersion()}}</p>
   </div>
@@ -22,7 +29,7 @@
     <input type="text" class="text-center form-control input-search-workflow"
            ng-model="home.filterString" placeholder="SEARCH...">
   </div>
-  <div ng-if="home.canShowWorkflows && !home.isWorkflowLoading()">
+  <div ng-if="!home.isWorkflowLoading()">
     <table class="table table-striped text-center table-workflows">
       <tr class="header text-uppercase">
         <td class="col-md-1 color-gray">
@@ -46,6 +53,12 @@
           <b>Updated</b>
           <span>
             <i ng-class="home.getClass('updated')"></i>
+          </span>
+        </td>
+        <td class="col-md-2 color-gray sortable" ng-click="home.sortBy('ownerName')">
+          <b>Owner name</b>
+          <span>
+            <i ng-class="home.getClass('ownerName')"></i>
           </span>
         </td>
         <td class="col-md-2 color-gray sortable" ng-click="home.sortBy('created')">
@@ -88,6 +101,14 @@
           </a>
         </td>
         <td class="vertical-align">
+          <a ng-class="{
+              'owned-by-current-user': home.isWorkflowOwnedByCurrentUser(workflow)
+            }"
+             ng-click="home.goToWorkflowEditor(workflow.id)">
+            {{workflow.ownerName}}
+          </a>
+        </td>
+        <td class="vertical-align">
           <a ng-click="home.goToWorkflowEditor(workflow.id)">
             {{workflow.created | date:"dd/MM/yyyy - hh:mm a"}}
           </a>
@@ -95,6 +116,7 @@
         <td class="vertical-align action-icons">
           <a ng-if="workflow.sessionStatus === 'running' || workflow.sessionStatus === 'error'">
             <i ng-click="home.deleteSession(workflow.id)"
+               ng-if="home.isWorkflowOwnedByCurrentUser(workflow)"
                uib-popover="Stop session"
                popover-trigger="mouseenter"
                popover-append-to-body="true"

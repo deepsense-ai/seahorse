@@ -2,11 +2,11 @@
 
 /* @ngInject */
 function Home($rootScope, $uibModal, $state, $q, WorkflowService, PageService, ConfirmationModalService, SessionManagerApi,
-              NotificationService, WorkflowsApiClient, config) {
+              NotificationService, WorkflowsApiClient, config, UserService) {
   this.init = () => {
     PageService.setTitle('Home');
     $rootScope.stateData.dataIsLoaded = true;
-    this.canShowWorkflows = false;
+    this._isWorkflowLoading = false;
     this.isWorkflowListEmpty = false;
     this.isErrorConnectingToVagrant = false;
     this.icon = '';
@@ -20,12 +20,12 @@ function Home($rootScope, $uibModal, $state, $q, WorkflowService, PageService, C
   };
 
   this.downloadWorkflows = () => {
-    this.canShowWorkflows = false;
+    this._isWorkflowLoading = true;
     WorkflowService.downloadWorkflows().then((workflows) => {
       if (workflows && workflows.length === 0) {
         this.isWorkflowListEmpty = true;
       }
-      this.canShowWorkflows = true;
+      this._isWorkflowLoading = false;
       this.workflows = workflows;
     }, () => {
       this.isErrorConnectingToVagrant = true;
@@ -49,8 +49,16 @@ function Home($rootScope, $uibModal, $state, $q, WorkflowService, PageService, C
     }
   };
 
+  this.getCurrentUser = () => {
+    return UserService.getSeahorseUser();
+  };
+
+  this.isWorkflowOwnedByCurrentUser = (workflow) => {
+    return UserService.getSeahorseUser().id == workflow.ownerId;
+  };
+
   this.isWorkflowLoading = () => {
-    return this._isLoadingWorkflows;
+    return this._isWorkflowLoading;
   };
 
   this.getClass = (columnName) => {
