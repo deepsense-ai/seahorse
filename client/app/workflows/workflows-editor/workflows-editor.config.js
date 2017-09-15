@@ -14,20 +14,21 @@ function WorkflowsConfig($stateProvider) {
       }
     },
     resolve: {
-      workflow: /* @ngInject */ ($q, $rootScope, $stateParams,
-        WorkflowsApiClient, Operations, OperationsHierarchyService) => {
-        let workflowId = $stateParams.id;
+      workflow: /* @ngInject */ ($q, $state, $rootScope, $stateParams,
+        WorkflowsApiClient, Operations, OperationsHierarchyService, ErrorService) => {
         let deferred = $q.defer();
-
         Operations.load()
           .then(OperationsHierarchyService.load)
-          .then(() => WorkflowsApiClient.getWorkflow(workflowId))
+          .then(() => WorkflowsApiClient.getWorkflow($stateParams.id))
           .then((data) => {
             $rootScope.stateData.dataIsLoaded = true;
             deferred.resolve(data);
           })
           .catch((error) => {
-            $rootScope.stateData.errorMessage = `Could not load the workflow \n ${error.statusText}`;
+            $state.go(ErrorService.getErrorState(error.status), {
+              id: $stateParams.reportId,
+              type: 'workflow'
+            });
             deferred.reject();
           });
         return deferred.promise;

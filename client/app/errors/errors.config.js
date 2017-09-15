@@ -2,18 +2,21 @@
 
 /* @ngInject */
 function ErrorsConfig($stateProvider) {
-  $stateProvider.
-  state('errorState', {
-    url: '/error',
-    views: {
-      '@': {
-        templateUrl: 'app/errors/error.html',
-        /* @ngInject */
-        controller: ($stateParams, $rootScope) => {
-          $rootScope.stateData.dataIsLoaded = true;
-        }
-      }
-    }
+  $stateProvider.state('MissingState', {
+    url: '/error/missing',
+    templateUrl: 'app/errors/error-missing.html',
+    controller: 'ErrorController as controller'
+  });
+
+  $stateProvider.state('ConflictState', {
+    url: '/:type/error/version/:id',
+    params: {
+      id: undefined,
+      type: undefined,
+      errorMessage: undefined
+    },
+    templateUrl: 'app/errors/error-version.html',
+    controller: 'ErrorController as controller'
   });
 }
 

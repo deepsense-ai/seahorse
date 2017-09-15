@@ -17,7 +17,6 @@ function AppConfig($urlRouterProvider, toastrConfig) {
       'warning': 'toast-warning'
     }
   });
-
   $urlRouterProvider.otherwise('/');
 }
 

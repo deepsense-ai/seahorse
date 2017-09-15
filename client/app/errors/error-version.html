@@ -1,0 +1,9 @@
+<div class="c-error text-center animated fadeIn">
+  <h2>This {{controller.getType()}} is no longer compatible</h2>
+  <p class="c-error__description">
+    <span>Current API version is: {{controller.getAPIVersion()}}</span>
+    <span>{{controller.getErrorDescription()}}</span>
+  </p>
+  <a ng-href="{{controller.getLink()}}" class="btn btn-info btn-lg c-error__link">Download JSON</a>
+  <a ui-sref="home" class="btn btn-info btn-lg c-error__link">Return to home</a>
+</div>
