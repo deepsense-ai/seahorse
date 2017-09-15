@@ -28,7 +28,6 @@ class SparkRBackend {
   private var entryPointTrackingId: String = _
 
   def start(entryPoint: Object): Unit = {
-    // JVMObjectTracker isn't multithreaded
     entryPointTrackingId = JVMObjectTracker.put(entryPoint)
     portNumber = backend.init()
     backendThread.start()

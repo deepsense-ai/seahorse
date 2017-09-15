@@ -68,6 +68,10 @@
     <level value ="WARN"/>
   </logger>
 
+  <logger name="org.apache.spark.api.r" >
+    <level value ="INFO"/>
+  </logger>
+
   <logger name="parquet.hadoop" >
     <level value ="WARN"/>
   </logger>
