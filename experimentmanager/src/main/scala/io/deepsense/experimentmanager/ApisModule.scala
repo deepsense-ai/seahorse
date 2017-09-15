@@ -9,10 +9,10 @@ import com.google.inject.binder.LinkedBindingBuilder
 import com.google.inject.multibindings.Multibinder
 
 import io.deepsense.commons.auth.AuthModule
-import io.deepsense.commons.rest.RestComponent
+import io.deepsense.commons.rest.{RestComponent, VersionApi}
 import io.deepsense.experimentmanager.deeplang.DeepLangModule
-import io.deepsense.experimentmanager.rest.json.GraphReaderModule
 import io.deepsense.experimentmanager.rest._
+import io.deepsense.experimentmanager.rest.json.GraphReaderModule
 
 /**
  * Configures all existing APIs.
@@ -31,5 +31,6 @@ class ApisModule(withMockedSecurity: Boolean) extends AbstractModule {
     bindApi.to(classOf[ExperimentsApi])
     bindApi.to(classOf[OperationsApi])
     bindApi.to(classOf[ModelsApi])
+    bindApi.to(classOf[VersionApi])
   }
 }

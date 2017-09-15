@@ -45,3 +45,9 @@ inConfig(IntegTest) {
 
 def integFilter(name: String) = name.endsWith("IntegSpec")
 def unitFilter(name: String) = name.endsWith("Spec") && !integFilter(name)
+
+enablePlugins(BuildInfoPlugin)
+
+buildInfoKeys += BuildInfoKey.action("gitCommitId") {
+  Process("git rev-parse HEAD").lines.head
+}

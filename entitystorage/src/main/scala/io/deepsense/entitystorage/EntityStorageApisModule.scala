@@ -9,7 +9,7 @@ import com.google.inject.binder.LinkedBindingBuilder
 import com.google.inject.multibindings.Multibinder
 
 import io.deepsense.commons.auth.AuthModule
-import io.deepsense.commons.rest.RestComponent
+import io.deepsense.commons.rest.{RestComponent, VersionApi}
 import io.deepsense.entitystorage.api.rest.EntitiesApi
 
 /**
@@ -25,5 +25,6 @@ class ApisModule(withMockedSecurity: Boolean) extends AbstractModule {
   override def configure(): Unit = {
     install(new AuthModule(withMockedSecurity))
     bindApi.to(classOf[EntitiesApi])
+    bindApi.to(classOf[VersionApi])
   }
 }
