@@ -48,11 +48,13 @@ case class ConvertType() extends DOperation1To1[DataFrame, DataFrame] {
     portIndex = 0
   )
 
+  val availableTargetTypes = List(ColumnType.numeric, ColumnType.string, ColumnType.categorical)
+
   val targetTypeParameter = ChoiceParameter(
     "Target type of the columns",
     None,
     required = true,
-    options = ListMap(ColumnType.values.toList.map(_.toString -> ParametersSchema()): _*)
+    options = ListMap(availableTargetTypes.map(_.toString -> ParametersSchema()): _*)
   )
 
   override val parameters: ParametersSchema = ParametersSchema(
