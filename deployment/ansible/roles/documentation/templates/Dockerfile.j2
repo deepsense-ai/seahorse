@@ -1,0 +1,6 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+FROM nginx
+
+RUN rm -fR /usr/share/nginx/html
+COPY docs /usr/share/nginx/html

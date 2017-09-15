@@ -1,0 +1,60 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+---
+- name: Builds documentation docker image
+  hosts: localhost
+  vars_files:
+    - vars/documentation.yml
+  roles:
+    - documentation
+
+- name: Exports documentation docker image
+  hosts: localhost
+  vars_files:
+    - vars/documentation.yml
+  tasks:
+    - include: tasks/save_docker_image.yml docker_image={{ds_documentation_docker_image}} download_dir="{{ds_documentation_download_dir}}"
+
+- name: Copies documentation docker image
+  hosts: frontend
+  user: ubuntu
+  sudo: yes
+  vars_files:
+    - vars/documentation.yml
+  tasks:
+    - name: Assures docker dir exists
+      file: path={{ds_documentation_download_dir}} state=directory
+    - include: tasks/copy_docker_image.yml docker_tar_image={{ds_documentation_docker_image}}-docker.tar docker_dir={{ds_documentation_download_dir}} download_dir="{{ds_documentation_download_dir}}"
+
+- name: Imports documentation docker image
+  hosts: frontend
+  user: ubuntu
+  sudo: yes
+  vars_files:
+    - vars/documentation.yml
+  tasks:
+    - include: tasks/load_docker_image.yml docker_image={{ds_documentation_docker_image}} docker_dir={{ds_documentation_download_dir}}
+
+- name: Runs frontend image
+  hosts: frontend
+  user: ubuntu
+  sudo: yes
+  vars_files:
+    - vars/documentation.yml
+  tasks:
+    - name: Register running Docker containers
+      register: docker_containers
+      command: docker ps -a
+
+    - name: Remove previous container
+      command: docker rm -f {{ds_documentation_docker_image}}
+      when: docker_containers.stdout.find(' {{ds_documentation_docker_image}} ') != -1
+
+    - name: Run frontend container
+      docker:
+        name: "{{ds_documentation_docker_image}}"
+        image: "{{ds_documentation_docker_image}}"
+        state: started
+        restart_policy: always
+        ports:
+          - "{{documentation_listen_ip}}:{{documentation_listen_port}}:80"

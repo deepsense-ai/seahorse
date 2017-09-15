@@ -1,0 +1,6 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+ds_documentation_docker_image: "ds_documentation"
+repo_dir: "/tmp/repos"
+repo_name: "deepsense-tools"
+docker_dir: "/tmp/docker-ansible"

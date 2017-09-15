@@ -1,0 +1,49 @@
+# Copyright (c) 2015, CodiLime Inc.
+
+---
+- name: Install ruby
+  apt: package=ruby state=latest
+
+- name: Install ruby-dev
+  apt: package=ruby-dev state=latest
+
+- name: Install build-essential
+  apt: package=build-essential state=latest
+
+- name: Install jekyll
+  gem: name=jekyll state=latest
+
+- name: Install therubyracer
+  gem: name=therubyracer state=latest
+
+- name: Create repo directory
+  file: path="{{repo_dir}}/{{repo_name}}" state=directory
+
+- name: Checkout deepsense-tools repository
+  git: repo={{ds_documentation_repo_url}}/{{repo_name}}
+        dest="{{repo_dir}}//{{repo_name}}"
+        accept_hostkey=yes
+        force=yes
+
+- name: Remove old documentation build files
+  file: path="{{repo_dir}}/{{repo_name}}/docs/_site"
+        state=absent
+
+- name: Build documentation
+  command: ~/.gem/ruby/1.9.1/bin/jekyll build chdir="{{repo_dir}}/{{repo_name}}/docs"
+
+- name: Assures docker dir exists
+  file: path={{ds_documentation_download_dir}} state=directory
+
+- name: Remove old documentation files from docker dir
+  file: path="{{ds_documentation_download_dir}}/docs"
+        state=absent
+
+- name: Create documentation dockerfile
+  template: src=Dockerfile.j2 dest="{{ds_documentation_download_dir}}/Dockerfile"
+
+- name: Copy documentation files
+  copy: src="{{repo_dir}}/{{repo_name}}/docs/_site/" dest="{{ds_documentation_download_dir}}/docs"
+
+- name: Build frontend docker image
+  command: docker build -t {{ds_documentation_docker_image}} {{ds_documentation_download_dir}}
