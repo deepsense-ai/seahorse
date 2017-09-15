@@ -29,7 +29,7 @@ import io.deepsense.models.entities.Entity
  * it also contains some metadata about execution of the Node,
  * e.g. when has it started or what is the progress.
  */
-case class State private[graph](
+case class State(
     status: Status.Status,
     started: Option[DateTime] = None,
     ended: Option[DateTime] = None,

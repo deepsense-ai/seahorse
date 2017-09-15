@@ -16,4 +16,14 @@
 
 package io.deepsense.models.workflows
 
-case class ThirdPartyData(data: String)
+import spray.json._
+
+case class ThirdPartyData(data: String) {
+
+  override def equals(o: Any): Boolean = o match {
+    case that: ThirdPartyData => this.data.parseJson == that.data.parseJson
+    case _ => false
+  }
+
+  override def hashCode: Int = data.parseJson.compactPrint.hashCode
+}

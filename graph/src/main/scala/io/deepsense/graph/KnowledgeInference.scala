@@ -56,7 +56,7 @@ trait KnowledgeInference {
     val inferenceResult =
       Graph(subgraphNodes, subgraphEdges).inferKnowledge(context).getResult(nodeId)
     SinglePortKnowledgeInferenceResult(
-      inferenceResult.knowledge(outPortIndex),
+      inferenceResult.ports(outPortIndex),
       inferenceResult.warnings,
       inferenceResult.errors)
   }

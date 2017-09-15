@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
-package io.deepsense.models.workflows
+package io.deepsense.models.json.workflow
 
-object WorkflowType extends Enumeration {
-  type WorkflowType = Value
-  val Batch = new Val("batch")
-  val Streaming = new Val("streaming")
+import io.deepsense.graph.Graph
+import io.deepsense.models.workflows.{WorkflowMetadata, ThirdPartyData, Variables, WorkflowWithVariables}
+import spray.json._
+
+trait WorkflowWithVariablesJsonProtocol extends WorkflowJsonProtocol {
+
+  implicit val variablesFormat = jsonFormat0(Variables)
+
+  implicit val workflowWithVariablesFormat =
+    jsonFormat(WorkflowWithVariables, "metadata", "workflow", "thirdPartyData", "variables")
 }

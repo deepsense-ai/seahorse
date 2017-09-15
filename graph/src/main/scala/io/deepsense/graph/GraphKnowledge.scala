@@ -39,7 +39,7 @@ case class GraphKnowledge(
 
   def getResult(id: Node.Id): NodeInferenceResult = resultsMap(id)
 
-  def getKnowledge(id: Node.Id): Vector[DKnowledge[DOperable]] = getResult(id).knowledge
+  def getKnowledge(id: Node.Id): Vector[DKnowledge[DOperable]] = getResult(id).ports
 }
 
 object GraphKnowledge {
@@ -49,7 +49,7 @@ object GraphKnowledge {
 }
 
 case class NodeInferenceResult(
-    knowledge: Vector[DKnowledge[DOperable]],
+    ports: Vector[DKnowledge[DOperable]],
     warnings: InferenceWarnings = InferenceWarnings.empty,
     errors: InferenceErrors = Vector.empty)
 

@@ -16,11 +16,12 @@
 
 package io.deepsense.models.json.workflow
 
+import io.deepsense.models.workflows.{WorkflowType, ThirdPartyData, WorkflowMetadata, Workflow}
 import spray.httpx.SprayJsonSupport
 import spray.json._
 
 import io.deepsense.commons.exception.FailureDescription
-import io.deepsense.commons.json.{DateTimeJsonProtocol, ExceptionsJsonProtocol, IdJsonProtocol}
+import io.deepsense.commons.json.{EnumerationSerializer, DateTimeJsonProtocol, ExceptionsJsonProtocol, IdJsonProtocol}
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.graph.Graph
 import io.deepsense.models.json.graph.GraphJsonProtocol.{GraphReader, GraphWriter}
@@ -51,5 +52,15 @@ trait WorkflowJsonProtocol
 
   implicit val workflowErrorFormat = jsonFormat5(FailureDescription.apply)
 
-  // TODO more formats
+  implicit val workflowTypeFormat = EnumerationSerializer.jsonEnumFormat(WorkflowType)
+
+  implicit val workflowMetadataFormat = jsonFormat(WorkflowMetadata, "type", "apiVersion")
+
+  implicit val thirdPartyDataFormat: JsonFormat[ThirdPartyData] = new JsonFormat[ThirdPartyData] {
+    override def read(json: JsValue): ThirdPartyData = ThirdPartyData(json.compactPrint)
+    override def write(thirdPartyData: ThirdPartyData): JsValue = thirdPartyData.data.parseJson
+  }
+
+  implicit val workflowFormat = jsonFormat(Workflow.apply, "metadata", "workflow", "thirdPartyData")
+
 }
