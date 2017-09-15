@@ -21,6 +21,7 @@ import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.file.File
+import io.deepsense.deeplang.doperables.machinelearning.gradientboostedtrees.regression.{UntrainedGradientBoostedTreesRegression, TrainedGradientBoostedTreesRegression}
 import io.deepsense.deeplang.doperables.machinelearning.logisticregression.{UntrainedLogisticRegression, TrainedLogisticRegression}
 import io.deepsense.deeplang.doperables.machinelearning.randomforest.classification.{UntrainedRandomForestClassification, TrainedRandomForestClassification}
 import io.deepsense.deeplang.doperables.machinelearning.randomforest.regression.{UntrainedRandomForestRegression, TrainedRandomForestRegression}
@@ -40,6 +41,8 @@ object CatalogRecorder {
     catalog.registerDOperable[TrainedRidgeRegression]()
     catalog.registerDOperable[UntrainedLogisticRegression]()
     catalog.registerDOperable[MathematicalTransformation]()
+    catalog.registerDOperable[TrainedGradientBoostedTreesRegression]()
+    catalog.registerDOperable[UntrainedGradientBoostedTreesRegression]()
     catalog.registerDOperable[TrainedLogisticRegression]()
     catalog.registerDOperable[UntrainedRandomForestRegression]()
     catalog.registerDOperable[TrainedRandomForestRegression]()
