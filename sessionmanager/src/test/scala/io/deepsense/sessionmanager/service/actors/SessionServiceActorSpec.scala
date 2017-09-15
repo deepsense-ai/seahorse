@@ -45,8 +45,7 @@ class SessionServiceActorSpec(_system: ActorSystem)
   }
 
   implicit val timeout: Timeout = 5.seconds
-
-  val cluster = ClusterDetails("yarn", "localhost", Some(1), Some(1), Some(1), Some(1), Some(""))
+  val cluster = ClusterDetails("name", "id", "yarn", "localhost")
 
 
   // TODO: Currently sessionId == workflowId

@@ -202,7 +202,7 @@ abstract class EventStoreSpec extends StandardSpec with UnitTestSupport {
   }
 
   private def createClusterDetails(): ClusterDetails = {
-    ClusterDetails("yarn", "localhost", Some(1), Some(1), Some(1), Some(1), Some(""))
+    ClusterDetails("id", "name", "yarn", "localhost")
   }
 
   private type Fixture[T] =

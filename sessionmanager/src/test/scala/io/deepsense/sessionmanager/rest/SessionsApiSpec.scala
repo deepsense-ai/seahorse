@@ -30,7 +30,7 @@ class SessionsApiSpec
     with IdJsonProtocol
     with SessionsJsonProtocol {
   val apiPrefix: String = "sessions"
-  val cluster = ClusterDetails("yarn", "localhost", Some(1), Some(1), Some(1), Some(1), Some(""))
+  val cluster = ClusterDetails(name = "name", id = "id", clusterType = "yarn", uri = "localhost")
 
   def testRoute(
       service: SessionService,

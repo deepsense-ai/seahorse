@@ -121,7 +121,7 @@ class PersistentEventStore @Inject() (
     private val workflowIdColumn = "workflow"
     private val eventColumn = "event"
     private val atColumn = "at"
-    private val clusterConfigColumn = "selializedClusterConfig"
+    private val clusterConfigColumn = "serializedClusterConfig"
 
     def workflowId: Rep[UUID] = column[UUID](workflowIdColumn, O.PrimaryKey)
     def event: Rep[String] = column[String](eventColumn)
