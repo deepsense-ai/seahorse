@@ -7,7 +7,8 @@ package io.deepsense.workflowmanager
 import scala.concurrent.Future
 
 import io.deepsense.commons.models.Id
-import io.deepsense.models.workflows.{Workflow, WorkflowWithKnowledge, WorkflowWithVariables}
+import io.deepsense.models.workflows.{WorkflowWithResults, Workflow, WorkflowWithKnowledge, WorkflowWithVariables}
+import io.deepsense.workflowmanager.model.WorkflowWithSavedResults
 
 /**
  * Workflow Manager's API
@@ -50,4 +51,13 @@ trait WorkflowManager {
    *         Otherwise false.
    */
   def delete(id: Id): Future[Boolean]
+
+  /**
+   * Saves workflow results
+   * @param workflowWithResults workflow results to save
+   * @return saved workflow results
+   */
+  def saveWorkflowResults(
+    workflowWithResults: WorkflowWithResults): Future[WorkflowWithSavedResults]
+
 }

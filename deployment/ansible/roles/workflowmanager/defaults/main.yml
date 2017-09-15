@@ -25,5 +25,6 @@ cassandra_host: "{{master_host}}"
 cassandra_reconnect_delay: 5000
 cassandra_user: cassandra
 cassandra_pass: cassandra
-wm_cassandra_table: workflows
+workflows_cassandra_table: workflows
+workflowresults_cassandra_table: workflowresults
 wm_cassandra_keyspace: workflowmanager

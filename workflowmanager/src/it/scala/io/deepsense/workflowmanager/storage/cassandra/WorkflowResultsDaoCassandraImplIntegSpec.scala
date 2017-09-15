@@ -4,9 +4,6 @@
 
 package io.deepsense.workflowmanager.storage.cassandra
 
-import scala.concurrent.{Await, Future}
-
-import com.datastax.driver.core.querybuilder.QueryBuilder
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
@@ -22,6 +19,7 @@ import io.deepsense.deeplang.parameters.{BooleanParameter, ParametersSchema}
 import io.deepsense.graph._
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.workflows._
+import io.deepsense.workflowmanager.model.{ExecutionReportWithId, WorkflowWithSavedResults}
 
 class WorkflowResultsDaoCassandraImplIntegSpec
   extends StandardSpec
@@ -50,11 +48,8 @@ class WorkflowResultsDaoCassandraImplIntegSpec
   when(catalog.createDOperation(operation3.id)).thenReturn(operation3)
   when(catalog.createDOperation(operation4.id)).thenReturn(operation4)
 
-  val workflowId: Workflow.Id = Workflow.Id.randomId
-  val result1 = createWorkflow(workflowId, graph = Graph())
-  val result2 = createWorkflow(workflowId, graph = createGraph())
-
-  val storedWorkflows = Set(result1, result2)
+  val resultId = ExecutionReportWithId.Id.randomId
+  val result = createResult(resultId, graph = createGraph())
 
   def cassandraTableName: String = "workflowresults"
   def cassandraKeySpaceName: String = "workflowmanager"
@@ -66,32 +61,38 @@ class WorkflowResultsDaoCassandraImplIntegSpec
 
   "WorkflowsResultsDao" should {
 
-    "return empty list when non existing workflow" in {
+    "return None when non existing workflow" in {
       whenReady(workflowResultsDao.get(Workflow.Id.randomId)) { results =>
-        results shouldBe List()
+        results shouldBe None
       }
     }
 
     "save and get workflow results" in {
-      whenReady(workflowResultsDao.save(result1)) { _ =>
-        whenReady(workflowResultsDao.save(result2)) { _ =>
-          whenReady(workflowResultsDao.get(workflowId)) { results =>
-            results shouldBe List(result1, result2)
-          }
+      whenReady(workflowResultsDao.save(result)) { _ =>
+        whenReady(workflowResultsDao.get(resultId)) { results =>
+          results shouldBe Some(result)
         }
       }
     }
   }
 
-  def createWorkflow(id: Workflow.Id, graph: Graph): WorkflowWithResults = {
+  def createResult(
+      resultId: ExecutionReportWithId.Id,
+      graph: Graph): WorkflowWithSavedResults = {
     val metadata = WorkflowMetadata(apiVersion = "x.x.x", workflowType = WorkflowType.Batch)
     val thirdPartyData = ThirdPartyData("{}")
-    val executionReport: ExecutionReport = ExecutionReport(
+    val executionReport: ExecutionReportWithId = ExecutionReportWithId(
+      resultId,
       Status.Failed,
       Some(FailureDescription(DeepSenseFailure.Id.randomId, FailureCode.NodeFailure, "title")),
       Map(Node.Id.randomId -> State(Status.Failed)),
       EntitiesMap())
-    WorkflowWithResults(id, metadata, graph, thirdPartyData, executionReport)
+    WorkflowWithSavedResults(
+      Workflow.Id.randomId,
+      metadata,
+      graph,
+      thirdPartyData,
+      executionReport)
   }
 
   def createGraph() : Graph = {

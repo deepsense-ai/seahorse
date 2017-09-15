@@ -15,7 +15,7 @@ object WorkflowResultsTableCreator {
     s"create table if not exists $table (" +
       s"""
          id uuid,
-         results list<text>,
+         results text,
          primary key (id)
       );
       """

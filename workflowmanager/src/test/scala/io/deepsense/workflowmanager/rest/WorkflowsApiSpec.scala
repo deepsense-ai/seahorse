@@ -10,7 +10,7 @@ import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
-import spray.http.HttpHeaders.{`Content-Disposition`, RawHeader}
+import spray.http.HttpHeaders.{RawHeader, `Content-Disposition`}
 import spray.http._
 import spray.json._
 import spray.routing.Route
@@ -29,7 +29,8 @@ import io.deepsense.graph._
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow._
 import io.deepsense.models.workflows._
-import io.deepsense.workflowmanager.storage.{WorkflowResultsStorage, WorkflowStorage}
+import io.deepsense.workflowmanager.model.WorkflowWithSavedResults$
+import io.deepsense.workflowmanager.storage.{InMemoryWorkflowStorage, WorkflowResultsStorage, WorkflowStorage}
 import io.deepsense.workflowmanager.{WorkflowManager, WorkflowManagerImpl, WorkflowManagerProvider}
 
 class WorkflowsApiSpec
@@ -50,6 +51,9 @@ class WorkflowsApiSpec
   val dOperableCatalog = new DOperableCatalog
   val inferContext: InferContext = new InferContext(dOperableCatalog, true)
   override val graphReader: GraphReader = new GraphReader(catalog)
+  val (workflowA, knowledgeA) = newWorkflowAndKnowledge
+  val workflowAId = Workflow.Id.randomId
+  val workflowWithResults = newWorkflowWithResults(workflowAId, workflowA)
 
   def newWorkflowAndKnowledge: (Workflow, GraphKnowledge) = {
     val node1 = Node(Node.Id.randomId, FileToDataFrame())
@@ -62,8 +66,7 @@ class WorkflowsApiSpec
     (workflow, knowledge)
   }
 
-  def newWorkflowWithResults: WorkflowWithResults = {
-    val (wf, _) = newWorkflowAndKnowledge
+  def newWorkflowWithResults(id: Workflow.Id, wf: Workflow): WorkflowWithResults = {
     val executionReport = ExecutionReport(
       Status.Failed,
       Some(FailureDescription(
@@ -71,12 +74,8 @@ class WorkflowsApiSpec
       Map(Node.Id.randomId -> State(Status.Failed)),
       EntitiesMap())
 
-    WorkflowWithResults(
-      Workflow.Id.randomId, wf.metadata, wf.graph, wf.additionalData, executionReport)
+    WorkflowWithResults(id, wf.metadata, wf.graph, wf.additionalData, executionReport)
   }
-
-  val (workflowA, knowledgeA) = newWorkflowAndKnowledge
-  val workflowAId = Workflow.Id.randomId
 
   def cyclicWorkflow: Workflow = {
     val node1 = Node(Node.Id.randomId, FileToDataFrame())
@@ -126,19 +125,15 @@ class WorkflowsApiSpec
         when(authorizatorProvider.forContext(any(classOf[Future[UserContext]])))
           .thenReturn(authorizator)
 
-        val storage = MockStorage()
+        val workflowStorage = mockStorage()
+        val workflowResultsStorage = mock[WorkflowResultsStorage]
         new WorkflowManagerImpl(
-          authorizatorProvider, storage, inferContext, futureContext,
-          roleGet, roleUpdate, roleDelete, roleCreate)
+          authorizatorProvider, workflowStorage, workflowResultsStorage, inferContext,
+          futureContext, roleGet, roleUpdate, roleDelete, roleCreate)
       }
     })
 
-    val workflowResultsStorage = mock[WorkflowResultsStorage]
-    when(workflowResultsStorage.save(any(classOf[WorkflowWithResults])))
-      .thenReturn(Promise.successful(()).future)
-
-    new SecureWorkflowApi(tokenTranslator, workflowManagerProvider, workflowResultsStorage,
-      apiPrefix, graphReader).route
+    new SecureWorkflowApi(tokenTranslator, workflowManagerProvider, apiPrefix, graphReader).route
   }
 
   s"GET /workflows/:id" should {
@@ -389,8 +384,6 @@ class WorkflowsApiSpec
   "POST /workflows/report/upload" should {
     "return created" when {
       "execution report file is sent" in {
-        val workflowWithResults = newWorkflowWithResults
-
         val multipartData = MultipartFormData(Map(
           "workflowFile" -> BodyPart(HttpEntity(
             ContentType(MediaTypes.`application/json`),
@@ -478,14 +471,9 @@ class WorkflowsApiSpec
     }
   }
 
-  case class MockStorage() extends WorkflowStorage {
-    private var storedWorkflows = Map(workflowAId -> workflowA)
-
-    override def get(id: Id): Future[Option[Workflow]] = Future.successful(storedWorkflows.get(id))
-
-    override def delete(id: Id): Future[Unit] = Future.successful(storedWorkflows -= id)
-
-    override def save(id: Id, workflow: Workflow): Future[Unit] =
-      Future.successful(storedWorkflows += (id -> workflow))
+  def mockStorage(): WorkflowStorage = {
+    val storage = new InMemoryWorkflowStorage()
+    storage.save(workflowAId, workflowA)
+    storage
   }
 }

@@ -18,14 +18,16 @@ import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.graph.CyclicGraphException
 import io.deepsense.models.workflows._
 import io.deepsense.workflowmanager.exceptions.WorkflowNotFoundException
-import io.deepsense.workflowmanager.storage.WorkflowStorage
+import io.deepsense.workflowmanager.model.{ExecutionReportWithId, WorkflowWithSavedResults}
+import io.deepsense.workflowmanager.storage.{WorkflowResultsStorage, WorkflowStorage}
 
 /**
  * Implementation of Workflow Manager.
  */
 class WorkflowManagerImpl @Inject()(
     authorizatorProvider: AuthorizatorProvider,
-    storage: WorkflowStorage,
+    workflowStorage: WorkflowStorage,
+    workflowResultsStorage: WorkflowResultsStorage,
     inferContext: InferContext,
     @Assisted userContextFuture: Future[UserContext],
     @Named("roles.workflows.get") roleGet: String,
@@ -40,7 +42,7 @@ class WorkflowManagerImpl @Inject()(
   def get(id: Id): Future[Option[WorkflowWithKnowledge]] = {
     logger.debug("Get workflow id: {}", id)
     authorizator.withRole(roleGet) { userContext =>
-      storage.get(id).map(_.map {
+      workflowStorage.get(id).map(_.map {
         workflow => withKnowledge(id, workflow)
       })
     }
@@ -49,7 +51,7 @@ class WorkflowManagerImpl @Inject()(
   def download(id: Id): Future[Option[WorkflowWithVariables]] = {
     logger.debug("Download workflow id: {}", id)
     authorizator.withRole(roleGet) { userContext =>
-      storage.get(id).map(_.map {
+      workflowStorage.get(id).map(_.map {
         workflow => withVariables(id, workflow)
       })
     }
@@ -61,9 +63,9 @@ class WorkflowManagerImpl @Inject()(
       Future.failed(new CyclicGraphException())
     } else {
       authorizator.withRole(roleUpdate) { userContext =>
-        storage.get(workflowId).flatMap {
+        workflowStorage.get(workflowId).flatMap {
           case Some(_) =>
-            storage.save(workflowId, workflow).map(_ => withKnowledge(workflowId, workflow))
+            workflowStorage.save(workflowId, workflow).map(_ => withKnowledge(workflowId, workflow))
           case None => throw new WorkflowNotFoundException(workflowId)
         }
       }
@@ -78,7 +80,7 @@ class WorkflowManagerImpl @Inject()(
       authorizator.withRole(roleCreate) {
         userContext => {
           val workflowId = Workflow.Id.randomId
-          storage.save(workflowId, workflow).map(_ => withKnowledge(workflowId, workflow))
+          workflowStorage.save(workflowId, workflow).map(_ => withKnowledge(workflowId, workflow))
         }
       }
     }
@@ -87,12 +89,23 @@ class WorkflowManagerImpl @Inject()(
   def delete(id: Id): Future[Boolean] = {
     logger.debug("Delete workflow id: {}", id)
     authorizator.withRole(roleDelete) { userContext =>
-      storage.get(id).flatMap {
+      workflowStorage.get(id).flatMap {
         case Some(workflow) =>
-          storage.delete(id).map(_ => true)
+          workflowStorage.delete(id).map(_ => true)
         case None => Future.successful(false)
       }
     }
+  }
+
+  def saveWorkflowResults(
+    workflowWithResults: WorkflowWithResults): Future[WorkflowWithSavedResults] = {
+    val resultsId = ExecutionReportWithId.Id.randomId
+    val workflowWithRegisteredResults =
+      WorkflowWithSavedResults(resultsId, workflowWithResults)
+
+    workflowStorage.saveExecutionResults(workflowWithRegisteredResults)
+      .map(_ => workflowResultsStorage.save(workflowWithRegisteredResults))
+      .map(_ => workflowWithRegisteredResults)
   }
 
   private def withKnowledge(id: Workflow.Id, workflow: Workflow): WorkflowWithKnowledge = {

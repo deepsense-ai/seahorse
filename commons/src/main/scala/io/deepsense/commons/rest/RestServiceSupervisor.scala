@@ -5,7 +5,8 @@
 package io.deepsense.commons.rest
 
 import akka.actor.{Actor, ActorInitializationException, Props}
-import com.typesafe.scalalogging.LazyLogging
+
+import io.deepsense.commons.utils.Logging
 
 /**
  * An actor with a specific supervising strategy. It shutdowns the actor system when
@@ -14,7 +15,7 @@ import com.typesafe.scalalogging.LazyLogging
  * The main purpose of the class is supervise initiation of the application. If the environment
  * does not meet the requirements the system should be shut down.
  */
-class RestServiceSupervisor extends Actor with LazyLogging {
+class RestServiceSupervisor extends Actor with Logging {
 
   import akka.actor.OneForOneStrategy
   import akka.actor.SupervisorStrategy._

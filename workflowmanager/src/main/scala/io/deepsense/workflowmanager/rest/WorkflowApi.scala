@@ -20,14 +20,13 @@ import io.deepsense.commons.auth.directives.{AbstractAuthDirectives, AuthDirecti
 import io.deepsense.commons.auth.usercontext.TokenTranslator
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.rest.{RestApiAbstractAuth, RestComponent}
-import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.graph.CyclicGraphException
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow._
 import io.deepsense.models.workflows.{Workflow, WorkflowWithResults}
 import io.deepsense.workflowmanager.WorkflowManagerProvider
 import io.deepsense.workflowmanager.exceptions.{FileNotFoundException, WorkflowNotFoundException, WorkflowRunningException}
-import io.deepsense.workflowmanager.storage.WorkflowResultsStorage
+import io.deepsense.workflowmanager.json.WorkflowWithRegisteredResultsJsonProtocol
 
 /**
  * Exposes Workflow Manager through a REST API.
@@ -35,7 +34,6 @@ import io.deepsense.workflowmanager.storage.WorkflowResultsStorage
 abstract class WorkflowApi @Inject() (
     val tokenTranslator: TokenTranslator,
     workflowManagerProvider: WorkflowManagerProvider,
-    workflowResultsStorage: WorkflowResultsStorage,
     @Named("workflows.api.prefix") apiPrefix: String,
     override val graphReader: GraphReader)
     (implicit ec: ExecutionContext)
@@ -45,7 +43,7 @@ abstract class WorkflowApi @Inject() (
   with WorkflowWithKnowledgeJsonProtocol
   with WorkflowWithVariablesJsonProtocol
   with MetadataInferenceResultJsonProtocol
-  with WorkflowWithResultsJsonProtocol
+  with WorkflowWithRegisteredResultsJsonProtocol
   with Cors {
 
   self: AbstractAuthDirectives =>
@@ -145,15 +143,12 @@ abstract class WorkflowApi @Inject() (
                       workflowWithResultsFormat.read(JsonParser(ParserInput(
                         selectFormPart(multipartFormData, workflowFileMultipartId))))
 
-                    formData => {
-                      val workflowWithResults = readWorkflow(formData)
-                      onComplete(
-                        workflowResultsStorage.save(workflowWithResults)) {
-                        case Success(_) => complete(
-                          StatusCodes.Created, workflowWithResults)
+                    formData => onComplete(
+                      workflowManagerProvider
+                          .forContext(userContext).saveWorkflowResults(readWorkflow(formData))) {
+                        case Success(saved) => complete(StatusCodes.Created, saved)
                         case Failure(exception) => failWith(exception)
                       }
-                    }
                   }
                 }
               }
@@ -201,14 +196,12 @@ abstract class WorkflowApi @Inject() (
 class SecureWorkflowApi @Inject() (
   tokenTranslator: TokenTranslator,
   workflowManagerProvider: WorkflowManagerProvider,
-  workflowResultsStorage: WorkflowResultsStorage,
   @Named("workflows.api.prefix") apiPrefix: String,
   override val graphReader: GraphReader)
   (implicit ec: ExecutionContext)
   extends WorkflowApi(
     tokenTranslator,
     workflowManagerProvider,
-    workflowResultsStorage,
     apiPrefix,
     graphReader)
   with AuthDirectives
@@ -216,14 +209,12 @@ class SecureWorkflowApi @Inject() (
 class InsecureWorkflowApi @Inject() (
   tokenTranslator: TokenTranslator,
   workflowManagerProvider: WorkflowManagerProvider,
-  workflowResultsStorage: WorkflowResultsStorage,
   @Named("workflows.api.prefix") apiPrefix: String,
   override val graphReader: GraphReader)
   (implicit ec: ExecutionContext)
   extends WorkflowApi(
     tokenTranslator,
     workflowManagerProvider,
-    workflowResultsStorage,
     apiPrefix,
     graphReader)
   with InsecureAuthDirectives

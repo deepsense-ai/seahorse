@@ -22,7 +22,7 @@ class WorkflowSessionModule extends AbstractModule {
       @Named("cassandra.port") port: Int,
       @Named("cassandra.credentials.user") user: String,
       @Named("cassandra.credentials.password") password: String,
-      @Named("cassandra.workflow.keyspace") keySpace: String,
+      @Named("cassandra.workflowmanager.keyspace") keySpace: String,
       @Named("cassandra.reconnect.delay") reconnectDelay: Long,
       clusterFactory: ClusterFactory,
       sessionFactory: SessionFactory): Session = {

@@ -18,9 +18,10 @@ import io.deepsense.deeplang.DOperation
 import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.deeplang.parameters.{BooleanParameter, ParametersSchema}
-import io.deepsense.graph.{Edge, Endpoint, Graph, Node}
+import io.deepsense.graph.{Edge, Endpoint, Graph, Node, State}
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
-import io.deepsense.models.workflows.{ThirdPartyData, Workflow, WorkflowMetadata, WorkflowType}
+import io.deepsense.models.workflows._
+import io.deepsense.workflowmanager.model.{ExecutionReportWithId, WorkflowWithSavedResults}
 
 
 class WorkflowDaoCassandraImplIntegSpec
@@ -87,6 +88,61 @@ class WorkflowDaoCassandraImplIntegSpec
         workflow shouldBe Some(workflow1)
       }
     }
+
+    "get latest execution result" when {
+      "workflow does not exist" in {
+        whenReady(workflowsDao.getLatestExecutionResults(Workflow.Id.randomId)) { result =>
+          result shouldBe None
+        }
+      }
+
+      "no results are available" in withStoredWorkflows(storedWorkflows) {
+        whenReady(workflowsDao.getLatestExecutionResults(workflow1Id)) { result =>
+          result shouldBe None
+        }
+      }
+
+      "results exist" in withStoredWorkflows(storedWorkflows) {
+        val resultId = ExecutionReportWithId.Id.randomId
+        whenReady(workflowsDao.saveExecutionResults(
+          executionResults(workflow1Id, workflow1, resultId))) { _ =>
+          whenReady(workflowsDao.getLatestExecutionResults(workflow1Id)) { result =>
+            result.get.executionReport.id shouldBe resultId
+          }
+        }
+      }
+
+      "results were updated" in withStoredWorkflows(storedWorkflows) {
+        val resultId1 = ExecutionReportWithId.Id.randomId
+        val resultId2 = ExecutionReportWithId.Id.randomId
+        whenReady(workflowsDao.saveExecutionResults(
+          executionResults(workflow1Id, workflow1, resultId1))) { _ =>
+          whenReady(workflowsDao.saveExecutionResults(
+            executionResults(workflow1Id, workflow1, resultId2))) { _ =>
+            whenReady(workflowsDao.getLatestExecutionResults(workflow1Id)) { result =>
+              result.get.executionReport.id shouldBe resultId2
+            }
+          }
+        }
+      }
+    }
+  }
+
+  private def executionResults(
+      workflowId: Workflow.Id,
+      workflow: Workflow,
+      resultId: ExecutionReportWithId.Id): WorkflowWithSavedResults = {
+    WorkflowWithSavedResults(
+        workflowId,
+        workflow.metadata,
+        workflow.graph,
+        workflow.additionalData,
+        ExecutionReportWithId(
+          resultId,
+          io.deepsense.graph.Status.Completed,
+          None,
+          Map[Node.Id, State](),
+          EntitiesMap()))
   }
 
   private def withStoredWorkflows(

@@ -38,12 +38,14 @@ cassandra {
     user = "{{cassandra_user}}"
     password = "{{cassandra_pass}}"
   }
-  workflow {
-    table = "{{wm_cassandra_table}}"
+  workflowmanager {
     keyspace = "{{wm_cassandra_keyspace}}"
-  }
-  workflowresults {
-    table = "workflowresults"
+    workflow {
+      table = "{{workflows_cassandra_table}}"
+    }
+    workflowresults {
+      table = "{{workflowresults_cassandra_table}}"
+    }
   }
 }
 

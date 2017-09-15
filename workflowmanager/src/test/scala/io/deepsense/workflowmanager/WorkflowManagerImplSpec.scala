@@ -6,6 +6,7 @@ package io.deepsense.workflowmanager
 
 import scala.concurrent.Future
 
+import org.mockito.{Mockito, ArgumentCaptor}
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 
@@ -13,9 +14,10 @@ import io.deepsense.commons.auth.usercontext.{Role, UserContext}
 import io.deepsense.commons.auth.{AuthorizatorProvider, UserContextAuthorizator}
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.deeplang.inference.InferContext
-import io.deepsense.graph.{Graph, GraphKnowledge}
-import io.deepsense.models.workflows.{ThirdPartyData, Workflow, WorkflowMetadata, WorkflowWithKnowledge}
-import io.deepsense.workflowmanager.storage.WorkflowStorage
+import io.deepsense.graph.{Status, Graph, GraphKnowledge}
+import io.deepsense.models.workflows._
+import io.deepsense.workflowmanager.model.WorkflowWithSavedResults
+import io.deepsense.workflowmanager.storage.{WorkflowResultsStorage, WorkflowStorage}
 
 class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
   val tenantId = "tenantId"
@@ -39,11 +41,27 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
   val storedWorkflowId = Workflow.Id.randomId
   val storedWorkflowWithKnowledge = WorkflowWithKnowledge(
     storedWorkflowId, metadata, graph, thirdPartyData, knowledge)
-  val storage: WorkflowStorage = mock[WorkflowStorage]
+  val workflowStorage: WorkflowStorage = mock[WorkflowStorage]
+  val workflowResultStorage = mock[WorkflowResultsStorage]
+  val workflowWithResults = WorkflowWithResults(
+    Workflow.Id.randomId,
+    mock[WorkflowMetadata],
+    mock[Graph],
+    mock[ThirdPartyData],
+    ExecutionReport(
+      Status.Aborted,
+      None,
+      Map[io.deepsense.graph.Node.Id, io.deepsense.graph.State](),
+      EntitiesMap()
+    )
+  )
+  Mockito.when(workflowStorage.saveExecutionResults(any())).thenReturn(Future.successful(()))
+  Mockito.when(workflowResultStorage.save(any())).thenReturn(Future.successful(()))
 
   val workflowManager = new WorkflowManagerImpl(
     authorizatorProvider,
-    storage,
+    workflowStorage,
+    workflowResultStorage,
     inferContext,
     userContextFuture,
     roleForAll,
@@ -54,7 +72,7 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
   "WorkflowManager.get(...)" should {
     "return None" when {
       "the requested workflow does not exist" in {
-        when(storage.get(any()))
+        when(workflowStorage.get(any()))
           .thenReturn(Future.successful(None))
 
         val eventualWorkflow = workflowManager.get(Workflow.Id.randomId)
@@ -62,7 +80,7 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
       }
     }
     "return workflow from the storage" in {
-      when(storage.get(storedWorkflowId))
+      when(workflowStorage.get(storedWorkflowId))
         .thenReturn(Future.successful(Some(storedWorkflow)))
 
       val eventualWorkflow = workflowManager.get(storedWorkflowId)
@@ -70,5 +88,19 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
     }
     "delete workflow from the storage" is pending
     "save workflow in storage" is pending
+  }
+
+  "WorkflowManager" should {
+    "generate id and store result in two tables" in {
+      whenReady(workflowManager.saveWorkflowResults(workflowWithResults)) { results =>
+        val resultId = results.executionReport.id
+        val captor1 = ArgumentCaptor.forClass(classOf[WorkflowWithSavedResults])
+        val captor2 = ArgumentCaptor.forClass(classOf[WorkflowWithSavedResults])
+        verify(workflowStorage, times(1)).saveExecutionResults(captor1.capture())
+        verify(workflowResultStorage, times(1)).save(captor2.capture())
+        captor1.getValue.executionReport.id shouldBe resultId
+        captor2.getValue.executionReport.id shouldBe resultId
+      }
+    }
   }
 }

@@ -11,7 +11,6 @@ object Version {
   val hadoop        = "2.6.0"
   val jclouds       = "1.9.0"
   val jsr305        = "3.0.0"
-  val logback       = "1.1.2"
   val metricsScala  = "3.5.1_a2.3"
   val mockito       = "1.10.19"
   val nsscalaTime   = "1.8.0"
@@ -27,57 +26,49 @@ object Version {
 object Library {
 
   val akka      = (name: String) => "org.spark-project.akka"  %% s"akka-$name"              % Version.akka
-  val avro      = (name: String) => "org.apache.avro"         % s"avro$name"                % Version.avro
   val hadoop    = (name: String) => "org.apache.hadoop"       % s"hadoop-$name"             % Version.hadoop exclude("org.slf4j", "slf4j-log4j12")
   val jclouds   = (name: String) => "org.apache.jclouds.api"  % s"openstack-$name"          % Version.jclouds
-  val logback   = (name: String) => "ch.qos.logback"          % s"logback-$name"            % Version.logback
   val seahorse  = (name: String) => "io.deepsense"           %% s"deepsense-seahorse-$name" % Version.seahorse
   val spark     = (name: String) => "org.apache.spark"       %% s"spark-$name"              % Version.spark exclude("org.slf4j", "slf4j-log4j12")
   val spray     = (name: String) => "io.spray"               %% s"spray-$name"              % Version.spray
 
-  val akkaActor          = akka("actor")
-  val akkaTestkit        = akka("testkit")
-  val apacheCommons      = "org.apache.commons"           %  "commons-lang3"      % Version.apacheCommons
-  val avroCore           = avro("")
-  // Please mind the dash to handle empty main module in avro and avro-ipc
-  val avroRpc            = avro("-ipc")
-  val cassandraUnit      = "org.cassandraunit"        %  "cassandra-unit"         % Version.cassandraUnit
-  val datastaxCassandra  = "com.datastax.cassandra"   %  "cassandra-driver-core"  % Version.cassandra
-  val guice              = "com.google.inject"            % "guice"               % Version.guice
-  val guiceMultibindings = "com.google.inject.extensions" % "guice-multibindings" % Version.guice
-  val hadoopClient       = hadoop("client")
-  val hadoopCommon       = hadoop("common")
-  val hadoopHdfs         = hadoop("hdfs")
-  val hadoopYarnApi      = hadoop("yarn-api")
-  val hadoopYarnClient   = hadoop("yarn-client")
-  val hadoopYarnCommon   = hadoop("yarn-common")
-  val jcloudsKeystone    = jclouds("keystone")
-  val jcloudsCompute     = "org.apache.jclouds"           % "jclouds-compute"     % Version.jclouds
-  val jcloudsNova        = jclouds("nova")
-  val logbackClassic     = logback("classic")
-  val logbackCore        = logback("core")
-  val metricsScala       = "nl.grons"                    %% "metrics-scala"       % Version.metricsScala
-  val mockitoCore        = "org.mockito"                  % "mockito-core"        % Version.mockito
-  val nscalaTime         = "com.github.nscala-time"      %% "nscala-time"         % Version.nsscalaTime
-  val scalacheck         = "org.scalacheck"              %% "scalacheck"          % Version.scalacheck
-  val scalaLogging       = "com.typesafe.scala-logging"  %% "scala-logging"       % "3.1.0"
-  val scalaReflect       = "org.scala-lang"               % "scala-reflect"       % Version.scala
-  val scalatest          = "org.scalatest"               %% "scalatest"           % Version.scalatest
-  val seahorseCommons    = seahorse("commons")
-  val seahorseDeeplang   = seahorse("deeplang")
-  val seahorseESClient   = seahorse("entitystorage-client")
-  val seahorseESModel    = seahorse("entitystorage-model")
-  val seahorseModels     = seahorse("models")
-  val seahorseGraph      = seahorse("graph")
-  val seahorseWorkflowJson  = seahorse("workflow-json")
-  val seahorseReportlib  = seahorse("reportlib")
-  val sparkCore          = spark("core")
-  val sparkMLLib         = spark("mllib")
-  val sprayCan           = spray("can")
-  val sprayRouting       = spray("routing")
-  val sprayTestkit       = spray("testkit")
-  val sprayClient        = spray("client")
-  val sprayJson          = "io.spray"                    %% "spray-json"          % Version.sprayJson
+  val akkaActor               = akka("actor")
+  val akkaTestkit             = akka("testkit")
+  val apacheCommons           = "org.apache.commons"           %  "commons-lang3"      % Version.apacheCommons
+  val cassandraUnit           = "org.cassandraunit"        %  "cassandra-unit"         % Version.cassandraUnit
+  val datastaxCassandra       = "com.datastax.cassandra"   %  "cassandra-driver-core"  % Version.cassandra
+  val guice                   = "com.google.inject"            % "guice"               % Version.guice
+  val guiceMultibindings      = "com.google.inject.extensions" % "guice-multibindings" % Version.guice
+  val hadoopClient            = hadoop("client")
+  val hadoopCommon            = hadoop("common")
+  val hadoopHdfs              = hadoop("hdfs")
+  val hadoopYarnApi           = hadoop("yarn-api")
+  val hadoopYarnClient        = hadoop("yarn-client")
+  val hadoopYarnCommon        = hadoop("yarn-common")
+  val jcloudsKeystone         = jclouds("keystone")
+  val jcloudsCompute          = "org.apache.jclouds"           % "jclouds-compute"     % Version.jclouds
+  val jcloudsNova             = jclouds("nova")
+  val metricsScala            = "nl.grons"                    %% "metrics-scala"       % Version.metricsScala
+  val mockitoCore             = "org.mockito"                  % "mockito-core"        % Version.mockito
+  val nscalaTime              = "com.github.nscala-time"      %% "nscala-time"         % Version.nsscalaTime
+  val scalacheck              = "org.scalacheck"              %% "scalacheck"          % Version.scalacheck
+  val scalaReflect            = "org.scala-lang"               % "scala-reflect"       % Version.scala
+  val scalatest               = "org.scalatest"               %% "scalatest"           % Version.scalatest
+  val seahorseCommons         = seahorse("commons")
+  val seahorseDeeplang        = seahorse("deeplang")
+  val seahorseESClient        = seahorse("entitystorage-client")
+  val seahorseESModel         = seahorse("entitystorage-model")
+  val seahorseModels          = seahorse("models")
+  val seahorseGraph           = seahorse("graph")
+  val seahorseWorkflowJson    = seahorse("workflow-json")
+  val seahorseReportlib       = seahorse("reportlib")
+  val sparkCore               = spark("core")
+  val sparkMLLib              = spark("mllib")
+  val sprayCan                = spray("can")
+  val sprayRouting            = spray("routing")
+  val sprayTestkit            = spray("testkit")
+  val sprayClient             = spray("client")
+  val sprayJson               = "io.spray"                    %% "spray-json"          % Version.sprayJson
 }
 
 object Dependencies {
@@ -91,10 +82,27 @@ object Dependencies {
     "seahorse.deepsense.io"  at "http://10.10.1.77:8081/artifactory/simple/deepsense-seahorse-release"
   )
 
+  val commons = Seq(
+    akkaActor,
+    apacheCommons,
+    datastaxCassandra,
+    guice,
+    guiceMultibindings,
+    jcloudsCompute,
+    jcloudsKeystone,
+    jcloudsNova,
+    metricsScala,
+    nscalaTime,
+    seahorseCommons,
+    sprayCan,
+    sprayJson,
+    sprayRouting
+  ) ++ Seq(akkaTestkit, cassandraUnit, mockitoCore, scalatest, sprayTestkit).map(_ % Test)
+
   val deploymodelservice = Seq(
     akkaActor,
-    sprayCan,
     seahorseDeeplang,
+    sprayCan,
     sprayJson,
     sprayRouting
   ) ++ Seq(scalatest, sprayTestkit).map(_ % s"$Test,it")
@@ -104,26 +112,6 @@ object Dependencies {
     seahorseDeeplang
   ) ++ Seq(akkaTestkit, cassandraUnit, mockitoCore, scalatest, seahorseESClient, sprayTestkit).map(_ % s"$Test,it")
 
-  val commons = Seq(
-    akkaActor,
-    apacheCommons,
-    datastaxCassandra,
-    jcloudsCompute,
-    jcloudsKeystone,
-    jcloudsNova,
-    logbackClassic,
-    logbackCore,
-    scalaLogging,
-    seahorseCommons,
-    sprayCan,
-    sprayJson,
-    sprayRouting,
-    guice,
-    guiceMultibindings,
-    metricsScala,
-    nscalaTime
-  ) ++ Seq(sprayTestkit, akkaTestkit, mockitoCore, scalatest, cassandraUnit).map(_ % Test)
-
   val workflowmanager = Seq(
     akkaActor,
     apacheCommons,
@@ -131,26 +119,12 @@ object Dependencies {
     guiceMultibindings,
     seahorseDeeplang,
     seahorseESModel,
-    seahorseWorkflowJson,
-    seahorseESModel,
+    seahorseGraph,
     seahorseReportlib,
+    seahorseWorkflowJson,
     sprayCan,
     sprayClient,
     sprayJson,
     sprayRouting
-  ) ++ Seq(sprayTestkit, akkaTestkit, mockitoCore, scalatest).map(_ % s"$Test,it")
-
-  val graphexecutor = Seq(
-    hadoopClient,
-    hadoopCommon,
-    hadoopHdfs,
-    hadoopYarnApi,
-    hadoopYarnClient,
-    hadoopYarnCommon,
-    seahorseDeeplang,
-    seahorseESClient,
-    seahorseESModel,
-    seahorseGraph,
-    seahorseModels
-  ) ++ Seq(sparkCore).map(_ % Provided) ++ Seq(akkaTestkit, mockitoCore, scalatest).map(_ % s"$Test,it")
+  ) ++ Seq(akkaTestkit, mockitoCore, scalatest, sprayTestkit).map(_ % s"$Test,it")
 }
