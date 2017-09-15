@@ -2,12 +2,11 @@
 //
 // Owner: Jacek Laskowski
 
-organization := "io.deepsense"
-name         := "backend"
-version      := "0.1.0"
-scalaVersion := "2.11.6"
+name         := "deepsense-backend"
 
 lazy val deeplang          = project
 lazy val experimentmanager = project
 lazy val graph             = project dependsOn deeplang
 lazy val graphexecutor     = project dependsOn graph
+
+lazy val `sbt-common-settings-plugin` = project in file("sbt-common-settings-plugin")

@@ -17,3 +17,9 @@ addSbtPlugin("com.cavorite" % "sbt-avro" % "0.3.2")
 
 // Assembly plugin allows creation a fat JAR of project with all of its dependencies.
 addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.12.0")
+
+lazy val sbtPlugin = RootProject(file("../sbt-common-settings-plugin"))
+lazy val plugins = project in file(".") dependsOn sbtPlugin
+
+addSbtPlugin("io.deepsense" % "deepsense-sbt-common-settings-plugin" % "1.0.0")
+

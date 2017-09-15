@@ -3,15 +3,8 @@
  *
  * Owner: Wojciech Jurczyk
  */
-organization := "io.deepsense"
-name         := "deepsense-experimentmanager"
-version      := "0.1.0"
-scalaVersion := "2.11.6"
 
-scalacOptions := Seq(
-  "-unchecked", "-deprecation", "-encoding", "utf8",
-  "-feature", "-language:implicitConversions"
-)
+name         := "deepsense-experimentmanager"
 
 Revolver.settings
 

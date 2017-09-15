@@ -4,10 +4,7 @@
 
 import sbtassembly.PathList
 
-organization := "io.deepsense"
 name         := "deepsense-graphexecutor"
-version      := "0.1.0"
-scalaVersion := "2.11.6"
 
 val hadoopV = "2.6.0"
 val avroV = "1.7.7"
