@@ -391,6 +391,6 @@
   "id": "0fdb79ec-b927-48f4-ba05-fb603c65a7a7",
   "metadata": {
     "type": "batch",
-    "apiVersion": "1.2.0"
+    "apiVersion": "1.3.0"
   }
 }
