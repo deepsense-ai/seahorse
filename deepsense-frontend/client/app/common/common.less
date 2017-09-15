@@ -46,3 +46,26 @@ label {
   }
 }
 
+@-moz-document url-prefix() {
+  body select.form-control {
+    padding-right: 25px;
+    background-image: url("../../img/arrow-down.svg");
+    background-repeat: no-repeat;
+    background-position: calc(~"100% - 7px") 50%;
+    -moz-appearance: none;
+
+    &:-moz-focusring {
+      color: transparent;
+      text-shadow: 0 0 0 @deepsense-black;
+    }
+  }
+
+  body input[type="number"].form-control {
+    -moz-appearance: textfield;
+
+    &:hover,
+    &:focus {
+      -moz-appearance: number-input;
+    }
+  }
+}
