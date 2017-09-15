@@ -154,6 +154,11 @@ object CatalogRecorder {
       "Scores a trained classification model"
     )
 
+    catalog.registerDOperation[CrossValidateClassifier](
+      DOperationCategories.ML.Classification,
+      "Cross-validates a classification model"
+    )
+
     catalog.registerDOperation[EvaluateClassification](
       DOperationCategories.ML.Classification,
       "Evaluates a classification model"
