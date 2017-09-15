@@ -94,11 +94,15 @@ case class StringParameter(
    * @param variables mapping from variable names to values
    */
   override private[parameters] def substitutePlaceholders(variables: Map[String, String]): Unit = {
-    val placeholderRegex = new Regex("\\$\\{(.*?)\\}", "name")
-    value = placeholderRegex.replaceAllIn(value, m => Regex.quoteReplacement {
-      val variableName = m.group("name")
-      variables.getOrElse(variableName, throw VariableNotDefinedException(variableName))
-    })
+    maybeValue match {
+      case Some(v) =>
+        val placeholderRegex = new Regex("\\$\\{(.*?)\\}", "name")
+        value = placeholderRegex.replaceAllIn(v, m => Regex.quoteReplacement {
+          val variableName = m.group("name")
+          variables.getOrElse(variableName, throw VariableNotDefinedException(variableName))
+        })
+      case None =>
+    }
   }
 
   override protected def defaultValueToJson(defaultValue: String): JsValue = defaultValue.toJson
