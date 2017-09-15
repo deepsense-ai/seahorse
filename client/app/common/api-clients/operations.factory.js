@@ -9,10 +9,6 @@
 /* @ngInject */
 function OperationsFactory(OperationsApiClient, $q) {
   const CATEGORY_ICONS = {
-    '11111-5555-9999': 'fa-cube',
-    '23123-12312-43242': 'fa-download',
-    '91111-111111-11111': 'fa-filter',
-    '234234-756756-34234': 'fa-gear',
     '5a39e324-15f4-464c-83a5-2d7fba2858aa': 'fa-exchange', // Input/Output
     '3fcc6ce8-11df-433f-8db3-fa1dcc545ed8': 'fa-bolt', // Transformation
     '6c730c11-9708-4a84-9dbd-3845903f32ac': 'fa-pencil-square-o', // Data Manipulation
@@ -79,8 +75,8 @@ function OperationsFactory(OperationsApiClient, $q) {
    */
   var updateOperationIcons = function updateOperationIcons() {
     for (let id in operationsData) {
-      let operation = operationsData[id],
-          category = categoryMap[operation.category];
+      let operation = operationsData[id];
+      let category = categoryMap[operation.category];
       operation.icon = category ? category.icon : DEFAULT_ICON;
     }
   };
@@ -94,7 +90,6 @@ function OperationsFactory(OperationsApiClient, $q) {
   var loadData = function loadData() {
     return OperationsApiClient.getAll().then((data) => {
       operationsData = data.operations;
-      updateOperationIcons();
       Object.freeze(operationsData);
       return operationsData;
     });
@@ -130,6 +125,7 @@ function OperationsFactory(OperationsApiClient, $q) {
       categoryMap = {};
       createCategoryMap(catalogData);
       updateCategoryIcons();
+      updateOperationIcons();
       Object.freeze(catalogData);
       Object.freeze(categoryMap);
       return catalogData;
@@ -148,12 +144,12 @@ function OperationsFactory(OperationsApiClient, $q) {
       deferred.resolve();
       return deferred.promise;
     }
-    return $q.all([
-      loadCatalog(),
-      loadData()
-    ]).then(() => {
-      isLoaded = true;
-    });
+
+    return loadData().
+      then(loadCatalog).
+      then(() => {
+        isLoaded = true;
+      });
   };
 
   /**

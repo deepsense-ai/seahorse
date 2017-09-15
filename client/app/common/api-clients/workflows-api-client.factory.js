@@ -15,6 +15,14 @@ function WorkflowsApiClientFactory(BaseApiClient, config) {
       return this.makeRequest(this.METHOD_GET, `${this.API_URL}${PATH_WORKFLOWS}/${workflowId}`);
     }
 
+    getLatestReport(workflowId) {
+      return this.makeRequest(this.METHOD_GET, `${this.API_URL}${PATH_WORKFLOWS}/${workflowId}/report`);
+    }
+
+    getReport(reportId) {
+      return this.makeRequest(this.METHOD_GET, `${this.API_URL}${PATH_REPORTS}/${reportId}`);
+    }
+
     createWorkflow(params) {
       let data = {
         metadata: {
@@ -47,16 +55,16 @@ function WorkflowsApiClientFactory(BaseApiClient, config) {
       return this.makeRequest(this.METHOD_PUT, `${this.API_URL}${PATH_WORKFLOWS}/${serializedWorkflow.id}`, data);
     }
 
-    getDownloadWorkflowUrl(workflowId) {
+    getDownloadWorkflowMethodUrl(workflowId) {
       return `${this.API_URL}${PATH_WORKFLOWS}/${workflowId}/download?format=json`;
     }
 
-    getLatestReport(workflowId) {
-      return this.makeRequest(this.METHOD_GET, `${this.API_URL}${PATH_WORKFLOWS}/${workflowId}/report`);
+    getUploadWorkflowMethodUrl() {
+      return `${this.API_URL}${PATH_WORKFLOWS}/upload`;
     }
 
-    getReport(reportId) {
-      return this.makeRequest(this.METHOD_GET, `${this.API_URL}${PATH_REPORTS}/${reportId}`);
+    getUploadReportMethodUrl() {
+      return `${this.API_URL}${PATH_WORKFLOWS}/report/upload`;
     }
   }
 

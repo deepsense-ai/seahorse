@@ -1,15 +1,9 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Grzegorz Swatowski
- */
-
 'use strict';
 
 /* @ngInject */
 function PortStatusesTooltipController($scope, $element) {
-  var that = this;
-  var internal = {};
+  let that = this;
+  let internal = {};
 
   _.assign(that, {
     portElement: null,

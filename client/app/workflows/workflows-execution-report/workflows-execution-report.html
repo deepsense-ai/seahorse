@@ -1,5 +1,8 @@
 <div class="workflow-container animated fadeIn">
-  <flow-chart-box></flow-chart-box>
+  <flow-chart-box
+    nodes="workflow.getWorkflow().getNodes()"
+    selected-node="workflow.getSelectedNode()"
+    report-mode="true"></flow-chart-box>
 
   <deepsense-operation-attributes
     node="workflow.getSelectedNode()"

@@ -2,7 +2,7 @@
 
 /* @ngInject */
 function WorkflowsReportController(
-  $scope, report,
+  $state, $scope, report, ConfirmationModalService,
   GraphNode, PageService, Operations, GraphPanelRendererService, WorkflowService, DeepsenseNodeParameters
 ) {
   let that = this;
@@ -24,7 +24,7 @@ function WorkflowsReportController(
     const DEFAULT_WORKFLOW_NAME = 'Draft workflow';
     let getTitle = () => {
       try {
-        return workflow.thirdPartyData.gui.name;
+        return workflow.thirdPartyData.gui.name || DEFAULT_WORKFLOW_NAME;
       } catch (e) {
         return DEFAULT_WORKFLOW_NAME;
       }
@@ -36,8 +36,6 @@ function WorkflowsReportController(
     GraphPanelRendererService.setWorkflow(WorkflowService.getWorkflow());
     GraphPanelRendererService.setZoom(1.0);
 
-    WorkflowService.updateTypeKnowledge(workflow.knowledge);
-    WorkflowService.updateEdgesStates();
     GraphPanelRendererService.changeEdgesPaintStyles();
   };
 
@@ -62,6 +60,15 @@ function WorkflowsReportController(
   $scope.$on('AttributePanel.UNSELECT_NODE', () => {
     internal.unselectNode();
     $scope.$digest();
+  });
+
+  $scope.$on('StatusBar.HOME_CLICK', () => {
+    ConfirmationModalService.showModal({
+      message: 'The operation redirects to the home page.'
+    }).
+      then(() => {
+        $state.go('home');
+      });
   });
 
   $scope.$on('$destroy', () => {

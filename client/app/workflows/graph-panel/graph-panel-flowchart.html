@@ -1,0 +1,47 @@
+<div context-menu-blocker flowchart-box-undraggable class="flowchart-box">
+  <div ng-if="!flowChartBoxCtrl.reportMode">
+    <div class="flowchart-paint-area"
+         multi-selection
+         deepsense-interactive
+         zoom-id="flowchart-box"
+         max-zoom-ratio="1.5"
+         droppable
+         droppable-type="exact"
+         droppable-exact-type="graphNode"
+         droppable-highlight="parent">
+      <graph-node jsplumb-draggable
+                  keyboard
+                  ng-class="{'selected-node': flowChartBoxCtrl.selectedNode.id === nodeId }"
+                  ng-repeat="(nodeId, node) in flowChartBoxCtrl.nodes"
+                  node="node">
+      </graph-node>
+    </div>
+  </div>
+  <div ng-if="flowChartBoxCtrl.reportMode">
+    <div class="flowchart-paint-area"
+         deepsense-interactive
+         zoom-id="flowchart-box"
+         max-zoom-ratio="1.5">
+      <graph-node ng-class="{'selected-node': flowChartBoxCtrl.selectedNode.id === nodeId }"
+                  ng-repeat="(nodeId, node) in flowChartBoxCtrl.nodes"
+                  node="node">
+      </graph-node>
+    </div>
+
+    <context-menu-wrapper></context-menu-wrapper>
+  </div>
+
+  <div ng-controller="PortStatusesTooltipController as portStatusesTooltipCtrl">
+    <sticky-window
+      ng-if="portStatusesTooltipCtrl.tooltipIsVisible"
+      x="::portStatusesTooltipCtrl.getPositionX()"
+      y="::portStatusesTooltipCtrl.getPositionY()"
+    >
+      <span ng-repeat="type in ::portStatusesTooltipCtrl.getTypes()">
+        <span>{{ ::type }}</span><span ng-if="::!$last">,</span>
+      </span>
+    </sticky-window>
+  </div>
+
+  <deepsense-interaction-toolbar zoom-id="flowchart-box"></deepsense-interaction-toolbar>
+</div>

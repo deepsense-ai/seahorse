@@ -3,7 +3,7 @@
 /* @ngInject */
 function WorkflowsEditorController(
   workflow,
-  $scope, $state,
+  $scope, $state, $stateParams,
   GraphNode, Edge,
   PageService, Operations, GraphPanelRendererService, WorkflowService, UUIDGenerator, MouseEvent,
   DeepsenseNodeParameters, ConfirmationModalService, ExportModalService,
@@ -21,7 +21,7 @@ function WorkflowsEditorController(
     const DEFAULT_WORKFLOW_NAME = 'Draft workflow';
     let getTitle = () => {
       try {
-        return workflow.thirdPartyData.gui.name;
+        return workflow.thirdPartyData.gui.name || DEFAULT_WORKFLOW_NAME;
       } catch (e) {
         return DEFAULT_WORKFLOW_NAME;
       }
@@ -163,6 +163,18 @@ function WorkflowsEditorController(
     RunModalFactory.showModal({
       message: 'Something here!'
     });
+  });
+
+  $scope.$on('StatusBar.LAST_EXECUTION_REPORT', () => {
+    ConfirmationModalService.showModal({
+      message: `The operation redirects to the view that displays the latest report for this workflow.
+      The workflow had to be executed at least once. Make sure you saved the current state of the workflow.`
+    }).
+      then(() => {
+        $state.go('workflows.latest_report', {
+          'id': $stateParams.id
+        });
+      });
   });
 
   $scope.$watchCollection('workflow.getWorkflow().getNodesIds()', (newValue, oldValue) => {

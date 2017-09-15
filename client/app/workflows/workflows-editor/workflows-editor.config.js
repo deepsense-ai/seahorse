@@ -5,8 +5,15 @@ function WorkflowsConfig($stateProvider) {
   $stateProvider.
     state('workflows.editor', {
       url: '/:id/editor',
-      templateUrl: 'app/workflows/workflows-editor/workflows-editor.html',
-      controller: 'WorkflowsEditorController as workflow',
+      views: {
+        'navBar': {
+          template: '<workflow-editor-status-bar ng-show="stateData.dataIsLoaded"></workflow-editor-status-bar>'
+        },
+        'reportView': {
+          templateUrl: 'app/workflows/workflows-editor/workflows-editor.html',
+          controller: 'WorkflowsEditorController as workflow'
+        }
+      },
       resolve: {
         workflow: /* @ngInject */($q, $rootScope, $stateParams,
                                   WorkflowsApiClient, Operations, OperationsHierarchyService) =>

@@ -14,5 +14,7 @@ exports.inject = function (module) {
   require('./graph-panel-flowchart.js').inject(module);
   require('./graph-panel-renderer.service.js').inject(module);
 
+  require('./context-menu-wrapper/context-menu-wrapper.drv.js').inject(module);
+
   require('./multi-selection/multi-selection.js').inject(module);
 };
