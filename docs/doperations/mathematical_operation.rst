@@ -55,8 +55,8 @@ column names parsing is also case sensitive. I.e. SCORE is different than score.
 Comma separated expressions are not valid - `SIN(someColumn), COS(someColumn)`` will not be parsed properly.
 
 Please make sure that the formula is always producing Double values i.e.
-``MIN(weight, 2)`` will produce Integer value in some cases,
-it should be changed to ``MIN(weight, 2.0)``
+``MINIMUM(weight, 2)`` will produce Integer value in some cases,
+it should be changed to ``MINIMUM(weight, 2.0)``
 
 Null values are propagated. The expression ``POW(SIN(score), 2.0) + 1.0 as score_transformed``
 will return null for rows containing null values in score column
@@ -71,7 +71,7 @@ Available functions and operators:
 
   - ``EXP(expr: Double)`` returns e to the power of the specified expression
 
-  - ``POWER(expr: Double, pow: Double)`` returns the value of the specified expression to the specified power
+  - ``POW(expr: Double, pow: Double)`` returns the value of the specified expression to the specified power
 
   - ``SQRT(expr: Double)`` return the square root of the specified float value.
 
