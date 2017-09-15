@@ -8,7 +8,7 @@ import scala.collection.JavaConverters._
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
-import org.apache.spark.sql.types.{IntegerType, StructField, StructType}
+import org.apache.spark.sql.types.{StructField, IntegerType, StructType}
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.Matchers
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
@@ -26,7 +26,7 @@ class DataFrameSplitterIntegSpec
       forAll((s: Set[Int], range: Double, seed: Int) => {
         val rdd = createData(s.toSeq)
         val df = executionContext.dataFrameBuilder.buildDataFrame(createSchema, rdd)
-        val (df1, df2) = executeOperation(executionContext, operation(range, seed / 2))(df)
+        val (df1, df2) = executeOperation(executionContext, Split(range, seed / 2))(df)
         val dfCount = df.sparkDataFrame.count()
         val df1Count = df1.sparkDataFrame.count()
         val df2Count = df2.sparkDataFrame.count()
@@ -57,15 +57,6 @@ class DataFrameSplitterIntegSpec
     val df1 = operationResult.head.asInstanceOf[DataFrame]
     val df2 = operationResult.last.asInstanceOf[DataFrame]
     (df1, df2)
-  }
-
-  private def operation(range: Double, seed: Double): Split = {
-    val operation = new Split
-    val valueParam = operation.parameters.getNumericParameter(Split.SplitRatioParam)
-    valueParam.value = Some(range)
-    val seedParam = operation.parameters.getNumericParameter(Split.SeedParam)
-    seedParam.value = Some(seed)
-    operation
   }
 
   // Create double generator in rage <0,1> with 0.1 step

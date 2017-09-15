@@ -13,6 +13,8 @@ case class InferenceWarnings(warnings: Vector[InferenceWarning]) {
 
   def ++(other: InferenceWarnings): InferenceWarnings =
     InferenceWarnings(warnings ++ other.warnings)
+
+  def isEmpty(): Boolean = warnings.isEmpty
 }
 
 object InferenceWarnings {
