@@ -45,7 +45,7 @@ function BoxPlot() {
             tooltip: {
               headerFormat: ''
             }
-          }, {
+          }/*, {
             name: 'Outlier',
             color: Highcharts.getOptions().colors[0],
             type: 'scatter',
@@ -58,7 +58,7 @@ function BoxPlot() {
             tooltip: {
               pointFormat: 'Observation: {point.y}'
             }
-          }]
+          }*/]
         });
       }
 

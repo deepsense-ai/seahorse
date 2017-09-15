@@ -21,7 +21,7 @@ function ExportModalController($modalInstance, $stateParams, WorkflowsApiClient,
     }).
     finally(() => {
       this.loading = false;
-    })
+    });
 }
 
 exports.inject = function (module) {
