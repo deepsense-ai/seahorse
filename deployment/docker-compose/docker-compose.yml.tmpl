@@ -36,6 +36,9 @@ services:
       - "80:80"
     depends_on:
       - rabbitmq
+      - workflowmanager
+      - sessionmanager
+      - notebooks
   rabbitmq:
     image: docker-registry.intra.codilime.com/tap/deepsense-rabbitmq
     ports:
