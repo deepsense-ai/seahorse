@@ -94,7 +94,7 @@ def main():
     elif not extra_args:
         parser.print_help()
     else:
-        with tempfile.NamedTemporaryFile(dir='.') as temp:
+        with tempfile.NamedTemporaryFile(dir='.', suffix = '.yml') as temp:
             temp.write(docker_compose)
             temp.flush()
             # Ignore interruptions - they'll still be passed to the child process and this
