@@ -9,6 +9,7 @@ import java.util.UUID
 import scala.collection.mutable
 
 import akka.actor.Actor
+import spray.http.HttpHeaders
 import spray.routing._
 
 import io.deepsense.deploymodelservice.DeployModelJsonProtocol._
@@ -27,14 +28,27 @@ trait DeployModelService extends HttpService {
   val path = "regression"
   val repository: ModelRepository
 
+  val AccessControlAllowAll = HttpHeaders.RawHeader(
+    "Access-Control-Allow-Origin", "*"
+  )
+  val AccessControlAllowHeadersAll = HttpHeaders.RawHeader(
+    "Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept"
+  )
   val myRoute = pathPrefix(path) {
     path(JavaUUID) { id =>
+      options {
+        respondWithHeaders(AccessControlAllowAll, AccessControlAllowHeadersAll) {
+          complete("")
+        }
+      } ~
       post {
-        entity(as[GetScoringRequest]) { request =>
-          println("get " + id.toString())
-          val model = repository(id)
-          val score = model.score(request)
-          complete(ScoreResult(score))
+        respondWithHeaders(AccessControlAllowAll) {
+          entity(as[GetScoringRequest]) { request =>
+            println("get " + id.toString())
+            val model = repository(id)
+            val score = model.score(request)
+            complete(ScoreResult(score))
+          }
         }
       }
     } ~
