@@ -21,3 +21,5 @@ WORKFLOW_EXECUTOR_GITHUB_REPO_NAME: seahorse-workflow-executor
 
 SEAHORSE_EDITOR_DOMAIN: editor.seahorse.deepsense.io
 SEAHORSE_EDITOR_ADDRESS: http://editor.seahorse.deepsense.io
+
+PANDAS_LIBRARY_ADDRESS: http://pandas.pydata.org
