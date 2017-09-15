@@ -44,6 +44,8 @@ case class SerializableConstantFunction[T <: Serializable](value: T)
   *
   * This version removes all references to 'path' variables, gets rid of all
   * file datasources and uses arbitrary rdd passed in here in constructor.
+  *
+  * Also, this version sets default escape character to '\'.
   */
 object DeepsenseDefaultSource {
 
@@ -62,7 +64,7 @@ object DeepsenseDefaultSource {
       throw new Exception("Quotation cannot be more than one character.")
     }
 
-    val escape = parameters.getOrElse("escape", null)
+    val escape = parameters.getOrElse("escape", "\\")
     val escapeChar: Character = if (escape == null) {
       null
     } else if (escape.length == 1) {
