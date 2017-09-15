@@ -55,8 +55,8 @@ class GraphExecutorActorSpec
     trait TestGraphNodeExecutorFactory extends GraphNodeExecutorFactory {
       var nodeExecutors: Seq[TestProbe] = _
       var expectedNodes: List[Node] = _
+      var nodesToVisit: List[Node] = _
       var expectedDOperableCache: Results = _
-      var createdExecutorsCount = 0
       var expectedExperiment = experiment
 
       def createGraphNodeExecutor(
@@ -68,10 +68,11 @@ class GraphExecutorActorSpec
           executionContext.tenantId shouldBe experiment.tenantId
           ec shouldBe executionContext
           exp shouldBe expectedExperiment.markRunning
-          node shouldBe expectedNodes(createdExecutorsCount)
+          nodesToVisit should contain(node)
           dOperableCache shouldBe expectedDOperableCache
-          val returnedExecutor = nodeExecutors(createdExecutorsCount)
-          createdExecutorsCount += 1
+          val indexOfNode = expectedNodes.indexOf(node)
+          val returnedExecutor = nodeExecutors(indexOfNode)
+          nodesToVisit = nodesToVisit.filter(n => n != node)
           new Wrapper(returnedExecutor.ref)
         }
       }
@@ -106,13 +107,14 @@ class GraphExecutorActorSpec
       val nodeExecutors = Seq(TestProbe(), TestProbe())
       when(graph.readyNodes).thenReturn(nodes)
       gea.expectedNodes = nodes
+      gea.nodesToVisit = nodes
       gea.nodeExecutors = nodeExecutors
       gea.expectedDOperableCache = Map.empty
 
       geaRef ! Launch(experiment)
       gea.nodeExecutors(0).expectMsg(GraphNodeExecutorActor.Messages.Start())
       gea.nodeExecutors(1).expectMsg(GraphNodeExecutorActor.Messages.Start())
-      gea.createdExecutorsCount shouldBe 2
+      gea.nodesToVisit shouldBe empty
     }
 
     def mockOperation(): DOperation = {
@@ -179,7 +181,6 @@ class GraphExecutorActorSpec
           Entity.Id.randomId -> mock[DOperable],
           Entity.Id.randomId -> mock[DOperable])
         gea.expectedDOperableCache = dOperableCache1
-        gea.createdExecutorsCount = 0
         val spy = Mockito.spy(gea.experiment)
         when(spy.markRunning) thenReturn spy
         gea.expectedExperiment = spy
@@ -190,6 +191,7 @@ class GraphExecutorActorSpec
         when(spy.withNode(any())) thenReturn spy
         when(spy.readyNodes) thenReturn readyNodes
         gea.expectedNodes = readyNodes
+        gea.nodesToVisit = readyNodes
 
         geaRef ! GraphExecutorActor.Messages.NodeFinished(finishedNode, dOperableCache1)
 
