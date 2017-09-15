@@ -88,6 +88,9 @@ abstract class WorkflowApi @Inject() (
   private val versionedWorkflowUnmarashaler: Unmarshaller[Workflow] =
     sprayJsonUnmarshallerConverter[Workflow](versionedWorkflowReader)
 
+  private val versionedWorkflowWithResultsUnmarashaler: Unmarshaller[WorkflowWithResults] =
+    sprayJsonUnmarshallerConverter[WorkflowWithResults](versionedWorkflowWithResultsReader)
+
   implicit private val envelopeWorkflowIdJsonFormat =
     new EnvelopeJsonFormat[Workflow.Id]("workflowId")
 
@@ -111,15 +114,19 @@ abstract class WorkflowApi @Inject() (
               } ~
               put {
                 withUserContext { userContext =>
-                  implicit val unmarshaller = versionedWorkflowUnmarashaler
-                  entity(as[Workflow]) { workflow =>
-                    onSuccess(
-                      workflowManagerProvider
+                  implicit val unmarshaller = versionedWorkflowWithResultsUnmarashaler
+                  entity(as[WorkflowWithResults]) {
+                    workflowWithResults =>
+                      onComplete(workflowManagerProvider
                         .forContext(userContext)
-                        .update(workflowId, workflow)
-                    ) { _ =>
-                      complete(StatusCodes.OK)
-                    }
+                        .updateStructAndStates(workflowId, workflowWithResults)) {
+                        case Failure(exception) =>
+                          logger.info("Workflow & results update failed", exception)
+                          failWith(exception)
+                        case Success(_) =>
+                          logger.info("Workflow & results updated")
+                          complete(StatusCodes.OK)
+                      }
                   }
                 }
               } ~

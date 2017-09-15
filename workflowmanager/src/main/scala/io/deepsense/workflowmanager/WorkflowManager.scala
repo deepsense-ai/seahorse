@@ -110,4 +110,12 @@ trait WorkflowManager {
    * @param notebook Notebook to be saved.
    */
   def saveNotebook(workflowId: Workflow.Id, nodeId: Node.Id, notebook: String): Future[Unit]
+
+  /**
+   * Updates an workflow, and then updates its nodes states in WorkflowStateStorage.
+   *
+   * @param wfId Id of the workflow.
+   * @param wfWithResults Updated workflow and its updated results to save.
+   */
+  def updateStructAndStates(wfId: Workflow.Id, wfWithResults: WorkflowWithResults): Future[Unit]
 }

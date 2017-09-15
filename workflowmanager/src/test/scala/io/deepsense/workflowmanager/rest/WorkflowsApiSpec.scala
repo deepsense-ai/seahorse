@@ -729,11 +729,11 @@ class WorkflowsApiSpec
   }
 
   s"PUT /workflows/:id" should {
-    val workflow = newWorkflow()
-    val updatedWorkflow = workflow.copy(
-      metadata = workflow.metadata.copy(apiVersion = BuildInfo.version))
-    val updatedWorkflowWithNotebook = updatedWorkflow.copy(
-      additionalData = ThirdPartyData(notebookA))
+    val workflowWithResults = newWorkflowWithResults(workflowAId, newWorkflow())
+    val updatedWorkflowWithResults = workflowWithResults.copy(
+      metadata = workflowWithResults.metadata.copy(apiVersion = BuildInfo.version))
+    val updatedWorkflowWithResultsWithNotebook = workflowWithResults.copy(
+      thirdPartyData = ThirdPartyData(notebookA))
 
     "process authorization before reading PUT content" in {
       val invalidContent = JsObject()
@@ -743,14 +743,14 @@ class WorkflowsApiSpec
     }
     "update the workflow and return Ok" when {
       "user updates his workflow without notebook" in {
-        Put(s"/$apiPrefix/$workflowAId", updatedWorkflow) ~>
+        Put(s"/$apiPrefix/$workflowAId", updatedWorkflowWithResults) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
         }
         ()
       }
       "user updates his workflow with notebook" in {
-        Put(s"/$apiPrefix/$workflowAId", updatedWorkflowWithNotebook) ~>
+        Put(s"/$apiPrefix/$workflowAId", updatedWorkflowWithResultsWithNotebook) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.OK)
         }
@@ -760,7 +760,7 @@ class WorkflowsApiSpec
     "return NotFound" when {
       "the workflow does not exist" in {
         val nonExistingId = Workflow.Id.randomId
-        Put(s"/$apiPrefix/$nonExistingId", updatedWorkflow) ~>
+        Put(s"/$apiPrefix/$nonExistingId", updatedWorkflowWithResults) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.NotFound)
         }
@@ -769,8 +769,8 @@ class WorkflowsApiSpec
     }
     "return BadRequest" when {
       "updated workflow contains wrong API version" in {
-        val wrongUpdatedWorkflow =
-          workflow.copy(metadata = workflow.metadata.copy(apiVersion = "0.0.1"))
+        val wrongUpdatedWorkflow = workflowWithResults
+          .copy(metadata = workflowWithResults.metadata.copy(apiVersion = "0.0.1"))
         Put(s"/$apiPrefix/$workflowAId", wrongUpdatedWorkflow) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
           status should be(StatusCodes.BadRequest)
@@ -782,21 +782,21 @@ class WorkflowsApiSpec
     }
     "return Unauthorized" when {
       "invalid auth token was send (when InvalidTokenException occurs)" in {
-        Put(s"/$apiPrefix/" + workflowAId, updatedWorkflow) ~>
+        Put(s"/$apiPrefix/" + workflowAId, updatedWorkflowWithResults) ~>
           addHeader("X-Auth-Token", "its-invalid!") ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
         ()
       }
       "the user does not have the requested role (on NoRoleExeption)" in {
-        Put(s"/$apiPrefix/" + workflowAId, updatedWorkflow) ~>
+        Put(s"/$apiPrefix/" + workflowAId, updatedWorkflowWithResults) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantB) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
         ()
       }
       "no auth token was send (on MissingHeaderRejection)" in {
-        Put(s"/$apiPrefix/" + workflowAId, updatedWorkflow) ~> testRoute ~> check {
+        Put(s"/$apiPrefix/" + workflowAId, updatedWorkflowWithResults) ~> testRoute ~> check {
           status should be(StatusCodes.Unauthorized)
         }
       }
@@ -963,7 +963,10 @@ class WorkflowsApiSpec
   }
 
   def mockStatesStorage(): WorkflowStateStorage = {
-    mock[WorkflowStateStorage]
+    val workflowStatesStorage = mock[WorkflowStateStorage]
+    when(workflowStatesStorage.save(any(), any()))
+      .thenReturn(Future.successful[Unit](Unit))
+    workflowStatesStorage
   }
 
   def mockStorage(): WorkflowStorage = {

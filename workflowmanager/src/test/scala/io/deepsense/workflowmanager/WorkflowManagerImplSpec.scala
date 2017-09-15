@@ -54,7 +54,6 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
     mock[DirectedGraph],
     mock[ThirdPartyData],
     ExecutionReport(Map[io.deepsense.graph.Node.Id, NodeState]()))
-  Mockito.when(workflowStorage.saveExecutionResults(any())).thenReturn(Future.successful(()))
   Mockito.when(workflowResultStorage.save(any())).thenReturn(Future.successful(()))
 
   val workflowManager = new WorkflowManagerImpl(
@@ -73,6 +72,7 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
   "WorkflowManager.get(...)" should {
     "return None" when {
       "the requested workflow does not exist" in {
+        reset(workflowStorage)
         when(workflowStorage.get(any()))
           .thenReturn(Future.successful(None))
 
@@ -84,6 +84,7 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
       }
     }
     "return workflow from the storage" in {
+      reset(workflowStorage)
       when(workflowStorage.get(storedWorkflowId))
         .thenReturn(Future.successful(Some(storedWorkflow)))
       when(workflowStateStorage.get(storedWorkflowId))
@@ -96,10 +97,43 @@ class WorkflowManagerImplSpec extends StandardSpec with UnitTestSupport {
     }
     "delete workflow from the storage" is pending
     "save workflow in storage" is pending
+    "update workflow in storage" in {
+      reset(workflowStorage)
+      when(workflowStorage.get(storedWorkflowId))
+        .thenReturn(Future.successful(Some(storedWorkflow)))
+      when(workflowStorage.update(storedWorkflowId, storedWorkflow))
+        .thenReturn(Future.successful[Unit](Unit))
+
+      val res = workflowManager.update(storedWorkflowId, storedWorkflow)
+      whenReady(res) { _ => () }
+      verify(workflowStorage).update(storedWorkflowId, storedWorkflow)
+      ()
+    }
+    "update StructAndStates in storages" in {
+      reset(workflowStorage)
+      when(workflowStorage.get(storedWorkflowId))
+        .thenReturn(Future.successful(Some(storedWorkflow)))
+      when(workflowStorage.update(storedWorkflowId, storedWorkflow))
+        .thenReturn(Future.successful[Unit](Unit))
+      when(
+        workflowStateStorage
+          .save(storedWorkflowId, storedWorkflowWithResults.executionReport.states))
+        .thenReturn(Future.successful[Unit](Unit))
+
+      val res = workflowManager.updateStructAndStates(storedWorkflowId, storedWorkflowWithResults)
+      whenReady(res) { _ => () }
+      verify(workflowStorage).update(storedWorkflowId, storedWorkflow)
+      verify(workflowStateStorage)
+        .save(storedWorkflowId, storedWorkflowWithResults.executionReport.states)
+      ()
+    }
   }
 
   "WorkflowManager" should {
     "generate id and store result in two tables" in {
+      reset(workflowStorage)
+      when(workflowStorage.saveExecutionResults(any())).thenReturn(Future.successful(()))
+
       whenReady(workflowManager.saveWorkflowResults(workflowWithResults)) { results =>
         val resultId = results.executionReport.id
         val captor1 = ArgumentCaptor.forClass(classOf[WorkflowWithSavedResults])

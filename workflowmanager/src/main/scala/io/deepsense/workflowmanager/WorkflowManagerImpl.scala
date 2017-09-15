@@ -171,6 +171,14 @@ class WorkflowManagerImpl @Inject()(
     }
   }
 
+  override def updateStructAndStates(
+      wfId: Workflow.Id,
+      wfWithResults: WorkflowWithResults): Future[Unit] = {
+    val wf = Workflow(wfWithResults.metadata, wfWithResults.graph, wfWithResults.thirdPartyData)
+    update(wfId, wf).flatMap( _ =>
+      workflowStateStorage.save(wfWithResults.id, wfWithResults.executionReport.states))
+  }
+
   private def withResults(id: Workflow.Id, workflow: Workflow): Future[WorkflowWithResults] = {
     getExecutionReport(id, workflow).map(
       WorkflowWithResults(id, workflow.metadata, workflow.graph, workflow.additionalData, _)
