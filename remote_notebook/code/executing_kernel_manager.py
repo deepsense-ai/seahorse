@@ -27,9 +27,10 @@ class ExecutingKernelManager(object):
 
     EXECUTING_KERNEL_NAME = 'ExecutingKernel'
 
-    def __init__(self, rabbit_mq_address, session_id, workflow_id, executing_kernel_source_dir):
+    def __init__(self, gateway_address, rabbit_mq_address, session_id, workflow_id, executing_kernel_source_dir):
         super(ExecutingKernelManager, self).__init__()
         self._executing_kernel_source_dir = executing_kernel_source_dir
+        self._gateway_address = gateway_address
         self._rabbit_mq_address = rabbit_mq_address
         self._session_id = session_id
         self._workflow_id = workflow_id
@@ -92,6 +93,8 @@ class ExecutingKernelManager(object):
                                                     '--',
                                                     '--signature-key', signature_key,
                                                     '--kernel-id', kernel_id,
+                                                    '--gateway-host', self._gateway_address[0],
+                                                    '--gateway-port', str(self._gateway_address[1]),
                                                     '--mq-host', self._rabbit_mq_address[0],
                                                     '--mq-port', str(self._rabbit_mq_address[1]),
                                                     # FIXME hack, but will work on TAP
@@ -121,15 +124,18 @@ class ExecutingKernelManager(object):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('--gateway-host', action='store', dest='gateway_host')
+    parser.add_argument('--gateway-port', action='store', dest='gateway_port')
     parser.add_argument('--mq-host', action='store', dest='mq_host')
     parser.add_argument('--mq-port', action='store', dest='mq_port')
     parser.add_argument('--session-id',  action='store', dest='session_id')
     parser.add_argument('--workflow-id', action='store', dest='workflow_id')
     args = parser.parse_args()
 
+    gateway_address = (args.gateway_host, int(args.gateway_port))
     mq_address = (args.mq_host, int(args.mq_port))
 
     kernel_source_dir = os.path.join(os.getcwd(), 'executing_kernel')
-    ekm = ExecutingKernelManager(mq_address, args.session_id, args.workflow_id,
+    ekm = ExecutingKernelManager(gateway_address, mq_address, args.session_id, args.workflow_id,
                                  executing_kernel_source_dir=kernel_source_dir)
     ekm.run()

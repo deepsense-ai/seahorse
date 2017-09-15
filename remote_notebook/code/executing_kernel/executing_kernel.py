@@ -11,7 +11,6 @@ from traitlets import Type
 
 from rabbit_mq_client import RabbitMQClient, RabbitMQJsonSender, RabbitMQJsonReceiver
 from socket_forwarder import SocketForwarder
-from gateway_resolver import GatewayResolver
 from notebook_server_client import NotebookServerClient
 from utils import debug
 
@@ -52,8 +51,7 @@ class ExecutingKernel(IPythonKernel):
     def _init_kernel(self):
         mq_host, mq_port = self._rabbit_mq_address
         nb_host, nb_port = self._notebook_server_address
-        gateway_resolver = GatewayResolver([mq_host, mq_port])
-        gateway_host, gateway_port = gateway_resolver.get_gateway_address()
+        gateway_host, gateway_port = self._gateway_address
         kernel_init_file = os.path.join(os.getcwd(), "executing_kernel/kernel_init.py")
 
         nb_client = NotebookServerClient(nb_host, nb_port, self._kernel_id)
@@ -121,6 +119,12 @@ class ExecutingKernel(IPythonKernel):
     @property
     def _signature_key(self):
         return self._extract_argument(self.parent.argv, '--signature-key')
+
+    @property
+    def _gateway_address(self):
+        host = self._extract_argument(self.parent.argv, '--gateway-host')
+        port = self._extract_argument(self.parent.argv, '--gateway-port')
+        return host, int(port)
 
     @property
     def _rabbit_mq_address(self):

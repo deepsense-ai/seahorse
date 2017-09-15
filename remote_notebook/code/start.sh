@@ -23,6 +23,14 @@ case $key in
   ADDITIONAL_PYTHON_PATH="$2"
   shift # past argument
   ;;
+  --gateway-host)
+  GATEWAY_HOST="$2"
+  shift # past argument
+  ;;
+  --gateway-port)
+  GATEWAY_PORT="$2"
+  shift # past argument
+  ;;
   -h|--mq-host)
   MQ_HOST="$2"
   shift # past argument
@@ -48,12 +56,14 @@ shift # past argument or value
 done
 
 # Verifying if all required parameters are set
-if [ -z "$WORKING_DIR" ]; then echo "Parameter --working-dir is required"; exit -1; fi
+if [ -z "$WORKING_DIR" ];  then echo "Parameter --working-dir is required"; exit -1; fi
 if [ -z "$ADDITIONAL_PYTHON_PATH" ]; then echo "Parameter --additional-python-path is required"; exit -1; fi
-if [ -z "$MQ_HOST" ];     then echo "Parameter --mq-host is required"; exit -1; fi
-if [ -z "$MQ_PORT" ];     then echo "Parameter --mq-port is required"; exit -1; fi
-if [ -z "$WORKFLOW_ID" ]; then echo "Parameter --workflow-id is required"; exit -1; fi
-if [ -z "$SESSION_ID" ];  then echo "Parameter --session-id is required"; exit -1; fi
+if [ -z "$GATEWAY_HOST" ]; then echo "Parameter --gateway-host is required"; exit -1; fi
+if [ -z "$GATEWAY_PORT" ]; then echo "Parameter --gateway-port is required"; exit -1; fi
+if [ -z "$MQ_HOST" ];      then echo "Parameter --mq-host is required"; exit -1; fi
+if [ -z "$MQ_PORT" ];      then echo "Parameter --mq-port is required"; exit -1; fi
+if [ -z "$WORKFLOW_ID" ];  then echo "Parameter --workflow-id is required"; exit -1; fi
+if [ -z "$SESSION_ID" ];   then echo "Parameter --session-id is required"; exit -1; fi
 
 # Exit script after first erroneous instruction
 set -ex
@@ -70,6 +80,8 @@ cd $WORKING_DIR
 
 echo "start executing_kernel_manager"
 python executing_kernel/executing_kernel_manager.py \
+  --gateway-host "$GATEWAY_HOST" \
+  --gateway-port "$GATEWAY_PORT" \
   --mq-host "$MQ_HOST" \
   --mq-port "$MQ_PORT" \
   --workflow-id "$WORKFLOW_ID" \
