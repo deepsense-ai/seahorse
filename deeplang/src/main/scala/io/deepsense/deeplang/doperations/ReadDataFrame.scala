@@ -54,6 +54,7 @@ case class ReadDataFrame() extends DOperation0To1[DataFrame] with ReadDataFrameP
        StorageType.withName(storageTypeParameter.value) match {
          case StorageType.JDBC => readFromJdbc(context)
          case StorageType.FILE => readFromFile(context)
+         case StorageType.CASSANDRA => readFromCassandra(context)
        }
     } catch {
       case e: IOException => throw DeepSenseIOException(e)
@@ -120,6 +121,27 @@ case class ReadDataFrame() extends DOperation0To1[DataFrame] with ReadDataFrameP
           dataFrame.sparkDataFrame.rdd,
           categoricalColumnNames)
     }
+  }
+
+  def readFromCassandra(context: ExecutionContext): DataFrame = {
+    val dataFrame = context.dataFrameBuilder.buildDataFrame(context.sqlContext
+      .read.format("org.apache.spark.sql.cassandra")
+      .options(Map(
+        "keyspace" -> cassandraKeyspaceParameter.value,
+        "table" -> cassandraTableParameter.value
+      )).load())
+    val schema = dataFrame.sparkDataFrame.schema
+    val (categoricalColumnIndices, categoricalColumnNames) =
+      getCategoricalColumns(schema, categoricalColumnsParameter.value)
+    val convertedSchema = StructType(schema.zipWithIndex.map { case (column, index) =>
+      if (categoricalColumnIndices.contains(index)) {
+        column.copy(dataType = StringType)
+      } else {
+        column
+      }
+    })
+    context.dataFrameBuilder
+      .buildDataFrame(convertedSchema, dataFrame.sparkDataFrame.rdd, categoricalColumnNames)
   }
 
   private def determineLineSeparator() : String = {
@@ -189,7 +211,11 @@ case class ReadDataFrame() extends DOperation0To1[DataFrame] with ReadDataFrameP
   override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }
 
-trait ReadDataFrameParameters extends CsvParameters with JdbcParameters {
+trait ReadDataFrameParameters
+    extends CsvParameters
+    with JdbcParameters
+    with CassandraParameters {
+
   import io.deepsense.deeplang.doperations.ReadDataFrame._
 
   val csvShouldConvertToBooleanParameter = BooleanParameter(
@@ -227,6 +253,10 @@ trait ReadDataFrameParameters extends CsvParameters with JdbcParameters {
         "url" -> jdbcUrlParameter,
         "driver" -> jdbcDriverClassNameParameter,
         "table" -> jdbcTableNameParameter,
+        "categorical columns" -> categoricalColumnsParameter),
+      StorageType.CASSANDRA.toString -> ParametersSchema(
+        "keyspace" -> cassandraKeyspaceParameter,
+        "table" -> cassandraTableParameter,
         "categorical columns" -> categoricalColumnsParameter)
     ))
 

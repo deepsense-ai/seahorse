@@ -14,9 +14,11 @@ Output will be Hadoop-compatible partitioned file.
 It is possible to customize the file format (e.g. the values separator in CSV format)
 by setting appropriate parameters.
 
-It also supports writing data to JDBC compatible databases.
-For more detailed information on using JDBC driver, visit:
-[Workflow Executor documentation](../workflowexecutor.html#custom-jdbc-drivers).
+It also supports writing data to JDBC compatible databases and Cassandra. <BR/>
+For more detailed information on using JDBC driver, visit
+[Custom JDBC drivers](../workflowexecutor.html#custom-jdbc-drivers) section. <BR/>
+For more detailed information on using Cassandra, visit
+[Cassandra configuration](../workflowexecutor.html#cassandra-configuration) section.
 
 
 ## Available file formats
@@ -90,7 +92,7 @@ Write DataFrame operation does not produce any output.
         <code><a href="../parameters.html#single_choice">Choice</a></code>
       </td>
       <td>The input data storage type. Possible values are:
-        <code>FILE</code>, <code>JDBC</code>.
+        <code>FILE</code>, <code>JDBC</code>, <code>CASSANDRA</code>.
       </td>
     </tr>
 
@@ -189,10 +191,21 @@ Write DataFrame operation does not produce any output.
       <td>
         <code><a href="../parameters.html#string">String</a></code>
       </td>
-      <td>Valid only if <code>data storage type = JDBC</code>.
-        JDBC table name.
-        Table with appropriate schema will be created,
-        if table already exists, exception will be thrown.
+      <td>Valid only if <code>data storage type = JDBC</code> or <code>data storage type = CASSANDRA</code>.
+        JDBC/Cassandra table name.
+        In case of JDBC, table with appropriate schema will be created; if table already exists, exception will be thrown.
+        In case of Cassandra, table must already exist, match dataframe schema and be empty.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code id="keyspace">keyspace</code>
+      </td>
+      <td>
+        <code><a href="../parameters.html#string">String</a></code>
+      </td>
+      <td>Valid only if <code>data storage type = CASSANDRA</code>.
+        Cassandra keyspace.
       </td>
     </tr>
   </tbody>

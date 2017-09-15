@@ -122,6 +122,19 @@ For more information on
 <a target="_blank" href="http://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/submitting-applications.html#advanced-dependency-management">Apache Spark documentation</a>.
 
 
+## Cassandra configuration
+
+To allow usage of Cassandra database as data source in I/O operations the following configuration
+parameters need to be defined either in Spark configuration or passed to ``spark-submit``
+using ``--conf`` option:
+
+* ``spark.cassandra.connection.host``
+* ``spark.cassandra.connection.port``
+* ``spark.cassandra.auth.username``
+* ``spark.cassandra.auth.password``
+
+For more information, please visit <a target="_blank" href="http://spark.apache.org/docs/{{ site.WORKFLOW_EXECUTOR_SPARK_VERSION }}/submitting-applications.html#launching-applications-with-spark-submit">Apache Spark documentation</a>.
+
 
 ## Workflow Executor Command Line Parameters
 

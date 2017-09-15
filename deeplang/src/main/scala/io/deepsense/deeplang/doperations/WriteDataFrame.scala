@@ -42,7 +42,8 @@ import io.deepsense.deeplang.{DOperation1To0, ExecutionContext, FileSystemClient
 case class WriteDataFrame()
   extends DOperation1To0[DataFrame]
   with CsvParameters
-  with JdbcParameters {
+  with JdbcParameters
+  with CassandraParameters {
 
   override val id: Id = "9e460036-95cc-42c5-ba64-5bc767a40e4e"
 
@@ -65,13 +66,16 @@ case class WriteDataFrame()
     options = ListMap(
       StorageType.FILE.toString -> ParametersSchema(
         "output file" -> outputFileParameter,
-        "format" -> fileFormatParameter
-        ),
+        "format" -> fileFormatParameter),
       StorageType.JDBC.toString -> ParametersSchema(
         "url" -> jdbcUrlParameter,
         "driver" -> jdbcDriverClassNameParameter,
-        "table" -> jdbcTableNameParameter)
-    ))
+        "table" -> jdbcTableNameParameter),
+      StorageType.CASSANDRA.toString -> ParametersSchema(
+        "keyspace" -> cassandraKeyspaceParameter,
+        "table" -> cassandraTableParameter)
+      )
+    )
 
   val outputFileParameter = StringParameter(
     description = "Output file path",
@@ -84,7 +88,9 @@ case class WriteDataFrame()
     try {
       StorageType.withName(storageTypeParameter.value) match {
         case StorageType.JDBC =>
-          writeToJdbc(context, dataFrame: DataFrame)
+          writeToJdbc(context, dataFrame)
+        case StorageType.CASSANDRA =>
+          writeToCassandra(context, dataFrame)
         case StorageType.FILE =>
           val path = FileSystemClient
             .replaceLeadingTildeWithHomeDirectory(outputFileParameter.value)
@@ -111,6 +117,17 @@ case class WriteDataFrame()
     val uncategorizedDataFrame = mapper.uncategorized(dataFrame)
     uncategorizedDataFrame.sparkDataFrame
       .write.jdbc(jdbcUrlParameter.value, jdbcTableNameParameter.value, properties)
+  }
+
+  def writeToCassandra(context: ExecutionContext, dataFrame: DataFrame): Unit = {
+    val mapper = CategoricalMapper(dataFrame, context.dataFrameBuilder)
+    val uncategorizedDataFrame = mapper.uncategorized(dataFrame)
+    uncategorizedDataFrame.sparkDataFrame
+      .write.format("org.apache.spark.sql.cassandra")
+      .options(Map(
+        "keyspace" -> cassandraKeyspaceParameter.value,
+        "table" -> cassandraTableParameter.value
+      )).save()
   }
 
   def writeToFile(context: ExecutionContext, dataFrame: DataFrame, path: String): Unit = {

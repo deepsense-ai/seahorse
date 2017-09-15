@@ -21,9 +21,8 @@ import java.sql.Timestamp
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.{StructField, StructType}
 import org.scalatest.BeforeAndAfter
-
 import io.deepsense.commons.types.ColumnType
-import io.deepsense.deeplang.DeeplangIntegTestSupport
+import io.deepsense.deeplang.{CassandraTestSupport, DeeplangIntegTestSupport}
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.dataframe.types.SparkConversions
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoriesMapping, MappingMetadataConverter}
@@ -32,26 +31,30 @@ import io.deepsense.deeplang.parameters._
 
 class WriteReadDataFrameIntegSpec
   extends DeeplangIntegTestSupport
-  with BeforeAndAfter {
+  with BeforeAndAfter
+  with CassandraTestSupport {
 
   val absoluteWriteReadDataFrameTestPath =  absoluteTestsDirPath + "/WriteReadDataFrameTest"
+
+  override def cassandraKeySpaceName: String = "dataframes"
+  override def cassandraTableName: String = "dataframe"
 
   val time = System.currentTimeMillis()
   val timestamp = new Timestamp(time)
 
-  val schema: StructType = StructType(Seq(
-    StructField("boolean",
-      SparkConversions.columnTypeToSparkColumnType(ColumnType.boolean)),
-    StructField("categorical",
-      SparkConversions.columnTypeToSparkColumnType(ColumnType.categorical),
-      metadata = MappingMetadataConverter.mappingToMetadata(CategoriesMapping(Seq("A", "B", "C")))),
-    StructField("numeric",
-      SparkConversions.columnTypeToSparkColumnType(ColumnType.numeric)),
-    StructField("string",
-      SparkConversions.columnTypeToSparkColumnType(ColumnType.string)),
-    StructField("timestamp",
-      SparkConversions.columnTypeToSparkColumnType(ColumnType.timestamp))
-  ))
+  def createSchema: StructType = {
+    StructType(Seq(
+      StructField("boolean", SparkConversions.columnTypeToSparkColumnType(ColumnType.boolean)),
+      StructField(
+        "categorical",
+        SparkConversions.columnTypeToSparkColumnType(ColumnType.categorical),
+        metadata =
+          MappingMetadataConverter.mappingToMetadata(CategoriesMapping(Seq("A", "B", "C")))),
+      StructField("numeric", SparkConversions.columnTypeToSparkColumnType(ColumnType.numeric)),
+      StructField("string", SparkConversions.columnTypeToSparkColumnType(ColumnType.string)),
+      StructField("timestamp", SparkConversions.columnTypeToSparkColumnType(ColumnType.timestamp))
+    ))
+  }
 
   val rows = Seq(
     Row(true, 0, 0.45, "3.14", timestamp),
@@ -60,7 +63,7 @@ class WriteReadDataFrameIntegSpec
     Row(null, null, null, null, null)
   )
 
-  val dataFrame = createDataFrame(rows, schema)
+  val dataFrame = createDataFrame(rows, createSchema)
 
   before {
     fileSystemClient.delete(testsDir)
@@ -83,7 +86,7 @@ class WriteReadDataFrameIntegSpec
     }
 
     "write and read JSON file" in {
-      val convertedSchema = schema.copy()
+      val convertedSchema = createSchema
       val timestampFieldIndex = convertedSchema.fieldIndex("timestamp")
 
       convertedSchema.fields.update(
@@ -123,5 +126,47 @@ class WriteReadDataFrameIntegSpec
 
       assertDataFramesEqual(loadedDataFrame, convertedDataFrame, checkRowOrder = false)
     }
+
+    "write and read from cassandra" in {
+
+      // Cassandra requires non-null primary key column
+      val schema = createSchema
+      val convertedSchema = schema.copy(fields =
+        StructField("id", SparkConversions.columnTypeToSparkColumnType(ColumnType.string)) +:
+        schema.fields)
+      val convertedRows = rows.zipWithIndex.map { case (r, i) => Row((i.toString +: r.toSeq): _*) }
+      val dataFrame = createDataFrame(convertedRows, convertedSchema)
+
+      createTable()
+
+      val wdf = WriteDataFrame()
+      wdf.storageTypeParameter.value = StorageType.CASSANDRA.toString
+      wdf.cassandraTableParameter.value = cassandraTableName
+      wdf.cassandraKeyspaceParameter.value = cassandraKeySpaceName
+      wdf.execute(executionContext)(Vector(dataFrame))
+
+      val rdf = ReadDataFrame()
+      rdf.storageTypeParameter.value = StorageType.CASSANDRA.toString
+      rdf.cassandraTableParameter.value = cassandraTableName
+      rdf.cassandraKeyspaceParameter.value = cassandraKeySpaceName
+      rdf.categoricalColumnsParameter.value =
+        MultipleColumnSelection(Vector(NameColumnSelection(Set("categorical"))))
+      val loadedDataFrame = rdf.execute(executionContext)(Vector()).head.asInstanceOf[DataFrame]
+
+      assertDataFramesEqual(loadedDataFrame, dataFrame, checkRowOrder = false)
+    }
+  }
+
+  def createTable(): Unit = {
+    session.execute(s"""
+      |CREATE TABLE IF NOT EXISTS $cassandraTableName (
+      |  boolean BOOLEAN,
+      |  categorical TEXT,
+      |  numeric DOUBLE,
+      |  string TEXT,
+      |  timestamp TIMESTAMP,
+      |  id TEXT,
+      |  PRIMARY KEY(id)
+      |)""".stripMargin)
   }
 }

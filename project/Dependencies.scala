@@ -17,19 +17,22 @@
 import sbt._
 
 object Version {
-  val akka          = "2.3.4-spark"
-  val amazonS3      = "1.10.16"
-  val spark         = "1.4.0"
-  val hadoop        = "2.6.0"
-  val apacheCommons = "3.3.+"
-  val sprayJson     = "1.3.1"
-  val mockito       = "1.10.19"
-  val nsscalaTime   = "1.8.0"
-  val scala         = "2.10.5"
-  val scalacheck    = "1.12.2"
-  val scalatest     = "3.0.0-SNAP4"
-  val spray         = "1.3.3"
-  val scoverage     = "1.0.4"
+  val akka               = "2.3.4-spark"
+  val amazonS3           = "1.10.16"
+  val spark              = "1.4.0"
+  val hadoop             = "2.6.0"
+  val apacheCommons      = "3.3.+"
+  val sprayJson          = "1.3.1"
+  val mockito            = "1.10.19"
+  val nsscalaTime        = "1.8.0"
+  val scala              = "2.10.5"
+  val scalacheck         = "1.12.2"
+  val scalatest          = "3.0.0-SNAP4"
+  val spray              = "1.3.3"
+  val scoverage          = "1.0.4"
+  val cassandra          = "2.1.5"
+  val cassandraConnector = "1.4.0"
+  val cassandraUnit      = "2.1.3.1"
 }
 
 object Library {
@@ -41,13 +44,13 @@ object Library {
   val akkaActor          = akka("actor")
   val akkaTestkit        = akka("testkit")
   val amazonS3           = "com.amazonaws"                     % "aws-java-sdk-s3"           % Version.amazonS3 exclude("com.fasterxml.jackson.core", "jackson-databind")
-  val apacheCommons      = "org.apache.commons"                %  "commons-lang3"            % Version.apacheCommons
-  val log4JExtras        = "log4j"                             %  "apache-log4j-extras"      % "1.2.17"
-  val nscalaTime         = "com.github.nscala-time"           %%  "nscala-time"              % Version.nsscalaTime
-  val mockitoCore        = "org.mockito"                       %  "mockito-core"             % Version.mockito
-  val scalacheck         = "org.scalacheck"                   %%  "scalacheck"               % Version.scalacheck
+  val apacheCommons      = "org.apache.commons"                % "commons-lang3"             % Version.apacheCommons
+  val log4JExtras        = "log4j"                             % "apache-log4j-extras"       % "1.2.17"
+  val nscalaTime         = "com.github.nscala-time"           %% "nscala-time"               % Version.nsscalaTime
+  val mockitoCore        = "org.mockito"                       % "mockito-core"              % Version.mockito
+  val scalacheck         = "org.scalacheck"                   %% "scalacheck"                % Version.scalacheck
   val slf4j              = "org.slf4j"                         % "slf4j-api"                 % "1.7.12"
-  val slf4jLog4j         = "org.slf4j"                         %  "slf4j-log4j12"            % "1.7.12"
+  val slf4jLog4j         = "org.slf4j"                         % "slf4j-log4j12"             % "1.7.12"
   val sprayCan           = spray("can")
   val sprayClient        = spray("client")
   val sprayHttpx         = spray("httpx")
@@ -62,6 +65,9 @@ object Library {
   val hadoopAWS          = hadoop("aws")
   val hadoopClient       = hadoop("client")
   val hadoopCommon       = hadoop("common")
+  val cassandra          = "com.datastax.cassandra"            % "cassandra-driver-core"     % Version.cassandra
+  val cassandraConnector = "com.datastax.spark"               %% "spark-cassandra-connector" % Version.cassandraConnector
+  val cassandraUnit      = "org.cassandraunit"                 % "cassandra-unit"            % Version.cassandraUnit
 }
 
 object Dependencies {
@@ -96,8 +102,9 @@ object Dependencies {
     sparkCore,
     hadoopAWS,
     hadoopClient,
-    hadoopCommon
-  ) ++ Seq(scalatest, mockitoCore, scalacheck, scoverage).map(_ % Test)
+    hadoopCommon,
+    cassandraConnector
+  ) ++ Seq(scalatest, mockitoCore, scalacheck, scoverage, cassandra, cassandraUnit).map(_ % Test)
 
   val entitystorageClient = Seq(
     akkaActor
