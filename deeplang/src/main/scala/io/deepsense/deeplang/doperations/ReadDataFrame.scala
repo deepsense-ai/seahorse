@@ -17,10 +17,12 @@
 package io.deepsense.deeplang.doperations
 
 import java.io.IOException
+import java.util.UUID
 
 import scala.collection.immutable.ListMap
 import scala.reflect.runtime.{universe => ru}
 
+import org.apache.spark.SparkContext
 import org.apache.spark.sql.types.{StringType, StructType}
 import org.apache.spark.sql.{DataFrame => SparkDataFrame}
 
@@ -52,16 +54,7 @@ case class ReadDataFrame()
       case StorageType.CASSANDRA =>
         readFromCassandra _ andThen addCategoricalsToSchema
       case StorageType.FILE =>
-        val path = FileSystemClient.replaceLeadingTildeWithHomeDirectory(sourceFileParameter.value)
-
-        FileFormat.withName(fileFormatParameter.value) match {
-          case FileFormat.PARQUET =>
-            readFromParquetFile(path) _ andThen context.dataFrameBuilder.buildDataFrame
-          case FileFormat.JSON =>
-            readFromJsonFile(path) _ andThen addCategoricalsToSchema
-          case FileFormat.CSV =>
-            readFromCsvFile(path) _ andThen inferAndConvert andThen addCategoricalsToSchema
-        }
+        prepareFilePath _ andThen readFromFile
     }
 
     try {
@@ -86,6 +79,18 @@ case class ReadDataFrame()
       .option("table", cassandraTableParameter.value)
       .load()
 
+  private def readFromFile(path: String)(implicit context: ExecutionContext) = {
+    val readPipeline = FileFormat.withName(fileFormatParameter.value) match {
+      case FileFormat.PARQUET =>
+        readFromParquetFile(path) _ andThen context.dataFrameBuilder.buildDataFrame
+      case FileFormat.JSON =>
+        readFromJsonFile(path) _ andThen addCategoricalsToSchema
+      case FileFormat.CSV =>
+        readFromCsvFile(path) _ andThen inferAndConvert andThen addCategoricalsToSchema
+    }
+    readPipeline(context)
+  }
+
   private def readFromParquetFile(path: String)(context: ExecutionContext): SparkDataFrame =
     context.sqlContext.read.parquet(path)
 
@@ -99,6 +104,34 @@ case class ReadDataFrame()
       .option("delimiter", determineColumnSeparator().toString)
       .load(path)
 
+  private def prepareFilePath(context: ExecutionContext) = {
+    val path = sourceFileParameter.value
+    if (isUrlSource(path)) {
+      downloadFile(path, context.sparkContext)
+    } else {
+      FileSystemClient.replaceLeadingTildeWithHomeDirectory(path)
+    }
+  }
+
+  private def isUrlSource(path: String): Boolean = {
+    val isHttp = path.startsWith("http://") || path.startsWith("https://")
+    val isFtp = path.startsWith("ftp://")
+    isHttp || isFtp
+  }
+
+  private def downloadFile(url: String, sparkContext: SparkContext): String = {
+    val prefix = if (sparkContext.isLocal) {
+      "file://"
+    } else {
+      "hdfs://"
+    }
+
+    val fileName = s"$prefix/tmp/deepsense/download/${UUID.randomUUID().toString}"
+    val content = scala.io.Source.fromURL(url).mkString
+    val lines = content.split("\n")
+    sparkContext.parallelize(lines).saveAsTextFile(fileName)
+    fileName
+  }
 
   private def addCategoricalsToSchema(
       sparkDataFrame: SparkDataFrame)(

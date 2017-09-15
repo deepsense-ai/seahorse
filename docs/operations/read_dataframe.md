@@ -11,6 +11,10 @@ Reads a DataFrame from a specified data storage type.
 Supports reading files (CSV, JSON or PARQUET) from local file system, Amazon S3 and HDFS
 (it supports reading Hadoop-compatible partitioned files).
 
+Additionally, HTTP/HTTPS and FTP URLs are supported. E.g. specifying
+``https://seahorse.deepsense.io/_static/transactions.csv`` as ``source`` parameter will download
+the example file from HTTP server.
+
 It also supports writing data to JDBC compatible databases and Cassandra. <BR/>
 For more detailed information on using JDBC driver, visit
 [Custom JDBC drivers](../workflowexecutor.html#custom-jdbc-drivers) section. <BR/>
