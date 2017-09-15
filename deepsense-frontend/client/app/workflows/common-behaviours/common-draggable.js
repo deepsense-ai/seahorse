@@ -22,6 +22,13 @@ function Draggable($rootScope, $log, DragAndDrop) {
       }
 
       function dragstart(event) {
+        if(!event.target.draggable) {
+          // Workaround for SHR-32. Problem might be somewhere else or even in Chrome itself.
+          // TODO Fix this at problems root instead of workarounding here
+          console.warn('Dragstart called on element with draggable=false.');
+          return true;
+        }
+
         $log.debug('Drag started on', element[0]);
 
         /* filter to cascaded draggable elements */
