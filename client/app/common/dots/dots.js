@@ -24,7 +24,7 @@ function Dots($timeout) {
           case 'loading':
             if (!dots) {
               dots = angular.element(element)
-                .after('<span class="o-dots">.......</span>').next();
+                .after('<span class="o-dots"></span>').next();
               processDots();
               element.attr('disabled', 'disabled');
             }
@@ -41,6 +41,8 @@ function Dots($timeout) {
           process(newValue);
         }
       });
+
+      process(scope.dynamicDotsStatus);
     }
   };
 }

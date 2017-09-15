@@ -1,10 +1,10 @@
 'use strict';
 
 /* @ngInject */
-function ExportModalController($modalInstance, $stateParams, WorkflowsApiClient) {
+function ExportModalController($modalInstance, $stateParams, WorkflowsApiClient, WorkflowService) {
   _.assign(this, {
     errorMessage: '',
-    loading: false,
+    loading: true,
     close: () => {
       $modalInstance.dismiss();
     },
@@ -14,6 +14,14 @@ function ExportModalController($modalInstance, $stateParams, WorkflowsApiClient)
       `));
     }
   });
+
+  WorkflowService.saveWorkflow().
+    catch(() => {
+      this.errorMessage = 'Could not save the workflow';
+    }).
+    finally(() => {
+      this.loading = false;
+    })
 }
 
 exports.inject = function (module) {
