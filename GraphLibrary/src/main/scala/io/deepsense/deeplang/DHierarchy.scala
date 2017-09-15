@@ -16,31 +16,38 @@ import scala.reflect.runtime.{universe => ru}
 class DHierarchy {
   private val mirror = ru.runtimeMirror(getClass.getClassLoader)
   private val baseType = ru.typeOf[DOperable]
-  /** All registered classNodes. */
-  private val classNodes: mutable.Map[String, ClassNode] = mutable.Map()
+  /** All registered nodes. */
+  private val nodes: mutable.Map[String, Node] = mutable.Map()
 
   this.register(baseType)
 
-  private class ClassNode(private val classInfo: Class[_]) {
+  private class Node(private val classInfo: Class[_]) {
     /** Set of all direct subclasses and subtraits. */
-    private val successors: mutable.Map[String, ClassNode] = mutable.Map()
+    private val successors: mutable.Map[String, Node] = mutable.Map()
+    /** Set of all direct superclasses and supertraits. */
+    private val predecessors: mutable.Map[String, Node] = mutable.Map()
     /** Name that unambiguously defines underlying type. */
     private[DHierarchy] val name: String = classInfo.getName.replaceAllLiterally("$", ".")
+    private[DHierarchy] val isTrait: Boolean = classInfo.isInterface
 
-    private[DHierarchy] def addSubclass(classNode: ClassNode): Unit = {
-      successors(classNode.name) = classNode
+    private[DHierarchy] def addSuccessor(node: Node): Unit = {
+      successors(node.name) = node
+    }
+
+    private[DHierarchy] def addPredecessor(node: Node): Unit = {
+      predecessors(node.name) = node
     }
 
     private def sumSets[T](sets: Iterable[mutable.Set[T]]) : mutable.Set[T] = {
       sets.foldLeft(mutable.Set[T]())((x,y) => x++y)
     }
 
-    /** Returns set of all leaf-classes that are descendants of this. */
-    private[DHierarchy] def leafClassNodes: mutable.Set[ClassNode] = {
+    /** Returns set of all leaf-nodes that are descendants of this. */
+    private[DHierarchy] def leafNodes: mutable.Set[Node] = {
       if (successors.isEmpty) mutable.Set(this) // this is leaf-class
       else {
-        val descendants = successors.values.map(_.leafClassNodes)
-        sumSets[ClassNode](descendants)
+        val descendants = successors.values.map(_.leafNodes)
+        sumSets[Node](descendants)
       }
     }
 
@@ -53,7 +60,7 @@ class DHierarchy {
       constructor.newInstance().asInstanceOf[DOperable]
     }
 
-    override def toString = s"ClassNode($name)"
+    override def toString = s"Node($name)"
   }
 
   private def classToType(c: Class[_]): ru.Type = mirror.classSymbol(c).toType
@@ -62,41 +69,42 @@ class DHierarchy {
 
   private def symbolToType(s: ru.Symbol): ru.Type = s.asClass.toType
 
-  private def addClassNode(classNode: ClassNode): Unit = classNodes(classNode.name) = classNode
+  private def addNode(node: Node): Unit = nodes(node.name) = node
 
   /**
    * Tries to register type in hierarchy.
-   * Returns Some(classNode) if succeed and None otherwise.
+   * Returns Some(node) if succeed and None otherwise.
    * Value t and classInfo should be describing the same type.
    */
-  private def register(t: ru.Type, classInfo: Class[_]): Option[ClassNode] = {
+  private def register(t: ru.Type, classInfo: Class[_]): Option[Node] = {
     if (!(t <:< baseType))
       return None
 
-    val classNode = new ClassNode(classInfo)
+    val node = new Node(classInfo)
 
-    val registeredClassNode = classNodes.get(classNode.name)
-    if (registeredClassNode.isDefined)
-      return registeredClassNode
+    val registeredNode = nodes.get(node.name)
+    if (registeredNode.isDefined)
+      return registeredNode
 
     val superTypes = classInfo.getInterfaces :+ classInfo.getSuperclass
     val superNodes = superTypes.map(register).flatten
-    superNodes.foreach(_.addSubclass(classNode))
-    addClassNode(classNode)
-    Some(classNode)
+    superNodes.foreach(_.addSuccessor(node))
+    superNodes.foreach(node.addPredecessor(_))
+    addNode(node)
+    Some(node)
   }
 
-  private def register(classInfo: Class[_]): Option[ClassNode] = {
+  private def register(classInfo: Class[_]): Option[Node] = {
     if (classInfo == null) return None
     register(classToType(classInfo), classInfo)
   }
 
-  private def register(t: ru.Type): Option[ClassNode] = {
+  private def register(t: ru.Type): Option[Node] = {
     register(t, typeToClass(t))
   }
 
-  /** Returns classNodes that correspond given type signature T. */
-  private def classNodesForType[T: ru.TypeTag]: Traversable[ClassNode] = {
+  /** Returns nodes that correspond given type signature T. */
+  private def nodesForType[T: ru.TypeTag]: Traversable[Node] = {
     val allBases: List[ru.Symbol] = ru.typeOf[T].baseClasses
 
     // 'allBases' contains symbols of all (direct and indirect) superclasses of T,
@@ -115,7 +123,7 @@ class DHierarchy {
     }
 
     val baseClassesNames: Set[String] = uniqueBaseClasses.map(_.fullName)
-    classNodes.filterKeys(baseClassesNames.contains).values
+    nodes.filterKeys(baseClassesNames.contains).values
   }
 
   /** Intersection of collection of sets. */
@@ -126,9 +134,9 @@ class DHierarchy {
 
   /** Returns instances of all leaf-classes that fulfil type signature T. */
   def concreteSubclassesInstances[T: ru.TypeTag]: mutable.Set[DOperable] = {
-    val typeClassNodes = classNodesForType[T]
-    val leafClassNodes = typeClassNodes.map(_.leafClassNodes)
-    val intersect = intersectSets[ClassNode](leafClassNodes)
+    val typeNodes = nodesForType[T]
+    val leafNodes = typeNodes.map(_.leafNodes)
+    val intersect = intersectSets[Node](leafNodes)
     intersect.map(_.createInstance())
   }
 
