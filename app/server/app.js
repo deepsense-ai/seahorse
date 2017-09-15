@@ -21,6 +21,13 @@ app.use(timeoutHandler);
 app.use(compression());
 app.disable('x-powered-by');
 
+app.use(function (req, res, next) {
+  if (req.headers['x-forwarded-proto'] !== 'https' && !req.headers.host.startsWith("localhost:")) {
+    return res.redirect(301, 'https://' + req.headers.host + '/');
+  }
+  next();
+});
+
 auth.init(app);
 
 app.get('/',
