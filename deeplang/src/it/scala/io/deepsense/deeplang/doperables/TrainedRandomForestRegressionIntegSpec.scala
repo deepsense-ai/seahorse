@@ -22,6 +22,7 @@ import org.apache.spark.rdd.RDD
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 
+import io.deepsense.deeplang.doperables.machinelearning.randomforest.RandomForestParameters
 import io.deepsense.deeplang.doperables.machinelearning.randomforest.regression.TrainedRandomForestRegression
 
 class TrainedRandomForestRegressionIntegSpec extends TrainedTreeRegressionIntegSpec {
@@ -33,11 +34,13 @@ class TrainedRandomForestRegressionIntegSpec extends TrainedTreeRegressionIntegS
     targetColumnName: String,
     resultDoubles: Seq[Double]): Scorable = {
 
+    val mockParameters = mock[RandomForestParameters]
+
     val mockModel = createRegressionModelMock(
       expectedInput = inputVectors,
       output = resultDoubles)
 
-    TrainedRandomForestRegression(mockModel, featureColumnNames, targetColumnName)
+    TrainedRandomForestRegression(mockParameters, mockModel, featureColumnNames, targetColumnName)
   }
 
   private def createRegressionModelMock(

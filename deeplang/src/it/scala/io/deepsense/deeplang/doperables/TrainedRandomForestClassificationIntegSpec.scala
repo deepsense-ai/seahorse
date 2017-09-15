@@ -29,6 +29,7 @@ import org.mockito.stubbing.Answer
 import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.{CategoriesMapping, MappingMetadataConverter}
+import io.deepsense.deeplang.doperables.machinelearning.randomforest.RandomForestParameters
 import io.deepsense.deeplang.doperables.machinelearning.randomforest.classification.TrainedRandomForestClassification
 import io.deepsense.deeplang.doperations.exceptions.{ColumnsDoNotExistException, WrongColumnTypeException}
 
@@ -113,11 +114,14 @@ class TrainedRandomForestClassificationIntegSpec extends DeeplangIntegTestSuppor
       targetColumnName: String,
       resultDoubles: Seq[Double]): Scorable = {
 
+    val mockParameters = mock[RandomForestParameters]
+
     val mockModel = createClassificationModelMock(
       expectedInput = inputVectors,
       output = resultDoubles)
 
-    TrainedRandomForestClassification(mockModel, featureColumnNames, targetColumnName)
+    TrainedRandomForestClassification(
+      mockParameters, mockModel, featureColumnNames, targetColumnName)
   }
 
   private def createClassificationModelMock(

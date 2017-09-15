@@ -18,12 +18,12 @@ package io.deepsense.deeplang.doperables.machinelearning.randomforest.regression
 
 import org.apache.spark.mllib.tree.{RandomForest => SparkRandomForest}
 
+import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang._
+import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.machinelearning.randomforest.RandomForestParameters
-import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
-import io.deepsense.reportlib.model.ReportContent
 
 case class UntrainedRandomForestRegression(
     modelParameters: RandomForestParameters)
@@ -59,7 +59,8 @@ case class UntrainedRandomForestRegression(
         modelParameters.maxDepth,
         modelParameters.maxBins)
 
-      val result = TrainedRandomForestRegression(trainedModel, featureColumns, targetColumn)
+      val result = TrainedRandomForestRegression(
+        modelParameters, trainedModel, featureColumns, targetColumn)
 
       labeledPoints.unpersist()
       result
@@ -72,8 +73,18 @@ case class UntrainedRandomForestRegression(
     }
   }
 
-  override def report(executionContext: ExecutionContext): Report =
-    Report(ReportContent("Report for UntrainedRandomForestRegression"))
+  override def report(executionContext: ExecutionContext): Report = {
+    DOperableReporter("Untrained Random Forest Regression")
+      .withParameters(
+        description = "",
+        ("Num trees", ColumnType.numeric, modelParameters.numTrees.toString),
+        ("Feature subset strategy", ColumnType.string, modelParameters.featureSubsetStrategy),
+        ("Impurity", ColumnType.string, modelParameters.impurity),
+        ("Max depth", ColumnType.numeric, modelParameters.maxDepth.toString),
+        ("Max bins", ColumnType.numeric, modelParameters.maxBins.toString)
+      )
+      .report
+  }
 
   override def save(context: ExecutionContext)(path: String): Unit = ???
 }
