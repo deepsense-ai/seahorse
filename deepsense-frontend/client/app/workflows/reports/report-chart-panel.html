@@ -17,12 +17,14 @@
       <dl class="dl-horizontal">
         <dt>Missing values</dt>
         <dd>{{ graphModal.distObject.missingValues }}</dd>
-        <dt>Min</dt>
-        <dd>{{ graphModal.shortenValues(graphModal.distObject.statistics.min) }}</dd>
-        <dt>Mean</dt>
-        <dd>{{ graphModal.shortenValues(graphModal.distObject.statistics.mean) }}</dd>
-        <dt>Max</dt>
-        <dd>{{ graphModal.shortenValues(graphModal.distObject.statistics.max) }}</dd>
+        <div ng-if="graphModal.distObject.statistics">
+          <dt>Min</dt>
+          <dd>{{ graphModal.shortenValues(graphModal.distObject.statistics.min) }}</dd>
+          <dt>Mean</dt>
+          <dd>{{ graphModal.shortenValues(graphModal.distObject.statistics.mean) }}</dd>
+          <dt>Max</dt>
+          <dd>{{ graphModal.shortenValues(graphModal.distObject.statistics.max) }}</dd>
+        </div>
       </dl>
     </div>
     <div>
