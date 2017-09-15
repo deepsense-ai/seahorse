@@ -33,6 +33,7 @@ object Version {
   val spark = "1.5.2"
   val spray = "1.3.3"
   val sprayJson = "1.3.1"
+  val wireMock = "1.57"
 }
 
 object Library {
@@ -72,6 +73,7 @@ object Library {
   val sparkCore = spark("core")
   val sparkMLLib = spark("mllib")
   val sparkSql = spark("sql")
+  val wireMock = "com.github.tomakehurst" % "wiremock" % Version.wireMock
 }
 
 object Dependencies {
@@ -135,5 +137,5 @@ object Dependencies {
     sprayClient,
     rabbitmq
   ) ++ Seq(sparkCore, sparkSql).map(_ % Provided) ++
-  Seq(akkaTestkit, mockitoCore, scalatest).map(_ % s"$Test,it")
+  Seq(akkaTestkit, mockitoCore, scalatest, wireMock).map(_ % s"$Test,it")
 }

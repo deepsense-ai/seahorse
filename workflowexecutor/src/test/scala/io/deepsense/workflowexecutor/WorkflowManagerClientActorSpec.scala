@@ -1,0 +1,230 @@
+/**
+ * Copyright 2015, deepsense.io
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.deepsense.workflowexecutor
+
+import scala.concurrent.Future
+import scala.concurrent.duration._
+
+import akka.actor.{ActorSystem, Props}
+import akka.pattern.ask
+import akka.util.Timeout
+import com.github.tomakehurst.wiremock.WireMockServer
+import com.github.tomakehurst.wiremock.client.WireMock
+import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
+import org.scalatest.BeforeAndAfterEach
+import org.scalatest.concurrent.ScalaFutures
+import spray.http.StatusCodes
+import spray.json._
+
+import io.deepsense.commons.StandardSpec
+import io.deepsense.deeplang.CatalogRecorder
+import io.deepsense.deeplang.catalogs.doperations.DOperationsCatalog
+import io.deepsense.graph.DirectedGraph
+import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
+import io.deepsense.models.json.workflow.WorkflowWithResultsJsonProtocol
+import io.deepsense.models.workflows._
+import io.deepsense.workflowexecutor.WorkflowManagerClientActorProtocol.{SaveState, SaveWorkflow, Request, GetWorkflow}
+import io.deepsense.workflowexecutor.exception.UnexpectedHttpResponseException
+
+class WorkflowManagerClientActorSpec
+  extends StandardSpec
+  with ScalaFutures
+  with BeforeAndAfterEach
+  with WorkflowWithResultsJsonProtocol {
+
+  implicit val patience = PatienceConfig(timeout = 5.seconds)
+
+  val graphReader = createGraphReader()
+
+  val wireMockServer = new WireMockServer(wireMockConfig().port(0))
+
+  val httpHost = "localhost"
+  var httpPort = 0
+
+  val workflowsApiPrefix = "workflows"
+  val reportsApiPrefix = "reports"
+  val workflowId = Workflow.Id.randomId
+
+  val executionReport = ExecutionReport(Map(), None)
+
+  val workflow = WorkflowWithResults(
+    workflowId,
+    WorkflowMetadata(WorkflowType.Batch, "1.0.0"),
+    DirectedGraph(),
+    ThirdPartyData("{}"),
+    ExecutionReport(Map(), None))
+
+  override def beforeEach(): Unit = {
+    wireMockServer.start()
+    httpPort = wireMockServer.port()
+    WireMock.configureFor(httpHost, httpPort)
+  }
+
+  override def afterEach(): Unit = {
+    wireMockServer.stop()
+  }
+
+  "WorkflowManagerClientActor" when {
+
+    "requested to get workflow" should {
+
+      "download workflow" in {
+        stubFor(get(urlEqualTo(s"/$workflowsApiPrefix/$workflowId"))
+          .willReturn(aResponse()
+            .withStatus(StatusCodes.OK.intValue)
+            .withBody(workflow.toJson.toString)
+          ))
+
+        val responseFuture = sendRequest(GetWorkflow(workflowId))
+          .mapTo[Option[WorkflowWithResults]]
+
+        whenReady(responseFuture) { response =>
+          response shouldBe Some(workflow)
+        }
+      }
+
+      "return None when workflow does not exist" in {
+        stubFor(get(urlEqualTo(s"/$workflowsApiPrefix/$workflowId"))
+          .willReturn(aResponse()
+            .withStatus(StatusCodes.NotFound.intValue)
+          ))
+
+        val responseFuture = sendRequest(GetWorkflow(workflowId))
+          .mapTo[Option[WorkflowWithResults]]
+
+        whenReady(responseFuture) { response =>
+          response shouldBe None
+        }
+      }
+
+      "fail on HTTP error" in {
+        stubFor(get(urlEqualTo(s"/$workflowsApiPrefix/$workflowId"))
+          .willReturn(aResponse()
+            .withStatus(StatusCodes.InternalServerError.intValue)
+          ))
+
+        val responseFuture = sendRequest(GetWorkflow(workflowId))
+          .mapTo[Option[WorkflowWithResults]]
+
+        whenReady(responseFuture.failed) { exception =>
+          exception shouldBe a[UnexpectedHttpResponseException]
+        }
+      }
+    }
+
+    "requested to save workflow with state" should {
+
+      "upload workflow and receive OK" in {
+        stubFor(put(urlEqualTo(s"/$workflowsApiPrefix/$workflowId"))
+          .willReturn(aResponse()
+            .withStatus(StatusCodes.OK.intValue)
+          ))
+
+        val responseFuture = sendRequest(SaveWorkflow(workflow))
+
+        whenReady(responseFuture) { _ =>
+          responseFuture.value.get shouldBe 'success
+        }
+      }
+
+      "upload workflow and receive Created" in {
+        stubFor(put(urlEqualTo(s"/$workflowsApiPrefix/$workflowId"))
+          .willReturn(aResponse()
+            .withStatus(StatusCodes.Created.intValue)
+          ))
+
+        val responseFuture = sendRequest(SaveWorkflow(workflow))
+
+        whenReady(responseFuture) { _ =>
+          responseFuture.value.get shouldBe 'success
+        }
+      }
+
+      "fail on HTTP error" in {
+        stubFor(put(urlEqualTo(s"/$workflowsApiPrefix/$workflowId"))
+          .willReturn(aResponse()
+            .withStatus(StatusCodes.InternalServerError.intValue)
+          ))
+
+        val responseFuture = sendRequest(SaveWorkflow(workflow))
+
+        whenReady(responseFuture.failed) { exception =>
+          exception shouldBe a[UnexpectedHttpResponseException]
+        }
+      }
+    }
+
+    "requested to save status" should {
+
+      "upload execution report and receive OK" in {
+        stubFor(post(urlEqualTo(s"/$reportsApiPrefix/$workflowId"))
+          .willReturn(aResponse()
+            .withStatus(StatusCodes.OK.intValue)
+          ))
+
+        val responseFuture = sendRequest(SaveState(workflowId, executionReport))
+
+        whenReady(responseFuture) { _ =>
+          responseFuture.value.get shouldBe 'success
+        }
+      }
+
+      "upload execution report and receive Created" in {
+        stubFor(post(urlEqualTo(s"/$reportsApiPrefix/$workflowId"))
+          .willReturn(aResponse()
+            .withStatus(StatusCodes.Created.intValue)
+          ))
+
+        val responseFuture = sendRequest(SaveState(workflowId, executionReport))
+
+        whenReady(responseFuture) { _ =>
+          responseFuture.value.get shouldBe 'success
+        }
+      }
+
+      "fail on HTTP error" in {
+        stubFor(post(urlEqualTo(s"/$reportsApiPrefix/$workflowId"))
+          .willReturn(aResponse()
+            .withStatus(StatusCodes.InternalServerError.intValue)
+          ))
+
+        val responseFuture = sendRequest(SaveState(workflowId, executionReport))
+
+        whenReady(responseFuture.failed) { exception =>
+          exception shouldBe a[UnexpectedHttpResponseException]
+        }
+      }
+    }
+  }
+
+  private def sendRequest(request: Request): Future[Any] = {
+    implicit val system = ActorSystem()
+    implicit val timeoutSeconds = Timeout(3.seconds)
+
+    val actorRef = system.actorOf(Props(new WorkflowManagerClientActor(
+      s"http://$httpHost:$httpPort", workflowsApiPrefix, reportsApiPrefix, graphReader)))
+
+    actorRef ? request
+  }
+
+  private def createGraphReader(): GraphReader = {
+    val catalog = DOperationsCatalog()
+    CatalogRecorder.registerDOperations(catalog)
+    new GraphReader(catalog)
+  }
+}
