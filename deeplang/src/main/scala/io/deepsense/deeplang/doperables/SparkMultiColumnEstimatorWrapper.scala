@@ -32,7 +32,7 @@ import io.deepsense.deeplang.params.wrappers.spark.ParamsWithSparkWrappers
 import io.deepsense.deeplang.{ExecutionContext, TypeUtils}
 
 abstract class SparkMultiColumnEstimatorWrapper[
-  MD <: ml.Model[MD],
+  MD <: ml.Model[MD]  { val outputCol: ml.param.Param[String] },
   E <: ml.Estimator[MD] { val outputCol: ml.param.Param[String] },
   MW <: SparkSingleColumnModelWrapper[MD, E],
   EW <: SparkSingleColumnEstimatorWrapper[MD, E, MW],
@@ -51,13 +51,12 @@ abstract class SparkMultiColumnEstimatorWrapper[
       df: DataFrame,
       single: SingleColumnChoice): MW = {
 
-    import sparkEstimatorWrapper._
-
     val estimator = sparkEstimatorWrapper.replicate()
-      .set(inputColumn -> single.getInputColumn)
+      .set(sparkEstimatorWrapper.inputColumn -> single.getInputColumn)
       .setSingleInPlaceParam(single.getInPlace)
 
-    estimator._fit(ctx, df).asInstanceOf[MW]
+    val mw = estimator._fit(ctx, df).asInstanceOf[MW]
+      mw.set(mw.inputColumn -> single.getInputColumn)
       .setSingleInPlaceParam(single.getInPlace)
   }
 
@@ -125,8 +124,19 @@ abstract class SparkMultiColumnEstimatorWrapper[
         .setModels(models)
         .setInputColumns(multi.getMultiInputColumnSelection)
         .setInPlace(multi.getMultiInPlaceChoice)
-    }.getOrElse(createMultiColumnModel()
-      .setModels(Seq.empty))
+    }.getOrElse {
+      val model = createMultiColumnModel()
+        .setModels(Seq.empty)
+
+      val inputColumnsParamValue = multi.getOrDefaultOption(multi.inputColumnsParam)
+      val inPlaceParamValue = multi.getOrDefaultOption(multi.multiInPlaceChoiceParam)
+
+      inputColumnsParamValue.map(v => model.set(model.multiColumnChoice.inputColumnsParam -> v))
+      inPlaceParamValue.map(v => model.set(model.multiColumnChoice.multiInPlaceChoiceParam -> v))
+
+      model
+    }
+
   }
 
   def createEstimatorWrapperInstance(): EW = TypeUtils.instanceOfType(estimatorWrapperTag)

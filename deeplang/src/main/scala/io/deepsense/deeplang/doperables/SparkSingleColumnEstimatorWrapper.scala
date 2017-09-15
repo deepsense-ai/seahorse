@@ -27,7 +27,7 @@ import io.deepsense.deeplang.params.Param
 import io.deepsense.deeplang.params.wrappers.spark.ParamsWithSparkWrappers
 
 abstract class SparkSingleColumnEstimatorWrapper[
-    MD <: ml.Model[MD],
+    MD <: ml.Model[MD] { val outputCol: ml.param.Param[String] },
     E <: ml.Estimator[MD] { val outputCol: ml.param.Param[String] },
     MW <: SparkSingleColumnModelWrapper[MD, E]]
 (override implicit val modelWrapperTag: TypeTag[MW], override implicit val estimatorTag: TypeTag[E])

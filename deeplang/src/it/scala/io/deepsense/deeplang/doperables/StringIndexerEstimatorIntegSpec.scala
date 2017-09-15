@@ -16,9 +16,9 @@
 
 package io.deepsense.deeplang.doperables
 
-import io.deepsense.deeplang.doperables.StringIndexerEstimatorIntegSpec.{MultiIndexedInPlaceR, IndexedR, MultiIndexedR, R}
+import io.deepsense.deeplang.doperables.StringIndexerEstimatorIntegSpec._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.NoInPlaceChoice
+import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.{YesInPlaceChoice, NoInPlaceChoice}
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.deeplang.{DKnowledge, DeeplangIntegTestSupport}
 
@@ -38,6 +38,24 @@ class StringIndexerEstimatorIntegSpec extends DeeplangIntegTestSupport {
       assertDataFramesEqual(
         transformed,
         outputDataFrame,
+        checkRowOrder = true,
+        checkNullability = false)
+    }
+    "convert single column in-place" in {
+      val si = new StringIndexerEstimator()
+      si.setSingleColumn("a", "overriddenBelow")
+      val t = si.fit(executionContext)(())(inputDataFrame)
+        .asInstanceOf[SingleStringIndexerModel]
+
+      t.setInputColumn("c")
+      t.setSingleInPlaceParam(YesInPlaceChoice())
+
+      t.transform(executionContext)(())(inputDataFrame)
+
+      val transformed = t.transform(executionContext)(())(inputDataFrame)
+      assertDataFramesEqual(
+        transformed,
+        outputDataFrameInPlace,
         checkRowOrder = true,
         checkNullability = false)
     }
@@ -128,6 +146,14 @@ class StringIndexerEstimatorIntegSpec extends DeeplangIntegTestSupport {
     createDataFrame(indexedRs)
   }
 
+  val outputDataFrameInPlace = {
+    val indexedRs = rs.map {
+      case R(a, b, c) =>
+        IndexedRInPlace(a, b, indexesA(c))
+    }
+    createDataFrame(indexedRs)
+  }
+
   val multiOutputDataFrame = {
     val indexesB: Map[String, Double] = Map(
       ("b", 0),
@@ -162,6 +188,7 @@ class StringIndexerEstimatorIntegSpec extends DeeplangIntegTestSupport {
 object StringIndexerEstimatorIntegSpec {
   case class R(a: String, b: String, c: String)
   case class IndexedR(a: String, b: String, c: String, out: Double)
+  case class IndexedRInPlace(a: String, b: String, c: Double)
   case class MultiIndexedR(a: String, b: String, c: String, idx_a: Double, idx_b: Double)
   case class MultiIndexedInPlaceR(a: Double, b: Double, c: String)
 }
