@@ -69,6 +69,7 @@ List of all currently supported operations:
     * [GBT Classifier](operations/gbt_classifier.html)
     * [Logistic Regression](operations/logistic_regression.html)
     * [Multilayer Perceptron Classifier](operations/multilayer_perceptron_classifier.html)
+    * [Naive Bayes](operations/naive_bayes.html)
   * Regression
     * [GBT Regressor](operations/gbt_regressor.html)
     * [Isotonic Regression](operations/isotonic_regression.html)

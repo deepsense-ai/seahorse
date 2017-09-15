@@ -54,6 +54,8 @@ object CatalogRecorder {
     // wrapped Spark ML estimators & models
     catalog.registerDOperable[LogisticRegression]()
     catalog.registerDOperable[LogisticRegressionModel]()
+    catalog.registerDOperable[NaiveBayes]()
+    catalog.registerDOperable[NaiveBayesModel]()
     catalog.registerDOperable[ALS]()
     catalog.registerDOperable[ALSModel]()
     catalog.registerDOperable[KMeans]()
@@ -262,6 +264,9 @@ object CatalogRecorder {
       DOperationCategories.ML.Classification)
 
     catalog.registerDOperation[CreateMultilayerPerceptronClassifier](
+      DOperationCategories.ML.Classification)
+
+    catalog.registerDOperation[CreateNaiveBayes](
       DOperationCategories.ML.Classification)
 
     catalog.registerDOperation[CreateKMeans](

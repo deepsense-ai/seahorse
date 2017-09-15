@@ -112,7 +112,7 @@ This operation does not take any input.
 <td><code>use custom weights</code></td>
 <td><code><a href="../parameter_types.html#single-choice">SingleChoice</a></code></td>
 <td>Whether to over-/under-sample training instances according to the given weights in
-`weight column`. If the `weight column` is not specified,
+the `weight column`. If the `weight column` is not specified,
 all instances are treated equally with a weight 1.0. Possible values: <code>["no", "yes"]</code></td>
 </tr>
 
