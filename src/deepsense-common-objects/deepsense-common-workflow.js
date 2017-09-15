@@ -124,6 +124,7 @@ factory('Workflow', /*@ngInject*/function (GraphNode, Edge) {
     };
 
     /**
+	 * Knowledge incoming to node on selected port
      * @param {Object} node Node that receives knowledge
      * @param {Number} portIndex Index of input port of [[node]] where knowledge is put
      * @return {Object|undefined} knowledge object, or undefined if edge does not exist
@@ -314,12 +315,15 @@ factory('Workflow', /*@ngInject*/function (GraphNode, Edge) {
       _.forEach(this.getNodes(), (node) => {
         if (knowledge[node.id]) {
           node.knowledgeErrors = knowledge[node.id].errors.slice();
-          if (knowledge[node.id].ports) {
-            let newOutputPorts = knowledge[node.id].ports;
+          let newOutputPorts = knowledge[node.id].ports;
+          if (newOutputPorts) {
             _.forEach(node.output, (port) => {
-              let newTypes = newOutputPorts[port.index];
-              if (newTypes) {
-                port.typeQualifier = newTypes.slice();
+              let {types, params} = newOutputPorts[port.index];
+              if (types) {
+                port.typeQualifier = types.slice();
+              }
+              if (params) {
+                port.params = params;
               }
             });
           }

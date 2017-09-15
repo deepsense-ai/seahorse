@@ -334,17 +334,18 @@ describe('workflow', () => {
     expect(node1.output[0].typeQualifier).toEqual(initOperations.o2.ports.output[0].typeQualifier);
 
     let knowledge = {
-      [node0.id]: buildNodeKnowledge([['T02']]),
-      [node1.id]: buildNodeKnowledge([['T04']])
+      [node0.id]: buildNodeKnowledge([{types: ['T02', 'T03']}]),
+      [node1.id]: buildNodeKnowledge([{types: ['T04'], params: 'xyz'}])
     };
 
     workflow.updateTypeKnowledge(knowledge);
 
     expect(node0.input[0].typeQualifier).toEqual(initOperations.o1.ports.input[0].typeQualifier);
-    expect(node0.output[0].typeQualifier).toEqual(['T02']);
+    expect(node0.output[0].typeQualifier).toEqual(['T02', 'T03']);
 
     expect(node1.input[0].typeQualifier).toEqual(initOperations.o2.ports.input[0].typeQualifier);
     expect(node1.output[0].typeQualifier).toEqual(['T04']);
+    expect(node1.output[0].params).toEqual('xyz');
   });
 
   it('returns incoming knowledge for node and port index if edge exists', () => {
