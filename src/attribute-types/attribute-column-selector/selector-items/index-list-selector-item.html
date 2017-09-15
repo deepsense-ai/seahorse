@@ -1,19 +1,22 @@
 <div class="index-list-selector-item u-flex u-flex--center-center m-b-sm">
-  <input type="number"
+  <input ng-if="selectorIsSingle()"
+         type="number"
          focused
          autofocus
          placeholder="Index"
          class="form-control o-custom index-list-selector-item__input single-selector"
          min="0"
          min-value
-         ng-model="item.firstNum"
-         ng-if="selectorIsSingle()">
+         ng-attr-max="{{maxIndex}}"
+         max-value
+         ng-model="item.firstNum">
 
   <form ng-if="!selectorIsSingle()"
+        style="flex: 1"
         novalidate
         ng-submit="addIndex(index)"
         name="indexForm">
-    <div  class="u-flex u-flex--center-center m-b-sm">
+    <div class="u-flex u-flex--center-center m-b-sm">
       <input type="number"
              focused
              autofocus
@@ -21,13 +24,17 @@
              class="form-control o-custom index-list-selector-item__input"
              min="0"
              min-value
+             ng-attr-max="{{maxIndex}}"
+             ng-attr-max-value
              ng-model="index.firstNum"
              required>
       <input type="number"
              placeholder="To"
              class="form-control o-custom index-list-selector-item__input"
-             min="0"
-             min-value
+             ng-attr-min="{{index.firstNum ? index.firstNum : 0}}"
+             ng-attr-min-value
+             ng-attr-max="{{maxIndex}}"
+             ng-attr-max-value
              ng-model="index.secondNum"
              required>
     </div>
@@ -38,11 +45,15 @@
       <span>Add index</span>
     </button>
 
-    <span class="badge badge-default o-tag-unit" ng-repeat="index in getItemsThisType('indexRange') | filter:hasValues">
-      <span>{{::index.firstNum}}</span>
+    <div>
+    <span class="badge badge-default o-tag-unit"
+          ng-class="isRangeValid(range) ? 'badge-default' : 'badge-danger'"
+          ng-repeat="range in getItemsThisType('indexRange') | filter:hasValues">
+      <span>{{::range.firstNum}}</span>
       <span> - </span>
-      <span class="o-tag-unit__name">{{::index.secondNum}}</span>
-      <a class="close o-tag-unit__close" ng-click="removeIndex(index)">&times;</a>
+      <span class="o-tag-unit__name">{{::range.secondNum}}</span>
+      <a class="close o-tag-unit__close" ng-click="removeIndex(range)">&times;</a>
     </span>
+    </div>
   </form>
 </div>

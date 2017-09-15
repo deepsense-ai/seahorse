@@ -1,9 +1,3 @@
-/**
- * Copyright (c) 2015, CodiLime Inc.
- *
- * Owner: Grzegorz Swatowski
- */
-
 'use strict';
 
 /*@ngInject*/
@@ -14,6 +8,11 @@ function IndexListSelectorItem($document, $timeout) {
     replace: true,
     scope: true,
     controller: function ($element, $scope) {
+      /**
+       * TODO: backend API should be changed. Fact that it is built this way causes that frontend code is really
+       * complicated. Ideally column selection should always have three items: types, names and ranges.
+       */
+
       /**
        * In fact it changes last added index. Because when you click plus icon
        * in modal, you have added index object to the items array. So when you
@@ -47,6 +46,12 @@ function IndexListSelectorItem($document, $timeout) {
       $scope.hasValues = function hasValues (indexParam) {
         return !$scope.isEmptyParameter(indexParam);
       };
+
+      $scope.maxIndex = $scope.parameter.dataFrameSchema && $scope.parameter.dataFrameSchema.fields.length - 1;
+
+      $scope.isRangeValid = $scope.maxIndex ?
+        function(range) { return range.secondNum <= $scope.maxIndex; }
+        : function(range) { return true; };
     }
   };
 }

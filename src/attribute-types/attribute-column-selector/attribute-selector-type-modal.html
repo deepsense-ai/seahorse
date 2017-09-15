@@ -25,7 +25,7 @@
     </div>
   </div>
 </header>
-<article ng-if="!parameter.dataFrameSchema" class="modal-body u-flex">
+<article class="modal-body u-flex">
   <section  class="o-modal-selector__item u-flex__1"
             ng-repeat="itemType in itemTypes"
             ng-hide="itemType.id === 'indexRange' && isItemIdInList('indexRange')">
@@ -59,7 +59,18 @@
   </section>
 </article>
 
-<known-cols-selector-item ng-if="::parameter.dataFrameSchema"></known-cols-selector-item>
+<article class="modal-body u-flex calculated-columns">
+  <span ng-if="::parameter.dataFrameSchema">
+    <strong>Selected column<span ng-if="::!selectorIsSingle()">s</span>:</strong>
+    <br/>
+    <calculated-selected-columns></calculated-selected-columns>
+  </span>
+  <span ng-if="::!parameter.dataFrameSchema">
+    Actual selected columns cannot be calculated because DataFrame schema is not known.
+    <br />
+    Partially execute workflow to bring schema to the selector.
+  </span>
+</article>
 
 <footer class="modal-footer">
   <button class="btn btn-sm btn-info" ng-click="modal.close()">Done</button>

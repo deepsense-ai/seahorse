@@ -1,9 +1,34 @@
 @active-color: #19aa8d;
 
-.selection-modal {
+.modal-xlg {
+  width: 85vw;
+
   .modal-body {
     min-height: 40vh;
+  }
+  .calculated-columns {
+    min-height: 30vh;
+    max-height: 30vh;
+  }
+}
+
+.modal-md {
+  .modal-body {
+    min-height: 20vh;
+  }
+  .calculated-columns {
+    min-height: 10vh;
+    max-height: 10vh;
+  }
+}
+
+.selection-modal {
+  .modal-body {
     padding: 5px 15px;
+  }
+  .calculated-columns {
+    border-top: 1px solid #e5e5e5;
+    overflow-y: auto;
   }
 }
 
@@ -46,7 +71,7 @@
 
     .column-names-list {
       overflow-y: auto;
-      max-height: 70vh;
+      max-height: 20vh;
     }
   }
 
@@ -71,5 +96,29 @@
     position: absolute;
     top: 0;
     right: 0;
+  }
+}
+
+#column-searcher {
+  .matched-text {
+    font-weight: bold;
+  }
+
+  &_dropdown {
+    overflow: auto;
+    max-height: 50vh;
+  }
+}
+
+// TODO dry
+
+#single-column-searcher {
+  .matched-text {
+    font-weight: bold;
+  }
+
+  &_dropdown {
+    overflow: auto;
+    max-height: 50vh;
   }
 }

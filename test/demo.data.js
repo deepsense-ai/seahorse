@@ -88,162 +88,202 @@ angular.module('test').
                 fields: [
                   {
                     name: "x",
-                    dataType: "integer"
+                    dataType: "integer",
+                    deeplangType: "numeric"
                   },
                   {
                     name: "y",
-                    dataType: "string"
+                    dataType: "string",
+                    deeplangType: "string"
                   },
                   {
                     name: "abc",
-                    dataType: "string"
+                    dataType: "string",
+                    deeplangType: "string"
                   },
                   {
                     name: "cde",
-                    dataType: "string"
+                    dataType: "string",
+                    deeplangType: "string"
                   },
                   {
                     name: "x1",
-                    dataType: "integer"
+                    dataType: "integer",
+                    deeplangType: "numeric"
                   },
                   {
                     name: "y2",
-                    dataType: "string"
+                    dataType: "string",
+                    deeplangType: "string"
                   },
                   {
                     name: "abc3",
-                    dataType: "string"
+                    dataType: "string",
+                    deeplangType: "string"
                   },
                   {
                     name: "cde4",
-                    dataType: "string"
+                    dataType: "string",
+                    deeplangType: "string"
                   },
                   {
                     name: "x11",
-                    dataType: "integer"
+                    dataType: "integer",
+                    deeplangType: "numeric"
                   },
                   {
                     name: "y22",
-                    dataType: "string"
+                    dataType: "string",
+                    deeplangType: "string"
                   },
                   {
                     name: "abc33",
-                    dataType: "string"
+                    dataType: "string",
+                    deeplangType: "string"
                   },
                   {
                     name: "cde44",
-                    dataType: "string"
+                    dataType: "string",
+                    deeplangType: "string"
                   },
                   {
                     name: "x111",
-                    dataType: "integer"
+                    dataType: "integer",
+                    deeplangType: "numeric"
                   },
                   {
                     name: "y222",
-                    dataType: "string"
+                    dataType: "string",
+                    deeplangType: "string"
                   },
                   {
                     name: "abc333",
-                    dataType: "string"
+                    dataType: "string",
+                    deeplangType: "string"
                   },
                   {
                     name: "cde444",
-                    dataType: "string"
+                    dataType: "string",
+                    deeplangType: "string"
                   },
                   {
                     name: "x1111",
-                    dataType: "integer"
+                    dataType: "integer",
+                    deeplangType: "numeric"
                   },
                   {
                     name: "y2222",
-                    dataType: "string"
+                    dataType: "string",
+                    deeplangType: "string"
                   },
                   {
                     name: "abc3333",
-                    dataType: "string"
+                    dataType: "string",
+                    deeplangType: "string"
                   },
                   {
                     name: "cde4444",
-                    dataType: "string"
+                    dataType: "string",
+                    deeplangType: "string"
                   },
                   {
                     name: "x5",
-                    dataType: "integer"
+                    dataType: "integer",
+                    deeplangType: "numeric"
                   },
                   {
                     name: "y6",
-                    dataType: "string"
+                    dataType: "string",
+                    deeplangType: "string"
                   },
                   {
                     name: "abc7",
-                    dataType: "string"
+                    dataType: "string",
+                    deeplangType: "string"
                   },
                   {
                     name: "cde8",
-                    dataType: "string"
+                    dataType: "string",
+                    deeplangType: "string"
                   },
                   {
                     name: "xx",
-                    dataType: "integer"
+                    dataType: "integer",
+                    deeplangType: "numeric"
                   },
                   {
                     name: "yy",
-                    dataType: "string"
+                    dataType: "string",
+                    deeplangType: "string"
                   },
                   {
                     name: "abcabc",
-                    dataType: "string"
+                    dataType: "string",
+                    deeplangType: "string"
                   },
                   {
                     name: "cdecde",
-                    dataType: "string"
+                    dataType: "string",
+                    deeplangType: "string"
                   },
                   {
                     name: "xx1",
-                    dataType: "integer"
+                    dataType: "integer",
+                    deeplangType: "numeric"
                   },
                   {
-                    name: "yy2",
-                    dataType: "string"
+                    name: "bool:yy2",
+                    dataType: "boolean",
+                    deeplangType: "boolean"
                   },
                   {
                     name: "abcabc3",
-                    dataType: "string"
+                    dataType: "string",
+                    deeplangType: "string"
                   },
                   {
-                    name: "cdecde4",
-                    dataType: "string"
+                    name: "certain timestamp col",
+                    dataType: "timestamp",
+                    deeplangType: "timestamp"
                   },{
                     name: "xx11",
-                    dataType: "integer"
+                    dataType: "integer",
+                    deeplangType: "numeric"
                   },
                   {
                     name: "yy22",
-                    dataType: "string"
+                    dataType: "string",
+                    deeplangType: "string"
                   },
                   {
                     name: "abcabc33",
-                    dataType: "string"
+                    dataType: "string",
+                    deeplangType: "string"
                   },
                   {
                     name: "cdecde44",
-                    dataType: "string"
+                    dataType: "timestamp",
+                    deeplangType: "timestamp"
                   },
                   {
                     name: "xx5",
-                    dataType: "integer"
+                    dataType: "integer",
+                    deeplangType: "numeric"
                   },
                   {
                     name: "yy6",
-                    dataType: "string"
+                    dataType: "string",
+                    deeplangType: "string"
                   },
                   {
-                    name: "abcabc7",
-                    dataType: "string"
+                    name: "abcabc7-bool",
+                    dataType: "boolean",
+                    deeplangType: "boolean"
                   },
                   {
                     name: "cdecde8",
-                    dataType: "string"
+                    dataType: "string",
+                    deeplangType: "string"
                   }
                 ]
               }
@@ -898,6 +938,15 @@ angular.module('test').
           ]
         },
         "sample-selectors-empty": null,
+        "multi-selector-known-cols": {
+          "excluding": false,
+          "selections": [
+            {
+              "type": "columnList",
+              "values": ["unknown-col", "abc"]
+            }
+          ]
+        },
         "sample-single-column-selector": {
           "type": "column", // name
           "value": "kozik"

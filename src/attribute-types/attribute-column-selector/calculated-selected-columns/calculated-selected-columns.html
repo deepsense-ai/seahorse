@@ -1,0 +1,8 @@
+<section>
+  <!-- TODO style it to handle overflow -->
+  <span class="badge o-tag-unit badge-info"
+        ng-repeat="column in (showedItems = calculatedColumns())">
+        <span class="o-tag-unit__name">{{::column.name}}</span>
+  </span>
+  <span ng-hide="showedItems.length">None</span>
+</section>

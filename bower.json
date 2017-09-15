@@ -1,0 +1,22 @@
+{
+  "name": "deepsense-attributes-panel",
+  "description": "Attributes panel",
+  "main": "attributes-panel.js",
+  "authors": [
+    "Witold Jędrzejewski <witold.jedrzejewski@codilime.com>"
+  ],
+  "license": "ISC",
+  "moduleType": [],
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angucomplete-alt": "~2.1.0"
+  }
+}

@@ -30,7 +30,7 @@ function AttributeSelectorType($timeout, $uibModal, $rootScope) {
 
           this.modal = $uibModal.open({
             templateUrl: 'attribute-types/attribute-column-selector/attribute-selector-type-modal.html',
-            size: 'lg',
+            size: selectorIsSingle() ? 'md' : 'xlg',
             scope: scope,
             windowClass: 'selection-modal'
           });
