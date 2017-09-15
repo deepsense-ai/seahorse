@@ -21,18 +21,25 @@ class SessionExecutorRequestBodyBuilderSpec extends StandardSpec with UnitTestSu
       val pyExecutorJar = "we2.jar"
       val pySparkDir = "spark"
       val pySparkZip = "pyspark.zip"
-      val wmAddress = "wmaddress"
+      val wmScheme = "http"
+      val wmHost = "wmhost"
+      val wmPort = "9080"
+      val wmAddress = s"$wmScheme://$wmHost:$wmPort"
 
       val builder = new SessionExecutorRequestBodyBuilder(
         className,
         jarPath,
         queueHost,
         queuePort,
+        false,
         pyExecutorDir,
         pyExecutorJar,
         pySparkDir,
         pySparkZip,
-        wmAddress)
+        wmScheme,
+        wmHost,
+        wmPort,
+        false)
 
       val request = builder.createSession(workflowId)
 
