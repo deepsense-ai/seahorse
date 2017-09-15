@@ -14,7 +14,7 @@ object WorkflowExecutor {
 
   val ExperimentJsonFilename = "experiment.json"
 
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
     import sys.process._
     "ls -al" !
 

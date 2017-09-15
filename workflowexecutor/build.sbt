@@ -2,7 +2,7 @@
 
 import sbtassembly.PathList
 
-name := "deepsense-workflowexecutor"
+name := "deepsense-seahorse-workflowexecutor"
 
 libraryDependencies ++= Dependencies.workflowexecutor
 

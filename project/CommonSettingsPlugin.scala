@@ -8,6 +8,8 @@ import sbt._
 object CommonSettingsPlugin extends AutoPlugin {
   override def trigger = allRequirements
 
+  lazy val OurIT = config("it") extend Test
+
   override def globalSettings = Seq(
   )
 
@@ -24,5 +26,40 @@ object CommonSettingsPlugin extends AutoPlugin {
     ),
     resolvers ++= Dependencies.resolvers,
     crossPaths := false
+  ) ++ ouritSettings ++ testSettings ++ Seq(
+    test <<= test in Test
   )
+
+  lazy val ouritSettings = inConfig(OurIT)(Defaults.testSettings) ++ inConfig(OurIT) {
+    Seq(
+      testOptions ++= Seq(
+        // Show full stacktraces (F), Put results in target/test-reports
+        Tests.Argument(TestFrameworks.ScalaTest, "-oF", "-u", "target/test-reports")
+      ),
+      javaOptions := Seq(s"-DlogFile=${name.value}"),
+      fork := true,
+      unmanagedClasspath += baseDirectory.value / "conf"
+    )
+  }
+
+  lazy val testSettings = inConfig(Test) {
+    Seq(
+      testOptions := Seq(
+        // Put results in target/test-reports
+        Tests.Argument(
+          TestFrameworks.ScalaTest,
+          "-o",
+          "-u", "target/test-reports",
+          "-y", "org.scalatest.FlatSpec",
+          "-y", "org.scalatest.WordSpec",
+          "-y", "org.scalatest.FunSuite"
+        )
+      ),
+      fork := true,
+      javaOptions := Seq(s"-DlogFile=${name.value}"),
+      unmanagedClasspath += baseDirectory.value / "conf"
+    )
+  }
+
+  override def projectConfigurations = OurIT +: super.projectConfigurations
 }
