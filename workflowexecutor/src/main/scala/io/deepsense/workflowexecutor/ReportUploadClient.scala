@@ -36,23 +36,15 @@ import io.deepsense.models.workflows._
 import io.deepsense.workflowexecutor.exception.UnexpectedHttpResponseException
 
 class ReportUploadClient(
-    val host: String,
-    val uploadScheme: String,
-    val uploadPort: Int,
+    val uploadAddress: String,
     val uploadPath: String,
     val uploadTimeout: Int,
-    val previewScheme: String,
-    val previewPort: Int,
-    val previewPath: String,
     override val graphReader: GraphReader)
   extends Logging
   with WorkflowWithSavedResultsJsonProtocol {
 
   val uploadUrl =
-    s"$uploadScheme://$host:$uploadPort/$uploadPath/report/upload"
-
-  val reportUrl = (reportId: String) =>
-    s"$previewScheme://$host:$previewPort/$previewPath/$reportId"
+    s"$uploadAddress/$uploadPath/report/upload"
 
   def uploadReport(workflow: WorkflowWithResults): Future[String] = {
 
@@ -88,7 +80,7 @@ class ReportUploadClient(
       case StatusCodes.Created =>
         val content = response.entity.data.asString
         val workflow = content.parseJson.convertTo[WorkflowWithSavedResults]
-        reportUrl(workflow.executionReport.id.toString)
+        workflow.executionReport.id.toString
       case _ => throw UnexpectedHttpResponseException(
         "Report upload failed", response.status, response.entity.data.asString)
     }

@@ -54,18 +54,14 @@ object WorkflowExecutorApp
   private val config = ConfigFactory.load
 
   private val workflowManagerConfig = WorkflowManagerConfig(
-    scheme = config.getString("workflow-manager.scheme"),
-    defaultHost = config.getString("workflow-manager.host"),
-    port = config.getInt("workflow-manager.port"),
+    defaultAddress = config.getString("workflow-manager.address"),
     path = config.getString("workflow-manager.path"),
     timeout = config.getInt("workflow-manager.timeout")
   )
 
   private val reportPreviewConfig = ReportPreviewConfig(
-    scheme = config.getString("report-preview.scheme"),
-    defaultHost = config.getString("report-preview.host"),
-    port = config.getInt("report-preview.port"),
-    path = config.getString("report-preview.path")
+    defaultAddress = config.getString("editor.address"),
+    path = config.getString("editor.report-preview.path")
   )
 
   override val graphReader = new GraphReader(dOperationsCatalog())
@@ -99,9 +95,9 @@ object WorkflowExecutorApp
       (_, c) => c.copy(uploadReport = true)
     } text "upload execution report to Seahorse Editor"
 
-    opt[String]('e', "editor-host") valueName "HOST" action {
-      (x, c) => c.copy(editorHost = Some(x))
-    } text "hostname or IP of Seahorse Editor"
+    opt[String]('a', "api-address") valueName "ADDRESS" action {
+      (x, c) => c.copy(apiAddress = Some(x))
+    } text "address of Seahorse Editor API. e.g. https://editor.seahorse.deepsense.io:9080"
 
     help("help") text "print this help message and exit"
     version("version") text "print product version and exit"
@@ -122,7 +118,7 @@ object WorkflowExecutorApp
     Version(BuildInfo.apiVersionMajor, BuildInfo.apiVersionMinor, BuildInfo.apiVersionPatch)
 
   def main(args: Array[String]): Unit = {
-    configureLogging
+    configureLogging()
 
     val cmdParams = parser.parse(args, ExecutionParams())
 
@@ -140,8 +136,9 @@ object WorkflowExecutorApp
       case Some(res) =>
         val resultUrl = Await.ready(res, Duration.Inf).value.get
         resultUrl match {
-          case Success(Some(url)) =>
-            logger.info(s"Report uploaded. You can see the results at: $url")
+          case Success(Some(reportId)) =>
+            logger.info(s"Report uploaded. Report id: $reportId. " +
+              s"You can see the results at: ${reportUrl(reportId)}, or at Your custom location.")
           case Success(None) =>
             logger.info("Workflow execution finished.")
           case Failure(exception) => exception match {
@@ -155,11 +152,13 @@ object WorkflowExecutorApp
     }
   }
 
-  def configureLogging: Unit = {
+  def configureLogging(): Unit = {
     Option(System.getProperty("logFile"))
       .getOrElse(System.setProperty("logFile", "workflowexecutor"))
     DOMConfigurator.configure(getClass.getResource("/log4j.xml"))
   }
+  private def reportUrl(reportId: String): String =
+    s"${reportPreviewConfig.defaultAddress}/${reportPreviewConfig.path}/$reportId"
 
   private def handleVersionException(versionException: WorkflowVersionException): Unit = {
     versionException match {
@@ -191,8 +190,8 @@ object WorkflowExecutorApp
   private def loadWorkflow(params: ExecutionParams): Future[WorkflowWithVariables] = {
     val content = params.workflowId match {
       case Some(id) =>
-        val editorHost = workflowManagerConfig.host(params.editorHost)
-        downloadWorkflow(editorHost, id)
+        val editorAddress = workflowManagerConfig.address(params.apiAddress)
+        downloadWorkflow(editorAddress, id)
       case None =>
         Future(Source.fromFile(params.workflowFilename.get).mkString)
     }
@@ -200,11 +199,9 @@ object WorkflowExecutorApp
     content.map(_.parseJson.convertTo[WorkflowWithVariables](versionedWorkflowWithVariablesReader))
   }
 
-  private def downloadWorkflow(editorHost: String, workflowId: String): Future[String] = {
+  private def downloadWorkflow(editorAddress: String, workflowId: String): Future[String] = {
     new WorkflowDownloadClient(
-      editorHost,
-      workflowManagerConfig.scheme,
-      workflowManagerConfig.port,
+      editorAddress,
       workflowManagerConfig.path,
       workflowManagerConfig.timeout
     ).downloadWorkflow(workflowId)
@@ -228,8 +225,9 @@ object WorkflowExecutorApp
     }
 
     if (params.uploadReport) {
-      val editorHost = workflowManagerConfig.host(params.editorHost)
-      uploadExecutionReport(editorHost, result).map(Some(_))
+      val reportUploadAddress = workflowManagerConfig.address(params.apiAddress)
+      val reportPreviewAddress = reportPreviewConfig.defaultAddress
+      uploadExecutionReport(reportUploadAddress, reportPreviewAddress, result).map(Some(_))
     } else {
       Future.successful(None)
     }
@@ -249,16 +247,13 @@ object WorkflowExecutorApp
   }
 
   private def uploadExecutionReport(
-      reportUploadHost: String,
+      reportUploadAddress: String,
+      reportPreviewAddress: String,
       result: WorkflowWithResults): Future[String] = {
-    new ReportUploadClient(reportUploadHost,
-      workflowManagerConfig.scheme,
-      workflowManagerConfig.port,
+    new ReportUploadClient(
+      reportUploadAddress,
       workflowManagerConfig.path,
       workflowManagerConfig.timeout,
-      reportPreviewConfig.scheme,
-      reportPreviewConfig.port,
-      reportPreviewConfig.path,
       graphReader
     ).uploadReport(result)
   }
@@ -275,24 +270,15 @@ object WorkflowExecutorApp
     outputDirectoryPath: Option[String] = None,
     uploadReport: Boolean = false,
     reportLevel: ReportLevel = ReportLevel.MEDIUM,
-    editorHost: Option[String] = None)
+    apiAddress: Option[String] = None)
 
   private case class WorkflowManagerConfig(
-      scheme: String,
-      defaultHost: String,
-      port: Int,
+      defaultAddress: String,
       path: String,
       timeout: Int) {
 
-    def host(hostname: Option[String]): String = hostname.getOrElse(defaultHost)
+    def address(address: Option[String]): String = address.getOrElse(defaultAddress)
   }
 
-  private case class ReportPreviewConfig(
-      scheme: String,
-      defaultHost: String,
-      port: Int,
-      path: String) {
-
-    def host(hostname: Option[String]): String = hostname.getOrElse(defaultHost)
-  }
+  private case class ReportPreviewConfig(defaultAddress: String, path: String)
 }

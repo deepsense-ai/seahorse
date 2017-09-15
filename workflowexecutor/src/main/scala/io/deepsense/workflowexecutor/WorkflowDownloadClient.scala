@@ -29,20 +29,16 @@ import spray.http._
 import spray.util._
 
 import io.deepsense.commons.utils.Logging
-import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
-import io.deepsense.models.json.workflow._
 import io.deepsense.workflowexecutor.exception.UnexpectedHttpResponseException
 
 class WorkflowDownloadClient(
-    val host: String,
-    val scheme: String,
-    val port: Int,
+    val address: String,
     val path: String,
     val timeout: Int)
   extends Logging {
 
   val downloadUrl = (workflowId: String) =>
-    s"$scheme://$host:$port/$path/$workflowId/download"
+    s"$address/$path/$workflowId/download"
 
   def downloadWorkflow(workflowId: String): Future[String] = {
 
