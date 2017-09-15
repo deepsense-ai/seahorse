@@ -12,6 +12,7 @@ function LibraryModalService($uibModal) {
   service.openLibraryModal = openLibraryModal;
   service.openUploadingFilesPopover = openUploadingFilesPopover;
   service.closeUploadingFilesPopover = closeUploadingFilesPopover;
+  service.toggleUploadingFilesPopover = toggleUploadingFilesPopover;
   service.getUploadingFilesPopoverStatus = getUploadingFilesPopoverStatus;
   service.getNewDirectoryInputVisibility = getNewDirectoryInputVisibility;
   service.showNewDirectoryInput = showNewDirectoryInput;
@@ -46,6 +47,10 @@ function LibraryModalService($uibModal) {
 
   function closeUploadingFilesPopover() {
     isUploadingFilesPopoverOpen = false;
+  }
+
+  function toggleUploadingFilesPopover() {
+    isUploadingFilesPopoverOpen = !isUploadingFilesPopoverOpen;
   }
 
   function getUploadingFilesPopoverStatus() {

@@ -16,12 +16,8 @@ class RecentFilesIndicatorController {
     }, true);
   }
 
-  openRecentFilesTable() {
-    this.LibraryModalService.openUploadingFilesPopover();
-  }
-
-  closeRecentFilesTable() {
-    this.LibraryModalService.closeUploadingFilesPopover();
+  toggleOpenRecentFiles() {
+    this.LibraryModalService.toggleUploadingFilesPopover();
   }
 }
 
