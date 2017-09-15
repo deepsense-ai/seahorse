@@ -11,11 +11,13 @@
         "format": {
           "CSV": {
             "separator": {
-              "Semicolon": {}
+              "Semicolon": {
+
+              }
             },
             "names included": false,
             "convert to boolean": true,
-            "categorical columns":  {
+            "categorical columns": {
               "selections": [{
                 "type": "indexRange",
                 "values": [1, 1]
@@ -40,7 +42,9 @@
         "format": {
           "CSV": {
             "column separator": {
-              "Semicolon": {}
+              "Semicolon": {
+
+              }
             },
             "write header": true
           }

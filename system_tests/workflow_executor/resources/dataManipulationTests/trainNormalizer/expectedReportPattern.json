@@ -1,45 +1,40 @@
 {
-  "8223aac0-024d-3a10-5382-7dd5667fe730": [
-    {
-      "report": {
-        "tables": {
-          "Data Sample": {
-            "columnNames": ["x", "y"]
-          },
-          "DataFrame Size": {
-            "values": [["2", "40"]]
+  "8223aac0-024d-3a10-5382-7dd5667fe730": [{
+    "report": {
+      "tables": {
+        "Data Sample": {
+          "columnNames": ["x", "y"]
+        },
+        "DataFrame Size": {
+          "values": [["2", "40"]]
+        }
+      },
+      "distributions": {
+        "x": {
+          "statistics": {
+            "mean": "0"
           }
         },
-        "distributions": {
-          "x": {
-            "statistics": {
-              "mean": "0"
-            }
-          },
-          "y": {
-            "statistics": {
-              "mean": "0"
-            }
+        "y": {
+          "statistics": {
+            "mean": "0"
           }
         }
       }
-    },
-    {
+    }
+  }, {
 
-    }
-  ],
-  "ef2e9d7c-d515-7859-46dd-0212e33bc5eb": [
-    {
-      "report": {
-        "tables": {
-          "Data Sample": {
-            "columnNames": ["x", "y"]
-          },
-          "DataFrame Size": {
-            "values": [["2", "40"]]
-          }
+  }],
+  "ef2e9d7c-d515-7859-46dd-0212e33bc5eb": [{
+    "report": {
+      "tables": {
+        "Data Sample": {
+          "columnNames": ["x", "y"]
+        },
+        "DataFrame Size": {
+          "values": [["2", "40"]]
         }
       }
     }
-  ]
+  }]
 }

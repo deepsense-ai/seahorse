@@ -34,6 +34,7 @@
       "parameters": {
         "format": {
           "JSON": {
+
           }
         },
         "output file": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/readWriteLocalOutputJson/output.json"

@@ -30,7 +30,9 @@
         "format": {
           "CSV": {
             "separator": {
-              "Comma": {}
+              "Comma": {
+
+              }
             },
             "names included": true,
             "convert to boolean": true,
@@ -70,7 +72,6 @@
         "name": "Create Random Forest Regression"
       },
       "parameters": {
-        "num trees": 1.0,
         "feature subset strategy": {
           "auto": {
 
@@ -81,8 +82,9 @@
 
           }
         },
-        "max depth": 20.0,
-        "max bins": 100.0
+        "max bins": 100.0,
+        "num trees": 1.0,
+        "max depth": 20.0
       }
     }, {
       "id": "57b7d45c-629b-d8c0-d831-6f0b023f5c44",
@@ -110,7 +112,9 @@
         "format": {
           "CSV": {
             "separator": {
-              "Comma": {}
+              "Comma": {
+
+              }
             },
             "names included": true,
             "convert to boolean": true,

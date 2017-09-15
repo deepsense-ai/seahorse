@@ -64,7 +64,9 @@
         "format": {
           "CSV": {
             "separator": {
-              "Comma": {}
+              "Comma": {
+
+              }
             },
             "names included": true,
             "convert to boolean": true,
@@ -94,18 +96,18 @@
       },
       "parameters": {
         "num iterations": 3.0,
-        "loss": {
-          "absolute": {
-
-          }
-        },
         "impurity": {
           "variance": {
 
           }
         },
+        "max bins": 50.0,
         "max depth": 5.0,
-        "max bins": 50.0
+        "loss": {
+          "absolute": {
+
+          }
+        }
       }
     }, {
       "id": "1bae8b7c-dee5-8ac5-bbf8-babd1eec04c8",
@@ -128,7 +130,9 @@
         "format": {
           "CSV": {
             "separator": {
-              "Comma": {}
+              "Comma": {
+
+              }
             },
             "names included": true,
             "convert to boolean": true,
@@ -151,7 +155,9 @@
         "format": {
           "CSV": {
             "column separator": {
-              "Comma": {}
+              "Comma": {
+
+              }
             },
             "write header": true
           }

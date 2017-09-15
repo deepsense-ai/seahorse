@@ -1,417 +1,508 @@
 {
-  "a7f8fbd0-f4c9-429c-9c3f-f32c06ef4ea0": [
-    {
-      "report": {
-        "distributions": {
-          "check_in": {},
-          "review_count": {},
-          "smokingUnknown": {},
-          "petsUnknown": {},
-          "stars": {},
-          "deposit": {},
-          "petsTRUE": {},
-          "smokingTRUE": {},
-          "lowest_price": {},
-          "highest_price": {}
+  "11da09b9-90f3-45aa-9fe9-ec3f9fa86046": [{
+    "report": {
+      "distributions": {
+        "stars": {
+
         },
-        "name": "DataFrame Report",
-        "tables": {
-          "DataFrame Size": {
-            "name": "DataFrame Size",
-            "columnNames": [
-              "Number of columns",
-              "Number of rows"
-            ],
-            "values": [
-              [
-                "29",
-                "3"
-              ]
-            ]
-          },
-          "Data Sample": {
-            "name": "Data Sample"
-          }
-        }
-      }
-    }
-  ],
-  "b5b0f9b4-eabf-42b9-a6e7-ae072bec1186": [
-    {
-      "report": {
-        "distributions": {
-          "localityBerkeley": {},
-          "localityBakersfield": {},
-          "localityCalistoga": {},
-          "localityDesert Hot Springs": {},
-          "localityCarmel": {},
-          "localityCosta Mesa": {},
-          "localityCarlsbad": {},
-          "localityCambria": {},
-          "localityAnaheim": {},
-          "localityBig Bear Lake": {}
+        "smokingUnknown": {
+
         },
-        "tables": {
-          "DataFrame Size": {
-            "name": "DataFrame Size",
-            "columnNames": [
-              "Number of columns",
-              "Number of rows"
-            ],
-            "values": [
-              [
-                "119",
-                "9"
-              ]
-            ]
-          },
-          "Data Sample": {
-            "name": "Data Sample"
-          }
-        }
-      }
-    }
-  ],
-  "dac882c2-ab95-417a-aca2-5eb4d5c355e5": [
-    {
-      "report": {
-        "distributions": {
-          "localityBerkeley": {},
-          "localityBakersfield": {},
-          "localityCalistoga": {},
-          "localityDesert Hot Springs": {},
-          "localityCarmel": {},
-          "localityCosta Mesa": {},
-          "localityCarlsbad": {},
-          "localityCambria": {},
-          "localityAnaheim": {},
-          "localityBig Bear Lake": {}
+        "highest_price": {
+
         },
-        "name": "DataFrame Report",
-        "tables": {
-          "DataFrame Size": {
-            "name": "DataFrame Size",
-            "columnNames": [
-              "Number of columns",
-              "Number of rows"
-            ],
-            "values": [
-              [
-                "117",
-                "9"
-              ]
-            ]
-          },
-          "Data Sample": {
-            "name": "Data Sample"
-          }
-        }
-      }
-    }
-  ],
-  "fc391d40-40c5-4097-a20f-822dded3454e": [
-    {
-      "report": {
-        "distributions": {
-          "localityBerkeley": {},
-          "localityBakersfield": {},
-          "localityCalistoga": {},
-          "localityDesert Hot Springs": {},
-          "localityCarmel": {},
-          "localityCosta Mesa": {},
-          "localityCarlsbad": {},
-          "localityCambria": {},
-          "localityAnaheim": {},
-          "localityBig Bear Lake": {}
+        "check_in": {
+
         },
-        "name": "DataFrame Report",
-        "tables": {
-          "DataFrame Size": {
-            "name": "DataFrame Size",
-            "columnNames": [
-              "Number of columns",
-              "Number of rows"
-            ],
-            "values": [
-              [
-                "118",
-                "9"
-              ]
-            ]
-          },
-          "Data Sample": {
-            "name": "Data Sample"
-          }
-        }
-      }
-    }
-  ],
-  "b761e7e9-61ff-4fca-ab7c-d5c3d49f3dd4": [
-    {
-      "report": {
-        "name": "Report for MathematicalTransformation"
-      }
-    }
-  ],
-  "4ec76fa1-6546-435b-84d1-d04eb647a83e": [
-    {
-      "report": {
-        "name": "Report for MathematicalTransformation"
-      }
-    }
-  ],
-  "9fc4cea7-afc5-472e-931e-ab6c1280c6eb": [
-    {
-      "report": {
-        "distributions": {
-          "check_in": {},
-          "review_count": {},
-          "smokingUnknown": {},
-          "petsUnknown": {},
-          "stars": {},
-          "deposit": {},
-          "petsTRUE": {},
-          "smokingTRUE": {},
-          "lowest_price": {},
-          "highest_price": {}
+        "review_count": {
+
         },
-        "name": "DataFrame Report",
-        "tables": {
-          "DataFrame Size": {
-            "name": "DataFrame Size",
-            "columnNames": [
-              "Number of columns",
-              "Number of rows"
-            ],
-            "values": [
-              [
-                "28",
-                "9"
-              ]
-            ]
-          },
-          "Data Sample": {
-            "name": "Data Sample"
-          }
-        }
-      }
-    }
-  ],
-  "e073a57c-7aef-4f29-bdd1-40cdcabb2047": [
-    {
-      "report": {
-        "distributions": {}
-      }
-    }
-  ],
-  "3bb69404-2ab0-4424-8e11-d7e385a4cc0c": [
-    {
-      "report": {
-        "distributions": {
-          "localityBerkeley": {},
-          "localityBakersfield": {},
-          "localityCalistoga": {},
-          "localityDesert Hot Springs": {},
-          "localityCarmel": {},
-          "localityCosta Mesa": {},
-          "localityCarlsbad": {},
-          "localityCambria": {},
-          "localityAnaheim": {},
-          "localityBig Bear Lake": {}
+        "lowest_price": {
+
         },
-        "name": "DataFrame Report",
-        "tables": {
-          "DataFrame Size": {
-            "name": "DataFrame Size",
-            "columnNames": [
-              "Number of columns",
-              "Number of rows"
-            ],
-            "values": [
-              [
-                "121",
-                "9"
-              ]
-            ]
-          },
-          "Data Sample": {
-            "name": "Data Sample"
-          }
-        }
-      }
-    }
-  ],
-  "90f0ad82-b9b4-4f93-a35e-26a4c0bd82d1": [
-    {
-      "report": {
-        "name": "Report for MathematicalTransformation"
-      }
-    }
-  ],
-  "5d871a5d-0bea-4909-8831-2a4fa4816b09": [
-    {
-      "report": {
-        "name": "Report for MathematicalTransformation"
-      }
-    }
-  ],
-  "dd91d24f-77f2-4954-b891-ed32e510d3c7": [
-    {
-      "report": {
-        "name": "Evaluate Regression Report",
-        "tables": {
-          "Evaluate Regression Report": {
-            "name": "Evaluate Regression Report"
-          }
-        }
-      }
-    }
-  ],
-  "11da09b9-90f3-45aa-9fe9-ec3f9fa86046": [
-    {
-      "report": {
-        "distributions": {
-          "check_in": {},
-          "review_count": {},
-          "smokingUnknown": {},
-          "petsUnknown": {},
-          "stars": {},
-          "deposit": {},
-          "petsTRUE": {},
-          "smokingTRUE": {},
-          "lowest_price": {},
-          "highest_price": {}
+        "petsTRUE": {
+
         },
-        "name": "DataFrame Report",
-        "tables": {
-          "DataFrame Size": {
-            "name": "DataFrame Size",
-            "columnNames": [
-              "Number of columns",
-              "Number of rows"
-            ],
-            "values": [
-              [
-                "28",
-                "9"
-              ]
-            ]
-          },
-          "Data Sample": {
-            "name": "Data Sample"
-          }
-        }
-      }
-    }
-  ],
-  "15546b98-912b-4380-9ac1-f6d862d8f2c1": [
-    {
-      "report": {
-        "distributions": {
-          "localityBerkeley": {},
-          "localityBakersfield": {},
-          "localityCalistoga": {},
-          "localityDesert Hot Springs": {},
-          "localityCarmel": {},
-          "localityCosta Mesa": {},
-          "localityCarlsbad": {},
-          "localityCambria": {},
-          "localityAnaheim": {},
-          "localityBig Bear Lake": {}
+        "petsUnknown": {
+
         },
-        "name": "DataFrame Report",
-        "tables": {
-          "DataFrame Size": {
-            "name": "DataFrame Size",
-            "columnNames": [
-              "Number of columns",
-              "Number of rows"
-            ],
-            "values": [
-              [
-                "120",
-                "9"
-              ]
-            ]
-          },
-          "Data Sample": {
-            "name": "Data Sample"
-          }
+        "deposit": {
+
+        },
+        "smokingTRUE": {
+
+        }
+      },
+      "name": "DataFrame Report",
+      "tables": {
+        "DataFrame Size": {
+          "name": "DataFrame Size",
+          "columnNames": ["Number of columns", "Number of rows"],
+          "values": [["28", "9"]]
+        },
+        "Data Sample": {
+          "name": "Data Sample"
         }
       }
     }
-  ],
+  }],
+  "9fc4cea7-afc5-472e-931e-ab6c1280c6eb": [{
+    "report": {
+      "distributions": {
+        "stars": {
+
+        },
+        "smokingUnknown": {
+
+        },
+        "highest_price": {
+
+        },
+        "check_in": {
+
+        },
+        "review_count": {
+
+        },
+        "lowest_price": {
+
+        },
+        "petsTRUE": {
+
+        },
+        "petsUnknown": {
+
+        },
+        "deposit": {
+
+        },
+        "smokingTRUE": {
+
+        }
+      },
+      "name": "DataFrame Report",
+      "tables": {
+        "DataFrame Size": {
+          "name": "DataFrame Size",
+          "columnNames": ["Number of columns", "Number of rows"],
+          "values": [["28", "9"]]
+        },
+        "Data Sample": {
+          "name": "Data Sample"
+        }
+      }
+    }
+  }],
   "550366f7-ea8b-498e-a6bf-6985acb4ee84": [],
-  "7ad7a106-e253-405e-8d95-7528f4e41f1f": [
-    {
-      "report": {
-        "distributions": {
-          "check_in": {},
-          "review_count": {},
-          "smokingUnknown": {},
-          "petsUnknown": {},
-          "stars": {},
-          "deposit": {},
-          "petsTRUE": {},
-          "smokingTRUE": {},
-          "lowest_price": {},
-          "highest_price": {}
+  "90f0ad82-b9b4-4f93-a35e-26a4c0bd82d1": [{
+    "report": {
+      "name": "Report for MathematicalTransformation"
+    }
+  }],
+  "4ec76fa1-6546-435b-84d1-d04eb647a83e": [{
+    "report": {
+      "name": "Report for MathematicalTransformation"
+    }
+  }],
+  "a7f8fbd0-f4c9-429c-9c3f-f32c06ef4ea0": [{
+    "report": {
+      "distributions": {
+        "stars": {
+
         },
-        "name": "DataFrame Report",
-        "tables": {
-          "DataFrame Size": {
-            "name": "DataFrame Size",
-            "columnNames": [
-              "Number of columns",
-              "Number of rows"
-            ],
-            "values": [
-              [
-                "28",
-                "6"
-              ]
-            ]
-          },
-          "Data Sample": {
-            "name": "Data Sample"
-          }
+        "smokingUnknown": {
+
+        },
+        "highest_price": {
+
+        },
+        "check_in": {
+
+        },
+        "review_count": {
+
+        },
+        "lowest_price": {
+
+        },
+        "petsTRUE": {
+
+        },
+        "petsUnknown": {
+
+        },
+        "deposit": {
+
+        },
+        "smokingTRUE": {
+
         }
-      }
-    },
-    {
-      "report": {
-        "distributions": {
-          "check_in": {},
-          "review_count": {},
-          "smokingUnknown": {},
-          "petsUnknown": {},
-          "stars": {},
-          "deposit": {},
-          "petsTRUE": {},
-          "smokingTRUE": {},
-          "lowest_price": {},
-          "highest_price": {}
+      },
+      "name": "DataFrame Report",
+      "tables": {
+        "DataFrame Size": {
+          "name": "DataFrame Size",
+          "columnNames": ["Number of columns", "Number of rows"],
+          "values": [["29", "3"]]
         },
-        "name": "DataFrame Report",
-        "tables": {
-          "DataFrame Size": {
-            "name": "DataFrame Size",
-            "columnNames": [
-              "Number of columns",
-              "Number of rows"
-            ],
-            "values": [
-              [
-                "28",
-                "3"
-              ]
-            ]
-          },
-          "Data Sample": {
-            "name": "Data Sample"
-          }
+        "Data Sample": {
+          "name": "Data Sample"
         }
       }
     }
-  ]
+  }],
+  "dac882c2-ab95-417a-aca2-5eb4d5c355e5": [{
+    "report": {
+      "distributions": {
+        "localityDesert Hot Springs": {
+
+        },
+        "localityCalistoga": {
+
+        },
+        "localityCarlsbad": {
+
+        },
+        "localityCarmel": {
+
+        },
+        "localityBerkeley": {
+
+        },
+        "localityCambria": {
+
+        },
+        "localityBakersfield": {
+
+        },
+        "localityBig Bear Lake": {
+
+        },
+        "localityAnaheim": {
+
+        },
+        "localityCosta Mesa": {
+
+        }
+      },
+      "name": "DataFrame Report",
+      "tables": {
+        "DataFrame Size": {
+          "name": "DataFrame Size",
+          "columnNames": ["Number of columns", "Number of rows"],
+          "values": [["117", "9"]]
+        },
+        "Data Sample": {
+          "name": "Data Sample"
+        }
+      }
+    }
+  }],
+  "5d871a5d-0bea-4909-8831-2a4fa4816b09": [{
+    "report": {
+      "name": "Report for MathematicalTransformation"
+    }
+  }],
+  "7ad7a106-e253-405e-8d95-7528f4e41f1f": [{
+    "report": {
+      "distributions": {
+        "stars": {
+
+        },
+        "smokingUnknown": {
+
+        },
+        "highest_price": {
+
+        },
+        "check_in": {
+
+        },
+        "review_count": {
+
+        },
+        "lowest_price": {
+
+        },
+        "petsTRUE": {
+
+        },
+        "petsUnknown": {
+
+        },
+        "deposit": {
+
+        },
+        "smokingTRUE": {
+
+        }
+      },
+      "name": "DataFrame Report",
+      "tables": {
+        "DataFrame Size": {
+          "name": "DataFrame Size",
+          "columnNames": ["Number of columns", "Number of rows"],
+          "values": [["28", "6"]]
+        },
+        "Data Sample": {
+          "name": "Data Sample"
+        }
+      }
+    }
+  }, {
+    "report": {
+      "distributions": {
+        "stars": {
+
+        },
+        "smokingUnknown": {
+
+        },
+        "highest_price": {
+
+        },
+        "check_in": {
+
+        },
+        "review_count": {
+
+        },
+        "lowest_price": {
+
+        },
+        "petsTRUE": {
+
+        },
+        "petsUnknown": {
+
+        },
+        "deposit": {
+
+        },
+        "smokingTRUE": {
+
+        }
+      },
+      "name": "DataFrame Report",
+      "tables": {
+        "DataFrame Size": {
+          "name": "DataFrame Size",
+          "columnNames": ["Number of columns", "Number of rows"],
+          "values": [["28", "3"]]
+        },
+        "Data Sample": {
+          "name": "Data Sample"
+        }
+      }
+    }
+  }],
+  "15546b98-912b-4380-9ac1-f6d862d8f2c1": [{
+    "report": {
+      "distributions": {
+        "localityDesert Hot Springs": {
+
+        },
+        "localityCalistoga": {
+
+        },
+        "localityCarlsbad": {
+
+        },
+        "localityCarmel": {
+
+        },
+        "localityBerkeley": {
+
+        },
+        "localityCambria": {
+
+        },
+        "localityBakersfield": {
+
+        },
+        "localityBig Bear Lake": {
+
+        },
+        "localityAnaheim": {
+
+        },
+        "localityCosta Mesa": {
+
+        }
+      },
+      "name": "DataFrame Report",
+      "tables": {
+        "DataFrame Size": {
+          "name": "DataFrame Size",
+          "columnNames": ["Number of columns", "Number of rows"],
+          "values": [["120", "9"]]
+        },
+        "Data Sample": {
+          "name": "Data Sample"
+        }
+      }
+    }
+  }],
+  "fc391d40-40c5-4097-a20f-822dded3454e": [{
+    "report": {
+      "distributions": {
+        "localityDesert Hot Springs": {
+
+        },
+        "localityCalistoga": {
+
+        },
+        "localityCarlsbad": {
+
+        },
+        "localityCarmel": {
+
+        },
+        "localityBerkeley": {
+
+        },
+        "localityCambria": {
+
+        },
+        "localityBakersfield": {
+
+        },
+        "localityBig Bear Lake": {
+
+        },
+        "localityAnaheim": {
+
+        },
+        "localityCosta Mesa": {
+
+        }
+      },
+      "name": "DataFrame Report",
+      "tables": {
+        "DataFrame Size": {
+          "name": "DataFrame Size",
+          "columnNames": ["Number of columns", "Number of rows"],
+          "values": [["118", "9"]]
+        },
+        "Data Sample": {
+          "name": "Data Sample"
+        }
+      }
+    }
+  }],
+  "dd91d24f-77f2-4954-b891-ed32e510d3c7": [{
+    "report": {
+      "name": "Evaluate Regression Report",
+      "tables": {
+        "Evaluate Regression Report": {
+          "name": "Evaluate Regression Report"
+        }
+      }
+    }
+  }],
+  "e073a57c-7aef-4f29-bdd1-40cdcabb2047": [{
+    "report": {
+      "distributions": {
+
+      }
+    }
+  }],
+  "3bb69404-2ab0-4424-8e11-d7e385a4cc0c": [{
+    "report": {
+      "distributions": {
+        "localityDesert Hot Springs": {
+
+        },
+        "localityCalistoga": {
+
+        },
+        "localityCarlsbad": {
+
+        },
+        "localityCarmel": {
+
+        },
+        "localityBerkeley": {
+
+        },
+        "localityCambria": {
+
+        },
+        "localityBakersfield": {
+
+        },
+        "localityBig Bear Lake": {
+
+        },
+        "localityAnaheim": {
+
+        },
+        "localityCosta Mesa": {
+
+        }
+      },
+      "name": "DataFrame Report",
+      "tables": {
+        "DataFrame Size": {
+          "name": "DataFrame Size",
+          "columnNames": ["Number of columns", "Number of rows"],
+          "values": [["121", "9"]]
+        },
+        "Data Sample": {
+          "name": "Data Sample"
+        }
+      }
+    }
+  }],
+  "b5b0f9b4-eabf-42b9-a6e7-ae072bec1186": [{
+    "report": {
+      "distributions": {
+        "localityDesert Hot Springs": {
+
+        },
+        "localityCalistoga": {
+
+        },
+        "localityCarlsbad": {
+
+        },
+        "localityCarmel": {
+
+        },
+        "localityBerkeley": {
+
+        },
+        "localityCambria": {
+
+        },
+        "localityBakersfield": {
+
+        },
+        "localityBig Bear Lake": {
+
+        },
+        "localityAnaheim": {
+
+        },
+        "localityCosta Mesa": {
+
+        }
+      },
+      "tables": {
+        "DataFrame Size": {
+          "name": "DataFrame Size",
+          "columnNames": ["Number of columns", "Number of rows"],
+          "values": [["119", "9"]]
+        },
+        "Data Sample": {
+          "name": "Data Sample"
+        }
+      }
+    }
+  }],
+  "b761e7e9-61ff-4fca-ab7c-d5c3d49f3dd4": [{
+    "report": {
+      "name": "Report for MathematicalTransformation"
+    }
+  }]
 }

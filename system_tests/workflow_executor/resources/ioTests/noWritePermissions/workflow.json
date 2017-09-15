@@ -11,7 +11,9 @@
         "format": {
           "CSV": {
             "separator": {
-              "Comma": {}
+              "Comma": {
+
+              }
             },
             "names included": true,
             "convert to boolean": true,
@@ -40,7 +42,9 @@
         "format": {
           "CSV": {
             "column separator": {
-              "Comma": {}
+              "Comma": {
+
+              }
             },
             "write header": true
           }

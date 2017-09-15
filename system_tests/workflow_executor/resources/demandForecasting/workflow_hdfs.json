@@ -62,7 +62,9 @@
         "format": {
           "CSV": {
             "separator": {
-              "Comma": {}
+              "Comma": {
+
+              }
             },
             "names included": true,
             "convert to boolean": true,
@@ -83,12 +85,16 @@
         "version": "0.1.0"
       },
       "parameters": {
-        "join columns": [
-          {
-            "left column": {"type": "column", "value": "datetime"},
-            "right column": {"type": "column","value": "datetime"}
+        "join columns": [{
+          "left column": {
+            "type": "column",
+            "value": "datetime"
+          },
+          "right column": {
+            "type": "column",
+            "value": "datetime"
           }
-        ],
+        }],
         "left prefix": null,
         "right prefix": null
       }
@@ -213,7 +219,9 @@
         "format": {
           "CSV": {
             "separator": {
-              "Comma": {}
+              "Comma": {
+
+              }
             },
             "names included": true,
             "convert to boolean": true,

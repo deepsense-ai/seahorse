@@ -1,94 +1,85 @@
 {
-  "07c2a748-9312-4bc1-7b64-71cfa2e47547": [
-    {
-      "report": {
-        "tables": {
-          "Data Sample": {
-            "columnNames": ["x", "x2", "x3", "value"]
-          },
-          "DataFrame Size": {
-            "values": [["4", "401"]]
-          }
+  "07c2a748-9312-4bc1-7b64-71cfa2e47547": [{
+    "report": {
+      "tables": {
+        "Data Sample": {
+          "columnNames": ["x", "x2", "x3", "value"]
         },
-        "distributions": {
-          "x": {
-            "subtype": "continuous"
-          },
-          "x2": {
-            "subtype": "continuous"
-          },
-          "x3": {
-            "subtype": "continuous"
-          },
-          "value": {
-            "subtype": "continuous"
-          }
+        "DataFrame Size": {
+          "values": [["4", "401"]]
         }
-      }
-    }
-  ],
-  "bbf9f00c-a0de-156e-7586-297908535113": [
-    {
-      "report": {
-        "tables": {
-          "Data Sample": {
-            "columnNames": ["x", "x2", "x3"]
-          },
-          "DataFrame Size": {
-            "values": [["3", "10"]]
-          }
+      },
+      "distributions": {
+        "x": {
+          "subtype": "continuous"
         },
-        "distributions": {
-          "x": {
-            "subtype": "continuous"
-          },
-          "x2": {
-            "subtype": "continuous"
-          },
-          "x3": {
-            "subtype": "continuous"
-          }
+        "x2": {
+          "subtype": "continuous"
+        },
+        "x3": {
+          "subtype": "continuous"
+        },
+        "value": {
+          "subtype": "continuous"
         }
       }
     }
-  ],
-  "2a743933-9198-2f0c-a736-aa2567e6b7a3": [
-    {
-      "report": {
-        "tables": {
-          "Data Sample": {
-            "columnNames": ["x", "x2", "x3", "prediction"]
-          },
-          "DataFrame Size": {
-            "values": [["4", "10"]]
-          }
+  }],
+  "ecdcf75a-25d5-c393-4592-068a9e70b5ec": [{
+    "report": {
+      "tables": {
+        "Evaluate Regression Report": {
+          "name": "Evaluate Regression Report",
+          "columnNames": ["DataFrame Size", "Explained Variance", "Mean Absolute Error", "Mean Squared Error", "r2", "Root Mean Squared Error"]
         }
       }
     }
-  ],
-  "c1555b5c-9eb8-9c32-f526-e54c9219dbd3": [
-    {},
-    {
-      "report": {
-        "tables": {
-          "Cross-validate Regression Report": {
-            "name": "Cross-validate Regression Report",
-            "columnNames": ["Fold Number", "Training Set Size", "Test Set Size", "Explained Variance", "Mean Absolute Error", "Mean Squared Error", "r2", "Root Mean Squared Error"]
-          }
+  }],
+  "2a743933-9198-2f0c-a736-aa2567e6b7a3": [{
+    "report": {
+      "tables": {
+        "Data Sample": {
+          "columnNames": ["x", "x2", "x3", "prediction"]
+        },
+        "DataFrame Size": {
+          "values": [["4", "10"]]
         }
       }
     }
-  ],
-  "ecdcf75a-25d5-c393-4592-068a9e70b5ec": [
-    {
-      "report": {
-        "tables": {
-          "Evaluate Regression Report": {
-            "name": "Evaluate Regression Report",
-            "columnNames": ["DataFrame Size", "Explained Variance", "Mean Absolute Error", "Mean Squared Error", "r2", "Root Mean Squared Error"]
-          }
+  }],
+  "c1555b5c-9eb8-9c32-f526-e54c9219dbd3": [{
+
+  }, {
+    "report": {
+      "tables": {
+        "Cross-validate Regression Report": {
+          "name": "Cross-validate Regression Report",
+          "columnNames": ["Fold Number", "Training Set Size", "Test Set Size", "Explained Variance", "Mean Absolute Error", "Mean Squared Error", "r2", "Root Mean Squared Error"]
         }
       }
     }
-  ]
+  }],
+  "bbf9f00c-a0de-156e-7586-297908535113": [{
+    "report": {
+      "tables": {
+        "Data Sample": {
+          "columnNames": ["x", "x2", "x3"]
+        },
+        "DataFrame Size": {
+          "values": [["3", "10"]]
+        }
+      },
+      "distributions": {
+        "x": {
+          "subtype": "continuous"
+        },
+        "x2": {
+          "subtype": "continuous"
+        },
+        "x3": {
+          "subtype": "continuous"
+        }
+      }
+    }
+  }]
 }

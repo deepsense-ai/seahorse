@@ -12,7 +12,9 @@
         "format": {
           "CSV": {
             "separator": {
-              "Comma": {}
+              "Comma": {
+
+              }
             },
             "names included": true,
             "convert to boolean": true,
@@ -67,7 +69,9 @@
         "format": {
           "CSV": {
             "column separator": {
-              "Comma": {}
+              "Comma": {
+
+              }
             },
             "write header": true
           }
@@ -207,35 +211,7 @@
           "excluding": false,
           "selections": [{
             "type": "columnList",
-            "values": [
-              "rating",
-              "review_count",
-              "stars",
-              "highest_price",
-              "lowest_price",
-              "deposit",
-              "petsTRUE",
-              "petsUnknown",
-              "smokingTRUE",
-              "smokingUnknown",
-              "check_in",
-              "room_count",
-              "meeting_roomsUnknown",
-              "parking_detailsUnknown",
-              "fitness_facilitiesTRUE",
-              "fitness_facilitiesUnknown",
-              "accessibilityUnknown",
-              "cribsUnknown",
-              "twentyfour_hour_front_deskUnknown",
-              "Bed_and_BreakfastsTRUE",
-              "BusinessTRUE",
-              "MotelTRUE",
-              "FamilyTRUE",
-              "B_BTRUE",
-              "log_highest_price1",
-              "log_lowest_price1",
-              "log_review_count1",
-              "dist_SF_LA"]
+            "values": ["rating", "review_count", "stars", "highest_price", "lowest_price", "deposit", "petsTRUE", "petsUnknown", "smokingTRUE", "smokingUnknown", "check_in", "room_count", "meeting_roomsUnknown", "parking_detailsUnknown", "fitness_facilitiesTRUE", "fitness_facilitiesUnknown", "accessibilityUnknown", "cribsUnknown", "twentyfour_hour_front_deskUnknown", "Bed_and_BreakfastsTRUE", "BusinessTRUE", "MotelTRUE", "FamilyTRUE", "B_BTRUE", "log_highest_price1", "log_lowest_price1", "log_review_count1", "dist_SF_LA"]
           }]
         }
       }

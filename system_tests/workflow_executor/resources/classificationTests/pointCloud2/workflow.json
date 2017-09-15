@@ -38,7 +38,9 @@
         "format": {
           "CSV": {
             "separator": {
-              "Semicolon": {}
+              "Semicolon": {
+
+              }
             },
             "names included": true,
             "convert to boolean": true,
@@ -131,7 +133,6 @@
         "name": "Create Random Forest Classification"
       },
       "parameters": {
-        "num trees": 1.0,
         "feature subset strategy": {
           "auto": {
 
@@ -142,8 +143,9 @@
 
           }
         },
-        "max depth": 6.0,
-        "max bins": 100.0
+        "max bins": 100.0,
+        "num trees": 1.0,
+        "max depth": 6.0
       }
     }, {
       "id": "88d65c54-c9bd-769c-d688-7f117a53649f",

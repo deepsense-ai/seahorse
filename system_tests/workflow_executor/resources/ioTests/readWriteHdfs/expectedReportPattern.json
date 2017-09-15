@@ -1,33 +1,31 @@
 {
-  "b2367b9d-3c7d-4db8-c5b4-40b99be2d8ea": [
-    {
-      "report": {
-        "tables": {
-          "Data Sample": {
-            "columnNames": ["unnamed_0", "unnamed_1", "unnamed_2", "unnamed_3"]
-          },
-          "DataFrame Size": {
-            "values": [["4", "25"]]
-          }
+  "b2367b9d-3c7d-4db8-c5b4-40b99be2d8ea": [{
+    "report": {
+      "tables": {
+        "Data Sample": {
+          "columnNames": ["unnamed_0", "unnamed_1", "unnamed_2", "unnamed_3"]
         },
-        "distributions": {
-          "unnamed_0": {
-            "subtype": "continuous"
-          },
-          "unnamed_1": {
-            "subtype": "categorical",
-            "buckets": ["black", "white"],
-            "counts": [1, 24]
-          },
-          "unnamed_2": {
-            "subtype": "continuous"
-          },
-          "unnamed_3": {
-            "subtype": "continuous"
-          }
+        "DataFrame Size": {
+          "values": [["4", "25"]]
+        }
+      },
+      "distributions": {
+        "unnamed_0": {
+          "subtype": "continuous"
+        },
+        "unnamed_1": {
+          "subtype": "categorical",
+          "buckets": ["black", "white"],
+          "counts": [1, 24]
+        },
+        "unnamed_2": {
+          "subtype": "continuous"
+        },
+        "unnamed_3": {
+          "subtype": "continuous"
         }
       }
     }
-  ],
+  }],
   "c9a629a2-6716-5ae8-9c0c-6e2afcfa2dba": []
 }

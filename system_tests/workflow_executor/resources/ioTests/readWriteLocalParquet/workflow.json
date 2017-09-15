@@ -10,6 +10,7 @@
         "source": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/resources/ioTests/readWriteLocalParquet/input.parquet",
         "format": {
           "PARQUET": {
+
           }
         },
         "line separator": {
@@ -27,6 +28,7 @@
       "parameters": {
         "format": {
           "PARQUET": {
+
           }
         },
         "output file": "file:///home/jenkins/workspace/workflow-executor-system-tests/workspace/workflow_executor/readWriteLocalOutputParquet/output.parquet"

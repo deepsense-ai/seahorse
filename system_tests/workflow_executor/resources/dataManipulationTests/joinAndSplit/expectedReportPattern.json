@@ -1,46 +1,41 @@
 {
-  "01ccc706-2912-c87d-5f02-9604a7db2b5f": [
-    {
-      "report": {
-        "tables": {
-          "Data Sample": {
-            "columnNames": ["name", "surname", "marriage_status", "salary"]
-          },
-          "DataFrame Size": {
-            "values": [["4", "10"]]
-          }
+  "01ccc706-2912-c87d-5f02-9604a7db2b5f": [{
+    "report": {
+      "tables": {
+        "Data Sample": {
+          "columnNames": ["name", "surname", "marriage_status", "salary"]
         },
-        "distributions": {
-          "marriage_status": {
-            "missingValues": 0,
-            "subtype": "continuous"
-          },
-          "salary": {
-            "missingValues": 5,
-            "subtype": "continuous"
-          }
+        "DataFrame Size": {
+          "values": [["4", "10"]]
+        }
+      },
+      "distributions": {
+        "marriage_status": {
+          "missingValues": 0,
+          "subtype": "continuous"
+        },
+        "salary": {
+          "missingValues": 5,
+          "subtype": "continuous"
         }
       }
     }
-  ],
-  "94d963d6-92e7-64b9-05e8-15661774d1bb": [
-    {
-      "report": {
-        "tables": {
-          "Data Sample": {
-            "columnNames": ["name", "surname", "marriage_status", "salary"]
-          }
-        }
-      }
-    },
-    {
-      "report": {
-        "tables": {
-          "Data Sample": {
-            "columnNames": ["name", "surname", "marriage_status", "salary"]
-          }
+  }],
+  "94d963d6-92e7-64b9-05e8-15661774d1bb": [{
+    "report": {
+      "tables": {
+        "Data Sample": {
+          "columnNames": ["name", "surname", "marriage_status", "salary"]
         }
       }
     }
-  ]
+  }, {
+    "report": {
+      "tables": {
+        "Data Sample": {
+          "columnNames": ["name", "surname", "marriage_status", "salary"]
+        }
+      }
+    }
+  }]
 }

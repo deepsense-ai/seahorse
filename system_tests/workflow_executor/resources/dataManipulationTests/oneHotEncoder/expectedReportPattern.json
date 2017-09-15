@@ -1,46 +1,40 @@
 {
-  "04658430-edd5-93e3-def8-c73f1469b1ef": [
-    {
-      "report": {
-        "tables": {
-          "Data Sample": {
-            "columnNames": [
-              "multiplied",
-              "color_green", "color_red", "color_blue",
-              "prefix_hardness_hard", "prefix_hardness_soft",
-              "prefix_hardness_medium"]
-          },
-          "DataFrame Size": {
-            "values": [["7", "20"]]
+  "04658430-edd5-93e3-def8-c73f1469b1ef": [{
+    "report": {
+      "tables": {
+        "Data Sample": {
+          "columnNames": ["multiplied", "color_green", "color_red", "color_blue", "prefix_hardness_hard", "prefix_hardness_soft", "prefix_hardness_medium"]
+        },
+        "DataFrame Size": {
+          "values": [["7", "20"]]
+        }
+      },
+      "distributions": {
+        "multiplied": {
+          "subtype": "continuous",
+          "statistics": {
+            "min": "0",
+            "max": "2",
+            "mean": "0.6"
           }
         },
-        "distributions": {
-          "multiplied": {
-            "subtype": "continuous",
-            "statistics": {
-              "min": "0",
-              "max": "2",
-              "mean": "0.6"
-            }
-          },
-          "color_blue": {
-            "subtype": "continuous",
-            "statistics": {
-              "min": "0",
-              "max": "1",
-              "mean": "0.35"
-            }
-          },
-          "prefix_hardness_soft": {
-            "subtype": "continuous",
-            "statistics": {
-              "min": "0",
-              "max": "1",
-              "mean": "0.45"
-            }
+        "color_blue": {
+          "subtype": "continuous",
+          "statistics": {
+            "min": "0",
+            "max": "1",
+            "mean": "0.35"
+          }
+        },
+        "prefix_hardness_soft": {
+          "subtype": "continuous",
+          "statistics": {
+            "min": "0",
+            "max": "1",
+            "mean": "0.45"
           }
         }
       }
     }
-  ]
+  }]
 }

@@ -103,7 +103,9 @@
         "format": {
           "CSV": {
             "separator": {
-              "Semicolon": {}
+              "Semicolon": {
+
+              }
             },
             "names included": true,
             "convert to boolean": true,
