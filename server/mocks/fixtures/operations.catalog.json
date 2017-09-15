@@ -1,110 +1,105 @@
 {
-  "catalog": [
-    {
-      "id": "11111-5555-9999",
-      "name": "Data store",
-      "catalog": [
-        {
-          "id": "982345-23943-85923",
-          "name": "Dataframe",
-          "items": [
-            {
-              "id": "43241264-6318434-f34d234",
-              "name": "ScientificDatasetA"
-            }
-          ]
-        },
-        {
-          "id": "90483-2345-87324",
-          "name": "Model"
-        }
-      ]
-    },
-    {
-      "id": "23123-12312-43242",
-      "name": "Data readers",
-      "items": [
-        {
-          "id": "342342-123123-434234-234234",
-          "name": "Sql Reader"
-        },
-        {
-          "id": "23456-78901-83752",
-          "name": "Webservice Reader"
-        },
-        {
-          "id": "59032-19830-83129",
-          "name": "Spliter"
-        }
-      ]
-    },
-    {
-      "id": "91111-111111-11111",
-      "name": "Filters",
-      "items": [
-        {
-          "id": "11111-111111-33333",
-          "name": "Column filter"
-        },
-        {
-          "id": "11111-111111-33322",
-          "name": "Multiple column filter"
-        },
-        {
-          "id": "342342-123123-434234-12334",
-          "name": "Row Filter"
-        }
-      ],
-      "catalog": [
-        {
-          "id": "81111-111111-11111",
-          "name": "Simple",
-          "items": [
-            {
-              "id": "11111-111111-11111",
-              "name": "Simple filter"
-            },
-            {
-              "id": "11111-111111-22222",
-              "name": "Basic filter"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "71111-111111-11111",
-      "name": "Machine Learning",
-      "catalog": [
-        {
-          "id": "987435-12343-56401",
-          "name": "Reggression",
-          "items": [
-            {
-              "id": "237956-23426-49857",
-              "name": "Linear Regresion"
-            }
-          ]
-        },
-        {
-          "id": "234234-756756-34234",
-          "name": "Classification",
-          "items": [
-            {
-              "id": "11111-111111-44444",
-              "name": "Neural Network"
-            },
-            {
-              "id": "11111-111111-55555",
-              "name": "Decision Forest"
-            },
-            {
-              "id": "1163bb76-ba65-4471-9632-dfb761d20dfb",
-              "name": "Evaluate Classification"
-            }
-          ]
-        }
-      ]
-    }
-  ]
+  "items": [],
+  "catalog": [{
+    "items": [{
+      "id": "83bad450-f87c-11e4-b939-0800200c9a66",
+      "name": "File To DataFrame"
+    }, {
+      "id": "748975b2-38f0-40b4-8550-3faf4840b7c5",
+      "name": "Read File"
+    }, {
+      "id": "2aa22df2-e28b-11e4-8a00-1681e6b88ec1",
+      "name": "Load DataFrame"
+    }, {
+      "id": "58025c36-e28b-11e4-8a00-1681e6b88ec1",
+      "name": "Save DataFrame"
+    }],
+    "catalog": [],
+    "id": "5a39e324-15f4-464c-83a5-2d7fba2858aa",
+    "name": "Input/Output"
+  }, {
+    "items": [{
+      "id": "ecb9bc36-5f7c-4a62-aa18-8db6e2d73251",
+      "name": "Mathematical Operation"
+    }, {
+      "id": "f6e1f59b-d04d-44e2-ae35-2fcada44d23f",
+      "name": "Apply Transformation"
+    }],
+    "catalog": [],
+    "id": "3fcc6ce8-11df-433f-8db3-fa1dcc545ed8",
+    "name": "Transformation"
+  }, {
+    "items": [{
+      "id": "b1b6eefe-f7b7-11e4-a322-1697f925ec7b",
+      "name": "One Hot Encoder"
+    }, {
+      "id": "06374446-3138-4cf7-9682-f884990f3a60",
+      "name": "Join"
+    }, {
+      "id": "42f2eb12-e28b-11e4-8a00-1681e6b88ec1",
+      "name": "Decompose Datetime"
+    }, {
+      "id": "f8b3c5d0-febe-11e4-b939-0800200c9a66",
+      "name": "Convert Type"
+    }, {
+      "id": "96b28b7f-d54c-40d7-9076-839411793d20",
+      "name": "Project Columns"
+    }, {
+      "id": "d273c42f-b840-4402-ba6b-18282cc68de3",
+      "name": "Split"
+    }],
+    "catalog": [],
+    "id": "6c730c11-9708-4a84-9dbd-3845903f32ac",
+    "name": "Data manipulation"
+  }, {
+    "items": [],
+    "catalog": [{
+      "items": [{
+        "id": "c526714c-e7fb-11e4-b02c-1681e6b88ec1",
+        "name": "Train Regressor"
+      }, {
+        "id": "6cf6867c-e7fd-11e4-b02c-1681e6b88ec1",
+        "name": "Score regressor"
+      }, {
+        "id": "0643f308-f2fa-11e4-b9b2-1697f925ec7b",
+        "name": "Ridge Regression"
+      }, {
+        "id": "95ca5225-b8e0-45c7-8ecd-a2c9d4d6861f",
+        "name": "Cross-validate Regressor"
+      }, {
+        "id": "f2a43e21-331e-42d3-8c02-7db1da20bc00",
+        "name": "Evaluate Regression"
+      }],
+      "catalog": [],
+      "id": "c80397a8-7840-4bdb-83b3-dc12f1f5bc3c",
+      "name": "Regression"
+    }, {
+      "items": [{
+        "id": "ed20e602-ff91-11e4-a322-1697f925ec7b",
+        "name": "Logistic Regression"
+      }, {
+        "id": "892cf942-fe24-11e4-a322-1697f925ec7b",
+        "name": "Train Classifier"
+      }, {
+        "id": "6f9a4e9e-fe1a-11e4-a322-1697f925ec7b",
+        "name": "Score Classifier"
+      }, {
+        "id": "1163bb76-ba65-4471-9632-dfb761d20dfb",
+        "name": "Evaluate Classification"
+      }],
+      "catalog": [],
+      "id": "ff13cbbd-f4ec-4df3-b0c3-f6fd4b019edf",
+      "name": "Classification"
+    }, {
+      "items": [{
+        "id": "c25e034e-ffac-11e4-a322-1697f925ec7b",
+        "name": "Select Important Features"
+      }],
+      "catalog": [],
+      "id": "dd29042a-a32c-4948-974f-073c41230da0",
+      "name": "Feature selection"
+    }],
+    "id": "64df4eb4-0c35-46a1-bdf9-372e47ef4a75",
+    "name": "Machine learning"
+  }]
 }

@@ -1,0 +1,28 @@
+{
+  "operation": {
+    "name": "Score regressor",
+    "description": "Scores a trained regression model",
+    "ports": {
+      "input": [{
+        "portIndex": 0,
+        "typeQualifier": ["io.deepsense.deeplang.doperables.Regressor", "io.deepsense.deeplang.doperables.Scorable"],
+        "required": true
+      }, {
+        "portIndex": 1,
+        "typeQualifier": ["io.deepsense.deeplang.doperables.dataframe.DataFrame"],
+        "required": true
+      }],
+      "output": [{
+        "portIndex": 0,
+        "typeQualifier": ["io.deepsense.deeplang.doperables.dataframe.DataFrame"]
+      }]
+    },
+    "version": "0.1.0",
+    "id": "6cf6867c-e7fd-11e4-b02c-1681e6b88ec1",
+    "category": "c80397a8-7840-4bdb-83b3-dc12f1f5bc3c",
+    "deterministic": false,
+    "parameters": {
+
+    }
+  }
+}
