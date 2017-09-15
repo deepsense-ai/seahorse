@@ -16,7 +16,7 @@ class WorkflowExecutorClient(object):
     self.spark_master = conf('sparkMaster')
     self.output_dir = "test-output"
 
-  def run_workflow(self, workflow_file_path, spark_master=None, spark_submit_options=None):
+  def run_workflow(self, workflow_file_path, spark_master=None, spark_submit_options=""):
     if spark_master == None:
       spark_master = self.spark_master
 
@@ -39,7 +39,7 @@ class WorkflowExecutorClient(object):
     if spark_submit.wait() != 0:
       raise AssertionError('spark-submit failed.')
 
-  def run_workflow_local(self, workflow_file_path, spark_submit_options=None):
+  def run_workflow_local(self, workflow_file_path, spark_submit_options=""):
     self.run_workflow(workflow_file_path, "local[4]", spark_submit_options)
 
   def check_execution_status(self, expected_status="COMPLETED"):
