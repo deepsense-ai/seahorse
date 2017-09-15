@@ -23,6 +23,12 @@ class WorkflowsEditorController {
       $rootScope.pageTitle = newValue;
     });
 
+    $scope.$watch(() => this.MultiSelectionService.getSelectedNodeIds(), (newValue) => {
+      if (newValue.length === 0) {
+        this.selectedNode = null;
+      }
+    });
+
     this.AdapterService.setMouseClickOnPortFunction((data) => {
       this.openReport(data);
     });
