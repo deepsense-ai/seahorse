@@ -15,14 +15,16 @@ fi
 
 # Settings
 SEAHORSE_BUILD_TAG=$1
-COMPOSE_FILE="http://artifactory.deepsense.codilime.com:8081/artifactory/seahorse-distribution/io/deepsense/$SEAHORSE_BUILD_TAG/dockercompose/docker-compose-internal.yml"
+ARTIFACT_NAME="docker-compose-internal.yml"
+COMPOSE_FILE="http://artifactory.deepsense.codilime.com:8081/artifactory/seahorse-distribution/io/deepsense/$SEAHORSE_BUILD_TAG/dockercompose/$ARTIFACT_NAME"
 VAGRANT_BOX_NAME="seahorse-vm"
 PUBLISH_DIR="../image_publication"
 
 # Download docker-compose config file
 cd ../deployment/vagrant_with_docker
-rm -f docker-compose.yml
+rm -f $ARTIFACT_NAME
 wget $COMPOSE_FILE
+mv $ARTIFACT_NAME docker-compose.yml
 
 # Create Vagrant box
 vagrant destroy -f $VAGRANT_BOX_NAME
