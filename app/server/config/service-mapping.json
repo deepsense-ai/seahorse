@@ -13,6 +13,10 @@
   "path": "/jupyter",
   "name": "jupyter"
 }, {
+  "path": "/library",
+  "name": "library"
+},
+{
   "path": "/stomp",
   "name": "rabbitmq"
 }, {
