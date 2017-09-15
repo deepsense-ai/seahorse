@@ -6,6 +6,7 @@
 
 package io.deepsense.experimentmanager
 
+import akka.actor.ActorSystem
 import com.google.inject.Guice
 
 import io.deepsense.commons.rest.RestServer
@@ -22,4 +23,6 @@ object ExperimentManagerApp extends App {
   CatalogRecorder.registerDOperations(injector.getInstance(classOf[DOperationsCatalog]))
 
   injector.getInstance(classOf[RestServer]).start()
+  injector.getInstance(classOf[ActorSystem]).awaitTermination()
+  System.exit(1)
 }

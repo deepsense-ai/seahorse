@@ -6,6 +6,8 @@
 
 package io.deepsense.entitystorage
 
+import java.util.concurrent.TimeUnit
+
 import scala.concurrent.duration
 import scala.concurrent.duration.FiniteDuration
 
@@ -30,10 +32,11 @@ trait CassandraTestSupport {
   val password = "cassandra"
   val table = "entities"
   val keySpace = "entitystorage"
+  val oneSecond = TimeUnit.SECONDS.toMillis(1)
 
   val clusterFactory = new ClusterFactory
   val sessionFactory = new SessionFactory
-  val cluster = clusterFactory.create(host, port, user, password)
+  val cluster = clusterFactory.create(host, port, user, password, oneSecond)
   val session = {
     val temporarySession = cluster.connect()
     temporarySession.execute(s"CREATE KEYSPACE IF NOT EXISTS $keySpace WITH" +

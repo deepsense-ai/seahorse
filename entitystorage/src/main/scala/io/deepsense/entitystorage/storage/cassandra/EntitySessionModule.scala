@@ -25,9 +25,10 @@ class EntitySessionModule extends AbstractModule {
       @Named("cassandra.credentials.user") user: String,
       @Named("cassandra.credentials.password") password: String,
       @Named("cassandra.entities.keyspace") keySpace: String,
+      @Named("cassandra.reconnect.delay") reconnectDelay: Long,
       clusterFactory: ClusterFactory,
       sessionFactory: SessionFactory): Session = {
-    val cluster = clusterFactory.create(host, port, user, password)
+    val cluster = clusterFactory.create(host, port, user, password, reconnectDelay)
     sessionFactory.connect(cluster, keySpace)
   }
 }
