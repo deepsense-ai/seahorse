@@ -29,7 +29,7 @@ import io.deepsense.deeplang.DOperation.Id
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.CategoricalMetadata
 import io.deepsense.deeplang.doperations.WriteDataFrame._
-import io.deepsense.deeplang.doperations.exceptions.FileNotFoundException
+import io.deepsense.deeplang.doperations.exceptions.DeepSenseIOException
 import io.deepsense.deeplang.parameters._
 import io.deepsense.deeplang.{DOperation1To0, ExecutionContext}
 
@@ -108,7 +108,7 @@ case class WriteDataFrame() extends DOperation1To0[DataFrame] {
           outputFileParameter.value.get, pathParameter.value.get)
       )
     } catch {
-      case e: IOException => throw FileNotFoundException(e)
+      case e: IOException => throw DeepSenseIOException(e)
     }
   }
 
