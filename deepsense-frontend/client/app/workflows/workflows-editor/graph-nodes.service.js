@@ -81,7 +81,8 @@ class GraphNodesService {
     const createdNode = workflow.createNode(nodeParams);
     createdNode.parametersValues = angular.copy(node.parameters.serialize());
 
-    if (node.operationId === this.nodeTypes.NOTEBOOK) {
+    if (node.operationId === this.nodeTypes.PYTHON_NOTEBOOK ||
+        node.operationId === this.nodeTypes.R_NOTEBOOK) {
       this.WorkflowsApiClient.cloneNotebookNode(workflow.id, node.id, newNodeId).then(() => {
         return workflow.addNode(createdNode);
       }, () => {

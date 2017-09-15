@@ -3,7 +3,7 @@
 require('./attributes-panel.service.js');
 
 /*@ngInject*/
-function OperationAttributes($rootScope, AttributesPanelService, config, version) {
+function OperationAttributes($rootScope, AttributesPanelService, config, version, nodeTypes) {
   function setCorrectHeight(container) {
     let heightOfOthers = _.reduce(jQuery(
       '> .ibox-title--main, > .c-attributes-tabs',
@@ -33,8 +33,9 @@ function OperationAttributes($rootScope, AttributesPanelService, config, version
       scope.publicParams = scope.publicParams || [];
 
       scope.$watch('node', function () {
-        let notebookOpId = 'e76ca616-0322-47a5-b390-70c9668265dd';
-        scope.hasCodeEdit = scope.node.operationId === notebookOpId;
+        let notebookOpIds = [nodeTypes.PYTHON_NOTEBOOK, nodeTypes.R_NOTEBOOK];
+
+        scope.hasCodeEdit = _.includes(notebookOpIds, scope.node.operationId);
         scope.$applyAsync(setCorrectHeight.bind(null, element[0]));
       });
 
@@ -52,23 +53,28 @@ function OperationAttributes($rootScope, AttributesPanelService, config, version
 
     controller: function ($scope, $sce, $element, $timeout, $uibModal) {
       let getDataFrameSource = () => {
-        let nodeIdPortSeparator = ',';
         let incomingEdge = $scope.node.getIncomingEdge(0);
         if (incomingEdge) {
           let {startPortId, startNodeId} = incomingEdge;
-          return startNodeId + nodeIdPortSeparator + startPortId;
+          return {nodeId: startNodeId, port: startPortId}
         }
-        return '';
+        return {};
       };
 
-      let idsParamsSeparator = '___';
-      let idsSeparator = '/';
+      this.getNotebookUrl = () => {
+        const languageMap = {};
+        languageMap[nodeTypes.PYTHON_NOTEBOOK] = 'python';
+        languageMap[nodeTypes.R_NOTEBOOK] = 'r';
 
-      this.getNotebookUrl = () => $sce.trustAsResourceUrl(
-        config.notebookHost + '/notebooks/' +
-        $scope.workflow + idsSeparator + $scope.node.id +
-        idsParamsSeparator +
-        getDataFrameSource());
+        const notebookParams = {
+          dataframeSource: getDataFrameSource(),
+          language: languageMap[$scope.node.operationId]
+        };
+
+        const encodedParams = btoa(JSON.stringify(notebookParams));
+        const url = `${config.notebookHost}/notebooks/${$scope.workflow}/${$scope.node.id}/${encodedParams}`
+        return $sce.trustAsResourceUrl(url);
+      }
 
       this.getDocsHost = () => config.docsHost;
       this.getDocsVersion = () => version.getDocsVersion();
