@@ -6,8 +6,8 @@ class WorkflowsEditorController {
   constructor(workflowWithResults, $scope, $state, $q, $rootScope, $log, $timeout, specialOperations, WorkflowCloneService,
               GraphNode, Edge, config, Report, MultiSelectionService, Operations, GraphPanelRendererService,
               WorkflowService, MouseEvent, ConfirmationModalService, ExportModalService, GraphNodesService, NotificationService,
-              ServerCommunication, CopyPasteService, SideBarService, BottomBarService, NodeCopyPasteVisitorService, SessionStatus,
-              EventsService, UserService, WorkflowsEditorService) {
+              ServerCommunication, CopyPasteService, SideBarService, BottomBarService, NodeCopyPasteVisitorService,
+              EventsService, WorkflowsEditorService) {
 
 
     WorkflowService.initRootWorkflow(workflowWithResults);
@@ -17,7 +17,7 @@ class WorkflowsEditorController {
       WorkflowCloneService, GraphNode, Edge, config, Report, MultiSelectionService, Operations,
       GraphPanelRendererService, WorkflowService, MouseEvent, ConfirmationModalService, ExportModalService,
       GraphNodesService, NotificationService, ServerCommunication, CopyPasteService, SideBarService, BottomBarService,
-      NodeCopyPasteVisitorService, SessionStatus, UserService, EventsService, WorkflowsEditorService
+      NodeCopyPasteVisitorService, EventsService, WorkflowsEditorService
     });
 
     $rootScope.$watch(() => this.WorkflowService.getCurrentWorkflow().name, (newValue) => {
@@ -30,7 +30,6 @@ class WorkflowsEditorController {
     this.catalog = Operations.getCatalog();
     this._editableModeEventListeners = [];
     this.zoomId = 'flowchart-box';
-    this.SessionStatus = SessionStatus;
     this.init(workflowWithResults);
   }
 
@@ -305,17 +304,11 @@ class WorkflowsEditorController {
   }
 
   isEditable() {
-    const workflow = this.WorkflowService.getCurrentWorkflow();
-    return workflow.workflowStatus === 'editor' && workflow.sessionStatus === this.SessionStatus.RUNNING && this._isOwner();
-  }
-
-  _isOwner() {
-    const workflow = this.WorkflowService.getCurrentWorkflow();
-    return workflow.owner.id === this.UserService.getSeahorseUser().id;
+    return this.WorkflowService.isWorkflowEditable();
   }
 
   _handleDelete() {
-    if (!this.isEditable()) {
+    if (!this.WorkflowService.isWorkflowEditable()) {
       console.log('WorkflowsEditorController', 'Cannot remove nodes if not editable');
       return;
     }

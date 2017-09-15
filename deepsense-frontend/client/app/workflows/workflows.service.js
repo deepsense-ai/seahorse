@@ -3,7 +3,7 @@
 /* @ngInject */
 function WorkflowService($rootScope, Workflow, OperationsHierarchyService, WorkflowsApiClient, Operations, ConfirmationModalService,
   DefaultInnerWorkflowGenerator, debounce, nodeTypes, SessionManagerApi, SessionStatus, SessionManager, ServerCommunication,
-  ClusterService) {
+  ClusterService, UserService) {
 
   const INNER_WORKFLOW_PARAM_NAME = 'inner workflow';
 
@@ -158,6 +158,13 @@ function WorkflowService($rootScope, Workflow, OperationsHierarchyService, Workf
       return workflow;
     }
 
+    isWorkflowEditable() {
+      const workflow = this.getCurrentWorkflow();
+      return workflow.workflowStatus === 'editor' &&
+        workflow.sessionStatus === SessionStatus.RUNNING &&
+        workflow.owner.id === UserService.getSeahorseUser().id;
+    }
+
     isWorkflowRunning() {
       let statuses = _.chain(this.getCurrentWorkflow().getNodes())
         .map((node) => {
@@ -170,7 +177,7 @@ function WorkflowService($rootScope, Workflow, OperationsHierarchyService, Workf
 
       return idx !== -1;
     }
-    
+
     isExecutorForCurrentWorkflowRunning() {
       const status = this.getCurrentWorkflow().sessionStatus;
       return status === SessionStatus.RUNNING || status === SessionStatus.CREATING;

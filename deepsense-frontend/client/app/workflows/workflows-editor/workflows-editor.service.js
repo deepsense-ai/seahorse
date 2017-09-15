@@ -3,14 +3,16 @@
 const COOKIE_NAME = 'SEAHORSE_NODE_DELETE_NO_CONFIRMATION';
 
 /* ngInject */
-function WorkflowsEditorService(DeleteModalService, EventsService) {
+function WorkflowsEditorService(DeleteModalService, EventsService, WorkflowService) {
 
   const service = this;
 
   service.handleDelete = handleDelete;
 
   function handleDelete(){
-    DeleteModalService.handleDelete(deleteSelection, COOKIE_NAME);
+    if (WorkflowService.isWorkflowEditable()) {
+      DeleteModalService.handleDelete(deleteSelection, COOKIE_NAME);
+    }
   }
 
   function deleteSelection() {
