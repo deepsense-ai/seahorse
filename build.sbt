@@ -22,7 +22,7 @@ lazy val settingsForNotPublished = CommonSettingsPlugin.assemblySettings ++
   LicenceReportSettings.settings ++ PublishSettings.disablePublishing
 
 lazy val sparkVersion = CommonSettingsPlugin.Versions.spark
-lazy val sparkUtils = project in file (s"sparkutils$sparkVersion") settings settingsForNotPublished
+lazy val sparkUtils = project in file (s"sparkutils$sparkVersion") settings settingsForPublished
 
 lazy val rootProject = project.in(file("."))
   .settings(name := "seahorse")
