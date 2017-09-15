@@ -107,7 +107,7 @@
       this.updateTransformStyle(animatedTransition);
     }
 
-    performZooming(relativeX, relativeY, zoomRatio, isStrict) {
+    performZooming(relativeX, relativeY, zoomRatio, isStrict = false) {
       let newTotalScale = isStrict ? zoomRatio : this.state.totalScale * zoomRatio;
       newTotalScale = Math.max(this._internal.MIN_ZOOM_RATIO, newTotalScale);
       newTotalScale = Math.min(this._internal.MAX_ZOOM_RATIO, newTotalScale);
@@ -120,7 +120,8 @@
       };
 
       this.adjustCorners();
-      this.updateTransformStyle(true);
+      //disable animation when performing strict zoom to fix Firefox issue with fit calculations
+      this.updateTransformStyle(!isStrict);
     }
 
     performCenterZooming(zoomRatio, isStrict) {
@@ -249,10 +250,11 @@
       let relativeX = visibleFrameCenter.x - psRectCenter.x;
       let relativeY = visibleFrameCenter.y - psRectCenter.y;
 
+      //True added to disable animation when performing strict zoom to fix Firefox issue with fit calculations
       this.movePanel({
         top: relativeY,
         left: relativeX
-      });
+      }, true);
 
       this.performCenterZooming(zoom, STRICT);
 
