@@ -5,7 +5,7 @@ const ZOOM_STEP = 0.05;
 const TRANSITION_TIME = 0.5;
 
 class EditorController {
-  constructor($rootScope, CanvasService, AdapterService, UUIDGenerator, Operations, OperationsHierarchyService, MouseEvent, $element) {
+  constructor($rootScope, $scope, CanvasService, AdapterService, UUIDGenerator, Operations, OperationsHierarchyService, MouseEvent, $element) {
     'ngInject';
 
     this.CanvasService = CanvasService;
@@ -17,6 +17,10 @@ class EditorController {
     this.$element = $element;
 
     this.categories = Operations.getCatalog();
+
+    $scope.$watch(this.workflow.getNodes, (newValue) => {
+      this.canShowInvitationToCreate = Object.keys(newValue).length === 0;
+    }, true);
 
     this.removeListener = $rootScope.$on('Keyboard.KEY_PRESSED_DEL', () => {
       this.hideTooltip();

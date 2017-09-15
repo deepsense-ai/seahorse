@@ -2,7 +2,7 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
 <svg>
 <metadata>
-Created by FontForge 20090914 at Tue Jan  3 12:57:38 2017
+Created by FontForge 20090914 at Tue Jan 10 09:50:50 2017
  By www-data
 Copyright (c) 2016, Przemysaw Bagin'ski / deepsense
 </metadata>
@@ -17,7 +17,7 @@ Copyright (c) 2016, Przemysaw Bagin'ski / deepsense
     ascent="800"
     descent="-200"
     x-height="496"
-    cap-height="582.001"
+    cap-height="682"
     bbox="33 -613.002 1837 1210"
     underline-thickness="50"
     underline-position="-100"
@@ -83,6 +83,8 @@ d="M33 0v666h265v-666h-265zM66 33h199v600h-199v-600z" />
  />
     <glyph glyph-name="period" unicode="." horiz-adv-x="541" 
 d="M60 298c0 58 20.5 107.5 61.5 148.5s90.5 61.5 148.5 61.5s107.5 -20.5 148.5 -61.5s61.5 -90.5 61.5 -148.5s-20.5 -107.5 -61.5 -148.5s-90.5 -61.5 -148.5 -61.5s-107.5 20.5 -148.5 61.5s-61.5 90.5 -61.5 148.5z" />
+    <glyph glyph-name="A" unicode="A" horiz-adv-x="1032" 
+d="M990 368v-108h-740l236 -236l-78 -78l-368 368l368 368l78 -78l-236 -236h740z" />
     <glyph glyph-name="O" unicode="O" horiz-adv-x="722" 
 d="M411 170c-40.667 -30.667 -86 -45.998 -136 -45.998c-63.333 0 -117.5 22.667 -162.5 68s-67.5 99.333 -67.5 162c0 63.333 22.333 117.166 67 161.499s99 66.5 163 66.5c63.333 0 117.5 -22.333 162.5 -67s67.5 -98.334 67.5 -161.001c0 -50 -15.333 -95.333 -46 -136
 l218 -196l-70 -70zM275 520.002c-46 0 -85.167 -16.167 -117.5 -48.5s-48.5 -71.5 -48.5 -117.5s16.167 -85.167 48.5 -117.5s71.5 -48.5 117.5 -48.5s85.167 16.167 117.5 48.5s48.5 71.5 48.5 117.5s-16.167 85.167 -48.5 117.5s-71.5 48.5 -117.5 48.5z" />

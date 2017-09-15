@@ -8,6 +8,12 @@
     on-new-node="$ctrl.newNode($event)"
   ></canvas-toolbar>
 
+  <create-node-invitation
+    ng-if="$ctrl.canShowInvitationToCreate"
+    class="create-node-invitation-wrapper"
+  >
+  </create-node-invitation>
+
   <core-canvas
     is-editable="$ctrl.isEditable"
     new-node-data="$ctrl.newNodeData"
@@ -16,15 +22,15 @@
     on-connection-abort="$ctrl.onConnectionAbort(newNodeData)"
   >
     <new-node
-      class="flowchart-box__new-node new-node"
-      id="node-new-node"
-      categories="$ctrl.categories"
-      containment="$ctrl.containment"
+      ng-if="$ctrl.newNodeData"
       ng-style="{
         left: $ctrl.newNodeData.x + 'px',
         top: $ctrl.newNodeData.y + 'px'
       }"
-      ng-if="$ctrl.newNodeData"
+      class="flowchart-box__new-node new-node"
+      id="node-new-node"
+      categories="$ctrl.categories"
+      containment="$ctrl.containment"
       on-select="$ctrl.onSelect(operationId)"
       on-display-rect-change="$ctrl.onDisplayRectChange(rect)"
       jsplumb-draggable
