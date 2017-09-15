@@ -27,10 +27,11 @@ import io.deepsense.deeplang.DOperable
 import io.deepsense.deeplang.doperables.ColumnsFilterer
 import io.deepsense.graph._
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
-import io.deepsense.models.json.workflow.{InferredStateJsonProtocol, WorkflowWithResultsJsonProtocol, ExecutionReportJsonProtocol}
+import io.deepsense.models.json.workflow.{ExecutionReportJsonProtocol, InferredStateJsonProtocol, WorkflowWithResultsJsonProtocol}
 import io.deepsense.models.workflows._
 import io.deepsense.reportlib.model.ReportContent
-import io.deepsense.workflowexecutor.communication.message.notebook.{PythonGatewayAddressJsonProtocol, Address, PythonGatewayAddress}
+import io.deepsense.workflowexecutor.communication.message.global.{ReadyJsonProtocol, Ready}
+import io.deepsense.workflowexecutor.communication.message.notebook.{Address, PythonGatewayAddress, PythonGatewayAddressJsonProtocol}
 import io.deepsense.workflowexecutor.communication.message.workflow.ExecutionStatus
 
 class ProtocolJsonSerializerSpec
@@ -39,7 +40,8 @@ class ProtocolJsonSerializerSpec
   with ExecutionReportJsonProtocol
   with PythonGatewayAddressJsonProtocol
   with WorkflowWithResultsJsonProtocol
-  with InferredStateJsonProtocol {
+  with InferredStateJsonProtocol
+  with ReadyJsonProtocol {
 
   override val graphReader: GraphReader = mock[GraphReader]
 
@@ -84,6 +86,12 @@ class ProtocolJsonSerializerSpec
         InferredState(Workflow.Id.randomId, GraphKnowledge(), ExecutionReport(Map()))
       protocolJsonSerializer.serializeMessage(inferredState) shouldBe
       expectedSerializationResult("inferredState", inferredState.toJson)
+    }
+
+    "serialize Ready" in {
+      val ready = Ready(Some(Workflow.Id.randomId))
+      protocolJsonSerializer.serializeMessage(ready) shouldBe
+      expectedSerializationResult("ready", ready.toJson)
     }
   }
 

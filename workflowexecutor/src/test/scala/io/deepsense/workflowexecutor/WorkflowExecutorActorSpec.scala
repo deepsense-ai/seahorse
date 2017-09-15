@@ -34,7 +34,6 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.inout._
 import io.deepsense.deeplang.doperations.{ReadDataFrame, WriteDataFrame}
 import io.deepsense.deeplang.inference.InferContext
-import io.deepsense.deeplang.params.{FileFormat, StorageType}
 import io.deepsense.deeplang.{CommonExecutionContext, DOperable, DOperation, ExecutionContext}
 import io.deepsense.graph.DeeplangGraph.DeeplangNode
 import io.deepsense.graph.Node.Id
@@ -306,6 +305,7 @@ class WorkflowExecutorActorSpec
             mock[CommonExecutionContext],
             wmClient.ref,
             system.actorSelection(publisher.ref.path),
+            TestProbe().ref,
             3), Workflow.Id.randomId.toString)
         wea.underlyingActor.statefulWorkflow = statefulWorkflow
         wea.underlyingActor.context.become(wea.underlyingActor.ready())
@@ -548,6 +548,7 @@ class WorkflowExecutorActorSpec
         nodeExecutorFactory,
         wmClient,
         system.actorSelection(publisher.ref.path),
+        TestProbe().ref,
         5), workflow.id.toString)
 
     val statusListeners = Seq(publisher)

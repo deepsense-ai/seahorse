@@ -50,7 +50,9 @@ object MQCommunication {
   object Topic {
     private val workflowPrefix = "workflow"
     private val notebook = "notebook"
+    private val seahorse = "seahorse"
     val allWorkflowsSubscriptionTopic = subscriptionTopic(s"$workflowPrefix.*")
+    val seahorsePublicationTopic = publicationTopic(seahorse)
     val notebookSubscriptionTopic = subscriptionTopic(notebook)
     val notebookPublicationTopic = publicationTopic(notebook)
     def workflowSubscriptionTopic(id: Workflow.Id): String = subscriptionTopic(workflowTopic(id))

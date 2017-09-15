@@ -28,6 +28,7 @@ import io.deepsense.deeplang.CommonExecutionContext
 import io.deepsense.models.workflows._
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.Init
 import io.deepsense.workflowexecutor.WorkflowManagerClientActorProtocol.GetWorkflow
+import io.deepsense.workflowexecutor.communication.message.global.Ready
 import io.deepsense.workflowexecutor.partialexecution.Execution
 
 /**
@@ -38,6 +39,7 @@ class SessionWorkflowExecutorActor(
     nodeExecutorFactory: GraphNodeExecutorFactory,
     workflowManagerClientActor: ActorRef,
     publisher: ActorSelection,
+    seahorseTopicPublisher: ActorRef,
     wmTimeout: Int)
   extends WorkflowExecutorActor(
     executionContext,
@@ -56,6 +58,15 @@ class SessionWorkflowExecutorActor(
       logger.debug("SessionWorkflowExecutorActor for: {} received INIT", workflowId.toString)
       workflowManagerClientActor.ask(GetWorkflow(workflowId))(wmTimeout seconds) pipeTo self
       context.become(waitingForWorkflow)
+  }
+
+  override def postRestart(reason: Throwable): Unit = {
+    super.postRestart(reason)
+    logger.warn(
+      s"SessionWorkflowExecutor actor for workflow: ${workflowId.toString} restarted.",
+      reason)
+    logger.info("Sending Ready message to seahorse topic after restart.")
+    seahorseTopicPublisher ! Ready(Some(workflowId))
   }
 
   def waitingForWorkflow: Actor.Receive = {
@@ -77,6 +88,7 @@ object SessionWorkflowExecutorActor {
     ec: CommonExecutionContext,
     workflowManagerClientActor: ActorRef,
     publisher: ActorSelection,
+    seahorseTopicPublisher: ActorRef,
     wmTimeout: Int,
     statusListener: Option[ActorRef] = None): Props =
     Props(new SessionWorkflowExecutorActor(
@@ -84,5 +96,6 @@ object SessionWorkflowExecutorActor {
       new GraphNodeExecutorFactoryImpl,
       workflowManagerClientActor,
       publisher,
+      seahorseTopicPublisher,
       wmTimeout))
 }

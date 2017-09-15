@@ -79,6 +79,7 @@ class ExecutionDispatcherActorSpec
         mock[ReportLevel],
         TestProbe().ref,
         TestProbe().ref,
+        TestProbe().ref,
         5
       ) with WorkflowExecutorsFactory with WorkflowExecutorFinder {
         override def createExecutor(
@@ -88,6 +89,7 @@ class ExecutionDispatcherActorSpec
             workflowManagerClientActor: ActorRef,
             statusLogger: ActorRef,
             publisher: ActorSelection,
+            seahorseTopicPublisher: ActorRef,
             wmTimeout: Int): ActorRef = {
           fail("Tried to create an executor but it exists!")
         }
@@ -118,6 +120,7 @@ class ExecutionDispatcherActorSpec
             workflowManagerClientActor: ActorRef,
             statusLogger: ActorRef,
             publisher: ActorSelection,
+            seahorseTopicPublisher: ActorRef,
             wmTimeout: Int): ActorRef = {
           workflowId shouldBe expectedWorkflowId
           testProbe.ref
@@ -138,7 +141,7 @@ class ExecutionDispatcherActorSpec
       reportLevel: ReportLevel)
     extends ExecutionDispatcherActor(
       sparkContext, dOperableCatalog, dataFrameStorage, pythonExecutionCaretaker,
-      reportLevel, TestProbe().ref, TestProbe().ref, 5) {
+      reportLevel, TestProbe().ref, TestProbe().ref, TestProbe().ref, 5) {
 
     self: WorkflowExecutorsFactory with WorkflowExecutorFinder =>
 

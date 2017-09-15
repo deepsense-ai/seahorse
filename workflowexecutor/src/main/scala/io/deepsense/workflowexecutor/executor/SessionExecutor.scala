@@ -65,16 +65,6 @@ case class SessionExecutor(
       new PythonExecutionCaretaker(pythonExecutorPath, sparkContext, dataFrameStorage)
     pythonExecutionCaretaker.start()
 
-    val executionDispatcher = system.actorOf(ExecutionDispatcherActor.props(
-      sparkContext,
-      dOperableCatalog,
-      dataFrameStorage,
-      pythonExecutionCaretaker,
-      ReportLevel.HIGH,
-      statusLogger,
-      workflowManagerClientActor,
-      config.getInt("workflow-manager.timeout")), "workflows")
-
     val factory = new ConnectionFactory()
     factory.setHost(messageQueueHost)
 
@@ -86,6 +76,21 @@ case class SessionExecutor(
     val messageSerializer = ProtocolJsonSerializer(graphReader)
     val communicationFactory =
       MQCommunicationFactory(system, connection, messageSerializer, messageDeserializer)
+
+    val seahorsePublisher = communicationFactory.createPublisher(
+      MQCommunication.Topic.seahorsePublicationTopic,
+      MQCommunication.Actor.Publisher.seahorse)
+
+    val executionDispatcher = system.actorOf(ExecutionDispatcherActor.props(
+      sparkContext,
+      dOperableCatalog,
+      dataFrameStorage,
+      pythonExecutionCaretaker,
+      ReportLevel.HIGH,
+      statusLogger,
+      workflowManagerClientActor,
+      seahorsePublisher,
+      config.getInt("workflow-manager.timeout")), "workflows")
 
     val notebookSubscriberActor = system.actorOf(
       NotebookKernelTopicSubscriber.props(

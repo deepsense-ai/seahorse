@@ -35,5 +35,6 @@ object JsonSerialization {
     val executionStatus = "executionStatus"
     val workflowWithResults = "workflowWithResults"
     val inferredState = "inferredState"
+    val ready = "ready"
   }
 }

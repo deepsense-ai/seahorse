@@ -25,6 +25,7 @@ import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.ReportLevel._
 import io.deepsense.models.workflows.Workflow
 import io.deepsense.models.workflows.Workflow.Id
+import io.deepsense.workflowexecutor.communication.message.global.Ready
 import io.deepsense.workflowexecutor.communication.message.workflow.Init
 import io.deepsense.workflowexecutor.executor.{Executor, PythonExecutionCaretaker}
 
@@ -36,6 +37,7 @@ class ExecutionDispatcherActor(
     reportLevel: ReportLevel,
     statusLogger: ActorRef,
     workflowManagerClientActor: ActorRef,
+    seahorseTopicPublisher: ActorRef,
     wmTimeout: Int)
   extends Actor
   with Logging
@@ -43,15 +45,25 @@ class ExecutionDispatcherActor(
 
   self: WorkflowExecutorsFactory with WorkflowExecutorFinder =>
 
-  // TODO handle child's exceptions
-
   override def receive: Receive = {
     case msg @ InitWorkflow(init @ Init(workflowId), publisherPath) =>
       val existingExecutor: Option[ActorRef] = findExecutor(workflowId)
       val publisher = context.actorSelection(publisherPath)
       val executor: ActorRef = existingExecutor.getOrElse(
-        createExecutor(workflowId, publisher, workflowManagerClientActor))
+        createExecutor(
+          workflowId,
+          publisher,
+          seahorseTopicPublisher,
+          workflowManagerClientActor))
       executor ! WorkflowExecutorActor.Messages.Init()
+  }
+
+
+  override def postRestart(reason: Throwable): Unit = {
+    super.postRestart(reason)
+    logger.warn("ExecutionDispatcherActor restarted.", reason)
+    logger.debug("Sending Ready message to seahorse topic.")
+    seahorseTopicPublisher ! Ready()
   }
 
   private def findExecutor(workflowId: Workflow.Id): Option[ActorRef] = {
@@ -64,6 +76,7 @@ class ExecutionDispatcherActor(
   def createExecutor(
     workflowId: Workflow.Id,
     publisher: ActorSelection,
+    seahorseTopicPublisher: ActorRef,
     workflowManagerClientActor: ActorRef): ActorRef = {
     val executor = createExecutor(
       context,
@@ -77,6 +90,7 @@ class ExecutionDispatcherActor(
       workflowManagerClientActor,
       statusLogger,
       publisher,
+      seahorseTopicPublisher,
       wmTimeout)
     logger.debug(s"Created an executor: '${executor.path}'")
     executor
@@ -93,6 +107,7 @@ trait WorkflowExecutorsFactory {
     workflowManagerClientActor: ActorRef,
     statusLogger: ActorRef,
     publisher: ActorSelection,
+    seahorseTopicPublisher: ActorRef,
     wmTimeout: Int): ActorRef
 }
 
@@ -104,12 +119,14 @@ trait WorkflowExecutorsFactoryImpl extends WorkflowExecutorsFactory {
       workflowManagerClientActor: ActorRef,
       statusLogger: ActorRef,
       publisher: ActorSelection,
+      seahorseTopicPublisher: ActorRef,
       wmTimeout: Int): ActorRef = {
     context.actorOf(
       SessionWorkflowExecutorActor.props(
         executionContext,
         workflowManagerClientActor,
         publisher,
+        seahorseTopicPublisher,
         wmTimeout,
         Some(statusLogger)),
       workflowId.toString)
@@ -134,6 +151,7 @@ object ExecutionDispatcherActor {
       reportLevel: ReportLevel,
       statusLogger: ActorRef,
       workflowManagerClientActor: ActorRef,
+      seahorseTopicPublisher: ActorRef,
       wmTimeout: Int): Props =
     Props(new ExecutionDispatcherActor(
       sparkContext,
@@ -143,6 +161,7 @@ object ExecutionDispatcherActor {
       reportLevel,
       statusLogger,
       workflowManagerClientActor,
+      seahorseTopicPublisher,
       wmTimeout
     ) with WorkflowExecutorsFactoryImpl
       with ExecutorFinderImpl)

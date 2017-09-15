@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package io.deepsense.workflowexecutor.communication.message.workflow
+package io.deepsense.workflowexecutor.communication.message.global
 
-import spray.json.{DefaultJsonProtocol, RootJsonFormat}
+import spray.json.RootJsonFormat
 
 import io.deepsense.commons.json.IdJsonProtocol
+import io.deepsense.commons.utils.Logging
 import io.deepsense.models.workflows.Workflow
 
-case class Init(workflowId: Workflow.Id)
+case class Ready(workflowId: Option[Workflow.Id] = None)
 
-trait InitJsonProtocol extends DefaultJsonProtocol with IdJsonProtocol {
-  implicit val initFormat: RootJsonFormat[Init] = jsonFormat1(Init.apply)
+trait ReadyJsonProtocol extends IdJsonProtocol with Logging {
+
+  implicit val readyFormat: RootJsonFormat[Ready] = jsonFormat1(Ready.apply)
 }
-
-object InitJsonProtocol extends InitJsonProtocol
