@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -ex
 
 # Copyright 2016, deepsense.ai
 #
@@ -21,10 +21,12 @@ function prepare_environment() {
   # we know about it and want to continue anyway
   npmrc -c codilime || test 1
   npmrc codilime
+
+  export NPM_REGISTRY_URL="https://registry.npmjs.org"
   npm set registry $NPM_REGISTRY_URL
 
-  sudo npm install -g webpack
-  sudo npm install -g npmrc
+  npm install webpack
+  npm install npmrc
   npm install
 }
 
