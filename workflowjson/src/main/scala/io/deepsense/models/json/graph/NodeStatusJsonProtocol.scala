@@ -22,8 +22,8 @@ import spray.json._
 import io.deepsense.commons.exception.FailureDescription
 import io.deepsense.commons.exception.json.FailureDescriptionJsonProtocol
 import io.deepsense.commons.json.DateTimeJsonProtocol._
+import io.deepsense.commons.models.Entity
 import io.deepsense.graph.nodestate._
-import io.deepsense.models.entities.Entity
 
 trait NodeStatusJsonProtocol
   extends DefaultJsonProtocol

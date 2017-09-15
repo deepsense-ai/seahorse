@@ -30,12 +30,12 @@ import org.scalatest.mock.MockitoSugar
 
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
+import io.deepsense.commons.models.Entity
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.deeplang.{CommonExecutionContext, DOperable, DOperation, ExecutionContext}
 import io.deepsense.graph.Node.Id
 import io.deepsense.graph._
 import io.deepsense.graph.nodestate.{Aborted, Completed, NodeStatus, Queued, Running}
-import io.deepsense.models.entities.Entity
 import io.deepsense.models.workflows.{EntitiesMap, Workflow}
 import io.deepsense.reportlib.model.ReportContent
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages._

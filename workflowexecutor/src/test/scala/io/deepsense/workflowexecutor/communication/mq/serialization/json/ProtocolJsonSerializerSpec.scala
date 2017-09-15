@@ -22,10 +22,10 @@ import org.scalatest.mock.MockitoSugar
 import spray.json._
 
 import io.deepsense.commons.StandardSpec
+import io.deepsense.commons.models.Entity
 import io.deepsense.deeplang.DOperable
 import io.deepsense.deeplang.doperables.machinelearning.randomforest.classification.UntrainedRandomForestClassification
 import io.deepsense.graph.{DirectedGraph, Node}
-import io.deepsense.models.entities.Entity
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphReader
 import io.deepsense.models.json.workflow.{WorkflowWithResultsJsonProtocol, ExecutionReportJsonProtocol}
 import io.deepsense.models.workflows._

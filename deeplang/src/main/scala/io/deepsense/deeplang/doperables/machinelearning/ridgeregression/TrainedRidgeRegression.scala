@@ -18,7 +18,7 @@ package io.deepsense.deeplang.doperables.machinelearning.ridgeregression
 
 import org.apache.spark.mllib.feature.StandardScalerModel
 import org.apache.spark.mllib.linalg.Vector
-import org.apache.spark.mllib.regression.{GeneralizedLinearModel, RidgeRegressionModel}
+import org.apache.spark.mllib.regression.RidgeRegressionModel
 import org.apache.spark.rdd.RDD
 
 import io.deepsense.deeplang.doperables.ColumnTypesPredicates.Predicate
@@ -35,16 +35,11 @@ case class TrainedRidgeRegression(
   extends RidgeRegression
   with TrainedLinearRegression
   with Scorable
-  with HasTargetColumn
-  with DOperableSaver {
+  with HasTargetColumn {
 
   def this() = this(null, null, null, null, null)
 
   def toInferrable: DOperable = new TrainedRidgeRegression()
-
-  private var physicalPath: Option[String] = None
-
-  override def url: Option[String] = physicalPath
 
   override protected def featurePredicate: Predicate = ColumnTypesPredicates.isNumeric
 

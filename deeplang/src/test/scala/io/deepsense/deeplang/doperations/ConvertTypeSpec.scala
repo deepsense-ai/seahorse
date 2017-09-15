@@ -22,9 +22,8 @@ import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.dataframe.types.categorical.{MappingMetadataConverter, CategoriesMapping}
 import io.deepsense.deeplang.doperables.dataframe._
-import io.deepsense.deeplang.inference.{MultipleColumnsMayNotExistWarning, ConversionMayNotBePossibleWarning, InferContext}
+import io.deepsense.deeplang.inference.ConversionMayNotBePossibleWarning
 import io.deepsense.deeplang.{DeeplangTestSupport, DKnowledge, UnitSpec}
-import io.deepsense.entitystorage.EntityStorageClient
 
 class ConvertTypeSpec extends UnitSpec with DeeplangTestSupport {
 

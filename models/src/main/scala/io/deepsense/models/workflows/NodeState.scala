@@ -16,8 +16,8 @@
 
 package io.deepsense.models.workflows
 
+import io.deepsense.commons.models.Entity
 import io.deepsense.graph.nodestate.NodeStatus
-import io.deepsense.models.entities.Entity
 
 case class NodeState(nodeStatus: NodeStatus, reports: Option[EntitiesMap]) {
 

@@ -20,8 +20,8 @@ import org.joda.time.DateTime
 
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.exception.FailureDescription
-import io.deepsense.models.entities.Entity
-import io.deepsense.models.entities.Entity.Id
+import io.deepsense.commons.models.Entity
+import Entity.Id
 
 sealed abstract class NodeStatus(val name: String) extends Serializable {
   def start: Running

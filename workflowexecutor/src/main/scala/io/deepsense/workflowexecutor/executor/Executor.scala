@@ -48,7 +48,6 @@ trait Executor extends Logging {
 
     val inferContext = InferContext(
       DataFrameBuilder(sqlContext),
-      entityStorageClient = null,  // temporarily not used
       tenantId,
       catalog,
       fullInference = true)

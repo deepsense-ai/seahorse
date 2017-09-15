@@ -20,7 +20,6 @@ import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.mllib.tree.model.RandomForestModel
 import org.apache.spark.rdd.RDD
 
-import io.deepsense.commons.types.ColumnType
 import io.deepsense.deeplang.doperables.ColumnTypesPredicates._
 import io.deepsense.deeplang.doperables._
 import io.deepsense.deeplang.doperables.machinelearning.randomforest.RandomForestParameters
@@ -33,8 +32,7 @@ case class TrainedRandomForestRegression(
     targetColumn: String)
   extends RandomForestRegressor
   with Scorable
-  with HasTargetColumn
-  with DOperableSaver {
+  with HasTargetColumn {
 
   def this() = this(null, null, null, null)
 

@@ -17,11 +17,11 @@
 package io.deepsense.workflowexecutor.partialexecution
 
 import io.deepsense.commons.exception.FailureDescription
+import io.deepsense.commons.models.Entity
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.graph.Node.Id
 import io.deepsense.graph.nodestate.NodeStatus
 import io.deepsense.graph.{DirectedGraph, Node, ReadyNode, StatefulGraph, nodestate}
-import io.deepsense.models.entities.Entity
 
 object Execution {
   def empty: IdleExecution = IdleExecution(StatefulGraph(), Set.empty[Node.Id])

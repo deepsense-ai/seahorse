@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package io.deepsense.entitystorage
+package io.deepsense.commons.models
 
-import akka.actor.ActorRef
+import io.deepsense.commons.models
 
-object TestActorBasedEntityStorageClientFactory extends ActorBasedEntityStorageClientFactory {
-  override def create(actorRef: ActorRef): EntityStorageClient = {
-    new ActorBasedEntityStorageClient(actorRef)
-  }
+object Entity {
+  type Id = models.Id
+  val Id = models.Id
 }

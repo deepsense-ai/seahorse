@@ -20,8 +20,8 @@ import spray.json._
 
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
+import io.deepsense.commons.models.Entity
 import io.deepsense.graph.nodestate._
-import io.deepsense.models.entities.Entity
 
 class NodeStateJsonProtocolSpec extends GraphJsonTestSupport {
 

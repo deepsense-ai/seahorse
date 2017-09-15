@@ -31,12 +31,11 @@ import com.typesafe.config.ConfigFactory
 import spray.json._
 
 import io.deepsense.commons.datetime.DateTimeConverter
-import io.deepsense.commons.models.Id
+import io.deepsense.commons.models.{Entity, Id}
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.CustomOperationExecutor.Result
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.ReportLevel.ReportLevel
-import io.deepsense.models.entities.Entity
 import io.deepsense.models.json.workflow.exceptions._
 import io.deepsense.models.workflows.{ExecutionReport, WorkflowWithResults, WorkflowWithVariables}
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.Launch

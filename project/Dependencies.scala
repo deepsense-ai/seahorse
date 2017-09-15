@@ -115,10 +115,6 @@ object Dependencies {
     sparkCSV
   ) ++ Seq(scalatest, mockitoCore, scalacheck, scoverage, cassandra, cassandraUnit).map(_ % Test)
 
-  val entitystorageClient = Seq(
-    akkaActor
-  ) ++ Seq(scalatest, mockitoCore, akkaTestkit).map(_ % Test)
-
   val graph = Seq(nscalaTime) ++ Seq(scalatest, mockitoCore).map(_ % Test)
 
   val workflowJson = Seq(
@@ -133,6 +129,7 @@ object Dependencies {
   ) ++ Seq(scalatest, mockitoCore).map(_ % Test)
 
   val workflowexecutor = Seq(
+    akkaActor,
     scopt,
     sprayClient,
     rabbitmq

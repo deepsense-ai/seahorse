@@ -16,19 +16,13 @@
 
 package io.deepsense.deeplang
 
-import scala.reflect.runtime.{universe => ru}
-
 import org.scalatest.FunSuite
-import org.scalatest.mock.MockitoSugar
 
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.DOperableMock
-import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.inference.{InferenceWarnings, InferContext}
 import io.deepsense.deeplang.parameters.{NumericParameter, ParametersSchema, Validator}
 import scala.reflect.runtime.{universe => ru}
-
-import io.deepsense.entitystorage.EntityStorageClient
 
 
 object DClassesForDOperations {

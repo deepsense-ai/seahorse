@@ -18,10 +18,10 @@ package io.deepsense.workflowexecutor
 
 import akka.actor.{Actor, PoisonPill}
 
+import io.deepsense.commons.models.Entity
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.{DKnowledge, DOperable, ExecutionContext}
 import io.deepsense.graph.Node
-import io.deepsense.models.entities.Entity
 import io.deepsense.reportlib.model.ReportContent
 import io.deepsense.workflowexecutor.WorkflowExecutorActor.Messages.{NodeCompleted, NodeFailed, NodeStarted}
 

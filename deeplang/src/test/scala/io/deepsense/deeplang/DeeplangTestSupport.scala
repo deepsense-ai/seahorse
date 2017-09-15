@@ -21,7 +21,6 @@ import org.scalatest.mock.MockitoSugar
 import io.deepsense.deeplang.catalogs.doperable.DOperableCatalog
 import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.inference.InferContext
-import io.deepsense.entitystorage.EntityStorageClient
 
 trait DeeplangTestSupport extends MockitoSugar {
 
@@ -30,7 +29,6 @@ trait DeeplangTestSupport extends MockitoSugar {
       fullInference: Boolean): InferContext =
     InferContext(
       mock[DataFrameBuilder],
-      mock[EntityStorageClient],
       "testTenantId",
       dOperableCatalog,
       fullInference = fullInference)

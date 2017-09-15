@@ -19,9 +19,9 @@ package io.deepsense.models.workflows
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
 
+import io.deepsense.commons.models.Entity
 import io.deepsense.deeplang.doperables.Normalizer
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.models.entities.Entity
 import io.deepsense.reportlib.model.ReportContent
 
 class EntitiesMapSpec

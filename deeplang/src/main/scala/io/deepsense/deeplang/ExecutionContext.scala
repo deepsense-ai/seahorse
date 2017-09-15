@@ -28,7 +28,6 @@ import io.deepsense.deeplang.CustomOperationExecutor.Result
 import io.deepsense.deeplang.doperables.ReportLevel.ReportLevel
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.deeplang.inference.InferContext
-import io.deepsense.entitystorage.{EntityStorageClient, UniqueFilenameUtil}
 
 case class CommonExecutionContext(
     sparkContext: SparkContext,
@@ -68,11 +67,6 @@ case class ExecutionContext(
     pythonCodeExecutor: ContextualPythonCodeExecutor) extends Logging {
 
   def dataFrameBuilder: DataFrameBuilder = inferContext.dataFrameBuilder
-
-  def entityStorageClient: EntityStorageClient = inferContext.entityStorageClient
-
-  def uniqueFsFileName(entityCategory: String): String =
-    UniqueFilenameUtil.getUniqueFsFilename(tenantId, entityCategory)
 }
 
 case class ContextualDataFrameStorage(

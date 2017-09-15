@@ -26,7 +26,7 @@ import org.apache.spark.sql.{Row, SQLContext}
 import org.apache.spark.{SparkConf, SparkContext, sql}
 import org.scalatest.BeforeAndAfterAll
 
-import io.deepsense.commons.models.Id
+import io.deepsense.commons.models.{Entity, Id}
 import io.deepsense.commons.spark.sql.UserDefinedFunctions
 import io.deepsense.deeplang.CustomOperationExecutor.Result
 import io.deepsense.deeplang.DataFrameStorage.DataFrameName
@@ -34,8 +34,6 @@ import io.deepsense.deeplang.doperables.ReportLevel
 import io.deepsense.deeplang.doperables.ReportLevel._
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
 import io.deepsense.deeplang.inference.InferContext
-import io.deepsense.entitystorage.EntityStorageClientInMemoryImpl
-import io.deepsense.models.entities.Entity
 
 /**
  * Adds features to facilitate integration testing using Spark and entitystorage
@@ -61,7 +59,6 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
   protected def prepareCommonExecutionContext(): CommonExecutionContext = {
     val inferContext = InferContext(
       DataFrameBuilder(sqlContext),
-      EntityStorageClientInMemoryImpl(entityStorageInitState),
       "testTenantId",
       dOperableCatalog = null,
       fullInference = true)
@@ -80,7 +77,6 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
   protected def prepareExecutionContext(): ExecutionContext = {
     val inferContext = InferContext(
       DataFrameBuilder(sqlContext),
-      EntityStorageClientInMemoryImpl(entityStorageInitState),
       "testTenantId",
       dOperableCatalog = null,
       fullInference = true)
@@ -110,8 +106,6 @@ trait DeeplangIntegTestSupport extends UnitSpec with BeforeAndAfterAll {
       collectedRows1 should contain theSameElementsAs collectedRows2
     }
   }
-
-  protected def entityStorageInitState: Map[(String, Entity.Id), Entity] = Map()
 
   protected def createDataFrame(rows: Seq[Row], schema: StructType): DataFrame = {
     val rdd: RDD[Row] = sparkContext.parallelize(rows)
@@ -199,9 +193,6 @@ private class MockedExecutionContext(
     tenantId,
     dataFrameStorage,
     pythonCodeExecutor) {
-
-  override def uniqueFsFileName(entityCategory: String): String =
-    s"target/tests/$entityCategory/" + UUID.randomUUID().toString
 }
 
 private class MockedDataFrameStorage extends DataFrameStorage {

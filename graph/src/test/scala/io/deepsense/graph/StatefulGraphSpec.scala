@@ -16,11 +16,10 @@
 
 package io.deepsense.graph
 
-
 import org.scalatest.{GivenWhenThen, Inspectors}
 
-import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.exception.FailureDescription
+import io.deepsense.commons.models.Entity
 import io.deepsense.commons.serialization.Serialization
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
 import io.deepsense.deeplang.inference.InferContext
@@ -28,7 +27,6 @@ import io.deepsense.graph.Node.Id
 import io.deepsense.graph.RandomNodeFactory._
 import io.deepsense.graph.graphstate._
 import io.deepsense.graph.nodestate.NodeStatus
-import io.deepsense.models.entities.Entity
 
 class StatefulGraphSpec
   extends StandardSpec

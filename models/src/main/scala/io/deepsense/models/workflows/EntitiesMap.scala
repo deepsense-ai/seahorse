@@ -16,8 +16,8 @@
 
 package io.deepsense.models.workflows
 
+import io.deepsense.commons.models.Entity
 import io.deepsense.deeplang.DOperable
-import io.deepsense.models.entities.Entity
 import io.deepsense.reportlib.model.ReportContent
 
 /**

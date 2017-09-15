@@ -19,8 +19,8 @@ package io.deepsense.models.json.workflow
 import org.joda.time.DateTime
 import spray.json._
 
+import io.deepsense.commons.models.Entity
 import io.deepsense.graph.nodestate
-import io.deepsense.models.entities.Entity
 import io.deepsense.models.json.graph.GraphJsonProtocol.GraphWriter
 import io.deepsense.models.workflows._
 

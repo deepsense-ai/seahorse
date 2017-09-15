@@ -21,8 +21,8 @@ import org.scalatest.mock.MockitoSugar
 
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.exception.FailureDescription
+import io.deepsense.commons.models.Entity
 import io.deepsense.deeplang._
-import io.deepsense.models.entities.Entity
 
 trait GraphTestSupport {
   self: MockitoSugar =>

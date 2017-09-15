@@ -19,11 +19,11 @@ package io.deepsense.graph
 import scala.util.{Failure, Success, Try}
 
 import io.deepsense.commons.exception.{DeepSenseException, DeepSenseFailure, FailureCode, FailureDescription}
+import io.deepsense.commons.models.Entity
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.graph.GraphKnowledge._
 import io.deepsense.graph.Node.Id
 import io.deepsense.graph.nodestate._
-import io.deepsense.models.entities.Entity
 
 case class StatefulGraph(
     directedGraph: DirectedGraph,

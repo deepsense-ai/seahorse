@@ -23,7 +23,6 @@ import io.deepsense.deeplang.doperables.Trainable.TrainingParameters
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
 import io.deepsense.deeplang.{DKnowledge, DMethod1To1, DOperable, ExecutionContext}
-import io.deepsense.entitystorage.UniqueFilenameUtil
 
 trait Trainable extends DOperable {
   val train: DMethod1To1[TrainableParameters, DataFrame, Scorable] =
@@ -121,11 +120,6 @@ trait Trainable extends DOperable {
 
     dataFrame.selectAsSparkLabeledPointRDD(
       target, features, labelPredicate = labelPredicate, featurePredicate = featurePredicate)
-  }
-
-  protected def saveScorable(context: ExecutionContext, scorable: Scorable): Unit = {
-    val uniquePath = context.uniqueFsFileName(UniqueFilenameUtil.ModelEntityCategory)
-    scorable.save(context)(uniquePath)
   }
 }
 

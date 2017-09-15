@@ -21,12 +21,12 @@ import scala.collection.mutable
 import akka.actor._
 
 import io.deepsense.commons.exception.{DeepSenseFailure, FailureCode, FailureDescription}
+import io.deepsense.commons.models.Entity
 import io.deepsense.commons.utils.Logging
 import io.deepsense.deeplang.{CommonExecutionContext, DOperable, ExecutionContext}
 import io.deepsense.graph.Node.Id
 import io.deepsense.graph._
 import io.deepsense.graph.nodestate.{Completed, NodeStatus}
-import io.deepsense.models.entities.Entity
 import io.deepsense.models.workflows.EntitiesMap
 import io.deepsense.reportlib.model.ReportContent
 import io.deepsense.workflowexecutor.communication.message.workflow.{ExecutionStatus, Init}
