@@ -22,20 +22,15 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.scalatest.BeforeAndAfter
 
+import io.deepsense.deeplang.DeeplangIntegTestSupport
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.inout._
-import io.deepsense.deeplang.params.selections.{MultipleColumnSelection, NameColumnSelection}
-import io.deepsense.deeplang.{CassandraTestSupport, DeeplangIntegTestSupport}
 
 class WriteReadDataFrameIntegSpec
   extends DeeplangIntegTestSupport
-  with BeforeAndAfter
-  with CassandraTestSupport {
+  with BeforeAndAfter {
 
   val absoluteWriteReadDataFrameTestPath = absoluteTestsDirPath + "/WriteReadDataFrameTest"
-
-  override def cassandraKeySpaceName: String = "dataframes"
-  override def cassandraTableName: String = "dataframe"
 
   val timestamp = new Timestamp(System.currentTimeMillis())
 
@@ -72,10 +67,6 @@ class WriteReadDataFrameIntegSpec
                   .setCsvColumnSeparator(CsvParameters.ColumnSeparatorChoice.Tab())
                   .setCsvNamesIncluded(true)))
       wdf.execute(executionContext)(Vector(dataFrame))
-
-      val categoricalColumns = MultipleColumnSelection(
-        Vector(NameColumnSelection(Set("categorical")))
-      )
 
       val rdf =
         new ReadDataFrame()
@@ -141,10 +132,6 @@ class WriteReadDataFrameIntegSpec
 
       wdf.execute(executionContext)(Vector(dataFrame))
 
-      val categoricals = MultipleColumnSelection(
-        Vector(NameColumnSelection(Set("categorical")))
-      )
-
       val rdf =
         new ReadDataFrame()
           .setStorageType(InputStorageTypeChoice.File()
@@ -154,46 +141,5 @@ class WriteReadDataFrameIntegSpec
 
       assertDataFramesEqual(loadedDataFrame, convertedDataFrame, checkRowOrder = false)
     }
-
-    "write and read from cassandra" in {
-      // Cassandra requires non-null primary key column
-      val idField =
-        StructField("id", StringType)
-      val convertedSchema = schema.copy(fields = idField +: schema.fields)
-      val convertedRows = rows.zipWithIndex.map { case (r, i) => Row(i.toString +: r.toSeq: _*) }
-      val dataFrame = createDataFrame(convertedRows, convertedSchema)
-
-      createTable()
-
-      val wdf =
-        new WriteDataFrame()
-          .setStorageType(
-            OutputStorageTypeChoice.Cassandra()
-              .setCassandraTable(cassandraTableName)
-              .setCassandraKeyspace(cassandraKeySpaceName))
-      wdf.execute(executionContext)(Vector(dataFrame))
-
-      val rdf =
-        new ReadDataFrame()
-          .setStorageType(
-            InputStorageTypeChoice.Cassandra()
-              .setCassandraTable(cassandraTableName)
-              .setCassandraKeyspace(cassandraKeySpaceName))
-      val loadedDataFrame = rdf.execute(executionContext)(Vector()).head.asInstanceOf[DataFrame]
-
-      assertDataFramesEqual(loadedDataFrame, dataFrame, checkRowOrder = false)
-    }
-  }
-
-  def createTable(): Unit = {
-    session.execute(s"""
-      |CREATE TABLE IF NOT EXISTS $cassandraTableName (
-      |  boolean BOOLEAN,
-      |  double DOUBLE,
-      |  string TEXT,
-      |  timestamp TIMESTAMP,
-      |  id TEXT,
-      |  PRIMARY KEY(id)
-      |)""".stripMargin)
   }
 }

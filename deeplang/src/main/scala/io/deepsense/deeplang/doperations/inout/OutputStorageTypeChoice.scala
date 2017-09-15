@@ -24,8 +24,7 @@ sealed trait OutputStorageTypeChoice extends Choice {
 
   override val choiceOrder: List[Class[_ <: OutputStorageTypeChoice]] = List(
     classOf[File],
-    classOf[Jdbc],
-    classOf[Cassandra])
+    classOf[Jdbc])
 }
 
 object OutputStorageTypeChoice {
@@ -59,13 +58,5 @@ object OutputStorageTypeChoice {
     override val name: String = StorageType.JDBC.toString
     override val params: Array[Param[_]] =
       declareParams(jdbcUrl, jdbcDriverClassName, jdbcTableName)
-  }
-
-  case class Cassandra()
-    extends OutputStorageTypeChoice
-    with CassandraParameters {
-
-    override val name: String = StorageType.CASSANDRA.toString
-    override val params = declareParams(cassandraKeyspace, cassandraTable)
   }
 }

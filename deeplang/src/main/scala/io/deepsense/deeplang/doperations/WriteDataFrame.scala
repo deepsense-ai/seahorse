@@ -58,8 +58,6 @@ case class WriteDataFrame()
       getStorageType match {
         case (jdbcChoice: OutputStorageTypeChoice.Jdbc) =>
           writeToJdbc(jdbcChoice, context, dataFrame)
-        case (cassandraChoice: OutputStorageTypeChoice.Cassandra) =>
-          writeToCassandra(cassandraChoice, context, dataFrame)
         case (fileChoice: OutputStorageTypeChoice.File) =>
           writeToFile(fileChoice, context, dataFrame)
       }
@@ -82,22 +80,6 @@ case class WriteDataFrame()
     val jdbcTableName = jdbcChoice.getJdbcTableName
 
     dataFrame.sparkDataFrame.write.jdbc(jdbcUrl, jdbcTableName, properties)
-  }
-
-  private def writeToCassandra(
-      cassandraChoice: OutputStorageTypeChoice.Cassandra,
-      context: ExecutionContext,
-      dataFrame: DataFrame): Unit = {
-
-    val cassandraKeyspace = cassandraChoice.getCassandraKeyspace
-    val cassandraTable = cassandraChoice.getCassandraTable
-
-
-    dataFrame.sparkDataFrame
-      .write.format("org.apache.spark.sql.cassandra")
-      .option("keyspace", cassandraKeyspace)
-      .option("table", cassandraTable)
-      .save()
   }
 
   private def writeToFile(

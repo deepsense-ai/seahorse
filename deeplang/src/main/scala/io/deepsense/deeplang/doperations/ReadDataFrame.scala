@@ -29,7 +29,6 @@ import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperations.ReadDataFrame._
 import io.deepsense.deeplang.doperations.exceptions.DeepSenseIOException
 import io.deepsense.deeplang.doperations.inout._
-import io.deepsense.deeplang.exceptions.DeepLangException
 import io.deepsense.deeplang.params.Params
 import io.deepsense.deeplang.params.choice.ChoiceParam
 import io.deepsense.deeplang.{DOperation0To1, ExecutionContext, FileSystemClient}
@@ -54,8 +53,6 @@ case class ReadDataFrame()
     val read: (ExecutionContext => DataFrame) = getStorageType match {
       case (jdbcChoice: InputStorageTypeChoice.Jdbc) =>
         readFromJdbc(jdbcChoice) _ andThen DataFrame.fromSparkDataFrame
-      case (cassandraChoice: InputStorageTypeChoice.Cassandra) =>
-        readFromCassandra(cassandraChoice) _ andThen DataFrame.fromSparkDataFrame
       case (fileChoice: InputStorageTypeChoice.File) =>
         prepareFilePath(fileChoice) _ andThen readFromFile(fileChoice.getFileFormat)
     }
@@ -76,17 +73,6 @@ case class ReadDataFrame()
       .option("driver", jdbcChoice.getJdbcDriverClassName)
       .option("url", jdbcChoice.getJdbcUrl)
       .option("dbtable", jdbcChoice.getJdbcTableName)
-      .load()
-  }
-
-  private def readFromCassandra
-    (cassandraChoice: InputStorageTypeChoice.Cassandra)
-    (context: ExecutionContext): SparkDataFrame = {
-
-    context.sqlContext
-      .read.format("org.apache.spark.sql.cassandra")
-      .option("keyspace", cassandraChoice.getCassandraKeyspace)
-      .option("table", cassandraChoice.getCassandraTable)
       .load()
   }
 

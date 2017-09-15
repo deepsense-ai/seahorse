@@ -17,15 +17,14 @@
 package io.deepsense.deeplang.doperations.inout
 
 import io.deepsense.deeplang.params.choice.{Choice, ChoiceParam}
-import io.deepsense.deeplang.params.{StorageType, Param, StringParam}
+import io.deepsense.deeplang.params.{Param, StorageType, StringParam}
 
 sealed trait InputStorageTypeChoice extends Choice {
   import InputStorageTypeChoice._
 
   override val choiceOrder: List[Class[_ <: InputStorageTypeChoice]] = List(
     classOf[File],
-    classOf[Jdbc],
-    classOf[Cassandra])
+    classOf[Jdbc])
 }
 
 object InputStorageTypeChoice {
@@ -59,14 +58,5 @@ object InputStorageTypeChoice {
     override val name: String = StorageType.JDBC.toString
     override val params: Array[Param[_]] =
       declareParams(jdbcUrl, jdbcDriverClassName, jdbcTableName)
-  }
-
-  case class Cassandra()
-    extends InputStorageTypeChoice
-    with CassandraParameters {
-
-    override val name: String = StorageType.CASSANDRA.toString
-    override val params: Array[Param[_]] =
-      declareParams(cassandraKeyspace, cassandraTable)
   }
 }
