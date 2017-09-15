@@ -21,7 +21,7 @@ object Version {
   val spark         = "1.4.0"
   val spray         = "1.3.3"
   val sprayJson     = "1.3.1"
-  val seahorse      = "0.1.7"
+  val seahorse      = "0.1.9"
 }
 
 object Library {
@@ -31,7 +31,7 @@ object Library {
   val hadoop    = (name: String) => "org.apache.hadoop"       % s"hadoop-$name"             % Version.hadoop exclude("org.slf4j", "slf4j-log4j12")
   val jclouds   = (name: String) => "org.apache.jclouds.api"  % s"openstack-$name"          % Version.jclouds
   val logback   = (name: String) => "ch.qos.logback"          % s"logback-$name"            % Version.logback
-  val seahorse  = (name: String) => "io.deepsense"            % s"deepsense-seahorse-$name" % Version.seahorse
+  val seahorse  = (name: String) => "io.deepsense"           %% s"deepsense-seahorse-$name" % Version.seahorse
   val spark     = (name: String) => "org.apache.spark"       %% s"spark-$name"              % Version.spark exclude("org.slf4j", "slf4j-log4j12")
   val spray     = (name: String) => "io.spray"               %% s"spray-$name"              % Version.spray
 

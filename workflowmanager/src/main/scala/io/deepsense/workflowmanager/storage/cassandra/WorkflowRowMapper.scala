@@ -14,8 +14,7 @@ import io.deepsense.models.json.workflow.WorkflowJsonProtocol
 import io.deepsense.models.workflows.Workflow
 
 case class WorkflowRowMapper @Inject() (
-    override val graphReader: GraphReader,
-  override val inferContext: InferContext)
+    override val graphReader: GraphReader)
   extends WorkflowJsonProtocol {
 
   def fromRow(row: Row): Workflow = {

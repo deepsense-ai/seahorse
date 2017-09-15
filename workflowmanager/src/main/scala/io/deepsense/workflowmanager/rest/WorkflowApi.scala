@@ -37,8 +37,7 @@ abstract class WorkflowApi @Inject() (
     workflowManagerProvider: WorkflowManagerProvider,
     workflowResultsStorage: WorkflowResultsStorage,
     @Named("workflows.api.prefix") apiPrefix: String,
-    override val graphReader: GraphReader,
-    override val inferContext: InferContext)
+    override val graphReader: GraphReader)
     (implicit ec: ExecutionContext)
   extends RestApiAbstractAuth
   with RestComponent
@@ -204,16 +203,14 @@ class SecureWorkflowApi @Inject() (
   workflowManagerProvider: WorkflowManagerProvider,
   workflowResultsStorage: WorkflowResultsStorage,
   @Named("workflows.api.prefix") apiPrefix: String,
-  override val graphReader: GraphReader,
-  override val inferContext: InferContext)
+  override val graphReader: GraphReader)
   (implicit ec: ExecutionContext)
   extends WorkflowApi(
     tokenTranslator,
     workflowManagerProvider,
     workflowResultsStorage,
     apiPrefix,
-    graphReader,
-    inferContext)
+    graphReader)
   with AuthDirectives
 
 class InsecureWorkflowApi @Inject() (
@@ -221,14 +218,12 @@ class InsecureWorkflowApi @Inject() (
   workflowManagerProvider: WorkflowManagerProvider,
   workflowResultsStorage: WorkflowResultsStorage,
   @Named("workflows.api.prefix") apiPrefix: String,
-  override val graphReader: GraphReader,
-  override val inferContext: InferContext)
+  override val graphReader: GraphReader)
   (implicit ec: ExecutionContext)
   extends WorkflowApi(
     tokenTranslator,
     workflowManagerProvider,
     workflowResultsStorage,
     apiPrefix,
-    graphReader,
-    inferContext)
+    graphReader)
   with InsecureAuthDirectives

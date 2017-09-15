@@ -36,7 +36,7 @@ class WorkflowDaoCassandraImplIntegSpec
   val catalog = mock[DOperationsCatalog]
   val graphReader: GraphReader = new GraphReader(catalog)
   val inferContext: InferContext = mock[InferContext]
-  val rowMapper = new WorkflowRowMapper(graphReader, inferContext)
+  val rowMapper = new WorkflowRowMapper(graphReader)
 
   val paramSchema = ParametersSchema("param1" -> new BooleanParameter("desc", None, false, None))
 

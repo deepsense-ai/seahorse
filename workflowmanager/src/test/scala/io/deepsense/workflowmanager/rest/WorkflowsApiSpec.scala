@@ -48,7 +48,7 @@ class WorkflowsApiSpec
   )
 
   val dOperableCatalog = new DOperableCatalog
-  override val inferContext: InferContext = new InferContext(dOperableCatalog, true)
+  val inferContext: InferContext = new InferContext(dOperableCatalog, true)
   override val graphReader: GraphReader = new GraphReader(catalog)
 
   def newWorkflowAndKnowledge: (Workflow, GraphKnowledge) = {
@@ -138,7 +138,7 @@ class WorkflowsApiSpec
       .thenReturn(Promise.successful(()).future)
 
     new SecureWorkflowApi(tokenTranslator, workflowManagerProvider, workflowResultsStorage,
-      apiPrefix, graphReader, inferContext).route
+      apiPrefix, graphReader).route
   }
 
   s"GET /workflows/:id" should {
