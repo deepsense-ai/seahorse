@@ -1,6 +1,6 @@
 <div class="panel panel-default no-border home-screen">
   <div class="logged-user">
-    <i class="fa fa-user"></i>
+    <i class="fa fa-user logged-user__icon"></i>
     <span>{{::home.getCurrentUser().name}}</span>
   </div>
 
@@ -30,42 +30,42 @@
   <div ng-if="!home.isWorkflowLoading()">
     <table class="table table-striped text-center table-workflows">
       <tr class="header text-uppercase">
-        <td class="col-md-1 color-gray">
+        <td class="col-md-1 color-gray table__small table__centered table__cell">
           <b>No.</b>
         </td>
-        <td class="col-md-2 color-gray sortable"
+        <td class="col-md-2 color-gray sortable table__cell"
             ng-click="home.sortBy('name')">
           <b>Name</b>
           <span>
             <i ng-class="home.getClass('name')"></i>
           </span>
         </td>
-        <td class="col-md-3 color-gray sortable"
+        <td class="col-md-2 color-gray sortable table__cell" ng-click="home.sortBy('ownerName')">
+          <b>Owner</b>
+          <span>
+            <i ng-class="home.getClass('ownerName')"></i>
+          </span>
+        </td>
+        <td class="col-md-3 color-gray sortable table__cell"
             ng-click="home.sortBy('description')">
           <b>Description</b>
           <span>
             <i ng-class="home.getClass('description')"></i>
           </span>
         </td>
-        <td class="col-md-2 color-gray sortable" ng-click="home.sortBy('updated')">
+        <td class="col-md-2 color-gray sortable table__cell" ng-click="home.sortBy('updated')">
           <b>Updated</b>
           <span>
             <i ng-class="home.getClass('updated')"></i>
           </span>
         </td>
-        <td class="col-md-2 color-gray sortable" ng-click="home.sortBy('ownerName')">
-          <b>Owner</b>
-          <span>
-            <i ng-class="home.getClass('ownerName')"></i>
-          </span>
-        </td>
-        <td class="col-md-2 color-gray sortable" ng-click="home.sortBy('created')">
+        <td class="col-md-2 color-gray sortable table__cell" ng-click="home.sortBy('created')">
           <b>Created</b>
           <span>
             <i ng-class="home.getClass('created')"></i>
           </span>
         </td>
-        <td class="col-md-2 color-gray">
+        <td class="col-md-2 color-gray table__centered table__cell">
           <b>Actions</b>
         </td>
       </tr>
@@ -73,15 +73,29 @@
                      filter: home.search |
                      orderBy : home.sort.column : home.sort.descending
                      track by workflow.id">
-        <td class="vertical-align">
+        <td class="table__centered table__cell">
           <a ng-click="home.goToWorkflowEditor(workflow.id)">
             {{$index+1}}
           </a>
         </td>
-        <td class="vertical-align">
-          <a ng-click="home.goToWorkflowEditor(workflow.id)">{{workflow.name}}</a>
+        <td class="table__cell table__left">
+          <a ng-class="{
+              'owned-by-current-user': home.isWorkflowOwnedByCurrentUser(workflow)
+            }"
+             ng-click="home.goToWorkflowEditor(workflow.id)">
+            {{workflow.name}}
+          </a>
         </td>
-        <td class="vertical-align">
+        <td class="table__cell table__left">
+          <a ng-class="{
+              'owned-by-current-user': home.isWorkflowOwnedByCurrentUser(workflow)
+            }"
+             ng-click="home.goToWorkflowEditor(workflow.id)">
+            <i class="fa fa-user logged-user__icon" ng-if="home.isWorkflowOwnedByCurrentUser(workflow)"></i>
+            {{workflow.ownerName}}
+          </a>
+        </td>
+        <td class="table__cell table__left">
           <a ng-if="workflow.description"
              uib-popover="{{workflow.description}}"
              popover-trigger="{{ home.getTriggerEventBasedOnDescriptionLength(workflow.description) }}"
@@ -94,47 +108,40 @@
             -
           </a>
         </td>
-        <td class="vertical-align">
+        <td class="table__cell table__left">
           <a ng-click="home.goToWorkflowEditor(workflow.id)">
             {{workflow.updated | date:"dd/MM/yyyy - hh:mm a"}}
           </a>
         </td>
-        <td class="vertical-align">
-          <a ng-class="{
-              'owned-by-current-user': home.isWorkflowOwnedByCurrentUser(workflow)
-            }"
-             ng-click="home.goToWorkflowEditor(workflow.id)">
-            {{workflow.ownerName}}
-          </a>
-        </td>
-        <td class="vertical-align">
+        <td class="table__cell table__left">
           <a ng-click="home.goToWorkflowEditor(workflow.id)">
             {{workflow.created | date:"dd/MM/yyyy - hh:mm a"}}
           </a>
         </td>
-        <td class="vertical-align action-icons">
-          <a ng-if="home.isWorkflowOwnedByCurrentUser(workflow) && workflow.sessionStatus !== 'not_running'">
-            <i ng-click="home.deleteSession(workflow.id)"
+        <td class="action-icons table__right table__cell">
+          <span>
+            <a ng-if="home.isWorkflowOwnedByCurrentUser(workflow) && workflow.sessionStatus !== 'not_running'"
+               ng-click="home.deleteSession(workflow.id)"
                popover-placement="left"
                uib-popover="Stop session"
                popover-trigger="mouseenter"
-               popover-append-to-body="true"
-               class="fa fa-power-off">
-            </i>
-          </a>
-          <a popover-trigger="mouseenter"
-             popover-placement="left"
-             uib-popover="Clone workflow"
-             ng-click="home.cloneWorkflow(workflow)">
-            <span class="fa fa-files-o"></span>
-          </a>
-          <a ng-if="home.isWorkflowOwnedByCurrentUser(workflow)"
-             popover-trigger="mouseenter"
-             popover-placement="left"
-             uib-popover="Delete workflow"
-             ng-click="home.deleteWorkflow(workflow)">
-            <span class="fa fa-times"></span>
-          </a>
+               popover-append-to-body="true">
+              <span class="fa fa-power-off"></span>
+            </a>
+            <a popover-trigger="mouseenter"
+               popover-placement="left"
+               uib-popover="Clone workflow"
+               ng-click="home.cloneWorkflow(workflow)">
+              <span class="fa fa-files-o"></span>
+            </a>
+            <a ng-if="home.isWorkflowOwnedByCurrentUser(workflow)"
+               popover-trigger="mouseenter"
+               popover-placement="left"
+               uib-popover="Delete workflow"
+               ng-click="home.deleteWorkflow(workflow)">
+              <span class="fa fa-times"></span>
+            </a>
+          </span>
         </td>
       </tr>
     </table>
