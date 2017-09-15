@@ -29,3 +29,7 @@ sed -i 's|\$EXPOSED_DB_PORT|'"$EXPOSED_DB_PORT"'|g' $TARGET
 sed -i 's|\$EXPOSED_NOTEBOOK_PORT|'"$EXPOSED_NOTEBOOK_PORT"'|g' $TARGET
 sed -i 's|\$EXPOSED_FRONTEND_PORT|'"$EXPOSED_FRONTEND_PORT"'|g' $TARGET
 sed -i 's|\$EXPOSED_LIBRARY_PORT|'"$EXPOSED_LIBRARY_PORT"'|g' $TARGET
+
+API_VERSION=`cat ../../version.sbt | sed -n  's/version in ThisBuild := "\([0-9.]\+\).*/\1/p'`
+sed -i 's|\$API_VERSION|'"$API_VERSION"'|g' $TARGET
+

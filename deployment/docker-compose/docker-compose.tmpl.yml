@@ -29,6 +29,7 @@ services:
       - "SESSION_POLLING_INTERVAL=1000"
       - "MQ_USER=yNNp7VJS"
       - "MQ_PASS=1ElYfGNW"
+      - "API_VERSION=$API_VERSION"
     links:
       - rabbitmq
       - workflowmanager
