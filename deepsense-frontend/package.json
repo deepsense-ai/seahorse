@@ -22,9 +22,9 @@
   },
   "dependencies": {
     "ace-webapp": "^0.2.0",
-    "angular": "^1.4.4",
-    "angular-mocks": "^1.4.4",
-    "angular-sanitize": "^1.4.6",
+    "angular": "1.4.9",
+    "angular-mocks": "1.4.9",
+    "angular-sanitize": "1.4.9",
     "angular-toastr": "^1.4.1",
     "angular-ui-ace": "^0.2.3",
     "angular-ui-bootstrap": "^1.1.1",
