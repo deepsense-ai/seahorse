@@ -1,0 +1,19 @@
+<div class="datasources-panel">
+  <div class="datasources-panel__header">
+    <div class="title">
+      Data sources
+    </div>
+  </div>
+
+  <datasources-toolbar
+    context="$ctrl.context"
+  >
+  </datasources-toolbar>
+
+  <datasources-list
+    on-select="$ctrl.onSelect({datasource: datasource})"
+    datasources="$ctrl.datasources"
+    context="$ctrl.context"
+  ></datasources-list>
+
+</div>

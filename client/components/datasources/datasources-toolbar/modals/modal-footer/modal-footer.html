@@ -1,0 +1,33 @@
+<div class="datasources-modal__footer">
+  <div class="datasources-modal__footer-input">
+    <label class="title">Name</label>
+    <input
+      ng-model="$ctrl.datasourceParams.name"
+      ng-focus="$ctrl.stopCopyingFromUserField()"
+      placeholder="Name"
+      class="form-control"
+      type="text"
+    />
+    <label
+      ng-if="$ctrl.doesNameExists()"
+      class="name-exists"
+    >
+      Datasource with this name already exists. Choose another name.
+    </label>
+  </div>
+  <button
+    ng-disabled="!$ctrl.canAddNewDatasource"
+    ng-click="$ctrl.ok()"
+    class="btn btn-blue"
+    type="button"
+  >
+    Ok
+  </button>
+  <button
+    ng-click="$ctrl.cancel()"
+    class="btn btn-white"
+    type="button"
+  >
+    Cancel
+  </button>
+</div>

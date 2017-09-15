@@ -1,0 +1,7 @@
+'use strict';
+
+export const datasourceContext = {
+  READ_DATASOURCE: 'READ_DATASOURCE',
+  WRITE_DATASOURCE: 'WRITE_DATASOURCE',
+  BROWSE_DATASOURCE: 'BROWSE_DATASOURCE'
+};

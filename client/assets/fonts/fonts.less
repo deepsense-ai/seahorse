@@ -1,0 +1,78 @@
+// Predefined font weights
+@font-weight-thin: 100;
+@font-weight-extralight: 200;
+@font-weight-light: 300;
+@font-weight-regular: 400;
+@font-weight-normal: @font-weight-regular;
+@font-weight-medium: 500;
+@font-weight-semibold: 600;
+@font-weight-bold: 700;
+@font-weight-extrabold: 800;
+@font-weight-ultrabold: 900;
+@font-weight-black: @font-weight-ultrabold;
+
+
+// define-font-face (mixin)
+// Params:
+//   - @fontFamily : Give it a name
+//   - @fontPath : Where font files are located
+//   - @fontFileName : Font file name without extension (we assume that all file formats has the same name)
+//   - @fileFormats : any combination of "eot", "woff", "ttf", "svg"
+//   - @fontWeight: defaults to normal (hint: use @font-weight-xxx)
+//   - @fontStyle: defaults to normal
+// Example
+//   .define-font-face("My Font"; "path/to/myfont"; "MyFont-Regular"; "eot", "woff", "ttf"; @font-weight-regular);
+//   .define-font-face("My Font"; "path/to/myfont"; "MyFont-Italic";  "eot", "woff", "ttf"; @font-weight-regular; italic);
+.define-font-face(@fontFamily; @fontPath; @fontFileName; @fileFormats; @fontWeight: normal; @fontStyle: normal) {
+	//@fontCache: `(new Date()).getTime()`;
+	@indexOfEOT: `@{fileFormats}.indexOf("eot")`;
+	@indexOfWOFF: `@{fileFormats}.indexOf("woff")`;
+	@indexOfTTF: `@{fileFormats}.indexOf("ttf")`;
+	@indexOfSVG: `@{fileFormats}.indexOf("svg")`;
+
+	.add-font-src-eot() when (@indexOfEOT > -1) {
+		src: url("@{fontPath}/@{fontFileName}.eot");
+		src+: url("@{fontPath}/@{fontFileName}.eot#iefix") format("embedded-opentype");
+	}
+	.add-font-src-woff() when (@indexOfWOFF > -1) {
+		src+: url("@{fontPath}/@{fontFileName}.woff") format("woff");
+	}
+	.add-font-src-ttf() when (@indexOfTTF > -1) {
+		src+: url("@{fontPath}/@{fontFileName}.ttf") format("truetype");
+	}
+	.add-font-src-svg() when (@indexOfSVG > -1) {
+		@fontSvgId: `@{fontFamily}.replace(/\W/g, '-').toLowerCase() + "-svg-id"`;
+		src+: url("@{fontPath}/@{fontFileName}.svg#@{fontSvgId}") format("svg");
+	}
+
+	@font-face {
+		font-family: @fontFamily;
+		.add-font-src-eot();
+		.add-font-src-woff();
+		.add-font-src-ttf();
+		.add-font-src-svg();
+		font-weight: @fontWeight;
+		font-style: @fontStyle;
+	}
+}
+
+
+// font-variant (mixin)
+// Params:
+//   - @fontFamily : defaults to inherit
+//   - @fontWeight : defaults to inherit
+//   - @fontStyle : defaults to normal
+//   - @fontSize : defaults to inherit
+// Example:
+//   .my-font(@fontSize: inherit) {
+//       .font-variant("My Font"; @font-weight-regular; normal; @fontSize);
+//   }
+//   .my-font-italic(@fontSize: inherit) {
+//       .font-variant("My Font"; @font-weight-regular; italic; @fontSize);
+//   }
+.font-variant(@fontFamily: inherit; @fontWeight: inherit; @fontStyle: normal; @fontSize: inherit) {
+	font-family: @fontFamily;
+	font-weight: @fontWeight;
+	font-style: @fontStyle;
+	font-size: @fontSize;
+}

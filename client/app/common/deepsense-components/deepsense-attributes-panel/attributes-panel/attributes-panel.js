@@ -25,7 +25,7 @@ function OperationAttributes($rootScope, AttributesPanelService, config, version
       node: '=',
       isInnerWorkflow: '=',
       publicParams: '=',
-      workflow: '=', // It's actually workflowId. TODO Rename it to workflowId
+      workflowId: '=',
       disabledMode: '='
     },
     templateUrl: tpl,
@@ -74,7 +74,7 @@ function OperationAttributes($rootScope, AttributesPanelService, config, version
         };
 
         const encodedParams = btoa(JSON.stringify(notebookParams));
-        const url = `${config.notebookHost}/notebooks/${$scope.workflow}/${$scope.node.id}/${encodedParams}`;
+        const url = `${config.notebookHost}/notebooks/${$scope.workflowId}/${$scope.node.id}/${encodedParams}`;
         return $sce.trustAsResourceUrl(url);
       };
 
@@ -121,7 +121,7 @@ function OperationAttributes($rootScope, AttributesPanelService, config, version
 
       $scope.$on('AttributesPanel.INTERNAL.CLICKED_EDIT_WORKFLOW', (event, data) => {
         $rootScope.$broadcast('AttributesPanel.OPEN_INNER_WORKFLOW', {
-          'workflowId': $scope.workflow,
+          'workflowId': $scope.workflowId,
           'nodeId': $scope.node.id,
           'parameterName': data.parameterName
         });

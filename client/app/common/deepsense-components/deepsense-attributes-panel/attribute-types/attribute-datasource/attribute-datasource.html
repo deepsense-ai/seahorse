@@ -1,0 +1,51 @@
+<div class="attribute-datasource">
+  <div
+    ng-if="isDataSourceEmpty()"
+    class="datasource-wrapper error-wrapper"
+  >
+    <div>
+      <span
+        ng-if="error"
+        class="datasource-wrapper__error-info"
+      >
+        {{error}}
+      </span>
+    </div>
+    <div class="datasource-wrapper__select">
+      <span class="error-icon fa fa-exclamation-circle"></span>
+      <span
+        ng-click="openDataSourcePanel()"
+        class="select-label"
+      >
+        Select data source
+      </span>
+    </div>
+  </div>
+  <div
+    ng-if="!isDataSourceEmpty()"
+    class="datasource-wrapper"
+  >
+    <div
+      ng-class="typeIcon[datasource.params.datasourceType]"
+      class="datasource-wrapper__icon sa"
+    ></div>
+    <div
+      ng-click="openDataSourcePanel()"
+      class="datasource-wrapper__name"
+      title={{datasource.params.name}}
+    >
+      {{datasource.params.name}}
+    </div>
+    <div
+      ng-click="clearDatasource()"
+      class="datasource-wrapper__icon sa sa-cross"
+      title="Clear datasource"
+    ></div>
+    <div
+      ng-if="isOwner()"
+      ng-click="editDatasource()"
+      class="datasource-wrapper__icon sa sa-edit"
+      title="Edit datasource"
+    ></div>
+  </div>
+</div>

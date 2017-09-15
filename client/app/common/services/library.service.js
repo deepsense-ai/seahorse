@@ -29,6 +29,7 @@ function LibraryService($q, $log, LibraryDataConverterService, LibraryApiService
   service.getCurrentDirectoryContent = getCurrentDirectoryContent;
   service.getFileByURI = getFileByURI; // Used once in LibraryConnector
   service.getUploadingFiles = getUploadingFiles;
+  service.isUploadingInProgress = isUploadingInProgress;
   service.removeDirectory = removeDirectory;
   service.removeFile = removeFile;
   service.removeUploadingFile = removeUploadingFile;
@@ -140,6 +141,17 @@ function LibraryService($q, $log, LibraryDataConverterService, LibraryApiService
    */
   function getUploadingFiles() {
     return uploading;
+  }
+
+
+  /**
+   * @returns {Bool} Flag indicating whether uploading
+   * is in progress:
+   */
+  function isUploadingInProgress() {
+    return uploading
+      .filter((value) => value.status === 'uploading')
+      .length > 0;
   }
 
 

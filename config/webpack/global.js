@@ -32,6 +32,7 @@ module.exports = function (_path) {
         ASSETS: path.join(_path, 'client', 'assets'),
         COMMON: path.join(_path, 'client', 'common'),
         COMPONENTS: path.join(_path, 'client', 'components'),
+        LESS: path.join(_path, 'client', 'less'),
         NODE_MODULES: path.join(_path, 'node_modules'),
         SRC: path.join(_path, 'client'),
         STATIC: path.join(_path, 'client', 'static'),

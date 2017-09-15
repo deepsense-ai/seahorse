@@ -4,19 +4,21 @@
 import angular from 'angular';
 
 // App
-import commonApiModule from './api/api.module';
-import commonDirectivesModule from './directives/directives.module';
-import commonFiltersModule from './filters/filters.module';
-import commonHelpersModule from './helpers/helpers.module';
-import commonSchedulesModule from './schedules/schedules.module';
+import apiModule from './api/api.module';
+import datasourcesModule from './datasources/datasources.module';
+import directivesModule from './directives/directives.module';
+import filtersModule from './filters/filters.module';
+import helpersModule from './helpers/helpers.module';
+import schedulesModule from './schedules/schedules.module';
 
 
 export const CommonModule = angular
   .module('common', [
-    commonApiModule,
-    commonDirectivesModule,
-    commonFiltersModule,
-    commonHelpersModule,
-    commonSchedulesModule
+    apiModule,
+    datasourcesModule,
+    directivesModule,
+    filtersModule,
+    helpersModule,
+    schedulesModule
   ])
   .name;

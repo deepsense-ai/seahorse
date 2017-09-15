@@ -1,0 +1,144 @@
+<div class="file-settings">
+  <div class="file-settings__row-wrapper">
+    <div class="title-row">Format</div>
+    <div class="inputs-row vertical-align-bottom">
+      <div class="col">
+        <select
+          ng-init="$ctrl.fileSettings.fileFormat = $ctrl.formats[0]"
+          ng-options="format as (format | uppercase) for format in $ctrl.formats"
+          ng-change="$ctrl.onChange({fileSettings: $ctrl.fileSettings})"
+          ng-model="$ctrl.fileSettings.fileFormat"
+          class="form-control"
+        >
+        </select>
+      </div>
+      <div
+        ng-if="$ctrl.fileSettings.fileFormat === 'csv'"
+        class="checkboxes-wrapper"
+      >
+        <div class="col checkbox-wrapper">
+          <label
+            class="format-form-label"
+            ng-class="{'active': $ctrl.fileSettings.csvFileFormatParams.includeHeader}"
+          >
+            <input
+              ng-change="$ctrl.onChange({fileSettings: $ctrl.fileSettings})"
+              ng-model="$ctrl.fileSettings.csvFileFormatParams.includeHeader"
+              type="checkbox"
+            />
+            <span>
+              First row includes column names
+            </span>
+          </label>
+        </div>
+        <div class="col checkbox-wrapper">
+          <label
+            ng-class="{'active': $ctrl.fileSettings.csvFileFormatParams.convert01ToBoolean}"
+            class="format-form-label"
+          >
+            <input
+              ng-change="$ctrl.onChange({fileSettings: $ctrl.fileSettings})"
+              ng-model="$ctrl.fileSettings.csvFileFormatParams.convert01ToBoolean"
+              type="checkbox"
+            />
+            <span>
+              Convert 0 and 1 to boolean
+            </span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    ng-if="$ctrl.fileSettings.fileFormat === 'csv'"
+    class="file-settings__row-wrapper"
+  >
+    <div class="title-row">Separator</div>
+    <div class="inputs-row space-between">
+      <div class="radio-wrapper">
+        <label class="format-form-label"
+               ng-class="{'active': $ctrl.fileSettings.csvFileFormatParams.separatorType === 'comma'}"
+        >
+          <input
+            ng-change="$ctrl.onChange({fileSettings: $ctrl.fileSettings})"
+            ng-model="$ctrl.fileSettings.csvFileFormatParams.separatorType"
+            type="radio"
+            value="comma"
+          />
+          <span class="radio-title">. (comma)</span>
+        </label>
+      </div>
+      <div class="radio-wrapper">
+        <label class="format-form-label"
+               ng-class="{'active': $ctrl.fileSettings.csvFileFormatParams.separatorType === 'semicolon'}">
+          <input
+            ng-change="$ctrl.onChange({fileSettings: $ctrl.fileSettings})"
+            ng-model="$ctrl.fileSettings.csvFileFormatParams.separatorType"
+            type="radio"
+            value="semicolon"
+          />
+          <span class="radio-title">; (semicolon)</span>
+        </label>
+      </div>
+      <div class="radio-wrapper">
+        <label class="format-form-label"
+               ng-class="{'active': $ctrl.fileSettings.csvFileFormatParams.separatorType === 'colon'}">
+          <input
+            ng-change="$ctrl.onChange({fileSettings: $ctrl.fileSettings})"
+            ng-model="$ctrl.fileSettings.csvFileFormatParams.separatorType"
+            type="radio"
+            value="colon"
+          />
+          <span class="radio-title">: (colon)</span>
+        </label>
+      </div>
+      <div class="radio-wrapper">
+        <label class="format-form-label"
+               ng-class="{'active': $ctrl.fileSettings.csvFileFormatParams.separatorType === 'space'}">
+          <input
+            ng-change="$ctrl.onChange({fileSettings: $ctrl.fileSettings})"
+            ng-model="$ctrl.fileSettings.csvFileFormatParams.separatorType"
+            type="radio"
+            value="space"
+          />
+          <span class="radio-title">space</span>
+        </label>
+      </div>
+      <div class="radio-wrapper">
+        <label class="format-form-label"
+               ng-class="{'active': $ctrl.fileSettings.csvFileFormatParams.separatorType === 'tab'}">
+          <input
+            ng-change="$ctrl.onChange({fileSettings: $ctrl.fileSettings})"
+            ng-model="$ctrl.fileSettings.csvFileFormatParams.separatorType"
+            type="radio"
+            value="tab"
+          />
+          <span class="radio-title">tab</span>
+        </label>
+      </div>
+      <div class="radio-wrapper">
+        <label class="format-form-label"
+               ng-class="{'active': $ctrl.fileSettings.csvFileFormatParams.separatorType === 'custom'}">
+          <input
+            ng-change="$ctrl.onChange({fileSettings: $ctrl.fileSettings})"
+            ng-model="$ctrl.fileSettings.csvFileFormatParams.separatorType"
+            type="radio"
+            value="custom"
+          />
+          <span class="radio-title">
+            <input
+              ng-change="$ctrl.onChange({fileSettings: $ctrl.fileSettings})"
+              ng-model="$ctrl.fileSettings.csvFileFormatParams.customSeparator"
+              ng-focus="$ctrl.onFocus()"
+              maxlength="1"
+              placeholder="custom"
+              id="custom-separator"
+              type="text"
+            />
+          </span>
+        </label>
+      </div>
+    </div>
+  </div>
+</div>

@@ -6,6 +6,7 @@ let browserValidator = require('./browser.validator.js');
 
 // Resources
 import '../css/app.less';
+import '../less/app.less';
 
 // App
 import { CommonModule } from 'COMMON/common.module';
