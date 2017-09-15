@@ -1,0 +1,8 @@
+<div>
+  <p>{{ experimentList.myExperiments }}</p>
+  <ul>
+    <li ng-repeat="item in experimentList.experiments">
+      <a ui-sref="lab.experiment({ id: item.id })">{{item.name}}</a>
+    </li>
+  </ul>
+</div>

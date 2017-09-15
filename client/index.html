@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en" ng-app="ds.lab" ng-strict-di>
+<head>
+  <meta charset="utf-8">
+  <title>DeepSense.io LAB</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="css/app.css">
+</head>
+<body class="container-fluid">
+  <nav class="collapse navbar-collapse bs-navbar-collapse">
+    <ul class="nav navbar-nav">
+      <li><a ui-sref="lab.experiments">experiments</a></li>
+      <li><a ui-sref="lab.datasets">datasets</a></li>
+      <li><a ui-sref="lab.account">account</a></li>
+      <li><a ui-sref="lab.home">home</a></li>
+    </ul>
+  </nav>
+  <section class="container-fluid" ui-view></section>
+  <script type="text/javascript" src="js/app.js"></script>
+</body>
+</html>
