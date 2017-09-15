@@ -29,6 +29,8 @@ class DHierarchy {
 
   private def symbolToType(s: ru.Symbol): ru.Type = s.asClass.toType
 
+  private def isParametrized(t: ru.Type): Boolean = !t.typeSymbol.asClass.typeParams.isEmpty
+
   private def addNode(node: Node): Unit = nodes(node.fullName) = node
 
   /**
@@ -39,6 +41,10 @@ class DHierarchy {
   private def register(t: ru.Type, typeInfo: Class[_]): Option[Node] = {
     if (!(t <:< baseType))
       return None
+
+    if (isParametrized(t)) {
+      throw new RuntimeException // TODO: What is the exceptions convention here?
+    }
 
     val node = Node(typeInfo)
 

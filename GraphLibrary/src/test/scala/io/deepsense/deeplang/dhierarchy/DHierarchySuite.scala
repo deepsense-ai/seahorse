@@ -27,6 +27,11 @@ object H {
   }
 }
 
+object Parametrized {
+  class A[T] extends DOperable
+  class B extends A[Int]
+}
+
 class DHierarchySuite extends FunSuite with Matchers {
 
   def testGettingSubclasses[SomeT : ru.TypeTag](h: DHierarchy, expected: DOperable*): Unit = {
@@ -78,5 +83,21 @@ class DHierarchySuite extends FunSuite with Matchers {
     val (traitsInfo, classesInfo) = h.info
     traitsInfo should contain theSameElementsAs traitsMock
     classesInfo should contain theSameElementsAs classesMock
+  }
+
+  test("Registering class extending parametrized class should produce exception") {
+    intercept[RuntimeException] {
+      import Parametrized._
+      val p = new DHierarchy
+      p.registerDOperable[B]()
+    }
+  }
+
+  test("Registering parametrized class should produce exception") {
+    intercept[RuntimeException] {
+      import Parametrized._
+      val p = new DHierarchy
+      p.registerDOperable[A[Int]]()
+    }
   }
 }
