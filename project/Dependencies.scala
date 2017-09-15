@@ -12,6 +12,7 @@ object Version {
   val nsscalaTime = "1.8.0"
   val scala = "2.11.6"
   val scalatest = "3.0.0-SNAP4"
+  val scalatra = "2.4.0"
   val scoverage = "1.0.4"
   val slick = "3.1.1"
   val spark = "1.6.1"
@@ -39,20 +40,24 @@ object Library {
 
   val spray = (name: String) => "io.spray" %% s"spray-$name" % Version.spray excludeAkkaActor
 
+
   val akkaActor = akka("actor")
   val akkaTestkit = akka("testkit")
   val apacheCommons = "org.apache.commons" % "commons-lang3" % Version.apacheCommons
   val guice = "com.google.inject" % "guice" % Version.guice
-  val guiceMultibindings = "com.google.inject.extensions" % "guice-multibindings"   % Version.guice
+  val guiceMultibindings = "com.google.inject.extensions" % "guice-multibindings" % Version.guice
   val jcloudsKeystone = jclouds("keystone")
   val jcloudsCompute = "org.apache.jclouds" % "jclouds-compute" % Version.jclouds
   val jcloudsNova = jclouds("nova")
+  val jettyWebapp = "org.eclipse.jetty" % "jetty-webapp" % "9.3.8.v20160314"
   val metricsScala = "nl.grons" %% "metrics-scala" % Version.metricsScala excludeAkkaActor
   val mockitoCore = "org.mockito" % "mockito-core" % Version.mockito
   val nscalaTime = "com.github.nscala-time" %% "nscala-time" % Version.nsscalaTime
   val rabbitmq = "com.thenewmotion.akka" %% "akka-rabbitmq" % "2.2" excludeAkkaActor
   val scalaReflect = "org.scala-lang" % "scala-reflect" % Version.scala
   val scalatest = "org.scalatest" %% "scalatest" % Version.scalatest
+  val scalatra = "org.scalatra" %% "scalatra" % Version.scalatra
+  val scalatraTest = "org.scalatra" %% "scalatra-scalatest" % Version.scalatra % "test"
   val scalaz = "org.scalaz" %% "scalaz-core" % "7.2.4"
   val scoverage = "org.scoverage" %% "scalac-scoverage-runtime" % Version.scoverage
   val seahorseCommons = seahorse("commons")
@@ -149,12 +154,16 @@ object Dependencies {
   ) ++ Seq(akkaTestkit, mockitoCore, scalatest, scoverage, sprayTestkit, wiremock)
     .map(_ % s"$Test,it")
 
+  val libraryservice = Seq(
+    scalatra,
+    jettyWebapp,
+    scalatraTest
+  ) ++ Seq(scoverage).map(_ % s"$Test,it")
+
   val integrationtests = Seq(
     "com.typesafe.play" %% "play-ws" % "2.4.3",
     "org.jfarcand" % "wcs" % "1.4", // won't currently work with scala 2.11
     // Author released 1.5 only for scala 2.11 so operator %% won't work.
     scalaz
   ) ++ Seq(scalatest).map(_ % s"$Test,it")
-
-
 }

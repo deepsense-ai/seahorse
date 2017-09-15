@@ -5,7 +5,7 @@ services:
     ports:
       - "33321:8080"
     environment:
-      VCAP_SERVICES: "{\"user-provided\":[{\"credentials\":{\"host\":\"http://workflowmanager:9080\"},\"name\":\"workflow-manager\"},{\"credentials\":{\"host\":\"http://sessionmanager:9082\"},\"name\":\"session-manager\"},{\"credentials\":{\"host\":\"http://notebooks:8888\"},\"name\":\"jupyter\"},{\"credentials\":{\"host\":\"http://rabbitmq:15674\"},\"name\":\"rabbitmq\"},{\"credentials\":{\"host\":\"http://frontend:80\"},\"name\":\"frontend\"}]}"
+      VCAP_SERVICES: "{\"user-provided\":[{\"credentials\":{\"host\":\"http://workflowmanager:9080\"},\"name\":\"workflow-manager\"},{\"credentials\":{\"host\":\"http://sessionmanager:9082\"},\"name\":\"session-manager\"},{\"credentials\":{\"host\":\"http://library:9083\"},\"name\":\"library\"},{\"credentials\":{\"host\":\"http://notebooks:8888\"},\"name\":\"jupyter\"},{\"credentials\":{\"host\":\"http://rabbitmq:15674\"},\"name\":\"rabbitmq\"},{\"credentials\":{\"host\":\"http://frontend:80\"},\"name\":\"frontend\"}]}"
       DISABLE_OAUTH: "true"
       FORCE_HTTPS: "false"
       WM_AUTH_USER: "oJkTZ8BV"
@@ -13,12 +13,14 @@ services:
     links:
       - workflowmanager
       - sessionmanager
+      - library
       - notebooks
       - rabbitmq
       - frontend
     depends_on:
       - workflowmanager
       - sessionmanager
+      - library
       - notebooks
       - rabbitmq
       - frontend
@@ -32,11 +34,13 @@ services:
       - rabbitmq
       - workflowmanager
       - sessionmanager
+      - library
       - notebooks
     depends_on:
       - rabbitmq
       - workflowmanager
       - sessionmanager
+      - library
       - notebooks
   sessionmanager:
     image: $DOCKER_REPOSITORY/deepsense-sessionmanager:$DOCKER_TAG
@@ -58,6 +62,7 @@ services:
       - "TEMP_DIR=/tmp/seahorse/download"
     volumes:
       - "./data:/resources/data"
+      - "library:/library"
     links:
       - rabbitmq
       - workflowmanager
@@ -65,6 +70,7 @@ services:
     depends_on:
       - rabbitmq
       - workflowmanager
+      - library
   notebooks:
     image: $DOCKER_REPOSITORY/deepsense-notebooks:$DOCKER_TAG
     environment:
@@ -99,3 +105,9 @@ services:
     image: $DOCKER_REPOSITORY/deepsense-h2:$DOCKER_TAG
     volumes:
       - "./h2-data:/opt/h2-data:rw"
+  library:
+    image: $DOCKER_REPOSITORY/deepsense-libraryservice:$DOCKER_TAG
+    volumes:
+      - "library:/library"
+volumes:
+  library:

@@ -13,7 +13,7 @@ addSbtPlugin("io.spray" % "sbt-revolver" % "0.7.2")
 // Plugin provides build info to use in code
 addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.4.0")
 
-addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.0.3")
+addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.1.4")
 
 addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.1")
 
