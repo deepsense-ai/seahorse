@@ -40,7 +40,7 @@
     - name: Create Cassandra directory
       file: path="{{cassandra_data_dir}}" state=directory owner=ubuntu group=ubuntu mode=755
 
-- name: Runs Cassandra image
+- name: Remove previous cassandra container
   hosts: cassandra
   user: ubuntu
   sudo: yes
@@ -56,6 +56,13 @@
       command: docker rm -f cassandra
       when: docker_containers.stdout.find(' cassandra ') != -1
 
+- name: Runs Cassandra image
+  hosts: cassandra
+  user: ubuntu
+  sudo: yes
+  vars_files:
+    - vars/docker.yml
+    - vars/env.yml
   roles:
     - { role: cassandra,
         data_dir: "{{cassandra_data_dir}}"
