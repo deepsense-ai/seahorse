@@ -117,6 +117,35 @@ class DOperableReporterSpec extends UnitSpec {
           List(Some(DoubleUtils.double2String(3.0)), Some(""))
         )
       }
+
+      "custom parameters are passed" in {
+
+        val parameters = Seq(
+          ("Column 1", ColumnType.string, Seq("Value 11", "Value 12", "Value 13")),
+          ("Column 2", ColumnType.categorical, Seq("Value 21", "Value 22")),
+          ("Column 3", ColumnType.numeric, Seq("3.0"))
+        )
+
+        val report = DOperableReporter(reportName)
+          .withCustomTable(
+            "name",
+            description,
+            parameters: _*
+          )
+          .report()
+
+        report.content should not be null
+        report.content.name shouldBe reportName
+        report.content.tables should not be Map.empty
+        val table = report.content.tables("name")
+        table.columnNames shouldBe Some(List(
+          "Column 1", "Column 2", "Column 3"))
+        table.values shouldBe List(
+          List(Some("Value 11"), Some("Value 21"), Some("3.0")),
+          List(Some("Value 12"), Some("Value 22"), Some("")),
+          List(Some("Value 13"), Some(""), Some(""))
+        )
+      }
     }
   }
 }

@@ -21,6 +21,8 @@ import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 
+import io.deepsense.commons.types.ColumnType
+import io.deepsense.commons.utils.DoubleUtils
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.inference.{InferContext, InferenceWarnings}
@@ -58,8 +60,17 @@ case class Normalizer(columns: Seq[String], scaler: StandardScalerModel) extends
     }
   }
 
-  override def report(executionContext: ExecutionContext): Report =
-    Report(ReportContent("Report for Normalizer"))
+  override def report(executionContext: ExecutionContext): Report = {
+    DOperableReporter("Report for Normalizer")
+      .withCustomTable(
+        name = "Statistics",
+        description = "",
+        ("Column", ColumnType.string, columns),
+        ("Mean", ColumnType.numeric, scaler.mean.toArray.map(DoubleUtils.double2String)),
+        ("Std", ColumnType.numeric, scaler.std.toArray.map(DoubleUtils.double2String))
+      )
+      .report
+  }
 
   override def toInferrable: DOperable = new Normalizer()
 

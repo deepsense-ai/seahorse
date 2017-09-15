@@ -89,6 +89,28 @@ case class DOperableReporter(title: String, tables: List[Table] = List.empty) {
     DOperableReporter(title, tables :+ featureColumnsTable :+ targetColumnTable)
   }
 
+  def withCustomTable(
+      name: String,
+      description: String,
+      columns: (String, ColumnType, Seq[String])*): DOperableReporter = {
+
+    val (columnNames, columnTypes, columnValues) = columns.unzip3
+    val rowCount = columnValues.map(_.length).max
+
+    val padded = columnValues.map(_.padTo(rowCount, ""))
+    val rows = padded.transpose.map(_.map(Some(_)))
+
+    val table = Table(
+      name,
+      description,
+      Some(columnNames.toList),
+      columnTypes.toList,
+      None,
+      rows.map(_.toList).toList)
+
+    DOperableReporter(title, tables :+ table)
+  }
+
   def report(): Report = Report(ReportContent(title, tables))
 
 }
