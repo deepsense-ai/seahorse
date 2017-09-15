@@ -61,13 +61,13 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 
 <tr>
 <td><code>p</code></td>
-<td><code><a href="../parameters.html#numeric">Numeric</a></code></td>
+<td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
 <td>Normalization in L^p space. Must be >= 1.</td>
 </tr>
 
 <tr>
 <td><code>operate on</code></td>
-<td><code><a href="../parameters.html#input_output_column_selector">InputOutputColumnSelector</a></code></td>
+<td><code><a href="../parameter_types.html#input_output_column_selector">InputOutputColumnSelector</a></code></td>
 <td>Input and output columns for the operation.</td>
 </tr>
 

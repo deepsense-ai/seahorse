@@ -67,7 +67,7 @@ List of nodes with associated [operations](operations.html).
 | --- | --- |
 | ``id`` | Unique identifier of a node in UUID format. |
 | ``operation`` | Description of an operation associated with the node. It consists of unique operation identifier and operation name. |
-| ``parameters`` | Operation specific parameters formatted according to [parameter format](parameters.html). |
+| ``parameters`` | Operation specific parameters formatted according to [parameter format](parameter_types.html). |
 
 #### Connections
 

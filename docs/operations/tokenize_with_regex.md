@@ -61,25 +61,25 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 
 <tr>
 <td><code>gaps</code></td>
-<td><code><a href="../parameters.html#boolean">Boolean</a></code></td>
+<td><code><a href="../parameter_types.html#boolean">Boolean</a></code></td>
 <td>Indicates whether regex splits on gaps (true) or matches tokens (false).</td>
 </tr>
 
 <tr>
 <td><code>min token length</code></td>
-<td><code><a href="../parameters.html#numeric">Numeric</a></code></td>
+<td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
 <td>Minimum token length, >= 0.</td>
 </tr>
 
 <tr>
 <td><code>pattern</code></td>
-<td><code><a href="../parameters.html#string">String</a></code></td>
+<td><code><a href="../parameter_types.html#string">String</a></code></td>
 <td>Regex pattern used to match delimiters (gaps = true) or tokens (gaps = false).</td>
 </tr>
 
 <tr>
 <td><code>operate on</code></td>
-<td><code><a href="../parameters.html#input_output_column_selector">InputOutputColumnSelector</a></code></td>
+<td><code><a href="../parameter_types.html#input_output_column_selector">InputOutputColumnSelector</a></code></td>
 <td>Input and output columns for the operation.</td>
 </tr>
 

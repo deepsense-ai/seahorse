@@ -48,19 +48,19 @@ This operation does not take any input.
 
 <tr>
 <td><code>metric</code></td>
-<td><code><a href="../parameters.html#single_choice">SingleChoice</a></code></td>
+<td><code><a href="../parameter_types.html#single_choice">SingleChoice</a></code></td>
 <td>Metric used in evaluation. Possible values: <code>["areaUnderROC", "areaUnderPR"]</code></td>
 </tr>
 
 <tr>
 <td><code>raw prediction column</code></td>
-<td><code><a href="../parameters.html#single_column_selector">SingleColumnSelector</a></code></td>
+<td><code><a href="../parameter_types.html#single_column_selector">SingleColumnSelector</a></code></td>
 <td>Raw prediction (confidence) column.</td>
 </tr>
 
 <tr>
 <td><code>label column</code></td>
-<td><code><a href="../parameters.html#single_column_selector">SingleColumnSelector</a></code></td>
+<td><code><a href="../parameter_types.html#single_column_selector">SingleColumnSelector</a></code></td>
 <td>Label column for model fitting.</td>
 </tr>
 

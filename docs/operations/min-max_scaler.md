@@ -61,25 +61,25 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 
 <tr>
 <td><code>min</code></td>
-<td><code><a href="../parameters.html#numeric">Numeric</a></code></td>
+<td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
 <td>Lower bound after transformation, shared by all features.</td>
 </tr>
 
 <tr>
 <td><code>max</code></td>
-<td><code><a href="../parameters.html#numeric">Numeric</a></code></td>
+<td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
 <td>Upper bound after transformation, shared by all features.</td>
 </tr>
 
 <tr>
 <td><code>input column</code></td>
-<td><code><a href="../parameters.html#single_column_selector">SingleColumnSelector</a></code></td>
+<td><code><a href="../parameter_types.html#single_column_selector">SingleColumnSelector</a></code></td>
 <td>Input column name.</td>
 </tr>
 
 <tr>
 <td><code>output column</code></td>
-<td><code><a href="../parameters.html#string">String</a></code></td>
+<td><code><a href="../parameter_types.html#string">String</a></code></td>
 <td>Output column name.</td>
 </tr>
 

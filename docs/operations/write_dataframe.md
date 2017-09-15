@@ -89,7 +89,7 @@ Write DataFrame operation does not produce any output.
         <code id="data-storage-type">data storage type</code>
       </td>
       <td>
-        <code><a href="../parameters.html#single_choice">Choice</a></code>
+        <code><a href="../parameter_types.html#single_choice">Choice</a></code>
       </td>
       <td>The input data storage type. Possible values are:
         <code>FILE</code>, <code>JDBC</code>, <code>CASSANDRA</code>.
@@ -101,7 +101,7 @@ Write DataFrame operation does not produce any output.
         <code id="output-file">output file</code>
       </td>
       <td>
-        <code><a href="../parameters.html#string">String</a></code>
+        <code><a href="../parameter_types.html#string">String</a></code>
       </td>
       <td>Valid only if <code>data storage type = FILE</code>.
         A path where the output file will be saved.
@@ -112,7 +112,7 @@ Write DataFrame operation does not produce any output.
         <code id="format">format</code>
       </td>
       <td>
-        <code><a href="../parameters.html#single_choice">Choice</a></code>
+        <code><a href="../parameter_types.html#single_choice">Choice</a></code>
       </td>
       <td>Valid only if <code>data storage type = FILE</code>.
         A format of the output file. Possible values:
@@ -125,7 +125,7 @@ Write DataFrame operation does not produce any output.
         <code id="column-separator">column separator</code>
       </td>
       <td>
-        <code><a href="../parameters.html#single_choice">Choice</a></code>
+        <code><a href="../parameter_types.html#single_choice">Choice</a></code>
       </td>
       <td>Valid only if <code>format = CSV</code>.
         Character separating fields in a row. Possible values are:
@@ -140,7 +140,7 @@ Write DataFrame operation does not produce any output.
         <code id="custom-column-separator">custom column separator</code>
       </td>
       <td>
-        <code><a href="../parameters.html#string">String</a></code>
+        <code><a href="../parameter_types.html#string">String</a></code>
       </td>
       <td>Valid only if <code>column separator = Custom column separator</code>.
         A custom column separator.
@@ -152,7 +152,7 @@ Write DataFrame operation does not produce any output.
         <code id="write-header">write header</code>
       </td>
       <td>
-        <code><a href="../parameters.html#boolean">Boolean</a></code>
+        <code><a href="../parameter_types.html#boolean">Boolean</a></code>
       </td>
       <td>Valid only if <code>format = CSV</code>.
         If <code>true</code> then columns' names will be written at the
@@ -165,12 +165,12 @@ Write DataFrame operation does not produce any output.
         <code id="url">url</code>
       </td>
       <td>
-        <code><a href="../parameters.html#string">String</a></code>
+        <code><a href="../parameter_types.html#string">String</a></code>
       </td>
       <td>Valid only if <code>data storage type = JDBC</code>.
         JDBC connection URL.
         Sensitive data (e.g. user, password) could be replaced on the fly during workflow execution,
-        see: <a href="../parameters.html#string">String parameter documentation</a> for more details.
+        see: <a href="../parameter_types.html#string">String parameter documentation</a> for more details.
       </td>
     </tr>
     <tr>
@@ -178,7 +178,7 @@ Write DataFrame operation does not produce any output.
         <code id="driver">driver</code>
       </td>
       <td>
-        <code><a href="../parameters.html#string">String</a></code>
+        <code><a href="../parameter_types.html#string">String</a></code>
       </td>
       <td>Valid only if <code>data storage type = JDBC</code>.
         JDBC driver ClassName.
@@ -189,7 +189,7 @@ Write DataFrame operation does not produce any output.
         <code id="table">table</code>
       </td>
       <td>
-        <code><a href="../parameters.html#string">String</a></code>
+        <code><a href="../parameter_types.html#string">String</a></code>
       </td>
       <td>Valid only if <code>data storage type = JDBC</code> or <code>data storage type = CASSANDRA</code>.
         JDBC/Cassandra table name.
@@ -202,7 +202,7 @@ Write DataFrame operation does not produce any output.
         <code id="keyspace">keyspace</code>
       </td>
       <td>
-        <code><a href="../parameters.html#string">String</a></code>
+        <code><a href="../parameter_types.html#string">String</a></code>
       </td>
       <td>Valid only if <code>data storage type = CASSANDRA</code>.
         Cassandra keyspace.

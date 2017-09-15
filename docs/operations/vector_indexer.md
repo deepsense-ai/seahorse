@@ -61,19 +61,19 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 
 <tr>
 <td><code>max categories</code></td>
-<td><code><a href="../parameters.html#numeric">Numeric</a></code></td>
+<td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
 <td>Threshold for the number of values a categorical feature can take. If a feature is found to have > maxCategories values, then it is declared continuous. Must be >= 2.</td>
 </tr>
 
 <tr>
 <td><code>input column</code></td>
-<td><code><a href="../parameters.html#single_column_selector">SingleColumnSelector</a></code></td>
+<td><code><a href="../parameter_types.html#single_column_selector">SingleColumnSelector</a></code></td>
 <td>Input column name.</td>
 </tr>
 
 <tr>
 <td><code>output column</code></td>
-<td><code><a href="../parameters.html#string">String</a></code></td>
+<td><code><a href="../parameter_types.html#string">String</a></code></td>
 <td>Output column name.</td>
 </tr>
 

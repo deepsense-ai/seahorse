@@ -61,25 +61,25 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 
 <tr>
 <td><code>with mean</code></td>
-<td><code><a href="../parameters.html#boolean">Boolean</a></code></td>
+<td><code><a href="../parameter_types.html#boolean">Boolean</a></code></td>
 <td>Centers the data with mean before scaling.</td>
 </tr>
 
 <tr>
 <td><code>with std</code></td>
-<td><code><a href="../parameters.html#boolean">Boolean</a></code></td>
+<td><code><a href="../parameter_types.html#boolean">Boolean</a></code></td>
 <td>Scales the data to unit standard deviation.</td>
 </tr>
 
 <tr>
 <td><code>input column</code></td>
-<td><code><a href="../parameters.html#single_column_selector">SingleColumnSelector</a></code></td>
+<td><code><a href="../parameter_types.html#single_column_selector">SingleColumnSelector</a></code></td>
 <td>Input column name.</td>
 </tr>
 
 <tr>
 <td><code>output column</code></td>
-<td><code><a href="../parameters.html#string">String</a></code></td>
+<td><code><a href="../parameter_types.html#string">String</a></code></td>
 <td>Output column name.</td>
 </tr>
 

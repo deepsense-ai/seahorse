@@ -61,13 +61,13 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 
 <tr>
 <td><code>drop last</code></td>
-<td><code><a href="../parameters.html#boolean">Boolean</a></code></td>
+<td><code><a href="../parameter_types.html#boolean">Boolean</a></code></td>
 <td>Whether to drop the last category in the encoded vector.</td>
 </tr>
 
 <tr>
 <td><code>operate on</code></td>
-<td><code><a href="../parameters.html#input_output_column_selector">InputOutputColumnSelector</a></code></td>
+<td><code><a href="../parameter_types.html#input_output_column_selector">InputOutputColumnSelector</a></code></td>
 <td>Input and output columns for the operation.</td>
 </tr>
 

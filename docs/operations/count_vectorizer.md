@@ -61,31 +61,31 @@ This operation is ported from Spark ML. For more details, see: <a target="_blank
 
 <tr>
 <td><code>input column</code></td>
-<td><code><a href="../parameters.html#single_column_selector">SingleColumnSelector</a></code></td>
+<td><code><a href="../parameter_types.html#single_column_selector">SingleColumnSelector</a></code></td>
 <td>Input column name.</td>
 </tr>
 
 <tr>
 <td><code>min different documents</code></td>
-<td><code><a href="../parameters.html#numeric">Numeric</a></code></td>
+<td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
 <td>Specifies the minimum number of different documents a term must appear in to be included in the vocabulary.</td>
 </tr>
 
 <tr>
 <td><code>min term frequency</code></td>
-<td><code><a href="../parameters.html#numeric">Numeric</a></code></td>
+<td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
 <td>Filter to ignore rare words in a document. For each document, terms with frequency/count less than the given threshold are ignored. If this is an integer >= 1, then this specifies a count (of times the term must appear in the document); if this is a double in [0,1), then this specifies a fraction (out of the document's token count). Note that the parameter is only used in transform of CountVectorizerModel and does not affect fitting.</td>
 </tr>
 
 <tr>
 <td><code>output column</code></td>
-<td><code><a href="../parameters.html#string">String</a></code></td>
+<td><code><a href="../parameter_types.html#string">String</a></code></td>
 <td>Output column name.</td>
 </tr>
 
 <tr>
 <td><code>max vocabulary size</code></td>
-<td><code><a href="../parameters.html#numeric">Numeric</a></code></td>
+<td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
 <td>Max size of the vocabulary.</td>
 </tr>
 

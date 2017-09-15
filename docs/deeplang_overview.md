@@ -50,7 +50,7 @@ Operation can have a set of named parameters. Parameters are modifying the behav
 #### Example
 In `ReadDataFrame`, parameters can be used to specify the source of data. In `FilterColumns`, parameters are used to specify the set of selected columns.
 
-List of currently supported types of parameters can be found [here](parameters.html).
+List of currently supported types of parameters can be found [here](parameter_types.html).
 
 ### Type Qualifiers
 Each port of an operation has associated type qualifier. A type qualifier of an input port informs what type of entity can be placed in this port. A type qualifier of an output port informs what is a guaranteed type of entity that will be produced in this port.

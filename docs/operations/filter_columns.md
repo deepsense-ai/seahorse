@@ -64,7 +64,7 @@ column in the output. Thus, in the resulting DataFrame no column will be duplica
 <tbody>
 <tr>
 <td><code>columns</code></td>
-<td><code><a href="../parameters.html#multiple_column_selector">MultipleColumnSelector</a></code></td>
+<td><code><a href="../parameter_types.html#multiple_column_selector">MultipleColumnSelector</a></code></td>
 <td>Columns to be included in the output DataFrame.
 Even if one of the columns is selected more than once (eg. by name and by type)
 it will be included only once. Empty selection is supported, but when a column selected by name

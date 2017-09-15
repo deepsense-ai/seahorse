@@ -72,12 +72,12 @@ with [Transform](transform.html) operation.
 <tbody>
 <tr>
 <td><code>formula</code></td>
-<td><code><a href="../parameters.html#string">String</a></code></td>
+<td><code><a href="../parameter_types.html#string">String</a></code></td>
 <td>A mathematical formula. The formula grammar is based on SQL expressions (see below).</td>
 </tr>
 <tr>
 <td><code>column name</code></td>
-<td><code><a href="../parameters.html#string">String</a></code></td>
+<td><code><a href="../parameter_types.html#string">String</a></code></td>
 <td>Name of the newly created column holding the result.</td>
 </tr>
 </tbody>

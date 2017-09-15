@@ -67,7 +67,7 @@ timestamp.</td>
 <tbody>
 <tr>
 <td><code>timestamp column</code></td>
-<td><code><a href="../parameters.html#single_column_selector">SingleColumnSelector</a></code></td>
+<td><code><a href="../parameter_types.html#single_column_selector">SingleColumnSelector</a></code></td>
 <td>One of the DataFrame columns.
    If column selected by user has type different then Timestamp, <code>WrongColumnTypeException</code>
    will be thrown.
@@ -75,13 +75,13 @@ timestamp.</td>
 </tr>
 <tr>
 <td><code>parts</code></td>
-<td><code><a href="../parameters.html#multiple_choice">MultipleChoice</a></code></td>
+<td><code><a href="../parameter_types.html#multiple_choice">MultipleChoice</a></code></td>
 <td>Parts of timestamp to extract to separate columns.
    Possible values are: <code>[year, month, day, hour, minutes, seconds]</code>.</td>
 </tr>
 <tr>
 <td><code>prefix</code></td>
-<td><code><a href="../parameters.html#string">String</a></code></td>
+<td><code><a href="../parameter_types.html#string">String</a></code></td>
 <td>Optional prefix for created columns.
    If provided, names of generated columns match pattern: <code>prefix + timestampPartName</code>,
    otherwise names will match pattern: <code>timestampPartName</code>.</td>

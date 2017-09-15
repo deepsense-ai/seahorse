@@ -83,9 +83,9 @@ are renamed by prepending prefix proper for the table, which they come from.
 <tbody>
 <tr>
 <td><code>join columns</code></td>
-<td><code><a href="../parameters.html#parameters_sequence">Parameters Sequence</a></code></td>
-<td>Sequence of pairs (<code>left column: <a href="../parameters.html#single_column_selector">SingleColumnSelector</a></code>,
-   <code>right column: <a href="../parameters.html#single_column_selector">SingleColumnSelector</a></code>) defining condition for the JOIN operation.
+<td><code><a href="../parameter_types.html#parameters_sequence">Parameters Sequence</a></code></td>
+<td>Sequence of pairs (<code>left column: <a href="../parameter_types.html#single_column_selector">SingleColumnSelector</a></code>,
+   <code>right column: <a href="../parameter_types.html#single_column_selector">SingleColumnSelector</a></code>) defining condition for the JOIN operation.
    Empty join condition is not supported and exception <code>ColumnDoesNotExistException</code> is thrown.
    When a column selected by name or by index does not exist, <code>ColumnDoesNotExistException</code> is thrown.
    When the type of columns to LEFT JOIN upon in two DataFrames do not match,
@@ -93,13 +93,13 @@ are renamed by prepending prefix proper for the table, which they come from.
 </tr>
 <tr>
 <td><code>left prefix</code></td>
-<td><code><a href="../parameters.html#string">String</a></code></td>
+<td><code><a href="../parameter_types.html#string">String</a></code></td>
 <td>Optional prefix, which can be prepended
    to these columns in the output table, which come from the left input table.</td>
 </tr>
 <tr>
 <td><code>right prefix</code></td>
-<td><code><a href="../parameters.html#string">String</a></code></td>
+<td><code><a href="../parameter_types.html#string">String</a></code></td>
 <td>Optional prefix, which can be prepended
    to these columns in the output table, which come from the right input table.</td>
 </tr>

@@ -72,7 +72,7 @@ Split operation does not preserve rows order.
 <tbody>
 <tr>
 <td><code id="ratio">ratio</code></td>
-<td><code><a href="../parameters.html#numeric">Numeric</a></code></td>
+<td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
 <td>
   Number between 0 and 1 describing how much of the input DataFrame will end up in the first part
   of the split. Example: ratio = 0.3 means that the input DataFrame will be split in 30% and 70%
@@ -81,7 +81,7 @@ Split operation does not preserve rows order.
 </tr>
 <tr>
 <td><code id="seed">seed</code></td>
-<td><code><a href="../parameters.html#numeric">Numeric</a></code></td>
+<td><code><a href="../parameter_types.html#numeric">Numeric</a></code></td>
 <td>
   Integer between -1073741824 and 1073741823 that is used as a seed for random number generator.
   Fixed value of this parameter allows to produce repeatable results.

@@ -1,8 +1,8 @@
 ---
 layout: documentation
-displayTitle: Parameters
-docTab: parameters
-title: Parameters
+displayTitle: Parameter Types
+docTab: parameter_types
+title: Parameter Types
 includeDeeplangMenu: true
 description: Parameters documentation
 ---

@@ -4,7 +4,7 @@ displayTitle: Operations
 docTab: operations
 title: Operations
 includeDeeplangMenu: true
-
+includeOperationsMenu: true
 description: Deepsense documentation homepage
 ---
 

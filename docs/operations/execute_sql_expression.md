@@ -63,12 +63,12 @@ Returns the results of the execution as a DataFrame.
 <tbody>
 <tr>
 <td><code>dataframe id</code></td>
-<td><code><a href="../parameters.html#string">String</a></code></td>
+<td><code><a href="../parameter_types.html#string">String</a></code></td>
 <td>An identifier that can be used in the SQL expression to refer to the input DataFrame. The value has to be unique in the workflow.</td>
 </tr>
 <tr>
 <td><code>expression</code></td>
-<td><code><a href="../parameters.html#string">String</a></code></td>
+<td><code><a href="../parameter_types.html#string">String</a></code></td>
 <td>The SQL expression to be executed. The expression must be a valid Spark SQL expression.</td>
 </tr>
 </tbody>

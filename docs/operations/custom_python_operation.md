@@ -79,7 +79,7 @@ The function that will be executed has to:
 <tbody>
 <tr>
 <td><code>code</code></td>
-<td><code><a href="../parameters.html#code-snippet">Code Snippet</a></code></td>
+<td><code><a href="../parameter_types.html#code-snippet">Code Snippet</a></code></td>
 <td>The Python code to be executed. It has to contain Python function complying to signature presented above in operation description.</td>
 </tr>
 </tbody>
