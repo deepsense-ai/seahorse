@@ -10,8 +10,11 @@
 // TODO: needs refactoring
 
 describe('EntitiesApiClient', () => {
-  var module,
-      EntitiesApiClient;
+  let module;
+  let EntitiesApiClient;
+
+  const API_VERSION = '0.9.0';
+  const URL_API_VERSION = 'v1';
 
   beforeEach(() => {
     module = angular.module('test', []);
@@ -23,7 +26,9 @@ describe('EntitiesApiClient', () => {
     angular.mock.module(($provide) => {
       $provide.constant('config', {
         'apiHost': '',
-        'apiPort': ''
+        'apiPort': '',
+        'apiVersion': API_VERSION,
+        'urlApiVersion': URL_API_VERSION
       });
     });
 
@@ -44,7 +49,7 @@ describe('EntitiesApiClient', () => {
         mockRequest;
 
     var id = 'test-01',
-        url = '/api/entities/' + id + '/report',
+        url = `/${URL_API_VERSION}/entities/${id}/report`,
         response = {'test': true};
 
     beforeEach(() => {

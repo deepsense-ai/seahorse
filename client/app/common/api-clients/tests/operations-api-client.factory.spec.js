@@ -61,6 +61,9 @@ describe('OperationsApiClient', () => {
   let testModule;
   let OperationsApiClient;
 
+  const API_VERSION = '0.9.0';
+  const URL_API_VERSION = 'v1';
+
   beforeEach(() => {
     testModule = angular.module('test', []);
 
@@ -71,7 +74,9 @@ describe('OperationsApiClient', () => {
     angular.mock.module(($provide) => {
       $provide.constant('config', {
         'apiHost': '',
-        'apiPort': ''
+        'apiPort': '',
+        'apiVersion': API_VERSION,
+        'urlApiVersion': URL_API_VERSION
       });
     });
 
@@ -90,7 +95,7 @@ describe('OperationsApiClient', () => {
   describe('should have getAll method', () => {
     let $httpBackend;
     let mockRequest;
-    let url = '/api/operations';
+    let url = `/${URL_API_VERSION}/operations`;
     let response = { 'test': true };
 
     beforeEach(() => {
@@ -130,7 +135,7 @@ describe('OperationsApiClient', () => {
     let $httpBackend;
     let mockRequest;
     let id = 'id-01';
-    let url = '/api/operations/' + id;
+    let url = `/${URL_API_VERSION}/operations/${id}`;
     let response = { 'test': true };
 
     beforeEach(() => {
@@ -168,7 +173,7 @@ describe('OperationsApiClient', () => {
   describe('should have getCatalog method', () => {
     let $httpBackend;
     let mockRequest;
-    let url = '/api/operations/catalog';
+    let url = `/${URL_API_VERSION}/operations/catalog`;
     let response = { 'test': true };
 
     beforeEach(() => {
@@ -206,7 +211,7 @@ describe('OperationsApiClient', () => {
   describe('should have getHierarchy method', () => {
     let $httpBackend;
     let mockRequest;
-    let url = '/api/operations/hierarchy';
+    let url = `/${URL_API_VERSION}/operations/hierarchy`;
     let response = { 'test': true };
 
     beforeEach(() => {

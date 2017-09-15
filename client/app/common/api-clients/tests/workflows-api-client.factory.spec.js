@@ -11,6 +11,7 @@ let promiseIsRejected = require('./utils/promise-is-rejected.js');
 
 const API_TYPE = 'batch';
 const API_VERSION = '0.9.0';
+const URL_API_VERSION = 'v1';
 
 describe('WorkflowsApiClient', () => {
   let module;
@@ -27,7 +28,8 @@ describe('WorkflowsApiClient', () => {
       $provide.constant('config', {
         'apiHost': '',
         'apiPort': '',
-        'apiVersion': API_VERSION
+        'apiVersion': API_VERSION,
+        'urlApiVersion': URL_API_VERSION
       });
     });
 
@@ -46,7 +48,7 @@ describe('WorkflowsApiClient', () => {
     let mockRequest;
 
     let id = 'workflow-id';
-    let url = '/api/workflows/' + id;
+    let url = `/${URL_API_VERSION}/workflows/${id}`;
     let response = {
       metadata: {
         type: API_TYPE,
@@ -105,7 +107,7 @@ describe('WorkflowsApiClient', () => {
   describe('should have createWorkflow method', () => {
     let $httpBackend;
     let mockRequest;
-    let url = '/api/workflows';
+    let url = `/${URL_API_VERSION}/workflows`;
     let params = {
       'name': 'Draft',
       'description': 'Draft workflow'
@@ -177,7 +179,7 @@ describe('WorkflowsApiClient', () => {
     let mockRequest;
 
     let id = 'workflow-id';
-    let url = `/api/workflows/${id}`;
+    let url = `/${URL_API_VERSION}/workflows/${id}`;
     let serializedWorkflow = {
       id: id,
       workflow: {
