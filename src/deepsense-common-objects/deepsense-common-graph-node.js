@@ -16,7 +16,6 @@ angular.module('deepsense.graph-model').
       this.edges = {};
       this.x = options.x;
       this.y = options.y;
-      this.results = [];
 
       if (options.parametersValues) {
         this.parametersValues = options.parametersValues;
@@ -24,9 +23,7 @@ angular.module('deepsense.graph-model').
         this.parameters = options.parameters;
       }
 
-      this.stateDetails = _.clone(options.state);
-
-      this.setStatus(options.state);
+      this.state = null;
     }
 
     GraphNode.prototype.STATUS = {
@@ -69,21 +66,28 @@ angular.module('deepsense.graph-model').
       return data;
     };
 
-    GraphNode.prototype.setStatus = function setStatus(state) {
-      if (state && state.status && Object.keys(this.STATUS).indexOf(state.status) > -1) {
-        this.status = this.STATUS[state.status];
-      } else if (!this.status) {
-        this.status = this.STATUS_DEFAULT;
+    GraphNode.prototype.setState = function setState(state) {
+      if (!state) {
+        this.state = null;
+      } else {
+        let status = state && state.status && Object.keys(this.STATUS).indexOf(state.status) > -1 ?
+          this.STATUS[state.status] :
+          this.STATUS_DEFAULT;
+
+        this.state = {
+          'started': state.started,
+          'ended': state.ended,
+          'results': state.results ? state.results : [],
+          'error': state.error,
+          'status': status
+        };
       }
     };
 
-    GraphNode.prototype.updateState = function updateState(state) {
-      this.results = state.results || [];
-      this.setStatus(state);
-    };
-
     GraphNode.prototype.getResult = function getResult(portIndex) {
-      return this.results[portIndex];
+      return this.state ?
+        this.state.results[portIndex] :
+        null;
     };
 
     GraphNode.prototype.setParameters = function setParameters(parametersSchema, DeepsenseNodeParameters) {

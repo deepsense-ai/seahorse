@@ -67,15 +67,14 @@ angular.module('deepsense.graph-model').
           'input': operation.ports.input,
           'output': operation.ports.output,
           'x': options.x,
-          'y': options.y,
-          'state': options.state
+          'y': options.y
         });
       };
 
       that.createNodes = function createNodes(nodes, operations, thirdPartyData) {
         let getCoordinate = (id, cord) => {
           try {
-            return thirdPartyData.gui.nodes[id].coordinates[cord];
+            return thirdPartyData.gui.nodes[id].coordinates[cord] || 0;
           } catch(e) {
             return 0;
           }
@@ -91,7 +90,6 @@ angular.module('deepsense.graph-model').
               'parameters': data.parameters,
               'x': getCoordinate(id, 'x'),
               'y': getCoordinate(id, 'y')
-              //'state': state.nodes[id]
             });
           that.addNode(node);
         }
