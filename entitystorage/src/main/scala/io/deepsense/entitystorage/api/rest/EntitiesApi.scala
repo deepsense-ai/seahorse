@@ -17,7 +17,7 @@ import io.deepsense.commons.auth.AuthorizatorProvider
 import io.deepsense.commons.auth.usercontext.TokenTranslator
 import io.deepsense.commons.rest.{RestApi, RestComponent}
 import io.deepsense.entitystorage.json.EntityJsonProtocol
-import io.deepsense.entitystorage.models.{Entity, EntityDescriptor}
+import io.deepsense.entitystorage.models.{CompactEntityDescriptor, Entity}
 import io.deepsense.entitystorage.storage.EntityDao
 
 class EntitiesApi @Inject() (
@@ -51,7 +51,7 @@ class EntitiesApi @Inject() (
   }
 
   private def entitiesDescriptors(entities: List[Entity]):
-      Map[String, Map[String, EntityDescriptor]] =
-    Map("entities" -> entities.map(e => e.id.value.toString -> EntityDescriptor(e)).toMap)
+      Map[String, Map[String, CompactEntityDescriptor]] =
+    Map("entities" -> entities.map(e => e.id.value.toString -> e.descriptor).toMap)
 
 }

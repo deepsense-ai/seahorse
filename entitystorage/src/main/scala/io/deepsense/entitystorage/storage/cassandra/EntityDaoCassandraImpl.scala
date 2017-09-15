@@ -13,7 +13,7 @@ import com.datastax.driver.core.Session
 import com.datastax.driver.core.querybuilder.QueryBuilder._
 import com.datastax.driver.core.querybuilder.Select.Where
 import com.datastax.driver.core.querybuilder.Update.Assignments
-import com.datastax.driver.core.querybuilder.{Update, Select, QueryBuilder}
+import com.datastax.driver.core.querybuilder.{QueryBuilder, Select, Update}
 import com.google.inject.Inject
 import com.google.inject.name.Named
 
@@ -26,20 +26,20 @@ class EntityDaoCassandraImpl @Inject() (
     (implicit ec: ExecutionContext)
   extends EntityDao {
 
-  def getAll(tenantId: String): Future[List[Entity]] =
+  override def getAll(tenantId: String): Future[List[Entity]] =
     Future(session.execute(getAllQuery(tenantId)))
       .map(_.all().toList.map(EntityRowMapper.fromRow))
 
-  def get(tenantId: String, id: Entity.Id): Future[Option[Entity]] = {
+  override def get(tenantId: String, id: Entity.Id): Future[Option[Entity]] = {
     Future(session.execute(getQuery(tenantId, id)))
       .map(rs => Option(rs.one()).map(EntityRowMapper.fromRow))
   }
 
-  def upsert(entity: Entity): Future[Unit] = {
+  override def upsert(entity: Entity): Future[Unit] = {
     Future(session.execute(upsertQuery(entity)))
   }
 
-  def delete(tenantId: String, id: Entity.Id): Future[Unit] = {
+  override def delete(tenantId: String, id: Entity.Id): Future[Unit] = {
     Future(session.execute(deleteQuery(tenantId, id)))
   }
 
@@ -61,22 +61,18 @@ class EntityDaoCassandraImpl @Inject() (
       .`with`(set(EntityRowMapper.Name, entity.name))
       .and(set(EntityRowMapper.Description, entity.description))
       .and(set(EntityRowMapper.DClass, entity.dClass))
+      .and(set(EntityRowMapper.Url, entity.data.map(_.url).orNull))
       .and(set(EntityRowMapper.Created, entity.created.getMillis))
       .and(set(EntityRowMapper.Updated, entity.updated.getMillis))
       .and(set(EntityRowMapper.Saved, entity.saved))
-    upsertDataOrUrl(update, entity)
+    upsertReport(update, entity)
       .where(QueryBuilder.eq(EntityRowMapper.TenantId, entity.tenantId))
       .and(QueryBuilder.eq(EntityRowMapper.Id, entity.id.value))
   }
 
-  private def upsertDataOrUrl(update: Update.Assignments, entity: Entity): Assignments = {
+  private def upsertReport(update: Update.Assignments, entity: Entity): Assignments = {
     // TODO Reimplement when Report gets implemented
-    EntityRowMapper.toDataOrUrl(entity) match {
-      case Left(url) =>
-      update.and(set(EntityRowMapper.Url, url))
-      case Right(report) =>
-        update.and(set(EntityRowMapper.Url, null))
-    }
+    update
   }
 
   private def deleteQuery(tenantId: String, id: Entity.Id) = {

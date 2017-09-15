@@ -7,11 +7,10 @@
 package io.deepsense.entitystorage.storage.cassandra
 
 import com.datastax.driver.core.Row
-import org.joda.time.DateTime
 
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.deeplang.doperables.Report
-import io.deepsense.entitystorage.models.{DataObject, DataObjectReference, DataObjectReport, Entity}
+import io.deepsense.entitystorage.models.{DataObjectReference, DataObjectReport, Entity}
 
 object EntityRowMapper {
 
@@ -33,27 +32,16 @@ object EntityRowMapper {
       row.getString(Name),
       row.getString(Description),
       row.getString(DClass),
+      readData(row),
+      readReport(row),
       DateTimeConverter.fromMillis(row.getDate(Created).getTime),
       DateTimeConverter.fromMillis(row.getDate(Updated).getTime),
-      readDataObject(row),
       row.getBool(Saved)
     )
 
-  def readDataObject(row: Row): DataObject = {
-    if (row.isNull(Url)) {
-      // TODO Read report from DB
-      // val report = row.getUDTValue(Data)
-      DataObjectReport(Report())
-    } else {
-      DataObjectReference(row.getString(Url))
-    }
-  }
+  def readData(row: Row): Option[DataObjectReference] =
+    Option(row.getString(Url)).map(DataObjectReference)
 
-  def toDataOrUrl(entity: Entity): Either[String, Report] = {
-    entity.data match {
-      case DataObjectReference(url) => Left(url)
-      case DataObjectReport(report) => Right(report)
-    }
-  }
+  def readReport(row: Row): Option[DataObjectReport] = Some(DataObjectReport(Report()))
 }
 

@@ -19,14 +19,21 @@ case class Entity (
   name: String,
   description: String,
   dClass: String,
+  data: Option[DataObjectReference],
+  report: Option[DataObjectReport],
   created: DateTime,
   updated: DateTime,
-  data: DataObject,
   saved: Boolean = true
 ) {
     if (dClass == DataObjectReport.getClass.getName) {
         require(data.isInstanceOf[DataObjectReport])
     }
+
+  def reportOnly = copy(data = None)
+
+  def dataOnly = copy(report = None)
+
+  def descriptor = CompactEntityDescriptor(this)
 }
 
 object Entity {
@@ -38,35 +45,55 @@ object Entity {
 }
 
 /**
+ * Data that describe entity to save.
+ */
+case class InputEntity (
+  tenantId: String,
+  name: String,
+  description: String,
+  dClass: String,
+  data: Option[DataObjectReference],
+  report: Option[DataObjectReport],
+  saved: Boolean
+) {
+    if (dClass == DataObjectReport.getClass.getName) {
+        require(data.isInstanceOf[DataObjectReport])
+    }
+}
+
+/**
  * Shorter Entity description used for list presentation
  */
-case class EntityDescriptor(
+case class CompactEntityDescriptor(
+  tenantId: String,
   id: Entity.Id,
   name: String,
   description: String,
   dClass: String,
-  saved: Boolean = true,
   created: DateTime,
-  updated: DateTime
+  updated: DateTime,
+  saved: Boolean = true
 )
 
-object EntityDescriptor {
+object CompactEntityDescriptor {
 
-  def apply(entity: Entity): EntityDescriptor = {
-    EntityDescriptor(entity.id,
+  def apply(entity: Entity): CompactEntityDescriptor = {
+    CompactEntityDescriptor(
+      entity.tenantId,
+      entity.id,
       entity.name,
       entity.description,
       entity.dClass,
-      entity.saved,
       entity.created,
-      entity.updated)
+      entity.updated,
+      entity.saved)
   }
 }
 
 /**
  * Entity Description that can be provided by user.
  */
-case class UserEntityDescription(
+case class UserEntityDescriptor(
   id: Entity.Id,
   name: String,
   description: String,

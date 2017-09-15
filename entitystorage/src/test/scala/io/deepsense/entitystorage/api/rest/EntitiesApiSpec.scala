@@ -8,7 +8,6 @@ package io.deepsense.entitystorage.api.rest
 
 import scala.concurrent.Future
 
-import org.joda.time.DateTime
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.mockito.invocation.InvocationOnMock
@@ -20,9 +19,8 @@ import spray.routing._
 
 import io.deepsense.commons.auth.usercontext.{TokenTranslator, UserContext}
 import io.deepsense.commons.auth.{Authorizator, AuthorizatorProvider}
-import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.{StandardSpec, UnitTestSupport}
-import io.deepsense.deeplang.doperables.Report
+import io.deepsense.entitystorage.factories.EntityTestFactory
 import io.deepsense.entitystorage.json.EntityJsonProtocol
 import io.deepsense.entitystorage.models._
 import io.deepsense.entitystorage.storage.EntityDao
@@ -32,24 +30,17 @@ class EntitiesApiSpec
   with UnitTestSupport
   with DefaultJsonProtocol
   with EntityJsonProtocol
-  with Matchers {
+  with Matchers
+  with EntityTestFactory {
 
   val correctTenant: String = "A"
   val apiPrefix: String = "v1/entities"
+  val tenantId = "Mr Mojo Risin"
   val entities = List(
-    createEntity(
-      1,
-      DateTimeConverter.now,
-      DateTimeConverter.now.plusHours(1),
-      DataObjectReference("hdfs://whatever")),
-    createEntity(
-      2,
-      DateTimeConverter.now.plusDays(1),
-      DateTimeConverter.now.plusDays(2),
-      DataObjectReport(Report()))
-  )
-  val expectedEntitiesMap: Map[String, Map[String, EntityDescriptor]] =
-    Map("entities" -> entities.map(e => e.id.value.toString -> EntityDescriptor(e)).toMap)
+    testEntity(tenantId, 1, Some(testDataObjectReference), Some(testDataObjectReport)),
+    testEntity(tenantId, 2, Some(testDataObjectReference), Some(testDataObjectReport)))
+  val expectedEntitiesMap: Map[String, Map[String, CompactEntityDescriptor]] =
+    Map("entities" -> entities.map(e => e.id.value.toString -> CompactEntityDescriptor(e)).toMap)
 
 
   "GET /entities" should {
@@ -58,25 +49,10 @@ class EntitiesApiSpec
         addHeader("X-Auth-Token", correctTenant) ~> testRoute ~> check {
         status should be(StatusCodes.OK)
         implicit val entityProtocol = EntityJsonProtocol
-        responseAs[Map[String, Map[String, EntityDescriptor]]] shouldBe expectedEntitiesMap
+        responseAs[Map[String, Map[String, CompactEntityDescriptor]]] shouldBe expectedEntitiesMap
       }
     }
   }
-
-  private def createEntity(
-      index: Int,
-      created: DateTime,
-      updated: DateTime,
-      data: DataObject): Entity = Entity(
-    "tenantId",
-    Entity.Id.randomId,
-    s"name$index",
-    s"description$index",
-    s"dClass$index",
-    created,
-    updated,
-    data
-  )
 
   protected def testRoute = {
     val tokenTranslator = mock[TokenTranslator]

@@ -14,17 +14,17 @@ import org.scalatest.concurrent.ScalaFutures
 
 import io.deepsense.commons.StandardSpec
 import io.deepsense.commons.datetime.DateTimeConverter
-import io.deepsense.commons.models.Id
-import io.deepsense.deeplang.doperables.Report
 import io.deepsense.entitystorage.CassandraTestSupport
-import io.deepsense.entitystorage.models.{DataObject, DataObjectReference, DataObjectReport, Entity}
+import io.deepsense.entitystorage.factories.EntityTestFactory
+import io.deepsense.entitystorage.models.{DataObjectReference, Entity}
 
 class EntityDaoCassandraImplIntegSpec
   extends StandardSpec
   with ScalaFutures
   with Matchers
   with BeforeAndAfter
-  with CassandraTestSupport {
+  with CassandraTestSupport
+  with EntityTestFactory {
 
   var entities: EntityDaoCassandraImpl = _
 
@@ -37,12 +37,12 @@ class EntityDaoCassandraImplIntegSpec
   val tenantId = "TestTenantId"
   val created = DateTimeConverter.now
   val updated = created.plusDays(5)
-  val dataObjectReference = DataObjectReference("http://example.com")
-  val dataObjectReport = DataObjectReport(Report())
+  val dataObjectReference = testDataObjectReference
+  val dataObjectReport = testDataObjectReport
 
-  val entity1 = createEntity(tenantId, 3, dataObjectReference)
-  val entity2 = createEntity(tenantId, 14, dataObjectReport)
-  val entity3 = createEntity(tenantId + "otherTenant", 15, dataObjectReport)
+  val entity1 = testEntity(tenantId, 3, Some(dataObjectReference), Some(dataObjectReport))
+  val entity2 = testEntity(tenantId, 14, None, Some(dataObjectReport))
+  val entity3 = testEntity(tenantId + "otherTenant", 15, None, Some(dataObjectReport))
   val inDb = Set(entity1, entity2, entity3)
 
   "Entities" should {
@@ -54,7 +54,7 @@ class EntityDaoCassandraImplIntegSpec
     "save and get an entity" that {
       val tenantId = "save_get_tenantId"
       "is a report" in {
-        val entity = createEntity(tenantId, 0, dataObjectReport)
+        val entity = testEntity(tenantId, 0, None, Some(dataObjectReport))
         whenReady(entities.upsert(entity)) { _ =>
           whenReady(entities.get(tenantId, entity.id)) { getEntity =>
             getEntity shouldBe Some(entity)
@@ -62,7 +62,7 @@ class EntityDaoCassandraImplIntegSpec
         }
       }
       "is an url" in {
-        val entity = createEntity(tenantId, 0, dataObjectReference)
+        val entity = testEntity(tenantId, 0, Some(dataObjectReference), Some(dataObjectReport))
         whenReady(entities.upsert(entity)) { _ =>
           whenReady(entities.get(tenantId, entity.id)) { getEntity =>
             getEntity shouldBe Some(entity)
@@ -87,22 +87,6 @@ class EntityDaoCassandraImplIntegSpec
     }
   }
 
-  private def createEntity(
-      tenantId: String,
-      number: Int,
-      dataObject: DataObject): Entity = {
-    Entity(
-      tenantId,
-      Id.randomId,
-      "name" + number,
-      "desc" + number,
-      "dclass" + number,
-      created.plusDays(number),
-      updated.plusDays(number),
-      dataObject,
-      number % 2 == 1)
-  }
-
   private def modifyEntity(entity: Entity): Entity = {
     val s = "modified"
     entity.copy(
@@ -111,7 +95,7 @@ class EntityDaoCassandraImplIntegSpec
       dClass = entity.dClass + s,
       created = entity.created.plusDays(1),
       updated = entity.updated.plusDays(1),
-      data = DataObjectReference(entity.name + entity.description),
+      data = Some(DataObjectReference(entity.name + entity.description)),
       saved = !entity.saved)
   }
 

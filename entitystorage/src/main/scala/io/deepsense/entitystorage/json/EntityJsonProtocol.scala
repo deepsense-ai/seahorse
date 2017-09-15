@@ -10,19 +10,19 @@ import spray.httpx.SprayJsonSupport
 import spray.json._
 
 import io.deepsense.commons.json.{DateTimeJsonProtocol, IdJsonProtocol}
-import io.deepsense.entitystorage.models.{UserEntityDescription, EntityDescriptor, Entity}
+import io.deepsense.entitystorage.models._
 
 trait EntityJsonProtocol
   extends DefaultJsonProtocol
   with SprayJsonSupport
-  with NullOptions
   with IdJsonProtocol
   with DateTimeJsonProtocol
-  with DataObjectJsonProtocol {
+  with DataObjectReportJsonProtocol {
 
-  implicit val entityFormat = jsonFormat9(Entity.apply)
-  implicit val entityDescriptorFormat = jsonFormat7(EntityDescriptor.apply)
-  implicit val userEntityDescriptionFormat = jsonFormat4(UserEntityDescription)
+  implicit val dataObjectReferenceFormat = jsonFormat1(DataObjectReference)
+  implicit val entityFormat = jsonFormat10(Entity.apply)
+  implicit val entityDescriptorFormat = jsonFormat8(CompactEntityDescriptor.apply)
+  implicit val userEntityDescriptorFormat = jsonFormat4(UserEntityDescriptor)
 }
 
 object EntityJsonProtocol extends EntityJsonProtocol

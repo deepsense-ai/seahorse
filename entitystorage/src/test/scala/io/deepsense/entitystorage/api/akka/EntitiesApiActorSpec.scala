@@ -20,10 +20,10 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
 
 import io.deepsense.commons.models.Id
-import io.deepsense.entitystorage.api.akka.EntitiesApiActor.Get
+import io.deepsense.entitystorage.api.akka.EntitiesApiActor.{Create, Get}
 import io.deepsense.entitystorage.factories.EntityTestFactory
-import io.deepsense.entitystorage.models.{DataObjectReference, Entity}
-import io.deepsense.entitystorage.storage.EntityDao
+import io.deepsense.entitystorage.models.Entity
+import io.deepsense.entitystorage.services.EntityService
 
 class EntitiesApiActorSpec
   extends FlatSpec
@@ -34,6 +34,7 @@ class EntitiesApiActorSpec
   with BeforeAndAfterAll {
 
   implicit var system: ActorSystem = _
+  var entityService: EntityService = _
   var actorRef: TestActorRef[EntitiesApiActor] = _
   var testProbe: TestProbe = _
 
@@ -41,12 +42,12 @@ class EntitiesApiActorSpec
   val tenantId = "tenantId"
   val existingEntityId = Entity.Id.randomId
   val notExistingEntityId = Entity.Id.randomId
-  val entity = testEntity("DataFrame", DataObjectReference("some url"))
+  val entity = testEntity
 
   "EntityApiActor" should "send entity if exists" in {
     testProbe.send(actorRef, Get(tenantId, existingEntityId))
 
-    testProbe.expectMsgType[Option[Entity]] shouldBe Some(entity)
+    testProbe.expectMsgType[Option[Entity]] shouldBe Some(entity.dataOnly)
   }
 
   it should "send None when entity does not exist" in {
@@ -55,9 +56,17 @@ class EntitiesApiActorSpec
     testProbe.expectMsgType[Option[Entity]] shouldBe None
   }
 
+  it should "create Entity in the storage" in {
+    val inputEntity = testInputEntity
+    testProbe.send(actorRef, Create(inputEntity))
+
+    verify(entityService, times(1)).createEntity(inputEntity)
+  }
+
   override def beforeAll(): Unit = {
     system = ActorSystem("test")
-    actorRef = TestActorRef(new EntitiesApiActor(entityDao))
+    entityService = createEntityService
+    actorRef = TestActorRef(new EntitiesApiActor(entityService))
     testProbe = TestProbe()
   }
 
@@ -65,11 +74,12 @@ class EntitiesApiActorSpec
     system.shutdown()
   }
 
-  private def entityDao: EntityDao = {
-    val entityDao: EntityDao = mock[EntityDao]
-    when(entityDao.get(org.mockito.Matchers.eq(tenantId), isA(classOf[Id])))
+  private def createEntityService: EntityService = {
+    val entityService: EntityService = mock[EntityService]
+    when(entityService.getEntityData(org.mockito.Matchers.eq(tenantId), isA(classOf[Id])))
       .thenReturn(Future.successful(None))
-    when(entityDao.get(tenantId, existingEntityId)).thenReturn(Future.successful(Some(entity)))
-    entityDao
+    when(entityService.getEntityData(tenantId, existingEntityId))
+      .thenReturn(Future.successful(Some(entity.dataOnly)))
+    entityService
   }
 }

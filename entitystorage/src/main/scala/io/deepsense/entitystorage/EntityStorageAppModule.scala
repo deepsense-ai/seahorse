@@ -6,7 +6,7 @@
 
 package io.deepsense.entitystorage
 
-import com.google.inject.{Scopes, AbstractModule}
+import com.google.inject.AbstractModule
 
 import io.deepsense.commons.akka.AkkaModule
 import io.deepsense.commons.config.ConfigModule
@@ -14,7 +14,6 @@ import io.deepsense.commons.jclouds.{KeystoneApiModule, TokenApiModule}
 import io.deepsense.commons.rest.RestModule
 import io.deepsense.entitystorage.api.akka.EntitiesActorModule
 import io.deepsense.entitystorage.storage.cassandra.EntityDaoCassandraModule
-import io.deepsense.entitystorage.storage.{EntityDaoInMemoryImpl, EntityDao}
 
 /**
  * The main module for Entity Storage. Installs all needed modules to run

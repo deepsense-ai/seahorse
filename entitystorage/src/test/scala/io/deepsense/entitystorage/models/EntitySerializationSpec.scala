@@ -17,8 +17,8 @@ class EntitySerializationSpec
   with Serialization
   with EntityTestFactory {
 
-  "Entity" should "serialize and deserialize correctly when has reference" in  {
-    val entity = testEntity("DataFrame", DataObjectReference("some sort of url"))
+  "Entity" should "serialize and deserialize correctly when has reference and report" in  {
+    val entity = testEntity
 
     val serialized = serialize(entity)
     val deserialized = deserialize[Entity](serialized)

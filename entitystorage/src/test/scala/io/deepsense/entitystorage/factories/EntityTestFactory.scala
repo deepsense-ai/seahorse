@@ -7,20 +7,39 @@
 package io.deepsense.entitystorage.factories
 
 import io.deepsense.commons.datetime.DateTimeConverter
-import io.deepsense.entitystorage.models.{DataObject, Entity}
+import io.deepsense.entitystorage.models.{InputEntity, DataObjectReference, DataObjectReport, Entity}
 
-trait EntityTestFactory {
+trait EntityTestFactory extends DataObjectFactory {
 
-  def testEntity(dClass: String, data: DataObject) = {
+  def testEntity: Entity = testEntity(Some(testDataObjectReference), Some(testDataObjectReport))
+
+  def testEntity(data: Option[DataObjectReference], report: Option[DataObjectReport]): Entity =
+    testEntity("testTenantId", 0, data, report)
+
+  def testEntity(
+      tenantId: String,
+      index: Int,
+      data: Option[DataObjectReference],
+      report: Option[DataObjectReport]): Entity = {
     val now = DateTimeConverter.now
     Entity(
-      "testTenantId",
+      tenantId,
       Entity.Id.randomId,
-      "testEntity",
-      "entity Description",
-      dClass,
+      s"testEntity_$index",
+      s"entity Description_$index",
+      "DataFrame",
+      data,
+      report,
       now,
-      now.plusHours(1),
-      data)
+      now.plusHours(1))
   }
+
+  def testInputEntity: InputEntity = new InputEntity(
+    "Mr Crowley",
+    "Operation",
+    "super operation",
+    "DataFrame",
+    Some(testDataObjectReference),
+    Some(testDataObjectReport),
+    false)
 }
