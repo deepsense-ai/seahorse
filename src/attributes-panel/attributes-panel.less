@@ -42,6 +42,14 @@
     }
   }
 
+  .flex-content {
+    &--no-flex {
+      > *:first-child {
+        flex: initial;
+      }
+    }
+  }
+
   &__details {
     padding: 0 @main-space / 2;
   }

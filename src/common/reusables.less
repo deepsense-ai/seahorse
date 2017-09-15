@@ -19,6 +19,14 @@
   }
 }
 
+.c-color-picker {
+  position: absolute;
+  width: 350px;
+  height: 200px;
+  background-color: white;
+  border: 1px solid lightgray;
+}
+
 .o-state {
   &__status {
     float: none !important;
@@ -92,6 +100,19 @@
 
   &__close {
     font-size: 1.4em;
+  }
+}
+
+.o-color-picker {
+  min-width: @main-space * 2;
+  height: @main-space * 2;
+  display: block;
+  margin: @main-space / 2 @main-space 0 0;
+  align-self: flex-start;
+  cursor: pointer;
+
+  &:hover {
+    outline: 1px solid lightblue;
   }
 }
 

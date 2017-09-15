@@ -1,6 +1,7 @@
 <aside class="ibox operation-attributes-panel animated fadeIn">
   <header class="ibox-title ibox-title--main">
-    <section class="ibox-title" ng-hide="disabledMode && !node.uiName">
+    <section class="ibox-title flex-content--no-flex" ng-hide="disabledMode && !node.uiName">
+      <span color-picker></span>
       <h4 class="ibox-title__name"
           tooltip-placement="left"
           tooltip="{{!disabledMode && node.uiName ? 'Click to change name' : ''}}"
@@ -9,9 +10,6 @@
         <span editable-text="node.uiName" onaftersave="panel.customNameSaved()" ng-if="!disabledMode">{{node.uiName || 'Create custom name'}}</span>
         <span ng-if="disabledMode && node.uiName">{{::node.uiName}}</span>
       </h4>
-      <a class="close-link" aria-label="Close" ng-click="panel.closePanel()">
-        <i class="fa fa-times"></i>
-      </a>
     </section>
     <section class="operation-attributes-panel__details" ng-class="{'u-top-border': disabledMode && !node.uiName}">
       <p class="operation-attributes-panel__title m-b-xs" ng-class="{'m-t-n-xs': !disabledMode}">{{ node.name }}</p>

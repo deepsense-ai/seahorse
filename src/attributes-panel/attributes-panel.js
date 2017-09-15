@@ -51,13 +51,6 @@ function OperationAttributes($rootScope, AttributesPanelService) {
         });
       };
 
-      this.closePanel = function () {
-        $element.addClass('fadeOut');
-        $timeout(() => {
-          $scope.$emit('AttributePanel.UNSELECT_NODE');
-        }, 1000, false);
-      };
-
       this.customNameSaved = function() {
         $rootScope.$applyAsync(() => {
           $rootScope.$broadcast('AttributesPanel.UPDATED');
