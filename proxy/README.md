@@ -3,7 +3,8 @@ Running the proxy app (dev mode)
 
 1. Run proxy in dev
 ```
-  $ npm install
+  npm install
   # EXPORT ENVs FROM docker-compose
-  $ npm run startDev
+  # protip - use `environment` section from docker-compose.yml from proxy docker
+  npm run startDev
 ```

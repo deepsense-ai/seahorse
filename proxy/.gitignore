@@ -20,5 +20,6 @@ src/coverage
 .classpath
 .project
 
-# babel
+# npm building
 lib/*
+dist/

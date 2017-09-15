@@ -25,7 +25,7 @@ function getTargetHost(req, res) {
   const path = req.url;
 
   const service = serviceMapping.getServiceForRequest(path);
-  if(!service) {
+  if(_.isUndefined(service)) {
     throw404(res, util.format("No service found for the path: %s", JSON.stringify(path)));
     return;
   }

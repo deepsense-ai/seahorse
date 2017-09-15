@@ -12,7 +12,6 @@ var strategy = oauth2.strategy;
 module.exports = {
   init: init,
   login: login,
-  checkLoggedIn: checkLoggedIn
 };
 
 function init(app) {
@@ -54,13 +53,5 @@ function login(req, res, next) {
     res.redirect('/oauth');
   } else {
     next();
-  }
-}
-
-function checkLoggedIn(req, res, next) {
-  if (req.user) {
-    next();
-  } else {
-    res.status(401).send('session_expired');
   }
 }

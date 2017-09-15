@@ -4,7 +4,6 @@
 module.exports = {
   init: init,
   login: login,
-  checkLoggedIn: checkLoggedIn
 };
 
 function init(app) {
@@ -25,9 +24,5 @@ function init(app) {
 }
 
 function login(req, res, next) {
-  next();
-}
-
-function checkLoggedIn(req, res, next) {
   next();
 }

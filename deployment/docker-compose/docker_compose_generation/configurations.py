@@ -111,6 +111,11 @@ class Proxy(Service):
     def port_mapping(self):
         return PortMappings().add(PortMappings.Mapping(33321, 33321))
 
+    def volumes(self):
+        return [
+            "trial:/trial"
+        ]
+
 
     def _service_address(self, service, name=None):
         address_no_protocol = getattr(self.services, service.name()).exposed_address(name).as_string()
@@ -519,7 +524,7 @@ class EnabledAuthorization(Authorization):
 
 class Configuration(object):
     services = []
-    volumes = []
+    volumes = ["trial"]
 
     @classmethod
     def replace(cls, service):
@@ -542,6 +547,7 @@ class LinuxConfiguration(Configuration):
         Database,
         DataSourceManager
     ]
+
 
 
 class MacConfiguration(Configuration):

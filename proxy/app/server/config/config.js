@@ -4,6 +4,7 @@
 const _ = require('underscore');
 const defaults = require('./default-config.json');
 const serviceMapping = require('./service-mapping');
+const thr = require('throw');
 
 const oauth = {
   "clientSecret": "seahorse01",
@@ -14,18 +15,26 @@ const oauth = {
   "userInfoUri": `${serviceMapping.authorization.host}/authorization/userinfo`
 };
 
+function getMandatory(name) {
+  return getVariable(name) || thr(`${name} must be defined.`);
+}
+
 function getVariable(name) {
   if(!name || !_.isString(name)) {
     return null;
   }
-  var value = process.env[name.toUpperCase()];
-  if(!value) {
-    value = defaults[name.toLowerCase()];
+  const value = process.env[name.toUpperCase()];
+  if(value) {
+    return value;
+  } else {
+    return defaults[name.toLowerCase()];
   }
-  return value;
 }
+
+
 
 module.exports = {
   oauth,
-  get: getVariable
+  getMandatory,
+  get: getVariable,
 };
