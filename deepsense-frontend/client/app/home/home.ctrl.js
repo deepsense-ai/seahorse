@@ -1,11 +1,12 @@
 'use strict';
 
 /* @ngInject */
-function Home($rootScope, $uibModal, $state, WorkflowService, PageService, ConfirmationModalService, SessionManagerApi,
-              WorkflowCloneService, SessionManager, config, UserService) {
+function Home($rootScope, $uibModal, $state, WorkflowService, ConfirmationModalService, SessionManagerApi,
+              WorkflowCloneService, ServerCommunication, SessionManager, config, UserService) {
   this.init = () => {
-    PageService.setTitle('Home');
     $rootScope.stateData.dataIsLoaded = true;
+    $rootScope.pageTitle = 'Workflows';
+    ServerCommunication.unsubscribeFromAllExchanges();
     this._isWorkflowLoading = false;
     this.isWorkflowListEmpty = false;
     this.isErrorConnectingToVagrant = false;
@@ -41,8 +42,14 @@ function Home($rootScope, $uibModal, $state, WorkflowService, PageService, Confi
   };
 
   this.search = (workflow) => {
+    let created = moment(workflow.created).format('DD/MM/YYYY - hh:mm a');
+    let updated = moment(workflow.updated).format('DD/MM/YYYY - hh:mm a');
+
     return !this.filterString ||
       (workflow.name.toLowerCase().includes(this.filterString.toLowerCase())) ||
+      (workflow.description.toLowerCase().includes(this.filterString.toLowerCase())) ||
+      (created.toString().includes(this.filterString.toLowerCase())) ||
+      (updated.toString().includes(this.filterString.toLowerCase())) ||
       (workflow.ownerName.toLowerCase().includes(this.filterString.toLowerCase()));
   };
 

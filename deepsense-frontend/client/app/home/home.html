@@ -18,7 +18,7 @@
     </div>
   </div>
   <deepsense-loading-spinner-sm ng-if="home.isWorkflowLoading()"></deepsense-loading-spinner-sm>
-  <div class="input-group col-md-12" ng-if="home.getAllWorkflows()">
+  <div class="input-group search-field" ng-if="home.getAllWorkflows()">
     <input type="text" class="text-center form-control input-search-workflow"
            ng-model="home.filterString" placeholder="SEARCH...">
   </div>
@@ -60,7 +60,7 @@
             <i ng-class="home.getClass('created')"></i>
           </span>
         </td>
-        <td class="color-gray table__centered table__cell">
+        <td class="color-gray table__action-icons table__centered table__cell">
           <b>Actions</b>
         </td>
       </tr>
@@ -68,52 +68,47 @@
                      filter: home.search |
                      orderBy : home.sort.column : home.sort.descending
                      track by workflow.id">
-        <td class="table__centered table__cell">
+        <td class="table__cell table__centered">
           <a ng-click="home.goToWorkflowEditor(workflow.id)">
             {{$index+1}}
           </a>
         </td>
-        <td class="table__cell table__left">
-          <a ng-class="{
-              'owned-by-current-user': home.isWorkflowOwnedByCurrentUser(workflow)
-            }"
+        <td class="table__cell table__left table__truncate">
+          <a ng-class="{'owned-by-current-user': home.isWorkflowOwnedByCurrentUser(workflow)}"
+             title={{workflow.name}}
              ng-click="home.goToWorkflowEditor(workflow.id)">
             {{workflow.name}}
           </a>
         </td>
-        <td class="table__cell table__left">
-          <a ng-class="{
-              'owned-by-current-user': home.isWorkflowOwnedByCurrentUser(workflow)
-            }"
+        <td class="table__cell table__left table__truncate">
+          <a ng-class="{'owned-by-current-user': home.isWorkflowOwnedByCurrentUser(workflow)}"
+             title={{workflow.ownerName}}
              ng-click="home.goToWorkflowEditor(workflow.id)">
-            <i class="fa fa-user logged-user__icon" ng-if="home.isWorkflowOwnedByCurrentUser(workflow)"></i>
+            <i class="fa fa-user table__logged-user" ng-if="home.isWorkflowOwnedByCurrentUser(workflow)"></i>
             {{workflow.ownerName}}
           </a>
         </td>
-        <td class="table__cell table__left">
+        <td class="table__cell table__left table__truncate">
           <a ng-if="workflow.description"
-             uib-popover="{{workflow.description}}"
-             popover-trigger="{{ home.getTriggerEventBasedOnDescriptionLength(workflow.description) }}"
-             popover-append-to-body="true"
              ng-click="home.goToWorkflowEditor(workflow.id)">
-            {{workflow.description | cut : true : 50 : ' ...' }}
+            <span title={{workflow.description}}>{{workflow.description}}</span>
           </a>
           <a ng-if="workflow.description.length == 0"
              ng-click="home.goToWorkflowEditor(workflow.id)">
             -
           </a>
         </td>
-        <td class="table__cell table__left">
+        <td class="table__cell table__centered">
           <a ng-click="home.goToWorkflowEditor(workflow.id)">
             {{workflow.updated | date:"dd/MM/yyyy - hh:mm a"}}
           </a>
         </td>
-        <td class="table__cell table__left">
+        <td class="table__cell table__centered">
           <a ng-click="home.goToWorkflowEditor(workflow.id)">
             {{workflow.created | date:"dd/MM/yyyy - hh:mm a"}}
           </a>
         </td>
-        <td class="action-icons table__right table__cell">
+        <td class="table__cell table__action-icons table__right table__no-wrap">
           <span>
             <a ng-if="home.isWorkflowOwnedByCurrentUser(workflow) && workflow.sessionStatus !== 'not_running'"
                ng-click="home.deleteSession(workflow.id)"

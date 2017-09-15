@@ -42,7 +42,7 @@ cd $PROJECT_PATH
 # Settings
 TIMESTAMP=`date +"%d%m%Y-%H%M%S"`
 COMMIT_HASH=`git rev-parse HEAD`
-DOCKER_REGISTRY="docker-registry.intra.codilime.com"
+DOCKER_REGISTRY="docker-repo.deepsense.codilime.com"
 QUAY_REGISTRY="quay.io"
 CL_NAMESPACE="tap"
 QUAY_NAMESPACE="deepsense_io"

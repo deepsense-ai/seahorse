@@ -3,7 +3,7 @@
 /* @ngInject */
 function NavigationBar() {
   return {
-    templateUrl: 'app/common/navigation-bar/navigation-bar.html'
+    templateUrl: 'app/workflows/navigation-bar/navigation-bar.html'
   };
 }
 exports.function = NavigationBar;

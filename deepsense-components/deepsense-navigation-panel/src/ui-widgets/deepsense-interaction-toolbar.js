@@ -15,7 +15,7 @@
       restrict: 'E',
       templateUrl: 'ui-widgets/deepsense-interaction-toolbar.html',
       scope: {
-        'zoomId': '@',
+        'zoomId': '@'
       },
       link: (scope) => {
         scope.zoomId = scope.zoomId || DEFAULT_ID;

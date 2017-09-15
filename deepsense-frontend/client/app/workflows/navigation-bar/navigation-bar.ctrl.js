@@ -1,11 +1,8 @@
 'use strict';
 
 /* @ngInject */
-function NavigationController($state, config, WorkflowService) {
+function NavigationController(config, WorkflowService) {
   _.assign(this, {
-      goToHomeView() {
-        $state.go('home', {}, {reload: true});
-      },
       getAPIVersion() {
         return config.editorVersion;
       },

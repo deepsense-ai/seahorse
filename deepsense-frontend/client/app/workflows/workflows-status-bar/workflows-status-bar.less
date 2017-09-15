@@ -21,15 +21,58 @@
       font-size: 22px;
       text-overflow: ellipsis;
       white-space: nowrap;
+      width: 70%;
       overflow: hidden;
 
       @media (max-width: @bigger-media-break) {
         font-size: 16px;
-        width: 100%;
+        width: 80%;
       }
 
       &__title {
         font-weight: bold;
+      }
+    }
+
+    &-user {
+      font-size: 16px;
+      margin-right: 20px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: 30%;
+      overflow: hidden;
+      text-align: right;
+      vertical-align: middle;
+
+      & i {
+        font-size: 20px;
+        color: @dark-blue;
+      }
+
+      @media (max-width: @bigger-media-break) {
+        font-size: 14px;
+        margin: 0 20px;
+      }
+    }
+
+    &-logout {
+      margin-right: 10px;
+      font-size: 14px;
+      min-width: 60px;
+
+      @media (max-width: @media-break) {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+      }
+    }
+
+    @media (max-width: @media-break) {
+      align-items: flex-start;
+      flex-direction: column;
+
+      &-user {
+        text-align: left;
       }
     }
   }

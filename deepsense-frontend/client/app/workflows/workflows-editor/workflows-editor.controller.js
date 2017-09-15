@@ -4,7 +4,7 @@ class WorkflowsEditorController {
 
   /* @ngInject */
   constructor(workflowWithResults, $scope, $state, $q, $rootScope, $log, $timeout, specialOperations, WorkflowCloneService,
-              GraphNode, Edge, config, Report, MultiSelectionService, PageService, Operations, GraphPanelRendererService,
+              GraphNode, Edge, config, Report, MultiSelectionService, Operations, GraphPanelRendererService,
               WorkflowService, MouseEvent, ConfirmationModalService, ExportModalService, GraphNodesService, NotificationService,
               ServerCommunication, CopyPasteService, SideBarService, BottomBarService, NodeCopyPasteVisitorService, SessionStatus, UserService) {
 
@@ -12,10 +12,14 @@ class WorkflowsEditorController {
 
     _.assign(this, {
       $scope, $state, $q, $rootScope, $log, $timeout, specialOperations,
-      WorkflowCloneService, GraphNode, Edge, config, Report, MultiSelectionService, PageService, Operations,
+      WorkflowCloneService, GraphNode, Edge, config, Report, MultiSelectionService, Operations,
       GraphPanelRendererService, WorkflowService, MouseEvent, ConfirmationModalService, ExportModalService,
       GraphNodesService, NotificationService, ServerCommunication, CopyPasteService, SideBarService, BottomBarService,
       NodeCopyPasteVisitorService, SessionStatus, UserService
+    });
+
+    $rootScope.$watch(() => this.WorkflowService.getCurrentWorkflow().name, (newValue) => {
+      $rootScope.pageTitle = newValue;
     });
 
     this.BottomBarData = BottomBarService.tabsState;
@@ -64,7 +68,6 @@ class WorkflowsEditorController {
   }
 
   init(workflowWithResults) {
-    this.PageService.setTitle('Workflow editor');
     this.GraphPanelRendererService.setZoom(1.0);
     this.WorkflowService.getCurrentWorkflow().updateState(workflowWithResults.executionReport);
     this.initListeners();
@@ -97,17 +100,24 @@ class WorkflowsEditorController {
         let reportEntityId = this.selectedPortObject.node.state.results[this.selectedPortObject.portIdx];
         this.loadReportById(reportEntityId);
       }
-      if (!this.WorkflowService.isWorkflowRunning()) {
+      if (this.WorkflowService.isWorkflowRunning()) {
+        this._setRunningMode();
+      } else {
         this._setEditableMode();
       }
     });
 
     this.$scope.$on('ServerCommunication.MESSAGE.inferredState', (event, data) => {
-      this.updateAndRerenderEdges(data);
-      if (data.states) {
-        this.WorkflowService.onInferredState(data.states);
-        if (!this.WorkflowService.isWorkflowRunning()) {
-          this._setEditableMode();
+      const currentWorkflow = this.WorkflowService.getCurrentWorkflow();
+      if (data.id === currentWorkflow.id) {
+        this.updateAndRerenderEdges(data);
+        if (data.states) {
+          this.WorkflowService.onInferredState(data.states);
+          if (this.WorkflowService.isWorkflowRunning()) {
+            this._setRunningMode();
+          } else {
+            this._setEditableMode();
+          }
         }
       }
     });
@@ -198,7 +208,7 @@ class WorkflowsEditorController {
         let selectedNodeIds = this.MultiSelectionService.getSelectedNodeIds();
         let sinkOrSourceNodeIds = _.filter(selectedNodeIds, (nodeId) => {
           let node = this.getWorkflow().getNodeById(nodeId);
-          return this._isSinkOrSource(node);
+          return this.GraphNodesService.isSinkOrSource(node);
         });
         if (sinkOrSourceNodeIds.length > 0) {
           let msg = 'Cannot delete source nor sink nodes';
@@ -236,19 +246,12 @@ class WorkflowsEditorController {
         this.NotificationService.clearToasts();
       }),
 
-      this.$scope.$on('AttributesPanel.OPEN_INNER_WORKFLOW', (event, data) => {
-        let workflow = this.WorkflowService._innerWorkflowByNodeId[data.nodeId];
-        this.WorkflowService._workflowsStack.push(workflow);
-      }),
-
-      this.$scope.$on('StatusBar.CLOSE-INNER-WORKFLOW', () => {
-        this.WorkflowService._workflowsStack.pop();
-      })
     ];
   }
 
   _goToWorkflow(workflow) {
     const id = workflow.workflowId;
+    this.ServerCommunication.unsubscribeFromAllExchanges();
     this.$state.go(this.$state.current, {id: id}, {reload: true});
   }
 
@@ -326,16 +329,20 @@ class WorkflowsEditorController {
     }
   }
 
+  isRunningOrAborting() {
+    const workflowStatus = this.WorkflowService.getCurrentWorkflow().workflowStatus;
+    return workflowStatus === 'running' || workflowStatus === 'aborting';
+  }
+
   isEditable() {
     const workflow = this.WorkflowService.getCurrentWorkflow();
     let isOwner = workflow.owner.id === this.UserService.getSeahorseUser().id;
-    return workflow.workflowStatus === 'editor' && workflow.sessionStatus === this.SessionStatus.RUNNING && isOwner;
+    return workflow.workflowStatus === 'editor' && workflow.sessionStatus === this.SessionStatus.RUNNING && this._isOwner();
   }
 
-  _isSinkOrSource(node) {
-    let sourceId = 'f94b04d7-ec34-42f7-8100-93fe235c89f8';
-    let sinkId = 'e652238f-7415-4da6-95c6-ee33808561b2';
-    return node.operationId === sourceId || node.operationId === sinkId;
+  _isOwner() {
+    const workflow = this.WorkflowService.getCurrentWorkflow();
+    return workflow.owner.id === this.UserService.getSeahorseUser().id;
   }
 
 }

@@ -122,6 +122,15 @@ class ServerCommunication {
     this.$log.info('Subscribe to exchange ' + uri + ', subscription: ', newSubscription);
   }
 
+  unsubscribeFromAllExchanges() {
+    for(let key in this.exchangeSubscriptions) {
+      if (this.exchangeSubscriptions.hasOwnProperty(key)) {
+        this.exchangeSubscriptions[key].unsubscribe();
+      }
+    }
+    this.exchangeSubscriptions = {};
+  }
+
   _onWebSocketConnect() {
     this.$log.info('ServerCommunication onWebSocketConnect');
     this._subscribeToExchange(this.seahorseTopicListeningUri());
@@ -143,7 +152,7 @@ class ServerCommunication {
     this.client.connect(
       user,
       pass,
-      this._onWebSocketConnect.bind(this, this.workflowId),
+      this._onWebSocketConnect.bind(this),
       this.errorHandler.bind(this, this.connectionAttemptId)
     );
   }

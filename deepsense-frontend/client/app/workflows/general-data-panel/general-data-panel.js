@@ -14,6 +14,7 @@ function GeneralDataPanel() {
       'workflow': '=',
       'description': '=',
       'publicParams': '=',
+      'disabledMode': '=',
       'state': '='
     }
   };
@@ -52,7 +53,7 @@ function GeneralDataPanelCtrl() {
     } else if (event.keyCode === 27) { // Escape key code
       this.hideInput(input);
     }
-  }
+  };
 
 }
 

@@ -16,3 +16,10 @@ DeepSense.io LAB application
 Running `npm run dev` creates a background process that rebuilds whole project whenever any of the source files has been changed, site available at [localhost:3000](http://localhost:3000/) will be automatically reloaded.
 If you run watcher for particular component as well it will allow you to automatically rebuild particular component and the whole app at the same time.
 This makes possible to develop independent component and check how it behaves in the main application.
+
+# List all licences
+
+```
+npm install -g license-checker
+license-checker --production --csv
+```

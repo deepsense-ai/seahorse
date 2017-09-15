@@ -140,6 +140,11 @@ class GraphNodesService {
       });
   }
 
+  isSinkOrSource(node) {
+    return node.operationId === this.nodeTypes.CUSTOM_TRANSFORMER_SINK ||
+      node.operationId === this.nodeTypes.CUSTOM_TRANSFORMER_SOURCE;
+  }
+
 }
 
 exports.inject = function (module) {

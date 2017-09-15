@@ -13,7 +13,7 @@
     <flow-chart-box
       workflow="workflow.getWorkflow()"
       selected-node="workflow.getSelectedNode()"
-      is-running="workflow.WorkflowService.getCurrentWorkflow().workflowStatus !== 'editor'"
+      is-running="workflow.isRunningOrAborting()"
       disabled-mode="!workflow.isEditable()"
       zoom-id="{{::workflow.zoomId}}"></flow-chart-box>
 
@@ -38,6 +38,7 @@
       name="workflow.getWorkflow().name"
       description="workflow.getWorkflow().description"
       public-params="workflow.WorkflowService.getCurrentWorkflow().publicParams"
+      disabled-mode="!workflow.isEditable()"
       ng-if="!workflow.getSelectedNode()"
       resizable
       resizable-panel-name="rightPanel"

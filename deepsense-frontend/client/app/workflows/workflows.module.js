@@ -23,6 +23,7 @@ require('./workflows-status-bar/menu-item/menu-item.directive.js').inject(workfl
 require('./workflows-status-bar/menu-item/menu-item.controller.js').inject(workflows);
 require('./workflows-status-bar/additional-html/running-executor-popover.ctrl.js').inject(workflows);
 require('./workflows-status-bar/additional-html/starting-popover.ctrl.js').inject(workflows);
+require('./workflows-status-bar/additional-html/executor-error.ctrl.js').inject(workflows);
 require('./workflows-editor/side-bar/side-bar.directive.js').inject(workflows);
 require('./workflows-editor/side-bar/side-bar.controller.js').inject(workflows);
 require('./workflows-editor/side-bar/side-bar.service.js').inject(workflows);
@@ -30,5 +31,6 @@ require('./workflows-editor/bottom-bar/bottom-bar.directive.js').inject(workflow
 require('./workflows-editor/bottom-bar/bottom-bar.controller.js').inject(workflows);
 require('./workflows-editor/bottom-bar/bottom-bar.service.js').inject(workflows);
 require('./session-manager.service.js').inject(workflows);
+require('./navigation-bar/navigation-bar.module.js').inject(workflows);
 
 module.exports = workflows;

@@ -108,7 +108,7 @@
     }
 
     performZooming(relativeX, relativeY, zoomRatio, isStrict) {
-      let newTotalScale = !isStrict ? this.state.totalScale * zoomRatio : zoomRatio;
+      let newTotalScale = isStrict ? zoomRatio : this.state.totalScale * zoomRatio;
       newTotalScale = Math.max(this._internal.MIN_ZOOM_RATIO, newTotalScale);
       newTotalScale = Math.min(this._internal.MAX_ZOOM_RATIO, newTotalScale);
 
@@ -119,7 +119,6 @@
         totalScale: newTotalScale
       };
 
-      this.performMinMaxZoomEvents(newTotalScale);
       this.adjustCorners();
       this.updateTransformStyle(true);
     }
@@ -158,17 +157,6 @@
       this.$document.off('mouseup', mouseUpHandler);
     }
 
-    performMinMaxZoomEvents (newTotalScale) {
-      switch (newTotalScale) {
-        case this._internal.MIN_ZOOM_RATIO:
-          this.$rootScope.$broadcast('INTERACTION-PANEL.ZOOM-MIN');
-          break;
-        case this._internal.MAX_ZOOM_RATIO:
-          this.$rootScope.$broadcast('INTERACTION-PANEL.ZOOM-MAX');
-          break;
-      }
-    }
-    
     fit (collection, collectionItemDimensions) {
       /**
        * Get data phase
