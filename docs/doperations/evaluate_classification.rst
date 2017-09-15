@@ -60,12 +60,13 @@ Input
 Output
 ------
 1. Report containing following metrics:
- * Accuracy
- * Precision
- * Recall
- * Confusion matrix
- * ROC curve
- * AUC
+
+  * Accuracy
+  * Precision
+  * Recall
+  * Confusion matrix
+  * ROC curve
+  * AUC
 
 ------
 Params
@@ -84,80 +85,44 @@ Example
 Report content example
 ----------------------
 
-{
+.. code-block:: json
 
-  "name": "Evaluate Classification",
-
-  "tables": {
-
-    "summary": {
-
-      "name": "summary",
-
-      "description": "Evaluate classification summary",
-
-      "columnNames": ["DataFrame size", "AUC", "Logarithmic Loss"],
-
-      "blockType": "table",
-
-      "rowNames": null,
-
-      "values": [["24", "1", "0.01005"]]
-
-    },
-
-    "accuracy": {
-
-      "name": "accuracy",
-
-      "description": "Accuracy",
-
-      "columnNames": ["Threshold", "Accuracy"],
-
-      "blockType": "table",
-
-      "rowNames": null,
-
-      "values": [["0.99", "1"], ["0.01", "0.5"]]
-
-    },
-
-    "fMeasureByThreshold": {
-
-      "name": "fMeasureByThreshold",
-
-      "description": "F-Measure (F1 score) by threshold",
-
-      "columnNames": ["Threshold", "F-Measure"],
-
-      "blockType": "table",
-
-      "rowNames": null,
-
-      "values": [["0.99", "1"], ["0.01", "0.666667"]]
-
-    },
-
-    "roc": {
-
-      "name": "roc",
-
-      "description": "Receiver Operating Characteristic curve",
-
-      "columnNames": ["False positive rate", "True positive rate"],
-
-      "blockType": "table",
-
-      "rowNames": null,
-
-      "values": [["0", "0"], ["0", "1"], ["1", "1"], ["1", "1"]]
-
-    }
-
-  },
-
-  "distributions": {
-
-  }
-
-}
+   {
+     "name": "Evaluate Classification",
+     "tables": {
+       "summary": {
+         "name": "summary",
+         "description": "Evaluate classification summary",
+         "columnNames": ["DataFrame size", "AUC", "Logarithmic Loss"],
+         "blockType": "table",
+         "rowNames": null,
+         "values": [["24", "1", "0.01005"]]
+       },
+       "accuracy": {
+         "name": "accuracy",
+         "description": "Accuracy",
+         "columnNames": ["Threshold", "Accuracy"],
+         "blockType": "table",
+         "rowNames": null,
+         "values": [["0.99", "1"], ["0.01", "0.5"]]
+       },
+       "fMeasureByThreshold": {
+         "name": "fMeasureByThreshold",
+         "description": "F-Measure (F1 score) by threshold",
+         "columnNames": ["Threshold", "F-Measure"],
+         "blockType": "table",
+         "rowNames": null,
+         "values": [["0.99", "1"], ["0.01", "0.666667"]]
+       },
+       "roc": {
+         "name": "roc",
+         "description": "Receiver Operating Characteristic curve",
+         "columnNames": ["False positive rate", "True positive rate"],
+         "blockType": "table",
+         "rowNames": null,
+         "values": [["0", "0"], ["0", "1"], ["1", "1"], ["1", "1"]]
+       }
+     },
+     "distributions": {
+     }
+   }

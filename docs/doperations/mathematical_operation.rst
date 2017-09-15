@@ -1,14 +1,14 @@
 .. Copyright (c) 2015, CodiLime, Inc.
 
 Mathematical operation
-===============
+======================
 
 ==========
 Descriptor
 ==========
 
 Mathematical operation creates a Transformation that creates a new column based on a mathematical formula.
-The Transformation can be applied to a DataFrame with ``Apply Transformation`` operation.
+The Transformation can be applied to a DataFrame with :doc:`apply_transformation` operation.
 
 **Operation version:** 1
 
@@ -109,9 +109,9 @@ Output Data
 
 1. Transformation containing the formula
 
------------------------------------------------------
-Applying transformation with ``Apply Transformation``
------------------------------------------------------
+--------------------------------------------------------
+Applying transformation with :doc:`apply_transformation`
+--------------------------------------------------------
 
 Assuming that the above Transformation is applied to the following DataFrame
 

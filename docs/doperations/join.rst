@@ -68,7 +68,7 @@ DataFrames and of the same type. If ``joinColumns`` are not in either DataFrames
 of different types, ``ColumnsDoNotExistException`` or ``WrongColumnTypeException`` exceptions are thrown,
 respectively.
 
-The join operation skips ``null`` values in LEFT JOIN, i.e. ``null``s do not match and yield rows.
+The join operation skips ``null`` values in LEFT JOIN, i.e. ``null`` s do not match and yield rows.
 
 Columns from right DataFrame with the names that currently exist in left DataFrame
 will be renamed by appending ``'_join'`` suffix.

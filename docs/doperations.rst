@@ -8,24 +8,24 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   doperations/read_file
-   doperations/load_data_frame
-   doperations/save_data_frame
-   doperations/file_to_dataframe
-   doperations/timestamp_decomposer
-   doperations/dataframe_splitter
-   doperations/project_columns
-   doperations/mathematical_operation
-   doperations/ridge_regression
-   doperations/train_regressor
-   doperations/score_regressor
-   doperations/evaluate_regression
-   doperations/cross_validate_regressor
-   doperations/logistic_regression
-   doperations/train_classifier
-   doperations/score_classifier
-   doperations/evaluate_classification
-   doperations/one_hot_encoder
    doperations/apply_transformation
-   doperations/join
    doperations/convert_type
+   doperations/cross_validate_regressor
+   doperations/dataframe_splitter
+   doperations/evaluate_classification
+   doperations/evaluate_regression
+   doperations/file_to_dataframe
+   doperations/join
+   doperations/load_data_frame
+   doperations/logistic_regression
+   doperations/mathematical_operation
+   doperations/one_hot_encoder
+   doperations/project_columns
+   doperations/read_file
+   doperations/ridge_regression
+   doperations/save_data_frame
+   doperations/score_classifier
+   doperations/score_regressor
+   doperations/timestamp_decomposer
+   doperations/train_classifier
+   doperations/train_regressor
