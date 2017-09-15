@@ -2,8 +2,8 @@
 
 class NodeCopyPasteVisitorService {
   /* @ngInject */
-  constructor($q, $rootScope, MultiSelectionService, WorkflowService, GraphNodesService) {
-    _.assign(this, {$q, $rootScope, MultiSelectionService, WorkflowService, GraphNodesService});
+  constructor($q, $rootScope, MultiSelectionService, WorkflowService, GraphNodesService, CanvasService) {
+    _.assign(this, {$q, $rootScope, MultiSelectionService, WorkflowService, GraphNodesService, CanvasService});
   }
 
   getType() {
@@ -21,7 +21,7 @@ class NodeCopyPasteVisitorService {
   }
 
   isFocused() {
-    return $('.flowchart-box').is(':focus');
+    return $('.canvas').is(':focus');
   }
 
   pasteUsingSerializedData(serializedData) {
@@ -45,10 +45,8 @@ class NodeCopyPasteVisitorService {
         let nodesId = clonedNodes.map(node => node.id);
         this.MultiSelectionService.clearSelection();
         this.$rootScope.$broadcast('MultiSelection.ADD', nodesId);
-      });
-
-      this.$rootScope.$broadcast('INTERACTION-PANEL.FIT', {
-        zoomId: 'flowchart-box'
+        this.CanvasService.render();
+        this.CanvasService.fit();
       });
     });
   }

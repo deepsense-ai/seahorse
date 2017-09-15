@@ -33,6 +33,7 @@ class EditorController {
 
   $onDestroy() {
     this.$canvas.off();
+    this.$element.off();
     this.removeListener();
   }
 
@@ -84,11 +85,18 @@ class EditorController {
       event.stopPropagation();
     });
 
-    // Drag and Drop from toolbar handling
     this.$canvas.bind('contextmenu', (event) => {
       const originalEvent = event.originalEvent;
       this.startWizard(originalEvent.offsetX, originalEvent.offsetY);
       return false;
+    });
+
+    /**
+     * Needed to manually restore focus to Canvas after clicking on elements inside editor.
+     * It is used by cloning service.
+     */
+    this.$canvas.bind('click', () => {
+      this.$canvas[0].querySelector('.canvas').focus();
     });
   }
 

@@ -19,7 +19,7 @@ const NewNodeComponent = {
       this.$timeout = $timeout;
     }
     $postLink() {
-      this.$element.bind('mousedown', (event) => {
+      this.$element.bind('mousedown click', (event) => {
         event.stopPropagation();
       });
 
