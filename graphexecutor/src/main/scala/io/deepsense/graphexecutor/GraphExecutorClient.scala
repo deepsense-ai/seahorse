@@ -10,7 +10,9 @@ import java.nio.ByteBuffer
 import java.util.Collections
 
 import scala.collection.JavaConverters._
+import scala.util.Try
 
+import com.typesafe.scalalogging.LazyLogging
 import org.apache.avro.AvroRuntimeException
 import org.apache.avro.ipc.NettyTransceiver
 import org.apache.avro.ipc.specific.SpecificRequestor
@@ -30,7 +32,7 @@ import io.deepsense.models.experiments.Experiment
  * allows to send an Experiment for execution to Graph Executor.
  * NOTE: Only one graph launch per object is allowed.
  */
-class GraphExecutorClient extends Closeable {
+class GraphExecutorClient extends Closeable with LazyLogging {
   var yarnClient: Option[YarnClient] = None
 
   var applicationId: Option[ApplicationId] = None
@@ -212,8 +214,16 @@ class GraphExecutorClient extends Closeable {
     appContext.setMaxAppAttempts(1)
 
     // Submit the application
-    yarnClient.get.submitApplication(appContext)
-    applicationId = Some(appContext.getApplicationId)
+    Try {
+      yarnClient.get.submitApplication(appContext)
+    }.map { aid =>
+      logger.info("Application submitted - ID: {}", aid)
+      applicationId = Some(aid)
+    }.recover {
+      case e: Exception =>
+        logger.error("Exception thrown at submitting application", e)
+        throw e
+    }
   }
 
   /**

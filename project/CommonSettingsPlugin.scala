@@ -17,6 +17,10 @@ object CommonSettingsPlugin extends AutoPlugin {
       "-unchecked", "-deprecation", "-encoding", "utf8", "-feature",
       "-language:existentials", "-language:implicitConversions"
     ),
+    javacOptions ++= Seq(
+      "-source", "1.7",
+      "-target", "1.7"
+    ),
     resolvers ++= Dependencies.resolvers
   ) ++ ouritSettings ++ testSettings ++ Seq(
     test <<= test in Test
@@ -24,11 +28,11 @@ object CommonSettingsPlugin extends AutoPlugin {
 
   lazy val ouritSettings = inConfig(OurIT)(Defaults.testSettings) ++ inConfig(OurIT) {
     Seq(
-      testOptions := Seq(
+      testOptions ++= Seq(
         // Show full stacktraces (F), Put results in target/test-reports
         Tests.Argument(TestFrameworks.ScalaTest, "-oF", "-u", "target/test-reports")
       ),
-      javaOptions := Seq("-Denv=integtest", "-Dconfig.trace=loads", s"-DlogFile=${name.value}"),
+      javaOptions ++= Seq("-Denv=integtest", s"-DlogFile=${name.value}"),
       fork := true,
       unmanagedClasspath += baseDirectory.value / "conf"
     )

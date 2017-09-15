@@ -49,17 +49,16 @@ class SimpleGraphExecutionIntegSuite
 
       while (!graphExecutorClient.hasGraphExecutorEndedRunning()) {
         val graph = graphExecutorClient.getExecutionState()
-        import io.deepsense.graph.Status
-        graph.nodes.filter(n => n.state.status == Status.Aborted
-          || n.state.status == Status.Failed).isEmpty shouldBe true
+        import io.deepsense.graph.Status._
+        forAll(graph.nodes) { _.state.status should not (be (Aborted) or be (Failed)) }
         // Sleeping to postpone next control loop iteration, delay arbitrarily chosen
         Thread.sleep(Constants.EMControlInterval)
       }
       // NOTE: Executed graph is not saved anywhere except GE. GE have to wait appropriate
       // time before closing RPC server, in order to allow to get executed graph state.
-      graphExecutorClient.isGraphExecutorFinished() shouldBe true
+      graphExecutorClient shouldBe 'graphExecutorFinished
       val graph = graphExecutorClient.getExecutionState()
-      graph.nodes.filter(n => n.state.status != Status.Completed).isEmpty shouldBe true
+      forAll(graph.nodes) { _.state.status shouldBe Status.Completed }
     } finally {
       graphExecutorClient.close()
     }

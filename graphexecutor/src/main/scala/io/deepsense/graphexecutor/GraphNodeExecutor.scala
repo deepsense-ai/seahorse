@@ -43,8 +43,7 @@ class GraphNodeExecutor(
       graphExecutor.graphGuard.synchronized {
         require(node.isRunning)
       }
-      logger.info("Execution of node: " + node.id + " time: " + System.currentTimeMillis)
-      logger.info("real node execution")
+      logger.info("Execution of node: {}", node.id)
       // TODO: pass real vector of DOperable's, not "deceptive mock"
       // (we are assuming that all DOperation's return at most one DOperable)
 

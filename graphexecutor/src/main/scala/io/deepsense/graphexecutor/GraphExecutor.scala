@@ -26,8 +26,8 @@ import org.apache.hadoop.yarn.conf.YarnConfiguration
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.{SparkConf, SparkContext}
 
-import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.commons.config.ConfigModule
+import io.deepsense.deeplang.doperables.dataframe.DataFrameBuilder
 import io.deepsense.deeplang.{DOperable, ExecutionContext}
 import io.deepsense.entitystorage.{EntityStorageClient, EntityStorageClientFactory}
 import io.deepsense.graph.{Graph, Status}
@@ -35,17 +35,26 @@ import io.deepsense.graphexecutor.protocol.GraphExecutorAvroRpcProtocol
 import io.deepsense.graphexecutor.util.BinarySemaphore
 import io.deepsense.models.experiments.Experiment
 
-object GraphExecutor {
+object GraphExecutor extends LazyLogging {
   var entityStorageClientFactory: EntityStorageClientFactory = _
 
   def main(args: Array[String]): Unit = {
+    // All INFOs are printed out to stderr on Hadoop YARN (dev env)
+    // Go to /opt/hadoop/logs/userlogs/application_*/container_*/stderr to see progress
+    logger.debug("Starting with args: {}", args.mkString("[", ", ", "]"))
     val injector = Guice.createInjector(
       new ConfigModule,
       new GraphExecutorModule,
-      new GraphExecutorTestModule)
+      new GraphExecutorTestModule
+    )
+    logger.debug("Guice Injector ready")
     val entityStorageClientFactory = injector.getInstance(
-      Key.get(classOf[EntityStorageClientFactory], Names.named(args(0))))
+      Key.get(classOf[EntityStorageClientFactory], Names.named(args(0)))
+    )
+    logger.debug("entityStorageClientFactory ready: {}", entityStorageClientFactory)
     val graphExecutor = new GraphExecutor(entityStorageClientFactory)
+    logger.debug("graphExecutor ready: {}", graphExecutor)
+    logger.debug("mainLoop is about to start")
     graphExecutor.mainLoop()
   }
 }
@@ -68,10 +77,6 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
   /** graphGuard is used to prevent concurrent graph field modifications/inconsistent reads */
   val graphGuard = new Object()
 
-  @volatile var experiment: Option[Experiment] = None
-
-  def graph: Option[Graph] = experiment.map(_.graph)
-
   /**
    * graphEventBinarySemaphore is used for signaling important changes in graph object
    * (graph sent, finished or aborted node execution)
@@ -81,14 +86,16 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
   /** executorsPool is pool of threads executing GraphNodes */
   val executorsPool = Executors.newFixedThreadPool(Constants.ConcurrentGraphNodeExecutors)
 
+  @volatile var experiment: Option[Experiment] = None
+
   def mainLoop(): Unit = {
-    // TODO: don't print anything
-    println("mainLoop() start" + System.currentTimeMillis)
+    logger.debug("mainLoop() started")
     val resourceManagerClient = new AMRMClientAsyncImpl[ContainerRequest](
-      Constants.AMRMClientHeartbeatInterval,
-      this)
+      Constants.AMRMClientHeartbeatInterval, this
+    )
     resourceManagerClient.init(conf)
     resourceManagerClient.start()
+    logger.debug("AMRMClientAsyncImpl started")
 
     // Construction of server for communication with ExperimentManager
     val rpcServer = new NettyServer(new SpecificResponder(
@@ -97,23 +104,29 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
       new SpecificData()),
       new InetSocketAddress(0)
     )
+    logger.debug("NettyServer initialized")
 
     // Application Master registration
     val appMasterHostname = InetAddress.getLocalHost.getHostName
-    resourceManagerClient.registerApplicationMaster(appMasterHostname, rpcServer.getPort, "")
+    try {
+      resourceManagerClient.registerApplicationMaster(appMasterHostname, rpcServer.getPort, "")
+    } catch {
+      case e: Exception =>
+        logger.error("Registering ApplicationMaster failed", e)
+        throw e
+    }
+    logger.debug(s"NettyServer(hostname=$appMasterHostname, port=${rpcServer.getPort}) registered")
 
-
-    // TODO: don't print anything
-    println("waitForGraph start " + System.currentTimeMillis)
+    logger.debug("waitForGraph about to be executed")
     // Wait for graph with specified timeout and if graph has been sent, proceed with its execution.
     if (this.waitForGraph(timeout = Constants.WaitingForGraphDelay)) {
-      // TODO: don't print anything
-      println("waitForGraph succeeded " + System.currentTimeMillis)
-      // All nodes are marked as queued (there is no partial execution).
+      logger.debug("waitForGraph succeeded")
+      logger.debug("All nodes to be marked as QUEUED")
       graphGuard.synchronized {
         experiment = Some(experiment.get
           .copy(graph = Graph(graph.get.nodes.map(_.markQueued), graph.get.edges)))
       }
+      logger.debug("All nodes marked as QUEUED")
       val executionContext = new ExecutionContext()
       // Acquire Spark Context
       val sparkConf = new SparkConf()
@@ -128,28 +141,32 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
         executionContext.tenantId = experiment.get.tenantId
       }
 
-
-      // Loop until there are nodes in graph that are ready to or during execution
+      logger.debug("Loop until there are nodes in graph that are ready to or during execution")
       while (graphGuard.synchronized {
         graph.get.readyNodes.nonEmpty ||
           graph.get.nodes.filter(n => n.state.status == Status.Running).nonEmpty
       }) {
-        // Retrieve list of nodes ready for execution in synchronized manner and use this list:
-        // Put its elements into RUNNING status and schedule their execution in executorPool.
+        val g = graph.get
+        logger.debug("Node statistics")
+        logger.debug("  READY   {}", g.readyNodes.size.toString)
+        logger.debug("  RUNNING {}", g.nodes.count(_.state.status == Status.Running).toString)
         graphGuard.synchronized {
-          for (node <- graph.get.readyNodes) {
-            // Synchronization guarantees that this node is still ready for execution
-            experiment = Some(experiment.get
-              .copy(graph = graph.get.markAsRunning(node.id)))
+          graph.get.readyNodes.foreach { node =>
+            val nid = node.id
+            experiment = experiment.map {
+              _.copy(graph = graph.get.markAsRunning(nid))
+            }
+            logger.debug("Node {} marked as RUNNING (in experiment)", graph.get.node(nid).toString)
+
             // executorPool won't throw RejectedExecutionException thanks to comprehensive
             // synchronization in GraphExecutorAvroRpcImpl.terminateExecution().
             // NOTE: Threads executing graph nodes are created in main thread for thread-safety.
             executorsPool.execute(
               new GraphNodeExecutor(
-                executionContext,
-                this,
-                graph.get.node(node.id),
-                entityStorageClient))
+                executionContext, this, graph.get.node(nid), entityStorageClient
+              )
+            )
+            logger.debug("Node {} executed (on executorsPool)", node.toString)
           }
         }
         // Waiting for change in graph (completed or failed nodes).
@@ -159,21 +176,22 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
         try {
           graphEventBinarySemaphore.tryAcquire(Constants.WaitingForNodeExecutionInterval)
         } catch {
-          case e: InterruptedException => {
-            // Silently proceed to next loop iteration
-          }
+          case e: InterruptedException => // ignored
         }
       }
 
-      // Mark as aborted all nodes that Graph Executor wasn't able to execute
+      logger.debug("Mark as aborted all nodes unable to execute")
       graphGuard.synchronized {
         if (graph.get.nodes.forall(_.isCompleted)) {
-          experiment = Some(experiment.get.markCompleted)
+          experiment = experiment.map(_.markCompleted)
+          logger.debug("Experiment completed")
         } else {
           if (graph.get.nodes.exists(_.isFailed)) {
-            experiment = Some(experiment.get.markFailed("Not all nodes were executed"))
+            experiment = experiment.map(_.markFailed("Not all nodes were executed"))
+            logger.error("Experiment failed partially")
           } else {
-            experiment = Some(experiment.get.markAborted)
+            experiment = experiment.map(_.markAborted)
+            logger.error("Experiment aborted")
           }
         }
       }
@@ -196,9 +214,8 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
       try {
         graphEventBinarySemaphore.tryAcquire(remainingTimeToWait)
       } catch {
-        case e: InterruptedException => {
+        case e: InterruptedException =>
           // Silently proceed to next loop iteration
-        }
       }
     }
     graph.nonEmpty
@@ -214,8 +231,7 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
       rmClient: AMRMClientAsyncImpl[ContainerRequest],
       rpcServer: NettyServer,
       entityStorageClientFactory: EntityStorageClientFactory): Unit = {
-    // TODO: don't print anything
-    println("cleanup start" + System.currentTimeMillis)
+    logger.debug("cleanup started")
     rmClient.unregisterApplicationMaster(FinalApplicationStatus.SUCCEEDED, "", "")
     // Netty problem identified:
     // ClosedChannelException is thrown in client connection thread when closing server during
@@ -237,9 +253,8 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
     executorsPool.shutdown()
     // TODO: don't print anything
     entityStorageClientFactory.close()
-    println("cleanup end" + System.currentTimeMillis)
+    logger.debug("cleanup end")
   }
-
 
   override def onContainersCompleted(statuses: List[ContainerStatus]): Unit = {}
 
@@ -269,21 +284,23 @@ class GraphExecutor(entityStorageClientFactory: EntityStorageClientFactory)
     }
   }
 
+  def graph: Option[Graph] = experiment.map(_.graph)
+
   override def onShutdownRequest(): Unit = {}
 
   override def onNodesUpdated(updatedNodes: List[NodeReport]): Unit = {}
 
   override def onContainersAllocated(containers: List[Container]): Unit = {}
 
-  private def createEntityStorageClient(entityStorageClientFactory: EntityStorageClientFactory)
-      : EntityStorageClient = {
+  private def createEntityStorageClient(
+      entityStorageClientFactory: EntityStorageClientFactory) : EntityStorageClient = {
     val config = ConfigFactory.load(Constants.GraphExecutorConfigName)
     val actorSystemName = config.getString("entityStorage.actorSystemName")
     val hostName = config.getString("entityStorage.hostname")
     val port = config.getInt("entityStorage.port")
     val actorName = config.getString("entityStorage.actorName")
     val timeoutSeconds = config.getInt("entityStorage.timeoutSeconds")
-    logger.info(
+    logger.debug(
       s"EntityStorageClient($actorSystemName, $hostName, $port, $actorName, $timeoutSeconds)")
     entityStorageClientFactory.create(actorSystemName, hostName, port, actorName, timeoutSeconds)
   }
