@@ -109,12 +109,25 @@
       </tr>
     </table>
   </div>
-  <div class="col-md-12" ng-if="!home.canShowWorkflows && !home.isWorkflowLoading()">
+  <div class="col-md-12" ng-if="!home.isWorkflowLoading() && home.isWorkflowListEmpty">
     <div class="container center">
       <div class="no-worfklows">
         <div class="no-worfklows__icon">
-          <i class="fa {{home.icon}}"></i>
-          <span>{{home.info}}</span>
+          <i class="fa fa-ban"></i>
+          <span>No workflows found!</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12" ng-if="!home.isWorkflowLoading() && home.isErrorConnectingToVagrant">
+    <div class="container center">
+      <div class="no-worfklows">
+        <div class="no-worfklows__icon">
+          <span>
+            <b>Seahorse is booting up.</b>
+          </span>
+          <br/>
+          <span>Please wait a few seconds and <a href="#" ng-click="home.reloadPage()">reload the page</a>.</span>
         </div>
       </div>
     </div>

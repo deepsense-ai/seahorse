@@ -8,6 +8,8 @@ function Home($rootScope, $uibModal, $state, WorkflowService, NotificationServic
     PageService.setTitle('Home');
     $rootScope.stateData.dataIsLoaded = true;
     this.canShowWorkflows = false;
+    this.isWorkflowListEmpty = false;
+    this.isErrorConnectingToVagrant = false;
     this.icon = '';
     this.info = '';
     this.sort = {
@@ -23,19 +25,17 @@ function Home($rootScope, $uibModal, $state, WorkflowService, NotificationServic
     WorkflowService.downloadWorkflows().then(() => {
       this.workflows = WorkflowService.getAllWorkflows();
       if (this.workflows && this.workflows.length === 0) {
-        this.setWarning('fa-ban', 'No workflows found!');
+        this.isWorkflowListEmpty = true;
       } else {
         this.canShowWorkflows = true;
       }
     }, () => {
-      this.setWarning('fa-exclamation-circle', 'Could not connect to the database. Try to reload the page.');
+      this.isErrorConnectingToVagrant = true;
     });
   };
 
-  this.setWarning = (icon, information) => {
-    this.canShowWorkflows = false;
-    this.icon = icon;
-    this.info = information;
+  this.reloadPage = () => {
+    window.location.reload();
   };
 
   this.getTriggerEventBasedOnDescriptionLength = (description) => {
@@ -103,8 +103,7 @@ function Home($rootScope, $uibModal, $state, WorkflowService, NotificationServic
   this.deleteWorkflow = function (workflow) {
     ConfirmationModalService.showModal({
       message: 'The operation will delete workflow "' + workflow.name + '". Deletion cannot be undone afterwards.'
-    }).
-    then(() => {
+    }).then(() => {
       WorkflowService.deleteWorkflow(workflow.id);
     });
   };
