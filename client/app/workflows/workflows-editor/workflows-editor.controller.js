@@ -3,16 +3,18 @@
 /* beautify preserve:start */
 import { GraphPanelRendererBase } from './../graph-panel/graph-panel-renderer/graph-panel-renderer-base.js';
 /* beautify preserve:end */
+import internal from './workflows-editor.internal.js';
 
 class WorkflowsEditorController {
 
   /* @ngInject */
   constructor(workflow, MultiSelectionService,
-    $scope, $state, $stateParams,
+    $scope, $state, $stateParams, $q, $rootScope,
     GraphNode, Edge,
     PageService, Operations, GraphPanelRendererService, WorkflowService, UUIDGenerator, MouseEvent,
     DeepsenseNodeParameters, ConfirmationModalService, ExportModalService,
-    LastExecutionReportService, NotificationService, ServerCommunication) {
+    LastExecutionReportService, NotificationService, ServerCommunication,
+    CopyPasteService) {
     this.ServerCommunication = ServerCommunication;
     this.PageService = PageService;
     this.WorkflowService = WorkflowService;
@@ -21,8 +23,10 @@ class WorkflowsEditorController {
     this.workflow = workflow;
     this.MultiSelectionService = MultiSelectionService;
     this.$scope = $scope;
+    this.$rootScope = $rootScope;
     this.$state = $state;
     this.$stateParams = $stateParams;
+    this.$q = $q;
     this.NotificationService = NotificationService;
     this.GraphPanelRendererService = GraphPanelRendererService;
     this.ConfirmationModalService = ConfirmationModalService;
@@ -34,6 +38,28 @@ class WorkflowsEditorController {
     this.selectedNode = null;
     this.Operations = Operations;
     this.catalog = Operations.getCatalog();
+    this.zoomId = 'flowchart-box';
+    this.CopyPasteService = CopyPasteService;
+    this.multipleCopyParams = {
+      type: 'nodes',
+      filter: () => MultiSelectionService.getSelectedNodes().length,
+      paste: (event, nodes) => {
+        let nodeParametersPromises = _.map(nodes, node => {
+          return internal.getNodeParameters.call(this, node);
+        });
+
+        return $q.all(nodeParametersPromises).then(
+          nodes => internal.cloneNodes.call(this, nodes)
+        ).then(
+          () => $scope.$broadcast('INTERACTION-PANEL.FIT', {
+            zoomId: this.zoomId
+          })
+        );
+      },
+      getEntityToCopy: () => MultiSelectionService.getSelectedNodes()
+        .map(WorkflowService.getWorkflow().getNodeById)
+    };
+
     this.init();
   }
 
@@ -43,6 +69,7 @@ class WorkflowsEditorController {
     this.GraphPanelRendererService.setRenderMode(GraphPanelRendererBase.EDITOR_RENDER_MODE);
     this.GraphPanelRendererService.setZoom(1.0);
     this.LastExecutionReportService.setTimeout();
+    this.CopyPasteService.add(this.multipleCopyParams);
     this.updateAndRerenderEdges(this.workflow);
     this.initListeners();
     this.ServerCommunication.init();
@@ -60,18 +87,7 @@ class WorkflowsEditorController {
       if (!_.includes(this.MultiSelectionService.getSelectedNodes(), node.id)) {
         this.MultiSelectionService.setSelectedNodes([node.id]);
       }
-      if (node.hasParameters()) {
-        this.$scope.$digest();
-      } else {
-        this.Operations.getWithParams(node.operationId)
-          .then((operationData) => {
-            this.$scope.$applyAsync(() => {
-              node.setParameters(operationData.parameters, this.DeepsenseNodeParameters);
-            });
-          }, (error) => {
-            console.error('operation fetch error', error);
-          });
-      }
+      internal.getNodeParameters.call(this, node);
     });
 
     this.$scope.$on(this.GraphNode.MOVE, () => {
@@ -104,15 +120,12 @@ class WorkflowsEditorController {
       let positionY = offsetY || 0;
       let elementOffsetX = 100;
       let elementOffsetY = 30;
-      let node = this.WorkflowService.getWorkflow()
-        .createNode({
-          'id': this.UUIDGenerator.generateUUID(),
-          'operation': operation,
-          'x': positionX > elementOffsetX ? positionX - elementOffsetX : 0,
-          'y': positionY > elementOffsetY ? positionY - elementOffsetY : 0
-        });
-
-      this.WorkflowService.getWorkflow().addNode(node);
+      let node = internal.createNodeAndAdd.call(this, {
+        operation: operation,
+        // TODO check if we reached right and bottom end of flowchart box,
+        x: positionX > elementOffsetX ? positionX - elementOffsetX : 0,
+        y: positionY > elementOffsetY ? positionY - elementOffsetY : 0
+      });
 
       if (this.Operations.hasWithParams(operation.id)) {
         this.WorkflowService.saveWorkflow();

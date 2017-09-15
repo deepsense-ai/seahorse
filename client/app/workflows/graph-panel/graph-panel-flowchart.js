@@ -46,7 +46,8 @@ function FlowChartBox(GraphPanelRendererService) {
     scope: {
       'selectedNode': '=',
       'nodes': '=',
-      'reportMode': '='
+      'reportMode': '=',
+      'zoomId': '@'
     },
     templateUrl: 'app/workflows/graph-panel/graph-panel-flowchart.html',
     link: (scope, element) => {

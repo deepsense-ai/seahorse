@@ -8,7 +8,8 @@
   <flow-chart-box
     nodes="workflow.getWorkflow().getNodes()"
     selected-node="workflow.getSelectedNode()"
-    report-mode="false"></flow-chart-box>
+    report-mode="false"
+    zoom-id="{{::workflow.zoomId}}"></flow-chart-box>
 
   <deepsense-operation-attributes
     node="workflow.getSelectedNode()"

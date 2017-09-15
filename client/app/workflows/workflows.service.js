@@ -1,7 +1,9 @@
 'use strict';
 
 /* @ngInject */
-function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClient, $rootScope) {
+function WorkflowService(Workflow, OperationsHierarchyService,
+  WorkflowsApiClient, Operations, UUIDGenerator,
+  $rootScope) {
 
   let internal = {};
 
@@ -65,6 +67,34 @@ function WorkflowService(Workflow, OperationsHierarchyService, WorkflowsApiClien
         .catch((error) => {
           $rootScope.$broadcast('Workflow.SAVE.ERROR', error);
         });
+    }
+
+    cloneParamsFromNodeToNode(nodeSrc, nodeDist) {
+      nodeDist.parametersValues = nodeSrc.parameters.serialize();
+    }
+
+    cloneNode(node) {
+      let operation = Operations.get(node.operationId);
+      let offset = {
+        x: 255,
+        y: 0
+      };
+      let nodeClone = _.cloneDeep(node);
+      let nodeParams = angular.merge(
+        nodeClone, {
+          'id': UUIDGenerator.generateUUID(),
+          'operation': operation,
+          'x': node.x - offset.x >= 0 ? node.x - offset.x : node.x,
+          'y': node.y - offset.y >= 0 ? node.y - offset.y : node.y,
+          'uiName': nodeClone.uiName ? nodeClone.uiName += ' copy' : ''
+        }
+      );
+      let createdNode = this.getWorkflow().createNode(nodeParams);
+
+      /* Copy params */
+      this.cloneParamsFromNodeToNode(node, createdNode);
+
+      return this.getWorkflow().addNode(createdNode);
     }
   }
 

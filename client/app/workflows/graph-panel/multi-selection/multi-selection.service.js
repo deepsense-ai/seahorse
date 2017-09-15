@@ -1,38 +1,33 @@
 'use strict';
 
-exports.inject = (module) => {
-  module.service('MultiSelectionService', () => {
+let internal = {};
+internal.selectedNodes = [];
 
-    let internal = {};
+class MultiSelectionService {
+  /* @ngInject */
+  constructor() {}
+
+  addNodesToSelection(nodes) {
+    internal.selectedNodes = _.union(internal.selectedNodes, nodes);
+  }
+
+  clearSelection() {
     internal.selectedNodes = [];
+  }
 
-    class MultiSelectionService {
+  removeNodesFromSelection(nodes) {
+    internal.selectedNodes = _.difference(internal.selectedNodes, nodes);
+  }
 
-      constructor() {
-        internal.selectedNodes = [];
-      }
+  setSelectedNodes(nodes) {
+    internal.selectedNodes = nodes;
+  }
 
-      addNodesToSelection(nodes) {
-        internal.selectedNodes = _.union(internal.selectedNodes, nodes);
-      }
+  getSelectedNodes() {
+    return internal.selectedNodes;
+  }
+}
 
-      clearSelection() {
-        internal.selectedNodes = [];
-      }
-
-      removeNodesFromSelection(nodes) {
-        internal.selectedNodes = _.difference(internal.selectedNodes, nodes);
-      }
-
-      setSelectedNodes(nodes) {
-        internal.selectedNodes = nodes;
-      }
-
-      getSelectedNodes() {
-        return internal.selectedNodes;
-      }
-    }
-
-    return new MultiSelectionService();
-  });
+exports.inject = function(module) {
+  module.service('MultiSelectionService', MultiSelectionService);
 };

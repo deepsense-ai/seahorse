@@ -16,6 +16,6 @@ class ErrorService {
 
 exports.function = ErrorService;
 
-exports.inject = function (module) {
+exports.inject = function(module) {
   module.service('ErrorService', ErrorService);
 };

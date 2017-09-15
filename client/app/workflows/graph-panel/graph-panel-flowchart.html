@@ -6,7 +6,7 @@
          deepsense-interactive-autorun="true"
          collection="flowChartBoxCtrl.nodes"
          collection-item-dimensions="flowChartBoxCtrl.getNodeDimensions()"
-         zoom-id="flowchart-box"
+         zoom-id="{{::flowChartBoxCtrl.zoomId}}"
          max-zoom-ratio="1.5"
          droppable
          droppable-type="exact"
@@ -26,7 +26,7 @@
          deepsense-interactive-autorun="true"
          collection="flowChartBoxCtrl.nodes"
          collection-item-dimensions="flowChartBoxCtrl.getNodeDimensions()"
-         zoom-id="flowchart-box"
+         zoom-id="{{::flowChartBoxCtrl.zoomId}}"
          max-zoom-ratio="1.5">
       <graph-node ng-class="{'selected-node': flowChartBoxCtrl.selectedNode.id === nodeId }"
                   ng-repeat="(nodeId, node) in flowChartBoxCtrl.nodes"
@@ -45,5 +45,5 @@
       </span>
     </sticky-window>
   </div>
-  <deepsense-interaction-toolbar zoom-id="flowchart-box" autorun="true"></deepsense-interaction-toolbar>
+  <deepsense-interaction-toolbar zoom-id="{{::flowChartBoxCtrl.zoomId}}" autorun="true"></deepsense-interaction-toolbar>
 </div>

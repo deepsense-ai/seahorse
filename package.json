@@ -35,7 +35,7 @@
     "deepsense-catalogue-panel": "0.0.8",
     "deepsense-context-menu": "0.0.1",
     "deepsense-cycle-analyser": "0.0.1",
-    "deepsense-graph-model": "0.0.25",
+    "deepsense-graph-model": "0.0.27",
     "deepsense-loading-spinner": "^1.0.2",
     "deepsense-navigation-panel": "0.0.14",
     "deepsense-node-parameters": "0.0.20",

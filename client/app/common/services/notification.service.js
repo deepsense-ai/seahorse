@@ -10,6 +10,25 @@ class LogHandlingService {
   }
 }
 
+/**
+ * `staticMessages` is map of "Global event name": params
+ * is used in order to add dynamic notification messages.
+ *
+ * Example of usage `staticMessages`:
+ *
+ * 'Workflow.SAVE': {
+ *    message: 'Saving workflow ...',
+ *    title: 'Workflow event',
+ *    notificationType: 'info'
+ * }
+ *
+ * 'Workflow.SAVE.SUCCESS': {
+ *    message: 'The workflow has been <b>saved</b> successfully',
+ *    title: 'Workflow event',
+ *    notificationType: 'success'
+ * }
+ */
+
 class NotificationService extends LogHandlingService {
   constructor($rootScope, $log, toastr) {
     super($log);
@@ -22,40 +41,25 @@ class NotificationService extends LogHandlingService {
     /* Array of all messages in order to delete them after some time */
     this.messages = [];
 
-    this.staticMessages = {
-      //'Workflow.SAVE': {
-      //  message: 'Saving workflow ...',
-      //  title: 'Workflow event',
-      //
-      //  notificationType: 'info'
-      //},
-      //'Workflow.SAVE.SUCCESS': {
-      //  message: 'The workflow has been <b>saved</b> successfully',
-      //  title: 'Workflow event',
-      //
-      //  notificationType: 'success'
-      //}
-    };
+    this.staticMessages = {};
 
     this.dynamicMessages = {
-      //'Workflow.SAVE.ERROR': (event, error) => {
-      //  this.showError(
-      //    NotificationService.getCommonErrorMessage('Workflow SAVE', error),
-      //    error
-      //  );
-      //},
       'LastExecutionReportService.REPORT_HAS_BEEN_UPLOADED': (event, data) => {
-        this.showLastExecution({
+        this.showWithParams({
           message: 'The report for this workflow is already available',
           title: 'Workflow event',
           settings: {
             timeOut: 0,
-            extendedTimeOut: 0,
+            extendedTimeOut: 0
           },
 
           notificationType: 'info'
         });
-      }
+      },
+      'CopyPaste.COPY.nodes': (event, copyObject) =>
+        this.showNodeCopyPaste('copy', copyObject),
+      'CopyPaste.PASTE.nodes': (event, pasteObject) =>
+        this.showNodeCopyPaste('paste', pasteObject)
     };
 
     this.initEventListeners();
@@ -65,21 +69,35 @@ class NotificationService extends LogHandlingService {
     this.showNotificationByEventName(event.name);
   }
 
-  showLastExecution(options) {
-    let toast = this.toastr[options.notificationType](options.message, options.title, options.settings);
+  showWithParams(params) {
+    let toast = this.toastr[params.notificationType](params.message, params.title, params.settings);
 
-    this.handleSameMessages(options.message, toast);
+    this.handleSameMessages(params.message, toast);
+    this.replaceInfoMessagesWithSuccess(params.message, toast);
   }
 
-  showError(data, error) {
-    this.error(data.title, error);
+  showNodeCopyPaste(type, copyObject) {
+    let isMultiple = copyObject.entityToCopy.length > 1;
+    let node = isMultiple ? copyObject.entityToCopy : copyObject.entityToCopy[0];
+    let templateData = {
+      entity: 'node',
+      multiple: isMultiple,
+      eventInThePastText: type === 'copy' ? 'copied' : 'pasted',
+      name: isMultiple ?
+        `${node.length} nodes` : `
+            "${node.uiName || node.name}"
+            <span class="o-color-picker o-color-picker--inline"
+                  style="background-color: ${node.color}"></span>
+          `
+    };
+    let messageObject = NotificationService.commonMessages(
+      type,
+      templateData
+    );
 
-    let toast = this.toastr.error(data.message, data.title, {
-      timeOut: 10000
-    });
+    messageObject.notificationType = type === 'copy' ? 'info' : 'success';
 
-    this.handleSameMessages(data.message, toast);
-    this.replaceInfoMessagesWithSuccess(data.message, toast);
+    this.showWithParams(messageObject);
   }
 
   showNotificationByEventName(eventName) {
@@ -140,27 +158,18 @@ class NotificationService extends LogHandlingService {
     }
   }
 
-  // Statics
-  static getCommonErrorMessage(label, error) {
-    return NotificationService.commonMessages(
-      'error', {
-        errorType: label
-      },
-      error
-    );
-  }
-
   static commonMessages(key, templateData, dynamicPart = {}) {
     let data = {
-      error: {
+      copy: {
         message: `
-          <%= errorType %> <b>error</b> <br />
-          ${dynamicPart.data} <br />
-          ${dynamicPart.statusText}
+          ${templateData.multiple? templateData.name : 'The <%= entity %>' + templateData.name + '<br />'}
+          ${templateData.multiple? 'are' : 'is'}\
+          <strong>${templateData.eventInThePastText}</strong>
         `,
-        title: 'Workflow event'
+        title: 'Copy/Paste event'
       }
     };
+    data.paste = data.copy;
 
     data[key].message = _.template(data[key].message)(templateData);
 

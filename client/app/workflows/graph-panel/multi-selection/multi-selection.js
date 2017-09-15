@@ -225,6 +225,12 @@ function MultiSelection(GraphNode, MouseEvent, WorkflowService, MultiSelectionSe
         selectionElement.style.display = 'none';
         element.append(selectionElement);
         element.on('mousedown', that.startPainting);
+        scope.$on('MultiSelection.ADD', (e, nodeIds) => {
+          that.unselectNodes();
+          nodeIds.forEach(id => that.addToSelection({
+            id
+          }));
+        });
       };
 
       that.init();
