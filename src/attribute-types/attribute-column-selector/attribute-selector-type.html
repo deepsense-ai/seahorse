@@ -12,6 +12,12 @@
       </button>
     </div>
   </div>
+  <label class="o-exclusion" ng-if="parameter.hasOwnProperty('excluding')">
+    <span class="o-exclusion__text" ng-show="parameter.excluding">Select the following:</span>
+    <span class="o-exclusion__text" ng-show="!parameter.excluding">Select all, excluding:</span>
+    <input type="checkbox" ng-model="parameter.excluding"
+           ui-switch="{color: '#1ab394', secondaryColor: '#E43B11', size: 'small'}" />
+  </label>
   <div class="ibox selector-item" ng-repeat="item in parameter.items">
     <div class="ibox-title">
       <span>{{ item.type.verbose }}</span>

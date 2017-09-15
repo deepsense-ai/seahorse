@@ -31,9 +31,7 @@
         </div>
 
         <button ng-click="togglePre('debug')">Toggle</button>
-        <pre class="row well default-spacing" id="debug">
-            {{ getNode().parameters.serialize() | json }}
-        </pre>
+        <pre class="row well default-spacing" id="debug">{{ getNode().parameters.serialize() | json }}</pre>
     </div>
 
     <deepsense-operation-attributes

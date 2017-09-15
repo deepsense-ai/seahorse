@@ -380,20 +380,23 @@ angular.module('test').
         ]
       },
       {
-        "sample-selectors": [
-          {
-            "type": "columnList",
-            "values": ["column1", "column2", "...", "column42"]
-          },
-          {
-            "type": "indexRange",
-            "values": [0, 42]
-          },
-          {
-            "type": "typeList",
-            "values": ["numeric", "time interval", "categorical"]
-          }
-        ],
+        "sample-selectors": {
+          "excluding": false,
+          "selections": [
+            {
+              "type": "columnList",
+              "values": ["column1", "column2", "...", "column42"]
+            },
+            {
+              "type": "indexRange",
+              "values": [0, 42]
+            },
+            {
+              "type": "typeList",
+              "values": ["numeric", "time interval", "categorical"]
+            }
+          ]
+        },
         "sample-single-column-selector": {
           "type": "column",
           "value": "kozik"
