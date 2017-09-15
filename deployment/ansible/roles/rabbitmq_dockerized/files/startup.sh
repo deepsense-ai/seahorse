@@ -6,6 +6,9 @@ set -e
 : ${RABBITMQ_PASS:=guest}
 
 SALT=$(head -c 4 /dev/urandom)
+while [ ${#SALT} != 4 ] ; do
+  SALT=$(head -c 4 /dev/urandom)
+done
 
 # Generate hashed password as described in http://lists.rabbitmq.com/pipermail/rabbitmq-discuss/2011-May/012765.html
 # HASH = BASE64 ( SALT || SHA256 ( SALT || PASS ) )
