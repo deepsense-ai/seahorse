@@ -64,9 +64,8 @@ For rows that have ``null`` in categorical column that is being decomposed, it w
 in corresponding columns.
 
 Result columns will have name of column category they represent with name of corresponding
-level appended.
-If this name is occupied, ``'_1'`` will be appended to it
-(or ``'_2'``, ``'_3'`` etc. so that uniqueness of column names is preserved).
+level appended. If the value for parameter ``prefix`` is provided, it will be prepended to
+generated columns' names, according to the pattern: ``prefix + columnName + "_" + value``.
 
 Encoded column will not be removed from DataFrame.
 
@@ -82,6 +81,8 @@ Params
 2. ``with redundant: Boolean`` - if ``true``, column that represents
    last (lexicographically) level of category will be present in result
    - otherwise it will be dropped.
+3. ``prefix: PrefixBasedColumnCreatorParameter`` - optional prefix for created columns.
+   If provided, names of generated columns match pattern: ``prefix + columnName + "_" + value``.
 
 =======
 Example
@@ -106,20 +107,21 @@ Operation Params
 ----------------
 1. columns = ["Kind", "Size"]
 2. with redundant = false
+3. prefix = "Animal_"
 
 -----------
 Output Data
 -----------
 
-========= ======= ====== ========== ========== =========
-Animal    Kind    Size   Kind_Bird  Kind_Fish  Size_Big
-========= ======= ====== ========== ========== =========
-Cow       Mammal  Big    0          0          1
-Ostrich   Bird    Big    1          0          1
-Trout     Fish    null   0          1          null
-Sparrow   Bird    Small  1          0          0
-Thing     null    Small  null       null       0
-========= ======= ====== ========== ========== =========
+========= ======= ====== ================= ================= ================
+Animal    Kind    Size   Animal_Kind_Bird  Animal_Kind_Fish  Animal_Size_Big
+========= ======= ====== ================= ================= ================
+Cow       Mammal  Big    0                 0                 1
+Ostrich   Bird    Big    1                 0                 1
+Trout     Fish    null   0                 1                 null
+Sparrow   Bird    Small  1                 0                 0
+Thing     null    Small  null              null              0
+========= ======= ====== ================= ================= ================
 
 ----------------
 Operation Params

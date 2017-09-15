@@ -53,8 +53,12 @@ An operation used to score a DataFrame using a previously trained classifier.
 It assumes that the input DataFrame contains columns that were used to train the model,
 and that they have a numeric type.
 If not, ``ColumnsDoNotExistException`` or ``WrongColumnTypeException`` are thrown respectively.
-The result column will have a name of the target column from the training DataFrame,
-with ``'_prediction'`` appended.
-If the name is occupied, ``'_1'`` will be appended to it
-(or ``'_2'``, ``'_3'`` etc. so that uniqueness of column names is preserved).
+The result column will have a name given in the ``prediction column`` parameter.
 The result column will be appended to the scored DataFrame.
+
+------
+Params
+------
+
+1. ``prediction column: SingleColumnCreatorParameter`` - name of the newly created column, which
+   contains generated predictions.

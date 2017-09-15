@@ -24,7 +24,7 @@ case class OneHotEncoder() extends DOperation1To1[DataFrame, DataFrame] {
     "Preserve redundant column", default = Some(false), required = true)
 
   val prefixParam = PrefixBasedColumnCreatorParameter(
-    "Prefix for generated columns", None, required = true)
+    "Prefix for generated columns", None, required = false)
 
   override val parameters: ParametersSchema = ParametersSchema(
     "columns" -> selectedColumnsParam,

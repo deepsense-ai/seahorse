@@ -63,18 +63,16 @@ and the columns of the right DataFrame but the columns used to LEFT JOIN. Rows m
 * The values must be equal to match.
 * Order of the columns is preserved (from left to right).
 
-The operation joins two DataFrames by the columns in ``join columns`` that must be in both
-DataFrames and of the same type. If ``join columns`` are not in either DataFrames or they are
-of different types, ``ColumnsDoNotExistException`` or ``WrongColumnTypeException`` exceptions are thrown,
-respectively.
+The operation joins two DataFrames by the column pairs given in ``join columns`` parameter.
+For each given pair, both columns must be of the same type. If column pairs in ``join columns``
+are not present in their DataFrames (left DataFrame and right DataFrame, respectively),
+``ColumnDoesNotExistException`` is thrown. If columns from one pair are of different types,
+``WrongColumnTypeException`` is thrown.
 
 The join operation skips ``null`` values in LEFT JOIN, i.e. ``null`` s do not match and yield rows.
 
-Columns from right DataFrame with the names that currently exist in left DataFrame
-will be renamed by appending ``'_join'`` suffix.
-If this name is occupied, ``'_1'`` will be appended to it
-(or ``'_2'``, ``'_3'`` etc. so that uniqueness of column names is preserved).
-
+If values of ``left prefix`` and/or ``right prefix`` are provided, columns in the output table
+are renamed by prepending prefix proper for the table, which they come from.
 
 -----
 Input
@@ -91,11 +89,13 @@ Output
 ------
 Params
 ------
-1. ``join columns: MultipleColumnSelector`` - columns to LEFT JOIN upon.
-   Even if one of the columns is selected more than once (eg. by name and by type)
-   it will be included only once.
-   Empty selection is not supported and exception ```ColumnsDoNotExistException`` is thrown.
-   When a column selected by name or by index does not exist in any or both DataFrames,
-   ``ColumnsDoNotExistException`` is thrown.
+1. ``join columns: ParametersSequence`` - sequence of pairs (``left column: SingleColumnSelectorParameter``,
+   ``right column: SingleColumnSelectorParameter``) defining condition for the JOIN operation.
+   Empty join condition is not supported and exception ``ColumnDoesNotExistException`` is thrown.
+   When a column selected by name or by index does not exist, ``ColumnDoesNotExistException`` is thrown.
    When the type of columns to LEFT JOIN upon in two DataFrames do not match,
    ``WrongColumnTypeException`` is thrown.
+2. ``left prefix: PrefixBasedColumnCreatorParameter`` - optional prefix, which can be prepended
+   to these columns in the output table, which come from the left input table.
+3. ``right prefix: PrefixBasedColumnCreatorParameter`` - optional prefix, which can be prepended
+   to these columns in the output table, which come from the right input table.
