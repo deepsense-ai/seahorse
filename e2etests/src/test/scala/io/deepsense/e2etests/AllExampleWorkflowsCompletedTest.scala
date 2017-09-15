@@ -6,13 +6,12 @@ package io.deepsense.e2etests
 
 import org.scalatest.{Matchers, WordSpec}
 
-class AllExampleWorkflowsCompletesTest extends WordSpec with Matchers with
-  SeahorseIntegrationTestDSL {
+class AllExampleWorkflowsCompletedTest extends WordSpec with Matchers with SeahorseIntegrationTestDSL {
 
   info("Assuming application will be accessible under localhost:33321")
 
   "All examples workflows" should {
-    "be correct - all nodes run and completed successfully" in {
+    "be correct - all nodes run and completed successfully" when {
 
       ensureSeahorseIsRunning()
       val exampleWorkflowIds = getExampleWorkflowsIds()

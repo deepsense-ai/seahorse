@@ -169,6 +169,7 @@ object Dependencies {
   val integrationtests = Seq(
     "com.typesafe.play" %% "play-ws" % "2.4.3",
     "org.jfarcand" % "wcs" % "1.5",
-    scalaz
+    scalaz,
+    seahorseWorkflowJson
   ) ++ Seq(scalatest).map(_ % s"$Test,it")
 }
