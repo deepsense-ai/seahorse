@@ -291,11 +291,11 @@ class WorkflowsApiSpec
         }
       }
     }
-    "return Bad Request" when {
+    "return InternalServerError" when {
       "inputExperiment contains cyclic graph" in {
         Post(s"/$apiPrefix", Envelope(cyclicWorkflow)) ~>
           addHeader("X-Auth-Token", validAuthTokenTenantA) ~> testRoute ~> check {
-          status should be (StatusCodes.BadRequest)
+          status should be (StatusCodes.InternalServerError)
         }
       }
     }

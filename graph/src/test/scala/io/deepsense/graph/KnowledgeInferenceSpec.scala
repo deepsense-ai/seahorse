@@ -187,12 +187,9 @@ class KnowledgeInferenceSpec
       }
     }
 
-    "throw an exception" when {
+    "return empty knowledge" when {
       "graph contains cycle" in {
-        intercept[CyclicGraphException] {
-          graphWithCycle.inferKnowledge(ctx)
-        }
-        ()
+        graphWithCycle.inferKnowledge(ctx).resultsMap should contain theSameElementsAs Map()
       }
     }
   }

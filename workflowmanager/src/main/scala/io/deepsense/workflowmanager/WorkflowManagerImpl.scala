@@ -21,8 +21,8 @@ import io.deepsense.commons.auth.{Authorizator, AuthorizatorProvider}
 import io.deepsense.commons.datetime.DateTimeConverter
 import io.deepsense.commons.models.Id
 import io.deepsense.commons.utils.Logging
-import io.deepsense.graph.Node
 import io.deepsense.models.actions.{LaunchAction, AbortAction, Action}
+import io.deepsense.graph.{CyclicGraphException, Node}
 import io.deepsense.models.messages._
 import io.deepsense.models.workflows.{Count, InputWorkflow, Workflow, WorkflowsList}
 import io.deepsense.workflowmanager.exceptions.{WorkflowNotFoundException, WorkflowNotRunningException, WorkflowRunningException}
@@ -69,6 +69,10 @@ class WorkflowManagerImpl @Inject()(
 
   def update(experimentId: Id, experiment: InputWorkflow): Future[Workflow] = {
     logger.debug("Update experiment id: {}, experiment: {}", experimentId, experiment)
+    if (experiment.graph.containsCycle) {
+      Future.failed(new CyclicGraphException())
+    }
+
     val now = DateTimeConverter.now
     authorizator.withRole(roleUpdate) { userContext =>
       val oldExperimentOption = storage.get(userContext.tenantId, experimentId)
@@ -92,6 +96,10 @@ class WorkflowManagerImpl @Inject()(
 
   def create(inputExperiment: InputWorkflow): Future[Workflow] = {
     logger.debug("Create experiment inputExperiment: {}", inputExperiment)
+    if (inputExperiment.graph.containsCycle) {
+      Future.failed(new CyclicGraphException())
+    }
+
     val now = DateTimeConverter.now
     authorizator.withRole(roleCreate) {
       userContext => {

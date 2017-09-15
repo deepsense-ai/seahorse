@@ -33,7 +33,6 @@ class ApisModule(withMockedSecurity: Boolean) extends AbstractModule {
     install(new DeepLangModule)
     bindApi.to(classOf[WorkflowApi])
     bindApi.to(classOf[OperationsApi])
-    bindApi.to(classOf[ModelsApi])
     bindApi.to(classOf[VersionApi])
   }
 }

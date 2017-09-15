@@ -124,7 +124,7 @@ case class ConvertType() extends DOperation1To1[DataFrame, DataFrame] {
       inputDFMetadata,
       columnNamesToConvert,
       targetType)
-    (outputKnowledge, selectionsWarnings ++ InferenceWarnings(conversionWarningsList:_*))
+    (outputKnowledge, selectionsWarnings ++ InferenceWarnings(conversionWarningsList: _*))
   }
 
   private def convertDataFrameMetadata(

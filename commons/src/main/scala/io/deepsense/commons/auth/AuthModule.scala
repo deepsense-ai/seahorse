@@ -7,7 +7,7 @@ package io.deepsense.commons.auth
 import com.google.inject.AbstractModule
 import com.google.inject.assistedinject.FactoryModuleBuilder
 
-import io.deepsense.commons.auth.usercontext.{MockedTokenTranslator, KeystoneTokenTranslator, TokenTranslator}
+import io.deepsense.commons.auth.usercontext.{KeystoneTokenTranslator, MockedTokenTranslator, TokenTranslator}
 
 class AuthModule(useMockSecurity: Boolean) extends AbstractModule {
   override def configure(): Unit = {

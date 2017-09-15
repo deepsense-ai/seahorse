@@ -176,8 +176,6 @@ class WorkflowApi @Inject() (
           complete(StatusCodes.NotFound, e.failureDescription)
         case e: WorkflowRunningException =>
           complete(StatusCodes.Conflict, e.failureDescription)
-        case e: CyclicGraphException =>
-          complete(StatusCodes.BadRequest, e.failureDescription)
         case e: FileNotFoundException =>
           complete(StatusCodes.NotFound, e.failureDescription)
     }
