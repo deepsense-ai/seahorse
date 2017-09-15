@@ -15,7 +15,7 @@ object CommonApiExceptions {
     errorCode = 400
   )
 
-  def doesNotExist(id: UUID) = ApiException (
+  def doesNotExist(id: UUID) = ApiException(
     message = s"Object with id $id does not exist.",
     errorCode = 404
   )

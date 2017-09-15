@@ -15,7 +15,7 @@ object FlywayMigration {
   def run(): Unit = {
     val flyway = new Flyway
     flyway.setLocations("db")
-    flyway.setSchemas(db.schema)
+    flyway.setSchemas(db.schema, db.quartzSchema)
     flyway.setDataSource(SchedulingManagerConfig.config.getString("databaseSlick.db.url"), "", "")
     flyway.migrate()
   }

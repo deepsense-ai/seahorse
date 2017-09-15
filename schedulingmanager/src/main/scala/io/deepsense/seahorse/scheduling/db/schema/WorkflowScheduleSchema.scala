@@ -9,9 +9,9 @@ import java.util.UUID
 
 import slick.jdbc.{PositionedParameters, SetParameter}
 
-import io.deepsense.seahorse.scheduling.SchedulingManagerConfig
 import io.deepsense.seahorse.scheduling.db.Database
 import io.deepsense.commons.service.db.CommonSlickFormats
+import io.deepsense.seahorse.scheduling.SchedulingManagerConfig
 
 object WorkflowScheduleSchema {
 

@@ -12,10 +12,11 @@ import io.deepsense.commons.service.server.JettyConfig
 object DatasourceManagerConfig {
 
   // TODO Load all *.default.conf automatically
-  val config = ConfigFactory.load("jetty.default.conf").withFallback(
+  val config =
+  ConfigFactory.defaultApplication().withFallback(
     ConfigFactory.load("database.default.conf")
   ).withFallback(
-    ConfigFactory.defaultApplication()
+    ConfigFactory.load("jetty.default.conf")
   )
 
   val jetty = new JettyConfig(config.getConfig("jetty"))

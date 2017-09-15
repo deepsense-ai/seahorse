@@ -6,13 +6,14 @@ package io.deepsense.seahorse.scheduling.api
 
 import java.util.UUID
 
+import slick.dbio._
+
 import scala.concurrent.Await
 import scala.util.{Failure, Success, Try}
 
-import slick.dbio._
-
+import io.deepsense.commons.config.ConfigToPropsLossy
 import io.deepsense.commons.service.api.CommonApiExceptions
-import io.deepsense.commons.service.db.dbio.GenericDBIOs
+import io.deepsense.commons.service.db.dbio.{GenericDBIOs, TryDBIO}
 import io.deepsense.seahorse.scheduling.SchedulingManagerConfig
 import io.deepsense.seahorse.scheduling.converters.SchedulesConverters
 import io.deepsense.seahorse.scheduling.db.Database
@@ -20,8 +21,16 @@ import io.deepsense.seahorse.scheduling.db.dbio.WorkflowSchedulesDBIOs
 import io.deepsense.seahorse.scheduling.db.schema.WorkflowScheduleSchema
 import io.deepsense.seahorse.scheduling.db.schema.WorkflowScheduleSchema.WorkflowScheduleDB
 import io.deepsense.seahorse.scheduling.model.{JsonBodyForError, WorkflowSchedule}
+import io.deepsense.seahorse.scheduling.schedule.{RunWorkflow, WorkflowScheduler}
 
 class SchedulingManagerApi extends DefaultApi {
+  import scala.concurrent.ExecutionContext.Implicits.global
+
+  private val scheduler = {
+    val s = new WorkflowScheduler[RunWorkflow](ConfigToPropsLossy(SchedulingManagerConfig.config))
+    s.start()
+    s
+  }
 
   private val genericDBIOs = new GenericDBIOs[WorkflowSchedule, WorkflowScheduleDB] {
     override val api = io.deepsense.seahorse.scheduling.db.Database.api
@@ -39,17 +48,22 @@ class SchedulingManagerApi extends DefaultApi {
   override def getWorkflowSchedulesImpl(): List[WorkflowSchedule] =
     genericDBIOs.getAll.run()
 
-  override def putWorkflowScheduleImpl(scheduleId: UUID, workflowSchedule: WorkflowSchedule): WorkflowSchedule =
-    genericDBIOs.insertOrUpdate(scheduleId, workflowSchedule).run()
+  override def putWorkflowScheduleImpl(scheduleId: UUID, workflowSchedule: WorkflowSchedule): WorkflowSchedule = (for {
+    updated <- genericDBIOs.insertOrUpdate(scheduleId, workflowSchedule)
+    () <- TryDBIO(scheduler.activateSchedule(updated))
+  } yield updated).run()
 
-  override def deleteWorkflowScheduleImpl(scheduleId: UUID): Unit =
-    genericDBIOs.delete(scheduleId).run()
+  override def deleteWorkflowScheduleImpl(scheduleId: UUID): Unit = (for {
+    () <- genericDBIOs.delete(scheduleId)
+    () <- TryDBIO(scheduler.deactivateSchedule(scheduleId))
+  } yield ()).run()
 
   // TODO DRY
   implicit class DBIOOps[T](dbio: DBIO[T]) {
     import scala.concurrent.duration._
     def run(): T = {
-      val futureResult = Database.db.run(dbio.withPinnedSession)
+      import io.deepsense.seahorse.scheduling.db.Database.api.{Database => _, _}
+      val futureResult = Database.db.run(dbio.transactionally)
       Try {
         Await.result(futureResult, SchedulingManagerConfig.database.timeout)
       } match {

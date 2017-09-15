@@ -43,6 +43,7 @@ object Library {
   val akkaTestkit = akka("testkit")
   val apacheCommons = "org.apache.commons" % "commons-lang3" % Version.apacheCommons
   val apacheCommonsExec = "org.apache.commons" % "commons-exec" % "1.3"
+  val cronUtils = "com.cronutils" % "cron-utils" % "5.0.4"
   val guice = "com.google.inject" % "guice" % Version.guice
   val guiceMultibindings = "com.google.inject.extensions" % "guice-multibindings" % Version.guice
   val jcloudsKeystone = jclouds("keystone")
@@ -52,6 +53,7 @@ object Library {
   val metricsScala = "nl.grons" %% "metrics-scala" % Version.metricsScala excludeAkkaActor
   val mockitoCore = "org.mockito" % "mockito-core" % Version.mockito
   val nscalaTime = "com.github.nscala-time" %% "nscala-time" % Version.nsscalaTime
+  val quartz = "org.quartz-scheduler" % "quartz" % "2.2.3"
   val rabbitmq = "com.thenewmotion.akka" %% "akka-rabbitmq" % "2.2" excludeAkkaActor
   val scalaReflect = "org.scala-lang" % "scala-reflect" % Version.scala
   val scalatest = "org.scalatest" %% "scalatest" % Version.scalatest
@@ -182,10 +184,13 @@ object Dependencies {
   )
 
   val schedulingmanager =  scalatraAndJetty ++ json4s ++ Seq(
+    cronUtils,
     h2,
     flyway,
-    scalajs
-  )
+    scalajs,
+    slick,
+    quartz
+  ) ++ Seq(scalatest).map(_ % Test)
 
   val integrationtests = Seq(
     "com.typesafe.play" %% "play-ws" % "2.4.3",

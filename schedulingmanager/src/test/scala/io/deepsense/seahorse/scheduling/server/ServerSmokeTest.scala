@@ -20,7 +20,7 @@ class ServerSmokeTest extends WordSpec with Matchers {
 
     "serve schedules" in {
       val response = Http("http://localhost:8080/schedulingmanager/v1/workflow-schedules").asString
-      logger.info(s"Datasources response: ${response.body}")
+      logger.info(s"Scheduling manager response: ${response.body}")
       response.isNotError shouldBe true
     }
     "serve swagger-ui" in {
