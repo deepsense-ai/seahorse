@@ -24,4 +24,5 @@ for file in sorted(os.listdir("examples")):
       for node_id, notebook_json in notebooks.iteritems():
         compact_notebook = compact_json(notebook_json)
         print INSERT_NOTEBOOK_FORMAT.format(id, uuid.UUID(node_id), compact_notebook)
+      created -= 1
 
