@@ -17,7 +17,8 @@
 package io.deepsense.deeplang.doperations.spark.wrappers.estimators
 
 import io.deepsense.deeplang.DOperation._
-import io.deepsense.deeplang.doperables.{Transformer, StringIndexerModel, StringIndexerEstimator}
+import io.deepsense.deeplang.doperables.spark.wrappers.estimators.StringIndexerEstimator
+import io.deepsense.deeplang.doperables.Transformer
 import io.deepsense.deeplang.doperations.{EstimatorAsOperation, MultiColumnEstimatorParamsForwarder}
 
 class StringIndexer

@@ -19,6 +19,8 @@ package io.deepsense.deeplang.doperables
 import io.deepsense.deeplang.doperables.StringIndexerEstimatorIntegSpec._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.multicolumn.SingleColumnParams.SingleTransformInPlaceChoices.{YesInPlaceChoice, NoInPlaceChoice}
+import io.deepsense.deeplang.doperables.spark.wrappers.estimators.{SingleStringIndexerModel, StringIndexerEstimator}
+import io.deepsense.deeplang.doperables.spark.wrappers.models.StringIndexerModel
 import io.deepsense.deeplang.inference.InferContext
 import io.deepsense.deeplang.{DKnowledge, DeeplangIntegTestSupport}
 

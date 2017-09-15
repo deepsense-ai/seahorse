@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperables
+package io.deepsense.deeplang.doperables.spark.wrappers.estimators
 
 import scala.language.reflectiveCalls
 
@@ -23,6 +23,8 @@ import org.apache.spark.ml.feature.{StringIndexer => SparkStringIndexer, StringI
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.SingleColumnChoice
 import io.deepsense.deeplang.doperables.report.CommonTablesGenerators.SparkSummaryEntry
 import io.deepsense.deeplang.doperables.report.{CommonTablesGenerators, Report}
+import io.deepsense.deeplang.doperables.spark.wrappers.models.StringIndexerModel
+import io.deepsense.deeplang.doperables.{SparkMultiColumnEstimatorWrapper, SparkSingleColumnEstimatorWrapper, SparkSingleColumnModelWrapper}
 import io.deepsense.deeplang.params.Param
 
 class StringIndexerEstimator

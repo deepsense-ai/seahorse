@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package io.deepsense.deeplang.doperables
+package io.deepsense.deeplang.doperables.spark.wrappers.models
 
 import org.apache.spark.ml.feature.{StringIndexer => SparkStringIndexer, StringIndexerModel => SparkStringIndexerModel}
 
+import io.deepsense.deeplang.doperables.MultiColumnModel
 import io.deepsense.deeplang.doperables.report.Report
+import io.deepsense.deeplang.doperables.spark.wrappers.estimators.SingleStringIndexerModel
 import io.deepsense.deeplang.params.Param
 
 case class StringIndexerModel()

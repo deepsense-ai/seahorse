@@ -18,7 +18,9 @@ package io.deepsense.deeplang.doperations
 
 import org.apache.spark.sql.types._
 
-import io.deepsense.deeplang.doperables.{StringIndexerModel, SingleStringIndexerModel, Transformer}
+import io.deepsense.deeplang.doperables.spark.wrappers.estimators.SingleStringIndexerModel
+import io.deepsense.deeplang.doperables.spark.wrappers.models.StringIndexerModel
+import io.deepsense.deeplang.doperables.Transformer
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.MultiColumnInPlaceChoices.MultiColumnNoInPlace
 import io.deepsense.deeplang.doperables.multicolumn.MultiColumnParams.SingleOrMultiColumnChoices.{MultiColumnChoice, SingleColumnChoice}
