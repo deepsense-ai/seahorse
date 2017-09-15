@@ -38,7 +38,7 @@ def main():
                         help='Custom frontend address passed to proxy: HOST:PORT',
                         action='store')
     parser.add_argument('--yaml-file', default='docker-compose.yml',
-                        help='The generated file; used only togeter with --generate-only',
+                        help='The generated file; used only together with --generate-only',
                         action='store')
     parser.add_argument('--generate-only',
                         help='If used, the script will only generate ',

@@ -1,7 +1,7 @@
 entryPointId <- "0"
 
 # R will install packages to first lib path in here. We will mount it as docker volume to persist packages.
-.libPaths(c(file.path("/opt/R_Libs"), file.path("/opt/spark-2.0.0/R/lib/"), .libPaths()))
+.libPaths(c(file.path("/opt/R_Libs"), file.path(Sys.getenv('SPARK_HOME'), 'R', 'lib'), .libPaths()))
 library(SparkR)
 
 SparkR:::connectBackend(r_backend_host, r_backend_port)
@@ -12,8 +12,18 @@ entryPoint <- SparkR:::getJobj(entryPointId)
 
 assign(".sparkRjsc", SparkR:::callJMethod(entryPoint, "getSparkContext"), envir = SparkR:::.sparkREnv)
 assign("sc", get(".sparkRjsc", envir = SparkR:::.sparkREnv), envir = .GlobalEnv)
-assign(".sparkRsession", SparkR:::callJMethod(entryPoint, "getNewSparkSession"), envir = SparkR:::.sparkREnv)
-assign("spark", get(".sparkRsession", envir = SparkR:::.sparkREnv), envir = .GlobalEnv)
+
+sparkSQLSession <- SparkR:::callJMethod(entryPoint, "getNewSparkSQLSession")
+
+sparkVersion <- SparkR:::callJMethod(sc, "version")
+if (sparkVersion == "2.0.0") {
+  assign(".sparkRsession", SparkR:::callJMethod(sparkSQLSession, "getSparkSession"), envir = SparkR:::.sparkREnv)
+  assign("spark", get(".sparkRsession", envir = SparkR:::.sparkREnv), envir = .GlobalEnv)
+} else {
+  assign(".sqlc", SparkR:::callJMethod(sparkSQLSession, "getSQLContext"), envir = SparkR:::.sparkREnv)
+  assign("sqlContext", get(".sqlc", envir = SparkR:::.sparkREnv), envir = .GlobalEnv)
+  assign("spark", get(".sqlc", envir = SparkR:::.sparkREnv), envir = .GlobalEnv)
+}
 
 dataframe <- function() {
     if (!exists("workflow_id") || !exists("node_id") || !exists("port_number")) {

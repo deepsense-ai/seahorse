@@ -743,6 +743,12 @@ object WorkflowsApiSpec {
     override val description: String = "mock operation desc"
     override val params = Array[Param[_]]()
 
+    @transient
+    override lazy val tTagTI_0: TypeTag[DOperable] = typeTag[DOperable]
+
+    @transient
+    override lazy val tTagTO_0: TypeTag[DOperable] = typeTag[DOperable]
+
     override protected def execute(t0: DOperable)(ctx: deeplang.ExecutionContext): DOperable = ???
   }
 }

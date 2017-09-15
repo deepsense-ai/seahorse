@@ -1,7 +1,7 @@
 Seahorse Mesos docker image
 ===========================
 
-The image contains Mesos, Spark and python libraries required for running SX inside a docker container.
+The image contains Mesos, Spark, R and python libraries required for running SX inside a docker container.
 Image is versioned by using Seahorse build tag as a docker tag (i.e. `20160926_230009-seahorse_on_desktop`, `20160921_164305-seahorse_on_desktop-1.3.1`).
 
 1. Build the image (with tag: `20160926_230009-seahorse_on_desktop`)
@@ -19,6 +19,6 @@ Image is versioned by using Seahorse build tag as a docker tag (i.e. `20160926_2
    $ LIBPROCESS_IP={MACHINE_IP_VISIBLE_FROM_CLUSTER}
    $ spark-shell --master mesos://10.10.1.221:5050 --conf spark.executor.uri=http://d3kbcqa49mib13.cloudfront.net/spark-2.0.0-bin-hadoop2.7.tgz
 
-4. Publishing the image manually (Jenkins job is prefered way to publish this docker image)
+4. Publishing the image manually (Jenkins job is preferred way to publish this docker image)
 
    $ docker push docker-repo.deepsense.codilime.com/deepsense_io/deepsense-mesos-spark:20160926_230009-seahorse_on_desktop

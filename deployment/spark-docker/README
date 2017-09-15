@@ -1,21 +1,22 @@
 Seahorse Spark docker image
 ===========================
 
-The image contains Spark and python libraries required for running SX inside a docker container.
+The image contains Spark, python AND R libraries required for running SX inside a docker container.
 Image is versioned by using Seahorse build tag as a docker tag (i.e. `20160926_230009-seahorse_on_desktop`, `20160921_164305-seahorse_on_desktop-1.3.1`).
+It can be build with selected spark and hadoop versions, which are passed as arguments to build.
 
 1. Building the image (with tag `20160926_230009-seahorse_on_desktop`)
 
-   $ docker build -t docker-repo.deepsense.codilime.com/deepsense_io/deepsense-spark:20160926_230009-seahorse_on_desktop .
+   $ docker build --build-arg SPARK_VERSION=2.0.0 HADOOP_VERSION=2.7 -t docker-repo.deepsense.codilime.com/deepsense_io/deepsense-spark-2.0.0:20160926_230009-seahorse_on_desktop .
 
 2. Running the image
 
    $ docker run -h sandbox -d docker-repo.deepsense.codilime.com/deepsense_io/deepsense-spark:20160926_230009-seahorse_on_desktop
-   $ docker run -it -p 8088:8088 -p 8042:8042 -p 4040:4040 -h docker-repo.deepsense.codilime.com/deepsense_io/deepsense-spark:20160926_230009-seahorse_on_desktop bash
+   $ docker run -it -p 8088:8088 -p 8042:8042 -p 4040:4040 -h docker-repo.deepsense.codilime.com/deepsense_io/deepsense-spark-2.0.0:20160926_230009-seahorse_on_desktop bash
 
 3. Publishing the image manually (Jenkins job is prefered way to publish this docker image)
 
-   $ docker push docker-repo.deepsense.codilime.com/deepsense_io/deepsense-spark:20160926_230009-seahorse_on_desktop
+   $ docker push docker-repo.deepsense.codilime.com/deepsense_io/deepsense-spark-2.0.0:20160926_230009-seahorse_on_desktop
 
 4. Verifying R libraries:
 To verify possibility of installation of popular machine learning R packages,

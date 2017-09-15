@@ -42,4 +42,10 @@ class IdentityOperation extends DOperation1To1[DataFrame, DataFrame] {
     "Returns the same data frame that was passed to it. Useful for educational purposes only."
 
   override def params: Array[Param[_]] = Array(comment)
+
+  @transient
+  override lazy val tTagTI_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
+
+  @transient
+  override lazy val tTagTO_0: ru.TypeTag[DataFrame] = ru.typeTag[DataFrame]
 }
