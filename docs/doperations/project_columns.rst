@@ -68,7 +68,7 @@ Params
 1. ``columns: MultipleColumnSelector`` - columns to be included in the output DataFrame.
 Even if one of the columns is selected more than once (eg. by name and by type)
 it will be included only once. Empty selection is supported, but when a column selected by name
-or by index does not exist the operation will fail at runtime with ColumnsDoesNotExistException.
+or by index does not exist the operation will fail at runtime with ColumnsDoNotExistException.
 
 .. _language_label:
 

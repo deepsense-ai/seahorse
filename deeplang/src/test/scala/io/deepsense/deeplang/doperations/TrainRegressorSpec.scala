@@ -47,8 +47,10 @@ class TrainRegressorSpec extends UnitSpec with MockitoSugar {
 
       result shouldBe Vector(scorableStub)
     }
+  }
 
-    "infer results of it's types" in {
+  it should {
+    "infer results of its types" in {
       val inferContextStub = mock[InferContext]
       val scorableStubs = Vector(mock[Scorable], mock[Scorable], mock[Scorable])
       val scorableKnowledgeStub1 = DKnowledge(Set(scorableStubs(0), scorableStubs(1)))
@@ -67,8 +69,8 @@ class TrainRegressorSpec extends UnitSpec with MockitoSugar {
       when(trainableMock2.train).thenReturn(trainMethodMock2)
       when(trainMethodMock2.infer(any())(any())(any())).thenReturn(scorableKnowledgeStub2)
 
-      val result = regressor.inferKnowledge(
-        inferContextStub)(Vector(DKnowledge(trainableMock1, trainableMock2), dataframeKnowledgeStub))
+      val result = regressor.inferKnowledge(inferContextStub)(
+        Vector(DKnowledge(trainableMock1, trainableMock2), dataframeKnowledgeStub))
 
       result shouldBe Vector(DKnowledge(scorableStubs.toSet))
     }

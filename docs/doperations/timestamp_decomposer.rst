@@ -74,9 +74,9 @@ Output
 ------
 Params
 ------
-1. ``timestampColumn: MultipleColumnSelector`` - one of the DataFrame columns.
-   Operation assumes that column selected by user has Timestamp type,
-   for other data types operation will result in runtime exception.
+1. ``timestampColumn: ColumnSelector`` - one of the DataFrame columns.
+   If column selected by user has type different then Timestamp, WrongColumnTypeException
+   will be thrown. If selected column does not exist, ColumnDoesNotExistException will be thrown.
 2. ``parts: MulitpleChoice`` - parts of timestamp to extract
    to separate columns.
    Possible values are: [year, month, day, hour, minutes, seconds].

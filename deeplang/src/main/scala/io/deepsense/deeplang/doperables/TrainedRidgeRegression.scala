@@ -7,7 +7,7 @@
 package io.deepsense.deeplang.doperables
 
 import org.apache.spark.mllib.linalg.Vector
-import org.apache.spark.mllib.regression.LinearRegressionModel
+import org.apache.spark.mllib.regression.RidgeRegressionModel
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
@@ -17,7 +17,7 @@ import io.deepsense.deeplang.{DMethod1To1, ExecutionContext}
 import io.deepsense.reportlib.model.ReportContent
 
 case class TrainedRidgeRegression(
-    model: Option[LinearRegressionModel],
+    model: Option[RidgeRegressionModel],
     featureColumns: Option[Seq[String]],
     targetColumn: Option[String])
   extends RidgeRegression

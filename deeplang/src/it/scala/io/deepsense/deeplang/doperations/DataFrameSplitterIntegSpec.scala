@@ -35,9 +35,9 @@ class DataFrameSplitterIntegSpec
         val rowsDf1 = df1.sparkDataFrame.collectAsList().asScala
         val rowsDf2 = df2.sparkDataFrame.collectAsList().asScala
         val intersect = rowsDf1.intersect(rowsDf2)
-        intersect.size should be(0)
-        (df1Count + df2Count) should be(dfCount)
-        rowsDf.toSet should be(rowsDf1.toSet.union(rowsDf2.toSet))
+        intersect.size shouldBe 0
+        (df1Count + df2Count) shouldBe dfCount
+        rowsDf.toSet shouldBe rowsDf1.toSet.union(rowsDf2.toSet)
       })
     }
   }

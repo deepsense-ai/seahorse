@@ -16,7 +16,7 @@ import org.scalatest.{Ignore, Matchers}
 
 import io.deepsense.deeplang._
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
-import io.deepsense.deeplang.doperations.exceptions.ColumnsDoesNotExistException
+import io.deepsense.deeplang.doperations.exceptions.ColumnsDoNotExistException
 import io.deepsense.deeplang.parameters.ColumnType.ColumnType
 import io.deepsense.deeplang.parameters._
 
@@ -51,41 +51,47 @@ class ProjectColumnIntegSpec
       val expectedDataFrame = createDataFrame(expectedData.map(Row.fromSeq), expectedSchema)
       assertDataFramesEqual(projected, expectedDataFrame)
     }
+  }
 
-    "throw an exception when the columns selected by name does not exist" in {
-      intercept[ColumnsDoesNotExistException]{
-        val nonExistingColumnName = "thisColumnDoesNotExist"
-        projectColumns(
-          Set(nonExistingColumnName),
-          Set.empty,
-          Set.empty)
+  it should {
+    "throw an exception" when {
+      "the columns selected by name does not exist" in {
+        intercept[ColumnsDoNotExistException] {
+          val nonExistingColumnName = "thisColumnDoesNotExist"
+          projectColumns(
+            Set(nonExistingColumnName),
+            Set.empty,
+            Set.empty)
+        }
+      }
+      "the columns selected by index does not exist" in {
+        intercept[ColumnsDoNotExistException] {
+          val nonExistingColumnIndex = 1000
+          projectColumns(
+            Set.empty,
+            Set(nonExistingColumnIndex),
+            Set.empty)
+        }
       }
     }
+  }
 
-    "throw an exception when the columns selected by index does not exist" in {
-      intercept[ColumnsDoesNotExistException]{
-        val nonExistingColumnIndex = 1000
-        projectColumns(
+  it should {
+    "produce an empty set" when {
+      "selecting a type that does not exist" in {
+        val emptyDataFrame = projectColumns(
           Set.empty,
-          Set(nonExistingColumnIndex),
-          Set.empty)
+          Set.empty,
+          Set(ColumnType.ordinal))
+        emptyDataFrame.sparkDataFrame.collectAsList().asScala shouldBe empty
       }
-    }
-
-    "produce an empty set when selecting a type that does not exist" in {
-      val emptyDataFrame = projectColumns(
-        Set.empty,
-        Set.empty,
-        Set(ColumnType.ordinal))
-      emptyDataFrame.sparkDataFrame.collectAsList().asScala shouldBe empty
-    }
-
-    "produce an empty set on empty selection" in {
-      val emptyDataFrame = projectColumns(
-        Set.empty,
-        Set.empty,
-        Set.empty)
-      emptyDataFrame.sparkDataFrame.collectAsList().asScala shouldBe empty
+      "selection is empty" in {
+        val emptyDataFrame = projectColumns(
+          Set.empty,
+          Set.empty,
+          Set.empty)
+        emptyDataFrame.sparkDataFrame.collectAsList().asScala shouldBe empty
+      }
     }
   }
 

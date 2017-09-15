@@ -6,11 +6,17 @@
 
 package io.deepsense.deeplang.doperables
 
+import org.apache.spark.mllib.regression.RidgeRegressionWithSGD
+
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.{DKnowledge, DMethod1To1, ExecutionContext, InferContext}
 import io.deepsense.reportlib.model.ReportContent
 
-class UntrainedRidgeRegression extends RidgeRegression with Trainable {
+case class UntrainedRidgeRegression(
+    model: Option[RidgeRegressionWithSGD])
+  extends RidgeRegression with Trainable {
+
+  def this() = this(None)
 
   override val train = new DMethod1To1[Trainable.Parameters, DataFrame, Scorable] {
     override def apply(
@@ -18,7 +24,12 @@ class UntrainedRidgeRegression extends RidgeRegression with Trainable {
         parameters: Trainable.Parameters)(
         dataframe: DataFrame): Scorable = {
 
-      new TrainedRidgeRegression  // TODO implement
+      val featureColumns = dataframe.getColumnNames(parameters.featureColumns)
+      val labelColumn = dataframe.getColumnName(parameters.targetColumn)
+
+      val labeledPoints = dataframe.toSparkLabeledPointRDD(featureColumns, labelColumn)
+      val trainedModel = model.get.run(labeledPoints)
+      TrainedRidgeRegression(Some(trainedModel), Some(featureColumns), Some(labelColumn))
     }
 
     override def infer(

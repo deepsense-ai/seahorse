@@ -14,7 +14,7 @@ import org.joda.time.DateTime
 import org.scalatest.BeforeAndAfter
 
 import io.deepsense.deeplang.doperables.dataframe.{DataFrame, DataFrameBuilder}
-import io.deepsense.deeplang.{DOperable, DeeplangIntegTestSupport}
+import io.deepsense.deeplang.{DeeplangIntegTestSupport, DOperable}
 import io.deepsense.entitystorage.EntityStorageClientTestInMemoryImpl
 
 class WriteDataFrameIntegSpec
@@ -26,13 +26,15 @@ class WriteDataFrameIntegSpec
 
   "WriteDataFrame" should {
     "write created DataFrame" in {
-      val rowsSeq: Seq[Row] = Seq(
+      val rows: Seq[Row] = Seq(
         Row("aaa", 1L, 1.2, timestamp),
         Row("bbb", 2L, 2.2, timestamp),
         Row("ccc", 3L, 3.4, timestamp))
-      testSimpleDataFrameSchemaWithRowsSeq(rowsSeq)
+      testSimpleDataFrameSchemaWithRowsSeq(rows)
     }
+  }
 
+  "WriteDataFrame" should {
     "write created DataFrame with missing values" in {
       val rowsSeq: Seq[Row] = Seq(
         Row("aaa", 1L, 1.2, null),

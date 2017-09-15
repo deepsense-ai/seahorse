@@ -7,7 +7,7 @@ package io.deepsense.deeplang.doperations.exceptions
 import io.deepsense.deeplang.doperables.dataframe.DataFrame
 import io.deepsense.deeplang.parameters.ColumnSelection
 
-case class ColumnsDoesNotExistException(
+case class ColumnsDoNotExistException(
     selections: Vector[ColumnSelection],
     dataFrame: DataFrame)
   extends DOperationExecutionException(

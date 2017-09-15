@@ -15,16 +15,17 @@ class HasSchemaValidationSpec extends UnitSpec {
   class Validator extends HasSchemaValidation
 
   "SchemaValidation" should {
-    "fail if column names are not unique in schema" in {
-      val schema: StructType = new StructType(
-        Array(new StructField("car", StringType), new StructField("car", IntegerType)))
+    "fail" when {
+      "column names are not unique in schema" in {
+        val schema: StructType = new StructType(
+          Array(new StructField("car", StringType), new StructField("car", IntegerType)))
 
-      intercept[IllegalArgumentException] {
-        new Validator().validateSchema(schema)
+        intercept[IllegalArgumentException] {
+          new Validator().validateSchema(schema)
+        }
       }
     }
-
-    "fail if there are multiple columns with id role" in {
+    "there are multiple columns with id role" in {
       val schema: StructType = new StructType(Array(
         new StructField("pesel", StringType, metadata = createIdRoleMetadata),
         new StructField("id", IntegerType, metadata = createIdRoleMetadata)
@@ -35,7 +36,7 @@ class HasSchemaValidationSpec extends UnitSpec {
       }
     }
 
-    "fail if id column has invalid type" in {
+    "id column has invalid type" in {
       val schema: StructType = new StructType(Array(
         new StructField("pesel", BooleanType, metadata = createIdRoleMetadata)
       ))
@@ -44,7 +45,9 @@ class HasSchemaValidationSpec extends UnitSpec {
         new Validator().validateSchema(schema)
       }
     }
+  }
 
+  it should {
     "validate correct schema" in {
       val schema: StructType = new StructType(Array(
         new StructField("pesel", IntegerType, metadata = createIdRoleMetadata),
@@ -60,5 +63,4 @@ class HasSchemaValidationSpec extends UnitSpec {
     metadataBuilder.putString("role", ColumnRole.Id.name)
     metadataBuilder.build()
   }
-
 }
